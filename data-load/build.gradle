@@ -1,13 +1,13 @@
 apply plugin: 'groovy'
 
-version = '1.0'
+version = '0.1.0-SNAPSHOT'
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.3'
-    compile 'com.xlson.groovycsv:groovycsv:1.0'
-    compile 'org.postgresql:postgresql:9.4-1201-jdbc41'
+	compile 'org.codehaus.groovy:groovy-all:2.4.3'
+	compile 'com.xlson.groovycsv:groovycsv:1.0'
+	compile 'org.postgresql:postgresql:9.4-1201-jdbc41'
 }
