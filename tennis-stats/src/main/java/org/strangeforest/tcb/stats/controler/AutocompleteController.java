@@ -12,16 +12,22 @@ public class AutocompleteController {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
+	private static final String PLAYER_AUTOCOMPLETE_QUERY =
+		"SELECT player_id, first_name, last_name FROM atp_players " +
+		"LEFT JOIN atp_best_rankings USING (player_id) " +
+		"WHERE lower(first_name) || ' ' || lower(last_name) LIKE ? " +
+		"ORDER BY best_rank, highest_points DESC";
+
 	@RequestMapping("/autocompletePlayer")
 	public List<AutocompleteOption> autocompletePlayer(@RequestParam(value="term") String term) {
 		return jdbcTemplate.query(
-			"SELECT player_id, first_name, last_name FROM atp_players WHERE lower(first_name) || ' ' || lower(last_name) LIKE ? ORDER BY player_id",
+			PLAYER_AUTOCOMPLETE_QUERY,
 			(rs, rowNum) -> {
 				String id = rs.getString("player_id");
 				String name = rs.getString("first_name") + ' ' + rs.getString("last_name");
 				return new AutocompleteOption(id, name, name);
 			},
-			"%" + term.trim().toLowerCase() + "%"
+			"%" + term.trim().replace("\\s*", " ").toLowerCase() + "%"
 		);
 	}
 }
