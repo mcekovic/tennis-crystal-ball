@@ -1,7 +1,7 @@
 package org.strangeforest.tcb.stats.controler;
 
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.time.*;
 import java.util.*;
 
@@ -20,15 +20,17 @@ public class PlayerRankingsController {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String CAREER = "C";
+	private static final LocalDate START_OF_NEW_RANKING_SYSTEM = LocalDate.of(2009, 1, 1);
+	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 2.0;
 
-	private static final String PLAYER_NAME = "first_name || ' ' || last_name";
 	private static final String PLAYER_IDS_QUERY =
-		"SELECT player_id, " + PLAYER_NAME + " AS player FROM atp_players " +
-		"WHERE %1$s";
+		"SELECT player_id FROM atp_players " +
+		"WHERE first_name || ' ' || last_name = ?";
+
 	private static final String PLAYER_RANKINGS_QUERY =
 		"SELECT rank_date, player_id, %1$s FROM atp_rankings " +
 		"LEFT JOIN atp_players USING (player_id) " +
-		"WHERE %2$s%3$s " +
+		"WHERE player_id = ANY(?)%2$s " +
 		"ORDER BY rank_date, player_id";
 
 	@RequestMapping("/playerRankings")
@@ -37,29 +39,32 @@ public class PlayerRankingsController {
 		@RequestParam(value="timeSpan", defaultValue = CAREER) String timeSpan,
 		@RequestParam(value="points", defaultValue = "false") boolean points
 	) {
-		String[] players = playersCSV.split(", ");
+		Players players = new Players(playersCSV.split(", "));
 		Range<LocalDate> dateRange = toDateRange(timeSpan);
 		String rankColumn = points ? "rank_points" : "rank";
-		String sql = format(PLAYER_RANKINGS_QUERY, rankColumn, playersCondition(players), dateRangeCondition(dateRange));
 		DataTable table = new DataTable();
-		LocalDate lastDate = null;
-		jdbcTemplate.query(sql,
+		RowCursor rowCursor = new RowCursor(table, players);
+		boolean compensateRankingPoints = points && shouldCompensateRankingPoints(dateRange);
+		jdbcTemplate.query(format(PLAYER_RANKINGS_QUERY, rankColumn, dateRangeCondition(dateRange)),
 			ps -> {
 				int index = 0;
-				index = bindPlayers(ps, index, players);
+				ps.setArray(++index, ps.getConnection().createArrayOf("integer", players.getPlayerIds().toArray()));
 				index = bindDateRange(ps, index, dateRange);
 			},
 			rs -> {
 				LocalDate date = rs.getDate("rank_date").toLocalDate();
-				String rank = rs.getString(rankColumn);
-				if (lastDate)
-				table.addRow(formatDate(date), new TableCell(rank));
+				int playerId = rs.getInt("player_id");
+				int rank = rs.getInt(rankColumn);
+				if (compensateRankingPoints)
+					rank = compensateRankingPoints(date, rank);
+				rowCursor.next(date, playerId, rank);
 			}
 		);
+		rowCursor.addRow();
 		if (!table.getRows().isEmpty()) {
 			table.addColumn("date", "Date");
-			for (String player : players)
-				table.addColumn("number", player + " ATP Ranking");
+			for (String player : players.getPlayers())
+				table.addColumn("number", player + " ATP " + (points ? "Points" : "Ranking"));
 		}
 		else {
 			table.addColumn("string", "Player");
@@ -68,28 +73,11 @@ public class PlayerRankingsController {
 		return table;
 	}
 
-	private Map<Integer, Integer> playerIndexMap(String[] players) {
-		jdbcTemplate.query(PLAYER_IDS_QUERY);
-	}
-
 	private Range<LocalDate> toDateRange(String timeSpan) {
 		switch (timeSpan) {
 			case CAREER: return Range.all();
 			default: return Range.atLeast(LocalDate.now().minusYears(Long.parseLong(timeSpan)));
 		}
-	}
-
-	private String playersCondition(String[] players) {
-		String condition = PLAYER_NAME + " IN (?";
-		for (int i = 2; i <= players.length; i++)
-			condition += ", ?";
-		return condition + ")";
-	}
-
-	private int bindPlayers(PreparedStatement ps, int index, String[] players) throws SQLException {
-		for (String player : players)
-			ps.setString(++index, player);
-		return index;
 	}
 
 	private String dateRangeCondition(Range<LocalDate> dateRange) {
@@ -109,7 +97,84 @@ public class PlayerRankingsController {
 		return index;
 	}
 
-	private static String formatDate(LocalDate date) {
-		return format("Date(%1$d, %2$d, %3$d)", date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+	private boolean shouldCompensateRankingPoints(Range<LocalDate> dateRange) {
+		return dateRange.contains(START_OF_NEW_RANKING_SYSTEM);
+	}
+
+	private int compensateRankingPoints(LocalDate date, int rank) {
+		return date.isBefore(START_OF_NEW_RANKING_SYSTEM) ? (int)(rank * RANKING_POINTS_COMPENSATION_FACTOR) : rank;
+	}
+
+	private class Players {
+
+		private final Map<Integer, Integer> playerIndexMap = new LinkedHashMap<>();
+		private final List<String> players = new ArrayList<>();
+
+		private Players(String[] players) {
+			for (int index = 0; index < players.length; index++) {
+				String player = players[index];
+				Integer playerId = findPlayerId(player);
+				if (playerId != null) {
+					this.players.add(player);
+					playerIndexMap.put(playerId, index);
+				}
+			}
+		}
+
+		private Collection<Integer> getPlayerIds() {
+			return playerIndexMap.keySet();
+		}
+
+		private List<String> getPlayers() {
+			return players;
+		}
+
+		private int getCount() {
+			return players.size();
+		}
+
+		private int getIndex(int playerId) {
+			return playerIndexMap.get(playerId);
+		}
+
+		private Integer findPlayerId(String player) {
+			List<Integer> playerIds = jdbcTemplate.queryForList(PLAYER_IDS_QUERY, Integer.class, player);
+			return playerIds.isEmpty() ? null : playerIds.get(0);
+		}
+	}
+
+	private static class RowCursor {
+
+		private final DataTable table;
+		private final Players players;
+		private LocalDate date;
+		private String[] ranks;
+
+		private RowCursor(DataTable table, Players players) {
+			this.table = table;
+			this.players = players;
+		}
+
+		private void next(LocalDate date, int playerId, int rank) {
+			if (!Objects.equals(date, this.date)) {
+				addRow();
+				this.date = date;
+				ranks = new String[players.getCount()];
+			}
+			ranks[players.getIndex(playerId)] = valueOf(rank);
+		}
+
+		private void addRow() {
+			if (date != null) {
+				TableRow row = table.addRow(formatDate(date));
+				for (String rank : ranks)
+					row.addCell(rank);
+				date = null;
+			}
+		}
+
+		private static String formatDate(LocalDate date) {
+			return format("Date(%1$d, %2$d, %3$d)", date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+		}
 	}
 }

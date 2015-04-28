@@ -23,7 +23,7 @@
 		/*<![CDATA[*/
 		google.load('visualization', '1.0', {packages:['corechart']});
 		function drawChart() {
-			var player = $("#players").val();
+			var players = $("#players").val();
 			var timeSpan = $("#timeSpan").val();
 			var points = $("#rankType").val() == 'points';
 			var jsonData = $.ajax({
@@ -33,8 +33,8 @@
 			}).responseText;
 			var data = new google.visualization.DataTable(jsonData);
 			var options = {
-				width: 800,
-				height: 400,
+				width: 1000,
+				height: 500,
 				chartArea: {left: 50, top: 20, height: "80%"},
 				vAxis: {direction: points ? 1 : -1, viewWindow: {min: points ? undefined : 1}, logScale: points ? false : useLogScale(jsonData)}
 			};
@@ -105,6 +105,7 @@
 		<input id="players" size="80"/>
 	</div>
 	<div class="ui-widget">
+		<label for="timeSpan">Time span: </label>
 		<select id="timeSpan">
 			<option value="C">Career</option>
 			<option value="1">Last 52 weeks</option>

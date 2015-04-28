@@ -1,20 +1,18 @@
 package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
-
-import static java.util.Arrays.*;
+import java.util.stream.*;
 
 public class TableRow {
 
-	private final List<TableCell> c;
+	private final List<TableCell> c = new ArrayList<>();
 
-	public TableRow(List<TableCell> cells) {
-		c = cells;
+	public TableRow(String value) {
+		c.add(new TableCell(value));
 	}
 
-	public TableRow(TableCell... cells) {
-		c = new ArrayList<>();
-		c.addAll(asList(cells));
+	public TableRow(String... values) {
+		Stream.of(values).forEach(value -> c.add(new TableCell(value)));
 	}
 
 	public List<TableCell> getC() {
