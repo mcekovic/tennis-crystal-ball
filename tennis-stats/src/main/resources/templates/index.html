@@ -8,28 +8,117 @@
 	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.3/jquery.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<style>
+		.ui-autocomplete {
+			max-height: 420px;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
 		.ui-autocomplete-loading {
-			background: white url("images/ui-anim_basic_16x16.gif") right center no-repeat;
+			background: white url("http://jquery-ui.googlecode.com/svn/tags/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif") right center no-repeat;
 		}
 	</style>
-	<script>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		google.load('visualization', '1.0', {packages:['corechart']});
+		function drawChart() {
+			var player = $("#players").val();
+			var timeSpan = $("#timeSpan").val();
+			var points = $("#rankType").val() == 'points';
+			var jsonData = $.ajax({
+				url: "playerRankings?players=" + players + "&timeSpan=" + timeSpan + "&points=" + points,
+				dataType: "json",
+				async: false
+			}).responseText;
+			var data = new google.visualization.DataTable(jsonData);
+			var options = {
+				width: 800,
+				height: 400,
+				chartArea: {left: 50, top: 20, height: "80%"},
+				vAxis: {direction: points ? 1 : -1, viewWindow: {min: points ? undefined : 1}, logScale: points ? false : useLogScale(jsonData)}
+			};
+			var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+			chart.draw(data, options);
+		}
+		function useLogScale(jsonData) {
+			var min = Number.MAX_VALUE;
+			var max = 0;
+			var json = $.parseJSON(jsonData);
+			for (var i = 0, ilen = json.rows.length; i < ilen; i++) {
+				var row = json.rows[i];
+				for (var j = 0, jlen = row.c.length; j < jlen; j++) {
+					if (j > 0) {
+						var value = row.c[j].v;
+						min = Math.min(min, value);
+						max = Math.max(max, value);
+					}
+				}
+			}
+			return max - min >= 100;
+		}
 		$(function() {
-			$("#player").autocomplete({
-				source: "autocompletePlayer",
-				minLength: 2
+			function split(val) {
+				return val.split(/,\s*/);
+			}
+			function extractLast(term) {
+				return split(term).pop();
+			}
+			$("#players").bind("keydown", function(event) {
+				if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function(request, response) {
+					$.getJSON("autocompletePlayer", {
+						term: extractLast(request.term)
+					}, response);
+				},
+				search: function() {
+					var term = extractLast(this.value);
+					if (term.length < 2) {
+						return false;
+					}
+				},
+				focus: function() {
+					return false;
+				},
+				select: function(event, ui) {
+					var terms = split(this.value);
+					terms.pop();
+					terms.push(ui.item.value);
+					terms.push("");
+					this.value = terms.join(", ");
+					return false;
+				}
 			});
 		});
+		/*]]>*/
 	</script>
 </head>
 <body>
 	<h1>Ultimate Tennis Statistics</h1>
 	<p>Welcome to Ultimate Tennis Statistics!</p>
-
 	<div class="ui-widget">
-		<label for="player">Player: </label>
-		<input id="player"/>
+		<label for="players">Players: </label>
+		<input id="players" size="80"/>
 	</div>
-
+	<div class="ui-widget">
+		<select id="timeSpan">
+			<option value="C">Career</option>
+			<option value="1">Last 52 weeks</option>
+			<option value="2">Last two years</option>
+			<option value="3">Last three years</option>
+			<option value="5">Last five years</option>
+			<option value="10">Last ten years</option>
+		</select>
+		<select id="rankType">
+			<option value="rank">Ordinal rank</option>
+			<option value="points">Ranking points</option>
+		</select>
+		<button onclick="drawChart()">Draw Chart</button>
+	</div>
+	<div id="chart_div"></div>
 </body>
 </html>
