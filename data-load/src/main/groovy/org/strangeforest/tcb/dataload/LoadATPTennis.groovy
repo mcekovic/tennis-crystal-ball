@@ -3,31 +3,49 @@ package org.strangeforest.tcb.dataload
 import groovy.sql.*
 
 def baseDir = getBaseDir('tcb.data.base-dir')
+def full = System.getProperty('tcb.data.full-load', 'true').toBoolean()
 
 def db = [url:'jdbc:postgresql://localhost:5432/postgres', user:'tcb', password:'tcb', driver:'org.postgresql.Driver']
 def sql = Sql.newInstance(db.url, db.user, db.password, db.driver)
 sql.connection.autoCommit = false
 
-println 'Loading ATP players'
-new ATPPlayersLoader(sql).mergeFile(baseDir + 'atp_players.csv')
+loadATPPlayers(baseDir, sql)
+loadATPRankings(baseDir, sql, full)
+loadATPMatches(baseDir, sql, full)
 
-println '\nLoading ATP rankings'
-load {
-	def loader = new ATPRankingsLoader(sql)
-	def rows = 0
-	for (decade in ['70s', '80s', '90s', '00s', '10s'])
-		rows += loader.mergeFile(baseDir + "atp_rankings_${decade}.csv")
-	rows += loader.mergeFile(baseDir + "atp_rankings_current.csv")
+def loadATPPlayers(baseDir, sql) {
+	println 'Loading ATP players'
+	new ATPPlayersLoader(sql).mergeFile(baseDir + 'atp_players.csv')
+	println()
 }
 
-println '\nLoading ATP matches'
-load {
-	def loader = new ATPMatchesLoader(sql)
-	def rows = 0
-	for (year in 1968..2014)
-		rows += loader.loadFile(baseDir + "atp_matches_${year}.csv")
-	def year = 2015
-	rows += loader.mergeFile(baseDir + "atp_matches_${year}.csv")
+def loadATPRankings(baseDir, sql, full) {
+	println 'Loading ATP rankings'
+	load {
+		def loader = new ATPRankingsLoader(sql)
+		def rows = 0
+		if (full) {
+			for (decade in ['70s', '80s', '90s', '00s', '10s'])
+				rows += loader.mergeFile(baseDir + "atp_rankings_${decade}.csv")
+		}
+		rows += loader.mergeFile(baseDir + "atp_rankings_current.csv")
+	}
+	println()
+}
+
+def loadATPMatches(baseDir, sql, full) {
+	println 'Loading ATP matches'
+	load {
+		def loader = new ATPMatchesLoader(sql)
+		def rows = 0
+		if (full) {
+			for (year in 1968..2014)
+				rows += loader.loadFile(baseDir + "atp_matches_${year}.csv")
+		}
+		def year = 2015
+		rows += loader.mergeFile(baseDir + "atp_matches_${year}.csv")
+	}
+	println()
 }
 
 def load(loader) {
