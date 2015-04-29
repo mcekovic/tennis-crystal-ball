@@ -11,23 +11,26 @@
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<style>
 		.ui-autocomplete {
-			max-height: 420px;
-			overflow-y: auto;
-			overflow-x: hidden;
+			max-height: 420px; overflow-y: auto; overflow-x: hidden;
 		}
 		.ui-autocomplete-loading {
-			background: white url("http://jquery-ui.googlecode.com/svn/tags/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif") right center no-repeat;
+			background: white url('http://jquery-ui.googlecode.com/svn/tags/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif') right center no-repeat;
 		}
 	</style>
 	<script type="text/javascript">
 		/*<![CDATA[*/
-		google.load('visualization', '1.0', {packages:['corechart']});
+		google.load("visualization", "1.0", {packages:["corechart"]});
 		function drawChart() {
 			var players = $("#players").val();
 			var timeSpan = $("#timeSpan").val();
-			var points = $("#rankType").val() == 'points';
+			var points = $("#rankType").val() == "points";
+			var dataUrl = "playerRankings?players=" + players + "&timeSpan=" + timeSpan + "&points=" + points;
+			if (timeSpan == "CS")
+				dataUrl += "&fromDate=" + $("#fromDate").val() + "&toDate=" + $("#toDate").val();
+			if (points)
+				dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
 			var jsonData = $.ajax({
-				url: "playerRankings?players=" + players + "&timeSpan=" + timeSpan + "&points=" + points,
+				url: dataUrl,
 				dataType: "json",
 				async: false
 			}).responseText;
@@ -38,7 +41,7 @@
 				chartArea: {left: 50, top: 20, height: "80%"},
 				vAxis: {direction: points ? 1 : -1, viewWindow: {min: points ? undefined : 1}, logScale: points ? false : useLogScale(jsonData)}
 			};
-			var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+			var chart = new google.visualization.LineChart(document.getElementById("chart_div"));
 			chart.draw(data, options);
 		}
 		function useLogScale(jsonData) {
@@ -55,7 +58,13 @@
 					}
 				}
 			}
-			return max - min >= 100;
+			return max - min >= 50;
+		}
+		function onTimeSpanChange() {
+			$("#dateRange").css("visibility", $("#timeSpan").val() == "CS" ? "visible" : "hidden");
+		}
+		function onRankTypeChange() {
+			$("#compensatePoints").prop("disabled", $("#rankType").val() == "rank");
 		}
 		$(function() {
 			function split(val) {
@@ -93,33 +102,69 @@
 					return false;
 				}
 			});
+			$("#fromDate").datepicker({
+				defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
+				onClose: function(selectedDate) {
+					$("#toDate").datepicker("option", "minDate", selectedDate);
+				}
+			});
+			$("#toDate").datepicker({
+				defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
+				onClose: function(selectedDate) {
+					$("#fromDate").datepicker("option", "maxDate", selectedDate);
+				}
+			});
+			onTimeSpanChange();
+			onRankTypeChange();
 		});
 		/*]]>*/
 	</script>
 </head>
 <body>
 	<h1>Ultimate Tennis Statistics</h1>
-	<p>Welcome to Ultimate Tennis Statistics!</p>
-	<div class="ui-widget">
-		<label for="players">Players: </label>
-		<input id="players" size="80"/>
-	</div>
-	<div class="ui-widget">
-		<label for="timeSpan">Time span: </label>
-		<select id="timeSpan">
-			<option value="C">Career</option>
-			<option value="1">Last 52 weeks</option>
-			<option value="2">Last two years</option>
-			<option value="3">Last three years</option>
-			<option value="5">Last five years</option>
-			<option value="10">Last ten years</option>
-		</select>
-		<select id="rankType">
-			<option value="rank">Ordinal rank</option>
-			<option value="points">Ranking points</option>
-		</select>
-		<button onclick="drawChart()">Draw Chart</button>
-	</div>
+	<h3>Rankings Chart</h3>
+	<table>
+		<tr>
+			<td colspan="2" class="ui-widget">
+				<label for="players">Players: </label>
+				<input id="players" size="80" width="100%"/>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="ui-widget">
+				<label for="timeSpan">Time span: </label>
+				<select id="timeSpan" onchange="onTimeSpanChange()">
+					<option value="CR">Career</option>
+					<option value="1">Last 52 weeks</option>
+					<option value="2">Last two years</option>
+					<option value="3">Last three years</option>
+					<option value="5">Last five years</option>
+					<option value="10">Last ten years</option>
+					<option value="CS">Custom</option>
+				</select>
+				<div id="dateRange" class="ui-widget" style="display: inline">
+					<label for="fromDate">From:</label>
+					<input type="text" id="fromDate" size="10"/>
+					<label for="toDate">To:</label>
+					<input type="text" id="toDate" size="10"/>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td class="ui-widget">
+				<label for="rankType">Rank type: </label>
+				<select id="rankType" onchange="onRankTypeChange()">
+					<option value="rank">Ordinal rank</option>
+					<option value="points">Ranking points</option>
+				</select>
+				<label for="compensatePoints" title="Compensate ranking points before 1.1.2009 to match new ATP ranking system">Compensate points: </label>
+				<input id="compensatePoints" type="checkbox"/>
+			</td>
+			<td class="ui-widget" align="right">
+				<button onclick="drawChart()">Draw Chart</button>
+			</td>
+		</tr>
+	</table>
 	<div id="chart_div"></div>
 </body>
 </html>

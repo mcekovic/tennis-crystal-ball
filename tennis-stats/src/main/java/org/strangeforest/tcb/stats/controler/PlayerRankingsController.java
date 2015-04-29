@@ -6,6 +6,7 @@ import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.format.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -19,7 +20,8 @@ public class PlayerRankingsController {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
-	private static final String CAREER = "C";
+	private static final String CAREER = "CR";
+	private static final String CUSTOM = "CS";
 	private static final LocalDate START_OF_NEW_RANKING_SYSTEM = LocalDate.of(2009, 1, 1);
 	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 2.0;
 
@@ -27,7 +29,7 @@ public class PlayerRankingsController {
 		"SELECT player_id FROM atp_players " +
 		"WHERE first_name || ' ' || last_name = ?";
 
-	private static final String PLAYER_RANKINGS_QUERY =
+	private static final String PLAYER_RANKINGS_QUERY = //language=SQL
 		"SELECT rank_date, player_id, %1$s FROM atp_rankings " +
 		"LEFT JOIN atp_players USING (player_id) " +
 		"WHERE player_id = ANY(?)%2$s " +
@@ -37,14 +39,16 @@ public class PlayerRankingsController {
 	public DataTable playerRankings(
 		@RequestParam(value="players") String playersCSV,
 		@RequestParam(value="timeSpan", defaultValue = CAREER) String timeSpan,
-		@RequestParam(value="points", defaultValue = "false") boolean points
+		@RequestParam(value="fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
+		@RequestParam(value="toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
+		@RequestParam(value="points", defaultValue = "false") boolean points,
+		@RequestParam(value="compensatePoints", defaultValue = "false") boolean compensatePoints
 	) {
 		Players players = new Players(playersCSV.split(", "));
-		Range<LocalDate> dateRange = toDateRange(timeSpan);
+		Range<LocalDate> dateRange = toDateRange(timeSpan, fromDate, toDate);
 		String rankColumn = points ? "rank_points" : "rank";
 		DataTable table = new DataTable();
 		RowCursor rowCursor = new RowCursor(table, players);
-		boolean compensateRankingPoints = points && shouldCompensateRankingPoints(dateRange);
 		jdbcTemplate.query(format(PLAYER_RANKINGS_QUERY, rankColumn, dateRangeCondition(dateRange)),
 			ps -> {
 				int index = 0;
@@ -55,7 +59,7 @@ public class PlayerRankingsController {
 				LocalDate date = rs.getDate("rank_date").toLocalDate();
 				int playerId = rs.getInt("player_id");
 				int rank = rs.getInt(rankColumn);
-				if (compensateRankingPoints)
+				if (compensatePoints)
 					rank = compensateRankingPoints(date, rank);
 				rowCursor.next(date, playerId, rank);
 			}
@@ -73,9 +77,10 @@ public class PlayerRankingsController {
 		return table;
 	}
 
-	private Range<LocalDate> toDateRange(String timeSpan) {
+	private Range<LocalDate> toDateRange(String timeSpan, LocalDate fromDate, LocalDate toDate) {
 		switch (timeSpan) {
 			case CAREER: return Range.all();
+			case CUSTOM: return Range.closed(fromDate, toDate);
 			default: return Range.atLeast(LocalDate.now().minusYears(Long.parseLong(timeSpan)));
 		}
 	}
@@ -95,10 +100,6 @@ public class PlayerRankingsController {
 		if (dateRange.hasUpperBound())
 			ps.setDate(++index, Date.valueOf(dateRange.upperEndpoint()));
 		return index;
-	}
-
-	private boolean shouldCompensateRankingPoints(Range<LocalDate> dateRange) {
-		return dateRange.contains(START_OF_NEW_RANKING_SYSTEM);
 	}
 
 	private int compensateRankingPoints(LocalDate date, int rank) {
@@ -174,7 +175,7 @@ public class PlayerRankingsController {
 		}
 
 		private static String formatDate(LocalDate date) {
-			return format("Date(%1$d, %2$d, %3$d)", date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+			return format("Date(%1$d, %2$d, %3$d)", date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
 		}
 	}
 }
