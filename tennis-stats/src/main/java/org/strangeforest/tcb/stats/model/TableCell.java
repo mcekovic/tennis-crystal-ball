@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 public class TableCell {
 
-	private final String v;
+	private String v;
 
 	public TableCell(String value) {
 		v = value;
@@ -10,5 +10,9 @@ public class TableCell {
 
 	public String getV() {
 		return v;
+	}
+
+	public void setV(String v) {
+		this.v = v;
 	}
 }

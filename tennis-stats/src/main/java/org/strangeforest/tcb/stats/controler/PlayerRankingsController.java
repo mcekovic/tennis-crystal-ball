@@ -65,6 +65,7 @@ public class PlayerRankingsController {
 			}
 		);
 		rowCursor.addRow();
+		addMissingRankings(table, players);
 		if (!table.getRows().isEmpty()) {
 			table.addColumn("date", "Date");
 			for (String player : players.getPlayers())
@@ -104,6 +105,26 @@ public class PlayerRankingsController {
 
 	private int compensateRankingPoints(LocalDate date, int rank) {
 		return date.isBefore(START_OF_NEW_RANKING_SYSTEM) ? (int)(rank * RANKING_POINTS_COMPENSATION_FACTOR) : rank;
+	}
+
+	private void addMissingRankings(DataTable table, Players players) {
+		for (int player = 1; player <= players.getCount(); player++) {
+			List<TableRow> rows = table.getRows();
+			String prevRank = null;
+			int prevRankIndex = -1;
+			for (int i = 0, count = rows.size(); i < count; i++) {
+				TableRow row = rows.get(i);
+				String rank = row.getC().get(player).getV();
+				if (rank != null) {
+					if (prevRank != null) {
+						for (int j = prevRankIndex + 1; j < i; j++)
+							rows.get(j).getC().get(player).setV(prevRank);
+					}
+					prevRank = rank;
+					prevRankIndex = i;
+				}
+			}
+		}
 	}
 
 	private class Players {
