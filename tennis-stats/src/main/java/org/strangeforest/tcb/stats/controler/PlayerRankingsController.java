@@ -26,12 +26,11 @@ public class PlayerRankingsController {
 	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 2.0;
 
 	private static final String PLAYER_IDS_QUERY =
-		"SELECT player_id FROM atp_players " +
+		"SELECT player_id FROM player " +
 		"WHERE first_name || ' ' || last_name = ?";
 
 	private static final String PLAYER_RANKINGS_QUERY = //language=SQL
-		"SELECT rank_date, player_id, %1$s FROM atp_rankings " +
-		"LEFT JOIN atp_players USING (player_id) " +
+		"SELECT rank_date, player_id, %1$s FROM player_ranking " +
 		"WHERE player_id = ANY(?)%2$s " +
 		"ORDER BY rank_date, player_id";
 

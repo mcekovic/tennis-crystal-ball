@@ -5,7 +5,7 @@ CREATE TABLE tournament (
 	name TEXT NOT NULL,
 	country_id TEXT,
 	city TEXT,
-	level CHAR(1) NOT NULL CHECK (surface IN ('G', 'F', 'M', 'A', 'D', 'O', 'C', 'T')),
+	level CHAR(1) NOT NULL CHECK (level IN ('G', 'F', 'M', 'A', 'D', 'O', 'C', 'T')),
 	surface CHAR(1) CHECK (surface IN ('H', 'C', 'G', 'P')),
 	indoor BOOLEAN NOT NULL,
 	draw_size SMALLINT,
@@ -16,7 +16,7 @@ CREATE TABLE tournament (
 -- tournament_mapping
 
 CREATE TABLE tournament_mapping (
-	ext_tournament_id INTEGER PRIMARY KEY,
+	ext_tournament_id TEXT PRIMARY KEY,
 	tournament_id INTEGER NOT NULL REFERENCES tournament (tournament_id) ON DELETE CASCADE
 );
 
@@ -32,7 +32,7 @@ CREATE TABLE tournament_event (
 	date DATE NOT NULL,
 	name TEXT NOT NULL,
 	city TEXT,
-	level CHAR(1) NOT NULL CHECK (surface IN ('G', 'F', 'M', 'A', 'D', 'O', 'C', 'T')),
+	level CHAR(1) NOT NULL CHECK (level IN ('G', 'F', 'M', 'A', 'D', 'O', 'C', 'T')),
 	surface CHAR(1) CHECK (surface IN ('H', 'C', 'G', 'P')),
 	indoor BOOLEAN NOT NULL,
 	draw_size SMALLINT,
@@ -104,13 +104,17 @@ CREATE TABLE player_ranking (
 
 CREATE INDEX ON player (player_id);
 
+CREATE MATERIALIZED VIEW player_best_ranking AS
+SELECT player_id, min(rank) AS best_rank, max(rank_points) AS best_rank_points FROM player_ranking
+GROUP BY player_id;
+
 
 -- tournament_event_player
 
 CREATE TABLE tournament_event_player (
 	tournament_event_id INTEGER NOT NULL REFERENCES tournament_event (tournament_event_id) ON DELETE CASCADE,
 	player_id INTEGER NOT NULL REFERENCES player (player_id) ON DELETE CASCADE,
-	result TEXT NOT NULL CHECK (result IN ('W', 'F', 'SF', 'Q', 'R16', 'R32', 'R64', 'R128', 'RR', 'BR')),
+	result TEXT NOT NULL CHECK (result IN ('W', 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'RR', 'BR')),
 	PRIMARY KEY (tournament_event_id, player_id)
 );
 
@@ -123,7 +127,7 @@ CREATE TABLE match (
 	match_id BIGSERIAL PRIMARY KEY,
 	tournament_event_id INTEGER NOT NULL REFERENCES tournament_event (tournament_event_id) ON DELETE CASCADE,
 	match_num SMALLINT,
-	round TEXT NOT NULL CHECK (round IN ('F', 'SF', 'Q', 'R16', 'R32', 'R64', 'R128', 'RR', 'BR', 'DC')),
+	round TEXT NOT NULL CHECK (round IN ('F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'RR', 'BR', 'DC')),
 	best_of SMALLINT NOT NULL,
 	winner_id INTEGER NOT NULL REFERENCES player (player_id),
 	winner_country_id TEXT NOT NULL,

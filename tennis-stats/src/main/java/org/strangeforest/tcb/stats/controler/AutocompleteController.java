@@ -13,10 +13,9 @@ public class AutocompleteController {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
-		"SELECT player_id, first_name, last_name FROM atp_players " +
-		"LEFT JOIN atp_best_rankings USING (player_id) " +
+		"SELECT player_id, first_name, last_name FROM player " +
 		"WHERE lower(first_name) || ' ' || lower(last_name) LIKE ? " +
-		"ORDER BY best_rank, highest_points DESC";
+		"ORDER BY best_rank, best_rank_points DESC";
 
 	@RequestMapping("/autocompletePlayer")
 	public List<AutocompleteOption> autocompletePlayer(@RequestParam(value="term") String term) {

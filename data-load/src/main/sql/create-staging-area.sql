@@ -64,9 +64,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE MATERIALIZED VIEW atp_best_rankings AS
-SELECT player_id, min(rank) AS best_rank, max(rank_points) AS highest_points FROM atp_rankings
-GROUP BY player_id;
 
 -- atp_matches
 

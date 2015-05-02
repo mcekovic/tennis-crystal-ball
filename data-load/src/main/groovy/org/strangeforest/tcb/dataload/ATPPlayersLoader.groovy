@@ -13,7 +13,7 @@ class ATPPlayersLoader extends BaseCSVLoader {
 	}
 
 	String loadSql() {
-		'{call load_ext_player(:ext_player_id, :first_name, :last_name, :dob, :country_id, :hand)}'
+		'{call load_atp_player(:ext_player_id, :first_name, :last_name, :dob, :country_id, :hand)}'
 	}
 
 	int batch() { 500 }

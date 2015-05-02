@@ -7,6 +7,6 @@ def sql = Sql.newInstance(db.url, db.user, db.password, db.driver)
 sql.connection.autoCommit = false
 
 def loader = new ATPTennisLoader()
-//loader.loadATPPlayers(new ATPPlayersLoader(sql))
+loader.loadATPPlayers(new ATPPlayersLoader(sql))
 loader.loadATPRankings(new ATPRankingsLoader(sql))
-//loader.loadATPMatches(new MatchesLoader(sql))
+loader.loadATPMatches(new ATPMatchesLoader(sql))

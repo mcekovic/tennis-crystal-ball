@@ -48,19 +48,27 @@ abstract class BaseCSVLoader {
 
 	// Data conversion
 
-	static def string(s, d = null) {
+	static String string(s, d = null) {
 		s ? s : d
 	}
 
-	static def integer(i) {
+	static Integer integer(i) {
 		i ? i.toInteger() : null
 	}
 
-	static def decimal(d) {
+	static Short smallint(i) {
+		i ? i.toShort() : null
+	}
+
+	static BigDecimal decimal(d) {
 		d ? d.toBigDecimal() : null
 	}
 
-	static def date(d) {
+	static Float real(f) {
+		f ? f.toFloat() : null
+	}
+
+	static java.sql.Date date(d) {
 		if (d) {
 			switch (d.length()) {
 				case 4: d += '0701'; break
@@ -73,7 +81,7 @@ abstract class BaseCSVLoader {
 	}
 
 	private static countryOverrides = [CHI: 'CHL', DEN: 'DNK', RSA: 'ZAF']
-	static def country(c) {
+	static String country(c) {
 		if (c) {
 			def co = countryOverrides[c]
 			def code = CountryCode.getByCode(co ?: c)
@@ -86,7 +94,7 @@ abstract class BaseCSVLoader {
 			null
 	}
 
-	static def hand(c) {
+	static String hand(c) {
 		switch (c) {
 			case 'R': return 'R'
 			case 'L': return 'L'
