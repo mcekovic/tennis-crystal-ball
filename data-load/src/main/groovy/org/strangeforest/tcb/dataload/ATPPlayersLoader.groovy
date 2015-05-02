@@ -2,9 +2,9 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
-class PlayersLoader extends BaseCsvLoader {
+class ATPPlayersLoader extends BaseCSVLoader {
 
-	PlayersLoader(Sql sql) {
+	ATPPlayersLoader(Sql sql) {
 		super(sql)
 	}
 

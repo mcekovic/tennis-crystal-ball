@@ -61,21 +61,24 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION load_ext_ranking(
 	p_rank_date DATE,
-	p_rank INTEGER,
 	p_ext_player_id INTEGER,
+	p_rank INTEGER,
 	p_rank_points INTEGER
 ) RETURNS VOID AS $$
 DECLARE
 	l_player_id INTEGER;
 BEGIN
 	l_player_id = map_ext_player(p_ext_player_id);
+	IF l_player_id IS NULL THEN
+		RAISE EXCEPTION 'Player % not found', p_ext_player_id;
+	END IF;
 	BEGIN
-		INSERT INTO atp_rankings
-		(rank_date, rank, player_id, rank_points)
+		INSERT INTO player_ranking
+		(rank_date, player_id, rank, rank_points)
 		VALUES
-		(p_rank_date, p_rank, l_player_id, p_rank_points);
+		(p_rank_date, l_player_id, p_rank, p_rank_points);
    EXCEPTION WHEN unique_violation THEN
-		UPDATE atp_rankings
+		UPDATE player_ranking
 		SET rank = p_rank, rank_points = p_rank_points
 		WHERE rank_date = p_rank_date AND player_id = l_player_id;
    END;

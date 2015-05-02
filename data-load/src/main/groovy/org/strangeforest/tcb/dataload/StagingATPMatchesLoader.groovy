@@ -2,7 +2,7 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
-class StagingATPMatchesLoader extends BaseCsvLoader {
+class StagingATPMatchesLoader extends BaseCSVLoader {
 
 	StagingATPMatchesLoader(Sql sql) {
 		super(sql)

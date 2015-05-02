@@ -21,7 +21,7 @@ class ATPTennisLoader {
 		load {
 			def rows = 0
 			if (full) {
-				for (decade in ['70s', '80s', '90s', '00s', '10s'])
+				for (decade in ['70s', '80s', '90s', '00s-mc', '10s'])
 					rows += loader.loadFile(baseDir + "atp_rankings_${decade}.csv")
 			}
 			rows += loader.loadFile(baseDir + "atp_rankings_current.csv")
