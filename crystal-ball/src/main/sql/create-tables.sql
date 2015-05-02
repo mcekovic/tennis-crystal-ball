@@ -20,6 +20,8 @@ CREATE TABLE tournament_mapping (
 	tournament_id INTEGER NOT NULL REFERENCES tournament (tournament_id) ON DELETE CASCADE
 );
 
+CREATE INDEX ON tournament_mapping (tournament_id);
+
 
 -- tournament_event
 
@@ -48,8 +50,8 @@ CREATE INDEX ON tournament_event (surface);
 
 CREATE TABLE player (
 	player_id SERIAL PRIMARY KEY,
-	first_name TEXT NOT NULL,
-	last_name TEXT NOT NULL,
+	first_name TEXT,
+	last_name TEXT,
 	dob DATE,
 	country_id TEXT NOT NULL,
 	birthplace TEXT,
@@ -77,6 +79,8 @@ CREATE INDEX ON player (country_id);
 
 ALTER TABLE tournament_event ADD COLUMN winner_id INTEGER REFERENCES player (player_id) ON DELETE SET NULL;
 
+CREATE INDEX ON tournament_event (winner_id);
+
 
 -- player_mapping
 
@@ -84,6 +88,8 @@ CREATE TABLE player_mapping (
 	ext_player_id INTEGER PRIMARY KEY,
 	player_id INTEGER NOT NULL REFERENCES player (player_id) ON DELETE CASCADE
 );
+
+CREATE INDEX ON player_mapping (player_id);
 
 
 -- player_ranking
@@ -107,6 +113,8 @@ CREATE TABLE tournament_event_player (
 	result TEXT NOT NULL CHECK (result IN ('W', 'F', 'SF', 'Q', 'R16', 'R32', 'R64', 'R128', 'RR', 'BR')),
 	PRIMARY KEY (tournament_event_id, player_id)
 );
+
+CREATE INDEX ON tournament_event_player (player_id);
 
 
 -- match
@@ -145,6 +153,8 @@ CREATE INDEX ON match (winner_id);
 CREATE INDEX ON match (loser_id);
 
 ALTER TABLE tournament_event ADD COLUMN final_id BIGINT REFERENCES match (match_id) ON DELETE SET NULL;
+
+CREATE INDEX ON tournament_event (final_id);
 
 
 -- set_score

@@ -2,11 +2,9 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
-class ATPRankingsLoader extends BaseLoader {
+class StagingATPRankingsLoader extends BaseCsvLoader {
 
-	def PARAMS = '(:rank_date, :rank, :player_id, :rank_points)'
-
-	ATPRankingsLoader(Sql sql) {
+	StagingATPRankingsLoader(Sql sql) {
 		super(sql)
 	}
 
@@ -14,17 +12,13 @@ class ATPRankingsLoader extends BaseLoader {
 		['rank_date', 'rank', 'player_id', 'rank_points']
 	}
 
-	def insertSql() {
-		'INSERT INTO atp_rankings (rank_date, rank, player_id, rank_points) VALUES ' + PARAMS
+	String loadSql() {
+		'{call stage_atp_ranking(:rank_date, :rank, :player_id, :rank_points)}'
 	}
 
-	def mergeSql() {
-		"{call merge_atp_ranking$PARAMS}"
-	}
+	int batch() { 500 }
 
-	def batch() { 500 }
-
-	def params(def line) {
+	Map params(def line) {
 		def params = [:]
 		params.rank_date = date line.rank_date
 		params.rank = integer line.rank

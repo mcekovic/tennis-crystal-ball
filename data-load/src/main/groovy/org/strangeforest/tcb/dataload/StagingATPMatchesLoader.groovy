@@ -2,37 +2,26 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
-class ATPMatchesLoader extends BaseLoader {
+class StagingATPMatchesLoader extends BaseCsvLoader {
 
-	def PARAMS = '(:tourney_id, :tourney_name, :surface, :draw_size, :tourney_level, :tourney_date, :match_num,' +
-	' :winner_id, :winner_seed, :winner_entry, :winner_name, :winner_hand, :winner_ht, :winner_ioc, :winner_age, :winner_rank, :winner_rank_points,' +
-	' :loser_id, :loser_seed, :loser_entry, :loser_name, :loser_hand, :loser_ht, :loser_ioc, :loser_age, :loser_rank, :loser_rank_points,' +
-	' :score, :best_of, :round, :minutes,' +
-	' :w_ace, :w_df, :w_svpt, :w_1stIn, :w_1stWon, :w_2ndWon, :w_SvGms, :w_bpSaved, :w_bpFaced,' +
-	' :l_ace, :l_df, :l_svpt, :l_1stIn, :l_1stWon, :l_2ndWon, :l_SvGms, :l_bpSaved, :l_bpFaced)'
-
-	ATPMatchesLoader(Sql sql) {
+	StagingATPMatchesLoader(Sql sql) {
 		super(sql)
 	}
 
-	def insertSql() {
-		'INSERT INTO atp_matches ' +
-		'(tourney_id, tourney_name, surface, draw_size, tourney_level, tourney_date, match_num,' +
-		' winner_id, winner_seed, winner_entry, winner_name, winner_hand, winner_ht, winner_ioc, winner_age, winner_rank, winner_rank_points,' +
-		' loser_id, loser_seed, loser_entry, loser_name, loser_hand, loser_ht, loser_ioc, loser_age, loser_rank, loser_rank_points,' +
-		' score, best_of, round, minutes,' +
-		' w_ace, w_df, w_svpt, w_1stIn, w_1stWon, w_2ndWon, w_SvGms, w_bpSaved, w_bpFaced,' +
-		' l_ace, l_df, l_svpt, l_1stIn, l_1stWon, l_2ndWon, l_SvGms, l_bpSaved, l_bpFaced) ' +
-		'VALUES ' + PARAMS
+	String loadSql() {
+		'{call stage_atp_match(' +
+			':tourney_id, :tourney_name, :surface, :draw_size, :tourney_level, :tourney_date, :match_num, ' +
+			':winner_id, :winner_seed, :winner_entry, :winner_name, :winner_hand, :winner_ht, :winner_ioc, :winner_age, :winner_rank, :winner_rank_points, ' +
+			':loser_id, :loser_seed, :loser_entry, :loser_name, :loser_hand, :loser_ht, :loser_ioc, :loser_age, :loser_rank, :loser_rank_points, ' +
+			':score, :best_of, :round, :minutes, ' +
+			':w_ace, :w_df, :w_svpt, :w_1stIn, :w_1stWon, :w_2ndWon, :w_SvGms, :w_bpSaved, :w_bpFaced, ' +
+			':l_ace, :l_df, :l_svpt, :l_1stIn, :l_1stWon, :l_2ndWon, :l_SvGms, :l_bpSaved, :l_bpFaced' +
+		')}'
 	}
 
-	def mergeSql() {
-		"{call merge_atp_match$PARAMS}"
-	}
+	int batch() { 100 }
 
-	def batch() { 100 }
-
-	def params(def line) {
+	Map params(def line) {
 		def params = [:]
 		params.tourney_id = line.tourney_id
 		params.tourney_name = line.tourney_name

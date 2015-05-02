@@ -9,7 +9,7 @@ CREATE TABLE atp_players (
 	country TEXT
 );
 
-CREATE OR REPLACE FUNCTION merge_atp_player(
+CREATE OR REPLACE FUNCTION stage_atp_player(
 	p_player_id INTEGER,
 	p_first_name TEXT,
 	p_last_name TEXT,
@@ -44,7 +44,7 @@ CREATE TABLE atp_rankings (
 
 CREATE INDEX ON atp_rankings (player_id);
 
-CREATE OR REPLACE FUNCTION merge_atp_ranking(
+CREATE OR REPLACE FUNCTION stage_atp_ranking(
 	p_rank_date DATE,
 	p_rank INTEGER,
 	p_player_id INTEGER,
@@ -124,7 +124,7 @@ CREATE TABLE atp_matches (
 );
 
 
-CREATE OR REPLACE FUNCTION merge_atp_match(
+CREATE OR REPLACE FUNCTION stage_atp_match(
 	p_tourney_id TEXT,
 	p_tourney_name TEXT,
 	p_surface TEXT,

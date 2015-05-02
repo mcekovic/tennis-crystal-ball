@@ -9,5 +9,6 @@ repositories {
 dependencies {
 	compile 'org.codehaus.groovy:groovy-all:2.4.3'
 	compile 'com.xlson.groovycsv:groovycsv:1.0'
-	compile 'org.postgresql:postgresql:9.4-1201-jdbc41'
+	compile 'com.neovisionaries:nv-i18n:1.15'
+	runtime 'org.postgresql:postgresql:9.4-1201-jdbc41'
 }
