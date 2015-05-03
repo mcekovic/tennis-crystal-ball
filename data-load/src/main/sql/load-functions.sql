@@ -13,9 +13,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- load_ext_player
+-- load_player
 
-CREATE OR REPLACE FUNCTION load_atp_player(
+CREATE OR REPLACE FUNCTION load_player(
 	p_ext_player_id INTEGER,
 	p_first_name TEXT,
 	p_last_name TEXT,
@@ -57,9 +57,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- load_ext_ranking
+-- load_ranking
 
-CREATE OR REPLACE FUNCTION load_atp_ranking(
+CREATE OR REPLACE FUNCTION load_ranking(
 	p_rank_date DATE,
 	p_ext_player_id INTEGER,
 	p_rank INTEGER,
@@ -101,9 +101,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- merge_ext_tournament
+-- merge_tournament
 
-CREATE OR REPLACE FUNCTION merge_atp_tournament(
+CREATE OR REPLACE FUNCTION merge_tournament(
 	p_ext_tournament_id TEXT,
 	p_name TEXT,
 	p_level CHAR(1),
@@ -136,9 +136,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- merge_ext_tournament_event
+-- merge_tournament_event
 
-CREATE OR REPLACE FUNCTION merge_atp_tournament_event(
+CREATE OR REPLACE FUNCTION merge_tournament_event(
 	p_ext_tournament_id TEXT,
 	p_season SMALLINT,
 	p_date DATE,
@@ -153,7 +153,7 @@ DECLARE
 	l_tournament_id INTEGER;
 	l_tournament_event_id INTEGER;
 BEGIN
-	l_tournament_id = merge_atp_tournament(p_ext_tournament_id, p_name, p_level, p_surface, p_indoor, p_draw_size, p_rank_points);
+	l_tournament_id = merge_tournament(p_ext_tournament_id, p_name, p_level, p_surface, p_indoor, p_draw_size, p_rank_points);
 	BEGIN
 		INSERT INTO tournament_event
 		(tournament_id, season, date, name, level, surface, indoor, draw_size)
@@ -203,7 +203,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION load_atp_match(
+CREATE OR REPLACE FUNCTION load_match(
 	p_ext_tournament_id TEXT,
 	p_season SMALLINT,
 	p_tournament_date DATE,
@@ -263,7 +263,7 @@ DECLARE
 	l_loser_id INTEGER;
 	l_match_id BIGINT;
 BEGIN
-	l_tournament_event_id = merge_atp_tournament_event(
+	l_tournament_event_id = merge_tournament_event(
 		p_ext_tournament_id, p_season, p_tournament_date, p_tournament_name, p_tournament_level, p_surface, p_indoor, p_draw_size, p_rank_points
 	);
 	l_winner_id = map_ext_player(p_ext_winner_id);

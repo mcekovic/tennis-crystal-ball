@@ -2,14 +2,14 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
-class ATPMatchesLoader extends BaseCSVLoader {
+class MatchLoader extends BaseCSVLoader {
 
-	ATPMatchesLoader(Sql sql) {
+	MatchLoader(Sql sql) {
 		super(sql)
 	}
 
 	String loadSql() {
-		'{call load_atp_match(' +
+		'{call load_match(' +
 			':ext_tournament_id, :season, :tournament_date, :tournament_name, :tournament_level, :surface, :indoor, :draw_size, :rank_points, ' +
 			':match_num, :round, :best_of, ' +
 			':ext_winner_id, :winner_seed, :winner_entry, :winner_rank, :winner_rank_points, :winner_age, :winner_country_id, :winner_name, :winner_height, :winner_hand, ' +

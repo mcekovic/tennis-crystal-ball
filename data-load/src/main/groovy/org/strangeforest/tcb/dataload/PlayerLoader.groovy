@@ -2,9 +2,9 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
-class ATPPlayersLoader extends BaseCSVLoader {
+class PlayerLoader extends BaseCSVLoader {
 
-	ATPPlayersLoader(Sql sql) {
+	PlayerLoader(Sql sql) {
 		super(sql)
 	}
 
@@ -13,7 +13,7 @@ class ATPPlayersLoader extends BaseCSVLoader {
 	}
 
 	String loadSql() {
-		'{call load_atp_player(:ext_player_id, :first_name, :last_name, :dob, :country_id, :hand)}'
+		'{call load_player(:ext_player_id, :first_name, :last_name, :dob, :country_id, :hand)}'
 	}
 
 	int batch() { 500 }

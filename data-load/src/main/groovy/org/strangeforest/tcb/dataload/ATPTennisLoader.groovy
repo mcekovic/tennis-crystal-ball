@@ -10,13 +10,13 @@ class ATPTennisLoader {
 		full = System.getProperty('tcb.data.full-load', 'true').toBoolean()
 	}
 
-	def loadATPPlayers(loader) {
+	def loadPlayers(loader) {
 		println 'Loading ATP players'
 		loader.loadFile(baseDir + 'atp_players.csv')
 		println()
 	}
 
-	def loadATPRankings(loader) {
+	def loadRankings(loader) {
 		println 'Loading ATP rankings'
 		load {
 			def rows = 0
@@ -29,7 +29,7 @@ class ATPTennisLoader {
 		println()
 	}
 
-	def loadATPMatches(loader) {
+	def loadMatches(loader) {
 		println 'Loading ATP matches'
 		load {
 			def rows = 0

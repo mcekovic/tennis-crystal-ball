@@ -2,9 +2,9 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
-class ATPRankingsLoader extends BaseCSVLoader {
+class RankingLoader extends BaseCSVLoader {
 
-	ATPRankingsLoader(Sql sql) {
+	RankingLoader(Sql sql) {
 		super(sql)
 	}
 
@@ -13,7 +13,7 @@ class ATPRankingsLoader extends BaseCSVLoader {
 	}
 
 	String loadSql() {
-		'{call load_atp_ranking(:rank_date, :ext_player_id, :rank, :rank_points)}'
+		'{call load_ranking(:rank_date, :ext_player_id, :rank, :rank_points)}'
 	}
 
 	int batch() { 500 }
