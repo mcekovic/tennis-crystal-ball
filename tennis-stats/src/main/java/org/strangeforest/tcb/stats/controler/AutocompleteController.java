@@ -13,7 +13,7 @@ public class AutocompleteController {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
-		"SELECT player_id, first_name, last_name FROM player " +
+		"SELECT player_id, first_name, last_name FROM player_v " +
 		"WHERE lower(first_name) || ' ' || lower(last_name) LIKE ? " +
 		"ORDER BY best_rank, best_rank_points DESC";
 

@@ -62,12 +62,6 @@ CREATE TABLE player (
 	backhand CHAR(1) CHECK (backhand IN ('S', 'D')),
 	turned_pro SMALLINT,
 	coach TEXT,
-	age REAL,
-	current_rank INTEGER,
-	current_rank_points INTEGER,
-	best_rank INTEGER,
-	best_rank_points INTEGER,
-	best_rank_date DATE,
 	web_site TEXT,
 	twitter TEXT,
 	facebook TEXT,
@@ -104,9 +98,28 @@ CREATE TABLE player_ranking (
 
 CREATE INDEX ON player (player_id);
 
-CREATE MATERIALIZED VIEW player_best_ranking AS
-SELECT player_id, min(rank) AS best_rank, max(rank_points) AS best_rank_points FROM player_ranking
-GROUP BY player_id;
+CREATE MATERIALIZED VIEW player_current_rank AS
+WITH current_rank_date AS (SELECT max(rank_date) AS rank_date FROM player_ranking)
+SELECT player_id, rank AS current_rank, rank_points AS current_rank_points
+FROM player_ranking
+WHERE rank_date = (SELECT rank_date FROM current_rank_date);
+
+CREATE MATERIALIZED VIEW player_best_rank AS
+SELECT DISTINCT player_id,	first_value(rank) OVER w AS best_rank, first_value(rank_date) OVER w AS best_rank_date
+FROM player_ranking
+WINDOW w AS (PARTITION BY player_id ORDER BY rank, rank_date);
+
+CREATE MATERIALIZED VIEW player_best_rank_points AS
+SELECT DISTINCT player_id,	first_value(rank_points) OVER w AS best_rank_points, first_value(rank_date) OVER w AS best_rank_points_date
+FROM player_ranking
+WINDOW w AS (PARTITION BY player_id ORDER BY rank_points DESC, rank_date);
+
+CREATE OR REPLACE VIEW player_v AS
+SELECT p.*, age(dob) AS age, current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date
+FROM player p
+LEFT JOIN player_current_rank USING (player_id)
+LEFT JOIN player_best_rank USING (player_id)
+LEFT JOIN player_best_rank_points USING (player_id);
 
 
 -- tournament_event_player
