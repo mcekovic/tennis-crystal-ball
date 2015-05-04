@@ -21,23 +21,25 @@
 		/*<![CDATA[*/
 		google.load("visualization", "1.0", {packages:["corechart"]});
 		var chartData;
-		var jsonData;
+		var points;
+		var logScale;
 		function drawChart(fetchData) {
 			var players = $("#players").val();
 			var timeSpan = $("#timeSpan").val();
-			var points = $("#rankType").val() == "points";
+			points = $("#rankType").val() == "points";
 			if (fetchData) {
 				var dataUrl = "playerRankings?players=" + players + "&timeSpan=" + timeSpan + "&points=" + points;
 				if (timeSpan == "CS")
 					dataUrl += "&fromDate=" + $("#fromDate").val() + "&toDate=" + $("#toDate").val();
 				if (points)
 					dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
-				jsonData = $.ajax({
+				var jsonData = $.ajax({
 					url: dataUrl,
 					dataType: "json",
 					async: false
 				}).responseText;
 				chartData = new google.visualization.DataTable(jsonData);
+				logScale = useLogScale(jsonData);
 			}
 			if (chartData != undefined) {
 				var width = $("#rankChartSize").slider("value");
@@ -45,7 +47,7 @@
 					width: width,
 					height: width / 2,
 					chartArea: {left: 50, top: 20, height: "80%"},
-					vAxis: {direction: points ? 1 : -1, viewWindow: {min: points ? undefined : 1}, logScale: points ? false : useLogScale(jsonData)}
+					vAxis: {direction: points ? 1 : -1, viewWindow: {min: points ? undefined : 1}, logScale: points ? false : logScale}
 				};
 				var chart = new google.visualization.LineChart(document.getElementById("rankChart"));
 				chart.draw(chartData, options);
