@@ -20,29 +20,36 @@
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		google.load("visualization", "1.0", {packages:["corechart"]});
-		function drawChart() {
+		var chartData;
+		var jsonData;
+		function drawChart(fetchData) {
 			var players = $("#players").val();
 			var timeSpan = $("#timeSpan").val();
 			var points = $("#rankType").val() == "points";
-			var dataUrl = "playerRankings?players=" + players + "&timeSpan=" + timeSpan + "&points=" + points;
-			if (timeSpan == "CS")
-				dataUrl += "&fromDate=" + $("#fromDate").val() + "&toDate=" + $("#toDate").val();
-			if (points)
-				dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
-			var jsonData = $.ajax({
-				url: dataUrl,
-				dataType: "json",
-				async: false
-			}).responseText;
-			var data = new google.visualization.DataTable(jsonData);
-			var options = {
-				width: 1000,
-				height: 500,
-				chartArea: {left: 50, top: 20, height: "80%"},
-				vAxis: {direction: points ? 1 : -1, viewWindow: {min: points ? undefined : 1}, logScale: points ? false : useLogScale(jsonData)}
-			};
-			var chart = new google.visualization.LineChart(document.getElementById("chart_div"));
-			chart.draw(data, options);
+			if (fetchData) {
+				var dataUrl = "playerRankings?players=" + players + "&timeSpan=" + timeSpan + "&points=" + points;
+				if (timeSpan == "CS")
+					dataUrl += "&fromDate=" + $("#fromDate").val() + "&toDate=" + $("#toDate").val();
+				if (points)
+					dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
+				jsonData = $.ajax({
+					url: dataUrl,
+					dataType: "json",
+					async: false
+				}).responseText;
+				chartData = new google.visualization.DataTable(jsonData);
+			}
+			if (chartData != undefined) {
+				var width = $("#rankChartSize").slider("value");
+				var options = {
+					width: width,
+					height: width / 2,
+					chartArea: {left: 50, top: 20, height: "80%"},
+					vAxis: {direction: points ? 1 : -1, viewWindow: {min: points ? undefined : 1}, logScale: points ? false : useLogScale(jsonData)}
+				};
+				var chart = new google.visualization.LineChart(document.getElementById("rankChart"));
+				chart.draw(chartData, options);
+			}
 		}
 		function useLogScale(jsonData) {
 			var min = Number.MAX_VALUE;
@@ -114,6 +121,15 @@
 					$("#fromDate").datepicker("option", "maxDate", selectedDate);
 				}
 			});
+			$("#rankChartSize").slider({
+				min: 500,
+				max: 2000,
+				value: 1000,
+				step: 100,
+				slide: function() {
+					drawChart(false);
+				}
+			});
 			onTimeSpanChange();
 			onRankTypeChange();
 		});
@@ -123,48 +139,42 @@
 <body>
 	<h1>Ultimate Tennis Statistics</h1>
 	<h3>Rankings Chart</h3>
-	<table>
-		<tr>
-			<td colspan="2" class="ui-widget">
-				<label for="players">Players: </label>
-				<input id="players" size="80" width="100%"/>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2" class="ui-widget">
-				<label for="timeSpan">Time span: </label>
-				<select id="timeSpan" onchange="onTimeSpanChange()">
-					<option value="CR">Career</option>
-					<option value="1">Last 52 weeks</option>
-					<option value="2">Last two years</option>
-					<option value="3">Last three years</option>
-					<option value="5">Last five years</option>
-					<option value="10">Last ten years</option>
-					<option value="CS">Custom</option>
-				</select>
-				<div id="dateRange" class="ui-widget" style="display: inline">
-					<label for="fromDate">From:</label>
-					<input type="text" id="fromDate" size="10"/>
-					<label for="toDate">To:</label>
-					<input type="text" id="toDate" size="10"/>
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<td class="ui-widget">
-				<label for="rankType">Rank type: </label>
-				<select id="rankType" onchange="onRankTypeChange()">
-					<option value="rank">Ordinal rank</option>
-					<option value="points">Ranking points</option>
-				</select>
-				<label for="compensatePoints" title="Compensate ranking points before 2009 to match new ATP ranking system">Compensate points: </label>
-				<input id="compensatePoints" type="checkbox"/>
-			</td>
-			<td class="ui-widget" align="right">
-				<button onclick="drawChart()">Draw Chart</button>
-			</td>
-		</tr>
-	</table>
-	<div id="chart_div"></div>
+	<div class="ui-widget">
+		<label for="players">Players: </label>
+		<input id="players" size="80" width="100%"/>
+	</div>
+	<div class="ui-widget">
+		<label for="timeSpan">Time span: </label>
+		<select id="timeSpan" onchange="onTimeSpanChange()">
+			<option value="CR">Career</option>
+			<option value="1">Last 52 weeks</option>
+			<option value="2">Last two years</option>
+			<option value="3">Last three years</option>
+			<option value="5">Last five years</option>
+			<option value="10">Last ten years</option>
+			<option value="CS">Custom</option>
+		</select>
+		<div id="dateRange" class="ui-widget" style="display: inline">
+			<label for="fromDate">From:</label>
+			<input type="text" id="fromDate" size="10"/>
+			<label for="toDate">To:</label>
+			<input type="text" id="toDate" size="10"/>
+		</div>
+	</div>
+	<div class="ui-widget">
+		<label for="rankType">Rank type: </label>
+		<select id="rankType" onchange="onRankTypeChange()">
+			<option value="rank">Ordinal rank</option>
+			<option value="points">Ranking points</option>
+		</select>
+		<label for="compensatePoints" title="Compensate ranking points before 2009 to match new ATP ranking system">Compensate points: </label>
+		<input id="compensatePoints" type="checkbox"/>
+	</div>
+	<div class="ui-widget">
+		<label for="rankChartSize">Chart size: </label>
+		<div id="rankChartSize" style="width: 200px; margin-left: 8px; margin-right: 8px; display: inline-block"></div>
+		<button onclick="drawChart(true)">Draw Chart</button>
+	</div>
+	<div id="rankChart"></div>
 </body>
 </html>

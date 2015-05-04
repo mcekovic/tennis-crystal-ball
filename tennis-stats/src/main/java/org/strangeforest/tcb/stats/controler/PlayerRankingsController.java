@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
+import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.format.annotation.*;
@@ -14,6 +15,7 @@ import org.strangeforest.tcb.stats.model.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
+import static java.util.stream.Collectors.*;
 
 @RestController
 public class PlayerRankingsController {
@@ -43,7 +45,8 @@ public class PlayerRankingsController {
 		@RequestParam(value="points", defaultValue = "false") boolean points,
 		@RequestParam(value="compensatePoints", defaultValue = "false") boolean compensatePoints
 	) {
-		Players players = new Players(playersCSV.split(", "));
+		List<String> inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
+		Players players = new Players(inputPlayers);
 		Range<LocalDate> dateRange = toDateRange(timeSpan, fromDate, toDate);
 		String rankColumn = points ? "rank_points" : "rank";
 		DataTable table = new DataTable();
@@ -72,7 +75,7 @@ public class PlayerRankingsController {
 		}
 		else {
 			table.addColumn("string", "Player");
-			table.addColumn("number", format("Player(s) %1$s not found", playersCSV));
+			table.addColumn("number", format("%1$s %2$s not found", inputPlayers.size() > 1 ? "Players" : "Player", playersCSV));
 		}
 		return table;
 	}
@@ -131,9 +134,9 @@ public class PlayerRankingsController {
 		private final Map<Integer, Integer> playerIndexMap = new LinkedHashMap<>();
 		private final List<String> players = new ArrayList<>();
 
-		private Players(String[] players) {
-			for (int index = 0; index < players.length; index++) {
-				String player = players[index];
+		private Players(List<String> players) {
+			for (int index = 0; index < players.size(); index++) {
+				String player = players.get(index);
 				Integer playerId = findPlayerId(player);
 				if (playerId != null) {
 					this.players.add(player);

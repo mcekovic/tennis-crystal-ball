@@ -1,0 +1,3 @@
+REFRESH MATERIALIZED VIEW player_current_rank;
+REFRESH MATERIALIZED VIEW player_best_rank;
+REFRESH MATERIALIZED VIEW player_best_rank_points;
