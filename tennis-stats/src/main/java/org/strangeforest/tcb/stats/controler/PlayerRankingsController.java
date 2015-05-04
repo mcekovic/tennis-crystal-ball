@@ -82,9 +82,15 @@ public class PlayerRankingsController {
 
 	private Range<LocalDate> toDateRange(String timeSpan, LocalDate fromDate, LocalDate toDate) {
 		switch (timeSpan) {
-			case CAREER: return Range.all();
-			case CUSTOM: return Range.closed(fromDate, toDate);
-			default: return Range.atLeast(LocalDate.now().minusYears(Long.parseLong(timeSpan)));
+			case CAREER:
+				return Range.all();
+			case CUSTOM:
+				if (fromDate != null)
+					return toDate != null ? Range.closed(fromDate, toDate) : Range.atLeast(fromDate);
+				else
+					return toDate != null ? Range.atMost(toDate) : Range.all();
+			default:
+				return Range.atLeast(LocalDate.now().minusYears(Long.parseLong(timeSpan)));
 		}
 	}
 

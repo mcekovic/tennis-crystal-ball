@@ -38,8 +38,16 @@
 					dataType: "json",
 					async: false
 				}).responseText;
-				chartData = new google.visualization.DataTable(jsonData);
-				logScale = useLogScale(jsonData);
+				var json = $.parseJSON(jsonData);
+				switch (json.status) {
+					case 400:
+						alert(json.message);
+						break;
+					default:
+						chartData = new google.visualization.DataTable(jsonData);
+						logScale = useLogScale(jsonData);
+						break;
+				}
 			}
 			if (chartData != undefined) {
 				var width = $("#rankChartSize").slider("value");
@@ -53,10 +61,9 @@
 				chart.draw(chartData, options);
 			}
 		}
-		function useLogScale(jsonData) {
+		function useLogScale(json) {
 			var min = Number.MAX_VALUE;
 			var max = 0;
-			var json = $.parseJSON(jsonData);
 			for (var i = 0, ilen = json.rows.length; i < ilen; i++) {
 				var row = json.rows[i];
 				for (var j = 0, jlen = row.c.length; j < jlen; j++) {
