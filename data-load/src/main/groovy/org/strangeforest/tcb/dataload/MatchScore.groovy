@@ -9,6 +9,8 @@ class MatchScore {
 	String outcome
 
 	static MatchScore parse(String match) {
+		if (!match)
+			return null
 		List sets = match.trim().tokenize(' ')
 		int w_sets = 0, l_sets = 0
 		List setScores = new ArrayList(sets.size())
@@ -18,10 +20,10 @@ class MatchScore {
 			if (pos > 0) {
 				try {
 					int len = set.length()
-					int w_gems = set.substring(0, pos).toInteger()
+					int w_gems = parseGems(set.substring(0, pos))
 					int pos2 = set.indexOf('(', pos + 2)
-					int l_gems = set.substring(pos + 1, pos2 > 0 ? pos2 : len).toInteger()
-					Integer tb_pt = null;
+					int l_gems = parseGems(set.substring(pos + 1, pos2 > 0 ? pos2 : len))
+					Integer tb_pt = null
 					if (pos2 > 0) {
 						if (set[len - 1] == ')')
 							tb_pt = set.substring(pos2 + 1, len - 1).toInteger()
@@ -44,15 +46,31 @@ class MatchScore {
 			else {
 				switch (set) {
 					case 'W/O': outcome = 'W/O'; break
-					case 'RET':
-					case 'DEF':
+					case 'Default':
+					case 'abandoned':
+					case 'unfinished':
+					case 'Unfinished':
 					case 'ABD':
-					case 'ABN': outcome = setScores ? 'RET' : 'W/O'; break
+					case 'ABN':
+					case 'DEF':
+					case 'RET': outcome = setScores.isEmpty() ? 'W/O' : 'RET'; break
+					case 'NA': return null
+					case 'In':
+					case 'Progress':
+					case 'Played':
+					case 'and': break
 					default: println("Invalid set outcome: $set")
 				}
 			}
 		}
 		new MatchScore(outcome: outcome, w_sets: w_sets, l_sets: l_sets, setScores: setScores)
+	}
+
+	static int parseGems(String s) {
+		switch (s) {
+			case 'Jun': return 6
+			default: s.toInteger()
+		}
 	}
 
 	static boolean isWin(int w_gems, int l_gems) {

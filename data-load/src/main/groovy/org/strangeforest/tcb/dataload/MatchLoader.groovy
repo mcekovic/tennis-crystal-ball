@@ -27,7 +27,7 @@ class MatchLoader extends BaseCSVLoader {
 
 		def tourneyId = string line.tourney_id
 		if (tourneyId[4] != '-')
-			throw new IllegalArgumentException("Invalid tourney_id: $tourneyId");
+			throw new IllegalArgumentException("Invalid tourney_id: $tourneyId")
 		params.ext_tournament_id = string tourneyId.substring(5)
 		params.season = smallint tourneyId.substring(0, 4)
 		params.tournament_date = date line.tourney_date
@@ -71,7 +71,12 @@ class MatchLoader extends BaseCSVLoader {
 		params.loser_height = smallint line.loser_ht
 		params.loser_hand = hand line.loser_hand
 
-		params.score = string line.score
+		def score = line.score
+		def matchScore = MatchScore.parse(score)
+		params.score = string score
+		params.outcome = matchScore?.outcome
+		params.w_sets = matchScore?.w_sets
+		params.l_sets = matchScore?.l_sets
 		params.minutes = smallint line.minutes
 
 		params.w_ace = smallint line.w_ace
@@ -98,13 +103,13 @@ class MatchLoader extends BaseCSVLoader {
 
 	static def mapLevel(String level, short drawSize, String name) {
 		switch (level) {
-			case 'G': return 'G';
-			case 'F': return 'F';
-			case 'M': return level.startsWith('Masters') && drawSize <= 16 ? 'F' : 'M';
-			case 'A': return name.contains('Olympics') ? 'O' : 'A';
-			case 'D': return 'D';
-			case 'C': return 'C';
-			default: throw new IllegalArgumentException("Unknown tournament level; $level")
+			case 'G': return 'G'
+			case 'F': return 'F'
+			case 'M': return level.startsWith('Masters') && drawSize <= 16 ? 'F' : 'M'
+			case 'A': return name.contains('Olympics') ? 'O' : 'A'
+			case 'D': return 'D'
+			case 'C': return 'C'
+			default: throw new IllegalArgumentException("Unknown tournament level: $level")
 		}
 	}
 
@@ -114,14 +119,14 @@ class MatchLoader extends BaseCSVLoader {
 			case 'Clay': return 'C'
 			case 'Grass': return 'G'
 			case 'Carpet': return 'P'
-			default: return null;
+			default: return null
 		}
 	}
 
 	static def mapIndoor(String surface) {
 		switch (surface) {
 			case 'Carpet': return true
-			default: return false;
+			default: return false
 		}
 	}
 
@@ -133,7 +138,7 @@ class MatchLoader extends BaseCSVLoader {
 			case 'R7': return 'QF'
 			case 'R3': return 'SF'
 			case 'R1': return 'F'
-			default: return round;
+			default: return round
 		}
 	}
 
@@ -143,7 +148,7 @@ class MatchLoader extends BaseCSVLoader {
 			case 'F': return 1500
 			case 'M': return 1000
 			case 'O': return 750
-			default: return null;
+			default: return null
 		}
 	}
 }

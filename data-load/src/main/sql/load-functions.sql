@@ -237,6 +237,9 @@ CREATE OR REPLACE FUNCTION load_match(
 	p_loser_height SMALLINT,
 	p_loser_hand CHAR(1),
 	p_score TEXT,
+	p_outcome TEXT,
+	p_w_sets SMALLINT,
+	p_l_sets SMALLINT,
 	p_minutes SMALLINT,
 	p_w_ace SMALLINT,
 	p_w_df SMALLINT,
@@ -273,25 +276,25 @@ BEGIN
 		(tournament_event_id, match_num, round, best_of,
 		 winner_id, winner_country_id, winner_seed, winner_entry, winner_rank, winner_rank_points, winner_age, winner_height,
 		 loser_id, loser_country_id, loser_seed, loser_entry, loser_rank, loser_rank_points, loser_age, loser_height,
-		 score)
+		 score, outcome, w_sets, l_sets)
 		VALUES
 		(l_tournament_event_id, p_match_num, p_round, p_best_of,
 		 l_winner_id, p_winner_country_id, p_winner_seed, p_winner_entry, p_winner_rank, p_winner_rank_points, p_winner_age, p_winner_height,
 		 l_loser_id, p_loser_country_id, p_loser_seed, p_loser_entry, p_loser_rank, p_loser_rank_points, p_loser_age, p_loser_height,
-		 p_score)
+		 p_score, p_outcome, p_w_sets, p_l_sets)
 		RETURNING match_id INTO l_match_id;
    EXCEPTION WHEN unique_violation THEN
 		UPDATE match
 		SET round = p_round, best_of = p_best_of,
 		 winner_id = l_winner_id, winner_country_id = p_winner_country_id, winner_seed = p_winner_seed, winner_entry = p_winner_entry, winner_rank = p_winner_rank, winner_rank_points = p_winner_rank_points, winner_age = p_winner_age, winner_height = p_winner_height,
 		 loser_id = l_loser_id, loser_country_id = p_loser_country_id, loser_seed = p_loser_seed, loser_entry = p_loser_entry, loser_rank = p_loser_rank, loser_rank_points = p_loser_rank_points, loser_age = p_loser_age, loser_height = p_loser_height,
-		 score = p_score
+		 score = p_score, outcome = p_outcome, w_sets = p_w_sets, l_sets = p_l_sets
 		WHERE tournament_event_id = l_tournament_event_id AND match_num = p_match_num
 		RETURNING match_id INTO l_match_id;
    END;
 	IF p_minutes IS NOT NULL
-	   AND p_w_ace IS NOT NULL AND p_w_df IS NOT NULL AND p_w_sv_pt IS NOT NULL AND p_w_1st_in IS NOT NULL AND p_w_1st_won IS NOT NULL AND p_w_2nd_won IS NOT NULL AND p_w_sv_gms IS NOT NULL AND p_w_bp_sv IS NOT NULL AND p_w_bp_fc IS NOT NULL
-	   AND p_l_ace IS NOT NULL AND p_l_df IS NOT NULL AND p_l_sv_pt IS NOT NULL AND p_l_1st_in IS NOT NULL AND p_l_1st_won IS NOT NULL AND p_l_2nd_won IS NOT NULL AND p_l_sv_gms IS NOT NULL AND p_l_bp_sv IS NOT NULL AND p_l_bp_fc IS NOT NULL
+	   OR p_w_ace IS NOT NULL OR p_w_df IS NOT NULL OR p_w_sv_pt IS NOT NULL OR p_w_1st_in IS NOT NULL OR p_w_1st_won IS NOT NULL OR p_w_2nd_won IS NOT NULL OR p_w_sv_gms IS NOT NULL AND p_w_bp_sv IS NOT NULL OR p_w_bp_fc IS NOT NULL
+	   OR p_l_ace IS NOT NULL OR p_l_df IS NOT NULL OR p_l_sv_pt IS NOT NULL OR p_l_1st_in IS NOT NULL OR p_l_1st_won IS NOT NULL OR p_l_2nd_won IS NOT NULL OR p_l_sv_gms IS NOT NULL AND p_l_bp_sv IS NOT NULL OR p_l_bp_fc IS NOT NULL
 	THEN
 		BEGIN
 			INSERT INTO match_stats
