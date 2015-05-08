@@ -1,12 +1,15 @@
 -- tournament
 
+CREATE TYPE tournament_level AS ENUM ('G', 'F', 'M', 'A', 'D', 'O', 'C', 'T');
+CREATE TYPE surface AS ENUM ('H', 'C', 'G', 'P');
+
 CREATE TABLE tournament (
 	tournament_id SERIAL PRIMARY KEY,
 	name TEXT NOT NULL,
 	country_id TEXT,
 	city TEXT,
-	level CHAR(1) NOT NULL CHECK (level IN ('G', 'F', 'M', 'A', 'D', 'O', 'C', 'T')),
-	surface CHAR(1) CHECK (surface IN ('H', 'C', 'G', 'P')),
+	level tournament_level NOT NULL,
+	surface surface,
 	indoor BOOLEAN NOT NULL,
 	draw_size SMALLINT,
 	rank_points INTEGER
@@ -32,8 +35,8 @@ CREATE TABLE tournament_event (
 	date DATE NOT NULL,
 	name TEXT NOT NULL,
 	city TEXT,
-	level CHAR(1) NOT NULL CHECK (level IN ('G', 'F', 'M', 'A', 'D', 'O', 'C', 'T')),
-	surface CHAR(1) CHECK (surface IN ('H', 'C', 'G', 'P')),
+	level tournament_level NOT NULL,
+	surface surface,
 	indoor BOOLEAN NOT NULL,
 	draw_size SMALLINT,
 	rank_points INTEGER,
@@ -48,6 +51,9 @@ CREATE INDEX ON tournament_event (surface);
 
 -- player
 
+CREATE TYPE player_hand AS ENUM ('R', 'L');
+CREATE TYPE player_backhand AS ENUM ('S', 'D');
+
 CREATE TABLE player (
 	player_id SERIAL PRIMARY KEY,
 	first_name TEXT,
@@ -58,8 +64,8 @@ CREATE TABLE player (
 	residence TEXT,
 	height SMALLINT,
 	weight SMALLINT,
-	hand CHAR(1) CHECK (hand IN ('R', 'L')),
-	backhand CHAR(1) CHECK (backhand IN ('S', 'D')),
+	hand player_hand,
+	backhand player_backhand,
 	turned_pro SMALLINT,
 	coach TEXT,
 	web_site TEXT,
@@ -96,7 +102,7 @@ CREATE TABLE player_ranking (
 	PRIMARY KEY (rank_date, player_id)
 );
 
-CREATE INDEX ON player (player_id);
+CREATE INDEX ON player_ranking (player_id);
 
 CREATE MATERIALIZED VIEW player_current_rank AS
 WITH current_rank_date AS (SELECT max(rank_date) AS rank_date FROM player_ranking)
@@ -124,10 +130,12 @@ LEFT JOIN player_best_rank_points USING (player_id);
 
 -- tournament_event_player
 
+CREATE TYPE tournament_event_result AS ENUM ('W', 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'RR', 'BR');
+
 CREATE TABLE tournament_event_player (
 	tournament_event_id INTEGER NOT NULL REFERENCES tournament_event (tournament_event_id) ON DELETE CASCADE,
 	player_id INTEGER NOT NULL REFERENCES player (player_id) ON DELETE CASCADE,
-	result TEXT NOT NULL CHECK (result IN ('W', 'F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'RR', 'BR')),
+	result tournament_event_result NOT NULL,
 	PRIMARY KEY (tournament_event_id, player_id)
 );
 
@@ -136,16 +144,20 @@ CREATE INDEX ON tournament_event_player (player_id);
 
 -- match
 
+CREATE TYPE match_round AS ENUM ('F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'RR', 'BR', 'DC');
+CREATE TYPE tournament_entry AS ENUM ('Q', 'WC', 'LL');
+CREATE TYPE match_outcome AS ENUM ('RET', 'W/O');
+
 CREATE TABLE match (
 	match_id BIGSERIAL PRIMARY KEY,
 	tournament_event_id INTEGER NOT NULL REFERENCES tournament_event (tournament_event_id) ON DELETE CASCADE,
 	match_num SMALLINT,
-	round TEXT NOT NULL CHECK (round IN ('F', 'SF', 'QF', 'R16', 'R32', 'R64', 'R128', 'RR', 'BR', 'DC')),
+	round match_round NOT NULL,
 	best_of SMALLINT NOT NULL,
 	winner_id INTEGER NOT NULL REFERENCES player (player_id),
 	winner_country_id TEXT NOT NULL,
 	winner_seed SMALLINT,
-	winner_entry TEXT CHECK (winner_entry IN ('Q', 'WC', 'LL')),
+	winner_entry tournament_entry,
 	winner_rank INTEGER,
 	winner_rank_points INTEGER,
 	winner_age REAL,
@@ -153,13 +165,13 @@ CREATE TABLE match (
 	loser_id INTEGER NOT NULL REFERENCES player (player_id),
 	loser_country_id TEXT NOT NULL,
 	loser_seed SMALLINT,
-	loser_entry TEXT CHECK (loser_entry IN ('Q', 'WC', 'LL')),
+	loser_entry tournament_entry,
 	loser_rank INTEGER,
 	loser_rank_points INTEGER,
 	loser_age REAL,
 	loser_height SMALLINT,
 	score TEXT,
-	outcome TEXT CHECK (outcome IN ('RET', 'W/O')),
+	outcome match_outcome,
 	w_sets SMALLINT,
 	l_sets SMALLINT,
 	UNIQUE (tournament_event_id, match_num)

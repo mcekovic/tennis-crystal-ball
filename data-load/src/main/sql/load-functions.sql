@@ -21,7 +21,7 @@ CREATE OR REPLACE FUNCTION load_player(
 	p_last_name TEXT,
 	p_dob DATE,
 	p_country_id TEXT,
-	p_hand CHAR(1)
+	p_hand TEXT
 ) RETURNS VOID AS $$
 DECLARE
 	l_player_id INTEGER;
@@ -32,11 +32,11 @@ BEGIN
 			INSERT INTO player
 			(first_name, last_name, dob, country_id, hand)
 			VALUES
-			(p_first_name, p_last_name, p_dob, p_country_id, p_hand)
+			(p_first_name, p_last_name, p_dob, p_country_id, p_hand::player_hand)
 			RETURNING player_id INTO l_player_id;
 		EXCEPTION WHEN unique_violation THEN
 			UPDATE player
-			SET country_id = p_country_id, hand = p_hand
+			SET country_id = p_country_id, hand = p_hand::player_hand
 			WHERE first_name = p_first_name AND last_name = p_last_name AND dob = p_dob
 			RETURNING player_id INTO l_player_id;
 		END;
@@ -46,7 +46,7 @@ BEGIN
 		(p_ext_player_id, l_player_id);
    ELSE
 		UPDATE player
-		SET first_name = p_first_name, last_name = p_last_name, dob = p_dob, country_id = p_country_id, hand = p_hand
+		SET first_name = p_first_name, last_name = p_last_name, dob = p_dob, country_id = p_country_id, hand = p_hand::player_hand
 		WHERE player_id = l_player_id
 		RETURNING player_id INTO l_player_id;
 	   IF l_player_id IS NULL THEN
@@ -106,8 +106,8 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION merge_tournament(
 	p_ext_tournament_id TEXT,
 	p_name TEXT,
-	p_level CHAR(1),
-	p_surface CHAR(1),
+	p_level TEXT,
+	p_surface TEXT,
 	p_indoor BOOLEAN,
 	p_draw_size SMALLINT,
 	p_rank_points INTEGER
@@ -120,7 +120,7 @@ BEGIN
 		INSERT INTO tournament
 		(name, level, surface, indoor, draw_size, rank_points)
 		VALUES
-		(p_name, p_level, p_surface, p_indoor, p_draw_size, p_rank_points)
+		(p_name, p_level::tournament_level, p_surface::surface, p_indoor, p_draw_size, p_rank_points)
 		RETURNING tournament_id INTO l_tournament_id;
 		INSERT INTO tournament_mapping
 		(ext_tournament_id, tournament_id)
@@ -128,7 +128,7 @@ BEGIN
 		(p_ext_tournament_id, l_tournament_id);
    ELSE
 		UPDATE tournament
-		SET name = p_name, level = p_level, surface = p_surface, indoor = p_indoor, draw_size = p_draw_size, rank_points = p_rank_points
+		SET name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor, draw_size = p_draw_size, rank_points = p_rank_points
 		WHERE tournament_id = l_tournament_id;
    END IF;
 	RETURN l_tournament_id;
@@ -143,8 +143,8 @@ CREATE OR REPLACE FUNCTION merge_tournament_event(
 	p_season SMALLINT,
 	p_date DATE,
 	p_name TEXT,
-	p_level CHAR(1),
-	p_surface CHAR(1),
+	p_level TEXT,
+	p_surface TEXT,
 	p_indoor BOOLEAN,
 	p_draw_size SMALLINT,
 	p_rank_points INTEGER
@@ -158,11 +158,11 @@ BEGIN
 		INSERT INTO tournament_event
 		(tournament_id, season, date, name, level, surface, indoor, draw_size)
 		VALUES
-		(l_tournament_id, p_season, p_date, p_name, p_level, p_surface, p_indoor, p_draw_size)
+		(l_tournament_id, p_season, p_date, p_name, p_level::tournament_level, p_surface::surface, p_indoor, p_draw_size)
 		RETURNING tournament_event_id INTO l_tournament_event_id;
 	EXCEPTION WHEN unique_violation THEN
 		UPDATE tournament_event
-		SET date = p_date, name = p_name, level = p_level, surface = p_surface, indoor = p_indoor, draw_size = p_draw_size
+		SET date = p_date, name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor, draw_size = p_draw_size
 		WHERE tournament_id = l_tournament_id AND season = p_season
 		RETURNING tournament_event_id INTO l_tournament_event_id;
    END;
@@ -208,8 +208,8 @@ CREATE OR REPLACE FUNCTION load_match(
 	p_season SMALLINT,
 	p_tournament_date DATE,
 	p_tournament_name TEXT,
-	p_tournament_level CHAR(1),
-	p_surface CHAR(1),
+	p_tournament_level TEXT,
+	p_surface TEXT,
 	p_indoor BOOLEAN,
 	p_draw_size SMALLINT,
 	p_rank_points INTEGER,
@@ -225,7 +225,7 @@ CREATE OR REPLACE FUNCTION load_match(
 	p_winner_country_id TEXT,
 	p_winner_name TEXT,
 	p_winner_height SMALLINT,
-	p_winner_hand CHAR(1),
+	p_winner_hand TEXT,
 	p_ext_loser_id INTEGER,
 	p_loser_seed SMALLINT,
 	p_loser_entry TEXT,
@@ -235,7 +235,7 @@ CREATE OR REPLACE FUNCTION load_match(
 	p_loser_country_id TEXT,
 	p_loser_name TEXT,
 	p_loser_height SMALLINT,
-	p_loser_hand CHAR(1),
+	p_loser_hand TEXT,
 	p_score TEXT,
 	p_w_sets SMALLINT,
 	p_l_sets SMALLINT,
@@ -289,17 +289,17 @@ BEGIN
 		 loser_id, loser_country_id, loser_seed, loser_entry, loser_rank, loser_rank_points, loser_age, loser_height,
 		 score, w_sets, l_sets, outcome)
 		VALUES
-		(l_tournament_event_id, p_match_num, p_round, p_best_of,
-		 l_winner_id, p_winner_country_id, p_winner_seed, p_winner_entry, p_winner_rank, p_winner_rank_points, p_winner_age, p_winner_height,
-		 l_loser_id, p_loser_country_id, p_loser_seed, p_loser_entry, p_loser_rank, p_loser_rank_points, p_loser_age, p_loser_height,
-		 p_score, p_w_sets, p_l_sets, p_outcome)
+		(l_tournament_event_id, p_match_num, p_round::match_round, p_best_of,
+		 l_winner_id, p_winner_country_id, p_winner_seed, p_winner_entry::tournament_entry, p_winner_rank, p_winner_rank_points, p_winner_age, p_winner_height,
+		 l_loser_id, p_loser_country_id, p_loser_seed, p_loser_entry::tournament_entry, p_loser_rank, p_loser_rank_points, p_loser_age, p_loser_height,
+		 p_score, p_w_sets, p_l_sets, p_outcome::match_outcome)
 		RETURNING match_id INTO l_match_id;
    EXCEPTION WHEN unique_violation THEN
 		UPDATE match
-		SET round = p_round, best_of = p_best_of,
-		 winner_id = l_winner_id, winner_country_id = p_winner_country_id, winner_seed = p_winner_seed, winner_entry = p_winner_entry, winner_rank = p_winner_rank, winner_rank_points = p_winner_rank_points, winner_age = p_winner_age, winner_height = p_winner_height,
-		 loser_id = l_loser_id, loser_country_id = p_loser_country_id, loser_seed = p_loser_seed, loser_entry = p_loser_entry, loser_rank = p_loser_rank, loser_rank_points = p_loser_rank_points, loser_age = p_loser_age, loser_height = p_loser_height,
-		 score = p_score, w_sets = p_w_sets, l_sets = p_l_sets, outcome = p_outcome
+		SET round = p_round::match_round, best_of = p_best_of,
+		 winner_id = l_winner_id, winner_country_id = p_winner_country_id, winner_seed = p_winner_seed, winner_entry = p_winner_entry::tournament_entry, winner_rank = p_winner_rank, winner_rank_points = p_winner_rank_points, winner_age = p_winner_age, winner_height = p_winner_height,
+		 loser_id = l_loser_id, loser_country_id = p_loser_country_id, loser_seed = p_loser_seed, loser_entry = p_loser_entry::tournament_entry, loser_rank = p_loser_rank, loser_rank_points = p_loser_rank_points, loser_age = p_loser_age, loser_height = p_loser_height,
+		 score = p_score, w_sets = p_w_sets, l_sets = p_l_sets, outcome = p_outcome::match_outcome
 		WHERE tournament_event_id = l_tournament_event_id AND match_num = p_match_num
 		RETURNING match_id INTO l_match_id;
    END;
@@ -345,7 +345,7 @@ BEGIN
 	END IF;
 	IF p_winner_hand IS NOT NULL THEN
 		UPDATE player
-		SET hand = p_winner_hand
+		SET hand = p_winner_hand::player_hand
 		WHERE player_id = l_winner_id;
 	END IF;
 
@@ -367,7 +367,7 @@ BEGIN
 	END IF;
 	IF p_loser_hand IS NOT NULL THEN
 		UPDATE player
-		SET hand = p_loser_hand
+		SET hand = p_loser_hand::player_hand
 		WHERE player_id = l_loser_id;
 	END IF;
 

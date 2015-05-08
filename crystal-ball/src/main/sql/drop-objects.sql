@@ -1,6 +1,7 @@
 DROP VIEW match_stats_v;
 DROP VIEW player_v;
 
+DROP MATERIALIZED VIEW player_current_rank;
 DROP MATERIALIZED VIEW player_best_rank;
 DROP MATERIALIZED VIEW player_best_rank_points;
 
@@ -14,3 +15,12 @@ DROP TABLE player CASCADE;
 DROP TABLE tournament_event CASCADE;
 DROP TABLE tournament_mapping CASCADE;
 DROP TABLE tournament CASCADE;
+
+DROP TYPE tournament_level;
+DROP TYPE surface;
+DROP TYPE player_hand;
+DROP TYPE player_backhand;
+DROP TYPE tournament_event_result;
+DROP TYPE match_round;
+DROP TYPE tournament_entry;
+DROP TYPE match_outcome;
