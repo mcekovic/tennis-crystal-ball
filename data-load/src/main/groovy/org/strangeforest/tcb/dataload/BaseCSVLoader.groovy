@@ -1,5 +1,8 @@
 package org.strangeforest.tcb.dataload
 
+import java.sql.*
+import java.util.Date
+
 import com.neovisionaries.i18n.*
 import com.xlson.groovycsv.*
 import groovy.sql.*
@@ -78,6 +81,10 @@ abstract class BaseCSVLoader {
 		}
 		else
 			null
+	}
+
+	Array shortArray(a) {
+		sql.connection.createArrayOf('smallint', a)
 	}
 
 	private static countryOverrides = [CHI: 'CHL', DEN: 'DNK', RSA: 'ZAF']

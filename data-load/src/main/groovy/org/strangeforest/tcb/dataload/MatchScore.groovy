@@ -4,15 +4,31 @@ import static java.lang.Math.*
 
 class MatchScore {
 
-	int w_sets, l_sets
-	List setScores
+	short w_sets, l_sets
 	String outcome
+	List setScores
+
+	short[] getW_gems() {
+		setScores.collect({setScore -> setScore.w_gems});
+	}
+
+	short[] getL_gems() {
+		setScores.collect({setScore -> setScore.l_gems});
+	}
+
+	Short[] getW_tb_pt() {
+		setScores.collect({setScore -> setScore.w_tb_pt});
+	}
+
+	Short[] getL_tb_pt() {
+		setScores.collect({setScore -> setScore.l_tb_pt});
+	}
 
 	static MatchScore parse(String match) {
 		if (!match)
 			return null
-		List sets = match.trim().tokenize(' ')
-		int w_sets = 0, l_sets = 0
+		List sets = match.tokenize(' ')
+		short w_sets = 0, l_sets = 0
 		List setScores = new ArrayList(sets.size())
 		String outcome = null
 		for (String set in sets) {
@@ -20,10 +36,10 @@ class MatchScore {
 			if (pos > 0) {
 				try {
 					int len = set.length()
-					int w_gems = parseGems(set.substring(0, pos))
+					short w_gems = parseGems(set.substring(0, pos))
 					int pos2 = set.indexOf('(', pos + 2)
-					int l_gems = parseGems(set.substring(pos + 1, pos2 > 0 ? pos2 : len))
-					Integer tb_pt = null
+					short l_gems = parseGems(set.substring(pos + 1, pos2 > 0 ? pos2 : len))
+					Short tb_pt = null
 					if (pos2 > 0) {
 						if (set[len - 1] == ')')
 							tb_pt = set.substring(pos2 + 1, len - 1).toInteger()
@@ -66,14 +82,14 @@ class MatchScore {
 		new MatchScore(outcome: outcome, w_sets: w_sets, l_sets: l_sets, setScores: setScores)
 	}
 
-	static int parseGems(String s) {
+	private static short parseGems(String s) {
 		switch (s) {
 			case 'Jun': return 6
 			default: s.toInteger()
 		}
 	}
 
-	static boolean isWin(int w_gems, int l_gems) {
+	private static boolean isWin(int w_gems, int l_gems) {
 		(w_gems >= 6 && w_gems >= l_gems + 2) || (w_gems == 7 && l_gems == 6)
 	}
 
@@ -83,12 +99,12 @@ class MatchScore {
 		MatchScore score = (MatchScore)o
 		Objects.equals(w_sets, score.w_sets) &&
 			Objects.equals(l_sets, score.l_sets) &&
-			Objects.equals(setScores, score.setScores) &&
-			Objects.equals(outcome, score.outcome)
+			Objects.equals(outcome, score.outcome) &&
+			Objects.equals(setScores, score.setScores)
 	}
 
 	@Override int hashCode() {
-		Objects.hash(w_sets, l_sets, setScores, outcome)
+		Objects.hash(w_sets, l_sets, outcome, setScores)
 	}
 
 

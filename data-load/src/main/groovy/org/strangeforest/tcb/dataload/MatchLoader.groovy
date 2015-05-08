@@ -14,7 +14,7 @@ class MatchLoader extends BaseCSVLoader {
 			':match_num, :round, :best_of, ' +
 			':ext_winner_id, :winner_seed, :winner_entry, :winner_rank, :winner_rank_points, :winner_age, :winner_country_id, :winner_name, :winner_height, :winner_hand, ' +
 			':ext_loser_id, :loser_seed, :loser_entry, :loser_rank, :loser_rank_points, :loser_age, :loser_country_id, :loser_name, :loser_height, :loser_hand, ' +
-			':score, :minutes, ' +
+			':score, :w_sets, :l_sets, :outcome, :w_gems, :l_gems, :w_tb_pt, :l_tb_pt, :minutes, ' +
 			':w_ace, :w_df, :w_sv_pt, :w_1st_in, :w_1st_won, :w_2nd_won, :w_sv_gms, :w_bp_sv, :w_bp_fc, ' +
 			':l_ace, :l_df, :l_sv_pt, :l_1st_in, :l_1st_won, :l_2nd_won, :l_sv_gms, :l_bp_sv, :l_bp_fc' +
 		')}'
@@ -71,12 +71,17 @@ class MatchLoader extends BaseCSVLoader {
 		params.loser_height = smallint line.loser_ht
 		params.loser_hand = hand line.loser_hand
 
-		def score = line.score
+		def score = line.score.trim()
 		def matchScore = MatchScore.parse(score)
 		params.score = string score
-		params.outcome = matchScore?.outcome
 		params.w_sets = matchScore?.w_sets
 		params.l_sets = matchScore?.l_sets
+		params.outcome = matchScore?.outcome
+		params.w_gems = matchScore ? shortArray(matchScore.w_gems) : null
+		params.l_gems = matchScore ? shortArray(matchScore.l_gems) : null
+		params.w_tb_pt = matchScore ? shortArray(matchScore.w_tb_pt) : null
+		params.l_tb_pt = matchScore ? shortArray(matchScore.l_tb_pt) : null
+
 		params.minutes = smallint line.minutes
 
 		params.w_ace = smallint line.w_ace

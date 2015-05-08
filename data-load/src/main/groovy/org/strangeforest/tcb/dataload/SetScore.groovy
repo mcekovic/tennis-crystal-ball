@@ -4,8 +4,8 @@ import java.util.*
 
 class SetScore {
 
-	int w_gems, l_gems
-	Integer w_tb_pt, l_tb_pt
+	short w_gems, l_gems
+	Short w_tb_pt, l_tb_pt
 
 	@Override boolean equals(Object o) {
 		if (!(o instanceof SetScore)) false

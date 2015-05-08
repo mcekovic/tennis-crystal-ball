@@ -237,9 +237,13 @@ CREATE OR REPLACE FUNCTION load_match(
 	p_loser_height SMALLINT,
 	p_loser_hand CHAR(1),
 	p_score TEXT,
-	p_outcome TEXT,
 	p_w_sets SMALLINT,
 	p_l_sets SMALLINT,
+	p_outcome TEXT,
+	p_w_gems SMALLINT[],
+	p_l_gems SMALLINT[],
+	p_w_tb_pt SMALLINT[],
+	p_l_tb_pt SMALLINT[],
 	p_minutes SMALLINT,
 	p_w_ace SMALLINT,
 	p_w_df SMALLINT,
@@ -265,33 +269,42 @@ DECLARE
 	l_winner_id INTEGER;
 	l_loser_id INTEGER;
 	l_match_id BIGINT;
+	l_set_count SMALLINT;
+	l_set SMALLINT;
 BEGIN
+	-- merge tournament_event
 	l_tournament_event_id = merge_tournament_event(
 		p_ext_tournament_id, p_season, p_tournament_date, p_tournament_name, p_tournament_level, p_surface, p_indoor, p_draw_size, p_rank_points
 	);
+
+	-- find players
 	l_winner_id = map_ext_player(p_ext_winner_id);
 	l_loser_id = map_ext_player(p_ext_loser_id);
+
+	-- merge match
 	BEGIN
 		INSERT INTO match
 		(tournament_event_id, match_num, round, best_of,
 		 winner_id, winner_country_id, winner_seed, winner_entry, winner_rank, winner_rank_points, winner_age, winner_height,
 		 loser_id, loser_country_id, loser_seed, loser_entry, loser_rank, loser_rank_points, loser_age, loser_height,
-		 score, outcome, w_sets, l_sets)
+		 score, w_sets, l_sets, outcome)
 		VALUES
 		(l_tournament_event_id, p_match_num, p_round, p_best_of,
 		 l_winner_id, p_winner_country_id, p_winner_seed, p_winner_entry, p_winner_rank, p_winner_rank_points, p_winner_age, p_winner_height,
 		 l_loser_id, p_loser_country_id, p_loser_seed, p_loser_entry, p_loser_rank, p_loser_rank_points, p_loser_age, p_loser_height,
-		 p_score, p_outcome, p_w_sets, p_l_sets)
+		 p_score, p_w_sets, p_l_sets, p_outcome)
 		RETURNING match_id INTO l_match_id;
    EXCEPTION WHEN unique_violation THEN
 		UPDATE match
 		SET round = p_round, best_of = p_best_of,
 		 winner_id = l_winner_id, winner_country_id = p_winner_country_id, winner_seed = p_winner_seed, winner_entry = p_winner_entry, winner_rank = p_winner_rank, winner_rank_points = p_winner_rank_points, winner_age = p_winner_age, winner_height = p_winner_height,
 		 loser_id = l_loser_id, loser_country_id = p_loser_country_id, loser_seed = p_loser_seed, loser_entry = p_loser_entry, loser_rank = p_loser_rank, loser_rank_points = p_loser_rank_points, loser_age = p_loser_age, loser_height = p_loser_height,
-		 score = p_score, outcome = p_outcome, w_sets = p_w_sets, l_sets = p_l_sets
+		 score = p_score, w_sets = p_w_sets, l_sets = p_l_sets, outcome = p_outcome
 		WHERE tournament_event_id = l_tournament_event_id AND match_num = p_match_num
 		RETURNING match_id INTO l_match_id;
    END;
+
+	-- merge match_stats
 	IF p_minutes IS NOT NULL
 	   OR p_w_ace IS NOT NULL OR p_w_df IS NOT NULL OR p_w_sv_pt IS NOT NULL OR p_w_1st_in IS NOT NULL OR p_w_1st_won IS NOT NULL OR p_w_2nd_won IS NOT NULL OR p_w_sv_gms IS NOT NULL AND p_w_bp_sv IS NOT NULL OR p_w_bp_fc IS NOT NULL
 	   OR p_l_ace IS NOT NULL OR p_l_df IS NOT NULL OR p_l_sv_pt IS NOT NULL OR p_l_1st_in IS NOT NULL OR p_l_1st_won IS NOT NULL OR p_l_2nd_won IS NOT NULL OR p_l_sv_gms IS NOT NULL AND p_l_bp_sv IS NOT NULL OR p_l_bp_fc IS NOT NULL
@@ -313,6 +326,8 @@ BEGIN
 			WHERE match_id = l_match_id AND set = 0;
 		END;
 	END IF;
+
+	-- update winner
 	IF p_winner_country_id IS NOT NULL THEN
 		UPDATE player
 		SET country_id = p_winner_country_id
@@ -333,6 +348,8 @@ BEGIN
 		SET hand = p_winner_hand
 		WHERE player_id = l_winner_id;
 	END IF;
+
+	-- update loser
 	IF p_loser_country_id IS NOT NULL THEN
 		UPDATE player
 		SET country_id = p_loser_country_id
@@ -352,6 +369,26 @@ BEGIN
 		UPDATE player
 		SET hand = p_loser_hand
 		WHERE player_id = l_loser_id;
+	END IF;
+
+	-- merge set_score
+	l_set_count = array_upper(p_w_gems, 1);
+	IF l_set_count IS NOT NULL THEN
+		FOR l_set IN 1 .. l_set_count LOOP
+			BEGIN
+				INSERT INTO set_score
+				(match_id, set, w_gems, l_gems, w_tb_pt, l_tb_pt)
+				VALUES
+				(l_match_id, l_set, p_w_gems[l_set], p_l_gems[l_set], p_w_tb_pt[l_set], p_w_tb_pt[l_set]);
+			EXCEPTION WHEN unique_violation
+				THEN
+				UPDATE set_score
+				SET w_gems = p_w_gems[l_set], l_gems = p_l_gems[l_set], w_tb_pt = p_w_tb_pt[l_set], l_tb_pt = p_l_tb_pt[l_set]
+				WHERE match_id = l_match_id AND set = l_set;
+			END;
+		END LOOP;
+		DELETE FROM set_score
+		WHERE match_id = l_match_id AND set > l_set_count;
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
