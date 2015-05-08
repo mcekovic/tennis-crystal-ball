@@ -14,8 +14,8 @@ public class AutocompleteController {
 
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
 		"SELECT player_id, first_name, last_name FROM player_v " +
-		"WHERE lower(first_name) || ' ' || lower(last_name) LIKE ? " +
-		"ORDER BY best_rank, best_rank_points DESC";
+		"WHERE first_name || ' ' || last_name ILIKE '%' || ? || '%'" +
+		"ORDER BY best_rank, best_rank_points DESC LIMIT 20";
 
 	@RequestMapping("/autocompletePlayer")
 	public List<AutocompleteOption> autocompletePlayer(@RequestParam(value="term") String term) {
@@ -26,7 +26,7 @@ public class AutocompleteController {
 				String name = rs.getString("first_name") + ' ' + rs.getString("last_name");
 				return new AutocompleteOption(id, name, name);
 			},
-			"%" + term.trim().replace("\\s*", " ").toLowerCase() + "%"
+			term.trim().replace("\\s*", " ")
 		);
 	}
 }

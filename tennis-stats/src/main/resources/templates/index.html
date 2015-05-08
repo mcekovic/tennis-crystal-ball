@@ -11,7 +11,7 @@
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<style>
 		.ui-autocomplete {
-			max-height: 420px; overflow-y: auto; overflow-x: hidden;
+			max-height: 600px; overflow-y: auto; overflow-x: hidden;
 		}
 		.ui-autocomplete-loading {
 			background: white url('http://jquery-ui.googlecode.com/svn/tags/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif') right center no-repeat;
@@ -29,8 +29,15 @@
 			points = $("#rankType").val() == "points";
 			if (fetchData) {
 				var dataUrl = "playerRankings?players=" + players + "&timeSpan=" + timeSpan + "&points=" + points;
-				if (timeSpan == "CS")
-					dataUrl += "&fromDate=" + $("#fromDate").val() + "&toDate=" + $("#toDate").val();
+				if (timeSpan == "CS") {
+					var fromDate = getDate("fromDate");
+					if (fromDate == null)
+						return;
+					var toDate = getDate("toDate");
+					if (toDate == null)
+						return;
+					dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
+				}
 				if (points)
 					dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
 				var jsonData = $.ajax({
@@ -45,7 +52,7 @@
 						break;
 					default:
 						chartData = new google.visualization.DataTable(jsonData);
-						logScale = useLogScale(jsonData);
+						logScale = useLogScale(json);
 						break;
 				}
 			}
@@ -81,6 +88,21 @@
 		}
 		function onRankTypeChange() {
 			$("#compensatePoints").prop("disabled", $("#rankType").val() == "rank");
+		}
+		function getDate(id) {
+			var $date = $("#" + id);
+			var date = $date.val();
+			if (date == "")
+				return date;
+			try {
+				$.datepicker.parseDate("dd-mm-yy", date);
+				return date;
+			}
+			catch (err) {
+				alert("Invalid " + id.substr(0, id.length - 4) + " date: " + date);
+				$date.focus();
+				return null;
+			}
 		}
 		$(function() {
 			function split(val) {
