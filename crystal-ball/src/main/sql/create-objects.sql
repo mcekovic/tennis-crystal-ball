@@ -121,7 +121,7 @@ FROM player_ranking
 WINDOW w AS (PARTITION BY player_id ORDER BY rank_points DESC, rank_date);
 
 CREATE OR REPLACE VIEW player_v AS
-SELECT p.*, age(dob) AS age, current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date
+SELECT p.*, first_name || ' ' || last_name AS name, age(dob) AS age, current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date
 FROM player p
 LEFT JOIN player_current_rank USING (player_id)
 LEFT JOIN player_best_rank USING (player_id)
