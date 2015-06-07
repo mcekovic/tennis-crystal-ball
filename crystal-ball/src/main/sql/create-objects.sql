@@ -128,27 +128,6 @@ LEFT JOIN player_best_rank USING (player_id)
 LEFT JOIN player_best_rank_points USING (player_id);
 
 
--- tournament_event_player
-
-CREATE TYPE tournament_event_result AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F', 'W');
-
-CREATE MATERIALIZED VIEW tournament_event_player_result AS
-WITH result_intermediate AS (
-	SELECT tournament_event_id, winner_id AS player_id,
-		(CASE WHEN round = 'F' THEN 'W' ELSE round::TEXT END)::tournament_event_result AS result
-	FROM match
-	UNION
-	SELECT tournament_event_id, loser_id AS player_id,
-		(CASE WHEN round = 'BR' THEN 'SF' ELSE round::TEXT END)::tournament_event_result AS result
-	FROM match
-)
-SELECT tournament_event_id, player_id, max(result) AS result
-FROM result_intermediate
-GROUP BY tournament_event_id, player_id;
-
-CREATE INDEX ON tournament_event_player_result (player_id);
-
-
 -- match
 
 CREATE TYPE match_round AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F');
@@ -264,3 +243,23 @@ SELECT match_id, set, minutes, sets, w_sv_gms + l_sv_gms AS games, w_sv_pt + l_s
 	l_win, l_fh_win, l_bh_win, l_uf_err, l_fh_uf_err, l_bh_uf_err, l_fc_err, l_n_pt, l_n_pt_won
 FROM match_stats;
 
+
+-- tournament_event_player
+
+CREATE TYPE tournament_event_result AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F', 'W');
+
+CREATE MATERIALIZED VIEW tournament_event_player_result AS
+WITH result_intermediate AS (
+	SELECT tournament_event_id, winner_id AS player_id,
+		(CASE WHEN round = 'F' THEN 'W' ELSE round::TEXT END)::tournament_event_result AS result
+	FROM match
+	UNION
+	SELECT tournament_event_id, loser_id AS player_id,
+		(CASE WHEN round = 'BR' THEN 'SF' ELSE round::TEXT END)::tournament_event_result AS result
+	FROM match
+)
+SELECT tournament_event_id, player_id, max(result) AS result
+FROM result_intermediate
+GROUP BY tournament_event_id, player_id;
+
+CREATE INDEX ON tournament_event_player_result (player_id);
