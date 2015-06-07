@@ -263,3 +263,24 @@ FROM result_intermediate
 GROUP BY tournament_event_id, player_id;
 
 CREATE INDEX ON tournament_event_player_result (player_id);
+
+
+-- tournament_rank_points
+
+CREATE TABLE tournament_rank_points (
+	level tournament_level NOT NULL,
+	result tournament_event_result NOT NULL,
+	rank_points INTEGER,
+	rank_points_2008 INTEGER,
+	goat_points INTEGER,
+	PRIMARY KEY (level, result)
+);
+
+
+-- player_goat_points
+
+CREATE MATERIALIZED VIEW player_goat_points AS
+SELECT player_id, sum(goat_points) goat_points FROM tournament_event_player_result
+LEFT JOIN tournament_event USING (tournament_event_id)
+LEFT JOIN tournament_rank_points USING (level, result)
+GROUP BY player_id;
