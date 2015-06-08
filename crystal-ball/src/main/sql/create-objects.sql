@@ -120,13 +120,6 @@ SELECT DISTINCT player_id,	first_value(rank_points) OVER w AS best_rank_points, 
 FROM player_ranking
 WINDOW w AS (PARTITION BY player_id ORDER BY rank_points DESC, rank_date);
 
-CREATE OR REPLACE VIEW player_v AS
-SELECT p.*, first_name || ' ' || last_name AS name, age(dob) AS age, current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date
-FROM player p
-LEFT JOIN player_current_rank USING (player_id)
-LEFT JOIN player_best_rank USING (player_id)
-LEFT JOIN player_best_rank_points USING (player_id);
-
 
 -- match
 
@@ -284,3 +277,14 @@ SELECT player_id, sum(goat_points) goat_points FROM tournament_event_player_resu
 LEFT JOIN tournament_event USING (tournament_event_id)
 LEFT JOIN tournament_rank_points USING (level, result)
 GROUP BY player_id;
+
+
+-- player_v
+
+CREATE OR REPLACE VIEW player_v AS
+SELECT p.*, first_name || ' ' || last_name AS name, age(dob) AS age, current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_points
+FROM player p
+LEFT JOIN player_current_rank USING (player_id)
+LEFT JOIN player_best_rank USING (player_id)
+LEFT JOIN player_best_rank_points USING (player_id)
+LEFT JOIN player_goat_points USING (player_id);
