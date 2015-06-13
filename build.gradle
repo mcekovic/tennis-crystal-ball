@@ -1,9 +1,21 @@
+apply plugin: 'com.github.ben-manes.versions'
+
+buildscript {
+	repositories {
+		mavenCentral()
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.github.ben-manes:gradle-versions-plugin:0.10.1'
+	}
+}
+
 version = '0.1.0-SNAPSHOT'
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+	gradleVersion = '2.4'
 }
