@@ -32,7 +32,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 	compile("org.springframework.boot:spring-boot-starter-jdbc")
 	compile("com.google.guava:guava:18.0")
-	compile("org.webjars:bootstrap:3.3.4")
+	compile("org.webjars:bootstrap:3.3.5")
 	compile("org.webjars:jquery:2.1.4")
 	compile("org.webjars:jquery-ui:1.11.4")
 	compile("org.webjars:jquery-ui-themes:1.11.4")
