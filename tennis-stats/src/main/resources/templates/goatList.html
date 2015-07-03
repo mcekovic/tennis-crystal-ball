@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Ultimate Tennis Statistics - GOAT List</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<link th:href="@{/jquery.bootgrid/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{/jquery.bootgrid/jquery.bootgrid.min.js}"></script>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$(function() {
+			$("#goatTable").bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/goatTable",
+				navigation: 2,
+				rowCount: [20],
+				sorting: false
+			});
+		});
+		/*]]>*/
+	</script>
+</head>
+<body>
+	<h1><a href="/">Ultimate Tennis Statistics</a></h1>
+	<h3>GOAT List</h3>
+	<table id="goatTable" class="table table-condensed table-hover table-striped" style="width: 500px">
+		<thead>
+			<tr>
+				<th data-column-id="goatRanking" data-type="numeric">GOAT Ranking</th>
+				<th data-column-id="name">Name</th>
+				<th data-column-id="goatPoints" data-type="numeric" data-order="desc" data-align="right">GOAT Points</th>
+			</tr>
+		</thead>
+	</table>
+</body>
+</html>

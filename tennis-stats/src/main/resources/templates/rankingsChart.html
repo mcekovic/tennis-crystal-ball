@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Ultimate Tennis Statistics - Rankings Chart</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<style>
+		.ui-autocomplete {
+			max-height: 600px; overflow-y: auto; overflow-x: hidden;
+		}
+		.ui-autocomplete-loading {
+			background: white url("http://jquery-ui.googlecode.com/svn/tags/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif") right center no-repeat;
+		}
+	</style>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		google.load("visualization", "1.0", {packages:["corechart"]});
+		var chartData;
+		var points;
+		var logScale;
+		function drawChart(fetchData, width) {
+			var players = $("#players").val();
+			var timeSpan = $("#timeSpan").val();
+			points = $("#rankType").val() == "points";
+			if (fetchData) {
+				var dataUrl = "playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&points=" + points;
+				if (timeSpan == "CS") {
+					var fromDate = getDate("fromDate");
+					if (fromDate == null)
+						return;
+					var toDate = getDate("toDate");
+					if (toDate == null)
+						return;
+					dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
+				}
+				if (points)
+					dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
+				var jsonData = $.ajax({
+					url: dataUrl,
+					dataType: "json",
+					async: false
+				}).responseText;
+				var json = $.parseJSON(jsonData);
+				switch (json.status) {
+					case 400:
+						alert(json.message);
+						break;
+					default:
+						chartData = new google.visualization.DataTable(jsonData);
+						logScale = useLogScale(json);
+						break;
+				}
+			}
+			if (chartData != undefined) {
+				var options = {
+					width: width,
+					height: width / 2,
+					chartArea: {left: 50, top: 20, height: "80%"},
+					vAxis: {direction: points ? 1 : -1, viewWindow: {min: points ? undefined : 1}, logScale: points ? false : logScale}
+				};
+				var chart = new google.visualization.LineChart(document.getElementById("rankChart"));
+				chart.draw(chartData, options);
+			}
+		}
+		function useLogScale(json) {
+			var min = Number.MAX_VALUE;
+			var max = 0;
+			for (var i = 0, ilen = json.rows.length; i < ilen; i++) {
+				var row = json.rows[i];
+				for (var j = 0, jlen = row.c.length; j < jlen; j++) {
+					if (j > 0) {
+						var value = row.c[j].v;
+						min = Math.min(min, value);
+						max = Math.max(max, value);
+					}
+				}
+			}
+			return max - min >= 50;
+		}
+		function onTimeSpanChange() {
+			$("#dateRange").css("visibility", $("#timeSpan").val() == "CS" ? "visible" : "hidden");
+		}
+		function onRankTypeChange() {
+			$("#compensatePoints").prop("disabled", $("#rankType").val() == "rank");
+		}
+		function getDate(id) {
+			var $date = $("#" + id);
+			var date = $date.val();
+			if (date == "")
+				return date;
+			try {
+				$.datepicker.parseDate("dd-mm-yy", date);
+				return date;
+			}
+			catch (err) {
+				alert("Invalid " + id.substr(0, id.length - 4) + " date: " + date);
+				$date.focus();
+				return null;
+			}
+		}
+		$(function() {
+			function split(val) {
+				return val.split(/,\s*/);
+			}
+			function extractLast(term) {
+				return split(term).pop();
+			}
+			$("#players").bind("keydown", function(event) {
+				if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
+					event.preventDefault();
+				}
+			}).autocomplete({
+				source: function(request, response) {
+					$.getJSON("autocompletePlayer", {
+						term: extractLast(request.term)
+					}, response);
+				},
+				search: function() {
+					var term = extractLast(this.value);
+					if (term.length < 2) {
+						return false;
+					}
+				},
+				focus: function() {
+					return false;
+				},
+				select: function(event, ui) {
+					var terms = split(this.value);
+					terms.pop();
+					terms.push(ui.item.value);
+					terms.push("");
+					this.value = terms.join(", ");
+					return false;
+				}
+			});
+			$("#fromDate").datepicker({
+				defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
+				onClose: function(selectedDate) {
+					$("#toDate").datepicker("option", "minDate", selectedDate);
+				}
+			});
+			$("#toDate").datepicker({
+				defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
+				onClose: function(selectedDate) {
+					$("#fromDate").datepicker("option", "maxDate", selectedDate);
+				}
+			});
+			$("#rankChartSize").slider({
+				min: 500,
+				max: 2000,
+				value: 1000,
+				step: 100,
+				slide: function(event, ui) {
+					drawChart(false, ui.value);
+				}
+			});
+			onTimeSpanChange();
+			onRankTypeChange();
+		});
+		/*]]>*/
+	</script>
+</head>
+<body>
+	<h1><a href="/">Ultimate Tennis Statistics</a></h1>
+	<h3>Rankings Chart</h3>
+	<div class="ui-widget">
+		<label for="players">Players: </label>
+		<input id="players" size="80" width="100%"/>
+	</div>
+	<div class="ui-widget">
+		<label for="timeSpan">Time span: </label>
+		<select id="timeSpan" onchange="onTimeSpanChange()">
+			<option value="CR">Career</option>
+			<option value="1">Last 52 weeks</option>
+			<option value="2">Last two years</option>
+			<option value="3">Last three years</option>
+			<option value="5">Last five years</option>
+			<option value="10">Last ten years</option>
+			<option value="CS">Custom</option>
+		</select>
+		<div id="dateRange" class="ui-widget" style="display: inline">
+			<label for="fromDate">From:</label>
+			<input type="text" id="fromDate" size="10"/>
+			<label for="toDate">To:</label>
+			<input type="text" id="toDate" size="10"/>
+		</div>
+	</div>
+	<div class="ui-widget">
+		<label for="rankType">Rank type: </label>
+		<select id="rankType" onchange="onRankTypeChange()">
+			<option value="rank">Ordinal rank</option>
+			<option value="points">Ranking points</option>
+		</select>
+		<label for="compensatePoints" title="Compensate ranking points before 2009 to match new ATP ranking system">Compensate points: </label>
+		<input id="compensatePoints" type="checkbox"/>
+	</div>
+	<div class="ui-widget">
+		<label for="rankChartSize">Chart size: </label>
+		<div id="rankChartSize" style="width: 200px; margin-left: 8px; margin-right: 8px; display: inline-block"></div>
+		<button onclick="drawChart(true, $('#rankChartSize').slider('value'))">Draw Chart</button>
+	</div>
+	<div id="rankChart"></div>
+</body>
+</html>

@@ -18,7 +18,7 @@ public class AutocompleteController {
 		"ORDER BY goat_points DESC NULLS LAST LIMIT 20";
 
 	@RequestMapping("/autocompletePlayer")
-	public List<AutocompleteOption> autocompletePlayer(@RequestParam(value="term") String term) {
+	public List<AutocompleteOption> autocompletePlayer(@RequestParam(value = "term") String term) {
 		return jdbcTemplate.query(
 			PLAYER_AUTOCOMPLETE_QUERY,
 			(rs, rowNum) -> {
