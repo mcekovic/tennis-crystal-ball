@@ -3,10 +3,11 @@
 <head>
 	<title>Ultimate Tennis Statistics - GOAT List</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-	<link th:href="@{/jquery.bootgrid/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
-	<script th:src="@{/jquery.bootgrid/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -17,9 +18,7 @@
 					cache: false
 				},
 				url: "/goatTable",
-				navigation: 2,
-				rowCount: [20],
-				sorting: false
+				sortable: true
 			});
 		});
 		/*]]>*/
@@ -28,11 +27,11 @@
 <body>
 	<h1><a href="/">Ultimate Tennis Statistics</a></h1>
 	<h3>GOAT List</h3>
-	<table id="goatTable" class="table table-condensed table-hover table-striped" style="width: 1000px">
+	<table id="goatTable" class="table table-condensed table-hover table-striped" style="width: 100%">
 		<thead>
 			<tr>
-				<th data-column-id="goatRanking" data-type="numeric" data-width="80">Ranking</th>
-				<th data-column-id="name" data-width="220">Name</th>
+				<th data-column-id="goatRanking" data-type="numeric" data-sortable="false" data-width="80">Ranking</th>
+				<th data-column-id="name" data-sortable="false" data-width="220">Name</th>
 				<th data-column-id="goatPoints" data-type="numeric" data-order="desc" data-width="100" data-align="right" data-header-align="right">GOAT Points</th>
 				<th data-column-id="grandSlams" data-type="numeric" data-order="desc" data-width="80" data-align="right" data-header-align="right">Grand Slams</th>
 				<th data-column-id="tourFinals" data-type="numeric" data-order="desc" data-width="80" data-align="right" data-header-align="right">Tour Finals</th>

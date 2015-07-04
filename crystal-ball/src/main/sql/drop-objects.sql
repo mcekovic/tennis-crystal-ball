@@ -6,12 +6,12 @@ DROP MATERIALIZED VIEW player_best_rank CASCADE;
 DROP MATERIALIZED VIEW player_best_rank_points CASCADE;
 DROP MATERIALIZED VIEW tournament_event_player_result CASCADE;
 DROP MATERIALIZED VIEW player_goat_points CASCADE;
+DROP MATERIALIZED VIEW player_titles CASCADE;
 
 DROP TABLE tournament_rank_points CASCADE;
 DROP TABLE match_stats CASCADE;
 DROP TABLE set_score CASCADE;
 DROP TABLE match CASCADE;
-DROP TABLE tournament_event_player CASCADE;
 DROP TABLE player_ranking CASCADE;
 DROP TABLE player_mapping CASCADE;
 DROP TABLE player CASCADE;

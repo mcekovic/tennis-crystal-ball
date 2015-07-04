@@ -237,7 +237,7 @@ SELECT match_id, set, minutes, sets, w_sv_gms + l_sv_gms AS games, w_sv_pt + l_s
 FROM match_stats;
 
 
--- tournament_event_player
+-- tournament_event_player_result
 
 CREATE TYPE tournament_event_result AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F', 'W');
 
@@ -273,18 +273,44 @@ CREATE TABLE tournament_rank_points (
 -- player_goat_points
 
 CREATE MATERIALIZED VIEW player_goat_points AS
-SELECT player_id, sum(goat_points) goat_points FROM tournament_event_player_result
-LEFT JOIN tournament_event USING (tournament_event_id)
-LEFT JOIN tournament_rank_points USING (level, result)
-GROUP BY player_id;
+WITH goat_points AS (
+	SELECT player_id, sum(goat_points) goat_points FROM tournament_event_player_result
+	LEFT JOIN tournament_event USING (tournament_event_id)
+	LEFT JOIN tournament_rank_points USING (level, result)
+	GROUP BY player_id
+)
+SELECT player_id, goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_ranking FROM goat_points;
+
+
+-- player_titles
+
+CREATE MATERIALIZED VIEW player_titles AS
+WITH titles AS (
+	SELECT player_id, level, count(*) AS titles FROM tournament_event_player_result
+	LEFT JOIN tournament_event USING (tournament_event_id)
+	WHERE result = 'W'
+	GROUP BY player_id, level
+)
+SELECT player_id,
+	(SELECT sum(titles) FROM titles t WHERE t.player_id = p.player_id) AS titles,
+	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'G') AS grand_slams,
+	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'F') AS tour_finals,
+	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'M') AS masters,
+	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'O') AS olympics
+FROM player p;
 
 
 -- player_v
 
 CREATE OR REPLACE VIEW player_v AS
-SELECT p.*, first_name || ' ' || last_name AS name, age(dob) AS age, current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_points
+SELECT p.*, first_name || ' ' || last_name AS name, age(dob) AS age,
+	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date,
+	goat_ranking, coalesce(goat_points, 0) AS goat_points,
+	coalesce(titles, 0) AS titles, coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals,
+	coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics
 FROM player p
 LEFT JOIN player_current_rank USING (player_id)
 LEFT JOIN player_best_rank USING (player_id)
 LEFT JOIN player_best_rank_points USING (player_id)
-LEFT JOIN player_goat_points USING (player_id);
+LEFT JOIN player_goat_points USING (player_id)
+LEFT JOIN player_titles USING (player_id);

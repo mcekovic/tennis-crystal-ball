@@ -69,7 +69,8 @@ class MatchScore {
 					case 'ABD':
 					case 'ABN':
 					case 'DEF':
-					case 'RET': outcome = setScores.isEmpty() ? 'W/O' : 'RET'; break
+					case 'RET':
+					case '(RET)': outcome = setScores.isEmpty() ? 'W/O' : 'RET'; break
 					case 'NA': return null
 					case 'In':
 					case 'Progress':
