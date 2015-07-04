@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.*;
 import org.strangeforest.tcb.stats.model.*;
 
+import com.google.common.base.*;
+
 @RestController
 public class GOATController {
 
@@ -16,30 +18,37 @@ public class GOATController {
 
 	private static final int PLAYER_COUNT = 1000;
 
-	private static final String GOAT_LIST_QUERY =
-		"SELECT goat_ranking, name, goat_points, grand_slams, tour_finals, masters, olympics, titles FROM player_v " +
-		"WHERE goat_ranking <= " + PLAYER_COUNT + " " +
-		"ORDER BY %1$s, name LIMIT ? OFFSET ?";
+	private static final String GOAT_LIST_QUERY = //language=SQL
+		"SELECT goat_ranking, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, titles FROM player_v " +
+		"WHERE goat_ranking <= " + PLAYER_COUNT + "%1$s " +
+		"ORDER BY %2$s, name LIMIT ? OFFSET ?";
 
+	public static final String FILTER_SQL = " AND (name ILIKE '%' || ? || '%' OR country_id ILIKE '%' || ? || '%')";
 	public static final String DEFAULT_ORDER = "goat_points DESC";
 
 	@RequestMapping("/goatTable")
 	public BootgridTable<GOATListRow> goatTable(
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
+		@RequestParam(value = "searchPhrase") String searchPhrase,
 		WebRequest request
 	) {
-		if (rowCount == -1)
-			rowCount = PLAYER_COUNT;
+		int pageSize = getPageSize(rowCount);
+		int offset = (current - 1) * pageSize;
+		String filter = getFilter(searchPhrase);
 		String orderBy = getOrderBy(request);
+		Object[] params = filter.length() == 0
+			? new Object[] {pageSize, offset}
+			: new Object[] {searchPhrase, searchPhrase, pageSize, offset};
 		BootgridTable<GOATListRow> table = new BootgridTable<>(current, PLAYER_COUNT);
 		jdbcTemplate.query(
-			String.format(GOAT_LIST_QUERY, orderBy),
+			String.format(GOAT_LIST_QUERY, filter, orderBy),
 			(rs) -> {
 				int goatRanking = rs.getInt("goat_ranking");
+				String countryId = rs.getString("country_id");
 				String name = rs.getString("name");
 				int goatPoints = rs.getInt("goat_points");
-				GOATListRow row = new GOATListRow(goatRanking, name, goatPoints);
+				GOATListRow row = new GOATListRow(goatRanking, countryId, name, goatPoints);
 				row.setGrandSlams(rs.getInt("grand_slams"));
 				row.setTourFinals(rs.getInt("tour_finals"));
 				row.setMasters(rs.getInt("masters"));
@@ -47,9 +56,17 @@ public class GOATController {
 				row.setTitles(rs.getInt("titles"));
 				table.addRow(row);
 			},
-			rowCount, (current-1)*rowCount
+			params
 		);
 		return table;
+	}
+
+	private int getPageSize(int rowCount) {
+		return rowCount > 0 ? rowCount : PLAYER_COUNT;
+	}
+
+	private String getFilter(String searchPhrase) {
+		return Strings.isNullOrEmpty(searchPhrase) ? "" : FILTER_SQL;
 	}
 
 	private static String getOrderBy(WebRequest request) {

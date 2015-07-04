@@ -4,6 +4,7 @@ public class GOATListRow {
 
 	private int goatRanking;
 	private String name;
+	private String countryId;
 	private int goatPoints;
 	private int grandSlams;
 	private int tourFinals;
@@ -11,14 +12,19 @@ public class GOATListRow {
 	private int olympics;
 	private int titles;
 
-	public GOATListRow(int goatRanking, String name, int goatPoints) {
+	public GOATListRow(int goatRanking, String countryId, String name, int goatPoints) {
 		this.goatRanking = goatRanking;
+		this.countryId = countryId;
 		this.name = name;
 		this.goatPoints = goatPoints;
 	}
 
 	public int getGoatRanking() {
 		return goatRanking;
+	}
+
+	public String getCountryId() {
+		return countryId;
 	}
 
 	public String getName() {

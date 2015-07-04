@@ -18,7 +18,11 @@
 					cache: false
 				},
 				url: "/goatTable",
-				sortable: true
+				rowCount: [10, 20, 50, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				}
 			});
 		});
 		/*]]>*/
@@ -31,6 +35,7 @@
 		<thead>
 			<tr>
 				<th data-column-id="goatRanking" data-type="numeric" data-sortable="false" data-width="80">Ranking</th>
+				<th data-column-id="countryId" data-sortable="false" data-width="60">Country</th>
 				<th data-column-id="name" data-sortable="false" data-width="220">Name</th>
 				<th data-column-id="goatPoints" data-type="numeric" data-order="desc" data-width="100" data-align="right" data-header-align="right">GOAT Points</th>
 				<th data-column-id="grandSlams" data-type="numeric" data-order="desc" data-width="80" data-align="right" data-header-align="right">Grand Slams</th>
