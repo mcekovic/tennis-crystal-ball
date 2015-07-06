@@ -11,12 +11,18 @@ import org.strangeforest.tcb.stats.model.*;
 
 import com.google.common.base.*;
 
+import static java.lang.String.*;
+
 @RestController
 public class GOATController {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final int PLAYER_COUNT = 1000;
+
+	private static final String GOAT_COUNT_QUERY = //language=SQL
+		"SELECT count(*) AS player_count FROM player_v " +
+		"WHERE goat_ranking <= " + PLAYER_COUNT + "%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
 		"SELECT goat_ranking, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, titles FROM player_v " +
@@ -33,16 +39,23 @@ public class GOATController {
 		@RequestParam(value = "searchPhrase") String searchPhrase,
 		WebRequest request
 	) {
-		int pageSize = getPageSize(rowCount);
+		boolean hasFilter = !Strings.isNullOrEmpty(searchPhrase);
+		String filter = hasFilter ? FILTER_SQL : "";
+
+		int playerCount = hasFilter
+         ? Math.min(PLAYER_COUNT, jdbcTemplate.queryForObject(format(GOAT_COUNT_QUERY, filter), new Object[] {searchPhrase, searchPhrase}, Integer.class))
+         : PLAYER_COUNT;
+
+		int pageSize = rowCount > 0 ? rowCount : playerCount;
 		int offset = (current - 1) * pageSize;
-		String filter = getFilter(searchPhrase);
 		String orderBy = getOrderBy(request);
-		Object[] params = filter.length() == 0
-			? new Object[] {pageSize, offset}
-			: new Object[] {searchPhrase, searchPhrase, pageSize, offset};
-		BootgridTable<GOATListRow> table = new BootgridTable<>(current, PLAYER_COUNT);
+		Object[] params = hasFilter
+			? new Object[] {searchPhrase, searchPhrase, pageSize, offset}
+			: new Object[] {pageSize, offset};
+
+		BootgridTable<GOATListRow> table = new BootgridTable<>(current, playerCount);
 		jdbcTemplate.query(
-			String.format(GOAT_LIST_QUERY, filter, orderBy),
+			format(GOAT_LIST_QUERY, filter, orderBy),
 			(rs) -> {
 				int goatRanking = rs.getInt("goat_ranking");
 				String countryId = rs.getString("country_id");
@@ -59,14 +72,6 @@ public class GOATController {
 			params
 		);
 		return table;
-	}
-
-	private int getPageSize(int rowCount) {
-		return rowCount > 0 ? rowCount : PLAYER_COUNT;
-	}
-
-	private String getFilter(String searchPhrase) {
-		return Strings.isNullOrEmpty(searchPhrase) ? "" : FILTER_SQL;
 	}
 
 	private static String getOrderBy(WebRequest request) {
