@@ -10,3 +10,5 @@ def loader = new ATPTennisLoader()
 loader.loadPlayers(new PlayerLoader(sql))
 loader.loadRankings(new RankingLoader(sql))
 loader.loadMatches(new MatchLoader(sql))
+
+loader.refreshComputedData(sql)

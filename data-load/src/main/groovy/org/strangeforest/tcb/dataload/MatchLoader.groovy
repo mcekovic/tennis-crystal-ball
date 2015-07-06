@@ -28,15 +28,17 @@ class MatchLoader extends BaseCSVLoader {
 		def tourneyId = string line.tourney_id
 		if (tourneyId[4] != '-')
 			throw new IllegalArgumentException("Invalid tourney_id: $tourneyId")
-		params.ext_tournament_id = string tourneyId.substring(5)
-		params.season = smallint tourneyId.substring(0, 4)
+		def extTournamentId = string(tourneyId.substring(5))
+		params.ext_tournament_id = extTournamentId
+		def season = smallint(tourneyId.substring(0, 4))
+		params.season = season
 		params.tournament_date = date line.tourney_date
 
 		def name = string line.tourney_name
 		params.tournament_name = name
 		def level = string line.tourney_level
 		def drawSize = smallint line.draw_size
-		def mappedLevel = mapLevel(level, drawSize, name)
+		def mappedLevel = mapLevel(level, drawSize, name, season, extTournamentId)
 		params.tournament_level = mappedLevel
 		def surface = string line.surface
 		params.surface = mapSurface surface
@@ -106,12 +108,32 @@ class MatchLoader extends BaseCSVLoader {
 		return params
 	}
 
-	static def mapLevel(String level, short drawSize, String name) {
+	static def mapLevel(String level, short drawSize, String name, int season, String extTournamentId) {
 		switch (level) {
 			case 'G': return 'G'
-			case 'F': return 'F'
-			case 'M': return name.startsWith('Masters') && drawSize <= 16 && !name.contains("WCT") ? 'F' : 'M'
-			case 'A': return name.contains('Olympics') ? 'O' : 'A'
+			case 'F': return name.contains("WCT") ? 'A' : 'F'
+			case 'M': return name.startsWith('Masters') && drawSize <= 16 ? 'F' : 'M'
+			case 'A':
+				if (name.contains('Olympics'))
+					return 'O'
+				else if (
+					(name.startsWith('Boston') && (1970..1977).contains(season)) ||
+					(name.startsWith('Forest Hills') && (1982..1985).contains(season)) ||
+					(name.equals('Hamburg') && (1978..1989).contains(season)) ||
+					(name.equals('Indianapolis') && (1969..1978).contains(season)) ||
+					(name.equals('Johannesburg') && (1972..1975).contains(season)) ||
+					(name.startsWith('Las Vegas') && (1976..1981).contains(season)) ||
+					(name.startsWith('Monte Carlo') && (1968..1989).contains(season)) ||
+					(name.startsWith('Paris') && season == 1989) ||
+					(name.startsWith('Philadelphia') && (1968..1986).contains(season)) ||
+					(name.equals('Stockholm') && ((1972..1980).contains(season) || (1984..1989).contains(season))) ||
+					(name.equals('Tokyo Indoor') && (1978..1988).contains(season)) ||
+					(name.startsWith('Washington') && extTournamentId.equals('418') && (1971..1978).contains(season)) ||
+					(name.equals('Wembley') && (1976..1983).contains(season))
+				)
+					return 'M'
+				else
+					return 'A'
 			case 'D': return 'D'
 			case 'C': return 'C'
 			default: throw new IllegalArgumentException("Unknown tournament level: $level")

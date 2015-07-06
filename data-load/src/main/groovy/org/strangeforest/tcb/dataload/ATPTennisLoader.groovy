@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import groovy.sql.*
+
 class ATPTennisLoader {
 
 	private final String baseDir
@@ -60,5 +62,23 @@ class ATPTennisLoader {
 		if (!baseDir.endsWith(File.separator))
 			baseDir = baseDir + File.separator
 		return baseDir
+	}
+
+	def refreshComputedData(Sql sql) {
+		refreshMaterializedView(sql, 'player_current_rank')
+		refreshMaterializedView(sql, 'player_best_rank')
+		refreshMaterializedView(sql, 'player_best_rank_points')
+		refreshMaterializedView(sql, 'tournament_event_player_result')
+		refreshMaterializedView(sql, 'player_goat_points')
+		refreshMaterializedView(sql, 'player_titles')
+	}
+
+	private static def refreshMaterializedView(Sql sql, String viewName) {
+		println "Refreshing materialized view '$viewName'"
+		def t0 = System.currentTimeMillis()
+		sql.execute('REFRESH MATERIALIZED VIEW ' + viewName)
+		sql.commit()
+		def seconds = (System.currentTimeMillis() - t0) / 1000.0
+		println "Materialized view '$viewName' refreshed in $seconds s"
 	}
 }
