@@ -110,7 +110,7 @@ class MatchLoader extends BaseCSVLoader {
 		switch (level) {
 			case 'G': return 'G'
 			case 'F': return 'F'
-			case 'M': return name.startsWith('Masters') && drawSize <= 16 ? 'F' : 'M'
+			case 'M': return name.startsWith('Masters') && drawSize <= 16 && !name.contains("WCT") ? 'F' : 'M'
 			case 'A': return name.contains('Olympics') ? 'O' : 'A'
 			case 'D': return 'D'
 			case 'C': return 'C'
