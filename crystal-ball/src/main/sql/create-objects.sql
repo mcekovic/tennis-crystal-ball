@@ -301,6 +301,7 @@ WITH titles AS (
 )
 SELECT player_id,
 	(SELECT sum(titles) FROM titles t WHERE t.player_id = p.player_id) AS titles,
+	(SELECT sum(titles) FROM titles t WHERE t.player_id = p.player_id AND t.level IN ('G', 'F', 'M', 'O')) AS big_titles,
 	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'G') AS grand_slams,
 	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'F') AS tour_finals,
 	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'M') AS masters,
@@ -316,8 +317,8 @@ CREATE OR REPLACE VIEW player_v AS
 SELECT p.*, first_name || ' ' || last_name AS name, age(dob) AS age,
 	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date,
 	goat_ranking, coalesce(goat_points, 0) AS goat_points,
-	coalesce(titles, 0) AS titles, coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals,
-	coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics
+	coalesce(titles, 0) AS titles, coalesce(big_titles, 0) AS big_titles,
+	coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals, coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics
 FROM player p
 LEFT JOIN player_current_rank USING (player_id)
 LEFT JOIN player_best_rank USING (player_id)

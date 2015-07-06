@@ -25,7 +25,7 @@ public class GOATController {
 		"WHERE goat_ranking <= " + PLAYER_COUNT + "%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
-		"SELECT goat_ranking, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, titles FROM player_v " +
+		"SELECT goat_ranking, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles FROM player_v " +
 		"WHERE goat_ranking <= " + PLAYER_COUNT + "%1$s " +
 		"ORDER BY %2$s, name LIMIT ? OFFSET ?";
 
@@ -66,6 +66,7 @@ public class GOATController {
 				row.setTourFinals(rs.getInt("tour_finals"));
 				row.setMasters(rs.getInt("masters"));
 				row.setOlympics(rs.getInt("olympics"));
+				row.setBigTitles(rs.getInt("big_titles"));
 				row.setTitles(rs.getInt("titles"));
 				table.addRow(row);
 			},
@@ -106,6 +107,7 @@ public class GOATController {
 		ORDER_MAP.put("tourFinals", "tour_finals");
 		ORDER_MAP.put("masters", "masters");
 		ORDER_MAP.put("olympics", "olympics");
+		ORDER_MAP.put("bigTitles", "big_titles");
 		ORDER_MAP.put("titles", "titles");
 	}
 }

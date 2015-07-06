@@ -10,6 +10,7 @@ public class GOATListRow {
 	private int tourFinals;
 	private int masters;
 	private int olympics;
+	private int bigTitles;
 	private int titles;
 
 	public GOATListRow(int goatRanking, String countryId, String name, int goatPoints) {
@@ -77,6 +78,14 @@ public class GOATListRow {
 
 	public void setOlympics(int olympics) {
 		this.olympics = olympics;
+	}
+
+	public int getBigTitles() {
+		return bigTitles;
+	}
+
+	public void setBigTitles(int bigTitles) {
+		this.bigTitles = bigTitles;
 	}
 
 	public int getTitles() {
