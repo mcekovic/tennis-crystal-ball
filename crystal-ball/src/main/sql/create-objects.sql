@@ -248,18 +248,35 @@ FROM match_stats;
 CREATE TYPE tournament_event_result AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F', 'W');
 
 CREATE MATERIALIZED VIEW tournament_event_player_result AS
-WITH result_intermediate AS (
+WITH match_result AS (
 	SELECT tournament_event_id, winner_id AS player_id,
 		(CASE WHEN round = 'F' THEN 'W' ELSE round::TEXT END)::tournament_event_result AS result
 	FROM match
 	UNION
-	SELECT tournament_event_id, loser_id AS player_id,
+	SELECT tournament_event_id, loser_id,
 		(CASE WHEN round = 'BR' THEN 'SF' ELSE round::TEXT END)::tournament_event_result AS result
 	FROM match
+), best_round AS (
+	SELECT tournament_event_id, player_id, max(result) AS result
+	FROM match_result
+	GROUP BY tournament_event_id, player_id
 )
-SELECT tournament_event_id, player_id, max(result) AS result
-FROM result_intermediate
-GROUP BY tournament_event_id, player_id;
+SELECT tournament_event_id, player_id, result, rank_points, rank_points_2008, goat_points FROM (
+	SELECT r.tournament_event_id, r.player_id, r.result, p.rank_points, p.rank_points_2008, p.goat_points
+	FROM best_round r
+	LEFT JOIN tournament_event e USING (tournament_event_id)
+	LEFT JOIN tournament_rank_points p USING (level, result)
+	WHERE level IN ('G', 'M', 'A', 'O')
+	UNION
+	SELECT r.tournament_event_id, r.player_id, r.result, sum(p.rank_points), sum(p.rank_points_2008), sum(p.goat_points)
+	FROM best_round r
+	LEFT OUTER JOIN match m ON m.tournament_event_id = r.tournament_event_id AND m.winner_id = r.player_id
+	LEFT JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
+	LEFT JOIN tournament_rank_points p ON p.level = e.level AND p.result = m.round::TEXT::tournament_event_result
+	WHERE e.level = 'F'
+	GROUP BY r.tournament_event_id, r.player_id, r.result
+) AS tournament_event_player_result;
+
 
 CREATE INDEX ON tournament_event_player_result (player_id);
 
@@ -281,8 +298,6 @@ CREATE TABLE tournament_rank_points (
 CREATE MATERIALIZED VIEW player_goat_points AS
 WITH goat_points AS (
 	SELECT player_id, sum(goat_points) goat_points FROM tournament_event_player_result
-	LEFT JOIN tournament_event USING (tournament_event_id)
-	LEFT JOIN tournament_rank_points USING (level, result)
 	GROUP BY player_id
 )
 SELECT player_id, goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_ranking FROM goat_points;
