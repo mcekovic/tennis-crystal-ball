@@ -243,6 +243,18 @@ SELECT match_id, set, minutes, sets, w_sv_gms + l_sv_gms AS games, w_sv_pt + l_s
 FROM match_stats;
 
 
+-- tournament_rank_points
+
+CREATE TABLE tournament_rank_points (
+	level tournament_level NOT NULL,
+	result tournament_event_result NOT NULL,
+	rank_points INTEGER,
+	rank_points_2008 INTEGER,
+	goat_points INTEGER,
+	PRIMARY KEY (level, result)
+);
+
+
 -- tournament_event_player_result
 
 CREATE TYPE tournament_event_result AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F', 'W');
@@ -277,20 +289,7 @@ SELECT tournament_event_id, player_id, result, rank_points, rank_points_2008, go
 	GROUP BY r.tournament_event_id, r.player_id, r.result
 ) AS tournament_event_player_result;
 
-
 CREATE INDEX ON tournament_event_player_result (player_id);
-
-
--- tournament_rank_points
-
-CREATE TABLE tournament_rank_points (
-	level tournament_level NOT NULL,
-	result tournament_event_result NOT NULL,
-	rank_points INTEGER,
-	rank_points_2008 INTEGER,
-	goat_points INTEGER,
-	PRIMARY KEY (level, result)
-);
 
 
 -- player_goat_points
