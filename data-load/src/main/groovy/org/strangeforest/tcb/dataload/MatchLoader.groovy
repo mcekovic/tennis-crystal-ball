@@ -28,15 +28,17 @@ class MatchLoader extends BaseCSVLoader {
 		def tourneyId = string line.tourney_id
 		if (tourneyId[4] != '-')
 			throw new IllegalArgumentException("Invalid tourney_id: $tourneyId")
-		def extTournamentId = string(tourneyId.substring(5))
+		def extTourneyId = string(tourneyId.substring(5))
+		def level = string line.tourney_level
+		def name = string line.tourney_name
+		def dcInfo = level == 'D' ? extractDCTournamentInfo(name) : null;
+		def extTournamentId = level != 'D' ? extTourneyId : dcInfo.extId
 		params.ext_tournament_id = extTournamentId
 		def season = smallint(tourneyId.substring(0, 4))
 		params.season = season
 		params.tournament_date = date line.tourney_date
 
-		def name = string line.tourney_name
-		params.tournament_name = name
-		def level = string line.tourney_level
+		params.tournament_name = level != 'D' ? name : dcInfo.name
 		def drawSize = smallint line.draw_size
 		def mappedLevel = mapLevel(level, drawSize, name, season, extTournamentId)
 		params.tournament_level = mappedLevel
@@ -46,9 +48,10 @@ class MatchLoader extends BaseCSVLoader {
 		params.draw_size = drawSize
 		params.rank_points = mapRankPoints mappedLevel
 
-		params.match_num = smallint line.match_num
+		def matchNum = line.match_num
+		params.match_num = level != 'D' ? smallint(matchNum) : smallint(dcMatchNum(extTourneyId, matchNum))
 		def round = string line.round
-		params.round = mapRound round
+		params.round = level != 'D' ? mapRound(round) : dcInfo.round
 		params.best_of = smallint line.best_of
 
 		params.ext_winner_id = integer line.winner_id
@@ -177,5 +180,40 @@ class MatchLoader extends BaseCSVLoader {
 			case 'O': return 750
 			default: return null
 		}
+	}
+
+
+	// Davis Cup
+
+	static def DavisCupTournamentInfo extractDCTournamentInfo(String name) {
+		String[] parts = name.split(' ')
+		if (parts.length < 4)
+			throw new IllegalArgumentException("Invalid Davis Cup tournament name: $name")
+		def group = parts[2]
+		def round = parts[3]
+		if (round.endsWith(':'))
+			round = round.substring(0, round.length() - 1)
+		new DavisCupTournamentInfo(extId: 'D' + group, name: 'Davis Cup ' + group, round: mapDCRound(round))
+	}
+
+	static def mapDCRound(String round) {
+		switch (round) {
+			case 'F': return 'F'
+			case 'SF': return 'SF'
+			case 'QF': return 'QF'
+			default: return 'RR'
+		}
+	}
+
+	def dcMatchNum(String extTourneyId, String matchNum) {
+		if (extTourneyId.startsWith('D'))
+			extTourneyId = extTourneyId.substring(1)
+		extTourneyId + matchNum;
+	}
+
+	static class DavisCupTournamentInfo {
+		String extId
+		String name
+		String round
 	}
 }

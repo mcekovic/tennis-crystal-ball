@@ -245,6 +245,8 @@ FROM match_stats;
 
 -- tournament_rank_points
 
+CREATE TYPE tournament_event_result AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F', 'W');
+
 CREATE TABLE tournament_rank_points (
 	level tournament_level NOT NULL,
 	result tournament_event_result NOT NULL,
@@ -256,8 +258,6 @@ CREATE TABLE tournament_rank_points (
 
 
 -- tournament_event_player_result
-
-CREATE TYPE tournament_event_result AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F', 'W');
 
 CREATE MATERIALIZED VIEW tournament_event_player_result AS
 WITH match_result AS (
