@@ -261,9 +261,10 @@ CREATE TABLE tournament_rank_points (
 
 CREATE MATERIALIZED VIEW tournament_event_player_result AS
 WITH match_result AS (
-	SELECT tournament_event_id, winner_id AS player_id,
-		(CASE WHEN round = 'F' THEN 'W' ELSE round::TEXT END)::tournament_event_result AS result
-	FROM match
+	SELECT tournament_event_id, m.winner_id AS player_id,
+		(CASE WHEN m.round = 'F' AND e.level <> 'D' THEN 'W' ELSE m.round::TEXT END)::tournament_event_result AS result
+	FROM match m
+	LEFT JOIN tournament_event e USING (tournament_event_id)
 	UNION
 	SELECT tournament_event_id, loser_id,
 		(CASE WHEN round = 'BR' THEN 'SF' ELSE round::TEXT END)::tournament_event_result AS result
@@ -285,7 +286,7 @@ SELECT tournament_event_id, player_id, result, rank_points, rank_points_2008, go
 	LEFT OUTER JOIN match m ON m.tournament_event_id = r.tournament_event_id AND m.winner_id = r.player_id
 	LEFT JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
 	LEFT JOIN tournament_rank_points p ON p.level = e.level AND p.result = m.round::TEXT::tournament_event_result
-	WHERE e.level = 'F'
+	WHERE e.level = 'F' OR (e.level = 'D' AND e.name LIKE '%WG')
 	GROUP BY r.tournament_event_id, r.player_id, r.result
 ) AS tournament_event_player_result;
 

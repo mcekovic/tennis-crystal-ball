@@ -38,7 +38,13 @@ VALUES
 ('A', 'SF',   180,  110,   18),
 ('A', 'QF',    90,   60,    9),
 ('A', 'R16',   45,   25,    4),
-('A', 'R32', NULL, NULL, NULL);
+('A', 'R32', NULL, NULL, NULL),
+-- Davis Cup
+('D', 'W',     75, NULL,    8),
+('D', 'F',     75, NULL,    8),
+('D', 'SF',    70, NULL,    7),
+('D', 'QF',    65, NULL,    6),
+('D', 'R16',   40, NULL,    4);
 
 COMMIT;
 

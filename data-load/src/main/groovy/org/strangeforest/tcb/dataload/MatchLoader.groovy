@@ -193,14 +193,15 @@ class MatchLoader extends BaseCSVLoader {
 		def round = parts[3]
 		if (round.endsWith(':'))
 			round = round.substring(0, round.length() - 1)
-		new DavisCupTournamentInfo(extId: 'D' + group, name: 'Davis Cup ' + group, round: mapDCRound(round))
+		new DavisCupTournamentInfo(extId: 'D' + group, name: 'Davis Cup ' + group, round: mapDCRound(round, group))
 	}
 
-	static def mapDCRound(String round) {
+	static def mapDCRound(String round, String group) {
 		switch (round) {
 			case 'F': return 'F'
 			case 'SF': return 'SF'
 			case 'QF': return 'QF'
+			case 'R1': return group == 'WG' ? 'R16' : 'RR'
 			default: return 'RR'
 		}
 	}
