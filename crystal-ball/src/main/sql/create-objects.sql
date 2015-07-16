@@ -130,7 +130,7 @@ CREATE INDEX ON player_best_rank_points (player_id);
 -- match
 
 CREATE TYPE match_round AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F');
-CREATE TYPE tournament_entry AS ENUM ('Q', 'WC', 'LL');
+CREATE TYPE tournament_entry AS ENUM ('Q', 'WC', 'LL', 'PR');
 CREATE TYPE match_outcome AS ENUM ('RET', 'W/O');
 
 CREATE TABLE match (

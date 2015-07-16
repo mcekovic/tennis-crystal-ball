@@ -61,7 +61,8 @@ class MatchScore {
 			}
 			else {
 				switch (set) {
-					case 'W/O': outcome = 'W/O'; break
+					case 'W/O':
+					case '(W/O)':	outcome = 'W/O'; break
 					case 'Default':
 					case 'abandoned':
 					case 'unfinished':
