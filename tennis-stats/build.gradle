@@ -27,6 +27,12 @@ repositories {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+dependencyManagement {
+	imports {
+		mavenBom 'org.springframework:spring-framework-bom:4.2.0.RELEASE'
+	}
+}
+
 dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
