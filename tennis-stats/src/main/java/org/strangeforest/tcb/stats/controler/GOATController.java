@@ -22,11 +22,11 @@ public class GOATController {
 
 	private static final String GOAT_COUNT_QUERY = //language=SQL
 		"SELECT count(*) AS player_count FROM player_v " +
-		"WHERE goat_ranking <= " + PLAYER_COUNT + "%1$s";
+		"WHERE goat_rank <= " + PLAYER_COUNT + "%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
-		"SELECT goat_ranking, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles FROM player_v " +
-		"WHERE goat_ranking <= " + PLAYER_COUNT + "%1$s " +
+		"SELECT goat_rank, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles FROM player_v " +
+		"WHERE goat_rank <= " + PLAYER_COUNT + "%1$s " +
 		"ORDER BY %2$s, name LIMIT ? OFFSET ?";
 
 	public static final String FILTER_SQL = " AND (name ILIKE '%' || ? || '%' OR country_id ILIKE '%' || ? || '%')";
@@ -57,11 +57,11 @@ public class GOATController {
 		jdbcTemplate.query(
 			format(GOAT_LIST_QUERY, filter, orderBy),
 			(rs) -> {
-				int goatRanking = rs.getInt("goat_ranking");
+				int goatRank = rs.getInt("goat_rank");
 				String countryId = rs.getString("country_id");
 				String name = rs.getString("name");
 				int goatPoints = rs.getInt("goat_points");
-				GOATListRow row = new GOATListRow(goatRanking, countryId, name, goatPoints);
+				GOATListRow row = new GOATListRow(goatRank, countryId, name, goatPoints);
 				row.setGrandSlams(rs.getInt("grand_slams"));
 				row.setTourFinals(rs.getInt("tour_finals"));
 				row.setMasters(rs.getInt("masters"));

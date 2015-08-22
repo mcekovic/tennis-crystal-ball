@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 public class GOATListRow {
 
-	private int goatRanking;
+	private int goatRank;
 	private String name;
 	private String countryId;
 	private int goatPoints;
@@ -13,15 +13,15 @@ public class GOATListRow {
 	private int bigTitles;
 	private int titles;
 
-	public GOATListRow(int goatRanking, String countryId, String name, int goatPoints) {
-		this.goatRanking = goatRanking;
+	public GOATListRow(int goatRank, String countryId, String name, int goatPoints) {
+		this.goatRank = goatRank;
 		this.countryId = countryId;
 		this.name = name;
 		this.goatPoints = goatPoints;
 	}
 
-	public int getGoatRanking() {
-		return goatRanking;
+	public int getGoatRank() {
+		return goatRank;
 	}
 
 	public String getCountryId() {
@@ -36,8 +36,8 @@ public class GOATListRow {
 		return goatPoints;
 	}
 
-	public void setGoatRanking(int goatRanking) {
-		this.goatRanking = goatRanking;
+	public void setGoatRank(int goatRank) {
+		this.goatRank = goatRank;
 	}
 
 	public void setName(String name) {

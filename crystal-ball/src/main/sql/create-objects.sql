@@ -300,7 +300,7 @@ WITH goat_points AS (
 	SELECT player_id, sum(goat_points) goat_points FROM tournament_event_player_result
 	GROUP BY player_id
 )
-SELECT player_id, goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_ranking FROM goat_points;
+SELECT player_id, goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank FROM goat_points;
 
 CREATE INDEX ON player_goat_points (player_id);
 
@@ -331,7 +331,7 @@ CREATE INDEX ON player_titles (player_id);
 CREATE OR REPLACE VIEW player_v AS
 SELECT p.*, first_name || ' ' || last_name AS name, age(dob) AS age,
 	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date,
-	goat_ranking, coalesce(goat_points, 0) AS goat_points,
+	goat_rank, coalesce(goat_points, 0) AS goat_points,
 	coalesce(titles, 0) AS titles, coalesce(big_titles, 0) AS big_titles,
 	coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals, coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics
 FROM player p

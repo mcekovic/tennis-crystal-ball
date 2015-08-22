@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"*/-->
+<head>
+	<title th:text="|Ultimate Tennis Statistics | + '-' + | ${player.name} Record|">Ultimate Tennis Statistics - Player Record</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<style>
+		.ui-autocomplete {
+			max-height: 600px; overflow-y: auto; overflow-x: hidden;
+		}
+		.ui-autocomplete-loading {
+			background: white url("http://jquery-ui.googlecode.com/svn/tags/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif") right center no-repeat;
+		}
+	</style>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$(function() {
+			$("#player").autocomplete({
+				source: "autocompletePlayer",
+				minLength: 2,
+				select: function(event, ui) {
+					if (ui.item)
+						window.location = "playerRecord?name=" + ui.item.value;
+				}
+			});
+		});
+		/*]]>*/
+	</script>
+</head>
+<body>
+	<h1><a href="/">Ultimate Tennis Statistics</a></h1>
+	<div class="ui-widget">
+		<label for="player">Player: </label>
+		<input id="player" size="40"/>
+	</div>
+	<h3 th:text="|${player.name} Record|">Player Record</h3>
+	<table id="playerTable" class="table table-condensed table-hover table-striped">
+		<thead>
+			<!--/* General */-->
+			<tr>
+				<th width="20%">Name</th>
+				<td th:text="${player.name}">Player</td>
+			</tr>
+			<tr>
+				<th>Date of Birth</th>
+				<td th:text="${#dates.format(player.dobAsDate, 'dd-MM-yyyy')}">1-1-1990</td>
+			</tr>
+			<tr>
+				<th>Age</th>
+				<td th:text="${player.age}">25</td>
+			</tr>
+			<tr>
+				<th>Country</th>
+				<td th:text="${player.countryId}">USA</td>
+			</tr>
+			<tr th:if="${player.birthplace != null}">
+				<th>Birthplace</th>
+				<td th:text="${player.birthplace}">New York</td>
+			</tr>
+			<tr th:if="${player.residence != null}">
+				<th>Residence</th>
+				<td th:text="${player.residence}">New York</td>
+			</tr>
+			<tr th:if="${player.height > 0}">
+				<th>Height</th>
+				<td th:text="|${player.height} cm|">180 cm</td>
+			</tr>
+			<tr th:if="${player.weight > 0}">
+				<th>Weight</th>
+				<td th:text="|${player.weight} kg|">80 kg</td>
+			</tr>
+
+			<!--/* Tennis */-->
+			<tr th:if="${player.hand != null}">
+				<th>Hand</th>
+				<td th:text="${player.hand}">Right</td>
+			</tr>
+			<tr th:if="${player.backhand != null}">
+				<th>Backhand</th>
+				<td th:text="${player.backhand}">Double-handed</td>
+			</tr>
+			<tr th:if="${player.turnedPro > 0}">
+				<th>Turned Pro</th>
+				<td th:text="${player.turnedPro}">2005</td>
+			</tr>
+			<tr th:if="${player.coach != null}">
+				<th>Coach</th>
+				<td th:text="${player.coach}">Brad Gilbert</td>
+			</tr>
+
+			<!--/* Titles */-->
+			<tr th:if="${player.titles > 0}">
+				<th>Titles</th>
+				<td th:text="${player.titles}">10</td>
+			</tr>
+			<tr th:if="${player.grandSlams > 0}">
+				<th>Grand Slams</th>
+				<td th:text="${player.grandSlams}">1</td>
+			</tr>
+			<tr th:if="${player.tourFinals > 0}">
+				<th>Tour Finals</th>
+				<td th:text="${player.tourFinals}">1</td>
+			</tr>
+			<tr th:if="${player.masters > 0}">
+				<th>Masters</th>
+				<td th:text="${player.masters}">5</td>
+			</tr>
+			<tr th:if="${player.olympics > 0}">
+				<th>Olympics</th>
+				<td th:text="${player.olympics}">1</td>
+			</tr>
+
+			<!--/* Ranking */-->
+			<tr th:if="${player.currentRank > 0}">
+				<th>Current Rank</th>
+				<td th:text="${player.currentRank} + ' (' + ${player.currentRankPoints} + ')'">10 (3000)</td>
+			</tr>
+			<tr th:if="${player.bestRank > 0}">
+				<th>Best Rank</th>
+				<td th:text="${player.bestRank} + ' (' + ${#dates.format(player.bestRankDateAsDate, 'dd-MM-yyyy')} + ')'">5 (1.1.2010)</td>
+			</tr>
+			<tr th:if="${player.bestRankPoints > 0}">
+				<th>Best Rank Points</th>
+				<td th:text="${player.bestRankPoints} + ' (' + ${#dates.format(player.bestRankPointsDateAsDate, 'dd-MM-yyyy')} + ')'">5000 (1.1.2011)</td>
+			</tr>
+			<tr th:if="${player.goatRank > 0}">
+				<th>GOAT Rank</th>
+				<td th:text="${player.goatRank} + ' (' + ${player.goatRankPoints} + ')'">50 (2500)</td>
+			</tr>
+
+			<!--/* Social */-->
+			<tr th:if="${player.webSite != null}">
+				<th>Web Site</th>
+				<td th:text="${player.webSite}">www.johnsmith.com</td>
+			</tr>
+			<tr th:if="${player.twitter != null}">
+				<th>Twitter</th>
+				<td th:text="${player.twitter}">twitter</td>
+			</tr>
+			<tr th:if="${player.facebook != null}">
+				<th>Facebook</th>
+				<td th:text="${player.facebook}">facebook</td>
+			</tr>
+		</thead>
+	</table>
+</body>
+</html>
