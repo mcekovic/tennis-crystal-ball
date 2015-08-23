@@ -60,7 +60,7 @@ class MatchLoader extends BaseCSVLoader {
 		params.winner_rank = integer line.winner_rank
 		params.winner_rank_points = integer line.winner_rank_points
 		params.winner_age = real line.winner_age
-		params.winner_country_id = string line.winner_ioc
+		params.winner_country_id = country line.winner_ioc
 		params.winner_name = string line.winner_name
 		params.winner_height = smallint line.winner_ht
 		params.winner_hand = hand line.winner_hand
@@ -71,7 +71,7 @@ class MatchLoader extends BaseCSVLoader {
 		params.loser_rank = integer line.loser_rank
 		params.loser_rank_points = integer line.loser_rank_points
 		params.loser_age = real line.loser_age
-		params.loser_country_id = string line.loser_ioc
+		params.loser_country_id = country line.loser_ioc
 		params.loser_name = string line.loser_name
 		params.loser_height = smallint line.loser_ht
 		params.loser_hand = hand line.loser_hand

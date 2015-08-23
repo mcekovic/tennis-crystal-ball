@@ -1,9 +1,10 @@
 package org.strangeforest.tcb.dataload
 
+import org.strangeforest.tcb.util.CountryUtil
+
 import java.sql.*
 import java.util.Date
 
-import com.neovisionaries.i18n.*
 import com.xlson.groovycsv.*
 import groovy.sql.*
 
@@ -87,18 +88,8 @@ abstract class BaseCSVLoader {
 		sql.connection.createArrayOf('smallint', a)
 	}
 
-	private static countryOverrides = [CHI: 'CHL', DEN: 'DNK', RSA: 'ZAF']
 	static String country(c) {
-		if (c) {
-			def co = countryOverrides[c]
-			def code = CountryCode.getByCode(co ?: c)
-			if (code)
-				code.alpha3
-			else
-				throw new IllegalArgumentException("Unknown country code: $c")
-		}
-		else
-			null
+		c && CountryUtil.code(c) ? c : CountryUtil.UNKNOWN
 	}
 
 	static String hand(c) {

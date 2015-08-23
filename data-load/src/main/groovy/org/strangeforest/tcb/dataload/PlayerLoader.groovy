@@ -24,7 +24,7 @@ class PlayerLoader extends BaseCSVLoader {
 		params.first_name = string line.first_name
 		params.last_name = string line.last_name
 		params.dob = date line.dob
-		params.country_id = string line.country, '???'
+		params.country_id = country line.country
 		params.hand = hand line.hand
 		return params
 	}

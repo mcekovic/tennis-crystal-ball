@@ -8,6 +8,7 @@ repositories {
 }
 
 dependencies {
-	runtime("org.postgresql:postgresql:9.4-1201-jdbc41")
-	testCompile group: 'junit', name: 'junit', version: '4.12'
+	compile 'com.neovisionaries:nv-i18n:1.17'
+	runtime 'org.postgresql:postgresql:9.4-1201-jdbc41'
+	testCompile 'junit:junit:4.12'
 }

@@ -3,6 +3,10 @@ package org.strangeforest.tcb.stats.model;
 import java.time.*;
 import java.util.*;
 
+import org.strangeforest.tcb.util.*;
+
+import com.neovisionaries.i18n.*;
+
 import static org.strangeforest.tcb.stats.util.DateUtil.*;
 
 public class Player {
@@ -80,6 +84,16 @@ public class Player {
 		return countryId;
 	}
 
+	public String getCountryCode() {
+		CountryCode code = CountryUtil.code(countryId);
+		return code != null ? code.getAlpha2().toLowerCase() : null;
+	}
+
+	public String getCountryName() {
+		CountryCode code = CountryUtil.code(countryId);
+		return code != null ? code.getName() : "Unknown";
+	}
+
 	public void setCountryId(String countryId) {
 		this.countryId = countryId;
 	}
@@ -123,12 +137,28 @@ public class Player {
 		return hand;
 	}
 
+	public String getHandName() {
+		switch (hand) {
+			case "L": return "Left-handed";
+			case "R": return "Right-handed";
+			default: return null;
+		}
+	}
+
 	public void setHand(String hand) {
 		this.hand = hand;
 	}
 
 	public String getBackhand() {
 		return backhand;
+	}
+
+	public String getBackhandName() {
+		switch (backhand) {
+			case "S": return "One-handed";
+			case "D": return "Two-handed";
+			default: return null;
+		}
 	}
 
 	public void setBackhand(String backhand) {

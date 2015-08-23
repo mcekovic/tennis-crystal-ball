@@ -6,8 +6,8 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath("io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE")
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+		classpath 'io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE'
 	}
 }
 
@@ -34,15 +34,16 @@ dependencyManagement {
 }
 
 dependencies {
-	compile("org.springframework.boot:spring-boot-starter-web")
-	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
-	compile("org.springframework.boot:spring-boot-starter-jdbc")
-	compile("com.google.guava:guava:18.0")
-	compile("org.webjars:bootstrap:3.3.5")
-	compile("org.webjars:jquery:2.1.4")
-	compile("org.webjars:jquery-ui:1.11.4")
-	compile("org.webjars:jquery-ui-themes:1.11.4")
-	compile("org.webjars.bower:jquery.bootgrid:1.2.0")
-	runtime("org.postgresql:postgresql:9.4-1201-jdbc41")
-	testCompile("org.springframework.boot:spring-boot-starter-test")
+	compile project(':crystal-ball')
+	compile 'org.springframework.boot:spring-boot-starter-web'
+	compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	compile 'org.springframework.boot:spring-boot-starter-jdbc'
+	compile 'com.google.guava:guava:18.0'
+	compile 'org.webjars:bootstrap:3.3.5'
+	compile 'org.webjars:jquery:2.1.4'
+	compile 'org.webjars:jquery-ui:1.11.4'
+	compile 'org.webjars:jquery-ui-themes:1.11.4'
+	compile 'org.webjars.bower:jquery.bootgrid:1.2.0'
+	runtime 'org.postgresql:postgresql:9.4-1201-jdbc41'
+	testCompile 'org.springframework.boot:spring-boot-starter-test'
 }

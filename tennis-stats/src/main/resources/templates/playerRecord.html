@@ -6,6 +6,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/flag-icon.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
 	<style>
@@ -14,6 +15,10 @@
 		}
 		.ui-autocomplete-loading {
 			background: white url("http://jquery-ui.googlecode.com/svn/tags/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif") right center no-repeat;
+		}
+		.no-wrap {
+			white-space: nowrap;
+			overflow: hidden;
 		}
 	</style>
 	<script type="text/javascript">
@@ -26,7 +31,7 @@
 					if (ui.item)
 						window.location = "playerRecord?name=" + ui.item.value;
 				}
-			});
+			}).focus();
 		});
 		/*]]>*/
 	</script>
@@ -42,107 +47,107 @@
 		<thead>
 			<!--/* General */-->
 			<tr>
-				<th width="20%">Name</th>
-				<td th:text="${player.name}">Player</td>
+				<th class="no-wrap">Name</th>
+				<td th:text="${player.name}" width="100%">Player</td>
 			</tr>
 			<tr>
-				<th>Date of Birth</th>
+				<th class="no-wrap">Date of Birth</th>
 				<td th:text="${#dates.format(player.dobAsDate, 'dd-MM-yyyy')}">1-1-1990</td>
 			</tr>
 			<tr>
-				<th>Age</th>
+				<th class="no-wrap">Age</th>
 				<td th:text="${player.age}">25</td>
 			</tr>
 			<tr>
-				<th>Country</th>
-				<td th:text="${player.countryId}">USA</td>
+				<th class="no-wrap">Country</th>
+				<td><span th:class="'flag-icon flag-icon-' + ${player.countryCode}" class="flag-icon flag-icon-us" th:title="${player.countryId}" title="USA"></span> <span th:text="${player.countryName}">United States</span></td>
 			</tr>
 			<tr th:if="${player.birthplace != null}">
-				<th>Birthplace</th>
+				<th class="no-wrap">Birthplace</th>
 				<td th:text="${player.birthplace}">New York</td>
 			</tr>
 			<tr th:if="${player.residence != null}">
-				<th>Residence</th>
+				<th class="no-wrap">Residence</th>
 				<td th:text="${player.residence}">New York</td>
 			</tr>
 			<tr th:if="${player.height > 0}">
-				<th>Height</th>
+				<th class="no-wrap">Height</th>
 				<td th:text="|${player.height} cm|">180 cm</td>
 			</tr>
 			<tr th:if="${player.weight > 0}">
-				<th>Weight</th>
+				<th class="no-wrap">Weight</th>
 				<td th:text="|${player.weight} kg|">80 kg</td>
 			</tr>
 
 			<!--/* Tennis */-->
 			<tr th:if="${player.hand != null}">
-				<th>Hand</th>
-				<td th:text="${player.hand}">Right</td>
+				<th class="no-wrap">Hand</th>
+				<td th:text="${player.handName}">Right-handed</td>
 			</tr>
 			<tr th:if="${player.backhand != null}">
-				<th>Backhand</th>
-				<td th:text="${player.backhand}">Double-handed</td>
+				<th class="no-wrap">Backhand</th>
+				<td th:text="${player.backhandName}">Two-handed</td>
 			</tr>
 			<tr th:if="${player.turnedPro > 0}">
-				<th>Turned Pro</th>
+				<th class="no-wrap">Turned Pro</th>
 				<td th:text="${player.turnedPro}">2005</td>
 			</tr>
 			<tr th:if="${player.coach != null}">
-				<th>Coach</th>
+				<th class="no-wrap">Coach</th>
 				<td th:text="${player.coach}">Brad Gilbert</td>
 			</tr>
 
 			<!--/* Titles */-->
 			<tr th:if="${player.titles > 0}">
-				<th>Titles</th>
+				<th class="no-wrap">Titles</th>
 				<td th:text="${player.titles}">10</td>
 			</tr>
 			<tr th:if="${player.grandSlams > 0}">
-				<th>Grand Slams</th>
+				<th class="no-wrap">Grand Slams</th>
 				<td th:text="${player.grandSlams}">1</td>
 			</tr>
 			<tr th:if="${player.tourFinals > 0}">
-				<th>Tour Finals</th>
+				<th class="no-wrap">Tour Finals</th>
 				<td th:text="${player.tourFinals}">1</td>
 			</tr>
 			<tr th:if="${player.masters > 0}">
-				<th>Masters</th>
+				<th class="no-wrap">Masters</th>
 				<td th:text="${player.masters}">5</td>
 			</tr>
 			<tr th:if="${player.olympics > 0}">
-				<th>Olympics</th>
+				<th class="no-wrap">Olympics</th>
 				<td th:text="${player.olympics}">1</td>
 			</tr>
 
 			<!--/* Ranking */-->
 			<tr th:if="${player.currentRank > 0}">
-				<th>Current Rank</th>
+				<th class="no-wrap">Current Rank</th>
 				<td th:text="${player.currentRank} + ' (' + ${player.currentRankPoints} + ')'">10 (3000)</td>
 			</tr>
 			<tr th:if="${player.bestRank > 0}">
-				<th>Best Rank</th>
+				<th class="no-wrap">Best Rank</th>
 				<td th:text="${player.bestRank} + ' (' + ${#dates.format(player.bestRankDateAsDate, 'dd-MM-yyyy')} + ')'">5 (1.1.2010)</td>
 			</tr>
 			<tr th:if="${player.bestRankPoints > 0}">
-				<th>Best Rank Points</th>
+				<th class="no-wrap">Best Rank Points</th>
 				<td th:text="${player.bestRankPoints} + ' (' + ${#dates.format(player.bestRankPointsDateAsDate, 'dd-MM-yyyy')} + ')'">5000 (1.1.2011)</td>
 			</tr>
 			<tr th:if="${player.goatRank > 0}">
-				<th>GOAT Rank</th>
+				<th class="no-wrap">GOAT Rank</th>
 				<td th:text="${player.goatRank} + ' (' + ${player.goatRankPoints} + ')'">50 (2500)</td>
 			</tr>
 
 			<!--/* Social */-->
 			<tr th:if="${player.webSite != null}">
-				<th>Web Site</th>
+				<th class="no-wrap">Web Site</th>
 				<td th:text="${player.webSite}">www.johnsmith.com</td>
 			</tr>
 			<tr th:if="${player.twitter != null}">
-				<th>Twitter</th>
+				<th class="no-wrap">Twitter</th>
 				<td th:text="${player.twitter}">twitter</td>
 			</tr>
 			<tr th:if="${player.facebook != null}">
-				<th>Facebook</th>
+				<th class="no-wrap">Facebook</th>
 				<td th:text="${player.facebook}">facebook</td>
 			</tr>
 		</thead>
