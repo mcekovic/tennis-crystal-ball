@@ -28,8 +28,9 @@ public class PlayerRankingsController {
 	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 2.0;
 
 	private static final String PLAYER_IDS_QUERY =
-		"SELECT player_id FROM player " +
-		"WHERE first_name || ' ' || last_name = ?";
+		"SELECT player_id FROM player_v " +
+		"WHERE first_name || ' ' || last_name = ? " +
+		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
 
 	private static final String PLAYER_RANKINGS_QUERY = //language=SQL
 		"SELECT rank_date, player_id, %1$s FROM player_ranking " +
@@ -168,8 +169,7 @@ public class PlayerRankingsController {
 		}
 
 		private Integer findPlayerId(String player) {
-			List<Integer> playerIds = jdbcTemplate.queryForList(PLAYER_IDS_QUERY, Integer.class, player);
-			return playerIds.isEmpty() ? null : playerIds.get(0);
+			return jdbcTemplate.queryForObject(PLAYER_IDS_QUERY, Integer.class, player);
 		}
 	}
 

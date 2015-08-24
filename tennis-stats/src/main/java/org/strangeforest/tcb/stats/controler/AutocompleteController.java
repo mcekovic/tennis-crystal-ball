@@ -15,7 +15,7 @@ public class AutocompleteController {
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
 		"SELECT player_id, name FROM player_v " +
 		"WHERE name ILIKE '%' || ? || '%'" +
-		"ORDER BY goat_points DESC NULLS LAST LIMIT 20";
+		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 20";
 
 	@RequestMapping("/autocompletePlayer")
 	public List<AutocompleteOption> autocompletePlayer(@RequestParam(value = "term") String term) {

@@ -4,10 +4,11 @@ import org.strangeforest.tcb.util.*;
 
 public class GOATListRow {
 
-	private int goatRank;
-	private String name;
-	private String countryId;
-	private String countryCode;
+	private final int playerId;
+	private final int goatRank;
+	private final String name;
+	private final String countryId;
+	private final String countryCode;
 	private int goatPoints;
 	private int grandSlams;
 	private int tourFinals;
@@ -16,12 +17,17 @@ public class GOATListRow {
 	private int bigTitles;
 	private int titles;
 
-	public GOATListRow(int goatRank, String countryId, String name, int goatPoints) {
+	public GOATListRow(int playerId, int goatRank, String countryId, String name, int goatPoints) {
 		this.goatRank = goatRank;
 		this.countryId = countryId;
+		this.playerId = playerId;
 		this.countryCode = CountryUtil.getISOAlpha2Code(countryId);
 		this.name = name;
 		this.goatPoints = goatPoints;
+	}
+
+	public int getPlayerId() {
+		return playerId;
 	}
 
 	public int getGoatRank() {
@@ -42,18 +48,6 @@ public class GOATListRow {
 
 	public int getGoatPoints() {
 		return goatPoints;
-	}
-
-	public void setGoatRank(int goatRank) {
-		this.goatRank = goatRank;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setGoatPoints(int goatPoints) {
-		this.goatPoints = goatPoints;
 	}
 
 	public int getGrandSlams() {

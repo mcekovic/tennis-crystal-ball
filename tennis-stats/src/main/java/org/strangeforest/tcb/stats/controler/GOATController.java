@@ -25,7 +25,7 @@ public class GOATController {
 		"WHERE goat_points > 0 AND goat_rank <= " + PLAYER_COUNT + "%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
-		"SELECT goat_rank, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles FROM player_v " +
+		"SELECT player_id, goat_rank, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles FROM player_v " +
 		"WHERE goat_points > 0 AND goat_rank <= " + PLAYER_COUNT + "%1$s " +
 		"ORDER BY %2$s, name LIMIT ? OFFSET ?";
 
@@ -54,11 +54,12 @@ public class GOATController {
 		jdbcTemplate.query(
 			format(GOAT_LIST_QUERY, filter, orderBy),
 			(rs) -> {
+				int playerId = rs.getInt("player_id");
 				int goatRank = rs.getInt("goat_rank");
 				String countryId = rs.getString("country_id");
 				String name = rs.getString("name");
 				int goatPoints = rs.getInt("goat_points");
-				GOATListRow row = new GOATListRow(goatRank, countryId, name, goatPoints);
+				GOATListRow row = new GOATListRow(playerId, goatRank, countryId, name, goatPoints);
 				row.setGrandSlams(rs.getInt("grand_slams"));
 				row.setTourFinals(rs.getInt("tour_finals"));
 				row.setMasters(rs.getInt("masters"));

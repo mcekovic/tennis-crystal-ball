@@ -20,16 +20,21 @@ public class PlayerRecordController {
 				"titles, grand_slams, tour_finals, masters, olympics, " +
 				"current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points, " +
 				"web_site, twitter, facebook " +
-		"FROM player_v " +
-		"WHERE name = ?";
+		"FROM player_v";
+
+		private static final String PLAYER_BY_NAME = PLAYER_QUERY + " WHERE name = ? ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
+		private static final String PLAYER_BY_ID = PLAYER_QUERY + " WHERE player_id = ?";
 
 	@RequestMapping("/playerRecord")
 	public ModelAndView playerRecord(
-		@RequestParam(value = "name") String name
+		@RequestParam(value = "id", required = false) Integer id,
+		@RequestParam(value = "name", required = false) String name
 	) {
-		Player playerModel = jdbcTemplate.queryForObject(PLAYER_QUERY, (rs, rowNum) -> {
+		if (id == null && name == null)
+			throw new IllegalArgumentException("Either player id or name should be specified.");
+		Player playerModel = jdbcTemplate.queryForObject(id != null ? PLAYER_BY_ID : PLAYER_BY_NAME, (rs, rowNum) -> {
 
-			Player player = new Player(name);
+			Player player = new Player(rs.getString("name"));
 			player.setDob(toLocalDate(rs.getDate("dob")));
 			player.setAge(rs.getInt("age"));
 			player.setCountryId(rs.getString("country_id"));
@@ -63,7 +68,7 @@ public class PlayerRecordController {
 			player.setFacebook(rs.getString("facebook"));
 
 			return player;
-		}, name);
+		}, id != null ? id : name);
 		return new ModelAndView("playerRecord", "player", playerModel);
 	}
 }
