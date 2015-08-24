@@ -7,15 +7,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 
-import static org.strangeforest.tcb.stats.util.DateUtil.*;
-
 @Controller
 public class PlayerRecordController {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_QUERY =
-		"SELECT name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight, " +
+		"SELECT player_id, name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight, " +
 				"hand, backhand, turned_pro, coach, " +
 				"titles, grand_slams, tour_finals, masters, olympics, " +
 				"current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points, " +
@@ -32,8 +30,9 @@ public class PlayerRecordController {
 	) {
 		Player playerModel = id != null || name != null ? jdbcTemplate.queryForObject(id != null ? PLAYER_BY_ID : PLAYER_BY_NAME, (rs, rowNum) -> {
 
-			Player player = new Player(rs.getString("name"));
-			player.setDob(toLocalDate(rs.getDate("dob")));
+			Player player = new Player(rs.getInt("player_id"));
+			player.setName(rs.getString("name"));
+			player.setDob(rs.getDate("dob"));
 			player.setAge(rs.getInt("age"));
 			player.setCountryId(rs.getString("country_id"));
 			player.setBirthplace(rs.getString("birthplace"));
@@ -55,9 +54,9 @@ public class PlayerRecordController {
 			player.setCurrentRank(rs.getInt("current_rank"));
 			player.setCurrentRankPoints(rs.getInt("current_rank_points"));
 			player.setBestRank(rs.getInt("best_rank"));
-			player.setBestRankDate(toLocalDate(rs.getDate("best_rank_date")));
+			player.setBestRankDate(rs.getDate("best_rank_date"));
 			player.setBestRankPoints(rs.getInt("best_rank_points"));
-			player.setBestRankPointsDate(toLocalDate(rs.getDate("best_rank_points_date")));
+			player.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
 			player.setGoatRank(rs.getInt("goat_rank"));
 			player.setGoatRankPoints(rs.getInt("goat_points"));
 

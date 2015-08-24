@@ -10,8 +10,9 @@ import static org.strangeforest.tcb.stats.util.DateUtil.*;
 public class Player {
 
 	// General
-	private final String name;
-	private LocalDate dob;
+	private final int id;
+	private String name;
+	private Date dob;
 	private int age;
 	private String countryId;
 	private String birthplace;
@@ -36,9 +37,9 @@ public class Player {
 	private int currentRank;
 	private int currentRankPoints;
 	private int bestRank;
-	private LocalDate bestRankDate;
+	private Date bestRankDate;
 	private int bestRankPoints;
-	private LocalDate bestRankPointsDate;
+	private Date bestRankPointsDate;
 	private int goatRank;
 	private int goatRankPoints;
 
@@ -47,8 +48,12 @@ public class Player {
 	private String twitter;
 	private String facebook;
 
-	public Player(String name) {
-		this.name = name;
+	public Player(int id) {
+		this.id = id;
+	}
+
+	public int getId() {
+		return id;
 	}
 
 
@@ -58,15 +63,15 @@ public class Player {
 		return name;
 	}
 
-	public LocalDate getDob() {
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getDob() {
 		return dob;
 	}
 
-	public Date getDobAsDate() {
-		return toDate(dob);
-	}
-
-	public void setDob(LocalDate dob) {
+	public void setDob(Date dob) {
 		this.dob = dob;
 	}
 
@@ -247,15 +252,11 @@ public class Player {
 		this.bestRank = bestRank;
 	}
 
-	public LocalDate getBestRankDate() {
+	public Date getBestRankDate() {
 		return bestRankDate;
 	}
 
-	public Date getBestRankDateAsDate() {
-		return toDate(bestRankDate);
-	}
-
-	public void setBestRankDate(LocalDate bestRankDate) {
+	public void setBestRankDate(Date bestRankDate) {
 		this.bestRankDate = bestRankDate;
 	}
 
@@ -267,15 +268,11 @@ public class Player {
 		this.bestRankPoints = bestRankPoints;
 	}
 
-	public LocalDate getBestRankPointsDate() {
+	public Date getBestRankPointsDate() {
 		return bestRankPointsDate;
 	}
 
-	public Date getBestRankPointsDateAsDate() {
-		return toDate(bestRankPointsDate);
-	}
-
-	public void setBestRankPointsDate(LocalDate bestRankPointsDate) {
+	public void setBestRankPointsDate(Date bestRankPointsDate) {
 		this.bestRankPointsDate = bestRankPointsDate;
 	}
 

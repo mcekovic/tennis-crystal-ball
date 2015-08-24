@@ -6,8 +6,11 @@
 	<title th:text="'Ultimate Tennis Statistics - ' + (${player} ? ${player.name} : 'Player') + ' Record'">Ultimate Tennis Statistics - Player Record</title>
 	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
 	<style>
 		.ui-autocomplete {
 			max-height: 600px; overflow-y: auto; overflow-x: hidden;
@@ -35,7 +38,7 @@
 		/*]]>*/
 	</script>
 </head>
-<body>
+<body class="container">
 	<h1><a href="/">Ultimate Tennis Statistics</a></h1>
 	<div class="ui-widget">
 		<label for="player">Player: </label>
@@ -43,7 +46,7 @@
 	</div>
 	<div th:if="${player}">
 		<h3 th:text="|${player.name} Record|">Player Record</h3>
-		<table id="playerTable" class="table table-condensed table-hover table-striped">
+		<table id="playerTable" class="table table-condensed">
 			<thead>
 				<!--/* General */-->
 				<tr>
@@ -52,7 +55,7 @@
 				</tr>
 				<tr>
 					<th class="no-wrap">Age</th>
-					<td th:text="|${player.age} (${#dates.format(player.dobAsDate, 'dd-MM-yyyy')})|">25 (1-1-1990)</td>
+					<td th:text="|${player.age} (${#dates.format(player.dob, 'dd-MM-yyyy')})|">25 (1-1-1990)</td>
 				</tr>
 				<tr>
 					<th class="no-wrap">Country</th>
@@ -122,11 +125,11 @@
 				</tr>
 				<tr th:if="${player.bestRank > 0}">
 					<th class="no-wrap">Best Rank</th>
-					<td th:text="${player.bestRank} + ' (' + ${#dates.format(player.bestRankDateAsDate, 'dd-MM-yyyy')} + ')'">5 (1.1.2010)</td>
+					<td th:text="${player.bestRank} + ' (' + ${#dates.format(player.bestRankDate, 'dd-MM-yyyy')} + ')'">5 (1.1.2010)</td>
 				</tr>
 				<tr th:if="${player.bestRankPoints > 0}">
 					<th class="no-wrap">Best Rank Points</th>
-					<td th:text="${player.bestRankPoints} + ' (' + ${#dates.format(player.bestRankPointsDateAsDate, 'dd-MM-yyyy')} + ')'">5000 (1.1.2011)</td>
+					<td th:text="${player.bestRankPoints} + ' (' + ${#dates.format(player.bestRankPointsDate, 'dd-MM-yyyy')} + ')'">5000 (1.1.2011)</td>
 				</tr>
 				<tr th:if="${player.goatRankPoints > 0}">
 					<th class="no-wrap">GOAT Rank</th>
@@ -145,6 +148,33 @@
 				<tr th:if="${player.facebook}">
 					<th class="no-wrap">Facebook</th>
 					<td th:text="${player.facebook}">facebook</td>
+				</tr>
+			</thead>
+		</table>
+		<h3 style="position: absolute">Tournament Results</h3>
+		<script type="text/javascript" th:inline="javascript">
+			/*<![CDATA[*/
+			$(function() {
+				$("#resultsTable").bootgrid({
+					ajax: true,
+					ajaxSettings: {
+						method: "GET",
+						cache: false
+					},
+					url: "/playerResults?playerId=[[${player.id}]]",
+					rowCount: [10, 20, 50, -1]
+				});
+			});
+			/*]]>*/
+		</script>
+		<table id="resultsTable" class="table table-condensed table-hover table-striped">
+			<thead>
+				<tr>
+					<th data-column-id="season" data-type="numeric" data-sortable="false" data-width="50">Season</th>
+					<th data-column-id="date" data-sortable="false" data-width="80">Date</th>
+					<th data-column-id="name" data-sortable="false" data-width="250">Tournament</th>
+					<th data-column-id="levelName" data-sortable="false" data-width="100">Level</th>
+					<th data-column-id="result" data-sortable="false" data-width="50">Result</th>
 				</tr>
 			</thead>
 		</table>

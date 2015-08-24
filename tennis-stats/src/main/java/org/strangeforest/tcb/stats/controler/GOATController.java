@@ -27,7 +27,7 @@ public class GOATController {
 	private static final String GOAT_LIST_QUERY = //language=SQL
 		"SELECT player_id, goat_rank, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles FROM player_v " +
 		"WHERE goat_points > 0 AND goat_rank <= " + PLAYER_COUNT + "%1$s " +
-		"ORDER BY %2$s, name LIMIT ? OFFSET ?";
+		"ORDER BY %2$s, name OFFSET ? LIMIT ?";
 
 	public static final String FILTER_SQL = " AND (name ILIKE '%' || ? || '%' OR country_id ILIKE '%' || ? || '%')";
 	public static final String DEFAULT_ORDER = "goat_points DESC";
@@ -48,7 +48,7 @@ public class GOATController {
 		int pageSize = rowCount > 0 ? rowCount : playerCount;
 		int offset = (current - 1) * pageSize;
 		String orderBy = getOrderBy(request);
-		params = hasFilter ? new Object[] {searchPhrase, searchPhrase, pageSize, offset} : new Object[] {pageSize, offset};
+		params = hasFilter ? new Object[] {searchPhrase, searchPhrase, offset, pageSize} : new Object[] {offset, pageSize};
 
 		BootgridTable<GOATListRow> table = new BootgridTable<>(current, playerCount);
 		jdbcTemplate.query(

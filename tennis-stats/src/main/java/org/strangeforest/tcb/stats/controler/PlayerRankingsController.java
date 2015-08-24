@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
+import java.util.Objects;
 import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.*;
 import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.model.*;
 
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
@@ -27,9 +29,9 @@ public class PlayerRankingsController {
 	private static final LocalDate START_OF_NEW_RANKING_SYSTEM = LocalDate.of(2009, 1, 1);
 	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 2.0;
 
-	private static final String PLAYER_IDS_QUERY =
+	private static final String PLAYER_ID_QUERY =
 		"SELECT player_id FROM player_v " +
-		"WHERE first_name || ' ' || last_name = ? " +
+		"WHERE name = ? " +
 		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
 
 	private static final String PLAYER_RANKINGS_QUERY = //language=SQL
@@ -144,6 +146,8 @@ public class PlayerRankingsController {
 		private Players(List<String> players) {
 			for (int index = 0; index < players.size(); index++) {
 				String player = players.get(index);
+				if (Strings.isNullOrEmpty(player))
+					continue;
 				Integer playerId = findPlayerId(player);
 				if (playerId != null) {
 					this.players.add(player);
@@ -169,7 +173,8 @@ public class PlayerRankingsController {
 		}
 
 		private Integer findPlayerId(String player) {
-			return jdbcTemplate.queryForObject(PLAYER_IDS_QUERY, Integer.class, player);
+			List<Integer> playerIds = jdbcTemplate.queryForList(PLAYER_ID_QUERY, Integer.class, player);
+			return playerIds.isEmpty() ? null : playerIds.get(0);
 		}
 	}
 
