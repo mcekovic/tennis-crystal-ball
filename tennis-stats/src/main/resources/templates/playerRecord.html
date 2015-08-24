@@ -46,8 +46,8 @@
 	</div>
 	<div th:if="${player}">
 		<h3 th:text="|${player.name} Record|">Player Record</h3>
-		<table id="playerTable" class="table table-condensed">
-			<thead>
+		<div style="display: inline-block; vertical-align: top">
+			<table class="table table-condensed">
 				<!--/* General */-->
 				<tr>
 					<th class="no-wrap">Name</th>
@@ -96,10 +96,28 @@
 					<td th:text="${player.coach}">Brad Gilbert</td>
 				</tr>
 
+				<!--/* Social */-->
+				<tr th:if="${player.webSite}">
+					<th class="no-wrap">Web Site</th>
+					<td th:text="${player.webSite}">www.johnsmith.com</td>
+				</tr>
+				<tr th:if="${player.twitter}">
+					<th class="no-wrap">Twitter</th>
+					<td th:text="${player.twitter}">twitter</td>
+				</tr>
+				<tr th:if="${player.facebook}">
+					<th class="no-wrap">Facebook</th>
+					<td th:text="${player.facebook}">facebook</td>
+				</tr>
+			</table>
+		</div>
+		<div style="display: inline-block; width: 10%">&nbsp;</div>
+		<div style="display: inline-block">
+			<table class="table table-condensed">
 				<!--/* Titles */-->
 				<tr th:if="${player.titles > 0}">
 					<th class="no-wrap">Titles</th>
-					<td th:text="${player.titles}">10</td>
+					<td th:text="${player.titles}" width="100%">10</td>
 				</tr>
 				<tr th:if="${player.grandSlams > 0}">
 					<th class="no-wrap">Grand Slams</th>
@@ -135,22 +153,8 @@
 					<th class="no-wrap">GOAT Rank</th>
 					<td th:text="${player.goatRank} + ' (' + ${player.goatRankPoints} + ')'">50 (2500)</td>
 				</tr>
-
-				<!--/* Social */-->
-				<tr th:if="${player.webSite}">
-					<th class="no-wrap">Web Site</th>
-					<td th:text="${player.webSite}">www.johnsmith.com</td>
-				</tr>
-				<tr th:if="${player.twitter}">
-					<th class="no-wrap">Twitter</th>
-					<td th:text="${player.twitter}">twitter</td>
-				</tr>
-				<tr th:if="${player.facebook}">
-					<th class="no-wrap">Facebook</th>
-					<td th:text="${player.facebook}">facebook</td>
-				</tr>
-			</thead>
-		</table>
+			</table>
+		</div>
 		<h3 style="position: absolute">Tournament Results</h3>
 		<script type="text/javascript" th:inline="javascript">
 			/*<![CDATA[*/
@@ -172,8 +176,8 @@
 				<tr>
 					<th data-column-id="season" data-type="numeric" data-sortable="false" data-width="50">Season</th>
 					<th data-column-id="date" data-sortable="false" data-width="80">Date</th>
-					<th data-column-id="name" data-sortable="false" data-width="250">Tournament</th>
 					<th data-column-id="levelName" data-sortable="false" data-width="100">Level</th>
+					<th data-column-id="name" data-sortable="false" data-width="250">Tournament</th>
 					<th data-column-id="result" data-sortable="false" data-width="50">Result</th>
 				</tr>
 			</thead>

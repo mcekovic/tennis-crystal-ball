@@ -56,7 +56,7 @@ class MatchLoader extends BaseCSVLoader {
 
 		params.ext_winner_id = integer line.winner_id
 		params.winner_seed = smallint line.winner_seed
-		params.winner_entry = string line.winner_entry
+		params.winner_entry = mapEntry(string(line.winner_entry))
 		params.winner_rank = integer line.winner_rank
 		params.winner_rank_points = integer line.winner_rank_points
 		params.winner_age = real line.winner_age
@@ -67,7 +67,7 @@ class MatchLoader extends BaseCSVLoader {
 		
 		params.ext_loser_id = integer line.loser_id
 		params.loser_seed = smallint line.loser_seed
-		params.loser_entry = string line.loser_entry
+		params.loser_entry = mapEntry(string(line.loser_entry))
 		params.loser_rank = integer line.loser_rank
 		params.loser_rank_points = integer line.loser_rank_points
 		params.loser_age = real line.loser_age
@@ -171,6 +171,17 @@ class MatchLoader extends BaseCSVLoader {
 			case 'R1': return 'F'
 			default: return round
 		}
+	}
+
+	static def mapEntry(String entry) {
+		if (entry) {
+			if (entry.endsWith(') W'))
+				'WC'
+			else if (entry == 'S')
+				null
+		}
+		else
+			entry
 	}
 
 	static def mapRankPoints(String level) {
