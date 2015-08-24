@@ -116,4 +116,14 @@ public abstract class CountryUtil {
 		}
 		return null;
 	}
+
+	public static String getISOAlpha2Code(String countryId) {
+		CountryCode code = code(countryId);
+		return code != null ? code.getAlpha2().toLowerCase() : null;
+	}
+
+	public static String getCountryName(String countryId) {
+		CountryCode code = code(countryId);
+		return code != null ? code.getName() : "Unknown";
+	}
 }

@@ -5,8 +5,6 @@ import java.util.*;
 
 import org.strangeforest.tcb.util.*;
 
-import com.neovisionaries.i18n.*;
-
 import static org.strangeforest.tcb.stats.util.DateUtil.*;
 
 public class Player {
@@ -85,13 +83,11 @@ public class Player {
 	}
 
 	public String getCountryCode() {
-		CountryCode code = CountryUtil.code(countryId);
-		return code != null ? code.getAlpha2().toLowerCase() : null;
+		return CountryUtil.getISOAlpha2Code(countryId);
 	}
 
 	public String getCountryName() {
-		CountryCode code = CountryUtil.code(countryId);
-		return code != null ? code.getName() : "Unknown";
+		return CountryUtil.getCountryName(countryId);
 	}
 
 	public void setCountryId(String countryId) {

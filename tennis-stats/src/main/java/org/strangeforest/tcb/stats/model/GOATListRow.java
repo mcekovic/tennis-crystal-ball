@@ -1,10 +1,13 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.strangeforest.tcb.util.*;
+
 public class GOATListRow {
 
 	private int goatRank;
 	private String name;
 	private String countryId;
+	private String countryCode;
 	private int goatPoints;
 	private int grandSlams;
 	private int tourFinals;
@@ -16,6 +19,7 @@ public class GOATListRow {
 	public GOATListRow(int goatRank, String countryId, String name, int goatPoints) {
 		this.goatRank = goatRank;
 		this.countryId = countryId;
+		this.countryCode = CountryUtil.getISOAlpha2Code(countryId);
 		this.name = name;
 		this.goatPoints = goatPoints;
 	}
@@ -26,6 +30,10 @@ public class GOATListRow {
 
 	public String getCountryId() {
 		return countryId;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
 	}
 
 	public String getName() {

@@ -26,7 +26,7 @@ public class GOATController {
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
 		"SELECT goat_rank, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles FROM player_v " +
-		"WHERE goat_rank <= " + PLAYER_COUNT + "%1$s " +
+		"WHERE goat_points > 0 AND goat_rank <= " + PLAYER_COUNT + "%1$s " +
 		"ORDER BY %2$s, name LIMIT ? OFFSET ?";
 
 	public static final String FILTER_SQL = " AND (name ILIKE '%' || ? || '%' OR country_id ILIKE '%' || ? || '%')";
