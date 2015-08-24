@@ -68,7 +68,7 @@ class ATPTennisLoader {
 		refreshMaterializedView(sql, 'player_current_rank')
 		refreshMaterializedView(sql, 'player_best_rank')
 		refreshMaterializedView(sql, 'player_best_rank_points')
-		refreshMaterializedView(sql, 'tournament_event_player_result')
+		refreshMaterializedView(sql, 'player_tournament_event_result')
 		refreshMaterializedView(sql, 'player_goat_points')
 		refreshMaterializedView(sql, 'player_titles')
 	}

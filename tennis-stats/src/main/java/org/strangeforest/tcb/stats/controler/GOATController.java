@@ -22,7 +22,7 @@ public class GOATController {
 
 	private static final String GOAT_COUNT_QUERY = //language=SQL
 		"SELECT count(*) AS player_count FROM player_v " +
-		"WHERE goat_rank <= " + PLAYER_COUNT + "%1$s";
+		"WHERE goat_points > 0 AND goat_rank <= " + PLAYER_COUNT + "%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
 		"SELECT goat_rank, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles FROM player_v " +
@@ -41,17 +41,14 @@ public class GOATController {
 	) {
 		boolean hasFilter = !Strings.isNullOrEmpty(searchPhrase);
 		String filter = hasFilter ? FILTER_SQL : "";
+		Object[] params = hasFilter ? new Object[] {searchPhrase, searchPhrase} : new Object[] {};
 
-		int playerCount = hasFilter
-         ? Math.min(PLAYER_COUNT, jdbcTemplate.queryForObject(format(GOAT_COUNT_QUERY, filter), new Object[] {searchPhrase, searchPhrase}, Integer.class))
-         : PLAYER_COUNT;
+		int playerCount = Math.min(PLAYER_COUNT, jdbcTemplate.queryForObject(format(GOAT_COUNT_QUERY, filter), params, Integer.class));
 
 		int pageSize = rowCount > 0 ? rowCount : playerCount;
 		int offset = (current - 1) * pageSize;
 		String orderBy = getOrderBy(request);
-		Object[] params = hasFilter
-			? new Object[] {searchPhrase, searchPhrase, pageSize, offset}
-			: new Object[] {pageSize, offset};
+		params = hasFilter ? new Object[] {searchPhrase, searchPhrase, pageSize, offset} : new Object[] {pageSize, offset};
 
 		BootgridTable<GOATListRow> table = new BootgridTable<>(current, playerCount);
 		jdbcTemplate.query(

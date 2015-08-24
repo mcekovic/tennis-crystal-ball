@@ -257,47 +257,47 @@ CREATE TABLE tournament_rank_points (
 );
 
 
--- tournament_event_player_result
+-- player_tournament_event_result
 
-CREATE MATERIALIZED VIEW tournament_event_player_result AS
+CREATE MATERIALIZED VIEW player_tournament_event_result AS
 WITH match_result AS (
-	SELECT tournament_event_id, m.winner_id AS player_id,
+	SELECT m.winner_id AS player_id,tournament_event_id,
 		(CASE WHEN m.round = 'F' AND e.level <> 'D' THEN 'W' ELSE m.round::TEXT END)::tournament_event_result AS result
 	FROM match m
 	LEFT JOIN tournament_event e USING (tournament_event_id)
 	UNION
-	SELECT tournament_event_id, loser_id,
+	SELECT loser_id, tournament_event_id,
 		(CASE WHEN round = 'BR' THEN 'SF' ELSE round::TEXT END)::tournament_event_result AS result
 	FROM match
 ), best_round AS (
-	SELECT tournament_event_id, player_id, max(result) AS result
+	SELECT player_id, tournament_event_id, max(result) AS result
 	FROM match_result
-	GROUP BY tournament_event_id, player_id
+	GROUP BY player_id, tournament_event_id
 )
-SELECT tournament_event_id, player_id, result, rank_points, rank_points_2008, goat_points FROM (
-	SELECT r.tournament_event_id, r.player_id, r.result, p.rank_points, p.rank_points_2008, p.goat_points
+SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, goat_points FROM (
+	SELECT r.player_id, r.tournament_event_id, r.result, p.rank_points, p.rank_points_2008, p.goat_points
 	FROM best_round r
 	LEFT JOIN tournament_event e USING (tournament_event_id)
 	LEFT JOIN tournament_rank_points p USING (level, result)
 	WHERE level IN ('G', 'M', 'A', 'O')
 	UNION
-	SELECT r.tournament_event_id, r.player_id, r.result, sum(p.rank_points), sum(p.rank_points_2008), sum(p.goat_points)
+	SELECT r.player_id, r.tournament_event_id, r.result, sum(p.rank_points), sum(p.rank_points_2008), sum(p.goat_points)
 	FROM best_round r
 	LEFT OUTER JOIN match m ON m.tournament_event_id = r.tournament_event_id AND m.winner_id = r.player_id
 	LEFT JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
 	LEFT JOIN tournament_rank_points p ON p.level = e.level AND p.result = m.round::TEXT::tournament_event_result
 	WHERE e.level = 'F' OR (e.level = 'D' AND e.name LIKE '%WG')
-	GROUP BY r.tournament_event_id, r.player_id, r.result
-) AS tournament_event_player_result;
+	GROUP BY r.player_id, r.tournament_event_id, r.result
+) AS player_tournament_event_result;
 
-CREATE INDEX ON tournament_event_player_result (player_id);
+CREATE INDEX ON player_tournament_event_result (player_id);
 
 
 -- player_goat_points
 
 CREATE MATERIALIZED VIEW player_goat_points AS
 WITH goat_points AS (
-	SELECT player_id, sum(goat_points) goat_points FROM tournament_event_player_result
+	SELECT player_id, sum(goat_points) goat_points FROM player_tournament_event_result
 	GROUP BY player_id
 )
 SELECT player_id, goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank FROM goat_points;
@@ -309,7 +309,7 @@ CREATE INDEX ON player_goat_points (player_id);
 
 CREATE MATERIALIZED VIEW player_titles AS
 WITH titles AS (
-	SELECT player_id, level, count(*) AS titles FROM tournament_event_player_result
+	SELECT player_id, level, count(*) AS titles FROM player_tournament_event_result
 	LEFT JOIN tournament_event USING (tournament_event_id)
 	WHERE result = 'W'
 	GROUP BY player_id, level
