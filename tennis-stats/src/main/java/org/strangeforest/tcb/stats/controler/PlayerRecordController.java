@@ -30,9 +30,7 @@ public class PlayerRecordController {
 		@RequestParam(value = "id", required = false) Integer id,
 		@RequestParam(value = "name", required = false) String name
 	) {
-		if (id == null && name == null)
-			throw new IllegalArgumentException("Either player id or name should be specified.");
-		Player playerModel = jdbcTemplate.queryForObject(id != null ? PLAYER_BY_ID : PLAYER_BY_NAME, (rs, rowNum) -> {
+		Player playerModel = id != null || name != null ? jdbcTemplate.queryForObject(id != null ? PLAYER_BY_ID : PLAYER_BY_NAME, (rs, rowNum) -> {
 
 			Player player = new Player(rs.getString("name"));
 			player.setDob(toLocalDate(rs.getDate("dob")));
@@ -68,7 +66,7 @@ public class PlayerRecordController {
 			player.setFacebook(rs.getString("facebook"));
 
 			return player;
-		}, id != null ? id : name);
+		}, id != null ? id : name) : null;
 		return new ModelAndView("playerRecord", "player", playerModel);
 	}
 }
