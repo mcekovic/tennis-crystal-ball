@@ -6,7 +6,6 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/css/flag-icon.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
 	<style>
@@ -60,7 +59,7 @@
 			</tr>
 			<tr>
 				<th class="no-wrap">Country</th>
-				<td><span th:class="'flag-icon flag-icon-' + ${player.countryCode}" class="flag-icon flag-icon-us" th:title="${player.countryId}" title="USA"></span> <span th:text="${player.countryName}">United States</span></td>
+				<td><img th:src="@{/flags/{code}.png(code=${player.countryCode})}" src="/flags/us.png" th:title="${player.countryId}" title="USA" width="24" height="24"/> <span th:text="${player.countryName}">United States</span></td>
 			</tr>
 			<tr th:if="${player.birthplace != null}">
 				<th class="no-wrap">Birthplace</th>
