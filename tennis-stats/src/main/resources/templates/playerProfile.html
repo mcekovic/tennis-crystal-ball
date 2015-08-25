@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"*/-->
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title th:text="'Ultimate Tennis Statistics - ' + (${player} ? ${player.name} : 'Player Profile')">Ultimate Tennis Statistics - Player Profile</title>
 	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
@@ -40,9 +41,9 @@
 </head>
 <body class="container">
 	<h1><a href="/">Ultimate Tennis Statistics</a></h1>
-	<div class="ui-widget">
-		<label for="player">Player: </label>
-		<input id="player" type="text" size="50" placeholder="Search Player"/>
+	<div class="ui-widget input-group col-md-4">
+		<label for="player" class="input-group-addon">Player:</label>
+		<input id="player" type="text" class="search-field form-control" placeholder="Search Player"/>
 	</div>
 	<div th:if="${player}">
 		<h3 th:text="${player.name}">Player Profile</h3>
@@ -118,23 +119,23 @@
 					<!--/* Titles */-->
 					<tr th:if="${player.titles > 0}">
 						<th class="no-wrap">Titles</th>
-						<td th:text="${player.titles}" width="100%">10</td>
+						<td width="100%"><span class="label label-default" th:text="${player.titles}">10</span></td>
 					</tr>
 					<tr th:if="${player.grandSlams > 0}">
 						<th class="no-wrap">Grand Slams</th>
-						<td th:text="${player.grandSlams}">1</td>
+						<td><span class="label label-danger" th:text="${player.grandSlams}">1</span></td>
 					</tr>
 					<tr th:if="${player.tourFinals > 0}">
 						<th class="no-wrap">Tour Finals</th>
-						<td th:text="${player.tourFinals}">1</td>
+						<td><span class="label label-warning" th:text="${player.tourFinals}">1</span></td>
 					</tr>
 					<tr th:if="${player.masters > 0}">
 						<th class="no-wrap">Masters</th>
-						<td th:text="${player.masters}">5</td>
+						<td><span class="label label-info" th:text="${player.masters}">5</span></td>
 					</tr>
 					<tr th:if="${player.olympics > 0}">
 						<th class="no-wrap">Olympics</th>
-						<td th:text="${player.olympics}">1</td>
+						<td><span class="label label-success" th:text="${player.olympics}">1</span></td>
 					</tr>
 
 					<!--/* Ranking */-->
@@ -168,9 +169,23 @@
 						cache: false
 					},
 					url: "/playerResults?playerId=[[${player.id}]]",
-					rowCount: [10, 20, 50, -1]
+					rowCount: [10, 20, 50, -1],
+					formatters: {
+						"level": function(column, row) {
+							return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + row.levelName + "</span>";
+						}
+					}
 				});
 			});
+			function levelClassSuffix(level) {
+				switch (level) {
+					case "G": return "danger";
+					case "F": return "warning";
+					case "M": return "info";
+					case "O": return "success";
+					default: return "default";
+				}
+			}
 			/*]]>*/
 		</script>
 		<table id="resultsTable" class="table table-condensed table-hover table-striped">
@@ -178,7 +193,7 @@
 				<tr>
 					<th data-column-id="season" data-type="numeric" data-sortable="false" data-width="50">Season</th>
 					<th data-column-id="date" data-sortable="false" data-width="80">Date</th>
-					<th data-column-id="levelName" data-sortable="false" data-width="100">Level</th>
+					<th data-column-id="levelName" data-formatter="level" data-sortable="false" data-width="100">Level</th>
 					<th data-column-id="name" data-sortable="false" data-width="250">Tournament</th>
 					<th data-column-id="result" data-sortable="false" data-width="50">Result</th>
 				</tr>
