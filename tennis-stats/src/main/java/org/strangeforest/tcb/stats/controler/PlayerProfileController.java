@@ -1,8 +1,11 @@
 package org.strangeforest.tcb.stats.controler;
 
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
+import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -20,52 +23,67 @@ public class PlayerProfileController {
 				"web_site, twitter, facebook " +
 		"FROM player_v";
 
-		private static final String PLAYER_BY_NAME = PLAYER_QUERY + " WHERE name = ? ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
-		private static final String PLAYER_BY_ID = PLAYER_QUERY + " WHERE player_id = ?";
+	private static final String PLAYER_BY_NAME = PLAYER_QUERY + " WHERE name = ? ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
+	private static final String PLAYER_BY_ID = PLAYER_QUERY + " WHERE player_id = ?";
+
+	private static final String SEASONS_QUERY =
+		"SELECT DISTINCT e.season FROM player_tournament_event_result r " +
+		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
+		"WHERE r.player_id = ? " +
+		"AND e.level <> 'D' " +
+		"ORDER BY season DESC";
 
 	@RequestMapping("/playerProfile")
 	public ModelAndView playerProfile(
 		@RequestParam(value = "id", required = false) Integer id,
 		@RequestParam(value = "name", required = false) String name
 	) {
-		Player playerModel = id != null || name != null ? jdbcTemplate.queryForObject(id != null ? PLAYER_BY_ID : PLAYER_BY_NAME, (rs, rowNum) -> {
+		if (id == null && name == null)
+			return new ModelAndView("playerProfile");
+		Player player = jdbcTemplate.queryForObject(id != null ? PLAYER_BY_ID : PLAYER_BY_NAME, (rs, rowNum) -> {
 
-			Player player = new Player(rs.getInt("player_id"));
-			player.setName(rs.getString("name"));
-			player.setDob(rs.getDate("dob"));
-			player.setAge(rs.getInt("age"));
-			player.setCountryId(rs.getString("country_id"));
-			player.setBirthplace(rs.getString("birthplace"));
-			player.setResidence(rs.getString("residence"));
-			player.setHeight(rs.getInt("height"));
-			player.setWeight(rs.getInt("weight"));
+			Player p = new Player(rs.getInt("player_id"));
+			p.setName(rs.getString("name"));
+			p.setDob(rs.getDate("dob"));
+			p.setAge(rs.getInt("age"));
+			p.setCountryId(rs.getString("country_id"));
+			p.setBirthplace(rs.getString("birthplace"));
+			p.setResidence(rs.getString("residence"));
+			p.setHeight(rs.getInt("height"));
+			p.setWeight(rs.getInt("weight"));
 
-			player.setHand(rs.getString("hand"));
-			player.setBackhand(rs.getString("backhand"));
-			player.setTurnedPro(rs.getInt("turned_pro"));
-			player.setCoach(rs.getString("coach"));
+			p.setHand(rs.getString("hand"));
+			p.setBackhand(rs.getString("backhand"));
+			p.setTurnedPro(rs.getInt("turned_pro"));
+			p.setCoach(rs.getString("coach"));
 
-			player.setTitles(rs.getInt("titles"));
-			player.setGrandSlams(rs.getInt("grand_slams"));
-			player.setTourFinals(rs.getInt("tour_finals"));
-			player.setMasters(rs.getInt("masters"));
-			player.setOlympics(rs.getInt("olympics"));
+			p.setTitles(rs.getInt("titles"));
+			p.setGrandSlams(rs.getInt("grand_slams"));
+			p.setTourFinals(rs.getInt("tour_finals"));
+			p.setMasters(rs.getInt("masters"));
+			p.setOlympics(rs.getInt("olympics"));
 
-			player.setCurrentRank(rs.getInt("current_rank"));
-			player.setCurrentRankPoints(rs.getInt("current_rank_points"));
-			player.setBestRank(rs.getInt("best_rank"));
-			player.setBestRankDate(rs.getDate("best_rank_date"));
-			player.setBestRankPoints(rs.getInt("best_rank_points"));
-			player.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
-			player.setGoatRank(rs.getInt("goat_rank"));
-			player.setGoatRankPoints(rs.getInt("goat_points"));
+			p.setCurrentRank(rs.getInt("current_rank"));
+			p.setCurrentRankPoints(rs.getInt("current_rank_points"));
+			p.setBestRank(rs.getInt("best_rank"));
+			p.setBestRankDate(rs.getDate("best_rank_date"));
+			p.setBestRankPoints(rs.getInt("best_rank_points"));
+			p.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
+			p.setGoatRank(rs.getInt("goat_rank"));
+			p.setGoatRankPoints(rs.getInt("goat_points"));
 
-			player.setWebSite(rs.getString("web_site"));
-			player.setTwitter(rs.getString("twitter"));
-			player.setFacebook(rs.getString("facebook"));
+			p.setWebSite(rs.getString("web_site"));
+			p.setTwitter(rs.getString("twitter"));
+			p.setFacebook(rs.getString("facebook"));
 
-			return player;
-		}, id != null ? id : name) : null;
-		return new ModelAndView("playerProfile", "player", playerModel);
+			return p;
+		}, id != null ? id : name);
+
+		List<Integer> seasons = jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class, player.getId());
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("player", player);
+		modelMap.addAttribute("seasons", seasons);
+		return new ModelAndView("playerProfile", modelMap);
 	}
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"*/-->
+<!--@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"-->
+<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -158,7 +159,39 @@
 				</table>
 			</div>
 		</div>
-		<h3 style="position: absolute">Tournament Results</h3>
+		<div class="row">
+			<div class="col-md-6"><h4>Tournament Results</h4></div>
+			<div class="col-md-2">
+				<select id="season" class="form-control" onchange="reloadResults()">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="level" class="form-control" onchange="reloadResults()">
+					<option value="">All levels</option>
+					<option value="G">Grand Slam</option>
+					<option value="F">Tour Finals</option>
+					<option value="M">Masters</option>
+					<option value="O">Olympics</option>
+					<option value="A">ATP</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="result" class="form-control" onchange="reloadResults()">
+					<option value="">All results</option>
+					<option value="W">W</option>
+					<option value="F">F</option>
+					<option value="SF">SF</option>
+					<option value="Q">Q</option>
+					<option value="R16">R16</option>
+					<option value="R32">R32</option>
+					<option value="R64">R64</option>
+					<option value="R128">R128</option>
+					<option value="RR">RR</option>
+				</select>
+			</div>
+		</div>
 		<script type="text/javascript" th:inline="javascript">
 			/*<![CDATA[*/
 			$(function() {
@@ -168,7 +201,7 @@
 						method: "GET",
 						cache: false
 					},
-					url: "/playerResults?playerId=[[${player.id}]]",
+					url: "/playerResults?playerId=[[${player.id}]]&season=" + $("#season").val() + "&level=" + $("#level").val() + "&result=" + $("#result").val(),
 					rowCount: [10, 20, 50, -1],
 					formatters: {
 						"level": function(column, row) {
@@ -185,6 +218,11 @@
 					case "O": return "success";
 					default: return "default";
 				}
+			}
+			function reloadResults() {
+				$("#resultsTable").bootgrid("clear").bootgrid({
+					url: "/playerResults?playerId=[[${player.id}]]&season=" + $("#season").val() + "&level=" + $("#level").val() + "&result=" + $("#result").val(),
+				}).bootgrid("reload");
 			}
 			/*]]>*/
 		</script>
