@@ -22,7 +22,10 @@
 		var chartData;
 		var points;
 		var logScale;
-		function drawChart(fetchData, width) {
+		function drawChart() {
+			doDrawChart(true, $('#rankChartSize').slider('value'));
+		}
+		function doDrawChart(fetchData, width) {
 			var players = $("#players").val();
 			var timeSpan = $("#timeSpan").val();
 			points = $("#rankType").val() == "points";
@@ -110,9 +113,10 @@
 				return split(term).pop();
 			}
 			$("#players").bind("keydown", function(event) {
-				if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
+				if (event.keyCode === $.ui.keyCode.ENTER && !$(this).autocomplete("instance").menu.active)
+				   drawChart();
+				else if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active)
 					event.preventDefault();
-				}
 			}).autocomplete({
 				source: function(request, response) {
 					$.getJSON("autocompletePlayer", {
@@ -155,7 +159,7 @@
 				value: 1000,
 				step: 100,
 				slide: function(event, ui) {
-					drawChart(false, ui.value);
+					doDrawChart(false, ui.value);
 				}
 			});
 			onTimeSpanChange();
@@ -169,7 +173,7 @@
 	<h3>Rankings Chart</h3>
 	<div class="ui-widget">
 		<label for="players">Players: </label>
-		<input id="players" size="80" width="100%"/>
+		<input id="players" type="text" size="80" width="100%" placeholder="Search Players"/>
 	</div>
 	<div class="ui-widget">
 		<label for="timeSpan">Time span: </label>
@@ -201,7 +205,7 @@
 	<div class="ui-widget">
 		<label for="rankChartSize">Chart size: </label>
 		<div id="rankChartSize" style="width: 200px; margin-left: 8px; margin-right: 8px; display: inline-block"></div>
-		<button onclick="drawChart(true, $('#rankChartSize').slider('value'))">Draw Chart</button>
+		<a class="btn btn-primary" href="#" role="button" onclick="drawChart()">Draw Chart</a>
 	</div>
 	<div id="rankChart"></div>
 </body>

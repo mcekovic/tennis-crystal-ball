@@ -23,17 +23,17 @@ public class PlayerResultsController {
 		"ORDER BY date DESC OFFSET ?";
 
 	@RequestMapping("/playerResults")
-	public BootgridTable<PlayerEventResult> playerRecord(
+	public BootgridTable<PlayerEventResult> playerResults(
 		@RequestParam(value = "playerId") int playerId,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount
 	) {
 		int pageSize = rowCount > 0 ? rowCount : MAX_RESULTS;
 		int offset = (current - 1) * pageSize;
-		AtomicInteger records = new AtomicInteger();
+		AtomicInteger results = new AtomicInteger();
 		BootgridTable<PlayerEventResult> table = new BootgridTable<>(current);
 		jdbcTemplate.query(RESULTS_QUERY, (rs) -> {
-			if (records.incrementAndGet() <= pageSize) {
+			if (results.incrementAndGet() <= pageSize) {
 				int season = rs.getInt("season");
 				Date date = rs.getDate("date");
 				String name = rs.getString("name");
@@ -42,7 +42,7 @@ public class PlayerResultsController {
 				table.addRow(new PlayerEventResult(season, date, name, level, result));
 			}
 		},	playerId, offset);
-		table.setTotal(offset + records.get());
+		table.setTotal(offset + results.get());
 		return table;
 	}
 }

@@ -8,7 +8,7 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 
 @Controller
-public class PlayerRecordController {
+public class PlayerProfileController {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
@@ -23,8 +23,8 @@ public class PlayerRecordController {
 		private static final String PLAYER_BY_NAME = PLAYER_QUERY + " WHERE name = ? ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
 		private static final String PLAYER_BY_ID = PLAYER_QUERY + " WHERE player_id = ?";
 
-	@RequestMapping("/playerRecord")
-	public ModelAndView playerRecord(
+	@RequestMapping("/playerProfile")
+	public ModelAndView playerProfile(
 		@RequestParam(value = "id", required = false) Integer id,
 		@RequestParam(value = "name", required = false) String name
 	) {
@@ -66,6 +66,6 @@ public class PlayerRecordController {
 
 			return player;
 		}, id != null ? id : name) : null;
-		return new ModelAndView("playerRecord", "player", playerModel);
+		return new ModelAndView("playerProfile", "player", playerModel);
 	}
 }
