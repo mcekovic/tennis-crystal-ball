@@ -30,18 +30,6 @@ public class PlayerEventResult {
 		return level;
 	}
 
-	public String getLevelName() {
-		switch (level) {
-			case "G": return "Grand Slam";
-			case "F": return "Tour Finals";
-			case "M": return "Masters";
-			case "A": return "ATP";
-			case "O": return "Olympics";
-			case "D": return "Davis Cup";
-			default: return null;
-		}
-	}
-
 	public String getName() {
 		return name;
 	}

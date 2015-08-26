@@ -13,12 +13,12 @@
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
 	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
 	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
-	<style>
+	<style th:inline="text">
 		.ui-autocomplete {
 			max-height: 600px; overflow-y: auto; overflow-x: hidden;
 		}
 		.ui-autocomplete-loading {
-			background: white url("http://jquery-ui.googlecode.com/svn/tags/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif") right center no-repeat;
+			background: white url("[[@{/images/ui-anim_basic_16x16.gif}]]") right center no-repeat;
 		}
 		.no-wrap {
 			white-space: nowrap;
@@ -56,7 +56,7 @@
 						<th class="no-wrap">Name</th>
 						<td th:text="${player.name}" width="100%">Player</td>
 					</tr>
-					<tr>
+					<tr th:if="${player.dob}">
 						<th class="no-wrap">Age</th>
 						<td th:text="|${player.age} (${#dates.format(player.dob, 'dd-MM-yyyy')})|">25 (1-1-1990)</td>
 					</tr>
@@ -159,47 +159,14 @@
 				</table>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-md-5"><h4>Tournament Results</h4></div>
-			<div class="col-md-2">
-				<select id="season" class="form-control" onchange="reloadResults()">
-					<option value="">All seasons</option>
-					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
-				</select>
-			</div>
-			<div class="col-md-2">
-				<select id="level" class="form-control" onchange="reloadResults()">
-					<option value="">All levels</option>
-					<option value="G">Grand Slam</option>
-					<option value="F">Tour Finals</option>
-					<option value="M">Masters</option>
-					<option value="O">Olympics</option>
-					<option value="A">ATP</option>
-				</select>
-			</div>
-			<div class="col-md-2">
-				<select id="result" class="form-control" onchange="reloadResults()">
-					<option value="">All results</option>
-					<option value="W">Win</option>
-					<option value="F">Final</option>
-					<option value="SF">Semi-final</option>
-					<option value="QF">Quarter-final</option>
-					<option value="R16">Round of 16</option>
-					<option value="R32">Round of 32</option>
-					<option value="R64">Round of 64</option>
-					<option value="R128">Round of 128</option>
-					<option value="RR">Round-Robin</option>
-				</select>
-			</div>
-			<div class="col-md-1">
-				<button type="button" class="btn btn-default" onclick="clearResultsFilter()">
-					<span class="glyphicon glyphicon-remove"></span> Clear
-				</button>
-			</div>
-		</div>
+
+		<!--/* Tournament Results */-->
 		<script type="text/javascript" th:inline="javascript">
 			/*<![CDATA[*/
 			$(function() {
+				$(document).ready(function(){
+					$('[data-toggle="tooltip"]').tooltip();
+				});
 				$("#resultsTable").bootgrid({
 					ajax: true,
 					ajaxSettings: {
@@ -215,8 +182,11 @@
 					},
 					rowCount: [10, 20, 50, -1],
 					formatters: {
+						"date": function(column, row) {
+							return $.datepicker.formatDate("dd-mm-yy", new Date(row.date));
+						},
 						"level": function(column, row) {
-							return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + row.levelName + "</span>";
+							return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + levelName(row.level) + "</span>";
 						}
 					}
 				});
@@ -228,6 +198,17 @@
 					case "M": return "info";
 					case "O": return "success";
 					default: return "default";
+				}
+			}
+			function levelName(level) {
+				switch (level) {
+					case "G": return "Grand Slam";
+					case "F": return "Tour Finals";
+					case "M": return "Masters";
+					case "A": return "ATP";
+					case "O": return "Olympics";
+					case "D": return "Davis Cup";
+					default: return level;
 				}
 			}
 			function reloadResults() {
@@ -242,11 +223,49 @@
 			}
 			/*]]>*/
 		</script>
+		<div class="row">
+			<div class="col-md-5"><h4>Tournament Results</h4></div>
+			<div class="col-md-2">
+				<select id="season" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="level" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter tournament levels">
+					<option value="">All levels</option>
+					<option value="G">Grand Slam</option>
+					<option value="F">Tour Finals</option>
+					<option value="M">Masters</option>
+					<option value="O">Olympics</option>
+					<option value="A">ATP</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="result" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter results">
+					<option value="">All results</option>
+					<option value="W">Win</option>
+					<option value="F">Final</option>
+					<option value="SF">Semi-final</option>
+					<option value="QF">Quarter-final</option>
+					<option value="R16">Round of 16</option>
+					<option value="R32">Round of 32</option>
+					<option value="R64">Round of 64</option>
+					<option value="R128">Round of 128</option>
+					<option value="RR">Round-Robin</option>
+				</select>
+			</div>
+			<div class="col-md-1">
+				<button type="button" class="btn btn-default" onclick="clearResultsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+					<span class="glyphicon glyphicon-remove"></span> Clear
+				</button>
+			</div>
+		</div>
 		<table id="resultsTable" class="table table-condensed table-hover table-striped">
 			<thead>
 				<tr>
 					<th data-column-id="season" data-converter="numeric" data-sortable="false" data-width="50">Season</th>
-					<th data-column-id="date" data-order="desc" data-width="80">Date</th>
+					<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
 					<th data-column-id="levelName" data-formatter="level" data-width="100">Level</th>
 					<th data-column-id="name" data-width="250">Tournament</th>
 					<th data-column-id="result" data-order="desc" data-width="50">Result</th>

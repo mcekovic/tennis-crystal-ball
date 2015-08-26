@@ -9,12 +9,12 @@
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<style>
+	<style th:inline="text">
 		.ui-autocomplete {
 			max-height: 600px; overflow-y: auto; overflow-x: hidden;
 		}
 		.ui-autocomplete-loading {
-			background: white url("http://jquery-ui.googlecode.com/svn/tags/1.8.2/themes/smoothness/images/ui-anim_basic_16x16.gif") right center no-repeat;
+			background: white url("[[@{/images/ui-anim_basic_16x16.gif}]]") right center no-repeat;
 		}
 	</style>
 	<script type="text/javascript">
@@ -24,7 +24,8 @@
 		var points;
 		var logScale;
 		function drawChart() {
-			doDrawChart(true, $('#rankChartSize').slider('value'));
+			if ($.trim($("#players").val()).length > 0)
+				doDrawChart(true, $('#rankChartSize').slider('value'));
 		}
 		function doDrawChart(fetchData, width) {
 			var players = $("#players").val();
@@ -206,7 +207,9 @@
 	<div class="ui-widget">
 		<label for="rankChartSize">Chart size: </label>
 		<div id="rankChartSize" style="width: 200px; margin-left: 8px; margin-right: 8px; display: inline-block"></div>
-		<a class="btn btn-primary" href="#" role="button" onclick="drawChart()">Draw Chart</a>
+		<a class="btn btn-primary" href="#" role="button" onclick="drawChart()">
+			<span class="glyphicon glyphicon-stats"></span> Draw Chart
+		</a>
 	</div>
 	<div id="rankChart"></div>
 </body>
