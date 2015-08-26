@@ -52,10 +52,6 @@
 			<div class="col-md-3">
 				<table class="table table-condensed no-wrap">
 					<!--/* General */-->
-					<tr>
-						<th>Name</th>
-						<td th:text="${player.name}" width="100%">Player</td>
-					</tr>
 					<tr th:if="${player.dob}">
 						<th>Age</th>
 						<td th:text="|${player.age} (${#dates.format(player.dob, 'dd-MM-yyyy')})|">25 (1-1-1990)</td>
@@ -148,7 +144,7 @@
  					<!--/* Social */-->
 					<tr th:if="${player.webSite}">
 						<th>Web Site</th>
-						<td><a th:href="${player.webSite}" href="http://www.johnsmith.com" target="_blank" th:text="${player.webSite}">http://www.johnsmith.com</a></td>
+						<td><a th:href="'http://' + ${player.webSite}" href="http://www.johnsmith.com" target="_blank" th:text="${player.webSite}">www.johnsmith.com</a></td>
 					</tr>
 					<tr th:if="${player.twitter}">
 						<th>Twitter</th>
