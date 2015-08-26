@@ -160,7 +160,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-6"><h4>Tournament Results</h4></div>
+			<div class="col-md-5"><h4>Tournament Results</h4></div>
 			<div class="col-md-2">
 				<select id="season" class="form-control" onchange="reloadResults()">
 					<option value="">All seasons</option>
@@ -180,16 +180,21 @@
 			<div class="col-md-2">
 				<select id="result" class="form-control" onchange="reloadResults()">
 					<option value="">All results</option>
-					<option value="W">W</option>
-					<option value="F">F</option>
-					<option value="SF">SF</option>
-					<option value="Q">Q</option>
-					<option value="R16">R16</option>
-					<option value="R32">R32</option>
-					<option value="R64">R64</option>
-					<option value="R128">R128</option>
-					<option value="RR">RR</option>
+					<option value="W">Win</option>
+					<option value="F">Final</option>
+					<option value="SF">Semi-final</option>
+					<option value="QF">Quarter-final</option>
+					<option value="R16">Round of 16</option>
+					<option value="R32">Round of 32</option>
+					<option value="R64">Round of 64</option>
+					<option value="R128">Round of 128</option>
+					<option value="RR">Round-Robin</option>
 				</select>
+			</div>
+			<div class="col-md-1">
+				<button type="button" class="btn btn-default" onclick="clearResultsFilter()">
+					<span class="glyphicon glyphicon-remove"></span> Clear
+				</button>
 			</div>
 		</div>
 		<script type="text/javascript" th:inline="javascript">
@@ -201,7 +206,13 @@
 						method: "GET",
 						cache: false
 					},
-					url: "/playerResults?playerId=[[${player.id}]]&season=" + $("#season").val() + "&level=" + $("#level").val() + "&result=" + $("#result").val(),
+					url: "/playerResults?playerId=[[${player.id}]]",
+					requestHandler: function (request) {
+						request.season = $("#season").val();
+						request.level = $("#level").val();
+						request.result = $("#result").val();
+						return request;
+					},
 					rowCount: [10, 20, 50, -1],
 					formatters: {
 						"level": function(column, row) {
@@ -220,20 +231,25 @@
 				}
 			}
 			function reloadResults() {
-				$("#resultsTable").bootgrid("clear").bootgrid({
-					url: "/playerResults?playerId=[[${player.id}]]&season=" + $("#season").val() + "&level=" + $("#level").val() + "&result=" + $("#result").val(),
-				}).bootgrid("reload");
+				$("#resultsTable").bootgrid("reload");
+			}
+			function clearResultsFilter() {
+				$("#season").val("");
+				$("#level").val("");
+				$("#result").val("");
+				$("#resultsTable").bootgrid("search", "");
+				reloadResults();
 			}
 			/*]]>*/
 		</script>
 		<table id="resultsTable" class="table table-condensed table-hover table-striped">
 			<thead>
 				<tr>
-					<th data-column-id="season" data-type="numeric" data-sortable="false" data-width="50">Season</th>
-					<th data-column-id="date" data-sortable="false" data-width="80">Date</th>
-					<th data-column-id="levelName" data-formatter="level" data-sortable="false" data-width="100">Level</th>
-					<th data-column-id="name" data-sortable="false" data-width="250">Tournament</th>
-					<th data-column-id="result" data-sortable="false" data-width="50">Result</th>
+					<th data-column-id="season" data-converter="numeric" data-sortable="false" data-width="50">Season</th>
+					<th data-column-id="date" data-order="desc" data-width="80">Date</th>
+					<th data-column-id="levelName" data-formatter="level" data-width="100">Level</th>
+					<th data-column-id="name" data-width="250">Tournament</th>
+					<th data-column-id="result" data-order="desc" data-width="50">Result</th>
 				</tr>
 			</thead>
 		</table>

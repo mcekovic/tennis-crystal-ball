@@ -6,15 +6,15 @@ public class PlayerEventResult {
 
 	private final int season;
 	private final Date date;
-	private final String name;
 	private final String level;
+	private final String name;
 	private final String result;
 
-	public PlayerEventResult(int season, Date date, String name, String level, String result) {
+	public PlayerEventResult(int season, Date date, String level, String name, String result) {
 		this.season = season;
 		this.date = date;
-		this.name = name;
 		this.level = level;
+		this.name = name;
 		this.result = result;
 	}
 
@@ -24,10 +24,6 @@ public class PlayerEventResult {
 
 	public Date getDate() {
 		return date;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public String getLevel() {
@@ -44,6 +40,10 @@ public class PlayerEventResult {
 			case "D": return "Davis Cup";
 			default: return null;
 		}
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public String getResult() {

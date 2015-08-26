@@ -1,16 +1,14 @@
 package org.strangeforest.tcb.stats.controler;
 
 import java.util.*;
-import java.util.Map.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.util.*;
 
-import com.google.common.base.*;
-
+import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 
 @RestController
@@ -29,17 +27,28 @@ public class GOATController {
 		"WHERE goat_points > 0 AND goat_rank <= " + PLAYER_COUNT + "%1$s " +
 		"ORDER BY %2$s, name OFFSET ? LIMIT ?";
 
-	public static final String FILTER_SQL = " AND (name ILIKE '%' || ? || '%' OR country_id ILIKE '%' || ? || '%')";
-	public static final String DEFAULT_ORDER = "goat_points DESC";
+	private static final String FILTER_SQL = " AND (name ILIKE '%' || ? || '%' OR country_id ILIKE '%' || ? || '%')";
+
+	private static Map<String, String> ORDER_MAP = new TreeMap<>();
+	static {
+		ORDER_MAP.put("goatPoints", "goat_points");
+		ORDER_MAP.put("grandSlams", "grand_slams");
+		ORDER_MAP.put("tourFinals", "tour_finals");
+		ORDER_MAP.put("masters", "masters");
+		ORDER_MAP.put("olympics", "olympics");
+		ORDER_MAP.put("bigTitles", "big_titles");
+		ORDER_MAP.put("titles", "titles");
+	}
+	private static final String DEFAULT_ORDER = "goat_points DESC";
 
 	@RequestMapping("/goatTable")
 	public BootgridTable<GOATListRow> goatTable(
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam(value = "searchPhrase") String searchPhrase,
-		WebRequest request
+		@RequestParam Map<String, String> requestParams
 	) {
-		boolean hasFilter = !Strings.isNullOrEmpty(searchPhrase);
+		boolean hasFilter = !isNullOrEmpty(searchPhrase);
 		String filter = hasFilter ? FILTER_SQL : "";
 		Object[] params = hasFilter ? new Object[] {searchPhrase, searchPhrase} : new Object[] {};
 
@@ -47,7 +56,7 @@ public class GOATController {
 
 		int pageSize = rowCount > 0 ? rowCount : playerCount;
 		int offset = (current - 1) * pageSize;
-		String orderBy = getOrderBy(request);
+		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		params = hasFilter ? new Object[] {searchPhrase, searchPhrase, offset, pageSize} : new Object[] {offset, pageSize};
 
 		BootgridTable<GOATListRow> table = new BootgridTable<>(current, playerCount);
@@ -71,41 +80,5 @@ public class GOATController {
 			params
 		);
 		return table;
-	}
-
-	private static String getOrderBy(WebRequest request) {
-		String orderBy = null;
-		for (Entry<String, String> order : ORDER_MAP.entrySet()) {
-			String sort = findSortBy(request, order.getKey(), order.getValue());
-			if (sort != null) {
-				if (orderBy != null)
-					orderBy += ", " + sort;
-				else
-					orderBy = sort;
-			}
-		}
-		if (orderBy != null) {
-			if (!orderBy.contains(DEFAULT_ORDER))
-				orderBy += ", " + DEFAULT_ORDER;
-			return orderBy;
-		}
-		else
-			return DEFAULT_ORDER;
-	}
-
-	private static String findSortBy(WebRequest request, String attrName, final String columnName) {
-		String sort = request.getParameter("sort[" + attrName + "]");
-		return sort != null ? columnName + " " + sort.toUpperCase() : null;
-	}
-
-	private static Map<String, String> ORDER_MAP = new TreeMap<>();
-	static {
-		ORDER_MAP.put("goatPoints", "goat_points");
-		ORDER_MAP.put("grandSlams", "grand_slams");
-		ORDER_MAP.put("tourFinals", "tour_finals");
-		ORDER_MAP.put("masters", "masters");
-		ORDER_MAP.put("olympics", "olympics");
-		ORDER_MAP.put("bigTitles", "big_titles");
-		ORDER_MAP.put("titles", "titles");
 	}
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
@@ -18,69 +19,83 @@ public class PlayerResultsController {
 
 	private static final int MAX_RESULTS = 1000;
 
-	private static final String RESULTS_QUERY =
-		"SELECT e.season, e.date, e.name, e.level, r.result FROM player_tournament_event_result r " +
+	private static final String RESULTS_QUERY = //language=SQL
+		"SELECT e.season, e.date, e.level, e.name, r.result FROM player_tournament_event_result r " +
 		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
 		"WHERE r.player_id = ? " +
-		"AND e.level <> 'D' %1$s" +
-		"ORDER BY date DESC OFFSET ?";
+		"AND e.level <> 'D'%1$s " +
+		"ORDER BY %2$s OFFSET ?";
 
-	private static final String SEASON_CONDITION = "AND e.season = ? ";
-	private static final String LEVEL_CONDITION  = "AND e.level = ?::tournament_level ";
-	private static final String RESULT_CONDITION = "AND r.result = ?::tournament_event_result ";
+	private static final String SEASON_CONDITION = " AND e.season = ?";
+	private static final String LEVEL_CONDITION = " AND e.level = ?::tournament_level";
+	private static final String RESULT_CONDITION = " AND r.result = ?::tournament_event_result";
+	private static final String TOURNAMENT_CONDITION = " AND e.name ILIKE '%' || ? || '%'";
+
+	private static Map<String, String> ORDER_MAP = new TreeMap<>();
+	static {
+		ORDER_MAP.put("season", "season");
+		ORDER_MAP.put("date", "date");
+		ORDER_MAP.put("levelName", "level");
+		ORDER_MAP.put("name", "name");
+		ORDER_MAP.put("result", "result");
+	}
+	private static final String DEFAULT_ORDER = "date DESC";
 
 	@RequestMapping("/playerResults")
 	public BootgridTable<PlayerEventResult> playerResults(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "season", required = false) Integer season,
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "result", required = false) String result,
-		@RequestParam(value = "current") int current,
-		@RequestParam(value = "rowCount") int rowCount
+			@RequestParam(value = "playerId") int playerId,
+			@RequestParam(value = "season", required = false) Integer season,
+			@RequestParam(value = "level", required = false) String level,
+			@RequestParam(value = "result", required = false) String result,
+			@RequestParam(value = "current") int current,
+			@RequestParam(value = "rowCount") int rowCount,
+			@RequestParam(value = "searchPhrase") String tournament,
+			@RequestParam Map<String, String> requestParams
 	) {
-		if (isNullOrEmpty(level))
-			level = null;
-		if (isNullOrEmpty(result))
-			result = null;
 		int pageSize = rowCount > 0 ? rowCount : MAX_RESULTS;
 		int offset = (current - 1) * pageSize;
+		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		AtomicInteger results = new AtomicInteger();
 		BootgridTable<PlayerEventResult> table = new BootgridTable<>(current);
-		jdbcTemplate.query(constructQuery(season, level, result), (rs) -> {
+		jdbcTemplate.query(constructQuery(season, level, result, tournament, orderBy), (rs) -> {
 			if (results.incrementAndGet() <= pageSize) {
 				table.addRow(new PlayerEventResult(
 					rs.getInt("season"),
 					rs.getDate("date"),
-					rs.getString("name"),
 					rs.getString("level"),
+					rs.getString("name"),
 					rs.getString("result")
 				));
 			}
-		},	params(playerId, season, level, result, offset));
+		},	params(playerId, season, level, result, tournament, offset));
 		table.setTotal(offset + results.get());
 		return table;
 	}
 
-	private String constructQuery(Integer season, String level, String result) {
+	private String constructQuery(Integer season, String level, String result, String tournament, String orderBy) {
 		StringBuilder conditions = new StringBuilder();
 		if (season != null)
 			conditions.append(SEASON_CONDITION);
-		if (level != null)
+		if (!isNullOrEmpty(level))
 			conditions.append(LEVEL_CONDITION);
-		if (result != null)
+		if (!isNullOrEmpty(result))
 			conditions.append(RESULT_CONDITION);
-		return format(RESULTS_QUERY, conditions);
+		if (!isNullOrEmpty(tournament))
+			conditions.append(TOURNAMENT_CONDITION);
+		return format(RESULTS_QUERY, conditions, orderBy);
 	}
 
-	private Object[] params(int playerId, Integer season, String level, String result, int offset) {
+	private Object[] params(int playerId, Integer season, String level, String result, String tournament, int offset) {
 		List<Object> params = new ArrayList<>();
 		params.add(playerId);
 		if (season != null)
 			params.add(season);
-		if (level != null)
+		if (!isNullOrEmpty(level))
 			params.add(level);
-		if (result != null)
+		if (!isNullOrEmpty(result))
 			params.add(result);
+		if (!isNullOrEmpty(tournament))
+			params.add(tournament);
 		params.add(offset);
 		return params.toArray();
 	}
