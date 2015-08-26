@@ -1,7 +1,16 @@
--- tournament
+-- types
 
 CREATE TYPE tournament_level AS ENUM ('G', 'F', 'M', 'A', 'D', 'O', 'C', 'T');
 CREATE TYPE surface AS ENUM ('H', 'C', 'G', 'P');
+CREATE TYPE player_hand AS ENUM ('R', 'L');
+CREATE TYPE player_backhand AS ENUM ('1', '2');
+CREATE TYPE tournament_event_result AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F', 'W');
+CREATE TYPE match_round AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F');
+CREATE TYPE tournament_entry AS ENUM ('Q', 'WC', 'LL', 'PR');
+CREATE TYPE match_outcome AS ENUM ('RET', 'W/O');
+
+
+-- tournament
 
 CREATE TABLE tournament (
 	tournament_id SERIAL PRIMARY KEY,
@@ -50,9 +59,6 @@ CREATE INDEX ON tournament_event (surface);
 
 
 -- player
-
-CREATE TYPE player_hand AS ENUM ('R', 'L');
-CREATE TYPE player_backhand AS ENUM ('S', 'D');
 
 CREATE TABLE player (
 	player_id SERIAL PRIMARY KEY,
@@ -128,10 +134,6 @@ CREATE INDEX ON player_best_rank_points (player_id);
 
 
 -- match
-
-CREATE TYPE match_round AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F');
-CREATE TYPE tournament_entry AS ENUM ('Q', 'WC', 'LL', 'PR');
-CREATE TYPE match_outcome AS ENUM ('RET', 'W/O');
 
 CREATE TABLE match (
 	match_id BIGSERIAL PRIMARY KEY,
@@ -244,8 +246,6 @@ FROM match_stats;
 
 
 -- tournament_rank_points
-
-CREATE TYPE tournament_event_result AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F', 'W');
 
 CREATE TABLE tournament_rank_points (
 	level tournament_level NOT NULL,

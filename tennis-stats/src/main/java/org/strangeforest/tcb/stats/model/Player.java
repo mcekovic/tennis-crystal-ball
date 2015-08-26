@@ -153,8 +153,8 @@ public class Player {
 
 	public String getBackhandName() {
 		switch (backhand) {
-			case "S": return "One-handed";
-			case "D": return "Two-handed";
+			case "1": return "One-handed";
+			case "2": return "Two-handed";
 			default: return null;
 		}
 	}

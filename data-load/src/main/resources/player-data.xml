@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<player-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<player name="Novak Djokovic">
+		<birthplace>Belgrade, Serbia</birthplace>
+		<residence>Monte Carlo, Monaco</residence>
+		<weight>78</weight>
+		<backhand>2</backhand>
+		<turnedPro>2003</turnedPro>
+		<coach>Boris Becker, Marian Vajda</coach>
+		<webSite>http://novakdjokovic.com/</webSite>
+		<twitter>@DjokerNole</twitter>
+		<facebook>djokovic.official</facebook>
+	</player>
+</player-data>

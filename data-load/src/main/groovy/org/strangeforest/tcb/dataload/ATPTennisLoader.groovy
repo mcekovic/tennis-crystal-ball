@@ -64,6 +64,12 @@ class ATPTennisLoader {
 		return baseDir
 	}
 
+	def loadAdditionalPlayerData(loader) {
+		println 'Loading additional player data'
+		loader.loadFile('classpath:/player-data.xml')
+		println()
+	}
+
 	def refreshComputedData(Sql sql) {
 		refreshMaterializedView(sql, 'player_current_rank')
 		refreshMaterializedView(sql, 'player_best_rank')

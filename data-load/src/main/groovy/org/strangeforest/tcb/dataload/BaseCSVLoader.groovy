@@ -12,7 +12,7 @@ abstract class BaseCSVLoader {
 
 	private Sql sql
 
-	private def PROGRESS_LINE_WRAP = 100
+	private static def PROGRESS_LINE_WRAP = 100
 
 	BaseCSVLoader(Sql sql) {
 		this.sql = sql
