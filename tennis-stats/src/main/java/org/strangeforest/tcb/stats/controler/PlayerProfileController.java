@@ -16,11 +16,10 @@ public class PlayerProfileController {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_QUERY =
-		"SELECT player_id, name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight, " +
-				"hand, backhand, turned_pro, coach, " +
+		"SELECT player_id, name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight, hand, backhand, " +
 				"titles, grand_slams, tour_finals, masters, olympics, " +
 				"current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points, " +
-				"web_site, twitter, facebook " +
+				"turned_pro, coach, web_site, twitter, facebook " +
 		"FROM player_v";
 
 	private static final String PLAYER_BY_NAME = PLAYER_QUERY + " WHERE name = ? ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
@@ -51,11 +50,8 @@ public class PlayerProfileController {
 			p.setResidence(rs.getString("residence"));
 			p.setHeight(rs.getInt("height"));
 			p.setWeight(rs.getInt("weight"));
-
 			p.setHand(rs.getString("hand"));
 			p.setBackhand(rs.getString("backhand"));
-			p.setTurnedPro(rs.getInt("turned_pro"));
-			p.setCoach(rs.getString("coach"));
 
 			p.setTitles(rs.getInt("titles"));
 			p.setGrandSlams(rs.getInt("grand_slams"));
@@ -72,6 +68,8 @@ public class PlayerProfileController {
 			p.setGoatRank(rs.getInt("goat_rank"));
 			p.setGoatRankPoints(rs.getInt("goat_points"));
 
+			p.setTurnedPro(rs.getInt("turned_pro"));
+			p.setCoach(rs.getString("coach"));
 			p.setWebSite(rs.getString("web_site"));
 			p.setTwitter(rs.getString("twitter"));
 			p.setFacebook(rs.getString("facebook"));

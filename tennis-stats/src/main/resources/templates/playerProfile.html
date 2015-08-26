@@ -50,111 +50,113 @@
 		<h3 th:text="${player.name}">Player Profile</h3>
 		<div class="row">
 			<div class="col-md-3">
-				<table class="table table-condensed">
+				<table class="table table-condensed no-wrap">
 					<!--/* General */-->
 					<tr>
-						<th class="no-wrap">Name</th>
+						<th>Name</th>
 						<td th:text="${player.name}" width="100%">Player</td>
 					</tr>
 					<tr th:if="${player.dob}">
-						<th class="no-wrap">Age</th>
+						<th>Age</th>
 						<td th:text="|${player.age} (${#dates.format(player.dob, 'dd-MM-yyyy')})|">25 (1-1-1990)</td>
 					</tr>
 					<tr>
-						<th class="no-wrap">Country</th>
+						<th>Country</th>
 						<td><img th:src="@{/flags/{code}.png(code=${player.countryCode})}" src="/flags/us.png" th:title="${player.countryId}" title="USA" width="24" height="24"/> <span th:text="${player.countryName}">United States</span></td>
 					</tr>
 					<tr th:if="${player.birthplace}">
-						<th class="no-wrap">Birthplace</th>
+						<th>Birthplace</th>
 						<td th:text="${player.birthplace}">New York</td>
 					</tr>
 					<tr th:if="${player.residence}">
-						<th class="no-wrap">Residence</th>
+						<th>Residence</th>
 						<td th:text="${player.residence}">New York</td>
 					</tr>
 					<tr th:if="${player.height > 0}">
-						<th class="no-wrap">Height</th>
+						<th>Height</th>
 						<td th:text="|${player.height} cm|">180 cm</td>
 					</tr>
 					<tr th:if="${player.weight > 0}">
-						<th class="no-wrap">Weight</th>
+						<th>Weight</th>
 						<td th:text="|${player.weight} kg|">80 kg</td>
 					</tr>
-
-					<!--/* Tennis */-->
 					<tr th:if="${player.hand}">
-						<th class="no-wrap">Hand</th>
+						<th>Plays</th>
 						<td th:text="${player.handName}">Right-handed</td>
 					</tr>
 					<tr th:if="${player.backhand}">
-						<th class="no-wrap">Backhand</th>
+						<th>Backhand</th>
 						<td th:text="${player.backhandName}">Two-handed</td>
 					</tr>
-					<tr th:if="${player.turnedPro > 0}">
-						<th class="no-wrap">Turned Pro</th>
-						<td th:text="${player.turnedPro}">2005</td>
+				</table>
+			</div>
+			<div class="col-md-1">&nbsp;</div>
+			<div class="col-md-3">
+				<table class="table table-condensed no-wrap">
+					<!--/* Titles */-->
+					<tr th:if="${player.titles > 0}">
+						<th>Titles</th>
+						<td width="100%"><span class="label label-default" th:text="${player.titles}">10</span></td>
 					</tr>
-					<tr th:if="${player.coach}">
-						<th class="no-wrap">Coach</th>
-						<td th:text="${player.coach}">Brad Gilbert</td>
+					<tr th:if="${player.grandSlams > 0}">
+						<th>Grand Slams</th>
+						<td><span class="label label-danger" th:text="${player.grandSlams}">1</span></td>
 					</tr>
-
-					<!--/* Social */-->
-					<tr th:if="${player.webSite}">
-						<th class="no-wrap">Web Site</th>
-						<td th:text="${player.webSite}">www.johnsmith.com</td>
+					<tr th:if="${player.tourFinals > 0}">
+						<th>Tour Finals</th>
+						<td><span class="label label-warning" th:text="${player.tourFinals}">1</span></td>
 					</tr>
-					<tr th:if="${player.twitter}">
-						<th class="no-wrap">Twitter</th>
-						<td th:text="${player.twitter}">twitter</td>
+					<tr th:if="${player.masters > 0}">
+						<th>Masters</th>
+						<td><span class="label label-info" th:text="${player.masters}">5</span></td>
 					</tr>
-					<tr th:if="${player.facebook}">
-						<th class="no-wrap">Facebook</th>
-						<td th:text="${player.facebook}">facebook</td>
+					<tr th:if="${player.olympics > 0}">
+						<th>Olympics</th>
+						<td><span class="label label-success" th:text="${player.olympics}">1</span></td>
+					</tr>
+					<!--/* Ranking */-->
+					<tr th:if="${player.currentRank > 0}">
+						<th>Current Rank</th>
+						<td th:text="${player.currentRank} + ' (' + ${player.currentRankPoints} + ')'">10 (3000)</td>
+					</tr>
+					<tr th:if="${player.bestRank > 0}">
+						<th>Best Rank</th>
+						<td th:text="${player.bestRank} + ' (' + ${#dates.format(player.bestRankDate, 'dd-MM-yyyy')} + ')'">5 (1.1.2010)</td>
+					</tr>
+					<tr th:if="${player.bestRankPoints > 0}">
+						<th>Best Rank Points</th>
+						<td th:text="${player.bestRankPoints} + ' (' + ${#dates.format(player.bestRankPointsDate, 'dd-MM-yyyy')} + ')'">5000 (1.1.2011)</td>
+					</tr>
+					<tr th:if="${player.goatRankPoints > 0}">
+						<th>GOAT Rank</th>
+						<td th:text="${player.goatRank} + ' (' + ${player.goatRankPoints} + ')'">50 (2500)</td>
 					</tr>
 				</table>
 			</div>
 			<div class="col-md-1">&nbsp;</div>
 			<div class="col-md-4">
-				<table class="table table-condensed">
-					<!--/* Titles */-->
-					<tr th:if="${player.titles > 0}">
-						<th class="no-wrap">Titles</th>
-						<td width="100%"><span class="label label-default" th:text="${player.titles}">10</span></td>
+				<table class="table table-condensed no-wrap">
+					<!--/* Tennis */-->
+					<tr th:if="${player.turnedPro > 0}">
+						<th>Turned Pro</th>
+						<td th:text="${player.turnedPro}">2005</td>
 					</tr>
-					<tr th:if="${player.grandSlams > 0}">
-						<th class="no-wrap">Grand Slams</th>
-						<td><span class="label label-danger" th:text="${player.grandSlams}">1</span></td>
+					<tr th:if="${player.coach}">
+						<th>Coach</th>
+						<td th:text="${player.coach}">Brad Gilbert</td>
 					</tr>
-					<tr th:if="${player.tourFinals > 0}">
-						<th class="no-wrap">Tour Finals</th>
-						<td><span class="label label-warning" th:text="${player.tourFinals}">1</span></td>
+ 					<!--/* Social */-->
+					<tr th:if="${player.webSite}">
+						<th>Web Site</th>
+						<td><a th:href="${player.webSite}" href="http://www.johnsmith.com" target="_blank" th:text="${player.webSite}">http://www.johnsmith.com</a></td>
 					</tr>
-					<tr th:if="${player.masters > 0}">
-						<th class="no-wrap">Masters</th>
-						<td><span class="label label-info" th:text="${player.masters}">5</span></td>
+					<tr th:if="${player.twitter}">
+						<th>Twitter</th>
+						<td><a th:href="'https://twitter.com/' + ${player.twitter}" href="https://twitter.com/JohnSmith" target="_blank" th:text="'@'+ ${player.twitter}">@JohnSmith</a></td>
 					</tr>
-					<tr th:if="${player.olympics > 0}">
-						<th class="no-wrap">Olympics</th>
-						<td><span class="label label-success" th:text="${player.olympics}">1</span></td>
-					</tr>
-
-					<!--/* Ranking */-->
-					<tr th:if="${player.currentRank > 0}">
-						<th class="no-wrap">Current Rank</th>
-						<td th:text="${player.currentRank} + ' (' + ${player.currentRankPoints} + ')'">10 (3000)</td>
-					</tr>
-					<tr th:if="${player.bestRank > 0}">
-						<th class="no-wrap">Best Rank</th>
-						<td th:text="${player.bestRank} + ' (' + ${#dates.format(player.bestRankDate, 'dd-MM-yyyy')} + ')'">5 (1.1.2010)</td>
-					</tr>
-					<tr th:if="${player.bestRankPoints > 0}">
-						<th class="no-wrap">Best Rank Points</th>
-						<td th:text="${player.bestRankPoints} + ' (' + ${#dates.format(player.bestRankPointsDate, 'dd-MM-yyyy')} + ')'">5000 (1.1.2011)</td>
-					</tr>
-					<tr th:if="${player.goatRankPoints > 0}">
-						<th class="no-wrap">GOAT Rank</th>
-						<td th:text="${player.goatRank} + ' (' + ${player.goatRankPoints} + ')'">50 (2500)</td>
+					<tr th:if="${player.facebook}">
+						<th>Facebook</th>
+						<td><a th:href="'https://www.facebook.com/' + ${player.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" th:text="${player.facebook}">JohnSmith</a></td>
 					</tr>
 				</table>
 			</div>

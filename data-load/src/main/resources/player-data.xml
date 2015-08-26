@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <player-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<player name="Roger Federer">
+		<birthplace>Basel, Switzerland</birthplace>
+		<residence>Bottmingen, Switzerland</residence>
+		<weight>85</weight>
+		<backhand>1</backhand>
+		<turnedPro>1998</turnedPro>
+		<coach>Severin Luthi and Stefan Edberg</coach>
+		<webSite>http://www.rogerfederer.com</webSite>
+		<twitter>rogerfederer</twitter>
+		<facebook>Federer</facebook>
+	</player>
+	<player name="Rafael Nadal">
+		<birthplace>Manacor, Mallorca, Spain</birthplace>
+		<residence>Manacor, Mallorca, Spain</residence>
+		<weight>85</weight>
+		<backhand>2</backhand>
+		<turnedPro>2001</turnedPro>
+		<coach>Toni Nadal</coach>
+		<webSite>http://www.rafaelnadal.com</webSite>
+		<twitter>RafaelNadal</twitter>
+		<facebook>Nadal</facebook>
+	</player>
 	<player name="Novak Djokovic">
 		<birthplace>Belgrade, Serbia</birthplace>
 		<residence>Monte Carlo, Monaco</residence>
@@ -7,8 +29,19 @@
 		<backhand>2</backhand>
 		<turnedPro>2003</turnedPro>
 		<coach>Boris Becker, Marian Vajda</coach>
-		<webSite>http://novakdjokovic.com/</webSite>
-		<twitter>@DjokerNole</twitter>
+		<webSite>http://novakdjokovic.com</webSite>
+		<twitter>DjokerNole</twitter>
 		<facebook>djokovic.official</facebook>
+	</player>
+	<player name="Andy Murray">
+		<birthplace>Dunblane, Scotland</birthplace>
+		<residence>London, England</residence>
+		<weight>84</weight>
+		<backhand>2</backhand>
+		<turnedPro>2005</turnedPro>
+		<coach>Amelie Mauresmo, Jonas Bjorkman</coach>
+		<webSite>http://www.andymurray.com</webSite>
+		<twitter>andy_murray</twitter>
+		<facebook>andymurrayofficial</facebook>
 	</player>
 </player-data>

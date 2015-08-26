@@ -16,6 +16,7 @@ abstract class BaseXMLLoader {
 	abstract String loadSql(def item)
 	abstract int batch()
 	abstract Map params(def item)
+	abstract String toString(def item)
 
 	def loadFile(String file) {
 		println "Loading file '$file'"
@@ -25,12 +26,17 @@ abstract class BaseXMLLoader {
 		def rows = 0
 
 		for (item in data.children()) {
-			sql.executeUpdate(params(item), loadSql(item))
-			if (++rows % batch == 0) {
-				sql.commit()
-				print '.'
-				if (rows % (batch * PROGRESS_LINE_WRAP) == 0)
-					println()
+			def loadSql = loadSql(item)
+			if (loadSql) {
+				int updated = sql.executeUpdate(params(item), loadSql)
+				if (!updated)
+					throw new NoSuchElementException('Cannot find ' + toString(item))
+				if (++rows % batch == 0) {
+					sql.commit()
+					print '.'
+					if (rows % (batch * PROGRESS_LINE_WRAP) == 0)
+						println()
+				}
 			}
 		}
 		sql.commit()
@@ -65,15 +71,7 @@ abstract class BaseXMLLoader {
 		i ? i.toInteger() : null
 	}
 
-	static Short smallint(i) {
-		i ? i.toShort() : null
-	}
-
-	static BigDecimal decimal(d) {
-		d ? d.toBigDecimal() : null
-	}
-
-	static Float real(f) {
-		f ? f.toFloat() : null
+	static java.sql.Date date(d) {
+		d ? new java.sql.Date(Date.parse('dd-MM-yyyy', d).time) : null
 	}
 }

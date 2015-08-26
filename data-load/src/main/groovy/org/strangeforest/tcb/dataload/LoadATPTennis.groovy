@@ -11,4 +11,6 @@ loader.loadPlayers(new PlayerLoader(sql))
 loader.loadRankings(new RankingLoader(sql))
 loader.loadMatches(new MatchLoader(sql))
 
+loader.loadAdditionalPlayerData(new AdditionalPlayerDataLoader(sql))
+
 loader.refreshComputedData(sql)

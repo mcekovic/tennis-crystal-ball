@@ -16,12 +16,8 @@ public class Player {
 	private String residence;
 	private int height;
 	private int weight;
-
-	// Tennis
 	private String hand;
 	private String backhand;
-	private int turnedPro;
-	private String coach;
 
 	// Titles
 	private int titles;
@@ -39,6 +35,10 @@ public class Player {
 	private Date bestRankPointsDate;
 	private int goatRank;
 	private int goatRankPoints;
+
+	// Tennis
+	private int turnedPro;
+	private String coach;
 
 	// Social
 	private String webSite;
@@ -128,9 +128,6 @@ public class Player {
 		this.weight = weight;
 	}
 
-
-	// Tennis
-
 	public String getHand() {
 		return hand;
 	}
@@ -161,22 +158,6 @@ public class Player {
 
 	public void setBackhand(String backhand) {
 		this.backhand = backhand;
-	}
-
-	public int getTurnedPro() {
-		return turnedPro;
-	}
-
-	public void setTurnedPro(int turnedPro) {
-		this.turnedPro = turnedPro;
-	}
-
-	public String getCoach() {
-		return coach;
-	}
-
-	public void setCoach(String coach) {
-		this.coach = coach;
 	}
 
 
@@ -287,6 +268,25 @@ public class Player {
 
 	public void setGoatRankPoints(int goatRankPoints) {
 		this.goatRankPoints = goatRankPoints;
+	}
+
+
+	// Tennis
+
+	public int getTurnedPro() {
+		return turnedPro;
+	}
+
+	public void setTurnedPro(int turnedPro) {
+		this.turnedPro = turnedPro;
+	}
+
+	public String getCoach() {
+		return coach;
+	}
+
+	public void setCoach(String coach) {
+		this.coach = coach;
 	}
 
 

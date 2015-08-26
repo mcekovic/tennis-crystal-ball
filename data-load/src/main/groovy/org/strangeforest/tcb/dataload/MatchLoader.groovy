@@ -218,7 +218,7 @@ class MatchLoader extends BaseCSVLoader {
 		}
 	}
 
-	def dcMatchNum(String extTourneyId, String matchNum) {
+	static def dcMatchNum(String extTourneyId, String matchNum) {
 		if (extTourneyId.startsWith('D'))
 			extTourneyId = extTourneyId.substring(1)
 		extTourneyId + matchNum;
