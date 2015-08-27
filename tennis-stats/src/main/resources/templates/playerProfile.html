@@ -175,6 +175,7 @@
 					requestHandler: function (request) {
 						request.season = $("#season").val();
 						request.level = $("#level").val();
+						request.surface = $("#surface").val();
 						request.result = $("#result").val();
 						return request;
 					},
@@ -185,6 +186,9 @@
 						},
 						"level": function(column, row) {
 							return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + levelName(row.level) + "</span>";
+						},
+						"surface": function(column, row) {
+							return "<span class='label label-" + surfaceClassSuffix(row.surface) + "'>" + surfaceName(row.surface) + "</span>";
 						}
 					}
 				});
@@ -209,12 +213,31 @@
 					default: return level;
 				}
 			}
+			function surfaceClassSuffix(surface) {
+				switch (surface) {
+					case "H": return "primary";
+					case "C": return "danger";
+					case "G": return "success";
+					case "P": return "warning";
+					default: return "default";
+				}
+			}
+			function surfaceName(surface) {
+				switch (surface) {
+					case "H": return "Hard";
+					case "C": return "Clay";
+					case "G": return "Grass";
+					case "P": return "Carpet";
+					default: return surface;
+				}
+			}
 			function reloadResults() {
 				$("#resultsTable").bootgrid("reload");
 			}
 			function clearResultsFilter() {
 				$("#season").val("");
 				$("#level").val("");
+				$("#surface").val("");
 				$("#result").val("");
 				$("#resultsTable").bootgrid("search", "");
 				reloadResults();
@@ -222,7 +245,7 @@
 			/*]]>*/
 		</script>
 		<div class="row">
-			<div class="col-md-5"><h4>Tournament Results</h4></div>
+			<div class="col-md-3"><h4>Tournament Results</h4></div>
 			<div class="col-md-2">
 				<select id="season" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
 					<option value="">All seasons</option>
@@ -230,7 +253,7 @@
 				</select>
 			</div>
 			<div class="col-md-2">
-				<select id="level" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter tournament levels">
+				<select id="level" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 					<option value="">All levels</option>
 					<option value="G">Grand Slam</option>
 					<option value="F">Tour Finals</option>
@@ -240,7 +263,16 @@
 				</select>
 			</div>
 			<div class="col-md-2">
-				<select id="result" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter results">
+				<select id="surface" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+					<option value="">All surfaces</option>
+					<option value="H">Hard</option>
+					<option value="C">Clay</option>
+					<option value="G">Grass</option>
+					<option value="P">Carpet</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="result" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by result">
 					<option value="">All results</option>
 					<option value="W">Win</option>
 					<option value="F">Final</option>
@@ -264,7 +296,8 @@
 				<tr>
 					<th data-column-id="season" data-converter="numeric" data-sortable="false" data-width="50">Season</th>
 					<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
-					<th data-column-id="levelName" data-formatter="level" data-width="100">Level</th>
+					<th data-column-id="level" data-formatter="level" data-width="100">Level</th>
+					<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
 					<th data-column-id="name" data-width="250">Tournament</th>
 					<th data-column-id="result" data-order="desc" data-width="50">Result</th>
 				</tr>
