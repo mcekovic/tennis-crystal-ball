@@ -11,13 +11,13 @@ public class TennisStatsController {
 		return "index";
 	}
 
-	@RequestMapping("/rankingsChart")
-	public String rankingsChart() {
-		return "rankingsChart";
-	}
-
 	@RequestMapping("/goatList")
 	public String goatList() {
 		return "goatList";
+	}
+
+	@RequestMapping("/rankingsChart")
+	public String rankingsChart() {
+		return "rankingsChart";
 	}
 }

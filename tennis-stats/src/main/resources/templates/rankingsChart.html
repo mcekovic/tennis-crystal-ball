@@ -173,43 +173,66 @@
 <body class="container">
 	<h1><a href="/">Ultimate Tennis Statistics</a></h1>
 	<h3>Rankings Chart</h3>
-	<div class="ui-widget">
-		<label for="players">Players: </label>
-		<input id="players" type="text" size="80" width="100%" placeholder="Search Players"/>
-	</div>
-	<div class="ui-widget">
-		<label for="timeSpan">Time span: </label>
-		<select id="timeSpan" onchange="onTimeSpanChange()">
-			<option value="CR">Career</option>
-			<option value="1">Last 52 weeks</option>
-			<option value="2">Last two years</option>
-			<option value="3">Last three years</option>
-			<option value="5">Last five years</option>
-			<option value="10">Last ten years</option>
-			<option value="CS">Custom</option>
-		</select>
-		<div id="dateRange" class="ui-widget" style="display: inline">
-			<label for="fromDate">From:</label>
-			<input type="text" id="fromDate" size="10"/>
-			<label for="toDate">To:</label>
-			<input type="text" id="toDate" size="10"/>
+	<div class="row">
+		<div class="col-md-9">
+			<div class="ui-widget input-group">
+				<label for="players" class="input-group-addon">Players:</label>
+				<input id="players" type="text" class="search-field form-control" placeholder="Search Players"/>
+			</div>
 		</div>
 	</div>
-	<div class="ui-widget">
-		<label for="rankType">Rank type: </label>
-		<select id="rankType" onchange="onRankTypeChange()">
-			<option value="rank">Ordinal rank</option>
-			<option value="points">Ranking points</option>
-		</select>
-		<label for="compensatePoints" title="Compensate ranking points before 2009 to match new ATP ranking system">Compensate points: </label>
-		<input id="compensatePoints" type="checkbox"/>
+	<div style="height: 4px"></div>
+	<div class="row">
+		<div class="col-md-3">
+			<div class="input-group">
+				<label for="timeSpan" class="input-group-addon">Time span:</label>
+				<select id="timeSpan" class="form-control" onchange="onTimeSpanChange()">
+					<option value="CR">Career</option>
+					<option value="1">Last 52 weeks</option>
+					<option value="2">Last two years</option>
+					<option value="3">Last three years</option>
+					<option value="5">Last five years</option>
+					<option value="10">Last ten years</option>
+					<option value="CS">Custom</option>
+				</select>
+			</div>
+		</div>
+		<div id="dateRange" class="col-md-4">
+			<div class="input-group">
+				<label for="fromDate" class="input-group-addon">From:</label>
+				<input type="text" id="fromDate" maxlength="10" class="form-control"/>
+				<label for="toDate" class="input-group-addon">To:</label>
+				<input type="text" id="toDate" maxlength="10" class="form-control"/>
+			</div>
+		</div>
 	</div>
-	<div class="ui-widget">
-		<label for="rankChartSize">Chart size: </label>
-		<div id="rankChartSize" style="width: 200px; margin-left: 8px; margin-right: 8px; display: inline-block"></div>
-		<a class="btn btn-primary" href="#" role="button" onclick="drawChart()">
-			<span class="glyphicon glyphicon-stats"></span> Draw Chart
-		</a>
+	<div style="height: 4px"></div>
+	<div class="row">
+		<div class="col-md-3">
+			<div class="input-group">
+				<label for="rankType" class="input-group-addon">Rank type:</label>
+				<select id="rankType" class="form-control" onchange="onRankTypeChange()">
+					<option value="rank">Ordinal rank</option>
+					<option value="points">Ranking points</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div class="checkbox">
+				<label title="Compensate ranking points before 2009 to match new ATP ranking system">
+					<input id="compensatePoints" type="checkbox"/> Compensate points
+				</label>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div id="rankChartSize" style="margin-top: 6px"></div>
+			<div style="text-align: center; opacity: 0.5">Chart size</div>
+		</div>
+		<div class="col-md-2">
+			<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawChart()">
+				<span class="glyphicon glyphicon-stats"></span> Draw Chart
+			</a>
+		</div>
 	</div>
 	<div id="rankChart"></div>
 </body>
