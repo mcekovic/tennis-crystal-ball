@@ -11,6 +11,22 @@
 		<twitter>rogerfederer</twitter>
 		<facebook>Federer</facebook>
 	</player>
+	<player name="Jimmy Connors">
+		<birthplace>Belleville, IL, USA</birthplace>
+		<residence>Belleville, IL, USA</residence>
+		<weight>70</weight>
+		<backhand>2</backhand>
+		<turnedPro>1972</turnedPro>
+		<twitter>JimmyConnors</twitter>
+	</player>
+	<player name="Ivan Lendl">
+		<birthplace>Ostrava, Czechoslovakia</birthplace>
+		<residence>Goshen, CT, USA</residence>
+		<weight>79</weight>
+		<backhand>1</backhand>
+		<turnedPro>1978</turnedPro>
+		<coach>Jay Bosworth</coach>
+	</player>
 	<player name="Rafael Nadal">
 		<birthplace>Manacor, Mallorca, Spain</birthplace>
 		<residence>Manacor, Mallorca, Spain</residence>
@@ -22,6 +38,13 @@
 		<twitter>RafaelNadal</twitter>
 		<facebook>Nadal</facebook>
 	</player>
+	<player name="John Mcenroe">
+		<birthplace>Wiesbaden, Germany</birthplace>
+		<residence>New York, NY, USA</residence>
+		<weight>75</weight>
+		<backhand>1</backhand>
+		<turnedPro>1978</turnedPro>
+	</player>
 	<player name="Novak Djokovic">
 		<birthplace>Belgrade, Serbia</birthplace>
 		<residence>Monte Carlo, Monaco</residence>
@@ -32,6 +55,56 @@
 		<webSite>novakdjokovic.com</webSite>
 		<twitter>DjokerNole</twitter>
 		<facebook>djokovic.official</facebook>
+	</player>
+	<player name="Pete Sampras">
+		<birthplace>Washington, D.C., USA</birthplace>
+		<residence>Los Angeles, California, USA</residence>
+		<weight>77</weight>
+		<backhand>1</backhand>
+		<turnedPro>1988</turnedPro>
+		<coach>Paul Annacone</coach>
+		<webSite>www.petesampras.com</webSite>
+	</player>
+	<player name="Andre Agassi">
+		<birthplace>Las Vegas, Nevada, USA</birthplace>
+		<residence>Las Vegas, Nevada, USA</residence>
+		<weight>80</weight>
+		<backhand>2</backhand>
+		<turnedPro>1986</turnedPro>
+		<coach>Darren Cahill</coach>
+		<twitter>AndreAgassi</twitter>
+	</player>
+	<player name="Bjorn Borg">
+		<birthplace>Sodertalje, Sweden</birthplace>
+		<residence>Monte Carlo, Monaco</residence>
+		<weight>73</weight>
+		<backhand>2</backhand>
+		<turnedPro>1973</turnedPro>
+		<coach>Lennart Bergelin</coach>
+	</player>
+	<player name="Boris Becker">
+		<birthplace>Leimen, Germany</birthplace>
+		<residence>Monte Carlo, Monaco</residence>
+		<weight>85</weight>
+		<backhand>1</backhand>
+		<turnedPro>1998</turnedPro>
+		<coach>Mike Depalmer, Jr.</coach>
+	</player>
+	<player name="Stefan Edberg">
+		<birthplace>Vastervik, Sweden</birthplace>
+		<residence>London, England</residence>
+		<weight>77</weight>
+		<backhand>1</backhand>
+		<turnedPro>1983</turnedPro>
+		<coach>Tony Pickard</coach>
+	</player>
+	<player name="Mats Wilander">
+		<birthplace>Vaxjo, Sweden</birthplace>
+		<residence>Sun Valley, Idaho, USA</residence>
+		<weight>77</weight>
+		<backhand>1</backhand>
+		<turnedPro>1981</turnedPro>
+		<twitter>mwilander</twitter>
 	</player>
 	<player name="Andy Murray">
 		<birthplace>Dunblane, Scotland</birthplace>
