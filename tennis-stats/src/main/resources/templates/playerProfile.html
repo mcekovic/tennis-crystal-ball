@@ -42,12 +42,14 @@
 </head>
 <body class="container">
 	<h1><a href="/">Ultimate Tennis Statistics</a></h1>
-	<div class="ui-widget input-group col-md-4">
-		<label for="player" class="input-group-addon">Player:</label>
-		<input id="player" type="text" class="search-field form-control" placeholder="Search Player"/>
+	<div class="row">
+		<div th:if="${player}" class="col-md-8"><h3 th:text="${player.name}">Player Profile</h3></div>
+		<div class="ui-widget input-group col-md-4">
+			<label for="player" class="input-group-addon">Player:</label>
+			<input id="player" type="text" class="search-field form-control" placeholder="Search Player"/>
+		</div>
 	</div>
 	<div th:if="${player}">
-		<h3 th:text="${player.name}">Player Profile</h3>
 		<div class="row">
 			<div class="col-md-3">
 				<table class="table table-condensed no-wrap">
@@ -298,7 +300,7 @@
 					<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
 					<th data-column-id="level" data-formatter="level" data-width="100">Level</th>
 					<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
-					<th data-column-id="name" data-width="250">Tournament</th>
+					<th data-column-id="name" data-width="200">Tournament</th>
 					<th data-column-id="result" data-order="desc" data-width="50">Result</th>
 				</tr>
 			</thead>
