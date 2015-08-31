@@ -190,7 +190,8 @@
 							return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + levelName(row.level) + "</span>";
 						},
 						"surface": function(column, row) {
-							return "<span class='label label-" + surfaceClassSuffix(row.surface) + "'>" + surfaceName(row.surface) + "</span>";
+							if (row.surface)
+								return "<span class='label label-" + surfaceClassSuffix(row.surface) + "'>" + surfaceName(row.surface) + "</span>";
 						}
 					}
 				});
