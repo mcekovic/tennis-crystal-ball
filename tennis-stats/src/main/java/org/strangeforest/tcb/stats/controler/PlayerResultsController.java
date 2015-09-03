@@ -20,7 +20,7 @@ public class PlayerResultsController {
 	private static final int MAX_RESULTS = 1000;
 
 	private static final String RESULTS_QUERY = //language=SQL
-		"SELECT e.season, e.date, e.level, e.surface, e.name, r.result FROM player_tournament_event_result r " +
+		"SELECT tournament_event_id, e.season, e.date, e.level, e.surface, e.name, r.result FROM player_tournament_event_result r " +
 		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
 		"WHERE r.player_id = ? " +
 		"AND e.level <> 'D'%1$s " +
@@ -63,6 +63,7 @@ public class PlayerResultsController {
 		jdbcTemplate.query(constructQuery(season, level, surface, result, tournament, orderBy), (rs) -> {
 			if (results.incrementAndGet() <= pageSize) {
 				table.addRow(new PlayerEventResult(
+					rs.getInt("tournament_event_id"),
 					rs.getInt("season"),
 					rs.getDate("date"),
 					rs.getString("level"),

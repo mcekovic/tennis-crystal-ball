@@ -116,21 +116,21 @@ SELECT player_id, rank AS current_rank, rank_points AS current_rank_points
 FROM player_ranking
 WHERE rank_date = (SELECT rank_date FROM current_rank_date);
 
-CREATE INDEX ON player_current_rank (player_id);
+CREATE UNIQUE INDEX ON player_current_rank (player_id);
 
 CREATE MATERIALIZED VIEW player_best_rank AS
 SELECT DISTINCT player_id,	first_value(rank) OVER w AS best_rank, first_value(rank_date) OVER w AS best_rank_date
 FROM player_ranking
 WINDOW w AS (PARTITION BY player_id ORDER BY rank, rank_date);
 
-CREATE INDEX ON player_best_rank (player_id);
+CREATE UNIQUE INDEX ON player_best_rank (player_id);
 
 CREATE MATERIALIZED VIEW player_best_rank_points AS
 SELECT DISTINCT player_id,	first_value(rank_points) OVER w AS best_rank_points, first_value(rank_date) OVER w AS best_rank_points_date
 FROM player_ranking
 WINDOW w AS (PARTITION BY player_id ORDER BY rank_points DESC, rank_date);
 
-CREATE INDEX ON player_best_rank_points (player_id);
+CREATE UNIQUE INDEX ON player_best_rank_points (player_id);
 
 
 -- match
@@ -302,7 +302,7 @@ WITH goat_points AS (
 )
 SELECT player_id, goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank FROM goat_points;
 
-CREATE INDEX ON player_goat_points (player_id);
+CREATE UNIQUE INDEX ON player_goat_points (player_id);
 
 
 -- player_titles
@@ -323,7 +323,7 @@ SELECT player_id,
 	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'O') AS olympics
 FROM player p;
 
-CREATE INDEX ON player_titles (player_id);
+CREATE UNIQUE INDEX ON player_titles (player_id);
 
 
 -- player_v

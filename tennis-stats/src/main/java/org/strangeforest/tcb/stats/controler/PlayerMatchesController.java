@@ -17,13 +17,14 @@ public class PlayerMatchesController {
 
 	@RequestMapping("/playerMatches")
 	public ModelAndView playerMatches(
-		@RequestParam(value = "id", required = false) Integer id,
-		@RequestParam(value = "name", required = false) String name
+		@RequestParam(value = "playerId", required = false) Integer playerId,
+		@RequestParam(value = "playerName", required = false) String playerName,
+		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId
 	) {
-		if (id == null && name == null)
+		if (playerId == null && playerName == null)
 			return new ModelAndView("playerMatches");
 
-		Player player = id != null ? playerService.getPlayer(id) : playerService.getPlayer(name);
+		Player player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(playerName);
 		List<Integer> seasons = playerService.getPlayerSeasons(player.getId());
 
 		ModelMap modelMap = new ModelMap();

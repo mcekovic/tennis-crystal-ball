@@ -13,7 +13,7 @@ public class AutocompleteController {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
-		"SELECT player_id, name FROM player_v " +
+		"SELECT player_id, name, country_id FROM player_v " +
 		"WHERE name ILIKE '%' || ? || '%'" +
 		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 20";
 
@@ -24,7 +24,8 @@ public class AutocompleteController {
 			(rs, rowNum) -> {
 				String id = rs.getString("player_id");
 				String name = rs.getString("name");
-				return new AutocompleteOption(id, name, name);
+				String countryId = rs.getString("country_id");
+				return new AutocompleteOption(id, name, name + " (" + countryId + ')');
 			},
 			term.trim().replace("\\s*", " ")
 		);

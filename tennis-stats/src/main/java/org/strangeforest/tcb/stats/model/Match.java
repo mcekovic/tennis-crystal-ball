@@ -5,25 +5,25 @@ import java.util.*;
 public class Match {
 
 	private final Date date;
-	private final String name;
+	private final String tournament;
 	private final String winner;
 	private final String loser;
-	private final String result;
+	private final String score;
 
-	public Match(Date date, String name, String winner, String loser, String result) {
+	public Match(Date date, String tournament, String winner, String loser, String score) {
 		this.date = date;
-		this.name = name;
+		this.tournament = tournament;
 		this.winner = winner;
 		this.loser = loser;
-		this.result = result;
+		this.score = score;
 	}
 
 	public Date getDate() {
 		return date;
 	}
 
-	public String getName() {
-		return name;
+	public String getTournament() {
+		return tournament;
 	}
 
 	public String getWinner() {
@@ -34,7 +34,7 @@ public class Match {
 		return loser;
 	}
 
-	public String getResult() {
-		return result;
+	public String getScore() {
+		return score;
 	}
 }
