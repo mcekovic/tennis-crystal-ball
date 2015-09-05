@@ -33,7 +33,7 @@
 				minLength: 2,
 				select: function(event, ui) {
 					if (ui.item)
-						window.location = "playerMatches?id=" + ui.item.id;
+						window.location = "playerMatches?playerId=" + ui.item.id;
 				}
 			}).focus();
 		});
@@ -103,7 +103,7 @@
 						method: "GET",
 						cache: false
 					},
-					url: "/matches?playerId=[[${player.id}]]",
+					url: "/matches?playerId=[[${player.id}]]" + ($("#tournamentEventId").val() != "" ? "&tournamentEventId=" + $("#tournamentEventId").val() : ""),
 					requestHandler: function (request) {
 						request.season = $("#season").val();
 						request.level = $("#level").val();
@@ -114,6 +114,9 @@
 					formatters: {
 						"date": function(column, row) {
 							return $.datepicker.formatDate("dd-mm-yy", new Date(row.date));
+						},
+						"match": function(column, row) {
+							return "<a href='/playerProfile?playerId=" + row.winnerId + "'>" + row.winner + "</a> d. <a href='/playerProfile?playerId=" + row.loserId + "'>" + row.loser + "</a>";
 						}
 					}
 				});
@@ -130,6 +133,7 @@
 			}
 			/*]]>*/
 		</script>
+		<input id="tournamentEventId" type="hidden" th:value="${param.tournamentEventId != null ? param.tournamentEventId[0] : ''}"/>
 		<div class="row">
 			<div class="col-md-3"><h4>Matches</h4></div>
 			<div class="col-md-2">
@@ -168,9 +172,8 @@
 				<tr>
 					<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
 					<th data-column-id="tournament" data-width="200">Tournament</th>
-					<th data-column-id="winner" data-width="200">Winner</th>
-					<th data-column-id="loser" data-width="200">Loser</th>
-					<th data-column-id="score" data-width="100">Score</th>
+					<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
+					<th data-column-id="score" data-sortable="false" data-width="100">Score</th>
 				</tr>
 			</thead>
 		</table>

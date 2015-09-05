@@ -18,8 +18,7 @@ public class PlayerMatchesController {
 	@RequestMapping("/playerMatches")
 	public ModelAndView playerMatches(
 		@RequestParam(value = "playerId", required = false) Integer playerId,
-		@RequestParam(value = "playerName", required = false) String playerName,
-		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId
+		@RequestParam(value = "playerName", required = false) String playerName
 	) {
 		if (playerId == null && playerName == null)
 			return new ModelAndView("playerMatches");

@@ -29,7 +29,7 @@
 						return "<img src='flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='24'/> " + row.countryId;
 					},
 					"link": function(column, row) {
-						return "<a href='playerProfile?id=" + row.playerId + "'>" + row.name + "</a>";
+						return "<a href='playerProfile?playerId=" + row.playerId + "'>" + row.name + "</a>";
 					}
 				}
 			});

@@ -20,7 +20,7 @@ public class MatchesController {
 	private static final int MAX_RESULTS = 1000;
 
 	private static final String RESULTS_QUERY = //language=SQL
-		"SELECT e.date, e.name AS tournament, pw.name AS winner, pl.name AS loser, m.score FROM match m " +
+		"SELECT e.date, e.name AS tournament, m.winner_id, pw.name AS winner, m.loser_id, pl.name AS loser, m.score FROM match m " +
 		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
 		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id " +
 		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id " +
@@ -62,7 +62,9 @@ public class MatchesController {
 				table.addRow(new Match(
 					rs.getDate("date"),
 					rs.getString("tournament"),
+					rs.getInt("winner_id"),
 					rs.getString("winner"),
+					rs.getInt("loser_id"),
 					rs.getString("loser"),
 					rs.getString("score")
 				));
