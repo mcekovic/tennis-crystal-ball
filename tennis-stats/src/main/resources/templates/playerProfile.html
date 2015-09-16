@@ -13,6 +13,7 @@
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
 	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
 	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/formatters.js}"></script>
 	<style th:inline="text">
 		.ui-autocomplete {
 			max-height: 600px; overflow-y: auto; overflow-x: hidden;
@@ -173,7 +174,7 @@
 						method: "GET",
 						cache: false
 					},
-					url: "/playerResults?playerId=[[${player.id}]]",
+					url: "/playerResultsTable?playerId=[[${player.id}]]",
 					requestHandler: function (request) {
 						request.season = $("#season").val();
 						request.level = $("#level").val();
@@ -183,60 +184,15 @@
 					},
 					rowCount: [10, 20, 50, -1],
 					formatters: {
-						"date": function(column, row) {
-							return $.datepicker.formatDate("dd-mm-yy", new Date(row.date));
-						},
-						"level": function(column, row) {
-							return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + levelName(row.level) + "</span>";
-						},
-						"surface": function(column, row) {
-							if (row.surface)
-								return "<span class='label label-" + surfaceClassSuffix(row.surface) + "'>" + surfaceName(row.surface) + "</span>";
-						},
+						"date": dateFormatter,
+						"level": levelFormatter,
+						"surface": surfaceFormatter,
 						"result": function(column, row) {
 							return "<a href='/playerMatches?playerId=[[${player.id}]]&tournamentEventId=" + row.tournamentEventId + "'>" + row.result + "</a>"
 						}
 					}
 				});
 			});
-			function levelClassSuffix(level) {
-				switch (level) {
-					case "G": return "danger";
-					case "F": return "warning";
-					case "M": return "info";
-					case "O": return "success";
-					default: return "default";
-				}
-			}
-			function levelName(level) {
-				switch (level) {
-					case "G": return "Grand Slam";
-					case "F": return "Tour Finals";
-					case "M": return "Masters";
-					case "A": return "ATP";
-					case "O": return "Olympics";
-					case "D": return "Davis Cup";
-					default: return level;
-				}
-			}
-			function surfaceClassSuffix(surface) {
-				switch (surface) {
-					case "H": return "primary";
-					case "C": return "danger";
-					case "G": return "success";
-					case "P": return "warning";
-					default: return "default";
-				}
-			}
-			function surfaceName(surface) {
-				switch (surface) {
-					case "H": return "Hard";
-					case "C": return "Clay";
-					case "G": return "Grass";
-					case "P": return "Carpet";
-					default: return surface;
-				}
-			}
 			function reloadResults() {
 				$("#resultsTable").bootgrid("reload");
 			}

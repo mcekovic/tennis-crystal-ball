@@ -27,7 +27,7 @@ public class PlayerRankingsController {
 	private static final String CAREER = "CR";
 	private static final String CUSTOM = "CS";
 	private static final LocalDate START_OF_NEW_RANKING_SYSTEM = LocalDate.of(2009, 1, 1);
-	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 2.0;
+	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 1.9;
 
 	private static final String PLAYER_ID_QUERY =
 		"SELECT player_id FROM player_v " +

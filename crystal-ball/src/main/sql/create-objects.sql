@@ -231,6 +231,7 @@ CREATE TABLE tournament_rank_points (
 	rank_points INTEGER,
 	rank_points_2008 INTEGER,
 	goat_points INTEGER,
+	additive BOOLEAN,
 	PRIMARY KEY (level, result)
 );
 
@@ -279,23 +280,25 @@ WITH match_result AS (
 		(CASE WHEN round = 'BR' THEN 'SF' ELSE round::TEXT END)::tournament_event_result AS result
 	FROM match
 ), best_round AS (
-	SELECT player_id, tournament_event_id, max(result) AS result
-	FROM match_result
-	GROUP BY player_id, tournament_event_id
+	SELECT m.player_id, tournament_event_id, max(m.result) AS result
+	FROM match_result m
+	LEFT JOIN tournament_event e USING (tournament_event_id)
+	WHERE e.level <> 'D' OR e.name LIKE '%WG'
+	GROUP BY m.player_id, tournament_event_id
 )
 SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, goat_points FROM (
 	SELECT r.player_id, r.tournament_event_id, r.result, p.rank_points, p.rank_points_2008, p.goat_points
 	FROM best_round r
 	LEFT JOIN tournament_event e USING (tournament_event_id)
 	LEFT JOIN tournament_rank_points p USING (level, result)
-	WHERE level IN ('G', 'M', 'A', 'O')
+	WHERE NOT p.additive
 	UNION
 	SELECT r.player_id, r.tournament_event_id, r.result, sum(p.rank_points), sum(p.rank_points_2008), sum(p.goat_points)
 	FROM best_round r
 	LEFT OUTER JOIN match m ON m.tournament_event_id = r.tournament_event_id AND m.winner_id = r.player_id
 	LEFT JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
 	LEFT JOIN tournament_rank_points p ON p.level = e.level AND p.result = m.round::TEXT::tournament_event_result
-	WHERE e.level = 'F' OR (e.level = 'D' AND e.name LIKE '%WG')
+	WHERE p.additive
 	GROUP BY r.player_id, r.tournament_event_id, r.result
 ) AS player_tournament_event_result;
 

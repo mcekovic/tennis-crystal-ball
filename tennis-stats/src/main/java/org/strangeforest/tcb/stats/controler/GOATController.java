@@ -29,6 +29,11 @@ public class GOATController {
 
 	private static final String FILTER_SQL = " AND (name ILIKE '%' || ? || '%' OR country_id ILIKE '%' || ? || '%')";
 
+	private static final String GOAT_POINTS_QUERY = //language=SQL
+		"SELECT level, result, goat_points, additive FROM tournament_rank_points " +
+		"WHERE goat_points > 0 " +
+		"ORDER BY level, result DESC";
+
 	private static Map<String, String> ORDER_MAP = new TreeMap<>();
 	static {
 		ORDER_MAP.put("goatPoints", "goat_points");
@@ -63,12 +68,12 @@ public class GOATController {
 		jdbcTemplate.query(
 			format(GOAT_LIST_QUERY, filter, orderBy),
 			(rs) -> {
-				int playerId = rs.getInt("player_id");
 				int goatRank = rs.getInt("goat_rank");
+				int playerId = rs.getInt("player_id");
+				String player = rs.getString("name");
 				String countryId = rs.getString("country_id");
-				String name = rs.getString("name");
 				int goatPoints = rs.getInt("goat_points");
-				GOATListRow row = new GOATListRow(playerId, goatRank, countryId, name, goatPoints);
+				GOATListRow row = new GOATListRow(goatRank, playerId, player, countryId, goatPoints);
 				row.setGrandSlams(rs.getInt("grand_slams"));
 				row.setTourFinals(rs.getInt("tour_finals"));
 				row.setMasters(rs.getInt("masters"));
@@ -79,6 +84,19 @@ public class GOATController {
 			},
 			params
 		);
+		return table;
+	}
+
+	@RequestMapping("/goatPointsTable")
+	public BootgridTable<GOATPointsRow> goatPointsTable() {
+		BootgridTable<GOATPointsRow> table = new BootgridTable<>();
+		jdbcTemplate.query(GOAT_POINTS_QUERY, (rs) -> {
+			String level = rs.getString("level");
+			String result = rs.getString("result");
+			int goatPoints = rs.getInt("goat_points");
+			boolean additive = rs.getBoolean("additive");
+			table.addRow(new GOATPointsRow(level, result, goatPoints, additive));
+		});
 		return table;
 	}
 }

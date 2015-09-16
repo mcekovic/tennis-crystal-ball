@@ -40,8 +40,8 @@ public class MatchesController {
 	}
 	private static final String DEFAULT_ORDER = "e.date DESC, m.match_num DESC";
 
-	@RequestMapping("/matches")
-	public BootgridTable<Match> playerResults(
+	@RequestMapping("/matchesTable")
+	public BootgridTable<Match> matchesTable(
 			@RequestParam(value = "playerId") int playerId,
 			@RequestParam(value = "season", required = false) Integer season,
 			@RequestParam(value = "level", required = false) String level,

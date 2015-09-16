@@ -13,6 +13,7 @@
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
 	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
 	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/formatters.js}"></script>
 	<style th:inline="text">
 		.ui-autocomplete {
 			max-height: 600px; overflow-y: auto; overflow-x: hidden;
@@ -103,7 +104,7 @@
 						method: "GET",
 						cache: false
 					},
-					url: "/matches?playerId=[[${player.id}]]" + ($("#tournamentEventId").val() != "" ? "&tournamentEventId=" + $("#tournamentEventId").val() : ""),
+					url: "/matchesTable?playerId=[[${player.id}]]" + ($("#tournamentEventId").val() != "" ? "&tournamentEventId=" + $("#tournamentEventId").val() : ""),
 					requestHandler: function (request) {
 						request.season = $("#season").val();
 						request.level = $("#level").val();
@@ -112,12 +113,8 @@
 					},
 					rowCount: [10, 20, 50, -1],
 					formatters: {
-						"date": function(column, row) {
-							return $.datepicker.formatDate("dd-mm-yy", new Date(row.date));
-						},
-						"match": function(column, row) {
-							return "<a href='/playerProfile?playerId=" + row.winnerId + "'>" + row.winner + "</a> d. <a href='/playerProfile?playerId=" + row.loserId + "'>" + row.loser + "</a>";
-						}
+						"date": dateFormatter,
+						"match": matchFormatter
 					}
 				});
 			});

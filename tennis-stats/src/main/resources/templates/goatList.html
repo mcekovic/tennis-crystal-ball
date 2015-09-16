@@ -9,6 +9,7 @@
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
 	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/formatters.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -25,11 +26,22 @@
 					characters: 2
 				},
 				formatters: {
-					"country": function(column, row) {
-						return "<img src='flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='24'/> " + row.countryId;
-					},
-					"link": function(column, row) {
-						return "<a href='playerProfile?playerId=" + row.playerId + "'>" + row.name + "</a>";
+					"country": countryFormatter,
+					"player": playerFormatter
+				}
+			});
+			$("#goatPointsTable").bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/goatPointsTable",
+				navigation: 0,
+				formatters: {
+					"level": levelFormatter,
+					"goatPoints": function(column, row) {
+						return (row.additive ? "+" : "") + row.goatPoints;
 					}
 				}
 			});
@@ -44,8 +56,8 @@
 		<thead>
 			<tr>
 				<th data-column-id="goatRank" data-type="numeric" data-sortable="false" data-width="55">Rank</th>
-				<th data-column-id="countryId" data-formatter="country" data-sortable="false" data-width="70">Country</th>
-				<th data-column-id="name" data-formatter="link" data-sortable="false" data-width="180">Name</th>
+				<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="70">Country</th>
+				<th data-column-id="player" data-formatter="player" data-sortable="false" data-width="180">Name</th>
 				<th data-column-id="goatPoints" data-type="numeric" data-order="desc" data-width="100" data-align="right" data-header-align="right">GOAT Points</th>
 				<th data-column-id="grandSlams" data-type="numeric" data-order="desc" data-width="100" data-align="right" data-header-align="right">Grand Slams</th>
 				<th data-column-id="tourFinals" data-type="numeric" data-order="desc" data-width="90" data-align="right" data-header-align="right">Tour Finals</th>
@@ -56,5 +68,21 @@
 			</tr>
 		</thead>
 	</table>
+	<div class="row">
+		<div class="col-md-4">
+			<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#goatLegend">Legend</button>
+			<div id="goatLegend" class="collapse">
+				<table id="goatPointsTable" class="table table-condensed table-hover table-striped">
+					<thead>
+					<tr>
+						<th data-column-id="level" data-formatter="level" data-sortable="false" data-width="80">Level</th>
+						<th data-column-id="result" data-sortable="false" data-width="50">Result</th>
+						<th data-column-id="goatPoints" data-formatter="goatPoints" data-sortable="false" data-width="50">Points</th>
+					</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

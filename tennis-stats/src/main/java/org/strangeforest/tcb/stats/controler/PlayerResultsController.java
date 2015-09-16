@@ -43,8 +43,8 @@ public class PlayerResultsController {
 	}
 	private static final String DEFAULT_ORDER = "date DESC";
 
-	@RequestMapping("/playerResults")
-	public BootgridTable<PlayerEventResult> playerResults(
+	@RequestMapping("/playerResultsTable")
+	public BootgridTable<PlayerEventResult> playerResultsTable(
 			@RequestParam(value = "playerId") int playerId,
 			@RequestParam(value = "season", required = false) Integer season,
 			@RequestParam(value = "level", required = false) String level,
