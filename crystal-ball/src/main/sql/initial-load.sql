@@ -12,9 +12,9 @@ VALUES
 ('G', 'R64',   45,   35, NULL, FALSE),
 ('G', 'R128',  10,    5, NULL, FALSE),
 -- Tour Finals
-('F', 'SF',   400,  200,    2, TRUE),
-('F', 'F',    500,  250,    4, TRUE),
-('F', 'RR',   200,  100, NULL, TRUE),
+('F', 'F',    500,  250,    2, TRUE),
+('F', 'SF',   400,  200,    1, TRUE),
+('F', 'RR',   200,  100,    1, TRUE),
 -- Masters
 ('M', 'W',   1000,  500,    4, FALSE),
 ('M', 'F',    600,  350,    2, FALSE),
