@@ -6,17 +6,10 @@
 	<title>Ultimate Tennis Statistics - Rankings Chart</title>
 	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<style th:inline="text">
-		.ui-autocomplete {
-			max-height: 600px; overflow-y: auto; overflow-x: hidden;
-		}
-		.ui-autocomplete-loading {
-			background: white url("[[@{/images/ui-anim_basic_16x16.gif}]]") right center no-repeat;
-		}
-	</style>
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		google.load("visualization", "1.0", {packages:["corechart"]});

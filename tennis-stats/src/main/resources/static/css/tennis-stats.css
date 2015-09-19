@@ -1,0 +1,40 @@
+.ui-autocomplete {
+	max-height: 600px; overflow-y: auto; overflow-x: hidden;
+}
+.ui-autocomplete-loading {
+	background: white url("../images/ui-anim_basic_16x16.gif") right center no-repeat;
+}
+.no-wrap {
+	white-space: nowrap;
+	overflow: hidden;
+}
+.black {
+	color: black;
+}
+.result-W {
+	background: lime;
+}
+.result-F {
+	background: thistle;
+}
+.result-SF {
+	background: yellow;
+}
+.result-QF {
+	background: blanchedalmond;
+}
+.result-R16 {
+	background: #AFEEEE;
+}
+.result-R32 {
+	background: #AFEEEE;
+}
+.result-R64 {
+	background: #AFEEEE;
+}
+.result-R128 {
+	background: #AFEEEE;
+}
+.result-RR {
+	background: #AFEEEE;
+}
