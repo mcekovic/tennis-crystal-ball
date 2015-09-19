@@ -239,10 +239,10 @@ CREATE TABLE tournament_rank_points (
 -- player_current_rank
 
 CREATE MATERIALIZED VIEW player_current_rank AS
-	WITH current_rank_date AS (SELECT max(rank_date) AS rank_date FROM player_ranking)
-	SELECT player_id, rank AS current_rank, rank_points AS current_rank_points
-	FROM player_ranking
-	WHERE rank_date = (SELECT rank_date FROM current_rank_date);
+WITH current_rank_date AS (SELECT max(rank_date) AS rank_date FROM player_ranking)
+SELECT player_id, rank AS current_rank, rank_points AS current_rank_points
+FROM player_ranking
+WHERE rank_date = (SELECT rank_date FROM current_rank_date);
 
 CREATE UNIQUE INDEX ON player_current_rank (player_id);
 
@@ -250,9 +250,9 @@ CREATE UNIQUE INDEX ON player_current_rank (player_id);
 -- player_best_rank
 
 CREATE MATERIALIZED VIEW player_best_rank AS
-	SELECT DISTINCT player_id,	first_value(rank) OVER w AS best_rank, first_value(rank_date) OVER w AS best_rank_date
-	FROM player_ranking
-	WINDOW w AS (PARTITION BY player_id ORDER BY rank, rank_date);
+SELECT DISTINCT player_id,	first_value(rank) OVER w AS best_rank, first_value(rank_date) OVER w AS best_rank_date
+FROM player_ranking
+WINDOW w AS (PARTITION BY player_id ORDER BY rank, rank_date);
 
 CREATE UNIQUE INDEX ON player_best_rank (player_id);
 
@@ -260,9 +260,9 @@ CREATE UNIQUE INDEX ON player_best_rank (player_id);
 -- player_best_rank_points
 
 CREATE MATERIALIZED VIEW player_best_rank_points AS
-	SELECT DISTINCT player_id,	first_value(rank_points) OVER w AS best_rank_points, first_value(rank_date) OVER w AS best_rank_points_date
-	FROM player_ranking
-	WINDOW w AS (PARTITION BY player_id ORDER BY rank_points DESC, rank_date);
+SELECT DISTINCT player_id,	first_value(rank_points) OVER w AS best_rank_points, first_value(rank_date) OVER w AS best_rank_points_date
+FROM player_ranking
+WINDOW w AS (PARTITION BY player_id ORDER BY rank_points DESC, rank_date);
 
 CREATE UNIQUE INDEX ON player_best_rank_points (player_id);
 
@@ -320,20 +320,27 @@ CREATE UNIQUE INDEX ON player_goat_points (player_id);
 -- player_titles
 
 CREATE MATERIALIZED VIEW player_titles AS
-WITH titles AS (
-	SELECT player_id, level, count(*) AS titles FROM player_tournament_event_result
+WITH level_titles AS (
+	SELECT player_id, level, count(result) AS titles FROM player_tournament_event_result
 	LEFT JOIN tournament_event USING (tournament_event_id)
 	WHERE result = 'W'
 	GROUP BY player_id, level
+), titles AS (
+	SELECT player_id, sum(titles) AS titles FROM level_titles
+	GROUP BY player_id
+), big_titles AS (
+	SELECT player_id, sum(titles) AS titles FROM level_titles
+	WHERE level IN ('G', 'F', 'M', 'O')
+	GROUP BY player_id
 )
-SELECT player_id,
-	(SELECT sum(titles) FROM titles t WHERE t.player_id = p.player_id) AS titles,
-	(SELECT sum(titles) FROM titles t WHERE t.player_id = p.player_id AND t.level IN ('G', 'F', 'M', 'O')) AS big_titles,
-	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'G') AS grand_slams,
-	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'F') AS tour_finals,
-	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'M') AS masters,
-	(SELECT titles FROM titles t WHERE t.player_id = p.player_id AND t.level = 'O') AS olympics
-FROM player p;
+SELECT p.player_id, t.titles AS titles, bt.titles AS big_titles, gt.titles AS grand_slams, ft.titles AS tour_finals, mt.titles AS masters, ot.titles AS olympics
+FROM player p
+LEFT JOIN titles t ON t.player_id = p.player_id
+LEFT JOIN big_titles bt ON bt.player_id = p.player_id
+LEFT JOIN level_titles gt ON gt.player_id = p.player_id AND gt.level = 'G'
+LEFT JOIN level_titles ft ON ft.player_id = p.player_id AND ft.level = 'F'
+LEFT JOIN level_titles mt ON mt.player_id = p.player_id AND mt.level = 'M'
+LEFT JOIN level_titles ot ON ot.player_id = p.player_id AND ot.level = 'O';
 
 CREATE UNIQUE INDEX ON player_titles (player_id);
 
