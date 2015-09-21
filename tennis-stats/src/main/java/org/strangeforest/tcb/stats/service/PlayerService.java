@@ -27,22 +27,32 @@ public class PlayerService {
 		"SELECT DISTINCT e.season FROM player_tournament_event_result r " +
 		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
 		"WHERE r.player_id = ? " +
-		"AND e.level <> 'D' " +
 		"ORDER BY season DESC";
 
+	private static final String TOURNAMENT_EVENTS_QUERY =
+		"SELECT tournament_event_id, e.name, e.season FROM player_tournament_event_result r " +
+		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
+		"WHERE r.player_id = ? " +
+		"ORDER BY name, season";
+
+
 	public Player getPlayer(int playerId) {
-		return jdbcTemplate.queryForObject(PLAYER_BY_ID, PlayerService::playerMapper, playerId);
+		return jdbcTemplate.queryForObject(PLAYER_BY_ID, this::playerMapper, playerId);
 	}
 
 	public Player getPlayer(String name) {
-		return jdbcTemplate.queryForObject(PLAYER_BY_NAME, PlayerService::playerMapper, name);
+		return jdbcTemplate.queryForObject(PLAYER_BY_NAME, this::playerMapper, name);
 	}
 
 	public List<Integer> getPlayerSeasons(int playerId) {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class, playerId);
 	}
 
-	private static Player playerMapper(ResultSet rs, int rowNum) throws SQLException {
+	public List<TournamentEvent> getPlayerTournamentEvents(int playerId) {
+		return jdbcTemplate.query(TOURNAMENT_EVENTS_QUERY, this::tournamentEventRowMapper, playerId);
+	}
+
+	private Player playerMapper(ResultSet rs, int rowNum) throws SQLException {
 		Player p = new Player(rs.getInt("player_id"));
 		p.setName(rs.getString("name"));
 		p.setDob(rs.getDate("dob"));
@@ -77,5 +87,12 @@ public class PlayerService {
 		p.setFacebook(rs.getString("facebook"));
 
 		return p;
+	}
+
+	private TournamentEvent tournamentEventRowMapper(ResultSet rs, int rowNum) throws SQLException {
+		int tournamentEventId = rs.getInt("tournament_event_id");
+		String name = rs.getString("name");
+		int season = rs.getInt("season");
+		return new TournamentEvent(tournamentEventId, name, season);
 	}
 }

@@ -54,7 +54,8 @@ public class PlayerRankingsController {
 		String rankColumn = points ? "rank_points" : "rank";
 		DataTable table = new DataTable();
 		RowCursor rowCursor = new RowCursor(table, players);
-		jdbcTemplate.query(format(PLAYER_RANKINGS_QUERY, rankColumn, dateRangeCondition(dateRange)),
+		jdbcTemplate.query(
+			format(PLAYER_RANKINGS_QUERY, rankColumn, dateRangeCondition(dateRange)),
 			ps -> {
 				int index = 0;
 				ps.setArray(++index, ps.getConnection().createArrayOf("integer", players.getPlayerIds().toArray()));

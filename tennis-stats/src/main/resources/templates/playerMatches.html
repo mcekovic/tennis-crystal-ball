@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"-->
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
+<!--@thymesVar id="tournamentEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEvent>"-->
+<!--@thymesVar id="tournamentEventId" type="java.lang.Integer>"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -93,16 +95,19 @@
 						method: "GET",
 						cache: false
 					},
-					url: "/matchesTable?playerId=[[${player.id}]]" + ($("#tournamentEventId").val() != "" ? "&tournamentEventId=" + $("#tournamentEventId").val() : ""),
+					url: "/matchesTable?playerId=[[${player.id}]]",
 					requestHandler: function (request) {
 						request.season = $("#season").val();
 						request.level = $("#level").val();
 						request.surface = $("#surface").val();
+						request.tournamentEventId = $("#tournamentEvent").val();
 						return request;
 					},
 					rowCount: [10, 20, 50, -1],
 					formatters: {
 						"date": dateFormatter,
+						"surface": surfaceFormatter,
+						"tournament": tournamentFormatter,
 						"match": matchFormatter
 					}
 				});
@@ -114,14 +119,14 @@
 				$("#season").val("");
 				$("#level").val("");
 				$("#surface").val("");
+				$("#tournamentEvent").val("");
 				$("#matchesTable").bootgrid("search", "");
 				reloadMatches();
 			}
 			/*]]>*/
 		</script>
-		<input id="tournamentEventId" type="hidden" th:value="${param.tournamentEventId != null ? param.tournamentEventId[0] : ''}"/>
 		<div class="row">
-			<div class="col-md-3"><h4>Matches</h4></div>
+			<div class="col-md-2"><h4>Matches</h4></div>
 			<div class="col-md-2">
 				<select id="season" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
 					<option value="">All seasons</option>
@@ -147,6 +152,13 @@
 					<option value="P" class="bg-warning">Carpet</option>
 				</select>
 			</div>
+			<div class="col-md-3">
+				<select id="tournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournament events">
+					<option value="">All events</option>
+					<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="${tournamentEvent.name} + ' - ' + ${tournamentEvent.season}"
+					        th:selected="${tournamentEvent.id == tournamentEventId}">2005</option>
+				</select>
+			</div>
 			<div class="col-md-1">
 				<button type="button" class="btn btn-default" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
 					<span class="glyphicon glyphicon-remove"></span> Clear
@@ -157,8 +169,10 @@
 			<thead>
 				<tr>
 					<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
-					<th data-column-id="tournament" data-width="200">Tournament</th>
-					<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
+					<th data-column-id="surface" data-formatter="surface" data-width="50">Surface</th>
+					<th data-column-id="tournament" data-formatter="tournament" data-width="150">Tournament</th>
+					<th data-column-id="round" data-width="50">Round</th>
+					<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="200">Match</th>
 					<th data-column-id="score" data-sortable="false" data-width="100">Score</th>
 				</tr>
 			</thead>

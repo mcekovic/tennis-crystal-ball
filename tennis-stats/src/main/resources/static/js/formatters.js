@@ -8,6 +8,11 @@ function countryFormatter(column, row) {
 	return "<img src='flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='24'/> " + row.countryId;
 }
 
+// Player
+function playerFormatter(column, row) {
+	return "<a href='playerProfile?playerId=" + row.playerId + "'>" + row.player + "</a>";
+}
+
 // Level
 function levelFormatter(column, row) {
 	return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + levelName(row.level) + "</span>";
@@ -57,9 +62,9 @@ function surfaceName(surface) {
 	}
 }
 
-// Player
-function playerFormatter(column, row) {
-	return "<a href='playerProfile?playerId=" + row.playerId + "'>" + row.player + "</a>";
+// Tournament
+function tournamentFormatter(column, row) {
+	return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + levelName(row.tournament) + "</span>";
 }
 
 // Match

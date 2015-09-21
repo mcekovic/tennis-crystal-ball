@@ -45,34 +45,38 @@ public class PlayerResultsController {
 
 	@RequestMapping("/playerResultsTable")
 	public BootgridTable<PlayerEventResult> playerResultsTable(
-			@RequestParam(value = "playerId") int playerId,
-			@RequestParam(value = "season", required = false) Integer season,
-			@RequestParam(value = "level", required = false) String level,
-			@RequestParam(value = "surface", required = false) String surface,
-			@RequestParam(value = "result", required = false) String result,
-			@RequestParam(value = "current") int current,
-			@RequestParam(value = "rowCount") int rowCount,
-			@RequestParam(value = "searchPhrase") String tournament,
-			@RequestParam Map<String, String> requestParams
+		@RequestParam(value = "playerId") int playerId,
+		@RequestParam(value = "season", required = false) Integer season,
+		@RequestParam(value = "level", required = false) String level,
+		@RequestParam(value = "surface", required = false) String surface,
+		@RequestParam(value = "result", required = false) String result,
+		@RequestParam(value = "current") int current,
+		@RequestParam(value = "rowCount") int rowCount,
+		@RequestParam(value = "searchPhrase") String tournament,
+		@RequestParam Map<String, String> requestParams
 	) {
 		int pageSize = rowCount > 0 ? rowCount : MAX_RESULTS;
 		int offset = (current - 1) * pageSize;
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		AtomicInteger results = new AtomicInteger();
 		BootgridTable<PlayerEventResult> table = new BootgridTable<>(current);
-		jdbcTemplate.query(constructQuery(season, level, surface, result, tournament, orderBy), (rs) -> {
-			if (results.incrementAndGet() <= pageSize) {
-				table.addRow(new PlayerEventResult(
-					rs.getInt("tournament_event_id"),
-					rs.getInt("season"),
-					rs.getDate("date"),
-					rs.getString("level"),
-					rs.getString("surface"),
-					rs.getString("name"),
-					rs.getString("result")
-				));
-			}
-		},	params(playerId, season, level, surface, result, tournament, offset));
+		jdbcTemplate.query(
+			constructQuery(season, level, surface, result, tournament, orderBy),
+			(rs) -> {
+				if (results.incrementAndGet() <= pageSize) {
+					table.addRow(new PlayerEventResult(
+						rs.getInt("tournament_event_id"),
+						rs.getInt("season"),
+						rs.getDate("date"),
+						rs.getString("level"),
+						rs.getString("surface"),
+						rs.getString("name"),
+						rs.getString("result")
+					));
+				}
+			},
+			params(playerId, season, level, surface, result, tournament, offset)
+		);
 		table.setTotal(offset + results.get());
 		return table;
 	}
