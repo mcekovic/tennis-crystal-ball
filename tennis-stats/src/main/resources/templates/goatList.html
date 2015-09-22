@@ -6,6 +6,7 @@
 	<title>Ultimate Tennis Statistics - GOAT List</title>
 	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
 	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
@@ -40,6 +41,7 @@
 				navigation: 0,
 				formatters: {
 					"level": levelFormatter,
+					"result": resultFormatter,
 					"goatPoints": function(column, row) {
 						return (row.additive ? "+" : "") + row.goatPoints;
 					}
@@ -78,8 +80,8 @@
 					<thead>
 						<tr>
 							<th data-column-id="level" data-formatter="level" data-sortable="false" data-width="80">Level</th>
-							<th data-column-id="result" data-sortable="false" data-width="50">Result</th>
-							<th data-column-id="goatPoints" data-formatter="goatPoints" data-sortable="false" data-width="50">Points</th>
+							<th data-column-id="result" data-formatter="result" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Result</th>
+							<th data-column-id="goatPoints" data-formatter="goatPoints" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
 						</tr>
 					</thead>
 				</table>

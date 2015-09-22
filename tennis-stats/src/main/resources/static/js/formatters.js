@@ -67,6 +67,11 @@ function tournamentFormatter(column, row) {
 	return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + levelName(row.tournament) + "</span>";
 }
 
+// Result
+function resultFormatter(column, row) {
+	return "<span class='label black result-" + row.result + "'>" + row.result + "</span>"
+}
+
 // Match
 function matchFormatter(column, row) {
 	return "<a href='playerProfile?playerId=" + row.winnerId + "'>" + row.winner + "</a> d. <a href='playerProfile?playerId=" + row.loserId + "'>" + row.loser + "</a>";
