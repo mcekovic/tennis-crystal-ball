@@ -121,6 +121,7 @@ class MatchLoader extends BaseCSVLoader {
 					return 'O'
 				else if (
 					(name.startsWith('Boston') && (1970..1977).contains(season)) ||
+					(name.startsWith('Buenos Aires') && (1970..1971).contains(season)) ||
 					(name.startsWith('Forest Hills') && (1982..1985).contains(season)) ||
 					(name.equals('Hamburg') && (1978..1989).contains(season)) ||
 					(name.equals('Indianapolis') && (1969..1978).contains(season)) ||
