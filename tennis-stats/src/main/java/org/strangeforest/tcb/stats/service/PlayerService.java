@@ -30,8 +30,9 @@ public class PlayerService {
 		"ORDER BY season DESC";
 
 	private static final String TOURNAMENT_EVENTS_QUERY =
-		"SELECT tournament_event_id, e.name, e.season FROM player_tournament_event_result r " +
+		"SELECT tournament_event_id, t.name, e.season FROM player_tournament_event_result r " +
 		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
+		"LEFT JOIN tournament t USING (tournament_id) " +
 		"WHERE r.player_id = ? " +
 		"ORDER BY name, season";
 
