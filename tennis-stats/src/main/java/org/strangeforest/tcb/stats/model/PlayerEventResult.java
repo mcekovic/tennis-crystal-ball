@@ -5,16 +5,14 @@ import java.util.*;
 public class PlayerEventResult {
 
 	private final int tournamentEventId;
-	private final int season;
 	private final Date date;
 	private final String level;
 	private final String surface;
 	private final String name;
 	private final String result;
 
-	public PlayerEventResult(int tournamentEventId, int season, Date date, String level, String surface, String name, String result) {
+	public PlayerEventResult(int tournamentEventId, Date date, String level, String surface, String name, String result) {
 		this.tournamentEventId = tournamentEventId;
-		this.season = season;
 		this.date = date;
 		this.level = level;
 		this.surface = surface;
@@ -24,10 +22,6 @@ public class PlayerEventResult {
 
 	public int getTournamentEventId() {
 		return tournamentEventId;
-	}
-
-	public int getSeason() {
-		return season;
 	}
 
 	public Date getDate() {

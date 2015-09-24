@@ -20,7 +20,7 @@ public class PlayerResultsController {
 	private static final int MAX_RESULTS = 1000;
 
 	private static final String RESULTS_QUERY = //language=SQL
-		"SELECT tournament_event_id, e.season, e.date, e.level, e.surface, e.name, r.result FROM player_tournament_event_result r " +
+		"SELECT tournament_event_id, e.date, e.level, e.surface, e.name, r.result FROM player_tournament_event_result r " +
 		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
 		"WHERE r.player_id = ? " +
 		"AND e.level <> 'D'%1$s " +
@@ -34,7 +34,6 @@ public class PlayerResultsController {
 
 	private static Map<String, String> ORDER_MAP = new TreeMap<>();
 	static {
-		ORDER_MAP.put("season", "season");
 		ORDER_MAP.put("date", "date");
 		ORDER_MAP.put("level", "level");
 		ORDER_MAP.put("surface", "surface");
@@ -66,7 +65,6 @@ public class PlayerResultsController {
 				if (results.incrementAndGet() <= pageSize) {
 					table.addRow(new PlayerEventResult(
 						rs.getInt("tournament_event_id"),
-						rs.getInt("season"),
 						rs.getDate("date"),
 						rs.getString("level"),
 						rs.getString("surface"),

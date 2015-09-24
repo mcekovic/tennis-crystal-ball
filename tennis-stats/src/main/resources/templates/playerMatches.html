@@ -1,182 +1,100 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<!--@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"-->
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
 <!--@thymesVar id="tournamentEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEvent>"-->
 <!--@thymesVar id="tournamentEventId" type="java.lang.Integer>"-->
-<head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title th:text="'Ultimate Tennis Statistics - ' + (${player} ? ${player.name} : 'Player Matches')">Ultimate Tennis Statistics - Player Matches</title>
-	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
-	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
-	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
-	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
-	<script th:src="@{/js/formatters.js}"></script>
-	<script type="text/javascript">
+<br/>
+<div xmlns:th="http://www.thymeleaf.org">
+	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
-			$("#player").autocomplete({
-				source: "autocompletePlayer",
-				minLength: 2,
-				select: function(event, ui) {
-					if (ui.item)
-						window.location = "playerMatches?playerId=" + ui.item.id;
+			$(document).ready(function(){
+				$('[data-toggle="tooltip"]').tooltip();
+			});
+			$("#matchesTable").bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/matchesTable?playerId=[[${player.id}]]",
+				requestHandler: function (request) {
+					request.season = $("#season").val();
+					request.level = $("#level").val();
+					request.surface = $("#surface").val();
+					request.tournamentEventId = $("#tournamentEvent").val();
+					return request;
+				},
+				rowCount: [10, 20, 50, -1],
+				formatters: {
+					"date": dateFormatter,
+					"surface": surfaceFormatter,
+					"tournament": tournamentFormatter,
+					"match": matchFormatter
 				}
-			}).focus();
+			});
 		});
+		function reloadMatches() {
+			$("#matchesTable").bootgrid("reload");
+		}
+		function clearMatchesFilter() {
+			$("#season").val("");
+			$("#level").val("");
+			$("#surface").val("");
+			$("#tournamentEvent").val("");
+			$("#matchesTable").bootgrid("search", "");
+			reloadMatches();
+		}
 		/*]]>*/
 	</script>
-</head>
-<body class="container">
-	<h1><a href="/">Ultimate Tennis Statistics</a></h1>
 	<div class="row">
-		<div th:if="${player}" class="col-md-8"><h3 th:text="${player.name}">Player Matches</h3></div>
-		<div class="ui-widget input-group col-md-4">
-			<label for="player" class="input-group-addon">Player:</label>
-			<input id="player" type="text" class="search-field form-control" placeholder="Search Player"/>
+		<div class="col-md-2"><h4>Matches</h4></div>
+		<div class="col-md-2">
+			<select id="season" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
+				<option value="">All seasons</option>
+				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="level" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+				<option value="">All levels</option>
+				<option value="G" class="bg-danger">Grand Slam</option>
+				<option value="F" class="bg-warning">Tour Finals</option>
+				<option value="M" class="bg-info">Masters</option>
+				<option value="O" class="bg-success">Olympics</option>
+				<option value="A" class="bg-default">ATP</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="surface" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+				<option value="">All surfaces</option>
+				<option value="H" class="bg-primary">Hard</option>
+				<option value="C" class="bg-danger">Clay</option>
+				<option value="G" class="bg-success">Grass</option>
+				<option value="P" class="bg-warning">Carpet</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="tournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournament events">
+				<option value="">All events</option>
+				<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="${tournamentEvent.name} + ' - ' + ${tournamentEvent.season}"
+				        th:selected="${tournamentEvent.id == tournamentEventId}">2005</option>
+			</select>
+		</div>
+		<div class="col-md-1">
+			<button type="button" class="btn btn-default" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+				<span class="glyphicon glyphicon-remove"></span> Clear
+			</button>
 		</div>
 	</div>
-	<div th:if="${player}">
-		<div class="row">
-			<div class="col-md-3">
-				<table class="table table-condensed no-wrap">
-					<!--/* General */-->
-					<tr th:if="${player.dob}">
-						<th>Age</th>
-						<td th:text="|${player.age} (${#dates.format(player.dob, 'dd-MM-yyyy')})|">25 (1-1-1990)</td>
-					</tr>
-					<tr>
-						<th>Country</th>
-						<td><img th:src="@{/flags/{code}.png(code=${player.countryCode})}" src="/flags/us.png" th:title="${player.countryId}" title="USA" width="24" height="24"/> <span th:text="${player.countryName}">United States</span></td>
-					</tr>
-				</table>
-			</div>
-			<div class="col-md-1">&nbsp;</div>
-			<div class="col-md-3">
-				<table class="table table-condensed no-wrap">
-					<!--/* Titles */-->
-					<tr th:if="${player.titles > 0}">
-						<th>Titles</th>
-						<td width="100%"><span class="label label-default" th:text="${player.titles}">10</span></td>
-					</tr>
-				</table>
-			</div>
-			<div class="col-md-1">&nbsp;</div>
-			<div class="col-md-4">
-				<table class="table table-condensed no-wrap">
-					<!--/* Ranking */-->
-					<tr th:if="${player.currentRank > 0}">
-						<th>Current Rank</th>
-						<td th:text="${player.currentRank} + ' (' + ${player.currentRankPoints} + ')'">10 (3000)</td>
-					</tr>
-					<tr th:if="${player.bestRank > 0}">
-						<th>Best Rank</th>
-						<td th:text="${player.bestRank} + ' (' + ${#dates.format(player.bestRankDate, 'dd-MM-yyyy')} + ')'">5 (1.1.2010)</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-
-		<!--/* Matches */-->
-		<script type="text/javascript" th:inline="javascript">
-			/*<![CDATA[*/
-			$(function() {
-				$(document).ready(function(){
-					$('[data-toggle="tooltip"]').tooltip();
-				});
-				$("#matchesTable").bootgrid({
-					ajax: true,
-					ajaxSettings: {
-						method: "GET",
-						cache: false
-					},
-					url: "/matchesTable?playerId=[[${player.id}]]",
-					requestHandler: function (request) {
-						request.season = $("#season").val();
-						request.level = $("#level").val();
-						request.surface = $("#surface").val();
-						request.tournamentEventId = $("#tournamentEvent").val();
-						return request;
-					},
-					rowCount: [10, 20, 50, -1],
-					formatters: {
-						"date": dateFormatter,
-						"surface": surfaceFormatter,
-						"tournament": tournamentFormatter,
-						"match": matchFormatter
-					}
-				});
-			});
-			function reloadMatches() {
-				$("#matchesTable").bootgrid("reload");
-			}
-			function clearMatchesFilter() {
-				$("#season").val("");
-				$("#level").val("");
-				$("#surface").val("");
-				$("#tournamentEvent").val("");
-				$("#matchesTable").bootgrid("search", "");
-				reloadMatches();
-			}
-			/*]]>*/
-		</script>
-		<div class="row">
-			<div class="col-md-2"><h4>Matches</h4></div>
-			<div class="col-md-2">
-				<select id="season" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
-					<option value="">All seasons</option>
-					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
-				</select>
-			</div>
-			<div class="col-md-2">
-				<select id="level" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
-					<option value="">All levels</option>
-					<option value="G" class="bg-danger">Grand Slam</option>
-					<option value="F" class="bg-warning">Tour Finals</option>
-					<option value="M" class="bg-info">Masters</option>
-					<option value="O" class="bg-success">Olympics</option>
-					<option value="A" class="bg-default">ATP</option>
-				</select>
-			</div>
-			<div class="col-md-2">
-				<select id="surface" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
-					<option value="">All surfaces</option>
-					<option value="H" class="bg-primary">Hard</option>
-					<option value="C" class="bg-danger">Clay</option>
-					<option value="G" class="bg-success">Grass</option>
-					<option value="P" class="bg-warning">Carpet</option>
-				</select>
-			</div>
-			<div class="col-md-3">
-				<select id="tournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournament events">
-					<option value="">All events</option>
-					<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="${tournamentEvent.name} + ' - ' + ${tournamentEvent.season}"
-					        th:selected="${tournamentEvent.id == tournamentEventId}">2005</option>
-				</select>
-			</div>
-			<div class="col-md-1">
-				<button type="button" class="btn btn-default" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-					<span class="glyphicon glyphicon-remove"></span> Clear
-				</button>
-			</div>
-		</div>
-		<table id="matchesTable" class="table table-condensed table-hover table-striped">
-			<thead>
-				<tr>
-					<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
-					<th data-column-id="surface" data-formatter="surface" data-width="50">Surface</th>
-					<th data-column-id="tournament" data-formatter="tournament" data-width="150">Tournament</th>
-					<th data-column-id="round" data-width="50">Round</th>
-					<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="200">Match</th>
-					<th data-column-id="score" data-sortable="false" data-width="120">Score</th>
-				</tr>
-			</thead>
-		</table>
-	</div>
-</body>
-</html>
+	<table id="matchesTable" class="table table-condensed table-hover table-striped">
+		<thead>
+			<tr>
+				<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
+				<th data-column-id="surface" data-formatter="surface" data-width="50">Surface</th>
+				<th data-column-id="tournament" data-formatter="tournament" data-width="150">Tournament</th>
+				<th data-column-id="round" data-width="50">Round</th>
+				<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="200">Match</th>
+				<th data-column-id="score" data-sortable="false" data-width="120">Score</th>
+			</tr>
+		</thead>
+	</table>
+</div>

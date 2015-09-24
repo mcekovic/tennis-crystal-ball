@@ -26,6 +26,24 @@
 						window.location = "playerProfile?playerId=" + ui.item.id;
 				}
 			}).focus();
+			$("[data-toggle=pill]").click(function(event) {
+				event.preventDefault();
+				var pill = $(this);
+				if (pill.hasClass("loaded"))
+					return;
+				var url = pill.attr("data-url");
+				if (typeof url !== "undefined") {
+					var href = this.hash;
+					$(href).load(url, function(data) {
+						if (data) {
+							if (!pill.hasClass("loaded"))
+								pill.addClass("loaded");
+							pill.tab('show');
+						}
+					});
+				} else
+					pill.tab('show');
+			});
 		});
 		/*]]>*/
 	</script>
@@ -150,110 +168,123 @@
 			</div>
 		</div>
 
-		<!--/* Tournament Results */-->
-		<script type="text/javascript" th:inline="javascript">
-			/*<![CDATA[*/
-			$(function() {
-				$(document).ready(function(){
-					$('[data-toggle="tooltip"]').tooltip();
-				});
-				$("#resultsTable").bootgrid({
-					ajax: true,
-					ajaxSettings: {
-						method: "GET",
-						cache: false
-					},
-					url: "/playerResultsTable?playerId=[[${player.id}]]",
-					requestHandler: function (request) {
-						request.season = $("#season").val();
-						request.level = $("#level").val();
-						request.surface = $("#surface").val();
-						request.result = $("#result").val();
-						return request;
-					},
-					rowCount: [10, 20, 50, -1],
-					formatters: {
-						"date": dateFormatter,
-						"level": levelFormatter,
-						"surface": surfaceFormatter,
-						"result": function(column, row) {
-							return "<a class='label black result-" + row.result + "' href='playerMatches?playerId=[[${player.id}]]&tournamentEventId=" + row.tournamentEventId + "'>" + row.result + "</a>"
-						}
+		<ul id="playerPills" class="nav nav-pills">
+			<li class="active"><a data-toggle="pill" href="#results">Results</a></li>
+			<li><a data-toggle="pill" href="#timeline">Timeline</a></li>
+			<li><a data-toggle="pill" href="#matches" th:attr="data-url='playerMatches?playerId=' + ${player.id}">Matches</a></li>
+		</ul>
+
+		<div class="tab-content">
+			<div id="results" class="tab-pane fade in active">
+				<!--/* Tournament Results */-->
+				<script type="text/javascript" th:inline="javascript">
+					/*<![CDATA[*/
+					$(function() {
+						$(document).ready(function(){
+							$('[data-toggle="tooltip"]').tooltip();
+						});
+						$("#resultsTable").bootgrid({
+							ajax: true,
+							ajaxSettings: {
+								method: "GET",
+								cache: false
+							},
+							url: "/playerResultsTable?playerId=[[${player.id}]]",
+							requestHandler: function (request) {
+								request.season = $("#season").val();
+								request.level = $("#level").val();
+								request.surface = $("#surface").val();
+								request.result = $("#result").val();
+								return request;
+							},
+							rowCount: [10, 20, 50, -1],
+							formatters: {
+								"date": dateFormatter,
+								"level": levelFormatter,
+								"surface": surfaceFormatter,
+								"result": function(column, row) {
+									return "<a class='label black result-" + row.result + "' href='playerMatches?playerId=[[${player.id}]]&tournamentEventId=" + row.tournamentEventId + "'>" + row.result + "</a>"
+								}
+							}
+						});
+					});
+					function reloadResults() {
+						$("#resultsTable").bootgrid("reload");
 					}
-				});
-			});
-			function reloadResults() {
-				$("#resultsTable").bootgrid("reload");
-			}
-			function clearResultsFilter() {
-				$("#season").val("");
-				$("#level").val("");
-				$("#surface").val("");
-				$("#result").val("");
-				$("#resultsTable").bootgrid("search", "");
-				reloadResults();
-			}
-			/*]]>*/
-		</script>
-		<div class="row">
-			<div class="col-md-3"><h4>Tournament Results</h4></div>
-			<div class="col-md-2">
-				<select id="season" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
-					<option value="">All seasons</option>
-					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
-				</select>
+					function clearResultsFilter() {
+						$("#season").val("");
+						$("#level").val("");
+						$("#surface").val("");
+						$("#result").val("");
+						$("#resultsTable").bootgrid("search", "");
+						reloadResults();
+					}
+					/*]]>*/
+				</script>
+				<br/>
+				<div class="row">
+					<div class="col-md-3"><h4>Tournament Results</h4></div>
+					<div class="col-md-2">
+						<select id="season" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
+							<option value="">All seasons</option>
+							<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<select id="level" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+							<option value="">All levels</option>
+							<option value="G" class="bg-danger">Grand Slam</option>
+							<option value="F" class="bg-warning">Tour Finals</option>
+							<option value="M" class="bg-info">Masters</option>
+							<option value="O" class="bg-success">Olympics</option>
+							<option value="A" class="bg-default">ATP</option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<select id="surface" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+							<option value="">All surfaces</option>
+							<option value="H" class="bg-primary">Hard</option>
+							<option value="C" class="bg-danger">Clay</option>
+							<option value="G" class="bg-success">Grass</option>
+							<option value="P" class="bg-warning">Carpet</option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<select id="result" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by result">
+							<option value="">All results</option>
+							<option value="W" class="result-W">Win</option>
+							<option value="F" class="result-F">Final</option>
+							<option value="SF" class="result-SF">Semi-Final</option>
+							<option value="QF" class="result-QF">Quarter-Final</option>
+							<option value="R16" class="result-R16">Round of 16</option>
+							<option value="R32" class="result-R32">Round of 32</option>
+							<option value="R64" class="result-R64">Round of 64</option>
+							<option value="R128" class="result-R128">Round of 128</option>
+							<option value="RR" class="result-RR">Round-Robin</option>
+							<option value="BR" class="result-BR">Bronze Medal</option>
+						</select>
+					</div>
+					<div class="col-md-1">
+						<button type="button" class="btn btn-default" onclick="clearResultsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+							<span class="glyphicon glyphicon-remove"></span> Clear
+						</button>
+					</div>
+				</div>
+				<table id="resultsTable" class="table table-condensed table-hover table-striped">
+					<thead>
+						<tr>
+							<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
+							<th data-column-id="level" data-formatter="level" data-width="100">Level</th>
+							<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
+							<th data-column-id="name" data-width="200">Tournament</th>
+							<th data-column-id="result" data-formatter="result" data-order="desc" data-width="50">Result</th>
+						</tr>
+					</thead>
+				</table>
 			</div>
-			<div class="col-md-2">
-				<select id="level" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
-					<option value="">All levels</option>
-					<option value="G" class="bg-danger">Grand Slam</option>
-					<option value="F" class="bg-warning">Tour Finals</option>
-					<option value="M" class="bg-info">Masters</option>
-					<option value="O" class="bg-success">Olympics</option>
-					<option value="A" class="bg-default">ATP</option>
-				</select>
-			</div>
-			<div class="col-md-2">
-				<select id="surface" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
-					<option value="">All surfaces</option>
-					<option value="H" class="bg-primary">Hard</option>
-					<option value="C" class="bg-danger">Clay</option>
-					<option value="G" class="bg-success">Grass</option>
-					<option value="P" class="bg-warning">Carpet</option>
-				</select>
-			</div>
-			<div class="col-md-2">
-				<select id="result" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by result">
-					<option value="">All results</option>
-					<option value="W" class="result-W">Win</option>
-					<option value="F" class="result-F">Final</option>
-					<option value="SF" class="result-SF">Semi-final</option>
-					<option value="QF" class="result-QF">Quarter-final</option>
-					<option value="R16" class="result-R16">Round of 16</option>
-					<option value="R32" class="result-R32">Round of 32</option>
-					<option value="R64" class="result-R64">Round of 64</option>
-					<option value="R128" class="result-R128">Round of 128</option>
-					<option value="RR" class="result-RR">Round-Robin</option>
-				</select>
-			</div>
-			<div class="col-md-1">
-				<button type="button" class="btn btn-default" onclick="clearResultsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-					<span class="glyphicon glyphicon-remove"></span> Clear
-				</button>
-			</div>
+			<div id="timeline" class="tab-pane fade"><br/>Loading...</div>
+			<div id="matches" class="tab-pane fade"><br/>Loading...</div>
 		</div>
-		<table id="resultsTable" class="table table-condensed table-hover table-striped">
-			<thead>
-				<tr>
-					<th data-column-id="season" data-converter="numeric" data-sortable="false" data-width="50">Season</th>
-					<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
-					<th data-column-id="level" data-formatter="level" data-width="100">Level</th>
-					<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
-					<th data-column-id="name" data-width="200">Tournament</th>
-					<th data-column-id="result" data-formatter="result" data-order="desc" data-width="50">Result</th>
-				</tr>
-			</thead>
-		</table>
 	</div>
 </body>
 </html>
