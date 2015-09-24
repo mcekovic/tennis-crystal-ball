@@ -15,11 +15,11 @@
 					method: "GET",
 					cache: false
 				},
-				url: "/matchesTable?playerId=[[${player.id}]]",
+				url: "/matchesTable?playerId=[[${playerId}]]",
 				requestHandler: function (request) {
-					request.season = $("#season").val();
-					request.level = $("#level").val();
-					request.surface = $("#surface").val();
+					request.season = $("#matchesSeason").val();
+					request.level = $("#matchesLevel").val();
+					request.surface = $("#matchesSurface").val();
 					request.tournamentEventId = $("#tournamentEvent").val();
 					return request;
 				},
@@ -36,9 +36,9 @@
 			$("#matchesTable").bootgrid("reload");
 		}
 		function clearMatchesFilter() {
-			$("#season").val("");
-			$("#level").val("");
-			$("#surface").val("");
+			$("#matchesSeason").val("");
+			$("#matchesLevel").val("");
+			$("#matchesSurface").val("");
 			$("#tournamentEvent").val("");
 			$("#matchesTable").bootgrid("search", "");
 			reloadMatches();
@@ -48,13 +48,13 @@
 	<div class="row">
 		<div class="col-md-2"><h4>Matches</h4></div>
 		<div class="col-md-2">
-			<select id="season" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
+			<select id="matchesSeason" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
 				<option value="">All seasons</option>
 				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id="level" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+			<select id="matchesLevel" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 				<option value="">All levels</option>
 				<option value="G" class="bg-danger">Grand Slam</option>
 				<option value="F" class="bg-warning">Tour Finals</option>
@@ -64,7 +64,7 @@
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id="surface" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+			<select id="matchesSurface" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 				<option value="">All surfaces</option>
 				<option value="H" class="bg-primary">Hard</option>
 				<option value="C" class="bg-danger">Clay</option>

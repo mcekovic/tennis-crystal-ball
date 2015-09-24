@@ -33,13 +33,11 @@
 					return;
 				var url = pill.attr("data-url");
 				if (typeof url !== "undefined") {
-					var href = this.hash;
-					$(href).load(url, function(data) {
-						if (data) {
-							if (!pill.hasClass("loaded"))
-								pill.addClass("loaded");
-							pill.tab('show');
-						}
+					var pane = this.hash;
+					$(pane).load(url, function() {
+						if (!pill.hasClass("loaded"))
+							pill.addClass("loaded");
+						pill.tab('show');
 					});
 				} else
 					pill.tab('show');
@@ -171,7 +169,7 @@
 		<ul id="playerPills" class="nav nav-pills">
 			<li class="active"><a data-toggle="pill" href="#results">Results</a></li>
 			<li><a data-toggle="pill" href="#timeline">Timeline</a></li>
-			<li><a data-toggle="pill" href="#matches" th:attr="data-url='playerMatches?playerId=' + ${player.id}">Matches</a></li>
+			<li><a id="matchesPill" data-toggle="pill" href="#matches" th:attr="data-url='playerMatches?playerId=' + ${player.id}">Matches</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -203,7 +201,7 @@
 								"level": levelFormatter,
 								"surface": surfaceFormatter,
 								"result": function(column, row) {
-									return "<a class='label black result-" + row.result + "' href='playerMatches?playerId=[[${player.id}]]&tournamentEventId=" + row.tournamentEventId + "'>" + row.result + "</a>"
+									return "<a class='label black result-" + row.result + "' href='javascript:playerMatches(" + row.tournamentEventId + ")'>" + row.result + "</a>"
 								}
 							}
 						});
@@ -218,6 +216,16 @@
 						$("#result").val("");
 						$("#resultsTable").bootgrid("search", "");
 						reloadResults();
+					}
+					function playerMatches(tournamentEventId) {
+						var pill = $("#matchesPill");
+						var pane = $("#matches");
+						var url = pill.attr("data-url");
+						$(pane).load(url + "&tournamentEventId=" + tournamentEventId, function() {
+							if (!pill.hasClass("loaded"))
+								pill.addClass("loaded");
+							pill.tab('show');
+						});
 					}
 					/*]]>*/
 				</script>

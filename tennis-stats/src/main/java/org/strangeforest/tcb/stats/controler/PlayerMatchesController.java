@@ -17,19 +17,14 @@ public class PlayerMatchesController {
 
 	@RequestMapping("/playerMatches")
 	public ModelAndView playerMatches(
-		@RequestParam(value = "playerId", required = false) Integer playerId,
-		@RequestParam(value = "playerName", required = false) String playerName,
+		@RequestParam(value = "playerId") int playerId,
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId
 	) {
-		if (playerId == null && playerName == null)
-			return new ModelAndView("playerMatches");
-
-		Player player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(playerName);
-		List<Integer> seasons = playerService.getPlayerSeasons(player.getId());
-		List<TournamentEvent> tournamentEvents = playerService.getPlayerTournamentEvents(player.getId());
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		List<TournamentEvent> tournamentEvents = playerService.getPlayerTournamentEvents(playerId);
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("player", player);
+		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("tournamentEvents", tournamentEvents);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
