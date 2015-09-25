@@ -46,4 +46,5 @@ dependencies {
 	compile 'org.webjars.bower:jquery.bootgrid:1.2.0'
 	runtime 'org.postgresql:postgresql:9.4-1203-jdbc42'
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
+	testCompile 'org.assertj:assertj-core:3.2.0'
 }

@@ -29,19 +29,19 @@
 			}).focus();
 			$("[data-toggle=pill]").click(function(event) {
 				event.preventDefault();
-				var pill = $(this);
-				if (pill.hasClass("loaded"))
+				var $pill = $(this);
+				if ($pill.hasClass("loaded"))
 					return;
-				var url = pill.attr("data-url");
+				var url = $pill.attr("data-url");
 				if (typeof url !== "undefined") {
-					var pane = this.hash;
-					$(pane).load(url, function() {
-						if (!pill.hasClass("loaded"))
-							pill.addClass("loaded");
-						pill.tab('show');
+					var $pane = this.hash;
+					$($pane).load(url, function() {
+						if (!$pill.hasClass("loaded"))
+							$pill.addClass("loaded");
+						$pill.tab('show');
 					});
 				} else
-					pill.tab('show');
+					$pill.tab('show');
 			});
 		});
 		function showTitles(level) {
@@ -177,7 +177,7 @@
 		<ul id="playerPills" class="nav nav-pills">
 			<li class="active"><a id="tournamentsPill" data-toggle="pill" href="#tournaments">Tournaments</a></li>
 			<li><a id="matchesPill" data-toggle="pill" href="#matches" th:attr="data-url='playerMatches?playerId=' + ${player.id}">Matches</a></li>
-			<li><a data-toggle="pill" href="#timeline">Timeline</a></li>
+			<li><a data-toggle="pill" href="#timeline" th:attr="data-url='playerTimeline?playerId=' + ${player.id}">Timeline</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -186,9 +186,7 @@
 				<script type="text/javascript" th:inline="javascript">
 					/*<![CDATA[*/
 					$(function() {
-						$(document).ready(function(){
-							$('[data-toggle="tooltip"]').tooltip();
-						});
+						$("[data-toggle='tooltip']").tooltip();
 						$("#tournamentsTable").bootgrid({
 							ajax: true,
 							ajaxSettings: {
@@ -210,7 +208,7 @@
 								"level": levelFormatter,
 								"surface": surfaceFormatter,
 								"result": function(column, row) {
-									return "<a class='label black result-" + row.result + "' href='javascript:playerMatches(" + row.tournamentEventId + ")'>" + row.result + "</a>"
+									return "<a class='label black bg-result-" + row.result + "' href='javascript:playerMatches(" + row.tournamentEventId + ")'>" + row.result + "</a>"
 								}
 							}
 						});
@@ -231,13 +229,13 @@
 						reloadTournaments();
 					}
 					function playerMatches(tournamentEventId) {
-						var pill = $("#matchesPill");
-						var pane = $("#matches");
-						var url = pill.attr("data-url");
-						$(pane).load(url + "&tournamentEventId=" + tournamentEventId, function() {
-							if (!pill.hasClass("loaded"))
-								pill.addClass("loaded");
-							pill.tab('show');
+						var $pill = $("#matchesPill");
+						var $pane = $("#matches");
+						var url = $pill.attr("data-url");
+						$($pane).load(url + "&tournamentEventId=" + tournamentEventId, function() {
+							if (!$pill.hasClass("loaded"))
+								$pill.addClass("loaded");
+							$pill.tab('show');
 						});
 					}
 					/*]]>*/

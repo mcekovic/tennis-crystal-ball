@@ -17,7 +17,7 @@ public class PlayerMatchesResource {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
-	private static final int MAX_MATCHES = 1000;
+	private static final int MAX_MATCHES = 10000;
 
 	private static final String MATCHES_QUERY = //language=SQL
 		"SELECT e.date, e.level, e.surface, e.name AS tournament, m.round, m.winner_id, pw.name AS winner, m.loser_id, pl.name AS loser, m.score FROM match m " +

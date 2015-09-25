@@ -9,7 +9,10 @@ public abstract class DateUtil {
 		return date != null ? Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()) : null;
 	}
 
-	public static LocalDate toLocalDate(java.sql.Date date) {
-		return date != null ? date.toLocalDate() : null;
+	public static LocalDate toLocalDate(Date date) {
+		if (date instanceof java.sql.Date)
+			return ((java.sql.Date)date).toLocalDate();
+		else
+			return date != null ? date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
 	}
 }

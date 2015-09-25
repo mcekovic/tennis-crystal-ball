@@ -7,9 +7,7 @@
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
-			$(document).ready(function(){
-				$('[data-toggle="tooltip"]').tooltip();
-			});
+			$("[data-toggle='tooltip']").tooltip();
 			$("#matchesTable").bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -63,6 +61,7 @@
 				<option value="M" class="bg-level-M">Masters</option>
 				<option value="A" class="bg-level-A">ATP</option>
 				<option value="O" class="bg-level-O">Olympics</option>
+				<option value="D" class="bg-level-D">Davis Cup</option>
 			</select>
 		</div>
 		<div class="col-md-2">

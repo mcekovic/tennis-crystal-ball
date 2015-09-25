@@ -1,0 +1,65 @@
+<!--@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"-->
+<br/>
+<div xmlns:th="http://www.thymeleaf.org">
+	<script type="text/javascript" th:inline="javascript">
+		/*<![CDATA[*/
+		$(function() {
+			var $timelineTable = $("#timelineTable");
+			$timelineTable.find("span.surface").each(function() {
+				var $surface = $(this);
+				var surface = $surface.text();
+				$surface.text(surfaceName(surface));
+				$surface.addClass("label-" + surfaceClassSuffix(surface));
+			});
+			$timelineTable.find("span.level").each(function() {
+				var $tournament = $(this);
+				var level = $tournament.data("level");
+				$tournament.addClass("label-" + levelClassSuffix(level));
+			});
+		});
+		function reloadMatches() {
+			$("#matchesTable").bootgrid("reload");
+		}
+		function clearMatchesFilter() {
+			$("#matchesSeason").val("");
+			$("#matchesLevel").val("");
+			$("#matchesSurface").val("");
+			$("#matchesTournament").val("");
+			$("#tournamentEvent").val("");
+			$("#matchesTable").bootgrid("search", "");
+			reloadMatches();
+		}
+		/*]]>*/
+	</script>
+	<style scoped="scoped">
+		.first-by-level {
+			border-top: 3px solid lightgray;
+		}
+		span.absent {
+			color: gray;
+		}
+	</style>
+	<table id="timelineTable" class="table table-condensed table-hover table-bordered">
+		<thead>
+			<tr>
+				<th>Tournament</th>
+				<th>Surface</th>
+				<th th:each="season : ${timeline.seasons}" th:text="${season}" align="center">2015</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="tournament : ${timeline.tournaments}" th:class="${tournament.firstByLevel ? 'first-by-level' : ''}">
+				<td th:class="'bg-level-' + ${tournament.level}" class="bg-level-G">
+					<span class="label level" th:attr="data-level=${tournament.level}" data-level="G" th:text="${tournament.name}">Wimbledon</span>
+				</td>
+				<td th:class="'bg-level-' + ${tournament.level}" class="bg-level-G">
+					<span th:text="${tournament.surface}" class="label surface">G</span>
+				</td>
+				<td th:each="item : ${tournament.items}" th:class="'bg-result-' + ${item.result}" class="result-W" align="center">
+					<a th:if="${item.result}" th:text="${item.result}" th:href="'javascript:playerMatches(' + ${item.tournamentEventId} + ')'">W</a>
+					<span th:unless="${item.result}" class="absent">A</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

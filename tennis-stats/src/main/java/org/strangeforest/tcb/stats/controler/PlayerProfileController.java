@@ -14,6 +14,7 @@ import org.strangeforest.tcb.stats.service.*;
 public class PlayerProfileController {
 
 	@Autowired private PlayerService playerService;
+	@Autowired private PlayerTimelineService timelineService;
 
 	@RequestMapping("/playerProfile")
 	public ModelAndView playerProfile(
@@ -50,5 +51,13 @@ public class PlayerProfileController {
 		modelMap.addAttribute("tournamentEvents", tournamentEvents);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		return new ModelAndView("playerMatches", modelMap);
+	}
+
+	@RequestMapping("/playerTimeline")
+	public ModelAndView playerTimeline(
+		@RequestParam(value = "playerId") int playerId
+	) {
+		PlayerTimeline timeline = timelineService.getPlayerTimeline(playerId);
+		return new ModelAndView("playerTimeline", "timeline", timeline);
 	}
 }

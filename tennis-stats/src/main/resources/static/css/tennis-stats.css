@@ -21,41 +21,41 @@
 	background: #d9edf7;
 }
 .bg-level-A {
-	background: white;
+	background: #f0f0f0;
 }
 .bg-level-O {
 	background: #dff0d8;
 }
 .bg-level-D {
-	background: #e0e0e0;
+	background: #fce3f7;
 }
-.result-W {
+.bg-result-W {
 	background: lime;
 }
-.result-F {
+.bg-result-F {
 	background: thistle;
 }
-.result-SF {
+.bg-result-SF {
 	background: yellow;
 }
-.result-BR {
+.bg-result-BR {
 	background: #CD7F32;
 }
-.result-QF {
+.bg-result-QF {
 	background: blanchedalmond;
 }
-.result-R16 {
+.bg-result-R16 {
 	background: #AFEEEE;
 }
-.result-R32 {
+.bg-result-R32 {
 	background: #AFEEEE;
 }
-.result-R64 {
+.bg-result-R64 {
 	background: #AFEEEE;
 }
-.result-R128 {
+.bg-result-R128 {
 	background: #AFEEEE;
 }
-.result-RR {
+.bg-result-RR {
 	background: #AFEEEE;
 }
