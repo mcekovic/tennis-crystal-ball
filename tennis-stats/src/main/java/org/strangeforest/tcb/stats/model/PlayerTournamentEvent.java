@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
-public class PlayerEventResult {
+public class PlayerTournamentEvent {
 
 	private final int tournamentEventId;
 	private final Date date;
@@ -11,7 +11,7 @@ public class PlayerEventResult {
 	private final String name;
 	private final String result;
 
-	public PlayerEventResult(int tournamentEventId, Date date, String level, String surface, String name, String result) {
+	public PlayerTournamentEvent(int tournamentEventId, Date date, String level, String surface, String name, String result) {
 		this.tournamentEventId = tournamentEventId;
 		this.date = date;
 		this.level = level;

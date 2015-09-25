@@ -1,4 +1,5 @@
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
+<!--@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.Tournament>"-->
 <!--@thymesVar id="tournamentEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEvent>"-->
 <!--@thymesVar id="tournamentEventId" type="java.lang.Integer>"-->
 <br/>
@@ -20,6 +21,7 @@
 					request.season = $("#matchesSeason").val();
 					request.level = $("#matchesLevel").val();
 					request.surface = $("#matchesSurface").val();
+					request.tournamentId = $("#matchesTournament").val();
 					request.tournamentEventId = $("#tournamentEvent").val();
 					return request;
 				},
@@ -39,6 +41,7 @@
 			$("#matchesSeason").val("");
 			$("#matchesLevel").val("");
 			$("#matchesSurface").val("");
+			$("#matchesTournament").val("");
 			$("#tournamentEvent").val("");
 			$("#matchesTable").bootgrid("search", "");
 			reloadMatches();
@@ -46,7 +49,6 @@
 		/*]]>*/
 	</script>
 	<div class="row">
-		<div class="col-md-2"><h4>Matches</h4></div>
 		<div class="col-md-2">
 			<select id="matchesSeason" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
 				<option value="">All seasons</option>
@@ -56,11 +58,11 @@
 		<div class="col-md-2">
 			<select id="matchesLevel" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 				<option value="">All levels</option>
-				<option value="G" class="bg-danger">Grand Slam</option>
-				<option value="F" class="bg-warning">Tour Finals</option>
-				<option value="M" class="bg-info">Masters</option>
-				<option value="O" class="bg-success">Olympics</option>
-				<option value="A" class="bg-default">ATP</option>
+				<option value="G" class="bg-level-G">Grand Slam</option>
+				<option value="F" class="bg-level-F">Tour Finals</option>
+				<option value="M" class="bg-level-M">Masters</option>
+				<option value="A" class="bg-level-A">ATP</option>
+				<option value="O" class="bg-level-O">Olympics</option>
 			</select>
 		</div>
 		<div class="col-md-2">
@@ -72,11 +74,17 @@
 				<option value="P" class="bg-warning">Carpet</option>
 			</select>
 		</div>
+		<div class="col-md-2">
+			<select id="matchesTournament" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+			</select>
+		</div>
 		<div class="col-md-3">
 			<select id="tournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournament events">
 				<option value="">All events</option>
 				<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="${tournamentEvent.name} + ' - ' + ${tournamentEvent.season}"
-				        th:selected="${tournamentEvent.id == tournamentEventId}">2005</option>
+				        th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon (2008)</option>
 			</select>
 		</div>
 		<div class="col-md-1">

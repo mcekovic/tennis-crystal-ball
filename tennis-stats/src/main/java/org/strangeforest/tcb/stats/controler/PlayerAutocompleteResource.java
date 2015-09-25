@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.model.*;
 
 @RestController
-public class AutocompleteController {
+public class PlayerAutocompleteResource {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 

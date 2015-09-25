@@ -12,7 +12,7 @@ import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 
 @RestController
-public class GOATController {
+public class GOATListResource {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 

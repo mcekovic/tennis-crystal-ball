@@ -13,13 +13,13 @@ import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 
 @RestController
-public class MatchesController {
+public class PlayerMatchesResource {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
-	private static final int MAX_RESULTS = 1000;
+	private static final int MAX_MATCHES = 1000;
 
-	private static final String RESULTS_QUERY = //language=SQL
+	private static final String MATCHES_QUERY = //language=SQL
 		"SELECT e.date, e.level, e.surface, e.name AS tournament, m.round, m.winner_id, pw.name AS winner, m.loser_id, pl.name AS loser, m.score FROM match m " +
 		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
 		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id " +
@@ -30,6 +30,7 @@ public class MatchesController {
 	private static final String SEASON_CONDITION = " AND e.season = ?";
 	private static final String LEVEL_CONDITION = " AND e.level = ?::tournament_level";
 	private static final String SURFACE_CONDITION = " AND e.surface = ?::surface";
+	private static final String TOURNAMENT_CONDITION = " AND e.tournament_id = ?";
 	private static final String TOURNAMENT_EVENT_CONDITION = " AND e.tournament_event_id = ?";
 	private static final String SEARCH_CONDITION = " AND e.name ILIKE '%' || ? || '%'";
 
@@ -48,21 +49,22 @@ public class MatchesController {
 		@RequestParam(value = "season", required = false) Integer season,
 		@RequestParam(value = "level", required = false) String level,
 		@RequestParam(value = "surface", required = false) String surface,
+		@RequestParam(value = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam(value = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		int pageSize = rowCount > 0 ? rowCount : MAX_RESULTS;
+		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
 		int offset = (current - 1) * pageSize;
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		AtomicInteger results = new AtomicInteger();
+		AtomicInteger matches = new AtomicInteger();
 		BootgridTable<Match> table = new BootgridTable<>(current);
 		jdbcTemplate.query(
-			constructQuery(season, level, surface, tournamentEventId, searchPhrase, orderBy),
+			constructQuery(season, level, surface, tournamentId, tournamentEventId, searchPhrase, orderBy),
 			(rs) -> {
-				if (results.incrementAndGet() <= pageSize) {
+				if (matches.incrementAndGet() <= pageSize) {
 					table.addRow(new Match(
 						rs.getDate("date"),
 						rs.getString("level"),
@@ -77,13 +79,13 @@ public class MatchesController {
 					));
 				}
 			},
-			params(playerId, season, level, surface, tournamentEventId, searchPhrase, offset)
+			params(playerId, season, level, surface, tournamentId, tournamentEventId, searchPhrase, offset)
 		);
-		table.setTotal(offset + results.get());
+		table.setTotal(offset + matches.get());
 		return table;
 	}
 
-	private String constructQuery(Integer season, String level, String surface, Integer tournamentEventId, String searchPhrase, String orderBy) {
+	private String constructQuery(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String searchPhrase, String orderBy) {
 		StringBuilder conditions = new StringBuilder();
 		if (season != null)
 			conditions.append(SEASON_CONDITION);
@@ -91,14 +93,16 @@ public class MatchesController {
 			conditions.append(LEVEL_CONDITION);
 		if (!isNullOrEmpty(surface))
 			conditions.append(SURFACE_CONDITION);
+		if (tournamentId != null)
+			conditions.append(TOURNAMENT_CONDITION);
 		if (tournamentEventId != null)
 			conditions.append(TOURNAMENT_EVENT_CONDITION);
 		if (!isNullOrEmpty(searchPhrase))
 			conditions.append(SEARCH_CONDITION);
-		return format(RESULTS_QUERY, conditions, orderBy);
+		return format(MATCHES_QUERY, conditions, orderBy);
 	}
 
-	private Object[] params(int playerId, Integer season, String level, String surface, Integer tournamentEventId, String searchPhrase, int offset) {
+	private Object[] params(int playerId, Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String searchPhrase, int offset) {
 		List<Object> params = new ArrayList<>();
 		params.add(playerId);
 		params.add(playerId);
@@ -108,6 +112,8 @@ public class MatchesController {
 			params.add(level);
 		if (!isNullOrEmpty(surface))
 			params.add(surface);
+		if (tournamentId != null)
+			params.add(tournamentId);
 		if (tournamentEventId != null)
 			params.add(tournamentEventId);
 		if (!isNullOrEmpty(searchPhrase))

@@ -11,6 +11,24 @@
 .black {
 	color: black;
 }
+.bg-level-G {
+	background: #f2dede;
+}
+.bg-level-F {
+	background: #fcf8e3;
+}
+.bg-level-M {
+	background: #d9edf7;
+}
+.bg-level-A {
+	background: white;
+}
+.bg-level-O {
+	background: #dff0d8;
+}
+.bg-level-D {
+	background: #e0e0e0;
+}
 .result-W {
 	background: lime;
 }

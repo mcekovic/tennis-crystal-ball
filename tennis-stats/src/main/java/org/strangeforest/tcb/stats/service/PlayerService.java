@@ -29,6 +29,13 @@ public class PlayerService {
 		"WHERE r.player_id = ? " +
 		"ORDER BY season DESC";
 
+	private static final String TOURNAMENTS_QUERY =
+		"SELECT DISTINCT tournament_id, t.name, t.level FROM player_tournament_event_result r " +
+		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
+		"LEFT JOIN tournament t USING (tournament_id) " +
+		"WHERE r.player_id = ? " +
+		"ORDER BY name";
+
 	private static final String TOURNAMENT_EVENTS_QUERY =
 		"SELECT tournament_event_id, t.name, e.season FROM player_tournament_event_result r " +
 		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
@@ -47,6 +54,10 @@ public class PlayerService {
 
 	public List<Integer> getPlayerSeasons(int playerId) {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class, playerId);
+	}
+
+	public List<Tournament> getPlayerTournaments(int playerId) {
+		return jdbcTemplate.query(TOURNAMENTS_QUERY, this::tournamentRowMapper, playerId);
 	}
 
 	public List<TournamentEvent> getPlayerTournamentEvents(int playerId) {
@@ -88,6 +99,13 @@ public class PlayerService {
 		p.setFacebook(rs.getString("facebook"));
 
 		return p;
+	}
+
+	private Tournament tournamentRowMapper(ResultSet rs, int rowNum) throws SQLException {
+		int tournamentId = rs.getInt("tournament_id");
+		String name = rs.getString("name");
+		String level = rs.getString("level");
+		return new Tournament(tournamentId, name, level);
 	}
 
 	private TournamentEvent tournamentEventRowMapper(ResultSet rs, int rowNum) throws SQLException {

@@ -20,7 +20,7 @@ import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 
 @RestController
-public class PlayerRankingsController {
+public class PlayerRankingsResource {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 

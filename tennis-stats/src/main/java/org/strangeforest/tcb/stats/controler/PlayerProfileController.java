@@ -25,10 +25,30 @@ public class PlayerProfileController {
 
 		Player player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
 		List<Integer> seasons = playerService.getPlayerSeasons(player.getId());
+		List<Tournament> tournaments = playerService.getPlayerTournaments(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player", player);
 		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("tournaments", tournaments);
 		return new ModelAndView("playerProfile", modelMap);
+	}
+
+	@RequestMapping("/playerMatches")
+	public ModelAndView playerMatches(
+		@RequestParam(value = "playerId") int playerId,
+		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId
+	) {
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		List<Tournament> tournaments = playerService.getPlayerTournaments(playerId);
+		List<TournamentEvent> tournamentEvents = playerService.getPlayerTournamentEvents(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("tournamentEvents", tournamentEvents);
+		modelMap.addAttribute("tournamentEventId", tournamentEventId);
+		return new ModelAndView("playerMatches", modelMap);
 	}
 }

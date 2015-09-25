@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"-->
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
+<!--@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.Tournament>"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -43,6 +44,13 @@
 					pill.tab('show');
 			});
 		});
+		function showTitles(level) {
+			clearTournamentsFilterControls();
+			$("#level").val(level);
+			$("#result").val("W");
+			reloadTournaments();
+			$("#tournamentsPill").tab('show');
+		}
 		/*]]>*/
 	</script>
 </head>
@@ -100,23 +108,23 @@
 					<!--/* Titles */-->
 					<tr th:if="${player.titles > 0}">
 						<th>Titles</th>
-						<td width="100%"><span class="label label-default" th:text="${player.titles}">10</span></td>
+						<td width="100%"><a class="label label-default" th:text="${player.titles}" href="javascript:showTitles()">10</a></td>
 					</tr>
 					<tr th:if="${player.grandSlams > 0}">
 						<th>Grand Slams</th>
-						<td><span class="label label-danger" th:text="${player.grandSlams}">1</span></td>
+						<td><a class="label label-danger" th:text="${player.grandSlams}" href="javascript:showTitles('G')">1</a></td>
 					</tr>
 					<tr th:if="${player.tourFinals > 0}">
 						<th>Tour Finals</th>
-						<td><span class="label label-warning" th:text="${player.tourFinals}">1</span></td>
+						<td><a class="label label-warning" th:text="${player.tourFinals}" href="javascript:showTitles('F')">1</a></td>
 					</tr>
 					<tr th:if="${player.masters > 0}">
 						<th>Masters</th>
-						<td><span class="label label-info" th:text="${player.masters}">5</span></td>
+						<td><a class="label label-info" th:text="${player.masters}" href="javascript:showTitles('M')">5</a></td>
 					</tr>
 					<tr th:if="${player.olympics > 0}">
 						<th>Olympics</th>
-						<td><span class="label label-success" th:text="${player.olympics}">1</span></td>
+						<td><a class="label label-success" th:text="${player.olympics}" href="javascript:showTitles('O')">1</a></td>
 					</tr>
 					<!--/* Ranking */-->
 					<tr th:if="${player.currentRank > 0}">
@@ -167,31 +175,32 @@
 		</div>
 
 		<ul id="playerPills" class="nav nav-pills">
-			<li class="active"><a data-toggle="pill" href="#results">Results</a></li>
-			<li><a data-toggle="pill" href="#timeline">Timeline</a></li>
+			<li class="active"><a id="tournamentsPill" data-toggle="pill" href="#tournaments">Tournaments</a></li>
 			<li><a id="matchesPill" data-toggle="pill" href="#matches" th:attr="data-url='playerMatches?playerId=' + ${player.id}">Matches</a></li>
+			<li><a data-toggle="pill" href="#timeline">Timeline</a></li>
 		</ul>
 
 		<div class="tab-content">
-			<div id="results" class="tab-pane fade in active">
-				<!--/* Tournament Results */-->
+			<div id="tournaments" class="tab-pane fade in active">
+				<!--/* Tournaments */-->
 				<script type="text/javascript" th:inline="javascript">
 					/*<![CDATA[*/
 					$(function() {
 						$(document).ready(function(){
 							$('[data-toggle="tooltip"]').tooltip();
 						});
-						$("#resultsTable").bootgrid({
+						$("#tournamentsTable").bootgrid({
 							ajax: true,
 							ajaxSettings: {
 								method: "GET",
 								cache: false
 							},
-							url: "/playerResultsTable?playerId=[[${player.id}]]",
+							url: "/playerTournamentsTable?playerId=[[${player.id}]]",
 							requestHandler: function (request) {
 								request.season = $("#season").val();
 								request.level = $("#level").val();
 								request.surface = $("#surface").val();
+								request.tournamentId = $("#tournament").val();
 								request.result = $("#result").val();
 								return request;
 							},
@@ -206,16 +215,20 @@
 							}
 						});
 					});
-					function reloadResults() {
-						$("#resultsTable").bootgrid("reload");
+					function reloadTournaments() {
+						$("#tournamentsTable").bootgrid("reload");
 					}
-					function clearResultsFilter() {
+					function clearTournamentsFilterControls() {
 						$("#season").val("");
 						$("#level").val("");
 						$("#surface").val("");
+						$("#tournament").val("");
 						$("#result").val("");
-						$("#resultsTable").bootgrid("search", "");
-						reloadResults();
+						$("#tournamentsTable").bootgrid("search", "");
+					}
+					function clearTournamentsFilter() {
+						clearTournamentsFilterControls();
+						reloadTournaments();
 					}
 					function playerMatches(tournamentEventId) {
 						var pill = $("#matchesPill");
@@ -231,25 +244,24 @@
 				</script>
 				<br/>
 				<div class="row">
-					<div class="col-md-3"><h4>Tournament Results</h4></div>
 					<div class="col-md-2">
-						<select id="season" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
+						<select id="season" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
 							<option value="">All seasons</option>
 							<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 						</select>
 					</div>
 					<div class="col-md-2">
-						<select id="level" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+						<select id="level" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 							<option value="">All levels</option>
-							<option value="G" class="bg-danger">Grand Slam</option>
-							<option value="F" class="bg-warning">Tour Finals</option>
-							<option value="M" class="bg-info">Masters</option>
-							<option value="O" class="bg-success">Olympics</option>
-							<option value="A" class="bg-default">ATP</option>
+							<option value="G" class="bg-level-G">Grand Slam</option>
+							<option value="F" class="bg-level-F">Tour Finals</option>
+							<option value="M" class="bg-level-M">Masters</option>
+							<option value="A" class="bg-level-A">ATP</option>
+							<option value="O" class="bg-level-O">Olympics</option>
 						</select>
 					</div>
 					<div class="col-md-2">
-						<select id="surface" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+						<select id="surface" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 							<option value="">All surfaces</option>
 							<option value="H" class="bg-primary">Hard</option>
 							<option value="C" class="bg-danger">Clay</option>
@@ -258,7 +270,13 @@
 						</select>
 					</div>
 					<div class="col-md-2">
-						<select id="result" class="form-control" onchange="reloadResults()" data-toggle="tooltip" data-placement="top" title="Filter by result">
+						<select id="tournament" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
+							<option value="">All tournaments</option>
+							<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<select id="result" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by result">
 							<option value="">All results</option>
 							<option value="W" class="result-W">Win</option>
 							<option value="F" class="result-F">Final</option>
@@ -273,12 +291,12 @@
 						</select>
 					</div>
 					<div class="col-md-1">
-						<button type="button" class="btn btn-default" onclick="clearResultsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+						<button type="button" class="btn btn-default" onclick="clearTournamentsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
 							<span class="glyphicon glyphicon-remove"></span> Clear
 						</button>
 					</div>
 				</div>
-				<table id="resultsTable" class="table table-condensed table-hover table-striped">
+				<table id="tournamentsTable" class="table table-condensed table-hover table-striped">
 					<thead>
 						<tr>
 							<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
