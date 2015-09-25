@@ -38,10 +38,10 @@
 					$($pane).load(url, function() {
 						if (!$pill.hasClass("loaded"))
 							$pill.addClass("loaded");
-						$pill.tab('show');
+						$pill.tab("show");
 					});
 				} else
-					$pill.tab('show');
+					$pill.tab("show");
 			});
 		});
 		function showTitles(level) {
@@ -49,7 +49,7 @@
 			$("#level").val(level);
 			$("#result").val("W");
 			reloadTournaments();
-			$("#tournamentsPill").tab('show');
+			$("#tournamentsPill").tab("show");
 		}
 		/*]]>*/
 	</script>
@@ -235,7 +235,7 @@
 						$($pane).load(url + "&tournamentEventId=" + tournamentEventId, function() {
 							if (!$pill.hasClass("loaded"))
 								$pill.addClass("loaded");
-							$pill.tab('show');
+							$pill.tab("show");
 						});
 					}
 					/*]]>*/

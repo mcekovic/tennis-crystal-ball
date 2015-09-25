@@ -18,7 +18,7 @@
 		var logScale;
 		function drawChart() {
 			if ($.trim($("#players").val()).length > 0)
-				doDrawChart(true, $('#rankChartSize').slider('value'));
+				doDrawChart(true, $("#rankChartSize").slider("value"));
 			else
 				$("#rankChart").html("<div class='alert alert-warning col-md-9'>No player selected!</div>");
 		}
@@ -152,7 +152,7 @@
 			});
 			$("#rankChartSize").slider({
 				min: 500,
-				max: 2000,
+				max: 1500,
 				value: 1000,
 				step: 100,
 				slide: function(event, ui) {
