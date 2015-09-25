@@ -55,7 +55,7 @@
 	</script>
 </head>
 <body class="container">
-	<h1><a href="/">Ultimate Tennis Statistics</a></h1>
+	<div th:include="fragments/header :: copy"></div>
 	<div class="row">
 		<div th:if="${player}" class="col-md-8"><h3 th:text="${player.name}">Player Profile</h3></div>
 		<div class="ui-widget input-group col-md-4">
@@ -310,5 +310,6 @@
 			<div id="matches" class="tab-pane fade"><br/>Loading...</div>
 		</div>
 	</div>
+	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>

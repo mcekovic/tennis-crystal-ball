@@ -7,13 +7,10 @@
 	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
 </head>
 <body class="container">
-	<h1>Ultimate Tennis Statistics</h1>
+	<div th:include="fragments/header :: copy"></div>
 	<h3><a th:href="goatList">GOAT List</a></h3>
 	<h3><a th:href="playerProfile">Player Profile</a></h3>
 	<h3><a th:href="rankingsChart">Rankings Chart</a></h3>
-	<hr/>
-	<footer>
-		<p>&copy; Strange Forest 2015</p>
-	</footer>
+	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>
