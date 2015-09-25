@@ -69,7 +69,7 @@ function tournamentFormatter(column, row) {
 
 // Result
 function resultFormatter(column, row) {
-	return "<span class='label black result-" + row.result + "'>" + row.result + "</span>"
+	return "<span class='label black bg-result-" + row.result + "'>" + row.result + "</span>"
 }
 
 // Match
