@@ -43,7 +43,9 @@ dependencies {
 	compile 'org.webjars:jquery:2.1.4'
 	compile 'org.webjars:jquery-ui:1.11.4'
 	compile 'org.webjars:jquery-ui-themes:1.11.4'
-	compile 'org.webjars.bower:jquery.bootgrid:1.2.0'
+	compile ('org.webjars.bower:jquery.bootgrid:1.2.0') {
+		exclude group: 'org.webjars.bower'
+	}
 	runtime 'org.postgresql:postgresql:9.4-1203-jdbc42'
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 	testCompile 'org.assertj:assertj-core:3.2.0'

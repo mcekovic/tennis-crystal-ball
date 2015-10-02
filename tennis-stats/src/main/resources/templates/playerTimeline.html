@@ -60,6 +60,9 @@
 					<span th:unless="${item.result}" class="absent">A</span>
 				</td>
 			</tr>
+			<tr th:if="${timeline.empty}">
+				<td colspan="2" align="center">No results found!</td>
+			</tr>
 		</tbody>
 	</table>
 </div>

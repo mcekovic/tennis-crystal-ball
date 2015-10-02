@@ -28,6 +28,10 @@ public class PlayerTimeline {
 		return seasons;
 	}
 
+	public boolean isEmpty() {
+		return tournaments.isEmpty();
+	}
+
 	public void addItem(PlayerTimelineItem item) {
 		PlayerTournamentTimeline tournament = getTournamentTimeline(item);
 		tournament.addItem(item);
