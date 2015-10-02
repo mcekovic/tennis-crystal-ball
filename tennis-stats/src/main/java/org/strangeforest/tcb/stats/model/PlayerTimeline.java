@@ -17,7 +17,7 @@ public class PlayerTimeline {
 		Collections.sort(sortedTournaments);
 		String lastLevel = null;
 		for (PlayerTournamentTimeline tournament : sortedTournaments) {
-			String level = tournament.getLevel();
+			String level = tournament.getMaxLevel();
 			tournament.setFirstByLevel(!Objects.equals(level, lastLevel));
 			lastLevel = level;
 		}
@@ -42,7 +42,7 @@ public class PlayerTimeline {
 		int tournamentId = item.getTournamentId();
 		PlayerTournamentTimeline tournament = tournaments.get(tournamentId);
 		if (tournament == null) {
-			tournament = new PlayerTournamentTimeline(this, tournamentId, item.getLevel(), item.getSurface(),  item.getName(), item.getDate());
+			tournament = new PlayerTournamentTimeline(this, tournamentId, item.getName());
 			tournaments.put(tournamentId, tournament);
 		}
 		return tournament;

@@ -32,15 +32,14 @@ class MatchLoader extends BaseCSVLoader {
 		def level = string line.tourney_level
 		def name = string line.tourney_name
 		def dcInfo = level == 'D' ? extractDCTournamentInfo(name) : null;
-		def extTournamentId = level != 'D' ? extTourneyId : dcInfo.extId
-		params.ext_tournament_id = extTournamentId
 		def season = smallint(tourneyId.substring(0, 4))
 		params.season = season
 		params.tournament_date = date line.tourney_date
 
 		params.tournament_name = level != 'D' ? name : dcInfo.name
 		def drawSize = smallint line.draw_size
-		def mappedLevel = mapLevel(level, drawSize, name, season, extTournamentId)
+		def mappedLevel = mapLevel(level, drawSize, name, season, extTourneyId)
+		params.ext_tournament_id = mapExtTournamentId(extTourneyId, mappedLevel, dcInfo)
 		params.tournament_level = mappedLevel
 		def surface = string line.surface
 		params.surface = mapSurface surface
@@ -109,6 +108,14 @@ class MatchLoader extends BaseCSVLoader {
 		params.l_bp_sv = smallint line.l_bpSaved
 		params.l_bp_fc = smallint line.l_bpFaced
 		return params
+	}
+
+	static def mapExtTournamentId(String extTourneyId, String level, DavisCupTournamentInfo dcInfo) {
+		switch (level) {
+			case 'D': return dcInfo.extId
+			case 'O': return level
+			default: return extTourneyId
+		}
 	}
 
 	static def mapLevel(String level, short drawSize, String name, int season, String extTournamentId) {

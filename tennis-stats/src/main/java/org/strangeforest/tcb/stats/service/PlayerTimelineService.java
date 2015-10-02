@@ -11,7 +11,7 @@ public class PlayerTimelineService {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String TIMELINE_QUERY = //language=SQL
-		"SELECT tournament_id, e.season, tournament_event_id, e.date, t.level, t.surface, t.name, r.result FROM player_tournament_event_result r " +
+		"SELECT tournament_id, e.season, tournament_event_id, e.date, e.level, e.surface, t.name, r.result FROM player_tournament_event_result r " +
 		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
 		"LEFT JOIN tournament t USING (tournament_id) " +
 		"WHERE r.player_id = ? " +

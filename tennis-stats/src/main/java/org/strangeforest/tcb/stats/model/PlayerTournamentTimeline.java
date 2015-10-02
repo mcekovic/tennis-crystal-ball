@@ -2,44 +2,48 @@ package org.strangeforest.tcb.stats.model;
 
 import java.time.*;
 import java.util.*;
+import java.util.function.*;
 
+import org.strangeforest.tcb.stats.util.*;
+
+import static java.util.Comparator.*;
 import static org.strangeforest.tcb.stats.util.DateUtil.*;
 
 public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTimeline> {
 
 	private final PlayerTimeline timeline;
 	private final int tournamentId;
-	private final String level;
-	private final String surface;
 	private final String name;
-	private final Date date;
-	private final Map<Integer, PlayerTimelineItem> items;
+	private final Set<String> levels = new LinkedHashSet<>();
+	private final Set<String> surfaces = new LinkedHashSet<>();
+	private final List<Date> dates = new ArrayList<>();
+	private final Map<Integer, PlayerTimelineItem> items = new HashMap<>();
 	private boolean firstByLevel;
 
-	public PlayerTournamentTimeline(PlayerTimeline timeline, int tournamentId, String level, String surface, String name, Date date) {
+	public PlayerTournamentTimeline(PlayerTimeline timeline, int tournamentId, String name) {
 		this.timeline = timeline;
 		this.tournamentId = tournamentId;
-		this.level = level;
-		this.surface = surface;
 		this.name = name;
-		this.date = date;
-		items = new HashMap<>();
 	}
 
 	public int getTournamentId() {
 		return tournamentId;
 	}
 
-	public String getLevel() {
-		return level;
-	}
-
-	public String getSurface() {
-		return surface;
-	}
-
 	public String getName() {
 		return name;
+	}
+
+	public Iterable<String> getLevels() {
+		return levels;
+	}
+
+	public String getMaxLevel() {
+		return maxLevel.get().code();
+	}
+
+	public Iterable<String> getSurfaces() {
+		return surfaces;
 	}
 
 	public List<PlayerTimelineItem> getItems() {
@@ -47,7 +51,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 		for (int season : timeline.getSeasons()) {
 			PlayerTimelineItem item = items.get(season);
 			if (item == null)
-				item = new PlayerTimelineItem(tournamentId, season, 0, date, level, surface, name, null);
+				item = new PlayerTimelineItem(tournamentId, season, 0, null, null, null, name, null);
 			timelineItems.add(item);
 		}
 		return timelineItems;
@@ -55,6 +59,11 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 
 	public void addItem(PlayerTimelineItem item) {
 		items.put(item.getSeason(), item);
+		levels.add(item.getLevel());
+		String surface = item.getSurface();
+		if (surface != null)
+			surfaces.add(surface);
+		dates.add(item.getDate());
 	}
 
 	public boolean isFirstByLevel() {
@@ -66,7 +75,13 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	}
 
 	@Override public int compareTo(PlayerTournamentTimeline tournament) {
-		int result = TournamentLevel.forCode(level).compareTo(TournamentLevel.forCode(tournament.level));
-		return result != 0 ? result : MonthDay.from(toLocalDate(date)).compareTo(MonthDay.from(toLocalDate(tournament.date)));
+		int result = maxLevel.get().compareTo(tournament.maxLevel.get());
+		return result != 0 ? result : endDay.get().compareTo(tournament.endDay.get());
 	}
+
+	private final Supplier<TournamentLevel> maxLevel = Memoizer.of(() -> levels.stream().map(TournamentLevel::forCode).min(naturalOrder()).get());
+
+	private final Supplier<MonthDay> endDay = Memoizer.of(() -> MonthDay.from(LocalDate.ofYearDay(REFERENCE_YEAR, (int)dates.stream().mapToInt(date -> toLocalDate(date).plusDays(7).getDayOfYear()).average().getAsDouble())));
+
+	private static final int REFERENCE_YEAR = 2001;
 }

@@ -49,11 +49,11 @@
 		</thead>
 		<tbody>
 			<tr th:each="tournament : ${timeline.tournaments}" th:class="${tournament.firstByLevel ? 'first-by-level' : ''}">
-				<td th:class="'bg-level-' + ${tournament.level}" class="bg-level-G">
-					<span class="label level" th:attr="data-level=${tournament.level}" data-level="G" th:text="${tournament.name}">Wimbledon</span>
+				<td th:class="'bg-level-' + ${tournament.maxLevel}" class="bg-level-G">
+					<span class="label level" th:attr="data-level=${tournament.maxLevel}" data-level="G" th:text="${tournament.name}">Wimbledon</span>
 				</td>
-				<td th:class="'bg-level-' + ${tournament.level}" class="bg-level-G">
-					<span th:text="${tournament.surface}" class="label surface">G</span>
+				<td th:class="'no-wrap bg-level-' + ${tournament.maxLevel}" class="bg-level-G">
+					<span th:each="surface : ${tournament.surfaces}" th:text="${surface}" class="label surface">G</span>
 				</td>
 				<td th:each="item : ${tournament.items}" th:class="'bg-result-' + ${item.result}" class="result-W" align="center">
 					<a th:if="${item.result}" th:text="${item.result}" th:href="'javascript:playerMatches(' + ${item.tournamentEventId} + ')'">W</a>
