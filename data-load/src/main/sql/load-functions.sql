@@ -142,6 +142,7 @@ CREATE OR REPLACE FUNCTION merge_tournament_event(
 	p_ext_tournament_id TEXT,
 	p_season SMALLINT,
 	p_date DATE,
+	p_tournament_name TEXT,
 	p_name TEXT,
 	p_level TEXT,
 	p_surface TEXT,
@@ -153,7 +154,7 @@ DECLARE
 	l_tournament_id INTEGER;
 	l_tournament_event_id INTEGER;
 BEGIN
-	l_tournament_id = merge_tournament(p_ext_tournament_id, p_name, p_level, p_surface, p_indoor, p_draw_size, p_rank_points);
+	l_tournament_id = merge_tournament(p_ext_tournament_id, p_tournament_name, p_level, p_surface, p_indoor, p_draw_size, p_rank_points);
 	BEGIN
 		INSERT INTO tournament_event
 		(tournament_id, season, date, name, level, surface, indoor, draw_size)
@@ -208,6 +209,7 @@ CREATE OR REPLACE FUNCTION load_match(
 	p_season SMALLINT,
 	p_tournament_date DATE,
 	p_tournament_name TEXT,
+	p_event_name TEXT,
 	p_tournament_level TEXT,
 	p_surface TEXT,
 	p_indoor BOOLEAN,
@@ -274,7 +276,7 @@ DECLARE
 BEGIN
 	-- merge tournament_event
 	l_tournament_event_id = merge_tournament_event(
-		p_ext_tournament_id, p_season, p_tournament_date, p_tournament_name, p_tournament_level, p_surface, p_indoor, p_draw_size, p_rank_points
+		p_ext_tournament_id, p_season, p_tournament_date, p_tournament_name, p_event_name, p_tournament_level, p_surface, p_indoor, p_draw_size, p_rank_points
 	);
 
 	-- find players
