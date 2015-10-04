@@ -16,6 +16,11 @@
 				var level = $tournament.data("level");
 				$tournament.addClass("label-" + levelClassSuffix(level));
 			});
+			$timelineTable.find("a[data-surface]").each(function() {
+				var $result = $(this);
+				var surface = $result.data("surface");
+				$result.tooltip({title: "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + "</span>", html: true});
+			});
 		});
 		function reloadMatches() {
 			$("#matchesTable").bootgrid("reload");
@@ -55,8 +60,9 @@
 				<td th:class="'no-wrap bg-level-' + ${tournament.maxLevel}" class="bg-level-G">
 					<span th:each="surface : ${tournament.surfaces}" th:text="${surface}" class="label surface">G</span>
 				</td>
-				<td th:each="item : ${tournament.items}" th:class="'bg-result-' + ${item.result}" class="result-W" align="center">
-					<a th:if="${item.result}" th:text="${item.result}" th:href="'javascript:playerMatches(' + ${item.tournamentEventId} + ')'">W</a>
+				<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
+					<a th:if="${item.result}" th:text="${item.result}" th:href="'javascript:playerMatches(' + ${item.tournamentEventId} + ')'"
+					   th:attr="data-surface=${tournament.surfaces.size() > 1 ? item.surface : ''}">W</a>
 					<span th:unless="${item.result}" class="absent">A</span>
 				</td>
 			</tr>
