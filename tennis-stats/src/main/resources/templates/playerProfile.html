@@ -63,7 +63,7 @@
 			<input id="player" type="text" class="search-field form-control" placeholder="Search Player"/>
 		</div>
 	</div>
-	<div th:if="${player}">
+	<th:block th:if="${player}">
 		<div class="row">
 			<div class="col-md-3">
 				<table class="table table-condensed no-wrap">
@@ -309,7 +309,7 @@
 			<div id="timeline" class="tab-pane fade"><br/>Loading...</div>
 			<div id="matches" class="tab-pane fade"><br/>Loading...</div>
 		</div>
-	</div>
+	</th:block>
 	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>
