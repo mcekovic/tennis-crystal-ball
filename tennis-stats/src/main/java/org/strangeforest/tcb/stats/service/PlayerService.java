@@ -15,9 +15,9 @@ public class PlayerService {
 
 	private static final String PLAYER_QUERY =
 		"SELECT player_id, name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight, hand, backhand, " +
-				"titles, grand_slams, tour_finals, masters, olympics, " +
-				"current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points, " +
-				"turned_pro, coach, web_site, twitter, facebook " +
+			"titles, grand_slams, tour_finals, masters, olympics, " +
+			"current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points, " +
+			"turned_pro, coach, web_site, twitter, facebook " +
 		"FROM player_v";
 
 	private static final String PLAYER_BY_NAME = PLAYER_QUERY + " WHERE name = ? ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";

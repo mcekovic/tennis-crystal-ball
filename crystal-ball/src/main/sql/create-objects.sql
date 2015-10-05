@@ -212,12 +212,12 @@ CREATE TABLE match_stats (
 
 CREATE OR REPLACE VIEW match_stats_v AS
 SELECT match_id, set, minutes, sets, w_sv_gms + l_sv_gms AS games, w_sv_pt + l_sv_pt AS points,
-	w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_sv_pt - w_1st_in - w_df AS w_2nd_in, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,
-	l_sv_pt AS w_rt_pt, l_1st_in - l_1st_won AS w_rt_1st_won, l_sv_pt - l_1st_in - l_2nd_won AS w_rt_2nd_won, l_bp_fc - l_bp_sv AS w_bp_won, l_bp_fc AS w_bp,
+	w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_sv_pt - w_1st_in - w_df AS w_2nd_in, w_2nd_won, w_sv_gms, l_sv_gms AS w_rt_gms, w_bp_sv, w_bp_fc,
+	l_sv_pt AS w_rt_pt, l_1st_in AS w_rt_1st, l_1st_in - l_1st_won AS w_rt_1st_won, l_sv_pt - l_1st_in AS w_rt_2nd, l_sv_pt - l_1st_in - l_2nd_won AS w_rt_2nd_won, l_bp_fc - l_bp_sv AS w_bp_won, l_bp_fc AS w_bp,
 	w_1st_won + w_2nd_won AS w_sv_pt_won, l_sv_pt - l_1st_won - l_2nd_won AS w_rt_pt_won, w_1st_won + w_2nd_won + l_sv_pt - l_1st_won - l_2nd_won AS w_pt_won,
 	w_win, w_fh_win, w_bh_win, w_uf_err, w_fh_uf_err, w_bh_uf_err, w_fc_err, w_n_pt, w_n_pt_won,
-	l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_sv_pt - l_1st_in - l_df AS l_2nd_in, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,
-	w_sv_pt AS l_rt_pt, w_1st_in - w_1st_won AS l_rt_1st_won, w_sv_pt - w_1st_in - w_2nd_won AS l_rt_2nd_won, w_bp_fc - w_bp_sv AS l_bp_won, w_bp_fc AS l_bp,
+	l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_sv_pt - l_1st_in - l_df AS l_2nd_in, l_2nd_won, l_sv_gms, w_sv_gms AS l_rt_gms, l_bp_sv, l_bp_fc,
+	w_sv_pt AS l_rt_pt, w_1st_in AS l_rt_1st, w_1st_in - w_1st_won AS l_rt_1st_won, w_sv_pt - w_1st_in AS l_rt_2nd, w_sv_pt - w_1st_in - w_2nd_won AS l_rt_2nd_won, w_bp_fc - w_bp_sv AS l_bp_won, w_bp_fc AS l_bp,
 	l_1st_won + l_2nd_won AS l_sv_pt_won, w_sv_pt - w_1st_won - w_2nd_won AS l_rt_pt_won, l_1st_won + l_2nd_won + w_sv_pt - w_1st_won - w_2nd_won AS l_pt_won,
 	l_win, l_fh_win, l_bh_win, l_uf_err, l_fh_uf_err, l_bh_uf_err, l_fc_err, l_n_pt, l_n_pt_won
 FROM match_stats;
