@@ -20,7 +20,7 @@ public class PlayerMatchesResource {
 	private static final int MAX_MATCHES = 10000;
 
 	private static final String MATCHES_QUERY = //language=SQL
-		"SELECT e.date, e.level, e.surface, e.name AS tournament, m.round, m.winner_id, pw.name AS winner, m.loser_id, pl.name AS loser, m.score FROM match m " +
+		"SELECT m.match_id, e.date, e.level, e.surface, e.name AS tournament, m.round, m.winner_id, pw.name AS winner, m.loser_id, pl.name AS loser, m.score FROM match m " +
 		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
 		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id " +
 		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id " +
@@ -66,6 +66,7 @@ public class PlayerMatchesResource {
 			(rs) -> {
 				if (matches.incrementAndGet() <= pageSize) {
 					table.addRow(new Match(
+						rs.getLong("match_id"),
 						rs.getDate("date"),
 						rs.getString("level"),
 						rs.getString("surface"),

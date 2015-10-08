@@ -4,6 +4,7 @@ import java.util.*;
 
 public class Match {
 
+	private final long id;
 	private final Date date;
 	private final String level;
 	private final String surface;
@@ -15,7 +16,8 @@ public class Match {
 	private final String loser;
 	private final String score;
 
-	public Match(Date date, String level, String surface, String tournament, String round, int winnerId, String winner, int loserId, String loser, String score) {
+	public Match(long id, Date date, String level, String surface, String tournament, String round, int winnerId, String winner, int loserId, String loser, String score) {
+		this.id = id;
 		this.date = date;
 		this.level = level;
 		this.surface = surface;
@@ -26,6 +28,10 @@ public class Match {
 		this.loserId = loserId;
 		this.loser = loser;
 		this.score = score;
+	}
+
+	public long getId() {
+		return id;
 	}
 
 	public Date getDate() {

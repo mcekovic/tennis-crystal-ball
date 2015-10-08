@@ -1,6 +1,6 @@
-<!--@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"-->
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
+	<!--@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"-->
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -57,7 +57,7 @@
 				<td th:class="'bg-level-' + ${tournament.maxLevel}" class="bg-level-G">
 					<span class="label level" th:attr="data-level=${tournament.maxLevel}" data-level="G" th:text="${tournament.name}">Wimbledon</span>
 				</td>
-				<td th:class="'no-wrap bg-level-' + ${tournament.maxLevel}" class="bg-level-G">
+				<td th:class="'text-nowrap bg-level-' + ${tournament.maxLevel}" class="bg-level-G">
 					<span th:each="surface : ${tournament.surfaces}" th:text="${surface}" class="label surface">G</span>
 				</td>
 				<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">

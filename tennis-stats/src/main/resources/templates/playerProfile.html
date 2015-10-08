@@ -66,7 +66,7 @@
 	<th:block th:if="${player}">
 		<div class="row">
 			<div class="col-md-3">
-				<table class="table table-condensed no-wrap">
+				<table class="table table-condensed text-nowrap">
 					<!--/* General */-->
 					<tr th:if="${player.dob}">
 						<th>Age</th>
@@ -104,7 +104,7 @@
 			</div>
 			<div class="col-md-1">&nbsp;</div>
 			<div class="col-md-3">
-				<table class="table table-condensed no-wrap">
+				<table class="table table-condensed text-nowrap">
 					<!--/* Titles */-->
 					<tr th:if="${player.titles > 0}">
 						<th>Titles</th>
@@ -147,7 +147,7 @@
 			</div>
 			<div class="col-md-1">&nbsp;</div>
 			<div class="col-md-4">
-				<table class="table table-condensed no-wrap">
+				<table class="table table-condensed text-nowrap">
 					<!--/* Tennis */-->
 					<tr th:if="${player.turnedPro > 0}">
 						<th>Turned Pro</th>

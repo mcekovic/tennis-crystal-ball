@@ -2,20 +2,28 @@ package org.strangeforest.tcb.stats.model;
 
 public class MatchStats {
 
-	private final int minutes;
+	private final String winner;
+	private final String loser;
 	private final Stats winnerStats;
 	private final Stats loserStats;
+	private final int minutes;
 
-	public MatchStats(int minutes, Stats winnerStats, Stats loserStats) {
+	public MatchStats(String winner, String loser, Stats winnerStats, Stats loserStats, int minutes) {
+		this.winner = winner;
+		this.loser = loser;
 		this.minutes = minutes;
 		this.winnerStats = winnerStats;
 		this.loserStats = loserStats;
-		winnerStats.setOponentStats(loserStats);
-		loserStats.setOponentStats(winnerStats);
+		winnerStats.setOpponentStats(loserStats);
+		loserStats.setOpponentStats(winnerStats);
 	}
 
-	public int getMinutes() {
-		return minutes;
+	public String getWinner() {
+		return winner;
+	}
+
+	public String getLoser() {
+		return loser;
 	}
 
 	public Stats getWinnerStats() {
@@ -24,5 +32,9 @@ public class MatchStats {
 
 	public Stats getLoserStats() {
 		return loserStats;
+	}
+
+	public int getMinutes() {
+		return minutes;
 	}
 }

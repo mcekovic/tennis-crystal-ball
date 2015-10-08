@@ -1,9 +1,9 @@
-<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
-<!--@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.Tournament>"-->
-<!--@thymesVar id="tournamentEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEvent>"-->
-<!--@thymesVar id="tournamentEventId" type="java.lang.Integer>"-->
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
+	<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
+	<!--@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.Tournament>"-->
+	<!--@thymesVar id="tournamentEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEvent>"-->
+	<!--@thymesVar id="tournamentEventId" type="java.lang.Integer>"-->
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -28,7 +28,10 @@
 					"date": dateFormatter,
 					"surface": surfaceFormatter,
 					"tournament": tournamentFormatter,
-					"match": matchFormatter
+					"match": matchFormatter,
+					"stats": function(column, row) {
+						return "<a id='matchStats-" + row.id + "' class='label label-info glyphicon glyphicon-stats' href='javascript:showMatchStats(" + row.id + ")'> Stats</a>";
+					}
 				}
 			});
 		});
@@ -44,8 +47,29 @@
 			$("#matchesTable").bootgrid("search", "");
 			reloadMatches();
 		}
+		function showMatchStats(matchId) {
+			var $matchStats = $("#matchStats-" + matchId);
+			if (!$matchStats.hasClass("loaded")) {
+				$.get("matchStats?matchId=" + matchId, function(data) {
+					$matchStats.popover({title: "Match Statistics", content: data, html: true, placement: "auto right"}).addClass("loaded").click();
+				});
+			}
+		}
+		function showMatchStatsEx(matchId) {
+			$("#matchStatsTable-" + matchId).find("tr.extra-stats").each(function() {
+				$(this).toggle();
+			});
+		}
+		function closeMatchStats(matchId) {
+			$("#matchStats-" + matchId).click();
+		}
 		/*]]>*/
 	</script>
+	<style scoped="scoped">
+		.popover {
+			max-width: 400px;
+		}
+	</style>
 	<div class="row">
 		<div class="col-md-2">
 			<select id="matchesSeason" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
@@ -101,6 +125,7 @@
 				<th data-column-id="round" data-width="50">Round</th>
 				<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="200">Match</th>
 				<th data-column-id="score" data-sortable="false" data-width="120">Score</th>
+				<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="50">Stats</th>
 			</tr>
 		</thead>
 	</table>

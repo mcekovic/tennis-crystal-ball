@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import static java.lang.Double.*;
+
 public class Stats {
 
 	private final int aces;
@@ -11,7 +13,9 @@ public class Stats {
 	private final int serviceGames;
 	private final int breakPointsSaved;
 	private final int breakPointsFaced;
-	private Stats oponentStats;
+	private Stats opponentStats;
+
+	private static final double PCT = 100.0;
 
 	public Stats(int aces, int doubleFaults, int servicePoints, int firstServeIn, int firstServeWon, int secondServeWon, int serviceGames, int breakPointsSaved, int breakPointsFaced) {
 		this.aces = aces;
@@ -44,20 +48,41 @@ public class Stats {
 		return firstServeIn;
 	}
 
+	public double getFirstServePct() {
+		return servicePoints != 0 ? PCT * firstServeIn / servicePoints : NaN;
+	}
+
 	public int getFirstServeWon() {
 		return firstServeWon;
 	}
 
+	public double getFirstServeWonPct() {
+		return firstServeIn != 0 ? PCT * firstServeWon / firstServeIn : NaN;
+	}
+
+	public int getSecondServes() {
+		return servicePoints - firstServeIn;
+	}
+
 	public int getSecondServeIn() {
-		return servicePoints - firstServeIn - doubleFaults;
+		return getSecondServes() - doubleFaults;
 	}
 
 	public int getSecondServeWon() {
 		return secondServeWon;
 	}
 
+	public double getSecondServeWonPct() {
+		int secondServes = getSecondServes();
+		return secondServes != 0 ? PCT * secondServeWon / secondServes : NaN;
+	}
+
 	public int getServicePointsWon() {
 		return firstServeWon + secondServeWon;
+	}
+
+	public double getServicePointsWonPct() {
+		return servicePoints != 0 ? PCT * getServicePointsWon() / servicePoints : NaN;
 	}
 
 	public int getServiceGames() {
@@ -76,46 +101,62 @@ public class Stats {
 	// Return
 
 	public int getReturnPoints() {
-		return oponentStats.servicePoints;
+		return opponentStats.servicePoints;
 	}
 
-	public int getFirstServerReturnPoints() {
-		return oponentStats.firstServeIn;
+	public int getFirstServeReturnPoints() {
+		return opponentStats.firstServeIn;
 	}
 
-	public int getFirstServerReturnPointsWon() {
-		return oponentStats.firstServeIn - oponentStats.firstServeWon;
+	public int getFirstServeReturnPointsWon() {
+		return opponentStats.firstServeIn - opponentStats.firstServeWon;
 	}
 
-	public int getSecondServerReturnPoints() {
-		return oponentStats.servicePoints - oponentStats.firstServeIn;
+	public double getFirstServeReturnPointsWonPct() {
+		return PCT - opponentStats.getFirstServeWonPct();
 	}
 
-	public int getSecondServerReturnPointsWon() {
-		return oponentStats.getSecondServerReturnPoints() - oponentStats.secondServeWon;
+	public int getSecondServeReturnPoints() {
+		return opponentStats.getSecondServes();
+	}
+
+	public int getSecondServeReturnPointsWon() {
+		return opponentStats.getSecondServes() - opponentStats.secondServeWon;
+	}
+
+	public double getSecondServeReturnPointsWonPct() {
+		return PCT - opponentStats.getSecondServeWonPct();
 	}
 
 	public int getReturnPointsWon() {
-		return oponentStats.getFirstServerReturnPointsWon() + oponentStats.getSecondServerReturnPointsWon();
+		return getFirstServeReturnPointsWon() + getSecondServeReturnPointsWon();
+	}
+
+	public double getReturnPointsWonPct() {
+		return PCT - opponentStats.getServicePointsWonPct();
 	}
 
 	public int getReturnGames() {
-		return oponentStats.serviceGames;
+		return opponentStats.serviceGames;
 	}
 
 	public int getBreakPointsWon() {
-		return oponentStats.breakPointsFaced - oponentStats.breakPointsSaved;
+		return opponentStats.breakPointsFaced - opponentStats.breakPointsSaved;
 	}
 
 	public int getBreakPoints() {
-		return oponentStats.breakPointsFaced;
+		return opponentStats.breakPointsFaced;
 	}
+
+
+
+	// Misc
 
 	public int getTotalPointsWon() {
 		return getServicePointsWon() + getReturnPointsWon();
 	}
 
-	void setOponentStats(Stats oponentStats) {
-		this.oponentStats = oponentStats;
+	void setOpponentStats(Stats opponentStats) {
+		this.opponentStats = opponentStats;
 	}
 }
