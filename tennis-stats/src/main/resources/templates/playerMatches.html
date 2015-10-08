@@ -55,8 +55,8 @@
 				});
 			}
 		}
-		function showMatchStatsEx(matchId) {
-			$("#matchStatsTable-" + matchId).find("tr.extra-stats").each(function() {
+		function toggleMatchStatsData(matchId) {
+			$("#matchStatsDiv-" + matchId).find(".pct-data, .raw-data").each(function() {
 				$(this).toggle();
 			});
 		}

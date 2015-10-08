@@ -1,7 +1,5 @@
 package org.strangeforest.tcb.stats.model;
 
-import static java.lang.Double.*;
-
 public class Stats {
 
 	private final int aces;
@@ -36,8 +34,16 @@ public class Stats {
 		return aces;
 	}
 
+	public double getAcePct() {
+		return servicePoints != 0 ? PCT * aces / servicePoints : 0.0;
+	}
+
 	public int getDoubleFaults() {
 		return doubleFaults;
+	}
+
+	public double getDoubleFaultPct() {
+		return servicePoints != 0 ? PCT * doubleFaults / servicePoints : 0.0;
 	}
 
 	public int getServicePoints() {
@@ -49,7 +55,7 @@ public class Stats {
 	}
 
 	public double getFirstServePct() {
-		return servicePoints != 0 ? PCT * firstServeIn / servicePoints : NaN;
+		return servicePoints != 0 ? PCT * firstServeIn / servicePoints : 0.0;
 	}
 
 	public int getFirstServeWon() {
@@ -57,7 +63,7 @@ public class Stats {
 	}
 
 	public double getFirstServeWonPct() {
-		return firstServeIn != 0 ? PCT * firstServeWon / firstServeIn : NaN;
+		return firstServeIn != 0 ? PCT * firstServeWon / firstServeIn : 0.0;
 	}
 
 	public int getSecondServes() {
@@ -74,7 +80,7 @@ public class Stats {
 
 	public double getSecondServeWonPct() {
 		int secondServes = getSecondServes();
-		return secondServes != 0 ? PCT * secondServeWon / secondServes : NaN;
+		return secondServes != 0 ? PCT * secondServeWon / secondServes : 0.0;
 	}
 
 	public int getServicePointsWon() {
@@ -82,7 +88,7 @@ public class Stats {
 	}
 
 	public double getServicePointsWonPct() {
-		return servicePoints != 0 ? PCT * getServicePointsWon() / servicePoints : NaN;
+		return servicePoints != 0 ? PCT * getServicePointsWon() / servicePoints : 0.0;
 	}
 
 	public int getServiceGames() {
@@ -148,13 +154,34 @@ public class Stats {
 		return opponentStats.breakPointsFaced;
 	}
 
+	public double getBreakPointsConverted() {
+		int breakPoints = getBreakPoints();
+		return breakPoints != 0 ? PCT * getBreakPointsWon() / breakPoints : 0.0;
+	}
 
 
-	// Misc
+	// Totals
+
+	public int getTotalPoints() {
+		return servicePoints + opponentStats.servicePoints;
+	}
 
 	public int getTotalPointsWon() {
 		return getServicePointsWon() + getReturnPointsWon();
 	}
+
+	public double getTotalPointsWonPct() {
+		int totalPoints = getTotalPoints();
+		return totalPoints != 0 ? PCT * getTotalPointsWon() / totalPoints : 0.0;
+	}
+
+	public double getDominanceRatio() {
+		double servicePointsLost = opponentStats.getReturnPointsWonPct();
+		return servicePointsLost != 0.0 ? getReturnPointsWonPct() / servicePointsLost : 0.0;
+	}
+
+
+	// Misc
 
 	void setOpponentStats(Stats opponentStats) {
 		this.opponentStats = opponentStats;

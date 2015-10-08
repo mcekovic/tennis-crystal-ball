@@ -1,14 +1,16 @@
-<th:block xmlns:th="http://www.thymeleaf.org">
+<div th:id="'matchStatsDiv-' + ${matchId}" xmlns:th="http://www.thymeleaf.org">
 	<!--@thymesVar id="matchId" type="java.lang.Long"-->
 	<!--@thymesVar id="matchStats" type="org.strangeforest.tcb.stats.model.MatchStats"-->
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
-			$(".extra-stats").hide();
+			var $matchStatsDiv = $("#matchStatsDiv-[[${matchId}]]");
+			$matchStatsDiv.find("[data-toggle='tooltip']").tooltip();
+			$matchStatsDiv.find(".raw-data").hide();
 		});
 		/*]]>*/
 	</script>
-	<table th:id="'matchStatsTable-' + ${matchId}" th:if="${matchStats}" class="table table-condensed table-hover table-striped">
+	<table th:if="${matchStats}" class="table table-condensed table-hover table-striped">
 		<thead>
 			<tr>
 				<th th:text="${matchStats.winner}">10</th>
@@ -19,40 +21,65 @@
 		<tbody th:with="winnerStats=${matchStats.winnerStats}, loserStats=${matchStats.loserStats}" class="text-nowrap">
 			<tr>
 				<th></th>
-				<th>Service</th>
+				<th>Serve</th>
 				<th></th>
 			</tr>
-			<tr>
+			<tr class="pct-data">
+				<th th:text="${#numbers.formatDecimal(winnerStats.acePct, 1, 1)} + '%'">10%</th>
+				<td>Ace %</td>
+				<th th:text="${#numbers.formatDecimal(loserStats.acePct, 1, 1)} + '%'">5%</th>
+			</tr>
+			<tr class="raw-data">
 				<th th:text="${winnerStats.aces}">10</th>
 				<td>Aces</td>
 				<th th:text="${loserStats.aces}">5</th>
 			</tr>
-			<tr>
+			<tr class="pct-data">
+				<th th:text="${#numbers.formatDecimal(winnerStats.doubleFaultPct, 1, 1)} + '%'">2%</th>
+				<td>Double Fault %</td>
+				<th th:text="${#numbers.formatDecimal(loserStats.doubleFaultPct, 1, 1)} + '%'">3%</th>
+			</tr>
+			<tr class="raw-data">
 				<th th:text="${winnerStats.doubleFaults}">2</th>
 				<td>Double Faults</td>
 				<th th:text="${loserStats.doubleFaults}">3</th>
 			</tr>
-			<tr>
+			<tr class="pct-data">
 				<th th:text="${#numbers.formatDecimal(winnerStats.firstServePct, 1, 1)} + '%'">66%</th>
-				<td>1st Serve %</td>
+				<td>1st Serve</td>
 				<th th:text="${#numbers.formatDecimal(loserStats.firstServePct, 1, 1)} + '%'">64%</th>
 			</tr>
-			<tr>
+			<tr class="raw-data">
+				<th th:text="${winnerStats.firstServeIn}">56</th>
+				<td>1st Serve In</td>
+				<th th:text="${loserStats.firstServeIn}">43</th>
+			</tr>
+			<tr class="pct-data">
 				<th th:text="${#numbers.formatDecimal(winnerStats.firstServeWonPct, 1, 1)} + '%'">80%</th>
-				<td>1st Serve Won %</td>
+				<td>1st Serve Won</td>
 				<th th:text="${#numbers.formatDecimal(loserStats.firstServeWonPct, 1, 1)} + '%'">75%</th>
 			</tr>
-			<tr>
+			<tr class="raw-data">
+				<th th:text="${winnerStats.firstServeWon}">46</th>
+				<td>1st Serve Won</td>
+				<th th:text="${loserStats.firstServeWon}">27</th>
+			</tr>
+			<tr class="pct-data">
 				<th th:text="${#numbers.formatDecimal(winnerStats.secondServeWonPct, 1, 1)} + '%'">60%</th>
-				<td>2nd Serve Won %</td>
+				<td>2nd Serve Won</td>
 				<th th:text="${#numbers.formatDecimal(loserStats.secondServeWonPct, 1, 1)} + '%'">45%</th>
 			</tr>
-			<tr class="extra-stats">
+			<tr class="raw-data">
+				<th th:text="${winnerStats.secondServeWon}">33</th>
+				<td>2nd Serve Won</td>
+				<th th:text="${loserStats.secondServeWon}">22</th>
+			</tr>
+			<tr class="pct-data">
 				<th th:text="${#numbers.formatDecimal(winnerStats.servicePointsWonPct, 1, 1)} + '%'">50%</th>
-				<td>Service Pts. Won %</td>
+				<td>Service Pts. Won</td>
 				<th th:text="${#numbers.formatDecimal(loserStats.servicePointsWonPct, 1, 1)} + '%'">35%</th>
 			</tr>
-			<tr class="extra-stats">
+			<tr class="raw-data">
 				<th th:text="${winnerStats.servicePointsWon}">88</th>
 				<td>Service Pts. Won</td>
 				<th th:text="${loserStats.servicePointsWon}">65</th>
@@ -62,42 +89,72 @@
 				<th>Return</th>
 				<th></th>
 			</tr>
-			<tr>
+			<tr class="pct-data">
+				<th th:text="${#numbers.formatDecimal(winnerStats.breakPointsConverted, 1, 1)} + '%'">50%</th>
+				<td>Break Points</td>
+				<th th:text="${#numbers.formatDecimal(loserStats.breakPointsConverted, 1, 1)} + '%'">35%</th>
+			</tr>
+			<tr class="raw-data">
 				<th th:text="${winnerStats.breakPointsWon} + '/' + ${winnerStats.breakPoints}">3/5</th>
 				<td>Break Points</td>
 				<th th:text="${loserStats.breakPointsWon} + '/' + ${loserStats.breakPoints}">0/0</th>
 			</tr>
-			<tr>
+			<tr class="pct-data">
+				<th th:text="${#numbers.formatDecimal(winnerStats.firstServeReturnPointsWonPct, 1, 1)} + '%'">15%</th>
+				<td>1st Srv. Rtn. Pts. Won</td>
+				<th th:text="${#numbers.formatDecimal(loserStats.firstServeReturnPointsWonPct, 1, 1)} + '%'">28%</th>
+			</tr>
+			<tr class="raw-data">
+				<th th:text="${winnerStats.firstServeReturnPointsWon}">43</th>
+				<td>1st Srv. Rtn. Pts. Won</td>
+				<th th:text="${loserStats.firstServeReturnPointsWon}">25</th>
+			</tr>
+			<tr class="pct-data">
+				<th th:text="${#numbers.formatDecimal(winnerStats.secondServeReturnPointsWonPct, 1, 1)} + '%'">33%</th>
+				<td>2nd Srv. Rtn. Pts. Won</td>
+				<th th:text="${#numbers.formatDecimal(loserStats.secondServeReturnPointsWonPct, 1, 1)} + '%'">22%</th>
+			</tr>
+			<tr class="raw-data">
+				<th th:text="${winnerStats.secondServeReturnPointsWon}">43</th>
+				<td>2nd Srv. Rtn. Pts. Won</td>
+				<th th:text="${loserStats.secondServeReturnPointsWon}">25</th>
+			</tr>
+			<tr class="pct-data">
 				<th th:text="${#numbers.formatDecimal(winnerStats.returnPointsWonPct, 1, 1)} + '%'">50%</th>
-				<td>Return Pts. Won %</td>
+				<td>Return Pts. Won</td>
 				<th th:text="${#numbers.formatDecimal(loserStats.returnPointsWonPct, 1, 1)} + '%'">35%</th>
 			</tr>
-			<tr class="extra-stats">
+			<tr class="raw-data">
 				<th th:text="${winnerStats.returnPointsWon}">43</th>
 				<td>Return Pts. Won</td>
 				<th th:text="${loserStats.returnPointsWon}">25</th>
-			</tr>
-			<tr class="extra-stats">
-				<th th:text="${winnerStats.firstServeReturnPointsWon}">15</th>
-				<td>1st Serve Return Pts. Won</td>
-				<th th:text="${loserStats.firstServeReturnPointsWon}">28</th>
-			</tr>
-			<tr class="extra-stats">
-				<th th:text="${winnerStats.secondServeReturnPointsWon}">33</th>
-				<td>2nd Serve Return Pts. Won</td>
-				<th th:text="${loserStats.secondServeReturnPointsWon}">22</th>
 			</tr>
 			<tr>
 				<th></th>
 				<th>Total</th>
 				<th></th>
 			</tr>
-			<tr>
+			<tr data-toggle="tooltip" data-placement="top"  title="Dominance Ratio: % of return points won divided by % of serve points lost">
+				<th th:text="${#numbers.formatDecimal(winnerStats.dominanceRatio, 1, 2)}">1.64</th>
+				<td>Dominance Ratio</td>
+				<th th:text="${#numbers.formatDecimal(loserStats.dominanceRatio, 1, 2)}">0.67</th>
+			</tr>
+			<tr class="pct-data">
+				<th th:text="${#numbers.formatDecimal(winnerStats.totalPointsWonPct, 1, 1)} + '%'">55%</th>
+				<td>Total Pts. Won</td>
+				<th th:text="${#numbers.formatDecimal(loserStats.totalPointsWonPct, 1, 1)} + '%'">45%</th>
+			</tr>
+			<tr class="raw-data">
 				<th th:text="${winnerStats.totalPointsWon}">125</th>
 				<td>Total Pts. Won</td>
 				<th th:text="${loserStats.totalPointsWon}">99</th>
 			</tr>
-			<tr th:if="${matchStats.minutes > 0}">
+			<tr class="pct-data" th:if="${matchStats.minutes > 0}">
+				<th></th>
+				<td>Time</td>
+				<th th:text="${matchStats.time}">1:31</th>
+			</tr>
+			<tr class="raw-data" th:if="${matchStats.minutes > 0}">
 				<th></th>
 				<td>Minutes</td>
 				<th th:text="${matchStats.minutes}">91</th>
@@ -106,11 +163,14 @@
 	</table>
 	<th:block th:unless="${matchStats}"><p>No statistics available!</p></th:block>
 	<div class="row">
-		<div th:if="${matchStats}" class="col-md-4">
-			<a class="btn btn-default btn-xs glyphicon glyphicon-stats" th:href="|javascript:showMatchStatsEx(${matchId})|"> Extra Stats</a>
+		<div th:if="${matchStats}" class="pct-data col-md-4">
+			<a class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:href="|javascript:toggleMatchStatsData(${matchId})|"> Raw Data</a>
+		</div>
+		<div th:if="${matchStats}" class="raw-data col-md-4">
+			<a class="btn btn-default btn-xs glyphicon glyphicon-scale" th:href="|javascript:toggleMatchStatsData(${matchId})|"> Pct Data</a>
 		</div>
 		<div class="col-md-4">
 			<a class="btn btn-default btn-xs glyphicon glyphicon-remove" th:href="|javascript:closeMatchStats(${matchId})|"> Close</a>
 		</div>
 	</div>
-</th:block>
+</div>

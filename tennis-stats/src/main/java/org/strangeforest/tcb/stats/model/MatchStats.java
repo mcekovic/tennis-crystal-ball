@@ -37,4 +37,9 @@ public class MatchStats {
 	public int getMinutes() {
 		return minutes;
 	}
+
+	public String getTime() {
+		int hours = minutes / 60;
+		return String.format("%1$d:%2$02d", hours, minutes - hours * 60);
+	}
 }
