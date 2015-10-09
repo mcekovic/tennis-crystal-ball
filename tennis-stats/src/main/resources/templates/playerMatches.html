@@ -30,7 +30,7 @@
 					"tournament": tournamentFormatter,
 					"match": matchFormatter,
 					"stats": function(column, row) {
-						return "<a id='matchStats-" + row.id + "' class='label label-info glyphicon glyphicon-stats' href='javascript:showMatchStats(" + row.id + ")'> Stats</a>";
+						return "<a id='matchStats-" + row.id + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event)'> Stats</a>";
 					}
 				}
 			});
@@ -47,11 +47,12 @@
 			$("#matchesTable").bootgrid("search", "");
 			reloadMatches();
 		}
-		function showMatchStats(matchId) {
+		function showMatchStats(matchId, event) {
 			var $matchStats = $("#matchStats-" + matchId);
 			if (!$matchStats.hasClass("loaded")) {
+				event.preventDefault();
 				$.get("matchStats?matchId=" + matchId, function(data) {
-					$matchStats.popover({title: "Match Statistics", content: data, html: true, placement: "auto right"}).addClass("loaded").click();
+					$matchStats.addClass("loaded").popover({title: "Match Statistics", content: data, html: true, placement: "auto right"}).click();
 				});
 			}
 		}

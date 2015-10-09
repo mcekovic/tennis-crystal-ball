@@ -16,7 +16,7 @@
 	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
 	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
 	<script th:src="@{/js/formatters.js}"></script>
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
 			$("#player").autocomplete({
@@ -50,6 +50,23 @@
 			$("#result").val("W");
 			reloadTournaments();
 			$("#tournamentsPill").tab("show");
+		}
+		function showPlayerStats(event) {
+			var $playerStats = $("#playerStats");
+			if (!$playerStats.hasClass("loaded")) {
+				$.get("playerStats?playerId=[[${player.id}]]", function(data) {
+					event.preventDefault();
+					$playerStats.addClass("loaded").popover({title: "[[${player.name}]] Statistics", content: data, html: true, placement: "auto right"}).click();
+				});
+			}
+		}
+		function togglePlayerStatsData() {
+			$("#playerStatsDiv").find(".pct-data, .raw-data").each(function() {
+				$(this).toggle();
+			});
+		}
+		function closePlayerStats() {
+			$("#playerStats").click();
 		}
 		/*]]>*/
 	</script>
@@ -169,6 +186,14 @@
 					<tr th:if="${player.facebook}">
 						<th>Facebook</th>
 						<td><a th:href="'https://www.facebook.com/' + ${player.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" th:text="${player.facebook}">JohnSmith</a></td>
+					</tr>
+					<tr>
+						<th>Statistics</th>
+						<td>
+							<a id="playerStats" href="#" class="btn btn-info btn-xs" role="button" onclick="showPlayerStats(event)">
+								<span class="glyphicon glyphicon-stats"></span> Stats
+							</a>
+						</td>
 					</tr>
 				</table>
 			</div>

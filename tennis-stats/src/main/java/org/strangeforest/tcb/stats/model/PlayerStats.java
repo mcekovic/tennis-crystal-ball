@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
-public class Stats {
+public class PlayerStats {
 
 	private final int aces;
 	private final int doubleFaults;
@@ -31,11 +31,11 @@ public class Stats {
 	private final int breakPointsLost;
 	private final Double breakPointsLostPct;
 
-	private Stats opponentStats;
+	private PlayerStats opponentStats;
 
 	private static final double PCT = 100.0;
 
-	public Stats(int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced) {
+	public PlayerStats(int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced) {
 		this.aces = aces;
 		this.doubleFaults = doubleFaults;
 		this.servicePoints = servicePoints;
@@ -226,7 +226,31 @@ public class Stats {
 
 	// Misc
 
-	void setOpponentStats(Stats opponentStats) {
+	public boolean isEmpty() {
+		return servicePoints == 0;
+	}
+
+	public void setOpponentStats(PlayerStats opponentStats) {
 		this.opponentStats = opponentStats;
+	}
+
+	public PlayerStats add(PlayerStats stats) {
+		PlayerStats sum = doAdd(stats);
+		sum.setOpponentStats(opponentStats.doAdd(stats.opponentStats));
+		return sum;
+	}
+
+	private PlayerStats doAdd(PlayerStats stats) {
+		return new PlayerStats(
+			aces + stats.aces,
+			doubleFaults + stats.doubleFaults,
+			servicePoints + stats.servicePoints,
+			firstServesIn + stats.firstServesIn,
+			firstServesWon + stats.firstServesWon,
+			secondServesWon + stats.secondServesWon,
+			serviceGames + stats.serviceGames,
+			breakPointsSaved + stats.breakPointsSaved,
+			breakPointsFaced + stats.breakPointsFaced
+		);
 	}
 }

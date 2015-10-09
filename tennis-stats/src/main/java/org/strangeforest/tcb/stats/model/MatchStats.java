@@ -4,11 +4,11 @@ public class MatchStats {
 
 	private final String winner;
 	private final String loser;
-	private final Stats winnerStats;
-	private final Stats loserStats;
+	private final PlayerStats winnerStats;
+	private final PlayerStats loserStats;
 	private final int minutes;
 
-	public MatchStats(String winner, String loser, Stats winnerStats, Stats loserStats, int minutes) {
+	public MatchStats(String winner, String loser, PlayerStats winnerStats, PlayerStats loserStats, int minutes) {
 		this.winner = winner;
 		this.loser = loser;
 		this.minutes = minutes;
@@ -26,11 +26,11 @@ public class MatchStats {
 		return loser;
 	}
 
-	public Stats getWinnerStats() {
+	public PlayerStats getWinnerStats() {
 		return winnerStats;
 	}
 
-	public Stats getLoserStats() {
+	public PlayerStats getLoserStats() {
 		return loserStats;
 	}
 

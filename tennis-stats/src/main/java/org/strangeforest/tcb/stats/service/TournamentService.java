@@ -46,7 +46,7 @@ public class TournamentService {
 		return jdbcTemplate.query(PLAYER_TOURNAMENT_EVENTS_QUERY, this::tournamentEventMapper, playerId);
 	}
 
-	public BootgridTable<PlayerTournamentEvent> getPlayerTournamentEventResultsTable(int playerId, TournamentEventFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<PlayerTournamentEvent> getPlayerTournamentEventResultsTable(int playerId, TournamentEventResultFilter filter, String orderBy, int pageSize, int currentPage) {
 		int offset = (currentPage - 1) * pageSize;
 		AtomicInteger tournamentEvents = new AtomicInteger();
 		BootgridTable<PlayerTournamentEvent> table = new BootgridTable<>(currentPage);
@@ -70,7 +70,7 @@ public class TournamentService {
 		return table;
 	}
 
-	public Object[] params(int playerId, TournamentEventFilter filter, int offset) {
+	public Object[] params(int playerId, TournamentEventResultFilter filter, int offset) {
 		List<Object> params = new ArrayList<>();
 		params.add(playerId);
 		params.addAll(filter.getParamList());

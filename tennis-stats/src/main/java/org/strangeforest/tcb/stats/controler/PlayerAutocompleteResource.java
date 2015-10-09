@@ -13,7 +13,9 @@ public class PlayerAutocompleteResource {
 	@Autowired private PlayerService playerService;
 
 	@RequestMapping("/autocompletePlayer")
-	public List<AutocompleteOption> autocompletePlayer(@RequestParam(value = "term") String term) {
+	public List<AutocompleteOption> autocompletePlayer(
+		@RequestParam(value = "term") String term
+	) {
 		return playerService.autocompletePlayer(term.trim().replace("\\s*", " "));
 	}
 }

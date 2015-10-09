@@ -178,14 +178,14 @@
 	</table>
 	<th:block th:unless="${matchStats}"><p>No statistics available!</p></th:block>
 	<div class="row">
-		<div th:if="${matchStats}" class="pct-data col-md-4">
+		<div th:if="${matchStats}" class="pct-data col-md-6">
 			<a class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:href="|javascript:toggleMatchStatsData(${matchId})|"> Raw Data</a>
 		</div>
-		<div th:if="${matchStats}" class="raw-data col-md-4">
+		<div th:if="${matchStats}" class="raw-data col-md-6">
 			<a class="btn btn-default btn-xs glyphicon glyphicon-scale" th:href="|javascript:toggleMatchStatsData(${matchId})|"> Pct. Data</a>
 		</div>
-		<div class="col-md-4">
-			<a class="btn btn-default btn-xs glyphicon glyphicon-remove" th:href="|javascript:closeMatchStats(${matchId})|"> Close</a>
+		<div class="col-md-6">
+			<a class="btn btn-default btn-xs glyphicon glyphicon-remove pull-right" th:href="|javascript:closeMatchStats(${matchId})|"> Close</a>
 		</div>
 	</div>
 </div>
