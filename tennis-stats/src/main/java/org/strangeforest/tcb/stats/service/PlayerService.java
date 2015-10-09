@@ -28,25 +28,16 @@ public class PlayerService {
 		"WHERE name ILIKE '%' || ? || '%'\n" +
 		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 20";
 
+	private static final String PLAYER_ID_QUERY =
+		"SELECT player_id FROM player_v\n" +
+		"WHERE name = ?\n" +
+		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
+
 	private static final String SEASONS_QUERY =
 		"SELECT DISTINCT e.season FROM player_tournament_event_result r\n" +
 		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE r.player_id = ?\n" +
 		"ORDER BY season DESC";
-
-	private static final String TOURNAMENTS_QUERY =
-		"SELECT DISTINCT tournament_id, t.name, t.level FROM player_tournament_event_result r\n" +
-		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
-		"LEFT JOIN tournament t USING (tournament_id)\n" +
-		"WHERE r.player_id = ?\n" +
-		"ORDER BY name";
-
-	private static final String TOURNAMENT_EVENTS_QUERY =
-		"SELECT tournament_event_id, t.name, e.season FROM player_tournament_event_result r\n" +
-		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
-		"LEFT JOIN tournament t USING (tournament_id)\n" +
-		"WHERE r.player_id = ?\n" +
-		"ORDER BY name, season";
 
 
 	public Player getPlayer(int playerId) {
@@ -61,16 +52,13 @@ public class PlayerService {
 		return jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, this::playerAutocompleteOptionMapper, name);
 	}
 
+	public Integer findPlayerId(String player) {
+		List<Integer> playerIds = jdbcTemplate.queryForList(PLAYER_ID_QUERY, Integer.class, player);
+		return playerIds.isEmpty() ? null : playerIds.get(0);
+	}
+
 	public List<Integer> getPlayerSeasons(int playerId) {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class, playerId);
-	}
-
-	public List<Tournament> getPlayerTournaments(int playerId) {
-		return jdbcTemplate.query(TOURNAMENTS_QUERY, this::tournamentMapper, playerId);
-	}
-
-	public List<TournamentEvent> getPlayerTournamentEvents(int playerId) {
-		return jdbcTemplate.query(TOURNAMENT_EVENTS_QUERY, this::tournamentEventMapper, playerId);
 	}
 
 	private Player playerMapper(ResultSet rs, int rowNum) throws SQLException {
@@ -115,19 +103,5 @@ public class PlayerService {
 		String name = rs.getString("name");
 		String countryId = rs.getString("country_id");
 		return new AutocompleteOption(id, name, name + " (" + countryId + ')');
-	}
-
-	private Tournament tournamentMapper(ResultSet rs, int rowNum) throws SQLException {
-		int tournamentId = rs.getInt("tournament_id");
-		String name = rs.getString("name");
-		String level = rs.getString("level");
-		return new Tournament(tournamentId, name, level);
-	}
-
-	private TournamentEvent tournamentEventMapper(ResultSet rs, int rowNum) throws SQLException {
-		int tournamentEventId = rs.getInt("tournament_event_id");
-		String name = rs.getString("name");
-		int season = rs.getInt("season");
-		return new TournamentEvent(tournamentEventId, name, season);
 	}
 }

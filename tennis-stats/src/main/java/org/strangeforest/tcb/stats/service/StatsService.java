@@ -8,7 +8,7 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
 @Service
-public class PlayerStatsService {
+public class StatsService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
@@ -21,6 +21,7 @@ public class PlayerStatsService {
 		"LEFT JOIN player_v pw ON m.winner_id = pw.player_id\n" +
 		"LEFT JOIN player_v pl ON m.loser_id = pl.player_id\n" +
 		"WHERE match_id = ? AND set = 0";
+
 
 	public MatchStats getMatchStats(long matchId) {
 		return jdbcTemplate.query(MATCH_STATS_QUERY, this::matchStatsMapper, matchId);

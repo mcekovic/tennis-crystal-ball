@@ -18,6 +18,7 @@ public class PlayerTimelineService {
 		"AND e.level <> 'D'\n" +
 		"ORDER BY tournament_event_id";
 
+
 	public PlayerTimeline getPlayerTimeline(int playerId) {
 		PlayerTimeline timeline = new PlayerTimeline();
 		jdbcTemplate.query(

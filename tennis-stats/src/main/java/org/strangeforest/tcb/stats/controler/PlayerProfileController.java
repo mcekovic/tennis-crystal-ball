@@ -14,6 +14,7 @@ import org.strangeforest.tcb.stats.service.*;
 public class PlayerProfileController {
 
 	@Autowired private PlayerService playerService;
+	@Autowired private TournamentService tournamentService;
 	@Autowired private PlayerTimelineService timelineService;
 
 	@RequestMapping("/playerProfile")
@@ -26,7 +27,7 @@ public class PlayerProfileController {
 
 		Player player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
 		List<Integer> seasons = playerService.getPlayerSeasons(player.getId());
-		List<Tournament> tournaments = playerService.getPlayerTournaments(playerId);
+		List<Tournament> tournaments = tournamentService.getPlayerTournaments(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player", player);
@@ -41,8 +42,8 @@ public class PlayerProfileController {
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		List<Tournament> tournaments = playerService.getPlayerTournaments(playerId);
-		List<TournamentEvent> tournamentEvents = playerService.getPlayerTournamentEvents(playerId);
+		List<Tournament> tournaments = tournamentService.getPlayerTournaments(playerId);
+		List<TournamentEvent> tournamentEvents = tournamentService.getPlayerTournamentEvents(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);

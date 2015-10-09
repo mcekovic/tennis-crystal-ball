@@ -11,7 +11,7 @@ import org.strangeforest.tcb.stats.service.*;
 @Controller
 public class StatsController {
 
-	@Autowired private PlayerStatsService statsService;
+	@Autowired private StatsService statsService;
 
 	@RequestMapping("/matchStats")
 	public ModelAndView matchStats(@RequestParam(value = "matchId") long matchId) {
