@@ -38,6 +38,7 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-web'
 	compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	compile 'org.springframework.boot:spring-boot-starter-jdbc'
+	compile 'org.springframework.boot:spring-boot-starter-logging'
 	compile 'com.google.guava:guava:18.0'
 	compile 'org.webjars:bootstrap:3.3.5'
 	compile 'org.webjars:jquery:2.1.4'

@@ -19,19 +19,19 @@ public class GOATListResource {
 	private static final int PLAYER_COUNT = 1000;
 
 	private static final String GOAT_COUNT_QUERY = //language=SQL
-		"SELECT count(*) AS player_count FROM player_v " +
+		"SELECT count(player_id) AS player_count FROM player_v\n" +
 		"WHERE goat_points > 0 AND goat_rank <= " + PLAYER_COUNT + "%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
-		"SELECT player_id, goat_rank, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles FROM player_v " +
-		"WHERE goat_points > 0 AND goat_rank <= " + PLAYER_COUNT + "%1$s " +
+		"SELECT player_id, goat_rank, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles FROM player_v\n" +
+		"WHERE goat_points > 0 AND goat_rank <= " + PLAYER_COUNT + "%1$s\n" +
 		"ORDER BY %2$s, name OFFSET ? LIMIT ?";
 
 	private static final String FILTER_SQL = " AND (name ILIKE '%' || ? || '%' OR country_id ILIKE '%' || ? || '%')";
 
-	private static final String GOAT_POINTS_QUERY = //language=SQL
-		"SELECT level, result, goat_points, additive FROM tournament_rank_points " +
-		"WHERE goat_points > 0 " +
+	private static final String GOAT_POINTS_QUERY =
+		"SELECT level, result, goat_points, additive FROM tournament_rank_points\n" +
+		"WHERE goat_points > 0\n" +
 		"ORDER BY level, result DESC";
 
 	private static Map<String, String> ORDER_MAP = new TreeMap<>();
@@ -44,7 +44,7 @@ public class GOATListResource {
 		ORDER_MAP.put("bigTitles", "big_titles");
 		ORDER_MAP.put("titles", "titles");
 	}
-	private static final String DEFAULT_ORDER = "goat_points DESC";
+	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("goat_points");
 
 	@RequestMapping("/goatTable")
 	public BootgridTable<GOATListRow> goatTable(

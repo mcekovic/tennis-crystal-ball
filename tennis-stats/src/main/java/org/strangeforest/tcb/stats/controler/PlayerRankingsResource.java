@@ -30,13 +30,13 @@ public class PlayerRankingsResource {
 	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 1.9;
 
 	private static final String PLAYER_ID_QUERY =
-		"SELECT player_id FROM player_v " +
-		"WHERE name = ? " +
+		"SELECT player_id FROM player_v\n" +
+		"WHERE name = ?\n" +
 		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
 
 	private static final String PLAYER_RANKINGS_QUERY = //language=SQL
-		"SELECT rank_date, player_id, %1$s FROM player_ranking " +
-		"WHERE player_id = ANY(?)%2$s " +
+		"SELECT rank_date, player_id, %1$s FROM player_ranking\n" +
+		"WHERE player_id = ANY(?)%2$s\n" +
 		"ORDER BY rank_date, player_id";
 
 	@RequestMapping("/playerRankingsTable")

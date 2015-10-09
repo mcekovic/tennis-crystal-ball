@@ -14,38 +14,38 @@ public class PlayerService {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_QUERY =
-		"SELECT player_id, name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight, hand, backhand, " +
-			"titles, grand_slams, tour_finals, masters, olympics, " +
-			"current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points, " +
-			"turned_pro, coach, web_site, twitter, facebook " +
+		"SELECT player_id, name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight, hand, backhand,\n" +
+			"titles, grand_slams, tour_finals, masters, olympics,\n" +
+			"current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points,\n" +
+			"turned_pro, coach, web_site, twitter, facebook\n" +
 		"FROM player_v";
 
-	private static final String PLAYER_BY_NAME = PLAYER_QUERY + " WHERE name = ? ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
-	private static final String PLAYER_BY_ID = PLAYER_QUERY + " WHERE player_id = ?";
+	private static final String PLAYER_BY_NAME = PLAYER_QUERY + "\nWHERE name = ? ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
+	private static final String PLAYER_BY_ID = PLAYER_QUERY + "\nWHERE player_id = ?";
 
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
-		"SELECT player_id, name, country_id FROM player_v " +
-		"WHERE name ILIKE '%' || ? || '%'" +
+		"SELECT player_id, name, country_id FROM player_v\n" +
+		"WHERE name ILIKE '%' || ? || '%'\n" +
 		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 20";
 
 	private static final String SEASONS_QUERY =
-		"SELECT DISTINCT e.season FROM player_tournament_event_result r " +
-		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
-		"WHERE r.player_id = ? " +
+		"SELECT DISTINCT e.season FROM player_tournament_event_result r\n" +
+		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"WHERE r.player_id = ?\n" +
 		"ORDER BY season DESC";
 
 	private static final String TOURNAMENTS_QUERY =
-		"SELECT DISTINCT tournament_id, t.name, t.level FROM player_tournament_event_result r " +
-		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
-		"LEFT JOIN tournament t USING (tournament_id) " +
-		"WHERE r.player_id = ? " +
+		"SELECT DISTINCT tournament_id, t.name, t.level FROM player_tournament_event_result r\n" +
+		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"LEFT JOIN tournament t USING (tournament_id)\n" +
+		"WHERE r.player_id = ?\n" +
 		"ORDER BY name";
 
 	private static final String TOURNAMENT_EVENTS_QUERY =
-		"SELECT tournament_event_id, t.name, e.season FROM player_tournament_event_result r " +
-		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
-		"LEFT JOIN tournament t USING (tournament_id) " +
-		"WHERE r.player_id = ? " +
+		"SELECT tournament_event_id, t.name, e.season FROM player_tournament_event_result r\n" +
+		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"LEFT JOIN tournament t USING (tournament_id)\n" +
+		"WHERE r.player_id = ?\n" +
 		"ORDER BY name, season";
 
 

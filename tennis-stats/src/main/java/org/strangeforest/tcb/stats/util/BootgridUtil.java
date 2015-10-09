@@ -4,7 +4,7 @@ import java.util.*;
 
 public abstract class BootgridUtil {
 
-	public static String getOrderBy(Map<String, String> params, Map<String, String> orderMap, String defaultOrder) {
+	public static String getOrderBy(Map<String, String> params, Map<String, String> orderMap, OrderBy... defaultOrders) {
 		String orderBy = null;
 		for (Map.Entry<String, String> order : orderMap.entrySet()) {
 			String sort = findSortBy(params, order.getKey(), order.getValue());
@@ -15,13 +15,15 @@ public abstract class BootgridUtil {
 					orderBy = sort;
 			}
 		}
-		if (orderBy != null) {
-			if (!orderBy.contains(defaultOrder))
-				orderBy += ", " + defaultOrder;
-			return orderBy;
+		for (OrderBy defaultOrder : defaultOrders) {
+			if (orderBy != null) {
+				if (!orderBy.contains(defaultOrder.getColumn()))
+					orderBy += ", " + defaultOrder;
+			}
+			else
+				orderBy = defaultOrder.toString();
 		}
-		else
-			return defaultOrder;
+		return orderBy;
 	}
 
 	private static String findSortBy(Map<String, String> params, String attrName, final String columnName) {

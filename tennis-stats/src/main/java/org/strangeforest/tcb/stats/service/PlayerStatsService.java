@@ -13,13 +13,13 @@ public class PlayerStatsService {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String MATCH_STATS_QUERY =
-		"SELECT pw.name AS winner, pl.name AS loser, minutes, " +
-			"w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc, " +
-			"l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc " +
-		"FROM match_stats " +
-		"LEFT JOIN match m USING (match_id) " +
-		"LEFT JOIN player_v pw ON m.winner_id = pw.player_id " +
-		"LEFT JOIN player_v pl ON m.loser_id = pl.player_id " +
+		"SELECT pw.name AS winner, pl.name AS loser, minutes,\n" +
+			"w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,\n" +
+			"l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc\n" +
+		"FROM match_stats\n" +
+		"LEFT JOIN match m USING (match_id)\n" +
+		"LEFT JOIN player_v pw ON m.winner_id = pw.player_id\n" +
+		"LEFT JOIN player_v pl ON m.loser_id = pl.player_id\n" +
 		"WHERE match_id = ? AND set = 0";
 
 	public MatchStats getMatchStats(long matchId) {

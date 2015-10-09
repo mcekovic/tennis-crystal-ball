@@ -11,6 +11,7 @@ import org.strangeforest.tcb.stats.util.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.util.OrderBy.*;
 
 @RestController
 public class PlayerMatchesResource {
@@ -20,11 +21,11 @@ public class PlayerMatchesResource {
 	private static final int MAX_MATCHES = 10000;
 
 	private static final String MATCHES_QUERY = //language=SQL
-		"SELECT m.match_id, e.date, e.level, e.surface, e.name AS tournament, m.round, m.winner_id, pw.name AS winner, m.loser_id, pl.name AS loser, m.score FROM match m " +
-		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
-		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id " +
-		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id " +
-		"WHERE (m.winner_id = ? OR m.loser_id = ?)%1$s " +
+		"SELECT m.match_id, e.date, e.level, e.surface, e.name AS tournament, m.round, m.winner_id, pw.name AS winner, m.loser_id, pl.name AS loser, m.score FROM match m\n" +
+		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id\n" +
+		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id\n" +
+		"WHERE (m.winner_id = ? OR m.loser_id = ?)%1$s\n" +
 		"ORDER BY %2$s OFFSET ?";
 
 	private static final String SEASON_CONDITION = " AND e.season = ?";
@@ -41,7 +42,7 @@ public class PlayerMatchesResource {
 		ORDER_MAP.put("tournament", "tournament");
 		ORDER_MAP.put("round", "round");
 	}
-	private static final String DEFAULT_ORDER = "e.date DESC, m.match_num DESC";
+	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("date"), desc("round"), desc("match_num")};
 
 	@RequestMapping("/matchesTable")
 	public BootgridTable<Match> matchesTable(
@@ -58,7 +59,7 @@ public class PlayerMatchesResource {
 	) {
 		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
 		int offset = (current - 1) * pageSize;
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		AtomicInteger matches = new AtomicInteger();
 		BootgridTable<Match> table = new BootgridTable<>(current);
 		jdbcTemplate.query(

@@ -20,10 +20,10 @@ public class PlayerTournamentsResource {
 	private static final int MAX_TOURNAMENTS = 1000;
 
 	private static final String TOURNAMENT_EVENTS_QUERY = //language=SQL
-		"SELECT tournament_event_id, e.date, e.level, e.surface, e.name, r.result FROM player_tournament_event_result r " +
-		"LEFT JOIN tournament_event e USING (tournament_event_id) " +
-		"WHERE r.player_id = ? " +
-		"AND e.level <> 'D'%1$s " +
+		"SELECT tournament_event_id, e.date, e.level, e.surface, e.name, r.result FROM player_tournament_event_result r\n" +
+		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"WHERE r.player_id = ?\n" +
+		"AND e.level <> 'D'%1$s\n" +
 		"ORDER BY %2$s OFFSET ?";
 
 	private static final String SEASON_CONDITION = " AND e.season = ?";
@@ -41,7 +41,7 @@ public class PlayerTournamentsResource {
 		ORDER_MAP.put("name", "name");
 		ORDER_MAP.put("result", "result");
 	}
-	private static final String DEFAULT_ORDER = "date DESC";
+	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("date");
 
 	@RequestMapping("/playerTournamentsTable")
 	public BootgridTable<PlayerTournamentEvent> playerTournamentsTable(
