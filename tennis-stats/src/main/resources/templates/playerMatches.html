@@ -156,7 +156,7 @@
 		<select id="tournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournament events">
 			<option value="">All events</option>
 			<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="|${tournamentEvent.name} ${tournamentEvent.season}|"
-			        th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon (2008)</option>
+			        th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon 2008</option>
 		</select>
 	</div>
 	<button id="playerStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showPlayerStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for selected matches)|">
