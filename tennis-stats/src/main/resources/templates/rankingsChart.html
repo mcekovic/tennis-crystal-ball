@@ -150,6 +150,7 @@
 					$("#fromDate").datepicker("option", "maxDate", selectedDate);
 				}
 			});
+			$("div.ui-datepicker").css({ fontSize: "12px" });
 			$("#rankChartSize").slider({
 				min: 500,
 				max: 1500,
@@ -225,7 +226,7 @@
 		</div>
 		<div class="col-md-2">
 			<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawChart()">
-				<span class="glyphicon glyphicon-signal"></span> Draw Chart
+				<span class="glyphicon glyphicon-signal"></span>&nbsp;&nbsp;Draw Chart
 			</a>
 		</div>
 	</div>
