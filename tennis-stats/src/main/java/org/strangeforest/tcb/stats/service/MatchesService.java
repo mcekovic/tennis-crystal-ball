@@ -24,7 +24,7 @@ public class MatchesService {
 		"ORDER BY %2$s OFFSET ?";
 
 
-	public BootgridTable<Match> getPlayerMatchesTable(int playerId, TournamentEventFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<Match> getPlayerMatchesTable(int playerId, MatchFilter filter, String orderBy, int pageSize, int currentPage) {
 		int offset = (currentPage - 1) * pageSize;
 		AtomicInteger matches = new AtomicInteger();
 		BootgridTable<Match> table = new BootgridTable<>(currentPage);
@@ -53,7 +53,7 @@ public class MatchesService {
 		return table;
 	}
 
-	private Object[] params(int playerId, TournamentEventFilter filter, int offset) {
+	private Object[] params(int playerId, MatchFilter filter, int offset) {
 		List<Object> params = new ArrayList<>();
 		params.add(playerId);
 		params.add(playerId);

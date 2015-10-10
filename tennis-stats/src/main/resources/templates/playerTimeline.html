@@ -22,18 +22,6 @@
 				$result.tooltip({title: "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + "</span>", html: true});
 			});
 		});
-		function reloadMatches() {
-			$("#matchesTable").bootgrid("reload");
-		}
-		function clearMatchesFilter() {
-			$("#matchesSeason").val("");
-			$("#matchesLevel").val("");
-			$("#matchesSurface").val("");
-			$("#matchesTournament").val("");
-			$("#tournamentEvent").val("");
-			$("#matchesTable").bootgrid("search", "");
-			reloadMatches();
-		}
 		/*]]>*/
 	</script>
 	<style scoped="scoped">

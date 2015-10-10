@@ -6,8 +6,6 @@ import static com.google.common.base.Strings.*;
 
 public class TournamentEventFilter {
 
-	public static final TournamentEventFilter ALL = new TournamentEventFilter(null, null, null, null, null, null);
-
 	private final Integer season;
 	private final String level;
 	private final String surface;

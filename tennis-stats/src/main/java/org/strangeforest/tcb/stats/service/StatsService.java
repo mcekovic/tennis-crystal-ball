@@ -57,10 +57,10 @@ public class StatsService {
 	}
 
 	public PlayerStats getPlayerStats(int playerId) {
-		return getPlayerStats(playerId, TournamentEventFilter.ALL);
+		return getPlayerStats(playerId, MatchFilter.ALL);
 	}
 
-	public PlayerStats getPlayerStats(int playerId, TournamentEventFilter filter) {
+	public PlayerStats getPlayerStats(int playerId, MatchFilter filter) {
 		String join = !filter.isEmpty() ? TOURNAMENT_EVENT_JOIN : "";
 		String criteria = filter.getCriteria();
 		Object[] params = playerStatsParams(playerId, filter);
@@ -81,7 +81,7 @@ public class StatsService {
 		return asWinnerStats.add(asLoserStats);
 	}
 
-	private Object[] playerStatsParams(int playerId, TournamentEventFilter filter) {
+	private Object[] playerStatsParams(int playerId, MatchFilter filter) {
 		List<Object> params = new ArrayList<>();
 		params.add(playerId);
 		params.addAll(filter.getParamList());

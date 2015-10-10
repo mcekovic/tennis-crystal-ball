@@ -19,6 +19,7 @@
 					request.season = $("#matchesSeason").val();
 					request.level = $("#matchesLevel").val();
 					request.surface = $("#matchesSurface").val();
+					request.round = $("#matchesRound").val();
 					request.tournamentId = $("#matchesTournament").val();
 					request.tournamentEventId = $("#tournamentEvent").val();
 					return request;
@@ -34,8 +35,12 @@
 					}
 				}
 			});
-			var statsButton = $("#playerStats").remove();
-			$("#matchesTable-header").find("div.search").before(statsButton);
+			var $matchesTableHeader = $("#matchesTable-header");
+			$matchesTableHeader.find("div.search").before($("#playerStats").remove());
+			var actionBar = $matchesTableHeader.find("div.actionBar");
+			actionBar.removeClass("col-sm-12").addClass("col-sm-7");
+			actionBar.before($("#matchesTournamentDiv").remove());
+			actionBar.before($("#tournamentEventDiv").remove());
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadMatches() {
@@ -46,6 +51,7 @@
 			$("#matchesSeason").val("");
 			$("#matchesLevel").val("");
 			$("#matchesSurface").val("");
+			$("#matchesRound").val("");
 			$("#matchesTournament").val("");
 			$("#tournamentEvent").val("");
 			$("#matchesTable").bootgrid("search", "");
@@ -58,6 +64,7 @@
 				url += "&season=" + $("#matchesSeason").val();
 				url += "&level=" + $("#matchesLevel").val();
 				url += "&surface=" + $("#matchesSurface").val();
+				url += "&round=" + $("#matchesRound").val();
 				url += "&tournamentId=" + $("#matchesTournament").val();
 				url += "&tournamentEventId=" + $("#tournamentEvent").val();
 				$.get(url, function(data) {
@@ -107,16 +114,17 @@
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id="matchesTournament" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
-				<option value="">All tournaments</option>
-				<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
-			</select>
-		</div>
-		<div class="col-md-3">
-			<select id="tournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournament events">
-				<option value="">All events</option>
-				<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="${tournamentEvent.name} + ' - ' + ${tournamentEvent.season}"
-				        th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon (2008)</option>
+			<select id="matchesRound" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+				<option value="">All rounds</option>
+				<option value="F" class="bg-result-F">Final</option>
+				<option value="SF" class="bg-result-SF">Semi-Final</option>
+				<option value="QF" class="bg-result-QF">Quarter-Final</option>
+				<option value="R16" class="bg-result-R16">Round of 16</option>
+				<option value="R32" class="bg-result-R32">Round of 32</option>
+				<option value="R64" class="bg-result-R64">Round of 64</option>
+				<option value="R128" class="bg-result-R128">Round of 128</option>
+				<option value="RR" class="bg-result-RR">Round-Robin</option>
+				<option value="BR" class="bg-result-BR">For Bronze Medal</option>
 			</select>
 		</div>
 		<div class="col-md-1">
@@ -138,7 +146,20 @@
 			</tr>
 		</thead>
 	</table>
-	<button id="playerStats" type="button" class="btn btn-info" style="margin-right: 20px" onclick="showPlayerStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for selected matches)|">
+	<div id="matchesTournamentDiv" class="col-sm-2" style="padding-left: 0px">
+		<select id="matchesTournament" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
+			<option value="">All tournaments</option>
+			<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+		</select>
+	</div>
+	<div id="tournamentEventDiv" class="col-sm-3">
+		<select id="tournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournament events">
+			<option value="">All events</option>
+			<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="|${tournamentEvent.name} ${tournamentEvent.season}|"
+			        th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon (2008)</option>
+		</select>
+	</div>
+	<button id="playerStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showPlayerStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for selected matches)|">
 		<span class="glyphicon glyphicon-stats"></span> Stats
 	</button>
 </th:block>

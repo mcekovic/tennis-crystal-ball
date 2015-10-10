@@ -34,12 +34,13 @@ public class PlayerMatchesResource {
 		@RequestParam(value = "surface", required = false) String surface,
 		@RequestParam(value = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(value = "round", required = false) String round,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam(value = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		TournamentEventFilter filter = new TournamentEventFilter(season, level, surface, tournamentId, tournamentEventId, searchPhrase);
+		MatchFilter filter = new MatchFilter(season, level, surface, tournamentId, tournamentEventId, round, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
 		return matchesService.getPlayerMatchesTable(playerId, filter, orderBy, pageSize, current);
