@@ -62,7 +62,7 @@
 				</td>
 				<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
 					<a th:if="${item.result}" th:text="${item.result}" th:href="'javascript:playerMatches(' + ${item.tournamentEventId} + ')'"
-					   th:attr="data-surface=${tournament.surfaces.size() > 1 ? item.surface : ''}">W</a>
+					   th:attr="data-surface=${tournament.surfaces.size() > 1 ? item.surface : ''}" title="Show matches">W</a>
 					<span th:unless="${item.result}" class="absent">A</span>
 				</td>
 			</tr>

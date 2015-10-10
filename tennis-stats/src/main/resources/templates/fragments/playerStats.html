@@ -1,11 +1,10 @@
-<div th:fragment="playerStats(elementId, popover)" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="playerStats(elementId, popover, buttonId)" xmlns:th="http://www.thymeleaf.org">
 	<!--@thymesVar id="stats" type="org.strangeforest.tcb.stats.model.PlayerStats"-->
 	<div th:id="${elementId}">
 		<script type="text/javascript" th:inline="javascript">
 			/*<![CDATA[*/
 			$(function() {
 				var $playerStatsDiv = $("#" + [[${elementId}]]);
-				$playerStatsDiv.find("[data-toggle='tooltip']").tooltip();
 				$playerStatsDiv.find(".raw-data").hide();
 			});
 			/*]]>*/
@@ -122,8 +121,8 @@
 						<th>Total</th>
 						<th></th>
 					</tr>
-					<tr data-toggle="tooltip" data-placement="top"  title="Dominance Ratio: % of return points won divided by % of serve points lost">
-						<td>Dominance Ratio</td>
+					<tr>
+						<td title="Dominance Ratio: % of return points won divided by % of serve points lost">Dominance Ratio</td>
 						<th th:text="${#numbers.formatDecimal(stats.dominanceRatio, 1, 2)}">0.67</th>
 					</tr>
 					<tr class="pct-data">
@@ -140,13 +139,13 @@
 		<th:block th:if="${stats.isEmpty()}"><p>No statistics available!</p></th:block>
 		<div class="row">
 			<div th:unless="${stats.isEmpty()}" class="pct-data col-md-6">
-				<a class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:href="|javascript:toggleStatsData('${elementId}')|"> Raw Data</a>
+				<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('${elementId}')|"> Raw Data</button>
 			</div>
 			<div th:unless="${stats.isEmpty()}" class="raw-data col-md-6">
-				<a class="btn btn-default btn-xs glyphicon glyphicon-scale" th:href="|javascript:toggleStatsData('${elementId}')|"> Pct. Data</a>
+				<button class="btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('${elementId}')|"> Pct. Data</button>
 			</div>
 			<div th:if="${popover}" class="col-md-6">
-				<a class="btn btn-default btn-xs glyphicon glyphicon-remove pull-right" href="javascript:closePlayerStats()"> Close</a>
+				<button class="btn btn-default btn-xs glyphicon glyphicon-remove pull-right" th:onclick="|$('#${buttonId}').click()|"> Close</button>
 			</div>
 		</div>
 	</div>

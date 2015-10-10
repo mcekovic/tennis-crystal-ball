@@ -111,23 +111,23 @@
 					<!--/* Titles */-->
 					<tr th:if="${player.titles > 0}">
 						<th>Titles</th>
-						<td width="100%"><a class="label label-default" th:text="${player.titles}" href="javascript:showTitles()">10</a></td>
+						<td width="100%"><a class="label label-default" th:text="${player.titles}" href="javascript:showTitles()" title="Show titles">10</a></td>
 					</tr>
 					<tr th:if="${player.grandSlams > 0}">
 						<th>Grand Slams</th>
-						<td><a class="label label-danger" th:text="${player.grandSlams}" href="javascript:showTitles('G')">1</a></td>
+						<td><a class="label label-danger" th:text="${player.grandSlams}" href="javascript:showTitles('G')" title="Show Grand Slam titles">1</a></td>
 					</tr>
 					<tr th:if="${player.tourFinals > 0}">
 						<th>Tour Finals</th>
-						<td><a class="label label-warning" th:text="${player.tourFinals}" href="javascript:showTitles('F')">1</a></td>
+						<td><a class="label label-warning" th:text="${player.tourFinals}" href="javascript:showTitles('F')" title="Show Tour Finals titles">1</a></td>
 					</tr>
 					<tr th:if="${player.masters > 0}">
 						<th>Masters</th>
-						<td><a class="label label-info" th:text="${player.masters}" href="javascript:showTitles('M')">5</a></td>
+						<td><a class="label label-info" th:text="${player.masters}" href="javascript:showTitles('M')" title="Show Masters titles">5</a></td>
 					</tr>
 					<tr th:if="${player.olympics > 0}">
 						<th>Olympics</th>
-						<td><a class="label label-success" th:text="${player.olympics}" href="javascript:showTitles('O')">1</a></td>
+						<td><a class="label label-success" th:text="${player.olympics}" href="javascript:showTitles('O')" title="Show Olympics titles">1</a></td>
 					</tr>
 					<!--/* Ranking */-->
 					<tr th:if="${player.currentRank > 0}">
@@ -212,7 +212,10 @@
 								"level": levelFormatter,
 								"surface": surfaceFormatter,
 								"result": function(column, row) {
-									return "<a class='label black bg-result-" + row.result + "' href='javascript:playerMatches(" + row.tournamentEventId + ")'>" + row.result + "</a>"
+									return "<a class='label black bg-result-" + row.result + "' href='javascript:playerMatches(" + row.tournamentEventId + ")' title='Show matches'>" + row.result + "</a>"
+								},
+								"stats": function(column, row) {
+									return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='Show statistics'> Stats</a>";
 								}
 							}
 						});
@@ -241,6 +244,16 @@
 								$pill.addClass("loaded");
 							$pill.tab("show");
 						});
+					}
+					function showEventStats(tournamentEventId, event) {
+						var $eventStats = $("#eventStats-" + tournamentEventId);
+						if (!$eventStats.hasClass("loaded")) {
+							event.preventDefault();
+							$.get("eventStats?playerId=[[${player.id}]]&tournamentEventId=" + tournamentEventId, function(data) {
+								$eventStats.addClass("loaded").popover({title: "Tournament Statistics", content: data, html: true, placement: "auto right"});
+								$eventStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "600px"); }).click();
+							});
+						}
 					}
 					/*]]>*/
 				</script>
@@ -306,6 +319,7 @@
 							<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
 							<th data-column-id="name" data-width="200">Tournament</th>
 							<th data-column-id="result" data-formatter="result" data-order="desc" data-width="50">Result</th>
+							<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="50">Stats</th>
 						</tr>
 					</thead>
 				</table>

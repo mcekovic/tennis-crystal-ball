@@ -5,7 +5,6 @@
 		/*<![CDATA[*/
 		$(function() {
 			var $matchStatsPopover = $("#matchStatsPopover-[[${matchId}]]");
-			$matchStatsPopover.find("[data-toggle='tooltip']").tooltip();
 			$matchStatsPopover.find(".raw-data").hide();
 		});
 		/*]]>*/
@@ -149,9 +148,9 @@
 				<th>Total</th>
 				<th></th>
 			</tr>
-			<tr data-toggle="tooltip" data-placement="top"  title="Dominance Ratio: % of return points won divided by % of serve points lost">
+			<tr>
 				<th th:text="${#numbers.formatDecimal(winnerStats.dominanceRatio, 1, 2)}">1.64</th>
-				<td>Dominance Ratio</td>
+				<td title="Dominance Ratio: % of return points won divided by % of serve points lost">Dominance Ratio</td>
 				<th th:text="${#numbers.formatDecimal(loserStats.dominanceRatio, 1, 2)}">0.67</th>
 			</tr>
 			<tr class="pct-data">
@@ -179,13 +178,13 @@
 	<th:block th:unless="${matchStats}"><p>No statistics available!</p></th:block>
 	<div class="row">
 		<div th:if="${matchStats}" class="pct-data col-md-6">
-			<a class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:href="|javascript:toggleStatsData('matchStatsPopover-${matchId}')|"> Raw Data</a>
+			<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('matchStatsPopover-${matchId}')|"> Raw Data</button>
 		</div>
 		<div th:if="${matchStats}" class="raw-data col-md-6">
-			<a class="btn btn-default btn-xs glyphicon glyphicon-scale" th:href="|javascript:toggleStatsData('matchStatsPopover-${matchId}')|"> Pct. Data</a>
+			<button class="btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('matchStatsPopover-${matchId}')|"> Pct. Data</button>
 		</div>
 		<div class="col-md-6">
-			<a class="btn btn-default btn-xs glyphicon glyphicon-remove pull-right" th:href="|javascript:closeMatchStats(${matchId})|"> Close</a>
+			<button class="btn btn-default btn-xs glyphicon glyphicon-remove pull-right" th:onclick="|$('#matchStats-${matchId}').click()|"> Close</button>
 		</div>
 	</div>
 </div>

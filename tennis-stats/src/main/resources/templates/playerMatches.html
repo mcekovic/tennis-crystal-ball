@@ -29,7 +29,7 @@
 					"tournament": tournamentFormatter,
 					"match": matchFormatter,
 					"stats": function(column, row) {
-						return "<a id='matchStats-" + row.id + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event)'> Stats</a>";
+						return "<a id='matchStats-" + row.id + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event)' title='Show statistics'> Stats</a>";
 					}
 				}
 			});
@@ -78,9 +78,6 @@
 					$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "400px"); }).click();
 				});
 			}
-		}
-		function closeMatchStats(matchId) {
-			$("#matchStats-" + matchId).click();
 		}
 		/*]]>*/
 	</script>
@@ -143,7 +140,7 @@
 			</tr>
 		</thead>
 	</table>
-	<button id="playerStats" type="button" class="btn btn-info" style="margin-right: 20px" onclick="showPlayerStats(event)">
+	<button id="playerStats" type="button" class="btn btn-info" style="margin-right: 20px" onclick="showPlayerStats(event)" data-toggle="tooltip" data-placement="top" title="Show statistics">
 		<span class="glyphicon glyphicon-stats"></span> Stats
 	</button>
 </th:block>

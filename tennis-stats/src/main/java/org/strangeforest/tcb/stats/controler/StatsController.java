@@ -21,15 +21,28 @@ public class StatsController {
 		return new ModelAndView("playerStatsTab", "stats", playerStats);
 	}
 
+	@RequestMapping("/eventStats")
+	public ModelAndView eventStats(
+		@RequestParam(value = "playerId") int playerId,
+		@RequestParam(value = "tournamentEventId") int tournamentEventId
+	) {
+		TournamentEventFilter filter = new TournamentEventFilter(null, null, null, null, tournamentEventId, null);
+		PlayerStats playerStats = statsService.getPlayerStats(playerId, filter);
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("tournamentEventId", tournamentEventId);
+		modelMap.addAttribute("stats", playerStats);
+		return new ModelAndView("eventStats", modelMap);
+	}
+
 	@RequestMapping("/playerStatsPopover")
 	public ModelAndView playerStatsPopover(
-			@RequestParam(value = "playerId") int playerId,
-			@RequestParam(value = "season", required = false) Integer season,
-			@RequestParam(value = "level", required = false) String level,
-			@RequestParam(value = "surface", required = false) String surface,
-			@RequestParam(value = "tournamentId", required = false) Integer tournamentId,
-			@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
-			@RequestParam(value = "searchPhrase", required = false) String searchPhrase
+		@RequestParam(value = "playerId") int playerId,
+		@RequestParam(value = "season", required = false) Integer season,
+		@RequestParam(value = "level", required = false) String level,
+		@RequestParam(value = "surface", required = false) String surface,
+		@RequestParam(value = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(value = "searchPhrase", required = false) String searchPhrase
 	) {
 		TournamentEventFilter filter = new TournamentEventFilter(season, level, surface, tournamentId, tournamentEventId, searchPhrase);
 		PlayerStats playerStats = statsService.getPlayerStats(playerId, filter);
