@@ -1,5 +1,6 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
+	<!--@thymesVar id="playerName" type="java.lang.String"-->
 	<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
 	<!--@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.Tournament>"-->
 	<!--@thymesVar id="tournamentEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEvent>"-->
@@ -29,7 +30,7 @@
 					"tournament": tournamentFormatter,
 					"match": matchFormatter,
 					"stats": function(column, row) {
-						return "<a id='matchStats-" + row.id + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event)' title='Show statistics'> Stats</a>";
+						return "<a id='matchStats-" + row.id + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'> Stats</a>";
 					}
 				}
 			});
@@ -53,7 +54,7 @@
 		function showPlayerStats(event) {
 			var $playerStats = $("#playerStats");
 			if (!$playerStats.hasClass("loaded")) {
-				var url = "playerStatsPopover?playerId=[[${playerId}]]";
+				var url = "playerStats?playerId=[[${playerId}]]";
 				url += "&season=" + $("#matchesSeason").val();
 				url += "&level=" + $("#matchesLevel").val();
 				url += "&surface=" + $("#matchesSurface").val();
@@ -61,20 +62,17 @@
 				url += "&tournamentEventId=" + $("#tournamentEvent").val();
 				$.get(url, function(data) {
 					event.preventDefault();
-					$playerStats.addClass("loaded").popover({title: [[${playerName}]] + " Statistics", content: data, html: true, placement: "auto left"});
+					$playerStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
 					$playerStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "600px"); }).click();
 				});
 			}
-		}
-		function closePlayerStats() {
-			$("#playerStats").click();
 		}
 		function showMatchStats(matchId, event) {
 			var $matchStats = $("#matchStats-" + matchId);
 			if (!$matchStats.hasClass("loaded")) {
 				event.preventDefault();
 				$.get("matchStats?matchId=" + matchId, function(data) {
-					$matchStats.addClass("loaded").popover({title: "Match Statistics", content: data, html: true, placement: "auto right"});
+					$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 					$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "400px"); }).click();
 				});
 			}
@@ -140,7 +138,7 @@
 			</tr>
 		</thead>
 	</table>
-	<button id="playerStats" type="button" class="btn btn-info" style="margin-right: 20px" onclick="showPlayerStats(event)" data-toggle="tooltip" data-placement="top" title="Show statistics">
+	<button id="playerStats" type="button" class="btn btn-info" style="margin-right: 20px" onclick="showPlayerStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for selected matches)|">
 		<span class="glyphicon glyphicon-stats"></span> Stats
 	</button>
 </th:block>

@@ -34,8 +34,8 @@ public class StatsController {
 		return new ModelAndView("eventStats", modelMap);
 	}
 
-	@RequestMapping("/playerStatsPopover")
-	public ModelAndView playerStatsPopover(
+	@RequestMapping("/playerStats")
+	public ModelAndView playerStats(
 		@RequestParam(value = "playerId") int playerId,
 		@RequestParam(value = "season", required = false) Integer season,
 		@RequestParam(value = "level", required = false) String level,
@@ -46,7 +46,7 @@ public class StatsController {
 	) {
 		TournamentEventFilter filter = new TournamentEventFilter(season, level, surface, tournamentId, tournamentEventId, searchPhrase);
 		PlayerStats playerStats = statsService.getPlayerStats(playerId, filter);
-		return new ModelAndView("playerStatsPopover", "stats", playerStats);
+		return new ModelAndView("playerStats", "stats", playerStats);
 	}
 
 	@RequestMapping("/matchStats")

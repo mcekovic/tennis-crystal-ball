@@ -31,7 +31,7 @@ public class TournamentService {
 		"ORDER BY name, season";
 
 	private static final String PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY = //language=SQL
-		"SELECT tournament_event_id, e.date, e.level, e.surface, e.name, r.result FROM player_tournament_event_result r\n" +
+		"SELECT tournament_event_id, e.season, e.date, e.level, e.surface, e.name, r.result FROM player_tournament_event_result r\n" +
 		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE r.player_id = ?\n" +
 		"AND e.level <> 'D'%1$s\n" +
@@ -56,6 +56,7 @@ public class TournamentService {
 				if (tournamentEvents.incrementAndGet() <= pageSize) {
 					table.addRow(new PlayerTournamentEvent(
 						rs.getInt("tournament_event_id"),
+						rs.getInt("season"),
 						rs.getDate("date"),
 						rs.getString("level"),
 						rs.getString("surface"),

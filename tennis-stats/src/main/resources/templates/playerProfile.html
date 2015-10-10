@@ -215,7 +215,7 @@
 									return "<a class='label black bg-result-" + row.result + "' href='javascript:playerMatches(" + row.tournamentEventId + ")' title='Show matches'>" + row.result + "</a>"
 								},
 								"stats": function(column, row) {
-									return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='Show statistics'> Stats</a>";
+									return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='" + row.name + " " + row.season + " Statistics'> Stats</a>";
 								}
 							}
 						});
@@ -250,7 +250,7 @@
 						if (!$eventStats.hasClass("loaded")) {
 							event.preventDefault();
 							$.get("eventStats?playerId=[[${player.id}]]&tournamentEventId=" + tournamentEventId, function(data) {
-								$eventStats.addClass("loaded").popover({title: "Tournament Statistics", content: data, html: true, placement: "auto right"});
+								$eventStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 								$eventStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "600px"); }).click();
 							});
 						}
