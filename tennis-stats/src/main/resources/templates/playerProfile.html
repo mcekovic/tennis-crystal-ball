@@ -51,33 +51,14 @@
 			reloadTournaments();
 			$("#tournamentsPill").tab("show");
 		}
-		function showPlayerStats(event) {
-			var $playerStats = $("#playerStats");
-			if (!$playerStats.hasClass("loaded")) {
-				$.get("playerStats?playerId=[[${player.id}]]", function(data) {
-					event.preventDefault();
-					$playerStats.addClass("loaded").popover({title: "[[${player.name}]] Statistics", content: data, html: true, placement: "auto right"}).click();
-				});
-			}
-		}
-		function togglePlayerStatsData() {
-			$("#playerStatsDiv").find(".pct-data, .raw-data").each(function() {
-				$(this).toggle();
-			});
-		}
-		function closePlayerStats() {
-			$("#playerStats").click();
+		function toggleStatsData(elementId) {
+			$("#" + elementId).find(".pct-data, .raw-data").toggle();
 		}
 		/*]]>*/
 	</script>
 </head>
 <body class="container">
-	<style scoped="scoped">
-		.popover {
-			max-width: 500px;
-		}
-	</style>
-	<div th:include="fragments/header :: copy"></div>
+	<div th:include="fragments/header :: title"></div>
 	<div class="row">
 		<div th:if="${player}" class="col-md-8"><h3 th:text="${player.name}">Player Profile</h3></div>
 		<div class="ui-widget input-group col-md-4">
@@ -192,14 +173,6 @@
 						<th>Facebook</th>
 						<td><a th:href="'https://www.facebook.com/' + ${player.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" th:text="${player.facebook}">JohnSmith</a></td>
 					</tr>
-					<tr>
-						<th>Statistics</th>
-						<td>
-							<a id="playerStats" href="#" class="btn btn-info btn-xs" role="button" onclick="showPlayerStats(event)">
-								<span class="glyphicon glyphicon-stats"></span> Stats
-							</a>
-						</td>
-					</tr>
 				</table>
 			</div>
 		</div>
@@ -208,6 +181,7 @@
 			<li class="active"><a id="tournamentsPill" data-toggle="pill" href="#tournaments">Tournaments</a></li>
 			<li><a id="matchesPill" data-toggle="pill" href="#matches" data-url="playerMatches?playerId=" th:attrappend="data-url=${player.id}">Matches</a></li>
 			<li><a data-toggle="pill" href="#timeline" data-url="playerTimeline?playerId=" th:attrappend="data-url=${player.id}">Timeline</a></li>
+			<li><a data-toggle="pill" href="#statistics" data-url="playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -336,8 +310,9 @@
 					</thead>
 				</table>
 			</div>
-			<div id="timeline" class="tab-pane fade"><br/>Loading...</div>
 			<div id="matches" class="tab-pane fade"><br/>Loading...</div>
+			<div id="timeline" class="tab-pane fade"><br/>Loading...</div>
+			<div id="statistics" class="tab-pane fade"><br/>Loading...</div>
 		</div>
 	</th:block>
 	<div th:include="fragments/footer :: copy"></div>

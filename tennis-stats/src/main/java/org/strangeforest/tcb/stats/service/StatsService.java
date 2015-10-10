@@ -30,8 +30,11 @@ public class StatsService {
 		"  sum(w_ace) w_ace, sum(w_df) w_df, sum(w_sv_pt) w_sv_pt, sum(w_1st_in) w_1st_in, sum(w_1st_won) w_1st_won, sum(w_2nd_won) w_2nd_won, sum(w_sv_gms) w_sv_gms, sum(w_bp_sv) w_bp_sv, sum(w_bp_fc) w_bp_fc,\n" +
 		"  sum(l_ace) l_ace, sum(l_df) l_df, sum(l_sv_pt) l_sv_pt, sum(l_1st_in) l_1st_in, sum(l_1st_won) l_1st_won, sum(l_2nd_won) l_2nd_won, sum(l_sv_gms) l_sv_gms, sum(l_bp_sv) l_bp_sv, sum(l_bp_fc) l_bp_fc\n" +
 		"FROM match_stats\n" +
-		"LEFT JOIN match m USING (match_id)\n" +
-		"WHERE m.%1$s = ? AND set = 0%2$s\n";
+		"LEFT JOIN match m USING (match_id)%1$s\n" +
+		"WHERE m.%2$s = ? AND set = 0%3$s\n";
+
+	private static final String TOURNAMENT_EVENT_JOIN = //language=SQL
+	 	"\nLEFT JOIN tournament_event e USING (tournament_event_id)";
 
 
 	public MatchStats getMatchStats(long matchId) {
@@ -53,29 +56,36 @@ public class StatsService {
 		);
 	}
 
+	public PlayerStats getPlayerStats(int playerId) {
+		return getPlayerStats(playerId, TournamentEventFilter.ALL);
+	}
+
+	public PlayerStats getPlayerStats(int playerId, TournamentEventFilter filter) {
+		String join = !filter.isEmpty() ? TOURNAMENT_EVENT_JOIN : "";
+		String criteria = filter.getCriteria();
+		Object[] params = playerStatsParams(playerId, filter);
+		PlayerStats asWinnerStats = jdbcTemplate.queryForObject(
+			format(PLAYER_STATS_QUERY, join, "winner_id", criteria),
+			(rs, rowNum) -> {
+				return mapPlayerStats(rs, "w_", "l_");
+			},
+			params
+		);
+		PlayerStats asLoserStats = jdbcTemplate.queryForObject(
+			format(PLAYER_STATS_QUERY, join, "loser_id", criteria),
+			(rs, rowNum) -> {
+				return mapPlayerStats(rs, "l_", "w_");
+			},
+			params
+		);
+		return asWinnerStats.add(asLoserStats);
+	}
+
 	private Object[] playerStatsParams(int playerId, TournamentEventFilter filter) {
 		List<Object> params = new ArrayList<>();
 		params.add(playerId);
 		params.addAll(filter.getParamList());
 		return params.toArray();
-	}
-
-	public PlayerStats getPlayerStats(int playerId, TournamentEventFilter filter) {
-		PlayerStats asWinnerStats = jdbcTemplate.queryForObject(
-			format(PLAYER_STATS_QUERY, "winner_id", filter.getCriteria()),
-			(rs, rowNum) -> {
-				return mapPlayerStats(rs, "w_", "l_");
-			},
-			playerStatsParams(playerId, filter)
-		);
-		PlayerStats asLoserStats = jdbcTemplate.queryForObject(
-			format(PLAYER_STATS_QUERY, "loser_id", filter.getCriteria()),
-			(rs, rowNum) -> {
-				return mapPlayerStats(rs, "l_", "w_");
-			},
-			playerStatsParams(playerId, filter)
-		);
-		return asWinnerStats.add(asLoserStats);
 	}
 
 	private PlayerStats mapPlayerStats(ResultSet rs, String prefix) throws SQLException {

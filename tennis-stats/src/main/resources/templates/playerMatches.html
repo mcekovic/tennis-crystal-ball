@@ -33,12 +33,12 @@
 					}
 				}
 			});
-			var clearButton = "<div class='btn-group' style='margin: 0px 20px 0px 0px'><button type='button' class='btn btn-default' onclick='clearMatchesFilter()' data-toggle='tooltip' data-placement='top' title='Clear all filters'>"
-				+ "<span class='glyphicon glyphicon-remove'></span> Clear</button></div>";
-			$("#matchesTable-header").find("div.search").after(clearButton);
+			var statsButton = $("#playerStats").remove();
+			$("#matchesTable-header").find("div.search").before(statsButton);
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadMatches() {
+			$("#playerStats").popover("destroy").removeClass("loaded");
 			$("#matchesTable").bootgrid("reload");
 		}
 		function clearMatchesFilter() {
@@ -50,30 +50,40 @@
 			$("#matchesTable").bootgrid("search", "");
 			reloadMatches();
 		}
+		function showPlayerStats(event) {
+			var $playerStats = $("#playerStats");
+			if (!$playerStats.hasClass("loaded")) {
+				var url = "playerStats?playerId=[[${playerId}]]";
+				url += "&season=" + $("#matchesSeason").val();
+				url += "&level=" + $("#matchesLevel").val();
+				url += "&surface=" + $("#matchesSurface").val();
+				url += "&tournamentId=" + $("#matchesTournament").val();
+				url += "&tournamentEventId=" + $("#tournamentEvent").val();
+				$.get(url, function(data) {
+					event.preventDefault();
+					$playerStats.addClass("loaded").popover({title: [[${playerName}]] + " Statistics", content: data, html: true, placement: "auto left"});
+					$playerStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "600px"); }).click();
+				});
+			}
+		}
+		function closePlayerStats() {
+			$("#playerStats").click();
+		}
 		function showMatchStats(matchId, event) {
 			var $matchStats = $("#matchStats-" + matchId);
 			if (!$matchStats.hasClass("loaded")) {
 				event.preventDefault();
 				$.get("matchStats?matchId=" + matchId, function(data) {
-					$matchStats.addClass("loaded").popover({title: "Match Statistics", content: data, html: true, placement: "auto right"}).click();
+					$matchStats.addClass("loaded").popover({title: "Match Statistics", content: data, html: true, placement: "auto right"});
+					$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "400px"); }).click();
 				});
 			}
-		}
-		function toggleMatchStatsData(matchId) {
-			$("#matchStatsDiv-" + matchId).find(".pct-data, .raw-data").each(function() {
-				$(this).toggle();
-			});
 		}
 		function closeMatchStats(matchId) {
 			$("#matchStats-" + matchId).click();
 		}
 		/*]]>*/
 	</script>
-	<style scoped="scoped">
-		.popover {
-			max-width: 400px;
-		}
-	</style>
 	<div class="row">
 		<div class="col-md-2">
 			<select id="matchesSeason" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
@@ -133,4 +143,7 @@
 			</tr>
 		</thead>
 	</table>
+	<button id="playerStats" type="button" class="btn btn-info" style="margin-right: 20px" onclick="showPlayerStats(event)">
+		<span class="glyphicon glyphicon-stats"></span> Stats
+	</button>
 </th:block>

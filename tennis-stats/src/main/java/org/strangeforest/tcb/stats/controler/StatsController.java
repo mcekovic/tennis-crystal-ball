@@ -13,6 +13,14 @@ public class StatsController {
 
 	@Autowired private StatsService statsService;
 
+	@RequestMapping("/playerStatsTab")
+	public ModelAndView playerStatsTab(
+		@RequestParam(value = "playerId") int playerId
+	) {
+		PlayerStats playerStats = statsService.getPlayerStats(playerId);
+		return new ModelAndView("playerStatsTab", "stats", playerStats);
+	}
+
 	@RequestMapping("/matchStats")
 	public ModelAndView matchStats(
 		@RequestParam(value = "matchId") long matchId

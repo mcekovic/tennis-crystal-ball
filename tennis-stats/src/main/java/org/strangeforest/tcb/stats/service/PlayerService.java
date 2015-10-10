@@ -20,8 +20,12 @@ public class PlayerService {
 			"turned_pro, coach, web_site, twitter, facebook\n" +
 		"FROM player_v";
 
-	private static final String PLAYER_BY_NAME = PLAYER_QUERY + "\nWHERE name = ? ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
-	private static final String PLAYER_BY_ID = PLAYER_QUERY + "\nWHERE player_id = ?";
+	private static final String PLAYER_BY_NAME_QUERY = PLAYER_QUERY + "\nWHERE name = ? ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
+	private static final String PLAYER_BY_ID_QUERY = PLAYER_QUERY + "\nWHERE player_id = ?";
+
+	private static final String PLAYER_NAME_QUERY =
+		"SELECT name FROM player_v\n" +
+		"WHERE player_id = ?";
 
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
 		"SELECT player_id, name, country_id FROM player_v\n" +
@@ -41,11 +45,15 @@ public class PlayerService {
 
 
 	public Player getPlayer(int playerId) {
-		return jdbcTemplate.queryForObject(PLAYER_BY_ID, this::playerMapper, playerId);
+		return jdbcTemplate.queryForObject(PLAYER_BY_ID_QUERY, this::playerMapper, playerId);
 	}
 
 	public Player getPlayer(String name) {
-		return jdbcTemplate.queryForObject(PLAYER_BY_NAME, this::playerMapper, name);
+		return jdbcTemplate.queryForObject(PLAYER_BY_NAME_QUERY, this::playerMapper, name);
+	}
+
+	public String getPlayerName(int playerId) {
+		return jdbcTemplate.queryForObject(PLAYER_NAME_QUERY, String.class, playerId);
 	}
 
 	public List<AutocompleteOption> autocompletePlayer(String name) {

@@ -1,12 +1,12 @@
-<div th:id="'matchStatsDiv-' + ${matchId}" xmlns:th="http://www.thymeleaf.org">
+<div th:id="'matchStatsPopover-' + ${matchId}" xmlns:th="http://www.thymeleaf.org">
 	<!--@thymesVar id="matchId" type="java.lang.Long"-->
 	<!--@thymesVar id="matchStats" type="org.strangeforest.tcb.stats.model.MatchStats"-->
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
-			var $matchStatsDiv = $("#matchStatsDiv-[[${matchId}]]");
-			$matchStatsDiv.find("[data-toggle='tooltip']").tooltip();
-			$matchStatsDiv.find(".raw-data").hide();
+			var $matchStatsPopover = $("#matchStatsPopover-[[${matchId}]]");
+			$matchStatsPopover.find("[data-toggle='tooltip']").tooltip();
+			$matchStatsPopover.find(".raw-data").hide();
 		});
 		/*]]>*/
 	</script>
@@ -179,10 +179,10 @@
 	<th:block th:unless="${matchStats}"><p>No statistics available!</p></th:block>
 	<div class="row">
 		<div th:if="${matchStats}" class="pct-data col-md-6">
-			<a class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:href="|javascript:toggleMatchStatsData(${matchId})|"> Raw Data</a>
+			<a class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:href="|javascript:toggleStatsData('matchStatsPopover-${matchId}')|"> Raw Data</a>
 		</div>
 		<div th:if="${matchStats}" class="raw-data col-md-6">
-			<a class="btn btn-default btn-xs glyphicon glyphicon-scale" th:href="|javascript:toggleMatchStatsData(${matchId})|"> Pct. Data</a>
+			<a class="btn btn-default btn-xs glyphicon glyphicon-scale" th:href="|javascript:toggleStatsData('matchStatsPopover-${matchId}')|"> Pct. Data</a>
 		</div>
 		<div class="col-md-6">
 			<a class="btn btn-default btn-xs glyphicon glyphicon-remove pull-right" th:href="|javascript:closeMatchStats(${matchId})|"> Close</a>

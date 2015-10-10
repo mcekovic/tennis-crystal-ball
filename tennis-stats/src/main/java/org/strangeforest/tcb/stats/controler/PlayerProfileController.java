@@ -41,12 +41,14 @@ public class PlayerProfileController {
 		@RequestParam(value = "playerId") int playerId,
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId
 	) {
+		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		List<Tournament> tournaments = tournamentService.getPlayerTournaments(playerId);
 		List<TournamentEvent> tournamentEvents = tournamentService.getPlayerTournamentEvents(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("playerName", name);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("tournamentEvents", tournamentEvents);
