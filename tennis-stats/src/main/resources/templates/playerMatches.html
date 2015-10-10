@@ -7,7 +7,6 @@
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
-			$("[data-toggle='tooltip']").tooltip();
 			$("#matchesTable").bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -34,6 +33,10 @@
 					}
 				}
 			});
+			var clearButton = "<div class='btn-group' style='margin: 0px 20px 0px 0px'><button type='button' class='btn btn-default' onclick='clearMatchesFilter()' data-toggle='tooltip' data-placement='top' title='Clear all filters'>"
+				+ "<span class='glyphicon glyphicon-remove'></span> Clear</button></div>";
+			$("#matchesTable-header").find("div.search").after(clearButton);
+			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadMatches() {
 			$("#matchesTable").bootgrid("reload");

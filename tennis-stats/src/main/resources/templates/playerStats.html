@@ -9,127 +9,133 @@
 		});
 		/*]]>*/
 	</script>
-	<table th:unless="${stats.isEmpty()}" class="table table-condensed table-hover table-striped">
-		<tbody class="text-nowrap">
-			<tr>
-				<th>Serve</th>
-				<th></th>
-			</tr>
-			<!-- Serve Pct. Data -->
-			<tr class="pct-data">
-				<td>Ace %</td>
-				<th th:text="${#numbers.formatDecimal(stats.acePct, 1, 1) + '%'}">10%</th>
-			</tr>
-			<tr class="pct-data">
-				<td>Double Fault %</td>
-				<th th:text="${#numbers.formatDecimal(stats.doubleFaultPct, 1, 1) + '%'}">3%</th>
-			</tr>
-			<tr class="pct-data">
-				<td>1st Serve</td>
-				<th th:text="${#numbers.formatDecimal(stats.firstServePct, 1, 1) + '%'}">64%</th>
-			</tr>
-			<tr class="pct-data">
-				<td>1st Serve Won</td>
-				<th th:text="${#numbers.formatDecimal(stats.firstServeWonPct, 1, 1) + '%'}">75%</th>
-			</tr>
-			<tr class="pct-data">
-				<td>2nd Serve Won</td>
-				<th th:text="${#numbers.formatDecimal(stats.secondServeWonPct, 1, 1) + '%'}">45%</th>
-			</tr>
-			<tr class="pct-data">
-				<td>Break Points Saved</td>
-				<th th:text="${stats.breakPointsSavedPct != null ? #numbers.formatDecimal(stats.breakPointsSavedPct, 1, 1) + '%' : ''}">35%</th>
-			</tr>
-			<tr class="pct-data">
-				<td>Service Pts. Won</td>
-				<th th:text="${#numbers.formatDecimal(stats.servicePointsWonPct, 1, 1) + '%'}">35%</th>
-			</tr>
-			<!-- Serve Raw Data -->
-			<tr class="raw-data"></tr>
-			<tr class="raw-data">
-				<td>Aces</td>
-				<th th:text="${stats.aces}">5</th>
-			</tr>
-			<tr class="raw-data">
-				<td>Double Faults</td>
-				<th th:text="${stats.doubleFaults}">3</th>
-			</tr>
-			<tr class="raw-data">
-				<td>1st Serve In</td>
-				<th th:text="${stats.firstServesIn}">43</th>
-			</tr>
-			<tr class="raw-data">
-				<td>1st Serve Won</td>
-				<th th:text="${stats.firstServesWon}">27</th>
-			</tr>
-			<tr class="raw-data">
-				<td>2nd Serve Won</td>
-				<th th:text="${stats.secondServesWon}">22</th>
-			</tr>
-			<tr class="raw-data">
-				<td>Break Points Saved</td>
-				<th th:text="${stats.breakPointsSaved} + '/' + ${stats.breakPointsFaced}">1/2</th>
-			</tr>
-			<tr class="raw-data">
-				<td>Service Pts. Won</td>
-				<th th:text="${stats.servicePointsWon}">65</th>
-			</tr>
-			<tr>
-				<th>Return</th>
-				<th></th>
-			</tr>
-			<!-- Return Pct. Data -->
-			<tr class="pct-data">
-				<td>1st Srv. Rtn. Won</td>
-				<th th:text="${#numbers.formatDecimal(stats.firstServeReturnPointsWonPct, 1, 1) + '%'}">28%</th>
-			</tr>
-			<tr class="pct-data">
-				<td>2nd Srv. Rtn. Won</td>
-				<th th:text="${#numbers.formatDecimal(stats.secondServeReturnPointsWonPct, 1, 1) + '%'}">22%</th>
-			</tr>
-			<tr class="pct-data">
-				<td>Break Points</td>
-				<th th:text="${stats.breakPointsConverted != null ? #numbers.formatDecimal(stats.breakPointsConverted, 1, 1) + '%' : ''}">35%</th>
-			</tr>
-			<tr class="pct-data">
-				<td>Return Pts. Won</td>
-				<th th:text="${#numbers.formatDecimal(stats.returnPointsWonPct, 1, 1) + '%'}">35%</th>
-			</tr>
-			<!-- Return Raw Data -->
-			<tr class="raw-data">
-				<td>1st Srv. Rtn. Won</td>
-				<th th:text="${stats.firstServeReturnPointsWon}">25</th>
-			</tr>
-			<tr class="raw-data">
-				<td>2nd Srv. Rtn. Won</td>
-				<th th:text="${stats.secondServeReturnPointsWon}">25</th>
-			</tr>
-			<tr class="raw-data">
-				<td>Break Points</td>
-				<th th:text="${stats.breakPointsWon} + '/' + ${stats.breakPoints}">0/0</th>
-			</tr>
-			<tr class="raw-data">
-				<td>Return Pts. Won</td>
-				<th th:text="${stats.returnPointsWon}">25</th>
-			</tr>
-			<tr>
-				<th>Total</th>
-				<th></th>
-			</tr>
-			<tr data-toggle="tooltip" data-placement="top"  title="Dominance Ratio: % of return points won divided by % of serve points lost">
-				<td>Dominance Ratio</td>
-				<th th:text="${#numbers.formatDecimal(stats.dominanceRatio, 1, 2)}">0.67</th>
-			</tr>
-			<tr class="pct-data">
-				<td>Total Pts. Won</td>
-				<th th:text="${#numbers.formatDecimal(stats.totalPointsWonPct, 1, 1) + '%'}">45%</th>
-			</tr>
-			<tr class="raw-data">
-				<td>Total Pts. Won</td>
-				<th th:text="${stats.totalPointsWon}">99</th>
-			</tr>
-		</tbody>
-	</table>
+	<div th:unless="${stats.isEmpty()}" class="row text-nowrap">
+		<div class="col-md-6 ">
+			<table class="table table-condensed table-hover table-striped">
+				<tr>
+					<th>Serve</th>
+					<th></th>
+				</tr>
+				<!-- Serve Pct. Data -->
+				<tr class="pct-data">
+					<td>Ace %</td>
+					<th th:text="${#numbers.formatDecimal(stats.acePct, 1, 1) + '%'}">10%</th>
+				</tr>
+				<tr class="pct-data">
+					<td>Double Fault %</td>
+					<th th:text="${#numbers.formatDecimal(stats.doubleFaultPct, 1, 1) + '%'}">3%</th>
+				</tr>
+				<tr class="pct-data">
+					<td>1st Serve</td>
+					<th th:text="${#numbers.formatDecimal(stats.firstServePct, 1, 1) + '%'}">64%</th>
+				</tr>
+				<tr class="pct-data">
+					<td>1st Serve Won</td>
+					<th th:text="${#numbers.formatDecimal(stats.firstServeWonPct, 1, 1) + '%'}">75%</th>
+				</tr>
+				<tr class="pct-data">
+					<td>2nd Serve Won</td>
+					<th th:text="${#numbers.formatDecimal(stats.secondServeWonPct, 1, 1) + '%'}">45%</th>
+				</tr>
+				<tr class="pct-data">
+					<td>Break Points Saved</td>
+					<th th:text="${stats.breakPointsSavedPct != null ? #numbers.formatDecimal(stats.breakPointsSavedPct, 1, 1) + '%' : ''}">35%</th>
+				</tr>
+				<tr class="pct-data">
+					<td>Service Pts. Won</td>
+					<th th:text="${#numbers.formatDecimal(stats.servicePointsWonPct, 1, 1) + '%'}">35%</th>
+				</tr>
+				<!-- Serve Raw Data -->
+				<tr class="raw-data"></tr>
+				<tr class="raw-data">
+					<td>Aces</td>
+					<th th:text="${stats.aces}">5</th>
+				</tr>
+				<tr class="raw-data">
+					<td>Double Faults</td>
+					<th th:text="${stats.doubleFaults}">3</th>
+				</tr>
+				<tr class="raw-data">
+					<td>1st Serve In</td>
+					<th th:text="${stats.firstServesIn}">43</th>
+				</tr>
+				<tr class="raw-data">
+					<td>1st Serve Won</td>
+					<th th:text="${stats.firstServesWon}">27</th>
+				</tr>
+				<tr class="raw-data">
+					<td>2nd Serve Won</td>
+					<th th:text="${stats.secondServesWon}">22</th>
+				</tr>
+				<tr class="raw-data">
+					<td>Break Points Saved</td>
+					<th th:text="${stats.breakPointsSaved} + '/' + ${stats.breakPointsFaced}">1/2</th>
+				</tr>
+				<tr class="raw-data">
+					<td>Service Pts. Won</td>
+					<th th:text="${stats.servicePointsWon}">65</th>
+				</tr>
+			</table>
+		</div>
+		<div class="col-md-6 ">
+			<table class="table table-condensed table-hover table-striped">
+				<tr>
+					<th>Return</th>
+					<th></th>
+				</tr>
+				<!-- Return Pct. Data -->
+				<tr class="pct-data">
+					<td>1st Srv. Rtn. Won</td>
+					<th th:text="${#numbers.formatDecimal(stats.firstServeReturnPointsWonPct, 1, 1) + '%'}">28%</th>
+				</tr>
+				<tr class="pct-data">
+					<td>2nd Srv. Rtn. Won</td>
+					<th th:text="${#numbers.formatDecimal(stats.secondServeReturnPointsWonPct, 1, 1) + '%'}">22%</th>
+				</tr>
+				<tr class="pct-data">
+					<td>Break Points</td>
+					<th th:text="${stats.breakPointsConverted != null ? #numbers.formatDecimal(stats.breakPointsConverted, 1, 1) + '%' : ''}">35%</th>
+				</tr>
+				<tr class="pct-data">
+					<td>Return Pts. Won</td>
+					<th th:text="${#numbers.formatDecimal(stats.returnPointsWonPct, 1, 1) + '%'}">35%</th>
+				</tr>
+				<!-- Return Raw Data -->
+				<tr class="raw-data">
+					<td>1st Srv. Rtn. Won</td>
+					<th th:text="${stats.firstServeReturnPointsWon}">25</th>
+				</tr>
+				<tr class="raw-data">
+					<td>2nd Srv. Rtn. Won</td>
+					<th th:text="${stats.secondServeReturnPointsWon}">25</th>
+				</tr>
+				<tr class="raw-data">
+					<td>Break Points</td>
+					<th th:text="${stats.breakPointsWon} + '/' + ${stats.breakPoints}">0/0</th>
+				</tr>
+				<tr class="raw-data">
+					<td>Return Pts. Won</td>
+					<th th:text="${stats.returnPointsWon}">25</th>
+				</tr>
+				<tr>
+					<th>Total</th>
+					<th></th>
+				</tr>
+				<tr data-toggle="tooltip" data-placement="top"  title="Dominance Ratio: % of return points won divided by % of serve points lost">
+					<td>Dominance Ratio</td>
+					<th th:text="${#numbers.formatDecimal(stats.dominanceRatio, 1, 2)}">0.67</th>
+				</tr>
+				<tr class="pct-data">
+					<td>Total Pts. Won</td>
+					<th th:text="${#numbers.formatDecimal(stats.totalPointsWonPct, 1, 1) + '%'}">45%</th>
+				</tr>
+				<tr class="raw-data">
+					<td>Total Pts. Won</td>
+					<th th:text="${stats.totalPointsWon}">99</th>
+				</tr>
+			</table>
+		</div>
+	</div>
 	<th:block th:if="${stats.isEmpty()}"><p>No statistics available!</p></th:block>
 	<div class="row">
 		<div th:unless="${stats.isEmpty()}" class="pct-data col-md-6">
