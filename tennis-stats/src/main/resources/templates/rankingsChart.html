@@ -20,7 +20,7 @@
 			if ($.trim($("#players").val()).length > 0)
 				doDrawChart(true, $("#rankChartSize").slider("value"));
 			else
-				$("#rankChart").html("<div class='alert alert-warning col-md-9'>No player selected!</div>");
+				$("#rankChart").html("<div class='row'><div class='alert alert-warning col-md-9'>No player selected!</div></div>");
 		}
 		function doDrawChart(fetchData, width) {
 			var players = $("#players").val();
@@ -225,7 +225,7 @@
 		</div>
 		<div class="col-md-2">
 			<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawChart()">
-				<span class="glyphicon glyphicon-stats"></span> Draw Chart
+				<span class="glyphicon glyphicon-signal"></span> Draw Chart
 			</a>
 		</div>
 	</div>

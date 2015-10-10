@@ -53,7 +53,7 @@
 		function showPlayerStats(event) {
 			var $playerStats = $("#playerStats");
 			if (!$playerStats.hasClass("loaded")) {
-				var url = "playerStats?playerId=[[${playerId}]]";
+				var url = "playerStatsPopover?playerId=[[${playerId}]]";
 				url += "&season=" + $("#matchesSeason").val();
 				url += "&level=" + $("#matchesLevel").val();
 				url += "&surface=" + $("#matchesSurface").val();
