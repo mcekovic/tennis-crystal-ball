@@ -16,10 +16,19 @@
 				var level = $tournament.data("level");
 				$tournament.addClass("label-" + levelClassSuffix(level));
 			});
-			$timelineTable.find("a[data-surface]").each(function() {
+			$timelineTable.find("a[data-level], a[data-surface]").each(function() {
 				var $result = $(this);
+				var level = $result.data("level");
 				var surface = $result.data("surface");
-				$result.tooltip({title: "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + "</span>", html: true});
+				var title = "";
+				if (level)
+					title += "<span class='label label-" + levelClassSuffix(level) + "'>" + levelName(level) + "</span>";
+				if (surface) {
+					if (level)
+						title += " ";
+					title += "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + "</span>";
+				}
+				$result.tooltip({title: title, html: true});
 			});
 		});
 		/*]]>*/
@@ -50,7 +59,8 @@
 				</td>
 				<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
 					<a th:if="${item.result}" th:text="${item.result}" th:href="'javascript:playerMatches(' + ${item.tournamentEventId} + ')'"
-					   th:attr="data-surface=${tournament.surfaces.size() > 1 ? item.surface : ''}" th:title="${tournament.surfaces.size() == 1 ? 'Show matches' : ''}">W</a>
+					   th:attr="data-level=${tournament.levelCount > 1 ? item.level : ''}, data-surface=${tournament.surfaceCount > 1 ? item.surface : ''}"
+					   th:title="${tournament.levelCount &lt;= 1 and tournament.surfaceCount &lt;= 1 ? 'Show matches' : ''}">W</a>
 					<span th:unless="${item.result}" class="absent">A</span>
 				</td>
 			</tr>

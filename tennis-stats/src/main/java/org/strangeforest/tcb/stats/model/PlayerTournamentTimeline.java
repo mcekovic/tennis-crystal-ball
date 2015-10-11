@@ -38,12 +38,20 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 		return levels;
 	}
 
+	public int getLevelCount() {
+		return levels.size();
+	}
+
 	public String getMaxLevel() {
 		return maxLevel.get().code();
 	}
 
 	public Iterable<String> getSurfaces() {
 		return surfaces;
+	}
+
+	public int getSurfaceCount() {
+		return surfaces.size();
 	}
 
 	public List<PlayerTimelineItem> getItems() {
