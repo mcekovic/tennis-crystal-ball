@@ -217,6 +217,9 @@
 								"stats": function(column, row) {
 									return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='" + row.name + " " + row.season + " Statistics'> Stats</a>";
 								}
+							},
+							labels: {
+								noResults: "No tournaments found"
 							}
 						});
 					});

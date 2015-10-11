@@ -33,6 +33,9 @@
 					"stats": function(column, row) {
 						return "<a id='matchStats-" + row.id + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'> Stats</a>";
 					}
+				},
+				labels: {
+					noResults: "No matches found"
 				}
 			});
 			var $matchesTableHeader = $("#matchesTable-header");

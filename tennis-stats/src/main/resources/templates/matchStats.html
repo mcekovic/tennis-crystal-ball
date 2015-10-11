@@ -175,7 +175,7 @@
 			</tr>
 		</tbody>
 	</table>
-	<th:block th:unless="${matchStats}"><p>No statistics available!</p></th:block>
+	<th:block th:unless="${matchStats}"><p>No statistics available</p></th:block>
 	<div class="row">
 		<div th:if="${matchStats}" class="pct-data col-md-6">
 			<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('matchStatsPopover-${matchId}')|"> Raw Data</button>

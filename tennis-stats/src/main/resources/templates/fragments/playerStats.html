@@ -136,7 +136,7 @@
 				</table>
 			</div>
 		</div>
-		<th:block th:if="${stats.isEmpty()}"><p>No statistics available!</p></th:block>
+		<th:block th:if="${stats.isEmpty()}"><p>No statistics available</p></th:block>
 		<div class="row">
 			<div th:unless="${stats.isEmpty()}" class="pct-data col-md-6">
 				<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('${elementId}')|"> Raw Data</button>
