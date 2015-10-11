@@ -17,8 +17,16 @@ public class StatsController {
 	public ModelAndView playerStatsTab(
 		@RequestParam(value = "playerId") int playerId
 	) {
-		PlayerStats playerStats = statsService.getPlayerStats(playerId);
-		return new ModelAndView("playerStatsTab", "stats", playerStats);
+		PlayerStats stats = statsService.getPlayerStats(playerId);
+		return new ModelAndView("playerStatsTab", "stats", stats);
+	}
+
+	@RequestMapping("/playerPerformance")
+	public ModelAndView playerPerformance(
+		@RequestParam(value = "playerId") int playerId
+	) {
+		PlayerPerformance perf = statsService.getPlayerPerformance(playerId);
+		return new ModelAndView("playerPerformance", "perf", perf);
 	}
 
 	@RequestMapping("/eventStats")
@@ -27,10 +35,10 @@ public class StatsController {
 		@RequestParam(value = "tournamentEventId") int tournamentEventId
 	) {
 		MatchFilter filter = new MatchFilter(null, null, null, null, tournamentEventId, null, null);
-		PlayerStats playerStats = statsService.getPlayerStats(playerId, filter);
+		PlayerStats stats = statsService.getPlayerStats(playerId, filter);
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
-		modelMap.addAttribute("stats", playerStats);
+		modelMap.addAttribute("stats", stats);
 		return new ModelAndView("eventStats", modelMap);
 	}
 
@@ -46,8 +54,8 @@ public class StatsController {
 		@RequestParam(value = "searchPhrase", required = false) String searchPhrase
 	) {
 		MatchFilter filter = new MatchFilter(season, level, surface, tournamentId, tournamentEventId, round, searchPhrase);
-		PlayerStats playerStats = statsService.getPlayerStats(playerId, filter);
-		return new ModelAndView("playerStats", "stats", playerStats);
+		PlayerStats stats = statsService.getPlayerStats(playerId, filter);
+		return new ModelAndView("playerStats", "stats", stats);
 	}
 
 	@RequestMapping("/matchStats")

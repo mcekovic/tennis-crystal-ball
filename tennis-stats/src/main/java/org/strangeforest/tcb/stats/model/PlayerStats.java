@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
+
 public class PlayerStats {
 
 	private final int aces;
@@ -36,8 +38,6 @@ public class PlayerStats {
 
 	private PlayerStats opponentStats;
 
-	private static final double PCT = 100.0;
-
 	public PlayerStats(int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced) {
 		this.aces = aces;
 		this.doubleFaults = doubleFaults;
@@ -48,27 +48,27 @@ public class PlayerStats {
 		this.serviceGames = serviceGames;
 		this.breakPointsSaved = breakPointsSaved;
 		this.breakPointsFaced = breakPointsFaced;
-		acePct = servicePoints != 0 ? PCT * aces / servicePoints : 0.0;
-		doubleFaultPct = servicePoints != 0 ? PCT * doubleFaults / servicePoints : 0.0;
-		firstServePct = servicePoints != 0 ? PCT * firstServesIn / servicePoints : 0.0;
-		firstServeWonPct = firstServesIn != 0 ? PCT * firstServesWon / firstServesIn : 0.0;
+		acePct = pct(aces, servicePoints);
+		doubleFaultPct = pct(doubleFaults, servicePoints);
+		firstServePct = pct(firstServesIn, servicePoints);
+		firstServeWonPct = pct(firstServesWon, firstServesIn);
 		firstServesLost = firstServesIn - firstServesWon;
 		firstServeLostPct = PCT - firstServeWonPct;
 		secondServes = servicePoints - firstServesIn;
 		secondServesIn = secondServes - doubleFaults;
-		secondServeWonPct = secondServes != 0 ? PCT * secondServesWon / secondServes : 0.0;
+		secondServeWonPct = pct(secondServesWon, secondServes);
 		secondServesLost = secondServes - secondServesWon;
 		secondServeLostPct = PCT - secondServeWonPct;
 		servicePointsWon = firstServesWon + secondServesWon;
-		servicePointsWonPct = servicePoints != 0 ? PCT * servicePointsWon / servicePoints : 0.0;
+		servicePointsWonPct = pct(servicePointsWon, servicePoints);
 		servicePointsLost = firstServesLost + secondServesLost;
 		servicePointsLostPct = PCT - servicePointsWonPct;
-		breakPointsSavedPct = breakPointsFaced != 0 ? PCT * breakPointsSaved / breakPointsFaced : null;
+		breakPointsSavedPct = optPct(breakPointsSaved, breakPointsFaced);
 		breakPointsLost = breakPointsFaced - breakPointsSaved;
-		breakPointsLostPct = breakPointsFaced != 0 ? PCT * breakPointsLost / breakPointsFaced : null;
+		breakPointsLostPct = optPct(breakPointsLost, breakPointsFaced);
 		serviceGamesWon = serviceGames - breakPointsLost;
-		serviceGamesWonPct = serviceGames != 0 ? PCT * serviceGamesWon / serviceGames : 0.0;
-		serviceGamesLostPct = serviceGames != 0 ? PCT * breakPointsLost / serviceGames : 0.0;
+		serviceGamesWonPct = pct(serviceGamesWon, serviceGames);
+		serviceGamesLostPct = pct(breakPointsLost, serviceGames);
 	}
 
 
@@ -237,8 +237,7 @@ public class PlayerStats {
 	}
 
 	public double getTotalPointsWonPct() {
-		int totalPoints = getTotalPoints();
-		return totalPoints != 0 ? PCT * getTotalPointsWon() / totalPoints : 0.0;
+		return pct(getTotalPointsWon(), getTotalPoints());
 	}
 
 	public int getTotalGames() {
@@ -250,12 +249,11 @@ public class PlayerStats {
 	}
 
 	public double getTotalGamesWonPct() {
-		int totalGames = getTotalGames();
-		return totalGames != 0 ? PCT * getTotalGamesWon() / totalGames : 0.0;
+		return pct(getTotalGamesWon(), getTotalGames());
 	}
 
 	public double getDominanceRatio() {
-		return servicePointsLostPct != 0.0 ? getReturnPointsWonPct() / servicePointsLostPct : 0.0;
+		return pct(getReturnPointsWonPct(), servicePointsLostPct);
 	}
 
 

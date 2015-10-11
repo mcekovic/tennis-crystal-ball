@@ -182,6 +182,7 @@
 			<li><a id="matchesPill" data-toggle="pill" href="#matches" data-url="playerMatches?playerId=" th:attrappend="data-url=${player.id}">Matches</a></li>
 			<li><a data-toggle="pill" href="#timeline" data-url="playerTimeline?playerId=" th:attrappend="data-url=${player.id}">Timeline</a></li>
 			<li><a data-toggle="pill" href="#statistics" data-url="playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
+			<li><a data-toggle="pill" href="#performance" data-url="playerPerformance?playerId=" th:attrappend="data-url=${player.id}">Performance</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -330,6 +331,7 @@
 			<div id="matches" class="tab-pane fade"><br/>Loading...</div>
 			<div id="timeline" class="tab-pane fade"><br/>Loading...</div>
 			<div id="statistics" class="tab-pane fade"><br/>Loading...</div>
+			<div id="performance" class="tab-pane fade"><br/>Loading...</div>
 		</div>
 	</th:block>
 	<div th:include="fragments/footer :: copy"></div>

@@ -4,13 +4,12 @@
 		<script type="text/javascript" th:inline="javascript">
 			/*<![CDATA[*/
 			$(function() {
-				var $playerStatsDiv = $("#" + [[${elementId}]]);
-				$playerStatsDiv.find(".raw-data").hide();
+				$("#" + [[${elementId}]]).find(".raw-data").hide();
 			});
 			/*]]>*/
 		</script>
 		<div th:unless="${stats.isEmpty()}" class="row text-nowrap">
-			<div th:class="'col-md-' + ${popover ? '6' : '4'}" class="col-md-6">
+			<div th:class="'col-md-' + ${popover ? '6' : '3'}" class="col-md-6">
 				<table class="table table-condensed table-hover table-striped">
 					<tr>
 						<th>Serve</th>
@@ -72,7 +71,7 @@
 					</tr>
 					<tr class="raw-data">
 						<td>Break Points Saved</td>
-						<th th:text="${stats.breakPointsSaved} + '/' + ${stats.breakPointsFaced}">1/2</th>
+						<th th:text="${stats.breakPointsSaved} + ' / ' + ${stats.breakPointsFaced}">1/2</th>
 					</tr>
 					<tr class="raw-data">
 						<td>Service Pts. Won</td>
@@ -84,7 +83,7 @@
 					</tr>
 				</table>
 			</div>
-			<div th:class="'col-md-' + ${popover ? '6' : '4'}" class="col-md-6">
+			<div th:class="'col-md-' + ${popover ? '6' : '3'}" class="col-md-6">
 				<table class="table table-condensed table-hover table-striped">
 					<tr>
 						<th>Return</th>
@@ -123,7 +122,7 @@
 					</tr>
 					<tr class="raw-data">
 						<td>Break Points</td>
-						<th th:text="${stats.breakPointsWon} + '/' + ${stats.breakPoints}">0/0</th>
+						<th th:text="${stats.breakPointsWon} + ' / ' + ${stats.breakPoints}">0/0</th>
 					</tr>
 					<tr class="raw-data">
 						<td>Return Pts. Won</td>
