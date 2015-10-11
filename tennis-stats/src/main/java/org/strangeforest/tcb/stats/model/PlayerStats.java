@@ -30,6 +30,9 @@ public class PlayerStats {
 	private final Double breakPointsSavedPct;
 	private final int breakPointsLost;
 	private final Double breakPointsLostPct;
+	private final int serviceGamesWon;
+	private final double serviceGamesWonPct;
+	private final double serviceGamesLostPct;
 
 	private PlayerStats opponentStats;
 
@@ -63,6 +66,9 @@ public class PlayerStats {
 		breakPointsSavedPct = breakPointsFaced != 0 ? PCT * breakPointsSaved / breakPointsFaced : null;
 		breakPointsLost = breakPointsFaced - breakPointsSaved;
 		breakPointsLostPct = breakPointsFaced != 0 ? PCT * breakPointsLost / breakPointsFaced : null;
+		serviceGamesWon = serviceGames - breakPointsLost;
+		serviceGamesWonPct = serviceGames != 0 ? PCT * serviceGamesWon / serviceGames : 0.0;
+		serviceGamesLostPct = serviceGames != 0 ? PCT * breakPointsLost / serviceGames : 0.0;
 	}
 
 
@@ -148,6 +154,14 @@ public class PlayerStats {
 		return breakPointsSavedPct;
 	}
 
+	public int getServiceGamesWon() {
+		return serviceGamesWon;
+	}
+
+	public double getServiceGamesWonPct() {
+		return serviceGamesWonPct;
+	}
+
 
 	// Return
 
@@ -203,6 +217,14 @@ public class PlayerStats {
 		return opponentStats.breakPointsLostPct;
 	}
 
+	public int getReturnGamesWon() {
+		return opponentStats.breakPointsLost;
+	}
+
+	public double getReturnGamesWonPct() {
+		return opponentStats.serviceGamesLostPct;
+	}
+
 
 	// Totals
 
@@ -217,6 +239,19 @@ public class PlayerStats {
 	public double getTotalPointsWonPct() {
 		int totalPoints = getTotalPoints();
 		return totalPoints != 0 ? PCT * getTotalPointsWon() / totalPoints : 0.0;
+	}
+
+	public int getTotalGames() {
+		return serviceGames + getReturnGames();
+	}
+
+	public int getTotalGamesWon() {
+		return serviceGamesWon + getReturnGamesWon();
+	}
+
+	public double getTotalGamesWonPct() {
+		int totalGames = getTotalGames();
+		return totalGames != 0 ? PCT * getTotalGamesWon() / totalGames : 0.0;
 	}
 
 	public double getDominanceRatio() {

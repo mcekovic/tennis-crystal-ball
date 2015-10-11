@@ -43,10 +43,13 @@
 					</tr>
 					<tr class="pct-data">
 						<td>Service Pts. Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.servicePointsWonPct, 1, 1) + '%'}">35%</th>
+						<th th:text="${#numbers.formatDecimal(stats.servicePointsWonPct, 1, 1) + '%'}">85%</th>
+					</tr>
+					<tr class="pct-data">
+						<td>Service Games Won</td>
+						<th th:text="${#numbers.formatDecimal(stats.serviceGamesWonPct, 1, 1) + '%'}">85%</th>
 					</tr>
 					<!-- Serve Raw Data -->
-					<tr class="raw-data"></tr>
 					<tr class="raw-data">
 						<td>Aces</td>
 						<th th:text="${stats.aces}">5</th>
@@ -75,6 +78,10 @@
 						<td>Service Pts. Won</td>
 						<th th:text="${stats.servicePointsWon}">65</th>
 					</tr>
+					<tr class="raw-data">
+						<td>Service Games Won</td>
+						<th th:text="${stats.serviceGamesWon}">12</th>
+					</tr>
 				</table>
 			</div>
 			<div th:class="'col-md-' + ${popover ? '6' : '4'}" class="col-md-6">
@@ -100,7 +107,12 @@
 						<td>Return Pts. Won</td>
 						<th th:text="${#numbers.formatDecimal(stats.returnPointsWonPct, 1, 1) + '%'}">35%</th>
 					</tr>
+					<tr class="pct-data">
+						<td>Return Games Won</td>
+						<th th:text="${#numbers.formatDecimal(stats.returnGamesWonPct, 1, 1) + '%'}">35%</th>
+					</tr>
 					<!-- Return Raw Data -->
+					<tr class="raw-data"></tr>
 					<tr class="raw-data">
 						<td>1st Srv. Rtn. Won</td>
 						<th th:text="${stats.firstServeReturnPointsWon}">25</th>
@@ -117,6 +129,10 @@
 						<td>Return Pts. Won</td>
 						<th th:text="${stats.returnPointsWon}">25</th>
 					</tr>
+					<tr class="raw-data">
+						<td>Return Games Won</td>
+						<th th:text="${stats.returnGamesWon}">3</th>
+					</tr>
 					<tr>
 						<th>Total</th>
 						<th></th>
@@ -127,11 +143,19 @@
 					</tr>
 					<tr class="pct-data">
 						<td>Total Pts. Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.totalPointsWonPct, 1, 1) + '%'}">45%</th>
+						<th th:text="${#numbers.formatDecimal(stats.totalPointsWonPct, 1, 1) + '%'}">56%</th>
+					</tr>
+					<tr class="pct-data">
+						<td>Total Games Won</td>
+						<th th:text="${#numbers.formatDecimal(stats.totalGamesWonPct, 1, 1) + '%'}">58%</th>
 					</tr>
 					<tr class="raw-data">
 						<td>Total Pts. Won</td>
 						<th th:text="${stats.totalPointsWon}">99</th>
+					</tr>
+					<tr class="raw-data">
+						<td>Total Games Won</td>
+						<th th:text="${stats.totalGamesWon}">16</th>
 					</tr>
 				</table>
 			</div>
