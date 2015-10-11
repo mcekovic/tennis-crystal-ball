@@ -33,16 +33,15 @@ public class PlayerTimeline {
 	}
 
 	public void addItem(PlayerTimelineItem item) {
-		PlayerTournamentTimeline tournament = getTournamentTimeline(item);
+		PlayerTournamentTimeline tournament = getTournamentTimeline(item.getTournamentId());
 		tournament.addItem(item);
 		seasons.add(item.getSeason());
 	}
 
-	private PlayerTournamentTimeline getTournamentTimeline(PlayerTimelineItem item) {
-		int tournamentId = item.getTournamentId();
+	private PlayerTournamentTimeline getTournamentTimeline(int tournamentId) {
 		PlayerTournamentTimeline tournament = tournaments.get(tournamentId);
 		if (tournament == null) {
-			tournament = new PlayerTournamentTimeline(this, tournamentId, item.getName());
+			tournament = new PlayerTournamentTimeline(this, tournamentId);
 			tournaments.put(tournamentId, tournament);
 		}
 		return tournament;

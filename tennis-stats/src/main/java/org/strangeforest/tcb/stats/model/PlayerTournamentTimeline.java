@@ -13,28 +13,22 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 
 	private final PlayerTimeline timeline;
 	private final int tournamentId;
-	private final String name;
-	private final Set<String> levels = new LinkedHashSet<>();
+	private final Map<String, String> levels = new LinkedHashMap<>(); // <Level, Name>
 	private final Set<String> surfaces = new LinkedHashSet<>();
 	private final List<Date> dates = new ArrayList<>();
 	private final Map<Integer, PlayerTimelineItem> items = new HashMap<>();
 	private boolean firstByLevel;
 
-	public PlayerTournamentTimeline(PlayerTimeline timeline, int tournamentId, String name) {
+	public PlayerTournamentTimeline(PlayerTimeline timeline, int tournamentId) {
 		this.timeline = timeline;
 		this.tournamentId = tournamentId;
-		this.name = name;
 	}
 
 	public int getTournamentId() {
 		return tournamentId;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public Iterable<String> getLevels() {
+	public Map<String, String> getLevelsAndNames() {
 		return levels;
 	}
 
@@ -59,7 +53,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 		for (int season : timeline.getSeasons()) {
 			PlayerTimelineItem item = items.get(season);
 			if (item == null)
-				item = new PlayerTimelineItem(tournamentId, season, 0, null, null, null, name, null);
+				item = new PlayerTimelineItem(tournamentId, season, 0, null, null, null, null, null);
 			timelineItems.add(item);
 		}
 		return timelineItems;
@@ -67,7 +61,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 
 	public void addItem(PlayerTimelineItem item) {
 		items.put(item.getSeason(), item);
-		levels.add(item.getLevel());
+		levels.put(item.getLevel(), item.getName());
 		String surface = item.getSurface();
 		if (surface != null)
 			surfaces.add(surface);
@@ -82,14 +76,22 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 		this.firstByLevel = firstByLevel;
 	}
 
+	private int getDuration() {
+		return maxLevel.get() == TournamentLevel.GRAND_SLAM ? 14 : 7;
+	}
+
 	@Override public int compareTo(PlayerTournamentTimeline tournament) {
 		int result = maxLevel.get().compareTo(tournament.maxLevel.get());
 		return result != 0 ? result : endDay.get().compareTo(tournament.endDay.get());
 	}
 
-	private final Supplier<TournamentLevel> maxLevel = Memoizer.of(() -> levels.stream().map(TournamentLevel::forCode).min(naturalOrder()).get());
+	private final Supplier<TournamentLevel> maxLevel = Memoizer.of(
+		() -> levels.keySet().stream().map(TournamentLevel::forCode).min(naturalOrder()).get()
+	);
 
-	private final Supplier<MonthDay> endDay = Memoizer.of(() -> MonthDay.from(LocalDate.ofYearDay(REFERENCE_YEAR, (int)dates.stream().mapToInt(date -> toLocalDate(date).plusDays(7).getDayOfYear()).average().getAsDouble())));
+	private final Supplier<MonthDay> endDay = Memoizer.of(
+		() -> MonthDay.from(LocalDate.ofYearDay(REFERENCE_YEAR, (int)dates.stream().mapToInt(date -> toLocalDate(date).plusDays(getDuration()).getDayOfYear()).average().getAsDouble()))
+	);
 
 	private static final int REFERENCE_YEAR = 2001;
 }

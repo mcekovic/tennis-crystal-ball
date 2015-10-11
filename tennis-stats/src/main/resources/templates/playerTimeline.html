@@ -41,7 +41,7 @@
 			color: gray;
 		}
 	</style>
-	<table id="timelineTable" class="table table-condensed table-hover table-bordered">
+	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
 			<tr>
 				<th>Tournament</th>
@@ -51,10 +51,10 @@
 		</thead>
 		<tbody>
 			<tr th:each="tournament : ${timeline.tournaments}" th:class="${tournament.firstByLevel ? 'first-by-level' : ''}">
-				<td th:class="'bg-level-' + ${tournament.maxLevel}" class="bg-level-G">
-					<span class="label level" th:attr="data-level=${tournament.maxLevel}" data-level="G" th:text="${tournament.name}">Wimbledon</span>
+				<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
+					<span th:each="levelAndName : ${tournament.levelsAndNames}" th:text="${levelAndName.value}" th:attr="data-level=${levelAndName.key}" data-level="G" class="label level">Wimbledon</span>
 				</td>
-				<td th:class="'text-nowrap bg-level-' + ${tournament.maxLevel}" class="bg-level-G">
+				<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
 					<span th:each="surface : ${tournament.surfaces}" th:text="${surface}" class="label surface">G</span>
 				</td>
 				<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
