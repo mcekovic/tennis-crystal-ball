@@ -253,7 +253,7 @@ public class PlayerStats {
 	}
 
 	public double getDominanceRatio() {
-		return pct(getReturnPointsWonPct(), servicePointsLostPct);
+		return servicePointsLostPct != 0.0 ? getReturnPointsWonPct() / servicePointsLostPct : 0.0;
 	}
 
 
