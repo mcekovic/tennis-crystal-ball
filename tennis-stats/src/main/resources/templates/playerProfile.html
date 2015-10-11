@@ -7,15 +7,15 @@
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title th:text="'Ultimate Tennis Statistics - ' + (${player} ? ${player.name} : 'Player Profile')">Ultimate Tennis Statistics - Player Profile</title>
-	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
-	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
-	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
-	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
-	<script th:src="@{/js/formatters.js}"></script>
+	<link th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<script th:src="@{webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{js/formatters.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -77,7 +77,7 @@
 					</tr>
 					<tr>
 						<th>Country</th>
-						<td><img th:src="@{/flags/{code}.png(code=${player.countryCode})}" src="/flags/us.png" th:title="${player.countryId}" title="USA" width="24" height="24"/> <span th:text="${player.countryName}">United States</span></td>
+						<td><img th:src="@{images/flags/{code}.png(code=${player.countryCode})}" src="images/flags/us.png" th:title="${player.countryId}" title="USA" width="24" height="24"/> <span th:text="${player.countryName}">United States</span></td>
 					</tr>
 					<tr th:if="${player.birthplace}">
 						<th>Birthplace</th>

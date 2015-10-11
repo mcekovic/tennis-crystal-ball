@@ -4,13 +4,13 @@
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Ultimate Tennis Statistics - GOAT List</title>
-	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
-	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
-	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
-	<script th:src="@{/js/formatters.js}"></script>
+	<link th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{js/formatters.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -31,21 +31,26 @@
 					"player": playerFormatter
 				}
 			});
-			$("#goatPointsTable").bootgrid({
-				ajax: true,
-				ajaxSettings: {
-					method: "GET",
-					cache: true
-				},
-				url: "/goatPointsTable",
-				navigation: 0,
-				formatters: {
-					"level": levelFormatter,
-					"result": resultFormatter,
-					"goatPoints": function(column, row) {
-						return (row.additive ? "+" : "") + row.goatPoints;
+			$("#goatLegend").on("shown.bs.collapse", function() {
+				var $goatPointsTable = $("#goatPointsTable");
+				if ($goatPointsTable.hasClass("loaded"))
+					return;
+				$goatPointsTable.addClass("loaded").bootgrid({
+					ajax: true,
+					ajaxSettings: {
+						method: "GET",
+						cache: true
+					},
+					url: "/goatPointsTable",
+					navigation: 0,
+					formatters: {
+						"level": levelFormatter,
+						"result": resultFormatter,
+						"goatPoints": function(column, row) {
+							return (row.additive ? "+" : "") + row.goatPoints;
+						}
 					}
-				}
+				});
 			});
 		});
 		/*]]>*/

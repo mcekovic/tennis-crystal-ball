@@ -5,7 +5,7 @@ function dateFormatter(column, row) {
 
 // Country
 function countryFormatter(column, row) {
-	return "<img src='flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='24'/> " + row.countryId;
+	return "<img src='images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='24'/> " + row.countryId;
 }
 
 // Player
