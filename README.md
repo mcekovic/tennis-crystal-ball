@@ -21,3 +21,17 @@ PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groo
 
 ### Data Loaders
 - Currently only for https://github.com/JeffSackmann/tennis_atp
+
+### Screenshots
+
+##### GOAT List
+![GOAT List](https://github.com/mcekovic/open-box/blob/master/GOATList.png?raw=true)
+
+##### Player Profile
+![Player Profile](https://github.com/mcekovic/open-box/blob/master/PlayerProfile.png?raw=true)
+
+##### Player Timeline
+![Player Timeline](https://github.com/mcekovic/open-box/blob/master/PlayerTimeline.png?raw=true)
+
+##### Ranking Chart
+![Ranking Chart](https://github.com/mcekovic/open-box/blob/master/RankingChart.png?raw=true)
