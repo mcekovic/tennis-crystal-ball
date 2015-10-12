@@ -11,6 +11,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 
 - Top Performers - find top performers in both statistics and performance figures
 - 'Big Guns' Timeline - see 'GOAT' points distribution among top players and seasons
+- Best Seasons - find which are really best seasons of all time based on 'GOAT' points
 - Head-to-Head - see head-to-head between 2 players as well as head-to-head clusters among several players
 
 ### Technology
