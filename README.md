@@ -4,8 +4,9 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 ## Features
 
 - 'GOAT' List - see best players of all time ranked by GOAT Points
-- Player Profile - see player infromation, tournament results, matches, timeline, statistics and performance indicators
-- Ranking Carts - see players ranking and rankings charts, compare players by constructing custom charts
+- Player Profile - see player information, tournament results, matches, timeline, statistics and performance indicators,
+  all linked together and easily navigable
+- Ranking Carts - see players ranking and ranking point charts, compare players by constructing custom charts
 
 ## Roadmap
 
