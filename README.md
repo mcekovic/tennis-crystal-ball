@@ -3,9 +3,9 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 
 ## Features
 
-- 'GOAT' List - See best players of all time ranked by GOAT Points
-- Player Profile - See player infromation, tournament results, matches, timeline, statistics and performance indicators
-- Ranking Carts - See players ranking and rankings charts, compare players by constructing custom charts
+- 'GOAT' List - see best players of all time ranked by GOAT Points
+- Player Profile - see player infromation, tournament results, matches, timeline, statistics and performance indicators
+- Ranking Carts - see players ranking and rankings charts, compare players by constructing custom charts
 
 ## Roadmap
 
@@ -15,7 +15,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 
 ### Technology
 
-PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groovy
+PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groovy...
 
 ### Data Loaders
 - Currently only for https://github.com/JeffSackmann/tennis_atp
