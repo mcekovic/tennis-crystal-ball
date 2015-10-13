@@ -13,6 +13,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 
 	private final PlayerTimeline timeline;
 	private final int tournamentId;
+	private String name;
 	private final Map<String, String> levels = new LinkedHashMap<>(); // <Level, Name>
 	private final Set<String> surfaces = new LinkedHashSet<>();
 	private final List<Date> dates = new ArrayList<>();
@@ -26,6 +27,10 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 
 	public int getTournamentId() {
 		return tournamentId;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public Map<String, String> getLevelsAndNames() {
@@ -53,13 +58,15 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 		for (int season : timeline.getSeasons()) {
 			PlayerTimelineItem item = items.get(season);
 			if (item == null)
-				item = new PlayerTimelineItem(tournamentId, season, 0, null, null, null, null, null);
+				item = new PlayerTimelineItem(tournamentId, null, season, 0, null, null, null, null, null);
 			timelineItems.add(item);
 		}
 		return timelineItems;
 	}
 
 	public void addItem(PlayerTimelineItem item) {
+		if (name == null)
+			name = item.getTournamentName();
 		items.put(item.getSeason(), item);
 		levels.put(item.getLevel(), item.getName());
 		String surface = item.getSurface();

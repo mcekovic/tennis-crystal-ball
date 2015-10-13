@@ -73,7 +73,7 @@
 				$.get(url, function(data) {
 					event.preventDefault();
 					$playerStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
-					$playerStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "600px"); }).click();
+					$playerStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
 				});
 			}
 		}

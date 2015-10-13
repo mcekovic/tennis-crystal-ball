@@ -13,22 +13,22 @@ public class PlayerTimelineTest {
 	@Test
 	public void simplePlayerTimelineIsCreated() {
 		PlayerTimeline timeline = new PlayerTimeline();
-		timeline.addItem(new PlayerTimelineItem(1, 2001, 101, toDate(LocalDate.of(2001, 1, 15)), "G", "H", "Australian Open", "SF"));
-		timeline.addItem(new PlayerTimelineItem(1, 2002, 201, toDate(LocalDate.of(2002, 1, 20)), "G", "H", "Australian Open", "QF"));
-		timeline.addItem(new PlayerTimelineItem(1, 2003, 301, toDate(LocalDate.of(2003, 1, 18)), "G", "H", "Australian Open", "W"));
+		timeline.addItem(new PlayerTimelineItem(1, "Australian Open", 2001, 101, toDate(LocalDate.of(2001, 1, 15)), "G", "H", "Australian Open", "SF"));
+		timeline.addItem(new PlayerTimelineItem(1, "Australian Open", 2002, 201, toDate(LocalDate.of(2002, 1, 20)), "G", "H", "Australian Open", "QF"));
+		timeline.addItem(new PlayerTimelineItem(1, "Australian Open", 2003, 301, toDate(LocalDate.of(2003, 1, 18)), "G", "H", "Australian Open", "W"));
 
-		timeline.addItem(new PlayerTimelineItem(3, 2002, 203, toDate(LocalDate.of(2002, 3, 5)), "M", "H", "Miami", "QF"));
-		timeline.addItem(new PlayerTimelineItem(3, 2003, 303, toDate(LocalDate.of(2003, 3, 8)), "M", "H", "Miami", "F"));
+		timeline.addItem(new PlayerTimelineItem(3, "Miami", 2002, 203, toDate(LocalDate.of(2002, 3, 5)), "M", "H", "Miami", "QF"));
+		timeline.addItem(new PlayerTimelineItem(3, "Miami", 2003, 303, toDate(LocalDate.of(2003, 3, 8)), "M", "H", "Miami", "F"));
 
-		timeline.addItem(new PlayerTimelineItem(4, 2001, 104, toDate(LocalDate.of(2001, 4, 20)), "M", "C", "Hamburg Masters", "R16"));
-		timeline.addItem(new PlayerTimelineItem(4, 2008, 804, toDate(LocalDate.of(2008, 4, 25)), "A", "C", "Hamburg", "QF"));
+		timeline.addItem(new PlayerTimelineItem(4, "Hamburg Masters", 2001, 104, toDate(LocalDate.of(2001, 4, 20)), "M", "C", "Hamburg Masters", "R16"));
+		timeline.addItem(new PlayerTimelineItem(4, "Hamburg Masters", 2008, 804, toDate(LocalDate.of(2008, 4, 25)), "A", "C", "Hamburg", "QF"));
 
-		timeline.addItem(new PlayerTimelineItem(2, 2002, 202, toDate(LocalDate.of(2002, 5, 10)), "G", "C", "Roland Garros", "R16"));
-		timeline.addItem(new PlayerTimelineItem(2, 2003, 302, toDate(LocalDate.of(2003, 5, 18)), "G", "C", "Roland Garros", "R32"));
-		timeline.addItem(new PlayerTimelineItem(2, 2004, 402, toDate(LocalDate.of(2004, 5, 15)), "G", "C", "Roland Garros", "R64"));
+		timeline.addItem(new PlayerTimelineItem(2, "Roland Garros", 2002, 202, toDate(LocalDate.of(2002, 5, 10)), "G", "C", "Roland Garros", "R16"));
+		timeline.addItem(new PlayerTimelineItem(2, "Roland Garros", 2003, 302, toDate(LocalDate.of(2003, 5, 18)), "G", "C", "Roland Garros", "R32"));
+		timeline.addItem(new PlayerTimelineItem(2, "Roland Garros", 2004, 402, toDate(LocalDate.of(2004, 5, 15)), "G", "C", "Roland Garros", "R64"));
 
-		timeline.addItem(new PlayerTimelineItem(5, 2001, 104, toDate(LocalDate.of(2001, 7, 20)), "M", "C", "Stuttgart Masters", "R32"));
-		timeline.addItem(new PlayerTimelineItem(5, 2009, 904, toDate(LocalDate.of(2009, 7, 25)), "A", "G", "Stuttgart", "SF"));
+		timeline.addItem(new PlayerTimelineItem(5, "Stuttgart", 2001, 104, toDate(LocalDate.of(2001, 7, 20)), "M", "C", "Stuttgart Masters", "R32"));
+		timeline.addItem(new PlayerTimelineItem(5, "Stuttgart", 2009, 904, toDate(LocalDate.of(2009, 7, 25)), "A", "G", "Stuttgart", "SF"));
 
 
 		assertThat(timeline.getSeasons()).containsExactly(2001, 2002, 2003, 2004, 2008, 2009);

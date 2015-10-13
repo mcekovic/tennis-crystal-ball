@@ -5,6 +5,7 @@ import java.util.*;
 public class PlayerTimelineItem {
 
 	private final int tournamentId;
+	private final String tournamentName;
 	private final int season;
 	private final int tournamentEventId;
 	private final Date date;
@@ -13,8 +14,9 @@ public class PlayerTimelineItem {
 	private final String name;
 	private final String result;
 
-	public PlayerTimelineItem(int tournamentId, int season, int tournamentEventId, Date date, String level, String surface, String name, String result) {
+	public PlayerTimelineItem(int tournamentId, String tournamentName, int season, int tournamentEventId, Date date, String level, String surface, String name, String result) {
 		this.tournamentId = tournamentId;
+		this.tournamentName = tournamentName;
 		this.season = season;
 		this.tournamentEventId = tournamentEventId;
 		this.date = date;
@@ -26,6 +28,10 @@ public class PlayerTimelineItem {
 
 	public int getTournamentId() {
 		return tournamentId;
+	}
+
+	public String getTournamentName() {
+		return tournamentName;
 	}
 
 	public int getSeason() {

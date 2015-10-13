@@ -9,7 +9,7 @@
 			/*]]>*/
 		</script>
 		<div th:unless="${stats.isEmpty()}" class="row text-nowrap">
-			<div th:class="'col-md-' + ${popover ? '6' : '3'}" class="col-md-6">
+			<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
 				<table class="table table-condensed table-hover table-striped">
 					<tr>
 						<th>Serve</th>
@@ -59,31 +59,31 @@
 					</tr>
 					<tr class="raw-data">
 						<td>1st Serve In</td>
-						<th th:text="${stats.firstServesIn}">43</th>
+						<th th:text="${stats.firstServesIn} + ' / ' + ${stats.servicePoints}">43 / 52</th>
 					</tr>
 					<tr class="raw-data">
 						<td>1st Serve Won</td>
-						<th th:text="${stats.firstServesWon}">27</th>
+						<th th:text="${stats.firstServesWon} + ' / ' + ${stats.firstServesIn}">27 / 43</th>
 					</tr>
 					<tr class="raw-data">
 						<td>2nd Serve Won</td>
-						<th th:text="${stats.secondServesWon}">22</th>
+						<th th:text="${stats.secondServesWon} + ' / ' + ${stats.secondServes}">12 / 15</th>
 					</tr>
 					<tr class="raw-data">
 						<td>Break Points Saved</td>
-						<th th:text="${stats.breakPointsSaved} + ' / ' + ${stats.breakPointsFaced}">1/2</th>
+						<th th:text="${stats.breakPointsSaved} + ' / ' + ${stats.breakPointsFaced}">1 / 2</th>
 					</tr>
 					<tr class="raw-data">
 						<td>Service Pts. Won</td>
-						<th th:text="${stats.servicePointsWon}">65</th>
+						<th th:text="${stats.servicePointsWon} + ' / ' + ${stats.servicePoints}">39 / 52</th>
 					</tr>
 					<tr class="raw-data">
 						<td>Service Games Won</td>
-						<th th:text="${stats.serviceGamesWon}">12</th>
+						<th th:text="${stats.serviceGamesWon} + ' / ' + ${stats.serviceGames}">12 / 15</th>
 					</tr>
 				</table>
 			</div>
-			<div th:class="'col-md-' + ${popover ? '6' : '3'}" class="col-md-6">
+			<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
 				<table class="table table-condensed table-hover table-striped">
 					<tr>
 						<th>Return</th>
@@ -114,28 +114,33 @@
 					<tr class="raw-data"></tr>
 					<tr class="raw-data">
 						<td>1st Srv. Rtn. Won</td>
-						<th th:text="${stats.firstServeReturnPointsWon}">25</th>
+						<th th:text="${stats.firstServeReturnPointsWon} + ' / ' + ${stats.firstServeReturnPoints}">25 / 60</th>
 					</tr>
 					<tr class="raw-data">
 						<td>2nd Srv. Rtn. Won</td>
-						<th th:text="${stats.secondServeReturnPointsWon}">25</th>
+						<th th:text="${stats.secondServeReturnPointsWon} + ' / ' + ${stats.secondServeReturnPoints}">25 / 50</th>
 					</tr>
 					<tr class="raw-data">
 						<td>Break Points</td>
-						<th th:text="${stats.breakPointsWon} + ' / ' + ${stats.breakPoints}">0/0</th>
+						<th th:text="${stats.breakPointsWon} + ' / ' + ${stats.breakPoints}">0 / 0</th>
 					</tr>
 					<tr class="raw-data">
 						<td>Return Pts. Won</td>
-						<th th:text="${stats.returnPointsWon}">25</th>
+						<th th:text="${stats.returnPointsWon} + ' / ' + ${stats.returnPoints}">25 / 55</th>
 					</tr>
 					<tr class="raw-data">
 						<td>Return Games Won</td>
-						<th th:text="${stats.returnGamesWon}">3</th>
+						<th th:text="${stats.returnGamesWon} + ' / ' + ${stats.returnGames}">3 / 12</th>
 					</tr>
+				</table>
+			</div>
+			<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
+				<table class="table table-condensed table-hover table-striped">
 					<tr>
 						<th>Total</th>
 						<th></th>
 					</tr>
+					<!-- Total Pct. Data -->
 					<tr>
 						<td title="Dominance Ratio: % of return points won divided by % of serve points lost">Dominance Ratio</td>
 						<th th:text="${#numbers.formatDecimal(stats.dominanceRatio, 1, 2)}">0.67</th>
@@ -148,13 +153,30 @@
 						<td>Total Games Won</td>
 						<th th:text="${#numbers.formatDecimal(stats.totalGamesWonPct, 1, 1) + '%'}">58%</th>
 					</tr>
+					<tr class="pct-data">
+						<td>Sets Won</td>
+						<th th:text="${#numbers.formatDecimal(stats.setsWonPct, 1, 1) + '%'}">62%</th>
+					</tr>
+					<tr class="pct-data">
+						<td>Matches Won</td>
+						<th th:text="${#numbers.formatDecimal(stats.matchesWonPct, 1, 1) + '%'}">69%</th>
+					</tr>
+					<!-- Total Raw Data -->
 					<tr class="raw-data">
 						<td>Total Pts. Won</td>
-						<th th:text="${stats.totalPointsWon}">99</th>
+						<th th:text="${stats.totalPointsWon} + ' / ' + ${stats.totalPoints}">1299 / 2234</th>
 					</tr>
 					<tr class="raw-data">
 						<td>Total Games Won</td>
-						<th th:text="${stats.totalGamesWon}">16</th>
+						<th th:text="${stats.totalGamesWon} + ' / ' + ${stats.totalGames}">86 / 125</th>
+					</tr>
+					<tr class="raw-data">
+						<td>Sets Won</td>
+						<th th:text="${stats.setsWon} + ' / ' + ${stats.sets}">16 / 27</th>
+					</tr>
+					<tr class="raw-data">
+						<td>Matches Won</td>
+						<th th:text="${stats.matchesWon} + ' / ' + ${stats.matches}">6 / 10</th>
 					</tr>
 				</table>
 			</div>

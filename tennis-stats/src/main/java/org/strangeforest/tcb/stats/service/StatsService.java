@@ -16,7 +16,7 @@ public class StatsService {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String MATCH_STATS_QUERY =
-		"SELECT pw.name AS winner, pl.name AS loser, minutes,\n" +
+		"SELECT pw.name AS winner, pl.name AS loser, minutes, 1 w_matches, 0 l_matches, w_sets, l_sets,\n" +
 		"  w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,\n" +
 		"  l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc\n" +
 		"FROM match_stats\n" +
@@ -26,12 +26,12 @@ public class StatsService {
 		"WHERE match_id = ? AND set = 0";
 
 	private static final String PLAYER_STATS_QUERY = //language=SQL
-		"SELECT sum(minutes) minutes,\n" +
+		"SELECT count(m.match_id) w_matches, 0 l_matches, sum(w_sets) w_sets, sum(l_sets) l_sets,\n" +
 		"  sum(w_ace) w_ace, sum(w_df) w_df, sum(w_sv_pt) w_sv_pt, sum(w_1st_in) w_1st_in, sum(w_1st_won) w_1st_won, sum(w_2nd_won) w_2nd_won, sum(w_sv_gms) w_sv_gms, sum(w_bp_sv) w_bp_sv, sum(w_bp_fc) w_bp_fc,\n" +
 		"  sum(l_ace) l_ace, sum(l_df) l_df, sum(l_sv_pt) l_sv_pt, sum(l_1st_in) l_1st_in, sum(l_1st_won) l_1st_won, sum(l_2nd_won) l_2nd_won, sum(l_sv_gms) l_sv_gms, sum(l_bp_sv) l_bp_sv, sum(l_bp_fc) l_bp_fc\n" +
-		"FROM match_stats\n" +
-		"LEFT JOIN match m USING (match_id)%1$s\n" +
-		"WHERE m.%2$s = ? AND set = 0%3$s\n";
+		"FROM match m\n" +
+		"LEFT JOIN match_stats s USING (match_id)%1$s\n" +
+		"WHERE m.%2$s = ? AND (s.set = 0 OR s.set IS NULL)%3$s";
 
 	private static final String TOURNAMENT_EVENT_JOIN = //language=SQL
 	 	"\nLEFT JOIN tournament_event e USING (tournament_event_id)";
@@ -40,7 +40,7 @@ public class StatsService {
 		"SELECT matches, matches_won, grand_slam_matches, grand_slam_matches_won, masters_matches, masters_matches_won, clay_matches, clay_matches_won, grass_matches, grass_matches_won, hard_matches, hard_matches_won, carpet_matches, carpet_matches_won,\n" +
 			"deciding_sets, deciding_sets_won, fifth_sets, fifth_sets_won, finals, finals_won, vs_top10, vs_top10_won, first_sets_won, after_winning_first_set, first_sets_lost, after_losing_first_set, tie_breaks, tie_breaks_won\n" +
 		"FROM player_performance\n" +
-		"WHERE player_id = ?\n";
+		"WHERE player_id = ?";
 
 
 	// Match statistics
@@ -99,8 +99,17 @@ public class StatsService {
 		return params.toArray();
 	}
 
+	private PlayerStats mapPlayerStats(ResultSet rs, String playerPrefix, String opponentPrefix) throws SQLException {
+		PlayerStats playerStats = mapPlayerStats(rs, playerPrefix);
+		PlayerStats opponentStats = mapPlayerStats(rs, opponentPrefix);
+		playerStats.setOpponentStats(opponentStats);
+		return playerStats;
+	}
+
 	private PlayerStats mapPlayerStats(ResultSet rs, String prefix) throws SQLException {
 		return new PlayerStats(
+			rs.getInt(prefix + "matches"),
+			rs.getInt(prefix + "sets"),
 			rs.getInt(prefix + "ace"),
 			rs.getInt(prefix + "df"),
 			rs.getInt(prefix + "sv_pt"),
@@ -111,13 +120,6 @@ public class StatsService {
 			rs.getInt(prefix + "bp_sv"),
 			rs.getInt(prefix + "bp_fc")
 		);
-	}
-
-	private PlayerStats mapPlayerStats(ResultSet rs, String playerPrefix, String opponentPrefix) throws SQLException {
-		PlayerStats playerStats = mapPlayerStats(rs, playerPrefix);
-		PlayerStats opponentStats = mapPlayerStats(rs, opponentPrefix);
-		playerStats.setOpponentStats(opponentStats);
-		return playerStats;
 	}
 
 

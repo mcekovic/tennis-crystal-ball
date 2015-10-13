@@ -4,6 +4,8 @@ import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class PlayerStats {
 
+	private final int matchesWon;
+	private final int setsWon;
 	private final int aces;
 	private final int doubleFaults;
 	private final int servicePoints;
@@ -38,7 +40,9 @@ public class PlayerStats {
 
 	private PlayerStats opponentStats;
 
-	public PlayerStats(int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced) {
+	public PlayerStats(int matchesWon, int setsWon, int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced) {
+		this.matchesWon = matchesWon;
+		this.setsWon = setsWon;
 		this.aces = aces;
 		this.doubleFaults = doubleFaults;
 		this.servicePoints = servicePoints;
@@ -69,6 +73,22 @@ public class PlayerStats {
 		serviceGamesWon = serviceGames - breakPointsLost;
 		serviceGamesWonPct = pct(serviceGamesWon, serviceGames);
 		serviceGamesLostPct = pct(breakPointsLost, serviceGames);
+	}
+
+	public int getMatchesWon() {
+		return matchesWon;
+	}
+
+	public int getMatchesLost() {
+		return opponentStats.getMatchesWon();
+	}
+
+	public int getSetsWon() {
+		return setsWon;
+	}
+
+	public int getSetsLost() {
+		return opponentStats.getSetsWon();
 	}
 
 
@@ -228,6 +248,22 @@ public class PlayerStats {
 
 	// Totals
 
+	public int getMatches() {
+		return matchesWon + getMatchesLost();
+	}
+
+	public double getMatchesWonPct() {
+		return pct(matchesWon, getMatches());
+	}
+
+	public int getSets() {
+		return setsWon + getSetsLost();
+	}
+
+	public double getSetsWonPct() {
+		return pct(setsWon, getSets());
+	}
+
 	public int getTotalPoints() {
 		return servicePoints + getReturnPoints();
 	}
@@ -275,6 +311,8 @@ public class PlayerStats {
 
 	private PlayerStats doAdd(PlayerStats stats) {
 		return new PlayerStats(
+			matchesWon + stats.matchesWon,
+			setsWon + stats.setsWon,
 			aces + stats.aces,
 			doubleFaults + stats.doubleFaults,
 			servicePoints + stats.servicePoints,
