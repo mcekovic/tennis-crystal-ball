@@ -241,9 +241,13 @@ CREATE UNIQUE INDEX ON player_current_rank (player_id);
 -- player_best_rank
 
 CREATE MATERIALIZED VIEW player_best_rank AS
-SELECT DISTINCT player_id,	first_value(rank) OVER w AS best_rank, first_value(rank_date) OVER w AS best_rank_date
-FROM player_ranking
-WINDOW w AS (PARTITION BY player_id ORDER BY rank, rank_date);
+WITH best_rank AS (
+	SELECT player_id, (SELECT min(rank) FROM player_ranking r WHERE r.player_id = p.player_id) AS best_rank
+	FROM player p
+)
+SELECT player_id, best_rank, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND r.rank = b.best_rank) AS best_rank_date
+FROM best_rank b
+WHERE best_rank IS NOT NULL;
 
 CREATE UNIQUE INDEX ON player_best_rank (player_id);
 
@@ -251,9 +255,13 @@ CREATE UNIQUE INDEX ON player_best_rank (player_id);
 -- player_best_rank_points
 
 CREATE MATERIALIZED VIEW player_best_rank_points AS
-SELECT DISTINCT player_id,	first_value(rank_points) OVER w AS best_rank_points, first_value(rank_date) OVER w AS best_rank_points_date
-FROM player_ranking
-WINDOW w AS (PARTITION BY player_id ORDER BY rank_points DESC, rank_date);
+WITH best_rank_points AS (
+	SELECT player_id, (SELECT max(rank_points) FROM player_ranking r WHERE r.player_id = p.player_id) AS best_rank_points
+	FROM player p
+)
+SELECT player_id, best_rank_points, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND r.rank_points = b.best_rank_points) AS best_rank_points_date
+FROM best_rank_points b
+WHERE best_rank_points IS NOT NULL;
 
 CREATE UNIQUE INDEX ON player_best_rank_points (player_id);
 
@@ -353,58 +361,59 @@ LEFT JOIN player_goat_points USING (player_id)
 LEFT JOIN player_titles USING (player_id);
 
 
--- match_for_perf
-
-CREATE MATERIALIZED VIEW match_for_perf AS
-SELECT m.match_id, e.level, e.surface, m.best_of, m.round, m.winner_id, m.loser_id, m.winner_rank, m.loser_rank, m.w_sets, m.l_sets FROM match m
-LEFT JOIN tournament_event e USING (tournament_event_id)
-WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND  (m.outcome IS NULL OR m.outcome <> 'W/O');
-
-CREATE INDEX ON match_for_perf (winner_id);
-CREATE INDEX ON match_for_perf (loser_id);
-
-
 -- player_performance
 
---TODO Optimize and remove the need for match_for_perf
 CREATE MATERIALIZED VIEW player_performance AS
-WITH player_with_matches AS (
-	SELECT p.player_id
-	FROM player p
-	WHERE exists(
-		SELECT m.match_id FROM match_for_perf m
-		WHERE m.winner_id = p.player_id OR m.loser_id = p.player_id
-	)
+WITH match_for_perf AS (
+	SELECT m.match_id, m.winner_id, m.loser_id, e.level, e.surface, m.best_of, m.round, m.winner_rank, m.loser_rank, m.w_sets, m.l_sets FROM match m
+	LEFT JOIN tournament_event e USING (tournament_event_id)
+	WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (m.outcome IS NULL OR m.outcome <> 'W/O')
 )
-SELECT p.player_id,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.winner_id = p.player_id) AS matches_won,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.loser_id = p.player_id) AS matches_lost,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.winner_id = p.player_id AND m.level = 'G') AS grand_slam_matches_won,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.loser_id = p.player_id AND m.level = 'G') AS grand_slam_matches_lost,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.winner_id = p.player_id AND m.level = 'M') AS masters_matches_won,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.loser_id = p.player_id AND m.level = 'M') AS masters_matches_lost,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.winner_id = p.player_id AND m.surface = 'C') AS clay_matches_won,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.loser_id = p.player_id AND m.surface = 'C') AS clay_matches_lost,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.winner_id = p.player_id AND m.surface = 'G') AS grass_matches_won,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.loser_id = p.player_id AND m.surface = 'G') AS grass_matches_lost,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.winner_id = p.player_id AND m.surface = 'H') AS hard_matches_won,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.loser_id = p.player_id AND m.surface = 'H') AS hard_matches_lost,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.winner_id = p.player_id AND m.surface = 'P') AS carpet_matches_won,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.loser_id = p.player_id AND m.surface = 'P') AS carpet_matches_lost,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.winner_id = p.player_id AND m.best_of = m.w_sets + m.l_sets) AS deciding_sets_won,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.loser_id = p.player_id AND m.best_of = m.w_sets + m.l_sets) AS deciding_sets_lost,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.winner_id = p.player_id AND m.w_sets + m.l_sets = 5) AS fifth_sets_won,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.loser_id = p.player_id AND m.w_sets + m.l_sets = 5) AS fifth_sets_lost,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.winner_id = p.player_id AND m.round = 'F' AND m.level <> 'D') AS finals_won,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.loser_id = p.player_id AND m.round = 'F' AND m.level <> 'D') AS finals_lost,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.winner_id = p.player_id AND m.loser_rank <= 10) AS vs_top10_won,
-	(SELECT count(m.match_id) FROM match_for_perf m WHERE m.loser_id = p.player_id AND m.winner_rank <= 10) AS vs_top10_lost,
-	(SELECT count(DISTINCT m.match_id) FROM match_for_perf m LEFT JOIN set_score s USING (match_id) WHERE m.winner_id = p.player_id AND s.set = 1 AND s.w_gems > s.l_gems) AS after_winning_first_set_won,
-	(SELECT count(DISTINCT m.match_id) FROM match_for_perf m LEFT JOIN set_score s USING (match_id) WHERE m.loser_id = p.player_id AND s.set = 1 AND s.l_gems > s.w_gems) AS after_winning_first_set_lost,
-	(SELECT count(DISTINCT m.match_id) FROM match_for_perf m LEFT JOIN set_score s USING (match_id) WHERE m.winner_id = p.player_id AND s.set = 1 AND s.w_gems < s.l_gems) AS after_losing_first_set_won,
-	(SELECT count(DISTINCT m.match_id) FROM match_for_perf m LEFT JOIN set_score s USING (match_id) WHERE m.loser_id = p.player_id AND s.set = 1 AND s.l_gems < s.w_gems) AS after_losing_first_set_lost,
-	(SELECT count(s.set) FROM match_for_perf m LEFT JOIN set_score s USING (match_id) WHERE (m.winner_id = p.player_id AND s.w_gems = 7 AND s.l_gems = 6) OR (m.loser_id = p.player_id AND s.w_gems = 6 AND s.l_gems = 7)) AS tie_breaks_won,
-	(SELECT count(s.set) FROM match_for_perf m LEFT JOIN set_score s USING (match_id) WHERE (m.winner_id = p.player_id AND s.w_gems = 6 AND s.l_gems = 7) OR (m.loser_id = p.player_id AND s.w_gems = 7 AND s.l_gems = 6)) AS tie_breaks_lost
-FROM player_with_matches p;
+SELECT player_id, matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, masters_matches_won, masters_matches_lost,
+	clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, hard_matches_won, hard_matches_lost, carpet_matches_won, carpet_matches_lost,
+	deciding_sets_won, deciding_sets_lost, fifth_sets_won, fifth_sets_lost, finals_won, finals_lost, vs_top10_won, vs_top10_lost,
+	after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost,
+	w_tie_breaks_won + l_tie_breaks_won AS tie_breaks_won, w_tie_breaks_lost + l_tie_breaks_lost AS tie_breaks_lost
+FROM (
+	SELECT m.winner_id player_id, count(DISTINCT match_id) matches_won,
+		count(DISTINCT CASE WHEN m.level = 'G' THEN match_id ELSE NULL END) grand_slam_matches_won,
+		count(DISTINCT CASE WHEN m.level = 'M' THEN match_id ELSE NULL END) masters_matches_won,
+		count(DISTINCT CASE WHEN m.surface = 'C' THEN match_id ELSE NULL END) clay_matches_won,
+		count(DISTINCT CASE WHEN m.surface = 'G' THEN match_id ELSE NULL END) grass_matches_won,
+		count(DISTINCT CASE WHEN m.surface = 'H' THEN match_id ELSE NULL END) hard_matches_won,
+		count(DISTINCT CASE WHEN m.surface = 'P' THEN match_id ELSE NULL END) carpet_matches_won,
+		count(DISTINCT CASE WHEN m.w_sets + m.l_sets = m.best_of THEN match_id ELSE NULL END) deciding_sets_won,
+		count(DISTINCT CASE WHEN m.w_sets + m.l_sets = 5 THEN match_id ELSE NULL END) fifth_sets_won,
+		count(DISTINCT CASE WHEN m.round = 'F' AND m.level <> 'D' THEN match_id ELSE NULL END) finals_won,
+		count(DISTINCT CASE WHEN m.loser_rank <= 10 THEN match_id ELSE NULL END) vs_top10_won,
+		count(DISTINCT CASE WHEN s.set = 1 AND s.w_gems > s.l_gems THEN match_id ELSE NULL END) after_winning_first_set_won,
+		count(DISTINCT CASE WHEN s.set = 1 AND s.w_gems < s.l_gems THEN match_id ELSE NULL END) after_losing_first_set_won,
+		count(CASE WHEN s.w_gems = 7 AND s.l_gems = 6 THEN s.set ELSE NULL END) w_tie_breaks_won,
+		count(CASE WHEN s.w_gems = 6 AND s.l_gems = 7 THEN s.set ELSE NULL END) w_tie_breaks_lost
+	FROM match_for_perf m
+	LEFT JOIN set_score s USING (match_id)
+	GROUP BY m.winner_id
+) AS match_won
+LEFT JOIN (
+	SELECT m.loser_id player_id, count(DISTINCT match_id) matches_lost,
+		count(DISTINCT CASE WHEN m.level = 'G' THEN match_id ELSE NULL END) grand_slam_matches_lost,
+		count(DISTINCT CASE WHEN m.level = 'M' THEN match_id ELSE NULL END) masters_matches_lost,
+		count(DISTINCT CASE WHEN m.surface = 'C' THEN match_id ELSE NULL END) clay_matches_lost,
+		count(DISTINCT CASE WHEN m.surface = 'G' THEN match_id ELSE NULL END) grass_matches_lost,
+		count(DISTINCT CASE WHEN m.surface = 'H' THEN match_id ELSE NULL END) hard_matches_lost,
+		count(DISTINCT CASE WHEN m.surface = 'P' THEN match_id ELSE NULL END) carpet_matches_lost,
+		count(DISTINCT CASE WHEN m.w_sets + m.l_sets = m.best_of THEN match_id ELSE NULL END) deciding_sets_lost,
+		count(DISTINCT CASE WHEN m.w_sets + m.l_sets = 5 THEN match_id ELSE NULL END) fifth_sets_lost,
+		count(DISTINCT CASE WHEN m.round = 'F' AND m.level <> 'D' THEN match_id ELSE NULL END) finals_lost,
+		count(DISTINCT CASE WHEN m.winner_rank <= 10 THEN match_id ELSE NULL END) vs_top10_lost,
+		count(DISTINCT CASE WHEN s.set = 1 AND s.w_gems < s.l_gems THEN match_id ELSE NULL END) after_winning_first_set_lost,
+		count(DISTINCT CASE WHEN s.set = 1 AND s.w_gems > s.l_gems THEN match_id ELSE NULL END) after_losing_first_set_lost,
+		count(CASE WHEN s.w_gems = 6 AND s.l_gems = 7 THEN s.set ELSE NULL END) l_tie_breaks_won,
+		count(CASE WHEN s.w_gems = 7 AND s.l_gems = 6 THEN s.set ELSE NULL END) l_tie_breaks_lost
+	FROM match_for_perf m
+	LEFT JOIN set_score s USING (match_id)
+	GROUP BY m.loser_id
+) AS match_lost
+USING (player_id);
 
 CREATE UNIQUE INDEX ON player_performance (player_id);

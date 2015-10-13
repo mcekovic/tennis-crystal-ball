@@ -4,5 +4,4 @@ REFRESH MATERIALIZED VIEW player_best_rank_points;
 REFRESH MATERIALIZED VIEW player_tournament_event_result;
 REFRESH MATERIALIZED VIEW player_goat_points;
 REFRESH MATERIALIZED VIEW player_titles;
-REFRESH MATERIALIZED VIEW match_for_perf;
 REFRESH MATERIALIZED VIEW player_performance;

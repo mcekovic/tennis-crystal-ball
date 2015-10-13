@@ -77,7 +77,6 @@ class ATPTennisLoader {
 		refreshMaterializedView(sql, 'player_tournament_event_result')
 		refreshMaterializedView(sql, 'player_goat_points')
 		refreshMaterializedView(sql, 'player_titles')
-		refreshMaterializedView(sql, 'match_for_perf')
 		refreshMaterializedView(sql, 'player_performance')
 	}
 
