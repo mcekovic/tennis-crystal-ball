@@ -25,16 +25,27 @@ public class StatisticsService {
 		"LEFT JOIN player_v pl ON m.loser_id = pl.player_id\n" +
 		"WHERE match_id = ? AND set = 0";
 
+	public static final String PLAYER_STATS_COLUMNS =
+		"count(m.match_id) w_matches, 0 l_matches, sum(w_sets) w_sets, sum(l_sets) l_sets,\n" +
+		"sum(w_ace) w_ace, sum(w_df) w_df, sum(w_sv_pt) w_sv_pt, sum(w_1st_in) w_1st_in, sum(w_1st_won) w_1st_won, sum(w_2nd_won) w_2nd_won, sum(w_sv_gms) w_sv_gms, sum(w_bp_sv) w_bp_sv, sum(w_bp_fc) w_bp_fc,\n" +
+		"sum(l_ace) l_ace, sum(l_df) l_df, sum(l_sv_pt) l_sv_pt, sum(l_1st_in) l_1st_in, sum(l_1st_won) l_1st_won, sum(l_2nd_won) l_2nd_won, sum(l_sv_gms) l_sv_gms, sum(l_bp_sv) l_bp_sv, sum(l_bp_fc) l_bp_fc";
+
 	private static final String PLAYER_STATS_QUERY = //language=SQL
-		"SELECT count(m.match_id) w_matches, 0 l_matches, sum(w_sets) w_sets, sum(l_sets) l_sets,\n" +
-		"  sum(w_ace) w_ace, sum(w_df) w_df, sum(w_sv_pt) w_sv_pt, sum(w_1st_in) w_1st_in, sum(w_1st_won) w_1st_won, sum(w_2nd_won) w_2nd_won, sum(w_sv_gms) w_sv_gms, sum(w_bp_sv) w_bp_sv, sum(w_bp_fc) w_bp_fc,\n" +
-		"  sum(l_ace) l_ace, sum(l_df) l_df, sum(l_sv_pt) l_sv_pt, sum(l_1st_in) l_1st_in, sum(l_1st_won) l_1st_won, sum(l_2nd_won) l_2nd_won, sum(l_sv_gms) l_sv_gms, sum(l_bp_sv) l_bp_sv, sum(l_bp_fc) l_bp_fc\n" +
+		"SELECT " + PLAYER_STATS_COLUMNS + "\n" +
 		"FROM match m\n" +
 		"LEFT JOIN match_stats s USING (match_id)%1$s\n" +
 		"WHERE m.%2$s = ? AND (s.set = 0 OR s.set IS NULL) AND (m.outcome IS NULL OR m.outcome <> 'W/O')%3$s";
 
 	private static final String TOURNAMENT_EVENT_JOIN = //language=SQL
 	 	"\nLEFT JOIN tournament_event e USING (tournament_event_id)";
+
+	private static final String PLAYER_YEARLY_STATS_QUERY = //language=SQL
+		"SELECT e.season, " + PLAYER_STATS_COLUMNS + "\n" +
+		"FROM match m\n" +
+		"LEFT JOIN match_stats s USING (match_id)\n" +
+		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"WHERE m.%1$s = ? AND (s.set = 0 OR s.set IS NULL) AND (m.outcome IS NULL OR m.outcome <> 'W/O')\n" +
+		"GROUP BY e.season ORDER BY e.season";
 
 	private static final String PLAYER_PERFORMANCE_QUERY =
 		"SELECT matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, masters_matches_won, masters_matches_lost, clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, hard_matches_won, hard_matches_lost, carpet_matches_won, carpet_matches_lost,\n" +
@@ -97,6 +108,30 @@ public class StatisticsService {
 		params.add(playerId);
 		params.addAll(filter.getParamList());
 		return params.toArray();
+	}
+
+	public Map<Integer, PlayerStats> getPlayerYearlyStats(int playerId) {
+		Map<Integer, PlayerStats> yearlyStats = new TreeMap<>();
+		jdbcTemplate.query(
+			format(PLAYER_YEARLY_STATS_QUERY, "winner_id"),
+			(rs) -> {
+				int season = rs.getInt("season");
+				PlayerStats asWinnerStats = mapPlayerStats(rs, "w_", "l_");
+				yearlyStats.put(season, asWinnerStats);
+			},
+			playerId
+		);
+		jdbcTemplate.query(
+			format(PLAYER_YEARLY_STATS_QUERY, "loser_id"),
+			(rs) -> {
+				int season = rs.getInt("season");
+				PlayerStats asLoserStats = mapPlayerStats(rs, "l_", "w_");
+				PlayerStats asWinnerStats = yearlyStats.get(season);
+				yearlyStats.put(season, asWinnerStats != null ? asWinnerStats.add(asLoserStats) : asLoserStats);
+			},
+			playerId
+		);
+		return yearlyStats;
 	}
 
 	private PlayerStats mapPlayerStats(ResultSet rs, String playerPrefix, String opponentPrefix) throws SQLException {

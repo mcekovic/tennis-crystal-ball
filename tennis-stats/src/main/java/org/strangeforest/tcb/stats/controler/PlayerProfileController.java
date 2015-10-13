@@ -16,6 +16,7 @@ public class PlayerProfileController {
 	@Autowired private PlayerService playerService;
 	@Autowired private TournamentService tournamentService;
 	@Autowired private PlayerTimelineService timelineService;
+	@Autowired private StatisticsService statisticsService;
 
 	@RequestMapping("/playerProfile")
 	public ModelAndView playerProfile(
@@ -61,6 +62,11 @@ public class PlayerProfileController {
 		@RequestParam(value = "playerId") int playerId
 	) {
 		PlayerTimeline timeline = timelineService.getPlayerTimeline(playerId);
-		return new ModelAndView("playerTimeline", "timeline", timeline);
+		Map<Integer, PlayerStats> yearlyStats = statisticsService.getPlayerYearlyStats(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("timeline", timeline);
+		modelMap.addAttribute("yearlyStats", yearlyStats);
+		return new ModelAndView("playerTimeline", modelMap);
 	}
 }

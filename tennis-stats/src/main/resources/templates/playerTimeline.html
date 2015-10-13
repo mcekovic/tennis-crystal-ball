@@ -1,6 +1,7 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"-->
+	<!--@thymesVar id="yearlyStats" type="java.util.Map<java.lang.Integer, org.strangeforest.tcb.stats.model.PlayerStats>"-->
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -40,6 +41,10 @@
 		span.absent {
 			color: gray;
 		}
+		td.stats {
+			font-size: smaller;
+			text-align: center;
+		}
 	</style>
 	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
@@ -64,6 +69,14 @@
 					   th:title="${tournament.levelCount &lt;= 1 and tournament.surfaceCount &lt;= 1 ? 'Show matches' : ''}">W</a>
 					<span th:unless="${item.result}" class="absent">A</span>
 				</td>
+			</tr>
+			<tr>
+				<td colspan="2">Matches Won</td>
+				<td th:each="season : ${timeline.seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${#numbers.formatDecimal(stats.matchesWonPct, 1, 1)} + '%'" class="stats">84.5%</td>
+			</tr>
+			<tr>
+				<td colspan="2">Matches Win - Loss</td>
+				<td th:each="season : ${timeline.seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.matchesWon} + '-' + ${stats.matchesLost}" class="stats">56 - 9</td>
 			</tr>
 			<tr th:if="${timeline.empty}">
 				<td colspan="2" align="center">No data found</td>
