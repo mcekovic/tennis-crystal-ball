@@ -11,7 +11,7 @@ import org.strangeforest.tcb.stats.model.*;
 import static java.lang.String.*;
 
 @Service
-public class StatsService {
+public class StatisticsService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
@@ -31,7 +31,7 @@ public class StatsService {
 		"  sum(l_ace) l_ace, sum(l_df) l_df, sum(l_sv_pt) l_sv_pt, sum(l_1st_in) l_1st_in, sum(l_1st_won) l_1st_won, sum(l_2nd_won) l_2nd_won, sum(l_sv_gms) l_sv_gms, sum(l_bp_sv) l_bp_sv, sum(l_bp_fc) l_bp_fc\n" +
 		"FROM match m\n" +
 		"LEFT JOIN match_stats s USING (match_id)%1$s\n" +
-		"WHERE m.%2$s = ? AND (s.set = 0 OR s.set IS NULL)%3$s";
+		"WHERE m.%2$s = ? AND (s.set = 0 OR s.set IS NULL) AND (m.outcome IS NULL OR m.outcome <> 'W/O')%3$s";
 
 	private static final String TOURNAMENT_EVENT_JOIN = //language=SQL
 	 	"\nLEFT JOIN tournament_event e USING (tournament_event_id)";

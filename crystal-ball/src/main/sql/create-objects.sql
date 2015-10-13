@@ -358,7 +358,7 @@ LEFT JOIN player_titles USING (player_id);
 CREATE MATERIALIZED VIEW match_for_perf AS
 SELECT m.match_id, e.level, e.surface, m.best_of, m.round, m.winner_id, m.loser_id, m.winner_rank, m.loser_rank, m.w_sets, m.l_sets FROM match m
 LEFT JOIN tournament_event e USING (tournament_event_id)
-WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D');
+WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND  (m.outcome IS NULL OR m.outcome <> 'W/O');
 
 CREATE INDEX ON match_for_perf (winner_id);
 CREATE INDEX ON match_for_perf (loser_id);

@@ -11,13 +11,13 @@ import org.strangeforest.tcb.stats.service.*;
 @Controller
 public class StatsController {
 
-	@Autowired private StatsService statsService;
+	@Autowired private StatisticsService statisticsService;
 
 	@RequestMapping("/playerStatsTab")
 	public ModelAndView playerStatsTab(
 		@RequestParam(value = "playerId") int playerId
 	) {
-		PlayerStats stats = statsService.getPlayerStats(playerId);
+		PlayerStats stats = statisticsService.getPlayerStats(playerId);
 		return new ModelAndView("playerStatsTab", "stats", stats);
 	}
 
@@ -25,7 +25,7 @@ public class StatsController {
 	public ModelAndView playerPerformance(
 		@RequestParam(value = "playerId") int playerId
 	) {
-		PlayerPerformance perf = statsService.getPlayerPerformance(playerId);
+		PlayerPerformance perf = statisticsService.getPlayerPerformance(playerId);
 		return new ModelAndView("playerPerformance", "perf", perf);
 	}
 
@@ -35,7 +35,7 @@ public class StatsController {
 		@RequestParam(value = "tournamentEventId") int tournamentEventId
 	) {
 		MatchFilter filter = new MatchFilter(null, null, null, null, tournamentEventId, null, null);
-		PlayerStats stats = statsService.getPlayerStats(playerId, filter);
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("stats", stats);
@@ -54,7 +54,7 @@ public class StatsController {
 		@RequestParam(value = "searchPhrase", required = false) String searchPhrase
 	) {
 		MatchFilter filter = new MatchFilter(season, level, surface, tournamentId, tournamentEventId, round, searchPhrase);
-		PlayerStats stats = statsService.getPlayerStats(playerId, filter);
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 		return new ModelAndView("playerStats", "stats", stats);
 	}
 
@@ -62,7 +62,7 @@ public class StatsController {
 	public ModelAndView matchStats(
 		@RequestParam(value = "matchId") long matchId
 	) {
-		MatchStats matchStats = statsService.getMatchStats(matchId);
+		MatchStats matchStats = statisticsService.getMatchStats(matchId);
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("matchId", matchId);
 		modelMap.addAttribute("matchStats", matchStats);
