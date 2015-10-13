@@ -37,8 +37,8 @@ public class StatisticsService {
 	 	"\nLEFT JOIN tournament_event e USING (tournament_event_id)";
 
 	private static final String PLAYER_PERFORMANCE_QUERY =
-		"SELECT matches, matches_won, grand_slam_matches, grand_slam_matches_won, masters_matches, masters_matches_won, clay_matches, clay_matches_won, grass_matches, grass_matches_won, hard_matches, hard_matches_won, carpet_matches, carpet_matches_won,\n" +
-			"deciding_sets, deciding_sets_won, fifth_sets, fifth_sets_won, finals, finals_won, vs_top10, vs_top10_won, first_sets_won, after_winning_first_set, first_sets_lost, after_losing_first_set, tie_breaks, tie_breaks_won\n" +
+		"SELECT matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, masters_matches_won, masters_matches_lost, clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, hard_matches_won, hard_matches_lost, carpet_matches_won, carpet_matches_lost,\n" +
+			"deciding_sets_won, deciding_sets_lost, fifth_sets_won, fifth_sets_lost, finals_won, finals_lost, vs_top10_won, vs_top10_lost, after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost, tie_breaks_won, tie_breaks_lost\n" +
 		"FROM player_performance\n" +
 		"WHERE player_id = ?";
 
@@ -132,21 +132,21 @@ public class StatisticsService {
 				if (rs.next()) {
 					PlayerPerformance perf = new PlayerPerformance();
 					// Performance
-					perf.setMatches(rs.getInt("matches"), rs.getInt("matches_won"));
-					perf.setGrandSlamMatches(rs.getInt("grand_slam_matches"), rs.getInt("grand_slam_matches_won"));
-					perf.setMastersMatches(rs.getInt("masters_matches"), rs.getInt("masters_matches_won"));
-					perf.setClayMatches(rs.getInt("clay_matches"), rs.getInt("clay_matches_won"));
-					perf.setGrassMatches(rs.getInt("grass_matches"), rs.getInt("grass_matches_won"));
-					perf.setHardMatches(rs.getInt("hard_matches"), rs.getInt("hard_matches_won"));
-					perf.setCarpetMatches(rs.getInt("carpet_matches"), rs.getInt("carpet_matches_won"));
+					perf.setMatches(mapWonLost(rs, "matches"));
+					perf.setGrandSlamMatches(mapWonLost(rs, "grand_slam_matches"));
+					perf.setMastersMatches(mapWonLost(rs, "masters_matches"));
+					perf.setClayMatches(mapWonLost(rs, "clay_matches"));
+					perf.setGrassMatches(mapWonLost(rs, "grass_matches"));
+					perf.setHardMatches(mapWonLost(rs, "hard_matches"));
+					perf.setCarpetMatches(mapWonLost(rs, "carpet_matches"));
 					// Pressure situations
-					perf.setDecidingSets(rs.getInt("deciding_sets"), rs.getInt("deciding_sets_won"));
-					perf.setFifthSets(rs.getInt("fifth_sets"), rs.getInt("fifth_sets_won"));
-					perf.setFinals(rs.getInt("finals"), rs.getInt("finals_won"));
-					perf.setVsTop10(rs.getInt("vs_top10"), rs.getInt("vs_top10_won"));
-					perf.setAfterWinningFirstSet(rs.getInt("first_sets_won"), rs.getInt("after_winning_first_set"));
-					perf.setAfterLosingFirstSet(rs.getInt("first_sets_lost"), rs.getInt("after_losing_first_set"));
-					perf.setTieBreaks(rs.getInt("tie_breaks"), rs.getInt("tie_breaks_won"));
+					perf.setDecidingSets(mapWonLost(rs, "deciding_sets"));
+					perf.setFifthSets(mapWonLost(rs, "fifth_sets"));
+					perf.setFinals(mapWonLost(rs, "finals"));
+					perf.setVsTop10(mapWonLost(rs, "vs_top10"));
+					perf.setAfterWinningFirstSet(mapWonLost(rs, "after_winning_first_set"));
+					perf.setAfterLosingFirstSet(mapWonLost(rs, "after_losing_first_set"));
+					perf.setTieBreaks(mapWonLost(rs, "tie_breaks"));
 					return perf;
 				}
 				else
@@ -154,5 +154,9 @@ public class StatisticsService {
 			},
 			playerId
 		);
+	}
+
+	private static WonLost mapWonLost(ResultSet rs, String name) throws SQLException {
+		return new WonLost(rs.getInt(name + "_won"), rs.getInt(name + "_lost"));
 	}
 }

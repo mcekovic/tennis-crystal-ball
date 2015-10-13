@@ -19,61 +19,61 @@
 				<!-- Performance Pct Data -->
 				<tr class="pct-data">
 					<td>Overall</td>
-					<th th:text="${#numbers.formatDecimal(perf.matchesWonPct, 1, 1) + '%'}">73%</th>
+					<th th:text="${#numbers.formatDecimal(perf.matches.wonPct, 1, 1) + '%'}">73%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Grand Slam</td>
-					<th th:text="${#numbers.formatDecimal(perf.grandSlamMatchesWonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.grandSlamMatches.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Masters</td>
-					<th th:text="${#numbers.formatDecimal(perf.mastersMatchesWonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.mastersMatches.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Clay</td>
-					<th th:text="${#numbers.formatDecimal(perf.clayMatchesWonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.clayMatches.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Grass</td>
-					<th th:text="${#numbers.formatDecimal(perf.grassMatchesWonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.grassMatches.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Hard</td>
-					<th th:text="${#numbers.formatDecimal(perf.hardMatchesWonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.hardMatches.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Carpet</td>
-					<th th:text="${#numbers.formatDecimal(perf.carpetMatchesWonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.carpetMatches.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<!-- Performance Raw Data -->
 				<tr class="raw-data"></tr>
 				<tr class="raw-data">
 					<td>Overall</td>
-					<th th:text="${perf.matchesWon} + ' - ' + ${perf.matchesLost} + ' / ' + ${perf.matches}">345/456</th>
+					<th th:text="${perf.matches}">345 / 456</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Grand Slam</td>
-					<th th:text="${perf.grandSlamMatchesWon} + ' - ' + ${perf.grandSlamMatchesLost} + ' / ' + ${perf.grandSlamMatches}">123/178</th>
+					<th th:text="${perf.grandSlamMatches}">123 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Masters</td>
-					<th th:text="${perf.mastersMatchesWon} + ' - ' + ${perf.mastersMatchesLost} + ' / ' + ${perf.mastersMatches}">123/178</th>
+					<th th:text="${perf.mastersMatches}">123 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Clay</td>
-					<th th:text="${perf.clayMatchesWon} + ' - ' + ${perf.clayMatchesLost} + ' / ' + ${perf.clayMatches}">123/178</th>
+					<th th:text="${perf.clayMatches}">123 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Grass</td>
-					<th th:text="${perf.grassMatchesWon} + ' - ' + ${perf.grassMatchesLost} + ' / ' + ${perf.grassMatches}">123/178</th>
+					<th th:text="${perf.grassMatches}">123 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Hard</td>
-					<th th:text="${perf.hardMatchesWon} + ' - ' + ${perf.hardMatchesLost} + ' / ' + ${perf.hardMatches}">123/178</th>
+					<th th:text="${perf.hardMatches}">123 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Carpet</td>
-					<th th:text="${perf.carpetMatchesWon} + ' - ' + ${perf.carpetMatchesLost} + ' / ' + ${perf.carpetMatches}">123/178</th>
+					<th th:text="${perf.carpetMatches}">123 / 178</th>
 				</tr>
 			</table>
 		</div>
@@ -87,61 +87,61 @@
 				<!-- Pressure Situations Pct Data -->
 				<tr class="pct-data">
 					<td>Deciding Set</td>
-					<th th:text="${#numbers.formatDecimal(perf.decidingSetsWonPct, 1, 1) + '%'}">73%</th>
+					<th th:text="${#numbers.formatDecimal(perf.decidingSets.wonPct, 1, 1) + '%'}">73%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Fifth Set</td>
-					<th th:text="${#numbers.formatDecimal(perf.fifthSetsWonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.fifthSets.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Finals</td>
-					<th th:text="${#numbers.formatDecimal(perf.finalsWonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.finals.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Vs Top 10</td>
-					<th th:text="${#numbers.formatDecimal(perf.vsTop10WonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.vsTop10.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>After Winning 1st Set</td>
-					<th th:text="${#numbers.formatDecimal(perf.afterWinningFirstSetPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.afterWinningFirstSet.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>After Losing 1st Set</td>
-					<th th:text="${#numbers.formatDecimal(perf.afterLosingFirstSetPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.afterLosingFirstSet.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Tie Breaks</td>
-					<th th:text="${#numbers.formatDecimal(perf.tieBreaksWonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${#numbers.formatDecimal(perf.tieBreaks.wonPct, 1, 1) + '%'}">76%</th>
 				</tr>
 				<!-- Pressure Situations Raw Data -->
 				<tr class="raw-data"></tr>
 				<tr class="raw-data">
 					<td>Deciding Set</td>
-					<th th:text="${perf.decidingSetsWon} + ' - ' + ${perf.decidingSetsLost} + ' / ' + ${perf.decidingSets}">95/156</th>
+					<th th:text="${perf.decidingSets}">95 / 156</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Fifth Set</td>
-					<th th:text="${perf.fifthSetsWon} + ' - ' + ${perf.fifthSetsLost} + ' / ' + ${perf.fifthSets}">23/44</th>
+					<th th:text="${perf.fifthSets}">23 / 44</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Finals</td>
-					<th th:text="${perf.finalsWon} + ' - ' + ${perf.finalsLost} + ' / ' + ${perf.finals}">23/48</th>
+					<th th:text="${perf.finals}">23 / 48</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Vs Top 10</td>
-					<th th:text="${perf.vsTop10Won} + ' - ' + ${perf.vsTop10Lost} + ' / ' + ${perf.vsTop10}">67/128</th>
+					<th th:text="${perf.vsTop10}">67 / 128</th>
 				</tr>
 				<tr class="raw-data">
 					<td>After Winning 1st Set</td>
-					<th th:text="${perf.afterWinningFirstSet} + ' - ' + ${perf.afterWinningFirstSetLost} + ' / ' + ${perf.firstSetsWon}">123/178</th>
+					<th th:text="${perf.afterWinningFirstSet}">123 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>After Losing 1st Set</td>
-					<th th:text="${perf.afterLosingFirstSet} + ' - ' + ${perf.afterLosingFirstSetLost} + ' / ' + ${perf.firstSetsLost}">123/178</th>
+					<th th:text="${perf.afterLosingFirstSet}">123 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Tie Breaks</td>
-					<th th:text="${perf.tieBreaksWon} + ' - ' + ${perf.tieBreaksLost} + ' / ' + ${perf.tieBreaks}">123/178</th>
+					<th th:text="${perf.tieBreaks}">123 / 178</th>
 				</tr>
 			</table>
 		</div>
