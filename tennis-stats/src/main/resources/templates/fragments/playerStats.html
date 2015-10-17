@@ -8,7 +8,7 @@
 			});
 			/*]]>*/
 		</script>
-		<div th:unless="${stats.isEmpty()}" class="row text-nowrap">
+		<div th:unless="${stats.empty}" class="row text-nowrap">
 			<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
 				<table class="table table-condensed table-hover table-striped">
 					<tr>
@@ -100,7 +100,7 @@
 					</tr>
 					<tr class="pct-data">
 						<td>Break Points</td>
-						<th th:text="${stats.breakPointsConverted != null ? #numbers.formatDecimal(stats.breakPointsConverted, 1, 1) + '%' : ''}">35%</th>
+						<th th:text="${stats.breakPointsWonPct != null ? #numbers.formatDecimal(stats.breakPointsWonPct, 1, 1) + '%' : ''}">35%</th>
 					</tr>
 					<tr class="pct-data">
 						<td>Return Pts. Won</td>
@@ -181,12 +181,12 @@
 				</table>
 			</div>
 		</div>
-		<th:block th:if="${stats.isEmpty()}"><p>No statistics available</p></th:block>
+		<th:block th:if="${stats.empty}"><p>No statistics available</p></th:block>
 		<div class="row">
-			<div th:unless="${stats.isEmpty()}" class="pct-data col-md-6">
+			<div th:unless="${stats.empty}" class="pct-data col-md-6">
 				<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('${elementId}')|"> Raw Data</button>
 			</div>
-			<div th:unless="${stats.isEmpty()}" class="raw-data col-md-6">
+			<div th:unless="${stats.empty}" class="raw-data col-md-6">
 				<button class="btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('${elementId}')|"> Pct. Data</button>
 			</div>
 			<div th:if="${popover}" class="col-md-6">

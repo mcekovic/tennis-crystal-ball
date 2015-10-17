@@ -233,7 +233,7 @@ public class PlayerStats {
 		return opponentStats.breakPointsFaced;
 	}
 
-	public Double getBreakPointsConverted() {
+	public Double getBreakPointsWonPct() {
 		return opponentStats.breakPointsLostPct;
 	}
 

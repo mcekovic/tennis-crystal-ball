@@ -5,19 +5,19 @@
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
-			var $timelineTable = $("#timelineTable");
-			$timelineTable.find("span.surface").each(function() {
+			var $tournamentsBody = $("#tournamentsBody");
+			$tournamentsBody.find("span.surface").each(function() {
 				var $surface = $(this);
 				var surface = $surface.text();
 				$surface.text(surfaceName(surface));
 				$surface.addClass("label-" + surfaceClassSuffix(surface));
 			});
-			$timelineTable.find("span.level").each(function() {
+			$tournamentsBody.find("span.level").each(function() {
 				var $tournament = $(this);
 				var level = $tournament.data("level");
 				$tournament.addClass("label-" + levelClassSuffix(level));
 			});
-			$timelineTable.find("a[data-level], a[data-surface]").each(function() {
+			$tournamentsBody.find("a[data-level], a[data-surface]").each(function() {
 				var $result = $(this);
 				var level = $result.data("level");
 				var surface = $result.data("surface");
@@ -31,31 +31,64 @@
 				}
 				$result.tooltip({title: title, html: true});
 			});
+			var $statsHead = $("#statisticsHead");
+			$statsHead.find(".raw-data").hide();
+			var $statsBody = $("#statisticsBody");
+			$statsBody.on("shown.bs.collapse", function() {
+				if (!$statsBody.hasClass("loaded")) {
+					var url = "playerTimelineStats?playerId=[[${playerId}]]&seasons=" + [[${#strings.listJoin(timeline.seasons, ",")}]];
+					$($statsBody).load(url, function () {
+						$statsBody.find(".raw-data").hide();
+						$statsBody.addClass("loaded");
+					});
+				}
+				$statsHead.find(".btn-stats").show();
+			}).on("hidden.bs.collapse", function() {
+				$statsHead.find(".btn-stats").hide();
+			});
 		});
 		/*]]>*/
 	</script>
 	<style scoped="scoped">
-		.first-by-level {
+		tr.timeline-header {
+			background-color: #d0d0d0;
+		}
+		th.season {
+			text-align: center;
+		}
+		tr.first-row {
 			border-top: 3px solid lightgray;
 		}
 		span.absent {
 			color: gray;
 		}
+		td.stats-header {
+			font-size: smaller;
+		}
 		td.stats {
 			font-size: smaller;
 			text-align: center;
 		}
+		td.stats-serve {
+			background-color: #fff0f8;
+		}
+		td.stats-return {
+			background-color: #f0fff8;
+		}
+		td.stats-total {
+			background-color: #ffffe8;
+		}
 	</style>
 	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
-			<tr>
+			<tr class="timeline-header">
 				<th>Tournament</th>
 				<th>Surface</th>
-				<th th:each="season : ${timeline.seasons}" th:text="${season}" align="center">2015</th>
+				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
 			</tr>
 		</thead>
-		<tbody>
-			<tr th:each="tournament : ${timeline.tournaments}" th:class="${tournament.firstByLevel ? 'first-by-level' : ''}">
+		<tbody id="tournamentsBody">
+			<tr th:each="tournament : ${timeline.tournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
 				<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
 					<span th:unless="${tournament.maxLevel} == 'O'" th:each="levelAndName : ${tournament.levelsAndNames}" th:text="${levelAndName.value}" th:attr="data-level=${levelAndName.key}" data-level="G" class="label level">Wimbledon</span>
 					<span th:if="${tournament.maxLevel} == 'O'" th:text="${tournament.name}" th:attr="data-level=${tournament.maxLevel}" data-level="O" class="label level">Olympics</span>
@@ -70,17 +103,24 @@
 					<span th:unless="${item.result}" class="absent">A</span>
 				</td>
 			</tr>
-			<tr>
-				<td colspan="2">Matches Won</td>
-				<td th:each="season : ${timeline.seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${#numbers.formatDecimal(stats.matchesWonPct, 1, 1)} + '%'" class="stats">84.5%</td>
-			</tr>
-			<tr>
-				<td colspan="2">Matches Win - Loss</td>
-				<td th:each="season : ${timeline.seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.matchesWon} + '-' + ${stats.matchesLost}" class="stats">56 - 9</td>
-			</tr>
 			<tr th:if="${timeline.empty}">
 				<td colspan="2" align="center">No data found</td>
 			</tr>
 		</tbody>
+		<thead id="statisticsHead">
+			<tr class="timeline-header">
+				<th>
+					<a id="timelineStats" href="#" class="label label-info glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Show yearly statistics"> Stats</a>
+				</th>
+				<th class="pct-data">
+					<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer btn-stats" onclick="toggleStatsData('timelineTable')" style="display: none"> Raw Data</button>
+				</th>
+				<th class="raw-data">
+					<button class="btn btn-default btn-xs glyphicon glyphicon-scale btn-stats" onclick="toggleStatsData('timelineTable')" style="display: none"> Pct. Data</button>
+				</th>
+				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+			</tr>
+		</thead>
+		<tbody id="statisticsBody"></tbody>
 	</table>
 </th:block>

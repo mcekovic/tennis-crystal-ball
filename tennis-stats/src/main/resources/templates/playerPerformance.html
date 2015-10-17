@@ -8,7 +8,7 @@
 		});
 		/*]]>*/
 	</script>
-	<div th:unless="${perf.isEmpty()}" class="row text-nowrap">
+	<div th:unless="${perf.empty}" class="row text-nowrap">
 		<div class="col-md-3">
 			<table class="table table-condensed table-hover table-striped">
 				<tr>
@@ -146,7 +146,7 @@
 			</table>
 		</div>
 	</div>
-	<div th:unless="${perf.isEmpty()}" class="row">
+	<div th:unless="${perf.empty}" class="row">
 		<div class="pct-data col-md-3">
 			<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('playerPerformance')"> Raw Data</button>
 		</div>
@@ -154,5 +154,5 @@
 			<button class="btn btn-default btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('playerPerformance')"> Pct. Data</button>
 		</div>
 	</div>
-	<th:block th:if="${perf.isEmpty()}"><p>No performance data available</p></th:block>
+	<th:block th:if="${perf.empty}"><p>No performance data available</p></th:block>
 </div>

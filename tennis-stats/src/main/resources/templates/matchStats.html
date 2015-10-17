@@ -112,9 +112,9 @@
 				<th th:text="${#numbers.formatDecimal(loserStats.secondServeReturnPointsWonPct, 1, 1) + '%'}">22%</th>
 			</tr>
 			<tr class="pct-data">
-				<th th:text="${winnerStats.breakPointsConverted != null ? #numbers.formatDecimal(winnerStats.breakPointsConverted, 1, 1) + '%' : ''}">50%</th>
+				<th th:text="${winnerStats.breakPointsWonPct != null ? #numbers.formatDecimal(winnerStats.breakPointsWonPct, 1, 1) + '%' : ''}">50%</th>
 				<td>Break Points</td>
-				<th th:text="${loserStats.breakPointsConverted != null ? #numbers.formatDecimal(loserStats.breakPointsConverted, 1, 1) + '%' : ''}">35%</th>
+				<th th:text="${loserStats.breakPointsWonPct != null ? #numbers.formatDecimal(loserStats.breakPointsWonPct, 1, 1) + '%' : ''}">35%</th>
 			</tr>
 			<tr class="pct-data">
 				<th th:text="${#numbers.formatDecimal(winnerStats.returnPointsWonPct, 1, 1) + '%'}">50%</th>
