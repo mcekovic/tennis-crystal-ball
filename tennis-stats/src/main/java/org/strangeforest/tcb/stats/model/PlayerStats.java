@@ -328,4 +328,12 @@ public class PlayerStats {
 			breakPointsFaced + stats.breakPointsFaced
 		);
 	}
+
+	public static final PlayerStats EMPTY = empty();
+
+	private static PlayerStats empty() {
+		PlayerStats empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		empty.setOpponentStats(empty);
+		return empty;
+	}
 }

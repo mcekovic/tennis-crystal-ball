@@ -1,147 +1,147 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
-	<!--@thymesVar id="yearlyStats" type="java.util.Map<java.lang.Integer, org.strangeforest.tcb.stats.model.PlayerStats>"-->
+	<!--@thymesVar id="seasonsStats" type="java.util.Map<java.lang.Integer, org.strangeforest.tcb.stats.model.PlayerStats>"-->
 	<!-- Serve -->
 	<tr class="pct-data first-row">
 		<td colspan="2" class="stats-header stats-serve">Ace %</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.acePct, 1, 1) + '%' : ''}" class="stats">4.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.acePct, 1, 1) + '%' : ''}" class="stats">4.5%</td>
 	</tr>
 	<tr class="raw-data first-row">
 		<td colspan="2" class="stats-header stats-serve">Aces</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.aces : ''}" class="stats">456</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.aces : ''}" class="stats">456</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-serve">Double Fault %</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.doubleFaultPct, 1, 1) + '%' : ''}" class="stats">2.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.doubleFaultPct, 1, 1) + '%' : ''}" class="stats">2.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-serve">Double Faults</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.doubleFaults : ''}" class="stats">256</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.doubleFaults : ''}" class="stats">256</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-serve">1st Serve</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.firstServePct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.firstServePct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-serve">1st Serve In</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.firstServesIn + '/' + stats.servicePoints : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.firstServesIn + '/' + stats.servicePoints : ''}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-serve">1st Serve Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.firstServeWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.firstServeWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-serve">1st Serve Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.firstServesWon + '/' + stats.firstServesIn : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.firstServesWon + '/' + stats.firstServesIn : ''}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-serve">2nd Serve Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.secondServeWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.secondServeWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-serve">2nd Serve Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.secondServesWon + '/' + stats.secondServes : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.secondServesWon + '/' + stats.secondServes : ''}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-serve">Break Points Saved</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() and stats.breakPointsSavedPct != null ? #numbers.formatDecimal(stats.breakPointsSavedPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() and stats.breakPointsSavedPct != null ? #numbers.formatDecimal(stats.breakPointsSavedPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-serve">Break Points Saved</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.breakPointsSaved + '/' + stats.breakPointsFaced : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.breakPointsSaved + '/' + stats.breakPointsFaced : ''}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-serve">Service Pts. Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.servicePointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.servicePointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-serve">Service Pts. Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.servicePointsWon + '/' + stats.servicePoints : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.servicePointsWon + '/' + stats.servicePoints : ''}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-serve">Service Games Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.serviceGamesWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.serviceGamesWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-serve">Service Games Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.serviceGamesWon + '/' + stats.serviceGames : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.serviceGamesWon + '/' + stats.serviceGames : ''}" class="stats">333/444</td>
 	</tr>
 	<!-- Return -->
 	<tr class="pct-data first-row">
 		<td colspan="2" class="stats-header stats-return">1st Srv. Rtn. Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.firstServeReturnPointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.firstServeReturnPointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data first-row">
 		<td colspan="2" class="stats-header stats-return">1st Srv. Rtn. Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.firstServeReturnPointsWon + '/' + stats.firstServeReturnPoints : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.firstServeReturnPointsWon + '/' + stats.firstServeReturnPoints : ''}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-return">2nd Srv. Rtn. Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.secondServeReturnPointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.secondServeReturnPointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-return">2nd Srv. Rtn. Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.secondServeReturnPointsWon + '/' + stats.secondServeReturnPoints : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.secondServeReturnPointsWon + '/' + stats.secondServeReturnPoints : ''}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-return">Break Points</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() and stats.breakPointsWonPct != null ? #numbers.formatDecimal(stats.breakPointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() and stats.breakPointsWonPct != null ? #numbers.formatDecimal(stats.breakPointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-return">Break Points</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.breakPointsWon + '/' + stats.breakPoints : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.breakPointsWon + '/' + stats.breakPoints : ''}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-return">Return Pts. Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.returnPointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.returnPointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-return">Return Pts. Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.returnPointsWon + '/' + stats.returnPoints : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.returnPointsWon + '/' + stats.returnPoints : ''}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-return">Return Games Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.returnGamesWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.returnGamesWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-return">Return Games Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.returnGamesWon + '/' + stats.returnGames : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.returnGamesWon + '/' + stats.returnGames : ''}" class="stats">333/444</td>
 	</tr>
 	<!-- Total -->
 	<tr class="first-row">
 		<td colspan="2" class="stats-header stats-total" title="Dominance Ratio: % of return points won divided by % of serve points lost">Dominance Ratio</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.dominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.dominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-total">Total Pts. Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.totalPointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.totalPointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-total">Total Pts. Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.totalPointsWon + '/' + stats.totalPoints : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.totalPointsWon + '/' + stats.totalPoints : ''}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-total">Total Games Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.totalGamesWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.totalGamesWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-total">Total Games Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.hasPointStats() ? stats.totalGamesWon + '/' + stats.totalGames : ''}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.totalGamesWon + '/' + stats.totalGames : ''}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-total">Sets Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${#numbers.formatDecimal(stats.setsWonPct, 1, 1) + '%'}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${#numbers.formatDecimal(stats.setsWonPct, 1, 1) + '%'}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
 		<td colspan="2" class="stats-header stats-total">Sets Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.setsWon + '/' + stats.sets}" class="stats">333/444</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.setsWon + '/' + stats.sets}" class="stats">333/444</td>
 	</tr>
 	<tr class="pct-data">
 		<td colspan="2" class="stats-header stats-total">Matches Won</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${#numbers.formatDecimal(stats.matchesWonPct, 1, 1) + '%'}" class="stats">84.5%</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${#numbers.formatDecimal(stats.matchesWonPct, 1, 1) + '%'}" class="stats">84.5%</td>
 	</tr>
 	<tr class="raw-data">
-		<td colspan="2" class="stats-header stats-total">Matches Win - Loss</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${yearlyStats.get(season)}" th:text="${stats.matchesWon + '-' + stats.matchesLost}" class="stats">56-9</td>
+		<td colspan="2" class="stats-header stats-total">Matches Won</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.matchesWon + '/' + stats.matches}" class="stats">56/66</td>
 	</tr>
 </th:block>

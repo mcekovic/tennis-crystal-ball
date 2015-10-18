@@ -188,10 +188,10 @@
 		<th:block th:if="${stats.empty}"><p>No statistics available</p></th:block>
 		<div class="row">
 			<div th:unless="${stats.empty}" class="pct-data col-md-6">
-				<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('${elementId}')|"> Raw Data</button>
+				<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('#${elementId}')|"> Raw Data</button>
 			</div>
 			<div th:unless="${stats.empty}" class="raw-data col-md-6">
-				<button class="btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('${elementId}')|"> Pct. Data</button>
+				<button class="btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('#${elementId}')|"> Pct. Data</button>
 			</div>
 			<div th:if="${popover}" class="col-md-6">
 				<button class="btn btn-default btn-xs glyphicon glyphicon-remove pull-right" th:onclick="|$('#${buttonId}').click()|"> Close</button>

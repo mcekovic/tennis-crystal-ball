@@ -4,6 +4,8 @@ import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class WonLost {
 
+	public static final WonLost EMPTY = new WonLost(0, 0);
+
 	private final int won;
 	private final int lost;
 	private final int total;
@@ -32,11 +34,19 @@ public class WonLost {
 		return wonPct;
 	}
 
+	public String getWonPctStr() {
+		return total > 0 ? String.format("%5.1f%%", wonPct) : "";
+	}
+
 	public boolean isEmpty() {
 		return total == 0;
 	}
 
-	@Override public String toString() {
-		return won + " - " + lost + " / " + total;
+	public String getWLT() {
+		return total > 0 ? won + " - " + lost + " / " + total : "";
+	}
+
+	public String getWL() {
+		return total > 0 ? won + "-" + lost : "";
 	}
 }

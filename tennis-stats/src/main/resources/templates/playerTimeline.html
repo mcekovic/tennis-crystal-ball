@@ -1,10 +1,10 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"-->
-	<!--@thymesVar id="yearlyStats" type="java.util.Map<java.lang.Integer, org.strangeforest.tcb.stats.model.PlayerStats>"-->
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
+			// Tournaments
 			var $tournamentsBody = $("#tournamentsBody");
 			$tournamentsBody.find("span.surface").each(function() {
 				var $surface = $(this);
@@ -31,29 +31,29 @@
 				}
 				$result.tooltip({title: title, html: true});
 			});
-			var $statsHead = $("#statisticsHead");
-			$statsHead.find(".raw-data").hide();
-			var $statsBody = $("#statisticsBody");
-			$statsBody.on("shown.bs.collapse", function() {
-				if (!$statsBody.hasClass("loaded")) {
-					var url = "playerTimelineStats?playerId=[[${playerId}]]&seasons=" + [[${#strings.listJoin(timeline.seasons, ",")}]];
-					$($statsBody).load(url, function () {
-						$statsBody.find(".raw-data").hide();
-						$statsBody.addClass("loaded");
+			bindTimelineExtraData("statistics", "playerTimelineStats");
+			bindTimelineExtraData("performance", "playerTimelinePerformance");
+		});
+		function bindTimelineExtraData(elementPrefix, url) {
+			var $head = $("#" + elementPrefix + "Head");
+			$head.find(".raw-data").hide();
+			var $body = $("#" + elementPrefix + "Body");
+			$body.on("shown.bs.collapse", function () {
+				if (!$body.hasClass("loaded")) {
+					$($body).load(url + "?playerId=[[${playerId}]]&seasons=" + [[${#strings.listJoin(timeline.seasons, ",")}]], function () {
+						$body.find(".raw-data").hide();
+						$body.addClass("loaded");
 					});
 				}
-				$statsHead.find(".btn-stats").show();
+				$head.find(".btn-stats").show();
 				$("html, body").scrollTop($(document).height() - $(window).height());
-			}).on("hidden.bs.collapse", function() {
-				$statsHead.find(".btn-stats").hide();
+			}).on("hidden.bs.collapse", function () {
+				$head.find(".btn-stats").hide();
 			});
-		});
+		}
 		/*]]>*/
 	</script>
 	<style scoped="scoped">
-		tr.timeline-header {
-			background-color: #d0d0d0;
-		}
 		th.season {
 			text-align: center;
 		}
@@ -79,10 +79,16 @@
 		td.stats-total {
 			background-color: #ffffe8;
 		}
+		td.stats-perf {
+			background-color: #f4f4ff;
+		}
+		td.stats-pressure {
+			background-color: #fff4f4;
+		}
 	</style>
 	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
-			<tr class="timeline-header">
+			<tr class="bg-primary">
 				<th>Tournament</th>
 				<th>Surface</th>
 				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
@@ -92,7 +98,7 @@
 			<tr th:each="tournament : ${timeline.bigTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
 				<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
 			</tr>
-			<tr th:unless="${timeline.empty}" class="timeline-header">
+			<tr th:unless="${timeline.empty}" class="bg-primary">
 				<th>Tournament</th>
 				<th>Surface</th>
 				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
@@ -105,19 +111,34 @@
 			</tr>
 		</tbody>
 		<thead id="statisticsHead">
-			<tr class="timeline-header">
+			<tr class="bg-primary">
 				<th>
-					<a id="timelineStats" href="#" class="label label-info glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle yearly statistics"> Stats</a>
+					<a id="timelineStats" href="#" class="label label-info glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"> Stats</a>
 				</th>
 				<th class="pct-data">
-					<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer btn-stats" onclick="toggleStatsData('timelineTable')" style="display: none"> Raw Data</button>
+					<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer btn-stats" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" style="display: none"> Raw Data</button>
 				</th>
 				<th class="raw-data">
-					<button class="btn btn-default btn-xs glyphicon glyphicon-scale btn-stats" onclick="toggleStatsData('timelineTable')" style="display: none"> Pct. Data</button>
+					<button class="btn btn-default btn-xs glyphicon glyphicon-scale btn-stats" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" style="display: none"> Pct. Data</button>
 				</th>
 				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
 			</tr>
 		</thead>
 		<tbody id="statisticsBody"></tbody>
+		<thead id="performanceHead">
+			<tr class="bg-primary">
+				<th>
+					<a id="timelinePerf" href="#" class="label label-info glyphicon glyphicon-stats" data-toggle="collapse" data-target="#performanceBody" title="Toggle seasons performance"> Performance</a>
+				</th>
+				<th class="pct-data">
+					<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer btn-stats" onclick="toggleStatsData('#performanceHead, #performanceBody')" style="display: none"> Raw Data</button>
+				</th>
+				<th class="raw-data">
+					<button class="btn btn-default btn-xs glyphicon glyphicon-scale btn-stats" onclick="toggleStatsData('#performanceHead, #performanceBody')" style="display: none"> Pct. Data</button>
+				</th>
+				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+			</tr>
+		</thead>
+		<tbody id="performanceBody"></tbody>
 	</table>
 </th:block>

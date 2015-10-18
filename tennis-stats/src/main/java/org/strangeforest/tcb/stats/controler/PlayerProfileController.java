@@ -1,7 +1,6 @@
 package org.strangeforest.tcb.stats.controler;
 
 import java.util.*;
-import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -10,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
-
-import static java.util.stream.Collectors.*;
 
 @Controller
 public class PlayerProfileController {
@@ -70,19 +67,5 @@ public class PlayerProfileController {
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("timeline", timeline);
 		return new ModelAndView("playerTimeline", modelMap);
-	}
-
-	@RequestMapping("/playerTimelineStats")
-	public ModelAndView playerTimelineStats(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "seasons") String seasons
-	) {
-		List<Integer> seasonList = Stream.of(seasons.split(",")).map(Integer::valueOf).collect(toList());
-		Map<Integer, PlayerStats> yearlyStats = statisticsService.getPlayerYearlyStats(playerId);
-
-		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("seasons", seasonList);
-		modelMap.addAttribute("yearlyStats", yearlyStats);
-		return new ModelAndView("playerTimelineStats", modelMap);
 	}
 }

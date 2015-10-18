@@ -144,4 +144,25 @@ public class PlayerPerformance {
 	public boolean isEmpty() {
 		return matches.isEmpty();
 	}
+
+	public static final PlayerPerformance EMPTY = empty();
+
+	private static PlayerPerformance empty() {
+		PlayerPerformance empty = new PlayerPerformance();
+		empty.matches = WonLost.EMPTY;
+		empty.grandSlamMatches = WonLost.EMPTY;
+		empty.mastersMatches = WonLost.EMPTY;
+		empty.clayMatches = WonLost.EMPTY;
+		empty.grassMatches = WonLost.EMPTY;
+		empty.hardMatches = WonLost.EMPTY;
+		empty.carpetMatches = WonLost.EMPTY;
+		empty.decidingSets = WonLost.EMPTY;
+		empty.fifthSets = WonLost.EMPTY;
+		empty.finals = WonLost.EMPTY;
+		empty.vsTop10 = WonLost.EMPTY;
+		empty.afterWinningFirstSet = WonLost.EMPTY;
+		empty.afterLosingFirstSet = WonLost.EMPTY;
+		empty.tieBreaks = WonLost.EMPTY;
+		return empty;
+	}
 }

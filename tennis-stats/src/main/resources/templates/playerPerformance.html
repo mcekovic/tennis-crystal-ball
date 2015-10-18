@@ -19,61 +19,61 @@
 				<!-- Performance Pct Data -->
 				<tr class="pct-data">
 					<td>Overall</td>
-					<th th:text="${#numbers.formatDecimal(perf.matches.wonPct, 1, 1) + '%'}">73%</th>
+					<th th:text="${perf.matches.wonPctStr}">73%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Grand Slam</td>
-					<th th:text="${#numbers.formatDecimal(perf.grandSlamMatches.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.grandSlamMatches.wonPctStr}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Masters</td>
-					<th th:text="${#numbers.formatDecimal(perf.mastersMatches.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.mastersMatches.wonPctStr}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Clay</td>
-					<th th:text="${#numbers.formatDecimal(perf.clayMatches.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.clayMatches.wonPctStr}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Grass</td>
-					<th th:text="${#numbers.formatDecimal(perf.grassMatches.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.grassMatches.wonPctStr}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Hard</td>
-					<th th:text="${#numbers.formatDecimal(perf.hardMatches.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.hardMatches.wonPctStr}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Carpet</td>
-					<th th:text="${#numbers.formatDecimal(perf.carpetMatches.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.carpetMatches.wonPctStr}">76%</th>
 				</tr>
 				<!-- Performance Raw Data -->
 				<tr class="raw-data"></tr>
 				<tr class="raw-data">
 					<td>Overall</td>
-					<th th:text="${perf.matches}">345 / 456</th>
+					<th th:text="${perf.matches.WLT}">345 - 55 / 456</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Grand Slam</td>
-					<th th:text="${perf.grandSlamMatches}">123 / 178</th>
+					<th th:text="${perf.grandSlamMatches.WLT}">123 - 55 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Masters</td>
-					<th th:text="${perf.mastersMatches}">123 / 178</th>
+					<th th:text="${perf.mastersMatches.WLT}">123 - 55 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Clay</td>
-					<th th:text="${perf.clayMatches}">123 / 178</th>
+					<th th:text="${perf.clayMatches.WLT}">123 - 55 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Grass</td>
-					<th th:text="${perf.grassMatches}">123 / 178</th>
+					<th th:text="${perf.grassMatches.WLT}">123 - 55 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Hard</td>
-					<th th:text="${perf.hardMatches}">123 / 178</th>
+					<th th:text="${perf.hardMatches.WLT}">123 - 55 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Carpet</td>
-					<th th:text="${perf.carpetMatches}">123 / 178</th>
+					<th th:text="${perf.carpetMatches.WLT}">123 - 55 / 178</th>
 				</tr>
 			</table>
 		</div>
@@ -87,71 +87,71 @@
 				<!-- Pressure Situations Pct Data -->
 				<tr class="pct-data">
 					<td>Deciding Set</td>
-					<th th:text="${#numbers.formatDecimal(perf.decidingSets.wonPct, 1, 1) + '%'}">73%</th>
+					<th th:text="${perf.decidingSets.wonPctStr}">73%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Fifth Set</td>
-					<th th:text="${#numbers.formatDecimal(perf.fifthSets.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.fifthSets.wonPctStr}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Finals</td>
-					<th th:text="${#numbers.formatDecimal(perf.finals.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.finals.wonPctStr}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Vs Top 10</td>
-					<th th:text="${#numbers.formatDecimal(perf.vsTop10.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.vsTop10.wonPctStr}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>After Winning 1st Set</td>
-					<th th:text="${#numbers.formatDecimal(perf.afterWinningFirstSet.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.afterWinningFirstSet.wonPctStr}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>After Losing 1st Set</td>
-					<th th:text="${#numbers.formatDecimal(perf.afterLosingFirstSet.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.afterLosingFirstSet.wonPctStr}">76%</th>
 				</tr>
 				<tr class="pct-data">
 					<td>Tie Breaks</td>
-					<th th:text="${#numbers.formatDecimal(perf.tieBreaks.wonPct, 1, 1) + '%'}">76%</th>
+					<th th:text="${perf.tieBreaks.wonPctStr}">76%</th>
 				</tr>
 				<!-- Pressure Situations Raw Data -->
 				<tr class="raw-data"></tr>
 				<tr class="raw-data">
 					<td>Deciding Set</td>
-					<th th:text="${perf.decidingSets}">95 / 156</th>
+					<th th:text="${perf.decidingSets.WLT}">95 - 55 / 156</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Fifth Set</td>
-					<th th:text="${perf.fifthSets}">23 / 44</th>
+					<th th:text="${perf.fifthSets.WLT}">23 - 55 / 44</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Finals</td>
-					<th th:text="${perf.finals}">23 / 48</th>
+					<th th:text="${perf.finals.WLT}">23 - 55 / 48</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Vs Top 10</td>
-					<th th:text="${perf.vsTop10}">67 / 128</th>
+					<th th:text="${perf.vsTop10.WLT}">67 - 55 / 128</th>
 				</tr>
 				<tr class="raw-data">
 					<td>After Winning 1st Set</td>
-					<th th:text="${perf.afterWinningFirstSet}">123 / 178</th>
+					<th th:text="${perf.afterWinningFirstSet.WLT}">123 - 55 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>After Losing 1st Set</td>
-					<th th:text="${perf.afterLosingFirstSet}">123 / 178</th>
+					<th th:text="${perf.afterLosingFirstSet.WLT}">123 - 55 / 178</th>
 				</tr>
 				<tr class="raw-data">
 					<td>Tie Breaks</td>
-					<th th:text="${perf.tieBreaks}">123 / 178</th>
+					<th th:text="${perf.tieBreaks.WLT}">123 - 55 / 178</th>
 				</tr>
 			</table>
 		</div>
 	</div>
 	<div th:unless="${perf.empty}" class="row">
 		<div class="pct-data col-md-3">
-			<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('playerPerformance')"> Raw Data</button>
+			<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#playerPerformance')"> Raw Data</button>
 		</div>
 		<div class="raw-data col-md-3">
-			<button class="btn btn-default btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('playerPerformance')"> Pct. Data</button>
+			<button class="btn btn-default btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#playerPerformance')"> Pct. Data</button>
 		</div>
 	</div>
 	<th:block th:if="${perf.empty}"><p>No performance data available</p></th:block>
