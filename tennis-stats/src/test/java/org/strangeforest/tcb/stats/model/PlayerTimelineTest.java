@@ -32,7 +32,7 @@ public class PlayerTimelineTest {
 
 
 		assertThat(timeline.getSeasons()).containsExactly(2001, 2002, 2003, 2004, 2008, 2009);
-		List<PlayerTournamentTimeline> tournaments = timeline.getTournaments();
+		List<PlayerTournamentTimeline> tournaments = timeline.getBigTournaments();
 		assertThat(tournaments).hasSize(5);
 
 		PlayerTournamentTimeline tournament1 = tournaments.get(0);

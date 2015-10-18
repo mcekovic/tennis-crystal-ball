@@ -42,7 +42,11 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	}
 
 	public String getMaxLevel() {
-		return maxLevel.get().code();
+		return maxLevel().code();
+	}
+
+	TournamentLevel maxLevel() {
+		return maxLevel.get();
 	}
 
 	public Iterable<String> getSurfaces() {
@@ -84,11 +88,11 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	}
 
 	private int getDuration() {
-		return maxLevel.get() == TournamentLevel.GRAND_SLAM ? 14 : 7;
+		return maxLevel() == TournamentLevel.GRAND_SLAM ? 14 : 7;
 	}
 
 	@Override public int compareTo(PlayerTournamentTimeline tournament) {
-		int result = maxLevel.get().compareTo(tournament.maxLevel.get());
+		int result = maxLevel().compareTo(tournament.maxLevel());
 		return result != 0 ? result : endDay.get().compareTo(tournament.endDay.get());
 	}
 

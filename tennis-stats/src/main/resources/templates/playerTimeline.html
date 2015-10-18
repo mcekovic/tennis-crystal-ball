@@ -43,6 +43,7 @@
 					});
 				}
 				$statsHead.find(".btn-stats").show();
+				$("html, body").scrollTop($(document).height() - $(window).height());
 			}).on("hidden.bs.collapse", function() {
 				$statsHead.find(".btn-stats").hide();
 			});
@@ -88,20 +89,16 @@
 			</tr>
 		</thead>
 		<tbody id="tournamentsBody">
-			<tr th:each="tournament : ${timeline.tournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
-				<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
-					<span th:unless="${tournament.maxLevel} == 'O'" th:each="levelAndName : ${tournament.levelsAndNames}" th:text="${levelAndName.value}" th:attr="data-level=${levelAndName.key}" data-level="G" class="label level">Wimbledon</span>
-					<span th:if="${tournament.maxLevel} == 'O'" th:text="${tournament.name}" th:attr="data-level=${tournament.maxLevel}" data-level="O" class="label level">Olympics</span>
-				</td>
-				<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
-					<span th:each="surface : ${tournament.surfaces}" th:text="${surface}" class="label surface">G</span>
-				</td>
-				<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
-					<a th:if="${item.result}" th:text="${item.result}" th:href="'javascript:playerMatches(' + ${item.tournamentEventId} + ')'"
-					   th:attr="data-level=${tournament.levelCount > 1 ? item.level : ''}, data-surface=${tournament.surfaceCount > 1 ? item.surface : ''}"
-					   th:title="${tournament.levelCount &lt;= 1 and tournament.surfaceCount &lt;= 1 ? 'Show matches' : ''}">W</a>
-					<span th:unless="${item.result}" class="absent">A</span>
-				</td>
+			<tr th:each="tournament : ${timeline.bigTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
+				<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
+			</tr>
+			<tr th:unless="${timeline.empty}" class="timeline-header">
+				<th>Tournament</th>
+				<th>Surface</th>
+				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+			</tr>
+			<tr th:each="tournament : ${timeline.otherTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
+				<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
 			</tr>
 			<tr th:if="${timeline.empty}">
 				<td colspan="2" align="center">No data found</td>
@@ -110,7 +107,7 @@
 		<thead id="statisticsHead">
 			<tr class="timeline-header">
 				<th>
-					<a id="timelineStats" href="#" class="label label-info glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Show yearly statistics"> Stats</a>
+					<a id="timelineStats" href="#" class="label label-info glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle yearly statistics"> Stats</a>
 				</th>
 				<th class="pct-data">
 					<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer btn-stats" onclick="toggleStatsData('timelineTable')" style="display: none"> Raw Data</button>

@@ -1,0 +1,16 @@
+<th:block th:fragment="playerTournamentTimeline(tournament)" xmlns:th="http://www.thymeleaf.org">
+	<!--@thymesVar id="tournament" type="org.strangeforest.tcb.stats.model.PlayerTournamentTimeline"-->
+	<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
+		<span th:unless="${tournament.maxLevel} == 'O'" th:each="levelAndName : ${tournament.levelsAndNames}" th:text="${levelAndName.value}" th:attr="data-level=${levelAndName.key}" data-level="G" class="label level">Wimbledon</span>
+		<span th:if="${tournament.maxLevel} == 'O'" th:text="${tournament.name}" th:attr="data-level=${tournament.maxLevel}" data-level="O" class="label level">Olympics</span>
+	</td>
+	<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
+		<span th:each="surface : ${tournament.surfaces}" th:text="${surface}" class="label surface">G</span>
+	</td>
+	<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
+		<a th:if="${item.result}" th:text="${item.result}" th:href="'javascript:playerMatches(' + ${item.tournamentEventId} + ')'"
+		   th:attr="data-level=${tournament.levelCount > 1 ? item.level : ''}, data-surface=${tournament.surfaceCount > 1 ? item.surface : ''}"
+		   th:title="${tournament.levelCount &lt;= 1 and tournament.surfaceCount &lt;= 1 ? 'Show matches' : ''}">W</a>
+		<span th:unless="${item.result}" class="absent">A</span>
+	</td>
+</th:block>

@@ -296,7 +296,11 @@ public class PlayerStats {
 	// Misc
 
 	public boolean isEmpty() {
-		return servicePoints == 0;
+		return matchesWon == 0 && getMatchesLost() == 0;
+	}
+
+	public boolean hasPointStats() {
+		return servicePoints > 0 || getReturnPoints() > 0;
 	}
 
 	public void setOpponentStats(PlayerStats opponentStats) {

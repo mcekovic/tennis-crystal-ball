@@ -86,9 +86,9 @@
 				<th th:text="${loserStats.secondServesWon}">22</th>
 			</tr>
 			<tr class="raw-data">
-				<th th:text="${winnerStats.breakPointsSaved} + ' / ' + ${winnerStats.breakPointsFaced}">3/5</th>
+				<th th:text="${winnerStats.breakPointsSaved + ' / ' + winnerStats.breakPointsFaced}">3 / 5</th>
 				<td>Break Points Saved</td>
-				<th th:text="${loserStats.breakPointsSaved} + ' / ' + ${loserStats.breakPointsFaced}">1/2</th>
+				<th th:text="${loserStats.breakPointsSaved + ' / ' + loserStats.breakPointsFaced}">1 / 2</th>
 			</tr>
 			<tr class="raw-data">
 				<th th:text="${winnerStats.servicePointsWon}">88</th>
@@ -133,9 +133,9 @@
 				<th th:text="${loserStats.secondServeReturnPointsWon}">25</th>
 			</tr>
 			<tr class="raw-data">
-				<th th:text="${winnerStats.breakPointsWon} + ' / ' + ${winnerStats.breakPoints}">3/5</th>
+				<th th:text="${winnerStats.breakPointsWon + ' / ' + winnerStats.breakPoints}">3/5</th>
 				<td>Break Points</td>
-				<th th:text="${loserStats.breakPointsWon} + ' / ' + ${loserStats.breakPoints}">0/0</th>
+				<th th:text="${loserStats.breakPointsWon + ' / ' + loserStats.breakPoints}">0/0</th>
 			</tr>
 			<tr class="raw-data">
 				<th th:text="${winnerStats.returnPointsWon}">43</th>
