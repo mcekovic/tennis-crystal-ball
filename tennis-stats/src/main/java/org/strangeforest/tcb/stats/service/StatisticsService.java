@@ -169,7 +169,7 @@ public class StatisticsService {
 	public PlayerPerformance getPlayerPerformance(int playerId) {
 		return jdbcTemplate.query(
 			PLAYER_PERFORMANCE_QUERY,
-			rs -> rs.next() ? mapPlayerPerformance(rs) : null,
+			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY,
 			playerId
 		);
 	}

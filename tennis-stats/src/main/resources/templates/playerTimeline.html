@@ -110,7 +110,7 @@
 				<td colspan="2" align="center">No data found</td>
 			</tr>
 		</tbody>
-		<thead id="statisticsHead">
+		<thead th:unless="${timeline.empty}" id="statisticsHead">
 			<tr class="bg-primary">
 				<th>
 					<a id="timelineStats" href="#" class="label label-info glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"> Stats</a>
@@ -125,7 +125,7 @@
 			</tr>
 		</thead>
 		<tbody id="statisticsBody"></tbody>
-		<thead id="performanceHead">
+		<thead th:unless="${timeline.empty}" id="performanceHead">
 			<tr class="bg-primary">
 				<th>
 					<a id="timelinePerf" href="#" class="label label-info glyphicon glyphicon-stats" data-toggle="collapse" data-target="#performanceBody" title="Toggle seasons performance"> Performance</a>
