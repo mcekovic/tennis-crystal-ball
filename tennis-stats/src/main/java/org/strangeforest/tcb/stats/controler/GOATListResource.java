@@ -32,7 +32,7 @@ public class GOATListResource {
 		@RequestParam(value = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		GOATListFilter filter = new GOATListFilter(searchPhrase);
+		PlayerListFilter filter = new PlayerListFilter(searchPhrase);
 		int playerCount = goatListService.getPlayerCount(filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);

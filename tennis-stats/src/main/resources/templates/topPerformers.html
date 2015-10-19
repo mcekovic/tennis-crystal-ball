@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Ultimate Tennis Statistics - Top Performers</title>
+	<link th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{js/formatters.js}"></script>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$(function() {
+			$("#topPerformersTable").bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/topPerformersTable",
+				requestHandler: function (request) {
+					request.dimension = $("#dimension").val();
+					return request;
+				},
+				rowCount: [10, 20, 50, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				},
+				formatters: {
+					"country": countryFormatter,
+					"player": playerFormatter
+				}
+			});
+			var $topPerformersTableHeader = $("#topPerformersTable-header");
+			$topPerformersTableHeader.find("div.search").before($("#dimensionDiv").remove());
+			showMinEntries();
+		});
+		function showMinEntries() {
+			$.getJSON("topPerformersDimension?dimension=" + $("#dimension").val(), function (dim) {
+				$("#minEntries").html(dim.minEntries + " " + dim.entriesName);
+			});
+		}
+		function reloadTopPerformers() {
+			$("#topPerformersTable").bootgrid("reload");
+			showMinEntries();
+		}
+		/*]]>*/
+	</script>
+</head>
+<body class="container">
+	<div th:include="fragments/header :: title"></div>
+	<h3 style="position: absolute">Top Performers</h3>
+	<div id="dimensionDiv" class="btn-group" style="margin-right: 20px">
+		<select id="dimension" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance dimension">
+			<optgroup label="Performance">
+				<option value="matches" selected="selected">Overall</option>
+				<option value="grand_slam_matches">Grand Slam</option>
+				<option value="masters_matches">Masters</option>
+				<option value="clay_matches">Clay</option>
+				<option value="grass_matches">Grass</option>
+				<option value="hard_matches">Hard</option>
+				<option value="carpet_matches">Carpet</option>
+			</optgroup>
+			<optgroup label="Pressure situations">
+				<option value="deciding_sets">Deciding set</option>
+				<option value="fifth_sets">5th set</option>
+				<option value="finals">Finals</option>
+				<option value="vs_top10">Vs Top 10</option>
+				<option value="after_winning_first_set">After winning 1st set</option>
+				<option value="after_losing_first_set">After losing 1st set</option>
+				<option value="tie_breaks">Tie breaks</option>
+			</optgroup>
+		</select>
+	</div>
+	<table id="topPerformersTable" class="table table-condensed table-hover table-striped">
+		<thead>
+			<tr>
+				<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="55">Rank</th>
+				<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="70">Country</th>
+				<th data-column-id="player" data-formatter="player" data-sortable="false" data-width="200">Name</th>
+				<th data-column-id="wonLostPct" data-order="desc" data-width="100" data-align="right" data-header-align="right">Pct.</th>
+				<th data-column-id="won" data-type="numeric" data-order="desc" data-width="80" data-align="right" data-header-align="right">Won</th>
+				<th data-column-id="lost" data-type="numeric" data-order="desc" data-width="80" data-align="right" data-header-align="right">Lost</th>
+			</tr>
+		</thead>
+	</table>
+	<p><i>* Minimum <span id="minEntries">100 matches</span></i></p>
+	<div th:include="fragments/footer :: copy"></div>
+</body>
+</html>

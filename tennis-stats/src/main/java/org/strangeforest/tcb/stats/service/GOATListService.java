@@ -29,11 +29,15 @@ public class GOATListService {
 		"ORDER BY level, result DESC";
 
 
-	public int getPlayerCount(GOATListFilter filter) {
-		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(format(GOAT_COUNT_QUERY, filter.getCriteria()), filter.getParams(), Integer.class));
+	public int getPlayerCount(PlayerListFilter filter) {
+		return jdbcTemplate.queryForObject(
+			format(GOAT_COUNT_QUERY, filter.getCriteria()),
+			filter.getParams(),
+			Integer.class
+		);
 	}
 
-	public BootgridTable<GOATListRow> getGOATListTable(int playerCount, GOATListFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<GOATListRow> getGOATListTable(int playerCount, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<GOATListRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
