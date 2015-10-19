@@ -41,7 +41,7 @@ public class TopPerformerRow {
 	}
 
 	public String getWonLostPct() {
-		return wonLost.getWonPctStr();
+		return wonLost.getWonPctStr(2);
 	}
 
 	public int getWon() {

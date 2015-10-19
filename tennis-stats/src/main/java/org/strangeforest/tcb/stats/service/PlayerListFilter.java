@@ -4,7 +4,6 @@ import java.util.*;
 
 import static com.google.common.base.Strings.*;
 import static java.util.Arrays.*;
-import static java.util.Collections.*;
 
 public class PlayerListFilter {
 

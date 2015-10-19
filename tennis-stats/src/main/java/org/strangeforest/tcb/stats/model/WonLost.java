@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
+import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class WonLost {
@@ -35,7 +36,11 @@ public class WonLost {
 	}
 
 	public String getWonPctStr() {
-		return total > 0 ? String.format("%5.1f%%", wonPct) : "";
+		return getWonPctStr(1);
+	}
+
+	public String getWonPctStr(int decimals) {
+		return total > 0 ? format(format("%%%1$d.%2$df%%%%", 4 + decimals, decimals), wonPct) : "";
 	}
 
 	public boolean isEmpty() {
