@@ -77,6 +77,9 @@ public class StatsLeadersService {
 		addDimension(new StatsDimension("firstServePct", "100.0*w_1st_in/w_sv_pt", true));
 		addDimension(new StatsDimension("firstServeWonPct", "100.0*w_1st_won/w_1st_in", true));
 		addDimension(new StatsDimension("secondServeWonPct", "100.0*w_2nd_won/(w_sv_pt-w_1st_in)", true));
+		addDimension(new StatsDimension("breakPointsSavedPct", "100.0*w_bp_sv/w_bp_fc", true));
+		addDimension(new StatsDimension("servicePointsWonPct", "100.0*(w_1st_won+w_2nd_won)/w_sv_pt", true));
+		addDimension(new StatsDimension("serviceGamesWonPct", "100.0*(w_sv_gms-(w_bp_fc-w_bp_sv))/w_sv_gms", true));
 	}
 
 	private static void addDimension(StatsDimension dimension) {
