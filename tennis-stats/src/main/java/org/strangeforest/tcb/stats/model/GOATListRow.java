@@ -1,14 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
-import org.strangeforest.tcb.util.*;
+public class GOATListRow extends PlayerRow {
 
-public class GOATListRow {
-
-	private final int goatRank;
-	private final int playerId;
-	private final String player;
-	private final String countryId;
-	private final String countryCode;
 	private int goatPoints;
 	private int grandSlams;
 	private int tourFinals;
@@ -18,32 +11,12 @@ public class GOATListRow {
 	private int titles;
 
 	public GOATListRow(int goatRank, int playerId, String player, String countryId, int goatPoints) {
-		this.goatRank = goatRank;
-		this.playerId = playerId;
-		this.player = player;
-		this.countryId = countryId;
-		this.countryCode = CountryUtil.getISOAlpha2Code(countryId);
+		super(goatRank, playerId, player, countryId);
 		this.goatPoints = goatPoints;
 	}
 
 	public int getGoatRank() {
-		return goatRank;
-	}
-
-	public int getPlayerId() {
-		return playerId;
-	}
-
-	public String getPlayer() {
-		return player;
-	}
-
-	public String getCountryId() {
-		return countryId;
-	}
-
-	public String getCountryCode() {
-		return countryCode;
+		return getRank();
 	}
 
 	public int getGoatPoints() {

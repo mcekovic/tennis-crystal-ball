@@ -78,6 +78,7 @@ class ATPTennisLoader {
 		refreshMaterializedView(sql, 'player_goat_points')
 		refreshMaterializedView(sql, 'player_titles')
 		refreshMaterializedView(sql, 'player_performance')
+		refreshMaterializedView(sql, 'player_stats')
 	}
 
 	private static def refreshMaterializedView(Sql sql, String viewName) {

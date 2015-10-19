@@ -23,7 +23,6 @@ public class PlayerStats {
 	private final int firstServesLost;
 	private final double firstServeLostPct;
 	private final int secondServes;
-	private final int secondServesIn;
 	private final double secondServeWonPct;
 	private final int secondServesLost;
 	private final double secondServeLostPct;
@@ -59,7 +58,6 @@ public class PlayerStats {
 		firstServesLost = firstServesIn - firstServesWon;
 		firstServeLostPct = PCT - firstServeWonPct;
 		secondServes = servicePoints - firstServesIn;
-		secondServesIn = secondServes - doubleFaults;
 		secondServeWonPct = pct(secondServesWon, secondServes);
 		secondServesLost = secondServes - secondServesWon;
 		secondServeLostPct = PCT - secondServeWonPct;
@@ -136,10 +134,6 @@ public class PlayerStats {
 
 	public int getSecondServes() {
 		return secondServes;
-	}
-
-	public int getSecondServesIn() {
-		return secondServesIn;
 	}
 
 	public int getSecondServesWon() {

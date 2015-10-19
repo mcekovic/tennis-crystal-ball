@@ -25,4 +25,9 @@ public class TennisStatsController {
 	public String topPerformers() {
 		return "topPerformers";
 	}
+
+	@RequestMapping("/statsLeaders")
+	public String statsLeaders() {
+		return "statsLeaders";
+	}
 }

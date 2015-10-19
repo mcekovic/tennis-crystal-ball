@@ -38,6 +38,7 @@
 			var $topPerformersTableHeader = $("#topPerformersTable-header");
 			$topPerformersTableHeader.find("div.search").before($("#dimensionDiv").remove());
 			showMinEntries();
+			$("[data-toggle='tooltip']").tooltip();
 		});
 		function showMinEntries() {
 			$.getJSON("topPerformersDimension?dimension=" + $("#dimension").val(), function (dim) {
@@ -66,12 +67,12 @@
 				<option value="carpet_matches">Carpet</option>
 			</optgroup>
 			<optgroup label="Pressure situations">
-				<option value="deciding_sets">Deciding set</option>
-				<option value="fifth_sets">5th set</option>
+				<option value="deciding_sets">Deciding Set</option>
+				<option value="fifth_sets">5th Set</option>
 				<option value="finals">Finals</option>
 				<option value="vs_top10">Vs Top 10</option>
-				<option value="after_winning_first_set">After winning 1st set</option>
-				<option value="after_losing_first_set">After losing 1st set</option>
+				<option value="after_winning_first_set">After Winning 1st Set</option>
+				<option value="after_losing_first_set">After Losing 1st Set</option>
 				<option value="tie_breaks">Tie breaks</option>
 			</optgroup>
 		</select>

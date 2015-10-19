@@ -57,8 +57,7 @@ public class TopPerformersService {
 				String player = rs.getString("name");
 				String countryId = rs.getString("country_id");
 				WonLost wonLost = mapWonLost(rs);
-				TopPerformerRow row = new TopPerformerRow(rank, playerId, player, countryId, wonLost);
-				table.addRow(row);
+				table.addRow(new TopPerformerRow(rank, playerId, player, countryId, wonLost));
 			},
 			filter.getParamsWithPrefix(getDimensionMinEntries(dimension), playerCount, offset, pageSize)
 		);

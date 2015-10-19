@@ -1,4 +1,3 @@
-DROP VIEW match_stats_v;
 DROP VIEW player_v;
 DROP VIEW player_season_performance_v;
 
@@ -9,6 +8,7 @@ DROP MATERIALIZED VIEW player_goat_points;
 DROP MATERIALIZED VIEW player_titles;
 DROP MATERIALIZED VIEW player_tournament_event_result;
 DROP MATERIALIZED VIEW player_performance;
+DROP MATERIALIZED VIEW player_stats;
 
 DROP TABLE tournament_rank_points CASCADE;
 DROP TABLE match_stats CASCADE;

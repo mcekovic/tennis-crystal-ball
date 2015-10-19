@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Ultimate Tennis Statistics - Statistics Leaders</title>
+	<link th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{js/formatters.js}"></script>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$(function() {
+			$("#statsLeadersTable").bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/statsLeadersTable",
+				requestHandler: function (request) {
+					request.dimension = $("#dimension").val();
+					return request;
+				},
+				rowCount: [10, 20, 50, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				},
+				formatters: {
+					"country": countryFormatter,
+					"player": playerFormatter
+				}
+			});
+			var $statsLeadersTableHeader = $("#statsLeadersTable-header");
+			$statsLeadersTableHeader.find("div.search").before($("#dimensionDiv").remove());
+			$("[data-toggle='tooltip']").tooltip();
+		});
+		function reloadStatsLeaders() {
+			$("#statsLeadersTable").bootgrid("reload");
+		}
+		/*]]>*/
+	</script>
+</head>
+<body class="container">
+	<div th:include="fragments/header :: title"></div>
+	<h3 style="position: absolute">Statistics Leaders</h3>
+	<div id="dimensionDiv" class="btn-group" style="margin-right: 20px">
+		<select id="dimension" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+			<optgroup label="Serve">
+				<option value="aces" selected="selected">Aces</option>
+				<option value="acePct">Ace %</option>
+				<option value="doubleFaultPct">Double Fault %</option>
+				<option value="firstServePct">1st Serve</option>
+				<option value="firstServeWonPct">1st Serve Won</option>
+				<option value="secondServeWonPct">2nd Serve Won</option>
+				<option value="breakPointsSavedPct">Break Points Saved</option>
+				<option value="servicePointsWonPct">Service Pts. Won</option>
+				<option value="serviceGamesWonPct">Service Games Won</option>
+			</optgroup>
+			<optgroup label="Return">
+				<option value="firstServeReturnWonPct">1st Srv. Rtn. Won</option>
+				<option value="secondServeReturnWonPct">2nd Srv. Rtn. Won</option>
+				<option value="breakPointsPct">Break Points</option>
+				<option value="returnPointsWonPct">Return Pts. Won</option>
+				<option value="returnGamesWonPct">Return Games Won</option>
+			</optgroup>
+			<optgroup label="Total">
+				<option value="dominanceRatio">Dominance Ratio</option>
+				<option value="totalPointsWonPct">Total Pts. Won</option>
+				<option value="totalGamesWonPct">Total Games Won</option>
+				<option value="setsWonPct">Sets Won</option>
+				<option value="matchesWonPctPct">Matches Won</option>
+			</optgroup>
+		</select>
+	</div>
+	<table id="statsLeadersTable" class="table table-condensed table-hover table-striped">
+		<thead>
+			<tr>
+				<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="55">Rank</th>
+				<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="70">Country</th>
+				<th data-column-id="player" data-formatter="player" data-sortable="false" data-width="200">Name</th>
+				<th data-column-id="value" data-order="desc" data-width="100" data-align="right" data-header-align="right">Value</th>
+			</tr>
+		</thead>
+	</table>
+	<p><i>* Minimum 100 matches</i></p>
+	<div th:include="fragments/footer :: copy"></div>
+</body>
+</html>
