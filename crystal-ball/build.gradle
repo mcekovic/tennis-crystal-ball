@@ -9,6 +9,6 @@ repositories {
 
 dependencies {
 	compile 'com.neovisionaries:nv-i18n:1.17'
-	runtime 'org.postgresql:postgresql:9.4-1203-jdbc42'
+	runtime 'org.postgresql:postgresql:9.4-1204-jdbc42'
 	testCompile 'junit:junit:4.12'
 }

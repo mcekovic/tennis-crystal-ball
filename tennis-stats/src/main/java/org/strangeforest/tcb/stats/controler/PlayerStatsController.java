@@ -14,7 +14,7 @@ import org.strangeforest.tcb.stats.service.*;
 import static java.util.stream.Collectors.*;
 
 @Controller
-public class StatsController {
+public class PlayerStatsController {
 
 	@Autowired private StatisticsService statisticsService;
 
@@ -79,11 +79,13 @@ public class StatsController {
 		@RequestParam(value = "playerId") int playerId,
 		@RequestParam(value = "seasons") String seasons
 	) {
+		PlayerStats careerStats = statisticsService.getPlayerStats(playerId);
 		List<Integer> seasonList = toSeasons(seasons);
 		Map<Integer, PlayerStats> seasonsStats = statisticsService.getPlayerSeasonsStats(playerId);
 		ensureSeasons(seasonsStats, seasonList, PlayerStats.EMPTY);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("careerStats", careerStats);
 		modelMap.addAttribute("seasons", seasonList);
 		modelMap.addAttribute("seasonsStats", seasonsStats);
 		return new ModelAndView("playerTimelineStats", modelMap);
@@ -94,17 +96,19 @@ public class StatsController {
 		@RequestParam(value = "playerId") int playerId,
 		@RequestParam(value = "seasons") String seasons
 	) {
+		PlayerPerformance careerPerf = statisticsService.getPlayerPerformance(playerId);
 		List<Integer> seasonList = toSeasons(seasons);
 		Map<Integer, PlayerPerformance> seasonsPerf = statisticsService.getPlayerSeasonsPerformance(playerId);
 		ensureSeasons(seasonsPerf, seasonList, PlayerPerformance.EMPTY);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("careerPerf", careerPerf);
 		modelMap.addAttribute("seasons", seasonList);
 		modelMap.addAttribute("seasonsPerf", seasonsPerf);
 		return new ModelAndView("playerTimelinePerformance", modelMap);
 	}
 
-	private List<Integer> toSeasons(@RequestParam(value = "seasons") String seasons) {
+	private List<Integer> toSeasons(String seasons) {
 		return Stream.of(seasons.split(",")).map(Integer::valueOf).collect(toList());
 	}
 

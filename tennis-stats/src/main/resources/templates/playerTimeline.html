@@ -45,7 +45,7 @@
 						$body.addClass("loaded");
 					});
 				}
-				$head.find(".btn-stats").show();
+				$head.find(".btn-stats").css("display", "inline");
 				$("html, body").scrollTop($(document).height() - $(window).height());
 			}).on("hidden.bs.collapse", function () {
 				$head.find(".btn-stats").hide();
@@ -113,14 +113,13 @@
 		<thead th:unless="${timeline.empty}" id="statisticsHead">
 			<tr class="bg-primary">
 				<th>
-					<a id="timelineStats" href="#" class="label label-info glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"> Stats</a>
+					<button id="timelineStats" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"> Stats</button>
+					<div class="btn-stats" style="display: none">
+						<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#statisticsHead, #statisticsBody')"> Raw Data</button>
+						<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#statisticsHead, #statisticsBody')"> Pct. Data</button>
+					</div>
 				</th>
-				<th class="pct-data">
-					<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer btn-stats" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" style="display: none"> Raw Data</button>
-				</th>
-				<th class="raw-data">
-					<button class="btn btn-default btn-xs glyphicon glyphicon-scale btn-stats" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" style="display: none"> Pct. Data</button>
-				</th>
+				<th class="text-center">Career</th>
 				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
 			</tr>
 		</thead>
@@ -128,14 +127,13 @@
 		<thead th:unless="${timeline.empty}" id="performanceHead">
 			<tr class="bg-primary">
 				<th>
-					<a id="timelinePerf" href="#" class="label label-info glyphicon glyphicon-stats" data-toggle="collapse" data-target="#performanceBody" title="Toggle seasons performance"> Performance</a>
+					<button id="timelinePerf" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#performanceBody" title="Toggle seasons performance"> Performance</button>
+					<div class="btn-stats" style="display: none">
+						<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#performanceHead, #performanceBody')"> Raw Data</button>
+						<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#performanceHead, #performanceBody')"> Pct. Data</button>
+					</div>
 				</th>
-				<th class="pct-data">
-					<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer btn-stats" onclick="toggleStatsData('#performanceHead, #performanceBody')" style="display: none"> Raw Data</button>
-				</th>
-				<th class="raw-data">
-					<button class="btn btn-default btn-xs glyphicon glyphicon-scale btn-stats" onclick="toggleStatsData('#performanceHead, #performanceBody')" style="display: none"> Pct. Data</button>
-				</th>
+				<th class="text-center">Career</th>
 				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
 			</tr>
 		</thead>
