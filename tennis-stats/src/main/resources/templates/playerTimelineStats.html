@@ -136,7 +136,7 @@
 	</tr>
 	<!-- Total -->
 	<tr class="first-row">
-		<td class="stats-header stats-total" title="Dominance Ratio: % of return points won divided by % of serve points lost">Dominance Ratio</td>
+		<td class="stats-header stats-total" th:title="#{stats.dominanceRatio.title}">Dominance Ratio</td>
 		<td th:text="${careerStats.hasPointStats() ? #numbers.formatDecimal(careerStats.dominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
 		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.dominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
 	</tr>

@@ -8,6 +8,7 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.model.StatsDimension.Type.*;
 
 @Service
 public class StatsLeadersService {
@@ -20,22 +21,23 @@ public class StatsLeadersService {
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM player_stats\n" +
 		"LEFT JOIN player_v USING (player_id)\n" +
-		"WHERE w_matches + l_matches >= ?%1$s";
+		"WHERE p_matches + o_matches >= ?%1$s";
 
 	private static final String STATS_LEADERS_QUERY = //language=SQL
 		"WITH stats_leaders AS (\n" +
 		"  SELECT player_id, name, country_id, %1$s AS value" +
 		"  FROM player_stats\n" +
 		"  LEFT JOIN player_v USING (player_id)\n" +
-		"  WHERE w_matches + l_matches >= ?%2$s\n" +
+		"  WHERE p_matches + o_matches >= ?%2$s\n" +
 		"), stats_leaders_ranked AS (\n" +
-		"  SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id, name, country_id, value\n" +
+		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, name, country_id, value\n" +
 		"  FROM stats_leaders\n" +
+		"  WHERE value IS NOT NULL\n" +
 		")\n" +
 		"SELECT rank, player_id, name, country_id, value\n" +
 		"FROM stats_leaders_ranked\n" +
 		"WHERE rank <= ?\n" +
-		"ORDER BY %3$s, name OFFSET ? LIMIT ?";
+		"ORDER BY %3$s NULLS LAST, name OFFSET ? LIMIT ?";
 
 
 	public int getPlayerCount(PlayerListFilter filter) {
@@ -58,7 +60,7 @@ public class StatsLeadersService {
 				String player = rs.getString("name");
 				String countryId = rs.getString("country_id");
 				double value = rs.getDouble("value");
-				table.addRow(new StatsLeaderRow(rank, playerId, player, countryId, value, statsDimension.isPct()));
+				table.addRow(new StatsLeaderRow(rank, playerId, player, countryId, value, statsDimension.getType()));
 			},
 			filter.getParamsWithPrefix(MIN_MATCHES, playerCount, offset, pageSize)
 		);
@@ -71,27 +73,29 @@ public class StatsLeadersService {
 	private static final Map<String, StatsDimension> DIMENSIONS = new HashMap<>();
 	static {
 		// Serve
-		addDimension(new StatsDimension("aces", "w_ace", false));
-		addDimension(new StatsDimension("acePct", "100.0*w_ace/w_sv_pt", true));
-		addDimension(new StatsDimension("doubleFaultPct", "100.0*w_df/w_sv_pt", true));
-		addDimension(new StatsDimension("firstServePct", "100.0*w_1st_in/w_sv_pt", true));
-		addDimension(new StatsDimension("firstServeWonPct", "100.0*w_1st_won/w_1st_in", true));
-		addDimension(new StatsDimension("secondServeWonPct", "100.0*w_2nd_won/(w_sv_pt-w_1st_in)", true));
-		addDimension(new StatsDimension("breakPointsSavedPct", "100.0*w_bp_sv/w_bp_fc", true));
-		addDimension(new StatsDimension("servicePointsWonPct", "100.0*(w_1st_won+w_2nd_won)/w_sv_pt", true));
-		addDimension(new StatsDimension("serviceGamesWonPct", "100.0*(w_sv_gms-(w_bp_fc-w_bp_sv))/w_sv_gms", true));
+		addDimension(new StatsDimension("aces", "p_ace", COUNT));
+		addDimension(new StatsDimension("acePct", "p_ace::real/p_sv_pt", PERCENTAGE));
+		addDimension(new StatsDimension("doubleFaultPct", "p_df::real/p_sv_pt", PERCENTAGE));
+		addDimension(new StatsDimension("firstServePct", "p_1st_in::real/p_sv_pt", PERCENTAGE));
+		addDimension(new StatsDimension("firstServeWonPct", "p_1st_won::real/p_1st_in", PERCENTAGE));
+		addDimension(new StatsDimension("secondServeWonPct", "p_2nd_won::real/(p_sv_pt-p_1st_in)", PERCENTAGE));
+		addDimension(new StatsDimension("breakPointsSavedPct", "p_bp_sv::real/p_bp_fc", PERCENTAGE));
+		addDimension(new StatsDimension("servicePointsWonPct", "(p_1st_won+p_2nd_won)::real/p_sv_pt", PERCENTAGE));
+		addDimension(new StatsDimension("serviceGamesWonPct", "(p_sv_gms-(p_bp_fc-p_bp_sv))::real/p_sv_gms", PERCENTAGE));
 		// Return
-		addDimension(new StatsDimension("firstServeReturnWonPct", "100.0*(l_1st_in-l_1st_won)/l_1st_in", true));
-		addDimension(new StatsDimension("secondServeReturnWonPct", "100.0*(l_sv_pt-l_1st_in-l_2nd_won)/(l_sv_pt-l_1st_in)", true));
-		addDimension(new StatsDimension("breakPointsPct", "100.0*(l_bp_fc-l_bp_sv)/l_bp_fc", true));
-		addDimension(new StatsDimension("returnPointsWonPct", "100.0*(l_sv_pt-l_1st_won-l_2nd_won)/l_sv_pt", true));
-		addDimension(new StatsDimension("returnGamesWonPct", "100.0*(l_bp_fc-l_bp_sv)/l_sv_gms", true));
+		addDimension(new StatsDimension("aceAgainstPct", "o_ace::real/o_sv_pt", PERCENTAGE));
+		addDimension(new StatsDimension("doubleFaultAgainstPct", "o_df::real/o_sv_pt", PERCENTAGE));
+		addDimension(new StatsDimension("firstServeReturnWonPct", "(o_1st_in-o_1st_won)::real/o_1st_in", PERCENTAGE));
+		addDimension(new StatsDimension("secondServeReturnWonPct", "(o_sv_pt-o_1st_in-o_2nd_won)::real/(o_sv_pt-o_1st_in)", PERCENTAGE));
+		addDimension(new StatsDimension("breakPointsPct", "(o_bp_fc-o_bp_sv)::real/o_bp_fc", PERCENTAGE));
+		addDimension(new StatsDimension("returnPointsWonPct", "(o_sv_pt-o_1st_won-o_2nd_won)::real/o_sv_pt", PERCENTAGE));
+		addDimension(new StatsDimension("returnGamesWonPct", "(o_bp_fc-o_bp_sv)::real/o_sv_gms", PERCENTAGE));
 		// Total
-		addDimension(new StatsDimension("dominanceRatio", "((l_sv_pt-l_1st_won-l_2nd_won)::real/l_sv_pt)/((w_sv_pt-w_1st_won-w_2nd_won)::real/w_sv_pt)", true));
-		addDimension(new StatsDimension("totalPointsWonPct", "100.0*(w_1st_won+w_2nd_won+l_sv_pt-l_1st_won-l_2nd_won)/(w_sv_pt+l_sv_pt)", true));
-		addDimension(new StatsDimension("totalGamesWonPct", "100.0*(w_sv_gms-(w_bp_fc-w_bp_sv)+l_bp_fc-l_bp_sv)/(w_sv_gms+l_sv_gms)", true));
-		addDimension(new StatsDimension("setsWonPct", "100.0*w_sets/(w_sets+l_sets)", true));
-		addDimension(new StatsDimension("matchesWonPctPct", "100.0*w_matches/(w_matches+l_matches)", true));
+		addDimension(new StatsDimension("dominanceRatio", "((o_sv_pt-o_1st_won-o_2nd_won)::real/o_sv_pt)/((p_sv_pt-p_1st_won-p_2nd_won)::real/p_sv_pt)", RATIO));
+		addDimension(new StatsDimension("totalPointsWonPct", "(p_1st_won+p_2nd_won+o_sv_pt-o_1st_won-o_2nd_won)::real/(p_sv_pt+o_sv_pt)", PERCENTAGE));
+		addDimension(new StatsDimension("totalGamesWonPct", "(p_sv_gms-(p_bp_fc-p_bp_sv)+o_bp_fc-o_bp_sv)::real/(p_sv_gms+o_sv_gms)", PERCENTAGE));
+		addDimension(new StatsDimension("setsWonPct", "p_sets::real/(p_sets+o_sets)", PERCENTAGE));
+		addDimension(new StatsDimension("matchesWonPctPct", "p_matches::real/(p_matches+o_matches)", PERCENTAGE));
 	}
 
 	private static void addDimension(StatsDimension dimension) {

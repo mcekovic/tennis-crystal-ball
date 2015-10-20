@@ -149,7 +149,7 @@
 			</tr>
 			<tr>
 				<th th:text="${#numbers.formatDecimal(winnerStats.dominanceRatio, 1, 2)}">1.64</th>
-				<td title="Dominance Ratio: % of return points won divided by % of serve points lost">Dominance Ratio</td>
+				<td th:title="#{stats.dominanceRatio.title}">Dominance Ratio</td>
 				<th th:text="${#numbers.formatDecimal(loserStats.dominanceRatio, 1, 2)}">0.67</th>
 			</tr>
 			<tr class="pct-data">

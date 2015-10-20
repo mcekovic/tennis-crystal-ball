@@ -2,14 +2,16 @@ package org.strangeforest.tcb.stats.model;
 
 public final class StatsDimension {
 
+	public enum Type {COUNT, PERCENTAGE, RATIO}
+
 	private final String name;
 	private final String expression;
-	private final boolean pct;
+	private final Type type;
 
-	public StatsDimension(String name, String expression, boolean pct) {
+	public StatsDimension(String name, String expression, Type type) {
 		this.name = name;
 		this.expression = expression;
-		this.pct = pct;
+		this.type = type;
 	}
 
 	public String getName() {
@@ -20,7 +22,7 @@ public final class StatsDimension {
 		return expression;
 	}
 
-	public boolean isPct() {
-		return pct;
+	public Type getType() {
+		return type;
 	}
 }

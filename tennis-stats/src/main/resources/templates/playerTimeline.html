@@ -5,7 +5,7 @@
 		/*<![CDATA[*/
 		$(function() {
 			// Tournaments
-			var $tournamentsBody = $("#tournamentsBody");
+			var $tournamentsBody = $("#bigTournamentsBody, #otherTournamentsBody");
 			$tournamentsBody.find("span.surface").each(function() {
 				var $surface = $(this);
 				var surface = $surface.text();
@@ -94,20 +94,24 @@
 				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
 			</tr>
 		</thead>
-		<tbody id="tournamentsBody">
+		<tbody id="bigTournamentsBody">
 			<tr th:each="tournament : ${timeline.bigTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
 				<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
 			</tr>
+			<tr th:if="${timeline.empty}">
+				<td colspan="2" align="center">No data found</td>
+			</tr>
+		</tbody>
+		<thead>
 			<tr th:unless="${timeline.empty}" class="bg-primary">
 				<th>Tournament</th>
 				<th>Surface</th>
 				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
 			</tr>
+		</thead>
+		<tbody id="otherTournamentsBody">
 			<tr th:each="tournament : ${timeline.otherTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
 				<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
-			</tr>
-			<tr th:if="${timeline.empty}">
-				<td colspan="2" align="center">No data found</td>
 			</tr>
 		</tbody>
 		<thead th:unless="${timeline.empty}" id="statisticsHead">

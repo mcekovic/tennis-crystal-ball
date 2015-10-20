@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
 public enum TournamentLevel {
+
 	GRAND_SLAM("G"),
 	TOUR_FINALS("F"),
 	MASTERS("M"),

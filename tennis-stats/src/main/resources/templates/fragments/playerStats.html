@@ -143,7 +143,7 @@
 					<!-- Total Pct. Data -->
 					<th:block th:if="${stats.hasPointStats()}">
 						<tr>
-							<td title="Dominance Ratio: % of return points won divided by % of serve points lost">Dominance Ratio</td>
+							<td th:title="#{stats.dominanceRatio.title}">Dominance Ratio</td>
 							<th th:text="${#numbers.formatDecimal(stats.dominanceRatio, 1, 2)}">0.67</th>
 						</tr>
 						<tr class="pct-data">

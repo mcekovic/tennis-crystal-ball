@@ -1,19 +1,25 @@
 package org.strangeforest.tcb.stats.model;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class StatsLeaderRow extends PlayerRow {
 
 	private final double value;
-	private final boolean pct;
+	private final StatsDimension.Type dimensionType;
 
-	public StatsLeaderRow(int rank, int playerId, String player, String countryId, double value, boolean pct) {
+	public StatsLeaderRow(int rank, int playerId, String player, String countryId, double value, StatsDimension.Type dimensionType) {
 		super(rank, playerId, player, countryId);
 		this.value = value;
-		this.pct = pct;
+		this.dimensionType = dimensionType;
 	}
 
 	public String getValue() {
-		return pct ? format("%6.2f%%", value) : valueOf((int)value);
+		switch (dimensionType) {
+			case COUNT: return valueOf((int)value);
+			case PERCENTAGE: return format("%6.2f%%", PCT * value);
+			case RATIO: return format("%8.3f", value);
+			default: throw new IllegalStateException(format("Invalid %1$s value: %2$s", dimensionType.getClass().getName(), dimensionType));
+		}
 	}
 }

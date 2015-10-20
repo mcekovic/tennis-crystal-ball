@@ -26,26 +26,23 @@ public class StatisticsService {
 		"WHERE match_id = ? AND set = 0";
 
 	private static final String PLAYER_STATS_COLUMNS =
-		"count(m.match_id) w_matches, 0 l_matches, sum(w_sets) w_sets, sum(l_sets) l_sets,\n" +
-		"sum(w_ace) w_ace, sum(w_df) w_df, sum(w_sv_pt) w_sv_pt, sum(w_1st_in) w_1st_in, sum(w_1st_won) w_1st_won, sum(w_2nd_won) w_2nd_won, sum(w_sv_gms) w_sv_gms, sum(w_bp_sv) w_bp_sv, sum(w_bp_fc) w_bp_fc,\n" +
-		"sum(l_ace) l_ace, sum(l_df) l_df, sum(l_sv_pt) l_sv_pt, sum(l_1st_in) l_1st_in, sum(l_1st_won) l_1st_won, sum(l_2nd_won) l_2nd_won, sum(l_sv_gms) l_sv_gms, sum(l_bp_sv) l_bp_sv, sum(l_bp_fc) l_bp_fc";
+		"sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets,\n" +
+		"sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,\n" +
+		"sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc";
 
 	private static final String PLAYER_STATS_QUERY = //language=SQL
 		"SELECT " + PLAYER_STATS_COLUMNS + "\n" +
-		"FROM match m\n" +
-		"LEFT JOIN match_stats s USING (match_id)%1$s\n" +
-		"WHERE m.%2$s = ? AND (s.set = 0 OR s.set IS NULL) AND (m.outcome IS NULL OR m.outcome <> 'W/O')%3$s";
+		"FROM player_match_stats_v m%1$s\n" +
+		"WHERE m.player_id = ?%2$s";
 
 	private static final String TOURNAMENT_EVENT_JOIN = //language=SQL
 	 	"\nLEFT JOIN tournament_event e USING (tournament_event_id)";
 
-	private static final String PLAYER_SEASONS_STATS_QUERY = //language=SQL
-		"SELECT e.season, " + PLAYER_STATS_COLUMNS + "\n" +
-		"FROM match m\n" +
-		"LEFT JOIN match_stats s USING (match_id)\n" +
-		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
-		"WHERE m.%1$s = ? AND (s.set = 0 OR s.set IS NULL) AND (m.outcome IS NULL OR m.outcome <> 'W/O')\n" +
-		"GROUP BY e.season ORDER BY e.season";
+	private static final String PLAYER_SEASONS_STATS_QUERY =
+		"SELECT season, " + PLAYER_STATS_COLUMNS + "\n" +
+		"FROM player_match_stats_v\n" +
+		"WHERE player_id = ?\n" +
+		"GROUP BY season ORDER BY season";
 
 	private static final String PLAYER_PERFORMANCE_COLUMNS =
 		"matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, masters_matches_won, masters_matches_lost, clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, hard_matches_won, hard_matches_lost, carpet_matches_won, carpet_matches_lost,\n" +
@@ -92,21 +89,13 @@ public class StatisticsService {
 		String join = !filter.isEmpty() ? TOURNAMENT_EVENT_JOIN : "";
 		String criteria = filter.getCriteria();
 		Object[] params = playerStatsParams(playerId, filter);
-		PlayerStats asWinnerStats = jdbcTemplate.queryForObject(
-			format(PLAYER_STATS_QUERY, join, "winner_id", criteria),
+		return jdbcTemplate.queryForObject(
+			format(PLAYER_STATS_QUERY, join, criteria),
 			(rs, rowNum) -> {
-				return mapPlayerStats(rs, "w_", "l_");
+				return mapPlayerStats(rs);
 			},
 			params
 		);
-		PlayerStats asLoserStats = jdbcTemplate.queryForObject(
-			format(PLAYER_STATS_QUERY, join, "loser_id", criteria),
-			(rs, rowNum) -> {
-				return mapPlayerStats(rs, "l_", "w_");
-			},
-			params
-		);
-		return asWinnerStats.add(asLoserStats);
 	}
 
 	private Object[] playerStatsParams(int playerId, MatchFilter filter) {
@@ -119,30 +108,20 @@ public class StatisticsService {
 	public Map<Integer, PlayerStats> getPlayerSeasonsStats(int playerId) {
 		Map<Integer, PlayerStats> seasonsStats = new TreeMap<>();
 		jdbcTemplate.query(
-			format(PLAYER_SEASONS_STATS_QUERY, "winner_id"),
+			PLAYER_SEASONS_STATS_QUERY,
 			rs -> {
 				int season = rs.getInt("season");
-				PlayerStats asWinnerStats = mapPlayerStats(rs, "w_", "l_");
-				seasonsStats.put(season, asWinnerStats);
-			},
-			playerId
-		);
-		jdbcTemplate.query(
-			format(PLAYER_SEASONS_STATS_QUERY, "loser_id"),
-			rs -> {
-				int season = rs.getInt("season");
-				PlayerStats asLoserStats = mapPlayerStats(rs, "l_", "w_");
-				PlayerStats asWinnerStats = seasonsStats.get(season);
-				seasonsStats.put(season, asWinnerStats != null ? asWinnerStats.add(asLoserStats) : asLoserStats);
+				PlayerStats stats = mapPlayerStats(rs);
+				seasonsStats.put(season, stats);
 			},
 			playerId
 		);
 		return seasonsStats;
 	}
 
-	private PlayerStats mapPlayerStats(ResultSet rs, String playerPrefix, String opponentPrefix) throws SQLException {
-		PlayerStats playerStats = mapPlayerStats(rs, playerPrefix);
-		PlayerStats opponentStats = mapPlayerStats(rs, opponentPrefix);
+	private PlayerStats mapPlayerStats(ResultSet rs) throws SQLException {
+		PlayerStats playerStats = mapPlayerStats(rs, "p_");
+		PlayerStats opponentStats = mapPlayerStats(rs, "o_");
 		playerStats.setOpponentStats(opponentStats);
 		return playerStats;
 	}
