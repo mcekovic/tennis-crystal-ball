@@ -80,6 +80,18 @@ public class StatsLeadersService {
 		addDimension(new StatsDimension("breakPointsSavedPct", "100.0*w_bp_sv/w_bp_fc", true));
 		addDimension(new StatsDimension("servicePointsWonPct", "100.0*(w_1st_won+w_2nd_won)/w_sv_pt", true));
 		addDimension(new StatsDimension("serviceGamesWonPct", "100.0*(w_sv_gms-(w_bp_fc-w_bp_sv))/w_sv_gms", true));
+		// Return
+		addDimension(new StatsDimension("firstServeReturnWonPct", "100.0*(l_1st_in-l_1st_won)/l_1st_in", true));
+		addDimension(new StatsDimension("secondServeReturnWonPct", "100.0*(l_sv_pt-l_1st_in-l_2nd_won)/(l_sv_pt-l_1st_in)", true));
+		addDimension(new StatsDimension("breakPointsPct", "100.0*(l_bp_fc-l_bp_sv)/l_bp_fc", true));
+		addDimension(new StatsDimension("returnPointsWonPct", "100.0*(l_sv_pt-l_1st_won-l_2nd_won)/l_sv_pt", true));
+		addDimension(new StatsDimension("returnGamesWonPct", "100.0*(l_bp_fc-l_bp_sv)/l_sv_gms", true));
+		// Total
+		addDimension(new StatsDimension("dominanceRatio", "((l_sv_pt-l_1st_won-l_2nd_won)::real/l_sv_pt)/((w_sv_pt-w_1st_won-w_2nd_won)::real/w_sv_pt)", true));
+		addDimension(new StatsDimension("totalPointsWonPct", "100.0*(w_1st_won+w_2nd_won+l_sv_pt-l_1st_won-l_2nd_won)/(w_sv_pt+l_sv_pt)", true));
+		addDimension(new StatsDimension("totalGamesWonPct", "100.0*(w_sv_gms-(w_bp_fc-w_bp_sv)+l_bp_fc-l_bp_sv)/(w_sv_gms+l_sv_gms)", true));
+		addDimension(new StatsDimension("setsWonPct", "100.0*w_sets/(w_sets+l_sets)", true));
+		addDimension(new StatsDimension("matchesWonPctPct", "100.0*w_matches/(w_matches+l_matches)", true));
 	}
 
 	private static void addDimension(StatsDimension dimension) {

@@ -441,7 +441,7 @@ WITH wl_stats AS (
 	LEFT JOIN match m USING (match_id)
 	WHERE set = 0
 )
-SELECT player_id, count(w_matches) w_matches, count(l_matches) l_matches, sum(w_sets) w_sets, sum(l_sets) l_sets,
+SELECT player_id, sum(w_matches) w_matches, sum(l_matches) l_matches, sum(w_sets) w_sets, sum(l_sets) l_sets,
 	sum(w_ace) w_ace, sum(w_df) w_df, sum(w_sv_pt) w_sv_pt, sum(w_1st_in) w_1st_in, sum(w_1st_won) w_1st_won, sum(w_2nd_won) w_2nd_won, sum(w_sv_gms) w_sv_gms, sum(w_bp_sv) w_bp_sv, sum(w_bp_fc) w_bp_fc,
    sum(l_ace) l_ace, sum(l_df) l_df, sum(l_sv_pt) l_sv_pt, sum(l_1st_in) l_1st_in, sum(l_1st_won) l_1st_won, sum(l_2nd_won) l_2nd_won, sum(l_sv_gms) l_sv_gms, sum(l_bp_sv) l_bp_sv, sum(l_bp_fc) l_bp_fc
 FROM wl_stats
