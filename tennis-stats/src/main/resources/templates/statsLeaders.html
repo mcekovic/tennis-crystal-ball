@@ -37,10 +37,17 @@
 			});
 			var $statsLeadersTableHeader = $("#statsLeadersTable-header");
 			$statsLeadersTableHeader.find("div.search").before($("#dimensionDiv").remove());
+			showMinEntries();
 			$("[data-toggle='tooltip']").tooltip();
 		});
+		function showMinEntries() {
+			$.get("statsLeadersMinEntries?dimension=" + $("#dimension").val(), function (data) {
+				$("#minEntries").html(data);
+			});
+		}
 		function reloadStatsLeaders() {
 			$("#statsLeadersTable").bootgrid("reload");
+			showMinEntries();
 		}
 		/*]]>*/
 	</script>
@@ -71,7 +78,9 @@
 				<option value="returnGamesWonPct">Return Games Won</option>
 			</optgroup>
 			<optgroup label="Total">
-				<option value="dominanceRatio">Dominance Ratio</option>
+				<option value="dominanceRatio" th:title="#{stats.dominanceRatio.title}">Dominance Ratio</option>
+				<option value="breakPointsRatio" th:title="#{stats.breakPointsRatio.title}">Break Points Ratio</option>
+				<option value="breakPointsOverPerformingRatio" th:title="#{stats.breakPointsOverPerformingRatio.title}">Break Pts. Over-Perf.</option>
 				<option value="totalPointsWonPct">Total Pts. Won</option>
 				<option value="totalGamesWonPct">Total Games Won</option>
 				<option value="setsWonPct">Sets Won</option>
@@ -89,7 +98,7 @@
 			</tr>
 		</thead>
 	</table>
-	<p><i>* Minimum 100 matches</i></p>
+	<p><i>* Minimum <span id="minEntries">100 matches</span></i></p>
 	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>

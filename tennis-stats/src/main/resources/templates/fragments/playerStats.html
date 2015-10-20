@@ -91,6 +91,14 @@
 					</tr>
 					<!-- Return Pct. Data -->
 					<tr class="pct-data">
+						<td>Ace Against %</td>
+						<th th:text="${#numbers.formatDecimal(stats.aceAgainstPct, 1, 1) + '%'}">10%</th>
+					</tr>
+					<tr class="pct-data">
+						<td>Double Fault Against %</td>
+						<th th:text="${#numbers.formatDecimal(stats.doubleFaultAgainstPct, 1, 1) + '%'}">3%</th>
+					</tr>
+					<tr class="pct-data">
 						<td>1st Srv. Rtn. Won</td>
 						<th th:text="${#numbers.formatDecimal(stats.firstServeReturnPointsWonPct, 1, 1) + '%'}">28%</th>
 					</tr>
@@ -112,6 +120,14 @@
 					</tr>
 					<!-- Return Raw Data -->
 					<tr class="raw-data"></tr>
+					<tr class="raw-data">
+						<td>Aces Against</td>
+						<th th:text="${stats.acesAgainst}">5</th>
+					</tr>
+					<tr class="raw-data">
+						<td>Double Faults Against</td>
+						<th th:text="${stats.doubleFaultsAgainst}">3</th>
+					</tr>
 					<tr class="raw-data">
 						<td>1st Srv. Rtn. Won</td>
 						<th th:text="${stats.firstServeReturnPointsWon + ' / ' + stats.firstServeReturnPoints}">25 / 60</th>
@@ -144,7 +160,15 @@
 					<th:block th:if="${stats.hasPointStats()}">
 						<tr>
 							<td th:title="#{stats.dominanceRatio.title}">Dominance Ratio</td>
-							<th th:text="${#numbers.formatDecimal(stats.dominanceRatio, 1, 2)}">0.67</th>
+							<th th:text="${#numbers.formatDecimal(stats.dominanceRatio, 1, 2)}">1.07</th>
+						</tr>
+						<tr>
+							<td th:title="#{stats.breakPointsRatio.title}">Break Points Ratio</td>
+							<th th:text="${#numbers.formatDecimal(stats.breakPointsRatio, 1, 2)}">1.03</th>
+						</tr>
+						<tr>
+							<td th:title="#{stats.breakPointsOverPerformingRatio.title}">Break Pts. Over-Perf.</td>
+							<th th:text="${#numbers.formatDecimal(stats.breakPointsOverPerformingRatio, 1, 2)}">1.01</th>
 						</tr>
 						<tr class="pct-data">
 							<td>Total Pts. Won</td>

@@ -7,11 +7,13 @@ public final class StatsDimension {
 	private final String name;
 	private final String expression;
 	private final Type type;
+	private final boolean needsStats;
 
-	public StatsDimension(String name, String expression, Type type) {
+	public StatsDimension(String name, String expression, Type type, boolean needsStats) {
 		this.name = name;
 		this.expression = expression;
 		this.type = type;
+		this.needsStats = needsStats;
 	}
 
 	public String getName() {
@@ -24,5 +26,9 @@ public final class StatsDimension {
 
 	public Type getType() {
 		return type;
+	}
+
+	public boolean isNeedsStats() {
+		return needsStats;
 	}
 }

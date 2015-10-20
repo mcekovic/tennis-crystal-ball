@@ -140,6 +140,16 @@
 		<td th:text="${careerStats.hasPointStats() ? #numbers.formatDecimal(careerStats.dominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
 		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.dominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
 	</tr>
+	<tr>
+		<td class="stats-header stats-total" th:title="#{stats.breakPointsRatio.title}">Break Points Ratio</td>
+		<td th:text="${careerStats.hasPointStats() ? #numbers.formatDecimal(careerStats.breakPointsRatio, 1, 2) : ''}" class="stats">1.12</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.breakPointsRatio, 1, 2) : ''}" class="stats">1.12</td>
+	</tr>
+	<tr>
+		<td class="stats-header stats-total" th:title="#{stats.breakPointsOverPerformingRatio.title}">Break Pts. Over-Perf.</td>
+		<td th:text="${careerStats.hasPointStats() ? #numbers.formatDecimal(careerStats.breakPointsOverPerformingRatio, 1, 2) : ''}" class="stats">1.12</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.breakPointsOverPerformingRatio, 1, 2) : ''}" class="stats">1.12</td>
+	</tr>
 	<tr class="pct-data">
 		<td class="stats-header stats-total">Total Pts. Won</td>
 		<td th:text="${careerStats.hasPointStats() ? #numbers.formatDecimal(careerStats.totalPointsWonPct, 1, 1) + '%' : ''}" class="stats">84.5%</td>

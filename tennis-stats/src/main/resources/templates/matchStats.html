@@ -152,6 +152,11 @@
 				<td th:title="#{stats.dominanceRatio.title}">Dominance Ratio</td>
 				<th th:text="${#numbers.formatDecimal(loserStats.dominanceRatio, 1, 2)}">0.67</th>
 			</tr>
+			<tr>
+				<th th:text="${#numbers.formatDecimal(winnerStats.breakPointsRatio, 1, 2)}">1.24</th>
+				<td th:title="#{stats.breakPointsRatio.title}">Break Points Ratio</td>
+				<th th:text="${#numbers.formatDecimal(loserStats.breakPointsRatio, 1, 2)}">0.37</th>
+			</tr>
 			<tr class="pct-data">
 				<th th:text="${#numbers.formatDecimal(winnerStats.totalPointsWonPct, 1, 1) + '%'}">55%</th>
 				<td>Total Pts. Won</td>
@@ -162,6 +167,7 @@
 				<td>Time</td>
 				<th th:text="${matchStats.time}">1:31</th>
 			</tr>
+			<tr class="raw-data" th:unless="${matchStats.minutes > 0}"></tr>
 			<tr class="raw-data">
 				<th th:text="${winnerStats.totalPointsWon}">125</th>
 				<td>Total Pts. Won</td>

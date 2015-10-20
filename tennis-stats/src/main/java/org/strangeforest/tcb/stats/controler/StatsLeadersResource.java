@@ -25,10 +25,17 @@ public class StatsLeadersResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		PlayerListFilter filter = new PlayerListFilter(searchPhrase);
-		int playerCount = statsLeadersService.getPlayerCount(filter);
+		int playerCount = statsLeadersService.getPlayerCount(dimension, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : playerCount;
 		return statsLeadersService.getStatsLeadersTable(dimension, playerCount, filter, orderBy, pageSize, current);
+	}
+
+	@RequestMapping("/statsLeadersMinEntries")
+	public String topPerformersDimension(
+		@RequestParam(value = "dimension") String dimension
+	) {
+		return statsLeadersService.getStatsLeadersMinEntries(dimension);
 	}
 }

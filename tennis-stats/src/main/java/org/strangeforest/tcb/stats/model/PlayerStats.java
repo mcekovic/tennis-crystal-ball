@@ -179,6 +179,22 @@ public class PlayerStats {
 
 	// Return
 
+	public int getAcesAgainst() {
+		return opponentStats.aces;
+	}
+
+	public double getAceAgainstPct() {
+		return opponentStats.acePct;
+	}
+
+	public int getDoubleFaultsAgainst() {
+		return opponentStats.doubleFaults;
+	}
+
+	public double getDoubleFaultAgainstPct() {
+		return opponentStats.doubleFaultPct;
+	}
+
 	public int getReturnPoints() {
 		return opponentStats.servicePoints;
 	}
@@ -284,6 +300,16 @@ public class PlayerStats {
 
 	public double getDominanceRatio() {
 		return servicePointsLostPct != 0.0 ? getReturnPointsWonPct() / servicePointsLostPct : 0.0;
+	}
+
+	public double getBreakPointsRatio() {
+		return breakPointsLostPct != 0.0 ? getBreakPointsWonPct() / breakPointsLostPct : 0.0;
+	}
+
+	public double getBreakPointsOverPerformingRatio() {
+		double breakPointsRatio = getBreakPointsRatio();
+		double dominanceRatio = getDominanceRatio();
+		return dominanceRatio != 0.0 ? breakPointsRatio / dominanceRatio : 0.0;
 	}
 
 
