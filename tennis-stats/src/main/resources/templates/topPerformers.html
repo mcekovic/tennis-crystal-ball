@@ -37,17 +37,19 @@
 			});
 			var $topPerformersTableHeader = $("#topPerformersTable-header");
 			$topPerformersTableHeader.find("div.search").before($("#dimensionDiv").remove());
-			showMinEntries();
+			dimensionChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
-		function showMinEntries() {
-			$.getJSON("topPerformersDimension?dimension=" + $("#dimension").val(), function (dim) {
+		function dimensionChanged() {
+			var $dimension = $("#dimension");
+			$("#topPerformersTable").find("th[data-column-id='wonLostPct']").html($dimension.find("option[value='" + $dimension.val() + "']").html());
+			$.getJSON("topPerformersDimension?dimension=" + $dimension.val(), function (dim) {
 				$("#minEntries").html(dim.minEntries + " " + dim.entriesName);
 			});
 		}
 		function reloadTopPerformers() {
+			dimensionChanged();
 			$("#topPerformersTable").bootgrid("reload");
-			showMinEntries();
 		}
 		/*]]>*/
 	</script>

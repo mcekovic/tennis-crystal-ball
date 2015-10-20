@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.BigGunsTimeline"-->
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Ultimate Tennis Statistics - Big Guns Timeline</title>
+	<link th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$(function() {
+		});
+		/*]]>*/
+	</script>
+</head>
+<body class="container">
+	<div th:include="fragments/header :: title"></div>
+	<h3>Big Guns Timeline</h3>
+	<table id="bigGunsTable" class="table table-condensed table-hover table-striped">
+		<thead>
+			<tr>
+				<th>Player</th>
+				<th th:each="season : ${timeline.seasons}" th:text="${season}">2015</th>
+			</tr>
+		</thead>
+	</table>
+	<div th:include="fragments/footer :: copy"></div>
+</body>
+</html>

@@ -333,22 +333,6 @@ LEFT JOIN level_titles ot ON ot.player_id = p.player_id AND ot.level = 'O';
 CREATE UNIQUE INDEX ON player_titles (player_id);
 
 
--- player_v
-
-CREATE OR REPLACE VIEW player_v AS
-SELECT p.*, first_name || ' ' || last_name AS name, age(dob) AS age,
-	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date,
-	goat_rank, coalesce(goat_points, 0) AS goat_points,
-	coalesce(titles, 0) AS titles, coalesce(big_titles, 0) AS big_titles,
-	coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals, coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics
-FROM player p
-LEFT JOIN player_current_rank USING (player_id)
-LEFT JOIN player_best_rank USING (player_id)
-LEFT JOIN player_best_rank_points USING (player_id)
-LEFT JOIN player_goat_points USING (player_id)
-LEFT JOIN player_titles USING (player_id);
-
-
 -- match_for_stats_v
 
 CREATE VIEW match_for_stats_v AS
@@ -454,3 +438,19 @@ FROM player_match_stats_v
 GROUP BY player_id;
 
 CREATE UNIQUE INDEX ON player_stats (player_id);
+
+
+-- player_v
+
+CREATE OR REPLACE VIEW player_v AS
+SELECT p.*, first_name || ' ' || last_name AS name, age(dob) AS age,
+	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date,
+	goat_rank, coalesce(goat_points, 0) AS goat_points,
+	coalesce(titles, 0) AS titles, coalesce(big_titles, 0) AS big_titles,
+	coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals, coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics
+FROM player p
+LEFT JOIN player_current_rank USING (player_id)
+LEFT JOIN player_best_rank USING (player_id)
+LEFT JOIN player_best_rank_points USING (player_id)
+LEFT JOIN player_goat_points USING (player_id)
+LEFT JOIN player_titles USING (player_id);

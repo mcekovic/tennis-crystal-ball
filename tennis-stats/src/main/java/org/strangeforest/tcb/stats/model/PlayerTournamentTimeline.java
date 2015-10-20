@@ -7,6 +7,7 @@ import java.util.function.*;
 import org.strangeforest.tcb.stats.util.*;
 
 import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.util.DateUtil.*;
 
 public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTimeline> {
@@ -58,14 +59,10 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	}
 
 	public List<PlayerTimelineItem> getItems() {
-		List<PlayerTimelineItem> timelineItems = new ArrayList<>();
-		for (int season : timeline.getSeasons()) {
+		return timeline.getSeasons().stream().map(season -> {
 			PlayerTimelineItem item = items.get(season);
-			if (item == null)
-				item = new PlayerTimelineItem(tournamentId, null, season, 0, null, null, null, null, null);
-			timelineItems.add(item);
-		}
-		return timelineItems;
+			return item != null ? item : new PlayerTimelineItem(tournamentId, null, season, 0, null, null, null, null, null);
+		}).collect(toList());
 	}
 
 	public void addItem(PlayerTimelineItem item) {

@@ -37,17 +37,19 @@
 			});
 			var $statsLeadersTableHeader = $("#statsLeadersTable-header");
 			$statsLeadersTableHeader.find("div.search").before($("#dimensionDiv").remove());
-			showMinEntries();
+			dimensionChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
-		function showMinEntries() {
-			$.get("statsLeadersMinEntries?dimension=" + $("#dimension").val(), function (data) {
+		function dimensionChanged() {
+			var $dimension = $("#dimension");
+			$("#statsLeadersTable").find("th[data-column-id='value']").html($dimension.find("option[value='" + $dimension.val() + "']").html());
+			$.get("statsLeadersMinEntries?dimension=" + $dimension.val(), function (data) {
 				$("#minEntries").html(data);
 			});
 		}
 		function reloadStatsLeaders() {
+			dimensionChanged();
 			$("#statsLeadersTable").bootgrid("reload");
-			showMinEntries();
 		}
 		/*]]>*/
 	</script>
