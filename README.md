@@ -7,10 +7,11 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Player Profile - see player information, tournament results, matches, timeline, statistics and performance indicators,
   all linked together and easily navigable
 - Ranking Carts - see players ranking and ranking point charts, compare players by constructing custom charts
+- Top Performers - find top performers in both performance and pressure situations figures
+- Statistics Leaders - find statistics leaders in different statistics categories, including dominance and break points ratios
 
 ## Roadmap
 
-- Top Performers - find top performers in both statistics and performance figures
 - 'Big Guns' Timeline - see 'GOAT' points distribution among top players and seasons
 - Best Seasons - find which are really the best seasons of all time based on 'GOAT' points
 - Head-to-Head - see head-to-head between two players as well as head-to-head clusters among several players (i.e. among 'Big 4')
