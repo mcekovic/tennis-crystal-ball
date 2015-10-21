@@ -12,6 +12,7 @@
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
+			$("span.best-player").css({top: '-=42px'});
 		});
 		/*]]>*/
 	</script>
@@ -35,41 +36,42 @@
 		}
 		span.best-player {
 			transform: rotate(-90deg);
+			position: absolute;
 			display: block;
 			width: 20px;
 			height: 60px;
 		}
-		td.points-0, td.points-10, td.points-20, td.points-30, td.points-40, td.points-50, td.points-60, td.points-70, td.points-80, td.points-90, td.points-100 {
+		.points-0, .points-10, .points-20, .points-30, .points-40, .points-50, .points-60, .points-70, .points-80, .points-90, .points-100 {
 			text-align: right;
 		}
-		td.points-10 {
+		.points-10 {
 			background-color: #ffe8f0;
 		}
-		td.points-20 {
+		.points-20 {
 			background-color: #fcd0e0;
 		}
-		td.points-30 {
+		.points-30 {
 			background-color: #f8b8d0;
 		}
-		td.points-40 {
+		.points-40 {
 			background-color: #f4a0c0;
 		}
-		td.points-50 {
+		.points-50 {
 			background-color: #f088b0;
 		}
-		td.points-60 {
+		.points-60 {
 			background-color: #ec70a0;
 		}
-		td.points-70 {
+		.points-70 {
 			background-color: #e85890;
 		}
-		td.points-80 {
+		.points-80 {
 			background-color: #e44080;
 		}
-		td.points-90 {
+		.points-90 {
 			background-color: #e02870;
 		}
-		td.points-100 {
+		.points-100 {
 			background-color: #dc1060;
 		}
 	</style>
@@ -80,13 +82,17 @@
 	<table id="bigGunsTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
 			<tr class="best-player">
-				<th colspan="3" style="padding: 1px 4px; text-align: right">Season, Best Player</th>
+				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Season Best Player</th>
 				<th style="padding: 1px" th:each="season : ${timeline.bigGunsSeasons}"><span th:text="${season.bestPlayer.lastName}" class="best-player">Federer</span></th>
 			</tr>
 			<tr class="season">
+				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Big Guns Dominance Ratio</th>
+				<th th:each="season : ${timeline.bigGunsSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px"><span th:text="${#numbers.formatDecimal(season.dominanceRatio, 1, 1)}" class="season">66.7</span></th>
+			</tr>
+			<tr class="season" style="border-bottom: 3px solid lightgray">
 				<th style="padding: 1px 4px">Player</th>
 				<th style="padding: 1px 4px">Born</th>
-				<th style="padding: 1px 4px">GOAT Pts.</th>
+				<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
 				<th style="padding: 1px" th:each="season : ${timeline.seasons}"><span th:text="${season}" class="season">2015</span></th>
 			</tr>
 		</thead>
@@ -97,10 +103,18 @@
 					<a th:href="'playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 				</td>
 				<td style="padding: 1px 4px" th:text="${#dates.format(player.dob, 'yyyy')}">1985</td>
-				<td style="padding: 1px 20px; text-align: right" th:text="${player.goatPoints}">1985</td>
+				<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray" th:text="${player.goatPoints}">1985</td>
 				<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" th:class="'points-' + ${10*(seasonPoint.points/10)}" class="points-10">15</td>
 			</tr>
 		</tbody>
+		<thead>
+			<tr class="season" style="border-top: 3px solid lightgray">
+				<th style="padding: 1px 4px">Player</th>
+				<th style="padding: 1px 4px">Born</th>
+				<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
+				<th style="padding: 1px" th:each="season : ${timeline.seasons}"><span th:text="${season}" class="season">2015</span></th>
+			</tr>
+		</thead>
 	</table>
 	<p><i>* Minimum <span th:text="${minGOATPoints}">50</span> GOAT points</i></p>
 	<div th:include="fragments/footer :: copy"></div>
