@@ -24,24 +24,14 @@
 			line-height: 1.0;
 			vertical-align: middle;
 		}
-		.table-condensed > thead > tr > th,
-		.table-condensed > tbody > tr > th {
-			padding: 1px;
-		}
-		.table-condensed > tbody > tr > td {
-			padding: 6px;
-		}
 		span.season {
 			transform: rotate(-90deg);
 			display: block;
 			width: 20px;
 			height: 25px;
 		}
-		td.points {
+		td.points-0, td.points-10, td.points-20, td.points-30, td.points-40, td.points-50, td.points-60, td.points-70, td.points-80, td.points-90, td.points-100 {
 			text-align: right;
-		}
-		td.points-0 {
-			background-color: white;
 		}
 		td.points-10 {
 			background-color: #ffe8f0;
@@ -84,7 +74,7 @@
 				<th style="padding: 1px 4px">Player</th>
 				<th style="padding: 1px 4px">Born</th>
 				<th style="padding: 1px 4px">GOAT Pts.</th>
-				<th th:each="season : ${timeline.seasons}"><span th:text="${season}" class="season">2015</span></th>
+				<th style="padding: 1px" th:each="season : ${timeline.seasons}"><span th:text="${season}" class="season">2015</span></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -95,7 +85,7 @@
 				</td>
 				<td style="padding: 1px 4px" th:text="${#dates.format(player.dob, 'yyyy')}">1985</td>
 				<td style="padding: 1px 20px; text-align: right" th:text="${player.goatPoints}">1985</td>
-				<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" th:class="'points points-' + ${10*(seasonPoint.points/10)}" class="points">5</td>
+				<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" th:class="'points-' + ${10*(seasonPoint.points/10)}" class="points-10">15</td>
 			</tr>
 		</tbody>
 	</table>
