@@ -8,8 +8,8 @@ public class StatsLeaderRow extends PlayerRow {
 	private final double value;
 	private final StatsDimension.Type dimensionType;
 
-	public StatsLeaderRow(int rank, int playerId, String player, String countryId, double value, StatsDimension.Type dimensionType) {
-		super(rank, playerId, player, countryId);
+	public StatsLeaderRow(int rank, int playerId, String name, String countryId, double value, StatsDimension.Type dimensionType) {
+		super(rank, playerId, name, countryId);
 		this.value = value;
 		this.dimensionType = dimensionType;
 	}

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.BigGunsTimeline"-->
+<!--@thymesVar id="minGOATPoints" type="java.lang.Integer"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -14,18 +15,91 @@
 		});
 		/*]]>*/
 	</script>
+	<style>
+		.table > thead > tr > th {
+			line-height: 2.5;
+		}
+		.table > tbody > tr > th,
+		.table > tbody > tr > td {
+			line-height: 1.0;
+			vertical-align: middle;
+		}
+		.table-condensed > thead > tr > th,
+		.table-condensed > tbody > tr > th {
+			padding: 1px;
+		}
+		.table-condensed > tbody > tr > td {
+			padding: 6px;
+		}
+		span.season {
+			transform: rotate(-90deg);
+			display: block;
+			width: 20px;
+			height: 25px;
+		}
+		td.points {
+			text-align: right;
+		}
+		td.points-0 {
+			background-color: white;
+		}
+		td.points-10 {
+			background-color: #ffe8f0;
+		}
+		td.points-20 {
+			background-color: #fcd0e0;
+		}
+		td.points-30 {
+			background-color: #f8b8d0;
+		}
+		td.points-40 {
+			background-color: #f4a0c0;
+		}
+		td.points-50 {
+			background-color: #f088b0;
+		}
+		td.points-60 {
+			background-color: #ec70a0;
+		}
+		td.points-70 {
+			background-color: #e85890;
+		}
+		td.points-80 {
+			background-color: #e44080;
+		}
+		td.points-90 {
+			background-color: #e02870;
+		}
+		td.points-100 {
+			background-color: #dc1060;
+		}
+	</style>
 </head>
 <body class="container">
 	<div th:include="fragments/header :: title"></div>
 	<h3>Big Guns Timeline</h3>
-	<table id="bigGunsTable" class="table table-condensed table-hover table-striped">
+	<table id="bigGunsTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
 			<tr>
-				<th>Player</th>
-				<th th:each="season : ${timeline.seasons}" th:text="${season}">2015</th>
+				<th style="padding: 1px 4px">Player</th>
+				<th style="padding: 1px 4px">Born</th>
+				<th style="padding: 1px 4px">GOAT Pts.</th>
+				<th th:each="season : ${timeline.seasons}"><span th:text="${season}" class="season">2015</span></th>
 			</tr>
 		</thead>
+		<tbody>
+			<tr th:each="player : ${timeline.players}">
+				<td style="padding: 1px 4px">
+					<img th:src="'images/flags/' + ${player.countryCode} + '.png'" src="images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="24"/>
+					<a th:href="'playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+				</td>
+				<td style="padding: 1px 4px" th:text="${#dates.format(player.dob, 'yyyy')}">1985</td>
+				<td style="padding: 1px 20px; text-align: right" th:text="${player.goatPoints}">1985</td>
+				<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" th:class="'points points-' + ${10*(seasonPoint.points/10)}" class="points">5</td>
+			</tr>
+		</tbody>
 	</table>
+	<p><i>* Minimum <span th:text="${minGOATPoints}">50</span> GOAT points</i></p>
 	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>

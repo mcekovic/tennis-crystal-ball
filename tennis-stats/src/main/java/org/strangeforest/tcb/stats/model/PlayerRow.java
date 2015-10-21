@@ -6,14 +6,14 @@ public abstract class PlayerRow {
 
 	private final int rank;
 	private final int playerId;
-	private final String player;
+	private final String name;
 	private final String countryId;
 	private final String countryCode;
 
-	protected PlayerRow(int rank, int playerId, String player, String countryId) {
+	protected PlayerRow(int rank, int playerId, String name, String countryId) {
 		this.rank = rank;
 		this.playerId = playerId;
-		this.player = player;
+		this.name = name;
 		this.countryId = countryId;
 		this.countryCode = CountryUtil.getISOAlpha2Code(countryId);
 	}
@@ -26,8 +26,8 @@ public abstract class PlayerRow {
 		return playerId;
 	}
 
-	public String getPlayer() {
-		return player;
+	public String getName() {
+		return name;
 	}
 
 	public String getCountryId() {

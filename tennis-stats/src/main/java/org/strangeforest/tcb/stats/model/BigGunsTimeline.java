@@ -9,7 +9,7 @@ public class BigGunsTimeline {
 
 	public BigGunsTimeline() {
 		players = new ArrayList<>();
-		seasons = new TreeSet<>();
+		seasons = new TreeSet<>(Comparator.reverseOrder());
 	}
 
 	public List<BigGunsPlayerTimeline> getPlayers() {

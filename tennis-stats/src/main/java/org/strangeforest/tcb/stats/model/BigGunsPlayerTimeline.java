@@ -7,19 +7,26 @@ import static java.util.stream.Collectors.*;
 public class BigGunsPlayerTimeline extends PlayerRow {
 
 	private final Date dob;
+	private final int goatPoints;
 	private final Map<Integer, SeasonPoints> seasons = new HashMap<>(); // <Season, SeasonPoints>
 	private BigGunsTimeline timeline;
 
-	public BigGunsPlayerTimeline(int rank, int playerId, String player, String countryId, Date dob) {
-		super(rank, playerId, player, countryId);
+	public BigGunsPlayerTimeline(int rank, int playerId, String name, String countryId, Date dob, int goatPoints) {
+		super(rank, playerId, name, countryId);
 		this.dob = dob;
+		this.goatPoints = goatPoints;
 	}
 
 	public Date getDob() {
 		return dob;
 	}
 
+	public int getGoatPoints() {
+		return goatPoints;
+	}
+
 	public Set<Integer> getSeasons() {
+
 		return seasons.keySet();
 	}
 

@@ -10,8 +10,8 @@ public class GOATListRow extends PlayerRow {
 	private int bigTitles;
 	private int titles;
 
-	public GOATListRow(int goatRank, int playerId, String player, String countryId, int goatPoints) {
-		super(goatRank, playerId, player, countryId);
+	public GOATListRow(int goatRank, int playerId, String name, String countryId, int goatPoints) {
+		super(goatRank, playerId, name, countryId);
 		this.goatPoints = goatPoints;
 	}
 

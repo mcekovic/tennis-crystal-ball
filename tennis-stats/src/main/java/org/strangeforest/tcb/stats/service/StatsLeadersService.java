@@ -59,10 +59,10 @@ public class StatsLeadersService {
 			(rs) -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
-				String player = rs.getString("name");
+				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
 				double value = rs.getDouble("value");
-				table.addRow(new StatsLeaderRow(rank, playerId, player, countryId, value, statsDimension.getType()));
+				table.addRow(new StatsLeaderRow(rank, playerId, name, countryId, value, statsDimension.getType()));
 			},
 			filter.getParamsWithPrefix(getMinEntriesValue(statsDimension), playerCount, offset, pageSize)
 		);

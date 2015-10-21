@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.controler;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
+import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -15,6 +16,11 @@ public class BigGunsTimelineController {
 	@RequestMapping("/bigGunsTimeline")
 	public ModelAndView bigGunsTimeline() {
 		BigGunsTimeline timeline = timelineService.getBigGunsTimeline();
-		return new ModelAndView("bigGunsTimeline", "timeline", timeline);
+		int minGOATPoints = timelineService.getMinGOATPoints();
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("timeline", timeline);
+		modelMap.addAttribute("minGOATPoints", minGOATPoints);
+		return new ModelAndView("bigGunsTimeline", modelMap);
 	}
 }

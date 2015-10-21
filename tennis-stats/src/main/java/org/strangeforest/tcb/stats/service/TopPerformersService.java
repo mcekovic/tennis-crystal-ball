@@ -54,10 +54,10 @@ public class TopPerformersService {
 			(rs) -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
-				String player = rs.getString("name");
+				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
 				WonLost wonLost = mapWonLost(rs);
-				table.addRow(new TopPerformerRow(rank, playerId, player, countryId, wonLost));
+				table.addRow(new TopPerformerRow(rank, playerId, name, countryId, wonLost));
 			},
 			filter.getParamsWithPrefix(getDimensionMinEntries(dimension), playerCount, offset, pageSize)
 		);

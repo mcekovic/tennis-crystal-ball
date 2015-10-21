@@ -10,7 +10,7 @@ function countryFormatter(column, row) {
 
 // Player
 function playerFormatter(column, row) {
-	return "<a href='playerProfile?playerId=" + row.playerId + "'>" + row.player + "</a>";
+	return "<a href='playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>";
 }
 
 // Level
@@ -74,5 +74,5 @@ function resultFormatter(column, row) {
 
 // Match
 function matchFormatter(column, row) {
-	return "<a href='playerProfile?playerId=" + row.winnerId + "'>" + row.winner + "</a> d. <a href='playerProfile?playerId=" + row.loserId + "'>" + row.loser + "</a>";
+	return "<a href='playerProfile?playerId=" + row.winnerId + "' title='Show profile'>" + row.winner + "</a> d. <a href='playerProfile?playerId=" + row.loserId + "' title='Show profile'>" + row.loser + "</a>";
 }

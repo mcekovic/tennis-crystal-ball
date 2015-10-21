@@ -45,10 +45,10 @@ public class GOATListService {
 			(rs) -> {
 				int goatRank = rs.getInt("goat_rank");
 				int playerId = rs.getInt("player_id");
-				String player = rs.getString("name");
+				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
 				int goatPoints = rs.getInt("goat_points");
-				GOATListRow row = new GOATListRow(goatRank, playerId, player, countryId, goatPoints);
+				GOATListRow row = new GOATListRow(goatRank, playerId, name, countryId, goatPoints);
 				row.setGrandSlams(rs.getInt("grand_slams"));
 				row.setTourFinals(rs.getInt("tour_finals"));
 				row.setMasters(rs.getInt("masters"));
