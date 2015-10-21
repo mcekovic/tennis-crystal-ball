@@ -16,8 +16,11 @@
 		/*]]>*/
 	</script>
 	<style>
-		.table > thead > tr > th {
+		.table > thead > tr.season > th {
 			line-height: 2.5;
+		}
+		.table > thead > tr.best-player > th {
+			line-height: 5.0;
 		}
 		.table > tbody > tr > th,
 		.table > tbody > tr > td {
@@ -29,6 +32,12 @@
 			display: block;
 			width: 20px;
 			height: 25px;
+		}
+		span.best-player {
+			transform: rotate(-90deg);
+			display: block;
+			width: 20px;
+			height: 60px;
 		}
 		td.points-0, td.points-10, td.points-20, td.points-30, td.points-40, td.points-50, td.points-60, td.points-70, td.points-80, td.points-90, td.points-100 {
 			text-align: right;
@@ -70,7 +79,11 @@
 	<h3>Big Guns Timeline</h3>
 	<table id="bigGunsTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
-			<tr>
+			<tr class="best-player">
+				<th colspan="3" style="padding: 1px 4px; text-align: right">Season, Best Player</th>
+				<th style="padding: 1px" th:each="season : ${timeline.bigGunsSeasons}"><span th:text="${season.bestPlayer.lastName}" class="best-player">Federer</span></th>
+			</tr>
+			<tr class="season">
 				<th style="padding: 1px 4px">Player</th>
 				<th style="padding: 1px 4px">Born</th>
 				<th style="padding: 1px 4px">GOAT Pts.</th>

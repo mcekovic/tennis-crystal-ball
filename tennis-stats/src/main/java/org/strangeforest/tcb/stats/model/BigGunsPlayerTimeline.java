@@ -6,15 +6,21 @@ import static java.util.stream.Collectors.*;
 
 public class BigGunsPlayerTimeline extends PlayerRow {
 
+	private final String lastName;
 	private final Date dob;
 	private final int goatPoints;
 	private final Map<Integer, SeasonPoints> seasons = new HashMap<>(); // <Season, SeasonPoints>
 	private BigGunsTimeline timeline;
 
-	public BigGunsPlayerTimeline(int rank, int playerId, String name, String countryId, Date dob, int goatPoints) {
+	public BigGunsPlayerTimeline(int rank, int playerId, String name, String lastName, String countryId, Date dob, int goatPoints) {
 		super(rank, playerId, name, countryId);
+		this.lastName = lastName;
 		this.dob = dob;
 		this.goatPoints = goatPoints;
+	}
+
+	public String getLastName() {
+		return lastName;
 	}
 
 	public Date getDob() {
@@ -35,6 +41,10 @@ public class BigGunsPlayerTimeline extends PlayerRow {
 			SeasonPoints seasonPoints = seasons.get(season);
 			return seasonPoints != null ? seasonPoints : new SeasonPoints(season, 0);
 		}).collect(toList());
+	}
+
+	public SeasonPoints getSeasonPoints(int season) {
+		return seasons.get(season);
 	}
 
 	public void addSeasonPoints(SeasonPoints seasonPoints) {

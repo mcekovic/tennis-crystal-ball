@@ -16,7 +16,7 @@ public class BigGunsTimelineService {
 	private static final int MIN_GOAT_POINTS = 50;
 
 	private static final String TIMELINE_QUERY = //language=SQL
-		"SELECT player_id, p.dob, p.name, p.country_id, p.goat_points, array(SELECT ROW(e.season, sum(r.goat_points))\n" +
+		"SELECT player_id, p.dob, p.name, p.last_name, p.country_id, p.goat_points, array(SELECT ROW(e.season, sum(r.goat_points))\n" +
 		"  FROM player_tournament_event_result r\n" +
 		"  LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE r.player_id = g.player_id\n" +
@@ -42,6 +42,7 @@ public class BigGunsTimelineService {
 				timeline.addPlayer(player);
 			}
 		);
+		timeline.calculateBigGunsSeasons();
 		return timeline;
 	}
 
@@ -52,10 +53,11 @@ public class BigGunsTimelineService {
 	private BigGunsPlayerTimeline mapPlayer(AtomicInteger rank, ResultSet rs) throws SQLException {
 		int playerId = rs.getInt("player_id");
 		String name = rs.getString("name");
+		String lastName = rs.getString("last_name");
 		String countryId = rs.getString("country_id");
 		Date dob = rs.getDate("dob");
 		int goatPoints = rs.getInt("goat_points");
-		return new BigGunsPlayerTimeline(rank.incrementAndGet(), playerId, name, countryId, dob, goatPoints);
+		return new BigGunsPlayerTimeline(rank.incrementAndGet(), playerId, name, lastName, countryId, dob, goatPoints);
 	}
 
 	private SeasonPoints mapSeasonPoints(String seasonPoints) {
