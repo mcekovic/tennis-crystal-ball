@@ -12,6 +12,7 @@ VALUES
 ('G', 'R64',   45,   35, NULL, FALSE),
 ('G', 'R128',  10,    5, NULL, FALSE),
 -- Tour Finals
+('F', 'W',   NULL, NULL, NULL, TRUE),
 ('F', 'F',    500,  250,    2, TRUE),
 ('F', 'SF',   400,  200,    1, TRUE),
 ('F', 'RR',   200,  100,    1, TRUE),
@@ -40,7 +41,7 @@ VALUES
 ('A', 'R16',   45,   25, NULL, FALSE),
 ('A', 'R32', NULL, NULL, NULL, FALSE),
 -- Davis Cup
-('D', 'W',     75, NULL, NULL, FALSE),
+('D', 'W',     75, NULL, NULL, TRUE),
 ('D', 'F',     75, NULL,    1, TRUE),
 ('D', 'SF',    70, NULL, NULL, TRUE),
 ('D', 'QF',    65, NULL, NULL, TRUE),
