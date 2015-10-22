@@ -17,21 +17,24 @@ public class TournamentService {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_TOURNAMENTS_QUERY =
-		"SELECT DISTINCT tournament_id, t.name, t.level FROM player_tournament_event_result r\n" +
+		"SELECT DISTINCT tournament_id, t.name, t.level\n" +
+		"FROM player_tournament_event_result r\n" +
 		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"LEFT JOIN tournament t USING (tournament_id)\n" +
 		"WHERE r.player_id = ?\n" +
 		"ORDER BY name";
 
 	private static final String PLAYER_TOURNAMENT_EVENTS_QUERY =
-		"SELECT tournament_event_id, t.name, e.season FROM player_tournament_event_result r\n" +
+		"SELECT tournament_event_id, t.name, e.season\n" +
+		"FROM player_tournament_event_result r\n" +
 		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"LEFT JOIN tournament t USING (tournament_id)\n" +
 		"WHERE r.player_id = ?\n" +
 		"ORDER BY name, season";
 
 	private static final String PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY = //language=SQL
-		"SELECT tournament_event_id, e.season, e.date, e.level, e.surface, e.name, r.result FROM player_tournament_event_result r\n" +
+		"SELECT tournament_event_id, e.season, e.date, e.level, e.surface, e.name, r.result\n" +
+		"FROM player_tournament_event_result r\n" +
 		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE r.player_id = ?\n" +
 		"AND e.level <> 'D'%1$s\n" +

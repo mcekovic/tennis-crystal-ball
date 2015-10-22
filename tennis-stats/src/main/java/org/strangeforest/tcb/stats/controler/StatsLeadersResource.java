@@ -14,7 +14,7 @@ public class StatsLeadersResource {
 	@Autowired private StatsLeadersService statsLeadersService;
 
 	private static Map<String, String> ORDER_MAP = Collections.singletonMap("value", "value");
-	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("value");
+	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("name");
 
 	@RequestMapping("/statsLeadersTable")
 	public BootgridTable<StatsLeaderRow> statsLeadersTable(

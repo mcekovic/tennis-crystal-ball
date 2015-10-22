@@ -16,12 +16,13 @@ public class GOATListService {
 
 	private static final String GOAT_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM player_v\n" +
-		"WHERE goat_points > 0 AND goat_rank <= " + MAX_PLAYER_COUNT + "%1$s";
+		"WHERE goat_points > 0 AND goat_rank <= ?%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
-		"SELECT player_id, goat_rank, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles FROM player_v\n" +
-		"WHERE goat_points > 0 AND goat_rank <= " + MAX_PLAYER_COUNT + "%1$s\n" +
-		"ORDER BY %2$s, name OFFSET ? LIMIT ?";
+		"SELECT player_id, goat_rank, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles\n" +
+		"FROM player_v\n" +
+		"WHERE goat_points > 0 AND goat_rank <= ?%1$s\n" +
+		"ORDER BY %2$s OFFSET ? LIMIT ?";
 
 	private static final String GOAT_POINTS_QUERY =
 		"SELECT level, result, goat_points, additive FROM tournament_rank_points\n" +
@@ -32,7 +33,7 @@ public class GOATListService {
 	public int getPlayerCount(PlayerListFilter filter) {
 		return jdbcTemplate.queryForObject(
 			format(GOAT_COUNT_QUERY, filter.getCriteria()),
-			filter.getParams(),
+			filter.getParamsWithPrefix(MAX_PLAYER_COUNT),
 			Integer.class
 		);
 	}
@@ -57,7 +58,7 @@ public class GOATListService {
 				row.setTitles(rs.getInt("titles"));
 				table.addRow(row);
 			},
-			filter.getParams(offset, pageSize)
+			filter.getParamsWithPrefix(MAX_PLAYER_COUNT, offset, pageSize)
 		);
 		return table;
 	}

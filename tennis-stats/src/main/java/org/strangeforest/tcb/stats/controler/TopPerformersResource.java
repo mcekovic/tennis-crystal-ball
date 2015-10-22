@@ -19,7 +19,7 @@ public class TopPerformersResource {
 		ORDER_MAP.put("won", "won");
 		ORDER_MAP.put("lost", "lost");
 	}
-	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("won_lost_pct");
+	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("name");
 
 	@RequestMapping("/topPerformersTable")
 	public BootgridTable<TopPerformerRow> topPerformersTable(

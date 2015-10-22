@@ -35,7 +35,7 @@ public class TopPerformersService {
 		"SELECT rank, player_id, name, country_id, won, lost\n" +
 		"FROM top_performers_ranked\n" +
 		"WHERE rank <= ?\n" +
-		"ORDER BY %3$s, name OFFSET ? LIMIT ?";
+		"ORDER BY %3$s OFFSET ? LIMIT ?";
 
 
 	public int getPlayerCount(String dimension, PlayerListFilter filter) {

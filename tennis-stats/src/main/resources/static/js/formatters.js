@@ -13,6 +13,11 @@ function playerFormatter(column, row) {
 	return "<a href='playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>";
 }
 
+function playerCountryFormatter(column, row) {
+	return "<img src='images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='24'/> " +
+	       "<a href='playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>";
+}
+
 // Level
 function levelFormatter(column, row) {
 	return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + levelName(row.level) + "</span>";

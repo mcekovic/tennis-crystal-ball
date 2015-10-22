@@ -23,7 +23,7 @@ public class BigGunsTimelineService {
 		") AS seasons_points\n" +
 		"FROM player_goat_points g\n" +
 		"LEFT JOIN player_v p USING (player_id)\n" +
-		"WHERE g.goat_points >= " + MIN_GOAT_POINTS + "\n" +
+		"WHERE g.goat_points >= ?\n" +
 		"ORDER BY p.dob DESC, p.name";
 
 
@@ -38,7 +38,8 @@ public class BigGunsTimelineService {
 				for (Object seasonsPoint : seasonsPoints)
 					player.addSeasonPoints(mapSeasonPoints(String.valueOf(seasonsPoint)));
 				timeline.addPlayer(player);
-			}
+			},
+			MIN_GOAT_POINTS
 		);
 		timeline.calculateBigGunsSeasons();
 		return timeline;

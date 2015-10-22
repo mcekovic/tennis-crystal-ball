@@ -23,7 +23,7 @@ public class GOATListResource {
 		ORDER_MAP.put("bigTitles", "big_titles");
 		ORDER_MAP.put("titles", "titles");
 	}
-	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("goat_points");
+	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("name");
 
 	@RequestMapping("/goatTable")
 	public BootgridTable<GOATListRow> goatTable(

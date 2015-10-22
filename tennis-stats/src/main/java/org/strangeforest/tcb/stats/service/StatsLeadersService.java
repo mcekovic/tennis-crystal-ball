@@ -38,7 +38,7 @@ public class StatsLeadersService {
 		"SELECT rank, player_id, name, country_id, value\n" +
 		"FROM stats_leaders_ranked\n" +
 		"WHERE rank <= ?\n" +
-		"ORDER BY %4$s NULLS LAST, name OFFSET ? LIMIT ?";
+		"ORDER BY %4$s NULLS LAST OFFSET ? LIMIT ?";
 
 
 	public int getPlayerCount(String dimension, PlayerListFilter filter) {
