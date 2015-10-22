@@ -74,6 +74,9 @@
 		.points-100 {
 			background-color: #dc1060;
 		}
+		.points {
+			color: darkblue;
+		}
 	</style>
 </head>
 <body class="container">
@@ -104,7 +107,7 @@
 				</td>
 				<td style="padding: 1px 4px" th:text="${#dates.format(player.dob, 'yyyy')}">1985</td>
 				<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray" th:text="${player.goatPoints}">1985</td>
-				<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" th:class="'points-' + ${10*(seasonPoint.points/10)}" class="points-10">15</td>
+				<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${10*(seasonPoint.points/10)}" class="points-10"><a th:href="'playerProfile?playerId=' + ${player.playerId} + '&amp;season=' + ${seasonPoint.season}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points">15</a></td>
 			</tr>
 		</tbody>
 		<thead>

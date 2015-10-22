@@ -21,19 +21,21 @@ public class PlayerProfileController {
 	@RequestMapping("/playerProfile")
 	public ModelAndView playerProfile(
 		@RequestParam(value = "playerId", required = false) Integer playerId,
-		@RequestParam(value = "name", required = false) String name
+		@RequestParam(value = "name", required = false) String name,
+		@RequestParam(value = "season", required = false) Integer season
 	) {
 		if (playerId == null && name == null)
 			return new ModelAndView("playerProfile");
 
 		Player player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
 		List<Integer> seasons = playerService.getPlayerSeasons(player.getId());
-		List<Tournament> tournaments = tournamentService.getPlayerTournaments(playerId);
+		List<Tournament> tournaments = tournamentService.getPlayerTournaments(player.getId());
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player", player);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("season", season);
 		return new ModelAndView("playerProfile", modelMap);
 	}
 
