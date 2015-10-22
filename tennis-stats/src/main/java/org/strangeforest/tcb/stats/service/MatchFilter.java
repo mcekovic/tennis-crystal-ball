@@ -29,4 +29,27 @@ public class MatchFilter extends TournamentEventFilter {
 			params.add(round);
 		return params;
 	}
+
+	@Override public boolean isEmpty() {
+		return super.isEmpty() && isNullOrEmpty(round);
+	}
+
+	public boolean isTournamentEventFilterEmpty() {
+		return super.isEmpty();
+	}
+
+
+	// Object methods
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof MatchFilter)) return false;
+		if (!super.equals(o)) return false;
+		MatchFilter filter = (MatchFilter)o;
+		return stringsEqual(round, filter.round);
+	}
+
+	@Override public int hashCode() {
+		return Objects.hash(super.hashCode(), emptyToNull(round));
+	}
 }

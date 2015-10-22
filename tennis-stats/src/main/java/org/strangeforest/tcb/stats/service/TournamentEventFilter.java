@@ -70,4 +70,27 @@ public class TournamentEventFilter {
 	public boolean isEmpty() {
 		return season == null && isNullOrEmpty(level) && isNullOrEmpty(surface) && tournamentId == null && tournamentEventId == null && isNullOrEmpty(searchPhrase);
 	}
+
+
+	// Object methods
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof TournamentEventFilter)) return false;
+		TournamentEventFilter filter = (TournamentEventFilter)o;
+		return Objects.equals(season, filter.season) &&
+			stringsEqual(level, filter.level) &&
+			stringsEqual(surface, filter.surface) &&
+			Objects.equals(tournamentId, filter.tournamentId) &&
+			Objects.equals(tournamentEventId, filter.tournamentEventId) &&
+			stringsEqual(searchPhrase, filter.searchPhrase);
+	}
+
+	@Override public int hashCode() {
+		return Objects.hash(season, emptyToNull(level), emptyToNull(surface), tournamentId, tournamentEventId, emptyToNull(searchPhrase));
+	}
+
+	protected static boolean stringsEqual(String s1, String s2) {
+		return Objects.equals(emptyToNull(s1), emptyToNull(s2));
+	}
 }

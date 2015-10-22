@@ -27,4 +27,23 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 			params.add(result);
 		return params;
 	}
+
+	@Override public boolean isEmpty() {
+		return super.isEmpty() && isNullOrEmpty(result);
+	}
+
+
+	// Object methods
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof TournamentEventResultFilter)) return false;
+		if (!super.equals(o)) return false;
+		TournamentEventResultFilter filter = (TournamentEventResultFilter)o;
+		return stringsEqual(result, filter.result);
+	}
+
+	@Override public int hashCode() {
+		return Objects.hash(super.hashCode(), emptyToNull(result));
+	}
 }

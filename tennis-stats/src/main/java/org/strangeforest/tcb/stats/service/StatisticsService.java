@@ -30,7 +30,12 @@ public class StatisticsService {
 		"sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,\n" +
 		"sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc";
 
-	private static final String PLAYER_STATS_QUERY = //language=SQL
+	private static final String PLAYER_STATS_QUERY =
+		"SELECT " + PLAYER_STATS_COLUMNS + "\n" +
+		"FROM player_stats\n" +
+		"WHERE player_id = ?";
+
+	private static final String PLAYER_FILTERED_STATS_QUERY = //language=SQL
 		"SELECT " + PLAYER_STATS_COLUMNS + "\n" +
 		"FROM player_match_stats_v m%1$s\n" +
 		"WHERE m.player_id = ?%2$s";
@@ -82,20 +87,30 @@ public class StatisticsService {
 	// Player statistics
 
 	public PlayerStats getPlayerStats(int playerId) {
-		return getPlayerStats(playerId, MatchFilter.ALL);
-	}
-
-	public PlayerStats getPlayerStats(int playerId, MatchFilter filter) {
-		String join = !filter.isEmpty() ? TOURNAMENT_EVENT_JOIN : "";
-		String criteria = filter.getCriteria();
-		Object[] params = playerStatsParams(playerId, filter);
 		return jdbcTemplate.queryForObject(
-			format(PLAYER_STATS_QUERY, join, criteria),
+			PLAYER_STATS_QUERY,
 			(rs, rowNum) -> {
 				return mapPlayerStats(rs);
 			},
-			params
+			playerId
 		);
+	}
+
+	public PlayerStats getPlayerStats(int playerId, MatchFilter filter) {
+		if (filter.equals(MatchFilter.ALL))
+			return getPlayerStats(playerId);
+		else {
+			String join = !filter.isTournamentEventFilterEmpty() ? TOURNAMENT_EVENT_JOIN : "";
+			String criteria = filter.getCriteria();
+			Object[] params = playerStatsParams(playerId, filter);
+			return jdbcTemplate.queryForObject(
+				format(PLAYER_FILTERED_STATS_QUERY, join, criteria),
+				(rs, rowNum) -> {
+					return mapPlayerStats(rs);
+				},
+				params
+			);
+		}
 	}
 
 	private Object[] playerStatsParams(int playerId, MatchFilter filter) {
