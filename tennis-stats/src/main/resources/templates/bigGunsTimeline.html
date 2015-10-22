@@ -7,8 +7,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Ultimate Tennis Statistics - Big Guns Timeline</title>
 	<link th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{js/formatters.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -17,14 +20,14 @@
 		/*]]>*/
 	</script>
 	<style>
-		.table > thead > tr.season > th {
+		#bigGunsTable > thead > tr.season > th {
 			line-height: 2.5;
 		}
-		.table > thead > tr.best-player > th {
+		#bigGunsTable > thead > tr.best-player > th {
 			line-height: 5.0;
 		}
-		.table > tbody > tr > th,
-		.table > tbody > tr > td {
+		#bigGunsTable > tbody > tr > th,
+		#bigGunsTable > tbody > tr > td {
 			line-height: 1.0;
 			vertical-align: middle;
 		}
@@ -120,6 +123,7 @@
 		</thead>
 	</table>
 	<p><i>* Minimum <span th:text="${minGOATPoints}">50</span> GOAT points</i></p>
+	<div th:include="fragments/goatLegend :: legend"></div>
 	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>

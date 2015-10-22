@@ -31,27 +31,6 @@
 					"player": playerFormatter
 				}
 			});
-			$("#goatLegend").on("shown.bs.collapse", function() {
-				var $goatPointsTable = $("#goatPointsTable");
-				if ($goatPointsTable.hasClass("loaded"))
-					return;
-				$goatPointsTable.addClass("loaded").bootgrid({
-					ajax: true,
-					ajaxSettings: {
-						method: "GET",
-						cache: true
-					},
-					url: "/goatPointsTable",
-					navigation: 0,
-					formatters: {
-						"level": levelFormatter,
-						"result": resultFormatter,
-						"goatPoints": function(column, row) {
-							return (row.additive ? "+" : "") + row.goatPoints;
-						}
-					}
-				});
-			});
 		});
 		/*]]>*/
 	</script>
@@ -75,24 +54,7 @@
 			</tr>
 		</thead>
 	</table>
-	<div class="row">
-		<div class="col-md-4">
-			<button type="button" class="btn btn-info" data-toggle="collapse" data-target="#goatLegend">Legend</button>
-			<div id="goatLegend" class="collapse">
-				<br/>
-				<h4>GOAT Points distribution</h4>
-				<table id="goatPointsTable" class="table table-condensed table-hover table-striped">
-					<thead>
-						<tr>
-							<th data-column-id="level" data-formatter="level" data-sortable="false" data-width="80">Level</th>
-							<th data-column-id="result" data-formatter="result" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Result</th>
-							<th data-column-id="goatPoints" data-formatter="goatPoints" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
-						</tr>
-					</thead>
-				</table>
-			</div>
-		</div>
-	</div>
+	<div th:include="fragments/goatLegend :: legend"></div>
 	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>
