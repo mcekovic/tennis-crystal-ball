@@ -16,12 +16,10 @@ public class BigGunsTimelineService {
 	private static final int MIN_GOAT_POINTS = 50;
 
 	private static final String TIMELINE_QUERY = //language=SQL
-		"SELECT player_id, p.dob, p.name, p.last_name, p.country_id, p.goat_points, array(SELECT ROW(e.season, sum(r.goat_points))\n" +
-		"  FROM player_tournament_event_result r\n" +
-		"  LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
-		"  WHERE r.player_id = g.player_id\n" +
-		"  GROUP BY e.season\n" +
-		"  ORDER BY e.season DESC\n" +
+		"SELECT player_id, p.dob, p.name, p.last_name, p.country_id, p.goat_points, array(SELECT ROW(s.season, s.goat_points)\n" +
+		"  FROM player_season_goat_points s\n" +
+		"  WHERE s.player_id = g.player_id\n" +
+		"  ORDER BY s.season DESC\n" +
 		") AS seasons_points\n" +
 		"FROM player_goat_points g\n" +
 		"LEFT JOIN player_v p USING (player_id)\n" +
