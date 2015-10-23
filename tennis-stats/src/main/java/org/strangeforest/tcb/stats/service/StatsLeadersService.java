@@ -78,7 +78,8 @@ public class StatsLeadersService {
 
 	private static final Map<String, StatsDimension> DIMENSIONS = new HashMap<>();
 
-	private static final String DOMINANCE_RATIO = "((o_sv_pt-o_1st_won-o_2nd_won)::real/o_sv_pt)/((p_sv_pt-p_1st_won-p_2nd_won)::real/p_sv_pt)";
+	private static final String POINTS_DOMINANCE_RATIO = "((o_sv_pt-o_1st_won-o_2nd_won)::real/o_sv_pt)/((p_sv_pt-p_1st_won-p_2nd_won)::real/p_sv_pt)";
+	private static final String GAMES_DOMINANCE_RATIO = "((o_bp_fc-o_bp_sv)::real/o_sv_gms)/((p_bp_fc-p_bp_sv)::real/p_sv_gms)";
 	private static final String BREAK_POINTS_RATIO = "CASE WHEN p_bp_fc > 0 AND o_bp_fc > 0 THEN ((o_bp_fc-o_bp_sv)::real/o_bp_fc)/((p_bp_fc-p_bp_sv)::real/p_bp_fc) ELSE NULL END";
 
 	static {
@@ -101,9 +102,10 @@ public class StatsLeadersService {
 		addDimension("returnPointsWonPct", "(o_sv_pt-o_1st_won-o_2nd_won)::real/o_sv_pt", PERCENTAGE, true);
 		addDimension("returnGamesWonPct", "(o_bp_fc-o_bp_sv)::real/o_sv_gms", PERCENTAGE, true);
 		// Total
-		addDimension("dominanceRatio", DOMINANCE_RATIO, RATIO, true);
+		addDimension("pointsDominanceRatio", POINTS_DOMINANCE_RATIO, RATIO, true);
+		addDimension("gamesDominanceRatio", GAMES_DOMINANCE_RATIO, RATIO, true);
 		addDimension("breakPointsRatio", BREAK_POINTS_RATIO, RATIO, true);
-		addDimension("breakPointsOverPerformingRatio", format("(%1$s)/(%2$s)", BREAK_POINTS_RATIO, DOMINANCE_RATIO), RATIO, true);
+		addDimension("breakPointsOverPerformingRatio", format("(%1$s)/(%2$s)", BREAK_POINTS_RATIO, POINTS_DOMINANCE_RATIO), RATIO, true);
 		addDimension("totalPointsWonPct", "(p_1st_won+p_2nd_won+o_sv_pt-o_1st_won-o_2nd_won)::real/(p_sv_pt+o_sv_pt)", PERCENTAGE, true);
 		addDimension("totalGamesWonPct", "(p_sv_gms-(p_bp_fc-p_bp_sv)+o_bp_fc-o_bp_sv)::real/(p_sv_gms+o_sv_gms)", PERCENTAGE, true);
 		addDimension("setsWonPct", "p_sets::real/(p_sets+o_sets)", PERCENTAGE, false);

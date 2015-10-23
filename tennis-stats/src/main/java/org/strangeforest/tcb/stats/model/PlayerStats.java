@@ -298,8 +298,12 @@ public class PlayerStats {
 		return pct(getTotalGamesWon(), getTotalGames());
 	}
 
-	public double getDominanceRatio() {
+	public double getPointsDominanceRatio() {
 		return servicePointsLostPct != 0.0 ? getReturnPointsWonPct() / servicePointsLostPct : 0.0;
+	}
+
+	public double getGamesDominanceRatio() {
+		return serviceGamesLostPct != 0.0 ? getReturnGamesWonPct() / serviceGamesLostPct : 0.0;
 	}
 
 	public Double getBreakPointsRatio() {
@@ -310,7 +314,7 @@ public class PlayerStats {
 	public Double getBreakPointsOverPerformingRatio() {
 		Double breakPointsRatio = getBreakPointsRatio();
 		if (breakPointsRatio != null) {
-			double dominanceRatio = getDominanceRatio();
+			double dominanceRatio = getPointsDominanceRatio();
 			return dominanceRatio != 0.0 ? breakPointsRatio / dominanceRatio : 0.0;
 		}
 		else

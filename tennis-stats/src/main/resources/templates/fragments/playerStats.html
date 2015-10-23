@@ -159,8 +159,12 @@
 					<!-- Total Pct. Data -->
 					<th:block th:if="${stats.hasPointStats()}">
 						<tr>
-							<td th:title="#{stats.dominanceRatio.title}">Dominance Ratio</td>
-							<th th:text="${#numbers.formatDecimal(stats.dominanceRatio, 1, 2)}">1.07</th>
+							<td th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</td>
+							<th th:text="${#numbers.formatDecimal(stats.pointsDominanceRatio, 1, 2)}">1.07</th>
+						</tr>
+						<tr>
+							<td th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</td>
+							<th th:text="${#numbers.formatDecimal(stats.gamesDominanceRatio, 1, 2)}">1.07</th>
 						</tr>
 						<tr>
 							<td th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</td>

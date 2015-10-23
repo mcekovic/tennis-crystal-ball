@@ -156,9 +156,14 @@
 	</tr>
 	<!-- Total -->
 	<tr class="first-row">
-		<td class="stats-header stats-total" th:title="#{stats.dominanceRatio.title}">Dominance Ratio</td>
-		<td th:text="${careerStats.hasPointStats() ? #numbers.formatDecimal(careerStats.dominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
-		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.dominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
+		<td class="stats-header stats-total" th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</td>
+		<td th:text="${careerStats.hasPointStats() ? #numbers.formatDecimal(careerStats.pointsDominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.pointsDominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
+	</tr>
+	<tr>
+		<td class="stats-header stats-total" th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</td>
+		<td th:text="${careerStats.hasPointStats() ? #numbers.formatDecimal(careerStats.gamesDominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
+		<td th:each="season : ${seasons}" th:with="stats = ${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.gamesDominanceRatio, 1, 2) : ''}" class="stats">1.12</td>
 	</tr>
 	<tr>
 		<td class="stats-header stats-total" th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</td>

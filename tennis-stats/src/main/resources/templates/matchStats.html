@@ -148,9 +148,14 @@
 				<th></th>
 			</tr>
 			<tr>
-				<th th:text="${#numbers.formatDecimal(winnerStats.dominanceRatio, 1, 2)}">1.64</th>
-				<td th:title="#{stats.dominanceRatio.title}">Dominance Ratio</td>
-				<th th:text="${#numbers.formatDecimal(loserStats.dominanceRatio, 1, 2)}">0.67</th>
+				<th th:text="${#numbers.formatDecimal(winnerStats.pointsDominanceRatio, 1, 2)}">1.64</th>
+				<td th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</td>
+				<th th:text="${#numbers.formatDecimal(loserStats.pointsDominanceRatio, 1, 2)}">0.67</th>
+			</tr>
+			<tr>
+				<th th:text="${#numbers.formatDecimal(winnerStats.gamesDominanceRatio, 1, 2)}">1.64</th>
+				<td th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</td>
+				<th th:text="${#numbers.formatDecimal(loserStats.gamesDominanceRatio, 1, 2)}">0.67</th>
 			</tr>
 			<tr>
 				<th th:text="${winnerStats.breakPointsRatio != null ? #numbers.formatDecimal(winnerStats.breakPointsRatio, 1, 2) : ''}">1.24</th>
