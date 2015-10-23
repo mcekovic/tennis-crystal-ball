@@ -153,9 +153,9 @@
 				<th th:text="${#numbers.formatDecimal(loserStats.dominanceRatio, 1, 2)}">0.67</th>
 			</tr>
 			<tr>
-				<th th:text="${#numbers.formatDecimal(winnerStats.breakPointsRatio, 1, 2)}">1.24</th>
-				<td th:title="#{stats.breakPointsRatio.title}">Break Points Ratio</td>
-				<th th:text="${#numbers.formatDecimal(loserStats.breakPointsRatio, 1, 2)}">0.37</th>
+				<th th:text="${winnerStats.breakPointsRatio != null ? #numbers.formatDecimal(winnerStats.breakPointsRatio, 1, 2) : ''}">1.24</th>
+				<td th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</td>
+				<th th:text="${loserStats.breakPointsRatio != null ? #numbers.formatDecimal(loserStats.breakPointsRatio, 1, 2) : ''}">0.37</th>
 			</tr>
 			<tr class="pct-data">
 				<th th:text="${#numbers.formatDecimal(winnerStats.totalPointsWonPct, 1, 1) + '%'}">55%</th>

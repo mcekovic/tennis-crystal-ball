@@ -302,14 +302,19 @@ public class PlayerStats {
 		return servicePointsLostPct != 0.0 ? getReturnPointsWonPct() / servicePointsLostPct : 0.0;
 	}
 
-	public double getBreakPointsRatio() {
-		return breakPointsLostPct != 0.0 ? getBreakPointsWonPct() / breakPointsLostPct : 0.0;
+	public Double getBreakPointsRatio() {
+		Double breakPointsWonPct = getBreakPointsWonPct();
+		return breakPointsWonPct != null && breakPointsLostPct != null ? breakPointsWonPct / breakPointsLostPct : null;
 	}
 
-	public double getBreakPointsOverPerformingRatio() {
-		double breakPointsRatio = getBreakPointsRatio();
-		double dominanceRatio = getDominanceRatio();
-		return dominanceRatio != 0.0 ? breakPointsRatio / dominanceRatio : 0.0;
+	public Double getBreakPointsOverPerformingRatio() {
+		Double breakPointsRatio = getBreakPointsRatio();
+		if (breakPointsRatio != null) {
+			double dominanceRatio = getDominanceRatio();
+			return dominanceRatio != 0.0 ? breakPointsRatio / dominanceRatio : 0.0;
+		}
+		else
+			return null;
 	}
 
 
