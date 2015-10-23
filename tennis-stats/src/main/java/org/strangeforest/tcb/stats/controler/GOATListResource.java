@@ -8,6 +8,8 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
+import static org.strangeforest.tcb.stats.util.OrderBy.*;
+
 @RestController
 public class GOATListResource {
 
@@ -23,7 +25,7 @@ public class GOATListResource {
 		ORDER_MAP.put("bigTitles", "big_titles");
 		ORDER_MAP.put("titles", "titles");
 	}
-	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("name");
+	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("goat_points"), asc("name")};
 
 	@RequestMapping("/goatTable")
 	public BootgridTable<GOATListRow> goatTable(
@@ -35,7 +37,7 @@ public class GOATListResource {
 		PlayerListFilter filter = new PlayerListFilter(searchPhrase);
 		int playerCount = goatListService.getPlayerCount(filter);
 
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : playerCount;
 		return goatListService.getGOATListTable(playerCount, filter, orderBy, pageSize, current);
 	}
