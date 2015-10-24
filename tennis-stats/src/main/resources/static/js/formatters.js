@@ -5,7 +5,7 @@ function dateFormatter(column, row) {
 
 // Country
 function countryFormatter(column, row) {
-	return "<img src='images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='24'/> " + row.countryId;
+	return "<img src='images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='20'/> " + row.countryId;
 }
 
 // Player
@@ -14,7 +14,7 @@ function playerFormatter(column, row) {
 }
 
 function playerCountryFormatter(column, row) {
-	return "<img src='images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='24'/> " +
+	return "<img src='images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='20'/> " +
 	       "<a href='playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>";
 }
 
