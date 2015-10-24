@@ -80,6 +80,7 @@ CREATE INDEX ON player_tournament_event_result (player_id);
 CREATE MATERIALIZED VIEW player_goat_points AS
 WITH goat_points AS (
 	SELECT player_id, sum(goat_points) goat_points FROM player_tournament_event_result
+	WHERE goat_points > 0
 	GROUP BY player_id
 )
 SELECT player_id, goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank FROM goat_points;
@@ -93,6 +94,7 @@ CREATE MATERIALIZED VIEW player_season_goat_points AS
 SELECT r.player_id, e.season, sum(goat_points) goat_points
 FROM player_tournament_event_result r
 LEFT JOIN tournament_event e USING (tournament_event_id)
+WHERE r.goat_points > 0
 GROUP BY r.player_id, e.season;
 
 CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
@@ -122,7 +124,8 @@ LEFT JOIN big_titles bt ON bt.player_id = p.player_id
 LEFT JOIN level_titles gt ON gt.player_id = p.player_id AND gt.level = 'G'
 LEFT JOIN level_titles ft ON ft.player_id = p.player_id AND ft.level = 'F'
 LEFT JOIN level_titles mt ON mt.player_id = p.player_id AND mt.level = 'M'
-LEFT JOIN level_titles ot ON ot.player_id = p.player_id AND ot.level = 'O';
+LEFT JOIN level_titles ot ON ot.player_id = p.player_id AND ot.level = 'O'
+WHERE t.titles > 0;
 
 CREATE UNIQUE INDEX ON player_titles (player_id);
 
