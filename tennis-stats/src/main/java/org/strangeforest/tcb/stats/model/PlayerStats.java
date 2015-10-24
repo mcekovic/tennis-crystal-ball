@@ -124,10 +124,6 @@ public class PlayerStats {
 		return firstServesWon;
 	}
 
-	public int getFirstServesLost() {
-		return firstServesLost;
-	}
-
 	public double getFirstServeWonPct() {
 		return firstServeWonPct;
 	}
@@ -311,14 +307,9 @@ public class PlayerStats {
 		return breakPointsWonPct != null && breakPointsLostPct != null ? breakPointsWonPct / breakPointsLostPct : null;
 	}
 
-	public Double getBreakPointsOverPerformingRatio() {
-		Double breakPointsRatio = getBreakPointsRatio();
-		if (breakPointsRatio != null) {
-			double dominanceRatio = getPointsDominanceRatio();
-			return dominanceRatio != 0.0 ? breakPointsRatio / dominanceRatio : 0.0;
-		}
-		else
-			return null;
+	public Double getOverPerformingRatio() {
+		double pointsWonPct = getTotalPointsWonPct();
+		return pointsWonPct != 0.0 ? getMatchesWonPct() / pointsWonPct : 0.0;
 	}
 
 

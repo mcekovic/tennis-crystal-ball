@@ -78,9 +78,15 @@ public class StatsLeadersService {
 
 	private static final Map<String, StatsDimension> DIMENSIONS = new HashMap<>();
 
-	private static final String POINTS_DOMINANCE_RATIO = "((o_sv_pt-o_1st_won-o_2nd_won)::real/o_sv_pt)/((p_sv_pt-p_1st_won-p_2nd_won)::real/p_sv_pt)";
-	private static final String GAMES_DOMINANCE_RATIO = "((o_bp_fc-o_bp_sv)::real/o_sv_gms)/((p_bp_fc-p_bp_sv)::real/p_sv_gms)";
-	private static final String BREAK_POINTS_RATIO = "CASE WHEN p_bp_fc > 0 AND o_bp_fc > 0 THEN ((o_bp_fc-o_bp_sv)::real/o_bp_fc)/((p_bp_fc-p_bp_sv)::real/p_bp_fc) ELSE NULL END";
+	private static final String BREAK_POINTS_CONVERTED_PCT = "(o_bp_fc-o_bp_sv)::real/o_bp_fc";
+	private static final String RETURN_POINTS_WON_PCT = "(o_sv_pt-o_1st_won-o_2nd_won)::real/o_sv_pt";
+	private static final String RETURN_GAMES_WON_PCT = "(o_bp_fc-o_bp_sv)::real/o_sv_gms";
+	private static final String TOTAL_POINTS_WON_PCT = "(p_1st_won+p_2nd_won+o_sv_pt-o_1st_won-o_2nd_won)::real/(p_sv_pt+o_sv_pt)";
+	private static final String MATCHES_WON_PCT = "p_matches::real/(p_matches+o_matches)";
+	private static final String POINTS_DOMINANCE_RATIO = "(" + RETURN_POINTS_WON_PCT + ")/((p_sv_pt-p_1st_won-p_2nd_won)::real/p_sv_pt)";
+	private static final String GAMES_DOMINANCE_RATIO = "(" + RETURN_GAMES_WON_PCT + ")/((p_bp_fc-p_bp_sv)::real/p_sv_gms)";
+	private static final String BREAK_POINTS_RATIO = "CASE WHEN p_bp_fc > 0 AND o_bp_fc > 0 THEN (" + BREAK_POINTS_CONVERTED_PCT + ")/((p_bp_fc-p_bp_sv)::real/p_bp_fc) ELSE NULL END";
+	private static final String OVER_PERFORMING_RATIO = "(" + MATCHES_WON_PCT + ")/(" + TOTAL_POINTS_WON_PCT + ")";
 
 	static {
 		// Serve
@@ -98,18 +104,18 @@ public class StatsLeadersService {
 		addDimension("doubleFaultAgainstPct", "o_df::real/o_sv_pt", PERCENTAGE, true);
 		addDimension("firstServeReturnWonPct", "(o_1st_in-o_1st_won)::real/o_1st_in", PERCENTAGE, true);
 		addDimension("secondServeReturnWonPct", "(o_sv_pt-o_1st_in-o_2nd_won)::real/(o_sv_pt-o_1st_in)", PERCENTAGE, true);
-		addDimension("breakPointsPct", "CASE WHEN o_bp_fc > 0 THEN (o_bp_fc-o_bp_sv)::real/o_bp_fc ELSE NULL END", PERCENTAGE, true);
-		addDimension("returnPointsWonPct", "(o_sv_pt-o_1st_won-o_2nd_won)::real/o_sv_pt", PERCENTAGE, true);
-		addDimension("returnGamesWonPct", "(o_bp_fc-o_bp_sv)::real/o_sv_gms", PERCENTAGE, true);
+		addDimension("breakPointsPct", "CASE WHEN o_bp_fc > 0 THEN " + BREAK_POINTS_CONVERTED_PCT + " ELSE NULL END", PERCENTAGE, true);
+		addDimension("returnPointsWonPct", RETURN_POINTS_WON_PCT, PERCENTAGE, true);
+		addDimension("returnGamesWonPct", RETURN_GAMES_WON_PCT, PERCENTAGE, true);
 		// Total
 		addDimension("pointsDominanceRatio", POINTS_DOMINANCE_RATIO, RATIO, true);
 		addDimension("gamesDominanceRatio", GAMES_DOMINANCE_RATIO, RATIO, true);
 		addDimension("breakPointsRatio", BREAK_POINTS_RATIO, RATIO, true);
-		addDimension("breakPointsOverPerformingRatio", format("(%1$s)/(%2$s)", BREAK_POINTS_RATIO, POINTS_DOMINANCE_RATIO), RATIO, true);
-		addDimension("totalPointsWonPct", "(p_1st_won+p_2nd_won+o_sv_pt-o_1st_won-o_2nd_won)::real/(p_sv_pt+o_sv_pt)", PERCENTAGE, true);
+		addDimension("overPerformingRatio", OVER_PERFORMING_RATIO, RATIO, true);
+		addDimension("totalPointsWonPct", TOTAL_POINTS_WON_PCT, PERCENTAGE, true);
 		addDimension("totalGamesWonPct", "(p_sv_gms-(p_bp_fc-p_bp_sv)+o_bp_fc-o_bp_sv)::real/(p_sv_gms+o_sv_gms)", PERCENTAGE, true);
 		addDimension("setsWonPct", "p_sets::real/(p_sets+o_sets)", PERCENTAGE, false);
-		addDimension("matchesWonPctPct", "p_matches::real/(p_matches+o_matches)", PERCENTAGE, false);
+		addDimension("matchesWonPctPct", MATCHES_WON_PCT, PERCENTAGE, false);
 	}
 
 	private static void addDimension(String name, String expression, StatsDimension.Type type, boolean needsStats) {

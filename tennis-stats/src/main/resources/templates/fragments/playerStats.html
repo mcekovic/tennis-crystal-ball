@@ -171,8 +171,8 @@
 							<th th:text="${stats.breakPointsRatio != null ? #numbers.formatDecimal(stats.breakPointsRatio, 1, 2) : ''}">1.03</th>
 						</tr>
 						<tr>
-							<td th:title="#{stats.breakPointsOverPerformingRatio.title}">Brk. Pts. Ov.-Perf.</td>
-							<th th:text="${stats.breakPointsOverPerformingRatio != null ? #numbers.formatDecimal(stats.breakPointsOverPerformingRatio, 1, 2) : ''}">1.01</th>
+							<td th:title="#{stats.overPerformingRatio.title}">Over-Performing</td>
+							<th th:text="${stats.overPerformingRatio != null ? #numbers.formatDecimal(stats.overPerformingRatio, 1, 2) : ''}">1.01</th>
 						</tr>
 						<tr class="pct-data">
 							<td>Total Pts. Won</td>
