@@ -129,6 +129,8 @@ class MatchLoader extends BaseCSVLoader {
 			case 'A':
 				if (name.contains('Olympics'))
 					return 'O'
+				else if (name.startsWith('Australian Open') && season == 1977)
+					return 'G'
 				else if (
 					(name.startsWith('Boston') && (1970..1977).contains(season)) ||
 					(name.startsWith('Buenos Aires') && (1970..1971).contains(season)) ||

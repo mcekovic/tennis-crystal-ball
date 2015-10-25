@@ -15,8 +15,9 @@ public class GOATListService {
 	private static final int MAX_PLAYER_COUNT = 1000;
 
 	private static final String GOAT_COUNT_QUERY = //language=SQL
-		"SELECT count(player_id) AS player_count FROM player_goat_points\n" +
-		"WHERE goat_points > 0 AND goat_rank <= ?%1$s";
+		"SELECT count(player_id) AS player_count FROM player_goat_points g\n" +
+		"LEFT JOIN player_v USING (player_id)\n" +
+		"WHERE g.goat_points > 0 AND g.goat_rank <= ?%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
 		"SELECT player_id, goat_rank, country_id, name, goat_points, grand_slams, tour_finals, masters, olympics, big_titles, titles\n" +
