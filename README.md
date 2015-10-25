@@ -6,7 +6,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - 'GOAT' List - see best players of all time ranked by 'GOAT' Points
 - 'Big Guns' Timeline - see 'GOAT' points distribution among top players and seasons
 - Best Seasons - find which are really the best seasons of all time based on 'GOAT' points
-- Player Profile - see player information, tournament results, matches, timeline, statistics and performance indicators,
+- Player Profile - see player information, tournament results, matches, timeline, performance indicators and statistics,
   all linked together and easily navigable
 - Ranking Carts - see players ranking and ranking point charts, compare players by constructing custom charts
 - Top Performers - find top performers in both performance and pressure situations figures
