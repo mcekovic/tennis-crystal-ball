@@ -97,7 +97,7 @@ WITH goat_points AS (
 	GROUP BY r.player_id, e.season
 	UNION ALL
 	SELECT r.player_id, r.season, sum(p.goat_points) goat_points FROM player_year_end_rank r
-	LEFT JOIN year_end_rank_goat_points p ON p.rank = r.year_end_rank
+	LEFT JOIN year_end_rank_goat_points p ON p.year_end_rank = r.year_end_rank
 	WHERE p.goat_points > 0
 	GROUP BY r.player_id, r.season
 )

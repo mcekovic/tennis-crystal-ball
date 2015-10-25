@@ -49,7 +49,7 @@ VALUES
 
 DELETE FROM year_end_rank_goat_points;
 INSERT INTO year_end_rank_goat_points
-(rank, goat_points)
+(year_end_rank, goat_points)
 VALUES
 (1, 8),
 (2, 4),

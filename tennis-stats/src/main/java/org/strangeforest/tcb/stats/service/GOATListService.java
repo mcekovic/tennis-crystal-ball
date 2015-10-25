@@ -25,10 +25,14 @@ public class GOATListService {
 		"WHERE goat_points > 0 AND goat_rank <= ?%1$s\n" +
 		"ORDER BY %2$s OFFSET ? LIMIT ?";
 
-	private static final String GOAT_POINTS_QUERY =
+	private static final String TOURNAMENT_GOAT_POINTS_QUERY =
 		"SELECT level, result, goat_points, additive FROM tournament_rank_points\n" +
 		"WHERE goat_points > 0\n" +
 		"ORDER BY level, result DESC";
+
+	private static final String YEAR_END_RANK_GOAT_POINTS_QUERY =
+		"SELECT year_end_rank, goat_points FROM year_end_rank_goat_points\n" +
+		"ORDER BY year_end_rank";
 
 
 	public int getPlayerCount(PlayerListFilter filter) {
@@ -64,14 +68,24 @@ public class GOATListService {
 		return table;
 	}
 
-	public BootgridTable<GOATPointsRow> getGOATPointsTable() {
-		BootgridTable<GOATPointsRow> table = new BootgridTable<>();
-		jdbcTemplate.query(GOAT_POINTS_QUERY, (rs) -> {
+	public BootgridTable<TournamentGOATPointsRow> getTournamentGOATPointsTable() {
+		BootgridTable<TournamentGOATPointsRow> table = new BootgridTable<>();
+		jdbcTemplate.query(TOURNAMENT_GOAT_POINTS_QUERY, (rs) -> {
 			String level = rs.getString("level");
 			String result = rs.getString("result");
 			int goatPoints = rs.getInt("goat_points");
 			boolean additive = rs.getBoolean("additive");
-			table.addRow(new GOATPointsRow(level, result, goatPoints, additive));
+			table.addRow(new TournamentGOATPointsRow(level, result, goatPoints, additive));
+		});
+		return table;
+	}
+
+	public BootgridTable<YearEndRankGOATPointsRow> getYearEndRankGOATPointsTable() {
+		BootgridTable<YearEndRankGOATPointsRow> table = new BootgridTable<>();
+		jdbcTemplate.query(YEAR_END_RANK_GOAT_POINTS_QUERY, (rs) -> {
+			int yearEndRank = rs.getInt("year_end_rank");
+			int goatPoints = rs.getInt("goat_points");
+			table.addRow(new YearEndRankGOATPointsRow(yearEndRank, goatPoints));
 		});
 		return table;
 	}

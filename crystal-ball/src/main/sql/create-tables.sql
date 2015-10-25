@@ -206,7 +206,7 @@ CREATE TABLE tournament_rank_points (
 -- year_end_rank_goat_points
 
 CREATE TABLE year_end_rank_goat_points (
-	rank INTEGER NOT NULL,
+	year_end_rank INTEGER NOT NULL,
 	goat_points INTEGER NOT NULL,
-	PRIMARY KEY (rank, goat_points)
+	PRIMARY KEY (year_end_rank, goat_points)
 );

@@ -1,13 +1,13 @@
 package org.strangeforest.tcb.stats.model;
 
-public class GOATPointsRow {
+public class TournamentGOATPointsRow {
 
 	private final String level;
 	private final String result;
-	private int goatPoints;
-	private boolean additive;
+	private final int goatPoints;
+	private final boolean additive;
 
-	public GOATPointsRow(String level, String result, int goatPoints, boolean additive) {
+	public TournamentGOATPointsRow(String level, String result, int goatPoints, boolean additive) {
 		this.level = level;
 		this.result = result;
 		this.goatPoints = goatPoints;

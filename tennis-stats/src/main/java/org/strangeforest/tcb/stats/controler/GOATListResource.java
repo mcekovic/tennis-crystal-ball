@@ -42,8 +42,13 @@ public class GOATListResource {
 		return goatListService.getGOATListTable(playerCount, filter, orderBy, pageSize, current);
 	}
 
-	@RequestMapping("/goatPointsTable")
-	public BootgridTable<GOATPointsRow> goatPointsTable() {
-		return goatListService.getGOATPointsTable();
+	@RequestMapping("/tournamentGOATPointsTable")
+	public BootgridTable<TournamentGOATPointsRow> tournamentGOATPointsTable() {
+		return goatListService.getTournamentGOATPointsTable();
+	}
+
+	@RequestMapping("/yearEndRankGOATPointsTable")
+	public BootgridTable<YearEndRankGOATPointsRow> yearEndRankGOATPointsTable() {
+		return goatListService.getYearEndRankGOATPointsTable();
 	}
 }
