@@ -1,13 +1,12 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.sql.*;
-
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class BestSeasonsService {
@@ -87,11 +86,6 @@ public class BestSeasonsService {
 			filter.getParamsWithPrefix(MIN_SEASON_GOAT_POINTS, offset, pageSize)
 		);
 		return table;
-	}
-
-	private Integer getInteger(ResultSet rs, String column) throws SQLException {
-		int i = rs.getInt(column);
-		return rs.wasNull() ? null : i;
 	}
 
 	public int getMinSeasonGOATPoints() {

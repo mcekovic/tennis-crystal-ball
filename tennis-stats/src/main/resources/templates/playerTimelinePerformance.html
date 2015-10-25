@@ -1,13 +1,27 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
-	<!--@thymesVar id="yearEndRankings" type="java.util.Map<java.lang.Integer, java.lang.Integer>"-->
+	<!--@thymesVar id="titles" type="java.util.Map<java.lang.Integer, java.lang.Integer>"-->
+	<!--@thymesVar id="yearEndRanks" type="java.util.Map<java.lang.Integer, java.lang.Integer>"-->
+	<!--@thymesVar id="goatPoints" type="java.util.Map<java.lang.Integer, java.lang.Integer>"-->
 	<!--@thymesVar id="careerPerf" type="org.strangeforest.tcb.stats.model.PlayerPerformance"-->
 	<!--@thymesVar id="seasonsPerf" type="java.util.Map<java.lang.Integer, org.strangeforest.tcb.stats.model.PlayerPerformance>"-->
+	<!-- Titles -->
+	<tr th:unless="${titles.empty}" class="first-row">
+		<td class="stats-header stats-general">Titles</td>
+		<td th:text="${titles.get(null)}" class="stats">25</td>
+		<td th:each="season : ${seasons}" th:text="${titles.get(season)}" class="stats" align="center">5</td>
+	</tr>
 	<!-- Year-end Rank -->
 	<tr>
-		<td class="stats-header stats-perf">Year-End Ranking</td>
-		<td class="stats"></td>
-		<td th:each="season : ${seasons}" th:text="${yearEndRankings.get(season)}" class="stats" align="center">5</td>
+		<td class="stats-header stats-general">Year-End Ranking</td>
+		<td th:text="${yearEndRanks.get(null)}" class="stats">5</td>
+		<td th:each="season : ${seasons}" th:text="${yearEndRanks.get(season)}" class="stats" align="center">5</td>
+	</tr>
+	<!-- GOAT Points -->
+	<tr th:unless="${goatPoints.empty}">
+		<td class="stats-header stats-general">GOAT Points</td>
+		<td th:text="${goatPoints.get(null)}" class="stats">155</td>
+		<td th:each="season : ${seasons}" th:text="${goatPoints.get(season)}" class="stats" align="center">25</td>
 	</tr>
 	<!-- Performance -->
 	<tr class="pct-data first-row">

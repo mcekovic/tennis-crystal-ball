@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
+
 @Service
 public class PlayerTimelineService {
 
@@ -21,10 +23,28 @@ public class PlayerTimelineService {
 		"AND e.level <> 'D'\n" +
 		"ORDER BY tournament_event_id";
 
-	private static final String PLAYER_YEAR_END_RANKINGS_QUERY =
+	private static final String SEASON_TITLES_QUERY =
+		"SELECT e.season, count(tournament_event_id) AS titles FROM player_tournament_event_result r\n" +
+		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"WHERE r.player_id = ? AND r.result = 'W'\n" +
+		"GROUP BY e.season\n" +
+		"UNION ALL\n" +
+		"SELECT NULL, count(tournament_event_id) FROM player_tournament_event_result\n" +
+		"WHERE player_id = ? AND result = 'W'";
+
+	private static final String YEAR_END_RANKS_QUERY =
 		"SELECT season, year_end_rank FROM player_year_end_rank\n" +
 		"WHERE player_id = ?\n" +
-		"ORDER BY season";
+		"UNION ALL\n" +
+		"SELECT NULL, min(year_end_rank) FROM player_year_end_rank\n" +
+		"WHERE player_id = ?";
+
+	private static final String SEASON_GOAT_POINTS_QUERY =
+		"SELECT season, goat_points FROM player_season_goat_points\n" +
+		"WHERE player_id = ?\n" +
+		"UNION ALL\n" +
+		"SELECT NULL, goat_points FROM player_goat_points\n" +
+		"WHERE player_id = ?";
 
 
 	public PlayerTimeline getPlayerTimeline(int playerId) {
@@ -49,17 +69,46 @@ public class PlayerTimelineService {
 		return timeline;
 	}
 
-	public Map<Integer, Integer> getPlayerYearEndRankings(int playerId) {
-		Map<Integer, Integer> yearEndRanks = new LinkedHashMap<>();
+	public Map<Integer, Integer> getPlayerSeasonTitles(int playerId) {
+		Map<Integer, Integer> seasonTitles = new HashMap<>();
 		jdbcTemplate.query(
-			PLAYER_YEAR_END_RANKINGS_QUERY,
+			SEASON_TITLES_QUERY,
 			rs -> {
-				int season = rs.getInt("season");
+				Integer season = getInteger(rs, "season");
+				int titles = rs.getInt("titles");
+				if (titles > 0)
+					seasonTitles.put(season, titles);
+			},
+			playerId, playerId
+		);
+		return seasonTitles;
+	}
+
+	public Map<Integer, Integer> getPlayerYearEndRanks(int playerId) {
+		Map<Integer, Integer> yearEndRanks = new HashMap<>();
+		jdbcTemplate.query(
+			YEAR_END_RANKS_QUERY,
+			rs -> {
+				Integer season = getInteger(rs, "season");
 				int yearEndRank = rs.getInt("year_end_rank");
 				yearEndRanks.put(season, yearEndRank);
 			},
-			playerId
+			playerId, playerId
 		);
 		return yearEndRanks;
+	}
+
+	public Map<Integer, Integer> getPlayerSeasonGOATPoints(int playerId) {
+		Map<Integer, Integer> seasonGOATPoints = new HashMap<>();
+		jdbcTemplate.query(
+			SEASON_GOAT_POINTS_QUERY,
+			rs -> {
+				Integer season = getInteger(rs, "season");
+				int goatPoints = rs.getInt("goat_points");
+				seasonGOATPoints.put(season, goatPoints);
+			},
+			playerId, playerId
+		);
+		return seasonGOATPoints;
 	}
 }

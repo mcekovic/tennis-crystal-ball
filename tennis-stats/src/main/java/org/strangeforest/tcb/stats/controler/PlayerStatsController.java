@@ -97,14 +97,18 @@ public class PlayerStatsController {
 		@RequestParam(value = "playerId") int playerId,
 		@RequestParam(value = "seasons") String seasons
 	) {
-		Map<Integer, Integer> yearEndRankings = timelineService.getPlayerYearEndRankings(playerId);
+		Map<Integer, Integer> titles = timelineService.getPlayerSeasonTitles(playerId);
+		Map<Integer, Integer> yearEndRanks = timelineService.getPlayerYearEndRanks(playerId);
+		Map<Integer, Integer> goatPoints = timelineService.getPlayerSeasonGOATPoints(playerId);
 		PlayerPerformance careerPerf = statisticsService.getPlayerPerformance(playerId);
 		List<Integer> seasonList = toSeasons(seasons);
 		Map<Integer, PlayerPerformance> seasonsPerf = statisticsService.getPlayerSeasonsPerformance(playerId);
 		ensureSeasons(seasonsPerf, seasonList, PlayerPerformance.EMPTY);
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("yearEndRankings", yearEndRankings);
+		modelMap.addAttribute("titles", titles);
+		modelMap.addAttribute("yearEndRanks", yearEndRanks);
+		modelMap.addAttribute("goatPoints", goatPoints);
 		modelMap.addAttribute("careerPerf", careerPerf);
 		modelMap.addAttribute("seasons", seasonList);
 		modelMap.addAttribute("seasonsPerf", seasonsPerf);
