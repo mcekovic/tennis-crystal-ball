@@ -1,3 +1,4 @@
+DROP TABLE year_end_rank_goat_points CASCADE;
 DROP TABLE tournament_rank_points CASCADE;
 DROP TABLE match_stats CASCADE;
 DROP TABLE set_score CASCADE;

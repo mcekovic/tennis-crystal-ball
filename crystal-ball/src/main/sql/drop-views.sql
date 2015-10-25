@@ -3,6 +3,7 @@ DROP VIEW player_v;
 DROP MATERIALIZED VIEW player_current_rank;
 DROP MATERIALIZED VIEW player_best_rank;
 DROP MATERIALIZED VIEW player_best_rank_points;
+DROP MATERIALIZED VIEW player_year_end_rank;
 DROP MATERIALIZED VIEW player_goat_points;
 DROP MATERIALIZED VIEW player_season_goat_points;
 DROP MATERIALIZED VIEW player_titles;

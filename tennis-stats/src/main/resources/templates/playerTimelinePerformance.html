@@ -1,7 +1,14 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--@thymesVar id="careerPerf" type="org.strangeforest.tcb.stats.model.PlayerPerformance"-->
 	<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
+	<!--@thymesVar id="yearEndRankings" type="java.util.Map<java.lang.Integer, java.lang.Integer>"-->
+	<!--@thymesVar id="careerPerf" type="org.strangeforest.tcb.stats.model.PlayerPerformance"-->
 	<!--@thymesVar id="seasonsPerf" type="java.util.Map<java.lang.Integer, org.strangeforest.tcb.stats.model.PlayerPerformance>"-->
+	<!-- Year-end Rank -->
+	<tr>
+		<td class="stats-header stats-perf">Year-End Ranking</td>
+		<td class="stats"></td>
+		<td th:each="season : ${seasons}" th:text="${yearEndRankings.get(season)}" class="stats" align="center">5</td>
+	</tr>
 	<!-- Performance -->
 	<tr class="pct-data first-row">
 		<td class="stats-header stats-perf">Overall</td>

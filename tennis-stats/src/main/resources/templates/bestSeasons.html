@@ -31,6 +31,9 @@
 					"player": playerCountryFormatter,
 					"season": function(column, row) {
 						return "<a href='playerProfile?playerId=" + row.playerId + "&season=" + row.season + "' title='Show season'>" + row.season + "</a>";
+					},
+					"yearEndRank": function(column, row) {
+						return row.yearEndRank != null ? row.yearEndRank : "";
 					}
 				}
 			});
@@ -56,8 +59,8 @@
 				<th data-column-id="mastersTitles" data-type="numeric" data-width="50" data-align="right" data-header-align="right">M W</th>
 				<th data-column-id="mastersFinals" data-type="numeric" data-width="50" data-align="right" data-header-align="right">M F</th>
 				<th data-column-id="olympicsTitles" data-type="numeric" data-width="50" data-align="right" data-header-align="right">O W</th>
-				<th data-column-id="olympicsFinals" data-type="numeric" data-width="50" data-align="right" data-header-align="right">O F</th>
 				<th data-column-id="titles" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Titles</th>
+				<th data-column-id="yearEndRank" data-formatter="yearEndRank" data-width="50" data-align="right" data-header-align="right">YER</th>
 			</tr>
 		</thead>
 	</table>

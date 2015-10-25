@@ -31,8 +31,8 @@
 				}
 				$result.tooltip({title: title, html: true});
 			});
-			bindTimelineExtraData("statistics", "playerTimelineStats");
 			bindTimelineExtraData("performance", "playerTimelinePerformance");
+			bindTimelineExtraData("statistics", "playerTimelineStats");
 		});
 		function bindTimelineExtraData(elementPrefix, url) {
 			var $head = $("#" + elementPrefix + "Head");
@@ -70,6 +70,12 @@
 			font-size: smaller;
 			text-align: center;
 		}
+		td.stats-perf {
+			background-color: #f4f4ff;
+		}
+		td.stats-pressure {
+			background-color: #fff4f4;
+		}
 		td.stats-serve {
 			background-color: #fff0f8;
 		}
@@ -78,12 +84,6 @@
 		}
 		td.stats-total {
 			background-color: #ffffe8;
-		}
-		td.stats-perf {
-			background-color: #f4f4ff;
-		}
-		td.stats-pressure {
-			background-color: #fff4f4;
 		}
 	</style>
 	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
@@ -94,16 +94,14 @@
 				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
 			</tr>
 		</thead>
+		<th:block th:unless="${timeline.empty}">
 		<tbody id="bigTournamentsBody">
 			<tr th:each="tournament : ${timeline.bigTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
 				<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
 			</tr>
-			<tr th:if="${timeline.empty}">
-				<td colspan="2" align="center">No data found</td>
-			</tr>
 		</tbody>
 		<thead>
-			<tr th:unless="${timeline.empty}" class="bg-primary">
+			<tr class="bg-primary">
 				<th>Tournament</th>
 				<th>Surface</th>
 				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
@@ -114,21 +112,7 @@
 				<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
 			</tr>
 		</tbody>
-		<thead th:unless="${timeline.empty}" id="statisticsHead">
-			<tr class="bg-primary">
-				<th>
-					<button id="timelineStats" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"> Stats</button>
-					<div class="btn-stats" style="display: none">
-						<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#statisticsHead, #statisticsBody')"> Raw Data</button>
-						<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#statisticsHead, #statisticsBody')"> Pct. Data</button>
-					</div>
-				</th>
-				<th class="text-center">Career</th>
-				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
-			</tr>
-		</thead>
-		<tbody id="statisticsBody"></tbody>
-		<thead th:unless="${timeline.empty}" id="performanceHead">
+		<thead id="performanceHead">
 			<tr class="bg-primary">
 				<th>
 					<button id="timelinePerf" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#performanceBody" title="Toggle seasons performance"> Performance</button>
@@ -142,5 +126,25 @@
 			</tr>
 		</thead>
 		<tbody id="performanceBody"></tbody>
+		<thead id="statisticsHead">
+			<tr class="bg-primary">
+				<th>
+					<button id="timelineStats" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"> Stats</button>
+					<div class="btn-stats" style="display: none">
+						<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#statisticsHead, #statisticsBody')"> Raw Data</button>
+						<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#statisticsHead, #statisticsBody')"> Pct. Data</button>
+					</div>
+				</th>
+				<th class="text-center">Career</th>
+				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+			</tr>
+		</thead>
+		<tbody id="statisticsBody"></tbody>
+		</th:block>
+		<tbody th:if="${timeline.empty}">
+			<tr>
+				<td colspan="2" align="center">No data found</td>
+			</tr>
+		</tbody>
 	</table>
 </th:block>

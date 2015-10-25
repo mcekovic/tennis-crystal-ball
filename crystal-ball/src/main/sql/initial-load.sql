@@ -47,5 +47,14 @@ VALUES
 ('D', 'QF',    65, NULL, NULL, TRUE),
 ('D', 'R16',   40, NULL, NULL, TRUE);
 
+DELETE FROM year_end_rank_goat_points;
+INSERT INTO year_end_rank_goat_points
+(rank, goat_points)
+VALUES
+(1, 8),
+(2, 4),
+(3, 2),
+(4, 1);
+
 COMMIT;
 

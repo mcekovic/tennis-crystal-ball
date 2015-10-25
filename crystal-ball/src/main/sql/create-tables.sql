@@ -201,3 +201,12 @@ CREATE TABLE tournament_rank_points (
 	additive BOOLEAN,
 	PRIMARY KEY (level, result)
 );
+
+
+-- year_end_rank_goat_points
+
+CREATE TABLE year_end_rank_goat_points (
+	rank INTEGER NOT NULL,
+	goat_points INTEGER NOT NULL,
+	PRIMARY KEY (rank, goat_points)
+);

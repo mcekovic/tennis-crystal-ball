@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.sql.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
@@ -31,20 +33,20 @@ public class BestSeasonsService {
 		"    count(CASE WHEN e.level = 'M' AND r.result = 'W' THEN 1 ELSE NULL END) masters_titles,\n" +
 		"    count(CASE WHEN e.level = 'M' AND r.result = 'F' THEN 1 ELSE NULL END) masters_finals,\n" +
 		"    count(CASE WHEN e.level = 'O' AND r.result = 'W' THEN 1 ELSE NULL END) olympics_titles,\n" +
-		"    count(CASE WHEN e.level = 'O' AND r.result = 'F' THEN 1 ELSE NULL END) olympics_finals,\n" +
 		"    count(CASE WHEN e.level <> 'D' AND r.result = 'W' THEN 1 ELSE NULL END) titles\n" +
 		"  FROM player_season_goat_points s\n" +
 		"  LEFT JOIN player_tournament_event_result r USING (player_id)\n" +
-		"  LEFT JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id AND e.season = s.season\n" +
+		"  LEFT JOIN tournament_event e USING (tournament_event_id, season)\n" +
 		"  WHERE s.goat_points >= ?\n" +
-		"  GROUP BY player_id, s.season, s.goat_points" +
-		"  ORDER BY s.goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC" +
-		")" +
-		"SELECT row_number() OVER () AS rank, player_id, s.season - date_part('year', p.dob) AS age, p.name, p.country_id, s.season, s.goat_points, " +
-		"  s.grand_slam_titles, s.grand_slam_finals, s.grand_slam_semi_finals, s.tour_finals_titles, s.tour_finals_finals," +
-		"  s.masters_titles, s.masters_finals, s.olympics_titles, s.olympics_finals, s.titles " +
-		"  FROM pleayer_season s" +
-		"  LEFT JOIN player_v p USING (player_id)\n" +
+		"  GROUP BY player_id, s.season, s.goat_points\n" +
+		"  ORDER BY s.goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC\n" +
+		")\n" +
+		"SELECT row_number() OVER () AS rank, player_id, s.season - date_part('year', p.dob) AS age, p.name, p.country_id, s.season, s.goat_points,\n" +
+		"  s.grand_slam_titles, s.grand_slam_finals, s.grand_slam_semi_finals, s.tour_finals_titles, s.tour_finals_finals,\n" +
+		"  s.masters_titles, s.masters_finals, s.olympics_titles, s.titles, y.year_end_rank\n" +
+		"FROM pleayer_season s\n" +
+		"LEFT JOIN player_v p USING (player_id)\n" +
+		"LEFT JOIN player_year_end_rank y USING (player_id, season)\n" +
 		"WHERE s.goat_points > 0%1$s\n" +
 		"ORDER BY %2$s OFFSET ? LIMIT ?";
 
@@ -78,13 +80,18 @@ public class BestSeasonsService {
 				row.setMastersTitles(rs.getInt("masters_titles"));
 				row.setMastersFinals(rs.getInt("masters_finals"));
 				row.setOlympicsTitles(rs.getInt("olympics_titles"));
-				row.setOlympicsFinals(rs.getInt("olympics_finals"));
 				row.setTitles(rs.getInt("titles"));
+				row.setYearEndRank(getInteger(rs, "year_end_rank"));
 				table.addRow(row);
 			},
 			filter.getParamsWithPrefix(MIN_SEASON_GOAT_POINTS, offset, pageSize)
 		);
 		return table;
+	}
+
+	private Integer getInteger(ResultSet rs, String column) throws SQLException {
+		int i = rs.getInt(column);
+		return rs.wasNull() ? null : i;
 	}
 
 	public int getMinSeasonGOATPoints() {

@@ -7,8 +7,9 @@ public class BestSeasonRow extends PlayerRow {
 	private int grandSlamTitles, grandSlamFinals, grandSlamSemiFinals;
 	private int tourFinalsTitles, tourFinalsFinals;
 	private int mastersTitles, mastersFinals;
-	private int olympicsTitles, olympicsFinals;
+	private int olympicsTitles;
 	private int titles;
+	private Integer yearEndRank;
 
 	public BestSeasonRow(int rank, int playerId, String name, String countryId, int season, int goatPoints) {
 		super(rank, playerId, name, countryId);
@@ -88,19 +89,19 @@ public class BestSeasonRow extends PlayerRow {
 		this.olympicsTitles = olympicsTitles;
 	}
 
-	public int getOlympicsFinals() {
-		return olympicsFinals;
-	}
-
-	public void setOlympicsFinals(int olympicsFinals) {
-		this.olympicsFinals = olympicsFinals;
-	}
-
 	public int getTitles() {
 		return titles;
 	}
 
 	public void setTitles(int titles) {
 		this.titles = titles;
+	}
+
+	public Integer getYearEndRank() {
+		return yearEndRank;
+	}
+
+	public void setYearEndRank(Integer yearEndRank) {
+		this.yearEndRank = yearEndRank;
 	}
 }

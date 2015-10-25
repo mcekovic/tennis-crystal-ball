@@ -17,6 +17,7 @@ import static java.util.stream.Collectors.*;
 public class PlayerStatsController {
 
 	@Autowired private StatisticsService statisticsService;
+	@Autowired private PlayerTimelineService timelineService;
 
 	@RequestMapping("/playerStatsTab")
 	public ModelAndView playerStatsTab(
@@ -96,12 +97,14 @@ public class PlayerStatsController {
 		@RequestParam(value = "playerId") int playerId,
 		@RequestParam(value = "seasons") String seasons
 	) {
+		Map<Integer, Integer> yearEndRankings = timelineService.getPlayerYearEndRankings(playerId);
 		PlayerPerformance careerPerf = statisticsService.getPlayerPerformance(playerId);
 		List<Integer> seasonList = toSeasons(seasons);
 		Map<Integer, PlayerPerformance> seasonsPerf = statisticsService.getPlayerSeasonsPerformance(playerId);
 		ensureSeasons(seasonsPerf, seasonList, PlayerPerformance.EMPTY);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("yearEndRankings", yearEndRankings);
 		modelMap.addAttribute("careerPerf", careerPerf);
 		modelMap.addAttribute("seasons", seasonList);
 		modelMap.addAttribute("seasonsPerf", seasonsPerf);

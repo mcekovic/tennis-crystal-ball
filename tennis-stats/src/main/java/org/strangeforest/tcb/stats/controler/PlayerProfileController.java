@@ -16,7 +16,6 @@ public class PlayerProfileController {
 	@Autowired private PlayerService playerService;
 	@Autowired private TournamentService tournamentService;
 	@Autowired private PlayerTimelineService timelineService;
-	@Autowired private StatisticsService statisticsService;
 
 	@RequestMapping("/playerProfile")
 	public ModelAndView playerProfile(

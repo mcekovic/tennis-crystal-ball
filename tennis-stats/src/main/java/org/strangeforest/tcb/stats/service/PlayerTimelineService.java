@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
@@ -18,6 +20,11 @@ public class PlayerTimelineService {
 		"WHERE r.player_id = ?\n" +
 		"AND e.level <> 'D'\n" +
 		"ORDER BY tournament_event_id";
+
+	private static final String PLAYER_YEAR_END_RANKINGS_QUERY =
+		"SELECT season, year_end_rank FROM player_year_end_rank\n" +
+		"WHERE player_id = ?\n" +
+		"ORDER BY season";
 
 
 	public PlayerTimeline getPlayerTimeline(int playerId) {
@@ -40,5 +47,19 @@ public class PlayerTimelineService {
 			playerId
 		);
 		return timeline;
+	}
+
+	public Map<Integer, Integer> getPlayerYearEndRankings(int playerId) {
+		Map<Integer, Integer> yearEndRanks = new LinkedHashMap<>();
+		jdbcTemplate.query(
+			PLAYER_YEAR_END_RANKINGS_QUERY,
+			rs -> {
+				int season = rs.getInt("season");
+				int yearEndRank = rs.getInt("year_end_rank");
+				yearEndRanks.put(season, yearEndRank);
+			},
+			playerId
+		);
+		return yearEndRanks;
 	}
 }

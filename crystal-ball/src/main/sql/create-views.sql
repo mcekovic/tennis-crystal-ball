@@ -37,6 +37,17 @@ WHERE best_rank_points IS NOT NULL;
 CREATE UNIQUE INDEX ON player_best_rank_points (player_id);
 
 
+-- player_year_end_rank
+
+CREATE MATERIALIZED VIEW player_year_end_rank AS
+SELECT DISTINCT player_id, date_part('year', rank_date) AS season,
+   first_value(rank) OVER (PARTITION BY player_id, date_part('year', rank_date) ORDER BY rank_date DESC) AS year_end_rank
+FROM player_ranking
+GROUP BY player_id, season, rank_date, rank;
+
+CREATE INDEX ON player_year_end_rank (player_id);
+
+
 -- player_tournament_event_result
 
 CREATE MATERIALIZED VIEW player_tournament_event_result AS
@@ -45,7 +56,7 @@ WITH match_result AS (
 		(CASE WHEN m.round = 'F' AND e.level <> 'D' THEN 'W' ELSE m.round::TEXT END)::tournament_event_result AS result
 	FROM match m
 	LEFT JOIN tournament_event e USING (tournament_event_id)
-	UNION
+	UNION ALL
 	SELECT loser_id, tournament_event_id,
 		(CASE WHEN round = 'BR' THEN 'SF' ELSE round::TEXT END)::tournament_event_result AS result
 	FROM match
@@ -62,7 +73,7 @@ SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, go
 	LEFT JOIN tournament_event e USING (tournament_event_id)
 	LEFT JOIN tournament_rank_points p USING (level, result)
 	WHERE NOT p.additive OR p.additive IS NULL
-	UNION
+	UNION ALL
 	SELECT r.player_id, r.tournament_event_id, r.result, sum(p.rank_points), sum(p.rank_points_2008), sum(p.goat_points)
 	FROM best_round r
 	LEFT OUTER JOIN match m ON m.tournament_event_id = r.tournament_event_id AND m.winner_id = r.player_id
@@ -75,29 +86,40 @@ SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, go
 CREATE INDEX ON player_tournament_event_result (player_id);
 
 
+-- player_season_goat_points
+
+CREATE MATERIALIZED VIEW player_season_goat_points AS
+WITH goat_points AS (
+	SELECT r.player_id, e.season, sum(goat_points) goat_points
+	FROM player_tournament_event_result r
+	LEFT JOIN tournament_event e USING (tournament_event_id)
+	WHERE r.goat_points > 0
+	GROUP BY r.player_id, e.season
+	UNION ALL
+	SELECT r.player_id, r.season, sum(p.goat_points) goat_points FROM player_year_end_rank r
+	LEFT JOIN year_end_rank_goat_points p ON p.rank = r.year_end_rank
+	WHERE p.goat_points > 0
+	GROUP BY r.player_id, r.season
+)
+SELECT player_id, season, sum(goat_points) goat_points
+FROM goat_points
+GROUP BY player_id, season;
+
+CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
+
+
 -- player_goat_points
 
 CREATE MATERIALIZED VIEW player_goat_points AS
 WITH goat_points AS (
-	SELECT player_id, sum(goat_points) goat_points FROM player_tournament_event_result
-	WHERE goat_points > 0
+	SELECT player_id, sum(goat_points) goat_points
+	FROM player_season_goat_points
 	GROUP BY player_id
 )
-SELECT player_id, goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank FROM goat_points;
+SELECT player_id, goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank
+FROM goat_points;
 
 CREATE UNIQUE INDEX ON player_goat_points (player_id);
-
-
--- player_season_goat_points
-
-CREATE MATERIALIZED VIEW player_season_goat_points AS
-SELECT r.player_id, e.season, sum(goat_points) goat_points
-FROM player_tournament_event_result r
-LEFT JOIN tournament_event e USING (tournament_event_id)
-WHERE r.goat_points > 0
-GROUP BY r.player_id, e.season;
-
-CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
 
 
 -- player_titles
@@ -147,7 +169,7 @@ SELECT match_id, tournament_event_id, season, round, winner_id player_id, loser_
 FROM match_for_stats_v
 LEFT JOIN match_stats USING (match_id)
 WHERE set = 0 OR set IS NULL
-UNION
+UNION ALL
 SELECT match_id, tournament_event_id, season, round, loser_id, winner_id, 0, 1, l_sets, w_sets,
 	l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,
 	w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc
