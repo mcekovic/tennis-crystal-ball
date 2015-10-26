@@ -79,7 +79,7 @@ class ATPTennisLoader {
 		refreshMaterializedView(sql, 'player_season_goat_points')
 		refreshMaterializedView(sql, 'player_goat_points')
 		refreshMaterializedView(sql, 'player_titles')
-		refreshMaterializedView(sql, 'CONCURRENTLY player_performance')
+		refreshMaterializedView(sql, 'player_performance')
 		refreshMaterializedView(sql, 'player_stats')
 	}
 

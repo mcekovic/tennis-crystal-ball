@@ -160,6 +160,72 @@ LEFT JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (m.outcome IS NULL OR m.outcome <> 'W/O');
 
 
+-- player_match_performance_v
+
+CREATE VIEW player_match_performance_v AS
+SELECT m.winner_id player_id, m.season, m.surface,
+	match_id match_id_won, NULL match_id_lost,
+	CASE WHEN m.level = 'G' THEN match_id ELSE NULL END grand_slam_match_id_won, NULL grand_slam_match_id_lost,
+	CASE WHEN m.level = 'M' THEN match_id ELSE NULL END masters_match_id_won, NULL masters_match_id_lost,
+	CASE WHEN m.surface = 'C' THEN match_id ELSE NULL END clay_match_id_won, NULL clay_match_id_lost,
+	CASE WHEN m.surface = 'G' THEN match_id ELSE NULL END grass_match_id_won, NULL grass_match_id_lost,
+	CASE WHEN m.surface = 'H' THEN match_id ELSE NULL END hard_match_id_won, NULL hard_match_id_lost,
+	CASE WHEN m.surface = 'P' THEN match_id ELSE NULL END carpet_match_id_won, NULL carpet_match_id_lost,
+	CASE WHEN m.w_sets + m.l_sets = m.best_of THEN match_id ELSE NULL END deciding_set_match_id_won, NULL deciding_set_match_id_lost,
+	CASE WHEN m.w_sets + m.l_sets = 5 THEN match_id ELSE NULL END fifth_set_match_id_won, NULL fifth_set_match_id_lost,
+	CASE WHEN m.round = 'F' AND m.level <> 'D' THEN match_id ELSE NULL END final_match_id_won, NULL final_match_id_lost,
+	CASE WHEN m.loser_rank <= 10 THEN match_id ELSE NULL END vs_top10_match_id_won, NULL vs_top10_match_id_lost,
+	CASE WHEN s.set = 1 AND s.w_gems > s.l_gems THEN match_id ELSE NULL END after_winning_first_set_match_id_won, NULL after_winning_first_set_match_id_lost,
+	CASE WHEN s.set = 1 AND s.w_gems < s.l_gems THEN match_id ELSE NULL END after_losing_first_set_match_id_won, NULL after_losing_first_set_match_id_lost,
+	CASE WHEN s.w_gems = 7 AND s.l_gems = 6 THEN s.set ELSE NULL END w_tie_break_set_won, NULL l_tie_break_set_won,
+	CASE WHEN s.w_gems = 6 AND s.l_gems = 7 THEN s.set ELSE NULL END w_tie_break_set_lost, NULL l_tie_break_set_lost
+FROM match_for_stats_v m
+LEFT JOIN set_score s USING (match_id)
+UNION ALL
+SELECT m.loser_id player_id, m.season, m.surface,
+	NULL, match_id,
+	NULL, CASE WHEN m.level = 'G' THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.level = 'M' THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.surface = 'C' THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.surface = 'G' THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.surface = 'H' THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.surface = 'P' THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.w_sets + m.l_sets = m.best_of THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.w_sets + m.l_sets = 5 THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.round = 'F' AND m.level <> 'D' THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.winner_rank <= 10 THEN match_id ELSE NULL END,
+	NULL, CASE WHEN s.set = 1 AND s.w_gems < s.l_gems THEN match_id ELSE NULL END,
+	NULL, CASE WHEN s.set = 1 AND s.w_gems > s.l_gems THEN match_id ELSE NULL END,
+	NULL, CASE WHEN s.w_gems = 6 AND s.l_gems = 7 THEN s.set ELSE NULL END,
+	NULL, CASE WHEN s.w_gems = 7 AND s.l_gems = 6 THEN s.set ELSE NULL END
+FROM match_for_stats_v m
+LEFT JOIN set_score s USING (match_id);
+
+
+-- player_performance
+
+CREATE MATERIALIZED VIEW player_performance AS
+SELECT player_id,
+	count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,
+	count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,
+	count(DISTINCT masters_match_id_won) masters_matches_won, count(DISTINCT masters_match_id_lost) masters_matches_lost,
+	count(DISTINCT clay_match_id_won) clay_matches_won, count(DISTINCT clay_match_id_lost) clay_matches_lost,
+	count(DISTINCT grass_match_id_won) grass_matches_won, count(DISTINCT grass_match_id_lost) grass_matches_lost,
+	count(DISTINCT hard_match_id_won) hard_matches_won, count(DISTINCT hard_match_id_lost) hard_matches_lost,
+	count(DISTINCT carpet_match_id_won) carpet_matches_won, count(DISTINCT carpet_match_id_lost) carpet_matches_lost,
+	count(DISTINCT deciding_set_match_id_won) deciding_sets_won, count(DISTINCT deciding_set_match_id_lost) deciding_sets_lost,
+	count(DISTINCT fifth_set_match_id_won) fifth_sets_won, count(DISTINCT fifth_set_match_id_lost) fifth_sets_lost,
+	count(DISTINCT final_match_id_won) finals_won, count(DISTINCT final_match_id_lost) finals_lost,
+	count(DISTINCT vs_top10_match_id_won) vs_top10_won, count(DISTINCT vs_top10_match_id_lost) vs_top10_lost,
+	count(DISTINCT after_winning_first_set_match_id_won) after_winning_first_set_won, count(DISTINCT after_winning_first_set_match_id_lost) after_winning_first_set_lost,
+	count(DISTINCT after_losing_first_set_match_id_won) after_losing_first_set_won, count(DISTINCT after_losing_first_set_match_id_lost) after_losing_first_set_lost,
+	count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost
+FROM player_match_performance_v
+GROUP BY player_id;
+
+CREATE UNIQUE INDEX ON player_performance (player_id);
+
+
 -- player_match_stats_v
 
 CREATE VIEW player_match_stats_v AS
@@ -176,75 +242,6 @@ SELECT match_id, tournament_event_id, season, round, loser_id, winner_id, 0, 1, 
 FROM match_for_stats_v
 LEFT JOIN match_stats USING (match_id)
 WHERE set = 0 OR set IS NULL;
-
-
--- player_season_performance_v
-
-CREATE VIEW player_season_performance_v AS
-SELECT player_id, season, matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, masters_matches_won, masters_matches_lost,
-	clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, hard_matches_won, hard_matches_lost, carpet_matches_won, carpet_matches_lost,
-	deciding_sets_won, deciding_sets_lost, fifth_sets_won, fifth_sets_lost, finals_won, finals_lost, vs_top10_won, vs_top10_lost,
-	after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost,
-	w_tie_breaks_won + l_tie_breaks_won AS tie_breaks_won, w_tie_breaks_lost + l_tie_breaks_lost AS tie_breaks_lost
-FROM (
-	SELECT m.winner_id player_id, m.season, count(DISTINCT match_id) matches_won,
-		count(DISTINCT CASE WHEN m.level = 'G' THEN match_id ELSE NULL END) grand_slam_matches_won,
-		count(DISTINCT CASE WHEN m.level = 'M' THEN match_id ELSE NULL END) masters_matches_won,
-		count(DISTINCT CASE WHEN m.surface = 'C' THEN match_id ELSE NULL END) clay_matches_won,
-		count(DISTINCT CASE WHEN m.surface = 'G' THEN match_id ELSE NULL END) grass_matches_won,
-		count(DISTINCT CASE WHEN m.surface = 'H' THEN match_id ELSE NULL END) hard_matches_won,
-		count(DISTINCT CASE WHEN m.surface = 'P' THEN match_id ELSE NULL END) carpet_matches_won,
-		count(DISTINCT CASE WHEN m.w_sets + m.l_sets = m.best_of THEN match_id ELSE NULL END) deciding_sets_won,
-		count(DISTINCT CASE WHEN m.w_sets + m.l_sets = 5 THEN match_id ELSE NULL END) fifth_sets_won,
-		count(DISTINCT CASE WHEN m.round = 'F' AND m.level <> 'D' THEN match_id ELSE NULL END) finals_won,
-		count(DISTINCT CASE WHEN m.loser_rank <= 10 THEN match_id ELSE NULL END) vs_top10_won,
-		count(DISTINCT CASE WHEN s.set = 1 AND s.w_gems > s.l_gems THEN match_id ELSE NULL END) after_winning_first_set_won,
-		count(DISTINCT CASE WHEN s.set = 1 AND s.w_gems < s.l_gems THEN match_id ELSE NULL END) after_losing_first_set_won,
-		count(CASE WHEN s.w_gems = 7 AND s.l_gems = 6 THEN s.set ELSE NULL END) w_tie_breaks_won,
-		count(CASE WHEN s.w_gems = 6 AND s.l_gems = 7 THEN s.set ELSE NULL END) w_tie_breaks_lost
-	FROM match_for_stats_v m
-	LEFT JOIN set_score s USING (match_id)
-	GROUP BY m.winner_id, m.season
-) AS match_won
-FULL JOIN (
-	SELECT m.loser_id player_id, m.season, count(DISTINCT match_id) matches_lost,
-		count(DISTINCT CASE WHEN m.level = 'G' THEN match_id ELSE NULL END) grand_slam_matches_lost,
-		count(DISTINCT CASE WHEN m.level = 'M' THEN match_id ELSE NULL END) masters_matches_lost,
-		count(DISTINCT CASE WHEN m.surface = 'C' THEN match_id ELSE NULL END) clay_matches_lost,
-		count(DISTINCT CASE WHEN m.surface = 'G' THEN match_id ELSE NULL END) grass_matches_lost,
-		count(DISTINCT CASE WHEN m.surface = 'H' THEN match_id ELSE NULL END) hard_matches_lost,
-		count(DISTINCT CASE WHEN m.surface = 'P' THEN match_id ELSE NULL END) carpet_matches_lost,
-		count(DISTINCT CASE WHEN m.w_sets + m.l_sets = m.best_of THEN match_id ELSE NULL END) deciding_sets_lost,
-		count(DISTINCT CASE WHEN m.w_sets + m.l_sets = 5 THEN match_id ELSE NULL END) fifth_sets_lost,
-		count(DISTINCT CASE WHEN m.round = 'F' AND m.level <> 'D' THEN match_id ELSE NULL END) finals_lost,
-		count(DISTINCT CASE WHEN m.winner_rank <= 10 THEN match_id ELSE NULL END) vs_top10_lost,
-		count(DISTINCT CASE WHEN s.set = 1 AND s.w_gems < s.l_gems THEN match_id ELSE NULL END) after_winning_first_set_lost,
-		count(DISTINCT CASE WHEN s.set = 1 AND s.w_gems > s.l_gems THEN match_id ELSE NULL END) after_losing_first_set_lost,
-		count(CASE WHEN s.w_gems = 6 AND s.l_gems = 7 THEN s.set ELSE NULL END) l_tie_breaks_won,
-		count(CASE WHEN s.w_gems = 7 AND s.l_gems = 6 THEN s.set ELSE NULL END) l_tie_breaks_lost
-	FROM match_for_stats_v m
-	LEFT JOIN set_score s USING (match_id)
-	GROUP BY m.loser_id, m.season
-) AS match_lost
-USING (player_id, season);
-
-
--- player_performance
-
-CREATE MATERIALIZED VIEW player_performance AS
-SELECT player_id, sum(matches_won) matches_won, sum(matches_lost) matches_lost,
-	sum(grand_slam_matches_won) grand_slam_matches_won, sum(grand_slam_matches_lost) grand_slam_matches_lost, sum(masters_matches_won) masters_matches_won, sum(masters_matches_lost) masters_matches_lost,
-	sum(clay_matches_won) clay_matches_won, sum(clay_matches_lost) clay_matches_lost, sum(grass_matches_won) grass_matches_won, sum(grass_matches_lost) grass_matches_lost,
-	sum(hard_matches_won) hard_matches_won, sum(hard_matches_lost) hard_matches_lost, sum(carpet_matches_won) carpet_matches_won, sum(carpet_matches_lost) carpet_matches_lost,
-	sum(deciding_sets_won) deciding_sets_won, sum(deciding_sets_lost) deciding_sets_lost, sum(fifth_sets_won) fifth_sets_won, sum(fifth_sets_lost) fifth_sets_lost,
-	sum(finals_won) finals_won, sum(finals_lost) finals_lost, sum(vs_top10_won) vs_top10_won, sum(vs_top10_lost) vs_top10_lost,
-	sum(after_winning_first_set_won) after_winning_first_set_won, sum(after_winning_first_set_lost) after_winning_first_set_lost,
-	sum(after_losing_first_set_won) after_losing_first_set_won, sum(after_losing_first_set_lost) after_losing_first_set_lost,
-	sum(tie_breaks_won) tie_breaks_won, sum(tie_breaks_lost) tie_breaks_lost
-FROM player_season_performance_v
-GROUP BY player_id;
-
-CREATE UNIQUE INDEX ON player_performance (player_id);
 
 
 -- player_stats

@@ -24,7 +24,7 @@ public class TopPerformersService {
 
 	private static final String TOP_PERFORMERS_QUERY = //language=SQL
 		"WITH top_performers AS (\n" +
-		"  SELECT player_id, name, country_id, %1$s_won/(%1$s_won + %1$s_lost) AS won_lost_pct, %1$s_won AS won, %1$s_lost AS lost" +
+		"  SELECT player_id, name, country_id, %1$s_won::real/(%1$s_won + %1$s_lost) AS won_lost_pct, %1$s_won AS won, %1$s_lost AS lost" +
 		"  FROM player_performance\n" +
 		"  LEFT JOIN player_v USING (player_id)\n" +
 		"  WHERE %1$s_won + %1$s_lost >= ?%2$s\n" +
