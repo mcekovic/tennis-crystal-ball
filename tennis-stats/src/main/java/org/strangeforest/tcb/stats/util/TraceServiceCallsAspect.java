@@ -17,6 +17,7 @@ public class TraceServiceCallsAspect {
 		traceInterceptor.setUseDynamicLogger(true);
 		traceInterceptor.setEnterMessage("$[methodName]($[arguments])");
 		traceInterceptor.setExitMessage("~$[methodName]=$[returnValue] ($[invocationTime])");
+		traceInterceptor.setExceptionMessage("!$[methodName]");
 		return traceInterceptor;
 	}
 
