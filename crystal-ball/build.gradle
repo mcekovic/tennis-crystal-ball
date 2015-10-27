@@ -1,11 +1,7 @@
 apply plugin: 'java'
 
-version = '0.1.0-SNAPSHOT'
 sourceCompatibility = 1.8
-
-repositories {
-	mavenCentral()
-}
+targetCompatibility = 1.8
 
 dependencies {
 	compile 'com.neovisionaries:nv-i18n:1.17'

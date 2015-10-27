@@ -2,9 +2,6 @@ buildscript {
 	ext {
 		springBootVersion = '1.2.7.RELEASE'
 	}
-	repositories {
-		mavenCentral()
-	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
 		classpath 'io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE'
@@ -14,15 +11,6 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
-
-jar {
-	baseName = 'tennis-stats'
-	version = '0.1.0-SNAPSHOT'
-}
-
-repositories {
-	mavenCentral()
-}
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -35,9 +23,10 @@ dependencyManagement {
 
 dependencies {
 	compile project(':crystal-ball')
+	compile 'org.springframework.boot:spring-boot-starter-aop'
+	compile 'org.springframework.boot:spring-boot-starter-jdbc'
 	compile 'org.springframework.boot:spring-boot-starter-web'
 	compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	compile 'org.springframework.boot:spring-boot-starter-jdbc'
 	compile 'org.springframework.boot:spring-boot-starter-logging'
 	project.properties['actuator'] ? (compile ('org.springframework.boot:spring-boot-starter-actuator')) : null
 	compile 'com.google.guava:guava:18.0'
@@ -49,6 +38,6 @@ dependencies {
 		exclude group: 'org.webjars.bower'
 	}
 	runtime 'org.postgresql:postgresql:9.4-1204-jdbc42'
-	testCompile 'org.springframework.boot:spring-boot-starter-test'
+	testCompile 'junit:junit:4.12'
 	testCompile 'org.assertj:assertj-core:3.2.0'
 }

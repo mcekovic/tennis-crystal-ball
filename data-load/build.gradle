@@ -1,11 +1,5 @@
 apply plugin: 'groovy'
 
-version = '0.1.0-SNAPSHOT'
-
-repositories {
-	mavenCentral()
-}
-
 dependencies {
 	compile project(':crystal-ball')
 	compile 'org.codehaus.groovy:groovy-all:2.4.5'
