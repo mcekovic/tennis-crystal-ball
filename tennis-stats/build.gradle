@@ -6,7 +6,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
 		classpath 'io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE'
 	}
 }
@@ -39,6 +39,7 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	compile 'org.springframework.boot:spring-boot-starter-jdbc'
 	compile 'org.springframework.boot:spring-boot-starter-logging'
+	project.properties['actuator'] ? (compile ('org.springframework.boot:spring-boot-starter-actuator')) : null
 	compile 'com.google.guava:guava:18.0'
 	compile 'org.webjars:bootstrap:3.3.5'
 	compile 'org.webjars:jquery:2.1.4'
