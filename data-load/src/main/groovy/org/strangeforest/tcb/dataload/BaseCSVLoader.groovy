@@ -20,7 +20,8 @@ abstract class BaseCSVLoader {
 
 	List columnNames() { null }
 	abstract String loadSql()
-	abstract int batch()
+	boolean withBatch() { true }
+	abstract int batchSize()
 	abstract Map params(def line)
 
 	def loadFile(String file) {
@@ -28,25 +29,67 @@ abstract class BaseCSVLoader {
 		def t0 = System.currentTimeMillis()
 		List columnNames = columnNames()
 		def loadSql = loadSql()
-		def batch = batch()
+		def batchSize = batchSize()
 		def csvParams = columnNames ? [columnNames: columnNames, readFirstLine: true] : [:]
 		def data = CsvParser.parseCsv(csvParams, new FileReader(file))
-		def rows = 0
-		for (line in data) {
-			sql.execute(params(line), loadSql)
-			if (++rows % batch == 0) {
-				sql.commit()
-				print '.'
-				if (rows % (batch * PROGRESS_LINE_WRAP) == 0)
-					println()
-			}
-		}
-		sql.commit()
+		int rows = withBatch() ? loadWithBatch(data, loadSql, batchSize) : load(data, loadSql, batchSize)
 		println ''
 		def seconds = (System.currentTimeMillis() - t0) / 1000.0
 		int rowsPerSecond = rows/seconds
 		println "Rows: $rows in $seconds s ($rowsPerSecond row/s)"
 		return rows
+	}
+
+	def load(Iterator data, String loadSql, int batchSize) {
+		def rows = 0
+		for (line in data) {
+			sql.execute(params(line), loadSql)
+			if (++rows % batchSize == 0) {
+				sql.commit()
+				printProgress(rows, batchSize)
+			}
+		}
+		sql.commit()
+		rows
+	}
+
+	def loadWithBatch(Iterator data, String loadSql, int batchSize) {
+		def rows = 0
+		def paramsBatch = []
+		for (line in data) {
+			paramsBatch.add params(line)
+			if (++rows % batchSize == 0) {
+				executeBatch(loadSql, paramsBatch)
+				printProgress(rows, batchSize)
+			}
+		}
+		if (paramsBatch)
+			executeBatch(loadSql, paramsBatch)
+		rows
+	}
+
+	def executeBatch(String loadSql, Collection paramsBatch) {
+		try {
+			sql.withBatch(loadSql) { ps ->
+				paramsBatch.each { params ->
+					ps.addBatch(params)
+				}
+			}
+		}
+		catch (BatchUpdateException buEx) {
+			def nextEx = buEx.getNextException();
+			if (nextEx)
+				System.err.println(nextEx);
+			throw buEx;
+		}
+		sql.commit()
+		paramsBatch.clear()
+	}
+
+	static def printProgress(int rows, int batchSize) {
+		print '.'
+		if (rows % (batchSize * PROGRESS_LINE_WRAP) == 0)
+			println()
 	}
 
 

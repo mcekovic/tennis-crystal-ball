@@ -20,7 +20,9 @@ class MatchLoader extends BaseCSVLoader {
 		')}'
 	}
 
-	int batch() { 100 }
+	boolean withBatch() { false }
+
+	int batchSize() { 100 }
 
 	Map params(def line) {
 		def params = [:]

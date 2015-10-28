@@ -16,7 +16,7 @@ class StagingPlayerLoader extends BaseCSVLoader {
 		'{call stage_player(:player_id, :first_name, :last_name, :hand, :dob, :country)}'
 	}
 
-	int batch() { 500 }
+	int batchSize() { 500 }
 
 	Map params(def line) {
 		def params = [:]

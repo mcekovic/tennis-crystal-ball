@@ -19,7 +19,7 @@ class StagingMatchLoader extends BaseCSVLoader {
 		')}'
 	}
 
-	int batch() { 100 }
+	int batchSize() { 100 }
 
 	Map params(def line) {
 		def params = [:]

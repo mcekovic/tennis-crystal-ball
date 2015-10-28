@@ -16,7 +16,7 @@ class StagingRankingLoader extends BaseCSVLoader {
 		'{call stage_ranking(:rank_date, :rank, :player_id, :rank_points)}'
 	}
 
-	int batch() { 500 }
+	int batchSize() { 500 }
 
 	Map params(def line) {
 		def params = [:]

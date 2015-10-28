@@ -16,7 +16,7 @@ class PlayerLoader extends BaseCSVLoader {
 		'{call load_player(:ext_player_id, :first_name, :last_name, :dob, :country_id, :hand)}'
 	}
 
-	int batch() { 500 }
+	int batchSize() { 500 }
 
 	Map params(def line) {
 		def params = [:]
