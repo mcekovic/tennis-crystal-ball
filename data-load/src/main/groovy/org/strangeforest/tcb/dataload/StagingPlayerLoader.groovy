@@ -2,10 +2,12 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
+import java.util.concurrent.*
+
 class StagingPlayerLoader extends BaseCSVLoader {
 
-	StagingPlayerLoader(Sql sql) {
-		super(sql)
+	StagingPlayerLoader(BlockingDeque<Sql> sqlPool) {
+		super(sqlPool)
 	}
 
 	List columnNames() {
@@ -18,7 +20,7 @@ class StagingPlayerLoader extends BaseCSVLoader {
 
 	int batchSize() { 500 }
 
-	Map params(def line) {
+	Map params(line, sql) {
 		def params = [:]
 		params.player_id = integer line.player_id
 		params.first_name = line.first_name

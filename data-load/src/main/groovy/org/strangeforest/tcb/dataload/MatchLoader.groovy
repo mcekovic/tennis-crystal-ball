@@ -2,11 +2,15 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
+import java.util.concurrent.*
+
 class MatchLoader extends BaseCSVLoader {
 
-	MatchLoader(Sql sql) {
-		super(sql)
+	MatchLoader(BlockingDeque<Sql> sqlPool) {
+		super(sqlPool)
 	}
+
+	int threadCount() { 1 }
 
 	String loadSql() {
 		'{call load_match(' +
@@ -24,7 +28,7 @@ class MatchLoader extends BaseCSVLoader {
 
 	int batchSize() { 100 }
 
-	Map params(def line) {
+	Map params(line, sql) {
 		def params = [:]
 
 		def tourneyId = string line.tourney_id
@@ -86,10 +90,10 @@ class MatchLoader extends BaseCSVLoader {
 		params.w_sets = matchScore?.w_sets
 		params.l_sets = matchScore?.l_sets
 		params.outcome = matchScore?.outcome
-		params.w_gems = matchScore ? shortArray(matchScore.w_gems) : null
-		params.l_gems = matchScore ? shortArray(matchScore.l_gems) : null
-		params.w_tb_pt = matchScore ? shortArray(matchScore.w_tb_pt) : null
-		params.l_tb_pt = matchScore ? shortArray(matchScore.l_tb_pt) : null
+		params.w_gems = matchScore ? shortArray(sql, matchScore.w_gems) : null
+		params.l_gems = matchScore ? shortArray(sql, matchScore.l_gems) : null
+		params.w_tb_pt = matchScore ? shortArray(sql, matchScore.w_tb_pt) : null
+		params.l_tb_pt = matchScore ? shortArray(sql, matchScore.l_tb_pt) : null
 
 		params.minutes = smallint line.minutes
 

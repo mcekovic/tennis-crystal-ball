@@ -2,10 +2,12 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
+import java.util.concurrent.*
+
 class RankingLoader extends BaseCSVLoader {
 
-	RankingLoader(Sql sql) {
-		super(sql)
+	RankingLoader(BlockingDeque<Sql> sqlPool) {
+		super(sqlPool)
 	}
 
 	List columnNames() {
@@ -18,7 +20,7 @@ class RankingLoader extends BaseCSVLoader {
 
 	int batchSize() { 500 }
 
-	Map params(def line) {
+	Map params(line, sql) {
 		def params = [:]
 		params.rank_date = date line.rank_date
 		params.ext_player_id = integer line.player_id

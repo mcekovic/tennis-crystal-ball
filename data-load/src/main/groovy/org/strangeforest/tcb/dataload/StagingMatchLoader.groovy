@@ -2,10 +2,12 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
+import java.util.concurrent.*
+
 class StagingMatchLoader extends BaseCSVLoader {
 
-	StagingMatchLoader(Sql sql) {
-		super(sql)
+	StagingMatchLoader(BlockingDeque<Sql> sqlPool) {
+		super(sqlPool)
 	}
 
 	String loadSql() {
@@ -21,7 +23,7 @@ class StagingMatchLoader extends BaseCSVLoader {
 
 	int batchSize() { 100 }
 
-	Map params(def line) {
+	Map params(line, sql) {
 		def params = [:]
 		params.tourney_id = line.tourney_id
 		params.tourney_name = line.tourney_name

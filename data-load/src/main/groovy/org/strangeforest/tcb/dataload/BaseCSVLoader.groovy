@@ -8,31 +8,33 @@ import java.util.Date
 import com.xlson.groovycsv.*
 import groovy.sql.*
 
+import java.util.concurrent.*
+import java.util.concurrent.atomic.*
+
 abstract class BaseCSVLoader {
 
-	private Sql sql
+	private BlockingDeque<Sql> sqlPool
 
 	private static def PROGRESS_LINE_WRAP = 100
 
-	BaseCSVLoader(Sql sql) {
-		this.sql = sql
+	BaseCSVLoader(BlockingDeque<Sql> sqlPool) {
+		this.sqlPool = sqlPool
 	}
 
 	List columnNames() { null }
+	int threadCount() { Integer.MAX_VALUE }
 	abstract String loadSql()
 	boolean withBatch() { true }
 	abstract int batchSize()
-	abstract Map params(def line)
+	abstract Map params(line, sql)
 
 	def loadFile(String file) {
 		println "Loading file '$file'"
 		def t0 = System.currentTimeMillis()
 		List columnNames = columnNames()
-		def loadSql = loadSql()
-		def batchSize = batchSize()
 		def csvParams = columnNames ? [columnNames: columnNames, readFirstLine: true] : [:]
 		def data = CsvParser.parseCsv(csvParams, new FileReader(file))
-		int rows = withBatch() ? loadWithBatch(data, loadSql, batchSize) : load(data, loadSql, batchSize)
+		int rows = load(data)
 		println ''
 		def seconds = (System.currentTimeMillis() - t0) / 1000.0
 		int rowsPerSecond = rows/seconds
@@ -40,35 +42,56 @@ abstract class BaseCSVLoader {
 		return rows
 	}
 
-	def load(Iterator data, String loadSql, int batchSize) {
+	def load(Iterator data) {
+		def loadSql = loadSql()
+		def batchSize = batchSize()
+		def withBatch = withBatch()
 		def rows = 0
-		for (line in data) {
-			sql.execute(params(line), loadSql)
-			if (++rows % batchSize == 0) {
-				sql.commit()
-				printProgress(rows, batchSize)
-			}
-		}
-		sql.commit()
-		rows
-	}
-
-	def loadWithBatch(Iterator data, String loadSql, int batchSize) {
-		def rows = 0
+		def batches = new AtomicInteger()
 		def paramsBatch = []
-		for (line in data) {
-			paramsBatch.add params(line)
-			if (++rows % batchSize == 0) {
-				executeBatch(loadSql, paramsBatch)
-				printProgress(rows, batchSize)
+		def sql = sqlPool.removeFirst()
+		try {
+			def executor = Executors.newFixedThreadPool(Math.min(sqlPool.size(), threadCount()))
+			for (line in data) {
+				paramsBatch.add params(line, sql)
+				if (++rows % batchSize == 0) {
+					execute(executor, withBatch, loadSql, paramsBatch, batches)
+					paramsBatch = []
+				}
 			}
+			if (paramsBatch)
+				execute(executor, withBatch, loadSql, paramsBatch, batches)
+			executor.shutdown()
+			executor.awaitTermination(1L, TimeUnit.DAYS)
 		}
-		if (paramsBatch)
-			executeBatch(loadSql, paramsBatch)
+		finally {
+			sqlPool.addFirst(sql)
+		}
 		rows
 	}
 
-	def executeBatch(String loadSql, Collection paramsBatch) {
+	def execute(ExecutorService executor, boolean withBatch, String loadSql, Iterable<Map> paramsBatch, AtomicInteger batches) {
+		def lineWrap = PROGRESS_LINE_WRAP
+		def sqlPool = sqlPool
+		executor.execute {
+			def sql = sqlPool.removeFirst()
+			try {
+				if (withBatch)
+					executeWithBatch(sql, loadSql, paramsBatch)
+				else
+					executePlain(sql, loadSql, paramsBatch)
+				sql.commit()
+			}
+			finally {
+				sqlPool.addFirst(sql)
+			}
+			print '.'
+			if (batches.incrementAndGet() % lineWrap == 0)
+				println()
+		}
+	}
+
+	static def executeWithBatch(Sql sql, String loadSql, Iterable<Map> paramsBatch) {
 		try {
 			sql.withBatch(loadSql) { ps ->
 				paramsBatch.each { params ->
@@ -82,14 +105,12 @@ abstract class BaseCSVLoader {
 				System.err.println(nextEx);
 			throw buEx;
 		}
-		sql.commit()
-		paramsBatch.clear()
 	}
 
-	static def printProgress(int rows, int batchSize) {
-		print '.'
-		if (rows % (batchSize * PROGRESS_LINE_WRAP) == 0)
-			println()
+	static def executePlain(Sql sql, String loadSql, Iterable<Map> paramsBatch) {
+		paramsBatch.each { params ->
+			sql.execute(params, loadSql)
+		}
 	}
 
 
@@ -127,7 +148,7 @@ abstract class BaseCSVLoader {
 			null
 	}
 
-	Array shortArray(a) {
+	static Array shortArray(sql, a) {
 		sql.connection.createArrayOf('smallint', a)
 	}
 
