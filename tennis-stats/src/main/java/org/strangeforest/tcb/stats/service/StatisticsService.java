@@ -103,11 +103,9 @@ public class StatisticsService {
 	// Player statistics
 
 	public PlayerStats getPlayerStats(int playerId) {
-		return jdbcTemplate.queryForObject(
+		return jdbcTemplate.query(
 			PLAYER_STATS_QUERY,
-			(rs, rowNum) -> {
-				return mapPlayerStats(rs);
-			},
+			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY,
 			playerId
 		);
 	}
