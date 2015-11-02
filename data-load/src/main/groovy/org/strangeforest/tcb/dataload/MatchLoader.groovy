@@ -24,8 +24,6 @@ class MatchLoader extends BaseCSVLoader {
 		')}'
 	}
 
-	boolean withBatch() { false }
-
 	int batchSize() { 100 }
 
 	Map params(line, sql) {

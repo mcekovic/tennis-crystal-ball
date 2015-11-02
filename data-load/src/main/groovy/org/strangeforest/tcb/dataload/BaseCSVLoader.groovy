@@ -24,7 +24,6 @@ abstract class BaseCSVLoader {
 	List columnNames() { null }
 	int threadCount() { Integer.MAX_VALUE }
 	abstract String loadSql()
-	boolean withBatch() { true }
 	abstract int batchSize()
 	abstract Map params(line, sql)
 
@@ -45,7 +44,6 @@ abstract class BaseCSVLoader {
 	def load(Iterator data) {
 		def loadSql = loadSql()
 		def batchSize = batchSize()
-		def withBatch = withBatch()
 		def rows = 0
 		def batches = new AtomicInteger()
 		def paramsBatch = []
@@ -55,12 +53,12 @@ abstract class BaseCSVLoader {
 			for (line in data) {
 				paramsBatch.add params(line, sql)
 				if (++rows % batchSize == 0) {
-					execute(executor, withBatch, loadSql, paramsBatch, batches)
+					execute(executor, loadSql, paramsBatch, batches)
 					paramsBatch = []
 				}
 			}
 			if (paramsBatch)
-				execute(executor, withBatch, loadSql, paramsBatch, batches)
+				execute(executor, loadSql, paramsBatch, batches)
 			executor.shutdown()
 			executor.awaitTermination(1L, TimeUnit.DAYS)
 		}
@@ -70,16 +68,13 @@ abstract class BaseCSVLoader {
 		rows
 	}
 
-	def execute(ExecutorService executor, boolean withBatch, String loadSql, Iterable<Map> paramsBatch, AtomicInteger batches) {
+	def execute(ExecutorService executor, String loadSql, Iterable<Map> paramsBatch, AtomicInteger batches) {
 		def lineWrap = PROGRESS_LINE_WRAP
 		def sqlPool = sqlPool
 		executor.execute {
 			def sql = sqlPool.removeFirst()
 			try {
-				if (withBatch)
-					executeWithBatch(sql, loadSql, paramsBatch)
-				else
-					executePlain(sql, loadSql, paramsBatch)
+				executeWithBatch(sql, loadSql, paramsBatch)
 				sql.commit()
 			}
 			finally {
@@ -103,12 +98,6 @@ abstract class BaseCSVLoader {
 			for (def nextEx = buEx.getNextException(); nextEx ; nextEx = nextEx.getNextException())
 				System.err.println(nextEx);
 			throw buEx;
-		}
-	}
-
-	static def executePlain(Sql sql, String loadSql, Iterable<Map> paramsBatch) {
-		paramsBatch.each { params ->
-			sql.execute(params, loadSql)
 		}
 	}
 

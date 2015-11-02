@@ -10,7 +10,7 @@ class SqlPool {
 
 	def static BlockingDeque<Sql> create() {
 		print 'Allocating DB connections'
-		def dbURL = System.getProperty('tcb.db.url', 'jdbc:postgresql://localhost:5432/postgres')
+		def dbURL = System.getProperty('tcb.db.url', 'jdbc:postgresql://localhost:5432/postgres?prepareThreshold=0')
 		def username = System.getProperty('tcb.db.username', 'tcb')
 		def password = System.getProperty('tcb.db.password', 'tcb')
 		def connections = Math.max(CONNECTIONS, Integer.parseInt(System.getProperty('tcb.db.connections', String.valueOf(CONNECTIONS))))
