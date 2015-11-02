@@ -100,8 +100,7 @@ abstract class BaseCSVLoader {
 			}
 		}
 		catch (BatchUpdateException buEx) {
-			def nextEx = buEx.getNextException();
-			if (nextEx)
+			for (def nextEx = buEx.getNextException(); nextEx ; nextEx = nextEx.getNextException())
 				System.err.println(nextEx);
 			throw buEx;
 		}

@@ -172,7 +172,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- merge_ext_match
+-- extract_first_name
 
 CREATE OR REPLACE FUNCTION extract_first_name(
 	p_name TEXT
@@ -189,6 +189,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
+-- extract_last_name
+
 CREATE OR REPLACE FUNCTION extract_last_name(
 	p_name TEXT
 ) RETURNS TEXT AS $$
@@ -203,6 +206,46 @@ BEGIN
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- merge_player
+
+CREATE OR REPLACE FUNCTION merge_player(
+	p_player_id INTEGER,
+	p_country_id TEXT,
+	p_name TEXT,
+	p_height SMALLINT,
+	p_hand TEXT
+) RETURNS VOID AS $$
+DECLARE
+	l_tournament_id INTEGER;
+	l_tournament_event_id INTEGER;
+BEGIN
+	IF p_country_id IS NOT NULL THEN
+		UPDATE player
+		SET country_id = p_country_id
+		WHERE player_id = p_player_id;
+	END IF;
+	IF p_name IS NOT NULL THEN
+		UPDATE player
+		SET first_name = extract_first_name(p_name), last_name = extract_last_name(p_name)
+		WHERE player_id = p_player_id AND first_name IS NULL AND last_name IS NULL;
+	END IF;
+	IF p_height IS NOT NULL THEN
+		UPDATE player
+		SET height = p_height
+		WHERE player_id = p_player_id;
+	END IF;
+	IF p_hand IS NOT NULL THEN
+		UPDATE player
+		SET hand = p_hand::player_hand
+		WHERE player_id = p_player_id;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- load_match
 
 CREATE OR REPLACE FUNCTION load_match(
 	p_ext_tournament_id TEXT,
@@ -330,48 +373,10 @@ BEGIN
 	END IF;
 
 	-- update winner
-	IF p_winner_country_id IS NOT NULL THEN
-		UPDATE player
-		SET country_id = p_winner_country_id
-		WHERE player_id = l_winner_id;
-	END IF;
-	IF p_winner_name IS NOT NULL THEN
-		UPDATE player
-		SET first_name = extract_first_name(p_winner_name), last_name = extract_last_name(p_winner_name)
-		WHERE player_id = l_winner_id AND first_name IS NULL AND last_name IS NULL;
-	END IF;
-	IF p_winner_height IS NOT NULL THEN
-		UPDATE player
-		SET height = p_winner_height
-		WHERE player_id = l_winner_id;
-	END IF;
-	IF p_winner_hand IS NOT NULL THEN
-		UPDATE player
-		SET hand = p_winner_hand::player_hand
-		WHERE player_id = l_winner_id;
-	END IF;
+	PERFORM merge_player(l_winner_id, p_winner_country_id, p_winner_name, p_winner_height, p_winner_hand);
 
 	-- update loser
-	IF p_loser_country_id IS NOT NULL THEN
-		UPDATE player
-		SET country_id = p_loser_country_id
-		WHERE player_id = l_loser_id;
-	END IF;
-	IF p_loser_name IS NOT NULL THEN
-		UPDATE player
-		SET first_name = extract_first_name(p_loser_name), last_name = extract_last_name(p_loser_name)
-		WHERE player_id = l_loser_id AND first_name IS NULL AND last_name IS NULL;
-	END IF;
-	IF p_loser_height IS NOT NULL THEN
-		UPDATE player
-		SET height = p_loser_height
-		WHERE player_id = l_loser_id;
-	END IF;
-	IF p_loser_hand IS NOT NULL THEN
-		UPDATE player
-		SET hand = p_loser_hand::player_hand
-		WHERE player_id = l_loser_id;
-	END IF;
+	PERFORM merge_player(l_loser_id, p_loser_country_id, p_loser_name, p_loser_height, p_loser_hand);
 
 	-- merge set_score
 	l_set_count = array_upper(p_w_gems, 1);

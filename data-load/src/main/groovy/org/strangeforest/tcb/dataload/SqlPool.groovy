@@ -1,26 +1,29 @@
 package org.strangeforest.tcb.dataload
 
-import groovy.sql.*
-
 import java.util.concurrent.*
 
+import groovy.sql.*
+
 class SqlPool {
+
+	def static final CONNECTIONS = 2
 
 	def static BlockingDeque<Sql> create() {
 		print 'Allocating DB connections'
 		def dbURL = System.getProperty('tcb.db.url', 'jdbc:postgresql://localhost:5432/postgres')
 		def username = System.getProperty('tcb.db.username', 'tcb')
 		def password = System.getProperty('tcb.db.password', 'tcb')
-		def connections = Integer.parseInt(System.getProperty('tcb.db.connections', '2'))
+		def connections = Math.max(CONNECTIONS, Integer.parseInt(System.getProperty('tcb.db.connections', String.valueOf(CONNECTIONS))))
 
-		def sqls = new LinkedBlockingDeque<Sql>()
+		def sqlPool = new LinkedBlockingDeque<Sql>()
 		for (int i = 0; i < connections; i++) {
 			Sql sql = Sql.newInstance(dbURL, username, password, 'org.postgresql.Driver')
 			sql.connection.autoCommit = false
-			sqls.addFirst(sql)
+			sql.cacheStatements = true
+			sqlPool.addFirst(sql)
 			print '.'
 		}
 		println ''
-		sqls
+		sqlPool
 	}
 }
