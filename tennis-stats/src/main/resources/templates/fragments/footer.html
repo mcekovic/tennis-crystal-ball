@@ -1,5 +1,22 @@
 <footer xmlns:th="http://www.thymeleaf.org" th:fragment="copy">
 	<br/>
-	<p style="font-size: small">&copy; 2015 Strange Forest Software</p>
-	<p style="font-size: x-small; font-style: italic">Powered by PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Groovy, available at <a href="https://github.com/mcekovic/tennis-crystal-ball" target="_blank">GitHub</a></p>
+	<style scoped="scoped">
+		.copyright {
+			font-size: small
+		}
+		.powered {
+			font-size: x-small;
+			font-style: italic;
+		}
+	</style>
+	<div class="row">
+		<div th:if="${#arrays.contains(@environment.getActiveProfiles(),'openshift')}" class="col-md-2">
+			<img src="images/openshift.png" width="128" height="32" alt="Powered by OpenShift"/>
+		</div>
+		<div class="col-md-10">
+			<div class="copyright">&copy; 2015 Strange Forest Software</div>
+			<div class="powered">Powered by PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Groovy, available at <a href="https://github.com/mcekovic/tennis-crystal-ball" target="_blank">GitHub</a></div>
+			<div class="powered">Feedback and issues at <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank">GitHub Issues</a></div>
+		</div>
+	</div>
 </footer>
