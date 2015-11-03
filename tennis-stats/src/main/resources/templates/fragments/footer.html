@@ -11,12 +11,11 @@
 	</style>
 	<div class="row">
 		<div th:if="${#arrays.contains(@environment.getActiveProfiles(),'openshift')}" class="col-md-2">
-			<img src="images/openshift.png" width="128" height="32" alt="Powered by OpenShift"/>
+			<a href="https://www.openshift.com" target="_blank"><img src="images/openshift.png" width="128" height="32" alt="Powered by OpenShift"/></a>
 		</div>
 		<div class="col-md-10">
-			<div class="copyright">&copy; 2015 Strange Forest Software</div>
+			<div class="copyright">&copy; 2015 Strange Forest Software, feedback at mcekovic@gmail.com, issues at <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank">GitHub Issues</a></div>
 			<div class="powered">Powered by PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Groovy, available at <a href="https://github.com/mcekovic/tennis-crystal-ball" target="_blank">GitHub</a></div>
-			<div class="powered">Feedback and issues at <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank">GitHub Issues</a></div>
 		</div>
 	</div>
 </footer>

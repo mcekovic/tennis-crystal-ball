@@ -37,7 +37,7 @@ dependencies {
 	compile ('org.webjars.bower:jquery.bootgrid:1.2.0') {
 		exclude group: 'org.webjars.bower'
 	}
-	runtime 'org.postgresql:postgresql:9.4-1204-jdbc42'
+	runtime 'org.postgresql:postgresql:9.4-1205-jdbc42'
 	testCompile 'junit:junit:4.12'
 	testCompile 'org.assertj:assertj-core:3.2.0'
 }

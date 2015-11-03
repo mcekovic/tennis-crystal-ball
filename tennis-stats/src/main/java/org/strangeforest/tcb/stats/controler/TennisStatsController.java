@@ -1,14 +1,19 @@
 package org.strangeforest.tcb.stats.controler;
 
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.*;
+import org.strangeforest.tcb.stats.service.*;
 
 @Controller
 public class TennisStatsController {
 
+	@Autowired private DataService dataService;
+
 	@RequestMapping("/")
-	public String index() {
-		return "index";
+	public ModelAndView index() {
+		return new ModelAndView("index", "lastUpdate", dataService.getLastUpdate());
 	}
 
 	@RequestMapping("/goatList")
