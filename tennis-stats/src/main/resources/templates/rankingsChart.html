@@ -39,6 +39,8 @@
 				}
 				if (points)
 					dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
+				var $loading = $("#loading");
+				$loading.show();
 				var jsonData = $.ajax({
 					url: dataUrl,
 					dataType: "json",
@@ -54,6 +56,7 @@
 						logScale = useLogScale(json);
 						break;
 				}
+				$loading.hide().css("position", "absolute").css("z-index", "100");
 			}
 			if (chartData != undefined) {
 				var options = {
@@ -228,6 +231,15 @@
 			<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawChart()">
 				<span class="glyphicon glyphicon-signal"></span>&nbsp;&nbsp;Draw Chart
 			</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="row col-md-9 text-center">
+			<div id="loading" style="width: 100%; display: none">
+				<br/>
+				<img src="images/loading.gif" width="128" height="128" alt="Loading chart..."/>
+				<br/>
+			</div>
 		</div>
 	</div>
 	<div id="rankChart"></div>
