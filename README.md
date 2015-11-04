@@ -20,6 +20,9 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 
 PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groovy...
 
+### Preview
+http://tennis-strangeforest.rhcloud.com
+
 ### Data Loaders
 - Currently only for https://github.com/JeffSackmann/tennis_atp
 
@@ -34,5 +37,14 @@ PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groo
 ##### Player Timeline
 ![Player Timeline](https://github.com/mcekovic/open-box/blob/master/PlayerTimeline.png?raw=true)
 
+##### 'Big Guns' Timeline
+![Big Guns Timeline](https://github.com/mcekovic/open-box/blob/master/BigGunsTimeline.png?raw=true)
+
+##### Best Seasons
+![Best Seasons](https://github.com/mcekovic/open-box/blob/master/BestSeasons.png?raw=true)
+
 ##### Ranking Chart
 ![Ranking Chart](https://github.com/mcekovic/open-box/blob/master/RankingChart.png?raw=true)
+
+##### Top Performers
+![Top Performers](https://github.com/mcekovic/open-box/blob/master/TopPerformers.png?raw=true)
