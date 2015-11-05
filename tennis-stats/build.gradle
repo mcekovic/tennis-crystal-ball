@@ -28,7 +28,7 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-web'
 	compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	compile 'org.springframework.boot:spring-boot-starter-logging'
-	project.properties['actuator'] ? (compile ('org.springframework.boot:spring-boot-starter-actuator')) : null
+	compile 'org.springframework.boot:spring-boot-starter-actuator'
 	compile 'com.google.guava:guava:18.0'
 	compile 'org.webjars:bootstrap:3.3.5'
 	compile 'org.webjars:jquery:2.1.4'
@@ -37,6 +37,7 @@ dependencies {
 	compile ('org.webjars.bower:jquery.bootgrid:1.2.0') {
 		exclude group: 'org.webjars.bower'
 	}
+	compile 'com.maxmind.geoip2:geoip2:2.3.1'
 	runtime 'org.postgresql:postgresql:9.4-1205-jdbc42'
 	testCompile 'junit:junit:4.12'
 	testCompile 'org.assertj:assertj-core:3.2.0'
