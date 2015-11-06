@@ -5,6 +5,7 @@ import java.sql.*;
 import java.time.*;
 import java.util.*;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
@@ -117,10 +118,10 @@ public class RankingsService {
 				String player = players.get(index);
 				if (Strings.isNullOrEmpty(player))
 					continue;
-				Integer playerId = playerService.findPlayerId(player);
-				if (playerId != null) {
+				Optional<Integer> playerId = playerService.findPlayerId(player);
+				if (playerId.isPresent()) {
 					this.players.add(player);
-					playerIndexMap.put(playerId, index);
+					playerIndexMap.put(playerId.get(), index);
 				}
 			}
 		}
