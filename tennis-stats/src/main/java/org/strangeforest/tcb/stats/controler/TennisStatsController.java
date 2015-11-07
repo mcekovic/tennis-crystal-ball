@@ -25,14 +25,4 @@ public class TennisStatsController {
 	public String rankingsChart() {
 		return "rankingsChart";
 	}
-
-	@RequestMapping("/topPerformers")
-	public String topPerformers() {
-		return "topPerformers";
-	}
-
-	@RequestMapping("/statsLeaders")
-	public String statsLeaders() {
-		return "statsLeaders";
-	}
 }

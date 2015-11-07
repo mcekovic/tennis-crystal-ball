@@ -202,10 +202,10 @@ FROM match_for_stats_v m
 LEFT JOIN set_score s USING (match_id);
 
 
--- player_performance
+-- player_season_performance
 
-CREATE MATERIALIZED VIEW player_performance AS
-SELECT player_id,
+CREATE MATERIALIZED VIEW player_season_performance AS
+SELECT player_id, season,
 	count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,
 	count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,
 	count(DISTINCT masters_match_id_won) masters_matches_won, count(DISTINCT masters_match_id_lost) masters_matches_lost,
@@ -221,6 +221,31 @@ SELECT player_id,
 	count(DISTINCT after_losing_first_set_match_id_won) after_losing_first_set_won, count(DISTINCT after_losing_first_set_match_id_lost) after_losing_first_set_lost,
 	count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost
 FROM player_match_performance_v
+GROUP BY player_id, season;
+
+CREATE INDEX ON player_season_performance (player_id);
+CREATE INDEX ON player_season_performance (season);
+
+
+-- player_performance
+
+CREATE MATERIALIZED VIEW player_performance AS
+SELECT player_id,
+	sum(matches_won) matches_won, sum(matches_lost) matches_lost,
+	sum(grand_slam_matches_won) grand_slam_matches_won, sum(grand_slam_matches_lost) grand_slam_matches_lost,
+	sum(masters_matches_won) masters_matches_won, sum(masters_matches_lost) masters_matches_lost,
+	sum(clay_matches_won) clay_matches_won, sum(clay_matches_lost) clay_matches_lost,
+	sum(grass_matches_won) grass_matches_won, sum(grass_matches_lost) grass_matches_lost,
+	sum(hard_matches_won) hard_matches_won, sum(hard_matches_lost) hard_matches_lost,
+	sum(carpet_matches_won) carpet_matches_won, sum(carpet_matches_lost) carpet_matches_lost,
+	sum(deciding_sets_won) deciding_sets_won, sum(deciding_sets_lost) deciding_sets_lost,
+	sum(fifth_sets_won) fifth_sets_won, sum(fifth_sets_lost) fifth_sets_lost,
+	sum(finals_won) finals_won, sum(finals_lost) finals_lost,
+	sum(vs_top10_won) vs_top10_won, sum(vs_top10_lost) vs_top10_lost,
+	sum(after_winning_first_set_won) after_winning_first_set_won, sum(after_winning_first_set_lost) after_winning_first_set_lost,
+	sum(after_losing_first_set_won) after_losing_first_set_won, sum(after_losing_first_set_lost) after_losing_first_set_lost,
+	sum(tie_breaks_won) tie_breaks_won, sum(tie_breaks_lost) tie_breaks_lost
+FROM player_season_performance
 GROUP BY player_id;
 
 CREATE UNIQUE INDEX ON player_performance (player_id);
@@ -244,13 +269,26 @@ LEFT JOIN match_stats USING (match_id)
 WHERE set = 0 OR set IS NULL;
 
 
+-- player_season_stats
+
+CREATE MATERIALIZED VIEW player_season_stats AS
+SELECT player_id, season, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets,
+	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
+   sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
+FROM player_match_stats_v
+GROUP BY player_id, season;
+
+CREATE INDEX ON player_season_stats (player_id);
+CREATE INDEX ON player_season_stats (season);
+
+
 -- player_stats
 
 CREATE MATERIALIZED VIEW player_stats AS
 SELECT player_id, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
-FROM player_match_stats_v
+FROM player_season_stats
 GROUP BY player_id;
 
 CREATE UNIQUE INDEX ON player_stats (player_id);

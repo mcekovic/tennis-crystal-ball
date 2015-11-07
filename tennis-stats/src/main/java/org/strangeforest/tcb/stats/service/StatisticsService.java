@@ -25,20 +25,23 @@ public class StatisticsService {
 		"LEFT JOIN player_v pl ON m.loser_id = pl.player_id\n" +
 		"WHERE match_id = ? AND set = 0";
 
+	public static final String PLAYER_STATS_COLUMNS =
+		"p_matches, o_matches, p_sets, o_sets,\n" +
+		"p_ace, p_df, p_sv_pt, p_1st_in, p_1st_won, p_2nd_won, p_sv_gms, p_bp_sv, p_bp_fc,\n" +
+		"o_ace, o_df, o_sv_pt, o_1st_in, o_1st_won, o_2nd_won, o_sv_gms, o_bp_sv, o_bp_fc\n";
+
 	private static final String PLAYER_STATS_QUERY =
-		"SELECT p_matches, o_matches, p_sets, o_sets,\n" +
-		"  p_ace, p_df, p_sv_pt, p_1st_in, p_1st_won, p_2nd_won, p_sv_gms, p_bp_sv, p_bp_fc,\n" +
-		"  o_ace, o_df, o_sv_pt, o_1st_in, o_1st_won, o_2nd_won, o_sv_gms, o_bp_sv, o_bp_fc\n" +
+		"SELECT " + PLAYER_STATS_COLUMNS +
 		"FROM player_stats\n" +
 		"WHERE player_id = ?";
 
-	private static final String PLAYER_STATS_COLUMNS =
+	private static final String PLAYER_STATS_SUMMED_COLUMNS =
 		"sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets,\n" +
 		"sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,\n" +
 		"sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc\n";
 
 	private static final String PLAYER_FILTERED_STATS_QUERY = //language=SQL
-		"SELECT " + PLAYER_STATS_COLUMNS +
+		"SELECT " + PLAYER_STATS_SUMMED_COLUMNS +
 		"FROM player_match_stats_v m%1$s\n" +
 		"WHERE m.player_id = ?%2$s";
 
@@ -47,37 +50,26 @@ public class StatisticsService {
 
 	private static final String PLAYER_SEASONS_STATS_QUERY =
 		"SELECT season, " + PLAYER_STATS_COLUMNS +
-		"FROM player_match_stats_v\n" +
+		"FROM player_season_stats\n" +
 		"WHERE player_id = ?\n" +
-		"GROUP BY season ORDER BY season";
+		"ORDER BY season";
 
 	private static final String PLAYER_PERFORMANCE_COLUMNS =
-		"count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,\n" +
-		"count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,\n" +
-		"count(DISTINCT masters_match_id_won) masters_matches_won, count(DISTINCT masters_match_id_lost) masters_matches_lost,\n" +
-		"count(DISTINCT clay_match_id_won) clay_matches_won, count(DISTINCT clay_match_id_lost) clay_matches_lost,\n" +
-		"count(DISTINCT grass_match_id_won) grass_matches_won, count(DISTINCT grass_match_id_lost) grass_matches_lost,\n" +
-		"count(DISTINCT hard_match_id_won) hard_matches_won, count(DISTINCT hard_match_id_lost) hard_matches_lost,\n" +
-		"count(DISTINCT carpet_match_id_won) carpet_matches_won, count(DISTINCT carpet_match_id_lost) carpet_matches_lost,\n" +
-		"count(DISTINCT deciding_set_match_id_won) deciding_sets_won, count(DISTINCT deciding_set_match_id_lost) deciding_sets_lost,\n" +
-		"count(DISTINCT fifth_set_match_id_won) fifth_sets_won, count(DISTINCT fifth_set_match_id_lost) fifth_sets_lost,\n" +
-		"count(DISTINCT final_match_id_won) finals_won, count(DISTINCT final_match_id_lost) finals_lost,\n" +
-		"count(DISTINCT vs_top10_match_id_won) vs_top10_won, count(DISTINCT vs_top10_match_id_lost) vs_top10_lost,\n" +
-		"count(DISTINCT after_winning_first_set_match_id_won) after_winning_first_set_won, count(DISTINCT after_winning_first_set_match_id_lost) after_winning_first_set_lost,\n" +
-		"count(DISTINCT after_losing_first_set_match_id_won) after_losing_first_set_won, count(DISTINCT after_losing_first_set_match_id_lost) after_losing_first_set_lost,\n" +
-		"count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost\n";
+		"matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, masters_matches_won, masters_matches_lost,\n" +
+		"clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, hard_matches_won, hard_matches_lost, carpet_matches_won, carpet_matches_lost,\n" +
+		"deciding_sets_won, deciding_sets_lost, fifth_sets_won, fifth_sets_lost, finals_won, finals_lost, vs_top10_won, vs_top10_lost,\n" +
+		"after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost, tie_breaks_won, tie_breaks_lost\n";
 
 	private static final String PLAYER_PERFORMANCE_QUERY =
-		"SELECT matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, masters_matches_won, masters_matches_lost, clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, hard_matches_won, hard_matches_lost, carpet_matches_won, carpet_matches_lost,\n" +
-		"  deciding_sets_won, deciding_sets_lost, fifth_sets_won, fifth_sets_lost, finals_won, finals_lost, vs_top10_won, vs_top10_lost, after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost, tie_breaks_won, tie_breaks_lost\n" +
+		"SELECT " + PLAYER_PERFORMANCE_COLUMNS +
 		"FROM player_performance\n" +
 		"WHERE player_id = ?";
 
 	private static final String PLAYER_SEASONS_PERFORMANCE_QUERY =
 		"SELECT season, " + PLAYER_PERFORMANCE_COLUMNS +
-		"FROM player_match_performance_v\n" +
+		"FROM player_season_performance\n" +
 		"WHERE player_id = ?\n" +
-		"GROUP BY season";
+		"ORDER BY season";
 
 
 	// Match statistics

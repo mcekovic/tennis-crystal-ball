@@ -17,9 +17,13 @@ public class PlayerListFilter {
 
 	public String getCriteria() {
 		StringBuilder criteria = new StringBuilder();
+		appendCriteria(criteria);
+		return criteria.toString();
+	}
+
+	protected void appendCriteria(StringBuilder criteria) {
 		if (!isNullOrEmpty(searchPhrase))
 			criteria.append(SEARCH_CRITERION);
-		return criteria.toString();
 	}
 
 	public Object[] getParams(Object... extraParams) {
@@ -34,11 +38,15 @@ public class PlayerListFilter {
 		List<Object> params = new ArrayList<>();
 		if (firstParam != null)
 			params.add(firstParam);
+		addParams(params);
+		params.addAll(asList(extraParams));
+		return params;
+	}
+
+	protected void addParams(List<Object> params) {
 		if (!isNullOrEmpty(searchPhrase)) {
 			params.add(searchPhrase);
 			params.add(searchPhrase);
 		}
-		params.addAll(asList(extraParams));
-		return params;
 	}
 }

@@ -9,7 +9,9 @@ DROP MATERIALIZED VIEW player_year_end_rank;
 DROP MATERIALIZED VIEW player_titles;
 DROP MATERIALIZED VIEW player_tournament_event_result;
 DROP MATERIALIZED VIEW player_performance;
+DROP MATERIALIZED VIEW player_season_performance;
 DROP MATERIALIZED VIEW player_stats;
+DROP MATERIALIZED VIEW player_season_stats;
 
 DROP VIEW player_match_performance_v;
 DROP VIEW player_match_stats_v;

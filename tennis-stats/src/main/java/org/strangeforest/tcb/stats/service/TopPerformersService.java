@@ -15,19 +15,25 @@ public class TopPerformersService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
-	private static final int MAX_PLAYER_COUNT = 1000;
+	private static final int MAX_PLAYER_COUNT          = 1000;
+	private static final int MIN_ENTRIES_SEASON_FACTOR =   10;
+
+	private static final String SEASONS_QUERY =
+		"SELECT DISTINCT season\n" +
+		"FROM player_season_performance\n" +
+		"ORDER BY season DESC";
 
 	private static final String TOP_PERFORMERS_COUNT_QUERY = //language=SQL
-		"SELECT count(player_id) AS player_count FROM player_performance\n" +
+		"SELECT count(player_id) AS player_count FROM %1$s\n" +
 		"LEFT JOIN player_v USING (player_id)\n" +
-		"WHERE %1$s_won + %1$s_lost >= ?%2$s";
+		"WHERE %2$s_won + %2$s_lost >= ?%3$s";
 
 	private static final String TOP_PERFORMERS_QUERY = //language=SQL
 		"WITH top_performers AS (\n" +
 		"  SELECT player_id, name, country_id, %1$s_won::real/(%1$s_won + %1$s_lost) AS won_lost_pct, %1$s_won AS won, %1$s_lost AS lost" +
-		"  FROM player_performance\n" +
+		"  FROM %2$s\n" +
 		"  LEFT JOIN player_v USING (player_id)\n" +
-		"  WHERE %1$s_won + %1$s_lost >= ?%2$s\n" +
+		"  WHERE %1$s_won + %1$s_lost >= ?%3$s\n" +
 		"), top_performers_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id, name, country_id, won_lost_pct, won, lost\n" +
 		"  FROM top_performers\n" +
@@ -35,22 +41,26 @@ public class TopPerformersService {
 		"SELECT rank, player_id, name, country_id, won, lost\n" +
 		"FROM top_performers_ranked\n" +
 		"WHERE rank <= ?\n" +
-		"ORDER BY %3$s OFFSET ? LIMIT ?";
+		"ORDER BY %4$s OFFSET ? LIMIT ?";
 
 
-	public int getPlayerCount(String dimension, PlayerListFilter filter) {
+	public List<Integer> getSeasons() {
+		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
+	}
+
+	public int getPlayerCount(String dimension, PlayerListSeasonFilter filter) {
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
-			format(TOP_PERFORMERS_COUNT_QUERY, dimension, filter.getCriteria()),
-			filter.getParamsWithPrefix(getDimensionMinEntries(dimension)),
+			format(TOP_PERFORMERS_COUNT_QUERY, perfTableName(filter), dimension, filter.getCriteria()),
+			filter.getParamsWithPrefix(getMinEntriesValue(dimension, filter)),
 			Integer.class
 		));
 	}
 
-	public BootgridTable<TopPerformerRow> getTopPerformersTable(String dimension, int playerCount, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<TopPerformerRow> getTopPerformersTable(String dimension, int playerCount, PlayerListSeasonFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<TopPerformerRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(TOP_PERFORMERS_QUERY, dimension, filter.getCriteria(), orderBy),
+			format(TOP_PERFORMERS_QUERY, dimension, perfTableName(filter), filter.getCriteria(), orderBy),
 			(rs) -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
@@ -59,21 +69,26 @@ public class TopPerformersService {
 				WonLost wonLost = mapWonLost(rs);
 				table.addRow(new TopPerformerRow(rank, playerId, name, countryId, wonLost));
 			},
-			filter.getParamsWithPrefix(getDimensionMinEntries(dimension), playerCount, offset, pageSize)
+			filter.getParamsWithPrefix(getMinEntriesValue(dimension, filter), playerCount, offset, pageSize)
 		);
 		return table;
+	}
+
+	public String getTopPerformersMinEntries(String dimension, PlayerListSeasonFilter filter) {
+		return getMinEntriesValue(dimension, filter) + " " + DIMENSIONS.get(dimension).getEntriesName();
+	}
+
+	private static String perfTableName(PlayerListSeasonFilter filter) {
+		return filter.hasSeason() ? "player_season_performance" : "player_performance";
 	}
 
 	private static WonLost mapWonLost(ResultSet rs) throws SQLException {
 		return new WonLost(rs.getInt("won"), rs.getInt("lost"));
 	}
 
-	private int getDimensionMinEntries(String dimension) {
-		return getPerformanceDimension(dimension).getMinEntries();
-	}
-
-	public PerformanceDimension getPerformanceDimension(String dimension) {
-		return DIMENSIONS.get(dimension);
+	private int getMinEntriesValue(String dimension, PlayerListSeasonFilter filter) {
+		int minEntries = DIMENSIONS.get(dimension).getMinEntries();
+		return filter.hasSeason() ? minEntries / MIN_ENTRIES_SEASON_FACTOR : minEntries;
 	}
 
 
