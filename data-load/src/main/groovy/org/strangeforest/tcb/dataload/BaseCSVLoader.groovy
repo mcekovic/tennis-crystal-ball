@@ -80,9 +80,10 @@ abstract class BaseCSVLoader {
 			finally {
 				sqlPool.addFirst(sql)
 			}
-			print '.'
 			if (batches.incrementAndGet() % lineWrap == 0)
-				println()
+				println '.'
+			else
+				print '.'
 		}
 	}
 
