@@ -14,7 +14,6 @@ import com.google.api.client.repackaged.com.google.common.base.*;
 import com.maxmind.geoip2.*;
 import com.maxmind.geoip2.exception.*;
 import com.maxmind.geoip2.model.*;
-import com.neovisionaries.i18n.*;
 
 @Component
 public class GeoIPFilter implements Filter {
@@ -37,23 +36,24 @@ public class GeoIPFilter implements Filter {
 
 	@Override public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		if (reader != null) {
-			String remoteAddr = ((HttpServletRequest)request).getHeader("X-Forwarded-For");
-			if (Strings.isNullOrEmpty(remoteAddr))
-				remoteAddr = request.getRemoteAddr();
 			try {
+				String remoteAddr = ((HttpServletRequest)request).getHeader("X-Forwarded-For");
+				if (Strings.isNullOrEmpty(remoteAddr))
+					remoteAddr = request.getRemoteAddr();
+				int commaPos = remoteAddr.indexOf(',');
+				if (commaPos > 0)
+					remoteAddr = remoteAddr.substring(0, commaPos);
 				CountryResponse country = reader.country(InetAddress.getByName(remoteAddr));
 				if (country != null) {
-					String isoCode = country.getCountry().getIsoCode();
-					if (!Strings.isNullOrEmpty(isoCode)) {
-						CountryCode code = CountryCode.getByCode(isoCode);
-						counterService.increment("counter.country." + (code != null ? code.getName() : isoCode));
-					}
+					String countryName = country.getCountry().getName();
+					if (!Strings.isNullOrEmpty(countryName))
+						counterService.increment("counter.country." + countryName);
 				}
 			}
 			catch (AddressNotFoundException ex) {
 				LOGGER.debug("Error geo-locating country.", ex);
 			}
-			catch (GeoIp2Exception ex) {
+			catch (Exception ex) {
 				LOGGER.error("Error geo-locating country.", ex);
 			}
 		}
