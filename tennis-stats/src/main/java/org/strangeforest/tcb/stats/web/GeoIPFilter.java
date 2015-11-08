@@ -18,9 +18,9 @@ import com.maxmind.geoip2.model.*;
 @Component
 public class GeoIPFilter implements Filter {
 
+	@Autowired private CounterService counterService;
 	private InputStream db;
 	private DatabaseReader reader;
-	@Autowired private CounterService counterService;
 
 	private static Logger LOGGER = LoggerFactory.getLogger(GeoIPFilter.class);
 
