@@ -14,7 +14,7 @@
 		/*<![CDATA[*/
 		google.load("visualization", "1.0", {packages:["corechart"]});
 		var chartData;
-		var points;
+		var rankType;
 		var logScale;
 		function drawChart() {
 			if ($.trim($("#players").val()).length > 0)
@@ -23,11 +23,11 @@
 				$("#rankChart").html("<div class='row'><div class='alert alert-warning col-md-9'>No player selected!</div></div>");
 		}
 		function doDrawChart(fetchData, width) {
-			var players = $("#players").val();
-			var timeSpan = $("#timeSpan").val();
-			points = $("#rankType").val() == "points";
+			rankType = $("#rankType").val();
 			if (fetchData) {
-				var dataUrl = "playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&points=" + points;
+				var players = $("#players").val();
+				var timeSpan = $("#timeSpan").val();
+				var dataUrl = "playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&rankType=" + rankType;
 				if (timeSpan == "CS") {
 					var fromDate = getDate("fromDate");
 					if (fromDate == null)
@@ -37,7 +37,9 @@
 						return;
 					dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
 				}
-				if (points)
+				if (timeSpan == "CR")
+					dataUrl += "&byAge=" + $("#byAge").prop("checked");
+				if (rankType == "POINTS")
 					dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
 				var $loading = $("#loading");
 				$loading.show();
@@ -59,6 +61,7 @@
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			}
 			if (chartData != undefined) {
+				var points = rankType != "RANK";
 				var options = {
 					width: width,
 					height: width / 2,
@@ -85,10 +88,12 @@
 			return max - min >= 50;
 		}
 		function onTimeSpanChange() {
-			$("#dateRange").css("visibility", $("#timeSpan").val() == "CS" ? "visible" : "hidden");
+			var timeSpan = $("#timeSpan").val();
+			$("#dateRange").css("display", timeSpan == "CS" ? "block" : "none");
+			$("#byAgeDiv").css("display", timeSpan == "CR" ? "block" : "none");
 		}
 		function onRankTypeChange() {
-			$("#compensatePoints").prop("disabled", $("#rankType").val() == "rank");
+			$("#compensatePointsDiv").css("visibility", $("#rankType").val() == "POINTS" ? "visible" : "hidden");
 		}
 		function getDate(id) {
 			var $date = $("#" + id);
@@ -168,6 +173,12 @@
 		});
 		/*]]>*/
 	</script>
+	<style>
+		.checkbox {
+			margin-top: 7px;
+			margin-bottom: 7px;
+		}
+	</style>
 </head>
 <body class="container">
 	<div th:include="fragments/header :: title"></div>
@@ -180,7 +191,7 @@
 			</div>
 		</div>
 	</div>
-	<div style="height: 4px"></div>
+	<div style="height: 5px"></div>
 	<div class="row">
 		<div class="col-md-3">
 			<div class="input-group">
@@ -204,20 +215,28 @@
 				<input type="text" id="toDate" maxlength="10" class="form-control"/>
 			</div>
 		</div>
+		<div class="col-md-2">
+			<div id="byAgeDiv" class="checkbox">
+				<label title="Show chart by age">
+					<input id="byAge" type="checkbox"/> By age
+				</label>
+			</div>
+		</div>
 	</div>
-	<div style="height: 4px"></div>
+	<div style="height: 5px"></div>
 	<div class="row">
 		<div class="col-md-3">
 			<div class="input-group">
 				<label for="rankType" class="input-group-addon">Rank type:</label>
 				<select id="rankType" class="form-control" onchange="onRankTypeChange()">
-					<option value="rank">Ordinal rank</option>
-					<option value="points">Ranking points</option>
+					<option value="RANK">Ordinal rank</option>
+					<option value="POINTS">Ranking points</option>
+					<option value="GOAT_POINTS">GOAT points</option>
 				</select>
 			</div>
 		</div>
 		<div class="col-md-2">
-			<div class="checkbox">
+			<div id="compensatePointsDiv" class="checkbox">
 				<label title="Compensate ranking points before 2009 to match new ATP ranking system">
 					<input id="compensatePoints" type="checkbox"/> Compensate points
 				</label>

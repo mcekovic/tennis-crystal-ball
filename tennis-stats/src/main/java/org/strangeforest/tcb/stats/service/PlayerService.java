@@ -60,9 +60,8 @@ public class PlayerService {
 		return jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, this::playerAutocompleteOptionMapper, name);
 	}
 
-	public Integer findPlayerId(String player) {
-		List<Integer> playerIds = jdbcTemplate.queryForList(PLAYER_ID_QUERY, Integer.class, player);
-		return playerIds.isEmpty() ? null : playerIds.get(0);
+	public Optional<Integer> findPlayerId(String player) {
+		return jdbcTemplate.queryForList(PLAYER_ID_QUERY, Integer.class, player).stream().findFirst();
 	}
 
 	public List<Integer> getPlayerSeasons(int playerId) {

@@ -15,21 +15,27 @@ public class StatsLeadersService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
-	private static final int MAX_PLAYER_COUNT =  1000;
-	private static final int MIN_MATCHES      =   100;
-	private static final int MIN_POINTS       = 10000;
+	private static final int MAX_PLAYER_COUNT          =  1000;
+	private static final int MIN_MATCHES               =   100;
+	private static final int MIN_POINTS                = 10000;
+	private static final int MIN_ENTRIES_SEASON_FACTOR =    10;
+
+	private static final String SEASONS_QUERY =
+		"SELECT DISTINCT season\n" +
+		"FROM player_season_stats\n" +
+		"ORDER BY season DESC";
 
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
-		"SELECT count(player_id) AS player_count FROM player_stats\n" +
+		"SELECT count(player_id) AS player_count FROM %1$s\n" +
 		"LEFT JOIN player_v USING (player_id)\n" +
-		"WHERE p_%1$s + o_%1$s >= ?%2$s";
+		"WHERE p_%2$s + o_%2$s >= ?%3$s";
 
 	private static final String STATS_LEADERS_QUERY = //language=SQL
 		"WITH stats_leaders AS (\n" +
 		"  SELECT player_id, name, country_id, %1$s AS value" +
-		"  FROM player_stats\n" +
+		"  FROM %2$s\n" +
 		"  LEFT JOIN player_v USING (player_id)\n" +
-		"  WHERE p_%2$s + o_%2$s >= ?%3$s\n" +
+		"  WHERE p_%3$s + o_%3$s >= ?%4$s\n" +
 		"), stats_leaders_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, name, country_id, value\n" +
 		"  FROM stats_leaders\n" +
@@ -38,24 +44,28 @@ public class StatsLeadersService {
 		"SELECT rank, player_id, name, country_id, value\n" +
 		"FROM stats_leaders_ranked\n" +
 		"WHERE rank <= ?\n" +
-		"ORDER BY %4$s NULLS LAST OFFSET ? LIMIT ?";
+		"ORDER BY %5$s NULLS LAST OFFSET ? LIMIT ?";
 
 
-	public int getPlayerCount(String dimension, PlayerListFilter filter) {
+	public List<Integer> getSeasons() {
+		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
+	}
+
+	public int getPlayerCount(String dimension, PlayerListSeasonFilter filter) {
 		StatsDimension statsDimension = DIMENSIONS.get(dimension);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
-			format(STATS_LEADERS_COUNT_QUERY, minEntriesColumn(statsDimension), filter.getCriteria()),
-			filter.getParamsWithPrefix(getMinEntriesValue(statsDimension)),
+			format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsDimension), filter.getCriteria()),
+			filter.getParamsWithPrefix(getMinEntriesValue(statsDimension, filter)),
 			Integer.class
 		));
 	}
 
-	public BootgridTable<StatsLeaderRow> getStatsLeadersTable(String dimension, int playerCount, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<StatsLeaderRow> getStatsLeadersTable(String dimension, int playerCount, PlayerListSeasonFilter filter, String orderBy, int pageSize, int currentPage) {
 		StatsDimension statsDimension = DIMENSIONS.get(dimension);
 		BootgridTable<StatsLeaderRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(STATS_LEADERS_QUERY, statsDimension.getExpression(), minEntriesColumn(statsDimension), filter.getCriteria(), orderBy),
+			format(STATS_LEADERS_QUERY, statsDimension.getExpression(), statsTableName(filter), minEntriesColumn(statsDimension), filter.getCriteria(), orderBy),
 			(rs) -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
@@ -64,13 +74,27 @@ public class StatsLeadersService {
 				double value = rs.getDouble("value");
 				table.addRow(new StatsLeaderRow(rank, playerId, name, countryId, value, statsDimension.getType()));
 			},
-			filter.getParamsWithPrefix(getMinEntriesValue(statsDimension), playerCount, offset, pageSize)
+			filter.getParamsWithPrefix(getMinEntriesValue(statsDimension, filter), playerCount, offset, pageSize)
 		);
 		return table;
 	}
 
-	public String getStatsLeadersMinEntries(String dimension) {
-		return DIMENSIONS.get(dimension).isNeedsStats() ? MIN_POINTS + " points" : MIN_MATCHES + " matches";
+	public String getStatsLeadersMinEntries(String dimension, PlayerListSeasonFilter filter) {
+		StatsDimension statsDimension = DIMENSIONS.get(dimension);
+		return getMinEntriesValue(statsDimension, filter) + (statsDimension.isNeedsStats() ? " points" : " matches");
+	}
+
+	private static String statsTableName(PlayerListSeasonFilter filter) {
+		return filter.hasSeason() ? "player_season_stats" : "player_stats";
+	}
+
+	private String minEntriesColumn(StatsDimension dimension) {
+		return dimension.isNeedsStats() ? "sv_pt" : "matches";
+	}
+
+	private int getMinEntriesValue(StatsDimension dimension, PlayerListSeasonFilter filter) {
+		int minEntries = dimension.isNeedsStats() ? MIN_POINTS : MIN_MATCHES;
+		return filter.hasSeason() ? minEntries / MIN_ENTRIES_SEASON_FACTOR : minEntries;
 	}
 
 
@@ -120,13 +144,5 @@ public class StatsLeadersService {
 
 	private static void addDimension(String name, String expression, StatsDimension.Type type, boolean needsStats) {
 		DIMENSIONS.put(name, new StatsDimension(name, expression, type, needsStats));
-	}
-
-	private String minEntriesColumn(StatsDimension dimension) {
-		return dimension.isNeedsStats() ? "sv_pt" : "matches";
-	}
-
-	public int getMinEntriesValue(StatsDimension dimension) {
-		return dimension.isNeedsStats() ? MIN_POINTS : MIN_MATCHES;
 	}
 }

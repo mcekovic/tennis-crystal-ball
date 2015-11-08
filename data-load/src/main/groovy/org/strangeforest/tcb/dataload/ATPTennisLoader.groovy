@@ -38,6 +38,7 @@ class ATPTennisLoader {
 			if (full) {
 				for (year in 1968..2014)
 					rows += loader.loadFile(baseDir + "atp_matches_${year}.csv")
+				rows += loader.loadFile(baseDir + "atp_matches_1990mc.csv")
 			}
 			def year = 2015
 			rows += loader.loadFile(baseDir + "atp_matches_${year}.csv")
@@ -79,7 +80,9 @@ class ATPTennisLoader {
 		refreshMaterializedView(sql, 'player_season_goat_points')
 		refreshMaterializedView(sql, 'player_goat_points')
 		refreshMaterializedView(sql, 'player_titles')
+		refreshMaterializedView(sql, 'player_season_performance')
 		refreshMaterializedView(sql, 'player_performance')
+		refreshMaterializedView(sql, 'player_season_stats')
 		refreshMaterializedView(sql, 'player_stats')
 	}
 

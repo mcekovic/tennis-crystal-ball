@@ -25,7 +25,7 @@ abstract class BaseCSVLoader {
 	int threadCount() { Integer.MAX_VALUE }
 	abstract String loadSql()
 	abstract int batchSize()
-	abstract Map params(line, sql)
+	abstract Map params(line, conn)
 
 	def loadFile(String file) {
 		println "Loading file '$file'"
@@ -47,11 +47,12 @@ abstract class BaseCSVLoader {
 		def rows = 0
 		def batches = new AtomicInteger()
 		def paramsBatch = []
-		def sql = sqlPool.removeFirst()
+		def paramsSql = sqlPool.removeFirst()
 		try {
 			def executor = Executors.newFixedThreadPool(Math.min(sqlPool.size(), threadCount()))
+			def paramsConn = paramsSql.connection
 			for (line in data) {
-				paramsBatch.add params(line, sql)
+				paramsBatch.add params(line, paramsConn)
 				if (++rows % batchSize == 0) {
 					execute(executor, loadSql, paramsBatch, batches)
 					paramsBatch = []
@@ -63,7 +64,7 @@ abstract class BaseCSVLoader {
 			executor.awaitTermination(1L, TimeUnit.DAYS)
 		}
 		finally {
-			sqlPool.addFirst(sql)
+			sqlPool.addFirst(paramsSql)
 		}
 		rows
 	}
@@ -80,9 +81,10 @@ abstract class BaseCSVLoader {
 			finally {
 				sqlPool.addFirst(sql)
 			}
-			print '.'
 			if (batches.incrementAndGet() % lineWrap == 0)
-				println()
+				println '.'
+			else
+				print '.'
 		}
 	}
 
@@ -136,8 +138,8 @@ abstract class BaseCSVLoader {
 			null
 	}
 
-	static Array shortArray(sql, a) {
-		sql.connection.createArrayOf('smallint', a)
+	static Array shortArray(conn, a) {
+		conn.createArrayOf('smallint', a)
 	}
 
 	static String country(c) {

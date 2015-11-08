@@ -23,7 +23,7 @@ class StagingMatchLoader extends BaseCSVLoader {
 
 	int batchSize() { 100 }
 
-	Map params(line, sql) {
+	Map params(line, conn) {
 		def params = [:]
 		params.tourney_id = line.tourney_id
 		params.tourney_name = line.tourney_name

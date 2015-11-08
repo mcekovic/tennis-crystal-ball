@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -23,6 +24,9 @@
 				url: "/statsLeadersTable",
 				requestHandler: function (request) {
 					request.dimension = $("#dimension").val();
+					var season = $("#season").val();
+					if (season != "")
+						request.season = season;
 					return request;
 				},
 				rowCount: [10, 20, 50, -1],
@@ -35,15 +39,18 @@
 					"player": playerFormatter
 				}
 			});
-			var $statsLeadersTableHeader = $("#statsLeadersTable-header");
-			$statsLeadersTableHeader.find("div.search").before($("#dimensionDiv").remove());
+			$("#statsLeadersTable-header").find("div.search").before($("#dimensionDiv").remove()).before($("#seasonDiv").remove());
 			dimensionChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function dimensionChanged() {
 			var $dimension = $("#dimension");
 			$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($dimension.find("option[value='" + $dimension.val() + "']").html());
-			$.get("statsLeadersMinEntries?dimension=" + $dimension.val(), function (data) {
+			var url = "statsLeadersMinEntries?dimension=" + $dimension.val();
+			var season = $("#season").val();
+			if (season != "")
+				url += "&season=" + season;
+			$.get(url, function (data) {
 				$("#minEntries").html(data);
 			});
 		}
@@ -89,6 +96,12 @@
 				<option value="setsWonPct">Sets Won</option>
 				<option value="matchesWonPctPct">Matches Won</option>
 			</optgroup>
+		</select>
+	</div>
+	<div id="seasonDiv" class="btn-group" style="margin-right: 20px">
+		<select id="season" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select career or season">
+			<option value="">Career</option>
+			<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 		</select>
 	</div>
 	<table id="statsLeadersTable" class="table table-condensed table-hover table-striped">

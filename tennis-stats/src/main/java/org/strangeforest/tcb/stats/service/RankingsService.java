@@ -5,7 +5,9 @@ import java.sql.*;
 import java.time.*;
 import java.util.*;
 import java.util.Objects;
+import java.util.Optional;
 
+import org.postgresql.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
@@ -15,6 +17,7 @@ import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.util.EnumUtil.*;
 
 @Service
 public class RankingsService {
@@ -26,38 +29,61 @@ public class RankingsService {
 	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 1.9;
 
 	private static final String PLAYER_RANKINGS_QUERY = //language=SQL
-		"SELECT rank_date, player_id, %1$s FROM player_ranking\n" +
-		"WHERE player_id = ANY(?)%2$s\n" +
-		"ORDER BY rank_date, player_id";
+		"SELECT r.rank_date AS date%1$s, r.player_id, %2$s AS rank_value\n" +
+		"FROM player_ranking r%3$s\n" +
+		"WHERE r.player_id = ANY(?)%4$s\n" +
+		"ORDER BY %5$s, r.player_id";
 
+	private static final String PLAYER_GOAT_POINTS_QUERY = //language=SQL
+		"WITH goat_points AS (\n" +
+		"  SELECT e.date, r.player_id, r.goat_points\n" +
+		"  FROM player_tournament_event_result r\n" +
+		"  LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  WHERE r.goat_points IS NOT NULL\n" +
+		"  UNION ALL\n" +
+		"  SELECT (r.season::TEXT || '-12-31')::DATE, r.player_id, p.goat_points\n" +
+		"  FROM player_year_end_rank r\n" +
+		"  LEFT JOIN year_end_rank_goat_points p USING (year_end_rank)\n" +
+		"  WHERE p.goat_points IS NOT NULL\n" +
+		")\n" +
+		"SELECT g.date%1$s, g.player_id, sum(g.goat_points) OVER (PARTITION BY g.player_id ORDER BY g.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
+		"FROM goat_points g%2$s\n" +
+		"WHERE g.player_id = ANY(?)%3$s\n" +
+		"ORDER BY %4$s, g.player_id";
 
-	public DataTable getRankingsDataTable(List<String> inputPlayers, Range<LocalDate> dateRange, boolean points, boolean compensatePoints) {
+	private static final String PLAYER_JOIN = /*language=SQL*/ " LEFT JOIN player p USING (player_id)";
+
+	public DataTable getRankingsDataTable(List<String> inputPlayers, Range<LocalDate> dateRange, RankType rankType, boolean byAge, boolean compensatePoints) {
 		Players players = new Players(inputPlayers);
-		String rankColumn = points ? "rank_points" : "rank";
 		DataTable table = new DataTable();
-		RowCursor rowCursor = new RowCursor(table, players);
+		RowCursor rowCursor = byAge ? new AgeRowCursor(table, players) : new DateRowCursor(table, players);
+		boolean compensate = compensatePoints && rankType == RankType.POINTS;
 		jdbcTemplate.query(
-			format(PLAYER_RANKINGS_QUERY, rankColumn, dateRangeCondition(dateRange)),
+			getSQL(rankType, dateRange, byAge),
 			ps -> {
 				int index = 0;
 				ps.setArray(++index, ps.getConnection().createArrayOf("integer", players.getPlayerIds().toArray()));
 				index = bindDateRange(ps, index, dateRange);
 			},
 			rs -> {
-				LocalDate date = rs.getDate("rank_date").toLocalDate();
+				LocalDate date = rs.getDate("date").toLocalDate();
 				int playerId = rs.getInt("player_id");
-				int rank = rs.getInt(rankColumn);
-				if (compensatePoints)
+				int rank = rs.getInt("rank_value");
+				if (compensate)
 					rank = compensateRankingPoints(date, rank);
-				rowCursor.next(date, playerId, rank);
+				Object value = byAge ? toDouble((PGInterval)rs.getObject("age")) : date;
+				rowCursor.next(value, playerId, rank);
 			}
 		);
 		rowCursor.addRow();
 		addMissingRankings(table, players);
 		if (!table.getRows().isEmpty()) {
-			table.addColumn("date", "Date");
+			if (byAge)
+				table.addColumn("number", "Age");
+			else
+				table.addColumn("date", "Date");
 			for (String player : players.getPlayers())
-				table.addColumn("number", player + " ATP " + (points ? "Points" : "Ranking"));
+				table.addColumn("number", player + " ATP " + getRankName(rankType));
 		}
 		else {
 			table.addColumn("string", "Player");
@@ -66,12 +92,27 @@ public class RankingsService {
 		return table;
 	}
 
-	private String dateRangeCondition(Range<LocalDate> dateRange) {
+	private String getSQL(RankType rankType, Range<LocalDate> dateRange, boolean byAge) {
+		String playerJoin = byAge ? PLAYER_JOIN : "";
+		String orderBy = byAge ? "age" : "date";
+		switch (rankType) {
+			case RANK:
+				return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank", playerJoin, dateRangeCondition(dateRange, "r.rank_date"), orderBy);
+			case POINTS:
+				return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank_points", playerJoin, dateRangeCondition(dateRange, "r.rank_date"), orderBy);
+			case GOAT_POINTS:
+				return format(PLAYER_GOAT_POINTS_QUERY, byAge ? ", age(g.date, p.dob) AS age" : "", playerJoin, dateRangeCondition(dateRange, "g.date"), orderBy);
+			default:
+				throw unknownEnum(rankType);
+		}
+	}
+
+	private String dateRangeCondition(Range<LocalDate> dateRange, String dateColumn) {
 		String condition = "";
 		if (dateRange.hasLowerBound())
-			condition += " AND rank_date >= ?";
+			condition += " AND " + dateColumn + " >= ?";
 		if (dateRange.hasUpperBound())
-			condition += " AND rank_date <= ?";
+			condition += " AND " + dateColumn + " <= ?";
 		return condition;
 	}
 
@@ -107,6 +148,22 @@ public class RankingsService {
 		}
 	}
 
+	private static String getRankName(RankType rankType) {
+		switch (rankType) {
+			case RANK: return "Ranking";
+			case POINTS: return "Points";
+			case GOAT_POINTS: return "GOAT Points";
+			default: throw unknownEnum(rankType);
+		}
+	}
+
+	private static final double MONTH_FACTOR = 1.0 / 12.0;
+	private static final double DAY_FACTOR = 1.0 / 365.25;
+
+	private static Double toDouble(PGInterval interval) {
+		return interval.getYears() + MONTH_FACTOR * interval.getMonths() + DAY_FACTOR * interval.getDays();
+	}
+
 	private class Players {
 
 		private final Map<Integer, Integer> playerIndexMap = new LinkedHashMap<>();
@@ -117,10 +174,10 @@ public class RankingsService {
 				String player = players.get(index);
 				if (Strings.isNullOrEmpty(player))
 					continue;
-				Integer playerId = playerService.findPlayerId(player);
-				if (playerId != null) {
+				Optional<Integer> playerId = playerService.findPlayerId(player);
+				if (playerId.isPresent()) {
 					this.players.add(player);
-					playerIndexMap.put(playerId, index);
+					playerIndexMap.put(playerId.get(), index);
 				}
 			}
 		}
@@ -142,11 +199,11 @@ public class RankingsService {
 		}
 	}
 
-	private static class RowCursor {
+	private static abstract class RowCursor<T> {
 
 		private final DataTable table;
 		private final Players players;
-		private LocalDate date;
+		private T value;
 		private String[] ranks;
 
 		private RowCursor(DataTable table, Players players) {
@@ -154,26 +211,46 @@ public class RankingsService {
 			this.players = players;
 		}
 
-		private void next(LocalDate date, int playerId, int rank) {
-			if (!Objects.equals(date, this.date)) {
+		private void next(T value, int playerId, int rank) {
+			if (!Objects.equals(value, this.value)) {
 				addRow();
-				this.date = date;
+				this.value = value;
 				ranks = new String[players.getCount()];
 			}
 			ranks[players.getIndex(playerId)] = valueOf(rank);
 		}
 
 		private void addRow() {
-			if (date != null) {
-				TableRow row = table.addRow(formatDate(date));
+			if (value != null) {
+				TableRow row = table.addRow(formatValue(value));
 				for (String rank : ranks)
 					row.addCell(rank);
-				date = null;
+				value = null;
 			}
 		}
 
-		private static String formatDate(LocalDate date) {
+		protected abstract String formatValue(T value);
+	}
+
+	private static class DateRowCursor extends RowCursor<LocalDate> {
+
+		private DateRowCursor(DataTable table, Players players) {
+			super(table, players);
+		}
+
+		@Override protected String formatValue(LocalDate date) {
 			return format("Date(%1$d, %2$d, %3$d)", date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
+		}
+	}
+
+	private static class AgeRowCursor extends RowCursor<Double> {
+
+		private AgeRowCursor(DataTable table, Players players) {
+			super(table, players);
+		}
+
+		@Override protected String formatValue(Double age) {
+			return format("%1$.3f", age);
 		}
 	}
 }

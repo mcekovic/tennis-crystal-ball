@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -23,6 +24,9 @@
 				url: "/topPerformersTable",
 				requestHandler: function (request) {
 					request.dimension = $("#dimension").val();
+					var season = $("#season").val();
+					if (season != "")
+						request.season = season;
 					return request;
 				},
 				rowCount: [10, 20, 50, -1],
@@ -36,15 +40,19 @@
 				}
 			});
 			var $topPerformersTableHeader = $("#topPerformersTable-header");
-			$topPerformersTableHeader.find("div.search").before($("#dimensionDiv").remove());
+			$topPerformersTableHeader.find("div.search").before($("#dimensionDiv").remove()).before($("#seasonDiv").remove());
 			dimensionChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function dimensionChanged() {
 			var $dimension = $("#dimension");
 			$("#topPerformersTable").find("th[data-column-id='wonLostPct'] > a > span.text").html($dimension.find("option[value='" + $dimension.val() + "']").html());
-			$.getJSON("topPerformersDimension?dimension=" + $dimension.val(), function (dim) {
-				$("#minEntries").html(dim.minEntries + " " + dim.entriesName);
+			var url = "topPerformersDimension?dimension=" + $dimension.val();
+			var season = $("#season").val();
+			if (season != "")
+				url += "&season=" + season;
+			$.get(url, function (data) {
+				$("#minEntries").html(data);
 			});
 		}
 		function reloadTopPerformers() {
@@ -77,6 +85,12 @@
 				<option value="after_losing_first_set">After Losing 1st Set</option>
 				<option value="tie_breaks">Tie breaks</option>
 			</optgroup>
+		</select>
+	</div>
+	<div id="seasonDiv" class="btn-group" style="margin-right: 20px">
+		<select id="season" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select career or season">
+			<option value="">Career</option>
+			<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 		</select>
 	</div>
 	<table id="topPerformersTable" class="table table-condensed table-hover table-striped">
