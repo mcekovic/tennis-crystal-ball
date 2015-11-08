@@ -38,7 +38,7 @@ dependencies {
 		exclude group: 'org.webjars.bower'
 	}
 	compile 'com.maxmind.geoip2:geoip2:2.3.1'
-	runtime 'org.postgresql:postgresql:9.4-1205-jdbc42'
+	compile 'org.postgresql:postgresql:9.4-1205-jdbc42'
 	testCompile 'junit:junit:4.12'
 	testCompile 'org.assertj:assertj-core:3.2.0'
 }

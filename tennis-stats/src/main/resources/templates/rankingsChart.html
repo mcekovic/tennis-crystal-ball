@@ -23,11 +23,12 @@
 				$("#rankChart").html("<div class='row'><div class='alert alert-warning col-md-9'>No player selected!</div></div>");
 		}
 		function doDrawChart(fetchData, width) {
-			var players = $("#players").val();
-			var timeSpan = $("#timeSpan").val();
 			rankType = $("#rankType").val();
 			if (fetchData) {
-				var dataUrl = "playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&rankType=" + rankType;
+				var players = $("#players").val();
+				var timeSpan = $("#timeSpan").val();
+				var byAge = $("#byAge").prop("checked");
+				var dataUrl = "playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&rankType=" + rankType + "&byAge=" + byAge;
 				if (timeSpan == "CS") {
 					var fromDate = getDate("fromDate");
 					if (fromDate == null)
@@ -37,7 +38,7 @@
 						return;
 					dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
 				}
-				if (rankType == "RANK_POINTS")
+				if (rankType == "POINTS")
 					dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
 				var $loading = $("#loading");
 				$loading.show();
@@ -89,7 +90,7 @@
 			$("#dateRange").css("visibility", $("#timeSpan").val() == "CS" ? "visible" : "hidden");
 		}
 		function onRankTypeChange() {
-			$("#compensatePoints").prop("disabled", $("#rankType").val() != "RANK_POINTS");
+			$("#compensatePoints").prop("disabled", $("#rankType").val() != "POINTS");
 		}
 		function getDate(id) {
 			var $date = $("#" + id);
@@ -181,7 +182,7 @@
 			</div>
 		</div>
 	</div>
-	<div style="height: 4px"></div>
+	<div style="height: 6px"></div>
 	<div class="row">
 		<div class="col-md-3">
 			<div class="input-group">
@@ -205,8 +206,14 @@
 				<input type="text" id="toDate" maxlength="10" class="form-control"/>
 			</div>
 		</div>
+		<div class="col-md-2">
+			<div class="checkbox">
+				<label title="Show chart by age">
+					<input id="byAge" type="checkbox"/> By age
+				</label>
+			</div>
+		</div>
 	</div>
-	<div style="height: 4px"></div>
 	<div class="row">
 		<div class="col-md-3">
 			<div class="input-group">
