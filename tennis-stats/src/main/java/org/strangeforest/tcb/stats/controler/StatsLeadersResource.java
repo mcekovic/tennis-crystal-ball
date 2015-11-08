@@ -20,12 +20,13 @@ public class StatsLeadersResource {
 	public BootgridTable<StatsLeaderRow> statsLeadersTable(
 		@RequestParam(value = "dimension") String dimension,
 		@RequestParam(value = "season", required = false) Integer season,
+		@RequestParam(value = "surface", required = false) String surface,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam(value = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		PlayerListSeasonFilter filter = new PlayerListSeasonFilter(searchPhrase, season);
+		StatsPlayerListFilter filter = new StatsPlayerListFilter(searchPhrase, season, surface);
 		int playerCount = statsLeadersService.getPlayerCount(dimension, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
@@ -36,9 +37,10 @@ public class StatsLeadersResource {
 	@RequestMapping("/statsLeadersMinEntries")
 	public String topPerformersDimension(
 		@RequestParam(value = "dimension") String dimension,
-		@RequestParam(value = "season", required = false) Integer season
+		@RequestParam(value = "season", required = false) Integer season,
+		@RequestParam(value = "surface", required = false) String surface
 	) {
-		PlayerListSeasonFilter filter = new PlayerListSeasonFilter("", season);
+		StatsPlayerListFilter filter = new StatsPlayerListFilter(season, surface);
 		return statsLeadersService.getStatsLeadersMinEntries(dimension, filter);
 	}
 }

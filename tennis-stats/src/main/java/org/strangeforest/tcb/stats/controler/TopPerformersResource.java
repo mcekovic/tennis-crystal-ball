@@ -32,7 +32,7 @@ public class TopPerformersResource {
 		@RequestParam(value = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		PlayerListSeasonFilter filter = new PlayerListSeasonFilter(searchPhrase, season);
+		StatsPlayerListFilter filter = new StatsPlayerListFilter(searchPhrase, season);
 		int playerCount = topPerformersService.getPlayerCount(dimension, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
@@ -45,7 +45,7 @@ public class TopPerformersResource {
 		@RequestParam(value = "dimension") String dimension,
 		@RequestParam(value = "season", required = false) Integer season
 	) {
-		PlayerListSeasonFilter filter = new PlayerListSeasonFilter("", season);
+		StatsPlayerListFilter filter = new StatsPlayerListFilter(season);
 		return topPerformersService.getTopPerformersMinEntries(dimension, filter);
 	}
 }

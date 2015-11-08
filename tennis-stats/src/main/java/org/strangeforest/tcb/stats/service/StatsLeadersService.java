@@ -15,10 +15,11 @@ public class StatsLeadersService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
-	private static final int MAX_PLAYER_COUNT          =  1000;
-	private static final int MIN_MATCHES               =   100;
-	private static final int MIN_POINTS                = 10000;
-	private static final int MIN_ENTRIES_SEASON_FACTOR =    10;
+	private static final int MAX_PLAYER_COUNT           =  1000;
+	private static final int MIN_MATCHES                =   100;
+	private static final int MIN_POINTS                 = 10000;
+	private static final int MIN_ENTRIES_SEASON_FACTOR  =    10;
+	private static final int MIN_ENTRIES_SURFACE_FACTOR =     2;
 
 	private static final String SEASONS_QUERY =
 		"SELECT DISTINCT season\n" +
@@ -32,7 +33,7 @@ public class StatsLeadersService {
 
 	private static final String STATS_LEADERS_QUERY = //language=SQL
 		"WITH stats_leaders AS (\n" +
-		"  SELECT player_id, name, country_id, %1$s AS value" +
+		"  SELECT player_id, name, country_id, %1$s AS value\n" +
 		"  FROM %2$s\n" +
 		"  LEFT JOIN player_v USING (player_id)\n" +
 		"  WHERE p_%3$s + o_%3$s >= ?%4$s\n" +
@@ -51,7 +52,7 @@ public class StatsLeadersService {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
 	}
 
-	public int getPlayerCount(String dimension, PlayerListSeasonFilter filter) {
+	public int getPlayerCount(String dimension, StatsPlayerListFilter filter) {
 		StatsDimension statsDimension = DIMENSIONS.get(dimension);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
 			format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsDimension), filter.getCriteria()),
@@ -60,7 +61,7 @@ public class StatsLeadersService {
 		));
 	}
 
-	public BootgridTable<StatsLeaderRow> getStatsLeadersTable(String dimension, int playerCount, PlayerListSeasonFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<StatsLeaderRow> getStatsLeadersTable(String dimension, int playerCount, StatsPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		StatsDimension statsDimension = DIMENSIONS.get(dimension);
 		BootgridTable<StatsLeaderRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
@@ -79,22 +80,26 @@ public class StatsLeadersService {
 		return table;
 	}
 
-	public String getStatsLeadersMinEntries(String dimension, PlayerListSeasonFilter filter) {
+	public String getStatsLeadersMinEntries(String dimension, StatsPlayerListFilter filter) {
 		StatsDimension statsDimension = DIMENSIONS.get(dimension);
 		return getMinEntriesValue(statsDimension, filter) + (statsDimension.isNeedsStats() ? " points" : " matches");
 	}
 
-	private static String statsTableName(PlayerListSeasonFilter filter) {
-		return filter.hasSeason() ? "player_season_stats" : "player_stats";
+	private static String statsTableName(StatsPlayerListFilter filter) {
+		return format("player%1$s%2$s_stats", filter.hasSeason() ? "_season" : "", filter.hasSurface() ? "_surface" : "");
 	}
 
 	private String minEntriesColumn(StatsDimension dimension) {
 		return dimension.isNeedsStats() ? "sv_pt" : "matches";
 	}
 
-	private int getMinEntriesValue(StatsDimension dimension, PlayerListSeasonFilter filter) {
+	private int getMinEntriesValue(StatsDimension dimension, StatsPlayerListFilter filter) {
 		int minEntries = dimension.isNeedsStats() ? MIN_POINTS : MIN_MATCHES;
-		return filter.hasSeason() ? minEntries / MIN_ENTRIES_SEASON_FACTOR : minEntries;
+		if (filter.hasSeason())
+			minEntries /= MIN_ENTRIES_SEASON_FACTOR;
+		if (filter.hasSurface())
+			minEntries /= MIN_ENTRIES_SURFACE_FACTOR;
+		return minEntries;
 	}
 
 
