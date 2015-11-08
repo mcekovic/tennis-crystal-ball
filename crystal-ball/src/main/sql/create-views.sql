@@ -97,7 +97,7 @@ WITH goat_points AS (
 	GROUP BY r.player_id, e.season
 	UNION ALL
 	SELECT r.player_id, r.season, sum(p.goat_points) goat_points FROM player_year_end_rank r
-	LEFT JOIN year_end_rank_goat_points p ON p.year_end_rank = r.year_end_rank
+	LEFT JOIN year_end_rank_goat_points p USING (year_end_rank)
 	WHERE p.goat_points > 0
 	GROUP BY r.player_id, r.season
 )
@@ -141,8 +141,8 @@ WITH level_titles AS (
 )
 SELECT p.player_id, t.titles AS titles, bt.titles AS big_titles, gt.titles AS grand_slams, ft.titles AS tour_finals, mt.titles AS masters, ot.titles AS olympics
 FROM player p
-LEFT JOIN titles t ON t.player_id = p.player_id
-LEFT JOIN big_titles bt ON bt.player_id = p.player_id
+LEFT JOIN titles t USING (player_id)
+LEFT JOIN big_titles bt USING (player_id)
 LEFT JOIN level_titles gt ON gt.player_id = p.player_id AND gt.level = 'G'
 LEFT JOIN level_titles ft ON ft.player_id = p.player_id AND ft.level = 'F'
 LEFT JOIN level_titles mt ON mt.player_id = p.player_id AND mt.level = 'M'

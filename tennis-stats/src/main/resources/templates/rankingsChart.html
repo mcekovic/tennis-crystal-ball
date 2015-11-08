@@ -27,8 +27,7 @@
 			if (fetchData) {
 				var players = $("#players").val();
 				var timeSpan = $("#timeSpan").val();
-				var byAge = $("#byAge").prop("checked");
-				var dataUrl = "playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&rankType=" + rankType + "&byAge=" + byAge;
+				var dataUrl = "playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&rankType=" + rankType;
 				if (timeSpan == "CS") {
 					var fromDate = getDate("fromDate");
 					if (fromDate == null)
@@ -38,6 +37,8 @@
 						return;
 					dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
 				}
+				if (timeSpan == "CR")
+					dataUrl += "&byAge=" + $("#byAge").prop("checked");
 				if (rankType == "POINTS")
 					dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
 				var $loading = $("#loading");
@@ -87,10 +88,12 @@
 			return max - min >= 50;
 		}
 		function onTimeSpanChange() {
-			$("#dateRange").css("visibility", $("#timeSpan").val() == "CS" ? "visible" : "hidden");
+			var timeSpan = $("#timeSpan").val();
+			$("#dateRange").css("display", timeSpan == "CS" ? "block" : "none");
+			$("#byAgeDiv").css("display", timeSpan == "CR" ? "block" : "none");
 		}
 		function onRankTypeChange() {
-			$("#compensatePoints").prop("disabled", $("#rankType").val() != "POINTS");
+			$("#compensatePointsDiv").css("visibility", $("#rankType").val() == "POINTS" ? "visible" : "hidden");
 		}
 		function getDate(id) {
 			var $date = $("#" + id);
@@ -170,6 +173,12 @@
 		});
 		/*]]>*/
 	</script>
+	<style>
+		.checkbox {
+			margin-top: 7px;
+			margin-bottom: 7px;
+		}
+	</style>
 </head>
 <body class="container">
 	<div th:include="fragments/header :: title"></div>
@@ -182,7 +191,7 @@
 			</div>
 		</div>
 	</div>
-	<div style="height: 6px"></div>
+	<div style="height: 5px"></div>
 	<div class="row">
 		<div class="col-md-3">
 			<div class="input-group">
@@ -207,13 +216,14 @@
 			</div>
 		</div>
 		<div class="col-md-2">
-			<div class="checkbox">
+			<div id="byAgeDiv" class="checkbox">
 				<label title="Show chart by age">
 					<input id="byAge" type="checkbox"/> By age
 				</label>
 			</div>
 		</div>
 	</div>
+	<div style="height: 5px"></div>
 	<div class="row">
 		<div class="col-md-3">
 			<div class="input-group">
@@ -226,7 +236,7 @@
 			</div>
 		</div>
 		<div class="col-md-2">
-			<div class="checkbox">
+			<div id="compensatePointsDiv" class="checkbox">
 				<label title="Compensate ranking points before 2009 to match new ATP ranking system">
 					<input id="compensatePoints" type="checkbox"/> Compensate points
 				</label>

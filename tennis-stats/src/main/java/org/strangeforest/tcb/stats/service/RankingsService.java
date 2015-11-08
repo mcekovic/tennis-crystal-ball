@@ -32,14 +32,24 @@ public class RankingsService {
 		"SELECT r.rank_date AS date%1$s, r.player_id, %2$s AS rank_value\n" +
 		"FROM player_ranking r%3$s\n" +
 		"WHERE r.player_id = ANY(?)%4$s\n" +
-		"ORDER BY %5$sr.rank_date, r.player_id";
+		"ORDER BY %5$s, r.player_id";
 
 	private static final String PLAYER_GOAT_POINTS_QUERY = //language=SQL
-		"SELECT e.date%1$s, r.player_id, sum(r.goat_points) OVER (PARTITION BY r.player_id ORDER BY e.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
-		"FROM player_tournament_event_result r%2$s\n" +
-		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
-		"WHERE r.player_id = ANY(?) AND r.goat_points IS NOT NULL%3$s\n" +
-		"ORDER BY %4$se.date, r.player_id";
+		"WITH goat_points AS (\n" +
+		"  SELECT e.date, r.player_id, r.goat_points\n" +
+		"  FROM player_tournament_event_result r\n" +
+		"  LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  WHERE r.goat_points IS NOT NULL\n" +
+		"  UNION ALL\n" +
+		"  SELECT (r.season::TEXT || '-12-31')::DATE, r.player_id, p.goat_points\n" +
+		"  FROM player_year_end_rank r\n" +
+		"  LEFT JOIN year_end_rank_goat_points p USING (year_end_rank)\n" +
+		"  WHERE p.goat_points IS NOT NULL\n" +
+		")\n" +
+		"SELECT g.date%1$s, g.player_id, sum(g.goat_points) OVER (PARTITION BY g.player_id ORDER BY g.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
+		"FROM goat_points g%2$s\n" +
+		"WHERE g.player_id = ANY(?)%3$s\n" +
+		"ORDER BY %4$s, g.player_id";
 
 	private static final String PLAYER_JOIN = /*language=SQL*/ " LEFT JOIN player p USING (player_id)";
 
@@ -91,7 +101,7 @@ public class RankingsService {
 			case POINTS:
 				return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank_points", playerJoin, dateRangeCondition(dateRange, "r.rank_date"), orderBy);
 			case GOAT_POINTS:
-				return format(PLAYER_GOAT_POINTS_QUERY, byAge ? ", age(e.date, p.dob) AS age" : "", playerJoin, dateRangeCondition(dateRange, "e.date"), orderBy);
+				return format(PLAYER_GOAT_POINTS_QUERY, byAge ? ", age(g.date, p.dob) AS age" : "", playerJoin, dateRangeCondition(dateRange, "g.date"), orderBy);
 			default:
 				throw unknownEnum(rankType);
 		}
