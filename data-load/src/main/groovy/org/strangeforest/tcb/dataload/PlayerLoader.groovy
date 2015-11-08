@@ -20,7 +20,7 @@ class PlayerLoader extends BaseCSVLoader {
 
 	int batchSize() { 500 }
 
-	Map params(line, sql) {
+	Map params(line, conn) {
 		def params = [:]
 		params.ext_player_id = integer line.player_id
 		params.first_name = string line.first_name

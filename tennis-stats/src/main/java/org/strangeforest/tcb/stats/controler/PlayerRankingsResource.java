@@ -28,12 +28,12 @@ public class PlayerRankingsResource {
 		@RequestParam(value = "timeSpan", defaultValue = CAREER) String timeSpan,
 		@RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
 		@RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
-		@RequestParam(value = "points", defaultValue = "false") boolean points,
+		@RequestParam(value = "rankType", defaultValue = "RANK") RankType rankType,
 		@RequestParam(value = "compensatePoints", defaultValue = "false") boolean compensatePoints
 	) {
 		List<String> inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 		Range<LocalDate> dateRange = toDateRange(timeSpan, fromDate, toDate);
-		return rankingsService.getRankingsDataTable(inputPlayers, dateRange, points, compensatePoints);
+		return rankingsService.getRankingsDataTable(inputPlayers, dateRange, rankType, compensatePoints);
 	}
 
 	private Range<LocalDate> toDateRange(String timeSpan, LocalDate fromDate, LocalDate toDate) {

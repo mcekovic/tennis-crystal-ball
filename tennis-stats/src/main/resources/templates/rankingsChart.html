@@ -14,7 +14,7 @@
 		/*<![CDATA[*/
 		google.load("visualization", "1.0", {packages:["corechart"]});
 		var chartData;
-		var points;
+		var rankType;
 		var logScale;
 		function drawChart() {
 			if ($.trim($("#players").val()).length > 0)
@@ -25,9 +25,9 @@
 		function doDrawChart(fetchData, width) {
 			var players = $("#players").val();
 			var timeSpan = $("#timeSpan").val();
-			points = $("#rankType").val() == "points";
+			rankType = $("#rankType").val();
 			if (fetchData) {
-				var dataUrl = "playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&points=" + points;
+				var dataUrl = "playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&rankType=" + rankType;
 				if (timeSpan == "CS") {
 					var fromDate = getDate("fromDate");
 					if (fromDate == null)
@@ -37,7 +37,7 @@
 						return;
 					dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
 				}
-				if (points)
+				if (rankType == "RANK_POINTS")
 					dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
 				var $loading = $("#loading");
 				$loading.show();
@@ -59,6 +59,7 @@
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			}
 			if (chartData != undefined) {
+				var points = rankType != "RANK";
 				var options = {
 					width: width,
 					height: width / 2,
@@ -88,7 +89,7 @@
 			$("#dateRange").css("visibility", $("#timeSpan").val() == "CS" ? "visible" : "hidden");
 		}
 		function onRankTypeChange() {
-			$("#compensatePoints").prop("disabled", $("#rankType").val() == "rank");
+			$("#compensatePoints").prop("disabled", $("#rankType").val() != "RANK_POINTS");
 		}
 		function getDate(id) {
 			var $date = $("#" + id);
@@ -211,8 +212,9 @@
 			<div class="input-group">
 				<label for="rankType" class="input-group-addon">Rank type:</label>
 				<select id="rankType" class="form-control" onchange="onRankTypeChange()">
-					<option value="rank">Ordinal rank</option>
-					<option value="points">Ranking points</option>
+					<option value="RANK">Ordinal rank</option>
+					<option value="POINTS">Ranking points</option>
+					<option value="GOAT_POINTS">GOAT points</option>
 				</select>
 			</div>
 		</div>

@@ -16,6 +16,7 @@ import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.util.EnumUtil.*;
 
 @Service
 public class RankingsService {
@@ -27,18 +28,25 @@ public class RankingsService {
 	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 1.9;
 
 	private static final String PLAYER_RANKINGS_QUERY = //language=SQL
-		"SELECT rank_date, player_id, %1$s FROM player_ranking\n" +
+		"SELECT rank_date, player_id, %1$s AS rank_value\n" +
+		"FROM player_ranking\n" +
 		"WHERE player_id = ANY(?)%2$s\n" +
 		"ORDER BY rank_date, player_id";
 
+	private static final String PLAYER_GOAT_POINTS_QUERY = //language=SQL
+		"SELECT e.date AS rank_date, r.player_id, sum(r.goat_points) OVER (PARTITION BY r.player_id ORDER BY e.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
+		"FROM player_tournament_event_result r\n" +
+		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"WHERE player_id = ANY(?) AND r.goat_points IS NOT NULL%1$s\n" +
+		"ORDER BY rank_date, player_id";
 
-	public DataTable getRankingsDataTable(List<String> inputPlayers, Range<LocalDate> dateRange, boolean points, boolean compensatePoints) {
+
+	public DataTable getRankingsDataTable(List<String> inputPlayers, Range<LocalDate> dateRange, RankType rankType, boolean compensatePoints) {
 		Players players = new Players(inputPlayers);
-		String rankColumn = points ? "rank_points" : "rank";
 		DataTable table = new DataTable();
 		RowCursor rowCursor = new RowCursor(table, players);
 		jdbcTemplate.query(
-			format(PLAYER_RANKINGS_QUERY, rankColumn, dateRangeCondition(dateRange)),
+			getSQL(rankType, dateRange),
 			ps -> {
 				int index = 0;
 				ps.setArray(++index, ps.getConnection().createArrayOf("integer", players.getPlayerIds().toArray()));
@@ -47,7 +55,7 @@ public class RankingsService {
 			rs -> {
 				LocalDate date = rs.getDate("rank_date").toLocalDate();
 				int playerId = rs.getInt("player_id");
-				int rank = rs.getInt(rankColumn);
+				int rank = rs.getInt("rank_value");
 				if (compensatePoints)
 					rank = compensateRankingPoints(date, rank);
 				rowCursor.next(date, playerId, rank);
@@ -58,7 +66,7 @@ public class RankingsService {
 		if (!table.getRows().isEmpty()) {
 			table.addColumn("date", "Date");
 			for (String player : players.getPlayers())
-				table.addColumn("number", player + " ATP " + (points ? "Points" : "Ranking"));
+				table.addColumn("number", player + " ATP " + getRankName(rankType));
 		}
 		else {
 			table.addColumn("string", "Player");
@@ -67,12 +75,25 @@ public class RankingsService {
 		return table;
 	}
 
-	private String dateRangeCondition(Range<LocalDate> dateRange) {
+	private String getSQL(RankType rankType, Range<LocalDate> dateRange) {
+		switch (rankType) {
+			case RANK:
+				return format(PLAYER_RANKINGS_QUERY, "rank", dateRangeCondition(dateRange, "rank_date"));
+			case POINTS:
+				return format(PLAYER_RANKINGS_QUERY, "rank_points", dateRangeCondition(dateRange, "rank_date"));
+			case GOAT_POINTS:
+				return format(PLAYER_GOAT_POINTS_QUERY, dateRangeCondition(dateRange, "e.date"));
+			default:
+				throw unknownEnum(rankType);
+		}
+	}
+
+	private String dateRangeCondition(Range<LocalDate> dateRange, String dateColumn) {
 		String condition = "";
 		if (dateRange.hasLowerBound())
-			condition += " AND rank_date >= ?";
+			condition += " AND " + dateColumn + " >= ?";
 		if (dateRange.hasUpperBound())
-			condition += " AND rank_date <= ?";
+			condition += " AND " + dateColumn + " <= ?";
 		return condition;
 	}
 
@@ -105,6 +126,15 @@ public class RankingsService {
 					prevRankIndex = i;
 				}
 			}
+		}
+	}
+
+	private String getRankName(RankType rankType) {
+		switch (rankType) {
+			case RANK: return "Ranking";
+			case POINTS: return "Points";
+			case GOAT_POINTS: return "GOAT Points";
+			default: throw unknownEnum(rankType);
 		}
 	}
 

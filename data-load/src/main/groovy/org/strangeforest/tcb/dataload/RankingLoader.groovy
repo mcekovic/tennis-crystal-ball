@@ -20,7 +20,7 @@ class RankingLoader extends BaseCSVLoader {
 
 	int batchSize() { 500 }
 
-	Map params(line, sql) {
+	Map params(line, conn) {
 		def params = [:]
 		params.rank_date = date line.rank_date
 		params.ext_player_id = integer line.player_id
