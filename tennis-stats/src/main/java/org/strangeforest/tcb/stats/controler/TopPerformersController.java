@@ -9,7 +9,7 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Controller
-public class TopPerformersController {
+public class TopPerformersController extends BaseController {
 
 	@Autowired private TopPerformersService topPerformersService;
 

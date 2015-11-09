@@ -1,3 +1,12 @@
 <header xmlns:th="http://www.thymeleaf.org" th:fragment="title">
-	<h1><a href="/" class="text-nowrap">Ultimate Tennis Statistics</a> <span class="text-nowrap" style="font-size: small; font-style: italic; vertical-align: top">Technology Preview</span></h1>
+	<!--@thymesVar id="lastDataUpdate" type="java.util.Date"-->
+	<div class="text-nowrap" style="display: flex; flex-direction: row">
+		<div style="display: flex; flex-direction: column">
+			<h1><a href="/">Ultimate Tennis Statistics</a></h1>
+		</div>
+		<div style="display: flex; flex-direction: column; margin: 10px 10px">
+			<div style="font-size: small; font-style: italic">Technology Preview</div>
+			<div style="font-size: small; font-style: italic" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}">Last data update: 21-09-2015</div>
+		</div>
+	</div>
 </header>

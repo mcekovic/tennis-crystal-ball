@@ -7,7 +7,7 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Controller
-public class BestSeasonsController {
+public class BestSeasonsController extends BaseController {
 
 	@Autowired private BestSeasonsService bestSeasonsService;
 

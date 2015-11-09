@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--@thymesVar id="lastUpdate" type="java.util.Date"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -22,8 +21,6 @@
 	<h3><a href="rankingsChart">Rankings Chart</a></h3>
 	<h3><a href="topPerformers">Top Performers</a></h3>
 	<h3><a href="statsLeaders">Statistics Leaders</a></h3>
-	<br/>
-	<p th:text="'Last data update: ' + ${#dates.format(lastUpdate, 'dd-MM-yyyy')}">Last data update: 21-09-2015</p>
 	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>
