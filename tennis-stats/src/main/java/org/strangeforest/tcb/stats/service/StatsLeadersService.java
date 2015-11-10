@@ -8,7 +8,7 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
 import static java.lang.String.*;
-import static org.strangeforest.tcb.stats.model.StatsDimension.Type.*;
+import static org.strangeforest.tcb.stats.model.StatsCategory.Type.*;
 
 @Service
 public class StatsLeadersService {
@@ -52,49 +52,49 @@ public class StatsLeadersService {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
 	}
 
-	public int getPlayerCount(String dimension, StatsPlayerListFilter filter) {
-		StatsDimension statsDimension = DIMENSIONS.get(dimension);
+	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
+		StatsCategory statsCategory = CATEGORIES.get(category);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
-			format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsDimension), filter.getCriteria()),
-			filter.getParamsWithPrefix(getMinEntriesValue(statsDimension, filter)),
+			format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria()),
+			filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter)),
 			Integer.class
 		));
 	}
 
-	public BootgridTable<StatsLeaderRow> getStatsLeadersTable(String dimension, int playerCount, StatsPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
-		StatsDimension statsDimension = DIMENSIONS.get(dimension);
+	public BootgridTable<StatsLeaderRow> getStatsLeadersTable(String category, int playerCount, StatsPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+		StatsCategory statsCategory = CATEGORIES.get(category);
 		BootgridTable<StatsLeaderRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(STATS_LEADERS_QUERY, statsDimension.getExpression(), statsTableName(filter), minEntriesColumn(statsDimension), filter.getCriteria(), orderBy),
+			format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria(), orderBy),
 			(rs) -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
 				double value = rs.getDouble("value");
-				table.addRow(new StatsLeaderRow(rank, playerId, name, countryId, value, statsDimension.getType()));
+				table.addRow(new StatsLeaderRow(rank, playerId, name, countryId, value, statsCategory.getType()));
 			},
-			filter.getParamsWithPrefix(getMinEntriesValue(statsDimension, filter), playerCount, offset, pageSize)
+			filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter), playerCount, offset, pageSize)
 		);
 		return table;
 	}
 
-	public String getStatsLeadersMinEntries(String dimension, StatsPlayerListFilter filter) {
-		StatsDimension statsDimension = DIMENSIONS.get(dimension);
-		return getMinEntriesValue(statsDimension, filter) + (statsDimension.isNeedsStats() ? " points" : " matches");
+	public String getStatsLeadersMinEntries(String category, StatsPlayerListFilter filter) {
+		StatsCategory statsCategory = CATEGORIES.get(category);
+		return getMinEntriesValue(statsCategory, filter) + (statsCategory.isNeedsStats() ? " points" : " matches");
 	}
 
 	private static String statsTableName(StatsPlayerListFilter filter) {
 		return format("player%1$s%2$s_stats", filter.hasSeason() ? "_season" : "", filter.hasSurface() ? "_surface" : "");
 	}
 
-	private String minEntriesColumn(StatsDimension dimension) {
-		return dimension.isNeedsStats() ? "sv_pt" : "matches";
+	private String minEntriesColumn(StatsCategory category) {
+		return category.isNeedsStats() ? "sv_pt" : "matches";
 	}
 
-	private int getMinEntriesValue(StatsDimension dimension, StatsPlayerListFilter filter) {
-		int minEntries = dimension.isNeedsStats() ? MIN_POINTS : MIN_MATCHES;
+	private int getMinEntriesValue(StatsCategory category, StatsPlayerListFilter filter) {
+		int minEntries = category.isNeedsStats() ? MIN_POINTS : MIN_MATCHES;
 		if (filter.hasSeason())
 			minEntries /= MIN_ENTRIES_SEASON_FACTOR;
 		if (filter.hasSurface())
@@ -103,9 +103,9 @@ public class StatsLeadersService {
 	}
 
 
-	// Dimensions
+	// Categories
 
-	private static final Map<String, StatsDimension> DIMENSIONS = new HashMap<>();
+	private static final Map<String, StatsCategory> CATEGORIES = new HashMap<>();
 
 	private static final String BREAK_POINTS_CONVERTED_PCT = "(o_bp_fc-o_bp_sv)::real/o_bp_fc";
 	private static final String RETURN_POINTS_WON_PCT = "(o_sv_pt-o_1st_won-o_2nd_won)::real/o_sv_pt";
@@ -119,35 +119,35 @@ public class StatsLeadersService {
 
 	static {
 		// Serve
-		addDimension("aces", "p_ace", COUNT, true);
-		addDimension("acePct", "p_ace::real/p_sv_pt", PERCENTAGE, true);
-		addDimension("doubleFaultPct", "p_df::real/p_sv_pt", PERCENTAGE, true);
-		addDimension("firstServePct", "p_1st_in::real/p_sv_pt", PERCENTAGE, true);
-		addDimension("firstServeWonPct", "p_1st_won::real/p_1st_in", PERCENTAGE, true);
-		addDimension("secondServeWonPct", "p_2nd_won::real/(p_sv_pt-p_1st_in)", PERCENTAGE, true);
-		addDimension("breakPointsSavedPct", "CASE WHEN p_bp_fc > 0 THEN p_bp_sv::real/p_bp_fc ELSE NULL END", PERCENTAGE, true);
-		addDimension("servicePointsWonPct", "(p_1st_won+p_2nd_won)::real/p_sv_pt", PERCENTAGE, true);
-		addDimension("serviceGamesWonPct", "(p_sv_gms-(p_bp_fc-p_bp_sv))::real/p_sv_gms", PERCENTAGE, true);
+		addCategory("aces", "p_ace", COUNT, true);
+		addCategory("acePct", "p_ace::real/p_sv_pt", PERCENTAGE, true);
+		addCategory("doubleFaultPct", "p_df::real/p_sv_pt", PERCENTAGE, true);
+		addCategory("firstServePct", "p_1st_in::real/p_sv_pt", PERCENTAGE, true);
+		addCategory("firstServeWonPct", "p_1st_won::real/p_1st_in", PERCENTAGE, true);
+		addCategory("secondServeWonPct", "p_2nd_won::real/(p_sv_pt-p_1st_in)", PERCENTAGE, true);
+		addCategory("breakPointsSavedPct", "CASE WHEN p_bp_fc > 0 THEN p_bp_sv::real/p_bp_fc ELSE NULL END", PERCENTAGE, true);
+		addCategory("servicePointsWonPct", "(p_1st_won+p_2nd_won)::real/p_sv_pt", PERCENTAGE, true);
+		addCategory("serviceGamesWonPct", "(p_sv_gms-(p_bp_fc-p_bp_sv))::real/p_sv_gms", PERCENTAGE, true);
 		// Return
-		addDimension("aceAgainstPct", "o_ace::real/o_sv_pt", PERCENTAGE, true);
-		addDimension("doubleFaultAgainstPct", "o_df::real/o_sv_pt", PERCENTAGE, true);
-		addDimension("firstServeReturnWonPct", "(o_1st_in-o_1st_won)::real/o_1st_in", PERCENTAGE, true);
-		addDimension("secondServeReturnWonPct", "(o_sv_pt-o_1st_in-o_2nd_won)::real/(o_sv_pt-o_1st_in)", PERCENTAGE, true);
-		addDimension("breakPointsPct", "CASE WHEN o_bp_fc > 0 THEN " + BREAK_POINTS_CONVERTED_PCT + " ELSE NULL END", PERCENTAGE, true);
-		addDimension("returnPointsWonPct", RETURN_POINTS_WON_PCT, PERCENTAGE, true);
-		addDimension("returnGamesWonPct", RETURN_GAMES_WON_PCT, PERCENTAGE, true);
+		addCategory("aceAgainstPct", "o_ace::real/o_sv_pt", PERCENTAGE, true);
+		addCategory("doubleFaultAgainstPct", "o_df::real/o_sv_pt", PERCENTAGE, true);
+		addCategory("firstServeReturnWonPct", "(o_1st_in-o_1st_won)::real/o_1st_in", PERCENTAGE, true);
+		addCategory("secondServeReturnWonPct", "(o_sv_pt-o_1st_in-o_2nd_won)::real/(o_sv_pt-o_1st_in)", PERCENTAGE, true);
+		addCategory("breakPointsPct", "CASE WHEN o_bp_fc > 0 THEN " + BREAK_POINTS_CONVERTED_PCT + " ELSE NULL END", PERCENTAGE, true);
+		addCategory("returnPointsWonPct", RETURN_POINTS_WON_PCT, PERCENTAGE, true);
+		addCategory("returnGamesWonPct", RETURN_GAMES_WON_PCT, PERCENTAGE, true);
 		// Total
-		addDimension("pointsDominanceRatio", POINTS_DOMINANCE_RATIO, RATIO, true);
-		addDimension("gamesDominanceRatio", GAMES_DOMINANCE_RATIO, RATIO, true);
-		addDimension("breakPointsRatio", BREAK_POINTS_RATIO, RATIO, true);
-		addDimension("overPerformingRatio", OVER_PERFORMING_RATIO, RATIO, true);
-		addDimension("totalPointsWonPct", TOTAL_POINTS_WON_PCT, PERCENTAGE, true);
-		addDimension("totalGamesWonPct", "p_games::real/(p_games+o_games)", PERCENTAGE, false);
-		addDimension("setsWonPct", "p_sets::real/(p_sets+o_sets)", PERCENTAGE, false);
-		addDimension("matchesWonPctPct", MATCHES_WON_PCT, PERCENTAGE, false);
+		addCategory("pointsDominanceRatio", POINTS_DOMINANCE_RATIO, RATIO, true);
+		addCategory("gamesDominanceRatio", GAMES_DOMINANCE_RATIO, RATIO, true);
+		addCategory("breakPointsRatio", BREAK_POINTS_RATIO, RATIO, true);
+		addCategory("overPerformingRatio", OVER_PERFORMING_RATIO, RATIO, true);
+		addCategory("totalPointsWonPct", TOTAL_POINTS_WON_PCT, PERCENTAGE, true);
+		addCategory("totalGamesWonPct", "p_games::real/(p_games+o_games)", PERCENTAGE, false);
+		addCategory("setsWonPct", "p_sets::real/(p_sets+o_sets)", PERCENTAGE, false);
+		addCategory("matchesWonPctPct", MATCHES_WON_PCT, PERCENTAGE, false);
 	}
 
-	private static void addDimension(String name, String expression, StatsDimension.Type type, boolean needsStats) {
-		DIMENSIONS.put(name, new StatsDimension(name, expression, type, needsStats));
+	private static void addCategory(String name, String expression, StatsCategory.Type type, boolean needsStats) {
+		CATEGORIES.put(name, new StatsCategory(name, expression, type, needsStats));
 	}
 }

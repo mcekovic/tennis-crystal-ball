@@ -18,7 +18,7 @@ public class StatsLeadersResource {
 
 	@RequestMapping("/statsLeadersTable")
 	public BootgridTable<StatsLeaderRow> statsLeadersTable(
-		@RequestParam(value = "dimension") String dimension,
+		@RequestParam(value = "category") String category,
 		@RequestParam(value = "season", required = false) Integer season,
 		@RequestParam(value = "surface", required = false) String surface,
 		@RequestParam(value = "current") int current,
@@ -27,20 +27,20 @@ public class StatsLeadersResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		StatsPlayerListFilter filter = new StatsPlayerListFilter(searchPhrase, season, surface);
-		int playerCount = statsLeadersService.getPlayerCount(dimension, filter);
+		int playerCount = statsLeadersService.getPlayerCount(category, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : playerCount;
-		return statsLeadersService.getStatsLeadersTable(dimension, playerCount, filter, orderBy, pageSize, current);
+		return statsLeadersService.getStatsLeadersTable(category, playerCount, filter, orderBy, pageSize, current);
 	}
 
 	@RequestMapping("/statsLeadersMinEntries")
-	public String topPerformersDimension(
-		@RequestParam(value = "dimension") String dimension,
+	public String statsLeadersMinEntries(
+		@RequestParam(value = "category") String category,
 		@RequestParam(value = "season", required = false) Integer season,
 		@RequestParam(value = "surface", required = false) String surface
 	) {
 		StatsPlayerListFilter filter = new StatsPlayerListFilter(season, surface);
-		return statsLeadersService.getStatsLeadersMinEntries(dimension, filter);
+		return statsLeadersService.getStatsLeadersMinEntries(category, filter);
 	}
 }

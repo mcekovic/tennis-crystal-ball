@@ -23,7 +23,7 @@
 				},
 				url: "/topPerformersTable",
 				requestHandler: function (request) {
-					request.dimension = $("#dimension").val();
+					request.category = $("#category").val();
 					var season = $("#season").val();
 					if (season != "")
 						request.season = season;
@@ -40,14 +40,14 @@
 				}
 			});
 			var $topPerformersTableHeader = $("#topPerformersTable-header");
-			$topPerformersTableHeader.find("div.search").before($("#dimensionDiv").remove()).before($("#seasonDiv").remove());
-			dimensionChanged();
+			$topPerformersTableHeader.find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove());
+			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
-		function dimensionChanged() {
-			var $dimension = $("#dimension");
-			$("#topPerformersTable").find("th[data-column-id='wonLostPct'] > a > span.text").html($dimension.find("option[value='" + $dimension.val() + "']").html());
-			var url = "topPerformersDimension?dimension=" + $dimension.val();
+		function categoryChanged() {
+			var $category = $("#category");
+			$("#topPerformersTable").find("th[data-column-id='wonLostPct'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
+			var url = "topPerformersMinEntries?category=" + $category.val();
 			var season = $("#season").val();
 			if (season != "")
 				url += "&season=" + season;
@@ -56,7 +56,7 @@
 			});
 		}
 		function reloadTopPerformers() {
-			dimensionChanged();
+			categoryChanged();
 			$("#topPerformersTable").bootgrid("reload");
 		}
 		/*]]>*/
@@ -65,8 +65,8 @@
 <body class="container">
 	<div th:include="fragments/header :: title"></div>
 	<h3 style="position: absolute">Top Performers</h3>
-	<div id="dimensionDiv" class="btn-group" style="margin-right: 20px">
-		<select id="dimension" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance dimension">
+	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">
+		<select id="category" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
 			<optgroup label="Performance">
 				<option value="matches" selected="selected">Overall</option>
 				<option value="grand_slam_matches">Grand Slam</option>

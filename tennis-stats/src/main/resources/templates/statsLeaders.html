@@ -23,7 +23,7 @@
 				},
 				url: "/statsLeadersTable",
 				requestHandler: function (request) {
-					request.dimension = $("#dimension").val();
+					request.category = $("#category").val();
 					var season = $("#season").val();
 					if (season != "")
 						request.season = season;
@@ -42,14 +42,14 @@
 					"player": playerFormatter
 				}
 			});
-			$("#statsLeadersTable-header").find("div.search").before($("#dimensionDiv").remove()).before($("#seasonDiv").remove()).before($("#surfaceDiv").remove());
-			dimensionChanged();
+			$("#statsLeadersTable-header").find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove()).before($("#surfaceDiv").remove());
+			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
-		function dimensionChanged() {
-			var $dimension = $("#dimension");
-			$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($dimension.find("option[value='" + $dimension.val() + "']").html());
-			var url = "statsLeadersMinEntries?dimension=" + $dimension.val();
+		function categoryChanged() {
+			var $category = $("#category");
+			$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
+			var url = "statsLeadersMinEntries?category=" + $category.val();
 			var season = $("#season").val();
 			if (season != "")
 				url += "&season=" + season;
@@ -61,7 +61,7 @@
 			});
 		}
 		function reloadStatsLeaders() {
-			dimensionChanged();
+			categoryChanged();
 			$("#statsLeadersTable").bootgrid("reload");
 		}
 		/*]]>*/
@@ -70,8 +70,8 @@
 <body class="container">
 	<div th:include="fragments/header :: title"></div>
 	<h3 style="position: absolute">Statistics Leaders</h3>
-	<div id="dimensionDiv" class="btn-group" style="margin-right: 20px">
-		<select id="dimension" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">
+		<select id="category" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
 			<optgroup label="Serve">
 				<option value="aces" selected="selected">Aces</option>
 				<option value="acePct">Ace %</option>

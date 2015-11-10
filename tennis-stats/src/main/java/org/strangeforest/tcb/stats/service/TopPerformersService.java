@@ -48,19 +48,19 @@ public class TopPerformersService {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
 	}
 
-	public int getPlayerCount(String dimension, StatsPlayerListFilter filter) {
+	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
-			format(TOP_PERFORMERS_COUNT_QUERY, perfTableName(filter), dimension, filter.getCriteria()),
-			filter.getParamsWithPrefix(getMinEntriesValue(dimension, filter)),
+			format(TOP_PERFORMERS_COUNT_QUERY, perfTableName(filter), category, filter.getCriteria()),
+			filter.getParamsWithPrefix(getMinEntriesValue(category, filter)),
 			Integer.class
 		));
 	}
 
-	public BootgridTable<TopPerformerRow> getTopPerformersTable(String dimension, int playerCount, StatsPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<TopPerformerRow> getTopPerformersTable(String category, int playerCount, StatsPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<TopPerformerRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(TOP_PERFORMERS_QUERY, dimension, perfTableName(filter), filter.getCriteria(), orderBy),
+			format(TOP_PERFORMERS_QUERY, category, perfTableName(filter), filter.getCriteria(), orderBy),
 			(rs) -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
@@ -69,13 +69,13 @@ public class TopPerformersService {
 				WonLost wonLost = mapWonLost(rs);
 				table.addRow(new TopPerformerRow(rank, playerId, name, countryId, wonLost));
 			},
-			filter.getParamsWithPrefix(getMinEntriesValue(dimension, filter), playerCount, offset, pageSize)
+			filter.getParamsWithPrefix(getMinEntriesValue(category, filter), playerCount, offset, pageSize)
 		);
 		return table;
 	}
 
-	public String getTopPerformersMinEntries(String dimension, StatsPlayerListFilter filter) {
-		return getMinEntriesValue(dimension, filter) + " " + DIMENSIONS.get(dimension).getEntriesName();
+	public String getTopPerformersMinEntries(String category, StatsPlayerListFilter filter) {
+		return getMinEntriesValue(category, filter) + " " + CATEGORIES.get(category).getEntriesName();
 	}
 
 	private static String perfTableName(StatsPlayerListFilter filter) {
@@ -86,35 +86,35 @@ public class TopPerformersService {
 		return new WonLost(rs.getInt("won"), rs.getInt("lost"));
 	}
 
-	private int getMinEntriesValue(String dimension, StatsPlayerListFilter filter) {
-		int minEntries = DIMENSIONS.get(dimension).getMinEntries();
+	private int getMinEntriesValue(String category, StatsPlayerListFilter filter) {
+		int minEntries = CATEGORIES.get(category).getMinEntries();
 		return filter.hasSeason() ? minEntries / MIN_ENTRIES_SEASON_FACTOR : minEntries;
 	}
 
 
-	// Dimensions
+	// Categories
 
-	private static final Map<String, PerformanceDimension> DIMENSIONS = new HashMap<>();
+	private static final Map<String, PerformanceCategory> CATEGORIES = new HashMap<>();
 	static {
 		// Performance
-		addDimension(new PerformanceDimension("matches",                 200, "matches"));
-		addDimension(new PerformanceDimension("grand_slam_matches",       50, "Grand Slam matches"));
-		addDimension(new PerformanceDimension("masters_matches",          50, "Masters matches"));
-		addDimension(new PerformanceDimension("hard_matches",            100, "hard court matches"));
-		addDimension(new PerformanceDimension("clay_matches",            100, "clay court matches"));
-		addDimension(new PerformanceDimension("grass_matches",            50, "grass court matches"));
-		addDimension(new PerformanceDimension("carpet_matches",           50, "carpet court matches"));
+		addCategory(new PerformanceCategory("matches", 200, "matches"));
+		addCategory(new PerformanceCategory("grand_slam_matches", 50, "Grand Slam matches"));
+		addCategory(new PerformanceCategory("masters_matches", 50, "Masters matches"));
+		addCategory(new PerformanceCategory("hard_matches", 100, "hard court matches"));
+		addCategory(new PerformanceCategory("clay_matches", 100, "clay court matches"));
+		addCategory(new PerformanceCategory("grass_matches", 50, "grass court matches"));
+		addCategory(new PerformanceCategory("carpet_matches", 50, "carpet court matches"));
 		// Pressure situations
-		addDimension(new PerformanceDimension("deciding_sets",           100, "matches"));
-		addDimension(new PerformanceDimension("fifth_sets",               20, "matches"));
-		addDimension(new PerformanceDimension("finals",                   20, "finals"));
-		addDimension(new PerformanceDimension("vs_top10",                 20, "matches"));
-		addDimension(new PerformanceDimension("after_winning_first_set", 100, "matches"));
-		addDimension(new PerformanceDimension("after_losing_first_set",  100, "matches"));
-		addDimension(new PerformanceDimension("tie_breaks",              100, "tie breaks"));
+		addCategory(new PerformanceCategory("deciding_sets", 100, "matches"));
+		addCategory(new PerformanceCategory("fifth_sets", 20, "matches"));
+		addCategory(new PerformanceCategory("finals", 20, "finals"));
+		addCategory(new PerformanceCategory("vs_top10", 20, "matches"));
+		addCategory(new PerformanceCategory("after_winning_first_set", 100, "matches"));
+		addCategory(new PerformanceCategory("after_losing_first_set", 100, "matches"));
+		addCategory(new PerformanceCategory("tie_breaks", 100, "tie breaks"));
 	}
 
-	private static void addDimension(PerformanceDimension dimension) {
-		DIMENSIONS.put(dimension.getName(), dimension);
+	private static void addCategory(PerformanceCategory category) {
+		CATEGORIES.put(category.getName(), category);
 	}
 }

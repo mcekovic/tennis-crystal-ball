@@ -1,12 +1,12 @@
 package org.strangeforest.tcb.stats.model;
 
-public final class PerformanceDimension {
+public final class PerformanceCategory {
 
 	private final String name;
 	private final int minEntries;
 	private final String entriesName;
 
-	public PerformanceDimension(String name, int minEntries, String entriesName) {
+	public PerformanceCategory(String name, int minEntries, String entriesName) {
 		this.name = name;
 		this.minEntries = minEntries;
 		this.entriesName = entriesName;

@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
-public final class StatsDimension {
+public final class StatsCategory {
 
 	public enum Type {COUNT, PERCENTAGE, RATIO}
 
@@ -9,7 +9,7 @@ public final class StatsDimension {
 	private final Type type;
 	private final boolean needsStats;
 
-	public StatsDimension(String name, String expression, Type type, boolean needsStats) {
+	public StatsCategory(String name, String expression, Type type, boolean needsStats) {
 		this.name = name;
 		this.expression = expression;
 		this.type = type;
