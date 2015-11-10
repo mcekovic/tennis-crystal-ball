@@ -7,6 +7,7 @@ REFRESH MATERIALIZED VIEW player_tournament_event_result;
 REFRESH MATERIALIZED VIEW player_season_goat_points;
 REFRESH MATERIALIZED VIEW player_goat_points;
 REFRESH MATERIALIZED VIEW player_titles;
+
 REFRESH MATERIALIZED VIEW player_season_performance;
 REFRESH MATERIALIZED VIEW player_performance;
 REFRESH MATERIALIZED VIEW player_season_surface_stats;

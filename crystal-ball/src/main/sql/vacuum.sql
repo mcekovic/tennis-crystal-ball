@@ -1,0 +1,30 @@
+VACUUM FULL ANALYSE VERBOSE player;
+VACUUM FULL ANALYSE VERBOSE player_mapping;
+VACUUM FULL ANALYSE VERBOSE player_ranking;
+
+VACUUM FULL ANALYSE VERBOSE tournament;
+VACUUM FULL ANALYSE VERBOSE tournament_mapping;
+VACUUM FULL ANALYSE VERBOSE tournament_event;
+VACUUM FULL ANALYSE VERBOSE match;
+VACUUM FULL ANALYSE VERBOSE set_score;
+VACUUM FULL ANALYSE VERBOSE match_stats;
+
+VACUUM FULL ANALYSE VERBOSE tournament_rank_points;
+VACUUM FULL ANALYSE VERBOSE year_end_rank_goat_points;
+
+VACUUM FULL ANALYSE VERBOSE player_current_rank;
+VACUUM FULL ANALYSE VERBOSE player_best_rank;
+VACUUM FULL ANALYSE VERBOSE player_best_rank_points;
+VACUUM FULL ANALYSE VERBOSE player_year_end_rank;
+
+VACUUM FULL ANALYSE VERBOSE player_tournament_event_result;
+VACUUM FULL ANALYSE VERBOSE player_season_goat_points;
+VACUUM FULL ANALYSE VERBOSE player_goat_points;
+VACUUM FULL ANALYSE VERBOSE player_titles;
+
+VACUUM FULL ANALYSE VERBOSE player_season_performance;
+VACUUM FULL ANALYSE VERBOSE player_performance;
+VACUUM FULL ANALYSE VERBOSE player_season_surface_stats;
+VACUUM FULL ANALYSE VERBOSE player_season_stats;
+VACUUM FULL ANALYSE VERBOSE player_surface_stats;
+VACUUM FULL ANALYSE VERBOSE player_stats;

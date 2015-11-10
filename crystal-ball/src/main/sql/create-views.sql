@@ -155,7 +155,7 @@ CREATE UNIQUE INDEX ON player_titles (player_id);
 -- match_for_stats_v
 
 CREATE VIEW match_for_stats_v AS
-SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.level, e.surface, m.best_of, m.round, m.winner_rank, m.loser_rank, m.w_sets, m.l_sets FROM match m
+SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.level, e.surface, m.best_of, m.round, m.winner_rank, m.loser_rank, m.w_sets, m.l_sets, m.w_games, m.l_games FROM match m
 LEFT JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LIKE '%WG') AND (m.outcome IS NULL OR m.outcome <> 'W/O');
 
@@ -175,10 +175,10 @@ SELECT m.winner_id player_id, m.season, m.surface,
 	CASE WHEN m.w_sets + m.l_sets = 5 THEN match_id ELSE NULL END fifth_set_match_id_won, NULL fifth_set_match_id_lost,
 	CASE WHEN m.round = 'F' AND m.level <> 'D' THEN match_id ELSE NULL END final_match_id_won, NULL final_match_id_lost,
 	CASE WHEN m.loser_rank <= 10 THEN match_id ELSE NULL END vs_top10_match_id_won, NULL vs_top10_match_id_lost,
-	CASE WHEN s.set = 1 AND s.w_gems > s.l_gems THEN match_id ELSE NULL END after_winning_first_set_match_id_won, NULL after_winning_first_set_match_id_lost,
-	CASE WHEN s.set = 1 AND s.w_gems < s.l_gems THEN match_id ELSE NULL END after_losing_first_set_match_id_won, NULL after_losing_first_set_match_id_lost,
-	CASE WHEN s.w_gems = 7 AND s.l_gems = 6 THEN s.set ELSE NULL END w_tie_break_set_won, NULL l_tie_break_set_won,
-	CASE WHEN s.w_gems = 6 AND s.l_gems = 7 THEN s.set ELSE NULL END w_tie_break_set_lost, NULL l_tie_break_set_lost
+	CASE WHEN s.set = 1 AND s.w_games > s.l_games THEN match_id ELSE NULL END after_winning_first_set_match_id_won, NULL after_winning_first_set_match_id_lost,
+	CASE WHEN s.set = 1 AND s.w_games < s.l_games THEN match_id ELSE NULL END after_losing_first_set_match_id_won, NULL after_losing_first_set_match_id_lost,
+	CASE WHEN s.w_games = 7 AND s.l_games = 6 THEN s.set ELSE NULL END w_tie_break_set_won, NULL l_tie_break_set_won,
+	CASE WHEN s.w_games = 6 AND s.l_games = 7 THEN s.set ELSE NULL END w_tie_break_set_lost, NULL l_tie_break_set_lost
 FROM match_for_stats_v m
 LEFT JOIN set_score s USING (match_id)
 UNION ALL
@@ -194,10 +194,10 @@ SELECT m.loser_id player_id, m.season, m.surface,
 	NULL, CASE WHEN m.w_sets + m.l_sets = 5 THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.round = 'F' AND m.level <> 'D' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.winner_rank <= 10 THEN match_id ELSE NULL END,
-	NULL, CASE WHEN s.set = 1 AND s.w_gems < s.l_gems THEN match_id ELSE NULL END,
-	NULL, CASE WHEN s.set = 1 AND s.w_gems > s.l_gems THEN match_id ELSE NULL END,
-	NULL, CASE WHEN s.w_gems = 6 AND s.l_gems = 7 THEN s.set ELSE NULL END,
-	NULL, CASE WHEN s.w_gems = 7 AND s.l_gems = 6 THEN s.set ELSE NULL END
+	NULL, CASE WHEN s.set = 1 AND s.w_games < s.l_games THEN match_id ELSE NULL END,
+	NULL, CASE WHEN s.set = 1 AND s.w_games > s.l_games THEN match_id ELSE NULL END,
+	NULL, CASE WHEN s.w_games = 6 AND s.l_games = 7 THEN s.set ELSE NULL END,
+	NULL, CASE WHEN s.w_games = 7 AND s.l_games = 6 THEN s.set ELSE NULL END
 FROM match_for_stats_v m
 LEFT JOIN set_score s USING (match_id);
 
@@ -254,14 +254,14 @@ CREATE UNIQUE INDEX ON player_performance (player_id);
 -- player_match_stats_v
 
 CREATE VIEW player_match_stats_v AS
-SELECT match_id, tournament_event_id, season, surface, round, winner_id player_id, loser_id opponent_id, 1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets,
+SELECT match_id, tournament_event_id, season, surface, round, winner_id player_id, loser_id opponent_id, 1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games,
 	w_ace p_ace, w_df p_df, w_sv_pt p_sv_pt, w_1st_in p_1st_in, w_1st_won p_1st_won, w_2nd_won p_2nd_won, w_sv_gms p_sv_gms, w_bp_sv p_bp_sv, w_bp_fc p_bp_fc,
 	l_ace o_ace, l_df o_df, l_sv_pt o_sv_pt, l_1st_in o_1st_in, l_1st_won o_1st_won, l_2nd_won o_2nd_won, l_sv_gms o_sv_gms, l_bp_sv o_bp_sv, l_bp_fc o_bp_fc
 FROM match_for_stats_v
 LEFT JOIN match_stats USING (match_id)
 WHERE set = 0 OR set IS NULL
 UNION ALL
-SELECT match_id, tournament_event_id, season, surface, round, loser_id, winner_id, 0, 1, l_sets, w_sets,
+SELECT match_id, tournament_event_id, season, surface, round, loser_id, winner_id, 0, 1, l_sets, w_sets, l_games, w_games,
 	l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,
 	w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc
 FROM match_for_stats_v
@@ -272,7 +272,7 @@ WHERE set = 0 OR set IS NULL;
 -- player_season_surface_stats
 
 CREATE MATERIALIZED VIEW player_season_surface_stats AS
-SELECT player_id, season, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets,
+SELECT player_id, season, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
 FROM player_match_stats_v
@@ -285,7 +285,7 @@ CREATE INDEX ON player_season_surface_stats (season, surface);
 -- player_season_stats
 
 CREATE MATERIALIZED VIEW player_season_stats AS
-SELECT player_id, season, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets,
+SELECT player_id, season, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
 FROM player_season_surface_stats
@@ -298,7 +298,7 @@ CREATE INDEX ON player_season_stats (season);
 -- player_surface_stats
 
 CREATE MATERIALIZED VIEW player_surface_stats AS
-SELECT player_id, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets,
+SELECT player_id, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
 FROM player_season_surface_stats
@@ -311,7 +311,7 @@ CREATE INDEX ON player_surface_stats (surface);
 -- player_stats
 
 CREATE MATERIALIZED VIEW player_stats AS
-SELECT player_id, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets,
+SELECT player_id, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
 FROM player_season_stats

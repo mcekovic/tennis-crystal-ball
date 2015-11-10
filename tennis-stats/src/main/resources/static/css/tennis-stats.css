@@ -25,6 +25,18 @@
 .bg-level-D {
 	background: #fce3f7;
 }
+.bg-surface-H {
+	background: #d9edf7;
+}
+.bg-surface-C {
+	background: #f2dede;
+}
+.bg-surface-G {
+	background: #dff0d8;
+}
+.bg-surface-P {
+	background: #fcf8e3;
+}
 .bg-result-W {
 	background: lime;
 }

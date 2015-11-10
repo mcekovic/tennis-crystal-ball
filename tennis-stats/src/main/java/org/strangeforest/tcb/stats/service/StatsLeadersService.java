@@ -142,7 +142,7 @@ public class StatsLeadersService {
 		addDimension("breakPointsRatio", BREAK_POINTS_RATIO, RATIO, true);
 		addDimension("overPerformingRatio", OVER_PERFORMING_RATIO, RATIO, true);
 		addDimension("totalPointsWonPct", TOTAL_POINTS_WON_PCT, PERCENTAGE, true);
-		addDimension("totalGamesWonPct", "(p_sv_gms-(p_bp_fc-p_bp_sv)+o_bp_fc-o_bp_sv)::real/(p_sv_gms+o_sv_gms)", PERCENTAGE, true);
+		addDimension("totalGamesWonPct", "p_games::real/(p_games+o_games)", PERCENTAGE, false);
 		addDimension("setsWonPct", "p_sets::real/(p_sets+o_sets)", PERCENTAGE, false);
 		addDimension("matchesWonPctPct", MATCHES_WON_PCT, PERCENTAGE, false);
 	}

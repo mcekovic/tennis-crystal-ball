@@ -6,6 +6,7 @@ public class PlayerStats {
 
 	private final int matchesWon;
 	private final int setsWon;
+	private final int gamesWon;
 	private final int aces;
 	private final int doubleFaults;
 	private final int servicePoints;
@@ -39,9 +40,10 @@ public class PlayerStats {
 
 	private PlayerStats opponentStats;
 
-	public PlayerStats(int matchesWon, int setsWon, int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced) {
+	public PlayerStats(int matchesWon, int setsWon, int gamesWon, int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced) {
 		this.matchesWon = matchesWon;
 		this.setsWon = setsWon;
+		this.gamesWon = gamesWon;
 		this.aces = aces;
 		this.doubleFaults = doubleFaults;
 		this.servicePoints = servicePoints;
@@ -87,6 +89,14 @@ public class PlayerStats {
 
 	public int getSetsLost() {
 		return opponentStats.getSetsWon();
+	}
+
+	public int getTotalGamesWon() {
+		return gamesWon;
+	}
+
+	public int getTotalGamesLost() {
+		return opponentStats.getTotalGamesWon();
 	}
 
 
@@ -270,6 +280,14 @@ public class PlayerStats {
 		return pct(setsWon, getSets());
 	}
 
+	public int getTotalGames() {
+		return gamesWon + getTotalGamesLost();
+	}
+
+	public double getTotalGamesWonPct() {
+		return pct(getTotalGamesWon(), getTotalGames());
+	}
+
 	public int getTotalPoints() {
 		return servicePoints + getReturnPoints();
 	}
@@ -280,18 +298,6 @@ public class PlayerStats {
 
 	public double getTotalPointsWonPct() {
 		return pct(getTotalPointsWon(), getTotalPoints());
-	}
-
-	public int getTotalGames() {
-		return serviceGames + getReturnGames();
-	}
-
-	public int getTotalGamesWon() {
-		return serviceGamesWon + getReturnGamesWon();
-	}
-
-	public double getTotalGamesWonPct() {
-		return pct(getTotalGamesWon(), getTotalGames());
 	}
 
 	public double getPointsDominanceRatio() {
@@ -337,6 +343,7 @@ public class PlayerStats {
 		return new PlayerStats(
 			matchesWon + stats.matchesWon,
 			setsWon + stats.setsWon,
+			gamesWon + stats.gamesWon,
 			aces + stats.aces,
 			doubleFaults + stats.doubleFaults,
 			servicePoints + stats.servicePoints,
@@ -352,7 +359,7 @@ public class PlayerStats {
 	public static final PlayerStats EMPTY = empty();
 
 	private static PlayerStats empty() {
-		PlayerStats empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		PlayerStats empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		empty.setOpponentStats(empty);
 		return empty;
 	}

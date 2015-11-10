@@ -282,13 +282,15 @@ CREATE OR REPLACE FUNCTION load_match(
 	p_loser_height SMALLINT,
 	p_loser_hand TEXT,
 	p_score TEXT,
+	p_outcome TEXT,
 	p_w_sets SMALLINT,
 	p_l_sets SMALLINT,
-	p_outcome TEXT,
-	p_w_gems SMALLINT[],
-	p_l_gems SMALLINT[],
-	p_w_tb_pt SMALLINT[],
-	p_l_tb_pt SMALLINT[],
+	p_w_games SMALLINT,
+	p_l_games SMALLINT,
+	p_w_set_games SMALLINT[],
+	p_l_set_games SMALLINT[],
+	p_w_set_tb_pt SMALLINT[],
+	p_l_set_tb_pt SMALLINT[],
 	p_minutes SMALLINT,
 	p_w_ace SMALLINT,
 	p_w_df SMALLINT,
@@ -332,19 +334,19 @@ BEGIN
 		(tournament_event_id, match_num, round, best_of,
 		 winner_id, winner_country_id, winner_seed, winner_entry, winner_rank, winner_rank_points, winner_age, winner_height,
 		 loser_id, loser_country_id, loser_seed, loser_entry, loser_rank, loser_rank_points, loser_age, loser_height,
-		 score, w_sets, l_sets, outcome)
+		 score, outcome, w_sets, l_sets, w_games, l_games)
 		VALUES
 		(l_tournament_event_id, p_match_num, p_round::match_round, p_best_of,
 		 l_winner_id, p_winner_country_id, p_winner_seed, p_winner_entry::tournament_entry, p_winner_rank, p_winner_rank_points, p_winner_age, p_winner_height,
 		 l_loser_id, p_loser_country_id, p_loser_seed, p_loser_entry::tournament_entry, p_loser_rank, p_loser_rank_points, p_loser_age, p_loser_height,
-		 p_score, p_w_sets, p_l_sets, p_outcome::match_outcome)
+		 p_score, p_outcome::match_outcome, p_w_sets, p_l_sets, p_w_games, p_l_games)
 		RETURNING match_id INTO l_match_id;
    EXCEPTION WHEN unique_violation THEN
 		UPDATE match
 		SET round = p_round::match_round, best_of = p_best_of,
 		 winner_id = l_winner_id, winner_country_id = p_winner_country_id, winner_seed = p_winner_seed, winner_entry = p_winner_entry::tournament_entry, winner_rank = p_winner_rank, winner_rank_points = p_winner_rank_points, winner_age = p_winner_age, winner_height = p_winner_height,
 		 loser_id = l_loser_id, loser_country_id = p_loser_country_id, loser_seed = p_loser_seed, loser_entry = p_loser_entry::tournament_entry, loser_rank = p_loser_rank, loser_rank_points = p_loser_rank_points, loser_age = p_loser_age, loser_height = p_loser_height,
-		 score = p_score, w_sets = p_w_sets, l_sets = p_l_sets, outcome = p_outcome::match_outcome
+		 score = p_score, outcome = p_outcome::match_outcome, w_sets = p_w_sets, l_sets = p_l_sets, w_games = p_w_games, l_games = p_l_games
 		WHERE tournament_event_id = l_tournament_event_id AND match_num = p_match_num
 		RETURNING match_id INTO l_match_id;
    END;
@@ -379,18 +381,18 @@ BEGIN
 	PERFORM merge_player(l_loser_id, p_loser_country_id, p_loser_name, p_loser_height, p_loser_hand);
 
 	-- merge set_score
-	l_set_count = array_upper(p_w_gems, 1);
+	l_set_count = array_upper(p_w_set_games, 1);
 	IF l_set_count IS NOT NULL THEN
 		FOR l_set IN 1 .. l_set_count LOOP
 			BEGIN
 				INSERT INTO set_score
-				(match_id, set, w_gems, l_gems, w_tb_pt, l_tb_pt)
+				(match_id, set, w_games, l_games, w_tb_pt, l_tb_pt)
 				VALUES
-				(l_match_id, l_set, p_w_gems[l_set], p_l_gems[l_set], p_w_tb_pt[l_set], p_w_tb_pt[l_set]);
+				(l_match_id, l_set, p_w_set_games[l_set], p_l_set_games[l_set], p_w_set_tb_pt[l_set], p_l_set_tb_pt[l_set]);
 			EXCEPTION WHEN unique_violation
 				THEN
 				UPDATE set_score
-				SET w_gems = p_w_gems[l_set], l_gems = p_l_gems[l_set], w_tb_pt = p_w_tb_pt[l_set], l_tb_pt = p_l_tb_pt[l_set]
+				SET w_games = p_w_set_games[l_set], l_games = p_l_set_games[l_set], w_tb_pt = p_w_set_tb_pt[l_set], l_tb_pt = p_l_set_tb_pt[l_set]
 				WHERE match_id = l_match_id AND set = l_set;
 			END;
 		END LOOP;

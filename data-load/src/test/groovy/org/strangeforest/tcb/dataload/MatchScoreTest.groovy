@@ -11,10 +11,12 @@ class MatchScoreTest {
 		assert score.outcome == null
 		assert score.w_sets == 2
 		assert score.l_sets == 1
+		assert score.w_games == 13
+		assert score.l_games == 14
 		assert score.setScores.size() == 3
-		assert score.setScores[0] == new SetScore(w_gems: 6, l_gems: 3)
-		assert score.setScores[1] == new SetScore(w_gems: 0, l_gems: 6)
-		assert score.setScores[2] == new SetScore(w_gems: 7, l_gems: 5)
+		assert score.setScores[0] == new SetScore(w_games: 6, l_games: 3)
+		assert score.setScores[1] == new SetScore(w_games: 0, l_games: 6)
+		assert score.setScores[2] == new SetScore(w_games: 7, l_games: 5)
 	}
 
 	@Test
@@ -24,12 +26,14 @@ class MatchScoreTest {
 		assert score.outcome == null
 		assert score.w_sets == 3
 		assert score.l_sets == 2
+		assert score.w_games == 31
+		assert score.l_games == 24
 		assert score.setScores.size() == 5
-		assert score.setScores[0] == new SetScore(w_gems: 2, l_gems: 6)
-		assert score.setScores[1] == new SetScore(w_gems: 6, l_gems: 1)
-		assert score.setScores[2] == new SetScore(w_gems: 6, l_gems: 0)
-		assert score.setScores[3] == new SetScore(w_gems: 5, l_gems: 7)
-		assert score.setScores[4] == new SetScore(w_gems: 12, l_gems: 10)
+		assert score.setScores[0] == new SetScore(w_games: 2, l_games: 6)
+		assert score.setScores[1] == new SetScore(w_games: 6, l_games: 1)
+		assert score.setScores[2] == new SetScore(w_games: 6, l_games: 0)
+		assert score.setScores[3] == new SetScore(w_games: 5, l_games: 7)
+		assert score.setScores[4] == new SetScore(w_games: 12, l_games: 10)
 	}
 
 	@Test
@@ -39,10 +43,12 @@ class MatchScoreTest {
 		assert score.outcome == null
 		assert score.w_sets == 2
 		assert score.l_sets == 1
+		assert score.w_games == 18
+		assert score.l_games == 18
 		assert score.setScores.size() == 3
-		assert score.setScores[0] == new SetScore(w_gems: 7, l_gems: 6, w_tb_pt: 7, l_tb_pt: 4)
-		assert score.setScores[1] == new SetScore(w_gems: 6, l_gems: 7, w_tb_pt: 0, l_tb_pt: 7)
-		assert score.setScores[2] == new SetScore(w_gems: 7, l_gems: 6, w_tb_pt: 14, l_tb_pt: 12)
+		assert score.setScores[0] == new SetScore(w_games: 7, l_games: 6, w_tb_pt: 7, l_tb_pt: 4)
+		assert score.setScores[1] == new SetScore(w_games: 6, l_games: 7, w_tb_pt: 0, l_tb_pt: 7)
+		assert score.setScores[2] == new SetScore(w_games: 7, l_games: 6, w_tb_pt: 14, l_tb_pt: 12)
 	}
 
 	@Test
@@ -52,6 +58,8 @@ class MatchScoreTest {
 		assert score.outcome == 'W/O'
 		assert score.w_sets == 0
 		assert score.l_sets == 0
+		assert score.w_games == 0
+		assert score.l_games == 0
 		assert score.setScores.isEmpty()
 	}
 
@@ -62,6 +70,8 @@ class MatchScoreTest {
 		assert score.outcome == 'W/O'
 		assert score.w_sets == 0
 		assert score.l_sets == 0
+		assert score.w_games == 0
+		assert score.l_games == 0
 		assert score.setScores.isEmpty()
 	}
 
@@ -72,9 +82,11 @@ class MatchScoreTest {
 		assert score.outcome == 'RET'
 		assert score.w_sets == 1
 		assert score.l_sets == 0
+		assert score.w_games == 9
+		assert score.l_games == 4
 		assert score.setScores.size() == 2
-		assert score.setScores[0] == new SetScore(w_gems: 6, l_gems: 4)
-		assert score.setScores[1] == new SetScore(w_gems: 3, l_gems: 0)
+		assert score.setScores[0] == new SetScore(w_games: 6, l_games: 4)
+		assert score.setScores[1] == new SetScore(w_games: 3, l_games: 0)
 	}
 
 	@Test
@@ -84,7 +96,9 @@ class MatchScoreTest {
 		assert score.outcome == 'RET'
 		assert score.w_sets == 0
 		assert score.l_sets == 0
+		assert score.w_games == 6
+		assert score.l_games == 6
 		assert score.setScores.size() == 1
-		assert score.setScores[0] == new SetScore(w_gems: 6, l_gems: 6)
+		assert score.setScores[0] == new SetScore(w_games: 6, l_games: 6)
 	}
 }

@@ -100,9 +100,9 @@ public class TopPerformersService {
 		addDimension(new PerformanceDimension("matches",                 200, "matches"));
 		addDimension(new PerformanceDimension("grand_slam_matches",       50, "Grand Slam matches"));
 		addDimension(new PerformanceDimension("masters_matches",          50, "Masters matches"));
+		addDimension(new PerformanceDimension("hard_matches",            100, "hard court matches"));
 		addDimension(new PerformanceDimension("clay_matches",            100, "clay court matches"));
 		addDimension(new PerformanceDimension("grass_matches",            50, "grass court matches"));
-		addDimension(new PerformanceDimension("hard_matches",            100, "hard court matches"));
 		addDimension(new PerformanceDimension("carpet_matches",           50, "carpet court matches"));
 		// Pressure situations
 		addDimension(new PerformanceDimension("deciding_sets",           100, "matches"));

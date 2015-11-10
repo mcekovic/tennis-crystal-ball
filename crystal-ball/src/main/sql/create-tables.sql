@@ -123,6 +123,8 @@ CREATE TABLE match (
 	outcome match_outcome,
 	w_sets SMALLINT,
 	l_sets SMALLINT,
+	w_games SMALLINT,
+	l_games SMALLINT,
 	UNIQUE (tournament_event_id, match_num)
 );
 
@@ -136,8 +138,8 @@ CREATE INDEX ON match (loser_id);
 CREATE TABLE set_score (
 	match_id BIGINT NOT NULL REFERENCES match (match_id) ON DELETE CASCADE,
 	set SMALLINT NOT NULL,
-	w_gems SMALLINT NOT NULL,
-	l_gems SMALLINT NOT NULL,
+	w_games SMALLINT NOT NULL,
+	l_games SMALLINT NOT NULL,
 	w_tb_pt SMALLINT,
 	l_tb_pt SMALLINT,
 	PRIMARY KEY (match_id, set)

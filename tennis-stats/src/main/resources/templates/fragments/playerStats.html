@@ -178,11 +178,11 @@
 							<td>Total Pts. Won</td>
 							<th th:text="${#numbers.formatDecimal(stats.totalPointsWonPct, 1, 1) + '%'}">56%</th>
 						</tr>
-						<tr class="pct-data">
-							<td>Total Games Won</td>
-							<th th:text="${#numbers.formatDecimal(stats.totalGamesWonPct, 1, 1) + '%'}">58%</th>
-						</tr>
 					</th:block>
+					<tr class="pct-data">
+						<td>Total Games Won</td>
+						<th th:text="${#numbers.formatDecimal(stats.totalGamesWonPct, 1, 1) + '%'}">58%</th>
+					</tr>
 					<tr class="pct-data">
 						<td>Sets Won</td>
 						<th th:text="${#numbers.formatDecimal(stats.setsWonPct, 1, 1) + '%'}">62%</th>
@@ -197,11 +197,12 @@
 							<td>Total Pts. Won</td>
 							<th th:text="${stats.totalPointsWon + ' / ' + stats.totalPoints}">1299 / 2234</th>
 						</tr>
-						<tr class="raw-data">
-							<td>Total Games Won</td>
-							<th th:text="${stats.totalGamesWon + ' / ' + stats.totalGames}">86 / 125</th>
-						</tr>
 					</th:block>
+					<tr th:unless="${stats.hasPointStats()}" class="raw-data"></tr>
+					<tr class="raw-data">
+						<td>Total Games Won</td>
+						<th th:text="${stats.totalGamesWon + ' / ' + stats.totalGames}">86 / 125</th>
+					</tr>
 					<tr class="raw-data">
 						<td>Sets Won</td>
 						<th th:text="${stats.setsWon + ' / ' + stats.sets}">16 / 27</th>
