@@ -5,6 +5,7 @@
 			$("#goatLegend").on("shown.bs.collapse", function() {
 				initTournamentGOATPointsTable();
 				initYearEndRankGOATPointsTable();
+				initPerformanceGOATPointsTable();
 			});
 		});
 		function initTournamentGOATPointsTable() {
@@ -42,6 +43,20 @@
 				navigation: 0
 			});
 		}
+		function initPerformanceGOATPointsTable() {
+			var $goatPointsTable = $("#performanceGOATPointsTable");
+			if ($goatPointsTable.hasClass("loaded"))
+				return;
+			$goatPointsTable.addClass("loaded").bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: true
+				},
+				url: "/performanceGOATPointsTable",
+				navigation: 0
+			});
+		}
 		/*]]>*/
 	</script>
 	<br/>
@@ -68,6 +83,16 @@
 								<tr>
 									<th data-column-id="yearEndRank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Year-End Ranking</th>
 									<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+					<div class="col-md-4">
+						<table id="performanceGOATPointsTable" class="table table-condensed table-hover table-striped">
+							<thead>
+								<tr>
+									<th data-column-id="category" data-sortable="false" data-width="120">Performance Category</th>
+									<th data-column-id="goatPoints" data-sortable="false" data-width="80">Points</th>
 								</tr>
 							</thead>
 						</table>

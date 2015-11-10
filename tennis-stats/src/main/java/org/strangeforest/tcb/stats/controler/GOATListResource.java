@@ -18,6 +18,9 @@ public class GOATListResource {
 	private static Map<String, String> ORDER_MAP = new TreeMap<>();
 	static {
 		ORDER_MAP.put("goatPoints", "goat_points");
+		ORDER_MAP.put("tournamentGoatPoints", "tournament_goat_points");
+		ORDER_MAP.put("rankingGoatPoints", "ranking_goat_points");
+		ORDER_MAP.put("performanceGoatPoints", "performance_goat_points");
 		ORDER_MAP.put("grandSlams", "grand_slams");
 		ORDER_MAP.put("tourFinals", "tour_finals");
 		ORDER_MAP.put("masters", "masters");
@@ -50,5 +53,10 @@ public class GOATListResource {
 	@RequestMapping("/yearEndRankGOATPointsTable")
 	public BootgridTable<YearEndRankGOATPointsRow> yearEndRankGOATPointsTable() {
 		return goatListService.getYearEndRankGOATPointsTable();
+	}
+
+	@RequestMapping("/performanceGOATPointsTable")
+	public BootgridTable<PerformanceGOATPointsRow> performanceGOATPointsTable() {
+		return goatListService.getPerformanceGOATPointsTable();
 	}
 }

@@ -86,58 +86,6 @@ SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, go
 CREATE INDEX ON player_tournament_event_result (player_id);
 
 
--- player_season_goat_points
-
-CREATE MATERIALIZED VIEW player_season_goat_points AS
-WITH goat_points AS (
-	SELECT r.player_id, e.season, sum(goat_points) goat_points, sum(goat_points) tournament_goat_points, 0 ranking_goat_points
-	FROM player_tournament_event_result r
-	LEFT JOIN tournament_event e USING (tournament_event_id)
-	WHERE r.goat_points > 0
-	GROUP BY r.player_id, e.season
-	UNION ALL
-	SELECT r.player_id, r.season, sum(p.goat_points), 0, sum(goat_points)
-	FROM player_year_end_rank r
-	LEFT JOIN year_end_rank_goat_points p USING (year_end_rank)
-	WHERE p.goat_points > 0
-	GROUP BY r.player_id, r.season
-)
-SELECT player_id, season, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points
-FROM goat_points
-GROUP BY player_id, season;
-
-CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
-
-
--- player_goat_points
-
-CREATE MATERIALIZED VIEW player_goat_points AS
-WITH top_performers AS (
-  SELECT player_id, matches_won::real/(matches_won + matches_lost) AS won_lost_pct
-  FROM player_performance
-  WHERE matches_won + matches_lost >= 200
-), top_performers_ranked AS (
-  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
-  FROM top_performers
-), goat_points AS (
-	SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, 0 performance_goat_points
-	FROM player_season_goat_points
-	UNION ALL
-	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
-	FROM top_performers_ranked t
-	LEFT JOIN top_performers_goat_points g ON g.category = 'MatchesWonPct' AND g.rank = t.rank
-	WHERE g.goat_points > 0
-), goat_points_total AS (
-	SELECT player_id, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(performance_goat_points) performance_goat_points
-	FROM goat_points
-	GROUP BY player_id
-)
-SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, performance_goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank
-FROM goat_points_total;
-
-CREATE UNIQUE INDEX ON player_goat_points (player_id);
-
-
 -- player_titles
 
 CREATE MATERIALIZED VIEW player_titles AS
@@ -334,6 +282,214 @@ FROM player_season_stats
 GROUP BY player_id;
 
 CREATE UNIQUE INDEX ON player_stats (player_id);
+
+
+-- player_season_goat_points
+
+CREATE MATERIALIZED VIEW player_season_goat_points AS
+WITH goat_points AS (
+	SELECT r.player_id, e.season, sum(goat_points) goat_points, sum(goat_points) tournament_goat_points, 0 ranking_goat_points
+	FROM player_tournament_event_result r
+	LEFT JOIN tournament_event e USING (tournament_event_id)
+	WHERE r.goat_points > 0
+	GROUP BY r.player_id, e.season
+	UNION ALL
+	SELECT r.player_id, r.season, sum(p.goat_points), 0, sum(goat_points)
+	FROM player_year_end_rank r
+	LEFT JOIN year_end_rank_goat_points p USING (year_end_rank)
+	WHERE p.goat_points > 0
+	GROUP BY r.player_id, r.season
+)
+SELECT player_id, season, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points
+FROM goat_points
+GROUP BY player_id, season;
+
+CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
+
+
+-- player_goat_points
+
+CREATE MATERIALIZED VIEW player_goat_points AS
+WITH matches_performers AS (
+  SELECT player_id, matches_won::real/(matches_won + matches_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE matches_won + matches_lost >= 200
+), matches_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM matches_performers
+), grand_slam_matches_performers AS (
+  SELECT player_id, grand_slam_matches_won::real/(grand_slam_matches_won + grand_slam_matches_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE grand_slam_matches_won + grand_slam_matches_lost >= 50
+), grand_slam_matches_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM grand_slam_matches_performers
+), masters_matches_performers AS (
+  SELECT player_id, masters_matches_won::real/(masters_matches_won + masters_matches_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE masters_matches_won + masters_matches_lost >= 50
+), masters_matches_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM masters_matches_performers
+), hard_matches_performers AS (
+  SELECT player_id, hard_matches_won::real/(hard_matches_won + hard_matches_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE hard_matches_won + hard_matches_lost >= 100
+), hard_matches_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM hard_matches_performers
+), clay_matches_performers AS (
+  SELECT player_id, clay_matches_won::real/(clay_matches_won + clay_matches_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE clay_matches_won + clay_matches_lost >= 100
+), clay_matches_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM clay_matches_performers
+), grass_matches_performers AS (
+  SELECT player_id, grass_matches_won::real/(grass_matches_won + grass_matches_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE grass_matches_won + grass_matches_lost >= 50
+), grass_matches_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM grass_matches_performers
+), carpet_matches_performers AS (
+  SELECT player_id, carpet_matches_won::real/(carpet_matches_won + carpet_matches_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE carpet_matches_won + carpet_matches_lost >= 50
+), carpet_matches_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM carpet_matches_performers
+), deciding_sets_performers AS (
+  SELECT player_id, deciding_sets_won::real/(deciding_sets_won + deciding_sets_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE deciding_sets_won + deciding_sets_lost >= 100
+), deciding_sets_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM deciding_sets_performers
+), fifth_sets_performers AS (
+  SELECT player_id, fifth_sets_won::real/(fifth_sets_won + fifth_sets_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE fifth_sets_won + fifth_sets_lost >= 20
+), fifth_sets_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM fifth_sets_performers
+), finals_performers AS (
+  SELECT player_id, finals_won::real/(finals_won + finals_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE finals_won + finals_lost >= 20
+), finals_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM finals_performers
+), vs_top10_performers AS (
+  SELECT player_id, vs_top10_won::real/(vs_top10_won + vs_top10_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE vs_top10_won + vs_top10_lost >= 20
+), vs_top10_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM vs_top10_performers
+), after_winning_first_set_performers AS (
+  SELECT player_id, after_winning_first_set_won::real/(after_winning_first_set_won + after_winning_first_set_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE after_winning_first_set_won + after_winning_first_set_lost >= 100
+), after_winning_first_set_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM after_winning_first_set_performers
+), after_losing_first_set_performers AS (
+  SELECT player_id, after_losing_first_set_won::real/(after_losing_first_set_won + after_losing_first_set_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE after_losing_first_set_won + after_losing_first_set_lost >= 100
+), after_losing_first_set_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM after_losing_first_set_performers
+), tie_breaks_performers AS (
+  SELECT player_id, tie_breaks_won::real/(tie_breaks_won + tie_breaks_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE tie_breaks_won + tie_breaks_lost >= 100
+), tie_breaks_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM tie_breaks_performers
+), goat_points AS (
+	SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, 0 performance_goat_points
+	FROM player_season_goat_points
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM matches_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'matches' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM grand_slam_matches_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'grand_slam_matches' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM masters_matches_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'masters_matches' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM hard_matches_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'hard_matches' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM clay_matches_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'clay_matches' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM grass_matches_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'grass_matches' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM carpet_matches_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'carpet_matches' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM deciding_sets_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'deciding_sets' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM fifth_sets_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'fifth_sets' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM finals_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'finals' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM vs_top10_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'vs_top10' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM after_winning_first_set_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'after_winning_first_set' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM after_losing_first_set_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'after_losing_first_set' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM tie_breaks_performers_ranked t
+	LEFT JOIN performance_goat_points g ON g.category = 'tie_breaks' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+), goat_points_total AS (
+	SELECT player_id, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(performance_goat_points) performance_goat_points
+	FROM goat_points
+	GROUP BY player_id
+)
+SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, performance_goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank
+FROM goat_points_total;
+
+CREATE UNIQUE INDEX ON player_goat_points (player_id);
 
 
 -- player_v

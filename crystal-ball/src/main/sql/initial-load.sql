@@ -52,18 +52,61 @@ INSERT INTO year_end_rank_goat_points
 (year_end_rank, goat_points)
 VALUES
 (1, 8),
-(2, 4),
-(3, 2),
-(4, 1);
+(2, 5),
+(3, 3),
+(4, 2),
+(5, 1);
 
-DELETE FROM top_performers_goat_points;
-INSERT INTO top_performers_goat_points
-(category , rank, goat_points)
+DELETE FROM performance_goat_points;
+INSERT INTO performance_goat_points
+(category , rank, goat_points, sort_order)
 VALUES
-('MatchesWonPct', 1, 8),
-('MatchesWonPct', 2, 4),
-('MatchesWonPct', 3, 2),
-('MatchesWonPct', 4, 1);
+('matches', 1, 8, 1),
+('matches', 2, 5, 1),
+('matches', 3, 3, 1),
+('matches', 4, 2, 1),
+('matches', 5, 1, 1),
+('grand_slam_matches', 1, 4, 2),
+('grand_slam_matches', 2, 2, 2),
+('grand_slam_matches', 3, 1, 2),
+('masters_matches', 1, 4, 3),
+('masters_matches', 2, 2, 3),
+('masters_matches', 3, 1, 3),
+('hard_matches', 1, 4, 4),
+('hard_matches', 2, 2, 4),
+('hard_matches', 3, 1, 4),
+('clay_matches', 1, 4, 5),
+('clay_matches', 2, 2, 5),
+('clay_matches', 3, 1, 5),
+('grass_matches', 1, 4, 6),
+('grass_matches', 2, 2, 6),
+('grass_matches', 3, 1, 6),
+('carpet_matches', 1, 4, 7),
+('carpet_matches', 2, 2, 7),
+('carpet_matches', 3, 1, 7),
+('deciding_sets', 1, 4, 8),
+('deciding_sets', 2, 2, 8),
+('deciding_sets', 3, 1, 8),
+('fifth_sets', 1, 4, 9),
+('fifth_sets', 2, 2, 9),
+('fifth_sets', 3, 1, 9),
+('finals', 1, 4, 10),
+('finals', 2, 2, 10),
+('finals', 3, 1, 10),
+('vs_top10', 1, 8, 11),
+('vs_top10', 2, 5, 11),
+('vs_top10', 3, 3, 11),
+('vs_top10', 4, 2, 11),
+('vs_top10', 5, 1, 11),
+('after_winning_first_set', 1, 4, 12),
+('after_winning_first_set', 2, 2, 12),
+('after_winning_first_set', 3, 1, 12),
+('after_losing_first_set', 1, 4, 13),
+('after_losing_first_set', 2, 2, 13),
+('after_losing_first_set', 3, 1, 13),
+('tie_breaks', 1, 4, 14),
+('tie_breaks', 2, 2, 14),
+('tie_breaks', 3, 1, 14);
 
 COMMIT;
 

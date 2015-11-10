@@ -12,6 +12,9 @@ CREATE TABLE tournament (
 	rank_points INTEGER
 );
 
+CREATE INDEX ON tournament (level);
+CREATE INDEX ON tournament (surface);
+
 
 -- tournament_mapping
 
@@ -214,11 +217,12 @@ CREATE TABLE year_end_rank_goat_points (
 );
 
 
--- top_performers_goat_points
+-- performance_goat_points
 
-CREATE TABLE top_performers_goat_points (
+CREATE TABLE performance_goat_points (
 	category TEXT NOT NULL,
 	rank INTEGER NOT NULL,
 	goat_points INTEGER NOT NULL,
+	sort_order INTEGER NOT NULL,
 	PRIMARY KEY (category, rank)
 );
