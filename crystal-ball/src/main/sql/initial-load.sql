@@ -56,5 +56,14 @@ VALUES
 (3, 2),
 (4, 1);
 
+DELETE FROM top_performers_goat_points;
+INSERT INTO top_performers_goat_points
+(category , rank, goat_points)
+VALUES
+('MatchesWonPct', 1, 8),
+('MatchesWonPct', 2, 4),
+('MatchesWonPct', 3, 2),
+('MatchesWonPct', 4, 1);
+
 COMMIT;
 

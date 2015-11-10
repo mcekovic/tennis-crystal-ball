@@ -212,3 +212,13 @@ CREATE TABLE year_end_rank_goat_points (
 	goat_points INTEGER NOT NULL,
 	PRIMARY KEY (year_end_rank, goat_points)
 );
+
+
+-- top_performers_goat_points
+
+CREATE TABLE top_performers_goat_points (
+	category TEXT NOT NULL,
+	rank INTEGER NOT NULL,
+	goat_points INTEGER NOT NULL,
+	PRIMARY KEY (category, rank)
+);

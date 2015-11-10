@@ -90,18 +90,19 @@ CREATE INDEX ON player_tournament_event_result (player_id);
 
 CREATE MATERIALIZED VIEW player_season_goat_points AS
 WITH goat_points AS (
-	SELECT r.player_id, e.season, sum(goat_points) goat_points
+	SELECT r.player_id, e.season, sum(goat_points) goat_points, sum(goat_points) tournament_goat_points, 0 ranking_goat_points
 	FROM player_tournament_event_result r
 	LEFT JOIN tournament_event e USING (tournament_event_id)
 	WHERE r.goat_points > 0
 	GROUP BY r.player_id, e.season
 	UNION ALL
-	SELECT r.player_id, r.season, sum(p.goat_points) goat_points FROM player_year_end_rank r
+	SELECT r.player_id, r.season, sum(p.goat_points), 0, sum(goat_points)
+	FROM player_year_end_rank r
 	LEFT JOIN year_end_rank_goat_points p USING (year_end_rank)
 	WHERE p.goat_points > 0
 	GROUP BY r.player_id, r.season
 )
-SELECT player_id, season, sum(goat_points) goat_points
+SELECT player_id, season, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points
 FROM goat_points
 GROUP BY player_id, season;
 
@@ -111,13 +112,28 @@ CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
 -- player_goat_points
 
 CREATE MATERIALIZED VIEW player_goat_points AS
-WITH goat_points AS (
-	SELECT player_id, sum(goat_points) goat_points
+WITH top_performers AS (
+  SELECT player_id, matches_won::real/(matches_won + matches_lost) AS won_lost_pct
+  FROM player_performance
+  WHERE matches_won + matches_lost >= 200
+), top_performers_ranked AS (
+  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+  FROM top_performers
+), goat_points AS (
+	SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, 0 performance_goat_points
 	FROM player_season_goat_points
+	UNION ALL
+	SELECT t.player_id, g.goat_points, 0, 0, g.goat_points
+	FROM top_performers_ranked t
+	LEFT JOIN top_performers_goat_points g ON g.category = 'MatchesWonPct' AND g.rank = t.rank
+	WHERE g.goat_points > 0
+), goat_points_total AS (
+	SELECT player_id, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(performance_goat_points) performance_goat_points
+	FROM goat_points
 	GROUP BY player_id
 )
-SELECT player_id, goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank
-FROM goat_points;
+SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, performance_goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank
+FROM goat_points_total;
 
 CREATE UNIQUE INDEX ON player_goat_points (player_id);
 
