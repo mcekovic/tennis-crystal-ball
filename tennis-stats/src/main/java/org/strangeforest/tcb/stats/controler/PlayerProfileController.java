@@ -16,6 +16,7 @@ public class PlayerProfileController extends BaseController {
 	@Autowired private PlayerService playerService;
 	@Autowired private TournamentService tournamentService;
 	@Autowired private PlayerTimelineService timelineService;
+	@Autowired private StatisticsService statisticsService;
 
 	@RequestMapping("/playerProfile")
 	public ModelAndView playerProfile(
@@ -68,5 +69,51 @@ public class PlayerProfileController extends BaseController {
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("timeline", timeline);
 		return new ModelAndView("playerTimeline", modelMap);
+	}
+
+	@RequestMapping("/playerPerformance")
+	public ModelAndView playerPerformance(
+		@RequestParam(value = "playerId") int playerId,
+		@RequestParam(value = "season", required = false) Integer season
+	) {
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		PlayerPerformance perf = season == null
+			? statisticsService.getPlayerPerformance(playerId)
+			: statisticsService.getPlayerSeasonPerformance(playerId, season);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("perf", perf);
+		return new ModelAndView("playerPerformance", modelMap);
+	}
+
+	@RequestMapping("/playerStatsTab")
+	public ModelAndView playerStatsTab(
+		@RequestParam(value = "playerId") int playerId,
+		@RequestParam(value = "season", required = false) Integer season,
+		@RequestParam(value = "surface", required = false) String surface
+	) {
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		PlayerStats stats;
+		if (season != null) {
+			stats = surface != null
+				? statisticsService.getPlayerSeasonSurfaceStats(playerId, season, surface)
+				: statisticsService.getPlayerSeasonStats(playerId, season);
+		}
+		else {
+			stats = surface != null
+				? statisticsService.getPlayerSurfaceStats(playerId, surface)
+				: statisticsService.getPlayerStats(playerId);
+		}
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("stats", stats);
+		return new ModelAndView("playerStatsTab", modelMap);
 	}
 }

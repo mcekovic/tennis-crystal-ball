@@ -19,22 +19,6 @@ public class PlayerStatsController {
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerTimelineService timelineService;
 
-	@RequestMapping("/playerStatsTab")
-	public ModelAndView playerStatsTab(
-		@RequestParam(value = "playerId") int playerId
-	) {
-		PlayerStats stats = statisticsService.getPlayerStats(playerId);
-		return new ModelAndView("playerStatsTab", "stats", stats);
-	}
-
-	@RequestMapping("/playerPerformance")
-	public ModelAndView playerPerformance(
-		@RequestParam(value = "playerId") int playerId
-	) {
-		PlayerPerformance perf = statisticsService.getPlayerPerformance(playerId);
-		return new ModelAndView("playerPerformance", "perf", perf);
-	}
-
 	@RequestMapping("/eventStats")
 	public ModelAndView eventStats(
 		@RequestParam(value = "playerId") int playerId,

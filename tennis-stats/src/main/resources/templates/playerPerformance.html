@@ -1,13 +1,32 @@
+<th:block  xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
+<!--@thymesVar id="season" type="java.lang.Integer"-->
+<!--@thymesVar id="perf" type="org.strangeforest.tcb.stats.model.PlayerPerformance"-->
+<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+	$(function() {
+		$("#playerPerformance").find(".raw-data").hide();
+	});
+	function reloadPerformance() {
+		var url = "playerPerformance?playerId=[[${playerId}]]";
+		var season = $("#perfSeason").val();
+		if (season != "")
+			url += "&season=" + season;
+		$("#performance").load(url);
+	}
+	/*]]>*/
+</script>
 <br/>
-<div id="playerPerformance" xmlns:th="http://www.thymeleaf.org">
-	<!--@thymesVar id="perf" type="org.strangeforest.tcb.stats.model.PlayerPerformance"-->
-	<script type="text/javascript">
-		/*<![CDATA[*/
-		$(function() {
-			$("#playerPerformance").find(".raw-data").hide();
-		});
-		/*]]>*/
-	</script>
+<div class="row">
+	<div class="col-md-2">
+		<select id="perfSeason" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Select season">
+			<option value="">All seasons</option>
+			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
+		</select>
+	</div>
+</div>
+<br/>
+<div id="playerPerformance">
 	<div th:unless="${perf.empty}" class="row text-nowrap">
 		<div class="col-md-3">
 			<table class="table table-condensed table-hover table-striped">
@@ -156,3 +175,4 @@
 	</div>
 	<th:block th:if="${perf.empty}"><p>No performance data available</p></th:block>
 </div>
+</th:block>

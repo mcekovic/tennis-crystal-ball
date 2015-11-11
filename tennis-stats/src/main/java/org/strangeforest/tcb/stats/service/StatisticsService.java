@@ -35,6 +35,21 @@ public class StatisticsService {
 		"FROM player_stats\n" +
 		"WHERE player_id = ?";
 
+	private static final String PLAYER_SEASON_STATS_QUERY =
+		"SELECT " + PLAYER_STATS_COLUMNS +
+		"FROM player_season_stats\n" +
+		"WHERE player_id = ? AND season = ?";
+
+	private static final String PLAYER_SURFACE_STATS_QUERY =
+		"SELECT " + PLAYER_STATS_COLUMNS +
+		"FROM player_surface_stats\n" +
+		"WHERE player_id = ? AND surface = ?::surface";
+
+	private static final String PLAYER_SEASON_SURFACE_STATS_QUERY =
+		"SELECT " + PLAYER_STATS_COLUMNS +
+		"FROM player_season_surface_stats\n" +
+		"WHERE player_id = ? AND season = ? AND surface = ?::surface";
+
 	private static final String PLAYER_STATS_SUMMED_COLUMNS =
 		"sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,\n" +
 		"sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,\n" +
@@ -64,6 +79,11 @@ public class StatisticsService {
 		"SELECT " + PLAYER_PERFORMANCE_COLUMNS +
 		"FROM player_performance\n" +
 		"WHERE player_id = ?";
+
+	private static final String PLAYER_SEASON_PERFORMANCE_QUERY =
+		"SELECT " + PLAYER_PERFORMANCE_COLUMNS +
+		"FROM player_season_performance\n" +
+		"WHERE player_id = ? AND season = ?";
 
 	private static final String PLAYER_SEASONS_PERFORMANCE_QUERY =
 		"SELECT season, " + PLAYER_PERFORMANCE_COLUMNS +
@@ -99,6 +119,30 @@ public class StatisticsService {
 			PLAYER_STATS_QUERY,
 			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY,
 			playerId
+		);
+	}
+
+	public PlayerStats getPlayerSeasonStats(int playerId, int season) {
+		return jdbcTemplate.query(
+			PLAYER_SEASON_STATS_QUERY,
+			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY,
+			playerId, season
+		);
+	}
+
+	public PlayerStats getPlayerSurfaceStats(int playerId, String surface) {
+		return jdbcTemplate.query(
+			PLAYER_SURFACE_STATS_QUERY,
+			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY,
+			playerId, surface
+		);
+	}
+
+	public PlayerStats getPlayerSeasonSurfaceStats(int playerId, Integer season, String surface) {
+		return jdbcTemplate.query(
+			PLAYER_SEASON_SURFACE_STATS_QUERY,
+			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY,
+			playerId, season, surface
 		);
 	}
 
@@ -172,6 +216,14 @@ public class StatisticsService {
 			PLAYER_PERFORMANCE_QUERY,
 			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY,
 			playerId
+		);
+	}
+
+	public PlayerPerformance getPlayerSeasonPerformance(int playerId, int season) {
+		return jdbcTemplate.query(
+			PLAYER_SEASON_PERFORMANCE_QUERY,
+			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY,
+			playerId, season
 		);
 	}
 

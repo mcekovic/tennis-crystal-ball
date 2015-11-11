@@ -1,4 +1,39 @@
+<th:block  xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
+<!--@thymesVar id="season" type="java.lang.Integer"-->
+<!--@thymesVar id="surface" type="java.lang.String"-->
+<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+	function reloadStats() {
+		var url = "playerStatsTab?playerId=[[${playerId}]]";
+		var season = $("#statsSeason").val();
+		if (season != "")
+			url += "&season=" + season;
+		var surface = $("#statsSurface").val();
+		if (surface != "")
+			url += "&surface=" + surface;
+		$("#statistics").load(url);
+	}
+	/*]]>*/
+</script>
 <br/>
-<div xmlns:th="http://www.thymeleaf.org"
-     th:include="fragments/playerStats :: playerStats(elementId='playerStatsTab', popover=false, buttonId=null)">
+<div class="row">
+	<div class="col-md-2">
+		<select id="statsSeason" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Select season">
+			<option value="">All seasons</option>
+			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<select id="statsSurface" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Select surface">
+			<option value="">All surfaces</option>
+			<option value="H" class="bg-surface-H" th:selected="${surface == 'H'}">Hard</option>
+			<option value="C" class="bg-surface-C" th:selected="${surface == 'C'}">Clay</option>
+			<option value="G" class="bg-surface-G" th:selected="${surface == 'G'}">Grass</option>
+			<option value="P" class="bg-surface-P" th:selected="${surface == 'P'}">Carpet</option>
+		</select>
+	</div>
 </div>
+<br/>
+<div th:include="fragments/playerStats :: playerStats(elementId='playerStatsTab', popover=false, buttonId=null)"></div>
+</th:block>
