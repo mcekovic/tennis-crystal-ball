@@ -6,7 +6,7 @@
 		</div>
 		<div style="display: flex; flex-direction: column; margin: 10px 10px">
 			<div style="font-size: small; font-style: italic">Technology Preview</div>
-			<div style="font-size: small; font-style: italic" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}">Last data update: 21-09-2015</div>
+			<div th:if="${lastDataUpdate}" style="font-size: small; font-style: italic" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}">Last data update: 21-09-2015</div>
 		</div>
 	</div>
 </header>

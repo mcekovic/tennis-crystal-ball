@@ -13,6 +13,21 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- find_player
+
+CREATE OR REPLACE FUNCTION find_player(
+	p_name TEXT
+) RETURNS INTEGER AS $$
+DECLARE
+	l_player_id INTEGER;
+BEGIN
+	SELECT player_id INTO l_player_id FROM player_v
+	WHERE name = p_name;
+	RETURN l_player_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- load_player
 
 CREATE OR REPLACE FUNCTION load_player(
@@ -325,8 +340,36 @@ BEGIN
 	);
 
 	-- find players
-	l_winner_id = map_ext_player(p_ext_winner_id);
-	l_loser_id = map_ext_player(p_ext_loser_id);
+	IF p_ext_winner_id IS NOT NULL THEN
+		l_winner_id = map_ext_player(p_ext_winner_id);
+	ELSE
+		l_winner_id = find_player(p_winner_name);
+	END IF;
+	IF p_ext_loser_id IS NOT NULL THEN
+		l_loser_id = map_ext_player(p_ext_loser_id);
+	ELSE
+		l_loser_id = find_player(p_loser_name);
+	END IF;
+
+	-- add data if missing
+	IF p_winner_country_id IS NULL THEN
+		SELECT country_id INTO p_winner_country_id FROM player WHERE player_id = l_winner_id;
+	END IF;
+	IF p_loser_country_id IS NULL THEN
+		SELECT country_id INTO p_loser_country_id FROM player WHERE player_id = l_loser_id;
+	END IF;
+	IF p_winner_age IS NULL THEN
+		SELECT (p_tournament_date - dob)/365.2425 INTO p_winner_age FROM player WHERE player_id = l_winner_id;
+	END IF;
+	IF p_loser_age IS NULL THEN
+		SELECT (p_tournament_date - dob)/365.2425 INTO p_loser_age FROM player WHERE player_id = l_loser_id;
+	END IF;
+	IF p_winner_height IS NULL THEN
+		SELECT height INTO p_winner_height FROM player WHERE player_id = l_winner_id;
+	END IF;
+	IF p_loser_height IS NULL THEN
+		SELECT height INTO p_loser_height FROM player WHERE player_id = l_loser_id;
+	END IF;
 
 	-- merge match
 	BEGIN
