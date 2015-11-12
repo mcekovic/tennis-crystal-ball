@@ -25,7 +25,7 @@ abstract class BaseCSVLoader {
 	int threadCount() { Integer.MAX_VALUE }
 	abstract String loadSql()
 	abstract int batchSize()
-	abstract Map params(line, conn)
+	abstract Map params(record, conn)
 
 	def loadFile(String file) {
 		println "Loading file '$file'"
@@ -34,11 +34,22 @@ abstract class BaseCSVLoader {
 		def csvParams = columnNames ? [columnNames: columnNames, readFirstLine: true] : [:]
 		def data = CsvParser.parseCsv(csvParams, new FileReader(file))
 		int rows = load(data)
+		printLoadInfo(t0, rows)
+		return rows
+	}
+
+	def load(Iterable data) {
+		def t0 = System.currentTimeMillis()
+		int rows = load(data.iterator())
+		printLoadInfo(t0, rows)
+		return rows
+	}
+
+	def static printLoadInfo(long t0, int rows) {
 		println ''
 		def seconds = (System.currentTimeMillis() - t0) / 1000.0
-		int rowsPerSecond = rows/seconds
+		int rowsPerSecond = rows / seconds
 		println "Rows: $rows in $seconds s ($rowsPerSecond row/s)"
-		return rows
 	}
 
 	def load(Iterator data) {
@@ -51,8 +62,8 @@ abstract class BaseCSVLoader {
 		try {
 			def executor = Executors.newFixedThreadPool(Math.min(sqlPool.size(), threadCount()))
 			def paramsConn = paramsSql.connection
-			for (line in data) {
-				paramsBatch.add params(line, paramsConn)
+			for (record in data) {
+				paramsBatch.add params(record, paramsConn)
 				if (++rows % batchSize == 0) {
 					execute(executor, loadSql, paramsBatch, batches)
 					paramsBatch = []

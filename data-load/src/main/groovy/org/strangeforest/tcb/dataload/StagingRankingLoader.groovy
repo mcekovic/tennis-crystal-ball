@@ -20,12 +20,12 @@ class StagingRankingLoader extends BaseCSVLoader {
 
 	int batchSize() { 500 }
 
-	Map params(line, conn) {
+	Map params(record, conn) {
 		def params = [:]
-		params.rank_date = date line.rank_date
-		params.rank = integer line.rank
-		params.player_id = integer line.player_id
-		params.rank_points = integer line.rank_points
+		params.rank_date = date record.rank_date
+		params.rank = integer record.rank
+		params.player_id = integer record.player_id
+		params.rank_points = integer record.rank_points
 		return params
 	}
 }

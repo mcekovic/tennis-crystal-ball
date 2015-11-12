@@ -26,63 +26,63 @@ class MatchLoader extends BaseCSVLoader {
 
 	int batchSize() { 100 }
 
-	Map params(line, conn) {
+	Map params(record, conn) {
 		def params = [:]
 
-		def tourneyId = string line.tourney_id
+		def tourneyId = string record.tourney_id
 		if (tourneyId[4] != '-')
 			throw new IllegalArgumentException("Invalid tourney_id: $tourneyId")
 		def extTourneyId = string(tourneyId.substring(5))
-		def level = string line.tourney_level
-		def name = string line.tourney_name
+		def level = string record.tourney_level
+		def name = string record.tourney_name
 		def dcInfo = level == 'D' ? extractDCTournamentInfo(name) : null;
 		def season = smallint(tourneyId.substring(0, 4))
 		params.season = season
-		params.tournament_date = date line.tourney_date
+		params.tournament_date = date record.tourney_date
 
 
 		def eventName = level != 'D' ? name : dcInfo.name
 		params.tournament_name = level != 'O' ? eventName : 'Olympics'
 		params.event_name = eventName
-		def drawSize = smallint line.draw_size
+		def drawSize = smallint record.draw_size
 		def mappedLevel = mapLevel(level, drawSize, name, season, extTourneyId)
 		params.ext_tournament_id = mapExtTournamentId(extTourneyId, mappedLevel, dcInfo)
 		params.tournament_level = mappedLevel
-		def surface = string line.surface
+		def surface = string record.surface
 		params.surface = mapSurface surface
 		params.indoor = mapIndoor surface
 		params.draw_size = drawSize
 		params.rank_points = mapRankPoints mappedLevel
 
-		def matchNum = line.match_num
+		def matchNum = record.match_num
 		params.match_num = level != 'D' ? smallint(matchNum) : smallint(dcMatchNum(extTourneyId, matchNum))
-		def round = string line.round
+		def round = string record.round
 		params.round = level != 'D' ? mapRound(round) : dcInfo.round
-		params.best_of = smallint line.best_of
+		params.best_of = smallint record.best_of
 
-		params.ext_winner_id = integer line.winner_id
-		params.winner_seed = smallint line.winner_seed
-		params.winner_entry = mapEntry(string(line.winner_entry))
-		params.winner_rank = integer line.winner_rank
-		params.winner_rank_points = integer line.winner_rank_points
-		params.winner_age = real line.winner_age
-		params.winner_country_id = country line.winner_ioc
-		params.winner_name = string line.winner_name
-		params.winner_height = smallint line.winner_ht
-		params.winner_hand = hand line.winner_hand
+		params.ext_winner_id = integer record.winner_id
+		params.winner_seed = smallint record.winner_seed
+		params.winner_entry = mapEntry(string(record.winner_entry))
+		params.winner_rank = integer record.winner_rank
+		params.winner_rank_points = integer record.winner_rank_points
+		params.winner_age = real record.winner_age
+		params.winner_country_id = country record.winner_ioc
+		params.winner_name = string record.winner_name
+		params.winner_height = smallint record.winner_ht
+		params.winner_hand = hand record.winner_hand
 		
-		params.ext_loser_id = integer line.loser_id
-		params.loser_seed = smallint line.loser_seed
-		params.loser_entry = mapEntry(string(line.loser_entry))
-		params.loser_rank = integer line.loser_rank
-		params.loser_rank_points = integer line.loser_rank_points
-		params.loser_age = real line.loser_age
-		params.loser_country_id = country line.loser_ioc
-		params.loser_name = string line.loser_name
-		params.loser_height = smallint line.loser_ht
-		params.loser_hand = hand line.loser_hand
+		params.ext_loser_id = integer record.loser_id
+		params.loser_seed = smallint record.loser_seed
+		params.loser_entry = mapEntry(string(record.loser_entry))
+		params.loser_rank = integer record.loser_rank
+		params.loser_rank_points = integer record.loser_rank_points
+		params.loser_age = real record.loser_age
+		params.loser_country_id = country record.loser_ioc
+		params.loser_name = string record.loser_name
+		params.loser_height = smallint record.loser_ht
+		params.loser_hand = hand record.loser_hand
 
-		def score = line.score.trim()
+		def score = record.score.trim()
 		def matchScore = MatchScore.parse(score)
 		params.score = string score
 		params.outcome = matchScore?.outcome
@@ -95,27 +95,27 @@ class MatchLoader extends BaseCSVLoader {
 		params.w_set_tb_pt = matchScore ? shortArray(conn, matchScore.w_set_tb_pt) : null
 		params.l_set_tb_pt = matchScore ? shortArray(conn, matchScore.l_set_tb_pt) : null
 
-		params.minutes = smallint line.minutes
+		params.minutes = smallint record.minutes
 
-		params.w_ace = smallint line.w_ace
-		params.w_df = smallint line.w_df
-		params.w_sv_pt = smallint line.w_svpt
-		params.w_1st_in = smallint line.w_1stIn
-		params.w_1st_won = smallint line.w_1stWon
-		params.w_2nd_won = smallint line.w_2ndWon
-		params.w_sv_gms = smallint line.w_SvGms
-		params.w_bp_sv = smallint line.w_bpSaved
-		params.w_bp_fc = smallint line.w_bpFaced
+		params.w_ace = smallint record.w_ace
+		params.w_df = smallint record.w_df
+		params.w_sv_pt = smallint record.w_svpt
+		params.w_1st_in = smallint record.w_1stIn
+		params.w_1st_won = smallint record.w_1stWon
+		params.w_2nd_won = smallint record.w_2ndWon
+		params.w_sv_gms = smallint record.w_SvGms
+		params.w_bp_sv = smallint record.w_bpSaved
+		params.w_bp_fc = smallint record.w_bpFaced
 
-		params.l_ace = smallint line.l_ace
-		params.l_df = smallint line.l_df
-		params.l_sv_pt = smallint line.l_svpt
-		params.l_1st_in = smallint line.l_1stIn
-		params.l_1st_won = smallint line.l_1stWon
-		params.l_2nd_won = smallint line.l_2ndWon
-		params.l_sv_gms = smallint line.l_SvGms
-		params.l_bp_sv = smallint line.l_bpSaved
-		params.l_bp_fc = smallint line.l_bpFaced
+		params.l_ace = smallint record.l_ace
+		params.l_df = smallint record.l_df
+		params.l_sv_pt = smallint record.l_svpt
+		params.l_1st_in = smallint record.l_1stIn
+		params.l_1st_won = smallint record.l_1stWon
+		params.l_2nd_won = smallint record.l_2ndWon
+		params.l_sv_gms = smallint record.l_SvGms
+		params.l_bp_sv = smallint record.l_bpSaved
+		params.l_bp_fc = smallint record.l_bpFaced
 		return params
 	}
 

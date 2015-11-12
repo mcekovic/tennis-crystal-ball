@@ -20,14 +20,14 @@ class StagingPlayerLoader extends BaseCSVLoader {
 
 	int batchSize() { 500 }
 
-	Map params(line, conn) {
+	Map params(record, conn) {
 		def params = [:]
-		params.player_id = integer line.player_id
-		params.first_name = line.first_name
-		params.last_name = line.last_name
-		params.hand = line.hand
-		params.dob = date line.dob
-		params.country = line.country
+		params.player_id = integer record.player_id
+		params.first_name = record.first_name
+		params.last_name = record.last_name
+		params.hand = record.hand
+		params.dob = date record.dob
+		params.country = record.country
 		return params
 	}
 }
