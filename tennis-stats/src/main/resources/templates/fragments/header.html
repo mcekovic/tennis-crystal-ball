@@ -5,8 +5,9 @@
 			<h1><a href="/">Ultimate Tennis Statistics</a></h1>
 		</div>
 		<div style="display: flex; flex-direction: column; margin: 10px 10px">
-			<div style="font-size: small; font-style: italic">Technology Preview</div>
-			<div th:if="${lastDataUpdate}" style="font-size: small; font-style: italic" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}">Last data update: 21-09-2015</div>
+			<div class="note" style="color: #337ab7">Technology Preview</div>
+			<div th:if="${lastDataUpdate}" class="note" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}">Last data update: 21-09-2015</div>
+			<div class="note" style="color: #d9534f">Work in progress - please be patient</div>
 		</div>
 	</div>
 </header>
