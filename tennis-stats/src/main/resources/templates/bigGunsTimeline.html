@@ -15,8 +15,18 @@
 	<script th:src="@{js/formatters.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
+		String.prototype.endsWith = function (s) {
+			return this.length >= s.length && this.substr(this.length - s.length) == s;
+		};
 		$(function() {
-			$("span.best-player").css({top: '-=42px'});
+			// Correct position
+			$("span.best-player").each(function() {
+				var $bestPlayer = $(this);
+				var top = $bestPlayer[0].getBoundingClientRect().top.toString();
+				if (top.endsWith("px"))
+					top = top.substr(0, top.length - 2);
+				$bestPlayer.css({top: (top - 62) + "px"});
+			})
 		});
 		/*]]>*/
 	</script>

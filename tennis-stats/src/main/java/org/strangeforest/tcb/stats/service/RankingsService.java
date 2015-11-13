@@ -83,7 +83,7 @@ public class RankingsService {
 			else
 				table.addColumn("date", "Date");
 			for (String player : players.getPlayers())
-				table.addColumn("number", player + " ATP " + getRankName(rankType));
+				table.addColumn("number", player + " " + getRankName(rankType));
 		}
 		else {
 			table.addColumn("string", "Player");
