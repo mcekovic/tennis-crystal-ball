@@ -43,34 +43,15 @@
 					dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
 				var $loading = $("#loading");
 				$loading.show();
-				var jsonData = $.ajax({
-					url: dataUrl,
-					dataType: "json",
-					async: false
-				}).responseText;
-				var json = $.parseJSON(jsonData);
-				switch (json.status) {
-					case 400:
-						alert(json.message);
-						break;
-					default:
-						chartData = new google.visualization.DataTable(jsonData);
-						logScale = useLogScale(json);
-						break;
-				}
-				$loading.hide().css("position", "absolute").css("z-index", "100");
+				$.ajax(dataUrl).done(function(json) {
+					chartData = new google.visualization.DataTable(JSON.stringify(json));
+					logScale = useLogScale(json);
+					showChart(width);
+					$loading.hide().css("position", "absolute").css("z-index", "100");
+				});
 			}
-			if (chartData != undefined) {
-				var points = rankType != "RANK";
-				var options = {
-					width: width,
-					height: width / 2,
-					chartArea: {left: 50, top: 20, height: "80%"},
-					vAxis: {direction: points ? 1 : -1, viewWindow: {min: points ? undefined : 1}, logScale: points ? false : logScale}
-				};
-				var chart = new google.visualization.LineChart(document.getElementById("rankChart"));
-				chart.draw(chartData, options);
-			}
+			else
+				showChart(width);
 		}
 		function useLogScale(json) {
 			var min = Number.MAX_VALUE;
@@ -86,6 +67,19 @@
 				}
 			}
 			return max - min >= 50;
+		}
+		function showChart(width) {
+			if (chartData != undefined) {
+				var points = rankType != "RANK";
+				var options = {
+					width: width,
+					height: width / 2,
+					chartArea: {left: 50, top: 20, height: "80%"},
+					vAxis: {direction: points ? 1 : -1, viewWindow: {min: points ? undefined : 1}, logScale: points ? false : logScale}
+				};
+				var chart = new google.visualization.LineChart(document.getElementById("rankChart"));
+				chart.draw(chartData, options);
+			}
 		}
 		function onTimeSpanChange() {
 			var timeSpan = $("#timeSpan").val();
