@@ -23,7 +23,7 @@ public class BigGunsSeason {
 	}
 
 	public int getDominanceRatioRounded() {
-		return (int)(10L*(Math.round(getDominanceRatio())/10L));
+		return BigGunsTimeline.roundDominanceRatio(getDominanceRatio());
 	}
 
 	public BigGunsPlayerTimeline getBestPlayer() {

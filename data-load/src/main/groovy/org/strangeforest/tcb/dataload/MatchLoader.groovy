@@ -40,13 +40,12 @@ class MatchLoader extends BaseCSVLoader {
 		params.season = season
 		params.tournament_date = date record.tourney_date
 
-
-		def eventName = level != 'D' ? name : dcInfo.name
-		params.tournament_name = level != 'O' ? eventName : 'Olympics'
-		params.event_name = eventName
 		def drawSize = smallint record.draw_size
 		def mappedLevel = mapLevel(level, drawSize, name, season, extTourneyId)
 		params.ext_tournament_id = mapExtTournamentId(extTourneyId, mappedLevel, dcInfo)
+		def eventName = mappedLevel != 'D' ? name : dcInfo.name
+		params.tournament_name = mappedLevel != 'O' ? eventName : 'Olympics'
+		params.event_name = eventName
 		params.tournament_level = mappedLevel
 		def surface = string record.surface
 		params.surface = mapSurface surface

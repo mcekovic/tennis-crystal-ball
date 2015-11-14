@@ -23,7 +23,7 @@ public class BigGunsEra {
 	}
 
 	public int getDominanceRatioRounded() {
-		return (int)(10L*(Math.round(getDominanceRatio())/10L));
+		return BigGunsTimeline.roundDominanceRatio(dominanceRatio);
 	}
 
 	public BigGunsPlayerTimeline getPlayer() {

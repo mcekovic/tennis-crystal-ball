@@ -68,4 +68,11 @@ public class BigGunsTimeline {
 		}
 		bigGunsEras.add(new BigGunsEra(eraSeasons));
 	}
+
+
+	// Util
+
+	static int roundDominanceRatio(double dominanceRatio) {
+		return 10*Math.floorDiv((int)dominanceRatio, 10);
+	}
 }
