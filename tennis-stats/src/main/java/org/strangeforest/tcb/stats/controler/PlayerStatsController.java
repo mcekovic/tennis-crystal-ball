@@ -24,7 +24,7 @@ public class PlayerStatsController {
 		@RequestParam(value = "playerId") int playerId,
 		@RequestParam(value = "tournamentEventId") int tournamentEventId
 	) {
-		MatchFilter filter = new MatchFilter(null, null, null, null, tournamentEventId, null, null);
+		MatchFilter filter = MatchFilter.forTournamentEvent(tournamentEventId);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
@@ -41,9 +41,10 @@ public class PlayerStatsController {
 		@RequestParam(value = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(value = "round", required = false) String round,
+		@RequestParam(value = "opponent", required = false) String opponent,
 		@RequestParam(value = "searchPhrase", required = false) String searchPhrase
 	) {
-		MatchFilter filter = new MatchFilter(season, level, surface, tournamentId, tournamentEventId, round, searchPhrase);
+		MatchFilter filter = new MatchFilter(season, level, surface, tournamentId, tournamentEventId, round, searchPhrase, OpponentFilter.forStats(opponent));
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 		return new ModelAndView("playerStats", "stats", stats);
 	}

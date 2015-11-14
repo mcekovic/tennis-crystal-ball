@@ -63,6 +63,9 @@ public class StatisticsService {
 	private static final String TOURNAMENT_EVENT_JOIN = //language=SQL
 	 	"\nLEFT JOIN tournament_event e USING (tournament_event_id)";
 
+	private static final String OPPONENT_JOIN = //language=SQL
+	 	"\nLEFT JOIN player o ON o.player_id = opponent_id";
+
 	private static final String PLAYER_SEASONS_STATS_QUERY =
 		"SELECT season, " + PLAYER_STATS_COLUMNS +
 		"FROM player_season_stats\n" +
@@ -149,18 +152,31 @@ public class StatisticsService {
 	public PlayerStats getPlayerStats(int playerId, MatchFilter filter) {
 		if (filter.equals(MatchFilter.ALL))
 			return getPlayerStats(playerId);
+		else if (filter.isForSeason())
+			return getPlayerSeasonStats(playerId, filter.getSeason());
+		else if (filter.isForSurface())
+			return getPlayerSurfaceStats(playerId, filter.getSurface());
+		else if (filter.isForSeasonAndSurface())
+			return getPlayerSeasonSurfaceStats(playerId, filter.getSeason(), filter.getSurface());
 		else {
-			String join = !filter.isTournamentEventFilterEmpty() ? TOURNAMENT_EVENT_JOIN : "";
-			String criteria = filter.getCriteria();
-			Object[] params = playerStatsParams(playerId, filter);
 			return jdbcTemplate.queryForObject(
-				format(PLAYER_FILTERED_STATS_QUERY, join, criteria),
+				format(PLAYER_FILTERED_STATS_QUERY, join(filter), filter.getCriteria()),
 				(rs, rowNum) -> {
 					return mapPlayerStats(rs);
 				},
-				params
+				playerStatsParams(playerId, filter)
 			);
 		}
+	}
+
+	private String join(MatchFilter filter) {
+		StringBuilder sb = new StringBuilder(100);
+		if (!filter.isTournamentEventFilterEmpty())
+			sb.append(TOURNAMENT_EVENT_JOIN);
+		OpponentFilter opponentFilter = filter.getOpponentFilter();
+		if (opponentFilter != null && !opponentFilter.getOpponent().isForRank())
+			sb.append(OPPONENT_JOIN);
+		return sb.toString();
 	}
 
 	private Object[] playerStatsParams(int playerId, MatchFilter filter) {

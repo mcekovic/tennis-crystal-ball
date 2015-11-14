@@ -119,7 +119,8 @@ CREATE UNIQUE INDEX ON player_titles (player_id);
 -- match_for_stats_v
 
 CREATE VIEW match_for_stats_v AS
-SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.level, e.surface, m.best_of, m.round, m.winner_rank, m.loser_rank, m.w_sets, m.l_sets, m.w_games, m.l_games FROM match m
+SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.level, e.surface, m.best_of, m.round, m.winner_rank, m.loser_rank, m.w_sets, m.l_sets, m.w_games, m.l_games
+FROM match m
 LEFT JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LIKE '%WG') AND (m.outcome IS NULL OR m.outcome <> 'W/O');
 
@@ -218,14 +219,16 @@ CREATE UNIQUE INDEX ON player_performance (player_id);
 -- player_match_stats_v
 
 CREATE VIEW player_match_stats_v AS
-SELECT match_id, tournament_event_id, season, surface, round, winner_id player_id, loser_id opponent_id, 1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games,
+SELECT match_id, tournament_event_id, season, surface, round, winner_id player_id, loser_id opponent_id, loser_rank opponent_rank,
+	1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games,
 	w_ace p_ace, w_df p_df, w_sv_pt p_sv_pt, w_1st_in p_1st_in, w_1st_won p_1st_won, w_2nd_won p_2nd_won, w_sv_gms p_sv_gms, w_bp_sv p_bp_sv, w_bp_fc p_bp_fc,
 	l_ace o_ace, l_df o_df, l_sv_pt o_sv_pt, l_1st_in o_1st_in, l_1st_won o_1st_won, l_2nd_won o_2nd_won, l_sv_gms o_sv_gms, l_bp_sv o_bp_sv, l_bp_fc o_bp_fc
 FROM match_for_stats_v
 LEFT JOIN match_stats USING (match_id)
 WHERE set = 0 OR set IS NULL
 UNION ALL
-SELECT match_id, tournament_event_id, season, surface, round, loser_id, winner_id, 0, 1, l_sets, w_sets, l_games, w_games,
+SELECT match_id, tournament_event_id, season, surface, round, loser_id, winner_id, winner_rank,
+	0, 1, l_sets, w_sets, l_games, w_games,
 	l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,
 	w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc
 FROM match_for_stats_v

@@ -20,6 +20,7 @@
 					request.level = $("#matchesLevel").val();
 					request.surface = $("#matchesSurface").val();
 					request.round = $("#matchesRound").val();
+					request.opponent = $("#matchesOpponent").val();
 					request.tournamentId = $("#matchesTournament").val();
 					request.tournamentEventId = $("#tournamentEvent").val();
 					return request;
@@ -55,6 +56,7 @@
 			$("#matchesLevel").val("");
 			$("#matchesSurface").val("");
 			$("#matchesRound").val("");
+			$("#matchesOpponent").val("");
 			$("#matchesTournament").val("");
 			$("#tournamentEvent").val("");
 			$("#matchesTable").bootgrid("search", "");
@@ -68,6 +70,7 @@
 				url += "&level=" + $("#matchesLevel").val();
 				url += "&surface=" + $("#matchesSurface").val();
 				url += "&round=" + $("#matchesRound").val();
+				url += "&opponent=" + $("#matchesOpponent").val();
 				url += "&tournamentId=" + $("#matchesTournament").val();
 				url += "&tournamentEventId=" + $("#tournamentEvent").val();
 				$.get(url, function(data) {
@@ -128,6 +131,21 @@
 				<option value="R128" class="bg-result-R128">Round of 128</option>
 				<option value="RR" class="bg-result-RR">Round-Robin</option>
 				<option value="BR" class="bg-result-BR">For Bronze Medal</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="matchesOpponent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+				<option value="">Vs All</option>
+				<option value="NO_1">Vs No. 1</option>
+				<option value="TOP_5">Vs Top 5</option>
+				<option value="TOP_10">Vs Top 10</option>
+				<option value="TOP_20">Vs Top 20</option>
+				<option value="TOP_50">Vs Top 50</option>
+				<option value="TOP_100">Vs Top 100</option>
+				<option value="RIGHT_HANDED">Vs Right-handed</option>
+				<option value="LEFT_HANDED">Vs Left-handed</option>
+				<option value="BACKHAND_2">Vs Two-handed bh.</option>
+				<option value="BACKHAND_1">Vs One-handed bh.</option>
 			</select>
 		</div>
 		<div class="col-md-1">

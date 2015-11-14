@@ -67,6 +67,14 @@ public class TournamentEventFilter {
 		return params;
 	}
 
+	public Integer getSeason() {
+		return season;
+	}
+
+	public String getSurface() {
+		return surface;
+	}
+
 	public boolean isEmpty() {
 		return season == null && isNullOrEmpty(level) && isNullOrEmpty(surface) && tournamentId == null && tournamentEventId == null && isNullOrEmpty(searchPhrase);
 	}
