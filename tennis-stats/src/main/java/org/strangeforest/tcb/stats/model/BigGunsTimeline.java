@@ -7,6 +7,7 @@ public class BigGunsTimeline {
 	private final List<BigGunsPlayerTimeline> players;
 	private final SortedSet<Integer> seasons;
 	private List<BigGunsSeason> bigGunsSeasons;
+	private List<BigGunsEra> bigGunsEras;
 
 	public BigGunsTimeline() {
 		players = new ArrayList<>();
@@ -25,6 +26,10 @@ public class BigGunsTimeline {
 		return bigGunsSeasons;
 	}
 
+	public List<BigGunsEra> getBigGunsEras() {
+		return bigGunsEras;
+	}
+
 	public void addPlayer(BigGunsPlayerTimeline player) {
 		players.add(player);
 		seasons.addAll(player.getSeasons());
@@ -39,5 +44,28 @@ public class BigGunsTimeline {
 				bigGunsSeason.processPlayer(player);
 			bigGunsSeasons.add(bigGunsSeason);
 		}
+	}
+
+	public void calculateBigGunsEras() {
+		int seasonCount = bigGunsSeasons.size();
+		for (int i = 0; i < seasonCount; i++) {
+			BigGunsSeason bigGunsSeason = bigGunsSeasons.get(i);
+			BigGunsPlayerTimeline bestPlayer = bigGunsSeason.getBestPlayer();
+			BigGunsPlayerTimeline prevBestPlayer = i > 0 ? bigGunsSeasons.get(i - 1).getBestPlayer() : null;
+			BigGunsPlayerTimeline nextBestPlayer = i < seasonCount - 1 ? bigGunsSeasons.get(i + 1).getBestPlayer() : null;
+			bigGunsSeason.setEraPlayer(prevBestPlayer == null || prevBestPlayer != nextBestPlayer ? bestPlayer : prevBestPlayer);
+		}
+		bigGunsEras = new ArrayList<>();
+		List<BigGunsSeason> eraSeasons = null;
+		for (BigGunsSeason bigGunsSeason : bigGunsSeasons) {
+			if (eraSeasons != null && bigGunsSeason.getEraPlayer() != eraSeasons.get(0).getEraPlayer()) {
+				bigGunsEras.add(new BigGunsEra(eraSeasons));
+				eraSeasons = null;
+			}
+			if (eraSeasons == null)
+				eraSeasons = new ArrayList<>();
+			eraSeasons.add(bigGunsSeason);
+		}
+		bigGunsEras.add(new BigGunsEra(eraSeasons));
 	}
 }

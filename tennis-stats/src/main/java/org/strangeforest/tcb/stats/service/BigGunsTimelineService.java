@@ -42,6 +42,7 @@ public class BigGunsTimelineService {
 			MIN_GOAT_POINTS
 		);
 		timeline.calculateBigGunsSeasons();
+		timeline.calculateBigGunsEras();
 		return timeline;
 	}
 

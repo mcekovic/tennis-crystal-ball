@@ -15,18 +15,23 @@
 	<script th:src="@{js/formatters.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
-		String.prototype.endsWith = function (s) {
-			return this.length >= s.length && this.substr(this.length - s.length) == s;
-		};
 		$(function() {
-			// Correct position
-			$("span.best-player").each(function() {
+			// Correct positions
+			var $timelineHeader = $("#timelineHeader");
+			$timelineHeader.find("span.best-player").each(function() {
 				var $bestPlayer = $(this);
-				var top = $bestPlayer[0].getBoundingClientRect().top.toString();
-				if (top.endsWith("px"))
-					top = top.substr(0, top.length - 2);
-				$bestPlayer.css({top: (top - 62) + "px"});
-			})
+				$bestPlayer.css({top: ($bestPlayer.offset().top - 62) + "px"});
+			});
+			$timelineHeader.find("span.era-player").each(function() {
+				var $eraPlayer = $(this);
+				$eraPlayer.css({left: ($eraPlayer.offset().left + $eraPlayer.parent().width() / 2 + 8) + "px"});
+			});
+			$timelineHeader.find("span.era-factor").each(function() {
+				var $eraFactor = $(this);
+				$eraFactor.css({position: "absolute"});
+				$eraFactor.css({left: ($eraFactor.offset().left + $eraFactor.parent().width() / 2 - 9) + "px"});
+				$eraFactor.css({top: ($eraFactor.offset().top - 30) + "px"});
+			});
 		});
 		/*]]>*/
 	</script>
@@ -97,14 +102,30 @@
 	<div th:include="fragments/header :: title"></div>
 	<h3>Big Guns Timeline</h3>
 	<table id="bigGunsTable" class="table table-condensed table-hover table-bordered text-nowrap">
-		<thead>
+		<thead id="timelineHeader">
+			<tr class="best-player">
+				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Era</th>
+				<th th:each="era : ${timeline.bigGunsEras}" th:class="'points-' + ${era.dominanceRatioRounded}" style="padding: 1px" th:colspan="${era.seasonCount}">
+					<span th:text="${era.player.lastName}" class="best-player era-player">Sampras</span>
+				</th>
+			</tr>
+			<tr class="season">
+				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Era Dominance Ratio</th>
+				<th th:each="era : ${timeline.bigGunsEras}" th:class="'points-' + ${era.dominanceRatioRounded}" style="padding: 1px" th:colspan="${era.seasonCount}">
+					<span th:text="${#numbers.formatDecimal(era.dominanceRatio, 1, 1)}" class="season era-factor">66.7</span>
+				</th>
+			</tr>
 			<tr class="best-player">
 				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Season Best Player</th>
-				<th style="padding: 1px" th:each="season : ${timeline.bigGunsSeasons}"><span th:text="${season.bestPlayer.lastName}" class="best-player">Federer</span></th>
+				<th th:each="season : ${timeline.bigGunsSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
+					<span th:text="${season.bestPlayer.lastName}" class="best-player">Federer</span>
+				</th>
 			</tr>
 			<tr class="season">
 				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Big Guns Dominance Ratio</th>
-				<th th:each="season : ${timeline.bigGunsSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px"><span th:text="${#numbers.formatDecimal(season.dominanceRatio, 1, 1)}" class="season">66.7</span></th>
+				<th th:each="season : ${timeline.bigGunsSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
+					<span th:text="${#numbers.formatDecimal(season.dominanceRatio, 1, 1)}" class="season">66.7</span>
+				</th>
 			</tr>
 			<tr class="season" style="border-bottom: 3px solid lightgray">
 				<th style="padding: 1px 4px">Player</th>
