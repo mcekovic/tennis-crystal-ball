@@ -125,6 +125,15 @@ LEFT JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LIKE '%WG') AND (m.outcome IS NULL OR m.outcome <> 'W/O');
 
 
+-- match_for_rivalry_v
+
+CREATE VIEW match_for_rivalry_v AS
+SELECT m.match_id, m.winner_id, m.loser_id
+FROM match m
+LEFT JOIN tournament_event e USING (tournament_event_id)
+WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LIKE '%WG');
+
+
 -- player_match_performance_v
 
 CREATE VIEW player_match_performance_v AS

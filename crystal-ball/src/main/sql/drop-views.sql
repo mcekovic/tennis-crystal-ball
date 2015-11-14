@@ -20,3 +20,4 @@ DROP MATERIALIZED VIEW player_season_surface_stats;
 DROP VIEW player_match_performance_v;
 DROP VIEW player_match_stats_v;
 DROP VIEW match_for_stats_v;
+DROP VIEW match_for_rivalry_v;

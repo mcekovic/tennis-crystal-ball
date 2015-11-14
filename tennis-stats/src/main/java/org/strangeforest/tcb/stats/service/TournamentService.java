@@ -50,9 +50,9 @@ public class TournamentService {
 	}
 
 	public BootgridTable<PlayerTournamentEvent> getPlayerTournamentEventResultsTable(int playerId, TournamentEventResultFilter filter, String orderBy, int pageSize, int currentPage) {
-		int offset = (currentPage - 1) * pageSize;
-		AtomicInteger tournamentEvents = new AtomicInteger();
 		BootgridTable<PlayerTournamentEvent> table = new BootgridTable<>(currentPage);
+		AtomicInteger tournamentEvents = new AtomicInteger();
+		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY, filter.getCriteria(), orderBy),
 			(rs) -> {

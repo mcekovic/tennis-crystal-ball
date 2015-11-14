@@ -8,6 +8,9 @@
 	font-size: small;
 	font-style: italic;
 }
+.label {
+	font-size: 87.5%;
+}
 .black {
 	color: black;
 }
@@ -57,17 +60,38 @@
 	background: blanchedalmond;
 }
 .bg-result-R16 {
-	background: #AFEEEE;
+	background: #afeeee;
 }
 .bg-result-R32 {
-	background: #AFEEEE;
+	background: #afeeee;
 }
 .bg-result-R64 {
-	background: #AFEEEE;
+	background: #afeeee;
 }
 .bg-result-R128 {
-	background: #AFEEEE;
+	background: #afeeee;
 }
 .bg-result-RR {
-	background: #AFEEEE;
+	background: #afeeee;
+}
+.bg-won-0 {
+	background: #ffa07a;
+}
+.bg-won-10 {
+	background: #ffc797;
+}
+.bg-won-30 {
+	background: #ffdba1;
+}
+.bg-won-50 {
+	background: #ffff99;
+}
+.bg-won-70 {
+	background: #cbff98;
+}
+.bg-won-90 {
+	background: #98ff98;
+}
+.bg-won-100 {
+	background: lime;
 }

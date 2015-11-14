@@ -1,0 +1,80 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<script type="text/javascript" th:inline="javascript">
+		/*<![CDATA[*/
+		$(function() {
+			var $rivalriesTable = $("#rivalriesTable");
+			$rivalriesTable.bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/playerRivalriesTable?playerId=[[${playerId}]]",
+				rowCount: [10, 20, 50, -1],
+				formatters: {
+					"player": playerCountryFormatter,
+					"wonPctStr": function(column, row) {
+						return "<span data-won-pct='" + row.wonPctClass + "'>" + row.wonPctStr + "</span>";
+					},
+					"lastMatch": function(column, row) {
+						var match = row.lastMatch;
+						var won = match.winnerId == [[${playerId}]];
+						return "<span class='label label-" + (won ? "won" : "lost") + "'>" + (won ? "Won" : "Lost") + "</span> [ " + match.score + " ] at " +
+							match.season + " " + tournamentFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
+					},
+					"stats": function(column, row) {
+						return "<a id='rivalryStats-" + row.playerId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showRivalryStats(" + row.playerId + ", event)' title='" + row.name + " Rivalry Statistics'> Stats</a>";
+					}
+				},
+				labels: {
+					noResults: "No rivalries found"
+				}
+			}).on("loaded.rs.jquery.bootgrid", function() {
+				$rivalriesTable.find("span[data-won-pct]").each(function () {
+					var $span = $(this);
+					$span.parent().addClass("bg-won-" + $span.data("won-pct"));
+				});
+			});
+			var $matchesTableHeader = $("#rivalriesTable-header");
+			var actionBar = $matchesTableHeader.find("div.actionBar");
+			actionBar.removeClass("col-sm-12").addClass("col-sm-7");
+			actionBar.before($("#rivalriesTitle").remove());
+		});
+		function showRivalryStats(opponentId, event) {
+			var $rivalryStats = $("#rivalryStats-" + opponentId);
+			if (!$rivalryStats.hasClass("loaded")) {
+				event.preventDefault();
+				$.get("rivalryStats?playerId=[[${playerId}]]&opponentId=" + opponentId, function(data) {
+					$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
+					$rivalryStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
+				});
+			}
+		}
+		/*]]>*/
+	</script>
+	<style scoped="scoped">
+		.label-won {
+			color: black;
+			background-color: lime;
+		}
+		.label-lost {
+			color: black;
+			background-color: #ffa07a;
+		}
+	</style>
+	<div id="rivalriesTitle" class="col-sm-3" style="font-size: large; font-weight: bold">Rivalries</div>
+	<table id="rivalriesTable" class="table table-condensed table-hover table-striped">
+		<thead>
+			<tr>
+				<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="120">Opponent</th>
+				<th data-column-id="bestRank" data-type="numeric" data-width="60" data-align="right" data-header-align="right">Best Rank</th>
+				<th data-column-id="matches" data-type="numeric" data-order="desc" data-width="55" data-align="right" data-header-align="right">Matches</th>
+				<th data-column-id="won" data-type="numeric" data-width="40" data-align="right" data-header-align="right">Won</th>
+				<th data-column-id="lost" data-type="numeric" data-width="40" data-align="right" data-header-align="right">Lost</th>
+				<th data-column-id="wonPctStr" data-formatter="wonPctStr" data-width="50" data-align="right" data-header-align="right">Win %</th>
+				<th data-column-id="lastMatch" data-formatter="lastMatch" data-sortable="false" data-width="250">Last Match</th>
+				<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="50">Stats</th>
+			</tr>
+		</thead>
+	</table>
+</th:block>

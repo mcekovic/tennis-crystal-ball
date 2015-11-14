@@ -8,22 +8,26 @@ public class MatchFilter extends TournamentEventFilter {
 
 	// Factory
 
-	public static final MatchFilter ALL = new MatchFilter(null, null, null, null, null, null, null, null);
+	public static final MatchFilter ALL = new MatchFilter(null, null, null, null, null, null, null, null, null);
 
 	public static MatchFilter forTournamentEvent(int tournamentEventId) {
-		return new MatchFilter(null, null, null, null, tournamentEventId, null, null, null);
+		return new MatchFilter(null, null, null, null, tournamentEventId, null, null, null, null);
+	}
+
+	public static MatchFilter forOpponent(int opponentId) {
+		return new MatchFilter(null, null, null, null, null, null, null, null, opponentId);
 	}
 
 	public static MatchFilter forSeason(int season) {
-		return new MatchFilter(season, null, null, null, null, null, null, null);
+		return new MatchFilter(season, null, null, null, null, null, null, null, null);
 	}
 
 	public static MatchFilter forSurface(String surface) {
-		return new MatchFilter(null, null, surface, null, null, null, null, null);
+		return new MatchFilter(null, null, surface, null, null, null, null, null, null);
 	}
 
 	public static MatchFilter forSeasonAndSurface(int season, String surface) {
-		return new MatchFilter(season, null, surface, null, null, null, null, null);
+		return new MatchFilter(season, null, surface, null, null, null, null, null, null);
 	}
 
 
@@ -31,13 +35,16 @@ public class MatchFilter extends TournamentEventFilter {
 
 	private final String round;
 	private final OpponentFilter opponentFilter;
+	private final Integer opponentId;
 
-	private static final String ROUND_CRITERION = " AND m.round = ?::match_round";
+	private static final String ROUND_CRITERION    = " AND m.round = ?::match_round";
+	private static final String OPPONENT_CRITERION = " AND opponent_id = ?";
 
-	public MatchFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String round, String searchPhrase, OpponentFilter opponentFilter) {
+	public MatchFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String round, String searchPhrase, OpponentFilter opponentFilter, Integer opponentId) {
 		super(season, level, surface, tournamentId, tournamentEventId, searchPhrase);
 		this.round = round;
 		this.opponentFilter = opponentFilter;
+		this.opponentId = opponentId;
 	}
 
 	@Override protected void appendCriteria(StringBuilder criteria) {
@@ -46,6 +53,8 @@ public class MatchFilter extends TournamentEventFilter {
 			criteria.append(ROUND_CRITERION);
 		if (opponentFilter != null)
 			criteria.append(opponentFilter.getCriterion());
+		if (opponentId != null)
+			criteria.append(OPPONENT_CRITERION);
 	}
 
 	@Override public List<Object> getParamList() {
@@ -57,11 +66,13 @@ public class MatchFilter extends TournamentEventFilter {
 			params.add(playerId);
 			params.add(playerId);
 		}
+		if (opponentId != null)
+			params.add(opponentId);
 		return params;
 	}
 
 	@Override public boolean isEmpty() {
-		return super.isEmpty() && isNullOrEmpty(round) && opponentFilter == null;
+		return super.isEmpty() && isNullOrEmpty(round) && opponentFilter == null && opponentId == null;
 	}
 
 	public boolean isTournamentEventFilterEmpty() {
@@ -96,10 +107,10 @@ public class MatchFilter extends TournamentEventFilter {
 		if (!(o instanceof MatchFilter)) return false;
 		if (!super.equals(o)) return false;
 		MatchFilter filter = (MatchFilter)o;
-		return stringsEqual(round, filter.round) && Objects.equals(opponentFilter, filter.opponentFilter);
+		return stringsEqual(round, filter.round) && Objects.equals(opponentFilter, filter.opponentFilter) && Objects.equals(opponentId, filter.opponentId);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(super.hashCode(), emptyToNull(round), opponentFilter);
+		return Objects.hash(super.hashCode(), emptyToNull(round), opponentFilter, opponentId);
 	}
 }

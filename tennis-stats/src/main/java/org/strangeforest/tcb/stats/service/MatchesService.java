@@ -26,9 +26,9 @@ public class MatchesService {
 
 
 	public BootgridTable<Match> getPlayerMatchesTable(int playerId, MatchFilter filter, String orderBy, int pageSize, int currentPage) {
-		int offset = (currentPage - 1) * pageSize;
-		AtomicInteger matches = new AtomicInteger();
 		BootgridTable<Match> table = new BootgridTable<>(currentPage);
+		AtomicInteger matches = new AtomicInteger();
+		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(PLAYER_MATCHES_QUERY, filter.getCriteria(), orderBy),
 			(rs) -> {

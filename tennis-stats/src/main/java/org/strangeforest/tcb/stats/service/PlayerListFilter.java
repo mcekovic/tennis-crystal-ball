@@ -26,21 +26,20 @@ public class PlayerListFilter {
 			criteria.append(SEARCH_CRITERION);
 	}
 
-	public Object[] getParams(Object... extraParams) {
-		return paramList(null, extraParams).toArray();
-	}
-
 	public Object[] getParamsWithPrefix(Object firstParam, Object... extraParams) {
-		return paramList(firstParam, extraParams).toArray();
-	}
-
-	private List<Object> paramList(Object firstParam, Object... extraParams) {
 		List<Object> params = new ArrayList<>();
-		if (firstParam != null)
-			params.add(firstParam);
+		params.add(firstParam);
 		addParams(params);
 		params.addAll(asList(extraParams));
-		return params;
+		return params.toArray();
+	}
+
+	public Object[] getParamsWithPrefixes(Collection prefixParams, Object... extraParams) {
+		List<Object> params = new ArrayList<>();
+		params.addAll(prefixParams);
+		addParams(params);
+		params.addAll(asList(extraParams));
+		return params.toArray();
 	}
 
 	protected void addParams(List<Object> params) {

@@ -71,6 +71,13 @@ public class PlayerProfileController extends BaseController {
 		return new ModelAndView("playerTimeline", modelMap);
 	}
 
+	@RequestMapping("/playerRivalries")
+	public ModelAndView playerRivalries(
+		@RequestParam(value = "playerId") int playerId
+	) {
+		return new ModelAndView("playerRivalries", "playerId", playerId);
+	}
+
 	@RequestMapping("/playerPerformance")
 	public ModelAndView playerPerformance(
 		@RequestParam(value = "playerId") int playerId,

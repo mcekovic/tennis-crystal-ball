@@ -13,10 +13,14 @@ public class WonLost {
 	private final double wonPct;
 
 	public WonLost(int won, int lost) {
+		this(won, lost, won + lost);
+	}
+
+	public WonLost(int won, int lost, int total) {
 		this.won = won;
 		this.lost = lost;
-		total = won + lost;
-		wonPct = pct(won, total);
+		this.total = total;
+		wonPct = pct(won, won + lost);
 	}
 
 	public int getWon() {
@@ -33,6 +37,23 @@ public class WonLost {
 
 	public double getWonPct() {
 		return wonPct;
+	}
+
+	public int getWonPctClass() {
+		if (wonPct <= 0.0)
+			return 0;
+		else if (wonPct < 20.0)
+			return 10;
+		else if (wonPct < 40.0)
+			return 30;
+		else if (wonPct < 60.0)
+			return 50;
+		else if (wonPct < 80.0)
+			return 70;
+		else if (wonPct < 100.0)
+			return 90;
+		else
+			return 100;
 	}
 
 	public String getWonPctStr() {
