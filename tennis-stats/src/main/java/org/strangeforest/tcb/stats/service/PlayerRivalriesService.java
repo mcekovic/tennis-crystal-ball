@@ -46,14 +46,14 @@ public class PlayerRivalriesService {
 		"SELECT r.player_id, r.opponent_id, o.name, o.country_id, o.best_rank, r.matches, r.won, r.lost,\n" +
 		"  lm.match_id, lm.season, lm.level, lm.surface, lm.tournament, lm.round, lm.winner_id, lm.loser_id, lm.score\n" +
 		"FROM rivalries r\n" +
-		"LEFT JOIN player_v o ON o.player_id = r.opponent_id\n" +
-		"LEFT JOIN LATERAL (\n" +
+		"LEFT JOIN player_v o ON o.player_id = r.opponent_id,\n" +
+		"LATERAL (\n" +
 		"  SELECT m.match_id, e.season, e.level, e.surface, e.name AS tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"  FROM match m\n" +
 		"  LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE (m.winner_id = r.player_id AND m.loser_id = r.opponent_id) OR (m.winner_id = r.opponent_id AND m.loser_id = r.player_id)\n" +
 		"  ORDER BY e.date DESC LIMIT 1\n" +
-		") lm ON TRUE\n" +
+		") lm\n" +
 		"WHERE TRUE%1$s\n" +
 		"ORDER BY %2$s OFFSET ?";
 

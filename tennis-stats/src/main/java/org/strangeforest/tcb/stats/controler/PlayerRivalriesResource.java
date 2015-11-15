@@ -25,7 +25,7 @@ public class PlayerRivalriesResource {
 		ORDER_MAP.put("lost", "lost");
 		ORDER_MAP.put("wonPctStr", "won::real/(won + lost)");
 	}
-	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("matches"), desc("won"), asc("lost")};
+	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("matches"), desc("won")};
 
 	@RequestMapping("/playerRivalriesTable")
 	public BootgridTable<PlayerRivalryRow> playerRivalriesTable(
