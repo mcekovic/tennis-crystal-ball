@@ -26,7 +26,7 @@ public class GeoIPFilter implements Filter {
 
 	@Override public void init(FilterConfig filterConfig) throws ServletException {
 		try {
-			db = getClass().getResourceAsStream("/geolite/GeoLite2-Country.mmdb");
+			db = getClass().getResourceAsStream("/GeoLite2-Country.mmdb");
 			reader = new DatabaseReader.Builder(db).build();
 		}
 		catch (IOException ex) {
