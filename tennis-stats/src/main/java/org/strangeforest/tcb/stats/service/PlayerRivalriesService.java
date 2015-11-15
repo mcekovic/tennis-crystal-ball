@@ -63,7 +63,7 @@ public class PlayerRivalriesService {
 	private static final String LAST_MATCH_JOIN_LATERAL = //language=SQL
 		",\n" +
 		"LATERAL (\n" +
-		"  SELECT m.match_id, e.season, e.level, e.surface, e.name AS tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
+		"  SELECT m.match_id, e.season, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"  FROM match m\n" +
 		"  LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE (m.winner_id = r.player_id AND m.loser_id = r.opponent_id) OR (m.winner_id = r.opponent_id AND m.loser_id = r.player_id)\n" +
@@ -72,12 +72,12 @@ public class PlayerRivalriesService {
 
 	private static final String LAST_MATCH_JSON = //language=SQL
 		"  (SELECT row_to_json(lm) FROM (\n" +
-		"     SELECT m.match_id, e.season, e.level, e.surface, e.name, m.round, m.winner_id, m.loser_id, m.score\n" +
+		"     SELECT m.match_id, e.season, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"     FROM match m\n" +
 		"     LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"     WHERE (m.winner_id = r.player_id AND m.loser_id = r.opponent_id) OR (m.winner_id = r.opponent_id AND m.loser_id = r.player_id)\n" +
 		"     ORDER BY e.date DESC LIMIT 1\n" +
-		"  ) AS lm(match_id, season, level, surface, tournament, round, winner_id, loser_id, score)) AS last_match";
+		"  ) AS lm) AS last_match";
 
 
 	@PostConstruct
