@@ -1,12 +1,17 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.io.*;
 import java.sql.*;
 import java.util.concurrent.atomic.*;
+
+import javax.annotation.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+
+import com.fasterxml.jackson.databind.*;
 
 import static java.lang.String.*;
 import static java.util.Arrays.*;
@@ -14,7 +19,9 @@ import static java.util.Arrays.*;
 @Service
 public class PlayerRivalriesService {
 
+	@Autowired private DataService dataService;
 	@Autowired private JdbcTemplate jdbcTemplate;
+	private boolean lateralSupported;
 
 	private static final String PLAYER_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries_raw AS (\n" +
@@ -44,25 +51,46 @@ public class PlayerRivalriesService {
 		"  ORDER BY matches DESC, won DESC\n" +
 		")\n" +
 		"SELECT r.player_id, r.opponent_id, o.name, o.country_id, o.best_rank, r.matches, r.won, r.lost,\n" +
-		"  lm.match_id, lm.season, lm.level, lm.surface, lm.tournament, lm.round, lm.winner_id, lm.loser_id, lm.score\n" +
+		"%1$s\n" +
 		"FROM rivalries r\n" +
-		"LEFT JOIN player_v o ON o.player_id = r.opponent_id,\n" +
+		"LEFT JOIN player_v o ON o.player_id = r.opponent_id%2$s\n" +
+		"WHERE TRUE%3$s\n" +
+		"ORDER BY %4$s OFFSET ?";
+
+	private static final String LAST_MATCH_LATERAL = //language=SQL
+		"  lm.match_id, lm.season, lm.level, lm.surface, lm.tournament, lm.round, lm.winner_id, lm.loser_id, lm.score";
+
+	private static final String LAST_MATCH_JOIN_LATERAL = //language=SQL
+		",\n" +
 		"LATERAL (\n" +
-		"  SELECT m.match_id, e.season, e.level, e.surface, e.name AS tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
+		"  SELECT m.match_id, e.season, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"  FROM match m\n" +
 		"  LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE (m.winner_id = r.player_id AND m.loser_id = r.opponent_id) OR (m.winner_id = r.opponent_id AND m.loser_id = r.player_id)\n" +
 		"  ORDER BY e.date DESC LIMIT 1\n" +
-		") lm\n" +
-		"WHERE TRUE%1$s\n" +
-		"ORDER BY %2$s OFFSET ?";
+		") lm";
+
+	private static final String LAST_MATCH_JSON = //language=SQL
+		"  (SELECT row_to_json(lm) FROM (\n" +
+		"     SELECT m.match_id, e.season, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
+		"     FROM match m\n" +
+		"     LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"     WHERE (m.winner_id = r.player_id AND m.loser_id = r.opponent_id) OR (m.winner_id = r.opponent_id AND m.loser_id = r.player_id)\n" +
+		"     ORDER BY e.date DESC LIMIT 1\n" +
+		"  ) AS lm) AS last_match";
+
+
+	@PostConstruct
+	private void init() {
+		lateralSupported = dataService.getDBServerVersion() >= 90300;
+	}
 
 	public BootgridTable<PlayerRivalryRow> getPlayerRivalriesTable(int player_id, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<PlayerRivalryRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(PLAYER_RIVALRIES_QUERY, filter.getCriteria(), orderBy),
+			format(PLAYER_RIVALRIES_QUERY, lateralSupported ? LAST_MATCH_LATERAL : LAST_MATCH_JSON, lateralSupported ? LAST_MATCH_JOIN_LATERAL : "", filter.getCriteria(), orderBy),
 			(rs) -> {
 				if (rivalries.incrementAndGet() <= pageSize) {
 					int bestRank = rs.getInt("best_rank");
@@ -86,6 +114,10 @@ public class PlayerRivalriesService {
 	}
 
 	private LastMatch mapLastMatch(ResultSet rs) throws SQLException {
+		return lateralSupported ? mapLastMatchLateral(rs) : mapLastMatchJson(rs);
+	}
+
+	private LastMatch mapLastMatchLateral(ResultSet rs) throws SQLException {
 		return new LastMatch(
 			rs.getLong("match_id"),
 			rs.getInt("season"),
@@ -97,5 +129,27 @@ public class PlayerRivalriesService {
 			rs.getInt("loser_id"),
 			rs.getString("score")
 		);
+	}
+
+	private static final ObjectReader READER = new ObjectMapper().reader();
+
+	private LastMatch mapLastMatchJson(ResultSet rs) throws SQLException {
+		try {
+			JsonNode lastMatch = READER.readTree(rs.getString("last_match"));
+			return new LastMatch(
+				lastMatch.get("match_id").asLong(),
+				lastMatch.get("season").asInt(),
+				lastMatch.get("level").asText(),
+				lastMatch.get("surface").asText(),
+				lastMatch.get("tournament").asText(),
+				lastMatch.get("round").asText(),
+				lastMatch.get("winner_id").asInt(),
+				lastMatch.get("loser_id").asInt(),
+				lastMatch.get("score").asText()
+			);
+		}
+		catch (IOException ex) {
+			throw new SQLException(ex);
+		}
 	}
 }

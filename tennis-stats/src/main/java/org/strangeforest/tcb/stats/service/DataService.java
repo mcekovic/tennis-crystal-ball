@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
+import org.postgresql.core.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
@@ -14,6 +15,8 @@ public class DataService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
+	private static final String DB_SERVER_VERSION_QUERY = "SELECT version()";
+
 	private static final String LAST_UPDATE_QUERY =
 		"SELECT max(last_update) FROM (\n" +
 		"  SELECT max(date) last_update FROM tournament_event\n" +
@@ -23,7 +26,26 @@ public class DataService {
 
 	private static final long LAST_UPDATE_EXPIRY_PERIOD = TimeUnit.MINUTES.toMillis(5L);
 
-	private final Supplier<Date> lastUpdate =  Memoizer.of(
+	private final Supplier<Integer> dbServerVersion = Memoizer.of(() -> dbServerVersion().getVersionNum());
+
+	private Version dbServerVersion() {
+		String versionStr = jdbcTemplate.queryForObject(DB_SERVER_VERSION_QUERY, String.class);
+		String[] versionArr = versionStr.split(" ");
+		if (versionArr.length >= 2) {
+			String version = versionArr[1];
+			if (version.endsWith(","))
+				version = version.substring(0, version.length() - 1);
+			return ServerVersion.from(version);
+		}
+		else
+			return ServerVersion.v9_4;
+	}
+
+	public int getDBServerVersion() {
+		return dbServerVersion.get();
+	}
+
+	private final Supplier<Date> lastUpdate = Memoizer.of(
 		() -> jdbcTemplate.queryForObject(LAST_UPDATE_QUERY, Date.class),
 		LAST_UPDATE_EXPIRY_PERIOD
 	);
