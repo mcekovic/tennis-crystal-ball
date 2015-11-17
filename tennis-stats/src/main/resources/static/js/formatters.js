@@ -5,17 +5,17 @@ function dateFormatter(column, row) {
 
 // Country
 function countryFormatter(column, row) {
-	return "<img src='images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='20'/> " + row.countryId;
+	return "<img src='/images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='20'/> " + row.countryId;
 }
 
 // Player
 function playerFormatter(column, row) {
-	return "<a href='playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>";
+	return "<a href='/playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>";
 }
 
 function playerCountryFormatter(column, row) {
-	return "<img src='images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='20'/> " +
-	       "<a href='playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>";
+	return "<img src='/images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='20'/> " +
+	       "<a href='/playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>";
 }
 
 // Level
@@ -79,5 +79,5 @@ function resultFormatter(column, row) {
 
 // Match
 function matchFormatter(column, row) {
-	return "<a href='playerProfile?playerId=" + row.winnerId + "' title='Show profile'>" + row.winner + "</a> d. <a href='playerProfile?playerId=" + row.loserId + "' title='Show profile'>" + row.loser + "</a>";
+	return "<a href='/playerProfile?playerId=" + row.winnerId + "' title='Show profile'>" + row.winner + "</a> d. <a href='/playerProfile?playerId=" + row.loserId + "' title='Show profile'>" + row.loser + "</a>";
 }

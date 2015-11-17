@@ -8,24 +8,24 @@
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title th:text="'Ultimate Tennis Statistics - ' + (${player} ? ${player.name} : 'Player Profile')">Ultimate Tennis Statistics - Player Profile</title>
-	<link th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{webjars/jquery/2.1.4/jquery.min.js}"></script>
-	<script th:src="@{webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
-	<script th:src="@{webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
-	<script th:src="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
-	<script th:src="@{js/formatters.js}"></script>
+	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/formatters.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
 			$("#player").autocomplete({
-				source: "autocompletePlayer",
+				source: "/autocompletePlayer",
 				minLength: 2,
 				select: function(event, ui) {
 					if (ui.item)
-						window.location = "playerProfile?playerId=" + ui.item.id;
+						window.location = "/playerProfile?playerId=" + ui.item.id;
 				}
 			}).focus();
 			$("[data-toggle=pill]").click(function(event) {
@@ -59,7 +59,7 @@
 	</script>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<div th:include="/fragments/header :: title"></div>
 	<div class="row">
 		<div th:if="${player}" class="col-md-8">
 			<h3 th:text="${player.name}">Player Profile</h3>
@@ -82,7 +82,7 @@
 					</tr>
 					<tr>
 						<th>Country</th>
-						<td><img th:src="@{images/flags/{code}.png(code=${player.countryCode})}" src="images/flags/us.png" th:title="${player.countryId}" title="USA" width="24" height="20"/> <span th:text="${player.countryName}">United States</span></td>
+						<td><img th:src="@{/images/flags/{code}.png(code=${player.countryCode})}" src="/images/flags/us.png" th:title="${player.countryId}" title="USA" width="24" height="20"/> <span th:text="${player.countryName}">United States</span></td>
 					</tr>
 					<tr th:if="${player.birthplace}">
 						<th>Birthplace</th>
@@ -184,11 +184,11 @@
 
 		<ul id="playerPills" class="nav nav-pills">
 			<li class="active"><a id="tournamentsPill" data-toggle="pill" href="#tournaments">Tournaments</a></li>
-			<li><a id="matchesPill" data-toggle="pill" href="#matches" data-url="playerMatches?playerId=" th:attrappend="data-url=${player.id}">Matches</a></li>
-			<li><a data-toggle="pill" href="#timeline" data-url="playerTimeline?playerId=" th:attrappend="data-url=${player.id}">Timeline</a></li>
-			<li><a data-toggle="pill" href="#rivalries" data-url="playerRivalries?playerId=" th:attrappend="data-url=${player.id}">Rivalries</a></li>
-			<li><a data-toggle="pill" href="#performance" data-url="playerPerformance?playerId=" th:attrappend="data-url=${player.id}">Performance</a></li>
-			<li><a data-toggle="pill" href="#statistics" data-url="playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
+			<li><a id="matchesPill" data-toggle="pill" href="#matches" data-url="/playerMatches?playerId=" th:attrappend="data-url=${player.id}">Matches</a></li>
+			<li><a data-toggle="pill" href="#timeline" data-url="/playerTimeline?playerId=" th:attrappend="data-url=${player.id}">Timeline</a></li>
+			<li><a data-toggle="pill" href="#rivalries" data-url="/playerRivalries?playerId=" th:attrappend="data-url=${player.id}">Rivalries</a></li>
+			<li><a data-toggle="pill" href="#performance" data-url="/playerPerformance?playerId=" th:attrappend="data-url=${player.id}">Performance</a></li>
+			<li><a data-toggle="pill" href="#statistics" data-url="/playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -341,6 +341,6 @@
 			<div id="statistics" class="tab-pane fade"><br/>Loading...</div>
 		</div>
 	</th:block>
-	<div th:include="fragments/footer :: copy"></div>
+	<div th:include="/fragments/footer :: copy"></div>
 </body>
 </html>

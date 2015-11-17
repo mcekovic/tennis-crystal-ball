@@ -8,7 +8,7 @@
 		$("#playerPerformance").find(".raw-data").hide();
 	});
 	function reloadPerformance() {
-		var url = "playerPerformance?playerId=[[${playerId}]]";
+		var url = "/playerPerformance?playerId=[[${playerId}]]";
 		var season = $("#perfSeason").val();
 		if (season != "")
 			url += "&season=" + season;

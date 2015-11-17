@@ -31,8 +31,8 @@
 				}
 				$result.tooltip({title: title, html: true});
 			});
-			bindTimelineExtraData("performance", "playerTimelinePerformance");
-			bindTimelineExtraData("statistics", "playerTimelineStats");
+			bindTimelineExtraData("performance", "/playerTimelinePerformance");
+			bindTimelineExtraData("statistics", "/playerTimelineStats");
 		});
 		function bindTimelineExtraData(elementPrefix, url) {
 			var $head = $("#" + elementPrefix + "Head");
@@ -100,7 +100,7 @@
 		<th:block th:unless="${timeline.empty}">
 		<tbody id="bigTournamentsBody">
 			<tr th:each="tournament : ${timeline.bigTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
-				<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
+				<th:block th:include="/fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
 			</tr>
 		</tbody>
 		<thead>
@@ -112,7 +112,7 @@
 		</thead>
 		<tbody id="otherTournamentsBody">
 			<tr th:each="tournament : ${timeline.otherTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
-				<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
+				<th:block th:include="/fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
 			</tr>
 		</tbody>
 		<thead id="performanceHead">

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.metrics.*;
 import org.springframework.stereotype.*;
 
-import com.google.api.client.repackaged.com.google.common.base.*;
+import com.google.common.base.*;
 import com.maxmind.geoip2.*;
 import com.maxmind.geoip2.exception.*;
 import com.maxmind.geoip2.model.*;

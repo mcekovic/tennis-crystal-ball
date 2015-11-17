@@ -4,13 +4,13 @@
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Ultimate Tennis Statistics - GOAT List</title>
-	<link th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{webjars/jquery/2.1.4/jquery.min.js}"></script>
-	<script th:src="@{webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
-	<script th:src="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
-	<script th:src="@{js/formatters.js}"></script>
+	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/formatters.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -35,7 +35,7 @@
 	</script>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<div th:include="/fragments/header :: title"></div>
 	<h3 style="position: absolute">GOAT List</h3>
 	<table id="goatTable" class="table table-condensed table-hover table-striped">
 		<thead>
@@ -55,7 +55,7 @@
 			</tr>
 		</thead>
 	</table>
-	<div th:include="fragments/goatLegend :: legend"></div>
-	<div th:include="fragments/footer :: copy"></div>
+	<div th:include="/fragments/goatLegend :: legend"></div>
+	<div th:include="/fragments/footer :: copy"></div>
 </body>
 </html>

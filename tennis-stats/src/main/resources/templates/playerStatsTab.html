@@ -5,7 +5,7 @@
 <script type="text/javascript" th:inline="javascript">
 	/*<![CDATA[*/
 	function reloadStats() {
-		var url = "playerStatsTab?playerId=[[${playerId}]]";
+		var url = "/playerStatsTab?playerId=[[${playerId}]]";
 		var season = $("#statsSeason").val();
 		if (season != "")
 			url += "&season=" + season;
@@ -35,5 +35,5 @@
 	</div>
 </div>
 <br/>
-<div th:include="fragments/playerStats :: playerStats(elementId='playerStatsTab', popover=false, buttonId=null)"></div>
+<div th:include="/fragments/playerStats :: playerStats(elementId='playerStatsTab', popover=false, buttonId=null)"></div>
 </th:block>

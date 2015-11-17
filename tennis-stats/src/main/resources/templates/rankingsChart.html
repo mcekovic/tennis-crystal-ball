@@ -4,11 +4,11 @@
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Ultimate Tennis Statistics - Rankings Chart</title>
-	<link th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{webjars/jquery/2.1.4/jquery.min.js}"></script>
-	<script th:src="@{webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
@@ -27,7 +27,7 @@
 			if (fetchData) {
 				var players = $("#players").val();
 				var timeSpan = $("#timeSpan").val();
-				var dataUrl = "playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&rankType=" + rankType;
+				var dataUrl = "/playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&rankType=" + rankType;
 				if (timeSpan == "CS") {
 					var fromDate = getDate("fromDate");
 					if (fromDate == null)
@@ -118,7 +118,7 @@
 					event.preventDefault();
 			}).autocomplete({
 				source: function(request, response) {
-					$.getJSON("autocompletePlayer", {
+					$.getJSON("/autocompletePlayer", {
 						term: extractLast(request.term)
 					}, response);
 				},
@@ -175,7 +175,7 @@
 	</style>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<div th:include="/fragments/header :: title"></div>
 	<h3>Rankings Chart</h3>
 	<div class="row">
 		<div class="col-md-9">
@@ -250,12 +250,12 @@
 		<div class="row col-md-9 text-center">
 			<div id="loading" style="width: 100%; display: none">
 				<br/>
-				<img src="images/loading.gif" width="128" height="128" alt="Loading chart..."/>
+				<img src="/images/loading.gif" width="128" height="128" alt="Loading chart..."/>
 				<br/>
 			</div>
 		</div>
 	</div>
 	<div id="rankChart"></div>
-	<div th:include="fragments/footer :: copy"></div>
+	<div th:include="/fragments/footer :: copy"></div>
 </body>
 </html>

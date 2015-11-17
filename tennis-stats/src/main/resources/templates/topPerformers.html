@@ -5,13 +5,13 @@
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Ultimate Tennis Statistics - Top Performers</title>
-	<link th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{webjars/jquery/2.1.4/jquery.min.js}"></script>
-	<script th:src="@{webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
-	<script th:src="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
-	<script th:src="@{js/formatters.js}"></script>
+	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/formatters.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -47,7 +47,7 @@
 		function categoryChanged() {
 			var $category = $("#category");
 			$("#topPerformersTable").find("th[data-column-id='wonLostPct'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
-			var url = "topPerformersMinEntries?category=" + $category.val();
+			var url = "/topPerformersMinEntries?category=" + $category.val();
 			var season = $("#season").val();
 			if (season != "")
 				url += "&season=" + season;
@@ -63,7 +63,7 @@
 	</script>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<div th:include="/fragments/header :: title"></div>
 	<h3 style="position: absolute">Top Performers</h3>
 	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">
 		<select id="category" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
@@ -106,6 +106,6 @@
 		</thead>
 	</table>
 	<p><i>* Minimum <span id="minEntries">100 matches</span></i></p>
-	<div th:include="fragments/footer :: copy"></div>
+	<div th:include="/fragments/footer :: copy"></div>
 </body>
 </html>

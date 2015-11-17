@@ -6,13 +6,13 @@
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Ultimate Tennis Statistics - Big Guns Timeline</title>
-	<link th:href="@{webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{webjars/jquery/2.1.4/jquery.min.js}"></script>
-	<script th:src="@{webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
-	<script th:src="@{webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
-	<script th:src="@{js/formatters.js}"></script>
+	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/formatters.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -106,7 +106,7 @@
 	</style>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<div th:include="/fragments/header :: title"></div>
 	<h3>Big Guns Timeline</h3>
 	<table id="bigGunsTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead id="timelineHeader">
@@ -144,8 +144,8 @@
 		<tbody>
 			<tr th:each="player : ${timeline.players}">
 				<td style="padding: 1px 4px">
-					<img th:src="'images/flags/' + ${player.countryCode} + '.png'" src="images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
-					<a th:href="'playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+					<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
+					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 				</td>
 				<td style="padding: 1px 4px" th:text="${#dates.format(player.dob, 'yyyy')}">1985</td>
 				<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray" th:text="${player.goatPoints}">1985</td>
@@ -162,7 +162,7 @@
 		</thead>
 	</table>
 	<p><i>* Minimum <span th:text="${minGOATPoints}">50</span> GOAT points</i></p>
-	<div th:include="fragments/goatLegend :: legend"></div>
-	<div th:include="fragments/footer :: copy"></div>
+	<div th:include="/fragments/goatLegend :: legend"></div>
+	<div th:include="/fragments/footer :: copy"></div>
 </body>
 </html>
