@@ -1,10 +1,11 @@
-function showChart(elementId, width, isRank, useLogScale) {
+function showChart(chartData, elementId, width, isRank, useLogScale, showLegend) {
 	if (chartData != undefined) {
 		var options = {
 			width: width,
 			height: width / 2,
 			chartArea: {left: 50, top: 20, height: "80%"},
-			vAxis: {direction: isRank ? -1 : 1, viewWindow: {min: isRank ? 1 : undefined}, logScale: useLogScale}
+			vAxis: {direction: isRank ? -1 : 1, viewWindow: {min: isRank ? 1 : undefined}, logScale: useLogScale},
+			legend: showLegend ? undefined : {position: "none"}
 		};
 		var chart = new google.visualization.LineChart(document.getElementById(elementId));
 		chart.draw(chartData, options);

@@ -45,7 +45,7 @@
 			$.ajax(dataUrl).done(function(json) {
 				chartData = new google.visualization.DataTable(JSON.stringify(json));
 				logScale = isRank ? useLogScale(json) : false;
-				showChart("rankChart", width, isRank, logScale);
+				showChart(chartData, "rankChart", width, isRank, logScale, true);
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			});
 		}
@@ -112,7 +112,7 @@
 				value: 1000,
 				step: 100,
 				slide: function(event, ui) {
-					showChart("rankChart", ui.value, isRank, logScale);
+					showChart(chartData, "rankChart", ui.value, isRank, logScale, true);
 				}
 			});
 			onTimeSpanChange();
