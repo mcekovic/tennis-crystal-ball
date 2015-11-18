@@ -10,6 +10,7 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class TournamentService {
@@ -33,7 +34,7 @@ public class TournamentService {
 		"ORDER BY name, season";
 
 	private static final String PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY = //language=SQL
-		"SELECT tournament_event_id, e.season, e.date, e.level, e.surface, e.name, r.result\n" +
+		"SELECT tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.draw_size, r.result\n" +
 		"FROM player_tournament_event_result r\n" +
 		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE r.player_id = ?\n" +
@@ -61,9 +62,10 @@ public class TournamentService {
 						rs.getInt("tournament_event_id"),
 						rs.getInt("season"),
 						rs.getDate("date"),
+						rs.getString("name"),
 						rs.getString("level"),
 						rs.getString("surface"),
-						rs.getString("name"),
+						getInteger(rs, "draw_size"),
 						rs.getString("result")
 					));
 				}

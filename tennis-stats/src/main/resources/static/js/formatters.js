@@ -69,7 +69,7 @@ function surfaceName(surface) {
 
 // Tournament
 function tournamentFormatter(column, row) {
-	return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + levelName(row.tournament) + "</span>";
+	return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</span>";
 }
 
 // Result

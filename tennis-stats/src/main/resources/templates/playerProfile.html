@@ -186,8 +186,8 @@
 			<li class="active"><a id="tournamentsPill" data-toggle="pill" href="#tournaments">Tournaments</a></li>
 			<li><a id="matchesPill" data-toggle="pill" href="#matches" data-url="/playerMatches?playerId=" th:attrappend="data-url=${player.id}">Matches</a></li>
 			<li><a data-toggle="pill" href="#timeline" data-url="/playerTimeline?playerId=" th:attrappend="data-url=${player.id}">Timeline</a></li>
-			<li><a data-toggle="pill" href="#ranking" data-url="/playerRankingChart?playerId=" th:attrappend="data-url=${player.id}">Ranking</a></li>
 			<li><a data-toggle="pill" href="#rivalries" data-url="/playerRivalries?playerId=" th:attrappend="data-url=${player.id}">Rivalries</a></li>
+			<li><a data-toggle="pill" href="#ranking" data-url="/playerRankingChart?playerId=" th:attrappend="data-url=${player.id}">Ranking</a></li>
 			<li><a data-toggle="pill" href="#performance" data-url="/playerPerformance?playerId=" th:attrappend="data-url=${player.id}">Performance</a></li>
 			<li><a data-toggle="pill" href="#statistics" data-url="/playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
 		</ul>
@@ -217,7 +217,7 @@
 							rowCount: [10, 20, 50, -1],
 							formatters: {
 								"date": dateFormatter,
-								"level": levelFormatter,
+								"tournament": tournamentFormatter,
 								"surface": surfaceFormatter,
 								"result": function(column, row) {
 									return "<a class='label black bg-result-" + row.result + "' href='javascript:playerMatches(" + row.tournamentEventId + ")' title='Show matches'>" + row.result + "</a>"
@@ -326,10 +326,10 @@
 					<thead>
 						<tr>
 							<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
-							<th data-column-id="level" data-formatter="level" data-width="100">Level</th>
+							<th data-column-id="name" data-formatter="tournament" data-width="200">Tournament</th>
 							<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
-							<th data-column-id="name" data-width="200">Tournament</th>
-							<th data-column-id="result" data-formatter="result" data-width="50">Result</th>
+							<th data-column-id="drawSize" data-type="numeric" data-width="80" data-align="center" data-header-align="center">Draw Size</th>
+							<th data-column-id="result" data-formatter="result" data-width="60" data-align="center" data-header-align="center">Result</th>
 							<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="50">Stats</th>
 						</tr>
 					</thead>
@@ -337,8 +337,8 @@
 			</div>
 			<div id="matches" class="tab-pane fade"><br/>Loading...</div>
 			<div id="timeline" class="tab-pane fade"><br/>Loading...</div>
-			<div id="ranking" class="tab-pane fade"><br/>Loading...</div>
 			<div id="rivalries" class="tab-pane fade"><br/>Loading...</div>
+			<div id="ranking" class="tab-pane fade"><br/>Loading...</div>
 			<div id="performance" class="tab-pane fade"><br/>Loading...</div>
 			<div id="statistics" class="tab-pane fade"><br/>Loading...</div>
 		</div>

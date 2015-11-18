@@ -7,18 +7,20 @@ public class PlayerTournamentEvent {
 	private final int tournamentEventId;
 	private final int season;
 	private final Date date;
+	private final String name;
 	private final String level;
 	private final String surface;
-	private final String name;
+	private final Integer drawSize;
 	private final String result;
 
-	public PlayerTournamentEvent(int tournamentEventId, int season, Date date, String level, String surface, String name, String result) {
+	public PlayerTournamentEvent(int tournamentEventId, int season, Date date, String name, String level, String surface, Integer drawSize, String result) {
 		this.tournamentEventId = tournamentEventId;
 		this.season = season;
 		this.date = date;
+		this.name = name;
 		this.level = level;
 		this.surface = surface;
-		this.name = name;
+		this.drawSize = drawSize;
 		this.result = result;
 	}
 
@@ -34,6 +36,10 @@ public class PlayerTournamentEvent {
 		return date;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	public String getLevel() {
 		return level;
 	}
@@ -42,8 +48,8 @@ public class PlayerTournamentEvent {
 		return surface;
 	}
 
-	public String getName() {
-		return name;
+	public Integer getDrawSize() {
+		return drawSize;
 	}
 
 	public String getResult() {

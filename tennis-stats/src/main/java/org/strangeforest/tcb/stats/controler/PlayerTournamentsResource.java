@@ -18,9 +18,9 @@ public class PlayerTournamentsResource {
 	private static Map<String, String> ORDER_MAP = new TreeMap<>();
 	static {
 		ORDER_MAP.put("date", "date");
-		ORDER_MAP.put("level", "level");
-		ORDER_MAP.put("surface", "surface");
 		ORDER_MAP.put("name", "name");
+		ORDER_MAP.put("surface", "surface");
+		ORDER_MAP.put("drawSize", "draw_size");
 		ORDER_MAP.put("result", "result");
 	}
 	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("date");
