@@ -59,7 +59,7 @@
 	</script>
 </head>
 <body class="container">
-	<div th:include="/fragments/header :: title"></div>
+	<div th:include="fragments/header :: title"></div>
 	<div class="row">
 		<div th:if="${player}" class="col-md-8">
 			<h3 th:text="${player.name}">Player Profile</h3>
@@ -343,6 +343,6 @@
 			<div id="statistics" class="tab-pane fade"><br/>Loading...</div>
 		</div>
 	</th:block>
-	<div th:include="/fragments/footer :: copy"></div>
+	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>

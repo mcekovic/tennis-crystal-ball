@@ -42,7 +42,7 @@
 	</script>
 </head>
 <body class="container">
-	<div th:include="/fragments/header :: title"></div>
+	<div th:include="fragments/header :: title"></div>
 	<h3 style="position: absolute">Best Seasons</h3>
 	<table id="bestSeasonsTable" class="table table-condensed table-hover table-striped">
 		<thead>
@@ -65,7 +65,7 @@
 		</thead>
 	</table>
 	<p><i>* Minimum <span th:text="${minSeasonGOATPoints}">25</span> season GOAT points</i></p>
-	<div th:include="/fragments/goatLegend :: legend"></div>
-	<div th:include="/fragments/footer :: copy"></div>
+	<div th:include="fragments/goatLegend :: legend"></div>
+	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>

@@ -35,7 +35,7 @@
 	</script>
 </head>
 <body class="container">
-	<div th:include="/fragments/header :: title"></div>
+	<div th:include="fragments/header :: title"></div>
 	<h3 style="position: absolute">GOAT List</h3>
 	<table id="goatTable" class="table table-condensed table-hover table-striped">
 		<thead>
@@ -55,7 +55,7 @@
 			</tr>
 		</thead>
 	</table>
-	<div th:include="/fragments/goatLegend :: legend"></div>
-	<div th:include="/fragments/footer :: copy"></div>
+	<div th:include="fragments/goatLegend :: legend"></div>
+	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>
