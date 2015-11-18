@@ -14,7 +14,7 @@
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		google.load("visualization", "1.0", {packages:["corechart"]});
-		var isRank, chartData, logScale;
+		var isRank, chartData, logScale, legendPosition;
 		function drawChart() {
 			if ($.trim($("#players").val()).length > 0)
 				doDrawChart($("#rankChartSize").slider("value"));
@@ -45,7 +45,8 @@
 			$.ajax(dataUrl).done(function(json) {
 				chartData = new google.visualization.DataTable(JSON.stringify(json));
 				logScale = isRank ? useLogScale(json) : false;
-				showChart(chartData, "rankChart", width, isRank, logScale, true);
+				legendPosition = json.cols.length < 5 ? "bottom" : "right";
+				showChart(chartData, "rankChart", width, isRank, logScale, legendPosition);
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			});
 		}
@@ -112,7 +113,7 @@
 				value: 1000,
 				step: 100,
 				slide: function(event, ui) {
-					showChart(chartData, "rankChart", ui.value, isRank, logScale, true);
+					showChart(chartData, "rankChart", ui.value, isRank, logScale, legendPosition);
 				}
 			});
 			onTimeSpanChange();

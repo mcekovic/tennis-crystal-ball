@@ -37,7 +37,7 @@
 				chartData = new google.visualization.DataTable(JSON.stringify(json));
 				logScale = isRank ? useLogScale(json) : false;
 				var width = $("#rankChartSize").slider("value");
-				showChart(chartData, "rankChart", width, isRank, logScale, false);
+				showChart(chartData, "rankChart", width, isRank, logScale, "none");
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			});
 		}
@@ -69,7 +69,7 @@
 				value: 1000,
 				step: 100,
 				slide: function(event, ui) {
-					showChart(chartData, "rankChart", ui.value, isRank, logScale, false);
+					showChart(chartData, "rankChart", ui.value, isRank, logScale, "none");
 				}
 			});
 			onRankingTimeSpanChange();
