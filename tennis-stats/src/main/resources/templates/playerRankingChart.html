@@ -3,10 +3,7 @@
 	<script th:src="@{/js/rankingChart.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
-		var script = document.createElement("script");
-		script.type = "text/javascript";
-		script.src = "https://www.google.com/jsapi?callback=loadGoogleCharts";
-		document.body.appendChild(script);
+		$(document.body).append("<script type='text/javascript' src='https://www.google.com/jsapi?callback=loadGoogleCharts'>&lt;/script>");
 		var isRank, chartData, logScale;
 		function loadGoogleCharts() {
 			google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
