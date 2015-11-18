@@ -1,0 +1,156 @@
+<br/>
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<script th:src="@{/js/rankingChart.js}"></script>
+	<script type="text/javascript" th:inline="javascript">
+		/*<![CDATA[*/
+		var script = document.createElement("script");
+		script.type = "text/javascript";
+		script.src = "https://www.google.com/jsapi?callback=loadGoogleCharts";
+		document.body.appendChild(script);
+		var isRank, chartData, logScale;
+		function loadGoogleCharts() {
+			google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
+				drawChart();
+			}});
+		}
+		function drawChart() {
+			var timeSpan = $("#rankingTimeSpan").val();
+			var rankType = $("#rankType").val();
+			isRank = rankType == "RANK";
+			var dataUrl = "/playerRankingsTable?playerId=[[${playerId}]]&timeSpan=" + timeSpan + "&rankType=" + rankType;
+			if (timeSpan == "CS") {
+				var fromDate = getDate("rankingFromDate");
+				if (fromDate == null)
+					return;
+				var toDate = getDate("rankingToDate");
+				if (toDate == null)
+					return;
+				dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
+			}
+			if (timeSpan == "CR")
+				dataUrl += "&byAge=" + $("#rankingByAge").prop("checked");
+			if (rankType == "POINTS")
+				dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
+			var $loading = $("#rankChartLoading");
+			$loading.show();
+			$.ajax(dataUrl).done(function(json) {
+				chartData = new google.visualization.DataTable(JSON.stringify(json));
+				logScale = isRank ? useLogScale(json) : false;
+				var width = $("#rankChartSize").slider("value");
+				showChart("rankChart", width, isRank, logScale);
+				$loading.hide().css("position", "absolute").css("z-index", "100");
+			});
+		}
+		function onRankingTimeSpanChange() {
+			var timeSpan = $("#rankingTimeSpan").val();
+			$("#rankingDateRange").css("display", timeSpan == "CS" ? "block" : "none");
+			$("#rankingByAgeDiv").css("display", timeSpan == "CR" ? "block" : "none");
+		}
+		function onRankTypeChange() {
+			$("#compensatePointsDiv").css("visibility", $("#rankType").val() == "POINTS" ? "visible" : "hidden");
+		}
+		$(function() {
+			$("#rankingFromDate").datepicker({
+				defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
+				onClose: function(selectedDate) {
+					$("#rankingToDate").datepicker("option", "minDate", selectedDate);
+				}
+			});
+			$("#rankingToDate").datepicker({
+				defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
+				onClose: function(selectedDate) {
+					$("#rankingFromDate").datepicker("option", "maxDate", selectedDate);
+				}
+			});
+			$("div.ui-datepicker").css({fontSize: "12px"});
+			$("#rankChartSize").slider({
+				min: 500,
+				max: 1500,
+				value: 1000,
+				step: 100,
+				slide: function(event, ui) {
+					showChart("rankChart", ui.value, isRank, logScale);
+				}
+			});
+			onRankingTimeSpanChange();
+			onRankTypeChange();
+		});
+		/*]]>*/
+	</script>
+	<style scoped="scoped">
+		.checkbox {
+			margin-top: 7px;
+			margin-bottom: 7px;
+		}
+	</style>
+	<div class="row">
+		<div class="col-md-3">
+			<div class="input-group">
+				<label for="rankingTimeSpan" class="input-group-addon">Time span:</label>
+				<select id="rankingTimeSpan" class="form-control" onchange="onRankingTimeSpanChange()">
+					<option value="CR">Career</option>
+					<option value="1">Last 52 weeks</option>
+					<option value="2">Last two years</option>
+					<option value="3">Last three years</option>
+					<option value="5">Last five years</option>
+					<option value="10">Last ten years</option>
+					<option value="CS">Custom</option>
+				</select>
+			</div>
+		</div>
+		<div id="rankingDateRange" class="col-md-4">
+			<div class="input-group">
+				<label for="rankingFromDate" class="input-group-addon">From:</label>
+				<input type="text" id="rankingFromDate" maxlength="10" class="form-control"/>
+				<label for="rankingToDate" class="input-group-addon">To:</label>
+				<input type="text" id="rankingToDate" maxlength="10" class="form-control"/>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div id="rankingByAgeDiv" class="checkbox">
+				<label title="Show chart by age">
+					<input id="rankingByAge" type="checkbox"/> By age
+				</label>
+			</div>
+		</div>
+	</div>
+	<div style="height: 5px"></div>
+	<div class="row">
+		<div class="col-md-3">
+			<div class="input-group">
+				<label for="rankType" class="input-group-addon">Rank type:</label>
+				<select id="rankType" class="form-control" onchange="onRankTypeChange()">
+					<option value="RANK">Ordinal rank</option>
+					<option value="POINTS">Ranking points</option>
+					<option value="GOAT_POINTS">GOAT points</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div id="compensatePointsDiv" class="checkbox">
+				<label title="Compensate ranking points before 2009 to match new ATP ranking system">
+					<input id="compensatePoints" type="checkbox"/> Compensate points
+				</label>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div id="rankChartSize" style="margin-top: 6px"></div>
+			<div style="text-align: center; opacity: 0.5">Chart size</div>
+		</div>
+		<div class="col-md-2">
+			<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawChart()">
+				<span class="glyphicon glyphicon-signal"></span>&nbsp;&nbsp;Draw Chart
+			</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="row col-md-9 text-center">
+			<div id="rankChartLoading" style="width: 100%; display: none">
+				<br/>
+				<img src="/images/loading.gif" width="128" height="128" alt="Loading chart..."/>
+				<br/>
+			</div>
+		</div>
+	</div>
+	<div id="rankChart"></div>
+</th:block>

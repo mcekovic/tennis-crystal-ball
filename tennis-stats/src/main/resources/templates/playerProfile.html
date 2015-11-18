@@ -186,6 +186,7 @@
 			<li class="active"><a id="tournamentsPill" data-toggle="pill" href="#tournaments">Tournaments</a></li>
 			<li><a id="matchesPill" data-toggle="pill" href="#matches" data-url="/playerMatches?playerId=" th:attrappend="data-url=${player.id}">Matches</a></li>
 			<li><a data-toggle="pill" href="#timeline" data-url="/playerTimeline?playerId=" th:attrappend="data-url=${player.id}">Timeline</a></li>
+			<li><a data-toggle="pill" href="#ranking" data-url="/playerRankingChart?playerId=" th:attrappend="data-url=${player.id}">Ranking</a></li>
 			<li><a data-toggle="pill" href="#rivalries" data-url="/playerRivalries?playerId=" th:attrappend="data-url=${player.id}">Rivalries</a></li>
 			<li><a data-toggle="pill" href="#performance" data-url="/playerPerformance?playerId=" th:attrappend="data-url=${player.id}">Performance</a></li>
 			<li><a data-toggle="pill" href="#statistics" data-url="/playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
@@ -336,6 +337,7 @@
 			</div>
 			<div id="matches" class="tab-pane fade"><br/>Loading...</div>
 			<div id="timeline" class="tab-pane fade"><br/>Loading...</div>
+			<div id="ranking" class="tab-pane fade"><br/>Loading...</div>
 			<div id="rivalries" class="tab-pane fade"><br/>Loading...</div>
 			<div id="performance" class="tab-pane fade"><br/>Loading...</div>
 			<div id="statistics" class="tab-pane fade"><br/>Loading...</div>

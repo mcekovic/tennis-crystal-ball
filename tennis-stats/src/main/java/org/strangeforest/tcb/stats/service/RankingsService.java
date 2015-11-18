@@ -31,8 +31,8 @@ public class RankingsService {
 	private static final String PLAYER_RANKINGS_QUERY = //language=SQL
 		"SELECT r.rank_date AS date%1$s, r.player_id, %2$s AS rank_value\n" +
 		"FROM player_ranking r%3$s\n" +
-		"WHERE r.player_id = ANY(?)%4$s\n" +
-		"ORDER BY %5$s, r.player_id";
+		"WHERE r.player_id = %4$s%5$s\n" +
+		"ORDER BY %6$s, r.player_id";
 
 	private static final String PLAYER_GOAT_POINTS_QUERY = //language=SQL
 		"WITH goat_points AS (\n" +
@@ -48,21 +48,42 @@ public class RankingsService {
 		")\n" +
 		"SELECT g.date%1$s, g.player_id, sum(g.goat_points) OVER (PARTITION BY g.player_id ORDER BY g.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
 		"FROM goat_points g%2$s\n" +
-		"WHERE g.player_id = ANY(?)%3$s\n" +
-		"ORDER BY %4$s, g.player_id";
+		"WHERE g.player_id = %3$s%4$s\n" +
+		"ORDER BY %5$s, g.player_id";
 
 	private static final String PLAYER_JOIN = /*language=SQL*/ " LEFT JOIN player p USING (player_id)";
 
+	public DataTable getRankingDataTable(int playerId, Range<LocalDate> dateRange, RankType rankType, boolean byAge, boolean compensatePoints) {
+		Players players = new Players(playerId);
+		DataTable table = fetchRankingsDataTable(players, dateRange, rankType, byAge, compensatePoints);
+		addColumns(table, players, rankType, byAge);
+		return table;
+	}
+
 	public DataTable getRankingsDataTable(List<String> inputPlayers, Range<LocalDate> dateRange, RankType rankType, boolean byAge, boolean compensatePoints) {
 		Players players = new Players(inputPlayers);
+		DataTable table = fetchRankingsDataTable(players, dateRange, rankType, byAge, compensatePoints);
+		if (!table.getRows().isEmpty())
+			addColumns(table, players, rankType, byAge);
+		else {
+			table.addColumn("string", "Player");
+			table.addColumn("number", format("%1$s %2$s not found", inputPlayers.size() > 1 ? "Players" : "Player", join(", ", inputPlayers)));
+		}
+		return table;
+	}
+
+	private DataTable fetchRankingsDataTable(Players players, Range<LocalDate> dateRange, RankType rankType, boolean byAge, boolean compensatePoints) {
 		DataTable table = new DataTable();
 		RowCursor rowCursor = byAge ? new AgeRowCursor(table, players) : new DateRowCursor(table, players);
 		boolean compensate = compensatePoints && rankType == RankType.POINTS;
 		jdbcTemplate.query(
-			getSQL(rankType, dateRange, byAge),
+			getSQL(players.getCount(), rankType, dateRange, byAge),
 			ps -> {
-				int index = 0;
-				ps.setArray(++index, ps.getConnection().createArrayOf("integer", players.getPlayerIds().toArray()));
+				int index = 1;
+				if (players.getCount() == 1)
+					ps.setInt(index, players.getPlayerIds().iterator().next());
+				else
+					ps.setArray(index, ps.getConnection().createArrayOf("integer", players.getPlayerIds().toArray()));
 				index = bindDateRange(ps, index, dateRange);
 			},
 			rs -> {
@@ -77,31 +98,29 @@ public class RankingsService {
 		);
 		rowCursor.addRow();
 		addMissingRankings(table, players);
-		if (!table.getRows().isEmpty()) {
-			if (byAge)
-				table.addColumn("number", "Age");
-			else
-				table.addColumn("date", "Date");
-			for (String player : players.getPlayers())
-				table.addColumn("number", player + " " + getRankName(rankType));
-		}
-		else {
-			table.addColumn("string", "Player");
-			table.addColumn("number", format("%1$s %2$s not found", inputPlayers.size() > 1 ? "Players" : "Player", join(", ", inputPlayers)));
-		}
 		return table;
 	}
 
-	private String getSQL(RankType rankType, Range<LocalDate> dateRange, boolean byAge) {
+	public static void addColumns(DataTable table, Players players, RankType rankType, boolean byAge) {
+		if (byAge)
+			table.addColumn("number", "Age");
+		else
+			table.addColumn("date", "Date");
+		for (String player : players.getPlayers())
+			table.addColumn("number", player + " " + getRankName(rankType));
+	}
+
+	private String getSQL(int playerCount, RankType rankType, Range<LocalDate> dateRange, boolean byAge) {
 		String playerJoin = byAge ? PLAYER_JOIN : "";
+		String playerCondition = playerCount > 1 ? "ANY(?)" : "?";
 		String orderBy = byAge ? "age" : "date";
 		switch (rankType) {
 			case RANK:
-				return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank", playerJoin, dateRangeCondition(dateRange, "r.rank_date"), orderBy);
+				return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank", playerJoin, playerCondition, dateRangeCondition(dateRange, "r.rank_date"), orderBy);
 			case POINTS:
-				return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank_points", playerJoin, dateRangeCondition(dateRange, "r.rank_date"), orderBy);
+				return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank_points", playerJoin, playerCondition, dateRangeCondition(dateRange, "r.rank_date"), orderBy);
 			case GOAT_POINTS:
-				return format(PLAYER_GOAT_POINTS_QUERY, byAge ? ", age(g.date, p.dob) AS age" : "", playerJoin, dateRangeCondition(dateRange, "g.date"), orderBy);
+				return format(PLAYER_GOAT_POINTS_QUERY, byAge ? ", age(g.date, p.dob) AS age" : "", playerJoin, playerCondition, dateRangeCondition(dateRange, "g.date"), orderBy);
 			default:
 				throw unknownEnum(rankType);
 		}
@@ -169,6 +188,11 @@ public class RankingsService {
 		private final Map<Integer, Integer> playerIndexMap = new LinkedHashMap<>();
 		private final List<String> players = new ArrayList<>();
 
+		private Players(int playerId) {
+			playerIndexMap.put(playerId, 0);
+			players.add(playerService.getPlayerName(playerId));
+		}
+
 		private Players(List<String> players) {
 			for (int index = 0; index < players.size(); index++) {
 				String player = players.get(index);
@@ -176,8 +200,8 @@ public class RankingsService {
 					continue;
 				Optional<Integer> playerId = playerService.findPlayerId(player);
 				if (playerId.isPresent()) {
-					this.players.add(player);
 					playerIndexMap.put(playerId.get(), index);
+					this.players.add(player);
 				}
 			}
 		}

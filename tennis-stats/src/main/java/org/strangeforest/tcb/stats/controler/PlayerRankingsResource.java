@@ -24,7 +24,8 @@ public class PlayerRankingsResource {
 
 	@RequestMapping("/playerRankingsTable")
 	public DataTable playerRankingsTable(
-		@RequestParam(value = "players") String playersCSV,
+		@RequestParam(value = "playerId", required = false) Integer playerId,
+		@RequestParam(value = "players", required = false) String playersCSV,
 		@RequestParam(value = "timeSpan", defaultValue = CAREER) String timeSpan,
 		@RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
 		@RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
@@ -32,9 +33,13 @@ public class PlayerRankingsResource {
 		@RequestParam(value = "byAge", defaultValue = "false") boolean byAge,
 		@RequestParam(value = "compensatePoints", defaultValue = "false") boolean compensatePoints
 	) {
-		List<String> inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 		Range<LocalDate> dateRange = toDateRange(timeSpan, fromDate, toDate);
-		return rankingsService.getRankingsDataTable(inputPlayers, dateRange, rankType, byAge, compensatePoints);
+		if (playerId != null)
+			return rankingsService.getRankingDataTable(playerId, dateRange, rankType, byAge, compensatePoints);
+		else {
+			List<String> inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
+			return rankingsService.getRankingsDataTable(inputPlayers, dateRange, rankType, byAge, compensatePoints);
+		}
 	}
 
 	private Range<LocalDate> toDateRange(String timeSpan, LocalDate fromDate, LocalDate toDate) {

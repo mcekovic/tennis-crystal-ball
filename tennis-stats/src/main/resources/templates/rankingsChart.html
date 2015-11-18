@@ -9,77 +9,45 @@
 	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<script th:src="@{/js/rankingChart.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		google.load("visualization", "1.0", {packages:["corechart"]});
-		var chartData;
-		var rankType;
-		var logScale;
+		var isRank, chartData, logScale;
 		function drawChart() {
 			if ($.trim($("#players").val()).length > 0)
-				doDrawChart(true, $("#rankChartSize").slider("value"));
+				doDrawChart($("#rankChartSize").slider("value"));
 			else
 				$("#rankChart").html("<div class='row'><div class='alert alert-warning col-md-9'>No player selected!</div></div>");
 		}
-		function doDrawChart(fetchData, width) {
-			rankType = $("#rankType").val();
-			if (fetchData) {
-				var players = $("#players").val();
-				var timeSpan = $("#timeSpan").val();
-				var dataUrl = "/playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&rankType=" + rankType;
-				if (timeSpan == "CS") {
-					var fromDate = getDate("fromDate");
-					if (fromDate == null)
-						return;
-					var toDate = getDate("toDate");
-					if (toDate == null)
-						return;
-					dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
-				}
-				if (timeSpan == "CR")
-					dataUrl += "&byAge=" + $("#byAge").prop("checked");
-				if (rankType == "POINTS")
-					dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
-				var $loading = $("#loading");
-				$loading.show();
-				$.ajax(dataUrl).done(function(json) {
-					chartData = new google.visualization.DataTable(JSON.stringify(json));
-					logScale = useLogScale(json);
-					showChart(width);
-					$loading.hide().css("position", "absolute").css("z-index", "100");
-				});
+		function doDrawChart(width) {
+			var players = $("#players").val();
+			var timeSpan = $("#timeSpan").val();
+			var rankType = $("#rankType").val();
+			isRank = rankType == "RANK";
+			var dataUrl = "/playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&rankType=" + rankType;
+			if (timeSpan == "CS") {
+				var fromDate = getDate("fromDate");
+				if (fromDate == null)
+					return;
+				var toDate = getDate("toDate");
+				if (toDate == null)
+					return;
+				dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
 			}
-			else
-				showChart(width);
-		}
-		function useLogScale(json) {
-			var min = Number.MAX_VALUE;
-			var max = 0;
-			for (var i = 0, ilen = json.rows.length; i < ilen; i++) {
-				var row = json.rows[i];
-				for (var j = 0, jlen = row.c.length; j < jlen; j++) {
-					if (j > 0) {
-						var value = row.c[j].v;
-						min = Math.min(min, value);
-						max = Math.max(max, value);
-					}
-				}
-			}
-			return max - min >= 50;
-		}
-		function showChart(width) {
-			if (chartData != undefined) {
-				var points = rankType != "RANK";
-				var options = {
-					width: width,
-					height: width / 2,
-					chartArea: {left: 50, top: 20, height: "80%"},
-					vAxis: {direction: points ? 1 : -1, viewWindow: {min: points ? undefined : 1}, logScale: points ? false : logScale}
-				};
-				var chart = new google.visualization.LineChart(document.getElementById("rankChart"));
-				chart.draw(chartData, options);
-			}
+			if (timeSpan == "CR")
+				dataUrl += "&byAge=" + $("#byAge").prop("checked");
+			if (rankType == "POINTS")
+				dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
+			var $loading = $("#loading");
+			$loading.show();
+			$.ajax(dataUrl).done(function(json) {
+				chartData = new google.visualization.DataTable(JSON.stringify(json));
+				logScale = isRank ? useLogScale(json) : false;
+				showChart("rankChart", width, isRank, logScale);
+				$loading.hide().css("position", "absolute").css("z-index", "100");
+			});
 		}
 		function onTimeSpanChange() {
 			var timeSpan = $("#timeSpan").val();
@@ -88,21 +56,6 @@
 		}
 		function onRankTypeChange() {
 			$("#compensatePointsDiv").css("visibility", $("#rankType").val() == "POINTS" ? "visible" : "hidden");
-		}
-		function getDate(id) {
-			var $date = $("#" + id);
-			var date = $date.val();
-			if (date == "")
-				return date;
-			try {
-				$.datepicker.parseDate("dd-mm-yy", date);
-				return date;
-			}
-			catch (err) {
-				alert("Invalid " + id.substr(0, id.length - 4) + " date: " + date);
-				$date.focus();
-				return null;
-			}
 		}
 		$(function() {
 			function split(val) {
@@ -152,14 +105,14 @@
 					$("#fromDate").datepicker("option", "maxDate", selectedDate);
 				}
 			});
-			$("div.ui-datepicker").css({ fontSize: "12px" });
+			$("div.ui-datepicker").css({fontSize: "12px"});
 			$("#rankChartSize").slider({
 				min: 500,
 				max: 1500,
 				value: 1000,
 				step: 100,
 				slide: function(event, ui) {
-					doDrawChart(false, ui.value);
+					showChart("rankChart", ui.value, isRank, logScale);
 				}
 			});
 			onTimeSpanChange();
