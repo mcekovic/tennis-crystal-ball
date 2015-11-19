@@ -15,7 +15,7 @@
 					arr.push([name.substr(16), json[name]]);
 				var data = google.visualization.arrayToDataTable(arr);
 				var options = {
-					colorAxis: {colors: ["white", "red"]}
+					colorAxis: {colors: ["#ffeeee", "#ff0000"]}
 				};
 				var chart = new google.visualization.GeoChart(document.getElementById("geolocationChart"));
 				chart.draw(data, options);
