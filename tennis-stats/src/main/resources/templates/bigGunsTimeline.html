@@ -20,7 +20,7 @@
 			var $timelineHeader = $("#timelineHeader");
 			$timelineHeader.find("span.best-player").each(function() {
 				var $bestPlayer = $(this);
-				$bestPlayer.css({display: "block"});
+				$bestPlayer.css({position: "absolute", display: "block"});
 				$bestPlayer.css({top: ($bestPlayer.offset().top - 62) + "px"});
 			});
 			$timelineHeader.find("span.era-player").each(function() {
@@ -50,7 +50,6 @@
 		}
 		span.best-player {
 			transform: rotate(-90deg);
-			position: absolute;
 			display: none;
 			width: 20px;
 			height: 60px;
