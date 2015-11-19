@@ -15,8 +15,7 @@
 	<script th:src="@{/js/formatters.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
-		$(function() {
-			// Correct positions
+		function correctInitPositions() {
 			var $timelineHeader = $("#timelineHeader");
 			$timelineHeader.find("span.best-player").each(function() {
 				var $bestPlayer = $(this);
@@ -32,6 +31,27 @@
 				$eraFactor.css({position: "absolute", display: "block"});
 				$eraFactor.css({left: ($eraFactor.offset().left + $eraFactor.parent().width() / 2 - 9) + "px"});
 				$eraFactor.css({top: ($eraFactor.offset().top - 29) + "px"});
+			});
+		}
+		function correctPositionsOnResize() {
+			var newLeft = $("#bigGunsTable").offset().left;
+			var dLeft = newLeft - bigGunsTableLeft;
+			correctLeftOnResize("span.era-player", dLeft + 20);
+			correctLeftOnResize("span.era-factor", dLeft + 2.5);
+			bigGunsTableLeft = newLeft;
+		}
+		function correctLeftOnResize(selector, offset) {
+			$("#timelineHeader").find(selector).each(function() {
+				var $this = $(this);
+				$this.css({left: ($this.offset().left + offset) + "px"});
+			});
+		}
+		var bigGunsTableLeft;
+		$(function() {
+			correctInitPositions();
+			bigGunsTableLeft = $("#bigGunsTable").offset().left;
+			$(window).resize(function() {
+				correctPositionsOnResize();
 			});
 		});
 		/*]]>*/
