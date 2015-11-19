@@ -6,7 +6,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - 'GOAT' List - see best players of Open Era ranked by 'GOAT' Points
 - 'Big Guns' Timeline - see 'GOAT' points distribution among top players and seasons
 - Best Seasons - find which are really the best seasons of all time based on 'GOAT' points
-- Player Profile - see player information, tournament results, matches, timeline, rivalries, performance indicators and statistics,
+- Player Profile - see player information, tournament results, matches, timeline, rivalries, ranking, performance indicators and statistics,
   all linked together and easily navigable
 - Ranking Carts - see players ranking and ranking point charts, compare players by constructing custom charts
 - Top Performers - find top performers in both performance and pressure situations figures
@@ -14,8 +14,9 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 
 ## Roadmap
 
-- 'Make your own GOAT' - enable users to enter 'GOAT' points distribution and calculate their own 'GOAT' list.
+- 'Make your own GOAT' - enable users to enter 'GOAT' points distribution and calculate their own 'GOAT' list
 - Heads-to-Heads - see heads-to-heads clusters among several players (i.e. among 'Big 4')
+- Tournament Browser - see all Open Era tournaments and events, draws, results and statistics 
 
 ### Technology
 
@@ -38,14 +39,19 @@ http://tennis-strangeforest.rhcloud.com
 ##### Player Timeline
 ![Player Timeline](https://github.com/mcekovic/open-box/blob/master/PlayerTimeline.png?raw=true)
 
+##### Player Rivalries
+![Player Rivalries](https://github.com/mcekovic/open-box/blob/master/PlayerRivalries.png?raw=true)
+
 ##### 'Big Guns' Timeline
 ![Big Guns Timeline](https://github.com/mcekovic/open-box/blob/master/BigGunsTimeline.png?raw=true)
 
 ##### Best Seasons
 ![Best Seasons](https://github.com/mcekovic/open-box/blob/master/BestSeasons.png?raw=true)
 
-##### Ranking Chart
-![Ranking Chart](https://github.com/mcekovic/open-box/blob/master/RankingChart.png?raw=true)
+##### Ranking Charts
+![Ranking Points Chart](https://github.com/mcekovic/open-box/blob/master/RankingChart.png?raw=true)
+
+![GOAT Points Chart](https://github.com/mcekovic/open-box/blob/master/RankingChart2.png?raw=true)
 
 ##### Top Performers
 ![Top Performers](https://github.com/mcekovic/open-box/blob/master/TopPerformers.png?raw=true)
