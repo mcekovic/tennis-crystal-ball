@@ -8,6 +8,9 @@ import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
+import static com.google.common.base.Strings.*;
+import static java.util.stream.Collectors.*;
+
 @Service
 public class PlayerService {
 
@@ -62,6 +65,10 @@ public class PlayerService {
 
 	public Optional<Integer> findPlayerId(String player) {
 		return jdbcTemplate.queryForList(PLAYER_ID_QUERY, Integer.class, player).stream().findFirst();
+	}
+
+	public List<Integer> findPlayerIds(List<String> players) {
+		return players.stream().filter(player -> !isNullOrEmpty(player)).map(this::findPlayerId).filter(Optional::isPresent).map(Optional::get).collect(toList());
 	}
 
 	public List<Integer> getPlayerSeasons(int playerId) {

@@ -13,7 +13,7 @@ import static org.strangeforest.tcb.stats.util.OrderBy.*;
 @RestController
 public class PlayerRivalriesResource {
 
-	@Autowired private PlayerRivalriesService rivalriesService;
+	@Autowired private RivalriesService rivalriesService;
 
 	private static final int MAX_RIVALRIES = 1000;
 

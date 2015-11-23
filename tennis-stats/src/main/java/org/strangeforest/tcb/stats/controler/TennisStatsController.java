@@ -21,6 +21,11 @@ public class TennisStatsController extends BaseController {
 		return "rankingsChart";
 	}
 
+	@RequestMapping("/rivalryCluster")
+	public String rivalryCluster() {
+		return "rivalryCluster";
+	}
+
 	@RequestMapping("/manage/geolocation")
 	public String geolocation() {
 		return "manage/geolocationChart";

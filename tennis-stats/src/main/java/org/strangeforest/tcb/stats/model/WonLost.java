@@ -75,4 +75,12 @@ public class WonLost {
 	public String getWL() {
 		return total > 0 ? won + "-" + lost : "";
 	}
+
+	public WonLost inverted() {
+		return new WonLost(lost, won, total);
+	}
+
+	public WonLost add(WonLost wonLost) {
+		return new WonLost(won + wonLost.won, lost + wonLost.lost, total + wonLost.total);
+	}
 }

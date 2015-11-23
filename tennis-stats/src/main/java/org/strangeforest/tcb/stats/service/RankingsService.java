@@ -1,7 +1,5 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.sql.Date;
-import java.sql.*;
 import java.time.*;
 import java.util.*;
 import java.util.Objects;
@@ -18,6 +16,7 @@ import com.google.common.collect.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.util.EnumUtil.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class RankingsService {
@@ -133,14 +132,6 @@ public class RankingsService {
 		if (dateRange.hasUpperBound())
 			condition += " AND " + dateColumn + " <= ?";
 		return condition;
-	}
-
-	private int bindDateRange(PreparedStatement ps, int index, Range<LocalDate> dateRange) throws SQLException {
-		if (dateRange.hasLowerBound())
-			ps.setDate(++index, Date.valueOf(dateRange.lowerEndpoint()));
-		if (dateRange.hasUpperBound())
-			ps.setDate(++index, Date.valueOf(dateRange.upperEndpoint()));
-		return index;
 	}
 
 	private int compensateRankingPoints(LocalDate date, int rank) {

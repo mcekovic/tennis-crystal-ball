@@ -9,6 +9,7 @@ import org.springframework.format.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.collect.*;
 
@@ -47,10 +48,7 @@ public class PlayerRankingsResource {
 			case CAREER:
 				return Range.all();
 			case CUSTOM:
-				if (fromDate != null)
-					return toDate != null ? Range.closed(fromDate, toDate) : Range.atLeast(fromDate);
-				else
-					return toDate != null ? Range.atMost(toDate) : Range.all();
+				return DateUtil.toRange(fromDate, toDate);
 			default:
 				return Range.atLeast(LocalDate.now().minusYears(Long.parseLong(timeSpan)));
 		}
