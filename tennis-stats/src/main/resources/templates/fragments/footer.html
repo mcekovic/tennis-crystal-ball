@@ -10,7 +10,7 @@
 		}
 	</style>
 	<div class="row">
-		<div th:if="${#arrays.contains(@environment.getActiveProfiles(),'openshift')}" class="col-md-2">
+		<div th:if="${#arrays.contains(@environment.getActiveProfiles(),'openshift') or #arrays.contains(@environment.getActiveProfiles(),'openshift-db')}" class="col-md-2">
 			<a href="https://www.openshift.com" target="_blank"><img src="/images/openshift.png" width="128" height="32" alt="Powered by OpenShift"/></a>
 		</div>
 		<div class="col-md-10">

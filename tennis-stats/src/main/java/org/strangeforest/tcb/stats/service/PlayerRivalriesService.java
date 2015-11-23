@@ -67,7 +67,7 @@ public class PlayerRivalriesService {
 		"  FROM match m\n" +
 		"  LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE (m.winner_id = r.player_id AND m.loser_id = r.opponent_id) OR (m.winner_id = r.opponent_id AND m.loser_id = r.player_id)\n" +
-		"  ORDER BY e.date DESC LIMIT 1\n" +
+		"  ORDER BY e.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
 		") lm";
 
 	private static final String LAST_MATCH_JSON = //language=SQL
@@ -76,7 +76,7 @@ public class PlayerRivalriesService {
 		"     FROM match m\n" +
 		"     LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"     WHERE (m.winner_id = r.player_id AND m.loser_id = r.opponent_id) OR (m.winner_id = r.opponent_id AND m.loser_id = r.player_id)\n" +
-		"     ORDER BY e.date DESC LIMIT 1\n" +
+		"     ORDER BY e.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
 		"  ) AS lm) AS last_match";
 
 

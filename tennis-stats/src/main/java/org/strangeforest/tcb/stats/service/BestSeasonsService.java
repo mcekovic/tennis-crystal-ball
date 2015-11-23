@@ -39,11 +39,16 @@ public class BestSeasonsService {
 		"  WHERE s.goat_points >= ?\n" +
 		"  GROUP BY player_id, s.season, s.goat_points\n" +
 		"  ORDER BY s.goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC\n" +
+		"), pleayer_season_ranked AS (\n" +
+		"  SELECT row_number() OVER () AS season_rank, player_id, season, goat_points,\n" +
+		"  grand_slam_titles, grand_slam_finals, grand_slam_semi_finals, tour_finals_titles, tour_finals_finals, masters_titles, masters_finals, olympics_titles, titles\n" +
+		"  FROM pleayer_season\n" +
 		")\n" +
-		"SELECT row_number() OVER () AS rank, player_id, s.season - date_part('year', p.dob) AS age, p.name, p.country_id, s.season, s.goat_points,\n" +
+		"SELECT season_rank, player_id, s.season - date_part('year', p.dob) AS age, p.name, rank() OVER (PARTITION BY player_id ORDER BY season_rank) player_season_rank,\n" +
+		"  p.country_id, s.season, s.goat_points,\n" +
 		"  s.grand_slam_titles, s.grand_slam_finals, s.grand_slam_semi_finals, s.tour_finals_titles, s.tour_finals_finals,\n" +
 		"  s.masters_titles, s.masters_finals, s.olympics_titles, s.titles, y.year_end_rank\n" +
-		"FROM pleayer_season s\n" +
+		"FROM pleayer_season_ranked s\n" +
 		"LEFT JOIN player_v p USING (player_id)\n" +
 		"LEFT JOIN player_year_end_rank y USING (player_id, season)\n" +
 		"WHERE s.goat_points > 0%1$s\n" +
@@ -64,13 +69,16 @@ public class BestSeasonsService {
 		jdbcTemplate.query(
 			format(BEST_SEASONS_QUERY, filter.getCriteria(), orderBy),
 			(rs) -> {
-				int rank = rs.getInt("rank");
+				int seasonRank = rs.getInt("season_rank");
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
+				int playerSeasonRank = rs.getInt("player_season_rank");
+				if (playerSeasonRank > 1)
+					name += " (" + playerSeasonRank + ')';
 				String countryId = rs.getString("country_id");
 				int season = rs.getInt("season");
 				int goatPoints = rs.getInt("goat_points");
-				BestSeasonRow row = new BestSeasonRow(rank, playerId, name, countryId, season, goatPoints);
+				BestSeasonRow row = new BestSeasonRow(seasonRank, playerId, name, countryId, season, goatPoints);
 				row.setGrandSlamTitles(rs.getInt("grand_slam_titles"));
 				row.setGrandSlamFinals(rs.getInt("grand_slam_finals"));
 				row.setGrandSlamSemiFinals(rs.getInt("grand_slam_semi_finals"));

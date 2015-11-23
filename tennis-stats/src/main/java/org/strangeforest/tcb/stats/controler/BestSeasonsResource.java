@@ -28,7 +28,7 @@ public class BestSeasonsResource {
 		ORDER_MAP.put("olympicsFinals", "olympics_finals");
 		ORDER_MAP.put("titles", "titles");
 	}
-	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("rank");
+	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("season_rank");
 
 	@RequestMapping("/bestSeasonsTable")
 	public BootgridTable<BestSeasonRow> bestSeasonsTable(
