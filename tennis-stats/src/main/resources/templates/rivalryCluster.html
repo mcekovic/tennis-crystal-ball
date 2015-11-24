@@ -16,7 +16,8 @@
 		/*<![CDATA[*/
 		function showRivalryCluster() {
 			var players = $.trim($("#players").val());
-			if (players.length >= 2) {
+			var count = getPlayerCount(players);
+			if (count >= 2) {
 				var fromDate = getDate("fromDate");
 				if (fromDate == null)
 					return;
@@ -31,9 +32,18 @@
 				});
 			}
 			else {
-				var message = players.length == 1 ? "Only one player selected!" : "No player selected!";
-				$("#rivalryClusterDiv").html("<div class='row'><div class='alert alert-warning col-md-9'>" + message + "</div></div>");
+				var message = count == 1 ? "At least two players must be selected!" : "No player selected!";
+				$("#rivalryClusterDiv").html("<div class='row'><div class='col-md-12'><div class='alert alert-warning'>" + message + "</div></div></div>");
 			}
+		}
+		function getPlayerCount(players) {
+			var a = split(players);
+			var count = 0;
+			for (var i = 0; i < a.length; i++) {
+				if ($.trim(a[i]) != "")
+					count++;
+			}
+			return count;
 		}
 		var hiddenData = ".pct-data";
 		function toggleStatsData() {

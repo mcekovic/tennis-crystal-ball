@@ -20,7 +20,7 @@
 			if ($.trim($("#players").val()).length > 0)
 				doDrawChart($("#rankChartSize").slider("value"));
 			else
-				$("#rankChart").html("<div class='row'><div class='alert alert-warning col-md-9'>No player selected!</div></div>");
+				$("#rankChart").html("<div class='row'><div class='col-md-9'><div class='alert alert-warning'>No player selected!</div></div></div>");
 		}
 		function doDrawChart(width) {
 			var players = $("#players").val();

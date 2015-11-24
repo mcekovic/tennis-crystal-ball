@@ -101,19 +101,19 @@ public class RivalriesService {
 	private static final String LAST_MATCH_JOIN_LATERAL = //language=SQL
 		",\n" +
 		"LATERAL (\n" +
-		"  SELECT m.match_id, e.season, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
+		"  SELECT m.match_id, e.season, e.date, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"  FROM match m\n" +
 		"  LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
-		"  WHERE (m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s)\n" +
+		"  WHERE ((m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s))%3$s\n" +
 		"  ORDER BY e.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
 		") lm";
 
 	private static final String LAST_MATCH_JSON = //language=SQL
 		"  (SELECT row_to_json(lm) FROM (\n" +
-		"     SELECT m.match_id, e.season, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
+		"     SELECT m.match_id, e.season, e.date, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"     FROM match m\n" +
 		"     LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
-		"     WHERE (m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s)\n" +
+		"     WHERE ((m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s))%3$s\n" +
 		"     ORDER BY e.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
 		"  ) AS lm) AS last_match";
 
@@ -129,8 +129,8 @@ public class RivalriesService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(PLAYER_RIVALRIES_QUERY,
-				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id", "opponent_id"),
-				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id") : "",
+				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id", "opponent_id", ""),
+				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", "") : "",
 				filter.getCriteria(), orderBy
 			),
 			(rs) -> {
@@ -152,11 +152,12 @@ public class RivalriesService {
 	}
 
 	public RivalryCluster getRivalryCluster(List<Integer> playerIds, RivalryFilter filter) {
+		String criteria = filter.getCriteria();
 		return new RivalryCluster(jdbcTemplate.query(
 			format(RIVALRIES_QUERY,
-				filter.getCriteria(),
-				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2"),
-				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2") : ""
+				criteria,
+				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),
+				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", criteria) : ""
 			),
 			ps -> {
 				int index = 1;
@@ -165,6 +166,7 @@ public class RivalriesService {
 				index = filter.bindParams(ps, index);
 				bindIntegerArray(ps, ++index, playerIds);
 				bindIntegerArray(ps, ++index, playerIds);
+				index = filter.bindParams(ps, index);
 				filter.bindParams(ps, index);
 			},
 			(rs, rowNum) -> {
