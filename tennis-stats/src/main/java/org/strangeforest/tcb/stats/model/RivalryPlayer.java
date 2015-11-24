@@ -26,6 +26,13 @@ public class RivalryPlayer implements Comparable<RivalryPlayer> {
 		return name;
 	}
 
+	public String getInitials() {
+		StringBuilder sb = new StringBuilder();
+		for (String word : name.split(" "))
+			sb.append(word.charAt(0));
+		return sb.toString();
+	}
+
 	public String getCountryId() {
 		return countryId;
 	}

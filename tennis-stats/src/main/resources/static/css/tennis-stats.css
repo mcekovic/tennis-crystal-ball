@@ -11,6 +11,14 @@
 .label {
 	font-size: 87.5%;
 }
+.label-won {
+	color: black;
+	background-color: lime;
+}
+.label-lost {
+	color: black;
+	background-color: #ffa07a;
+}
 .black {
 	color: black;
 }

@@ -30,6 +30,10 @@ public class RivalryCluster {
 		return clusterRivalries;
 	}
 
+	public int getPlayerCount() {
+		return clusterRivalries.size();
+	}
+
 	public boolean isEmpty() {
 		return clusterRivalries.isEmpty();
 	}
