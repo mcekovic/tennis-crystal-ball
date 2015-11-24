@@ -9,6 +9,7 @@
 	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<script th:src="@{/js/tcbUtil.js}"></script>
 	<script th:src="@{/js/rankingChart.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript">
@@ -59,54 +60,8 @@
 			$("#compensatePointsDiv").css("visibility", $("#rankType").val() == "POINTS" ? "visible" : "hidden");
 		}
 		$(function() {
-			function split(val) {
-				return val.split(/,\s*/);
-			}
-			function extractLast(term) {
-				return split(term).pop();
-			}
-			$("#players").bind("keydown", function(event) {
-				if (event.keyCode === $.ui.keyCode.ENTER && !$(this).autocomplete("instance").menu.active)
-				   drawChart();
-				else if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active)
-					event.preventDefault();
-			}).autocomplete({
-				source: function(request, response) {
-					$.getJSON("/autocompletePlayer", {
-						term: extractLast(request.term)
-					}, response);
-				},
-				search: function() {
-					var term = extractLast(this.value);
-					if (term.length < 2) {
-						return false;
-					}
-				},
-				focus: function() {
-					return false;
-				},
-				select: function(event, ui) {
-					var terms = split(this.value);
-					terms.pop();
-					terms.push(ui.item.value);
-					terms.push("");
-					this.value = terms.join(", ");
-					return false;
-				}
-			});
-			$("#fromDate").datepicker({
-				defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
-				onClose: function(selectedDate) {
-					$("#toDate").datepicker("option", "minDate", selectedDate);
-				}
-			});
-			$("#toDate").datepicker({
-				defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
-				onClose: function(selectedDate) {
-					$("#fromDate").datepicker("option", "maxDate", selectedDate);
-				}
-			});
-			$("div.ui-datepicker").css({fontSize: "12px"});
+			autocompletePlayers("players", drawChart);
+			dateRangePicker("fromDate", "toDate");
 			$("#rankChartSize").slider({
 				min: 500,
 				max: 1500,

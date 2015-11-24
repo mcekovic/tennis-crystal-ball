@@ -1,5 +1,6 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
+	<script th:src="@{/js/tcbUtil.js}"></script>
 	<script th:src="@{/js/rankingChart.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
@@ -47,19 +48,7 @@
 			$("#compensatePointsDiv").css("visibility", $("#rankType").val() == "POINTS" ? "visible" : "hidden");
 		}
 		$(function() {
-			$("#rankingFromDate").datepicker({
-				defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
-				onClose: function(selectedDate) {
-					$("#rankingToDate").datepicker("option", "minDate", selectedDate);
-				}
-			});
-			$("#rankingToDate").datepicker({
-				defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
-				onClose: function(selectedDate) {
-					$("#rankingFromDate").datepicker("option", "maxDate", selectedDate);
-				}
-			});
-			$("div.ui-datepicker").css({fontSize: "12px"});
+			dateRangePicker("rankingFromDate", "rankingToDate");
 			$("#rankChartSize").slider({
 				min: 500,
 				max: 1500,

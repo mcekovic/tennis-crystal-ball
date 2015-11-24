@@ -27,19 +27,3 @@ function useLogScale(json) {
 	}
 	return max - min >= 50;
 }
-
-function getDate(id) {
-	var $date = $("#" + id);
-	var date = $date.val();
-	if (date == "")
-		return date;
-	try {
-		$.datepicker.parseDate("dd-mm-yy", date);
-		return date;
-	}
-	catch (err) {
-		alert("Invalid " + id.substr(0, id.length - 4) + " date: " + date);
-		$date.focus();
-		return null;
-	}
-}

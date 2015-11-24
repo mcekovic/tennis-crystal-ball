@@ -35,7 +35,7 @@ public class RivalriesController {
 		List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 
 		List<Integer> playerIds = playerService.findPlayerIds(players);
-		RivalryCluster rivalryCluster = rivalriesService.getRivalryCluster(playerIds, dateRange, level, surface);
+		RivalryCluster rivalryCluster = rivalriesService.getRivalryCluster(playerIds, new RivalryFilter(dateRange, level, surface));
 
 		return new ModelAndView("rivalryClusterTable", "rivalryCluster", rivalryCluster);
 	}

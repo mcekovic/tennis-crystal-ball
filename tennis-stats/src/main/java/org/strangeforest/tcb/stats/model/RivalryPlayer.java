@@ -1,16 +1,20 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.strangeforest.tcb.util.*;
+
 public class RivalryPlayer implements Comparable<RivalryPlayer> {
 
 	private final int playerId;
 	private final String name;
 	private final String countryId;
+	private final String countryCode;
 	private final int goatPoints;
 
 	public RivalryPlayer(int playerId, String name, String countryId, int goatPoints) {
 		this.playerId = playerId;
 		this.name = name;
 		this.countryId = countryId;
+		this.countryCode = CountryUtil.getISOAlpha2Code(countryId);
 		this.goatPoints = goatPoints;
 	}
 
@@ -24,6 +28,10 @@ public class RivalryPlayer implements Comparable<RivalryPlayer> {
 
 	public String getCountryId() {
 		return countryId;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
 	}
 
 	public int getGoatPoints() {

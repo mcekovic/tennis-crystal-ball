@@ -119,7 +119,7 @@ CREATE UNIQUE INDEX ON player_titles (player_id);
 -- match_for_stats_v
 
 CREATE VIEW match_for_stats_v AS
-SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.level, e.surface, m.best_of, m.round, m.winner_rank, m.loser_rank, m.w_sets, m.l_sets, m.w_games, m.l_games
+SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.date, e.level, e.surface, m.best_of, m.round, m.winner_rank, m.loser_rank, m.w_sets, m.l_sets, m.w_games, m.l_games
 FROM match m
 LEFT JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LIKE '%WG') AND (m.outcome IS NULL OR m.outcome <> 'W/O');
@@ -128,7 +128,7 @@ WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LI
 -- match_for_rivalry_v
 
 CREATE VIEW match_for_rivalry_v AS
-SELECT m.match_id, m.winner_id, m.loser_id
+SELECT m.match_id, m.winner_id, m.loser_id, e.date, e.level, e.surface
 FROM match m
 LEFT JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LIKE '%WG');

@@ -44,4 +44,8 @@ public class Rivalry {
 	public LastMatch getLastMatch() {
 		return lastMatch;
 	}
+
+	public Rivalry inverted() {
+		return new Rivalry(player2, player1, wonLost.inverted(), lastMatch);
+	}
 }

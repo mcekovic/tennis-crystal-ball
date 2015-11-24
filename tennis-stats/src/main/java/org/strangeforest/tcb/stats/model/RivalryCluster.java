@@ -20,7 +20,7 @@ public class RivalryCluster {
 			int playerId1 = player1.getPlayerId();
 			int playerId2 = player2.getPlayerId();
 			this.rivalries.put(new RivalryKey(playerId1, playerId2), rivalry);
-			this.rivalries.put(new RivalryKey(playerId2, playerId1), rivalry);
+			this.rivalries.put(new RivalryKey(playerId2, playerId1), rivalry.inverted());
 		}
 		clusterRivalries = new ArrayList<>(clusterRivalryMap.values());
 		sort(clusterRivalries, (rivalry1, rivalry2) -> rivalry1.getPlayer1().compareTo(rivalry2.getPlayer1()));
@@ -28,6 +28,10 @@ public class RivalryCluster {
 
 	public List<Rivalry> getClusterRivalries() {
 		return clusterRivalries;
+	}
+
+	public boolean isEmpty() {
+		return clusterRivalries.isEmpty();
 	}
 
 	public Rivalry getRivalry(int playerId1, int playerId2) {

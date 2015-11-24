@@ -9,7 +9,7 @@
 	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
-	<script th:src="@{/js/rankingChart.js}"></script>
+	<script th:src="@{/js/tcbUtil.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		function showRivalryCluster() {
@@ -21,63 +21,26 @@
 				var toDate = getDate("toDate");
 				if (toDate == null)
 					return;
-				var url = "/rivalryClusterTable?players=" + players + "&fromDate=" + fromDate + "&toDate=" + toDate;
-				$("#rivalryClusterTable").load(url);
+				var level = $("#level").val();
+				var surface = $("#surface").val();
+				var url = "/rivalryClusterTable?players=" + players + "&fromDate=" + fromDate + "&toDate=" + toDate + "&level=" + level + "&surface=" + surface;
+				$.ajax(url).done(function(data) {
+					$("#rivalryClusterDiv").html(data);
+				});
 			}
 			else {
 				var message = players.length == 1 ? "Only one player selected!" : "No player selected!";
-				$("#rivalryClusterTable").html("<div class='row'><div class='alert alert-warning col-md-9'>" + message + "</div></div>");
+				$("#rivalryClusterDiv").html("<div class='row'><div class='alert alert-warning col-md-9'>" + message + "</div></div>");
 			}
 		}
+		var hiddenData = ".pct-data";
+		function toggleStatsData() {
+			hiddenData = hiddenData == ".pct-data" ? ".raw-data" : ".pct-data";
+			$(".pct-data, .raw-data").toggle();
+		}
 		$(function() {
-			function split(val) {
-				return val.split(/,\s*/);
-			}
-			function extractLast(term) {
-				return split(term).pop();
-			}
-			$("#players").bind("keydown", function(event) {
-				if (event.keyCode === $.ui.keyCode.ENTER && !$(this).autocomplete("instance").menu.active)
-				   drawChart();
-				else if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active)
-					event.preventDefault();
-			}).autocomplete({
-				source: function(request, response) {
-					$.getJSON("/autocompletePlayer", {
-						term: extractLast(request.term)
-					}, response);
-				},
-				search: function() {
-					var term = extractLast(this.value);
-					if (term.length < 2) {
-						return false;
-					}
-				},
-				focus: function() {
-					return false;
-				},
-				select: function(event, ui) {
-					var terms = split(this.value);
-					terms.pop();
-					terms.push(ui.item.value);
-					terms.push("");
-					this.value = terms.join(", ");
-					return false;
-				}
-			});
-			$("#fromDate").datepicker({
-				defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
-				onClose: function(selectedDate) {
-					$("#toDate").datepicker("option", "minDate", selectedDate);
-				}
-			});
-			$("#toDate").datepicker({
-				defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
-				onClose: function(selectedDate) {
-					$("#fromDate").datepicker("option", "maxDate", selectedDate);
-				}
-			});
-			$("div.ui-datepicker").css({fontSize: "12px"});
+			autocompletePlayers("players", showRivalryCluster);
+			dateRangePicker("fromDate", "toDate");
 		});
 		/*]]>*/
 	</script>
@@ -86,7 +49,7 @@
 	<div th:include="fragments/header :: title"></div>
 	<h3>Rivalry Cluster</h3>
 	<div class="row">
-		<div class="col-md-9">
+		<div class="col-md-12">
 			<div class="ui-widget input-group">
 				<label for="players" class="input-group-addon">Players:</label>
 				<input id="players" type="text" class="search-field form-control" placeholder="Search Players"/>
@@ -104,13 +67,41 @@
 			</div>
 		</div>
 		<div class="col-md-2">
+			<select id="level" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+				<option value="">All levels</option>
+				<option value="G" class="bg-level-G">Grand Slam</option>
+				<option value="F" class="bg-level-F">Tour Finals</option>
+				<option value="M" class="bg-level-M">Masters</option>
+				<option value="A" class="bg-level-A">ATP</option>
+				<option value="O" class="bg-level-O">Olympics</option>
+				<option value="D" class="bg-level-D">Davis Cup</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="surface" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+				<option value="">All surfaces</option>
+				<option value="H" class="bg-surface-H">Hard</option>
+				<option value="C" class="bg-surface-C">Clay</option>
+				<option value="G" class="bg-surface-G">Grass</option>
+				<option value="P" class="bg-surface-P">Carpet</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<a class="pct-data btn btn-default" href="#" role="button" onclick="toggleStatsData()" style="display: none">
+				<span class="glyphicon glyphicon-equalizer"></span> Raw Data
+			</a>
+			<a class="raw-data btn btn-default" href="#" role="button" onclick="toggleStatsData()">
+				<span class="glyphicon glyphicon-scale"></span> Pct. Data
+			</a>
+		</div>
+		<div class="col-md-2">
 			<a class="btn btn-primary pull-right" href="#" role="button" onclick="showRivalryCluster()">
 				<span class="glyphicon glyphicon-th"></span>&nbsp;&nbsp;Show
 			</a>
 		</div>
 	</div>
 	<br/>
-	<div id="rivalryClusterTable"></div>
+	<div id="rivalryClusterDiv"></div>
 	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>

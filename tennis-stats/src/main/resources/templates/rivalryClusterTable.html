@@ -1,0 +1,57 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="rivalryCluster" type="org.strangeforest.tcb.stats.model.RivalryCluster"-->
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$(function() {
+			$("#rivalryClusterTable").find(hiddenData).hide();
+		});
+		/*]]>*/
+	</script>
+	<style>
+		#rivalryClusterTable > thead > tr > th {
+			border-bottom: 3px solid lightgray;
+		}
+		#rivalryClusterTable > tbody > tr > th {
+			border-right: 3px solid lightgray;
+			vertical-align: middle;
+		}
+		#rivalryClusterTable > tbody > tr > td {
+			text-align: center;
+			vertical-align: middle;
+		}
+	</style>
+	<table id="rivalryClusterTable" class="table table-condensed table-hover table-bordered text-nowrap">
+		<thead id="rivalryClusterVerticalHeader">
+			<tr class="player-vertical">
+				<th style="border-right: 3px solid lightgray">Player</th>
+				<th style="border-right: 3px solid lightgray; text-align: center">Totals</th>
+				<th th:each="rivalry : ${rivalryCluster.clusterRivalries}" style="text-align: center">
+					<a th:with="player = ${rivalry.player1}" th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+				</th>
+			</tr>
+		</thead>
+		<tbody th:unless="${rivalryCluster.empty}">
+			<tr th:each="hRivalry : ${rivalryCluster.clusterRivalries}">
+				<th th:with="player = ${hRivalry.player1}">
+					<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
+					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+				</th>
+				<th style="text-align: center">
+					<span class="raw-data" th:text="${hRivalry.wonLost.WLT}">11 - 9 / 20</span>
+					<span class="pct-data" th:text="${hRivalry.wonLost.wonPctStr}">55.5%</span>
+				</th>
+				<td th:each="vRivalry : ${rivalryCluster.clusterRivalries}" th:with="rivalry = ${rivalryCluster.getRivalry(hRivalry.player1.playerId, vRivalry.player1.playerId)}">
+					<th:block th:if="${rivalry != null}">
+						<span class="raw-data" th:text="${rivalry.wonLost.WLT}">4 - 2 / 6</span>
+						<span class="pct-data" th:text="${rivalry.wonLost.wonPctStr}">66.7%</span>
+					</th:block>
+				</td>
+			</tr>
+		</tbody>
+		<tbody th:if="${rivalryCluster.empty}">
+			<tr>
+				<td colspan="2" align="center">No data found</td>
+			</tr>
+		</tbody>
+	</table>
+</th:block>

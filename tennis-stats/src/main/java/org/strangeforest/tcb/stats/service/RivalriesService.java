@@ -64,12 +64,12 @@ public class RivalriesService {
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id, loser_id, count(match_id) matches, 0 won\n" +
 		"  FROM match_for_rivalry_v\n" +
-		"  WHERE winner_id = ANY(?) AND loser_id = ANY(?)\n" +
+		"  WHERE winner_id = ANY(?) AND loser_id = ANY(?)%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT winner_id, loser_id, 0, count(match_id)\n" +
 		"  FROM match_for_stats_v\n" +
-		"  WHERE winner_id = ANY(?) AND loser_id = ANY(?)\n" +
+		"  WHERE winner_id = ANY(?) AND loser_id = ANY(?)%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"), rivalries_2 AS (\n" +
 		"  SELECT winner_id player_id_1, loser_id player_id_2, sum(matches) matches, sum(won) won, 0 lost\n" +
@@ -89,10 +89,10 @@ public class RivalriesService {
 		")\n" +
 		"SELECT r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.goat_points goat_points_1,\n" +
 		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
-		"%1$s\n" +
+		"%2$s\n" +
 		"FROM rivalries_3 r\n" +
 		"LEFT JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
-		"LEFT JOIN player_v p2 ON p2.player_id = r.player_id_2%2$s\n" +
+		"LEFT JOIN player_v p2 ON p2.player_id = r.player_id_2%3$s\n" +
 		"WHERE r.rank = 1";
 
 	private static final String LAST_MATCH_LATERAL = //language=SQL
@@ -151,9 +151,10 @@ public class RivalriesService {
 		return table;
 	}
 
-	public RivalryCluster getRivalryCluster(List<Integer> playerIds, Range<LocalDate> dateRange, String level, String surface) {
+	public RivalryCluster getRivalryCluster(List<Integer> playerIds, RivalryFilter filter) {
 		return new RivalryCluster(jdbcTemplate.query(
 			format(RIVALRIES_QUERY,
+				filter.getCriteria(),
 				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2"),
 				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2") : ""
 			),
@@ -161,9 +162,10 @@ public class RivalriesService {
 				int index = 1;
 				bindIntegerArray(ps, index, playerIds);
 				bindIntegerArray(ps, ++index, playerIds);
+				index = filter.bindParams(ps, index);
 				bindIntegerArray(ps, ++index, playerIds);
 				bindIntegerArray(ps, ++index, playerIds);
-				index = bindDateRange(ps, index, dateRange);
+				filter.bindParams(ps, index);
 			},
 			(rs, rowNum) -> {
 				RivalryPlayer player1 = mapPlayer(rs, "_1");
