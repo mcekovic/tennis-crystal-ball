@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="minRivalryMatches" type="java.lang.Integer"-->
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Ultimate Tennis Statistics - Greatest Rivalries</title>
+	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/formatters.js}"></script>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$(function() {
+			$("#greatestRivalriesTable").bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/greatestRivalriesTable",
+				rowCount: [10, 20, 50, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				},
+				formatters: {
+					"player1": player1CountryFormatter,
+					"player2": player2CountryFormatter,
+					"wonPctStr": function(column, row) {
+						return "<span data-won-pct='" + row.wonPctClass + "'>" + row.wonPctStr + "</span>";
+					},
+					"lastMatch": function(column, row) {
+						var match = row.lastMatch;
+						return (match.winnerId == row.player1.playerId ? row.player1.name : row.player2.name) + " [ " + match.score + " ] at " +
+							match.season + " " + tournamentFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
+					}
+				}
+			});
+		});
+		/*]]>*/
+	</script>
+</head>
+<body class="container">
+	<div th:include="fragments/header :: title"></div>
+	<h3 style="position: absolute">Greatest Rivalries</h3>
+	<table id="greatestRivalriesTable" class="table table-condensed table-hover table-striped">
+		<thead>
+			<tr>
+				<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="45">Rank</th>
+				<th data-column-id="player1" data-formatter="player1" data-sortable="false" data-width="120">Player 1</th>
+				<th data-column-id="player2" data-formatter="player2" data-sortable="false" data-width="120">Player 2</th>
+				<th data-column-id="matches" data-type="numeric" data-order="desc" data-width="55" data-align="right" data-header-align="right">Matches</th>
+				<th data-column-id="won" data-type="numeric" data-width="40" data-align="right" data-header-align="right">Won</th>
+				<th data-column-id="lost" data-type="numeric" data-width="40" data-align="right" data-header-align="right">Lost</th>
+				<th data-column-id="wonPctStr" data-formatter="wonPctStr" data-width="50" data-align="right" data-header-align="right">Win %</th>
+				<th data-column-id="lastMatch" data-formatter="lastMatch" data-sortable="false" data-width="250">Last Match</th>
+			</tr>
+		</thead>
+	</table>
+	<p><i>* Minimum <span th:text="${minRivalryMatches}">10</span> rivalry matches</i></p>
+	<div th:include="fragments/footer :: copy"></div>
+</body>
+</html>

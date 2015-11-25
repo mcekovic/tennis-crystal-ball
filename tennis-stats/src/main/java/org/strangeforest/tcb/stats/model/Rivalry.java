@@ -25,7 +25,7 @@ public class Rivalry {
 		return wonLost;
 	}
 
-	public void addWonLost(WonLost wonLost) {
+	void addWonLost(WonLost wonLost) {
 		this.wonLost = this.wonLost.add(wonLost);
 	}
 
@@ -41,11 +41,19 @@ public class Rivalry {
 		return wonLost.getLost();
 	}
 
+	public String getWonPctStr() {
+		return wonLost.getWonPctStr();
+	}
+
+	public int getWonPctClass() {
+		return wonLost.getWonPctClass();
+	}
+
 	public LastMatch getLastMatch() {
 		return lastMatch;
 	}
 
-	public Rivalry inverted() {
+	Rivalry inverted() {
 		return new Rivalry(player2, player1, wonLost.inverted(), lastMatch);
 	}
 }

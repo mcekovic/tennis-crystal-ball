@@ -13,8 +13,6 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
-import com.google.common.collect.*;
-
 import static java.util.stream.Collectors.*;
 
 @Controller
@@ -22,6 +20,17 @@ public class RivalriesController {
 
 	@Autowired private RivalriesService rivalriesService;
 	@Autowired private PlayerService playerService;
+
+	@RequestMapping("/greatestRivalries")
+	public ModelAndView greatestRivalries() {
+		int minRivalryMatches = rivalriesService.getGreatestRivalriesMinMatches();
+		return new ModelAndView("greatestRivalries", "minRivalryMatches", minRivalryMatches);
+	}
+
+	@RequestMapping("/rivalryCluster")
+	public String rivalryCluster() {
+		return "rivalryCluster";
+	}
 
 	@RequestMapping("/rivalryClusterTable")
 	public ModelAndView rivalryClusterTable(
@@ -31,11 +40,11 @@ public class RivalriesController {
 		@RequestParam(value = "level", required = false) String level,
 		@RequestParam(value = "surface", required = false) String surface
 	) {
-		Range<LocalDate> dateRange = DateUtil.toRange(fromDate, toDate);
 		List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
+		RivalryFilter filter = new RivalryFilter(DateUtil.toRange(fromDate, toDate), level, surface);
 
 		List<Integer> playerIds = playerService.findPlayerIds(players);
-		RivalryCluster rivalryCluster = rivalriesService.getRivalryCluster(playerIds, new RivalryFilter(dateRange, level, surface));
+		RivalryCluster rivalryCluster = rivalriesService.getRivalryCluster(playerIds, filter);
 
 		return new ModelAndView("rivalryClusterTable", "rivalryCluster", rivalryCluster);
 	}

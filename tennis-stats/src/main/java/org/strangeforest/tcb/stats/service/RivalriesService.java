@@ -2,7 +2,6 @@ package org.strangeforest.tcb.stats.service;
 
 import java.io.*;
 import java.sql.*;
-import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import javax.annotation.*;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
 import com.fasterxml.jackson.databind.*;
-import com.google.common.collect.*;
 
 import static java.lang.String.*;
 import static java.util.Arrays.*;
@@ -25,6 +23,8 @@ public class RivalriesService {
 	@Autowired private DataService dataService;
 	@Autowired private JdbcTemplate jdbcTemplate;
 	private boolean lateralSupported;
+
+	private static final int MIN_GREATEST_RIVALRIES_MATCHES = 10;
 
 	private static final String PLAYER_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
@@ -84,8 +84,8 @@ public class RivalriesService {
 		"  FROM rivalries_2\n" +
 		"  GROUP BY player_id_1, player_id_2\n" +
 		"  WINDOW r AS (\n" +
-		"    PARTITION BY CASE WHEN player_id_1 < player_id_2 THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY player_id_1)\n" +
-		"  \n" +
+		"    PARTITION BY CASE WHEN player_id_1 < player_id_2 THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY player_id_1\n" +
+		"  )\n" +
 		")\n" +
 		"SELECT r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.goat_points goat_points_1,\n" +
 		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
@@ -94,6 +94,46 @@ public class RivalriesService {
 		"LEFT JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
 		"LEFT JOIN player_v p2 ON p2.player_id = r.player_id_2%3$s\n" +
 		"WHERE r.rank = 1";
+
+	private static final String GREATEST_RIVALRIES_QUERY = //language=SQL
+		"WITH rivalries AS (\n" +
+		"  SELECT winner_id, loser_id, count(match_id) matches, 0 won\n" +
+		"  FROM match_for_rivalry_v\n" +
+		"  WHERE TRUE%1$s\n" +
+		"  GROUP BY winner_id, loser_id\n" +
+		"  UNION ALL\n" +
+		"  SELECT winner_id, loser_id, 0, count(match_id)\n" +
+		"  FROM match_for_stats_v\n" +
+		"  WHERE TRUE%1$s\n" +
+		"  GROUP BY winner_id, loser_id\n" +
+		"), rivalries_2 AS (\n" +
+		"  SELECT winner_id player_id_1, loser_id player_id_2, sum(matches) matches, sum(won) won, 0 lost\n" +
+		"  FROM rivalries\n" +
+		"  GROUP BY player_id_1, player_id_2, matches\n" +
+		"  HAVING matches >= ?\n" +
+		"  UNION ALL\n" +
+		"  SELECT loser_id player_id_1, winner_id player_id_2, sum(matches), 0, sum(won)\n" +
+		"  FROM rivalries\n" +
+		"  GROUP BY player_id_1, player_id_2, matches\n" +
+		"  HAVING matches >= ?\n" +
+		"), rivalries_3 AS (\n" +
+		"  SELECT rank() OVER riv AS rank, player_id_1, player_id_2, sum(matches) matches, sum(won) won, sum(lost) lost, g1.goat_points + g2.goat_points rivalry_goat_points\n" +
+		"  FROM rivalries_2\n" +
+		"  LEFT JOIN player_goat_points g1 ON g1.player_id = player_id_1\n" +
+		"  LEFT JOIN player_goat_points g2 ON g2.player_id = player_id_2\n" +
+		"  GROUP BY player_id_1, player_id_2, g1.goat_points, g2.goat_points\n" +
+		"  WINDOW riv AS (\n" +
+		"    PARTITION BY CASE WHEN g1.goat_points > g2.goat_points OR (g1.goat_points = g2.goat_points AND player_id_1 < player_id_2) THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY g1.goat_points DESC, player_id_1\n" +
+		"  )\n" +
+		")\n" +
+		"SELECT rank() OVER (ORDER BY matches DESC, rivalry_goat_points DESC) AS rivalry_rank, r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.goat_points goat_points_1,\n" +
+		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
+		"%2$s\n" +
+		"FROM rivalries_3 r\n" +
+		"LEFT JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
+		"LEFT JOIN player_v p2 ON p2.player_id = r.player_id_2%3$s\n" +
+		"WHERE rank = 1\n" +
+		"ORDER BY %4$s, p1.goat_points + p2.goat_points DESC OFFSET ?";
 
 	private static final String LAST_MATCH_LATERAL = //language=SQL
 		"  lm.match_id, lm.season, lm.level, lm.surface, lm.tournament, lm.round, lm.winner_id, lm.loser_id, lm.score";
@@ -178,6 +218,46 @@ public class RivalriesService {
 			}
 		));
 	}
+
+	public BootgridTable<GreatestRivalry> getGreatestRivalriesTable(RivalryFilter filter, String orderBy, int pageSize, int currentPage) {
+		BootgridTable<GreatestRivalry> table = new BootgridTable<>(currentPage);
+		AtomicInteger rivalries = new AtomicInteger();
+		int offset = (currentPage - 1) * pageSize;
+		String criteria = filter.getCriteria();
+		jdbcTemplate.query(
+			format(GREATEST_RIVALRIES_QUERY,
+				criteria,
+				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),
+				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", criteria) : "",
+				orderBy
+			),
+			ps -> {
+				int index = filter.bindParams(ps, 0);
+				index = filter.bindParams(ps, index);
+				ps.setInt(++index, MIN_GREATEST_RIVALRIES_MATCHES);
+				ps.setInt(++index, MIN_GREATEST_RIVALRIES_MATCHES);
+				index = filter.bindParams(ps, index);
+				ps.setInt(++index, offset);
+			},
+			(rs) -> {
+				if (rivalries.incrementAndGet() <= pageSize) {
+					int rank = rs.getInt("rivalry_rank");
+					RivalryPlayer player1 = mapPlayer(rs, "_1");
+					RivalryPlayer player2 = mapPlayer(rs, "_2");
+					WonLost wonLost = mapWonLost(rs);
+					LastMatch lastMatch = mapLastMatch(rs);
+					table.addRow(new GreatestRivalry(rank, player1, player2, wonLost, lastMatch));
+				}
+			}
+		);
+		table.setTotal(offset + rivalries.get());
+		return table;
+	}
+
+	public int getGreatestRivalriesMinMatches() {
+		return MIN_GREATEST_RIVALRIES_MATCHES;
+	}
+
 
 	private static WonLost mapWonLost(ResultSet rs) throws SQLException {
 		return new WonLost(rs.getInt("won"), rs.getInt("lost"), rs.getInt("matches"));
