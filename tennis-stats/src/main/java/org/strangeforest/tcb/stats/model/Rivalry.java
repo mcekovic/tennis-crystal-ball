@@ -49,6 +49,14 @@ public class Rivalry {
 		return wonLost.getWonPctClass();
 	}
 
+	public String getLostPctStr() {
+		return wonLost.inverted().getWonPctStr();
+	}
+
+	public int getLostPctClass() {
+		return wonLost.inverted().getWonPctClass();
+	}
+
 	public LastMatch getLastMatch() {
 		return lastMatch;
 	}

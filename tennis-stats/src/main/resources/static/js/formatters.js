@@ -14,21 +14,14 @@ function playerFormatter(column, row) {
 }
 
 function playerCountryFormatter(column, row) {
-	return _playerCountryFormatter(row);
+	return "<img src='/images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='20'/> " +
+		"<a href='/playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>";
 }
 
-function player1CountryFormatter(column, row) {
-	return _playerCountryFormatter(row.player1);
+function rivalryFormatter(column, row) {
+	return playerCountryFormatter(column, row.player1) + " - " + playerCountryFormatter(column, row.player2);
 }
 
-function player2CountryFormatter(column, row) {
-	return _playerCountryFormatter(row.player2);
-}
-
-function _playerCountryFormatter(player) {
-	return "<img src='/images/flags/" + player.countryCode + ".png' title='" + player.countryId + "' width='24' height='20'/> " +
-	       "<a href='/playerProfile?playerId=" + player.playerId + "' title='Show profile'>" + player.name + "</a>";
-}
 
 // Level
 function levelFormatter(column, row) {

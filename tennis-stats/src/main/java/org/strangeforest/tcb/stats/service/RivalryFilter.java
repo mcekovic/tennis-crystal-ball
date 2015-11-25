@@ -25,6 +25,22 @@ public class RivalryFilter {
 		this.surface = surface;
 	}
 
+	public String getLevel() {
+		return level;
+	}
+
+	public String getSurface() {
+		return surface;
+	}
+
+	public boolean hasLevel() {
+		return !isNullOrEmpty(level);
+	}
+
+	public boolean hasSurface() {
+		return !isNullOrEmpty(surface);
+	}
+
 	public String getCriteria() {
 		StringBuilder criteria = new StringBuilder();
 		appendCriteria(criteria);

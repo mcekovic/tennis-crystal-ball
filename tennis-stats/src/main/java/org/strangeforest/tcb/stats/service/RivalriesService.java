@@ -24,7 +24,22 @@ public class RivalriesService {
 	@Autowired private JdbcTemplate jdbcTemplate;
 	private boolean lateralSupported;
 
-	private static final int MIN_GREATEST_RIVALRIES_MATCHES = 10;
+	private static final int MIN_GREATEST_RIVALRIES_MATCHES = 20;
+	private static final int MIN_GREATEST_RIVALRIES_MATCHES_MIN = 2;
+	private static final Map<String, Double> MIN_MATCHES_LEVEL_FACTOR = new HashMap<>();
+	private static final Map<String, Double> MIN_MATCHES_SURFACE_FACTOR = new HashMap<>();
+	static {
+		MIN_MATCHES_LEVEL_FACTOR.put("G",  4.0);
+		MIN_MATCHES_LEVEL_FACTOR.put("F",  8.0);
+		MIN_MATCHES_LEVEL_FACTOR.put("M",  3.0);
+		MIN_MATCHES_LEVEL_FACTOR.put("A",  1.8);
+		MIN_MATCHES_LEVEL_FACTOR.put("O", 20.0);
+		MIN_MATCHES_LEVEL_FACTOR.put("D",  8.0);
+		MIN_MATCHES_SURFACE_FACTOR.put("H",  2.0);
+		MIN_MATCHES_SURFACE_FACTOR.put("C",  2.0);
+		MIN_MATCHES_SURFACE_FACTOR.put("G",  5.0);
+		MIN_MATCHES_SURFACE_FACTOR.put("P",  3.0);
+	}
 
 	private static final String PLAYER_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
@@ -109,19 +124,18 @@ public class RivalriesService {
 		"), rivalries_2 AS (\n" +
 		"  SELECT winner_id player_id_1, loser_id player_id_2, sum(matches) matches, sum(won) won, 0 lost\n" +
 		"  FROM rivalries\n" +
-		"  GROUP BY player_id_1, player_id_2, matches\n" +
-		"  HAVING matches >= ?\n" +
+		"  GROUP BY player_id_1, player_id_2\n" +
 		"  UNION ALL\n" +
 		"  SELECT loser_id player_id_1, winner_id player_id_2, sum(matches), 0, sum(won)\n" +
 		"  FROM rivalries\n" +
-		"  GROUP BY player_id_1, player_id_2, matches\n" +
-		"  HAVING matches >= ?\n" +
+		"  GROUP BY player_id_1, player_id_2\n" +
 		"), rivalries_3 AS (\n" +
 		"  SELECT rank() OVER riv AS rank, player_id_1, player_id_2, sum(matches) matches, sum(won) won, sum(lost) lost, g1.goat_points + g2.goat_points rivalry_goat_points\n" +
 		"  FROM rivalries_2\n" +
 		"  LEFT JOIN player_goat_points g1 ON g1.player_id = player_id_1\n" +
 		"  LEFT JOIN player_goat_points g2 ON g2.player_id = player_id_2\n" +
 		"  GROUP BY player_id_1, player_id_2, g1.goat_points, g2.goat_points\n" +
+		"  HAVING sum(matches) >= ?\n" +
 		"  WINDOW riv AS (\n" +
 		"    PARTITION BY CASE WHEN g1.goat_points > g2.goat_points OR (g1.goat_points = g2.goat_points AND player_id_1 < player_id_2) THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY g1.goat_points DESC, player_id_1\n" +
 		"  )\n" +
@@ -234,8 +248,7 @@ public class RivalriesService {
 			ps -> {
 				int index = filter.bindParams(ps, 0);
 				index = filter.bindParams(ps, index);
-				ps.setInt(++index, MIN_GREATEST_RIVALRIES_MATCHES);
-				ps.setInt(++index, MIN_GREATEST_RIVALRIES_MATCHES);
+				ps.setInt(++index, getGreatestRivalriesMinMatches(filter));
 				index = filter.bindParams(ps, index);
 				ps.setInt(++index, offset);
 			},
@@ -254,8 +267,13 @@ public class RivalriesService {
 		return table;
 	}
 
-	public int getGreatestRivalriesMinMatches() {
-		return MIN_GREATEST_RIVALRIES_MATCHES;
+	public int getGreatestRivalriesMinMatches(RivalryFilter filter) {
+		double minMatches = MIN_GREATEST_RIVALRIES_MATCHES;
+		if (filter.hasLevel())
+			minMatches /= MIN_MATCHES_LEVEL_FACTOR.get(filter.getLevel());
+		if (filter.hasSurface())
+			minMatches /= MIN_MATCHES_SURFACE_FACTOR.get(filter.getSurface());
+		return Math.max((int)Math.round(minMatches), MIN_GREATEST_RIVALRIES_MATCHES_MIN);
 	}
 
 

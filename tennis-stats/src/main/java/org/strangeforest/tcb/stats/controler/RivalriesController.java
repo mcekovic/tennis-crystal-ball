@@ -16,15 +16,14 @@ import org.strangeforest.tcb.stats.util.*;
 import static java.util.stream.Collectors.*;
 
 @Controller
-public class RivalriesController {
+public class RivalriesController extends BaseController {
 
 	@Autowired private RivalriesService rivalriesService;
 	@Autowired private PlayerService playerService;
 
 	@RequestMapping("/greatestRivalries")
-	public ModelAndView greatestRivalries() {
-		int minRivalryMatches = rivalriesService.getGreatestRivalriesMinMatches();
-		return new ModelAndView("greatestRivalries", "minRivalryMatches", minRivalryMatches);
+	public String greatestRivalries() {
+		return "greatestRivalries";
 	}
 
 	@RequestMapping("/rivalryCluster")
