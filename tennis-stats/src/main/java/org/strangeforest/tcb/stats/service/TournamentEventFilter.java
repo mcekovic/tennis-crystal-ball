@@ -47,7 +47,7 @@ public class TournamentEventFilter {
 		if (tournamentEventId != null)
 			criteria.append(TOURNAMENT_EVENT_CRITERION);
 		if (!isNullOrEmpty(searchPhrase))
-			criteria.append(SEARCH_CRITERION);
+			criteria.append(getSearchCriterion());
 	}
 
 	public List<Object> getParamList() {
@@ -63,8 +63,16 @@ public class TournamentEventFilter {
 		if (tournamentEventId != null)
 			params.add(tournamentEventId);
 		if (!isNullOrEmpty(searchPhrase))
-			params.add(searchPhrase);
+			addSearchParams(params);
 		return params;
+	}
+
+	protected String getSearchCriterion() {
+		return SEARCH_CRITERION;
+	}
+
+	protected void addSearchParams(List<Object> params) {
+		params.add(searchPhrase);
 	}
 
 	public Integer getSeason() {
@@ -73,6 +81,14 @@ public class TournamentEventFilter {
 
 	public String getSurface() {
 		return surface;
+	}
+
+	protected String getSearchPhrase() {
+		return searchPhrase;
+	}
+
+	public boolean hasSearchPhrase() {
+		return !isNullOrEmpty(searchPhrase);
 	}
 
 	public boolean isEmpty() {

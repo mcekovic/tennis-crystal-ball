@@ -13,6 +13,9 @@
 				rowCount: [10, 20, 50, -1],
 				formatters: {
 					"player": playerCountryFormatter,
+					"matches": function(column, row) {
+						return "<a href='javascript:playerRivalryMatches(" + row.playerId + ")' title='Show rivalry matches'>" + row.matches + "</a>"
+					},
 					"wonPctStr": function(column, row) {
 						return "<span data-won-pct='" + row.wonPctClass + "'>" + row.wonPctStr + "</span>";
 					},
@@ -58,7 +61,7 @@
 			<tr>
 				<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="120">Opponent</th>
 				<th data-column-id="bestRank" data-type="numeric" data-width="60" data-align="right" data-header-align="right">Best Rank</th>
-				<th data-column-id="matches" data-type="numeric" data-order="desc" data-width="55" data-align="right" data-header-align="right">Matches</th>
+				<th data-column-id="matches" data-formatter="matches" data-order="desc" data-width="55" data-align="right" data-header-align="right">Matches</th>
 				<th data-column-id="won" data-type="numeric" data-width="40" data-align="right" data-header-align="right">Won</th>
 				<th data-column-id="lost" data-type="numeric" data-width="40" data-align="right" data-header-align="right">Lost</th>
 				<th data-column-id="wonPctStr" data-formatter="wonPctStr" data-width="50" data-align="right" data-header-align="right">Win %</th>

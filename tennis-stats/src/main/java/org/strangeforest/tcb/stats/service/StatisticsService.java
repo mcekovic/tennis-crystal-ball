@@ -64,7 +64,7 @@ public class StatisticsService {
 	 	"\nLEFT JOIN tournament_event e USING (tournament_event_id)";
 
 	private static final String OPPONENT_JOIN = //language=SQL
-	 	"\nLEFT JOIN player o ON o.player_id = opponent_id";
+	 	"\nLEFT JOIN player_v o ON o.player_id = opponent_id";
 
 	private static final String PLAYER_SEASONS_STATS_QUERY =
 		"SELECT season, " + PLAYER_STATS_COLUMNS +
@@ -174,7 +174,7 @@ public class StatisticsService {
 		if (!filter.isTournamentEventFilterEmpty())
 			sb.append(TOURNAMENT_EVENT_JOIN);
 		OpponentFilter opponentFilter = filter.getOpponentFilter();
-		if (opponentFilter != null && !opponentFilter.getOpponent().isForRank())
+		if (!opponentFilter.isForRank() || filter.hasSearchPhrase())
 			sb.append(OPPONENT_JOIN);
 		return sb.toString();
 	}

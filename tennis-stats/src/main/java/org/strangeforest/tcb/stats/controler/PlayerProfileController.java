@@ -22,7 +22,8 @@ public class PlayerProfileController extends BaseController {
 	public ModelAndView playerProfile(
 		@RequestParam(value = "playerId", required = false) Integer playerId,
 		@RequestParam(value = "name", required = false) String name,
-		@RequestParam(value = "season", required = false) Integer season
+		@RequestParam(value = "season", required = false) Integer season,
+		@RequestParam(value = "opponentId", required = false) Integer opponentId
 	) {
 		if (playerId == null && name == null)
 			return new ModelAndView("playerProfile");
@@ -36,13 +37,15 @@ public class PlayerProfileController extends BaseController {
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("opponentId", opponentId);
 		return new ModelAndView("playerProfile", modelMap);
 	}
 
 	@RequestMapping("/playerMatches")
 	public ModelAndView playerMatches(
 		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId
+		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(value = "opponentId", required = false) Integer opponentId
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
@@ -56,6 +59,10 @@ public class PlayerProfileController extends BaseController {
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("tournamentEvents", tournamentEvents);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
+		if (opponentId != null) {
+			modelMap.addAttribute("opponentId", opponentId);
+			modelMap.addAttribute("opponentName", playerService.getPlayerName(opponentId));
+		}
 		return new ModelAndView("playerMatches", modelMap);
 	}
 

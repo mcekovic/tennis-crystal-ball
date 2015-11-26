@@ -5,6 +5,8 @@
 	<!--@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.Tournament>"-->
 	<!--@thymesVar id="tournamentEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEvent>"-->
 	<!--@thymesVar id="tournamentEventId" type="java.lang.Integer>"-->
+	<!--@thymesVar id="opponentId" type="java.lang.Integer>"-->
+	<!--@thymesVar id="opponentName" type="java.lang.String>"-->
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -38,6 +40,8 @@
 				labels: {
 					noResults: "No matches found"
 				}
+			}).on("loaded.rs.jquery.bootgrid", function() {
+				$("#playerStats").popover("destroy").removeClass("loaded");
 			});
 			var $matchesTableHeader = $("#matchesTable-header");
 			$matchesTableHeader.find("div.search").before($("#playerStats").remove());
@@ -48,7 +52,6 @@
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadMatches() {
-			$("#playerStats").popover("destroy").removeClass("loaded");
 			$("#matchesTable").bootgrid("reload");
 		}
 		function clearMatchesFilter() {
@@ -73,6 +76,7 @@
 				url += "&opponent=" + $("#matchesOpponent").val();
 				url += "&tournamentId=" + $("#matchesTournament").val();
 				url += "&tournamentEventId=" + $("#tournamentEvent").val();
+				url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 				$.get(url, function(data) {
 					event.preventDefault();
 					$playerStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
@@ -146,6 +150,7 @@
 				<option value="LEFT_HANDED">Vs Left-handed</option>
 				<option value="BACKHAND_2">Vs Two-handed bh.</option>
 				<option value="BACKHAND_1">Vs One-handed bh.</option>
+				<option th:if="${opponentId != null}" th:value="${'OPP_' + opponentId}" th:text="${'Vs ' + opponentName}" selected="selected">Vs Roger Federer</option>
 			</select>
 		</div>
 		<div class="col-md-1">

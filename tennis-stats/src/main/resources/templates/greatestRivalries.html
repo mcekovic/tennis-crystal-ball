@@ -40,7 +40,8 @@
 				formatters: {
 					"rivalry": rivalryFormatter,
 					"h2h": function(column, row) {
-						return row.won + " - " + row.lost;
+						return "<a href='/playerProfile?playerId=" + row.player1.playerId + "&opponentId=" + row.player2.playerId + "' title='Show " + row.player1.name + " - " + row.player2.name + " matches'>" + row.won + "</a>" +
+							" - <a href='/playerProfile?playerId=" + row.player2.playerId + "&opponentId=" + row.player1.playerId + "' title='Show " + row.player2.name + " - " + row.player1.name + " matches'>" + row.lost + "</a>";
 					},
 					"h2hPct": function(column, row) {
 						return "<span data-won-pct='" + row.wonPctClass + "' class='rivalry-pct'>" + row.wonPctStr + "</span> - <span data-won-pct='" + row.lostPctClass + "' class='rivalry-pct'>" + row.lostPctStr + "</span>";

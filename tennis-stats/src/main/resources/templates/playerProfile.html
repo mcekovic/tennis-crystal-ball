@@ -4,6 +4,7 @@
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
 <!--@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.Tournament>"-->
 <!--@thymesVar id="season" type="java.lang.Integer"-->
+<!--@thymesVar id="opponentId" type="java.lang.Integer"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -34,16 +35,13 @@
 				if ($pill.hasClass("loaded"))
 					return;
 				var url = $pill.attr("data-url");
-				if (typeof url !== "undefined") {
-					var $pane = this.hash;
-					$($pane).load(url, function() {
-						if (!$pill.hasClass("loaded"))
-							$pill.addClass("loaded");
-						$pill.tab("show");
-					});
-				} else
+				if (typeof url !== "undefined")
+					loadTab($pill, this.hash, url);
+				else
 					$pill.tab("show");
 			});
+			if ([[${opponentId != null}]])
+				playerRivalryMatches([[${opponentId}]]);
 		});
 		function showTitles(level) {
 			clearTournamentsFilterControls();
@@ -51,6 +49,13 @@
 			$("#result").val("W");
 			reloadTournaments();
 			$("#tournamentsPill").tab("show");
+		}
+		function loadTab(pill, pane, url) {
+			$(pane).load(url, function () {
+				if (!pill.hasClass("loaded"))
+					pill.addClass("loaded");
+				pill.tab("show");
+			});
 		}
 		function toggleStatsData(selector) {
 			$(selector).find(".pct-data, .raw-data").toggle();
@@ -220,7 +225,7 @@
 								"tournament": tournamentFormatter,
 								"surface": surfaceFormatter,
 								"result": function(column, row) {
-									return "<a class='label black bg-result-" + row.result + "' href='javascript:playerMatches(" + row.tournamentEventId + ")' title='Show matches'>" + row.result + "</a>"
+									return "<a class='label black bg-result-" + row.result + "' href='javascript:playerTournamentMatches(" + row.tournamentEventId + ")' title='Show tournament matches'>" + row.result + "</a>"
 								},
 								"stats": function(column, row) {
 									return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='" + row.name + " " + row.season + " Statistics'> Stats</a>";
@@ -246,15 +251,15 @@
 						clearTournamentsFilterControls();
 						reloadTournaments();
 					}
-					function playerMatches(tournamentEventId) {
+					function playerTournamentMatches(tournamentEventId) {
 						var $pill = $("#matchesPill");
-						var $pane = $("#matches");
-						var url = $pill.attr("data-url");
-						$($pane).load(url + "&tournamentEventId=" + tournamentEventId, function() {
-							if (!$pill.hasClass("loaded"))
-								$pill.addClass("loaded");
-							$pill.tab("show");
-						});
+						var url = $pill.attr("data-url") + "&tournamentEventId=" + tournamentEventId;
+						loadTab($pill, $("#matches"), url)
+					}
+					function playerRivalryMatches(opponentId) {
+						var $pill = $("#matchesPill");
+						var url = $pill.attr("data-url") + "&opponentId=" + opponentId;
+						loadTab($pill, $("#matches"), url)
 					}
 					function showEventStats(tournamentEventId, event) {
 						var $eventStats = $("#eventStats-" + tournamentEventId);

@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.service;
 
+import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 
 public enum Opponent {
@@ -14,6 +15,10 @@ public enum Opponent {
 	LEFT_HANDED(matchesHandCriterion("L"), statsHandCriterion("L"), false),
 	BACKHAND_2(matchesBackhandCriterion("2"), statsBackhandCriterion("2"), false),
 	BACKHAND_1(matchesBackhandCriterion("1"), statsBackhandCriterion("1"), false);
+
+	public static Opponent forValue(String opponent) {
+		return !isNullOrEmpty(opponent) ? Opponent.valueOf(opponent) : null;
+	}
 
 	private final String matchesCriterion;
 	private final String statsCriterion;
