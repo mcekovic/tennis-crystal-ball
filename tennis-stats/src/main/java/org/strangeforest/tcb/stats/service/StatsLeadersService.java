@@ -1,11 +1,14 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.StatsCategory.Type.*;
@@ -48,8 +51,11 @@ public class StatsLeadersService {
 		"ORDER BY %5$s NULLS LAST OFFSET ? LIMIT ?";
 
 
+	private static final long SEASONS_EXPIRY_PERIOD = TimeUnit.MINUTES.toMillis(5L);
+	private final Supplier<List<Integer>> seasons = Memoizer.of(() -> jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class), SEASONS_EXPIRY_PERIOD);
+
 	public List<Integer> getSeasons() {
-		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
+		return seasons.get();
 	}
 
 	public int getPlayerCount(String category, StatsPlayerListFilter filter) {

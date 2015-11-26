@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"-->
-<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
-<!--@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.Tournament>"-->
 <!--@thymesVar id="season" type="java.lang.Integer"-->
+<!--@thymesVar id="level" type="java.lang.String"-->
+<!--@thymesVar id="surface" type="java.lang.String"-->
 <!--@thymesVar id="opponentId" type="java.lang.Integer"-->
 <head>
 	<meta charset="utf-8"/>
@@ -41,14 +41,37 @@
 					$pill.tab("show");
 			});
 			if ([[${opponentId != null}]])
-				playerRivalryMatches([[${opponentId}]]);
+				playerRivalryMatches([[${opponentId}]], [[${level}]], [[${surface}]]);
+			else
+				playerTournaments([[${season}]]);
 		});
-		function showTitles(level) {
-			clearTournamentsFilterControls();
-			$("#level").val(level);
-			$("#result").val("W");
-			reloadTournaments();
-			$("#tournamentsPill").tab("show");
+		function playerTournaments(season, level, result) {
+			var $pill = $("#tournamentsPill");
+			var url = $pill.attr("data-url");
+			if (season)
+				url += "&season=" + season;
+			if (level)
+				url += "&level=" + level;
+			if (result)
+				url += "&result=" + result;
+			loadTab($pill, $("#tournaments"), url)
+		}
+		function playerTitles(level) {
+			playerTournaments(null, level, "W");
+		}
+		function playerTournamentMatches(tournamentEventId) {
+			var $pill = $("#matchesPill");
+			var url = $pill.attr("data-url") + "&tournamentEventId=" + tournamentEventId;
+			loadTab($pill, $("#matches"), url)
+		}
+		function playerRivalryMatches(opponentId, level, surface) {
+			var $pill = $("#matchesPill");
+			var url = $pill.attr("data-url") + "&opponentId=" + opponentId;
+			if (level)
+				url += "&level=" + level;
+			if (surface)
+				url += "&surface=" + surface;
+			loadTab($pill, $("#matches"), url)
 		}
 		function loadTab(pill, pane, url) {
 			$(pane).load(url, function () {
@@ -121,23 +144,23 @@
 					<!--/* Titles */-->
 					<tr th:if="${player.titles > 0}">
 						<th>Titles</th>
-						<td width="100%"><a class="label label-default" th:text="${player.titles}" href="javascript:showTitles()" title="Show titles">10</a></td>
+						<td width="100%"><a class="label label-default" th:text="${player.titles}" href="javascript:playerTitles()" title="Show titles">10</a></td>
 					</tr>
 					<tr th:if="${player.grandSlams > 0}">
 						<th>Grand Slams</th>
-						<td><a class="label label-danger" th:text="${player.grandSlams}" href="javascript:showTitles('G')" title="Show Grand Slam titles">1</a></td>
+						<td><a class="label label-danger" th:text="${player.grandSlams}" href="javascript:playerTitles('G')" title="Show Grand Slam titles">1</a></td>
 					</tr>
 					<tr th:if="${player.tourFinals > 0}">
 						<th>Tour Finals</th>
-						<td><a class="label label-warning" th:text="${player.tourFinals}" href="javascript:showTitles('F')" title="Show Tour Finals titles">1</a></td>
+						<td><a class="label label-warning" th:text="${player.tourFinals}" href="javascript:playerTitles('F')" title="Show Tour Finals titles">1</a></td>
 					</tr>
 					<tr th:if="${player.masters > 0}">
 						<th>Masters</th>
-						<td><a class="label label-info" th:text="${player.masters}" href="javascript:showTitles('M')" title="Show Masters titles">5</a></td>
+						<td><a class="label label-info" th:text="${player.masters}" href="javascript:playerTitles('M')" title="Show Masters titles">5</a></td>
 					</tr>
 					<tr th:if="${player.olympics > 0}">
 						<th>Olympics</th>
-						<td><a class="label label-success" th:text="${player.olympics}" href="javascript:showTitles('O')" title="Show Olympics titles">1</a></td>
+						<td><a class="label label-success" th:text="${player.olympics}" href="javascript:playerTitles('O')" title="Show Olympics titles">1</a></td>
 					</tr>
 					<!--/* Ranking */-->
 					<tr th:if="${player.currentRank > 0}">
@@ -186,9 +209,8 @@
 				</table>
 			</div>
 		</div>
-
 		<ul id="playerPills" class="nav nav-pills">
-			<li class="active"><a id="tournamentsPill" data-toggle="pill" href="#tournaments">Tournaments</a></li>
+			<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" data-url="/playerTournaments?playerId=" th:attrappend="data-url=${player.id}">Tournaments</a></li>
 			<li><a id="matchesPill" data-toggle="pill" href="#matches" data-url="/playerMatches?playerId=" th:attrappend="data-url=${player.id}">Matches</a></li>
 			<li><a data-toggle="pill" href="#timeline" data-url="/playerTimeline?playerId=" th:attrappend="data-url=${player.id}">Timeline</a></li>
 			<li><a data-toggle="pill" href="#rivalries" data-url="/playerRivalries?playerId=" th:attrappend="data-url=${player.id}">Rivalries</a></li>
@@ -196,150 +218,8 @@
 			<li><a data-toggle="pill" href="#performance" data-url="/playerPerformance?playerId=" th:attrappend="data-url=${player.id}">Performance</a></li>
 			<li><a data-toggle="pill" href="#statistics" data-url="/playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
 		</ul>
-
 		<div class="tab-content">
-			<div id="tournaments" class="tab-pane fade in active">
-				<!--/* Tournaments */-->
-				<script type="text/javascript" th:inline="javascript">
-					/*<![CDATA[*/
-					$(function() {
-						$("[data-toggle='tooltip']").tooltip();
-						$("#tournamentsTable").bootgrid({
-							ajax: true,
-							ajaxSettings: {
-								method: "GET",
-								cache: false
-							},
-							url: "/playerTournamentsTable?playerId=[[${player.id}]]",
-							requestHandler: function (request) {
-								request.season = $("#season").val();
-								request.level = $("#level").val();
-								request.surface = $("#surface").val();
-								request.tournamentId = $("#tournament").val();
-								request.result = $("#result").val();
-								return request;
-							},
-							rowCount: [10, 20, 50, -1],
-							formatters: {
-								"date": dateFormatter,
-								"tournament": tournamentFormatter,
-								"surface": surfaceFormatter,
-								"result": function(column, row) {
-									return "<a class='label black bg-result-" + row.result + "' href='javascript:playerTournamentMatches(" + row.tournamentEventId + ")' title='Show tournament matches'>" + row.result + "</a>"
-								},
-								"stats": function(column, row) {
-									return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='" + row.name + " " + row.season + " Statistics'> Stats</a>";
-								}
-							},
-							labels: {
-								noResults: "No tournaments found"
-							}
-						});
-					});
-					function reloadTournaments() {
-						$("#tournamentsTable").bootgrid("reload");
-					}
-					function clearTournamentsFilterControls() {
-						$("#season").val("");
-						$("#level").val("");
-						$("#surface").val("");
-						$("#tournament").val("");
-						$("#result").val("");
-						$("#tournamentsTable").bootgrid("search", "");
-					}
-					function clearTournamentsFilter() {
-						clearTournamentsFilterControls();
-						reloadTournaments();
-					}
-					function playerTournamentMatches(tournamentEventId) {
-						var $pill = $("#matchesPill");
-						var url = $pill.attr("data-url") + "&tournamentEventId=" + tournamentEventId;
-						loadTab($pill, $("#matches"), url)
-					}
-					function playerRivalryMatches(opponentId) {
-						var $pill = $("#matchesPill");
-						var url = $pill.attr("data-url") + "&opponentId=" + opponentId;
-						loadTab($pill, $("#matches"), url)
-					}
-					function showEventStats(tournamentEventId, event) {
-						var $eventStats = $("#eventStats-" + tournamentEventId);
-						if (!$eventStats.hasClass("loaded")) {
-							event.preventDefault();
-							$.get("eventStats?playerId=[[${player.id}]]&tournamentEventId=" + tournamentEventId, function(data) {
-								$eventStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
-								$eventStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
-							});
-						}
-					}
-					/*]]>*/
-				</script>
-				<br/>
-				<div class="row">
-					<div class="col-md-2">
-						<select id="season" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
-							<option value="">All seasons</option>
-							<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
-						</select>
-					</div>
-					<div class="col-md-2">
-						<select id="level" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
-							<option value="">All levels</option>
-							<option value="G" class="bg-level-G">Grand Slam</option>
-							<option value="F" class="bg-level-F">Tour Finals</option>
-							<option value="M" class="bg-level-M">Masters</option>
-							<option value="A" class="bg-level-A">ATP</option>
-							<option value="O" class="bg-level-O">Olympics</option>
-						</select>
-					</div>
-					<div class="col-md-2">
-						<select id="surface" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
-							<option value="">All surfaces</option>
-							<option value="H" class="bg-surface-H">Hard</option>
-							<option value="C" class="bg-surface-C">Clay</option>
-							<option value="G" class="bg-surface-G">Grass</option>
-							<option value="P" class="bg-surface-P">Carpet</option>
-						</select>
-					</div>
-					<div class="col-md-2">
-						<select id="tournament" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
-							<option value="">All tournaments</option>
-							<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
-						</select>
-					</div>
-					<div class="col-md-2">
-						<select id="result" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by result">
-							<option value="">All results</option>
-							<option value="W" class="bg-result-W">Win</option>
-							<option value="F" class="bg-result-F">Final</option>
-							<option value="SF" class="bg-result-SF">Semi-Final</option>
-							<option value="QF" class="bg-result-QF">Quarter-Final</option>
-							<option value="R16" class="bg-result-R16">Round of 16</option>
-							<option value="R32" class="bg-result-R32">Round of 32</option>
-							<option value="R64" class="bg-result-R64">Round of 64</option>
-							<option value="R128" class="bg-result-R128">Round of 128</option>
-							<option value="RR" class="bg-result-RR">Round-Robin</option>
-							<option value="BR" class="bg-result-BR">Bronze Medal</option>
-						</select>
-					</div>
-					<div class="col-md-1">
-						<button type="button" class="btn btn-default" onclick="clearTournamentsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-							<span class="glyphicon glyphicon-remove"></span> Clear
-						</button>
-					</div>
-				</div>
-				<table id="tournamentsTable" class="table table-condensed table-hover table-striped">
-					<thead>
-						<tr>
-							<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
-							<th data-column-id="name" data-formatter="tournament" data-width="200">Tournament</th>
-							<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
-							<th data-column-id="drawSize" data-type="numeric" data-width="80" data-align="center" data-header-align="center">Draw Size</th>
-							<th data-column-id="result" data-formatter="result" data-width="60" data-align="center" data-header-align="center">Result</th>
-							<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="50">Stats</th>
-						</tr>
-					</thead>
-				</table>
-			</div>
+			<div id="tournaments" class="tab-pane fade"><br/>Loading...</div>
 			<div id="matches" class="tab-pane fade"><br/>Loading...</div>
 			<div id="timeline" class="tab-pane fade"><br/>Loading...</div>
 			<div id="rivalries" class="tab-pane fade"><br/>Loading...</div>

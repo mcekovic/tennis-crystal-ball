@@ -4,8 +4,10 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
+import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
+import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Controller
@@ -16,6 +18,10 @@ public class StatsLeadersController extends BaseController {
 	@RequestMapping("/statsLeaders")
 	public ModelAndView statsLeaders() {
 		List<Integer> seasons = statsLeadersService.getSeasons();
-		return new ModelAndView("statsLeaders", "seasons", seasons);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("surfaces", Options.SURFACES);
+		return new ModelAndView("statsLeaders", modelMap);
 	}
 }

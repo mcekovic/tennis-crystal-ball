@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
+<!--@thymesVar id="surfaces" type="java.util.List<org.strangeforest.tcb.stats.model.Option>"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -113,10 +114,7 @@
 	<div id="surfaceDiv" class="btn-group" style="margin-right: 20px">
 		<select id="surface" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select surface">
 			<option value="">All surfaces</option>
-			<option value="H" class="bg-surface-H">Hard</option>
-			<option value="C" class="bg-surface-C">Clay</option>
-			<option value="G" class="bg-surface-G">Grass</option>
-			<option value="P" class="bg-surface-P">Carpet</option>
+			<option th:each="option : ${surfaces}" th:value="${option.value}" th:class="|bg-surface-${option.value}|" value="H" class="bg-surface-H" th:text="${option.text}">Hard</option>
 		</select>
 	</div>
 	<table id="statsLeadersTable" class="table table-condensed table-hover table-striped">

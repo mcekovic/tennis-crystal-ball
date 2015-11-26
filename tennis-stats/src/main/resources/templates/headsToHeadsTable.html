@@ -1,9 +1,9 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
-<!--@thymesVar id="rivalryCluster" type="org.strangeforest.tcb.stats.model.RivalryCluster"-->
+<!--@thymesVar id="headsToHeads" type="org.strangeforest.tcb.stats.model.HeadsToHeads"-->
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
-			var $table = $("#rivalryClusterTable");
+			var $table = $("#headsToHeadsTable");
 			$table.find(hiddenData).hide();
 			$table.find("span.rivalry").each(function() {
 				var $match = $(this);
@@ -17,14 +17,14 @@
 		/*]]>*/
 	</script>
 	<style>
-		#rivalryClusterTable > thead > tr > th {
+		#headsToHeadsTable > thead > tr > th {
 			border-bottom: 3px solid lightgray;
 		}
-		#rivalryClusterTable > tbody > tr > th {
+		#headsToHeadsTable > tbody > tr > th {
 			border-right: 3px solid lightgray;
 			vertical-align: middle;
 		}
-		#rivalryClusterTable > tbody > tr > td {
+		#headsToHeadsTable > tbody > tr > td {
 			text-align: center;
 			vertical-align: middle;
 			padding: 5px 2px;
@@ -34,18 +34,18 @@
 			max-width: 400px;
 		}
 	</style>
-	<table id="rivalryClusterTable" class="table table-condensed table-hover table-bordered" th:with="playerCount=${rivalryCluster.playerCount}">
-		<thead id="rivalryClusterVerticalHeader">
+	<table id="headsToHeadsTable" class="table table-condensed table-hover table-bordered" th:with="playerCount=${headsToHeads.playerCount}">
+		<thead>
 			<tr class="player-vertical">
 				<th style="border-right: 3px solid lightgray">Player</th>
 				<th style="border-right: 3px solid lightgray; text-align: center">Totals</th>
-				<th th:each="rivalry : ${rivalryCluster.clusterRivalries}" style="text-align: center">
+				<th th:each="rivalry : ${headsToHeads.rivalries}" style="text-align: center">
 					<a th:with="player=${rivalry.player1}" th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${playerCount &lt;= 10 ? player.name : player.initials}" title="Show profile">Roger Federer</a>
 				</th>
 			</tr>
 		</thead>
 		<tbody class="text-nowrap">
-			<tr th:unless="${rivalryCluster.empty}" th:each="hRivalry : ${rivalryCluster.clusterRivalries}">
+			<tr th:unless="${headsToHeads.empty}" th:each="hRivalry : ${headsToHeads.rivalries}">
 				<th th:with="player=${hRivalry.player1}">
 					<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
 					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
@@ -54,14 +54,14 @@
 					<span class="raw-data" th:text="${hRivalry.wonLost.WLT}">11 - 9 / 20</span>
 					<span class="pct-data" th:text="${hRivalry.wonLost.wonPctStr}">55.5%</span>
 				</th>
-				<td th:each="vRivalry : ${rivalryCluster.clusterRivalries}" th:with="playerId1=${hRivalry.player1.playerId}, playerId2=${vRivalry.player1.playerId}, rivalry=${rivalryCluster.getRivalry(playerId1, playerId2)}">
-					<span th:if="${rivalry != null}" th:with="match=${rivalry.lastMatch}, url=${'/playerProfile?playerId=' + playerId1 + '&amp;opponentId=' + playerId2}, title=${'Show ' + hRivalry.player1.name + ' - ' + vRivalry.player1.name + ' matches'}" class="rivalry" th:attr="data-won=${match.winnerId == hRivalry.player1.playerId}, data-score=${match.score}, data-season=${match.season}, data-tournament=${match.tournament}, data-level=${match.level}, data-surface=${match.surface}, data-round=${match.round}">
+				<td th:each="vRivalry : ${headsToHeads.rivalries}" th:with="playerId1=${hRivalry.player1.playerId}, playerId2=${vRivalry.player1.playerId}, rivalry=${headsToHeads.getRivalry(playerId1, playerId2)}">
+					<span th:if="${rivalry != null}" th:with="match=${rivalry.lastMatch}, url=|/playerProfile?playerId=${playerId1}&amp;opponentId=${playerId2}&amp;level=${level}&amp;surface=${surface}|, title=${'Show ' + hRivalry.player1.name + ' - ' + vRivalry.player1.name + ' matches'}" class="rivalry" th:attr="data-won=${match.winnerId == hRivalry.player1.playerId}, data-score=${match.score}, data-season=${match.season}, data-tournament=${match.tournament}, data-level=${match.level}, data-surface=${match.surface}, data-round=${match.round}">
 						<a class="raw-data" th:href="${url}" th:text="${playerCount &lt;= 10 ? rivalry.wonLost.WLT : rivalry.wonLost.WL}" th:title="${title}">4 - 2 / 6</a>
 						<a class="pct-data" th:href="${url}" th:text="${rivalry.wonLost.wonPctStr}" th:title="${title}">66.7%</a>
 					</span>
 				</td>
 			</tr>
-			<tr th:if="${rivalryCluster.empty}">
+			<tr th:if="${headsToHeads.empty}">
 				<td colspan="2" align="center">No data found</td>
 			</tr>
 		</tbody>

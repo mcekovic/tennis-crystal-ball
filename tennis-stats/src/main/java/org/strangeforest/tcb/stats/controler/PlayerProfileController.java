@@ -23,27 +23,55 @@ public class PlayerProfileController extends BaseController {
 		@RequestParam(value = "playerId", required = false) Integer playerId,
 		@RequestParam(value = "name", required = false) String name,
 		@RequestParam(value = "season", required = false) Integer season,
+		@RequestParam(value = "level", required = false) String level,
+		@RequestParam(value = "surface", required = false) String surface,
 		@RequestParam(value = "opponentId", required = false) Integer opponentId
 	) {
 		if (playerId == null && name == null)
 			return new ModelAndView("playerProfile");
 
 		Player player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
-		List<Integer> seasons = playerService.getPlayerSeasons(player.getId());
-		List<Tournament> tournaments = tournamentService.getPlayerTournaments(player.getId());
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player", player);
-		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("opponentId", opponentId);
 		return new ModelAndView("playerProfile", modelMap);
+	}
+
+	@RequestMapping("/playerTournaments")
+	public ModelAndView playerTournaments(
+		@RequestParam(value = "playerId") int playerId,
+		@RequestParam(value = "season", required = false) Integer season,
+		@RequestParam(value = "level", required = false) String level,
+		@RequestParam(value = "surface", required = false) String surface,
+		@RequestParam(value = "result", required = false) String result,
+		@RequestParam(value = "opponentId", required = false) Integer opponentId
+	) {
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		List<Tournament> tournaments = tournamentService.getPlayerTournaments(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("levels", Options.TOURNAMENT_LEVELS_W_O_D_C);
+		modelMap.addAttribute("surfaces", Options.SURFACES);
+		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("result", result);
+		modelMap.addAttribute("opponentId", opponentId);
+		return new ModelAndView("playerTournaments", modelMap);
 	}
 
 	@RequestMapping("/playerMatches")
 	public ModelAndView playerMatches(
 		@RequestParam(value = "playerId") int playerId,
+		@RequestParam(value = "level", required = false) String level,
+		@RequestParam(value = "surface", required = false) String surface,
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(value = "opponentId", required = false) Integer opponentId
 	) {
@@ -56,8 +84,12 @@ public class PlayerProfileController extends BaseController {
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("playerName", name);
 		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("levels", Options.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Options.SURFACES);
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("tournamentEvents", tournamentEvents);
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		if (opponentId != null) {
 			modelMap.addAttribute("opponentId", opponentId);
@@ -132,6 +164,7 @@ public class PlayerProfileController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("surfaces", Options.SURFACES);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("stats", stats);

@@ -1,5 +1,6 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
+<!--@thymesVar id="surfaces" type="java.util.List<org.strangeforest.tcb.stats.model.Option>"-->
 <!--@thymesVar id="season" type="java.lang.Integer"-->
 <!--@thymesVar id="surface" type="java.lang.String"-->
 <script type="text/javascript" th:inline="javascript">
@@ -27,10 +28,7 @@
 	<div class="col-md-2">
 		<select id="statsSurface" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Select surface">
 			<option value="">All surfaces</option>
-			<option value="H" class="bg-surface-H" th:selected="${surface == 'H'}">Hard</option>
-			<option value="C" class="bg-surface-C" th:selected="${surface == 'C'}">Clay</option>
-			<option value="G" class="bg-surface-G" th:selected="${surface == 'G'}">Grass</option>
-			<option value="P" class="bg-surface-P" th:selected="${surface == 'P'}">Carpet</option>
+			<option th:each="option : ${surfaces}" th:value="${option.value}" th:class="|bg-surface-${option.value}|" value="H" class="bg-surface-H" th:text="${option.text}" th:selected="${option.value == surface}">Hard</option>
 		</select>
 	</div>
 </div>

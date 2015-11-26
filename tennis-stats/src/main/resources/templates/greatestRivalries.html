@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="levels" type="java.util.List<org.strangeforest.tcb.stats.model.Option>"-->
+<!--@thymesVar id="surfaces" type="java.util.List<org.strangeforest.tcb.stats.model.Option>"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -40,8 +42,15 @@
 				formatters: {
 					"rivalry": rivalryFormatter,
 					"h2h": function(column, row) {
-						return "<a href='/playerProfile?playerId=" + row.player1.playerId + "&opponentId=" + row.player2.playerId + "' title='Show " + row.player1.name + " - " + row.player2.name + " matches'>" + row.won + "</a>" +
-							" - <a href='/playerProfile?playerId=" + row.player2.playerId + "&opponentId=" + row.player1.playerId + "' title='Show " + row.player2.name + " - " + row.player1.name + " matches'>" + row.lost + "</a>";
+						var params = "";
+						var level = $("#level").val();
+						if (level)
+							params += "&level=" + level;
+						var surface = $("#surface").val();
+						if (surface)
+							params += "&surface=" + surface;
+						return "<a href='/playerProfile?playerId=" + row.player1.playerId + "&opponentId=" + row.player2.playerId + params + "' title='Show " + row.player1.name + " - " + row.player2.name + " matches'>" + row.won + "</a>" +
+							" - <a href='/playerProfile?playerId=" + row.player2.playerId + "&opponentId=" + row.player1.playerId + params + "' title='Show " + row.player2.name + " - " + row.player1.name + " matches'>" + row.lost + "</a>";
 					},
 					"h2hPct": function(column, row) {
 						return "<span data-won-pct='" + row.wonPctClass + "' class='rivalry-pct'>" + row.wonPctStr + "</span> - <span data-won-pct='" + row.lostPctClass + "' class='rivalry-pct'>" + row.lostPctStr + "</span>";
@@ -98,21 +107,13 @@
 	<div id="levelDiv" class="btn-group" style="margin-right: 20px">
 		<select id="level" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
-			<option value="G" class="bg-level-G">Grand Slam</option>
-			<option value="F" class="bg-level-F">Tour Finals</option>
-			<option value="M" class="bg-level-M">Masters</option>
-			<option value="A" class="bg-level-A">ATP</option>
-			<option value="O" class="bg-level-O">Olympics</option>
-			<option value="D" class="bg-level-D">Davis Cup</option>
+			<option th:each="option : ${levels}" th:value="${option.value}" th:class="|bg-level-${option.value}|" value="G" class="bg-level-G" th:text="${option.text}">Grand Slam</option>
 		</select>
 	</div>
 	<div id="surfaceDiv" class="btn-group" style="margin-right: 20px">
 		<select id="surface" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 			<option value="">All surfaces</option>
-			<option value="H" class="bg-surface-H">Hard</option>
-			<option value="C" class="bg-surface-C">Clay</option>
-			<option value="G" class="bg-surface-G">Grass</option>
-			<option value="P" class="bg-surface-P">Carpet</option>
+			<option th:each="option : ${surfaces}" th:value="${option.value}" th:class="|bg-surface-${option.value}|" value="H" class="bg-surface-H" th:text="${option.text}">Hard</option>
 		</select>
 	</div>
 	<p><i>* Minimum <span id="minMatches">10</span> rivalry matches</i></p>

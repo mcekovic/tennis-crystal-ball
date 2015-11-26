@@ -7,6 +7,7 @@ import java.util.stream.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.format.annotation.*;
 import org.springframework.stereotype.*;
+import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -22,17 +23,23 @@ public class RivalriesController extends BaseController {
 	@Autowired private PlayerService playerService;
 
 	@RequestMapping("/greatestRivalries")
-	public String greatestRivalries() {
-		return "greatestRivalries";
+	public ModelAndView greatestRivalries() {
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("levels", Options.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Options.SURFACES);
+		return new ModelAndView("greatestRivalries", modelMap);
 	}
 
-	@RequestMapping("/rivalryCluster")
-	public String rivalryCluster() {
-		return "rivalryCluster";
+	@RequestMapping("/headsToHeads")
+	public ModelAndView headsToHeads() {
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("levels", Options.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Options.SURFACES);
+		return new ModelAndView("headsToHeads", modelMap);
 	}
 
-	@RequestMapping("/rivalryClusterTable")
-	public ModelAndView rivalryClusterTable(
+	@RequestMapping("/headsToHeadsTable")
+	public ModelAndView headsToHeadsTable(
 		@RequestParam(value = "players") String playersCSV,
 		@RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
 		@RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
@@ -43,8 +50,12 @@ public class RivalriesController extends BaseController {
 		RivalryFilter filter = new RivalryFilter(DateUtil.toRange(fromDate, toDate), level, surface);
 
 		List<Integer> playerIds = playerService.findPlayerIds(players);
-		RivalryCluster rivalryCluster = rivalriesService.getRivalryCluster(playerIds, filter);
+		HeadsToHeads headsToHeads = rivalriesService.getHeadsToHeads(playerIds, filter);
 
-		return new ModelAndView("rivalryClusterTable", "rivalryCluster", rivalryCluster);
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("headsToHeads", headsToHeads);
+		return new ModelAndView("headsToHeadsTable", modelMap);
 	}
 }

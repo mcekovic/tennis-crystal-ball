@@ -75,7 +75,7 @@ public class RivalriesService {
 		"WHERE TRUE%3$s\n" +
 		"ORDER BY %4$s OFFSET ?";
 
-	private static final String RIVALRIES_QUERY = //language=SQL
+	private static final String HEADS_TO_HEADS_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id, loser_id, count(match_id) matches, 0 won\n" +
 		"  FROM match_for_rivalry_v\n" +
@@ -205,10 +205,10 @@ public class RivalriesService {
 		return table;
 	}
 
-	public RivalryCluster getRivalryCluster(List<Integer> playerIds, RivalryFilter filter) {
+	public HeadsToHeads getHeadsToHeads(List<Integer> playerIds, RivalryFilter filter) {
 		String criteria = filter.getCriteria();
-		return new RivalryCluster(jdbcTemplate.query(
-			format(RIVALRIES_QUERY,
+		return new HeadsToHeads(jdbcTemplate.query(
+			format(HEADS_TO_HEADS_QUERY,
 				criteria,
 				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),
 				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", criteria) : ""

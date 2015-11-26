@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="levels" type="java.util.List<org.strangeforest.tcb.stats.model.Option>"-->
+<!--@thymesVar id="surfaces" type="java.util.List<org.strangeforest.tcb.stats.model.Option>"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Ultimate Tennis Statistics - Rivalry Cluster</title>
+	<title>Ultimate Tennis Statistics - Heads-to-Heads</title>
 	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
@@ -14,7 +16,7 @@
 	<script th:src="@{/js/tcbUtil.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
-		function showRivalryCluster() {
+		function showHeadsToHeads() {
 			var players = $.trim($("#players").val());
 			var count = getPlayerCount(players);
 			if (count >= 2) {
@@ -26,14 +28,14 @@
 					return;
 				var level = $("#level").val();
 				var surface = $("#surface").val();
-				var url = "/rivalryClusterTable?players=" + players + "&fromDate=" + fromDate + "&toDate=" + toDate + "&level=" + level + "&surface=" + surface;
+				var url = "/headsToHeadsTable?players=" + players + "&fromDate=" + fromDate + "&toDate=" + toDate + "&level=" + level + "&surface=" + surface;
 				$.ajax(url).done(function(data) {
-					$("#rivalryClusterDiv").html(data);
+					$("#headsToHeadsDiv").html(data);
 				});
 			}
 			else {
 				var message = count == 1 ? "At least two players must be selected!" : "No player selected!";
-				$("#rivalryClusterDiv").html("<div class='row'><div class='col-md-12'><div class='alert alert-warning'>" + message + "</div></div></div>");
+				$("#headsToHeadsDiv").html("<div class='row'><div class='col-md-12'><div class='alert alert-warning'>" + message + "</div></div></div>");
 			}
 		}
 		function getPlayerCount(players) {
@@ -51,7 +53,7 @@
 			$(".pct-data, .raw-data").toggle();
 		}
 		$(function() {
-			autocompletePlayers("players", showRivalryCluster);
+			autocompletePlayers("players", showHeadsToHeads);
 			dateRangePicker("fromDate", "toDate");
 			$("[data-toggle='tooltip']").tooltip();
 		});
@@ -60,7 +62,7 @@
 </head>
 <body class="container">
 	<div th:include="fragments/header :: title"></div>
-	<h3>Rivalry Cluster</h3>
+	<h3>Heads-to-Heads</h3>
 	<div class="row">
 		<div class="col-md-12">
 			<div class="ui-widget input-group">
@@ -82,21 +84,13 @@
 		<div class="col-md-2">
 			<select id="level" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 				<option value="">All levels</option>
-				<option value="G" class="bg-level-G">Grand Slam</option>
-				<option value="F" class="bg-level-F">Tour Finals</option>
-				<option value="M" class="bg-level-M">Masters</option>
-				<option value="A" class="bg-level-A">ATP</option>
-				<option value="O" class="bg-level-O">Olympics</option>
-				<option value="D" class="bg-level-D">Davis Cup</option>
+				<option th:each="option : ${levels}" th:value="${option.value}" th:class="|bg-level-${option.value}|" value="G" class="bg-level-G" th:text="${option.text}">Grand Slam</option>
 			</select>
 		</div>
 		<div class="col-md-2">
 			<select id="surface" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 				<option value="">All surfaces</option>
-				<option value="H" class="bg-surface-H">Hard</option>
-				<option value="C" class="bg-surface-C">Clay</option>
-				<option value="G" class="bg-surface-G">Grass</option>
-				<option value="P" class="bg-surface-P">Carpet</option>
+				<option th:each="option : ${surfaces}" th:value="${option.value}" th:class="|bg-surface-${option.value}|" value="H" class="bg-surface-H" th:text="${option.text}">Hard</option>
 			</select>
 		</div>
 		<div class="col-md-2">
@@ -108,13 +102,13 @@
 			</a>
 		</div>
 		<div class="col-md-2">
-			<a class="btn btn-primary pull-right" href="#" role="button" onclick="showRivalryCluster()">
+			<a class="btn btn-primary pull-right" href="#" role="button" onclick="showHeadsToHeads()">
 				<span class="glyphicon glyphicon-th"></span>&nbsp;&nbsp;Show
 			</a>
 		</div>
 	</div>
 	<br/>
-	<div id="rivalryClusterDiv"></div>
+	<div id="headsToHeadsDiv"></div>
 	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>
