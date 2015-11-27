@@ -140,7 +140,7 @@ public class RivalriesService {
 		"    PARTITION BY CASE WHEN g1.goat_points > g2.goat_points OR (g1.goat_points = g2.goat_points AND player_id_1 < player_id_2) THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY g1.goat_points DESC, player_id_1\n" +
 		"  )\n" +
 		")\n" +
-		"SELECT rank() OVER (ORDER BY matches DESC, rivalry_goat_points DESC) AS rivalry_rank, r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.goat_points goat_points_1,\n" +
+		"SELECT rank() OVER (ORDER BY matches DESC, (won + lost) DESC,  rivalry_goat_points DESC) AS rivalry_rank, r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.goat_points goat_points_1,\n" +
 		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
 		"%2$s\n" +
 		"FROM rivalries_3 r\n" +
