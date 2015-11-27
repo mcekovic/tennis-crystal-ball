@@ -72,3 +72,13 @@ function autocompletePlayers(id, func) {
 		}
 	});
 }
+
+function getPlayerCount(players) {
+	var a = split(players);
+	var count = 0;
+	for (var i = 0; i < a.length; i++) {
+		if ($.trim(a[i]) != "")
+			count++;
+	}
+	return count;
+}

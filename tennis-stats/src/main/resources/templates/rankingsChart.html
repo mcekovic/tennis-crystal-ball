@@ -17,7 +17,8 @@
 		google.load("visualization", "1.0", {packages:["corechart"]});
 		var isRank, chartData, logScale, legendPosition;
 		function drawChart() {
-			if ($.trim($("#players").val()).length > 0)
+			var players = $.trim($("#players").val());
+			if (getPlayerCount(players) >= 1)
 				doDrawChart($("#rankChartSize").slider("value"));
 			else
 				$("#rankChart").html("<div class='row'><div class='col-md-9'><div class='alert alert-warning'>No player selected!</div></div></div>");
@@ -41,6 +42,7 @@
 				dataUrl += "&byAge=" + $("#byAge").prop("checked");
 			if (rankType == "POINTS")
 				dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
+			$("#rankChart").html("");
 			var $loading = $("#loading");
 			$loading.show();
 			$.ajax(dataUrl).done(function(json) {
@@ -48,6 +50,7 @@
 				logScale = isRank ? useLogScale(json) : false;
 				legendPosition = json.cols.length < 5 ? "bottom" : "right";
 				showChart(chartData, "rankChart", width, isRank, logScale, legendPosition);
+			}).always(function() {
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			});
 		}

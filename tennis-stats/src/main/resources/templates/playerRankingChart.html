@@ -36,6 +36,7 @@
 				logScale = isRank ? useLogScale(json) : false;
 				var width = $("#rankChartSize").slider("value");
 				showChart(chartData, "rankChart", width, isRank, logScale, "none");
+			}).always(function() {
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			});
 		}

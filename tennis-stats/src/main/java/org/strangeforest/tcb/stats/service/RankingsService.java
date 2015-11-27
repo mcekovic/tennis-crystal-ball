@@ -185,13 +185,13 @@ public class RankingsService {
 		}
 
 		private Players(List<String> players) {
-			for (int index = 0; index < players.size(); index++) {
-				String player = players.get(index);
+			int index = 0;
+			for (String player : players) {
 				if (Strings.isNullOrEmpty(player))
 					continue;
 				Optional<Integer> playerId = playerService.findPlayerId(player);
 				if (playerId.isPresent()) {
-					playerIndexMap.put(playerId.get(), index);
+					playerIndexMap.put(playerId.get(), index++);
 					this.players.add(player);
 				}
 			}
