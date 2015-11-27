@@ -30,15 +30,13 @@ public class GreatestRivalriesResource {
 
 	@RequestMapping("/greatestRivalriesTable")
 	public BootgridTable<GreatestRivalry> greatestRivalriesTable(
-		@RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
-		@RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
 		@RequestParam(value = "level", required = false) String level,
 		@RequestParam(value = "surface", required = false) String surface,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam Map<String, String> requestParams
 	) {
-		RivalryFilter filter = new RivalryFilter(DateUtil.toRange(fromDate, toDate), level, surface);
+		RivalryFilter filter = new RivalryFilter(Range.all(), level, surface);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
 		return rivalriesService.getGreatestRivalriesTable(filter, orderBy, pageSize, current);

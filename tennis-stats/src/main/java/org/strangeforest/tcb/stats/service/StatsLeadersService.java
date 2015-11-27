@@ -24,11 +24,6 @@ public class StatsLeadersService {
 	private static final int MIN_ENTRIES_SEASON_FACTOR  =    10;
 	private static final int MIN_ENTRIES_SURFACE_FACTOR =     2;
 
-	private static final String SEASONS_QUERY =
-		"SELECT DISTINCT season\n" +
-		"FROM player_season_stats\n" +
-		"ORDER BY season DESC";
-
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +
 		"LEFT JOIN player_v USING (player_id)\n" +
@@ -50,13 +45,6 @@ public class StatsLeadersService {
 		"WHERE rank <= ?\n" +
 		"ORDER BY %5$s NULLS LAST OFFSET ? LIMIT ?";
 
-
-	private static final long SEASONS_EXPIRY_PERIOD = TimeUnit.MINUTES.toMillis(5L);
-	private final Supplier<List<Integer>> seasons = Memoizer.of(() -> jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class), SEASONS_EXPIRY_PERIOD);
-
-	public List<Integer> getSeasons() {
-		return seasons.get();
-	}
 
 	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
 		StatsCategory statsCategory = CATEGORIES.get(category);

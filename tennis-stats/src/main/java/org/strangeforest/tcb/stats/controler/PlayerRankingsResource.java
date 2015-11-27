@@ -48,7 +48,7 @@ public class PlayerRankingsResource {
 			case CAREER:
 				return Range.all();
 			case CUSTOM:
-				return DateUtil.toRange(fromDate, toDate);
+				return RangeUtil.toRange(fromDate, toDate);
 			default:
 				return Range.atLeast(LocalDate.now().minusYears(Long.parseLong(timeSpan)));
 		}

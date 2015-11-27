@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
 <!--@thymesVar id="levels" type="java.util.List<org.strangeforest.tcb.stats.model.Option>"-->
 <!--@thymesVar id="surfaces" type="java.util.List<org.strangeforest.tcb.stats.model.Option>"-->
 <head>
@@ -20,15 +21,11 @@
 			var players = $.trim($("#players").val());
 			var count = getPlayerCount(players);
 			if (count >= 2) {
-				var fromDate = getDate("fromDate");
-				if (fromDate == null)
-					return;
-				var toDate = getDate("toDate");
-				if (toDate == null)
-					return;
+				var fromSeason = $("#fromSeason").val();
+				var toSeason = $("#toSeason").val();
 				var level = $("#level").val();
 				var surface = $("#surface").val();
-				var url = "/headsToHeadsTable?players=" + players + "&fromDate=" + fromDate + "&toDate=" + toDate + "&level=" + level + "&surface=" + surface;
+				var url = "/headsToHeadsTable?players=" + players + "&fromSeason=" + fromSeason + "&toSeason=" + toSeason + "&level=" + level + "&surface=" + surface;
 				$.ajax(url).done(function(data) {
 					$("#headsToHeadsDiv").html(data);
 				});
@@ -54,7 +51,6 @@
 		}
 		$(function() {
 			autocompletePlayers("players", showHeadsToHeads);
-			dateRangePicker("fromDate", "toDate");
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		/*]]>*/
@@ -75,10 +71,16 @@
 	<div class="row">
 		<div class="col-md-4">
 			<div class="input-group">
-				<label for="fromDate" class="input-group-addon">From:</label>
-				<input type="text" id="fromDate" maxlength="10" class="form-control"/>
-				<label for="toDate" class="input-group-addon">To:</label>
-				<input type="text" id="toDate" maxlength="10" class="form-control"/>
+				<label for="fromSeason" class="input-group-addon">From:</label>
+				<select id="fromSeason" class="form-control" data-toggle="tooltip" data-placement="top" title="Select from season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
+				<label for="toSeason" class="input-group-addon">To:</label>
+				<select id="toSeason" class="form-control" data-toggle="tooltip" data-placement="top" title="Select to season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
 			</div>
 		</div>
 		<div class="col-md-2">

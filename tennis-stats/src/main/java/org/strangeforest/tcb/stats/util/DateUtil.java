@@ -18,10 +18,4 @@ public abstract class DateUtil {
 			return date != null ? date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
 	}
 
-	public static Range<LocalDate> toRange(LocalDate fromDate, LocalDate toDate) {
-		if (fromDate != null)
-			return toDate != null ? Range.closed(fromDate, toDate) : Range.atLeast(fromDate);
-		else
-			return toDate != null ? Range.atMost(toDate) : Range.all();
-	}
 }

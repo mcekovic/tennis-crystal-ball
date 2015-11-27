@@ -14,6 +14,14 @@ public abstract class ResultSetUtil {
 		return rs.wasNull() ? null : i;
 	}
 
+	public static int bindIntegerRange(PreparedStatement ps, int index, Range<Integer> integerRange) throws SQLException {
+		if (integerRange.hasLowerBound())
+			ps.setInt(++index, integerRange.lowerEndpoint());
+		if (integerRange.hasUpperBound())
+			ps.setInt(++index, integerRange.upperEndpoint());
+		return index;
+	}
+
 	public static int bindDateRange(PreparedStatement ps, int index, Range<LocalDate> dateRange) throws SQLException {
 		if (dateRange.hasLowerBound())
 			ps.setDate(++index, Date.valueOf(dateRange.lowerEndpoint()));

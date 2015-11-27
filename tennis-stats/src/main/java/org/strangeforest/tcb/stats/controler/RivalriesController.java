@@ -1,11 +1,9 @@
 package org.strangeforest.tcb.stats.controler;
 
-import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.format.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +18,7 @@ import static java.util.stream.Collectors.*;
 public class RivalriesController extends BaseController {
 
 	@Autowired private RivalriesService rivalriesService;
+	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerService playerService;
 
 	@RequestMapping("/greatestRivalries")
@@ -33,6 +32,7 @@ public class RivalriesController extends BaseController {
 	@RequestMapping("/headsToHeads")
 	public ModelAndView headsToHeads() {
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("seasons", statisticsService.getSeasons());
 		modelMap.addAttribute("levels", Options.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Options.SURFACES);
 		return new ModelAndView("headsToHeads", modelMap);
@@ -41,13 +41,13 @@ public class RivalriesController extends BaseController {
 	@RequestMapping("/headsToHeadsTable")
 	public ModelAndView headsToHeadsTable(
 		@RequestParam(value = "players") String playersCSV,
-		@RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
-		@RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
+		@RequestParam(value = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(value = "toSeason", required = false) Integer toSeason,
 		@RequestParam(value = "level", required = false) String level,
 		@RequestParam(value = "surface", required = false) String surface
 	) {
 		List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
-		RivalryFilter filter = new RivalryFilter(DateUtil.toRange(fromDate, toDate), level, surface);
+		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, surface);
 
 		List<Integer> playerIds = playerService.findPlayerIds(players);
 		HeadsToHeads headsToHeads = rivalriesService.getHeadsToHeads(playerIds, filter);

@@ -2,11 +2,14 @@ package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import static java.lang.String.*;
 
@@ -14,6 +17,11 @@ import static java.lang.String.*;
 public class StatisticsService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
+
+	private static final String SEASONS_QUERY =
+		"SELECT DISTINCT season\n" +
+		"FROM player_season_stats\n" +
+		"ORDER BY season DESC";
 
 	private static final String MATCH_STATS_QUERY =
 		"SELECT pw.name AS winner, pl.name AS loser, minutes, 1 w_matches, 0 l_matches, w_sets, l_sets, w_games, l_games,\n" +
@@ -93,6 +101,16 @@ public class StatisticsService {
 		"FROM player_season_performance\n" +
 		"WHERE player_id = ?\n" +
 		"ORDER BY season";
+
+
+	// Seasons
+
+	private static final long SEASONS_EXPIRY_PERIOD = TimeUnit.MINUTES.toMillis(5L);
+	private final Supplier<List<Integer>> seasons = Memoizer.of(() -> jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class), SEASONS_EXPIRY_PERIOD);
+
+	public List<Integer> getSeasons() {
+		return seasons.get();
+	}
 
 
 	// Match statistics

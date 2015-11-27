@@ -13,11 +13,11 @@ import org.strangeforest.tcb.stats.service.*;
 @Controller
 public class StatsLeadersController extends BaseController {
 
-	@Autowired private StatsLeadersService statsLeadersService;
+	@Autowired private StatisticsService statisticsService;
 
 	@RequestMapping("/statsLeaders")
 	public ModelAndView statsLeaders() {
-		List<Integer> seasons = statsLeadersService.getSeasons();
+		List<Integer> seasons = statisticsService.getSeasons();
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", seasons);
