@@ -25,7 +25,8 @@
 				var toSeason = $("#toSeason").val();
 				var level = $("#level").val();
 				var surface = $("#surface").val();
-				var url = "/headsToHeadsTable?players=" + players + "&fromSeason=" + fromSeason + "&toSeason=" + toSeason + "&level=" + level + "&surface=" + surface;
+				var statsVsAll = $("#statsVsAll").prop("checked");
+				var url = "/headsToHeadsTable?players=" + players + "&fromSeason=" + fromSeason + "&toSeason=" + toSeason + "&level=" + level + "&surface=" + surface + "&statsVsAll=" + statsVsAll;
 				$.ajax(url).done(function(data) {
 					$("#headsToHeadsDiv").html(data);
 				});
@@ -43,11 +44,6 @@
 					count++;
 			}
 			return count;
-		}
-		var hiddenData = ".pct-data";
-		function toggleStatsData() {
-			hiddenData = hiddenData == ".pct-data" ? ".raw-data" : ".pct-data";
-			$(".pct-data, .raw-data").toggle();
 		}
 		$(function() {
 			autocompletePlayers("players", showHeadsToHeads);
@@ -96,12 +92,11 @@
 			</select>
 		</div>
 		<div class="col-md-2">
-			<a class="pct-data btn btn-default" href="#" role="button" onclick="toggleStatsData()" style="display: none">
-				<span class="glyphicon glyphicon-equalizer"></span> Raw Data
-			</a>
-			<a class="raw-data btn btn-default" href="#" role="button" onclick="toggleStatsData()">
-				<span class="glyphicon glyphicon-scale"></span> Pct. Data
-			</a>
+			<div class="checkbox">
+				<label title="Show player statistics versus all or only between heads" class="text-nowrap">
+					<input id="statsVsAll" type="checkbox"/> Stats vs All
+				</label>
+			</div>
 		</div>
 		<div class="col-md-2">
 			<a class="btn btn-primary pull-right" href="#" role="button" onclick="showHeadsToHeads()">

@@ -44,18 +44,21 @@ public class RivalriesController extends BaseController {
 		@RequestParam(value = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(value = "toSeason", required = false) Integer toSeason,
 		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface
+		@RequestParam(value = "surface", required = false) String surface,
+		@RequestParam(value = "statsVsAll") boolean statsVsAll
 	) {
 		List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, surface);
 
 		List<Integer> playerIds = playerService.findPlayerIds(players);
 		HeadsToHeads headsToHeads = rivalriesService.getHeadsToHeads(playerIds, filter);
+		Map<Integer, PlayerStats> playersStats = statisticsService.getPlayersStats(playerIds, filter, statsVsAll);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("headsToHeads", headsToHeads);
+		modelMap.addAttribute("playersStats", playersStats);
 		return new ModelAndView("headsToHeadsTable", modelMap);
 	}
 }

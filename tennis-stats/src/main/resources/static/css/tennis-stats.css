@@ -103,3 +103,28 @@
 .bg-won-100 {
 	background: lime;
 }
+.stats-header {
+	font-size: smaller;
+}
+.stats {
+	font-size: smaller;
+	text-align: center;
+}
+.stats-general {
+	background-color: #f0ffff;
+}
+.stats-perf {
+	background-color: #f4f4ff;
+}
+.stats-pressure {
+	background-color: #fff4f4;
+}
+.stats-serve {
+	background-color: #fff0f8;
+}
+.stats-return {
+	background-color: #f0fff8;
+}
+.stats-total {
+	background-color: #ffffe8;
+}

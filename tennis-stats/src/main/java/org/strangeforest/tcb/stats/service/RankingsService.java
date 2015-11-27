@@ -82,7 +82,7 @@ public class RankingsService {
 				if (players.getCount() == 1)
 					ps.setInt(index, players.getPlayerIds().iterator().next());
 				else
-					ps.setArray(index, ps.getConnection().createArrayOf("integer", players.getPlayerIds().toArray()));
+					bindIntegerArray(ps, index, players.getPlayerIds());
 				index = bindDateRange(ps, index, dateRange);
 			},
 			rs -> {

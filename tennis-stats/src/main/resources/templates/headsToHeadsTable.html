@@ -1,11 +1,11 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--@thymesVar id="headsToHeads" type="org.strangeforest.tcb.stats.model.HeadsToHeads"-->
+<!--@thymesVar id="playersStats" type="java.util.Map<java.lang.Integer, org.strangeforest.tcb.stats.model.PlayerStats>"-->
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
-			var $table = $("#headsToHeadsTable");
-			$table.find(hiddenData).hide();
-			$table.find("span.rivalry").each(function() {
+			$(".pct-data").hide();
+			$("#headsToHeadsTable").find("span.rivalry").each(function() {
 				var $match = $(this);
 				var match = {won: $match.data("won"), score: $match.data("score"), season: $match.data("season"), tournament: $match.data("tournament"),
 					          level: $match.data("level"), surface: $match.data("surface"), round: $match.data("round")};
@@ -14,17 +14,20 @@
 				$match.tooltip({title: matchTitle, html: true, placement: "top"});
 			});
 		});
+		function toggleStatsData() {
+			$(".pct-data, .raw-data").toggle();
+		}
 		/*]]>*/
 	</script>
 	<style>
-		#headsToHeadsTable > thead > tr > th {
+		#headsToHeadsTable > thead > tr > th, #playersStatsTable > thead > tr > th {
 			border-bottom: 3px solid lightgray;
 		}
-		#headsToHeadsTable > tbody > tr > th {
+		#headsToHeadsTable > tbody > tr > th, #playersStatsTable > tbody > tr > th {
 			border-right: 3px solid lightgray;
 			vertical-align: middle;
 		}
-		#headsToHeadsTable > tbody > tr > td {
+		#headsToHeadsTable > tbody > tr > td, #playersStatsTable > tbody > tr > td {
 			text-align: center;
 			vertical-align: middle;
 			padding: 5px 2px;
@@ -36,7 +39,7 @@
 	</style>
 	<table id="headsToHeadsTable" class="table table-condensed table-hover table-bordered" th:with="playerCount=${headsToHeads.playerCount}">
 		<thead>
-			<tr class="player-vertical">
+			<tr>
 				<th style="border-right: 3px solid lightgray">Player</th>
 				<th style="border-right: 3px solid lightgray; text-align: center">Totals</th>
 				<th th:each="rivalry : ${headsToHeads.rivalries}" style="text-align: center">
@@ -66,4 +69,106 @@
 			</tr>
 		</tbody>
 	</table>
+	<table th:unless="${headsToHeads.empty}" id="playersStatsTable" class="table table-condensed table-hover table-bordered text-nowrap">
+		<thead>
+			<tr>
+				<th style="border-right: 3px solid lightgray">Player</th>
+				<!-- Serve -->
+				<th class="pct-data stats-header stats-serve first-column" title="Ace %">A%</th>
+				<th class="raw-data stats-header stats-serve first-column" title="Aces">A</th>
+				<th class="pct-data stats-header stats-serve" title="Double Fault %">DF%</th>
+				<th class="raw-data stats-header stats-serve" title="Double Faults">DF</th>
+				<th class="pct-data stats-header stats-serve" title="1st Serve">1Srv</th>
+				<th class="raw-data stats-header stats-serve" title="1st Serve In">1SrvIn</th>
+				<th class="stats-header stats-serve" title="1st Serve Won">1SrvW</th>
+				<th class="stats-header stats-serve" title="2nd Serve Won">2SrvW</th>
+				<th class="stats-header stats-serve" title="Break Points Saved">BPSvd</th>
+				<th class="stats-header stats-serve" title="Service Points Won">SrvPW</th>
+				<th class="stats-header stats-serve" title="Service Games Won">SrvGW</th>
+				<!-- Return -->
+				<th class="pct-data stats-header stats-return first-column" title="Ace Against %">AAg%</th>
+				<th class="raw-data stats-header stats-return first-column" title="Aces Against">AAg</th>
+				<th class="pct-data stats-header stats-return" title="Double Fault Against %">DFAg%</th>
+				<th class="raw-data stats-header stats-return" title="Double Fault Against">DFAg</th>
+				<th class="stats-header stats-return" title="1st Serve Return Points Won">1SrvRW</th>
+				<th class="stats-header stats-return" title="2nd Serve Return Points Won">2SrvRW</th>
+				<th class="stats-header stats-return" title="Break Points">BP</th>
+				<th class="stats-header stats-return" title="Return Points Won">RtnPW</th>
+				<th class="stats-header stats-return" title="Return Games Won">RtnGW</th>
+				<!-- Total -->
+				<th class="stats-header stats-total" th:title="#{stats.pointsDominanceRatio.title}">PDom</th>
+				<th class="stats-header stats-total" th:title="#{stats.gamesDominanceRatio.title}">GDom</th>
+				<th class="stats-header stats-total" th:title="#{stats.breakPointsRatio.title}">BPRt</th>
+				<th class="stats-header stats-total" th:title="#{stats.overPerformingRatio.title}">OvPrf</th>
+				<th class="stats-header stats-total" title="Total Points Won">TtlPW</th>
+				<th class="stats-header stats-total" title="Total Games Won">TtlGW</th>
+				<th class="stats-header stats-total" title="Sets Won">StsW</th>
+				<th class="stats-header stats-total" title="Matches Won">MtsW</th>
+			</tr>
+		</thead>
+		<tbody class="text-nowrap">
+			<tr th:each="hRivalry : ${headsToHeads.rivalries}" th:with="player=${hRivalry.player1}, stats=${playersStats.get(player.playerId)}">
+				<th>
+					<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
+					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+				</th>
+				<!-- Serve -->
+				<td class="pct-data stats stats-serve" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.acePct, 1, 1) + '%' : ''}">4.5%</td>
+				<td class="raw-data stats stats-serve" th:text="${stats.hasPointStats() ? stats.aces : ''}">456</td>
+				<td class="pct-data stats stats-serve" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.doubleFaultPct, 1, 1) + '%' : ''}">2.5%</td>
+				<td class="raw-data stats stats-serve" th:text="${stats.hasPointStats() ? stats.doubleFaults : ''}">256</td>
+				<td class="pct-data stats stats-serve" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.firstServePct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-serve" th:text="${stats.hasPointStats() ? stats.firstServesIn + '/' + stats.servicePoints : ''}">333/444</td>
+				<td class="pct-data stats stats-serve" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.firstServeWonPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-serve" th:text="${stats.hasPointStats() ? stats.firstServesWon + '/' + stats.firstServesIn : ''}">333/444</td>
+				<td class="pct-data stats stats-serve" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.secondServeWonPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-serve" th:text="${stats.hasPointStats() ? stats.secondServesWon + '/' + stats.secondServes : ''}">333/444</td>
+				<td class="pct-data stats stats-serve" th:text="${stats.hasPointStats() and stats.breakPointsSavedPct != null ? #numbers.formatDecimal(stats.breakPointsSavedPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-serve" th:text="${stats.hasPointStats() ? stats.breakPointsSaved + '/' + stats.breakPointsFaced : ''}">333/444</td>
+				<td class="pct-data stats stats-serve" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.servicePointsWonPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-serve" th:text="${stats.hasPointStats() ? stats.servicePointsWon + '/' + stats.servicePoints : ''}">333/444</td>
+				<td class="pct-data stats stats-serve" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.serviceGamesWonPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-serve" th:text="${stats.hasPointStats() ? stats.serviceGamesWon + '/' + stats.serviceGames : ''}">333/444</td>
+				<!-- Return -->
+				<td class="pct-data stats stats-return" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.aceAgainstPct, 1, 1) + '%' : ''}">4.5%</td>
+				<td class="raw-data stats stats-return" th:text="${stats.hasPointStats() ? stats.acesAgainst : ''}">333</td>
+				<td class="pct-data stats stats-return" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.doubleFaultAgainstPct, 1, 1) + '%' : ''}">4.5%</td>
+				<td class="raw-data stats stats-return" th:text="${stats.hasPointStats() ? stats.doubleFaultsAgainst : ''}">333</td>
+				<td class="pct-data stats stats-return" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.firstServeReturnPointsWonPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-return" th:text="${stats.hasPointStats() ? stats.firstServeReturnPointsWon + '/' + stats.firstServeReturnPoints : ''}">333/444</td>
+				<td class="pct-data stats stats-return" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.secondServeReturnPointsWonPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-return" th:text="${stats.hasPointStats() ? stats.secondServeReturnPointsWon + '/' + stats.secondServeReturnPoints : ''}">333/444</td>
+				<td class="pct-data stats stats-return" th:text="${stats.hasPointStats() and stats.breakPointsWonPct != null ? #numbers.formatDecimal(stats.breakPointsWonPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-return" th:text="${stats.hasPointStats() ? stats.breakPointsWon + '/' + stats.breakPoints : ''}">333/444</td>
+				<td class="pct-data stats stats-return" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.returnPointsWonPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-return" th:text="${stats.hasPointStats() ? stats.returnPointsWon + '/' + stats.returnPoints : ''}">333/444</td>
+				<td class="pct-data stats stats-return" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.returnGamesWonPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-return" th:text="${stats.hasPointStats() ? stats.returnGamesWon + '/' + stats.returnGames : ''}">333/444</td>
+				<!-- Total -->
+				<td class="stats stats-total" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.pointsDominanceRatio, 1, 2) : ''}">1.12</td>
+				<td class="stats stats-total" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.gamesDominanceRatio, 1, 2) : ''}">1.12</td>
+				<td class="stats stats-total" th:text="${stats.hasPointStats() and stats.breakPointsRatio != null ? #numbers.formatDecimal(stats.breakPointsRatio, 1, 2) : ''}">1.12</td>
+				<td class="stats stats-total" th:text="${stats.hasPointStats() and stats.overPerformingRatio != null ? #numbers.formatDecimal(stats.overPerformingRatio, 1, 2) : ''}">1.12</td>
+				<td class="pct-data stats stats-total" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.totalPointsWonPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-total" th:text="${stats.hasPointStats() ? stats.totalPointsWon + '/' + stats.totalPoints : ''}">333/444</td>
+				<td class="pct-data stats stats-total" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.totalGamesWonPct, 1, 1) + '%' : ''}">84.5%</td>
+				<td class="raw-data stats stats-total" th:text="${stats.hasPointStats() ? stats.totalGamesWon + '/' + stats.totalGames : ''}">333/444</td>
+				<td class="pct-data stats stats-total" th:text="${#numbers.formatDecimal(stats.setsWonPct, 1, 1) + '%'}">84.5%</td>
+				<td class="raw-data stats stats-total" th:text="${stats.setsWon + '/' + stats.sets}">333/444</td>
+				<td class="pct-data stats stats-total" th:text="${#numbers.formatDecimal(stats.matchesWonPct, 1, 1) + '%'}">84.5%</td>
+				<td class="raw-data stats stats-total" th:text="${stats.matchesWon + '/' + stats.matches}">56/66</td>
+			</tr>
+			<tr th:if="${headsToHeads.empty}">
+				<td colspan="2" align="center">No data found</td>
+			</tr>
+		</tbody>
+	</table>
+	<div th:unless="${headsToHeads.empty}" class="row">
+		<div class="pct-data col-md-2">
+			<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData()"> Raw Data</button>
+		</div>
+		<div class="raw-data col-md-2">
+			<button class="btn btn-default btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData()"> Pct. Data</button>
+		</div>
+	</div>
 </th:block>

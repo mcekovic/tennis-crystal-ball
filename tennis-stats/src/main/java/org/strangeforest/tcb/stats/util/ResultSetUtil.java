@@ -30,7 +30,7 @@ public abstract class ResultSetUtil {
 		return index;
 	}
 
-	public static void bindIntegerArray(PreparedStatement ps, int index, List<Integer> arr) throws SQLException {
-		ps.setArray(index, ps.getConnection().createArrayOf("integer", arr.toArray()));
+	public static void bindIntegerArray(PreparedStatement ps, int index, Collection<Integer> integers) throws SQLException {
+		ps.setArray(index, ps.getConnection().createArrayOf("integer", integers.toArray()));
 	}
 }

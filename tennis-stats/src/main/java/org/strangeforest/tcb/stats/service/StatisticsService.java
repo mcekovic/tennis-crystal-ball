@@ -12,6 +12,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.util.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class StatisticsService {
@@ -68,11 +69,20 @@ public class StatisticsService {
 		"FROM player_match_stats_v m%1$s\n" +
 		"WHERE m.player_id = ?%2$s";
 
+	private static final String PLAYERS_FILTERED_STATS_QUERY = //language=SQL
+		"SELECT m.player_id, " + PLAYER_STATS_SUMMED_COLUMNS +
+		"FROM player_match_stats_v m\n" +
+		"WHERE m.player_id = ANY(?)%1$s%2$s\n" +
+		"GROUP BY m.player_id";
+
 	private static final String TOURNAMENT_EVENT_JOIN = //language=SQL
 	 	"\nLEFT JOIN tournament_event e USING (tournament_event_id)";
 
 	private static final String OPPONENT_JOIN = //language=SQL
 	 	"\nLEFT JOIN player_v o ON o.player_id = opponent_id";
+
+	private static final String OPPONENTS_CRITERIA = //language=SQL
+	 	" AND opponent_id = ANY(?)";
 
 	private static final String PLAYER_SEASONS_STATS_QUERY =
 		"SELECT season, " + PLAYER_STATS_COLUMNS +
@@ -185,6 +195,25 @@ public class StatisticsService {
 				playerStatsParams(playerId, filter)
 			);
 		}
+	}
+
+	public Map<Integer, PlayerStats> getPlayersStats(List<Integer> playerIds, RivalryFilter filter, boolean vsAll) {
+		Map<Integer, PlayerStats> playersStats = new HashMap<>();
+		jdbcTemplate.query(
+			format(PLAYERS_FILTERED_STATS_QUERY, filter.getCriteria(), vsAll ? "" : OPPONENTS_CRITERIA),
+			(ps) -> {
+				int index = 1;
+				bindIntegerArray(ps, index, playerIds);
+				index = filter.bindParams(ps, index);
+				if (!vsAll)
+					bindIntegerArray(ps, ++index, playerIds);
+			},
+			(rs) -> {
+				int playerId = rs.getInt("player_id");
+				playersStats.put(playerId, mapPlayerStats(rs));
+			}
+		);
+		return playersStats;
 	}
 
 	private String join(MatchFilter filter) {
