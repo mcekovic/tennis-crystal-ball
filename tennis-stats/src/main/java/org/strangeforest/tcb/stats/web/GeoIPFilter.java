@@ -8,6 +8,7 @@ import javax.servlet.http.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.metrics.*;
+import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 
 import com.google.common.base.*;
@@ -15,7 +16,7 @@ import com.maxmind.geoip2.*;
 import com.maxmind.geoip2.exception.*;
 import com.maxmind.geoip2.model.*;
 
-@Component
+@Component @Profile("!dev")
 public class GeoIPFilter implements Filter {
 
 	@Autowired private CounterService counterService;

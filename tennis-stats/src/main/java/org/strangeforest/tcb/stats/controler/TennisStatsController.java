@@ -20,9 +20,4 @@ public class TennisStatsController extends BaseController {
 	public String rankingsChart() {
 		return "rankingsChart";
 	}
-
-	@RequestMapping("/manage/geolocation")
-	public String geolocation() {
-		return "manage/geolocationChart";
-	}
 }
