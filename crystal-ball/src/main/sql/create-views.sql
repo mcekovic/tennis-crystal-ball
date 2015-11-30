@@ -118,7 +118,7 @@ CREATE UNIQUE INDEX ON player_titles (player_id);
 
 -- match_for_stats_v
 
-CREATE VIEW match_for_stats_v AS
+CREATE OR REPLACE VIEW match_for_stats_v AS
 SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.level, e.surface, m.best_of, m.round, m.winner_rank, m.loser_rank, m.w_sets, m.l_sets, m.w_games, m.l_games
 FROM match m
 LEFT JOIN tournament_event e USING (tournament_event_id)
@@ -127,7 +127,7 @@ WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LI
 
 -- match_for_rivalry_v
 
-CREATE VIEW match_for_rivalry_v AS
+CREATE OR REPLACE VIEW match_for_rivalry_v AS
 SELECT m.match_id, m.winner_id, m.loser_id, e.season, e.level, e.surface
 FROM match m
 LEFT JOIN tournament_event e USING (tournament_event_id)
@@ -136,7 +136,7 @@ WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LI
 
 -- player_match_performance_v
 
-CREATE VIEW player_match_performance_v AS
+CREATE OR REPLACE VIEW player_match_performance_v AS
 SELECT m.winner_id player_id, m.season, m.surface,
 	match_id match_id_won, NULL match_id_lost,
 	CASE WHEN m.level = 'G' THEN match_id ELSE NULL END grand_slam_match_id_won, NULL grand_slam_match_id_lost,
@@ -227,7 +227,7 @@ CREATE UNIQUE INDEX ON player_performance (player_id);
 
 -- player_match_stats_v
 
-CREATE VIEW player_match_stats_v AS
+CREATE OR REPLACE VIEW player_match_stats_v AS
 SELECT match_id, tournament_event_id, season, level, surface, round, winner_id player_id, loser_id opponent_id, loser_rank opponent_rank,
 	1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games,
 	w_ace p_ace, w_df p_df, w_sv_pt p_sv_pt, w_1st_in p_1st_in, w_1st_won p_1st_won, w_2nd_won p_2nd_won, w_sv_gms p_sv_gms, w_bp_sv p_bp_sv, w_bp_fc p_bp_fc,
@@ -321,7 +321,7 @@ CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
 
 -- player_performance_goat_points_v
 
-CREATE VIEW player_performance_goat_points_v AS
+CREATE OR REPLACE VIEW player_performance_goat_points_v AS
 WITH matches_performers AS (
   SELECT player_id, matches_won::real/(matches_won + matches_lost) AS won_lost_pct
   FROM player_performance
