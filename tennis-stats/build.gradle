@@ -16,6 +16,12 @@ apply plugin: 'application'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+processResources {
+	filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+		'info.app.version': project.property('version')
+	]
+}
+
 dependencies {
 	compile project(':crystal-ball')
 	compile ('org.springframework.boot:spring-boot-starter-aop')
