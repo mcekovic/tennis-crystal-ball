@@ -111,7 +111,7 @@ public class RankingsService {
 
 	private String getSQL(int playerCount, RankType rankType, Range<LocalDate> dateRange, boolean byAge) {
 		String playerJoin = byAge ? PLAYER_JOIN : "";
-		String playerCondition = playerCount > 1 ? "ANY(?)" : "?";
+		String playerCondition = playerCount == 1 ? "?" : "ANY(?)";
 		String orderBy = byAge ? "age" : "date";
 		switch (rankType) {
 			case RANK:
