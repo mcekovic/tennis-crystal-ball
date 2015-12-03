@@ -1,37 +1,17 @@
-function getDate(id) {
-	var $date = $("#" + id);
-	var date = $date.val();
-	if (date == "")
-		return date;
-	try {
-		$.datepicker.parseDate("dd-mm-yy", date);
-		return date;
-	}
-	catch (err) {
-		alert("Invalid " + id.substr(0, id.length - 4) + " date: " + date);
-		$date.focus();
-		return null;
-	}
-}
+// Autocomplete player
 
-function dateRangePicker(fromId, toId) {
-	var $from = $("#" + fromId);
-	var $to = $("#" + toId);
-	$from.datepicker({
-		defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
-		onClose: function (selectedDate) {
-			$to.datepicker("option", "minDate", selectedDate);
-		}
+function autocompletePlayer(id) {
+	$(function () {
+		$("#" + id).autocomplete({
+			source: "/autocompletePlayer",
+			minLength: 2,
+			select: function (event, ui) {
+				if (ui.item)
+					window.location = "/playerProfile?playerId=" + ui.item.id;
+			}
+		});
 	});
-	$to.datepicker({
-		defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
-		onClose: function (selectedDate) {
-			$from.datepicker("option", "maxDate", selectedDate);
-		}
-	});
-	$("div.ui-datepicker").css({fontSize: "12px"});
 }
-
 
 function split(val) {
 	return val.split(/,\s*/);
@@ -82,3 +62,41 @@ function getPlayerCount(players) {
 	}
 	return count;
 }
+
+
+// Dates
+
+function getDate(id) {
+	var $date = $("#" + id);
+	var date = $date.val();
+	if (date == "")
+		return date;
+	try {
+		$.datepicker.parseDate("dd-mm-yy", date);
+		return date;
+	}
+	catch (err) {
+		alert("Invalid " + id.substr(0, id.length - 4) + " date: " + date);
+		$date.focus();
+		return null;
+	}
+}
+
+function dateRangePicker(fromId, toId) {
+	var $from = $("#" + fromId);
+	var $to = $("#" + toId);
+	$from.datepicker({
+		defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
+		onClose: function (selectedDate) {
+			$to.datepicker("option", "minDate", selectedDate);
+		}
+	});
+	$to.datepicker({
+		defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
+		onClose: function (selectedDate) {
+			$from.datepicker("option", "maxDate", selectedDate);
+		}
+	});
+	$("div.ui-datepicker").css({fontSize: "12px"});
+}
+

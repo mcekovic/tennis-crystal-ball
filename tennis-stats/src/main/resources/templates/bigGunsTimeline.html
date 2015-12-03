@@ -7,12 +7,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Ultimate Tennis Statistics - Big Guns Timeline</title>
 	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
 	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
 	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/tcbUtil.js}"></script>
 	<script th:src="@{/js/formatters.js}"></script>
+	<script th:src="@{/js/jquery.resize.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		function correctInitPositions() {
@@ -29,30 +33,36 @@
 			$timelineHeader.find("span.era-factor").each(function() {
 				var $eraFactor = $(this);
 				$eraFactor.css({position: "absolute", display: "block"});
-				$eraFactor.css({left: ($eraFactor.offset().left + $eraFactor.parent().width() / 2 - 9) + "px"});
-				$eraFactor.css({top: ($eraFactor.offset().top - 29) + "px"});
+				$eraFactor.css({
+					left: ($eraFactor.offset().left + $eraFactor.parent().width() / 2 - 9) + "px",
+					top: ($eraFactor.offset().top - 29) + "px"
+				});
 			});
 		}
 		function correctPositionsOnResize() {
-			var newLeft = $("#bigGunsTable").offset().left;
-			var dLeft = newLeft - bigGunsTableLeft;
-			correctLeftOnResize("span.era-player", dLeft + 20);
-			correctLeftOnResize("span.era-factor", dLeft + 2.5);
-			bigGunsTableLeft = newLeft;
+			var newOffset = $("#bigGunsTable").offset();
+			var dLeft = newOffset.left - bigGunsTableOffset.left;
+			var dTop = newOffset.top - bigGunsTableOffset.top;
+			correctPosOnResize("span.best-player", dLeft + 20, dTop - 20);
+			correctPosOnResize("span.era-factor", dLeft + 2.5, dTop - 2.5);
+			bigGunsTableOffset = newOffset;
 		}
-		function correctLeftOnResize(selector, offset) {
+		function correctPosOnResize(selector, dLeft, dTop) {
 			$("#timelineHeader").find(selector).each(function() {
 				var $this = $(this);
-				$this.css({left: ($this.offset().left + offset) + "px"});
+				var offset = $this.offset();
+				$this.css({
+					left: (offset.left + dLeft) + "px",
+					top: (offset.top + dTop) + "px"
+				});
 			});
 		}
-		var bigGunsTableLeft;
+		var bigGunsTableOffset;
 		$(function() {
 			correctInitPositions();
-			bigGunsTableLeft = $("#bigGunsTable").offset().left;
-			$(window).resize(function() {
-				correctPositionsOnResize();
-			});
+			bigGunsTableOffset = $("#bigGunsTable").offset();
+			$(window).resize(correctPositionsOnResize);
+			$("#navbar").resize(correctPositionsOnResize);
 		});
 		/*]]>*/
 	</script>

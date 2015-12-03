@@ -5,7 +5,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Ultimate Tennis Statistics</title>
 	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{/js/tcbUtil.js}"></script>
 	<style>
 		body {
 			background: url("/images/home-bg.png") no-repeat center center fixed;
@@ -15,15 +20,13 @@
 </head>
 <body class="container">
 	<div th:include="fragments/header :: title"></div>
-	<h3><a href="/goatList">GOAT List</a></h3>
-	<h3><a href="/bigGunsTimeline">Big Guns Timeline</a></h3>
-	<h3><a href="/bestSeasons">Best Seasons</a></h3>
-	<h3><a href="/greatestRivalries">Greatest Rivalries</a></h3>
-	<h3><a href="/playerProfile">Player Profile</a></h3>
-	<h3><a href="/rankingsChart">Rankings Chart</a></h3>
-	<h3><a href="/headsToHeads">Heads-to-Heads</a></h3>
-	<h3><a href="/topPerformers">Top Performers</a></h3>
-	<h3><a href="/statsLeaders">Statistics Leaders</a></h3>
+	<br/>
+	<div class="text-nowrap">
+		<h1 style="float: left; margin-top: 10px"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></h1>
+		<h5 style="font-style: italic">Technology Preview</h5>
+	</div>
+	<br/>
+	<br/>
 	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>

@@ -1,12 +1,22 @@
+.navbar-brand {
+	height: 40px;
+	padding: 10px 15px;
+}
+.navbar-text {
+	margin: 10px;
+}
+.nav > li > a {
+	padding: 5px 10px;
+}
 .ui-autocomplete {
 	max-height: 600px; overflow-y: auto; overflow-x: hidden;
 }
 .ui-autocomplete-loading {
 	background: white url("/images/ui-anim_basic_16x16.gif") right center no-repeat;
 }
-.note {
-	font-size: small;
-	font-style: italic;
+.grid-title {
+	position: absolute;
+	margin-top: 5px;
 }
 .label {
 	font-size: 87.5%;

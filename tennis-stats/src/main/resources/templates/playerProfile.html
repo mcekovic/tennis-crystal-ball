@@ -17,6 +17,7 @@
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
 	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
 	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/tcbUtil.js}"></script>
 	<script th:src="@{/js/formatters.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
@@ -88,18 +89,8 @@
 </head>
 <body class="container">
 	<div th:include="fragments/header :: title"></div>
-	<div class="row">
-		<div th:if="${player}" class="col-md-8">
-			<h3 th:text="${player.name}">Player Profile</h3>
-		</div>
-		<div class=" col-md-4">
-			<div class="ui-widget input-group">
-				<label for="player" class="input-group-addon">Player:</label>
-				<input id="player" type="text" class="search-field form-control" placeholder="Search Player"/>
-			</div>
-		</div>
-	</div>
 	<th:block th:if="${player}">
+		<h3 th:text="${player.name}">Player Profile</h3>
 		<div class="row">
 			<div class="col-md-3">
 				<table class="table table-condensed text-nowrap">

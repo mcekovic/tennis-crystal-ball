@@ -1,13 +1,39 @@
 <header xmlns:th="http://www.thymeleaf.org" th:fragment="title">
 	<!--@thymesVar id="lastDataUpdate" type="java.util.Date"-->
-	<div class="text-nowrap" style="display: flex; flex-direction: row">
-		<div style="display: flex; flex-direction: column">
-			<h1><a href="/">Ultimate Tennis Statistics</a></h1>
+	<!--@thymesVar id="servletPath" type="java.lang.String"-->
+	<script type="text/javascript">
+		autocompletePlayer("player");
+	</script>
+	<nav id="navbar" class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<div class="navbar-brand text-nowrap">
+					<a href="/" style="font-size: larger"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></a>
+				</div>
+			</div>
+			<div class="navbar-header">
+				<div class="navbar-text text-nowrap">
+					<span th:if="${lastDataUpdate}" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}">Last data update: 21-09-2015</span>
+				</div>
+			</div>
+			<div class="navbar-header navbar-right">
+				<div class="ui-widget input-group" style="padding-top: 2px">
+					<label for="player" class="input-group-addon">Player:</label>
+					<input id="player" type="text" class="search-field form-control" size="30" placeholder="Search Player"/>
+				</div>
+			</div>
+			<div>
+				<ul class="nav navbar-nav">
+					<li th:class="${servletPath == '/goatList' ? 'active' : ''}"><a href="/goatList">GOAT List</a></li>
+					<li th:class="${servletPath == '/bigGunsTimeline' ? 'active' : ''}"><a href="/bigGunsTimeline">Big Guns Timeline</a></li>
+					<li th:class="${servletPath == '/bestSeasons' ? 'active' : ''}"><a href="/bestSeasons">Best Seasons</a></li>
+					<li th:class="${servletPath == '/greatestRivalries' ? 'active' : ''}"><a href="/greatestRivalries">Greatest Rivalries</a></li>
+					<li th:class="${servletPath == '/rankingsChart' ? 'active' : ''}"><a href="/rankingsChart">Rankings Chart</a></li>
+					<li th:class="${servletPath == '/headsToHeads' ? 'active' : ''}"><a href="/headsToHeads">Heads-to-Heads</a></li>
+					<li th:class="${servletPath == '/topPerformers' ? 'active' : ''}"><a href="/topPerformers">Top Performers</a></li>
+					<li th:class="${servletPath == '/statsLeaders' ? 'active' : ''}"><a href="/statsLeaders">Statistics Leaders</a></li>
+				</ul>
+			</div>
 		</div>
-		<div style="display: flex; flex-direction: column; margin: 10px 10px">
-			<div class="note" style="color: #337ab7">Technology Preview</div>
-			<div class="note" style="color: #d9534f">Work in progress - please be patient</div>
-			<div th:if="${lastDataUpdate}" class="note" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}">Last data update: 21-09-2015</div>
-		</div>
-	</div>
+	</nav>
 </header>
