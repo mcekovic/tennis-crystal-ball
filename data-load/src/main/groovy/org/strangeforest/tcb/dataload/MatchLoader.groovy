@@ -146,8 +146,9 @@ class MatchLoader extends BaseCSVLoader {
 					(name.startsWith('Las Vegas') && (1976..1981).contains(season)) ||
 					(name.startsWith('Monte Carlo') && (1968..1989).contains(season)) ||
 					(name.startsWith('Monte-Carlo') && season == 2015) ||
-					(name.startsWith('Paris') && season == 1989) ||
+					(name.startsWith('Paris') && [1989, 2015].contains(season)) ||
 					(name.startsWith('Philadelphia') && (1968..1986).contains(season)) ||
+					(name.equals('Shanghai') && season == 2015) ||
 					(name.equals('Stockholm') && ((1972..1980).contains(season) || (1984..1989).contains(season))) ||
 					(name.equals('Tokyo Indoor') && (1978..1988).contains(season)) ||
 					(name.startsWith('Washington') && extTournamentId.equals('418') && (1971..1978).contains(season)) ||

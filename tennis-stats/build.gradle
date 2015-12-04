@@ -17,9 +17,11 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 processResources {
-	filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
-		'info.app.version': project.property('version')
-	]
+	filesMatching('application.properties') {
+		filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+			'info.app.version': project.property('version') + '-' + git.head().abbreviatedId
+		]
+	}
 }
 
 dependencies {

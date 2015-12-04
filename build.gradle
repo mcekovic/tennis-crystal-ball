@@ -15,7 +15,7 @@ ext {
 }
 
 allprojects {
-	version = "0.5-${git.head().abbreviatedId}"
+	version = "0.5-SNAPSHOT"
 
 	buildscript {
 		repositories {
