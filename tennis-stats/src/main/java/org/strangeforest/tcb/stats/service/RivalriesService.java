@@ -130,14 +130,14 @@ public class RivalriesService {
 		"  FROM rivalries\n" +
 		"  GROUP BY player_id_1, player_id_2\n" +
 		"), rivalries_3 AS (\n" +
-		"  SELECT rank() OVER riv AS rank, player_id_1, player_id_2, sum(matches) matches, sum(won) won, sum(lost) lost, g1.goat_points + g2.goat_points rivalry_goat_points\n" +
+		"  SELECT rank() OVER riv AS rank, player_id_1, player_id_2, sum(matches) matches, sum(won) won, sum(lost) lost, coalesce(g1.goat_points, 0) + coalesce(g2.goat_points, 0) rivalry_goat_points\n" +
 		"  FROM rivalries_2\n" +
 		"  LEFT JOIN player_goat_points g1 ON g1.player_id = player_id_1\n" +
 		"  LEFT JOIN player_goat_points g2 ON g2.player_id = player_id_2\n" +
-		"  GROUP BY player_id_1, player_id_2, g1.goat_points, g2.goat_points\n" +
+		"  GROUP BY player_id_1, player_id_2, coalesce(g1.goat_points, 0), coalesce(g2.goat_points, 0)\n" +
 		"  HAVING sum(matches) >= ?\n" +
 		"  WINDOW riv AS (\n" +
-		"    PARTITION BY CASE WHEN g1.goat_points > g2.goat_points OR (g1.goat_points = g2.goat_points AND player_id_1 < player_id_2) THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY g1.goat_points DESC, player_id_1\n" +
+		"    PARTITION BY CASE WHEN coalesce(g1.goat_points, 0) > coalesce(g2.goat_points, 0) OR (coalesce(g1.goat_points, 0) = coalesce(g2.goat_points, 0) AND player_id_1 < player_id_2) THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY coalesce(g1.goat_points, 0) DESC, player_id_1\n" +
 		"  )\n" +
 		")\n" +
 		"SELECT rank() OVER (ORDER BY matches DESC, (won + lost) DESC, rivalry_goat_points DESC) AS rivalry_rank, r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.goat_points goat_points_1,\n" +
