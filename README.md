@@ -3,21 +3,20 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 
 ## Features
 
-- 'GOAT' List - see best players of Open Era ranked by 'GOAT' Points
-- 'Big Guns' Timeline - see 'GOAT' points distribution among top players and seasons
-- Best Seasons - find which are really the best seasons of all time based on 'GOAT' points
-- Greatest Rivalries - see greatest rivalries, optionally filtered by tournament level or surface
-- Player Profile - see player information, tournament results, matches, timeline, rivalries, ranking, performance indicators and statistics,
-  all linked together and easily navigable
-- Ranking Carts - see players ranking and ranking point charts, compare players by constructing custom charts
-- Heads-to-Heads - see heads-to-heads clusters among several players (i.e. among 'Big 4')
-- Top Performers - find top performers in both performance and pressure situations figures
-- Statistics Leaders - find statistics leaders in different statistics categories, including dominance and break points ratios
+- 'GOAT' List - Best players of Open Era ranked by 'GOAT' Points
+- 'Big Guns' Timeline - 'GOAT' points distribution among top players and seasons
+- Best Seasons - Find which are the best seasons of Open Era based on 'GOAT' points
+- Greatest Rivalries - Explore greatest rivalries, overall or by tournament level and surface
+- Player Profile - Player information, tournament results, matches, timeline, rivalries, ranking, performance indicators and statistics
+- Ranking Carts - Player ranking and ranking point charts, compare players by constructing custom charts
+- Heads-to-Heads - Heads-to-heads clusters among several players (i.e. among 'Big 4')
+- Top Performers - Find top performers in both performance and pressure situations figures
+- Statistics Leaders - Find statistics leaders in different statistics categories, including dominance and break points ratios
 
 ## Roadmap
 
-- 'Make your own GOAT' - enable users to enter 'GOAT' points distribution and calculate their own 'GOAT' list
-- Tournament Browser - see all Open Era tournaments and events, draws, results and statistics 
+- 'Make your own GOAT' - Enable users to enter 'GOAT' points distribution and calculate their own 'GOAT' list
+- Tournament Browser - All Open Era tournaments and events, draws, results and statistics 
 
 ### Technology
 
