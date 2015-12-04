@@ -301,21 +301,19 @@ public class PlayerStats {
 	}
 
 	public double getPointsDominanceRatio() {
-		return servicePointsLostPct != 0.0 ? getReturnPointsWonPct() / servicePointsLostPct : 0.0;
+		return ratio(getReturnPointsWonPct(), servicePointsLostPct);
 	}
 
 	public double getGamesDominanceRatio() {
-		return serviceGamesLostPct != 0.0 ? getReturnGamesWonPct() / serviceGamesLostPct : 0.0;
+		return ratio(getReturnGamesWonPct(), serviceGamesLostPct);
 	}
 
 	public Double getBreakPointsRatio() {
-		Double breakPointsWonPct = getBreakPointsWonPct();
-		return breakPointsWonPct != null && breakPointsLostPct != null ? breakPointsWonPct / breakPointsLostPct : null;
+		return ratio(getBreakPointsWonPct(), breakPointsLostPct);
 	}
 
 	public Double getOverPerformingRatio() {
-		double pointsWonPct = getTotalPointsWonPct();
-		return pointsWonPct != 0.0 ? getMatchesWonPct() / pointsWonPct : 0.0;
+		return ratio(getMatchesWonPct(), getTotalPointsWonPct());
 	}
 
 

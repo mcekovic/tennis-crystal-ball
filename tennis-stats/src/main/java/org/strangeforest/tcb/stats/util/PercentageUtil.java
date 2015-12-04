@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.util;
 
+import static java.lang.Double.*;
+
 public abstract class PercentageUtil {
 
 	public static final double PCT = 100.0;
@@ -14,5 +16,13 @@ public abstract class PercentageUtil {
 
 	public static Double optPct(int value, int from) {
 		return from != 0 ? PCT * value / from : null;
+	}
+
+	public static double ratio(double up, double down) {
+		return down != 0.0 ? up / down : POSITIVE_INFINITY;
+	}
+
+	public static Double ratio(Double up, Double down) {
+		return up != null && down != null ? ratio(up.doubleValue(), down.doubleValue()) : null;
 	}
 }
