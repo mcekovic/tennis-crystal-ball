@@ -1,14 +1,11 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
-import org.strangeforest.tcb.stats.util.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.StatsCategory.Type.*;
@@ -19,7 +16,7 @@ public class StatsLeadersService {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final int MAX_PLAYER_COUNT           =  1000;
-	private static final int MIN_MATCHES                =   100;
+	private static final int MIN_MATCHES                =   200;
 	private static final int MIN_POINTS                 = 10000;
 	private static final int MIN_ENTRIES_SEASON_FACTOR  =    10;
 	private static final int MIN_ENTRIES_SURFACE_FACTOR =     2;
@@ -138,7 +135,7 @@ public class StatsLeadersService {
 		addCategory("totalPointsWonPct", TOTAL_POINTS_WON_PCT, PERCENTAGE, true);
 		addCategory("totalGamesWonPct", "p_games::real/(p_games+o_games)", PERCENTAGE, false);
 		addCategory("setsWonPct", "p_sets::real/(p_sets+o_sets)", PERCENTAGE, false);
-		addCategory("matchesWonPctPct", MATCHES_WON_PCT, PERCENTAGE, false);
+		addCategory("matchesWonPct", MATCHES_WON_PCT, PERCENTAGE, false);
 	}
 
 	private static void addCategory(String name, String expression, StatsCategory.Type type, boolean needsStats) {

@@ -56,7 +56,7 @@ public class TopPerformersService {
 
 	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
-			format(TOP_PERFORMERS_COUNT_QUERY, perfTableName(filter), category, filter.getCriteria()),
+			format(TOP_PERFORMERS_COUNT_QUERY, perfTableName(filter), categoryColumn(category), filter.getCriteria()),
 			filter.getParamsWithPrefix(getMinEntriesValue(category, filter)),
 			Integer.class
 		));
@@ -66,7 +66,7 @@ public class TopPerformersService {
 		BootgridTable<TopPerformerRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(TOP_PERFORMERS_QUERY, category, perfTableName(filter), filter.getCriteria(), orderBy),
+			format(TOP_PERFORMERS_QUERY, categoryColumn(category), perfTableName(filter), filter.getCriteria(), orderBy),
 			(rs) -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
@@ -92,6 +92,10 @@ public class TopPerformersService {
 		return new WonLost(rs.getInt("won"), rs.getInt("lost"));
 	}
 
+	private String categoryColumn(String category) {
+		return CATEGORIES.get(category).getColumn();
+	}
+
 	private int getMinEntriesValue(String category, StatsPlayerListFilter filter) {
 		int minEntries = CATEGORIES.get(category).getMinEntries();
 		return filter.hasSeason() ? minEntries / MIN_ENTRIES_SEASON_FACTOR : minEntries;
@@ -103,21 +107,21 @@ public class TopPerformersService {
 	private static final Map<String, PerformanceCategory> CATEGORIES = new HashMap<>();
 	static {
 		// Performance
-		addCategory(new PerformanceCategory("matches", 200, "matches"));
-		addCategory(new PerformanceCategory("grand_slam_matches", 50, "Grand Slam matches"));
-		addCategory(new PerformanceCategory("masters_matches", 50, "Masters matches"));
-		addCategory(new PerformanceCategory("hard_matches", 100, "hard court matches"));
-		addCategory(new PerformanceCategory("clay_matches", 100, "clay court matches"));
-		addCategory(new PerformanceCategory("grass_matches", 50, "grass court matches"));
-		addCategory(new PerformanceCategory("carpet_matches", 50, "carpet court matches"));
+		addCategory(new PerformanceCategory("matches", "matches", 200, "matches"));
+		addCategory(new PerformanceCategory("grandSlamMatches", "grand_slam_matches", 50, "Grand Slam matches"));
+		addCategory(new PerformanceCategory("mastersMatches", "masters_matches", 50, "Masters matches"));
+		addCategory(new PerformanceCategory("hardMatches", "hard_matches", 100, "hard court matches"));
+		addCategory(new PerformanceCategory("clayMatches", "clay_matches", 100, "clay court matches"));
+		addCategory(new PerformanceCategory("grassMatches", "grass_matches", 50, "grass court matches"));
+		addCategory(new PerformanceCategory("carpetMatches", "carpet_matches", 50, "carpet court matches"));
 		// Pressure situations
-		addCategory(new PerformanceCategory("deciding_sets", 100, "matches"));
-		addCategory(new PerformanceCategory("fifth_sets", 20, "matches"));
-		addCategory(new PerformanceCategory("finals", 20, "finals"));
-		addCategory(new PerformanceCategory("vs_top10", 20, "matches"));
-		addCategory(new PerformanceCategory("after_winning_first_set", 100, "matches"));
-		addCategory(new PerformanceCategory("after_losing_first_set", 100, "matches"));
-		addCategory(new PerformanceCategory("tie_breaks", 100, "tie breaks"));
+		addCategory(new PerformanceCategory("decidingSets", "deciding_sets", 100, "matches"));
+		addCategory(new PerformanceCategory("fifthSets", "fifth_sets", 20, "matches"));
+		addCategory(new PerformanceCategory("finals", "finals", 20, "finals"));
+		addCategory(new PerformanceCategory("vsTop10", "vs_top10", 20, "matches"));
+		addCategory(new PerformanceCategory("afterWinningFirstSet", "after_winning_first_set", 100, "matches"));
+		addCategory(new PerformanceCategory("afterLosingFirstSet", "after_losing_first_set", 100, "matches"));
+		addCategory(new PerformanceCategory("tieBreaks", "tie_breaks", 100, "tie breaks"));
 	}
 
 	private static void addCategory(PerformanceCategory category) {

@@ -57,56 +57,161 @@ VALUES
 (4, 2),
 (5, 1);
 
+DELETE FROM best_rank_goat_points;
+INSERT INTO best_rank_goat_points
+(best_rank, goat_points)
+VALUES
+(1, 8),
+(2, 5),
+(3, 3),
+(4, 2),
+(5, 1);
+
+DELETE FROM performance_category;
+INSERT INTO performance_category
+(category_id, name, min_entries, sort_order)
+VALUES
+('matches', 'Matches', 200, 1),
+('grandSlamMatches', 'Grand Slam Matches', 50, 2),
+('mastersMatches', 'Masters Matches', 50, 3),
+('hardMatches', 'Hard Matches', 100, 4),
+('clayMatches', 'Clay Matches', 100, 5),
+('grassMatches', 'Grass Matches', 50, 6),
+('carpetMatches', 'Carpet Matches', 50, 7),
+('decidingSets', 'Deciding Sets', 100, 8),
+('fifthSets', 'Fifth Sets', 20, 9),
+('finals', 'Finals', 20, 10),
+('vsTop10', 'Vs Top 10', 20, 11),
+('afterWinningFirstSet', 'After Winning First Set', 100, 12),
+('afterLosingFirstSet', 'After Losing First Set', 100, 13),
+('tieBreaks', 'Tie Breaks', 100, 14);
+
 DELETE FROM performance_goat_points;
 INSERT INTO performance_goat_points
-(category , rank, goat_points, sort_order)
+(category_id, rank, goat_points)
 VALUES
-('matches', 1, 8, 1),
-('matches', 2, 5, 1),
-('matches', 3, 3, 1),
-('matches', 4, 2, 1),
-('matches', 5, 1, 1),
-('grand_slam_matches', 1, 4, 2),
-('grand_slam_matches', 2, 2, 2),
-('grand_slam_matches', 3, 1, 2),
-('masters_matches', 1, 4, 3),
-('masters_matches', 2, 2, 3),
-('masters_matches', 3, 1, 3),
-('hard_matches', 1, 4, 4),
-('hard_matches', 2, 2, 4),
-('hard_matches', 3, 1, 4),
-('clay_matches', 1, 4, 5),
-('clay_matches', 2, 2, 5),
-('clay_matches', 3, 1, 5),
-('grass_matches', 1, 4, 6),
-('grass_matches', 2, 2, 6),
-('grass_matches', 3, 1, 6),
-('carpet_matches', 1, 4, 7),
-('carpet_matches', 2, 2, 7),
-('carpet_matches', 3, 1, 7),
-('deciding_sets', 1, 4, 8),
-('deciding_sets', 2, 2, 8),
-('deciding_sets', 3, 1, 8),
-('fifth_sets', 1, 4, 9),
-('fifth_sets', 2, 2, 9),
-('fifth_sets', 3, 1, 9),
-('finals', 1, 4, 10),
-('finals', 2, 2, 10),
-('finals', 3, 1, 10),
-('vs_top10', 1, 8, 11),
-('vs_top10', 2, 5, 11),
-('vs_top10', 3, 3, 11),
-('vs_top10', 4, 2, 11),
-('vs_top10', 5, 1, 11),
-('after_winning_first_set', 1, 4, 12),
-('after_winning_first_set', 2, 2, 12),
-('after_winning_first_set', 3, 1, 12),
-('after_losing_first_set', 1, 4, 13),
-('after_losing_first_set', 2, 2, 13),
-('after_losing_first_set', 3, 1, 13),
-('tie_breaks', 1, 4, 14),
-('tie_breaks', 2, 2, 14),
-('tie_breaks', 3, 1, 14);
+('matches', 1, 8),
+('matches', 2, 5),
+('matches', 3, 3),
+('matches', 4, 2),
+('matches', 5, 1),
+('grandSlamMatches', 1, 4),
+('grandSlamMatches', 2, 2),
+('grandSlamMatches', 3, 1),
+('mastersMatches', 1, 4),
+('mastersMatches', 2, 2),
+('mastersMatches', 3, 1),
+('hardMatches', 1, 4),
+('hardMatches', 2, 2),
+('hardMatches', 3, 1),
+('clayMatches', 1, 4),
+('clayMatches', 2, 2),
+('clayMatches', 3, 1),
+('grassMatches', 1, 4),
+('grassMatches', 2, 2),
+('grassMatches', 3, 1),
+('carpetMatches', 1, 4),
+('carpetMatches', 2, 2),
+('carpetMatches', 3, 1),
+('decidingSets', 1, 4),
+('decidingSets', 2, 2),
+('decidingSets', 3, 1),
+('fifthSets', 1, 4),
+('fifthSets', 2, 2),
+('fifthSets', 3, 1),
+('finals', 1, 4),
+('finals', 2, 2),
+('finals', 3, 1),
+('vsTop10', 1, 8),
+('vsTop10', 2, 5),
+('vsTop10', 3, 3),
+('vsTop10', 4, 2),
+('vsTop10', 5, 1),
+('afterWinningFirstSet', 1, 4),
+('afterWinningFirstSet', 2, 2),
+('afterWinningFirstSet', 3, 1),
+('afterLosingFirstSet', 1, 4),
+('afterLosingFirstSet', 2, 2),
+('afterLosingFirstSet', 3, 1),
+('tieBreaks', 1, 4),
+('tieBreaks', 2, 2),
+('tieBreaks', 3, 1);
+
+DELETE FROM statistics_category;
+INSERT INTO statistics_category
+(category_id, name, min_entries, sort_order)
+VALUES
+-- Serve
+('acePct', 'Ace %', 10000, 1),
+('doubleFaultPct', 'Double Fault %', 10000, 2),
+('firstServePct', 'First Serve %', 10000, 3),
+('firstServeWonPct', 'First Serve Won %', 10000, 4),
+('secondServeWonPct', 'Second Serve Won %', 10000, 5),
+('breakPointsSavedPct', 'Break Points Saved %', 10000, 6),
+('servicePointsWonPct', 'Service Points Won %', 10000, 7),
+('serviceGamesWonPct', 'Service Games Won %', 10000, 8),
+-- Return
+('firstServeReturnWonPct', 'First Serve Return Won %', 10000, 9),
+('secondServeReturnWonPct', 'Second Serve Return Won %', 10000, 10),
+('breakPointsPct', 'Break Points %', 10000, 11),
+('returnPointsWonPct', 'Return Points Won %', 10000, 12),
+('returnGamesWonPct', 'Return Games Won %', 10000, 13),
+-- Total
+('pointsDominanceRatio', 'Points Dominance Ratio', 10000, 14),
+('gamesDominanceRatio', 'Games Dominance Ratio', 10000, 14),
+('breakPointsRatio', 'Break Points Ratio', 10000, 14),
+('overPerformingRatio', 'Over-Performing Ratio', 10000, 14),
+('totalPointsWonPct', 'Total Points Won %', 10000, 14),
+('totalGamesWonPct', 'Total Games Won %', 200, 14),
+('setsWonPct', 'Sets Won %', 200, 14);
+
+DELETE FROM statistics_goat_points;
+INSERT INTO statistics_goat_points
+(category_id, rank, goat_points)
+VALUES
+-- Serve
+('acePct', 1, 2),
+('acePct', 2, 1),
+('doubleFaultPct', 1, 2),
+('doubleFaultPct', 2, 1),
+('firstServePct', 1, 2),
+('firstServePct', 2, 1),
+('firstServeWonPct', 1, 2),
+('firstServeWonPct', 2, 1),
+('secondServeWonPct', 1, 2),
+('secondServeWonPct', 2, 1),
+('breakPointsSavedPct', 1, 2),
+('breakPointsSavedPct', 2, 1),
+('servicePointsWonPct', 1, 2),
+('servicePointsWonPct', 2, 1),
+('serviceGamesWonPct', 1, 2),
+('serviceGamesWonPct', 2, 1),
+-- Return
+('firstServeReturnWonPct', 1, 2),
+('firstServeReturnWonPct', 2, 1),
+('secondServeReturnWonPct', 1, 2),
+('secondServeReturnWonPct', 2, 1),
+('breakPointsPct', 1, 2),
+('breakPointsPct', 2, 1),
+('returnPointsWonPct', 1, 2),
+('returnPointsWonPct', 2, 1),
+('returnGamesWonPct', 1, 2),
+('returnGamesWonPct', 2, 1),
+-- Total
+('pointsDominanceRatio', 1, 2),
+('pointsDominanceRatio', 2, 1),
+('gamesDominanceRatio', 1, 2),
+('gamesDominanceRatio', 2, 1),
+('breakPointsRatio', 1, 2),
+('breakPointsRatio', 2, 1),
+('overPerformingRatio', 1, 2),
+('overPerformingRatio', 2, 1),
+('totalPointsWonPct', 1, 2),
+('totalPointsWonPct', 2, 1),
+('totalGamesWonPct', 1, 2),
+('totalGamesWonPct', 2, 1),
+('setsWonPct', 1, 2),
+('setsWonPct', 2, 1);
 
 COMMIT;
 

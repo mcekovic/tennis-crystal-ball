@@ -217,12 +217,52 @@ CREATE TABLE year_end_rank_goat_points (
 );
 
 
+-- best_rank_goat_points
+
+CREATE TABLE best_rank_goat_points (
+	best_rank INTEGER NOT NULL,
+	goat_points INTEGER NOT NULL,
+	PRIMARY KEY (best_rank, goat_points)
+);
+
+
+-- performance_category
+
+CREATE TABLE performance_category (
+	category_id TEXT NOT NULL,
+	name TEXT NOT NULL,
+	min_entries INTEGER NOT NULL,
+	sort_order INTEGER NOT NULL,
+	PRIMARY KEY (category_id)
+);
+
+
 -- performance_goat_points
 
 CREATE TABLE performance_goat_points (
-	category TEXT NOT NULL,
+	category_id TEXT NOT NULL REFERENCES performance_category (category_id) ON DELETE CASCADE,
 	rank INTEGER NOT NULL,
 	goat_points INTEGER NOT NULL,
+	PRIMARY KEY (category_id, rank)
+);
+
+
+-- statistics_category
+
+CREATE TABLE statistics_category (
+	category_id TEXT NOT NULL,
+	name TEXT NOT NULL,
+	min_entries INTEGER NOT NULL,
 	sort_order INTEGER NOT NULL,
-	PRIMARY KEY (category, rank)
+	PRIMARY KEY (category_id)
+);
+
+
+-- statistics_goat_points
+
+CREATE TABLE statistics_goat_points (
+	category_id TEXT NOT NULL REFERENCES statistics_category (category_id) ON DELETE CASCADE,
+	rank INTEGER NOT NULL,
+	goat_points INTEGER NOT NULL,
+	PRIMARY KEY (category_id, rank)
 );

@@ -4,8 +4,10 @@
 		$(function() {
 			$("#goatLegend").on("shown.bs.collapse", function() {
 				initTournamentGOATPointsTable();
-				initYearEndRankGOATPointsTable();
-				initPerformanceGOATPointsTable();
+				initSimpleGOATPointsTable("yearEndRankGOATPointsTable");
+				initSimpleGOATPointsTable("bestRankGOATPointsTable");
+				initSimpleGOATPointsTable("performanceGOATPointsTable");
+				initSimpleGOATPointsTable("statisticsGOATPointsTable");
 			});
 		});
 		function initTournamentGOATPointsTable() {
@@ -29,8 +31,8 @@
 				}
 			});
 		}
-		function initYearEndRankGOATPointsTable() {
-			var $goatPointsTable = $("#yearEndRankGOATPointsTable");
+		function initSimpleGOATPointsTable(table) {
+			var $goatPointsTable = $("#" + table);
 			if ($goatPointsTable.hasClass("loaded"))
 				return;
 			$goatPointsTable.addClass("loaded").bootgrid({
@@ -39,21 +41,7 @@
 					method: "GET",
 					cache: true
 				},
-				url: "/yearEndRankGOATPointsTable",
-				navigation: 0
-			});
-		}
-		function initPerformanceGOATPointsTable() {
-			var $goatPointsTable = $("#performanceGOATPointsTable");
-			if ($goatPointsTable.hasClass("loaded"))
-				return;
-			$goatPointsTable.addClass("loaded").bootgrid({
-				ajax: true,
-				ajaxSettings: {
-					method: "GET",
-					cache: true
-				},
-				url: "/performanceGOATPointsTable",
+				url: "/" + table,
 				navigation: 0
 			});
 		}
@@ -66,7 +54,7 @@
 			<div id="goatLegend" class="collapse">
 				<h4>GOAT Points distribution</h4>
 				<div class="row">
-					<div class="col-md-4">
+					<div class="col-md-3">
 						<table id="tournamentGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
 								<tr>
@@ -81,18 +69,36 @@
 						<table id="yearEndRankGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
 								<tr>
-									<th data-column-id="yearEndRank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Year-End Ranking</th>
+									<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Year-End Ranking</th>
+									<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
+								</tr>
+							</thead>
+						</table>
+						<table id="bestRankGOATPointsTable" class="table table-condensed table-hover table-striped">
+							<thead>
+								<tr>
+									<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Best Ranking</th>
 									<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
 								</tr>
 							</thead>
 						</table>
 					</div>
-					<div class="col-md-4">
+					<div class="col-md-3">
 						<table id="performanceGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
 								<tr>
 									<th data-column-id="category" data-sortable="false" data-width="120">Performance Category</th>
-									<th data-column-id="goatPoints" data-sortable="false" data-width="80">Points</th>
+									<th data-column-id="goatPoints" data-sortable="false" data-width="60">Points</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+					<div class="col-md-3">
+						<table id="statisticsGOATPointsTable" class="table table-condensed table-hover table-striped">
+							<thead>
+								<tr>
+									<th data-column-id="category" data-sortable="false" data-width="130">Statistics Category</th>
+									<th data-column-id="goatPoints" data-sortable="false" data-width="50">Points</th>
 								</tr>
 							</thead>
 						</table>

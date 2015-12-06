@@ -51,12 +51,22 @@ public class GOATListResource {
 	}
 
 	@RequestMapping("/yearEndRankGOATPointsTable")
-	public BootgridTable<YearEndRankGOATPointsRow> yearEndRankGOATPointsTable() {
+	public BootgridTable<RankGOATPointsRow> yearEndRankGOATPointsTable() {
 		return goatListService.getYearEndRankGOATPointsTable();
 	}
 
+	@RequestMapping("/bestRankGOATPointsTable")
+	public BootgridTable<RankGOATPointsRow> bestRankGOATPointsTable() {
+		return goatListService.getBestRankGOATPointsTable();
+	}
+
 	@RequestMapping("/performanceGOATPointsTable")
-	public BootgridTable<PerformanceGOATPointsRow> performanceGOATPointsTable() {
+	public BootgridTable<PerfStatGOATPointsRow> performanceGOATPointsTable() {
 		return goatListService.getPerformanceGOATPointsTable();
+	}
+
+	@RequestMapping("/statisticsGOATPointsTable")
+	public BootgridTable<PerfStatGOATPointsRow> statisticsGOATPointsTable() {
+		return goatListService.getStatisticsGOATPointsTable();
 	}
 }

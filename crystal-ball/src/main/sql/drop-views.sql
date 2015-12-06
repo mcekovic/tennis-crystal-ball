@@ -1,5 +1,8 @@
 DROP VIEW player_v;
+DROP FUNCTION performance_min_entries(TEXT);
+DROP FUNCTION statistics_min_entries(TEXT);
 DROP VIEW player_performance_goat_points_v;
+DROP VIEW player_statistics_goat_points_v;
 
 DROP MATERIALIZED VIEW player_current_rank;
 DROP MATERIALIZED VIEW player_best_rank;

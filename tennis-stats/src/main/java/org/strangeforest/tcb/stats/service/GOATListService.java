@@ -32,13 +32,14 @@ public class GOATListService {
 		"WHERE goat_points > 0\n" +
 		"ORDER BY level, result DESC";
 
-	private static final String YEAR_END_RANK_GOAT_POINTS_QUERY =
-		"SELECT year_end_rank, goat_points FROM year_end_rank_goat_points\n" +
-		"ORDER BY year_end_rank";
+	private static final String RANK_GOAT_POINTS_QUERY = //language=SQL
+		"SELECT %2$s, goat_points FROM %1$s\n" +
+		"ORDER BY %2$s";
 
-	private static final String PERFORMANCE_GOAT_POINTS_QUERY =
-		"SELECT sort_order, initcap(replace(category, '_', ' ')) AS category, string_agg(goat_points::TEXT, ', ') AS goat_points\n" +
-		"FROM performance_goat_points\n" +
+	private static final String PERF_STAT_GOAT_POINTS_QUERY = //language=SQL
+		"SELECT sort_order, name AS category, string_agg(goat_points::TEXT, ', ') AS goat_points\n" +
+		"FROM %1$s\n" +
+		"LEFT JOIN %2$s USING (category_id)\n" +
 		"GROUP BY sort_order, category\n" +
 		"ORDER BY sort_order";
 
@@ -91,38 +92,39 @@ public class GOATListService {
 		return table;
 	}
 
-	public BootgridTable<YearEndRankGOATPointsRow> getYearEndRankGOATPointsTable() {
-		BootgridTable<YearEndRankGOATPointsRow> table = new BootgridTable<>();
-		jdbcTemplate.query(YEAR_END_RANK_GOAT_POINTS_QUERY, (rs) -> {
-			int yearEndRank = rs.getInt("year_end_rank");
+	public BootgridTable<RankGOATPointsRow> getYearEndRankGOATPointsTable() {
+		return getRankGOATPointsTable("year_end_rank_goat_points", "year_end_rank");
+	}
+
+	public BootgridTable<RankGOATPointsRow> getBestRankGOATPointsTable() {
+		return getRankGOATPointsTable("best_rank_goat_points", "best_rank");
+	}
+
+	private BootgridTable<RankGOATPointsRow> getRankGOATPointsTable(String tableName, String rankColumn) {
+		BootgridTable<RankGOATPointsRow> table = new BootgridTable<>();
+		jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn), (rs) -> {
+			int bestRank = rs.getInt(rankColumn);
 			int goatPoints = rs.getInt("goat_points");
-			table.addRow(new YearEndRankGOATPointsRow(yearEndRank, goatPoints));
+			table.addRow(new RankGOATPointsRow(bestRank, goatPoints));
 		});
 		return table;
 	}
 
-	public BootgridTable<PerformanceGOATPointsRow> getPerformanceGOATPointsTable() {
-		BootgridTable<PerformanceGOATPointsRow> table = new BootgridTable<>();
-		jdbcTemplate.query(PERFORMANCE_GOAT_POINTS_QUERY, (rs) -> {
+	public BootgridTable<PerfStatGOATPointsRow> getPerformanceGOATPointsTable() {
+		return getPerfStatGOATPointsTable("performance_goat_points", "performance_category");
+	}
+
+	public BootgridTable<PerfStatGOATPointsRow> getStatisticsGOATPointsTable() {
+		return getPerfStatGOATPointsTable("statistics_goat_points", "statistics_category");
+	}
+
+	private BootgridTable<PerfStatGOATPointsRow> getPerfStatGOATPointsTable(String goatPointsTable, String categoryTable) {
+		BootgridTable<PerfStatGOATPointsRow> table = new BootgridTable<>();
+		jdbcTemplate.query(format(PERF_STAT_GOAT_POINTS_QUERY, goatPointsTable, categoryTable), (rs) -> {
 			String category = rs.getString("category");
 			String goatPoints = rs.getString("goat_points");
-			table.addRow(new PerformanceGOATPointsRow(category, goatPoints));
+			table.addRow(new PerfStatGOATPointsRow(category, goatPoints));
 		});
 		return table;
-	}
-
-	private String capitalize(String s) {
-		int length = s.length();
-		StringBuilder sb = new StringBuilder(length);
-		for (int i = 0; i < length; i++) {
-			char c = s.charAt(i);
-			if (i == 0 || (i > 0 && s.charAt(i - 1) == '_'))
-				sb.append(Character.toUpperCase(c));
-			else if (c == '_')
-				sb.append(' ');
-			else
-				sb.append(c);
-		}
-		return sb.toString();
 	}
 }
