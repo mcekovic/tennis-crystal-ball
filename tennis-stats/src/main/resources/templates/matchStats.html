@@ -188,10 +188,10 @@
 	<th:block th:unless="${matchStats}"><p>No statistics available</p></th:block>
 	<div class="row">
 		<div th:if="${matchStats}" class="pct-data col-md-6">
-			<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|"> Raw Data</button>
+			<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|" title="Show raw data"> Raw Data</button>
 		</div>
 		<div th:if="${matchStats}" class="raw-data col-md-6">
-			<button class="btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|"> Pct. Data</button>
+			<button class="btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|" title="Show percentage data"> Pct. Data</button>
 		</div>
 		<div class="col-md-6">
 			<button class="btn btn-default btn-xs glyphicon glyphicon-remove pull-right" th:onclick="|$('#matchStats-${matchId}').click()|"> Close</button>

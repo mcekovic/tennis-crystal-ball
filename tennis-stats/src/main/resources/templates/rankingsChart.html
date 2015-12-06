@@ -9,6 +9,7 @@
 	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
 	<script th:src="@{/js/tcbUtil.js}"></script>
 	<script th:src="@{/js/rankingChart.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -76,6 +77,7 @@
 			});
 			onTimeSpanChange();
 			onRankTypeChange();
+			$("[data-toggle='tooltip']").tooltip();
 		});
 		/*]]>*/
 	</script>
@@ -123,7 +125,7 @@
 		</div>
 		<div class="col-md-2">
 			<div id="byAgeDiv" class="checkbox">
-				<label title="Show chart by age">
+				<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
 					<input id="byAge" type="checkbox"/> By age
 				</label>
 			</div>
@@ -143,7 +145,7 @@
 		</div>
 		<div class="col-md-2">
 			<div id="compensatePointsDiv" class="checkbox">
-				<label title="Compensate ranking points before 2009 to match new ATP ranking system">
+				<label data-toggle="tooltip" data-placement="top" title="Compensate ranking points before 2009 to match new ATP ranking system">
 					<input id="compensatePoints" type="checkbox"/> Compensate points
 				</label>
 			</div>

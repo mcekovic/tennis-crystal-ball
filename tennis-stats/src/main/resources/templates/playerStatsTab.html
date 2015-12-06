@@ -19,17 +19,23 @@
 </script>
 <br/>
 <div class="row">
-	<div class="col-md-2">
-		<select id="statsSeason" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Select season">
-			<option value="">All seasons</option>
-			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
-		</select>
+	<div class="col-md-3">
+		<div class="input-group">
+			<label for="statsSeason" class="input-group-addon">Season:</label>
+			<select id="statsSeason" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Select season">
+				<option value="">All seasons</option>
+				<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
+			</select>
+		</div>
 	</div>
-	<div class="col-md-2">
-		<select id="statsSurface" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Select surface">
-			<option value="">All surfaces</option>
-			<option th:each="option : ${surfaces}" th:value="${option.value}" th:class="|bg-surface-${option.value}|" value="H" class="bg-surface-H" th:text="${option.text}" th:selected="${option.value == surface}">Hard</option>
-		</select>
+	<div class="col-md-3">
+		<div class="input-group">
+			<label for="statsSurface" class="input-group-addon">Surface:</label>
+			<select id="statsSurface" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Select surface">
+				<option value="">All surfaces</option>
+				<option th:each="option : ${surfaces}" th:value="${option.value}" th:class="|bg-surface-${option.value}|" value="H" class="bg-surface-H" th:text="${option.text}" th:selected="${option.value == surface}">Hard</option>
+			</select>
+		</div>
 	</div>
 </div>
 <br/>

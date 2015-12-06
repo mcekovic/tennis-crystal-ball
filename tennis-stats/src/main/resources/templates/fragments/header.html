@@ -7,22 +7,25 @@
 	<nav id="navbar" class="navbar navbar-default">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<div class="navbar-brand text-nowrap">
+				<div class="navbar-brand text-nowrap" style="float: left">
 					<a href="/" style="font-size: larger"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></a>
 				</div>
-			</div>
-			<div class="navbar-header">
-				<div class="navbar-text text-nowrap">
-					<span th:if="${lastDataUpdate}" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}">Last data update: 21-09-2015</span>
+				<div class="navbar-text" style="margin-left: 15px">
+					<span th:if="${lastDataUpdate}" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}" class="text-nowrap">Last data update: 21-09-2015</span>
 				</div>
 			</div>
 			<div class="navbar-header navbar-right">
-				<div class="ui-widget input-group" style="padding-top: 2px">
+				<button type="button" class="navbar-toggle" style="margin: 0" data-toggle="collapse" data-target="#menuNavbar">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<div class="ui-widget input-group">
 					<label for="player" class="input-group-addon">Player:</label>
 					<input id="player" type="text" class="search-field form-control" size="30" placeholder="Search Player"/>
 				</div>
 			</div>
-			<div>
+			<div id="menuNavbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
 					<li th:class="${servletPath == '/goatList' ? 'active' : ''}"><a href="/goatList">GOAT List</a></li>
 					<li th:class="${servletPath == '/bigGunsTimeline' ? 'active' : ''}"><a href="/bigGunsTimeline">Big Guns Timeline</a></li>

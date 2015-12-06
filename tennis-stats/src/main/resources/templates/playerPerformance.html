@@ -18,11 +18,14 @@
 </script>
 <br/>
 <div class="row">
-	<div class="col-md-2">
-		<select id="perfSeason" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Select season">
-			<option value="">All seasons</option>
-			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
-		</select>
+	<div class="col-md-3">
+		<div class="input-group">
+			<label for="perfSeason" class="input-group-addon">Season:</label>
+			<select id="perfSeason" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Select season">
+				<option value="">All seasons</option>
+				<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
+			</select>
+		</div>
 	</div>
 </div>
 <br/>
@@ -167,10 +170,10 @@
 	</div>
 	<div th:unless="${perf.empty}" class="row">
 		<div class="pct-data col-md-3">
-			<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#playerPerformance')"> Raw Data</button>
+			<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#playerPerformance')" title="Show raw data"> Raw Data</button>
 		</div>
 		<div class="raw-data col-md-3">
-			<button class="btn btn-default btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#playerPerformance')"> Pct. Data</button>
+			<button class="btn btn-default btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#playerPerformance')" title="Show percentage data"> Pct. Data</button>
 		</div>
 	</div>
 	<th:block th:if="${perf.empty}"><p>No performance data available</p></th:block>

@@ -61,6 +61,7 @@
 			});
 			onRankingTimeSpanChange();
 			onRankTypeChange();
+			$("[data-toggle='tooltip']").tooltip();
 		});
 		/*]]>*/
 	</script>
@@ -95,7 +96,7 @@
 		</div>
 		<div class="col-md-2">
 			<div id="rankingByAgeDiv" class="checkbox">
-				<label title="Show chart by age">
+				<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
 					<input id="rankingByAge" type="checkbox"/> By age
 				</label>
 			</div>
@@ -115,7 +116,7 @@
 		</div>
 		<div class="col-md-2">
 			<div id="compensatePointsDiv" class="checkbox">
-				<label title="Compensate ranking points before 2009 to match new ATP ranking system">
+				<label data-toggle="tooltip" data-placement="top" title="Compensate ranking points before 2009 to match new ATP ranking system">
 					<input id="compensatePoints" type="checkbox"/> Compensate points
 				</label>
 			</div>

@@ -17,7 +17,8 @@
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
-			$("#goatTable").bootgrid({
+			var $goatTable = $("#goatTable");
+			$goatTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
 					method: "GET",
@@ -33,6 +34,19 @@
 					"player": playerCountryFormatter
 				}
 			});
+			setBootgridTitles($goatTable, [
+				{id: "goatRank", title: "GOAT rank"},
+				{id: "goatPoints", title: "GOAT points"},
+				{id: "tournamentGoatPoints", title: "Tournament GOAT points"},
+				{id: "rankingGoatPoints", title: "Ranking GOAT points"},
+				{id: "performanceGoatPoints", title: "Performance GOAT points"},
+				{id: "grandSlams", title: "Grand Slam titles"},
+				{id: "tourFinals", title: "Tour Finals titles"},
+				{id: "masters", title: "Masters titles"},
+				{id: "olympics", title: "Olympics titles"},
+				{id: "bigTitles", title: "Big titles (GS + TF + M + O)"},
+				{id: "titles", title: "Titles"}
+			]);
 		});
 		/*]]>*/
 	</script>
@@ -46,9 +60,9 @@
 				<th data-column-id="goatRank" data-type="numeric" data-sortable="false" data-width="45">Rank</th>
 				<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="120">Name</th>
 				<th data-column-id="goatPoints" data-type="numeric" data-order="desc" data-width="80" data-align="right" data-header-align="right">GOAT Points</th>
-				<th data-column-id="tournamentGoatPoints" data-type="numeric" data-order="desc" data-width="70" data-align="right" data-header-align="right">Tournament</th>
-				<th data-column-id="rankingGoatPoints" data-type="numeric" data-order="desc" data-width="70" data-align="right" data-header-align="right">Ranking</th>
-				<th data-column-id="performanceGoatPoints" data-type="numeric" data-order="desc" data-width="70" data-align="right" data-header-align="right">Performance</th>
+				<th data-column-id="tournamentGoatPoints" data-type="numeric" data-order="desc" data-width="70" data-align="right" data-header-align="right">Tourn. Pts.</th>
+				<th data-column-id="rankingGoatPoints" data-type="numeric" data-order="desc" data-width="70" data-align="right" data-header-align="right">Rank. Pts.</th>
+				<th data-column-id="performanceGoatPoints" data-type="numeric" data-order="desc" data-width="70" data-align="right" data-header-align="right">Perf. Pts.</th>
 				<th data-column-id="grandSlams" data-type="numeric" data-width="50" data-align="right" data-header-align="right">GS</th>
 				<th data-column-id="tourFinals" data-type="numeric" data-width="50" data-align="right" data-header-align="right">TF</th>
 				<th data-column-id="masters" data-type="numeric" data-width="50" data-align="right" data-header-align="right">M</th>

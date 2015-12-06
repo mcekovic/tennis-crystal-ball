@@ -64,6 +64,16 @@ function getPlayerCount(players) {
 }
 
 
+// Bootgrid
+
+function setBootgridTitles($gridTable, titles) {
+	for (var i = 0, count = titles.length; i < count; i++) {
+		var title = titles[i];
+		$gridTable.find("th[data-column-id='" + title.id + "'] > a > span[class='text']").attr("title", title.title);
+	}
+}
+
+
 // Dates
 
 function getDate(id) {

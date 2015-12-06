@@ -18,7 +18,8 @@
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
-			$("#bestSeasonsTable").bootgrid({
+			var $bestSeasonsTable = $("#bestSeasonsTable");
+			$bestSeasonsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
 					method: "GET",
@@ -40,6 +41,20 @@
 					}
 				}
 			});
+			setBootgridTitles($bestSeasonsTable, [
+				{id: "rank", title: "Season rank"},
+				{id: "goatPoints", title: "GOAT points"},
+				{id: "grandSlamTitles", title: "Grand Slam titles"},
+				{id: "grandSlamFinals", title: "Grand Slam finals"},
+				{id: "grandSlamSemiFinals", title: "Grand Slam semi finals"},
+				{id: "tourFinalsTitles", title: "Tour Finals titles"},
+				{id: "tourFinalsFinals", title: "Tour Finals finals"},
+				{id: "mastersTitles", title: "Masters titles"},
+				{id: "mastersFinals", title: "Masters finals"},
+				{id: "olympicsTitles", title: "Olympics titles"},
+				{id: "titles", title: "Titles"},
+				{id: "yearEndRank", title: "Year-end ranking"}
+			]);
 		});
 		/*]]>*/
 	</script>

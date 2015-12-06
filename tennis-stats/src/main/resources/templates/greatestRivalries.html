@@ -73,6 +73,11 @@
 			$("#greatestRivalriesTable-header").find("div.search").before($("#levelDiv").remove()).before($("#surfaceDiv").remove()).remove();
 			filterChanged();
 			$("[data-toggle='tooltip']").tooltip();
+			setBootgridTitles($rivalriesTable, [
+				{id: "rank", title: "Rivalry rank"},
+				{id: "h2h", title: "Head-to-head"},
+				{id: "h2hPct", title: "Head-to-head percentages"}
+			]);
 		});
 		function filterChanged() {
 			var url = "/greatestRivalriesMinMatches?level=" + $("#level").val() + "&surface=" + $("#surface").val();
