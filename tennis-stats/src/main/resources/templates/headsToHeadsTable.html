@@ -151,8 +151,8 @@
 				<td class="stats stats-total" th:text="${stats.hasPointStats() and stats.overPerformingRatio != null ? #numbers.formatDecimal(stats.overPerformingRatio, 1, 2) : ''}">1.12</td>
 				<td class="pct-data stats stats-total" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.totalPointsWonPct, 1, 1) + '%' : ''}">84.5%</td>
 				<td class="raw-data stats stats-total" th:text="${stats.hasPointStats() ? stats.totalPointsWon + '/' + stats.totalPoints : ''}">333/444</td>
-				<td class="pct-data stats stats-total" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.totalGamesWonPct, 1, 1) + '%' : ''}">84.5%</td>
-				<td class="raw-data stats stats-total" th:text="${stats.hasPointStats() ? stats.totalGamesWon + '/' + stats.totalGames : ''}">333/444</td>
+				<td class="pct-data stats stats-total" th:text="${#numbers.formatDecimal(stats.totalGamesWonPct, 1, 1) + '%'}">84.5%</td>
+				<td class="raw-data stats stats-total" th:text="${stats.totalGamesWon + '/' + stats.totalGames}">333/444</td>
 				<td class="pct-data stats stats-total" th:text="${#numbers.formatDecimal(stats.setsWonPct, 1, 1) + '%'}">84.5%</td>
 				<td class="raw-data stats stats-total" th:text="${stats.setsWon + '/' + stats.sets}">333/444</td>
 				<td class="pct-data stats stats-total" th:text="${#numbers.formatDecimal(stats.matchesWonPct, 1, 1) + '%'}">84.5%</td>

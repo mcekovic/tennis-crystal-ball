@@ -3,7 +3,7 @@ package org.strangeforest.tcb.stats.model;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
-public class WonLost {
+public class WonLost implements Comparable<WonLost> {
 
 	public static final WonLost EMPTY = new WonLost(0, 0);
 
@@ -82,5 +82,12 @@ public class WonLost {
 
 	public WonLost add(WonLost wonLost) {
 		return new WonLost(won + wonLost.won, lost + wonLost.lost, total + wonLost.total);
+	}
+
+
+	// Object methods
+
+	@Override public int compareTo(WonLost wonLost) {
+		return Double.compare(wonLost.wonPct, wonPct);
 	}
 }

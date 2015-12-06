@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.model;
 import java.util.*;
 
 import static java.util.Collections.*;
+import static java.util.Comparator.*;
 
 public class HeadsToHeads {
 
@@ -23,7 +24,7 @@ public class HeadsToHeads {
 			this.rivalryMap.put(new RivalryKey(playerId2, playerId1), rivalry.inverted());
 		}
 		this.rivalries = new ArrayList<>(map.values());
-		sort(this.rivalries, (rivalry1, rivalry2) -> rivalry1.getPlayer1().compareTo(rivalry2.getPlayer1()));
+		sort(this.rivalries, comparing(Rivalry::getWonLost).thenComparing(Rivalry::getPlayer1));
 	}
 
 	public List<Rivalry> getRivalries() {

@@ -7,16 +7,20 @@
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Ultimate Tennis Statistics - Heads-to-Heads</title>
-	<link th:href="@{/webjars/bootstrap/3.3.5/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.1.4/jquery.min.js}"></script>
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
-	<script th:src="@{/webjars/bootstrap/3.3.5/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
 	<script th:src="@{/js/tcbUtil.js}"></script>
 	<script th:src="@{/js/formatters.js}"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
+		$(function() {
+			autocompletePlayers("players", showHeadsToHeads);
+			$("[data-toggle='tooltip']").tooltip();
+		});
 		function showHeadsToHeads() {
 			var players = $.trim($("#players").val());
 			var count = getPlayerCount(players);
@@ -36,10 +40,9 @@
 				$("#headsToHeadsDiv").html("<div class='row'><div class='col-md-12'><div class='alert alert-warning'>" + message + "</div></div></div>");
 			}
 		}
-		$(function() {
-			autocompletePlayers("players", showHeadsToHeads);
-			$("[data-toggle='tooltip']").tooltip();
-		});
+		function selectPlayers(a) {
+			$("#players").val(a.title);
+		}
 		/*]]>*/
 	</script>
 </head>
@@ -48,9 +51,21 @@
 	<h3>Heads-to-Heads</h3>
 	<div class="row">
 		<div class="col-md-12">
-			<div class="ui-widget input-group">
+			<div class="input-group">
 				<label for="players" class="input-group-addon">Players:</label>
-				<input id="players" type="text" class="search-field form-control" placeholder="Search Players"/>
+				<input id="players" type="text" class="ui-widget search-field form-control" placeholder="Search Players"/>
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Quick Picks <span class="caret"></span></button>
+					<ul class="dropdown-menu">
+						<li><a href="#" onclick="selectPlayers(this)" title="Roger Federer, Rafael Nadal, Novak Djokovic, Andy Murray">Big Four</a></li>
+						<li><a href="#" onclick="selectPlayers(this)" title="Marin Cilic, Kei Nishikori, Milos Raonic, Grigor Dimitrov">Young Guns</a></li>
+						<li><a href="#" onclick="selectPlayers(this)" title="Gustavo Kuerten, Marat Safin, Juan Carlos Ferrero, Lleyton Hewitt, Andy Roddick">Week Era</a></li>
+						<li><a href="#" onclick="selectPlayers(this)" title="Andre Agassi, Jim Courier, Pete Sampras, Michael Chang">Americans rule '90</a></li>
+						<li><a href="#" onclick="selectPlayers(this)" title="Mats Wilander, Stefan Edberg, Thomas Muster, Boris Becker">Late '80 / Early '90</a></li>
+						<li><a href="#" onclick="selectPlayers(this)" title="Guillermo Vilas, Jimmy Connors, Bjorn Borg, John Mcenroe, Ivan Lendl">'70 / Early '80</a></li>
+						<li><a href="#" onclick="selectPlayers(this)" title="Rod Laver, Ken Rosewall, Arthur Ashe, John Newcombe, Ilie Nastase, Manuel Orantes">Dawn of Open Era</a></li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
