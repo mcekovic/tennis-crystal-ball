@@ -36,6 +36,9 @@ public class GOATListService {
 		"SELECT %2$s, goat_points FROM %1$s\n" +
 		"ORDER BY %2$s";
 
+	private static final String WEEKS_AT_NO1_FOR_GOAT_POINT =
+		"SELECT weeks_for_point FROM weeks_at_no1_goat_points";
+
 	private static final String PERF_STAT_GOAT_POINTS_QUERY = //language=SQL
 		"SELECT sort_order, name AS category, string_agg(goat_points::TEXT, ', ') AS goat_points\n" +
 		"FROM %1$s\n" +
@@ -108,6 +111,10 @@ public class GOATListService {
 			table.addRow(new RankGOATPointsRow(bestRank, goatPoints));
 		});
 		return table;
+	}
+
+	public int getWeeksAtNo1ForGOATPoint() {
+		return jdbcTemplate.queryForObject(WEEKS_AT_NO1_FOR_GOAT_POINT, Integer.class);
 	}
 
 	public BootgridTable<PerfStatGOATPointsRow> getPerformanceGOATPointsTable() {

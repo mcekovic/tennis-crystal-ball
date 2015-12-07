@@ -2,6 +2,7 @@ REFRESH MATERIALIZED VIEW player_current_rank;
 REFRESH MATERIALIZED VIEW player_best_rank;
 REFRESH MATERIALIZED VIEW player_best_rank_points;
 REFRESH MATERIALIZED VIEW player_year_end_rank;
+REFRESH MATERIALIZED VIEW player_weeks_at_no1;
 
 REFRESH MATERIALIZED VIEW player_tournament_event_result;
 REFRESH MATERIALIZED VIEW player_titles;

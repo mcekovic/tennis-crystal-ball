@@ -67,6 +67,12 @@ VALUES
 (4, 2),
 (5, 1);
 
+DELETE FROM weeks_at_no1_goat_points;
+INSERT INTO weeks_at_no1_goat_points
+(weeks_for_point)
+VALUES
+(10);
+
 DELETE FROM performance_category;
 INSERT INTO performance_category
 (category_id, name, min_entries, sort_order)
@@ -158,12 +164,12 @@ VALUES
 ('returnGamesWonPct', 'Return Games Won %', 10000, 13),
 -- Total
 ('pointsDominanceRatio', 'Points Dominance Ratio', 10000, 14),
-('gamesDominanceRatio', 'Games Dominance Ratio', 10000, 14),
-('breakPointsRatio', 'Break Points Ratio', 10000, 14),
-('overPerformingRatio', 'Over-Performing Ratio', 10000, 14),
-('totalPointsWonPct', 'Total Points Won %', 10000, 14),
-('totalGamesWonPct', 'Total Games Won %', 200, 14),
-('setsWonPct', 'Sets Won %', 200, 14);
+('gamesDominanceRatio', 'Games Dominance Ratio', 10000, 15),
+('breakPointsRatio', 'Break Points Ratio', 10000, 15),
+('overPerformingRatio', 'Over-Performing Ratio', 10000, 17),
+('totalPointsWonPct', 'Total Points Won %', 10000, 18),
+('totalGamesWonPct', 'Total Games Won %', 200, 19),
+('setsWonPct', 'Sets Won %', 200, 20);
 
 DELETE FROM statistics_goat_points;
 INSERT INTO statistics_goat_points

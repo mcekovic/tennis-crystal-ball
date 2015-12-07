@@ -1,6 +1,7 @@
 DROP TABLE tournament_rank_points CASCADE;
 DROP TABLE year_end_rank_goat_points CASCADE;
 DROP TABLE best_rank_goat_points CASCADE;
+DROP TABLE weeks_at_no1_goat_points CASCADE;
 DROP TABLE performance_goat_points CASCADE;
 DROP TABLE performance_category CASCADE;
 DROP TABLE statistics_goat_points CASCADE;

@@ -6,6 +6,9 @@
 				initTournamentGOATPointsTable();
 				initSimpleGOATPointsTable("yearEndRankGOATPointsTable");
 				initSimpleGOATPointsTable("bestRankGOATPointsTable");
+				$.get("/weeksAtNo1ForGOATPoint", function (data) {
+					$("#weeksAtNo1ForGOATPoint").html(data);
+				});
 				initSimpleGOATPointsTable("performanceGOATPointsTable");
 				initSimpleGOATPointsTable("statisticsGOATPointsTable");
 			});
@@ -82,6 +85,10 @@
 								</tr>
 							</thead>
 						</table>
+						<div>
+							<strong>Weeks at No. 1</strong>
+							<p>+1 point for each <span id="weeksAtNo1ForGOATPoint"></span> weeks as ATP No. 1</p>
+						</div>
 					</div>
 					<div class="col-md-3">
 						<table id="performanceGOATPointsTable" class="table table-condensed table-hover table-striped">

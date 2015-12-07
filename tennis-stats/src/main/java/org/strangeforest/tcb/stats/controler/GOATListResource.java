@@ -60,6 +60,11 @@ public class GOATListResource {
 		return goatListService.getBestRankGOATPointsTable();
 	}
 
+	@RequestMapping("/weeksAtNo1ForGOATPoint")
+	public int weeksAtNo1ForGOATPoint() {
+		return goatListService.getWeeksAtNo1ForGOATPoint();
+	}
+
 	@RequestMapping("/performanceGOATPointsTable")
 	public BootgridTable<PerfStatGOATPointsRow> performanceGOATPointsTable() {
 		return goatListService.getPerformanceGOATPointsTable();

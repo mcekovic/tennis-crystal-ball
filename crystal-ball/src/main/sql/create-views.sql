@@ -319,17 +319,40 @@ GROUP BY player_id, season;
 CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
 
 
+-- weeks
+
+CREATE OR REPLACE FUNCTION weeks(
+	p_from DATE,
+	p_to DATE
+) RETURNS REAL AS $$
+BEGIN
+	RETURN extract(epoch FROM age(p_to, p_from))/(7*24*60*60);
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- player_weeks_at_no1
+
+CREATE MATERIALIZED VIEW player_weeks_at_no1 AS
+WITH player_ranking_ex AS (
+	SELECT player_id, rank_date, rank, lead(rank, -1) OVER (pr) prev_rank, weeks(lead(rank_date, -1) OVER (pr), rank_date) weeks
+	FROM player_ranking
+	WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)
+	ORDER BY rank_date
+)
+SELECT player_id, round(sum(CASE WHEN prev_rank = 1 THEN weeks - 1 ELSE 0 END + CASE WHEN rank = 1 THEN 1 ELSE 0 END)) weeks_at_no1
+FROM player_ranking_ex
+WHERE rank = 1 OR prev_rank = 1
+GROUP BY player_id;
+
+
 -- performance_min_entries
 
 CREATE OR REPLACE FUNCTION performance_min_entries(
 	p_category_id TEXT
 ) RETURNS INTEGER AS $$
-DECLARE
-	l_min_entires INTEGER;
 BEGIN
-	SELECT min_entries INTO l_min_entires FROM performance_category
-	WHERE category_id = p_category_id;
-	RETURN l_min_entires;
+	RETURN (SELECT min_entries FROM performance_category WHERE category_id = p_category_id);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -516,12 +539,8 @@ GROUP BY player_id;
 CREATE OR REPLACE FUNCTION statistics_min_entries(
 	p_category_id TEXT
 ) RETURNS INTEGER AS $$
-DECLARE
-	l_min_entires INTEGER;
 BEGIN
-	SELECT min_entries INTO l_min_entires FROM statistics_category
-	WHERE category_id = p_category_id;
-	RETURN l_min_entires;
+	RETURN (SELECT min_entries FROM statistics_category WHERE category_id = p_category_id);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -791,6 +810,14 @@ WITH goat_points AS (
 	SELECT player_id, goat_points, 0, goat_points, 0
 	FROM player_best_rank
 	LEFT JOIN best_rank_goat_points USING (best_rank)
+	WHERE goat_points > 0
+	UNION ALL
+	SELECT player_id, goat_points, 0, goat_points, 0
+	FROM (
+		SELECT player_id, round(weeks_at_no1 / weeks_for_point) goat_points
+		FROM player_weeks_at_no1
+		LEFT JOIN weeks_at_no1_goat_points ON TRUE
+	) AS at_no1_gp
 	WHERE goat_points > 0
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points

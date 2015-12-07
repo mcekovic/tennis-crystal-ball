@@ -226,6 +226,14 @@ CREATE TABLE best_rank_goat_points (
 );
 
 
+-- weeks_at_no1_goat_points
+
+CREATE TABLE weeks_at_no1_goat_points (
+	weeks_for_point INTEGER NOT NULL,
+	PRIMARY KEY (weeks_for_point)
+);
+
+
 -- performance_category
 
 CREATE TABLE performance_category (
