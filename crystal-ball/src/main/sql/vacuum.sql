@@ -11,11 +11,19 @@ VACUUM FULL ANALYSE VERBOSE match_stats;
 
 VACUUM FULL ANALYSE VERBOSE tournament_rank_points;
 VACUUM FULL ANALYSE VERBOSE year_end_rank_goat_points;
+VACUUM FULL ANALYSE VERBOSE best_rank_goat_points;
+VACUUM FULL ANALYSE VERBOSE weeks_at_no1_goat_points;
+
+VACUUM FULL ANALYSE VERBOSE performance_category;
+VACUUM FULL ANALYSE VERBOSE performance_goat_points;
+VACUUM FULL ANALYSE VERBOSE statistics_category;
+VACUUM FULL ANALYSE VERBOSE statistics_goat_points;
 
 VACUUM FULL ANALYSE VERBOSE player_current_rank;
 VACUUM FULL ANALYSE VERBOSE player_best_rank;
 VACUUM FULL ANALYSE VERBOSE player_best_rank_points;
 VACUUM FULL ANALYSE VERBOSE player_year_end_rank;
+VACUUM FULL ANALYSE VERBOSE player_weeks_at_no1;
 
 VACUUM FULL ANALYSE VERBOSE player_tournament_event_result;
 VACUUM FULL ANALYSE VERBOSE player_season_goat_points;
