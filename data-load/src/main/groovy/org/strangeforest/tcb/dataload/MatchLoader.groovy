@@ -195,12 +195,11 @@ class MatchLoader extends BaseCSVLoader {
 	static def mapEntry(String entry) {
 		if (entry) {
 			if (entry.endsWith(') W'))
-				'WC'
+				return 'WC'
 			else if (entry == 'S')
-				null
+				return null
 		}
-		else
-			entry
+		entry
 	}
 
 	static def mapRankPoints(String level) {

@@ -16,7 +16,8 @@ public class MatchesService {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
-		"SELECT m.match_id, e.date, e.name AS tournament, e.level, e.surface, m.round, m.winner_id, pw.name AS winner, m.loser_id, pl.name AS loser, m.score\n" +
+		"SELECT m.match_id, e.date, e.name AS tournament, e.level, e.surface, m.round," +
+		"  m.winner_id, pw.name AS winner, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser, m.loser_seed, m.loser_entry, m.score\n" +
 		"FROM match m\n" +
 		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
 		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id\n" +
@@ -42,8 +43,12 @@ public class MatchesService {
 						rs.getString("round"),
 						rs.getInt("winner_id"),
 						rs.getString("winner"),
+						rs.getInt("winner_seed"),
+						rs.getString("winner_entry"),
 						rs.getInt("loser_id"),
 						rs.getString("loser"),
+						rs.getInt("loser_seed"),
+						rs.getString("loser_entry"),
 						rs.getString("score")
 					));
 				}
