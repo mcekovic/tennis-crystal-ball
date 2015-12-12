@@ -20,7 +20,7 @@ public class GOATListService {
 		"WHERE g.goat_points > 0 AND g.goat_rank <= ?%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
-		"SELECT player_id, g.goat_rank, country_id, name, g.goat_points, g.tournament_goat_points, g.ranking_goat_points, g.performance_goat_points,\n" +
+		"SELECT player_id, g.goat_rank, country_id, name, g.goat_points, g.tournament_goat_points, g.ranking_goat_points, g.achievements_goat_points,\n" +
 		"  grand_slams, tour_finals, masters, olympics, big_titles, titles\n" +
 		"FROM player_goat_points g\n" +
 		"LEFT JOIN player_v USING (player_id)\n" +
@@ -39,12 +39,23 @@ public class GOATListService {
 	private static final String WEEKS_AT_NO1_FOR_GOAT_POINT =
 		"SELECT weeks_for_point FROM weeks_at_no1_goat_points";
 
+	private static final String CAREER_GRAND_SLAM_GOAT_POINTS =
+		"SELECT career_grand_slam FROM grand_slam_goat_points";
+
+	private static final String SEASON_GRAND_SLAM_GOAT_POINTS =
+		"SELECT season_grand_slam FROM grand_slam_goat_points";
+
 	private static final String PERF_STAT_GOAT_POINTS_QUERY = //language=SQL
-		"SELECT sort_order, name AS category, string_agg(goat_points::TEXT, ', ') AS goat_points\n" +
-		"FROM %1$s\n" +
-		"LEFT JOIN %2$s USING (category_id)\n" +
+		"WITH goat_points AS (\n" +
+		"  SELECT sort_order, name AS category, goat_points\n" +
+		"  FROM %1$s\n" +
+		"  LEFT JOIN %2$s USING (category_id)\n" +
+		"  ORDER BY sort_order, category, rank\n" +
+		")\n" +
+		"SELECT category, string_agg(goat_points::TEXT, ', ') AS goat_points\n" +
+		"FROM goat_points\n" +
 		"GROUP BY sort_order, category\n" +
-		"ORDER BY sort_order";
+		"ORDER BY sort_order, category";
 
 
 	public int getPlayerCount(PlayerListFilter filter) {
@@ -68,8 +79,8 @@ public class GOATListService {
 				int goatPoints = rs.getInt("goat_points");
 				int tournamentGoatPoints = rs.getInt("tournament_goat_points");
 				int rankingGoatPoints = rs.getInt("ranking_goat_points");
-				int performanceGoatPoints = rs.getInt("performance_goat_points");
-				GOATListRow row = new GOATListRow(goatRank, playerId, name, countryId, goatPoints, tournamentGoatPoints, rankingGoatPoints, performanceGoatPoints);
+				int achievementsGoatPoints = rs.getInt("achievements_goat_points");
+				GOATListRow row = new GOATListRow(goatRank, playerId, name, countryId, goatPoints, tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints);
 				row.setGrandSlams(rs.getInt("grand_slams"));
 				row.setTourFinals(rs.getInt("tour_finals"));
 				row.setMasters(rs.getInt("masters"));
@@ -103,6 +114,10 @@ public class GOATListService {
 		return getRankGOATPointsTable("best_rank_goat_points", "best_rank");
 	}
 
+	public BootgridTable<RankGOATPointsRow> getBestSeasonGOATPointsTable() {
+		return getRankGOATPointsTable("best_season_goat_points", "season_rank");
+	}
+
 	private BootgridTable<RankGOATPointsRow> getRankGOATPointsTable(String tableName, String rankColumn) {
 		BootgridTable<RankGOATPointsRow> table = new BootgridTable<>();
 		jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn), (rs) -> {
@@ -115,6 +130,14 @@ public class GOATListService {
 
 	public int getWeeksAtNo1ForGOATPoint() {
 		return jdbcTemplate.queryForObject(WEEKS_AT_NO1_FOR_GOAT_POINT, Integer.class);
+	}
+
+	public int getCareerGrandSlamGOATPoints() {
+		return jdbcTemplate.queryForObject(CAREER_GRAND_SLAM_GOAT_POINTS, Integer.class);
+	}
+
+	public int getSeasonGrandSlamGOATPoints() {
+		return jdbcTemplate.queryForObject(SEASON_GRAND_SLAM_GOAT_POINTS, Integer.class);
 	}
 
 	public BootgridTable<PerfStatGOATPointsRow> getPerformanceGOATPointsTable() {

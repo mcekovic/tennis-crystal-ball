@@ -4,7 +4,6 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
-import javax.annotation.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
@@ -22,7 +21,6 @@ public class RivalriesService {
 
 	@Autowired private DataService dataService;
 	@Autowired private JdbcTemplate jdbcTemplate;
-	private boolean lateralSupported;
 
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES = 20;
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES_MIN = 2;
@@ -172,15 +170,11 @@ public class RivalriesService {
 		"  ) AS lm) AS last_match";
 
 
-	@PostConstruct
-	private void init() {
-		lateralSupported = dataService.getDBServerVersion() >= 90300;
-	}
-
 	public BootgridTable<PlayerRivalryRow> getPlayerRivalriesTable(int player_id, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<PlayerRivalryRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
+		boolean lateralSupported = lateralSupported();
 		jdbcTemplate.query(
 			format(PLAYER_RIVALRIES_QUERY,
 				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id", "opponent_id", ""),
@@ -195,7 +189,7 @@ public class RivalriesService {
 					String countryId = rs.getString("country_id");
 					PlayerRivalryRow row = new PlayerRivalryRow(bestRank, playerId, name, countryId);
 					row.setWonLost(mapWonLost(rs));
-					row.setLastMatch(mapLastMatch(rs));
+					row.setLastMatch(mapLastMatch(rs, lateralSupported));
 					table.addRow(row);
 				}
 			},
@@ -207,6 +201,7 @@ public class RivalriesService {
 
 	public HeadsToHeads getHeadsToHeads(List<Integer> playerIds, RivalryFilter filter) {
 		String criteria = filter.getCriteria();
+		boolean lateralSupported = lateralSupported();
 		return new HeadsToHeads(jdbcTemplate.query(
 			format(HEADS_TO_HEADS_QUERY,
 				criteria,
@@ -227,7 +222,7 @@ public class RivalriesService {
 				RivalryPlayer player1 = mapPlayer(rs, "_1");
 				RivalryPlayer player2 = mapPlayer(rs, "_2");
 				WonLost wonLost = mapWonLost(rs);
-				LastMatch lastMatch = mapLastMatch(rs);
+				LastMatch lastMatch = mapLastMatch(rs, lateralSupported);
 				return new Rivalry(player1, player2, wonLost, lastMatch);
 			}
 		));
@@ -238,6 +233,7 @@ public class RivalriesService {
 		AtomicInteger rivalries = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		String criteria = filter.getCriteria();
+		boolean lateralSupported = lateralSupported();
 		jdbcTemplate.query(
 			format(GREATEST_RIVALRIES_QUERY,
 				criteria,
@@ -258,7 +254,7 @@ public class RivalriesService {
 					RivalryPlayer player1 = mapPlayer(rs, "_1");
 					RivalryPlayer player2 = mapPlayer(rs, "_2");
 					WonLost wonLost = mapWonLost(rs);
-					LastMatch lastMatch = mapLastMatch(rs);
+					LastMatch lastMatch = mapLastMatch(rs, lateralSupported);
 					table.addRow(new GreatestRivalry(rank, player1, player2, wonLost, lastMatch));
 				}
 			}
@@ -290,7 +286,7 @@ public class RivalriesService {
 		);
 	}
 
-	private LastMatch mapLastMatch(ResultSet rs) throws SQLException {
+	private LastMatch mapLastMatch(ResultSet rs, boolean lateralSupported) throws SQLException {
 		return lateralSupported ? mapLastMatchLateral(rs) : mapLastMatchJson(rs);
 	}
 
@@ -328,5 +324,9 @@ public class RivalriesService {
 		catch (IOException ex) {
 			throw new SQLException(ex);
 		}
+	}
+
+	private boolean lateralSupported() {
+		return dataService.getDBServerVersion() >= 90300;
 	}
 }

@@ -296,39 +296,63 @@ GROUP BY player_id;
 CREATE UNIQUE INDEX ON player_stats (player_id);
 
 
+-- player_career_grand_slam_goat_points_v
+
+CREATE OR REPLACE VIEW player_career_grand_slam_goat_points_v AS
+WITH player_distinct_grand_slams AS (
+	SELECT player_id, count(DISTINCT e.tournament_id) grand_slams
+	FROM player_tournament_event_result r
+	LEFT JOIN tournament_event e USING (tournament_event_id)
+	WHERE e.level = 'G'
+	AND r.result = 'W'
+	GROUP BY player_id
+)
+SELECT gs.player_id, g.career_grand_slam goat_points
+FROM player_distinct_grand_slams gs
+LEFT JOIN grand_slam_goat_points g ON TRUE
+WHERE gs.grand_slams >= 4;
+
+
+-- player_season_grand_slam_goat_points_v
+
+CREATE OR REPLACE VIEW player_season_grand_slam_goat_points_v AS
+WITH player_season_grand_slams AS (
+	SELECT player_id, e.season, count(e.tournament_id) grand_slams
+	FROM player_tournament_event_result r
+	LEFT JOIN tournament_event e USING (tournament_event_id)
+	WHERE e.level = 'G'
+	AND r.result = 'W'
+	GROUP BY player_id, e.season
+)
+SELECT gs.player_id, gs.season, g.season_grand_slam goat_points
+FROM player_season_grand_slams gs
+LEFT JOIN grand_slam_goat_points g ON TRUE
+WHERE gs.grand_slams >= 4;
+
+
 -- player_season_goat_points
 
 CREATE MATERIALIZED VIEW player_season_goat_points AS
 WITH goat_points AS (
-	SELECT r.player_id, e.season, sum(goat_points) goat_points, sum(goat_points) tournament_goat_points, 0 ranking_goat_points
+	SELECT r.player_id, e.season, sum(goat_points) goat_points, sum(goat_points) tournament_goat_points, 0 ranking_goat_points, 0 achievements_goat_points
 	FROM player_tournament_event_result r
 	LEFT JOIN tournament_event e USING (tournament_event_id)
 	WHERE r.goat_points > 0
 	GROUP BY r.player_id, e.season
 	UNION ALL
-	SELECT r.player_id, r.season, sum(p.goat_points), 0, sum(goat_points)
+	SELECT r.player_id, r.season, sum(p.goat_points), 0, sum(goat_points), 0
 	FROM player_year_end_rank r
-	LEFT JOIN year_end_rank_goat_points p USING (year_end_rank)
-	WHERE p.goat_points > 0
+	INNER JOIN year_end_rank_goat_points p USING (year_end_rank)
 	GROUP BY r.player_id, r.season
+	UNION ALL
+	SELECT player_id, season, goat_points, 0, 0, goat_points
+	FROM player_season_grand_slam_goat_points_v
 )
-SELECT player_id, season, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points
+SELECT player_id, season, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points
 FROM goat_points
 GROUP BY player_id, season;
 
 CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
-
-
--- weeks
-
-CREATE OR REPLACE FUNCTION weeks(
-	p_from DATE,
-	p_to DATE
-) RETURNS REAL AS $$
-BEGIN
-	RETURN extract(epoch FROM age(p_to, p_from))/(7*24*60*60);
-END;
-$$ LANGUAGE plpgsql;
 
 
 -- player_weeks_at_no1
@@ -346,15 +370,29 @@ WHERE rank = 1 OR prev_rank = 1
 GROUP BY player_id;
 
 
--- performance_min_entries
+-- player_best_season_goat_points_v
 
-CREATE OR REPLACE FUNCTION performance_min_entries(
-	p_category_id TEXT
-) RETURNS INTEGER AS $$
-BEGIN
-	RETURN (SELECT min_entries FROM performance_category WHERE category_id = p_category_id);
-END;
-$$ LANGUAGE plpgsql;
+CREATE OR REPLACE VIEW player_best_season_goat_points_v AS
+WITH pleayer_season AS (
+	SELECT player_id, s.season, s.goat_points,
+		count(CASE WHEN e.level = 'G' AND r.result = 'W' THEN 1 ELSE NULL END) grand_slam_titles,
+		count(CASE WHEN e.level = 'G' AND r.result = 'F' THEN 1 ELSE NULL END) grand_slam_finals,
+		count(CASE WHEN e.level = 'F' AND r.result = 'W' THEN 1 ELSE NULL END) tour_finals_titles,
+		count(CASE WHEN e.level = 'M' AND r.result = 'W' THEN 1 ELSE NULL END) masters_titles,
+		count(CASE WHEN e.level = 'O' AND r.result = 'W' THEN 1 ELSE NULL END) olympics_titles,
+		count(CASE WHEN e.level <> 'D' AND r.result = 'W' THEN 1 ELSE NULL END) titles
+	FROM player_season_goat_points s
+	LEFT JOIN player_tournament_event_result r USING (player_id)
+	LEFT JOIN tournament_event e USING (tournament_event_id, season)
+	WHERE s.goat_points > 0
+	GROUP BY player_id, s.season, s.goat_points
+), pleayer_season_ranked AS (
+	SELECT player_id, season, rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank
+	FROM pleayer_season
+)
+SELECT player_id, goat_points
+FROM pleayer_season_ranked
+INNER JOIN best_season_goat_points USING (season_rank);
 
 
 -- player_performance_goat_points_v
@@ -461,88 +499,63 @@ WITH matches_performers AS (
 ), goat_points AS (
 	SELECT p.player_id, g.goat_points
 	FROM matches_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'matches' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'matches' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM grand_slam_matches_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'grandSlamMatches' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'grandSlamMatches' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM masters_matches_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'mastersMatches' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'mastersMatches' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM hard_matches_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'hardMatches' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'hardMatches' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM clay_matches_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'clayMatches' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'clayMatches' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM grass_matches_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'grassMatches' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'grassMatches' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM carpet_matches_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'carpetMatches' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'carpetMatches' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM deciding_sets_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'decidingSets' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'decidingSets' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM fifth_sets_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'fifthSets' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'fifthSets' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM finals_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'finals' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'finals' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM vs_top10_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'vsTop10' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'vsTop10' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM after_winning_first_set_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'afterWinningFirstSet' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'afterWinningFirstSet' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM after_losing_first_set_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'afterLosingFirstSet' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'afterLosingFirstSet' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM tie_breaks_performers_ranked p
-	LEFT JOIN performance_goat_points g ON g.category_id = 'tieBreaks' AND g.rank = p.rank
-	WHERE g.goat_points > 0
+	INNER JOIN performance_goat_points g ON g.category_id = 'tieBreaks' AND g.rank = p.rank
 )
 SELECT player_id, sum(goat_points) goat_points
 FROM goat_points
 GROUP BY player_id;
-
-
--- statistics_min_entries
-
-CREATE OR REPLACE FUNCTION statistics_min_entries(
-	p_category_id TEXT
-) RETURNS INTEGER AS $$
-BEGIN
-	RETURN (SELECT min_entries FROM statistics_category WHERE category_id = p_category_id);
-END;
-$$ LANGUAGE plpgsql;
 
 
 -- player_statistics_goat_points_v
@@ -695,105 +708,85 @@ WITH acePct_leaders AS (
 	-- Serve
 	SELECT l.player_id, g.goat_points
 	FROM acePct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'acePct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'acePct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM doubleFaultPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'doubleFaultPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'doubleFaultPct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM firstServePct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'firstServePct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'firstServePct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM firstServeWonPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'firstServeWonPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'firstServeWonPct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM secondServeWonPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'secondServeWonPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'secondServeWonPct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM breakPointsSavedPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'breakPointsSavedPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'breakPointsSavedPct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM servicePointsWonPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'servicePointsWonPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'servicePointsWonPct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM serviceGamesWonPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'serviceGamesWonPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'serviceGamesWonPct' AND g.rank = l.rank
 	-- Return
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM firstServeReturnWonPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'firstServeReturnWonPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'firstServeReturnWonPct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM secondServeReturnWonPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'secondServeReturnWonPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'secondServeReturnWonPct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM breakPointsPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'breakPointsPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'breakPointsPct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM returnPointsWonPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'returnPointsWonPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'returnPointsWonPct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM returnGamesWonPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'returnGamesWonPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'returnGamesWonPct' AND g.rank = l.rank
 	-- Total
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM pointsDominanceRatio_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'pointsDominanceRatio' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'pointsDominanceRatio' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM gamesDominanceRatio_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'gamesDominanceRatio' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'gamesDominanceRatio' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM breakPointsRatio_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'breakPointsRatio' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'breakPointsRatio' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM overPerformingRatio_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'overPerformingRatio' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'overPerformingRatio' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM totalPointsWonPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'totalPointsWonPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'totalPointsWonPct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM totalGamesWonPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'totalGamesWonPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'totalGamesWonPct' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM setsWonPct_leaders_ranked l
-	LEFT JOIN statistics_goat_points g ON g.category_id = 'setsWonPct' AND g.rank = l.rank
-	WHERE g.goat_points > 0
+	INNER JOIN statistics_goat_points g ON g.category_id = 'setsWonPct' AND g.rank = l.rank
 )
 SELECT player_id, sum(goat_points) goat_points
 FROM goat_points
@@ -804,21 +797,25 @@ GROUP BY player_id;
 
 CREATE MATERIALIZED VIEW player_goat_points AS
 WITH goat_points AS (
-	SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, 0 performance_goat_points
+	SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points
 	FROM player_season_goat_points
 	UNION ALL
 	SELECT player_id, goat_points, 0, goat_points, 0
 	FROM player_best_rank
-	LEFT JOIN best_rank_goat_points USING (best_rank)
-	WHERE goat_points > 0
+	INNER JOIN best_rank_goat_points USING (best_rank)
 	UNION ALL
 	SELECT player_id, goat_points, 0, goat_points, 0
 	FROM (
 		SELECT player_id, round(weeks_at_no1 / weeks_for_point) goat_points
 		FROM player_weeks_at_no1
-		LEFT JOIN weeks_at_no1_goat_points ON TRUE
+		INNER JOIN weeks_at_no1_goat_points ON TRUE
 	) AS at_no1_gp
-	WHERE goat_points > 0
+	UNION ALL
+	SELECT player_id, goat_points, 0, 0, goat_points
+	FROM player_career_grand_slam_goat_points_v
+	UNION ALL
+	SELECT player_id, goat_points, 0, 0, goat_points
+	FROM player_best_season_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points
 	FROM player_performance_goat_points_v
@@ -826,11 +823,11 @@ WITH goat_points AS (
 	SELECT player_id, goat_points, 0, 0, goat_points
 	FROM player_statistics_goat_points_v
 ), goat_points_total AS (
-	SELECT player_id, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(performance_goat_points) performance_goat_points
+	SELECT player_id, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points
 	FROM goat_points
 	GROUP BY player_id
 )
-SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, performance_goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank
+SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank
 FROM goat_points_total;
 
 CREATE UNIQUE INDEX ON player_goat_points (player_id);

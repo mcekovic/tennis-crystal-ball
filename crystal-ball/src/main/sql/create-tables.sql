@@ -234,6 +234,24 @@ CREATE TABLE weeks_at_no1_goat_points (
 );
 
 
+-- grand_slam_goat_points
+
+CREATE TABLE grand_slam_goat_points (
+	career_grand_slam INTEGER NOT NULL,
+	season_grand_slam INTEGER NOT NULL,
+	PRIMARY KEY (career_grand_slam, season_grand_slam)
+);
+
+
+-- best_season_goat_points
+
+CREATE TABLE best_season_goat_points (
+	season_rank INTEGER NOT NULL,
+	goat_points INTEGER NOT NULL,
+	PRIMARY KEY (season_rank)
+);
+
+
 -- performance_category
 
 CREATE TABLE performance_category (

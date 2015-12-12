@@ -20,7 +20,7 @@ public class GOATListResource {
 		ORDER_MAP.put("goatPoints", "goat_points");
 		ORDER_MAP.put("tournamentGoatPoints", "tournament_goat_points");
 		ORDER_MAP.put("rankingGoatPoints", "ranking_goat_points");
-		ORDER_MAP.put("performanceGoatPoints", "performance_goat_points");
+		ORDER_MAP.put("achievementsGoatPoints", "achievements_goat_points");
 		ORDER_MAP.put("grandSlams", "grand_slams");
 		ORDER_MAP.put("tourFinals", "tour_finals");
 		ORDER_MAP.put("masters", "masters");
@@ -60,9 +60,24 @@ public class GOATListResource {
 		return goatListService.getBestRankGOATPointsTable();
 	}
 
+	@RequestMapping("/bestSeasonGOATPointsTable")
+	public BootgridTable<RankGOATPointsRow> bestSeasonGOATPointsTable() {
+		return goatListService.getBestSeasonGOATPointsTable();
+	}
+
 	@RequestMapping("/weeksAtNo1ForGOATPoint")
 	public int weeksAtNo1ForGOATPoint() {
 		return goatListService.getWeeksAtNo1ForGOATPoint();
+	}
+
+	@RequestMapping("/careerGrandSlamGOATPoints")
+	public int careerGrandSlamGOATPoints() {
+		return goatListService.getCareerGrandSlamGOATPoints();
+	}
+
+	@RequestMapping("/seasonGrandSlamGOATPoints")
+	public int seasonGrandSlamGOATPoints() {
+		return goatListService.getSeasonGrandSlamGOATPoints();
 	}
 
 	@RequestMapping("/performanceGOATPointsTable")

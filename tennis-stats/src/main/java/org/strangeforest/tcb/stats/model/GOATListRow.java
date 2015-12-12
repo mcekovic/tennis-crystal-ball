@@ -5,7 +5,7 @@ public class GOATListRow extends PlayerRow {
 	private final int goatPoints;
 	private final int tournamentGoatPoints;
 	private final int rankingGoatPoints;
-	private final int performanceGoatPoints;
+	private final int achievementsGoatPoints;
 	private int grandSlams;
 	private int tourFinals;
 	private int masters;
@@ -13,12 +13,12 @@ public class GOATListRow extends PlayerRow {
 	private int bigTitles;
 	private int titles;
 
-	public GOATListRow(int goatRank, int playerId, String name, String countryId, int goatPoints, int tournamentGoatPoints, int rankingGoatPoints, int performanceGoatPoints) {
+	public GOATListRow(int goatRank, int playerId, String name, String countryId, int goatPoints, int tournamentGoatPoints, int rankingGoatPoints, int achievementsGoatPoints) {
 		super(goatRank, playerId, name, countryId);
 		this.goatPoints = goatPoints;
 		this.tournamentGoatPoints = tournamentGoatPoints;
 		this.rankingGoatPoints = rankingGoatPoints;
-		this.performanceGoatPoints = performanceGoatPoints;
+		this.achievementsGoatPoints = achievementsGoatPoints;
 	}
 
 	public int getGoatRank() {
@@ -37,8 +37,8 @@ public class GOATListRow extends PlayerRow {
 		return rankingGoatPoints;
 	}
 
-	public int getPerformanceGoatPoints() {
-		return performanceGoatPoints;
+	public int getAchievementsGoatPoints() {
+		return achievementsGoatPoints;
 	}
 
 	public int getGrandSlams() {

@@ -14,6 +14,9 @@ VACUUM FULL ANALYSE VERBOSE year_end_rank_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_rank_goat_points;
 VACUUM FULL ANALYSE VERBOSE weeks_at_no1_goat_points;
 
+VACUUM FULL ANALYSE VERBOSE grand_slam_goat_points;
+VACUUM FULL ANALYSE VERBOSE best_season_goat_points;
+
 VACUUM FULL ANALYSE VERBOSE performance_category;
 VACUUM FULL ANALYSE VERBOSE performance_goat_points;
 VACUUM FULL ANALYSE VERBOSE statistics_category;

@@ -3,6 +3,9 @@ DROP TABLE year_end_rank_goat_points CASCADE;
 DROP TABLE best_rank_goat_points CASCADE;
 DROP TABLE weeks_at_no1_goat_points CASCADE;
 
+DROP TABLE grand_slam_goat_points CASCADE;
+DROP TABLE best_season_goat_points CASCADE;
+
 DROP TABLE performance_goat_points CASCADE;
 DROP TABLE performance_category CASCADE;
 DROP TABLE statistics_goat_points CASCADE;

@@ -38,10 +38,9 @@ public class BestSeasonsService {
 		"  LEFT JOIN tournament_event e USING (tournament_event_id, season)\n" +
 		"  WHERE s.goat_points >= ?\n" +
 		"  GROUP BY player_id, s.season, s.goat_points\n" +
-		"  ORDER BY s.goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC\n" +
 		"), pleayer_season_ranked AS (\n" +
-		"  SELECT row_number() OVER () AS season_rank, player_id, season, goat_points,\n" +
-		"  grand_slam_titles, grand_slam_finals, grand_slam_semi_finals, tour_finals_titles, tour_finals_finals, masters_titles, masters_finals, olympics_titles, titles\n" +
+		"  SELECT rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank,\n" +
+		"     player_id, season, goat_points, grand_slam_titles, grand_slam_finals, grand_slam_semi_finals, tour_finals_titles, tour_finals_finals, masters_titles, masters_finals, olympics_titles, titles\n" +
 		"  FROM pleayer_season\n" +
 		")\n" +
 		"SELECT season_rank, player_id, s.season - date_part('year', p.dob) AS age, p.name, rank() OVER (PARTITION BY player_id ORDER BY season_rank) player_season_rank,\n" +
@@ -51,7 +50,7 @@ public class BestSeasonsService {
 		"FROM pleayer_season_ranked s\n" +
 		"LEFT JOIN player_v p USING (player_id)\n" +
 		"LEFT JOIN player_year_end_rank y USING (player_id, season)\n" +
-		"WHERE s.goat_points > 0%1$s\n" +
+		"WHERE TRUE%1$s\n" +
 		"ORDER BY %2$s OFFSET ? LIMIT ?";
 
 

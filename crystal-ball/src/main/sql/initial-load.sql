@@ -73,6 +73,22 @@ INSERT INTO weeks_at_no1_goat_points
 VALUES
 (10);
 
+DELETE FROM grand_slam_goat_points;
+INSERT INTO grand_slam_goat_points
+(career_grand_slam, season_grand_slam)
+VALUES
+(8, 8);
+
+DELETE FROM best_season_goat_points;
+INSERT INTO best_season_goat_points
+(season_rank, goat_points)
+VALUES
+(1, 8),
+(2, 5),
+(3, 3),
+(4, 2),
+(5, 1);
+
 DELETE FROM performance_category;
 INSERT INTO performance_category
 (category_id, name, min_entries, sort_order)
