@@ -57,9 +57,10 @@ public class PlayerStatsController {
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(value = "round", required = false) String round,
 		@RequestParam(value = "opponent", required = false) String opponent,
+		@RequestParam(value = "won", required = false) Boolean won,
 		@RequestParam(value = "searchPhrase", required = false) String searchPhrase
 	) {
-		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, searchPhrase, OpponentFilter.forStats(opponent));
+		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, OpponentFilter.forStats(opponent), WonFilter.forStats(won), searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		return new ModelAndView("playerStats", "stats", stats);

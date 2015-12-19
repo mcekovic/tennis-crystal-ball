@@ -27,7 +27,7 @@ public class OpponentFilter {
 	}
 
 	public static OpponentFilter forStats(String opponent, Integer opponentId) {
-		return new OpponentFilter(Opponent.forValue(opponent), 0, opponentId);
+		return new OpponentFilter(Opponent.forValue(opponent), null, opponentId);
 	}
 
 	private static boolean isSinglePlayer(String opponent) {
@@ -84,12 +84,12 @@ public class OpponentFilter {
 		return opponent == null && opponentId == null;
 	}
 
-	public boolean isForRank() {
-		return opponent != null && opponent.isForRank();
+	public boolean isOpponentRequired() {
+		return opponent != null && opponent.isOpponentRequired();
 	}
 
 	private boolean isForMatches() {
-		return playerId != 0;
+		return playerId != null;
 	}
 
 

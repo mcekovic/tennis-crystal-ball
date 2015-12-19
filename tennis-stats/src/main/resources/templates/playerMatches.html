@@ -27,6 +27,7 @@
 					request.surface = $("#matchesSurface").val();
 					request.round = $("#matchesRound").val();
 					request.opponent = $("#matchesOpponent").val();
+					request.won = $("#matchesWon").val();
 					request.tournamentId = $("#matchesTournament").val();
 					request.tournamentEventId = $("#tournamentEvent").val();
 					return request;
@@ -50,9 +51,10 @@
 			var $matchesTableHeader = $("#matchesTable-header");
 			$matchesTableHeader.find("div.search").before($("#playerStats").remove());
 			var actionBar = $matchesTableHeader.find("div.actionBar");
-			actionBar.removeClass("col-sm-12").addClass("col-sm-7");
+			actionBar.removeClass("col-sm-12").addClass("col-sm-5");
 			actionBar.before($("#matchesTournamentDiv").remove());
 			actionBar.before($("#tournamentEventDiv").remove());
+			actionBar.before($("#matchesWonDiv").remove());
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadMatches() {
@@ -66,6 +68,7 @@
 			$("#matchesOpponent").val("");
 			$("#matchesTournament").val("");
 			$("#tournamentEvent").val("");
+			$("#matchesWon").val("");
 			$("#matchesTable").bootgrid("search", "");
 			reloadMatches();
 		}
@@ -80,6 +83,7 @@
 				url += "&opponent=" + $("#matchesOpponent").val();
 				url += "&tournamentId=" + $("#matchesTournament").val();
 				url += "&tournamentEventId=" + $("#tournamentEvent").val();
+				url += "&won=" + $("#matchesWon").val();
 				url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 				$.get(url, function(data) {
 					event.preventDefault();
@@ -146,6 +150,11 @@
 				<option value="LEFT_HANDED">Vs Left-handed</option>
 				<option value="BACKHAND_2">Vs Two-handed bh.</option>
 				<option value="BACKHAND_1">Vs One-handed bh.</option>
+				<option value="SEEDED">Vs Seeded</option>
+				<option value="UNSEEDED">Vs Unseeded</option>
+				<option value="QUALIFIER">Vs Qualifier</option>
+				<option value="WILD_CARD">Vs Wild-Card</option>
+				<option value="LUCKY_LOSER">Vs Lucky-Loser</option>
 				<option th:if="${opponentId != null}" th:value="${'OPP_' + opponentId}" th:text="${'Vs ' + opponentName}" selected="selected">Vs Roger Federer</option>
 			</select>
 		</div>
@@ -179,6 +188,13 @@
 			<option value="">All events</option>
 			<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="|${tournamentEvent.name} ${tournamentEvent.season}|"
 			        th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon 2008</option>
+		</select>
+	</div>
+	<div id="matchesWonDiv" class="col-md-2">
+		<select id="matchesWon" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by won/lost">
+			<option value="">All matches</option>
+			<option value="true">Won</option>
+			<option value="false">Lost</option>
 		</select>
 	</div>
 	<button id="playerStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showPlayerStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for selected matches)|">

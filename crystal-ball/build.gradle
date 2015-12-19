@@ -4,6 +4,6 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-	compile ('com.neovisionaries:nv-i18n:1.17')
+	compile ('com.neovisionaries:nv-i18n:1.18')
 	testCompile ('junit:junit:4.12')
 }

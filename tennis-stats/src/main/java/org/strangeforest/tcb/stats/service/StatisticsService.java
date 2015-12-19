@@ -221,7 +221,7 @@ public class StatisticsService {
 		if (!filter.isTournamentEventFilterEmpty())
 			sb.append(TOURNAMENT_EVENT_JOIN);
 		OpponentFilter opponentFilter = filter.getOpponentFilter();
-		if (!opponentFilter.isForRank() || filter.hasSearchPhrase())
+		if (opponentFilter.isOpponentRequired() || filter.hasSearchPhrase())
 			sb.append(OPPONENT_JOIN);
 		return sb.toString();
 	}
