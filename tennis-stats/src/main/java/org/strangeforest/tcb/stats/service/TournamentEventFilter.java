@@ -1,8 +1,13 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
+import java.util.Objects;
+
+import com.google.common.base.*;
+import com.google.common.base.MoreObjects.*;
 
 import static com.google.common.base.Strings.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class TournamentEventFilter {
 
@@ -114,7 +119,17 @@ public class TournamentEventFilter {
 		return Objects.hash(season, emptyToNull(level), emptyToNull(surface), tournamentId, tournamentEventId, emptyToNull(searchPhrase));
 	}
 
-	protected static boolean stringsEqual(String s1, String s2) {
-		return Objects.equals(emptyToNull(s1), emptyToNull(s2));
+	@Override public String toString() {
+		return toStringHelper().toString();
+	}
+
+	protected ToStringHelper toStringHelper() {
+		return MoreObjects.toStringHelper(this).omitNullValues()
+			.add("season", season)
+			.add("level", level)
+			.add("surface", surface)
+			.add("tournamentId", tournamentId)
+			.add("tournamentEventId", tournamentEventId)
+			.add("searchPhrase", searchPhrase);
 	}
 }

@@ -1,6 +1,9 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
+import java.util.Objects;
+
+import com.google.common.base.*;
 
 public class OpponentFilter {
 
@@ -104,5 +107,13 @@ public class OpponentFilter {
 
 	@Override public int hashCode() {
 		return Objects.hash(opponent, playerId, opponentId);
+	}
+
+	@Override public String toString() {
+		return MoreObjects.toStringHelper(this).omitNullValues()
+			.add("opponent", opponent)
+			.add("playerId", playerId)
+			.add("opponentId", opponentId)
+			.toString();
 	}
 }

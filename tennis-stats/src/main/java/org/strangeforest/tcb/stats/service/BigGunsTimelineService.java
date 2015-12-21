@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -27,6 +28,7 @@ public class BigGunsTimelineService {
 		"ORDER BY p.dob DESC, p.name";
 
 
+	@Cacheable("BigGunsTimeline")
 	public BigGunsTimeline getBigGunsTimeline() {
 		BigGunsTimeline timeline = new BigGunsTimeline();
 		AtomicInteger rank = new AtomicInteger();

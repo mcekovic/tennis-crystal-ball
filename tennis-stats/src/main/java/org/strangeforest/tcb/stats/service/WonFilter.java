@@ -1,6 +1,9 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
+import java.util.Objects;
+
+import com.google.common.base.*;
 
 import static java.lang.String.*;
 
@@ -66,5 +69,12 @@ public class WonFilter {
 
 	@Override public int hashCode() {
 		return Objects.hash(won, playerId);
+	}
+
+	@Override public String toString() {
+		return MoreObjects.toStringHelper(this).omitNullValues()
+			.add("won", won)
+			.add("playerId", playerId)
+			.toString();
 	}
 }

@@ -1,8 +1,12 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
+import java.util.Objects;
+
+import com.google.common.base.MoreObjects.*;
 
 import static com.google.common.base.Strings.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class MatchFilter extends TournamentEventFilter {
 
@@ -128,5 +132,12 @@ public class MatchFilter extends TournamentEventFilter {
 
 	@Override public int hashCode() {
 		return Objects.hash(super.hashCode(), emptyToNull(round), opponentFilter, wonFilter);
+	}
+
+	@Override protected ToStringHelper toStringHelper() {
+		return super.toStringHelper()
+			.add("round", round)
+			.add("opponentFilter", opponentFilter)
+			.add("wonFilter", wonFilter);
 	}
 }

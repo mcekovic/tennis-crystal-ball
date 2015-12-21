@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -58,6 +59,7 @@ public class GOATListService {
 		"ORDER BY sort_order, category";
 
 
+	@Cacheable("GOATList.Count")
 	public int getPlayerCount(PlayerListFilter filter) {
 		return jdbcTemplate.queryForObject(
 			format(GOAT_COUNT_QUERY, filter.getCriteria()),
@@ -66,6 +68,7 @@ public class GOATListService {
 		);
 	}
 
+	@Cacheable("GOATList.Table")
 	public BootgridTable<GOATListRow> getGOATListTable(int playerCount, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<GOATListRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
@@ -94,6 +97,7 @@ public class GOATListService {
 		return table;
 	}
 
+	@Cacheable("GOATLegend.TournamentPoints")
 	public BootgridTable<TournamentGOATPointsRow> getTournamentGOATPointsTable() {
 		BootgridTable<TournamentGOATPointsRow> table = new BootgridTable<>();
 		jdbcTemplate.query(TOURNAMENT_GOAT_POINTS_QUERY, (rs) -> {
@@ -106,14 +110,17 @@ public class GOATListService {
 		return table;
 	}
 
+	@Cacheable("GOATLegend.YearEndRankPoints")
 	public BootgridTable<RankGOATPointsRow> getYearEndRankGOATPointsTable() {
 		return getRankGOATPointsTable("year_end_rank_goat_points", "year_end_rank");
 	}
 
+	@Cacheable("GOATLegend.BestRankPoints")
 	public BootgridTable<RankGOATPointsRow> getBestRankGOATPointsTable() {
 		return getRankGOATPointsTable("best_rank_goat_points", "best_rank");
 	}
 
+	@Cacheable("GOATLegend.BestSeasonPoints")
 	public BootgridTable<RankGOATPointsRow> getBestSeasonGOATPointsTable() {
 		return getRankGOATPointsTable("best_season_goat_points", "season_rank");
 	}
@@ -128,22 +135,27 @@ public class GOATListService {
 		return table;
 	}
 
+	@Cacheable("GOATLegend.WeeksAtNo1ForPoint")
 	public int getWeeksAtNo1ForGOATPoint() {
 		return jdbcTemplate.queryForObject(WEEKS_AT_NO1_FOR_GOAT_POINT, Integer.class);
 	}
 
+	@Cacheable("GOATLegend.CareerGrandSlamPoints")
 	public int getCareerGrandSlamGOATPoints() {
 		return jdbcTemplate.queryForObject(CAREER_GRAND_SLAM_GOAT_POINTS, Integer.class);
 	}
 
+	@Cacheable("GOATLegend.SeasonGrandSlamPoints")
 	public int getSeasonGrandSlamGOATPoints() {
 		return jdbcTemplate.queryForObject(SEASON_GRAND_SLAM_GOAT_POINTS, Integer.class);
 	}
 
+	@Cacheable("GOATLegend.PerformancePoints")
 	public BootgridTable<PerfStatGOATPointsRow> getPerformanceGOATPointsTable() {
 		return getPerfStatGOATPointsTable("performance_goat_points", "performance_category");
 	}
 
+	@Cacheable("GOATLegend.StatisticsPoints")
 	public BootgridTable<PerfStatGOATPointsRow> getStatisticsGOATPointsTable() {
 		return getPerfStatGOATPointsTable("statistics_goat_points", "statistics_category");
 	}

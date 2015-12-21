@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -54,6 +55,7 @@ public class BestSeasonsService {
 		"ORDER BY %2$s OFFSET ? LIMIT ?";
 
 
+	@Cacheable("BestSeasons.Count")
 	public int getBestSeasonCount(PlayerListFilter filter) {
 		return Math.min(MAX_SEASON_COUNT, jdbcTemplate.queryForObject(
 			format(BEST_SEASON_COUNT_QUERY, filter.getCriteria()),
@@ -62,6 +64,7 @@ public class BestSeasonsService {
 		));
 	}
 
+	@Cacheable("BestSeasons.Table")
 	public BootgridTable<BestSeasonRow> getBestSeasonsTable(int seasonCount, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<BestSeasonRow> table = new BootgridTable<>(currentPage, seasonCount);
 		int offset = (currentPage - 1) * pageSize;

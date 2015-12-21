@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -228,6 +229,7 @@ public class RivalriesService {
 		));
 	}
 
+	@Cacheable("GreatestRivalries.Table")
 	public BootgridTable<GreatestRivalry> getGreatestRivalriesTable(RivalryFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<GreatestRivalry> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();

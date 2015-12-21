@@ -1,8 +1,12 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
+import java.util.Objects;
+
+import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class StatsPlayerListFilter extends PlayerListFilter {
 
@@ -52,5 +56,27 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 		if (!isNullOrEmpty(surface))
 			params.add(surface);
 		super.addParams(params);
+	}
+
+
+	// Object methods
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof StatsPlayerListFilter)) return false;
+		if (!super.equals(o)) return false;
+		StatsPlayerListFilter filter = (StatsPlayerListFilter)o;
+		return Objects.equals(season, filter.season) &&	stringsEqual(surface, filter.surface);
+	}
+
+	@Override public int hashCode() {
+		return Objects.hash(super.hashCode(), season, surface);
+	}
+
+	@Override public String toString() {
+		return MoreObjects.toStringHelper(this).omitNullValues()
+			.add("season", season)
+			.add("surface", surface)
+			.toString();
 	}
 }

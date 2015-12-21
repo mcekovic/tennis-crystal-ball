@@ -1,10 +1,13 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
+import java.util.Objects;
 
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 public class RivalryFilter {
@@ -64,5 +67,27 @@ public class RivalryFilter {
 		if (!isNullOrEmpty(surface))
 			ps.setString(++index, surface);
 		return index;
+	}
+
+
+	// Object methods
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof RivalryFilter)) return false;
+		RivalryFilter filter = (RivalryFilter)o;
+		return Objects.equals(seasonRange, filter.seasonRange) && stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface);
+	}
+
+	@Override public int hashCode() {
+		return Objects.hash(seasonRange, level, surface);
+	}
+
+	@Override public String toString() {
+		return MoreObjects.toStringHelper(this).omitNullValues()
+			.add("seasonRange", seasonRange)
+			.add("level", level)
+			.add("surface", surface)
+			.toString();
 	}
 }
