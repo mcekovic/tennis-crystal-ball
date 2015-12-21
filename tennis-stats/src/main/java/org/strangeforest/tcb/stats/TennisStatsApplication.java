@@ -20,13 +20,13 @@ public class TennisStatsApplication {
 		SpringApplication.run(TennisStatsApplication.class, args);
 	}
 
-	@Value("${cache.maxSize:1000}")
+	@Value("${cache.max-size:1000}")
 	private int cacheMaxSize;
 
-	@Value("${cache.expiryPeriod:5}")
+	@Value("${cache.expiry-period:5}")
 	private int cacheExpiryPeriod;
 
-	@Value("${cache.expiryPeriodUnit:MINUTES}")
+	@Value("${cache.expiry-period-unit:MINUTES}")
 	private TimeUnit cacheExpiryPeriodUnit;
 
 	@Bean
