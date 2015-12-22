@@ -370,6 +370,8 @@ FROM player_ranking_ex
 WHERE rank = 1 OR prev_rank = 1
 GROUP BY player_id;
 
+CREATE UNIQUE INDEX ON player_weeks_at_no1 (player_id);
+
 
 -- player_big_wins_goat_points_v
 
