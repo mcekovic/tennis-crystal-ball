@@ -55,7 +55,7 @@ WITH match_result AS (
 	SELECT m.winner_id AS player_id, tournament_event_id,
 		(CASE WHEN m.round = 'F' AND e.level <> 'D' THEN 'W' ELSE m.round::TEXT END)::tournament_event_result AS result
 	FROM match m
-	LEFT JOIN tournament_event e USING (tournament_event_id)
+	INNER JOIN tournament_event e USING (tournament_event_id)
 	UNION ALL
 	SELECT loser_id, tournament_event_id,
 		(CASE WHEN round = 'BR' THEN 'SF' ELSE round::TEXT END)::tournament_event_result AS result
@@ -63,21 +63,21 @@ WITH match_result AS (
 ), best_round AS (
 	SELECT m.player_id, tournament_event_id, max(m.result) AS result
 	FROM match_result m
-	LEFT JOIN tournament_event e USING (tournament_event_id)
+	INNER JOIN tournament_event e USING (tournament_event_id)
 	WHERE e.level <> 'D' OR e.name LIKE '%WG'
 	GROUP BY m.player_id, tournament_event_id
 )
 SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, goat_points FROM (
 	SELECT r.player_id, r.tournament_event_id, r.result, p.rank_points, p.rank_points_2008, p.goat_points
 	FROM best_round r
-	LEFT JOIN tournament_event e USING (tournament_event_id)
+	INNER JOIN tournament_event e USING (tournament_event_id)
 	LEFT JOIN tournament_rank_points p USING (level, result)
 	WHERE NOT p.additive OR p.additive IS NULL
 	UNION ALL
 	SELECT r.player_id, r.tournament_event_id, r.result, sum(p.rank_points), sum(p.rank_points_2008), sum(p.goat_points)
 	FROM best_round r
 	LEFT OUTER JOIN match m ON m.tournament_event_id = r.tournament_event_id AND m.winner_id = r.player_id
-	LEFT JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
+	INNER JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
 	LEFT JOIN tournament_rank_points p ON p.level = e.level AND p.result = m.round::TEXT::tournament_event_result
 	WHERE p.additive
 	GROUP BY r.player_id, r.tournament_event_id, r.result
@@ -91,7 +91,7 @@ CREATE INDEX ON player_tournament_event_result (player_id);
 CREATE MATERIALIZED VIEW player_titles AS
 WITH level_titles AS (
 	SELECT player_id, level, count(result) AS titles FROM player_tournament_event_result
-	LEFT JOIN tournament_event USING (tournament_event_id)
+	INNER JOIN tournament_event USING (tournament_event_id)
 	WHERE result = 'W'
 	GROUP BY player_id, level
 ), titles AS (
@@ -122,7 +122,7 @@ CREATE OR REPLACE VIEW match_for_stats_v AS
 SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.level, e.surface, m.best_of, m.round,
 	m.winner_rank, m.loser_rank, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.w_sets, m.l_sets, m.w_games, m.l_games
 FROM match m
-LEFT JOIN tournament_event e USING (tournament_event_id)
+INNER JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LIKE '%WG') AND (m.outcome IS NULL OR m.outcome <> 'W/O');
 
 
@@ -131,7 +131,7 @@ WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LI
 CREATE OR REPLACE VIEW match_for_rivalry_v AS
 SELECT m.match_id, m.winner_id, m.loser_id, e.season, e.level, e.surface
 FROM match m
-LEFT JOIN tournament_event e USING (tournament_event_id)
+INNER JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LIKE '%WG');
 
 
@@ -303,14 +303,14 @@ CREATE OR REPLACE VIEW player_career_grand_slam_goat_points_v AS
 WITH player_distinct_grand_slams AS (
 	SELECT player_id, count(DISTINCT e.tournament_id) grand_slams
 	FROM player_tournament_event_result r
-	LEFT JOIN tournament_event e USING (tournament_event_id)
+	INNER JOIN tournament_event e USING (tournament_event_id)
 	WHERE e.level = 'G'
 	AND r.result = 'W'
 	GROUP BY player_id
 )
 SELECT gs.player_id, g.career_grand_slam goat_points
 FROM player_distinct_grand_slams gs
-LEFT JOIN grand_slam_goat_points g ON TRUE
+INNER JOIN grand_slam_goat_points g ON TRUE
 WHERE gs.grand_slams >= 4;
 
 
@@ -320,14 +320,14 @@ CREATE OR REPLACE VIEW player_season_grand_slam_goat_points_v AS
 WITH player_season_grand_slams AS (
 	SELECT player_id, e.season, count(e.tournament_id) grand_slams
 	FROM player_tournament_event_result r
-	LEFT JOIN tournament_event e USING (tournament_event_id)
+	INNER JOIN tournament_event e USING (tournament_event_id)
 	WHERE e.level = 'G'
 	AND r.result = 'W'
 	GROUP BY player_id, e.season
 )
 SELECT gs.player_id, gs.season, g.season_grand_slam goat_points
 FROM player_season_grand_slams gs
-LEFT JOIN grand_slam_goat_points g ON TRUE
+INNER JOIN grand_slam_goat_points g ON TRUE
 WHERE gs.grand_slams >= 4;
 
 
@@ -337,7 +337,7 @@ CREATE MATERIALIZED VIEW player_season_goat_points AS
 WITH goat_points AS (
 	SELECT r.player_id, e.season, sum(goat_points) goat_points, sum(goat_points) tournament_goat_points, 0 ranking_goat_points, 0 achievements_goat_points
 	FROM player_tournament_event_result r
-	LEFT JOIN tournament_event e USING (tournament_event_id)
+	INNER JOIN tournament_event e USING (tournament_event_id)
 	WHERE r.goat_points > 0
 	GROUP BY r.player_id, e.season
 	UNION ALL
@@ -369,6 +369,22 @@ SELECT player_id, round(sum(CASE WHEN prev_rank = 1 THEN weeks - 1 ELSE 0 END + 
 FROM player_ranking_ex
 WHERE rank = 1 OR prev_rank = 1
 GROUP BY player_id;
+
+
+-- player_big_wins_goat_points_v
+
+CREATE OR REPLACE VIEW player_big_wins_goat_points_v AS
+WITH big_wins_goat_points AS (
+	SELECT m.winner_id AS player_id, round(sum(rdf.round_factor * rkf.rank_factor)::REAL/100) goat_points
+	FROM match m
+	INNER JOIN tournament_event e USING (tournament_event_id)
+	INNER JOIN big_win_round_factor rdf ON rdf.level = e.level AND rdf.round = m.round
+	INNER JOIN big_win_rank_factor rkf ON rkf.rank = m.loser_rank
+	GROUP BY m.winner_id
+)
+SELECT player_id, goat_points
+FROM big_wins_goat_points
+WHERE goat_points > 0;
 
 
 -- player_best_season_goat_points_v
@@ -817,6 +833,9 @@ WITH goat_points AS (
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points
 	FROM player_best_season_goat_points_v
+	UNION ALL
+	SELECT player_id, goat_points, 0, 0, goat_points
+	FROM player_big_wins_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points
 	FROM player_performance_goat_points_v

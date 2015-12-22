@@ -67,6 +67,58 @@ VALUES
 (4, 2),
 (5, 1);
 
+DELETE FROM big_win_round_factor;
+INSERT INTO big_win_round_factor
+(level, round, round_factor)
+VALUES
+-- Grand Slam
+('G', 'F',   8),
+('G', 'SF',  4),
+('G', 'QF',  2),
+('G', 'R16', 1),
+-- Tour Finals
+('F', 'F',  6),
+('F', 'SF', 3),
+('F', 'RR', 1),
+-- Masters
+('M', 'F',  4),
+('M', 'SF', 2),
+('M', 'QF', 1),
+-- Olympics
+('O', 'F',  3),
+('O', 'BR', 1),
+('O', 'SF', 1),
+-- ATP
+('A', 'F',  2),
+('A', 'SF', 1),
+-- Davis Cup
+('D', 'F',  1);
+
+DELETE FROM big_win_rank_factor;
+INSERT INTO big_win_rank_factor
+(rank, rank_factor)
+VALUES
+( 1, 8),
+( 2, 6),
+( 3, 5),
+( 4, 4),
+( 5, 4),
+( 6, 3),
+( 7, 3),
+( 8, 2),
+( 9, 2),
+(10, 2),
+(11, 1),
+(12, 1),
+(13, 1),
+(14, 1),
+(15, 1),
+(16, 1),
+(17, 1),
+(18, 1),
+(19, 1),
+(20, 1);
+
 DELETE FROM weeks_at_no1_goat_points;
 INSERT INTO weeks_at_no1_goat_points
 (weeks_for_point)
@@ -112,11 +164,9 @@ DELETE FROM performance_goat_points;
 INSERT INTO performance_goat_points
 (category_id, rank, goat_points)
 VALUES
-('matches', 1, 8),
-('matches', 2, 5),
-('matches', 3, 3),
-('matches', 4, 2),
-('matches', 5, 1),
+('matches', 1, 4),
+('matches', 2, 2),
+('matches', 3, 1),
 ('grandSlamMatches', 1, 4),
 ('grandSlamMatches', 2, 2),
 ('grandSlamMatches', 3, 1),
@@ -144,11 +194,9 @@ VALUES
 ('finals', 1, 4),
 ('finals', 2, 2),
 ('finals', 3, 1),
-('vsTop10', 1, 8),
-('vsTop10', 2, 5),
-('vsTop10', 3, 3),
-('vsTop10', 4, 2),
-('vsTop10', 5, 1),
+('vsTop10', 1, 4),
+('vsTop10', 2, 2),
+('vsTop10', 3, 1),
 ('afterWinningFirstSet', 1, 4),
 ('afterWinningFirstSet', 2, 2),
 ('afterWinningFirstSet', 3, 1),

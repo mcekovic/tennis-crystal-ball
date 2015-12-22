@@ -44,49 +44,4 @@ public class GOATListResource {
 		int pageSize = rowCount > 0 ? rowCount : playerCount;
 		return goatListService.getGOATListTable(playerCount, filter, orderBy, pageSize, current);
 	}
-
-	@RequestMapping("/tournamentGOATPointsTable")
-	public BootgridTable<TournamentGOATPointsRow> tournamentGOATPointsTable() {
-		return goatListService.getTournamentGOATPointsTable();
-	}
-
-	@RequestMapping("/yearEndRankGOATPointsTable")
-	public BootgridTable<RankGOATPointsRow> yearEndRankGOATPointsTable() {
-		return goatListService.getYearEndRankGOATPointsTable();
-	}
-
-	@RequestMapping("/bestRankGOATPointsTable")
-	public BootgridTable<RankGOATPointsRow> bestRankGOATPointsTable() {
-		return goatListService.getBestRankGOATPointsTable();
-	}
-
-	@RequestMapping("/bestSeasonGOATPointsTable")
-	public BootgridTable<RankGOATPointsRow> bestSeasonGOATPointsTable() {
-		return goatListService.getBestSeasonGOATPointsTable();
-	}
-
-	@RequestMapping("/weeksAtNo1ForGOATPoint")
-	public int weeksAtNo1ForGOATPoint() {
-		return goatListService.getWeeksAtNo1ForGOATPoint();
-	}
-
-	@RequestMapping("/careerGrandSlamGOATPoints")
-	public int careerGrandSlamGOATPoints() {
-		return goatListService.getCareerGrandSlamGOATPoints();
-	}
-
-	@RequestMapping("/seasonGrandSlamGOATPoints")
-	public int seasonGrandSlamGOATPoints() {
-		return goatListService.getSeasonGrandSlamGOATPoints();
-	}
-
-	@RequestMapping("/performanceGOATPointsTable")
-	public BootgridTable<PerfStatGOATPointsRow> performanceGOATPointsTable() {
-		return goatListService.getPerformanceGOATPointsTable();
-	}
-
-	@RequestMapping("/statisticsGOATPointsTable")
-	public BootgridTable<PerfStatGOATPointsRow> statisticsGOATPointsTable() {
-		return goatListService.getStatisticsGOATPointsTable();
-	}
 }

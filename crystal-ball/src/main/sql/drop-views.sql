@@ -1,14 +1,15 @@
 DROP VIEW player_v;
 
 DROP MATERIALIZED VIEW player_goat_points;
+DROP VIEW player_best_season_goat_points_v;
+DROP MATERIALIZED VIEW player_season_goat_points;
 
 DROP VIEW player_performance_goat_points_v;
 DROP VIEW player_statistics_goat_points_v;
+DROP VIEW player_big_wins_goat_points_v;
 DROP VIEW player_career_grand_slam_goat_points_v;
 DROP VIEW player_season_grand_slam_goat_points_v;
-DROP VIEW player_best_season_goat_points_v;
 
-DROP MATERIALIZED VIEW player_season_goat_points;
 DROP MATERIALIZED VIEW player_current_rank;
 DROP MATERIALIZED VIEW player_best_rank;
 DROP MATERIALIZED VIEW player_best_rank_points;

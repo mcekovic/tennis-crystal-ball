@@ -234,6 +234,25 @@ CREATE TABLE weeks_at_no1_goat_points (
 );
 
 
+-- big_win_round_factor
+
+CREATE TABLE big_win_round_factor (
+	level tournament_level NOT NULL,
+	round match_round NOT NULL,
+	round_factor INTEGER,
+	PRIMARY KEY (level, round)
+);
+
+
+-- big_win_rank_factor
+
+CREATE TABLE big_win_rank_factor (
+	rank INTEGER NOT NULL,
+	rank_factor INTEGER,
+	PRIMARY KEY (rank)
+);
+
+
 -- grand_slam_goat_points
 
 CREATE TABLE grand_slam_goat_points (
