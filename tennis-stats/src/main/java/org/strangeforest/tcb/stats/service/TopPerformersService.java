@@ -45,7 +45,7 @@ public class TopPerformersService {
 		"ORDER BY %4$s OFFSET ? LIMIT ?";
 
 
-	@Cacheable("Performance.Seasons")
+	@Cacheable(value = "Global", key = "'PerformanceSeasons'")
 	public List<Integer> getSeasons() {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
 	}

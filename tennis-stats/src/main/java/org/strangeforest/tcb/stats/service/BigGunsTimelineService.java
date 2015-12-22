@@ -28,7 +28,7 @@ public class BigGunsTimelineService {
 		"ORDER BY p.dob DESC, p.name";
 
 
-	@Cacheable("BigGunsTimeline")
+	@Cacheable(value = "Global", key = "'BigGunsTimeline'")
 	public BigGunsTimeline getBigGunsTimeline() {
 		BigGunsTimeline timeline = new BigGunsTimeline();
 		AtomicInteger rank = new AtomicInteger();

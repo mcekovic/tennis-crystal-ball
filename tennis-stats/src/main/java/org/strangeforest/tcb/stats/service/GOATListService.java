@@ -97,7 +97,7 @@ public class GOATListService {
 		return table;
 	}
 
-	@Cacheable("GOATLegend.TournamentPoints")
+	@Cacheable(value = "Global", key = "'TournamentGOATPointsTable'")
 	public BootgridTable<TournamentGOATPointsRow> getTournamentGOATPointsTable() {
 		BootgridTable<TournamentGOATPointsRow> table = new BootgridTable<>();
 		jdbcTemplate.query(TOURNAMENT_GOAT_POINTS_QUERY, (rs) -> {
@@ -110,17 +110,17 @@ public class GOATListService {
 		return table;
 	}
 
-	@Cacheable("GOATLegend.YearEndRankPoints")
+	@Cacheable(value = "Global", key = "'YearEndRankGOATPointsTable'")
 	public BootgridTable<RankGOATPointsRow> getYearEndRankGOATPointsTable() {
 		return getRankGOATPointsTable("year_end_rank_goat_points", "year_end_rank");
 	}
 
-	@Cacheable("GOATLegend.BestRankPoints")
+	@Cacheable(value = "Global", key = "'BestRankGOATPointsTable'")
 	public BootgridTable<RankGOATPointsRow> getBestRankGOATPointsTable() {
 		return getRankGOATPointsTable("best_rank_goat_points", "best_rank");
 	}
 
-	@Cacheable("GOATLegend.BestSeasonPoints")
+	@Cacheable(value = "Global", key = "'BestSeasonGOATPointsTable'")
 	public BootgridTable<RankGOATPointsRow> getBestSeasonGOATPointsTable() {
 		return getRankGOATPointsTable("best_season_goat_points", "season_rank");
 	}
@@ -135,27 +135,27 @@ public class GOATListService {
 		return table;
 	}
 
-	@Cacheable("GOATLegend.WeeksAtNo1ForPoint")
+	@Cacheable(value = "Global", key = "'WeeksAtNo1ForGOATPoint'")
 	public int getWeeksAtNo1ForGOATPoint() {
 		return jdbcTemplate.queryForObject(WEEKS_AT_NO1_FOR_GOAT_POINT, Integer.class);
 	}
 
-	@Cacheable("GOATLegend.CareerGrandSlamPoints")
+	@Cacheable(value = "Global", key = "'CareerGrandSlamGOATPoints'")
 	public int getCareerGrandSlamGOATPoints() {
 		return jdbcTemplate.queryForObject(CAREER_GRAND_SLAM_GOAT_POINTS, Integer.class);
 	}
 
-	@Cacheable("GOATLegend.SeasonGrandSlamPoints")
+	@Cacheable(value = "Global", key = "'SeasonGrandSlamGOATPoints'")
 	public int getSeasonGrandSlamGOATPoints() {
 		return jdbcTemplate.queryForObject(SEASON_GRAND_SLAM_GOAT_POINTS, Integer.class);
 	}
 
-	@Cacheable("GOATLegend.PerformancePoints")
+	@Cacheable(value = "Global", key = "'PerformanceGOATPointsTable'")
 	public BootgridTable<PerfStatGOATPointsRow> getPerformanceGOATPointsTable() {
 		return getPerfStatGOATPointsTable("performance_goat_points", "performance_category");
 	}
 
-	@Cacheable("GOATLegend.StatisticsPoints")
+	@Cacheable(value = "Global", key = "'StatisticsGOATPointsTable'")
 	public BootgridTable<PerfStatGOATPointsRow> getStatisticsGOATPointsTable() {
 		return getPerfStatGOATPointsTable("statistics_goat_points", "statistics_category");
 	}

@@ -1,11 +1,11 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 
 import org.postgresql.core.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.util.*;
@@ -23,8 +23,6 @@ public class DataService {
 		"  UNION ALL\n" +
 		"  SELECT max(rank_date) FROM player_ranking\n" +
 		") AS last_update";
-
-	private static final long LAST_UPDATE_EXPIRY_PERIOD = TimeUnit.MINUTES.toMillis(5L);
 
 	private final Supplier<Integer> dbServerVersion = Memoizer.of(() -> dbServerVersion().getVersionNum());
 
@@ -45,12 +43,8 @@ public class DataService {
 		return dbServerVersion.get();
 	}
 
-	private final Supplier<Date> lastUpdate = Memoizer.of(
-		() -> jdbcTemplate.queryForObject(LAST_UPDATE_QUERY, Date.class),
-		LAST_UPDATE_EXPIRY_PERIOD
-	);
-
+	@Cacheable(value = "Global", key = "'LastUpdate'")
 	public Date getLastUpdate() {
-		return lastUpdate.get();
+		return jdbcTemplate.queryForObject(LAST_UPDATE_QUERY, Date.class);
 	}
 }

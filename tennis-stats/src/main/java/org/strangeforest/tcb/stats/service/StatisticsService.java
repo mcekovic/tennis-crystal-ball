@@ -113,7 +113,7 @@ public class StatisticsService {
 
 	// Seasons
 
-	@Cacheable("Statistics.Seasons")
+	@Cacheable(value = "Global", key = "'StatisticsSeasons'")
 	public List<Integer> getSeasons() {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
 	}
