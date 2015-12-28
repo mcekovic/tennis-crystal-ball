@@ -271,6 +271,15 @@ CREATE TABLE best_season_goat_points (
 );
 
 
+-- greatest_rivalries_goat_points
+
+CREATE TABLE greatest_rivalries_goat_points (
+	rivalry_rank INTEGER NOT NULL,
+	goat_points INTEGER NOT NULL,
+	PRIMARY KEY (rivalry_rank)
+);
+
+
 -- performance_category
 
 CREATE TABLE performance_category (

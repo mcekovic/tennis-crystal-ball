@@ -64,6 +64,11 @@ public class GOATLegendResource {
 		return goatLegendService.getBestSeasonGOATPointsTable();
 	}
 
+	@RequestMapping("/greatestRivalriesGOATPointsTable")
+	public BootgridTable<RankGOATPointsRow> greatestRivalriesGOATPointsTable() {
+		return goatLegendService.getGreatestRivalriesGOATPointsTable();
+	}
+
 	@RequestMapping("/performanceGOATPointsTable")
 	public BootgridTable<PerfStatGOATPointsRow> performanceGOATPointsTable() {
 		return goatLegendService.getPerformanceGOATPointsTable();

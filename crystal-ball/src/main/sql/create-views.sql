@@ -377,16 +377,15 @@ CREATE UNIQUE INDEX ON player_weeks_at_no1 (player_id);
 
 CREATE OR REPLACE VIEW player_big_wins_goat_points_v AS
 WITH big_wins_goat_points AS (
-	SELECT m.winner_id AS player_id, round(sum(rdf.round_factor * rkf.rank_factor)::REAL/100) goat_points
+	SELECT m.winner_id AS player_id, sum(rdf.round_factor * rkf.rank_factor)::REAL/100 goat_points
 	FROM match m
 	INNER JOIN tournament_event e USING (tournament_event_id)
 	INNER JOIN big_win_round_factor rdf ON rdf.level = e.level AND rdf.round = m.round
 	INNER JOIN big_win_rank_factor rkf ON rkf.rank = m.loser_rank
 	GROUP BY m.winner_id
 )
-SELECT player_id, goat_points
-FROM big_wins_goat_points
-WHERE goat_points > 0;
+SELECT player_id, round(goat_points) goat_points, goat_points unrounded_goat_points
+FROM big_wins_goat_points;
 
 
 -- player_best_season_goat_points_v
@@ -412,6 +411,51 @@ WITH pleayer_season AS (
 SELECT player_id, goat_points
 FROM pleayer_season_ranked
 INNER JOIN best_season_goat_points USING (season_rank);
+
+
+-- player_greatest_rivalries_goat_points_v
+
+CREATE OR REPLACE VIEW player_greatest_rivalries_goat_points_v AS
+WITH rivalries AS (
+  SELECT winner_id, loser_id, count(match_id) matches, 0 won
+  FROM match_for_rivalry_v
+  GROUP BY winner_id, loser_id
+  UNION ALL
+  SELECT winner_id, loser_id, 0, count(match_id)
+  FROM match_for_stats_v
+  GROUP BY winner_id, loser_id
+), rivalries_2 AS (
+  SELECT winner_id player_id_1, loser_id player_id_2, sum(matches) matches, sum(won) won, 0 lost
+  FROM rivalries
+  GROUP BY player_id_1, player_id_2
+  UNION ALL
+  SELECT loser_id player_id_1, winner_id player_id_2, sum(matches), 0, sum(won)
+  FROM rivalries
+  GROUP BY player_id_1, player_id_2
+), rivalries_3 AS (
+  SELECT rank() OVER riv AS rank, player_id_1, player_id_2, sum(matches) matches, sum(won) won, sum(lost) lost
+  FROM rivalries_2
+  GROUP BY player_id_1, player_id_2
+  HAVING sum(matches) >= 20
+  WINDOW riv AS (
+    PARTITION BY CASE WHEN player_id_1 < player_id_2 THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY player_id_1
+  )
+), rivalries_4 AS (
+  SELECT rank() OVER (ORDER BY matches DESC, (won + lost) DESC) AS rivalry_rank, r.player_id_1, r.player_id_2, r.matches, r.won, r.lost
+  FROM rivalries_3 r
+  WHERE rank = 1
+), goat_points AS (
+  SELECT r.player_id_1 player_id, r.won/(r.won + r.lost)*g.goat_points goat_points
+  FROM rivalries_4 r
+  INNER JOIN greatest_rivalries_goat_points g USING (rivalry_rank)
+  UNION ALL
+  SELECT r.player_id_2, r.lost/(r.won + r.lost)*g.goat_points
+  FROM rivalries_4 r
+  INNER JOIN greatest_rivalries_goat_points g USING (rivalry_rank)
+)
+SELECT player_id, round(sum(goat_points)) goat_points, sum(goat_points) unrounded_goat_points
+FROM goat_points
+GROUP BY player_id;
 
 
 -- player_performance_goat_points_v
@@ -835,6 +879,9 @@ WITH goat_points AS (
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points
 	FROM player_best_season_goat_points_v
+	UNION ALL
+	SELECT player_id, goat_points, 0, 0, goat_points
+	FROM player_greatest_rivalries_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points
 	FROM player_big_wins_goat_points_v

@@ -141,6 +141,16 @@ VALUES
 (4, 2),
 (5, 1);
 
+DELETE FROM greatest_rivalries_goat_points;
+INSERT INTO greatest_rivalries_goat_points
+(rivalry_rank, goat_points)
+VALUES
+(1, 8),
+(2, 5),
+(3, 3),
+(4, 2),
+(5, 1);
+
 DELETE FROM performance_category;
 INSERT INTO performance_category
 (category_id, name, min_entries, sort_order)

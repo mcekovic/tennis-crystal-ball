@@ -9,6 +9,7 @@ DROP VIEW player_statistics_goat_points_v;
 DROP VIEW player_big_wins_goat_points_v;
 DROP VIEW player_career_grand_slam_goat_points_v;
 DROP VIEW player_season_grand_slam_goat_points_v;
+DROP VIEW player_greatest_rivalries_goat_points_v;
 
 DROP MATERIALIZED VIEW player_current_rank;
 DROP MATERIALIZED VIEW player_best_rank;

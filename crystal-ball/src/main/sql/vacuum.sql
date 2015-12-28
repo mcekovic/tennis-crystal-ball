@@ -18,6 +18,7 @@ VACUUM FULL ANALYSE VERBOSE big_win_round_factor;
 VACUUM FULL ANALYSE VERBOSE big_win_rank_factor;
 VACUUM FULL ANALYSE VERBOSE grand_slam_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_season_goat_points;
+VACUUM FULL ANALYSE VERBOSE greatest_rivalries_goat_points;
 
 VACUUM FULL ANALYSE VERBOSE performance_category;
 VACUUM FULL ANALYSE VERBOSE performance_goat_points;

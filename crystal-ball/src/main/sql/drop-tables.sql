@@ -7,6 +7,7 @@ DROP TABLE big_win_round_factor CASCADE;
 DROP TABLE big_win_rank_factor CASCADE;
 DROP TABLE grand_slam_goat_points CASCADE;
 DROP TABLE best_season_goat_points CASCADE;
+DROP TABLE greatest_rivalries_goat_points CASCADE;
 
 DROP TABLE performance_goat_points CASCADE;
 DROP TABLE performance_category CASCADE;

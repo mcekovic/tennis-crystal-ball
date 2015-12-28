@@ -146,7 +146,7 @@ public class RivalriesService {
 		"LEFT JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
 		"LEFT JOIN player_v p2 ON p2.player_id = r.player_id_2%3$s\n" +
 		"WHERE rank = 1\n" +
-		"ORDER BY %4$s, p1.goat_points + p2.goat_points DESC OFFSET ?";
+		"ORDER BY %4$s OFFSET ?";
 
 	private static final String LAST_MATCH_LATERAL = //language=SQL
 		"  lm.match_id, lm.season, lm.level, lm.surface, lm.tournament, lm.round, lm.winner_id, lm.loser_id, lm.score";

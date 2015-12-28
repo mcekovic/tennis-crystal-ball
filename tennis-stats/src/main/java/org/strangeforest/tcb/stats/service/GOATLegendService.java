@@ -116,6 +116,11 @@ public class GOATLegendService {
 		return getRankGOATPointsTable("best_season_goat_points", "season_rank", "goat_points");
 	}
 
+	@Cacheable(value = "Global", key = "'GreatestRivalriesGOATPointsTable'")
+	public BootgridTable<RankGOATPointsRow> getGreatestRivalriesGOATPointsTable() {
+		return getRankGOATPointsTable("greatest_rivalries_goat_points", "rivalry_rank", "goat_points");
+	}
+
 	@Cacheable(value = "Global", key = "'PerformanceGOATPointsTable'")
 	public BootgridTable<PerfStatGOATPointsRow> getPerformanceGOATPointsTable() {
 		return getPerfStatGOATPointsTable("performance_goat_points", "performance_category");
