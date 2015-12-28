@@ -16,7 +16,11 @@
 				initGOATPointsTable("bigWinRoundFactorTable", {
 					"level": levelFormatter
 				});
-				initGOATPointsTable("bigWinRankFactorTable");
+				initGOATPointsTable("bigWinRankFactorTable", {
+					"rankRange": function(column, row) {
+						return row.fromRank == row.toRank ? row.fromRank : row.fromRank + " - " + row.toRank;
+					}
+				});
 				initGOATPointsItem("careerGrandSlamGOATPoints");
 				initGOATPointsItem("seasonGrandSlamGOATPoints");
 				initGOATPointsTable("bestSeasonGOATPointsTable");
@@ -56,16 +60,6 @@
 				<div class="row">
 					<div class="col-md-3">
 						<h4>Tournament Points</h4>
-					</div>
-					<div class="col-md-3">
-						<h4>Ranking Points</h4>
-					</div>
-					<div class="col-md-6">
-						<h4>Achievements, Performance and Statistics Points</h4>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-3">
 						<table id="tournamentGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
 								<tr>
@@ -75,22 +69,21 @@
 								</tr>
 							</thead>
 						</table>
-					</div>
-					<div class="col-md-3">
+						<h4>Ranking Points</h4>
 						<table id="yearEndRankGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
-								<tr>
-									<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Year-End Ranking</th>
-									<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
-								</tr>
+							<tr>
+								<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Year-End Ranking</th>
+								<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
+							</tr>
 							</thead>
 						</table>
 						<table id="bestRankGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
-								<tr>
-									<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Best Ranking</th>
-									<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
-								</tr>
+							<tr>
+								<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Best Ranking</th>
+								<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
+							</tr>
 							</thead>
 						</table>
 						<div>
@@ -98,83 +91,92 @@
 							<p>+1 point for each <span id="weeksAtNo1ForGOATPoint"></span> weeks as ATP No. 1</p>
 						</div>
 					</div>
-					<div class="col-md-3">
-						<div>
-							<strong>Big Wins GOAT Points</strong>
-							<p><i>sum</i>(Match Factor * Rank Factor) / 100</p>
+					<div class="col-md-9">
+						<h4>Achievements, Performance and Statistics Points</h4>
+						<div class="row">
+							<div class="col-md-4">
+								<div>
+									<strong>Big Wins GOAT Points</strong>
+									<p><i>sum</i>(Match Factor * Rank Factor) / 100</p>
+								</div>
+								<table id="bigWinRoundFactorTable" class="table table-condensed table-hover table-striped">
+									<thead>
+									<tr>
+										<th data-column-id="level" data-formatter="level" data-sortable="false" data-width="80">Level</th>
+										<th data-column-id="round" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Round</th>
+										<th data-column-id="roundFactor" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Factor</th>
+									</tr>
+									</thead>
+								</table>
+								<table id="bigWinRankFactorTable" class="table table-condensed table-hover table-striped">
+									<thead>
+									<tr>
+										<th data-column-id="rankRange" data-formatter="rankRange" data-sortable="false" data-width="80" data-align="center">Win vs Rank</th>
+										<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Factor</th>
+									</tr>
+									</thead>
+								</table>
+							</div>
+							<div class="col-md-4">
+								<div>
+									<strong>Career Grand Slam</strong>
+									<p>+<span id="careerGrandSlamGOATPoints"></span> points for Career Grand Slam</p>
+								</div>
+								<div>
+									<strong>Calendar Grand Slam</strong>
+									<p>+<span id="seasonGrandSlamGOATPoints"></span> points for each Calendar Grand Slam</p>
+								</div>
+								<br/>
+								<div>
+									<strong>Best Season GOAT Points</strong>
+								</div>
+								<table id="bestSeasonGOATPointsTable" class="table table-condensed table-hover table-striped">
+									<thead>
+									<tr>
+										<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="90" data-align="center">Best Season Rank</th>
+										<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="40" data-header-align="center" data-align="center">Points</th>
+									</tr>
+									</thead>
+								</table>
+								<br/>
+								<div>
+									<strong>Greatest Rivalries GOAT Points</strong>
+									<p>Points are distributed to both players by rivalry won/lost ratio</p>
+								</div>
+								<table id="greatestRivalriesGOATPointsTable" class="table table-condensed table-hover table-striped">
+									<thead>
+									<tr>
+										<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="90" data-align="center">Rivalry Rank</th>
+										<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="40" data-header-align="center" data-align="center">Points</th>
+									</tr>
+									</thead>
+								</table>
+							</div>
+							<div class="col-md-4">
+								<div>
+									<strong>Performance GOAT Points</strong>
+								</div>
+								<table id="performanceGOATPointsTable" class="table table-condensed table-hover table-striped">
+									<thead>
+									<tr>
+										<th data-column-id="category" data-sortable="false" data-width="120">Perform. Category</th>
+										<th data-column-id="goatPoints" data-sortable="false" data-width="60">Points</th>
+									</tr>
+									</thead>
+								</table>
+								<div>
+									<strong>Statistics GOAT Points</strong>
+								</div>
+								<table id="statisticsGOATPointsTable" class="table table-condensed table-hover table-striped">
+									<thead>
+										<tr>
+											<th data-column-id="category" data-sortable="false" data-width="130">Statistics Category</th>
+											<th data-column-id="goatPoints" data-sortable="false" data-width="50">Points</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
 						</div>
-						<table id="bigWinRoundFactorTable" class="table table-condensed table-hover table-striped">
-							<thead>
-							<tr>
-								<th data-column-id="level" data-formatter="level" data-sortable="false" data-width="80">Level</th>
-								<th data-column-id="round" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Round</th>
-								<th data-column-id="roundFactor" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Factor</th>
-							</tr>
-							</thead>
-						</table>
-						<table id="bigWinRankFactorTable" class="table table-condensed table-hover table-striped">
-							<thead>
-							<tr>
-								<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Win vs Rank</th>
-								<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Factor</th>
-							</tr>
-							</thead>
-						</table>
-						<div>
-							<strong>Best Season GOAT Points</strong>
-						</div>
-						<table id="bestSeasonGOATPointsTable" class="table table-condensed table-hover table-striped">
-							<thead>
-							<tr>
-								<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="90" data-align="center">Best Season Rank</th>
-								<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="40" data-header-align="center" data-align="center">Points</th>
-							</tr>
-							</thead>
-						</table>
-					</div>
-					<div class="col-md-3">
-						<div>
-							<strong>Career Grand Slam</strong>
-							<p>+<span id="careerGrandSlamGOATPoints"></span> points for Career Grand Slam</p>
-						</div>
-						<div>
-							<strong>Calendar Grand Slam</strong>
-							<p>+<span id="seasonGrandSlamGOATPoints"></span> points for each Calendar Grand Slam</p>
-						</div>
-						<div>
-							<strong>Greatest Rivalries GOAT Points</strong>
-							<p>Points are distributed to both players by won/lost ratio</p>
-						</div>
-						<table id="greatestRivalriesGOATPointsTable" class="table table-condensed table-hover table-striped">
-							<thead>
-							<tr>
-								<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="90" data-align="center">Rivalry Rank</th>
-								<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="40" data-header-align="center" data-align="center">Points</th>
-							</tr>
-							</thead>
-						</table>
-						<div>
-							<strong>Performance GOAT Points</strong>
-						</div>
-						<table id="performanceGOATPointsTable" class="table table-condensed table-hover table-striped">
-							<thead>
-							<tr>
-								<th data-column-id="category" data-sortable="false" data-width="120">Perform. Category</th>
-								<th data-column-id="goatPoints" data-sortable="false" data-width="60">Points</th>
-							</tr>
-							</thead>
-						</table>
-						<div>
-							<strong>Statistics GOAT Points</strong>
-						</div>
-						<table id="statisticsGOATPointsTable" class="table table-condensed table-hover table-striped">
-							<thead>
-								<tr>
-									<th data-column-id="category" data-sortable="false" data-width="130">Statistics Category</th>
-									<th data-column-id="goatPoints" data-sortable="false" data-width="50">Points</th>
-								</tr>
-							</thead>
-						</table>
 					</div>
 				</div>
 			</div>

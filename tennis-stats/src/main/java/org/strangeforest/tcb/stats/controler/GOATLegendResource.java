@@ -45,7 +45,7 @@ public class GOATLegendResource {
 	}
 
 	@RequestMapping("/bigWinRankFactorTable")
-	public BootgridTable<RankGOATPointsRow> bigWinRankFactorTable() {
+	public BootgridTable<RankRangeGOATPointsRow> bigWinRankFactorTable() {
 		return goatLegendService.getBigWinRankFactorTable();
 	}
 

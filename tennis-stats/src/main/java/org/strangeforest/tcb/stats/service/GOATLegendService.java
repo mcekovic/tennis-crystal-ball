@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.util.concurrent.atomic.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
@@ -97,8 +99,8 @@ public class GOATLegendService {
 	}
 
 	@Cacheable(value = "Global", key = "'BigWinRankFactorTable'")
-	public BootgridTable<RankGOATPointsRow> getBigWinRankFactorTable() {
-		return getRankGOATPointsTable("big_win_rank_factor", "rank", "rank_factor");
+	public BootgridTable<RankRangeGOATPointsRow> getBigWinRankFactorTable() {
+		return getRankRangeGOATPointsTable("big_win_rank_factor", "rank", "rank_factor");
 	}
 
 	@Cacheable(value = "Global", key = "'CareerGrandSlamGOATPoints'")
@@ -137,10 +139,30 @@ public class GOATLegendService {
 	private BootgridTable<RankGOATPointsRow> getRankGOATPointsTable(String tableName, String rankColumn, String pointsColumn) {
 		BootgridTable<RankGOATPointsRow> table = new BootgridTable<>();
 		jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn, pointsColumn), (rs) -> {
-			int bestRank = rs.getInt(rankColumn);
+			int rank = rs.getInt(rankColumn);
 			int goatPoints = rs.getInt(pointsColumn);
-			table.addRow(new RankGOATPointsRow(bestRank, goatPoints));
+			table.addRow(new RankGOATPointsRow(rank, goatPoints));
 		});
+		return table;
+	}
+
+	private BootgridTable<RankRangeGOATPointsRow> getRankRangeGOATPointsTable(String tableName, String rankColumn, String pointsColumn) {
+		BootgridTable<RankRangeGOATPointsRow> table = new BootgridTable<>();
+		final AtomicInteger fromRank = new AtomicInteger();
+		final AtomicInteger toRank = new AtomicInteger();
+		final AtomicInteger currGoatPoints = new AtomicInteger();
+		jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn, pointsColumn), (rs) -> {
+			int rank = rs.getInt(rankColumn);
+			int goatPoints = rs.getInt(pointsColumn);
+			if (goatPoints != currGoatPoints.get()) {
+				if (fromRank.get() != 0)
+					table.addRow(new RankRangeGOATPointsRow(fromRank.get(), toRank.get(), currGoatPoints.get()));
+				fromRank.set(rank);
+				currGoatPoints.set(goatPoints);
+			}
+			toRank.set(rank);
+		});
+		table.addRow(new RankRangeGOATPointsRow(fromRank.get(), toRank.get(), currGoatPoints.get()));
 		return table;
 	}
 
