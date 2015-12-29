@@ -356,8 +356,8 @@ SELECT m.winner_id AS player_id, e.season, e.date, (mf.match_factor * (wrf.rank_
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
 INNER JOIN big_win_match_factor mf ON mf.level = e.level AND mf.round = m.round
-INNER JOIN big_win_rank_factor wrf ON wrf.rank = m.winner_rank
-INNER JOIN big_win_rank_factor lrf ON lrf.rank = m.loser_rank;
+INNER JOIN big_win_rank_factor wrf ON wrf.rank = coalesce(m.winner_rank, (SELECT r.rank FROM player_ranking r WHERE r.player_id = m.winner_id AND r.rank_date <= e.date ORDER BY r.rank_date DESC LIMIT 1))
+INNER JOIN big_win_rank_factor lrf ON lrf.rank = coalesce(m.loser_rank, (SELECT r.rank FROM player_ranking r WHERE r.player_id = m.loser_id AND r.rank_date <= e.date ORDER BY r.rank_date DESC LIMIT 1));
 
 
 -- player_season_big_wins_goat_points_v
