@@ -67,9 +67,9 @@ VALUES
 (4, 2),
 (5, 1);
 
-DELETE FROM big_win_round_factor;
-INSERT INTO big_win_round_factor
-(level, round, round_factor)
+DELETE FROM big_win_match_factor;
+INSERT INTO big_win_match_factor
+(level, round, match_factor)
 VALUES
 -- Grand Slam
 ('G', 'F',   8),

@@ -4,6 +4,7 @@ public class BestSeasonRow extends PlayerRow {
 
 	private final int season;
 	private final int goatPoints;
+	private int tournamentGoatPoints, yearEndRankGoatPoints, weeksAtNo1GoatPoints, bigWinsGoatPoints, grandSlamGoatPoints;
 	private int grandSlamTitles, grandSlamFinals, grandSlamSemiFinals;
 	private int tourFinalsTitles, tourFinalsFinals;
 	private int mastersTitles, mastersFinals;
@@ -24,6 +25,52 @@ public class BestSeasonRow extends PlayerRow {
 	public int getGoatPoints() {
 		return goatPoints;
 	}
+
+
+	// GOAT points items
+
+	public int getTournamentGoatPoints() {
+		return tournamentGoatPoints;
+	}
+
+	public void setTournamentGoatPoints(int tournamentGoatPoints) {
+		this.tournamentGoatPoints = tournamentGoatPoints;
+	}
+
+	public int getYearEndRankGoatPoints() {
+		return yearEndRankGoatPoints;
+	}
+
+	public void setYearEndRankGoatPoints(int yearEndRankGoatPoints) {
+		this.yearEndRankGoatPoints = yearEndRankGoatPoints;
+	}
+
+	public int getWeeksAtNo1GoatPoints() {
+		return weeksAtNo1GoatPoints;
+	}
+
+	public void setWeeksAtNo1GoatPoints(int weeksAtNo1GoatPoints) {
+		this.weeksAtNo1GoatPoints = weeksAtNo1GoatPoints;
+	}
+
+	public int getBigWinsGoatPoints() {
+		return bigWinsGoatPoints;
+	}
+
+	public void setBigWinsGoatPoints(int bigWinsGoatPoints) {
+		this.bigWinsGoatPoints = bigWinsGoatPoints;
+	}
+
+	public int getGrandSlamGoatPoints() {
+		return grandSlamGoatPoints;
+	}
+
+	public void setGrandSlamGoatPoints(int grandSlamGoatPoints) {
+		this.grandSlamGoatPoints = grandSlamGoatPoints;
+	}
+
+
+	// Titles
 
 	public int getGrandSlamTitles() {
 		return grandSlamTitles;

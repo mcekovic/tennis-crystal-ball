@@ -1,15 +1,15 @@
 package org.strangeforest.tcb.stats.model;
 
-public class BigWinRoundFactorRow {
+public class BigWinMatchFactorRow {
 
 	private final String level;
 	private final String round;
-	private final int roundFactor;
+	private final int matchFactor;
 
-	public BigWinRoundFactorRow(String level, String round, int roundFactor) {
+	public BigWinMatchFactorRow(String level, String round, int matchFactor) {
 		this.level = level;
 		this.round = round;
-		this.roundFactor = roundFactor;
+		this.matchFactor = matchFactor;
 	}
 
 	public String getLevel() {
@@ -20,7 +20,7 @@ public class BigWinRoundFactorRow {
 		return round;
 	}
 
-	public int getRoundFactor() {
-		return roundFactor;
+	public int getMatchFactor() {
+		return matchFactor;
 	}
 }

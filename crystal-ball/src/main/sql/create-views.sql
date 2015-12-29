@@ -297,6 +297,85 @@ GROUP BY player_id;
 CREATE UNIQUE INDEX ON player_stats (player_id);
 
 
+-- no1_player_ranking_v
+
+CREATE OR REPLACE VIEW no1_player_ranking_v AS
+WITH no1_player_ranking AS (
+	SELECT player_id, rank_date, date_part('year', rank_date) AS season, rank, lead(rank, -1) OVER (pr) prev_rank, weeks(lead(rank_date, -1) OVER (pr), rank_date) weeks
+	FROM player_ranking
+	INNER JOIN player_best_rank USING (player_id)
+	WHERE best_rank = 1
+	WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)
+	ORDER BY rank_date
+)
+SELECT player_id, rank_date, season, rank, prev_rank, (CASE WHEN prev_rank = 1 THEN weeks - 1 ELSE 0 END + CASE WHEN rank = 1 THEN 1 ELSE 0 END) weeks_at_no1
+FROM no1_player_ranking
+WHERE rank = 1 OR prev_rank = 1;
+
+
+-- player_season_weeks_at_no1
+
+CREATE MATERIALIZED VIEW player_season_weeks_at_no1 AS
+SELECT player_id, season, round(sum(weeks_at_no1)) weeks_at_no1
+FROM no1_player_ranking_v
+GROUP BY player_id, season;
+
+CREATE UNIQUE INDEX ON player_season_weeks_at_no1 (player_id, season);
+
+
+-- player_weeks_at_no1
+
+CREATE MATERIALIZED VIEW player_weeks_at_no1 AS
+SELECT player_id, round(sum(weeks_at_no1)) weeks_at_no1
+FROM no1_player_ranking_v
+GROUP BY player_id;
+
+CREATE UNIQUE INDEX ON player_weeks_at_no1 (player_id);
+
+
+-- player_season_weeks_at_no1_goat_points_v
+
+CREATE OR REPLACE VIEW player_season_weeks_at_no1_goat_points_v AS
+SELECT player_id, season, round(weeks_at_no1 / weeks_for_point) AS goat_points, weeks_at_no1 / weeks_for_point AS unrounded_goat_points
+FROM player_season_weeks_at_no1
+INNER JOIN weeks_at_no1_goat_points ON TRUE;
+
+
+-- player_weeks_at_no1_goat_points_v
+
+CREATE OR REPLACE VIEW player_weeks_at_no1_goat_points_v AS
+SELECT player_id, round(weeks_at_no1 / weeks_for_point) AS goat_points, weeks_at_no1 / weeks_for_point AS unrounded_goat_points
+FROM player_weeks_at_no1
+INNER JOIN weeks_at_no1_goat_points ON TRUE;
+
+
+-- player_big_wins_v
+
+CREATE OR REPLACE VIEW player_big_wins_v AS
+SELECT m.winner_id AS player_id, e.season, e.date, (mf.match_factor * (wrf.rank_factor + lrf.rank_factor) / 2)::REAL / 100 goat_points
+FROM match m
+INNER JOIN tournament_event e USING (tournament_event_id)
+INNER JOIN big_win_match_factor mf ON mf.level = e.level AND mf.round = m.round
+INNER JOIN big_win_rank_factor wrf ON wrf.rank = m.winner_rank
+INNER JOIN big_win_rank_factor lrf ON lrf.rank = m.loser_rank;
+
+
+-- player_season_big_wins_goat_points_v
+
+CREATE OR REPLACE VIEW player_season_big_wins_goat_points_v AS
+SELECT player_id, season, round(sum(goat_points)) goat_points, sum(goat_points) unrounded_goat_points
+FROM player_big_wins_v
+GROUP BY player_id, season;
+
+
+-- player_big_wins_goat_points_v
+
+CREATE OR REPLACE VIEW player_big_wins_goat_points_v AS
+SELECT player_id, round(sum(goat_points)) goat_points, sum(goat_points) unrounded_goat_points
+FROM player_big_wins_v
+GROUP BY player_id;
+
+
 -- player_career_grand_slam_goat_points_v
 
 CREATE OR REPLACE VIEW player_career_grand_slam_goat_points_v AS
@@ -329,88 +408,6 @@ SELECT gs.player_id, gs.season, g.season_grand_slam goat_points
 FROM player_season_grand_slams gs
 INNER JOIN grand_slam_goat_points g ON TRUE
 WHERE gs.grand_slams >= 4;
-
-
--- player_season_goat_points
-
-CREATE MATERIALIZED VIEW player_season_goat_points AS
-WITH goat_points AS (
-	SELECT r.player_id, e.season, sum(goat_points) goat_points, sum(goat_points) tournament_goat_points, 0 ranking_goat_points, 0 achievements_goat_points
-	FROM player_tournament_event_result r
-	INNER JOIN tournament_event e USING (tournament_event_id)
-	WHERE r.goat_points > 0
-	GROUP BY r.player_id, e.season
-	UNION ALL
-	SELECT r.player_id, r.season, sum(p.goat_points), 0, sum(goat_points), 0
-	FROM player_year_end_rank r
-	INNER JOIN year_end_rank_goat_points p USING (year_end_rank)
-	GROUP BY r.player_id, r.season
-	UNION ALL
-	SELECT player_id, season, goat_points, 0, 0, goat_points
-	FROM player_season_grand_slam_goat_points_v
-)
-SELECT player_id, season, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points
-FROM goat_points
-GROUP BY player_id, season;
-
-CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
-
-
--- player_weeks_at_no1
-
-CREATE MATERIALIZED VIEW player_weeks_at_no1 AS
-WITH player_ranking_ex AS (
-	SELECT player_id, rank_date, rank, lead(rank, -1) OVER (pr) prev_rank, weeks(lead(rank_date, -1) OVER (pr), rank_date) weeks
-	FROM player_ranking
-	WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)
-	ORDER BY rank_date
-)
-SELECT player_id, round(sum(CASE WHEN prev_rank = 1 THEN weeks - 1 ELSE 0 END + CASE WHEN rank = 1 THEN 1 ELSE 0 END)) weeks_at_no1
-FROM player_ranking_ex
-WHERE rank = 1 OR prev_rank = 1
-GROUP BY player_id;
-
-CREATE UNIQUE INDEX ON player_weeks_at_no1 (player_id);
-
-
--- player_big_wins_goat_points_v
-
-CREATE OR REPLACE VIEW player_big_wins_goat_points_v AS
-WITH big_wins_goat_points AS (
-	SELECT m.winner_id AS player_id, sum(rdf.round_factor * rkf.rank_factor)::REAL/100 goat_points
-	FROM match m
-	INNER JOIN tournament_event e USING (tournament_event_id)
-	INNER JOIN big_win_round_factor rdf ON rdf.level = e.level AND rdf.round = m.round
-	INNER JOIN big_win_rank_factor rkf ON rkf.rank = m.loser_rank
-	GROUP BY m.winner_id
-)
-SELECT player_id, round(goat_points) goat_points, goat_points unrounded_goat_points
-FROM big_wins_goat_points;
-
-
--- player_best_season_goat_points_v
-
-CREATE OR REPLACE VIEW player_best_season_goat_points_v AS
-WITH pleayer_season AS (
-	SELECT player_id, s.season, s.goat_points,
-		count(CASE WHEN e.level = 'G' AND r.result = 'W' THEN 1 ELSE NULL END) grand_slam_titles,
-		count(CASE WHEN e.level = 'G' AND r.result = 'F' THEN 1 ELSE NULL END) grand_slam_finals,
-		count(CASE WHEN e.level = 'F' AND r.result = 'W' THEN 1 ELSE NULL END) tour_finals_titles,
-		count(CASE WHEN e.level = 'M' AND r.result = 'W' THEN 1 ELSE NULL END) masters_titles,
-		count(CASE WHEN e.level = 'O' AND r.result = 'W' THEN 1 ELSE NULL END) olympics_titles,
-		count(CASE WHEN e.level <> 'D' AND r.result = 'W' THEN 1 ELSE NULL END) titles
-	FROM player_season_goat_points s
-	LEFT JOIN player_tournament_event_result r USING (player_id)
-	LEFT JOIN tournament_event e USING (tournament_event_id, season)
-	WHERE s.goat_points > 0
-	GROUP BY player_id, s.season, s.goat_points
-), pleayer_season_ranked AS (
-	SELECT player_id, season, rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank
-	FROM pleayer_season
-)
-SELECT player_id, goat_points
-FROM pleayer_season_ranked
-INNER JOIN best_season_goat_points USING (season_rank);
 
 
 -- player_greatest_rivalries_goat_points_v
@@ -856,47 +853,133 @@ FROM goat_points
 GROUP BY player_id;
 
 
+-- player_season_goat_points
+
+CREATE MATERIALIZED VIEW player_season_goat_points AS
+WITH goat_points AS (
+	SELECT r.player_id, e.season, sum(r.goat_points) goat_points, sum(r.goat_points) tournament_goat_points, 0 ranking_goat_points, 0 achievements_goat_points,
+		sum(r.goat_points) raw_goat_points, 0 raw_ranking_goat_points, 0 raw_achievements_goat_points,
+		0 year_end_rank_goat_points, 0 weeks_at_no1_goat_points, 0 big_wins_goat_points, 0 grand_slam_goat_points
+	FROM player_tournament_event_result r
+	INNER JOIN tournament_event e USING (tournament_event_id)
+	WHERE r.goat_points > 0
+	GROUP BY r.player_id, e.season
+	UNION ALL
+	SELECT r.player_id, r.season, sum(p.goat_points), 0, sum(p.goat_points), 0,
+		sum(p.goat_points), sum(p.goat_points), 0,
+		sum(p.goat_points), 0, 0, 0
+	FROM player_year_end_rank r
+	INNER JOIN year_end_rank_goat_points p USING (year_end_rank)
+	GROUP BY r.player_id, r.season
+	UNION ALL
+	SELECT player_id, season, goat_points, 0, goat_points, 0,
+		0, 0, 0,
+		0, goat_points, 0, 0
+	FROM player_season_weeks_at_no1_goat_points_v
+	UNION ALL
+	SELECT player_id, season, goat_points, 0, 0, goat_points,
+		0, 0, 0,
+		0, 0, goat_points, 0
+	FROM player_season_big_wins_goat_points_v
+	UNION ALL
+	SELECT player_id, season, goat_points, 0, 0, goat_points,
+		goat_points, 0, goat_points,
+		0, 0, 0, goat_points
+	FROM player_season_grand_slam_goat_points_v
+)
+SELECT player_id, season, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points,
+	sum(raw_goat_points) raw_goat_points, sum(raw_ranking_goat_points) raw_ranking_goat_points, sum(raw_achievements_goat_points) raw_achievements_goat_points,
+	sum(year_end_rank_goat_points) year_end_rank_goat_points, sum(weeks_at_no1_goat_points) weeks_at_no1_goat_points, sum(big_wins_goat_points) big_wins_goat_points, sum(grand_slam_goat_points) grand_slam_goat_points
+FROM goat_points
+GROUP BY player_id, season;
+
+CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
+
+
+-- player_best_season_goat_points_v
+
+CREATE OR REPLACE VIEW player_best_season_goat_points_v AS
+WITH pleayer_season AS (
+	SELECT player_id, s.season, s.goat_points,
+		count(CASE WHEN e.level = 'G' AND r.result = 'W' THEN 1 ELSE NULL END) grand_slam_titles,
+		count(CASE WHEN e.level = 'G' AND r.result = 'F' THEN 1 ELSE NULL END) grand_slam_finals,
+		count(CASE WHEN e.level = 'F' AND r.result = 'W' THEN 1 ELSE NULL END) tour_finals_titles,
+		count(CASE WHEN e.level = 'M' AND r.result = 'W' THEN 1 ELSE NULL END) masters_titles,
+		count(CASE WHEN e.level = 'O' AND r.result = 'W' THEN 1 ELSE NULL END) olympics_titles,
+		count(CASE WHEN e.level <> 'D' AND r.result = 'W' THEN 1 ELSE NULL END) titles
+	FROM player_season_goat_points s
+	LEFT JOIN player_tournament_event_result r USING (player_id)
+	LEFT JOIN tournament_event e USING (tournament_event_id, season)
+	WHERE s.goat_points > 0
+	GROUP BY player_id, s.season, s.goat_points
+), pleayer_season_ranked AS (
+	SELECT player_id, season, rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank
+	FROM pleayer_season
+)
+SELECT player_id, goat_points
+FROM pleayer_season_ranked
+INNER JOIN best_season_goat_points USING (season_rank);
+
+
 -- player_goat_points
 
 CREATE MATERIALIZED VIEW player_goat_points AS
 WITH goat_points AS (
-	SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points
+	SELECT player_id, raw_goat_points goat_points, tournament_goat_points, raw_ranking_goat_points ranking_goat_points, raw_achievements_goat_points achievements_goat_points,
+		year_end_rank_goat_points, 0 best_rank_goat_points, 0 weeks_at_no1_goat_points,
+		0 big_wins_goat_points, grand_slam_goat_points, 0 best_season_goat_points, 0 greatest_rivalries_goat_points, 0 performance_goat_points, 0 statistics_goat_points
 	FROM player_season_goat_points
 	UNION ALL
-	SELECT player_id, goat_points, 0, goat_points, 0
+	SELECT player_id, goat_points, 0, goat_points, 0,
+		0, goat_points, 0,
+		0, 0, 0, 0, 0, 0
 	FROM player_best_rank
 	INNER JOIN best_rank_goat_points USING (best_rank)
 	UNION ALL
-	SELECT player_id, goat_points, 0, goat_points, 0
-	FROM (
-		SELECT player_id, round(weeks_at_no1 / weeks_for_point) goat_points
-		FROM player_weeks_at_no1
-		INNER JOIN weeks_at_no1_goat_points ON TRUE
-	) AS at_no1_gp
+	SELECT player_id, goat_points, 0, goat_points, 0,
+		0, 0, goat_points,
+		0, 0, 0, 0, 0, 0
+	FROM player_weeks_at_no1_goat_points_v
 	UNION ALL
-	SELECT player_id, goat_points, 0, 0, goat_points
-	FROM player_career_grand_slam_goat_points_v
-	UNION ALL
-	SELECT player_id, goat_points, 0, 0, goat_points
-	FROM player_best_season_goat_points_v
-	UNION ALL
-	SELECT player_id, goat_points, 0, 0, goat_points
-	FROM player_greatest_rivalries_goat_points_v
-	UNION ALL
-	SELECT player_id, goat_points, 0, 0, goat_points
+	SELECT player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0,
+		goat_points, 0, 0, 0, 0, 0
 	FROM player_big_wins_goat_points_v
 	UNION ALL
-	SELECT player_id, goat_points, 0, 0, goat_points
+	SELECT player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0,
+		0, goat_points, 0, 0, 0, 0
+	FROM player_career_grand_slam_goat_points_v
+	UNION ALL
+	SELECT player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0,
+		0, 0, goat_points, 0, 0, 0
+	FROM player_best_season_goat_points_v
+	UNION ALL
+	SELECT player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0,
+		0, 0, 0, goat_points, 0, 0
+	FROM player_greatest_rivalries_goat_points_v
+	UNION ALL
+	SELECT player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0,
+		0, 0, 0, 0, goat_points, 0
 	FROM player_performance_goat_points_v
 	UNION ALL
-	SELECT player_id, goat_points, 0, 0, goat_points
+	SELECT player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0,
+		0, 0, 0, 0, 0, goat_points
 	FROM player_statistics_goat_points_v
 ), goat_points_total AS (
-	SELECT player_id, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points
+	SELECT player_id, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points,
+		sum(year_end_rank_goat_points) year_end_rank_goat_points, sum(best_rank_goat_points) best_rank_goat_points, sum(weeks_at_no1_goat_points) weeks_at_no1_goat_points,
+		sum(big_wins_goat_points) big_wins_goat_points, sum(grand_slam_goat_points) grand_slam_goat_points, sum(best_season_goat_points) best_season_goat_points, sum(greatest_rivalries_goat_points) greatest_rivalries_goat_points, sum(performance_goat_points) performance_goat_points, sum(statistics_goat_points) statistics_goat_points
 	FROM goat_points
 	GROUP BY player_id
 )
-SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank
+SELECT player_id, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
+	year_end_rank_goat_points, best_rank_goat_points, weeks_at_no1_goat_points,
+	big_wins_goat_points, grand_slam_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points
 FROM goat_points_total;
 
 CREATE UNIQUE INDEX ON player_goat_points (player_id);

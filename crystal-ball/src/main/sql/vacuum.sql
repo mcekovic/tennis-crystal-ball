@@ -14,7 +14,7 @@ VACUUM FULL ANALYSE VERBOSE year_end_rank_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_rank_goat_points;
 VACUUM FULL ANALYSE VERBOSE weeks_at_no1_goat_points;
 
-VACUUM FULL ANALYSE VERBOSE big_win_round_factor;
+VACUUM FULL ANALYSE VERBOSE big_win_match_factor;
 VACUUM FULL ANALYSE VERBOSE big_win_rank_factor;
 VACUUM FULL ANALYSE VERBOSE grand_slam_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_season_goat_points;
@@ -29,6 +29,7 @@ VACUUM FULL ANALYSE VERBOSE player_current_rank;
 VACUUM FULL ANALYSE VERBOSE player_best_rank;
 VACUUM FULL ANALYSE VERBOSE player_best_rank_points;
 VACUUM FULL ANALYSE VERBOSE player_year_end_rank;
+VACUUM FULL ANALYSE VERBOSE player_season_weeks_at_no1;
 VACUUM FULL ANALYSE VERBOSE player_weeks_at_no1;
 
 VACUUM FULL ANALYSE VERBOSE player_tournament_event_result;

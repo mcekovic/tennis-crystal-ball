@@ -35,6 +35,19 @@
 					"season": function(column, row) {
 						return "<a href='/playerProfile?playerId=" + row.playerId + "&season=" + row.season + "' title='Show season'>" + row.season + "</a>";
 					},
+					"goatPoints": function playerCountryFormatter(column, row) {
+						if (row.goatPoints > 0) {
+							var title = "";
+							title = appendGoatPointsTitle(title, row, "tournamentGoatPoints", "Tournament");
+							title = appendGoatPointsTitle(title, row, "yearEndRankGoatPoints", "Year-end ranking");
+							title = appendGoatPointsTitle(title, row, "weeksAtNo1GoatPoints", "Weeks at No 1.");
+							title = appendGoatPointsTitle(title, row, "bigWinsGoatPoints", "Big wins");
+							title = appendGoatPointsTitle(title, row, "grandSlamGoatPoints", "Grand Slam");
+							return "<span title='" + title + "'>" + row.goatPoints + "</span>";
+						}
+						else
+							return row.achievementsGoatPoints;
+					},
 					"yearEndRank": function(column, row) {
 						return row.yearEndRank != null ? row.yearEndRank : "";
 					}
@@ -67,7 +80,7 @@
 				<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="45">Rank</th>
 				<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="120">Name</th>
 				<th data-column-id="season" data-formatter="season" data-width="55" data-align="center">Season</th>
-				<th data-column-id="goatPoints" data-type="numeric" data-order="desc" data-width="65" data-align="right" data-header-align="right">GOAT Pts.</th>
+				<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="65" data-align="right" data-header-align="right">GOAT Pts.</th>
 				<th data-column-id="grandSlamTitles" data-type="numeric" data-width="50" data-align="right" data-header-align="right">GS W</th>
 				<th data-column-id="grandSlamFinals" data-type="numeric" data-width="50" data-align="right" data-header-align="right">GS F</th>
 				<th data-column-id="grandSlamSemiFinals" data-type="numeric" data-width="50" data-align="right" data-header-align="right">GS SF</th>

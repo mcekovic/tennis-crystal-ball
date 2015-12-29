@@ -3,9 +3,9 @@ package org.strangeforest.tcb.stats.model;
 public class GOATListRow extends PlayerRow {
 
 	private final int goatPoints;
-	private final int tournamentGoatPoints;
-	private final int rankingGoatPoints;
-	private final int achievementsGoatPoints;
+	private final int tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints;
+	private int yearEndRankGoatPoints, bestRankGoatPoints, weeksAtNo1GoatPoints;
+	private int bigWinsGoatPoints, grandSlamGoatPoints, bestSeasonGoatPoints, greatestRivalriesGoatPoints, performanceGoatPoints, statisticsGoatPoints;
 	private int grandSlams;
 	private int tourFinals;
 	private int masters;
@@ -39,6 +39,84 @@ public class GOATListRow extends PlayerRow {
 
 	public int getAchievementsGoatPoints() {
 		return achievementsGoatPoints;
+	}
+
+
+	// Ranking GOAT points
+
+	public int getYearEndRankGoatPoints() {
+		return yearEndRankGoatPoints;
+	}
+
+	public void setYearEndRankGoatPoints(int yearEndRankGoatPoints) {
+		this.yearEndRankGoatPoints = yearEndRankGoatPoints;
+	}
+
+	public int getBestRankGoatPoints() {
+		return bestRankGoatPoints;
+	}
+
+	public void setBestRankGoatPoints(int bestRankGoatPoints) {
+		this.bestRankGoatPoints = bestRankGoatPoints;
+	}
+
+	public int getWeeksAtNo1GoatPoints() {
+		return weeksAtNo1GoatPoints;
+	}
+
+	public void setWeeksAtNo1GoatPoints(int weeksAtNo1GoatPoints) {
+		this.weeksAtNo1GoatPoints = weeksAtNo1GoatPoints;
+	}
+
+
+	// Achievements GOAT points
+
+	public int getBigWinsGoatPoints() {
+		return bigWinsGoatPoints;
+	}
+
+	public void setBigWinsGoatPoints(int bigWinsGoatPoints) {
+		this.bigWinsGoatPoints = bigWinsGoatPoints;
+	}
+
+	public int getGrandSlamGoatPoints() {
+		return grandSlamGoatPoints;
+	}
+
+	public void setGrandSlamGoatPoints(int grandSlamGoatPoints) {
+		this.grandSlamGoatPoints = grandSlamGoatPoints;
+	}
+
+	public int getBestSeasonGoatPoints() {
+		return bestSeasonGoatPoints;
+	}
+
+	public void setBestSeasonGoatPoints(int bestSeasonGoatPoints) {
+		this.bestSeasonGoatPoints = bestSeasonGoatPoints;
+	}
+
+	public int getGreatestRivalriesGoatPoints() {
+		return greatestRivalriesGoatPoints;
+	}
+
+	public void setGreatestRivalriesGoatPoints(int greatestRivalriesGoatPoints) {
+		this.greatestRivalriesGoatPoints = greatestRivalriesGoatPoints;
+	}
+
+	public int getPerformanceGoatPoints() {
+		return performanceGoatPoints;
+	}
+
+	public void setPerformanceGoatPoints(int performanceGoatPoints) {
+		this.performanceGoatPoints = performanceGoatPoints;
+	}
+
+	public int getStatisticsGoatPoints() {
+		return statisticsGoatPoints;
+	}
+
+	public void setStatisticsGoatPoints(int statisticsGoatPoints) {
+		this.statisticsGoatPoints = statisticsGoatPoints;
 	}
 
 	public int getGrandSlams() {

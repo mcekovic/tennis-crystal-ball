@@ -39,9 +39,9 @@ public class GOATLegendResource {
 
 	// Achievements
 
-	@RequestMapping("/bigWinRoundFactorTable")
-	public BootgridTable<BigWinRoundFactorRow> bigWinRoundFactorTable() {
-		return goatLegendService.getBigWinRoundFactorTable();
+	@RequestMapping("/bigWinMatchFactorTable")
+	public BootgridTable<BigWinMatchFactorRow> bigWinMatchFactorTable() {
+		return goatLegendService.getBigWinMatchFactorTable();
 	}
 
 	@RequestMapping("/bigWinRankFactorTable")

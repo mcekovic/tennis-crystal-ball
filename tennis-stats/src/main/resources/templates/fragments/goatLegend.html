@@ -13,7 +13,7 @@
 				initGOATPointsTable("yearEndRankGOATPointsTable");
 				initGOATPointsTable("bestRankGOATPointsTable");
 				initGOATPointsItem("weeksAtNo1ForGOATPoint");
-				initGOATPointsTable("bigWinRoundFactorTable", {
+				initGOATPointsTable("bigWinMatchFactorTable", {
 					"level": levelFormatter
 				});
 				initGOATPointsTable("bigWinRankFactorTable", {
@@ -97,21 +97,21 @@
 							<div class="col-md-4">
 								<div>
 									<strong>Big Wins GOAT Points</strong>
-									<p><i>sum</i>(Match Factor * Rank Factor) / 100</p>
+									<p><i>sum</i>(MatchFactor * RankFactor) / 100<br/><span style="font-size: smaller">MatchFactor = <i>factor</i>(Level, Round)<br/>RankFactor =<br/>(<i>factor</i>(WinnerRank) + <i>factor</i>(LoserRank)) / 2</span></p>
 								</div>
-								<table id="bigWinRoundFactorTable" class="table table-condensed table-hover table-striped">
+								<table id="bigWinMatchFactorTable" class="table table-condensed table-hover table-striped">
 									<thead>
 									<tr>
 										<th data-column-id="level" data-formatter="level" data-sortable="false" data-width="80">Level</th>
 										<th data-column-id="round" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Round</th>
-										<th data-column-id="roundFactor" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Factor</th>
+										<th data-column-id="matchFactor" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Factor</th>
 									</tr>
 									</thead>
 								</table>
 								<table id="bigWinRankFactorTable" class="table table-condensed table-hover table-striped">
 									<thead>
 									<tr>
-										<th data-column-id="rankRange" data-formatter="rankRange" data-sortable="false" data-width="80" data-align="center">Win vs Rank</th>
+										<th data-column-id="rankRange" data-formatter="rankRange" data-sortable="false" data-width="80" data-align="center">Rank</th>
 										<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Factor</th>
 									</tr>
 									</thead>

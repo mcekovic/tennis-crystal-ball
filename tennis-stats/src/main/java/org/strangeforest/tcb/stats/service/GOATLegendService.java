@@ -27,8 +27,8 @@ public class GOATLegendService {
 	private static final String WEEKS_AT_NO1_FOR_GOAT_POINT =
 		"SELECT weeks_for_point FROM weeks_at_no1_goat_points";
 
-	private static final String BIG_WIN_ROUND_FACTOR_QUERY =
-		"SELECT level, round, round_factor FROM big_win_round_factor\n" +
+	private static final String BIG_WIN_MATCH_FACTOR_QUERY =
+		"SELECT level, round, match_factor FROM big_win_match_factor\n" +
 		"ORDER BY level, round DESC";
 
 	private static final String CAREER_GRAND_SLAM_GOAT_POINTS =
@@ -86,14 +86,14 @@ public class GOATLegendService {
 
 	// Achievements
 
-	@Cacheable(value = "Global", key = "'BigWinRoundFactorTable'")
-	public BootgridTable<BigWinRoundFactorRow> getBigWinRoundFactorTable() {
-		BootgridTable<BigWinRoundFactorRow> table = new BootgridTable<>();
-		jdbcTemplate.query(BIG_WIN_ROUND_FACTOR_QUERY, (rs) -> {
+	@Cacheable(value = "Global", key = "'BigWinMatchFactorTable'")
+	public BootgridTable<BigWinMatchFactorRow> getBigWinMatchFactorTable() {
+		BootgridTable<BigWinMatchFactorRow> table = new BootgridTable<>();
+		jdbcTemplate.query(BIG_WIN_MATCH_FACTOR_QUERY, (rs) -> {
 			String level = rs.getString("level");
 			String round = rs.getString("round");
-			int roundFactor = rs.getInt("round_factor");
-			table.addRow(new BigWinRoundFactorRow(level, round, roundFactor));
+			int matchFactor = rs.getInt("match_factor");
+			table.addRow(new BigWinMatchFactorRow(level, round, matchFactor));
 		});
 		return table;
 	}

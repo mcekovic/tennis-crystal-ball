@@ -203,3 +203,14 @@ function formatMatchPlayer(id, name, seed, entry) {
 	return "<a href='/playerProfile?playerId=" + id + "' title='Show profile'>" + name
 		+ (seed ? (" (" + seed  + (entry ? " " + entry : "") + ")") : (entry ? " (" + entry + ")" : "")) + "</a>";
 }
+
+// Misc Formatter
+function appendGoatPointsTitle(title, row, propertyName, propertyTitle) {
+	var points = row[propertyName];
+	if (points > 0) {
+		if (title)
+			title += ", ";
+		title += propertyTitle + ": " + points;
+	}
+	return title;
+}
