@@ -37,12 +37,12 @@ public class RankingsService {
 		"WITH goat_points AS (\n" +
 		"  SELECT e.date, r.player_id, r.goat_points\n" +
 		"  FROM player_tournament_event_result r\n" +
-		"  LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE r.goat_points IS NOT NULL\n" +
 		"  UNION ALL\n" +
 		"  SELECT (r.season::TEXT || '-12-31')::DATE, r.player_id, p.goat_points\n" +
 		"  FROM player_year_end_rank r\n" +
-		"  LEFT JOIN year_end_rank_goat_points p USING (year_end_rank)\n" +
+		"  INNER JOIN year_end_rank_goat_points p USING (year_end_rank)\n" +
 		"  WHERE p.goat_points IS NOT NULL\n" +
 		")\n" +
 		"SELECT g.date%1$s, g.player_id, sum(g.goat_points) OVER (PARTITION BY g.player_id ORDER BY g.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
@@ -50,7 +50,7 @@ public class RankingsService {
 		"WHERE g.player_id = %3$s%4$s\n" +
 		"ORDER BY %5$s, g.player_id";
 
-	private static final String PLAYER_JOIN = /*language=SQL*/ " LEFT JOIN player p USING (player_id)";
+	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
 	public DataTable getRankingDataTable(int playerId, Range<LocalDate> dateRange, RankType rankType, boolean byAge, boolean compensatePoints) {
 		Players players = new Players(playerId);

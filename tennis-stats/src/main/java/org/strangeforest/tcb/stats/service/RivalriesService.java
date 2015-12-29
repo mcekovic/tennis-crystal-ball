@@ -70,7 +70,7 @@ public class RivalriesService {
 		"SELECT r.player_id, r.opponent_id, o.name, o.country_id, o.best_rank, r.matches, r.won, r.lost,\n" +
 		"%1$s\n" +
 		"FROM rivalries_2 r\n" +
-		"LEFT JOIN player_v o ON o.player_id = r.opponent_id%2$s\n" +
+		"INNER JOIN player_v o ON o.player_id = r.opponent_id%2$s\n" +
 		"WHERE TRUE%3$s\n" +
 		"ORDER BY %4$s OFFSET ?";
 
@@ -105,8 +105,8 @@ public class RivalriesService {
 		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
 		"%2$s\n" +
 		"FROM rivalries_3 r\n" +
-		"LEFT JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
-		"LEFT JOIN player_v p2 ON p2.player_id = r.player_id_2%3$s\n" +
+		"INNER JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
+		"INNER JOIN player_v p2 ON p2.player_id = r.player_id_2%3$s\n" +
 		"WHERE r.rank = 1";
 
 	private static final String GREATEST_RIVALRIES_QUERY = //language=SQL
@@ -143,8 +143,8 @@ public class RivalriesService {
 		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
 		"%2$s\n" +
 		"FROM rivalries_3 r\n" +
-		"LEFT JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
-		"LEFT JOIN player_v p2 ON p2.player_id = r.player_id_2%3$s\n" +
+		"INNER JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
+		"INNER JOIN player_v p2 ON p2.player_id = r.player_id_2%3$s\n" +
 		"WHERE rank = 1\n" +
 		"ORDER BY %4$s OFFSET ?";
 
@@ -156,7 +156,7 @@ public class RivalriesService {
 		"LATERAL (\n" +
 		"  SELECT m.match_id, e.season, e.date, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"  FROM match m\n" +
-		"  LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE ((m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s))%3$s\n" +
 		"  ORDER BY e.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
 		") lm";
@@ -165,7 +165,7 @@ public class RivalriesService {
 		"  (SELECT row_to_json(lm) FROM (\n" +
 		"     SELECT m.match_id, e.season, e.date, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"     FROM match m\n" +
-		"     LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"     INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"     WHERE ((m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s))%3$s\n" +
 		"     ORDER BY e.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
 		"  ) AS lm) AS last_match";

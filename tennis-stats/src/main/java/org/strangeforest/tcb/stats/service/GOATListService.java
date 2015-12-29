@@ -17,14 +17,14 @@ public class GOATListService {
 
 	private static final String GOAT_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM player_goat_points g\n" +
-		"LEFT JOIN player_v USING (player_id)\n" +
+		"INNER JOIN player_v USING (player_id)\n" +
 		"WHERE g.goat_points > 0 AND g.goat_rank <= ?%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
 		"SELECT player_id, g.goat_rank, country_id, name, g.goat_points, g.tournament_goat_points, g.ranking_goat_points, g.achievements_goat_points,\n" +
 		"  grand_slams, tour_finals, masters, olympics, big_titles, titles\n" +
 		"FROM player_goat_points g\n" +
-		"LEFT JOIN player_v USING (player_id)\n" +
+		"INNER JOIN player_v USING (player_id)\n" +
 		"WHERE g.goat_points > 0 AND g.goat_rank <= ?%1$s\n" +
 		"ORDER BY %2$s OFFSET ? LIMIT ?";
 

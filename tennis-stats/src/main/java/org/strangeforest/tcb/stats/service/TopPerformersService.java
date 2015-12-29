@@ -26,14 +26,14 @@ public class TopPerformersService {
 
 	private static final String TOP_PERFORMERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +
-		"LEFT JOIN player_v USING (player_id)\n" +
+		"INNER JOIN player_v USING (player_id)\n" +
 		"WHERE %2$s_won + %2$s_lost >= ?%3$s";
 
 	private static final String TOP_PERFORMERS_QUERY = //language=SQL
 		"WITH top_performers AS (\n" +
 		"  SELECT player_id, name, country_id, %1$s_won::real/(%1$s_won + %1$s_lost) AS won_lost_pct, %1$s_won AS won, %1$s_lost AS lost\n" +
 		"  FROM %2$s\n" +
-		"  LEFT JOIN player_v USING (player_id)\n" +
+		"  INNER JOIN player_v USING (player_id)\n" +
 		"  WHERE %1$s_won + %1$s_lost >= ?%3$s\n" +
 		"), top_performers_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id, name, country_id, won_lost_pct, won, lost\n" +

@@ -17,15 +17,15 @@ public class PlayerTimelineService {
 	private static final String TIMELINE_QUERY =
 		"SELECT tournament_id, t.name AS tournament_name, e.season, tournament_event_id, e.date, e.level, e.surface, e.name, r.result\n" +
 		"FROM player_tournament_event_result r\n" +
-		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
-		"LEFT JOIN tournament t USING (tournament_id)\n" +
+		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"INNER JOIN tournament t USING (tournament_id)\n" +
 		"WHERE r.player_id = ?\n" +
 		"AND e.level <> 'D'\n" +
 		"ORDER BY tournament_event_id";
 
 	private static final String SEASON_TITLES_QUERY =
 		"SELECT e.season, count(tournament_event_id) AS titles FROM player_tournament_event_result r\n" +
-		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE r.player_id = ? AND r.result = 'W'\n" +
 		"GROUP BY e.season\n" +
 		"UNION ALL\n" +

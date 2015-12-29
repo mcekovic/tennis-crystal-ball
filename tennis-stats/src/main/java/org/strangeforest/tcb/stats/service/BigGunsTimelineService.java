@@ -23,7 +23,7 @@ public class BigGunsTimelineService {
 		"  ORDER BY s.season DESC\n" +
 		") AS seasons_points\n" +
 		"FROM player_goat_points g\n" +
-		"LEFT JOIN player_v p USING (player_id)\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE g.goat_points >= ?\n" +
 		"ORDER BY p.dob DESC, p.name";
 

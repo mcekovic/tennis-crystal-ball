@@ -19,7 +19,7 @@ public class BestSeasonsService {
 
 	private static final String BEST_SEASON_COUNT_QUERY = //language=SQL
 		"SELECT count(s.season) AS season_count FROM player_season_goat_points s\n" +
-		"LEFT JOIN player_v USING (player_id)\n" +
+		"INNER JOIN player_v USING (player_id)\n" +
 		"WHERE s.goat_points >= ?%1$s";
 
 	private static final String BEST_SEASONS_QUERY = //language=SQL
@@ -36,7 +36,7 @@ public class BestSeasonsService {
 		"    count(CASE WHEN e.level <> 'D' AND r.result = 'W' THEN 1 ELSE NULL END) titles\n" +
 		"  FROM player_season_goat_points s\n" +
 		"  LEFT JOIN player_tournament_event_result r USING (player_id)\n" +
-		"  LEFT JOIN tournament_event e USING (tournament_event_id, season)\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id, season)\n" +
 		"  WHERE s.goat_points >= ?\n" +
 		"  GROUP BY player_id, s.season, s.goat_points\n" +
 		"), pleayer_season_ranked AS (\n" +
@@ -49,7 +49,7 @@ public class BestSeasonsService {
 		"  s.grand_slam_titles, s.grand_slam_finals, s.grand_slam_semi_finals, s.tour_finals_titles, s.tour_finals_finals,\n" +
 		"  s.masters_titles, s.masters_finals, s.olympics_titles, s.titles, y.year_end_rank\n" +
 		"FROM pleayer_season_ranked s\n" +
-		"LEFT JOIN player_v p USING (player_id)\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
 		"LEFT JOIN player_year_end_rank y USING (player_id, season)\n" +
 		"WHERE TRUE%1$s\n" +
 		"ORDER BY %2$s OFFSET ? LIMIT ?";

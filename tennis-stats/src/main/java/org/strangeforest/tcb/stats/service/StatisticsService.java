@@ -27,9 +27,9 @@ public class StatisticsService {
 		"  w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,\n" +
 		"  l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc\n" +
 		"FROM match_stats\n" +
-		"LEFT JOIN match m USING (match_id)\n" +
-		"LEFT JOIN player_v pw ON m.winner_id = pw.player_id\n" +
-		"LEFT JOIN player_v pl ON m.loser_id = pl.player_id\n" +
+		"INNER JOIN match m USING (match_id)\n" +
+		"INNER JOIN player_v pw ON m.winner_id = pw.player_id\n" +
+		"INNER JOIN player_v pl ON m.loser_id = pl.player_id\n" +
 		"WHERE match_id = ? AND set = 0";
 
 	public static final String PLAYER_STATS_COLUMNS =
@@ -74,10 +74,10 @@ public class StatisticsService {
 		"GROUP BY m.player_id";
 
 	private static final String TOURNAMENT_EVENT_JOIN = //language=SQL
-	 	"\nLEFT JOIN tournament_event e USING (tournament_event_id)";
+	 	"\nINNER JOIN tournament_event e USING (tournament_event_id)";
 
 	private static final String OPPONENT_JOIN = //language=SQL
-	 	"\nLEFT JOIN player_v o ON o.player_id = opponent_id";
+	 	"\nINNER JOIN player_v o ON o.player_id = opponent_id";
 
 	private static final String OPPONENTS_CRITERIA = //language=SQL
 	 	" AND opponent_id = ANY(?)";

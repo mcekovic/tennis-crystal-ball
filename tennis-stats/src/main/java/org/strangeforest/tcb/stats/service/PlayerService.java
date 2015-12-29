@@ -42,7 +42,7 @@ public class PlayerService {
 
 	private static final String SEASONS_QUERY =
 		"SELECT DISTINCT e.season FROM player_tournament_event_result r\n" +
-		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
+		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE r.player_id = ?\n" +
 		"ORDER BY season DESC";
 

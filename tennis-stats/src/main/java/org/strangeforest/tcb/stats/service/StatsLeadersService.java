@@ -23,14 +23,14 @@ public class StatsLeadersService {
 
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +
-		"LEFT JOIN player_v USING (player_id)\n" +
+		"INNER JOIN player_v USING (player_id)\n" +
 		"WHERE p_%2$s + o_%2$s >= ?%3$s";
 
 	private static final String STATS_LEADERS_QUERY = //language=SQL
 		"WITH stats_leaders AS (\n" +
 		"  SELECT player_id, name, country_id, %1$s AS value\n" +
 		"  FROM %2$s\n" +
-		"  LEFT JOIN player_v USING (player_id)\n" +
+		"  INNER JOIN player_v USING (player_id)\n" +
 		"  WHERE p_%3$s + o_%3$s >= ?%4$s\n" +
 		"), stats_leaders_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, name, country_id, value\n" +

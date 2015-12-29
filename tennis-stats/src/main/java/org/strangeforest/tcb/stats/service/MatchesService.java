@@ -19,9 +19,9 @@ public class MatchesService {
 		"SELECT m.match_id, e.date, e.name AS tournament, e.level, e.surface, m.round," +
 		"  m.winner_id, pw.name AS winner, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser, m.loser_seed, m.loser_entry, m.score\n" +
 		"FROM match m\n" +
-		"LEFT JOIN tournament_event e USING (tournament_event_id)\n" +
-		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id\n" +
-		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id\n" +
+		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
+		"INNER JOIN player_v pl ON pl.player_id = m.loser_id\n" +
 		"WHERE (m.winner_id = ? OR m.loser_id = ?)%1$s\n" +
 		"ORDER BY %2$s OFFSET ?";
 
