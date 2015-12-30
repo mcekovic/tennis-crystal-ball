@@ -52,11 +52,21 @@ public class RankingsService {
 		"  UNION ALL\n" +
 		"  SELECT (season::TEXT || '-12-31')::DATE, player_id, goat_points\n" +
 		"  FROM player_season_grand_slam_goat_points_v\n" +
+		"  UNION ALL\n" +
+		"  SELECT (season::TEXT || '-12-31')::DATE, player_id, goat_points\n" +
+		"  FROM player_best_season_goat_points_v\n" +
+		"), goat_points_summed AS (\n" +
+		"  SELECT g.date%1$s, g.player_id, sum(g.goat_points) OVER (PARTITION BY g.player_id ORDER BY g.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
+		"  FROM goat_points g%2$s\n" +
+		"  WHERE g.player_id = %3$s%4$s\n" +
+		"  ORDER BY %5$s, g.player_id\n" +
+		"), goat_points_numbered AS (\n" +
+		"	SELECT date, age, player_id, rank_value, row_number() OVER (PARTITION BY %5$s, player_id ORDER BY rank_value DESC) row_number\n" +
+		"	FROM goat_points_summed\n" +
 		")\n" +
-		"SELECT g.date%1$s, g.player_id, sum(g.goat_points) OVER (PARTITION BY g.player_id ORDER BY g.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
-		"FROM goat_points g%2$s\n" +
-		"WHERE g.player_id = %3$s%4$s\n" +
-		"ORDER BY %5$s, g.player_id";
+		"SELECT date, age, player_id, rank_value\n" +
+		"FROM goat_points_numbered\n" +
+		"WHERE row_number = 1";
 
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 

@@ -916,7 +916,7 @@ WITH pleayer_season AS (
 	SELECT player_id, season, rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank
 	FROM pleayer_season
 )
-SELECT player_id, goat_points
+SELECT player_id, season, goat_points
 FROM pleayer_season_ranked
 INNER JOIN best_season_goat_points USING (season_rank);
 

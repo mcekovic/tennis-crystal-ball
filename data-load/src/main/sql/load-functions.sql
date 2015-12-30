@@ -101,6 +101,35 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- load_ranking
+
+CREATE OR REPLACE FUNCTION load_ranking(
+	p_rank_date DATE,
+	p_player_name TEXT,
+	p_rank INTEGER,
+	p_rank_points INTEGER
+) RETURNS VOID AS $$
+DECLARE
+	l_player_id INTEGER;
+BEGIN
+	l_player_id = find_player(p_player_name);
+	IF l_player_id IS NULL THEN
+		RAISE EXCEPTION 'Player % not found', p_player_name;
+	END IF;
+	BEGIN
+		INSERT INTO player_ranking
+		(rank_date, player_id, rank, rank_points)
+		VALUES
+		(p_rank_date, l_player_id, p_rank, p_rank_points);
+   EXCEPTION WHEN unique_violation THEN
+		UPDATE player_ranking
+		SET rank = p_rank, rank_points = p_rank_points
+		WHERE rank_date = p_rank_date AND player_id = l_player_id;
+   END;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- map_ext_tournament
 
 CREATE OR REPLACE FUNCTION map_ext_tournament(
