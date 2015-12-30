@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION player_rank(
 	p_date DATE
 ) RETURNS INTEGER AS $$
 BEGIN
-	RETURN (SELECT rank FROM player_ranking WHERE player_id = p_player_id AND rank_date <= p_date ORDER BY rank_date DESC LIMIT 1);
+	RETURN (SELECT rank FROM player_ranking WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1);
 END;
 $$ LANGUAGE plpgsql;
 
