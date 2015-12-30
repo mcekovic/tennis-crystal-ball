@@ -14,12 +14,13 @@ DROP VIEW player_greatest_rivalries_goat_points_v;
 DROP VIEW player_performance_goat_points_v;
 DROP VIEW player_statistics_goat_points_v;
 
+DROP MATERIALIZED VIEW player_weeks_at_no1;
+DROP MATERIALIZED VIEW player_season_weeks_at_no1;
+DROP VIEW no1_player_ranking_v;
 DROP MATERIALIZED VIEW player_current_rank;
 DROP MATERIALIZED VIEW player_best_rank;
 DROP MATERIALIZED VIEW player_best_rank_points;
 DROP MATERIALIZED VIEW player_year_end_rank;
-DROP MATERIALIZED VIEW player_weeks_at_no1;
-DROP MATERIALIZED VIEW player_season_weeks_at_no1;
 
 DROP MATERIALIZED VIEW player_titles;
 DROP MATERIALIZED VIEW player_tournament_event_result;
@@ -35,5 +36,4 @@ DROP VIEW player_match_performance_v;
 DROP VIEW player_match_stats_v;
 DROP VIEW match_for_stats_v;
 DROP VIEW match_for_rivalry_v;
-DROP VIEW no1_player_ranking_v;
 DROP VIEW player_big_wins_v;

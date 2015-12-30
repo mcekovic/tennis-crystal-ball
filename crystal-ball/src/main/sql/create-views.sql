@@ -119,8 +119,8 @@ CREATE UNIQUE INDEX ON player_titles (player_id);
 -- match_for_stats_v
 
 CREATE OR REPLACE VIEW match_for_stats_v AS
-SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.level, e.surface, m.best_of, m.round,
-	m.winner_rank, m.loser_rank, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.w_sets, m.l_sets, m.w_games, m.l_games
+SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.date, e.level, e.surface, m.best_of, m.round,
+	coalesce(m.winner_rank, player_rank(m.winner_id, e.date)) winner_rank, coalesce(m.loser_rank, player_rank(m.loser_id, e.date)) loser_rank, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.w_sets, m.l_sets, m.w_games, m.l_games
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LIKE '%WG') AND (m.outcome IS NULL OR m.outcome <> 'W/O');
@@ -352,12 +352,11 @@ INNER JOIN weeks_at_no1_goat_points ON TRUE;
 -- player_big_wins_v
 
 CREATE OR REPLACE VIEW player_big_wins_v AS
-SELECT m.winner_id AS player_id, e.season, e.date, (mf.match_factor * (wrf.rank_factor + lrf.rank_factor) / 2)::REAL / 100 goat_points
-FROM match m
-INNER JOIN tournament_event e USING (tournament_event_id)
-INNER JOIN big_win_match_factor mf ON mf.level = e.level AND mf.round = m.round
-INNER JOIN big_win_rank_factor wrf ON wrf.rank = coalesce(m.winner_rank, (SELECT r.rank FROM player_ranking r WHERE r.player_id = m.winner_id AND r.rank_date <= e.date ORDER BY r.rank_date DESC LIMIT 1))
-INNER JOIN big_win_rank_factor lrf ON lrf.rank = coalesce(m.loser_rank, (SELECT r.rank FROM player_ranking r WHERE r.player_id = m.loser_id AND r.rank_date <= e.date ORDER BY r.rank_date DESC LIMIT 1));
+SELECT m.winner_id AS player_id, m.season, m.date, (mf.match_factor * (wrf.rank_factor + lrf.rank_factor) / 2)::REAL / 100 goat_points
+FROM match_for_stats_v m
+INNER JOIN big_win_match_factor mf ON mf.level = m.level AND mf.round = m.round
+INNER JOIN big_win_rank_factor wrf ON wrf.rank = m.winner_rank
+INNER JOIN big_win_rank_factor lrf ON lrf.rank = m.loser_rank;
 
 
 -- player_season_big_wins_goat_points_v

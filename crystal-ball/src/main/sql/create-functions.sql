@@ -1,3 +1,15 @@
+-- player_rank
+
+CREATE OR REPLACE FUNCTION player_rank(
+	p_player_id INTEGER,
+	p_date DATE
+) RETURNS INTEGER AS $$
+BEGIN
+	RETURN (SELECT rank FROM player_ranking WHERE player_id = p_player_id AND rank_date <= p_date ORDER BY rank_date DESC LIMIT 1);
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- weeks
 
 CREATE OR REPLACE FUNCTION weeks(
