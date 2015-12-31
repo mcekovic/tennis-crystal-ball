@@ -21,8 +21,8 @@ CREATE OR REPLACE FUNCTION find_player(
 DECLARE
 	l_player_id INTEGER;
 BEGIN
-	SELECT player_id INTO l_player_id FROM player_v
-	WHERE name = p_name;
+	SELECT player_id INTO l_player_id FROM player
+	WHERE first_name || ' ' || last_name = p_name;
 	RETURN l_player_id;
 END;
 $$ LANGUAGE plpgsql;
