@@ -1,5 +1,5 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="legend">
-	<script type="text/javascript">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="legend(forSeason)">
+	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
 			$("#goatLegend").on("shown.bs.collapse", function() {
@@ -11,7 +11,8 @@
 					}
 				});
 				initGOATPointsTable("yearEndRankGOATPointsTable");
-				initGOATPointsTable("bestRankGOATPointsTable");
+				if ([[${!forSeason}]])
+					initGOATPointsTable("bestRankGOATPointsTable");
 				initGOATPointsItem("weeksAtNo1ForGOATPoint");
 				initGOATPointsTable("bigWinMatchFactorTable", {
 					"level": levelFormatter
@@ -21,12 +22,15 @@
 						return row.fromRank == row.toRank ? row.fromRank : row.fromRank + " - " + row.toRank;
 					}
 				});
-				initGOATPointsItem("careerGrandSlamGOATPoints");
+				if ([[${!forSeason}]])
+					initGOATPointsItem("careerGrandSlamGOATPoints");
 				initGOATPointsItem("seasonGrandSlamGOATPoints");
-				initGOATPointsTable("bestSeasonGOATPointsTable");
-				initGOATPointsTable("greatestRivalriesGOATPointsTable");
-				initGOATPointsTable("performanceGOATPointsTable");
-				initGOATPointsTable("statisticsGOATPointsTable");
+				if ([[${!forSeason}]]) {
+					initGOATPointsTable("bestSeasonGOATPointsTable");
+					initGOATPointsTable("greatestRivalriesGOATPointsTable");
+					initGOATPointsTable("performanceGOATPointsTable");
+					initGOATPointsTable("statisticsGOATPointsTable");
+				}
 			});
 		});
 		function initGOATPointsTable(table, formatters) {
@@ -78,7 +82,7 @@
 							</tr>
 							</thead>
 						</table>
-						<table id="bestRankGOATPointsTable" class="table table-condensed table-hover table-striped">
+						<table th:if="${!forSeason}" id="bestRankGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
 							<tr>
 								<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Best Ranking</th>
@@ -92,7 +96,7 @@
 						</div>
 					</div>
 					<div class="col-md-9">
-						<h4>Achievements, Performance and Statistics Points</h4>
+						<h4>Achievements<span th:if="${!forSeason}">, Performance and Statistics</span> Points</h4>
 						<div class="row">
 							<div class="col-md-4">
 								<div>
@@ -118,15 +122,16 @@
 								</table>
 							</div>
 							<div class="col-md-4">
-								<div>
+								<div th:if="${!forSeason}">
 									<strong>Career Grand Slam</strong>
 									<p>+<span id="careerGrandSlamGOATPoints"></span> points for Career Grand Slam</p>
 								</div>
 								<div>
 									<strong>Calendar Grand Slam</strong>
-									<p>+<span id="seasonGrandSlamGOATPoints"></span> points for each Calendar Grand Slam</p>
+									<p>+<span id="seasonGrandSlamGOATPoints"></span> points for<span th:if="${!forSeason}"> each</span> Calendar Grand Slam</p>
 								</div>
 								<br/>
+								<th:block th:if="${!forSeason}">
 								<div>
 									<strong>Best Season Points</strong>
 								</div>
@@ -151,8 +156,9 @@
 									</tr>
 									</thead>
 								</table>
+								</th:block>
 							</div>
-							<div class="col-md-4">
+							<div th:if="${!forSeason}" class="col-md-4">
 								<div>
 									<strong>Performance Points</strong>
 								</div>
