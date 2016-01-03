@@ -165,15 +165,21 @@
 						<th>Best Rank Points</th>
 						<td th:text="${player.bestRankPoints} + ' (' + ${#dates.format(player.bestRankPointsDate, 'dd-MM-yyyy')} + ')'">5000 (1.1.2011)</td>
 					</tr>
-					<tr th:if="${player.goatRankPoints > 0}">
-						<th>GOAT Rank</th>
-						<td th:text="${player.goatRank} + ' (' + ${player.goatRankPoints} + ')'">50 (2500)</td>
-					</tr>
 				</table>
 			</div>
 			<div class="col-md-1">&nbsp;</div>
 			<div class="col-md-4">
 				<table class="table table-condensed text-nowrap">
+					<!--/* Ranking */-->
+					<tr th:if="${player.goatRankPoints > 0}">
+						<th>GOAT Rank</th>
+						<td th:text="${player.goatRank} + ' (' + ${player.goatRankPoints} + ')'">50 (2500)</td>
+					</tr>
+					<tr th:if="${player.weeksAtNo1 > 0}">
+						<th>Weeks at No. 1</th>
+						<td th:text="${player.weeksAtNo1}">50</td>
+					</tr>
+					<tr th:if="${player.goatRankPoints > 0 or player.weeksAtNo1 > 0}"><td colspan="2">&nbsp;</td></tr>
 					<!--/* Tennis */-->
 					<tr th:if="${player.turnedPro > 0}">
 						<th>Turned Pro</th>

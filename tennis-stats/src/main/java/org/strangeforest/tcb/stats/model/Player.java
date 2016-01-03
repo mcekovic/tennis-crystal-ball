@@ -35,6 +35,7 @@ public class Player {
 	private Date bestRankPointsDate;
 	private int goatRank;
 	private int goatRankPoints;
+	private int weeksAtNo1;
 
 	// Tennis
 	private int turnedPro;
@@ -268,6 +269,14 @@ public class Player {
 
 	public void setGoatRankPoints(int goatRankPoints) {
 		this.goatRankPoints = goatRankPoints;
+	}
+
+	public int getWeeksAtNo1() {
+		return weeksAtNo1;
+	}
+
+	public void setWeeksAtNo1(int weeksAtNo1) {
+		this.weeksAtNo1 = weeksAtNo1;
 	}
 
 

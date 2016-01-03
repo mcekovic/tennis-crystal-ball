@@ -19,7 +19,7 @@ public class PlayerService {
 	private static final String PLAYER_QUERY =
 		"SELECT player_id, name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight, hand, backhand,\n" +
 			"titles, grand_slams, tour_finals, masters, olympics,\n" +
-			"current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points,\n" +
+			"current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points, weeks_at_no1,\n" +
 			"turned_pro, coach, web_site, twitter, facebook\n" +
 		"FROM player_v";
 
@@ -102,6 +102,7 @@ public class PlayerService {
 		p.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
 		p.setGoatRank(rs.getInt("goat_rank"));
 		p.setGoatRankPoints(rs.getInt("goat_points"));
+		p.setWeeksAtNo1(rs.getInt("weeks_at_no1"));
 
 		p.setTurnedPro(rs.getInt("turned_pro"));
 		p.setCoach(rs.getString("coach"));
