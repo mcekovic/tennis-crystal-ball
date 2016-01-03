@@ -326,8 +326,8 @@ CREATE UNIQUE INDEX ON player_season_weeks_at_no1 (player_id, season);
 -- player_weeks_at_no1
 
 CREATE MATERIALIZED VIEW player_weeks_at_no1 AS
-SELECT player_id, round(sum(weeks_at_no1)) weeks_at_no1
-FROM no1_player_ranking_v
+SELECT player_id, sum(weeks_at_no1) weeks_at_no1
+FROM player_season_weeks_at_no1
 GROUP BY player_id;
 
 CREATE UNIQUE INDEX ON player_weeks_at_no1 (player_id);
