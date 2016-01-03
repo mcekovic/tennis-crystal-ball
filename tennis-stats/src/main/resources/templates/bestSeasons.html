@@ -95,7 +95,12 @@
 		</thead>
 	</table>
 	<p><i>* Minimum <span th:text="${minSeasonGOATPoints}">25</span> season GOAT points</i></p>
-	<div th:include="fragments/goatLegend :: legend(true)"></div>
+	<br/>
+	<div class="row">
+		<div class="col-md-12">
+			<div th:include="fragments/goatLegend :: legend(true)"></div>
+		</div>
+	</div>
 	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>
