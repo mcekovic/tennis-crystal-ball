@@ -93,7 +93,7 @@
 				</div>
 			</div>
 			<div class="col-md-9">
-				<h4>Achievements<span th:if="${!forSeason}">, Performance and Statistics</span> Points</h4>
+				<h4>Achievements<th:block th:if="${!forSeason}">, Performance and Statistics</th:block> Points</h4>
 				<div class="row">
 					<div class="col-md-4">
 						<div>
@@ -125,7 +125,7 @@
 						</div>
 						<div>
 							<strong>Calendar Grand Slam</strong>
-							<p>+<span id="seasonGrandSlamGOATPoints"></span> points for<span th:if="${!forSeason}"> each</span> Calendar Grand Slam</p>
+							<p>+<span id="seasonGrandSlamGOATPoints"></span> points for<th:block th:if="${!forSeason}"> each</th:block> Calendar Grand Slam</p>
 						</div>
 						<br/>
 						<th:block th:if="${!forSeason}">
