@@ -5,6 +5,7 @@ buildscript {
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
 		classpath 'io.spring.gradle:dependency-management-plugin:0.5.4.RELEASE'
+		classpath 'org.hidetake:gradle-ssh-plugin:1.1.4'
 	}
 }
 
@@ -12,6 +13,7 @@ apply plugin: 'java'
 apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'application'
+apply plugin: 'org.hidetake.ssh'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -50,4 +52,49 @@ dependencies {
 	compile files('lib/GeoLite2-Country.zip')
 	testCompile ('junit:junit:4.12')
 	testCompile ('org.assertj:assertj-core:3.2.0')
+}
+
+remotes {
+	def home = System.properties['user.home']
+	openShift {
+		host = 'tennis-strangeforest.rhcloud.com'
+		user = '5637dc3a0c1e6656ae0001b2'
+		identity = file("${home}/.ssh/id_rsa")
+	}
+}
+
+task quickDeployToOpenShift << {
+	def version = project.property('version')
+	def tennisStats = "tennis-stats-${version}"
+	def tennisStatsJar = "${tennisStats}.jar"
+	def srcPath = 'build/libs'
+	def destPath = "app-root/data/${tennisStats}/lib"
+	ssh.run {
+		session(remotes.openShift) {
+			put "${srcPath}/${tennisStatsJar}.original", destPath
+			execute 'gear stop'
+			execute 'rm -rf app-root/logs/*'
+			execute "mv -f ${destPath}/${tennisStatsJar}.original ${destPath}/${tennisStatsJar}"
+			execute 'gear start'
+		}
+	}
+}
+
+task fullDeployToOpenShift << {
+	def version = project.property('version')
+	def tennisStats = "tennis-stats-${version}"
+	def tennisStatsDist = "${tennisStats}.tar"
+	def srcPath = 'build/distributions'
+	def destPath = 'app-root/data'
+	ssh.run {
+		session(remotes.openShift) {
+			put "${srcPath}/${tennisStatsDist}", destPath
+			execute 'gear stop'
+			execute "rm -rf ${destPath}/${tennisStats}"
+			execute 'rm -rf app-root/logs/*'
+			execute "cd ${destPath}; tar -xvf ${tennisStatsDist}"
+			execute "rm ${destPath}/${tennisStatsDist}"
+			execute 'gear start'
+		}
+	}
 }
