@@ -61,10 +61,10 @@ public class RankingsService {
 		"  WHERE g.player_id = %3$s%4$s\n" +
 		"  ORDER BY %5$s, g.player_id\n" +
 		"), goat_points_numbered AS (\n" +
-		"	SELECT date, age, player_id, rank_value, row_number() OVER (PARTITION BY %5$s, player_id ORDER BY rank_value DESC) row_number\n" +
+		"	SELECT date%6$s, player_id, rank_value, row_number() OVER (PARTITION BY %5$s, player_id ORDER BY rank_value DESC) row_number\n" +
 		"	FROM goat_points_summed\n" +
 		")\n" +
-		"SELECT date, age, player_id, rank_value\n" +
+		"SELECT date%6$s, player_id, rank_value\n" +
 		"FROM goat_points_numbered\n" +
 		"WHERE row_number = 1";
 
@@ -137,7 +137,7 @@ public class RankingsService {
 			case POINTS:
 				return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank_points", playerJoin, playerCondition, dateRangeCondition(dateRange, "r.rank_date"), orderBy);
 			case GOAT_POINTS:
-				return format(PLAYER_GOAT_POINTS_QUERY, byAge ? ", age(g.date, p.dob) AS age" : "", playerJoin, playerCondition, dateRangeCondition(dateRange, "g.date"), orderBy);
+				return format(PLAYER_GOAT_POINTS_QUERY, byAge ? ", age(g.date, p.dob) AS age" : "", playerJoin, playerCondition, dateRangeCondition(dateRange, "g.date"), orderBy, byAge ? ", age" : "");
 			default:
 				throw unknownEnum(rankType);
 		}
