@@ -8,7 +8,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Best Seasons - Find which are the best seasons of Open Era based on 'GOAT' points
 - Greatest Rivalries - Explore greatest rivalries, overall or by tournament level and surface
 - Player Profile - Player information, tournament results, matches, timeline, rivalries, ranking, performance indicators and statistics
-- Ranking Carts - Player ranking and ranking point charts, compare players by constructing custom charts
+- Ranking Charts - Player ranking and ranking point charts, compare players by constructing custom charts
 - Heads-to-Heads - Heads-to-heads clusters among several players (i.e. among 'Big 4')
 - Top Performers - Find top performers in both performance and pressure situations figures
 - Statistics Leaders - Find statistics leaders in different statistics categories, including dominance and break points ratios

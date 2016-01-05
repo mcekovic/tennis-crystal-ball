@@ -98,3 +98,8 @@ task fullDeployToOpenShift << {
 		}
 	}
 }
+
+task checkHealthAtOpenShift << {
+	def health = new groovy.json.JsonSlurper().parse(new URL('http://tennis-strangeforest.rhcloud.com/manage/health'))
+	println "Ultimate Tennis Statistics is ${health.status}."
+}
