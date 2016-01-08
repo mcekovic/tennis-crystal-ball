@@ -38,7 +38,7 @@ dependencies {
 	compile ('org.springframework.boot:spring-boot-starter-actuator')
 	compile ('org.springframework:spring-context-support:4.2.4.RELEASE')
 	compile ('com.google.guava:guava:19.0')
-	compile ('org.postgresql:postgresql:9.4-1206-jdbc42')
+	compile ('org.postgresql:postgresql:9.4.1207.jre7')
 	compile ('org.webjars:bootstrap:3.3.6')
 	compile ('org.webjars:jquery:2.1.4')
 	compile ('org.webjars:jquery-ui:1.11.4')
