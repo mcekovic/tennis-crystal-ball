@@ -13,12 +13,11 @@ CREATE UNIQUE INDEX ON player_current_rank (player_id);
 
 CREATE MATERIALIZED VIEW player_best_rank AS
 WITH best_rank AS (
-	SELECT player_id, (SELECT min(rank) FROM player_ranking r WHERE r.player_id = p.player_id) AS best_rank
-	FROM player p
+	SELECT player_id, min(rank) AS best_rank FROM player_ranking
+	GROUP BY player_id
 )
 SELECT player_id, best_rank, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND r.rank = b.best_rank) AS best_rank_date
-FROM best_rank b
-WHERE best_rank IS NOT NULL;
+FROM best_rank b;
 
 CREATE UNIQUE INDEX ON player_best_rank (player_id);
 
@@ -27,12 +26,12 @@ CREATE UNIQUE INDEX ON player_best_rank (player_id);
 
 CREATE MATERIALIZED VIEW player_best_rank_points AS
 WITH best_rank_points AS (
-	SELECT player_id, (SELECT max(rank_points) FROM player_ranking r WHERE r.player_id = p.player_id) AS best_rank_points
-	FROM player p
+	SELECT player_id, max(rank_points) AS best_rank_points FROM player_ranking
+	WHERE rank_points > 0
+	GROUP BY player_id
 )
 SELECT player_id, best_rank_points, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND r.rank_points = b.best_rank_points) AS best_rank_points_date
-FROM best_rank_points b
-WHERE best_rank_points IS NOT NULL;
+FROM best_rank_points b;
 
 CREATE UNIQUE INDEX ON player_best_rank_points (player_id);
 

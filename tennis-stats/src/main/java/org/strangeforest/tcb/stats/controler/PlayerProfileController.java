@@ -15,6 +15,7 @@ public class PlayerProfileController extends BaseController {
 
 	@Autowired private PlayerService playerService;
 	@Autowired private TournamentService tournamentService;
+	@Autowired private RankingsService rankingsService;
 	@Autowired private DataService dataService;
 	@Autowired private PlayerTimelineService timelineService;
 	@Autowired private StatisticsService statisticsService;
@@ -118,14 +119,15 @@ public class PlayerProfileController extends BaseController {
 		return new ModelAndView("playerRivalries", "playerId", playerId);
 	}
 
-	@RequestMapping("/playerRankingChart")
-	public ModelAndView playerRankingChart(
+	@RequestMapping("/playerRankings")
+	public ModelAndView playerRankings(
 		@RequestParam(value = "playerId") int playerId
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("highlights", rankingsService.getRankingHighlights(playerId));
 		modelMap.addAttribute("seasons", dataService.getSeasons());
-		return new ModelAndView("playerRankingChart", modelMap);
+		return new ModelAndView("playerRankings", modelMap);
 	}
 
 	@RequestMapping("/playerPerformance")

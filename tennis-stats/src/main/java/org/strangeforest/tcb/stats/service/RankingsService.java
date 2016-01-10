@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;
@@ -88,6 +89,40 @@ public class RankingsService {
 		"WHERE g.player_id = %3$s%4$s\n" +
 		"GROUP BY g.season%6$s, g.player_id\n" +
 		"ORDER BY %5$s, g.player_id";
+
+	private static final String PLAYER_RANKING_QUERY =
+		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points, weeks_at_no1\n" +
+		"FROM player_v\n" +
+		"WHERE player_id = ?";
+
+	private static final String PLAYER_YEAR_END_RANK_QUERY =
+		"WITH best_rank AS (\n" +
+		"	SELECT min(year_end_rank) AS best_year_end_rank\n" +
+		"  FROM player_year_end_rank\n" +
+		"  WHERE player_id = ?\n" +
+		")\n" +
+		"SELECT best_year_end_rank, (SELECT string_agg(season::TEXT, ', ') AS seasons FROM player_year_end_rank r WHERE r.player_id = ? AND r.year_end_rank = b.best_year_end_rank) AS best_year_end_rank_seasons\n" +
+		"FROM best_rank b";
+
+	private static final String PLAYER_YEAR_END_RANK_POINTS_QUERY =
+		"WITH best_rank_points AS (\n" +
+		"	SELECT max(year_end_rank_points) AS best_year_end_rank_points\n" +
+		"  FROM player_year_end_rank\n" +
+		"  WHERE player_id = ?\n" +
+		"  AND year_end_rank_points > 0\n" +
+		")\n" +
+		"SELECT best_year_end_rank_points, (SELECT string_agg(season::TEXT, ', ') AS seasons FROM player_year_end_rank r WHERE r.player_id = ? AND r.year_end_rank_points = b.best_year_end_rank_points) AS best_year_end_rank_points_seasons\n" +
+		"FROM best_rank_points b";
+
+	private static final String PLAYER_RANKINGS_FOR_HIGHLIGHTS_QUERY =
+		"SELECT rank, lead(rank, -1) OVER (pr) prev_rank, weeks(lead(rank_date, -1) OVER (pr), rank_date) weeks\n" +
+		"FROM player_ranking\n" +
+		"WHERE player_id = ?\n" +
+		"WINDOW pr AS (ORDER BY rank_date)";
+
+	private static final String PLAYER_YEAR_END_RANKINGS_FOR_HIGHLIGHTS_QUERY =
+		"SELECT year_end_rank FROM player_year_end_rank\n" +
+		"WHERE player_id = ?";
 
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
@@ -345,5 +380,36 @@ public class RankingsService {
 		@Override protected String formatValue(Double d) {
 			return format("%1$.3f", d);
 		}
+	}
+
+
+	// Ranking Highlights
+
+	public RankingHighlights getRankingHighlights(int playerId) {
+		RankingHighlights highlights = new RankingHighlights();
+
+		jdbcTemplate.query(PLAYER_YEAR_END_RANK_QUERY, rs -> {
+			highlights.setBestYearEndRank(rs.getInt("best_year_end_rank"));
+			highlights.setBestYearEndRankSeasons(rs.getString("best_year_end_rank_seasons"));
+		}, playerId, playerId);
+
+		jdbcTemplate.query(PLAYER_YEAR_END_RANK_POINTS_QUERY, rs -> {
+			highlights.setBestYearEndRankPoints(rs.getInt("best_year_end_rank_points"));
+			highlights.setBestYearEndRankPointsSeasons(rs.getString("best_year_end_rank_points_seasons"));
+		}, playerId, playerId);
+
+		jdbcTemplate.query(PLAYER_RANKINGS_FOR_HIGHLIGHTS_QUERY, rs -> {
+			int rank = rs.getInt("rank");
+			Integer prevRank = ResultSetUtil.getInteger(rs, "prev_rank");
+			double weeks = rs.getDouble("weeks");
+			highlights.processWeeksAt(rank, prevRank, weeks);
+		}, playerId);
+
+		jdbcTemplate.query(PLAYER_YEAR_END_RANKINGS_FOR_HIGHLIGHTS_QUERY, rs -> {
+			int rank = rs.getInt("year_end_rank");
+			highlights.processYearEndRank(rank);
+		}, playerId);
+
+		return highlights;
 	}
 }
