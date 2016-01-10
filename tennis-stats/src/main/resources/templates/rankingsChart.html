@@ -16,28 +16,37 @@
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		google.load("visualization", "1.0", {packages:["corechart"]});
-		var isRank, chartData, logScale, legendPosition;
+		var isRank, bySeason, chartData, logScale, pointCount, legendPosition;
 		function drawChart() {
 			var players = $.trim($("#players").val());
 			if (getPlayerCount(players) >= 1)
-				doDrawChart($("#rankChartSize").slider("value"));
+				doDrawChart();
 			else
 				$("#rankChart").html("<div class='row'><div class='col-md-9'><div class='alert alert-warning'>No player selected!</div></div></div>");
 		}
-		function doDrawChart(width) {
+		function doDrawChart() {
 			var players = $("#players").val();
-			var timeSpan = $("#timeSpan").val();
 			var rankType = $("#rankType").val();
+			var timeSpan = $("#timeSpan").val();
+			bySeason = $("#bySeason").prop("checked");
 			isRank = rankType == "RANK";
-			var dataUrl = "/playerRankingsTable?players=" + players + "&timeSpan=" + timeSpan + "&rankType=" + rankType;
+			var dataUrl = "/playerRankingsTable?players=" + players + "&rankType=" + rankType + "&timeSpan=" + timeSpan;
+			if (timeSpan != "1")
+				dataUrl += "&bySeason=" + bySeason;
+			else
+				bySeason = false;
 			if (timeSpan == "CS") {
-				var fromDate = getDate("fromDate");
-				if (fromDate == null)
-					return;
-				var toDate = getDate("toDate");
-				if (toDate == null)
-					return;
-				dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
+				if (bySeason)
+					dataUrl += "&fromSeason=" + $("#fromSeason").val() + "&toSeason=" + $("#toSeason").val();
+				else {
+					var fromDate = getDate("fromDate");
+					if (fromDate == null)
+						return;
+					var toDate = getDate("toDate");
+					if (toDate == null)
+						return;
+					dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
+				}
 			}
 			if (timeSpan == "CR")
 				dataUrl += "&byAge=" + $("#byAge").prop("checked");
@@ -49,15 +58,20 @@
 			$.ajax(dataUrl).done(function(json) {
 				chartData = new google.visualization.DataTable(JSON.stringify(json));
 				logScale = isRank ? useLogScale(json) : false;
+				pointCount = json.rows.length;
 				legendPosition = json.cols.length < 5 ? "bottom" : "right";
-				showChart(chartData, "rankChart", width, isRank, logScale, legendPosition);
+				var width = $("#rankChartSize").slider("value");
+				showChart(chartData, "rankChart", width, isRank, bySeason, logScale, pointCount, legendPosition);
 			}).always(function() {
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			});
 		}
 		function onTimeSpanChange() {
 			var timeSpan = $("#timeSpan").val();
-			$("#dateRange").css("display", timeSpan == "CS" ? "block" : "none");
+			var bySeason = $("#bySeason").prop("checked");
+			$("#bySeasonDiv").css("display", timeSpan != "1" ? "block" : "none");
+			$("#dateRange").css("display", timeSpan == "CS" && !bySeason ? "block" : "none");
+			$("#seasonRange").css("display", timeSpan == "CS" && bySeason ? "block" : "none");
 			$("#byAgeDiv").css("display", timeSpan == "CR" ? "block" : "none");
 		}
 		function onRankTypeChange() {
@@ -72,7 +86,7 @@
 				value: 1000,
 				step: 100,
 				slide: function(event, ui) {
-					showChart(chartData, "rankChart", ui.value, isRank, logScale, legendPosition);
+					showChart(chartData, "rankChart", ui.value, isRank, bySeason, logScale, pointCount, legendPosition);
 				}
 			});
 			onTimeSpanChange();
@@ -115,6 +129,13 @@
 				</select>
 			</div>
 		</div>
+		<div id="bySeasonDiv" class="col-md-2">
+			<div class="checkbox">
+				<label data-toggle="tooltip" data-placement="top" title="Show chart by season (year-end)">
+					<input id="bySeason" type="checkbox" onchange="onTimeSpanChange()"/> By season
+				</label>
+			</div>
+		</div>
 		<div id="dateRange" class="col-md-4">
 			<div class="input-group">
 				<label for="fromDate" class="input-group-addon">From:</label>
@@ -123,8 +144,22 @@
 				<input type="text" id="toDate" maxlength="10" class="form-control"/>
 			</div>
 		</div>
-		<div class="col-md-2">
-			<div id="byAgeDiv" class="checkbox">
+		<div id="seasonRange" class="col-md-4">
+			<div class="input-group">
+				<label for="fromSeason" class="input-group-addon">From:</label>
+				<select id="fromSeason" class="form-control" data-toggle="tooltip" data-placement="top" title="Select from season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
+				<label for="toSeason" class="input-group-addon">To:</label>
+				<select id="toSeason" class="form-control" data-toggle="tooltip" data-placement="top" title="Select to season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
+			</div>
+		</div>
+		<div id="byAgeDiv" class="col-md-2">
+			<div class="checkbox">
 				<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
 					<input id="byAge" type="checkbox"/> By age
 				</label>

@@ -41,9 +41,11 @@ CREATE UNIQUE INDEX ON player_best_rank_points (player_id);
 
 CREATE MATERIALIZED VIEW player_year_end_rank AS
 SELECT DISTINCT player_id, date_part('year', rank_date) AS season,
-   first_value(rank) OVER (PARTITION BY player_id, date_part('year', rank_date) ORDER BY rank_date DESC) AS year_end_rank
+   first_value(rank) OVER (player_season_rank) AS year_end_rank,
+   first_value(rank_points) OVER (player_season_rank) AS year_end_rank_points
 FROM player_ranking
-GROUP BY player_id, season, rank_date, rank;
+GROUP BY player_id, season, rank_date, rank
+WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_date) ORDER BY rank_date DESC);
 
 CREATE INDEX ON player_year_end_rank (player_id);
 

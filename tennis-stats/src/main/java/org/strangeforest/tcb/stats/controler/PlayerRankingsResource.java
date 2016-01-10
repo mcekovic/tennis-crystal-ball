@@ -27,19 +27,23 @@ public class PlayerRankingsResource {
 	public DataTable playerRankingsTable(
 		@RequestParam(value = "playerId", required = false) Integer playerId,
 		@RequestParam(value = "players", required = false) String playersCSV,
+		@RequestParam(value = "rankType", defaultValue = "RANK") RankType rankType,
 		@RequestParam(value = "timeSpan", defaultValue = CAREER) String timeSpan,
+		@RequestParam(value = "bySeason", defaultValue = "false") boolean bySeason,
 		@RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
 		@RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
-		@RequestParam(value = "rankType", defaultValue = "RANK") RankType rankType,
+		@RequestParam(value = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(value = "toSeason", required = false) Integer toSeason,
 		@RequestParam(value = "byAge", defaultValue = "false") boolean byAge,
 		@RequestParam(value = "compensatePoints", defaultValue = "false") boolean compensatePoints
 	) {
-		Range<LocalDate> dateRange = toDateRange(timeSpan, fromDate, toDate);
+		Range<LocalDate> dateRange = !bySeason ? toDateRange(timeSpan, fromDate, toDate) : null;
+		Range<Integer> seasonRange = bySeason ? toSeasonRange(timeSpan, fromSeason, toSeason) : null;
 		if (playerId != null)
-			return rankingsService.getRankingDataTable(playerId, dateRange, rankType, byAge, compensatePoints);
+			return rankingsService.getRankingDataTable(playerId, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		else {
 			List<String> inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
-			return rankingsService.getRankingsDataTable(inputPlayers, dateRange, rankType, byAge, compensatePoints);
+			return rankingsService.getRankingsDataTable(inputPlayers, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		}
 	}
 
@@ -51,6 +55,17 @@ public class PlayerRankingsResource {
 				return RangeUtil.toRange(fromDate, toDate);
 			default:
 				return Range.atLeast(LocalDate.now().minusYears(Long.parseLong(timeSpan)));
+		}
+	}
+
+	private Range<Integer> toSeasonRange(String timeSpan, Integer fromSeason, Integer toSeason) {
+		switch (timeSpan) {
+			case CAREER:
+				return Range.all();
+			case CUSTOM:
+				return RangeUtil.toRange(fromSeason, toSeason);
+			default:
+				return Range.atLeast(LocalDate.now().getYear() - Integer.parseInt(timeSpan));
 		}
 	}
 }

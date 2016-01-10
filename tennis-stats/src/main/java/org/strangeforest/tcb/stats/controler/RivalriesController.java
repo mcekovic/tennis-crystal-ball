@@ -18,6 +18,7 @@ import static java.util.stream.Collectors.*;
 public class RivalriesController extends BaseController {
 
 	@Autowired private RivalriesService rivalriesService;
+	@Autowired private DataService dataService;
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerService playerService;
 
@@ -32,7 +33,7 @@ public class RivalriesController extends BaseController {
 	@RequestMapping("/headsToHeads")
 	public ModelAndView headsToHeads() {
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("seasons", statisticsService.getSeasons());
+		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", Options.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Options.SURFACES);
 		return new ModelAndView("headsToHeads", modelMap);

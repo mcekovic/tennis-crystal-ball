@@ -15,9 +15,4 @@ public class TennisStatsController extends BaseController {
 	public String goatList() {
 		return "goatList";
 	}
-
-	@RequestMapping("/rankingsChart")
-	public String rankingsChart() {
-		return "rankingsChart";
-	}
 }

@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.sql.*;
+import java.sql.Date;
+import java.util.*;
 import java.util.function.*;
 
 import org.postgresql.core.*;
@@ -24,6 +25,9 @@ public class DataService {
 		"  SELECT max(rank_date) FROM player_ranking\n" +
 		") AS last_update";
 
+	private static final String SEASONS_QUERY =
+		"SELECT DISTINCT season FROM tournament_event ORDER BY season";
+
 	private final Supplier<Integer> dbServerVersion = Memoizer.of(() -> dbServerVersion().getVersionNum());
 
 	private Version dbServerVersion() {
@@ -46,5 +50,10 @@ public class DataService {
 	@Cacheable(value = "Global", key = "'LastUpdate'")
 	public Date getLastUpdate() {
 		return jdbcTemplate.queryForObject(LAST_UPDATE_QUERY, Date.class);
+	}
+
+	@Cacheable(value = "Global", key = "'Seasons'")
+	public List<Integer> getSeasons() {
+		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
 	}
 }
