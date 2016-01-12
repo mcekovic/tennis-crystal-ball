@@ -205,17 +205,17 @@ public class RankingsService {
 		switch (rankType) {
 			case RANK:
 				if (bySeason)
-					return format(PLAYER_SEASON_RANKINGS_QUERY, byAge ? ", date_part('year', age(season_end(r.season), p.dob)) AS age" : "", "r.year_end_rank", playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy);
+					return format(PLAYER_SEASON_RANKINGS_QUERY, byAge ? ", date_part('year', age((r.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "", "r.year_end_rank", playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy);
 				else
 					return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank", playerJoin, playerCondition, periodRangeCondition(dateRange, "r.rank_date"), orderBy);
 			case POINTS:
 				if (bySeason)
-					return format(PLAYER_SEASON_RANKINGS_QUERY, byAge ? ", date_part('year', age(season_end(r.season), p.dob)) AS age" : "", "r.year_end_rank_points", playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy);
+					return format(PLAYER_SEASON_RANKINGS_QUERY, byAge ? ", date_part('year', age((r.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "", "r.year_end_rank_points", playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy);
 				else
 					return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank_points", playerJoin, playerCondition, periodRangeCondition(dateRange, "r.rank_date"), orderBy);
 			case GOAT_POINTS:
 				if (bySeason)
-					return format(PLAYER_SEASON_GOAT_POINTS_QUERY, byAge ? ", date_part('year', age(season_end(g.season), p.dob)) AS age" : "", playerJoin, playerCondition, periodRangeCondition(seasonRange, "g.season"), orderBy, byAge ? ", age" : "");
+					return format(PLAYER_SEASON_GOAT_POINTS_QUERY, byAge ? ", date_part('year', age((g.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "", playerJoin, playerCondition, periodRangeCondition(seasonRange, "g.season"), orderBy, byAge ? ", age" : "");
 				else
 					return format(PLAYER_GOAT_POINTS_QUERY, byAge ? ", age(g.date, p.dob) AS age" : "", playerJoin, playerCondition, periodRangeCondition(dateRange, "g.date"), orderBy, byAge ? ", age" : "");
 			default:
