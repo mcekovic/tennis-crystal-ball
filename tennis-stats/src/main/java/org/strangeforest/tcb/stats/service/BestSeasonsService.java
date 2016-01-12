@@ -46,7 +46,7 @@ public class BestSeasonsService {
 		"     grand_slam_titles, grand_slam_finals, grand_slam_semi_finals, tour_finals_titles, tour_finals_finals, masters_titles, masters_finals, olympics_titles, titles\n" +
 		"  FROM pleayer_season\n" +
 		")\n" +
-		"SELECT season_rank, player_id, s.season - date_part('year', p.dob) AS age, p.name, rank() OVER (PARTITION BY player_id ORDER BY season_rank) player_season_rank,\n" +
+		"SELECT season_rank, player_id, s.season - date_part('year', p.dob)::INTEGER AS age, p.name, rank() OVER (PARTITION BY player_id ORDER BY season_rank) player_season_rank,\n" +
 		"  p.country_id, s.season, s.goat_points, s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points,\n" +
 		"  s.grand_slam_titles, s.grand_slam_finals, s.grand_slam_semi_finals, s.tour_finals_titles, s.tour_finals_finals,\n" +
 		"  s.masters_titles, s.masters_finals, s.olympics_titles, s.titles, y.year_end_rank\n" +

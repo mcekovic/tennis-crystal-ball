@@ -22,6 +22,21 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- season_end
+
+CREATE OR REPLACE FUNCTION season_end(
+	p_season INTEGER
+) RETURNS DATE AS $$
+BEGIN
+	IF p_season = date_part('year', current_date)::INTEGER THEN
+		RETURN current_date;
+	ELSE
+		RETURN (p_season::TEXT || '-12-31')::DATE;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- performance_min_entries
 
 CREATE OR REPLACE FUNCTION performance_min_entries(

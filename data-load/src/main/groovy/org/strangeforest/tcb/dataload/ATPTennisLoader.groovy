@@ -36,11 +36,11 @@ class ATPTennisLoader {
 		load {
 			def rows = 0
 			if (full) {
-				for (year in 1968..2014)
+				for (year in 1968..2015)
 					rows += loader.loadFile(baseDir + "atp_matches_${year}.csv")
 				rows += loader.loadFile(baseDir + "atp_matches_1990mc.csv")
 			}
-			def year = 2015
+			def year = 2016
 			rows += loader.loadFile(baseDir + "atp_matches_${year}.csv")
 		}
 		println()

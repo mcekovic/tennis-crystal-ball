@@ -48,20 +48,20 @@ public class RankingsService {
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE r.goat_points > 0\n" +
 		"  UNION ALL\n" +
-		"  SELECT (r.season::TEXT || '-12-31')::DATE, r.player_id, p.goat_points\n" +
+		"  SELECT season_end(r.season), r.player_id, p.goat_points\n" +
 		"  FROM player_year_end_rank r\n" +
 		"  INNER JOIN year_end_rank_goat_points p USING (year_end_rank)\n" +
 		"  UNION ALL\n" +
-		"  SELECT (season::TEXT || '-12-31')::DATE, player_id, goat_points\n" +
+		"  SELECT season_end(season), player_id, goat_points\n" +
 		"  FROM player_season_weeks_at_no1_goat_points_v\n" +
 		"  UNION ALL\n" +
 		"  SELECT date, player_id, goat_points\n" +
 		"  FROM player_big_wins_v\n" +
 		"  UNION ALL\n" +
-		"  SELECT (season::TEXT || '-12-31')::DATE, player_id, goat_points\n" +
+		"  SELECT season_end(season), player_id, goat_points\n" +
 		"  FROM player_season_grand_slam_goat_points_v\n" +
 		"  UNION ALL\n" +
-		"  SELECT (season::TEXT || '-12-31')::DATE, player_id, goat_points\n" +
+		"  SELECT season_end(season), player_id, goat_points\n" +
 		"  FROM player_best_season_goat_points_v\n" +
 		"), goat_points_summed AS (\n" +
 		"  SELECT g.date%1$s, g.player_id, sum(g.goat_points) OVER (PARTITION BY g.player_id ORDER BY g.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
@@ -205,17 +205,17 @@ public class RankingsService {
 		switch (rankType) {
 			case RANK:
 				if (bySeason)
-					return format(PLAYER_SEASON_RANKINGS_QUERY, byAge ? ", date_part('year', age((r.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "", "r.year_end_rank", playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy);
+					return format(PLAYER_SEASON_RANKINGS_QUERY, byAge ? ", date_part('year', age(season_end(r.season), p.dob)) AS age" : "", "r.year_end_rank", playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy);
 				else
 					return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank", playerJoin, playerCondition, periodRangeCondition(dateRange, "r.rank_date"), orderBy);
 			case POINTS:
 				if (bySeason)
-					return format(PLAYER_SEASON_RANKINGS_QUERY, byAge ? ", date_part('year', age((r.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "", "r.year_end_rank_points", playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy);
+					return format(PLAYER_SEASON_RANKINGS_QUERY, byAge ? ", date_part('year', age(season_end(r.season), p.dob)) AS age" : "", "r.year_end_rank_points", playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy);
 				else
 					return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank_points", playerJoin, playerCondition, periodRangeCondition(dateRange, "r.rank_date"), orderBy);
 			case GOAT_POINTS:
 				if (bySeason)
-					return format(PLAYER_SEASON_GOAT_POINTS_QUERY, byAge ? ", date_part('year', age((g.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "", playerJoin, playerCondition, periodRangeCondition(seasonRange, "g.season"), orderBy, byAge ? ", age" : "");
+					return format(PLAYER_SEASON_GOAT_POINTS_QUERY, byAge ? ", date_part('year', age(season_end(g.season), p.dob)) AS age" : "", playerJoin, playerCondition, periodRangeCondition(seasonRange, "g.season"), orderBy, byAge ? ", age" : "");
 				else
 					return format(PLAYER_GOAT_POINTS_QUERY, byAge ? ", age(g.date, p.dob) AS age" : "", playerJoin, playerCondition, periodRangeCondition(dateRange, "g.date"), orderBy, byAge ? ", age" : "");
 			default:
