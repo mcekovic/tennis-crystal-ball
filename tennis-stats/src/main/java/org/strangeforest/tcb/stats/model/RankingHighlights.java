@@ -10,10 +10,18 @@ import static java.util.Comparator.*;
 public class RankingHighlights {
 
 	// Ranking
+	private int currentRank;
+	private int currentRankPoints;
+	private int bestRank;
+	private Date bestRankDate;
+	private int bestRankPoints;
+	private Date bestRankPointsDate;
 	private int bestYearEndRank;
 	private String bestYearEndRankSeasons;
 	private int bestYearEndRankPoints;
 	private String bestYearEndRankPointsSeasons;
+	private int goatRank;
+	private int goatRankPoints;
 	private Map<Integer, Double> weeksAt = new HashMap<>();
 	private Map<Integer, Integer> yearEndsAt = new HashMap<>();
 
@@ -37,6 +45,54 @@ public class RankingHighlights {
 
 
 	// Ranking
+
+	public int getCurrentRank() {
+		return currentRank;
+	}
+
+	public void setCurrentRank(int currentRank) {
+		this.currentRank = currentRank;
+	}
+
+	public int getCurrentRankPoints() {
+		return currentRankPoints;
+	}
+
+	public void setCurrentRankPoints(int currentRankPoints) {
+		this.currentRankPoints = currentRankPoints;
+	}
+
+	public int getBestRank() {
+		return bestRank;
+	}
+
+	public void setBestRank(int bestRank) {
+		this.bestRank = bestRank;
+	}
+
+	public Date getBestRankDate() {
+		return bestRankDate;
+	}
+
+	public void setBestRankDate(Date bestRankDate) {
+		this.bestRankDate = bestRankDate;
+	}
+
+	public int getBestRankPoints() {
+		return bestRankPoints;
+	}
+
+	public void setBestRankPoints(int bestRankPoints) {
+		this.bestRankPoints = bestRankPoints;
+	}
+
+	public Date getBestRankPointsDate() {
+		return bestRankPointsDate;
+	}
+
+	public void setBestRankPointsDate(Date bestRankPointsDate) {
+		this.bestRankPointsDate = bestRankPointsDate;
+	}
 
 	public int getBestYearEndRank() {
 		return bestYearEndRank;
@@ -68,6 +124,22 @@ public class RankingHighlights {
 
 	public void setBestYearEndRankPointsSeasons(String bestYearEndRankPointsSeasons) {
 		this.bestYearEndRankPointsSeasons = bestYearEndRankPointsSeasons;
+	}
+
+	public int getGoatRank() {
+		return goatRank;
+	}
+
+	public void setGoatRank(int goatRank) {
+		this.goatRank = goatRank;
+	}
+
+	public int getGoatRankPoints() {
+		return goatRankPoints;
+	}
+
+	public void setGoatRankPoints(int goatRankPoints) {
+		this.goatRankPoints = goatRankPoints;
 	}
 
 	private Supplier<FrequentRank<Double>> mostFrequentRank = Memoizer.of(() -> findMostFrequentRank(weeksAt));

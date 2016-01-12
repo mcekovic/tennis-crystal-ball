@@ -181,6 +181,18 @@
 		<div class="col-md-4">
 			<h4>Ranking Highlights</h4>
 			<table class="table table-condensed text-nowrap">
+				<tr th:if="${highlights.currentRank > 0}">
+					<th>Current Rank</th>
+					<td th:text="${highlights.currentRank} + ' (' + ${highlights.currentRankPoints} + ')'">10 (3000)</td>
+				</tr>
+				<tr th:if="${highlights.bestRank > 0}">
+					<th>Best Rank</th>
+					<td th:text="${highlights.bestRank} + ' (' + ${#dates.format(highlights.bestRankDate, 'dd-MM-yyyy')} + ')'">5 (1.1.2010)</td>
+				</tr>
+				<tr th:if="${highlights.bestRankPoints > 0}">
+					<th>Best Rank Points</th>
+					<td th:text="${highlights.bestRankPoints} + ' (' + ${#dates.format(highlights.bestRankPointsDate, 'dd-MM-yyyy')} + ')'">5000 (1.1.2011)</td>
+				</tr>
 				<tr th:if="${highlights.bestYearEndRank > 0}">
 					<th>Best Year-End Rank</th>
 					<td th:text="${highlights.bestYearEndRank} + ' (' + ${highlights.bestYearEndRankSeasons} + ')'">10 (2001, 2003)</td>
@@ -196,6 +208,10 @@
 				<tr th:if="${highlights.mostFrequentYearEndRank}" th:with="mostFrequentRank=${highlights.mostFrequentYearEndRank}">
 					<th>Most Frequent Year-End Rank</th>
 					<td th:text="${mostFrequentRank.rank} + ' (' + ${mostFrequentRank.duration} + ' year' + ${mostFrequentRank.duration > 1 ? 's' : ''} + ')'">10 (3 years)</td>
+				</tr>
+				<tr th:if="${highlights.goatRankPoints > 0}">
+					<th>GOAT Rank</th>
+					<td th:text="${highlights.goatRank} + ' (' + ${highlights.goatRankPoints} + ')'">50 (2500)</td>
 				</tr>
 			</table>
 		</div>
