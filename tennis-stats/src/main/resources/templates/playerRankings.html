@@ -104,11 +104,11 @@
 		<div id="rankingBySeasonDiv" class="col-md-2">
 			<div class="checkbox">
 				<label data-toggle="tooltip" data-placement="top" title="Show chart by season (year-end)">
-					<input id="rankingBySeason" type="checkbox" onchange="onTimeSpanChange()"/> By season
+					<input id="rankingBySeason" type="checkbox" onchange="onRankingTimeSpanChange()"/> By season
 				</label>
 			</div>
 		</div>
-		<div id="rankingDateRange" class="col-md-4">
+		<div id="rankingDateRange" class="col-md-4" style="display: none">
 			<div class="input-group">
 				<label for="rankingFromDate" class="input-group-addon">From:</label>
 				<input type="text" id="rankingFromDate" maxlength="10" class="form-control"/>
@@ -116,7 +116,7 @@
 				<input type="text" id="rankingToDate" maxlength="10" class="form-control"/>
 			</div>
 		</div>
-		<div id="rankingSeasonRange" class="col-md-4">
+		<div id="rankingSeasonRange" class="col-md-4" style="display: none">
 			<div class="input-group">
 				<label for="rankingFromSeason" class="input-group-addon">From:</label>
 				<select id="rankingFromSeason" class="form-control" data-toggle="tooltip" data-placement="top" title="Select from season">
