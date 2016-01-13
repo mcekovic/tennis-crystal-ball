@@ -101,7 +101,7 @@ public class RankingsService {
 		"  FROM player_year_end_rank\n" +
 		"  WHERE player_id = ?\n" +
 		")\n" +
-		"SELECT best_year_end_rank, (SELECT string_agg(season::TEXT, ', ') AS seasons FROM player_year_end_rank r WHERE r.player_id = ? AND r.year_end_rank = b.best_year_end_rank) AS best_year_end_rank_seasons\n" +
+		"SELECT best_year_end_rank, (SELECT string_agg(season::TEXT, ', ' ORDER BY season) AS seasons FROM player_year_end_rank r WHERE r.player_id = ? AND r.year_end_rank = b.best_year_end_rank) AS best_year_end_rank_seasons\n" +
 		"FROM best_rank b";
 
 	private static final String PLAYER_YEAR_END_RANK_POINTS_QUERY =
@@ -111,7 +111,7 @@ public class RankingsService {
 		"  WHERE player_id = ?\n" +
 		"  AND year_end_rank_points > 0\n" +
 		")\n" +
-		"SELECT best_year_end_rank_points, (SELECT string_agg(season::TEXT, ', ') AS seasons FROM player_year_end_rank r WHERE r.player_id = ? AND r.year_end_rank_points = b.best_year_end_rank_points) AS best_year_end_rank_points_seasons\n" +
+		"SELECT best_year_end_rank_points, (SELECT string_agg(season::TEXT, ', ' ORDER BY season) AS seasons FROM player_year_end_rank r WHERE r.player_id = ? AND r.year_end_rank_points = b.best_year_end_rank_points) AS best_year_end_rank_points_seasons\n" +
 		"FROM best_rank_points b";
 
 	private static final String PLAYER_RANKINGS_FOR_HIGHLIGHTS_QUERY =

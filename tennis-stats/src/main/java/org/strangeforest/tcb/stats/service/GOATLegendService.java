@@ -38,14 +38,9 @@ public class GOATLegendService {
 		"SELECT season_grand_slam FROM grand_slam_goat_points";
 
 	private static final String PERF_STAT_GOAT_POINTS_QUERY = //language=SQL
-		"WITH goat_points AS (\n" +
-		"  SELECT sort_order, name AS category, goat_points\n" +
-		"  FROM %1$s\n" +
-		"  INNER JOIN %2$s USING (category_id)\n" +
-		"  ORDER BY sort_order, category, rank\n" +
-		")\n" +
-		"SELECT category, string_agg(goat_points::TEXT, ', ') AS goat_points\n" +
-		"FROM goat_points\n" +
+		"SELECT name AS category, string_agg(goat_points::TEXT, ', ' ORDER BY rank) AS goat_points\n" +
+		"FROM %1$s\n" +
+		"INNER JOIN %2$s USING (category_id)\n" +
 		"GROUP BY sort_order, category\n" +
 		"ORDER BY sort_order, category";
 
