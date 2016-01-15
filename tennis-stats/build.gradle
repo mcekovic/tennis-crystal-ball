@@ -38,7 +38,7 @@ dependencies {
 	compile ('org.springframework.boot:spring-boot-starter-actuator')
 	compile ('org.springframework:spring-context-support:4.2.4.RELEASE')
 	compile ('com.google.guava:guava:19.0')
-	compile ('org.postgresql:postgresql:9.4.1207.jre7')
+	compile ('org.postgresql:postgresql:9.4.1207')
 	compile ('org.webjars:bootstrap:3.3.6')
 	compile ('org.webjars:jquery:2.1.4')
 	compile ('org.webjars:jquery-ui:1.11.4')
@@ -46,12 +46,12 @@ dependencies {
 	compile ('org.webjars.bower:jquery.bootgrid:1.2.0') {
 		exclude group: 'org.webjars.bower'
 	}
-	compile ('com.maxmind.geoip2:geoip2:2.3.1') {
+	compile ('com.maxmind.geoip2:geoip2:2.6.0') {
 		exclude group: 'com.google.http-client'
 	}
 	compile files('lib/GeoLite2-Country.zip')
 	testCompile ('junit:junit:4.12')
-	testCompile ('org.assertj:assertj-core:3.2.0')
+	testCompile ('org.assertj:assertj-core:3.3.0')
 }
 
 remotes {
