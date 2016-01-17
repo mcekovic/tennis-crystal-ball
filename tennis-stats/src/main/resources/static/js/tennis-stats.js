@@ -184,6 +184,11 @@ function surfaceName(surface) {
 	}
 }
 
+// Indoor Formatter
+function indoorFormatter(column, row) {
+	return row.indoor ? "Indoor" : "Outdoor";
+}
+
 // Tournament Formatter
 function tournamentFormatter(column, row) {
 	return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</span>";
@@ -196,12 +201,12 @@ function resultFormatter(column, row) {
 
 // Match Formatter
 function matchFormatter(column, row) {
-	return formatMatchPlayer(row.winnerId, row.winner, row.winnerSeed, row.winnerEntry) + " d. " + formatMatchPlayer(row.loserId, row.loser, row.loserSeed, row.loserEntry);
+	return formatMatchPlayer(row.winner) + " d. " + formatMatchPlayer(row.loser);
 }
 
-function formatMatchPlayer(id, name, seed, entry) {
-	return "<a href='/playerProfile?playerId=" + id + "' title='Show profile'>" + name
-		+ (seed ? (" (" + seed  + (entry ? " " + entry : "") + ")") : (entry ? " (" + entry + ")" : "")) + "</a>";
+function formatMatchPlayer(player) {
+	return "<a href='/playerProfile?playerId=" + player.id + "' title='Show profile'>" + player.name
+		+ (player.seed ? (" (" + player.seed  + (player.entry ? " " + player.entry : "") + ")") : (player.entry ? " (" + player.entry + ")" : "")) + "</a>";
 }
 
 // Misc Formatter

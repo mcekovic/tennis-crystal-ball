@@ -15,8 +15,6 @@ public class PlayerMatchesResource {
 
 	@Autowired private MatchesService matchesService;
 
-	private static final int MAX_MATCHES = 10000;
-
 	private static Map<String, String> ORDER_MAP = new TreeMap<>();
 	static {
 		ORDER_MAP.put("date", "date");
@@ -44,7 +42,6 @@ public class PlayerMatchesResource {
 	) {
 		MatchFilter filter = new MatchFilter(season, level, surface, tournamentId, tournamentEventId, round, OpponentFilter.forMatches(opponent, playerId), WonFilter.forMatches(won, playerId), searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
-		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
-		return matchesService.getPlayerMatchesTable(playerId, filter, orderBy, pageSize, current);
+		return matchesService.getPlayerMatchesTable(playerId, filter, orderBy, rowCount, current);
 	}
 }

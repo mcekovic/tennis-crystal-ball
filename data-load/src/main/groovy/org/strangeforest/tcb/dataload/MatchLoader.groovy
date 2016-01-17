@@ -14,7 +14,7 @@ class MatchLoader extends BaseCSVLoader {
 
 	String loadSql() {
 		'{call load_match(' +
-			':ext_tournament_id, :season, :tournament_date, :tournament_name, :event_name, :tournament_level, :surface, :indoor, :draw_size, :rank_points, ' +
+			':ext_tournament_id, :season, :tournament_date, :tournament_name, :event_name, :tournament_level, :surface, :indoor, :draw_type, :draw_size, :rank_points, ' +
 			':match_num, :round, :best_of, ' +
 			':ext_winner_id, :winner_seed, :winner_entry, :winner_rank, :winner_rank_points, :winner_age, :winner_country_id, :winner_name, :winner_height, :winner_hand, ' +
 			':ext_loser_id, :loser_seed, :loser_entry, :loser_rank, :loser_rank_points, :loser_age, :loser_country_id, :loser_name, :loser_height, :loser_hand, ' +
@@ -50,6 +50,7 @@ class MatchLoader extends BaseCSVLoader {
 		def surface = string record.surface
 		params.surface = mapSurface surface
 		params.indoor = mapIndoor surface
+		params.draw_type = mappedLevel != 'F' ? 'KO' : 'RR';
 		params.draw_size = drawSize
 		params.rank_points = mapRankPoints mappedLevel
 
@@ -247,4 +248,34 @@ class MatchLoader extends BaseCSVLoader {
 		String name
 		String round
 	}
+
+	static def SAME_TOURNAMENT_MAP = [
+		'2013': '393',
+		'2041': '393',
+		'6116': '409',
+		'M020': '339',
+		'0891': '891',
+		'0451': '451',
+		'3937': '301',
+		'1720': '334',
+		'3944': '316',
+		'712': '650',
+		'725': '650',
+		'6718': '359',
+		'417': '80',
+		'3943': '80',
+		'3938': '347',
+		'3942': '313',
+		'506': '303',
+		'3939': '344',
+		'2063': '360',
+		'803': '499',
+		'805': '437',
+		'661': '615',
+		'6710': '615',
+		'7290': '468',
+		'820': '405',
+		'7163': '2027',
+		'5012': '426',
+	]
 }

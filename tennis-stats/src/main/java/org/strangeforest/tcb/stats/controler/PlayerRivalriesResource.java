@@ -15,8 +15,6 @@ public class PlayerRivalriesResource {
 
 	@Autowired private RivalriesService rivalriesService;
 
-	private static final int MAX_RIVALRIES = 1000;
-
 	private static Map<String, String> ORDER_MAP = new TreeMap<>();
 	static {
 		ORDER_MAP.put("bestRank", "best_rank");
@@ -37,7 +35,6 @@ public class PlayerRivalriesResource {
 	) {
 		PlayerListFilter filter = new PlayerListFilter(searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
-		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
-		return rivalriesService.getPlayerRivalriesTable(playerId, filter, orderBy, pageSize, current);
+		return rivalriesService.getPlayerRivalriesTable(playerId, filter, orderBy, rowCount, current);
 	}
 }

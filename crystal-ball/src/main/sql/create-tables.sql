@@ -36,6 +36,7 @@ CREATE TABLE tournament_event (
 	level tournament_level NOT NULL,
 	surface surface,
 	indoor BOOLEAN NOT NULL,
+	draw_type draw_type,
 	draw_size SMALLINT,
 	rank_points INTEGER,
 	UNIQUE (tournament_id, season)

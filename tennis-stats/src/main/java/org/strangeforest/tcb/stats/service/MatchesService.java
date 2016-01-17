@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
@@ -17,7 +18,7 @@ public class MatchesService {
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
 		"SELECT m.match_id, e.date, e.name AS tournament, e.level, e.surface, m.round," +
-		"  m.winner_id, pw.name AS winner, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser, m.loser_seed, m.loser_entry, m.score\n" +
+		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.score\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
@@ -41,14 +42,8 @@ public class MatchesService {
 						rs.getString("level"),
 						rs.getString("surface"),
 						rs.getString("round"),
-						rs.getInt("winner_id"),
-						rs.getString("winner"),
-						rs.getInt("winner_seed"),
-						rs.getString("winner_entry"),
-						rs.getInt("loser_id"),
-						rs.getString("loser"),
-						rs.getInt("loser_seed"),
-						rs.getString("loser_entry"),
+						mapMatchPlayer(rs, "winner_"),
+						mapMatchPlayer(rs, "loser_"),
 						rs.getString("score")
 					));
 				}
@@ -66,5 +61,14 @@ public class MatchesService {
 		params.addAll(filter.getParamList());
 		params.add(offset);
 		return params.toArray();
+	}
+
+	static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix) throws SQLException {
+		return new MatchPlayer(
+			rs.getInt(prefix + "id"),
+			rs.getString(prefix + "name"),
+			rs.getInt(prefix + "seed"),
+			rs.getString(prefix + "entry")
+		);
 	}
 }

@@ -9,7 +9,7 @@ import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
 @RestController
-public class PlayerTournamentsResource {
+public class TournamentEventsResource {
 
 	@Autowired private TournamentService tournamentService;
 
@@ -17,27 +17,25 @@ public class PlayerTournamentsResource {
 	static {
 		ORDER_MAP.put("date", "date");
 		ORDER_MAP.put("name", "name");
+		ORDER_MAP.put("level", "level");
 		ORDER_MAP.put("surface", "surface");
-		ORDER_MAP.put("drawSize", "draw_size");
-		ORDER_MAP.put("result", "result");
+		ORDER_MAP.put("draw", "draw_type, draw_size");
 	}
 	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("date");
 
-	@RequestMapping("/playerTournamentsTable")
-	public BootgridTable<PlayerTournamentEvent> playerTournamentsTable(
-		@RequestParam(value = "playerId") int playerId,
+	@RequestMapping("/tournamentEventsTable")
+	public BootgridTable<TournamentEvent> playerTournamentsTable(
 		@RequestParam(value = "season", required = false) Integer season,
 		@RequestParam(value = "level", required = false) String level,
 		@RequestParam(value = "surface", required = false) String surface,
 		@RequestParam(value = "tournamentId", required = false) Integer tournamentId,
-		@RequestParam(value = "result", required = false) String result,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam(value = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		TournamentEventResultFilter filter = new TournamentEventResultFilter(season, level, surface, tournamentId, result, searchPhrase);
+		TournamentEventFilter filter = new TournamentEventFilter(season, level, surface, tournamentId, null, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		return tournamentService.getPlayerTournamentEventResultsTable(playerId, filter, orderBy, rowCount, current);
+		return tournamentService.getTournamentEventsTable(filter, orderBy, rowCount, current);
 	}
 }

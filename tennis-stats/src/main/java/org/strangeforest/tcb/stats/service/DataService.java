@@ -26,7 +26,7 @@ public class DataService {
 		") AS last_update";
 
 	private static final String SEASONS_QUERY =
-		"SELECT DISTINCT season FROM tournament_event ORDER BY season";
+		"SELECT DISTINCT season FROM tournament_event ORDER BY season DESC";
 
 	private final Supplier<Integer> dbServerVersion = Memoizer.of(() -> dbServerVersion().getVersionNum());
 
