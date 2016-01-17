@@ -53,7 +53,7 @@ public class PlayerProfileController extends BaseController {
 		@RequestParam(value = "opponentId", required = false) Integer opponentId
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		List<Tournament> tournaments = tournamentService.getPlayerTournaments(playerId);
+		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
@@ -79,8 +79,8 @@ public class PlayerProfileController extends BaseController {
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		List<Tournament> tournaments = tournamentService.getPlayerTournaments(playerId);
-		List<TournamentEvent> tournamentEvents = tournamentService.getPlayerTournamentEvents(playerId);
+		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
+		List<TournamentEventItem> tournamentEvents = tournamentService.getPlayerTournamentEvents(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);

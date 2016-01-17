@@ -152,9 +152,7 @@ CREATE OR REPLACE FUNCTION merge_tournament(
 	p_name TEXT,
 	p_level TEXT,
 	p_surface TEXT,
-	p_indoor BOOLEAN,
-	p_draw_size SMALLINT,
-	p_rank_points INTEGER
+	p_indoor BOOLEAN
 ) RETURNS INTEGER AS $$
 DECLARE
 	l_tournament_id INTEGER;
@@ -162,9 +160,9 @@ BEGIN
 	l_tournament_id = map_ext_tournament(p_ext_tournament_id);
 	IF l_tournament_id IS NULL THEN
 		INSERT INTO tournament
-		(name, level, surface, indoor, draw_size, rank_points)
+		(name, level, surface, indoor)
 		VALUES
-		(p_name, p_level::tournament_level, p_surface::surface, p_indoor, p_draw_size, p_rank_points)
+		(p_name, p_level::tournament_level, p_surface::surface, p_indoor)
 		RETURNING tournament_id INTO l_tournament_id;
 		INSERT INTO tournament_mapping
 		(ext_tournament_id, tournament_id)
@@ -172,7 +170,7 @@ BEGIN
 		(p_ext_tournament_id, l_tournament_id);
    ELSE
 		UPDATE tournament
-		SET name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor, draw_size = p_draw_size, rank_points = p_rank_points
+		SET name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor
 		WHERE tournament_id = l_tournament_id;
    END IF;
 	RETURN l_tournament_id;
@@ -198,7 +196,7 @@ DECLARE
 	l_tournament_id INTEGER;
 	l_tournament_event_id INTEGER;
 BEGIN
-	l_tournament_id = merge_tournament(p_ext_tournament_id, p_tournament_name, p_level, p_surface, p_indoor, p_draw_size, p_rank_points);
+	l_tournament_id = merge_tournament(p_ext_tournament_id, p_tournament_name, p_level, p_surface, p_indoor);
 	BEGIN
 		INSERT INTO tournament_event
 		(tournament_id, season, date, name, level, surface, indoor, draw_size)

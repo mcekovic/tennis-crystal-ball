@@ -1,15 +1,15 @@
 package org.strangeforest.tcb.stats.model;
 
-public class TournamentEvent {
+public class TournamentItem {
 
 	private final int id;
 	private final String name;
-	private final int season;
+	private final String level;
 
-	public TournamentEvent(int id, String name, int season) {
+	public TournamentItem(int id, String name, String level) {
 		this.id = id;
 		this.name = name;
-		this.season = season;
+		this.level = level;
 	}
 
 	public int getId() {
@@ -20,7 +20,7 @@ public class TournamentEvent {
 		return name;
 	}
 
-	public int getSeason() {
-		return season;
+	public String getLevel() {
+		return level;
 	}
 }

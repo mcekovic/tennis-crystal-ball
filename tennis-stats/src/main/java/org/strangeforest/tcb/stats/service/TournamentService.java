@@ -42,11 +42,11 @@ public class TournamentService {
 		"ORDER BY %2$s OFFSET ?";
 
 
-	public List<Tournament> getPlayerTournaments(int playerId) {
+	public List<TournamentItem> getPlayerTournaments(int playerId) {
 		return jdbcTemplate.query(PLAYER_TOURNAMENTS_QUERY, this::tournamentMapper, playerId);
 	}
 
-	public List<TournamentEvent> getPlayerTournamentEvents(int playerId) {
+	public List<TournamentEventItem> getPlayerTournamentEvents(int playerId) {
 		return jdbcTemplate.query(PLAYER_TOURNAMENT_EVENTS_QUERY, this::tournamentEventMapper, playerId);
 	}
 
@@ -84,17 +84,17 @@ public class TournamentService {
 		return params.toArray();
 	}
 
-	private Tournament tournamentMapper(ResultSet rs, int rowNum) throws SQLException {
+	private TournamentItem tournamentMapper(ResultSet rs, int rowNum) throws SQLException {
 		int tournamentId = rs.getInt("tournament_id");
 		String name = rs.getString("name");
 		String level = rs.getString("level");
-		return new Tournament(tournamentId, name, level);
+		return new TournamentItem(tournamentId, name, level);
 	}
 
-	private TournamentEvent tournamentEventMapper(ResultSet rs, int rowNum) throws SQLException {
+	private TournamentEventItem tournamentEventMapper(ResultSet rs, int rowNum) throws SQLException {
 		int tournamentEventId = rs.getInt("tournament_event_id");
 		String name = rs.getString("name");
 		int season = rs.getInt("season");
-		return new TournamentEvent(tournamentEventId, name, season);
+		return new TournamentEventItem(tournamentEventId, name, season);
 	}
 }

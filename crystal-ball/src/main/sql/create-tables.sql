@@ -7,9 +7,7 @@ CREATE TABLE tournament (
 	city TEXT,
 	level tournament_level NOT NULL,
 	surface surface,
-	indoor BOOLEAN NOT NULL,
-	draw_size SMALLINT,
-	rank_points INTEGER
+	indoor BOOLEAN NOT NULL
 );
 
 CREATE INDEX ON tournament (level);
