@@ -47,6 +47,36 @@ VALUES
 ('D', 'QF',    65, NULL, NULL, TRUE),
 ('D', 'R16',   40, NULL, NULL, TRUE);
 
+DELETE FROM tournament_event_rank_factor;
+INSERT INTO tournament_event_rank_factor
+(rank_from, rank_to, rank_factor)
+VALUES
+(  1,   1, 100),
+(  2,   2,  85),
+(  3,   3,  75),
+(  4,   4,  67),
+(  5,   5,  60),
+(  6,   6,  55),
+(  7,   8,  50),
+(  9,  10,  45),
+( 11,  13,  40),
+( 14,  16,  35),
+( 17,  20,  30),
+( 21,  25,  25),
+( 26,  30,  20),
+( 31,  35,  16),
+( 36,  40,  13),
+( 41,  45,  10),
+( 46,  50,   8),
+( 51,  55,   6),
+( 56,  60,   5),
+( 61,  69,   4),
+( 70,  79,   3),
+( 80,  99,   2),
+(101, 200,   1);
+
+
+
 DELETE FROM year_end_rank_goat_points;
 INSERT INTO year_end_rank_goat_points
 (year_end_rank, goat_points)

@@ -48,6 +48,16 @@ CREATE INDEX ON tournament_event (level);
 CREATE INDEX ON tournament_event (surface);
 
 
+-- tournament_event_rank_factor
+
+CREATE TABLE tournament_event_rank_factor (
+	rank_from INTEGER NOT NULL,
+	rank_to INTEGER NOT NULL,
+	rank_factor INTEGER,
+	PRIMARY KEY (rank_from)
+);
+
+
 -- player
 
 CREATE TABLE player (

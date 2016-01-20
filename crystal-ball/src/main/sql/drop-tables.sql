@@ -17,6 +17,7 @@ DROP TABLE statistics_category CASCADE;
 DROP TABLE match_stats CASCADE;
 DROP TABLE set_score CASCADE;
 DROP TABLE match CASCADE;
+DROP TABLE tournament_event_rank_factor CASCADE;
 DROP TABLE tournament_event CASCADE;
 DROP TABLE tournament_mapping CASCADE;
 DROP TABLE tournament CASCADE;
