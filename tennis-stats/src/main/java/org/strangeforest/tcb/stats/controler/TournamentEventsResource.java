@@ -13,6 +13,8 @@ public class TournamentEventsResource {
 
 	@Autowired private TournamentService tournamentService;
 
+	private static final int MAX_TOURNAMENT_EVENTS = 1000;
+
 	private static Map<String, String> ORDER_MAP = new TreeMap<>();
 	static {
 		ORDER_MAP.put("date", "date");
@@ -36,6 +38,7 @@ public class TournamentEventsResource {
 	) {
 		TournamentEventFilter filter = new TournamentEventFilter(season, level, surface, tournamentId, null, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		return tournamentService.getTournamentEventsTable(filter, orderBy, rowCount, current);
+		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENT_EVENTS;
+		return tournamentService.getTournamentEventsTable(filter, orderBy, pageSize, current);
 	}
 }

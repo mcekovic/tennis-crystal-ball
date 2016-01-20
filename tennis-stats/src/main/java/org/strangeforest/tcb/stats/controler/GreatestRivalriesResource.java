@@ -15,6 +15,8 @@ public class GreatestRivalriesResource {
 
 	@Autowired private RivalriesService rivalriesService;
 
+	private static final int MAX_RIVALRIES = 1000;
+
 	private static Map<String, String> ORDER_MAP = new TreeMap<>();
 	static {
 		ORDER_MAP.put("matches", "matches");
@@ -34,7 +36,8 @@ public class GreatestRivalriesResource {
 	) {
 		RivalryFilter filter = new RivalryFilter(Range.all(), level, surface);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		return rivalriesService.getGreatestRivalriesTable(filter, orderBy, rowCount, current);
+		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
+		return rivalriesService.getGreatestRivalriesTable(filter, orderBy, pageSize, current);
 	}
 
 	@RequestMapping("/greatestRivalriesMinMatches")

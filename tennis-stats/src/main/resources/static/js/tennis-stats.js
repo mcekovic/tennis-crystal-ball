@@ -204,8 +204,12 @@ function matchFormatter(column, row) {
 	return formatMatchPlayer(row.winner) + " d. " + formatMatchPlayer(row.loser);
 }
 
-function formatMatchPlayer(player) {
-	return "<a href='/playerProfile?playerId=" + player.id + "' title='Show profile'>" + player.name
+function matchFormatterHighlightWinner(column, row) {
+	return formatMatchPlayer(row.winner, true) + " d. " + formatMatchPlayer(row.loser);
+}
+
+function formatMatchPlayer(player, winner) {
+	return "<a href='/playerProfile?playerId=" + player.id + "' title='Show profile'>" + (winner ? "<strong>" : "") + player.name + (winner ? "</strong>" : "")
 		+ (player.seed ? (" (" + player.seed  + (player.entry ? " " + player.entry : "") + ")") : (player.entry ? " (" + player.entry + ")" : "")) + "</a>";
 }
 
