@@ -125,7 +125,7 @@ SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.d
 	m.winner_rank, m.loser_rank, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.w_sets, m.l_sets, m.w_games, m.l_games
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
-WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LIKE '%WG') AND (m.outcome IS NULL OR m.outcome <> 'W/O');
+WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (m.outcome IS NULL OR m.outcome <> 'W/O');
 
 
 -- match_for_rivalry_v
@@ -134,7 +134,7 @@ CREATE OR REPLACE VIEW match_for_rivalry_v AS
 SELECT m.match_id, m.winner_id, m.loser_id, e.season, e.level, e.surface
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
-WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (e.level <> 'D' OR e.name LIKE '%WG');
+WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D');
 
 
 -- player_match_performance_v
