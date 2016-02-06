@@ -1,17 +1,20 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.time.*;
 import java.util.*;
 
 public class BigGunsTimeline {
 
 	private final List<BigGunsPlayerTimeline> players;
 	private final SortedSet<Integer> seasons;
+	private final LocalDate now;
 	private List<BigGunsSeason> bigGunsSeasons;
 	private List<BigGunsEra> bigGunsEras;
 
 	public BigGunsTimeline() {
 		players = new ArrayList<>();
 		seasons = new TreeSet<>(Comparator.reverseOrder());
+		now = LocalDate.now();
 	}
 
 	public List<BigGunsPlayerTimeline> getPlayers() {
@@ -50,10 +53,12 @@ public class BigGunsTimeline {
 		int seasonCount = bigGunsSeasons.size();
 		for (int i = 0; i < seasonCount; i++) {
 			BigGunsSeason bigGunsSeason = bigGunsSeasons.get(i);
-			BigGunsPlayerTimeline bestPlayer = bigGunsSeason.getBestPlayer();
-			BigGunsPlayerTimeline prevBestPlayer = i > 0 ? bigGunsSeasons.get(i - 1).getBestPlayer() : null;
-			BigGunsPlayerTimeline nextBestPlayer = i < seasonCount - 1 ? bigGunsSeasons.get(i + 1).getBestPlayer() : null;
-			bigGunsSeason.setEraPlayer(prevBestPlayer == null || prevBestPlayer != nextBestPlayer ? bestPlayer : prevBestPlayer);
+			if (isEligibleForEra(bigGunsSeason.getSeason())) {
+				BigGunsPlayerTimeline bestPlayer = bigGunsSeason.getBestPlayer();
+				BigGunsPlayerTimeline prevBestPlayer = i > 0 ? bigGunsSeasons.get(i - 1).getBestPlayer() : null;
+				BigGunsPlayerTimeline nextBestPlayer = i < seasonCount - 1 ? bigGunsSeasons.get(i + 1).getBestPlayer() : null;
+				bigGunsSeason.setEraPlayer(prevBestPlayer == null || prevBestPlayer != nextBestPlayer ? bestPlayer : prevBestPlayer);
+			}
 		}
 		bigGunsEras = new ArrayList<>();
 		List<BigGunsSeason> eraSeasons = null;
@@ -67,6 +72,11 @@ public class BigGunsTimeline {
 			eraSeasons.add(bigGunsSeason);
 		}
 		bigGunsEras.add(new BigGunsEra(eraSeasons));
+	}
+
+	private boolean isEligibleForEra(int season) {
+		int year = now.getYear();
+		return season < year || (season == year && now.getMonthValue() >= 11);
 	}
 
 

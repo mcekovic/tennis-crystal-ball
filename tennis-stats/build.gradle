@@ -39,6 +39,10 @@ dependencies {
 	compile ('org.springframework:spring-context-support:4.2.4.RELEASE')
 	compile ('com.google.guava:guava:19.0')
 	compile ('org.postgresql:postgresql:9.4.1207')
+	def jacksonVersion = '2.7.1'
+	compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+	compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
+	compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion-1")
 	compile ('org.webjars:bootstrap:3.3.6')
 	compile ('org.webjars:jquery:2.2.0')
 	compile ('org.webjars:jquery-ui:1.11.4')
