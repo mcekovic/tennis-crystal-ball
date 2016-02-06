@@ -131,7 +131,16 @@ class MatchLoader extends BaseCSVLoader {
 		switch (level) {
 			case 'G': return 'G'
 			case 'F': return name.contains("WCT") ? 'A' : 'F'
-			case 'M': return name.startsWith('Masters') && drawSize <= 16 ? 'F' : 'M'
+			case 'M':
+				if (name.startsWith('Masters') && drawSize <= 16)
+					return 'F'
+				else if (
+					(name.equals('Delray Beach') && season == 1985) ||
+					(name.equals('Cincinnati') && (1968..1980).contains(season))
+				)
+					return 'A'
+				else
+					return 'M'
 			case 'A':
 				if (name.contains('Olympics'))
 					return 'O'
