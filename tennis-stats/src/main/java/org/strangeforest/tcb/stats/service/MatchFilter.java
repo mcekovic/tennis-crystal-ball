@@ -1,11 +1,11 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
-import java.util.Objects;
 
 import com.google.common.base.MoreObjects.*;
 
 import static com.google.common.base.Strings.*;
+import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class MatchFilter extends TournamentEventFilter {
@@ -53,7 +53,7 @@ public class MatchFilter extends TournamentEventFilter {
 	private final OpponentFilter opponentFilter;
 	private final WonFilter wonFilter;
 
-	private static final String ROUND_CRITERION          = " AND m.round = ?::match_round";
+	private static final String ROUND_CRITERION          = " AND m.round %1$s ?::match_round";
 	private static final String MATCHES_SEARCH_CRITERION = " AND (e.name ILIKE '%' || ? || '%' OR pw.name ILIKE '%' || ? || '%' OR pl.name ILIKE '%' || ? || '%')";
 	private static final String STATS_SEARCH_CRITERION   = " AND (e.name ILIKE '%' || ? || '%' OR o.name ILIKE '%' || ? || '%')";
 
@@ -67,7 +67,7 @@ public class MatchFilter extends TournamentEventFilter {
 	@Override protected void appendCriteria(StringBuilder criteria) {
 		super.appendCriteria(criteria);
 		if (!isNullOrEmpty(round))
-			criteria.append(ROUND_CRITERION);
+			criteria.append(format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
 		opponentFilter.appendCriteria(criteria);
 		wonFilter.appendCriteria(criteria);
 	}
@@ -75,7 +75,7 @@ public class MatchFilter extends TournamentEventFilter {
 	@Override public List<Object> getParamList() {
 		List<Object> params = super.getParamList();
 		if (!isNullOrEmpty(round))
-			params.add(round);
+			params.add(round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 		opponentFilter.addParams(params);
 		wonFilter.addParams(params);
 		return params;

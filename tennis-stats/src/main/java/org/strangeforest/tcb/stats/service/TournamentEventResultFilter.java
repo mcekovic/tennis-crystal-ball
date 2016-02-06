@@ -1,18 +1,18 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
-import java.util.Objects;
 
 import com.google.common.base.MoreObjects.*;
 
 import static com.google.common.base.Strings.*;
+import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class TournamentEventResultFilter extends TournamentEventFilter {
 
 	private final String result;
 
-	private static final String RESULT_CRITERION = " AND r.result = ?::tournament_event_result";
+	private static final String RESULT_CRITERION = " AND r.result %1$s ?::tournament_event_result";
 
 	public TournamentEventResultFilter(Integer season, String level, String surface, Integer tournamentId, String result, String searchPhrase) {
 		super(season, level, surface, tournamentId, null, searchPhrase);
@@ -22,13 +22,13 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 	@Override protected void appendCriteria(StringBuilder criteria) {
 		super.appendCriteria(criteria);
 		if (!isNullOrEmpty(result))
-			criteria.append(RESULT_CRITERION);
+			criteria.append(format(RESULT_CRITERION, result.endsWith("+") ? ">=" : "="));
 	}
 
 	@Override public List<Object> getParamList() {
 		List<Object> params = super.getParamList();
 		if (!isNullOrEmpty(result))
-			params.add(result);
+			params.add(result.endsWith("+") ? result.substring(0, result.length() - 1) : result);
 		return params;
 	}
 
