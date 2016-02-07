@@ -55,7 +55,7 @@ CREATE INDEX ON player_year_end_rank (player_id);
 CREATE MATERIALIZED VIEW player_tournament_event_result AS
 WITH match_result AS (
 	SELECT m.winner_id AS player_id, tournament_event_id,
-		(CASE WHEN m.round = 'F' AND e.level <> 'D' THEN 'W' ELSE m.round::TEXT END)::tournament_event_result AS result
+		(CASE WHEN m.round = 'F' AND e.level <> 'D' AND (outcome IS NULL OR outcome <> 'ABD') THEN 'W' ELSE m.round::TEXT END)::tournament_event_result AS result
 	FROM match m
 	INNER JOIN tournament_event e USING (tournament_event_id)
 	UNION ALL
@@ -125,7 +125,7 @@ SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.d
 	m.winner_rank, m.loser_rank, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.w_sets, m.l_sets, m.w_games, m.l_games
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
-WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (m.outcome IS NULL OR m.outcome <> 'W/O');
+WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D') AND (m.outcome IS NULL OR m.outcome = 'RET');
 
 
 -- match_for_rivalry_v

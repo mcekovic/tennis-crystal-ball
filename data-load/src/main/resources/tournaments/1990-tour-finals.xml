@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1990" name="Tour Finals" date="1990-11-12" ext-id="605">
+		<level>F</level>
+		<surface>P</surface>
+		<indoor>true</indoor>
+		<draw-type>RR</draw-type>
+		<draw-size>8</draw-size>
+		<player seed="1" name="Stefan Edberg"/>
+		<player seed="2" name="Boris Becker"/>
+		<player seed="3" name="Ivan Lendl"/>
+		<player seed="4" name="Andre Agassi"/>
+		<player seed="5" name="Pete Sampras"/>
+		<player seed="6" name="Andres Gomez"/>
+		<player seed="7" name="Thomas Muster"/>
+		<player seed="8" name="Emilio Sanchez"/>
+		<!-- RR -->
+		<match match-num="1" round="RR" best-of="3" winner="Stefan Edberg" loser="Pete Sampras" score="7-5 6-4"/>
+		<match match-num="2" round="RR" best-of="3" winner="Boris Becker" loser="Ivan Lendl" score="1-6 7-6 6-4"/>
+		<match match-num="3" round="RR" best-of="3" winner="Thomas Muster" loser="Andres Gomez" score="7-5 5-7 6-4"/>
+		<match match-num="4" round="RR" best-of="3" winner="Boris Becker" loser="Thomas Muster" score="7-5 6-4"/>
+		<match match-num="5" round="RR" best-of="3" winner="Ivan Lendl" loser="Andres Gomez" score="6-4 6-1"/>
+		<match match-num="6" round="RR" best-of="3" winner="Andre Agassi" loser="Emilio Sanchez" score="6-0 6-3"/>
+		<match match-num="7" round="RR" best-of="3" winner="Stefan Edberg" loser="Andre Agassi" score="7-6 4-6 7-6"/>
+		<match match-num="8" round="RR" best-of="3" winner="Boris Becker" loser="Andres Gomez" score="4-6 6-3 6-3"/>
+		<match match-num="9" round="RR" best-of="3" winner="Pete Sampras" loser="Emilio Sanchez" score="6-2 6-4"/>
+		<match match-num="10" round="RR" best-of="3" winner="Stefan Edberg" loser="Emilio Sanchez" score="6-7 6-3 6-1"/>
+		<match match-num="11" round="RR" best-of="3" winner="Ivan Lendl" loser="Thomas Muster" score="6-3 6-3"/>
+		<match match-num="12" round="RR" best-of="3" winner="Andre Agassi" loser="Pete Sampras" score="6-4 6-2"/>
+		<!-- SF -->
+		<match match-num="13" round="SF" best-of="3" winner="Stefan Edberg" loser="Ivan Lendl" score="6-4 6-2"/>
+		<match match-num="14" round="SF" best-of="3" winner="Andre Agassi" loser="Boris Becker" score="6-2 6-4"/>
+		<!-- F -->
+		<match match-num="15" round="F" best-of="5" winner="Andre Agassi" loser="Stefan Edberg" score="5-7 7-6 7-5 6-2"/>
+	</tournament>
+</tournament-data>

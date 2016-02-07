@@ -1,10 +1,14 @@
 package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
+import org.strangeforest.tcb.util.*
+
+import java.sql.*
+import java.util.Date
 
 abstract class BaseXMLLoader {
 
-	private Sql sql
+	protected Sql sql
 
 	private static def CLASSPATH_PREFIX = 'classpath:'
 	private static def PROGRESS_LINE_WRAP = 100
@@ -13,10 +17,8 @@ abstract class BaseXMLLoader {
 		this.sql = sql
 	}
 
-	abstract String loadSql(def item)
 	abstract int batch()
-	abstract Map params(def item)
-	abstract String toString(def item)
+	abstract boolean loadItem(item)
 
 	def loadFile(String file) {
 		println "Loading file '$file'"
@@ -26,11 +28,7 @@ abstract class BaseXMLLoader {
 		def rows = 0
 
 		for (item in data.children()) {
-			def loadSql = loadSql(item)
-			if (loadSql) {
-				int updated = sql.executeUpdate(params(item), loadSql)
-				if (!updated)
-					throw new NoSuchElementException('Cannot find ' + toString(item))
+			if (loadItem(item)) {
 				if (++rows % batch == 0) {
 					sql.commit()
 					print '.'
@@ -64,14 +62,36 @@ abstract class BaseXMLLoader {
 	// Data conversion
 
 	static String string(s, d = null) {
-		s ? s : d
+		s = s?.toString()
+		s ?: d
 	}
 
 	static Integer integer(i) {
+		i = i?.toString()
 		i ? i.toInteger() : null
 	}
 
+	static Short smallint(i) {
+		i = i?.toString()
+		i ? i.toShort() : null
+	}
+
+	static Boolean bool(b, d = null) {
+		b = b?.toString()
+		b ? b.toBoolean() : d
+	}
+
 	static java.sql.Date date(d) {
-		d ? new java.sql.Date(Date.parse('dd-MM-yyyy', d).time) : null
+		d = d?.toString()
+		d ? new java.sql.Date(Date.parse('yyyy-MM-dd', d).time) : null
+	}
+
+	static Array shortArray(conn, a) {
+		conn.createArrayOf('smallint', a)
+	}
+
+	static String country(c) {
+		c = c?.toString()
+		c && CountryUtil.code(c) ? c : null
 	}
 }

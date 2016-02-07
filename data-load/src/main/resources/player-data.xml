@@ -5,9 +5,9 @@
 		<residence>Bottmingen, Switzerland</residence>
 		<weight>85</weight>
 		<backhand>1</backhand>
-		<turnedPro>1998</turnedPro>
+		<turned-pro>1998</turned-pro>
 		<coach>Severin Luthi and Stefan Edberg</coach>
-		<webSite>www.rogerfederer.com</webSite>
+		<web-site>www.rogerfederer.com</web-site>
 		<twitter>rogerfederer</twitter>
 		<facebook>Federer</facebook>
 	</player>
@@ -16,7 +16,7 @@
 		<residence>Belleville, IL, USA</residence>
 		<weight>70</weight>
 		<backhand>2</backhand>
-		<turnedPro>1972</turnedPro>
+		<turned-pro>1972</turned-pro>
 		<twitter>JimmyConnors</twitter>
 	</player>
 	<player name="Ivan Lendl">
@@ -24,7 +24,7 @@
 		<residence>Goshen, CT, USA</residence>
 		<weight>79</weight>
 		<backhand>1</backhand>
-		<turnedPro>1978</turnedPro>
+		<turned-pro>1978</turned-pro>
 		<coach>Jay Bosworth</coach>
 	</player>
 	<player name="Rafael Nadal">
@@ -32,9 +32,9 @@
 		<residence>Manacor, Mallorca, Spain</residence>
 		<weight>85</weight>
 		<backhand>2</backhand>
-		<turnedPro>2001</turnedPro>
+		<turned-pro>2001</turned-pro>
 		<coach>Toni Nadal</coach>
-		<webSite>www.rafaelnadal.com</webSite>
+		<web-site>www.rafaelnadal.com</web-site>
 		<twitter>RafaelNadal</twitter>
 		<facebook>Nadal</facebook>
 	</player>
@@ -43,16 +43,16 @@
 		<residence>New York, NY, USA</residence>
 		<weight>75</weight>
 		<backhand>1</backhand>
-		<turnedPro>1978</turnedPro>
+		<turned-pro>1978</turned-pro>
 	</player>
 	<player name="Novak Djokovic">
 		<birthplace>Belgrade, Serbia</birthplace>
 		<residence>Monte Carlo, Monaco</residence>
 		<weight>78</weight>
 		<backhand>2</backhand>
-		<turnedPro>2003</turnedPro>
-		<coach>Boris Becker, Marian Vajda</coach>
-		<webSite>novakdjokovic.com</webSite>
+		<turned-pro>2003</turned-pro>
+		<coach>Boris Becker2, Marian Vajda</coach>
+		<web-site>novakdjokovic.com</web-site>
 		<twitter>DjokerNole</twitter>
 		<facebook>djokovic.official</facebook>
 	</player>
@@ -61,16 +61,16 @@
 		<residence>Los Angeles, California, USA</residence>
 		<weight>77</weight>
 		<backhand>1</backhand>
-		<turnedPro>1988</turnedPro>
+		<turned-pro>1988</turned-pro>
 		<coach>Paul Annacone</coach>
-		<webSite>www.petesampras.com</webSite>
+		<web-site>www.petesampras.com</web-site>
 	</player>
 	<player name="Andre Agassi">
 		<birthplace>Las Vegas, Nevada, USA</birthplace>
 		<residence>Las Vegas, Nevada, USA</residence>
 		<weight>80</weight>
 		<backhand>2</backhand>
-		<turnedPro>1986</turnedPro>
+		<turned-pro>1986</turned-pro>
 		<coach>Darren Cahill</coach>
 		<twitter>AndreAgassi</twitter>
 	</player>
@@ -79,7 +79,7 @@
 		<residence>Monte Carlo, Monaco</residence>
 		<weight>73</weight>
 		<backhand>2</backhand>
-		<turnedPro>1973</turnedPro>
+		<turned-pro>1973</turned-pro>
 		<coach>Lennart Bergelin</coach>
 	</player>
 	<player name="Boris Becker">
@@ -87,7 +87,7 @@
 		<residence>Monte Carlo, Monaco</residence>
 		<weight>85</weight>
 		<backhand>1</backhand>
-		<turnedPro>1998</turnedPro>
+		<turned-pro>1998</turned-pro>
 		<coach>Mike Depalmer, Jr.</coach>
 	</player>
 	<player name="Stefan Edberg">
@@ -95,7 +95,7 @@
 		<residence>London, England</residence>
 		<weight>77</weight>
 		<backhand>1</backhand>
-		<turnedPro>1983</turnedPro>
+		<turned-pro>1983</turned-pro>
 		<coach>Tony Pickard</coach>
 	</player>
 	<player name="Mats Wilander">
@@ -103,7 +103,7 @@
 		<residence>Sun Valley, Idaho, USA</residence>
 		<weight>77</weight>
 		<backhand>1</backhand>
-		<turnedPro>1981</turnedPro>
+		<turned-pro>1981</turned-pro>
 		<twitter>mwilander</twitter>
 	</player>
 	<player name="Andy Murray">
@@ -111,9 +111,9 @@
 		<residence>London, England</residence>
 		<weight>84</weight>
 		<backhand>2</backhand>
-		<turnedPro>2005</turnedPro>
+		<turned-pro>2005</turned-pro>
 		<coach>Amelie Mauresmo, Jonas Bjorkman</coach>
-		<webSite>www.andymurray.com</webSite>
+		<web-site>www.andymurray.com</web-site>
 		<twitter>andy_murray</twitter>
 		<facebook>andymurrayofficial</facebook>
 	</player>
@@ -122,9 +122,9 @@
 		<residence>Valencia, Spain</residence>
 		<weight>73</weight>
 		<backhand>2</backhand>
-		<turnedPro>2000</turnedPro>
+		<turned-pro>2000</turned-pro>
 		<coach>Francisco Fogues</coach>
-		<webSite>www.davidferrer.com</webSite>
+		<web-site>www.davidferrer.com</web-site>
 		<twitter>DavidFerrer87</twitter>
 	</player>
 	<player name="Tomas Berdych">
@@ -132,9 +132,9 @@
 		<residence>Monte Carlo, Monaco</residence>
 		<weight>91</weight>
 		<backhand>2</backhand>
-		<turnedPro>2002</turnedPro>
+		<turned-pro>2002</turned-pro>
 		<coach>Dani Vallverdu</coach>
-		<webSite>tomasberdych.cz</webSite>
+		<web-site>tomasberdych.cz</web-site>
 		<twitter>tomasberdych</twitter>
 		<facebook>tomasberdych</facebook>
 	</player>
@@ -143,7 +143,7 @@
 		<residence>Tandil, Argentina</residence>
 		<weight>97</weight>
 		<backhand>2</backhand>
-		<turnedPro>2005</turnedPro>
+		<turned-pro>2005</turned-pro>
 		<twitter>delpotrojuan</twitter>
 		<facebook>JuanMartinDelPotro.Ok</facebook>
 	</player>
@@ -152,9 +152,9 @@
 		<residence>Bradenton, Florida - LA, CA</residence>
 		<weight>84</weight>
 		<backhand>1</backhand>
-		<turnedPro>1996</turnedPro>
+		<turned-pro>1996</turned-pro>
 		<coach>Alexander Waske</coach>
-		<webSite>www.tommyhaas.com</webSite>
+		<web-site>www.tommyhaas.com</web-site>
 		<twitter>TommyHaas13</twitter>
 		<facebook>pages/Tommy-Haas/133144376702967</facebook>
 	</player>
@@ -163,9 +163,9 @@
 		<residence>Gingins, Switzerland</residence>
 		<weight>91</weight>
 		<backhand>2</backhand>
-		<turnedPro>2004</turnedPro>
+		<turned-pro>2004</turned-pro>
 		<coach>Nicolas Escude &amp; Thierry Ascione</coach>
-		<webSite>www.jowiltsonga.fr</webSite>
+		<web-site>www.jowiltsonga.fr</web-site>
 		<twitter>tsonga7</twitter>
 		<facebook>tsonga</facebook>
 	</player>
@@ -174,9 +174,9 @@
 		<residence>St. Barthelemy, Switzerland</residence>
 		<weight>81</weight>
 		<backhand>1</backhand>
-		<turnedPro>2002</turnedPro>
+		<turned-pro>2002</turned-pro>
 		<coach>Magnus Norman</coach>
-		<webSite>www.stanwawrinka.com</webSite>
+		<web-site>www.stanwawrinka.com</web-site>
 		<twitter>stanwawrinka</twitter>
 		<facebook>stanwawrinka</facebook>
 	</player>
@@ -185,9 +185,9 @@
 		<residence>Neuchatel, Switzerland</residence>
 		<weight>75</weight>
 		<backhand>1</backhand>
-		<turnedPro>2002</turnedPro>
+		<turned-pro>2002</turned-pro>
 		<coach>Sergi Bruguera and Sebastien Grosjean</coach>
-		<webSite>richardgasquet.net</webSite>
+		<web-site>richardgasquet.net</web-site>
 		<twitter>richardgasquet1</twitter>
 	</player>
 	<player name="Tommy Robredo">
@@ -195,9 +195,9 @@
 		<residence>San Cugat del Valles, Spain</residence>
 		<weight>75</weight>
 		<backhand>1</backhand>
-		<turnedPro>1998</turnedPro>
+		<turned-pro>1998</turned-pro>
 		<coach>Karim Perona</coach>
-		<webSite>www.tommy-robredo.com</webSite>
+		<web-site>www.tommy-robredo.com</web-site>
 		<twitter>TRobredo</twitter>
 	</player>
 	<player name="Marin Cilic">
@@ -205,9 +205,9 @@
 		<residence>Monte Carlo, Monaco</residence>
 		<weight>82</weight>
 		<backhand>2</backhand>
-		<turnedPro>2005</turnedPro>
+		<turned-pro>2005</turned-pro>
 		<coach>Goran Ivanisevic</coach>
-		<webSite>www.marin-cilic.net</webSite>
+		<web-site>www.marin-cilic.net</web-site>
 		<twitter>cilic_marin</twitter>
 		<facebook>MarinCilic</facebook>
 	</player>
@@ -216,8 +216,8 @@
 		<residence>Monte Carlo, Monaco</residence>
 		<weight>87</weight>
 		<backhand>2</backhand>
-		<turnedPro>2001</turnedPro>
-		<webSite>robinsoderling.se</webSite>
+		<turned-pro>2001</turned-pro>
+		<web-site>robinsoderling.se</web-site>
 		<twitter>RSoderling</twitter>
 	</player>
 	<player name="Mikhail Youzhny">
@@ -225,7 +225,7 @@
 		<residence>Moscow, Russia</residence>
 		<weight>73</weight>
 		<backhand>1</backhand>
-		<turnedPro>1999</turnedPro>
+		<turned-pro>1999</turned-pro>
 		<coach>Boris Sobkin</coach>
 	</player>
 	<player name="Gael Monfils">
@@ -233,8 +233,8 @@
 		<residence>Switzerland</residence>
 		<weight>80</weight>
 		<backhand>2</backhand>
-		<turnedPro>2004</turnedPro>
-		<webSite>www.lamonf.com</webSite>
+		<turned-pro>2004</turned-pro>
+		<web-site>www.lamonf.com</web-site>
 		<twitter>Gael_Monfils</twitter>
 		<facebook>pages/Gael-Monfils-Tennis/128049253953369</facebook>
 	</player>
@@ -243,9 +243,9 @@
 		<residence>Bradenton, Florida, USA</residence>
 		<weight>77</weight>
 		<backhand>2</backhand>
-		<turnedPro>2007</turnedPro>
+		<turned-pro>2007</turned-pro>
 		<coach>Dante Bottini &amp; Michael Chang</coach>
-		<webSite>www.keinishikori.com</webSite>
+		<web-site>www.keinishikori.com</web-site>
 		<twitter>keinishikori</twitter>
 		<facebook>keinishikori</facebook>
 	</player>
@@ -254,9 +254,9 @@
 		<residence>Monte Carlo, Monaco</residence>
 		<weight>98</weight>
 		<backhand>2</backhand>
-		<turnedPro>2008</turnedPro>
+		<turned-pro>2008</turned-pro>
 		<coach>Ivan Ljubicic &amp; Riccardo Piatti</coach>
-		<webSite>milosraonicofficial.com</webSite>
+		<web-site>milosraonicofficial.com</web-site>
 		<twitter>milosraonic</twitter>
 		<facebook>MilosRaonicOfficial</facebook>
 	</player>
@@ -265,9 +265,9 @@
 		<residence>Belgrade, Serbia</residence>
 		<weight>80</weight>
 		<backhand>2</backhand>
-		<turnedPro>2002</turnedPro>
+		<turned-pro>2002</turned-pro>
 		<coach>Dirk Hordorff</coach>
-		<webSite>www.jtipsarevic.com</webSite>
+		<web-site>www.jtipsarevic.com</web-site>
 		<twitter>TipsarevicJanko</twitter>
 		<facebook>JankoOfficial</facebook>
 	</player>
@@ -276,9 +276,9 @@
 		<residence>Belgrade, Serbia</residence>
 		<weight>86</weight>
 		<backhand>2</backhand>
-		<turnedPro>2006</turnedPro>
+		<turned-pro>2006</turned-pro>
 		<coach>Jack Reader</coach>
-		<webSite>www.viktortroicki.com</webSite>
+		<web-site>www.viktortroicki.com</web-site>
 		<twitter>troicki_viktor</twitter>
 		<facebook>viktortroicki</facebook>
 	</player>

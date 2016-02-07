@@ -119,7 +119,7 @@ class MatchLoader extends BaseCSVLoader {
 		return params
 	}
 
-	static def mapExtTournamentId(String extTourneyId, String level, DavisCupTournamentInfo dcInfo) {
+	static mapExtTournamentId(String extTourneyId, String level, DavisCupTournamentInfo dcInfo) {
 		switch (level) {
 			case 'D': return dcInfo.extId
 			case 'O': return level
@@ -127,7 +127,7 @@ class MatchLoader extends BaseCSVLoader {
 		}
 	}
 
-	static def mapLevel(String level, short drawSize, String name, int season, String extTournamentId) {
+	static mapLevel(String level, short drawSize, String name, int season, String extTournamentId) {
 		switch (level) {
 			case 'G': return 'G'
 			case 'F': return name.contains("WCT") ? 'A' : 'F'
@@ -177,7 +177,7 @@ class MatchLoader extends BaseCSVLoader {
 		}
 	}
 
-	static def mapSurface(String surface) {
+	static mapSurface(String surface) {
 		switch (surface) {
 			case 'Hard': return 'H'
 			case 'Clay': return 'C'
@@ -187,14 +187,14 @@ class MatchLoader extends BaseCSVLoader {
 		}
 	}
 
-	static def mapIndoor(String surface) {
+	static mapIndoor(String surface) {
 		switch (surface) {
 			case 'Carpet': return true
 			default: return false
 		}
 	}
 
-	static def mapRound(String round) {
+	static mapRound(String round) {
 		switch (round) {
 			case 'R63': return 'R64'
 			case 'R31': return 'R32'
@@ -206,7 +206,7 @@ class MatchLoader extends BaseCSVLoader {
 		}
 	}
 
-	static def mapEntry(String entry) {
+	static mapEntry(String entry) {
 		if (entry) {
 			if (entry.endsWith(') W'))
 				return 'WC'
@@ -216,7 +216,7 @@ class MatchLoader extends BaseCSVLoader {
 		entry
 	}
 
-	static def mapRankPoints(String level) {
+	static mapRankPoints(String level) {
 		switch (level) {
 			case 'G': return 2000
 			case 'F': return 1500
@@ -229,7 +229,7 @@ class MatchLoader extends BaseCSVLoader {
 
 	// Davis Cup
 
-	static def DavisCupTournamentInfo extractDCTournamentInfo(String name) {
+	static DavisCupTournamentInfo extractDCTournamentInfo(String name) {
 		String[] parts = name.split(' ')
 		if (parts.length < 4)
 			throw new IllegalArgumentException("Invalid Davis Cup tournament name: $name")
@@ -240,7 +240,7 @@ class MatchLoader extends BaseCSVLoader {
 		new DavisCupTournamentInfo(extId: 'D' + group, name: 'Davis Cup ' + group, round: mapDCRound(round, group))
 	}
 
-	static def mapDCRound(String round, String group) {
+	static mapDCRound(String round, String group) {
 		switch (round) {
 			case 'F': return 'F'
 			case 'SF': return 'SF'
@@ -250,7 +250,7 @@ class MatchLoader extends BaseCSVLoader {
 		}
 	}
 
-	static def dcMatchNum(String extTourneyId, String matchNum) {
+	static dcMatchNum(String extTourneyId, String matchNum) {
 		if (extTourneyId.startsWith('D'))
 			extTourneyId = extTourneyId.substring(1)
 		extTourneyId + matchNum;
@@ -262,7 +262,7 @@ class MatchLoader extends BaseCSVLoader {
 		String round
 	}
 
-	static def SAME_TOURNAMENT_MAP = [
+	static SAME_TOURNAMENT_MAP = [
 		'2013': '393',
 		'2041': '393',
 		'6116': '409',

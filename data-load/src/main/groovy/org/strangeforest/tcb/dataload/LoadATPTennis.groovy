@@ -8,6 +8,8 @@ loader.loadRankings(new RankingLoader(sqlPool))
 loader.loadMatches(new MatchLoader(sqlPool))
 
 def sql = sqlPool.removeFirst()
-loader.loadAdditionalPlayerData(new AdditionalPlayerDataLoader(sql))
+//loader.loadAdditionalData(new AdditionalPlayerDataLoader(sql), 'player', 'classpath:/player-data.xml')
+//loader.loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1990-tour-finals.xml')
+//loader.loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1981-monte-carlo.xml')
 
 loader.refreshComputedData(sql)

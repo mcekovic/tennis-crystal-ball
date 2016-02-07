@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1981" name="Monte Carlo" date="1981-04-13" ext-id="410">
+		<level>M</level>
+		<surface>C</surface>
+		<draw-type>KO</draw-type>
+		<draw-size>32</draw-size>
+		<player seed="1" name="Bjorn Borg"/>
+		<player seed="2" name="Jimmy Connors"/>
+		<player seed="3" name="Guillermo Vilas"/>
+		<player seed="5" name="Jose Luis Clerc"/>
+		<player seed="6" name="Yannick Noah"/>
+		<player seed="7" name="Balazs Taroczy"/>
+		<player seed="8" name="Tomas Smid"/>
+		<player entry="Q" name="Gabriel Urpi"/>
+		<!-- R32 -->
+		<match match-num="1" round="R32" best-of="3" winner="Victor Pecci" loser="Bjorn Borg" score="6-0 4-6 7-5"/>
+		<match match-num="2" round="R32" best-of="3" winner="Jimmy Connors" loser="Corrado Barazzutti" score="6-4 7-6"/>
+		<match match-num="3" round="R32" best-of="3" winner="Guillermo Vilas" loser="Ilie Nastase" score="6-0 6-0"/>
+		<match match-num="4" round="R32" best-of="3" winner="Jose Higueras" loser="Jose Luis Clerc" score="7-6 6-1"/>
+		<match match-num="5" round="R32" best-of="3" winner="Yannick Noah" loser="Mario Martinez" score="6-2 6-2"/>
+		<match match-num="6" round="R32" best-of="3" winner="Balazs Taroczy" loser="Kjell Johansson" score="6-1 6-0"/>
+		<match match-num="7" round="R32" best-of="3" winner="Tomas Smid" loser="Thierry Tulasne" score="3-6 7-6 6-2"/>
+		<match match-num="8" round="R32" best-of="3" winner="Ricardo Cano" loser="Pavel Slozil" score="7-6 6-0"/>
+		<match match-num="9" round="R32" best-of="3" winner="Sammy Giammalva Jr" loser="Christophe Casa" score="6-3 2-6 6-4"/>
+		<match match-num="10" round="R32" best-of="3" winner="Gilles Moretton" loser="Shlomo Glickstein" score="6-3 5-7 6-4"/>
+		<match match-num="11" round="R32" best-of="3" winner="Buster C Mottram" loser="Heinz Gunthardt" score="6-2 6-0"/>
+		<match match-num="12" round="R32" best-of="3" winner="Gianni Ocleppo" loser="Manuel Orantes" score="6-4 6-3"/>
+		<match match-num="13" round="R32" best-of="3" winner="Adriano Panatta" loser="Fernando Luna" score="6-3 6-2"/>
+		<match match-num="14" round="R32" best-of="3" winner="Pascal Portes" loser="Andrew Pattison" score="7-5 6-1"/>
+		<match match-num="15" round="R32" best-of="3" winner="Christophe Roger Vasselin" loser="Chris Lewis NZL" score="6-4 6-3"/>
+		<match match-num="16" round="R32" best-of="3" winner="Gabriel Urpi" loser="Angel Gimenez" score="6-2 1-6 6-2"/>
+		<!-- R16 -->
+		<match match-num="17" round="R16" best-of="3" winner="Jimmy Connors" loser="Pascal Portes" score="6-3 6-1"/>
+		<match match-num="18" round="R16" best-of="3" winner="Guillermo Vilas" loser="Gianni Ocleppo" score="6-4 6-1"/>
+		<match match-num="19" round="R16" best-of="3" winner="Yannick Noah" loser="Gabriel Urpi" score="7-5 5-7 7-5"/>
+		<match match-num="20" round="R16" best-of="3" winner="Balazs Taroczy" loser="Christophe Roger Vasselin" score="6-4 6-1"/>
+		<match match-num="21" round="R16" best-of="3" winner="Tomas Smid" loser="Gilles Moretton" score="6-1 7-6"/>
+		<match match-num="22" round="R16" best-of="3" winner="Ricardo Cano" loser="Sammy Giammalva Jr" score="6-7 6-2 6-1"/>
+		<match match-num="23" round="R16" best-of="3" winner="Jose Higueras" loser="Buster C Mottram" score="3-6 6-4 6-1"/>
+		<match match-num="24" round="R16" best-of="3" winner="Adriano Panatta" loser="Victor Pecci" score="6-3 6-2"/>
+		<!-- QF -->
+		<match match-num="25" round="QF" best-of="3" winner="Jimmy Connors" loser="Yannick Noah" score="6-3 6-2"/>
+		<match match-num="26" round="QF" best-of="3" winner="Guillermo Vilas" loser="Tomas Smid" score="6-0 1-6 7-6"/>
+		<match match-num="27" round="QF" best-of="3" winner="Balazs Taroczy" loser="Ricardo Cano" score="6-2 6-3"/>
+		<match match-num="28" round="QF" best-of="3" winner="Adriano Panatta" loser="Jose Higueras" score="6-1 1-6 6-4"/>
+		<!-- SF -->
+		<match match-num="29" round="SF" best-of="3" winner="Jimmy Connors" loser="Balazs Taroczy" score="6-1 7-6"/>
+		<match match-num="30" round="SF" best-of="3" winner="Guillermo Vilas" loser="Adriano Panatta" score="6-2 6-2"/>
+		<!-- F -->
+		<match match-num="31" round="F" best-of="5" winner="Guillermo Vilas" loser="Jimmy Connors" score="5-5 ABD" outcome="ABD"/>
+	</tournament>
+</tournament-data>

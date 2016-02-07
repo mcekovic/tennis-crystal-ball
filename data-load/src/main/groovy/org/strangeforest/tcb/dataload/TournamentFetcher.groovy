@@ -7,11 +7,11 @@ import java.time.temporal.*
 
 class TournamentFetcher {
 
-	def static fetchTournament(season, urlId, extId) {
+	static fetchTournament(season, urlId, extId) {
 		fetchTournament(season, urlId, extId, null)
 	}
 
-	def static fetchTournament(season, urlId, extId, level) {
+	static fetchTournament(season, urlId, extId, level) {
 		def manager = new ScriptEngineManager()
 		def engine = manager.getEngineByName("JavaScript")
 		def data = new URL("http://www.minorleaguesplits.com/tennisabstract/cgi-bin/jstourneys/${season}${urlId}.js").getText()

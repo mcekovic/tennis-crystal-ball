@@ -46,7 +46,7 @@ class ATPTennisLoader {
 		println()
 	}
 
-	private static def load(loader) {
+	private static load(loader) {
 		def t0 = System.currentTimeMillis()
 
 		def rows = loader()
@@ -56,7 +56,7 @@ class ATPTennisLoader {
 		println "Total rows: $rows in $seconds s ($rowsPerSecond row/s)"
 	}
 
-	private static def getBaseDir(property) {
+	private static getBaseDir(property) {
 		def baseDir = System.properties[property]
 		if (!baseDir)
 			throw new IllegalArgumentException('No ATP Tennis data base directory is set, please specify it in tcb.data.base-dir system property.')
@@ -65,13 +65,13 @@ class ATPTennisLoader {
 		return baseDir
 	}
 
-	def loadAdditionalPlayerData(loader) {
-		println 'Loading additional player data'
-		loader.loadFile('classpath:/player-data.xml')
+	static loadAdditionalData(loader, name, file) {
+		println "Loading additional $name data"
+		loader.loadFile(file)
 		println()
 	}
 
-	def refreshComputedData(Sql sql) {
+	static refreshComputedData(Sql sql) {
 		refreshMaterializedView(sql, 'player_current_rank')
 		refreshMaterializedView(sql, 'player_best_rank')
 		refreshMaterializedView(sql, 'player_best_rank_points')
@@ -90,7 +90,7 @@ class ATPTennisLoader {
 		refreshMaterializedView(sql, 'player_goat_points')
 	}
 
-	private static def refreshMaterializedView(Sql sql, String viewName) {
+	private static refreshMaterializedView(Sql sql, String viewName) {
 		println "Refreshing materialized view '$viewName'"
 		def t0 = System.currentTimeMillis()
 		sql.execute('REFRESH MATERIALIZED VIEW ' + viewName)

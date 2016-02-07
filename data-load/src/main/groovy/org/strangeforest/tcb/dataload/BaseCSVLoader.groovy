@@ -102,7 +102,7 @@ abstract class BaseCSVLoader {
 		}
 	}
 
-	static def executeWithBatch(Sql sql, String loadSql, Iterable<Map> paramsBatch) {
+	static executeWithBatch(Sql sql, String loadSql, Iterable<Map> paramsBatch) {
 		try {
 			sql.withBatch(loadSql) { ps ->
 				paramsBatch.each { params ->
@@ -121,7 +121,7 @@ abstract class BaseCSVLoader {
 	// Data conversion
 
 	static String string(s, d = null) {
-		s ? s : d
+		s ?: d
 	}
 
 	static Integer integer(i) {
@@ -156,8 +156,8 @@ abstract class BaseCSVLoader {
 		conn.createArrayOf('smallint', a)
 	}
 
-	static String country(c) {
-		c && CountryUtil.code(c) ? c : CountryUtil.UNKNOWN
+	static String country(c, d = null) {
+		c && CountryUtil.code(c) ? c : d
 	}
 
 	static String hand(c) {

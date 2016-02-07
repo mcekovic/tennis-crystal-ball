@@ -35,7 +35,7 @@ class RankingLoader extends BaseCSVLoader {
 		return params
 	}
 
-	static def Integer maxRank() {
+	static Integer maxRank() {
 		def value = System.getProperty('tcb.data.maxRank')
 		value ? Integer.parseInt(value) : null
 	}

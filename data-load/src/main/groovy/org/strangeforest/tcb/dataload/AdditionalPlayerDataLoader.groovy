@@ -2,21 +2,21 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
-class AdditionalPlayerDataLoader extends BaseXMLLoader {
+class AdditionalPlayerDataLoader extends SimpleXMLLoader {
 
 	AdditionalPlayerDataLoader(Sql sql) {
 		super(sql)
 	}
 
-	String loadSql(def item) {
+	String loadSql(item) {
 		def children = item.children()
 		if (!children.isEmpty()) {
 			def sql = "UPDATE player SET"
 			def index = 0
 			for (attr in children) {
 				def attrName = attr.name()
-				def column = column(attrName)
-				def attrCast = cast(attrName)
+				def column = column attrName
+				def attrCast = cast column
 				if (index++)
 					sql += ','
 				sql += " $column = :$attrCast"
@@ -27,64 +27,46 @@ class AdditionalPlayerDataLoader extends BaseXMLLoader {
 			null
 	}
 
-	static def column(attr) {
+	static column(attr) {
 		def column = COLUMN_MAP[attr]
-		column ? column : attr
+		column ?: attr
 	}
 
-	static def cast(attr) {
+	static cast(attr) {
 		def cast = CAST_MAP[attr]
 		cast ? attr + '::' + cast : attr
 	}
 
 	int batch() { 100 }
 
-	Map params(def item) {
+	Map params(item) {
 		def params = [:]
-		params.name = string item.@'name'
-		addDateParam item, params, 'dob'
-		addStringParam item, params, 'birthplace'
-		addStringParam item, params, 'residence'
-		addIntegerParam item, params, 'height'
-		addIntegerParam item, params, 'weight'
-		addStringParam item, params, 'hand'
-		addStringParam item, params, 'backhand'
-		addIntegerParam item, params, 'turnedPro'
-		addStringParam item, params, 'coach'
-		addStringParam item, params, 'webSite'
-		addStringParam item, params, 'twitter'
-		addStringParam item, params, 'facebook'
+		params.name = string item.@name
+		params.dob = date item.dob
+		params.birthplace = string item.birthplace
+		params.residence = string item.residence
+		params.height = integer item.height
+		params.weight = integer item.weight
+		params.hand = string item.hand
+		params.backhand = string item.backhand
+		params.turned_pro = integer item.'turned-pro'
+		params.coach = string item.coach
+		params.web_site = string item.'web-site'
+		params.twitter = string item.twitter
+		params.facebook = string item.facebook
 		return params
 	}
 
-	String toString(def item) {
-		'player ' + string(item.@'name')
+	String toString(item) {
+		'player ' + string (item.@name)
 	}
 
-	static def addStringParam(def item, def params, def attr) {
-		def node = item[attr]
-		if (node)
-			params[attr] = string node.text()
-	}
-
-	static def addIntegerParam(def item, def params, def attr) {
-		def node = item[attr]
-		if (node)
-			params[attr] = integer node.text()
-	}
-
-	static def addDateParam(def item, def params, def attr) {
-		def node = item[attr]
-		if (node)
-			params[attr] = date node.text()
-	}
-
-	private static def COLUMN_MAP = [
-		'turnedPro': 'turned_pro',
-		'webSite': 'web_site'
+	private static COLUMN_MAP = [
+		'turned-pro': 'turned_pro',
+		'web-site': 'web_site'
 	]
 
-	private static def CAST_MAP = [
+	private static CAST_MAP = [
 		'hand': 'player_hand',
 		'backhand': 'player_backhand'
 	]

@@ -380,6 +380,10 @@ BEGIN
 		l_loser_id = find_player(p_loser_name);
 	END IF;
 
+	-- merge players
+	PERFORM merge_player(l_winner_id, p_winner_country_id, p_winner_name, p_winner_height, p_winner_hand);
+	PERFORM merge_player(l_loser_id, p_loser_country_id, p_loser_name, p_loser_height, p_loser_hand);
+
 	-- add data if missing
 	IF p_winner_country_id IS NULL THEN
 		SELECT country_id INTO p_winner_country_id FROM player WHERE player_id = l_winner_id;
@@ -446,12 +450,6 @@ BEGIN
 		END;
 	END IF;
 
-	-- update winner
-	PERFORM merge_player(l_winner_id, p_winner_country_id, p_winner_name, p_winner_height, p_winner_hand);
-
-	-- update loser
-	PERFORM merge_player(l_loser_id, p_loser_country_id, p_loser_name, p_loser_height, p_loser_hand);
-
 	-- merge set_score
 	l_set_count = array_upper(p_w_set_games, 1);
 	IF l_set_count IS NOT NULL THEN
@@ -471,6 +469,7 @@ BEGIN
 		DELETE FROM set_score
 		WHERE match_id = l_match_id AND set > l_set_count;
 	END IF;
+
 END;
 $$ LANGUAGE plpgsql;
 

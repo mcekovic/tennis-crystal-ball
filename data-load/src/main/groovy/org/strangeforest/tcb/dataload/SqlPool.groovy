@@ -6,9 +6,9 @@ import groovy.sql.*
 
 class SqlPool {
 
-	def static final CONNECTIONS = 2
+	static final CONNECTIONS = 2
 
-	def static BlockingDeque<Sql> create() {
+	static BlockingDeque<Sql> create() {
 		print 'Allocating DB connections'
 		def dbURL = System.getProperty('tcb.db.url', 'jdbc:postgresql://localhost:5432/postgres?prepareThreshold=0')
 		def username = System.getProperty('tcb.db.username', 'tcb')

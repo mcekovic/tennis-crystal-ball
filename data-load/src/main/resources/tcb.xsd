@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.strangeforest.org/schema/tcb">
+	<!-- Tournament Results -->
+	<xs:element name="tournament-data" type="tournamentDataType"/>
+	<xs:complexType name="tournamentDataType">
+		<xs:sequence>
+			<xs:element type="tournamentType" name="tournament"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="tournamentType">
+		<xs:sequence>
+			<xs:element type="tournamentLevel" name="level"/>
+			<xs:element type="surface" name="surface" minOccurs="0"/>
+			<xs:element type="xs:boolean" name="indoor" minOccurs="0"/>
+			<xs:element type="drawType" name="draw-type" minOccurs="0"/>
+			<xs:element type="xs:short" name="draw-size" minOccurs="0"/>
+			<xs:element type="tournamentPlayerType" name="player" maxOccurs="unbounded"/>
+			<xs:element type="matchType" name="match" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute type="xs:short" name="season"/>
+		<xs:attribute type="xs:string" name="name"/>
+		<xs:attribute type="xs:date" name="date"/>
+		<xs:attribute type="xs:string" name="ext-id"/>
+	</xs:complexType>
+	<xs:simpleType name="tournamentLevel">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="G"/>
+			<xs:enumeration value="F"/>
+			<xs:enumeration value="M"/>
+			<xs:enumeration value="A"/>
+			<xs:enumeration value="D"/>
+			<xs:enumeration value="O"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="surface">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="H"/>
+			<xs:enumeration value="C"/>
+			<xs:enumeration value="G"/>
+			<xs:enumeration value="P"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="drawType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="KO"/>
+			<xs:enumeration value="RR"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="matchType">
+		<xs:attribute type="xs:short" name="match-num"/>
+		<xs:attribute type="roundType" name="round"/>
+		<xs:attribute type="xs:short" name="best-of"/>
+		<xs:attribute type="xs:string" name="winner"/>
+		<xs:attribute type="xs:string" name="loser"/>
+		<xs:attribute type="xs:string" name="score"/>
+		<xs:attribute type="matchOutcomeType" name="outcome"/>
+	</xs:complexType>
+	<xs:complexType name="tournamentPlayerType">
+		<xs:attribute type="xs:short" name="seed"/>
+		<xs:attribute type="xs:string" name="entry"/>
+		<xs:attribute type="xs:string" name="name"/>
+		<xs:attribute type="xs:string" name="country"/>
+		<xs:attribute type="xs:integer" name="rank"/>
+		<xs:attribute type="xs:integer" name="rank-points"/>
+		<xs:attribute type="xs:integer" name="ext-id"/>
+	</xs:complexType>
+	<xs:simpleType name="roundType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="F"/>
+			<xs:enumeration value="BR"/>
+			<xs:enumeration value="SF"/>
+			<xs:enumeration value="QF"/>
+			<xs:enumeration value="R16"/>
+			<xs:enumeration value="R32"/>
+			<xs:enumeration value="R64"/>
+			<xs:enumeration value="R128"/>
+			<xs:enumeration value="RR"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="matchOutcomeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="RET"/>
+			<xs:enumeration value="W/O"/>
+			<xs:enumeration value="ABD"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Player Data -->
+	<xs:element name="player-data" type="playerDataType"/>
+	<xs:complexType name="playerDataType">
+		<xs:sequence>
+			<xs:element type="playerType" name="player"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="playerType">
+		<xs:sequence>
+			<xs:element type="xs:date" name="dob" minOccurs="0"/>
+			<xs:element type="xs:string" name="birthplace" minOccurs="0"/>
+			<xs:element type="xs:string" name="residence" minOccurs="0"/>
+			<xs:element type="xs:short" name="height" minOccurs="0"/>
+			<xs:element type="xs:short" name="weight" minOccurs="0"/>
+			<xs:element type="playerHand" name="hand" minOccurs="0"/>
+			<xs:element type="playerBackhand" name="backhand" minOccurs="0"/>
+			<xs:element type="xs:short" name="turned-pro" minOccurs="0"/>
+			<xs:element type="xs:string" name="coach" minOccurs="0"/>
+			<xs:element type="xs:anyURI" name="web-site" minOccurs="0"/>
+			<xs:element type="xs:string" name="twitter" minOccurs="0"/>
+			<xs:element type="xs:string" name="facebook" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute type="xs:string" name="name"/>
+	</xs:complexType>
+	<xs:simpleType name="playerHand">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="R"/>
+			<xs:enumeration value="L"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="playerBackhand">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
