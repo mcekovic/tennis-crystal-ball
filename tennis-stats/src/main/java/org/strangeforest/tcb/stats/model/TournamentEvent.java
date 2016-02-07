@@ -12,12 +12,12 @@ public class TournamentEvent {
 	private final String surface;
 	private final boolean indoor;
 	private final String drawType;
-	private final int drawSize;
+	private final Integer drawSize;
 	private final MatchPlayer winner;
 	private final MatchPlayer loser;
 	private final String score;
 
-	public TournamentEvent(int id, int season, Date date, String name, String level, String surface, boolean indoor, String drawType, int drawSize, MatchPlayer winner, MatchPlayer loser, String score) {
+	public TournamentEvent(int id, int season, Date date, String name, String level, String surface, boolean indoor, String drawType, Integer drawSize, MatchPlayer winner, MatchPlayer loser, String score) {
 		this.id = id;
 		this.season = season;
 		this.date = date;
@@ -64,12 +64,12 @@ public class TournamentEvent {
 		return drawType;
 	}
 
-	public int getDrawSize() {
+	public Integer getDrawSize() {
 		return drawSize;
 	}
 
 	public String getDraw() {
-		return drawType + drawSize;
+		return drawType + (drawSize != null ? " " + drawSize : "");
 	}
 
 	public MatchPlayer getWinner() {

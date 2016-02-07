@@ -20,7 +20,7 @@ public class PlayerTournamentsResource {
 		ORDER_MAP.put("date", "date");
 		ORDER_MAP.put("name", "name");
 		ORDER_MAP.put("surface", "surface");
-		ORDER_MAP.put("drawSize", "draw_size");
+		ORDER_MAP.put("draw", "draw_type, draw_size");
 		ORDER_MAP.put("result", "result");
 	}
 	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("date");
