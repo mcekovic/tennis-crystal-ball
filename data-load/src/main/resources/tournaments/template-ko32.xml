@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="" name="" date="" ext-id="">
+		<level></level>
+		<surface></surface>
+		<draw-type>KO</draw-type>
+		<draw-size>32</draw-size>
+		<player seed="1" name=""/>
+		<player seed="2" name=""/>
+		<player seed="3" name=""/>
+		<player seed="5" name=""/>
+		<player seed="6" name=""/>
+		<player seed="7" name=""/>
+		<player seed="8" name=""/>
+		<player entry="Q" name=""/>
+		<player entry="Q" name=""/>
+		<!-- R32 -->
+		<match match-num="1" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="2" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="3" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="4" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="5" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="6" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="7" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="8" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="9" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="10" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="11" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="12" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="13" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="14" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="15" round="R32" best-of="3" winner="" loser="" score=""/>
+		<match match-num="16" round="R32" best-of="3" winner="" loser="" score=""/>
+		<!-- R16 -->
+		<match match-num="17" round="R16" best-of="3" winner="" loser="" score=""/>
+		<match match-num="18" round="R16" best-of="3" winner="" loser="" score=""/>
+		<match match-num="19" round="R16" best-of="3" winner="" loser="" score=""/>
+		<match match-num="20" round="R16" best-of="3" winner="" loser="" score=""/>
+		<match match-num="21" round="R16" best-of="3" winner="" loser="" score=""/>
+		<match match-num="22" round="R16" best-of="3" winner="" loser="" score=""/>
+		<match match-num="23" round="R16" best-of="3" winner="" loser="" score=""/>
+		<match match-num="24" round="R16" best-of="3" winner="" loser="" score=""/>
+		<!-- QF -->
+		<match match-num="25" round="QF" best-of="3" winner="" loser="" score=""/>
+		<match match-num="26" round="QF" best-of="3" winner="" loser="" score=""/>
+		<match match-num="27" round="QF" best-of="3" winner="" loser="" score=""/>
+		<match match-num="28" round="QF" best-of="3" winner="" loser="" score=""/>
+		<!-- SF -->
+		<match match-num="29" round="SF" best-of="3" winner="" loser="" score=""/>
+		<match match-num="30" round="SF" best-of="3" winner="" loser="" score=""/>
+		<!-- F -->
+		<match match-num="31" round="F" best-of="3" winner="" loser="" score=""/>
+	</tournament>
+</tournament-data>

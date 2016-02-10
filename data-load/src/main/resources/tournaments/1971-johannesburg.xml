@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1971" name="Johannesburg" date="1971-04-12" ext-id="426">
+		<level>M</level>
+		<surface>H</surface>
+		<draw-type>KO</draw-type>
+		<draw-size>64</draw-size>
+		<!-- R32 -->
+		<match match-num="33" round="R32" best-of="5" winner="Ken Rosewall" loser="Bernard Mignot" score="6-4 6-4 7-5"/>
+		<match match-num="34" round="R32" best-of="5" winner="U Unknown" loser="Nicola Pietrangeli" score="4-6 6-1 3-6 6-3 6-3"/>
+		<match match-num="35" round="R32" best-of="5" winner="Bob Carmichael" loser="Henry Hank Irvine" score="6-3 6-3 4-6 7-6"/>
+		<match match-num="36" round="R32" best-of="5" winner="Owen Davidson" loser="D Matthews" score="7-5 6-2 6-1"/>
+		<match match-num="37" round="R32" best-of="5" winner="Cliff Drysdale" loser="Byron Bertram" score="6-3 6-7 2-6 6-3 6-1"/>
+		<match match-num="38" round="R32" best-of="5" winner="Ray Ruffels" loser="Jackie Saul" score="6-2 6-4 7-5"/>
+		<match match-num="39" round="R32" best-of="5" winner="Jan Leschly" loser="Phil Dent" score="6-3 7-6 7-6"/>
+		<match match-num="40" round="R32" best-of="5" winner="Andres Gimeno" loser="Pat Cramer" score="6-3 6-2 6-1"/>
+		<match match-num="41" round="R32" best-of="5" winner="Raymond Moore" loser="Geoff Masters" score="6-3 6-4 6-4"/>
+		<match match-num="42" round="R32" best-of="5" winner="Robert Maud" loser="Manuel Santana" score="W/O"/>
+		<match match-num="43" round="R32" best-of="5" winner="Nicholas Kalogeropoulos" loser="John Alexander" score="6-7 6-7 6-2 6-1 6-3"/>
+		<match match-num="44" round="R32" best-of="5" winner="Nikola Pilic" loser="Jaime Pinto Bravo" score="3-6 6-1 6-3 6-1"/>
+		<match match-num="45" round="R32" best-of="5" winner="Bob Hewitt" loser="Andrew Pattison" score="6-3 3-6 3-6 6-1 6-1"/>
+		<match match-num="46" round="R32" best-of="5" winner="Frew Mcmillan" loser="Roy Barth" score="6-1 6-2 6-3"/>
+		<match match-num="47" round="R32" best-of="5" winner="Derek Schroder" loser="Brian Fairlie" score="6-4 7-6 6-7 6-2"/>
+		<match match-num="48" round="R32" best-of="5" winner="Fred Stolle" loser="Clive S Brebnor" score="6-3 6-3 6-1"/>
+		<!-- R16 -->
+		<match match-num="49" round="R16" best-of="5" winner="Ken Rosewall" loser="U Unknown" score="6-2 6-1 6-2"/>
+		<match match-num="50" round="R16" best-of="5" winner="Owen Davidson" loser="Bob Carmichael" score="2-6 6-1 7-6 6-3"/>
+		<match match-num="51" round="R16" best-of="5" winner="Cliff Drysdale" loser="Ray Ruffels" score="7-6 1-6 6-4 1-6 6-3"/>
+		<match match-num="52" round="R16" best-of="5" winner="Andres Gimeno" loser="Jan Leschly" score="7-6 6-4 6-4"/>
+		<match match-num="53" round="R16" best-of="5" winner="Raymond Moore" loser="Robert Maud" score="6-4 7-6 2-6 6-2"/>
+		<match match-num="54" round="R16" best-of="5" winner="Nikola Pilic" loser="Nicholas Kalogeropoulos" score="6-2 6-4 4-6 4-6 6-4"/>
+		<match match-num="55" round="R16" best-of="5" winner="Bob Hewitt" loser="Frew Mcmillan" score="4-6 0-6 6-2 6-4 6-1"/>
+		<match match-num="56" round="R16" best-of="5" winner="Fred Stolle" loser="Derek Schroder" score="6-3 7-6 6-1"/>
+		<!-- QF -->
+		<match match-num="57" round="QF" best-of="5" winner="Ken Rosewall" loser="Owen Davidson" score="6-2 6-2 6-1"/>
+		<match match-num="58" round="QF" best-of="5" winner="Andres Gimeno" loser="Cliff Drysdale" score="6-2 6-4 6-0"/>
+		<match match-num="59" round="QF" best-of="5" winner="Raymond Moore" loser="Nikola Pilic" score="6-2 3-6 6-3 6-4"/>
+		<match match-num="60" round="QF" best-of="5" winner="Fred Stolle" loser="Bob Hewitt" score="6-4 4-6 6-3 6-4"/>
+		<!-- SF -->
+		<match match-num="61" round="SF" best-of="5" winner="Ken Rosewall" loser="Andres Gimeno" score="6-1 6-3 6-1"/>
+		<match match-num="62" round="SF" best-of="5" winner="Fred Stolle" loser="Raymond Moore" score="5-7 5-7 6-3 6-4 6-4"/>
+		<!-- F -->
+		<match match-num="63" round="F" best-of="5" winner="Ken Rosewall" loser="Fred Stolle" score="6-4 6-0 6-4"/>
+	</tournament>
+</tournament-data>

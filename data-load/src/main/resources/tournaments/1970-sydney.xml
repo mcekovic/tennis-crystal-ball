@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1970" name="Sydney Outdoor" date="1970-03-16" ext-id="338">
+		<level>M</level>
+		<surface>G</surface>
+		<draw-type>KO</draw-type>
+		<draw-size>32</draw-size>
+		<!-- R32 -->
+		<!--<match match-num="1" round="R32" best-of="5" winner="Rod Laver" loser="" score=""/>-->
+		<match match-num="2" round="R32" best-of="5" winner="Ion Tiriac" loser="Earl Butch Buchholz" score="6-1 6-4 6-4"/>
+		<match match-num="3" round="R32" best-of="5" winner="John Cooper" loser="Fred Stolle" score="6-4 3-6 6-3 1-6 6-2"/>
+		<match match-num="4" round="R32" best-of="5" winner="Ilie Nastase" loser="Allan Mcdonald" score="6-3 6-3 6-4"/>
+		<match match-num="5" round="R32" best-of="5" winner="Roger Taylor" loser="Colin Dibley" score="6-4 6-2 6-2"/>
+		<!--<match match-num="6" round="R32" best-of="5" winner="Tom Okker" loser="" score=""/>-->
+		<match match-num="7" round="R32" best-of="5" winner="Robert Lutz" loser="Raymond Moore" score="6-3 4-6 4-6 6-2 6-2"/>
+		<!--<match match-num="8" round="R32" best-of="5" winner="Arthur Ashe" loser="" score=""/>-->
+		<!--<match match-num="9" round="R32" best-of="5" winner="Ken Rosewall" loser="" score=""/>-->
+		<match match-num="10" round="R32" best-of="5" winner="Frank Sedgman" loser="Stan Smith" score="W/O"/>
+		<match match-num="11" round="R32" best-of="5" winner="Bill Bowrey" loser="Marty Riessen" score="7-5 8-6 6-3"/>
+		<!--<match match-num="12" round="R32" best-of="5" winner="Richard Pancho Gonzales" loser="" score=""/>-->
+		<match match-num="13" round="R32" best-of="5" winner="Roy Emerson" loser="Graham Stilwell" score="6-3 6-1 6-4"/>
+		<match match-num="14" round="R32" best-of="5" winner="Mal Anderson" loser="Dennis Ralston" score="10-12 6-2 6-4 5-7 6-4"/>
+		<!--<match match-num="15" round="R32" best-of="5" winner="John Newcombe" loser="" score=""/>-->
+		<match match-num="16" round="R32" best-of="5" winner="Andres Gimeno" loser="Mark Cox" score="8-6 6-2 6-3"/>
+		<!-- R16 -->
+		<match match-num="17" round="R16" best-of="5" winner="Rod Laver" loser="Ion Tiriac" score="4-6 6-3 7-5 6-2"/>
+		<match match-num="18" round="R16" best-of="5" winner="John Cooper" loser="Ilie Nastase" score="6-3 6-3 5-7 6-4"/>
+		<match match-num="19" round="R16" best-of="5" winner="Roger Taylor" loser="Tom Okker" score="6-0 6-3 5-7 6-4"/>
+		<match match-num="20" round="R16" best-of="5" winner="Arthur Ashe" loser="Robert Lutz" score="6-3 6-4 6-4"/>
+		<match match-num="21" round="R16" best-of="5" winner="Ken Rosewall" loser="Frank Sedgman" score="4-6 9-7 6-4 8-6"/>
+		<match match-num="22" round="R16" best-of="5" winner="Richard Pancho Gonzales" loser="Bill Bowrey" score="6-3 6-4 6-2"/>
+		<match match-num="23" round="R16" best-of="5" winner="Roy Emerson" loser="Mal Anderson" score="6-2 16-14 6-3"/>
+		<match match-num="24" round="R16" best-of="5" winner="Andres Gimeno" loser="John Newcombe" score="6-4 7-5 13-11"/>
+		<!-- QF -->
+		<match match-num="25" round="QF" best-of="5" winner="Rod Laver" loser="John Cooper" score="10-8 6-3 6-2"/>
+		<match match-num="26" round="QF" best-of="5" winner="Roger Taylor" loser="Arthur Ashe" score="6-3 8-6 6-4"/>
+		<match match-num="27" round="QF" best-of="5" winner="Ken Rosewall" loser="Richard Pancho Gonzales" score="6-0 10-8 6-2"/>
+		<match match-num="28" round="QF" best-of="5" winner="Andres Gimeno" loser="Roy Emerson" score="6-3 3-6 4-6 6-2 6-3"/>
+		<!-- SF -->
+		<match match-num="29" round="SF" best-of="5" winner="Rod Laver" loser="Roger Taylor" score="6-4 12-14 6-2 6-2"/>
+		<match match-num="30" round="SF" best-of="5" winner="Ken Rosewall" loser="Andres Gimeno" score="6-4 6-8 11-9 6-1"/>
+		<!-- F -->
+		<match match-num="31" round="F" best-of="5" winner="Rod Laver" loser="Ken Rosewall" score="3-6 6-2 3-6 6-2 6-3"/>
+	</tournament>
+</tournament-data>

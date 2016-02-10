@@ -5,6 +5,7 @@ import java.util.*;
 public class TournamentEvent {
 
 	private final int id;
+	private final String extId;
 	private final int season;
 	private final Date date;
 	private final String name;
@@ -17,8 +18,9 @@ public class TournamentEvent {
 	private final MatchPlayer loser;
 	private final String score;
 
-	public TournamentEvent(int id, int season, Date date, String name, String level, String surface, boolean indoor, String drawType, Integer drawSize, MatchPlayer winner, MatchPlayer loser, String score) {
+	public TournamentEvent(int id, String extId, int season, Date date, String name, String level, String surface, boolean indoor, String drawType, Integer drawSize, MatchPlayer winner, MatchPlayer loser, String score) {
 		this.id = id;
+		this.extId = extId;
 		this.season = season;
 		this.date = date;
 		this.name = name;
@@ -34,6 +36,10 @@ public class TournamentEvent {
 
 	public int getId() {
 		return id;
+	}
+
+	public String getExtId() {
+		return extId;
 	}
 
 	public int getSeason() {

@@ -23,6 +23,9 @@ DECLARE
 BEGIN
 	SELECT player_id INTO l_player_id FROM player
 	WHERE first_name || ' ' || last_name = p_name;
+	IF l_player_id IS NULL THEN
+		RAISE EXCEPTION 'Player % not found', p_name;
+	END IF;
 	RETURN l_player_id;
 END;
 $$ LANGUAGE plpgsql;
@@ -113,9 +116,6 @@ DECLARE
 	l_player_id INTEGER;
 BEGIN
 	l_player_id = find_player(p_player_name);
-	IF l_player_id IS NULL THEN
-		RAISE EXCEPTION 'Player % not found', p_player_name;
-	END IF;
 	BEGIN
 		INSERT INTO player_ranking
 		(rank_date, player_id, rank, rank_points)

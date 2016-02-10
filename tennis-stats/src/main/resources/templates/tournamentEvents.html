@@ -41,6 +41,7 @@
 				},
 				formatters: {
 					"date": dateFormatter,
+					"event": eventFormatter,
 					"level": levelFormatter,
 					"surface": surfaceFormatter,
 					"indoor": indoorFormatter,
@@ -100,7 +101,7 @@
 		<thead>
 			<tr>
 				<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
-				<th data-column-id="name" data-width="150">Name</th>
+				<th data-column-id="event" data-formatter="event" data-width="150">Name</th>
 				<th data-column-id="level" data-formatter="level" data-width="65">Level</th>
 				<th data-column-id="surface" data-formatter="surface" data-width="60">Surface</th>
 				<th data-column-id="indoor" data-formatter="indoor" data-width="60">Indoor</th>

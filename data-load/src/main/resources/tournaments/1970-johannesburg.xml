@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1970" name="Johannesburg" date="1970-03-30" ext-id="426">
+		<level>M</level>
+		<surface>H</surface>
+		<draw-type>KO</draw-type>
+		<draw-size>64</draw-size>
+		<!-- R32 -->
+		<match match-num="33" round="R32" best-of="5" winner="Rod Laver" loser="Bill Freer" score="6-1 6-1 6-3"/>
+		<match match-num="34" round="R32" best-of="5" winner="Pierre Barthes" loser="Graydon Garner" score="6-3 6-4 6-2"/>
+		<match match-num="35" round="R32" best-of="5" winner="Raymond Moore" loser="Alvin Gardiner" score="6-3 6-4 6-2"/>
+		<match match-num="36" round="R32" best-of="5" winner="Nikola Pilic" loser="W Russell Seymour" score="4-6 6-0 11-9 6-2"/>
+		<match match-num="37" round="R32" best-of="5" winner="Bob Hewitt" loser="Harald Elschenbroich" score="6-2 6-3 8-6"/>
+		<match match-num="38" round="R32" best-of="5" winner="Roger Taylor" loser="Derek Schroder" score="8-6 10-8 6-2"/>
+		<match match-num="39" round="R32" best-of="5" winner="Cliff Drysdale" loser="Keith Diepraam" score="6-0 6-4 6-0"/>
+		<match match-num="40" round="R32" best-of="5" winner="Jackie Saul" loser="Bill Bowrey" score="6-3 6-3 2-6 3-6 6-4"/>
+		<match match-num="41" round="R32" best-of="5" winner="Frew Mcmillan" loser="U Unknown" score="W/O"/>
+		<match match-num="42" round="R32" best-of="5" winner="Tom Okker" loser="Clive S Brebnor" score="6-1 6-3 9-7"/>
+		<match match-num="43" round="R32" best-of="5" winner="Mark Cox" loser="Alfred Schwartz" score="6-1 6-2 7-5"/>
+		<match match-num="44" round="R32" best-of="5" winner="Earl Butch Buchholz" loser="Frank Mcdonald" score="6-4 6-2 6-4"/>
+		<match match-num="45" round="R32" best-of="5" winner="Richard Pancho Gonzales" loser="Rauty Krog" score="6-4 6-2 8-6"/>
+		<match match-num="46" round="R32" best-of="5" winner="Graham Stilwell" loser="Andrew Pattison" score="7-5 2-6 10-8 4-6 6-4"/>
+		<match match-num="47" round="R32" best-of="5" winner="Robert Maud" loser="Abe Segal" score="6-3 6-2 6-4"/>
+		<match match-num="48" round="R32" best-of="5" winner="Terry Ryan" loser="Marty Riessen" score="4-6 6-3 6-2 7-5"/>
+		<!-- R16 -->
+		<match match-num="49" round="R16" best-of="5" winner="Rod Laver" loser="Pierre Barthes" score="6-2 6-8 6-4 6-4"/>
+		<match match-num="50" round="R16" best-of="5" winner="Raymond Moore" loser="Nikola Pilic" score="3-6 4-6 6-2 8-6 6-3"/>
+		<match match-num="51" round="R16" best-of="5" winner="Bob Hewitt" loser="Roger Taylor" score="6-4 4-6 1-6 6-1 6-2"/>
+		<match match-num="52" round="R16" best-of="5" winner="Cliff Drysdale" loser="Jackie Saul" score="6-2 6-4 6-4 "/>
+		<match match-num="53" round="R16" best-of="5" winner="Frew Mcmillan" loser="Tom Okker" score="2-6 11-9 6-3 6-4"/>
+		<match match-num="54" round="R16" best-of="5" winner="Mark Cox" loser="Earl Butch Buchholz" score="1-6 6-1 3-1 RET"/>
+		<match match-num="55" round="R16" best-of="5" winner="Richard Pancho Gonzales" loser="Graham Stilwell" score="2-6 9-7 6-4 6-1"/>
+		<match match-num="56" round="R16" best-of="5" winner="Robert Maud" loser="Terry Ryan" score="6-1 6-4 6-2"/>
+		<!-- QF -->
+		<match match-num="57" round="QF" best-of="5" winner="Rod Laver" loser="Raymond Moore" score="6-4 6-2 8-6"/>
+		<match match-num="58" round="QF" best-of="5" winner="Bob Hewitt" loser="Cliff Drysdale" score="6-2 6-4 6-1"/>
+		<match match-num="59" round="QF" best-of="5" winner="Frew Mcmillan" loser="Mark Cox" score="6-2 6-4 2-6 6-3"/>
+		<match match-num="60" round="QF" best-of="5" winner="Richard Pancho Gonzales" loser="Robert Maud" score="6-4 6-2 3-6 6-3"/>
+		<!-- SF -->
+		<match match-num="61" round="SF" best-of="5" winner="Rod Laver" loser="Bob Hewitt" score="6-4 8-6 6-1"/>
+		<match match-num="62" round="SF" best-of="5" winner="Frew Mcmillan" loser="Richard Pancho Gonzales" score="6-4 6-1 6-8 6-3"/>
+		<!-- F -->
+		<match match-num="63" round="F" best-of="5" winner="Rod Laver" loser="Frew Mcmillan" score="4-6 6-2 6-1 6-2"/>
+	</tournament>
+</tournament-data>

@@ -153,7 +153,8 @@ class MatchLoader extends BaseCSVLoader {
 					(name.startsWith('Forest Hills') && (1982..1985).contains(season)) ||
 					(name.equals('Hamburg') && (1978..1989).contains(season)) ||
 					(name.equals('Indianapolis') && (1974..1977).contains(season)) ||
-					(name.equals('Johannesburg') && (1972..1974).contains(season)) ||
+					(name.startsWith('Johannesburg') && extTournamentId == '426' && (1972..1973).contains(season))||
+					(name.startsWith('Johannesburg') && extTournamentId == '254' && season == 1974)||
 					(name.startsWith('Las Vegas') && (1972..1981).contains(season) && drawSize >= 32) ||
 					(name.startsWith('Los Angeles') && (1970..1973).contains(season) && drawSize >= 64) ||
 					(name.startsWith('Monte Carlo') && (1970..1989).contains(season)) ||

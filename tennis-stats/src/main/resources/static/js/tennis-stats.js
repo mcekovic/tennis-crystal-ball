@@ -194,6 +194,11 @@ function tournamentFormatter(column, row) {
 	return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</span>";
 }
 
+// Tournament Event Formatter
+function eventFormatter(column, row) {
+	return "<span title='" + row.extId + "'>" + row.name + "</span>";
+}
+
 // Result Formatter
 function resultFormatter(column, row) {
 	return "<span class='label black bg-result-" + row.result + "'>" + row.result + "</span>"
