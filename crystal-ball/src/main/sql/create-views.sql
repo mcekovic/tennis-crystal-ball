@@ -154,8 +154,8 @@ SELECT m.winner_id player_id, m.season, m.surface,
 	CASE WHEN m.loser_rank <= 10 THEN match_id ELSE NULL END vs_top10_match_id_won, NULL vs_top10_match_id_lost,
 	CASE WHEN s.set = 1 AND s.w_games > s.l_games THEN match_id ELSE NULL END after_winning_first_set_match_id_won, NULL after_winning_first_set_match_id_lost,
 	CASE WHEN s.set = 1 AND s.w_games < s.l_games THEN match_id ELSE NULL END after_losing_first_set_match_id_won, NULL after_losing_first_set_match_id_lost,
-	CASE WHEN s.w_games = 7 AND s.l_games = 6 THEN s.set ELSE NULL END w_tie_break_set_won, NULL l_tie_break_set_won,
-	CASE WHEN s.w_games = 6 AND s.l_games = 7 THEN s.set ELSE NULL END w_tie_break_set_lost, NULL l_tie_break_set_lost
+	CASE WHEN s.w_games = s.l_games + 1 AND s.l_games >= 6 THEN s.set ELSE NULL END w_tie_break_set_won, NULL l_tie_break_set_won,
+	CASE WHEN s.l_games = s.w_games + 1 AND s.w_games >= 6 THEN s.set ELSE NULL END w_tie_break_set_lost, NULL l_tie_break_set_lost
 FROM match_for_stats_v m
 LEFT JOIN set_score s USING (match_id)
 UNION ALL
@@ -173,8 +173,8 @@ SELECT m.loser_id player_id, m.season, m.surface,
 	NULL, CASE WHEN m.winner_rank <= 10 THEN match_id ELSE NULL END,
 	NULL, CASE WHEN s.set = 1 AND s.w_games < s.l_games THEN match_id ELSE NULL END,
 	NULL, CASE WHEN s.set = 1 AND s.w_games > s.l_games THEN match_id ELSE NULL END,
-	NULL, CASE WHEN s.w_games = 6 AND s.l_games = 7 THEN s.set ELSE NULL END,
-	NULL, CASE WHEN s.w_games = 7 AND s.l_games = 6 THEN s.set ELSE NULL END
+	NULL, CASE WHEN s.l_games = s.w_games + 1 AND s.w_games >= 6 THEN s.set ELSE NULL END,
+	NULL, CASE WHEN s.w_games = s.l_games + 1 AND s.l_games >= 6 THEN s.set ELSE NULL END
 FROM match_for_stats_v m
 LEFT JOIN set_score s USING (match_id);
 

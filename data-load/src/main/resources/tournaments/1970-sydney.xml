@@ -5,6 +5,14 @@
 		<surface>G</surface>
 		<draw-type>KO</draw-type>
 		<draw-size>32</draw-size>
+		<player seed="1" name="Rod Laver"/>
+		<player seed="2" name="John Newcombe"/>
+		<player seed="3" name="Ken Rosewall"/>
+		<player seed="4" name="Arthur Ashe"/>
+		<player seed="5" name="Tom Okker"/>
+		<player seed="6" name="Richard Pancho Gonzales"/>
+		<player seed="7" name="Roy Emerson"/>
+		<player seed="8" name="Ilie Nastase"/>
 		<!-- R32 -->
 		<!--<match match-num="1" round="R32" best-of="5" winner="Rod Laver" loser="" score=""/>-->
 		<match match-num="2" round="R32" best-of="5" winner="Ion Tiriac" loser="Earl Butch Buchholz" score="6-1 6-4 6-4"/>

@@ -38,7 +38,6 @@ class ATPTennisLoader {
 			if (full) {
 				for (year in 1968..2015)
 					rows += loader.loadFile(baseDir + "atp_matches_${year}.csv")
-				rows += loader.loadFile(baseDir + "atp_matches_1990mc.csv")
 			}
 			def year = 2016
 			rows += loader.loadFile(baseDir + "atp_matches_${year}.csv")
@@ -65,7 +64,23 @@ class ATPTennisLoader {
 		return baseDir
 	}
 
-	static loadAdditionalData(loader, name, file) {
+	def loadAdditionalPlayerData(sql) {
+		if (full)
+			loadAdditionalData(new AdditionalPlayerDataLoader(sql), 'player', 'classpath:/player-data.xml')
+	}
+
+	def loadAdditionalTournamenData(sql) {
+		if (full) {
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-sydney.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-johannesburg.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-wembley.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1971-johannesburg.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1981-monte-carlo.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1990-tour-finals.xml')
+		}
+	}
+
+	private static loadAdditionalData(loader, name, file) {
 		println "Loading additional $name data"
 		loader.loadFile(file)
 		println()

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1970" name="Sydney Outdoor" date="1970-11-16" ext-id="430">
+		<level>M</level>
+		<surface>H</surface>
+		<indoor>true</indoor>
+		<draw-type>KO</draw-type>
+		<draw-size>32</draw-size>
+		<player seed="1" name="Rod Laver"/>
+		<player seed="2" name="Ken Rosewall"/>
+		<player seed="3" name="Cliff Richey"/>
+		<player seed="4" name="Arthur Ashe"/>
+		<player seed="5" name="Tom Okker"/>
+		<player seed="6" name="Roy Emerson"/>
+		<player seed="7" name="Stan Smith"/>
+		<player seed="8" name="Ilie Nastase"/>
+		<!-- R32 -->
+		<match match-num="1" round="R32" best-of="3" winner="Rod Laver" loser="Jaime Fillol" score="7-5 7-5"/>
+		<match match-num="2" round="R32" best-of="3" winner="Andres Gimeno" loser="Ray Ruffels" score="6-3 6-2"/>
+		<match match-num="3" round="R32" best-of="3" winner="Tom Gorman" loser="Marty Riessen" score="8-9 9-8 7-5"/>
+		<match match-num="4" round="R32" best-of="3" winner="Ilie Nastase" loser="Dick Crealy" score="6-4 6-4"/>
+		<match match-num="5" round="R32" best-of="3" winner="Dennis Ralston" loser="Clark Graebner" score="6-8 6-1 6-4"/>
+		<match match-num="6" round="R32" best-of="3" winner="John Alexander" loser="Tom Okker" score="6-2 9-8"/>
+		<match match-num="7" round="R32" best-of="3" winner="Mark Cox" loser="David Lloyd" score="8-6 6-3"/>
+		<match match-num="8" round="R32" best-of="3" winner="Cliff Drysdale" loser="Arthur Ashe" score="6-1 6-2"/>
+		<match match-num="9" round="R32" best-of="3" winner="Ken Rosewall" loser="Bob Carmichael" score="6-8 9-8 7-5"/>
+		<match match-num="10" round="R32" best-of="3" winner="Nikola Pilic" loser="Jan Kodes" score="5-7 7-5 6-4"/>
+		<match match-num="11" round="R32" best-of="3" winner="Stan Smith" loser="Ismail El Shafei" score="6-2 9-8"/>
+		<match match-num="12" round="R32" best-of="3" winner="Richard Pancho Gonzales" loser="Ion Tiriac" score="4-6 6-4 6-2"/>
+		<match match-num="13" round="R32" best-of="3" winner="Roger Taylor" loser="Owen Davidson" score="9-8 6-2"/>
+		<match match-num="14" round="R32" best-of="3" winner="Roy Emerson" loser="Zeljko Franulovic" score="9-7 6-4"/>
+		<match match-num="15" round="R32" best-of="3" winner="Pierre Barthes" loser="Graham Stilwell" score="6-0 6-2"/>
+		<match match-num="16" round="R32" best-of="3" winner="Cliff Richey" loser="Roy Barth" score="6-2 6-3"/>
+		<!-- R16 -->
+		<match match-num="17" round="R16" best-of="3" winner="Rod Laver" loser="Andres Gimeno" score="6-1 4-6 9-8"/>
+		<match match-num="18" round="R16" best-of="3" winner="Ilie Nastase" loser="Tom Gorman" score="6-8 6-2 6-4"/>
+		<match match-num="19" round="R16" best-of="3" winner="Dennis Ralston" loser="John Alexander" score="6-3 3-6 8-6"/>
+		<match match-num="20" round="R16" best-of="3" winner="Cliff Drysdale" loser="Mark Cox" score="9-8 6-3"/>
+		<match match-num="21" round="R16" best-of="3" winner="Ken Rosewall" loser="Nikola Pilic" score="6-2 6-1"/>
+		<match match-num="22" round="R16" best-of="3" winner="Richard Pancho Gonzales" loser="Stan Smith" score="8-9 9-8 9-8"/>
+		<match match-num="23" round="R16" best-of="3" winner="Roger Taylor" loser="Roy Emerson" score="6-3 6-2"/>
+		<match match-num="24" round="R16" best-of="3" winner="Cliff Richey" loser="Pierre Barthes" score="7-5 8-6"/>
+		<!-- QF -->
+		<match match-num="25" round="QF" best-of="3" winner="Rod Laver" loser="Ilie Nastase" score="6-1 6-2"/>
+		<match match-num="26" round="QF" best-of="3" winner="Cliff Drysdale" loser="Dennis Ralston" score="9-8 6-8 6-3"/>
+		<match match-num="27" round="QF" best-of="3" winner="Ken Rosewall" loser="Richard Pancho Gonzales" score="6-2 6-3"/>
+		<match match-num="28" round="QF" best-of="3" winner="Cliff Richey" loser="Roger Taylor" score="8-6 8-9 6-2"/>
+		<!-- SF -->
+		<match match-num="29" round="SF" best-of="3" winner="Rod Laver" loser="Cliff Drysdale" score="6-4 6-4"/>
+		<match match-num="30" round="SF" best-of="3" winner="Cliff Richey" loser="Ken Rosewall" score="7-5 6-2"/>
+		<!-- F -->
+		<match match-num="31" round="F" best-of="5" winner="Rod Laver" loser="Cliff Richey" score="6-3 6-4 7-5"/>
+	</tournament>
+</tournament-data>
