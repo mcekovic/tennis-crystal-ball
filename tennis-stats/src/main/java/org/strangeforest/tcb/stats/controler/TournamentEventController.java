@@ -23,7 +23,7 @@ public class TournamentEventController extends BaseController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("levels", Options.TOURNAMENT_LEVELS_W_O_D_C);
+		modelMap.addAttribute("levels", Options.MAIN_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Options.SURFACES);
 		modelMap.addAttribute("tournaments", tournaments);
 		return new ModelAndView("tournamentEvents", modelMap);

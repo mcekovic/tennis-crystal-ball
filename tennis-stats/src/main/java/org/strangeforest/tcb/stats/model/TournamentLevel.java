@@ -7,7 +7,11 @@ public enum TournamentLevel {
 	MASTERS("M"),
 	OLYMPICS("O"),
 	ATP("A"),
-	DAVIS_CUP("D");
+	DAVIS_CUP("D"),
+	OTHERS("H"),
+	OTHERS_TEAM("T"),
+	CHALLENGERS("C"),
+	FUTURES("U");
 
 	private final String code;
 

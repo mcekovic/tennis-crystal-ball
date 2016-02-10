@@ -55,7 +55,7 @@ CREATE INDEX ON player_year_end_rank (player_id);
 CREATE MATERIALIZED VIEW player_tournament_event_result AS
 WITH match_result AS (
 	SELECT m.winner_id AS player_id, tournament_event_id,
-		(CASE WHEN m.round = 'F' AND e.level <> 'D' AND (outcome IS NULL OR outcome <> 'ABD') THEN 'W' ELSE m.round::TEXT END)::tournament_event_result AS result
+		(CASE WHEN m.round = 'F' AND e.level NOT IN ('D', 'T') AND (outcome IS NULL OR outcome <> 'ABD') THEN 'W' ELSE m.round::TEXT END)::tournament_event_result AS result
 	FROM match m
 	INNER JOIN tournament_event e USING (tournament_event_id)
 	UNION ALL
@@ -150,7 +150,7 @@ SELECT m.winner_id player_id, m.season, m.surface,
 	CASE WHEN m.surface = 'P' THEN match_id ELSE NULL END carpet_match_id_won, NULL carpet_match_id_lost,
 	CASE WHEN m.w_sets + m.l_sets = m.best_of THEN match_id ELSE NULL END deciding_set_match_id_won, NULL deciding_set_match_id_lost,
 	CASE WHEN m.w_sets + m.l_sets = 5 THEN match_id ELSE NULL END fifth_set_match_id_won, NULL fifth_set_match_id_lost,
-	CASE WHEN m.round = 'F' AND m.level <> 'D' THEN match_id ELSE NULL END final_match_id_won, NULL final_match_id_lost,
+	CASE WHEN m.round = 'F' AND m.level NOT IN ('D', 'T') THEN match_id ELSE NULL END final_match_id_won, NULL final_match_id_lost,
 	CASE WHEN m.loser_rank <= 10 THEN match_id ELSE NULL END vs_top10_match_id_won, NULL vs_top10_match_id_lost,
 	CASE WHEN s.set = 1 AND s.w_games > s.l_games THEN match_id ELSE NULL END after_winning_first_set_match_id_won, NULL after_winning_first_set_match_id_lost,
 	CASE WHEN s.set = 1 AND s.w_games < s.l_games THEN match_id ELSE NULL END after_losing_first_set_match_id_won, NULL after_losing_first_set_match_id_lost,
@@ -169,7 +169,7 @@ SELECT m.loser_id player_id, m.season, m.surface,
 	NULL, CASE WHEN m.surface = 'P' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.w_sets + m.l_sets = m.best_of THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.w_sets + m.l_sets = 5 THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.round = 'F' AND m.level <> 'D' THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.round = 'F' AND m.level NOT IN ('D', 'T') THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.winner_rank <= 10 THEN match_id ELSE NULL END,
 	NULL, CASE WHEN s.set = 1 AND s.w_games < s.l_games THEN match_id ELSE NULL END,
 	NULL, CASE WHEN s.set = 1 AND s.w_games > s.l_games THEN match_id ELSE NULL END,
@@ -907,7 +907,7 @@ WITH pleayer_season AS (
 		count(CASE WHEN e.level = 'F' AND r.result = 'W' THEN 1 ELSE NULL END) tour_finals_titles,
 		count(CASE WHEN e.level = 'M' AND r.result = 'W' THEN 1 ELSE NULL END) masters_titles,
 		count(CASE WHEN e.level = 'O' AND r.result = 'W' THEN 1 ELSE NULL END) olympics_titles,
-		count(CASE WHEN e.level <> 'D' AND r.result = 'W' THEN 1 ELSE NULL END) titles
+		count(CASE WHEN e.level IN ('G', 'F', 'M', 'A', 'O') AND r.result = 'W' THEN 1 ELSE NULL END) titles
 	FROM player_season_goat_points s
 	LEFT JOIN player_tournament_event_result r USING (player_id)
 	LEFT JOIN tournament_event e USING (tournament_event_id, season)

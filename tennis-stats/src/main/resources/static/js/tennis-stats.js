@@ -156,6 +156,10 @@ function levelName(level) {
 		case "A": return "ATP";
 		case "O": return "Olympics";
 		case "D": return "Davis Cup";
+		case "H": return "Others";
+		case "T": return "Others Team";
+		case "C": return "Challengers";
+		case "U": return "Futures";
 		default: return level;
 	}
 }

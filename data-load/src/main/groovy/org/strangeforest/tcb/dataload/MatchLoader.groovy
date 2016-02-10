@@ -170,6 +170,11 @@ class MatchLoader extends BaseCSVLoader {
 					(name.equals('Wembley') && ((1970..1971).contains(season) || (1976..1983).contains(season)))
 				)
 					return 'M'
+				else if (
+					(name.equals('Nations Cup') && extTournamentId == '615') ||
+					(name.equals('Dusseldorf') && extTournamentId == '615')
+				)
+					return 'T'
 				else
 					return 'A'
 			case 'D': return 'D'

@@ -58,7 +58,7 @@ public class PlayerProfileController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("levels", Options.TOURNAMENT_LEVELS_W_O_D_C);
+		modelMap.addAttribute("levels", Options.MAIN_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Options.SURFACES);
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("season", season);
@@ -86,7 +86,7 @@ public class PlayerProfileController extends BaseController {
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("playerName", name);
 		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("levels", Options.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levels", Options.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Options.SURFACES);
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("tournamentEvents", tournamentEvents);

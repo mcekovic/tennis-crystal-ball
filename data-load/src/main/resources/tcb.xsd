@@ -30,6 +30,10 @@
 			<xs:enumeration value="A"/>
 			<xs:enumeration value="D"/>
 			<xs:enumeration value="O"/>
+			<xs:enumeration value="H"/>
+			<xs:enumeration value="T"/>
+			<xs:enumeration value="C"/>
+			<xs:enumeration value="U"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="surface">

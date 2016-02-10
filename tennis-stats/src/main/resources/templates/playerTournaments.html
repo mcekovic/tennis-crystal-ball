@@ -92,7 +92,7 @@
 		<div class="col-md-2">
 			<select id="tournament" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
 				<option value="">All tournaments</option>
-				<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+				<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
 			</select>
 		</div>
 		<div class="col-md-2">
