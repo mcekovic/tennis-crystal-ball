@@ -171,6 +171,10 @@ class MatchLoader extends BaseCSVLoader {
 				)
 					return 'M'
 				else if (
+					name.equals('Barranquilla')
+				)
+					return 'H'
+				else if (
 					(name.equals('Nations Cup') && extTournamentId == '615') ||
 					(name.equals('Dusseldorf') && extTournamentId == '615')
 				)

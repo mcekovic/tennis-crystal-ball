@@ -9,6 +9,6 @@ loader.loadMatches(new MatchLoader(sqlPool))
 
 def sql = sqlPool.removeFirst()
 loader.loadAdditionalPlayerData(sql)
-loader.loadAdditionalTournamenData(sql)
+loader.loadAdditionalTournamentData(sql)
 
 loader.refreshComputedData(sql)

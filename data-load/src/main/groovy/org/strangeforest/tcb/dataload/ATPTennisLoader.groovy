@@ -69,13 +69,15 @@ class ATPTennisLoader {
 			loadAdditionalData(new AdditionalPlayerDataLoader(sql), 'player', 'classpath:/player-data.xml')
 	}
 
-	def loadAdditionalTournamenData(sql) {
+	def loadAdditionalTournamentData(sql) {
 		if (full) {
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-sydney.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-johannesburg.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-salisbury.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-sydney.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-wembley.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1971-johannesburg.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1972-roanoke.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1973-washington-indoor-2.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1974-auckland.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1979-dorado-beach.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1981-monte-carlo.xml')

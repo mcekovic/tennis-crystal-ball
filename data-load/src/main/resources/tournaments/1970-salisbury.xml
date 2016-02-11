@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1970" name="Salisbury" date="1970-02-16" ext-id="A2">
+		<level>A</level>
+		<surface>H</surface>
+		<indoor>true</indoor>
+		<draw-type>KO</draw-type>
+		<draw-size>48</draw-size>
+		<!-- R64 -->
+		<match match-num="1" round="R64" best-of="3" winner="Ilie Nastase" loser="Hans Jaochim Plotz" score="6-1 4-6 7-5"/>
+		<match match-num="2" round="R64" best-of="3" winner="Gerald Battrick" loser="Jaime Fillol" score="6-3 6-1"/>
+		<match match-num="3" round="R64" best-of="3" winner="Szabolcz Baranyi" loser="Ron Barnes" score="6-8 9-7 6-4"/>
+		<match match-num="4" round="R64" best-of="3" winner="Arthur Ashe" loser="Pancho Guzman" score="6-1 6-2"/>
+		<match match-num="5" round="R64" best-of="3" winner="Tom Gorman" loser="Terry Addison" score="21-19 6-4"/>
+		<match match-num="6" round="R64" best-of="3" winner="Nicola Spear" loser="Butch Seewagen" score="7-9 6-2 6-4"/>
+		<match match-num="7" round="R64" best-of="3" winner="Ingo Buding" loser="Erik Van Dillen" score="6-3 5-7 6-3"/>
+		<match match-num="8" round="R64" best-of="3" winner="Tony Roche" loser="Onny Parun" score="9-7 6-2"/>
+		<match match-num="9" round="R64" best-of="3" winner="Jim Osborne" loser="Ian Crookenden" score="W/O"/>
+		<match match-num="10" round="R64" best-of="3" winner="Jan Kukal" loser="Marty Riessen" score="6-3 1-6 8-6"/>
+		<match match-num="11" round="R64" best-of="3" winner="Roy Emerson" loser="Roy Barth" score="9-7 6-4"/>
+		<match match-num="12" round="R64" best-of="3" winner="Peter Curtis" loser="Ray Keldie" score="W/O"/>
+		<match match-num="13" round="R64" best-of="3" winner="Manuel Santana" loser="Peter Szoke" score="17-15 8-6"/>
+		<match match-num="14" round="R64" best-of="3" winner="Francois Jauffret" loser="Premjit Lall" score="16-14 6-8 6-4"/>
+		<match match-num="15" round="R64" best-of="3" winner="Jim Mcmanus" loser="Jan Kodes" score="10-8 3-4 RET"/>
+		<match match-num="16" round="R64" best-of="3" winner="Cliff Richey" loser="Bob Carmichael" score="6-4 6-4"/>
+		<!-- R32 -->
+		<match match-num="17" round="R32" best-of="3" winner="Ilie Nastase" loser="Gerald Battrick" score="15-13 6-0"/>
+		<match match-num="18" round="R32" best-of="3" winner="Arthur Ashe" loser="Szabolcz Baranyi" score="6-2 6-4"/>
+		<match match-num="19" round="R32" best-of="3" winner="Tom Gorman" loser="Nicola Spear" score="6-2 6-4"/>
+		<match match-num="20" round="R32" best-of="3" winner="Tony Roche" loser="Ingo Buding" score="6-4 6-4"/>
+		<match match-num="21" round="R32" best-of="3" winner="Ion Tiriac" loser="Bernard Paul" score="14-12 6-2"/>
+		<match match-num="22" round="R32" best-of="3" winner="Tom Okker" loser="Joaquin Loyo Mayo" score="6-3 6-2"/>
+		<match match-num="23" round="R32" best-of="3" winner="Stan Smith" loser="Zeljko Franulovic" score="6-4 6-3"/>
+		<match match-num="24" round="R32" best-of="3" winner="Roger Taylor" loser="Thomaz Koch" score="13-11 6-1"/>
+		<match match-num="25" round="R32" best-of="3" winner="Ismail El Shafei" loser="Brian Fairlie" score="6-2 6-4"/>
+		<match match-num="26" round="R32" best-of="3" winner="Clark Graebner" loser="Nikola Pilic" score="4-6 6-4 6-4"/>
+		<match match-num="27" round="R32" best-of="3" winner="Torben Ulrich" loser="Tom Edlefsen" score="6-3 8-6"/>
+		<match match-num="28" round="R32" best-of="3" winner="Rod Laver" loser="Mike Belkin" score="W/O"/>
+		<match match-num="29" round="R32" best-of="3" winner="Jim Osborne" loser="Jan Kukal" score="6-3 6-3"/>
+		<match match-num="30" round="R32" best-of="3" winner="Peter Curtis" loser="Roy Emerson" score="6-3 6-4"/>
+		<match match-num="31" round="R32" best-of="3" winner="Manuel Santana" loser="Francois Jauffret" score="6-2 6-4"/>
+		<match match-num="32" round="R32" best-of="3" winner="Cliff Richey" loser="Jim Mcmanus" score="6-1 6-3"/>
+		<!-- R16 -->
+		<match match-num="33" round="R16" best-of="3" winner="Ilie Nastase" loser="Arthur Ashe" score="8-6 5-7 6-2"/>
+		<match match-num="34" round="R16" best-of="3" winner="Tony Roche" loser="Tom Gorman" score="7-5 6-4"/>
+		<match match-num="35" round="R16" best-of="3" winner="Ion Tiriac" loser="Tom Okker" score="6-3 7-5"/>
+		<match match-num="36" round="R16" best-of="3" winner="Roger Taylor" loser="Stan Smith" score="8-6 2-6 6-3"/>
+		<match match-num="37" round="R16" best-of="3" winner="Ismail El Shafei" loser="Clark Graebner" score="12-10 6-3"/>
+		<match match-num="38" round="R16" best-of="3" winner="Rod Laver" loser="Torben Ulrich" score="6-4 6-1"/>
+		<match match-num="39" round="R16" best-of="3" winner="Jim Osborne" loser="Peter Curtis" score="3-6 6-3 6-3"/>
+		<match match-num="40" round="R16" best-of="3" winner="Cliff Richey" loser="Manuel Santana" score="7-5 6-3"/>
+		<!-- QF -->
+		<match match-num="41" round="QF" best-of="3" winner="Ilie Nastase" loser="Tony Roche" score="W/O"/>
+		<match match-num="42" round="QF" best-of="3" winner="Roger Taylor" loser="Ion Tiriac" score="11-9 6-1"/>
+		<match match-num="43" round="QF" best-of="3" winner="Ismail El Shafei" loser="Rod Laver" score="6-3 10-8"/>
+		<match match-num="44" round="QF" best-of="3" winner="Cliff Richey" loser="Jim Osborne" score="6-2 6-2"/>
+		<!-- SF -->
+		<match match-num="45" round="SF" best-of="5" winner="Ilie Nastase" loser="Roger Taylor" score="6-4 6-8 6-3 6-3"/>
+		<match match-num="46" round="SF" best-of="5" winner="Cliff Richey" loser="Ismail El Shafei" score="6-3 7-5 6-4"/>
+		<!-- F -->
+		<match match-num="47" round="F" best-of="5" winner="Ilie Nastase" loser="Cliff Richey" score="6-8 3-6 6-4 9-7 6-0"/>
+	</tournament>
+</tournament-data>

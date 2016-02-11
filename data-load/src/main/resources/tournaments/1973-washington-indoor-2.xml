@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1973" name="Washington-2" date="1974-03-19" ext-id="2040">
+		<level>A</level>
+		<surface>P</surface>
+		<indoor>true</indoor>
+		<draw-type>KO</draw-type>
+		<draw-size>32</draw-size>
+		<!-- R32 -->
+		<match match-num="1" round="R32" best-of="3" winner="Ilie Nastase" loser="John Paish" score="6-1 6-3"/>
+		<match match-num="2" round="R32" best-of="3" winner="Sherwood Stewart" loser="Peter Fleming" score="6-2 7-6"/>
+		<match match-num="3" round="R32" best-of="3" winner="Byron Bertram" loser="Ian Crookenden" score="6-4 6-2"/>
+		<match match-num="4" round="R32" best-of="3" winner="Nicholas Kalogeropoulos" loser="Steve Tidball" score="6-1 6-1"/>
+		<match match-num="5" round="R32" best-of="3" winner="Billy Martin" loser="John Cooper" score="6-1 6-2"/>
+		<match match-num="6" round="R32" best-of="3" winner="Juan Gisbert" loser="Modesto Tito Vazquez" score="7-5 5-7 6-2"/>
+		<match match-num="7" round="R32" best-of="3" winner="Mike Estep" loser="Steve Fiske" score="6-2 6-2"/>
+		<match match-num="8" round="R32" best-of="3" winner="Jurgen Fassbender" loser="Peter Curtis" score="6-2 6-4"/>
+		<match match-num="9" round="R32" best-of="3" winner="Karl Meiler" loser="Bob Goeltz" score="6-2 6-0"/>
+		<match match-num="10" round="R32" best-of="3" winner="Ion Tiriac" loser="Vitas Gerulaitis" score="W/O"/>
+		<match match-num="11" round="R32" best-of="3" winner="Jaime Pinto Bravo" loser="U Unknown" score="W/O"/>
+		<match match-num="12" round="R32" best-of="3" winner="Paul Gerken" loser="Brady Bohrnstedt" score="6-0 6-0"/>
+		<match match-num="13" round="R32" best-of="3" winner="Ian Fletcher" loser="Robert Kreiss" score="7-6 4-6 6-3"/>
+		<match match-num="14" round="R32" best-of="3" winner="Pat Cramer" loser="Steve Turner" score="6-1 6-4"/>
+		<match match-num="15" round="R32" best-of="3" winner="Dick R Bohrnstedt" loser="Gavorielle Marcu" score="5-7 6-2 6-1"/>
+		<match match-num="16" round="R32" best-of="3" winner="Jimmy Connors" loser="Francisco Castello Branco" score="6-3 6-3"/>
+		<!-- R16 -->
+		<match match-num="17" round="R16" best-of="3" winner="Ilie Nastase" loser="Sherwood Stewart" score="7-5 6-4"/>
+		<match match-num="18" round="R16" best-of="3" winner="Nicholas Kalogeropoulos" loser="Byron Bertram" score="W/O"/>
+		<match match-num="19" round="R16" best-of="3" winner="Billy Martin" loser="Juan Gisbert" score="7-5 6-4"/>
+		<match match-num="20" round="R16" best-of="3" winner="Jurgen Fassbender" loser="Mike Estep" score="6-4 7-5"/>
+		<match match-num="21" round="R16" best-of="3" winner="Karl Meiler" loser="Ion Tiriac" score="6-0 6-1"/>
+		<match match-num="22" round="R16" best-of="3" winner="Paul Gerken" loser="Jaime Pinto Bravo" score="6-7 7-6 7-5"/>
+		<match match-num="23" round="R16" best-of="3" winner="Ian Fletcher" loser="Pat Cramer" score="6-4 6-4"/>
+		<match match-num="24" round="R16" best-of="3" winner="Jimmy Connors" loser="Dick R Bohrnstedt" score="6-2 6-3"/>
+		<!-- QF -->
+		<match match-num="25" round="QF" best-of="3" winner="Ilie Nastase" loser="Nicholas Kalogeropoulos" score="6-2 6-3"/>
+		<match match-num="26" round="QF" best-of="3" winner="Jurgen Fassbender" loser="Billy Martin" score="6-4 6-4"/>
+		<match match-num="27" round="QF" best-of="3" winner="Karl Meiler" loser="Paul Gerken" score="6-3 5-7 6-4"/>
+		<match match-num="28" round="QF" best-of="3" winner="Jimmy Connors" loser="Ian Fletcher" score="6-4 6-4"/>
+		<!-- SF -->
+		<match match-num="29" round="SF" best-of="3" winner="Ilie Nastase" loser="Jurgen Fassbender" score="4-6 6-1 7-5"/>
+		<match match-num="30" round="SF" best-of="3" winner="Jimmy Connors" loser="Karl Meiler" score="6-3 6-1"/>
+		<!-- F -->
+		<match match-num="31" round="F" best-of="5" winner="Ilie Nastase" loser="Jimmy Connors" score="4-6 6-2 7-5 6-2"/>
+	</tournament>
+</tournament-data>
