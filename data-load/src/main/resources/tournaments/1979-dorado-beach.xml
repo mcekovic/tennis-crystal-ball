@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1979" name="Dorado Beach" date="1979-02-19" ext-id="A1">
+		<level>A</level>
+		<surface>C</surface>
+		<draw-type>RR</draw-type>
+		<draw-size>6</draw-size>
+		<!-- RR -->
+		<match match-num="1" round="RR" best-of="3" winner="Jimmy Connors" loser="Manuel Orantes" score="6-3 6-1"/>
+		<match match-num="2" round="RR" best-of="3" winner="Vitas Gerulaitis" loser="Ilie Nastase" score="6-3 6-2"/>
+		<match match-num="3" round="RR" best-of="3" winner="Peter Fleming" loser="Adriano Panatta" score="6-3 2-6 6-4"/>
+		<match match-num="4" round="RR" best-of="3" winner="Peter Fleming" loser="Ilie Nastase" score="6-5 6-3"/>
+		<match match-num="5" round="RR" best-of="3" winner="Jimmy Connors" loser="Vitas Gerulaitis" score="6-0 6-4"/>
+		<match match-num="6" round="RR" best-of="3" winner="Adriano Panatta" loser="Manuel Orantes" score="6-3 6-4"/>
+		<match match-num="7" round="RR" best-of="3" winner="Ilie Nastase" loser="Adriano Panatta" score="6-4 2-6 6-1"/>
+		<match match-num="8" round="RR" best-of="3" winner="Vitas Gerulaitis" loser="Manuel Orantes" score="6-2 6-2"/>
+		<match match-num="9" round="RR" best-of="3" winner="Jimmy Connors" loser="Peter Fleming" score="6-5 6-0"/>
+		<match match-num="10" round="RR" best-of="3" winner="Vitas Gerulaitis" loser="Adriano Panatta" score="6-2 6-5"/>
+		<match match-num="11" round="RR" best-of="3" winner="Jimmy Connors" loser="Ilie Nastase" score="6-4 6-5"/>
+		<match match-num="12" round="RR" best-of="3" winner="Peter Fleming" loser="Manuel Orantes" score="6-1 6-2"/>
+		<match match-num="13" round="RR" best-of="3" winner="Ilie Nastase" loser="Manuel Orantes" score="6-4 6-4"/>
+		<match match-num="14" round="RR" best-of="3" winner="Jimmy Connors" loser="Adriano Panatta" score="4-6 6-5 6-2"/>
+		<match match-num="15" round="RR" best-of="3" winner="Vitas Gerulaitis" loser="Peter Fleming" score="6-1 6-3"/>
+		<!-- F -->
+		<match match-num="31" round="F" best-of="5" winner="Jimmy Connors" loser="Vitas Gerulaitis" score="6-5 6-0 6-4"/>
+	</tournament>
+</tournament-data>

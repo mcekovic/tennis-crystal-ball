@@ -8,8 +8,8 @@ public enum TournamentLevel {
 	OLYMPICS("O"),
 	ATP("A"),
 	DAVIS_CUP("D"),
+	WORLD_TEAM_CUP("T"),
 	OTHERS("H"),
-	OTHERS_TEAM("T"),
 	CHALLENGERS("C"),
 	FUTURES("U");
 

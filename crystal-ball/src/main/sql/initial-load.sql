@@ -45,7 +45,9 @@ VALUES
 ('D', 'F',     75, NULL,    1, TRUE),
 ('D', 'SF',    70, NULL, NULL, TRUE),
 ('D', 'QF',    65, NULL, NULL, TRUE),
-('D', 'R16',   40, NULL, NULL, TRUE);
+('D', 'R16',   40, NULL, NULL, TRUE),
+-- World Team Cup
+('T', 'F',   NULL, NULL,    1, TRUE);
 
 DELETE FROM tournament_event_rank_factor;
 INSERT INTO tournament_event_rank_factor

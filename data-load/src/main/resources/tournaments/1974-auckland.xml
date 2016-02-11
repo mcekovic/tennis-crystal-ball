@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1974" name="Auckland" date="1974-01-07" ext-id="301">
+		<level>A</level>
+		<surface>G</surface>
+		<draw-type>KO</draw-type>
+		<draw-size>32</draw-size>
+		<!-- R32 -->
+		<match match-num="1" round="R32" best-of="5" winner="Onny Parun" loser="U Unknown" score="6-1 6-2 6-4"/>
+		<match match-num="2" round="R32" best-of="5" winner="Ray Ruffels" loser="Thierry Bernasconi" score="6-1 6-1 5-7 7-6"/>
+		<match match-num="3" round="R32" best-of="5" winner="Syd Ball" loser="John Lloyd" score="6-1 6-0 7-6"/>
+		<match match-num="4" round="R32" best-of="5" winner="Russell Simpson" loser="George Hardie" score="7-6 3-6 6-4 6-3"/>
+		<match match-num="5" round="R32" best-of="5" winner="Vladimir Zednik" loser="Tony Parun P071" score="6-3 6-3 7-6"/>
+		<match match-num="6" round="R32" best-of="5" winner="Allan Stone" loser="John Mills" score="6-2 6-7 6-4 6-3"/>
+		<match match-num="7" round="R32" best-of="5" winner="Wanaro Ngodrella" loser="Nick Boyne" score="6-1 6-1 6-3"/>
+		<match match-num="8" round="R32" best-of="5" winner="Ross Case" loser="Mark Farrell" score="7-5 6-3 6-7 6-2"/>
+		<match match-num="9" round="R32" best-of="5" winner="Bjorn Borg" loser="Jan Hordijk" score="6-4 6-2 6-1"/>
+		<match match-num="10" round="R32" best-of="5" winner="John Feaver" loser="Peter Langsford" score="4-6 6-1 6-3 6-1"/>
+		<match match-num="11" round="R32" best-of="5" winner="Dick Crealy" loser="Fred Whitaker" score="7-5 2-6 6-3 6-4"/>
+		<match match-num="12" round="R32" best-of="5" winner="Ian Fletcher" loser="U Unknown" score="6-4 6-0 6-3"/>
+		<match match-num="13" round="R32" best-of="5" winner="Bob Giltinan" loser="Jean Paul Meyer" score="6-3 7-5 6-7 5-7 6-3"/>
+		<match match-num="14" round="R32" best-of="5" winner="Larry Parker" loser="Jacques Thamin" score="6-2 6-3 6-4"/>
+		<match match-num="15" round="R32" best-of="5" winner="William Brown" loser="Jean Louis Haillet" score="6-4 6-3 6-1"/>
+		<match match-num="16" round="R32" best-of="5" winner="Colin Dibley" loser="Richard Hawkes" score="6-2 6-1 7-6"/>
+		<!-- R16 -->
+		<match match-num="17" round="R16" best-of="5" winner="Onny Parun" loser="Ray Ruffels" score="6-2 3-6 6-3 6-2"/>
+		<match match-num="18" round="R16" best-of="5" winner="Syd Ball" loser="Russell Simpson" score="6-3 6-3 RET"/>
+		<match match-num="19" round="R16" best-of="5" winner="Allan Stone" loser="Vladimir Zednik" score="6-4 5-7 7-6 6-3"/>
+		<match match-num="20" round="R16" best-of="5" winner="Ross Case" loser="Wanaro Ngodrella" score="6-3 7-6 7-6"/>
+		<match match-num="21" round="R16" best-of="5" winner="Bjorn Borg" loser="John Feaver" score="6-4 6-2 3-6 6-2"/>
+		<match match-num="22" round="R16" best-of="5" winner="Dick Crealy" loser="Ian Fletcher" score="6-4 7-6 6-3"/>
+		<match match-num="23" round="R16" best-of="5" winner="Bob Giltinan" loser="Larry Parker" score="6-1 7-6 6-1"/>
+		<match match-num="24" round="R16" best-of="5" winner="Colin Dibley" loser="William Brown" score="1-6 6-1 7-6 6-3"/>
+		<!-- QF -->
+		<match match-num="25" round="QF" best-of="5" winner="Onny Parun" loser="Syd Ball" score="7-5 5-7 4-6 6-2 6-4"/>
+		<match match-num="26" round="QF" best-of="5" winner="Ross Case" loser="Allan Stone" score="6-7 2-6 7-5 6-1 6-2"/>
+		<match match-num="27" round="QF" best-of="5" winner="Bjorn Borg" loser="Dick Crealy" score="5-7 6-2 7-6 6-1"/>
+		<match match-num="28" round="QF" best-of="5" winner="Colin Dibley" loser="Bob Giltinan" score="4-6 6-1 6-3 2-6 6-3"/>
+		<!-- SF -->
+		<match match-num="29" round="SF" best-of="5" winner="Onny Parun" loser="Ross Case" score="7-5 6-3 6-1"/>
+		<match match-num="30" round="SF" best-of="5" winner="Bjorn Borg" loser="Colin Dibley" score="6-2 6-7 6-4 6-1"/>
+		<!-- F -->
+		<match match-num="31" round="F" best-of="5" winner="Bjorn Borg" loser="Onny Parun" score="6-4 6-3 6-1"/>
+	</tournament>
+</tournament-data>

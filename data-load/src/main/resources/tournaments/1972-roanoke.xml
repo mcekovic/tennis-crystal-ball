@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1972" name="Roanoke" date="1972-01-17" ext-id="2022">
+		<level>A</level>
+		<surface>H</surface>
+		<indoor>true</indoor>
+		<draw-type>KO</draw-type>
+		<draw-size>4</draw-size>
+		<!-- SF -->
+		<match match-num="1" round="SF" best-of="3" winner="Jimmy Connors" loser="Frank Froehling" score="6-3 6-7 6-3"/>
+		<match match-num="2" round="SF" best-of="3" winner="Vladimir Zednik" loser="Jaime Fillol" score="6-4 7-6"/>
+		<!-- F -->
+		<match match-num="3" round="F" best-of="3" winner="Jimmy Connors" loser="Vladimir Zednik" score="6-4 7-6"/>
+	</tournament>
+</tournament-data>

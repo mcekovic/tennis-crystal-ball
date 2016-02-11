@@ -153,11 +153,11 @@ function levelName(level) {
 		case "G": return "Grand Slam";
 		case "F": return "Tour Finals";
 		case "M": return "Masters";
-		case "A": return "ATP";
 		case "O": return "Olympics";
+		case "A": return "ATP";
 		case "D": return "Davis Cup";
+		case "T": return "World Team Cup";
 		case "H": return "Others";
-		case "T": return "Others Team";
 		case "C": return "Challengers";
 		case "U": return "Futures";
 		default: return level;
