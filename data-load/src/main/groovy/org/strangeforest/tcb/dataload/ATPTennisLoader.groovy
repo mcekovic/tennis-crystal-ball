@@ -6,10 +6,12 @@ class ATPTennisLoader {
 
 	private final String baseDir
 	private final boolean full
+	private final boolean useMaterializedViews
 
 	ATPTennisLoader() {
 		baseDir = getBaseDir('tcb.data.base-dir')
 		full = System.getProperty('tcb.data.full-load', 'true').toBoolean()
+		useMaterializedViews = System.getProperty('tcb.data.use-materialized-views', 'true').toBoolean()
 	}
 
 	def loadPlayers(loader) {
@@ -91,7 +93,14 @@ class ATPTennisLoader {
 		println()
 	}
 
-	static refreshComputedData(Sql sql) {
+	def refreshComputedData(Sql sql) {
+		if (useMaterializedViews)
+			refreshMaterializedViews(sql)
+		else
+			refreshMaterializedViewTables(sql)
+	}
+
+	static refreshMaterializedViews(Sql sql) {
 		refreshMaterializedView(sql, 'player_current_rank')
 		refreshMaterializedView(sql, 'player_best_rank')
 		refreshMaterializedView(sql, 'player_best_rank_points')
@@ -111,11 +120,26 @@ class ATPTennisLoader {
 	}
 
 	private static refreshMaterializedView(Sql sql, String viewName) {
-		println "Refreshing materialized view '$viewName'"
 		def t0 = System.currentTimeMillis()
+		println "Refreshing materialized view '$viewName'"
 		sql.execute('REFRESH MATERIALIZED VIEW ' + viewName)
 		sql.commit()
 		def seconds = (System.currentTimeMillis() - t0) / 1000.0
 		println "Materialized view '$viewName' refreshed in $seconds s"
+	}
+
+	private static refreshMaterializedViewTables(Sql sql) {
+		def t0 = System.currentTimeMillis()
+		println 'Dropping views...'
+		executeSQLFile(sql, '../crystal-ball/src/main/sql/drop-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+		println 'Creating views...'
+		executeSQLFile(sql, '../crystal-ball/src/main/sql/create-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+		def seconds = (System.currentTimeMillis() - t0) / 1000.0
+		println "Materialized view tables refreshed in $seconds s"
+	}
+
+	private static boolean executeSQLFile(Sql sql, String file, String replaceTarget, String replacement) {
+		sql.execute(new File(file).text.replace(replaceTarget, replacement))
+		sql.commit()
 	}
 }

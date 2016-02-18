@@ -77,8 +77,6 @@ VALUES
 ( 80,  99,   2),
 (101, 200,   1);
 
-
-
 DELETE FROM year_end_rank_goat_points;
 INSERT INTO year_end_rank_goat_points
 (year_end_rank, goat_points)
