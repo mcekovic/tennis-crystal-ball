@@ -138,7 +138,7 @@ class ATPTennisLoader {
 		println "Materialized view tables refreshed in $seconds s"
 	}
 
-	private static boolean executeSQLFile(Sql sql, String file, String replaceTarget, String replacement) {
+	private static executeSQLFile(Sql sql, String file, String replaceTarget, String replacement) {
 		sql.execute(new File(file).text.replace(replaceTarget, replacement))
 		sql.commit()
 	}
