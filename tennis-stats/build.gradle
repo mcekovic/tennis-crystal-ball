@@ -5,7 +5,7 @@ buildscript {
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
 		classpath 'io.spring.gradle:dependency-management-plugin:0.5.5.RELEASE'
-		classpath 'org.hidetake:gradle-ssh-plugin:1.1.4'
+		classpath 'org.hidetake:gradle-ssh-plugin:1.2.0'
 	}
 }
 

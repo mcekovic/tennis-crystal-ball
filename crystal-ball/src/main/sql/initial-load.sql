@@ -124,7 +124,9 @@ VALUES
 ('A', 'F',  2),
 ('A', 'SF', 1),
 -- Davis Cup
-('D', 'F',  1);
+('D', 'F',  1),
+-- World Team Cup
+('T', 'F',  1);
 
 DELETE FROM big_win_rank_factor;
 INSERT INTO big_win_rank_factor

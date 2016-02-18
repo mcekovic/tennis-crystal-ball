@@ -17,6 +17,8 @@ abstract class BaseCSVLoader {
 
 	private static def PROGRESS_LINE_WRAP = 100
 
+	private static final String DEADLOCK_DETECTED = "40P01"
+
 	BaseCSVLoader(BlockingDeque<Sql> sqlPool) {
 		this.sqlPool = sqlPool
 	}
@@ -83,18 +85,10 @@ abstract class BaseCSVLoader {
 		rows
 	}
 
-	def execute(ExecutorService executor, String loadSql, Iterable<Map> paramsBatch, AtomicInteger batches) {
+	def execute(ExecutorService executor, String loadSql, Collection<Map> paramsBatch, AtomicInteger batches) {
 		def lineWrap = PROGRESS_LINE_WRAP
-		def sqlPool = sqlPool
 		executor.execute {
-			def sql = sqlPool.removeFirst()
-			try {
-				executeWithBatch(sql, loadSql, paramsBatch)
-				sql.commit()
-			}
-			finally {
-				sqlPool.addFirst(sql)
-			}
+			executeWithBatch(loadSql, paramsBatch)
 			if (batches.incrementAndGet() % lineWrap == 0)
 				println '.'
 			else
@@ -102,18 +96,44 @@ abstract class BaseCSVLoader {
 		}
 	}
 
-	static executeWithBatch(Sql sql, String loadSql, Iterable<Map> paramsBatch) {
+	def executeWithBatch(String loadSql, Collection<Map> paramsBatch) {
+		def sql = sqlPool.removeFirst()
 		try {
 			sql.withBatch(loadSql) { ps ->
 				paramsBatch.each { params ->
 					ps.addBatch(params)
 				}
 			}
+			sql.commit()
 		}
 		catch (BatchUpdateException buEx) {
-			for (def nextEx = buEx.getNextException(); nextEx ; nextEx = nextEx.getNextException())
-				System.err.println(nextEx);
-			throw buEx;
+			switch (buEx.getSQLState()) {
+				case DEADLOCK_DETECTED:
+					sql.rollback()
+					for (def paramsSubBatch : tile(paramsBatch))
+						executeWithBatch(loadSql, paramsSubBatch)
+					break
+				default:
+					for (def nextEx = buEx.getNextException(); nextEx ; nextEx = nextEx.getNextException())
+						System.err.println(nextEx);
+					throw buEx;
+			}
+		}
+		finally {
+			sqlPool.addFirst(sql)
+		}
+	}
+
+	private static <E> List<Collection<E>> tile(Collection<E> col) {
+		int size = col.size()
+		if (size == 1)
+			[col]
+		else {
+			def part1 = [], part2 = []
+			def part1Size = size / 2
+			def i = 0
+			col.each { it -> (++i <= part1Size ? part1 : part2).add it }
+			[part1, part2]
 		}
 	}
 
