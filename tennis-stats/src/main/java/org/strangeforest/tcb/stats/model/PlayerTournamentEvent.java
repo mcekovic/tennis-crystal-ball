@@ -63,6 +63,18 @@ public class PlayerTournamentEvent {
 	}
 
 	public String getResult() {
-		return result;
+		return mapResult(result, level);
+	}
+
+	static String mapResult(String result, String level) {
+		if (Objects.equals(level, "O")) {
+			switch (result) {
+				case "W": return "G";
+				case "F": return "S";
+				default: return result;
+			}
+		}
+		else
+			return result;
 	}
 }

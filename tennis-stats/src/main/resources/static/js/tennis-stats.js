@@ -13,14 +13,6 @@ function autocompletePlayer(id) {
 	});
 }
 
-function split(val) {
-	return val.split(/,\s*/);
-}
-
-function extractLast(term) {
-	return split(term).pop();
-}
-
 function autocompletePlayers(id, func) {
 	$("#" + id).bind("keydown", function (event) {
 		if (event.keyCode === $.ui.keyCode.ENTER && !$(this).autocomplete("instance").menu.active)
@@ -51,6 +43,14 @@ function autocompletePlayers(id, func) {
 			return false;
 		}
 	});
+}
+
+function split(val) {
+	return val.split(/,\s*/);
+}
+
+function extractLast(term) {
+	return split(term).pop();
 }
 
 function getPlayerCount(players) {
@@ -139,6 +139,7 @@ function rivalryFormatter(column, row) {
 function levelFormatter(column, row) {
 	return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + levelName(row.level) + "</span>";
 }
+
 function levelClassSuffix(level) {
 	switch (level) {
 		case "G": return "danger";
@@ -148,6 +149,7 @@ function levelClassSuffix(level) {
 		default: return "default";
 	}
 }
+
 function levelName(level) {
 	switch (level) {
 		case "G": return "Grand Slam";
@@ -169,6 +171,7 @@ function surfaceFormatter(column, row) {
 	if (row.surface)
 		return "<span class='label label-" + surfaceClassSuffix(row.surface) + "'>" + surfaceName(row.surface) + "</span>";
 }
+
 function surfaceClassSuffix(surface) {
 	switch (surface) {
 		case "H": return "primary";
@@ -178,6 +181,7 @@ function surfaceClassSuffix(surface) {
 		default: return "default";
 	}
 }
+
 function surfaceName(surface) {
 	switch (surface) {
 		case "H": return "Hard";

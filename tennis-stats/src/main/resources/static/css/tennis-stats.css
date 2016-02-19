@@ -71,9 +71,6 @@
 .bg-result-SF {
 	background: yellow;
 }
-.bg-result-BR {
-	background: #ff9c40;
-}
 .bg-result-QF {
 	background: blanchedalmond;
 }
@@ -91,6 +88,15 @@
 }
 .bg-result-RR {
 	background: #afeeee;
+}
+.bg-result-G {
+	background: gold;
+}
+.bg-result-S {
+	background: silver;
+}
+.bg-result-BR {
+	background: #ff9c40;
 }
 .bg-won-0 {
 	background: #ffa07a;

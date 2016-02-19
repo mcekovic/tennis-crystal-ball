@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import static org.strangeforest.tcb.stats.model.PlayerTournamentEvent.*;
+
 public class PlayerTimelineItem {
 
 	private final int tournamentId;
@@ -59,6 +61,6 @@ public class PlayerTimelineItem {
 	}
 
 	public String getResult() {
-		return result;
+		return mapResult(result, level);
 	}
 }
