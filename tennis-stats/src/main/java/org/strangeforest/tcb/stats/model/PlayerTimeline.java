@@ -20,7 +20,7 @@ public class PlayerTimeline {
 	}
 
 	public List<PlayerTournamentTimeline> getOtherTournaments() {
-		return getTournaments(EnumSet.of(ATP, DAVIS_CUP));
+		return getTournaments(EnumSet.of(ATP_500, ATP_250));
 	}
 
 	private List<PlayerTournamentTimeline> getTournaments(EnumSet<TournamentLevel> levels) {

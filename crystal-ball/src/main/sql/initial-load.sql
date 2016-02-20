@@ -33,13 +33,20 @@ VALUES
 ('O', 'R16',   70,   50, NULL, FALSE),
 ('O', 'R32',   35,   25, NULL, FALSE),
 ('O', 'R64',    5,    5, NULL, FALSE),
--- ATP
-('A', 'W',    500,  250,    2, FALSE),
-('A', 'F',    300,  175,    1, FALSE),
-('A', 'SF',   180,  110, NULL, FALSE),
-('A', 'QF',    90,   60, NULL, FALSE),
+-- ATP 500
+('A', 'W',    500,  300,    2, FALSE),
+('A', 'F',    300,  210,    1, FALSE),
+('A', 'SF',   180,  135, NULL, FALSE),
+('A', 'QF',    90,   75, NULL, FALSE),
 ('A', 'R16',   45,   25, NULL, FALSE),
 ('A', 'R32', NULL, NULL, NULL, FALSE),
+-- ATP 250
+('B', 'W',    250,  250,    1, FALSE),
+('B', 'F',    150,  175, NULL, FALSE),
+('B', 'SF',    90,  110, NULL, FALSE),
+('B', 'QF',    45,   60, NULL, FALSE),
+('B', 'R16',   20,   25, NULL, FALSE),
+('B', 'R32', NULL, NULL, NULL, FALSE),
 -- Davis Cup
 ('D', 'W',     75, NULL, NULL, TRUE),
 ('D', 'F',     75, NULL,    1, TRUE),
@@ -118,9 +125,11 @@ VALUES
 ('O', 'F',  3),
 ('O', 'BR', 1),
 ('O', 'SF', 1),
--- ATP
+-- ATP 500
 ('A', 'F',  2),
 ('A', 'SF', 1),
+-- ATP 250
+('B', 'F',  1),
 -- Davis Cup
 ('D', 'F',  1),
 -- World Team Cup

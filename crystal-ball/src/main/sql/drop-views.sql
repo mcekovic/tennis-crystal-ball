@@ -24,6 +24,7 @@ DROP MATERIALIZED VIEW player_year_end_rank;
 
 DROP MATERIALIZED VIEW player_titles;
 DROP MATERIALIZED VIEW player_tournament_event_result;
+DROP MATERIALIZED VIEW event_participation;
 
 DROP MATERIALIZED VIEW player_performance;
 DROP MATERIALIZED VIEW player_season_performance;

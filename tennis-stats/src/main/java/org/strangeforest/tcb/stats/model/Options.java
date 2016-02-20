@@ -10,8 +10,9 @@ public abstract class Options {
 		new Option("G", "Grand Slam"),
 		new Option("F", "Tour Finals"),
 		new Option("M", "Masters"),
-		new Option("A", "ATP"),
-		new Option("O", "Olympics")
+		new Option("O", "Olympics"),
+		new Option("A", "ATP 500"),
+		new Option("B", "ATP 250")
 	);
 
 	public static final List<Option> TOURNAMENT_LEVELS = new ArrayList<Option>(MAIN_TOURNAMENT_LEVELS) {{

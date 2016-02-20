@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
 	<tournament season="1972" name="Roanoke" date="1972-01-17" ext-id="2022">
-		<level>A</level>
+		<level>B</level>
 		<surface>H</surface>
 		<indoor>true</indoor>
 		<draw-type>KO</draw-type>

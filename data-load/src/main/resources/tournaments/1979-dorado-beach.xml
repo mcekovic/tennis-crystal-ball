@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
 	<tournament season="1979" name="Dorado Beach" date="1979-02-19" ext-id="A1">
-		<level>A</level>
+		<level>B</level>
 		<surface>C</surface>
 		<draw-type>RR</draw-type>
 		<draw-size>6</draw-size>

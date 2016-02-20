@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
 	<tournament season="1973" name="Washington-2" date="1974-03-19" ext-id="2040">
-		<level>A</level>
+		<level>B</level>
 		<surface>P</surface>
 		<indoor>true</indoor>
 		<draw-type>KO</draw-type>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
 	<tournament season="1974" name="Auckland" date="1974-01-07" ext-id="301">
-		<level>A</level>
+		<level>B</level>
 		<surface>G</surface>
 		<draw-type>KO</draw-type>
 		<draw-size>32</draw-size>

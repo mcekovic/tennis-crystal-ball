@@ -27,9 +27,10 @@
 			<xs:enumeration value="G"/>
 			<xs:enumeration value="F"/>
 			<xs:enumeration value="M"/>
-			<xs:enumeration value="A"/>
-			<xs:enumeration value="D"/>
 			<xs:enumeration value="O"/>
+			<xs:enumeration value="A"/>
+			<xs:enumeration value="B"/>
+			<xs:enumeration value="D"/>
 			<xs:enumeration value="H"/>
 			<xs:enumeration value="T"/>
 			<xs:enumeration value="C"/>

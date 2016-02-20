@@ -49,6 +49,22 @@ WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_dat
 
 CREATE INDEX ON player_year_end_rank (player_id);
 
+-- event_participation
+
+CREATE MATERIALIZED VIEW event_participation AS
+WITH event_players AS (
+	SELECT DISTINCT tournament_event_id, winner_id AS player_id, winner_rank AS rank FROM match
+	UNION DISTINCT
+	SELECT DISTINCT tournament_event_id, loser_id, loser_rank FROM match
+)
+SELECT p.tournament_event_id, count(p.player_id) player_count, sum(f.rank_factor) participation_points,
+	max_event_participation(count(p.player_id)::INTEGER) AS max_participation_points
+FROM event_players p
+INNER JOIN tournament_event e USING (tournament_event_id)
+LEFT JOIN tournament_event_rank_factor f ON p.rank BETWEEN f.rank_from AND f.rank_to
+WHERE e.level NOT IN ('D', 'T')
+GROUP BY p.tournament_event_id;
+
 
 -- player_tournament_event_result
 
@@ -98,7 +114,7 @@ WITH level_titles AS (
 	GROUP BY player_id, level
 ), titles AS (
 	SELECT player_id, sum(titles) AS titles FROM level_titles
-	WHERE level IN ('G', 'F', 'M', 'O', 'A')
+	WHERE level IN ('G', 'F', 'M', 'O', 'A', 'B')
 	GROUP BY player_id
 ), big_titles AS (
 	SELECT player_id, sum(titles) AS titles FROM level_titles
@@ -125,7 +141,7 @@ SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.d
 	m.winner_rank, m.loser_rank, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.w_sets, m.l_sets, m.w_games, m.l_games
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
-WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D', 'T') AND (m.outcome IS NULL OR m.outcome = 'RET');
+WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T') AND (m.outcome IS NULL OR m.outcome = 'RET');
 
 
 -- match_for_rivalry_v
@@ -134,7 +150,7 @@ CREATE OR REPLACE VIEW match_for_rivalry_v AS
 SELECT m.match_id, m.winner_id, m.loser_id, e.season, e.level, e.surface
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
-WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'D', 'T');
+WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T');
 
 
 -- player_match_performance_v
@@ -907,7 +923,7 @@ WITH pleayer_season AS (
 		count(CASE WHEN e.level = 'F' AND r.result = 'W' THEN 1 ELSE NULL END) tour_finals_titles,
 		count(CASE WHEN e.level = 'M' AND r.result = 'W' THEN 1 ELSE NULL END) masters_titles,
 		count(CASE WHEN e.level = 'O' AND r.result = 'W' THEN 1 ELSE NULL END) olympics_titles,
-		count(CASE WHEN e.level IN ('G', 'F', 'M', 'A', 'O') AND r.result = 'W' THEN 1 ELSE NULL END) titles
+		count(CASE WHEN e.level IN ('G', 'F', 'M', 'O', 'A', 'B') AND r.result = 'W' THEN 1 ELSE NULL END) titles
 	FROM player_season_goat_points s
 	LEFT JOIN player_tournament_event_result r USING (player_id)
 	LEFT JOIN tournament_event e USING (tournament_event_id, season)

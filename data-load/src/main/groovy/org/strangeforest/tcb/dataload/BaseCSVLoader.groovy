@@ -97,7 +97,7 @@ abstract class BaseCSVLoader {
 	}
 
 	def executeWithBatch(String loadSql, Collection<Map> paramsBatch) {
-		def sql = sqlPool.removeFirst()
+		def sql = sqlPool.take()
 		try {
 			sql.withBatch(loadSql) { ps ->
 				paramsBatch.each { params ->
@@ -107,9 +107,9 @@ abstract class BaseCSVLoader {
 			sql.commit()
 		}
 		catch (BatchUpdateException buEx) {
+			sql.rollback()
 			switch (buEx.getSQLState()) {
 				case DEADLOCK_DETECTED:
-					sql.rollback()
 					for (def paramsSubBatch : tile(paramsBatch))
 						executeWithBatch(loadSql, paramsSubBatch)
 					break
@@ -120,7 +120,7 @@ abstract class BaseCSVLoader {
 			}
 		}
 		finally {
-			sqlPool.addFirst(sql)
+			sqlPool.put(sql)
 		}
 	}
 

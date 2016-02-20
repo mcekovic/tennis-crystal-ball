@@ -69,3 +69,23 @@ BEGIN
 	RETURN (SELECT min_entries FROM statistics_category WHERE category_id = p_category_id);
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- max_event_participation
+
+CREATE OR REPLACE FUNCTION max_event_participation(
+	p_player_count INTEGER
+) RETURNS INTEGER AS $$
+DECLARE
+	l_max_participation INTEGER = 0;
+	l_participation INTEGER;
+BEGIN
+	FOR rank IN 1..p_player_count LOOP
+		SELECT rank_factor INTO l_participation FROM tournament_event_rank_factor WHERE rank BETWEEN rank_from AND rank_to;
+		IF l_participation IS NOT NULL THEN
+			l_max_participation = l_max_participation + l_participation;
+		END IF;
+	END LOOP;
+	RETURN l_max_participation;
+END;
+$$ LANGUAGE plpgsql;

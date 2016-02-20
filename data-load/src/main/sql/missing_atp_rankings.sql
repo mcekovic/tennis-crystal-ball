@@ -217,9 +217,6 @@ PERFORM load_ranking(DATE '1982-12-27', 'Gene Mayer', 8, NULL);
 PERFORM load_ranking(DATE '1982-12-27', 'Yannick Noah', 9, NULL);
 PERFORM load_ranking(DATE '1982-12-27', 'Peter Mcnamara', 10, NULL);
 
-DELETE FROM player_ranking
-WHERE rank_date = DATE '1983-03-01';
-
 PERFORM load_ranking(DATE '1983-01-31', 'Jimmy Connors', 1, NULL);
 PERFORM load_ranking(DATE '1983-01-31', 'John Mcenroe', 2, NULL);
 

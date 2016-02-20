@@ -158,10 +158,8 @@ class MatchLoader extends BaseCSVLoader {
 					(name.startsWith('Las Vegas') && (1972..1981).contains(season) && drawSize >= 32) ||
 					(name.startsWith('Los Angeles') && (1970..1973).contains(season) && drawSize >= 64) ||
 					(name.startsWith('Monte Carlo') && (1970..1989).contains(season)) ||
-					(name.startsWith('Monte-Carlo') && season == 2015) ||
-					(name.startsWith('Paris') && [1989, 2015].contains(season)) ||
+					(name.startsWith('Paris') && season == 1989) ||
 					(name.startsWith('Philadelphia') && (1970..1986).contains(season)) ||
-					(name.equals('Shanghai') && season == 2015) ||
 					(name.equals('Sydney Outdoor') && season == 1971) ||
 					(name.equals('Stockholm') && ((1972..1980).contains(season) || (1984..1989).contains(season))) ||
 					(name.equals('Stockholm Open') && (1970..1971).contains(season)) ||
@@ -179,8 +177,42 @@ class MatchLoader extends BaseCSVLoader {
 					(name.equals('Dusseldorf') && extTournamentId == '615')
 				)
 					return 'T'
-				else
+				else if (
+					(name.equals('Rotterdam') && (1999..2016).contains(season)) ||
+					(name.equals('Rio de Janeiro') && (2014..2016).contains(season)) ||
+					(name.equals('Dubai') && (2001..2016).contains(season)) ||
+					(name.equals('Acapulco') && (2001..2016).contains(season)) ||
+					(name.equals('Mexico City') && season == 2000) ||
+					(name.equals('Barcelona') && (1990..2016).contains(season)) ||
+					(name.equals('Halle') && (2015..2016).contains(season)) ||
+					(name.equals('London') && ((1998..2000).contains(season) || (2015..2016).contains(season))) ||
+					(name.equals('Hamburg') && (2009..2016).contains(season)) ||
+					(name.equals('Washington') && ((1990..2002).contains(season) || (2009..2016).contains(season))) ||
+					(name.equals('Beijing') && (2009..2016).contains(season)) ||
+					(name.equals('Tokyo') && (1996..2016).contains(season)) ||
+					(name.equals('Tokyo Outdoor') && (1990..1995).contains(season)) ||
+					(name.equals('Tokyo Indoor') && (1990..1995).contains(season)) ||
+					(name.equals('Vienna') && ((1996..2008).contains(season) || (2015..2016).contains(season))) ||
+					(name.equals('Basel') && (2009..2016).contains(season)) ||
+					(name.equals('Valencia') && (2009..2014).contains(season)) ||
+					(name.equals('Memphis') && ((1990..1992).contains(season) || (1994..2013).contains(season))) ||
+					(name.equals('Stuttgart Outdoor') && (1990..2000).contains(season)) ||
+					(name.equals('Stuttgart') && (season == 2001 || (2003..2008).contains(season))) ||
+					(name.equals('Stuttgart Indoor') && (1990..1995).contains(season)) ||
+					(name.equals('Kitzbuhel') && (1999..2008).contains(season)) ||
+					(name.equals('Indianapolis') && (1990..2002).contains(season)) ||
+					(name.equals('Singapore') && (1997..1999).contains(season)) ||
+					(name.equals('Antwerp') && (1996..1998).contains(season)) ||
+					(name.equals('Philadelphia') && (1990..1998).contains(season)) ||
+					(name.equals('New Haven') && (1990..1998).contains(season)) ||
+					(name.equals('Milan') && (1991..1997).contains(season)) ||
+					(name.equals('Sydney Indoor') && (1990..1994).contains(season)) ||
+					(name.equals('Brussels') && (1990..1992).contains(season)) ||
+					(name.equals('Toronto Indoor') && season == 1990)
+				)
 					return 'A'
+				else
+					return 'B'
 			case 'D': return 'D'
 			case 'C': return 'C'
 			default: throw new IllegalArgumentException("Unknown tournament level: $level")

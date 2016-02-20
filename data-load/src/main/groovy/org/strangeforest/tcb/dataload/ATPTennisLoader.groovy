@@ -107,6 +107,7 @@ class ATPTennisLoader {
 		refreshMaterializedView(sql, 'player_year_end_rank')
 		refreshMaterializedView(sql, 'player_season_weeks_at_no1')
 		refreshMaterializedView(sql, 'player_weeks_at_no1')
+		refreshMaterializedView(sql, 'event_participation')
 		refreshMaterializedView(sql, 'player_tournament_event_result')
 		refreshMaterializedView(sql, 'player_titles')
 		refreshMaterializedView(sql, 'player_season_performance')

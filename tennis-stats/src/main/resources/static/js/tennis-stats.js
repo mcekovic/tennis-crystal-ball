@@ -137,17 +137,7 @@ function rivalryFormatter(column, row) {
 
 // Level Formatter
 function levelFormatter(column, row) {
-	return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + levelName(row.level) + "</span>";
-}
-
-function levelClassSuffix(level) {
-	switch (level) {
-		case "G": return "danger";
-		case "F": return "warning";
-		case "M": return "info";
-		case "O": return "success";
-		default: return "default";
-	}
+	return "<span class='label label-" + row.level + "'>" + levelName(row.level) + "</span>";
 }
 
 function levelName(level) {
@@ -156,7 +146,8 @@ function levelName(level) {
 		case "F": return "Tour Finals";
 		case "M": return "Masters";
 		case "O": return "Olympics";
-		case "A": return "ATP";
+		case "A": return "ATP 500";
+		case "B": return "ATP 250";
 		case "D": return "Davis Cup";
 		case "T": return "World Team Cup";
 		case "H": return "Others";
@@ -199,7 +190,7 @@ function indoorFormatter(column, row) {
 
 // Tournament Formatter
 function tournamentFormatter(column, row) {
-	return "<span class='label label-" + levelClassSuffix(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</span>";
+	return "<span class='label label-" + row.level + "'>" + (row.tournament ? row.tournament : row.name) + "</span>";
 }
 
 // Tournament Event Formatter

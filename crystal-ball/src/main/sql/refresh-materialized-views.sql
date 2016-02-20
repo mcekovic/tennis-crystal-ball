@@ -5,6 +5,7 @@ REFRESH MATERIALIZED VIEW player_year_end_rank;
 REFRESH MATERIALIZED VIEW player_season_weeks_at_no1;
 REFRESH MATERIALIZED VIEW player_weeks_at_no1;
 
+REFRESH MATERIALIZED VIEW event_participation;
 REFRESH MATERIALIZED VIEW player_tournament_event_result;
 REFRESH MATERIALIZED VIEW player_titles;
 

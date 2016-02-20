@@ -29,6 +29,30 @@
 	color: black;
 	background-color: #ffa07a;
 }
+.label-G {
+	background-color: #d9534f;
+}
+.label-F {
+	background-color: #f0ad4e;
+}
+.label-M {
+	background-color: #5bc0de;
+}
+.label-O {
+	background-color: #5cb85c;
+}
+.label-A {
+	background-color: #777;
+}
+.label-B {
+	background-color: #aaa;
+}
+.label-D {
+	background-color: #d860f8;
+}
+.label-T {
+	background-color: #f088b0;
+}
 .black {
 	color: black;
 }
@@ -41,14 +65,20 @@
 .bg-level-M {
 	background: #d9edf7;
 }
-.bg-level-A {
-	background: #f0f0f0;
-}
 .bg-level-O {
 	background: #dff0d8;
 }
+.bg-level-A {
+	background: #e0e0e0;
+}
+.bg-level-B {
+	background: #f0f0f0;
+}
 .bg-level-D {
-	background: #fce3f7;
+	background: #f7e3f7;
+}
+.bg-level-T {
+	background: #f7ecf3;
 }
 .bg-surface-H {
 	background: #d9edf7;
