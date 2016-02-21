@@ -28,7 +28,7 @@ public class TournamentService {
 		"LEFT JOIN match m ON m.tournament_event_id = e.tournament_event_id AND m.round = 'F'\n" +
 		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id\n" +
 		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id\n" +
-		"WHERE e.level NOT IN ('D', 'C')%1$s\n" +
+		"WHERE e.level NOT IN ('D', 'T')%1$s\n" +
 		"ORDER BY %2$s OFFSET ?";
 
 	private static final String TOURNAMENTS_QUERY =

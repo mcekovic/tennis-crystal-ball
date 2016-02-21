@@ -1,4 +1,4 @@
-CREATE TYPE tournament_level AS ENUM ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T', 'H', 'C', 'U');
+CREATE TYPE tournament_level AS ENUM ('G', 'F', 'M', 'O', 'A', 'B', 'C', 'U', 'E', 'H', 'D', 'T');
 CREATE TYPE surface AS ENUM ('H', 'C', 'G', 'P');
 CREATE TYPE draw_type AS ENUM ('KO', 'RR');
 CREATE TYPE player_hand AS ENUM ('R', 'L');
