@@ -5,7 +5,7 @@
 		<span th:if="${tournament.maxLevel} == 'O'" th:text="${tournament.name}" th:attr="data-level=${tournament.maxLevel}" data-level="O" class="label level">Olympics</span>
 	</td>
 	<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
-		<span th:each="surface : ${tournament.surfaces}" th:text="${surface}" class="label surface">G</span>
+		<span th:each="surface : ${tournament.surfaces}" th:text="${surface.surface}" class="label surface" th:title="${surface.indoor ? 'Indoor' : 'Outdoor'}">G</span>
 	</td>
 	<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
 		<a th:if="${item.result}" th:href="'javascript:playerTournamentMatches(' + ${item.tournamentEventId} + ')'" th:attr="data-level=${tournament.levelCount > 1 ? item.level : ''}, data-surface=${tournament.surfaceCount > 1 ? item.surface : ''}">

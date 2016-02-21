@@ -14,7 +14,9 @@
 			});
 			$tournamentsBody.find("span.level").each(function() {
 				var $tournament = $(this);
-				$tournament.addClass("label-" + $tournament.data("level"));
+				var level = $tournament.data("level");
+				$tournament.addClass("label-" + level);
+				$tournament.attr("title", levelName(level));
 			});
 			$tournamentsBody.find("a[data-level], a[data-surface]").each(function() {
 				var $result = $(this);

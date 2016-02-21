@@ -6,17 +6,19 @@ public class LastMatch {
 	private final int season;
 	private final String level;
 	private final String surface;
+	private final boolean indoor;
 	private final String tournament;
 	private final String round;
 	private final int winnerId;
 	private final int loserId;
 	private final String score;
 
-	public LastMatch(long id, int season, String level, String surface, String tournament, String round, int winnerId, int loserId, String score) {
+	public LastMatch(long id, int season, String level, String surface, boolean indoor, String tournament, String round, int winnerId, int loserId, String score) {
 		this.id = id;
 		this.season = season;
 		this.level = level;
 		this.surface = surface;
+		this.indoor = indoor;
 		this.tournament = tournament;
 		this.round = round;
 		this.winnerId = winnerId;
@@ -38,6 +40,10 @@ public class LastMatch {
 
 	public String getSurface() {
 		return surface;
+	}
+
+	public boolean isIndoor() {
+		return indoor;
 	}
 
 	public String getTournament() {

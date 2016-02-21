@@ -47,6 +47,18 @@
 .label-B {
 	background-color: #aaa;
 }
+.label-C {
+	background-color: #ccc;
+}
+.label-U {
+	background-color: #ddd;
+}
+.label-E {
+	background-color: #ddd;
+}
+.label-H {
+	background-color: #ddd;
+}
 .label-D {
 	background-color: #d860f8;
 }
@@ -72,7 +84,19 @@
 	background: #e0e0e0;
 }
 .bg-level-B {
+	background: #e8e8e8;
+}
+.bg-level-C {
 	background: #f0f0f0;
+}
+.bg-level-U {
+	background: #f8f8f8;
+}
+.bg-level-E {
+	background: white;
+}
+.bg-level-H {
+	background: white;
 }
 .bg-level-D {
 	background: #f7e3f7;

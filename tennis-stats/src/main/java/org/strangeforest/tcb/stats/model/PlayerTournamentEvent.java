@@ -10,17 +10,19 @@ public class PlayerTournamentEvent {
 	private final String name;
 	private final String level;
 	private final String surface;
+	private final boolean indoor;
 	private final String drawType;
 	private final Integer drawSize;
 	private final String result;
 
-	public PlayerTournamentEvent(int tournamentEventId, int season, Date date, String name, String level, String surface, String drawType, Integer drawSize, String result) {
+	public PlayerTournamentEvent(int tournamentEventId, int season, Date date, String name, String level, String surface, boolean indoor, String drawType, Integer drawSize, String result) {
 		this.tournamentEventId = tournamentEventId;
 		this.season = season;
 		this.date = date;
 		this.name = name;
 		this.level = level;
 		this.surface = surface;
+		this.indoor = indoor;
 		this.drawType = drawType;
 		this.drawSize = drawSize;
 		this.result = result;
@@ -48,6 +50,10 @@ public class PlayerTournamentEvent {
 
 	public String getSurface() {
 		return surface;
+	}
+
+	public boolean isIndoor() {
+		return indoor;
 	}
 
 	public String getDrawType() {

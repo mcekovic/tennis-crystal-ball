@@ -15,7 +15,7 @@ public class PlayerTimelineService {
 	@Autowired private JdbcTemplate jdbcTemplate;
 
 	private static final String TIMELINE_QUERY =
-		"SELECT tournament_id, t.name AS tournament_name, e.season, tournament_event_id, e.date, e.level, e.surface, e.name, r.result\n" +
+		"SELECT tournament_id, t.name AS tournament_name, e.season, tournament_event_id, e.date, e.level, e.surface, e.indoor, e.name, r.result\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN tournament t USING (tournament_id)\n" +
@@ -60,6 +60,7 @@ public class PlayerTimelineService {
 					rs.getDate("date"),
 					rs.getString("level"),
 					rs.getString("surface"),
+					rs.getBoolean("indoor"),
 					rs.getString("name"),
 					rs.getString("result")
 				));

@@ -16,7 +16,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	private final int tournamentId;
 	private String name;
 	private final Map<String, String> levels = new LinkedHashMap<>(); // <Level, Name>
-	private final Set<String> surfaces = new LinkedHashSet<>();
+	private final Set<TimelineSurface> surfaces = new LinkedHashSet<>();
 	private final List<Date> dates = new ArrayList<>();
 	private final Map<Integer, PlayerTimelineItem> items = new HashMap<>();
 	private boolean firstByLevel;
@@ -50,7 +50,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 		return maxLevel.get();
 	}
 
-	public Iterable<String> getSurfaces() {
+	public Iterable<TimelineSurface> getSurfaces() {
 		return surfaces;
 	}
 
@@ -61,7 +61,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	public List<PlayerTimelineItem> getItems() {
 		return timeline.getSeasons().stream().map(season -> {
 			PlayerTimelineItem item = items.get(season);
-			return item != null ? item : new PlayerTimelineItem(tournamentId, null, season, 0, null, null, null, null, null);
+			return item != null ? item : new PlayerTimelineItem(tournamentId, season);
 		}).collect(toList());
 	}
 
@@ -72,7 +72,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 		levels.put(item.getLevel(), item.getName());
 		String surface = item.getSurface();
 		if (surface != null)
-			surfaces.add(surface);
+			surfaces.add(new TimelineSurface(surface, item.isIndoor()));
 		dates.add(item.getDate());
 	}
 
@@ -102,4 +102,39 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	);
 
 	private static final int REFERENCE_YEAR = 2001;
+
+
+	public static class TimelineSurface {
+
+		private final String surface;
+		private final boolean indoor;
+
+		public TimelineSurface(String surface) {
+			this(surface, false);
+		}
+
+		public TimelineSurface(String surface, boolean indoor) {
+			this.surface = surface;
+			this.indoor = indoor;
+		}
+
+		public String getSurface() {
+			return surface;
+		}
+
+		public boolean isIndoor() {
+			return indoor;
+		}
+
+		@Override public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			TimelineSurface that = (TimelineSurface)o;
+			return Objects.equals(surface, that.surface) && indoor == that.indoor;
+		}
+
+		@Override public int hashCode() {
+			return Objects.hash(surface, indoor);
+		}
+	}
 }

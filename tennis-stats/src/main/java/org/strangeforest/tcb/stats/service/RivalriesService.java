@@ -150,12 +150,12 @@ public class RivalriesService {
 		"ORDER BY %4$s OFFSET ?";
 
 	private static final String LAST_MATCH_LATERAL = //language=SQL
-		"  lm.match_id, lm.season, lm.level, lm.surface, lm.tournament, lm.round, lm.winner_id, lm.loser_id, lm.score";
+		"  lm.match_id, lm.season, lm.level, lm.surface, lm.indoor, lm.tournament, lm.round, lm.winner_id, lm.loser_id, lm.score";
 
 	private static final String LAST_MATCH_JOIN_LATERAL = //language=SQL
 		",\n" +
 		"LATERAL (\n" +
-		"  SELECT m.match_id, e.season, e.date, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
+		"  SELECT m.match_id, e.season, e.date, e.level, e.surface, e.indoor, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"  FROM match m\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE ((m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s))%3$s\n" +
@@ -164,7 +164,7 @@ public class RivalriesService {
 
 	private static final String LAST_MATCH_JSON = //language=SQL
 		"  (SELECT row_to_json(lm) FROM (\n" +
-		"     SELECT m.match_id, e.season, e.date, e.level, e.surface, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
+		"     SELECT m.match_id, e.season, e.date, e.level, e.surface, e.indoor, e.name tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"     FROM match m\n" +
 		"     INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"     WHERE ((m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s))%3$s\n" +
@@ -299,6 +299,7 @@ public class RivalriesService {
 			rs.getInt("season"),
 			rs.getString("level"),
 			rs.getString("surface"),
+			rs.getBoolean("indoor"),
 			rs.getString("tournament"),
 			rs.getString("round"),
 			rs.getInt("winner_id"),
@@ -317,6 +318,7 @@ public class RivalriesService {
 				lastMatch.get("season").asInt(),
 				lastMatch.get("level").asText(),
 				lastMatch.get("surface").asText(),
+				lastMatch.get("indoor").asBoolean(),
 				lastMatch.get("tournament").asText(),
 				lastMatch.get("round").asText(),
 				lastMatch.get("winner_id").asInt(),

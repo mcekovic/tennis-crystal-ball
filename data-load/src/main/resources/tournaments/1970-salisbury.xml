@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
 	<tournament season="1970" name="Salisbury" date="1970-02-16" ext-id="A2">
-		<level>A</level>
+		<level>B</level>
 		<surface>H</surface>
 		<indoor>true</indoor>
 		<draw-type>KO</draw-type>

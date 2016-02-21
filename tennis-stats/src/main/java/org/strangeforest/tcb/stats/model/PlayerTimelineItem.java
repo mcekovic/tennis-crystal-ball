@@ -13,10 +13,15 @@ public class PlayerTimelineItem {
 	private final Date date;
 	private final String level;
 	private final String surface;
+	private final boolean indoor;
 	private final String name;
 	private final String result;
 
-	public PlayerTimelineItem(int tournamentId, String tournamentName, int season, int tournamentEventId, Date date, String level, String surface, String name, String result) {
+	public PlayerTimelineItem(int tournamentId, int season) {
+		this(tournamentId, null, season, 0, null, null, null, false, null, null);
+	}
+
+	public PlayerTimelineItem(int tournamentId, String tournamentName, int season, int tournamentEventId, Date date, String level, String surface, boolean indoor, String name, String result) {
 		this.tournamentId = tournamentId;
 		this.tournamentName = tournamentName;
 		this.season = season;
@@ -24,6 +29,7 @@ public class PlayerTimelineItem {
 		this.date = date;
 		this.level = level;
 		this.surface = surface;
+		this.indoor = indoor;
 		this.name = name;
 		this.result = result;
 	}
@@ -54,6 +60,10 @@ public class PlayerTimelineItem {
 
 	public String getSurface() {
 		return surface;
+	}
+
+	public boolean isIndoor() {
+		return indoor;
 	}
 
 	public String getName() {

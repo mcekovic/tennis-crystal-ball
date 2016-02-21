@@ -45,7 +45,6 @@
 					"event": eventFormatter,
 					"level": levelFormatter,
 					"surface": surfaceFormatter,
-					"indoor": indoorFormatter,
 					"participationPct": function(column, row) {
 						return row.participationPct.toFixed(1) + "%";
 					},
@@ -110,9 +109,8 @@
 		<thead>
 			<tr>
 				<th data-column-id="date" data-formatter="date" data-order="desc" data-width="70">Date</th>
-				<th data-column-id="name" data-formatter="event" data-width="120">Name</th>
+				<th data-column-id="name" data-formatter="event" data-width="130">Name</th>
 				<th data-column-id="surface" data-formatter="surface" data-width="60">Surface</th>
-				<th data-column-id="indoor" data-formatter="indoor" data-width="60">Indoor</th>
 				<th data-column-id="draw" data-width="50">Draw</th>
 				<th data-column-id="playerCount" data-width="40">Pls.</th>
 				<th data-column-id="participationPoints" data-width="50">P. Pts.</th>

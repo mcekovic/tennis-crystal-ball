@@ -148,11 +148,12 @@ function levelName(level) {
 		case "O": return "Olympics";
 		case "A": return "ATP 500";
 		case "B": return "ATP 250";
-		case "D": return "Davis Cup";
-		case "T": return "World Team Cup";
-		case "H": return "Others";
 		case "C": return "Challengers";
 		case "U": return "Futures";
+		case "E": return "Exhibitions";
+		case "H": return "Others";
+		case "D": return "Davis Cup";
+		case "T": return "World Team Cup";
 		default: return level;
 	}
 }
@@ -181,11 +182,6 @@ function surfaceName(surface) {
 		case "P": return "Carpet";
 		default: return surface;
 	}
-}
-
-// Indoor Formatter
-function indoorFormatter(column, row) {
-	return row.indoor ? "Indoor" : "Outdoor";
 }
 
 // Tournament Formatter

@@ -51,7 +51,7 @@ public class TournamentService {
 		"ORDER BY name, season";
 
 	private static final String PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY = //language=SQL
-		"SELECT tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.draw_type, e.draw_size, r.result\n" +
+		"SELECT tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, r.result\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE r.player_id = ?\n" +
@@ -132,6 +132,7 @@ public class TournamentService {
 						rs.getString("name"),
 						rs.getString("level"),
 						rs.getString("surface"),
+						rs.getBoolean("indoor"),
 						rs.getString("draw_type"),
 						getInteger(rs, "draw_size"),
 						rs.getString("result")
