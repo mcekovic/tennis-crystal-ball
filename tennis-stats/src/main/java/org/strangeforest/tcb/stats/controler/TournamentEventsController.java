@@ -11,7 +11,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Controller
-public class TournamentEventController extends BaseController {
+public class TournamentEventsController extends BaseController {
 
 	@Autowired private TournamentService tournamentService;
 	@Autowired private DataService dateService;

@@ -28,7 +28,7 @@ public abstract class BootgridUtil {
 
 	private static String findSortBy(Map<String, String> params, String attrName, final String columnName) {
 		String sort = params.get("sort[" + attrName + "]");
-		return sort != null ? columnName + " " + sort.toUpperCase() : null;
+		return sort != null ? OrderBy.addSort(columnName, sort.toUpperCase()) : null;
 	}
 
 	private static boolean hasColumn(String orderBy, OrderBy order) {

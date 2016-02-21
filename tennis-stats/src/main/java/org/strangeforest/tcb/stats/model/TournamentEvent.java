@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
+
 public class TournamentEvent {
 
 	private final int id;
@@ -12,13 +14,17 @@ public class TournamentEvent {
 	private final String level;
 	private final String surface;
 	private final boolean indoor;
-	private final String drawType;
-	private final Integer drawSize;
-	private final MatchPlayer winner;
-	private final MatchPlayer loser;
-	private final String score;
+	private String drawType;
+	private Integer drawSize;
+	private int playerCount;
+	private int participationPoints;
+	private int maxParticipationPoints;
+	private double participationPct;
+	private MatchPlayer winner;
+	private MatchPlayer loser;
+	private String score;
 
-	public TournamentEvent(int id, String extId, int season, Date date, String name, String level, String surface, boolean indoor, String drawType, Integer drawSize, MatchPlayer winner, MatchPlayer loser, String score) {
+	public TournamentEvent(int id, String extId, int season, Date date, String name, String level, String surface, boolean indoor) {
 		this.id = id;
 		this.extId = extId;
 		this.season = season;
@@ -27,8 +33,18 @@ public class TournamentEvent {
 		this.level = level;
 		this.surface = surface;
 		this.indoor = indoor;
+	}
+
+	public void setDraw(String drawType, Integer drawSize, int playerCount, int participationPoints, int maxParticipationPoints) {
 		this.drawType = drawType;
 		this.drawSize = drawSize;
+		this.playerCount = playerCount;
+		this.participationPoints = participationPoints;
+		this.maxParticipationPoints = maxParticipationPoints;
+		participationPct = pct(participationPoints, maxParticipationPoints);
+	}
+
+	public void setFinal(MatchPlayer winner, MatchPlayer loser, String score) {
 		this.winner = winner;
 		this.loser = loser;
 		this.score = score;
@@ -76,6 +92,22 @@ public class TournamentEvent {
 
 	public String getDraw() {
 		return drawType + (drawSize != null ? " " + drawSize : "");
+	}
+
+	public int getPlayerCount() {
+		return playerCount;
+	}
+
+	public int getParticipationPoints() {
+		return participationPoints;
+	}
+
+	public int getMaxParticipationPoints() {
+		return maxParticipationPoints;
+	}
+
+	public double getParticipationPct() {
+		return participationPct;
 	}
 
 	public MatchPlayer getWinner() {

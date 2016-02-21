@@ -160,7 +160,7 @@ function levelName(level) {
 // Surface Formatter
 function surfaceFormatter(column, row) {
 	if (row.surface)
-		return "<span class='label label-" + surfaceClassSuffix(row.surface) + "'>" + surfaceName(row.surface) + "</span>";
+		return "<span class='label label-" + surfaceClassSuffix(row.surface) + (row.indoor != null ? "' title='" + (row.indoor ? "Indoor" : "Outdoor") : "") + "'>" + surfaceName(row.surface) + "</span>";
 }
 
 function surfaceClassSuffix(surface) {
@@ -190,12 +190,12 @@ function indoorFormatter(column, row) {
 
 // Tournament Formatter
 function tournamentFormatter(column, row) {
-	return "<span class='label label-" + row.level + "'>" + (row.tournament ? row.tournament : row.name) + "</span>";
+	return "<span class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</span>";
 }
 
 // Tournament Event Formatter
 function eventFormatter(column, row) {
-	return "<span title='" + row.extId + "'>" + row.name + "</span>";
+	return "<span class='label label-" + row.level + "' title='" + levelName(row.level) + " - " +  row.extId + "'>" + row.name + "</span>";
 }
 
 // Result Formatter
@@ -208,8 +208,8 @@ function matchFormatter(column, row) {
 	return formatMatchPlayer(row.winner) + " d. " + formatMatchPlayer(row.loser);
 }
 
-function matchFormatterHighlightWinner(column, row) {
-	return formatMatchPlayer(row.winner, true) + " d. " + formatMatchPlayer(row.loser);
+function fullMatchFormatter(column, row) {
+	return formatMatchPlayer(row.winner, true) + " d. " + formatMatchPlayer(row.loser) + " " + row.score;
 }
 
 function formatMatchPlayer(player, winner) {

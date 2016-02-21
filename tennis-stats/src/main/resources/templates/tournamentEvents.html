@@ -20,7 +20,8 @@
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
-			$("#tournamentEventsTable").bootgrid({
+			var $tournamentEventsTable = $("#tournamentEventsTable");
+			$tournamentEventsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
 					method: "GET",
@@ -45,9 +46,17 @@
 					"level": levelFormatter,
 					"surface": surfaceFormatter,
 					"indoor": indoorFormatter,
-					"match": matchFormatterHighlightWinner
+					"participationPct": function(column, row) {
+						return row.participationPct.toFixed(1) + "%";
+					},
+					"match": fullMatchFormatter
 				}
 			});
+			setBootgridTitles($tournamentEventsTable, [
+				{id: "playerCount", title: "Players"},
+				{id: "participationPoints", title: "Participation points"},
+				{id: "participationPct", title: "Participation percentage"}
+			]);
 		});
 		function reloadTournamentEvents() {
 			$("#tournamentEventsTable").bootgrid("reload");
@@ -100,14 +109,15 @@
 	<table id="tournamentEventsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 			<tr>
-				<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
-				<th data-column-id="event" data-formatter="event" data-width="150">Name</th>
-				<th data-column-id="level" data-formatter="level" data-width="65">Level</th>
+				<th data-column-id="date" data-formatter="date" data-order="desc" data-width="70">Date</th>
+				<th data-column-id="name" data-formatter="event" data-width="120">Name</th>
 				<th data-column-id="surface" data-formatter="surface" data-width="60">Surface</th>
 				<th data-column-id="indoor" data-formatter="indoor" data-width="60">Indoor</th>
 				<th data-column-id="draw" data-width="50">Draw</th>
-				<th data-column-id="final" data-formatter="match" data-sortable="false" data-width="220">Final</th>
-				<th data-column-id="score" data-sortable="false" data-width="120">Score</th>
+				<th data-column-id="playerCount" data-width="40">Pls.</th>
+				<th data-column-id="participationPoints" data-width="50">P. Pts.</th>
+				<th data-column-id="participationPct" data-formatter="participationPct" data-width="50">P. Pct.</th>
+				<th data-column-id="final" data-formatter="match" data-sortable="false" data-width="280">Final</th>
 			</tr>
 		</thead>
 	</table>

@@ -20,9 +20,11 @@ public class TournamentService {
 
 	private static final String TOURNAMENT_EVENTS_QUERY = //language=SQL
 		"SELECT e.tournament_event_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
+		"  p.player_count, p.participation_points, p.max_participation_points,\n" +
 		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.score\n" +
 		"FROM tournament_event e\n" +
 		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
+		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
 		"LEFT JOIN match m ON m.tournament_event_id = e.tournament_event_id AND m.round = 'F'\n" +
 		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id\n" +
 		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id\n" +
@@ -65,7 +67,7 @@ public class TournamentService {
 			format(TOURNAMENT_EVENTS_QUERY, filter.getCriteria(), orderBy),
 			(rs) -> {
 				if (tournamentEvents.incrementAndGet() <= pageSize) {
-					table.addRow(new TournamentEvent(
+					TournamentEvent tournamentEvent = new TournamentEvent(
 						rs.getInt("tournament_event_id"),
 						rs.getString("ext_tournament_id"),
 						rs.getInt("season"),
@@ -73,13 +75,21 @@ public class TournamentService {
 						rs.getString("name"),
 						rs.getString("level"),
 						rs.getString("surface"),
-						rs.getBoolean("indoor"),
+						rs.getBoolean("indoor")
+					);
+					tournamentEvent.setDraw(
 						rs.getString("draw_type"),
 						getInteger(rs, "draw_size"),
+						rs.getInt("player_count"),
+						rs.getInt("participation_points"),
+						rs.getInt("max_participation_points")
+					);
+					tournamentEvent.setFinal(
 						mapMatchPlayer(rs, "winner_"),
 						mapMatchPlayer(rs, "loser_"),
 						rs.getString("score")
-					));
+					);
+					table.addRow(tournamentEvent);
 				}
 			},
 			tournamentEventsParams(filter, offset)

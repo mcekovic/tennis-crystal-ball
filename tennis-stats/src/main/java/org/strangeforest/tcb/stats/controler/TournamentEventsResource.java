@@ -19,9 +19,11 @@ public class TournamentEventsResource {
 	static {
 		ORDER_MAP.put("date", "date");
 		ORDER_MAP.put("name", "name");
-		ORDER_MAP.put("level", "level");
 		ORDER_MAP.put("surface", "surface");
 		ORDER_MAP.put("draw", "draw_type, draw_size");
+		ORDER_MAP.put("playerCount", "player_count NULLS LAST");
+		ORDER_MAP.put("participationPoints", "participation_points NULLS LAST");
+		ORDER_MAP.put("participationPct", "participation_points::DECIMAL/max_participation_points NULLS LAST");
 	}
 	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("date");
 
