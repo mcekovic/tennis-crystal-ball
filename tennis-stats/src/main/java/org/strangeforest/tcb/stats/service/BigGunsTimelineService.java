@@ -14,7 +14,7 @@ public class BigGunsTimelineService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
-	private static final int MIN_GOAT_POINTS = 50;
+	private static final int MIN_GOAT_POINTS = 40;
 
 	private static final String TIMELINE_QUERY = //language=SQL
 		"SELECT player_id, p.dob, p.name, p.last_name, p.country_id, p.goat_points, array(SELECT ROW(s.season, s.goat_points)\n" +

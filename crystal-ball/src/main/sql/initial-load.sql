@@ -53,7 +53,7 @@ VALUES
 ('D', 'SF',    70, NULL, NULL, TRUE),
 ('D', 'QF',    65, NULL, NULL, TRUE),
 ('D', 'R16',   40, NULL, NULL, TRUE),
--- World Team Cup
+-- Others Team
 ('T', 'F',   NULL, NULL,    1, TRUE);
 
 DELETE FROM tournament_event_rank_factor;
@@ -132,7 +132,7 @@ VALUES
 ('B', 'F',  1),
 -- Davis Cup
 ('D', 'F',  1),
--- World Team Cup
+-- Others Team
 ('T', 'F',  1);
 
 DELETE FROM big_win_rank_factor;

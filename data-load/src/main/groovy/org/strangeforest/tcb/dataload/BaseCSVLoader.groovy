@@ -145,19 +145,19 @@ abstract class BaseCSVLoader {
 	}
 
 	static Integer integer(i) {
-		i?.toInteger() ?: null
+		i ? i.toInteger() : null
 	}
 
 	static Short smallint(i) {
-		i?.toShort() ?: null
+		i ? i.toShort() : null
 	}
 
 	static BigDecimal decimal(d) {
-		d?.toBigDecimal() ?: null
+		d ? d.toBigDecimal() : null
 	}
 
 	static Float real(f) {
-		f?.toFloat() ?: null
+		f ? f.toFloat() : null
 	}
 
 	static java.sql.Date date(d) {

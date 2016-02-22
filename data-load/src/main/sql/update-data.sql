@@ -27,7 +27,7 @@ WITH ranked_atp_event AS (
 	SELECT tournament_event_id, rank() OVER (PARTITION BY e.season ORDER BY p.participation_points DESC NULLS LAST) AS participation_rank
 	FROM tournament_event e
 	LEFT JOIN event_participation p USING (tournament_event_id)
-	WHERE e.level IN ('A', 'B')
+	WHERE e.level = 'B'
 	AND e.season < 1990
 	AND p.participation_points > 0
 )

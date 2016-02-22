@@ -19,9 +19,10 @@ public abstract class Options {
 		add(new Option("D", "Davis Cup"));
 	}};
 
-	public static final List<Option> ALL_TOURNAMENT_LEVELS = new ArrayList<Option>(TOURNAMENT_LEVELS) {{
-		add(new Option("T", "World Team Cup"));
+	public static final List<Option> ALL_TOURNAMENT_LEVELS = new ArrayList<Option>(MAIN_TOURNAMENT_LEVELS) {{
 		add(new Option("H", "Others"));
+		add(new Option("D", "Davis Cup"));
+		add(new Option("T", "Others Team"));
 	}};
 
 	public static final List<Option> SURFACES = asList(
