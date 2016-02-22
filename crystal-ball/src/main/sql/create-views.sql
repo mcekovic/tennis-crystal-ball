@@ -1,3 +1,20 @@
+-- event_participation
+
+CREATE MATERIALIZED VIEW event_participation AS
+WITH event_players AS (
+	SELECT DISTINCT tournament_event_id, winner_id AS player_id, winner_rank AS rank FROM match
+	UNION DISTINCT
+	SELECT DISTINCT tournament_event_id, loser_id, loser_rank FROM match
+)
+SELECT p.tournament_event_id, count(p.player_id) player_count, sum(f.rank_factor) participation_points,
+	max_event_participation(count(p.player_id)::INTEGER) AS max_participation_points
+FROM event_players p
+INNER JOIN tournament_event e USING (tournament_event_id)
+LEFT JOIN tournament_event_rank_factor f ON p.rank BETWEEN f.rank_from AND f.rank_to
+WHERE e.level NOT IN ('D', 'T')
+GROUP BY p.tournament_event_id;
+
+
 -- player_current_rank
 
 CREATE MATERIALIZED VIEW player_current_rank AS
@@ -48,22 +65,6 @@ GROUP BY player_id, season, rank_date, rank
 WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_date)::INTEGER ORDER BY rank_date DESC);
 
 CREATE INDEX ON player_year_end_rank (player_id);
-
--- event_participation
-
-CREATE MATERIALIZED VIEW event_participation AS
-WITH event_players AS (
-	SELECT DISTINCT tournament_event_id, winner_id AS player_id, winner_rank AS rank FROM match
-	UNION DISTINCT
-	SELECT DISTINCT tournament_event_id, loser_id, loser_rank FROM match
-)
-SELECT p.tournament_event_id, count(p.player_id) player_count, sum(f.rank_factor) participation_points,
-	max_event_participation(count(p.player_id)::INTEGER) AS max_participation_points
-FROM event_players p
-INNER JOIN tournament_event e USING (tournament_event_id)
-LEFT JOIN tournament_event_rank_factor f ON p.rank BETWEEN f.rank_from AND f.rank_to
-WHERE e.level NOT IN ('D', 'T')
-GROUP BY p.tournament_event_id;
 
 
 -- player_tournament_event_result
