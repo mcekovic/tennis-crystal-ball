@@ -62,23 +62,19 @@ abstract class BaseXMLLoader {
 	// Data conversion
 
 	static String string(s, d = null) {
-		s = s?.toString()
-		s ?: d
+		s?.toString() ?: d
 	}
 
 	static Integer integer(i) {
-		i = i?.toString()
-		i ? i.toInteger() : null
+		i?.toString()?.toInteger() ?: null
 	}
 
 	static Short smallint(i) {
-		i = i?.toString()
-		i ? i.toShort() : null
+		i?.toString()?.toShort() ?: null
 	}
 
 	static Boolean bool(b, d = null) {
-		b = b?.toString()
-		b ? b.toBoolean() : d
+		b?.toString()?.toBoolean() ?: d
 	}
 
 	static java.sql.Date date(d) {

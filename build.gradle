@@ -11,7 +11,7 @@ buildscript {
 }
 
 ext {
-	git = org.ajoberstar.grgit.Grgit.open(file('.'))
+	git = org.ajoberstar.grgit.Grgit.open()
 }
 
 allprojects {
