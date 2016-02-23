@@ -160,7 +160,7 @@
 				</th>
 			</tr>
 			<tr class="season">
-				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="For all players with minimum 50 GOAT points: SUM(player season GOAT points * player GOAT points) / 1000">Big Guns Dominance Ratio</th>
+				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" th:title="'For all players with minimum ' + ${minGOATPoints} + ' GOAT points: SUM(player season GOAT points * player GOAT points) / 1000'">Big Guns Dominance Ratio</th>
 				<th th:each="season : ${timeline.bigGunsSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
 					<span th:text="${#numbers.formatDecimal(season.dominanceRatio, 1, 1)}" class="season">66.7</span>
 				</th>
@@ -192,7 +192,7 @@
 			</tr>
 		</thead>
 	</table>
-	<p><i>* Minimum <span th:text="${minGOATPoints}">50</span> GOAT points</i></p>
+	<p><i>* Minimum <span th:text="${minGOATPoints}">40</span> GOAT points</i></p>
 	<br/>
 	<div class="row">
 		<div class="col-md-12">

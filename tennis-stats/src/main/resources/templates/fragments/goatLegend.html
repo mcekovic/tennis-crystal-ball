@@ -9,7 +9,9 @@
 					"goatPoints": function(column, row) {
 						return (row.additive ? "+" : "") + row.goatPoints;
 					}
-				});
+				}, [
+					{id: "result", title: "Result/Round"}
+				]);
 				initGOATPointsTable("yearEndRankGOATPointsTable");
 				if ([[${!forSeason}]])
 					initGOATPointsTable("bestRankGOATPointsTable");
@@ -33,7 +35,7 @@
 				}
 			});
 		});
-		function initGOATPointsTable(table, formatters) {
+		function initGOATPointsTable(table, formatters, titles) {
 			var $table = $("#" + table);
 			if ($table.hasClass("loaded"))
 				return;
@@ -47,6 +49,8 @@
 				navigation: 0,
 				formatters: formatters
 			});
+			if (titles)
+				setBootgridTitles($table, titles);
 		}
 		function initGOATPointsItem(item) {
 			$.get("/" + item, function (data) {
@@ -70,7 +74,10 @@
 						</tr>
 					</thead>
 				</table>
+				<p>+ is for additive tournaments where points are assigned for wins in each round rather then for tournament result</p>
+				<br/>
 				<h4>Ranking Points</h4>
+				<strong>Each season's year-end rank</strong>
 				<table id="yearEndRankGOATPointsTable" class="table table-condensed table-hover table-striped">
 					<thead>
 					<tr>
@@ -79,6 +86,7 @@
 					</tr>
 					</thead>
 				</table>
+				<strong>Career high ranking</strong>
 				<table th:if="${!forSeason}" id="bestRankGOATPointsTable" class="table table-condensed table-hover table-striped">
 					<thead>
 					<tr>
@@ -159,6 +167,7 @@
 						<div>
 							<strong>Performance Points</strong>
 						</div>
+						<p>Points assigned to best players in each performance category</p>
 						<table id="performanceGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
 							<tr>
@@ -170,6 +179,7 @@
 						<div>
 							<strong>Statistics Points</strong>
 						</div>
+						<p>Points assigned to best players in each statistics category</p>
 						<table id="statisticsGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
 								<tr>
