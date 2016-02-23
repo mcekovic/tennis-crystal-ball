@@ -8,7 +8,7 @@ import org.strangeforest.tcb.stats.util.*;
 
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.util.DateUtil.*;
+import static org.strangeforest.tcb.util.DateUtil.*;
 
 public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTimeline> {
 

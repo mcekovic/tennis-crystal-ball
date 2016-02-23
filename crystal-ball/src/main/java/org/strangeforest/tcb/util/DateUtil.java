@@ -1,9 +1,7 @@
-package org.strangeforest.tcb.stats.util;
+package org.strangeforest.tcb.util;
 
-import java.util.*;
 import java.time.*;
-
-import com.google.common.collect.*;
+import java.util.*;
 
 public abstract class DateUtil {
 
@@ -17,5 +15,4 @@ public abstract class DateUtil {
 		else
 			return date != null ? date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
 	}
-
 }

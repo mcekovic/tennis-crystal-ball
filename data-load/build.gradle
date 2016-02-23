@@ -2,8 +2,8 @@ apply plugin: 'groovy'
 
 dependencies {
 	compile project(':crystal-ball')
-	compile ('org.codehaus.groovy:groovy-all:2.4.5')
+	compile ('org.codehaus.groovy:groovy-all:2.4.6')
 	compile ('com.xlson.groovycsv:groovycsv:1.1')
-	runtime ('org.postgresql:postgresql:9.4.1207')
+	runtime ('org.postgresql:postgresql:9.4.1208')
 	testCompile ('junit:junit:4.12')
 }

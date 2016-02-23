@@ -38,7 +38,7 @@ dependencies {
 	compile ('org.springframework.boot:spring-boot-starter-actuator')
 	compile ('org.springframework:spring-context-support:4.2.4.RELEASE')
 	compile ('com.google.guava:guava:19.0')
-	compile ('org.postgresql:postgresql:9.4.1207')
+	compile ('org.postgresql:postgresql:9.4.1208')
 	def jacksonVersion = '2.7.1'
 	compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")

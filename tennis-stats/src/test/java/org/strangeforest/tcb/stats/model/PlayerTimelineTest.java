@@ -7,7 +7,7 @@ import org.junit.*;
 import org.strangeforest.tcb.stats.model.PlayerTournamentTimeline.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.strangeforest.tcb.stats.util.DateUtil.*;
+import static org.strangeforest.tcb.util.DateUtil.*;
 
 public class PlayerTimelineTest {
 
