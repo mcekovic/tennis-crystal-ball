@@ -2,8 +2,6 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
-import java.sql.BatchUpdateException
-
 class XMLMatchLoader extends BaseXMLLoader {
 
 	XMLMatchLoader(Sql sql) {
@@ -27,24 +25,17 @@ class XMLMatchLoader extends BaseXMLLoader {
 	boolean loadItem(item) {
 		def players = playerMap(item.player.list())
 		def matches = item.match.list()
-		try {
-			sql.withBatch(loadSql()) { ps ->
-				matches.each { match ->
-					Map params = tournamentParams(item)
-					params.match_num = smallint match.@'match-num'
-					params.round = string match.@round
-					params.best_of = smallint match.@'best-of'
-					params.putAll playerParams(match, 'winner', players)
-					params.putAll playerParams(match, 'loser', players)
-					params.putAll scoreParams(match, sql.connection)
-					ps.addBatch(params)
-				}
+		sql.withBatch(loadSql()) { ps ->
+			matches.each { match ->
+				Map params = tournamentParams(item)
+				params.match_num = smallint match.@'match-num'
+				params.round = string match.@round
+				params.best_of = smallint match.@'best-of'
+				params.putAll playerParams(match, 'winner', players)
+				params.putAll playerParams(match, 'loser', players)
+				params.putAll scoreParams(match, sql.connection)
+				ps.addBatch(params)
 			}
-		}
-		catch (BatchUpdateException buEx) {
-			for (def nextEx = buEx.getNextException(); nextEx ; nextEx = nextEx.getNextException())
-				System.err.println(nextEx);
-			throw buEx;
 		}
 	}
 

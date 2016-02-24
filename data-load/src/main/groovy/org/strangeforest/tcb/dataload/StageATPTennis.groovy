@@ -1,8 +1,8 @@
 package org.strangeforest.tcb.dataload
 
-def sqls = SqlPool.create()
+def sqlPool = new SqlPool()
 
 def loader = new ATPTennisLoader()
-loader.loadPlayers(new StagingPlayerLoader(sqls))
-loader.loadRankings(new StagingRankingLoader(sqls))
-loader.loadMatches(new StagingMatchLoader(sqls))
+loader.loadPlayers(new StagingPlayerLoader(sqlPool))
+loader.loadRankings(new StagingRankingLoader(sqlPool))
+loader.loadMatches(new StagingMatchLoader(sqlPool))

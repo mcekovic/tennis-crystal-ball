@@ -1,13 +1,10 @@
 package org.strangeforest.tcb.dataload
 
-import groovy.sql.*
 import org.strangeforest.tcb.util.*
-
-import java.util.concurrent.*
 
 class PlayerLoader extends BaseCSVLoader {
 
-	PlayerLoader(BlockingDeque<Sql> sqlPool) {
+	PlayerLoader(SqlPool sqlPool) {
 		super(sqlPool)
 	}
 

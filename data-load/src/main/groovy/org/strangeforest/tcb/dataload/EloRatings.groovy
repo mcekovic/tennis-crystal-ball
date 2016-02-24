@@ -1,108 +1,128 @@
 package org.strangeforest.tcb.dataload
 
-import groovy.sql.*
-
-import java.time.*
-import java.util.concurrent.*
-
 import static java.lang.Math.*
 import static org.strangeforest.tcb.util.DateUtil.*
 
 class EloRatings {
 
-	private BlockingDeque<Sql> sqlPool
-	private Map<Player, EloRating> playerRatings = [:]
+	private SqlPool sqlPool
+	private Map<Integer, EloRating> playerRatings = [:]
+	private int matches
+	private Date lastDate
 
 	private static final String QUERY_MATCHES = //language=SQL
-		'SELECT m.winner_id, w.name winner, m.loser_id, l.name loser, e.date, e.level, m.round\n' +
-		'FROM match m\n' +
-		'INNER JOIN tournament_event e USING (tournament_event_id)\n' +
-		'INNER JOIN player_v w ON (w.player_id = m.winner_id)\n' +
-		'INNER JOIN player_v l ON (l.player_id = m.loser_id)\n' +
-		'ORDER BY e.date, m.match_num'
+		"SELECT m.winner_id, m.loser_id, e.date + (CASE e.level WHEN 'G' THEN INTERVAL '14 days' ELSE INTERVAL '7 days' END) AS end_date,\n" +
+      "	e.level, m.round, m.best_of, m.outcome\n" +
+		"FROM match m\n" +
+		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
+		"AND (m.outcome IS NULL OR m.outcome <> 'ABD')\n" +
+		"ORDER BY end_date, m.match_num"
+
+	private static final String MERGE_ELO_RANKING = //language=SQL
+		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating)}"
+
+	private static final int MIN_MATCHES = 10
+	private static final int DOT_SIZE = 1000
+	private static final int PROGRESS_LINE_WRAP = 100
+	private static final int PLAYERS_TO_SAVE = 200
 
 	private static def comparator = { a, b -> b.value <=> a.value }
 	private static def bestComparator = { a, b -> b.value.bestRating <=> a.value.bestRating }
 
-	EloRatings(BlockingDeque<Sql> sqlPool) {
+	EloRatings(SqlPool sqlPool) {
 		this.sqlPool = sqlPool
 	}
 
-	def compute() {
+	def compute(save = false) {
 		def sql = sqlPool.take()
+		println 'Processing matches'
 		try {
-			sql.eachRow(QUERY_MATCHES, { match -> processMatch(match) })
+			sql.eachRow(QUERY_MATCHES, { match -> processMatch(match, save) })
 		}
 		finally {
 			sqlPool.put(sql)
 		}
+		println()
 		playerRatings
 	}
 
-	def current() {
-		def minDate = toDate(LocalDate.now().minusYears(1))
-		playerRatings.findAll {	it.value.matches >= 20 && it.value.date >= minDate	}.sort comparator
+	def current(int count, Date date = new Date()) {
+		Date minDate = toDate(toLocalDate(date).minusYears(1))
+		def i = 0
+		playerRatings.findAll {	it.value.matches >= MIN_MATCHES && it.value.date >= minDate	}
+			.sort(comparator)
+			.findAll { ++i <= count }
 	}
 
-	def allTime() {
-		playerRatings.findAll {	it.value.matches >= 20 }.sort bestComparator
+	def allTime(int count) {
+		def i = 0
+		playerRatings.findAll {	it.value.bestRating }
+			.sort(bestComparator)
+			.findAll { ++i <= count }
 	}
 
-	def processMatch(match) {
-		def winnerId = match.winner_id
-		def loserId = match.loser_id
+	def processMatch(match, save) {
+		Date date = match.end_date
+		if (save && date != lastDate && playerRatings)
+			saveRatings(lastDate)
+
+		int winnerId = match.winner_id
+		int loserId = match.loser_id
 
 		def winnerRating = getRating(winnerId)
 		def loserRating = getRating(loserId)
 
-		def winnerQ = pow(10, winnerRating.rating / 400)
-		def loserQ = pow(10, loserRating.rating / 400)
-		def loserExpectedScore = loserQ / (winnerQ + loserQ)
+		double winnerQ = pow(10, winnerRating.rating / 400)
+		double loserQ = pow(10, loserRating.rating / 400)
+		double loserExpectedScore = loserQ / (winnerQ + loserQ)
 
+		double deltaRating = kFactor(match) * loserExpectedScore
+		playerRatings.put(winnerId, winnerRating.newRating(deltaRating, date))
+		playerRatings.put(loserId, loserRating.newRating(-deltaRating, date))
 
-		def deltaRating = kFactor(match) * loserExpectedScore
-		def date = match.date
-		playerRatings.put new Player(id: winnerId, name: match.winner), winnerRating.newRating(deltaRating, date)
-		playerRatings.put new Player(id: loserId, name: match.loser), loserRating.newRating(-deltaRating, date)
-	}
-
-	static int kFactor(match) {
-		switch (match.level) {
-			case 'G': return 40
-			case 'F': return 30
-			case 'M': return 20
-			case 'A': return 10
-			default: return 10
+		lastDate = date
+		if (++matches % DOT_SIZE == 0) {
+			print '.'
+			if (matches % (DOT_SIZE * PROGRESS_LINE_WRAP) == 0)
+				println()
 		}
 	}
 
 	private EloRating getRating(playerId) {
-		playerRatings.get(new Player(id: playerId)) ?: new EloRating()
+		playerRatings.get(playerId) ?: new EloRating()
 	}
 
-	static class Player {
-
-		int id
-		String name
-
-		boolean equals(player) {
-			this.is(player) || (getClass() == player.class && id == player.id)
+	static double kFactor(match) {
+		double kFactor = 100
+		switch (match.level) {
+			case 'G': break
+			case 'F': kFactor *= 0.9; break
+			case 'M': kFactor *= 0.8; break
+			case 'A': kFactor *= 0.7; break
+			default: kFactor *= 0.6; break
 		}
-
-		int hashCode() {
-			id
+		switch (match.round) {
+			case 'F': break
+			case 'BR': kFactor *= 0.975; break
+			case 'SF': kFactor *= 0.95; break
+			case 'QF': kFactor *= 0.90; break
+			case 'R16': kFactor *= 0.85; break
+			case 'R32': kFactor *= 0.80; break
+			case 'R64': kFactor *= 0.75; break
+			case 'R128': kFactor *= 0.70; break
+			case 'RR': kFactor *= 0.90; break
 		}
-
-		String toString() {
-			name
-		}
+		if (match.best_of < 5) kFactor *= 0.9
+		if (match.outcome == 'W/O') kFactor *= 0.5
+		kFactor
 	}
 
 	static class EloRating implements Comparable<EloRating> {
 
 		double rating
-		Date date
 		int matches
+		Date date
 		EloRating bestRating
 
 		EloRating() {
@@ -111,13 +131,28 @@ class EloRatings {
 		}
 
 		EloRating newRating(double delta, Date date) {
-			def newRating = new EloRating(rating: rating + kFunction(delta), date: date, matches: matches + 1)
-			newRating.bestRating = bestRating && bestRating >= newRating ? bestRating : newRating
+			def newRating = new EloRating(rating: rating + delta * kFunction(), matches: matches + 1, date: date)
+			newRating.bestRating = bestRating(newRating)
 			newRating
 		}
 
-		def double kFunction(double delta) {
-			delta * 30 / min(matches + 10, 60)
+		def bestRating(EloRating newRating) {
+			if (matches >= MIN_MATCHES)
+				bestRating && bestRating >= newRating ? bestRating : newRating
+			else
+				null
+		}
+
+		/**
+		 * K-Function returns values from 1/4 to 1.
+		 * For rating 0-1600 returns 1.
+		 * For rating 1800 returns 1/2.
+		 * For rating 2000 returns 1/3.
+		 * For rating 2200+ returns 1/4.
+		 * @return values from 1/4 to 1, depending on current rating
+		 */
+		private def double kFunction() {
+			1.0 / min(max(rating - 1400, 200) / 200.0, 4.0)
 		}
 
 		String toString() {
@@ -126,6 +161,23 @@ class EloRatings {
 
 		int compareTo(EloRating eloRating) {
 			rating <=> eloRating.rating
+		}
+	}
+
+	def saveRatings(Date date) {
+		sqlPool.withSql { sql ->
+			sql.withBatch(MERGE_ELO_RANKING) { ps ->
+				def i = 0
+				def list = current(PLAYERS_TO_SAVE, date)
+				list.each { it ->
+					Map params = [:]
+					params.rank_date = new java.sql.Date(date.time)
+					params.player_id = it.key
+					params.rank = ++i
+					params.elo_rating = (int)round(it.value.rating)
+					ps.addBatch(params)
+				}
+			}
 		}
 	}
 }

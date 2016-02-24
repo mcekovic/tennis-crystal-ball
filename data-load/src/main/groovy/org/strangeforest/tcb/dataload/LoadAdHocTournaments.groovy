@@ -2,7 +2,7 @@ package org.strangeforest.tcb.dataload
 
 import static org.strangeforest.tcb.dataload.TournamentFetcher.*
 
-def sqlPool = SqlPool.create()
+def sqlPool = new SqlPool()
 
 def matchLoader = new MatchLoader(sqlPool)
 matchLoader.load(fetchTournament(2016, 'Quito', 7161))

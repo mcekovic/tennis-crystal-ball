@@ -1,3 +1,30 @@
+-- weeks
+
+CREATE OR REPLACE FUNCTION weeks(
+	p_from DATE,
+	p_to DATE
+) RETURNS REAL AS $$
+BEGIN
+	RETURN extract(epoch FROM age(p_to, p_from))/604800.0;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- season_end
+
+CREATE OR REPLACE FUNCTION season_end(
+	p_season INTEGER
+) RETURNS DATE AS $$
+BEGIN
+	IF p_season = date_part('year', current_date)::INTEGER THEN
+		RETURN current_date;
+	ELSE
+		RETURN (p_season::TEXT || '-12-31')::DATE;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- player_rank
 
 CREATE OR REPLACE FUNCTION player_rank(
@@ -22,29 +49,25 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- weeks
+-- merge_elo_ranking
 
-CREATE OR REPLACE FUNCTION weeks(
-	p_from DATE,
-	p_to DATE
-) RETURNS REAL AS $$
+CREATE OR REPLACE FUNCTION merge_elo_ranking(
+	p_rank_date DATE,
+	p_player_id INTEGER,
+	p_rank INTEGER,
+	p_elo_rating INTEGER
+) RETURNS VOID AS $$
 BEGIN
-	RETURN extract(epoch FROM age(p_to, p_from))/604800.0;
-END;
-$$ LANGUAGE plpgsql;
-
-
--- season_end
-
-CREATE OR REPLACE FUNCTION season_end(
-	p_season INTEGER
-) RETURNS DATE AS $$
-BEGIN
-	IF p_season = date_part('year', current_date)::INTEGER THEN
-		RETURN current_date;
-	ELSE
-		RETURN (p_season::TEXT || '-12-31')::DATE;
-	END IF;
+	BEGIN
+		INSERT INTO player_elo_ranking
+		(rank_date, player_id, rank, elo_rating)
+		VALUES
+		(p_rank_date, p_player_id, p_rank, p_elo_rating);
+	EXCEPTION WHEN unique_violation THEN
+		UPDATE player_elo_ranking
+		SET rank = p_rank, elo_rating = p_elo_rating
+		WHERE rank_date = p_rank_date AND player_id = p_player_id;
+	END;
 END;
 $$ LANGUAGE plpgsql;
 

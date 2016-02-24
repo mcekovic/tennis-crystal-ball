@@ -38,9 +38,9 @@ abstract class BaseXMLLoader {
 			}
 		}
 		sql.commit()
-		println ''
+		println()
 		def seconds = (System.currentTimeMillis() - t0) / 1000.0
-		int rowsPerSecond = rows/seconds
+		int rowsPerSecond = seconds ? rows / seconds : 0
 		println "Rows: $rows in $seconds s ($rowsPerSecond row/s)"
 		return rows
 	}

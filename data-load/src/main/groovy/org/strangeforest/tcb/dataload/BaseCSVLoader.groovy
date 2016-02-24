@@ -1,25 +1,23 @@
 package org.strangeforest.tcb.dataload
 
-import org.strangeforest.tcb.util.CountryUtil
-
 import java.sql.*
 import java.util.Date
-
-import com.xlson.groovycsv.*
-import groovy.sql.*
-
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 
+import org.strangeforest.tcb.util.*
+
+import com.xlson.groovycsv.*
+
 abstract class BaseCSVLoader {
 
-	private BlockingDeque<Sql> sqlPool
+	protected SqlPool sqlPool
 
 	private static def PROGRESS_LINE_WRAP = 100
 
 	private static final String DEADLOCK_DETECTED = "40P01"
 
-	BaseCSVLoader(BlockingDeque<Sql> sqlPool) {
+	BaseCSVLoader(SqlPool sqlPool) {
 		this.sqlPool = sqlPool
 	}
 
@@ -48,9 +46,9 @@ abstract class BaseCSVLoader {
 	}
 
 	def static printLoadInfo(long t0, int rows) {
-		println ''
+		println()
 		def seconds = (System.currentTimeMillis() - t0) / 1000.0
-		int rowsPerSecond = rows / seconds
+		int rowsPerSecond = seconds ? rows / seconds : 0
 		println "Rows: $rows in $seconds s ($rowsPerSecond row/s)"
 	}
 
@@ -60,10 +58,9 @@ abstract class BaseCSVLoader {
 		def rows = 0
 		def batches = new AtomicInteger()
 		def paramsBatch = []
-		def paramsSql = sqlPool.removeFirst()
-		try {
+		sqlPool.withSql { sql ->
 			def executor = Executors.newFixedThreadPool(Math.min(sqlPool.size(), threadCount()))
-			def paramsConn = paramsSql.connection
+			def paramsConn = sql.connection
 			for (record in data) {
 				def params = params(record, paramsConn)
 				if (params) {
@@ -78,9 +75,6 @@ abstract class BaseCSVLoader {
 				execute(executor, loadSql, paramsBatch, batches)
 			executor.shutdown()
 			executor.awaitTermination(1L, TimeUnit.DAYS)
-		}
-		finally {
-			sqlPool.addFirst(paramsSql)
 		}
 		rows
 	}
@@ -97,30 +91,24 @@ abstract class BaseCSVLoader {
 	}
 
 	def executeWithBatch(String loadSql, Collection<Map> paramsBatch) {
-		def sql = sqlPool.take()
-		try {
-			sql.withBatch(loadSql) { ps ->
-				paramsBatch.each { params ->
-					ps.addBatch(params)
+		sqlPool.withSql { sql ->
+			try {
+				sql.withBatch(loadSql) { ps ->
+					paramsBatch.each { params ->
+						ps.addBatch(params)
+					}
 				}
 			}
-			sql.commit()
-		}
-		catch (BatchUpdateException buEx) {
-			sql.rollback()
-			switch (buEx.getSQLState()) {
-				case DEADLOCK_DETECTED:
-					for (def paramsSubBatch : tile(paramsBatch))
-						executeWithBatch(loadSql, paramsSubBatch)
-					break
-				default:
-					for (def nextEx = buEx.getNextException(); nextEx ; nextEx = nextEx.getNextException())
-						System.err.println(nextEx);
-					throw buEx;
+			catch (BatchUpdateException buEx) {
+				switch (buEx.getSQLState()) {
+					case DEADLOCK_DETECTED:
+						for (def paramsSubBatch : tile(paramsBatch))
+							executeWithBatch(loadSql, paramsSubBatch)
+						break
+					default:
+						throw buEx;
+				}
 			}
-		}
-		finally {
-			sqlPool.put(sql)
 		}
 	}
 

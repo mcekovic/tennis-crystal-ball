@@ -1,14 +1,10 @@
 package org.strangeforest.tcb.dataload
 
-import groovy.sql.*
-
-import java.util.concurrent.*
-
 class RankingLoader extends BaseCSVLoader {
 
 	Integer maxRank
 
-	RankingLoader(BlockingDeque<Sql> sqlPool) {
+	RankingLoader(SqlPool sqlPool) {
 		super(sqlPool)
 		maxRank = maxRank()
 	}

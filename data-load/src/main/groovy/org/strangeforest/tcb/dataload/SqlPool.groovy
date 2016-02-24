@@ -1,29 +1,50 @@
 package org.strangeforest.tcb.dataload
 
+import java.sql.*
 import java.util.concurrent.*
 
 import groovy.sql.*
 
-class SqlPool {
+class SqlPool extends LinkedBlockingDeque<Sql> {
 
-	static final CONNECTIONS = 2
+	static final MIN_SIZE = 2
 
-	static BlockingDeque<Sql> create() {
+	SqlPool(size = null) {
 		print 'Allocating DB connections'
 		def dbURL = System.getProperty('tcb.db.url', 'jdbc:postgresql://localhost:5432/postgres?prepareThreshold=0')
 		def username = System.getProperty('tcb.db.username', 'tcb')
 		def password = System.getProperty('tcb.db.password', 'tcb')
-		def connections = Math.max(CONNECTIONS, Integer.parseInt(System.getProperty('tcb.db.connections', String.valueOf(CONNECTIONS))))
+		def connections = size ?: Math.max(MIN_SIZE, Integer.parseInt(System.getProperty('tcb.db.connections', String.valueOf(MIN_SIZE))))
 
-		def sqlPool = new LinkedBlockingDeque<Sql>()
 		for (int i = 0; i < connections; i++) {
 			Sql sql = Sql.newInstance(dbURL, username, password, 'org.postgresql.Driver')
 			sql.connection.autoCommit = false
 			sql.cacheStatements = true
-			sqlPool.addFirst(sql)
+			addFirst(sql)
 			print '.'
 		}
-		println ''
-		sqlPool
+		println()
+	}
+
+	def withSql(Closure c) {
+		Sql sql = take()
+		try {
+			def r = c(sql)
+			sql.commit()
+			r
+		}
+		catch (BatchUpdateException buEx) {
+			sql.rollback()
+			for (def nextEx = buEx.getNextException(); nextEx ; nextEx = nextEx.getNextException())
+				System.err.println(nextEx);
+			throw buEx;
+		}
+		catch (Throwable th) {
+			sql.rollback()
+			throw th;
+		}
+		finally {
+			put(sql)
+		}
 	}
 }

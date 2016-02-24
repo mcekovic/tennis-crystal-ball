@@ -107,6 +107,19 @@ CREATE TABLE player_ranking (
 CREATE INDEX ON player_ranking (player_id);
 
 
+-- player_elo_ranking
+
+CREATE TABLE player_elo_ranking (
+	rank_date DATE NOT NULL,
+	player_id INTEGER NOT NULL REFERENCES player (player_id) ON DELETE CASCADE,
+	rank INTEGER NOT NULL,
+	elo_rating INTEGER NOT NULL,
+	PRIMARY KEY (rank_date, player_id)
+);
+
+CREATE INDEX ON player_elo_ranking (player_id);
+
+
 -- match
 
 CREATE TABLE match (

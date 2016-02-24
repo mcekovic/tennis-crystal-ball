@@ -1,12 +1,8 @@
 package org.strangeforest.tcb.dataload
 
-import groovy.sql.*
-
-import java.util.concurrent.*
-
 class StagingPlayerLoader extends BaseCSVLoader {
 
-	StagingPlayerLoader(BlockingDeque<Sql> sqlPool) {
+	StagingPlayerLoader(SqlPool sqlPool) {
 		super(sqlPool)
 	}
 
