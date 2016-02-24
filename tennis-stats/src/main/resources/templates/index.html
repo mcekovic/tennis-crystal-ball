@@ -13,6 +13,23 @@
 	<script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
 	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
 	<script th:src="@{/js/tennis-stats.js}"></script>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$(function(){
+			$("[data-toggle=popover]").popover({
+				html : true,
+				content: function() {
+					var content = $(this).attr("data-popover");
+					return $(content).children(".popover-content").html();
+				},
+				title: function() {
+					var title = $(this).attr("data-popover");
+					return $(title).children(".popover-title").html();
+				}
+			}).on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); });
+		});
+		/*]]>*/
+	</script>
 	<style>
 		body {
 			background: url("/images/home-bg.png") no-repeat center center fixed;
@@ -36,8 +53,8 @@
 	</p>
 	<h4 class="text-nowrap">Latest New Features</h4>
 	<ul>
+		<li><a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> in 'GOAT' List, highest Elo rating 'GOAT' points and Elo ranking and rating charts using customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-popover="#eloRatingPopover">Elo rating formula</a>!</li>
 		<li>Separation of ATP 500 and ATP 250 tournaments and update of 'GOAT' formula accordingly</li>
-		<li><a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo ranking and rating</a> charts</li>
 	</ul>
 	<h4 class="text-nowrap">Features</h4>
 	<ul>
@@ -46,7 +63,7 @@
 		<li><a href="/bestSeasons">Best Seasons</a> - Find which are the best seasons of Open Era based on 'GOAT' points</li>
 		<li><a href="/greatestRivalries">Greatest Rivalries</a> - Explore greatest rivalries, overall or by tournament level and surface</li>
 		<li>Player Profile - Player information, tournament results, matches, timeline, rivalries, ranking, performance indicators and statistics</li>
-		<li><a href="/rankingsChart">Ranking Charts</a> - Player ranking and ranking point charts (including <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo system</a>), compare players by constructing custom charts</li>
+		<li><a href="/rankingsChart">Ranking Charts</a> - Player ranking and ranking point charts (including Elo rating), compare players by constructing custom charts</li>
 		<li><a href="/headsToHeads">Heads-to-Heads</a> - Heads-to-heads clusters among several players (i.e. among 'Big 4')</li>
 		<li><a href="/topPerformers">Top Performers</a> - Find top performers in both performance and pressure situations figures</li>
 		<li><a href="/statsLeaders">Statistics Leaders</a> - Find statistics leaders in different statistics categories, including dominance and break points ratios</li>
@@ -68,5 +85,29 @@
 	<div th:include="fragments/goatLegend :: legend(false)"></div>
 	<br/>
 	<div th:include="fragments/footer :: copy"></div>
-</body>
+	<div class="hidden" id="eloRatingPopover">
+		<div class="popover-title">Elo Rating Formula</div>
+		<div class="popover-content">
+			Elo rating is calculated in the <a href="https://en.wikipedia.org/wiki/Elo_rating_system#Theory" target="_blank">standard way</a>:
+			<ul>
+				<li>400 points difference means 90% chance for winning</li>
+				<li>Start rating is 1500 points</li>
+				<li>Minimum matches is 10</li>
+			</ul>
+			However, highly customized <strong>K-factor</strong> function reflecting tournament level and match round is used:
+			<ul>
+				<li>K factor base value is 100</li>
+				<li>Tournament level adjustment is: Grand Slam 100%, Tour Finals 90%, Masters 80%, ATP 500 70% and all others 60%</li>
+				<li>Match round adjustment is: Final 100%, Semi-Final 95%, Quarter-Final 90%, Round of 16 85%, Round of 32 80%, Round of 64 75%, Round of 128 70%, Round-Robin 90% and For Bronze Medal 97.5%</li>
+				<li>Number of sets adjustment: Best-of-5 100% and Best-of-3 90%</li>
+				<li>Walk-over adjustment: 50%</li>
+			</ul>
+			Examples:
+			<ul>
+				<li>Grand Slam final: 100</li>
+				<li>Masters semi-final: 100 * 80% * 95% * 90% = 68.4</li>
+				<li>ATP 250 round of 32: 100 * 60% * 80% * 90% = 43.2</li>
+			</ul>
+		</div>
+	</div></body>
 </html>

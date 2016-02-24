@@ -92,7 +92,7 @@ public class RankingsService {
 		"ORDER BY %5$s, g.player_id";
 
 	private static final String PLAYER_RANKING_QUERY =
-		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points\n" +
+		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, best_elo_rating, best_elo_rating_date, goat_rank, goat_points\n" +
 		"FROM player_v\n" +
 		"WHERE player_id = ?";
 
@@ -446,6 +446,8 @@ public class RankingsService {
 			highlights.setBestRankDate(rs.getDate("best_rank_date"));
 			highlights.setBestRankPoints(rs.getInt("best_rank_points"));
 			highlights.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
+			highlights.setBestEloRating(rs.getInt("best_elo_rating"));
+			highlights.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
 			highlights.setGoatRank(rs.getInt("goat_rank"));
 			highlights.setGoatRankPoints(rs.getInt("goat_points"));
 		}, playerId);

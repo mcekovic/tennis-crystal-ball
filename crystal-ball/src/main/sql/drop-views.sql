@@ -4,6 +4,7 @@ DROP MATERIALIZED VIEW player_goat_points;
 DROP VIEW player_best_season_goat_points_v;
 DROP MATERIALIZED VIEW player_season_goat_points;
 
+DROP VIEW player_best_elo_rating_goat_points_v;
 DROP VIEW player_weeks_at_no1_goat_points_v;
 DROP VIEW player_season_weeks_at_no1_goat_points_v;
 DROP VIEW player_big_wins_goat_points_v;
@@ -21,6 +22,7 @@ DROP MATERIALIZED VIEW player_current_rank;
 DROP MATERIALIZED VIEW player_best_rank;
 DROP MATERIALIZED VIEW player_best_rank_points;
 DROP MATERIALIZED VIEW player_year_end_rank;
+DROP MATERIALIZED VIEW player_best_elo_rating;
 DROP MATERIALIZED VIEW player_year_end_elo_rank;
 
 DROP MATERIALIZED VIEW player_titles;

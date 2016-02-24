@@ -67,6 +67,19 @@ WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_dat
 CREATE INDEX ON player_year_end_rank (player_id);
 
 
+-- player_best_rank_points
+
+CREATE MATERIALIZED VIEW player_best_elo_rating AS
+WITH best_elo_rating AS (
+	SELECT player_id, max(elo_rating) AS best_elo_rating FROM player_elo_ranking
+	GROUP BY player_id
+)
+SELECT player_id, best_elo_rating, (SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.elo_rating = b.best_elo_rating) AS best_elo_rating_date
+FROM best_elo_rating b;
+
+CREATE UNIQUE INDEX ON player_best_rank_points (player_id);
+
+
 -- player_year_end_elo_rank
 
 CREATE MATERIALIZED VIEW player_year_end_elo_rank AS
@@ -328,6 +341,18 @@ FROM player_season_stats
 GROUP BY player_id;
 
 CREATE UNIQUE INDEX ON player_stats (player_id);
+
+
+-- player_best_elo_rating_goat_points_v
+
+CREATE OR REPLACE VIEW player_best_elo_rating_goat_points_v AS
+WITH best_elo_rating_ranked AS (
+	SELECT player_id, rank() OVER (ORDER BY best_elo_rating DESC) AS best_elo_rating_rank
+	FROM player_best_elo_rating
+)
+SELECT player_id, goat_points
+FROM best_elo_rating_ranked
+INNER JOIN best_elo_rating_goat_points USING (best_elo_rating_rank);
 
 
 -- no1_player_ranking_v
@@ -958,59 +983,64 @@ INNER JOIN best_season_goat_points USING (season_rank);
 CREATE MATERIALIZED VIEW player_goat_points AS
 WITH goat_points AS (
 	SELECT player_id, raw_goat_points goat_points, tournament_goat_points, raw_ranking_goat_points ranking_goat_points, raw_achievements_goat_points achievements_goat_points,
-		year_end_rank_goat_points, 0 best_rank_goat_points, 0 weeks_at_no1_goat_points,
+		year_end_rank_goat_points, 0 best_rank_goat_points, 0 best_elo_rating_goat_points, 0 weeks_at_no1_goat_points,
 		0 big_wins_goat_points, grand_slam_goat_points, 0 best_season_goat_points, 0 greatest_rivalries_goat_points, 0 performance_goat_points, 0 statistics_goat_points
 	FROM player_season_goat_points
 	UNION ALL
 	SELECT player_id, goat_points, 0, goat_points, 0,
-		0, goat_points, 0,
+		0, goat_points, 0, 0,
 		0, 0, 0, 0, 0, 0
 	FROM player_best_rank
 	INNER JOIN best_rank_goat_points USING (best_rank)
 	UNION ALL
 	SELECT player_id, goat_points, 0, goat_points, 0,
-		0, 0, goat_points,
+		0, 0, goat_points, 0,
+		0, 0, 0, 0, 0, 0
+	FROM player_best_elo_rating_goat_points_v
+	UNION ALL
+	SELECT player_id, goat_points, 0, goat_points, 0,
+		0, 0, 0, goat_points,
 		0, 0, 0, 0, 0, 0
 	FROM player_weeks_at_no1_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0,
+		0, 0, 0, 0,
 		goat_points, 0, 0, 0, 0, 0
 	FROM player_big_wins_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0,
+		0, 0, 0, 0,
 		0, goat_points, 0, 0, 0, 0
 	FROM player_career_grand_slam_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0,
+		0, 0, 0, 0,
 		0, 0, goat_points, 0, 0, 0
 	FROM player_best_season_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0,
+		0, 0, 0, 0,
 		0, 0, 0, goat_points, 0, 0
 	FROM player_greatest_rivalries_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0,
+		0, 0, 0, 0,
 		0, 0, 0, 0, goat_points, 0
 	FROM player_performance_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0,
+		0, 0, 0, 0,
 		0, 0, 0, 0, 0, goat_points
 	FROM player_statistics_goat_points_v
 ), goat_points_total AS (
 	SELECT player_id, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points,
-		sum(year_end_rank_goat_points) year_end_rank_goat_points, sum(best_rank_goat_points) best_rank_goat_points, sum(weeks_at_no1_goat_points) weeks_at_no1_goat_points,
+		sum(year_end_rank_goat_points) year_end_rank_goat_points, sum(best_rank_goat_points) best_rank_goat_points, sum(best_elo_rating_goat_points) best_elo_rating_goat_points, sum(weeks_at_no1_goat_points) weeks_at_no1_goat_points,
 		sum(big_wins_goat_points) big_wins_goat_points, sum(grand_slam_goat_points) grand_slam_goat_points, sum(best_season_goat_points) best_season_goat_points, sum(greatest_rivalries_goat_points) greatest_rivalries_goat_points, sum(performance_goat_points) performance_goat_points, sum(statistics_goat_points) statistics_goat_points
 	FROM goat_points
 	GROUP BY player_id
 )
 SELECT player_id, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
-	year_end_rank_goat_points, best_rank_goat_points, weeks_at_no1_goat_points,
+	year_end_rank_goat_points, best_rank_goat_points, best_elo_rating_goat_points, weeks_at_no1_goat_points,
 	big_wins_goat_points, grand_slam_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points
 FROM goat_points_total;
 
@@ -1021,7 +1051,7 @@ CREATE UNIQUE INDEX ON player_goat_points (player_id);
 
 CREATE OR REPLACE VIEW player_v AS
 SELECT p.*, first_name || ' ' || last_name AS name, age(dob) AS age,
-	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date,
+	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, best_elo_rating, best_elo_rating_date,
 	goat_rank, coalesce(goat_points, 0) AS goat_points, coalesce(weeks_at_no1, 0) weeks_at_no1,
 	coalesce(titles, 0) AS titles, coalesce(big_titles, 0) AS big_titles,
 	coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals, coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics
@@ -1029,6 +1059,7 @@ FROM player p
 LEFT JOIN player_current_rank USING (player_id)
 LEFT JOIN player_best_rank USING (player_id)
 LEFT JOIN player_best_rank_points USING (player_id)
+LEFT JOIN player_best_elo_rating USING (player_id)
 LEFT JOIN player_goat_points USING (player_id)
 LEFT JOIN player_weeks_at_no1 USING (player_id)
 LEFT JOIN player_titles USING (player_id);

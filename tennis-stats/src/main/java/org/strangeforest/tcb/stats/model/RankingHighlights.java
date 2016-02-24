@@ -20,6 +20,8 @@ public class RankingHighlights {
 	private String bestYearEndRankSeasons;
 	private int bestYearEndRankPoints;
 	private String bestYearEndRankPointsSeasons;
+	private int bestEloRating;
+	private Date bestEloRatingDate;
 	private int goatRank;
 	private int goatRankPoints;
 	private Map<Integer, Double> weeksAt = new HashMap<>();
@@ -124,6 +126,22 @@ public class RankingHighlights {
 
 	public void setBestYearEndRankPointsSeasons(String bestYearEndRankPointsSeasons) {
 		this.bestYearEndRankPointsSeasons = bestYearEndRankPointsSeasons;
+	}
+
+	public int getBestEloRating() {
+		return bestEloRating;
+	}
+
+	public void setBestEloRating(int bestEloRating) {
+		this.bestEloRating = bestEloRating;
+	}
+
+	public Date getBestEloRatingDate() {
+		return bestEloRatingDate;
+	}
+
+	public void setBestEloRatingDate(Date bestEloRatingDate) {
+		this.bestEloRatingDate = bestEloRatingDate;
 	}
 
 	public int getGoatRank() {

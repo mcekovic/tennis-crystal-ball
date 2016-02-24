@@ -73,6 +73,11 @@ public class GOATLegendService {
 		return getRankGOATPointsTable("best_rank_goat_points", "best_rank", "goat_points");
 	}
 
+	@Cacheable(value = "Global", key = "'BestEloRatingGOATPointsTable'")
+	public BootgridTable<RankGOATPointsRow> getBestEloRatingGOATPointsTable() {
+		return getRankGOATPointsTable("best_elo_rating_goat_points", "best_elo_rating_rank", "goat_points");
+	}
+
 	@Cacheable(value = "Global", key = "'WeeksAtNo1ForGOATPoint'")
 	public int getWeeksAtNo1ForGOATPoint() {
 		return jdbcTemplate.queryForObject(WEEKS_AT_NO1_FOR_GOAT_POINT, Integer.class);

@@ -36,6 +36,7 @@
 							var title = "";
 							title = appendGoatPointsTitle(title, row, "yearEndRankGoatPoints", "Year-end ranking");
 							title = appendGoatPointsTitle(title, row, "bestRankGoatPoints", "Best ranking");
+							title = appendGoatPointsTitle(title, row, "bestEloRatingGoatPoints", "Best Elo rating");
 							title = appendGoatPointsTitle(title, row, "weeksAtNo1GoatPoints", "Weeks at No 1.");
 							return "<span title='" + title + "'>" + row.rankingGoatPoints + "</span>";
 						}
@@ -55,6 +56,9 @@
 						}
 						else
 							return row.achievementsGoatPoints;
+					},
+					"bestEloRating": function bestEloRatingFormatter(column, row) {
+						return "<span title='" + $.datepicker.formatDate("dd-mm-yy", new Date(row.bestEloRatingDate)) + "'>" + row.bestEloRating + "</span>";
 					}
 				}
 			});
@@ -69,7 +73,8 @@
 				{id: "masters", title: "Masters titles"},
 				{id: "olympics", title: "Olympics titles"},
 				{id: "bigTitles", title: "Big titles (GS + TF + M + O)"},
-				{id: "titles", title: "Titles"}
+				{id: "titles", title: "Titles"},
+				{id: "bestEloRating", title: "Highest Elo rating"}
 			]);
 		});
 		/*]]>*/
@@ -87,12 +92,13 @@
 				<th data-column-id="tournamentGoatPoints" data-type="numeric" data-order="desc" data-width="70" data-align="right" data-header-align="right">Tourn. Pts.</th>
 				<th data-column-id="rankingGoatPoints" data-formatter="rankingGoatPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right">Rank. Pts.</th>
 				<th data-column-id="achievementsGoatPoints" data-formatter="achievementsGoatPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right">Ach. Pts.</th>
-				<th data-column-id="grandSlams" data-type="numeric" data-width="50" data-align="right" data-header-align="right">GS</th>
-				<th data-column-id="tourFinals" data-type="numeric" data-width="50" data-align="right" data-header-align="right">TF</th>
-				<th data-column-id="masters" data-type="numeric" data-width="50" data-align="right" data-header-align="right">M</th>
-				<th data-column-id="olympics" data-type="numeric" data-width="50" data-align="right" data-header-align="right">O</th>
-				<th data-column-id="bigTitles" data-type="numeric" data-width="50" data-align="right" data-header-align="right">BT</th>
-				<th data-column-id="titles" data-type="numeric" data-width="50" data-align="right" data-header-align="right">T</th>
+				<th data-column-id="grandSlams" data-type="numeric" data-width="40" data-align="right" data-header-align="right">GS</th>
+				<th data-column-id="tourFinals" data-type="numeric" data-width="40" data-align="right" data-header-align="right">TF</th>
+				<th data-column-id="masters" data-type="numeric" data-width="40" data-align="right" data-header-align="right">M</th>
+				<th data-column-id="olympics" data-type="numeric" data-width="40" data-align="right" data-header-align="right">O</th>
+				<th data-column-id="bigTitles" data-type="numeric" data-width="40" data-align="right" data-header-align="right">BT</th>
+				<th data-column-id="titles" data-type="numeric" data-width="40" data-align="right" data-header-align="right">T</th>
+				<th data-column-id="bestEloRating" data-formatter="bestEloRating" data-width="50" data-align="right" data-header-align="right">Elo</th>
 			</tr>
 		</thead>
 	</table>

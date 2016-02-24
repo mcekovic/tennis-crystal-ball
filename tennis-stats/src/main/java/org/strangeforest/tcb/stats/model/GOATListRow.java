@@ -1,10 +1,12 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.util.*;
+
 public class GOATListRow extends PlayerRow {
 
 	private final int goatPoints;
 	private final int tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints;
-	private int yearEndRankGoatPoints, bestRankGoatPoints, weeksAtNo1GoatPoints;
+	private int yearEndRankGoatPoints, bestRankGoatPoints, bestEloRatingGoatPoints, weeksAtNo1GoatPoints;
 	private int bigWinsGoatPoints, grandSlamGoatPoints, bestSeasonGoatPoints, greatestRivalriesGoatPoints, performanceGoatPoints, statisticsGoatPoints;
 	private int grandSlams;
 	private int tourFinals;
@@ -12,6 +14,8 @@ public class GOATListRow extends PlayerRow {
 	private int olympics;
 	private int bigTitles;
 	private int titles;
+	private int bestEloRating;
+	private Date bestEloRatingDate;
 
 	public GOATListRow(int goatRank, int playerId, String name, String countryId, int goatPoints, int tournamentGoatPoints, int rankingGoatPoints, int achievementsGoatPoints) {
 		super(goatRank, playerId, name, countryId);
@@ -58,6 +62,14 @@ public class GOATListRow extends PlayerRow {
 
 	public void setBestRankGoatPoints(int bestRankGoatPoints) {
 		this.bestRankGoatPoints = bestRankGoatPoints;
+	}
+
+	public int getBestEloRatingGoatPoints() {
+		return bestEloRatingGoatPoints;
+	}
+
+	public void setBestEloRatingGoatPoints(int bestEloRatingGoatPoints) {
+		this.bestEloRatingGoatPoints = bestEloRatingGoatPoints;
 	}
 
 	public int getWeeksAtNo1GoatPoints() {
@@ -119,6 +131,9 @@ public class GOATListRow extends PlayerRow {
 		this.statisticsGoatPoints = statisticsGoatPoints;
 	}
 
+
+	// Titles
+
 	public int getGrandSlams() {
 		return grandSlams;
 	}
@@ -165,5 +180,24 @@ public class GOATListRow extends PlayerRow {
 
 	public void setTitles(int titles) {
 		this.titles = titles;
+	}
+
+
+	// Elo rating
+
+	public int getBestEloRating() {
+		return bestEloRating;
+	}
+
+	public void setBestEloRating(int bestEloRating) {
+		this.bestEloRating = bestEloRating;
+	}
+
+	public Date getBestEloRatingDate() {
+		return bestEloRatingDate;
+	}
+
+	public void setBestEloRatingDate(Date bestEloRatingDate) {
+		this.bestEloRatingDate = bestEloRatingDate;
 	}
 }

@@ -31,6 +31,11 @@ public class GOATLegendResource {
 		return goatLegendService.getBestRankGOATPointsTable();
 	}
 
+	@RequestMapping("/bestEloRatingGOATPointsTable")
+	public BootgridTable<RankGOATPointsRow> bestEloRatingGOATPointsTable() {
+		return goatLegendService.getBestEloRatingGOATPointsTable();
+	}
+
 	@RequestMapping("/weeksAtNo1ForGOATPoint")
 	public int weeksAtNo1ForGOATPoint() {
 		return goatLegendService.getWeeksAtNo1ForGOATPoint();

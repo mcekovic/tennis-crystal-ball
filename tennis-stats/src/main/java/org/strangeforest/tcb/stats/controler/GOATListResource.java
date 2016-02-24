@@ -27,6 +27,7 @@ public class GOATListResource {
 		ORDER_MAP.put("olympics", "olympics");
 		ORDER_MAP.put("bigTitles", "big_titles");
 		ORDER_MAP.put("titles", "titles");
+		ORDER_MAP.put("bestEloRating", "best_elo_rating NULLS LAST");
 	}
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("goat_points"), asc("name")};
 

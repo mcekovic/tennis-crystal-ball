@@ -104,6 +104,22 @@ VALUES
 (4, 2),
 (5, 1);
 
+DELETE FROM best_elo_rating_goat_points;
+INSERT INTO best_elo_rating_goat_points
+(best_elo_rating_rank, goat_points)
+VALUES
+(1, 8),
+(2, 5),
+(3, 3),
+(4, 2),
+(5, 1);
+
+DELETE FROM weeks_at_no1_goat_points;
+INSERT INTO weeks_at_no1_goat_points
+(weeks_for_point)
+VALUES
+(10);
+
 DELETE FROM big_win_match_factor;
 INSERT INTO big_win_match_factor
 (level, round, match_factor)
@@ -159,12 +175,6 @@ VALUES
 (18, 1),
 (19, 1),
 (20, 1);
-
-DELETE FROM weeks_at_no1_goat_points;
-INSERT INTO weeks_at_no1_goat_points
-(weeks_for_point)
-VALUES
-(10);
 
 DELETE FROM grand_slam_goat_points;
 INSERT INTO grand_slam_goat_points

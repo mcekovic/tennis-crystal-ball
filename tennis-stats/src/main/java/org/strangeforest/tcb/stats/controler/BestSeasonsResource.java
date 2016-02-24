@@ -27,6 +27,7 @@ public class BestSeasonsResource {
 		ORDER_MAP.put("olympicsTitles", "olympics_titles");
 		ORDER_MAP.put("olympicsFinals", "olympics_finals");
 		ORDER_MAP.put("titles", "titles");
+		ORDER_MAP.put("yearEndRank", "year_end_rank");
 	}
 	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("season_rank");
 

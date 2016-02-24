@@ -9,8 +9,8 @@ eloRatings.compute(true)
 
 
 sqlPool.withSql { sql ->
-	showCurrent(eloRatings, sql)
-//	showAllTime(eloRatings, sql)
+//	showCurrent(eloRatings, sql)
+	showAllTime(eloRatings, sql)
 }
 
 
