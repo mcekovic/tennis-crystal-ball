@@ -67,7 +67,7 @@ WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_dat
 CREATE INDEX ON player_year_end_rank (player_id);
 
 
--- player_best_rank_points
+-- player_best_elo_rating
 
 CREATE MATERIALIZED VIEW player_best_elo_rating AS
 WITH best_elo_rating AS (
@@ -77,7 +77,7 @@ WITH best_elo_rating AS (
 SELECT player_id, best_elo_rating, (SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.elo_rating = b.best_elo_rating) AS best_elo_rating_date
 FROM best_elo_rating b;
 
-CREATE UNIQUE INDEX ON player_best_rank_points (player_id);
+CREATE UNIQUE INDEX ON player_best_elo_rating (player_id);
 
 
 -- player_year_end_elo_rank
