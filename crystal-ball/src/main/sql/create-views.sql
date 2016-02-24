@@ -67,6 +67,20 @@ WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_dat
 CREATE INDEX ON player_year_end_rank (player_id);
 
 
+-- player_year_end_elo_rank
+
+CREATE MATERIALIZED VIEW player_year_end_elo_rank AS
+SELECT DISTINCT player_id, date_part('year', rank_date)::INTEGER AS season,
+   first_value(rank) OVER (player_season_rank) AS year_end_rank,
+   first_value(elo_rating) OVER (player_season_rank) AS year_end_elo_rating
+FROM player_elo_ranking
+WHERE date_part('year', rank_date) < date_part('year', current_date) OR date_part('month', current_date) >= 11
+GROUP BY player_id, season, rank_date, rank
+WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_date)::INTEGER ORDER BY rank_date DESC);
+
+CREATE INDEX ON player_year_end_elo_rank (player_id);
+
+
 -- player_tournament_event_result
 
 CREATE MATERIALIZED VIEW player_tournament_event_result AS

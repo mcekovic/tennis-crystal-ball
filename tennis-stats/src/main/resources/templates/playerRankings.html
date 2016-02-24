@@ -17,7 +17,7 @@
 			var rankType = $("#rankType").val();
 			var timeSpan = $("#rankingTimeSpan").val();
 			bySeason = $("#rankingBySeason").prop("checked");
-			isRank = rankType == "RANK";
+			isRank = rankType == "RANK" || rankType == "ELO_RANK";
 			var dataUrl = "/playerRankingsTable?playerId=[[${playerId}]]&rankType=" + rankType + "&timeSpan=" + timeSpan;
 			if (timeSpan != "1")
 				dataUrl += "&bySeason=" + bySeason;
@@ -144,8 +144,10 @@
 			<div class="input-group">
 				<label for="rankType" class="input-group-addon">Rank type:</label>
 				<select id="rankType" class="form-control" onchange="onRankTypeChange()">
-					<option value="RANK">Ordinal rank</option>
-					<option value="POINTS">Ranking points</option>
+					<option value="RANK">ATP Ranking</option>
+					<option value="POINTS">ATP Points</option>
+					<option value="ELO_RANK">Elo Ranking</option>
+					<option value="ELO_RATING">Elo Rating</option>
 					<option value="GOAT_POINTS">GOAT points</option>
 				</select>
 			</div>

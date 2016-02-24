@@ -21,6 +21,7 @@ DROP MATERIALIZED VIEW player_current_rank;
 DROP MATERIALIZED VIEW player_best_rank;
 DROP MATERIALIZED VIEW player_best_rank_points;
 DROP MATERIALIZED VIEW player_year_end_rank;
+DROP MATERIALIZED VIEW player_year_end_elo_rank;
 
 DROP MATERIALIZED VIEW player_titles;
 DROP MATERIALIZED VIEW player_tournament_event_result;

@@ -16,6 +16,7 @@ import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.model.RankType.*;
 import static org.strangeforest.tcb.stats.util.EnumUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
@@ -31,15 +32,15 @@ public class RankingsService {
 
 	private static final String PLAYER_RANKINGS_QUERY = //language=SQL
 		"SELECT r.rank_date AS date%1$s, r.player_id, %2$s AS rank_value\n" +
-		"FROM player_ranking r%3$s\n" +
-		"WHERE r.player_id = %4$s%5$s\n" +
-		"ORDER BY %6$s, r.player_id";
+		"FROM %3$s r%4$s\n" +
+		"WHERE r.player_id = %5$s%6$s\n" +
+		"ORDER BY %7$s, r.player_id";
 
 	private static final String PLAYER_SEASON_RANKINGS_QUERY = //language=SQL
 		"SELECT r.season%1$s, r.player_id, %2$s AS rank_value\n" +
-		"FROM player_year_end_rank r%3$s\n" +
-		"WHERE r.player_id = %4$s%5$s\n" +
-		"ORDER BY %6$s, r.player_id";
+		"FROM %3$s r%4$s\n" +
+		"WHERE r.player_id = %5$s%6$s\n" +
+		"ORDER BY %7$s, r.player_id";
 
 	private static final String PLAYER_GOAT_POINTS_QUERY = //language=SQL
 		"WITH goat_points AS (\n" +
@@ -148,7 +149,7 @@ public class RankingsService {
 	private DataTable fetchRankingsDataTable(Players players, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
 		DataTable table = new DataTable();
 		RowCursor rowCursor = bySeason ? new IntegerRowCursor(table, players) : (byAge ? new DoubleRowCursor(table, players) : new DateRowCursor(table, players));
-		boolean compensate = compensatePoints && rankType == RankType.POINTS;
+		boolean compensate = compensatePoints && rankType == POINTS;
 		jdbcTemplate.query(
 			getSQL(players.getCount(), rankType, bySeason, dateRange, seasonRange, byAge),
 			ps -> {
@@ -202,24 +203,72 @@ public class RankingsService {
 		String playerJoin = byAge ? PLAYER_JOIN : "";
 		String playerCondition = playerCount == 1 ? "?" : "ANY(?)";
 		String orderBy = byAge ? "age" : (bySeason ? "season" : "date");
+		if (rankType == GOAT_POINTS) {
+			if (bySeason) {
+				return format(PLAYER_SEASON_GOAT_POINTS_QUERY,
+					byAge ? ", date_part('year', age((g.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "",
+					playerJoin, playerCondition, periodRangeCondition(seasonRange, "g.season"), orderBy, byAge ? ", age" : ""
+				);
+			}
+			else {
+				return format(PLAYER_GOAT_POINTS_QUERY,
+					byAge ? ", age(g.date, p.dob) AS age" : "",
+					playerJoin, playerCondition, periodRangeCondition(dateRange, "g.date"), orderBy, byAge ? ", age" : ""
+				);
+			}
+		}
+		else {
+			if (bySeason) {
+				return format(PLAYER_SEASON_RANKINGS_QUERY,
+					byAge ? ", date_part('year', age((r.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "",
+					rankColumnBySeason(rankType), rankingTableBySeason(rankType), playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy
+				);
+			}
+			else {
+				return format(PLAYER_RANKINGS_QUERY,
+					byAge ? ", age(r.rank_date, p.dob) AS age" : "",
+					rankColumn(rankType), rankingTable(rankType), playerJoin, playerCondition, periodRangeCondition(dateRange, "r.rank_date"), orderBy);
+			}
+		}
+	}
+
+	private String rankColumn(RankType rankType) {
 		switch (rankType) {
 			case RANK:
-				if (bySeason)
-					return format(PLAYER_SEASON_RANKINGS_QUERY, byAge ? ", date_part('year', age((r.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "", "r.year_end_rank", playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy);
-				else
-					return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank", playerJoin, playerCondition, periodRangeCondition(dateRange, "r.rank_date"), orderBy);
-			case POINTS:
-				if (bySeason)
-					return format(PLAYER_SEASON_RANKINGS_QUERY, byAge ? ", date_part('year', age((r.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "", "r.year_end_rank_points", playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy);
-				else
-					return format(PLAYER_RANKINGS_QUERY, byAge ? ", age(r.rank_date, p.dob) AS age" : "", "r.rank_points", playerJoin, playerCondition, periodRangeCondition(dateRange, "r.rank_date"), orderBy);
-			case GOAT_POINTS:
-				if (bySeason)
-					return format(PLAYER_SEASON_GOAT_POINTS_QUERY, byAge ? ", date_part('year', age((g.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "", playerJoin, playerCondition, periodRangeCondition(seasonRange, "g.season"), orderBy, byAge ? ", age" : "");
-				else
-					return format(PLAYER_GOAT_POINTS_QUERY, byAge ? ", age(g.date, p.dob) AS age" : "", playerJoin, playerCondition, periodRangeCondition(dateRange, "g.date"), orderBy, byAge ? ", age" : "");
-			default:
-				throw unknownEnum(rankType);
+			case ELO_RANK: return "r.rank";
+			case POINTS: return "r.rank_points";
+			case ELO_RATING: return "r.elo_rating";
+			default: throw unknownEnum(rankType);
+		}
+	}
+
+	private String rankColumnBySeason(RankType rankType) {
+		switch (rankType) {
+			case RANK:
+			case ELO_RANK: return "r.year_end_rank";
+			case POINTS: return "r.year_end_rank_points";
+			case ELO_RATING: return "r.year_end_elo_rating";
+			default: throw unknownEnum(rankType);
+		}
+	}
+
+	private String rankingTable(RankType rankType) {
+		switch (rankType) {
+			case RANK:
+			case POINTS: return "player_ranking";
+			case ELO_RANK:
+			case ELO_RATING: return "player_elo_ranking";
+			default: throw unknownEnum(rankType);
+		}
+	}
+
+	private String rankingTableBySeason(RankType rankType) {
+		switch (rankType) {
+			case RANK:
+			case POINTS: return "player_year_end_rank";
+			case ELO_RANK:
+			case ELO_RATING: return "player_year_end_elo_rank";
+			default: throw unknownEnum(rankType);
 		}
 	}
 
@@ -262,8 +311,10 @@ public class RankingsService {
 
 	private static String getRankName(RankType rankType) {
 		switch (rankType) {
-			case RANK: return "Ranking";
-			case POINTS: return "Points";
+			case RANK: return "ATP Ranking";
+			case POINTS: return "ATP Points";
+			case ELO_RANK: return "Elo Ranking";
+			case ELO_RATING: return "Elo Rating";
 			case GOAT_POINTS: return "GOAT Points";
 			default: throw unknownEnum(rankType);
 		}

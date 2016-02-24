@@ -1,5 +1,5 @@
 package org.strangeforest.tcb.stats.model;
 
 public enum RankType {
-	RANK, POINTS, GOAT_POINTS
+	RANK, POINTS, ELO_RANK, ELO_RATING, GOAT_POINTS
 }
