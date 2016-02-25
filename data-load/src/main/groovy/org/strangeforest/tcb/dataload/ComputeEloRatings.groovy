@@ -5,11 +5,11 @@ import groovy.sql.*
 def sqlPool = new SqlPool()
 
 def eloRatings = new EloRatings(sqlPool)
-eloRatings.compute(true)
+eloRatings.compute()
 
 
 sqlPool.withSql { sql ->
-//	showCurrent(eloRatings, sql)
+	showCurrent(eloRatings, sql)
 	showAllTime(eloRatings, sql)
 }
 
@@ -17,7 +17,7 @@ sqlPool.withSql { sql ->
 
 def showCurrent(EloRatings eloRatings, Sql sql) {
 	def i = 0
-	eloRatings.current(1000).each {
+	eloRatings.current(100).each {
 		printf '%1$4s %2$-30s %3$4s%n', ++i, getPlayerName(sql, it.key), it.value
 	}
 }

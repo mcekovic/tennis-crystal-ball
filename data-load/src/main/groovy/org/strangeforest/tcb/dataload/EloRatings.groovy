@@ -144,15 +144,19 @@ class EloRatings {
 		}
 
 		/**
-		 * K-Function returns values from 1/4 to 1.
-		 * For rating 0-1600 returns 1.
-		 * For rating 1800 returns 1/2.
-		 * For rating 2000 returns 1/3.
-		 * For rating 2200+ returns 1/4.
-		 * @return values from 1/4 to 1, depending on current rating
+		 * K-Function returns values from 1/2 to 1.
+		 * For rating 0-2000 returns 1.
+		 * For rating 2100 returns 3/4.
+		 * For rating 2200+ returns 1/2.
+		 * @return values from 1/2 to 1, depending on current rating
 		 */
 		private def double kFunction() {
-			1.0 / min(max(rating - 1400, 200) / 200.0, 4.0)
+			if (rating <= 2000)
+				1.0
+			else if (rating <= 2200)
+				1.0 - (rating - 2000) / 400.0
+			else
+				0.5
 		}
 
 		String toString() {
