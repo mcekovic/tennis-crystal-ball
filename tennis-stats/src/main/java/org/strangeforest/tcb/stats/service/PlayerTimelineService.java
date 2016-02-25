@@ -23,7 +23,7 @@ public class PlayerTimelineService {
 		"AND e.level <> 'D'\n" +
 		"ORDER BY tournament_event_id";
 
-	private static final String SEASON_TITLES_QUERY =
+	private static final String SEASON_TITLES_QUERY = //language=SQL
 		"SELECT e.season, count(tournament_event_id) AS titles FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE r.player_id = ? AND r.result = 'W'\n" +
@@ -32,14 +32,21 @@ public class PlayerTimelineService {
 		"SELECT NULL, count(tournament_event_id) FROM player_tournament_event_result\n" +
 		"WHERE player_id = ? AND result = 'W'";
 
-	private static final String YEAR_END_RANKS_QUERY =
+	private static final String YEAR_END_RANKS_QUERY = //language=SQL
 		"SELECT season, year_end_rank FROM player_year_end_rank\n" +
 		"WHERE player_id = ?\n" +
 		"UNION ALL\n" +
 		"SELECT NULL, min(year_end_rank) FROM player_year_end_rank\n" +
 		"WHERE player_id = ?";
 
-	private static final String SEASON_GOAT_POINTS_QUERY =
+	private static final String YEAR_END_ELO_RATINGS_QUERY = //language=SQL
+		"SELECT season, year_end_elo_rating FROM player_year_end_elo_rank\n" +
+		"WHERE player_id = ?\n" +
+		"UNION ALL\n" +
+		"SELECT NULL, best_elo_rating FROM player_v\n" +
+		"WHERE player_id = ?";
+
+	private static final String SEASON_GOAT_POINTS_QUERY = //language=SQL
 		"SELECT season, goat_points FROM player_season_goat_points\n" +
 		"WHERE player_id = ?\n" +
 		"UNION ALL\n" +
@@ -70,46 +77,34 @@ public class PlayerTimelineService {
 		return timeline;
 	}
 
-	public Map<Integer, Integer> getPlayerSeasonTitles(int playerId) {
-		Map<Integer, Integer> seasonTitles = new HashMap<>();
+	public Map<Integer, Integer> getPlayerSeasonValues(String query, String column, int playerId) {
+		Map<Integer, Integer> seasonValues = new HashMap<>();
 		jdbcTemplate.query(
-			SEASON_TITLES_QUERY,
+			query,
 			rs -> {
 				Integer season = getInteger(rs, "season");
-				int titles = rs.getInt("titles");
-				if (titles > 0)
-					seasonTitles.put(season, titles);
+				int value = rs.getInt(column);
+				if (value > 0)
+					seasonValues.put(season, value);
 			},
 			playerId, playerId
 		);
-		return seasonTitles;
+		return seasonValues;
+	}
+
+	public Map<Integer, Integer> getPlayerSeasonTitles(int playerId) {
+		return getPlayerSeasonValues(SEASON_TITLES_QUERY, "titles", playerId);
 	}
 
 	public Map<Integer, Integer> getPlayerYearEndRanks(int playerId) {
-		Map<Integer, Integer> yearEndRanks = new HashMap<>();
-		jdbcTemplate.query(
-			YEAR_END_RANKS_QUERY,
-			rs -> {
-				Integer season = getInteger(rs, "season");
-				int yearEndRank = rs.getInt("year_end_rank");
-				yearEndRanks.put(season, yearEndRank);
-			},
-			playerId, playerId
-		);
-		return yearEndRanks;
+		return getPlayerSeasonValues(YEAR_END_RANKS_QUERY, "year_end_rank", playerId);
+	}
+
+	public Map<Integer, Integer> getPlayerYearEndEloRatings(int playerId) {
+		return getPlayerSeasonValues(YEAR_END_ELO_RATINGS_QUERY, "year_end_elo_rating", playerId);
 	}
 
 	public Map<Integer, Integer> getPlayerSeasonGOATPoints(int playerId) {
-		Map<Integer, Integer> seasonGOATPoints = new HashMap<>();
-		jdbcTemplate.query(
-			SEASON_GOAT_POINTS_QUERY,
-			rs -> {
-				Integer season = getInteger(rs, "season");
-				int goatPoints = rs.getInt("goat_points");
-				seasonGOATPoints.put(season, goatPoints);
-			},
-			playerId, playerId
-		);
-		return seasonGOATPoints;
+		return getPlayerSeasonValues(SEASON_GOAT_POINTS_QUERY, "goat_points", playerId);
 	}
 }
