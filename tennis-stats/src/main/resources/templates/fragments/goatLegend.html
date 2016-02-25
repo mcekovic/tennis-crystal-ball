@@ -76,7 +76,7 @@
 						</tr>
 					</thead>
 				</table>
-				<p>+ is for additive tournaments where points are assigned for wins in each round rather then for tournament result</p>
+				<p>+ is for tournaments where points are assigned for wins in each round rather then for tournament result</p>
 				<br/>
 				<h4>Ranking Points</h4>
 				<strong th:unless="${forSeason}">Each season's year-end rank</strong>
@@ -98,7 +98,7 @@
 					</tr>
 					</thead>
 				</table>
-				<strong th:unless="${forSeason}">All-time highest Elo rating</strong>
+				<strong th:unless="${forSeason}">Highest peak Elo rating</strong>
 				<table th:unless="${forSeason}" id="bestEloRatingGOATPointsTable" class="table table-condensed table-hover table-striped">
 					<thead>
 					<tr>

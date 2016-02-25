@@ -212,7 +212,7 @@
 					<td th:text="${mostFrequentRank.rank} + ' (' + ${mostFrequentRank.duration} + ' year' + ${mostFrequentRank.duration > 1 ? 's' : ''} + ')'">10 (3 years)</td>
 				</tr>
 				<tr th:if="${highlights.bestEloRating > 0}">
-					<th>Best <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo</a> Rating</th>
+					<th>Highest <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo</a> Rating</th>
 					<td th:text="${highlights.bestEloRating} + ' (' + ${#dates.format(highlights.bestEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
 				</tr>
 				<tr th:if="${highlights.goatRankPoints > 0}">

@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.dataload
 
 import java.util.concurrent.*
+import java.util.concurrent.atomic.*
 
 import static java.lang.Math.*
 import static org.strangeforest.tcb.util.DateUtil.*
@@ -8,9 +9,11 @@ import static org.strangeforest.tcb.util.DateUtil.*
 class EloRatings {
 
 	private SqlPool sqlPool
-	private Map<Integer, EloRating> playerRatings = [:]
+	private Map<Integer, EloRating> playerRatings
 	private int matches
 	private Date lastDate
+	private AtomicInteger saves
+	private AtomicInteger progress
 
 	private static final String QUERY_MATCHES = //language=SQL
 		"SELECT m.winner_id, m.loser_id, e.date + (CASE e.level WHEN 'G' THEN INTERVAL '14 days' ELSE INTERVAL '7 days' END) AS end_date,\n" +
@@ -25,7 +28,8 @@ class EloRatings {
 		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating)}"
 
 	private static final int MIN_MATCHES = 10
-	private static final int DOT_SIZE = 1000
+	private static final int MATCHES_PER_DOT = 1000
+	private static final int SAVES_PER_PLUS = 20
 	private static final int PROGRESS_LINE_WRAP = 100
 	private static final int PLAYERS_TO_SAVE = 200
 
@@ -37,6 +41,11 @@ class EloRatings {
 	}
 
 	def compute(save = false) {
+		playerRatings = [:]
+		matches = 0
+		lastDate = null
+		saves = new AtomicInteger()
+		progress = new AtomicInteger()
 		println 'Processing matches'
 		sqlPool.withSql {sql ->
 			def saveExecutor = save ? Executors.newFixedThreadPool(sqlPool.size()) : null
@@ -44,8 +53,8 @@ class EloRatings {
 				sql.eachRow(QUERY_MATCHES) { match -> processMatch(match, saveExecutor) }
 			}
 			finally {
-				saveExecutor.shutdown()
-				saveExecutor.awaitTermination(1L, TimeUnit.DAYS)
+				saveExecutor?.shutdown()
+				saveExecutor?.awaitTermination(1L, TimeUnit.DAYS)
 			}
 		}
 		println()
@@ -90,11 +99,8 @@ class EloRatings {
 		playerRatings.put(loserId, loserRating.newRating(-deltaRating, date))
 
 		lastDate = date
-		if (++matches % DOT_SIZE == 0) {
-			print '.'
-			if (matches % (DOT_SIZE * PROGRESS_LINE_WRAP) == 0)
-				println()
-		}
+		if (++matches % MATCHES_PER_DOT == 0)
+			progressTick '.'
 	}
 
 	private EloRating getRating(playerId) {
@@ -190,6 +196,13 @@ class EloRatings {
 				}
 			}
 		}
-		print '+'
+		if (saves.incrementAndGet() % SAVES_PER_PLUS == 0)
+			progressTick '+'
+	}
+
+	private progressTick(tick) {
+		print tick
+		if (progress.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
+			println()
 	}
 }
