@@ -30,11 +30,23 @@
 					<li th:class="${servletPath == '/goatList' ? 'active' : ''}"><a href="/goatList">GOAT List</a></li>
 					<li th:class="${servletPath == '/bigGunsTimeline' ? 'active' : ''}"><a href="/bigGunsTimeline">Big Guns Timeline</a></li>
 					<li th:class="${servletPath == '/bestSeasons' ? 'active' : ''}"><a href="/bestSeasons">Best Seasons</a></li>
-					<li th:class="${servletPath == '/greatestRivalries' ? 'active' : ''}"><a href="/greatestRivalries">Greatest Rivalries</a></li>
-					<li th:class="${servletPath == '/rankingsChart' ? 'active' : ''}"><a href="/rankingsChart">Rankings Chart</a></li>
-					<li th:class="${servletPath == '/headsToHeads' ? 'active' : ''}"><a href="/headsToHeads">Heads-to-Heads</a></li>
+					<li th:class="${servletPath == '/headsToHeads' || servletPath == '/greatestRivalries' ? 'active dropdown' : 'dropdown'}">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rivalries<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/greatestRivalries">Greatest Rivalries</a></li>
+							<li><a href="/headsToHeads">Heads-to-Heads</a></li>
+						</ul>
+					</li>
+					<li th:class="${servletPath.startsWith('/rankings') ? 'active dropdown' : 'dropdown'}">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rankings<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/rankingsTable">Rankings Table</a></li>
+							<li><a href="/rankingsChart">Rankings Chart</a></li>
+						</ul>
+					</li>
 					<li th:class="${servletPath == '/topPerformers' ? 'active' : ''}"><a href="/topPerformers">Top Performers</a></li>
 					<li th:class="${servletPath == '/statsLeaders' ? 'active' : ''}"><a href="/statsLeaders">Statistics Leaders</a></li>
+					<li th:class="${servletPath == '/tournamentEvents' ? 'active' : ''}"><a href="/tournamentEvents">Tournaments</a></li>
 				</ul>
 			</div>
 		</div>

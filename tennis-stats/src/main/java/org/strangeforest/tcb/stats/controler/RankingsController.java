@@ -8,10 +8,17 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Controller
-public class RankingsChartController extends BaseController {
+public class RankingsController extends BaseController {
 
 	@Autowired
 	private DataService dataService;
+
+	@RequestMapping("/rankingsTable")
+	public ModelAndView rankingsTable() {
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("seasons", dataService.getSeasons());
+		return new ModelAndView("rankingsTable", modelMap);
+	}
 
 	@RequestMapping("/rankingsChart")
 	public ModelAndView rankingsChart() {

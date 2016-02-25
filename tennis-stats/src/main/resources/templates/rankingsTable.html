@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Ultimate Tennis Statistics - Rankings Table</title>
+	<link th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.2.0/jquery.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/tennis-stats.js}"></script>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$(function() {
+			$("#rankingsTable").bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/rankingsTableTable",
+				requestHandler: function (request) {
+					request.rankType = $("#rankType").val();
+					var season = $("#season").val();
+					if (season != "")
+						request.season = season;
+					var date = $("#date").val();
+					if (date != "")
+						request.date = date;
+					return request;
+				},
+				sorting: false,
+				rowCount: [20, 50, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				},
+				formatters: {
+					"country": countryFormatter,
+					"player": playerFormatter
+				}
+			});
+			var $rankingsTableHeader = $("#rankingsTable-header");
+			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove()).before($("#seasonDiv").remove()).before($("#dateDiv").remove());
+			rankTypeChanged();
+			$("[data-toggle='tooltip']").tooltip();
+		});
+		function rankTypeChanged() {
+			var rankType = $("#rankType").val();
+			$("#rankingsTable").find("th[data-column-id='points'] > a > span.text").html(rankType == "POINTS" ? "Points" : "Elo Rating");
+			$("#season").find("option[value='']").html(rankType == "POINTS" ? "Current" : "All Time");
+			seasonChanged();
+		}
+		function seasonChanged() {
+			var $season = $("#season");
+			var season = $season.val();
+			var $date = $("#date");
+			$date.find("option").remove();
+			$date.prop("disabled", season == "");
+			if (season != "") {
+				var url = "/rankingSeasonDates?rankType=" + $("#rankType").val() + "&season=" + season;
+				$.get(url, function (data) {
+					$date.append("<option value=''>Year-end</option>");
+					for (var i = 0; i < data.length; i++) {
+						var date = $.datepicker.formatDate("dd-mm-yy", new Date(data[i]));
+						$date.append("<option value='" + date + "'>" + date + "</option>");
+					}
+				});
+			}
+		}
+		function reloadRankings() {
+			$("#rankingsTable").bootgrid("reload");
+		}
+		/*]]>*/
+	</script>
+</head>
+<body class="container">
+	<div th:include="fragments/header :: title"></div>
+	<h3 class="grid-title">Rankings Table</h3>
+	<div id="rankTypeDiv" class="btn-group" style="margin-right: 20px">
+		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
+			<option value="POINTS">ATP Ranking</option>
+			<option value="ELO_RATING">Elo Ranking</option>
+		</select>
+	</div>
+	<div id="seasonDiv" class="btn-group" style="margin-right: 20px">
+		<select id="season" class="form-control" onchange="seasonChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select season">
+			<option value="">Current</option>
+			<option th:each="season : ${seasons}" th:value="${season}" value="2015" th:text="${season}">2015</option>
+		</select>
+	</div>
+	<div id="dateDiv" class="btn-group" style="width: 110px; margin-right: 20px">
+		<select id="date" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
+	</div>
+	<table id="rankingsTable" class="table table-condensed table-hover table-striped">
+		<thead>
+			<tr>
+				<th data-column-id="rank" data-type="numeric" data-width="55">Rank</th>
+				<th data-column-id="country" data-formatter="country" data-width="70">Country</th>
+				<th data-column-id="name" data-formatter="player" data-width="200">Name</th>
+				<th data-column-id="points" data-type="numeric" data-width="80" data-align="right" data-header-align="right">Points</th>
+			</tr>
+		</thead>
+	</table>
+	<div th:include="fragments/footer :: copy"></div>
+</body>
+</html>

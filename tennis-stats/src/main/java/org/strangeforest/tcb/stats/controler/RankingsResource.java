@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.controler;
 
+import java.sql.Date;
 import java.time.*;
 import java.util.*;
 import java.util.stream.*;
@@ -14,14 +15,45 @@ import org.strangeforest.tcb.stats.util.*;
 import com.google.common.collect.*;
 
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.model.RankType.*;
 
 @RestController
-public class PlayerRankingsResource {
+public class RankingsResource {
 
 	@Autowired private RankingsService rankingsService;
 
 	private static final String CAREER = "CR";
 	private static final String CUSTOM = "CS";
+
+	private static final int MAX_PLAYERS = 1000;
+
+	@RequestMapping("/rankingsTableTable")
+	public BootgridTable<PlayerRankingsRow> rankingsTable(
+		@RequestParam(value = "rankType") RankType rankType,
+		@RequestParam(value = "season", required = false) Integer season,
+		@RequestParam(value = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date,
+		@RequestParam(value = "current") int current,
+		@RequestParam(value = "rowCount") int rowCount,
+		@RequestParam(value = "searchPhrase") String searchPhrase
+	) {
+		if (date == null) {
+			if (season != null)
+				date = rankingsService.getSeasonEndRankingDate(rankType, season);
+			if (date == null && rankType != ELO_RATING)
+				date = rankingsService.getCurrentRankingDate(rankType);
+		}
+		PlayerListFilter filter = new PlayerListFilter(searchPhrase);
+		int pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
+		return rankingsService.getRankingsTable(rankType, date, filter, pageSize, current);
+	}
+
+	@RequestMapping("/rankingSeasonDates")
+	public List<Date> rankingDates(
+		@RequestParam(value = "rankType") RankType rankType,
+		@RequestParam(value = "season") int season
+	) {
+		return rankingsService.getRankingSeasonDates(rankType, season);
+	}
 
 	@RequestMapping("/playerRankingsTable")
 	public DataTable playerRankingsTable(

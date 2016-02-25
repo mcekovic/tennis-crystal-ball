@@ -1,9 +1,11 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.sql.Date;
 import java.time.*;
 import java.util.*;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.*;
 
 import org.postgresql.util.*;
 import org.springframework.beans.factory.annotation.*;
@@ -16,9 +18,11 @@ import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
+import static java.lang.String.valueOf;
 import static org.strangeforest.tcb.stats.model.RankType.*;
 import static org.strangeforest.tcb.stats.util.EnumUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
+import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Service
 public class RankingsService {
@@ -29,6 +33,36 @@ public class RankingsService {
 	private static final LocalDate START_DATE_OF_NEW_RANKING_SYSTEM = LocalDate.of(2009, 1, 1);
 	private static final int START_SEASON_OF_NEW_RANKING_SYSTEM = START_DATE_OF_NEW_RANKING_SYSTEM.getYear();
 	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 1.9;
+
+	private static final String CURRENT_RANKING_DATE_QUERY = //language=SQL
+		"SELECT max(rank_date) AS rank_date FROM %1$s";
+
+	private static final String SEASON_END_RANKING_DATE_QUERY = //language=SQL
+		"SELECT max(rank_date) AS rank_date FROM %1$s\n" +
+		"WHERE date_part('year', rank_date) = ?";
+
+	private static final String RANKING_SEASON_DATES_QUERY = //language=SQL
+		"SELECT DISTINCT rank_date FROM %1$s\n" +
+		"WHERE date_part('year', rank_date) = ?\n" +
+		"ORDER BY rank_date DESC";
+
+	private static final String RANKING_TABLE_QUERY = //language=SQL
+		"SELECT r.rank, player_id, p.name, p.country_id, %1$s AS points\n" +
+		"FROM %2$s r\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"WHERE r.rank_date = ?%3$s\n" +
+		"ORDER BY rank OFFSET ?";
+
+	private static final String HIGHEST_ELO_RATING_TABLE_QUERY = //language=SQL
+		"WITH best_elo_rating_ranked AS (\n" +
+		"  SELECT rank() OVER (ORDER BY best_elo_rating DESC) AS rank, player_id, best_elo_rating\n" +
+		"  FROM player_best_elo_rating\n" +
+		")\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, r.best_elo_rating AS points\n" +
+		"FROM best_elo_rating_ranked r\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"WHERE TRUE%1$s\n" +
+		"ORDER BY rank OFFSET ?";
 
 	private static final String PLAYER_RANKINGS_QUERY = //language=SQL
 		"SELECT r.rank_date AS date%1$s, r.player_id, %2$s AS rank_value\n" +
@@ -126,6 +160,53 @@ public class RankingsService {
 		"WHERE player_id = ?";
 
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
+
+	public LocalDate getCurrentRankingDate(RankType rankType) {
+		String sql = format(CURRENT_RANKING_DATE_QUERY, rankingTable(rankType));
+		return toLocalDate(jdbcTemplate.queryForObject(sql, Date.class));
+	}
+
+	public LocalDate getSeasonEndRankingDate(RankType rankType, int season) {
+		String sql = format(SEASON_END_RANKING_DATE_QUERY, rankingTable(rankType));
+		return toLocalDate(jdbcTemplate.queryForObject(sql, Date.class, season));
+	}
+
+	public List<Date> getRankingSeasonDates(RankType rankType, int season) {
+		String sql = format(RANKING_SEASON_DATES_QUERY, rankingTable(rankType));
+		return jdbcTemplate.queryForList(sql, Date.class, season);
+	}
+
+	public BootgridTable<PlayerRankingsRow> getRankingsTable(RankType rankType, LocalDate date, PlayerListFilter filter, int pageSize, int currentPage) {
+		if (!EnumSet.of(POINTS, ELO_RATING).contains(rankType))
+			throw new IllegalArgumentException("Unsupported rankings table RankType: " + rankType);
+		if (date == null && rankType != ELO_RATING)
+			throw new IllegalArgumentException("All-time ranking is available only for " + ELO_RATING);
+
+		BootgridTable<PlayerRankingsRow> table = new BootgridTable<>(currentPage);
+		AtomicInteger players = new AtomicInteger();
+		int offset = (currentPage - 1) * pageSize;
+		String pointsColumn = rankColumn(rankType);
+		boolean allTimeElo = rankType == ELO_RATING && date == null;
+		jdbcTemplate.query(
+			allTimeElo
+				? format(HIGHEST_ELO_RATING_TABLE_QUERY, filter.getCriteria())
+				: format(RANKING_TABLE_QUERY, pointsColumn, rankingTable(rankType), filter.getCriteria()),
+			(rs) -> {
+				if (players.incrementAndGet() <= pageSize) {
+					int rank = rs.getInt("rank");
+					int playerId = rs.getInt("player_id");
+					String name = rs.getString("name");
+					String countryId = rs.getString("country_id");
+					int points = rs.getInt("points");
+					PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, points);
+					table.addRow(row);
+				}
+			},
+			allTimeElo ? filter.getParams(offset) : filter.getParamsWithPrefix(date, offset)
+		);
+		table.setTotal(offset + players.get());
+		return table;
+	}
 
 	public DataTable getRankingDataTable(int playerId, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
 		Players players = new Players(playerId);

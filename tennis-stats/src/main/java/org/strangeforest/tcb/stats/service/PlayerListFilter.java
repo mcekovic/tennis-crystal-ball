@@ -31,6 +31,13 @@ public class PlayerListFilter {
 			criteria.append(SEARCH_CRITERION);
 	}
 
+	public Object[] getParams(Object... extraParams) {
+		List<Object> params = new ArrayList<>();
+		addParams(params);
+		params.addAll(asList(extraParams));
+		return params.toArray();
+	}
+
 	public Object[] getParamsWithPrefix(Object firstParam, Object... extraParams) {
 		List<Object> params = new ArrayList<>();
 		params.add(firstParam);

@@ -49,6 +49,7 @@
 				},
 				url: "/" + table,
 				navigation: 0,
+				sorting: false,
 				formatters: formatters
 			});
 			if (titles)
@@ -70,9 +71,9 @@
 				<table id="tournamentGOATPointsTable" class="table table-condensed table-hover table-striped">
 					<thead>
 						<tr>
-							<th data-column-id="level" data-formatter="level" data-sortable="false" data-width="80">Level</th>
-							<th data-column-id="result" data-formatter="result" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Result</th>
-							<th data-column-id="goatPoints" data-formatter="goatPoints" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
+							<th data-column-id="level" data-formatter="level" data-width="80">Level</th>
+							<th data-column-id="result" data-formatter="result" data-width="50" data-header-align="center" data-align="center">Result</th>
+							<th data-column-id="goatPoints" data-formatter="goatPoints" data-width="50" data-header-align="center" data-align="center">Points</th>
 						</tr>
 					</thead>
 				</table>
@@ -84,8 +85,8 @@
 				<table id="yearEndRankGOATPointsTable" class="table table-condensed table-hover table-striped">
 					<thead>
 					<tr>
-						<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Year-End Ranking</th>
-						<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
+						<th data-column-id="rank" data-type="numeric" data-width="80" data-align="center">Year-End Ranking</th>
+						<th data-column-id="goatPoints" data-type="numeric" data-width="50" data-header-align="center" data-align="center">Points</th>
 					</tr>
 					</thead>
 				</table>
@@ -93,8 +94,8 @@
 				<table th:unless="${forSeason}" id="bestRankGOATPointsTable" class="table table-condensed table-hover table-striped">
 					<thead>
 					<tr>
-						<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Best Ranking</th>
-						<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
+						<th data-column-id="rank" data-type="numeric" data-width="80" data-align="center">Best Ranking</th>
+						<th data-column-id="goatPoints" data-type="numeric" data-width="50" data-header-align="center" data-align="center">Points</th>
 					</tr>
 					</thead>
 				</table>
@@ -102,8 +103,8 @@
 				<table th:unless="${forSeason}" id="bestEloRatingGOATPointsTable" class="table table-condensed table-hover table-striped">
 					<thead>
 					<tr>
-						<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="80" data-align="center">Rank</th>
-						<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Points</th>
+						<th data-column-id="rank" data-type="numeric" data-width="80" data-align="center">Rank</th>
+						<th data-column-id="goatPoints" data-type="numeric" data-width="50" data-header-align="center" data-align="center">Points</th>
 					</tr>
 					</thead>
 				</table>
@@ -123,17 +124,17 @@
 						<table id="bigWinMatchFactorTable" class="table table-condensed table-hover table-striped">
 							<thead>
 							<tr>
-								<th data-column-id="level" data-formatter="level" data-sortable="false" data-width="80">Level</th>
-								<th data-column-id="round" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Round</th>
-								<th data-column-id="matchFactor" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Factor</th>
+								<th data-column-id="level" data-formatter="level" data-width="80">Level</th>
+								<th data-column-id="round" data-width="50" data-header-align="center" data-align="center">Round</th>
+								<th data-column-id="matchFactor" data-type="numeric" data-width="50" data-header-align="center" data-align="center">Factor</th>
 							</tr>
 							</thead>
 						</table>
 						<table id="bigWinRankFactorTable" class="table table-condensed table-hover table-striped">
 							<thead>
 							<tr>
-								<th data-column-id="rankRange" data-formatter="rankRange" data-sortable="false" data-width="80" data-align="center">Rank</th>
-								<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="50" data-header-align="center" data-align="center">Factor</th>
+								<th data-column-id="rankRange" data-formatter="rankRange" data-width="80" data-align="center">Rank</th>
+								<th data-column-id="goatPoints" data-type="numeric" data-width="50" data-header-align="center" data-align="center">Factor</th>
 							</tr>
 							</thead>
 						</table>
@@ -155,8 +156,8 @@
 						<table id="bestSeasonGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
 							<tr>
-								<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="90" data-align="center">Best Season Rank</th>
-								<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="40" data-header-align="center" data-align="center">Points</th>
+								<th data-column-id="rank" data-type="numeric" data-width="90" data-align="center">Best Season Rank</th>
+								<th data-column-id="goatPoints" data-type="numeric" data-width="40" data-header-align="center" data-align="center">Points</th>
 							</tr>
 							</thead>
 						</table>
@@ -168,8 +169,8 @@
 						<table id="greatestRivalriesGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
 							<tr>
-								<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="90" data-align="center">Rivalry Rank</th>
-								<th data-column-id="goatPoints" data-type="numeric" data-sortable="false" data-width="40" data-header-align="center" data-align="center">Points</th>
+								<th data-column-id="rank" data-type="numeric" data-width="90" data-align="center">Rivalry Rank</th>
+								<th data-column-id="goatPoints" data-type="numeric" data-width="40" data-header-align="center" data-align="center">Points</th>
 							</tr>
 							</thead>
 						</table>
@@ -183,8 +184,8 @@
 						<table id="performanceGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
 							<tr>
-								<th data-column-id="category" data-sortable="false" data-width="120">Perform. Category</th>
-								<th data-column-id="goatPoints" data-sortable="false" data-width="60">Points</th>
+								<th data-column-id="category" data-width="120">Perform. Category</th>
+								<th data-column-id="goatPoints" data-width="60">Points</th>
 							</tr>
 							</thead>
 						</table>
@@ -195,8 +196,8 @@
 						<table id="statisticsGOATPointsTable" class="table table-condensed table-hover table-striped">
 							<thead>
 								<tr>
-									<th data-column-id="category" data-sortable="false" data-width="130">Statistics Category</th>
-									<th data-column-id="goatPoints" data-sortable="false" data-width="50">Points</th>
+									<th data-column-id="category" data-width="130">Statistics Category</th>
+									<th data-column-id="goatPoints" data-width="50">Points</th>
 								</tr>
 							</thead>
 						</table>
