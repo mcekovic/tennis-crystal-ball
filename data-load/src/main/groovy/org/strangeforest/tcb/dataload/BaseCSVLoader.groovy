@@ -102,6 +102,7 @@ abstract class BaseCSVLoader {
 			catch (BatchUpdateException buEx) {
 				switch (buEx.getSQLState()) {
 					case DEADLOCK_DETECTED:
+						print '*'
 						for (def paramsSubBatch : tile(paramsBatch))
 							executeWithBatch(loadSql, paramsSubBatch)
 						break
@@ -112,7 +113,7 @@ abstract class BaseCSVLoader {
 		}
 	}
 
-	private static <E> List<Collection<E>> tile(Collection<E> col) {
+	static <E> List<Collection<E>> tile(Collection<E> col) {
 		int size = col.size()
 		if (size == 1)
 			[col]

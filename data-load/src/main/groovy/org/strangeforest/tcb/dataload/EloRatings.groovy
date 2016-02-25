@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import java.util.concurrent.*
+
 import static java.lang.Math.*
 import static org.strangeforest.tcb.util.DateUtil.*
 
@@ -35,13 +37,16 @@ class EloRatings {
 	}
 
 	def compute(save = false) {
-		def sql = sqlPool.take()
 		println 'Processing matches'
-		try {
-			sql.eachRow(QUERY_MATCHES, { match -> processMatch(match, save) })
-		}
-		finally {
-			sqlPool.put(sql)
+		sqlPool.withSql {sql ->
+			def saveExecutor = save ? Executors.newFixedThreadPool(sqlPool.size()) : null
+			try {
+				sql.eachRow(QUERY_MATCHES) { match -> processMatch(match, saveExecutor) }
+			}
+			finally {
+				saveExecutor.shutdown()
+				saveExecutor.awaitTermination(1L, TimeUnit.DAYS)
+			}
 		}
 		println()
 		playerRatings
@@ -62,10 +67,13 @@ class EloRatings {
 			.findAll { ++i <= count }
 	}
 
-	def processMatch(match, save) {
+	def processMatch(match, saveExecutor) {
 		Date date = match.end_date
-		if (save && date != lastDate && playerRatings)
-			saveRatings(lastDate)
+		if (saveExecutor && date != lastDate && playerRatings) {
+			def ratingsToSave = current(PLAYERS_TO_SAVE, lastDate).collectEntries { k, v -> [k, v.rating] }
+			def dateToSave = lastDate
+			saveExecutor.execute { saveRatings(ratingsToSave, dateToSave) }
+		}
 
 		int winnerId = match.winner_id
 		int loserId = match.loser_id
@@ -145,9 +153,9 @@ class EloRatings {
 
 		/**
 		 * K-Function returns values from 1/2 to 1.
-		 * For rating 0-2000 returns 1.
-		 * For rating 2100 returns 3/4.
-		 * For rating 2200+ returns 1/2.
+		 * For rating 0-2000 returns 1
+		 * For rating 2001-2200 returns linearly decreased values from 1 to 1/2. For example, for 2100 return 3/4
+		 * For rating 2200+ returns 1/2
 		 * @return values from 1/2 to 1, depending on current rating
 		 */
 		private def double kFunction() {
@@ -168,20 +176,20 @@ class EloRatings {
 		}
 	}
 
-	def saveRatings(Date date) {
+	def saveRatings(Map<Integer, Double> ratings, Date date) {
 		sqlPool.withSql { sql ->
 			sql.withBatch(MERGE_ELO_RANKING) { ps ->
 				def i = 0
-				def list = current(PLAYERS_TO_SAVE, date)
-				list.each { it ->
+				ratings.each { it ->
 					Map params = [:]
 					params.rank_date = new java.sql.Date(date.time)
 					params.player_id = it.key
 					params.rank = ++i
-					params.elo_rating = (int)round(it.value.rating)
+					params.elo_rating = (int)round(it.value)
 					ps.addBatch(params)
 				}
 			}
 		}
+		print '+'
 	}
 }

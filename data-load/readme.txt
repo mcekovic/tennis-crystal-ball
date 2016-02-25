@@ -9,5 +9,6 @@ LoadAddHocTournaments.groovy
 missing-atp-rankings.sql
 rankings-pre-atp.sql
 update-data.sql
+ComputeEloRatings.groovy
 refresh-materialized-views.sql
 vacuum.sql

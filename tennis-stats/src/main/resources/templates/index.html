@@ -26,7 +26,7 @@
 					var title = $(this).attr("data-popover");
 					return $(title).children(".popover-title").html();
 				}
-			}).on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); });
+			}).on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "900px"); });
 		});
 		/*]]>*/
 	</script>
@@ -104,16 +104,16 @@
 				<li>Current rating adjustment (this allows lower ranked players to advance more rapidly, while stabilizes ratings at the top):
 					<ul>
 						<li>For rating of 2000 and below: 100%</li>
-						<li>For rating of 2100: 75%%</li>
+						<li>For rating of 2100: 75%</li>
 						<li>For rating of 2200 and above: 50%</li>
 					</ul>
 				</li>
 			</ul>
 			Examples:
 			<ul>
-				<li>Grand Slam final: 100</li>
-				<li>Masters semi-final: 100 * 80% * 95% * 90% = 68.4</li>
-				<li>ATP 250 round of 32: 100 * 60% * 80% * 90% = 43.2</li>
+				<li>Grand Slam final, rating 2450 d. 2350: 100 -> [+100 * 50%, -100 * 50%] = [+50, -50] (+50 for winner, -50 for loser)</li>
+				<li>Masters semi-final ratings 2100 d. 2350: 100 * 80% * 95% * 90% = 68.4 -> [+68.4 * 75%, -68.4 * 50%] = [+51.3, -34.2]</li>
+				<li>ATP 250 round of 32, rating 2250 d. 1800: 100 * 60% * 80% * 90% = 43.2 -> [+43.2 * 50%, -43.2] = [+21.6, -43.2]</li>
 			</ul>
 		</div>
 	</div></body>
