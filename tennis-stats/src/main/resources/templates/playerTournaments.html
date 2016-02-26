@@ -86,7 +86,7 @@
 		<div class="col-md-2">
 			<select id="surface" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 				<option value="">All surfaces</option>
-				<option th:each="option : ${surfaces}" th:value="${option.value}" th:class="|bg-surface-${option.value}|" value="H" class="bg-surface-H" th:text="${option.text}">Hard</option>
+				<option th:each="option : ${surfaces}" th:value="${option.value}" th:class="|bg-surface-${option.value}|" value="H" class="bg-surface-H" th:text="${option.text}" th:selected="${option.value == surface}">Hard</option>
 			</select>
 		</div>
 		<div class="col-md-2">

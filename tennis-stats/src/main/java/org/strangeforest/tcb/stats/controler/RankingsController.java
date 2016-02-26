@@ -14,9 +14,12 @@ public class RankingsController extends BaseController {
 	private DataService dataService;
 
 	@RequestMapping("/rankingsTable")
-	public ModelAndView rankingsTable() {
+	public ModelAndView rankingsTable(
+		@RequestParam(value = "rankType", required = false) String rankType
+	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", dataService.getSeasons());
+		modelMap.addAttribute("rankType", rankType);
 		return new ModelAndView("rankingsTable", modelMap);
 	}
 

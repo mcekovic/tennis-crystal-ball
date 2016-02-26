@@ -20,6 +20,8 @@ public class RankingHighlights {
 	private String bestYearEndRankSeasons;
 	private int bestYearEndRankPoints;
 	private String bestYearEndRankPointsSeasons;
+	private int bestEloRank;
+	private Date bestEloRankDate;
 	private int bestEloRating;
 	private Date bestEloRatingDate;
 	private int goatRank;
@@ -126,6 +128,22 @@ public class RankingHighlights {
 
 	public void setBestYearEndRankPointsSeasons(String bestYearEndRankPointsSeasons) {
 		this.bestYearEndRankPointsSeasons = bestYearEndRankPointsSeasons;
+	}
+
+	public int getBestEloRank() {
+		return bestEloRank;
+	}
+
+	public void setBestEloRank(int bestEloRank) {
+		this.bestEloRank = bestEloRank;
+	}
+
+	public Date getBestEloRankDate() {
+		return bestEloRankDate;
+	}
+
+	public void setBestEloRankDate(Date bestEloRankDate) {
+		this.bestEloRankDate = bestEloRankDate;
 	}
 
 	public int getBestEloRating() {

@@ -67,6 +67,19 @@ WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_dat
 CREATE INDEX ON player_year_end_rank (player_id);
 
 
+-- player_best_elo_rank
+
+CREATE MATERIALIZED VIEW player_best_elo_rank AS
+WITH best_elo_rank AS (
+	SELECT player_id, min(rank) AS best_elo_rank FROM player_elo_ranking
+	GROUP BY player_id
+)
+SELECT player_id, best_elo_rank, (SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.rank = b.best_elo_rank) AS best_elo_rank_date
+FROM best_elo_rank b;
+
+CREATE UNIQUE INDEX ON player_best_elo_rank (player_id);
+
+
 -- player_best_elo_rating
 
 CREATE MATERIALIZED VIEW player_best_elo_rating AS
@@ -1051,7 +1064,7 @@ CREATE UNIQUE INDEX ON player_goat_points (player_id);
 
 CREATE OR REPLACE VIEW player_v AS
 SELECT p.*, first_name || ' ' || last_name AS name, age(dob) AS age,
-	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, best_elo_rating, best_elo_rating_date,
+	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,
 	goat_rank, coalesce(goat_points, 0) AS goat_points, coalesce(weeks_at_no1, 0) weeks_at_no1,
 	coalesce(titles, 0) AS titles, coalesce(big_titles, 0) AS big_titles,
 	coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals, coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics
@@ -1059,6 +1072,7 @@ FROM player p
 LEFT JOIN player_current_rank USING (player_id)
 LEFT JOIN player_best_rank USING (player_id)
 LEFT JOIN player_best_rank_points USING (player_id)
+LEFT JOIN player_best_elo_rank USING (player_id)
 LEFT JOIN player_best_elo_rating USING (player_id)
 LEFT JOIN player_goat_points USING (player_id)
 LEFT JOIN player_weeks_at_no1 USING (player_id)

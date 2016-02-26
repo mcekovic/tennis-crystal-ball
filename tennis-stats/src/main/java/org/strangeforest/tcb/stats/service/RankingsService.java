@@ -47,10 +47,10 @@ public class RankingsService {
 		"ORDER BY rank_date DESC";
 
 	private static final String RANKING_TABLE_QUERY = //language=SQL
-		"SELECT r.rank, player_id, p.name, p.country_id, %1$s AS points\n" +
-		"FROM %2$s r\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, %1$s AS points, %2$s AS best_rank, %3$s AS best_rank_date\n" +
+		"FROM %4$s r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE r.rank_date = ?%3$s\n" +
+		"WHERE r.rank_date = ?%5$s\n" +
 		"ORDER BY rank OFFSET ?";
 
 	private static final String HIGHEST_ELO_RATING_TABLE_QUERY = //language=SQL
@@ -58,7 +58,7 @@ public class RankingsService {
 		"  SELECT rank() OVER (ORDER BY best_elo_rating DESC) AS rank, player_id, best_elo_rating\n" +
 		"  FROM player_best_elo_rating\n" +
 		")\n" +
-		"SELECT r.rank, player_id, p.name, p.country_id, r.best_elo_rating AS points\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, r.best_elo_rating AS points, p.best_elo_rating_date AS points_date, p.best_elo_rank AS best_rank, p.best_elo_rank_date AS best_rank_date\n" +
 		"FROM best_elo_rating_ranked r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE TRUE%1$s\n" +
@@ -126,7 +126,7 @@ public class RankingsService {
 		"ORDER BY %5$s, g.player_id";
 
 	private static final String PLAYER_RANKING_QUERY =
-		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, best_elo_rating, best_elo_rating_date, goat_rank, goat_points\n" +
+		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date, goat_rank, goat_points\n" +
 		"FROM player_v\n" +
 		"WHERE player_id = ?";
 
@@ -190,7 +190,7 @@ public class RankingsService {
 		jdbcTemplate.query(
 			allTimeElo
 				? format(HIGHEST_ELO_RATING_TABLE_QUERY, filter.getCriteria())
-				: format(RANKING_TABLE_QUERY, pointsColumn, rankingTable(rankType), filter.getCriteria()),
+				: format(RANKING_TABLE_QUERY, pointsColumn, bestRankColumn(rankType), bestRankDateColumn(rankType), rankingTable(rankType), filter.getCriteria()),
 			(rs) -> {
 				if (players.incrementAndGet() <= pageSize) {
 					int rank = rs.getInt("rank");
@@ -198,7 +198,11 @@ public class RankingsService {
 					String name = rs.getString("name");
 					String countryId = rs.getString("country_id");
 					int points = rs.getInt("points");
-					PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, points);
+					int bestRank = rs.getInt("best_rank");
+					Date bestRankDate = rs.getDate("best_rank_date");
+					PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, points, bestRank, bestRankDate);
+					if (allTimeElo)
+						row.setPointsDate(rs.getDate("points_date"));
 					table.addRow(row);
 				}
 			},
@@ -329,6 +333,22 @@ public class RankingsService {
 			case ELO_RANK: return "r.year_end_rank";
 			case POINTS: return "r.year_end_rank_points";
 			case ELO_RATING: return "r.year_end_elo_rating";
+			default: throw unknownEnum(rankType);
+		}
+	}
+
+	private String bestRankColumn(RankType rankType) {
+		switch (rankType) {
+			case POINTS: return "p.best_rank";
+			case ELO_RATING: return "p.best_elo_rank";
+			default: throw unknownEnum(rankType);
+		}
+	}
+
+	private String bestRankDateColumn(RankType rankType) {
+		switch (rankType) {
+			case POINTS: return "p.best_rank_date";
+			case ELO_RATING: return "p.best_elo_rank_date";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -527,6 +547,8 @@ public class RankingsService {
 			highlights.setBestRankDate(rs.getDate("best_rank_date"));
 			highlights.setBestRankPoints(rs.getInt("best_rank_points"));
 			highlights.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
+			highlights.setBestEloRank(rs.getInt("best_elo_rank"));
+			highlights.setBestEloRankDate(rs.getDate("best_elo_rank_date"));
 			highlights.setBestEloRating(rs.getInt("best_elo_rating"));
 			highlights.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
 			highlights.setGoatRank(rs.getInt("goat_rank"));

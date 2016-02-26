@@ -211,8 +211,12 @@
 					<th>Most Frequent Year-End Rank</th>
 					<td th:text="${mostFrequentRank.rank} + ' (' + ${mostFrequentRank.duration} + ' year' + ${mostFrequentRank.duration > 1 ? 's' : ''} + ')'">10 (3 years)</td>
 				</tr>
+				<tr th:if="${highlights.bestEloRank > 0}">
+					<th>Best Elo Rank</th>
+					<td th:text="${highlights.bestEloRank} + ' (' + ${#dates.format(highlights.bestEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
+				</tr>
 				<tr th:if="${highlights.bestEloRating > 0}">
-					<th>Highest <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo</a> Rating</th>
+					<th>Highest Elo Rating</th>
 					<td th:text="${highlights.bestEloRating} + ' (' + ${#dates.format(highlights.bestEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
 				</tr>
 				<tr th:if="${highlights.goatRankPoints > 0}">
