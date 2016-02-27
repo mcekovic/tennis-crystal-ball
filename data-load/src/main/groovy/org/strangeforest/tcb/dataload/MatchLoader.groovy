@@ -254,10 +254,8 @@ class MatchLoader extends BaseCSVLoader {
 
 	static mapEntry(String entry) {
 		if (entry) {
-			if (entry.endsWith(') W'))
-				return 'WC'
-			else if (entry == 'S' || entry == 'SE')
-				return null
+			if (entry == 'S')
+				return 'SE'
 		}
 		entry
 	}

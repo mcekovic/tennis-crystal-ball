@@ -71,15 +71,15 @@ class MatchScore {
 				switch (set) {
 					case 'W/O':
 					case '(W/O)':	outcome = 'W/O'; break
-					case 'Default':
-					case 'abandoned':
-					case 'unfinished':
-					case 'Unfinished':
-					case 'ABD':
-					case 'ABN':
-					case 'DEF':
 					case 'RET':
 					case '(RET)': outcome = setScores.isEmpty() ? 'W/O' : 'RET'; break
+					case 'ABD':
+					case 'ABN':
+					case 'abandoned':
+					case 'unfinished':
+					case 'Unfinished': outcome = 'ABD'; break
+					case 'Default':
+					case 'DEF': outcome = 'DEF'; break
 					case 'NA': return null
 					case 'In':
 					case 'Progress':
