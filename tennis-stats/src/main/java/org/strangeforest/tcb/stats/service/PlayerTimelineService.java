@@ -58,7 +58,7 @@ public class PlayerTimelineService {
 		PlayerTimeline timeline = new PlayerTimeline();
 		jdbcTemplate.query(
 			TIMELINE_QUERY,
-			(rs) -> {
+			rs -> {
 				timeline.addItem(new PlayerTimelineItem(
 					rs.getInt("tournament_id"),
 					rs.getString("tournament_name"),

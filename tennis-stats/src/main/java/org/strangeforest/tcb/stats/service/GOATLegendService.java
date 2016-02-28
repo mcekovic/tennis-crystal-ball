@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 
@@ -50,7 +51,7 @@ public class GOATLegendService {
 	@Cacheable(value = "Global", key = "'TournamentGOATPointsTable'")
 	public BootgridTable<TournamentGOATPointsRow> getTournamentGOATPointsTable() {
 		BootgridTable<TournamentGOATPointsRow> table = new BootgridTable<>();
-		jdbcTemplate.query(TOURNAMENT_GOAT_POINTS_QUERY, (rs) -> {
+		jdbcTemplate.query(TOURNAMENT_GOAT_POINTS_QUERY, rs -> {
 			String level = rs.getString("level");
 			String result = rs.getString("result");
 			int goatPoints = rs.getInt("goat_points");
@@ -89,7 +90,7 @@ public class GOATLegendService {
 	@Cacheable(value = "Global", key = "'BigWinMatchFactorTable'")
 	public BootgridTable<BigWinMatchFactorRow> getBigWinMatchFactorTable() {
 		BootgridTable<BigWinMatchFactorRow> table = new BootgridTable<>();
-		jdbcTemplate.query(BIG_WIN_MATCH_FACTOR_QUERY, (rs) -> {
+		jdbcTemplate.query(BIG_WIN_MATCH_FACTOR_QUERY, rs -> {
 			String level = rs.getString("level");
 			String round = rs.getString("round");
 			int matchFactor = rs.getInt("match_factor");
@@ -138,7 +139,7 @@ public class GOATLegendService {
 
 	private BootgridTable<RankGOATPointsRow> getRankGOATPointsTable(String tableName, String rankColumn, String pointsColumn) {
 		BootgridTable<RankGOATPointsRow> table = new BootgridTable<>();
-		jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn, pointsColumn), (rs) -> {
+		jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn, pointsColumn), rs -> {
 			int rank = rs.getInt(rankColumn);
 			int goatPoints = rs.getInt(pointsColumn);
 			table.addRow(new RankGOATPointsRow(rank, goatPoints));
@@ -151,7 +152,7 @@ public class GOATLegendService {
 		final AtomicInteger fromRank = new AtomicInteger();
 		final AtomicInteger toRank = new AtomicInteger();
 		final AtomicInteger currGoatPoints = new AtomicInteger();
-		jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn, pointsColumn), (rs) -> {
+		jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn, pointsColumn), rs -> {
 			int rank = rs.getInt(rankColumn);
 			int goatPoints = rs.getInt(pointsColumn);
 			if (goatPoints != currGoatPoints.get()) {
@@ -168,7 +169,7 @@ public class GOATLegendService {
 
 	private BootgridTable<PerfStatGOATPointsRow> getPerfStatGOATPointsTable(String goatPointsTable, String categoryTable) {
 		BootgridTable<PerfStatGOATPointsRow> table = new BootgridTable<>();
-		jdbcTemplate.query(format(PERF_STAT_GOAT_POINTS_QUERY, goatPointsTable, categoryTable), (rs) -> {
+		jdbcTemplate.query(format(PERF_STAT_GOAT_POINTS_QUERY, goatPointsTable, categoryTable), rs -> {
 			String category = rs.getString("category");
 			String goatPoints = rs.getString("goat_points");
 			table.addRow(new PerfStatGOATPointsRow(category, goatPoints));

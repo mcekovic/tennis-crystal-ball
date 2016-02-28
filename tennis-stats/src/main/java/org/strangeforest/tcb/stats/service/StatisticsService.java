@@ -197,14 +197,14 @@ public class StatisticsService {
 		Map<Integer, PlayerStats> playersStats = new HashMap<>();
 		jdbcTemplate.query(
 			format(PLAYERS_FILTERED_STATS_QUERY, filter.getCriteria(), vsAll ? "" : OPPONENTS_CRITERIA),
-			(ps) -> {
+			ps -> {
 				int index = 1;
 				bindIntegerArray(ps, index, playerIds);
 				index = filter.bindParams(ps, index);
 				if (!vsAll)
 					bindIntegerArray(ps, ++index, playerIds);
 			},
-			(rs) -> {
+			rs -> {
 				int playerId = rs.getInt("player_id");
 				playersStats.put(playerId, mapPlayerStats(rs));
 			}

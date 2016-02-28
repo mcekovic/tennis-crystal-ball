@@ -37,7 +37,7 @@
 							<li><a href="/headsToHeads">Heads-to-Heads</a></li>
 						</ul>
 					</li>
-					<li th:class="${servletPath.startsWith('/rankings') ? 'active dropdown' : 'dropdown'}">
+					<li th:class="${servletPath != null and servletPath.startsWith('/rankings') ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rankings<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="/rankingsTable">Rankings Table</a></li>

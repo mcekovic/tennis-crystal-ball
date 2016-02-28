@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="tournamentEvent" type="org.strangeforest.tcb.stats.model.TournamentEvent"-->
+<!--@thymesVar id="draw" type="org.strangeforest.tcb.stats.model.TournamentEventDraw"-->
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title th:text="'Ultimate Tennis Statistics - ' + ${tournamentEvent.name} + ' ' + ${tournamentEvent.season}">Ultimate Tennis Statistics - Australian Open 2016</title>
+	<link th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.2.1/jquery.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/tennis-stats.js}"></script>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		/*]]>*/
+	</script>
+	<style>
+		td.seed {
+			width: 20px;
+			padding: 0 2px 0 2px;
+		}
+		td.player {
+			padding: 0 2px 0 2px;
+		}
+		td.score {
+			padding: 0 2px 0 2px;
+		}
+	</style>
+</head>
+<body class="container">
+	<div th:include="fragments/header :: title"></div>
+	<h3 th:text="${tournamentEvent.name} + ' ' + ${tournamentEvent.season}">Australian Open 2016</h3>
+	<table id="drawTable" class="table-condensed text-nowrap">
+		<thead>
+			<tr>
+				<th th:each="round : ${draw.rounds}" th:text="${round.description}">Final</th>
+			</tr>
+			<tr th:each="i : ${#numbers.sequence(0, draw.maxRoundMatches - 1)}">
+				<td th:each="round : ${draw.rounds}" th:with="matches=${draw.getRoundMatches(round)}, match=${i lt matches.size() ? matches[i] : null}">
+					<table th:if="${match}" class="table-bordered">
+						<tr th:with="winner=${match.winner}">
+							<td class="seed">
+								<span style="vertical-align: middle" th:text="${winner.seedAndEntry}"></span>
+							</td>
+							<td class="player">
+								<img th:src="'/images/flags/' + ${winner.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${winner.countryId}" title="SUI" width="24" height="20"/>
+								<a th:href="'/playerProfile?playerId=' + ${winner.id}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+							</td>
+							<td rowspan="2" class="score" th:text="${match.score}">6-4 6-3</td>
+						</tr>
+						<tr th:with="loser=${match.loser}">
+							<td class="seed">
+								<span style="vertical-align: middle" th:text="${loser.seedAndEntry}"></span>
+							</td>
+							<td class="player">
+								<img th:src="'/images/flags/' + ${loser.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${loser.countryId}" title="ESP" width="24" height="20"/>
+								<a th:href="'/playerProfile?playerId=' + ${loser.id}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	<div th:include="fragments/footer :: copy"></div>
+</body>
+</html>

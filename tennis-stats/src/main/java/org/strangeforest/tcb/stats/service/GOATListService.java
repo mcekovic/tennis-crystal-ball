@@ -5,6 +5,7 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 
@@ -46,7 +47,7 @@ public class GOATListService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(GOAT_LIST_QUERY, filter.getCriteria(), orderBy),
-			(rs) -> {
+			rs -> {
 				int goatRank = rs.getInt("goat_rank");
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");

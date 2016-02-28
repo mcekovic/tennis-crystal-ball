@@ -14,6 +14,7 @@ import org.strangeforest.tcb.stats.service.*;
 public class TournamentEventsController extends BaseController {
 
 	@Autowired private TournamentService tournamentService;
+	@Autowired private MatchesService matchesService;
 	@Autowired private DataService dateService;
 
 	@RequestMapping("/tournamentEvents")
@@ -27,5 +28,18 @@ public class TournamentEventsController extends BaseController {
 		modelMap.addAttribute("surfaces", Options.SURFACES);
 		modelMap.addAttribute("tournaments", tournaments);
 		return new ModelAndView("tournamentEvents", modelMap);
+	}
+
+	@RequestMapping("/tournamentEventDraw")
+	public ModelAndView tournamentEventDraw(
+		@RequestParam(value = "tournamentEventId") int tournamentEventId
+	) {
+		TournamentEvent tournamentEvent = tournamentService.getTournamentEvent(tournamentEventId);
+		TournamentEventDraw draw = matchesService.getTournamentEventDraw(tournamentEventId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("tournamentEvent", tournamentEvent);
+		modelMap.addAttribute("draw", draw);
+		return new ModelAndView("tournamentEventDraw", modelMap);
 	}
 }

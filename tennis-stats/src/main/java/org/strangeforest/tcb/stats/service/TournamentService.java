@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.MatchesService.*;
@@ -17,6 +18,9 @@ import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 public class TournamentService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
+
+	private static final String TOURNAMENTS_QUERY =
+		"SELECT tournament_id, name, level FROM tournament ORDER BY name";
 
 	private static final String TOURNAMENT_EVENTS_QUERY = //language=SQL
 		"SELECT e.tournament_event_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
@@ -31,8 +35,13 @@ public class TournamentService {
 		"WHERE e.level NOT IN ('D', 'T')%1$s\n" +
 		"ORDER BY %2$s OFFSET ?";
 
-	private static final String TOURNAMENTS_QUERY =
-		"SELECT tournament_id, name, level FROM tournament ORDER BY name";
+	private static final String TOURNAMENT_EVENT_QUERY =
+		"SELECT tournament_event_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
+		"  p.player_count, p.participation_points, p.max_participation_points\n" +
+		"FROM tournament_event e\n" +
+		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
+		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
+		"WHERE tournament_event_id = ?";
 
 	private static final String PLAYER_TOURNAMENTS_QUERY =
 		"SELECT DISTINCT tournament_id, t.name, t.level\n" +
@@ -59,13 +68,17 @@ public class TournamentService {
 		"ORDER BY %2$s OFFSET ?";
 
 
+	public List<TournamentItem> getTournaments() {
+		return jdbcTemplate.query(TOURNAMENTS_QUERY, this::tournamentItemMapper);
+	}
+
 	public BootgridTable<TournamentEvent> getTournamentEventsTable(TournamentEventFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<TournamentEvent> table = new BootgridTable<>(currentPage);
 		AtomicInteger tournamentEvents = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(TOURNAMENT_EVENTS_QUERY, filter.getCriteria(), orderBy),
-			(rs) -> {
+			rs -> {
 				if (tournamentEvents.incrementAndGet() <= pageSize) {
 					TournamentEvent tournamentEvent = new TournamentEvent(
 						rs.getInt("tournament_event_id"),
@@ -98,15 +111,42 @@ public class TournamentService {
 		return table;
 	}
 
+	public TournamentEvent getTournamentEvent(int tournamentEventId) {
+		return jdbcTemplate.query(
+			TOURNAMENT_EVENT_QUERY,
+			rs -> {
+				if (rs.next()) {
+					TournamentEvent tournamentEvent = new TournamentEvent(
+						rs.getInt("tournament_event_id"),
+						rs.getString("ext_tournament_id"),
+						rs.getInt("season"),
+						rs.getDate("date"),
+						rs.getString("name"),
+						rs.getString("level"),
+						rs.getString("surface"),
+						rs.getBoolean("indoor")
+					);
+					tournamentEvent.setDraw(
+						rs.getString("draw_type"),
+						getInteger(rs, "draw_size"),
+						rs.getInt("player_count"),
+						rs.getInt("participation_points"),
+						rs.getInt("max_participation_points")
+					);
+					return tournamentEvent;
+				}
+				else
+					throw new IllegalArgumentException(format("Tournament event %1$d not found.", tournamentEventId));
+			},
+			tournamentEventId
+		);
+	}
+
 	public Object[] tournamentEventsParams(TournamentEventFilter filter, int offset) {
 		List<Object> params = new ArrayList<>();
 		params.addAll(filter.getParamList());
 		params.add(offset);
 		return params.toArray();
-	}
-
-	public List<TournamentItem> getTournaments() {
-		return jdbcTemplate.query(TOURNAMENTS_QUERY, this::tournamentItemMapper);
 	}
 
 	public List<TournamentItem> getPlayerTournaments(int playerId) {
@@ -123,7 +163,7 @@ public class TournamentService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY, filter.getCriteria(), orderBy),
-			(rs) -> {
+			rs -> {
 				if (tournamentEvents.incrementAndGet() <= pageSize) {
 					table.addRow(new PlayerTournamentEvent(
 						rs.getInt("tournament_event_id"),

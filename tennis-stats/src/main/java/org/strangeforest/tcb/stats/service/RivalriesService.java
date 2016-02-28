@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.table.*;
 
 import com.fasterxml.jackson.databind.*;
 
@@ -183,7 +184,7 @@ public class RivalriesService {
 				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", "") : "",
 				filter.getCriteria(), orderBy
 			),
-			(rs) -> {
+			rs -> {
 				if (rivalries.incrementAndGet() <= pageSize) {
 					int bestRank = rs.getInt("best_rank");
 					int playerId = rs.getInt("opponent_id");
@@ -251,7 +252,7 @@ public class RivalriesService {
 				index = filter.bindParams(ps, index);
 				ps.setInt(++index, offset);
 			},
-			(rs) -> {
+			rs -> {
 				if (rivalries.incrementAndGet() <= pageSize) {
 					int rank = rs.getInt("rivalry_rank");
 					RivalryPlayer player1 = mapPlayer(rs, "_1");

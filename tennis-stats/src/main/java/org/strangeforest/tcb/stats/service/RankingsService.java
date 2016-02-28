@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.base.*;
@@ -191,7 +192,7 @@ public class RankingsService {
 			allTimeElo
 				? format(HIGHEST_ELO_RATING_TABLE_QUERY, filter.getCriteria())
 				: format(RANKING_TABLE_QUERY, pointsColumn, bestRankColumn(rankType), bestRankDateColumn(rankType), rankingTable(rankType), filter.getCriteria()),
-			(rs) -> {
+			rs -> {
 				if (players.incrementAndGet() <= pageSize) {
 					int rank = rs.getInt("rank");
 					int playerId = rs.getInt("player_id");

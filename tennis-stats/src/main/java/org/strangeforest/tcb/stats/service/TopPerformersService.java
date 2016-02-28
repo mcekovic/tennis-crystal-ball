@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 
@@ -63,7 +64,7 @@ public class TopPerformersService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(TOP_PERFORMERS_QUERY, categoryColumn(category), perfTableName(filter), filter.getCriteria(), orderBy),
-			(rs) -> {
+			rs -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");

@@ -5,6 +5,7 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
@@ -72,7 +73,7 @@ public class BestSeasonsService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(BEST_SEASONS_QUERY, filter.getCriteria(), orderBy),
-			(rs) -> {
+			rs -> {
 				int seasonRank = rs.getInt("season_rank");
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
