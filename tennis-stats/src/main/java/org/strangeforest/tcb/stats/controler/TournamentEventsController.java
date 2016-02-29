@@ -24,8 +24,8 @@ public class TournamentEventsController extends BaseController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("levels", Options.MAIN_TOURNAMENT_LEVELS);
-		modelMap.addAttribute("surfaces", Options.SURFACES);
+		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		return new ModelAndView("tournamentEvents", modelMap);
 	}
@@ -40,6 +40,8 @@ public class TournamentEventsController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEvent", tournamentEvent);
 		modelMap.addAttribute("draw", draw);
+		modelMap.addAttribute("levels", TournamentLevel.asMap());
+		modelMap.addAttribute("surfaces", Surface.asMap());
 		return new ModelAndView("tournamentEventDraw", modelMap);
 	}
 }

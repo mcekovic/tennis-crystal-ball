@@ -25,8 +25,8 @@ public class RivalriesController extends BaseController {
 	@RequestMapping("/greatestRivalries")
 	public ModelAndView greatestRivalries() {
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("levels", Options.TOURNAMENT_LEVELS);
-		modelMap.addAttribute("surfaces", Options.SURFACES);
+		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Surface.values());
 		return new ModelAndView("greatestRivalries", modelMap);
 	}
 
@@ -34,8 +34,8 @@ public class RivalriesController extends BaseController {
 	public ModelAndView headsToHeads() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", dataService.getSeasons());
-		modelMap.addAttribute("levels", Options.TOURNAMENT_LEVELS);
-		modelMap.addAttribute("surfaces", Options.SURFACES);
+		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Surface.values());
 		return new ModelAndView("headsToHeads", modelMap);
 	}
 

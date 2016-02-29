@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--@thymesVar id="tournamentEvent" type="org.strangeforest.tcb.stats.model.TournamentEvent"-->
 <!--@thymesVar id="draw" type="org.strangeforest.tcb.stats.model.TournamentEventDraw"-->
+<!--@thymesVar id="levels" type="java.util.Map"-->
+<!--@thymesVar id="surfaces" type="java.util.Map"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -33,6 +35,24 @@
 <body class="container">
 	<div th:include="fragments/header :: title"></div>
 	<h3 th:text="${tournamentEvent.name} + ' ' + ${tournamentEvent.season}">Australian Open 2016</h3>
+	<div class="row">
+		<div class="col-md-3">
+			<table class="table table-condensed text-nowrap">
+				<tr>
+					<th>Level</th>
+					<td th:text="${levels[tournamentEvent.level]}">Grand Slam</td>
+				</tr>
+				<tr>
+					<th>Surface</th>
+					<td th:text="${(tournamentEvent.indoor ? 'Indoor ' : '') + surfaces[tournamentEvent.surface]}">Hard</td>
+				</tr>
+				<tr>
+					<th>Draw</th>
+					<td th:text="${tournamentEvent.draw}">KO 128</td>
+				</tr>
+			</table>
+		</div>
+	</div>
 	<table id="drawTable" class="table-condensed text-nowrap">
 		<thead>
 			<tr>
@@ -49,7 +69,8 @@
 								<img th:src="'/images/flags/' + ${winner.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${winner.countryId}" title="SUI" width="24" height="20"/>
 								<a th:href="'/playerProfile?playerId=' + ${winner.id}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 							</td>
-							<td rowspan="2" class="score" th:text="${match.score}">6-4 6-3</td>
+							<td th:each="score : ${match.score}" class="score" th:utext="${score.winnerScore}">6</td>
+							<td th:if="${match.outcome}" class="score" th:text="${match.outcome}"></td>
 						</tr>
 						<tr th:with="loser=${match.loser}">
 							<td class="seed">
@@ -59,6 +80,8 @@
 								<img th:src="'/images/flags/' + ${loser.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${loser.countryId}" title="ESP" width="24" height="20"/>
 								<a th:href="'/playerProfile?playerId=' + ${loser.id}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
 							</td>
+							<td th:each="score : ${match.score}" class="score" th:utext="${score.loserScore}">3</td>
+							<td th:if="${match.outcome}" class="score"></td>
 						</tr>
 					</table>
 				</td>

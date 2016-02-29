@@ -21,7 +21,7 @@ public class StatsLeadersController extends BaseController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("surfaces", Options.SURFACES);
+		modelMap.addAttribute("surfaces", Surface.values());
 		return new ModelAndView("statsLeaders", modelMap);
 	}
 }

@@ -58,8 +58,8 @@ public class PlayerProfileController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("levels", Options.MAIN_TOURNAMENT_LEVELS);
-		modelMap.addAttribute("surfaces", Options.SURFACES);
+		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
@@ -86,8 +86,8 @@ public class PlayerProfileController extends BaseController {
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("playerName", name);
 		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("levels", Options.ALL_TOURNAMENT_LEVELS);
-		modelMap.addAttribute("surfaces", Options.SURFACES);
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("tournamentEvents", tournamentEvents);
 		modelMap.addAttribute("level", level);
@@ -170,7 +170,7 @@ public class PlayerProfileController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("surfaces", Options.SURFACES);
+		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("stats", stats);

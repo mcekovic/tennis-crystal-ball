@@ -43,7 +43,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	}
 
 	public String getMaxLevel() {
-		return maxLevel().code();
+		return maxLevel().getCode();
 	}
 
 	TournamentLevel maxLevel() {
@@ -94,7 +94,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	}
 
 	private final Supplier<TournamentLevel> maxLevel = Memoizer.of(
-		() -> levels.keySet().stream().map(TournamentLevel::forCode).min(naturalOrder()).get()
+		() -> levels.keySet().stream().map(TournamentLevel::decode).min(naturalOrder()).get()
 	);
 
 	private final Supplier<MonthDay> endDay = Memoizer.of(

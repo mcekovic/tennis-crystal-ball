@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--@thymesVar id="levels" type="java.util.List<org.strangeforest.tcb.stats.model.Option>"-->
-<!--@thymesVar id="surfaces" type="java.util.List<org.strangeforest.tcb.stats.model.Option>"-->
+<!--@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"-->
+<!--@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -114,13 +114,13 @@
 	<div id="levelDiv" class="btn-group" style="margin-right: 20px">
 		<select id="level" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
-			<option th:each="option : ${levels}" th:value="${option.value}" th:class="|bg-level-${option.value}|" value="G" class="bg-level-G" th:text="${option.text}">Grand Slam</option>
+			<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
 		</select>
 	</div>
 	<div id="surfaceDiv" class="btn-group" style="margin-right: 20px">
 		<select id="surface" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 			<option value="">All surfaces</option>
-			<option th:each="option : ${surfaces}" th:value="${option.value}" th:class="|bg-surface-${option.value}|" value="H" class="bg-surface-H" th:text="${option.text}">Hard</option>
+			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 		</select>
 	</div>
 	<p><i>* Minimum <span id="minMatches">10</span> rivalry matches</i></p>

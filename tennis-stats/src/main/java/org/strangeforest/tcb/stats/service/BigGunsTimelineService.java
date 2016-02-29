@@ -38,7 +38,7 @@ public class BigGunsTimelineService {
 				BigGunsPlayerTimeline player = mapPlayer(rank, rs);
 				Object[] seasonsPoints = (Object[])rs.getArray("seasons_points").getArray();
 				for (Object seasonsPoint : seasonsPoints)
-					player.addSeasonPoints(mapSeasonPoints(String.valueOf(seasonsPoint)));
+					player.addSeasonPoints(mapSeasonPoints(seasonsPoint.toString()));
 				timeline.addPlayer(player);
 			},
 			MIN_GOAT_POINTS

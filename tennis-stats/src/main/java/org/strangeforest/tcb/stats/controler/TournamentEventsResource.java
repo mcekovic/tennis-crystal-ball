@@ -9,6 +9,8 @@ import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
+import static org.strangeforest.tcb.stats.util.OrderBy.*;
+
 @RestController
 public class TournamentEventsResource {
 
@@ -26,7 +28,7 @@ public class TournamentEventsResource {
 		ORDER_MAP.put("participationPoints", "participation_points NULLS LAST");
 		ORDER_MAP.put("participationPct", "participation_points::DECIMAL/max_participation_points NULLS LAST");
 	}
-	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("date");
+	private static final OrderBy[] DEFAULT_ORDER = new OrderBy[] {desc("date"), asc("level"), asc("name")};
 
 	@RequestMapping("/tournamentEventsTable")
 	public BootgridTable<TournamentEvent> playerTournamentsTable(
