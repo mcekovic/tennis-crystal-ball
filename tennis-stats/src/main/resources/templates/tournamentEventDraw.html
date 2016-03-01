@@ -42,10 +42,18 @@
 					<th>Level</th>
 					<td th:text="${levels[tournamentEvent.level]}">Grand Slam</td>
 				</tr>
+			</table>
+		</div>
+		<div class="col-md-3">
+			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Surface</th>
 					<td th:text="${(tournamentEvent.indoor ? 'Indoor ' : '') + surfaces[tournamentEvent.surface]}">Hard</td>
 				</tr>
+			</table>
+		</div>
+		<div class="col-md-3">
+			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Draw</th>
 					<td th:text="${tournamentEvent.draw}">KO 128</td>
@@ -69,7 +77,7 @@
 								<img th:src="'/images/flags/' + ${winner.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${winner.countryId}" title="SUI" width="24" height="20"/>
 								<a th:href="'/playerProfile?playerId=' + ${winner.id}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 							</td>
-							<td th:each="score : ${match.score}" class="score" th:utext="${score.winnerScore}">6</td>
+							<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.wGames}">6</th:block><sup th:if="${score.wTBPoints}" th:text="|(${score.wTBPoints})|"></sup></td>
 							<td th:if="${match.outcome}" class="score" th:text="${match.outcome}"></td>
 						</tr>
 						<tr th:with="loser=${match.loser}">
@@ -80,7 +88,7 @@
 								<img th:src="'/images/flags/' + ${loser.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${loser.countryId}" title="ESP" width="24" height="20"/>
 								<a th:href="'/playerProfile?playerId=' + ${loser.id}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
 							</td>
-							<td th:each="score : ${match.score}" class="score" th:utext="${score.loserScore}">3</td>
+							<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.wGames}">3</th:block><sup th:if="${score.lTBPoints}" th:text="|(${score.lTBPoints})|"></sup></td>
 							<td th:if="${match.outcome}" class="score"></td>
 						</tr>
 					</table>

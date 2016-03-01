@@ -12,15 +12,19 @@ public class SetScore {
 		this.lTBPoints = lTBPoints;
 	}
 
-	public String getWinnerScore() {
-		return score(wGames, wTBPoints);
+	public int getwGames() {
+		return wGames;
 	}
 
-	public String getLoserScore() {
-		return score(lGames, lTBPoints);
+	public int getlGames() {
+		return lGames;
 	}
 
-	private static String score(int wGames, Integer wTBPoints) {
-		return wTBPoints != null ? String.valueOf(wGames) + "<sup>(" + wTBPoints + ")</sup>" : String.valueOf(wGames);
+	public Integer getwTBPoints() {
+		return wTBPoints;
+	}
+
+	public Integer getlTBPoints() {
+		return lTBPoints;
 	}
 }
