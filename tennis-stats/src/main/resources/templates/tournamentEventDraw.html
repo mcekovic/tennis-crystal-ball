@@ -15,8 +15,46 @@
 	<script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
 	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
 	<script th:src="@{/js/tennis-stats.js}"></script>
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
+		var rounds = [[${draw.rounds}]];
+		var roundsToShow = Math.min(rounds.length, 4);
+		var maxRoundPos = rounds.length - roundsToShow;
+		var roundPos = maxRoundPos;
+		$(function() {
+			showRounds();
+		});
+		function roundLeft() {
+			if (roundPos > 0) {
+				roundPos--;
+				showRounds()
+			}
+		}
+		function roundRight() {
+			if (roundPos < maxRoundPos) {
+				roundPos++;
+				showRounds()
+			}
+		}
+		function showRounds() {
+			doShowRounds(roundPos, roundPos + roundsToShow);
+		}
+		function doShowRounds(fromIndex, toIndex) {
+			$("#drawTable").find("th[data-round-index], td[data-round-index]").each(function () {
+				var $match = $(this);
+				var roundIndex = $match.data("round-index");
+				if (fromIndex <= roundIndex && roundIndex < toIndex)
+					$match.show();
+				else
+					$match.hide();
+			});
+			var $drawLeft = $("#drawLeft");
+			$drawLeft.prop("disabled", roundPos == 0);
+			$drawLeft.html(" " + rounds[Math.max(0, roundPos - 1)].$name);
+			var $drawRight = $("#drawRight");
+			$drawRight.prop("disabled", roundPos == maxRoundPos);
+			$drawRight.html(" " + rounds[Math.min(maxRoundPos, roundPos + 1) + roundsToShow - 1].$name);
+		}
 		/*]]>*/
 	</script>
 	<style>
@@ -61,13 +99,19 @@
 			</table>
 		</div>
 	</div>
-	<table id="drawTable" class="table-condensed text-nowrap">
+	<table id="drawTable" class="table-condensed text-nowrap" width="100%">
 		<thead>
 			<tr>
-				<th th:each="round : ${draw.rounds}" th:text="${round.description}">Final</th>
+				<th colspan="2"><button id="drawLeft" type="button" class="btn btn-info btn-xs glyphicon glyphicon-chevron-left" onclick="roundLeft()"></button></th>
+				<th colspan="2" style="text-align: right"><button id="drawRight" type="button" class="btn btn-info btn-xs glyphicon glyphicon-chevron-right" onclick="roundRight()"></button></th>
 			</tr>
+			<tr>
+				<th th:each="round : ${draw.rounds}" th:text="${round.description}" th:attr="data-round-index=${roundStat.index}">Final</th>
+			</tr>
+		</thead>
+		<tbody>
 			<tr th:each="i : ${#numbers.sequence(0, draw.maxRoundMatches - 1)}">
-				<td th:each="round : ${draw.rounds}" th:with="matches=${draw.getRoundMatches(round)}, match=${i lt matches.size() ? matches[i] : null}">
+				<td th:each="round : ${draw.rounds}" th:with="matches=${draw.getRoundMatches(round)}, match=${i lt matches.size() ? matches[i] : null}" th:attr="data-round-index=${roundStat.index}">
 					<table th:if="${match}" class="table-bordered">
 						<tr th:with="winner=${match.winner}">
 							<td class="seed">
@@ -94,8 +138,6 @@
 					</table>
 				</td>
 			</tr>
-		</thead>
-		<tbody>
 		</tbody>
 	</table>
 	<div th:include="fragments/footer :: copy"></div>
