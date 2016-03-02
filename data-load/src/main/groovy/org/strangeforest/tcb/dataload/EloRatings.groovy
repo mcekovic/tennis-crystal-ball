@@ -14,6 +14,8 @@ class EloRatings {
 	private Date lastDate
 	private AtomicInteger saves
 	private AtomicInteger progress
+	private Executor saveExecutor
+	private Date saveFromDate
 
 	private static final String QUERY_MATCHES = //language=SQL
 		"SELECT m.winner_id, m.loser_id, e.date + (CASE e.level WHEN 'G' THEN INTERVAL '14 days' ELSE INTERVAL '7 days' END) AS end_date,\n" +
@@ -40,17 +42,21 @@ class EloRatings {
 		this.sqlPool = sqlPool
 	}
 
-	def compute(save = false) {
+	def compute(save = false, saveFromDate = null) {
 		playerRatings = [:]
 		matches = 0
 		lastDate = null
 		saves = new AtomicInteger()
 		progress = new AtomicInteger()
 		println 'Processing matches'
-		sqlPool.withSql {sql ->
-			def saveExecutor = save ? Executors.newFixedThreadPool(sqlPool.size()) : null
+		if (save) {
+			saveExecutor = Executors.newFixedThreadPool(sqlPool.size())
+			this.saveFromDate = saveFromDate
+		}
+		sqlPool.withSql { sql ->
 			try {
-				sql.eachRow(QUERY_MATCHES) { match -> processMatch(match, saveExecutor) }
+				sql.eachRow(QUERY_MATCHES) { match -> processMatch(match) }
+				saveCurrentRatings()
 			}
 			finally {
 				saveExecutor?.shutdown()
@@ -76,13 +82,10 @@ class EloRatings {
 			.findAll { ++i <= count }
 	}
 
-	def processMatch(match, saveExecutor) {
+	def processMatch(match) {
 		Date date = match.end_date
-		if (saveExecutor && date != lastDate && playerRatings) {
-			def ratingsToSave = current(PLAYERS_TO_SAVE, lastDate).collectEntries { k, v -> [k, v.rating] }
-			def dateToSave = lastDate
-			saveExecutor.execute { saveRatings(ratingsToSave, dateToSave) }
-		}
+		if (date != lastDate)
+			saveCurrentRatings()
 
 		int winnerId = match.winner_id
 		int loserId = match.loser_id
@@ -179,6 +182,14 @@ class EloRatings {
 
 		int compareTo(EloRating eloRating) {
 			rating <=> eloRating.rating
+		}
+	}
+
+	def saveCurrentRatings() {
+		if (saveExecutor && playerRatings && (!saveFromDate || lastDate >= saveFromDate)) {
+			def ratingsToSave = current(PLAYERS_TO_SAVE, lastDate).collectEntries { k, v -> [k, v.rating] }
+			def dateToSave = lastDate
+			saveExecutor.execute { saveRatings(ratingsToSave, dateToSave) }
 		}
 	}
 
