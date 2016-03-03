@@ -6,6 +6,7 @@ public class Match {
 
 	private final long id;
 	private final Date date;
+	private final int tournamentEventId;
 	private final String tournament;
 	private final String level;
 	private final String surface;
@@ -15,10 +16,11 @@ public class Match {
 	private final MatchPlayer loser;
 	private final String score;
 
-	public Match(long id, Date date, String tournament, String level, String surface, boolean indoor, String round,
+	public Match(long id, Date date, int tournamentEventId, String tournament, String level, String surface, boolean indoor, String round,
 	             MatchPlayer winner, MatchPlayer loser, String score) {
 		this.id = id;
 		this.date = date;
+		this.tournamentEventId = tournamentEventId;
 		this.tournament = tournament;
 		this.level = level;
 		this.surface = surface;
@@ -35,6 +37,10 @@ public class Match {
 
 	public Date getDate() {
 		return date;
+	}
+
+	public int getTournamentEventId() {
+		return tournamentEventId;
 	}
 
 	public String getTournament() {

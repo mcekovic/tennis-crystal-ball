@@ -186,7 +186,7 @@ function surfaceName(surface) {
 
 // Tournament Formatter
 function tournamentFormatter(column, row) {
-	return "<span class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</span>";
+	return "<a href='/tournamentEventDraw?tournamentEventId=" + row.tournamentEventId + "' class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</a>";
 }
 
 // Tournament Event Formatter

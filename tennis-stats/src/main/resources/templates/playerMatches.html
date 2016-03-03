@@ -50,11 +50,11 @@
 			});
 			var $matchesTableHeader = $("#matchesTable-header");
 			$matchesTableHeader.find("div.search").before($("#playerStats").remove());
-			var actionBar = $matchesTableHeader.find("div.actionBar");
-			actionBar.removeClass("col-sm-12").addClass("col-sm-5");
-			actionBar.before($("#matchesTournamentDiv").remove());
-			actionBar.before($("#tournamentEventDiv").remove());
-			actionBar.before($("#matchesWonDiv").remove());
+			var $actionBar = $matchesTableHeader.find("div.actionBar");
+			$actionBar.removeClass("col-sm-12").addClass("col-sm-5");
+			$actionBar.before($("#matchesTournamentDiv").remove());
+			$actionBar.before($("#tournamentEventDiv").remove());
+			$actionBar.before($("#matchesWonDiv").remove());
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadMatches() {

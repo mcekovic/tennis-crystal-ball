@@ -30,7 +30,7 @@ public class MatchesService {
 		"ORDER BY match_num";
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
-		"SELECT m.match_id, e.date, e.name AS tournament, e.level, e.surface, e.indoor, m.round," +
+		"SELECT m.match_id, e.date, e.tournament_event_id, e.name AS tournament, e.level, e.surface, e.indoor, m.round," +
 		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.score\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
@@ -92,6 +92,7 @@ public class MatchesService {
 					table.addRow(new Match(
 						rs.getLong("match_id"),
 						rs.getDate("date"),
+						rs.getInt("tournament_event_id"),
 						rs.getString("tournament"),
 						rs.getString("level"),
 						rs.getString("surface"),

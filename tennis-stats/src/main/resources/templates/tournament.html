@@ -19,8 +19,8 @@
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
-			var $tournamentEventsTable = $("#tournamentEventsTable");
-			$tournamentEventsTable.bootgrid({
+			var $tournamentHistoryTable = $("#tournamentHistoryTable");
+			$tournamentHistoryTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
 					method: "GET",
@@ -39,12 +39,16 @@
 					"match": fullMatchFormatter
 				}
 			});
-			setBootgridTitles($tournamentEventsTable, [
+			setBootgridTitles($tournamentHistoryTable, [
 				{id: "playerCount", title: "Players"},
 				{id: "participationPoints", title: "Participation points"},
 				{id: "participationPct", title: "Participation percentage"}
 			]);
-			$("#tournamentEventsTable-header").find("div.search").remove();
+			var $tournamentHistoryTableHeader = $("#tournamentHistoryTable-header");
+			$tournamentHistoryTableHeader.find("div.search").remove();
+			var $actionBar = $tournamentHistoryTableHeader.find("div.actionBar");
+			$actionBar.removeClass("col-sm-12").addClass("col-sm-4");
+			$actionBar.before($("#seasonsDiv").remove());
 		});
 		/*]]>*/
 	</script>
@@ -53,7 +57,7 @@
 	<div th:include="fragments/header :: title"></div>
 	<h3 th:text="${tournament.name}">Australian Open</h3>
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-4">
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Level</th>
@@ -61,7 +65,7 @@
 				</tr>
 			</table>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-4">
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Surface</th>
@@ -70,17 +74,13 @@
 			</table>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-6">
-			<table class="table table-condensed text-nowrap">
-				<tr>
-					<th>Seasons</th>
-					<td th:text="${tournament.formatedSeasons}">1968-2015</td>
-				</tr>
-			</table>
+	<div id="seasonsDiv" class="col-sm-8">
+		<div class="input-group">
+			<label for="seasons" class="input-group-addon">Seasons:</label>
+			<input id="seasons" type="text" class="ui-widget form-control" readonly="readonly" th:value="${tournament.formatedSeasons}" value="1968-2015"/>
 		</div>
 	</div>
-	<table id="tournamentEventsTable" class="table table-condensed table-hover table-striped">
+	<table id="tournamentHistoryTable" class="table table-condensed table-hover table-striped">
 		<thead>
 			<tr>
 				<th data-column-id="date" data-formatter="date" data-order="desc" data-width="70">Date</th>

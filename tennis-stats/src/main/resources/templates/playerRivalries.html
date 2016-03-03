@@ -39,9 +39,9 @@
 				});
 			});
 			var $matchesTableHeader = $("#rivalriesTable-header");
-			var actionBar = $matchesTableHeader.find("div.actionBar");
-			actionBar.removeClass("col-sm-12").addClass("col-sm-9");
-			actionBar.before($("#rivalriesTitle").remove());
+			var $actionBar = $matchesTableHeader.find("div.actionBar");
+			$actionBar.removeClass("col-sm-12").addClass("col-sm-9");
+			$actionBar.before($("#rivalriesTitle").remove());
 		});
 		function showRivalryStats(opponentId, event) {
 			var $rivalryStats = $("#rivalryStats-" + opponentId);
