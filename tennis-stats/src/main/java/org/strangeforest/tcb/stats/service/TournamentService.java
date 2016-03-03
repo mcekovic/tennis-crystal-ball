@@ -64,8 +64,8 @@ public class TournamentService {
 		"SELECT r.rank, player_id, p.name, p.country_id, r.count\n" +
 		"FROM record_results r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE r.rank <= coalesce((SELECT r2.rank FROM record_results r2 WHERE r2.order = ?), ?)\n" +
-		"ORDER BY r.order, p.goat_points DESC";
+		"WHERE r.rank <= coalesce((SELECT max(r2.rank) FROM record_results r2 WHERE r2.order = ?), ?)\n" +
+		"ORDER BY r.order, p.goat_points DESC, p.name";
 
 	private static final String PLAYER_TOURNAMENTS_QUERY =
 		"SELECT DISTINCT tournament_id, t.name, t.level\n" +

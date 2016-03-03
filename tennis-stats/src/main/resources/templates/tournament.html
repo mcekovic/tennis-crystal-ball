@@ -45,11 +45,7 @@
 				{id: "participationPoints", title: "Participation points"},
 				{id: "participationPct", title: "Participation percentage"}
 			]);
-			var $tournamentHistoryTableHeader = $("#tournamentHistoryTable-header");
-			$tournamentHistoryTableHeader.find("div.search").remove();
-			var $actionBar = $tournamentHistoryTableHeader.find("div.actionBar");
-			$actionBar.removeClass("col-sm-12").addClass("col-sm-4");
-			$actionBar.before($("#seasonsDiv").remove());
+			$("#tournamentHistoryTable-header").find("div.search").remove();
 		});
 		/*]]>*/
 	</script>
@@ -58,7 +54,7 @@
 	<div th:include="fragments/header :: title"></div>
 	<h3 th:text="${tournament.name}">Australian Open</h3>
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Level</th>
@@ -66,11 +62,19 @@
 				</tr>
 			</table>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Surface</th>
 					<td th:text="${(tournament.indoor ? 'Indoor ' : '') + surfaces[tournament.surface]}">Hard</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-md-6">
+			<table class="table table-condensed text-nowrap">
+				<tr>
+					<th>Seasons</th>
+					<td th:text="${tournament.formatedSeasons}">1968-2015</td>
 				</tr>
 			</table>
 		</div>
@@ -81,12 +85,6 @@
 	</ul>
 	<div class="tab-content">
 		<div id="events" class="tab-pane fade in active">
-			<div id="seasonsDiv" class="col-sm-8">
-				<div class="input-group">
-					<label for="seasons" class="input-group-addon">Seasons:</label>
-					<input id="seasons" type="text" class="ui-widget form-control" readonly="readonly" th:value="${tournament.formatedSeasons}" value="1968-2015"/>
-				</div>
-			</div>
 			<table id="tournamentHistoryTable" class="table table-condensed table-hover table-striped">
 				<thead>
 				<tr>
