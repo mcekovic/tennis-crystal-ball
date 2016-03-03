@@ -29,17 +29,7 @@
 						window.location = "/playerProfile?playerId=" + ui.item.id;
 				}
 			}).focus();
-			$("[data-toggle=pill]").click(function(event) {
-				event.preventDefault();
-				var $pill = $(this);
-				if ($pill.hasClass("loaded"))
-					return;
-				var url = $pill.attr("data-url");
-				if (typeof url !== "undefined")
-					loadTab($pill, this.hash, url);
-				else
-					$pill.tab("show");
-			});
+			$("[data-toggle=pill]").click(tabClick);
 			if ([[${opponentId != null}]])
 				playerRivalryMatches([[${opponentId}]], [[${level}]], [[${surface}]]);
 			else
@@ -72,13 +62,6 @@
 			if (surface)
 				url += "&surface=" + surface;
 			loadTab($pill, $("#matches"), url)
-		}
-		function loadTab(pill, pane, url) {
-			$(pane).load(url, function () {
-				if (!pill.hasClass("loaded"))
-					pill.addClass("loaded");
-				pill.tab("show");
-			});
 		}
 		function toggleStatsData(selector) {
 			$(selector).find(".pct-data, .raw-data").toggle();

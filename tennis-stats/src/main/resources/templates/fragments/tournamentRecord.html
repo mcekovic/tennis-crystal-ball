@@ -1,0 +1,20 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="tournamentRecord(title, playerRecords)">
+	<table class="table table-condensed table-hover table-striped">
+		<thead>
+			<tr>
+				<th></th>
+				<th colspan="2" th:text="${title}">Titles</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="playerRecord : ${playerRecords}">
+				<td class="text-right" th:text="${playerRecord.rank}">1</td>
+				<td>
+					<img th:src="'/images/flags/' + ${playerRecord.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${playerRecord.countryId}" title="SUI" width="24" height="20"/>
+					<a th:href="'/playerProfile?playerId=' + ${playerRecord.playerId}" th:text="${playerRecord.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+				</td>
+				<td class="text-right" th:text="${playerRecord.value}">5</td>
+			</tr>
+		</tbody>
+	</table>
+</th:block>

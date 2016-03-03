@@ -17,6 +17,8 @@ public class TournamentController extends BaseController {
 	@Autowired private MatchesService matchesService;
 	@Autowired private DataService dateService;
 
+	private static final int MAX_RECORD_PLAYERS = 10;
+
 	@RequestMapping("/tournament")
 	public ModelAndView tournament(
 		@RequestParam(value = "tournamentId") int tournamentId
@@ -42,8 +44,8 @@ public class TournamentController extends BaseController {
 		return new ModelAndView("tournamentEvents", modelMap);
 	}
 
-	@RequestMapping("/tournamentEventDraw")
-	public ModelAndView tournamentEventDraw(
+	@RequestMapping("/tournamentEvent")
+	public ModelAndView tournamentEvent(
 		@RequestParam(value = "tournamentEventId") int tournamentEventId
 	) {
 		TournamentEvent tournamentEvent = tournamentService.getTournamentEvent(tournamentEventId);
@@ -54,6 +56,23 @@ public class TournamentController extends BaseController {
 		modelMap.addAttribute("draw", draw);
 		modelMap.addAttribute("levels", TournamentLevel.asMap());
 		modelMap.addAttribute("surfaces", Surface.asMap());
-		return new ModelAndView("tournamentEventDraw", modelMap);
+		return new ModelAndView("tournamentEvent", modelMap);
+	}
+
+	@RequestMapping("/tournamentRecords")
+	public ModelAndView tournamentRecords(
+		@RequestParam(value = "tournamentId") int tournamentId
+	) {
+		List<PlayerRecordRow> recordTitles = tournamentService.getTournamentRecord(tournamentId, "W", MAX_RECORD_PLAYERS);
+		List<PlayerRecordRow> recordFinals = tournamentService.getTournamentRecord(tournamentId, "F", MAX_RECORD_PLAYERS);
+		List<PlayerRecordRow> recordSemiFinals = tournamentService.getTournamentRecord(tournamentId, "SF", MAX_RECORD_PLAYERS);
+		List<PlayerRecordRow> recordAppearances = tournamentService.getTournamentRecord(tournamentId, "R128", MAX_RECORD_PLAYERS);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("recordTitles", recordTitles);
+		modelMap.addAttribute("recordFinals", recordFinals);
+		modelMap.addAttribute("recordSemiFinals", recordSemiFinals);
+		modelMap.addAttribute("recordAppearances", recordAppearances);
+		return new ModelAndView("tournamentRecords", modelMap);
 	}
 }

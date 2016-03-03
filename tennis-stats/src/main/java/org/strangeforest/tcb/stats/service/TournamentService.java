@@ -30,26 +30,42 @@ public class TournamentService {
 		"FROM tournament t\n" +
 		"WHERE tournament_id = ?";
 
-	private static final String TOURNAMENT_EVENTS_QUERY = //language=SQL
+	private static final String TOURNAMENT_EVENT_SELECT = //language=SQL
 		"SELECT e.tournament_event_id, e.tournament_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
 		"  p.player_count, p.participation_points, p.max_participation_points,\n" +
-		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.score\n" +
+		"  m.winner_id, pw.name winner_name, m.winner_seed, m.winner_entry,\n" +
+		"  m.loser_id runner_up_id, pl.name runner_up_name, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry, m.score\n" +
 		"FROM tournament_event e\n" +
 		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
 		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
 		"LEFT JOIN match m ON m.tournament_event_id = e.tournament_event_id AND m.round = 'F'\n" +
 		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id\n" +
-		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id\n" +
+		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id\n";
+
+	private static final String TOURNAMENT_EVENTS_QUERY = //language=SQL
+		TOURNAMENT_EVENT_SELECT +
 		"WHERE e.level NOT IN ('D', 'T')%1$s\n" +
 		"ORDER BY %2$s OFFSET ?";
 
 	private static final String TOURNAMENT_EVENT_QUERY =
-		"SELECT tournament_event_id, tournament_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
-		"  p.player_count, p.participation_points, p.max_participation_points\n" +
-		"FROM tournament_event e\n" +
-		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
-		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
-		"WHERE tournament_event_id = ?";
+		TOURNAMENT_EVENT_SELECT +
+		"WHERE e.tournament_event_id = ?";
+
+	private static final String TOURNAMENT_RECORD_QUERY =
+		"WITH record_results AS (\n" +
+		"  SELECT player_id, count(result) AS count,\n" +
+		"    rank() OVER (ORDER BY count(result) DESC) AS rank, rank() OVER (ORDER BY count(result) DESC, max(e.season)) AS order\n" +
+		"  FROM player_tournament_event_result r\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  INNER JOIN player_goat_points g USING (player_id)\n" +
+		"  WHERE e.tournament_id = ? AND r.result >= ?::tournament_event_result\n" +
+		"  GROUP BY player_id\n" +
+		")\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, r.count\n" +
+		"FROM record_results r\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"WHERE r.rank <= coalesce((SELECT r2.rank FROM record_results r2 WHERE r2.order = ?), ?)\n" +
+		"ORDER BY r.order, p.goat_points DESC";
 
 	private static final String PLAYER_TOURNAMENTS_QUERY =
 		"SELECT DISTINCT tournament_id, t.name, t.level\n" +
@@ -106,32 +122,8 @@ public class TournamentService {
 		jdbcTemplate.query(
 			format(TOURNAMENT_EVENTS_QUERY, filter.getCriteria(), orderBy),
 			rs -> {
-				if (tournamentEvents.incrementAndGet() <= pageSize) {
-					TournamentEvent tournamentEvent = new TournamentEvent(
-						rs.getInt("tournament_event_id"),
-						rs.getInt("tournament_id"),
-						rs.getString("ext_tournament_id"),
-						rs.getInt("season"),
-						rs.getDate("date"),
-						rs.getString("name"),
-						rs.getString("level"),
-						rs.getString("surface"),
-						rs.getBoolean("indoor")
-					);
-					tournamentEvent.setDraw(
-						rs.getString("draw_type"),
-						getInteger(rs, "draw_size"),
-						rs.getInt("player_count"),
-						rs.getInt("participation_points"),
-						rs.getInt("max_participation_points")
-					);
-					tournamentEvent.setFinal(
-						mapMatchPlayer(rs, "winner_"),
-						mapMatchPlayer(rs, "loser_"),
-						rs.getString("score")
-					);
-					table.addRow(tournamentEvent);
-				}
+				if (tournamentEvents.incrementAndGet() <= pageSize)
+					table.addRow(mapTournamentEvent(rs));
 			},
 			tournamentEventsParams(filter, offset)
 		);
@@ -139,31 +131,19 @@ public class TournamentService {
 		return table;
 	}
 
+	private Object[] tournamentEventsParams(TournamentEventFilter filter, int offset) {
+		List<Object> params = new ArrayList<>();
+		params.addAll(filter.getParamList());
+		params.add(offset);
+		return params.toArray();
+	}
+
 	public TournamentEvent getTournamentEvent(int tournamentEventId) {
 		return jdbcTemplate.query(
 			TOURNAMENT_EVENT_QUERY,
 			rs -> {
-				if (rs.next()) {
-					TournamentEvent tournamentEvent = new TournamentEvent(
-						rs.getInt("tournament_event_id"),
-						rs.getInt("tournament_id"),
-						rs.getString("ext_tournament_id"),
-						rs.getInt("season"),
-						rs.getDate("date"),
-						rs.getString("name"),
-						rs.getString("level"),
-						rs.getString("surface"),
-						rs.getBoolean("indoor")
-					);
-					tournamentEvent.setDraw(
-						rs.getString("draw_type"),
-						getInteger(rs, "draw_size"),
-						rs.getInt("player_count"),
-						rs.getInt("participation_points"),
-						rs.getInt("max_participation_points")
-					);
-					return tournamentEvent;
-				}
+				if (rs.next())
+					return mapTournamentEvent(rs);
 				else
 					throw new IllegalArgumentException(format("Tournament event %1$d not found.", tournamentEventId));
 			},
@@ -171,12 +151,51 @@ public class TournamentService {
 		);
 	}
 
-	public Object[] tournamentEventsParams(TournamentEventFilter filter, int offset) {
-		List<Object> params = new ArrayList<>();
-		params.addAll(filter.getParamList());
-		params.add(offset);
-		return params.toArray();
+	private static TournamentEvent mapTournamentEvent(ResultSet rs) throws SQLException {
+		TournamentEvent tournamentEvent = new TournamentEvent(
+			rs.getInt("tournament_event_id"),
+			rs.getInt("tournament_id"),
+			rs.getString("ext_tournament_id"),
+			rs.getInt("season"),
+			rs.getDate("date"),
+			rs.getString("name"),
+			rs.getString("level"),
+			rs.getString("surface"),
+			rs.getBoolean("indoor")
+		);
+		tournamentEvent.setDraw(
+			rs.getString("draw_type"),
+			getInteger(rs, "draw_size"),
+			rs.getInt("player_count"),
+			rs.getInt("participation_points"),
+			rs.getInt("max_participation_points")
+		);
+		tournamentEvent.setFinal(
+			mapMatchPlayer(rs, "winner_"),
+			mapMatchPlayer(rs, "runner_up_"),
+			rs.getString("score")
+		);
+		return tournamentEvent;
 	}
+
+	public List<PlayerRecordRow> getTournamentRecord(int tournamentId, String result, int maxPlayers) {
+		return jdbcTemplate.query(
+			TOURNAMENT_RECORD_QUERY,
+			(rs, rowNum) -> {
+				return new PlayerRecordRow(
+					rs.getInt("rank"),
+					rs.getInt("player_id"),
+					rs.getString("name"),
+					rs.getString("country_id"),
+					rs.getInt("count")
+				);
+			},
+			tournamentId, result, maxPlayers, maxPlayers
+		);
+	}
+
+
+	// Player Tournaments
 
 	public List<TournamentItem> getPlayerTournaments(int playerId) {
 		return jdbcTemplate.query(PLAYER_TOURNAMENTS_QUERY, this::tournamentItemMapper, playerId);

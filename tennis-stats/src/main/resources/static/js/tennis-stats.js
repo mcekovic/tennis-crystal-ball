@@ -64,6 +64,29 @@ function getPlayerCount(players) {
 }
 
 
+// Tabs
+
+function tabClick(event) {
+	event.preventDefault();
+	var $pill = $(this);
+	if ($pill.hasClass("loaded"))
+		return;
+	var url = $pill.attr("data-url");
+	if (typeof url !== "undefined")
+		loadTab($pill, this.hash, url);
+	else
+		$pill.tab("show");
+}
+
+function loadTab(pill, pane, url) {
+	$(pane).load(url, function () {
+		if (!pill.hasClass("loaded"))
+			pill.addClass("loaded");
+		pill.tab("show");
+	});
+}
+
+
 // Dates
 
 function getDate(id) {
@@ -186,12 +209,12 @@ function surfaceName(surface) {
 
 // Tournament Formatter
 function tournamentFormatter(column, row) {
-	return "<a href='/tournamentEventDraw?tournamentEventId=" + row.tournamentEventId + "' class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</a>";
+	return "<a href='/tournamentEvent?tournamentEventId=" + row.tournamentEventId + "' class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</a>";
 }
 
 // Tournament Event Formatter
 function eventFormatter(column, row) {
-	return "<a href='/tournamentEventDraw?tournamentEventId=" + row.id + "' class='label label-" + row.level + "' title='" + levelName(row.level) + " - " +  row.tournamentExtId + "'>" + row.name + "</a>";
+	return "<a href='/tournamentEvent?tournamentEventId=" + row.id + "' class='label label-" + row.level + "' title='" + levelName(row.level) + " - " +  row.tournamentExtId + "'>" + row.name + "</a>";
 }
 
 // Result Formatter
@@ -204,8 +227,8 @@ function matchFormatter(column, row) {
 	return formatMatchPlayer(row.winner) + " d. " + formatMatchPlayer(row.loser);
 }
 
-function fullMatchFormatter(column, row) {
-	return formatMatchPlayer(row.winner, true) + " d. " + formatMatchPlayer(row.loser) + " " + row.score;
+function finalFormatter(column, row) {
+	return formatMatchPlayer(row.winner, true) + " d. " + formatMatchPlayer(row.runnerUp) + " " + row.score;
 }
 
 function formatMatchPlayer(player, winner) {
