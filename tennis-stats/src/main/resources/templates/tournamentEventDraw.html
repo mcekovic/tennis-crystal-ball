@@ -98,6 +98,17 @@
 				</tr>
 			</table>
 		</div>
+		<div class="col-md-3">
+			<table class="table table-condensed text-nowrap">
+				<tr>
+					<th colspan="2">
+						<a role="button" th:href="'/tournament?tournamentId=' + ${tournamentEvent.tournamentId}" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Tournament history">
+							<span class="glyphicon glyphicon-calendar"></span> History
+						</a>
+					</th>
+				</tr>
+			</table>
+		</div>
 	</div>
 	<table id="drawTable" class="table-condensed text-nowrap" width="100%">
 		<thead>

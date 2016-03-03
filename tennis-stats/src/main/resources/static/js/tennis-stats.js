@@ -191,7 +191,7 @@ function tournamentFormatter(column, row) {
 
 // Tournament Event Formatter
 function eventFormatter(column, row) {
-	return "<a href='/tournamentEventDraw?tournamentEventId=" + row.id + "' class='label label-" + row.level + "' title='" + levelName(row.level) + " - " +  row.extId + "'>" + row.name + "</a>";
+	return "<a href='/tournamentEventDraw?tournamentEventId=" + row.id + "' class='label label-" + row.level + "' title='" + levelName(row.level) + " - " +  row.tournamentExtId + "'>" + row.name + "</a>";
 }
 
 // Result Formatter

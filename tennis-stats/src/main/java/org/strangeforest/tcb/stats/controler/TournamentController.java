@@ -11,11 +11,23 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Controller
-public class TournamentEventsController extends BaseController {
+public class TournamentController extends BaseController {
 
 	@Autowired private TournamentService tournamentService;
 	@Autowired private MatchesService matchesService;
 	@Autowired private DataService dateService;
+
+	@RequestMapping("/tournament")
+	public ModelAndView tournament(
+		@RequestParam(value = "tournamentId") int tournamentId
+	) {
+		Tournament tournament = tournamentService.getTournament(tournamentId);
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("tournament", tournament);
+		modelMap.addAttribute("levels", TournamentLevel.asMap());
+		modelMap.addAttribute("surfaces", Surface.asMap());
+		return new ModelAndView("tournament", modelMap);
+	}
 
 	@RequestMapping("/tournamentEvents")
 	public ModelAndView tournamentEvents() {

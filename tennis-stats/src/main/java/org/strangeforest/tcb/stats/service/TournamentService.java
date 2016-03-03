@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.service;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
@@ -11,6 +12,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.MatchesService.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
@@ -19,11 +21,17 @@ public class TournamentService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
-	private static final String TOURNAMENTS_QUERY =
+	private static final String TOURNAMENT_ITEMS_QUERY =
 		"SELECT tournament_id, name, level FROM tournament ORDER BY name";
 
+	private static final String TOURNAMENT_QUERY =
+		"SELECT name, level, surface, indoor,\n" +
+		"  array(SELECT e.season FROM tournament_event e WHERE e.tournament_id = t.tournament_id ORDER BY season) AS seasons\n" +
+		"FROM tournament t\n" +
+		"WHERE tournament_id = ?";
+
 	private static final String TOURNAMENT_EVENTS_QUERY = //language=SQL
-		"SELECT e.tournament_event_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
+		"SELECT e.tournament_event_id, e.tournament_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
 		"  p.player_count, p.participation_points, p.max_participation_points,\n" +
 		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.score\n" +
 		"FROM tournament_event e\n" +
@@ -36,7 +44,7 @@ public class TournamentService {
 		"ORDER BY %2$s OFFSET ?";
 
 	private static final String TOURNAMENT_EVENT_QUERY =
-		"SELECT tournament_event_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
+		"SELECT tournament_event_id, tournament_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
 		"  p.player_count, p.participation_points, p.max_participation_points\n" +
 		"FROM tournament_event e\n" +
 		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
@@ -69,7 +77,26 @@ public class TournamentService {
 
 
 	public List<TournamentItem> getTournaments() {
-		return jdbcTemplate.query(TOURNAMENTS_QUERY, this::tournamentItemMapper);
+		return jdbcTemplate.query(TOURNAMENT_ITEMS_QUERY, this::tournamentItemMapper);
+	}
+
+	public Tournament getTournament(int tournamentId) {
+		return jdbcTemplate.query(
+			TOURNAMENT_QUERY,
+			rs -> {
+				if (rs.next()) {
+					String name = rs.getString("name");
+					String level = rs.getString("level");
+					String surface = rs.getString("surface");
+					boolean indoor = rs.getBoolean("indoor");
+					Object[] seasons = (Object[])rs.getArray("seasons").getArray();
+					return new Tournament(tournamentId, name, level, surface, indoor, Stream.of(seasons).map(o -> (Integer)o).collect(toList()));
+				}
+				else
+					throw new IllegalArgumentException(format("Tournament %1$d not found.", tournamentId));
+			},
+			tournamentId
+		);
 	}
 
 	public BootgridTable<TournamentEvent> getTournamentEventsTable(TournamentEventFilter filter, String orderBy, int pageSize, int currentPage) {
@@ -82,6 +109,7 @@ public class TournamentService {
 				if (tournamentEvents.incrementAndGet() <= pageSize) {
 					TournamentEvent tournamentEvent = new TournamentEvent(
 						rs.getInt("tournament_event_id"),
+						rs.getInt("tournament_id"),
 						rs.getString("ext_tournament_id"),
 						rs.getInt("season"),
 						rs.getDate("date"),
@@ -118,6 +146,7 @@ public class TournamentService {
 				if (rs.next()) {
 					TournamentEvent tournamentEvent = new TournamentEvent(
 						rs.getInt("tournament_event_id"),
+						rs.getInt("tournament_id"),
 						rs.getString("ext_tournament_id"),
 						rs.getInt("season"),
 						rs.getDate("date"),
