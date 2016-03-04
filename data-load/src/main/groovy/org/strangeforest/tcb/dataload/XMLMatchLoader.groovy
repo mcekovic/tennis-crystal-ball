@@ -104,28 +104,21 @@ class XMLMatchLoader extends BaseXMLLoader {
 		params.l_set_games = matchScore ? shortArray(conn, matchScore.l_set_games) : null
 		params.w_set_tb_pt = matchScore ? shortArray(conn, matchScore.w_set_tb_pt) : null
 		params.l_set_tb_pt = matchScore ? shortArray(conn, matchScore.l_set_tb_pt) : null
-
-		params.minutes = null
-
-		params.w_ace = null
-		params.w_df = null
-		params.w_sv_pt = null
-		params.w_1st_in = null
-		params.w_1st_won = null
-		params.w_2nd_won = null
-		params.w_sv_gms = null
-		params.w_bp_sv = null
-		params.w_bp_fc = null
-
-		params.l_ace = null
-		params.l_df = null
-		params.l_sv_pt = null
-		params.l_1st_in = null
-		params.l_1st_won = null
-		params.l_2nd_won = null
-		params.l_sv_gms = null
-		params.l_bp_sv = null
-		params.l_bp_fc = null
+		params.minutes = smallint match.@minutes
+		setStatsParams(params, match.'winner-stats', 'w_')
+		setStatsParams(params, match.'loser-stats', 'l_')
 		return params
+	}
+
+	def setStatsParams(Map params, stats, prefix) {
+		params[prefix + 'ace'] = stats?.ace
+		params[prefix + 'df'] = stats?.df
+		params[prefix + 'sv_pt'] = stats?.'sv-pt'
+		params[prefix + '1st_in'] = stats?.'fst-in'
+		params[prefix + '1st_won'] = stats?.'fst-won'
+		params[prefix + '2nd_won'] = stats?.'snd-won'
+		params[prefix + 'sv_gms'] = stats?.'sv-gms'
+		params[prefix + 'bp_sv'] = stats?.'bp-sv'
+		params[prefix + 'bp_fc'] = stats?.'bp-fc'
 	}
 }

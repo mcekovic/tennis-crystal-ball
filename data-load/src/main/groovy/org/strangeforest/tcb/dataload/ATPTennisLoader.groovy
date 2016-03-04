@@ -4,19 +4,18 @@ import groovy.sql.*
 
 class ATPTennisLoader {
 
-	private final String baseDir
 	private final boolean full
 	private final boolean useMaterializedViews
+	private String baseDir
 
 	ATPTennisLoader() {
-		baseDir = getBaseDir('tcb.data.base-dir')
 		full = System.getProperty('tcb.data.full-load', 'true').toBoolean()
 		useMaterializedViews = System.getProperty('tcb.data.use-materialized-views', 'true').toBoolean()
 	}
 
 	def loadPlayers(loader) {
 		println 'Loading ATP players'
-		loader.loadFile(baseDir + 'atp_players.csv')
+		loader.loadFile(baseDir() + 'atp_players.csv')
 		println()
 	}
 
@@ -26,9 +25,9 @@ class ATPTennisLoader {
 			def rows = 0
 			if (full) {
 				for (decade in ['70s', '80s', '90s', '00s-mc', '10s'])
-					rows += loader.loadFile(baseDir + "atp_rankings_${decade}.csv")
+					rows += loader.loadFile(baseDir() + "atp_rankings_${decade}.csv")
 			}
-			rows += loader.loadFile(baseDir + "atp_rankings_current.csv")
+			rows += loader.loadFile(baseDir() + "atp_rankings_current.csv")
 		}
 		println()
 	}
@@ -39,10 +38,10 @@ class ATPTennisLoader {
 			def rows = 0
 			if (full) {
 				for (year in 1968..2015)
-					rows += loader.loadFile(baseDir + "atp_matches_${year}.csv")
+					rows += loader.loadFile(baseDir() + "atp_matches_${year}.csv")
 			}
 			def year = 2016
-			rows += loader.loadFile(baseDir + "atp_matches_${year}.csv")
+			rows += loader.loadFile(baseDir() + "atp_matches_${year}.csv")
 		}
 		println()
 	}
@@ -57,12 +56,14 @@ class ATPTennisLoader {
 		println "Total rows: $rows in $seconds s ($rowsPerSecond row/s)"
 	}
 
-	private static getBaseDir(property) {
-		def baseDir = System.properties[property]
-		if (!baseDir)
-			throw new IllegalArgumentException('No ATP Tennis data base directory is set, please specify it in tcb.data.base-dir system property.')
-		if (!baseDir.endsWith(File.separator))
-			baseDir = baseDir + File.separator
+	private baseDir() {
+		if (!baseDir) {
+			baseDir = System.properties['tcb.data.base-dir']
+			if (!baseDir)
+				throw new IllegalArgumentException('No ATP Tennis data base directory is set, please specify it in tcb.data.base-dir system property.')
+			if (!baseDir.endsWith(File.separator))
+				baseDir += File.separator
+		}
 		return baseDir
 	}
 

@@ -52,6 +52,10 @@
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:complexType name="matchType">
+		<xs:sequence>
+			<xs:element type="statsType" name="winner-stats" minOccurs="0"/>
+			<xs:element type="statsType" name="loser-stats" minOccurs="0"/>
+		</xs:sequence>
 		<xs:attribute type="xs:short" name="match-num"/>
 		<xs:attribute type="roundType" name="round"/>
 		<xs:attribute type="xs:short" name="best-of"/>
@@ -59,6 +63,18 @@
 		<xs:attribute type="xs:string" name="loser"/>
 		<xs:attribute type="xs:string" name="score"/>
 		<xs:attribute type="matchOutcomeType" name="outcome"/>
+		<xs:attribute type="xs:short" name="minutes"/>
+	</xs:complexType>
+	<xs:complexType name="statsType">
+		<xs:attribute type="xs:short" name="ace"/>
+		<xs:attribute type="xs:short" name="df"/>
+		<xs:attribute type="xs:short" name="sv-pt"/>
+		<xs:attribute type="xs:short" name="fst-in"/>
+		<xs:attribute type="xs:short" name="fst-won"/>
+		<xs:attribute type="xs:short" name="snd-won"/>
+		<xs:attribute type="xs:short" name="sv-gms"/>
+		<xs:attribute type="xs:short" name="bp-sv"/>
+		<xs:attribute type="xs:short" name="bp-fc"/>
 	</xs:complexType>
 	<xs:complexType name="tournamentPlayerType">
 		<xs:attribute type="xs:short" name="seed"/>
