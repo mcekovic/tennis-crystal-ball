@@ -57,7 +57,6 @@ public class TournamentService {
 		"    rank() OVER (ORDER BY count(result) DESC) AS rank, rank() OVER (ORDER BY count(result) DESC, max(e.season)) AS order\n" +
 		"  FROM player_tournament_event_result r\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"  INNER JOIN player_goat_points g USING (player_id)\n" +
 		"  WHERE e.tournament_id = ? AND r.result >= ?::tournament_event_result\n" +
 		"  GROUP BY player_id\n" +
 		")\n" +
