@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -91,6 +92,7 @@ public class TournamentService {
 		"ORDER BY %2$s OFFSET ?";
 
 
+	@Cacheable(value = "Global", key = "'Tournaments'")
 	public List<TournamentItem> getTournaments() {
 		return jdbcTemplate.query(TOURNAMENT_ITEMS_QUERY, this::tournamentItemMapper);
 	}
@@ -114,6 +116,7 @@ public class TournamentService {
 		);
 	}
 
+	@Cacheable("TournamentEvents.Table")
 	public BootgridTable<TournamentEvent> getTournamentEventsTable(TournamentEventFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<TournamentEvent> table = new BootgridTable<>(currentPage);
 		AtomicInteger tournamentEvents = new AtomicInteger();
