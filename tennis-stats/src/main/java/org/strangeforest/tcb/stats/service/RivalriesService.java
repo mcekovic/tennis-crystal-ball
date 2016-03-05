@@ -321,7 +321,7 @@ public class RivalriesService {
 				lastMatch.get("level").asText(),
 				lastMatch.get("surface").asText(),
 				lastMatch.get("indoor").asBoolean(),
-				lastMatch.get("tournamentEventId").asInt(),
+				lastMatch.get("tournament_event_id").asInt(),
 				lastMatch.get("tournament").asText(),
 				lastMatch.get("round").asText(),
 				lastMatch.get("winner_id").asInt(),

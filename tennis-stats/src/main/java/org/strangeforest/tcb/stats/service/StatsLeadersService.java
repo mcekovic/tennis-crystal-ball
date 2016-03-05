@@ -105,7 +105,7 @@ public class StatsLeadersService {
 	private static final String TOTAL_POINTS_WON_PCT = "(p_1st_won+p_2nd_won+o_sv_pt-o_1st_won-o_2nd_won)::real/(p_sv_pt+o_sv_pt)";
 	private static final String MATCHES_WON_PCT = "p_matches::real/(p_matches+o_matches)";
 	private static final String POINTS_DOMINANCE_RATIO = "(" + RETURN_POINTS_WON_PCT + ")/((p_sv_pt-p_1st_won-p_2nd_won)::real/p_sv_pt)";
-	private static final String GAMES_DOMINANCE_RATIO = "(" + RETURN_GAMES_WON_PCT + ")/((p_bp_fc-p_bp_sv)::real/p_sv_gms)";
+	private static final String GAMES_DOMINANCE_RATIO = "CASE WHEN p_sv_gms > 0 THEN (" + RETURN_GAMES_WON_PCT + ")/((p_bp_fc-p_bp_sv)::real/p_sv_gms) ELSE NULL END";
 	private static final String BREAK_POINTS_RATIO = "CASE WHEN p_bp_fc > 0 AND o_bp_fc > 0 THEN (" + BREAK_POINTS_CONVERTED_PCT + ")/((p_bp_fc-p_bp_sv)::real/p_bp_fc) ELSE NULL END";
 	private static final String OVER_PERFORMING_RATIO = "(" + MATCHES_WON_PCT + ")/(" + TOTAL_POINTS_WON_PCT + ")";
 
@@ -119,7 +119,7 @@ public class StatsLeadersService {
 		addCategory("secondServeWonPct", "p_2nd_won::real/(p_sv_pt-p_1st_in)", PERCENTAGE, true);
 		addCategory("breakPointsSavedPct", "CASE WHEN p_bp_fc > 0 THEN p_bp_sv::real/p_bp_fc ELSE NULL END", PERCENTAGE, true);
 		addCategory("servicePointsWonPct", "(p_1st_won+p_2nd_won)::real/p_sv_pt", PERCENTAGE, true);
-		addCategory("serviceGamesWonPct", "(p_sv_gms-(p_bp_fc-p_bp_sv))::real/p_sv_gms", PERCENTAGE, true);
+		addCategory("serviceGamesWonPct", "CASE WHEN p_sv_gms > 0 THEN (p_sv_gms-(p_bp_fc-p_bp_sv))::real/p_sv_gms ELSE NULL END", PERCENTAGE, true);
 		// Return
 		addCategory("aceAgainstPct", "o_ace::real/o_sv_pt", PERCENTAGE, true);
 		addCategory("doubleFaultAgainstPct", "o_df::real/o_sv_pt", PERCENTAGE, true);
