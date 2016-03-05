@@ -246,3 +246,17 @@ function appendGoatPointsTitle(title, row, propertyName, propertyTitle) {
 	}
 	return title;
 }
+
+
+// Statistics
+
+function showMatchStats(matchId, event) {
+	var $matchStats = $("#matchStats-" + matchId);
+	if (!$matchStats.hasClass("loaded")) {
+		event.preventDefault();
+		$.get("matchStats?matchId=" + matchId, function(data) {
+			$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
+			$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "400px"); }).click();
+		});
+	}
+}
