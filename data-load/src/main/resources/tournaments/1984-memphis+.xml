@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1984" name="Monte Carlo" date="1984-02-06" ext-id="402">
+		<level>A</level>
+		<surface>C</surface>
+		<draw-type>KO</draw-type>
+		<draw-size>48</draw-size>
+		<!-- R64 -->
+		<match match-num="4" round="R64" best-of="3" winner="Tom Gullikson" loser="Stefan Edberg" score="7-6 6-4"/>
+	</tournament>
+</tournament-data>

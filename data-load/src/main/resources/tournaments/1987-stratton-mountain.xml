@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1987" tournament-name="New Haven" name="Stratton Mountain" date="1987-08-03" ext-id="420">
+		<level>B</level>
+		<surface>H</surface>
+		<draw-type>KO</draw-type>
+		<draw-size>64</draw-size>
+		<player seed="1" name="Ivan Lendl"/>
+		<player seed="2" name="Jimmy Connors"/>
+		<player seed="3" name="Pat Cash"/>
+		<player seed="4" name="John Mcenroe"/>
+		<player seed="5" name="Tim Mayotte"/>
+		<player seed="6" name="Brad Gilbert"/>
+		<player seed="7" name="David Pate"/>
+		<player seed="8" name="Scott Davis"/>
+		<player seed="9" name="Johan Kriek"/>
+		<player seed="10" name="Wally Masur"/>
+		<player seed="11" name="Slobodan Zivojinovic"/>
+		<player seed="12" name="Amos Mansdorf"/>
+		<player seed="13" name="Paul Annacone"/>
+		<player seed="14" name="Peter Doohan"/>
+		<player seed="15" name="Christo Van Rensburg"/>
+		<player seed="16" name="Derrick Rostagno"/>
+		<player entry="Q" name="Joey Rive"/>
+		<player entry="Q" name="Simon Youl"/>
+		<player entry="Q" name="Shelby Cannon"/>
+		<player entry="Q" name="Dan Goldberg"/>
+		<player entry="Q" name="Luke Jensen"/>
+		<player entry="Q" name="Andrew Burrow"/>
+		<player entry="Q" name="Peter Palandjian"/>
+		<player entry="Q" name="Philip Johnson"/>
+		<player entry="WC" name="Vijay Amritraj"/>
+		<player entry="WC" name="Marc Flur"/>
+		<player entry="WC" name="Larry Scott"/>
+		<player entry="WC" name="Patrick Mcenroe"/>
+		<player entry="WC" name="Richey Reneberg"/>
+		<!-- R64 -->
+		<match match-num="1" round="R64" best-of="3" winner="Ivan Lendl" loser="Marc Flur" score="6-4 6-3"/>
+		<match match-num="2" round="R64" best-of="3" winner="Greg Holmes" loser="Jimmy Connors" score="7-5 7-5"/>
+		<match match-num="3" round="R64" best-of="3" winner="Pat Cash" loser="Kelly Evernden" score="6-7 6-2 6-4"/>
+		<match match-num="4" round="R64" best-of="3" winner="John Mcenroe" loser="Jonathan Canter" score="6-3 6-2"/>
+		<match match-num="5" round="R64" best-of="3" winner="Tim Mayotte" loser="Todd Witsken" score="6-2 3-6 6-3"/>
+		<match match-num="6" round="R64" best-of="3" winner="Brad Gilbert" loser="Larry Scott" score="6-4 6-0"/>
+		<match match-num="7" round="R64" best-of="3" winner="David Pate" loser="Patrick Mcenroe" score="7-6 7-5"/>
+		<match match-num="8" round="R64" best-of="3" winner="Scott Davis" loser="Dan Goldberg" score="4-6 6-2 6-4"/>
+		<match match-num="9" round="R64" best-of="3" winner="Johan Kriek" loser="Stephane Bonneau" score="7-6 6-2"/>
+		<match match-num="10" round="R64" best-of="3" winner="Mark Kratzmann" loser="Wally Masur" score="1-6 7-6 7-5"/>
+		<match match-num="11" round="R64" best-of="3" winner="Slobodan Zivojinovic" loser="Eddie Edwards" score="6-4 6-1"/>
+		<match match-num="12" round="R64" best-of="3" winner="Amos Mansdorf" loser="Michael Westphal" score="6-1 6-4"/>
+		<match match-num="13" round="R64" best-of="3" winner="Paul Annacone" loser="Gary Donnelly" score="6-2 7-5"/>
+		<match match-num="14" round="R64" best-of="3" winner="Peter Doohan" loser="Bill Scanlon" score="7-5 6-0"/>
+		<match match-num="15" round="R64" best-of="3" winner="Christo Van Rensburg" loser="Nduka Odizor" score="6-4 6-3"/>
+		<match match-num="16" round="R64" best-of="3" winner="Robert Seguso" loser="Derrick Rostagno" score="6-4 6-4"/>
+		<match match-num="17" round="R64" best-of="3" winner="Andre Agassi" loser="Luke Jensen" score="3-6 6-3 6-3"/>
+		<match match-num="18" round="R64" best-of="3" winner="Vijay Amritraj" loser="Johan Carlsson" score="0-6 6-4 7-5"/>
+		<match match-num="19" round="R64" best-of="3" winner="Shelby Cannon" loser="Michael Kures" score="3-6 6-1 6-2"/>
+		<match match-num="20" round="R64" best-of="3" winner="Marcel Freeman" loser="Barry Moir" score="6-1 6-2"/>
+		<match match-num="21" round="R64" best-of="3" winner="Sammy Giammalva Jr" loser="Peter Fleming" score="6-3 7-6"/>
+		<match match-num="22" round="R64" best-of="3" winner="Dan Goldie" loser="Richard Matuszewski" score="6-3 2-6 7-6"/>
+		<match match-num="23" round="R64" best-of="3" winner="Chip Hooper" loser="Brad Drewett" score="6-4 7-5"/>
+		<match match-num="24" round="R64" best-of="3" winner="Kelly Jones" loser="Mike Leach" score="6-2 6-2"/>
+		<match match-num="25" round="R64" best-of="3" winner="Martin Laurendeau" loser="Andrew Burrow" score="7-6 6-2"/>
+		<match match-num="26" round="R64" best-of="3" winner="Peter Lundgren" loser="Christo Steyn" score="6-2 6-2"/>
+		<match match-num="27" round="R64" best-of="3" winner="Francisco Maciel" loser="Peter Palandjian" score="6-4 6-2"/>
+		<match match-num="28" round="R64" best-of="3" winner="Jim Pugh" loser="Philip Johnson" score="7-6 4-6 6-3"/>
+		<match match-num="29" round="R64" best-of="3" winner="Joey Rive" loser="Mel Purcell" score="7-6 6-3"/>
+		<match match-num="30" round="R64" best-of="3" winner="Ben Testerman" loser="John Fitzgerald" score="2-6 6-4 7-6"/>
+		<match match-num="31" round="R64" best-of="3" winner="Danie Visser" loser="Eric Winogradsky" score="7-5 7-6"/>
+		<match match-num="32" round="R64" best-of="3" winner="Simon Youl" loser="Richey Reneberg" score="6-4 7-6 6-1"/>
+		<!-- R32 -->
+		<match match-num="33" round="R32" best-of="3" winner="Ivan Lendl" loser="Jim Pugh" score="7-6 6-3"/>
+		<match match-num="34" round="R32" best-of="3" winner="Andre Agassi" loser="Pat Cash" score="7-6 7-6"/>
+		<match match-num="35" round="R32" best-of="3" winner="John Mcenroe" loser="Peter Lundgren" score="6-3 6-4"/>
+		<match match-num="36" round="R32" best-of="3" winner="Joey Rive" loser="Tim Mayotte" score="7-6 2-6 6-4"/>
+		<match match-num="37" round="R32" best-of="3" winner="Brad Gilbert" loser="Shelby Cannon" score="6-2 6-7 6-2"/>
+		<match match-num="38" round="R32" best-of="3" winner="David Pate" loser="Dan Goldie" score="6-3 7-5"/>
+		<match match-num="39" round="R32" best-of="3" winner="Scott Davis" loser="Simon Youl" score="7-6 6-1"/>
+		<match match-num="40" round="R32" best-of="3" winner="Kelly Jones" loser="Johan Kriek" score="6-2 4-6 6-1"/>
+		<match match-num="41" round="R32" best-of="3" winner="Slobodan Zivojinovic" loser="Vijay Amritraj" score="6-4 7-6"/>
+		<match match-num="42" round="R32" best-of="3" winner="Amos Mansdorf" loser="Martin Laurendeau" score="6-4 7-6"/>
+		<match match-num="43" round="R32" best-of="3" winner="Chip Hooper" loser="Paul Annacone" score="7-6 6-2"/>
+		<match match-num="44" round="R32" best-of="3" winner="Ben Testerman" loser="Peter Doohan" score="6-2 7-5"/>
+		<match match-num="45" round="R32" best-of="3" winner="Christo Van Rensburg" loser="Sammy Giammalva Jr" score="7-6 6-4"/>
+		<match match-num="46" round="R32" best-of="3" winner="Greg Holmes" loser="Marcel Freeman" score="6-7 6-4 6-4"/>
+		<match match-num="47" round="R32" best-of="3" winner="Robert Seguso" loser="Francisco Maciel" score="6-3 6-4"/>
+		<match match-num="48" round="R32" best-of="3" winner="Danie Visser" loser="Mark Kratzmann" score="7-6 6-3"/>
+		<!-- R16 -->
+		<match match-num="49" round="R16" best-of="3" winner="Ivan Lendl" loser="Robert Seguso" score="6-3 6-7 6-2"/>
+		<match match-num="50" round="R16" best-of="3" winner="John Mcenroe" loser="Ben Testerman" score="7-6 0-6 6-1"/>
+		<match match-num="51" round="R16" best-of="3" winner="Brad Gilbert" loser="Amos Mansdorf" score="6-4 6-4"/>
+		<match match-num="52" round="R16" best-of="3" winner="Danie Visser" loser="David Pate" score="7-6 3-6 6-1"/>
+		<match match-num="53" round="R16" best-of="3" winner="Kelly Jones" loser="Scott Davis" score="7-6 7-6"/>
+		<match match-num="54" round="R16" best-of="3" winner="Joey Rive" loser="Slobodan Zivojinovic" score="7-6 6-2"/>
+		<match match-num="55" round="R16" best-of="3" winner="Christo Van Rensburg" loser="Greg Holmes" score="6-1 6-4"/>
+		<match match-num="56" round="R16" best-of="3" winner="Andre Agassi" loser="Chip Hooper" score="6-4 6-7 6-3"/>
+		<!-- QF -->
+		<match match-num="57" round="QF" best-of="3" winner="Ivan Lendl" loser="Kelly Jones" score="6-3 6-1"/>
+		<match match-num="58" round="QF" best-of="3" winner="John Mcenroe" loser="Brad Gilbert" score="6-3 6-2"/>
+		<match match-num="59" round="QF" best-of="3" winner="Christo Van Rensburg" loser="Danie Visser" score="6-2 6-3"/>
+		<match match-num="60" round="QF" best-of="3" winner="Andre Agassi" loser="Joey Rive" score="7-6 6-2"/>
+		<!-- SF -->
+		<match match-num="61" round="SF" best-of="3" winner="Ivan Lendl" loser="Andre Agassi" score="6-2 5-7 6-3"/>
+		<match match-num="62" round="SF" best-of="3" winner="John Mcenroe" loser="Christo Van Rensburg" score="6-4 6-2"/>
+		<!-- F -->
+		<match match-num="63" round="F" best-of="3" winner="Ivan Lendl" loser="John Mcenroe" score="6-7 4-1 ABD"/>
+	</tournament>
+</tournament-data>

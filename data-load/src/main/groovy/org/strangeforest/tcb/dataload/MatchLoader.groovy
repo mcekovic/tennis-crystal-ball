@@ -48,7 +48,7 @@ class MatchLoader extends BaseCSVLoader {
 		def surface = string record.surface
 		params.surface = mapSurface surface
 		params.indoor = mapIndoor surface
-		params.draw_type = mappedLevel != 'F' ? 'KO' : 'RR';
+		params.draw_type = mappedLevel != 'F' || (1982..1985).contains(season) ? 'KO' : 'RR';
 		params.draw_size = drawSize
 		params.rank_points = mapRankPoints mappedLevel
 

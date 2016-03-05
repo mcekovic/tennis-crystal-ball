@@ -182,7 +182,7 @@ SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.season, e.d
 	m.winner_rank, m.loser_rank, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.w_sets, m.l_sets, m.w_games, m.l_games
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
-WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T') AND (e.level <> 'D' OR e.name LIKE '%WG' OR e.name LIKE '%G1' OR e.name LIKE '%G2') AND (m.outcome IS NULL OR m.outcome = 'RET');
+WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T') AND (e.level <> 'D' OR e.name LIKE '%WG' OR e.name LIKE '%G1' OR e.name LIKE '%G2') AND (m.outcome IS NULL OR m.outcome IN ('RET', 'DEF'));
 
 
 -- match_for_rivalry_v

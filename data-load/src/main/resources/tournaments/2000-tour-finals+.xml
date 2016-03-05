@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="2000" name="Masters Cup" date="2000-11-27" ext-id="605">
+		<level>F</level>
+		<surface>H</surface>
+		<draw-type>RR</draw-type>
+		<draw-size>8</draw-size>
+		<!-- RR -->
+		<match match-num="12" round="RR" best-of="3" winner="Pete Sampras" loser="Marat Safin" score="6-3 6-2"/>
+		<match match-num="13" round="RR" best-of="3" winner="Marat Safin" loser="Lleyton Hewitt" score="6-4 6-4"/>
+		<match match-num="14" round="RR" best-of="3" winner="Marat Safin" loser="Alex Corretja" score="6-7(6) 7-5 6-3"/>
+		<!-- SF -->
+		<match match-num="15" round="SF" best-of="3" winner="Andre Agassi" loser="Marat Safin" score="6-3 6-3"/>
+	</tournament>
+</tournament-data>

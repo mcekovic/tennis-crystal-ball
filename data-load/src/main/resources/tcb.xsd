@@ -18,6 +18,7 @@
 			<xs:element type="matchType" name="match" maxOccurs="unbounded"/>
 		</xs:sequence>
 		<xs:attribute type="xs:short" name="season"/>
+		<xs:attribute type="xs:string" name="tournament-name"/>
 		<xs:attribute type="xs:string" name="name"/>
 		<xs:attribute type="xs:date" name="date"/>
 		<xs:attribute type="xs:string" name="ext-id"/>
@@ -30,11 +31,12 @@
 			<xs:enumeration value="O"/>
 			<xs:enumeration value="A"/>
 			<xs:enumeration value="B"/>
-			<xs:enumeration value="D"/>
-			<xs:enumeration value="H"/>
-			<xs:enumeration value="T"/>
 			<xs:enumeration value="C"/>
 			<xs:enumeration value="U"/>
+			<xs:enumeration value="E"/>
+			<xs:enumeration value="H"/>
+			<xs:enumeration value="D"/>
+			<xs:enumeration value="T"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="surface">
@@ -102,6 +104,7 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="RET"/>
 			<xs:enumeration value="W/O"/>
+			<xs:enumeration value="DEF"/>
 			<xs:enumeration value="ABD"/>
 		</xs:restriction>
 	</xs:simpleType>

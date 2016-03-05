@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="2003" name="Masters Cup" date="2003-11-10" ext-id="605">
+		<level>F</level>
+		<surface>H</surface>
+		<draw-type>RR</draw-type>
+		<draw-size>8</draw-size>
+		<!-- RR -->
+		<match match-num="14" round="RR" best-of="3" winner="Carlos Moya" loser="Rainer Schuettler" score="7-5 6-4"/>
+		<match match-num="15" round="RR" best-of="3" winner="Rainer Schuettler" loser="Guillermo Coria" score="6-3 4-6 6-2"/>
+	</tournament>
+</tournament-data>

@@ -34,6 +34,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 				params.putAll playerParams(match, 'winner', players)
 				params.putAll playerParams(match, 'loser', players)
 				params.putAll scoreParams(match, sql.connection)
+				params.putAll statsParams(match)
 				ps.addBatch(params)
 			}
 		}
@@ -60,8 +61,9 @@ class XMLMatchLoader extends BaseXMLLoader {
 		params.ext_tournament_id = string tournament.@'ext-id'
 		params.season = smallint tournament.@season
 		params.tournament_date = date tournament.@date
+		def tournamentName = string tournament.@'tournament-name'
 		def name = string tournament.@name
-		params.tournament_name = name
+		params.tournament_name = tournamentName ?: name
 		params.event_name = name
 		params.tournament_level = string tournament.level
 		params.surface = string tournament.surface
@@ -104,6 +106,11 @@ class XMLMatchLoader extends BaseXMLLoader {
 		params.l_set_games = matchScore ? shortArray(conn, matchScore.l_set_games) : null
 		params.w_set_tb_pt = matchScore ? shortArray(conn, matchScore.w_set_tb_pt) : null
 		params.l_set_tb_pt = matchScore ? shortArray(conn, matchScore.l_set_tb_pt) : null
+		return params
+	}
+
+	Map statsParams(match) {
+		def params = [:]
 		params.minutes = smallint match.@minutes
 		setStatsParams(params, match.'winner-stats', 'w_')
 		setStatsParams(params, match.'loser-stats', 'l_')
@@ -111,14 +118,14 @@ class XMLMatchLoader extends BaseXMLLoader {
 	}
 
 	def setStatsParams(Map params, stats, prefix) {
-		params[prefix + 'ace'] = stats?.ace
-		params[prefix + 'df'] = stats?.df
-		params[prefix + 'sv_pt'] = stats?.'sv-pt'
-		params[prefix + '1st_in'] = stats?.'fst-in'
-		params[prefix + '1st_won'] = stats?.'fst-won'
-		params[prefix + '2nd_won'] = stats?.'snd-won'
-		params[prefix + 'sv_gms'] = stats?.'sv-gms'
-		params[prefix + 'bp_sv'] = stats?.'bp-sv'
-		params[prefix + 'bp_fc'] = stats?.'bp-fc'
+		params[prefix + 'ace'] = smallint stats?.ace
+		params[prefix + 'df'] = smallint stats?.df
+		params[prefix + 'sv_pt'] = smallint stats?.'sv-pt'
+		params[prefix + '1st_in'] = smallint stats?.'fst-in'
+		params[prefix + '1st_won'] = smallint stats?.'fst-won'
+		params[prefix + '2nd_won'] = smallint stats?.'snd-won'
+		params[prefix + 'sv_gms'] = smallint stats?.'sv-gms'
+		params[prefix + 'bp_sv'] = smallint stats?.'bp-sv'
+		params[prefix + 'bp_fc'] = smallint stats?.'bp-fc'
 	}
 }

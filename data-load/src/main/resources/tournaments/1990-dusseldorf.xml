@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1990" name="Dusseldorf" date="1990-05-27" ext-id="615">
+		<level>T</level>
+		<surface>C</surface>
+		<draw-type>RR</draw-type>
+		<draw-size>8</draw-size>
+		<!-- RR -->
+		<match match-num="1" round="RR" best-of="3" winner="Alex Antonitsch" loser="Martin Jaite" score="6-4 7-6"/>
+		<match match-num="2" round="RR" best-of="3" winner="Alberto Mancini" loser="Thomas Buchmayer" score="6-2 6-4"/>
+		<match match-num="3" round="RR" best-of="3" winner="Goran Prpic" loser="Stefan Edberg" score="6-1 6-4"/>
+		<match match-num="4" round="RR" best-of="3" winner="Jordi Arrese" loser="Boris Becker" score="6-2 6-1"/>
+		<match match-num="5" round="RR" best-of="3" winner="Sergi Bruguera" loser="Carl Uwe Steeb" score="2-6 6-4 6-3"/>
+		<match match-num="6" round="RR" best-of="3" winner="Jim Courier" loser="Alexander Volkov" score="6-4 6-2"/>
+		<match match-num="7" round="RR" best-of="3" winner="Brad Gilbert" loser="Andrei Cherkasov" score="6-2 6-3"/>
+		<match match-num="8" round="RR" best-of="3" winner="Goran Ivanisevic" loser="Oliver Fuchs" score="6-4 6-2"/>
+		<match match-num="9" round="RR" best-of="3" winner="Martin Jaite" loser="Stefan Edberg" score="3-6 6-2 6-4"/>
+		<match match-num="10" round="RR" best-of="3" winner="Alberto Mancini" loser="Jonas Svensson" score="6-4 6-2"/>
+		<match match-num="11" round="RR" best-of="3" winner="Goran Prpic" loser="Alex Antonitsch" score="6-1 6-1"/>
+		<match match-num="12" round="RR" best-of="3" winner="Jordi Arrese" loser="Andrei Cherkasov" score="6-2 4-6 7-6"/>
+		<match match-num="13" round="RR" best-of="3" winner="Boris Becker" loser="Brad Gilbert" score="6-1 6-1"/>
+		<match match-num="14" round="RR" best-of="3" winner="Sergi Bruguera" loser="Alexander Volkov" score="7-5 6-3"/>
+		<match match-num="15" round="RR" best-of="3" winner="Jim Courier" loser="Carl Uwe Steeb" score="6-3 1-6 6-3"/>
+		<match match-num="16" round="RR" best-of="3" winner="Stefan Edberg" loser="Thomas Muster" score="6-2 6-4"/>
+		<match match-num="17" round="RR" best-of="3" winner="Magnus Gustafsson" loser="Goran Ivanisevic" score="6-4 6-2"/>
+		<match match-num="18" round="RR" best-of="3" winner="Goran Ivanisevic" loser="Alberto Mancini" score="6-4 6-0"/>
+		<match match-num="19" round="RR" best-of="3" winner="Goran Prpic" loser="Martin Jaite" score="7-6 4-6 7-6"/>
+		<match match-num="20" round="RR" best-of="3" winner="Jonas Svensson" loser="Alex Antonitsch" score="6-4 6-3"/>
+		<match match-num="21" round="RR" best-of="3" winner="Jordi Arrese" loser="Brad Gilbert" score="7-5 7-5"/>
+		<match match-num="22" round="RR" best-of="3" winner="Boris Becker" loser="Andrei Cherkasov" score="6-4 6-3"/>
+		<match match-num="23" round="RR" best-of="3" winner="Jim Courier" loser="Sergi Bruguera" score="7-5 6-1"/>
+		<match match-num="24" round="RR" best-of="3" winner="Carl Uwe Steeb" loser="Alexander Volkov" score="7-5 7-5"/>
+		<!-- F -->
+		<match match-num="25" round="F" best-of="3" winner="Goran Ivanisevic" loser="Jim Courier" score="3-6 7-5 6-1"/>
+		<match match-num="26" round="F" best-of="3" winner="Goran Prpic" loser="Brad Gilbert" score="6-4 6-4"/>
+	</tournament>
+</tournament-data>

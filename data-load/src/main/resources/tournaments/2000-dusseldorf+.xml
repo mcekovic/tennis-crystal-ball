@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="2000" name="Dusseldorf" date="2000-05-21" ext-id="615">
+		<level>T</level>
+		<surface>C</surface>
+		<draw-type>RR</draw-type>
+		<draw-size>8</draw-size>
+		<!-- RR -->
+		<match match-num="17" round="RR" best-of="3" winner="Alberto Martin" loser="Nicolas Massu" score="5-0 RET"/>
+		<match match-num="18" round="RR" best-of="3" winner="Marat Safin" loser="Richard Fromberg" score="6-2 6-4"/>
+		<match match-num="19" round="RR" best-of="3" winner="Dominik Hrbaty" loser="Tommy Haas" score="6-2 4-6 6-2"/>
+		<match match-num="20" round="RR" best-of="3" winner="Karol Kucera" loser="Rainer Schuettler" score="6-2 6-2"/>
+		<match match-num="21" round="RR" best-of="3" winner="Marat Safin" loser="Alberto Martin" score="7-6(2) 6-1"/>
+		<match match-num="22" round="RR" best-of="3" winner="Tommy Haas" loser="Pete Sampras" score="7-5 6-2"/>
+		<match match-num="23" round="RR" best-of="3" winner="Rainer Schuettler" loser="Vincent Spadea" score="7-5 3-6 6-1"/>
+		<match match-num="24" round="RR" best-of="3" winner="Marat Safin" loser="Nicolas Massu" score="7-6(7) 6-4"/>
+		<match match-num="25" round="RR" best-of="3" winner="Tommy Haas" loser="Thomas Enqvist" score="5-7 6-2 6-2"/>
+		<match match-num="26" round="RR" best-of="3" winner="Mikael Tillstrom" loser="Rainer Schuettler" score="6-4 7-6(2)"/>
+	</tournament>
+</tournament-data>

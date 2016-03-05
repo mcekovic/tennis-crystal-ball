@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1999" name="Tour Finals" date="1999-11-22" ext-id="605">
+		<level>F</level>
+		<surface>H</surface>
+		<draw-type>RR</draw-type>
+		<draw-size>8</draw-size>
+		<!-- RR -->
+		<match match-num="14" round="RR" best-of="3" winner="Pete Sampras" loser="Nicolas Lapentti" score="7-6(2) 7-6(5)"/>
+		<match match-num="15" round="RR" best-of="3" winner="Gustavo Kuerten" loser="Nicolas Lapentti" score="6-1 6-2"/>
+	</tournament>
+</tournament-data>
