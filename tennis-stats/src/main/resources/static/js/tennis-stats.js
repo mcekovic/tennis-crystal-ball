@@ -224,11 +224,13 @@ function resultFormatter(column, row) {
 
 // Match Formatter
 function matchFormatter(column, row) {
-	return formatMatchPlayer(row.winner) + " d. " + formatMatchPlayer(row.loser);
+	var victory = row.score.indexOf("ABD") == -1;
+	return formatMatchPlayer(row.winner) + " " + (victory ? "d." : "vs") + " " + formatMatchPlayer(row.loser);
 }
 
 function finalFormatter(column, row) {
-	return formatMatchPlayer(row.winner, true) + " d. " + formatMatchPlayer(row.runnerUp) + " " + row.score;
+	var victory = row.score.indexOf("ABD") == -1;
+	return formatMatchPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchPlayer(row.runnerUp) + " " + row.score;
 }
 
 function formatMatchPlayer(player, winner) {

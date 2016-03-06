@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
-	<tournament season="1970" name="Sydney Outdoor" date="1970-11-16" ext-id="430">
+	<tournament season="1970" name="Wembley" date="1970-11-16" ext-id="430">
 		<level>M</level>
 		<surface>H</surface>
 		<indoor>true</indoor>

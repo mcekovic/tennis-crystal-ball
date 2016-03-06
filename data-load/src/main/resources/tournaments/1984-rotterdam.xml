@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1984" name="Rotterdam" date="1984-03-12" ext-id="407">
+		<level>B</level>
+		<surface>H</surface>
+		<indoor>true</indoor>
+		<draw-type>KO</draw-type>
+		<draw-size>32</draw-size>
+		<player seed="1" name="Ivan Lendl"/>
+		<player seed="2" name="Jimmy Connors"/>
+		<player seed="3" name="Kevin Curren"/>
+		<player seed="4" name="Eliot Teltscher"/>
+		<player seed="5" name="Johan Kriek"/>
+		<player seed="6" name="Gene Mayer"/>
+		<player seed="7" name="Tomas Smid"/>
+		<player seed="8" name="Anders Jarryd"/>
+		<player entry="Q" name="Marko Ostoja"/>
+		<player entry="Q" name="Jakob Hlasek"/>
+		<player entry="Q" name="Jan Van Langendonck"/>
+		<player entry="Q" name="Magnus Tideman"/>
+		<player entry="WC" name="Stefan Edberg"/>
+		<!-- R32 -->
+		<match match-num="1" round="R32" best-of="3" winner="Ivan Lendl" loser="Jakob Hlasek" score="6-0 6-4"/>
+		<match match-num="2" round="R32" best-of="3" winner="Jimmy Connors" loser="Brian Teacher" score="6-3 7-6"/>
+		<match match-num="3" round="R32" best-of="3" winner="Kevin Curren" loser="Jan Van Langendonck" score="6-3 6-4"/>
+		<match match-num="4" round="R32" best-of="3" winner="Eliot Teltscher" loser="Vitas Gerulaitis" score="6-3 7-5"/>
+		<match match-num="5" round="R32" best-of="3" winner="Johan Kriek" loser="Wojtek Fibak" score="2-6 6-1 6-4"/>
+		<match match-num="6" round="R32" best-of="3" winner="Gene Mayer" loser="Magnus Tideman" score="6-1 6-1"/>
+		<match match-num="7" round="R32" best-of="3" winner="Tomas Smid" loser="Hank Pfister" score="6-2 6-0"/>
+		<match match-num="8" round="R32" best-of="3" winner="Anders Jarryd" loser="Mark Edmondson" score="6-3 6-3"/>
+		<match match-num="9" round="R32" best-of="3" winner="Fritz Buehning" loser="Pat Cash" score="3-6 6-4 7-6"/>
+		<match match-num="10" round="R32" best-of="3" winner="Stefan Edberg" loser="Chip Hooper" score="6-7 6-1 6-4"/>
+		<match match-num="11" round="R32" best-of="3" winner="John Fitzgerald" loser="Michiel Schapers" score="6-0 2-6 6-1"/>
+		<match match-num="12" round="R32" best-of="3" winner="Shlomo Glickstein" loser="Christophe Roger Vasselin" score="6-1 6-4"/>
+		<match match-num="13" round="R32" best-of="3" winner="Brian Gottfried" loser="Roscoe Tanner" score="7-5 6-2"/>
+		<match match-num="14" round="R32" best-of="3" winner="Joakim Nystrom" loser="Robert Vant Hof" score="6-1 6-3"/>
+		<match match-num="15" round="R32" best-of="3" winner="Marko Ostoja" loser="Scott Davis" score="6-3 3-6 6-1"/>
+		<match match-num="16" round="R32" best-of="3" winner="Mel Purcell" loser="Tom Gullikson" score="6-2 7-5"/>
+		<!-- R16 -->
+		<match match-num="17" round="R16" best-of="3" winner="Ivan Lendl" loser="Marko Ostoja" score="7-5 6-1"/>
+		<match match-num="18" round="R16" best-of="3" winner="Jimmy Connors" loser="Fritz Buehning" score="6-2 6-1"/>
+		<match match-num="19" round="R16" best-of="3" winner="Kevin Curren" loser="Brian Gottfried" score="6-2 7-5"/>
+		<match match-num="20" round="R16" best-of="3" winner="Eliot Teltscher" loser="Joakim Nystrom" score="3-6 6-0 6-3"/>
+		<match match-num="21" round="R16" best-of="3" winner="Stefan Edberg" loser="Johan Kriek" score="6-3 6-3"/>
+		<match match-num="22" round="R16" best-of="3" winner="Gene Mayer" loser="John Fitzgerald" score="6-3 6-1"/>
+		<match match-num="23" round="R16" best-of="3" winner="Mel Purcell" loser="Tomas Smid" score="6-4 6-0"/>
+		<match match-num="24" round="R16" best-of="3" winner="Anders Jarryd" loser="Shlomo Glickstein" score="7-6 6-2"/>
+		<!-- QF -->
+		<match match-num="25" round="QF" best-of="3" winner="Ivan Lendl" loser="Mel Purcell" score="6-1 6-2"/>
+		<match match-num="26" round="QF" best-of="3" winner="Jimmy Connors" loser="Gene Mayer" score="6-0 6-1"/>
+		<match match-num="27" round="QF" best-of="3" winner="Anders Jarryd" loser="Kevin Curren" score="7-6 6-2"/>
+		<match match-num="28" round="QF" best-of="3" winner="Stefan Edberg" loser="Eliot Teltscher" score="6-1 6-4"/>
+		<!-- SF -->
+		<match match-num="29" round="SF" best-of="3" winner="Ivan Lendl" loser="Stefan Edberg" score="6-3 2-6 7-6"/>
+		<match match-num="30" round="SF" best-of="3" winner="Jimmy Connors" loser="Anders Jarryd" score="6-4 6-4"/>
+		<!-- F -->
+		<match match-num="31" round="F" best-of="3" winner="Ivan Lendl" loser="Jimmy Connors" score="ABD"/>
+	</tournament>
+</tournament-data>
