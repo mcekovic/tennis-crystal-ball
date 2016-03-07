@@ -221,12 +221,13 @@ CREATE TABLE match_stats (
 
 CREATE TABLE tournament_rank_points (
 	level tournament_level NOT NULL,
+	draw_type draw_type NOT NULL,
 	result tournament_event_result NOT NULL,
 	rank_points INTEGER,
 	rank_points_2008 INTEGER,
 	goat_points INTEGER,
 	additive BOOLEAN,
-	PRIMARY KEY (level, result)
+	PRIMARY KEY (level, draw_type, result)
 );
 
 

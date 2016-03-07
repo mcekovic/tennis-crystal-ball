@@ -48,8 +48,8 @@ class MatchLoader extends BaseCSVLoader {
 		def surface = string record.surface
 		params.surface = mapSurface surface
 		params.indoor = mapIndoor surface
-		params.draw_type = mappedLevel != 'F' || (1982..1985).contains(season) ? 'KO' : 'RR';
-		params.draw_size = drawSize
+		params.draw_type = mapDrawType(mappedLevel, season);
+		params.draw_size = mapDrawSize(drawSize, mappedLevel, season)
 		params.rank_points = mapRankPoints mappedLevel
 
 		def matchNum = record.match_num
@@ -237,6 +237,20 @@ class MatchLoader extends BaseCSVLoader {
 		switch (surface) {
 			case 'Carpet': return true
 			default: return false
+		}
+	}
+
+	static mapDrawType(String level, int season) {
+		switch (level) {
+			case 'F': return (1982..1985).contains(season) ? 'KO' : 'RR'
+			default: return 'KO'
+		}
+	}
+
+	static short mapDrawSize(short drawSize, String level, int season) {
+		switch (level) {
+			case 'F': return season >= 1987 ? 8 : drawSize
+			default: return drawSize
 		}
 	}
 

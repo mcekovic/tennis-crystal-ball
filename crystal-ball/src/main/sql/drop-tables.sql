@@ -27,8 +27,3 @@ DROP TABLE player_elo_ranking CASCADE;
 DROP TABLE player_ranking CASCADE;
 DROP TABLE player_mapping CASCADE;
 DROP TABLE player CASCADE;
-
-DROP SEQUENCE tournament_tournament_id_seq;
-DROP SEQUENCE tournament_event_tournament_event_id_seq;
-DROP SEQUENCE player_player_id_seq;
-DROP SEQUENCE match_match_id_seq;

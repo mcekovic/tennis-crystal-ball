@@ -130,14 +130,14 @@ SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, go
 	SELECT r.player_id, r.tournament_event_id, r.result, p.rank_points, p.rank_points_2008, p.goat_points
 	FROM best_round r
 	INNER JOIN tournament_event e USING (tournament_event_id)
-	LEFT JOIN tournament_rank_points p USING (level, result)
+	LEFT JOIN tournament_rank_points p USING (level, draw_type, result)
 	WHERE NOT p.additive OR p.additive IS NULL
 	UNION ALL
 	SELECT r.player_id, r.tournament_event_id, r.result, sum(p.rank_points), sum(p.rank_points_2008), sum(p.goat_points)
 	FROM best_round r
 	LEFT OUTER JOIN match m ON m.tournament_event_id = r.tournament_event_id AND m.winner_id = r.player_id
 	INNER JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
-	LEFT JOIN tournament_rank_points p ON p.level = e.level AND p.result = m.round::TEXT::tournament_event_result
+	LEFT JOIN tournament_rank_points p ON p.level = e.level AND p.draw_type = e.draw_type AND p.result = m.round::TEXT::tournament_event_result
 	WHERE p.additive
 	GROUP BY r.player_id, r.tournament_event_id, r.result
 ) AS player_tournament_event_result;
