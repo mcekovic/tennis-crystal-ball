@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.dataload
 
+import java.time.temporal.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 
@@ -142,15 +143,26 @@ class EloRatings {
 		Date date
 		EloRating bestRating
 
+		private static final int START_RATING = 1500
+
 		EloRating() {
-			rating = 1500
+			rating = START_RATING
 			matches = 0
 		}
 
 		EloRating newRating(double delta, Date date) {
-			def newRating = new EloRating(rating: rating + delta * kFunction(), matches: matches + 1, date: date)
+			def newRating = new EloRating(rating: ratingDateAdjusted(date) + delta * kFunction(), matches: matches + 1, date: date)
 			newRating.bestRating = bestRating(newRating)
 			newRating
+		}
+
+		def ratingDateAdjusted(Date date) {
+			if (this.date) {
+				def daysSinceLastMatch = ChronoUnit.DAYS.between(toLocalDate(this.date), toLocalDate(date))
+				if (daysSinceLastMatch > 365)
+					return max(START_RATING, rating - (daysSinceLastMatch - 365))
+			}
+			rating
 		}
 
 		def bestRating(EloRating newRating) {
