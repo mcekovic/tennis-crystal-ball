@@ -19,7 +19,7 @@ public class GOATLegendService {
 	private static final String TOURNAMENT_GOAT_POINTS_QUERY =
 		"SELECT level, result, goat_points, additive FROM tournament_rank_points\n" +
 		"WHERE goat_points > 0\n" +
-		"ORDER BY level, result DESC";
+		"ORDER BY level, draw_type DESC, result DESC";
 
 	private static final String RANK_GOAT_POINTS_QUERY = //language=SQL
 		"SELECT %2$s, %3$s FROM %1$s\n" +
