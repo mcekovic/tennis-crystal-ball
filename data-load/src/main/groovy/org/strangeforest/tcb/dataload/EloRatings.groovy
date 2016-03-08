@@ -180,10 +180,10 @@ class EloRatings {
 		 * @return values from 1/2 to 1, depending on current rating
 		 */
 		private def double kFunction() {
-			if (rating <= 2000)
+			if (rating <= 1800)
 				1.0
 			else if (rating <= 2200)
-				1.0 - (rating - 2000) / 400.0
+				1.0 - (rating - 1800) / 800.0
 			else
 				0.5
 		}
