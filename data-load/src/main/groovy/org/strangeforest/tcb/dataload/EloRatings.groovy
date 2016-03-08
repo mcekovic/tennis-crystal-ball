@@ -160,7 +160,7 @@ class EloRatings {
 			if (this.date) {
 				def daysSinceLastMatch = ChronoUnit.DAYS.between(toLocalDate(this.date), toLocalDate(date))
 				if (daysSinceLastMatch > 365)
-					return max(START_RATING, rating - (daysSinceLastMatch - 365))
+					return max(START_RATING, rating - (daysSinceLastMatch - 365) * 200 / 365)
 			}
 			rating
 		}
