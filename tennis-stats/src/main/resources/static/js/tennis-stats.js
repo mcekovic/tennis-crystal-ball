@@ -238,7 +238,25 @@ function formatMatchPlayer(player, winner) {
 		+ (player.seed ? (" (" + player.seed  + (player.entry ? " " + player.entry : "") + ")") : (player.entry ? " (" + player.entry + ")" : "")) + "</a>";
 }
 
-// Misc Formatter
+
+// Misc
+
+function bindPopovers() {
+	$("[data-toggle=popover]").popover({
+		html: true,
+		content: function () {
+			var content = $(this).attr("data-popover");
+			return $(content).children(".popover-content").html();
+		},
+		title: function () {
+			var title = $(this).attr("data-popover");
+			return $(title).children(".popover-title").html();
+		}
+	}).on("show.bs.popover", function () {
+		$(this).data("bs.popover").tip().css("max-width", "900px");
+	});
+}
+
 function appendGoatPointsTitle(title, row, propertyName, propertyTitle) {
 	var points = row[propertyName];
 	if (points > 0) {
@@ -248,9 +266,6 @@ function appendGoatPointsTitle(title, row, propertyName, propertyTitle) {
 	}
 	return title;
 }
-
-
-// Statistics
 
 function showMatchStats(matchId, event) {
 	var $matchStats = $("#matchStats-" + matchId);

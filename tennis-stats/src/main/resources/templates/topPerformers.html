@@ -41,8 +41,7 @@
 					"player": playerFormatter
 				}
 			});
-			var $topPerformersTableHeader = $("#topPerformersTable-header");
-			$topPerformersTableHeader.find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove());
+			$("#topPerformersTable-header").find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove());
 			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});

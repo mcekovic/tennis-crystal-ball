@@ -53,15 +53,16 @@
 					}
 				}
 			});
-			var $rankingsTableHeader = $("#rankingsTable-header");
-			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove()).before($("#seasonDiv").remove()).before($("#dateDiv").remove());
+			$("#rankingsTable-header").find("div.search").before($("#rankTypeDiv").remove()).before($("#seasonDiv").remove()).before($("#dateDiv").remove());
 			rankTypeChanged();
 			$("[data-toggle='tooltip']").tooltip();
+			bindPopovers();
 		});
 		function rankTypeChanged() {
 			var rankType = $("#rankType").val();
 			$("#rankingsTable").find("th[data-column-id='points'] > a > span.text").html(rankType == "POINTS" ? "Points" : "Elo Rating");
 			$("#season").find("option[value='']").html(rankType == "POINTS" ? "Current" : "All-time");
+			$("#eloInfo").css("display", rankType == "ELO_RATING" ? "inline" : "none");
 			seasonChanged();
 		}
 		function seasonChanged() {
@@ -116,6 +117,10 @@
 			</tr>
 		</thead>
 	</table>
+	<div id="eloInfo" style="display: none">
+		<a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> considers who you play too! We use sophisticated tennis-customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-popover="#eloRatingPopover">Elo rating formula</a>!
+	</div>
 	<div th:include="fragments/footer :: copy"></div>
+	<div th:include="fragments/aboutElo :: aboutElo"></div>
 </body>
 </html>
