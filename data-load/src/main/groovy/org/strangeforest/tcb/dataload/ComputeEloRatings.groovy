@@ -7,12 +7,10 @@ def sqlPool = new SqlPool()
 def eloRatings = new EloRatings(sqlPool)
 eloRatings.compute(true)
 
-
 sqlPool.withSql { sql ->
 	showCurrent(eloRatings, sql)
 	showAllTime(eloRatings, sql)
 }
-
 
 
 def showCurrent(EloRatings eloRatings, Sql sql) {

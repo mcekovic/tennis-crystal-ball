@@ -66,7 +66,7 @@ public class TournamentController extends BaseController {
 		List<PlayerRecordRow> recordTitles = tournamentService.getTournamentRecord(tournamentId, "W", MAX_RECORD_PLAYERS);
 		List<PlayerRecordRow> recordFinals = tournamentService.getTournamentRecord(tournamentId, "F", MAX_RECORD_PLAYERS);
 		List<PlayerRecordRow> recordSemiFinals = tournamentService.getTournamentRecord(tournamentId, "SF", MAX_RECORD_PLAYERS);
-		List<PlayerRecordRow> recordAppearances = tournamentService.getTournamentRecord(tournamentId, "R128", MAX_RECORD_PLAYERS);
+		List<PlayerRecordRow> recordAppearances = tournamentService.getTournamentRecord(tournamentId, "RR", MAX_RECORD_PLAYERS);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("recordTitles", recordTitles);

@@ -44,12 +44,13 @@ class EloRatings {
 	}
 
 	def compute(save = false, saveFromDate = null) {
+		println 'Processing matches'
+		def t0 = System.currentTimeMillis()
 		playerRatings = [:]
 		matches = 0
 		lastDate = null
 		saves = new AtomicInteger()
 		progress = new AtomicInteger()
-		println 'Processing matches'
 		if (save) {
 			saveExecutor = Executors.newFixedThreadPool(sqlPool.size())
 			this.saveFromDate = saveFromDate
@@ -64,7 +65,8 @@ class EloRatings {
 				saveExecutor?.awaitTermination(1L, TimeUnit.DAYS)
 			}
 		}
-		println()
+		def seconds = (System.currentTimeMillis() - t0) / 1000.0
+		println "\nElo Ratings computed in $seconds s"
 		playerRatings
 	}
 
@@ -160,7 +162,7 @@ class EloRatings {
 			if (this.date) {
 				def daysSinceLastMatch = ChronoUnit.DAYS.between(toLocalDate(this.date), toLocalDate(date))
 				if (daysSinceLastMatch > 365)
-					return max(START_RATING, rating - (daysSinceLastMatch - 365))
+					return max(START_RATING, rating - (daysSinceLastMatch - 365) * 200 / 365)
 			}
 			rating
 		}
@@ -174,16 +176,16 @@ class EloRatings {
 
 		/**
 		 * K-Function returns values from 1/2 to 1.
-		 * For rating 0-2000 returns 1
-		 * For rating 2001-2200 returns linearly decreased values from 1 to 1/2. For example, for 2100 return 3/4
-		 * For rating 2200+ returns 1/2
+		 * For rating 0-1800 returns 1
+		 * For rating 1800-2000 returns linearly decreased values from 1 to 1/2. For example, for 1900 return 3/4
+		 * For rating 2000+ returns 1/2
 		 * @return values from 1/2 to 1, depending on current rating
 		 */
 		private def double kFunction() {
 			if (rating <= 1800)
 				1.0
-			else if (rating <= 2200)
-				1.0 - (rating - 1800) / 800.0
+			else if (rating <= 2000)
+				1.0 - (rating - 1800) / 400.0
 			else
 				0.5
 		}

@@ -16,17 +16,7 @@
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function(){
-			$("[data-toggle=popover]").popover({
-				html : true,
-				content: function() {
-					var content = $(this).attr("data-popover");
-					return $(content).children(".popover-content").html();
-				},
-				title: function() {
-					var title = $(this).attr("data-popover");
-					return $(title).children(".popover-title").html();
-				}
-			}).on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "900px"); });
+			bindPopovers();
 		});
 		/*]]>*/
 	</script>
@@ -88,36 +78,6 @@
 	<div th:include="fragments/goatLegend :: legend(false)"></div>
 	<br/>
 	<div th:include="fragments/footer :: copy"></div>
-	<div class="hidden" id="eloRatingPopover">
-		<div class="popover-title">Elo Rating Formula</div>
-		<div class="popover-content">
-			Elo rating is calculated in the <a href="https://en.wikipedia.org/wiki/Elo_rating_system#Theory" target="_blank">standard way</a>:
-			<ul>
-				<li>400 points difference means 90% chance for winning</li>
-				<li>Start rating is 1500 points</li>
-				<li>Minimum matches is 10</li>
-			</ul>
-			However, highly customized <strong>K-factor</strong> function reflecting tournament level, match round and player current rating is used:
-			<ul>
-				<li>K factor base value is 100</li>
-				<li>Tournament level adjustment is: Grand Slam 100%, Tour Finals 90%, Masters 80%, ATP 500 70% and all others 60%</li>
-				<li>Match round adjustment is: Final 100%, Semi-Final 95%, Quarter-Final 90%, Round of 16 85%, Round of 32 80%, Round of 64 75%, Round of 128 70%, Round-Robin 90% and For Bronze Medal 97.5%</li>
-				<li>Number of sets adjustment: Best-of-5 100% and Best-of-3 90%</li>
-				<li>Walk-over adjustment: 50%</li>
-				<li>Current rating adjustment (this allows lower ranked players to advance more rapidly, while stabilizes ratings at the top):
-					<ul>
-						<li>For rating of 1800 and below: 100%</li>
-						<li>For rating of 2000: 75%</li>
-						<li>For rating of 2200 and above: 50%</li>
-					</ul>
-				</li>
-			</ul>
-			Examples:
-			<ul>
-				<li>Grand Slam final, rating 2450 d. 2350 (0.36): 100 -> 0.36 * [+100 * 50%, -100 * 50%] = [+18, +18] (+18 for winner, -18 for loser)</li>
-				<li>Masters semi-final ratings 2000 d. 2350 (0.81): 100 * 80% * 95% * 90% = 68.4 -> 0.88 * [+68.4 * 75%, -68.4 * 50%] = [+45.1, - 30.1]</li>
-				<li>ATP 250 round of 32, rating 2250 d. 1800 (0.07): 100 * 60% * 80% * 90% = 43.2 -> 0.07 * [+43.2 * 50%, -43.2] = [+1.5, -3.0]</li>
-			</ul>
-		</div>
-	</div></body>
+	<div th:include="fragments/aboutElo :: aboutElo"></div>
+</body>
 </html>

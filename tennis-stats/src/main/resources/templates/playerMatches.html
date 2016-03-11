@@ -173,7 +173,7 @@
 			</tr>
 		</thead>
 	</table>
-	<div id="matchesTournamentDiv" class="col-sm-2" style="padding-left: 0px">
+	<div id="matchesTournamentDiv" class="col-sm-2" style="padding-left: 0">
 		<select id="matchesTournament" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
 			<option value="">All tournaments</option>
 			<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
