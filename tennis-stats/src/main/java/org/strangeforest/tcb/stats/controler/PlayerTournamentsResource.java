@@ -18,6 +18,7 @@ public class PlayerTournamentsResource {
 
 	private static Map<String, String> ORDER_MAP = new TreeMap<>();
 	static {
+		ORDER_MAP.put("season", "season");
 		ORDER_MAP.put("date", "date");
 		ORDER_MAP.put("name", "name");
 		ORDER_MAP.put("surface", "surface");
