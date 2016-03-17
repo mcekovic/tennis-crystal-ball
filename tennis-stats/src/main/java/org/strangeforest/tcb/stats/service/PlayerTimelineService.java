@@ -77,7 +77,7 @@ public class PlayerTimelineService {
 		return timeline;
 	}
 
-	public Map<Integer, Integer> getPlayerSeasonValues(String query, String column, int playerId) {
+	private Map<Integer, Integer> getPlayerSeasonValues(String query, String column, int playerId) {
 		Map<Integer, Integer> seasonValues = new HashMap<>();
 		jdbcTemplate.query(
 			query,

@@ -62,18 +62,12 @@ public class GeoIPFilter implements Filter {
 	}
 
 	@Override public void destroy() {
-		if (reader != null) {
-			try {
-				try {
-					reader.close();
-				}
-				finally {
-					db.close();
-				}
-			}
-			catch (IOException ex) {
-				LOGGER.error("Error closing GeoIP database.", ex);
-			}
+		try (InputStream ignored = db) {
+			if (reader != null)
+				reader.close();
+		}
+		catch (IOException ex) {
+			LOGGER.error("Error closing GeoIP database.", ex);
 		}
 	}
 }

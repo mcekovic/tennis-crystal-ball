@@ -128,7 +128,7 @@ public class MatchesService {
 		);
 	}
 
-	static MatchPlayerEx mapMatchPlayerEx(ResultSet rs, String prefix) throws SQLException {
+	private static MatchPlayerEx mapMatchPlayerEx(ResultSet rs, String prefix) throws SQLException {
 		return new MatchPlayerEx(
 			rs.getInt(prefix + "id"),
 			rs.getString(prefix + "name"),

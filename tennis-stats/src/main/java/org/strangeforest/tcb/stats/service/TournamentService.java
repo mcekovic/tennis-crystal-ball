@@ -235,7 +235,7 @@ public class TournamentService {
 		return table;
 	}
 
-	public Object[] playerTournamentEventResultsParams(int playerId, TournamentEventResultFilter filter, int offset) {
+	private Object[] playerTournamentEventResultsParams(int playerId, TournamentEventResultFilter filter, int offset) {
 		List<Object> params = new ArrayList<>();
 		params.add(playerId);
 		params.addAll(filter.getParamList());

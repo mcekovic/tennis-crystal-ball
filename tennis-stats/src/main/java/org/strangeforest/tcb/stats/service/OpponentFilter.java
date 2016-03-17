@@ -41,7 +41,7 @@ public class OpponentFilter {
 		return Integer.parseInt(opponent.substring(OPPONENT_PREFIX.length()));
 	}
 
-	public static final String OPPONENT_PREFIX = "OPP_";
+	private static final String OPPONENT_PREFIX = "OPP_";
 
 
 	// Instance

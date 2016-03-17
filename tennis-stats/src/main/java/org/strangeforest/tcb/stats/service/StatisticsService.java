@@ -32,7 +32,7 @@ public class StatisticsService {
 		"INNER JOIN player_v pl ON m.loser_id = pl.player_id\n" +
 		"WHERE match_id = ? AND set = 0";
 
-	public static final String PLAYER_STATS_COLUMNS =
+	private static final String PLAYER_STATS_COLUMNS =
 		"p_matches, o_matches, p_sets, o_sets, p_games, o_games,\n" +
 		"p_ace, p_df, p_sv_pt, p_1st_in, p_1st_won, p_2nd_won, p_sv_gms, p_bp_sv, p_bp_fc,\n" +
 		"o_ace, o_df, o_sv_pt, o_1st_in, o_1st_won, o_2nd_won, o_sv_gms, o_bp_sv, o_bp_fc\n";

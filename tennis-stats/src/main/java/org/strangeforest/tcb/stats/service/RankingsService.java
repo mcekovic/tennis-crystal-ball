@@ -274,7 +274,7 @@ public class RankingsService {
 		return table;
 	}
 
-	public static void addColumns(DataTable table, Players players, RankType rankType, boolean bySeason, boolean byAge) {
+	private static void addColumns(DataTable table, Players players, RankType rankType, boolean bySeason, boolean byAge) {
 		if (byAge)
 			table.addColumn("number", "Age");
 		else if (bySeason)

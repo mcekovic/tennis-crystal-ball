@@ -30,7 +30,7 @@ public class WonFilter {
 	private static final String MATCHES_WON_CRITERION = " AND m.%1$s = ?";
 	private static final String STATS_WON_CRITERION   = " AND %1$s = 1";
 
-	public WonFilter(Boolean won, Integer playerId) {
+	private WonFilter(Boolean won, Integer playerId) {
 		this.won = won;
 		this.playerId = playerId;
 	}

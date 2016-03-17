@@ -49,7 +49,7 @@ public class RivalryFilter {
 		return criteria.toString();
 	}
 
-	protected void appendCriteria(StringBuilder criteria) {
+	private void appendCriteria(StringBuilder criteria) {
 		if (seasonRange.hasLowerBound())
 			criteria.append(SEASON_FROM_CRITERION);
 		if (seasonRange.hasUpperBound())
