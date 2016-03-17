@@ -51,7 +51,7 @@ public class GeoIPFilter implements Filter {
 						counterService.increment("counter.country." + countryName);
 				}
 			}
-			catch (AddressNotFoundException ex) {
+			catch (AddressNotFoundException | UnknownHostException ex) {
 				LOGGER.debug("Error geo-locating country.", ex);
 			}
 			catch (Exception ex) {
