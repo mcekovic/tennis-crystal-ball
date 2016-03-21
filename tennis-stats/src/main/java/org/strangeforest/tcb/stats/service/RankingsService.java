@@ -3,8 +3,6 @@ package org.strangeforest.tcb.stats.service;
 import java.sql.Date;
 import java.time.*;
 import java.util.*;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.*;
 
 import org.postgresql.util.*;
@@ -15,11 +13,9 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.util.*;
 
-import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
-import static java.lang.String.valueOf;
 import static org.strangeforest.tcb.stats.model.RankType.*;
 import static org.strangeforest.tcb.stats.util.EnumUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
@@ -214,30 +210,30 @@ public class RankingsService {
 	}
 
 	public DataTable getRankingDataTable(int playerId, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
-		Players players = new Players(playerId);
-		DataTable table = fetchRankingsDataTable(players, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
-		addColumns(table, players, rankType, bySeason, byAge);
+		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerId);
+		DataTable table = fetchRankingsDataTable(indexedPlayers, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
+		addColumns(table, indexedPlayers, rankType, bySeason, byAge);
 		return table;
 	}
 
-	public DataTable getRankingsDataTable(List<String> inputPlayers, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
-		Players players = new Players(inputPlayers);
-		DataTable table = fetchRankingsDataTable(players, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
+	public DataTable getRankingsDataTable(List<String> players, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
+		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(players);
+		DataTable table = fetchRankingsDataTable(indexedPlayers, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		if (!table.getRows().isEmpty())
-			addColumns(table, players, rankType, bySeason, byAge);
+			addColumns(table, indexedPlayers, rankType, bySeason, byAge);
 		else {
 			table.addColumn("string", "Player");
-			table.addColumn("number", format("%1$s %2$s not found", inputPlayers.size() > 1 ? "Players" : "Player", join(", ", inputPlayers)));
+			table.addColumn("number", format("%1$s %2$s not found", players.size() > 1 ? "IndexedPlayers" : "Player", join(", ", players)));
 		}
 		return table;
 	}
 
-	private DataTable fetchRankingsDataTable(Players players, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
+	private DataTable fetchRankingsDataTable(IndexedPlayers players, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
 		DataTable table = new DataTable();
 		RowCursor rowCursor = bySeason ? new IntegerRowCursor(table, players) : (byAge ? new DoubleRowCursor(table, players) : new DateRowCursor(table, players));
 		boolean compensate = compensatePoints && rankType == POINTS;
 		jdbcTemplate.query(
-			getSQL(players.getCount(), rankType, bySeason, dateRange, seasonRange, byAge),
+			getDataTableSQL(players.getCount(), rankType, bySeason, dateRange, seasonRange, byAge),
 			ps -> {
 				int index = 1;
 				if (players.getCount() == 1)
@@ -274,7 +270,7 @@ public class RankingsService {
 		return table;
 	}
 
-	private static void addColumns(DataTable table, Players players, RankType rankType, boolean bySeason, boolean byAge) {
+	private static void addColumns(DataTable table, IndexedPlayers players, RankType rankType, boolean bySeason, boolean byAge) {
 		if (byAge)
 			table.addColumn("number", "Age");
 		else if (bySeason)
@@ -285,7 +281,7 @@ public class RankingsService {
 			table.addColumn("number", player + " " + getRankName(rankType));
 	}
 
-	private String getSQL(int playerCount, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge) {
+	private String getDataTableSQL(int playerCount, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge) {
 		String playerJoin = byAge ? PLAYER_JOIN : "";
 		String playerCondition = playerCount == 1 ? "?" : "ANY(?)";
 		String orderBy = byAge ? "age" : (bySeason ? "season" : "date");
@@ -391,7 +387,7 @@ public class RankingsService {
 		return season < START_SEASON_OF_NEW_RANKING_SYSTEM ? (int)(rank * RANKING_POINTS_COMPENSATION_FACTOR) : rank;
 	}
 
-	private void addMissingRankings(DataTable table, Players players) {
+	private void addMissingRankings(DataTable table, IndexedPlayers players) {
 		for (int player = 1; player <= players.getCount(); player++) {
 			List<TableRow> rows = table.getRows();
 			String prevRank = null;
@@ -427,112 +423,6 @@ public class RankingsService {
 
 	private static Double toDouble(PGInterval interval) {
 		return interval.getYears() + MONTH_FACTOR * interval.getMonths() + DAY_FACTOR * interval.getDays();
-	}
-
-	private class Players {
-
-		private final Map<Integer, Integer> playerIndexMap = new LinkedHashMap<>();
-		private final List<String> players = new ArrayList<>();
-
-		private Players(int playerId) {
-			playerIndexMap.put(playerId, 0);
-			players.add(playerService.getPlayerName(playerId));
-		}
-
-		private Players(List<String> players) {
-			int index = 0;
-			for (String player : players) {
-				if (Strings.isNullOrEmpty(player))
-					continue;
-				Optional<Integer> playerId = playerService.findPlayerId(player);
-				if (playerId.isPresent()) {
-					playerIndexMap.put(playerId.get(), index++);
-					this.players.add(player);
-				}
-			}
-		}
-
-		private Collection<Integer> getPlayerIds() {
-			return playerIndexMap.keySet();
-		}
-
-		private List<String> getPlayers() {
-			return players;
-		}
-
-		private int getCount() {
-			return players.size();
-		}
-
-		private int getIndex(int playerId) {
-			return playerIndexMap.get(playerId);
-		}
-	}
-
-	private static abstract class RowCursor<T> {
-
-		private final DataTable table;
-		private final Players players;
-		private T value;
-		private String[] ranks;
-
-		private RowCursor(DataTable table, Players players) {
-			this.table = table;
-			this.players = players;
-		}
-
-		private void next(T value, int playerId, int rank) {
-			if (!Objects.equals(value, this.value)) {
-				addRow();
-				this.value = value;
-				ranks = new String[players.getCount()];
-			}
-			ranks[players.getIndex(playerId)] = valueOf(rank);
-		}
-
-		private void addRow() {
-			if (value != null) {
-				TableRow row = table.addRow(formatValue(value));
-				for (String rank : ranks)
-					row.addCell(rank);
-				value = null;
-			}
-		}
-
-		protected abstract String formatValue(T value);
-	}
-
-	private static class DateRowCursor extends RowCursor<LocalDate> {
-
-		private DateRowCursor(DataTable table, Players players) {
-			super(table, players);
-		}
-
-		@Override protected String formatValue(LocalDate date) {
-			return format("Date(%1$d, %2$d, %3$d)", date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
-		}
-	}
-
-	private static class IntegerRowCursor extends RowCursor<Integer> {
-
-		private IntegerRowCursor(DataTable table, Players players) {
-			super(table, players);
-		}
-
-		@Override protected String formatValue(Integer i) {
-			return valueOf(i);
-		}
-	}
-
-	private static class DoubleRowCursor extends RowCursor<Double> {
-
-		private DoubleRowCursor(DataTable table, Players players) {
-			super(table, players);
-		}
-
-		@Override protected String formatValue(Double d) {
-			return format("%1$.3f", d);
-		}
 	}
 
 

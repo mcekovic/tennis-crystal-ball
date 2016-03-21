@@ -46,7 +46,13 @@
 						</ul>
 					</li>
 					<li th:class="${servletPath == '/topPerformers' ? 'active' : ''}"><a href="/topPerformers">Top Performers</a></li>
-					<li th:class="${servletPath == '/statsLeaders' ? 'active' : ''}"><a href="/statsLeaders">Statistics Leaders</a></li>
+					<li th:class="${servletPath == '/statsLeaders' || servletPath == '/statsChart' ? 'active dropdown' : 'dropdown'}">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Statistics<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="/statsLeaders">Statistics Leaders</a></li>
+							<li><a href="/statsChart">Statistics Chart</a></li>
+						</ul>
+					</li>
 					<li th:class="${servletPath != null and servletPath.startsWith('/tournament') ? 'active' : ''}"><a href="/tournamentEvents">Tournaments</a></li>
 				</ul>
 			</div>

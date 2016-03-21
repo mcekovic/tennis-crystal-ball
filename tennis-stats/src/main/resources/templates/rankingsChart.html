@@ -12,7 +12,7 @@
 	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
 	<script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
 	<script th:src="@{/js/tennis-stats.js}"></script>
-	<script th:src="@{/js/ranking-chart.js}"></script>
+	<script th:src="@{/js/tennis-chart.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript">
 		/*<![CDATA[*/
@@ -62,7 +62,7 @@
 				pointCount = json.rows.length;
 				legendPosition = json.cols.length < 5 ? "bottom" : "right";
 				var width = $("#rankChartSize").slider("value");
-				showChart(chartData, "rankChart", width, isRank, bySeason, logScale, pointCount, legendPosition);
+				showRankingChart(chartData, "rankChart", width, bySeason, pointCount, isRank, logScale, legendPosition);
 			}).always(function() {
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			});
@@ -87,7 +87,7 @@
 				value: 1000,
 				step: 100,
 				slide: function(event, ui) {
-					showChart(chartData, "rankChart", ui.value, isRank, bySeason, logScale, pointCount, legendPosition);
+					showRankingChart(chartData, "rankChart", ui.value, bySeason, pointCount, isRank, logScale, legendPosition);
 				}
 			});
 			onTimeSpanChange();

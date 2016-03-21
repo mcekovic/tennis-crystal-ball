@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.table.*;
 
 import static com.google.common.base.Strings.*;
 import static java.util.stream.Collectors.*;
@@ -73,6 +74,14 @@ public class PlayerService {
 
 	public List<Integer> getPlayerSeasons(int playerId) {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class, playerId);
+	}
+
+	public IndexedPlayers getIndexedPlayers(int playerId) {
+		return new IndexedPlayers(playerId, this);
+	}
+
+	public IndexedPlayers getIndexedPlayers(List<String> inputPlayers) {
+		return new IndexedPlayers(inputPlayers, this);
 	}
 
 	private Player playerMapper(ResultSet rs, int rowNum) throws SQLException {
