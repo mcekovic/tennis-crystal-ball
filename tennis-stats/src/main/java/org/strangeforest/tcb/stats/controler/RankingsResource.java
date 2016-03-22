@@ -22,6 +22,7 @@ import static org.strangeforest.tcb.stats.model.RankType.*;
 public class RankingsResource {
 
 	@Autowired private RankingsService rankingsService;
+	@Autowired private RankingChartService rankingChartService;
 
 	private static final String CAREER = "CR";
 	private static final String CUSTOM = "CS";
@@ -73,10 +74,10 @@ public class RankingsResource {
 		Range<LocalDate> dateRange = !bySeason ? toDateRange(timeSpan, fromDate, toDate) : null;
 		Range<Integer> seasonRange = bySeason ? toSeasonRange(timeSpan, fromSeason, toSeason) : null;
 		if (playerId != null)
-			return rankingsService.getRankingDataTable(playerId, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
+			return rankingChartService.getRankingDataTable(playerId, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		else {
 			List<String> inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
-			return rankingsService.getRankingsDataTable(inputPlayers, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
+			return rankingChartService.getRankingsDataTable(inputPlayers, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		}
 	}
 

@@ -20,6 +20,7 @@ public class StatsLeadersController extends BaseController {
 		List<Integer> seasons = statisticsService.getSeasons();
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("surfaces", Surface.values());
 		return new ModelAndView("statsLeaders", modelMap);

@@ -210,7 +210,7 @@ DELETE FROM performance_category;
 INSERT INTO performance_category
 (category_id, name, min_entries, sort_order)
 VALUES
-('matches', 'Matches', 200, 1),
+('matches', 'Overall Matches', 200, 1),
 ('grandSlamMatches', 'Grand Slam Matches', 50, 2),
 ('mastersMatches', 'Masters Matches', 50, 3),
 ('hardMatches', 'Hard Matches', 100, 4),
@@ -279,18 +279,18 @@ VALUES
 -- Serve
 ('acePct', 'Ace %', 10000, 1),
 ('doubleFaultPct', 'Double Fault %', 10000, 2),
-('firstServePct', 'First Serve %', 10000, 3),
-('firstServeWonPct', 'First Serve Won %', 10000, 4),
-('secondServeWonPct', 'Second Serve Won %', 10000, 5),
-('breakPointsSavedPct', 'Break Points Saved %', 10000, 6),
-('servicePointsWonPct', 'Service Points Won %', 10000, 7),
-('serviceGamesWonPct', 'Service Games Won %', 10000, 8),
+('firstServePct', 'First Serve', 10000, 3),
+('firstServeWonPct', 'First Serve Won', 10000, 4),
+('secondServeWonPct', 'Second Serve Won', 10000, 5),
+('breakPointsSavedPct', 'Break Points Saved', 10000, 6),
+('servicePointsWonPct', 'Service Points Won', 10000, 7),
+('serviceGamesWonPct', 'Service Games Won', 10000, 8),
 -- Return
-('firstServeReturnWonPct', 'First Serve Return Won %', 10000, 9),
-('secondServeReturnWonPct', 'Second Serve Return Won %', 10000, 10),
-('breakPointsPct', 'Break Points %', 10000, 11),
-('returnPointsWonPct', 'Return Points Won %', 10000, 12),
-('returnGamesWonPct', 'Return Games Won %', 10000, 13),
+('firstServeReturnWonPct', 'First Serve Return Won', 10000, 9),
+('secondServeReturnWonPct', 'Second Serve Return Won', 10000, 10),
+('breakPointsPct', 'Break Points Won', 10000, 11),
+('returnPointsWonPct', 'Return Points Won', 10000, 12),
+('returnGamesWonPct', 'Return Games Won', 10000, 13),
 -- Total
 ('pointsDominanceRatio', 'Points Dominance Ratio', 10000, 14),
 ('gamesDominanceRatio', 'Games Dominance Ratio', 10000, 15),

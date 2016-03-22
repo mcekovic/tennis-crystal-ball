@@ -107,7 +107,7 @@
 						<th th:text="${#numbers.formatDecimal(stats.secondServeReturnPointsWonPct, 1, 1) + '%'}">22%</th>
 					</tr>
 					<tr class="pct-data">
-						<td>Break Points</td>
+						<td>Break Points Won</td>
 						<th th:text="${stats.breakPointsWonPct != null ? #numbers.formatDecimal(stats.breakPointsWonPct, 1, 1) + '%' : ''}">35%</th>
 					</tr>
 					<tr class="pct-data">
@@ -137,7 +137,7 @@
 						<th th:text="${stats.secondServeReturnPointsWon + ' / ' + stats.secondServeReturnPoints}">25 / 50</th>
 					</tr>
 					<tr class="raw-data">
-						<td>Break Points</td>
+						<td>Break Points Won</td>
 						<th th:text="${stats.breakPointsWon + ' / ' + stats.breakPoints}">0 / 0</th>
 					</tr>
 					<tr class="raw-data">

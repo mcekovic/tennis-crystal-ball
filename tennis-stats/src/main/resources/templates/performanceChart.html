@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"-->
-<!--@thymesVar id="categoryTypes" type="java.util.Map<java.lang.String, java.lang.String>"-->
-<!--@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"-->
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Ultimate Tennis Statistics - Statistics Chart</title>
+	<title>Ultimate Tennis Statistics - Performance Chart</title>
 	<link th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
 	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
@@ -20,44 +18,42 @@
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		google.load("visualization", "1.0", {packages:["corechart"]});
-		var chartData, pointCount, isPct, legendPosition;
-		var categoryTypes = [[${categoryTypes}]];
+		var chartData, pointCount, legendPosition;
 		function drawChart() {
 			var players = $.trim($("#players").val());
 			if (getPlayerCount(players) >= 1)
 				doDrawChart();
 			else
-				$("#statsChart").html("<div class='row'><div class='col-md-9'><div class='alert alert-warning'>No player selected!</div></div></div>");
+				$("#perfChart").html("<div class='row'><div class='col-md-9'><div class='alert alert-warning'>No player selected!</div></div></div>");
 		}
 		function doDrawChart() {
 			var players = $("#players").val();
 			var category = $("#category").val();
-			var dataUrl = "/playerStatisticsTable?players=" + players + "&category=" + category + "&surface=" + $("#surface").val();
+			var dataUrl = "/playerPerformanceTable?players=" + players + "&category=" + category;
 			dataUrl += "&fromSeason=" + $("#fromSeason").val() + "&toSeason=" + $("#toSeason").val();
 			dataUrl += "&byAge=" + $("#byAge").prop("checked");
-			$("#statsChart").html("");
+			$("#perfChart").html("");
 			var $loading = $("#loading");
 			$loading.show();
 			$.ajax(dataUrl).done(function(json) {
 				chartData = new google.visualization.DataTable(JSON.stringify(json));
 				pointCount = json.rows.length;
-				isPct = categoryTypes[category] == "PERCENTAGE";
 				legendPosition = json.cols.length < 4 ? "bottom" : "right";
-				var width = $("#statsChartSize").slider("value");
-				showStatsChart(chartData, "statsChart", width, pointCount, isPct, legendPosition);
+				var width = $("#perfChartSize").slider("value");
+				showPerformanceChart(chartData, "perfChart", width, pointCount, legendPosition);
 			}).always(function() {
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			});
 		}
 		$(function() {
 			autocompletePlayers("players", drawChart);
-			$("#statsChartSize").slider({
+			$("#perfChartSize").slider({
 				min: 500,
 				max: 1500,
 				value: 1000,
 				step: 100,
 				slide: function(event, ui) {
-					showStatsChart(chartData, "statsChart", ui.value, pointCount, isPct, legendPosition);
+					showPerformanceChart(chartData, "perfChart", ui.value, pointCount, legendPosition);
 				}
 			});
 			onSeasonRangeChange();
@@ -77,7 +73,7 @@
 </head>
 <body class="container">
 	<div th:include="fragments/header :: title"></div>
-	<h3>Statistics Chart</h3>
+	<h3>Performance Chart</h3>
 	<div class="row">
 		<div class="col-md-9">
 			<div class="input-group">
@@ -88,22 +84,13 @@
 	</div>
 	<div style="height: 5px"></div>
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-4">
 			<div class="input-group">
 				<label for="category" class="input-group-addon">Category:</label>
 				<select id="category" class="form-control">
-					<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
-						<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+					<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
+						<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="matches" th:class="${category.cssClass}" th:text="${category.title}">Overall</option>
 					</optgroup>
-				</select>
-			</div>
-		</div>
-		<div class="col-md-3">
-			<div class="input-group">
-				<label for="surface" class="input-group-addon">Surface:</label>
-				<select id="surface" class="form-control">
-					<option value="">All surfaces</option>
-					<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 				</select>
 			</div>
 		</div>
@@ -132,7 +119,7 @@
 			</div>
 		</div>
 		<div class="col-md-2">
-			<div id="statsChartSize" style="margin-top: 6px"></div>
+			<div id="perfChartSize" style="margin-top: 6px"></div>
 			<div style="text-align: center; opacity: 0.5">Chart size</div>
 		</div>
 		<div class="col-md-2">
@@ -150,7 +137,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="statsChart"></div>
+	<div id="perfChart"></div>
 	<div th:include="fragments/footer :: copy"></div>
 </body>
 </html>

@@ -52,18 +52,20 @@ public class TopPerformersService {
 	}
 
 	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
+		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
-			format(TOP_PERFORMERS_COUNT_QUERY, perfTableName(filter), categoryColumn(category), filter.getCriteria()),
-			filter.getParamsWithPrefix(getMinEntriesValue(category, filter)),
+			format(TOP_PERFORMERS_COUNT_QUERY, perfTableName(filter), perfCategory.getColumn(), filter.getCriteria()),
+			filter.getParamsWithPrefix(getMinEntriesValue(perfCategory, filter)),
 			Integer.class
 		));
 	}
 
 	public BootgridTable<TopPerformerRow> getTopPerformersTable(String category, int playerCount, StatsPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		BootgridTable<TopPerformerRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(TOP_PERFORMERS_QUERY, categoryColumn(category), perfTableName(filter), filter.getCriteria(), orderBy),
+			format(TOP_PERFORMERS_QUERY, perfCategory.getColumn(), perfTableName(filter), filter.getCriteria(), orderBy),
 			rs -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
@@ -72,13 +74,14 @@ public class TopPerformersService {
 				WonLost wonLost = mapWonLost(rs);
 				table.addRow(new TopPerformerRow(rank, playerId, name, countryId, wonLost));
 			},
-			filter.getParamsWithPrefix(getMinEntriesValue(category, filter), playerCount, offset, pageSize)
+			filter.getParamsWithPrefix(getMinEntriesValue(perfCategory, filter), playerCount, offset, pageSize)
 		);
 		return table;
 	}
 
 	public String getTopPerformersMinEntries(String category, StatsPlayerListFilter filter) {
-		return getMinEntriesValue(category, filter) + " " + CATEGORIES.get(category).getEntriesName();
+		PerformanceCategory perfCategory = PerformanceCategory.get(category);
+		return getMinEntriesValue(perfCategory, filter) + " " + perfCategory.getEntriesName();
 	}
 
 	private static String perfTableName(StatsPlayerListFilter filter) {
@@ -89,39 +92,8 @@ public class TopPerformersService {
 		return new WonLost(rs.getInt("won"), rs.getInt("lost"));
 	}
 
-	private String categoryColumn(String category) {
-		return CATEGORIES.get(category).getColumn();
-	}
-
-	private int getMinEntriesValue(String category, StatsPlayerListFilter filter) {
-		int minEntries = CATEGORIES.get(category).getMinEntries();
+	private int getMinEntriesValue(PerformanceCategory category, StatsPlayerListFilter filter) {
+		int minEntries = category.getMinEntries();
 		return filter.hasSeason() ? minEntries / MIN_ENTRIES_SEASON_FACTOR : minEntries;
-	}
-
-
-	// Categories
-
-	private static final Map<String, PerformanceCategory> CATEGORIES = new HashMap<>();
-	static {
-		// Performance
-		addCategory(new PerformanceCategory("matches", "matches", 200, "matches"));
-		addCategory(new PerformanceCategory("grandSlamMatches", "grand_slam_matches", 50, "Grand Slam matches"));
-		addCategory(new PerformanceCategory("mastersMatches", "masters_matches", 50, "Masters matches"));
-		addCategory(new PerformanceCategory("hardMatches", "hard_matches", 100, "hard court matches"));
-		addCategory(new PerformanceCategory("clayMatches", "clay_matches", 100, "clay court matches"));
-		addCategory(new PerformanceCategory("grassMatches", "grass_matches", 50, "grass court matches"));
-		addCategory(new PerformanceCategory("carpetMatches", "carpet_matches", 50, "carpet court matches"));
-		// Pressure situations
-		addCategory(new PerformanceCategory("decidingSets", "deciding_sets", 100, "matches"));
-		addCategory(new PerformanceCategory("fifthSets", "fifth_sets", 20, "matches"));
-		addCategory(new PerformanceCategory("finals", "finals", 20, "finals"));
-		addCategory(new PerformanceCategory("vsTop10", "vs_top10", 20, "matches"));
-		addCategory(new PerformanceCategory("afterWinningFirstSet", "after_winning_first_set", 100, "matches"));
-		addCategory(new PerformanceCategory("afterLosingFirstSet", "after_losing_first_set", 100, "matches"));
-		addCategory(new PerformanceCategory("tieBreaks", "tie_breaks", 100, "tie breaks"));
-	}
-
-	private static void addCategory(PerformanceCategory category) {
-		CATEGORIES.put(category.getName(), category);
 	}
 }

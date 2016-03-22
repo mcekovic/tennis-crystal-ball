@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"-->
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
 <!--@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"-->
 <head>
@@ -75,35 +76,8 @@
 	<h3 class="grid-title">Statistics Leaders</h3>
 	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">
 		<select id="category" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
-			<optgroup label="Serve">
-				<option value="aces" selected="selected">Aces</option>
-				<option value="acePct">Ace %</option>
-				<option value="doubleFaultPct">Double Fault %</option>
-				<option value="firstServePct">1st Serve</option>
-				<option value="firstServeWonPct">1st Serve Won</option>
-				<option value="secondServeWonPct">2nd Serve Won</option>
-				<option value="breakPointsSavedPct">Break Points Saved</option>
-				<option value="servicePointsWonPct">Service Pts. Won</option>
-				<option value="serviceGamesWonPct">Service Games Won</option>
-			</optgroup>
-			<optgroup label="Return">
-				<option value="aceAgainstPct">Ace Against %</option>
-				<option value="doubleFaultAgainstPct">Dbl. Flt. Against %</option>
-				<option value="firstServeReturnWonPct">1st Srv. Rtn. Won</option>
-				<option value="secondServeReturnWonPct">2nd Srv. Rtn. Won</option>
-				<option value="breakPointsPct">Break Points</option>
-				<option value="returnPointsWonPct">Return Pts. Won</option>
-				<option value="returnGamesWonPct">Return Games Won</option>
-			</optgroup>
-			<optgroup label="Total">
-				<option value="pointsDominanceRatio" th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</option>
-				<option value="gamesDominanceRatio" th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</option>
-				<option value="breakPointsRatio" th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</option>
-				<option value="overPerformingRatio" th:title="#{stats.overPerformingRatio.title}">Over-Performing</option>
-				<option value="totalPointsWonPct">Total Pts. Won</option>
-				<option value="totalGamesWonPct">Total Games Won</option>
-				<option value="setsWonPct">Sets Won</option>
-				<option value="matchesWonPct">Matches Won</option>
+			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
+				<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
 			</optgroup>
 		</select>
 	</div>

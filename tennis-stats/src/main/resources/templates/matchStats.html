@@ -113,7 +113,7 @@
 			</tr>
 			<tr class="pct-data">
 				<th th:text="${winnerStats.breakPointsWonPct != null ? #numbers.formatDecimal(winnerStats.breakPointsWonPct, 1, 1) + '%' : ''}">50%</th>
-				<td>Break Points</td>
+				<td>Break Points Won</td>
 				<th th:text="${loserStats.breakPointsWonPct != null ? #numbers.formatDecimal(loserStats.breakPointsWonPct, 1, 1) + '%' : ''}">35%</th>
 			</tr>
 			<tr class="pct-data">
@@ -134,7 +134,7 @@
 			</tr>
 			<tr class="raw-data">
 				<th th:text="${winnerStats.breakPointsWon + ' / ' + winnerStats.breakPoints}">3/5</th>
-				<td>Break Points</td>
+				<td>Break Points Won</td>
 				<th th:text="${loserStats.breakPointsWon + ' / ' + loserStats.breakPoints}">0/0</th>
 			</tr>
 			<tr class="raw-data">

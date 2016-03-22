@@ -27,6 +27,10 @@ public enum Surface implements CodedEnum {
 		return text;
 	}
 
+	public static Surface decode(String code) {
+		return CodedEnum.decode(Surface.class, code);
+	}
+
 	public static Map<String, String> asMap() {
 		return CodedEnum.asMap(Surface.class);
 	}

@@ -5,6 +5,32 @@
 <!--@thymesVar id="surface" type="java.lang.String"-->
 <script type="text/javascript" th:inline="javascript">
 	/*<![CDATA[*/
+	$(document.body).append("<script type='text/javascript' src='https://www.google.com/jsapi?callback=loadGoogleCharts'>&lt;/script>");
+	var chartData, pointCount, isPct, legendPosition;
+	var categoryTypes = [[${categoryTypes}]];
+	function loadGoogleCharts() {
+		google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
+			drawChart();
+		}});
+	}
+	function drawChart() {
+		var category = $("#statsCategory").val();
+		var dataUrl = "/playerStatisticsTable?playerId=[[${playerId}]]&category=" + category + "&surface=" + $("#statsChartSurface").val();
+		dataUrl += "&fromSeason=" + $("#statsFromSeason").val() + "&toSeason=" + $("#statsToSeason").val();
+		dataUrl += "&byAge=" + $("#statsByAge").prop("checked");
+		$("#statsChart").html("");
+		var $loading = $("#statsChartLoading");
+		$loading.show();
+		$.ajax(dataUrl).done(function(json) {
+			chartData = new google.visualization.DataTable(JSON.stringify(json));
+			pointCount = json.rows.length;
+			isPct = categoryTypes[category] == "PERCENTAGE";
+			var width = $("#statsChartSize").slider("value");
+			showStatsChart(chartData, "statsChart", width, pointCount, isPct, "none");
+		}).always(function() {
+			$loading.hide().css("position", "absolute").css("z-index", "100");
+		});
+	}
 	function reloadStats() {
 		var url = "/playerStatsTab?playerId=[[${playerId}]]";
 		var season = $("#statsSeason").val();
@@ -22,7 +48,7 @@
 	<div class="col-md-3">
 		<div class="input-group">
 			<label for="statsSeason" class="input-group-addon">Season:</label>
-			<select id="statsSeason" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Select season">
+			<select id="statsSeason" class="form-control" onchange="reloadStats()">
 				<option value="">All seasons</option>
 				<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
 			</select>
@@ -31,7 +57,7 @@
 	<div class="col-md-3">
 		<div class="input-group">
 			<label for="statsSurface" class="input-group-addon">Surface:</label>
-			<select id="statsSurface" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Select surface">
+			<select id="statsSurface" class="form-control" onchange="reloadStats()">
 				<option value="">All surfaces</option>
 				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
 			</select>

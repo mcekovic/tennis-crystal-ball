@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"-->
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
 <head>
 	<meta charset="utf-8"/>
@@ -68,23 +69,8 @@
 	<h3 class="grid-title">Top Performers</h3>
 	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">
 		<select id="category" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
-			<optgroup label="Performance">
-				<option value="matches" selected="selected">Overall</option>
-				<option value="grandSlamMatches">Grand Slam</option>
-				<option value="mastersMatches">Masters</option>
-				<option value="hardMatches" class="bg-surface-H">Hard</option>
-				<option value="clayMatches" class="bg-surface-C">Clay</option>
-				<option value="grassMatches" class="bg-surface-G">Grass</option>
-				<option value="carpetMatches" class="bg-surface-P">Carpet</option>
-			</optgroup>
-			<optgroup label="Pressure situations">
-				<option value="decidingSets">Deciding Set</option>
-				<option value="fifthSets">5th Set</option>
-				<option value="finals">Finals</option>
-				<option value="vsTop10">Vs Top 10</option>
-				<option value="afterWinningFirstSet">After Winning 1st Set</option>
-				<option value="afterLosingFirstSet">After Losing 1st Set</option>
-				<option value="tieBreaks">Tie breaks</option>
+			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
+				<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="matches" th:class="${category.cssClass}" th:text="${category.title}">Overall</option>
 			</optgroup>
 		</select>
 	</div>

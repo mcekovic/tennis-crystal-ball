@@ -21,7 +21,7 @@
 	<div class="col-md-3">
 		<div class="input-group">
 			<label for="perfSeason" class="input-group-addon">Season:</label>
-			<select id="perfSeason" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Select season">
+			<select id="perfSeason" class="form-control" onchange="reloadPerformance()">
 				<option value="">All seasons</option>
 				<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
 			</select>
