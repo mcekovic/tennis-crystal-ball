@@ -65,7 +65,7 @@
 	</script>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<header th:include="fragments/header :: title"></header>
 	<h3 class="grid-title">Top Performers</h3>
 	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">
 		<select id="category" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
@@ -93,6 +93,6 @@
 		</thead>
 	</table>
 	<p><i>* Minimum <span id="minEntries">100 matches</span></i></p>
-	<div th:include="fragments/footer :: copy"></div>
+	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

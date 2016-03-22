@@ -1,17 +1,20 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.sql.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.StatsCategory.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.util.EnumUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
@@ -66,8 +69,7 @@ public class StatisticsChartService {
 			rs -> {
 				Object x = byAge ? rs.getInt("age") : rs.getInt("season");
 				int playerId = rs.getInt("player_id");
-				double y = rs.getDouble("value");
-				y = adjustStatsValue(category, y);
+				Object y = getStatsValue(rs, category);
 				rowCursor.next(x, playerId, y);
 			}
 		);
@@ -75,11 +77,13 @@ public class StatisticsChartService {
 		return table;
 	}
 
-	private static double adjustStatsValue(StatsCategory category, double statsValue) {
-		switch (category.getType()) {
-			case PERCENTAGE: return round(statsValue, 10000.0);
-			case RATIO: return round(statsValue, 1000.0);
-			default: return statsValue;
+	private static Object getStatsValue(ResultSet rs, StatsCategory category) throws SQLException {
+		Type type = category.getType();
+		switch (type) {
+			case COUNT: return rs.getInt("value");
+			case PERCENTAGE: return round(rs.getDouble("value"), 10000.0);
+			case RATIO: return round(rs.getDouble("value"), 1000.0);
+			default: throw unknownEnum(type);
 		}
 	}
 

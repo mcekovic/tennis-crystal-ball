@@ -2,18 +2,17 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--@thymesVar id="highlights" type="org.strangeforest.tcb.stats.model.RankingHighlights"-->
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
-<script th:src="@{/js/tennis-stats.js}"></script>
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 	/*<![CDATA[*/
-	$(document.body).append("<script type='text/javascript' src='https://www.google.com/jsapi?callback=loadGoogleCharts'>&lt;/script>");
+	$(document.body).append("<script type='text/javascript' src='https://www.google.com/jsapi?callback=loadGoogleChartsForRanking'>&lt;/script>");
 	var chartData, bySeason, pointCount, isRank, logScale;
-	function loadGoogleCharts() {
+	function loadGoogleChartsForRanking() {
 		google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
-			drawChart();
+			drawRankingChart();
 		}});
 	}
-	function drawChart() {
+	function drawRankingChart() {
 		var rankType = $("#rankType").val();
 		var timeSpan = $("#rankingTimeSpan").val();
 		bySeason = $("#rankingBySeason").prop("checked");
@@ -164,7 +163,7 @@
 		<div style="text-align: center; opacity: 0.5">Chart size</div>
 	</div>
 	<div class="col-md-2">
-		<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawChart()">
+		<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawRankingChart()">
 			<span class="glyphicon glyphicon-signal"></span>&nbsp;&nbsp;Draw Chart
 		</a>
 	</div>

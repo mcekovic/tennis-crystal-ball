@@ -1,0 +1,111 @@
+<th:block  xmlns:th="http://www.thymeleaf.org">
+<!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
+<!--@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.PerformanceCategory>>"-->
+<script th:src="@{/js/tennis-chart.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+	/*<![CDATA[*/
+	$(document.body).append("<script type='text/javascript' src='https://www.google.com/jsapi?callback=loadGoogleChartsForPerf'>&lt;/script>");
+	var chartData, pointCount;
+	function loadGoogleChartsForPerf() {
+		google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
+			drawPerformanceChart();
+		}});
+	}
+	function drawPerformanceChart() {
+		var category = $("#perfCategory").val();
+		var dataUrl = "/playerPerformanceTable?playerId=[[${playerId}]]&category=" + category;
+		dataUrl += "&fromSeason=" + $("#perfFromSeason").val() + "&toSeason=" + $("#perfToSeason").val();
+		dataUrl += "&byAge=" + $("#perfByAge").prop("checked");
+		$("#perfChart").html("");
+		var $loading = $("#perfChartLoading");
+		$loading.show();
+		$.ajax(dataUrl).done(function(json) {
+			chartData = new google.visualization.DataTable(JSON.stringify(json));
+			pointCount = json.rows.length;
+			var width = $("#perfChartSize").slider("value");
+			showPerformanceChart(chartData, "perfChart", width, pointCount, "none");
+		}).always(function() {
+			$loading.hide().css("position", "absolute").css("z-index", "100");
+		});
+	}
+	$(function() {
+		$("#perfChartSize").slider({
+			min: 500,
+			max: 1500,
+			value: 1000,
+			step: 100,
+			slide: function(event, ui) {
+				showPerformanceChart(chartData, "perfChart", ui.value, pointCount, "none");
+			}
+		});
+		onPerfSeasonRangeChange();
+		$("[data-toggle='tooltip']").tooltip();
+	});
+	function onPerfSeasonRangeChange() {
+		$("#perfByAgeDiv").css("display", $("#perfFromSeason").val() == "" && $("#perfToSeason").val() == "" ? "block" : "none");
+	}
+	/*]]>*/
+</script>
+<style scoped="scoped">
+	.checkbox {
+		margin-top: 7px;
+		margin-bottom: 7px;
+	}
+</style>
+<br/>
+<div class="row">
+	<div class="col-md-3">
+		<div class="input-group">
+			<label for="perfCategory" class="input-group-addon">Category:</label>
+			<select id="perfCategory" class="form-control">
+				<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
+					<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="matches" th:class="${category.cssClass}" th:text="${category.title}">Overall</option>
+				</optgroup>
+			</select>
+		</div>
+	</div>
+</div>
+<div style="height: 5px"></div>
+<div class="row">
+	<div class="col-md-4">
+		<div class="input-group">
+			<label for="perfFromSeason" class="input-group-addon">From:</label>
+			<select id="perfFromSeason" class="form-control" onchange="onPerfSeasonRangeChange()">
+				<option value="">All seasons</option>
+				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+			</select>
+			<label for="perfToSeason" class="input-group-addon">To:</label>
+			<select id="perfToSeason" class="form-control" onchange="onPerfSeasonRangeChange()">
+				<option value="">All seasons</option>
+				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+			</select>
+		</div>
+	</div>
+	<div class="col-md-1">
+		<div id="perfByAgeDiv" class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
+				<input id="perfByAge" type="checkbox"/> By age
+			</label>
+		</div>
+	</div>
+	<div class="col-md-2">
+		<div id="perfChartSize" style="margin-top: 6px"></div>
+		<div style="text-align: center; opacity: 0.5">Chart size</div>
+	</div>
+	<div class="col-md-2">
+		<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawPerformanceChart()">
+			<span class="glyphicon glyphicon-signal"></span>&nbsp;&nbsp;Draw Chart
+		</a>
+	</div>
+</div>
+<div class="row">
+	<div class="row col-md-9 text-center">
+		<div id="loading" style="width: 100%; display: none">
+			<br/>
+			<img src="/images/loading.gif" width="128" height="128" alt="Loading chart..."/>
+			<br/>
+		</div>
+	</div>
+</div>
+<div id="perfChart"></div>
+</th:block>

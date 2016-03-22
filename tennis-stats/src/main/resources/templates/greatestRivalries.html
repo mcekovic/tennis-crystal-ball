@@ -93,7 +93,7 @@
 	</style>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<header th:include="fragments/header :: title"></header>
 	<h3 class="grid-title">Greatest Rivalries</h3>
 	<table id="greatestRivalriesTable" class="table table-condensed table-hover table-striped">
 		<thead>
@@ -120,6 +120,6 @@
 		</select>
 	</div>
 	<p><i>* Minimum <span id="minMatches">10</span> rivalry matches</i></p>
-	<div th:include="fragments/footer :: copy"></div>
+	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

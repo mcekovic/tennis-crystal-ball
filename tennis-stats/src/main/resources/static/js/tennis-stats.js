@@ -63,6 +63,10 @@ function getPlayerCount(players) {
 	return count;
 }
 
+function selectPlayers(a) {
+	$("#players").val(a.title);
+}
+
 
 // Tabs
 

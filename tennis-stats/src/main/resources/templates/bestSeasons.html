@@ -72,7 +72,7 @@
 	</script>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<header th:include="fragments/header :: title"></header>
 	<h3 class="grid-title">Best Seasons</h3>
 	<table id="bestSeasonsTable" class="table table-condensed table-hover table-striped">
 		<thead>
@@ -101,6 +101,6 @@
 			<div th:include="fragments/goatLegend :: legend(true)"></div>
 		</div>
 	</div>
-	<div th:include="fragments/footer :: copy"></div>
+	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

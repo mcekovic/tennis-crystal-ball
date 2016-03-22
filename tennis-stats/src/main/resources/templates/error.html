@@ -13,12 +13,12 @@
 	<script th:src="@{/js/tennis-stats.js}"></script>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<header th:include="fragments/header :: title"></header>
 	<h3>Unexpected error occurred</h3>
 	<div th:text="|Error: ${error} (${status})|">Error (status)</div>
 	<div th:text="|Path: ${path}|">Path</div>
 	<div id="created" th:text="|Timestamp: ${timestamp}|">Timestamp</div>
 	<div th:text="|Message: ${message}|">Message</div>
-	<div th:include="fragments/footer :: copy"></div>
+	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

@@ -80,7 +80,7 @@
 	</script>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<header th:include="fragments/header :: title"></header>
 	<h3>Tournament Events</h3>
 	<div id="seasonDiv" class="col-sm-1" style="padding-left: 0">
 		<select id="season" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by season">
@@ -125,6 +125,6 @@
 			</tr>
 		</thead>
 	</table>
-	<div th:include="fragments/footer :: copy"></div>
+	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

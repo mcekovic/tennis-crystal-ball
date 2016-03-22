@@ -39,32 +39,18 @@
 				$("#headsToHeadsDiv").html("<div class='row'><div class='col-md-12'><div class='alert alert-warning'>" + message + "</div></div></div>");
 			}
 		}
-		function selectPlayers(a) {
-			$("#players").val(a.title);
-		}
 		/*]]>*/
 	</script>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<header th:include="fragments/header :: title"></header>
 	<h3>Heads-to-Heads</h3>
 	<div class="row">
 		<div class="col-md-12">
 			<div class="input-group">
 				<label for="players" class="input-group-addon">Players:</label>
 				<input id="players" type="text" class="ui-widget search-field form-control" placeholder="Search Players"/>
-				<div class="input-group-btn">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Quick Picks <span class="caret"></span></button>
-					<ul class="dropdown-menu">
-						<li><a href="#" onclick="selectPlayers(this)" title="Roger Federer, Rafael Nadal, Novak Djokovic, Andy Murray">Big Four</a></li>
-						<li><a href="#" onclick="selectPlayers(this)" title="Marin Cilic, Kei Nishikori, Milos Raonic, Grigor Dimitrov">Young Guns</a></li>
-						<li><a href="#" onclick="selectPlayers(this)" title="Gustavo Kuerten, Marat Safin, Juan Carlos Ferrero, Lleyton Hewitt, Andy Roddick">Week Era</a></li>
-						<li><a href="#" onclick="selectPlayers(this)" title="Pete Sampras, Andre Agassi, Jim Courier, Michael Chang">Americans rule '90</a></li>
-						<li><a href="#" onclick="selectPlayers(this)" title="Mats Wilander, Stefan Edberg, Boris Becker, Thomas Muster">Late '80 / Early '90</a></li>
-						<li><a href="#" onclick="selectPlayers(this)" title="Jimmy Connors, Guillermo Vilas, Bjorn Borg, John Mcenroe, Ivan Lendl">'70 / Early '80 dominance</a></li>
-						<li><a href="#" onclick="selectPlayers(this)" title="Rod Laver, Ken Rosewall, Arthur Ashe, John Newcombe, Ilie Nastase, Manuel Orantes">Dawn of Open Era</a></li>
-					</ul>
-				</div>
+				<div class="input-group-btn" th:include="fragments/playerQuickPicks :: quickPicks"></div>
 			</div>
 		</div>
 	</div>
@@ -111,6 +97,6 @@
 	</div>
 	<br/>
 	<div id="headsToHeadsDiv"></div>
-	<div th:include="fragments/footer :: copy"></div>
+	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

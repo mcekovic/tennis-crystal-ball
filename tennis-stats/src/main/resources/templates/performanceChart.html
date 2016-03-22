@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"-->
+<!--@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.PerformanceCategory>>"-->
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
 <head>
 	<meta charset="utf-8"/>
@@ -72,13 +72,14 @@
 	</style>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<header th:include="fragments/header :: title"></header>
 	<h3>Performance Chart</h3>
 	<div class="row">
-		<div class="col-md-9">
+		<div class="col-md-10">
 			<div class="input-group">
 				<label for="players" class="input-group-addon">Players:</label>
 				<input id="players" type="text" class="ui-widget search-field form-control" placeholder="Search Players"/>
+				<div class="input-group-btn" th:include="fragments/playerQuickPicks :: quickPicks"></div>
 			</div>
 		</div>
 	</div>
@@ -111,7 +112,7 @@
 				</select>
 			</div>
 		</div>
-		<div class="col-md-1">
+		<div class="col-md-2">
 			<div id="byAgeDiv" class="checkbox">
 				<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
 					<input id="byAge" type="checkbox"/> By age
@@ -129,7 +130,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="row col-md-9 text-center">
+		<div class="row col-md-10 text-center">
 			<div id="loading" style="width: 100%; display: none">
 				<br/>
 				<img src="/images/loading.gif" width="128" height="128" alt="Loading chart..."/>
@@ -138,6 +139,6 @@
 		</div>
 	</div>
 	<div id="perfChart"></div>
-	<div th:include="fragments/footer :: copy"></div>
+	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

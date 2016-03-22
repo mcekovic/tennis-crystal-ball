@@ -10,6 +10,8 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
+import static java.util.stream.Collectors.*;
+
 @Controller
 public class PlayerProfileController extends BaseController {
 
@@ -148,6 +150,19 @@ public class PlayerProfileController extends BaseController {
 		return new ModelAndView("playerPerformance", modelMap);
 	}
 
+	@RequestMapping("/playerPerformanceChart")
+	public ModelAndView playerPerformanceChart(
+		@RequestParam(value = "playerId") int playerId
+	) {
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
+		return new ModelAndView("playerPerformanceChart", modelMap);
+	}
+
 	@RequestMapping("/playerStatsTab")
 	public ModelAndView playerStatsTab(
 		@RequestParam(value = "playerId") int playerId,
@@ -175,5 +190,20 @@ public class PlayerProfileController extends BaseController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("stats", stats);
 		return new ModelAndView("playerStatsTab", modelMap);
+	}
+
+	@RequestMapping("/playerStatsChart")
+	public ModelAndView playerStatsChart(
+		@RequestParam(value = "playerId") int playerId
+	) {
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("categoryTypes",  StatsCategory.getCategories().entrySet().stream().collect(toMap(Map.Entry::getKey, e -> e.getValue().getType().name())));
+		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
+		return new ModelAndView("playerStatsChart", modelMap);
 	}
 }

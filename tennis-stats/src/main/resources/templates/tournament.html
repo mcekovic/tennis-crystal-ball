@@ -51,7 +51,7 @@
 	</script>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<header th:include="fragments/header :: title"></header>
 	<h3 th:text="${tournament.name}">Australian Open</h3>
 	<div class="row">
 		<div class="col-md-3">
@@ -102,6 +102,6 @@
 		</div>
 		<div id="records" class="tab-pane fade"><br/>Loading...</div>
 	</div>
-	<div th:include="fragments/footer :: copy"></div>
+	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

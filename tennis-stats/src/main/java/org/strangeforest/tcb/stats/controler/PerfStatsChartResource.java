@@ -31,6 +31,8 @@ public class PerfStatsChartResource {
 	) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
+		if (!seasonRange.equals(Range.all()))
+			byAge = false;
 		if (playerId != null)
 			return perfChartService.getPerformanceDataTable(playerId, perfCategory, seasonRange, byAge);
 		else {
@@ -51,6 +53,8 @@ public class PerfStatsChartResource {
 	) {
 		StatsCategory statsCategory = StatsCategory.get(category);
 		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
+		if (!seasonRange.equals(Range.all()))
+			byAge = false;
 		if (playerId != null)
 			return statsChartService.getStatisticsDataTable(playerId, statsCategory, surface, seasonRange, byAge);
 		else {

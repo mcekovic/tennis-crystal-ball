@@ -70,7 +70,7 @@
 	</script>
 </head>
 <body class="container">
-	<div th:include="fragments/header :: title"></div>
+	<header th:include="fragments/header :: title"></header>
 	<th:block th:if="${player}">
 		<h3 th:text="${player.name}">Player Profile</h3>
 		<div class="row">
@@ -189,7 +189,9 @@
 			<li><a data-toggle="pill" href="#rivalries" data-url="/playerRivalries?playerId=" th:attrappend="data-url=${player.id}">Rivalries</a></li>
 			<li><a data-toggle="pill" href="#ranking" data-url="/playerRankings?playerId=" th:attrappend="data-url=${player.id}">Ranking</a></li>
 			<li><a data-toggle="pill" href="#performance" data-url="/playerPerformance?playerId=" th:attrappend="data-url=${player.id}">Performance</a></li>
+			<li><a data-toggle="pill" href="#performanceChart" data-url="/playerPerformanceChart?playerId=" th:attrappend="data-url=${player.id}">Perf. Chart</a></li>
 			<li><a data-toggle="pill" href="#statistics" data-url="/playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
+			<li><a data-toggle="pill" href="#statisticsChart" data-url="/playerStatsChart?playerId=" th:attrappend="data-url=${player.id}">Stat. Chart</a></li>
 		</ul>
 		<div class="tab-content">
 			<div id="tournaments" class="tab-pane fade"><br/>Loading...</div>
@@ -198,9 +200,11 @@
 			<div id="rivalries" class="tab-pane fade"><br/>Loading...</div>
 			<div id="ranking" class="tab-pane fade"><br/>Loading...</div>
 			<div id="performance" class="tab-pane fade"><br/>Loading...</div>
+			<div id="performanceChart" class="tab-pane fade"><br/>Loading...</div>
 			<div id="statistics" class="tab-pane fade"><br/>Loading...</div>
+			<div id="statisticsChart" class="tab-pane fade"><br/>Loading...</div>
 		</div>
 	</th:block>
-	<div th:include="fragments/footer :: copy"></div>
+	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>
