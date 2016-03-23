@@ -33,24 +33,32 @@ public final class StatsCategory {
 		// Serve
 		addCategory(SERVE, "aces", "p_ace", COUNT, true, "Aces");
 		addCategory(SERVE, "acePct", "p_ace::real/p_sv_pt", PERCENTAGE, true, "Ace %");
+		addCategory(SERVE, "acesPerMatch", "p_ace::real/(p_matches+o_matches)", RATIO, true, "Aces per Match");
+		addCategory(SERVE, "acesPerSvcGame", "CASE WHEN p_sv_gms > 0 THEN p_ace::real/p_sv_gms ELSE NULL END", RATIO, true, "Aces per Svc. Game");
 		addCategory(SERVE, "doubleFault", "p_df", COUNT, true, "Double Faults");
 		addCategory(SERVE, "doubleFaultPct", "p_df::real/p_sv_pt", PERCENTAGE, true, "Double Fault %");
-		addCategory(SERVE, "firstServePct", "p_1st_in::real/p_sv_pt", PERCENTAGE, true, "1st Serve");
-		addCategory(SERVE, "firstServeWonPct", "p_1st_won::real/p_1st_in", PERCENTAGE, true, "1st Serve Won");
-		addCategory(SERVE, "secondServeWonPct", "p_2nd_won::real/(p_sv_pt-p_1st_in)", PERCENTAGE, true, "2nd Serve Won");
-		addCategory(SERVE, "breakPointsSavedPct", "CASE WHEN p_bp_fc > 0 THEN p_bp_sv::real/p_bp_fc ELSE NULL END", PERCENTAGE, true, "Break Points Saved");
-		addCategory(SERVE, "servicePointsWonPct", "(p_1st_won+p_2nd_won)::real/p_sv_pt", PERCENTAGE, true, "Service Pts. Won");
-		addCategory(SERVE, "serviceGamesWonPct", "CASE WHEN p_sv_gms > 0 THEN (p_sv_gms-(p_bp_fc-p_bp_sv))::real/p_sv_gms ELSE NULL END", PERCENTAGE, true, "Service Games Won");
+		addCategory(SERVE, "dfsPerMatch", "p_df::real/(p_matches+o_matches)", RATIO, true, "DFs per Match");
+		addCategory(SERVE, "dfsPerSvcGame", "CASE WHEN p_sv_gms > 0 THEN p_df::real/p_sv_gms ELSE NULL END", RATIO, true, "DFs per Svc. Game");
+		addCategory(SERVE, "firstServePct", "p_1st_in::real/p_sv_pt", PERCENTAGE, true, "1st Serve %");
+		addCategory(SERVE, "firstServeWonPct", "p_1st_won::real/p_1st_in", PERCENTAGE, true, "1st Serve Won %");
+		addCategory(SERVE, "secondServeWonPct", "p_2nd_won::real/(p_sv_pt-p_1st_in)", PERCENTAGE, true, "2nd Serve Won %");
+		addCategory(SERVE, "breakPointsFaced", "p_bp_fc", COUNT, true, "Break Points Faced");
+		addCategory(SERVE, "bpsPerSvcGame", "CASE WHEN p_sv_gms > 0 THEN p_bp_fc::real/p_sv_gms ELSE NULL END", RATIO, true, "BPs per Svc. Game");
+		addCategory(SERVE, "breakPointsSavedPct", "CASE WHEN p_bp_fc > 0 THEN p_bp_sv::real/p_bp_fc ELSE NULL END", PERCENTAGE, true, "Break Points Saved %");
+		addCategory(SERVE, "servicePointsWonPct", "(p_1st_won+p_2nd_won)::real/p_sv_pt", PERCENTAGE, true, "Service Pts. Won %");
+		addCategory(SERVE, "serviceGamesWonPct", "CASE WHEN p_sv_gms > 0 THEN (p_sv_gms-(p_bp_fc-p_bp_sv))::real/p_sv_gms ELSE NULL END", PERCENTAGE, true, "Service Games Won %");
 		// Return
 		addCategory(RETURN, "aceAgainst", "o_ace", COUNT, true, "Ace Against");
 		addCategory(RETURN, "aceAgainstPct", "o_ace::real/o_sv_pt", PERCENTAGE, true, "Ace Against %");
 		addCategory(RETURN, "doubleFaultAgainst", "o_df", COUNT, true, "Dbl. Flt. Against");
 		addCategory(RETURN, "doubleFaultAgainstPct", "o_df::real/o_sv_pt", PERCENTAGE, true, "Dbl. Flt. Against %");
-		addCategory(RETURN, "firstServeReturnWonPct", "(o_1st_in-o_1st_won)::real/o_1st_in", PERCENTAGE, true, "1st Srv. Rtn. Won");
-		addCategory(RETURN, "secondServeReturnWonPct", "(o_sv_pt-o_1st_in-o_2nd_won)::real/(o_sv_pt-o_1st_in)", PERCENTAGE, true, "2nd Srv. Rtn. Won");
-		addCategory(RETURN, "breakPointsPct", "CASE WHEN o_bp_fc > 0 THEN " + BREAK_POINTS_CONVERTED_PCT + " ELSE NULL END", PERCENTAGE, true, "Break Points Won");
-		addCategory(RETURN, "returnPointsWonPct", RETURN_POINTS_WON_PCT, PERCENTAGE, true, "Return Pts. Won");
-		addCategory(RETURN, "returnGamesWonPct", RETURN_GAMES_WON_PCT, PERCENTAGE, true, "Return Games Won");
+		addCategory(RETURN, "firstServeReturnWonPct", "(o_1st_in-o_1st_won)::real/o_1st_in", PERCENTAGE, true, "1st Srv. Rtn. Won %");
+		addCategory(RETURN, "secondServeReturnWonPct", "(o_sv_pt-o_1st_in-o_2nd_won)::real/(o_sv_pt-o_1st_in)", PERCENTAGE, true, "2nd Srv. Rtn. Won %");
+		addCategory(RETURN, "breakPoints", "o_bp_fc", COUNT, true, "Break Points Earned");
+		addCategory(RETURN, "bpsPerRtnGame", "CASE WHEN o_sv_gms > 0 THEN o_bp_fc::real/o_sv_gms ELSE NULL END", RATIO, true, "BPs per Rtn. Game");
+		addCategory(RETURN, "breakPointsPct", "CASE WHEN o_bp_fc > 0 THEN " + BREAK_POINTS_CONVERTED_PCT + " ELSE NULL END", PERCENTAGE, true, "Break Points Won %");
+		addCategory(RETURN, "returnPointsWonPct", RETURN_POINTS_WON_PCT, PERCENTAGE, true, "Return Pts. Won %");
+		addCategory(RETURN, "returnGamesWonPct", RETURN_GAMES_WON_PCT, PERCENTAGE, true, "Return Games Won %");
 		// Total
 		addCategory(TOTAL, "pointsDominanceRatio", POINTS_DOMINANCE_RATIO, RATIO, true, "Points Dominance", "stats.pointsDominanceRatio.title");
 		addCategory(TOTAL, "gamesDominanceRatio", GAMES_DOMINANCE_RATIO, RATIO, true, "Games Dominance", "stats.gamesDominanceRatio.title");

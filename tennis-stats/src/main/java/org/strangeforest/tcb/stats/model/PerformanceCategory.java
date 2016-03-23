@@ -25,6 +25,8 @@ public final class PerformanceCategory {
 		addCategory(PRESSURE_SITUATIONS, "decidingSets", "deciding_sets", "Deciding Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "fifthSets", "fifth_sets", "5th Set", 20, "matches");
 		addCategory(PRESSURE_SITUATIONS, "finals", "finals", "Finals", 20, "finals");
+		addCategory(PRESSURE_SITUATIONS, "vsNo1", "vs_no1", "Vs No. 1", 10, "matches");
+		addCategory(PRESSURE_SITUATIONS, "vsTop5", "vs_top5", "Vs Top 5", 20, "matches");
 		addCategory(PRESSURE_SITUATIONS, "vsTop10", "vs_top10", "Vs Top 10", 20, "matches");
 		addCategory(PRESSURE_SITUATIONS, "afterWinningFirstSet", "after_winning_first_set", "After Winning 1st Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "afterLosingFirstSet", "after_losing_first_set", "After Losing 1st Set", 100, "matches");
