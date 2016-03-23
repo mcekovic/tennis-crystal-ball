@@ -22,7 +22,7 @@ public class MatchesService {
 		"SELECT m.match_id, m.match_num, m.round,\n" +
 		"  m.winner_id, pw.short_name AS winner_name, m.winner_seed, m.winner_entry, m.winner_country_id,\n" +
 		"  m.loser_id, pl.short_name AS loser_name, m.loser_seed, m.loser_entry, m.loser_country_id,\n" +
-		"  array(SELECT ROW(w_games, l_games, w_tb_pt, l_tb_pt) FROM set_score s WHERE s.match_id = m.match_id) AS set_scores, m.outcome\n" +
+		"  array(SELECT ROW(w_games, l_games, w_tb_pt, l_tb_pt) FROM set_score s WHERE s.match_id = m.match_id) AS set_scores, m.outcome, m.has_stats\n" +
 		"FROM match m\n" +
 		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
 		"INNER JOIN player_v pl ON pl.player_id = m.loser_id\n" +
@@ -31,7 +31,7 @@ public class MatchesService {
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
 		"SELECT m.match_id, e.date, e.tournament_event_id, e.name AS tournament, e.level, e.surface, e.indoor, m.round," +
-		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.score\n" +
+		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.score, m.has_stats\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
@@ -56,7 +56,8 @@ public class MatchesService {
 					mapMatchPlayerEx(rs, "winner_"),
 					mapMatchPlayerEx(rs, "loser_"),
 					score,
-					rs.getString("outcome")
+					rs.getString("outcome"),
+					rs.getBoolean("has_stats")
 				);
 				draw.addMatch(matchNum, match);
 			},
@@ -100,7 +101,8 @@ public class MatchesService {
 						rs.getString("round"),
 						mapMatchPlayer(rs, "winner_"),
 						mapMatchPlayer(rs, "loser_"),
-						rs.getString("score")
+						rs.getString("score"),
+						rs.getBoolean("has_stats")
 					));
 				}
 			},

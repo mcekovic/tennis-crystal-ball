@@ -162,7 +162,7 @@
 		<tbody>
 			<tr th:each="i : ${#numbers.sequence(0, draw.maxRoundMatches - 1)}">
 				<td th:each="round : ${draw.rounds}" th:with="matches=${draw.getRoundMatches(round)}, match=${i lt matches.size() ? matches[i] : null}" th:attr="data-round-index=${roundStat.index}">
-					<table th:if="${match}" class="table-bordered">
+					<table th:if="${match}" class="table-bordered" th:with="outcomeOrStats=${match.outcome != null || match.hasStats}">
 						<tr th:with="winner=${match.winner}">
 							<td class="seed">
 								<span th:text="${winner.seedAndEntry}"></span>
@@ -172,7 +172,7 @@
 								<strong><a th:href="'/playerProfile?playerId=' + ${winner.id}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a></strong>
 							</td>
 							<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.wGames}">6</th:block><sup th:if="${score.wTBPoints}" th:text="|(${score.wTBPoints})|"></sup></td>
-							<td class="score"><th:block th:if="${match.outcome}" th:text="${match.outcome}"/></td>
+							<td th:if="${outcomeOrStats}" class="score"><th:block th:if="${match.outcome}" th:text="${match.outcome}"/></td>
 						</tr>
 						<tr th:with="loser=${match.loser}">
 							<td class="seed">
@@ -183,8 +183,8 @@
 								<a th:href="'/playerProfile?playerId=' + ${loser.id}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
 							</td>
 							<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.lGames}">3</th:block><sup th:if="${score.lTBPoints}" th:text="|(${score.lTBPoints})|"></sup></td>
-							<td class="stats">
-								<a th:id="'matchStats-' + ${match.id}" href="#" class="btn btn-info btn-xxs glyphicon glyphicon-stats" th:onclick="|showMatchStats(${match.id}, event)|" title='Match Statistics'> </a>
+							<td th:if="${outcomeOrStats}" class="stats">
+								<a th:if="${match.hasStats}" th:id="'matchStats-' + ${match.id}" href="#" class="btn btn-info btn-xxs glyphicon glyphicon-stats" th:onclick="|showMatchStats(${match.id}, event)|" title='Match Statistics'> </a>
 							</td>
 						</tr>
 					</table>

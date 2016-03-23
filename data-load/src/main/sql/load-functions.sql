@@ -360,6 +360,8 @@ DECLARE
 	l_winner_id INTEGER;
 	l_loser_id INTEGER;
 	l_match_id BIGINT;
+	l_has_stats BOOLEAN;
+	l_new BOOLEAN;
 	l_set_count SMALLINT;
 	l_set SMALLINT;
 BEGIN
@@ -404,34 +406,37 @@ BEGIN
 		SELECT height INTO p_loser_height FROM player WHERE player_id = l_loser_id;
 	END IF;
 
+	l_has_stats := p_minutes IS NOT NULL
+	   OR p_w_ace IS NOT NULL OR p_w_df IS NOT NULL OR p_w_sv_pt IS NOT NULL OR p_w_1st_in IS NOT NULL OR p_w_1st_won IS NOT NULL OR p_w_2nd_won IS NOT NULL OR p_w_sv_gms IS NOT NULL AND p_w_bp_sv IS NOT NULL OR p_w_bp_fc IS NOT NULL
+	   OR p_l_ace IS NOT NULL OR p_l_df IS NOT NULL OR p_l_sv_pt IS NOT NULL OR p_l_1st_in IS NOT NULL OR p_l_1st_won IS NOT NULL OR p_l_2nd_won IS NOT NULL OR p_l_sv_gms IS NOT NULL AND p_l_bp_sv IS NOT NULL OR p_l_bp_fc IS NOT NULL;
+
 	-- merge match
 	BEGIN
 		INSERT INTO match
 		(tournament_event_id, match_num, round, best_of,
 		 winner_id, winner_country_id, winner_seed, winner_entry, winner_rank, winner_rank_points, winner_age, winner_height,
 		 loser_id, loser_country_id, loser_seed, loser_entry, loser_rank, loser_rank_points, loser_age, loser_height,
-		 score, outcome, w_sets, l_sets, w_games, l_games)
+		 score, outcome, w_sets, l_sets, w_games, l_games, has_stats)
 		VALUES
 		(l_tournament_event_id, p_match_num, p_round::match_round, p_best_of,
 		 l_winner_id, p_winner_country_id, p_winner_seed, p_winner_entry::tournament_entry, p_winner_rank, p_winner_rank_points, p_winner_age, p_winner_height,
 		 l_loser_id, p_loser_country_id, p_loser_seed, p_loser_entry::tournament_entry, p_loser_rank, p_loser_rank_points, p_loser_age, p_loser_height,
-		 p_score, p_outcome::match_outcome, p_w_sets, p_l_sets, p_w_games, p_l_games)
+		 p_score, p_outcome::match_outcome, p_w_sets, p_l_sets, p_w_games, p_l_games, l_has_stats)
 		RETURNING match_id INTO l_match_id;
+		l_new := TRUE;
    EXCEPTION WHEN unique_violation THEN
 		UPDATE match
 		SET round = p_round::match_round, best_of = p_best_of,
 		 winner_id = l_winner_id, winner_country_id = p_winner_country_id, winner_seed = p_winner_seed, winner_entry = p_winner_entry::tournament_entry, winner_rank = p_winner_rank, winner_rank_points = p_winner_rank_points, winner_age = p_winner_age, winner_height = p_winner_height,
 		 loser_id = l_loser_id, loser_country_id = p_loser_country_id, loser_seed = p_loser_seed, loser_entry = p_loser_entry::tournament_entry, loser_rank = p_loser_rank, loser_rank_points = p_loser_rank_points, loser_age = p_loser_age, loser_height = p_loser_height,
-		 score = p_score, outcome = p_outcome::match_outcome, w_sets = p_w_sets, l_sets = p_l_sets, w_games = p_w_games, l_games = p_l_games
+		 score = p_score, outcome = p_outcome::match_outcome, w_sets = p_w_sets, l_sets = p_l_sets, w_games = p_w_games, l_games = p_l_games, has_stats = l_has_stats
 		WHERE tournament_event_id = l_tournament_event_id AND match_num = p_match_num
 		RETURNING match_id INTO l_match_id;
+		l_new := FALSE;
    END;
 
 	-- merge match_stats
-	IF p_minutes IS NOT NULL
-	   OR p_w_ace IS NOT NULL OR p_w_df IS NOT NULL OR p_w_sv_pt IS NOT NULL OR p_w_1st_in IS NOT NULL OR p_w_1st_won IS NOT NULL OR p_w_2nd_won IS NOT NULL OR p_w_sv_gms IS NOT NULL AND p_w_bp_sv IS NOT NULL OR p_w_bp_fc IS NOT NULL
-	   OR p_l_ace IS NOT NULL OR p_l_df IS NOT NULL OR p_l_sv_pt IS NOT NULL OR p_l_1st_in IS NOT NULL OR p_l_1st_won IS NOT NULL OR p_l_2nd_won IS NOT NULL OR p_l_sv_gms IS NOT NULL AND p_l_bp_sv IS NOT NULL OR p_l_bp_fc IS NOT NULL
-	THEN
+	IF l_has_stats THEN
 		BEGIN
 			INSERT INTO match_stats
 			(match_id, set, minutes,
@@ -448,6 +453,9 @@ BEGIN
 				l_ace = p_l_ace, l_df = p_l_df, l_sv_pt = p_l_sv_pt, l_1st_in = p_l_1st_in, l_1st_won = p_l_1st_won, l_2nd_won = p_l_2nd_won, l_sv_gms = p_l_sv_gms, l_bp_sv = p_l_bp_sv, l_bp_fc = p_l_bp_fc
 			WHERE match_id = l_match_id AND set = 0;
 		END;
+	ELSEIF NOT l_new THEN
+		DELETE FROM match_stats
+		WHERE match_id = l_match_id AND set = 0;
 	END IF;
 
 	-- merge set_score

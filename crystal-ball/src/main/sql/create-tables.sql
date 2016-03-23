@@ -150,6 +150,7 @@ CREATE TABLE match (
 	l_sets SMALLINT,
 	w_games SMALLINT,
 	l_games SMALLINT,
+	has_stats BOOLEAN,
 	UNIQUE (tournament_event_id, match_num)
 );
 
