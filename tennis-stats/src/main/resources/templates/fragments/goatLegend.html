@@ -23,7 +23,7 @@
 				});
 				initGOATPointsTable("bigWinRankFactorTable", {
 					"rankRange": function(column, row) {
-						return row.fromRank == row.toRank ? row.fromRank : row.fromRank + " - " + row.toRank;
+						return row.rankFrom == row.rankTo ? row.rankFrom : row.rankFrom + " - " + row.rankTo;
 					}
 				});
 				if ([[${!forSeason}]])

@@ -200,7 +200,9 @@ CREATE OR REPLACE VIEW player_match_performance_v AS
 SELECT m.winner_id player_id, m.season, m.surface,
 	match_id match_id_won, NULL match_id_lost,
 	CASE WHEN m.level = 'G' THEN match_id ELSE NULL END grand_slam_match_id_won, NULL grand_slam_match_id_lost,
+	CASE WHEN m.level = 'F' THEN match_id ELSE NULL END tour_finals_match_id_won, NULL tour_finals_match_id_lost,
 	CASE WHEN m.level = 'M' THEN match_id ELSE NULL END masters_match_id_won, NULL masters_match_id_lost,
+	CASE WHEN m.level = 'O' THEN match_id ELSE NULL END olympics_match_id_won, NULL olympics_match_id_lost,
 	CASE WHEN m.surface = 'C' THEN match_id ELSE NULL END clay_match_id_won, NULL clay_match_id_lost,
 	CASE WHEN m.surface = 'G' THEN match_id ELSE NULL END grass_match_id_won, NULL grass_match_id_lost,
 	CASE WHEN m.surface = 'H' THEN match_id ELSE NULL END hard_match_id_won, NULL hard_match_id_lost,
@@ -221,7 +223,9 @@ UNION ALL
 SELECT m.loser_id player_id, m.season, m.surface,
 	NULL, match_id,
 	NULL, CASE WHEN m.level = 'G' THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.level = 'F' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.level = 'M' THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.level = 'O' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.surface = 'C' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.surface = 'G' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.surface = 'H' THEN match_id ELSE NULL END,
@@ -246,7 +250,9 @@ CREATE MATERIALIZED VIEW player_season_performance AS
 SELECT player_id, season,
 	count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,
 	count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,
+	count(DISTINCT tour_finals_match_id_won) tour_finals_matches_won, count(DISTINCT tour_finals_match_id_lost) tour_finals_matches_lost,
 	count(DISTINCT masters_match_id_won) masters_matches_won, count(DISTINCT masters_match_id_lost) masters_matches_lost,
+	count(DISTINCT olympics_match_id_won) olympics_matches_won, count(DISTINCT olympics_match_id_lost) olympics_matches_lost,
 	count(DISTINCT clay_match_id_won) clay_matches_won, count(DISTINCT clay_match_id_lost) clay_matches_lost,
 	count(DISTINCT grass_match_id_won) grass_matches_won, count(DISTINCT grass_match_id_lost) grass_matches_lost,
 	count(DISTINCT hard_match_id_won) hard_matches_won, count(DISTINCT hard_match_id_lost) hard_matches_lost,
@@ -273,7 +279,9 @@ CREATE MATERIALIZED VIEW player_performance AS
 SELECT player_id,
 	sum(matches_won) matches_won, sum(matches_lost) matches_lost,
 	sum(grand_slam_matches_won) grand_slam_matches_won, sum(grand_slam_matches_lost) grand_slam_matches_lost,
+	sum(tour_finals_matches_won) tour_finals_matches_won, sum(tour_finals_matches_lost) tour_finals_matches_lost,
 	sum(masters_matches_won) masters_matches_won, sum(masters_matches_lost) masters_matches_lost,
+	sum(olympics_matches_won) olympics_matches_won, sum(olympics_matches_lost) olympics_matches_lost,
 	sum(clay_matches_won) clay_matches_won, sum(clay_matches_lost) clay_matches_lost,
 	sum(grass_matches_won) grass_matches_won, sum(grass_matches_lost) grass_matches_lost,
 	sum(hard_matches_won) hard_matches_won, sum(hard_matches_lost) hard_matches_lost,
@@ -434,8 +442,8 @@ CREATE OR REPLACE VIEW player_big_wins_v AS
 SELECT m.winner_id AS player_id, m.season, m.date, (mf.match_factor * (wrf.rank_factor + lrf.rank_factor) / 2)::REAL / 100 goat_points
 FROM match_for_stats_v m
 INNER JOIN big_win_match_factor mf ON mf.level = m.level AND mf.round = m.round
-INNER JOIN big_win_rank_factor wrf ON wrf.rank = m.winner_rank
-INNER JOIN big_win_rank_factor lrf ON lrf.rank = m.loser_rank;
+INNER JOIN big_win_rank_factor wrf ON m.winner_rank BETWEEN wrf.rank_from AND wrf.rank_to
+INNER JOIN big_win_rank_factor lrf ON m.loser_rank BETWEEN lrf.rank_from AND lrf.rank_to;
 
 
 -- player_season_big_wins_goat_points_v
@@ -550,6 +558,13 @@ WITH matches_performers AS (
 ), grand_slam_matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM grand_slam_matches_performers
+), tour_finals_matches_performers AS (
+	SELECT player_id, tour_finals_matches_won::real/(tour_finals_matches_won + tour_finals_matches_lost) AS won_lost_pct
+	FROM player_performance
+	WHERE tour_finals_matches_won + tour_finals_matches_lost >= performance_min_entries('tourFinalsMatches')
+), tour_finals_matches_performers_ranked AS (
+	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+	FROM tour_finals_matches_performers
 ), masters_matches_performers AS (
 	SELECT player_id, masters_matches_won::real/(masters_matches_won + masters_matches_lost) AS won_lost_pct
 	FROM player_performance
@@ -557,6 +572,13 @@ WITH matches_performers AS (
 ), masters_matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM masters_matches_performers
+), olympics_matches_performers AS (
+	SELECT player_id, olympics_matches_won::real/(olympics_matches_won + olympics_matches_lost) AS won_lost_pct
+	FROM player_performance
+	WHERE olympics_matches_won + olympics_matches_lost >= performance_min_entries('olympicsMatches')
+), olympics_matches_performers_ranked AS (
+	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+	FROM olympics_matches_performers
 ), hard_matches_performers AS (
 	SELECT player_id, hard_matches_won::real/(hard_matches_won + hard_matches_lost) AS won_lost_pct
 	FROM player_performance
@@ -606,6 +628,20 @@ WITH matches_performers AS (
 ), finals_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM finals_performers
+), vs_no1_performers AS (
+	SELECT player_id, vs_no1_won::real/(vs_no1_won + vs_no1_lost) AS won_lost_pct
+	FROM player_performance
+	WHERE vs_no1_won + vs_no1_lost >= performance_min_entries('vsNo1')
+), vs_no1_performers_ranked AS (
+	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+	FROM vs_no1_performers
+), vs_top5_performers AS (
+	SELECT player_id, vs_top5_won::real/(vs_top5_won + vs_top5_lost) AS won_lost_pct
+	FROM player_performance
+	WHERE vs_top5_won + vs_top5_lost >= performance_min_entries('vsTop5')
+), vs_top5_performers_ranked AS (
+	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+	FROM vs_top5_performers
 ), vs_top10_performers AS (
 	SELECT player_id, vs_top10_won::real/(vs_top10_won + vs_top10_lost) AS won_lost_pct
 	FROM player_performance
@@ -644,8 +680,16 @@ WITH matches_performers AS (
 	INNER JOIN performance_goat_points g ON g.category_id = 'grandSlamMatches' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
+	FROM tour_finals_matches_performers_ranked p
+	INNER JOIN performance_goat_points g ON g.category_id = 'tourFinalsMatches' AND g.rank = p.rank
+	UNION ALL
+	SELECT p.player_id, g.goat_points
 	FROM masters_matches_performers_ranked p
 	INNER JOIN performance_goat_points g ON g.category_id = 'mastersMatches' AND g.rank = p.rank
+	UNION ALL
+	SELECT p.player_id, g.goat_points
+	FROM olympics_matches_performers_ranked p
+	INNER JOIN performance_goat_points g ON g.category_id = 'olympicsMatches' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM hard_matches_performers_ranked p
@@ -674,6 +718,14 @@ WITH matches_performers AS (
 	SELECT p.player_id, g.goat_points
 	FROM finals_performers_ranked p
 	INNER JOIN performance_goat_points g ON g.category_id = 'finals' AND g.rank = p.rank
+	UNION ALL
+	SELECT p.player_id, g.goat_points
+	FROM vs_no1_performers_ranked p
+	INNER JOIN performance_goat_points g ON g.category_id = 'vsNo1' AND g.rank = p.rank
+	UNION ALL
+	SELECT p.player_id, g.goat_points
+	FROM vs_top5_performers_ranked p
+	INNER JOIN performance_goat_points g ON g.category_id = 'vsTop5' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM vs_top10_performers_ranked p

@@ -157,28 +157,15 @@ VALUES
 
 DELETE FROM big_win_rank_factor;
 INSERT INTO big_win_rank_factor
-(rank, rank_factor)
+(rank_from, rank_to, rank_factor)
 VALUES
-( 1, 8),
-( 2, 6),
-( 3, 5),
-( 4, 4),
-( 5, 4),
-( 6, 3),
-( 7, 3),
-( 8, 2),
-( 9, 2),
-(10, 2),
-(11, 1),
-(12, 1),
-(13, 1),
-(14, 1),
-(15, 1),
-(16, 1),
-(17, 1),
-(18, 1),
-(19, 1),
-(20, 1);
+( 1,  1, 8),
+( 2,  2, 6),
+( 3,  3, 5),
+( 4,  5, 4),
+( 6,  7, 3),
+( 8, 10, 2),
+(11, 20, 1);
 
 DELETE FROM grand_slam_goat_points;
 INSERT INTO grand_slam_goat_points
@@ -210,20 +197,24 @@ DELETE FROM performance_category;
 INSERT INTO performance_category
 (category_id, name, min_entries, sort_order)
 VALUES
-('matches', 'Overall Matches', 200, 1),
-('grandSlamMatches', 'Grand Slam Matches', 50, 2),
-('mastersMatches', 'Masters Matches', 50, 3),
-('hardMatches', 'Hard Matches', 100, 4),
-('clayMatches', 'Clay Matches', 100, 5),
-('grassMatches', 'Grass Matches', 50, 6),
-('carpetMatches', 'Carpet Matches', 50, 7),
-('decidingSets', 'Deciding Sets', 100, 8),
-('fifthSets', 'Fifth Sets', 20, 9),
-('finals', 'Finals', 20, 10),
-('vsTop10', 'Vs Top 10', 20, 11),
-('afterWinningFirstSet', 'After Winning First Set', 100, 12),
-('afterLosingFirstSet', 'After Losing First Set', 100, 13),
-('tieBreaks', 'Tie Breaks', 100, 14);
+('matches',              'Overall Matches',         200,  1),
+('grandSlamMatches',     'Grand Slam Matches',       50,  2),
+('tourFinalsMatches',    'Tour Finals Matches',      10,  3),
+('mastersMatches',       'Masters Matches',          50,  4),
+('olympicsMatches',      'Olympics Matches',          5,  5),
+('hardMatches',          'Hard Matches',            100,  6),
+('clayMatches',          'Clay Matches',            100,  7),
+('grassMatches',         'Grass Matches',            50,  8),
+('carpetMatches',        'Carpet Matches',           50,  9),
+('decidingSets',         'Deciding Sets',           100, 10),
+('fifthSets',            'Fifth Sets',               20, 11),
+('finals',               'Finals',                   20, 12),
+('vsNo1',                'Vs No. 1',                 10, 13),
+('vsTop5',               'Vs Top 5',                 20, 14),
+('vsTop10',              'Vs Top 10',                20, 15),
+('afterWinningFirstSet', 'After Winning First Set', 100, 16),
+('afterLosingFirstSet',  'After Losing First Set',  100, 17),
+('tieBreaks',            'Tie Breaks',              100, 18);
 
 DELETE FROM performance_goat_points;
 INSERT INTO performance_goat_points
@@ -235,9 +226,14 @@ VALUES
 ('grandSlamMatches', 1, 4),
 ('grandSlamMatches', 2, 2),
 ('grandSlamMatches', 3, 1),
+('tourFinalsMatches', 1, 4),
+('tourFinalsMatches', 2, 2),
+('tourFinalsMatches', 3, 1),
 ('mastersMatches', 1, 4),
 ('mastersMatches', 2, 2),
 ('mastersMatches', 3, 1),
+('olympicsMatches', 1, 2),
+('olympicsMatches', 2, 1),
 ('hardMatches', 1, 4),
 ('hardMatches', 2, 2),
 ('hardMatches', 3, 1),
@@ -259,6 +255,12 @@ VALUES
 ('finals', 1, 4),
 ('finals', 2, 2),
 ('finals', 3, 1),
+('vsNo1', 1, 4),
+('vsNo1', 2, 2),
+('vsNo1', 3, 1),
+('vsTop5', 1, 4),
+('vsTop5', 2, 2),
+('vsTop5', 3, 1),
 ('vsTop10', 1, 4),
 ('vsTop10', 2, 2),
 ('vsTop10', 3, 1),

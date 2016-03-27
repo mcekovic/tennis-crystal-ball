@@ -5,7 +5,9 @@ public class PlayerPerformance {
 	// Performance
 	private WonLost matches;
 	private WonLost grandSlamMatches;
+	private WonLost tourFinalsMatches;
 	private WonLost mastersMatches;
+	private WonLost olympicsMatches;
 	private WonLost clayMatches;
 	private WonLost grassMatches;
 	private WonLost hardMatches;
@@ -15,6 +17,8 @@ public class PlayerPerformance {
 	private WonLost decidingSets;
 	private WonLost fifthSets;
 	private WonLost finals;
+	private WonLost vsNo1;
+	private WonLost vsTop5;
 	private WonLost vsTop10;
 	private WonLost afterWinningFirstSet;
 	private WonLost afterLosingFirstSet;
@@ -39,12 +43,28 @@ public class PlayerPerformance {
 		this.grandSlamMatches = grandSlamMatches;
 	}
 
+	public WonLost getTourFinalsMatches() {
+		return tourFinalsMatches;
+	}
+
+	public void setTourFinalsMatches(WonLost tourFinalsMatches) {
+		this.tourFinalsMatches = tourFinalsMatches;
+	}
+
 	public WonLost getMastersMatches() {
 		return mastersMatches;
 	}
 
 	public void setMastersMatches(WonLost mastersMatches) {
 		this.mastersMatches = mastersMatches;
+	}
+
+	public WonLost getOlympicsMatches() {
+		return olympicsMatches;
+	}
+
+	public void setOlympicsMatches(WonLost olympicsMatches) {
+		this.olympicsMatches = olympicsMatches;
 	}
 
 	public WonLost getClayMatches() {
@@ -106,6 +126,22 @@ public class PlayerPerformance {
 		this.finals = finals;
 	}
 
+	public WonLost getVsNo1() {
+		return vsNo1;
+	}
+
+	public void setVsNo1(WonLost vsNo1) {
+		this.vsNo1 = vsNo1;
+	}
+
+	public WonLost getVsTop5() {
+		return vsTop5;
+	}
+
+	public void setVsTop5(WonLost vsTop5) {
+		this.vsTop5 = vsTop5;
+	}
+
 	public WonLost getVsTop10() {
 		return vsTop10;
 	}
@@ -151,7 +187,9 @@ public class PlayerPerformance {
 		PlayerPerformance empty = new PlayerPerformance();
 		empty.matches = WonLost.EMPTY;
 		empty.grandSlamMatches = WonLost.EMPTY;
+		empty.tourFinalsMatches = WonLost.EMPTY;
 		empty.mastersMatches = WonLost.EMPTY;
+		empty.olympicsMatches = WonLost.EMPTY;
 		empty.clayMatches = WonLost.EMPTY;
 		empty.grassMatches = WonLost.EMPTY;
 		empty.hardMatches = WonLost.EMPTY;
@@ -159,6 +197,8 @@ public class PlayerPerformance {
 		empty.decidingSets = WonLost.EMPTY;
 		empty.fifthSets = WonLost.EMPTY;
 		empty.finals = WonLost.EMPTY;
+		empty.vsNo1 = WonLost.EMPTY;
+		empty.vsTop5 = WonLost.EMPTY;
 		empty.vsTop10 = WonLost.EMPTY;
 		empty.afterWinningFirstSet = WonLost.EMPTY;
 		empty.afterLosingFirstSet = WonLost.EMPTY;

@@ -52,6 +52,16 @@
 		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.grandSlamMatches.WL}" class="stats">456-167</td>
 	</tr>
 	<tr class="pct-data">
+		<td class="stats-header stats-perf">Tour Finals</td>
+		<td th:text="${careerPerf.tourFinalsMatches.wonPctStr}" class="stats">75.2%</td>
+		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.tourFinalsMatches.wonPctStr}" class="stats">75.2%</td>
+	</tr>
+	<tr class="raw-data">
+		<td class="stats-header stats-perf">Tour Finals</td>
+		<td th:text="${careerPerf.tourFinalsMatches.WL}" class="stats">456-167</td>
+		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.tourFinalsMatches.WL}" class="stats">456-167</td>
+	</tr>
+	<tr class="pct-data">
 		<td class="stats-header stats-perf">Masters</td>
 		<td th:text="${careerPerf.mastersMatches.wonPctStr}" class="stats">75.2%</td>
 		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.mastersMatches.wonPctStr}" class="stats">75.2%</td>
@@ -60,6 +70,16 @@
 		<td class="stats-header stats-perf">Masters</td>
 		<td th:text="${careerPerf.mastersMatches.WL}" class="stats">456-167</td>
 		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.mastersMatches.WL}" class="stats">456-167</td>
+	</tr>
+	<tr class="pct-data">
+		<td class="stats-header stats-perf">Olympics</td>
+		<td th:text="${careerPerf.olympicsMatches.wonPctStr}" class="stats">75.2%</td>
+		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.olympicsMatches.wonPctStr}" class="stats">75.2%</td>
+	</tr>
+	<tr class="raw-data">
+		<td class="stats-header stats-perf">Olympics</td>
+		<td th:text="${careerPerf.olympicsMatches.WL}" class="stats">456-167</td>
+		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.olympicsMatches.WL}" class="stats">456-167</td>
 	</tr>
 	<tr class="pct-data">
 		<td class="stats-header stats-perf">Clay</td>
@@ -131,6 +151,26 @@
 		<td class="stats-header stats-pressure">Finals</td>
 		<td th:text="${careerPerf.finals.WL}" class="stats">456-167</td>
 		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.finals.WL}" class="stats">456-167</td>
+	</tr>
+	<tr class="pct-data">
+		<td class="stats-header stats-pressure">Vs No. 1</td>
+		<td th:text="${careerPerf.vsNo1.wonPctStr}" class="stats">35.2%</td>
+		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.vsNo1.wonPctStr}" class="stats">35.2%</td>
+	</tr>
+	<tr class="raw-data">
+		<td class="stats-header stats-pressure">Vs No. 1</td>
+		<td th:text="${careerPerf.vsNo1.WL}" class="stats">56-167</td>
+		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.vsNo1.WL}" class="stats">56-167</td>
+	</tr>
+	<tr class="pct-data">
+		<td class="stats-header stats-pressure">Vs Top 5</td>
+		<td th:text="${careerPerf.vsTop5.wonPctStr}" class="stats">55.2%</td>
+		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.vsTop5.wonPctStr}" class="stats">55.2%</td>
+	</tr>
+	<tr class="raw-data">
+		<td class="stats-header stats-pressure">Vs Top 5</td>
+		<td th:text="${careerPerf.vsTop5.WL}" class="stats">456-167</td>
+		<td th:each="season : ${seasons}" th:with="perf=${seasonsPerf.get(season)}" th:text="${perf.vsTop5.WL}" class="stats">456-167</td>
 	</tr>
 	<tr class="pct-data">
 		<td class="stats-header stats-pressure">Vs Top 10</td>

@@ -19,7 +19,7 @@ public abstract class PercentageUtil {
 	}
 
 	public static double ratio(double up, double down) {
-		return down != 0.0 ? up / down : POSITIVE_INFINITY;
+		return down != 0.0 ? up / down : (up != 0.0 ? POSITIVE_INFINITY : 0.0);
 	}
 
 	public static Double ratio(Double up, Double down) {

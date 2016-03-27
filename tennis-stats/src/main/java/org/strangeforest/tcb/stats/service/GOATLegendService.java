@@ -25,6 +25,10 @@ public class GOATLegendService {
 		"SELECT %2$s, %3$s FROM %1$s\n" +
 		"ORDER BY %2$s";
 
+	private static final String RANK_RANGE_GOAT_POINTS_QUERY = //language=SQL
+		"SELECT rank_from, rank_to, %2$s FROM %1$s\n" +
+		"ORDER BY rank_from";
+
 	private static final String WEEKS_AT_NO1_FOR_GOAT_POINT =
 		"SELECT weeks_for_point FROM weeks_at_no1_goat_points";
 
@@ -101,7 +105,7 @@ public class GOATLegendService {
 
 	@Cacheable(value = "Global", key = "'BigWinRankFactorTable'")
 	public BootgridTable<RankRangeGOATPointsRow> getBigWinRankFactorTable() {
-		return getRankRangeGOATPointsTable("big_win_rank_factor", "rank", "rank_factor");
+		return getRankRangeGOATPointsTable("big_win_rank_factor", "rank_factor");
 	}
 
 	@Cacheable(value = "Global", key = "'CareerGrandSlamGOATPoints'")
@@ -147,23 +151,14 @@ public class GOATLegendService {
 		return table;
 	}
 
-	private BootgridTable<RankRangeGOATPointsRow> getRankRangeGOATPointsTable(String tableName, String rankColumn, String pointsColumn) {
+	private BootgridTable<RankRangeGOATPointsRow> getRankRangeGOATPointsTable(String tableName, String pointsColumn) {
 		BootgridTable<RankRangeGOATPointsRow> table = new BootgridTable<>();
-		final AtomicInteger fromRank = new AtomicInteger();
-		final AtomicInteger toRank = new AtomicInteger();
-		final AtomicInteger currGoatPoints = new AtomicInteger();
-		jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn, pointsColumn), rs -> {
-			int rank = rs.getInt(rankColumn);
+		jdbcTemplate.query(format(RANK_RANGE_GOAT_POINTS_QUERY, tableName, pointsColumn), rs -> {
+			int rankFrom = rs.getInt("rank_from");
+			int rankTo = rs.getInt("rank_to");
 			int goatPoints = rs.getInt(pointsColumn);
-			if (goatPoints != currGoatPoints.get()) {
-				if (fromRank.get() != 0)
-					table.addRow(new RankRangeGOATPointsRow(fromRank.get(), toRank.get(), currGoatPoints.get()));
-				fromRank.set(rank);
-				currGoatPoints.set(goatPoints);
-			}
-			toRank.set(rank);
+			table.addRow(new RankRangeGOATPointsRow(rankFrom, rankTo, goatPoints));
 		});
-		table.addRow(new RankRangeGOATPointsRow(fromRank.get(), toRank.get(), currGoatPoints.get()));
 		return table;
 	}
 

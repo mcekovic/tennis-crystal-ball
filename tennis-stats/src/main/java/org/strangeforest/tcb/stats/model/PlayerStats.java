@@ -18,7 +18,9 @@ public class PlayerStats {
 	private final int breakPointsFaced;
 
 	private final double acePct;
+	private final double acesPerServiceGame;
 	private final double doubleFaultPct;
+	private final double doubleFaultsPerServiceGame;
 	private final double firstServePct;
 	private final double firstServeWonPct;
 	private final int firstServesLost;
@@ -31,6 +33,7 @@ public class PlayerStats {
 	private final double servicePointsWonPct;
 	private final int servicePointsLost;
 	private final double servicePointsLostPct;
+	private final double breakPointsPerServiceGame;
 	private final Double breakPointsSavedPct;
 	private final int breakPointsLost;
 	private final Double breakPointsLostPct;
@@ -54,7 +57,9 @@ public class PlayerStats {
 		this.breakPointsSaved = breakPointsSaved;
 		this.breakPointsFaced = breakPointsFaced;
 		acePct = pct(aces, servicePoints);
+		acesPerServiceGame = ratio(aces, serviceGames);
 		doubleFaultPct = pct(doubleFaults, servicePoints);
+		doubleFaultsPerServiceGame = ratio(doubleFaults, serviceGames);
 		firstServePct = pct(firstServesIn, servicePoints);
 		firstServeWonPct = pct(firstServesWon, firstServesIn);
 		firstServesLost = firstServesIn - firstServesWon;
@@ -70,6 +75,7 @@ public class PlayerStats {
 		breakPointsSavedPct = optPct(breakPointsSaved, breakPointsFaced);
 		breakPointsLost = breakPointsFaced - breakPointsSaved;
 		breakPointsLostPct = optPct(breakPointsLost, breakPointsFaced);
+		breakPointsPerServiceGame = ratio(breakPointsFaced, serviceGames);
 		serviceGamesWon = serviceGames - breakPointsLost;
 		serviceGamesWonPct = pct(serviceGamesWon, serviceGames);
 		serviceGamesLostPct = pct(breakPointsLost, serviceGames);
@@ -110,12 +116,20 @@ public class PlayerStats {
 		return acePct;
 	}
 
+	public double getAcesPerServiceGame() {
+		return acesPerServiceGame;
+	}
+
 	public int getDoubleFaults() {
 		return doubleFaults;
 	}
 
 	public double getDoubleFaultPct() {
 		return doubleFaultPct;
+	}
+
+	public double getDoubleFaultsPerServiceGame() {
+		return doubleFaultsPerServiceGame;
 	}
 
 	public int getServicePoints() {
@@ -172,6 +186,10 @@ public class PlayerStats {
 
 	public Double getBreakPointsSavedPct() {
 		return breakPointsSavedPct;
+	}
+
+	public double getBreakPointsPerServiceGame() {
+		return breakPointsPerServiceGame;
 	}
 
 	public int getServiceGamesWon() {
@@ -251,6 +269,10 @@ public class PlayerStats {
 
 	public Double getBreakPointsWonPct() {
 		return opponentStats.breakPointsLostPct;
+	}
+
+	public double getBreakPointsPerReturnGame() {
+		return opponentStats.breakPointsPerServiceGame;
 	}
 
 	public int getReturnGamesWon() {

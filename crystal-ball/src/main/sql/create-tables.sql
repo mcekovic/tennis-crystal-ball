@@ -280,9 +280,10 @@ CREATE TABLE big_win_match_factor (
 -- big_win_rank_factor
 
 CREATE TABLE big_win_rank_factor (
-	rank INTEGER NOT NULL,
+	rank_from INTEGER NOT NULL,
+	rank_to INTEGER NOT NULL,
 	rank_factor INTEGER,
-	PRIMARY KEY (rank)
+	PRIMARY KEY (rank_from)
 );
 
 
