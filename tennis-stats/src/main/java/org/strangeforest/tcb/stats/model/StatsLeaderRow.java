@@ -9,8 +9,8 @@ public class StatsLeaderRow extends PlayerRow {
 	private final double value;
 	private final StatsCategory.Type categoryType;
 
-	public StatsLeaderRow(int rank, int playerId, String name, String countryId, double value, StatsCategory.Type categoryType) {
-		super(rank, playerId, name, countryId);
+	public StatsLeaderRow(int rank, int playerId, String name, String countryId, boolean active, double value, StatsCategory.Type categoryType) {
+		super(rank, playerId, name, countryId, active);
 		this.value = value;
 		this.categoryType = categoryType;
 	}

@@ -22,7 +22,7 @@ public class GOATListService {
 		"WHERE g.goat_points > 0 AND g.goat_rank <= ?%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
-		"SELECT player_id, g.goat_rank, p.country_id, p.name, g.goat_points, g.tournament_goat_points, g.ranking_goat_points, g.achievements_goat_points,\n" +
+		"SELECT player_id, g.goat_rank, p.country_id, p.active, p.name, g.goat_points, g.tournament_goat_points, g.ranking_goat_points, g.achievements_goat_points,\n" +
 		"  g.year_end_rank_goat_points, g.best_rank_goat_points, g.best_elo_rating_goat_points, g.weeks_at_no1_goat_points,\n" +
 		"  g.big_wins_goat_points, g.grand_slam_goat_points, g.best_season_goat_points, g.greatest_rivalries_goat_points, g.performance_goat_points, g.statistics_goat_points,\n" +
 		"  p.grand_slams, p.tour_finals, p.masters, p.olympics, p.big_titles, p.titles, p.best_elo_rating, p.best_elo_rating_date\n" +
@@ -52,11 +52,12 @@ public class GOATListService {
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
+				boolean active = rs.getBoolean("active");
 				int goatPoints = rs.getInt("goat_points");
 				int tournamentGoatPoints = rs.getInt("tournament_goat_points");
 				int rankingGoatPoints = rs.getInt("ranking_goat_points");
 				int achievementsGoatPoints = rs.getInt("achievements_goat_points");
-				GOATListRow row = new GOATListRow(goatRank, playerId, name, countryId, goatPoints, tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints);
+				GOATListRow row = new GOATListRow(goatRank, playerId, name, countryId, active, goatPoints, tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints);
 				// GOAT points items
 				row.setYearEndRankGoatPoints(rs.getInt("year_end_rank_goat_points"));
 				row.setBestRankGoatPoints(rs.getInt("best_rank_goat_points"));

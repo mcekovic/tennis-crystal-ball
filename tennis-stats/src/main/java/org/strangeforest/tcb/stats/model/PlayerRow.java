@@ -9,12 +9,14 @@ public abstract class PlayerRow {
 	private final String name;
 	private final String countryId;
 	private final String countryCode;
+	private final boolean active;
 
-	protected PlayerRow(int rank, int playerId, String name, String countryId) {
+	protected PlayerRow(int rank, int playerId, String name, String countryId, boolean active) {
 		this.rank = rank;
 		this.playerId = playerId;
 		this.name = name;
 		this.countryId = countryId;
+		this.active = active;
 		this.countryCode = CountryUtil.getISOAlpha2Code(countryId);
 	}
 
@@ -36,5 +38,9 @@ public abstract class PlayerRow {
 
 	public String getCountryCode() {
 		return countryCode;
+	}
+
+	public boolean isActive() {
+		return active;
 	}
 }

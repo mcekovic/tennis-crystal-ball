@@ -72,6 +72,7 @@ CREATE TABLE player (
 	weight SMALLINT,
 	hand player_hand,
 	backhand player_backhand,
+	active BOOLEAN,
 	turned_pro SMALLINT,
 	coach TEXT,
 	web_site TEXT,

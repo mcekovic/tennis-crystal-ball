@@ -12,8 +12,8 @@ public class BigGunsPlayerTimeline extends PlayerRow {
 	private final Map<Integer, SeasonPoints> seasons = new HashMap<>(); // <Season, SeasonPoints>
 	private BigGunsTimeline timeline;
 
-	public BigGunsPlayerTimeline(int rank, int playerId, String name, String lastName, String countryId, Date dob, int goatPoints) {
-		super(rank, playerId, name, countryId);
+	public BigGunsPlayerTimeline(int rank, int playerId, String name, String lastName, String countryId, boolean active, Date dob, int goatPoints) {
+		super(rank, playerId, name, countryId, active);
 		this.lastName = lastName;
 		this.dob = dob;
 		this.goatPoints = goatPoints;

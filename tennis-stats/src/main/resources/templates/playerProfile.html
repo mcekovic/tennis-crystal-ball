@@ -158,6 +158,10 @@
 			<div class="col-md-4">
 				<table class="table table-condensed text-nowrap">
 					<!--/* Tennis */-->
+					<tr>
+						<th>Active</th>
+						<td th:text="${player.active ? 'Yes' : 'No'}">Yes</td>
+					</tr>
 					<tr th:if="${player.turnedPro > 0}">
 						<th>Turned Pro</th>
 						<td th:text="${player.turnedPro}">2005</td>

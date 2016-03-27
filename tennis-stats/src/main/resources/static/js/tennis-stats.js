@@ -149,12 +149,13 @@ function countryFormatter(column, row) {
 
 // Player Formatter
 function playerFormatter(column, row) {
-	return "<a href='/playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>";
+	return "<a href='/playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>" +
+		(row.active ? " <img src='/images/active.png' title='Active' width='12' height='12'/>" : "");
 }
 
 function playerCountryFormatter(column, row) {
 	return "<img src='/images/flags/" + row.countryCode + ".png' title='" + row.countryId + "' width='24' height='20'/> " +
-		"<a href='/playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>";
+		playerFormatter(column, row);
 }
 
 function rivalryFormatter(column, row) {

@@ -1,4 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="tournamentRecord(title, playerRecords)">
+	<!--@thymesVar id="playerRecords" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRecordRow>"-->
 	<table class="table table-condensed table-hover table-striped">
 		<thead>
 			<tr>
@@ -12,6 +13,7 @@
 				<td>
 					<img th:src="'/images/flags/' + ${playerRecord.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${playerRecord.countryId}" title="SUI" width="24" height="20"/>
 					<a th:href="'/playerProfile?playerId=' + ${playerRecord.playerId}" th:text="${playerRecord.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+					<img th:if="${playerRecord.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 				</td>
 				<td class="text-right" th:text="${playerRecord.value}">5</td>
 			</tr>

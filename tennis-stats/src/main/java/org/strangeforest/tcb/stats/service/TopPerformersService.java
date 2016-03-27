@@ -32,15 +32,15 @@ public class TopPerformersService {
 
 	private static final String TOP_PERFORMERS_QUERY = //language=SQL
 		"WITH top_performers AS (\n" +
-		"  SELECT player_id, name, country_id, %1$s_won::real/(%1$s_won + %1$s_lost) AS won_lost_pct, %1$s_won AS won, %1$s_lost AS lost\n" +
+		"  SELECT player_id, name, country_id, active, %1$s_won::real/(%1$s_won + %1$s_lost) AS won_lost_pct, %1$s_won AS won, %1$s_lost AS lost\n" +
 		"  FROM %2$s\n" +
 		"  INNER JOIN player_v USING (player_id)\n" +
 		"  WHERE %1$s_won + %1$s_lost >= ?%3$s\n" +
 		"), top_performers_ranked AS (\n" +
-		"  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id, name, country_id, won_lost_pct, won, lost\n" +
+		"  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id, name, country_id, active, won_lost_pct, won, lost\n" +
 		"  FROM top_performers\n" +
 		")\n" +
-		"SELECT rank, player_id, name, country_id, won, lost\n" +
+		"SELECT rank, player_id, name, country_id, active, won, lost\n" +
 		"FROM top_performers_ranked\n" +
 		"WHERE rank <= ?\n" +
 		"ORDER BY %4$s OFFSET ? LIMIT ?";
@@ -71,8 +71,9 @@ public class TopPerformersService {
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
+				boolean active = rs.getBoolean("active");
 				WonLost wonLost = mapWonLost(rs);
-				table.addRow(new TopPerformerRow(rank, playerId, name, countryId, wonLost));
+				table.addRow(new TopPerformerRow(rank, playerId, name, countryId, active, wonLost));
 			},
 			filter.getParamsWithPrefix(getMinEntriesValue(perfCategory, filter), playerCount, offset, pageSize)
 		);

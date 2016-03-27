@@ -17,7 +17,7 @@ public class BigGunsTimelineService {
 	private static final int MIN_GOAT_POINTS = 40;
 
 	private static final String TIMELINE_QUERY = //language=SQL
-		"SELECT player_id, p.dob, p.name, p.last_name, p.country_id, p.goat_points, array(SELECT ROW(s.season, s.goat_points)\n" +
+		"SELECT player_id, p.dob, p.name, p.last_name, p.country_id, p.active, p.goat_points, array(SELECT ROW(s.season, s.goat_points)\n" +
 		"  FROM player_season_goat_points s\n" +
 		"  WHERE s.player_id = g.player_id\n" +
 		"  ORDER BY s.season DESC\n" +
@@ -57,9 +57,10 @@ public class BigGunsTimelineService {
 		String name = rs.getString("name");
 		String lastName = rs.getString("last_name");
 		String countryId = rs.getString("country_id");
+		boolean active = rs.getBoolean("active");
 		Date dob = rs.getDate("dob");
 		int goatPoints = rs.getInt("goat_points");
-		return new BigGunsPlayerTimeline(rank.incrementAndGet(), playerId, name, lastName, countryId, dob, goatPoints);
+		return new BigGunsPlayerTimeline(rank.incrementAndGet(), playerId, name, lastName, countryId, active, dob, goatPoints);
 	}
 
 	private SeasonPoints mapSeasonPoints(String seasonPoints) {

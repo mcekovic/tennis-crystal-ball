@@ -61,7 +61,7 @@ public class TournamentService {
 		"  WHERE e.tournament_id = ? AND r.result >= ?::tournament_event_result\n" +
 		"  GROUP BY player_id\n" +
 		")\n" +
-		"SELECT r.rank, player_id, p.name, p.country_id, r.count\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.count\n" +
 		"FROM record_results r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.rank <= coalesce((SELECT max(r2.rank) FROM record_results r2 WHERE r2.order = ?), ?)\n" +
@@ -189,6 +189,7 @@ public class TournamentService {
 					rs.getInt("player_id"),
 					rs.getString("name"),
 					rs.getString("country_id"),
+					rs.getBoolean("active"),
 					rs.getInt("count")
 				);
 			},

@@ -69,7 +69,7 @@ public class RivalriesService {
 		"  GROUP BY player_id, opponent_id\n" +
 		"  ORDER BY matches DESC, won DESC\n" +
 		")\n" +
-		"SELECT r.player_id, r.opponent_id, o.name, o.country_id, o.best_rank, r.matches, r.won, r.lost,\n" +
+		"SELECT r.player_id, r.opponent_id, o.name, o.country_id, o.active, o.best_rank, r.matches, r.won, r.lost,\n" +
 		"%1$s\n" +
 		"FROM rivalries_2 r\n" +
 		"INNER JOIN player_v o ON o.player_id = r.opponent_id%2$s\n" +
@@ -103,8 +103,8 @@ public class RivalriesService {
 		"    PARTITION BY CASE WHEN player_id_1 < player_id_2 THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY player_id_1\n" +
 		"  )\n" +
 		")\n" +
-		"SELECT r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.goat_points goat_points_1,\n" +
-		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
+		"SELECT r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.active active_1, p1.goat_points goat_points_1,\n" +
+		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.active active_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
 		"%2$s\n" +
 		"FROM rivalries_3 r\n" +
 		"INNER JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
@@ -141,8 +141,8 @@ public class RivalriesService {
 		"    PARTITION BY CASE WHEN coalesce(g1.goat_points, 0) > coalesce(g2.goat_points, 0) OR (coalesce(g1.goat_points, 0) = coalesce(g2.goat_points, 0) AND player_id_1 < player_id_2) THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY coalesce(g1.goat_points, 0) DESC, player_id_1\n" +
 		"  )\n" +
 		")\n" +
-		"SELECT rank() OVER (ORDER BY matches DESC, (won + lost) DESC, rivalry_goat_points DESC) AS rivalry_rank, r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.goat_points goat_points_1,\n" +
-		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
+		"SELECT rank() OVER (ORDER BY matches DESC, (won + lost) DESC, rivalry_goat_points DESC) AS rivalry_rank, r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.active active_1, p1.goat_points goat_points_1,\n" +
+		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.active active_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
 		"%2$s\n" +
 		"FROM rivalries_3 r\n" +
 		"INNER JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
@@ -190,7 +190,8 @@ public class RivalriesService {
 					int playerId = rs.getInt("opponent_id");
 					String name = rs.getString("name");
 					String countryId = rs.getString("country_id");
-					PlayerRivalryRow row = new PlayerRivalryRow(bestRank, playerId, name, countryId);
+					boolean active = rs.getBoolean("active");
+					PlayerRivalryRow row = new PlayerRivalryRow(bestRank, playerId, name, countryId, active);
 					row.setWonLost(mapWonLost(rs));
 					row.setLastMatch(mapLastMatch(rs, lateralSupported));
 					table.addRow(row);
@@ -286,6 +287,7 @@ public class RivalriesService {
 			rs.getInt("player_id" + suffix),
 			rs.getString("name" + suffix),
 			rs.getString("country_id" + suffix),
+			rs.getBoolean("active" + suffix),
 			rs.getInt("goat_points" + suffix)
 		);
 	}

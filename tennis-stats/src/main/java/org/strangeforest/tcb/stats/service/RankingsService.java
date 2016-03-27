@@ -47,7 +47,7 @@ public class RankingsService {
 		"  SELECT rank() OVER (ORDER BY best_elo_rating DESC) AS rank, player_id, best_elo_rating\n" +
 		"  FROM player_best_elo_rating\n" +
 		")\n" +
-		"SELECT r.rank, player_id, p.name, p.country_id, r.best_elo_rating AS points, p.best_elo_rating_date AS points_date, p.best_elo_rank AS best_rank, p.best_elo_rank_date AS best_rank_date\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, p.best_elo_rating_date AS points_date, p.best_elo_rank AS best_rank, p.best_elo_rank_date AS best_rank_date\n" +
 		"FROM best_elo_rating_ranked r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE TRUE%1$s\n" +
@@ -124,10 +124,11 @@ public class RankingsService {
 					int playerId = rs.getInt("player_id");
 					String name = rs.getString("name");
 					String countryId = rs.getString("country_id");
+					boolean active = allTimeElo && rs.getBoolean("active");
 					int points = rs.getInt("points");
 					int bestRank = rs.getInt("best_rank");
 					Date bestRankDate = rs.getDate("best_rank_date");
-					PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, points, bestRank, bestRankDate);
+					PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, active, points, bestRank, bestRankDate);
 					if (allTimeElo)
 						row.setPointsDate(rs.getDate("points_date"));
 					table.addRow(row);

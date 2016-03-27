@@ -26,16 +26,16 @@ public class StatsLeadersService {
 
 	private static final String STATS_LEADERS_QUERY = //language=SQL
 		"WITH stats_leaders AS (\n" +
-		"  SELECT player_id, name, country_id, %1$s AS value\n" +
+		"  SELECT player_id, name, country_id, active, %1$s AS value\n" +
 		"  FROM %2$s\n" +
 		"  INNER JOIN player_v USING (player_id)\n" +
 		"  WHERE p_%3$s + o_%3$s >= ?%4$s\n" +
 		"), stats_leaders_ranked AS (\n" +
-		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, name, country_id, value\n" +
+		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, name, country_id, active, value\n" +
 		"  FROM stats_leaders\n" +
 		"  WHERE value IS NOT NULL\n" +
 		")\n" +
-		"SELECT rank, player_id, name, country_id, value\n" +
+		"SELECT rank, player_id, name, country_id, active, value\n" +
 		"FROM stats_leaders_ranked\n" +
 		"WHERE rank <= ?\n" +
 		"ORDER BY %5$s NULLS LAST OFFSET ? LIMIT ?";
@@ -61,8 +61,9 @@ public class StatsLeadersService {
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
+				boolean active = rs.getBoolean("active");
 				double value = rs.getDouble("value");
-				table.addRow(new StatsLeaderRow(rank, playerId, name, countryId, value, statsCategory.getType()));
+				table.addRow(new StatsLeaderRow(rank, playerId, name, countryId, active, value, statsCategory.getType()));
 			},
 			filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter), playerCount, offset, pageSize)
 		);

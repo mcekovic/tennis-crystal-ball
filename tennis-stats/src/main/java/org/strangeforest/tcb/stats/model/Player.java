@@ -38,6 +38,7 @@ public class Player {
 	private int weeksAtNo1;
 
 	// Tennis
+	private boolean active;
 	private int turnedPro;
 	private String coach;
 
@@ -281,6 +282,14 @@ public class Player {
 
 
 	// Tennis
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 
 	public int getTurnedPro() {
 		return turnedPro;

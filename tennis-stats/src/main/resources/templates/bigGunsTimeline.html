@@ -177,6 +177,7 @@
 				<td style="padding: 1px 4px">
 					<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
 					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+					<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 				</td>
 				<td style="padding: 1px 4px" th:text="${#dates.format(player.dob, 'yyyy')}">1985</td>
 				<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray" th:text="${player.goatPoints}">1985</td>
