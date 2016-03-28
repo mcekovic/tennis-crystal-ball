@@ -27,7 +27,7 @@
 					request.surface = $("#matchesSurface").val();
 					request.round = $("#matchesRound").val();
 					request.opponent = $("#matchesOpponent").val();
-					request.won = $("#matchesWon").val();
+					request.outcome = $("#matchesOutcome").val();
 					request.tournamentId = $("#matchesTournament").val();
 					request.tournamentEventId = $("#tournamentEvent").val();
 					return request;
@@ -54,7 +54,7 @@
 			$actionBar.removeClass("col-sm-12").addClass("col-sm-5");
 			$actionBar.before($("#matchesTournamentDiv").remove());
 			$actionBar.before($("#tournamentEventDiv").remove());
-			$actionBar.before($("#matchesWonDiv").remove());
+			$actionBar.before($("#matchesOutcomeDiv").remove());
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadMatches() {
@@ -68,7 +68,7 @@
 			$("#matchesOpponent").val("");
 			$("#matchesTournament").val("");
 			$("#tournamentEvent").val("");
-			$("#matchesWon").val("");
+			$("#matchesOutcome").val("");
 			$("#matchesTable").bootgrid("search", "");
 			reloadMatches();
 		}
@@ -83,7 +83,7 @@
 				url += "&opponent=" + $("#matchesOpponent").val();
 				url += "&tournamentId=" + $("#matchesTournament").val();
 				url += "&tournamentEventId=" + $("#tournamentEvent").val();
-				url += "&won=" + $("#matchesWon").val();
+				url += "&outcome=" + $("#matchesOutcome").val();
 				url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 				$.get(url, function(data) {
 					event.preventDefault();
@@ -186,11 +186,18 @@
 			        th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon 2008</option>
 		</select>
 	</div>
-	<div id="matchesWonDiv" class="col-md-2">
-		<select id="matchesWon" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by won/lost">
+	<div id="matchesOutcomeDiv" class="col-md-2">
+		<select id="matchesOutcome" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outcome">
 			<option value="">All matches</option>
-			<option value="true">Won</option>
-			<option value="false">Lost</option>
+			<option value="won">Won</option>
+			<option value="lost">Lost</option>
+			<option value="wonRET">Won by retirement</option>
+			<option value="lostRET">Lost by retirement</option>
+			<option value="wonW/O">Won by walkover</option>
+			<option value="lostW/O">Lost by walkover</option>
+			<option value="wonDEF">Won by defaulting</option>
+			<option value="lostDEF">Lost by defaulting</option>
+			<option value="ABD">Abandoned</option>
 		</select>
 	</div>
 	<button id="playerStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showPlayerStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for selected matches)|">
