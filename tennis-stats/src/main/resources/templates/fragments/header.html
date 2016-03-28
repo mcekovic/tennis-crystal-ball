@@ -37,12 +37,12 @@
 							<li th:class="${servletPath == '/headsToHeads' ? 'active' : ''}"><a href="/headsToHeads">Heads-to-Heads</a></li>
 						</ul>
 					</li>
-					<li th:class="${servletPath == '/rankingsTable' || servletPath == '/rankingsChart' || servletPath == '/eloRankingsTable' ? 'active dropdown' : 'dropdown'}">
+					<li th:class="${servletPath == '/rankingsTable' || servletPath == '/rankingsChart' || servletPath == '/allTimeEloRatings' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rankings<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li th:class="${servletPath == '/rankingsTable' ? 'active' : ''}"><a href="/rankingsTable">Rankings Table</a></li>
 							<li th:class="${servletPath == '/rankingsChart' ? 'active' : ''}"><a href="/rankingsChart">Rankings Chart</a></li>
-							<li th:class="${servletPath == '/eloRankingsTable' ? 'active' : ''}"><a href="/eloRankingsTable">All-time Highest Elo Rating</a></li>
+							<li th:class="${servletPath == '/allTimeEloRatings' ? 'active' : ''}"><a href="/allTimeEloRatings">All-time Highest Elo Ratings</a></li>
 						</ul>
 					</li>
 					<li th:class="${servletPath == '/topPerformers' || servletPath == '/performanceChart' ? 'active dropdown' : 'dropdown'}">

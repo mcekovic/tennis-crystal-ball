@@ -57,7 +57,7 @@ class EloRatings {
 		saves = new AtomicInteger()
 		progress = new AtomicInteger()
 		if (save) {
-			saveExecutor = Executors.newFixedThreadPool(sqlPool.size())
+			saveExecutor = Executors.newFixedThreadPool((int)((sqlPool.size() + 1) / 2))
 			this.saveFromDate = saveFromDate
 		}
 		sqlPool.withSql { sql ->

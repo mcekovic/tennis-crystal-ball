@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"-->
-<!--@thymesVar id="rankType" type="java.lang.String"-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -46,11 +45,7 @@
 						return "<span title='" + $.datepicker.formatDate("dd-mm-yy", new Date(row.bestRankDate)) + "'>" + row.bestRank + "</span>";
 					},
 					"country": countryFormatter,
-					"player": playerFormatter,
-					"points": function(column, row) {
-						var pointsDate = row.pointsDate;
-						return pointsDate ? "<span title='" + $.datepicker.formatDate("dd-mm-yy", new Date(pointsDate)) + "'>" + row.points + "</span>" : row.points;
-					}
+					"player": playerFormatter
 				}
 			});
 			$("#rankingsTable-header").find("div.search").before($("#rankTypeDiv").remove()).before($("#seasonDiv").remove()).before($("#dateDiv").remove());
@@ -93,8 +88,8 @@
 	<h3 class="grid-title">Rankings Table</h3>
 	<div id="rankTypeDiv" class="btn-group" style="margin-right: 20px">
 		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
-			<option value="POINTS" th:selected="${rankType == 'POINTS'}">ATP Ranking</option>
-			<option value="ELO_RATING" th:selected="${rankType == 'ELO_RATING'}">Elo Ranking</option>
+			<option value="POINTS">ATP Ranking</option>
+			<option value="ELO_RATING">Elo Ranking</option>
 		</select>
 	</div>
 	<div id="seasonDiv" class="btn-group" style="margin-right: 20px">
@@ -113,7 +108,7 @@
 				<th data-column-id="best_rank" data-formatter="bestRank" data-width="70">Best Rank</th>
 				<th data-column-id="country" data-formatter="country" data-width="70">Country</th>
 				<th data-column-id="name" data-formatter="player" data-width="250">Name</th>
-				<th data-column-id="points" data-formatter="points" data-width="80" data-align="right" data-header-align="right">Points</th>
+				<th data-column-id="points" data-type="numeric" data-width="80" data-align="right" data-header-align="right">Points</th>
 			</tr>
 		</thead>
 	</table>

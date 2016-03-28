@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Ultimate Tennis Statistics - All-Time Highest Elo Ratings</title>
+	<link th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{/webjars/jquery/2.2.2/jquery.min.js}"></script>
+	<script th:src="@{/webjars/jquery-ui/1.11.4/jquery-ui.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+	<script th:src="@{/webjars/jquery.bootgrid/1.2.0/dist/jquery.bootgrid.min.js}"></script>
+	<script th:src="@{/js/tennis-stats.js}"></script>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$(function() {
+			$("#rankingsTable").bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/rankingsTableTable?rankType=ELO_RATING",
+				sorting: false,
+				rowCount: [20, 50, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				},
+				formatters: {
+					"bestRank": function(column, row) {
+						return "<span title='" + $.datepicker.formatDate("dd-mm-yy", new Date(row.bestRankDate)) + "'>" + row.bestRank + "</span>";
+					},
+					"country": countryFormatter,
+					"player": playerFormatter,
+					"date": function(column, row) {
+						return $.datepicker.formatDate("dd-mm-yy", new Date(row.pointsDate));
+					}
+				}
+			});
+			$("[data-toggle='tooltip']").tooltip();
+			bindPopovers();
+		});
+		/*]]>*/
+	</script>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3 class="grid-title">All-Time Highest Elo Ratings</h3>
+	<table id="rankingsTable" class="table table-condensed table-hover table-striped">
+		<thead>
+			<tr>
+				<th data-column-id="rank" data-type="numeric" data-width="55">Rank</th>
+				<th data-column-id="best_rank" data-formatter="bestRank" data-width="70">Best Rank</th>
+				<th data-column-id="country" data-formatter="country" data-width="70">Country</th>
+				<th data-column-id="name" data-formatter="player" data-width="250">Name</th>
+				<th data-column-id="pointsDate" data-formatter="date" data-width="80" >Date</th>
+				<th data-column-id="points" data-type="numeric" data-width="80" data-align="right" data-header-align="right">Points</th>
+			</tr>
+		</thead>
+	</table>
+	<em><strong>*</strong> <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> considers opponent rating as well, meaning wins over quality opponents are worth more then wins over lesser rated players.<br/>Ultimate Tennis Statistics use sophisticated tennis-customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-popover="#eloRatingPopover">Elo rating formula</a>.</em>
+	<footer th:include="fragments/footer :: copy"></footer>
+	<div th:include="fragments/aboutElo :: aboutElo"></div>
+</body>
+</html>
