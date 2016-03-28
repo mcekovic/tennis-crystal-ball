@@ -4,6 +4,8 @@ import java.time.temporal.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 
+import groovy.sql.*
+
 import static java.lang.Math.*
 import static org.strangeforest.tcb.util.DateUtil.*
 
@@ -26,6 +28,9 @@ class EloRatings {
 		"WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
 		"AND (m.outcome IS NULL OR m.outcome <> 'ABD')\n" +
 		"ORDER BY end_date, m.match_num"
+
+	private static final String QUERY_PLAYER_RANK = //language=SQL
+		"{? = call player_rank(?, ?)}"
 
 	private static final String MERGE_ELO_RANKING = //language=SQL
 		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating)}"
@@ -109,8 +114,8 @@ class EloRatings {
 			progressTick '.'
 	}
 
-	private EloRating getRating(playerId) {
-		playerRatings.get(playerId) ?: new EloRating()
+	private EloRating getRating(int playerId) {
+		playerRatings.get(playerId) ?: new EloRating(playerRank(playerId, lastDate))
 	}
 
 	static double kFactor(match) {
@@ -145,11 +150,30 @@ class EloRatings {
 		Date date
 		EloRating bestRating
 
-		private static final int START_RATING = 1500
+		private static final START_RATING_TABLE = [
+			ratingPoint(1, 2365),
+			ratingPoint(2, 2290),
+			ratingPoint(3, 2235),
+			ratingPoint(4, 2195),
+			ratingPoint(5, 2160),
+			ratingPoint(7, 2110),
+			ratingPoint(10, 2060),
+			ratingPoint(15, 2015),
+			ratingPoint(20, 1980),
+			ratingPoint(30, 1925),
+			ratingPoint(50, 1840),
+			ratingPoint(70, 1770),
+			ratingPoint(100, 1695),
+			ratingPoint(150, 1615),
+			ratingPoint(200, 1555),
+			ratingPoint(300, 1500)
+		]
+		static final int START_RATING = START_RATING_TABLE[START_RATING_TABLE.size() - 1].eloRating
 
-		EloRating() {
-			rating = START_RATING
-			matches = 0
+		EloRating() {}
+
+		EloRating(Integer rank) {
+			rating = startRating(rank)
 		}
 
 		EloRating newRating(double delta, Date date) {
@@ -190,6 +214,33 @@ class EloRatings {
 				0.5
 		}
 
+		private static def ratingPoint(int rank, int eloRating) {
+			return new RatingPoint(rank: rank, eloRating: eloRating)
+		}
+
+		static int startRating(Integer rank) {
+			if (rank) {
+				RatingPoint prevPoint
+				for (RatingPoint point : START_RATING_TABLE) {
+					if (rank == point.rank)
+						return point.eloRating
+					else if (rank < point.rank) {
+						if (prevPoint != null)
+							return prevPoint.eloRating - (prevPoint.eloRating - point.eloRating) * (rank - prevPoint.rank) / (point.rank - prevPoint.rank)
+						else
+							return point.eloRating
+					}
+					prevPoint = point
+				}
+			}
+			START_RATING
+		}
+
+		static class RatingPoint {
+			int rank;
+			int eloRating;
+		}
+
 		String toString() {
 			round rating
 		}
@@ -197,6 +248,15 @@ class EloRatings {
 		int compareTo(EloRating eloRating) {
 			rating <=> eloRating.rating
 		}
+	}
+
+
+	Integer playerRank(int playerId, Date date) {
+		Integer playerRank
+		sqlPool.withSql { sql ->
+			sql.call(QUERY_PLAYER_RANK, [Sql.INTEGER, playerId, date]) { rank -> playerRank = rank }
+		}
+		playerRank
 	}
 
 	def saveCurrentRatings() {
