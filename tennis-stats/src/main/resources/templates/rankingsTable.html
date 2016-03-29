@@ -67,7 +67,7 @@
 			$date.find("option").remove();
 			$date.prop("disabled", season == "");
 			if (season != "") {
-				var url = "/rankingSeasonDates?rankType=" + $("#rankType").val() + "&season=" + season;
+				var url = "/seasonRankingDates?rankType=" + $("#rankType").val() + "&season=" + season;
 				$.get(url, function (data) {
 					$date.append("<option value=''>" + (season == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
 					for (var i = 0; i < data.length; i++) {

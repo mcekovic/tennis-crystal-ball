@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -20,7 +21,6 @@ import static org.strangeforest.tcb.util.DateUtil.*;
 @Service
 public class RankingsService {
 
-	@Autowired private PlayerService playerService;
 	@Autowired private JdbcTemplate jdbcTemplate;
 
  	private static final String CURRENT_RANKING_DATE_QUERY = //language=SQL
@@ -88,21 +88,25 @@ public class RankingsService {
 		"WHERE player_id = ?";
 
 
+	@Cacheable("RankingsTable.CurrentDate")
 	public LocalDate getCurrentRankingDate(RankType rankType) {
 		String sql = format(CURRENT_RANKING_DATE_QUERY, rankingTable(rankType));
 		return toLocalDate(jdbcTemplate.queryForObject(sql, Date.class));
 	}
 
+	@Cacheable("RankingsTable.SeasonEndDate")
 	public LocalDate getSeasonEndRankingDate(RankType rankType, int season) {
 		String sql = format(SEASON_END_RANKING_DATE_QUERY, rankingTable(rankType));
 		return toLocalDate(jdbcTemplate.queryForObject(sql, Date.class, season));
 	}
 
-	public List<Date> getRankingSeasonDates(RankType rankType, int season) {
+	@Cacheable("RankingsTable.SeasonDates")
+	public List<Date> getSeasonRankingDates(RankType rankType, int season) {
 		String sql = format(RANKING_SEASON_DATES_QUERY, rankingTable(rankType));
 		return jdbcTemplate.queryForList(sql, Date.class, season);
 	}
 
+	@Cacheable("RankingsTable.Table")
 	public BootgridTable<PlayerRankingsRow> getRankingsTable(RankType rankType, LocalDate date, PlayerListFilter filter, int pageSize, int currentPage) {
 		if (!EnumSet.of(POINTS, ELO_RATING).contains(rankType))
 			throw new IllegalArgumentException("Unsupported rankings table RankType: " + rankType);

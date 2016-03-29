@@ -49,12 +49,12 @@ public class RankingsResource {
 		return rankingsService.getRankingsTable(rankType, date, filter, pageSize, current);
 	}
 
-	@RequestMapping("/rankingSeasonDates")
+	@RequestMapping("/seasonRankingDates")
 	public List<Date> rankingDates(
 		@RequestParam(value = "rankType") RankType rankType,
 		@RequestParam(value = "season") int season
 	) {
-		return rankingsService.getRankingSeasonDates(rankType, season);
+		return rankingsService.getSeasonRankingDates(rankType, season);
 	}
 
 	@RequestMapping("/playerRankingsTable")
