@@ -35,7 +35,7 @@ public class TournamentService {
 		"SELECT e.tournament_event_id, e.tournament_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
 		"  p.player_count, p.participation_points, p.max_participation_points,\n" +
 		"  m.winner_id, pw.name winner_name, m.winner_seed, m.winner_entry,\n" +
-		"  m.loser_id runner_up_id, pl.name runner_up_name, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry, m.score\n" +
+		"  m.loser_id runner_up_id, pl.name runner_up_name, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry, m.score, m.outcome\n" +
 		"FROM tournament_event e\n" +
 		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
 		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
@@ -175,7 +175,8 @@ public class TournamentService {
 		tournamentEvent.setFinal(
 			mapMatchPlayer(rs, "winner_"),
 			mapMatchPlayer(rs, "runner_up_"),
-			rs.getString("score")
+			rs.getString("score"),
+			rs.getString("outcome")
 		);
 		return tournamentEvent;
 	}

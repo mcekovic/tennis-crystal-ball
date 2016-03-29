@@ -24,6 +24,7 @@ public class TournamentEvent {
 	private MatchPlayer winner;
 	private MatchPlayer runnerUp;
 	private String score;
+	private String outcome;
 
 	public TournamentEvent(int id, int tournamentId, String tournamentExtId, int season, Date date, String name, String level, String surface, boolean indoor) {
 		this.id = id;
@@ -46,10 +47,11 @@ public class TournamentEvent {
 		participationPct = pct(participationPoints, maxParticipationPoints);
 	}
 
-	public void setFinal(MatchPlayer winner, MatchPlayer loser, String score) {
+	public void setFinal(MatchPlayer winner, MatchPlayer loser, String score, String outcome) {
 		this.winner = winner;
 		this.runnerUp = loser;
 		this.score = score;
+		this.outcome = outcome;
 	}
 
 	public int getId() {
@@ -126,5 +128,9 @@ public class TournamentEvent {
 
 	public String getScore() {
 		return score;
+	}
+
+	public String getOutcome() {
+		return outcome;
 	}
 }

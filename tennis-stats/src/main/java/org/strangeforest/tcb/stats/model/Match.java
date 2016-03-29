@@ -15,10 +15,11 @@ public class Match {
 	private final MatchPlayer winner;
 	private final MatchPlayer loser;
 	private final String score;
+	private final String outcome;
 	private final boolean hasStats;
 
 	public Match(long id, Date date, int tournamentEventId, String tournament, String level, String surface, boolean indoor, String round,
-	             MatchPlayer winner, MatchPlayer loser, String score, boolean hasStats) {
+	             MatchPlayer winner, MatchPlayer loser, String score, String outcome, boolean hasStats) {
 		this.id = id;
 		this.date = date;
 		this.tournamentEventId = tournamentEventId;
@@ -30,6 +31,7 @@ public class Match {
 		this.winner = winner;
 		this.loser = loser;
 		this.score = score;
+		this.outcome = outcome;
 		this.hasStats = hasStats;
 	}
 
@@ -75,6 +77,10 @@ public class Match {
 
 	public String getScore() {
 		return score;
+	}
+
+	public String getOutcome() {
+		return outcome;
 	}
 
 	public boolean isHasStats() {

@@ -128,15 +128,14 @@
 				<tr>
 					<th>Winner</th>
 					<td th:with="player=${tournamentEvent.winner}">
-						<a th:unless="${#strings.contains(tournamentEvent.score, 'ABD')}" th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Roger Federer</a>
-						<th:block th:if="${#strings.contains(tournamentEvent.score, 'ABD')}">ABD</th:block>
+						<a th:unless="${tournamentEvent.outcome == 'ABD'}" th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+						<th:block th:if="${tournamentEvent.outcome == 'ABD'}">ABD</th:block>
 					</td>
 				</tr>
-				<tr>
+				<tr th:unless="${tournamentEvent.outcome == 'ABD'}">
 					<th>Runner-up</th>
 					<td th:with="player=${tournamentEvent.runnerUp}">
-						<a th:unless="${#strings.contains(tournamentEvent.score, 'ABD')}" th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Rafael Nadal</a>
-						<th:block th:if="${#strings.contains(tournamentEvent.score, 'ABD')}">ABD</th:block>
+						<a th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Rafael Nadal</a>
 					</td>
 				</tr>
 				<tr>

@@ -229,12 +229,11 @@ function resultFormatter(column, row) {
 
 // Match Formatter
 function matchFormatter(column, row) {
-	var victory = row.score.indexOf("ABD") == -1;
-	return formatMatchPlayer(row.winner) + " " + (victory ? "d." : "vs") + " " + formatMatchPlayer(row.loser);
+	return formatMatchPlayer(row.winner) + " " + (row.outcome != "ABD" ? "d." : "vs") + " " + formatMatchPlayer(row.loser);
 }
 
 function finalFormatter(column, row) {
-	var victory = row.score.indexOf("ABD") == -1;
+	var victory = row.outcome != "ABD";
 	return formatMatchPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchPlayer(row.runnerUp) + " " + row.score;
 }
 
