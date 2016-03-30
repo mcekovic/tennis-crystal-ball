@@ -1,11 +1,10 @@
 package org.strangeforest.tcb.stats.model.table;
 
 import java.util.*;
-import java.util.Optional;
 
 import org.strangeforest.tcb.stats.service.*;
 
-import com.google.common.base.*;
+import static com.google.common.base.Strings.*;
 
 public class IndexedPlayers {
 
@@ -20,7 +19,7 @@ public class IndexedPlayers {
 	public IndexedPlayers(List<String> players, PlayerService playerService) {
 		int index = 0;
 		for (String player : players) {
-			if (Strings.isNullOrEmpty(player))
+			if (isNullOrEmpty(player))
 				continue;
 			Optional<Integer> playerId = playerService.findPlayerId(player);
 			if (playerId.isPresent()) {

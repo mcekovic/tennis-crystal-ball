@@ -39,8 +39,8 @@ public class HeadsToHeads {
 		return rivalries.isEmpty();
 	}
 
-	public Rivalry getRivalry(int playerId1, int playerId2) {
-		return playerId1 != playerId2 ? rivalryMap.get(new RivalryKey(playerId1, playerId2)) : null;
+	public Optional<Rivalry> getRivalry(int playerId1, int playerId2) {
+		return Optional.ofNullable(rivalryMap.get(new RivalryKey(playerId1, playerId2)));
 	}
 
 	private static void addRivalry(Map<Integer, Rivalry> rivalryMap, RivalryPlayer player, WonLost wonLost) {

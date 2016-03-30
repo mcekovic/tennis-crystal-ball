@@ -119,7 +119,7 @@ public abstract class CountryUtil {
 
 	public static String getISOAlpha2Code(String countryId) {
 		CountryCode code = code(countryId);
-		return code != null ? code.getAlpha2().toLowerCase() : null;
+		return code != null ? code.getAlpha2().toLowerCase() : "__";
 	}
 
 	public static String getCountryName(String countryId) {
