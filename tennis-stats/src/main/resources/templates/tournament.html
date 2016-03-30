@@ -82,9 +82,11 @@
 	<ul id="tournamentPills" class="nav nav-pills">
 		<li class="active"><a data-toggle="pill" href="#events">Events</a></li>
 		<li><a data-toggle="pill" href="#records" data-url="/tournamentRecords?tournamentId=" th:attrappend="data-url=${tournament.id}">Records</a></li>
+		<li><a data-toggle="pill" href="#statistics" data-url="/tournamentStats?tournamentId=" th:attrappend="data-url=${tournament.id}">Statistics</a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="events" class="tab-pane fade in active">
+			<h3 class="grid-title" th:text="${tournament.name} + ' Events'">Australian Open Events</h3>
 			<table id="tournamentHistoryTable" class="table table-condensed table-hover table-striped">
 				<thead>
 				<tr>
@@ -101,6 +103,7 @@
 			</table>
 		</div>
 		<div id="records" class="tab-pane fade"><br/>Loading...</div>
+		<div id="statistics" class="tab-pane fade"><br/>Loading...</div>
 	</div>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>

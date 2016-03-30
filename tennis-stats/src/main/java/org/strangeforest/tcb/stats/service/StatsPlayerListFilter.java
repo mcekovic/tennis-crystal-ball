@@ -12,26 +12,32 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 
 	private final Integer season;
 	private final String surface;
+	private final Integer tournamentId;
+	private final Integer tournamentEventId;
 
-	private static final String SEASON_CRITERION  = " AND season = ?";
+	private static final String SEASON_CRITERION = " AND season = ?";
 	private static final String SURFACE_CRITERION = " AND surface = ?::surface";
+	private static final String TOURNAMENT_CRITERION = " AND tournament_id = ?";
+	private static final String TOURNAMENT_EVENT_CRITERION = " AND tournament_event_id = ?";
 
 	public StatsPlayerListFilter(Integer season) {
 		this(null, season);
 	}
 
 	public StatsPlayerListFilter(String searchPhrase, Integer season) {
-		this(searchPhrase, season, null);
+		this(searchPhrase, season, null, null, null);
 	}
 
-	public StatsPlayerListFilter(Integer season, String surface) {
-		this(null, season, surface);
+	public StatsPlayerListFilter(Integer season, String surface, Integer tournamentId, Integer tournamentEventId) {
+		this(null, season, surface, tournamentId, tournamentEventId);
 	}
 
-	public StatsPlayerListFilter(String searchPhrase, Integer season, String surface) {
+	public StatsPlayerListFilter(String searchPhrase, Integer season, String surface, Integer tournamentId, Integer tournamentEventId) {
 		super(searchPhrase);
 		this.season = season;
 		this.surface = surface;
+		this.tournamentId = tournamentId;
+		this.tournamentEventId = tournamentEventId;
 	}
 
 	public boolean hasSeason() {
@@ -42,11 +48,27 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 		return !isNullOrEmpty(surface);
 	}
 
+	public boolean hasTournament() {
+		return tournamentId != null;
+	}
+
+	public boolean hasTournamentEvent() {
+		return tournamentEventId != null;
+	}
+
+	public boolean hasTournamentOrTournamentEvent() {
+		return hasTournament() || hasTournamentEvent();
+	}
+
 	@Override protected void appendCriteria(StringBuilder criteria) {
 		if (season != null)
 			criteria.append(SEASON_CRITERION);
 		if (!isNullOrEmpty(surface))
 			criteria.append(SURFACE_CRITERION);
+		if (tournamentId != null)
+			criteria.append(TOURNAMENT_CRITERION);
+		if (tournamentEventId != null)
+			criteria.append(TOURNAMENT_EVENT_CRITERION);
 		super.appendCriteria(criteria);
 	}
 
@@ -55,6 +77,10 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 			params.add(season);
 		if (!isNullOrEmpty(surface))
 			params.add(surface);
+		if (tournamentId != null)
+			params.add(tournamentId);
+		if (tournamentEventId != null)
+			params.add(tournamentEventId);
 		super.addParams(params);
 	}
 
@@ -66,17 +92,20 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 		if (!(o instanceof StatsPlayerListFilter)) return false;
 		if (!super.equals(o)) return false;
 		StatsPlayerListFilter filter = (StatsPlayerListFilter)o;
-		return Objects.equals(season, filter.season) &&	stringsEqual(surface, filter.surface);
+		return Objects.equals(season, filter.season) &&	stringsEqual(surface, filter.surface)
+		    && Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(super.hashCode(), season, surface);
+		return Objects.hash(super.hashCode(), season, surface, tournamentId, tournamentEventId);
 	}
 
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("season", season)
 			.add("surface", surface)
+			.add("tournamentId", tournamentId)
+			.add("tournamentEventId", tournamentEventId)
 			.toString();
 	}
 }

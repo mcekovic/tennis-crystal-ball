@@ -13,11 +13,13 @@ public class StatsLeadersService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 
-	private static final int MAX_PLAYER_COUNT           =  1000;
-	private static final int MIN_MATCHES                =   200;
-	private static final int MIN_POINTS                 = 10000;
-	private static final int MIN_ENTRIES_SEASON_FACTOR  =    10;
-	private static final int MIN_ENTRIES_SURFACE_FACTOR =     2;
+	private static final int MAX_PLAYER_COUNT              =  1000;
+	private static final int MIN_MATCHES                   =   200;
+	private static final int MIN_POINTS                    = 10000;
+	private static final int MIN_ENTRIES_SEASON_FACTOR     =    10;
+	private static final int MIN_ENTRIES_SURFACE_FACTOR    =     2;
+	private static final int MIN_ENTRIES_TOURNAMENT_FACTOR =    20;
+	private static final int MIN_ENTRIES_EVENT_FACTOR      =   200;
 
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +
@@ -40,22 +42,72 @@ public class StatsLeadersService {
 		"WHERE rank <= ?\n" +
 		"ORDER BY %5$s NULLS LAST OFFSET ? LIMIT ?";
 
+	private static final String SUMMED_STATS_LEADERS_COUNT_QUERY = //language=SQL
+		"WITH player_stats AS (\n" +
+		"  SELECT player_id, " + StatisticsService.PLAYER_STATS_SUMMED_COLUMNS +
+		"  FROM player_match_stats_v\n" +
+		"  INNER JOIN player_v USING (player_id)\n" +
+		"  WHERE TRUE%1$s\n" +
+		"  GROUP BY player_id\n" +
+		")\n" +
+		"SELECT count(player_id) AS player_count FROM player_stats\n" +
+		"WHERE p_%2$s + o_%2$s >= ?";
+
+	private static final String SUMMED_STATS_LEADERS_QUERY = //language=SQL
+		"WITH player_stats AS (\n" +
+		"  SELECT player_id, name, country_id, active, " + StatisticsService.PLAYER_STATS_SUMMED_COLUMNS +
+		"  FROM player_match_stats_v\n" +
+		"  INNER JOIN player_v USING (player_id)\n" +
+		"  WHERE TRUE%1$s\n" +
+		"  GROUP BY player_id, name, country_id, active\n" +
+		"), stats_leaders AS (\n" +
+		"  SELECT player_id, name, country_id, active, %2$s AS value\n" +
+		"  FROM player_stats\n" +
+		"  WHERE p_%3$s + o_%3$s >= ?\n" +
+		"), stats_leaders_ranked AS (\n" +
+		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, name, country_id, active, value\n" +
+		"  FROM stats_leaders\n" +
+		"  WHERE value IS NOT NULL\n" +
+		")\n" +
+		"SELECT rank, player_id, name, country_id, active, value\n" +
+		"FROM stats_leaders_ranked\n" +
+		"WHERE rank <= ?\n" +
+		"ORDER BY %4$s NULLS LAST OFFSET ? LIMIT ?";
+
 
 	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
-		StatsCategory statsCategory = StatsCategory.get(category);
-		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
-			format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria()),
-			filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter)),
-			Integer.class
-		));
+		return Math.min(MAX_PLAYER_COUNT, getPlayerCount(StatsCategory.get(category), filter));
+	}
+
+	protected int getPlayerCount(StatsCategory statsCategory, StatsPlayerListFilter filter) {
+		if (filter.hasTournamentOrTournamentEvent()) {
+			return jdbcTemplate.queryForObject(
+				format(SUMMED_STATS_LEADERS_COUNT_QUERY, filter.getCriteria(), minEntriesColumn(statsCategory)),
+				filter.getParams(getMinEntriesValue(statsCategory, filter)),
+				Integer.class
+			);
+		}
+		else {
+			return jdbcTemplate.queryForObject(
+				format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria()),
+				filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter)),
+				Integer.class
+			);
+		}
 	}
 
 	public BootgridTable<StatsLeaderRow> getStatsLeadersTable(String category, int playerCount, StatsPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		StatsCategory statsCategory = StatsCategory.get(category);
 		BootgridTable<StatsLeaderRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
+		String sql = filter.hasTournamentOrTournamentEvent()
+			? format(SUMMED_STATS_LEADERS_QUERY, filter.getCriteria(), statsCategory.getExpression(), minEntriesColumn(statsCategory), orderBy)
+			: format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria(), orderBy);
+		Object[] params = filter.hasTournamentOrTournamentEvent()
+			? filter.getParams(getMinEntriesValue(statsCategory, filter), playerCount, offset, pageSize)
+			: filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter), playerCount, offset, pageSize);
 		jdbcTemplate.query(
-			format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria(), orderBy),
+			sql,
 			rs -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
@@ -65,7 +117,7 @@ public class StatsLeadersService {
 				double value = rs.getDouble("value");
 				table.addRow(new StatsLeaderRow(rank, playerId, name, countryId, active, value, statsCategory.getType()));
 			},
-			filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter), playerCount, offset, pageSize)
+			params
 		);
 		return table;
 	}
@@ -89,6 +141,10 @@ public class StatsLeadersService {
 			minEntries /= MIN_ENTRIES_SEASON_FACTOR;
 		if (filter.hasSurface())
 			minEntries /= MIN_ENTRIES_SURFACE_FACTOR;
+		if (filter.hasTournamentEvent())
+			minEntries /= MIN_ENTRIES_EVENT_FACTOR;
+		else if (filter.hasTournament())
+			minEntries /= MIN_ENTRIES_TOURNAMENT_FACTOR;
 		return minEntries;
 	}
 }
