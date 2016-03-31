@@ -59,6 +59,16 @@ public class TournamentController extends BaseController {
 		return new ModelAndView("tournamentEvent", modelMap);
 	}
 
+	@RequestMapping("/tournamentEventStats")
+	public ModelAndView tournamentEventStats(
+		@RequestParam(value = "tournamentEventId") int tournamentEventId
+	) {
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("tournamentEventId", tournamentEventId);
+		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
+		return new ModelAndView("tournamentEventStats", modelMap);
+	}
+
 	@RequestMapping("/tournamentRecords")
 	public ModelAndView tournamentRecords(
 		@RequestParam(value = "tournamentId") int tournamentId

@@ -24,6 +24,7 @@
 		var maxRoundPos = rounds.length - roundsToShow;
 		var roundPos = maxRoundPos;
 		$(function() {
+			$("[data-toggle=pill]").click(tabClick);
 			showRounds();
 		});
 		function roundLeft() {
@@ -148,49 +149,58 @@
 			</table>
 		</div>
 	</div>
-	<table id="drawTable" class="table-condensed text-nowrap" width="100%">
-		<thead>
-			<tr>
-				<th colspan="2"><button id="drawLeft" type="button" class="btn btn-info btn-xs glyphicon glyphicon-chevron-left" onclick="roundLeft()"></button></th>
-				<th colspan="2" style="text-align: right"><button id="drawRight" type="button" class="btn btn-info btn-xs glyphicon glyphicon-chevron-right" onclick="roundRight()"></button></th>
-			</tr>
-			<tr>
-				<th th:each="round : ${draw.rounds}" th:text="${round.description}" th:attr="data-round-index=${roundStat.index}">Final</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="i : ${#numbers.sequence(0, draw.maxRoundMatches - 1)}">
-				<td th:each="round : ${draw.rounds}" th:with="matches=${draw.getRoundMatches(round)}, match=${i lt matches.size() ? matches[i] : null}" th:attr="data-round-index=${roundStat.index}">
-					<table th:if="${match}" class="table-bordered" th:with="outcomeOrStats=${match.outcome != null || match.hasStats}">
-						<tr th:with="winner=${match.winner}">
-							<td class="seed">
-								<span th:text="${winner.seedAndEntry}"></span>
-							</td>
-							<td class="player">
-								<img th:src="'/images/flags/' + ${winner.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${winner.countryId}" title="SUI" width="24" height="20"/>
-								<strong><a th:href="'/playerProfile?playerId=' + ${winner.id}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a></strong>
-							</td>
-							<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.wGames}">6</th:block><sup th:if="${score.wTBPoints}" th:text="|(${score.wTBPoints})|"></sup></td>
-							<td th:if="${outcomeOrStats}" class="score"><th:block th:if="${match.outcome}" th:text="${match.outcome}"/></td>
-						</tr>
-						<tr th:with="loser=${match.loser}">
-							<td class="seed">
-								<span th:text="${loser.seedAndEntry}"></span>
-							</td>
-							<td class="player">
-								<img th:src="'/images/flags/' + ${loser.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${loser.countryId}" title="ESP" width="24" height="20"/>
-								<a th:href="'/playerProfile?playerId=' + ${loser.id}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
-							</td>
-							<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.lGames}">3</th:block><sup th:if="${score.lTBPoints}" th:text="|(${score.lTBPoints})|"></sup></td>
-							<td th:if="${outcomeOrStats}" class="stats">
-								<a th:if="${match.hasStats}" th:id="'matchStats-' + ${match.id}" href="#" class="btn btn-info btn-xxs glyphicon glyphicon-stats" th:onclick="|showMatchStats(${match.id}, event)|" title='Match Statistics'> </a>
-							</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	<ul id="tournamentEventPills" class="nav nav-pills">
+		<li class="active"><a data-toggle="pill" href="#draw">Draw</a></li>
+		<li><a data-toggle="pill" href="#statistics" data-url="/tournamentEventStats?tournamentEventId=" th:attrappend="data-url=${tournamentEvent.id}">Statistics</a></li>
+	</ul>
+	<div class="tab-content">
+		<div id="draw" class="tab-pane fade in active">
+			<table id="drawTable" class="table-condensed text-nowrap" width="100%">
+			<thead>
+				<tr>
+					<th colspan="2"><button id="drawLeft" type="button" class="btn btn-info btn-xs glyphicon glyphicon-chevron-left" onclick="roundLeft()"></button></th>
+					<th colspan="2" style="text-align: right"><button id="drawRight" type="button" class="btn btn-info btn-xs glyphicon glyphicon-chevron-right" onclick="roundRight()"></button></th>
+				</tr>
+				<tr>
+					<th th:each="round : ${draw.rounds}" th:text="${round.description}" th:attr="data-round-index=${roundStat.index}">Final</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="i : ${#numbers.sequence(0, draw.maxRoundMatches - 1)}">
+					<td th:each="round : ${draw.rounds}" th:with="matches=${draw.getRoundMatches(round)}, match=${i lt matches.size() ? matches[i] : null}" th:attr="data-round-index=${roundStat.index}">
+						<table th:if="${match}" class="table-bordered" th:with="outcomeOrStats=${match.outcome != null || match.hasStats}">
+							<tr th:with="winner=${match.winner}">
+								<td class="seed">
+									<span th:text="${winner.seedAndEntry}"></span>
+								</td>
+								<td class="player">
+									<img th:src="'/images/flags/' + ${winner.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${winner.countryId}" title="SUI" width="24" height="20"/>
+									<strong><a th:href="'/playerProfile?playerId=' + ${winner.id}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a></strong>
+								</td>
+								<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.wGames}">6</th:block><sup th:if="${score.wTBPoints}" th:text="|(${score.wTBPoints})|"></sup></td>
+								<td th:if="${outcomeOrStats}" class="score"><th:block th:if="${match.outcome}" th:text="${match.outcome}"/></td>
+							</tr>
+							<tr th:with="loser=${match.loser}">
+								<td class="seed">
+									<span th:text="${loser.seedAndEntry}"></span>
+								</td>
+								<td class="player">
+									<img th:src="'/images/flags/' + ${loser.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${loser.countryId}" title="ESP" width="24" height="20"/>
+									<a th:href="'/playerProfile?playerId=' + ${loser.id}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
+								</td>
+								<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.lGames}">3</th:block><sup th:if="${score.lTBPoints}" th:text="|(${score.lTBPoints})|"></sup></td>
+								<td th:if="${outcomeOrStats}" class="stats">
+									<a th:if="${match.hasStats}" th:id="'matchStats-' + ${match.id}" href="#" class="btn btn-info btn-xxs glyphicon glyphicon-stats" th:onclick="|showMatchStats(${match.id}, event)|" title='Match Statistics'> </a>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+			</table>
+		</div>
+		<div id="statistics" class="tab-pane fade"><br/>Loading...</div>
+	</div>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
+import static java.util.Arrays.asList;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class StatsPlayerListFilter extends PlayerListFilter {
@@ -64,7 +65,24 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 		return tournamentId;
 	}
 
+	public String getBaseCriteria() {
+		StringBuilder criteria = new StringBuilder();
+		appendBaseCriteria(criteria);
+		return criteria.toString();
+	}
+
+	public String getSearchCriteria() {
+		StringBuilder criteria = new StringBuilder();
+		super.appendCriteria(criteria);
+		return criteria.toString();
+	}
+
 	@Override protected void appendCriteria(StringBuilder criteria) {
+		appendBaseCriteria(criteria);
+		super.appendCriteria(criteria);
+	}
+
+	private void appendBaseCriteria(StringBuilder criteria) {
 		if (season != null)
 			criteria.append(SEASON_CRITERION);
 		if (!isNullOrEmpty(surface))
@@ -73,10 +91,48 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 			criteria.append(TOURNAMENT_CRITERION);
 		if (tournamentEventId != null)
 			criteria.append(TOURNAMENT_EVENT_CRITERION);
-		super.appendCriteria(criteria);
+	}
+
+	public Object[] getBaseParams(Object... extraParams) {
+		List<Object> params = new ArrayList<>();
+		addBaseParams(params);
+		params.addAll(asList(extraParams));
+		return params.toArray();
+	}
+
+	public Object[] getBaseParamsWithPrefix(Object firstParam, Object... extraParams) {
+		List<Object> params = new ArrayList<>();
+		params.add(firstParam);
+		addBaseParams(params);
+		params.addAll(asList(extraParams));
+		return params.toArray();
+	}
+
+	public Object[] getParams(Collection midParams, Object... extraParams) {
+		List<Object> params = new ArrayList<>();
+		addBaseParams(params);
+		params.addAll(midParams);
+		super.addParams(params);
+		params.addAll(asList(extraParams));
+		return params.toArray();
+	}
+
+	public Object[] getParamsWithPrefix(Object firstParam, Collection midParams, Object... extraParams) {
+		List<Object> params = new ArrayList<>();
+		params.add(firstParam);
+		addBaseParams(params);
+		params.addAll(midParams);
+		super.addParams(params);
+		params.addAll(asList(extraParams));
+		return params.toArray();
 	}
 
 	@Override protected void addParams(List<Object> params) {
+		addBaseParams(params);
+		super.addParams(params);
+	}
+
+	private void addBaseParams(List<Object> params) {
 		if (season != null)
 			params.add(season);
 		if (!isNullOrEmpty(surface))
@@ -85,7 +141,6 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 			params.add(tournamentId);
 		if (tournamentEventId != null)
 			params.add(tournamentEventId);
-		super.addParams(params);
 	}
 
 

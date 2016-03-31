@@ -11,6 +11,8 @@ import org.strangeforest.tcb.stats.model.table.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
+import static java.util.Arrays.*;
+import static java.util.Collections.*;
 
 @Service
 public class StatsLeadersService {
@@ -23,11 +25,12 @@ public class StatsLeadersService {
 	private static final int MIN_POINTS                 = 10000;
 	private static final int MIN_ENTRIES_SEASON_FACTOR  =    10;
 	private static final int MIN_ENTRIES_SURFACE_FACTOR =     2;
-	private static final int MIN_ENTRIES_EVENT_FACTOR   =   200;
+	private static final int MIN_ENTRIES_EVENT_FACTOR   =   100;
 	private static final Map<Range<Integer>, Integer> MIN_ENTRIES_TOURNAMENT_FACTOR = new HashMap<Range<Integer>, Integer>() {{
-		put(Range.closed(1, 4), 100);
-		put(Range.closed(5, 9), 50);
-		put(Range.atLeast(10), 20);
+		put(Range.closed(1, 2), 100);
+		put(Range.closed(3, 5), 50);
+		put(Range.closed(6, 9), 25);
+		put(Range.atLeast(5), 20);
 	}};
 
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
@@ -37,19 +40,19 @@ public class StatsLeadersService {
 
 	private static final String STATS_LEADERS_QUERY = //language=SQL
 		"WITH stats_leaders AS (\n" +
-		"  SELECT player_id, name, country_id, active, %1$s AS value\n" +
+		"  SELECT player_id, %1$s AS value\n" +
 		"  FROM %2$s\n" +
-		"  INNER JOIN player_v USING (player_id)\n" +
 		"  WHERE p_%3$s + o_%3$s >= ?%4$s\n" +
 		"), stats_leaders_ranked AS (\n" +
-		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, name, country_id, active, value\n" +
+		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, value\n" +
 		"  FROM stats_leaders\n" +
 		"  WHERE value IS NOT NULL\n" +
 		")\n" +
 		"SELECT rank, player_id, name, country_id, active, value\n" +
 		"FROM stats_leaders_ranked\n" +
-		"WHERE rank <= ?\n" +
-		"ORDER BY %5$s NULLS LAST OFFSET ? LIMIT ?";
+		"INNER JOIN player_v USING (player_id)\n" +
+		"WHERE rank <= ?%5$s\n" +
+		"ORDER BY %6$s NULLS LAST OFFSET ? LIMIT ?";
 
 	private static final String SUMMED_STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"WITH player_stats AS (\n" +
@@ -64,24 +67,24 @@ public class StatsLeadersService {
 
 	private static final String SUMMED_STATS_LEADERS_QUERY = //language=SQL
 		"WITH player_stats AS (\n" +
-		"  SELECT player_id, name, country_id, active, " + StatisticsService.PLAYER_STATS_SUMMED_COLUMNS +
+		"  SELECT player_id, " + StatisticsService.PLAYER_STATS_SUMMED_COLUMNS +
 		"  FROM player_match_stats_v\n" +
-		"  INNER JOIN player_v USING (player_id)\n" +
 		"  WHERE TRUE%1$s\n" +
-		"  GROUP BY player_id, name, country_id, active\n" +
+		"  GROUP BY player_id\n" +
 		"), stats_leaders AS (\n" +
-		"  SELECT player_id, name, country_id, active, %2$s AS value\n" +
+		"  SELECT player_id, %2$s AS value\n" +
 		"  FROM player_stats\n" +
 		"  WHERE p_%3$s + o_%3$s >= ?\n" +
 		"), stats_leaders_ranked AS (\n" +
-		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, name, country_id, active, value\n" +
+		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, value\n" +
 		"  FROM stats_leaders\n" +
 		"  WHERE value IS NOT NULL\n" +
 		")\n" +
 		"SELECT rank, player_id, name, country_id, active, value\n" +
 		"FROM stats_leaders_ranked\n" +
-		"WHERE rank <= ?\n" +
-		"ORDER BY %4$s NULLS LAST OFFSET ? LIMIT ?";
+		"INNER JOIN player_v USING (player_id)\n" +
+		"WHERE rank <= ?%4$s\n" +
+		"ORDER BY %5$s NULLS LAST OFFSET ? LIMIT ?";
 
 
 	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
@@ -91,15 +94,15 @@ public class StatsLeadersService {
 	protected int getPlayerCount(StatsCategory statsCategory, StatsPlayerListFilter filter) {
 		if (filter.hasTournamentOrTournamentEvent()) {
 			return jdbcTemplate.queryForObject(
-				format(SUMMED_STATS_LEADERS_COUNT_QUERY, filter.getCriteria(), minEntriesColumn(statsCategory)),
-				filter.getParams(getMinEntriesValue(statsCategory, filter)),
+				format(SUMMED_STATS_LEADERS_COUNT_QUERY, filter.getBaseCriteria(), minEntriesColumn(statsCategory)),
+				filter.getBaseParams(getMinEntriesValue(statsCategory, filter)),
 				Integer.class
 			);
 		}
 		else {
 			return jdbcTemplate.queryForObject(
-				format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria()),
-				filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter)),
+				format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria()),
+				filter.getBaseParamsWithPrefix(getMinEntriesValue(statsCategory, filter)),
 				Integer.class
 			);
 		}
@@ -134,14 +137,14 @@ public class StatsLeadersService {
 
 	private String getTableSQL(StatsCategory statsCategory, StatsPlayerListFilter filter, String orderBy) {
 		return filter.hasTournamentOrTournamentEvent()
-	       ? format(SUMMED_STATS_LEADERS_QUERY, filter.getCriteria(), statsCategory.getExpression(), minEntriesColumn(statsCategory), orderBy)
-	       : format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria(), orderBy);
+	       ? format(SUMMED_STATS_LEADERS_QUERY, filter.getBaseCriteria(), statsCategory.getExpression(), minEntriesColumn(statsCategory), filter.getSearchCriteria(), orderBy)
+	       : format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), filter.getSearchCriteria(), orderBy);
 	}
 
 	private Object[] getTableParams(StatsCategory statsCategory, int playerCount, StatsPlayerListFilter filter, int pageSize, int offset) {
 		return filter.hasTournamentOrTournamentEvent()
-			? filter.getParams(getMinEntriesValue(statsCategory, filter), playerCount, offset, pageSize)
-			: filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter), playerCount, offset, pageSize);
+			? filter.getParams(asList(getMinEntriesValue(statsCategory, filter), playerCount), offset, pageSize)
+			: filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter), singletonList(playerCount), offset, pageSize);
 	}
 
 	private static String statsTableName(StatsPlayerListFilter filter) {

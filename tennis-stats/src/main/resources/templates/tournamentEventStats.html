@@ -9,7 +9,7 @@
 					method: "GET",
 					cache: false
 				},
-				url: "/statsLeadersTable?tournamentId=[[${tournamentId}]]",
+				url: "/statsLeadersTable?tournamentEventId=[[${tournamentEventId}]]",
 				requestHandler: function (request) {
 					request.category = $("#category").val();
 					return request;
@@ -34,7 +34,7 @@
 		function categoryChanged() {
 			var $category = $("#category");
 			$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
-			var url = "/statsLeadersMinEntries?category=" + $category.val() + "&tournamentId=[[${tournamentId}]]";
+			var url = "/statsLeadersMinEntries?category=" + $category.val() + "&tournamentEventId=[[${tournamentEventId}]]";
 			$.get(url, function (data) {
 				$("#minEntries").html(data);
 			});
@@ -63,5 +63,5 @@
 			</tr>
 		</thead>
 	</table>
-	<p><i>* Minimum <span id="minEntries">10 matches</span></i></p>
+	<p><i>* Minimum <span id="minEntries">2 matches</span></i></p>
 </th:block>
