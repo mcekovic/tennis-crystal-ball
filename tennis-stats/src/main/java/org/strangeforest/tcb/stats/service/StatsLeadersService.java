@@ -1,10 +1,14 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
+
+import com.google.common.collect.*;
 
 import static java.lang.String.*;
 
@@ -12,14 +16,19 @@ import static java.lang.String.*;
 public class StatsLeadersService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private TournamentService tournamentService;
 
-	private static final int MAX_PLAYER_COUNT              =  1000;
-	private static final int MIN_MATCHES                   =   200;
-	private static final int MIN_POINTS                    = 10000;
-	private static final int MIN_ENTRIES_SEASON_FACTOR     =    10;
-	private static final int MIN_ENTRIES_SURFACE_FACTOR    =     2;
-	private static final int MIN_ENTRIES_TOURNAMENT_FACTOR =    20;
-	private static final int MIN_ENTRIES_EVENT_FACTOR      =   200;
+	private static final int MAX_PLAYER_COUNT           =  1000;
+	private static final int MIN_MATCHES                =   200;
+	private static final int MIN_POINTS                 = 10000;
+	private static final int MIN_ENTRIES_SEASON_FACTOR  =    10;
+	private static final int MIN_ENTRIES_SURFACE_FACTOR =     2;
+	private static final int MIN_ENTRIES_EVENT_FACTOR   =   200;
+	private static final Map<Range<Integer>, Integer> MIN_ENTRIES_TOURNAMENT_FACTOR = new HashMap<Range<Integer>, Integer>() {{
+		put(Range.closed(1, 4), 100);
+		put(Range.closed(5, 9), 50);
+		put(Range.atLeast(10), 20);
+	}};
 
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +
@@ -100,12 +109,8 @@ public class StatsLeadersService {
 		StatsCategory statsCategory = StatsCategory.get(category);
 		BootgridTable<StatsLeaderRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
-		String sql = filter.hasTournamentOrTournamentEvent()
-			? format(SUMMED_STATS_LEADERS_QUERY, filter.getCriteria(), statsCategory.getExpression(), minEntriesColumn(statsCategory), orderBy)
-			: format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria(), orderBy);
-		Object[] params = filter.hasTournamentOrTournamentEvent()
-			? filter.getParams(getMinEntriesValue(statsCategory, filter), playerCount, offset, pageSize)
-			: filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter), playerCount, offset, pageSize);
+		String sql = getTableSQL(statsCategory, filter, orderBy);
+		Object[] params = getTableParams(statsCategory, playerCount, filter, pageSize, offset);
 		jdbcTemplate.query(
 			sql,
 			rs -> {
@@ -127,6 +132,18 @@ public class StatsLeadersService {
 		return getMinEntriesValue(statsCategory, filter) + (statsCategory.isNeedsStats() ? " points" : " matches");
 	}
 
+	private String getTableSQL(StatsCategory statsCategory, StatsPlayerListFilter filter, String orderBy) {
+		return filter.hasTournamentOrTournamentEvent()
+	       ? format(SUMMED_STATS_LEADERS_QUERY, filter.getCriteria(), statsCategory.getExpression(), minEntriesColumn(statsCategory), orderBy)
+	       : format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria(), orderBy);
+	}
+
+	private Object[] getTableParams(StatsCategory statsCategory, int playerCount, StatsPlayerListFilter filter, int pageSize, int offset) {
+		return filter.hasTournamentOrTournamentEvent()
+			? filter.getParams(getMinEntriesValue(statsCategory, filter), playerCount, offset, pageSize)
+			: filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter), playerCount, offset, pageSize);
+	}
+
 	private static String statsTableName(StatsPlayerListFilter filter) {
 		return format("player%1$s%2$s_stats", filter.hasSeason() ? "_season" : "", filter.hasSurface() ? "_surface" : "");
 	}
@@ -144,7 +161,11 @@ public class StatsLeadersService {
 		if (filter.hasTournamentEvent())
 			minEntries /= MIN_ENTRIES_EVENT_FACTOR;
 		else if (filter.hasTournament())
-			minEntries /= MIN_ENTRIES_TOURNAMENT_FACTOR;
+			minEntries /= getMinEntriesTournamentFactor(tournamentService.getTournamentEventCount(filter.getTournamentId()));
 		return minEntries;
+	}
+
+	private int getMinEntriesTournamentFactor(int eventCount) {
+		return MIN_ENTRIES_TOURNAMENT_FACTOR.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().get().getValue();
 	}
 }

@@ -18,13 +18,12 @@ public class PlayerMatchesResource {
 
 	private static final int MAX_MATCHES = 10000;
 
-	private static Map<String, String> ORDER_MAP = new TreeMap<>();
-	static {
-		ORDER_MAP.put("date", "date");
-		ORDER_MAP.put("tournament", "tournament");
-		ORDER_MAP.put("surface", "surface");
-		ORDER_MAP.put("round", "round");
-	}
+	private static Map<String, String> ORDER_MAP = new TreeMap<String, String>() {{
+		put("date", "date");
+		put("tournament", "tournament");
+		put("surface", "surface");
+		put("round", "round");
+	}};
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("date"), desc("round"), desc("match_num")};
 
 	@RequestMapping("/matchesTable")

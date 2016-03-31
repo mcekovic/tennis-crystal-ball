@@ -60,6 +60,10 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 		return hasTournament() || hasTournamentEvent();
 	}
 
+	public int getTournamentId() {
+		return tournamentId;
+	}
+
 	@Override protected void appendCriteria(StringBuilder criteria) {
 		if (season != null)
 			criteria.append(SEASON_CRITERION);

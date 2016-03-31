@@ -67,6 +67,11 @@ public class TournamentService {
 		"WHERE r.rank <= coalesce((SELECT max(r2.rank) FROM record_results r2 WHERE r2.order = ?), ?)\n" +
 		"ORDER BY r.order, p.goat_points DESC, p.name";
 
+	private static final String TOURNAMENT_EVENT_COUNT_QUERY =
+		"SELECT count(tournament_event_id) event_count\n" +
+		"FROM tournament_event\n" +
+		"WHERE tournament_id = ?";
+
 	private static final String PLAYER_TOURNAMENTS_QUERY =
 		"SELECT DISTINCT tournament_id, t.name, t.level\n" +
 		"FROM player_tournament_event_result r\n" +
@@ -196,6 +201,11 @@ public class TournamentService {
 			},
 			tournamentId, result, maxPlayers, maxPlayers
 		);
+	}
+
+	@Cacheable("Tournament.EventCount")
+	public int getTournamentEventCount(int tournamentId) {
+		return jdbcTemplate.queryForObject(TOURNAMENT_EVENT_COUNT_QUERY, Integer.class, tournamentId);
 	}
 
 

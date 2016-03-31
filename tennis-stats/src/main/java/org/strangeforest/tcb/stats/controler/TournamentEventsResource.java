@@ -18,16 +18,15 @@ public class TournamentEventsResource {
 
 	private static final int MAX_TOURNAMENT_EVENTS = 1000;
 
-	private static Map<String, String> ORDER_MAP = new TreeMap<>();
-	static {
-		ORDER_MAP.put("date", "date");
-		ORDER_MAP.put("name", "name");
-		ORDER_MAP.put("surface", "surface");
-		ORDER_MAP.put("draw", "draw_type, draw_size");
-		ORDER_MAP.put("playerCount", "player_count NULLS LAST");
-		ORDER_MAP.put("participationPoints", "participation_points NULLS LAST");
-		ORDER_MAP.put("participationPct", "participation_points::DECIMAL/max_participation_points NULLS LAST");
-	}
+	private static Map<String, String> ORDER_MAP = new TreeMap<String, String>() {{
+		put("date", "date");
+		put("name", "name");
+		put("surface", "surface");
+		put("draw", "draw_type, draw_size");
+		put("playerCount", "player_count NULLS LAST");
+		put("participationPoints", "participation_points NULLS LAST");
+		put("participationPct", "participation_points::DECIMAL/max_participation_points NULLS LAST");
+	}};
 	private static final OrderBy[] DEFAULT_ORDER = new OrderBy[] {desc("date"), asc("level"), asc("name")};
 
 	@RequestMapping("/tournamentEventsTable")

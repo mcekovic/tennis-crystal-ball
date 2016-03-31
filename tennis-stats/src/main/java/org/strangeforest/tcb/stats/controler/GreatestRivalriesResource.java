@@ -18,13 +18,12 @@ public class GreatestRivalriesResource {
 
 	private static final int MAX_RIVALRIES = 1000;
 
-	private static Map<String, String> ORDER_MAP = new TreeMap<>();
-	static {
-		ORDER_MAP.put("matches", "matches");
-		ORDER_MAP.put("won", "won");
-		ORDER_MAP.put("lost", "lost");
-		ORDER_MAP.put("wonPctStr", "won::real/(won + lost)");
-	}
+	private static Map<String, String> ORDER_MAP = new TreeMap<String, String>() {{
+		put("matches", "matches");
+		put("won", "won");
+		put("lost", "lost");
+		put("wonPctStr", "won::real/(won + lost)");
+	}};
 	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("rivalry_rank");
 
 	@RequestMapping("/greatestRivalriesTable")

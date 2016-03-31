@@ -16,20 +16,19 @@ public class GOATListResource {
 
 	@Autowired private GOATListService goatListService;
 
-	private static Map<String, String> ORDER_MAP = new TreeMap<>();
-	static {
-		ORDER_MAP.put("goatPoints", "goat_points");
-		ORDER_MAP.put("tournamentGoatPoints", "tournament_goat_points");
-		ORDER_MAP.put("rankingGoatPoints", "ranking_goat_points");
-		ORDER_MAP.put("achievementsGoatPoints", "achievements_goat_points");
-		ORDER_MAP.put("grandSlams", "grand_slams");
-		ORDER_MAP.put("tourFinals", "tour_finals");
-		ORDER_MAP.put("masters", "masters");
-		ORDER_MAP.put("olympics", "olympics");
-		ORDER_MAP.put("bigTitles", "big_titles");
-		ORDER_MAP.put("titles", "titles");
-		ORDER_MAP.put("bestEloRating", "best_elo_rating NULLS LAST");
-	}
+	private static Map<String, String> ORDER_MAP = new TreeMap<String, String>() {{
+		put("goatPoints", "goat_points");
+		put("tournamentGoatPoints", "tournament_goat_points");
+		put("rankingGoatPoints", "ranking_goat_points");
+		put("achievementsGoatPoints", "achievements_goat_points");
+		put("grandSlams", "grand_slams");
+		put("tourFinals", "tour_finals");
+		put("masters", "masters");
+		put("olympics", "olympics");
+		put("bigTitles", "big_titles");
+		put("titles", "titles");
+		put("bestEloRating", "best_elo_rating NULLS LAST");
+	}};
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("goat_points"), asc("name")};
 
 	@RequestMapping("/goatTable")

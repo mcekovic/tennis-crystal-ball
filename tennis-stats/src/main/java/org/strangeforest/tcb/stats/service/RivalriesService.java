@@ -26,21 +26,21 @@ public class RivalriesService {
 
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES = 20;
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES_MIN = 2;
-	private static final Map<String, Double> MIN_MATCHES_LEVEL_FACTOR = new HashMap<>();
-	private static final Map<String, Double> MIN_MATCHES_SURFACE_FACTOR = new HashMap<>();
-	static {
-		MIN_MATCHES_LEVEL_FACTOR.put("G",  4.0);
-		MIN_MATCHES_LEVEL_FACTOR.put("F",  8.0);
-		MIN_MATCHES_LEVEL_FACTOR.put("M",  3.0);
-		MIN_MATCHES_LEVEL_FACTOR.put("O", 20.0);
-		MIN_MATCHES_LEVEL_FACTOR.put("A",  3.5);
-		MIN_MATCHES_LEVEL_FACTOR.put("B",  2.5);
-		MIN_MATCHES_LEVEL_FACTOR.put("D",  8.0);
-		MIN_MATCHES_SURFACE_FACTOR.put("H",  2.0);
-		MIN_MATCHES_SURFACE_FACTOR.put("C",  2.0);
-		MIN_MATCHES_SURFACE_FACTOR.put("G",  5.0);
-		MIN_MATCHES_SURFACE_FACTOR.put("P",  3.0);
-	}
+	private static final Map<String, Double> MIN_MATCHES_LEVEL_FACTOR = new HashMap<String, Double>() {{
+		put("G",  4.0);
+		put("F",  8.0);
+		put("M",  3.0);
+		put("O", 20.0);
+		put("A",  3.5);
+		put("B",  2.5);
+		put("D",  8.0);
+	}};
+	private static final Map<String, Double> MIN_MATCHES_SURFACE_FACTOR = new HashMap<String, Double>() {{
+		put("H",  2.0);
+		put("C",  2.0);
+		put("G",  5.0);
+		put("P",  3.0);
+	}};
 
 	private static final String PLAYER_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +

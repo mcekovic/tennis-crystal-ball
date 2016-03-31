@@ -16,15 +16,14 @@ public class PlayerTournamentsResource {
 
 	private static final int MAX_TOURNAMENTS = 1000;
 
-	private static Map<String, String> ORDER_MAP = new TreeMap<>();
-	static {
-		ORDER_MAP.put("season", "season");
-		ORDER_MAP.put("date", "date");
-		ORDER_MAP.put("name", "name");
-		ORDER_MAP.put("surface", "surface");
-		ORDER_MAP.put("draw", "draw_type, draw_size");
-		ORDER_MAP.put("result", "result");
-	}
+	private static Map<String, String> ORDER_MAP = new TreeMap<String, String>() {{
+		put("season", "season");
+		put("date", "date");
+		put("name", "name");
+		put("surface", "surface");
+		put("draw", "draw_type, draw_size");
+		put("result", "result");
+	}};
 	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("date");
 
 	@RequestMapping("/playerTournamentsTable")

@@ -16,12 +16,11 @@ public class TopPerformersResource {
 
 	@Autowired private TopPerformersService topPerformersService;
 
-	private static Map<String, String> ORDER_MAP = new TreeMap<>();
-	static {
-		ORDER_MAP.put("wonLostPct", "won_lost_pct");
-		ORDER_MAP.put("won", "won");
-		ORDER_MAP.put("lost", "lost");
-	}
+	private static Map<String, String> ORDER_MAP = new TreeMap<String, String>() {{
+		put("wonLostPct", "won_lost_pct");
+		put("won", "won");
+		put("lost", "lost");
+	}};
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("won"), asc("lost"), asc("name")};
 
 	@RequestMapping("/topPerformersTable")
