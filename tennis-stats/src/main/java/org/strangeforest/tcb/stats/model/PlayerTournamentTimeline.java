@@ -101,7 +101,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 		() -> MonthDay.from(LocalDate.ofYearDay(REFERENCE_YEAR, (int)dates.stream().mapToInt(date -> toLocalDate(date).plusDays(getDuration()).getDayOfYear()).average().getAsDouble()))
 	);
 
-	private static final int REFERENCE_YEAR = 2001;
+	private static final int REFERENCE_YEAR = 2000;
 
 
 	public static class TimelineSurface {
