@@ -11,8 +11,8 @@ import org.strangeforest.tcb.stats.model.table.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static java.util.Collections.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 @Service
 public class StatsLeadersService {
@@ -50,16 +50,14 @@ public class StatsLeadersService {
 		")\n" +
 		"SELECT rank, player_id, name, country_id, active, value\n" +
 		"FROM stats_leaders_ranked\n" +
-		"INNER JOIN player_v USING (player_id)\n" +
-		"WHERE rank <= ?%5$s\n" +
+		"INNER JOIN player_v USING (player_id)%5$s\n" +
 		"ORDER BY %6$s NULLS LAST OFFSET ? LIMIT ?";
 
 	private static final String SUMMED_STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"WITH player_stats AS (\n" +
 		"  SELECT player_id, " + StatisticsService.PLAYER_STATS_SUMMED_COLUMNS +
 		"  FROM player_match_stats_v\n" +
-		"  INNER JOIN player_v USING (player_id)\n" +
-		"  WHERE TRUE%1$s\n" +
+		"  INNER JOIN player_v USING (player_id)%1$s\n" +
 		"  GROUP BY player_id\n" +
 		")\n" +
 		"SELECT count(player_id) AS player_count FROM player_stats\n" +
@@ -68,8 +66,7 @@ public class StatsLeadersService {
 	private static final String SUMMED_STATS_LEADERS_QUERY = //language=SQL
 		"WITH player_stats AS (\n" +
 		"  SELECT player_id, " + StatisticsService.PLAYER_STATS_SUMMED_COLUMNS +
-		"  FROM player_match_stats_v\n" +
-		"  WHERE TRUE%1$s\n" +
+		"  FROM player_match_stats_v%1$s\n" +
 		"  GROUP BY player_id\n" +
 		"), stats_leaders AS (\n" +
 		"  SELECT player_id, %2$s AS value\n" +
@@ -82,8 +79,7 @@ public class StatsLeadersService {
 		")\n" +
 		"SELECT rank, player_id, name, country_id, active, value\n" +
 		"FROM stats_leaders_ranked\n" +
-		"INNER JOIN player_v USING (player_id)\n" +
-		"WHERE rank <= ?%4$s\n" +
+		"INNER JOIN player_v USING (player_id)%4$s\n" +
 		"ORDER BY %5$s NULLS LAST OFFSET ? LIMIT ?";
 
 
@@ -94,15 +90,15 @@ public class StatsLeadersService {
 	protected int getPlayerCount(StatsCategory statsCategory, StatsPlayerListFilter filter) {
 		if (filter.hasTournamentOrTournamentEvent()) {
 			return jdbcTemplate.queryForObject(
-				format(SUMMED_STATS_LEADERS_COUNT_QUERY, filter.getBaseCriteria(), minEntriesColumn(statsCategory)),
-				filter.getBaseParams(getMinEntriesValue(statsCategory, filter)),
+				format(SUMMED_STATS_LEADERS_COUNT_QUERY, where(filter.getCriteria(), 2), minEntriesColumn(statsCategory)),
+				filter.getParams(getMinEntriesValue(statsCategory, filter)),
 				Integer.class
 			);
 		}
 		else {
 			return jdbcTemplate.queryForObject(
-				format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria()),
-				filter.getBaseParamsWithPrefix(getMinEntriesValue(statsCategory, filter)),
+				format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria()),
+				filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter)),
 				Integer.class
 			);
 		}
@@ -113,7 +109,7 @@ public class StatsLeadersService {
 		BootgridTable<StatsLeaderRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
 		String sql = getTableSQL(statsCategory, filter, orderBy);
-		Object[] params = getTableParams(statsCategory, playerCount, filter, pageSize, offset);
+		Object[] params = getTableParams(statsCategory, filter, pageSize, offset);
 		jdbcTemplate.query(
 			sql,
 			rs -> {
@@ -137,14 +133,14 @@ public class StatsLeadersService {
 
 	private String getTableSQL(StatsCategory statsCategory, StatsPlayerListFilter filter, String orderBy) {
 		return filter.hasTournamentOrTournamentEvent()
-	       ? format(SUMMED_STATS_LEADERS_QUERY, filter.getBaseCriteria(), statsCategory.getExpression(), minEntriesColumn(statsCategory), filter.getSearchCriteria(), orderBy)
-	       : format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), filter.getSearchCriteria(), orderBy);
+	       ? format(SUMMED_STATS_LEADERS_QUERY, where(filter.getBaseCriteria(), 2), statsCategory.getExpression(), minEntriesColumn(statsCategory), where(filter.getSearchCriteria()), orderBy)
+	       : format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy);
 	}
 
-	private Object[] getTableParams(StatsCategory statsCategory, int playerCount, StatsPlayerListFilter filter, int pageSize, int offset) {
+	private Object[] getTableParams(StatsCategory statsCategory, StatsPlayerListFilter filter, int pageSize, int offset) {
 		return filter.hasTournamentOrTournamentEvent()
-			? filter.getParams(asList(getMinEntriesValue(statsCategory, filter), playerCount), offset, pageSize)
-			: filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter), singletonList(playerCount), offset, pageSize);
+	       ? filter.getParams(singleton(getMinEntriesValue(statsCategory, filter)), offset, pageSize)
+	       : filter.getParamsWithPrefix(getMinEntriesValue(statsCategory, filter), offset, pageSize);
 	}
 
 	private static String statsTableName(StatsPlayerListFilter filter) {

@@ -15,6 +15,7 @@ import org.strangeforest.tcb.stats.util.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.RankType.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.util.EnumUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
@@ -49,8 +50,7 @@ public class RankingsService {
 		")\n" +
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, p.best_elo_rating_date AS points_date, p.best_elo_rank AS best_rank, p.best_elo_rank_date AS best_rank_date\n" +
 		"FROM best_elo_rating_ranked r\n" +
-		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE TRUE%1$s\n" +
+		"INNER JOIN player_v p USING (player_id)%1$s\n" +
 		"ORDER BY rank OFFSET ?";
 
 	private static final String PLAYER_RANKING_QUERY =
@@ -120,7 +120,7 @@ public class RankingsService {
 		boolean allTimeElo = rankType == ELO_RATING && date == null;
 		jdbcTemplate.query(
 			allTimeElo
-				? format(HIGHEST_ELO_RATING_TABLE_QUERY, filter.getCriteria())
+				? format(HIGHEST_ELO_RATING_TABLE_QUERY, where(filter.getCriteria()))
 				: format(RANKING_TABLE_QUERY, pointsColumn, bestRankColumn(rankType), bestRankDateColumn(rankType), rankingTable(rankType), filter.getCriteria()),
 			rs -> {
 				if (players.incrementAndGet() <= pageSize) {

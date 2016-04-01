@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.*;
 
 import static java.lang.String.*;
 import static java.util.Arrays.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
@@ -72,8 +73,7 @@ public class RivalriesService {
 		"SELECT r.player_id, r.opponent_id, o.name, o.country_id, o.active, o.best_rank, r.matches, r.won, r.lost,\n" +
 		"%1$s\n" +
 		"FROM rivalries_2 r\n" +
-		"INNER JOIN player_v o ON o.player_id = r.opponent_id%2$s\n" +
-		"WHERE TRUE%3$s\n" +
+		"INNER JOIN player_v o ON o.player_id = r.opponent_id%2$s%3$s\n" +
 		"ORDER BY %4$s OFFSET ?";
 
 	private static final String HEADS_TO_HEADS_QUERY = //language=SQL
@@ -114,13 +114,11 @@ public class RivalriesService {
 	private static final String GREATEST_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id, loser_id, count(match_id) matches, 0 won\n" +
-		"  FROM match_for_rivalry_v\n" +
-		"  WHERE TRUE%1$s\n" +
+		"  FROM match_for_rivalry_v%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT winner_id, loser_id, 0, count(match_id)\n" +
-		"  FROM match_for_stats_v\n" +
-		"  WHERE TRUE%1$s\n" +
+		"  FROM match_for_stats_v%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"), rivalries_2 AS (\n" +
 		"  SELECT winner_id player_id_1, loser_id player_id_2, sum(matches) matches, sum(won) won, 0 lost\n" +
@@ -182,7 +180,7 @@ public class RivalriesService {
 			format(PLAYER_RIVALRIES_QUERY,
 				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id", "opponent_id", ""),
 				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", "") : "",
-				filter.getCriteria(), orderBy
+				where(filter.getCriteria()), orderBy
 			),
 			rs -> {
 				if (rivalries.incrementAndGet() <= pageSize) {
@@ -241,7 +239,7 @@ public class RivalriesService {
 		boolean lateralSupported = lateralSupported();
 		jdbcTemplate.query(
 			format(GREATEST_RIVALRIES_QUERY,
-				criteria,
+				where(criteria, 2),
 				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),
 				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", criteria) : "",
 				orderBy

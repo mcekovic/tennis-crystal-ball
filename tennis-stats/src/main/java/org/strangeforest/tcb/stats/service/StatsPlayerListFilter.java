@@ -93,33 +93,8 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 			criteria.append(TOURNAMENT_EVENT_CRITERION);
 	}
 
-	public Object[] getBaseParams(Object... extraParams) {
-		List<Object> params = new ArrayList<>();
-		addBaseParams(params);
-		params.addAll(asList(extraParams));
-		return params.toArray();
-	}
-
-	public Object[] getBaseParamsWithPrefix(Object firstParam, Object... extraParams) {
-		List<Object> params = new ArrayList<>();
-		params.add(firstParam);
-		addBaseParams(params);
-		params.addAll(asList(extraParams));
-		return params.toArray();
-	}
-
 	public Object[] getParams(Collection midParams, Object... extraParams) {
 		List<Object> params = new ArrayList<>();
-		addBaseParams(params);
-		params.addAll(midParams);
-		super.addParams(params);
-		params.addAll(asList(extraParams));
-		return params.toArray();
-	}
-
-	public Object[] getParamsWithPrefix(Object firstParam, Collection midParams, Object... extraParams) {
-		List<Object> params = new ArrayList<>();
-		params.add(firstParam);
 		addBaseParams(params);
 		params.addAll(midParams);
 		super.addParams(params);

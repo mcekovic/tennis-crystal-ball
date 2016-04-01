@@ -8,6 +8,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
@@ -53,8 +54,7 @@ public class BestSeasonsService {
 		"  s.masters_titles, s.masters_finals, s.olympics_titles, s.titles, y.year_end_rank\n" +
 		"FROM pleayer_season_ranked s\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"LEFT JOIN player_year_end_rank y USING (player_id, season)\n" +
-		"WHERE TRUE%1$s\n" +
+		"LEFT JOIN player_year_end_rank y USING (player_id, season)%1$s\n" +
 		"ORDER BY %2$s OFFSET ? LIMIT ?";
 
 
@@ -72,7 +72,7 @@ public class BestSeasonsService {
 		BootgridTable<BestSeasonRow> table = new BootgridTable<>(currentPage, seasonCount);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(BEST_SEASONS_QUERY, filter.getCriteria(), orderBy),
+			format(BEST_SEASONS_QUERY, where(filter.getCriteria()), orderBy),
 			rs -> {
 				int seasonRank = rs.getInt("season_rank");
 				int playerId = rs.getInt("player_id");
