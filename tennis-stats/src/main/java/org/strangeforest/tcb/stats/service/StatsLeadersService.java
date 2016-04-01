@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -24,7 +25,7 @@ public class StatsLeadersService {
 	private static final int MIN_MATCHES                =   200;
 	private static final int MIN_POINTS                 = 10000;
 	private static final int MIN_ENTRIES_SEASON_FACTOR  =    10;
-	private static final int MIN_ENTRIES_SURFACE_FACTOR =     2;
+	private static final int MIN_ENTRIES_SURFACE_FACTOR =     4;
 	private static final int MIN_ENTRIES_EVENT_FACTOR   =   100;
 	private static final Map<Range<Integer>, Integer> MIN_ENTRIES_TOURNAMENT_FACTOR = new HashMap<Range<Integer>, Integer>() {{
 		put(Range.closed(1, 2), 100);
@@ -153,8 +154,12 @@ public class StatsLeadersService {
 
 	private int getMinEntriesValue(StatsCategory category, StatsPlayerListFilter filter) {
 		int minEntries = category.isNeedsStats() ? MIN_POINTS : MIN_MATCHES;
-		if (filter.hasSeason())
+		if (filter.hasSeason()) {
 			minEntries /= MIN_ENTRIES_SEASON_FACTOR;
+			LocalDate today = LocalDate.now();
+			if (filter.getSeason() == today.getYear() && today.getMonth().compareTo(Month.SEPTEMBER) <= 0)
+				minEntries /= 12.0 / today.getMonth().getValue();
+		}
 		if (filter.hasSurface())
 			minEntries /= MIN_ENTRIES_SURFACE_FACTOR;
 		if (filter.hasTournamentEvent())

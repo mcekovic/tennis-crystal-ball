@@ -61,6 +61,10 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 		return hasTournament() || hasTournamentEvent();
 	}
 
+	public Integer getSeason() {
+		return season;
+	}
+
 	public int getTournamentId() {
 		return tournamentId;
 	}

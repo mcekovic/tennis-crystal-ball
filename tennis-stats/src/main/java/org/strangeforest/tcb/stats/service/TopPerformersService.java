@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
+import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -95,6 +96,12 @@ public class TopPerformersService {
 
 	private int getMinEntriesValue(PerformanceCategory category, StatsPlayerListFilter filter) {
 		int minEntries = category.getMinEntries();
-		return filter.hasSeason() ? minEntries / MIN_ENTRIES_SEASON_FACTOR : minEntries;
+		if (filter.hasSeason()) {
+			minEntries /= MIN_ENTRIES_SEASON_FACTOR;
+			LocalDate today = LocalDate.now();
+			if (filter.getSeason() == today.getYear() && today.getMonth().compareTo(Month.SEPTEMBER) <= 0)
+				minEntries /= 12.0 / today.getMonth().getValue();
+		}
+		return minEntries;
 	}
 }
