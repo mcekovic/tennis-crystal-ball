@@ -77,16 +77,41 @@ function tabClick(event) {
 		return;
 	var url = $pill.attr("data-url");
 	if (typeof url !== "undefined")
-		loadTab($pill, this.hash, url);
+		loadTab($pill, url);
 	else
 		$pill.tab("show");
 }
 
-function loadTab(pill, pane, url) {
-	$(pane).load(url, function () {
-		if (!pill.hasClass("loaded"))
-			pill.addClass("loaded");
-		pill.tab("show");
+function loadTab($pill, url) {
+	var $pane = $($pill.attr("href"));
+	$pane.load(url, function () {
+		if (!$pill.hasClass("loaded"))
+			$pill.addClass("loaded");
+		$pill.tab("show");
+	});
+}
+
+
+// Collapse
+
+function collapseClick(event) {
+	event.preventDefault();
+	var $button = $(this);
+	if ($button.hasClass("loaded"))
+		return;
+	var url = $button.attr("data-url");
+	if (typeof url !== "undefined")
+		loadCollapse($button, url);
+	else
+		$($button.attr("data-target")).collapse("toggle");
+}
+
+function loadCollapse($button, url) {
+	var $pane = $($button.attr("data-target"));
+	$pane.load(url, function () {
+		if (!$button.hasClass("loaded"))
+			$button.addClass("loaded");
+		$pane.collapse("toggle");
 	});
 }
 

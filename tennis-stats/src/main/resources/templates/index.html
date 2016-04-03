@@ -17,6 +17,7 @@
 		/*<![CDATA[*/
 		$(function(){
 			bindPopovers();
+			$("[data-toggle=collapse]").click(collapseClick);
 		});
 		/*]]>*/
 	</script>
@@ -76,7 +77,8 @@
 		'GOAT' formula is based on assigning 'GOAT' points to players for tournament results, rankings and various important achievements.
 		For visual description of 'GOAT' formula please click:
 	</p>
-	<div th:include="fragments/goatLegend :: legend(false)"></div>
+	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend</button>
+	<div id="goatLegend" class="collapse">Loading...</div>
 	<br/>
 	<footer th:include="fragments/footer :: copy"></footer>
 	<div th:include="fragments/aboutElo :: aboutElo"></div>

@@ -1,13 +1,12 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.util.concurrent.atomic.*;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
-import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 
@@ -52,35 +51,33 @@ public class GOATLegendService {
 
 	// Tournament
 
-	@Cacheable(value = "Global", key = "'TournamentGOATPointsTable'")
-	public BootgridTable<TournamentGOATPointsRow> getTournamentGOATPointsTable() {
-		BootgridTable<TournamentGOATPointsRow> table = new BootgridTable<>();
-		jdbcTemplate.query(TOURNAMENT_GOAT_POINTS_QUERY, rs -> {
+	@Cacheable(value = "Global", key = "'TournamentGOATPoints'")
+	public List<TournamentGOATPoints> getTournamentGOATPoints() {
+		return jdbcTemplate.query(TOURNAMENT_GOAT_POINTS_QUERY, (rs, rowNum) -> {
 			String level = rs.getString("level");
 			String result = rs.getString("result");
 			int goatPoints = rs.getInt("goat_points");
 			boolean additive = rs.getBoolean("additive");
-			table.addRow(new TournamentGOATPointsRow(level, result, goatPoints, additive));
+			return new TournamentGOATPoints(level, result, goatPoints, additive);
 		});
-		return table;
 	}
 
 
 	// Ranking
 
-	@Cacheable(value = "Global", key = "'YearEndRankGOATPointsTable'")
-	public BootgridTable<RankGOATPointsRow> getYearEndRankGOATPointsTable() {
-		return getRankGOATPointsTable("year_end_rank_goat_points", "year_end_rank", "goat_points");
+	@Cacheable(value = "Global", key = "'YearEndRankGOATPoints'")
+	public List<RankGOATPoints> getYearEndRankGOATPoints() {
+		return getRankGOATPoints("year_end_rank_goat_points", "year_end_rank", "goat_points");
 	}
 
-	@Cacheable(value = "Global", key = "'BestRankGOATPointsTable'")
-	public BootgridTable<RankGOATPointsRow> getBestRankGOATPointsTable() {
-		return getRankGOATPointsTable("best_rank_goat_points", "best_rank", "goat_points");
+	@Cacheable(value = "Global", key = "'BestRankGOATPoints'")
+	public List<RankGOATPoints> getBestRankGOATPoints() {
+		return getRankGOATPoints("best_rank_goat_points", "best_rank", "goat_points");
 	}
 
-	@Cacheable(value = "Global", key = "'BestEloRatingGOATPointsTable'")
-	public BootgridTable<RankGOATPointsRow> getBestEloRatingGOATPointsTable() {
-		return getRankGOATPointsTable("best_elo_rating_goat_points", "best_elo_rating_rank", "goat_points");
+	@Cacheable(value = "Global", key = "'BestEloRatingGOATPoints'")
+	public List<RankGOATPoints> getBestEloRatingGOATPoints() {
+		return getRankGOATPoints("best_elo_rating_goat_points", "best_elo_rating_rank", "goat_points");
 	}
 
 	@Cacheable(value = "Global", key = "'WeeksAtNo1ForGOATPoint'")
@@ -91,21 +88,19 @@ public class GOATLegendService {
 
 	// Achievements
 
-	@Cacheable(value = "Global", key = "'BigWinMatchFactorTable'")
-	public BootgridTable<BigWinMatchFactorRow> getBigWinMatchFactorTable() {
-		BootgridTable<BigWinMatchFactorRow> table = new BootgridTable<>();
-		jdbcTemplate.query(BIG_WIN_MATCH_FACTOR_QUERY, rs -> {
+	@Cacheable(value = "Global", key = "'BigWinMatchFactors'")
+	public List<BigWinMatchFactor> getBigWinMatchFactors() {
+		return jdbcTemplate.query(BIG_WIN_MATCH_FACTOR_QUERY, (rs, rowNum) -> {
 			String level = rs.getString("level");
 			String round = rs.getString("round");
 			int matchFactor = rs.getInt("match_factor");
-			table.addRow(new BigWinMatchFactorRow(level, round, matchFactor));
+			return new BigWinMatchFactor(level, round, matchFactor);
 		});
-		return table;
 	}
 
-	@Cacheable(value = "Global", key = "'BigWinRankFactorTable'")
-	public BootgridTable<RankRangeGOATPointsRow> getBigWinRankFactorTable() {
-		return getRankRangeGOATPointsTable("big_win_rank_factor", "rank_factor");
+	@Cacheable(value = "Global", key = "'BigWinRankFactors'")
+	public List<RankRangeGOATPoints> getBigWinRankFactors() {
+		return getRankRangeGOATPoints("big_win_rank_factor", "rank_factor");
 	}
 
 	@Cacheable(value = "Global", key = "'CareerGrandSlamGOATPoints'")
@@ -118,57 +113,51 @@ public class GOATLegendService {
 		return jdbcTemplate.queryForObject(SEASON_GRAND_SLAM_GOAT_POINTS, Integer.class);
 	}
 
-	@Cacheable(value = "Global", key = "'BestSeasonGOATPointsTable'")
-	public BootgridTable<RankGOATPointsRow> getBestSeasonGOATPointsTable() {
-		return getRankGOATPointsTable("best_season_goat_points", "season_rank", "goat_points");
+	@Cacheable(value = "Global", key = "'BestSeasonGOATPoints'")
+	public List<RankGOATPoints> getBestSeasonGOATPoints() {
+		return getRankGOATPoints("best_season_goat_points", "season_rank", "goat_points");
 	}
 
-	@Cacheable(value = "Global", key = "'GreatestRivalriesGOATPointsTable'")
-	public BootgridTable<RankGOATPointsRow> getGreatestRivalriesGOATPointsTable() {
-		return getRankGOATPointsTable("greatest_rivalries_goat_points", "rivalry_rank", "goat_points");
+	@Cacheable(value = "Global", key = "'GreatestRivalriesGOATPoints'")
+	public List<RankGOATPoints> getGreatestRivalriesGOATPoints() {
+		return getRankGOATPoints("greatest_rivalries_goat_points", "rivalry_rank", "goat_points");
 	}
 
-	@Cacheable(value = "Global", key = "'PerformanceGOATPointsTable'")
-	public BootgridTable<PerfStatGOATPointsRow> getPerformanceGOATPointsTable() {
-		return getPerfStatGOATPointsTable("performance_goat_points", "performance_category");
+	@Cacheable(value = "Global", key = "'PerformanceGOATPoints'")
+	public List<PerfStatGOATPoints> getPerformanceGOATPoints() {
+		return getPerfStatGOATPoints("performance_goat_points", "performance_category");
 	}
 
-	@Cacheable(value = "Global", key = "'StatisticsGOATPointsTable'")
-	public BootgridTable<PerfStatGOATPointsRow> getStatisticsGOATPointsTable() {
-		return getPerfStatGOATPointsTable("statistics_goat_points", "statistics_category");
+	@Cacheable(value = "Global", key = "'StatisticsGOATPoints'")
+	public List<PerfStatGOATPoints> getStatisticsGOATPoints() {
+		return getPerfStatGOATPoints("statistics_goat_points", "statistics_category");
 	}
 
 
 	// Util
 
-	private BootgridTable<RankGOATPointsRow> getRankGOATPointsTable(String tableName, String rankColumn, String pointsColumn) {
-		BootgridTable<RankGOATPointsRow> table = new BootgridTable<>();
-		jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn, pointsColumn), rs -> {
+	private List<RankGOATPoints> getRankGOATPoints(String tableName, String rankColumn, String pointsColumn) {
+		return jdbcTemplate.query(format(RANK_GOAT_POINTS_QUERY, tableName, rankColumn, pointsColumn), (rs, rowNum) -> {
 			int rank = rs.getInt(rankColumn);
 			int goatPoints = rs.getInt(pointsColumn);
-			table.addRow(new RankGOATPointsRow(rank, goatPoints));
+			return new RankGOATPoints(rank, goatPoints);
 		});
-		return table;
 	}
 
-	private BootgridTable<RankRangeGOATPointsRow> getRankRangeGOATPointsTable(String tableName, String pointsColumn) {
-		BootgridTable<RankRangeGOATPointsRow> table = new BootgridTable<>();
-		jdbcTemplate.query(format(RANK_RANGE_GOAT_POINTS_QUERY, tableName, pointsColumn), rs -> {
+	private List<RankRangeGOATPoints> getRankRangeGOATPoints(String tableName, String pointsColumn) {
+		return jdbcTemplate.query(format(RANK_RANGE_GOAT_POINTS_QUERY, tableName, pointsColumn), (rs, rowNum) -> {
 			int rankFrom = rs.getInt("rank_from");
 			int rankTo = rs.getInt("rank_to");
 			int goatPoints = rs.getInt(pointsColumn);
-			table.addRow(new RankRangeGOATPointsRow(rankFrom, rankTo, goatPoints));
+			return new RankRangeGOATPoints(rankFrom, rankTo, goatPoints);
 		});
-		return table;
 	}
 
-	private BootgridTable<PerfStatGOATPointsRow> getPerfStatGOATPointsTable(String goatPointsTable, String categoryTable) {
-		BootgridTable<PerfStatGOATPointsRow> table = new BootgridTable<>();
-		jdbcTemplate.query(format(PERF_STAT_GOAT_POINTS_QUERY, goatPointsTable, categoryTable), rs -> {
+	private List<PerfStatGOATPoints> getPerfStatGOATPoints(String goatPointsTable, String categoryTable) {
+		return jdbcTemplate.query(format(PERF_STAT_GOAT_POINTS_QUERY, goatPointsTable, categoryTable), (rs, rowNum) -> {
 			String category = rs.getString("category");
 			String goatPoints = rs.getString("goat_points");
-			table.addRow(new PerfStatGOATPointsRow(category, goatPoints));
+			return new PerfStatGOATPoints(category, goatPoints);
 		});
-		return table;
 	}
 }

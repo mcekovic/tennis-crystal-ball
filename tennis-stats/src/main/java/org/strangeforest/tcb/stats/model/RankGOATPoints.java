@@ -1,11 +1,11 @@
 package org.strangeforest.tcb.stats.model;
 
-public class RankGOATPointsRow {
+public class RankGOATPoints {
 
 	private final int rank;
 	private final int goatPoints;
 
-	public RankGOATPointsRow(int rank, int goatPoints) {
+	public RankGOATPoints(int rank, int goatPoints) {
 		this.rank = rank;
 		this.goatPoints = goatPoints;
 	}

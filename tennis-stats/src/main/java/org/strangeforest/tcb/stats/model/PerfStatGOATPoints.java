@@ -1,11 +1,11 @@
 package org.strangeforest.tcb.stats.model;
 
-public class PerfStatGOATPointsRow {
+public class PerfStatGOATPoints {
 
 	private final String category;
 	private final String goatPoints;
 
-	public PerfStatGOATPointsRow(String category, String goatPoints) {
+	public PerfStatGOATPoints(String category, String goatPoints) {
 		this.category = category;
 		this.goatPoints = goatPoints;
 	}

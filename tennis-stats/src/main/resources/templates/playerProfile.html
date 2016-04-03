@@ -44,7 +44,7 @@
 				url += "&level=" + level;
 			if (result)
 				url += "&result=" + result;
-			loadTab($pill, $("#tournaments"), url)
+			loadTab($pill, url)
 		}
 		function playerTitles(level) {
 			playerTournaments(null, level, "W");
@@ -52,7 +52,7 @@
 		function playerTournamentMatches(tournamentEventId) {
 			var $pill = $("#matchesPill");
 			var url = $pill.attr("data-url") + "&tournamentEventId=" + tournamentEventId;
-			loadTab($pill, $("#matches"), url)
+			loadTab($pill, url)
 		}
 		function playerRivalryMatches(opponentId, level, surface) {
 			var $pill = $("#matchesPill");
@@ -61,7 +61,7 @@
 				url += "&level=" + level;
 			if (surface)
 				url += "&surface=" + surface;
-			loadTab($pill, $("#matches"), url)
+			loadTab($pill, url)
 		}
 		function toggleStatsData(selector) {
 			$(selector).find(".pct-data, .raw-data").toggle();

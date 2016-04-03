@@ -1,12 +1,12 @@
 package org.strangeforest.tcb.stats.model;
 
-public class BigWinMatchFactorRow {
+public class BigWinMatchFactor {
 
 	private final String level;
 	private final String round;
 	private final int matchFactor;
 
-	public BigWinMatchFactorRow(String level, String round, int matchFactor) {
+	public BigWinMatchFactor(String level, String round, int matchFactor) {
 		this.level = level;
 		this.round = round;
 		this.matchFactor = matchFactor;
