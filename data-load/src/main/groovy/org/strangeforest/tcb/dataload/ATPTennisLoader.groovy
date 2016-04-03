@@ -91,11 +91,17 @@ class ATPTennisLoader {
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1990-dusseldorf.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1990-tour-finals.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1999-tour-finals+.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/2000-dusseldorf+.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/2000-tour-finals+.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/2002-tour-finals+.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/2003-tour-finals+.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/2004-tour-finals+.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/2000-dusseldorf+.xml')
+		}
+	}
+
+	public static loadAdditionalTournament(sqlPool, file) {
+		sqlPool.withSql { sql ->
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', file)
 		}
 	}
 

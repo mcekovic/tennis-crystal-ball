@@ -39,6 +39,20 @@ COMMIT;
 
 REFRESH MATERIALIZED VIEW event_participation;
 
+UPDATE tournament_event
+SET level = 'B'
+WHERE level = 'A' AND season < 1990;
+
+UPDATE tournament_event e
+SET level = 'A'
+WHERE level = 'B' AND season < 1990
+AND (
+	(name LIKE 'Dallas%' AND season BETWEEN 1971 AND 1989 AND '610' = (SELECT m.ext_tournament_id FROM tournament_mapping m WHERE m.tournament_id = e.tournament_id)) OR
+	(name = 'Grand Slam Cup' AND season BETWEEN 1990 AND 1999) OR
+	(name = 'Pepsi Grand Slam' AND season BETWEEN 1976 AND 1981) OR
+	(name = 'WCT Challenge Cup' AND season BETWEEN 1976 AND 1980)
+);
+
 WITH ranked_atp_event AS (
 	SELECT tournament_event_id, rank() OVER (PARTITION BY e.season ORDER BY p.participation_points DESC NULLS LAST) AS participation_rank
 	FROM tournament_event e
