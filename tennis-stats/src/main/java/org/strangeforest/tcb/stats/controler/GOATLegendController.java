@@ -34,6 +34,6 @@ public class GOATLegendController {
 		modelMap.addAttribute("greatestRivalriesGOATPoints", goatLegendService.getGreatestRivalriesGOATPoints());
 		modelMap.addAttribute("performanceGOATPoints", goatLegendService.getPerformanceGOATPoints());
 		modelMap.addAttribute("statisticsGOATPoints", goatLegendService.getStatisticsGOATPoints());
-		return new ModelAndView("/goatLegend", modelMap);
+		return new ModelAndView("goatLegend", modelMap);
 	}
 }
