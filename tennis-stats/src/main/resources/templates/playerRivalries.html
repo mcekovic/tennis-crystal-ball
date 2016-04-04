@@ -14,7 +14,7 @@
 				formatters: {
 					"player": playerCountryFormatter,
 					"matches": function(column, row) {
-						return "<a href='javascript:playerRivalryMatches(" + row.playerId + ")' title='Show rivalry matches'>" + row.matches + "</a>"
+						return "<a href='/playerProfile?playerId=[[${playerId}]]&opponentId=" + row.playerId + "' title='Show rivalry matches'>" + row.matches + "</a>"
 					},
 					"wonPctStr": function(column, row) {
 						return "<span data-won-pct='" + row.wonPctClass + "'>" + row.wonPctStr + "</span>";

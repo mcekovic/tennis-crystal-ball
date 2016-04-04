@@ -8,7 +8,7 @@
 		<span th:each="surface : ${tournament.surfaces}" th:text="${surface.surface}" class="label surface" th:title="${surface.indoor ? 'Indoor' : 'Outdoor'}">G</span>
 	</td>
 	<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
-		<a th:if="${item.result}" th:href="'javascript:playerTournamentMatches(' + ${item.tournamentEventId} + ')'" th:attr="data-level=${tournament.levelCount > 1 ? item.level : ''}, data-surface=${tournament.surfaceCount > 1 ? item.surface : ''}">
+		<a th:if="${item.result}" th:href="'/playerProfile?playerId=' + ${playerId} + '&amp;tournamentEventId=' + ${item.tournamentEventId}" th:attr="data-level=${tournament.levelCount > 1 ? item.level : ''}, data-surface=${tournament.surfaceCount > 1 ? item.surface : ''}">
 			<span th:text="${item.result}" title="Show tournament matches">W</span>
 		</a>
 		<span th:unless="${item.result}" class="absent">A</span>

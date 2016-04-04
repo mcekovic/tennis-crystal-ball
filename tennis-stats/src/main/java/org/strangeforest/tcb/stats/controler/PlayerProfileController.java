@@ -29,6 +29,8 @@ public class PlayerProfileController extends BaseController {
 		@RequestParam(value = "season", required = false) Integer season,
 		@RequestParam(value = "level", required = false) String level,
 		@RequestParam(value = "surface", required = false) String surface,
+		@RequestParam(value = "result", required = false) String result,
+		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(value = "opponentId", required = false) Integer opponentId
 	) {
 		if (playerId == null && name == null)
@@ -41,6 +43,8 @@ public class PlayerProfileController extends BaseController {
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("result", result);
+		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("opponentId", opponentId);
 		return new ModelAndView("playerProfile", modelMap);
 	}
@@ -51,8 +55,7 @@ public class PlayerProfileController extends BaseController {
 		@RequestParam(value = "season", required = false) Integer season,
 		@RequestParam(value = "level", required = false) String level,
 		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "result", required = false) String result,
-		@RequestParam(value = "opponentId", required = false) Integer opponentId
+		@RequestParam(value = "result", required = false) String result
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
@@ -67,7 +70,6 @@ public class PlayerProfileController extends BaseController {
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("result", result);
-		modelMap.addAttribute("opponentId", opponentId);
 		return new ModelAndView("playerTournaments", modelMap);
 	}
 
