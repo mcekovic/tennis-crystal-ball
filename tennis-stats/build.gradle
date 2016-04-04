@@ -5,7 +5,7 @@ buildscript {
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
 		classpath 'io.spring.gradle:dependency-management-plugin:0.5.6.RELEASE'
-		classpath 'org.hidetake:gradle-ssh-plugin:1.6.0'
+		classpath 'org.hidetake:gradle-ssh-plugin:2.0.0'
 	}
 }
 
@@ -55,7 +55,7 @@ dependencies {
 	}
 	compile files('lib/GeoLite2-Country.zip')
 	testCompile ('junit:junit:4.12')
-	testCompile ('org.assertj:assertj-core:3.3.0')
+	testCompile ('org.assertj:assertj-core:3.4.0')
 }
 
 remotes {

@@ -1,0 +1,24 @@
+<br/>
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--@thymesVar id="levelResults" type="java.util.Map<java.lang.String, java.util.List<java.lang.String>>"-->
+	<!--@thymesVar id="goatPoints" type="org.strangeforest.tcb.stats.model.PlayerGOATPoints"-->
+	<table id="goatPointsTable" class="table table-condensed table-hover table-bordered text-nowrap">
+		<thead>
+			<tr>
+				<th>GOAT Points</th>
+				<th th:each="level : ${levelResults}" th:colspan="${level.value.size()}" class="text-center" th:text="${level.key}">G</th>
+			</tr>
+			<tr>
+				<th>Season</th>
+				<th:block th:each="level : ${levelResults}">
+					<th th:each="result : ${level.value}" class="text-center" th:text="${result}">W</th>
+				</th:block>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="season : ${goatPoints.getSeasonsPoints()}">
+				<td th:text="${season.season}">2000</td>
+			</tr>
+		</tbody>
+	</table>
+</th:block>

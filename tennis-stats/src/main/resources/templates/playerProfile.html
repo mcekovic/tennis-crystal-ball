@@ -194,6 +194,7 @@
 			<li><a data-toggle="pill" href="#performanceChart" data-url="/playerPerformanceChart?playerId=" th:attrappend="data-url=${player.id}" title="Performance Chart">Perf. Chart</a></li>
 			<li><a data-toggle="pill" href="#statistics" data-url="/playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
 			<li><a data-toggle="pill" href="#statisticsChart" data-url="/playerStatsChart?playerId=" th:attrappend="data-url=${player.id}" title="Statistics Chart">Stats. Chart</a></li>
+			<li><a data-toggle="pill" href="#goatPoints" data-url="/playerGOATPoints?playerId=" th:attrappend="data-url=${player.id}" title="GOAT Points Breakdown">GOAT Points</a></li>
 		</ul>
 		<div class="tab-content">
 			<div id="tournaments" class="tab-pane fade"><br/>Loading...</div>
@@ -205,6 +206,7 @@
 			<div id="performanceChart" class="tab-pane fade"><br/>Loading...</div>
 			<div id="statistics" class="tab-pane fade"><br/>Loading...</div>
 			<div id="statisticsChart" class="tab-pane fade"><br/>Loading...</div>
+			<div id="goatPoints" class="tab-pane fade"><br/>Loading...</div>
 		</div>
 	</th:block>
 	<footer th:include="fragments/footer :: copy"></footer>

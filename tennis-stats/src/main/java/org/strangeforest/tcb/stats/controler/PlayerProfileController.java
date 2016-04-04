@@ -21,6 +21,7 @@ public class PlayerProfileController extends BaseController {
 	@Autowired private DataService dataService;
 	@Autowired private PlayerTimelineService timelineService;
 	@Autowired private StatisticsService statisticsService;
+	@Autowired private GOATPointsService goatPointsService;
 
 	@RequestMapping("/playerProfile")
 	public ModelAndView playerProfile(
@@ -207,5 +208,18 @@ public class PlayerProfileController extends BaseController {
 		modelMap.addAttribute("categoryTypes",  StatsCategory.getCategories().entrySet().stream().collect(toMap(Map.Entry::getKey, e -> e.getValue().getType().name())));
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerStatsChart", modelMap);
+	}
+
+	@RequestMapping("/playerGOATPoints")
+	public ModelAndView playerGOATPoints(
+		@RequestParam(value = "playerId") int playerId
+	) {
+		Map<String, List<String>> levelResults = goatPointsService.getLevelResults();
+		PlayerGOATPoints goatPoints = goatPointsService.getPlayerGOATPoints(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("levelResults", levelResults);
+		modelMap.addAttribute("goatPoints", goatPoints);
+		return new ModelAndView("playerGOATPoints", modelMap);
 	}
 }
