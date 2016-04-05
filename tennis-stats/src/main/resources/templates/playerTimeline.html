@@ -67,63 +67,63 @@
 	</style>
 	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
-			<tr class="bg-primary">
-				<th>Tournament</th>
-				<th>Surface</th>
-				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
-			</tr>
+		<tr class="bg-primary">
+			<th>Tournament</th>
+			<th>Surface</th>
+			<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+		</tr>
 		</thead>
 		<th:block th:unless="${timeline.empty}">
 		<tbody id="bigTournamentsBody">
-			<tr th:each="tournament : ${timeline.bigTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
-				<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
-			</tr>
+		<tr th:each="tournament : ${timeline.bigTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
+			<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
+		</tr>
 		</tbody>
 		<thead>
-			<tr class="bg-primary">
-				<th>Tournament</th>
-				<th>Surface</th>
-				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
-			</tr>
+		<tr class="bg-primary">
+			<th>Tournament</th>
+			<th>Surface</th>
+			<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+		</tr>
 		</thead>
 		<tbody id="otherTournamentsBody">
-			<tr th:each="tournament : ${timeline.otherTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
-				<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
-			</tr>
+		<tr th:each="tournament : ${timeline.otherTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
+			<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
+		</tr>
 		</tbody>
 		<thead id="performanceHead">
-			<tr class="bg-primary">
-				<th>
-					<button id="timelinePerf" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#performanceBody" title="Toggle seasons performance"> Performance</button>
-					<div class="btn-stats" style="display: none">
-						<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#performanceHead, #performanceBody')" title="Show raw data"> Raw Data</button>
-						<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#performanceHead, #performanceBody')" title="Show percentage data"> Pct. Data</button>
-					</div>
-				</th>
-				<th class="text-center">Career</th>
-				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
-			</tr>
+		<tr class="bg-primary">
+			<th>
+				<button id="timelinePerf" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#performanceBody" title="Toggle seasons performance"> Performance</button>
+				<div class="btn-stats" style="display: none">
+					<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#performanceHead, #performanceBody')" title="Show raw data"> Raw Data</button>
+					<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#performanceHead, #performanceBody')" title="Show percentage data"> Pct. Data</button>
+				</div>
+			</th>
+			<th class="text-center">Career</th>
+			<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+		</tr>
 		</thead>
 		<tbody id="performanceBody"></tbody>
 		<thead id="statisticsHead">
-			<tr class="bg-primary">
-				<th>
-					<button id="timelineStats" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"> Stats</button>
-					<div class="btn-stats" style="display: none">
-						<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show raw data"> Raw Data</button>
-						<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show percentage data"> Pct. Data</button>
-					</div>
-				</th>
-				<th class="text-center">Career</th>
-				<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
-			</tr>
+		<tr class="bg-primary">
+			<th>
+				<button id="timelineStats" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"> Stats</button>
+				<div class="btn-stats" style="display: none">
+					<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show raw data"> Raw Data</button>
+					<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show percentage data"> Pct. Data</button>
+				</div>
+			</th>
+			<th class="text-center">Career</th>
+			<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+		</tr>
 		</thead>
 		<tbody id="statisticsBody"></tbody>
 		</th:block>
 		<tbody th:if="${timeline.empty}">
-			<tr>
-				<td colspan="2" align="center">No data found</td>
-			</tr>
+		<tr>
+			<td colspan="2" align="center">No data found</td>
+		</tr>
 		</tbody>
 	</table>
 </th:block>

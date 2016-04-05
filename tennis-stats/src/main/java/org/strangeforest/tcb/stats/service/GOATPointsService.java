@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
+import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
+
 @Service
 public class GOATPointsService {
 
@@ -45,7 +47,7 @@ public class GOATPointsService {
 		Map<String, List<String>> levelResults = new LinkedHashMap<>();
 		jdbcTemplate.query(LEVEL_RESULTS_QUERY, rs -> {
 			String level = rs.getString("level");
-			String result = rs.getString("result");
+			String result = mapResult(level, rs.getString("result"));
 			List<String> results = levelResults.get(level);
 			if (results == null) {
 				results = new ArrayList<>();
@@ -86,14 +88,14 @@ public class GOATPointsService {
 			points.setGrandSlamPoints(rs.getInt("grand_slam_goat_points"));
 			return points;
 		}, playerId);
-		goatPoints.setSeasonsPoints(seasonPoints);
+		goatPoints.setPlayerSeasonsPoints(seasonPoints);
 
 		jdbcTemplate.query(TOURNAMENT_POINTS_QUERY, rs -> {
 			int season = rs.getInt("season");
 			String level = rs.getString("level");
-			String result = rs.getString("result");
+			String result = mapResult(level, rs.getString("result"));
 			int count = rs.getInt("count");
-			goatPoints.getSeasonPoints(season).addTournamentItem(level, result, count);
+			goatPoints.getPlayerSeasonPoints(season).addTournamentItem(level, result, count);
 		}, playerId);
 
 		return goatPoints;

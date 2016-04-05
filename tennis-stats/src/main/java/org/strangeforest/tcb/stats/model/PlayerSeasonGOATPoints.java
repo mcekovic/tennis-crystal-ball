@@ -36,24 +36,24 @@ public class PlayerSeasonGOATPoints {
 		return totalPoints;
 	}
 
-	public int getTournamentPoints() {
-		return tournamentPoints;
+	public Integer getTournamentPoints() {
+		return zeroToNull(tournamentPoints);
 	}
 
 	public void setTournamentPoints(int tournamentPoints) {
 		this.tournamentPoints = tournamentPoints;
 	}
 
-	public int getRankingPoints() {
-		return rankingPoints;
+	public Integer getRankingPoints() {
+		return zeroToNull(rankingPoints);
 	}
 
 	public void setRankingPoints(int rankingPoints) {
 		this.rankingPoints = rankingPoints;
 	}
 
-	public int getAchievementsPoints() {
-		return achievementsPoints;
+	public Integer getAchievementsPoints() {
+		return zeroToNull(achievementsPoints);
 	}
 
 	public void setAchievementsPoints(int achievementsPoints) {
@@ -74,16 +74,16 @@ public class PlayerSeasonGOATPoints {
 
 	// Ranking
 
-	public int getYearEndRankPoints() {
-		return yearEndRankPoints;
+	public Integer getYearEndRankPoints() {
+		return zeroToNull(yearEndRankPoints);
 	}
 
 	public void setYearEndRankPoints(int yearEndRankPoints) {
 		this.yearEndRankPoints = yearEndRankPoints;
 	}
 
-	public int getWeeksAtNo1Points() {
-		return weeksAtNo1Points;
+	public Integer getWeeksAtNo1Points() {
+		return zeroToNull(weeksAtNo1Points);
 	}
 
 	public void setWeeksAtNo1Points(int weeksAtNo1Points) {
@@ -93,15 +93,19 @@ public class PlayerSeasonGOATPoints {
 
 	// Achievements
 
-	public int getBigWinsPoints() {
-		return bigWinsPoints;
+	public Integer getBigWinsPoints() {
+		return zeroToNull(bigWinsPoints);
 	}
 
 	public void setBigWinsPoints(int bigWinsPoints) {
 		this.bigWinsPoints = bigWinsPoints;
 	}
 
-	public int getGrandSlamPoints() {
+	public Integer getGrandSlamPoints() {
+		return zeroToNull(grandSlamPoints);
+	}
+
+	public int getGrandSlamPointsRaw() {
 		return grandSlamPoints;
 	}
 
@@ -109,6 +113,12 @@ public class PlayerSeasonGOATPoints {
 		this.grandSlamPoints = grandSlamPoints;
 	}
 
+
+	// Util
+
+	private static Integer zeroToNull(int i) {
+		return i != 0 ? i : null;
+	}
 
 	private static  class LevelResult {
 

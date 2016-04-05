@@ -142,56 +142,56 @@
 	<h3>Big Guns Timeline</h3>
 	<table id="bigGunsTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead id="timelineHeader">
-			<tr class="best-player">
-				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Era</th>
-				<th th:each="era : ${timeline.bigGunsEras}" th:class="'points-' + ${era.dominanceRatioRounded}" style="padding: 1px" th:colspan="${era.seasonCount}">
-					<span th:if="${era.player}" th:text="${era.player.lastName}" class="best-player era-player">Sampras</span>
-				</th>
-			</tr>
-			<tr class="season">
-				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average dominance ratio in the Era">Era Dominance Ratio</th>
-				<th th:each="era : ${timeline.bigGunsEras}" th:class="'points-' + ${era.dominanceRatioRounded}" style="padding: 1px" th:colspan="${era.seasonCount}">
-					<span th:text="${#numbers.formatDecimal(era.dominanceRatio, 1, 1)}" class="era-factor">66.7</span>
-				</th>
-			</tr>
-			<tr class="best-player">
-				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Season Best Player</th>
-				<th th:each="season : ${timeline.bigGunsSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
-					<span th:text="${season.bestPlayer.lastName}" class="best-player">Federer</span>
-				</th>
-			</tr>
-			<tr class="season">
-				<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" th:title="'For all players with minimum ' + ${minGOATPoints} + ' GOAT points: SUM(player season GOAT points * player GOAT points) / 1000'">Big Guns Dominance Ratio</th>
-				<th th:each="season : ${timeline.bigGunsSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
-					<span th:text="${#numbers.formatDecimal(season.dominanceRatio, 1, 1)}" class="season">66.7</span>
-				</th>
-			</tr>
-			<tr class="season" style="border-bottom: 3px solid lightgray">
-				<th style="padding: 1px 4px">Player</th>
-				<th style="padding: 1px 4px">Born</th>
-				<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
-				<th style="padding: 1px" th:each="season : ${timeline.seasons}"><span th:text="${season}" class="season">2015</span></th>
-			</tr>
+		<tr class="best-player">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Era</th>
+			<th th:each="era : ${timeline.bigGunsEras}" th:class="'points-' + ${era.dominanceRatioRounded}" style="padding: 1px" th:colspan="${era.seasonCount}">
+				<span th:if="${era.player}" th:text="${era.player.lastName}" class="best-player era-player">Sampras</span>
+			</th>
+		</tr>
+		<tr class="season">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average dominance ratio in the Era">Era Dominance Ratio</th>
+			<th th:each="era : ${timeline.bigGunsEras}" th:class="'points-' + ${era.dominanceRatioRounded}" style="padding: 1px" th:colspan="${era.seasonCount}">
+				<span th:text="${#numbers.formatDecimal(era.dominanceRatio, 1, 1)}" class="era-factor">66.7</span>
+			</th>
+		</tr>
+		<tr class="best-player">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Season Best Player</th>
+			<th th:each="season : ${timeline.bigGunsSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
+				<span th:text="${season.bestPlayer.lastName}" class="best-player">Federer</span>
+			</th>
+		</tr>
+		<tr class="season">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" th:title="'For all players with minimum ' + ${minGOATPoints} + ' GOAT points: SUM(player season GOAT points * player GOAT points) / 1000'">Big Guns Dominance Ratio</th>
+			<th th:each="season : ${timeline.bigGunsSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
+				<span th:text="${#numbers.formatDecimal(season.dominanceRatio, 1, 1)}" class="season">66.7</span>
+			</th>
+		</tr>
+		<tr class="season" style="border-bottom: 3px solid lightgray">
+			<th style="padding: 1px 4px">Player</th>
+			<th style="padding: 1px 4px">Born</th>
+			<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
+			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><span th:text="${season}" class="season">2015</span></th>
+		</tr>
 		</thead>
 		<tbody>
-			<tr th:each="player : ${timeline.players}">
-				<td style="padding: 1px 4px">
-					<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
-					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
-					<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
-				</td>
-				<td style="padding: 1px 4px" th:text="${#dates.format(player.dob, 'yyyy')}">1985</td>
-				<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray" th:text="${player.goatPoints}">1985</td>
-				<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${10*(seasonPoint.points/10)}" class="points-10"><a th:href="'playerProfile?playerId=' + ${player.playerId} + '&amp;season=' + ${seasonPoint.season}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points">15</a></td>
-			</tr>
+		<tr th:each="player : ${timeline.players}">
+			<td style="padding: 1px 4px">
+				<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
+				<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+				<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
+			</td>
+			<td style="padding: 1px 4px" th:text="${#dates.format(player.dob, 'yyyy')}">1985</td>
+			<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray" th:text="${player.goatPoints}">1985</td>
+			<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${10*(seasonPoint.points/10)}" class="points-10"><a th:href="'playerProfile?playerId=' + ${player.playerId} + '&amp;season=' + ${seasonPoint.season}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points">15</a></td>
+		</tr>
 		</tbody>
 		<thead>
-			<tr class="season" style="border-top: 3px solid lightgray">
-				<th style="padding: 1px 4px">Player</th>
-				<th style="padding: 1px 4px">Born</th>
-				<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
-				<th style="padding: 1px" th:each="season : ${timeline.seasons}"><span th:text="${season}" class="season">2015</span></th>
-			</tr>
+		<tr class="season" style="border-top: 3px solid lightgray">
+			<th style="padding: 1px 4px">Player</th>
+			<th style="padding: 1px 4px">Born</th>
+			<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
+			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><span th:text="${season}" class="season">2015</span></th>
+		</tr>
 		</thead>
 	</table>
 	<p><i>* Minimum <span th:text="${minGOATPoints}">40</span> GOAT points</i></p>

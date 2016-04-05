@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
-import static org.strangeforest.tcb.stats.model.PlayerTournamentEvent.*;
+import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
 
 public class PlayerTimelineItem {
 
@@ -71,6 +71,6 @@ public class PlayerTimelineItem {
 	}
 
 	public String getResult() {
-		return mapResult(result, level);
+		return mapResult(level, result);
 	}
 }

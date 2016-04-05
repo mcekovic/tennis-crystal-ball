@@ -46,4 +46,16 @@ public enum TournamentLevel implements CodedEnum {
 	public static EnumSet<TournamentLevel> MAIN_TOURNAMENT_LEVELS = EnumSet.of(GRAND_SLAM, TOUR_FINALS, MASTERS, OLYMPICS, ATP_500, ATP_250);
 	public static EnumSet<TournamentLevel> TOURNAMENT_LEVELS = EnumSet.of(GRAND_SLAM, TOUR_FINALS, MASTERS, OLYMPICS, ATP_500, ATP_250, DAVIS_CUP);
 	public static EnumSet<TournamentLevel> ALL_TOURNAMENT_LEVELS = EnumSet.of(GRAND_SLAM, TOUR_FINALS, MASTERS, OLYMPICS, ATP_500, ATP_250, OTHERS, DAVIS_CUP, OTHERS_TEAM);
+
+	public static String mapResult(String level, String result) {
+		if (Objects.equals(level, "O")) {
+			switch (result) {
+				case "W": return "G";
+				case "F": return "S";
+				default: return result;
+			}
+		}
+		else
+			return result;
+	}
 }

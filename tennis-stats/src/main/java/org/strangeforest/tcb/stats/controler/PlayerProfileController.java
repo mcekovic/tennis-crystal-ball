@@ -219,6 +219,7 @@ public class PlayerProfileController extends BaseController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("levelResults", levelResults);
+		modelMap.addAttribute("levelResultCount", levelResults.values().stream().mapToInt(List::size).sum());
 		modelMap.addAttribute("goatPoints", goatPoints);
 		return new ModelAndView("playerGOATPoints", modelMap);
 	}

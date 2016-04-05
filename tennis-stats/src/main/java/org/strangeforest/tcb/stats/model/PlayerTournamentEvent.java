@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
+
 public class PlayerTournamentEvent {
 
 	private final int tournamentEventId;
@@ -69,18 +71,7 @@ public class PlayerTournamentEvent {
 	}
 
 	public String getResult() {
-		return mapResult(result, level);
+		return mapResult(level, result);
 	}
 
-	static String mapResult(String result, String level) {
-		if (Objects.equals(level, "O")) {
-			switch (result) {
-				case "W": return "G";
-				case "F": return "S";
-				default: return result;
-			}
-		}
-		else
-			return result;
-	}
 }

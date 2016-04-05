@@ -17,12 +17,13 @@ public class PlayerGOATPoints {
 	// Achievements
 	private int bigWinsPoints;
 	private int grandSlamPoints;
+	private int seasonsGrandSlamPoints;
 	private int bestSeasonPoints;
 	private int greatestRivalriesPoints;
 	private int performancePoints;
 	private int statisticsPoints;
 	// Seasons
-	private List<PlayerSeasonGOATPoints> seasonsPoints = new ArrayList<>();
+	private List<PlayerSeasonGOATPoints> playerSeasonsPoints = new ArrayList<>();
 
 	public PlayerGOATPoints(int totalPoints) {
 		this.totalPoints = totalPoints;
@@ -33,6 +34,10 @@ public class PlayerGOATPoints {
 
 	public int getTotalPoints() {
 		return totalPoints;
+	}
+
+	public int getSeasonsPoints() {
+		return tournamentPoints + getSeasonsRankingPoints() + getSeasonsAchievementsPoints();
 	}
 
 	public int getTournamentPoints() {
@@ -57,6 +62,19 @@ public class PlayerGOATPoints {
 
 	public void setAchievementsPoints(int achievementsPoints) {
 		this.achievementsPoints = achievementsPoints;
+	}
+
+
+	// Tournament
+
+	public Integer getTournamentItem(String level, String result) {
+		int count = 0;
+		for (PlayerSeasonGOATPoints playerSeasonPoints : playerSeasonsPoints) {
+			Integer seasonCount = playerSeasonPoints.getTournamentItem(level, result);
+			if (seasonCount != null)
+				count += seasonCount;
+		}
+		return count;
 	}
 
 
@@ -94,6 +112,14 @@ public class PlayerGOATPoints {
 		this.weeksAtNo1Points = weeksAtNo1Points;
 	}
 
+	public int getSeasonsRankingPoints() {
+		return yearEndRankPoints + weeksAtNo1Points;
+	}
+
+	public int getCareerRankingPoints() {
+		return bestRankPoints + bestEloRatingPoints;
+	}
+
 
 	// Achievements
 
@@ -107,6 +133,14 @@ public class PlayerGOATPoints {
 
 	public int getGrandSlamPoints() {
 		return grandSlamPoints;
+	}
+
+	public int getSeasonsGrandSlamPoints() {
+		return seasonsGrandSlamPoints;
+	}
+
+	public int getCareerGrandSlamPoints() {
+		return grandSlamPoints - seasonsGrandSlamPoints;
 	}
 
 	public void setGrandSlamPoints(int grandSlamPoints) {
@@ -145,18 +179,27 @@ public class PlayerGOATPoints {
 		this.statisticsPoints = statisticsPoints;
 	}
 
+	public int getSeasonsAchievementsPoints() {
+		return bigWinsPoints + seasonsGrandSlamPoints;
+	}
+
+	public int getCareerAchievementsPoints() {
+		return getCareerGrandSlamPoints() + bestSeasonPoints + greatestRivalriesPoints + performancePoints + statisticsPoints;
+	}
+
 
 	// Seasons
 
-	public List<PlayerSeasonGOATPoints> getSeasonsPoints() {
-		return seasonsPoints;
+	public List<PlayerSeasonGOATPoints> getPlayerSeasonsPoints() {
+		return playerSeasonsPoints;
 	}
 
-	public void setSeasonsPoints(List<PlayerSeasonGOATPoints> seasonsPoints) {
-		this.seasonsPoints = seasonsPoints;
+	public void setPlayerSeasonsPoints(List<PlayerSeasonGOATPoints> playerSeasonsPoints) {
+		this.playerSeasonsPoints = playerSeasonsPoints;
+		seasonsGrandSlamPoints = playerSeasonsPoints.stream().mapToInt(PlayerSeasonGOATPoints::getGrandSlamPointsRaw).sum();
 	}
 
-	public PlayerSeasonGOATPoints getSeasonPoints(int season) {
-		return seasonsPoints.stream().filter( points -> points.getSeason() == season).findFirst().orElse(new PlayerSeasonGOATPoints(season, 0));
+	public PlayerSeasonGOATPoints getPlayerSeasonPoints(int season) {
+		return playerSeasonsPoints.stream().filter(points -> points.getSeason() == season).findFirst().orElse(new PlayerSeasonGOATPoints(season, 0));
 	}
 }

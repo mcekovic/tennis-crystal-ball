@@ -247,11 +247,6 @@ function eventFormatter(column, row) {
 	return "<a href='/tournamentEvent?tournamentEventId=" + row.id + "' class='label label-" + row.level + "' title='" + levelName(row.level) + " - " +  row.tournamentExtId + "'>" + row.name + "</a>";
 }
 
-// Result Formatter
-function resultFormatter(column, row) {
-	return "<span class='label black bg-result-" + row.result + "'>" + row.result + "</span>"
-}
-
 // Match Formatter
 function matchFormatter(column, row) {
 	return formatMatchPlayer(row.winner) + " " + (row.outcome != "ABD" ? "d." : "vs") + " " + formatMatchPlayer(row.loser);

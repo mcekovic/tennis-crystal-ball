@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
-import static org.strangeforest.tcb.stats.model.PlayerTournamentEvent.*;
+import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
 
 public class TournamentGOATPoints {
 
@@ -21,7 +21,7 @@ public class TournamentGOATPoints {
 	}
 
 	public String getResult() {
-		return mapResult(result, level);
+		return mapResult(level, result);
 	}
 
 	public int getGoatPoints() {

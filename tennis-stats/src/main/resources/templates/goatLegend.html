@@ -16,8 +16,7 @@
 	<script type="text/javascript">
 		/*<![CDATA[*/
 		$(function() {
-			var $goatLegendRow = $("#goatLegendRow");
-			$goatLegendRow.find("span.level").each(function() {
+			$("#goatLegendRow").find("span.level").each(function() {
 				var $level = $(this);
 				var level = $level.data("level");
 				$level.addClass("label-" + level);
@@ -32,18 +31,18 @@
 		<h4>Tournament Points</h4>
 		<table class="table table-condensed table-hover table-striped">
 			<thead>
-				<tr>
-					<th>Level</th>
-					<th class="text-center" title="Result/Round">Result</th>
-					<th class="text-center">Points</th>
-				</tr>
+			<tr>
+				<th>Level</th>
+				<th class="text-center" title="Result/Round">Result</th>
+				<th class="text-center">Points</th>
+			</tr>
 			</thead>
 			<tbody>
-				<tr th:each="point : ${tournamentGOATPoints}">
-					<td><span th:attr="data-level=${point.level}" data-level="G" class="label level"></span></td>
-					<td class="text-center"><span th:class="'label black bg-result-' + ${point.result}" class="label black" th:text="${point.result}">W</span></td>
-					<td class="text-center" th:text="${(point.additive ? '+' : '') + point.goatPoints}">8</td>
-				</tr>
+			<tr th:each="point : ${tournamentGOATPoints}">
+				<td><span th:attr="data-level=${point.level}" data-level="G" class="label level"></span></td>
+				<td class="text-center"><span th:class="'label black bg-result-' + ${point.result}" class="label black" th:text="${point.result}">W</span></td>
+				<td class="text-center" th:text="${(point.additive ? '+' : '') + point.goatPoints}">8</td>
+			</tr>
 			</tbody>
 		</table>
 		<p><em>+ is for tournaments where points are assigned for wins in each round rather then for tournament result</em></p>
@@ -54,46 +53,46 @@
 		<strong th:if="${forSeason}">Season's year-end rank</strong>
 		<table class="table table-condensed table-hover table-striped">
 			<thead>
-				<tr>
-					<th>Year-End Ranking</th>
-					<th class="text-center">Points</th>
-				</tr>
+			<tr>
+				<th>Year-End Ranking</th>
+				<th class="text-center">Points</th>
+			</tr>
 			</thead>
 			<tbody>
-				<tr th:each="point : ${yearEndRankGOATPoints}">
-					<td class="text-center" th:text="${point.rank}">1</td>
-					<td class="text-center" th:text="${point.goatPoints}">8</td>
-				</tr>
+			<tr th:each="point : ${yearEndRankGOATPoints}">
+				<td class="text-center" th:text="${point.rank}">1</td>
+				<td class="text-center" th:text="${point.goatPoints}">8</td>
+			</tr>
 			</tbody>
 		</table>
 		<strong th:unless="${forSeason}">Career high ranking</strong>
 		<table th:unless="${forSeason}" class="table table-condensed table-hover table-striped">
 			<thead>
-				<tr>
-					<th>Best Ranking</th>
-					<th class="text-center">Points</th>
-				</tr>
+			<tr>
+				<th>Best Ranking</th>
+				<th class="text-center">Points</th>
+			</tr>
 			</thead>
 			<tbody>
-				<tr th:each="point : ${bestRankGOATPoints}">
-					<td class="text-center" th:text="${point.rank}">1</td>
-					<td class="text-center" th:text="${point.goatPoints}">8</td>
-				</tr>
+			<tr th:each="point : ${bestRankGOATPoints}">
+				<td class="text-center" th:text="${point.rank}">1</td>
+				<td class="text-center" th:text="${point.goatPoints}">8</td>
+			</tr>
 			</tbody>
 		</table>
 		<strong th:unless="${forSeason}">All-time highest Elo rating</strong>
 		<table th:unless="${forSeason}" class="table table-condensed table-hover table-striped">
 			<thead>
-				<tr>
-					<th>All-Time Elo Ranking</th>
-					<th class="text-center">Points</th>
-				</tr>
+			<tr>
+				<th>All-Time Elo Ranking</th>
+				<th class="text-center">Points</th>
+			</tr>
 			</thead>
 			<tbody>
-				<tr th:each="point : ${bestEloRatingGOATPoints}">
-					<td class="text-center" th:text="${point.rank}">1</td>
-					<td class="text-center" th:text="${point.goatPoints}">8</td>
-				</tr>
+			<tr th:each="point : ${bestEloRatingGOATPoints}">
+				<td class="text-center" th:text="${point.rank}">1</td>
+				<td class="text-center" th:text="${point.goatPoints}">8</td>
+			</tr>
 			</tbody>
 		</table>
 		<div>
@@ -111,32 +110,32 @@
 				</div>
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
-						<tr>
-							<th>Level</th>
-							<th class="text-center">Round</th>
-							<th class="text-center">Factor</th>
-						</tr>
+					<tr>
+						<th>Level</th>
+						<th class="text-center">Round</th>
+						<th class="text-center">Factor</th>
+					</tr>
 					</thead>
 					<tbody>
-						<tr th:each="point : ${bigWinMatchFactors}">
-							<td><span th:attr="data-level=${point.level}" data-level="G" class="label level"></span></td>
-							<td class="text-center"><span th:text="${point.round}">F</span></td>
-							<td class="text-center" th:text="${point.matchFactor}">8</td>
-						</tr>
+					<tr th:each="point : ${bigWinMatchFactors}">
+						<td><span th:attr="data-level=${point.level}" data-level="G" class="label level"></span></td>
+						<td class="text-center"><span th:text="${point.round}">F</span></td>
+						<td class="text-center" th:text="${point.matchFactor}">8</td>
+					</tr>
 					</tbody>
 				</table>
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
-						<tr>
-							<th>Rank</th>
-							<th class="text-center">Factor</th>
-						</tr>
+					<tr>
+						<th>Rank</th>
+						<th class="text-center">Factor</th>
+					</tr>
 					</thead>
 					<tbody>
-						<tr th:each="point : ${bigWinRankFactors}">
-							<td class="text-center" th:text="${point.rankFrom == point.rankTo ? point.rankFrom : point.rankFrom + ' - ' + point.rankTo}">1</td>
-							<td class="text-center" th:text="${point.goatPoints}">8</td>
-						</tr>
+					<tr th:each="point : ${bigWinRankFactors}">
+						<td class="text-center" th:text="${point.rankFrom == point.rankTo ? point.rankFrom : point.rankFrom + ' - ' + point.rankTo}">1</td>
+						<td class="text-center" th:text="${point.goatPoints}">8</td>
+					</tr>
 					</tbody>
 				</table>
 			</div>
@@ -156,16 +155,16 @@
 				</div>
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
-						<tr>
-							<th>Best Season Rank</th>
-							<th class="text-center">Points</th>
-						</tr>
+					<tr>
+						<th>Best Season Rank</th>
+						<th class="text-center">Points</th>
+					</tr>
 					</thead>
 					<tbody>
-						<tr th:each="point : ${bestSeasonGOATPoints}">
-							<td class="text-center" th:text="${point.rank}">1</td>
-							<td class="text-center" th:text="${point.goatPoints}">8</td>
-						</tr>
+					<tr th:each="point : ${bestSeasonGOATPoints}">
+						<td class="text-center" th:text="${point.rank}">1</td>
+						<td class="text-center" th:text="${point.goatPoints}">8</td>
+					</tr>
 					</tbody>
 				</table>
 				<br/>
@@ -175,16 +174,16 @@
 				</div>
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
-						<tr>
-							<th>Rivalry Rank</th>
-							<th class="text-center">Points</th>
-						</tr>
+					<tr>
+						<th>Rivalry Rank</th>
+						<th class="text-center">Points</th>
+					</tr>
 					</thead>
 					<tbody>
-						<tr th:each="point : ${greatestRivalriesGOATPoints}">
-							<td class="text-center" th:text="${point.rank}">1</td>
-							<td class="text-center" th:text="${point.goatPoints}">8</td>
-						</tr>
+					<tr th:each="point : ${greatestRivalriesGOATPoints}">
+						<td class="text-center" th:text="${point.rank}">1</td>
+						<td class="text-center" th:text="${point.goatPoints}">8</td>
+					</tr>
 					</tbody>
 				</table>
 				</th:block>
@@ -196,16 +195,16 @@
 				<p>Points assigned to best players in each performance category</p>
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
-						<tr>
-							<th title="Performance Category">Perform. Category</th>
-							<th>Points</th>
-						</tr>
+					<tr>
+						<th title="Performance Category">Perform. Category</th>
+						<th>Points</th>
+					</tr>
 					</thead>
 					<tbody>
-						<tr th:each="point : ${performanceGOATPoints}">
-							<td th:text="${point.category}">1</td>
-							<td th:text="${point.goatPoints}">8</td>
-						</tr>
+					<tr th:each="point : ${performanceGOATPoints}">
+						<td th:text="${point.category}">1</td>
+						<td th:text="${point.goatPoints}">8</td>
+					</tr>
 					</tbody>
 				</table>
 				<div>
@@ -214,16 +213,16 @@
 				<p>Points assigned to best players in each statistics category</p>
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
-						<tr>
-							<th>Statistics Category</th>
-							<th>Points</th>
-						</tr>
+					<tr>
+						<th>Statistics Category</th>
+						<th>Points</th>
+					</tr>
 					</thead>
 					<tbody>
-						<tr th:each="point : ${statisticsGOATPoints}">
-							<td th:text="${point.category}">1</td>
-							<td th:text="${point.goatPoints}">8</td>
-						</tr>
+					<tr th:each="point : ${statisticsGOATPoints}">
+						<td th:text="${point.category}">1</td>
+						<td th:text="${point.goatPoints}">8</td>
+					</tr>
 					</tbody>
 				</table>
 			</div>
