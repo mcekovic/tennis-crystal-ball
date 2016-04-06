@@ -46,23 +46,26 @@
 		.last-column {
 			border-right: 2px solid lightgray;
 		}
-		.top {
-			vertical-align: top;
+		.valign-middle {
+			vertical-align: middle;
 		}
 		.points {
 			text-align: right;
+		}
+		.result {
+			width: 50px;
 		}
 	</style>
 	<table id="goatPointsTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
 		<tr>
-			<th colspan="2" rowspan="2" class="first-header first-column top grand-total">GOAT Points</th>
-			<th th:colspan="${levelResultCount + 1}" class="first-header first-column tournament">Tournament</th>
-			<th colspan="3" rowspan="2" class="first-header first-column top ranking">Ranking</th>
-			<th colspan="3" rowspan="2" class="first-header first-column last-column top achievements">Achievements</th>
+			<th colspan="2" rowspan="2" class="first-header first-column text-center valign-middle grand-total">GOAT Points</th>
+			<th th:colspan="${levelResultCount + 1}" class="first-header first-column text-center tournament">Tournament</th>
+			<th colspan="3" rowspan="2" class="first-header first-column text-center valign-middle ranking">Ranking</th>
+			<th colspan="3" rowspan="2" class="first-header first-column last-column text-center valign-middle achievements">Achievements</th>
 		</tr>
 		<tr>
-			<th th:each="level : ${levelResults}" th:colspan="${level.value.size()}" class="level text-center first-column" th:attr="data-level=${level.key}" th:text="${level.key}">G</th>
+			<th th:each="level : ${levelResults}" th:colspan="${level.value.size()}" class="level first-column text-center" th:attr="data-level=${level.key}" th:text="${level.key}">G</th>
 			<th title="Tournament Level" class="first-column tournament">Level</th>
 		</tr>
 		<tr>
