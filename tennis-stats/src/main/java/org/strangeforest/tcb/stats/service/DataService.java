@@ -20,7 +20,7 @@ public class DataService {
 
 	private static final String LAST_UPDATE_QUERY =
 		"SELECT max(last_update) FROM (\n" +
-		"  SELECT max(date) last_update FROM tournament_event\n" +
+		"  SELECT max(tournament_end(date, level, draw_size)) last_update FROM tournament_event\n" +
 		"  UNION ALL\n" +
 		"  SELECT max(rank_date) FROM player_ranking\n" +
 		") AS last_update";

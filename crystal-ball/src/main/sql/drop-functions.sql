@@ -1,5 +1,6 @@
 DROP FUNCTION weeks(DATE, DATE);
 DROP FUNCTION season_end(INTEGER);
+DROP FUNCTION tournament_end(DATE, tournament_level, SMALLINT);
 DROP FUNCTION player_rank(INTEGER, DATE);
 DROP FUNCTION player_rank_points(INTEGER, DATE);
 DROP FUNCTION merge_elo_ranking(DATE, INTEGER, INTEGER, INTEGER);

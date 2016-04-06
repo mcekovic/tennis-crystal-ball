@@ -25,6 +25,23 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- tournament_end
+
+CREATE OR REPLACE FUNCTION tournament_end(
+	p_date DATE,
+	p_level tournament_level,
+	p_draw_size SMALLINT
+) RETURNS DATE AS $$
+BEGIN
+	IF p_level = 'G' OR p_draw_size >= 96 THEN
+		RETURN p_date + INTEGER '14';
+	ELSE
+		RETURN p_date + INTEGER '7';
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- player_rank
 
 CREATE OR REPLACE FUNCTION player_rank(

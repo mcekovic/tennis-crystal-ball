@@ -84,10 +84,6 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 		this.firstByLevel = firstByLevel;
 	}
 
-	private int getDuration() {
-		return maxLevel() == TournamentLevel.GRAND_SLAM ? 14 : 7;
-	}
-
 	@Override public int compareTo(PlayerTournamentTimeline tournament) {
 		int result = maxLevel().compareTo(tournament.maxLevel());
 		return result != 0 ? result : endDay.get().compareTo(tournament.endDay.get());
@@ -98,7 +94,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	);
 
 	private final Supplier<MonthDay> endDay = Memoizer.of(
-		() -> MonthDay.from(LocalDate.ofYearDay(REFERENCE_YEAR, (int)dates.stream().mapToInt(date -> toLocalDate(date).plusDays(getDuration()).getDayOfYear()).average().getAsDouble()))
+		() -> MonthDay.from(LocalDate.ofYearDay(REFERENCE_YEAR, (int)dates.stream().mapToInt(date -> toLocalDate(date).getDayOfYear()).average().getAsDouble()))
 	);
 
 	private static final int REFERENCE_YEAR = 2000;
