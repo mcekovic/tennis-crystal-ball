@@ -82,7 +82,7 @@ class TournamentFetcher {
 	}
 
 	static matchNum(match_id) {
-		String.valueOf(Integer.parseInt(match_id) % 100)
+		String.valueOf(Integer.parseInt(match_id) % 1000)
 	}
 
 	static age(dob) {

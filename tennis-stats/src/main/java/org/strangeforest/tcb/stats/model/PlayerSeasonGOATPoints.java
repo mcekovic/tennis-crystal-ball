@@ -36,6 +36,10 @@ public class PlayerSeasonGOATPoints {
 		return totalPoints;
 	}
 
+	public int getTotalPointsRounded() {
+		return 10 * (totalPoints / 10);
+	}
+
 	public Integer getTournamentPoints() {
 		return zeroToNull(tournamentPoints);
 	}

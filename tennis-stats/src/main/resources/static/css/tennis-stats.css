@@ -173,6 +173,36 @@
 .bg-won-100 {
 	background: lime;
 }
+.points-10 {
+	background-color: #ffe8f0;
+}
+.points-20 {
+	background-color: #fcd0e0;
+}
+.points-30 {
+	background-color: #f8b8d0;
+}
+.points-40 {
+	background-color: #f4a0c0;
+}
+.points-50 {
+	background-color: #f088b0;
+}
+.points-60 {
+	background-color: #ec70a0;
+}
+.points-70 {
+	background-color: #e85890;
+}
+.points-80 {
+	background-color: #e44080;
+}
+.points-90 {
+	background-color: #e02870;
+}
+.points-100 {
+	background-color: #dc1060;
+}
 .stats-header {
 	font-size: smaller;
 }

@@ -83,6 +83,6 @@ public class BigGunsTimeline {
 	// Util
 
 	static int roundDominanceRatio(double dominanceRatio) {
-		return 10*Math.floorDiv((int)dominanceRatio, 10);
+		return 10 * ((int)dominanceRatio / 10);
 	}
 }

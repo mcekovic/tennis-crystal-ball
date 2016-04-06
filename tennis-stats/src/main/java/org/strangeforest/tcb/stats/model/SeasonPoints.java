@@ -17,4 +17,8 @@ public class SeasonPoints {
 	public int getPoints() {
 		return points;
 	}
+
+	public int getPointsRounded() {
+		return 10 * (points / 10);
+	}
 }
