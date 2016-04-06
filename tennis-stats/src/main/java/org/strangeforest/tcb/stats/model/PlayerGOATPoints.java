@@ -5,7 +5,7 @@ import java.util.*;
 public class PlayerGOATPoints {
 
 	// Totals
-	private final int totalPoints;
+	private int totalPoints;
 	private int tournamentPoints;
 	private int rankingPoints;
 	private int achievementsPoints;
@@ -25,15 +25,19 @@ public class PlayerGOATPoints {
 	// Seasons
 	private List<PlayerSeasonGOATPoints> playerSeasonsPoints = new ArrayList<>();
 
-	public PlayerGOATPoints(int totalPoints) {
-		this.totalPoints = totalPoints;
-	}
-
 
 	// Totals
 
 	public int getTotalPoints() {
 		return totalPoints;
+	}
+
+	public void setTotalPoints(int totalPoints) {
+		this.totalPoints = totalPoints;
+	}
+
+	public boolean isEmpty() {
+		return totalPoints == 0;
 	}
 
 	public int getSeasonsPoints() {

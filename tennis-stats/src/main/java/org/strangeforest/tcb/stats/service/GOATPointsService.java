@@ -59,23 +59,29 @@ public class GOATPointsService {
 	}
 
 	public PlayerGOATPoints getPlayerGOATPoints(int playerId) {
-		PlayerGOATPoints goatPoints = jdbcTemplate.queryForObject(TOTAL_POINTS_QUERY, (rs, rowNum) -> {
-			PlayerGOATPoints points = new PlayerGOATPoints(rs.getInt("goat_points"));
-			points.setTournamentPoints(rs.getInt("tournament_goat_points"));
-			points.setRankingPoints(rs.getInt("ranking_goat_points"));
-			points.setAchievementsPoints(rs.getInt("achievements_goat_points"));
-			points.setYearEndRankPoints(rs.getInt("year_end_rank_goat_points"));
-			points.setBestRankPoints(rs.getInt("best_rank_goat_points"));
-			points.setBestEloRatingPoints(rs.getInt("best_elo_rating_goat_points"));
-			points.setWeeksAtNo1Points(rs.getInt("weeks_at_no1_goat_points"));
-			points.setBigWinsPoints(rs.getInt("big_wins_goat_points"));
-			points.setGrandSlamPoints(rs.getInt("grand_slam_goat_points"));
-			points.setBestSeasonPoints(rs.getInt("best_season_goat_points"));
-			points.setGreatestRivalriesPoints(rs.getInt("greatest_rivalries_goat_points"));
-			points.setPerformancePoints(rs.getInt("performance_goat_points"));
-			points.setStatisticsPoints(rs.getInt("statistics_goat_points"));
+		PlayerGOATPoints goatPoints = jdbcTemplate.query(TOTAL_POINTS_QUERY, rs -> {
+			PlayerGOATPoints points = new PlayerGOATPoints();
+			if (rs.next()) {
+				points.setTotalPoints(rs.getInt("goat_points"));
+				points.setTournamentPoints(rs.getInt("tournament_goat_points"));
+				points.setRankingPoints(rs.getInt("ranking_goat_points"));
+				points.setAchievementsPoints(rs.getInt("achievements_goat_points"));
+				points.setYearEndRankPoints(rs.getInt("year_end_rank_goat_points"));
+				points.setBestRankPoints(rs.getInt("best_rank_goat_points"));
+				points.setBestEloRatingPoints(rs.getInt("best_elo_rating_goat_points"));
+				points.setWeeksAtNo1Points(rs.getInt("weeks_at_no1_goat_points"));
+				points.setBigWinsPoints(rs.getInt("big_wins_goat_points"));
+				points.setGrandSlamPoints(rs.getInt("grand_slam_goat_points"));
+				points.setBestSeasonPoints(rs.getInt("best_season_goat_points"));
+				points.setGreatestRivalriesPoints(rs.getInt("greatest_rivalries_goat_points"));
+				points.setPerformancePoints(rs.getInt("performance_goat_points"));
+				points.setStatisticsPoints(rs.getInt("statistics_goat_points"));
+			}
 			return points;
 		}, playerId);
+
+		if (goatPoints.isEmpty())
+			return goatPoints;
 
 		List<PlayerSeasonGOATPoints> seasonPoints = jdbcTemplate.query(SEASON_POINTS_QUERY, (rs, rowNum) -> {
 			PlayerSeasonGOATPoints points = new PlayerSeasonGOATPoints(rs.getInt("season"), rs.getInt("goat_points"));
