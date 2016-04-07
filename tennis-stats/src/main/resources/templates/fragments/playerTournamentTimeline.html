@@ -1,5 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="playerTournamentTimeline(tournament)">
-	<!--@thymesVar id="tournament" type="org.strangeforest.tcb.stats.model.PlayerTournamentTimeline"-->
+	<!--/*@thymesVar id="tournament" type="org.strangeforest.tcb.stats.model.PlayerTournamentTimeline"*/-->
 	<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
 		<span th:unless="${tournament.maxLevel} == 'O'" th:each="levelAndName : ${tournament.levelsAndNames}" th:text="${levelAndName.value}" th:attr="data-level=${levelAndName.key}" data-level="G" class="label level">Wimbledon</span>
 		<span th:if="${tournament.maxLevel} == 'O'" th:text="${tournament.name}" th:attr="data-level=${tournament.maxLevel}" data-level="O" class="label level">Olympics</span>
