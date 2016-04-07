@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.*;
 import java.util.Objects;
 
+import org.springframework.jdbc.core.namedparam.*;
+
 import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
@@ -14,7 +16,7 @@ public class PlayerListFilter {
 
 	private final String searchPhrase;
 
-	private static final String SEARCH_CRITERION = " AND (name ILIKE '%' || ? || '%' OR country_id ILIKE '%' || ? || '%')";
+	private static final String SEARCH_CRITERION = " AND (name ILIKE '%' || :searchPhrase || '%' OR country_id ILIKE '%' || :searchPhrase || '%')";
 
 	public PlayerListFilter(String searchPhrase) {
 		this.searchPhrase = searchPhrase;
@@ -29,6 +31,17 @@ public class PlayerListFilter {
 	protected void appendCriteria(StringBuilder criteria) {
 		if (!isNullOrEmpty(searchPhrase))
 			criteria.append(SEARCH_CRITERION);
+	}
+
+	public MapSqlParameterSource getParams() {
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		addParams(params);
+		return params;
+	}
+
+	protected void addParams(MapSqlParameterSource params) {
+		if (!isNullOrEmpty(searchPhrase))
+			params.addValue("searchPhrase", searchPhrase);
 	}
 
 	public Object[] getParams(Object... extraParams) {

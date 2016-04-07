@@ -2,19 +2,20 @@ package org.strangeforest.tcb.stats.service;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class BestSeasonsService {
 
-	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int MAX_SEASON_COUNT = 200;
 	private static final int MIN_SEASON_GOAT_POINTS = 25;
@@ -22,7 +23,7 @@ public class BestSeasonsService {
 	private static final String BEST_SEASON_COUNT_QUERY = //language=SQL
 		"SELECT count(s.season) AS season_count FROM player_season_goat_points s\n" +
 		"INNER JOIN player_v USING (player_id)\n" +
-		"WHERE s.goat_points >= ?%1$s";
+		"WHERE s.goat_points >= :minPoints%1$s";
 
 	private static final String BEST_SEASONS_QUERY = //language=SQL
 		"WITH pleayer_season AS (\n" +
@@ -40,7 +41,7 @@ public class BestSeasonsService {
 		"  FROM player_season_goat_points s\n" +
 		"  LEFT JOIN player_tournament_event_result r USING (player_id)\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id, season)\n" +
-		"  WHERE s.goat_points >= ?\n" +
+		"  WHERE s.goat_points >= :minPoints\n" +
 		"  GROUP BY player_id, s.season, s.goat_points, s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points\n" +
 		"), pleayer_season_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank,\n" +
@@ -55,14 +56,14 @@ public class BestSeasonsService {
 		"FROM pleayer_season_ranked s\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"LEFT JOIN player_year_end_rank y USING (player_id, season)%1$s\n" +
-		"ORDER BY %2$s OFFSET ? LIMIT ?";
+		"ORDER BY %2$s OFFSET :offset LIMIT :limit";
 
 
 	@Cacheable("BestSeasons.Count")
 	public int getBestSeasonCount(PlayerListFilter filter) {
 		return Math.min(MAX_SEASON_COUNT, jdbcTemplate.queryForObject(
 			format(BEST_SEASON_COUNT_QUERY, filter.getCriteria()),
-			filter.getParamsWithPrefix(MIN_SEASON_GOAT_POINTS),
+			params(filter.getParams(), "minPoints", MIN_SEASON_GOAT_POINTS),
 			Integer.class
 		));
 	}
@@ -73,6 +74,7 @@ public class BestSeasonsService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(BEST_SEASONS_QUERY, where(filter.getCriteria()), orderBy),
+			params(filter.getParams(), "minPoints", MIN_SEASON_GOAT_POINTS, "offset", offset, "limit", pageSize),
 			rs -> {
 				int seasonRank = rs.getInt("season_rank");
 				int playerId = rs.getInt("player_id");
@@ -102,8 +104,7 @@ public class BestSeasonsService {
 				row.setTitles(rs.getInt("titles"));
 				row.setYearEndRank(getInteger(rs, "year_end_rank"));
 				table.addRow(row);
-			},
-			filter.getParamsWithPrefix(MIN_SEASON_GOAT_POINTS, offset, pageSize)
+			}
 		);
 		return table;
 	}

@@ -3,6 +3,8 @@ package org.strangeforest.tcb.stats.service;
 import java.util.*;
 import java.util.Objects;
 
+import org.springframework.jdbc.core.namedparam.*;
+
 import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
@@ -16,10 +18,10 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 	private final Integer tournamentId;
 	private final Integer tournamentEventId;
 
-	private static final String SEASON_CRITERION = " AND season = ?";
-	private static final String SURFACE_CRITERION = " AND surface = ?::surface";
-	private static final String TOURNAMENT_CRITERION = " AND tournament_id = ?";
-	private static final String TOURNAMENT_EVENT_CRITERION = " AND tournament_event_id = ?";
+	private static final String SEASON_CRITERION = " AND season = :season";
+	private static final String SURFACE_CRITERION = " AND surface = :surface::surface";
+	private static final String TOURNAMENT_CRITERION = " AND tournament_id = :tournamentId";
+	private static final String TOURNAMENT_EVENT_CRITERION = " AND tournament_event_id = :tournamentEventId";
 
 	public StatsPlayerListFilter(Integer season) {
 		this(null, season);
@@ -95,6 +97,18 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 			criteria.append(TOURNAMENT_CRITERION);
 		if (tournamentEventId != null)
 			criteria.append(TOURNAMENT_EVENT_CRITERION);
+	}
+
+	@Override protected void addParams(MapSqlParameterSource params) {
+		super.addParams(params);
+		if (season != null)
+			params.addValue("season", season);
+		if (!isNullOrEmpty(surface))
+			params.addValue("surface", surface);
+		if (tournamentId != null)
+			params.addValue("tournamentId", tournamentId);
+		if (tournamentEventId != null)
+			params.addValue("tournamentEventId", tournamentEventId);
 	}
 
 	public Object[] getParams(Collection midParams, Object... extraParams) {

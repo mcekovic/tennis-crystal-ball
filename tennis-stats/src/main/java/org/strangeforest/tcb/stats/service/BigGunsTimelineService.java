@@ -5,14 +5,16 @@ import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
 public class BigGunsTimelineService {
 
-	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int MIN_GOAT_POINTS = 40;
 
@@ -24,7 +26,7 @@ public class BigGunsTimelineService {
 		") AS seasons_points\n" +
 		"FROM player_goat_points g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE g.goat_points >= ?\n" +
+		"WHERE g.goat_points >= :minGOATPoints\n" +
 		"ORDER BY p.dob DESC, p.name";
 
 
@@ -33,15 +35,14 @@ public class BigGunsTimelineService {
 		BigGunsTimeline timeline = new BigGunsTimeline();
 		AtomicInteger rank = new AtomicInteger();
 		jdbcTemplate.query(
-			TIMELINE_QUERY,
+			TIMELINE_QUERY, param("minGOATPoints", MIN_GOAT_POINTS),
 			rs -> {
 				BigGunsPlayerTimeline player = mapPlayer(rank, rs);
 				Object[] seasonsPoints = (Object[])rs.getArray("seasons_points").getArray();
 				for (Object seasonsPoint : seasonsPoints)
 					player.addSeasonPoints(mapSeasonPoints(seasonsPoint.toString()));
 				timeline.addPlayer(player);
-			},
-			MIN_GOAT_POINTS
+			}
 		);
 		timeline.calculateBigGunsSeasons();
 		timeline.calculateBigGunsEras();

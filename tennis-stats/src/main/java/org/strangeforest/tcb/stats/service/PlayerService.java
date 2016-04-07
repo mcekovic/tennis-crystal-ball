@@ -4,18 +4,19 @@ import java.sql.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static com.google.common.base.Strings.*;
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
 public class PlayerService {
 
-	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_QUERY =
 		"SELECT player_id, name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight, hand, backhand,\n" +
@@ -24,48 +25,48 @@ public class PlayerService {
 		"  active, turned_pro, coach, web_site, twitter, facebook\n" +
 		"FROM player_v";
 
-	private static final String PLAYER_BY_NAME_QUERY = PLAYER_QUERY + "\nWHERE name = ? ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
-	private static final String PLAYER_BY_ID_QUERY = PLAYER_QUERY + "\nWHERE player_id = ?";
+	private static final String PLAYER_BY_NAME_QUERY = PLAYER_QUERY + "\nWHERE name = :name ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
+	private static final String PLAYER_BY_ID_QUERY = PLAYER_QUERY + "\nWHERE player_id = :playerId";
 
 	private static final String PLAYER_NAME_QUERY =
 		"SELECT name FROM player_v\n" +
-		"WHERE player_id = ?";
+		"WHERE player_id = :playerId";
 
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
 		"SELECT player_id, name, country_id FROM player_v\n" +
-		"WHERE name ILIKE '%' || ? || '%'\n" +
+		"WHERE name ILIKE '%' || :name || '%'\n" +
 		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 20";
 
 	private static final String PLAYER_ID_QUERY =
 		"SELECT player_id FROM player_v\n" +
-		"WHERE name = ?\n" +
+		"WHERE name = :name\n" +
 		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
 
 	private static final String SEASONS_QUERY =
 		"SELECT DISTINCT e.season FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"WHERE r.player_id = ?\n" +
+		"WHERE r.player_id = :playerId\n" +
 		"ORDER BY season DESC";
 
 
 	public Player getPlayer(int playerId) {
-		return jdbcTemplate.queryForObject(PLAYER_BY_ID_QUERY, this::playerMapper, playerId);
+		return jdbcTemplate.queryForObject(PLAYER_BY_ID_QUERY, param("playerId", playerId), this::playerMapper);
 	}
 
 	public Player getPlayer(String name) {
-		return jdbcTemplate.queryForObject(PLAYER_BY_NAME_QUERY, this::playerMapper, name);
+		return jdbcTemplate.queryForObject(PLAYER_BY_NAME_QUERY, param("name", name), this::playerMapper);
 	}
 
 	public String getPlayerName(int playerId) {
-		return jdbcTemplate.queryForObject(PLAYER_NAME_QUERY, String.class, playerId);
+		return jdbcTemplate.queryForObject(PLAYER_NAME_QUERY, param("playerId", playerId), String.class);
 	}
 
 	public List<AutocompleteOption> autocompletePlayer(String name) {
-		return jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, this::playerAutocompleteOptionMapper, name);
+		return jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, param("name", name), this::playerAutocompleteOptionMapper);
 	}
 
-	public Optional<Integer> findPlayerId(String player) {
-		return jdbcTemplate.queryForList(PLAYER_ID_QUERY, Integer.class, player).stream().findFirst();
+	public Optional<Integer> findPlayerId(String name) {
+		return jdbcTemplate.queryForList(PLAYER_ID_QUERY, param("name", name), Integer.class).stream().findFirst();
 	}
 
 	public List<Integer> findPlayerIds(List<String> players) {
@@ -73,7 +74,7 @@ public class PlayerService {
 	}
 
 	public List<Integer> getPlayerSeasons(int playerId) {
-		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class, playerId);
+		return jdbcTemplate.queryForList(SEASONS_QUERY, param("playerId", playerId), Integer.class);
 	}
 
 	public IndexedPlayers getIndexedPlayers(int playerId) {

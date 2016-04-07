@@ -6,18 +6,19 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
 public class TopPerformersService {
 
-	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int MAX_PLAYER_COUNT          = 1000;
 	private static final int MIN_ENTRIES_SEASON_FACTOR =   10;
@@ -30,13 +31,13 @@ public class TopPerformersService {
 	private static final String TOP_PERFORMERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +
 		"INNER JOIN player_v USING (player_id)\n" +
-		"WHERE %2$s_won + %2$s_lost >= ?%3$s";
+		"WHERE %2$s_won + %2$s_lost >= :minEntries%3$s";
 
 	private static final String TOP_PERFORMERS_QUERY = //language=SQL
 		"WITH top_performers AS (\n" +
 		"  SELECT player_id, %1$s_won::real/(%1$s_won + %1$s_lost) AS won_lost_pct, %1$s_won AS won, %1$s_lost AS lost\n" +
 		"  FROM %2$s\n" +
-		"  WHERE %1$s_won + %1$s_lost >= ?%3$s\n" +
+		"  WHERE %1$s_won + %1$s_lost >= :minEntries%3$s\n" +
 		"), top_performers_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id, won_lost_pct, won, lost\n" +
 		"  FROM top_performers\n" +
@@ -44,19 +45,19 @@ public class TopPerformersService {
 		"SELECT rank, player_id, name, country_id, active, won, lost\n" +
 		"FROM top_performers_ranked\n" +
 		"INNER JOIN player_v USING (player_id)%4$s\n" +
-		"ORDER BY %5$s OFFSET ? LIMIT ?";
+		"ORDER BY %5$s OFFSET :offset LIMIT :limit";
 
 
 	@Cacheable(value = "Global", key = "'PerformanceSeasons'")
 	public List<Integer> getSeasons() {
-		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
+		return jdbcTemplate.getJdbcOperations().queryForList(SEASONS_QUERY, Integer.class);
 	}
 
 	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
 			format(TOP_PERFORMERS_COUNT_QUERY, perfTableName(filter), perfCategory.getColumn(), filter.getCriteria()),
-			filter.getParamsWithPrefix(getMinEntriesValue(perfCategory, filter)),
+			params(filter.getParams(), "minEntries", getMinEntriesValue(perfCategory, filter)),
 			Integer.class
 		));
 	}
@@ -67,6 +68,7 @@ public class TopPerformersService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(TOP_PERFORMERS_QUERY, perfCategory.getColumn(), perfTableName(filter), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy),
+			params(filter.getParams(), "minEntries", getMinEntriesValue(perfCategory, filter), "offset", offset, "limit", pageSize),
 			rs -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
@@ -75,8 +77,7 @@ public class TopPerformersService {
 				boolean active = !filter.hasSeason() && rs.getBoolean("active");
 				WonLost wonLost = mapWonLost(rs);
 				table.addRow(new TopPerformerRow(rank, playerId, name, countryId, active, wonLost));
-			},
-			filter.getParamsWithPrefix(getMinEntriesValue(perfCategory, filter), offset, pageSize)
+			}
 		);
 		return table;
 	}

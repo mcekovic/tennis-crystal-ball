@@ -2,24 +2,25 @@ package org.strangeforest.tcb.stats.service;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
 public class GOATListService {
 
-	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int MAX_PLAYER_COUNT = 1000;
 
 	private static final String GOAT_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM player_goat_points g\n" +
 		"INNER JOIN player_v USING (player_id)\n" +
-		"WHERE g.goat_points > 0 AND g.goat_rank <= ?%1$s";
+		"WHERE g.goat_points > 0 AND g.goat_rank <= :maxPlayers%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
 		"SELECT player_id, g.goat_rank, p.country_id, p.active, p.name, g.goat_points, g.tournament_goat_points, g.ranking_goat_points, g.achievements_goat_points,\n" +
@@ -28,15 +29,15 @@ public class GOATListService {
 		"  p.grand_slams, p.tour_finals, p.masters, p.olympics, p.big_titles, p.titles, p.best_elo_rating, p.best_elo_rating_date\n" +
 		"FROM player_goat_points g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE g.goat_points > 0 AND g.goat_rank <= ?%1$s\n" +
-		"ORDER BY %2$s OFFSET ? LIMIT ?";
+		"WHERE g.goat_points > 0 AND g.goat_rank <= :maxPlayers%1$s\n" +
+		"ORDER BY %2$s OFFSET :offset LIMIT :limit";
 
 
 	@Cacheable("GOATList.Count")
 	public int getPlayerCount(PlayerListFilter filter) {
 		return jdbcTemplate.queryForObject(
 			format(GOAT_COUNT_QUERY, filter.getCriteria()),
-			filter.getParamsWithPrefix(MAX_PLAYER_COUNT),
+			params(filter.getParams(), "maxPlayers", MAX_PLAYER_COUNT),
 			Integer.class
 		);
 	}
@@ -47,6 +48,7 @@ public class GOATListService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(GOAT_LIST_QUERY, filter.getCriteria(), orderBy),
+			params(filter.getParams(), "maxPlayers", MAX_PLAYER_COUNT, "offset", offset, "limit", pageSize),
 			rs -> {
 				int goatRank = rs.getInt("goat_rank");
 				int playerId = rs.getInt("player_id");
@@ -80,8 +82,7 @@ public class GOATListService {
 				row.setBestEloRating(rs.getInt("best_elo_rating"));
 				row.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
 				table.addRow(row);
-			},
-			filter.getParamsWithPrefix(MAX_PLAYER_COUNT, offset, pageSize)
+			}
 		);
 		return table;
 	}
