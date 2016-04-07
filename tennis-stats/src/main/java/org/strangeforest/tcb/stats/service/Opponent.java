@@ -31,11 +31,11 @@ public enum Opponent {
 	private final String statsCriterion;
 	private final boolean opponentRequired;
 
-	private static final String MATCHES_RANK_CRITERION = " AND ((m.winner_rank <= %1$d AND m.winner_id <> ?) OR (m.loser_rank <= %1$d AND m.loser_id <> ?))";
-	private static final String MATCHES_SEED_CRITERION = " AND ((m.winner_seed %1$s AND m.winner_id <> ?) OR (m.loser_seed %1$s AND m.loser_id <> ?))";
-	private static final String MATCHES_ENTRY_CRITERION = " AND ((m.winner_entry = '%1$s' AND m.winner_id <> ?) OR (m.loser_entry = '%1$s' AND m.loser_id <> ?))";
-	private static final String MATCHES_HAND_CRITERION = " AND ((pw.hand = '%1$s' AND m.winner_id <> ?) OR (pl.hand = '%1$s' AND m.loser_id <> ?))";
-	private static final String MATCHES_BACKHAND_CRITERION = " AND ((pw.backhand = '%1$s' AND m.winner_id <> ?) OR (pl.backhand = '%1$s' AND m.loser_id <> ?))";
+	private static final String MATCHES_RANK_CRITERION = " AND ((m.winner_rank <= %1$d AND m.winner_id <> :playerId) OR (m.loser_rank <= %1$d AND m.loser_id <> :playerId))";
+	private static final String MATCHES_SEED_CRITERION = " AND ((m.winner_seed %1$s AND m.winner_id <> :playerId) OR (m.loser_seed %1$s AND m.loser_id <> :playerId))";
+	private static final String MATCHES_ENTRY_CRITERION = " AND ((m.winner_entry = '%1$s' AND m.winner_id <> :playerId) OR (m.loser_entry = '%1$s' AND m.loser_id <> :playerId))";
+	private static final String MATCHES_HAND_CRITERION = " AND ((pw.hand = '%1$s' AND m.winner_id <> :playerId) OR (pl.hand = '%1$s' AND m.loser_id <> :playerId))";
+	private static final String MATCHES_BACKHAND_CRITERION = " AND ((pw.backhand = '%1$s' AND m.winner_id <> :playerId) OR (pl.backhand = '%1$s' AND m.loser_id <> :playerId))";
 
 	private static final String STATS_RANK_CRITERION = " AND opponent_rank <= %1$d";
 	private static final String STATS_SEED_CRITERION = " AND opponent_seed %1$s";

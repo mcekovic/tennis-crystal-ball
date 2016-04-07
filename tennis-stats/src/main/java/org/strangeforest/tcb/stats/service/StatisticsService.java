@@ -5,17 +5,18 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class StatisticsService {
 
-	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String SEASONS_QUERY =
 		"SELECT DISTINCT season\n" +
@@ -30,7 +31,7 @@ public class StatisticsService {
 		"INNER JOIN match m USING (match_id)\n" +
 		"INNER JOIN player_v pw ON m.winner_id = pw.player_id\n" +
 		"INNER JOIN player_v pl ON m.loser_id = pl.player_id\n" +
-		"WHERE match_id = ? AND set = 0";
+		"WHERE match_id = :matchId AND set = 0";
 
 	private static final String PLAYER_STATS_COLUMNS =
 		"p_matches, o_matches, p_sets, o_sets, p_games, o_games,\n" +
@@ -40,22 +41,22 @@ public class StatisticsService {
 	private static final String PLAYER_STATS_QUERY =
 		"SELECT " + PLAYER_STATS_COLUMNS +
 		"FROM player_stats\n" +
-		"WHERE player_id = ?";
+		"WHERE player_id = :playerId";
 
 	private static final String PLAYER_SEASON_STATS_QUERY =
 		"SELECT " + PLAYER_STATS_COLUMNS +
 		"FROM player_season_stats\n" +
-		"WHERE player_id = ? AND season = ?";
+		"WHERE player_id = :playerId AND season = :season";
 
 	private static final String PLAYER_SURFACE_STATS_QUERY =
 		"SELECT " + PLAYER_STATS_COLUMNS +
 		"FROM player_surface_stats\n" +
-		"WHERE player_id = ? AND surface = ?::surface";
+		"WHERE player_id = :playerId AND surface = :surface::surface";
 
 	private static final String PLAYER_SEASON_SURFACE_STATS_QUERY =
 		"SELECT " + PLAYER_STATS_COLUMNS +
 		"FROM player_season_surface_stats\n" +
-		"WHERE player_id = ? AND season = ? AND surface = ?::surface";
+		"WHERE player_id = :playerId AND season = :season AND surface = :surface::surface";
 
 	public static final String PLAYER_STATS_SUMMED_COLUMNS =
 		"sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,\n" +
@@ -65,7 +66,7 @@ public class StatisticsService {
 	private static final String PLAYER_FILTERED_STATS_QUERY = //language=SQL
 		"SELECT " + PLAYER_STATS_SUMMED_COLUMNS +
 		"FROM player_match_stats_v m%1$s\n" +
-		"WHERE m.player_id = ?%2$s";
+		"WHERE m.player_id = :playerId%2$s";
 
 	private static final String PLAYERS_FILTERED_STATS_QUERY = //language=SQL
 		"SELECT m.player_id, " + PLAYER_STATS_SUMMED_COLUMNS +
@@ -85,7 +86,7 @@ public class StatisticsService {
 	private static final String PLAYER_SEASONS_STATS_QUERY =
 		"SELECT season, " + PLAYER_STATS_COLUMNS +
 		"FROM player_season_stats\n" +
-		"WHERE player_id = ?\n" +
+		"WHERE player_id = :playerId\n" +
 		"ORDER BY season";
 
 	private static final String PLAYER_PERFORMANCE_COLUMNS =
@@ -97,17 +98,17 @@ public class StatisticsService {
 	private static final String PLAYER_PERFORMANCE_QUERY =
 		"SELECT " + PLAYER_PERFORMANCE_COLUMNS +
 		"FROM player_performance\n" +
-		"WHERE player_id = ?";
+		"WHERE player_id = :playerId";
 
 	private static final String PLAYER_SEASON_PERFORMANCE_QUERY =
 		"SELECT " + PLAYER_PERFORMANCE_COLUMNS +
 		"FROM player_season_performance\n" +
-		"WHERE player_id = ? AND season = ?";
+		"WHERE player_id = :playerId AND season = :season";
 
 	private static final String PLAYER_SEASONS_PERFORMANCE_QUERY =
 		"SELECT season, " + PLAYER_PERFORMANCE_COLUMNS +
 		"FROM player_season_performance\n" +
-		"WHERE player_id = ?\n" +
+		"WHERE player_id = :playerId\n" +
 		"ORDER BY season";
 
 
@@ -115,7 +116,7 @@ public class StatisticsService {
 
 	@Cacheable(value = "Global", key = "'StatisticsSeasons'")
 	public List<Integer> getSeasons() {
-		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
+		return jdbcTemplate.getJdbcOperations().queryForList(SEASONS_QUERY, Integer.class);
 	}
 
 
@@ -123,9 +124,8 @@ public class StatisticsService {
 
 	public MatchStats getMatchStats(long matchId) {
 		return jdbcTemplate.query(
-			MATCH_STATS_QUERY,
-			rs -> rs.next() ? mapMatchStats(rs) : null,
-			matchId
+			MATCH_STATS_QUERY, params("matchId", matchId),
+			rs -> rs.next() ? mapMatchStats(rs) : null
 		);
 	}
 
@@ -144,32 +144,32 @@ public class StatisticsService {
 	public PlayerStats getPlayerStats(int playerId) {
 		return jdbcTemplate.query(
 			PLAYER_STATS_QUERY,
-			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY,
-			playerId
+			params("playerId", playerId),
+			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY
 		);
 	}
 
 	public PlayerStats getPlayerSeasonStats(int playerId, int season) {
 		return jdbcTemplate.query(
 			PLAYER_SEASON_STATS_QUERY,
-			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY,
-			playerId, season
+			params("playerId", playerId).addValue("season", season),
+			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY
 		);
 	}
 
 	public PlayerStats getPlayerSurfaceStats(int playerId, String surface) {
 		return jdbcTemplate.query(
 			PLAYER_SURFACE_STATS_QUERY,
-			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY,
-			playerId, surface
+			params("playerId", playerId).addValue("surface", surface),
+			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY
 		);
 	}
 
 	public PlayerStats getPlayerSeasonSurfaceStats(int playerId, Integer season, String surface) {
 		return jdbcTemplate.query(
 			PLAYER_SEASON_SURFACE_STATS_QUERY,
-			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY,
-			playerId, season, surface
+			params("playerId", playerId).addValue("season", season).addValue("surface", surface),
+			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY
 		);
 	}
 
@@ -185,17 +185,17 @@ public class StatisticsService {
 		else {
 			return jdbcTemplate.queryForObject(
 				format(PLAYER_FILTERED_STATS_QUERY, join(filter), filter.getCriteria()),
+				filter.getParams().addValue("playerId", playerId),
 				(rs, rowNum) -> {
 					return mapPlayerStats(rs);
-				},
-				playerStatsParams(playerId, filter)
+				}
 			);
 		}
 	}
 
 	public Map<Integer, PlayerStats> getPlayersStats(List<Integer> playerIds, RivalryFilter filter, boolean vsAll) {
 		Map<Integer, PlayerStats> playersStats = new HashMap<>();
-		jdbcTemplate.query(
+		jdbcTemplate.getJdbcOperations().query(
 			format(PLAYERS_FILTERED_STATS_QUERY, filter.getCriteria(), vsAll ? "" : OPPONENTS_CRITERIA),
 			ps -> {
 				int index = 1;
@@ -222,23 +222,15 @@ public class StatisticsService {
 		return sb.toString();
 	}
 
-	private Object[] playerStatsParams(int playerId, MatchFilter filter) {
-		List<Object> params = new ArrayList<>();
-		params.add(playerId);
-		params.addAll(filter.getParamList());
-		return params.toArray();
-	}
-
 	public Map<Integer, PlayerStats> getPlayerSeasonsStats(int playerId) {
 		Map<Integer, PlayerStats> seasonsStats = new TreeMap<>();
 		jdbcTemplate.query(
-			PLAYER_SEASONS_STATS_QUERY,
+			PLAYER_SEASONS_STATS_QUERY, params("playerId", playerId),
 			rs -> {
 				int season = rs.getInt("season");
 				PlayerStats stats = mapPlayerStats(rs);
 				seasonsStats.put(season, stats);
-			},
-			playerId
+			}
 		);
 		return seasonsStats;
 	}
@@ -272,29 +264,26 @@ public class StatisticsService {
 
 	public PlayerPerformance getPlayerPerformance(int playerId) {
 		return jdbcTemplate.query(
-			PLAYER_PERFORMANCE_QUERY,
-			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY,
-			playerId
+			PLAYER_PERFORMANCE_QUERY, params("playerId", playerId),
+			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY
 		);
 	}
 
 	public PlayerPerformance getPlayerSeasonPerformance(int playerId, int season) {
 		return jdbcTemplate.query(
-			PLAYER_SEASON_PERFORMANCE_QUERY,
-			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY,
-			playerId, season
+			PLAYER_SEASON_PERFORMANCE_QUERY, params("playerId", playerId).addValue("season", season),
+			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY
 		);
 	}
 
 	public Map<Integer, PlayerPerformance> getPlayerSeasonsPerformance(int playerId) {
 		Map<Integer, PlayerPerformance> seasonsPerf = new TreeMap<>();
 		jdbcTemplate.query(
-			PLAYER_SEASONS_PERFORMANCE_QUERY,
+			PLAYER_SEASONS_PERFORMANCE_QUERY, params("playerId", playerId),
 			rs -> {
 				int season = rs.getInt("season");
 				seasonsPerf.put(season, mapPlayerPerformance(rs));
-			},
-			playerId
+			}
 		);
 		return seasonsPerf;
 	}

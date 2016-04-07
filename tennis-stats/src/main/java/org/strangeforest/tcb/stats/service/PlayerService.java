@@ -50,23 +50,23 @@ public class PlayerService {
 
 
 	public Player getPlayer(int playerId) {
-		return jdbcTemplate.queryForObject(PLAYER_BY_ID_QUERY, param("playerId", playerId), this::playerMapper);
+		return jdbcTemplate.queryForObject(PLAYER_BY_ID_QUERY, params("playerId", playerId), this::playerMapper);
 	}
 
 	public Player getPlayer(String name) {
-		return jdbcTemplate.queryForObject(PLAYER_BY_NAME_QUERY, param("name", name), this::playerMapper);
+		return jdbcTemplate.queryForObject(PLAYER_BY_NAME_QUERY, params("name", name), this::playerMapper);
 	}
 
 	public String getPlayerName(int playerId) {
-		return jdbcTemplate.queryForObject(PLAYER_NAME_QUERY, param("playerId", playerId), String.class);
+		return jdbcTemplate.queryForObject(PLAYER_NAME_QUERY, params("playerId", playerId), String.class);
 	}
 
 	public List<AutocompleteOption> autocompletePlayer(String name) {
-		return jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, param("name", name), this::playerAutocompleteOptionMapper);
+		return jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, params("name", name), this::playerAutocompleteOptionMapper);
 	}
 
 	public Optional<Integer> findPlayerId(String name) {
-		return jdbcTemplate.queryForList(PLAYER_ID_QUERY, param("name", name), Integer.class).stream().findFirst();
+		return jdbcTemplate.queryForList(PLAYER_ID_QUERY, params("name", name), Integer.class).stream().findFirst();
 	}
 
 	public List<Integer> findPlayerIds(List<String> players) {
@@ -74,7 +74,7 @@ public class PlayerService {
 	}
 
 	public List<Integer> getPlayerSeasons(int playerId) {
-		return jdbcTemplate.queryForList(SEASONS_QUERY, param("playerId", playerId), Integer.class);
+		return jdbcTemplate.queryForList(SEASONS_QUERY, params("playerId", playerId), Integer.class);
 	}
 
 	public IndexedPlayers getIndexedPlayers(int playerId) {

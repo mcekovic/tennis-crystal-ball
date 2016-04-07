@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
 
+import org.springframework.jdbc.core.namedparam.*;
+
 import com.google.common.base.MoreObjects.*;
 
 import static com.google.common.base.Strings.*;
@@ -39,10 +41,6 @@ public class MatchFilter extends TournamentEventFilter {
 			@Override protected String getSearchCriterion() {
 				return STATS_SEARCH_CRITERION;
 			}
-			@Override protected void addSearchParams(List<Object> params) {
-				params.add(getSearchPhrase());
-				params.add(getSearchPhrase());
-			}
 		};
 	}
 
@@ -53,9 +51,9 @@ public class MatchFilter extends TournamentEventFilter {
 	private final OpponentFilter opponentFilter;
 	private final OutcomeFilter outcomeFilter;
 
-	private static final String ROUND_CRITERION          = " AND m.round %1$s ?::match_round";
-	private static final String MATCHES_SEARCH_CRITERION = " AND (e.name ILIKE '%' || ? || '%' OR pw.name ILIKE '%' || ? || '%' OR pl.name ILIKE '%' || ? || '%')";
-	private static final String STATS_SEARCH_CRITERION   = " AND (e.name ILIKE '%' || ? || '%' OR o.name ILIKE '%' || ? || '%')";
+	private static final String ROUND_CRITERION          = " AND m.round %1$s :round::match_round";
+	private static final String MATCHES_SEARCH_CRITERION = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR pw.name ILIKE '%' || :searchPhrase || '%' OR pl.name ILIKE '%' || :searchPhrase || '%')";
+	private static final String STATS_SEARCH_CRITERION   = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR o.name ILIKE '%' || :searchPhrase || '%')";
 
 	public MatchFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, String searchPhrase) {
 		super(season, level, surface, tournamentId, tournamentEventId, searchPhrase);
@@ -72,23 +70,16 @@ public class MatchFilter extends TournamentEventFilter {
 		outcomeFilter.appendCriteria(criteria);
 	}
 
-	@Override public List<Object> getParamList() {
-		List<Object> params = super.getParamList();
+	@Override public void addParams(MapSqlParameterSource params) {
+		super.addParams(params);
 		if (!isNullOrEmpty(round))
-			params.add(round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
+			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 		opponentFilter.addParams(params);
 		outcomeFilter.addParams(params);
-		return params;
 	}
 
 	@Override protected String getSearchCriterion() {
 		return MATCHES_SEARCH_CRITERION;
-	}
-
-	@Override protected void addSearchParams(List<Object> params) {
-		params.add(getSearchPhrase());
-		params.add(getSearchPhrase());
-		params.add(getSearchPhrase());
 	}
 
 	@Override public boolean isEmpty() {

@@ -1,6 +1,5 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.util.*;
 import java.util.Objects;
 
 import org.springframework.jdbc.core.namedparam.*;
@@ -8,7 +7,6 @@ import org.springframework.jdbc.core.namedparam.*;
 import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
-import static java.util.Arrays.asList;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class StatsPlayerListFilter extends PlayerListFilter {
@@ -109,31 +107,6 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 			params.addValue("tournamentId", tournamentId);
 		if (tournamentEventId != null)
 			params.addValue("tournamentEventId", tournamentEventId);
-	}
-
-	public Object[] getParams(Collection midParams, Object... extraParams) {
-		List<Object> params = new ArrayList<>();
-		addBaseParams(params);
-		params.addAll(midParams);
-		super.addParams(params);
-		params.addAll(asList(extraParams));
-		return params.toArray();
-	}
-
-	@Override protected void addParams(List<Object> params) {
-		addBaseParams(params);
-		super.addParams(params);
-	}
-
-	private void addBaseParams(List<Object> params) {
-		if (season != null)
-			params.add(season);
-		if (!isNullOrEmpty(surface))
-			params.add(surface);
-		if (tournamentId != null)
-			params.add(tournamentId);
-		if (tournamentEventId != null)
-			params.add(tournamentEventId);
 	}
 
 

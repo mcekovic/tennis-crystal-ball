@@ -5,18 +5,19 @@ import java.util.*;
 import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class MatchesService {
 
-	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String TOURNAMENT_EVENT_MATCHES_QUERY =
 		"SELECT m.match_id, m.match_num, m.round,\n" +
@@ -26,7 +27,7 @@ public class MatchesService {
 		"FROM match m\n" +
 		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
 		"INNER JOIN player_v pl ON pl.player_id = m.loser_id\n" +
-		"WHERE m.tournament_event_id = ?\n" +
+		"WHERE m.tournament_event_id = :tournamentEventId\n" +
 		"ORDER BY match_num";
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
@@ -36,14 +37,14 @@ public class MatchesService {
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
 		"INNER JOIN player_v pl ON pl.player_id = m.loser_id\n" +
-		"WHERE (m.winner_id = ? OR m.loser_id = ?)%1$s\n" +
-		"ORDER BY %2$s OFFSET ?";
+		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%1$s\n" +
+		"ORDER BY %2$s OFFSET :offset";
 
 
 	public TournamentEventDraw getTournamentEventDraw(int tournamentEventId) {
 		TournamentEventDraw draw = new TournamentEventDraw();
 		jdbcTemplate.query(
-			TOURNAMENT_EVENT_MATCHES_QUERY,
+			TOURNAMENT_EVENT_MATCHES_QUERY, params("tournamentEventId", tournamentEventId),
 			rs -> {
 				short matchNum = rs.getShort("match_num");
 				Object[] setScores = (Object[])rs.getArray("set_scores").getArray();
@@ -60,8 +61,7 @@ public class MatchesService {
 					rs.getBoolean("has_stats")
 				);
 				draw.addMatch(matchNum, match);
-			},
-			tournamentEventId
+			}
 		);
 		return draw;
 	}
@@ -88,6 +88,9 @@ public class MatchesService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(PLAYER_MATCHES_QUERY, filter.getCriteria(), orderBy),
+			filter.getParams()
+				.addValue("playerId", playerId)
+				.addValue("offset", offset),
 			rs -> {
 				if (matches.incrementAndGet() <= pageSize) {
 					table.addRow(new Match(
@@ -106,20 +109,10 @@ public class MatchesService {
 						rs.getBoolean("has_stats")
 					));
 				}
-			},
-			params(playerId, filter, offset)
+			}
 		);
 		table.setTotal(offset + matches.get());
 		return table;
-	}
-
-	private Object[] params(int playerId, MatchFilter filter, int offset) {
-		List<Object> params = new ArrayList<>();
-		params.add(playerId);
-		params.add(playerId);
-		params.addAll(filter.getParamList());
-		params.add(offset);
-		return params.toArray();
 	}
 
 	static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix) throws SQLException {

@@ -1,7 +1,8 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.util.*;
 import java.util.Objects;
+
+import org.springframework.jdbc.core.namedparam.*;
 
 import com.google.common.base.*;
 import com.google.common.base.MoreObjects.*;
@@ -18,12 +19,12 @@ public class TournamentEventFilter {
 	private final Integer tournamentEventId;
 	private final String searchPhrase;
 
-	private static final String SEASON_CRITERION           = " AND e.season = ?";
-	private static final String LEVEL_CRITERION            = " AND e.level = ?::tournament_level";
-	private static final String SURFACE_CRITERION          = " AND e.surface = ?::surface";
-	private static final String TOURNAMENT_CRITERION       = " AND e.tournament_id = ?";
-	private static final String TOURNAMENT_EVENT_CRITERION = " AND e.tournament_event_id = ?";
-	private static final String SEARCH_CRITERION           = " AND e.name ILIKE '%' || ? || '%'";
+	private static final String SEASON_CRITERION           = " AND e.season = :season";
+	private static final String LEVEL_CRITERION            = " AND e.level = :level::tournament_level";
+	private static final String SURFACE_CRITERION          = " AND e.surface = :surface::surface";
+	private static final String TOURNAMENT_CRITERION       = " AND e.tournament_id = :tournamentId";
+	private static final String TOURNAMENT_EVENT_CRITERION = " AND e.tournament_event_id = :tournamentEventId";
+	private static final String SEARCH_CRITERION           = " AND e.name ILIKE '%' || :searchPhrase || '%'";
 
 	public TournamentEventFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String searchPhrase) {
 		this.season = season;
@@ -55,29 +56,29 @@ public class TournamentEventFilter {
 			criteria.append(getSearchCriterion());
 	}
 
-	public List<Object> getParamList() {
-		List<Object> params = new ArrayList<>();
-		if (season != null)
-			params.add(season);
-		if (!isNullOrEmpty(level))
-			params.add(level);
-		if (!isNullOrEmpty(surface))
-			params.add(surface);
-		if (tournamentId != null)
-			params.add(tournamentId);
-		if (tournamentEventId != null)
-			params.add(tournamentEventId);
-		if (!isNullOrEmpty(searchPhrase))
-			addSearchParams(params);
+	public MapSqlParameterSource getParams() {
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		addParams(params);
 		return params;
+	}
+
+	protected void addParams(MapSqlParameterSource params) {
+		if (season != null)
+			params.addValue("season", season);
+		if (!isNullOrEmpty(level))
+			params.addValue("level", level);
+		if (!isNullOrEmpty(surface))
+			params.addValue("surface", surface);
+		if (tournamentId != null)
+			params.addValue("tournamentId", tournamentId);
+		if (tournamentEventId != null)
+			params.addValue("tournamentEventId", tournamentEventId);
+		if (!isNullOrEmpty(searchPhrase))
+			params.addValue("searchPhrase", searchPhrase);
 	}
 
 	protected String getSearchCriterion() {
 		return SEARCH_CRITERION;
-	}
-
-	protected void addSearchParams(List<Object> params) {
-		params.add(searchPhrase);
 	}
 
 	public Integer getSeason() {
@@ -86,10 +87,6 @@ public class TournamentEventFilter {
 
 	public String getSurface() {
 		return surface;
-	}
-
-	protected String getSearchPhrase() {
-		return searchPhrase;
 	}
 
 	public boolean hasSearchPhrase() {

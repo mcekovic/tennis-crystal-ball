@@ -9,7 +9,6 @@ import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
@@ -63,7 +62,7 @@ public class BestSeasonsService {
 	public int getBestSeasonCount(PlayerListFilter filter) {
 		return Math.min(MAX_SEASON_COUNT, jdbcTemplate.queryForObject(
 			format(BEST_SEASON_COUNT_QUERY, filter.getCriteria()),
-			params(filter.getParams(), "minPoints", MIN_SEASON_GOAT_POINTS),
+			filter.getParams().addValue("minPoints", MIN_SEASON_GOAT_POINTS),
 			Integer.class
 		));
 	}
@@ -74,7 +73,10 @@ public class BestSeasonsService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(BEST_SEASONS_QUERY, where(filter.getCriteria()), orderBy),
-			params(filter.getParams(), "minPoints", MIN_SEASON_GOAT_POINTS, "offset", offset, "limit", pageSize),
+			filter.getParams()
+				.addValue("minPoints", MIN_SEASON_GOAT_POINTS)
+				.addValue("offset", offset)
+				.addValue("limit", pageSize),
 			rs -> {
 				int seasonRank = rs.getInt("season_rank");
 				int playerId = rs.getInt("player_id");

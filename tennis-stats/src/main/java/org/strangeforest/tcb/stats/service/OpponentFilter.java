@@ -1,7 +1,8 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.util.*;
 import java.util.Objects;
+
+import org.springframework.jdbc.core.namedparam.*;
 
 import com.google.common.base.*;
 
@@ -9,35 +10,35 @@ public class OpponentFilter {
 
 	// Factory
 
-	public static final OpponentFilter ALL = new OpponentFilter(null, null, null);
+	public static final OpponentFilter ALL = new OpponentFilter(null, null, false);
 
-	public static OpponentFilter forMatches(String opponent, int playerId) {
+	public static OpponentFilter forMatches(String opponent) {
 		if (isSinglePlayer(opponent))
-			return forMatches(null, playerId, extractPlayerId(opponent));
+			return forMatches(null, extractOpponentId(opponent));
 		else
-			return forMatches(opponent, playerId, null);
+			return forMatches(opponent, null);
 	}
 
-	private static OpponentFilter forMatches(String opponent, Integer playerId, Integer opponentId) {
-		return new OpponentFilter(Opponent.forValue(opponent), playerId, opponentId);
+	private static OpponentFilter forMatches(String opponent, Integer opponentId) {
+		return new OpponentFilter(Opponent.forValue(opponent), opponentId, false);
 	}
 
 	public static OpponentFilter forStats(String opponent) {
 		if (isSinglePlayer(opponent))
-			return forStats(null, extractPlayerId(opponent));
+			return forStats(null, extractOpponentId(opponent));
 		else
 			return forStats(opponent, null);
 	}
 
 	public static OpponentFilter forStats(String opponent, Integer opponentId) {
-		return new OpponentFilter(Opponent.forValue(opponent), null, opponentId);
+		return new OpponentFilter(Opponent.forValue(opponent), opponentId, true);
 	}
 
 	private static boolean isSinglePlayer(String opponent) {
 		return opponent != null && opponent.startsWith(OPPONENT_PREFIX);
 	}
 
-	private static int extractPlayerId(String opponent) {
+	private static int extractOpponentId(String opponent) {
 		return Integer.parseInt(opponent.substring(OPPONENT_PREFIX.length()));
 	}
 
@@ -47,40 +48,28 @@ public class OpponentFilter {
 	// Instance
 
 	private final Opponent opponent;
-	private final Integer playerId;
 	private final Integer opponentId;
+	private final boolean forStats;
 
-	private static final String MATCHES_OPPONENT_CRITERION = " AND ((m.winner_id = ? AND m.loser_id = ?) OR (m.winner_id = ? AND m.loser_id = ?))";
-	private static final String STATS_OPPONENT_CRITERION   = " AND opponent_id = ?";
+	private static final String MATCHES_OPPONENT_CRITERION = " AND ((m.winner_id = :playerId AND m.loser_id = :opponentId) OR (m.winner_id = :opponentId AND m.loser_id = :playerId))";
+	private static final String STATS_OPPONENT_CRITERION   = " AND opponent_id = :opponentId";
 
-	private OpponentFilter(Opponent opponent, Integer playerId, Integer opponentId) {
+	private OpponentFilter(Opponent opponent, Integer opponentId, boolean forStats) {
 		this.opponent = opponent;
-		this.playerId = playerId;
 		this.opponentId = opponentId;
+		this.forStats = forStats;
 	}
 
 	void appendCriteria(StringBuilder criteria) {
 		if (opponent != null)
-			criteria.append(isForMatches() ? opponent.getMatchesCriterion() : opponent.getStatsCriterion());
+			criteria.append(forStats ? opponent.getStatsCriterion() : opponent.getMatchesCriterion());
 		if (opponentId != null)
-			criteria.append(isForMatches() ? MATCHES_OPPONENT_CRITERION : STATS_OPPONENT_CRITERION);
+			criteria.append(forStats ? STATS_OPPONENT_CRITERION : MATCHES_OPPONENT_CRITERION);
 	}
 
-	void addParams(List<Object> params) {
-		if (opponent != null && isForMatches()) {
-			params.add(playerId);
-			params.add(playerId);
-		}
-		if (opponentId != null) {
-			if (isForMatches()) {
-				params.add(playerId);
-				params.add(opponentId);
-				params.add(opponentId);
-				params.add(playerId);
-			}
-			else
-				params.add(opponentId);
-		}
+	void addParams(MapSqlParameterSource params) {
+		if (opponentId != null)
+			params.addValue("opponentId", opponentId);
 	}
 
 	public boolean isEmpty() {
@@ -91,10 +80,6 @@ public class OpponentFilter {
 		return opponent != null && opponent.isOpponentRequired();
 	}
 
-	private boolean isForMatches() {
-		return playerId != null;
-	}
-
 
 	// Object methods
 
@@ -102,17 +87,16 @@ public class OpponentFilter {
 		if (this == o) return true;
 		if (!(o instanceof OpponentFilter)) return false;
 		OpponentFilter filter = (OpponentFilter)o;
-		return opponent == filter.opponent && Objects.equals(playerId, filter.playerId) && Objects.equals(opponentId, filter.opponentId);
+		return opponent == filter.opponent && Objects.equals(opponentId, filter.opponentId) && forStats == filter.forStats;
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(opponent, playerId, opponentId);
+		return Objects.hash(opponent, opponentId);
 	}
 
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("opponent", opponent)
-			.add("playerId", playerId)
 			.add("opponentId", opponentId)
 			.toString();
 	}

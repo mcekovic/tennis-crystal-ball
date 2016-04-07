@@ -8,7 +8,6 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
 public class GOATListService {
@@ -37,7 +36,7 @@ public class GOATListService {
 	public int getPlayerCount(PlayerListFilter filter) {
 		return jdbcTemplate.queryForObject(
 			format(GOAT_COUNT_QUERY, filter.getCriteria()),
-			params(filter.getParams(), "maxPlayers", MAX_PLAYER_COUNT),
+			filter.getParams().addValue("maxPlayers", MAX_PLAYER_COUNT),
 			Integer.class
 		);
 	}
@@ -48,7 +47,10 @@ public class GOATListService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(GOAT_LIST_QUERY, filter.getCriteria(), orderBy),
-			params(filter.getParams(), "maxPlayers", MAX_PLAYER_COUNT, "offset", offset, "limit", pageSize),
+			filter.getParams()
+				.addValue("maxPlayers", MAX_PLAYER_COUNT)
+				.addValue("offset", offset)
+				.addValue("limit", pageSize),
 			rs -> {
 				int goatRank = rs.getInt("goat_rank");
 				int playerId = rs.getInt("player_id");

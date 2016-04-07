@@ -35,7 +35,7 @@ public class BigGunsTimelineService {
 		BigGunsTimeline timeline = new BigGunsTimeline();
 		AtomicInteger rank = new AtomicInteger();
 		jdbcTemplate.query(
-			TIMELINE_QUERY, param("minGOATPoints", MIN_GOAT_POINTS),
+			TIMELINE_QUERY, params("minGOATPoints", MIN_GOAT_POINTS),
 			rs -> {
 				BigGunsPlayerTimeline player = mapPlayer(rank, rs);
 				Object[] seasonsPoints = (Object[])rs.getArray("seasons_points").getArray();

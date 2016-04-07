@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
@@ -15,7 +15,6 @@ import org.strangeforest.tcb.stats.model.table.*;
 import com.fasterxml.jackson.databind.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
@@ -23,7 +22,7 @@ import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 public class RivalriesService {
 
 	@Autowired private DataService dataService;
-	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES = 20;
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES_MIN = 2;
@@ -47,22 +46,22 @@ public class RivalriesService {
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id player_id, loser_id opponent_id, count(match_id) matches, 0 won, 0 lost\n" +
 		"  FROM match_for_rivalry_v\n" +
-		"  WHERE winner_id = ?\n" +
+		"  WHERE winner_id = :playerId\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT loser_id, winner_id, count(match_id), 0, 0\n" +
 		"  FROM match_for_rivalry_v\n" +
-		"  WHERE loser_id = ?\n" +
+		"  WHERE loser_id = :playerId\n" +
 		"  GROUP BY loser_id, winner_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT winner_id, loser_id, 0, count(match_id), 0\n" +
 		"  FROM match_for_stats_v\n" +
-		"  WHERE winner_id = ?\n" +
+		"  WHERE winner_id = :playerId\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT loser_id, winner_id, 0, 0, count(match_id)\n" +
 		"  FROM match_for_stats_v\n" +
-		"  WHERE loser_id = ?\n" +
+		"  WHERE loser_id = :playerId\n" +
 		"  GROUP BY loser_id, winner_id\n" +
 		"), rivalries_2 AS (\n" +
 		"  SELECT player_id, opponent_id, sum(matches) matches, sum(won) won, sum(lost) lost\n" +
@@ -74,7 +73,7 @@ public class RivalriesService {
 		"%1$s\n" +
 		"FROM rivalries_2 r\n" +
 		"INNER JOIN player_v o ON o.player_id = r.opponent_id%2$s%3$s\n" +
-		"ORDER BY %4$s OFFSET ?";
+		"ORDER BY %4$s OFFSET :offset";
 
 	private static final String HEADS_TO_HEADS_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
@@ -171,7 +170,7 @@ public class RivalriesService {
 		"  ) AS lm) AS last_match";
 
 
-	public BootgridTable<PlayerRivalryRow> getPlayerRivalriesTable(int player_id, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<PlayerRivalryRow> getPlayerRivalriesTable(int playerId, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<PlayerRivalryRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
@@ -182,20 +181,22 @@ public class RivalriesService {
 				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", "") : "",
 				where(filter.getCriteria()), orderBy
 			),
+			filter.getParams()
+				.addValue("playerId", playerId)
+				.addValue("offset", offset),
 			rs -> {
 				if (rivalries.incrementAndGet() <= pageSize) {
 					int bestRank = rs.getInt("best_rank");
-					int playerId = rs.getInt("opponent_id");
+					int opponentId = rs.getInt("opponent_id");
 					String name = rs.getString("name");
 					String countryId = rs.getString("country_id");
 					boolean active = rs.getBoolean("active");
-					PlayerRivalryRow row = new PlayerRivalryRow(bestRank, playerId, name, countryId, active);
+					PlayerRivalryRow row = new PlayerRivalryRow(bestRank, opponentId, name, countryId, active);
 					row.setWonLost(mapWonLost(rs));
 					row.setLastMatch(mapLastMatch(rs, lateralSupported));
 					table.addRow(row);
 				}
-			},
-			filter.getParamsWithPrefixes(asList(player_id, player_id, player_id, player_id), offset)
+			}
 		);
 		table.setTotal(offset + rivalries.get());
 		return table;
@@ -204,7 +205,7 @@ public class RivalriesService {
 	public HeadsToHeads getHeadsToHeads(List<Integer> playerIds, RivalryFilter filter) {
 		String criteria = filter.getCriteria();
 		boolean lateralSupported = lateralSupported();
-		return new HeadsToHeads(jdbcTemplate.query(
+		return new HeadsToHeads(jdbcTemplate.getJdbcOperations().query(
 			format(HEADS_TO_HEADS_QUERY,
 				criteria,
 				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),
@@ -237,7 +238,7 @@ public class RivalriesService {
 		int offset = (currentPage - 1) * pageSize;
 		String criteria = filter.getCriteria();
 		boolean lateralSupported = lateralSupported();
-		jdbcTemplate.query(
+		jdbcTemplate.getJdbcOperations().query(
 			format(GREATEST_RIVALRIES_QUERY,
 				where(criteria, 2),
 				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),

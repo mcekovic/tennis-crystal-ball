@@ -57,7 +57,7 @@ public class TopPerformersService {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
 			format(TOP_PERFORMERS_COUNT_QUERY, perfTableName(filter), perfCategory.getColumn(), filter.getCriteria()),
-			params(filter.getParams(), "minEntries", getMinEntriesValue(perfCategory, filter)),
+			filter.getParams().addValue("minEntries", getMinEntriesValue(perfCategory, filter)),
 			Integer.class
 		));
 	}
@@ -68,7 +68,10 @@ public class TopPerformersService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(TOP_PERFORMERS_QUERY, perfCategory.getColumn(), perfTableName(filter), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy),
-			params(filter.getParams(), "minEntries", getMinEntriesValue(perfCategory, filter), "offset", offset, "limit", pageSize),
+			filter.getParams()
+				.addValue("minEntries", getMinEntriesValue(perfCategory, filter))
+				.addValue("offset", offset)
+				.addValue("limit", pageSize),
 			rs -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");

@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.service;
 
 import java.util.*;
 
+import org.springframework.jdbc.core.namedparam.*;
+
 import com.google.common.base.MoreObjects.*;
 
 import static com.google.common.base.Strings.*;
@@ -12,7 +14,7 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 
 	private final String result;
 
-	private static final String RESULT_CRITERION = " AND r.result %1$s ?::tournament_event_result";
+	private static final String RESULT_CRITERION = " AND r.result %1$s :result::tournament_event_result";
 
 	public TournamentEventResultFilter(Integer season, String level, String surface, Integer tournamentId, String result, String searchPhrase) {
 		super(season, level, surface, tournamentId, null, searchPhrase);
@@ -25,11 +27,10 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 			criteria.append(format(RESULT_CRITERION, result.endsWith("+") ? ">=" : "="));
 	}
 
-	@Override public List<Object> getParamList() {
-		List<Object> params = super.getParamList();
+	@Override protected void addParams(MapSqlParameterSource params) {
+		super.addParams(params);
 		if (!isNullOrEmpty(result))
-			params.add(result.endsWith("+") ? result.substring(0, result.length() - 1) : result);
-		return params;
+			params.addValue("result", result.endsWith("+") ? result.substring(0, result.length() - 1) : result);
 	}
 
 	@Override public boolean isEmpty() {

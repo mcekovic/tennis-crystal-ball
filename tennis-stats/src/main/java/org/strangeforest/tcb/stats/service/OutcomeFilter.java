@@ -1,7 +1,8 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.util.*;
 import java.util.Objects;
+
+import org.springframework.jdbc.core.namedparam.*;
 
 import com.google.common.base.*;
 
@@ -13,14 +14,14 @@ public class OutcomeFilter {
 
 	// Factory
 
-	public static final OutcomeFilter ALL = new OutcomeFilter(null, null);
+	public static final OutcomeFilter ALL = new OutcomeFilter(null, false);
 
-	public static OutcomeFilter forMatches(String outcome, int playerId) {
-		return outcome != null ? new OutcomeFilter(outcome, playerId) : ALL;
+	public static OutcomeFilter forMatches(String outcome) {
+		return outcome != null ? new OutcomeFilter(outcome, false) : ALL;
 	}
 
 	public static OutcomeFilter forStats(String outcome) {
-		return outcome != null ? new OutcomeFilter(outcome, null) : ALL;
+		return outcome != null ? new OutcomeFilter(outcome, true) : ALL;
 	}
 
 
@@ -28,16 +29,16 @@ public class OutcomeFilter {
 
 	private final Boolean won;
 	private final String outcome;
-	private final Integer playerId;
+	private final boolean forStats;
 
 	private static final String WON = "won";
 	private static final String LOST = "lost";
 
-	private static final String MATCHES_WON_CRITERION = " AND m.%1$s = ?";
+	private static final String MATCHES_WON_CRITERION = " AND m.%1$s = :playerId";
 	private static final String STATS_WON_CRITERION   = " AND %1$s = 1";
-	private static final String OUTCOME_CRITERION = " AND outcome = ?::match_outcome";
+	private static final String OUTCOME_CRITERION = " AND outcome = :outcome::match_outcome";
 
-	private OutcomeFilter(String outcome, Integer playerId) {
+	private OutcomeFilter(String outcome, boolean forStats) {
 		if (!isNullOrEmpty(outcome)) {
 			if (outcome.startsWith(WON)) {
 				this.won = Boolean.TRUE;
@@ -56,33 +57,27 @@ public class OutcomeFilter {
 			this.won = null;
 			this.outcome = null;
 		}
-		this.playerId = playerId;
+		this.forStats = forStats;
 	}
 
 	void appendCriteria(StringBuilder criteria) {
 		if (won != null) {
-			if (isForMatches())
-				criteria.append(format(MATCHES_WON_CRITERION, won ? "winner_id" : "loser_id"));
-			else
+			if (forStats)
 				criteria.append(format(STATS_WON_CRITERION, won ? "p_matches" : "o_matches"));
+			else
+				criteria.append(format(MATCHES_WON_CRITERION, won ? "winner_id" : "loser_id"));
 		}
 		if (!isNullOrEmpty(outcome))
 			criteria.append(OUTCOME_CRITERION);
 	}
 
-	void addParams(List<Object> params) {
-		if (won != null && isForMatches())
-			params.add(playerId);
+	void addParams(MapSqlParameterSource params) {
 		if (!isNullOrEmpty(outcome))
-			params.add(outcome);
+			params.addValue("outcome", outcome);
 	}
 
 	public boolean isEmpty() {
 		return won == null && isNullOrEmpty(outcome);
-	}
-
-	private boolean isForMatches() {
-		return playerId != null;
 	}
 
 
@@ -92,18 +87,17 @@ public class OutcomeFilter {
 		if (this == o) return true;
 		if (!(o instanceof OutcomeFilter)) return false;
 		OutcomeFilter filter = (OutcomeFilter)o;
-		return Objects.equals(won, filter.won) && stringsEqual(outcome, filter.outcome) && Objects.equals(playerId, filter.playerId);
+		return Objects.equals(won, filter.won) && stringsEqual(outcome, filter.outcome) && forStats == filter.forStats;
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(won, outcome, playerId);
+		return Objects.hash(won, outcome);
 	}
 
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("won", won)
 			.add("outcome", outcome)
-			.add("playerId", playerId)
 			.toString();
 	}
 }
