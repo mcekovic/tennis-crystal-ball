@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
-import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class RivalriesService {
@@ -79,12 +78,12 @@ public class RivalriesService {
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id, loser_id, count(match_id) matches, 0 won\n" +
 		"  FROM match_for_rivalry_v\n" +
-		"  WHERE winner_id = ANY(?) AND loser_id = ANY(?)%1$s\n" +
+		"  WHERE winner_id IN (:playerIds) AND loser_id IN (:playerIds)%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT winner_id, loser_id, 0, count(match_id)\n" +
 		"  FROM match_for_stats_v\n" +
-		"  WHERE winner_id = ANY(?) AND loser_id = ANY(?)%1$s\n" +
+		"  WHERE winner_id IN (:playerIds) AND loser_id IN (:playerIds)%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"), rivalries_2 AS (\n" +
 		"  SELECT winner_id player_id_1, loser_id player_id_2, sum(matches) matches, sum(won) won, 0 lost\n" +
@@ -133,7 +132,7 @@ public class RivalriesService {
 		"  LEFT JOIN player_goat_points g1 ON g1.player_id = player_id_1\n" +
 		"  LEFT JOIN player_goat_points g2 ON g2.player_id = player_id_2\n" +
 		"  GROUP BY player_id_1, player_id_2, coalesce(g1.goat_points, 0), coalesce(g2.goat_points, 0)\n" +
-		"  HAVING sum(matches) >= ?\n" +
+		"  HAVING sum(matches) >= :minMatches\n" +
 		"  WINDOW riv AS (\n" +
 		"    PARTITION BY CASE WHEN coalesce(g1.goat_points, 0) > coalesce(g2.goat_points, 0) OR (coalesce(g1.goat_points, 0) = coalesce(g2.goat_points, 0) AND player_id_1 < player_id_2) THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY coalesce(g1.goat_points, 0) DESC, player_id_1\n" +
 		"  )\n" +
@@ -145,7 +144,7 @@ public class RivalriesService {
 		"INNER JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
 		"INNER JOIN player_v p2 ON p2.player_id = r.player_id_2%3$s\n" +
 		"WHERE rank = 1\n" +
-		"ORDER BY %4$s OFFSET ?";
+		"ORDER BY %4$s OFFSET :offset";
 
 	private static final String LAST_MATCH_LATERAL = //language=SQL
 		"  lm.match_id, lm.season, lm.level, lm.surface, lm.indoor, lm.tournament_event_id, lm.tournament, lm.round, lm.winner_id, lm.loser_id, lm.score";
@@ -205,22 +204,13 @@ public class RivalriesService {
 	public HeadsToHeads getHeadsToHeads(List<Integer> playerIds, RivalryFilter filter) {
 		String criteria = filter.getCriteria();
 		boolean lateralSupported = lateralSupported();
-		return new HeadsToHeads(jdbcTemplate.getJdbcOperations().query(
+		return new HeadsToHeads(jdbcTemplate.query(
 			format(HEADS_TO_HEADS_QUERY,
 				criteria,
 				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),
 				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", criteria) : ""
 			),
-			ps -> {
-				int index = 1;
-				bindIntegerArray(ps, index, playerIds);
-				bindIntegerArray(ps, ++index, playerIds);
-				index = filter.bindParams(ps, index);
-				bindIntegerArray(ps, ++index, playerIds);
-				bindIntegerArray(ps, ++index, playerIds);
-				index = filter.bindParams(ps, index);
-				filter.bindParams(ps, index);
-			},
+			filter.getParams().addValue("playerIds", playerIds),
 			(rs, rowNum) -> {
 				RivalryPlayer player1 = mapPlayer(rs, "_1");
 				RivalryPlayer player2 = mapPlayer(rs, "_2");
@@ -238,20 +228,16 @@ public class RivalriesService {
 		int offset = (currentPage - 1) * pageSize;
 		String criteria = filter.getCriteria();
 		boolean lateralSupported = lateralSupported();
-		jdbcTemplate.getJdbcOperations().query(
+		jdbcTemplate.query(
 			format(GREATEST_RIVALRIES_QUERY,
 				where(criteria, 2),
 				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),
 				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", criteria) : "",
 				orderBy
 			),
-			ps -> {
-				int index = filter.bindParams(ps, 0);
-				index = filter.bindParams(ps, index);
-				ps.setInt(++index, getGreatestRivalriesMinMatches(filter));
-				index = filter.bindParams(ps, index);
-				ps.setInt(++index, offset);
-			},
+			filter.getParams()
+				.addValue("minMatches", getGreatestRivalriesMinMatches(filter))
+				.addValue("offset", offset),
 			rs -> {
 				if (rivalries.incrementAndGet() <= pageSize) {
 					int rank = rs.getInt("rivalry_rank");

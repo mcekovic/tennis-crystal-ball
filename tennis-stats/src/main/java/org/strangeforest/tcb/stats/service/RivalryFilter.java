@@ -1,14 +1,15 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.sql.*;
 import java.util.Objects;
+
+import org.springframework.jdbc.core.namedparam.*;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
-import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 public class RivalryFilter {
 
@@ -16,10 +17,10 @@ public class RivalryFilter {
 	private final String level;
 	private final String surface;
 
-	private static final String SEASON_FROM_CRITERION = " AND season >= ?";
-	private static final String SEASON_TO_CRITERION   = " AND season <= ?";
-	private static final String LEVEL_CRITERION       = " AND level = ?::tournament_level";
-	private static final String SURFACE_CRITERION     = " AND surface = ?::surface";
+	private static final String SEASON_FROM_CRITERION = " AND season >= :seasonFrom";
+	private static final String SEASON_TO_CRITERION   = " AND season <= :seasonTo";
+	private static final String LEVEL_CRITERION       = " AND level = :level::tournament_level";
+	private static final String SURFACE_CRITERION     = " AND surface = :surface::surface";
 
 	public RivalryFilter(Range<Integer> seasonRange, String level, String surface) {
 		this.seasonRange = seasonRange;
@@ -45,11 +46,6 @@ public class RivalryFilter {
 
 	public String getCriteria() {
 		StringBuilder criteria = new StringBuilder();
-		appendCriteria(criteria);
-		return criteria.toString();
-	}
-
-	private void appendCriteria(StringBuilder criteria) {
 		if (seasonRange.hasLowerBound())
 			criteria.append(SEASON_FROM_CRITERION);
 		if (seasonRange.hasUpperBound())
@@ -58,15 +54,17 @@ public class RivalryFilter {
 			criteria.append(LEVEL_CRITERION);
 		if (!isNullOrEmpty(surface))
 			criteria.append(SURFACE_CRITERION);
+		return criteria.toString();
 	}
 
-	public int bindParams(PreparedStatement ps, int index) throws SQLException {
-		index = bindIntegerRange(ps, index, seasonRange);
+	public MapSqlParameterSource getParams() {
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		addParams(params, seasonRange, "season");
 		if (!isNullOrEmpty(level))
-			ps.setString(++index, level);
+			params.addValue("level", level);
 		if (!isNullOrEmpty(surface))
-			ps.setString(++index, surface);
-		return index;
+			params.addValue("surface", surface);
+		return params;
 	}
 
 

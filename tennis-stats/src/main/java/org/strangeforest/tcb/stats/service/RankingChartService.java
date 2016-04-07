@@ -5,7 +5,7 @@ import java.util.*;
 
 import org.postgresql.util.*;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
@@ -14,14 +14,15 @@ import com.google.common.collect.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.RankType.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.EnumUtil.*;
-import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class RankingChartService {
 
 	@Autowired private PlayerService playerService;
-	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final LocalDate START_DATE_OF_NEW_RANKING_SYSTEM = LocalDate.of(2009, 1, 1);
 	private static final int START_SEASON_OF_NEW_RANKING_SYSTEM = START_DATE_OF_NEW_RANKING_SYSTEM.getYear();
@@ -30,14 +31,14 @@ public class RankingChartService {
 	private static final String PLAYER_RANKINGS_QUERY = //language=SQL
 		"SELECT r.rank_date AS date%1$s, r.player_id, %2$s AS rank_value\n" +
 		"FROM %3$s r%4$s\n" +
-		"WHERE r.player_id = %5$s%6$s\n" +
-		"ORDER BY %7$s, r.player_id";
+		"WHERE r.player_id IN (:playerIds)%5$s\n" +
+		"ORDER BY %6$s, r.player_id";
 
 	private static final String PLAYER_SEASON_RANKINGS_QUERY = //language=SQL
 		"SELECT r.season%1$s, r.player_id, %2$s AS rank_value\n" +
 		"FROM %3$s r%4$s\n" +
-		"WHERE r.player_id = %5$s%6$s\n" +
-		"ORDER BY %7$s, r.player_id";
+		"WHERE r.player_id IN (:playerIds)%5$s\n" +
+		"ORDER BY %6$s, r.player_id";
 
 	private static final String PLAYER_GOAT_POINTS_QUERY = //language=SQL
 		"WITH goat_points AS (\n" +
@@ -64,13 +65,13 @@ public class RankingChartService {
 		"), goat_points_summed AS (\n" +
 		"  SELECT g.date%1$s, g.player_id, sum(g.goat_points) OVER (PARTITION BY g.player_id ORDER BY g.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
 		"  FROM goat_points g%2$s\n" +
-		"  WHERE g.player_id = %3$s%4$s\n" +
-		"  ORDER BY %5$s, g.player_id\n" +
+		"  WHERE g.player_id IN (:playerIds)%3$s\n" +
+		"  ORDER BY %4$s, g.player_id\n" +
 		"), goat_points_numbered AS (\n" +
-		"	SELECT date%6$s, player_id, rank_value, row_number() OVER (PARTITION BY %5$s, player_id ORDER BY rank_value DESC) row_number\n" +
+		"	SELECT date%5$s, player_id, rank_value, row_number() OVER (PARTITION BY %4$s, player_id ORDER BY rank_value DESC) row_number\n" +
 		"	FROM goat_points_summed\n" +
 		")\n" +
-		"SELECT date%6$s, player_id, rank_value\n" +
+		"SELECT date%5$s, player_id, rank_value\n" +
 		"FROM goat_points_numbered\n" +
 		"WHERE row_number = 1";
 
@@ -84,8 +85,8 @@ public class RankingChartService {
 		")\n" +
 		"SELECT g.season%1$s, g.player_id, sum(g.goat_points) rank_value\n" +
 		"FROM goat_points g%2$s\n" +
-		"WHERE g.player_id = %3$s%4$s\n" +
-		"GROUP BY g.season%6$s, g.player_id\n" +
+		"WHERE g.player_id IN (:playerIds)%3$s\n" +
+		"GROUP BY g.season%4$s, g.player_id\n" +
 		"ORDER BY %5$s, g.player_id";
 
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
@@ -114,18 +115,8 @@ public class RankingChartService {
 		RowCursor rowCursor = bySeason ? new IntegerRowCursor(table, players) : (byAge ? new DoubleRowCursor(table, players) : new DateRowCursor(table, players));
 		boolean compensate = compensatePoints && rankType == POINTS;
 		jdbcTemplate.query(
-			getSQL(players.getCount(), rankType, bySeason, dateRange, seasonRange, byAge),
-			ps -> {
-				int index = 1;
-				if (players.getCount() == 1)
-					ps.setInt(index, players.getPlayerIds().iterator().next());
-				else
-					bindIntegerArray(ps, index, players.getPlayerIds());
-				if (bySeason)
-					index = bindIntegerRange(ps, index, seasonRange);
-				else
-					index = bindDateRange(ps, index, dateRange);
-			},
+			getSQL(rankType, bySeason, dateRange, seasonRange, byAge),
+			getParams(players, bySeason, dateRange, seasonRange),
 			rs -> {
 				Object x;
 				int playerId = rs.getInt("player_id");
@@ -160,21 +151,20 @@ public class RankingChartService {
 			table.addColumn("number", player + " " + getRankName(rankType));
 	}
 
-	private String getSQL(int playerCount, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge) {
+	private String getSQL(RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge) {
 		String playerJoin = byAge ? PLAYER_JOIN : "";
-		String playerCondition = playerCount == 1 ? "?" : "ANY(?)";
 		String orderBy = byAge ? "age" : (bySeason ? "season" : "date");
 		if (rankType == GOAT_POINTS) {
 			if (bySeason) {
 				return format(PLAYER_SEASON_GOAT_POINTS_QUERY,
 					byAge ? ", date_part('year', age((g.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "",
-					playerJoin, playerCondition, periodRangeCondition(seasonRange, "g.season"), orderBy, byAge ? ", age" : ""
+					playerJoin, rangeFilter(seasonRange, "g.season", "season"), byAge ? ", age" : "", orderBy
 				);
 			}
 			else {
 				return format(PLAYER_GOAT_POINTS_QUERY,
 					byAge ? ", age(g.date, p.dob) AS age" : "",
-					playerJoin, playerCondition, periodRangeCondition(dateRange, "g.date"), orderBy, byAge ? ", age" : ""
+					playerJoin, rangeFilter(dateRange, "g.date", "date"), orderBy, byAge ? ", age" : ""
 				);
 			}
 		}
@@ -182,13 +172,13 @@ public class RankingChartService {
 			if (bySeason) {
 				return format(PLAYER_SEASON_RANKINGS_QUERY,
 					byAge ? ", date_part('year', age((r.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "",
-					rankColumnBySeason(rankType), rankingTableBySeason(rankType), playerJoin, playerCondition, periodRangeCondition(seasonRange, "r.season"), orderBy
+					rankColumnBySeason(rankType), rankingTableBySeason(rankType), playerJoin, rangeFilter(seasonRange, "r.season", "season"), orderBy
 				);
 			}
 			else {
 				return format(PLAYER_RANKINGS_QUERY,
 					byAge ? ", age(r.rank_date, p.dob) AS age" : "",
-					rankColumn(rankType), rankingTable(rankType), playerJoin, playerCondition, periodRangeCondition(dateRange, "r.rank_date"), orderBy);
+					rankColumn(rankType), rankingTable(rankType), playerJoin, rangeFilter(dateRange, "r.rank_date", "date"), orderBy);
 			}
 		}
 	}
@@ -233,13 +223,13 @@ public class RankingChartService {
 		}
 	}
 
-	private String periodRangeCondition(Range<?> range, String column) {
-		String condition = "";
-		if (range.hasLowerBound())
-			condition += " AND " + column + " >= ?";
-		if (range.hasUpperBound())
-			condition += " AND " + column + " <= ?";
-		return condition;
+	private MapSqlParameterSource getParams(IndexedPlayers players, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange) {
+		MapSqlParameterSource params = params("playerIds", players.getPlayerIds());
+		if (bySeason)
+			addParams(params, seasonRange, "season");
+		else
+			addParams(params, dateRange, "date");
+		return params;
 	}
 
 	private int compensateRankingPoints(LocalDate date, int rank) {

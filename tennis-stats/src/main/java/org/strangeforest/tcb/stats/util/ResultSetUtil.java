@@ -1,8 +1,6 @@
 package org.strangeforest.tcb.stats.util;
 
 import java.sql.*;
-import java.sql.Date;
-import java.time.*;
 import java.util.*;
 
 import com.google.common.collect.*;
@@ -19,14 +17,6 @@ public abstract class ResultSetUtil {
 			ps.setInt(++index, integerRange.lowerEndpoint());
 		if (integerRange.hasUpperBound())
 			ps.setInt(++index, integerRange.upperEndpoint());
-		return index;
-	}
-
-	public static int bindDateRange(PreparedStatement ps, int index, Range<LocalDate> dateRange) throws SQLException {
-		if (dateRange.hasLowerBound())
-			ps.setDate(++index, Date.valueOf(dateRange.lowerEndpoint()));
-		if (dateRange.hasUpperBound())
-			ps.setDate(++index, Date.valueOf(dateRange.upperEndpoint()));
 		return index;
 	}
 

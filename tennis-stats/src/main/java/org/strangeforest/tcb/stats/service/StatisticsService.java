@@ -11,7 +11,6 @@ import org.strangeforest.tcb.stats.model.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
 
 @Service
 public class StatisticsService {
@@ -71,7 +70,7 @@ public class StatisticsService {
 	private static final String PLAYERS_FILTERED_STATS_QUERY = //language=SQL
 		"SELECT m.player_id, " + PLAYER_STATS_SUMMED_COLUMNS +
 		"FROM player_match_stats_v m\n" +
-		"WHERE m.player_id = ANY(?)%1$s%2$s\n" +
+		"WHERE m.player_id IN (:playerIds)%1$s%2$s\n" +
 		"GROUP BY m.player_id";
 
 	private static final String TOURNAMENT_EVENT_JOIN = //language=SQL
@@ -81,7 +80,7 @@ public class StatisticsService {
 	 	"\nINNER JOIN player_v o ON o.player_id = opponent_id";
 
 	private static final String OPPONENTS_CRITERIA = //language=SQL
-	 	" AND opponent_id = ANY(?)";
+	 	" AND opponent_id IN (:playerIds)";
 
 	private static final String PLAYER_SEASONS_STATS_QUERY =
 		"SELECT season, " + PLAYER_STATS_COLUMNS +
@@ -195,15 +194,9 @@ public class StatisticsService {
 
 	public Map<Integer, PlayerStats> getPlayersStats(List<Integer> playerIds, RivalryFilter filter, boolean vsAll) {
 		Map<Integer, PlayerStats> playersStats = new HashMap<>();
-		jdbcTemplate.getJdbcOperations().query(
+		jdbcTemplate.query(
 			format(PLAYERS_FILTERED_STATS_QUERY, filter.getCriteria(), vsAll ? "" : OPPONENTS_CRITERIA),
-			ps -> {
-				int index = 1;
-				bindIntegerArray(ps, index, playerIds);
-				index = filter.bindParams(ps, index);
-				if (!vsAll)
-					bindIntegerArray(ps, ++index, playerIds);
-			},
+			filter.getParams().addValue("playerIds", playerIds),
 			rs -> {
 				int playerId = rs.getInt("player_id");
 				playersStats.put(playerId, mapPlayerStats(rs));
