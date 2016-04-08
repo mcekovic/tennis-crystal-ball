@@ -20,4 +20,8 @@ public class TopPerformerRow extends PlayerRow {
 	public int getLost() {
 		return wonLost.getLost();
 	}
+
+	public int getPlayed() {
+		return wonLost.getTotal();
+	}
 }

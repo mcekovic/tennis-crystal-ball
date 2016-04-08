@@ -20,6 +20,7 @@ public class TopPerformersResource {
 		put("wonLostPct", "won_lost_pct");
 		put("won", "won");
 		put("lost", "lost");
+		put("played", "played");
 	}};
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("won"), asc("lost"), asc("name")};
 

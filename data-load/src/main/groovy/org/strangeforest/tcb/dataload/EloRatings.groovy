@@ -21,8 +21,7 @@ class EloRatings {
 	private Date saveFromDate
 
 	private static final String QUERY_MATCHES = //language=SQL
-		"SELECT m.winner_id, m.loser_id, e.date + (CASE e.level WHEN 'G' THEN INTERVAL '14 days' ELSE INTERVAL '7 days' END) AS end_date,\n" +
-      "	e.level, m.round, m.best_of, m.outcome\n" +
+		"SELECT m.winner_id, m.loser_id, tournament_end(e.date, e.level, e.draw_size) AS end_date, e.level, m.round, m.best_of, m.outcome\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
