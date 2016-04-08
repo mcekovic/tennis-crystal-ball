@@ -226,9 +226,9 @@ public class RankingChartService {
 	private MapSqlParameterSource getParams(IndexedPlayers players, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange) {
 		MapSqlParameterSource params = params("playerIds", players.getPlayerIds());
 		if (bySeason)
-			addParams(params, seasonRange, "season");
+			addRangeParams(params, seasonRange, "season");
 		else
-			addParams(params, dateRange, "date");
+			addRangeParams(params, dateRange, "date");
 		return params;
 	}
 

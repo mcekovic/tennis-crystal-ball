@@ -59,7 +59,7 @@ public class RivalryFilter {
 
 	public MapSqlParameterSource getParams() {
 		MapSqlParameterSource params = new MapSqlParameterSource();
-		addParams(params, seasonRange, "season");
+		addRangeParams(params, seasonRange, "season");
 		if (!isNullOrEmpty(level))
 			params.addValue("level", level);
 		if (!isNullOrEmpty(surface))

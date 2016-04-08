@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
-import org.strangeforest.tcb.stats.util.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.RankType.*;

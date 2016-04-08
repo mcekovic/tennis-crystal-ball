@@ -3,7 +3,7 @@ package org.strangeforest.tcb.stats.service;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
@@ -11,19 +11,20 @@ import org.strangeforest.tcb.stats.model.table.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
-import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
 public class PerformanceChartService {
 
 	@Autowired private PlayerService playerService;
-	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_SEASON_PERFORMANCE_QUERY = //language=SQL
 		"SELECT %1$s, player_id, CASE WHEN %2$s_won + %2$s_lost > 0 THEN %2$s_won::real/(%2$s_won + %2$s_lost) ELSE NULL END AS won_lost_pct\n" +
 		"FROM player_season_performance pf%3$s\n" +
-		"WHERE player_id = %4$s%5$s\n" +
-		"ORDER BY %6$s, player_id";
+		"WHERE player_id IN (:playerIds)%4$s\n" +
+		"ORDER BY %5$s, player_id";
 
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
@@ -51,15 +52,8 @@ public class PerformanceChartService {
 		DataTable table = new DataTable();
 		RowCursor rowCursor = new IntegerRowCursor(table, players);
 		jdbcTemplate.query(
-			getSQL(players.getCount(), category, seasonRange, byAge),
-			ps -> {
-				int index = 1;
-				if (players.getCount() == 1)
-					ps.setInt(index, players.getPlayerIds().iterator().next());
-				else
-					bindIntegerArray(ps, index, players.getPlayerIds());
-				index = bindIntegerRange(ps, index, seasonRange);
-			},
+			getSQL(category, seasonRange, byAge),
+			getParams(players, seasonRange),
 			rs -> {
 				Object x = byAge ? rs.getInt("age") : rs.getInt("season");
 				int playerId = rs.getInt("player_id");
@@ -84,23 +78,19 @@ public class PerformanceChartService {
 			table.addColumn("number", player + " " + category.getTitle());
 	}
 
-	private String getSQL(int playerCount, PerformanceCategory category, Range<Integer> seasonRange, boolean byAge) {
+	private String getSQL(PerformanceCategory category, Range<Integer> seasonRange, boolean byAge) {
 		return format(PLAYER_SEASON_PERFORMANCE_QUERY,
 			byAge ? "date_part('year', age((pf.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "pf.season",
 			category.getColumn(),
 			byAge ? PLAYER_JOIN : "",
-			playerCount == 1 ? "?" : "ANY(?)",
-			conditions(seasonRange, "pf.season"),
+			rangeFilter(seasonRange, "pf.season", "season"),
 			byAge ? "age" : "season"
 		);
 	}
 
-	private String conditions(Range<?> range, String column) {
-		StringBuilder conditions = new StringBuilder();
-		if (range.hasLowerBound())
-			conditions.append(" AND ").append(column).append(" >= ?");
-		if (range.hasUpperBound())
-			conditions.append(" AND ").append(column).append(" <= ?");
-		return conditions.toString();
+	private MapSqlParameterSource getParams(IndexedPlayers players, Range<Integer> seasonRange) {
+		MapSqlParameterSource params = params("playerIds", players.getPlayerIds());
+		addRangeParams(params, seasonRange, "season");
+		return params;
 	}
 }

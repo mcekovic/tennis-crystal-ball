@@ -12,7 +12,7 @@ import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
 @Service
 public class MatchesService {

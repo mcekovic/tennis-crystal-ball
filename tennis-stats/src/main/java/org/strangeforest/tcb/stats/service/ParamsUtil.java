@@ -10,7 +10,7 @@ public abstract class ParamsUtil {
 		return new MapSqlParameterSource(name, value);
 	}
 
-	public static <T extends Comparable> void addParams(MapSqlParameterSource params, Range<T> range, String name) {
+	public static <T extends Comparable> void addRangeParams(MapSqlParameterSource params, Range<T> range, String name) {
 		if (range.hasLowerBound())
 			params.addValue(name + "From", range.lowerEndpoint());
 		if (range.hasUpperBound())

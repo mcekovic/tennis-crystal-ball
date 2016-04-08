@@ -16,7 +16,7 @@ import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.MatchesService.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
 @Service
 public class TournamentService {

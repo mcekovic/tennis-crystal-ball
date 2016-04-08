@@ -9,7 +9,7 @@ import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
-import static org.strangeforest.tcb.stats.util.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
 @Service
 public class BestSeasonsService {
