@@ -355,3 +355,19 @@ CREATE TABLE statistics_goat_points (
 	goat_points INTEGER NOT NULL,
 	PRIMARY KEY (category_id, rank)
 );
+
+
+-- visitor
+
+CREATE TABLE visitor (
+	visitor_id SERIAL PRIMARY KEY,
+	ip_address TEXT NOT NULL,
+	visits INTEGER NOT NULL,
+	active BOOLEAN NOT NULL DEFAULT TRUE,
+	first_visit TIMESTAMP(3) NOT NULL DEFAULT current_timestamp,
+	last_visit TIMESTAMP(3) NOT NULL
+);
+
+CREATE INDEX ON visitor (ip_address);
+CREATE INDEX ON visitor (active);
+CREATE INDEX ON visitor (first_visit);

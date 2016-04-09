@@ -17,8 +17,6 @@ public class RivalryFilter {
 	private final String level;
 	private final String surface;
 
-	private static final String SEASON_FROM_CRITERION = " AND season >= :seasonFrom";
-	private static final String SEASON_TO_CRITERION   = " AND season <= :seasonTo";
 	private static final String LEVEL_CRITERION       = " AND level = :level::tournament_level";
 	private static final String SURFACE_CRITERION     = " AND surface = :surface::surface";
 
@@ -46,10 +44,7 @@ public class RivalryFilter {
 
 	public String getCriteria() {
 		StringBuilder criteria = new StringBuilder();
-		if (seasonRange.hasLowerBound())
-			criteria.append(SEASON_FROM_CRITERION);
-		if (seasonRange.hasUpperBound())
-			criteria.append(SEASON_TO_CRITERION);
+		appendRangeFilter(criteria, seasonRange, "season", "season");
 		if (!isNullOrEmpty(level))
 			criteria.append(LEVEL_CRITERION);
 		if (!isNullOrEmpty(surface))
