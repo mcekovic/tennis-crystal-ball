@@ -36,7 +36,8 @@ dependencies {
 	}
 	compile ('org.springframework.boot:spring-boot-starter-logging')
 	compile ('org.springframework.boot:spring-boot-starter-actuator')
-	compile ('org.springframework:spring-context-support:4.2.4.RELEASE')
+	def sprigVersion = '4.2.5.RELEASE'
+	compile ('org.springframework:spring-context-support:' + sprigVersion)
 	compile ('com.google.guava:guava:19.0')
 	compile ('org.postgresql:postgresql:9.4.1208')
 	def jacksonVersion = '2.7.1'
@@ -45,8 +46,9 @@ dependencies {
 	compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion-1")
 	compile ('org.webjars:bootstrap:3.3.6')
 	compile ('org.webjars:jquery:2.2.2')
-	compile ('org.webjars:jquery-ui:1.11.4')
-	compile ('org.webjars:jquery-ui-themes:1.11.4')
+	def jQueryUIVersion = '1.11.4'
+	compile ('org.webjars:jquery-ui:' + jQueryUIVersion)
+	compile ('org.webjars:jquery-ui-themes:' + jQueryUIVersion)
 	compile ('org.webjars.bower:jquery.bootgrid:1.2.0') {
 		exclude group: 'org.webjars.bower'
 	}
@@ -57,6 +59,7 @@ dependencies {
 	testCompile ('junit:junit:4.12')
 	testCompile ('org.assertj:assertj-core:3.4.0')
 	testCompile ('org.mockito:mockito-all:1.10.19')
+	testCompile ('org.springframework:spring-test:' + sprigVersion)
 }
 
 remotes {

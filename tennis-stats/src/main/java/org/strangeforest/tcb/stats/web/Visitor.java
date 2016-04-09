@@ -8,6 +8,7 @@ public class Visitor {
 	private final String ipAddress;
 	private int visits;
 	private Instant lastVisit;
+	private boolean dirty;
 
 	public Visitor(long id, String ipAddress, int visits, Instant lastVisit) {
 		this.id = id;
@@ -35,6 +36,18 @@ public class Visitor {
 	public int visit() {
 		lastVisit = Instant.now();
 		return ++visits;
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void setDirty() {
+		dirty = true;
+	}
+
+	public void clearDirty() {
+		dirty = false;
 	}
 
 	public boolean isExpired(Duration expiryTimeout) {

@@ -34,6 +34,14 @@ public class VisitorManager {
 		this.repository = repository;
 	}
 
+	void setExpiryTimeout(Duration expiryTimeout) {
+		this.expiryTimeout = expiryTimeout;
+	}
+
+	void setExpiryCheckPeriod(Duration expiryCheckPeriod) {
+		this.expiryCheckPeriod = expiryCheckPeriod;
+	}
+
 	void setSaveAfterVisitCount(int saveAfterVisitCount) {
 		this.saveAfterVisitCount = saveAfterVisitCount;
 	}
@@ -55,22 +63,28 @@ public class VisitorManager {
 
 	@PreDestroy
 	public void destroy() throws InterruptedException {
+		if (visitors == null)
+			return;
 		try {
 			try {
 				if (visitorExpirer != null) {
-					if (visitorExpirerFuture != null)
+					if (visitorExpirerFuture != null) {
 						visitorExpirerFuture.cancel(false);
+						visitorExpirerFuture = null;
+					}
 					visitorExpirer.shutdown();
 					visitorExpirer.awaitTermination(15L, TimeUnit.SECONDS);
+					visitorExpirer = null;
 				}
 			}
 			finally {
 				expire();
-				repository.saveAll(visitorStream().collect(toList()));
+				repository.saveAll(visitorStream().filter(Visitor::isDirty).collect(toList()));
 			}
 		}
 		finally {
 			visitors.cleanUp();
+			visitors = null;
 		}
 	}
 
@@ -83,8 +97,12 @@ public class VisitorManager {
 			}
 			else {
 				Visitor visitor = optionalVisitor.get();
-				if (visitor.visit() % saveAfterVisitCount == 0)
+				if (visitor.visit() % saveAfterVisitCount == 0) {
 					repository.save(visitor);
+					visitor.clearDirty();
+				}
+				else
+					visitor.setDirty();
 			}
 		}
 		catch (ExecutionException ex) {
