@@ -111,7 +111,7 @@ function loadCollapse($button, url) {
 	$pane.load(url, function () {
 		if (!$button.hasClass("loaded"))
 			$button.addClass("loaded");
-		$pane.collapse("toggle");
+		$pane.collapse("show");
 	});
 }
 

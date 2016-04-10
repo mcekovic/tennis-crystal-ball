@@ -11,7 +11,7 @@ import static java.util.Collections.*;
 public class PropertyEditorsConfig {
 
 	@Bean
-	public static CustomEditorConfigurer tennisStatsEditorConfigurer() {
+	public static CustomEditorConfigurer customEditorConfigurer() {
 		CustomEditorConfigurer editorConfigurer = new CustomEditorConfigurer();
 		editorConfigurer.setCustomEditors(singletonMap(Duration.class, DurationPropertyEditor.class));
 		return editorConfigurer;
