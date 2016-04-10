@@ -7,14 +7,16 @@ public class Visitor {
 	private final long id;
 	private final String ipAddress;
 	private final String countryId;
+	private final String country;
 	private int visits;
 	private Instant lastVisit;
 	private boolean dirty;
 
-	public Visitor(long id, String ipAddress, String countryId, int visits, Instant lastVisit) {
+	public Visitor(long id, String ipAddress, String countryId, String country, int visits, Instant lastVisit) {
 		this.id = id;
 		this.ipAddress = ipAddress;
 		this.countryId = countryId;
+		this.country = country;
 		this.visits = visits;
 		this.lastVisit = lastVisit;
 	}
@@ -29,6 +31,10 @@ public class Visitor {
 
 	public String getCountryId() {
 		return countryId;
+	}
+
+	public String getCountry() {
+		return country;
 	}
 
 	public synchronized int getVisits() {

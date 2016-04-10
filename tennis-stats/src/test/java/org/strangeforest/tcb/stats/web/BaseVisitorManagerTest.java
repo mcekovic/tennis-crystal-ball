@@ -6,6 +6,8 @@ import java.util.*;
 import org.junit.*;
 import org.junit.After;
 import org.mockito.*;
+import org.mockito.invocation.*;
+import org.mockito.stubbing.*;
 import org.mockito.verification.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -39,7 +41,10 @@ public abstract class BaseVisitorManagerTest {
 
 	protected void visitAndVerifyFirstVisit(String ipAddress, VerificationMode mode) {
 		when(repository.find(ipAddress)).thenReturn(Optional.empty());
-		when(repository.create(matches(ipAddress), any())).thenReturn(new Visitor(1L, ipAddress, "SRB", 1, Instant.now()));
+		when(repository.create(any(), any(), any())).thenAnswer(invocation -> {
+			Object[] args = invocation.getArguments();
+			return new Visitor(1L, (String)args[0], (String)args[1], (String)args[2], 1, Instant.now());
+		});
 
 		Visitor visitor = manager.visit(ipAddress);
 
@@ -47,7 +52,7 @@ public abstract class BaseVisitorManagerTest {
 		assertThat(visitor.getVisits()).isEqualTo(1);
 
 		verify(repository, mode).find(ipAddress);
-		verify(repository, mode).create(matches(ipAddress), any());
+		verify(repository, mode).create(matches(ipAddress), any(), any());
 		verifyNoMoreInteractions(repository);
 		verify(geoIPService, mode).getCountry(ipAddress);
 		verifyNoMoreInteractions(geoIPService);

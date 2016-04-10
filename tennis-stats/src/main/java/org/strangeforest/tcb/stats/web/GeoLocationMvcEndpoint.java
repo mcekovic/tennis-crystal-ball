@@ -5,13 +5,12 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.endpoint.*;
 import org.springframework.boot.actuate.endpoint.mvc.*;
-import org.springframework.context.annotation.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 
-@Component @Profile("!dev")
+@Component @VisitorSupport
 public class GeoLocationMvcEndpoint implements MvcEndpoint {
 
 	@Autowired private MetricsEndpoint metricsEndpoint;

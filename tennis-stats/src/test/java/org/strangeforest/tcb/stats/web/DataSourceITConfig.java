@@ -12,13 +12,13 @@ import org.springframework.transaction.*;
 @Configuration
 public class DataSourceITConfig {
 
-	@Value("${spring.datasource.url}")
+	@Value("${test.datasource.url}")
 	private String dataSourceUrl;
 
-	@Value("${spring.datasource.username}")
+	@Value("${test.datasource.username}")
 	private String dataSourceUsername;
 
-	@Value("${spring.datasource.password}")
+	@Value("${test.datasource.password}")
 	private String dataSourcePassword;
 
 	@Bean

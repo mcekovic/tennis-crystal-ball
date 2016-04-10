@@ -22,14 +22,19 @@ public class VisitorRepositoryIT {
 	@Test
 	public void visitorIsCreatedAndFound() {
 		String ipAddress = "192.168.1.1";
-		Visitor visitor = repository.create(ipAddress, "SRB");
+		String countryId = "SRB";
+		String country = "Serbia";
+		Visitor visitor = repository.create(ipAddress, countryId, country);
 
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
 		assertThat(visitor.getVisits()).isEqualTo(1);
 
-		Optional<Visitor> optionalVisitor = repository.find(ipAddress);
-		assertThat(optionalVisitor).isNotEmpty();
-		assertThat(optionalVisitor.get().getVisits()).isEqualTo(1);
+		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
+		assertThat(optionalSavedVisitor).isNotEmpty();
+		Visitor savedVisitor = optionalSavedVisitor.get();
+		assertThat(savedVisitor.getCountryId()).isEqualTo(countryId);
+		assertThat(savedVisitor.getCountry()).isEqualTo(country);
+		assertThat(savedVisitor.getVisits()).isEqualTo(1);
 	}
 
 	@Test
@@ -43,9 +48,9 @@ public class VisitorRepositoryIT {
 	@Test
 	public void visitorsAreAllFound() {
 		String ipAddress1 = "192.168.1.1";
-		repository.create(ipAddress1, "SRB");
+		repository.create(ipAddress1, "SRB", "Serbia");
 		String ipAddress2 = "192.168.1.2";
-		repository.create(ipAddress2, "SRB");
+		repository.create(ipAddress2, "USA", "United States");
 
 		List<Visitor> visitors = repository.findAll();
 
@@ -56,7 +61,7 @@ public class VisitorRepositoryIT {
 	@Test
 	public void visitorIsSaved() {
 		String ipAddress = "192.168.1.1";
-		Visitor visitor = repository.create(ipAddress, "SRB");
+		Visitor visitor = repository.create(ipAddress, "SRB", "Serbia");
 
 		visitor.visit();
 		repository.save(visitor);
@@ -69,9 +74,9 @@ public class VisitorRepositoryIT {
 	@Test
 	public void allVisitorAreSaved() {
 		String ipAddress1 = "192.168.1.1";
-		Visitor visitor1 = repository.create(ipAddress1, "SRB");
+		Visitor visitor1 = repository.create(ipAddress1, "SRB", "Serbia");
 		String ipAddress2 = "192.168.1.2";
-		Visitor visitor2 = repository.create(ipAddress2, "SRB");
+		Visitor visitor2 = repository.create(ipAddress2, "USA", "United States");
 
 		visitor1.visit();
 		visitor2.visit();
@@ -86,7 +91,7 @@ public class VisitorRepositoryIT {
 	@Test
 	public void visitorIsExpired() {
 		String ipAddress = "192.168.1.1";
-		Visitor visitor = repository.create(ipAddress, "SRB");
+		Visitor visitor = repository.create(ipAddress, "SRB", "Serbia");
 
 		repository.expire(visitor);
 

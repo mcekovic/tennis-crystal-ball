@@ -12,10 +12,11 @@ import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.cache.*;
 import com.maxmind.geoip2.record.*;
+import com.neovisionaries.i18n.*;
 
 import static java.util.stream.Collectors.*;
 
-@Service
+@Service @VisitorSupport
 public class VisitorManager {
 
 	@Autowired private VisitorRepository repository;
@@ -83,9 +84,17 @@ public class VisitorManager {
 		try {
 			Optional<Visitor> optionalVisitor = visitors.get(ipAddress);
 			if (!optionalVisitor.isPresent()) {
-				Optional<Country> country = geoIPService.getCountry(ipAddress);
-				String countryId = country.isPresent() ? country.get().getIsoCode() : null;
-				Visitor visitor = repository.create(ipAddress, countryId);
+				Optional<Country> optionalCountry = geoIPService.getCountry(ipAddress);
+				String countryId = null;
+				String countryName = null;
+				if (optionalCountry.isPresent()) {
+					Country country = optionalCountry.get();
+					CountryCode code = CountryCode.getByCode(country.getIsoCode());
+					if (code != null)
+						countryId = code.getAlpha3();
+					countryName = country.getName();
+				}
+				Visitor visitor = repository.create(ipAddress, countryId, countryName);
 				optionalVisitor = Optional.of(visitor);
 				visitors.put(ipAddress, optionalVisitor);
 				return visitor;
@@ -117,5 +126,10 @@ public class VisitorManager {
 
 	private Stream<Visitor> visitorStream() {
 		return visitors.asMap().values().stream().map(Optional::get);
+	}
+
+	void clearCache() {
+		if (visitors != null)
+			visitors.invalidateAll();
 	}
 }

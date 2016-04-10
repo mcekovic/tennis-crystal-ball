@@ -13,7 +13,7 @@ import com.maxmind.geoip2.exception.*;
 import com.maxmind.geoip2.model.*;
 import com.maxmind.geoip2.record.*;
 
-@Service
+@Service @VisitorSupport
 public class GeoIPService {
 
 	private InputStream db;
