@@ -6,13 +6,15 @@ public class Visitor {
 
 	private final long id;
 	private final String ipAddress;
+	private final String countryId;
 	private int visits;
 	private Instant lastVisit;
 	private boolean dirty;
 
-	public Visitor(long id, String ipAddress, int visits, Instant lastVisit) {
+	public Visitor(long id, String ipAddress, String countryId, int visits, Instant lastVisit) {
 		this.id = id;
 		this.ipAddress = ipAddress;
+		this.countryId = countryId;
 		this.visits = visits;
 		this.lastVisit = lastVisit;
 	}
@@ -25,32 +27,36 @@ public class Visitor {
 		return ipAddress;
 	}
 
-	public int getVisits() {
+	public String getCountryId() {
+		return countryId;
+	}
+
+	public synchronized int getVisits() {
 		return visits;
 	}
 
-	public Instant getLastVisit() {
+	public synchronized Instant getLastVisit() {
 		return lastVisit;
 	}
 
-	public int visit() {
+	public synchronized int visit() {
 		lastVisit = Instant.now();
 		return ++visits;
 	}
 
-	public boolean isDirty() {
+	public synchronized boolean isDirty() {
 		return dirty;
 	}
 
-	public void setDirty() {
+	public synchronized void setDirty() {
 		dirty = true;
 	}
 
-	public void clearDirty() {
+	public synchronized void clearDirty() {
 		dirty = false;
 	}
 
-	public boolean isExpired(Duration expiryTimeout) {
+	public synchronized boolean isExpired(Duration expiryTimeout) {
 		return lastVisit.plus(expiryTimeout).isBefore(Instant.now());
 	}
 }

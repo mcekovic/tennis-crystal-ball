@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.util;
+package org.strangeforest.tcb.stats.spring;
 
 import org.aopalliance.aop.*;
 import org.springframework.aop.*;

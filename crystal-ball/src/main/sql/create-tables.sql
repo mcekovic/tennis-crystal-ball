@@ -362,6 +362,7 @@ CREATE TABLE statistics_goat_points (
 CREATE TABLE visitor (
 	visitor_id SERIAL PRIMARY KEY,
 	ip_address TEXT NOT NULL,
+	country_id TEXT,
 	visits INTEGER NOT NULL,
 	active BOOLEAN NOT NULL DEFAULT TRUE,
 	first_visit TIMESTAMP(3) NOT NULL DEFAULT current_timestamp,

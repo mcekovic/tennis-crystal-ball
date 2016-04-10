@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class TennisStatsController extends BaseController {
 
-	@Value("${tennis-stats.down-for-maintenance}")
+	@Value("${tennis-stats.down-for-maintenance:false}")
 	private boolean downForMaintenance;
 
 	@RequestMapping("/")

@@ -6,45 +6,36 @@ import java.util.concurrent.*;
 import java.util.stream.*;
 import javax.annotation.*;
 
-import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.cache.*;
+import com.maxmind.geoip2.record.*;
 
 import static java.util.stream.Collectors.*;
 
 @Service
 public class VisitorManager {
 
-	private VisitorRepository repository;
-	@Value("tennis-stats.visitors.expiryTimeout") private Duration expiryTimeout = Duration.ofHours(1);
-	@Value("tennis-stats.visitors.expiryCheckPeriod") private Duration expiryCheckPeriod = Duration.ofMinutes(5);
-	@Value("tennis-stats.visitors.saveAfterVisitCount") private int saveAfterVisitCount = 10;
-	@Value("tennis-stats.visitors.cacheSize") private int cacheSize = 1000;
+	@Autowired private VisitorRepository repository;
+	@Autowired private GeoIPService geoIPService;
+
+	@Value("${tennis-stats.visitors.expiry-period:PT1H}")
+	private Duration expiryPeriod = Duration.ofHours(1);
+
+	@Value("${tennis-stats.visitors.expiry-check-period:PT5M}")
+	private Duration expiryCheckPeriod = Duration.ofMinutes(5);
+
+	@Value("${tennis-stats.visitors.save-every-visit-count:10}")
+	private int saveEveryVisitCount = 10;
+
+	@Value("${tennis-stats.visitors.cache-size:1000}")
+	private int cacheSize = 1000;
 
 	private LoadingCache<String, Optional<Visitor>> visitors;
 	private ScheduledExecutorService visitorExpirer;
 	private ScheduledFuture<?> visitorExpirerFuture;
-
-	private static Logger LOGGER = LoggerFactory.getLogger(VisitorManager.class);
-
-	@Autowired
-	public VisitorManager(VisitorRepository repository) {
-		this.repository = repository;
-	}
-
-	void setExpiryTimeout(Duration expiryTimeout) {
-		this.expiryTimeout = expiryTimeout;
-	}
-
-	void setExpiryCheckPeriod(Duration expiryCheckPeriod) {
-		this.expiryCheckPeriod = expiryCheckPeriod;
-	}
-
-	void setSaveAfterVisitCount(int saveAfterVisitCount) {
-		this.saveAfterVisitCount = saveAfterVisitCount;
-	}
 
 	@PostConstruct
 	public void init() {
@@ -88,30 +79,37 @@ public class VisitorManager {
 		}
 	}
 
-	public void visit(String ipAddress) {
+	public Visitor visit(String ipAddress) {
 		try {
 			Optional<Visitor> optionalVisitor = visitors.get(ipAddress);
 			if (!optionalVisitor.isPresent()) {
-				optionalVisitor = Optional.of(repository.create(ipAddress));
+				Optional<Country> country = geoIPService.getCountry(ipAddress);
+				String countryId = country.isPresent() ? country.get().getIsoCode() : null;
+				Visitor visitor = repository.create(ipAddress, countryId);
+				optionalVisitor = Optional.of(visitor);
 				visitors.put(ipAddress, optionalVisitor);
+				return visitor;
 			}
 			else {
 				Visitor visitor = optionalVisitor.get();
-				if (visitor.visit() % saveAfterVisitCount == 0) {
+				int visits = visitor.visit();
+				if (saveEveryVisitCount > 0 && visits % saveEveryVisitCount == 0) {
 					repository.save(visitor);
 					visitor.clearDirty();
 				}
 				else
 					visitor.setDirty();
+				return visitor;
 			}
 		}
 		catch (ExecutionException ex) {
-			LOGGER.error("Error tracking visit.", ex);
+			Throwable cause = ex.getCause();
+			throw new TennisStatsException("Error tracking visit.", cause != null ? cause : null);
 		}
 	}
 
 	private void expire() {
-		visitorStream().filter(visitor -> visitor.isExpired(expiryTimeout)).forEach(visitor -> {
+		visitorStream().filter(visitor -> visitor.isExpired(expiryPeriod)).forEach(visitor -> {
 			repository.expire(visitor);
 			visitors.invalidate(visitor.getIpAddress());
 		});

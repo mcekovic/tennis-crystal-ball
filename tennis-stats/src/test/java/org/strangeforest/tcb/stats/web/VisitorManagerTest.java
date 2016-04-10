@@ -9,11 +9,11 @@ import org.mockito.runners.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.util.ReflectionTestUtils.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VisitorManagerTest extends BaseVisitorManagerTest {
 
-	@Captor ArgumentCaptor<Visitor> visitorCaptor;
 	@Captor ArgumentCaptor<Collection<Visitor>> visitorsCaptor;
 
 	@Test
@@ -33,19 +33,24 @@ public class VisitorManagerTest extends BaseVisitorManagerTest {
 		String ipAddress = "192.168.1.1";
 
 		visitAndVerifyFirstVisit(ipAddress);
-		manager.visit(ipAddress);
+		Visitor visitor = manager.visit(ipAddress);
+
+		assertThat(visitor.getVisits()).isEqualTo(2);
 
 		verifyNoMoreInteractions(repository);
+		verifyNoMoreInteractions(geoIPService);
 	}
 
 	@Test
 	public void thirdVisitSavesVisitor() {
-		manager.setSaveAfterVisitCount(3);
+		setField(manager, "saveEveryVisitCount", 3);
 		String ipAddress = "192.168.1.1";
 
 		visitAndVerifyFirstVisit(ipAddress);
 		manager.visit(ipAddress);
-		manager.visit(ipAddress);
+		Visitor visitor = manager.visit(ipAddress);
+
+		assertThat(visitor.getVisits()).isEqualTo(3);
 
 		verify(repository).save(visitorCaptor.capture());
 		assertThat(visitorCaptor.getValue().getIpAddress()).isEqualTo(ipAddress);
@@ -69,7 +74,7 @@ public class VisitorManagerTest extends BaseVisitorManagerTest {
 		verify(repository).saveAll(visitorsCaptor.capture());
 		Collection<Visitor> visitors = visitorsCaptor.getValue();
 		assertThat(visitors).hasSize(1);
-		assertThat(visitors.iterator().next().getIpAddress()).isEqualTo(ipAddress1);
+		assertThat(visitors).extracting(Visitor::getIpAddress).containsExactly(ipAddress1);
 		verifyNoMoreInteractions(repository);
 	}
 }
