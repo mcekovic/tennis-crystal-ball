@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1977" name="Johannesburg-2" date="1977-11-28" ext-id="254">
+		<level>B</level>
+		<surface>H</surface>
+		<draw-type>KO</draw-type>
+		<draw-size>32</draw-size>
+		<player seed="1" name="Guillermo Vilas"/>
+		<player seed="2" name="Eddie Dibbs"/>
+		<player entry="Q" name="D Sullivan"/>
+		<player entry="Q" name="George Rudman"/>
+		<player entry="Q" name="Andrew Jarrett"/>
+		<player entry="Q" name="Mike Myburg"/>
+		<!-- R32 -->
+		<match match-num="1" round="R32" best-of="3" winner="Guillermo Vilas" loser="Onny Parun" score="1-6 6-2 7-5"/>
+		<match match-num="2" round="R32" best-of="3" winner="Jim Delaney" loser="Ion Tiriac" score="6-4 4-6 6-3"/>
+		<match match-num="3" round="R32" best-of="3" winner="Andrew Pattison" loser="Andre Van Der Merwe A" score="7-5 6-2"/>
+		<match match-num="4" round="R32" best-of="3" winner="Peter Fleming" loser="Cliff Drysdale" score="6-2 6-4"/>
+		<match match-num="5" round="R32" best-of="3" winner="Stan Smith" loser="Andrew Jarrett" score="7-6 6-0"/>
+		<match match-num="6" round="R32" best-of="3" winner="George Rudman" loser="Mike Myburg" score="6-4 6-2"/>
+		<match match-num="7" round="R32" best-of="3" winner="D Sullivan" loser="Colin Dowdeswell" score="6-0 7-6"/>
+		<match match-num="8" round="R32" best-of="3" winner="Raymond Moore" loser="Jeff Borowiak" score="6-1 7-5"/>
+		<match match-num="9" round="R32" best-of="3" winner="Bernard Mitton" loser="Mark Cox" score="6-2 4-6 6-3"/>
+		<match match-num="10" round="R32" best-of="3" winner="Sherwood Stewart" loser="John Muller" score="6-3 6-1"/>
+		<match match-num="11" round="R32" best-of="3" winner="Frew Mcmillan" loser="Mike Machette" score="6-2 6-3"/>
+		<match match-num="12" round="R32" best-of="3" winner="Willem Prinsloo" loser="Jaime Fillol" score="6-3 6-4"/>
+		<match match-num="13" round="R32" best-of="3" winner="Buster C Mottram" loser="Paul Mcnamee" score="7-5 6-2"/>
+		<match match-num="14" round="R32" best-of="3" winner="Cliff Richey" loser="Mike Fishbach" score="1-6 6-4 6-3"/>
+		<match match-num="15" round="R32" best-of="3" winner="Byron Bertram" loser="Robert Lutz" score="4-6 6-4 6-2"/>
+		<match match-num="16" round="R32" best-of="3" winner="Eddie Dibbs" loser="Bob Hewitt" score="6-2 6-1"/>
+		<!-- R16 -->
+		<match match-num="17" round="R16" best-of="3" winner="Guillermo Vilas" loser="Jim Delaney" score="6-1 6-1"/>
+		<match match-num="18" round="R16" best-of="3" winner="Peter Fleming" loser="Andrew Pattison" score="6-3 6-3"/>
+		<match match-num="19" round="R16" best-of="3" winner="Stan Smith" loser="George Rudman" score="6-2 6-2"/>
+		<match match-num="20" round="R16" best-of="3" winner="D Sullivan" loser="Raymond Moore" score="6-4 6-3"/>
+		<match match-num="21" round="R16" best-of="3" winner="Sherwood Stewart" loser="Bernard Mitton" score="6-3 6-3"/>
+		<match match-num="22" round="R16" best-of="3" winner="Frew Mcmillan" loser="Willem Prinsloo" score="6-4 6-2"/>
+		<match match-num="23" round="R16" best-of="3" winner="Buster C Mottram" loser="Cliff Richey" score="7-5 6-1"/>
+		<match match-num="24" round="R16" best-of="3" winner="Eddie Dibbs" loser="Byron Bertram" score="6-2 2-6 7-6"/>
+		<!-- QF -->
+		<match match-num="25" round="QF" best-of="3" winner="Guillermo Vilas" loser="Peter Fleming" score="7-6 0-6 6-4"/>
+		<match match-num="26" round="QF" best-of="3" winner="Stan Smith" loser="D Sullivan" score="6-3 6-4"/>
+		<match match-num="27" round="QF" best-of="3" winner="Frew Mcmillan" loser="Sherwood Stewart" score="6-2 6-4"/>
+		<match match-num="28" round="QF" best-of="3" winner="Buster C Mottram" loser="Eddie Dibbs" score="6-1 7-5"/>
+		<!-- SF -->
+		<match match-num="29" round="SF" best-of="3" winner="Guillermo Vilas" loser="Stan Smith" score="6-2 6-4"/>
+		<match match-num="30" round="SF" best-of="3" winner="Buster C Mottram" loser="Frew Mcmillan" score="6-2 1-6 8-6"/>
+		<!-- F -->
+		<match match-num="31" round="F" best-of="5" winner="Guillermo Vilas" loser="Buster C Mottram" score="7-6 6-3 6-4"/>
+	</tournament>
+</tournament-data>

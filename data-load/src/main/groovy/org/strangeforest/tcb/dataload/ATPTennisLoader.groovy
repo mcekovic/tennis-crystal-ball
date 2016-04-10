@@ -83,6 +83,7 @@ class ATPTennisLoader {
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1973-washington-indoor-2.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1974-auckland.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1977-johannesburg.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1977-johannesburg-2.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1979-dorado-beach.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1981-monte-carlo.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1984-memphis+.xml')
