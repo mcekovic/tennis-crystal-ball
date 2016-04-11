@@ -16,6 +16,10 @@ public class GeoIPFilter implements Filter {
 	@Autowired private VisitorManager visitorManager;
 	@Autowired private CounterService counterService;
 
+	public static final String COUNTER_COUNTRY = "counter.country.";
+	public static final String VISITS = "visits.";
+	public static final String HITS = "hits.";
+
 	@Override public void init(FilterConfig filterConfig) {}
 	@Override public void destroy() {}
 
@@ -26,9 +30,13 @@ public class GeoIPFilter implements Filter {
 		int commaPos = remoteAddr.indexOf(',');
 		if (commaPos > 0)
 			remoteAddr = remoteAddr.substring(0, commaPos);
-		String country = visitorManager.visit(remoteAddr).getCountry();
-		if (!isNullOrEmpty(country))
-			counterService.increment("counter.country." + country);
+		Visitor visitor = visitorManager.visit(remoteAddr);
+		String country = visitor.getCountry();
+		if (!isNullOrEmpty(country)) {
+			if (visitor.isFirstHit())
+				counterService.increment(COUNTER_COUNTRY + VISITS + country);
+			counterService.increment(COUNTER_COUNTRY + HITS + country);
+		}
 		chain.doFilter(request, response);
 	}
 }

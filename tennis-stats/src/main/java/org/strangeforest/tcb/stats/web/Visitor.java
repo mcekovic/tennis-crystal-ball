@@ -41,6 +41,10 @@ public class Visitor {
 		return hits;
 	}
 
+	public synchronized boolean isFirstHit() {
+		return hits == 1;
+	}
+
 	public synchronized Instant getLastHit() {
 		return lastHit;
 	}

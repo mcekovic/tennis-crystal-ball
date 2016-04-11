@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="chartBy" type="java.lang.Object[]"*/-->
 <head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Ultimate Tennis Statistics - Visitors</title>
+	<link th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
 	<script th:src="@{/webjars/jquery/2.2.2/jquery.min.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" th:inline="javascript">
@@ -16,9 +22,23 @@
 			var chart = new google.visualization.GeoChart(document.getElementById("geolocationChart"));
 			chart.draw(data, options);
 		}
+		function chartByChanged() {
+			window.location = "/manage/geolocationChart?chartBy=" + $("#chartBy").val()
+		}
 	</script>
 </head>
 <body>
+	<div class="row">
+		<div class="col-md-2">
+			<div class="input-group">
+				<label for="chartBy" class="input-group-addon">Chart by:</label>
+				<select id="chartBy" class="form-control" onchange="chartByChanged()">
+					<option value="hits" th:selected="${chartBy == 'hits'}">Hits</option>
+					<option value="visits" th:selected="${chartBy == 'visits'}">Visits</option>
+				</select>
+			</div>
+		</div>
+	</div>
 	<div id="geolocationChart" style="width: 900px; height: 500px;"></div>
 </body>
 </html>
