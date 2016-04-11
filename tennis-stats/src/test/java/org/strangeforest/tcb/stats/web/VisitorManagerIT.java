@@ -33,37 +33,37 @@ public class VisitorManagerIT {
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
 		assertThat(visitor.getCountryId()).isEqualTo("SRB");
 		assertThat(visitor.getCountry()).isEqualTo("Serbia");
-		assertThat(visitor.getVisits()).isEqualTo(1);
+		assertThat(visitor.getHits()).isEqualTo(1);
 	}
 
 	@Test
-	public void secondVisitIncrementVisitsButDoesNotSaveVisitor() {
+	public void secondVisitIncrementHitsButDoesNotSaveVisitor() {
 		String ipAddress = "178.148.80.189";
 		manager.visit(ipAddress);
 
 		Visitor visitor = manager.visit(ipAddress);
 		assertThat(visitor.getCountryId()).isEqualTo("SRB");
-		assertThat(visitor.getVisits()).isEqualTo(2);
+		assertThat(visitor.getHits()).isEqualTo(2);
 
 		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
 		assertThat(optionalSavedVisitor).isNotEmpty();
 		Visitor savedVisitor = optionalSavedVisitor.get();
-		assertThat(savedVisitor.getVisits()).isEqualTo(1);
+		assertThat(savedVisitor.getHits()).isEqualTo(1);
 	}
 
 	@Test
-	public void thirdVisitIncrementVisitsButAndSaveVisitor() {
+	public void thirdVisitIncrementHitsButAndSaveVisitor() {
 		String ipAddress = "178.148.80.189";
 		manager.visit(ipAddress);
 		manager.visit(ipAddress);
 
 		Visitor visitor = manager.visit(ipAddress);
-		assertThat(visitor.getVisits()).isEqualTo(3);
+		assertThat(visitor.getHits()).isEqualTo(3);
 
 		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
 		assertThat(optionalSavedVisitor).isNotEmpty();
 		Visitor savedVisitor = optionalSavedVisitor.get();
-		assertThat(savedVisitor.getVisits()).isEqualTo(3);
+		assertThat(savedVisitor.getHits()).isEqualTo(3);
 	}
 
 	@Test
@@ -72,18 +72,18 @@ public class VisitorManagerIT {
 		manager.visit(ipAddress);
 
 		Visitor visitor = manager.visit(ipAddress);
-		assertThat(visitor.getVisits()).isEqualTo(2);
+		assertThat(visitor.getHits()).isEqualTo(2);
 
 		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
 		assertThat(optionalSavedVisitor).isNotEmpty();
 		Visitor savedVisitor = optionalSavedVisitor.get();
-		assertThat(savedVisitor.getVisits()).isEqualTo(1);
+		assertThat(savedVisitor.getHits()).isEqualTo(1);
 
 		manager.destroy();
 
 		optionalSavedVisitor = repository.find(ipAddress);
 		assertThat(optionalSavedVisitor).isNotEmpty();
 		savedVisitor = optionalSavedVisitor.get();
-		assertThat(savedVisitor.getVisits()).isEqualTo(2);
+		assertThat(savedVisitor.getHits()).isEqualTo(2);
 	}
 }

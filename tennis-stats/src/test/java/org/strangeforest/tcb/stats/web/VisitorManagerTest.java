@@ -35,7 +35,7 @@ public class VisitorManagerTest extends BaseVisitorManagerTest {
 		visitAndVerifyFirstVisit(ipAddress);
 		Visitor visitor = manager.visit(ipAddress);
 
-		assertThat(visitor.getVisits()).isEqualTo(2);
+		assertThat(visitor.getHits()).isEqualTo(2);
 
 		verifyNoMoreInteractions(repository);
 		verifyNoMoreInteractions(geoIPService);
@@ -43,14 +43,14 @@ public class VisitorManagerTest extends BaseVisitorManagerTest {
 
 	@Test
 	public void thirdVisitSavesVisitor() {
-		setField(manager, "saveEveryVisitCount", 3);
+		setField(manager, "saveEveryHitCount", 3);
 		String ipAddress = "192.168.1.1";
 
 		visitAndVerifyFirstVisit(ipAddress);
 		manager.visit(ipAddress);
 		Visitor visitor = manager.visit(ipAddress);
 
-		assertThat(visitor.getVisits()).isEqualTo(3);
+		assertThat(visitor.getHits()).isEqualTo(3);
 
 		verify(repository).save(visitorCaptor.capture());
 		assertThat(visitorCaptor.getValue().getIpAddress()).isEqualTo(ipAddress);

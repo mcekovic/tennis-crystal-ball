@@ -27,14 +27,14 @@ public class VisitorRepositoryIT {
 		Visitor visitor = repository.create(ipAddress, countryId, country);
 
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
-		assertThat(visitor.getVisits()).isEqualTo(1);
+		assertThat(visitor.getHits()).isEqualTo(1);
 
 		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
 		assertThat(optionalSavedVisitor).isNotEmpty();
 		Visitor savedVisitor = optionalSavedVisitor.get();
 		assertThat(savedVisitor.getCountryId()).isEqualTo(countryId);
 		assertThat(savedVisitor.getCountry()).isEqualTo(country);
-		assertThat(savedVisitor.getVisits()).isEqualTo(1);
+		assertThat(savedVisitor.getHits()).isEqualTo(1);
 	}
 
 	@Test
@@ -68,7 +68,7 @@ public class VisitorRepositoryIT {
 
 		Optional<Visitor> optionalVisitor = repository.find(ipAddress);
 		assertThat(optionalVisitor).isNotEmpty();
-		assertThat(optionalVisitor.get().getVisits()).isEqualTo(2);
+		assertThat(optionalVisitor.get().getHits()).isEqualTo(2);
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class VisitorRepositoryIT {
 
 		List<Visitor> visitors = repository.findAll();
 		assertThat(visitors).hasSize(2);
-		assertThat(visitors).extracting(Visitor::getVisits).containsExactlyInAnyOrder(2, 3);
+		assertThat(visitors).extracting(Visitor::getHits).containsExactlyInAnyOrder(2, 3);
 	}
 
 	@Test

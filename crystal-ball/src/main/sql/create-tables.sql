@@ -364,12 +364,12 @@ CREATE TABLE visitor (
 	ip_address TEXT NOT NULL,
 	country_id TEXT,
 	country TEXT,
-	visits INTEGER NOT NULL,
+	hits INTEGER NOT NULL,
 	active BOOLEAN NOT NULL DEFAULT TRUE,
-	first_visit TIMESTAMP(3) NOT NULL DEFAULT now(),
-	last_visit TIMESTAMP(3) NOT NULL
+	first_hit TIMESTAMP(3) NOT NULL DEFAULT now(),
+	last_hit TIMESTAMP(3) NOT NULL
 );
 
 CREATE INDEX ON visitor (ip_address);
 CREATE INDEX ON visitor (active);
-CREATE INDEX ON visitor (first_visit);
+CREATE INDEX ON visitor (first_hit);

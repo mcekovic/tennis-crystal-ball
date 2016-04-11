@@ -18,10 +18,10 @@ public class VisitorRepository {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
-	private static final String FIND = "SELECT visitor_id, country_id, country, visits, last_visit FROM visitor WHERE ip_address = :ipAddress AND active";
-	private static final String FIND_ALL = "SELECT visitor_id, country_id, country, ip_address, visits, last_visit FROM visitor WHERE active";
-	private static final String CREATE = "INSERT INTO visitor (ip_address, country_id, country, visits, last_visit) VALUES (:ipAddress, :countryId, :country, :visits, :lastVisit)";
-	private static final String SAVE = "UPDATE visitor SET visits = :visits, last_visit = :lastVisit%1$s WHERE visitor_id = :visitorId";
+	private static final String FIND = "SELECT visitor_id, country_id, country, hits, last_hit FROM visitor WHERE ip_address = :ipAddress AND active";
+	private static final String FIND_ALL = "SELECT visitor_id, country_id, country, ip_address, hits, last_hit FROM visitor WHERE active";
+	private static final String CREATE = "INSERT INTO visitor (ip_address, country_id, country, hits, last_hit) VALUES (:ipAddress, :countryId, :country, :hits, :lastHit)";
+	private static final String SAVE = "UPDATE visitor SET hits = :hits, last_hit = :lastHit%1$s WHERE visitor_id = :visitorId";
 
 	public Optional<Visitor> find(String ipAddress) {
 		return jdbcTemplate.query(FIND, params("ipAddress", ipAddress), rs ->
@@ -39,23 +39,23 @@ public class VisitorRepository {
 			ipAddress,
 			rs.getString("country_id"),
 			rs.getString("country"),
-			rs.getInt("visits"),
-			rs.getTimestamp("last_visit").toInstant()
+			rs.getInt("hits"),
+			rs.getTimestamp("last_hit").toInstant()
 		);
 	}
 
 	public Visitor create(String ipAddress, String countryId, String country) {
-		int visits = 1;
-		Instant lastVisit = Instant.now();
+		int hits = 1;
+		Instant lastHit = Instant.now();
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(CREATE,
 			params("ipAddress", ipAddress)
 				.addValue("countryId", countryId)
 				.addValue("country", country)
-				.addValue("visits", visits)
-				.addValue("lastVisit", Timestamp.from(lastVisit)),
+				.addValue("hits", hits)
+				.addValue("lastHit", Timestamp.from(lastHit)),
 		keyHolder, new String[] {"visitor_id"});
-		return new Visitor(keyHolder.getKey().longValue(), ipAddress, countryId, country, visits, lastVisit);
+		return new Visitor(keyHolder.getKey().longValue(), ipAddress, countryId, country, hits, lastHit);
 	}
 
 	public void save(Visitor visitor) {
@@ -79,7 +79,7 @@ public class VisitorRepository {
 
 	private static MapSqlParameterSource saveVisitorParams(Visitor visitor) {
 		return params("visitorId", visitor.getId())
-			.addValue("visits", visitor.getVisits())
-			.addValue("lastVisit", Timestamp.from(visitor.getLastVisit()));
+			.addValue("hits", visitor.getHits())
+			.addValue("lastHit", Timestamp.from(visitor.getLastHit()));
 	}
 }

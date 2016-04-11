@@ -28,8 +28,8 @@ public class VisitorManager {
 	@Value("${tennis-stats.visitors.expiry-check-period:PT5M}")
 	private Duration expiryCheckPeriod = Duration.ofMinutes(5);
 
-	@Value("${tennis-stats.visitors.save-every-visit-count:10}")
-	private int saveEveryVisitCount = 10;
+	@Value("${tennis-stats.visitors.save-every-hit-count:10}")
+	private int saveEveryHitCount = 10;
 
 	@Value("${tennis-stats.visitors.cache-size:1000}")
 	private int cacheSize = 1000;
@@ -101,8 +101,8 @@ public class VisitorManager {
 			}
 			else {
 				Visitor visitor = optionalVisitor.get();
-				int visits = visitor.visit();
-				if (saveEveryVisitCount > 0 && visits % saveEveryVisitCount == 0) {
+				int hits = visitor.visit();
+				if (saveEveryHitCount > 0 && hits % saveEveryHitCount == 0) {
 					repository.save(visitor);
 					visitor.clearDirty();
 				}

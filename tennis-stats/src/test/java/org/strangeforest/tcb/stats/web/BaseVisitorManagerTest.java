@@ -3,11 +3,9 @@ package org.strangeforest.tcb.stats.web;
 import java.time.*;
 import java.util.*;
 
-import org.junit.*;
 import org.junit.After;
+import org.junit.*;
 import org.mockito.*;
-import org.mockito.invocation.*;
-import org.mockito.stubbing.*;
 import org.mockito.verification.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -49,7 +47,7 @@ public abstract class BaseVisitorManagerTest {
 		Visitor visitor = manager.visit(ipAddress);
 
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
-		assertThat(visitor.getVisits()).isEqualTo(1);
+		assertThat(visitor.getHits()).isEqualTo(1);
 
 		verify(repository, mode).find(ipAddress);
 		verify(repository, mode).create(matches(ipAddress), any(), any());
