@@ -1,10 +1,13 @@
 -- event_participation
 
 CREATE MATERIALIZED VIEW event_participation AS
-WITH event_players AS (
+WITH event_player_ranks AS (
 	SELECT DISTINCT tournament_event_id, winner_id AS player_id, winner_rank AS rank FROM match
 	UNION DISTINCT
 	SELECT DISTINCT tournament_event_id, loser_id, loser_rank FROM match
+), event_players AS (
+	SELECT tournament_event_id, player_id, avg(rank) AS rank FROM event_player_ranks
+	GROUP BY tournament_event_id, player_id
 )
 SELECT p.tournament_event_id, count(p.player_id) player_count, sum(f.rank_factor) participation_points,
 	max_event_participation(count(p.player_id)::INTEGER) AS max_participation_points
@@ -13,6 +16,8 @@ INNER JOIN tournament_event e USING (tournament_event_id)
 LEFT JOIN tournament_event_rank_factor f ON p.rank BETWEEN f.rank_from AND f.rank_to
 WHERE e.level NOT IN ('D', 'T')
 GROUP BY p.tournament_event_id;
+
+CREATE UNIQUE INDEX ON event_participation (tournament_event_id);
 
 
 -- player_current_rank

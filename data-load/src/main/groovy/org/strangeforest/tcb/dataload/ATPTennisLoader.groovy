@@ -74,6 +74,8 @@ class ATPTennisLoader {
 
 	def loadAdditionalTournamentData(sql) {
 		if (full) {
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1969-johannesburg.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1969-wembley.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-johannesburg.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-salisbury.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-sydney.xml')

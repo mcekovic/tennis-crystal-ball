@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1969" name="Johannesburg" date="1969-04-07" ext-id="426">
+		<level>B</level>
+		<surface>H</surface>
+		<draw-type>KO</draw-type>
+		<draw-size>128</draw-size>
+		<!-- R128 -->
+		<!-- R64 -->
+		<!-- R32 -->
+		<match match-num="97" round="R32" best-of="5" winner="Rod Laver" loser="Alfred Schwartz" score="6-0 6-3 3-6 6-1"/>
+		<match match-num="98" round="R32" best-of="5" winner="Frew Mcmillan" loser="Julian Krinsky" score="6-4 6-1 6-2"/>
+		<match match-num="99" round="R32" best-of="5" winner="Andres Gimeno" loser="Derek Schroder" score="6-4 6-2 6-3"/>
+		<match match-num="100" round="R32" best-of="5" winner="Bob Hewitt" loser="U Unknown" score="6-4 6-4 6-1"/>
+		<match match-num="101" round="R32" best-of="5" winner="Richard Pancho Gonzales" loser="Albert Gaertner" score="6-4 6-4 6-1"/>
+		<match match-num="102" round="R32" best-of="5" winner="Fred Stolle" loser="Jackie Saul" score="6-1 6-2 6-1"/>
+		<match match-num="103" round="R32" best-of="5" winner="Robert Maud" loser="John Brown" score="6-1 6-2 RET"/>
+		<match match-num="104" round="R32" best-of="5" winner="Cliff Drysdale" loser="K Brebnor" score="6-3 6-4 8-6"/>
+		<match match-num="105" round="R32" best-of="5" winner="Tony Roche" loser="Andrew Pattison" score="5-7 6-3 8-6 6-2"/>
+		<match match-num="106" round="R32" best-of="5" winner="Bob Carmichael" loser="Barry Phillips Moore" score="4-6 6-3 6-4 10-8"/>
+		<match match-num="107" round="R32" best-of="5" winner="Dennis Ralston" loser="Terry Ryan" score="6-3 5-7 6-3 6-1"/>
+		<match match-num="108" round="R32" best-of="5" winner="Raymond Moore" loser="Keith Diepraam" score="6-3 6-2 5-7 6-4"/>
+		<match match-num="109" round="R32" best-of="5" winner="Cliff Richey" loser="Clive S Brebnor" score="3-6 6-3 6-1 6-3"/>
+		<match match-num="110" round="R32" best-of="5" winner="Roy Emerson" loser="Graydon Garner" score="6-4 6-0 6-4"/>
+		<match match-num="111" round="R32" best-of="5" winner="Dick Crealy" loser="Allan Stone" score="6-1 6-4 6-2"/>
+		<match match-num="112" round="R32" best-of="5" winner="Tom Okker" loser="Richard Hawkes" score="6-4 6-3 6-0"/>
+		<!-- R16 -->
+		<match match-num="113" round="R16" best-of="5" winner="Rod Laver" loser="Frew Mcmillan" score="6-2 6-4 6-2"/>
+		<match match-num="114" round="R16" best-of="5" winner="Bob Hewitt" loser="Andres Gimeno" score="6-3 6-4 6-2"/>
+		<match match-num="115" round="R16" best-of="5" winner="Richard Pancho Gonzales" loser="Fred Stolle" score="2-6 6-3 6-4 12-14 11-9"/>
+		<match match-num="116" round="R16" best-of="5" winner="Cliff Drysdale" loser="Robert Maud" score="5-7 6-2 2-6 6-4 7-5"/>
+		<match match-num="117" round="R16" best-of="5" winner="Tony Roche" loser="Bob Carmichael" score="7-5 6-3 7-5"/>
+		<match match-num="118" round="R16" best-of="5" winner="Raymond Moore" loser="Dennis Ralston" score="6-2 4-6 8-6 6-1"/>
+		<match match-num="119" round="R16" best-of="5" winner="Cliff Richey" loser="Roy Emerson" score="6-3 6-4 3-6 6-3"/>
+		<match match-num="120" round="R16" best-of="5" winner="Tom Okker" loser="Dick Crealy" score="7-5 9-7 6-0"/>
+		<!-- QF -->
+		<match match-num="121" round="QF" best-of="5" winner="Rod Laver" loser="Bob Hewitt" score="6-2 6-4 6-2"/>
+		<match match-num="122" round="QF" best-of="5" winner="Cliff Drysdale" loser="Richard Pancho Gonzales" score="3-6 3-6 10-8 6-4 7-5"/>
+		<match match-num="123" round="QF" best-of="5" winner="Tony Roche" loser="Raymond Moore" score="6-3 11-9 6-3"/>
+		<match match-num="124" round="QF" best-of="5" winner="Tom Okker" loser="Cliff Richey" score="3-6 6-3 6-4 8-6"/>
+		<!-- SF -->
+		<match match-num="125" round="SF" best-of="5" winner="Rod Laver" loser="Cliff Drysdale" score="6-1 1-6 6-1 6-2"/>
+		<match match-num="126" round="SF" best-of="5" winner="Tom Okker" loser="Tony Roche" score="W/O"/>
+		<!-- F -->
+		<match match-num="127" round="F" best-of="5" winner="Rod Laver" loser="Tom Okker" score="6-3 10-8 6-3"/>
+	</tournament>
+</tournament-data>

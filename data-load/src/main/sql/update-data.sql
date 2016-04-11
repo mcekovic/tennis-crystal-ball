@@ -54,7 +54,7 @@ AND (
 );
 
 WITH ranked_atp_event AS (
-	SELECT tournament_event_id, rank() OVER (PARTITION BY e.season ORDER BY p.participation_points DESC NULLS LAST) AS participation_rank
+	SELECT season, tournament_event_id, rank() OVER (PARTITION BY e.season ORDER BY p.participation_points DESC NULLS LAST) AS participation_rank
 	FROM tournament_event e
 	LEFT JOIN event_participation p USING (tournament_event_id)
 	WHERE e.level = 'B'
@@ -63,6 +63,10 @@ WITH ranked_atp_event AS (
 )
 UPDATE tournament_event
 SET level = 'A'
-WHERE tournament_event_id IN (SELECT e.tournament_event_id FROM ranked_atp_event e WHERE participation_rank <= 11);
+WHERE tournament_event_id IN (
+	SELECT e.tournament_event_id FROM ranked_atp_event e
+	WHERE (season >= 1970 AND participation_rank <= 11)
+	OR (season < 1970 AND participation_rank <= 25)
+);
 
 COMMIT;
