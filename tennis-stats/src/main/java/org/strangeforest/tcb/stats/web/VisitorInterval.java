@@ -2,10 +2,10 @@ package org.strangeforest.tcb.stats.web;
 
 public enum VisitorInterval {
 
-	HOUR("1 HOUR", "Hour"),
-	DAY("1 DAY", "Day"),
-	WEEK("1 WEEK", "Week"),
-	MONTH("1 MONTH", "Month");
+	HOUR("1 HOUR", "Last Hour"),
+	DAY("1 DAY", "Last Day"),
+	WEEK("1 WEEK", "Last Week"),
+	MONTH("1 MONTH", "Last Month");
 
 	private final String expression;
 	private final String caption;
