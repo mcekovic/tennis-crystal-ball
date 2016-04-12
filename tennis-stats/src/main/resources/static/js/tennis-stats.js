@@ -161,6 +161,8 @@ function setBootgridTitles($gridTable, titles) {
 		$gridTable.find("th[data-column-id='" + title.id + "'] > a > span[class='text']").attr("title", title.title);
 	}
 }
+/* Fixes Bootgrid Issue with no link cursors on pagination buttons */
+var bootgridTemplatePaginationItem = "<li class=\"{{ctx.css}}\"><a href=\"#\" data-page=\"{{ctx.page}}\" class=\"{{css.paginationButton}}\">{{ctx.text}}</a></li>";
 
 // Date Formatter
 function dateFormatter(column, row) {

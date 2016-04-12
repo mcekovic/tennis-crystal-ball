@@ -13,7 +13,7 @@ import org.strangeforest.tcb.stats.service.*;
 import static java.util.stream.Collectors.*;
 
 @Controller
-public class PlayerProfileController extends BaseController {
+public class PlayerProfileController extends PageController {
 
 	@Autowired private PlayerService playerService;
 	@Autowired private TournamentService tournamentService;

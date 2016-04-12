@@ -44,6 +44,9 @@
 				},
 				labels: {
 					noResults: "No matches found"
+				},
+				templates: {
+					paginationItem: bootgridTemplatePaginationItem
 				}
 			}).on("loaded.rs.jquery.bootgrid", function() {
 				$("#playerStats").popover("destroy").removeClass("loaded");

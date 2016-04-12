@@ -5,7 +5,7 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-public class TennisStatsController extends BaseController {
+public class TennisStatsController extends PageController {
 
 	@Value("${tennis-stats.down-for-maintenance:false}")
 	private boolean downForMaintenance;

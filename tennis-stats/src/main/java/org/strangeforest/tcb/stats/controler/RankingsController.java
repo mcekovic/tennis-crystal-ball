@@ -1,7 +1,5 @@
 package org.strangeforest.tcb.stats.controler;
 
-import java.util.*;
-
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
@@ -10,7 +8,7 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Controller
-public class RankingsController extends BaseController {
+public class RankingsController extends PageController {
 
 	@Autowired private DataService dataService;
 

@@ -13,7 +13,7 @@ import org.strangeforest.tcb.stats.service.*;
 import static java.util.stream.Collectors.*;
 
 @Controller
-public class PerfStatsChartController extends BaseController {
+public class PerfStatsChartController extends PageController {
 
 	@Autowired private TopPerformersService topPerformersService;
 	@Autowired private StatisticsService statisticsService;

@@ -9,7 +9,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Controller
-public class BigGunsTimelineController extends BaseController {
+public class BigGunsTimelineController extends PageController {
 
 	@Autowired private BigGunsTimelineService timelineService;
 

@@ -9,7 +9,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Controller
-public class TopPerformersController extends BaseController {
+public class TopPerformersController extends PageController {
 
 	@Autowired private TopPerformersService topPerformersService;
 

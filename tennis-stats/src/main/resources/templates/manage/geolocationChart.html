@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="chartBy" type="java.lang.Object[]"*/-->
+<!--/*@thymesVar id="versions" type="java.util.Map<String, String>"*/-->
+<!--/*@thymesVar id="stat" type="org.strangeforest.tcb.stats.web.VisitorStat"*/-->
+<!--/*@thymesVar id="interval" type="org.strangeforest.tcb.stats.web.VisitorInterval"*/-->
+<!--/*@thymesVar id="stats" type="org.strangeforest.tcb.stats.web.VisitorStat[]"*/-->
+<!--/*@thymesVar id="intervals" type="org.strangeforest.tcb.stats.web.VisitorInterval[]"*/-->
+<!--/*@thymesVar id="countries" type="java.lang.Object[]"*/-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>Ultimate Tennis Statistics - Visitors</title>
-	<link th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/webjars/jquery-ui-themes/1.11.4/smoothness/jquery-ui.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{/webjars/jquery/2.2.2/jquery.min.js}"></script>
+	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
+	<link th:href="@{|/webjars/jquery-ui-themes/${versions['jquery-ui']}/smoothness/jquery-ui.css|}" rel="stylesheet" media="screen"/>
+	<script th:src="@{|/webjars/jquery/${versions['jquery']}/jquery.min.js|}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" th:inline="javascript">
+		/*<![CDATA[*/
 		google.load("visualization", "1", {packages:["geochart"]});
 		google.setOnLoadCallback(drawGeolocationChart);
 
@@ -22,19 +28,27 @@
 			var chart = new google.visualization.GeoChart(document.getElementById("geolocationChart"));
 			chart.draw(data, options);
 		}
-		function chartByChanged() {
-			window.location = "/manage/geolocationChart?chartBy=" + $("#chartBy").val()
+		function chartChanged() {
+			window.location = "/manage/geolocationChart?stat=" + $("#chartStat").val() + "&interval=" + $("#chartInterval").val();
 		}
+		/*]]>*/
 	</script>
 </head>
 <body>
 	<div class="row">
 		<div class="col-md-2">
 			<div class="input-group">
-				<label for="chartBy" class="input-group-addon">Chart by:</label>
-				<select id="chartBy" class="form-control" onchange="chartByChanged()">
-					<option value="hits" th:selected="${chartBy == 'hits'}">Hits</option>
-					<option value="visits" th:selected="${chartBy == 'visits'}">Visits</option>
+				<label for="chartStat" class="input-group-addon">Chart by:</label>
+				<select id="chartStat" class="form-control" onchange="chartChanged()">
+					<option th:each="aStat : ${stats}" th:value="${aStat}" th:selected="${aStat == stat}" th:text="${aStat.caption}">Hits</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div class="input-group">
+				<label for="chartInterval" class="input-group-addon">Interval:</label>
+				<select id="chartInterval" class="form-control" onchange="chartChanged()">
+					<option th:each="anInterval : ${intervals}" th:value="${anInterval}" th:selected="${anInterval == interval}" th:text="${anInterval.caption}">Day</option>
 				</select>
 			</div>
 		</div>

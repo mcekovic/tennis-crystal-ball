@@ -22,6 +22,10 @@ public class VisitorRepository {
 	private static final String FIND_ALL = "SELECT visitor_id, country_id, country, ip_address, hits, last_hit FROM visitor WHERE active";
 	private static final String CREATE = "INSERT INTO visitor (ip_address, country_id, country, hits, last_hit) VALUES (:ipAddress, :countryId, :country, :hits, :lastHit)";
 	private static final String SAVE = "UPDATE visitor SET hits = :hits, last_hit = :lastHit%1$s WHERE visitor_id = :visitorId";
+	private static final String STATS_QUERY = "SELECT country, %1$s AS value FROM visitor WHERE last_hit >= now() - INTERVAL '%2$s' GROUP BY country";
+
+
+	// CRUD
 
 	public Optional<Visitor> find(String ipAddress) {
 		return jdbcTemplate.query(FIND, params("ipAddress", ipAddress), rs ->
@@ -81,5 +85,17 @@ public class VisitorRepository {
 		return params("visitorId", visitor.getId())
 			.addValue("hits", visitor.getHits())
 			.addValue("lastHit", Timestamp.from(visitor.getLastHit()));
+	}
+
+
+	// Queries
+
+	public List<Object[]> getVisitorsByCountry(VisitorStat stat, VisitorInterval interval) {
+		return jdbcTemplate.getJdbcOperations().query(
+			format(STATS_QUERY, stat.getExpression(), interval.getExpression()),
+			(rs, rowNum) -> {
+				return new Object[] {rs.getString("country"), rs.getObject("value")};
+			}
+		);
 	}
 }

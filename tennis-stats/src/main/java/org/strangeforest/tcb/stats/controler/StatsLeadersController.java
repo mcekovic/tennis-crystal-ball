@@ -11,7 +11,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Controller
-public class StatsLeadersController extends BaseController {
+public class StatsLeadersController extends PageController {
 
 	@Autowired private StatisticsService statisticsService;
 

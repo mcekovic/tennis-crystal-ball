@@ -15,7 +15,7 @@ import org.strangeforest.tcb.stats.util.*;
 import static java.util.stream.Collectors.*;
 
 @Controller
-public class RivalriesController extends BaseController {
+public class RivalriesController extends PageController {
 
 	@Autowired private RivalriesService rivalriesService;
 	@Autowired private DataService dataService;

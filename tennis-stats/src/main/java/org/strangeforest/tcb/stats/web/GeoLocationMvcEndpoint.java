@@ -8,14 +8,14 @@ import org.springframework.boot.actuate.endpoint.mvc.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
-import org.springframework.util.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
+import org.strangeforest.tcb.stats.controler.*;
 
 @Component @VisitorSupport
 public class GeoLocationMvcEndpoint implements MvcEndpoint {
 
-	@Autowired private MetricsEndpoint metricsEndpoint;
+	@Autowired private VisitorRepository repository;
 
 	@Override public String getPath() {
 		return "/geolocationChart";
@@ -31,22 +31,19 @@ public class GeoLocationMvcEndpoint implements MvcEndpoint {
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView geolocationChart(
-		@RequestParam(value = "chartBy", defaultValue = "hits") String chartBy
+		@RequestParam(value = "stat", defaultValue = "VISITS") VisitorStat stat,
+		@RequestParam(value = "interval", defaultValue = "DAY") VisitorInterval interval
 	) {
-		String caption = StringUtils.capitalize(chartBy);
-		String prefix = GeoIPFilter.COUNTER_COUNTRY + chartBy + '.';
-		Object[] countries = metricsEndpoint.invoke().entrySet().stream()
-			.filter(e -> e.getKey().startsWith(prefix))
-			.map(e -> new Object[] {e.getKey().substring(prefix.length()), e.getValue()})
-			.collect(() -> {
-				ArrayList<Object[]> list = new ArrayList<>();
-				list.add(new Object[] {"Country", caption});
-				return list;
-			}, List::add, List::addAll).toArray();
+		List<Object[]> countries = repository.getVisitorsByCountry(stat, interval);
+		countries.add(0, new Object[] {"Country", stat.getCaption()});
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.put("chartBy", chartBy);
-		modelMap.put("countries", countries);
+		modelMap.put("versions", BaseController.VERSIONS);
+		modelMap.put("stat", stat);
+		modelMap.put("interval", interval);
+		modelMap.put("stats", VisitorStat.values());
+		modelMap.put("intervals", VisitorInterval.values());
+		modelMap.put("countries", countries.toArray());
 		return new ModelAndView("manage/geolocationChart", modelMap);
 	}
 }

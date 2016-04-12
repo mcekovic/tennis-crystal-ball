@@ -14,7 +14,7 @@ import org.strangeforest.tcb.stats.service.*;
 import static java.util.stream.Collectors.*;
 
 @Controller
-public class PlayerStatsController {
+public class PlayerStatsController extends BaseController {
 
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerTimelineService timelineService;

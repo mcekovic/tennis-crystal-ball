@@ -8,7 +8,7 @@
  import org.strangeforest.tcb.stats.service.*;
 
 @Controller
-public class GOATLegendController {
+public class GOATLegendController extends BaseController {
 
 	@Autowired private GOATLegendService goatLegendService;
 

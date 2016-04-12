@@ -372,4 +372,4 @@ CREATE TABLE visitor (
 
 CREATE INDEX ON visitor (ip_address);
 CREATE INDEX ON visitor (active);
-CREATE INDEX ON visitor (first_hit);
+CREATE INDEX ON visitor (last_hit);
