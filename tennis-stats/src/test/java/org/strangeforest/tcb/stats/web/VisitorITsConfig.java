@@ -8,7 +8,7 @@ import org.strangeforest.tcb.stats.spring.*;
 @Configuration
 @PropertySource("/application-test.properties")
 @EnableTransactionManagement
-@Import({PropertyEditorsConfig.class, DataSourceITConfig.class})
+@Import({TennisStatsConfig.class, DataSourceITConfig.class})
 public class VisitorITsConfig {
 
 	@Bean
