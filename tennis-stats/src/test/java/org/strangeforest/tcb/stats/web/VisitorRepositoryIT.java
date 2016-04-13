@@ -47,6 +47,7 @@ public class VisitorRepositoryIT {
 
 	@Test
 	public void visitorsAreAllFound() {
+		int existingVisitors = getExistingVisitors();
 		String ipAddress1 = "192.168.1.1";
 		repository.create(ipAddress1, "SRB", "Serbia");
 		String ipAddress2 = "192.168.1.2";
@@ -54,8 +55,8 @@ public class VisitorRepositoryIT {
 
 		List<Visitor> visitors = repository.findAll();
 
-		assertThat(visitors).hasSize(2);
-		assertThat(visitors).extracting(Visitor::getIpAddress).containsExactlyInAnyOrder(ipAddress1, ipAddress2);
+		assertThat(visitors).hasSize(existingVisitors + 2);
+		assertThat(visitors).extracting(Visitor::getIpAddress).contains(ipAddress1, ipAddress2);
 	}
 
 	@Test
@@ -73,6 +74,7 @@ public class VisitorRepositoryIT {
 
 	@Test
 	public void allVisitorAreSaved() {
+		int existingVisitors = getExistingVisitors();
 		String ipAddress1 = "192.168.1.1";
 		Visitor visitor1 = repository.create(ipAddress1, "SRB", "Serbia");
 		String ipAddress2 = "192.168.1.2";
@@ -84,8 +86,8 @@ public class VisitorRepositoryIT {
 		repository.saveAll(asList(visitor1, visitor2));
 
 		List<Visitor> visitors = repository.findAll();
-		assertThat(visitors).hasSize(2);
-		assertThat(visitors).extracting(Visitor::getHits).containsExactlyInAnyOrder(2, 3);
+		assertThat(visitors).hasSize(existingVisitors + 2);
+		assertThat(visitors).extracting(Visitor::getHits).contains(2, 3);
 	}
 
 	@Test
@@ -97,5 +99,9 @@ public class VisitorRepositoryIT {
 
 		Optional<Visitor> optionalVisitor = repository.find(ipAddress);
 		assertThat(optionalVisitor).isEmpty();
+	}
+
+	private int getExistingVisitors() {
+		return repository.findAll().size();
 	}
 }
