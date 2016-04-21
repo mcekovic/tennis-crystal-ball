@@ -19,6 +19,6 @@ matchLoader.load(fetchTournament(2016, 'Acapulco', 807))
 matchLoader.load(fetchTournament(2016, 'Sao_Paulo', 533))
 matchLoader.load(fetchTournament(2016, 'Indian_Wells', 404))
 matchLoader.load(fetchTournament(2016, 'Miami', 403))
+matchLoader.load(fetchTournament(2016, 'Monte_Carlo', 410))
 
 //ATPTennisLoader.loadAdditionalTournament(sqlPool, 'classpath:/tournaments/2016-indian-wells.xml')
-//ATPTennisLoader.loadAdditionalTournament(sqlPool, 'classpath:/tournaments/2016-miami.xml')
