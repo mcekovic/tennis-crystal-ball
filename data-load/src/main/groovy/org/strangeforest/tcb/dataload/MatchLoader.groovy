@@ -116,7 +116,7 @@ class MatchLoader extends BaseCSVLoader {
 		params.l_bp_fc = smallint record.l_bpFaced
 
 		short totalPoints = (params.w_sv_pt ?: 0) + (params.l_sv_pt ?: 0)
-		if (totalPoints > 0) {
+		if (totalPoints > 0 && matchScore) {
 			short totalGames = (matchScore.w_games ?: 0) + (matchScore.l_games ?: 0)
 			if (totalGames > 1) {
 				if (params.w_sv_gms == 0)

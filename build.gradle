@@ -10,12 +10,8 @@ buildscript {
 	}
 }
 
-ext {
-	git = org.ajoberstar.grgit.Grgit.open()
-}
-
 allprojects {
-	version = "0.5-SNAPSHOT"
+	version = '0.9-SNAPSHOT'
 
 	buildscript {
 		repositories {
@@ -28,6 +24,16 @@ allprojects {
 	}
 }
 
+ext {
+	git = org.ajoberstar.grgit.Grgit.open()
+	releaseVersion = releaseVersion version
+}
+
 task wrapper(type: Wrapper) {
 	gradleVersion = '2.12'
+}
+
+def releaseVersion(version) {
+	def SNAPSHOT_SUFFIX = '-SNAPSHOT'
+	version.endsWith(SNAPSHOT_SUFFIX) ? version.substring(0, version.length() - SNAPSHOT_SUFFIX.length()) : version
 }

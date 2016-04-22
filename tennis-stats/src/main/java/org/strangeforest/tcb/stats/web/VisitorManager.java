@@ -82,7 +82,16 @@ public class VisitorManager {
 
 	public Visitor visit(String ipAddress) {
 		try {
-			Optional<Visitor> optionalVisitor = visitors.get(ipAddress);
+			return doVisit(ipAddress, visitors.get(ipAddress));
+		}
+		catch (ExecutionException ex) {
+			Throwable cause = ex.getCause();
+			throw new TennisStatsException("Error tracking visit.", cause != null ? cause : null);
+		}
+	}
+
+	private Visitor doVisit(String ipAddress, Optional<Visitor> optionalVisitor) {
+		synchronized (optionalVisitor) {
 			if (!optionalVisitor.isPresent()) {
 				Optional<Country> optionalCountry = geoIPService.getCountry(ipAddress);
 				String countryId = null;
@@ -110,10 +119,6 @@ public class VisitorManager {
 					visitor.setDirty();
 				return visitor;
 			}
-		}
-		catch (ExecutionException ex) {
-			Throwable cause = ex.getCause();
-			throw new TennisStatsException("Error tracking visit.", cause != null ? cause : null);
 		}
 	}
 
