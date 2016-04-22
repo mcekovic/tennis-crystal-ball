@@ -78,11 +78,22 @@ public class PlayerService {
 	}
 
 	public IndexedPlayers getIndexedPlayers(int playerId) {
-		return new IndexedPlayers(playerId, this);
+		IndexedPlayers indexedPlayers = new IndexedPlayers();
+		indexedPlayers.addPlayer(playerId, getPlayerName(playerId), 0);
+		return indexedPlayers;
 	}
 
 	public IndexedPlayers getIndexedPlayers(List<String> inputPlayers) {
-		return new IndexedPlayers(inputPlayers, this);
+		IndexedPlayers indexedPlayers = new IndexedPlayers();
+		int index = 0;
+		for (String player : inputPlayers) {
+			if (isNullOrEmpty(player))
+				continue;
+			Optional<Integer> playerId = findPlayerId(player);
+			if (playerId.isPresent())
+				indexedPlayers.addPlayer(playerId.get(), player, index++);
+		}
+		return indexedPlayers;
 	}
 
 	private Player playerMapper(ResultSet rs, int rowNum) throws SQLException {

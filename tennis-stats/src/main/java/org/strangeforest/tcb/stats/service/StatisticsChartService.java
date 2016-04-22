@@ -54,6 +54,8 @@ public class StatisticsChartService {
 
 	private DataTable fetchStatisticsDataTable(IndexedPlayers players, StatsCategory category, String surface, Range<Integer> seasonRange, boolean byAge) {
 		DataTable table = new DataTable();
+		if (players.isEmpty())
+			return table;
 		RowCursor rowCursor = new IntegerRowCursor(table, players);
 		jdbcTemplate.query(
 			getSQL(category, surface, seasonRange, byAge),

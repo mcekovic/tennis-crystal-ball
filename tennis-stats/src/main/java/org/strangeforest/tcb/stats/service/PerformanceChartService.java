@@ -50,6 +50,8 @@ public class PerformanceChartService {
 
 	private DataTable fetchPerformanceDataTable(IndexedPlayers players, PerformanceCategory category, Range<Integer> seasonRange, boolean byAge) {
 		DataTable table = new DataTable();
+		if (players.isEmpty())
+			return table;
 		RowCursor rowCursor = new IntegerRowCursor(table, players);
 		jdbcTemplate.query(
 			getSQL(category, seasonRange, byAge),

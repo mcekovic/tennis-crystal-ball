@@ -112,6 +112,8 @@ public class RankingChartService {
 
 	private DataTable fetchRankingsDataTable(IndexedPlayers players, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
 		DataTable table = new DataTable();
+		if (players.isEmpty())
+			return table;
 		RowCursor rowCursor = bySeason ? new IntegerRowCursor(table, players) : (byAge ? new DoubleRowCursor(table, players) : new DateRowCursor(table, players));
 		boolean compensate = compensatePoints && rankType == POINTS;
 		jdbcTemplate.query(
