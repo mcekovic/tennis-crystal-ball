@@ -11,7 +11,7 @@ public abstract class BaseController {
 	@Autowired private HttpServletRequest request;
 
 	public static final Map<String, String> VERSIONS = new HashMap<String, String>() {{
-		put("jquery", "2.2.2");
+		put("jquery", "2.2.3");
 		put("jquery-ui", "1.11.4");
 		put("bootstrap", "3.3.6");
 		put("bootgrid", "1.3.1");

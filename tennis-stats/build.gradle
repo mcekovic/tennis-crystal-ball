@@ -45,7 +45,7 @@ dependencies {
 	compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion-1")
 	compile ('org.webjars:bootstrap:3.3.6')
-	compile ('org.webjars:jquery:2.2.2')
+	compile ('org.webjars:jquery:2.2.3')
 	def jQueryUIVersion = '1.11.4'
 	compile ('org.webjars:jquery-ui:' + jQueryUIVersion)
 	compile ('org.webjars:jquery-ui-themes:' + jQueryUIVersion)
@@ -57,7 +57,7 @@ dependencies {
 	}
 	compile files('lib/GeoLite2-Country.zip')
 	testCompile ('junit:junit:4.12')
-	testCompile ('org.assertj:assertj-core:3.4.0')
+	testCompile ('org.assertj:assertj-core:3.4.1')
 	testCompile ('org.mockito:mockito-all:1.10.19')
 	testCompile ('org.springframework:spring-test:' + sprigVersion)
 }
