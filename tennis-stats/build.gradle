@@ -49,10 +49,10 @@ dependencies {
 	compile ('org.springframework:spring-context-support:' + sprigVersion)
 	compile ('com.google.guava:guava:19.0')
 	compile ('org.postgresql:postgresql:9.4.1208')
-	def jacksonVersion = '2.7.1'
+	def jacksonVersion = '2.7.3'
 	compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
-	compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion-1")
+	compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
 	compile ('org.webjars:bootstrap:3.3.6')
 	compile ('org.webjars:jquery:2.2.3')
 	def jQueryUIVersion = '1.11.4'
