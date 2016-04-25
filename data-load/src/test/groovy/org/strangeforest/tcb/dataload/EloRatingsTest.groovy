@@ -7,7 +7,7 @@ import static org.strangeforest.tcb.dataload.EloRatings.*;
 public class EloRatingsTest {
 
 	@Test
-	void startRatingIsCalculatedCorrectly() {
+	void "Start rating is calculated correctly"() {
 		assert rankHasStartRating(1, 2365)
 		assert rankHasStartRating(2, 2290)
 		assert rankHasStartRating(3, 2235)

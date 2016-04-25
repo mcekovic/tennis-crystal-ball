@@ -5,7 +5,7 @@ import org.junit.*
 class MatchScoreTest {
 
 	@Test
-	void testBestOf3MatchScore() {
+	void "Test best-of-3 match score"() {
 		MatchScore score = MatchScore.parse('6-3 0-6 7-5')
 
 		assert score.outcome == null
@@ -20,7 +20,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void testBestOf5MatchScore() {
+	void "Test best-of-5 match score"() {
 		MatchScore score = MatchScore.parse('2-6 6-1 6-0 5-7 12-10')
 
 		assert score.outcome == null
@@ -37,7 +37,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void testMatchScoreWithTieBreak() {
+	void "Test match score with tie-break"() {
 		MatchScore score = MatchScore.parse('7-6(4) 6-7(0) 7-6(12)')
 
 		assert score.outcome == null
@@ -52,7 +52,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void testWalkOver() {
+	void "Test walk-over"() {
 		MatchScore score = MatchScore.parse('W/O')
 
 		assert score.outcome == 'W/O'
@@ -64,7 +64,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void testWalkOver2() {
+	void "Test walk-over 2"() {
 		MatchScore score = MatchScore.parse('RET')
 
 		assert score.outcome == 'W/O'
@@ -76,7 +76,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void testRetired() {
+	void "Test retired"() {
 		MatchScore score = MatchScore.parse('6-4 3-0 RET')
 
 		assert score.outcome == 'RET'
@@ -90,7 +90,7 @@ class MatchScoreTest {
 	}
 
 	@Test
-	void testRetired2() {
+	void "Test retired 2"() {
 		MatchScore score = MatchScore.parse('6-6 RET')
 
 		assert score.outcome == 'RET'
