@@ -18,6 +18,15 @@ apply plugin: 'org.hidetake.ssh'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+sourceSets {
+	integrationTest { sourceSet ->
+		['java', 'groovy', 'resources'].each {
+			if (!sourceSet.hasProperty(it)) return
+			sourceSet."$it".srcDir file("src/integration-test/${it}")
+		}
+	}
+}
+
 processResources {
 	filesMatching('application.properties') {
 		filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
@@ -60,6 +69,15 @@ dependencies {
 	testCompile ('org.assertj:assertj-core:3.4.1')
 	testCompile ('org.mockito:mockito-all:1.10.19')
 	testCompile ('org.springframework:spring-test:' + sprigVersion)
+	integrationTestCompile sourceSets.main.output
+	integrationTestCompile sourceSets.test.output
+	integrationTestCompile configurations.testCompile
+	integrationTestRuntime configurations.testRuntime
+}
+
+task integrationTest(type: Test) {
+	testClassesDir = sourceSets.integrationTest.output.classesDir
+	classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
 remotes {
