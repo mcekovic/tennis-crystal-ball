@@ -156,9 +156,9 @@ class ATPTennisLoader {
 	private static refreshMaterializedViewTables(Sql sql) {
 		def t0 = System.currentTimeMillis()
 		println 'Dropping views...'
-		executeSQLFile(sql, '../crystal-ball/src/main/sql/drop-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+		executeSQLFile(sql, '../crystal-ball/src/main/db/drop-views.sql', 'MATERIALIZED VIEW', 'TABLE')
 		println 'Creating views...'
-		executeSQLFile(sql, '../crystal-ball/src/main/sql/create-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+		executeSQLFile(sql, '../crystal-ball/src/main/db/create-views.sql', 'MATERIALIZED VIEW', 'TABLE')
 		def seconds = (System.currentTimeMillis() - t0) / 1000.0
 		println "Materialized view tables refreshed in $seconds s"
 	}
