@@ -45,8 +45,7 @@ dependencies {
 	}
 	compile ('org.springframework.boot:spring-boot-starter-logging')
 	compile ('org.springframework.boot:spring-boot-starter-actuator')
-	def sprigVersion = '4.2.5.RELEASE'
-	compile ('org.springframework:spring-context-support:' + sprigVersion)
+	compile ('org.springframework:spring-context-support')
 	compile ('com.google.guava:guava:19.0')
 	compile ('org.postgresql:postgresql:9.4.1208')
 	def jacksonVersion = '2.7.3'
@@ -68,7 +67,7 @@ dependencies {
 	testCompile ('junit:junit:4.12')
 	testCompile ('org.assertj:assertj-core:3.4.1')
 	testCompile ('org.mockito:mockito-all:1.10.19')
-	testCompile ('org.springframework:spring-test:' + sprigVersion)
+	testCompile ('org.springframework:spring-test')
 	integrationTestCompile sourceSets.main.output
 	integrationTestCompile sourceSets.test.output
 	integrationTestCompile configurations.testCompile
