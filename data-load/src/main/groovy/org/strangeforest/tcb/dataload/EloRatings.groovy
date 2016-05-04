@@ -28,6 +28,9 @@ class EloRatings {
 		"AND (m.outcome IS NULL OR m.outcome <> 'ABD')\n" +
 		"ORDER BY end_date, m.match_num"
 
+	private static final String QUERY_LAST_DATE = //language=SQL
+		"SELECT max(rank_date) AS last_date FROM player_elo_ranking"
+
 	private static final String QUERY_PLAYER_RANK = //language=SQL
 		"{? = call player_rank(?, ?)}"
 
@@ -47,7 +50,7 @@ class EloRatings {
 		this.sqlPool = sqlPool
 	}
 
-	def compute(save = false, saveFromDate = null) {
+	def compute(save = false, deltaSave = false, saveFromDate = null) {
 		println 'Processing matches'
 		def t0 = System.currentTimeMillis()
 		playerRatings = [:]
@@ -57,6 +60,11 @@ class EloRatings {
 		progress = new AtomicInteger()
 		if (save) {
 			saveExecutor = Executors.newFixedThreadPool((int)((sqlPool.size() + 1) / 2))
+			if (deltaSave && !saveFromDate) {
+				sqlPool.withSql { sql ->
+					saveFromDate = sql.firstRow(QUERY_LAST_DATE).last_date
+				}
+			}
 			this.saveFromDate = saveFromDate
 		}
 		sqlPool.withSql { sql ->

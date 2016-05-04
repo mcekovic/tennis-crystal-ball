@@ -49,12 +49,12 @@ public class PlayerService {
 		"ORDER BY season DESC";
 
 
-	public Player getPlayer(int playerId) {
-		return jdbcTemplate.queryForObject(PLAYER_BY_ID_QUERY, params("playerId", playerId), this::playerMapper);
+	public Optional<Player> getPlayer(int playerId) {
+		return jdbcTemplate.query(PLAYER_BY_ID_QUERY, params("playerId", playerId), this::playerExtractor);
 	}
 
-	public Player getPlayer(String name) {
-		return jdbcTemplate.queryForObject(PLAYER_BY_NAME_QUERY, params("name", name), this::playerMapper);
+	public Optional<Player> getPlayer(String name) {
+		return jdbcTemplate.query(PLAYER_BY_NAME_QUERY, params("name", name), this::playerExtractor);
 	}
 
 	public String getPlayerName(int playerId) {
@@ -96,43 +96,47 @@ public class PlayerService {
 		return indexedPlayers;
 	}
 
-	private Player playerMapper(ResultSet rs, int rowNum) throws SQLException {
-		Player p = new Player(rs.getInt("player_id"));
-		p.setName(rs.getString("name"));
-		p.setDob(rs.getDate("dob"));
-		p.setAge(rs.getInt("age"));
-		p.setCountryId(rs.getString("country_id"));
-		p.setBirthplace(rs.getString("birthplace"));
-		p.setResidence(rs.getString("residence"));
-		p.setHeight(rs.getInt("height"));
-		p.setWeight(rs.getInt("weight"));
-		p.setHand(rs.getString("hand"));
-		p.setBackhand(rs.getString("backhand"));
+	private Optional<Player> playerExtractor(ResultSet rs) throws SQLException {
+		if (rs.next()) {
+			Player p = new Player(rs.getInt("player_id"));
+			p.setName(rs.getString("name"));
+			p.setDob(rs.getDate("dob"));
+			p.setAge(rs.getInt("age"));
+			p.setCountryId(rs.getString("country_id"));
+			p.setBirthplace(rs.getString("birthplace"));
+			p.setResidence(rs.getString("residence"));
+			p.setHeight(rs.getInt("height"));
+			p.setWeight(rs.getInt("weight"));
+			p.setHand(rs.getString("hand"));
+			p.setBackhand(rs.getString("backhand"));
 
-		p.setTitles(rs.getInt("titles"));
-		p.setGrandSlams(rs.getInt("grand_slams"));
-		p.setTourFinals(rs.getInt("tour_finals"));
-		p.setMasters(rs.getInt("masters"));
-		p.setOlympics(rs.getInt("olympics"));
+			p.setTitles(rs.getInt("titles"));
+			p.setGrandSlams(rs.getInt("grand_slams"));
+			p.setTourFinals(rs.getInt("tour_finals"));
+			p.setMasters(rs.getInt("masters"));
+			p.setOlympics(rs.getInt("olympics"));
 
-		p.setCurrentRank(rs.getInt("current_rank"));
-		p.setCurrentRankPoints(rs.getInt("current_rank_points"));
-		p.setBestRank(rs.getInt("best_rank"));
-		p.setBestRankDate(rs.getDate("best_rank_date"));
-		p.setBestRankPoints(rs.getInt("best_rank_points"));
-		p.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
-		p.setGoatRank(rs.getInt("goat_rank"));
-		p.setGoatRankPoints(rs.getInt("goat_points"));
-		p.setWeeksAtNo1(rs.getInt("weeks_at_no1"));
+			p.setCurrentRank(rs.getInt("current_rank"));
+			p.setCurrentRankPoints(rs.getInt("current_rank_points"));
+			p.setBestRank(rs.getInt("best_rank"));
+			p.setBestRankDate(rs.getDate("best_rank_date"));
+			p.setBestRankPoints(rs.getInt("best_rank_points"));
+			p.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
+			p.setGoatRank(rs.getInt("goat_rank"));
+			p.setGoatRankPoints(rs.getInt("goat_points"));
+			p.setWeeksAtNo1(rs.getInt("weeks_at_no1"));
 
-		p.setActive(rs.getBoolean("active"));
-		p.setTurnedPro(rs.getInt("turned_pro"));
-		p.setCoach(rs.getString("coach"));
-		p.setWebSite(rs.getString("web_site"));
-		p.setTwitter(rs.getString("twitter"));
-		p.setFacebook(rs.getString("facebook"));
+			p.setActive(rs.getBoolean("active"));
+			p.setTurnedPro(rs.getInt("turned_pro"));
+			p.setCoach(rs.getString("coach"));
+			p.setWebSite(rs.getString("web_site"));
+			p.setTwitter(rs.getString("twitter"));
+			p.setFacebook(rs.getString("facebook"));
 
-		return p;
+			return Optional.of(p);
+		}
+		else
+			return Optional.empty();
 	}
 
 	private AutocompleteOption playerAutocompleteOptionMapper(ResultSet rs, int rowNum) throws SQLException {

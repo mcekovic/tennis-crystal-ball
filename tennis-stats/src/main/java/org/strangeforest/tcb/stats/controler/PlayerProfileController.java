@@ -37,10 +37,13 @@ public class PlayerProfileController extends PageController {
 		if (playerId == null && name == null)
 			return new ModelAndView("playerProfile");
 
-		Player player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
+		Optional<Player> player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("player", player);
+		if (player.isPresent())
+			modelMap.addAttribute("player", player.get());
+		else
+			modelMap.addAttribute("playerRef", playerId != null ? playerId : name);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);

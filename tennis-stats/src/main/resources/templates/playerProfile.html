@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="versions" type="java.util.Map<String, String>"*/-->
 <!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"*/-->
+<!--/*@thymesVar id="playerRef" type="java.lang.String"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
@@ -210,6 +211,7 @@
 			<div id="goatPoints" class="tab-pane fade"><br/>Loading...</div>
 		</div>
 	</th:block>
+	<h4 th:unless="${player}" th:text="'Player ' + ${playerRef}  + ' not found.'">Player bot found.</h4>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>
