@@ -18,7 +18,7 @@ public class VisitorRepository {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
-	private static final String FIND = "SELECT visitor_id, country_id, country, hits, last_hit FROM visitor WHERE ip_address = :ipAddress AND active";
+	private static final String FIND = "SELECT visitor_id, country_id, country, hits, last_hit FROM visitor WHERE ip_address = :ipAddress AND active ORDER BY last_hit DESC";
 	private static final String FIND_ALL = "SELECT visitor_id, country_id, country, ip_address, hits, last_hit FROM visitor WHERE active";
 	private static final String CREATE = "INSERT INTO visitor (ip_address, country_id, country, hits, last_hit) VALUES (:ipAddress, :countryId, :country, :hits, :lastHit)";
 	private static final String SAVE = "UPDATE visitor SET hits = :hits, last_hit = :lastHit%1$s WHERE visitor_id = :visitorId";
@@ -28,9 +28,9 @@ public class VisitorRepository {
 	// CRUD
 
 	public Optional<Visitor> find(String ipAddress) {
-		return jdbcTemplate.query(FIND, params("ipAddress", ipAddress), rs ->
-			rs.next() ? Optional.of(mapVisitor(ipAddress, rs)) : Optional.<Visitor>empty()
-		);
+		return jdbcTemplate.query(FIND, params("ipAddress", ipAddress),
+			(rs, rowNum) -> mapVisitor(ipAddress, rs)
+		).stream().findFirst();
 	}
 
 	public List<Visitor> findAll() {
