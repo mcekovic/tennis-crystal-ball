@@ -34,12 +34,14 @@ public class VisitorManager {
 	@Value("${tennis-stats.visitors.cache-size:1000}")
 	private int cacheSize = 1000;
 
+	private LockManager<String> lockManager;
 	private LoadingCache<String, Optional<Visitor>> visitors;
 	private ScheduledExecutorService visitorExpirer;
 	private ScheduledFuture<?> visitorExpirerFuture;
 
 	@PostConstruct
 	public void init() {
+		lockManager = new LockManager<>();
 		visitors = CacheBuilder.newBuilder().maximumSize(cacheSize).build(
 			new CacheLoader<String, Optional<Visitor>>() {
 				public Optional<Visitor> load(String ipAddress) {
@@ -91,7 +93,7 @@ public class VisitorManager {
 	}
 
 	private Visitor doVisit(String ipAddress, Optional<Visitor> optionalVisitor) {
-		synchronized (optionalVisitor) {
+		return lockManager.withLock(ipAddress, () -> {
 			if (!optionalVisitor.isPresent()) {
 				Optional<Country> optionalCountry = geoIPService.getCountry(ipAddress);
 				String countryId = null;
@@ -104,8 +106,7 @@ public class VisitorManager {
 					countryName = country.getName();
 				}
 				Visitor visitor = repository.create(ipAddress, countryId, countryName);
-				optionalVisitor = Optional.of(visitor);
-				visitors.put(ipAddress, optionalVisitor);
+				visitors.put(ipAddress, Optional.of(visitor));
 				return visitor;
 			}
 			else {
@@ -119,7 +120,7 @@ public class VisitorManager {
 					visitor.setDirty();
 				return visitor;
 			}
-		}
+		});
 	}
 
 	private void expire() {
