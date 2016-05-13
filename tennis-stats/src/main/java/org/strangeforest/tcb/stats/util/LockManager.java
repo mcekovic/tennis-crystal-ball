@@ -1,17 +1,17 @@
 package org.strangeforest.tcb.stats.util;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
-import java.util.function.*;
 
 public class LockManager<T> {
 
 	private final Map<T, EntryLock> locks = new HashMap<>();
 
-	public <R> R withLock(T key, Supplier<R> callback) {
+	public <R> R withLock(T key, Callable<R> callback) throws Exception {
 		getLock(key).lock();
 		try {
-			return callback.get();
+			return callback.call();
 		}
 		finally {
 			unlock(key);
@@ -41,11 +41,11 @@ public class LockManager<T> {
 
 		private int refCount;
 
-		public void incRefCount() {
+		void incRefCount() {
 			++refCount;
 		}
 
-		public int decRefCount() {
+		int decRefCount() {
 			return --refCount;
 		}
 	}

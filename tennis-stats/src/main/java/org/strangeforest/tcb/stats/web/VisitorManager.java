@@ -84,16 +84,19 @@ public class VisitorManager {
 
 	public Visitor visit(String ipAddress) {
 		try {
-			return doVisit(ipAddress, visitors.get(ipAddress));
+			return doVisit(ipAddress);
 		}
 		catch (ExecutionException ex) {
-			Throwable cause = ex.getCause();
-			throw new TennisStatsException("Error tracking visit.", cause != null ? cause : null);
+			throw new TennisStatsException("Error tracking visit.", Optional.ofNullable(ex.getCause()).orElse(ex));
+		}
+		catch (Exception ex) {
+			throw new TennisStatsException("Error tracking visit.", ex);
 		}
 	}
 
-	private Visitor doVisit(String ipAddress, Optional<Visitor> optionalVisitor) {
+	private Visitor doVisit(String ipAddress) throws Exception {
 		return lockManager.withLock(ipAddress, () -> {
+			Optional<Visitor> optionalVisitor = visitors.get(ipAddress);
 			if (!optionalVisitor.isPresent()) {
 				Optional<Country> optionalCountry = geoIPService.getCountry(ipAddress);
 				String countryId = null;
