@@ -19,7 +19,7 @@ public class VisitorRepository {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String FIND = "SELECT visitor_id, country_id, country, hits, last_hit FROM visitor WHERE ip_address = :ipAddress AND active ORDER BY last_hit DESC";
-	private static final String FIND_ALL = "SELECT visitor_id, country_id, country, ip_address, hits, last_hit FROM visitor WHERE active";
+	private static final String FIND_ALL = "SELECT max(visitor_id) AS visitor_id, country_id, country, ip_address, sum(hits) AS hits, max(last_hit) AS last_hit FROM visitor WHERE active GROUP by country_id, country, ip_address";
 	private static final String CREATE = "INSERT INTO visitor (ip_address, country_id, country, hits, last_hit) VALUES (:ipAddress, :countryId, :country, :hits, :lastHit)";
 	private static final String SAVE = "UPDATE visitor SET hits = :hits, last_hit = :lastHit%1$s WHERE visitor_id = :visitorId";
 	private static final String STATS_QUERY = "SELECT country, %1$s AS value FROM visitor WHERE last_hit >= now() - INTERVAL '%2$s' GROUP BY country";
