@@ -5,13 +5,13 @@ buildscript {
 		jcenter()
 	}
 	dependencies {
-		classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
-		classpath 'org.ajoberstar:gradle-git:1.4.2'
+		classpath "com.github.ben-manes:gradle-versions-plugin:$gradleVersionsVersion"
+		classpath "org.ajoberstar:gradle-git:$gradleGitVersion"
 	}
 }
 
 allprojects {
-	version = '0.9-SNAPSHOT'
+	version = "$projectVersion"
 
 	buildscript {
 		repositories {
@@ -30,7 +30,7 @@ ext {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '2.13'
+	gradleVersion = "$gradleVersion"
 }
 
 def releaseVersion(version) {

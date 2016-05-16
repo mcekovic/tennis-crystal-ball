@@ -1,11 +1,8 @@
 buildscript {
-	ext {
-		springBootVersion = '1.3.5.RELEASE'
-	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-		classpath 'io.spring.gradle:dependency-management-plugin:0.5.6.RELEASE'
-		classpath 'org.hidetake:gradle-ssh-plugin:2.1.0'
+		classpath "io.spring.gradle:dependency-management-plugin:$springDependencyManagementVersion"
+		classpath "org.hidetake:gradle-ssh-plugin:$gradleSshVersion"
 	}
 }
 
@@ -30,7 +27,7 @@ sourceSets {
 processResources {
 	filesMatching('application.properties') {
 		filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
-			'info.app.version': project.property('version') + '-' + git.head().abbreviatedId
+			'info.app.version': (project.property('version') + '-' + git.head().abbreviatedId).toString()
 		]
 	}
 }
@@ -46,27 +43,25 @@ dependencies {
 	compile ('org.springframework.boot:spring-boot-starter-logging')
 	compile ('org.springframework.boot:spring-boot-starter-actuator')
 	compile ('org.springframework:spring-context-support')
-	compile ('com.google.guava:guava:19.0')
-	compile ('org.postgresql:postgresql:9.4.1208')
-	def jacksonVersion = '2.7.3'
+	compile ("com.google.guava:guava:$guavaVersion")
+	compile ("org.postgresql:postgresql:$postgresqlJdbcVersion")
 	compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-	compile ('org.webjars:bootstrap:3.3.6')
-	compile ('org.webjars:jquery:2.2.3')
-	def jQueryUIVersion = '1.11.4'
-	compile ('org.webjars:jquery-ui:' + jQueryUIVersion)
-	compile ('org.webjars:jquery-ui-themes:' + jQueryUIVersion)
-	compile ('org.webjars.bower:jquery-bootgrid:1.3.1') {
+	compile ("org.webjars:bootstrap:$bootstrapVersion")
+	compile ("org.webjars:jquery:$jQueryVersion")
+	compile ("org.webjars:jquery-ui:$jQueryUIVersion")
+	compile ("org.webjars:jquery-ui-themes:$jQueryUIVersion")
+	compile ("org.webjars.bower:jquery-bootgrid:$jQueryBootgridVersion") {
 		exclude group: 'org.webjars.bower'
 	}
-	compile ('com.maxmind.geoip2:geoip2:2.6.0') {
+	compile ("com.maxmind.geoip2:geoip2:$geoip2Version") {
 		exclude group: 'com.google.http-client'
 	}
 	compile files('lib/GeoLite2-Country.zip')
-	testCompile ('junit:junit:4.12')
-	testCompile ('org.assertj:assertj-core:3.4.1')
-	testCompile ('org.mockito:mockito-all:1.10.19')
+	testCompile ("junit:junit:$junitVersion")
+	testCompile ("org.assertj:assertj-core:$assertjCoreVersion")
+	testCompile ("org.mockito:mockito-all:$mockitoAllVersion")
 	testCompile ('org.springframework:spring-test')
 	integrationTestCompile sourceSets.main.output
 	integrationTestCompile sourceSets.test.output

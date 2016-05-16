@@ -1,20 +1,27 @@
-plugins {
-	id "org.flywaydb.flyway" version "4.0"
+buildscript {
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2"
+		}
+	}
+	dependencies {
+		classpath "gradle.plugin.com.boxfuse.client:flyway-release:$flywayVersion"
+	}
 }
 
 apply plugin: 'java'
+apply plugin: 'org.flywaydb.flyway'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-	compile ('com.neovisionaries:nv-i18n:1.18')
-	runtime ('org.postgresql:postgresql:9.4.1208')
-	testCompile ('junit:junit:4.12')
+	compile ("com.neovisionaries:nv-i18n:$nvi18nVersion")
+	runtime ("org.postgresql:postgresql:$postgresqlJdbcVersion")
+	testCompile ("junit:junit:$junitVersion")
 }
 
 flyway {
-//	driver = 'org.postgresql.Driver'
 	url = 'jdbc:postgresql://localhost:5432/postgres'
 	user = 'tcb'
 	password = 'tcb'
