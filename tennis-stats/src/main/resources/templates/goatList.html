@@ -25,6 +25,12 @@
 					cache: false
 				},
 				url: "/goatTable",
+				requestHandler: function (request) {
+					var active = $("#activePlayers").prop("checked");
+					if (active)
+						request.active = active;
+					return request;
+				},
 				rowCount: [10, 20, 50, -1],
 				searchSettings: {
 					delay: 300,
@@ -69,6 +75,7 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
+			$("#goatTable-header").find("div.search").before($("#activePlayersDiv").remove());
 			setBootgridTitles($goatTable, [
 				{id: "goatRank", title: "GOAT rank"},
 				{id: "goatPoints", title: "GOAT points"},
@@ -83,8 +90,12 @@
 				{id: "titles", title: "Titles"},
 				{id: "bestEloRating", title: "Highest Elo rating"}
 			]);
-			$("[data-toggle=collapse]").click(collapseClick);
+			$("[data-toggle='collapse']").click(collapseClick);
+			$("[data-toggle='tooltip']").tooltip();
 		});
+		function reloadGOATTable() {
+			$("#goatTable").bootgrid("reload");
+		}
 		/*]]>*/
 	</script>
 </head>
@@ -95,7 +106,7 @@
 		<thead>
 		<tr>
 			<th data-column-id="goatRank" data-type="numeric" data-sortable="false" data-width="45">Rank</th>
-			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="120">Name</th>
+			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="130">Name</th>
 			<th data-column-id="goatPoints" data-type="numeric" data-order="desc" data-width="80" data-align="right" data-header-align="right">GOAT Points</th>
 			<th data-column-id="tournamentGoatPoints" data-type="numeric" data-order="desc" data-width="70" data-align="right" data-header-align="right">Tourn. Pts.</th>
 			<th data-column-id="rankingGoatPoints" data-formatter="rankingGoatPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right">Rank. Pts.</th>
@@ -110,6 +121,13 @@
 		</tr>
 		</thead>
 	</table>
+	<div id="activePlayersDiv" class="btn-group" style="margin-right: 20px">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
+				<input id="activePlayers" type="checkbox" onchange="reloadGOATTable()"/> Active players
+			</label>
+		</div>
+	</div>
 	<br/>
 	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend</button>
 	<div id="goatLegend" class="collapse">Loading...</div>

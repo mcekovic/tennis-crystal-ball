@@ -33,12 +33,13 @@ public class GOATListResource {
 
 	@RequestMapping("/goatTable")
 	public BootgridTable<GOATListRow> goatTable(
+		@RequestParam(value = "active", required = false) Boolean active,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam(value = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		PlayerListFilter filter = new PlayerListFilter(searchPhrase);
+		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);
 		int playerCount = goatListService.getPlayerCount(filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);

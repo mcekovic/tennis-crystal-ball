@@ -129,7 +129,7 @@ public class RankingsService {
 					int playerId = rs.getInt("player_id");
 					String name = rs.getString("name");
 					String countryId = rs.getString("country_id");
-					boolean active = allTimeElo && rs.getBoolean("active");
+					Boolean active = allTimeElo ? rs.getBoolean("active") : null;
 					int points = rs.getInt("points");
 					int bestRank = rs.getInt("best_rank");
 					Date bestRankDate = rs.getDate("best_rank_date");

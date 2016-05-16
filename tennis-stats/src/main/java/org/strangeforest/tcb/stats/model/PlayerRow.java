@@ -9,9 +9,9 @@ public abstract class PlayerRow {
 	private final String name;
 	private final String countryId;
 	private final String countryCode;
-	private final boolean active;
+	private final Boolean active;
 
-	protected PlayerRow(int rank, int playerId, String name, String countryId, boolean active) {
+	protected PlayerRow(int rank, int playerId, String name, String countryId, Boolean active) {
 		this.rank = rank;
 		this.playerId = playerId;
 		this.name = name;
@@ -40,7 +40,7 @@ public abstract class PlayerRow {
 		return countryCode;
 	}
 
-	public boolean isActive() {
+	public Boolean getActive() {
 		return active;
 	}
 }

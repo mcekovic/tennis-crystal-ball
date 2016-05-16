@@ -56,7 +56,7 @@ public class GOATListService {
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
-				boolean active = rs.getBoolean("active");
+				Boolean active = !filter.hasActive() ? rs.getBoolean("active") : null;
 				int goatPoints = rs.getInt("goat_points");
 				int tournamentGoatPoints = rs.getInt("tournament_goat_points");
 				int rankingGoatPoints = rs.getInt("ranking_goat_points");

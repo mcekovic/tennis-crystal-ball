@@ -17,7 +17,7 @@ public class GOATListRow extends PlayerRow {
 	private int bestEloRating;
 	private Date bestEloRatingDate;
 
-	public GOATListRow(int goatRank, int playerId, String name, String countryId, boolean active, int goatPoints, int tournamentGoatPoints, int rankingGoatPoints, int achievementsGoatPoints) {
+	public GOATListRow(int goatRank, int playerId, String name, String countryId, Boolean active, int goatPoints, int tournamentGoatPoints, int rankingGoatPoints, int achievementsGoatPoints) {
 		super(goatRank, playerId, name, countryId, active);
 		this.goatPoints = goatPoints;
 		this.tournamentGoatPoints = tournamentGoatPoints;
