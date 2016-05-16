@@ -9,7 +9,8 @@ SET active = exists(
 
 UPDATE player
 SET active = FALSE
-WHERE first_name = 'Lleyton' AND last_name = 'Hewitt';
+WHERE (first_name = 'Lleyton' AND last_name = 'Hewitt')
+OR (first_name = 'Mardy' AND last_name = 'Fish');
 
 COMMIT;
 
