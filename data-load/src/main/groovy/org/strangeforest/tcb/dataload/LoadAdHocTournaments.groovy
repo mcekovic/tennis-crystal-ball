@@ -26,5 +26,6 @@ matchLoader.load(fetchTournament(2016, 'Munich', 308))
 matchLoader.load(fetchTournament(2016, 'Estoril', 7290))
 matchLoader.load(fetchTournament(2016, 'Istanbul', 7163))
 matchLoader.load(fetchTournament(2016, 'Madrid', 1536))
+matchLoader.load(fetchTournament(2016, 'Rome_Masters', 416))
 
 //ATPTennisLoader.loadAdditionalTournament(sqlPool, 'classpath:/tournaments/2016-indian-wells.xml')
