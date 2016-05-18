@@ -157,7 +157,7 @@ public class StatsLeadersService {
 			minEntries /= MIN_ENTRIES_EVENT_FACTOR;
 		else if (filter.hasTournament())
 			minEntries /= getMinEntriesTournamentFactor(tournamentService.getTournamentEventCount(filter.getTournamentId()));
-		return minEntries;
+		return Math.max(minEntries, 1);
 	}
 
 	private int getMinEntriesTournamentFactor(int eventCount) {

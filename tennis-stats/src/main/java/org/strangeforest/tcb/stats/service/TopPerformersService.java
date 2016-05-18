@@ -106,6 +106,6 @@ public class TopPerformersService {
 			if (filter.getSeason() == today.getYear() && today.getMonth().compareTo(Month.SEPTEMBER) <= 0)
 				minEntries /= 12.0 / today.getMonth().getValue();
 		}
-		return minEntries;
+		return Math.max( minEntries, 1);
 	}
 }
