@@ -1,5 +1,3 @@
-apply plugin: 'com.github.ben-manes.versions'
-
 buildscript {
 	repositories {
 		jcenter()
@@ -9,6 +7,8 @@ buildscript {
 		classpath "org.ajoberstar:gradle-git:$gradleGitVersion"
 	}
 }
+
+apply plugin: 'com.github.ben-manes.versions'
 
 allprojects {
 	version = "$projectVersion"
