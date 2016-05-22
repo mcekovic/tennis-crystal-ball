@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import org.strangeforest.tcb.util.LockManager
+
 import java.time.temporal.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
@@ -11,13 +13,13 @@ import static org.strangeforest.tcb.util.DateUtil.*
 
 class EloRatings {
 
-	private SqlPool sqlPool
+	private final SqlPool sqlPool
+	private final LockManager<Integer> lockManager
 	private Map<Integer, EloRating> playerRatings
-	private int matches
 	private Date lastDate
 	private AtomicInteger saves
 	private AtomicInteger progress
-	private Executor saveExecutor
+	private ExecutorService workerExecutor, saveExecutor
 	private Date saveFromDate
 
 	private static final String QUERY_MATCHES = //language=SQL
@@ -26,7 +28,7 @@ class EloRatings {
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
 		"AND (m.outcome IS NULL OR m.outcome <> 'ABD')\n" +
-		"ORDER BY end_date, m.match_num"
+		"ORDER BY end_date, m.round, m.winner_id, m.match_num"
 
 	private static final String QUERY_LAST_DATE = //language=SQL
 		"SELECT max(rank_date) AS last_date FROM player_elo_ranking"
@@ -38,6 +40,8 @@ class EloRatings {
 		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating)}"
 
 	private static final int MIN_MATCHES = 10
+
+	private static final double WRITE_READ_RATIO = 2.0
 	private static final int MATCHES_PER_DOT = 1000
 	private static final int SAVES_PER_PLUS = 20
 	private static final int PROGRESS_LINE_WRAP = 100
@@ -48,18 +52,26 @@ class EloRatings {
 
 	EloRatings(SqlPool sqlPool) {
 		this.sqlPool = sqlPool
+		lockManager = new LockManager<>()
 	}
 
 	def compute(save = false, deltaSave = false, saveFromDate = null) {
 		println 'Processing matches'
 		def t0 = System.currentTimeMillis()
+		int matches = 0
+		List<Future> matchFutures = new ArrayList<>()
 		playerRatings = [:]
-		matches = 0
 		lastDate = null
 		saves = new AtomicInteger()
 		progress = new AtomicInteger()
+		def remainingPoolSize = sqlPool.size() - 1
+		int saveThreads = save ? remainingPoolSize * WRITE_READ_RATIO / (1 + WRITE_READ_RATIO) : 0
+		int workerThreads = max(remainingPoolSize - saveThreads, 1)
+		println "Using $workerThreads worker threads"
+		workerExecutor = Executors.newFixedThreadPool(workerThreads)
 		if (save) {
-			saveExecutor = Executors.newFixedThreadPool((int)((sqlPool.size() + 1) / 2))
+			saveExecutor = Executors.newFixedThreadPool(saveThreads)
+			println "Using $saveThreads saving threads"
 			if (deltaSave && !saveFromDate) {
 				sqlPool.withSql { sql ->
 					saveFromDate = sql.firstRow(QUERY_LAST_DATE).last_date
@@ -69,10 +81,30 @@ class EloRatings {
 		}
 		sqlPool.withSql { sql ->
 			try {
-				sql.eachRow(QUERY_MATCHES) { match -> processMatch(match) }
+				sql.eachRow(QUERY_MATCHES) { match ->
+					def date = match.end_date
+					if (date != lastDate) {
+						waitForAllMatchesToComplete(matchFutures)
+						saveCurrentRatings()
+					}
+					def winnerId = match.winner_id
+					def loserId = match.loser_id
+					def level = match.level
+					def round = match.round
+					def bestOf = match.best_of
+					def outcome = match.outcome
+					matchFutures.add workerExecutor.submit {
+						processMatch(date, winnerId, loserId, level, round, bestOf, outcome)
+					}
+					lastDate = date
+					if (++matches % MATCHES_PER_DOT == 0)
+						progressTick '.'
+				}
+				waitForAllMatchesToComplete(matchFutures)
 				saveCurrentRatings()
 			}
 			finally {
+				workerExecutor.shutdownNow()
 				saveExecutor?.shutdown()
 				saveExecutor?.awaitTermination(1L, TimeUnit.DAYS)
 			}
@@ -80,6 +112,11 @@ class EloRatings {
 		def seconds = (System.currentTimeMillis() - t0) / 1000.0
 		println "\nElo Ratings computed in $seconds s"
 		playerRatings
+	}
+
+	static def waitForAllMatchesToComplete(def matchFutures) {
+		matchFutures.forEach { it -> it.get() }
+		matchFutures.clear()
 	}
 
 	def current(int count, Date date = new Date()) {
@@ -97,44 +134,46 @@ class EloRatings {
 			.findAll { ++i <= count }
 	}
 
-	def processMatch(match) {
-		Date date = match.end_date
-		if (date != lastDate)
-			saveCurrentRatings()
+	def processMatch(date, winnerId, loserId, level, round, bestOf, outcome) {
+		lockManager.withLock(min(winnerId, loserId)) {
+			lockManager.withLock(max(winnerId, loserId)) {
+				def winnerRating = getRating(winnerId)
+				def loserRating = getRating(loserId)
 
-		int winnerId = match.winner_id
-		int loserId = match.loser_id
+				double winnerQ = pow(10, winnerRating.rating / 400)
+				double loserQ = pow(10, loserRating.rating / 400)
+				double loserExpectedScore = loserQ / (winnerQ + loserQ)
 
-		def winnerRating = getRating(winnerId)
-		def loserRating = getRating(loserId)
+				double deltaRating = kFactor(level, round, bestOf, outcome) * loserExpectedScore
 
-		double winnerQ = pow(10, winnerRating.rating / 400)
-		double loserQ = pow(10, loserRating.rating / 400)
-		double loserExpectedScore = loserQ / (winnerQ + loserQ)
-
-		double deltaRating = kFactor(match) * loserExpectedScore
-		playerRatings.put(winnerId, winnerRating.newRating(deltaRating, date))
-		playerRatings.put(loserId, loserRating.newRating(-deltaRating, date))
-
-		lastDate = date
-		if (++matches % MATCHES_PER_DOT == 0)
-			progressTick '.'
+				playerRatings.put(winnerId, winnerRating.newRating(deltaRating, date))
+				playerRatings.put(loserId, loserRating.newRating(-deltaRating, date))
+			}
+		}
 	}
 
 	private EloRating getRating(int playerId) {
 		playerRatings.get(playerId) ?: new EloRating(playerRank(playerId, lastDate))
 	}
 
-	static double kFactor(match) {
+	private Integer playerRank(int playerId, Date date) {
+		Integer playerRank
+		sqlPool.withSql { sql ->
+			sql.call(QUERY_PLAYER_RANK, [Sql.INTEGER, playerId, date]) { rank -> playerRank = rank }
+		}
+		playerRank
+	}
+
+	static double kFactor(level, round, bestOf, outcome) {
 		double kFactor = 100
-		switch (match.level) {
+		switch (level) {
 			case 'G': break
 			case 'F': kFactor *= 0.9; break
 			case 'M': kFactor *= 0.8; break
 			case 'A': kFactor *= 0.7; break
 			default: kFactor *= 0.6; break
 		}
-		switch (match.round) {
+		switch (round) {
 			case 'F': break
 			case 'BR': kFactor *= 0.975; break
 			case 'SF': kFactor *= 0.95; break
@@ -145,8 +184,8 @@ class EloRatings {
 			case 'R128': kFactor *= 0.70; break
 			case 'RR': kFactor *= 0.90; break
 		}
-		if (match.best_of < 5) kFactor *= 0.9
-		if (match.outcome == 'W/O') kFactor *= 0.5
+		if (bestOf < 5) kFactor *= 0.9
+		if (outcome == 'W/O') kFactor *= 0.5
 		kFactor
 	}
 
@@ -257,14 +296,6 @@ class EloRatings {
 		}
 	}
 
-
-	Integer playerRank(int playerId, Date date) {
-		Integer playerRank
-		sqlPool.withSql { sql ->
-			sql.call(QUERY_PLAYER_RANK, [Sql.INTEGER, playerId, date]) { rank -> playerRank = rank }
-		}
-		playerRank
-	}
 
 	def saveCurrentRatings() {
 		if (saveExecutor && playerRatings && (!saveFromDate || lastDate >= saveFromDate)) {
