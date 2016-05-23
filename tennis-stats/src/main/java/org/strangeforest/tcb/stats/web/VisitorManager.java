@@ -43,13 +43,10 @@ public class VisitorManager {
 	@PostConstruct
 	public void init() {
 		lockManager = new LockManager<>();
-		visitors = CacheBuilder.newBuilder().maximumSize(cacheSize).build(
-			new CacheLoader<String, Optional<Visitor>>() {
-				public Optional<Visitor> load(String ipAddress) {
-					return repository.find(ipAddress);
-				}
-			}
-		);
+		visitors = CacheBuilder.newBuilder()
+			.maximumSize(cacheSize)
+			.removalListener(this::visitorRemoved)
+			.build(new VisitorCacheLoader());
 		visitors.putAll(repository.findAll().stream().collect(toMap(Visitor::getIpAddress, Optional::of)));
 		visitorExpirer = Executors.newSingleThreadScheduledExecutor();
 		long period = expiryCheckPeriod.getSeconds();
@@ -73,8 +70,8 @@ public class VisitorManager {
 				}
 			}
 			finally {
+				repository.saveAll(cachedVisitorStream().filter(Visitor::isDirty).collect(toList()));
 				expire();
-				repository.saveAll(visitorStream().filter(Visitor::isDirty).collect(toList()));
 			}
 		}
 		finally {
@@ -135,11 +132,29 @@ public class VisitorManager {
 	}
 
 	private Stream<Visitor> visitorStream() {
+		return repository.findAll().stream();
+	}
+
+	private Stream<Visitor> cachedVisitorStream() {
 		return visitors.asMap().values().stream().map(Optional::get);
 	}
 
 	void clearCache() {
 		if (visitors != null)
 			visitors.invalidateAll();
+	}
+
+	private class VisitorCacheLoader extends CacheLoader<String, Optional<Visitor>> {
+		public Optional<Visitor> load(String ipAddress) {
+			return repository.find(ipAddress);
+		}
+	}
+
+	private void visitorRemoved(RemovalNotification<String, Optional<Visitor>> notification) {
+		if (notification.wasEvicted()) {
+			Optional<Visitor> optionalVisitor = notification.getValue();
+			if (optionalVisitor != null && optionalVisitor.isPresent())
+				repository.save(optionalVisitor.get());
+		}
 	}
 }

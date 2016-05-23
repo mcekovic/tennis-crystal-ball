@@ -6,6 +6,7 @@ import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.runners.*;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.*;
@@ -25,11 +26,13 @@ public class VisitorManagerTimedIT extends BaseVisitorManagerTest {
 	public void whenVisitorIsExpiredVisitBySameIPAddressCreatesNewVisitor() throws InterruptedException {
 		String ipAddress = "192.168.1.1";
 
-		visitAndVerifyFirstVisit(ipAddress);
+		Visitor visitor = visitAndVerifyFirstVisit(ipAddress);
 
-		Thread.sleep(3000L);
+		when(repository.findAll()).thenReturn(asList(visitor));
+		Thread.sleep(2000L);
 
-		verify(repository).expire(visitorCaptor.capture());
+		verify(repository, atLeast(1)).findAll();
+		verify(repository, atLeast(1)).expire(visitorCaptor.capture());
 		assertThat(visitorCaptor.getValue().getIpAddress()).isEqualTo(ipAddress);
 
 		visitAndVerifyFirstVisit(ipAddress, times(2));

@@ -33,11 +33,11 @@ public abstract class BaseVisitorManagerTest {
 		verifyNoMoreInteractions(geoIPService);
 	}
 
-	protected void visitAndVerifyFirstVisit(String ipAddress) {
-		visitAndVerifyFirstVisit(ipAddress, times(1));
+	protected Visitor visitAndVerifyFirstVisit(String ipAddress) {
+		return visitAndVerifyFirstVisit(ipAddress, times(1));
 	}
 
-	protected void visitAndVerifyFirstVisit(String ipAddress, VerificationMode mode) {
+	protected Visitor visitAndVerifyFirstVisit(String ipAddress, VerificationMode mode) {
 		when(repository.find(ipAddress)).thenReturn(Optional.empty());
 		when(repository.create(any(), any(), any())).thenAnswer(invocation -> {
 			Object[] args = invocation.getArguments();
@@ -54,5 +54,7 @@ public abstract class BaseVisitorManagerTest {
 		verifyNoMoreInteractions(repository);
 		verify(geoIPService, mode).getCountry(ipAddress);
 		verifyNoMoreInteractions(geoIPService);
+
+		return visitor;
 	}
 }

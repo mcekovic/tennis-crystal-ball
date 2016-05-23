@@ -72,6 +72,7 @@ public class VisitorManagerTest extends BaseVisitorManagerTest {
 		manager.destroy();
 
 		verify(repository).saveAll(visitorsCaptor.capture());
+		verify(repository).findAll();
 		Collection<Visitor> visitors = visitorsCaptor.getValue();
 		assertThat(visitors).hasSize(1);
 		assertThat(visitors).extracting(Visitor::getIpAddress).containsExactly(ipAddress1);
