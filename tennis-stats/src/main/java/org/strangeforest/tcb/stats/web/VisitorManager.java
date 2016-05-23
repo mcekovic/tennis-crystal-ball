@@ -116,7 +116,7 @@ public class VisitorManager {
 			else {
 				Visitor visitor = optionalVisitor.get();
 				int hits = visitor.visit();
-				if (saveEveryHitCount > 0 && hits % saveEveryHitCount == 0) {
+				if (saveEveryHitCount > 0 && (hits % saveEveryHitCount == 0)) {
 					repository.save(visitor);
 					visitor.clearDirty();
 				}

@@ -94,11 +94,13 @@ public class VisitorRepositoryIT {
 	public void visitorIsExpired() {
 		String ipAddress = "192.168.1.1";
 		Visitor visitor = repository.create(ipAddress, "SRB", "Serbia");
+		Optional<Visitor> optionalVisitor = repository.find(ipAddress);
+		assertThat(optionalVisitor).isNotEmpty();
 
 		repository.expire(visitor);
 
-		Optional<Visitor> optionalVisitor = repository.find(ipAddress);
-		assertThat(optionalVisitor).isEmpty();
+		Optional<Visitor> optionalExpiredVisitor = repository.find(ipAddress);
+		assertThat(optionalExpiredVisitor).isEmpty();
 	}
 
 	private int getExistingVisitors() {
