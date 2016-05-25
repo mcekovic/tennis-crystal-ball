@@ -17,7 +17,7 @@ class EloRatings {
 	private final LockManager<Integer> lockManager
 	private final Map<Integer, CompletableFuture> playerMatchFutures
 	private Map<Integer, EloRating> playerRatings
-	private Date lastDate
+	private volatile Date lastDate
 	private AtomicInteger saves
 	private AtomicInteger progress
 	private ExecutorService rankExecutor, saveExecutor
@@ -84,7 +84,7 @@ class EloRatings {
 			try {
 				sql.eachRow(QUERY_MATCHES) { match ->
 					def date = match.end_date
-					if (date != lastDate) {
+					if (lastDate && date != lastDate) {
 						waitForAllMatchesToComplete()
 						saveCurrentRatings()
 					}
@@ -130,8 +130,8 @@ class EloRatings {
 	def processMatch(match) {
 		int winnerId = match.winner_id
 		int loserId = match.loser_id
-		int playerId1 = min(winnerId, loserId)
-		int playerId2 = max(winnerId, loserId)
+		def playerId1 = min(winnerId, loserId)
+		def playerId2 = max(winnerId, loserId)
 		lockManager.withLock(playerId1) {
 			lockManager.withLock(playerId2) {
 				def winnerRating = playerRatings.get(winnerId)
@@ -149,8 +149,8 @@ class EloRatings {
 					Runnable closure = {
 						lockManager.withLock(playerId1) {
 							lockManager.withLock(playerId2) {
-								winnerRating = winnerRating ?: (playerRatings.get(winnerId) ?: new EloRating(playerRank(winnerId, lastDate)))
-								loserRating = loserRating ?: (playerRatings.get(loserId) ?: new EloRating(playerRank(loserId, lastDate)))
+								winnerRating = playerRatings.get(winnerId) ?: new EloRating(playerRank(winnerId, lastDate))
+								loserRating = playerRatings.get(loserId) ?: new EloRating(playerRank(loserId, lastDate))
 								double deltaRating = deltaRating(winnerRating, loserRating, level, round, bestOf, outcome)
 								putNewRatings(winnerId, loserId, winnerRating, loserRating, deltaRating, date)
 							}
@@ -224,10 +224,10 @@ class EloRatings {
 
 	static class EloRating implements Comparable<EloRating> {
 
-		double rating
-		int matches
-		Date date
-		EloRating bestRating
+		volatile double rating
+		volatile int matches
+		volatile Date date
+		volatile EloRating bestRating
 
 		private static final START_RATING_TABLE = [
 			ratingPoint(1, 2365),
