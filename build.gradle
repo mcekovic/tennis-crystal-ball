@@ -4,6 +4,7 @@ buildscript {
 	}
 	dependencies {
 		classpath "com.github.ben-manes:gradle-versions-plugin:$gradleVersionsVersion"
+		classpath "org.hidetake:gradle-ssh-plugin:$gradleSshVersion"
 		classpath "org.ajoberstar:gradle-git:$gradleGitVersion"
 	}
 }
@@ -21,6 +22,17 @@ allprojects {
 
 	repositories {
 		mavenCentral()
+	}
+
+	apply plugin: 'org.hidetake.ssh'
+
+	remotes {
+		def home = System.properties['user.home']
+		openShift {
+			host = 'tennis-strangeforest.rhcloud.com'
+			user = '5637dc3a0c1e6656ae0001b2'
+			identity = file("${home}/.ssh/id_rsa")
+		}
 	}
 }
 

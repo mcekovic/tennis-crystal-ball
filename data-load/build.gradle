@@ -1,9 +1,48 @@
 apply plugin: 'groovy'
+apply plugin: 'application'
+
+mainClassName = 'org.strangeforest.tcb.dataload.Main'
+applicationDefaultJvmArgs = [
+	'-Dtcb.db.connections=21',
+	'-Dtcb.db.username=adminbnga3sx',
+	'-Dtcb.db.password=I1KZe338nRAX',
+	'-Dtcb.db.url=jdbc:postgresql://127.2.254.130:5432/tennis?prepareThreshold=0'
+]
 
 dependencies {
 	compile project(':crystal-ball')
 	compile ("org.codehaus.groovy:groovy-all:$groovyVersion")
 	compile ("com.xlson.groovycsv:groovycsv:$groovyCsvVersion")
 	runtime ("org.postgresql:postgresql:$postgresqlJdbcVersion")
+	runtime ("commons-cli:commons-cli:$commonsCliVersion")
 	testCompile ("junit:junit:$junitVersion")
+}
+
+task quickDeployToOpenShift << {
+	def version = project.property('version')
+	def dataLoad = "data-load-${version}"
+	def dataLoadJar = "${dataLoad}.jar"
+	def srcPath = 'build/libs'
+	def destPath = "app-root/data/${dataLoad}/lib"
+	ssh.run {
+		session(remotes.openShift) {
+			put "${srcPath}/${dataLoadJar}", destPath
+		}
+	}
+}
+
+task fullDeployToOpenShift << {
+	def version = project.property('version')
+	def dataLoad = "data-load-${version}"
+	def dataLoadDist = "${dataLoad}.tar"
+	def srcPath = 'build/distributions'
+	def destPath = 'app-root/data'
+	ssh.run {
+		session(remotes.openShift) {
+			put "${srcPath}/${dataLoadDist}", destPath
+			execute "rm -rf ${destPath}/${dataLoad}"
+			execute "cd ${destPath}; tar -xvf ${dataLoadDist}"
+			execute "rm ${destPath}/${dataLoadDist}"
+		}
+	}
 }

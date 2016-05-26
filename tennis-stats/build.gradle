@@ -2,7 +2,6 @@ buildscript {
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
 		classpath "io.spring.gradle:dependency-management-plugin:$springDependencyManagementVersion"
-		classpath "org.hidetake:gradle-ssh-plugin:$gradleSshVersion"
 	}
 }
 
@@ -10,7 +9,6 @@ apply plugin: 'java'
 apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'application'
-apply plugin: 'org.hidetake.ssh'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -72,15 +70,6 @@ dependencies {
 task integrationTest(type: Test) {
 	testClassesDir = sourceSets.integrationTest.output.classesDir
 	classpath = sourceSets.integrationTest.runtimeClasspath
-}
-
-remotes {
-	def home = System.properties['user.home']
-	openShift {
-		host = 'tennis-strangeforest.rhcloud.com'
-		user = '5637dc3a0c1e6656ae0001b2'
-		identity = file("${home}/.ssh/id_rsa")
-	}
 }
 
 task quickDeployToOpenShift << {

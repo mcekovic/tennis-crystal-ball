@@ -35,10 +35,13 @@ class EloRatings {
 		"SELECT max(rank_date) AS last_date FROM player_elo_ranking"
 
 	private static final String QUERY_PLAYER_RANK = //language=SQL
-		"{? = call player_rank(?, ?)}"
+		"SELECT player_rank(?, ?) AS rank"
 
 	private static final String MERGE_ELO_RANKING = //language=SQL
 		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating)}"
+
+	private static final String DELETE_ALL = //language=SQL
+		"DELETE FROM player_elo_ranking"
 
 	private static final int MIN_MATCHES = 10
 
@@ -59,7 +62,6 @@ class EloRatings {
 	}
 
 	def compute(save = false, deltaSave = false, saveFromDate = null) {
-		println 'Processing matches'
 		def t0 = System.currentTimeMillis()
 		int matches = 0
 		playerRatings = new ConcurrentHashMap<>()
@@ -77,13 +79,15 @@ class EloRatings {
 		if (save) {
 			saveExecutor = Executors.newFixedThreadPool(saveThreads)
 			println "Using $saveThreads saving threads"
-			if (deltaSave && !saveFromDate) {
-				sqlPool.withSql { sql ->
-					saveFromDate = sql.firstRow(QUERY_LAST_DATE).last_date
-				}
+			if (deltaSave) {
+				this.saveFromDate = saveFromDate ? saveFromDate : lastDate()
 			}
-			this.saveFromDate = saveFromDate
+			else {
+				println 'Deleting all Elo ratings'
+				deleteAll()
+			}
 		}
+		println 'Processing matches'
 		sqlPool.withSql { sql ->
 			try {
 				sql.eachRow(QUERY_MATCHES) { match ->
@@ -186,15 +190,6 @@ class EloRatings {
 	def putNewRatings(int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date) {
 		playerRatings.put(winnerId, winnerRating.newRating(deltaRating, date))
 		playerRatings.put(loserId, loserRating.newRating(-deltaRating, date))
-	}
-
-	def Integer playerRank(int playerId, Date date) {
-		Integer playerRank
-		sqlPool.withSql { sql ->
-			sql.call(QUERY_PLAYER_RANK, [Sql.INTEGER, playerId, date]) { rank -> playerRank = rank }
-		}
-		rankFetches.incrementAndGet()
-		playerRank
 	}
 
 	static double kFactor(level, round, bestOf, outcome) {
@@ -329,6 +324,25 @@ class EloRatings {
 		}
 	}
 
+
+	def Date lastDate() {
+		sqlPool.withSql { sql ->
+			sql.firstRow(QUERY_LAST_DATE).last_date
+		}
+	}
+
+	def deleteAll() {
+		sqlPool.withSql { sql ->
+			sql.execute(DELETE_ALL)
+		}
+	}
+
+	def Integer playerRank(int playerId, Date date) {
+		rankFetches.incrementAndGet()
+		sqlPool.withSql { Sql sql ->
+			sql.firstRow(QUERY_PLAYER_RANK, [playerId, date]).rank
+		}
+	}
 
 	def saveCurrentRatings() {
 		if (saveExecutor && playerRatings && (!saveFromDate || lastDate >= saveFromDate)) {
