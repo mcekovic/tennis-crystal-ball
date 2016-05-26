@@ -18,6 +18,22 @@ public class LockManager<T> {
 		}
 	}
 
+	public <R> R withLock(T key1, T key2, Callable<R> callback) throws Exception {
+		getLock(key1).lock();
+		try {
+			getLock(key2).lock();
+			try {
+				return callback.call();
+			}
+			finally {
+				unlock(key2);
+			}
+		}
+		finally {
+			unlock(key1);
+		}
+	}
+
 	private synchronized EntryLock getLock(T key) {
 		EntryLock lock = locks.get(key);
 		if (lock == null) {

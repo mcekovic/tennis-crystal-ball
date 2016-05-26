@@ -18,7 +18,7 @@ class EloRatings {
 	private final Map<Integer, CompletableFuture> playerMatchFutures
 	private Map<Integer, EloRating> playerRatings
 	private volatile Date lastDate
-	private AtomicInteger saves
+	private AtomicInteger saves, rankFetches
 	private AtomicInteger progress
 	private ExecutorService rankExecutor, saveExecutor
 	private Date saveFromDate
@@ -42,14 +42,15 @@ class EloRatings {
 
 	private static final int MIN_MATCHES = 10
 
-	private static final double SAVE_RANK_RATIO = 4.0
+	private static final double SAVE_RANK_RATIO = 1.0
 	private static final int MATCHES_PER_DOT = 1000
 	private static final int SAVES_PER_PLUS = 20
 	private static final int PROGRESS_LINE_WRAP = 100
 	private static final int PLAYERS_TO_SAVE = 200
 
-	private static def comparator = { a, b -> b.value <=> a.value }
-	private static def bestComparator = { a, b -> b.value.bestRating <=> a.value.bestRating }
+	private static final def comparator = { a, b -> b.value <=> a.value }
+	private static final def bestComparator = { a, b -> b.value.bestRating <=> a.value.bestRating }
+	private static final def nullFuture = CompletableFuture.completedFuture(null)
 
 	EloRatings(SqlPool sqlPool) {
 		this.sqlPool = sqlPool
@@ -64,12 +65,15 @@ class EloRatings {
 		playerRatings = new ConcurrentHashMap<>()
 		lastDate = null
 		saves = new AtomicInteger()
+		rankFetches = new AtomicInteger()
 		progress = new AtomicInteger()
 		def remainingPoolSize = sqlPool.size() - 1
 		int saveThreads = save ? (SAVE_RANK_RATIO ? remainingPoolSize * SAVE_RANK_RATIO / (1 + SAVE_RANK_RATIO) : remainingPoolSize) : 0
 		int rankThreads = SAVE_RANK_RATIO ? remainingPoolSize - saveThreads : 0
-		println "Using $rankThreads rank threads"
-		rankExecutor = rankThreads ? Executors.newFixedThreadPool(rankThreads) : null
+		if (rankThreads) {
+			println "Using $rankThreads rank threads"
+			rankExecutor = Executors.newFixedThreadPool(rankThreads)
+		}
 		if (save) {
 			saveExecutor = Executors.newFixedThreadPool(saveThreads)
 			println "Using $saveThreads saving threads"
@@ -104,6 +108,9 @@ class EloRatings {
 		}
 		def seconds = (System.currentTimeMillis() - t0) / 1000.0
 		println "\nElo Ratings computed in $seconds s"
+		println "Rank fetches: $rankFetches"
+		if (save)
+			println "Saves: $saves"
 		playerRatings
 	}
 
@@ -132,46 +139,38 @@ class EloRatings {
 		int loserId = match.loser_id
 		def playerId1 = min(winnerId, loserId)
 		def playerId2 = max(winnerId, loserId)
-		lockManager.withLock(playerId1) {
-			lockManager.withLock(playerId2) {
-				def winnerRating = playerRatings.get(winnerId)
-				def loserRating = playerRatings.get(loserId)
-				String level = match.level
-				String round = match.round
-				short bestOf = match.best_of
-				String outcome = match.outcome
-				Date date = match.end_date
-				if (winnerRating && loserRating) {
-					double deltaRating = deltaRating(winnerRating, loserRating, level, round, bestOf, outcome)
-					putNewRatings(winnerId, loserId, winnerRating, loserRating, deltaRating, date)
-				}
-				else if (rankExecutor) {
-					Runnable closure = {
-						lockManager.withLock(playerId1) {
-							lockManager.withLock(playerId2) {
-								winnerRating = playerRatings.get(winnerId) ?: new EloRating(playerRank(winnerId, lastDate))
-								loserRating = playerRatings.get(loserId) ?: new EloRating(playerRank(loserId, lastDate))
-								double deltaRating = deltaRating(winnerRating, loserRating, level, round, bestOf, outcome)
-								putNewRatings(winnerId, loserId, winnerRating, loserRating, deltaRating, date)
-							}
-						}
-					}
-					CompletableFuture matchFuture;
-					def player1MatchFuture = playerMatchFutures.get(playerId1)
-					def player2MatchFuture = playerMatchFutures.get(playerId2)
-					if (player1MatchFuture)
-						matchFuture = player2MatchFuture ? CompletableFuture.allOf(player1MatchFuture, player2MatchFuture).thenRun(closure) : player1MatchFuture.thenRun(closure)
-					else
-						matchFuture = player2MatchFuture ? player2MatchFuture.thenRun(closure) : CompletableFuture.runAsync(closure, rankExecutor)
-					playerMatchFutures.put(playerId1, matchFuture)
-					playerMatchFutures.put(playerId2, matchFuture)
-				}
+		lockManager.withLock(playerId1, playerId2) {
+			String level = match.level
+			String round = match.round
+			short bestOf = match.best_of
+			String outcome = match.outcome
+			Date date = match.end_date
+			def winnerRating = playerRatings.get(winnerId)
+			def loserRating = playerRatings.get(loserId)
+			boolean schedule = false;
+			if (!(winnerRating && loserRating)) {
+				if (rankExecutor)
+					schedule = true
 				else {
 					winnerRating = winnerRating ?: new EloRating(playerRank(winnerId, lastDate))
 					loserRating = loserRating ?: new EloRating(playerRank(loserId, lastDate))
-					double deltaRating = deltaRating(winnerRating, loserRating, level, round, bestOf, outcome)
-					putNewRatings(winnerId, loserId, winnerRating, loserRating, deltaRating, date)
 				}
+			}
+			if (schedule) {
+				def future = CompletableFuture.allOf(playerMatchFutures.get(playerId1) ?: nullFuture, playerMatchFutures.get(playerId2) ?: nullFuture).thenRunAsync({
+					lockManager.withLock(playerId1, playerId2) {
+						winnerRating = playerRatings.get(winnerId) ?: new EloRating(playerRank(winnerId, lastDate))
+						loserRating = playerRatings.get(loserId) ?: new EloRating(playerRank(loserId, lastDate))
+						double deltaRating = deltaRating(winnerRating, loserRating, level, round, bestOf, outcome)
+						putNewRatings(winnerId, loserId, winnerRating, loserRating, deltaRating, date)
+					}
+				}, rankExecutor);
+				playerMatchFutures.put(playerId1, future)
+				playerMatchFutures.put(playerId2, future)
+			}
+			else {
+				double deltaRating = deltaRating(winnerRating, loserRating, level, round, bestOf, outcome)
+				putNewRatings(winnerId, loserId, winnerRating, loserRating, deltaRating, date)
 			}
 		}
 	}
@@ -194,6 +193,7 @@ class EloRatings {
 		sqlPool.withSql { sql ->
 			sql.call(QUERY_PLAYER_RANK, [Sql.INTEGER, playerId, date]) { rank -> playerRank = rank }
 		}
+		rankFetches.incrementAndGet()
 		playerRank
 	}
 
