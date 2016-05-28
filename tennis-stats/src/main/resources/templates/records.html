@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="recordCategories" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.records.Record>>"*/-->
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Ultimate Tennis Statistics - Records</title>
+	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
+	<link th:href="@{|/webjars/jquery-ui-themes/${versions['jquery-ui']}/smoothness/jquery-ui.css|}" rel="stylesheet" media="screen"/>
+	<link th:href="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.css|}" rel="stylesheet" media="screen"/>
+	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
+	<script th:src="@{|/webjars/jquery/${versions['jquery']}/jquery.min.js|}"></script>
+	<script th:src="@{|/webjars/jquery-ui/${versions['jquery-ui']}/jquery-ui.min.js|}"></script>
+	<script th:src="@{|/webjars/bootstrap/${versions['bootstrap']}/js/bootstrap.min.js|}"></script>
+	<script th:src="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.js|}"></script>
+	<script th:src="@{/js/tennis-stats.js}"></script>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		$(function() {
+			$("#recordTable").bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/recordTable",
+				requestHandler: function (request) {
+					request.recordId = $("#record").val();
+					return request;
+				},
+				sorting: false,
+				rowCount: [20, 50, -1],
+				formatters: {
+					"country": countryFormatter,
+					"player": playerFormatter
+				},
+				templates: {
+					paginationItem: bootgridTemplatePaginationItem
+				}
+			});
+			$("#recordTable-header").find("div.search").before($("#recordDiv").remove()).remove();
+		});
+		function reloadRecord() {
+			$("#recordTable").bootgrid("reload");
+		}
+		/*]]>*/
+	</script>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3 class="grid-title">Records</h3>
+	<div id="recordDiv" class="btn-group" style="margin-right: 20px">
+		<select id="record" class="form-control" onchange="reloadRecord()">
+			<optgroup th:each="recordCategory : ${recordCategories}" th:label="${recordCategory.key}" label="Matches Played">
+				<option th:each="record : ${recordCategory.value}" th:value="${record.id}" value="MatchesPlayed" th:text="${record.name}">Most Matches Played</option>
+			</optgroup>
+		</select>
+	</div>
+	<table id="recordTable" class="table table-condensed table-hover table-striped">
+		<thead>
+		<tr>
+			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="55">Rank</th>
+			<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="70">Country</th>
+			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="200">Name</th>
+		</tr>
+		</thead>
+	</table>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

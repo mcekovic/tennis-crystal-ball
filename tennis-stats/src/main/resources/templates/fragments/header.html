@@ -59,6 +59,7 @@
 							<li th:class="${servletPath == '/statsChart' ? 'active' : ''}"><a href="/statsChart">Statistics Chart</a></li>
 						</ul>
 					</li>
+					<li th:class="${servletPath == '/records' ? 'active' : ''}"><a href="/records">Records</a></li>
 					<li th:class="${servletPath != null and servletPath.startsWith('/tournament') ? 'active' : ''}"><a href="/tournamentEvents">Tournaments</a></li>
 				</ul>
 			</div>
