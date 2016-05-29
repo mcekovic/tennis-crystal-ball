@@ -5,7 +5,6 @@ import java.util.*;
 public class Record {
 
 	private final String id;
-	private final String category;
 	private final String name;
 	private final String sql;
 	private final String columns;
@@ -14,9 +13,8 @@ public class Record {
 	private final RecordRowFactory rowFactory;
 	private final List<RecordColumn> columnInfos;
 
-	public Record(String id, String category, String name, String sql, String columns, String rankOrder, String displayOrder, RecordRowFactory rowFactory, List<RecordColumn> columnInfos) {
+	public Record(String id, String name, String sql, String columns, String rankOrder, String displayOrder, RecordRowFactory rowFactory, List<RecordColumn> columnInfos) {
 		this.id = id;
-		this.category = category;
 		this.name = name;
 		this.sql = sql;
 		this.columns = columns;
@@ -28,10 +26,6 @@ public class Record {
 
 	public String getId() {
 		return id;
-	}
-
-	public String getCategory() {
-		return category;
 	}
 
 	public String getName() {

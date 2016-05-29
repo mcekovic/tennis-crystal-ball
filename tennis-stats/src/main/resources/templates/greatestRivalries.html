@@ -57,7 +57,7 @@
 					"lastMatch": function(column, row) {
 						var match = row.lastMatch;
 						return (match.winnerId == row.player1.playerId ? row.player1.name : row.player2.name) + " [ " + match.score + " ] at " +
-							match.season + " " + tournamentFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
+							match.season + " " + tournamentEventFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
 					}
 				},
 				labels: {

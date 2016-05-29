@@ -23,7 +23,7 @@
 						var match = row.lastMatch;
 						var won = match.winnerId == [[${playerId}]];
 						return "<span class='label label-" + (won ? "won" : "lost") + "'>" + (won ? "Won" : "Lost") + "</span> [ " + match.score + " ] at " +
-							match.season + " " + tournamentFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
+							match.season + " " + tournamentEventFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
 					},
 					"stats": function(column, row) {
 						return "<a id='rivalryStats-" + row.playerId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showRivalryStats(" + row.playerId + ", event)' title='" + row.name + " Rivalry Statistics'> Stats</a>";

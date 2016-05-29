@@ -14,10 +14,11 @@ public class RecordsResource {
 	@RequestMapping("/recordTable")
 	public BootgridTable<RecordRow> recordTable(
 		@RequestParam(value = "recordId") String recordId,
+		@RequestParam(value = "active") boolean active,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount
 	) {
 		int pageSize = rowCount > 0 ? rowCount : RecordsService.MAX_PLAYER_COUNT;
-		return recordsService.getRecordTable(recordId, pageSize, current);
+		return recordsService.getRecordTable(recordId, active, pageSize, current);
 	}
 }

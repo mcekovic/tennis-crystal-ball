@@ -1,9 +1,9 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="recordTitles" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRecordRow>"*/-->
-	<!--/*@thymesVar id="recordFinals" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRecordRow>"*/-->
-	<!--/*@thymesVar id="recordSemiFinals" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRecordRow>"*/-->
-	<!--/*@thymesVar id="recordAppearances" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRecordRow>"*/-->
+	<!--/*@thymesVar id="recordTitles" type="java.util.List<org.strangeforest.tcb.stats.model.records.IntegerRecordRow>"*/-->
+	<!--/*@thymesVar id="recordFinals" type="java.util.List<org.strangeforest.tcb.stats.model.records.IntegerRecordRow>"*/-->
+	<!--/*@thymesVar id="recordSemiFinals" type="java.util.List<org.strangeforest.tcb.stats.model.records.IntegerRecordRow>"*/-->
+	<!--/*@thymesVar id="recordAppearances" type="java.util.List<org.strangeforest.tcb.stats.model.records.IntegerRecordRow>"*/-->
 	<div class="row">
 		<div class="col-md-3">
 			<th:block th:include="fragments/tournamentRecord :: tournamentRecord('Titles', ${recordTitles})"/>

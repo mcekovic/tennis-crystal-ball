@@ -241,11 +241,16 @@ function surfaceName(surface) {
 
 // Tournament Formatter
 function tournamentFormatter(column, row) {
-	return "<a href='/tournamentEvent?tournamentEventId=" + row.tournamentEventId + "' class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</a>";
+	return "<a href='/tournament?tournamentId=" + row.tournamentId + "' class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + row.tournament + "</a>";
 }
 
 // Tournament Event Formatter
-function eventFormatter(column, row) {
+function tournamentEventFormatter(column, row) {
+	return "<a href='/tournamentEvent?tournamentEventId=" + row.tournamentEventId + "' class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</a>";
+}
+
+// Tournament Event Formatter 2
+function tournamentEventFormatter2(column, row) {
 	return "<a href='/tournamentEvent?tournamentEventId=" + row.id + "' class='label label-" + row.level + "' title='" + levelName(row.level) + " - " +  row.tournamentExtId + "'>" + row.name + "</a>";
 }
 

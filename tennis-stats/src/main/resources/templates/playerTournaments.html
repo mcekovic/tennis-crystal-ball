@@ -31,7 +31,7 @@
 				rowCount: [10, 20, 50, -1],
 				formatters: {
 					"date": dateFormatter,
-					"tournament": tournamentFormatter,
+					"tournament": tournamentEventFormatter,
 					"surface": surfaceFormatter,
 					"result": function(column, row) {
 						return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[[${playerId}]]&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
