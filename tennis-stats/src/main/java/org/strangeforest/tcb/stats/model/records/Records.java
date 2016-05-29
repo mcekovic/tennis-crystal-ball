@@ -24,6 +24,10 @@ public abstract class Records {
 	private static final List<RecordCategory> RECORD_CATEGORIES = new ArrayList<>();
 	private static final Map<String, Record> RECORDS = new HashMap<>();
 	static {
-		register(new MatchesPlayedCategory());
+		register(new MostMatchesCategory(MostMatchesCategory.RecordType.PLAYED));
+		register(new MostMatchesCategory(MostMatchesCategory.RecordType.WON));
+		register(new MostMatchesCategory(MostMatchesCategory.RecordType.LOST));
+		register(new GreatestMatchesPctCategory(GreatestMatchesPctCategory.RecordType.WINNING));
+		register(new GreatestMatchesPctCategory(GreatestMatchesPctCategory.RecordType.LOSING));
 	}
 }

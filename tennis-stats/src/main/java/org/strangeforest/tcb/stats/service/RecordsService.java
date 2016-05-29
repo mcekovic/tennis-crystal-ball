@@ -22,7 +22,8 @@ public class RecordsService {
 		"  %1$s\n" +
 		"), player_record_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY %2$s) AS rank, rank() OVER (ORDER BY %3$s) AS order, player_id, %4$s\n" +
-		"  FROM player_record r%5$s\n" +
+		"  FROM player_record r LEFT JOIN player p USING (player_id)\n" +
+		"  WHERE NOT lower(p.last_name) LIKE '%%unknown%%'%5$s\n" +
 		")\n" +
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, %4$s\n" +
 		"FROM player_record_ranked r\n" +
@@ -30,8 +31,7 @@ public class RecordsService {
 		"WHERE r.rank <= :maxPlayers\n" +
 		"ORDER BY r.order, p.name OFFSET :offset LIMIT :limit";
 
-	private static final String ACTIVE_CONDITION = //language=SQL
-		" LEFT JOIN player p USING (player_id) WHERE p.active";
+	private static final String ACTIVE_CONDITION = /* language=SQL */ " AND p.active";
 
 
 	@Cacheable("Records.Table")
