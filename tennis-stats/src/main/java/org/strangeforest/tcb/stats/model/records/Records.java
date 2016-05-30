@@ -34,5 +34,13 @@ public abstract class Records {
 		register(new MostSemiFinalsCategory());
 		register(new MostQuarterFinalsCategory());
 		register(new MostEntriesCategory());
+		// Titles/Finals ratios
+		// Titles/Entries ratios
+		// Titles with least sets lost
+		// Titles with least games lost
+		// Streaks
+		// Rankings
+		// Rivalries
+		// Youngest/Oldest/Bagels/Years Span
 	}
 }
