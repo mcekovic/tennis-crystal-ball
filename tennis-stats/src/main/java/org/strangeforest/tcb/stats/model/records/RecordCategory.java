@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model.records;
 
 import java.util.*;
 
+import com.google.common.base.*;
+
 public abstract class RecordCategory {
 
 	private final String name;
@@ -22,5 +24,13 @@ public abstract class RecordCategory {
 
 	protected final void register(Record record) {
 		records.add(record);
+	}
+
+	protected static String prefixSpace(String s) {
+		return !Strings.isNullOrEmpty(s) ? ' ' + s : s;
+	}
+
+	protected static String suffixSpace(String s) {
+		return !Strings.isNullOrEmpty(s) ? s + ' ' : s;
 	}
 }

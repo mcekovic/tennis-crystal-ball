@@ -70,6 +70,7 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 th:text="${record != null ? record.name : 'Records'}">Records</h3>
+	<h5><i>More Records to Come!!!</i></h5>
 	<div class="row">
 		<div id="recordDiv" class="col-sm-8" th:style="${record != null ? 'padding-left: 0' : 'margin-top: 15px'}">
 			<div class="input-group" style="float: left">

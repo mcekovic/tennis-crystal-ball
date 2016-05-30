@@ -50,139 +50,52 @@ class GreatestMatchesPctCategory extends RecordCategory {
 
 	GreatestMatchesPctCategory(RecordType type) {
 		super("Greatest " + type.name + " Pct.");
-		register(new Record(
-			"Greatest" + type.name + "Pct", "Greatest " + type.name + " Pct.",
-			"SELECT player_id, " + type.expression("matches") + " AS pct, matches_won AS won, matches_lost AS lost\n" +
-			"FROM player_performance WHERE matches_won + matches_lost >= performance_min_entries('matches')",
+		register(greatestMatchPct("", type, "", "", "matches"));
+		register(greatestMatchPct("GrandSlam", type, "Grand Slam", "grand_slam_", "grandSlamMatches"));
+		register(greatestMatchPct("TourFinals", type, "Tour Finals", "tour_finals_", "tourFinalsMatches"));
+		register(greatestMatchPct("Masters", type, "Masters", "masters_", "mastersMatches"));
+		register(greatestMatchPct("Olympics", type, "Olympics", "olympics_", "olympicsMatches"));
+		register(greatestMatchPct("Hard", type, "Hard", "hard_", "hardMatches"));
+		register(greatestMatchPct("Clay", type, "Clay", "clay_", "clayMatches"));
+		register(greatestMatchPct("Grass", type, "Grass", "grass_", "grassMatches"));
+		register(greatestMatchPct("Carpet", type, "Carpet", "carpet_", "carpetMatches"));
+		register(greatestMatchPctVs("No1", type, "No. 1", "no1"));
+		register(greatestMatchPctVs("Top5", type, "Top 5", "top5"));
+		register(greatestMatchPctVs("Top10", type, "Top 10", "top10"));
+		register(greatestSeasonMatchPct(type));
+		//TODO For single tournament
+	}
+
+	private static Record greatestMatchPct(String id, RecordType type, String name, String columnPrefix, String perfCategory) {
+		return new Record(
+			id + type.name + "Pct", "Greatest " + suffixSpace(name) + type.name + " Pct.",
+			"SELECT player_id, " + type.expression(columnPrefix + "matches") + " AS pct, " + columnPrefix + "matches_won AS won, " + columnPrefix + "matches_lost AS lost\n" +
+			"FROM player_performance WHERE " + columnPrefix + "matches_won + " + columnPrefix + "matches_lost >= performance_min_entries('" + perfCategory + "')",
 			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
 			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", type.name + " Pct."),
+				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", suffixSpace(name) + type.name + " Pct."),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
 			)
-		));
-		register(new Record(
-			"GreatestGrandSlam" + type.name + "Pct", "Greatest Grand Slam " + type.name + " Pct.",
-			"SELECT player_id, " + type.expression("grand_slam_matches") + " AS pct, grand_slam_matches_won AS won, grand_slam_matches_lost AS lost\n" +
-			"FROM player_performance WHERE grand_slam_matches_won + grand_slam_matches_lost >= performance_min_entries('grandSlamMatches')",
+		);
+	}
+
+	private static Record greatestMatchPctVs(String id, RecordType type, String name, String column) {
+		return new Record(
+			type.name + "PctVs" + id, "Greatest " + type.name + " Pct. Vs. " + name,
+			"SELECT player_id, " + type.expression("vs_" + column) + " AS pct, vs_" + column + "_won AS won, vs_" + column + "_lost AS lost\n" +
+			"FROM player_performance WHERE vs_" + column + "_won + vs_" + column + "_lost >= performance_min_entries('vs" + id + "')",
 			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
 			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", "Grand Slam " + type.name + " Pct."),
+				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", type.name + " Pct. Vs. " + name),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
 			)
-		));
-		register(new Record(
-			"GreatestTourFinals" + type.name + "Pct", "Greatest Tour Finals " + type.name + " Pct.",
-			"SELECT player_id, " + type.expression("tour_finals_matches") + " AS pct, tour_finals_matches_won AS won, tour_finals_matches_lost AS lost\n" +
-			"FROM player_performance WHERE tour_finals_matches_won + tour_finals_matches_lost >= performance_min_entries('tourFinalsMatches')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
-			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", "Tour Finals " + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
-			)
-		));
-		register(new Record(
-			"GreatestMasters" + type.name + "Pct", "Greatest Masters " + type.name + " Pct.",
-			"SELECT player_id, " + type.expression("masters_matches") + " AS pct, masters_matches_won AS won, masters_matches_lost AS lost\n" +
-			"FROM player_performance WHERE masters_matches_won + masters_matches_lost >= performance_min_entries('mastersMatches')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
-			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", "Masters " + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
-			)
-		));
-		register(new Record(
-			"GreatestOlympics" + type.name + "Pct", "Greatest Olympics " + type.name + " Pct.",
-			"SELECT player_id, " + type.expression("olympics_matches") + " AS pct, olympics_matches_won AS won, olympics_matches_lost AS lost\n" +
-			"FROM player_performance WHERE olympics_matches_won + olympics_matches_lost >= performance_min_entries('olympicsMatches')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
-			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", "Olympics " + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
-			)
-		));
-		register(new Record(
-			"GreatestHard" + type.name + "Pct", "Greatest Hard " + type.name + " Pct.",
-			"SELECT player_id, " + type.expression("hard_matches") + " AS pct, hard_matches_won AS won, hard_matches_lost AS lost\n" +
-			"FROM player_performance WHERE hard_matches_won + hard_matches_lost >= performance_min_entries('hardMatches')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
-			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", "Hard " + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
-			)
-		));
-		register(new Record(
-			"GreatestClay" + type.name + "Pct", "Greatest Clay " + type.name + " Pct.",
-			"SELECT player_id, " + type.expression("clay_matches") + " AS pct, clay_matches_won AS won, clay_matches_lost AS lost\n" +
-			"FROM player_performance WHERE clay_matches_won + clay_matches_lost >= performance_min_entries('clayMatches')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
-			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", "Clay " + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
-			)
-		));
-		register(new Record(
-			"GreatestGrass" + type.name + "Pct", "Greatest Grass " + type.name + " Pct.",
-			"SELECT player_id, " + type.expression("grass_matches") + " AS pct, grass_matches_won AS won, grass_matches_lost AS lost\n" +
-			"FROM player_performance WHERE grass_matches_won + grass_matches_lost >= performance_min_entries('grassMatches')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
-			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", "Grass " + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
-			)
-		));
-		register(new Record(
-			"GreatestCarpet" + type.name + "Pct", "Greatest Carpet " + type.name + " Pct.",
-			"SELECT player_id, " + type.expression("carpet_matches") + " AS pct, carpet_matches_won AS won, carpet_matches_lost AS lost\n" +
-			"FROM player_performance WHERE carpet_matches_won + carpet_matches_lost >= performance_min_entries('carpetMatches')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
-			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", "Carpet " + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
-			)
-		));
-		register(new Record(
-			"Greatest" + type.name + "PctVsNo1", "Greatest " + type.name + " Pct. Vs. No. 1",
-			"SELECT player_id, " + type.expression("vs_no1") + " AS pct, vs_no1_won AS won, vs_no1_lost AS lost\n" +
-			"FROM player_performance WHERE vs_no1_won + vs_no1_lost >= performance_min_entries('vsNo1')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
-			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", type.name + " Pct. Vs. No. 1"),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
-			)
-		));
-		register(new Record(
-			"Greatest" + type.name + "PctVsTop5", "Greatest " + type.name + " Pct. Vs. Top 5",
-			"SELECT player_id, " + type.expression("vs_top5") + " AS pct, vs_top5_won AS won, vs_top5_lost AS lost\n" +
-			"FROM player_performance WHERE vs_top5_won + vs_top5_lost >= performance_min_entries('vsTop5')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
-			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", type.name + " Pct. Vs. Top 5"),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
-			)
-		));
-		register(new Record(
-			"Greatest" + type.name + "PctVsTop10", "Greatest " + type.name + " Pct. Vs. Top 10",
-			"SELECT player_id, " + type.expression("vs_top10") + " AS pct, vs_top10_won AS won, vs_top10_lost AS lost\n" +
-			"FROM player_performance WHERE vs_top10_won + vs_top10_lost >= performance_min_entries('vsTop10')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
-			asList(
-				new RecordColumn(type.pctAttr , null, null, PCT_WIDTH, "right", type.name + " Pct. Vs. Top 10"),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played")
-			)
-		));
-		register(new Record(
+		);
+	}
+
+	private static Record greatestSeasonMatchPct(RecordType type) {
+		return new Record(
 			"SeasonGreatest" + type.name + "Pct", "Greatest " + type.name + " Pct. in Single Season",
 			"SELECT player_id, season, " + type.expression("matches") + " AS pct, matches_won AS won, matches_lost AS lost\n" +
 			"FROM player_season_performance WHERE matches_won + matches_lost >= performance_min_entries('matches') / 10",
@@ -193,7 +106,6 @@ class GreatestMatchesPctCategory extends RecordCategory {
 				new RecordColumn("played", "numeric", null, PLAYED_WIDTH, "right", "Played"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			)
-		));
-		//TODO For single tournament
+		);
 	}
 }
