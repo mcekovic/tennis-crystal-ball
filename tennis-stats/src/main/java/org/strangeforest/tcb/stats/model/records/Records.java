@@ -29,6 +29,10 @@ public abstract class Records {
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.LOST));
 		register(new GreatestMatchesPctCategory(GreatestMatchesPctCategory.RecordType.WINNING));
 		register(new GreatestMatchesPctCategory(GreatestMatchesPctCategory.RecordType.LOSING));
-		register(new TournamentResultsCategory());
+		register(new MostTitlesCategory());
+		register(new MostFinalsCategory());
+		register(new MostSemiFinalsCategory());
+		register(new MostQuarterFinalsCategory());
+		register(new MostEntriesCategory());
 	}
 }

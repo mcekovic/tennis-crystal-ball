@@ -50,18 +50,18 @@ class GreatestMatchesPctCategory extends RecordCategory {
 
 	GreatestMatchesPctCategory(RecordType type) {
 		super("Greatest " + type.name + " Pct.");
-		register(greatestMatchPct("", type, "", "", "matches"));
-		register(greatestMatchPct("GrandSlam", type, "Grand Slam", "grand_slam_", "grandSlamMatches"));
-		register(greatestMatchPct("TourFinals", type, "Tour Finals", "tour_finals_", "tourFinalsMatches"));
-		register(greatestMatchPct("Masters", type, "Masters", "masters_", "mastersMatches"));
-		register(greatestMatchPct("Olympics", type, "Olympics", "olympics_", "olympicsMatches"));
-		register(greatestMatchPct("Hard", type, "Hard", "hard_", "hardMatches"));
-		register(greatestMatchPct("Clay", type, "Clay", "clay_", "clayMatches"));
-		register(greatestMatchPct("Grass", type, "Grass", "grass_", "grassMatches"));
-		register(greatestMatchPct("Carpet", type, "Carpet", "carpet_", "carpetMatches"));
-		register(greatestMatchPctVs("No1", type, "No. 1", "no1"));
-		register(greatestMatchPctVs("Top5", type, "Top 5", "top5"));
-		register(greatestMatchPctVs("Top10", type, "Top 10", "top10"));
+		register(greatestMatchPct(N_A, type, N_A, N_A, "matches"));
+		register(greatestMatchPct(GRAND_SLAM, type, GRAND_SLAM_NAME, "grand_slam_", "grandSlamMatches"));
+		register(greatestMatchPct(TOUR_FINALS, type, TOUR_FINALS_NAME, "tour_finals_", "tourFinalsMatches"));
+		register(greatestMatchPct(MASTERS, type, MASTERS_NAME, "masters_", "mastersMatches"));
+		register(greatestMatchPct(OLYMPICS, type, OLYMPICS_NAME, "olympics_", "olympicsMatches"));
+		register(greatestMatchPct(HARD, type, HARD_NAME, "hard_", "hardMatches"));
+		register(greatestMatchPct(CLAY, type, CLAY_NAME, "clay_", "clayMatches"));
+		register(greatestMatchPct(GRASS, type, GRASS_NAME, "grass_", "grassMatches"));
+		register(greatestMatchPct(CARPET, type, CARPET_NAME, "carpet_", "carpetMatches"));
+		register(greatestMatchPctVs(NO_1, type, NO_1_NAME, "no1"));
+		register(greatestMatchPctVs(TOP_5, type, TOP_5_NAME, "top5"));
+		register(greatestMatchPctVs(TOP_10, type, TOP_10_NAME, "top10"));
 		register(greatestSeasonMatchPct(type));
 		//TODO For single tournament
 	}

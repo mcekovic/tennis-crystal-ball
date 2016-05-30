@@ -37,23 +37,23 @@ class MostMatchesCategory extends RecordCategory {
 
 	MostMatchesCategory(RecordType type) {
 		super("Most Matches " + type.name);
-		register(mostMatches("", type, "", ""));
-		register(mostMatches("GrandSlam", type, "Grand Slam", "grand_slam_"));
-		register(mostMatches("TourFinals", type, "Tour Finals", "tour_finals_"));
-		register(mostMatches("Masters", type, "Masters", "masters_"));
-		register(mostMatches("Olympics", type, "Olympics", "olympics_"));
-		register(mostMatches("Hard", type, "Hard", "hard_"));
-		register(mostMatches("Clay", type, "Clay", "clay_"));
-		register(mostMatches("Grass", type, "Grass", "grass_"));
-		register(mostMatches("Carpet", type, "Carpet", "carpet_"));
-		register(mostMatchesVs("No1", type, "No. 1", "no1"));
-		register(mostMatchesVs("Top5", type, "Top 5", "top5"));
-		register(mostMatchesVs("Top10", type, "Top 10", "top10"));
+		register(mostMatches(N_A, type, N_A, N_A));
+		register(mostMatches(GRAND_SLAM, type, GRAND_SLAM_NAME, "grand_slam_"));
+		register(mostMatches(TOUR_FINALS, type, TOUR_FINALS_NAME, "tour_finals_"));
+		register(mostMatches(MASTERS, type, MASTERS_NAME, "masters_"));
+		register(mostMatches(OLYMPICS, type, OLYMPICS_NAME, "olympics_"));
+		register(mostMatches(HARD, type, HARD_NAME, "hard_"));
+		register(mostMatches(CLAY, type, CLAY_NAME, "clay_"));
+		register(mostMatches(GRASS, type, GRASS_NAME, "grass_"));
+		register(mostMatches(CARPET, type, CARPET_NAME, "carpet_"));
+		register(mostMatchesVs(NO_1, type, NO_1_NAME, "no1"));
+		register(mostMatchesVs(TOP_5, type, TOP_5_NAME, "top5"));
+		register(mostMatchesVs(TOP_10, type, TOP_10_NAME, "top10"));
 		register(mostSeasonMatches(type));
 		//TODO Should be from materialized view
-		register(mostTournamentMatches("", type, "", "m.level IN ('G', 'F', 'M', 'O', 'A', 'B')"));
-		register(mostTournamentMatches("GrandSlam", type, "Grand Slam", "m.level = 'G'"));
-		register(mostTournamentMatches("Masters", type, "Masters", "m.level = 'M'"));
+		register(mostTournamentMatches(N_A, type, N_A, "m." + ALL_TOURNAMENTS));
+		register(mostTournamentMatches(GRAND_SLAM, type, GRAND_SLAM_NAME, "m." + GRAND_SLAM_TOURNAMENTS));
+		register(mostTournamentMatches(MASTERS, type, MASTERS_NAME, "m." + MASTERS_TOURNAMENTS));
 	}
 
 	private static Record mostMatches(String id, RecordType type, String name, String columnPrefix) {
