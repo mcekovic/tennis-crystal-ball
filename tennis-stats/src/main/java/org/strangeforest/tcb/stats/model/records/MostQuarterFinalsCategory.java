@@ -20,6 +20,6 @@ public class MostQuarterFinalsCategory extends TournamentResultsCategory {
 	}
 
 	private static Record mostQuarterFinals(String id, String name, String nameSuffix, String condition) {
-		return mostResults(id + "QuarterFinals", suffixSpace(name) + "Quarter-Finals", nameSuffix, QUARTER_FINALS, condition);
+		return mostResults(id + "QuarterFinals", suffix(name, " ") + "Quarter-Finals", nameSuffix, QUARTER_FINALS, condition);
 	}
 }

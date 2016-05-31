@@ -14,7 +14,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 
 	protected static Record mostResults(String id, String name, String nameSuffix, String resultCondition, String condition) {
 		return new Record(
-			id, "Most " + name + prefixSpace(nameSuffix),
+			id, "Most " + name + prefix(nameSuffix, " "),
 			"SELECT player_id, count(tournament_event_id) AS value, max(date) AS last_date\n" +
 			"FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
 			"WHERE " + resultCondition + " AND " + condition + "\n" +
@@ -26,7 +26,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 
 	protected static Record mostSeasonResults(String id, String name, String nameSuffix, String resultCondition, String condition) {
 		return new Record(
-			"Season" + id, "Most " + name + " in Single Season" + prefixSpace(nameSuffix),
+			"Season" + id, "Most " + name + " in Single Season" + prefix(nameSuffix, " "),
 			"SELECT player_id, season, count(tournament_event_id) AS value\n" +
 			"FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
 			"WHERE " + resultCondition + " AND " + condition + "\n" +

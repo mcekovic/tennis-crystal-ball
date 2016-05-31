@@ -80,11 +80,11 @@ public abstract class RecordCategory {
 		records.add(record);
 	}
 
-	protected static String prefixSpace(String s) {
-		return !Strings.isNullOrEmpty(s) ? ' ' + s : s;
+	protected static String prefix(String s, String preffix) {
+		return !Strings.isNullOrEmpty(s) ? preffix + s : s;
 	}
 
-	protected static String suffixSpace(String s) {
-		return !Strings.isNullOrEmpty(s) ? s + ' ' : s;
+	protected static String suffix(String s, String suffix) {
+		return !Strings.isNullOrEmpty(s) ? s + suffix : s;
 	}
 }

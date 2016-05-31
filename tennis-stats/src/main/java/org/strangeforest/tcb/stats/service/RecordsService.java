@@ -37,7 +37,7 @@ public class RecordsService {
 	@Cacheable("Records.Table")
 	public BootgridTable<RecordRow> getRecordTable(String recordId, boolean activePlayers, int pageSize, int currentPage) {
 		Record record = Records.getRecord(recordId);
-		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage, MAX_PLAYER_COUNT);
+		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(RECORD_QUERY, record.getSql(), record.getRankOrder(), record.getDisplayOrder(), record.getColumns(), activePlayers ? ACTIVE_CONDITION : ""),
@@ -55,6 +55,7 @@ public class RecordsService {
 				table.addRow(row);
 			}
 		);
+		table.setTotal(MAX_PLAYER_COUNT, pageSize);
 		return table;
 	}
 }

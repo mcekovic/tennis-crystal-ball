@@ -31,6 +31,7 @@ DROP MATERIALIZED VIEW player_tournament_event_result;
 
 DROP MATERIALIZED VIEW player_performance;
 DROP MATERIALIZED VIEW player_season_performance;
+DROP MATERIALIZED VIEW player_tournament_performance;
 DROP MATERIALIZED VIEW player_stats;
 DROP MATERIALIZED VIEW player_season_stats;
 DROP MATERIALIZED VIEW player_surface_stats;

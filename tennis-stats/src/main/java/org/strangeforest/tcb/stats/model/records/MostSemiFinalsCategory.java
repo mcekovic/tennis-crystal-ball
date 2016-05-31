@@ -20,6 +20,6 @@ public class MostSemiFinalsCategory extends TournamentResultsCategory {
 	}
 
 	private static Record mostSemiFinals(String id, String name, String nameSuffix, String condition) {
-		return mostResults(id + "SemiFinals", suffixSpace(name) + "Semi-Finals", nameSuffix, SEMI_FINALS, condition);
+		return mostResults(id + "SemiFinals", suffix(name, " ") + "Semi-Finals", nameSuffix, SEMI_FINALS, condition);
 	}
 }

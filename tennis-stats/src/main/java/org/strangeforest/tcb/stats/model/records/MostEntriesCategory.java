@@ -25,7 +25,7 @@ public class MostEntriesCategory extends TournamentResultsCategory {
 	}
 
 	private static Record mostEntries(String id, String name, String nameSuffix, String condition) {
-		return mostResults(id + "Entries", suffixSpace(name) + "Entries", nameSuffix, ENTRIES, condition);
+		return mostResults(id + "Entries", suffix(name, " ") + "Entries", nameSuffix, ENTRIES, condition);
 	}
 
 	private static Record mostSeasonEntries() {
@@ -33,7 +33,7 @@ public class MostEntriesCategory extends TournamentResultsCategory {
 	}
 
 	private static Record mostTournamentEntries(String id, String name, String condition) {
-		return mostTournamentResults(id + "Entries", suffixSpace(name) + "Entries", ENTRIES, condition);
+		return mostTournamentResults(id + "Entries", suffix(name, " ") + "Entries", ENTRIES, condition);
 	}
 
 	private static Record mostDifferentTournamentEntries() {

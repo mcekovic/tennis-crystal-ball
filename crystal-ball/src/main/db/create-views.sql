@@ -202,7 +202,7 @@ WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T');
 -- player_match_performance_v
 
 CREATE OR REPLACE VIEW player_match_performance_v AS
-SELECT m.winner_id player_id, m.season, m.surface,
+SELECT m.winner_id player_id, m.season, m.surface, m.tournament_id,
 	match_id match_id_won, NULL match_id_lost,
 	CASE WHEN m.level = 'G' THEN match_id ELSE NULL END grand_slam_match_id_won, NULL grand_slam_match_id_lost,
 	CASE WHEN m.level = 'F' THEN match_id ELSE NULL END tour_finals_match_id_won, NULL tour_finals_match_id_lost,
@@ -225,7 +225,7 @@ SELECT m.winner_id player_id, m.season, m.surface,
 FROM match_for_stats_v m
 LEFT JOIN set_score s USING (match_id)
 UNION ALL
-SELECT m.loser_id player_id, m.season, m.surface,
+SELECT m.loser_id player_id, m.season, m.surface, m.tournament_id,
 	NULL, match_id,
 	NULL, CASE WHEN m.level = 'G' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.level = 'F' THEN match_id ELSE NULL END,
@@ -276,6 +276,20 @@ GROUP BY player_id, season;
 
 CREATE INDEX ON player_season_performance (player_id);
 CREATE INDEX ON player_season_performance (season);
+
+
+-- player_tournament_performance
+
+CREATE MATERIALIZED VIEW player_tournament_performance AS
+SELECT player_id, tournament_id,
+	count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,
+	count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,
+	count(DISTINCT masters_match_id_won) masters_matches_won, count(DISTINCT masters_match_id_lost) masters_matches_lost
+FROM player_match_performance_v
+GROUP BY player_id, tournament_id;
+
+CREATE INDEX ON player_tournament_performance (player_id);
+CREATE INDEX ON player_tournament_performance (tournament_id);
 
 
 -- player_performance

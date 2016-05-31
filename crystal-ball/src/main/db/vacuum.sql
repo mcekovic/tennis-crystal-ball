@@ -45,6 +45,7 @@ VACUUM FULL ANALYSE VERBOSE player_season_goat_points;
 VACUUM FULL ANALYSE VERBOSE player_goat_points;
 
 VACUUM FULL ANALYSE VERBOSE player_season_performance;
+VACUUM FULL ANALYSE VERBOSE player_tournament_performance;
 VACUUM FULL ANALYSE VERBOSE player_performance;
 VACUUM FULL ANALYSE VERBOSE player_season_surface_stats;
 VACUUM FULL ANALYSE VERBOSE player_season_stats;

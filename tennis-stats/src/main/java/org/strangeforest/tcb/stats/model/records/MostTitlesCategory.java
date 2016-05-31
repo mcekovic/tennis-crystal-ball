@@ -30,18 +30,18 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 	}
 
 	private static Record mostTitles(String id, String name, String nameSuffix, String condition) {
-		return mostResults(id + "Titles", suffixSpace(name) + "Titles", nameSuffix, TITLES, condition);
+		return mostResults(id + "Titles", suffix(name, " ") + "Titles", nameSuffix, TITLES, condition);
 	}
 
 	private static Record mostSeasonTitles(String id, String name, String nameSuffix, String condition) {
-		return mostSeasonResults(id + "Titles", suffixSpace(name) + "Titles", nameSuffix, TITLES, condition);
+		return mostSeasonResults(id + "Titles", suffix(name, " ") + "Titles", nameSuffix, TITLES, condition);
 	}
 
 	private static Record mostTournamentTitles(String id, String name, String condition) {
-		return mostTournamentResults(id + "Titles", suffixSpace(name) + "Titles", TITLES, condition);
+		return mostTournamentResults(id + "Titles", suffix(name, " ") + "Titles", TITLES, condition);
 	}
 
 	private static Record mostDifferentTournamentTitles(String id, String name, String condition) {
-		return mostDifferentTournamentResults(id + "Titles", suffixSpace(name) + "Titles", TITLES, condition);
+		return mostDifferentTournamentResults(id + "Titles", suffix(name, " ") + "Titles", TITLES, condition);
 	}
 }

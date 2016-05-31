@@ -27,15 +27,15 @@ public abstract class Records {
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.PLAYED));
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.WON));
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.LOST));
-		register(new GreatestMatchesPctCategory(GreatestMatchesPctCategory.RecordType.WINNING));
-		register(new GreatestMatchesPctCategory(GreatestMatchesPctCategory.RecordType.LOSING));
+		register(new GreatestMatchPctCategory(GreatestMatchPctCategory.RecordType.WINNING));
+		register(new GreatestMatchPctCategory(GreatestMatchPctCategory.RecordType.LOSING));
 		register(new MostTitlesCategory());
 		register(new MostFinalsCategory());
 		register(new MostSemiFinalsCategory());
 		register(new MostQuarterFinalsCategory());
 		register(new MostEntriesCategory());
-		// Titles/Finals ratios
-		// Titles/Entries ratios
+		register(new GreatestTitlePctCategory(GreatestTitlePctCategory.RecordType.WINNING));
+		register(new GreatestTitlePctCategory(GreatestTitlePctCategory.RecordType.LOSING));
 		// Titles with least sets lost
 		// Titles with least games lost
 		// Streaks

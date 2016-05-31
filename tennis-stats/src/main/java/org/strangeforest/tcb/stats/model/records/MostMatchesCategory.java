@@ -11,18 +11,14 @@ class MostMatchesCategory extends RecordCategory {
 	private static final String TOURNAMENT_WIDTH = "100";
 
 	enum RecordType {
-		PLAYED("Played", "player_id", "player_match_stats_v"),
-		WON("Won", "winner_id", "match_for_stats_v"),
-		LOST("Lost", "loser_id", "match_for_stats_v");
+		PLAYED("Played"),
+		WON("Won"),
+		LOST("Lost");
 
 		final String name;
-		final String playerColumn;
-		final String tableName;
 
-		RecordType(String name, String playerColumn, String tableName) {
+		RecordType(String name) {
 			this.name = name;
-			this.playerColumn = playerColumn;
-			this.tableName = tableName;
 		}
 
 		String expression(String prefix) {
@@ -50,18 +46,17 @@ class MostMatchesCategory extends RecordCategory {
 		register(mostMatchesVs(TOP_5, type, TOP_5_NAME, "top5"));
 		register(mostMatchesVs(TOP_10, type, TOP_10_NAME, "top10"));
 		register(mostSeasonMatches(type));
-		//TODO Should be from materialized view
-		register(mostTournamentMatches(N_A, type, N_A, "m." + ALL_TOURNAMENTS));
-		register(mostTournamentMatches(GRAND_SLAM, type, GRAND_SLAM_NAME, "m." + GRAND_SLAM_TOURNAMENTS));
-		register(mostTournamentMatches(MASTERS, type, MASTERS_NAME, "m." + MASTERS_TOURNAMENTS));
+		register(mostTournamentMatches(N_A, type, N_A, N_A));
+		register(mostTournamentMatches(GRAND_SLAM, type, GRAND_SLAM_NAME, "grand_slam_"));
+		register(mostTournamentMatches(MASTERS, type, MASTERS_NAME, "masters_"));
 	}
 
 	private static Record mostMatches(String id, RecordType type, String name, String columnPrefix) {
 		return new Record(
-			id + "Matches" + type.name, "Most " + suffixSpace(name) + "Matches " + type.name,
+			id + "Matches" + type.name, "Most " + suffix(name, " ") + "Matches " + type.name,
 			"SELECT player_id, " + type.expression(columnPrefix + "matches") + " AS value FROM player_performance",
 			"r.value", "r.value DESC", "r.value DESC", RecordRowFactory.INTEGER,
-			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffixSpace(name) + "Matches " + type.name))
+			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(name, " ") + "Matches " + type.name))
 		);
 	}
 
@@ -86,14 +81,14 @@ class MostMatchesCategory extends RecordCategory {
 		);
 	}
 
-	private static Record mostTournamentMatches(String id, RecordType type, String name, String condition) {
+	private static Record mostTournamentMatches(String id, RecordType type, String name, String columnPrefix) {
 		return new Record(
-			id + "TournamentMatches" + type.name, "Most Matches " + type.name + " in Single " + suffixSpace(name) + "Tournament",
-			"SELECT m." + type.playerColumn + " AS player_id, tournament_id, t.name AS tournament, t.level, count(m.match_id) AS value\n" +
-			"FROM " + type.tableName + " m INNER JOIN tournament t USING (tournament_id) WHERE " + condition + " GROUP BY m." + type.playerColumn + ", tournament_id, t.name, t.level",
+			id + "TournamentMatches" + type.name, "Most Matches " + type.name + " in Single " + suffix(name, " ") + "Tournament",
+			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + columnPrefix + "matches") + " AS value\n" +
+			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id) WHERE t." + ALL_TOURNAMENTS,
 			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.tournament", RecordRowFactory.TOURNAMENT_INTEGER,
 			asList(
-				new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffixSpace(name) + "Matches " + type.name),
+				new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(name, " ") + "Matches " + type.name),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
 			)
 		);
