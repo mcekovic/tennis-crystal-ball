@@ -6,10 +6,6 @@ import static java.util.Arrays.*;
 
 class MostMatchesCategory extends RecordCategory {
 
-	private static final String MATCHES_WIDTH =    "120";
-	private static final String SEASON_WIDTH =      "60";
-	private static final String TOURNAMENT_WIDTH = "100";
-
 	enum RecordType {
 		PLAYED("Played"),
 		WON("Won"),
@@ -31,27 +27,31 @@ class MostMatchesCategory extends RecordCategory {
 		}
 	}
 
+	private static final String MATCHES_WIDTH =    "120";
+	private static final String SEASON_WIDTH =      "60";
+	private static final String TOURNAMENT_WIDTH = "100";
+
 	MostMatchesCategory(RecordType type) {
 		super("Most Matches " + type.name);
-		register(mostMatches(N_A, type, N_A, N_A));
-		register(mostMatches(GRAND_SLAM, type, GRAND_SLAM_NAME, "grand_slam_"));
-		register(mostMatches(TOUR_FINALS, type, TOUR_FINALS_NAME, "tour_finals_"));
-		register(mostMatches(MASTERS, type, MASTERS_NAME, "masters_"));
-		register(mostMatches(OLYMPICS, type, OLYMPICS_NAME, "olympics_"));
-		register(mostMatches(HARD, type, HARD_NAME, "hard_"));
-		register(mostMatches(CLAY, type, CLAY_NAME, "clay_"));
-		register(mostMatches(GRASS, type, GRASS_NAME, "grass_"));
-		register(mostMatches(CARPET, type, CARPET_NAME, "carpet_"));
-		register(mostMatchesVs(NO_1, type, NO_1_NAME, "no1"));
-		register(mostMatchesVs(TOP_5, type, TOP_5_NAME, "top5"));
-		register(mostMatchesVs(TOP_10, type, TOP_10_NAME, "top10"));
+		register(mostMatches(type, N_A, N_A, N_A));
+		register(mostMatches(type, GRAND_SLAM, GRAND_SLAM_NAME, "grand_slam_"));
+		register(mostMatches(type, TOUR_FINALS, TOUR_FINALS_NAME, "tour_finals_"));
+		register(mostMatches(type, MASTERS, MASTERS_NAME, "masters_"));
+		register(mostMatches(type, OLYMPICS, OLYMPICS_NAME, "olympics_"));
+		register(mostMatches(type, HARD, HARD_NAME, "hard_"));
+		register(mostMatches(type, CLAY, CLAY_NAME, "clay_"));
+		register(mostMatches(type, GRASS, GRASS_NAME, "grass_"));
+		register(mostMatches(type, CARPET, CARPET_NAME, "carpet_"));
+		register(mostMatchesVs(type, NO_1, NO_1_NAME, "no1"));
+		register(mostMatchesVs(type, TOP_5, TOP_5_NAME, "top5"));
+		register(mostMatchesVs(type, TOP_10, TOP_10_NAME, "top10"));
 		register(mostSeasonMatches(type));
-		register(mostTournamentMatches(N_A, type, N_A, N_A));
-		register(mostTournamentMatches(GRAND_SLAM, type, GRAND_SLAM_NAME, "grand_slam_"));
-		register(mostTournamentMatches(MASTERS, type, MASTERS_NAME, "masters_"));
+		register(mostTournamentMatches(type, N_A, N_A, N_A));
+		register(mostTournamentMatches(type, GRAND_SLAM, GRAND_SLAM_NAME, "grand_slam_"));
+		register(mostTournamentMatches(type, MASTERS, MASTERS_NAME, "masters_"));
 	}
 
-	private static Record mostMatches(String id, RecordType type, String name, String columnPrefix) {
+	private static Record mostMatches(RecordType type, String id, String name, String columnPrefix) {
 		return new Record(
 			id + "Matches" + type.name, "Most " + suffix(name, " ") + "Matches " + type.name,
 			"SELECT player_id, " + type.expression(columnPrefix + "matches") + " AS value FROM player_performance",
@@ -60,7 +60,7 @@ class MostMatchesCategory extends RecordCategory {
 		);
 	}
 
-	private static Record mostMatchesVs(String id, RecordType type, String name, String columnPrefix) {
+	private static Record mostMatchesVs(RecordType type, String id, String name, String columnPrefix) {
 		return new Record(
 			"MatchesVs" + id + type.name, "Most Matches " + type.name + " Vs. " + name,
 			"SELECT player_id, " + type.expression("vs_" + columnPrefix) + " AS value FROM player_performance",
@@ -81,7 +81,7 @@ class MostMatchesCategory extends RecordCategory {
 		);
 	}
 
-	private static Record mostTournamentMatches(String id, RecordType type, String name, String columnPrefix) {
+	private static Record mostTournamentMatches(RecordType type, String id, String name, String columnPrefix) {
 		return new Record(
 			id + "TournamentMatches" + type.name, "Most Matches " + type.name + " in Single " + suffix(name, " ") + "Tournament",
 			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + columnPrefix + "matches") + " AS value\n" +

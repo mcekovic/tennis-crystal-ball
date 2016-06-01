@@ -17,6 +17,11 @@ public enum RecordRowFactory {
 			return new TournamentIntegerRecordRow(rank, playerId, name, countryId, active);
 		}
 	},
+	TOURNAMENT_EVENT_INTEGER {
+		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
+			return new TournamentEventIntegerRecordRow(rank, playerId, name, countryId, active);
+		}
+	},
 	WINNING_PCT {
 		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
 			return new WinningPctRecordRow(rank, playerId, name, countryId, active);

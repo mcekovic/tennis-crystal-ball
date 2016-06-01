@@ -36,8 +36,8 @@ public abstract class Records {
 		register(new MostEntriesCategory());
 		register(new GreatestTitlePctCategory(GreatestTitlePctCategory.RecordType.WINNING));
 		register(new GreatestTitlePctCategory(GreatestTitlePctCategory.RecordType.LOSING));
-		// Titles with least sets lost
-		// Titles with least games lost
+		register(new ItemsWinningTitleCategory(ItemsWinningTitleCategory.RecordType.LEAST));
+		register(new ItemsWinningTitleCategory(ItemsWinningTitleCategory.RecordType.MOST));
 		// Streaks
 		// Rankings
 		// Rivalries

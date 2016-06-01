@@ -5,13 +5,6 @@ import static org.strangeforest.tcb.stats.model.records.RecordRowFactory.*;
 
 class GreatestMatchPctCategory extends RecordCategory {
 
-	private static final String PCT_WIDTH =        "100";
-	private static final String WON_WIDTH =         "60";
-	private static final String LOST_WIDTH =        "60";
-	private static final String PLAYED_WIDTH =      "60";
-	private static final String SEASON_WIDTH =      "60";
-	private static final String TOURNAMENT_WIDTH = "100";
-
 	enum RecordType {
 		WINNING("Winning", "_won", "wonLostPct", WINNING_PCT, SEASON_WINNING_PCT, TOURNAMENT_WINNING_PCT,
 			new RecordColumn("won", "numeric", null, WON_WIDTH, "right", "Won")
@@ -43,27 +36,34 @@ class GreatestMatchPctCategory extends RecordCategory {
 		}
 	}
 
+	private static final String PCT_WIDTH =        "100";
+	private static final String WON_WIDTH =         "60";
+	private static final String LOST_WIDTH =        "60";
+	private static final String PLAYED_WIDTH =      "60";
+	private static final String SEASON_WIDTH =      "60";
+	private static final String TOURNAMENT_WIDTH = "100";
+
 	GreatestMatchPctCategory(RecordType type) {
 		super("Greatest " + type.name + " Pct.");
-		register(greatestMatchPct(N_A, type, N_A, N_A, "matches"));
-		register(greatestMatchPct(GRAND_SLAM, type, GRAND_SLAM_NAME, "grand_slam_", "grandSlamMatches"));
-		register(greatestMatchPct(TOUR_FINALS, type, TOUR_FINALS_NAME, "tour_finals_", "tourFinalsMatches"));
-		register(greatestMatchPct(MASTERS, type, MASTERS_NAME, "masters_", "mastersMatches"));
-		register(greatestMatchPct(OLYMPICS, type, OLYMPICS_NAME, "olympics_", "olympicsMatches"));
-		register(greatestMatchPct(HARD, type, HARD_NAME, "hard_", "hardMatches"));
-		register(greatestMatchPct(CLAY, type, CLAY_NAME, "clay_", "clayMatches"));
-		register(greatestMatchPct(GRASS, type, GRASS_NAME, "grass_", "grassMatches"));
-		register(greatestMatchPct(CARPET, type, CARPET_NAME, "carpet_", "carpetMatches"));
-		register(greatestMatchPctVs(NO_1, type, NO_1_NAME, "no1"));
-		register(greatestMatchPctVs(TOP_5, type, TOP_5_NAME, "top5"));
-		register(greatestMatchPctVs(TOP_10, type, TOP_10_NAME, "top10"));
+		register(greatestMatchPct(type, N_A, N_A, N_A, "matches"));
+		register(greatestMatchPct(type, GRAND_SLAM, GRAND_SLAM_NAME, "grand_slam_", "grandSlamMatches"));
+		register(greatestMatchPct(type, TOUR_FINALS, TOUR_FINALS_NAME, "tour_finals_", "tourFinalsMatches"));
+		register(greatestMatchPct(type, MASTERS, MASTERS_NAME, "masters_", "mastersMatches"));
+		register(greatestMatchPct(type, OLYMPICS, OLYMPICS_NAME, "olympics_", "olympicsMatches"));
+		register(greatestMatchPct(type, HARD, HARD_NAME, "hard_", "hardMatches"));
+		register(greatestMatchPct(type, CLAY, CLAY_NAME, "clay_", "clayMatches"));
+		register(greatestMatchPct(type, GRASS, GRASS_NAME, "grass_", "grassMatches"));
+		register(greatestMatchPct(type, CARPET, CARPET_NAME, "carpet_", "carpetMatches"));
+		register(greatestMatchPctVs(type, NO_1, NO_1_NAME, "no1"));
+		register(greatestMatchPctVs(type, TOP_5, TOP_5_NAME, "top5"));
+		register(greatestMatchPctVs(type, TOP_10, TOP_10_NAME, "top10"));
 		register(greatestSeasonMatchPct(type));
-		register(greatestTournamentMatchPct(N_A, type, N_A, N_A, "matches"));
-		register(greatestTournamentMatchPct(GRAND_SLAM, type, GRAND_SLAM_NAME, "grand_slam_", "grandSlamMatches"));
-		register(greatestTournamentMatchPct(MASTERS, type, MASTERS_NAME, "masters_", "mastersMatches"));
+		register(greatestTournamentMatchPct(type, N_A, N_A, N_A, "matches"));
+		register(greatestTournamentMatchPct(type, GRAND_SLAM, GRAND_SLAM_NAME, "grand_slam_", "grandSlamMatches"));
+		register(greatestTournamentMatchPct(type, MASTERS, MASTERS_NAME, "masters_", "mastersMatches"));
 	}
 
-	private static Record greatestMatchPct(String id, RecordType type, String name, String columnPrefix, String perfCategory) {
+	private static Record greatestMatchPct(RecordType type, String id, String name, String columnPrefix, String perfCategory) {
 		return new Record(
 			id + type.name + "Pct", "Greatest " + suffix(name, " ") + type.name + " Pct.",
 			"SELECT player_id, " + type.expression(columnPrefix + "matches") + " AS pct, " + columnPrefix + "matches_won AS won, " + columnPrefix + "matches_lost AS lost\n" +
@@ -77,7 +77,7 @@ class GreatestMatchPctCategory extends RecordCategory {
 		);
 	}
 
-	private static Record greatestMatchPctVs(String id, RecordType type, String name, String column) {
+	private static Record greatestMatchPctVs(RecordType type, String id, String name, String column) {
 		return new Record(
 			type.name + "PctVs" + id, "Greatest " + type.name + " Pct. Vs. " + name,
 			"SELECT player_id, " + type.expression("vs_" + column) + " AS pct, vs_" + column + "_won AS won, vs_" + column + "_lost AS lost\n" +
@@ -106,7 +106,7 @@ class GreatestMatchPctCategory extends RecordCategory {
 		);
 	}
 
-	private static Record greatestTournamentMatchPct(String id, RecordType type, String name, String columnPrefix, String perfCategory) {
+	private static Record greatestTournamentMatchPct(RecordType type, String id, String name, String columnPrefix, String perfCategory) {
 		return new Record(
 			"Tournament" + id + type.name + "Pct", "Greatest " + suffix(name, " ") + type.name + " Pct. in Single" + suffix(name, " ") + "Tournament",
 			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + columnPrefix + "matches") + " AS pct, p." + columnPrefix + "matches_won AS won, p." + columnPrefix + "matches_lost AS lost\n" +

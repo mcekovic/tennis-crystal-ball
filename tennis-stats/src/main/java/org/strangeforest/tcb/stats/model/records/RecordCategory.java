@@ -87,4 +87,8 @@ public abstract class RecordCategory {
 	protected static String suffix(String s, String suffix) {
 		return !Strings.isNullOrEmpty(s) ? s + suffix : s;
 	}
+
+	protected static String surfaceTournaments(String surface, String prefix) {
+		return "surface = '" + surface + "' AND " + prefix + ALL_TOURNAMENTS;
+	}
 }

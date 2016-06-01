@@ -5,11 +5,6 @@ import static org.strangeforest.tcb.stats.model.records.RecordRowFactory.*;
 
 class GreatestTitlePctCategory extends RecordCategory {
 
-	private static final String PCT_WIDTH =        "100";
-	private static final String WON_WIDTH =         "60";
-	private static final String LOST_WIDTH =        "60";
-	private static final String PLAYED_WIDTH =      "60";
-
 	enum RecordType {
 		WINNING("Winning", "finals_won", "CASE r.result WHEN 'W' THEN 1 ELSE 0 END", "wonLostPct", WINNING_PCT,
 			new RecordColumn("won", "numeric", null, WON_WIDTH, "right", "Won")
@@ -34,21 +29,26 @@ class GreatestTitlePctCategory extends RecordCategory {
 		}
 	}
 
+	private static final String PCT_WIDTH =   "100";
+	private static final String WON_WIDTH =    "60";
+	private static final String LOST_WIDTH =   "60";
+	private static final String PLAYED_WIDTH = "60";
+
 	GreatestTitlePctCategory(RecordType type ) {
 		super("Greatest Title " + type.name + " Pct.");
 		register(greatestFinalPct(type));
-		register(greatestFinalPct(GRAND_SLAM, type, GRAND_SLAM_NAME, N_A, GRAND_SLAM_TOURNAMENTS, "grandSlamMatches"));
-		register(greatestFinalPct(TOUR_FINALS, type, TOUR_FINALS_NAME, N_A, TOUR_FINALS_TOURNAMENTS, "tourFinalsMatches"));
-		register(greatestFinalPct(MASTERS, type, MASTERS_NAME, N_A, MASTERS_TOURNAMENTS, "mastersMatches"));
-		register(greatestFinalPct(OLYMPICS, type, OLYMPICS_NAME, N_A, OLYMPICS_TOURNAMENTS, "olympicsMatches"));
-		register(greatestFinalPct(BIG, type, BIG_NAME, BIG_NAME_SUFFIX, BIG_TOURNAMENTS, "matches"));
-		register(greatestFinalPct(ATP_500, type, ATP_500_NAME, N_A, ATP_500_TOURNAMENTS, "mastersMatches"));
-		register(greatestFinalPct(ATP_250, type, ATP_250_NAME, N_A, ATP_250_TOURNAMENTS, "mastersMatches"));
-		register(greatestFinalPct(SMALL, type, SMALL_NAME, SMALL_NAME_SUFFIX, SMALL_TOURNAMENTS, "matches"));
-		register(greatestFinalPct(HARD, type, HARD_NAME, N_A, HARD_TOURNAMENTS, "hardMatches"));
-		register(greatestFinalPct(CLAY, type, CLAY_NAME, N_A, CLAY_TOURNAMENTS, "clayMatches"));
-		register(greatestFinalPct(GRASS, type, GRASS_NAME, N_A, GRASS_TOURNAMENTS, "grassMatches"));
-		register(greatestFinalPct(CARPET, type, CARPET_NAME, N_A, CARPET_TOURNAMENTS, "carpetMatches"));
+		register(greatestFinalPct(type, GRAND_SLAM, GRAND_SLAM_NAME, N_A, GRAND_SLAM_TOURNAMENTS, "grandSlamMatches"));
+		register(greatestFinalPct(type, TOUR_FINALS, TOUR_FINALS_NAME, N_A, TOUR_FINALS_TOURNAMENTS, "tourFinalsMatches"));
+		register(greatestFinalPct(type, MASTERS, MASTERS_NAME, N_A, MASTERS_TOURNAMENTS, "mastersMatches"));
+		register(greatestFinalPct(type, OLYMPICS, OLYMPICS_NAME, N_A, OLYMPICS_TOURNAMENTS, "olympicsMatches"));
+		register(greatestFinalPct(type, BIG, BIG_NAME, BIG_NAME_SUFFIX, BIG_TOURNAMENTS, "matches"));
+		register(greatestFinalPct(type, ATP_500, ATP_500_NAME, N_A, ATP_500_TOURNAMENTS, "mastersMatches"));
+		register(greatestFinalPct(type, ATP_250, ATP_250_NAME, N_A, ATP_250_TOURNAMENTS, "mastersMatches"));
+		register(greatestFinalPct(type, SMALL, SMALL_NAME, SMALL_NAME_SUFFIX, SMALL_TOURNAMENTS, "matches"));
+		register(greatestFinalPct(type, HARD, HARD_NAME, N_A, HARD_TOURNAMENTS, "hardMatches"));
+		register(greatestFinalPct(type, CLAY, CLAY_NAME, N_A, CLAY_TOURNAMENTS, "clayMatches"));
+		register(greatestFinalPct(type, GRASS, GRASS_NAME, N_A, GRASS_TOURNAMENTS, "grassMatches"));
+		register(greatestFinalPct(type, CARPET, CARPET_NAME, N_A, CARPET_TOURNAMENTS, "carpetMatches"));
 		if (type == RecordType.WINNING) {
 			register(greatestTitlePct(N_A, N_A, N_A, ALL_TOURNAMENTS, "matches"));
 			register(greatestTitlePct(GRAND_SLAM, GRAND_SLAM_NAME, N_A, GRAND_SLAM_TOURNAMENTS, "grandSlamMatches"));
@@ -80,7 +80,7 @@ class GreatestTitlePctCategory extends RecordCategory {
 		);
 	}
 
-	private static Record greatestFinalPct(String id, RecordType type, String name, String nameSuffix, String condition, String perfCategory) {
+	private static Record greatestFinalPct(RecordType type, String id, String name, String nameSuffix, String condition, String perfCategory) {
 		return new Record(
 			id + "Final" + type.name + "Pct", "Greatest " + suffix(name, " ") + "Final " + type.name + " Pct." + prefix(nameSuffix, " "),
 			"SELECT r.player_id, sum(" + type.expression2 + ")::real/count(r.player_id) AS pct, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END) AS won, sum(CASE r.result WHEN 'W' THEN 0 ELSE 1 END) AS lost\n" +
