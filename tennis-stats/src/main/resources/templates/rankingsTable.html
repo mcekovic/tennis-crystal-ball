@@ -63,7 +63,6 @@
 		function rankTypeChanged() {
 			var rankType = $("#rankType").val();
 			$("#rankingsTable").find("th[data-column-id='points'] > a > span.text").html(rankType == "POINTS" ? "Points" : "Elo Rating");
-			$("#season").find("option[value='']").html(rankType == "POINTS" ? "Current" : "All-time");
 			$("#eloInfo").css("display", rankType == "ELO_RATING" ? "inline" : "none");
 			seasonChanged();
 		}

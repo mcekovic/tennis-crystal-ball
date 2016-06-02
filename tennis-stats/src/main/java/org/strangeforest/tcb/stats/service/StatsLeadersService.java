@@ -116,7 +116,7 @@ public class StatsLeadersService {
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
-				boolean active = !filter.hasSeason() && rs.getBoolean("active");
+				Boolean active = !filter.hasActive() && !filter.hasSeason() ? rs.getBoolean("active") : null;
 				double value = rs.getDouble("value");
 				table.addRow(new StatsLeaderRow(rank, playerId, name, countryId, active, value, statsCategory.getType()));
 			}

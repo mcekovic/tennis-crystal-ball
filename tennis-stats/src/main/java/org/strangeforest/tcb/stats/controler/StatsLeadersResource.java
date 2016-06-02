@@ -24,12 +24,13 @@ public class StatsLeadersResource {
 		@RequestParam(value = "surface", required = false) String surface,
 		@RequestParam(value = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(value = "active", required = false) Boolean active,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam(value = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		StatsPlayerListFilter filter = new StatsPlayerListFilter(searchPhrase, season, surface, tournamentId, tournamentEventId);
+		StatsPlayerListFilter filter = new StatsPlayerListFilter(active, searchPhrase, season, surface, tournamentId, tournamentEventId);
 		int playerCount = statsLeadersService.getPlayerCount(category, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);

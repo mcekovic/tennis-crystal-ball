@@ -22,19 +22,19 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND tournament_event_id = :tournamentEventId";
 
 	public StatsPlayerListFilter(Integer season) {
-		this(null, season);
+		this(null, null, season);
 	}
 
-	public StatsPlayerListFilter(String searchPhrase, Integer season) {
-		this(searchPhrase, season, null, null, null);
+	public StatsPlayerListFilter(Boolean active, String searchPhrase, Integer season) {
+		this(active, searchPhrase, season, null, null, null);
 	}
 
 	public StatsPlayerListFilter(Integer season, String surface, Integer tournamentId, Integer tournamentEventId) {
-		this(null, season, surface, tournamentId, tournamentEventId);
+		this(null, null, season, surface, tournamentId, tournamentEventId);
 	}
 
-	public StatsPlayerListFilter(String searchPhrase, Integer season, String surface, Integer tournamentId, Integer tournamentEventId) {
-		super(searchPhrase);
+	public StatsPlayerListFilter(Boolean active, String searchPhrase, Integer season, String surface, Integer tournamentId, Integer tournamentEventId) {
+		super(active, searchPhrase);
 		this.season = season;
 		this.surface = surface;
 		this.tournamentId = tournamentId;

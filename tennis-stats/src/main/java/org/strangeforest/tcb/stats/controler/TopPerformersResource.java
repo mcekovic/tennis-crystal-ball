@@ -28,12 +28,13 @@ public class TopPerformersResource {
 	public BootgridTable<TopPerformerRow> topPerformersTable(
 		@RequestParam(value = "category") String category,
 		@RequestParam(value = "season", required = false) Integer season,
+		@RequestParam(value = "active", required = false) Boolean active,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam(value = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		StatsPlayerListFilter filter = new StatsPlayerListFilter(searchPhrase, season);
+		StatsPlayerListFilter filter = new StatsPlayerListFilter(active, searchPhrase, season);
 		int playerCount = topPerformersService.getPlayerCount(category, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);

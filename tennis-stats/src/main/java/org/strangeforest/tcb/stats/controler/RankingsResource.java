@@ -16,7 +16,6 @@ import org.strangeforest.tcb.stats.util.*;
 import com.google.common.collect.*;
 
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.model.RankType.*;
 
 @RestController
 public class RankingsResource {
@@ -34,6 +33,7 @@ public class RankingsResource {
 		@RequestParam(value = "rankType") RankType rankType,
 		@RequestParam(value = "season", required = false) Integer season,
 		@RequestParam(value = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date,
+		@RequestParam(value = "allTime", required = false) boolean allTime,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam(value = "searchPhrase") String searchPhrase
@@ -41,7 +41,7 @@ public class RankingsResource {
 		if (date == null) {
 			if (season != null)
 				date = rankingsService.getSeasonEndRankingDate(rankType, season);
-			if (date == null && rankType != ELO_RATING)
+			if (date == null && !allTime)
 				date = rankingsService.getCurrentRankingDate(rankType);
 		}
 		PlayerListFilter filter = new PlayerListFilter(searchPhrase);

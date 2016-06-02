@@ -26,7 +26,7 @@
 				},
 				url: "/goatTable",
 				requestHandler: function (request) {
-					var active = $("#activePlayers").prop("checked");
+					var active = $("#active").prop("checked");
 					if (active)
 						request.active = active;
 					return request;
@@ -75,7 +75,7 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
-			$("#goatTable-header").find("div.search").before($("#activePlayersDiv").remove());
+			$("#goatTable-header").find("div.search").before($("#activeDiv").remove());
 			setBootgridTitles($goatTable, [
 				{id: "goatRank", title: "GOAT rank"},
 				{id: "goatPoints", title: "GOAT points"},
@@ -102,6 +102,13 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 class="grid-title">GOAT List</h3>
+	<div id="activeDiv" class="btn-group" style="margin-right: 20px">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
+				<input id="active" type="checkbox" onchange="reloadGOATTable()"/> Active players
+			</label>
+		</div>
+	</div>
 	<table id="goatTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
@@ -121,13 +128,6 @@
 		</tr>
 		</thead>
 	</table>
-	<div id="activePlayersDiv" class="btn-group" style="margin-right: 20px">
-		<div class="checkbox">
-			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
-				<input id="activePlayers" type="checkbox" onchange="reloadGOATTable()"/> Active players
-			</label>
-		</div>
-	</div>
 	<br/>
 	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend</button>
 	<div id="goatLegend" class="collapse">Loading...</div>

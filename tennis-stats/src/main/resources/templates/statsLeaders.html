@@ -35,6 +35,9 @@
 					var surface = $("#surface").val();
 					if (surface != "")
 						request.surface = surface;
+					var active = $("#active").prop("checked");
+					if (active)
+						request.active = active;
 					return request;
 				},
 				rowCount: [20, 50, -1],
@@ -53,7 +56,7 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
-			$("#statsLeadersTable-header").find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove()).before($("#surfaceDiv").remove());
+			$("#statsLeadersTable-header").find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove()).before($("#surfaceDiv").remove()).before($("#activeDiv").remove());
 			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
@@ -99,6 +102,13 @@
 			<option value="">All surfaces</option>
 			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 		</select>
+	</div>
+	<div id="activeDiv" class="btn-group" style="margin-right: 20px">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
+				<input id="active" type="checkbox" onchange="reloadStatsLeaders()"/> Active
+			</label>
+		</div>
 	</div>
 	<table id="statsLeadersTable" class="table table-condensed table-hover table-striped">
 		<thead>
