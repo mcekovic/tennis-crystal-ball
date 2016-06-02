@@ -68,6 +68,14 @@
 			categoryChanged();
 			$("#topPerformersTable").bootgrid("reload");
 		}
+		function seasonChanged() {
+			var $active = $("#active");
+			var forSeason = $("#season").val() != "";
+			if (forSeason)
+				$active.prop("checked", false);
+			$active.prop("disabled", forSeason);
+			reloadTopPerformers();
+		}
 		/*]]>*/
 	</script>
 </head>
@@ -82,7 +90,7 @@
 		</select>
 	</div>
 	<div id="seasonDiv" class="btn-group" style="margin-right: 20px">
-		<select id="season" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select career or season">
+		<select id="season" class="form-control" onchange="seasonChanged()" data-toggle="tooltip" data-placement="top" title="Select career or season">
 			<option value="">Career</option>
 			<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 		</select>

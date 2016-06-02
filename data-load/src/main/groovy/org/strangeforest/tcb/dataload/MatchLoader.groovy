@@ -11,7 +11,7 @@ class MatchLoader extends BaseCSVLoader {
 	String loadSql() {
 		'{call load_match(' +
 			':ext_tournament_id, :season, :tournament_date, :tournament_name, :event_name, :tournament_level, :surface, :indoor, :draw_type, :draw_size, :rank_points, ' +
-			':match_num, :round, :best_of, ' +
+			':match_num, :date, :round, :best_of, ' +
 			':ext_winner_id, :winner_seed, :winner_entry, :winner_rank, :winner_rank_points, :winner_age, :winner_country_id, :winner_name, :winner_height, :winner_hand, ' +
 			':ext_loser_id, :loser_seed, :loser_entry, :loser_rank, :loser_rank_points, :loser_age, :loser_country_id, :loser_name, :loser_height, :loser_hand, ' +
 			':score, :outcome, :w_sets, :l_sets, :w_games, :l_games, :w_set_games, :l_set_games, :w_set_tb_pt, :l_set_tb_pt, :minutes, ' +
@@ -34,7 +34,9 @@ class MatchLoader extends BaseCSVLoader {
 		def dcInfo = level == 'D' ? extractDCTournamentInfo(name) : null;
 		def season = smallint(tourneyId.substring(0, 4))
 		params.season = season
-		params.tournament_date = date record.tourney_date
+		def date = date record.tourney_date
+		params.tournament_date = date
+		params.date = date
 
 		def drawSize = smallint record.draw_size
 		def mappedLevel = mapLevel(level, drawSize, name, season, extTourneyId)

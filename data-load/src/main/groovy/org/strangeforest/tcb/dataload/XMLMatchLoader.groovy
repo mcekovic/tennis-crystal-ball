@@ -11,7 +11,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 	String loadSql() {
 		'{call load_match(' +
 			':ext_tournament_id, :season, :tournament_date, :tournament_name, :event_name, :tournament_level, :surface, :indoor, :draw_type, :draw_size, :rank_points, ' +
-			':match_num, :round, :best_of, ' +
+			':match_num, :date, :round, :best_of, ' +
 			':ext_winner_id, :winner_seed, :winner_entry, :winner_rank, :winner_rank_points, :winner_age, :winner_country_id, :winner_name, :winner_height, :winner_hand, ' +
 			':ext_loser_id, :loser_seed, :loser_entry, :loser_rank, :loser_rank_points, :loser_age, :loser_country_id, :loser_name, :loser_height, :loser_hand, ' +
 			':score, :outcome, :w_sets, :l_sets, :w_games, :l_games, :w_set_games, :l_set_games, :w_set_tb_pt, :l_set_tb_pt, :minutes, ' +
@@ -29,6 +29,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 			matches.each { match ->
 				Map params = tournamentParams(item)
 				params.match_num = smallint match.@'match-num'
+				params.date = date item.@date
 				params.round = string match.@round
 				params.best_of = smallint match.@'best-of'
 				params.putAll playerParams(match, 'winner', players)
