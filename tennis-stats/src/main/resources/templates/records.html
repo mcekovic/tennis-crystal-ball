@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="infamous" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="record" type="org.strangeforest.tcb.stats.model.records.Record"*/-->
 <!--/*@thymesVar id="active" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="recordCategories" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>"*/-->
+<!--/*@thymesVar id="infamousRecordCategories" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>"*/-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -27,7 +29,7 @@
 				},
 				url: "/recordTable?recordId=" + [[${record.id}]],
 				requestHandler: function (request) {
-					request.active = isActivePlayersChecked();
+					request.active = isActiveChecked();
 					return request;
 				},
 				sorting: false,
@@ -46,7 +48,8 @@
 			var $actionBar = $recordTableHeader.find("div.actionBar");
 			$actionBar.removeClass("col-sm-12").addClass("col-sm-2");
 			$actionBar.before($("#recordDiv").remove());
-			$actionBar.before($("#activePlayersDiv").remove());
+			$actionBar.before($("#infamousDiv").remove());
+			$actionBar.before($("#activeDiv").remove());
 		});
 		/*]]>*/
 	</script>
@@ -55,12 +58,21 @@
 		$(function() {
 			$("[data-toggle='tooltip']").tooltip();
 		});
-		function isActivePlayersChecked() {
-			return $("#activePlayers").prop("checked");
+		function isInfamousChecked() {
+			return $("#infamous").prop("checked");
+		}
+		function isActiveChecked() {
+			return $("#active").prop("checked");
+		}
+		function infamousChanged(reload) {
+			if (reload)
+				reloadRecord();
+			else
+				window.location.href = "/records?infamous=" + isInfamousChecked();
 		}
 		function reloadRecord() {
-			var url = "/record?recordId=" + $("#record").val();
-			if (isActivePlayersChecked())
+			var url = "/record?recordId=" + $(isInfamousChecked() ? "#infamousRecord" : "#record").val();
+			if (isActiveChecked())
 				url += "&active=true";
 			window.location.href = url;
 		}
@@ -71,23 +83,41 @@
 	<header th:include="fragments/header :: title"></header>
 	<h3 th:text="${record != null ? record.name : 'Records'}">Records</h3>
 	<h5><i>More Records to Come!!!</i></h5>
-	<div class="row">
-		<div id="recordDiv" class="col-sm-8" th:style="${record != null ? 'padding-left: 0' : 'margin-top: 15px'}">
-			<div class="input-group" style="float: left">
-				<label for="record" class="input-group-addon">Record:</label>
-				<select id="record" class="form-control" onchange="reloadRecord()" data-toggle="tooltip" data-placement="top" title="Select Record">
-					<option th:unless="${record}" value="">Select Record</option>
-					<optgroup th:each="recordCategory : ${recordCategories}" th:label="${recordCategory.name}" label="Matches Played">
-						<option th:each="aRecord : ${recordCategory.records}" th:value="${aRecord.id}" value="MatchesPlayed" th:text="${aRecord.name}" th:selected="${record != null and aRecord.id == record.id}">Most Matches Played</option>
-					</optgroup>
-				</select>
+	<div class="container-fluid">
+		<div class="row">
+			<div id="recordDiv" class="col-sm-7" style="padding-left: 0">
+				<div id="recordControl" class="input-group" th:style="'float: left' + ${infamous ? '; display: none' : ''}">
+					<label for="record" class="input-group-addon">Record:</label>
+					<select id="record" class="form-control" onchange="reloadRecord()" data-toggle="tooltip" data-placement="top" title="Select Record">
+						<option th:unless="${record}" value="">Select Record</option>
+						<optgroup th:each="recordCategory : ${recordCategories}" th:label="${recordCategory.name}" label="Matches Played">
+							<option th:each="aRecord : ${recordCategory.records}" th:value="${aRecord.id}" value="MatchesPlayed" th:text="${aRecord.name}" th:selected="${record != null and aRecord.id == record.id}">Most Matches Played</option>
+						</optgroup>
+					</select>
+				</div>
+				<div id="infamousRecordControl" class="input-group" th:style="'float: left' + ${infamous ? '' : '; display: none'}">
+					<label for="infamousRecord" class="input-group-addon">Infamous:</label>
+					<select id="infamousRecord" class="form-control" onchange="reloadRecord()" data-toggle="tooltip" data-placement="top" title="Select Infamous Record">
+						<option th:unless="${record}" value="">Select Infamous Record</option>
+						<optgroup th:each="recordCategory : ${infamousRecordCategories}" th:label="${recordCategory.name}" label="Matches Played">
+							<option th:each="aRecord : ${recordCategory.records}" th:value="${aRecord.id}" value="MatchesLost" th:text="${aRecord.name}" th:selected="${record != null and aRecord.id == record.id}">Most Matches Lost</option>
+						</optgroup>
+					</select>
+				</div>
 			</div>
-		</div>
-		<div th:if="${record}" id="activePlayersDiv" class="col-sm-2">
-			<div class="checkbox">
-				<label data-toggle="tooltip" data-placement="top" title="Show only active players">
-					<input id="activePlayers" type="checkbox" onchange="reloadRecord()" th:checked="${active}"/> Active players
-				</label>
+			<div id="infamousDiv" class="col-sm-1">
+				<div class="checkbox">
+					<label data-toggle="tooltip" data-placement="top" title="Show famous or infamous records">
+						<input id="infamous" type="checkbox" th:onchange="'infamousChanged(' + ${record != null} + ')'" th:checked="${infamous}"/> Infamous
+					</label>
+				</div>
+			</div>
+			<div th:if="${record}" id="activeDiv" class="col-sm-2">
+				<div class="checkbox">
+					<label data-toggle="tooltip" data-placement="top" title="Show only active players">
+						<input id="active" type="checkbox" onchange="reloadRecord()" th:checked="${active}"/> Active players
+					</label>
+				</div>
 			</div>
 		</div>
 	</div>

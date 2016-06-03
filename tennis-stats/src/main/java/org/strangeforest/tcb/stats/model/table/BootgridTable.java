@@ -43,13 +43,6 @@ public class BootgridTable<R> {
 		this.total = total;
 	}
 
-	public void setTotal(int total, int pageSize) {
-		this.total = total;
-		int last = current + rowCount;
-		if (rowCount < pageSize && last < total)
-			this.total = last;
-	}
-
 	public int getTotal() {
 		return total != 0 ? total : rowCount;
 	}
