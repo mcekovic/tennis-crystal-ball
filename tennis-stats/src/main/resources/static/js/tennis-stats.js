@@ -246,12 +246,24 @@ function tournamentFormatter(column, row) {
 
 // Tournament Event Formatter
 function tournamentEventFormatter(column, row) {
-	return "<a href='/tournamentEvent?tournamentEventId=" + row.tournamentEventId + "' class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + (row.tournament ? row.tournament : row.name) + "</a>";
+	return formatTournamentEvent(row.tournamentEventId, row.level, row.tournament ? row.tournament : row.name);
 }
 
-// Tournament Event Formatter 2
-function tournamentEventFormatter2(column, row) {
-	return "<a href='/tournamentEvent?tournamentEventId=" + row.id + "' class='label label-" + row.level + "' title='" + levelName(row.level) + " - " +  row.tournamentExtId + "'>" + row.name + "</a>";
+function tournamentEventFormatterExtId(column, row) {
+	return formatTournamentEvent(row.id, row.level, row.name, row.tournamentExtId);
+}
+
+function startTournamentEventFormatter(column, row) {
+	return tournamentEventFormatter(column, row.startEvent);
+}
+
+function endTournamentEventFormatter(column, row) {
+	return tournamentEventFormatter(column, row.endEvent);
+}
+
+function formatTournamentEvent(id, level, name, extId) {
+	var link = level != "D" && level != "T";
+	return (link ? "<a href='/tournamentEvent?tournamentEventId=" + id + "'" : "<div") + " class='label label-" + level + "' title='" + levelName(level) + (extId ? " - " +  extId : "") +"'>" + name + (link ? "</a>" : "</div>");
 }
 
 // Match Formatter

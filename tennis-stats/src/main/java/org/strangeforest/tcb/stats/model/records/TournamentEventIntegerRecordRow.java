@@ -2,9 +2,12 @@ package org.strangeforest.tcb.stats.model.records;
 
 import java.sql.*;
 
-public class TournamentEventIntegerRecordRow extends TournamentIntegerRecordRow {
+public class TournamentEventIntegerRecordRow extends IntegerRecordRow {
 
 	private int season;
+	private int tournamentEventId;
+	private String tournament;
+	private String level;
 	private int matches;
 
 	public TournamentEventIntegerRecordRow(int rank, int playerId, String name, String countryId, Boolean active) {
@@ -15,13 +18,28 @@ public class TournamentEventIntegerRecordRow extends TournamentIntegerRecordRow 
 		return season;
 	}
 
+	public int getTournamentEventId() {
+		return tournamentEventId;
+	}
+
+	public String getTournament() {
+		return tournament;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
 	public int getMatches() {
 		return matches;
 	}
 
-	@Override public void readValues(ResultSet rs) throws SQLException {
-		super.readValues(rs);
+	@Override public void read(ResultSet rs) throws SQLException {
+		super.read(rs);
 		season = rs.getInt("season");
+		tournamentEventId = rs.getInt("tournament_event_id");
+		tournament = rs.getString("tournament");
+		level = rs.getString("level");
 		matches = rs.getInt("matches");
 	}
 }

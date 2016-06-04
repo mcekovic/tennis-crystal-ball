@@ -14,8 +14,8 @@ public abstract class SeasonWonLostRecordRow extends WonLostRecordRow {
 		return season;
 	}
 
-	@Override public void readValues(ResultSet rs) throws SQLException {
-		super.readValues(rs);
+	@Override public void read(ResultSet rs) throws SQLException {
+		super.read(rs);
 		season = rs.getInt("season");
 	}
 }

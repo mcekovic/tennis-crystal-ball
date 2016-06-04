@@ -42,6 +42,11 @@ public abstract class Records {
 		register(new MostEntriesCategory(), false);
 		register(new GreatestTitlePctCategory(GreatestTitlePctCategory.RecordType.WINNING), false);
 		register(new ItemsWinningTitleCategory(ItemsWinningTitleCategory.RecordType.LEAST), false);
+		register(new WinningStreaksCategory(), false);
+		register(new TitleStreaksCategory(), false);
+		register(new FinalStreaksCategory(), false);
+		register(new SemiFinalStreaksCategory(), false);
+		register(new QuarterFinalStreaksCategory(), false);
 		// Infamous Records
 		register(new BestPlayerThatNeverCategory(), true);
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.LOST), true);

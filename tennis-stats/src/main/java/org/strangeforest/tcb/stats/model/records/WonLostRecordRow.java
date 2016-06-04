@@ -12,7 +12,7 @@ public abstract class WonLostRecordRow extends RecordRow {
 		super(rank, playerId, name, countryId, active);
 	}
 
-	@Override public void readValues(ResultSet rs) throws SQLException {
+	@Override public void read(ResultSet rs) throws SQLException {
 		wonLost = new WonLost(rs.getInt("won"), rs.getInt("lost"));
 	}
 }

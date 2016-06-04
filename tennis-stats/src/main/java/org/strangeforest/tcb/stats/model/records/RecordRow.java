@@ -10,5 +10,5 @@ public abstract class RecordRow extends PlayerRow {
 		super(rank, playerId, name, countryId, active);
 	}
 
-	public abstract void readValues(ResultSet rs) throws SQLException;
+	public abstract void read(ResultSet rs) throws SQLException;
 }

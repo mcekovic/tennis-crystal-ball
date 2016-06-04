@@ -37,7 +37,10 @@
 				formatters: {
 					"country": countryFormatter,
 					"player": playerFormatter,
-					"tournament": tournamentFormatter
+					"tournament": tournamentFormatter,
+					"tournamentEvent": tournamentEventFormatter,
+					"startTournamentEvent": startTournamentEventFormatter,
+					"endTournamentEvent": endTournamentEventFormatter
 				},
 				templates: {
 					paginationItem: bootgridTemplatePaginationItem
@@ -81,8 +84,11 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 th:text="${record != null ? record.name : 'Records'}">Records</h3>
-	<h5><i>More Records to Come!!!</i></h5>
+	<div class="text-nowrap">
+		<h3 style="float: left; margin-top: 5px" th:text="${record != null ? record.name : 'Records'}">Records</h3>
+		<h5 style="font-style: italic">&nbsp;More Records to Come!</h5>
+	</div>
+	<br/>
 	<div class="container-fluid">
 		<div class="row">
 			<div id="recordDiv" class="col-sm-7" style="padding-left: 0">
@@ -126,7 +132,7 @@
 		<tr>
 			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="55">Rank</th>
 			<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="70">Country</th>
-			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="200">Name</th>
+			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="180">Name</th>
 			<th th:each="column : ${record.getColumnInfos()}" th:attr="data-column-id=${column.name},data-type=${column.type},data-formatter=${column.formatter},data-width=${column.width},data-align=${column.align},data-header-align=${column.align}" data-sortable="false" th:text="${column.caption}">Value</th>
 		</tr>
 		</thead>
