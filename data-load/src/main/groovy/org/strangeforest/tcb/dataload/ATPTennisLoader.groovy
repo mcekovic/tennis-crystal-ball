@@ -141,6 +141,9 @@ class ATPTennisLoader {
 		refreshMaterializedView(sql, 'player_season_stats')
 		refreshMaterializedView(sql, 'player_surface_stats')
 		refreshMaterializedView(sql, 'player_stats')
+		refreshMaterializedView(sql, 'player_win_streak')
+		refreshMaterializedView(sql, 'player_surface_win_streak')
+		refreshMaterializedView(sql, 'player_level_win_streak')
 		refreshMaterializedView(sql, 'player_season_goat_points')
 		refreshMaterializedView(sql, 'player_goat_points')
 	}

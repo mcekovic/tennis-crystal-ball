@@ -51,3 +51,6 @@ VACUUM FULL ANALYSE VERBOSE player_season_surface_stats;
 VACUUM FULL ANALYSE VERBOSE player_season_stats;
 VACUUM FULL ANALYSE VERBOSE player_surface_stats;
 VACUUM FULL ANALYSE VERBOSE player_stats;
+VACUUM FULL ANALYSE VERBOSE player_win_streak;
+VACUUM FULL ANALYSE VERBOSE player_surface_win_streak;
+VACUUM FULL ANALYSE VERBOSE player_level_win_streak;

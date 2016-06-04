@@ -183,7 +183,7 @@ CREATE UNIQUE INDEX ON player_titles (player_id);
 -- match_for_stats_v
 
 CREATE OR REPLACE VIEW match_for_stats_v AS
-SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.tournament_id, e.season, m.date, e.level, e.surface, m.best_of, m.round,
+SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.tournament_id, e.season, e.level, e.surface, m.date, m.match_num, m.round, m.best_of,
 	m.winner_rank, m.loser_rank, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.w_sets, m.l_sets, m.w_games, m.l_games, m.outcome
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
@@ -197,6 +197,18 @@ SELECT m.match_id, m.winner_id, m.loser_id, e.season, e.level, e.surface
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T');
+
+
+-- player_match_for_stats_v
+
+CREATE OR REPLACE VIEW player_match_for_stats_v AS
+SELECT match_id, tournament_event_id, tournament_id, season, level, surface, date, match_num, round, winner_id player_id, loser_id opponent_id,
+	1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games
+FROM match_for_stats_v
+UNION ALL
+SELECT match_id, tournament_event_id, tournament_id, season, level, surface, date, match_num, round, loser_id, winner_id,
+	0, 1, l_sets, w_sets, l_games, w_games
+FROM match_for_stats_v;
 
 
 -- player_match_performance_v
@@ -389,6 +401,66 @@ FROM player_season_stats
 GROUP BY player_id;
 
 CREATE UNIQUE INDEX ON player_stats (player_id);
+
+
+-- player_win_streak
+
+CREATE MATERIALIZED VIEW player_win_streak AS
+WITH match_lost_count AS (
+	SELECT match_id, player_id, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id ORDER BY date, round, match_num) o_matches_count
+	FROM player_match_for_stats_v
+), match_win_streak AS (
+	SELECT player_id, rank() OVER (ws) AS win_streak,
+		first_value(match_id) OVER (ws) AS first_match_id,
+		last_value(match_id) OVER (PARTITION BY player_id, o_matches_count ORDER BY date, round, match_num ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_match_id
+	FROM match_lost_count
+	WHERE p_matches > 0
+	WINDOW ws AS (PARTITION BY player_id, o_matches_count ORDER BY date, round, match_num)
+)
+SELECT player_id, max(win_streak) AS win_streak, first_match_id, last_match_id
+FROM match_win_streak
+GROUP BY player_id, first_match_id, last_match_id
+HAVING max(win_streak) >= 5;
+
+
+-- player_surface_win_streak
+
+CREATE MATERIALIZED VIEW player_surface_win_streak AS
+WITH match_lost_count AS (
+	SELECT match_id, player_id, surface, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id, surface ORDER BY date, round, match_num) o_matches_count
+	FROM player_match_for_stats_v
+), match_win_streak AS (
+	SELECT player_id, surface, rank() OVER (ws) AS win_streak,
+		first_value(match_id) OVER (ws) AS first_match_id,
+		last_value(match_id) OVER (PARTITION BY player_id, surface, o_matches_count ORDER BY date, round, match_num ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_match_id
+	FROM match_lost_count
+	WHERE p_matches > 0
+	WINDOW ws AS (PARTITION BY player_id, surface, o_matches_count ORDER BY date, round, match_num)
+)
+SELECT player_id, surface, max(win_streak) AS win_streak, first_match_id, last_match_id
+FROM match_win_streak
+GROUP BY player_id, surface, first_match_id, last_match_id
+HAVING max(win_streak) >= 5;
+
+
+-- player_surface_win_streak
+
+CREATE MATERIALIZED VIEW player_level_win_streak AS
+WITH match_lost_count AS (
+	SELECT match_id, player_id, level, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id, level ORDER BY date, round, match_num) o_matches_count
+	FROM player_match_for_stats_v
+), match_win_streak AS (
+	SELECT player_id, level, rank() OVER (ws) AS win_streak,
+		first_value(match_id) OVER (ws) AS first_match_id,
+		last_value(match_id) OVER (PARTITION BY player_id, level, o_matches_count ORDER BY date, round, match_num ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_match_id
+	FROM match_lost_count
+	WHERE p_matches > 0
+	WINDOW ws AS (PARTITION BY player_id, level, o_matches_count ORDER BY date, round, match_num)
+)
+SELECT player_id, level, max(win_streak) AS win_streak, first_match_id, last_match_id
+FROM match_win_streak
+GROUP BY player_id, level, first_match_id, last_match_id
+HAVING max(win_streak) >= 5;
 
 
 -- player_best_elo_rating_goat_points_v

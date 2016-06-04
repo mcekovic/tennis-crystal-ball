@@ -59,7 +59,7 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		return new Record(
 			type.name + item.name + "LostWinning" + id + "Title", suffix(type.name, " ") + item.name + " Lost Winning " + suffix(name, " ") + "Title",
 			"SELECT player_id, tournament_event_id, e.tournament_id, e.name AS tournament, e.level, e.season, e.date, sum(m." + item.column + ") AS value, count(m.match_id) AS matches\n" +
-			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) LEFT JOIN player_match_stats_v m USING (player_id, tournament_event_id)\n" +
+			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) LEFT JOIN player_match_for_stats_v m USING (player_id, tournament_event_id)\n" +
 			"WHERE result = 'W' AND e." + condition + "\n" +
 			"GROUP BY player_id, tournament_event_id, e.tournament_id, e.name, e.level, e.season, e.date HAVING count(m.match_id) >= 3",
 			"r.value, r.tournament_id, r.tournament, r.level, r.season, r.matches", type.order, type.order + ", r.date", RecordRowFactory.TOURNAMENT_EVENT_INTEGER,
