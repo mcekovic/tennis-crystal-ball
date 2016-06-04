@@ -20,6 +20,6 @@ public class QuarterFinalStreaksCategory extends ResultsStreaksCategory {
 	}
 
 	private static Record quarterFinalStreak(String id, String name, String nameSuffix, String condition) {
-		return resultStreak(id + "QuarterFinal", suffix(name, " ") + "Quarter-Final", nameSuffix, SEMI_FINALS, condition);
+		return resultStreak(id + "QuarterFinal", suffix(name, " ") + "Quarter-Final", nameSuffix, QUARTER_FINALS, condition);
 	}
 }

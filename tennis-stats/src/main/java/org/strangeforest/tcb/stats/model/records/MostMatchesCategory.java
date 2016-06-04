@@ -54,6 +54,7 @@ class MostMatchesCategory extends RecordCategory {
 	private static Record mostMatches(RecordType type, String id, String name, String columnPrefix) {
 		return new Record(
 			id + "Matches" + type.name, "Most " + suffix(name, " ") + "Matches " + type.name,
+			/* language=SQL */
 			"SELECT player_id, " + type.expression(columnPrefix + "matches") + " AS value FROM player_performance",
 			"r.value", "r.value DESC", "r.value DESC", RecordRowFactory.INTEGER,
 			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(name, " ") + "Matches " + type.name))
@@ -63,6 +64,7 @@ class MostMatchesCategory extends RecordCategory {
 	private static Record mostMatchesVs(RecordType type, String id, String name, String columnPrefix) {
 		return new Record(
 			"MatchesVs" + id + type.name, "Most Matches " + type.name + " Vs. " + name,
+			/* language=SQL */
 			"SELECT player_id, " + type.expression("vs_" + columnPrefix) + " AS value FROM player_performance",
 			"r.value", "r.value DESC", "r.value DESC", RecordRowFactory.INTEGER,
 			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", "Matches " + type.name + " Vs. " + name))
@@ -72,6 +74,7 @@ class MostMatchesCategory extends RecordCategory {
 	private static Record mostSeasonMatches(RecordType type) {
 		return new Record(
 			"SeasonMatches" + type.name, "Most Matches " + type.name + " in Single Season",
+			/* language=SQL */
 			"SELECT player_id, season, " + type.expression("matches") + " AS value FROM player_season_performance",
 			"r.value, r.season", "r.value DESC", "r.value DESC, r.season", RecordRowFactory.SEASON_INTEGER,
 			asList(
@@ -84,6 +87,7 @@ class MostMatchesCategory extends RecordCategory {
 	private static Record mostTournamentMatches(RecordType type, String id, String name, String columnPrefix) {
 		return new Record(
 			id + "TournamentMatches" + type.name, "Most Matches " + type.name + " in Single " + suffix(name, " ") + "Tournament",
+			/* language=SQL */
 			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + columnPrefix + "matches") + " AS value\n" +
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id) WHERE t." + ALL_TOURNAMENTS,
 			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.tournament", RecordRowFactory.TOURNAMENT_INTEGER,

@@ -31,6 +31,7 @@ class BestPlayerThatNeverCategory extends RecordCategory {
 	private static Record bestPlayerThatNeverWon(String id, String name, String nameSuffix, String titleColumn) {
 		return new Record(
 			"BestPlayerThatNeverWon" + id + "Title", "Best Player That Never Won" + prefix(name, " ") + " Title" + prefix(nameSuffix, " "),
+			/* language=SQL */
 			"SELECT player_id, goat_points AS value FROM player_v WHERE goat_points > 0 AND " + titleColumn + " = 0",
 			"r.value", "r.value DESC", "r.value DESC", RecordRowFactory.INTEGER,
 			asList(GOAT_POINTS_COLUMN)
@@ -40,6 +41,7 @@ class BestPlayerThatNeverCategory extends RecordCategory {
 	private static Record bestPlayerThatNeverReachedTopN(String id, String name, String rankType, String rankColumn, int bestRank) {
 		return new Record(
 			"BestPlayerThatNeverReached" + id + rankType + "Ranking", "Best Player That Never Reached" + prefix(name, " ") + prefix(rankType, " ") + " Ranking",
+			/* language=SQL */
 			"SELECT player_id, goat_points AS value FROM player_v WHERE goat_points > 0 AND " + rankColumn + " > " + bestRank,
 			"r.value", "r.value DESC", "r.value DESC", RecordRowFactory.INTEGER,
 			asList(GOAT_POINTS_COLUMN)

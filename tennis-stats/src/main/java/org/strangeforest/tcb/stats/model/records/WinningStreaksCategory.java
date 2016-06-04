@@ -37,6 +37,7 @@ public class WinningStreaksCategory extends RecordCategory {
 	private static Record winningStreakRecord(String id, String name, String tableName, String condition) {
 		return new Record(
 			id, name,
+			/* language=SQL */
 			"SELECT player_id, s.win_streak AS value, lm.date AS end_date,\n" +
 			"  fe.season AS start_season, fe.tournament_event_id AS start_tournament_event_id, fe.name AS start_tournament, fe.level AS start_level,\n" +
 			"  le.season AS end_season, le.tournament_event_id AS end_tournament_event_id, le.name AS end_tournament, le.level AS end_level\n" +

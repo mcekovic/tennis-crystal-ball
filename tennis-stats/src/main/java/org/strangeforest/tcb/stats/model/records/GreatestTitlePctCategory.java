@@ -69,6 +69,7 @@ class GreatestTitlePctCategory extends RecordCategory {
 	private static Record greatestFinalPct(RecordType type) {
 		return new Record(
 			"Final" + type.name + "Pct", "Greatest Final " + type.name + " Pct.",
+			/* language=SQL */
 			"SELECT player_id, " + type.expression1 + "::real/(finals_won + finals_lost) AS pct, finals_won AS won, finals_lost AS lost\n" +
 			"FROM player_performance WHERE finals_won + finals_lost >= performance_min_entries('finals')",
 			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
@@ -83,6 +84,7 @@ class GreatestTitlePctCategory extends RecordCategory {
 	private static Record greatestFinalPct(RecordType type, String id, String name, String nameSuffix, String condition, String perfCategory) {
 		return new Record(
 			id + "Final" + type.name + "Pct", "Greatest " + suffix(name, " ") + "Final " + type.name + " Pct." + prefix(nameSuffix, " "),
+			/* language=SQL */
 			"SELECT r.player_id, sum(" + type.expression2 + ")::real/count(r.player_id) AS pct, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END) AS won, sum(CASE r.result WHEN 'W' THEN 0 ELSE 1 END) AS lost\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE r.result IN ('W', 'F') AND e." + condition + "\n" +
@@ -99,6 +101,7 @@ class GreatestTitlePctCategory extends RecordCategory {
 	private static Record greatestTitlePct(String id, String name, String nameSuffix, String condition, String perfCategory) {
 		return new Record(
 			id + "TitleWinningPct", "Greatest " + suffix(name, " ") + "Title/Entry Winning Pct." + prefix(nameSuffix, " "),
+			/* language=SQL */
 			"SELECT r.player_id, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END)::real/count(r.player_id) AS pct, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END) AS won, sum(CASE r.result WHEN 'W' THEN 0 ELSE 1 END) AS lost\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE e." + condition + "\n" +

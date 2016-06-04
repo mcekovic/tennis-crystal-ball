@@ -58,6 +58,7 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 	protected static Record itemsLostWinningTitle(RecordType type, ItemType item, String id, String name, String condition) {
 		return new Record(
 			type.name + item.name + "LostWinning" + id + "Title", suffix(type.name, " ") + item.name + " Lost Winning " + suffix(name, " ") + "Title",
+			/* language=SQL */
 			"SELECT player_id, tournament_event_id, e.name AS tournament, e.level, e.season, e.date, sum(m." + item.column + ") AS value, count(m.match_id) AS matches\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) LEFT JOIN player_match_for_stats_v m USING (player_id, tournament_event_id)\n" +
 			"WHERE result = 'W' AND e." + condition + "\n" +

@@ -15,8 +15,10 @@ public abstract class ResultsStreaksCategory extends RecordCategory {
 	protected static Record resultStreak(String id, String name, String nameSuffix, String resultCondition, String condition) {
 		return new Record(
 			id + "Streak", suffix(name, " ") + "Streak" + prefix(nameSuffix, " "),
+			// CASE in second line replaceable by FILTER in PostgreSQL 9.4+
+			/* language=SQL */
 			"WITH event_not_count AS (\n" +
-			"  SELECT r.player_id, e.tournament_event_id, e.date, r.result, count(e.tournament_event_id) FILTER (WHERE NOT(" + resultCondition + ")) OVER (PARTITION BY player_id ORDER BY date) AS not_count\n" +
+			"  SELECT r.player_id, e.tournament_event_id, e.date, r.result, sum(CASE WHEN r." + resultCondition + " THEN 0 ELSE 1 END) OVER (PARTITION BY player_id ORDER BY date) AS not_count\n" +
 			"  FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)" + prefix(condition, " WHERE e.") + "\n" +
 			"), event_result_streak AS (\n" +
 			"  SELECT player_id, rank() OVER (rs) AS result_streak,\n" +
@@ -32,8 +34,8 @@ public abstract class ResultsStreaksCategory extends RecordCategory {
 			"  HAVING max(result_streak) >= 2\n" +
 			")\n" +
 			"SELECT player_id, s.result_streak AS value, le.date AS end_date,\n" +
-			"fe.season AS start_season, s.first_event_id AS start_tournament_event_id, fe.name AS start_tournament, fe.level AS start_level,\n" +
-			"le.season AS end_season, s.last_event_id AS end_tournament_event_id, le.name AS end_tournament, le.level AS end_level\n" +
+			"  fe.season AS start_season, s.first_event_id AS start_tournament_event_id, fe.name AS start_tournament, fe.level AS start_level,\n" +
+			"  le.season AS end_season, s.last_event_id AS end_tournament_event_id, le.name AS end_tournament, le.level AS end_level\n" +
 			"FROM player_event_result_streak s\n" +
 			"INNER JOIN tournament_event fe ON fe.tournament_event_id = s.first_event_id\n" +
 			"INNER JOIN tournament_event le ON le.tournament_event_id = s.last_event_id",

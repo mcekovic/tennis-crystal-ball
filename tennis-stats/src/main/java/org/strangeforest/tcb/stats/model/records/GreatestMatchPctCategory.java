@@ -66,6 +66,7 @@ class GreatestMatchPctCategory extends RecordCategory {
 	private static Record greatestMatchPct(RecordType type, String id, String name, String columnPrefix, String perfCategory) {
 		return new Record(
 			id + type.name + "Pct", "Greatest " + suffix(name, " ") + type.name + " Pct.",
+			/* language=SQL */
 			"SELECT player_id, " + type.expression(columnPrefix + "matches") + " AS pct, " + columnPrefix + "matches_won AS won, " + columnPrefix + "matches_lost AS lost\n" +
 			"FROM player_performance WHERE " + columnPrefix + "matches_won + " + columnPrefix + "matches_lost >= performance_min_entries('" + perfCategory + "')",
 			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
@@ -80,6 +81,7 @@ class GreatestMatchPctCategory extends RecordCategory {
 	private static Record greatestMatchPctVs(RecordType type, String id, String name, String column) {
 		return new Record(
 			type.name + "PctVs" + id, "Greatest " + type.name + " Pct. Vs. " + name,
+			/* language=SQL */
 			"SELECT player_id, " + type.expression("vs_" + column) + " AS pct, vs_" + column + "_won AS won, vs_" + column + "_lost AS lost\n" +
 			"FROM player_performance WHERE vs_" + column + "_won + vs_" + column + "_lost >= performance_min_entries('vs" + id + "')",
 			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
@@ -94,6 +96,7 @@ class GreatestMatchPctCategory extends RecordCategory {
 	private static Record greatestSeasonMatchPct(RecordType type) {
 		return new Record(
 			"Season" + type.name + "Pct", "Greatest " + type.name + " Pct. in Single Season",
+			/* language=SQL */
 			"SELECT player_id, season, " + type.expression("matches") + " AS pct, matches_won AS won, matches_lost AS lost\n" +
 			"FROM player_season_performance WHERE matches_won + matches_lost >= performance_min_entries('matches') / 10",
 			"r.pct, r.won, r.lost, r.season", "r.pct DESC", "r.pct DESC, r.season", type.seasonRowFactory,
@@ -109,6 +112,7 @@ class GreatestMatchPctCategory extends RecordCategory {
 	private static Record greatestTournamentMatchPct(RecordType type, String id, String name, String columnPrefix, String perfCategory) {
 		return new Record(
 			"Tournament" + id + type.name + "Pct", "Greatest " + suffix(name, " ") + type.name + " Pct. in Single" + suffix(name, " ") + "Tournament",
+			/* language=SQL */
 			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + columnPrefix + "matches") + " AS pct, p." + columnPrefix + "matches_won AS won, p." + columnPrefix + "matches_lost AS lost\n" +
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id)\n" +
 			"WHERE t." + ALL_TOURNAMENTS + " AND p." + columnPrefix + "matches_won + p." + columnPrefix + "matches_lost >= performance_min_entries('" + perfCategory + "') / 5",
