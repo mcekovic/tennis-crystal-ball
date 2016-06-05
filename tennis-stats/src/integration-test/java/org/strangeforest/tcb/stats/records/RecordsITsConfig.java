@@ -1,16 +1,17 @@
-package org.strangeforest.tcb.stats.web;
+package org.strangeforest.tcb.stats.records;
 
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.*;
 import org.springframework.transaction.annotation.*;
 import org.strangeforest.tcb.stats.*;
+import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.spring.*;
 
 @Configuration
 @PropertySource("/application-test.properties")
 @EnableTransactionManagement
 @Import({TennisStatsConfig.class, DataSourceITConfig.class})
-public class VisitorITsConfig {
+public class RecordsITsConfig {
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
@@ -18,17 +19,12 @@ public class VisitorITsConfig {
 	}
 
 	@Bean
-	public VisitorManager visitorManager() {
-		return new VisitorManager();
+	public RecordsService recordsService() {
+		return new RecordsService();
 	}
 
 	@Bean
-	public VisitorRepository visitorRepository() {
-		return new VisitorRepository();
-	}
-
-	@Bean
-	public GeoIPService geoIPService() {
-		return new GeoIPService();
+	public PlayerService playerService() {
+		return new PlayerService();
 	}
 }
