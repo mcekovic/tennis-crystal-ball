@@ -2,19 +2,22 @@ package org.strangeforest.tcb.stats.model.records;
 
 import org.strangeforest.tcb.stats.util.*;
 
+import static com.google.common.base.Strings.*;
 import static java.util.Arrays.*;
 
 public class MostMatchesCategory extends RecordCategory {
 
 	enum RecordType {
-		PLAYED("Played"),
-		WON("Won"),
-		LOST("Lost");
+		PLAYED("Played", N_A),
+		WON("Won", "winner_id"),
+		LOST("Lost", "loser_id");
 
 		final String name;
+		final String playerColumn;
 
-		RecordType(String name) {
+		RecordType(String name, String playerColumn) {
 			this.name = name;
+			this.playerColumn = playerColumn;
 		}
 
 		String expression(String prefix) {
@@ -24,6 +27,10 @@ public class MostMatchesCategory extends RecordCategory {
 				case LOST: return prefix + "_lost";
 				default: throw EnumUtil.unknownEnum(this);
 			}
+		}
+
+		boolean forBy() {
+			return !isNullOrEmpty(playerColumn);
 		}
 	}
 
@@ -38,6 +45,9 @@ public class MostMatchesCategory extends RecordCategory {
 		register(mostMatches(type, TOUR_FINALS, TOUR_FINALS_NAME, "tour_finals_"));
 		register(mostMatches(type, MASTERS, MASTERS_NAME, "masters_"));
 		register(mostMatches(type, OLYMPICS, OLYMPICS_NAME, "olympics_"));
+		register(mostMatches(type, ATP_500, ATP_500_NAME, "atp500_"));
+		register(mostMatches(type, ATP_250, ATP_250_NAME, "atp250_"));
+		register(mostMatches(type, DAVIS_CUP, DAVIS_CUP_NAME, "davis_cup_"));
 		register(mostMatches(type, HARD, HARD_NAME, "hard_"));
 		register(mostMatches(type, CLAY, CLAY_NAME, "clay_"));
 		register(mostMatches(type, GRASS, GRASS_NAME, "grass_"));
@@ -49,6 +59,13 @@ public class MostMatchesCategory extends RecordCategory {
 		register(mostTournamentMatches(type, N_A, N_A, N_A));
 		register(mostTournamentMatches(type, GRAND_SLAM, GRAND_SLAM_NAME, "grand_slam_"));
 		register(mostTournamentMatches(type, MASTERS, MASTERS_NAME, "masters_"));
+		register(mostTournamentMatches(type, ATP_500, ATP_500_NAME, "atp500_"));
+		register(mostTournamentMatches(type, ATP_250, ATP_250_NAME, "atp250_"));
+		if (type.forBy()) {
+			register(mostMatchesBy(type, "Retirement", "RET"));
+			register(mostMatchesBy(type, "Walkover", "W/O"));
+			register(mostMatchesBy(type, "Defaulting", "DEF"));
+		}
 	}
 
 	private static Record mostMatches(RecordType type, String id, String name, String columnPrefix) {
@@ -95,6 +112,18 @@ public class MostMatchesCategory extends RecordCategory {
 				new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(name, " ") + "Matches " + type.name),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
 			)
+		);
+	}
+
+	private static Record mostMatchesBy(RecordType type, String name, String outcome) {
+		return new Record(
+			"Matches" + type.name + "By" + name, "Most Matches " + type.name + " by " + name,
+			/* language=SQL */
+			"SELECT " + type.playerColumn + " AS player_id, count(match_id) AS value FROM match\n" +
+			"WHERE outcome = '" + outcome + "'\n" +
+			"GROUP BY player_id",
+			"r.value", "r.value DESC", "r.value DESC", RecordRowFactory.INTEGER,
+			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", "Matches " + type.name + " by " + name))
 		);
 	}
 }

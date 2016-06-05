@@ -50,6 +50,9 @@ class GreatestMatchPctCategory extends RecordCategory {
 		register(greatestMatchPct(type, TOUR_FINALS, TOUR_FINALS_NAME, "tour_finals_", "tourFinalsMatches"));
 		register(greatestMatchPct(type, MASTERS, MASTERS_NAME, "masters_", "mastersMatches"));
 		register(greatestMatchPct(type, OLYMPICS, OLYMPICS_NAME, "olympics_", "olympicsMatches"));
+		register(greatestMatchPct(type, ATP_500, ATP_500_NAME, "atp500_", "mastersMatches"));
+		register(greatestMatchPct(type, ATP_250, ATP_250_NAME, "atp250_", "mastersMatches"));
+		register(greatestMatchPct(type, DAVIS_CUP, DAVIS_CUP_NAME, "davis_cup_", "tourFinalsMatches"));
 		register(greatestMatchPct(type, HARD, HARD_NAME, "hard_", "hardMatches"));
 		register(greatestMatchPct(type, CLAY, CLAY_NAME, "clay_", "clayMatches"));
 		register(greatestMatchPct(type, GRASS, GRASS_NAME, "grass_", "grassMatches"));
@@ -61,6 +64,8 @@ class GreatestMatchPctCategory extends RecordCategory {
 		register(greatestTournamentMatchPct(type, N_A, N_A, N_A, "matches"));
 		register(greatestTournamentMatchPct(type, GRAND_SLAM, GRAND_SLAM_NAME, "grand_slam_", "grandSlamMatches"));
 		register(greatestTournamentMatchPct(type, MASTERS, MASTERS_NAME, "masters_", "mastersMatches"));
+		register(greatestTournamentMatchPct(type, ATP_500, ATP_500_NAME, "atp500_", "mastersMatches"));
+		register(greatestTournamentMatchPct(type, ATP_250, ATP_250_NAME, "atp250_", "mastersMatches"));
 	}
 
 	private static Record greatestMatchPct(RecordType type, String id, String name, String columnPrefix, String perfCategory) {
@@ -69,7 +74,7 @@ class GreatestMatchPctCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, " + type.expression(columnPrefix + "matches") + " AS pct, " + columnPrefix + "matches_won AS won, " + columnPrefix + "matches_lost AS lost\n" +
 			"FROM player_performance WHERE " + columnPrefix + "matches_won + " + columnPrefix + "matches_lost >= performance_min_entries('" + perfCategory + "')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
+			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.rowFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
@@ -84,7 +89,7 @@ class GreatestMatchPctCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, " + type.expression("vs_" + column) + " AS pct, vs_" + column + "_won AS won, vs_" + column + "_lost AS lost\n" +
 			"FROM player_performance WHERE vs_" + column + "_won + vs_" + column + "_lost >= performance_min_entries('vs" + id + "')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
+			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.rowFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct. Vs. " + name),
 				type.valueRecordColumn,
@@ -99,7 +104,7 @@ class GreatestMatchPctCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, season, " + type.expression("matches") + " AS pct, matches_won AS won, matches_lost AS lost\n" +
 			"FROM player_season_performance WHERE matches_won + matches_lost >= performance_min_entries('matches') / 10",
-			"r.pct, r.won, r.lost, r.season", "r.pct DESC", "r.pct DESC, r.season", type.seasonRowFactory,
+			"r.pct, r.won, r.lost, r.season", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.season", type.seasonRowFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct."),
 				type.valueRecordColumn,
@@ -111,12 +116,12 @@ class GreatestMatchPctCategory extends RecordCategory {
 
 	private static Record greatestTournamentMatchPct(RecordType type, String id, String name, String columnPrefix, String perfCategory) {
 		return new Record(
-			"Tournament" + id + type.name + "Pct", "Greatest " + suffix(name, " ") + type.name + " Pct. in Single" + suffix(name, " ") + "Tournament",
+			"Tournament" + id + type.name + "Pct", "Greatest " + type.name + " Pct. in Single " + suffix(name, " ") + "Tournament",
 			/* language=SQL */
 			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + columnPrefix + "matches") + " AS pct, p." + columnPrefix + "matches_won AS won, p." + columnPrefix + "matches_lost AS lost\n" +
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id)\n" +
 			"WHERE t." + ALL_TOURNAMENTS + " AND p." + columnPrefix + "matches_won + p." + columnPrefix + "matches_lost >= performance_min_entries('" + perfCategory + "') / 5",
-			"r.pct, r.won, r.lost, r.tournament_id, r.tournament, r.level", "r.pct DESC", "r.pct DESC, r.tournament", type.tournamentRowFactory,
+			"r.pct, r.won, r.lost, r.tournament_id, r.tournament, r.level", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.tournament", type.tournamentRowFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,

@@ -21,6 +21,8 @@ public class MostEntriesCategory extends TournamentResultsCategory {
 		register(mostTournamentEntries(N_A, N_A, ALL_TOURNAMENTS));
 		register(mostTournamentEntries(GRAND_SLAM, GRAND_SLAM_NAME, GRAND_SLAM_TOURNAMENTS));
 		register(mostTournamentEntries(MASTERS, MASTERS_NAME, MASTERS_TOURNAMENTS));
+		register(mostTournamentEntries(ATP_500, ATP_500_NAME, ATP_500_TOURNAMENTS));
+		register(mostTournamentEntries(ATP_250, ATP_250_NAME, ATP_250_TOURNAMENTS));
 		register(mostDifferentTournamentEntries());
 	}
 

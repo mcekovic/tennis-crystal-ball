@@ -17,6 +17,7 @@ public abstract class RecordCategory {
 	protected static final String BIG = "Big";
 	protected static final String ATP_500 = "ATP500";
 	protected static final String ATP_250 = "ATP250";
+	protected static final String DAVIS_CUP = "DavisCup";
 	protected static final String SMALL = "Small";
 	protected static final String HARD = "Hard";
 	protected static final String CLAY = "Clay";
@@ -39,6 +40,7 @@ public abstract class RecordCategory {
 	protected static final String BIG_NAME_SUFFIX = "(Grand Slam, Tour Finals, Masters, Olympics)";
 	protected static final String ATP_500_NAME = "ATP 500/CS";
 	protected static final String ATP_250_NAME = "ATP 250/WS";
+	protected static final String DAVIS_CUP_NAME = "Davis Cup";
 	protected static final String SMALL_NAME = "Small";
 	protected static final String SMALL_NAME_SUFFIX = "(ATP 500/CS, ATP 250/WS)";
 	protected static final String HARD_NAME = "Hard";

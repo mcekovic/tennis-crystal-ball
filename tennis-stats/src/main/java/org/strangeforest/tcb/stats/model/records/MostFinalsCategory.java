@@ -27,6 +27,8 @@ public class MostFinalsCategory extends TournamentResultsCategory {
 		register(mostDifferentTournamentFinals(N_A, N_A, ALL_TOURNAMENTS));
 		register(mostDifferentTournamentFinals(GRAND_SLAM, GRAND_SLAM_NAME, GRAND_SLAM_TOURNAMENTS));
 		register(mostDifferentTournamentFinals(MASTERS, MASTERS_NAME, MASTERS_TOURNAMENTS));
+		register(mostDifferentTournamentFinals(ATP_500, ATP_500_NAME, ATP_500_TOURNAMENTS));
+		register(mostDifferentTournamentFinals(ATP_250, ATP_250_NAME, ATP_250_TOURNAMENTS));
 	}
 
 	private static Record mostFinals(String id, String name, String nameSuffix, String condition) {
