@@ -15,6 +15,15 @@ OR (first_name = 'Mardy' AND last_name = 'Fish');
 COMMIT;
 
 
+-- Adjust invalid rankings
+
+UPDATE player_ranking
+SET rank_points = 24
+WHERE player_id = (SELECT player_id FROM player_v WHERE name = 'Pat Cash') AND rank_date = DATE '1990-04-16';
+
+COMMIT;
+
+
 -- Update match missing rankings
 
 UPDATE match m

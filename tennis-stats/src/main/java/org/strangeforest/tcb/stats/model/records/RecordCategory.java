@@ -23,10 +23,13 @@ public abstract class RecordCategory {
 	protected static final String GRASS = "Grass";
 	protected static final String CARPET = "Carpet";
 	protected static final String NO_1 = "No1";
+	protected static final String NO_2 = "No2";
+	protected static final String NO_3 = "No3";
 	protected static final String TOP_2 = "Top2";
 	protected static final String TOP_3 = "Top3";
 	protected static final String TOP_5 = "Top5";
 	protected static final String TOP_10 = "Top10";
+	protected static final String TOP_20 = "Top20";
 
 	protected static final String GRAND_SLAM_NAME = "Grand Slam";
 	protected static final String TOUR_FINALS_NAME = "Tour Finals";
@@ -43,10 +46,13 @@ public abstract class RecordCategory {
 	protected static final String GRASS_NAME = "Grass";
 	protected static final String CARPET_NAME = "Carpet";
 	protected static final String NO_1_NAME = "No. 1";
+	protected static final String NO_2_NAME = "No. 2";
+	protected static final String NO_3_NAME = "No. 3";
 	protected static final String TOP_2_NAME = "Top 2";
 	protected static final String TOP_3_NAME = "Top 3";
 	protected static final String TOP_5_NAME = "Top 5";
 	protected static final String TOP_10_NAME = "Top 10";
+	protected static final String TOP_20_NAME = "Top 20";
 	protected static final String ATP = "ATP";
 	protected static final String ELO = "Elo";
 

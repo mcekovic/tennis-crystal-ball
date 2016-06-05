@@ -47,14 +47,15 @@ public abstract class Records {
 		register(new FinalStreaksCategory(), false);
 		register(new SemiFinalStreaksCategory(), false);
 		register(new QuarterFinalStreaksCategory(), false);
+		register(new RankingATPCategory(), false);
+		register(new RankingEloCategory(), false);
 		// Infamous Records
 		register(new BestPlayerThatNeverCategory(), true);
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.LOST), true);
 		register(new GreatestMatchPctCategory(GreatestMatchPctCategory.RecordType.LOSING), true);
 		register(new GreatestTitlePctCategory(GreatestTitlePctCategory.RecordType.LOSING), true);
 		register(new ItemsWinningTitleCategory(ItemsWinningTitleCategory.RecordType.MOST), true);
-		// Streaks
-		// Rankings
+		// Rankings - Consecutive, times, youngest, oldest, time span, points diff
 		// Rivalries
 		// Youngest/Oldest/Bagels/Years Span
 	}

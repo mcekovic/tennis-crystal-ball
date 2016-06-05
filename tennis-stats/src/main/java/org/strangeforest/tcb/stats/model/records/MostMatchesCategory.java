@@ -4,7 +4,7 @@ import org.strangeforest.tcb.stats.util.*;
 
 import static java.util.Arrays.*;
 
-class MostMatchesCategory extends RecordCategory {
+public class MostMatchesCategory extends RecordCategory {
 
 	enum RecordType {
 		PLAYED("Played"),
@@ -31,7 +31,7 @@ class MostMatchesCategory extends RecordCategory {
 	private static final String SEASON_WIDTH =      "60";
 	private static final String TOURNAMENT_WIDTH = "100";
 
-	MostMatchesCategory(RecordType type) {
+	public MostMatchesCategory(RecordType type) {
 		super("Most Matches " + type.name);
 		register(mostMatches(type, N_A, N_A, N_A));
 		register(mostMatches(type, GRAND_SLAM, GRAND_SLAM_NAME, "grand_slam_"));

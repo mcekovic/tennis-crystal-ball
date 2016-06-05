@@ -48,11 +48,13 @@ CREATE UNIQUE INDEX ON player_best_rank (player_id);
 
 CREATE MATERIALIZED VIEW player_best_rank_points AS
 WITH best_rank_points AS (
-	SELECT player_id, max(rank_points) AS best_rank_points FROM player_ranking
+	SELECT player_id, max(rank_points) AS best_rank_points, max(adjust_atp_rank_points(rank_points, rank_date)) AS best_rank_points_adjusted
+	FROM player_ranking
 	WHERE rank_points > 0
 	GROUP BY player_id
 )
-SELECT player_id, best_rank_points, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND r.rank_points = b.best_rank_points) AS best_rank_points_date
+SELECT player_id, best_rank_points, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND r.rank_points = b.best_rank_points) AS best_rank_points_date,
+	best_rank_points_adjusted, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND adjust_atp_rank_points(r.rank_points, r.rank_date) = b.best_rank_points_adjusted) AS best_rank_points_adjusted_date
 FROM best_rank_points b;
 
 CREATE UNIQUE INDEX ON player_best_rank_points (player_id);

@@ -46,8 +46,8 @@ DROP MATERIALIZED VIEW player_vs_top10_win_streak;
 DROP VIEW player_big_wins_v;
 DROP VIEW player_match_performance_v;
 DROP VIEW player_match_stats_v;
+DROP VIEW player_match_for_stats_v;
 DROP VIEW match_for_stats_v;
 DROP VIEW match_for_rivalry_v;
-DROP VIEW player_match_for_stats_v;
 
 DROP MATERIALIZED VIEW event_participation;

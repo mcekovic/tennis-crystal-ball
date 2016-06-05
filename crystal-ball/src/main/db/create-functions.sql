@@ -10,6 +10,17 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- season_start
+
+CREATE OR REPLACE FUNCTION season_start(
+	p_season INTEGER
+) RETURNS DATE AS $$
+BEGIN
+	RETURN (p_season::TEXT || '-01-01')::DATE;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- season_end
 
 CREATE OR REPLACE FUNCTION season_end(
@@ -62,6 +73,18 @@ CREATE OR REPLACE FUNCTION player_rank_points(
 ) RETURNS INTEGER AS $$
 BEGIN
 	RETURN (SELECT rank_points FROM player_ranking WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1);
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- player_rank_points
+
+CREATE OR REPLACE FUNCTION adjust_atp_rank_points(
+	p_points INTEGER,
+	p_date DATE
+) RETURNS INTEGER AS $$
+BEGIN
+	RETURN CASE WHEN p_date < DATE '2009-01-01' THEN round(p_points * 1.9)::INTEGER ELSE p_points END;
 END;
 $$ LANGUAGE plpgsql;
 

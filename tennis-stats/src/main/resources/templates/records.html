@@ -8,7 +8,7 @@
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title th:text="'Ultimate Tennis Statistics - ' + ${record != null ? record.name : 'Records'}">Ultimate Tennis Statistics - Records</title>
+	<title th:text="'Ultimate Tennis Statistics - ' + ${record != null ? record.name : 'Records Book'}">Ultimate Tennis Statistics - Records Book</title>
 	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
 	<link th:href="@{|/webjars/jquery-ui-themes/${versions['jquery-ui']}/smoothness/jquery-ui.css|}" rel="stylesheet" media="screen"/>
 	<link th:href="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.css|}" rel="stylesheet" media="screen"/>
@@ -40,7 +40,8 @@
 					"tournament": tournamentFormatter,
 					"tournamentEvent": tournamentEventFormatter,
 					"startTournamentEvent": startTournamentEventFormatter,
-					"endTournamentEvent": endTournamentEventFormatter
+					"endTournamentEvent": endTournamentEventFormatter,
+					"date": dateFormatter
 				},
 				templates: {
 					paginationItem: bootgridTemplatePaginationItem
@@ -85,8 +86,8 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<div class="text-nowrap">
-		<h3 style="float: left; margin-top: 5px" th:text="${record != null ? record.name : 'Records'}">Records</h3>
-		<h5 style="font-style: italic">&nbsp;More Records to Come!</h5>
+		<h3 style="float: left; margin-top: 5px" th:text="${record != null ? record.name : 'Records Book'}">Records Book</h3>
+		<h5 th:unless="${record}" style="font-style: italic">&nbsp;More Records to Come!</h5>
 	</div>
 	<br/>
 	<div class="container-fluid">
