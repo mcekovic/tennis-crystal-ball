@@ -72,7 +72,7 @@ class GreatestTitlePctCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, " + type.expression1 + "::real/(finals_won + finals_lost) AS pct, finals_won AS won, finals_lost AS lost\n" +
 			"FROM player_performance WHERE finals_won + finals_lost >= performance_min_entries('finals')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
+			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.rowFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct."),
 				type.valueRecordColumn,
@@ -89,7 +89,7 @@ class GreatestTitlePctCategory extends RecordCategory {
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE r.result IN ('W', 'F') AND e." + condition + "\n" +
 			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('finals') * performance_min_entries('" + perfCategory + "') / performance_min_entries('matches')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", type.rowFactory,
+			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.rowFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
@@ -106,7 +106,7 @@ class GreatestTitlePctCategory extends RecordCategory {
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE e." + condition + "\n" +
 			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('" + perfCategory + "') / 5",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC", WINNING_PCT,
+			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", WINNING_PCT,
 			asList(
 				new RecordColumn("wonLostPct", null, null, PCT_WIDTH, "right", suffix(name, " ") + "Winning Pct."),
 				RecordType.WINNING.valueRecordColumn,
