@@ -45,7 +45,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 		return new Record(
 			"Tournament" + id, "Most " + name + " in Single Tournament",
 			/* language=SQL */
-			"SELECT player_id, tournament_id, t.name AS tournament, t.level, count(tournament_event_id) AS value, max(e.date) AS last_date\n" +
+			"SELECT r.player_id, tournament_id, t.name AS tournament, t.level, count(tournament_event_id) AS value, max(e.date) AS last_date\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) INNER JOIN tournament t USING (tournament_id)\n" +
 			"WHERE r." + resultCondition + " AND e." + condition + "\n" +
 			"GROUP BY player_id, tournament_id, t.name, t.level",
@@ -61,11 +61,16 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 		return new Record(
 			"Different" + id, "Most Different " + name,
 			/* language=SQL */
-			"SELECT player_id, count(DISTINCT tournament_id) AS value, max(date) AS last_date\n" +
-			"FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
-			"WHERE " + resultCondition + " AND " + condition + "\n" +
+			"WITH results AS (\n" +
+			"  SELECT player_id, tournament_id, min(date) AS first_date\n" +
+			"  FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
+			"  WHERE " + resultCondition + " AND " + condition + "\n" +
+			"  GROUP BY player_id, tournament_id\n" +
+			")\n" +
+			"SELECT player_id, count(tournament_id) AS value, max(first_date) AS first_date\n" +
+			"FROM results\n" +
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.last_date", RecordRowFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC, r.first_date", RecordRowFactory.INTEGER,
 			asList(new RecordColumn("value", "numeric", null, RESULTS_WIDTH, "right", name))
 		);
 	}
