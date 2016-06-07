@@ -29,7 +29,7 @@
 				requestHandler: function (request) {
 					request.category = $("#category").val();
 					var season = $("#season").val();
-					if (season != "")
+					if (season)
 						request.season = season;
 					var active = $("#active").prop("checked");
 					if (active)

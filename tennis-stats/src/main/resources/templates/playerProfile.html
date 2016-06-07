@@ -7,6 +7,7 @@
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="result" type="java.lang.String"*/-->
+<!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="opponentId" type="java.lang.Integer"*/-->
 <head>
@@ -37,7 +38,7 @@
 			if ([[${tournamentEventId == null && opponentId == null}]])
 				playerTournaments([[${season}]], [[${level}]], [[${result}]]);
 			else
-				playerMatches([[${level}]], [[${surface}]], [[${tournamentEventId}]], [[${opponentId}]]);
+				playerMatches([[${level}]], [[${surface}]], [[${round}]], [[${tournamentEventId}]], [[${opponentId}]]);
 		});
 		function playerTournaments(season, level, result) {
 			var $pill = $("#tournamentsPill");
@@ -50,13 +51,15 @@
 				url += "&result=" + result;
 			loadTab($pill, url)
 		}
-		function playerMatches(level, surface, tournamentEventId, opponentId) {
+		function playerMatches(level, surface, round, tournamentEventId, opponentId) {
 			var $pill = $("#matchesPill");
 			var url = $pill.attr("data-url");
 			if (level)
 				url += "&level=" + level;
 			if (surface)
 				url += "&surface=" + surface;
+			if (round)
+				url += "&round=" + round;
 			if (tournamentEventId)
 				url += "&tournamentEventId=" + tournamentEventId;
 			if (opponentId)

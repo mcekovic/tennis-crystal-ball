@@ -31,6 +31,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(value = "level", required = false) String level,
 		@RequestParam(value = "surface", required = false) String surface,
 		@RequestParam(value = "result", required = false) String result,
+		@RequestParam(value = "round", required = false) String round,
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(value = "opponentId", required = false) Integer opponentId
 	) {
@@ -48,6 +49,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("result", result);
+		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("opponentId", opponentId);
 		return new ModelAndView("playerProfile", modelMap);
@@ -82,6 +84,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(value = "playerId") int playerId,
 		@RequestParam(value = "level", required = false) String level,
 		@RequestParam(value = "surface", required = false) String surface,
+		@RequestParam(value = "round", required = false) String round,
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(value = "opponentId", required = false) Integer opponentId
 	) {
@@ -96,10 +99,12 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("tournamentEvents", tournamentEvents);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		if (opponentId != null) {
 			modelMap.addAttribute("opponentId", opponentId);

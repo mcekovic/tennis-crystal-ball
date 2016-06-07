@@ -196,7 +196,7 @@ WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T') AND (m.outcome IS NULL
 -- match_for_rivalry_v
 
 CREATE OR REPLACE VIEW match_for_rivalry_v AS
-SELECT m.match_id, m.winner_id, m.loser_id, e.season, e.level, e.surface
+SELECT m.match_id, m.winner_id, m.loser_id, e.season, e.level, e.surface, m.round
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T');

@@ -30,10 +30,10 @@
 				requestHandler: function (request) {
 					request.category = $("#category").val();
 					var season = $("#season").val();
-					if (season != "")
+					if (season)
 						request.season = season;
 					var surface = $("#surface").val();
-					if (surface != "")
+					if (surface)
 						request.surface = surface;
 					var active = $("#active").prop("checked");
 					if (active)

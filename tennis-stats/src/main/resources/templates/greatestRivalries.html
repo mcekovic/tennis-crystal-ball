@@ -3,6 +3,7 @@
 <!--/*@thymesVar id="versions" type="java.util.Map<String, String>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -29,11 +30,14 @@
 				url: "/greatestRivalriesTable",
 				requestHandler: function (request) {
 					var level = $("#level").val();
-					if (level != "")
+					if (level)
 						request.level = level;
 					var surface = $("#surface").val();
-					if (surface != "")
+					if (surface)
 						request.surface = surface;
+					var round = $("#round").val();
+					if (round)
+						request.round = round;
 					return request;
 				},
 				sorting: false,
@@ -48,6 +52,9 @@
 						var surface = $("#surface").val();
 						if (surface)
 							params += "&surface=" + surface;
+						var round = $("#round").val();
+						if (round)
+							params += "&round=" + round;
 						return "<a href='/playerProfile?playerId=" + row.player1.playerId + "&opponentId=" + row.player2.playerId + params + "' title='Show " + row.player1.name + " - " + row.player2.name + " matches'>" + row.won + "</a>" +
 							" - <a href='/playerProfile?playerId=" + row.player2.playerId + "&opponentId=" + row.player1.playerId + params + "' title='Show " + row.player2.name + " - " + row.player1.name + " matches'>" + row.lost + "</a>";
 					},
@@ -72,7 +79,7 @@
 					$span.addClass("bg-won-" + $span.data("won-pct"));
 				});
 			});
-			$("#greatestRivalriesTable-header").find("div.search").before($("#levelDiv").remove()).before($("#surfaceDiv").remove()).remove();
+			$("#greatestRivalriesTable-header").find("div.search").before($("#levelDiv").remove()).before($("#surfaceDiv").remove()).before($("#roundDiv").remove()).remove();
 			filterChanged();
 			$("[data-toggle='tooltip']").tooltip();
 			setBootgridTitles($rivalriesTable, [
@@ -82,7 +89,7 @@
 			]);
 		});
 		function filterChanged() {
-			var url = "/greatestRivalriesMinMatches?level=" + $("#level").val() + "&surface=" + $("#surface").val();
+			var url = "/greatestRivalriesMinMatches?level=" + $("#level").val() + "&surface=" + $("#surface").val() + "&round=" + encodeURIComponent($("#round").val());
 			$.get(url, function (data) {
 				$("#minMatches").html(data);
 			});
@@ -102,18 +109,6 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 class="grid-title">Greatest Rivalries</h3>
-	<table id="greatestRivalriesTable" class="table table-condensed table-hover table-striped">
-		<thead>
-		<tr>
-			<th data-column-id="rank" data-type="numeric" data-width="45">Rank</th>
-			<th data-column-id="rivalry" data-formatter="rivalry" data-width="200">Rivalry</th>
-			<th data-column-id="matches" data-type="numeric" data-order="desc" data-width="55" data-align="right" data-header-align="right">Matches</th>
-			<th data-column-id="h2h" data-formatter="h2h" data-width="40" data-align="center" data-header-align="center">H2H</th>
-			<th data-column-id="h2hPct" data-formatter="h2hPct" data-width="75" data-align="center" data-header-align="center">H2H %</th>
-			<th data-column-id="lastMatch" data-formatter="lastMatch" data-width="300">Last Match</th>
-		</tr>
-		</thead>
-	</table>
 	<div id="levelDiv" class="btn-group" style="margin-right: 20px">
 		<select id="level" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
@@ -126,6 +121,24 @@
 			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 		</select>
 	</div>
+	<div id="roundDiv" class="btn-group" style="margin-right: 20px">
+		<select id="round" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+			<option value="">All rounds</option>
+			<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+		</select>
+	</div>
+	<table id="greatestRivalriesTable" class="table table-condensed table-hover table-striped">
+		<thead>
+		<tr>
+			<th data-column-id="rank" data-type="numeric" data-width="45">Rank</th>
+			<th data-column-id="rivalry" data-formatter="rivalry" data-width="200">Rivalry</th>
+			<th data-column-id="matches" data-type="numeric" data-order="desc" data-width="55" data-align="right" data-header-align="right">Matches</th>
+			<th data-column-id="h2h" data-formatter="h2h" data-width="40" data-align="center" data-header-align="center">H2H</th>
+			<th data-column-id="h2hPct" data-formatter="h2hPct" data-width="75" data-align="center" data-header-align="center">H2H %</th>
+			<th data-column-id="lastMatch" data-formatter="lastMatch" data-width="300">Last Match</th>
+		</tr>
+		</thead>
+	</table>
 	<p><i>* Minimum <span id="minMatches">10</span> rivalry matches</i></p>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>

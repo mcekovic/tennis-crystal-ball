@@ -27,6 +27,7 @@ public class RivalriesController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("rounds", Round.values());
 		return new ModelAndView("greatestRivalries", modelMap);
 	}
 
@@ -46,10 +47,11 @@ public class RivalriesController extends PageController {
 		@RequestParam(value = "toSeason", required = false) Integer toSeason,
 		@RequestParam(value = "level", required = false) String level,
 		@RequestParam(value = "surface", required = false) String surface,
+		@RequestParam(value = "round", required = false) String round,
 		@RequestParam(value = "statsVsAll") boolean statsVsAll
 	) {
 		List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
-		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, surface);
+		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, surface, round);
 
 		List<Integer> playerIds = playerService.findPlayerIds(players);
 		HeadsToHeads headsToHeads = rivalriesService.getHeadsToHeads(playerIds, filter);

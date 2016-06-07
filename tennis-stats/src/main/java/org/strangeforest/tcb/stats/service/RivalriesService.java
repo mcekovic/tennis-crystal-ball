@@ -40,6 +40,23 @@ public class RivalriesService {
 		put("G",  5.0);
 		put("P",  3.0);
 	}};
+	private static final Map<String, Double> MIN_MATCHES_ROUND_FACTOR = new HashMap<String, Double>() {{
+		put("F",     5.0);
+		put("SF",    4.0);
+		put("SF+",   2.5);
+		put("QF",    3.5);
+		put("QF+",   1.5);
+		put("R16",   3.5);
+		put("R16+",  1.2);
+		put("R32",   4.0);
+		put("R32+",  1.2);
+		put("R64",   5.0);
+		put("R64+",  1.1);
+		put("R128",  8.0);
+		put("RR",    8.0);
+		put("BR",   20.0);
+		put("BR+",   5.0);
+	}};
 
 	private static final String PLAYER_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
@@ -259,6 +276,8 @@ public class RivalriesService {
 			minMatches /= MIN_MATCHES_LEVEL_FACTOR.get(filter.getLevel());
 		if (filter.hasSurface())
 			minMatches /= MIN_MATCHES_SURFACE_FACTOR.get(filter.getSurface());
+		if (filter.hasRound())
+			minMatches /= MIN_MATCHES_ROUND_FACTOR.get(filter.getRound());
 		return Math.max((int)Math.round(minMatches), MIN_GREATEST_RIVALRIES_MATCHES_MIN);
 	}
 
