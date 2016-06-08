@@ -4,6 +4,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.context.support.*;
 import org.springframework.transaction.annotation.*;
 import org.strangeforest.tcb.stats.*;
+import org.strangeforest.tcb.stats.controler.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.spring.*;
 
@@ -26,5 +27,10 @@ public class RecordsITsConfig {
 	@Bean
 	public PlayerService playerService() {
 		return new PlayerService();
+	}
+
+	@Bean
+	public DownForMaintenanceInterceptor downForMaintenanceInterceptor() {
+		return new DownForMaintenanceInterceptor();
 	}
 }
