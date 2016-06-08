@@ -1,4 +1,8 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+	<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
@@ -10,11 +14,17 @@
 					cache: false
 				},
 				url: "/playerRivalriesTable?playerId=[[${playerId}]]",
+				requestHandler: function (request) {
+					request.level = $("#rivalryLevel").val();
+					request.surface = $("#rivalrySurface").val();
+					request.round = $("#rivalryRound").val();
+					return request;
+				},
 				rowCount: [10, 20, 50, -1],
 				formatters: {
 					"player": playerCountryFormatter,
 					"matches": function(column, row) {
-						return "<a href='/playerProfile?playerId=[[${playerId}]]&opponentId=" + row.playerId + "' title='Show rivalry matches'>" + row.matches + "</a>"
+						return "<a href='/playerProfile?playerId=[[${playerId}]]&opponentId=" + row.playerId + rivalryFilterParams() + "' title='Show rivalry matches'>" + row.matches + "</a>"
 					},
 					"wonPctStr": function(column, row) {
 						return "<span data-won-pct='" + row.wonPctClass + "'>" + row.wonPctStr + "</span>";
@@ -42,23 +52,70 @@
 				});
 			});
 			var $matchesTableHeader = $("#rivalriesTable-header");
+			$matchesTableHeader.find("div.search").before($("#rivalryLevelDiv").remove()).before($("#rivalrySurfaceDiv").remove()).before($("#rivalryRoundDiv").remove()).after($("#clearRivalryFilterButton").remove());
 			var $actionBar = $matchesTableHeader.find("div.actionBar");
-			$actionBar.removeClass("col-sm-12").addClass("col-sm-9");
+			$actionBar.removeClass("col-sm-12").addClass("col-sm-11");
 			$actionBar.before($("#rivalriesTitle").remove());
 		});
+		function reloadRivalries() {
+			$("#rivalriesTable").bootgrid("reload");
+		}
+		function clearRivalryFilter() {
+			$("#rivalryLevel").val("");
+			$("#rivalrySurface").val("");
+			$("#rivalryRound").val("");
+			$("#rivalriesTable").bootgrid("search", "");
+			reloadRivalries();
+		}
 		function showRivalryStats(opponentId, event) {
 			var $rivalryStats = $("#rivalryStats-" + opponentId);
 			if (!$rivalryStats.hasClass("loaded")) {
 				event.preventDefault();
-				$.get("rivalryStats?playerId=[[${playerId}]]&opponentId=" + opponentId, function(data) {
+				$.get("rivalryStats?playerId=[[${playerId}]]&opponentId=" + opponentId + rivalryFilterParams(), function(data) {
 					$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 					$rivalryStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
 				});
 			}
 		}
+		function rivalryFilterParams() {
+			var params = "";
+			var level = $("#rivalryLevel").val();
+			if (level)
+				params += "&level=" + level;
+			var surface = $("#rivalrySurface").val();
+			if (surface)
+				params += "&surface=" + surface;
+			var round = $("#rivalryRound").val();
+			if (round)
+				params += "&round=" + round;
+			return params;
+		}
 		/*]]>*/
 	</script>
-	<div id="rivalriesTitle" class="col-sm-3" style="font-size: large; font-weight: bold">Rivalries</div>
+	<div id="rivalriesTitle" class="col-sm-1" style="font-size: large; font-weight: bold">Rivalries</div>
+	<div id="rivalryLevelDiv" class="btn-group" style="margin-right: 20px">
+		<select id="rivalryLevel" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+			<option value="">All levels</option>
+			<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
+		</select>
+	</div>
+	<div id="rivalrySurfaceDiv" class="btn-group" style="margin-right: 20px">
+		<select id="rivalrySurface" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+			<option value="">All surfaces</option>
+			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+		</select>
+	</div>
+	<div id="rivalryRoundDiv" class="btn-group" style="margin-right: 20px">
+		<select id="rivalryRound" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+			<option value="">All rounds</option>
+			<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+		</select>
+	</div>
+	<div id="clearRivalryFilterButton" class="btn-group" style="margin-right: 20px">
+		<button type="button" class="btn btn-default" onclick="clearRivalryFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+			<span class="glyphicon glyphicon-remove"></span> Clear
+		</button>
+	</div>
 	<table id="rivalriesTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>

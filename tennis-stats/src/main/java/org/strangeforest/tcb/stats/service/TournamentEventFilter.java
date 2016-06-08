@@ -116,7 +116,7 @@ public class TournamentEventFilter {
 		return Objects.hash(season, emptyToNull(level), emptyToNull(surface), tournamentId, tournamentEventId, emptyToNull(searchPhrase));
 	}
 
-	@Override public String toString() {
+	@Override public final String toString() {
 		return toStringHelper().toString();
 	}
 

@@ -129,7 +129,12 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerRivalries(
 		@RequestParam(value = "playerId") int playerId
 	) {
-		return new ModelAndView("playerRivalries", "playerId", playerId);
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("rounds", Round.values());
+		return new ModelAndView("playerRivalries", modelMap);
 	}
 
 	@RequestMapping("/playerRankings")

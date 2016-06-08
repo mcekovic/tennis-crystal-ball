@@ -36,9 +36,12 @@ public class PlayerStatsController extends BaseController {
 	@RequestMapping("/rivalryStats")
 	public ModelAndView rivalryStats(
 		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "opponentId") int opponentId
+		@RequestParam(value = "opponentId") int opponentId,
+		@RequestParam(value = "level", required = false) String level,
+		@RequestParam(value = "surface", required = false) String surface,
+		@RequestParam(value = "round", required = false) String round
 	) {
-		MatchFilter filter = MatchFilter.forOpponent(opponentId);
+		MatchFilter filter = MatchFilter.forOpponent(opponentId, level, surface, round);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();

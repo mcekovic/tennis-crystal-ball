@@ -1,5 +1,6 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="playerName" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
@@ -153,19 +154,6 @@
 			</button>
 		</div>
 	</div>
-	<table id="matchesTable" class="table table-condensed table-hover table-striped">
-		<thead>
-		<tr>
-			<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
-			<th data-column-id="tournament" data-formatter="tournament" data-width="140">Tournament</th>
-			<th data-column-id="surface" data-formatter="surface" data-width="60">Surface</th>
-			<th data-column-id="round" data-width="50">Round</th>
-			<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="220">Match</th>
-			<th data-column-id="score" data-sortable="false" data-width="120">Score</th>
-			<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="50">Stats</th>
-		</tr>
-		</thead>
-	</table>
 	<div id="matchesTournamentDiv" class="col-sm-2" style="padding-left: 0">
 		<select id="matchesTournament" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
 			<option value="">All tournaments</option>
@@ -196,4 +184,17 @@
 	<button id="playerStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showPlayerStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for selected matches)|">
 		<span class="glyphicon glyphicon-stats"></span> Stats
 	</button>
+	<table id="matchesTable" class="table table-condensed table-hover table-striped">
+		<thead>
+		<tr>
+			<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
+			<th data-column-id="tournament" data-formatter="tournament" data-width="140">Tournament</th>
+			<th data-column-id="surface" data-formatter="surface" data-width="60">Surface</th>
+			<th data-column-id="round" data-width="50">Round</th>
+			<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="220">Match</th>
+			<th data-column-id="score" data-sortable="false" data-width="120">Score</th>
+			<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="50">Stats</th>
+		</tr>
+		</thead>
+	</table>
 </th:block>

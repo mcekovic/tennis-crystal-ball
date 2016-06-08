@@ -9,6 +9,8 @@ import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
+import com.google.common.collect.*;
+
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
 
 @RestController
@@ -30,12 +32,16 @@ public class PlayerRivalriesResource {
 	@RequestMapping("/playerRivalriesTable")
 	public BootgridTable<PlayerRivalryRow> playerRivalriesTable(
 		@RequestParam(value = "playerId") int playerId,
+		@RequestParam(value = "level", required = false) String level,
+		@RequestParam(value = "surface", required = false) String surface,
+		@RequestParam(value = "round", required = false) String round,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam(value = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		PlayerListFilter filter = new PlayerListFilter(searchPhrase);
+		RivalryFilter rivalryFilter = new RivalryFilter(Range.all(), level, surface, round);
+		RivalryPlayerListFilter filter = new RivalryPlayerListFilter(searchPhrase, rivalryFilter);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
 		return rivalriesService.getPlayerRivalriesTable(playerId, filter, orderBy, pageSize, current);

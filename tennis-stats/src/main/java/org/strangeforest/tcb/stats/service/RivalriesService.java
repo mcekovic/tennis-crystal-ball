@@ -61,23 +61,23 @@ public class RivalriesService {
 	private static final String PLAYER_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id player_id, loser_id opponent_id, count(match_id) matches, 0 won, 0 lost\n" +
-		"  FROM match_for_rivalry_v\n" +
-		"  WHERE winner_id = :playerId\n" +
+		"  FROM match_for_rivalry_v m INNER JOIN player_v p ON p.player_id = m.loser_id\n" +
+		"  WHERE winner_id = :playerId%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT loser_id, winner_id, count(match_id), 0, 0\n" +
-		"  FROM match_for_rivalry_v\n" +
-		"  WHERE loser_id = :playerId\n" +
+		"  FROM match_for_rivalry_v m INNER JOIN player_v p ON p.player_id = m.winner_id\n" +
+		"  WHERE loser_id = :playerId%1$s\n" +
 		"  GROUP BY loser_id, winner_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT winner_id, loser_id, 0, count(match_id), 0\n" +
-		"  FROM match_for_stats_v\n" +
-		"  WHERE winner_id = :playerId\n" +
+		"  FROM match_for_stats_v m INNER JOIN player_v p ON p.player_id = m.loser_id\n" +
+		"  WHERE winner_id = :playerId%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT loser_id, winner_id, 0, 0, count(match_id)\n" +
-		"  FROM match_for_stats_v\n" +
-		"  WHERE loser_id = :playerId\n" +
+		"  FROM match_for_stats_v m INNER JOIN player_v p ON p.player_id = m.winner_id\n" +
+		"  WHERE loser_id = :playerId%1$s\n" +
 		"  GROUP BY loser_id, winner_id\n" +
 		"), rivalries_2 AS (\n" +
 		"  SELECT player_id, opponent_id, sum(matches) matches, sum(won) won, sum(lost) lost\n" +
@@ -86,9 +86,9 @@ public class RivalriesService {
 		"  ORDER BY matches DESC, won DESC\n" +
 		")\n" +
 		"SELECT r.player_id, r.opponent_id, o.name, o.country_id, o.active, o.best_rank, r.matches, r.won, r.lost,\n" +
-		"%1$s\n" +
+		"%2$s\n" +
 		"FROM rivalries_2 r\n" +
-		"INNER JOIN player_v o ON o.player_id = r.opponent_id%2$s%3$s\n" +
+		"INNER JOIN player_v o ON o.player_id = r.opponent_id%3$s\n" +
 		"ORDER BY %4$s OFFSET :offset";
 
 	private static final String HEADS_TO_HEADS_QUERY = //language=SQL
@@ -186,16 +186,18 @@ public class RivalriesService {
 		"  ) AS lm) AS last_match";
 
 
-	public BootgridTable<PlayerRivalryRow> getPlayerRivalriesTable(int playerId, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<PlayerRivalryRow> getPlayerRivalriesTable(int playerId, RivalryPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<PlayerRivalryRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
+		String criteria = filter.getCriteria();
 		boolean lateralSupported = lateralSupported();
 		jdbcTemplate.query(
 			format(PLAYER_RIVALRIES_QUERY,
-				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id", "opponent_id", ""),
-				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", "") : "",
-				where(filter.getCriteria()), orderBy
+				criteria,
+				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id", "opponent_id", criteria),
+				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", criteria) : "",
+				orderBy
 			),
 			filter.getParams()
 				.addValue("playerId", playerId)

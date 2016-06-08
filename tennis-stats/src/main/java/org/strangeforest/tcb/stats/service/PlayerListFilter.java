@@ -70,10 +70,13 @@ public class PlayerListFilter {
 		return Objects.hash(active, searchPhrase);
 	}
 
-	@Override public String toString() {
+	@Override public final String toString() {
+		return toStringHelper().toString();
+	}
+
+	protected MoreObjects.ToStringHelper toStringHelper() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("active", active)
-			.add("searchPhrase", searchPhrase)
-			.toString();
+			.add("searchPhrase", searchPhrase);
 	}
 }

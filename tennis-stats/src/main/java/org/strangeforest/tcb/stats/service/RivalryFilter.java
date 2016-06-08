@@ -56,6 +56,11 @@ public class RivalryFilter {
 
 	public String getCriteria() {
 		StringBuilder criteria = new StringBuilder();
+		appendCriteria(criteria);
+		return criteria.toString();
+	}
+
+	void appendCriteria(StringBuilder criteria) {
 		appendRangeFilter(criteria, seasonRange, "season", "season");
 		if (!isNullOrEmpty(level))
 			criteria.append(LEVEL_CRITERION);
@@ -63,11 +68,15 @@ public class RivalryFilter {
 			criteria.append(SURFACE_CRITERION);
 		if (!isNullOrEmpty(round))
 			criteria.append(format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
-		return criteria.toString();
 	}
 
 	public MapSqlParameterSource getParams() {
 		MapSqlParameterSource params = new MapSqlParameterSource();
+		addParams(params);
+		return params;
+	}
+
+	void addParams(MapSqlParameterSource params) {
 		addRangeParams(params, seasonRange, "season");
 		if (!isNullOrEmpty(level))
 			params.addValue("level", level);
@@ -75,7 +84,6 @@ public class RivalryFilter {
 			params.addValue("surface", surface);
 		if (!isNullOrEmpty(round))
 			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
-		return params;
 	}
 
 
