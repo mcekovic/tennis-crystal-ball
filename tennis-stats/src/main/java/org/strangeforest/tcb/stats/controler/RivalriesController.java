@@ -37,6 +37,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("rounds", Round.values());
 		return new ModelAndView("headsToHeads", modelMap);
 	}
 
@@ -60,6 +61,7 @@ public class RivalriesController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("headsToHeads", headsToHeads);
 		modelMap.addAttribute("playersStats", playersStats);
 		return new ModelAndView("headsToHeadsTable", modelMap);

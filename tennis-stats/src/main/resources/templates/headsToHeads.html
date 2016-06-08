@@ -4,6 +4,7 @@
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -29,8 +30,9 @@
 				var toSeason = $("#toSeason").val();
 				var level = $("#level").val();
 				var surface = $("#surface").val();
+				var round = encodeURIComponent($("#round").val());
 				var statsVsAll = $("#statsVsAll").prop("checked");
-				var url = "/headsToHeadsTable?players=" + players + "&fromSeason=" + fromSeason + "&toSeason=" + toSeason + "&level=" + level + "&surface=" + surface + "&statsVsAll=" + statsVsAll;
+				var url = "/headsToHeadsTable?players=" + players + "&fromSeason=" + fromSeason + "&toSeason=" + toSeason + "&level=" + level + "&surface=" + surface + "&round=" + round + "&statsVsAll=" + statsVsAll;
 				$.ajax(url).done(function(data) {
 					$("#headsToHeadsDiv").html(data);
 				});
@@ -47,12 +49,17 @@
 	<header th:include="fragments/header :: title"></header>
 	<h3>Heads-to-Heads</h3>
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-md-11">
 			<div class="input-group">
 				<label for="players" class="input-group-addon">Players:</label>
 				<input id="players" type="text" class="ui-widget search-field form-control" placeholder="Search Players"/>
 				<div class="input-group-btn" th:include="fragments/playerQuickPicks :: quickPicks"></div>
 			</div>
+		</div>
+		<div class="col-md-1">
+			<a class="btn btn-primary pull-right" href="#" role="button" onclick="showHeadsToHeads()">
+				<span class="glyphicon glyphicon-th"></span>&nbsp;&nbsp;Show
+			</a>
 		</div>
 	</div>
 	<div style="height: 5px"></div>
@@ -84,16 +91,17 @@
 			</select>
 		</div>
 		<div class="col-md-2">
+			<select id="round" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by round">
+				<option value="">All rounds</option>
+				<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+			</select>
+		</div>
+		<div class="col-md-2">
 			<div class="checkbox">
 				<label data-toggle="tooltip" data-placement="top" title="Show player statistics versus all or only between heads" class="text-nowrap">
 					<input id="statsVsAll" type="checkbox"/> Stats vs All
 				</label>
 			</div>
-		</div>
-		<div class="col-md-2">
-			<a class="btn btn-primary pull-right" href="#" role="button" onclick="showHeadsToHeads()">
-				<span class="glyphicon glyphicon-th"></span>&nbsp;&nbsp;Show
-			</a>
 		</div>
 	</div>
 	<br/>
