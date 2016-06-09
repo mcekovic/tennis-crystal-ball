@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="versions" type="java.util.Map<String, String>"*/-->
+<!--/*@thymesVar id="maintenanceMessage" type="java.lang.String>"*/-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -11,9 +12,9 @@
 <body class="container">
 <br/>
 	<h4 class="text-nowrap"><a href="/"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></a> - Down for Maintenance</h4>
-	<p>
-		Ultimate Tennis Statistics is down for maintenance and will be back soon. Please <a href="/">try again</a> later.
-	</p>
+	<p>Ultimate Tennis Statistics is down for maintenance and will be back soon.</p>
+	<p th:text="${maintenanceMessage}">Maintenance message</p>
+	<p>Please <a href="/">try again</a> later.</p>
 	<img src="/images/maintenance.jpg" width="700" height="422" alt="Down for maintenance"/>
 	<br/>
 	<footer th:include="fragments/footer :: copy"></footer>

@@ -1,7 +1,9 @@
 package org.strangeforest.tcb.stats.controler;
 
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.*;
 
 @Controller
 public class TennisStatsController extends PageController {
@@ -16,8 +18,11 @@ public class TennisStatsController extends PageController {
 		return "goatList";
 	}
 
+	@Value("${tennis-stats.down-for-maintenance.message:}")
+	private String maintenanceMessage;
+
 	@RequestMapping("/maintenance")
-	public String maintenance() {
-		return "maintenance";
+	public ModelAndView maintenance() {
+		return new ModelAndView("maintenance", "maintenanceMessage", maintenanceMessage);
 	}
 }

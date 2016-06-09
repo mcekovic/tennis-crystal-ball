@@ -4,7 +4,6 @@ import org.springframework.context.annotation.*;
 import org.springframework.context.support.*;
 import org.springframework.transaction.annotation.*;
 import org.strangeforest.tcb.stats.*;
-import org.strangeforest.tcb.stats.controler.*;
 import org.strangeforest.tcb.stats.spring.*;
 
 @Configuration
@@ -31,10 +30,5 @@ public class VisitorITsConfig {
 	@Bean
 	public GeoIPService geoIPService() {
 		return new GeoIPService();
-	}
-
-	@Bean
-	public DownForMaintenanceInterceptor downForMaintenanceInterceptor() {
-		return new DownForMaintenanceInterceptor();
 	}
 }
