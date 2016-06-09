@@ -75,7 +75,8 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<th:block th:if="${player}">
-		<h3 th:text="${player.name}">Player Profile</h3>
+		<img th:src="@{/images/flags/{code}.png(code=${player.countryCode})}" src="/images/flags/ch.png'" style="float: left; margin-top: 2px; margin-right: 8px" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
+		<h3 th:text="${player.name}">Roger Federer</h3>
 		<ul id="playerPills" class="nav nav-pills">
 			<li class="active"><a data-toggle="pill" href="#profile">Profile</a></li>
 			<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" data-url="/playerTournaments?playerId=" th:attrappend="data-url=${player.id}">Tournaments</a></li>
