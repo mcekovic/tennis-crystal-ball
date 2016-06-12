@@ -10,6 +10,7 @@ public abstract class RecordCategory {
 	private final List<Record> records;
 
 	protected static final String N_A = "";
+	protected static final String TOURNAMENT = "Tournament";
 	protected static final String GRAND_SLAM = "GrandSlam";
 	protected static final String TOUR_FINALS = "TourFinals";
 	protected static final String MASTERS = "Masters";

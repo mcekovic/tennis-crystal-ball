@@ -49,6 +49,7 @@ public abstract class Records {
 		register(new QuarterFinalStreaksCategory(), false);
 		register(new RankingATPCategory(), false);
 		register(new RankingEloCategory(), false);
+		register(new SpecialTournamentResultCategory(), false);
 		// Infamous Records
 		register(new BestPlayerThatNeverCategory(), true);
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.LOST), true);

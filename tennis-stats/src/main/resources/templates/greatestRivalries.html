@@ -80,6 +80,7 @@
 				});
 			});
 			$("#greatestRivalriesTable-header").find("div.search").before($("#levelDiv").remove()).before($("#surfaceDiv").remove()).before($("#roundDiv").remove()).remove();
+			$rivalriesTable.find("th[data-column-id='rivalry'] > a > span.text").html("<span title='Player with more GOAT points is on the left side'>Rivalry</span>");
 			filterChanged();
 			$("[data-toggle='tooltip']").tooltip();
 			setBootgridTitles($rivalriesTable, [
