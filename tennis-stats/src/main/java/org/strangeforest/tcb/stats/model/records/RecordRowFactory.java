@@ -12,6 +12,11 @@ public enum RecordRowFactory {
 			return new SeasonIntegerRecordRow(rank, playerId, name, countryId, active);
 		}
 	},
+	SEASON_RANGE_INTEGER {
+		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
+			return new SeasonRangeIntegerRecordRow(rank, playerId, name, countryId, active);
+		}
+	},
 	SEASON_TWO_INTEGERS {
 		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
 			return new SeasonTwoIntegersRecordRow(rank, playerId, name, countryId, active);
