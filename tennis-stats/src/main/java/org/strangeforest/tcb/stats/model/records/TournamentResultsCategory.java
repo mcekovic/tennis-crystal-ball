@@ -43,7 +43,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 
 	protected static Record mostTournamentResults(String id, String name, String resultCondition, String condition) {
 		return new Record(
-			"Tournament" + id, "Most " + name + " in Single Tournament",
+			"Tournament" + id, "Most " + name + " at Single Tournament",
 			/* language=SQL */
 			"SELECT r.player_id, tournament_id, t.name AS tournament, t.level, count(tournament_event_id) AS value, max(e.date) AS last_date\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) INNER JOIN tournament t USING (tournament_id)\n" +

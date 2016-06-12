@@ -24,6 +24,11 @@ public class WinningStreaksCategory extends RecordCategory {
 		register(winningStreakVs(NO_1, NO_1_NAME, "no1"));
 		register(winningStreakVs(TOP_5, TOP_5_NAME, "top5"));
 		register(winningStreakVs(TOP_10, TOP_10_NAME, "top10"));
+		register(tournamentWinningStreak(N_A, N_A, "_tournament", N_A));
+		register(tournamentWinningStreak(GRAND_SLAM, GRAND_SLAM_NAME, "_tournament_level", GRAND_SLAM_TOURNAMENTS));
+		register(tournamentWinningStreak(MASTERS, MASTERS_NAME, "_tournament_level", MASTERS_TOURNAMENTS));
+		register(tournamentWinningStreak(ATP_500, ATP_500_NAME, "_tournament_level", ATP_500_TOURNAMENTS));
+		register(tournamentWinningStreak(ATP_250, ATP_250_NAME, "_tournament_level", ATP_250_TOURNAMENTS));
 	}
 
 	private static Record winningStreak(String id, String name, String tableName, String condition) {
@@ -32,6 +37,10 @@ public class WinningStreaksCategory extends RecordCategory {
 
 	private static Record winningStreakVs(String id, String name, String tableName) {
 		return winningStreakRecord("WinningStreakVs" + id, "Winning Streak Vs " + name, "_vs_" + tableName, N_A);
+	}
+
+	private static Record tournamentWinningStreak(String id, String name, String tableName, String condition) {
+		return winningStreakRecord(id + "TournamentWinningStreak", "Winning Streak at Single " + suffix(name, " ") + "Tournament", tableName, condition);
 	}
 
 	private static Record winningStreakRecord(String id, String name, String tableName, String condition) {

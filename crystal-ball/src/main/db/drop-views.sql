@@ -42,6 +42,8 @@ DROP MATERIALIZED VIEW player_level_win_streak;
 DROP MATERIALIZED VIEW player_vs_no1_win_streak;
 DROP MATERIALIZED VIEW player_vs_top5_win_streak;
 DROP MATERIALIZED VIEW player_vs_top10_win_streak;
+DROP MATERIALIZED VIEW player_tournament_win_streak;
+DROP MATERIALIZED VIEW player_tournament_level_win_streak;
 
 DROP VIEW player_big_wins_v;
 DROP VIEW player_match_performance_v;

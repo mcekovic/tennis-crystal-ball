@@ -24,6 +24,8 @@ public class MostFinalsCategory extends TournamentResultsCategory {
 		register(mostTournamentFinals(N_A, N_A, ALL_TOURNAMENTS));
 		register(mostTournamentFinals(GRAND_SLAM, GRAND_SLAM_NAME, GRAND_SLAM_TOURNAMENTS));
 		register(mostTournamentFinals(MASTERS, MASTERS_NAME, MASTERS_TOURNAMENTS));
+		register(mostTournamentFinals(ATP_500, ATP_500_NAME, ATP_500_TOURNAMENTS));
+		register(mostTournamentFinals(ATP_250, ATP_250_NAME, ATP_250_TOURNAMENTS));
 		register(mostDifferentTournamentFinals(N_A, N_A, ALL_TOURNAMENTS));
 		register(mostDifferentTournamentFinals(GRAND_SLAM, GRAND_SLAM_NAME, GRAND_SLAM_TOURNAMENTS));
 		register(mostDifferentTournamentFinals(MASTERS, MASTERS_NAME, MASTERS_TOURNAMENTS));

@@ -103,7 +103,7 @@ public class MostMatchesCategory extends RecordCategory {
 
 	private static Record mostTournamentMatches(RecordType type, String id, String name, String columnPrefix) {
 		return new Record(
-			id + "TournamentMatches" + type.name, "Most Matches " + type.name + " in Single " + suffix(name, " ") + "Tournament",
+			id + "TournamentMatches" + type.name, "Most Matches " + type.name + " at Single " + suffix(name, " ") + "Tournament",
 			/* language=SQL */
 			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + columnPrefix + "matches") + " AS value\n" +
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id) WHERE t." + ALL_TOURNAMENTS,

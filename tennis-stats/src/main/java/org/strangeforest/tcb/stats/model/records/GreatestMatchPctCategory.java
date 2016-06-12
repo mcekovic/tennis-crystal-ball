@@ -116,7 +116,7 @@ class GreatestMatchPctCategory extends RecordCategory {
 
 	private static Record greatestTournamentMatchPct(RecordType type, String id, String name, String columnPrefix, String perfCategory) {
 		return new Record(
-			"Tournament" + id + type.name + "Pct", "Greatest " + type.name + " Pct. in Single " + suffix(name, " ") + "Tournament",
+			"Tournament" + id + type.name + "Pct", "Greatest " + type.name + " Pct. at Single " + suffix(name, " ") + "Tournament",
 			/* language=SQL */
 			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + columnPrefix + "matches") + " AS pct, p." + columnPrefix + "matches_won AS won, p." + columnPrefix + "matches_lost AS lost\n" +
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id)\n" +

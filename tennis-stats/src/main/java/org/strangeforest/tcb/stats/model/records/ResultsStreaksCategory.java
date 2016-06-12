@@ -13,24 +13,32 @@ public abstract class ResultsStreaksCategory extends RecordCategory {
 	}
 
 	protected static Record resultStreak(String id, String name, String nameSuffix, String resultCondition, String condition) {
+		return resultStreak(id + "Streak", suffix(name, " ") + "Streak", nameSuffix, resultCondition, condition, N_A);
+	}
+
+	protected static Record tournamentResultStreak(String id, String name, String resultName, String resultCondition, String condition) {
+		return resultStreak(id + "TournamentStreak", suffix(resultName, " ") + "Streak at Single " + suffix(name, " ") + "Tournament", N_A, resultCondition, condition, "tournament_id");
+	}
+
+	private static Record resultStreak(String id, String name, String nameSuffix, String resultCondition, String condition, String partition) {
 		return new Record(
-			id + "Streak", suffix(name, " ") + "Streak" + prefix(nameSuffix, " "),
+			id, name + prefix(nameSuffix, " "),
 			// CASE in second line replaceable by FILTER in PostgreSQL 9.4+
 			/* language=SQL */
 			"WITH event_not_count AS (\n" +
-			"  SELECT r.player_id, e.tournament_event_id, e.date, r.result, sum(CASE WHEN r." + resultCondition + " THEN 0 ELSE 1 END) OVER (PARTITION BY player_id ORDER BY date) AS not_count\n" +
+			"  SELECT r.player_id" + prefix(partition, ", e.") + ", e.tournament_event_id, e.date, r.result, sum(CASE WHEN r." + resultCondition + " THEN 0 ELSE 1 END) OVER (PARTITION BY player_id" + prefix(partition, ", e.") + " ORDER BY date) AS not_count\n" +
 			"  FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)" + prefix(condition, " WHERE e.") + "\n" +
 			"), event_result_streak AS (\n" +
-			"  SELECT player_id, rank() OVER (rs) AS result_streak,\n" +
+			"  SELECT player_id" + prefix(partition, ", ") + ", rank() OVER (rs) AS result_streak,\n" +
 			"    first_value(tournament_event_id) OVER (rs) AS first_event_id,\n" +
-			"    last_value(tournament_event_id) OVER (PARTITION BY player_id, not_count ORDER BY date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_event_id\n" +
+			"    last_value(tournament_event_id) OVER (PARTITION BY player_id" + prefix(partition, ", ") + ", not_count ORDER BY date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_event_id\n" +
 			"  FROM event_not_count\n" +
 			"  WHERE " + resultCondition + "\n" +
-			"  WINDOW rs AS (PARTITION BY player_id, not_count ORDER BY date)\n" +
+			"  WINDOW rs AS (PARTITION BY player_id" + prefix(partition, ", ") + ", not_count ORDER BY date)\n" +
 			"), player_event_result_streak AS (\n" +
-			"  SELECT player_id, max(result_streak) AS result_streak, first_event_id, last_event_id\n" +
+			"  SELECT player_id" + prefix(partition, ", ") + ", max(result_streak) AS result_streak, first_event_id, last_event_id\n" +
 			"  FROM event_result_streak\n" +
-			"  GROUP BY player_id, first_event_id, last_event_id\n" +
+			"  GROUP BY player_id" + prefix(partition, ", ") + ", first_event_id, last_event_id\n" +
 			"  HAVING max(result_streak) >= 2\n" +
 			")\n" +
 			"SELECT player_id, s.result_streak AS value, le.date AS end_date,\n" +

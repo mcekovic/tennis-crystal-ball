@@ -57,3 +57,5 @@ VACUUM FULL ANALYSE VERBOSE player_level_win_streak;
 VACUUM FULL ANALYSE VERBOSE player_vs_no1_win_streak;
 VACUUM FULL ANALYSE VERBOSE player_vs_top5_win_streak;
 VACUUM FULL ANALYSE VERBOSE player_vs_top10_win_streak;
+VACUUM FULL ANALYSE VERBOSE player_tournament_win_streak;
+VACUUM FULL ANALYSE VERBOSE player_tournament_level_win_streak;

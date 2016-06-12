@@ -24,6 +24,8 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 		register(mostTournamentTitles(N_A, N_A, ALL_TOURNAMENTS));
 		register(mostTournamentTitles(GRAND_SLAM, GRAND_SLAM_NAME, GRAND_SLAM_TOURNAMENTS));
 		register(mostTournamentTitles(MASTERS, MASTERS_NAME, MASTERS_TOURNAMENTS));
+		register(mostTournamentTitles(ATP_500, ATP_500_NAME, ATP_500_TOURNAMENTS));
+		register(mostTournamentTitles(ATP_250, ATP_250_NAME, ATP_250_TOURNAMENTS));
 		register(mostDifferentTournamentTitles(N_A, N_A, ALL_TOURNAMENTS));
 		register(mostDifferentTournamentTitles(GRAND_SLAM, GRAND_SLAM_NAME, GRAND_SLAM_TOURNAMENTS));
 		register(mostDifferentTournamentTitles(MASTERS, MASTERS_NAME, MASTERS_TOURNAMENTS));
