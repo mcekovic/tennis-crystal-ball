@@ -43,7 +43,7 @@
 				},
 				formatters: {
 					"bestRank": function(column, row) {
-						return "<span title='" + $.datepicker.formatDate("dd-mm-yy", new Date(row.bestRankDate)) + "'>" + row.bestRank + "</span>";
+						return "<span title='" + formatDate(row.bestRankDate) + "'>" + row.bestRank + "</span>";
 					},
 					"country": countryFormatter,
 					"player": playerFormatter
@@ -77,7 +77,7 @@
 				$.get(url, function (data) {
 					$date.append("<option value=''>" + (season == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
 					for (var i = 0; i < data.length; i++) {
-						var date = $.datepicker.formatDate("dd-mm-yy", new Date(data[i]));
+						var date = formatDate(data[i]);
 						$date.append("<option value='" + date + "'>" + date + "</option>");
 					}
 				});

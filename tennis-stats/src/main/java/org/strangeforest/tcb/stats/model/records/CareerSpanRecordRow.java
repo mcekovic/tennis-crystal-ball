@@ -1,30 +1,36 @@
 package org.strangeforest.tcb.stats.model.records;
 
 import java.sql.*;
+import java.util.Date;
 
 import static org.strangeforest.tcb.stats.model.records.RecordTournamentEvent.*;
 
-public class StreakRecordRow extends IntegerRecordRow {
+public class CareerSpanRecordRow extends RecordRow {
 
-	private int startSeason;
+	private String span;
+	private Date startDate;
 	private RecordTournamentEvent startEvent;
-	private int endSeason;
+	private Date endDate;
 	private RecordTournamentEvent endEvent;
 
-	public StreakRecordRow(int rank, int playerId, String name, String countryId, Boolean active) {
+	public CareerSpanRecordRow(int rank, int playerId, String name, String countryId, Boolean active) {
 		super(rank, playerId, name, countryId, active);
 	}
 
-	public int getStartSeason() {
-		return startSeason;
+	public String getSpan() {
+		return span;
+	}
+
+	public Date getStartDate() {
+		return startDate;
 	}
 
 	public RecordTournamentEvent getStartEvent() {
 		return startEvent;
 	}
 
-	public int getEndSeason() {
-		return endSeason;
+	public Date getEndDate() {
+		return endDate;
 	}
 
 	public RecordTournamentEvent getEndEvent() {
@@ -32,10 +38,10 @@ public class StreakRecordRow extends IntegerRecordRow {
 	}
 
 	@Override public void read(ResultSet rs) throws SQLException {
-		super.read(rs);
-		startSeason = rs.getInt("start_season");
+		span = rs.getString("span");
+		startDate = rs.getDate("start_date");
 		startEvent = readTournamentEvent(rs, "start_");
-		endSeason = rs.getInt("end_season");
+		endDate = rs.getDate("end_date");
 		endEvent = readTournamentEvent(rs, "end_");
 	}
 }

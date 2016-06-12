@@ -38,7 +38,7 @@
 				},
 				formatters: {
 					"player": playerCountryFormatter,
-					"rankingGoatPoints": function playerCountryFormatter(column, row) {
+					"rankingGoatPoints": function(column, row) {
 						if (row.rankingGoatPoints > 0) {
 							var title = "";
 							title = appendGoatPointsTitle(title, row, "yearEndRankGoatPoints", "Year-end ranking");
@@ -50,7 +50,7 @@
 						else
 							return row.rankingGoatPoints;
 					},
-					"achievementsGoatPoints": function playerCountryFormatter(column, row) {
+					"achievementsGoatPoints": function(column, row) {
 						if (row.achievementsGoatPoints > 0) {
 							var title = "";
 							title = appendGoatPointsTitle(title, row, "bigWinsGoatPoints", "Big wins");
@@ -64,8 +64,8 @@
 						else
 							return row.achievementsGoatPoints;
 					},
-					"bestEloRating": function bestEloRatingFormatter(column, row) {
-						return "<span title='" + $.datepicker.formatDate("dd-mm-yy", new Date(row.bestEloRatingDate)) + "'>" + row.bestEloRating + "</span>";
+					"bestEloRating": function(column, row) {
+						return "<span title='" + formatDate(row.bestEloRatingDate) + "'>" + row.bestEloRating + "</span>";
 					}
 				},
 				labels: {

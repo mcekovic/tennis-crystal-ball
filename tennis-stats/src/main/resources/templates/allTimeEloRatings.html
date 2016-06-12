@@ -32,12 +32,12 @@
 				},
 				formatters: {
 					"bestRank": function(column, row) {
-						return "<span title='" + $.datepicker.formatDate("dd-mm-yy", new Date(row.bestRankDate)) + "'>" + row.bestRank + "</span>";
+						return "<span title='" + formatDate(row.bestRankDate) + "'>" + row.bestRank + "</span>";
 					},
 					"country": countryFormatter,
 					"player": playerFormatter,
 					"date": function(column, row) {
-						return $.datepicker.formatDate("dd-mm-yy", new Date(row.pointsDate));
+						return formatDate(row.pointsDate);
 					}
 				},
 				labels: {

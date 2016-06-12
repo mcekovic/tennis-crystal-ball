@@ -118,13 +118,19 @@ function loadCollapse($button, url) {
 
 // Dates
 
+const date_format = "dd-mm-yy";
+
+function formatDate(date) {
+	return $.datepicker.formatDate(date_format, new Date(date));
+}
+
 function getDate(id) {
 	var $date = $("#" + id);
 	var date = $date.val();
 	if (date == "")
 		return date;
 	try {
-		$.datepicker.parseDate("dd-mm-yy", date);
+		$.datepicker.parseDate(date_format, date);
 		return date;
 	}
 	catch (err) {
@@ -138,13 +144,13 @@ function dateRangePicker(fromId, toId) {
 	var $from = $("#" + fromId);
 	var $to = $("#" + toId);
 	$from.datepicker({
-		defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
+		defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: date_format,
 		onClose: function (selectedDate) {
 			$to.datepicker("option", "minDate", selectedDate);
 		}
 	});
 	$to.datepicker({
-		defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: "dd-mm-yy",
+		defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: date_format,
 		onClose: function (selectedDate) {
 			$from.datepicker("option", "maxDate", selectedDate);
 		}
@@ -166,7 +172,7 @@ var bootgridTemplatePaginationItem = "<li class=\"{{ctx.css}}\"><a href=\"#\" da
 
 // Date Formatter
 function dateFormatter(column, row) {
-	return $.datepicker.formatDate("dd-mm-yy", new Date(row.date));
+	return formatDate(row.date);
 }
 
 // Country Formatter

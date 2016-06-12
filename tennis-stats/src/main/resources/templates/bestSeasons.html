@@ -36,7 +36,7 @@
 					"season": function(column, row) {
 						return "<a href='/playerProfile?playerId=" + row.playerId + "&season=" + row.season + "' title='Show season'>" + row.season + "</a>";
 					},
-					"goatPoints": function playerCountryFormatter(column, row) {
+					"goatPoints": function(column, row) {
 						if (row.goatPoints > 0) {
 							var title = "";
 							title = appendGoatPointsTitle(title, row, "tournamentGoatPoints", "Tournament");

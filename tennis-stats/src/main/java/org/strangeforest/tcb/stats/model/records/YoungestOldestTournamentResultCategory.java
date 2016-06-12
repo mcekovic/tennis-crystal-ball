@@ -1,10 +1,10 @@
 package org.strangeforest.tcb.stats.model.records;
 
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.model.records.SpecialTournamentResultCategory.RecordType.*;
-import static org.strangeforest.tcb.stats.model.records.SpecialTournamentResultCategory.ResultType.*;
+import static org.strangeforest.tcb.stats.model.records.YoungestOldestTournamentResultCategory.RecordType.*;
+import static org.strangeforest.tcb.stats.model.records.YoungestOldestTournamentResultCategory.ResultType.*;
 
-public class SpecialTournamentResultCategory extends RecordCategory {
+public class YoungestOldestTournamentResultCategory extends RecordCategory {
 
 	enum RecordType {
 		YOUNGEST("Youngest", "r.age"),
@@ -32,11 +32,11 @@ public class SpecialTournamentResultCategory extends RecordCategory {
 		}
 	}
 
-	private static final String AGE_WIDTH =        "100";
+	private static final String AGE_WIDTH =        "130";
 	private static final String TOURNAMENT_WIDTH = "100";
 	private static final String SEASON_WIDTH =      "60";
 
-	public SpecialTournamentResultCategory() {
+	public YoungestOldestTournamentResultCategory() {
 		super("Youngest/Oldest Tournament Champion/Finalist");
 		registerAgeTournamentResults(YOUNGEST, CHAMPION);
 		registerAgeTournamentResults(OLDEST, CHAMPION);

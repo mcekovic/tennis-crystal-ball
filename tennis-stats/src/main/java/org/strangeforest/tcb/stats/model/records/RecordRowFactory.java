@@ -37,6 +37,11 @@ public enum RecordRowFactory {
 			return new StreakRecordRow(rank, playerId, name, countryId, active);
 		}
 	},
+	CAREER_SPAN {
+		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
+			return new CareerSpanRecordRow(rank, playerId, name, countryId, active);
+		}
+	},
 	TOURNAMENT_EVENT_AGE {
 		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
 			return new TournamentEventAgeRecordRow(rank, playerId, name, countryId, active);

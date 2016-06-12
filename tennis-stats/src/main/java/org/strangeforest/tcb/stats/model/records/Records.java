@@ -19,17 +19,23 @@ public abstract class Records {
 		return record;
 	}
 
+	public static int getRecordCount() {
+		return recordCount;
+	}
+
 	private static void register(RecordCategory recordCategory, boolean infamous) {
 		(infamous ? INFAMOUS_RECORD_CATEGORIES : RECORD_CATEGORIES).add(recordCategory);
 		for (Record record : recordCategory.getRecords()) {
 			record.setInfamous(infamous);
 			RECORDS.put(record.getId(), record);
+			recordCount++;
 		}
 	}
 
 	private static final List<RecordCategory> RECORD_CATEGORIES = new ArrayList<>();
 	private static final List<RecordCategory> INFAMOUS_RECORD_CATEGORIES = new ArrayList<>();
 	private static final Map<String, Record> RECORDS = new HashMap<>();
+	private static int recordCount;
 	static {
 		// Famous Records
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.PLAYED), false);
@@ -49,7 +55,8 @@ public abstract class Records {
 		register(new QuarterFinalStreaksCategory(), false);
 		register(new RankingATPCategory(), false);
 		register(new RankingEloCategory(), false);
-		register(new SpecialTournamentResultCategory(), false);
+		register(new YoungestOldestTournamentResultCategory(), false);
+		register(new LongestCareerSpanCategory(), false);
 		// Infamous Records
 		register(new BestPlayerThatNeverCategory(), true);
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.LOST), true);
