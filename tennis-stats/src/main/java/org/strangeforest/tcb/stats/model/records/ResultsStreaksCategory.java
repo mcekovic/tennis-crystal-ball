@@ -29,8 +29,8 @@ public abstract class ResultsStreaksCategory extends RecordCategory {
 			"  SELECT r.player_id" + prefix(partition, ", e.") + ", e.tournament_event_id, e.date, r.result, sum(CASE WHEN r." + resultCondition + " THEN 0 ELSE 1 END) OVER (PARTITION BY player_id" + prefix(partition, ", e.") + " ORDER BY date) AS not_count\n" +
 			"  FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)" + prefix(condition, " WHERE e.") + "\n" +
 			"), event_result_streak AS (\n" +
-			"  SELECT player_id" + prefix(partition, ", ") + ", rank() OVER (rs) AS result_streak,\n" +
-			"    first_value(tournament_event_id) OVER (rs) AS first_event_id,\n" +
+			"  SELECT player_id" + prefix(partition, ", ") + ", rank() OVER rs AS result_streak,\n" +
+			"    first_value(tournament_event_id) OVER rs AS first_event_id,\n" +
 			"    last_value(tournament_event_id) OVER (PARTITION BY player_id" + prefix(partition, ", ") + ", not_count ORDER BY date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_event_id\n" +
 			"  FROM event_not_count\n" +
 			"  WHERE " + resultCondition + "\n" +

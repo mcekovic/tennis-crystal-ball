@@ -78,7 +78,7 @@ public class RankingsService {
 		"FROM best_rank_points b";
 
 	private static final String PLAYER_RANKINGS_FOR_HIGHLIGHTS_QUERY =
-		"SELECT rank, lead(rank, -1) OVER (pr) prev_rank, weeks(lead(rank_date, -1) OVER (pr), rank_date) weeks\n" +
+		"SELECT rank, lag(rank) OVER pr prev_rank, weeks(lag(rank_date) OVER pr, rank_date) weeks\n" +
 		"FROM player_ranking\n" +
 		"WHERE player_id = :playerId\n" +
 		"WINDOW pr AS (ORDER BY rank_date)";

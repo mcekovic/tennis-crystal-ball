@@ -37,13 +37,12 @@ public abstract class RankingCategory extends RecordCategory {
 			"WeeksAt" + rankType + id, "Most Weeks at " + rankType + " " + name,
 			/* language=SQL */
 			"WITH player_ranking_weeks AS (\n" +
-			"  SELECT player_id, rank_date, rank, lead(rank_date, -1) OVER (pr) AS prev_rank_date, lead(rank, -1) OVER (pr) AS prev_rank,\n" +
-			"    weeks(lead(rank_date, -1) OVER (pr), rank_date) AS weeks\n" +
+			"  SELECT player_id, rank_date, rank, lag(rank_date) OVER pr AS prev_rank_date, lag(rank) OVER pr AS prev_rank,\n" +
+			"    weeks(lag(rank_date) OVER pr, rank_date) AS weeks\n" +
 			"  FROM player" + rankDBName + "_ranking\n" +
 			"  INNER JOIN player_best" + rankDBName + "_rank USING (player_id)\n" +
 			"  WHERE best" + rankDBName + "_rank " + bestCondition + "\n" +
 			"  WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)\n" +
-			"  ORDER BY rank_date\n" +
 			")\n" +
 			"SELECT player_id, round(sum(CASE WHEN prev_rank " + condition + " THEN weeks - 1 ELSE 0 END + CASE WHEN rank " + condition + " THEN 1 ELSE 0 END)) AS value, max(rank_date) AS last_date\n" +
 			"FROM player_ranking_weeks\n" +
