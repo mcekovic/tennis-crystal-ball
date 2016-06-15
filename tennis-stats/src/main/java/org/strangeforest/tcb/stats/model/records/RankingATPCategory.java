@@ -55,10 +55,10 @@ public class RankingATPCategory extends RankingCategory {
 	}
 
 	private static Record youngestOldestATPRanking(AgeType type, String id, String name, String condition) {
-		return youngestOldestRanking(type, type.name + "ATP" + id, type.name + " ATP " + name, "player_atp_ranking_v", condition);
+		return youngestOldestRanking(type, type.name + "ATP" + id, type.name + " ATP " + name, "player_ranking", condition);
 	}
 
 	private static Record careerSpanATPRanking(String id, String name, String condition) {
-		return careerSpanRanking("ATP" + id, "ATP " + name, "player_atp_ranking_v", condition);
+		return careerSpanRanking("ATP" + id, "ATP " + name, "player_ranking", condition);
 	}
 }
