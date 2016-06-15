@@ -51,5 +51,6 @@ DROP VIEW player_match_stats_v;
 DROP VIEW player_match_for_stats_v;
 DROP VIEW match_for_stats_v;
 DROP VIEW match_for_rivalry_v;
+DROP VIEW player_atp_ranking_v;
 
 DROP MATERIALIZED VIEW event_participation;

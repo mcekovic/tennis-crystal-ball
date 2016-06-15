@@ -19,6 +19,12 @@ GROUP BY p.tournament_event_id;
 
 CREATE UNIQUE INDEX ON event_participation (tournament_event_id);
 
+-- player_atp_ranking_v
+
+CREATE OR REPLACE VIEW player_atp_ranking_v AS
+SELECT * FROM player_ranking
+WHERE rank_date >= DATE '1973-08-23';
+
 
 -- player_current_rank
 

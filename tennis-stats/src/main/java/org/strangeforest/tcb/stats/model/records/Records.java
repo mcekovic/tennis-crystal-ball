@@ -56,7 +56,7 @@ public abstract class Records {
 		register(new RankingATPCategory(), false);
 		register(new RankingEloCategory(), false);
 		register(new YoungestOldestTournamentResultCategory(), false);
-		register(new LongestCareerCategory(), false);
+		register(new LongestCareerResultSpanCategory(), false);
 		// Infamous Records
 		register(new BestPlayerThatNeverCategory(), true);
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.LOST), true);

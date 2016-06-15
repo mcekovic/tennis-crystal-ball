@@ -16,7 +16,7 @@ public class CacheManagerConfig {
 	@Value("${cache.max-size:1000}")
 	private int cacheMaxSize;
 
-	@Value("${cache.expiry-period:PT5M}")
+	@Value("${cache.expiry-period:PT15M}")
 	private Duration cacheExpiryPeriod;
 
 	@Bean

@@ -3,9 +3,9 @@ package org.strangeforest.tcb.stats.model.records;
 import java.util.*;
 
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.model.records.LongestCareerCategory.ResultType.*;
+import static org.strangeforest.tcb.stats.model.records.LongestCareerResultSpanCategory.ResultType.*;
 
-public class LongestCareerCategory extends RecordCategory {
+public class LongestCareerResultSpanCategory extends RecordCategory {
 
 	enum ResultType {
 		TITLE("Title", TITLES),
@@ -26,8 +26,8 @@ public class LongestCareerCategory extends RecordCategory {
 	private static final String SEASONS_WIDTH =     "80";
 	private static final String SEASON_WIDTH =      "80";
 
-	public LongestCareerCategory() {
-		super("Longest Career");
+	public LongestCareerResultSpanCategory() {
+		super("Longest Career Title/Final Span");
 		registerResultCareerSpans(TITLE);
 		registerResultCareerSpans(FINAL);
 		registerWinCareerSpans();
@@ -75,7 +75,7 @@ public class LongestCareerCategory extends RecordCategory {
 			"INNER JOIN tournament_event fe ON fe.tournament_event_id = r.first_event_id\n" +
 			"INNER JOIN tournament_event le ON le.tournament_event_id = r.last_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'",
-			SPAN_COLUMNS, "r.span DESC", "r.span DESC, r.end_date", RecordRowFactory.CAREER_SPAN,
+			SPAN_COLUMNS, "r.span DESC", "r.span DESC, r.end_date", RecordRowFactory.TOURNAMENT_CAREER_SPAN,
 			SPAN_RECORD_COLUMNS
 		);
 	}
@@ -101,7 +101,7 @@ public class LongestCareerCategory extends RecordCategory {
 			"INNER JOIN match lm ON lm.match_id = w.last_match_id INNER JOIN tournament_event le ON le.tournament_event_id = lm.tournament_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'\n" +
 			"AND p.name NOT IN ('Alexander Zverev', 'Fred Hemmes', 'Miloslav Mecir')", // TODO Remove after data is fixed
-			SPAN_COLUMNS, "r.span DESC", "r.span DESC, r.end_date", RecordRowFactory.CAREER_SPAN,
+			SPAN_COLUMNS, "r.span DESC", "r.span DESC, r.end_date", RecordRowFactory.TOURNAMENT_CAREER_SPAN,
 			SPAN_RECORD_COLUMNS
 		);
 	}

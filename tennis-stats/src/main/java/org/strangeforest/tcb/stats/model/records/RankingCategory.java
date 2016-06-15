@@ -5,11 +5,28 @@ import static java.util.Arrays.*;
 public abstract class RankingCategory extends RecordCategory {
 
 	private static final String SEASONS_WIDTH = "120";
-	private static final String WEEKS_WIDTH   = "120";
-	private static final String POINTS_WIDTH  = "100";
-	private static final String DATE_WIDTH    =  "80";
-	private static final String RANK_WIDTH    =  "60";
-	private static final String SEASON_WIDTH  =  "60";
+	private static final String WEEKS_WIDTH =   "120";
+	private static final String POINTS_WIDTH =  "100";
+	private static final String DATE_WIDTH =     "80";
+	private static final String RANK_WIDTH =     "60";
+	private static final String SEASON_WIDTH =   "60";
+	private static final String AGE_WIDTH =     "130";
+	private static final String SPAN_WIDTH =    "130";
+
+	enum AgeType {
+		YOUNGEST("Youngest", "min", "r.age"),
+		OLDEST("Oldest", "max", "r.age DESC");
+
+		final String name;
+		final String function;
+		final String order;
+
+		AgeType(String name, String function, String order) {
+			this.name = name;
+			this.function = function;
+			this.order = order;
+		}
+	}
 
 	protected RankingCategory(String name) {
 		super(name);
@@ -76,6 +93,40 @@ public abstract class RankingCategory extends RecordCategory {
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("value2", "numeric", null, RANK_WIDTH, "right", "Rank"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
+			)
+		);
+	}
+
+	protected static Record youngestOldestRanking(AgeType type, String id, String name, String tableName, String condition) {
+		return new Record(
+			id, name,
+			/* language=SQL */
+			"SELECT player_id, " + type.function + "(age(r.rank_date, p.dob)) AS age, " + type.function + "(r.rank_date) AS date\n" +
+			"FROM " + tableName + " r INNER JOIN player_v p USING (player_id)\n" +
+			"WHERE rank " + condition + "\n" +
+			"AND p.name NOT IN ('Jaime Fillol', 'Chris Lewis', 'Olivier Cayla')\n" + // TODO Remove after data is fixed
+			"GROUP BY player_id",
+			"r.age, r.date", type.order, type.order + ", r.date", RecordRowFactory.DATE_AGE,
+			asList(
+				new RecordColumn("age", null, null, AGE_WIDTH, "left", "Age"),
+				new RecordColumn("date", null, "date", DATE_WIDTH, "left", "Date")
+			)
+		);
+	}
+
+	protected static Record careerSpanRanking(String id, String name, String tableName, String condition) {
+		return new Record(
+			"LongestATP" + id + "Span", "Longest Career First " + name + " to Last " + name,
+			/* language=SQL */
+			"SELECT player_id, age(max(rank_date), min(rank_date)) AS span, min(rank_date) AS start_date, max(rank_date) AS end_date\n" +
+			"FROM " + tableName + "\n" +
+			"WHERE rank " + condition + "\n" +
+			"GROUP BY player_id",
+			"r.span, r.start_date, r.end_date", "r.span DESC", "r.span DESC, r.end_date", RecordRowFactory.CAREER_SPAN,
+			asList(
+				new RecordColumn("span", null, null, SPAN_WIDTH, "left", "Career Span"),
+				new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
+				new RecordColumn("endDate", null, "endDate", DATE_WIDTH, "center", "End Date")
 			)
 		);
 	}
