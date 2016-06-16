@@ -48,7 +48,7 @@ http://tennis-strangeforest.rhcloud.com
 ![Player Tournaments](https://github.com/mcekovic/open-box/blob/master/PlayerTournaments.png?raw=true)
 
 ##### Player GOAT Points
-![Player GOAT Points](https://github.com/mcekovic/open-box/blob/master/PlayerGOATPints.png?raw=true)
+![Player GOAT Points](https://github.com/mcekovic/open-box/blob/master/PlayerGOATPoints.png?raw=true)
 
 ##### Player Timeline
 ![Player Timeline](https://github.com/mcekovic/open-box/blob/master/PlayerTimeline.png?raw=true)
