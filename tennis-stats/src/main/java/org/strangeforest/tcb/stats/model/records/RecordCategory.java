@@ -77,6 +77,14 @@ public abstract class RecordCategory {
 	protected static final String SEMI_FINALS = "result IN ('W', 'F', 'SF')";
 	protected static final String QUARTER_FINALS = "result IN ('W', 'F', 'SF', 'QF')";
 	protected static final String ENTRIES = "result IS NOT NULL";
+	protected static final String NO_1_RANK = "= 1";
+	protected static final String NO_2_RANK = "= 2";
+	protected static final String TOP_2_RANK = "<= 2";
+	protected static final String NO_3_RANK = "= 3";
+	protected static final String TOP_3_RANK = "<= 3";
+	protected static final String TOP_5_RANK = "<= 5";
+	protected static final String TOP_10_RANK = "<= 10";
+	protected static final String TOP_20_RANK = "<= 20";
 
 	protected RecordCategory(String name) {
 		this.name = name;

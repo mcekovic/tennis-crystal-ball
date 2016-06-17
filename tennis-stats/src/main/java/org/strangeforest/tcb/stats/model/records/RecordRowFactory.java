@@ -37,6 +37,11 @@ public enum RecordRowFactory {
 			return new DateIntegerRecordRow(rank, playerId, name, countryId, active);
 		}
 	},
+	DATE_RANGE_INTEGER {
+		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
+			return new DateRangeIntegerRecordRow(rank, playerId, name, countryId, active);
+		}
+	},
 	DATE_AGE {
 		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
 			return new DateAgeRecordRow(rank, playerId, name, countryId, active);

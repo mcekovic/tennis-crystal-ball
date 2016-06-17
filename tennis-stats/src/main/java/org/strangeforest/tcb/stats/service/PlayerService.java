@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -49,14 +50,17 @@ public class PlayerService {
 		"ORDER BY season DESC";
 
 
+	@Cacheable("Player.ById")
 	public Optional<Player> getPlayer(int playerId) {
 		return jdbcTemplate.query(PLAYER_BY_ID_QUERY, params("playerId", playerId), this::playerExtractor);
 	}
 
+	@Cacheable("Player.ByName")
 	public Optional<Player> getPlayer(String name) {
 		return jdbcTemplate.query(PLAYER_BY_NAME_QUERY, params("name", name), this::playerExtractor);
 	}
 
+	@Cacheable("PlayerName.ById")
 	public String getPlayerName(int playerId) {
 		return jdbcTemplate.queryForObject(PLAYER_NAME_QUERY, params("playerId", playerId), String.class);
 	}
@@ -65,6 +69,7 @@ public class PlayerService {
 		return jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, params("name", name), this::playerAutocompleteOptionMapper);
 	}
 
+	@Cacheable("PlayerId.ByName")
 	public Optional<Integer> findPlayerId(String name) {
 		return jdbcTemplate.queryForList(PLAYER_ID_QUERY, params("name", name), Integer.class).stream().findFirst();
 	}
@@ -73,6 +78,7 @@ public class PlayerService {
 		return players.stream().filter(player -> !isNullOrEmpty(player)).map(this::findPlayerId).filter(Optional::isPresent).map(Optional::get).collect(toList());
 	}
 
+	@Cacheable("PlayerSeasons")
 	public List<Integer> getPlayerSeasons(int playerId) {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, params("playerId", playerId), Integer.class);
 	}

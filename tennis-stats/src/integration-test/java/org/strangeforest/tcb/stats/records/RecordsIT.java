@@ -12,6 +12,8 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 
+import static java.util.Comparator.*;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = RecordsITsConfig.class)
 @Transactional
@@ -22,8 +24,17 @@ public class RecordsIT {
 
 	@Test
 	public void testAllFamousRecords() {
-		Map<Integer, Integer> records = new HashMap<>();
-		for (RecordCategory recordCategory : Records.getRecordCategories()) {
+		testRecords(Records.getRecordCategories());
+	}
+
+	@Test
+	public void testAllInfamousRecords() {
+		testRecords(Records.getInfamousRecordCategories());
+	}
+
+	private void testRecords(List<RecordCategory> categories) {
+		Map<Integer, PlayerRecords> records = new HashMap<>();
+		for (RecordCategory recordCategory : categories) {
 			for (Record record : recordCategory.getRecords()) {
 				BootgridTable<RecordRow> table = recordsService.getRecordTable(record.getId(), false, 100, 1);
 				if (table.getRowCount() > 0) {
@@ -36,18 +47,31 @@ public class RecordsIT {
 				}
 			}
 		}
-		for (Map.Entry<Integer, Integer> entry : sortByValuesDesc(records).entrySet())
-			System.out.printf("%30s %5s%n", playerService.getPlayerName(entry.getKey()), entry.getValue());
+		records.values().stream().sorted(reverseOrder()).forEach(record ->
+			System.out.printf("%30s %5s%n", playerService.getPlayerName(record.playerId), record.records)
+		);
 	}
 
-	private static void incRecords(Map<Integer, Integer> records, int playerId) {
-		Integer count = records.get(playerId);
-		records.put(playerId, count != null ? count + 1 : 1);
+	private static void incRecords(Map<Integer, PlayerRecords> records, int playerId) {
+		PlayerRecords playerRecords = records.get(playerId);
+		if (playerRecords != null)
+			playerRecords.records++;
+		else
+			records.put(playerId, new PlayerRecords(playerId));
 	}
 
-	public static <K, V extends Comparable<V>> Map<K, V> sortByValuesDesc(final Map<K, V> map) {
-		Map<K, V> sortedByValues = new TreeMap<>((k1, k2) -> map.get(k2).compareTo(map.get(k1)));
-	    sortedByValues.putAll(map);
-	    return sortedByValues;
+	private static class PlayerRecords implements Comparable<PlayerRecords> {
+
+		private int playerId;
+		private int records;
+
+		PlayerRecords(int playerId) {
+			this.playerId = playerId;
+			records = 1;
+		}
+
+		@Override public int compareTo(PlayerRecords pr) {
+			return Integer.compare(records, pr.records);
+		}
 	}
 }

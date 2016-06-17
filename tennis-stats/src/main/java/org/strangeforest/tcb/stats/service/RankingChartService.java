@@ -24,6 +24,7 @@ public class RankingChartService {
 	@Autowired private PlayerService playerService;
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
+	//TODO Use adjust_atp_rank_points function
 	private static final LocalDate START_DATE_OF_NEW_RANKING_SYSTEM = LocalDate.of(2009, 1, 1);
 	private static final int START_SEASON_OF_NEW_RANKING_SYSTEM = START_DATE_OF_NEW_RANKING_SYSTEM.getYear();
 	private static final double RANKING_POINTS_COMPENSATION_FACTOR = 1.9;
