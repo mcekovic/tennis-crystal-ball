@@ -15,8 +15,8 @@ public class DateIntegerRecordRow extends IntegerRecordRow {
 		return date;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
-		super.read(rs);
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
+		super.read(rs, activePlayers);
 		date = rs.getDate("date");
 	}
 }

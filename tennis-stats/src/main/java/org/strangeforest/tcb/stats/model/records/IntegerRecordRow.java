@@ -19,7 +19,7 @@ public class IntegerRecordRow extends RecordRow {
 		return value;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
 		value = rs.getInt("value");
 	}
 }

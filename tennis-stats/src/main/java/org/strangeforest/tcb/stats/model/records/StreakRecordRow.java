@@ -31,8 +31,8 @@ public class StreakRecordRow extends IntegerRecordRow {
 		return endEvent;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
-		super.read(rs);
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
+		super.read(rs, activePlayers);
 		startSeason = rs.getInt("start_season");
 		startEvent = readTournamentEvent(rs, "start_");
 		endSeason = rs.getInt("end_season");

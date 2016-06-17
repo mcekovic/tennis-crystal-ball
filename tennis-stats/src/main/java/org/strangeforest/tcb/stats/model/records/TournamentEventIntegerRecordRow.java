@@ -34,8 +34,8 @@ public class TournamentEventIntegerRecordRow extends IntegerRecordRow {
 		return matches;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
-		super.read(rs);
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
+		super.read(rs, activePlayers);
 		season = rs.getInt("season");
 		tournamentEventId = rs.getInt("tournament_event_id");
 		tournament = rs.getString("tournament");

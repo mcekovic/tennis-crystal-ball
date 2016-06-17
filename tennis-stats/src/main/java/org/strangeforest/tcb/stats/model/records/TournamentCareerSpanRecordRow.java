@@ -21,8 +21,8 @@ public class TournamentCareerSpanRecordRow extends CareerSpanRecordRow {
 		return endEvent;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
-		super.read(rs);
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
+		super.read(rs, activePlayers);
 		startEvent = readTournamentEvent(rs, "start_");
 		endEvent = readTournamentEvent(rs, "end_");
 	}

@@ -20,7 +20,7 @@ public class DateAgeRecordRow extends RecordRow {
 		return date;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
 		age = rs.getString("age");
 		date = rs.getDate("date");
 	}

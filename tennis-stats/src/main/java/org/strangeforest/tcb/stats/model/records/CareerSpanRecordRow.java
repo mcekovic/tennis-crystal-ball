@@ -25,7 +25,7 @@ public class CareerSpanRecordRow extends RecordRow {
 		return endDate;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
 		span = rs.getString("span");
 		startDate = rs.getDate("start_date");
 		endDate = rs.getDate("end_date");

@@ -67,6 +67,11 @@ public enum RecordRowFactory {
 			return new TournamentEventAgeRecordRow(rank, playerId, name, countryId, active);
 		}
 	},
+	RANKING_DIFF {
+		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
+			return new RankingDiffRecordRow(rank, playerId, name, countryId, active);
+		}
+	},
 	WINNING_PCT {
 		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
 			return new WinningPctRecordRow(rank, playerId, name, countryId, active);

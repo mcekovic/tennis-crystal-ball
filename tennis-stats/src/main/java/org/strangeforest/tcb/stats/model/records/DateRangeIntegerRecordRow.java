@@ -20,8 +20,8 @@ public class DateRangeIntegerRecordRow extends IntegerRecordRow {
 		return endDate;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
-		super.read(rs);
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
+		super.read(rs, activePlayers);
 		startDate = rs.getDate("start_date");
 		endDate = rs.getDate("end_date");
 	}

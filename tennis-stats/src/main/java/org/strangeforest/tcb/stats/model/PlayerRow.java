@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 import org.strangeforest.tcb.util.*;
 
-public abstract class PlayerRow {
+public class PlayerRow {
 
 	private final int rank;
 	private final int playerId;
@@ -11,7 +11,7 @@ public abstract class PlayerRow {
 	private final String countryCode;
 	private final Boolean active;
 
-	protected PlayerRow(int rank, int playerId, String name, String countryId, Boolean active) {
+	public PlayerRow(int rank, int playerId, String name, String countryId, Boolean active) {
 		this.rank = rank;
 		this.playerId = playerId;
 		this.name = name;

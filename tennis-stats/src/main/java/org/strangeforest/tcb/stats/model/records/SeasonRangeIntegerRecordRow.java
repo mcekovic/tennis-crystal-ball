@@ -19,8 +19,8 @@ public class SeasonRangeIntegerRecordRow extends IntegerRecordRow {
 		return endSeason;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
-		super.read(rs);
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
+		super.read(rs, activePlayers);
 		startSeason = rs.getInt("start_season");
 		endSeason = rs.getInt("end_season");
 	}

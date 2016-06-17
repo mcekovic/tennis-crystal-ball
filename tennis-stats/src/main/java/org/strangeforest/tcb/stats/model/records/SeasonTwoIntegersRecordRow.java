@@ -19,8 +19,8 @@ public class SeasonTwoIntegersRecordRow extends IntegerRecordRow {
 		return season;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
-		super.read(rs);
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
+		super.read(rs, activePlayers);
 		value2 = rs.getInt("value2");
 		season = rs.getInt("season");
 	}

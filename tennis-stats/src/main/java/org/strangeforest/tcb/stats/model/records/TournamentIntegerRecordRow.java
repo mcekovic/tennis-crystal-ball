@@ -24,8 +24,8 @@ public class TournamentIntegerRecordRow extends IntegerRecordRow {
 		return level;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
-		super.read(rs);
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
+		super.read(rs, activePlayers);
 		tournamentId = rs.getInt("tournament_id");
 		tournament = rs.getString("tournament");
 		level = rs.getString("level");

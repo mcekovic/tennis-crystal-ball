@@ -34,7 +34,7 @@ public class TournamentEventAgeRecordRow extends RecordRow {
 		return level;
 	}
 
-	@Override public void read(ResultSet rs) throws SQLException {
+	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
 		age = rs.getString("age");
 		season = rs.getInt("season");
 		tournamentEventId = rs.getInt("tournament_event_id");
