@@ -77,12 +77,12 @@ public abstract class RankingCategory extends RecordCategory {
 		register(youngestOldestRanking(OLDEST, OLDEST.name + type + TOP_5, OLDEST.name + prefix(type, " ") + prefix(TOP_5_NAME, " "), rankDBName, TOP_5_RANK));
 		register(youngestOldestRanking(OLDEST, OLDEST.name + type + TOP_10, OLDEST.name + prefix(type, " ") + prefix(TOP_10_NAME, " "), rankDBName, TOP_10_RANK));
 		register(youngestOldestRanking(OLDEST, OLDEST.name + type + TOP_20, OLDEST.name + prefix(type, " ") + prefix(TOP_20_NAME, " "), rankDBName, TOP_20_RANK));
-		register(careerSpanRanking(type + NO_1, prefix(type, " ") + NO_1_NAME, rankDBName, NO_1_RANK));
-		register(careerSpanRanking(type + TOP_2, prefix(type, " ") + TOP_2_NAME, rankDBName, TOP_2_RANK));
-		register(careerSpanRanking(type + TOP_3, prefix(type, " ") + TOP_3_NAME, rankDBName, TOP_3_RANK));
-		register(careerSpanRanking(type + TOP_5, prefix(type, " ") + TOP_5_NAME, rankDBName, TOP_5_RANK));
-		register(careerSpanRanking(type + TOP_10, prefix(type, " ") + TOP_10_NAME, rankDBName, TOP_10_RANK));
-		register(careerSpanRanking(type + TOP_20, prefix(type, " ") + TOP_20_NAME, rankDBName, TOP_20_RANK));
+		register(careerSpanRanking(type + NO_1, suffix(type, " ") + NO_1_NAME, rankDBName, NO_1_RANK));
+		register(careerSpanRanking(type + TOP_2, suffix(type, " ") + TOP_2_NAME, rankDBName, TOP_2_RANK));
+		register(careerSpanRanking(type + TOP_3, suffix(type, " ") + TOP_3_NAME, rankDBName, TOP_3_RANK));
+		register(careerSpanRanking(type + TOP_5, suffix(type, " ") + TOP_5_NAME, rankDBName, TOP_5_RANK));
+		register(careerSpanRanking(type + TOP_10, suffix(type, " ") + TOP_10_NAME, rankDBName, TOP_10_RANK));
+		register(careerSpanRanking(type + TOP_20, suffix(type, " ") + TOP_20_NAME, rankDBName, TOP_20_RANK));
 	}
 
 	protected static Record mostWeeksAt(String rankType, String id, String name, String rankDBName, String condition, String bestCondition) {
@@ -236,7 +236,7 @@ public abstract class RankingCategory extends RecordCategory {
 	}
 
 	protected static Record greatestPointsDifferenceBetweenNo1andNo2(
-		String id, String name, String tableName, String columnName,
+		String id, String name, String tableName, String columnName, String condition,
 		String expression, String expression1, String expression2,
 		String type, String formatter, String caption, String diffCaption
 	) {
@@ -248,7 +248,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"    " + expression + " AS value, r1.rank_date\n" +
 			"  FROM " + tableName + " r1\n" +
 			"  INNER JOIN " + tableName + " r2 ON r2.rank_date = r1.rank_date AND r2.rank = 2 AND r2." + columnName + " > 0\n" +
-			"  WHERE r1.rank = 1 AND r1." + columnName + " > 0\n" +
+			"  WHERE r1.rank = 1 AND r1." + columnName + " > 0" + prefix(condition, " AND ") + "\n" +
 			"), ranking_diff2 AS (\n" +
 			"  SELECT player_id, player_id2, first_value(value1) OVER diff AS value1, first_value(value2) OVER diff AS value2,\n" +
 			"    first_value(value) OVER diff AS value, first_value(rank_date) OVER diff AS date\n" +

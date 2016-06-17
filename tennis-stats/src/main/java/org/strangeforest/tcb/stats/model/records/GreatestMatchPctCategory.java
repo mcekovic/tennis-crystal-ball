@@ -3,7 +3,7 @@ package org.strangeforest.tcb.stats.model.records;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordRowFactory.*;
 
-class GreatestMatchPctCategory extends RecordCategory {
+public class GreatestMatchPctCategory extends RecordCategory {
 
 	enum RecordType {
 		WINNING("Winning", "_won", "wonLostPct", WINNING_PCT, SEASON_WINNING_PCT, TOURNAMENT_WINNING_PCT,
@@ -43,7 +43,7 @@ class GreatestMatchPctCategory extends RecordCategory {
 	private static final String SEASON_WIDTH =      "60";
 	private static final String TOURNAMENT_WIDTH = "100";
 
-	GreatestMatchPctCategory(RecordType type) {
+	public GreatestMatchPctCategory(RecordType type) {
 		super("Greatest " + type.name + " Pct.");
 		register(greatestMatchPct(type, N_A, N_A, N_A, "matches"));
 		register(greatestMatchPct(type, GRAND_SLAM, GRAND_SLAM_NAME, "grand_slam_", "grandSlamMatches"));

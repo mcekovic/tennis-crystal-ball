@@ -2,13 +2,13 @@ package org.strangeforest.tcb.stats.model.records;
 
 import static java.util.Arrays.*;
 
-class BestPlayerThatNeverCategory extends RecordCategory {
+public class BestPlayerThatNeverCategory extends RecordCategory {
 
 	private static final String POINTS_WIDTH = "120";
 
 	private static final RecordColumn GOAT_POINTS_COLUMN = new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", "GOAT Points");
 
-	BestPlayerThatNeverCategory() {
+	public BestPlayerThatNeverCategory() {
 		super("Best Player That Never...");
 		register(bestPlayerThatNeverWon(GRAND_SLAM, GRAND_SLAM_NAME, N_A, "grand_slams"));
 		register(bestPlayerThatNeverWon(TOUR_FINALS, TOUR_FINALS_NAME, N_A, "tour_finals"));

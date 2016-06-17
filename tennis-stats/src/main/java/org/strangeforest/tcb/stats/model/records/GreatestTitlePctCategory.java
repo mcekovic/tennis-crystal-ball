@@ -3,23 +3,25 @@ package org.strangeforest.tcb.stats.model.records;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordRowFactory.*;
 
-class GreatestTitlePctCategory extends RecordCategory {
+public class GreatestTitlePctCategory extends RecordCategory {
 
 	enum RecordType {
-		WINNING("Winning", "finals_won", "CASE r.result WHEN 'W' THEN 1 ELSE 0 END", "wonLostPct", WINNING_PCT,
+		WINNING("Final/Title", "Winning", "finals_won", "CASE r.result WHEN 'W' THEN 1 ELSE 0 END", "wonLostPct", WINNING_PCT,
 			new RecordColumn("won", "numeric", null, WON_WIDTH, "right", "Won")
 		),
-		LOSING("Losing", "finals_lost", "CASE r.result WHEN 'W' THEN 0 ELSE 1 END", "lostWonPct", LOSING_PCT,
+		LOSING("Final", "Losing", "finals_lost", "CASE r.result WHEN 'W' THEN 0 ELSE 1 END", "lostWonPct", LOSING_PCT,
 			new RecordColumn("lost", "numeric", null, LOST_WIDTH, "right", "Lost")
 		);
 
+		final String categoryName;
 		final String name;
 		final String expression1, expression2;
 		final String pctAttr;
 		final RecordRowFactory rowFactory;
 		final RecordColumn valueRecordColumn;
 
-		RecordType(String name, String expression1, String expression2, String pctAttr, RecordRowFactory rowFactory, RecordColumn valueRecordColumn) {
+		RecordType(String categoryName, String name, String expression1, String expression2, String pctAttr, RecordRowFactory rowFactory, RecordColumn valueRecordColumn) {
+			this.categoryName = categoryName;
 			this.name = name;
 			this.expression1 = expression1;
 			this.expression2 = expression2;
@@ -34,8 +36,8 @@ class GreatestTitlePctCategory extends RecordCategory {
 	private static final String LOST_WIDTH =   "60";
 	private static final String PLAYED_WIDTH = "60";
 
-	GreatestTitlePctCategory(RecordType type ) {
-		super("Greatest Title " + type.name + " Pct.");
+	public GreatestTitlePctCategory(RecordType type) {
+		super("Greatest " + suffix(type.categoryName, " ") + type.name + " Pct.");
 		register(greatestFinalPct(type));
 		register(greatestFinalPct(type, GRAND_SLAM, GRAND_SLAM_NAME, N_A, GRAND_SLAM_TOURNAMENTS, "grandSlamMatches"));
 		register(greatestFinalPct(type, TOUR_FINALS, TOUR_FINALS_NAME, N_A, TOUR_FINALS_TOURNAMENTS, "tourFinalsMatches"));
