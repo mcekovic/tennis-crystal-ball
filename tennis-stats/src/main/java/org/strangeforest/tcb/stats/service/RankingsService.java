@@ -78,10 +78,9 @@ public class RankingsService {
 		"FROM best_rank_points b";
 
 	private static final String PLAYER_RANKINGS_FOR_HIGHLIGHTS_QUERY =
-		"SELECT rank, lag(rank) OVER pr prev_rank, weeks(lag(rank_date) OVER pr, rank_date) weeks\n" +
+		"SELECT rank, weeks(rank_date, lead(rank_date) OVER (ORDER BY rank_date)) AS weeks\n" +
 		"FROM player_ranking\n" +
-		"WHERE player_id = :playerId\n" +
-		"WINDOW pr AS (ORDER BY rank_date)";
+		"WHERE player_id = :playerId";
 
 	private static final String PLAYER_YEAR_END_RANKINGS_FOR_HIGHLIGHTS_QUERY =
 		"SELECT year_end_rank FROM player_year_end_rank\n" +
@@ -216,9 +215,8 @@ public class RankingsService {
 
 		jdbcTemplate.query(PLAYER_RANKINGS_FOR_HIGHLIGHTS_QUERY, params("playerId", playerId), rs -> {
 			int rank = rs.getInt("rank");
-			Integer prevRank = ResultSetUtil.getInteger(rs, "prev_rank");
 			double weeks = rs.getDouble("weeks");
-			highlights.processWeeksAt(rank, prevRank, weeks);
+			highlights.processWeeksAt(rank, weeks);
 		});
 
 		jdbcTemplate.query(PLAYER_YEAR_END_RANKINGS_FOR_HIGHLIGHTS_QUERY, params("playerId", playerId), rs -> {

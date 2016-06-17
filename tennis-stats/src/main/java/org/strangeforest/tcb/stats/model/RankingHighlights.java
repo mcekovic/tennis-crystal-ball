@@ -198,65 +198,44 @@ public class RankingHighlights {
 	// Weeks
 
 	public int getWeeksAtNo1() {
-		return (int)weeksAtNo1;
-	}
-
-	public void setWeeksAtNo1(int weeksAtNo1) {
-		this.weeksAtNo1 = weeksAtNo1;
+		return (int)Math.ceil(weeksAtNo1);
 	}
 
 	public int getWeeksInTop5() {
-		return (int)weeksInTop5;
+		return (int)Math.ceil(weeksInTop5);
 	}
 
 	public int getWeeksInTop10() {
-		return (int)weeksInTop10;
+		return (int)Math.ceil(weeksInTop10);
 	}
 
 	public int getWeeksInTop20() {
-		return (int)weeksInTop20;
+		return (int)Math.ceil(weeksInTop20);
 	}
 
 	public int getWeeksInTop50() {
-		return (int)weeksInTop50;
+		return (int)Math.ceil(weeksInTop50);
 	}
 
 	public int getWeeksInTop100() {
-		return (int)weeksInTop100;
+		return (int)Math.ceil(weeksInTop100);
 	}
 
-	public void processWeeksAt(int rank, Integer prevRank, double weeks) {
-		if (prevRank != null && weeks <= MAX_WEEKS) {
-			double dw = weeks - 1;
-			if (prevRank == 1)
-				weeksAtNo1 += dw;
-			if (prevRank <= 5)
-				weeksInTop5 += dw;
-			if (prevRank <= 10)
-				weeksInTop10 += dw;
-			if (prevRank <= 20)
-				weeksInTop20 += dw;
-			if (prevRank <= 50)
-				weeksInTop50 += dw;
-			if (prevRank <= 100)
-				weeksInTop100 += dw;
-			Double w = weeksAt.get(prevRank);
-			weeksAt.put(prevRank, w != null ? w + dw : dw);
-		}
+	public void processWeeksAt(int rank, double weeks) {
 		if (rank == 1)
-			++weeksAtNo1;
+			weeksAtNo1 += weeks;
 		if (rank <= 5)
-			++weeksInTop5;
+			weeksInTop5 += weeks;
 		if (rank <= 10)
-			++weeksInTop10;
+			weeksInTop10 += weeks;
 		if (rank <= 20)
-			++weeksInTop20;
+			weeksInTop20 += weeks;
 		if (rank <= 50)
-			++weeksInTop50;
+			weeksInTop50 += weeks;
 		if (rank <= 100)
-			++weeksInTop100;
+			weeksInTop100 += weeks;
 		Double w = weeksAt.get(rank);
-		weeksAt.put(rank, w != null ? w + 1 : 1);
+		weeksAt.put(rank, w != null ? w + weeks : weeks);
 	}
 
 

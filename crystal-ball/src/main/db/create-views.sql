@@ -620,16 +620,14 @@ INNER JOIN best_elo_rating_goat_points USING (best_elo_rating_rank);
 
 CREATE OR REPLACE VIEW no1_player_ranking_v AS
 WITH no1_player_ranking AS (
-	SELECT player_id, rank_date, date_part('year', rank_date)::INTEGER AS season, rank, lag(rank) OVER pr prev_rank, weeks(lag(rank_date) OVER pr, rank_date) weeks
+	SELECT player_id, rank_date, date_part('year', rank_date)::INTEGER AS season, rank, weeks(rank_date, lead(rank_date) OVER (PARTITION BY player_id ORDER BY rank_date)) AS weeks
 	FROM player_ranking
 	INNER JOIN player_best_rank USING (player_id)
 	WHERE best_rank = 1
-	WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)
-	ORDER BY rank_date
 )
-SELECT player_id, rank_date, season, rank, prev_rank, (CASE WHEN prev_rank = 1 THEN weeks - 1 ELSE 0 END + CASE WHEN rank = 1 THEN 1 ELSE 0 END) weeks_at_no1
+SELECT player_id, rank_date, season, weeks AS weeks_at_no1
 FROM no1_player_ranking
-WHERE rank = 1 OR prev_rank = 1;
+WHERE rank = 1;
 
 
 -- player_season_weeks_at_no1
@@ -645,8 +643,8 @@ CREATE UNIQUE INDEX ON player_season_weeks_at_no1 (player_id, season);
 -- player_weeks_at_no1
 
 CREATE MATERIALIZED VIEW player_weeks_at_no1 AS
-SELECT player_id, sum(weeks_at_no1) weeks_at_no1
-FROM player_season_weeks_at_no1
+SELECT player_id, ceil(sum(weeks_at_no1)) weeks_at_no1
+FROM no1_player_ranking_v
 GROUP BY player_id;
 
 CREATE UNIQUE INDEX ON player_weeks_at_no1 (player_id);

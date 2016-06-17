@@ -5,7 +5,11 @@ CREATE OR REPLACE FUNCTION weeks(
 	p_to DATE
 ) RETURNS REAL AS $$
 BEGIN
-	RETURN extract(epoch FROM age(p_to, p_from))/604800.0;
+	IF p_to IS NOT NULL THEN
+		RETURN extract(epoch FROM age(p_to, p_from))/604800.0;
+	ELSE
+		RETURN 1;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 

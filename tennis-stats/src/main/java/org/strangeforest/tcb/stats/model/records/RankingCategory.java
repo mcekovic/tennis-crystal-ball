@@ -13,6 +13,8 @@ public abstract class RankingCategory extends RecordCategory {
 	private static final String AGE_WIDTH =     "130";
 	private static final String SPAN_WIDTH =    "130";
 
+	private static final String INVALID_RANKING_PLAYERS = "'Jaime Fillol', 'Chris Lewis', 'Olivier Cayla'";
+
 	enum AgeType {
 		YOUNGEST("Youngest", "min", "r.age"),
 		OLDEST("Oldest", "max", "r.age DESC");
@@ -37,16 +39,16 @@ public abstract class RankingCategory extends RecordCategory {
 			"WeeksAt" + rankType + id, "Most Weeks at " + rankType + " " + name,
 			/* language=SQL */
 			"WITH player_ranking_weeks AS (\n" +
-			"  SELECT player_id, rank_date, rank, lag(rank_date) OVER pr AS prev_rank_date, lag(rank) OVER pr AS prev_rank,\n" +
-			"    weeks(lag(rank_date) OVER pr, rank_date) AS weeks\n" +
+			"  SELECT player_id, rank_date, rank, weeks(rank_date, lead(rank_date) OVER (PARTITION BY player_id ORDER BY rank_date)) AS weeks\n" +
 			"  FROM player" + rankDBName + "_ranking\n" +
 			"  INNER JOIN player_best" + rankDBName + "_rank USING (player_id)\n" +
 			"  WHERE best" + rankDBName + "_rank " + bestCondition + "\n" +
-			"  WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)\n" +
 			")\n" +
-			"SELECT player_id, round(sum(CASE WHEN prev_rank " + condition + " THEN weeks - 1 ELSE 0 END + CASE WHEN rank " + condition + " THEN 1 ELSE 0 END)) AS value, max(rank_date) AS last_date\n" +
+			"SELECT player_id, ceil(sum(weeks)) AS value, max(rank_date) AS last_date\n" +
 			"FROM player_ranking_weeks\n" +
-			"WHERE (rank " + condition + " OR prev_rank " + condition + ") AND rank_date - prev_rank_date <= 400\n" +
+			"INNER JOIN player_v p USING (player_id)\n" +
+			"WHERE rank " + condition + "\n" +
+			"AND p.name NOT IN (" + INVALID_RANKING_PLAYERS + ")\n" + // TODO Remove after data is fixed
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date", RecordRowFactory.INTEGER,
 			asList(new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Weeks At " + name))
@@ -103,7 +105,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"SELECT player_id, " + type.function + "(age(r.rank_date, p.dob)) AS age, " + type.function + "(r.rank_date) AS date\n" +
 			"FROM " + tableName + " r INNER JOIN player_v p USING (player_id)\n" +
 			"WHERE rank " + condition + "\n" +
-			"AND p.name NOT IN ('Jaime Fillol', 'Chris Lewis', 'Olivier Cayla')\n" + // TODO Remove after data is fixed
+			"AND p.name NOT IN (" + INVALID_RANKING_PLAYERS + ")\n" + // TODO Remove after data is fixed
 			"GROUP BY player_id",
 			"r.age, r.date", type.order, type.order + ", r.date", RecordRowFactory.DATE_AGE,
 			asList(
