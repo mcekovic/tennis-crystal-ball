@@ -19,12 +19,12 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Performance Charts - Performance charts for various performance categories, filtered by seasons
 - Statistics Leaders - Find statistics leaders in different statistics categories, including dominance and break points ratios
 - Statistics Charts - Statistics charts for various statistics categories, including dominance and break points ratios
-- Records Book - Various match, tournament result and ranking records, famous and infamous
+- Records Book - Various match, tournament result and ranking records, famous and infamous (best player that never...)
 - Tournaments Browser - Browse all Open Era tournaments, see tournament draw, statistics, historical winners and records
 
 ## Roadmap
 
-- 'Make your own GOAT' - Enable users to enter 'GOAT' points distribution and calculate their own 'GOAT' list
+- ['Make your own GOAT'](https://github.com/mcekovic/tennis-crystal-ball/issues/14) - Enable users to enter 'GOAT' points distribution and calculate their own 'GOAT' list
 
 ### Technology
 
