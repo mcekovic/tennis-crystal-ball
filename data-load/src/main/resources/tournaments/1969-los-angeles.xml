@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1969" name="Los Angeles WCT" date="1969-03-03" ext-id="816">
+		<level>B</level>
+		<surface>H</surface>
+		<indoor>true</indoor>
+		<draw-type>KO</draw-type>
+		<draw-size>13</draw-size>
+		<!-- R16 -->
+		<match match-num="3" round="R16" best-of="3" winner="Raymond Moore" loser="Richard Pancho Gonzales" score="6-4 6-4"/>
+		<match match-num="4" round="R16" best-of="3" winner="John Newcombe" loser="Pancho Segura" score="7-5 6-2"/>
+		<match match-num="6" round="R16" best-of="3" winner="Ken Rosewall" loser="Earl Butch Buchholz" score="6-4 6-2"/>
+		<match match-num="7" round="R16" best-of="3" winner="Fred Stolle" loser="Tom Okker" score="7-5 6-4"/>
+		<match match-num="8" round="R16" best-of="3" winner="Marty Riessen" loser="Tony Roche" score="6-4 6-3"/>
+		<!-- QF -->
+		<match match-num="9" round="QF" best-of="3" winner="Rod Laver" loser="Dennis Ralston" score="5-7 6-3 6-2"/>
+		<match match-num="10" round="QF" best-of="3" winner="John Newcombe" loser="Raymond Moore" score="3-6 6-1 7-5"/>
+		<match match-num="11" round="QF" best-of="3" winner="Roy Emerson" loser="Ken Rosewall" score="6-3 2-6 6-3"/>
+		<match match-num="12" round="QF" best-of="3" winner="Marty Riessen" loser="Fred Stolle" score="7-5 6-4"/>
+		<!-- SF -->
+		<match match-num="13" round="SF" best-of="3" winner="Rod Laver" loser="John Newcombe" score="6-2 6-4"/>
+		<match match-num="14" round="SF" best-of="3" winner="Marty Riessen" loser="Roy Emerson" score="6-3 7-5"/>
+		<!-- F -->
+		<match match-num="15" round="F" best-of="3" winner="Rod Laver" loser="Marty Riessen" score="6-4 10-8"/>
+	</tournament>
+</tournament-data>

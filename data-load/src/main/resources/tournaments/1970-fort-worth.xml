@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1970" name="Fort Worth WCT" date="1970-08-17" ext-id="653">
+		<level>B</level>
+		<surface>H</surface>
+		<draw-type>KO</draw-type>
+		<draw-size>8</draw-size>
+		<!-- QF -->
+		<match match-num="1" round="QF" best-of="3" winner="Rod Laver" loser="Roger Taylor" score="6-4 7-5"/>
+		<match match-num="2" round="QF" best-of="3" winner="Andres Gimeno" loser="Ken Rosewall" score="6-3 6-2"/>
+		<match match-num="3" round="QF" best-of="3" winner="John Newcombe" loser="Raymond Moore" score="6-4 6-3"/>
+		<match match-num="4" round="QF" best-of="3" winner="Roy Emerson" loser="Richard Pancho Gonzales" score="7-9 6-1 6-1"/>
+		<!-- SF -->
+		<match match-num="5" round="SF" best-of="3" winner="Rod Laver" loser="Andres Gimeno" score="6-4 6-4"/>
+		<match match-num="6" round="SF" best-of="3" winner="Roy Emerson" loser="John Newcombe" score="8-6 7-5"/>
+		<!-- F -->
+		<match match-num="7" round="F" best-of="3" winner="Rod Laver" loser="Roy Emerson" score="6-3 7-5"/>
+	</tournament>
+</tournament-data>

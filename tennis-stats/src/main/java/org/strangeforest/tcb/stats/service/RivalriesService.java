@@ -169,11 +169,11 @@ public class RivalriesService {
 	private static final String LAST_MATCH_JOIN_LATERAL = //language=SQL
 		",\n" +
 		"LATERAL (\n" +
-		"  SELECT m.match_id, e.season, e.date, e.level, e.surface, e.indoor, e.tournament_event_id, e.name AS tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
+		"  SELECT m.match_id, e.season, m.date, e.level, m.surface, m.indoor, e.tournament_event_id, e.name AS tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"  FROM match m\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE ((m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s))%3$s\n" +
-		"  ORDER BY e.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
+		"  ORDER BY e.date DESC, m.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
 		") lm";
 
 	private static final String LAST_MATCH_JSON = //language=SQL
@@ -182,7 +182,7 @@ public class RivalriesService {
 		"     FROM match m\n" +
 		"     INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"     WHERE ((m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s))%3$s\n" +
-		"     ORDER BY e.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
+		"     ORDER BY e.date DESC, m.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
 		"  ) AS lm) AS last_match";
 
 

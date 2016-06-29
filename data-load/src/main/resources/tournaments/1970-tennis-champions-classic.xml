@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1970" name="Tennis Champions Classic" date="1970-07-13" ext-id="TCC">
+		<level>B</level>
+		<surface>H</surface>
+		<indoor>true</indoor>
+		<draw-type>RR</draw-type>
+		<draw-size>9</draw-size>
+		<!-- RR -->
+		<match match-num="1" round="RR" best-of="5" winner="Richard Pancho Gonzales" loser="Rod Laver" score="7-5 3-6 2-6 6-3 6-2"/>
+		<match match-num="2" round="RR" best-of="5" winner="Richard Pancho Gonzales" loser="John Newcombe" score="6-4 6-4 6-2"/>
+		<match match-num="3" round="RR" best-of="5" winner="Roy Emerson" loser="Richard Pancho Gonzales" score="6-3 6-2 6-0"/>
+		<match match-num="4" round="RR" best-of="5" winner="Roy Emerson" loser="Ken Rosewall" score="7-5 4-6 7-5 6-4"/>
+		<match match-num="5" round="RR" best-of="5" winner="Roy Emerson" loser="Andres Gimeno" score="4-6 6-4 3-6 6-4 7-5"/>
+		<match match-num="6" round="RR" best-of="5" winner="Fred Stolle" loser="Roy Emerson" score="7-5 7-5 6-4"/>
+		<match match-num="7" round="RR" best-of="5" winner="Tom Okker" loser="Fred Stolle" score="6-3 6-3 2-6 6-1"/>
+		<match match-num="8" round="RR" best-of="5" winner="Ken Rosewall" loser="John Newcombe" score="5-7 7-5 6-1 6-2"/>
+		<match match-num="9" round="RR" best-of="5" winner="Rod Laver" loser="Andres Gimeno" score="4-6 4-6 6-1 6-3 6-2"/>
+		<match match-num="10" round="RR" best-of="5" winner="Tom Okker" loser="Tony Roche" score="6-3 3-6 7-5 3-6 6-4"/>
+		<match match-num="11" round="RR" best-of="5" winner="Ken Rosewall" loser="Fred Stolle" score="5-7 6-0 6-4 6-1"/>
+		<match match-num="12" round="RR" best-of="5" winner="Rod Laver" loser="Tony Roche" score="6-2 6-4 6-2"/>
+		<match match-num="13" round="RR" best-of="5" winner="Ken Rosewall" loser="Tom Okker" score="6-2 6-4 6-2"/>
+		<!-- SF -->
+		<match match-num="14" round="SF" best-of="5" winner="Rod Laver" loser="Richard Pancho Gonzales" score="6-3 6-3 6-1"/>
+		<match match-num="15" round="SF" best-of="5" winner="Ken Rosewall" loser="Roy Emerson" score="4-6 6-1 6-4 4-6 7-5"/>
+		<!-- F -->
+		<match match-num="16" round="F" best-of="5" winner="Rod Laver" loser="Ken Rosewall" score="6-4 6-3 6-3"/>
+	</tournament>
+</tournament-data>

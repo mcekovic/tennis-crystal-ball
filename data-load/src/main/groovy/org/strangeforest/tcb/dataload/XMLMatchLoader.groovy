@@ -29,7 +29,13 @@ class XMLMatchLoader extends BaseXMLLoader {
 			matches.each { match ->
 				Map params = tournamentParams(item)
 				params.match_num = smallint match.@'match-num'
-				params.date = date item.@date
+				params.date = date(match.@date) ?: date(item.@date)
+				def surface = string(match.@surface)
+				if (surface)
+					params.surface = surface
+				def indoor = bool(match.@indoor)
+				if (indoor)
+					params.indoor = indoor
 				params.round = string match.@round
 				params.best_of = smallint match.@'best-of'
 				params.putAll playerParams(match, 'winner', players)

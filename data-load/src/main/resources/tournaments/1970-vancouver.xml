@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1970" name="Vancouver WCT" date="1970-08-17" ext-id="2048">
+		<level>B</level>
+		<surface>H</surface>
+		<indoor>true</indoor>
+		<draw-type>KO</draw-type>
+		<draw-size>16</draw-size>
+		<!-- R16 -->
+		<match match-num="1" round="R16" best-of="3" winner="Rod Laver" loser="Pierre Barthes" score="6-1 6-1"/>
+		<match match-num="2" round="R16" best-of="3" winner="Richard Pancho Gonzales" loser="Mark Cox" score="6-4 6-2"/>
+		<match match-num="3" round="R16" best-of="3" winner="Cliff Drysdale" loser="Tony Roche" score="2-6 6-4 6-1"/>
+		<match match-num="4" round="R16" best-of="3" winner="Tom Okker" loser="Ismail El Shafei" score="7-6 7-6"/>
+		<match match-num="5" round="R16" best-of="3" winner="Andres Gimeno" loser="Fred Stolle" score="6-3 6-3"/>
+		<match match-num="6" round="R16" best-of="3" winner="John Newcombe" loser="Graham Stilwell" score="6-1 6-3"/>
+		<match match-num="7" round="R16" best-of="3" winner="Marty Riessen" loser="Roger Taylor" score="6-3 6-3"/>
+		<match match-num="8" round="R16" best-of="3" winner="Roy Emerson" loser="Nikola Pilic" score="7-6 1-6 6-4"/>
+		<!-- QF -->
+		<match match-num="9" round="QF" best-of="3" winner="Rod Laver" loser="Richard Pancho Gonzales" score="6-4 7-6"/>
+		<match match-num="10" round="QF" best-of="3" winner="Tom Okker" loser="Cliff Drysdale" score="6-3 6-3"/>
+		<match match-num="11" round="QF" best-of="3" winner="Andres Gimeno" loser="John Newcombe" score="6-3 6-3"/>
+		<match match-num="12" round="QF" best-of="3" winner="Roy Emerson" loser="Marty Riessen" score="6-3 6-1"/>
+		<!-- SF -->
+		<match match-num="13" round="SF" best-of="3" winner="Rod Laver" loser="Tom Okker" score="6-4 6-0"/>
+		<match match-num="14" round="SF" best-of="3" winner="Roy Emerson" loser="Andres Gimeno" score="6-3 6-3"/>
+		<!-- F -->
+		<match match-num="15" round="F" best-of="5" winner="Rod Laver" loser="Roy Emerson" score="6-2 6-1 6-2"/>
+	</tournament>
+</tournament-data>

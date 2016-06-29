@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1969" name="Fort Worth WCT" date="1969-08-17" ext-id="653">
+		<level>B</level>
+		<surface>H</surface>
+		<draw-type>KO</draw-type>
+		<draw-size>10</draw-size>
+		<!-- R16 -->
+		<match match-num="3" round="R16" best-of="3" winner="Raymond Moore" loser="Andres Gimeno" score="6-3 9-7"/>
+		<match match-num="7" round="R16" best-of="3" winner="Earl Butch Buchholz" loser="Fred Stolle" score="5-7 7-5 6-3"/>
+		<!-- QF -->
+		<match match-num="9" round="QF" best-of="3" winner="Rod Laver" loser="Raymond Moore" score="4-6 8-6 6-3"/>
+		<match match-num="10" round="QF" best-of="3" winner="Tom Okker" loser="Ron Holmberg" score="7-5 6-2"/>
+		<match match-num="11" round="QF" best-of="3" winner="Tony Roche" loser="Pierre Barthes" score="7-5 6-8 6-3"/>
+		<match match-num="12" round="QF" best-of="3" winner="Ken Rosewall" loser="Earl Butch Buchholz" score="6-3 3-6 6-4"/>
+		<!-- SF -->
+		<match match-num="13" round="SF" best-of="3" winner="Rod Laver" loser="Tom Okker" score="2-6 6-3 6-2"/>
+		<match match-num="14" round="SF" best-of="3" winner="Ken Rosewall" loser="Tony Roche" score="7-5 6-1"/>
+		<!-- F -->
+		<match match-num="15" round="F" best-of="3" winner="Rod Laver" loser="Ken Rosewall" score="6-3 6-2"/>
+	</tournament>
+</tournament-data>

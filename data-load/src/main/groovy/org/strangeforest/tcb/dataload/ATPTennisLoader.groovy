@@ -74,13 +74,19 @@ class ATPTennisLoader {
 
 	def loadAdditionalTournamentData(sql) {
 		if (full) {
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1969-fort-worth.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1969-johannesburg.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1969-los-angeles.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1969-wembley.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-fort-worth.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-johannesburg.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-salisbury.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-sydney.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-tennis-champions-classic.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-vancouver.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-wembley.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1971-johannesburg.xml')
+			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1971-tennis-champions-classic.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1972-roanoke.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1973-washington-indoor-2.xml')
 			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1974-auckland.xml')

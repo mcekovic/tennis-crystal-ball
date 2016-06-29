@@ -59,6 +59,9 @@
 			<xs:element type="statsType" name="loser-stats" minOccurs="0"/>
 		</xs:sequence>
 		<xs:attribute type="xs:short" name="match-num"/>
+		<xs:attribute type="xs:date" name="date"/>
+		<xs:attribute type="surface" name="surface"/>
+		<xs:attribute type="xs:boolean" name="indoor"/>
 		<xs:attribute type="roundType" name="round"/>
 		<xs:attribute type="xs:short" name="best-of"/>
 		<xs:attribute type="xs:string" name="winner"/>

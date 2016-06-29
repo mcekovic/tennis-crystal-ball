@@ -128,6 +128,8 @@ CREATE TABLE match (
 	tournament_event_id INTEGER NOT NULL REFERENCES tournament_event (tournament_event_id) ON DELETE CASCADE,
 	match_num SMALLINT,
 	date DATE NOT NULL,
+	surface surface,
+	indoor BOOLEAN NOT NULL,
 	round match_round NOT NULL,
 	best_of SMALLINT NOT NULL,
 	winner_id INTEGER NOT NULL REFERENCES player (player_id),

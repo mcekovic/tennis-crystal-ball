@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+	<tournament season="1971" name="Tennis Champions Classic" date="1971-03-15" ext-id="TCC">
+		<level>B</level>
+		<surface>H</surface>
+		<indoor>true</indoor>
+		<draw-type>RR</draw-type>
+		<draw-size>9</draw-size>
+		<!-- RR -->
+		<match match-num="1" round="RR" best-of="5" winner="Rod Laver" loser="Ken Rosewall" score="6-3 6-2 7-5"/>
+		<match match-num="2" round="RR" best-of="5" winner="Rod Laver" loser="John Newcombe" score="6-4 6-2 4-6 5-7 6-4"/>
+		<match match-num="3" round="RR" best-of="5" winner="Rod Laver" loser="Tony Roche" score="7-5 4-6 3-6 7-5 6-1"/>
+		<match match-num="4" round="RR" best-of="5" winner="Rod Laver" loser="Roy Emerson" score="6-2 6-3 7-5"/>
+		<match match-num="5" round="RR" best-of="5" winner="Rod Laver" loser="Arthur Ashe" score="7-5 6-4 7-5"/>
+		<match match-num="6" round="RR" best-of="5" winner="Rod Laver" loser="Tom Okker" score="5-7 5-7 6-2 6-2 6-2"/>
+		<match match-num="7" round="RR" best-of="5" winner="Arthur Ashe" loser="Ken Rosewall" score="6-2 6-2 0-6 6-4"/>
+		<match match-num="8" round="RR" best-of="5" winner="Rod Laver" loser="Arthur Ashe" score="3-6 6-3 6-3 6-4"/>
+		<match match-num="9" round="RR" best-of="5" winner="Tom Okker" loser="John Newcombe" score="6-4 6-2 1-6 6-3"/>
+		<match match-num="10" round="RR" best-of="5" winner="Rod Laver" loser="Roger Taylor" score="6-3 7-5 6-2"/>
+		<match match-num="11" round="RR" best-of="5" winner="Dennis Ralston" loser="Tony Roche" score="6-2 7-5 7-5"/>
+		<match match-num="12" round="RR" best-of="5" winner="Rod Laver" loser="Tom Okker" score="6-1 6-4 6-3"/>
+		<match match-num="13" round="RR" best-of="5" winner="Roy Emerson" loser="Roger Taylor" score="4-6 6-1 6-3 7-5"/>
+		<match match-num="14" round="RR" best-of="5" winner="Rod Laver" loser="Dennis Ralston" score="3-6 6-1 6-4 6-3"/>
+		<match match-num="15" round="RR" best-of="5" winner="Rod Laver" loser="Roy Emerson" score="6-3 5-7 6-3 3-6 6-3"/>
+		<match match-num="16" round="RR" best-of="5" winner="Dennis Ralston" loser="Arthur Ashe" score="6-2 4-6 7-6"/>
+		<!-- SF -->
+		<match match-num="17" round="SF" best-of="5" winner="Rod Laver" loser="Dennis Ralston" score="6-3 6-4 7-5"/>
+		<match match-num="18" round="SF" best-of="5" winner="Tom Okker" loser="Roy Emerson" score="6-4 2-6 4-6 6-3 6-4"/>
+		<!-- F -->
+		<match match-num="19" round="F" best-of="5" winner="Rod Laver" loser="Tom Okker" score="7-5 6-2 6-1"/>
+	</tournament>
+</tournament-data>

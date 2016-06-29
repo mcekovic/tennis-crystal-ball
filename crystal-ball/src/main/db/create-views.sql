@@ -206,7 +206,7 @@ CREATE UNIQUE INDEX ON player_titles (player_id);
 -- match_for_stats_v
 
 CREATE OR REPLACE VIEW match_for_stats_v AS
-SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.tournament_id, e.season, e.level, e.surface, m.date, m.match_num, m.round, m.best_of,
+SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.tournament_id, e.season, e.level, m.surface, m.date, m.match_num, m.round, m.best_of,
 	m.winner_rank, m.loser_rank, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.w_sets, m.l_sets, m.w_games, m.l_games, m.outcome
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
@@ -216,7 +216,7 @@ WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T') AND (m.outcome IS NULL
 -- match_for_rivalry_v
 
 CREATE OR REPLACE VIEW match_for_rivalry_v AS
-SELECT m.match_id, m.winner_id, m.loser_id, e.season, e.level, e.surface, m.round
+SELECT m.match_id, m.winner_id, m.loser_id, e.season, e.level, m.surface, m.round
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T');
