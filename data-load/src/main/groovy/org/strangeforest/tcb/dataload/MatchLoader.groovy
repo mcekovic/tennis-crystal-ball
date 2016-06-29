@@ -63,7 +63,7 @@ class MatchLoader extends BaseCSVLoader {
 		params.ext_winner_id = integer record.winner_id
 		params.winner_seed = smallint record.winner_seed
 		params.winner_entry = mapEntry(string(record.winner_entry))
-		params.winner_rank = integer record.winner_rank
+		params.winner_rank = integer mapRank(record.winner_rank)
 		params.winner_rank_points = integer record.winner_rank_points
 		params.winner_age = real record.winner_age
 		params.winner_country_id = country record.winner_ioc
@@ -74,7 +74,7 @@ class MatchLoader extends BaseCSVLoader {
 		params.ext_loser_id = integer record.loser_id
 		params.loser_seed = smallint record.loser_seed
 		params.loser_entry = mapEntry(string(record.loser_entry))
-		params.loser_rank = integer record.loser_rank
+		params.loser_rank = integer mapRank(record.loser_rank)
 		params.loser_rank_points = integer record.loser_rank_points
 		params.loser_age = real record.loser_age
 		params.loser_country_id = country record.loser_ioc
@@ -286,6 +286,13 @@ class MatchLoader extends BaseCSVLoader {
 				return 'SE'
 		}
 		entry
+	}
+
+	static mapRank(String rank) {
+		switch (rank) {
+			case 'UNR': return ''
+			default: return rank
+		}
 	}
 
 	static mapRankPoints(String level) {
