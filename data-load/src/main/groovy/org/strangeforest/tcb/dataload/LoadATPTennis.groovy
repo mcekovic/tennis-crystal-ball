@@ -11,5 +11,5 @@ sqlPool.withSql { sql ->
 	loader.loadAdditionalPlayerData(sql)
 	loader.loadAdditionalTournamentData(sql)
 
-	loader.refreshComputedData(sql)
+	loader.refreshMaterializedViews(sql)
 }

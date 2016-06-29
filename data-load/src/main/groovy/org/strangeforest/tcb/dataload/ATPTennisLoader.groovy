@@ -114,14 +114,7 @@ class ATPTennisLoader {
 		println()
 	}
 
-	def refreshComputedData(Sql sql) {
-		if (useMaterializedViews)
-			refreshMaterializedViews(sql)
-		else
-			refreshMaterializedViewTables(sql)
-	}
-
-	static refreshMaterializedViews(Sql sql) {
+	def refreshMaterializedViews(Sql sql) {
 		refreshMaterializedView(sql, 'player_current_rank')
 		refreshMaterializedView(sql, 'player_best_rank')
 		refreshMaterializedView(sql, 'player_best_rank_points')
@@ -153,27 +146,78 @@ class ATPTennisLoader {
 		refreshMaterializedView(sql, 'player_goat_points')
 	}
 
-	private static refreshMaterializedView(Sql sql, String viewName) {
+	def refreshMaterializedView(Sql sql, String viewName) {
 		def t0 = System.currentTimeMillis()
 		println "Refreshing materialized view '$viewName'"
-		sql.execute('REFRESH MATERIALIZED VIEW ' + viewName)
+		if (useMaterializedViews)
+			sql.execute("REFRESH MATERIALIZED VIEW $viewName".toString())
+		else {
+			sql.execute("DELETE FROM $viewName".toString())
+			sql.execute("INSERT INTO $viewName SELECT * FROM ${viewName}_v".toString())
+		}
 		sql.commit()
 		def seconds = (System.currentTimeMillis() - t0) / 1000.0
 		println "Materialized view '$viewName' refreshed in $seconds s"
 	}
 
-	private static refreshMaterializedViewTables(Sql sql) {
+	def createDatabase(Sql sql) {
 		def t0 = System.currentTimeMillis()
-		println 'Dropping views...'
-		executeSQLFile(sql, '../crystal-ball/src/main/db/drop-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+
+		println 'Creating types...'
+		executeSQLFile(sql, '../crystal-ball/src/main/db/create-types.sql')
+
+		println 'Creating tables...'
+		executeSQLFile(sql, '../crystal-ball/src/main/db/create-tables.sql')
+
+		println 'Creating functions...'
+		executeSQLFile(sql, '../crystal-ball/src/main/db/create-functions.sql')
+
 		println 'Creating views...'
-		executeSQLFile(sql, '../crystal-ball/src/main/db/create-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+		if (useMaterializedViews)
+			executeSQLFile(sql, '../crystal-ball/src/main/db/create-views.sql')
+		else
+			executeSQLFile(sql, '../crystal-ball/src/main/db/create-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+
+		println 'Loading initial data...'
+		executeSQLFile(sql, '../crystal-ball/src/main/db/initial-load.sql')
+
+		println 'Creating load functions...'
+		executeSQLFile(sql, 'src/main/db/load-functions.sql')
+
 		def seconds = (System.currentTimeMillis() - t0) / 1000.0
-		println "Materialized view tables refreshed in $seconds s"
+		println "Database created in $seconds s"
 	}
 
-	private static executeSQLFile(Sql sql, String file, String replaceTarget, String replacement) {
-		sql.execute(new File(file).text.replace(replaceTarget, replacement))
+	def dropDatabase(Sql sql) {
+		def t0 = System.currentTimeMillis()
+
+		println 'Dropping load functions...'
+		executeSQLFile(sql, 'src/main/db/drop-load-functions.sql')
+
+		println 'Dropping views...'
+		if (useMaterializedViews)
+			executeSQLFile(sql, '../crystal-ball/src/main/db/drop-views.sql')
+		else
+			executeSQLFile(sql, '../crystal-ball/src/main/db/drop-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+
+		println 'Dropping functions...'
+		executeSQLFile(sql, '../crystal-ball/src/main/db/drop-functions.sql')
+
+		println 'Dropping tables...'
+		executeSQLFile(sql, '../crystal-ball/src/main/db/drop-tables.sql')
+
+		println 'Dropping types...'
+		executeSQLFile(sql, '../crystal-ball/src/main/db/drop-types.sql')
+
+		def seconds = (System.currentTimeMillis() - t0) / 1000.0
+		println "Database dropped in $seconds s"
+	}
+
+	private static executeSQLFile(Sql sql, String file, String replaceTarget = null, String replacement = null) {
+		def sqlText = new File(file).text
+		if (replaceTarget && replacement)
+			sqlText = sqlText.replace(replaceTarget, replacement)
+		sql.execute(sqlText)
 		sql.commit()
 	}
 }

@@ -1,6 +1,6 @@
 -- event_participation
 
-CREATE MATERIALIZED VIEW event_participation AS
+CREATE OR REPLACE VIEW event_participation_v AS
 WITH event_player_ranks AS (
 	SELECT DISTINCT tournament_event_id, winner_id AS player_id, winner_rank AS rank FROM match
 	UNION DISTINCT
@@ -17,23 +17,27 @@ LEFT JOIN tournament_event_rank_factor f ON p.rank BETWEEN f.rank_from AND f.ran
 WHERE e.level NOT IN ('D', 'T')
 GROUP BY p.tournament_event_id;
 
+CREATE MATERIALIZED VIEW event_participation AS SELECT * FROM event_participation_v;
+
 CREATE UNIQUE INDEX ON event_participation (tournament_event_id);
 
 
 -- player_current_rank
 
-CREATE MATERIALIZED VIEW player_current_rank AS
+CREATE OR REPLACE VIEW player_current_rank_v AS
 WITH current_rank_date AS (SELECT max(rank_date) AS rank_date FROM player_ranking)
 SELECT player_id, rank AS current_rank, rank_points AS current_rank_points
 FROM player_ranking
 WHERE rank_date = (SELECT rank_date FROM current_rank_date);
+
+CREATE MATERIALIZED VIEW player_current_rank AS SELECT * FROM player_current_rank_v;
 
 CREATE UNIQUE INDEX ON player_current_rank (player_id);
 
 
 -- player_best_rank
 
-CREATE MATERIALIZED VIEW player_best_rank AS
+CREATE OR REPLACE VIEW player_best_rank_v AS
 WITH best_rank AS (
 	SELECT player_id, min(rank) AS best_rank FROM player_ranking
 	GROUP BY player_id
@@ -41,12 +45,14 @@ WITH best_rank AS (
 SELECT player_id, best_rank, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND r.rank = b.best_rank) AS best_rank_date
 FROM best_rank b;
 
+CREATE MATERIALIZED VIEW player_best_rank AS SELECT * FROM player_best_rank_v;
+
 CREATE UNIQUE INDEX ON player_best_rank (player_id);
 
 
 -- player_best_rank_points
 
-CREATE MATERIALIZED VIEW player_best_rank_points AS
+CREATE OR REPLACE VIEW player_best_rank_points_v AS
 WITH best_rank_points AS (
 	SELECT player_id, max(rank_points) AS best_rank_points, max(adjust_atp_rank_points(rank_points, rank_date)) AS best_rank_points_adjusted
 	FROM player_ranking
@@ -57,12 +63,14 @@ SELECT player_id, best_rank_points, (SELECT min(rank_date) FROM player_ranking r
 	best_rank_points_adjusted, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND adjust_atp_rank_points(r.rank_points, r.rank_date) = b.best_rank_points_adjusted) AS best_rank_points_adjusted_date
 FROM best_rank_points b;
 
+CREATE MATERIALIZED VIEW player_best_rank_points AS SELECT * FROM player_best_rank_points_v;
+
 CREATE UNIQUE INDEX ON player_best_rank_points (player_id);
 
 
 -- player_year_end_rank
 
-CREATE MATERIALIZED VIEW player_year_end_rank AS
+CREATE OR REPLACE VIEW player_year_end_rank_v AS
 SELECT DISTINCT player_id, date_part('year', rank_date)::INTEGER AS season,
    first_value(rank) OVER player_season_rank AS year_end_rank,
    first_value(rank_points) OVER player_season_rank AS year_end_rank_points
@@ -71,12 +79,14 @@ WHERE date_part('year', rank_date) < date_part('year', current_date) OR date_par
 GROUP BY player_id, season, rank_date, rank
 WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_date)::INTEGER ORDER BY rank_date DESC);
 
+CREATE MATERIALIZED VIEW player_year_end_rank AS SELECT * FROM player_year_end_rank_v;
+
 CREATE INDEX ON player_year_end_rank (player_id);
 
 
 -- player_best_elo_rank
 
-CREATE MATERIALIZED VIEW player_best_elo_rank AS
+CREATE OR REPLACE VIEW player_best_elo_rank_v AS
 WITH best_elo_rank AS (
 	SELECT player_id, min(rank) AS best_elo_rank FROM player_elo_ranking
 	GROUP BY player_id
@@ -84,12 +94,14 @@ WITH best_elo_rank AS (
 SELECT player_id, best_elo_rank, (SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.rank = b.best_elo_rank) AS best_elo_rank_date
 FROM best_elo_rank b;
 
+CREATE MATERIALIZED VIEW player_best_elo_rank AS SELECT * FROM player_best_elo_rank_v;
+
 CREATE UNIQUE INDEX ON player_best_elo_rank (player_id);
 
 
 -- player_best_elo_rating
 
-CREATE MATERIALIZED VIEW player_best_elo_rating AS
+CREATE OR REPLACE VIEW player_best_elo_rating_v AS
 WITH best_elo_rating AS (
 	SELECT player_id, max(elo_rating) AS best_elo_rating FROM player_elo_ranking
 	GROUP BY player_id
@@ -97,12 +109,14 @@ WITH best_elo_rating AS (
 SELECT player_id, best_elo_rating, (SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.elo_rating = b.best_elo_rating) AS best_elo_rating_date
 FROM best_elo_rating b;
 
+CREATE MATERIALIZED VIEW player_best_elo_rating AS SELECT * FROM player_best_elo_rating_v;
+
 CREATE UNIQUE INDEX ON player_best_elo_rating (player_id);
 
 
 -- player_year_end_elo_rank
 
-CREATE MATERIALIZED VIEW player_year_end_elo_rank AS
+CREATE OR REPLACE VIEW player_year_end_elo_rank_v AS
 SELECT DISTINCT player_id, date_part('year', rank_date)::INTEGER AS season,
    first_value(rank) OVER player_season_rank AS year_end_rank,
    first_value(elo_rating) OVER player_season_rank AS year_end_elo_rating
@@ -111,12 +125,14 @@ WHERE date_part('year', rank_date) < date_part('year', current_date) OR date_par
 GROUP BY player_id, season, rank_date, rank
 WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_date)::INTEGER ORDER BY rank_date DESC);
 
+CREATE MATERIALIZED VIEW player_year_end_elo_rank AS SELECT * FROM player_year_end_elo_rank_v;
+
 CREATE INDEX ON player_year_end_elo_rank (player_id);
 
 
 -- player_tournament_event_result
 
-CREATE MATERIALIZED VIEW player_tournament_event_result AS
+CREATE OR REPLACE VIEW player_tournament_event_result_v AS
 WITH match_result AS (
 	SELECT m.winner_id AS player_id, tournament_event_id,
 		(CASE WHEN m.round = 'F' AND e.level NOT IN ('D', 'T') AND (outcome IS NULL OR outcome <> 'ABD') THEN 'W' ELSE m.round::TEXT END)::tournament_event_result AS result
@@ -149,13 +165,15 @@ SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, go
 	GROUP BY r.player_id, r.tournament_event_id, r.result
 ) AS player_tournament_event_result;
 
+CREATE MATERIALIZED VIEW player_tournament_event_result AS SELECT * FROM player_tournament_event_result_v;
+
 CREATE INDEX ON player_tournament_event_result (player_id);
 CREATE INDEX ON player_tournament_event_result (result);
 
 
 -- player_titles
 
-CREATE MATERIALIZED VIEW player_titles AS
+CREATE OR REPLACE VIEW player_titles_v AS
 WITH level_titles AS (
 	SELECT player_id, level, count(result) AS titles FROM player_tournament_event_result
 	INNER JOIN tournament_event USING (tournament_event_id)
@@ -179,6 +197,8 @@ LEFT JOIN level_titles ft ON ft.player_id = p.player_id AND ft.level = 'F'
 LEFT JOIN level_titles mt ON mt.player_id = p.player_id AND mt.level = 'M'
 LEFT JOIN level_titles ot ON ot.player_id = p.player_id AND ot.level = 'O'
 WHERE t.titles > 0;
+
+CREATE MATERIALIZED VIEW player_titles AS SELECT * FROM player_titles_v;
 
 CREATE UNIQUE INDEX ON player_titles (player_id);
 
@@ -272,7 +292,7 @@ LEFT JOIN set_score s USING (match_id);
 
 -- player_season_performance
 
-CREATE MATERIALIZED VIEW player_season_performance AS
+CREATE OR REPLACE VIEW player_season_performance_v AS
 SELECT player_id, season,
 	count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,
 	count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,
@@ -298,13 +318,15 @@ SELECT player_id, season,
 FROM player_match_performance_v
 GROUP BY player_id, season;
 
+CREATE MATERIALIZED VIEW player_season_performance AS SELECT * FROM player_season_performance_v;
+
 CREATE INDEX ON player_season_performance (player_id);
 CREATE INDEX ON player_season_performance (season);
 
 
 -- player_tournament_performance
 
-CREATE MATERIALIZED VIEW player_tournament_performance AS
+CREATE OR REPLACE VIEW player_tournament_performance_v AS
 SELECT player_id, tournament_id,
 	count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,
 	count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,
@@ -315,13 +337,15 @@ SELECT player_id, tournament_id,
 FROM player_match_performance_v
 GROUP BY player_id, tournament_id;
 
+CREATE MATERIALIZED VIEW player_tournament_performance AS SELECT * FROM player_tournament_performance_v;
+
 CREATE INDEX ON player_tournament_performance (player_id);
 CREATE INDEX ON player_tournament_performance (tournament_id);
 
 
 -- player_performance
 
-CREATE MATERIALIZED VIEW player_performance AS
+CREATE OR REPLACE VIEW player_performance_v AS
 SELECT player_id,
 	sum(matches_won) matches_won, sum(matches_lost) matches_lost,
 	sum(grand_slam_matches_won) grand_slam_matches_won, sum(grand_slam_matches_lost) grand_slam_matches_lost,
@@ -346,6 +370,8 @@ SELECT player_id,
 	sum(tie_breaks_won) tie_breaks_won, sum(tie_breaks_lost) tie_breaks_lost
 FROM player_season_performance
 GROUP BY player_id;
+
+CREATE MATERIALIZED VIEW player_performance AS SELECT * FROM player_performance_v;
 
 CREATE UNIQUE INDEX ON player_performance (player_id);
 
@@ -372,12 +398,14 @@ WHERE set = 0 OR set IS NULL;
 
 -- player_season_surface_stats
 
-CREATE MATERIALIZED VIEW player_season_surface_stats AS
+CREATE OR REPLACE VIEW player_season_surface_stats_v AS
 SELECT player_id, season, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
 FROM player_match_stats_v
 GROUP BY player_id, season, surface;
+
+CREATE MATERIALIZED VIEW player_season_surface_stats AS SELECT * FROM player_season_surface_stats_v;
 
 CREATE INDEX ON player_season_surface_stats (player_id);
 CREATE INDEX ON player_season_surface_stats (season, surface);
@@ -385,12 +413,14 @@ CREATE INDEX ON player_season_surface_stats (season, surface);
 
 -- player_season_stats
 
-CREATE MATERIALIZED VIEW player_season_stats AS
+CREATE OR REPLACE VIEW player_season_stats_v AS
 SELECT player_id, season, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
 FROM player_season_surface_stats
 GROUP BY player_id, season;
+
+CREATE MATERIALIZED VIEW player_season_stats AS SELECT * FROM player_season_stats_v;
 
 CREATE INDEX ON player_season_stats (player_id);
 CREATE INDEX ON player_season_stats (season);
@@ -398,12 +428,14 @@ CREATE INDEX ON player_season_stats (season);
 
 -- player_surface_stats
 
-CREATE MATERIALIZED VIEW player_surface_stats AS
+CREATE OR REPLACE VIEW player_surface_stats_v AS
 SELECT player_id, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
 FROM player_season_surface_stats
 GROUP BY player_id, surface;
+
+CREATE MATERIALIZED VIEW player_surface_stats AS SELECT * FROM player_surface_stats_v;
 
 CREATE INDEX ON player_surface_stats (player_id);
 CREATE INDEX ON player_surface_stats (surface);
@@ -411,19 +443,21 @@ CREATE INDEX ON player_surface_stats (surface);
 
 -- player_stats
 
-CREATE MATERIALIZED VIEW player_stats AS
+CREATE OR REPLACE VIEW player_stats_v AS
 SELECT player_id, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
 FROM player_season_stats
 GROUP BY player_id;
 
+CREATE MATERIALIZED VIEW player_stats AS SELECT * FROM player_stats_v;
+
 CREATE UNIQUE INDEX ON player_stats (player_id);
 
 
 -- player_win_streak
 
-CREATE MATERIALIZED VIEW player_win_streak AS
+CREATE OR REPLACE VIEW player_win_streak_v AS
 WITH match_lost_count AS (
 	SELECT match_id, player_id, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id ORDER BY date, round, match_num) AS o_matches_count
 	FROM player_match_for_stats_v
@@ -440,12 +474,14 @@ FROM match_win_streak
 GROUP BY player_id, first_match_id, last_match_id
 HAVING max(win_streak) >= 5;
 
+CREATE MATERIALIZED VIEW player_win_streak AS SELECT * FROM player_win_streak_v;
+
 CREATE INDEX ON player_win_streak (player_id);
 
 
 -- player_surface_win_streak
 
-CREATE MATERIALIZED VIEW player_surface_win_streak AS
+CREATE OR REPLACE VIEW player_surface_win_streak_v AS
 WITH match_lost_count AS (
 	SELECT match_id, player_id, surface, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id, surface ORDER BY date, round, match_num) AS o_matches_count
 	FROM player_match_for_stats_v
@@ -462,13 +498,15 @@ FROM match_win_streak
 GROUP BY player_id, surface, first_match_id, last_match_id
 HAVING max(win_streak) >= 5;
 
+CREATE MATERIALIZED VIEW player_surface_win_streak AS SELECT * FROM player_surface_win_streak_v;
+
 CREATE INDEX ON player_surface_win_streak (player_id);
 CREATE INDEX ON player_surface_win_streak (surface);
 
 
 -- player_level_win_streak
 
-CREATE MATERIALIZED VIEW player_level_win_streak AS
+CREATE OR REPLACE VIEW player_level_win_streak_v AS
 WITH match_lost_count AS (
 	SELECT match_id, player_id, level, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id, level ORDER BY date, round, match_num) AS o_matches_count
 	FROM player_match_for_stats_v
@@ -485,13 +523,15 @@ FROM match_win_streak
 GROUP BY player_id, level, first_match_id, last_match_id
 HAVING max(win_streak) >= 5;
 
+CREATE MATERIALIZED VIEW player_level_win_streak AS SELECT * FROM player_level_win_streak_v;
+
 CREATE INDEX ON player_level_win_streak (player_id);
 CREATE INDEX ON player_level_win_streak (level);
 
 
 -- player_vs_no1_win_streak
 
-CREATE MATERIALIZED VIEW player_vs_no1_win_streak AS
+CREATE OR REPLACE VIEW player_vs_no1_win_streak_v AS
 WITH match_lost_count AS (
 	SELECT match_id, player_id, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id ORDER BY date, round, match_num) AS o_matches_count
 	FROM player_match_for_stats_v
@@ -509,12 +549,14 @@ FROM match_win_streak
 GROUP BY player_id, first_match_id, last_match_id
 HAVING max(win_streak) >= 2;
 
+CREATE MATERIALIZED VIEW player_vs_no1_win_streak AS SELECT * FROM player_vs_no1_win_streak_v;
+
 CREATE INDEX ON player_vs_no1_win_streak (player_id);
 
 
 -- player_vs_top5_win_streak
 
-CREATE MATERIALIZED VIEW player_vs_top5_win_streak AS
+CREATE OR REPLACE VIEW player_vs_top5_win_streak_v AS
 WITH match_lost_count AS (
 	SELECT match_id, player_id, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id ORDER BY date, round, match_num) AS o_matches_count
 	FROM player_match_for_stats_v
@@ -532,12 +574,14 @@ FROM match_win_streak
 GROUP BY player_id, first_match_id, last_match_id
 HAVING max(win_streak) >= 3;
 
+CREATE MATERIALIZED VIEW player_vs_top5_win_streak AS SELECT * FROM player_vs_top5_win_streak_v;
+
 CREATE INDEX ON player_vs_top5_win_streak (player_id);
 
 
 -- player_vs_top10_win_streak
 
-CREATE MATERIALIZED VIEW player_vs_top10_win_streak AS
+CREATE OR REPLACE VIEW player_vs_top10_win_streak_v AS
 WITH match_lost_count AS (
 	SELECT match_id, player_id, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id ORDER BY date, round, match_num) AS o_matches_count
 	FROM player_match_for_stats_v
@@ -555,12 +599,14 @@ FROM match_win_streak
 GROUP BY player_id, first_match_id, last_match_id
 HAVING max(win_streak) >= 3;
 
-CREATE INDEX ON player_vs_top5_win_streak (player_id);
+CREATE MATERIALIZED VIEW player_vs_top10_win_streak AS SELECT * FROM player_vs_top10_win_streak_v;
+
+CREATE INDEX ON player_vs_top10_win_streak (player_id);
 
 
 -- player_tournament_win_streak
 
-CREATE MATERIALIZED VIEW player_tournament_win_streak AS
+CREATE OR REPLACE VIEW player_tournament_win_streak_v AS
 WITH match_lost_count AS (
 	SELECT match_id, player_id, tournament_id, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id, tournament_id ORDER BY date, round, match_num) AS o_matches_count
 	FROM player_match_for_stats_v
@@ -577,13 +623,15 @@ FROM match_win_streak
 GROUP BY player_id, tournament_id, first_match_id, last_match_id
 HAVING max(win_streak) >= 5;
 
+CREATE MATERIALIZED VIEW player_tournament_win_streak AS SELECT * FROM player_tournament_win_streak_v;
+
 CREATE INDEX ON player_tournament_win_streak (player_id);
 CREATE INDEX ON player_tournament_win_streak (tournament_id);
 
 
 -- player_tournament_level_win_streak
 
-CREATE MATERIALIZED VIEW player_tournament_level_win_streak AS
+CREATE OR REPLACE VIEW player_tournament_level_win_streak_v AS
 WITH match_lost_count AS (
 	SELECT match_id, player_id, tournament_id, level, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id, tournament_id, level ORDER BY date, round, match_num) AS o_matches_count
 	FROM player_match_for_stats_v
@@ -599,6 +647,8 @@ SELECT player_id, tournament_id, level, max(win_streak) AS win_streak, first_mat
 FROM match_win_streak
 GROUP BY player_id, tournament_id, level, first_match_id, last_match_id
 HAVING max(win_streak) >= 5;
+
+CREATE MATERIALIZED VIEW player_tournament_level_win_streak AS SELECT * FROM player_tournament_level_win_streak_v;
 
 CREATE INDEX ON player_tournament_level_win_streak (player_id);
 CREATE INDEX ON player_tournament_level_win_streak (tournament_id);
@@ -632,20 +682,24 @@ WHERE rank = 1;
 
 -- player_season_weeks_at_no1
 
-CREATE MATERIALIZED VIEW player_season_weeks_at_no1 AS
+CREATE OR REPLACE VIEW player_season_weeks_at_no1_v AS
 SELECT player_id, season, round(sum(weeks_at_no1)) weeks_at_no1
 FROM no1_player_ranking_v
 GROUP BY player_id, season;
+
+CREATE MATERIALIZED VIEW player_season_weeks_at_no1 AS SELECT * FROM player_season_weeks_at_no1_v;
 
 CREATE UNIQUE INDEX ON player_season_weeks_at_no1 (player_id, season);
 
 
 -- player_weeks_at_no1
 
-CREATE MATERIALIZED VIEW player_weeks_at_no1 AS
+CREATE OR REPLACE VIEW player_weeks_at_no1_v AS
 SELECT player_id, ceil(sum(weeks_at_no1)) weeks_at_no1
 FROM no1_player_ranking_v
 GROUP BY player_id;
+
+CREATE MATERIALIZED VIEW player_weeks_at_no1 AS SELECT * FROM player_weeks_at_no1_v;
 
 CREATE UNIQUE INDEX ON player_weeks_at_no1 (player_id);
 
@@ -1215,7 +1269,7 @@ GROUP BY player_id;
 
 -- player_season_goat_points
 
-CREATE MATERIALIZED VIEW player_season_goat_points AS
+CREATE OR REPLACE VIEW player_season_goat_points_v AS
 WITH goat_points AS (
 	SELECT r.player_id, e.season, sum(r.goat_points) goat_points, sum(r.goat_points) tournament_goat_points, 0 ranking_goat_points, 0 achievements_goat_points,
 		sum(r.goat_points) raw_goat_points, 0 raw_ranking_goat_points, 0 raw_achievements_goat_points,
@@ -1253,6 +1307,8 @@ SELECT player_id, season, sum(goat_points) goat_points, sum(tournament_goat_poin
 FROM goat_points
 GROUP BY player_id, season;
 
+CREATE MATERIALIZED VIEW player_season_goat_points AS SELECT * FROM player_season_goat_points_v;
+
 CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
 
 
@@ -1283,7 +1339,7 @@ INNER JOIN best_season_goat_points USING (season_rank);
 
 -- player_goat_points
 
-CREATE MATERIALIZED VIEW player_goat_points AS
+CREATE OR REPLACE VIEW player_goat_points_v AS
 WITH goat_points AS (
 	SELECT player_id, raw_goat_points goat_points, tournament_goat_points, raw_ranking_goat_points ranking_goat_points, raw_achievements_goat_points achievements_goat_points,
 		year_end_rank_goat_points, 0 best_rank_goat_points, 0 best_elo_rating_goat_points, 0 weeks_at_no1_goat_points,
@@ -1346,6 +1402,8 @@ SELECT player_id, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_ran
 	year_end_rank_goat_points, best_rank_goat_points, best_elo_rating_goat_points, weeks_at_no1_goat_points,
 	big_wins_goat_points, grand_slam_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points
 FROM goat_points_total;
+
+CREATE MATERIALIZED VIEW player_goat_points AS SELECT * FROM player_goat_points_v;
 
 CREATE UNIQUE INDEX ON player_goat_points (player_id);
 
