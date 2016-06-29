@@ -94,12 +94,12 @@ public class RivalriesService {
 	private static final String HEADS_TO_HEADS_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id, loser_id, count(match_id) matches, 0 won\n" +
-		"  FROM match_for_rivalry_v\n" +
+		"  FROM match_for_rivalry_v m\n" +
 		"  WHERE winner_id IN (:playerIds) AND loser_id IN (:playerIds)%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT winner_id, loser_id, 0, count(match_id)\n" +
-		"  FROM match_for_stats_v\n" +
+		"  FROM match_for_stats_v m\n" +
 		"  WHERE winner_id IN (:playerIds) AND loser_id IN (:playerIds)%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"), rivalries_2 AS (\n" +
@@ -129,11 +129,11 @@ public class RivalriesService {
 	private static final String GREATEST_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id, loser_id, count(match_id) matches, 0 won\n" +
-		"  FROM match_for_rivalry_v%1$s\n" +
+		"  FROM match_for_rivalry_v m%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT winner_id, loser_id, 0, count(match_id)\n" +
-		"  FROM match_for_stats_v%1$s\n" +
+		"  FROM match_for_stats_v m%1$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"), rivalries_2 AS (\n" +
 		"  SELECT winner_id player_id_1, loser_id player_id_2, sum(matches) matches, sum(won) won, 0 lost\n" +
@@ -178,7 +178,7 @@ public class RivalriesService {
 
 	private static final String LAST_MATCH_JSON = //language=SQL
 		"  (SELECT row_to_json(lm) FROM (\n" +
-		"     SELECT m.match_id, e.season, e.date, e.level, e.surface, e.indoor, e.tournament_event_id, e.name AS tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
+		"     SELECT m.match_id, e.season, m.date, e.level, m.surface, m.indoor, e.tournament_event_id, e.name AS tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
 		"     FROM match m\n" +
 		"     INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"     WHERE ((m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s))%3$s\n" +

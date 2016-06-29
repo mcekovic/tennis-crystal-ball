@@ -20,7 +20,7 @@ public class RivalryFilter {
 	private final String round;
 
 	private static final String LEVEL_CRITERION       = " AND level = :level::tournament_level";
-	private static final String SURFACE_CRITERION     = " AND surface = :surface::surface";
+	private static final String SURFACE_CRITERION     = " AND m.surface = :surface::surface";
 	private static final String ROUND_CRITERION       = " AND round %1$s :round::match_round";
 
 	public RivalryFilter(Range<Integer> seasonRange, String level, String surface, String round) {
