@@ -8,9 +8,11 @@ import java.time.temporal.*
 class TournamentFetcher {
 
 	static fetchTournament(season, urlId, extId, level = null) {
+		def url = "http://www.minorleaguesplits.com/tennisabstract/cgi-bin/jstourneys/${season}${urlId}.js"
+		println "Fetching URL '$url'"
 		def manager = new ScriptEngineManager()
 		def engine = manager.getEngineByName("JavaScript")
-		def data = new URL("http://www.minorleaguesplits.com/tennisabstract/cgi-bin/jstourneys/${season}${urlId}.js").getText()
+		def data = new URL(url).getText()
 		engine.eval(data)
 
 		def id = season + '-' + extId

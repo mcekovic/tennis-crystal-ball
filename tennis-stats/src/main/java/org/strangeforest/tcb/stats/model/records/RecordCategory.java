@@ -18,8 +18,8 @@ public abstract class RecordCategory {
 	protected static final String BIG = "Big";
 	protected static final String ATP_500 = "ATP500";
 	protected static final String ATP_250 = "ATP250";
-	protected static final String DAVIS_CUP = "DavisCup";
 	protected static final String SMALL = "Small";
+	protected static final String DAVIS_CUP = "DavisCup";
 	protected static final String HARD = "Hard";
 	protected static final String CLAY = "Clay";
 	protected static final String GRASS = "Grass";
@@ -41,9 +41,9 @@ public abstract class RecordCategory {
 	protected static final String BIG_NAME_SUFFIX = "(Grand Slam, Tour Finals, Masters, Olympics)";
 	protected static final String ATP_500_NAME = "ATP 500/CS";
 	protected static final String ATP_250_NAME = "ATP 250/WS";
-	protected static final String DAVIS_CUP_NAME = "Davis Cup";
 	protected static final String SMALL_NAME = "Small";
 	protected static final String SMALL_NAME_SUFFIX = "(ATP 500/CS, ATP 250/WS)";
+	protected static final String DAVIS_CUP_NAME = "Davis Cup";
 	protected static final String HARD_NAME = "Hard";
 	protected static final String CLAY_NAME = "Clay";
 	protected static final String GRASS_NAME = "Grass";
@@ -68,6 +68,7 @@ public abstract class RecordCategory {
 	protected static final String ATP_500_TOURNAMENTS = "level = 'A'";
 	protected static final String ATP_250_TOURNAMENTS = "level = 'B'";
 	protected static final String SMALL_TOURNAMENTS = "level IN ('A', 'B')";
+	protected static final String DAVIS_CUP_TOURNAMENTS = "level = 'D'";
 	protected static final String HARD_TOURNAMENTS = "surface = 'H' AND " + ALL_TOURNAMENTS;
 	protected static final String CLAY_TOURNAMENTS = "surface = 'C' AND " + ALL_TOURNAMENTS;
 	protected static final String GRASS_TOURNAMENTS = "surface = 'G' AND " + ALL_TOURNAMENTS;

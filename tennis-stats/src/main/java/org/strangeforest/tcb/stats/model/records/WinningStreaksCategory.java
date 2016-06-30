@@ -15,8 +15,11 @@ public class WinningStreaksCategory extends RecordCategory {
 		register(winningStreak(TOUR_FINALS, TOUR_FINALS_NAME, "_level", TOUR_FINALS_TOURNAMENTS));
 		register(winningStreak(MASTERS, MASTERS_NAME, "_level", MASTERS_TOURNAMENTS));
 		register(winningStreak(OLYMPICS, OLYMPICS_NAME, "_level", OLYMPICS_TOURNAMENTS));
+		register(winningStreak(BIG + TOURNAMENT, BIG_NAME + prefix(TOURNAMENT, " "), "_level", BIG_TOURNAMENTS));
 		register(winningStreak(ATP_500, ATP_500_NAME, "_level", ATP_500_TOURNAMENTS));
 		register(winningStreak(ATP_250, ATP_250_NAME, "_level", ATP_250_TOURNAMENTS));
+		register(winningStreak(SMALL + TOURNAMENT, SMALL_NAME + prefix(TOURNAMENT, " "), "_level", SMALL_TOURNAMENTS));
+		register(winningStreak(DAVIS_CUP, DAVIS_CUP_NAME, "_level", DAVIS_CUP_TOURNAMENTS));
 		register(winningStreak(HARD, HARD_NAME, "_surface", "surface = 'H'"));
 		register(winningStreak(CLAY, CLAY_NAME, "_surface", "surface = 'C'"));
 		register(winningStreak(GRASS, GRASS_NAME, "_surface", "surface = 'G'"));
