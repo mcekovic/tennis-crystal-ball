@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.*
 
 import org.strangeforest.tcb.util.*
 
+import com.google.common.base.*
 import com.xlson.groovycsv.*
 
 abstract class BaseCSVLoader {
@@ -29,27 +30,28 @@ abstract class BaseCSVLoader {
 
 	def loadFile(String file) {
 		println "Loading file '$file'"
-		def t0 = System.currentTimeMillis()
+		def stopwatch = Stopwatch.createStarted();
 		List columnNames = columnNames()
 		def csvParams = columnNames ? [columnNames: columnNames, readFirstLine: true] : [:]
 		def data = CsvParser.parseCsv(csvParams, new FileReader(file))
 		int rows = load(data)
-		printLoadInfo(t0, rows)
+		printLoadInfo(stopwatch, rows)
 		return rows
 	}
 
 	def load(Iterable data) {
-		def t0 = System.currentTimeMillis()
+		def stopwatch = Stopwatch.createStarted();
 		int rows = load(data.iterator())
-		printLoadInfo(t0, rows)
+		printLoadInfo(stopwatch, rows)
 		return rows
 	}
 
-	def static printLoadInfo(long t0, int rows) {
+	def static printLoadInfo(Stopwatch stopwatch, int rows) {
 		println()
-		def seconds = (System.currentTimeMillis() - t0) / 1000.0
+		stopwatch.stop()
+		def seconds = stopwatch.elapsed(TimeUnit.SECONDS)
 		int rowsPerSecond = seconds ? rows / seconds : 0
-		println "Rows: $rows in $seconds s ($rowsPerSecond row/s)"
+		println "Rows: $rows in $stopwatch ($rowsPerSecond row/s)"
 	}
 
 	def load(Iterator data) {

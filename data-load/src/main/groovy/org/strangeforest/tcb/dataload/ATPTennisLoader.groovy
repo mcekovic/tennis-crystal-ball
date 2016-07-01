@@ -1,5 +1,8 @@
 package org.strangeforest.tcb.dataload
 
+import java.util.concurrent.*
+
+import com.google.common.base.*
 import groovy.sql.*
 
 class ATPTennisLoader {
@@ -47,13 +50,14 @@ class ATPTennisLoader {
 	}
 
 	private static load(loader) {
-		def t0 = System.currentTimeMillis()
+		def stopwatch = Stopwatch.createStarted();
 
 		def rows = loader()
 
-		def seconds = (System.currentTimeMillis() - t0) / 1000.0
-		int rowsPerSecond = rows / seconds
-		println "Total rows: $rows in $seconds s ($rowsPerSecond row/s)"
+		stopwatch.stop()
+		def seconds = stopwatch.elapsed(TimeUnit.SECONDS)
+		int rowsPerSecond = seconds ? rows / seconds : 0
+		println "Total rows: $rows in $stopwatch ($rowsPerSecond row/s)"
 	}
 
 	private baseDir() {
@@ -121,6 +125,7 @@ class ATPTennisLoader {
 	}
 
 	def refreshMaterializedViews(Sql sql) {
+		def stopwatch = Stopwatch.createStarted();
 		refreshMaterializedView(sql, 'player_current_rank')
 		refreshMaterializedView(sql, 'player_best_rank')
 		refreshMaterializedView(sql, 'player_best_rank_points')
@@ -150,10 +155,11 @@ class ATPTennisLoader {
 		refreshMaterializedView(sql, 'player_tournament_level_win_streak')
 		refreshMaterializedView(sql, 'player_season_goat_points')
 		refreshMaterializedView(sql, 'player_goat_points')
+		println "\nMaterialized views refreshed in $stopwatch"
 	}
 
 	def refreshMaterializedView(Sql sql, String viewName) {
-		def t0 = System.currentTimeMillis()
+		def stopwatch = Stopwatch.createStarted();
 		println "Refreshing materialized view '$viewName'"
 		if (useMaterializedViews)
 			sql.execute("REFRESH MATERIALIZED VIEW $viewName".toString())
@@ -162,12 +168,11 @@ class ATPTennisLoader {
 			sql.execute("INSERT INTO $viewName SELECT * FROM ${viewName}_v".toString())
 		}
 		sql.commit()
-		def seconds = (System.currentTimeMillis() - t0) / 1000.0
-		println "Materialized view '$viewName' refreshed in $seconds s"
+		println "Materialized view '$viewName' refreshed in $stopwatch"
 	}
 
 	def createDatabase(Sql sql) {
-		def t0 = System.currentTimeMillis()
+		def stopwatch = Stopwatch.createStarted();
 
 		println 'Creating types...'
 		executeSQLFile(sql, '../crystal-ball/src/main/db/create-types.sql')
@@ -190,12 +195,11 @@ class ATPTennisLoader {
 		println 'Creating load functions...'
 		executeSQLFile(sql, 'src/main/db/load-functions.sql')
 
-		def seconds = (System.currentTimeMillis() - t0) / 1000.0
-		println "Database created in $seconds s"
+		println "Database created in $stopwatch"
 	}
 
 	def dropDatabase(Sql sql) {
-		def t0 = System.currentTimeMillis()
+		def stopwatch = Stopwatch.createStarted();
 
 		println 'Dropping load functions...'
 		executeSQLFile(sql, 'src/main/db/drop-load-functions.sql')
@@ -215,8 +219,7 @@ class ATPTennisLoader {
 		println 'Dropping types...'
 		executeSQLFile(sql, '../crystal-ball/src/main/db/drop-types.sql')
 
-		def seconds = (System.currentTimeMillis() - t0) / 1000.0
-		println "Database dropped in $seconds s"
+		println "Database dropped in $stopwatch"
 	}
 
 	private static executeSQLFile(Sql sql, String file, String replaceTarget = null, String replacement = null) {

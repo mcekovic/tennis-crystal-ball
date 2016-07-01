@@ -1,10 +1,13 @@
 package org.strangeforest.tcb.dataload
 
-import groovy.sql.*
-import org.strangeforest.tcb.util.*
-
 import java.sql.*
 import java.util.Date
+import java.util.concurrent.*
+
+import org.strangeforest.tcb.util.*
+
+import com.google.common.base.*
+import groovy.sql.*
 
 abstract class BaseXMLLoader {
 
@@ -22,7 +25,7 @@ abstract class BaseXMLLoader {
 
 	def loadFile(String file) {
 		println "Loading file '$file'"
-		def t0 = System.currentTimeMillis()
+		def stopwatch = Stopwatch.createStarted();
 		def batch = batch()
 		def data = new XmlSlurper().parse(getReader(file))
 		def rows = 0
@@ -39,9 +42,10 @@ abstract class BaseXMLLoader {
 		}
 		sql.commit()
 		println()
-		def seconds = (System.currentTimeMillis() - t0) / 1000.0
+		stopwatch.stop()
+		def seconds = stopwatch.elapsed(TimeUnit.SECONDS)
 		int rowsPerSecond = seconds ? rows / seconds : 0
-		println "Rows: $rows in $seconds s ($rowsPerSecond row/s)"
+		println "Rows: $rows in $stopwatch ($rowsPerSecond row/s)"
 		return rows
 	}
 

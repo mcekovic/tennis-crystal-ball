@@ -13,6 +13,7 @@ dependencies {
 	compile project(':crystal-ball')
 	compile ("org.codehaus.groovy:groovy-all:$groovyVersion")
 	compile ("com.xlson.groovycsv:groovycsv:$groovyCsvVersion")
+	compile ("com.google.guava:guava:$guavaVersion")
 	runtime ("org.postgresql:postgresql:$postgresqlJdbcVersion")
 	runtime ("commons-cli:commons-cli:$commonsCliVersion")
 	testCompile ("junit:junit:$junitVersion")

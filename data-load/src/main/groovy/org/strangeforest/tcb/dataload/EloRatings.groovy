@@ -1,11 +1,12 @@
 package org.strangeforest.tcb.dataload
 
-import org.strangeforest.tcb.util.LockManager
-
 import java.time.temporal.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 
+import org.strangeforest.tcb.util.*
+
+import com.google.common.base.*
 import groovy.sql.*
 
 import static java.lang.Math.*
@@ -62,7 +63,7 @@ class EloRatings {
 	}
 
 	def compute(save = false, deltaSave = false, saveFromDate = null) {
-		def t0 = System.currentTimeMillis()
+		def stopwatch = Stopwatch.createStarted();
 		int matches = 0
 		playerRatings = new ConcurrentHashMap<>()
 		lastDate = null
@@ -110,8 +111,7 @@ class EloRatings {
 				saveExecutor?.awaitTermination(1L, TimeUnit.DAYS)
 			}
 		}
-		def seconds = (System.currentTimeMillis() - t0) / 1000.0
-		println "\nElo Ratings computed in $seconds s"
+		println "\nElo Ratings computed in $stopwatch"
 		println "Rank fetches: $rankFetches"
 		if (save)
 			println "Saves: $saves"
