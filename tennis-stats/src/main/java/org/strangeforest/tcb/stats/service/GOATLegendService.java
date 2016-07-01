@@ -103,6 +103,11 @@ public class GOATLegendService {
 		return getRankRangeGOATPoints("big_win_rank_factor", "rank_factor");
 	}
 
+	@Cacheable(value = "Global", key = "'H2hRankFactors'")
+	public List<RankRangeGOATPoints> getH2hRankFactors() {
+		return getRankRangeGOATPoints("h2h_rank_factor", "rank_factor");
+	}
+
 	@Cacheable(value = "Global", key = "'CareerGrandSlamGOATPoints'")
 	public int getCareerGrandSlamGOATPoints() {
 		return jdbcTemplate.queryForObject(CAREER_GRAND_SLAM_GOAT_POINTS, Integer.class);

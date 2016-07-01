@@ -150,8 +150,10 @@
 				<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 			</td>
 			<td style="padding: 1px 4px" th:text="${#dates.format(player.dob, 'yyyy')}">1985</td>
-			<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray" th:text="${player.goatPoints}">1985</td>
-			<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${seasonPoint.pointsRounded}" class="points-10"><a th:href="'playerProfile?playerId=' + ${player.playerId} + '&amp;season=' + ${seasonPoint.season}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points">15</a></td>
+			<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray">
+				<a th:href="'/playerProfile?playerId=' + ${player.playerId} + '&amp;goatPoints=true'" th:text="${player.goatPoints}" title="Show GOAT points distribution">585</a>
+			</td>
+			<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${seasonPoint.pointsRounded}" class="points-10"><a th:href="'playerProfile?playerId=' + ${player.playerId} + '&amp;season=' + ${seasonPoint.season}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points" title="Show season results">15</a></td>
 		</tr>
 		</tbody>
 		<thead>

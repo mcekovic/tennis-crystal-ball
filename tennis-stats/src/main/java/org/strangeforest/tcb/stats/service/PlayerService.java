@@ -129,7 +129,7 @@ public class PlayerService {
 			p.setBestRankPoints(rs.getInt("best_rank_points"));
 			p.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
 			p.setGoatRank(rs.getInt("goat_rank"));
-			p.setGoatRankPoints(rs.getInt("goat_points"));
+			p.setGoatPoints(rs.getInt("goat_points"));
 			p.setWeeksAtNo1(rs.getInt("weeks_at_no1"));
 
 			p.setActive(rs.getBoolean("active"));

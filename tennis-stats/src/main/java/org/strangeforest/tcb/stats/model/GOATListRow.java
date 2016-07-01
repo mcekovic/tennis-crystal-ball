@@ -7,7 +7,7 @@ public class GOATListRow extends PlayerRow {
 	private final int goatPoints;
 	private final int tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints;
 	private int yearEndRankGoatPoints, bestRankGoatPoints, bestEloRatingGoatPoints, weeksAtNo1GoatPoints;
-	private int bigWinsGoatPoints, grandSlamGoatPoints, bestSeasonGoatPoints, greatestRivalriesGoatPoints, performanceGoatPoints, statisticsGoatPoints;
+	private int bigWinsGoatPoints, h2hGoatPoints, grandSlamGoatPoints, bestSeasonGoatPoints, greatestRivalriesGoatPoints, performanceGoatPoints, statisticsGoatPoints;
 	private int grandSlams;
 	private int tourFinals;
 	private int masters;
@@ -89,6 +89,14 @@ public class GOATListRow extends PlayerRow {
 
 	public void setBigWinsGoatPoints(int bigWinsGoatPoints) {
 		this.bigWinsGoatPoints = bigWinsGoatPoints;
+	}
+
+	public int getH2hGoatPoints() {
+		return h2hGoatPoints;
+	}
+
+	public void setH2hGoatPoints(int h2hGoatPoints) {
+		this.h2hGoatPoints = h2hGoatPoints;
 	}
 
 	public int getGrandSlamGoatPoints() {

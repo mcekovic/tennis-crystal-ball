@@ -10,6 +10,7 @@
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="opponentId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="goatPoints" type="java.lang.Boolean"*/-->
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -35,7 +36,9 @@
 				}
 			}).focus();
 			$("[data-toggle=pill]").click(tabClick);
-			if ([[${tournamentEventId != null || opponentId != null}]])
+			if ([[${goatPoints}]])
+				$("#goatPointsPill").click();
+			else if ([[${tournamentEventId != null || opponentId != null}]])
 				playerMatches([[${level}]], [[${surface}]], [[${round}]], [[${tournamentEventId}]], [[${opponentId}]]);
 			else if ([[${season != null || level != null || result != null}]])
 				playerTournaments([[${season}]], [[${level}]], [[${result}]]);
@@ -90,7 +93,7 @@
 			<li><a data-toggle="pill" href="#performanceChart" data-url="/playerPerformanceChart?playerId=" th:attrappend="data-url=${player.id}" title="Performance Chart">Perf. Chart</a></li>
 			<li><a data-toggle="pill" href="#statistics" data-url="/playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
 			<li><a data-toggle="pill" href="#statisticsChart" data-url="/playerStatsChart?playerId=" th:attrappend="data-url=${player.id}" title="Statistics Chart">Stats. Chart</a></li>
-			<li><a data-toggle="pill" href="#goatPoints" data-url="/playerGOATPoints?playerId=" th:attrappend="data-url=${player.id}" title="GOAT Points Breakdown">GOAT Points</a></li>
+			<li><a id="goatPointsPill" data-toggle="pill" href="#goatPoints" data-url="/playerGOATPoints?playerId=" th:attrappend="data-url=${player.id}" title="GOAT Points Breakdown">GOAT Points</a></li>
 		</ul>
 		<div class="tab-content">
 			<div id="profile" class="tab-pane fade"><br/>Loading...</div>

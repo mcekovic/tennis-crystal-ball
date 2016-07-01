@@ -38,6 +38,9 @@
 				},
 				formatters: {
 					"player": playerCountryFormatter,
+					"goatPoints": function(column, row) {
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&goatPoints=true' title='Show GOAT points distribution'><b>" + row.goatPoints + "</b></a>";
+					},
 					"rankingGoatPoints": function(column, row) {
 						if (row.rankingGoatPoints > 0) {
 							var title = "";
@@ -54,6 +57,7 @@
 						if (row.achievementsGoatPoints > 0) {
 							var title = "";
 							title = appendGoatPointsTitle(title, row, "bigWinsGoatPoints", "Big wins");
+							title = appendGoatPointsTitle(title, row, "h2hGoatPoints", "Head-to-head");
 							title = appendGoatPointsTitle(title, row, "grandSlamGoatPoints", "Grand Slam");
 							title = appendGoatPointsTitle(title, row, "bestSeasonGoatPoints", "Best seasons");
 							title = appendGoatPointsTitle(title, row, "greatestRivalriesGoatPoints", "Greatest rivalries");
@@ -114,7 +118,7 @@
 		<tr>
 			<th data-column-id="goatRank" data-type="numeric" data-sortable="false" data-width="45">Rank</th>
 			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="130">Name</th>
-			<th data-column-id="goatPoints" data-type="numeric" data-order="desc" data-width="80" data-align="right" data-header-align="right">GOAT Points</th>
+			<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="80" data-align="right" data-header-align="right">GOAT Points</th>
 			<th data-column-id="tournamentGoatPoints" data-type="numeric" data-order="desc" data-width="70" data-align="right" data-header-align="right">Tourn. Pts.</th>
 			<th data-column-id="rankingGoatPoints" data-formatter="rankingGoatPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right">Rank. Pts.</th>
 			<th data-column-id="achievementsGoatPoints" data-formatter="achievementsGoatPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right">Ach. Pts.</th>

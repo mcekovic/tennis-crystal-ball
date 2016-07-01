@@ -200,7 +200,7 @@ public class RankingsService {
 			highlights.setBestEloRating(rs.getInt("best_elo_rating"));
 			highlights.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
 			highlights.setGoatRank(rs.getInt("goat_rank"));
-			highlights.setGoatRankPoints(rs.getInt("goat_points"));
+			highlights.setGoatPoints(rs.getInt("goat_points"));
 		});
 
 		jdbcTemplate.query(PLAYER_YEAR_END_RANK_QUERY, params("playerId", playerId), rs -> {

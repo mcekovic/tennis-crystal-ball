@@ -16,6 +16,7 @@ public class PlayerGOATPoints {
 	private int weeksAtNo1Points;
 	// Achievements
 	private int bigWinsPoints;
+	private int h2hPoints;
 	private int grandSlamPoints;
 	private int seasonsGrandSlamPoints;
 	private int bestSeasonPoints;
@@ -135,6 +136,14 @@ public class PlayerGOATPoints {
 		this.bigWinsPoints = bigWinsPoints;
 	}
 
+	public int getH2hPoints() {
+		return h2hPoints;
+	}
+
+	public void setH2hPoints(int h2hPoints) {
+		this.h2hPoints = h2hPoints;
+	}
+
 	public int getGrandSlamPoints() {
 		return grandSlamPoints;
 	}
@@ -188,7 +197,7 @@ public class PlayerGOATPoints {
 	}
 
 	public int getCareerAchievementsPoints() {
-		return getCareerGrandSlamPoints() + bestSeasonPoints + greatestRivalriesPoints + performancePoints + statisticsPoints;
+		return h2hPoints + getCareerGrandSlamPoints() + bestSeasonPoints + greatestRivalriesPoints + performancePoints + statisticsPoints;
 	}
 
 

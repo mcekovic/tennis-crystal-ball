@@ -28,6 +28,7 @@ public class GOATLegendController extends BaseController {
 		// Achievements
 		modelMap.addAttribute("bigWinMatchFactors", goatLegendService.getBigWinMatchFactors());
 		modelMap.addAttribute("bigWinRankFactors", goatLegendService.getBigWinRankFactors());
+		modelMap.addAttribute("h2hRankFactors", goatLegendService.getH2hRankFactors());
 		modelMap.addAttribute("careerGrandSlamGOATPoints", goatLegendService.getCareerGrandSlamGOATPoints());
 		modelMap.addAttribute("seasonGrandSlamGOATPoints", goatLegendService.getSeasonGrandSlamGOATPoints());
 		modelMap.addAttribute("bestSeasonGOATPoints", goatLegendService.getBestSeasonGOATPoints());

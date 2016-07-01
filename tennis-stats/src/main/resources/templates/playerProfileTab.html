@@ -72,9 +72,12 @@
 				<th>Best Rank</th>
 				<td th:text="${player.bestRank} + ' (' + ${#dates.format(player.bestRankDate, 'dd-MM-yyyy')} + ')'">5 (1.1.2010)</td>
 			</tr>
-			<tr th:if="${player.goatRankPoints > 0}">
+			<tr th:if="${player.goatPoints > 0}">
 				<th>GOAT Rank</th>
-				<td th:text="${player.goatRank} + ' (' + ${player.goatRankPoints} + ')'">50 (2500)</td>
+				<td>
+					<th:block th:text="${player.goatRank}">50</th:block>
+					(<a th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;goatPoints=true'" th:text="${player.goatPoints}" title="Show GOAT points distribution">25</a>)
+				</td>
 			</tr>
 			<tr th:if="${player.weeksAtNo1 > 0}">
 				<th>Weeks at No. 1</th>

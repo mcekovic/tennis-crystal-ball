@@ -1,5 +1,6 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="highlights" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <script th:src="@{/js/tennis-chart.js}"></script>
@@ -218,9 +219,12 @@
 				<th>Highest Elo Rating</th>
 				<td th:text="${highlights.bestEloRating} + ' (' + ${#dates.format(highlights.bestEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
 			</tr>
-			<tr th:if="${highlights.goatRankPoints > 0}">
+			<tr th:if="${highlights.goatPoints > 0}">
 				<th>GOAT Rank</th>
-				<td th:text="${highlights.goatRank} + ' (' + ${highlights.goatRankPoints} + ')'">50 (2500)</td>
+				<td>
+					<th:block th:text="${highlights.goatRank}">50</th:block>
+					(<a th:href="'/playerProfile?playerId=' + ${playerId} + '&amp;goatPoints=true'" th:text="${highlights.goatPoints}" title="Show GOAT points distribution">25</a>)
+				</td>
 			</tr>
 		</table>
 	</div>

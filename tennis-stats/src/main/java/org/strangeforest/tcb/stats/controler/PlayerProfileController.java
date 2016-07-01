@@ -33,7 +33,8 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(value = "result", required = false) String result,
 		@RequestParam(value = "round", required = false) String round,
 		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(value = "opponentId", required = false) Integer opponentId
+		@RequestParam(value = "opponentId", required = false) Integer opponentId,
+		@RequestParam(value = "goatPoints", required = false) Boolean goatPoints
 	) {
 		if (playerId == null && name == null)
 			return new ModelAndView("playerProfile");
@@ -52,6 +53,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("opponentId", opponentId);
+		modelMap.addAttribute("goatPoints", goatPoints);
 		return new ModelAndView("playerProfile", modelMap);
 	}
 

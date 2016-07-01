@@ -463,19 +463,22 @@ WITH rivalry AS (
 	FROM player_match_for_stats_v
 	GROUP BY player_id, opponent_id
 	HAVING count(match_id) >= 3
+), h2h AS (
+	SELECT r.player_id,
+		sum(CASE WHEN r.p_matches > r.o_matches THEN 1 ELSE 0 END) AS h2h_won,
+		sum(CASE WHEN r.p_matches = r.o_matches THEN 1 ELSE 0 END) AS h2h_draw,
+		sum(CASE WHEN r.p_matches < r.o_matches THEN 1 ELSE 0 END) AS h2h_lost,
+		CASE WHEN count(r.opponent_id) >= 5 AND sum((1 + sign(r.p_matches - r.o_matches))) > 0 THEN
+			10 * ln(sum((1 + sign(r.p_matches - r.o_matches)) * (1 + r.p_matches / 10.0) * f.rank_factor)
+			      / sum((1 + sign(r.o_matches - r.p_matches)) * (1 + r.o_matches / 10.0) * f.rank_factor))
+		ELSE 0 END AS goat_points
+	FROM rivalry r
+	INNER JOIN player_best_rank br ON br.player_id = r.opponent_id
+	INNER JOIN h2h_rank_factor f ON br.best_rank BETWEEN f.rank_from AND f.rank_to
+	GROUP BY r.player_id
 )
-SELECT r.player_id,
-	sum(CASE WHEN r.p_matches > r.o_matches THEN 1 ELSE 0 END) AS h2h_won,
-	sum(CASE WHEN r.p_matches = r.o_matches THEN 1 ELSE 0 END) AS h2h_draw,
-	sum(CASE WHEN r.p_matches < r.o_matches THEN 1 ELSE 0 END) AS h2h_lost,
-	round(10 * ln(sum((1 + sign(r.p_matches - r.o_matches)) * (1 + r.p_matches / 10.0) * f.rank_factor)
-	/ sum((1 + sign(r.o_matches - r.p_matches)) * (1 + r.o_matches / 10.0) * f.rank_factor))) AS goat_points
-FROM rivalry r
-INNER JOIN player_best_rank br ON br.player_id = r.opponent_id
-INNER JOIN h2h_rank_factor f ON br.best_rank BETWEEN f.rank_from AND f.rank_to
-GROUP BY r.player_id
-HAVING count(r.opponent_id) >= 5
-AND sum((1 + sign(r.p_matches - r.o_matches))) > 0;
+SELECT player_id, h2h_won, h2h_draw, h2h_lost, CASE WHEN goat_points > 0 THEN round(goat_points)::INTEGER ELSE 0 END AS goat_points
+FROM h2h;
 
 CREATE MATERIALIZED VIEW player_h2h AS SELECT * FROM player_h2h_v;
 
@@ -1370,64 +1373,69 @@ CREATE OR REPLACE VIEW player_goat_points_v AS
 WITH goat_points AS (
 	SELECT player_id, raw_goat_points goat_points, tournament_goat_points, raw_ranking_goat_points ranking_goat_points, raw_achievements_goat_points achievements_goat_points,
 		year_end_rank_goat_points, 0 best_rank_goat_points, 0 best_elo_rating_goat_points, 0 weeks_at_no1_goat_points,
-		0 big_wins_goat_points, grand_slam_goat_points, 0 best_season_goat_points, 0 greatest_rivalries_goat_points, 0 performance_goat_points, 0 statistics_goat_points
+		0 big_wins_goat_points, 0 h2h_goat_points, grand_slam_goat_points, 0 best_season_goat_points, 0 greatest_rivalries_goat_points, 0 performance_goat_points, 0 statistics_goat_points
 	FROM player_season_goat_points
 	UNION ALL
 	SELECT player_id, goat_points, 0, goat_points, 0,
 		0, goat_points, 0, 0,
-		0, 0, 0, 0, 0, 0
+		0, 0, 0, 0, 0, 0, 0
 	FROM player_best_rank
 	INNER JOIN best_rank_goat_points USING (best_rank)
 	UNION ALL
 	SELECT player_id, goat_points, 0, goat_points, 0,
 		0, 0, goat_points, 0,
-		0, 0, 0, 0, 0, 0
+		0, 0, 0, 0, 0, 0, 0
 	FROM player_best_elo_rating_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, goat_points, 0,
 		0, 0, 0, goat_points,
-		0, 0, 0, 0, 0, 0
+		0, 0, 0, 0, 0, 0, 0
 	FROM player_weeks_at_no1_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
 		0, 0, 0, 0,
-		goat_points, 0, 0, 0, 0, 0
+		goat_points, 0, 0, 0, 0, 0, 0
 	FROM player_big_wins_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
 		0, 0, 0, 0,
-		0, goat_points, 0, 0, 0, 0
+		0, goat_points, 0, 0, 0, 0, 0
+	FROM player_h2h
+	UNION ALL
+	SELECT player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0, 0,
+		0, 0, goat_points, 0, 0, 0, 0
 	FROM player_career_grand_slam_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
 		0, 0, 0, 0,
-		0, 0, goat_points, 0, 0, 0
+		0, 0, 0, goat_points, 0, 0, 0
 	FROM player_best_season_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
 		0, 0, 0, 0,
-		0, 0, 0, goat_points, 0, 0
+		0, 0, 0, 0, goat_points, 0, 0
 	FROM player_greatest_rivalries_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
 		0, 0, 0, 0,
-		0, 0, 0, 0, goat_points, 0
+		0, 0, 0, 0, 0, goat_points, 0
 	FROM player_performance_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
 		0, 0, 0, 0,
-		0, 0, 0, 0, 0, goat_points
+		0, 0, 0, 0, 0, 0, goat_points
 	FROM player_statistics_goat_points_v
 ), goat_points_total AS (
 	SELECT player_id, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points,
 		sum(year_end_rank_goat_points) year_end_rank_goat_points, sum(best_rank_goat_points) best_rank_goat_points, sum(best_elo_rating_goat_points) best_elo_rating_goat_points, sum(weeks_at_no1_goat_points) weeks_at_no1_goat_points,
-		sum(big_wins_goat_points) big_wins_goat_points, sum(grand_slam_goat_points) grand_slam_goat_points, sum(best_season_goat_points) best_season_goat_points, sum(greatest_rivalries_goat_points) greatest_rivalries_goat_points, sum(performance_goat_points) performance_goat_points, sum(statistics_goat_points) statistics_goat_points
+		sum(big_wins_goat_points) big_wins_goat_points, sum(h2h_goat_points) h2h_goat_points, sum(grand_slam_goat_points) grand_slam_goat_points, sum(best_season_goat_points) best_season_goat_points, sum(greatest_rivalries_goat_points) greatest_rivalries_goat_points, sum(performance_goat_points) performance_goat_points, sum(statistics_goat_points) statistics_goat_points
 	FROM goat_points
 	GROUP BY player_id
 )
 SELECT player_id, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
 	year_end_rank_goat_points, best_rank_goat_points, best_elo_rating_goat_points, weeks_at_no1_goat_points,
-	big_wins_goat_points, grand_slam_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points
+	big_wins_goat_points, h2h_goat_points, grand_slam_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points
 FROM goat_points_total;
 
 CREATE MATERIALIZED VIEW player_goat_points AS SELECT * FROM player_goat_points_v;

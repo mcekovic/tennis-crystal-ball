@@ -152,6 +152,13 @@
 		</th:block>
 		<th:block th:if="${goatPoints.careerAchievementsPoints > 0}">
 		<tbody>
+		<tr th:if="${goatPoints.h2hPoints > 0}">
+			<td class="first-column"></td>
+			<td class="points first-column" th:text="${goatPoints.h2hPoints}"></td>
+			<td th:colspan="${levelResultCount + 5}" class="first-column"></td>
+			<td colspan="2" class="first-column">Head-to-Head</td>
+			<td class="points first-column last-column" th:text="${goatPoints.h2hPoints}"></td>
+		</tr>
 		<tr th:if="${goatPoints.careerGrandSlamPoints > 0}">
 			<td class="first-column"></td>
 			<td class="points first-column" th:text="${goatPoints.careerGrandSlamPoints}"></td>

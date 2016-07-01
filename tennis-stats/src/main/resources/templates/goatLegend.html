@@ -7,6 +7,7 @@
 	<!--/*@thymesVar id="weeksAtNo1ForGOATPoint" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="bigWinMatchFactors" type="java.util.List<org.strangeforest.tcb.stats.model.BigWinMatchFactor>"*/-->
 	<!--/*@thymesVar id="bigWinRankFactors" type="java.util.List<org.strangeforest.tcb.stats.model.RankRangeGOATPoints>"*/-->
+	<!--/*@thymesVar id="h2hRankFactors" type="java.util.List<org.strangeforest.tcb.stats.model.RankRangeGOATPoints>"*/-->
 	<!--/*@thymesVar id="careerGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="seasonGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="bestSeasonGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
@@ -29,6 +30,7 @@
 <div id="goatLegendRow" class="row">
 	<div class="col-md-3">
 		<h4>Tournament Points</h4>
+		<p>Points assigned for tournament results</p>
 		<table class="table table-condensed table-hover table-striped">
 			<thead>
 			<tr>
@@ -49,8 +51,8 @@
 		<p><em>* Tour Finals draw is normally round-robin, but was knock-out from 1982 to 1985</em></p>
 		<br/>
 		<h4>Ranking Points</h4>
-		<strong th:unless="${forSeason}">Each season's year-end rank</strong>
-		<strong th:if="${forSeason}">Season's year-end rank</strong>
+		<strong th:unless="${forSeason}">Each Season's Year-End Rank</strong>
+		<strong th:if="${forSeason}">Season's Year-End Rank</strong>
 		<table class="table table-condensed table-hover table-striped">
 			<thead>
 			<tr>
@@ -65,7 +67,7 @@
 			</tr>
 			</tbody>
 		</table>
-		<strong th:unless="${forSeason}">Career high ranking</strong>
+		<strong th:unless="${forSeason}">Career High Ranking</strong>
 		<table th:unless="${forSeason}" class="table table-condensed table-hover table-striped">
 			<thead>
 			<tr>
@@ -80,7 +82,7 @@
 			</tr>
 			</tbody>
 		</table>
-		<strong th:unless="${forSeason}">All-time highest Elo rating</strong>
+		<strong th:unless="${forSeason}">All-Time Highest Elo Rating</strong>
 		<table th:unless="${forSeason}" class="table table-condensed table-hover table-striped">
 			<thead>
 			<tr>
@@ -106,7 +108,15 @@
 			<div class="col-md-4">
 				<div>
 					<strong>Big Wins Points</strong>
-					<p><i>sum</i>(MatchFactor * RankFactor) / 100<br/><span style="font-size: smaller">MatchFactor = <i>factor</i>(Level, Round)<br/>RankFactor =<br/>(<i>factor</i>(WinnerRank) + <i>factor</i>(LoserRank)) / 2</span></p>
+					<p>Points assigned for winning big matches in the end-rounds of important tournaments against high-ranked opponents or as a high-ranked player</p>
+					<p>
+						<i>sum</i>(MatchFactor * RankFactor) / 100<br/>
+						<span style="font-size: smaller">
+							MatchFactor = <i>factor</i>(Level, Round)<br/>
+							RankFactor =<br/>
+							(<i>factor</i>(WinnerRank) + <i>factor</i>(LoserRank)) / 2
+						</span>
+					</p>
 				</div>
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
@@ -138,6 +148,42 @@
 					</tr>
 					</tbody>
 				</table>
+				<th:block th:unless="${forSeason}">
+				<div>
+					<strong>Head-to-Head Points</strong>
+					<p>Points assigned for exceptional Head-to-Head ratios against fellow players in the same Era</p>
+					<p>
+						10 * <i>ln</i>(<br/>
+						&nbsp;<i>sum</i>(Wh2h * Wh2hWeight * RankFactor)<br/>
+						&nbsp;/<br/>
+						&nbsp;<i>sum</i>(Lh2h * Lh2hWeight * RankFactor)<br/>
+						)<br/>
+						<span style="font-size: smaller">
+							Wh2h = Won H2H: 1, Draw H2H: 0.5, Lost H2H: 0<br/>
+							Wh2hWeight = 1 + H2HMatchesWon / 10<br/>
+							Lh2h = Won H2H: 0, Draw H2H: 0.5, Lost H2H: 1<br/>
+							Lh2hWeight = 1 + H2HMatchesLost / 10<br/>
+							RankFactor = <i>factor</i>(OpponentRank)<br/>
+							* minimum 3 H2H series matches<br/>
+							** minimum 5 H2H series
+						</span>
+					</p>
+				</div>
+				<table class="table table-condensed table-hover table-striped">
+					<thead>
+					<tr>
+						<th>Rank</th>
+						<th class="text-center">Factor</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr th:each="point : ${h2hRankFactors}">
+						<td class="text-center" th:text="${point.rankFrom == point.rankTo ? point.rankFrom : point.rankFrom + ' - ' + point.rankTo}">1</td>
+						<td class="text-center" th:text="${point.goatPoints}">8</td>
+					</tr>
+					</tbody>
+				</table>
+				</th:block>
 			</div>
 			<div class="col-md-4">
 				<div th:unless="${forSeason}">
@@ -152,6 +198,7 @@
 				<th:block th:unless="${forSeason}">
 				<div>
 					<strong>Best Season Points</strong>
+					<p>Points assigned for best rated seasons</p>
 				</div>
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
@@ -170,7 +217,7 @@
 				<br/>
 				<div>
 					<strong>Greatest Rivalries Points</strong>
-					<p>Points are distributed to both players by rivalry won/lost ratio</p>
+					<p>Points assigned for participation in the Greatest Rivalries (points are distributed to both rivalry players by rivalry won/lost ratio)</p>
 				</div>
 				<table class="table table-condensed table-hover table-striped">
 					<thead>

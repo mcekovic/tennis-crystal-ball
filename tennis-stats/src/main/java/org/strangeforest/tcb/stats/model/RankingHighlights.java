@@ -25,7 +25,7 @@ public class RankingHighlights {
 	private int bestEloRating;
 	private Date bestEloRatingDate;
 	private int goatRank;
-	private int goatRankPoints;
+	private int goatPoints;
 	private Map<Integer, Double> weeksAt = new HashMap<>();
 	private Map<Integer, Integer> yearEndsAt = new HashMap<>();
 
@@ -170,12 +170,12 @@ public class RankingHighlights {
 		this.goatRank = goatRank;
 	}
 
-	public int getGoatRankPoints() {
-		return goatRankPoints;
+	public int getGoatPoints() {
+		return goatPoints;
 	}
 
-	public void setGoatRankPoints(int goatRankPoints) {
-		this.goatRankPoints = goatRankPoints;
+	public void setGoatPoints(int goatPoints) {
+		this.goatPoints = goatPoints;
 	}
 
 	private Supplier<FrequentRank<Double>> mostFrequentRank = Memoizer.of(() -> findMostFrequentRank(weeksAt));
