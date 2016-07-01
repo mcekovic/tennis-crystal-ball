@@ -56,6 +56,9 @@ DROP MATERIALIZED VIEW player_surface_stats;
 DROP VIEW player_surface_stats_v;
 DROP MATERIALIZED VIEW player_season_surface_stats;
 DROP VIEW player_season_surface_stats_v;
+DROP MATERIALIZED VIEW player_h2h;
+DROP VIEW player_h2h_v;
+
 DROP MATERIALIZED VIEW player_win_streak;
 DROP VIEW player_win_streak_v;
 DROP MATERIALIZED VIEW player_surface_win_streak;

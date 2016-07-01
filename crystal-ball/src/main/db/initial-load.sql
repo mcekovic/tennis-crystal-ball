@@ -167,6 +167,18 @@ VALUES
 ( 8, 10, 2),
 (11, 20, 1);
 
+DELETE FROM h2h_rank_factor;
+INSERT INTO h2h_rank_factor
+(rank_from, rank_to, rank_factor)
+VALUES
+( 1,  1, 8),
+( 2,  2, 6),
+( 3,  3, 5),
+( 4,  5, 4),
+( 6,  7, 3),
+( 8, 10, 2),
+(11, 20, 1);
+
 DELETE FROM grand_slam_goat_points;
 INSERT INTO grand_slam_goat_points
 (career_grand_slam, season_grand_slam)

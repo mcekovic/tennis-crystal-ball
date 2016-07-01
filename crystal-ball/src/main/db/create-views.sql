@@ -455,6 +455,33 @@ CREATE MATERIALIZED VIEW player_stats AS SELECT * FROM player_stats_v;
 CREATE UNIQUE INDEX ON player_stats (player_id);
 
 
+-- player_h2h
+
+CREATE OR REPLACE VIEW player_h2h_v AS
+WITH rivalry AS (
+	SELECT player_id, opponent_id, sum(p_matches) AS p_matches, sum(o_matches) AS o_matches
+	FROM player_match_for_stats_v
+	GROUP BY player_id, opponent_id
+	HAVING count(match_id) >= 3
+)
+SELECT r.player_id,
+	sum(CASE WHEN r.p_matches > r.o_matches THEN 1 ELSE 0 END) AS h2h_won,
+	sum(CASE WHEN r.p_matches = r.o_matches THEN 1 ELSE 0 END) AS h2h_draw,
+	sum(CASE WHEN r.p_matches < r.o_matches THEN 1 ELSE 0 END) AS h2h_lost,
+	round(10 * ln(sum((1 + sign(r.p_matches - r.o_matches)) * (1 + r.p_matches / 10.0) * f.rank_factor)
+	/ sum((1 + sign(r.o_matches - r.p_matches)) * (1 + r.o_matches / 10.0) * f.rank_factor))) AS goat_points
+FROM rivalry r
+INNER JOIN player_best_rank br ON br.player_id = r.opponent_id
+INNER JOIN h2h_rank_factor f ON br.best_rank BETWEEN f.rank_from AND f.rank_to
+GROUP BY r.player_id
+HAVING count(r.opponent_id) >= 5
+AND sum((1 + sign(r.p_matches - r.o_matches))) > 0;
+
+CREATE MATERIALIZED VIEW player_h2h AS SELECT * FROM player_h2h_v;
+
+CREATE UNIQUE INDEX ON player_h2h (player_id);
+
+
 -- player_win_streak
 
 CREATE OR REPLACE VIEW player_win_streak_v AS

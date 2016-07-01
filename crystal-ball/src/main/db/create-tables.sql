@@ -291,6 +291,16 @@ CREATE TABLE big_win_rank_factor (
 );
 
 
+-- h2h_rank_factor
+
+CREATE TABLE h2h_rank_factor (
+	rank_from INTEGER NOT NULL,
+	rank_to INTEGER NOT NULL,
+	rank_factor INTEGER,
+	PRIMARY KEY (rank_from)
+);
+
+
 -- grand_slam_goat_points
 
 CREATE TABLE grand_slam_goat_points (

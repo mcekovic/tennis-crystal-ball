@@ -19,6 +19,8 @@ REFRESH MATERIALIZED VIEW player_season_surface_stats;
 REFRESH MATERIALIZED VIEW player_season_stats;
 REFRESH MATERIALIZED VIEW player_surface_stats;
 REFRESH MATERIALIZED VIEW player_stats;
+REFRESH MATERIALIZED VIEW player_h2h;
+
 REFRESH MATERIALIZED VIEW player_win_streak;
 REFRESH MATERIALIZED VIEW player_surface_win_streak;
 REFRESH MATERIALIZED VIEW player_level_win_streak;
