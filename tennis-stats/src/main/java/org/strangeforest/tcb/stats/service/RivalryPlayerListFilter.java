@@ -15,6 +15,10 @@ public class RivalryPlayerListFilter extends PlayerListFilter {
 		this.rivalryFilter = rivalryFilter;
 	}
 
+	public String getRivalryCriteria() {
+		return rivalryFilter.getCriteria();
+	}
+
 	@Override protected void appendCriteria(StringBuilder criteria) {
 		super.appendCriteria(criteria);
 		rivalryFilter.appendCriteria(criteria);

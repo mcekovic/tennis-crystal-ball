@@ -198,13 +198,12 @@ public class RivalriesService {
 		BootgridTable<PlayerRivalryRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
-		String criteria = filter.getCriteria();
 		boolean lateralSupported = lateralSupported();
 		jdbcTemplate.query(
 			format(PLAYER_RIVALRIES_QUERY,
-				criteria,
-				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id", "opponent_id", criteria),
-				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", criteria) : "",
+			   filter.getCriteria(),
+				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id", "opponent_id", filter.getRivalryCriteria()),
+				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", filter.getRivalryCriteria()) : "",
 				orderBy
 			),
 			filter.getParams()
