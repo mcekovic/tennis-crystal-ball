@@ -80,7 +80,7 @@ task quickDeployToOpenShift << {
 	def destPath = "app-root/data/${tennisStats}/lib"
 	ssh.run {
 		session(remotes.openShift) {
-			put "${srcPath}/${tennisStatsJar}.original", destPath
+			put from: "${srcPath}/${tennisStatsJar}.original", into: destPath
 			execute 'gear stop'
 			execute 'rm -rf app-root/logs/*'
 			execute "mv -f ${destPath}/${tennisStatsJar}.original ${destPath}/${tennisStatsJar}"
@@ -97,7 +97,7 @@ task fullDeployToOpenShift << {
 	def destPath = 'app-root/data'
 	ssh.run {
 		session(remotes.openShift) {
-			put "${srcPath}/${tennisStatsDist}", destPath
+			put from: "${srcPath}/${tennisStatsDist}", into: destPath
 			execute 'gear stop'
 			execute "rm -rf ${destPath}/${tennisStats}"
 			execute 'rm -rf app-root/logs/*'

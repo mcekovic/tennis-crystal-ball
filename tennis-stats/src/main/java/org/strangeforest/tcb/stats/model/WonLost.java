@@ -7,10 +7,10 @@ public class WonLost implements Comparable<WonLost> {
 
 	public static final WonLost EMPTY = new WonLost(0, 0);
 
-	private final int won;
-	private final int lost;
-	private final int total;
-	private final double wonPct;
+	protected final int won;
+	protected final int lost;
+	protected final int total;
+	protected double wonPct;
 
 	public WonLost(int won, int lost) {
 		this(won, lost, won + lost);

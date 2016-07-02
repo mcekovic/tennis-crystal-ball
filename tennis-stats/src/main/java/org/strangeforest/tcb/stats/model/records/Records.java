@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model.records;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.records.categories.*;
+
 public abstract class Records {
 
 	public static List<RecordCategory> getRecordCategories() {
@@ -57,14 +59,14 @@ public abstract class Records {
 		register(new RankingEloCategory(), false);
 		register(new YoungestOldestTournamentResultCategory(), false);
 		register(new LongestCareerResultSpanCategory(), false);
+		register(new HeadToHeadCategory(false), false);
+		register(new GOATPointsCategory(), false);
 		// Infamous Records
 		register(new BestPlayerThatNeverCategory(), true);
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.LOST), true);
 		register(new GreatestMatchPctCategory(GreatestMatchPctCategory.RecordType.LOSING), true);
 		register(new GreatestTitlePctCategory(GreatestTitlePctCategory.RecordType.LOSING), true);
 		register(new ItemsWinningTitleCategory(ItemsWinningTitleCategory.RecordType.MOST), true);
-		// Rankings - Consecutive, times, youngest, oldest, time span, points diff
-		// Rivalries
-		// Youngest/Oldest/Bagels/Years Span
+		register(new HeadToHeadCategory(true), true);
 	}
 }

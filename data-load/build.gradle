@@ -27,7 +27,7 @@ task quickDeployToOpenShift << {
 	def destPath = "app-root/data/${dataLoad}/lib"
 	ssh.run {
 		session(remotes.openShift) {
-			put "${srcPath}/${dataLoadJar}", destPath
+			put from: "${srcPath}/${dataLoadJar}", into: destPath
 		}
 	}
 }
@@ -40,7 +40,7 @@ task fullDeployToOpenShift << {
 	def destPath = 'app-root/data'
 	ssh.run {
 		session(remotes.openShift) {
-			put "${srcPath}/${dataLoadDist}", destPath
+			put from: "${srcPath}/${dataLoadDist}", into: destPath
 			execute "rm -rf ${destPath}/${dataLoad}"
 			execute "cd ${destPath}; tar -xvf ${dataLoadDist}"
 			execute "rm ${destPath}/${dataLoadDist}"

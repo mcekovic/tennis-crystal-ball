@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model.records;
 
+import org.strangeforest.tcb.stats.model.records.rows.*;
+
 public enum RecordRowFactory {
 
 	INTEGER {
@@ -80,6 +82,16 @@ public enum RecordRowFactory {
 	LOSING_PCT {
 		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
 			return new LosingPctRecordRow(rank, playerId, name, countryId, active);
+		}
+	},
+	WINNING_W_DRAW_PCT {
+		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
+			return new WinningWDrawPctRecordRow(rank, playerId, name, countryId, active);
+		}
+	},
+	LOSING_W_DRAW_PCT {
+		@Override public RecordRow createRow(int rank, int playerId, String name, String countryId, Boolean active) {
+			return new LosingWDrawPctRecordRow(rank, playerId, name, countryId, active);
 		}
 	},
 	SEASON_WINNING_PCT {
