@@ -129,11 +129,11 @@ public class RivalriesService {
 	private static final String GREATEST_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id, loser_id, count(match_id) matches, 0 won\n" +
-		"  FROM match_for_rivalry_v m%1$s\n" +
+		"  FROM match_for_rivalry_v m%1$s%2$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
 		"  SELECT winner_id, loser_id, 0, count(match_id)\n" +
-		"  FROM match_for_stats_v m%1$s\n" +
+		"  FROM match_for_stats_v m%1$s%2$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"), rivalries_2 AS (\n" +
 		"  SELECT winner_id player_id_1, loser_id player_id_2, sum(matches) matches, sum(won) won, 0 lost\n" +
@@ -156,12 +156,20 @@ public class RivalriesService {
 		")\n" +
 		"SELECT rank() OVER (ORDER BY matches DESC, (won + lost) DESC, rivalry_goat_points DESC) AS rivalry_rank, r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.active active_1, p1.goat_points goat_points_1,\n" +
 		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.active active_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
-		"%2$s\n" +
+		"%3$s\n" +
 		"FROM rivalries_3 r\n" +
 		"INNER JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
-		"INNER JOIN player_v p2 ON p2.player_id = r.player_id_2%3$s\n" +
+		"INNER JOIN player_v p2 ON p2.player_id = r.player_id_2%4$s\n" +
 		"WHERE rank = 1\n" +
-		"ORDER BY %4$s OFFSET :offset";
+		"ORDER BY %5$s OFFSET :offset";
+
+	private static final String BEST_RANK_JOIN = //language=SQL
+		"\n" +
+		"  INNER JOIN player_best_rank rw ON rw.player_id = winner_id\n" +
+		"  INNER JOIN player_best_rank rl ON rl.player_id = loser_id";
+
+	private static final String BEST_RANK_CRITERIA = //language=SQL
+		" AND rw.best_rank <= :bestRank AND rl.best_rank <= :bestRank";
 
 	private static final String LAST_MATCH_LATERAL = //language=SQL
 		"  lm.match_id, lm.season, lm.level, lm.surface, lm.indoor, lm.tournament_event_id, lm.tournament, lm.round, lm.winner_id, lm.loser_id, lm.score";
@@ -241,22 +249,29 @@ public class RivalriesService {
 	}
 
 	@Cacheable("GreatestRivalries.Table")
-	public BootgridTable<GreatestRivalry> getGreatestRivalriesTable(RivalryFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<GreatestRivalry> getGreatestRivalriesTable(RivalryFilter filter, Integer bestRank, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<GreatestRivalry> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		String criteria = filter.getCriteria();
+		String lastMatchCriteria = criteria;
+		MapSqlParameterSource params = filter.getParams()
+			.addValue("minMatches", getGreatestRivalriesMinMatches(filter))
+			.addValue("offset", offset);
+		if (bestRank != null) {
+			criteria += BEST_RANK_CRITERIA;
+			params.addValue("bestRank", bestRank);
+		}
 		boolean lateralSupported = lateralSupported();
 		jdbcTemplate.query(
 			format(GREATEST_RIVALRIES_QUERY,
+				bestRank != null ? BEST_RANK_JOIN : "",
 				where(criteria, 2),
-				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),
-				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", criteria) : "",
+				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", lastMatchCriteria),
+				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", lastMatchCriteria) : "",
 				orderBy
 			),
-			filter.getParams()
-				.addValue("minMatches", getGreatestRivalriesMinMatches(filter))
-				.addValue("offset", offset),
+			params,
 			rs -> {
 				if (rivalries.incrementAndGet() <= pageSize) {
 					int rank = rs.getInt("rivalry_rank");

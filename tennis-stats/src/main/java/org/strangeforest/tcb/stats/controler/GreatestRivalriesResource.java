@@ -31,6 +31,7 @@ public class GreatestRivalriesResource {
 		@RequestParam(value = "level", required = false) String level,
 		@RequestParam(value = "surface", required = false) String surface,
 		@RequestParam(value = "round", required = false) String round,
+		@RequestParam(value = "bestRank", required = false) Integer bestRank,
 		@RequestParam(value = "current") int current,
 		@RequestParam(value = "rowCount") int rowCount,
 		@RequestParam Map<String, String> requestParams
@@ -38,7 +39,7 @@ public class GreatestRivalriesResource {
 		RivalryFilter filter = new RivalryFilter(Range.all(), level, surface, round);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
-		return rivalriesService.getGreatestRivalriesTable(filter, orderBy, pageSize, current);
+		return rivalriesService.getGreatestRivalriesTable(filter, bestRank, orderBy, pageSize, current);
 	}
 
 	@RequestMapping("/greatestRivalriesMinMatches")

@@ -38,6 +38,9 @@
 					var round = $("#round").val();
 					if (round)
 						request.round = round;
+					var bestRank = $("#bestRank").val();
+					if (bestRank)
+						request.bestRank = bestRank;
 					return request;
 				},
 				sorting: false,
@@ -79,7 +82,7 @@
 					$span.addClass("bg-won-" + $span.data("won-pct"));
 				});
 			});
-			$("#greatestRivalriesTable-header").find("div.search").before($("#levelDiv").remove()).before($("#surfaceDiv").remove()).before($("#roundDiv").remove()).remove();
+			$("#greatestRivalriesTable-header").find("div.search").before($("#levelDiv").remove()).before($("#surfaceDiv").remove()).before($("#roundDiv").remove()).before($("#bestRankDiv").remove()).remove();
 			$rivalriesTable.find("th[data-column-id='rivalry'] > a > span.text").html("<span title='Player with more GOAT points is on the left side'>Rivalry</span>");
 			filterChanged();
 			$("[data-toggle='tooltip']").tooltip();
@@ -126,6 +129,17 @@
 		<select id="round" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by round">
 			<option value="">All rounds</option>
 			<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+		</select>
+	</div>
+	<div id="bestRankDiv" class="btn-group" style="margin-right: 20px">
+		<select id="bestRank" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by player best rank">
+			<option value="">All players</option>
+			<option value="1">Between once No. 1</option>
+			<option value="2">Between once Top 2</option>
+			<option value="3">Between once Top 3</option>
+			<option value="5">Between once Top 5</option>
+			<option value="10">Between once Top 10</option>
+			<option value="20">Between once Top 20</option>
 		</select>
 	</div>
 	<table id="greatestRivalriesTable" class="table table-condensed table-hover table-striped">
