@@ -468,16 +468,19 @@ WITH rivalry AS (
 		sum(CASE WHEN r.p_matches > r.o_matches THEN 1 ELSE 0 END) AS h2h_won,
 		sum(CASE WHEN r.p_matches = r.o_matches THEN 1 ELSE 0 END) AS h2h_draw,
 		sum(CASE WHEN r.p_matches < r.o_matches THEN 1 ELSE 0 END) AS h2h_lost,
-		CASE WHEN count(r.opponent_id) >= 5 AND sum((1 + sign(r.p_matches - r.o_matches))) > 0 THEN
-			10 * ln(sum((1 + sign(r.p_matches - r.o_matches)) * (1 + r.p_matches / 10.0) * f.rank_factor)
-			      / sum((1 + sign(r.o_matches - r.p_matches)) * (1 + r.o_matches / 10.0) * f.rank_factor))
-		ELSE 0 END AS goat_points
+		count(r.opponent_id) AS h2h_count,
+		sum((1 + sign(r.p_matches - r.o_matches)) * (1 + r.p_matches / 10.0) * f.rank_factor) AS h2h_won_factor,
+		sum((1 + sign(r.o_matches - r.p_matches)) * (1 + r.o_matches / 10.0) * f.rank_factor) AS h2h_lost_factor
 	FROM rivalry r
-	INNER JOIN player_best_rank br ON br.player_id = r.opponent_id
-	INNER JOIN h2h_rank_factor f ON br.best_rank BETWEEN f.rank_from AND f.rank_to
+	LEFT JOIN player_best_rank br ON br.player_id = r.opponent_id
+	LEFT JOIN h2h_rank_factor f ON br.best_rank BETWEEN f.rank_from AND f.rank_to
 	GROUP BY r.player_id
 )
-SELECT player_id, h2h_won, h2h_draw, h2h_lost, CASE WHEN goat_points > 0 THEN round(goat_points)::INTEGER ELSE 0 END AS goat_points
+SELECT player_id, h2h_won, h2h_draw, h2h_lost, CASE WHEN h2h_count >= 10 THEN CASE
+	WHEN h2h_lost_factor = 0 THEN 100
+	WHEN h2h_won_factor = 0 THEN 0
+	ELSE round(10 * ln(h2h_won_factor / h2h_lost_factor))::INTEGER
+END ELSE 0 END AS goat_points
 FROM h2h;
 
 CREATE MATERIALIZED VIEW player_h2h AS SELECT * FROM player_h2h_v;

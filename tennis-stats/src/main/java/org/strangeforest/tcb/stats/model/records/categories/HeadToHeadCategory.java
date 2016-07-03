@@ -3,11 +3,25 @@ package org.strangeforest.tcb.stats.model.records.categories;
 import org.strangeforest.tcb.stats.model.records.*;
 
 import static java.util.Arrays.*;
+import static org.strangeforest.tcb.stats.model.records.RecordRowFactory.*;
+import static org.strangeforest.tcb.stats.model.records.categories.HeadToHeadCategory.MostLeast.*;
 import static org.strangeforest.tcb.stats.model.records.categories.HeadToHeadCategory.PctRecordType.*;
 import static org.strangeforest.tcb.stats.model.records.categories.HeadToHeadCategory.RecordType.*;
-import static org.strangeforest.tcb.stats.model.records.RecordRowFactory.*;
 
 public class HeadToHeadCategory extends RecordCategory {
+
+	enum MostLeast {
+		MOST("Most", "r.value DESC"),
+		LEAST("Least", "r.value");
+
+		final String name;
+		final String order;
+
+		MostLeast(String name, String order) {
+			this.name = name;
+			this.order = order;
+		}
+	}
 
 	enum RecordType {
 		PLAYED("Played", HTH_TOTAL),
@@ -55,27 +69,29 @@ public class HeadToHeadCategory extends RecordCategory {
 	private static final RecordColumn LOST_COLUMN = new RecordColumn("lost", "numeric", null, H2H_SMALL_WIDTH, "right", "Lost");
 
 	public HeadToHeadCategory(boolean infamous) {
-		super("Head-to-Head (minimum 3 matches in H2H series, minimum 5 H2H series)");
+		super("Head-to-Head (minimum 3 matches in H2H series, minimum 10 H2H series)");
 		if (!infamous) {
-			register(mostH2HSeries(PLAYED));
-			register(mostH2HSeries(WON));
-			register(mostH2HSeries(DRAW));
+			register(mostH2HSeries(MOST, PLAYED));
+			register(mostH2HSeries(MOST, WON));
+			register(mostH2HSeries(LEAST, LOST));
+			register(mostH2HSeries(MOST, DRAW));
 			register(greatestH2HSeriesPct(WINNING));
 		}
 		else {
-			register(mostH2HSeries(LOST));
+			register(mostH2HSeries(MOST, LOST));
+			register(mostH2HSeries(LEAST, WON));
 			register(greatestH2HSeriesPct(LOSING));
 		}
 	}
 
-	private static Record mostH2HSeries(RecordType type) {
+	private static Record mostH2HSeries(MostLeast mostLeast, RecordType type) {
 		return new Record(
-			"H2HSeries" + type.name, "Most Head-to-Head Series " + type.name,
+			mostLeast.name + "MostH2HSeries" + type.name, mostLeast.name + " Head-to-Head Series " + type.name,
 			/* language=SQL */
 			"SELECT player_id, " + type.column + " AS value\n" +
 			"FROM player_h2h\n" +
-			"WHERE " + HTH_TOTAL + " >= 5 AND " + type.column + " > 0",
-			"r.value", "r.value DESC", "r.value DESC", RecordRowFactory.INTEGER,
+			"WHERE " + HTH_TOTAL + " >= 10",
+			"r.value", mostLeast.order, mostLeast.order, RecordRowFactory.INTEGER,
 			asList(new RecordColumn("value", "numeric", null, H2H_WIDTH, "right", "H2H Series " + type.name))
 		);
 	}
@@ -86,7 +102,7 @@ public class HeadToHeadCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, " + type.expression + " AS pct, h2h_won AS won, h2h_draw AS draw, h2h_lost AS lost\n" +
 			"FROM player_h2h\n" +
-			"WHERE " + HTH_TOTAL + " >= 5",
+			"WHERE " + HTH_TOTAL + " >= 10",
 			"r.pct, r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC", type.rowFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", "H2H " + type.name + " Pct."),
