@@ -703,12 +703,16 @@ INNER JOIN best_elo_rating_goat_points USING (best_elo_rating_rank);
 
 CREATE OR REPLACE VIEW no1_player_ranking_v AS
 WITH no1_player_ranking AS (
-	SELECT player_id, rank_date, date_part('year', rank_date)::INTEGER AS season, rank, weeks(rank_date, lead(rank_date) OVER (PARTITION BY player_id ORDER BY rank_date)) AS weeks
+	SELECT player_id, rank_date, date_part('year', rank_date)::INTEGER AS season, rank,
+		weeks(rank_date, lead(rank_date) OVER p) AS weeks,
+		season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks,
+		next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks
 	FROM player_ranking
 	INNER JOIN player_best_rank USING (player_id)
 	WHERE best_rank = 1
+	WINDOW p AS (PARTITION BY player_id ORDER BY rank_date)
 )
-SELECT player_id, rank_date, season, weeks AS weeks_at_no1
+SELECT player_id, rank_date, season, weeks AS weeks_at_no1, season_weeks AS season_weeks_at_no1, next_season_weeks AS next_season_weeks_at_no1
 FROM no1_player_ranking
 WHERE rank = 1;
 
@@ -716,9 +720,13 @@ WHERE rank = 1;
 -- player_season_weeks_at_no1
 
 CREATE OR REPLACE VIEW player_season_weeks_at_no1_v AS
-SELECT player_id, season, round(sum(weeks_at_no1)) weeks_at_no1
-FROM no1_player_ranking_v
-GROUP BY player_id, season;
+WITH weeks_at_no1 AS (
+	SELECT player_id, season, sum(season_weeks_at_no1) AS season_weeks_at_no1, sum(next_season_weeks_at_no1) AS next_season_weeks_at_no1
+	FROM no1_player_ranking_v
+	GROUP BY player_id, season
+)
+SELECT player_id, season, round(season_weeks_at_no1 + coalesce(lag(next_season_weeks_at_no1) OVER (PARTITION BY player_id ORDER BY season), 0))::INTEGER AS weeks_at_no1
+FROM weeks_at_no1;
 
 CREATE MATERIALIZED VIEW player_season_weeks_at_no1 AS SELECT * FROM player_season_weeks_at_no1_v;
 
@@ -740,7 +748,7 @@ CREATE UNIQUE INDEX ON player_weeks_at_no1 (player_id);
 -- player_season_weeks_at_no1_goat_points_v
 
 CREATE OR REPLACE VIEW player_season_weeks_at_no1_goat_points_v AS
-SELECT player_id, season, round(weeks_at_no1 / weeks_for_point) AS goat_points, weeks_at_no1 / weeks_for_point AS unrounded_goat_points
+SELECT player_id, season, round(weeks_at_no1::REAL / weeks_for_point)::INTEGER AS goat_points, weeks_at_no1::REAL / weeks_for_point AS unrounded_goat_points
 FROM player_season_weeks_at_no1
 INNER JOIN weeks_at_no1_goat_points ON TRUE;
 
@@ -748,7 +756,7 @@ INNER JOIN weeks_at_no1_goat_points ON TRUE;
 -- player_weeks_at_no1_goat_points_v
 
 CREATE OR REPLACE VIEW player_weeks_at_no1_goat_points_v AS
-SELECT player_id, round(weeks_at_no1 / weeks_for_point) AS goat_points, weeks_at_no1 / weeks_for_point AS unrounded_goat_points
+SELECT player_id, round(weeks_at_no1::REAL / weeks_for_point)::INTEGER AS goat_points, weeks_at_no1::REAL / weeks_for_point AS unrounded_goat_points
 FROM player_weeks_at_no1
 INNER JOIN weeks_at_no1_goat_points ON TRUE;
 
@@ -756,7 +764,7 @@ INNER JOIN weeks_at_no1_goat_points ON TRUE;
 -- player_big_wins_v
 
 CREATE OR REPLACE VIEW player_big_wins_v AS
-SELECT m.winner_id AS player_id, m.season, m.date, (mf.match_factor * (wrf.rank_factor + lrf.rank_factor) / 2)::REAL / 100 goat_points
+SELECT m.winner_id AS player_id, m.season, m.date, (mf.match_factor * (wrf.rank_factor + lrf.rank_factor) / 2.0) / 100 AS goat_points
 FROM match_for_stats_v m
 INNER JOIN big_win_match_factor mf ON mf.level = m.level AND mf.round = m.round
 INNER JOIN big_win_rank_factor wrf ON m.winner_rank BETWEEN wrf.rank_from AND wrf.rank_to
@@ -766,7 +774,7 @@ INNER JOIN big_win_rank_factor lrf ON m.loser_rank BETWEEN lrf.rank_from AND lrf
 -- player_season_big_wins_goat_points_v
 
 CREATE OR REPLACE VIEW player_season_big_wins_goat_points_v AS
-SELECT player_id, season, round(sum(goat_points)) goat_points, sum(goat_points) unrounded_goat_points
+SELECT player_id, season, round(sum(goat_points))::INTEGER AS goat_points, sum(goat_points) AS unrounded_goat_points
 FROM player_big_wins_v
 GROUP BY player_id, season;
 
@@ -774,7 +782,7 @@ GROUP BY player_id, season;
 -- player_big_wins_goat_points_v
 
 CREATE OR REPLACE VIEW player_big_wins_goat_points_v AS
-SELECT player_id, round(sum(goat_points)) goat_points, sum(goat_points) unrounded_goat_points
+SELECT player_id, round(sum(goat_points))::INTEGER AS goat_points, sum(goat_points) AS unrounded_goat_points
 FROM player_big_wins_v
 GROUP BY player_id;
 
@@ -845,15 +853,15 @@ WITH rivalries AS (
   FROM rivalries_3 r
   WHERE rank = 1
 ), goat_points AS (
-  SELECT r.player_id_1 player_id, r.won/(r.won + r.lost)*g.goat_points goat_points
+  SELECT r.player_id_1 player_id, r.won::REAL / (r.won + r.lost) * g.goat_points AS goat_points
   FROM rivalries_4 r
   INNER JOIN greatest_rivalries_goat_points g USING (rivalry_rank)
   UNION ALL
-  SELECT r.player_id_2, r.lost/(r.won + r.lost)*g.goat_points
+  SELECT r.player_id_2, r.lost::REAL / (r.won + r.lost) * g.goat_points
   FROM rivalries_4 r
   INNER JOIN greatest_rivalries_goat_points g USING (rivalry_rank)
 )
-SELECT player_id, round(sum(goat_points)) goat_points, sum(goat_points) unrounded_goat_points
+SELECT player_id, round(sum(goat_points))::INTEGER AS goat_points, sum(goat_points) AS unrounded_goat_points
 FROM goat_points
 GROUP BY player_id;
 
@@ -862,126 +870,126 @@ GROUP BY player_id;
 
 CREATE OR REPLACE VIEW player_performance_goat_points_v AS
 WITH matches_performers AS (
-	SELECT player_id, matches_won::real/(matches_won + matches_lost) AS won_lost_pct
+	SELECT player_id, matches_won::REAL / (matches_won + matches_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE matches_won + matches_lost >= performance_min_entries('matches')
 ), matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM matches_performers
 ), grand_slam_matches_performers AS (
-	SELECT player_id, grand_slam_matches_won::real/(grand_slam_matches_won + grand_slam_matches_lost) AS won_lost_pct
+	SELECT player_id, grand_slam_matches_won::REAL / (grand_slam_matches_won + grand_slam_matches_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE grand_slam_matches_won + grand_slam_matches_lost >= performance_min_entries('grandSlamMatches')
 ), grand_slam_matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM grand_slam_matches_performers
 ), tour_finals_matches_performers AS (
-	SELECT player_id, tour_finals_matches_won::real/(tour_finals_matches_won + tour_finals_matches_lost) AS won_lost_pct
+	SELECT player_id, tour_finals_matches_won::REAL / (tour_finals_matches_won + tour_finals_matches_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE tour_finals_matches_won + tour_finals_matches_lost >= performance_min_entries('tourFinalsMatches')
 ), tour_finals_matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM tour_finals_matches_performers
 ), masters_matches_performers AS (
-	SELECT player_id, masters_matches_won::real/(masters_matches_won + masters_matches_lost) AS won_lost_pct
+	SELECT player_id, masters_matches_won::REAL / (masters_matches_won + masters_matches_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE masters_matches_won + masters_matches_lost >= performance_min_entries('mastersMatches')
 ), masters_matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM masters_matches_performers
 ), olympics_matches_performers AS (
-	SELECT player_id, olympics_matches_won::real/(olympics_matches_won + olympics_matches_lost) AS won_lost_pct
+	SELECT player_id, olympics_matches_won::REAL / (olympics_matches_won + olympics_matches_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE olympics_matches_won + olympics_matches_lost >= performance_min_entries('olympicsMatches')
 ), olympics_matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM olympics_matches_performers
 ), hard_matches_performers AS (
-	SELECT player_id, hard_matches_won::real/(hard_matches_won + hard_matches_lost) AS won_lost_pct
+	SELECT player_id, hard_matches_won::REAL / (hard_matches_won + hard_matches_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE hard_matches_won + hard_matches_lost >= performance_min_entries('hardMatches')
 ), hard_matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM hard_matches_performers
 ), clay_matches_performers AS (
-	SELECT player_id, clay_matches_won::real/(clay_matches_won + clay_matches_lost) AS won_lost_pct
+	SELECT player_id, clay_matches_won::REAL / (clay_matches_won + clay_matches_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE clay_matches_won + clay_matches_lost >= performance_min_entries('clayMatches')
 ), clay_matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM clay_matches_performers
 ), grass_matches_performers AS (
-	SELECT player_id, grass_matches_won::real/(grass_matches_won + grass_matches_lost) AS won_lost_pct
+	SELECT player_id, grass_matches_won::REAL / (grass_matches_won + grass_matches_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE grass_matches_won + grass_matches_lost >= performance_min_entries('grassMatches')
 ), grass_matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM grass_matches_performers
 ), carpet_matches_performers AS (
-	SELECT player_id, carpet_matches_won::real/(carpet_matches_won + carpet_matches_lost) AS won_lost_pct
+	SELECT player_id, carpet_matches_won::REAL / (carpet_matches_won + carpet_matches_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE carpet_matches_won + carpet_matches_lost >= performance_min_entries('carpetMatches')
 ), carpet_matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM carpet_matches_performers
 ), deciding_sets_performers AS (
-	SELECT player_id, deciding_sets_won::real/(deciding_sets_won + deciding_sets_lost) AS won_lost_pct
+	SELECT player_id, deciding_sets_won::REAL / (deciding_sets_won + deciding_sets_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE deciding_sets_won + deciding_sets_lost >= performance_min_entries('decidingSets')
 ), deciding_sets_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM deciding_sets_performers
 ), fifth_sets_performers AS (
-	SELECT player_id, fifth_sets_won::real/(fifth_sets_won + fifth_sets_lost) AS won_lost_pct
+	SELECT player_id, fifth_sets_won::REAL / (fifth_sets_won + fifth_sets_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE fifth_sets_won + fifth_sets_lost >= performance_min_entries('fifthSets')
 ), fifth_sets_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM fifth_sets_performers
 ), finals_performers AS (
-	SELECT player_id, finals_won::real/(finals_won + finals_lost) AS won_lost_pct
+	SELECT player_id, finals_won::REAL / (finals_won + finals_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE finals_won + finals_lost >= performance_min_entries('finals')
 ), finals_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM finals_performers
 ), vs_no1_performers AS (
-	SELECT player_id, vs_no1_won::real/(vs_no1_won + vs_no1_lost) AS won_lost_pct
+	SELECT player_id, vs_no1_won::REAL / (vs_no1_won + vs_no1_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE vs_no1_won + vs_no1_lost >= performance_min_entries('vsNo1')
 ), vs_no1_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM vs_no1_performers
 ), vs_top5_performers AS (
-	SELECT player_id, vs_top5_won::real/(vs_top5_won + vs_top5_lost) AS won_lost_pct
+	SELECT player_id, vs_top5_won::REAL / (vs_top5_won + vs_top5_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE vs_top5_won + vs_top5_lost >= performance_min_entries('vsTop5')
 ), vs_top5_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM vs_top5_performers
 ), vs_top10_performers AS (
-	SELECT player_id, vs_top10_won::real/(vs_top10_won + vs_top10_lost) AS won_lost_pct
+	SELECT player_id, vs_top10_won::REAL / (vs_top10_won + vs_top10_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE vs_top10_won + vs_top10_lost >= performance_min_entries('vsTop10')
 ), vs_top10_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM vs_top10_performers
 ), after_winning_first_set_performers AS (
-	SELECT player_id, after_winning_first_set_won::real/(after_winning_first_set_won + after_winning_first_set_lost) AS won_lost_pct
+	SELECT player_id, after_winning_first_set_won::REAL / (after_winning_first_set_won + after_winning_first_set_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE after_winning_first_set_won + after_winning_first_set_lost >= performance_min_entries('afterWinningFirstSet')
 ), after_winning_first_set_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM after_winning_first_set_performers
 ), after_losing_first_set_performers AS (
-	SELECT player_id, after_losing_first_set_won::real/(after_losing_first_set_won + after_losing_first_set_lost) AS won_lost_pct
+	SELECT player_id, after_losing_first_set_won::REAL / (after_losing_first_set_won + after_losing_first_set_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE after_losing_first_set_won + after_losing_first_set_lost >= performance_min_entries('afterLosingFirstSet')
 ), after_losing_first_set_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM after_losing_first_set_performers
 ), tie_breaks_performers AS (
-	SELECT player_id, tie_breaks_won::real/(tie_breaks_won + tie_breaks_lost) AS won_lost_pct
+	SELECT player_id, tie_breaks_won::REAL / (tie_breaks_won + tie_breaks_lost) AS won_lost_pct
 	FROM player_performance
 	WHERE tie_breaks_won + tie_breaks_lost >= performance_min_entries('tieBreaks')
 ), tie_breaks_performers_ranked AS (
@@ -1070,56 +1078,56 @@ GROUP BY player_id;
 CREATE OR REPLACE VIEW player_statistics_goat_points_v AS
 -- Serve
 WITH acePct_leaders AS (
-	SELECT player_id, p_ace::real/p_sv_pt AS value
+	SELECT player_id, p_ace::REAL / p_sv_pt AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('acePct')
 ), acePct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM acePct_leaders
 ), doubleFaultPct_leaders AS (
-	SELECT player_id, p_df::real/p_sv_pt AS value
+	SELECT player_id, p_df::REAL / p_sv_pt AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('doubleFaultPct')
 ), doubleFaultPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value ASC) AS rank, player_id
 	FROM doubleFaultPct_leaders
 ), firstServePct_leaders AS (
-	SELECT player_id, p_1st_in::real/p_sv_pt AS value
+	SELECT player_id, p_1st_in::REAL / p_sv_pt AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('firstServePct')
 ), firstServePct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM firstServePct_leaders
 ), firstServeWonPct_leaders AS (
-	SELECT player_id, p_1st_won::real/p_1st_in AS value
+	SELECT player_id, p_1st_won::REAL / p_1st_in AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('firstServeWonPct')
 ), firstServeWonPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM firstServeWonPct_leaders
 ), secondServeWonPct_leaders AS (
-	SELECT player_id, p_2nd_won::real/(p_sv_pt-p_1st_in) AS value
+	SELECT player_id, p_2nd_won::REAL / (p_sv_pt - p_1st_in) AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('secondServeWonPct')
 ), secondServeWonPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM secondServeWonPct_leaders
 ), breakPointsSavedPct_leaders AS (
-	SELECT player_id, CASE WHEN p_bp_fc > 0 THEN p_bp_sv::real/p_bp_fc ELSE NULL END AS value
+	SELECT player_id, CASE WHEN p_bp_fc > 0 THEN p_bp_sv::REAL / p_bp_fc ELSE NULL END AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('breakPointsSavedPct')
 ), breakPointsSavedPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM breakPointsSavedPct_leaders
 ), servicePointsWonPct_leaders AS (
-	SELECT player_id, (p_1st_won+p_2nd_won)::real/p_sv_pt AS value
+	SELECT player_id, (p_1st_won + p_2nd_won)::REAL / p_sv_pt AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('servicePointsWonPct')
 ), servicePointsWonPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM servicePointsWonPct_leaders
 ), serviceGamesWonPct_leaders AS (
-	SELECT player_id, (p_sv_gms-(p_bp_fc-p_bp_sv))::real/p_sv_gms AS value
+	SELECT player_id, (p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / p_sv_gms AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('serviceGamesWonPct')
 ), serviceGamesWonPct_leaders_ranked AS (
@@ -1127,35 +1135,35 @@ WITH acePct_leaders AS (
 	FROM serviceGamesWonPct_leaders
 -- Return
 ), firstServeReturnWonPct_leaders AS (
-	SELECT player_id, (o_1st_in-o_1st_won)::real/o_1st_in AS value
+	SELECT player_id, (o_1st_in - o_1st_won)::REAL / o_1st_in AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('firstServeReturnWonPct')
 ), firstServeReturnWonPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM firstServeReturnWonPct_leaders
 ), secondServeReturnWonPct_leaders AS (
-	SELECT player_id, (o_sv_pt-o_1st_in-o_2nd_won)::real/(o_sv_pt-o_1st_in) AS value
+	SELECT player_id, (o_sv_pt - o_1st_in - o_2nd_won)::REAL / (o_sv_pt - o_1st_in) AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('secondServeReturnWonPct')
 ), secondServeReturnWonPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM secondServeReturnWonPct_leaders
 ), breakPointsPct_leaders AS (
-	SELECT player_id, CASE WHEN o_bp_fc > 0 THEN (o_bp_fc-o_bp_sv)::real/o_bp_fc ELSE NULL END AS value
+	SELECT player_id, CASE WHEN o_bp_fc > 0 THEN (o_bp_fc - o_bp_sv)::REAL / o_bp_fc ELSE NULL END AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('breakPointsPct')
 ), breakPointsPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM breakPointsPct_leaders
 ), returnPointsWonPct_leaders AS (
-	SELECT player_id, (o_sv_pt-o_1st_won-o_2nd_won)::real/o_sv_pt AS value
+	SELECT player_id, (o_sv_pt - o_1st_won - o_2nd_won)::REAL / o_sv_pt AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('returnPointsWonPct')
 ), returnPointsWonPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM returnPointsWonPct_leaders
 ), returnGamesWonPct_leaders AS (
-	SELECT player_id, (o_bp_fc-o_bp_sv)::real/o_sv_gms AS value
+	SELECT player_id, (o_bp_fc - o_bp_sv)::REAL / o_sv_gms AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('returnGamesWonPct')
 ), returnGamesWonPct_leaders_ranked AS (
@@ -1163,49 +1171,49 @@ WITH acePct_leaders AS (
 	FROM returnGamesWonPct_leaders
 -- Total
 ), pointsDominanceRatio_leaders AS (
-	SELECT player_id, ((o_sv_pt-o_1st_won-o_2nd_won)::real/o_sv_pt)/((p_sv_pt-p_1st_won-p_2nd_won)::real/p_sv_pt) AS value
+	SELECT player_id, ((o_sv_pt - o_1st_won - o_2nd_won)::REAL / o_sv_pt) / ((p_sv_pt - p_1st_won - p_2nd_won)::REAL / p_sv_pt) AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('pointsDominanceRatio')
 ), pointsDominanceRatio_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM pointsDominanceRatio_leaders
 ), gamesDominanceRatio_leaders AS (
-	SELECT player_id, ((o_bp_fc-o_bp_sv)::real/o_sv_gms)/((p_bp_fc-p_bp_sv)::real/p_sv_gms) AS value
+	SELECT player_id, ((o_bp_fc - o_bp_sv)::REAL / o_sv_gms) / ((p_bp_fc - p_bp_sv)::REAL / p_sv_gms) AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('gamesDominanceRatio')
 ), gamesDominanceRatio_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM gamesDominanceRatio_leaders
 ), breakPointsRatio_leaders AS (
-	SELECT player_id, CASE WHEN p_bp_fc > 0 AND o_bp_fc > 0 THEN ((o_bp_fc-o_bp_sv)::real/o_bp_fc)/((p_bp_fc-p_bp_sv)::real/p_bp_fc) ELSE NULL END AS value
+	SELECT player_id, CASE WHEN p_bp_fc > 0 AND o_bp_fc > 0 THEN ((o_bp_fc - o_bp_sv)::REAL / o_bp_fc) / ((p_bp_fc - p_bp_sv)::REAL / p_bp_fc) ELSE NULL END AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('breakPointsRatio')
 ), breakPointsRatio_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM breakPointsRatio_leaders
 ), overPerformingRatio_leaders AS (
-	SELECT player_id, (p_matches::real/(p_matches+o_matches))/((p_1st_won+p_2nd_won+o_sv_pt-o_1st_won-o_2nd_won)::real/(p_sv_pt+o_sv_pt)) AS value
+	SELECT player_id, (p_matches::REAL / (p_matches + o_matches)) / ((p_1st_won + p_2nd_won + o_sv_pt - o_1st_won - o_2nd_won)::REAL / (p_sv_pt + o_sv_pt)) AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('overPerformingRatio')
 ), overPerformingRatio_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM overPerformingRatio_leaders
 ), totalPointsWonPct_leaders AS (
-	SELECT player_id, (p_1st_won+p_2nd_won+o_sv_pt-o_1st_won-o_2nd_won)::real/(p_sv_pt+o_sv_pt) AS value
+	SELECT player_id, (p_1st_won + p_2nd_won + o_sv_pt - o_1st_won - o_2nd_won)::REAL / (p_sv_pt + o_sv_pt) AS value
 	FROM player_stats
 	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('totalPointsWonPct')
 ), totalPointsWonPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM totalPointsWonPct_leaders
 ), totalGamesWonPct_leaders AS (
-	SELECT player_id, p_games::real/(p_games+o_games) AS value
+	SELECT player_id, p_games::REAL / (p_games + o_games) AS value
 	FROM player_stats
 	WHERE p_matches + o_matches >= statistics_min_entries('totalGamesWonPct')
 ), totalGamesWonPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value DESC) AS rank, player_id
 	FROM totalGamesWonPct_leaders
 ), setsWonPct_leaders AS (
-	SELECT player_id, p_sets::real/(p_sets+o_sets) AS value
+	SELECT player_id, p_sets::REAL / (p_sets + o_sets) AS value
 	FROM player_stats
 	WHERE p_matches + o_matches >= statistics_min_entries('setsWonPct')
 ), setsWonPct_leaders_ranked AS (

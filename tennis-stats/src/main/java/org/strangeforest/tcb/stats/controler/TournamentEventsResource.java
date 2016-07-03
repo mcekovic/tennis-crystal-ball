@@ -25,7 +25,7 @@ public class TournamentEventsResource {
 		put("draw", "draw_type, draw_size");
 		put("playerCount", "player_count NULLS LAST");
 		put("participationPoints", "participation_points NULLS LAST");
-		put("participationPct", "participation_points::DECIMAL/max_participation_points NULLS LAST");
+		put("participationPct", "participation_points::REAL / max_participation_points NULLS LAST");
 	}};
 	private static final OrderBy[] DEFAULT_ORDER = new OrderBy[] {desc("date"), asc("level"), asc("name")};
 

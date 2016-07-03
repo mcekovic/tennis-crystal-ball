@@ -34,7 +34,7 @@ public class TopPerformersService {
 
 	private static final String TOP_PERFORMERS_QUERY = //language=SQL
 		"WITH top_performers AS (\n" +
-		"  SELECT player_id, %1$s_won::real/(%1$s_won + %1$s_lost) AS won_lost_pct, %1$s_won AS won, %1$s_lost AS lost, %1$s_won + %1$s_lost AS played\n" +
+		"  SELECT player_id, %1$s_won::REAL / (%1$s_won + %1$s_lost) AS won_lost_pct, %1$s_won AS won, %1$s_lost AS lost, %1$s_won + %1$s_lost AS played\n" +
 		"  FROM %2$s\n" +
 		"  WHERE %1$s_won + %1$s_lost >= :minEntries%3$s\n" +
 		"), top_performers_ranked AS (\n" +

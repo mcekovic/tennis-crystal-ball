@@ -34,7 +34,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		}
 
 		String expression(String prefix) {
-			return prefix + columnSuffix + "::real/(" + prefix + "_won + " + prefix + "_lost)";
+			return prefix + columnSuffix + "::REAL / (" + prefix + "_won + " + prefix + "_lost)";
 		}
 	}
 

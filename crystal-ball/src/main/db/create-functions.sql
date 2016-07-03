@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION weeks(
 ) RETURNS REAL AS $$
 BEGIN
 	IF p_to IS NOT NULL THEN
-		RETURN extract(epoch FROM age(p_to, p_from))/604800.0;
+		RETURN extract(epoch FROM age(p_to, p_from)) / 604800.0;
 	ELSE
 		RETURN 1;
 	END IF;
@@ -30,11 +30,45 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION season_end(
 	p_season INTEGER
 ) RETURNS DATE AS $$
+DECLARE
+	curr_date DATE = current_date;
 BEGIN
-	IF p_season = date_part('year', current_date)::INTEGER THEN
-		RETURN current_date;
+	IF p_season = date_part('year', curr_date)::INTEGER THEN
+		RETURN curr_date;
 	ELSE
 		RETURN (p_season::TEXT || '-12-31')::DATE;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- season_weeks
+
+CREATE OR REPLACE FUNCTION season_weeks(
+	p_from DATE,
+	p_to DATE
+) RETURNS REAL AS $$
+BEGIN
+	IF date_part('year', p_from) = date_part('year', p_to) THEN
+		RETURN weeks(p_from, p_to);
+	ELSE
+		RETURN weeks(p_from, date_trunc('year', p_to)::DATE);
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- next_season_weeks
+
+CREATE OR REPLACE FUNCTION next_season_weeks(
+	p_from DATE,
+	p_to DATE
+) RETURNS REAL AS $$
+BEGIN
+	IF date_part('year', p_from) = date_part('year', p_to) THEN
+		RETURN 0;
+	ELSE
+		RETURN weeks(date_trunc('year', p_to)::DATE, p_to);
 	END IF;
 END;
 $$ LANGUAGE plpgsql;

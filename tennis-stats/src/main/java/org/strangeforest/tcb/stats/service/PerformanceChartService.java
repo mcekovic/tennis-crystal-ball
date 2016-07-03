@@ -21,7 +21,7 @@ public class PerformanceChartService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_SEASON_PERFORMANCE_QUERY = //language=SQL
-		"SELECT %1$s, player_id, CASE WHEN %2$s_won + %2$s_lost > 0 THEN %2$s_won::real/(%2$s_won + %2$s_lost) ELSE NULL END AS won_lost_pct\n" +
+		"SELECT %1$s, player_id, CASE WHEN %2$s_won + %2$s_lost > 0 THEN %2$s_won::REAL / (%2$s_won + %2$s_lost) ELSE NULL END AS won_lost_pct\n" +
 		"FROM player_season_performance pf%3$s\n" +
 		"WHERE player_id IN (:playerIds)%4$s\n" +
 		"ORDER BY %5$s, player_id";

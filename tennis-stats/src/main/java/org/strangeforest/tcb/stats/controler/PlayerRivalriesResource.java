@@ -25,7 +25,7 @@ public class PlayerRivalriesResource {
 		put("matches", "matches");
 		put("won", "won");
 		put("lost", "lost");
-		put("wonPctStr", "CASE WHEN won + lost > 0 THEN won::real/(won + lost) ELSE 0 END");
+		put("wonPctStr", "CASE WHEN won + lost > 0 THEN won::REAL / (won + lost) ELSE 0 END");
 	}};
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("matches"), desc("won")};
 

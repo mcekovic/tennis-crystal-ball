@@ -1,6 +1,8 @@
 DROP FUNCTION weeks(DATE, DATE);
 DROP FUNCTION season_start(INTEGER);
 DROP FUNCTION season_end(INTEGER);
+DROP FUNCTION season_weeks(DATE, DATE);
+DROP FUNCTION next_season_weeks(DATE, DATE);
 DROP FUNCTION tournament_end(DATE, tournament_level, SMALLINT);
 DROP FUNCTION player_rank(INTEGER, DATE);
 DROP FUNCTION player_rank_points(INTEGER, DATE);

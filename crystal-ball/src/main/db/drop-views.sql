@@ -17,6 +17,9 @@ DROP VIEW player_greatest_rivalries_goat_points_v;
 DROP VIEW player_performance_goat_points_v;
 DROP VIEW player_statistics_goat_points_v;
 
+DROP MATERIALIZED VIEW player_h2h;
+DROP VIEW player_h2h_v;
+
 DROP MATERIALIZED VIEW player_weeks_at_no1;
 DROP VIEW player_weeks_at_no1_v;
 DROP MATERIALIZED VIEW player_season_weeks_at_no1;
@@ -56,8 +59,6 @@ DROP MATERIALIZED VIEW player_surface_stats;
 DROP VIEW player_surface_stats_v;
 DROP MATERIALIZED VIEW player_season_surface_stats;
 DROP VIEW player_season_surface_stats_v;
-DROP MATERIALIZED VIEW player_h2h;
-DROP VIEW player_h2h_v;
 
 DROP MATERIALIZED VIEW player_win_streak;
 DROP VIEW player_win_streak_v;

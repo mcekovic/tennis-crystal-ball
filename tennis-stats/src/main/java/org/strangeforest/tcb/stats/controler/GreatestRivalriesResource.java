@@ -22,7 +22,7 @@ public class GreatestRivalriesResource {
 		put("matches", "matches");
 		put("won", "won");
 		put("lost", "lost");
-		put("wonPctStr", "won::real/(won + lost)");
+		put("wonPctStr", "won::REAL / (won + lost)");
 	}};
 	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("rivalry_rank");
 
