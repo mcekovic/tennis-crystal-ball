@@ -6,8 +6,9 @@ import static java.util.Arrays.*;
 
 public class GOATPointsCategory extends RecordCategory {
 
-	private static final String POINTS_WIDTH = "150";
-	private static final String SEASON_WIDTH =  "60";
+	private static final String POINTS_WIDTH =  "150";
+	private static final String SEASON_WIDTH =   "60";
+	private static final String SEASONS_WIDTH = "150";
 
 	public GOATPointsCategory() {
 		super("GOAT Points");
@@ -23,6 +24,7 @@ public class GOATPointsCategory extends RecordCategory {
 		register(mostSeasonGOATPoints("Tournament", "Tournament", "tournament_goat_points"));
 		register(mostSeasonGOATPoints("Ranking", "Ranking", "ranking_goat_points"));
 		register(mostSeasonGOATPoints("BigWins", "Big Wins", "big_wins_goat_points"));
+		register(mostConsecutiveSeasonWithGOATPoints());
 	}
 
 	private static Record mostGOATPoints(String id, String name, String columnName) {
@@ -48,6 +50,30 @@ public class GOATPointsCategory extends RecordCategory {
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", suffix(name, " ") + "GOAT Points"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
+			)
+		);
+	}
+
+	private static Record mostConsecutiveSeasonWithGOATPoints() {
+		return new Record(
+         "ConsecutiveSeasonsWithGOATPoints", "Most Consecutive Seasons With at Least One GOAT Point",
+			/* language=SQL */
+			"WITH player_seasons AS (\n" +
+			"  SELECT player_id, season, season - row_number() OVER (PARTITION BY player_id ORDER BY season) AS grouping_season\n" +
+			"  FROM player_season_goat_points\n" +
+			"), player_consecutive_seasons AS (\n" +
+			"  SELECT player_id, season, grouping_season, dense_rank() OVER (PARTITION BY player_id, grouping_season ORDER BY season) AS consecutive_seasons\n" +
+			"  FROM player_seasons\n" +
+			")\n" +
+			"SELECT player_id, max(season) - max(consecutive_seasons) + 1 AS start_season, max(season) AS end_season, max(consecutive_seasons) AS value\n" +
+			"FROM player_consecutive_seasons\n" +
+			"GROUP BY player_id, grouping_season\n" +
+			"HAVING max(consecutive_seasons) > 1",
+			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season", RecordRowFactory.SEASON_RANGE_INTEGER,
+			asList(
+				new RecordColumn("value", "numeric", null, SEASONS_WIDTH, "right", "Seasons with GOAT Points"),
+				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
+				new RecordColumn("endSeason", "numeric", null, SEASON_WIDTH, "center", "End Season")
 			)
 		);
 	}
