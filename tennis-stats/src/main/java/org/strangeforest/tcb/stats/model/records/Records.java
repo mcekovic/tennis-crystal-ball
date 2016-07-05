@@ -55,8 +55,8 @@ public abstract class Records {
 		register(new FinalStreaksCategory(), false);
 		register(new SemiFinalStreaksCategory(), false);
 		register(new QuarterFinalStreaksCategory(), false);
-		register(new RankingATPCategory(), false);
-		register(new RankingEloCategory(), false);
+		register(new ATPRankingCategory(), false);
+		register(new EloRankingCategory(), false);
 		register(new YoungestOldestTournamentResultCategory(), false);
 		register(new LongestCareerResultSpanCategory(), false);
 		register(new HeadToHeadCategory(false), false);
@@ -67,6 +67,8 @@ public abstract class Records {
 		register(new GreatestMatchPctCategory(GreatestMatchPctCategory.RecordType.LOSING), true);
 		register(new GreatestTitlePctCategory(GreatestTitlePctCategory.RecordType.LOSING), true);
 		register(new ItemsWinningTitleCategory(ItemsWinningTitleCategory.RecordType.MOST), true);
+		register(new InfamousATPRankingCategory(), true);
+		register(new InfamousEloRankingCategory(), true);
 		register(new HeadToHeadCategory(true), true);
 	}
 }

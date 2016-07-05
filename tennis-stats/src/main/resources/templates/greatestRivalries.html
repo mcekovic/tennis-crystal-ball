@@ -46,7 +46,12 @@
 				sorting: false,
 				rowCount: [20, 50, -1],
 				formatters: {
-					"rivalry": rivalryFormatter,
+					"rivalry": function(column, row) {
+						var active = row.player1.active && row.player2.active;
+						row.player1.active = false;
+						row.player2.active = false;
+						return playerCountryFormatter(column, row.player1) + " - " + playerCountryFormatter(column, row.player2) + (active ? " <img src='/images/active.png' title='Active' width='12' height='12'/>" : "");
+					},
 					"h2h": function(column, row) {
 						var params = "";
 						var level = $("#level").val();

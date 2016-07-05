@@ -149,8 +149,8 @@ class EloRatings {
 			short bestOf = match.best_of
 			String outcome = match.outcome
 			Date date = match.end_date
-			def winnerRating = playerRatings.get(winnerId)
-			def loserRating = playerRatings.get(loserId)
+			def winnerRating = getRating(winnerId, date)
+			def loserRating = getRating(loserId, date)
 			boolean schedule = false;
 			if (!(winnerRating && loserRating)) {
 				if (rankExecutor)
@@ -163,8 +163,8 @@ class EloRatings {
 			if (schedule) {
 				def future = CompletableFuture.allOf(playerMatchFutures.get(playerId1) ?: nullFuture, playerMatchFutures.get(playerId2) ?: nullFuture).thenRunAsync({
 					lockManager.withLock(playerId1, playerId2) {
-						winnerRating = playerRatings.get(winnerId) ?: new EloRating(playerRank(winnerId, lastDate))
-						loserRating = playerRatings.get(loserId) ?: new EloRating(playerRank(loserId, lastDate))
+						winnerRating = getRating(winnerId, date) ?: new EloRating(playerRank(winnerId, lastDate))
+						loserRating = getRating(loserId, date) ?: new EloRating(playerRank(loserId, lastDate))
 						double deltaRating = deltaRating(winnerRating, loserRating, level, round, bestOf, outcome)
 						putNewRatings(winnerId, loserId, winnerRating, loserRating, deltaRating, date)
 					}
@@ -179,17 +179,24 @@ class EloRatings {
 		}
 	}
 
+	def getRating(int playerId, Date date) {
+		def rating = playerRatings.get(playerId)
+		if (rating)
+			rating.adjustRating(date)
+		rating
+	}
+
+	def putNewRatings(int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date) {
+		playerRatings.put(winnerId, winnerRating.newRating(deltaRating, date))
+		playerRatings.put(loserId, loserRating.newRating(-deltaRating, date))
+	}
+
 	def static double deltaRating(EloRating winnerRating, EloRating loserRating, String level, String round, short bestOf, String outcome) {
 		double winnerQ = pow(10, winnerRating.rating / 400)
 		double loserQ = pow(10, loserRating.rating / 400)
 		double loserExpectedScore = loserQ / (winnerQ + loserQ)
 
 		kFactor(level, round, bestOf, outcome) * loserExpectedScore
-	}
-
-	def putNewRatings(int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date) {
-		playerRatings.put(winnerId, winnerRating.newRating(deltaRating, date))
-		playerRatings.put(loserId, loserRating.newRating(-deltaRating, date))
 	}
 
 	static double kFactor(level, round, bestOf, outcome) {
@@ -251,25 +258,9 @@ class EloRatings {
 		}
 
 		EloRating newRating(double delta, Date date) {
-			def newRating = new EloRating(rating: ratingDateAdjusted(date) + delta * kFunction(), matches: matches + 1, date: date)
+			def newRating = new EloRating(rating: rating + delta * kFunction(), matches: matches + 1, date: date)
 			newRating.bestRating = bestRating(newRating)
 			newRating
-		}
-
-		def ratingDateAdjusted(Date date) {
-			if (this.date) {
-				def daysSinceLastMatch = ChronoUnit.DAYS.between(toLocalDate(this.date), toLocalDate(date))
-				if (daysSinceLastMatch > 365)
-					return max(START_RATING, rating - (daysSinceLastMatch - 365) * 200 / 365)
-			}
-			rating
-		}
-
-		def bestRating(EloRating newRating) {
-			if (matches >= MIN_MATCHES)
-				bestRating && bestRating >= newRating ? bestRating : newRating
-			else
-				null
 		}
 
 		/**
@@ -286,6 +277,25 @@ class EloRatings {
 				1.0 - (rating - 1800) / 400.0
 			else
 				0.5
+		}
+
+		def adjustRating(Date date) {
+			if (this.date) {
+				def daysSinceLastMatch = ChronoUnit.DAYS.between(toLocalDate(this.date), toLocalDate(date))
+				if (daysSinceLastMatch > 365)
+					rating = ratingAdjusted(daysSinceLastMatch)
+			}
+		}
+
+		private def ratingAdjusted(long daysSinceLastMatch) {
+			max(START_RATING, rating - (daysSinceLastMatch - 365) * 200 / 365)
+		}
+
+		def bestRating(EloRating newRating) {
+			if (matches >= MIN_MATCHES)
+				bestRating && bestRating >= newRating ? bestRating : newRating
+			else
+				null
 		}
 
 		private static def ratingPoint(int rank, int eloRating) {

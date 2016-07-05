@@ -51,7 +51,7 @@ public class RankingsService {
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, p.best_elo_rating_date AS points_date, p.best_elo_rank AS best_rank, p.best_elo_rank_date AS best_rank_date\n" +
 		"FROM best_elo_rating_ranked r\n" +
 		"INNER JOIN player_v p USING (player_id)%1$s\n" +
-		"ORDER BY rank OFFSET :offset";
+		"ORDER BY rank, best_rank_date OFFSET :offset";
 
 	private static final String PLAYER_RANKING_QUERY =
 		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date, goat_rank, goat_points\n" +

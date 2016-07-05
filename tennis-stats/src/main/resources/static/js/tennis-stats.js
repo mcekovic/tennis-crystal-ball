@@ -191,10 +191,6 @@ function playerCountryFormatter(column, row) {
 		playerFormatter(column, row);
 }
 
-function rivalryFormatter(column, row) {
-	return playerCountryFormatter(column, row.player1) + " - " + playerCountryFormatter(column, row.player2);
-}
-
 
 // Level Formatter
 function levelFormatter(column, row) {

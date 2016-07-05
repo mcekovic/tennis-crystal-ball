@@ -64,6 +64,14 @@ public abstract class RankingCategory extends RecordCategory {
 		register(mostEndsOfSeasonAt(type, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK));
 		register(mostEndsOfSeasonAt(type, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK));
 		register(mostEndsOfSeasonAt(type, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
+		register(mostConsecutiveEndsOfSeasonAt(type, NO_1, NO_1_NAME, rankDBName, NO_1_RANK));
+		register(mostConsecutiveEndsOfSeasonAt(type, NO_2, NO_2_NAME, rankDBName, NO_2_RANK));
+		register(mostConsecutiveEndsOfSeasonAt(type, NO_3, NO_3_NAME, rankDBName, NO_3_RANK));
+		register(mostConsecutiveEndsOfSeasonAt(type, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK));
+		register(mostConsecutiveEndsOfSeasonAt(type, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK));
+		register(mostConsecutiveEndsOfSeasonAt(type, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK));
+		register(mostConsecutiveEndsOfSeasonAt(type, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK));
+		register(mostConsecutiveEndsOfSeasonAt(type, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
 		register(mostTimesAt(type, NO_1, NO_1_NAME, rankDBName, NO_1_RANK, NO_1_RANK));
 		register(mostTimesAt(type, NO_2, NO_2_NAME, rankDBName, NO_2_RANK, TOP_2_RANK));
 		register(mostTimesAt(type, NO_3, NO_3_NAME, rankDBName, NO_3_RANK, TOP_3_RANK));
@@ -154,6 +162,34 @@ public abstract class RankingCategory extends RecordCategory {
 		);
 	}
 
+	protected static Record mostConsecutiveEndsOfSeasonAt(String rankType, String id, String name, String rankDBName, String condition) {
+		return new Record(
+         "ConsecutiveEndsOfSeasonAt" + rankType + id, "Most Consecutive Ends of Season at " + rankType + " " + name,
+			/* language=SQL */
+			"WITH player_seasons AS (\n" +
+			"  SELECT DISTINCT player_id, season\n" +
+			"  FROM player_year_end" + rankDBName + "_rank\n" +
+			"  WHERE year_end_rank " + condition + "\n" +
+			"), player_seasons_2 AS (\n" +
+			"  SELECT player_id, season, season - row_number() OVER (PARTITION BY player_id ORDER BY season) AS grouping_season\n" +
+			"  FROM player_seasons\n" +
+			"), player_consecutive_seasons AS (\n" +
+			"  SELECT player_id, season, grouping_season, dense_rank() OVER (PARTITION BY player_id, grouping_season ORDER BY season) AS consecutive_seasons\n" +
+			"  FROM player_seasons_2\n" +
+			")\n" +
+			"SELECT player_id, max(season) - max(consecutive_seasons) + 1 AS start_season, max(season) AS end_season, max(consecutive_seasons) AS value\n" +
+			"FROM player_consecutive_seasons\n" +
+			"GROUP BY player_id, grouping_season\n" +
+			"HAVING max(consecutive_seasons) > 1",
+			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season", RecordRowFactory.SEASON_RANGE_INTEGER,
+			asList(
+				new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Seasons at " + name),
+				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
+				new RecordColumn("endSeason", "numeric", null, SEASON_WIDTH, "center", "End Season")
+			)
+		);
+	}
+
 	protected static Record mostTimesAt(String rankType, String id, String name, String rankDBName, String condition, String bestCondition) {
 		return new Record(
 			"TimesAt" + rankType + id, "Most Times at " + rankType + " " + name,
@@ -221,6 +257,26 @@ public abstract class RankingCategory extends RecordCategory {
 		);
 	}
 
+	protected static Record leastPointsAsNo1(String id, String name, String tableName, String expression, String columnName, String caption) {
+		return new Record(
+			id, name,
+			/* language=SQL */
+			"WITH least_points AS (\n" +
+			"  SELECT player_id, min(" + expression + ") AS value\n" +
+			"  FROM " + tableName + " r1\n" +
+			"  WHERE rank = 1 AND rank_date >= DATE '1968-07-01' AND " + columnName + " > 0\n" +
+			"  GROUP BY player_id\n" +
+         ")\n" +
+			"SELECT player_id, value, (SELECT min(r.rank_date) FROM " + tableName + " r WHERE r.player_id = l.player_id AND r.rank = 1 AND " + expression + " = l.value) AS date\n" +
+			"FROM least_points l",
+			"r.value, r.date", "r.value", "r.value, r.date", RecordRowFactory.DATE_INTEGER,
+			asList(
+				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
+				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
+			)
+		);
+	}
+
 	protected static Record mostEndOfSeasonPoints(String id, String name, String tableName, String columnName, String caption) {
 		return new Record(
 			id, name,
@@ -237,9 +293,24 @@ public abstract class RankingCategory extends RecordCategory {
 		);
 	}
 
-	protected static Record greatestPointsDifferenceBetweenNo1andNo2(
+	protected static Record leastEndOfSeasonPointsAsNo1(String id, String name, String tableName, String columnName, String caption) {
+		return new Record(
+			id, name,
+			/* language=SQL */
+			"SELECT player_id, " + columnName + " AS value, season\n" +
+			"FROM " + tableName + "\n" +
+			"WHERE year_end_rank = 1 AND " + columnName + " > 0",
+			"r.value, r.season", "r.value", "r.value, r.season", RecordRowFactory.SEASON_INTEGER,
+			asList(
+				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
+				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
+			)
+		);
+	}
+
+	protected static Record pointsDifferenceBetweenNo1andNo2(
 		String id, String name, String tableName, String columnName, String condition,
-		String expression, String expression1, String expression2,
+		String expression, String expression1, String expression2, String order,
 		String type, String formatter, String caption, String diffCaption
 	) {
 		return new Record(
@@ -261,7 +332,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"SELECT DISTINCT d.player_id, d.player_id2, p2.name AS name2, p2.country_id AS country_id2, p2.active AS active2, d.value1, d.value2, d.value, d.date\n" +
 			"FROM ranking_diff2 d\n" +
 			"INNER JOIN player_v p2 ON p2.player_id = d.player_id2",
-			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.date", "r.value DESC", "r.value DESC, r.date", RecordRowFactory.RANKING_DIFF,
+			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.date", order, order + ", r.date", RecordRowFactory.RANKING_DIFF,
 			asList(
 				new RecordColumn("player2", null, "player2", PLAYER_WIDTH, "left", "No. 2 Player"),
 				new RecordColumn("value1", "numeric", null, POINTS_WIDTH, "right", caption + " No. 1"),
