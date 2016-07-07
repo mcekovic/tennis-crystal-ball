@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 import org.strangeforest.tcb.stats.model.records.*;
 
 import static java.util.Arrays.*;
+import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
 
 public class WinningStreaksCategory extends RecordCategory {
 
@@ -12,40 +13,52 @@ public class WinningStreaksCategory extends RecordCategory {
 
 	public WinningStreaksCategory() {
 		super("Winning Streaks");
-		register(winningStreak(N_A, N_A, N_A, N_A, N_A));
-		register(winningStreak(GRAND_SLAM, GRAND_SLAM_NAME, N_A, "_level", GRAND_SLAM_TOURNAMENTS));
-		register(winningStreak(TOUR_FINALS, TOUR_FINALS_NAME, N_A, "_level", TOUR_FINALS_TOURNAMENTS));
-		register(winningStreak(MASTERS, MASTERS_NAME, N_A, "_level", MASTERS_TOURNAMENTS));
-		register(winningStreak(OLYMPICS, OLYMPICS_NAME, N_A, "_level", OLYMPICS_TOURNAMENTS));
-		register(winningStreak(BIG + TOURNAMENT, BIG_NAME + prefix(TOURNAMENT, " "), BIG_NAME_SUFFIX, "_level", BIG_TOURNAMENTS));
-		register(winningStreak(ATP_500, ATP_500_NAME, N_A, "_level", ATP_500_TOURNAMENTS));
-		register(winningStreak(ATP_250, ATP_250_NAME, N_A, "_level", ATP_250_TOURNAMENTS));
-		register(winningStreak(SMALL + TOURNAMENT, SMALL_NAME + prefix(TOURNAMENT, " "), SMALL_NAME_SUFFIX,"_level", SMALL_TOURNAMENTS));
-		register(winningStreak(DAVIS_CUP, DAVIS_CUP_NAME, N_A, "_level", DAVIS_CUP_TOURNAMENTS));
-		register(winningStreak(HARD, HARD_NAME, N_A, "_surface", "surface = 'H'"));
-		register(winningStreak(CLAY, CLAY_NAME, N_A, "_surface", "surface = 'C'"));
-		register(winningStreak(GRASS, GRASS_NAME, N_A, "_surface", "surface = 'G'"));
-		register(winningStreak(CARPET, CARPET_NAME, N_A, "_surface", "surface = 'P'"));
-		register(winningStreakVs(NO_1, NO_1_NAME, "no1"));
-		register(winningStreakVs(TOP_5, TOP_5_NAME, "top5"));
-		register(winningStreakVs(TOP_10, TOP_10_NAME, "top10"));
-		register(tournamentWinningStreak(N_A, N_A, "_tournament", N_A));
-		register(tournamentWinningStreak(GRAND_SLAM, GRAND_SLAM_NAME, "_tournament_level", GRAND_SLAM_TOURNAMENTS));
-		register(tournamentWinningStreak(MASTERS, MASTERS_NAME, "_tournament_level", MASTERS_TOURNAMENTS));
-		register(tournamentWinningStreak(ATP_500, ATP_500_NAME, "_tournament_level", ATP_500_TOURNAMENTS));
-		register(tournamentWinningStreak(ATP_250, ATP_250_NAME, "_tournament_level", ATP_250_TOURNAMENTS));
+		register(winningStreak(ALL, N_A, N_A, N_A));
+		register(winningStreak(GRAND_SLAM, N_A, "_level"));
+		register(winningStreak(TOUR_FINALS, N_A, "_level"));
+		register(winningStreak(MASTERS, N_A, "_level"));
+		register(winningStreak(OLYMPICS, N_A, "_level"));
+		register(winningStreak(BIG_TOURNAMENTS, TOURNAMENT, "_level"));
+		register(winningStreak(ATP_500, N_A, "_level"));
+		register(winningStreak(ATP_250, N_A, "_level"));
+		register(winningStreak(SMALL_TOURNAMENTS, TOURNAMENT, "_level"));
+		register(winningStreak(DAVIS_CUP, N_A, "_level"));
+		register(winningStreak(HARD, N_A, "_surface", "surface = 'H'"));
+		register(winningStreak(CLAY, N_A, "_surface", "surface = 'C'"));
+		register(winningStreak(GRASS, N_A, "_surface", "surface = 'G'"));
+		register(winningStreak(CARPET, N_A, "_surface", "surface = 'P'"));
+		register(winningStreakVs(NO_1_FILTER, "no1"));
+		register(winningStreakVs(TOP_5_FILTER, "top5"));
+		register(winningStreakVs(TOP_10_FILTER, "top10"));
+		register(tournamentWinningStreak(ALL, "_tournament", N_A));
+		register(tournamentWinningStreak(GRAND_SLAM, "_tournament_level"));
+		register(tournamentWinningStreak(MASTERS, "_tournament_level"));
+		register(tournamentWinningStreak(ATP_500, "_tournament_level"));
+		register(tournamentWinningStreak(ATP_250, "_tournament_level"));
 	}
 
-	private static Record winningStreak(String id, String name, String nameSuffix, String tableName, String condition) {
-		return winningStreakRecord(id + "WinningStreak", suffix(name, " ") + "Winning Streak" + prefix(nameSuffix, " "), tableName, condition);
+	private static Record winningStreak(RecordFilter filter, String nameSuffix, String tableName) {
+		return winningStreak(filter, nameSuffix, tableName, null);
 	}
 
-	private static Record winningStreakVs(String id, String name, String tableName) {
-		return winningStreakRecord("WinningStreakVs" + id, "Winning Streak Vs " + name, "_vs_" + tableName, N_A);
+	private static Record winningStreak(RecordFilter filter, String nameSuffix, String tableName, String condition) {
+		if (condition == null)
+			condition = filter.condition;
+		return winningStreakRecord(filter.id + nameSuffix + "WinningStreak", suffix(filter.name, " ") + suffix(nameSuffix, " ") + "Winning Streak" + prefix(filter.nameSuffix, " "), tableName, condition);
 	}
 
-	private static Record tournamentWinningStreak(String id, String name, String tableName, String condition) {
-		return winningStreakRecord(id + "TournamentWinningStreak", "Winning Streak at Single " + suffix(name, " ") + "Tournament", tableName, condition);
+	private static Record winningStreakVs(RecordFilter filter, String tableName) {
+		return winningStreakRecord("WinningStreakVs" + filter.id, "Winning Streak Vs " + filter.name, "_vs_" + tableName, N_A);
+	}
+
+	private static Record tournamentWinningStreak(RecordFilter filter, String tableName) {
+		return tournamentWinningStreak(filter, tableName, null);
+	}
+
+	private static Record tournamentWinningStreak(RecordFilter filter, String tableName, String condition) {
+		if (condition == null)
+			condition = filter.condition;
+		return winningStreakRecord(filter.id + "TournamentWinningStreak", "Winning Streak at Single " + suffix(filter.name, " ") + "Tournament", tableName, condition);
 	}
 
 	private static Record winningStreakRecord(String id, String name, String tableName, String condition) {

@@ -5,6 +5,7 @@ import java.util.*;
 import org.strangeforest.tcb.stats.model.records.*;
 
 import static java.util.Arrays.*;
+import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
 import static org.strangeforest.tcb.stats.model.records.categories.LongestCareerResultSpanCategory.ResultType.*;
 
 public class LongestCareerResultSpanCategory extends RecordCategory {
@@ -38,33 +39,33 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 	}
 
 	private void registerResultCareerSpans(ResultType type) {
-		register(resultCareerSpan(type, N_A, N_A, N_A));
-		register(resultCareerSpan(type, GRAND_SLAM, GRAND_SLAM_NAME, GRAND_SLAM_TOURNAMENTS));
-		register(resultCareerSpan(type, TOUR_FINALS, TOUR_FINALS_NAME, TOUR_FINALS_TOURNAMENTS));
-		register(resultCareerSpan(type, MASTERS, MASTERS_NAME, MASTERS_TOURNAMENTS));
+		register(resultCareerSpan(type, ALL));
+		register(resultCareerSpan(type, GRAND_SLAM));
+		register(resultCareerSpan(type, TOUR_FINALS));
+		register(resultCareerSpan(type, MASTERS));
 	}
 
 	private void registerWinCareerSpans() {
-		register(winCareerSpan(N_A, N_A, N_A));
-		register(winCareerSpan(GRAND_SLAM, GRAND_SLAM_NAME, GRAND_SLAM_TOURNAMENTS));
-		register(winCareerSpan(MASTERS, MASTERS_NAME, MASTERS_TOURNAMENTS));
+		register(winCareerSpan(ALL));
+		register(winCareerSpan(GRAND_SLAM));
+		register(winCareerSpan(MASTERS));
 	}
 
 	private void registerConsecutiveSeasons(ResultType type) {
-		register(consecutiveSeasons(type, N_A, N_A, N_A));
-		register(consecutiveSeasons(type, GRAND_SLAM, GRAND_SLAM_NAME, GRAND_SLAM_TOURNAMENTS));
-		register(consecutiveSeasons(type, MASTERS, MASTERS_NAME, MASTERS_TOURNAMENTS));
+		register(consecutiveSeasons(type, ALL));
+		register(consecutiveSeasons(type, GRAND_SLAM));
+		register(consecutiveSeasons(type, MASTERS));
 	}
 
-	private static Record resultCareerSpan(ResultType type, String id, String name, String condition) {
+	private static Record resultCareerSpan(ResultType type, RecordFilter filter) {
 		return new Record(
-			"Longest" + id + type.name + "Span", "Longest " + suffix(name, " ") + "First " + type.name + " to Last " + type.name,
+			"Longest" + filter.id + type.name + "Span", "Longest " + suffix(filter.name, " ") + "First " + type.name + " to Last " + type.name,
 			/* language=SQL */
 			"WITH result_with_span AS (\n" +
 			"  SELECT player_id, first_value(tournament_event_id) OVER (PARTITION BY player_id ORDER BY e.date) AS first_event_id,\n" +
 			"    last_value(tournament_event_id) OVER (PARTITION BY player_id ORDER BY e.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_event_id\n" +
 			"  FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-			"  WHERE r." + type.condition + prefix(condition, " AND e.") + "\n" +
+			"  WHERE r." + type.condition + prefix(filter.condition, " AND e.") + "\n" +
 			"), result_span AS (\n" +
 			"  SELECT player_id, first_event_id, last_event_id\n" +
 			"  FROM result_with_span\n" +
@@ -82,14 +83,14 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 		);
 	}
 
-	private static Record winCareerSpan(String id, String name, String condition) {
+	private static Record winCareerSpan(RecordFilter filter) {
 		return new Record(
-			"Longest" + id + "WinSpan", "Longest " + suffix(name, " ") + "First Win to Last Win",
+			"Longest" + filter.id + "WinSpan", "Longest " + suffix(filter.name, " ") + "First Win to Last Win",
 			/* language=SQL */
 			"WITH match_win_span AS (\n" +
 			"  SELECT winner_id AS player_id, first_value(match_id) OVER (PARTITION BY winner_id ORDER BY date) AS first_match_id,\n" +
 			"    last_value(match_id) OVER (PARTITION BY winner_id ORDER BY date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_match_id\n" +
-			"  FROM match_for_stats_v" + prefix(condition, " WHERE ") + "\n" +
+			"  FROM match_for_stats_v" + prefix(filter.condition, " WHERE ") + "\n" +
 			"), win_span AS (\n" +
 			"  SELECT player_id, first_match_id, last_match_id\n" +
 			"  FROM match_win_span\n" +
@@ -111,21 +112,21 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 	private static final String SPAN_COLUMNS = "r.span, r.start_date, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_date, r.end_tournament_event_id, r.end_tournament, r.end_level";
 
 	private static final List<RecordColumn> SPAN_RECORD_COLUMNS = asList(
-			new RecordColumn("span", null, null, SPAN_WIDTH, "left", "Career Span"),
-			new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
-			new RecordColumn("startEvent", null, "startTournamentEvent", TOURNAMENT_WIDTH, "left", "Start Tournament"),
-			new RecordColumn("endDate", null, "endDate", DATE_WIDTH, "center", "End Date"),
-			new RecordColumn("endEvent", null, "endTournamentEvent", TOURNAMENT_WIDTH, "left", "End Tournament")
+		new RecordColumn("span", null, null, SPAN_WIDTH, "left", "Career Span"),
+		new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
+		new RecordColumn("startEvent", null, "startTournamentEvent", TOURNAMENT_WIDTH, "left", "Start Tournament"),
+		new RecordColumn("endDate", null, "endDate", DATE_WIDTH, "center", "End Date"),
+		new RecordColumn("endEvent", null, "endTournamentEvent", TOURNAMENT_WIDTH, "left", "End Tournament")
 	);
 
- 	private static Record consecutiveSeasons(ResultType type, String id, String name, String condition) {
+ 	private static Record consecutiveSeasons(ResultType type, RecordFilter filter) {
 		return new Record(
-			"ConsecutiveSeasonsWith" + id + type.name, "Consecutive Seasons With at Least One " + suffix(name, " ") + type.name,
+			"ConsecutiveSeasonsWith" + filter.id + type.name, "Consecutive Seasons With at Least One " + suffix(filter.name, " ") + type.name,
 			/* language=SQL */
 			"WITH player_seasons AS (\n" +
 			"  SELECT DISTINCT r.player_id, e.season\n" +
 			"  FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-			"  WHERE r." + type.condition + prefix(condition, " AND e.") + "\n" +
+			"  WHERE r." + type.condition + prefix(filter.condition, " AND e.") + "\n" +
 			"), player_seasons_2 AS (\n" +
 			"  SELECT player_id, season, season - row_number() OVER (PARTITION BY player_id ORDER BY season) AS grouping_season\n" +
 			"  FROM player_seasons\n" +

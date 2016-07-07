@@ -5,6 +5,7 @@ import org.strangeforest.tcb.stats.util.*;
 
 import static com.google.common.base.Strings.*;
 import static java.util.Arrays.*;
+import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
 
 public class MostMatchesCategory extends RecordCategory {
 
@@ -41,27 +42,27 @@ public class MostMatchesCategory extends RecordCategory {
 
 	public MostMatchesCategory(RecordType type) {
 		super("Most Matches " + type.name);
-		register(mostMatches(type, N_A, N_A, N_A));
-		register(mostMatches(type, GRAND_SLAM, GRAND_SLAM_NAME, "grand_slam_"));
-		register(mostMatches(type, TOUR_FINALS, TOUR_FINALS_NAME, "tour_finals_"));
-		register(mostMatches(type, MASTERS, MASTERS_NAME, "masters_"));
-		register(mostMatches(type, OLYMPICS, OLYMPICS_NAME, "olympics_"));
-		register(mostMatches(type, ATP_500, ATP_500_NAME, "atp500_"));
-		register(mostMatches(type, ATP_250, ATP_250_NAME, "atp250_"));
-		register(mostMatches(type, DAVIS_CUP, DAVIS_CUP_NAME, "davis_cup_"));
-		register(mostMatches(type, HARD, HARD_NAME, "hard_"));
-		register(mostMatches(type, CLAY, CLAY_NAME, "clay_"));
-		register(mostMatches(type, GRASS, GRASS_NAME, "grass_"));
-		register(mostMatches(type, CARPET, CARPET_NAME, "carpet_"));
-		register(mostMatchesVs(type, NO_1, NO_1_NAME, "no1"));
-		register(mostMatchesVs(type, TOP_5, TOP_5_NAME, "top5"));
-		register(mostMatchesVs(type, TOP_10, TOP_10_NAME, "top10"));
+		register(mostMatches(type, ALL));
+		register(mostMatches(type, GRAND_SLAM));
+		register(mostMatches(type, TOUR_FINALS));
+		register(mostMatches(type, MASTERS));
+		register(mostMatches(type, OLYMPICS));
+		register(mostMatches(type, ATP_500));
+		register(mostMatches(type, ATP_250));
+		register(mostMatches(type, DAVIS_CUP));
+		register(mostMatches(type, HARD));
+		register(mostMatches(type, CLAY));
+		register(mostMatches(type, GRASS));
+		register(mostMatches(type, CARPET));
+		register(mostMatchesVs(type, NO_1_FILTER));
+		register(mostMatchesVs(type, TOP_5_FILTER));
+		register(mostMatchesVs(type, TOP_10_FILTER));
 		register(mostSeasonMatches(type));
-		register(mostTournamentMatches(type, N_A, N_A, N_A));
-		register(mostTournamentMatches(type, GRAND_SLAM, GRAND_SLAM_NAME, "grand_slam_"));
-		register(mostTournamentMatches(type, MASTERS, MASTERS_NAME, "masters_"));
-		register(mostTournamentMatches(type, ATP_500, ATP_500_NAME, "atp500_"));
-		register(mostTournamentMatches(type, ATP_250, ATP_250_NAME, "atp250_"));
+		register(mostTournamentMatches(type, ALL));
+		register(mostTournamentMatches(type, GRAND_SLAM));
+		register(mostTournamentMatches(type, MASTERS));
+		register(mostTournamentMatches(type, ATP_500));
+		register(mostTournamentMatches(type, ATP_250));
 		if (type.forBy()) {
 			register(mostMatchesBy(type, "Retirement", "RET"));
 			register(mostMatchesBy(type, "Walkover", "W/O"));
@@ -69,23 +70,23 @@ public class MostMatchesCategory extends RecordCategory {
 		}
 	}
 
-	private static Record mostMatches(RecordType type, String id, String name, String columnPrefix) {
+	private static Record mostMatches(RecordType type, RecordFilter filter) {
 		return new Record(
-			id + "Matches" + type.name, "Most " + suffix(name, " ") + "Matches " + type.name,
+			filter.id + "Matches" + type.name, "Most " + suffix(filter.name, " ") + "Matches " + type.name,
 			/* language=SQL */
-			"SELECT player_id, " + type.expression(columnPrefix + "matches") + " AS value FROM player_performance",
+			"SELECT player_id, " + type.expression(filter.columnPrefix + "matches") + " AS value FROM player_performance",
 			"r.value", "r.value DESC", "r.value DESC", RecordRowFactory.INTEGER,
-			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(name, " ") + "Matches " + type.name))
+			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(filter.name, " ") + "Matches " + type.name))
 		);
 	}
 
-	private static Record mostMatchesVs(RecordType type, String id, String name, String columnPrefix) {
+	private static Record mostMatchesVs(RecordType type, RecordFilter filter) {
 		return new Record(
-			"MatchesVs" + id + type.name, "Most Matches " + type.name + " Vs. " + name,
+			"MatchesVs" + filter.id + type.name, "Most Matches " + type.name + " Vs. " + filter.name,
 			/* language=SQL */
-			"SELECT player_id, " + type.expression("vs_" + columnPrefix) + " AS value FROM player_performance",
+			"SELECT player_id, " + type.expression(filter.columnPrefix) + " AS value FROM player_performance",
 			"r.value", "r.value DESC", "r.value DESC", RecordRowFactory.INTEGER,
-			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", "Matches " + type.name + " Vs. " + name))
+			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", "Matches " + type.name + " Vs. " + filter.name))
 		);
 	}
 
@@ -102,15 +103,15 @@ public class MostMatchesCategory extends RecordCategory {
 		);
 	}
 
-	private static Record mostTournamentMatches(RecordType type, String id, String name, String columnPrefix) {
+	private static Record mostTournamentMatches(RecordType type, RecordFilter filter) {
 		return new Record(
-			id + "TournamentMatches" + type.name, "Most Matches " + type.name + " at Single " + suffix(name, " ") + "Tournament",
+			filter.id + "TournamentMatches" + type.name, "Most Matches " + type.name + " at Single " + suffix(filter.name, " ") + "Tournament",
 			/* language=SQL */
-			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + columnPrefix + "matches") + " AS value\n" +
+			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + filter.columnPrefix + "matches") + " AS value\n" +
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id) WHERE t." + ALL_TOURNAMENTS,
 			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.tournament", RecordRowFactory.TOURNAMENT_INTEGER,
 			asList(
-				new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(name, " ") + "Matches " + type.name),
+				new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(filter.name, " ") + "Matches " + type.name),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
 			)
 		);

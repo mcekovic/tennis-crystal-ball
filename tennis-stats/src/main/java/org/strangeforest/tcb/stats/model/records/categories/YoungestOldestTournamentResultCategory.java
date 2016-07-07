@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 import org.strangeforest.tcb.stats.model.records.*;
 
 import static java.util.Arrays.*;
+import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
 import static org.strangeforest.tcb.stats.model.records.categories.YoungestOldestTournamentResultCategory.RecordType.*;
 import static org.strangeforest.tcb.stats.model.records.categories.YoungestOldestTournamentResultCategory.ResultType.*;
 
@@ -47,17 +48,21 @@ public class YoungestOldestTournamentResultCategory extends RecordCategory {
 	}
 
 	private void registerAgeTournamentResults(RecordType recordType, ResultType resultType) {
-		register(ageTournamentResult(recordType, resultType, TOURNAMENT, "Tournament", ALL_TOURNAMENTS));
-		register(ageTournamentResult(recordType, resultType, GRAND_SLAM, GRAND_SLAM_NAME, GRAND_SLAM_TOURNAMENTS));
-		register(ageTournamentResult(recordType, resultType, TOUR_FINALS, TOUR_FINALS_NAME, TOUR_FINALS_TOURNAMENTS));
-		register(ageTournamentResult(recordType, resultType, MASTERS, MASTERS_NAME, MASTERS_TOURNAMENTS));
-		register(ageTournamentResult(recordType, resultType, OLYMPICS, OLYMPICS_NAME, OLYMPICS_TOURNAMENTS));
-		register(ageTournamentResult(recordType, resultType, ATP_500, ATP_500_NAME, ATP_500_TOURNAMENTS));
-		register(ageTournamentResult(recordType, resultType, ATP_250, ATP_250_NAME, ATP_250_TOURNAMENTS));
-		register(ageTournamentResult(recordType, resultType, HARD, HARD_NAME, HARD_TOURNAMENTS));
-		register(ageTournamentResult(recordType, resultType, CLAY, CLAY_NAME, CLAY_TOURNAMENTS));
-		register(ageTournamentResult(recordType, resultType, GRASS, GRASS_NAME, GRASS_TOURNAMENTS));
-		register(ageTournamentResult(recordType, resultType, CARPET, CARPET_NAME, CARPET_TOURNAMENTS));
+		register(ageTournamentResult(recordType, resultType, TOURNAMENT, TOURNAMENT, ALL_TOURNAMENTS));
+		register(ageTournamentResult(recordType, resultType, GRAND_SLAM));
+		register(ageTournamentResult(recordType, resultType, TOUR_FINALS));
+		register(ageTournamentResult(recordType, resultType, MASTERS));
+		register(ageTournamentResult(recordType, resultType, OLYMPICS));
+		register(ageTournamentResult(recordType, resultType, ATP_500));
+		register(ageTournamentResult(recordType, resultType, ATP_250));
+		register(ageTournamentResult(recordType, resultType, HARD));
+		register(ageTournamentResult(recordType, resultType, CLAY));
+		register(ageTournamentResult(recordType, resultType, GRASS));
+		register(ageTournamentResult(recordType, resultType, CARPET));
+	}
+
+	private static Record ageTournamentResult(RecordType type, ResultType resultType, RecordFilter filter) {
+		return ageTournamentResult(type, resultType, filter.id, filter.name, filter.condition);
 	}
 
 	private static Record ageTournamentResult(RecordType type, ResultType resultType, String id, String name, String condition) {
