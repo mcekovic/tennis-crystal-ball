@@ -53,9 +53,9 @@ public class RecordsService {
 					String name = rs.getString("name");
 					String countryId = rs.getString("country_id");
 					Boolean active = !activePlayers ? rs.getBoolean("active") : null;
-					RecordRow row = record.getRowFactory().createRow(rank, playerId, name, countryId, active);
-					row.read(rs, activePlayers);
-					table.addRow(row);
+					RecordDetail detail = record.getDetailFactory().createDetail();
+					detail.read(rs, activePlayers);
+					table.addRow(new RecordRow(rank, playerId, name, countryId, active, detail));
 				}
 			}
 		);

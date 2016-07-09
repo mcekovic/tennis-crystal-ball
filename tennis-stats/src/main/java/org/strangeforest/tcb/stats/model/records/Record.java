@@ -10,18 +10,18 @@ public class Record {
 	private final String columns;
 	private final String rankOrder;
 	private final String displayOrder;
-	private final RecordRowFactory rowFactory;
+	private final RecordDetailFactory detailFactory;
 	private final List<RecordColumn> columnInfos;
 	private boolean infamous;
 
-	public Record(String id, String name, String sql, String columns, String rankOrder, String displayOrder, RecordRowFactory rowFactory, List<RecordColumn> columnInfos) {
+	public Record(String id, String name, String sql, String columns, String rankOrder, String displayOrder, RecordDetailFactory detailFactory, List<RecordColumn> columnInfos) {
 		this.id = id;
 		this.name = name;
 		this.sql = sql;
 		this.columns = columns;
 		this.rankOrder = rankOrder;
 		this.displayOrder = displayOrder;
-		this.rowFactory = rowFactory;
+		this.detailFactory = detailFactory;
 		this.columnInfos = columnInfos;
 	}
 
@@ -49,8 +49,8 @@ public class Record {
 		return displayOrder;
 	}
 
-	public RecordRowFactory getRowFactory() {
-		return rowFactory;
+	public RecordDetailFactory getDetailFactory() {
+		return detailFactory;
 	}
 
 	public List<RecordColumn> getColumnInfos() {

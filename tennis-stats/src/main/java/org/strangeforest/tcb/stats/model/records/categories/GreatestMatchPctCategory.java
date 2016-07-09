@@ -4,7 +4,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
-import static org.strangeforest.tcb.stats.model.records.RecordRowFactory.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDetailFactory.*;
 
 public class GreatestMatchPctCategory extends RecordCategory {
 
@@ -19,18 +19,18 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		final String name;
 		final String columnSuffix;
 		final String pctAttr;
-		final RecordRowFactory rowFactory;
-		final RecordRowFactory seasonRowFactory;
-		final RecordRowFactory tournamentRowFactory;
+		final RecordDetailFactory detailFactory;
+		final RecordDetailFactory seasonDetailFactory;
+		final RecordDetailFactory tournamentDetailFactory;
 		final RecordColumn valueRecordColumn;
 
-		RecordType(String name, String column, String pctAttr, RecordRowFactory rowFactory, RecordRowFactory seasonRowFactory, RecordRowFactory tournamentRowFactory, RecordColumn valueRecordColumn) {
+		RecordType(String name, String column, String pctAttr, RecordDetailFactory detailFactory, RecordDetailFactory seasonDetailFactory, RecordDetailFactory tournamentDetailFactory, RecordColumn valueRecordColumn) {
 			this.name = name;
 			this.columnSuffix = column;
 			this.pctAttr = pctAttr;
-			this.rowFactory = rowFactory;
-			this.seasonRowFactory = seasonRowFactory;
-			this.tournamentRowFactory = tournamentRowFactory;
+			this.detailFactory = detailFactory;
+			this.seasonDetailFactory = seasonDetailFactory;
+			this.tournamentDetailFactory = tournamentDetailFactory;
 			this.valueRecordColumn = valueRecordColumn;
 		}
 
@@ -75,7 +75,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, " + type.expression(filter.columnPrefix + "matches") + " AS pct, " + filter.columnPrefix + "matches_won AS won, " + filter.columnPrefix + "matches_lost AS lost\n" +
 			"FROM player_performance WHERE " + filter.columnPrefix + "matches_won + " + filter.columnPrefix + "matches_lost >= performance_min_entries('" + filter.perfCategory + "')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.rowFactory,
+			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(filter.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
@@ -90,7 +90,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, " + type.expression(filter.columnPrefix) + " AS pct, " + filter.columnPrefix + "_won AS won, " + filter.columnPrefix + "_lost AS lost\n" +
 			"FROM player_performance WHERE " + filter.columnPrefix + "_won + " + filter.columnPrefix + "_lost >= performance_min_entries('" + filter.perfCategory + "')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.rowFactory,
+			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct. Vs. " + filter.name),
 				type.valueRecordColumn,
@@ -105,7 +105,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, season, " + type.expression("matches") + " AS pct, matches_won AS won, matches_lost AS lost\n" +
 			"FROM player_season_performance WHERE matches_won + matches_lost >= performance_min_entries('matches') / 10",
-			"r.pct, r.won, r.lost, r.season", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.season", type.seasonRowFactory,
+			"r.pct, r.won, r.lost, r.season", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.season", type.seasonDetailFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct."),
 				type.valueRecordColumn,
@@ -122,7 +122,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + filter.columnPrefix + "matches") + " AS pct, p." + filter.columnPrefix + "matches_won AS won, p." + filter.columnPrefix + "matches_lost AS lost\n" +
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id)\n" +
 			"WHERE t." + ALL_TOURNAMENTS + " AND p." + filter.columnPrefix + "matches_won + p." + filter.columnPrefix + "matches_lost >= performance_min_entries('" + filter.perfCategory + "') / 5",
-			"r.pct, r.won, r.lost, r.tournament_id, r.tournament, r.level", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.tournament", type.tournamentRowFactory,
+			"r.pct, r.won, r.lost, r.tournament_id, r.tournament, r.level", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.tournament", type.tournamentDetailFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(filter.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,

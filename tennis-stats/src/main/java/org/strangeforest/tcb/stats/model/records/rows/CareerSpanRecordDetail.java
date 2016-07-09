@@ -5,15 +5,11 @@ import java.util.Date;
 
 import org.strangeforest.tcb.stats.model.records.*;
 
-public class CareerSpanRecordRow extends RecordRow {
+public class CareerSpanRecordDetail implements RecordDetail {
 
 	private String span;
 	private Date startDate;
 	private Date endDate;
-
-	public CareerSpanRecordRow(int rank, int playerId, String name, String countryId, Boolean active) {
-		super(rank, playerId, name, countryId, active);
-	}
 
 	public String getSpan() {
 		return span;

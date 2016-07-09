@@ -71,7 +71,7 @@ public class WinningStreaksCategory extends RecordCategory {
 			"FROM player" + tableName + "_win_streak s\n" +
 			"INNER JOIN match fm ON fm.match_id = s.first_match_id INNER JOIN tournament_event fe ON fe.tournament_event_id = fm.tournament_event_id\n" +
 			"INNER JOIN match lm ON lm.match_id = s.last_match_id INNER JOIN tournament_event le ON le.tournament_event_id = lm.tournament_event_id" + prefix(condition, " WHERE s."),
-			"r.value, r.start_season, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_season, r.end_tournament_event_id, r.end_tournament, r.end_level", "r.value DESC", "r.value DESC, r.end_date", RecordRowFactory.STREAK,
+			"r.value, r.start_season, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_season, r.end_tournament_event_id, r.end_tournament, r.end_level", "r.value DESC", "r.value DESC, r.end_date", RecordDetailFactory.STREAK,
 			asList(
 				new RecordColumn("value", "numeric", null, STREAK_WIDTH, "right", "Streak"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),

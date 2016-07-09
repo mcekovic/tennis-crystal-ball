@@ -22,7 +22,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
 			"WHERE " + resultCondition + " AND " + condition + "\n" +
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.last_date", RecordRowFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC, r.last_date", RecordDetailFactory.INTEGER,
 			asList(new RecordColumn("value", "numeric", null, RESULTS_WIDTH, "right", name))
 		);
 	}
@@ -35,7 +35,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
 			"WHERE " + resultCondition + " AND " + condition + "\n" +
 			"GROUP BY player_id, season",
-			"r.value, r.season", "r.value DESC", "r.value DESC, r.season", RecordRowFactory.SEASON_INTEGER,
+			"r.value, r.season", "r.value DESC", "r.value DESC, r.season", RecordDetailFactory.SEASON_INTEGER,
 			asList(
 				new RecordColumn("value", "numeric", null, RESULTS_WIDTH, "right", name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
@@ -51,7 +51,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) INNER JOIN tournament t USING (tournament_id)\n" +
 			"WHERE r." + resultCondition + " AND e." + condition + "\n" +
 			"GROUP BY player_id, tournament_id, t.name, t.level",
-			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.last_date", RecordRowFactory.TOURNAMENT_INTEGER,
+			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.last_date", RecordDetailFactory.TOURNAMENT_INTEGER,
 			asList(
 				new RecordColumn("value", "numeric", null, RESULTS_WIDTH, "right", name),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
@@ -72,7 +72,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"SELECT player_id, count(tournament_id) AS value, max(first_date) AS first_date\n" +
 			"FROM results\n" +
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.first_date", RecordRowFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC, r.first_date", RecordDetailFactory.INTEGER,
 			asList(new RecordColumn("value", "numeric", null, RESULTS_WIDTH, "right", name))
 		);
 	}

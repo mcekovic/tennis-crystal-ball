@@ -5,16 +5,12 @@ import java.util.Date;
 
 import org.strangeforest.tcb.stats.model.*;
 
-public class RankingDiffRecordRow extends IntegerRecordRow {
+public class RankingDiffRecordDetail extends IntegerRecordDetail {
 
 	private PlayerRow player2;
 	private int value1;
 	private int value2;
 	private Date date;
-
-	public RankingDiffRecordRow(int rank, int playerId, String name, String countryId, Boolean active) {
-		super(rank, playerId, name, countryId, active);
-	}
 
 	public PlayerRow getPlayer2() {
 		return player2;

@@ -36,7 +36,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 			"BestPlayerThatNeverWon" + filter.id + "Title", "Best Player That Never Won" + prefix(filter.name, " ") + " Title" + prefix(filter.nameSuffix, " "),
 			/* language=SQL */
 			"SELECT player_id, goat_points AS value FROM player_v WHERE goat_points > 0 AND " + titleColumn + " = 0",
-			"r.value", "r.value DESC", "r.value DESC", RecordRowFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC", RecordDetailFactory.INTEGER,
 			asList(GOAT_POINTS_COLUMN)
 		);
 	}
@@ -46,7 +46,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 			"BestPlayerThatNeverReached" + id + rankType + "Ranking", "Best Player That Never Reached" + prefix(name, " ") + prefix(rankType, " ") + " Ranking",
 			/* language=SQL */
 			"SELECT player_id, goat_points AS value FROM player_v WHERE goat_points > 0 AND " + rankColumn + " > " + bestRank,
-			"r.value", "r.value DESC", "r.value DESC", RecordRowFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC", RecordDetailFactory.INTEGER,
 			asList(GOAT_POINTS_COLUMN)
 		);
 	}

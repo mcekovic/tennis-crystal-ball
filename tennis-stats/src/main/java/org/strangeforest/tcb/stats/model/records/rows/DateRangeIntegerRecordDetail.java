@@ -3,14 +3,10 @@ package org.strangeforest.tcb.stats.model.records.rows;
 import java.sql.*;
 import java.util.Date;
 
-public class DateRangeIntegerRecordRow extends IntegerRecordRow {
+public class DateRangeIntegerRecordDetail extends IntegerRecordDetail {
 
 	private Date startDate;
 	private Date endDate;
-
-	public DateRangeIntegerRecordRow(int rank, int playerId, String name, String countryId, Boolean active) {
-		super(rank, playerId, name, countryId, active);
-	}
 
 	public Date getStartDate() {
 		return startDate;

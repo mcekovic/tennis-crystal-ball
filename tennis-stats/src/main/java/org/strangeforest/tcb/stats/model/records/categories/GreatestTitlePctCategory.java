@@ -4,7 +4,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
-import static org.strangeforest.tcb.stats.model.records.RecordRowFactory.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDetailFactory.*;
 
 public class GreatestTitlePctCategory extends RecordCategory {
 
@@ -20,16 +20,16 @@ public class GreatestTitlePctCategory extends RecordCategory {
 		final String name;
 		final String expression1, expression2;
 		final String pctAttr;
-		final RecordRowFactory rowFactory;
+		final RecordDetailFactory detailFactory;
 		final RecordColumn valueRecordColumn;
 
-		RecordType(String categoryName, String name, String expression1, String expression2, String pctAttr, RecordRowFactory rowFactory, RecordColumn valueRecordColumn) {
+		RecordType(String categoryName, String name, String expression1, String expression2, String pctAttr, RecordDetailFactory detailFactory, RecordColumn valueRecordColumn) {
 			this.categoryName = categoryName;
 			this.name = name;
 			this.expression1 = expression1;
 			this.expression2 = expression2;
 			this.pctAttr = pctAttr;
-			this.rowFactory = rowFactory;
+			this.detailFactory = detailFactory;
 			this.valueRecordColumn = valueRecordColumn;
 		}
 	}
@@ -75,7 +75,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, " + type.expression1 + "::REAL / (finals_won + finals_lost) AS pct, finals_won AS won, finals_lost AS lost\n" +
 			"FROM player_performance WHERE finals_won + finals_lost >= performance_min_entries('finals')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.rowFactory,
+			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct."),
 				type.valueRecordColumn,
@@ -92,7 +92,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE r.result IN ('W', 'F') AND e." + filter.condition + "\n" +
 			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('finals') * performance_min_entries('" + filter.perfCategory + "') / performance_min_entries('matches')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.rowFactory,
+			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(filter.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,

@@ -2,15 +2,11 @@ package org.strangeforest.tcb.stats.model.records.rows;
 
 import java.sql.*;
 
-public abstract class TournamentWonLostRecordRow extends WonLostRecordRow {
+public abstract class TournamentWonLostRecordDetail extends WonLostRecordDetail {
 
 	private int tournamentId;
 	private String tournament;
 	private String level;
-
-	public TournamentWonLostRecordRow(int rank, int playerId, String name, String countryId, Boolean active) {
-		super(rank, playerId, name, countryId, active);
-	}
 
 	public int getTournamentId() {
 		return tournamentId;

@@ -2,17 +2,13 @@ package org.strangeforest.tcb.stats.model.records.rows;
 
 import java.sql.*;
 
-public class TournamentEventIntegerRecordRow extends IntegerRecordRow {
+public class TournamentEventIntegerRecordDetail extends IntegerRecordDetail {
 
 	private int season;
 	private int tournamentEventId;
 	private String tournament;
 	private String level;
 	private int matches;
-
-	public TournamentEventIntegerRecordRow(int rank, int playerId, String name, String countryId, Boolean active) {
-		super(rank, playerId, name, countryId, active);
-	}
 
 	public int getSeason() {
 		return season;

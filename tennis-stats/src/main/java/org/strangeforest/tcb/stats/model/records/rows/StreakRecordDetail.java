@@ -4,16 +4,12 @@ import java.sql.*;
 
 import static org.strangeforest.tcb.stats.model.records.rows.RecordTournamentEvent.*;
 
-public class StreakRecordRow extends IntegerRecordRow {
+public class StreakRecordDetail extends IntegerRecordDetail {
 
 	private int startSeason;
 	private RecordTournamentEvent startEvent;
 	private int endSeason;
 	private RecordTournamentEvent endEvent;
-
-	public StreakRecordRow(int rank, int playerId, String name, String countryId, Boolean active) {
-		super(rank, playerId, name, countryId, active);
-	}
 
 	public int getStartSeason() {
 		return startSeason;

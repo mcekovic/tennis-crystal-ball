@@ -3,7 +3,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 import org.strangeforest.tcb.stats.model.records.*;
 
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.model.records.RecordRowFactory.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDetailFactory.*;
 import static org.strangeforest.tcb.stats.model.records.categories.HeadToHeadCategory.MostLeast.*;
 import static org.strangeforest.tcb.stats.model.records.categories.HeadToHeadCategory.PctRecordType.*;
 import static org.strangeforest.tcb.stats.model.records.categories.HeadToHeadCategory.RecordType.*;
@@ -45,15 +45,15 @@ public class HeadToHeadCategory extends RecordCategory {
 		final String name;
 		final String expression;
 		final String pctAttr;
-		final RecordRowFactory rowFactory;
+		final RecordDetailFactory detailFactory;
 		final RecordColumn value1RecordColumn;
 		final RecordColumn value2RecordColumn;
 
-		PctRecordType(String name, String expression, String pctAttr, RecordRowFactory rowFactory, RecordColumn value1RecordColumn, RecordColumn value2RecordColumn) {
+		PctRecordType(String name, String expression, String pctAttr, RecordDetailFactory detailFactory, RecordColumn value1RecordColumn, RecordColumn value2RecordColumn) {
 			this.name = name;
 			this.pctAttr = pctAttr;
 			this.expression = expression;
-			this.rowFactory = rowFactory;
+			this.detailFactory = detailFactory;
 			this.value1RecordColumn = value1RecordColumn;
 			this.value2RecordColumn = value2RecordColumn;
 		}
@@ -91,7 +91,7 @@ public class HeadToHeadCategory extends RecordCategory {
 			"SELECT player_id, " + type.column + " AS value\n" +
 			"FROM player_h2h\n" +
 			"WHERE " + HTH_TOTAL + " >= 10",
-			"r.value", mostLeast.order, mostLeast.order, RecordRowFactory.INTEGER,
+			"r.value", mostLeast.order, mostLeast.order, RecordDetailFactory.INTEGER,
 			asList(new RecordColumn("value", "numeric", null, H2H_WIDTH, "right", "H2H Series " + type.name))
 		);
 	}
@@ -103,7 +103,7 @@ public class HeadToHeadCategory extends RecordCategory {
 			"SELECT player_id, " + type.expression + " AS pct, h2h_won AS won, h2h_draw AS draw, h2h_lost AS lost\n" +
 			"FROM player_h2h\n" +
 			"WHERE " + HTH_TOTAL + " >= 10",
-			"r.pct, r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC", type.rowFactory,
+			"r.pct, r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC", type.detailFactory,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", "H2H " + type.name + " Pct."),
 				type.value1RecordColumn,

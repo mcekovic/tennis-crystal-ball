@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.rows.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
@@ -179,20 +180,20 @@ public class TournamentService {
 		return tournamentEvent;
 	}
 
-	public List<IntegerRecordRow> getTournamentRecord(int tournamentId, String result, int maxPlayers) {
+	public List<RecordRow> getTournamentRecord(int tournamentId, String result, int maxPlayers) {
 		return jdbcTemplate.query(
 			TOURNAMENT_RECORD_QUERY,
 			params("tournamentId", tournamentId)
 				.addValue("result", result)
 				.addValue("maxPlayers", maxPlayers),
 			(rs, rowNum) -> {
-				return new IntegerRecordRow(
+				return new RecordRow(
 					rs.getInt("rank"),
 					rs.getInt("player_id"),
 					rs.getString("name"),
 					rs.getString("country_id"),
 					rs.getBoolean("active"),
-					rs.getInt("count")
+					new IntegerRecordDetail(rs.getInt("count"))
 				);
 			}
 		);
