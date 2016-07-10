@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.model.records.rows;
+package org.strangeforest.tcb.stats.model.records.details;
 
 import java.sql.*;
 import java.util.Date;
@@ -18,7 +18,7 @@ public class DateAgeRecordDetail implements RecordDetail {
 		return date;
 	}
 
-	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
+	public void read(ResultSet rs, boolean activePlayers) throws SQLException {
 		age = rs.getString("age");
 		date = rs.getDate("date");
 	}

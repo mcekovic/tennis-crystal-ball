@@ -1,6 +1,6 @@
-package org.strangeforest.tcb.stats.model.records.rows;
+package org.strangeforest.tcb.stats.model.records.details;
 
-public class WinningPctRecordDetail extends WonLostRecordDetail {
+public class TournamentWinningPctRecordDetail extends TournamentWonLostRecordDetail {
 
 	public String getWonLostPct() {
 		return wonLost.getWonPctStr(2);

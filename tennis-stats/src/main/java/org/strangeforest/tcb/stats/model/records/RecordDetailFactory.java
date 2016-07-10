@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model.records;
 
-import org.strangeforest.tcb.stats.model.records.rows.*;
+import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.lang.String.*;
 
@@ -33,6 +33,10 @@ public enum RecordDetailFactory {
 
 	RecordDetailFactory(Class<? extends RecordDetail> detailClass) {
 		this.detailClass = detailClass;
+	}
+
+	public Class<? extends RecordDetail> getDetailClass() {
+		return detailClass;
 	}
 
 	public RecordDetail createDetail() {

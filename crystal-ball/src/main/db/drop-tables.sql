@@ -1,5 +1,8 @@
 DROP TABLE visitor CASCADE;
 
+DROP TABLE player_record CASCADE;
+DROP TABLE active_player_record CASCADE;
+
 DROP TABLE tournament_rank_points CASCADE;
 DROP TABLE year_end_rank_goat_points CASCADE;
 DROP TABLE best_rank_goat_points CASCADE;

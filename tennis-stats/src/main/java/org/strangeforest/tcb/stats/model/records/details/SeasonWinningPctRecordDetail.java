@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.model.records.rows;
+package org.strangeforest.tcb.stats.model.records.details;
 
 public class SeasonWinningPctRecordDetail extends SeasonWonLostRecordDetail {
 

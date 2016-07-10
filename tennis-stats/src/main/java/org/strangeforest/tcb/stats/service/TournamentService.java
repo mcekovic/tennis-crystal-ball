@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.records.*;
-import org.strangeforest.tcb.stats.model.records.rows.*;
+import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;

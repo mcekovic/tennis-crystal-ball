@@ -1,6 +1,8 @@
-package org.strangeforest.tcb.stats.model.records.rows;
+package org.strangeforest.tcb.stats.model.records.details;
 
 import java.sql.*;
+
+import com.fasterxml.jackson.annotation.*;
 
 public class TournamentEventIntegerRecordDetail extends IntegerRecordDetail {
 
@@ -10,12 +12,22 @@ public class TournamentEventIntegerRecordDetail extends IntegerRecordDetail {
 	private String level;
 	private int matches;
 
+	public TournamentEventIntegerRecordDetail(@JsonProperty("value") int value) {
+		super(value);
+	}
+
 	public int getSeason() {
 		return season;
 	}
 
+	@JsonGetter("tournamentEventId")
 	public int getTournamentEventId() {
 		return tournamentEventId;
+	}
+
+	@JsonSetter("tournament_event_id")
+	public void setTournamentEventId(int tournamentEventId) {
+		this.tournamentEventId = tournamentEventId;
 	}
 
 	public String getTournament() {
@@ -30,8 +42,7 @@ public class TournamentEventIntegerRecordDetail extends IntegerRecordDetail {
 		return matches;
 	}
 
-	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
-		super.read(rs, activePlayers);
+	public void read(ResultSet rs, boolean activePlayers) throws SQLException {
 		season = rs.getInt("season");
 		tournamentEventId = rs.getInt("tournament_event_id");
 		tournament = rs.getString("tournament");

@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.model.records.rows;
+package org.strangeforest.tcb.stats.model.records.details;
 
 import java.sql.*;
 
@@ -25,7 +25,7 @@ public abstract class WonDrawLostRecordDetail implements RecordDetail {
 		return wonDrawLost.getTotal();
 	}
 
-	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
+	public void read(ResultSet rs, boolean activePlayers) throws SQLException {
 		wonDrawLost = new WonDrawLost(rs.getInt("won"), rs.getInt("draw"), rs.getInt("lost"));
 	}
 }

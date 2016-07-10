@@ -1,15 +1,23 @@
-package org.strangeforest.tcb.stats.model.records.rows;
+package org.strangeforest.tcb.stats.model.records.details;
 
 import java.sql.*;
 
-public class TournamentIntegerRecordDetail extends IntegerRecordDetail {
+import com.fasterxml.jackson.annotation.*;
+
+public abstract class TournamentWonLostRecordDetail extends WonLostRecordDetail {
 
 	private int tournamentId;
 	private String tournament;
 	private String level;
 
+	@JsonGetter("tournamentId")
 	public int getTournamentId() {
 		return tournamentId;
+	}
+
+	@JsonSetter("tournament_id")
+	public void setTournamentId(int tournamentId) {
+		this.tournamentId = tournamentId;
 	}
 
 	public String getTournament() {

@@ -1,8 +1,8 @@
-package org.strangeforest.tcb.stats.model.records.rows;
+package org.strangeforest.tcb.stats.model.records.details;
 
 import java.sql.*;
 
-public class SeasonIntegerRecordDetail extends IntegerRecordDetail {
+public abstract class SeasonWonLostRecordDetail extends WonLostRecordDetail {
 
 	private int season;
 

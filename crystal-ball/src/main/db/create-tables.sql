@@ -370,6 +370,33 @@ CREATE TABLE statistics_goat_points (
 );
 
 
+-- player_record
+
+CREATE TABLE player_record (
+	record_id TEXT NOT NULL,
+	sort_order INTEGER NOT NULL,
+	rank INTEGER NOT NULL,
+	player_id INTEGER NOT NULL REFERENCES player (player_id) ON DELETE CASCADE,
+	detail JSON NOT NULL,
+	PRIMARY KEY (record_id, sort_order)
+);
+
+CREATE INDEX ON player_record (player_id);
+CREATE INDEX ON player_record (rank);
+
+
+-- active_player_record
+
+CREATE TABLE active_player_record (
+	record_id TEXT NOT NULL,
+	sort_order INTEGER NOT NULL,
+	rank INTEGER NOT NULL,
+	player_id INTEGER NOT NULL REFERENCES player (player_id) ON DELETE CASCADE,
+	detail JSON NOT NULL,
+	PRIMARY KEY (record_id, sort_order)
+);
+
+
 -- visitor
 
 CREATE TABLE visitor (
