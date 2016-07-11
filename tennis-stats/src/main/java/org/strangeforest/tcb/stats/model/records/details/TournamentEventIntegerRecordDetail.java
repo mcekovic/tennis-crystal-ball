@@ -1,33 +1,37 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import java.sql.*;
-
 import com.fasterxml.jackson.annotation.*;
 
 public class TournamentEventIntegerRecordDetail extends IntegerRecordDetail {
 
-	private int season;
-	private int tournamentEventId;
-	private String tournament;
-	private String level;
-	private int matches;
+	private final int season;
+	private final int tournamentEventId;
+	private final String tournament;
+	private final String level;
+	private final int matches;
 
-	public TournamentEventIntegerRecordDetail(@JsonProperty("value") int value) {
+	public TournamentEventIntegerRecordDetail(
+      @JsonProperty("value") int value,
+      @JsonProperty("season") int season,
+      @JsonProperty("tournament_event_id") int tournamentEventId,
+      @JsonProperty("tournament") String tournament,
+      @JsonProperty("level") String level,
+      @JsonProperty("matches") int matches
+	) {
 		super(value);
+		this.season = season;
+		this.tournamentEventId = tournamentEventId;
+		this.tournament = tournament;
+		this.level = level;
+		this.matches = matches;
 	}
 
 	public int getSeason() {
 		return season;
 	}
 
-	@JsonGetter("tournamentEventId")
 	public int getTournamentEventId() {
 		return tournamentEventId;
-	}
-
-	@JsonSetter("tournament_event_id")
-	public void setTournamentEventId(int tournamentEventId) {
-		this.tournamentEventId = tournamentEventId;
 	}
 
 	public String getTournament() {
@@ -40,13 +44,5 @@ public class TournamentEventIntegerRecordDetail extends IntegerRecordDetail {
 
 	public int getMatches() {
 		return matches;
-	}
-
-	public void read(ResultSet rs, boolean activePlayers) throws SQLException {
-		season = rs.getInt("season");
-		tournamentEventId = rs.getInt("tournament_event_id");
-		tournament = rs.getString("tournament");
-		level = rs.getString("level");
-		matches = rs.getInt("matches");
 	}
 }

@@ -14,14 +14,14 @@ public class Record {
 	private final List<RecordColumn> columnInfos;
 	private boolean infamous;
 
-	public Record(String id, String name, String sql, String columns, String rankOrder, String displayOrder, RecordDetailFactory detailFactory, List<RecordColumn> columnInfos) {
+	public Record(String id, String name, String sql, String columns, String rankOrder, String displayOrder, Class<? extends RecordDetail> detailClass, List<RecordColumn> columnInfos) {
 		this.id = id;
 		this.name = name;
 		this.sql = sql;
 		this.columns = columns;
 		this.rankOrder = rankOrder;
 		this.displayOrder = displayOrder;
-		this.detailFactory = detailFactory;
+		this.detailFactory = RecordDetailFactory.forClass(detailClass);
 		this.columnInfos = columnInfos;
 	}
 

@@ -16,8 +16,8 @@ public class PlayerRow {
 		this.playerId = playerId;
 		this.name = name;
 		this.countryId = countryId;
-		this.active = active;
 		this.countryCode = CountryUtil.getISOAlpha2Code(countryId);
+		this.active = active;
 	}
 
 	public int getRank() {

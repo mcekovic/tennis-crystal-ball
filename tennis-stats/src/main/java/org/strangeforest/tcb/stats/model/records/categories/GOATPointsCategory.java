@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
 
@@ -34,7 +35,7 @@ public class GOATPointsCategory extends RecordCategory {
 			"SELECT player_id, " + columnName + " AS value\n" +
 			"FROM player_goat_points\n" +
 			"WHERE " + columnName + " > 0",
-			"r.value", "r.value DESC", "r.value DESC", RecordDetailFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,
 			asList(new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", suffix(name, " ") + "GOAT Points"))
 		);
 	}
@@ -46,7 +47,7 @@ public class GOATPointsCategory extends RecordCategory {
 			"SELECT player_id, season, " + columnName + " AS value\n" +
 			"FROM player_season_goat_points\n" +
 			"WHERE " + columnName + " > 0",
-			"r.value, r.season", "r.value DESC", "r.value DESC, r.season", RecordDetailFactory.SEASON_INTEGER,
+			"r.value, r.season", "r.value DESC", "r.value DESC, r.season", SeasonIntegerRecordDetail.class,
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", suffix(name, " ") + "GOAT Points"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
@@ -69,7 +70,7 @@ public class GOATPointsCategory extends RecordCategory {
 			"FROM player_consecutive_seasons\n" +
 			"GROUP BY player_id, grouping_season\n" +
 			"HAVING max(consecutive_seasons) > 1",
-			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season", RecordDetailFactory.SEASON_RANGE_INTEGER,
+			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season", SeasonRangeIntegerRecordDetail.class,
 			asList(
 				new RecordColumn("value", "numeric", null, SEASONS_WIDTH, "right", "Seasons with GOAT Points"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),

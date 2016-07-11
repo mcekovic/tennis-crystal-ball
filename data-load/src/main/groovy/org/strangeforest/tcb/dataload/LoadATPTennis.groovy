@@ -12,4 +12,5 @@ sqlPool.withSql { sql ->
 	loader.loadAdditionalTournamentData(sql)
 
 	loader.refreshMaterializedViews(sql)
+	loader.clearSavedRecords(sql)
 }

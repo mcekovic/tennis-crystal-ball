@@ -1,13 +1,15 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import java.sql.*;
-
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.records.*;
 
 public abstract class WonDrawLostRecordDetail implements RecordDetail {
 
-	protected WonDrawLost wonDrawLost;
+	protected final WonDrawLost wonDrawLost;
+
+	protected WonDrawLostRecordDetail(int won, int draw, int lost) {
+		this.wonDrawLost = new WonDrawLost(won, draw, lost);
+	}
 
 	public int getWon() {
 		return wonDrawLost.getWon();
@@ -23,9 +25,5 @@ public abstract class WonDrawLostRecordDetail implements RecordDetail {
 
 	public int getPlayed() {
 		return wonDrawLost.getTotal();
-	}
-
-	public void read(ResultSet rs, boolean activePlayers) throws SQLException {
-		wonDrawLost = new WonDrawLost(rs.getInt("won"), rs.getInt("draw"), rs.getInt("lost"));
 	}
 }

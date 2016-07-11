@@ -1,14 +1,23 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import java.sql.*;
-import java.util.Date;
+import java.util.*;
 
 import org.strangeforest.tcb.stats.model.records.*;
 
+import com.fasterxml.jackson.annotation.*;
+
 public class DateAgeRecordDetail implements RecordDetail {
 
-	private String age;
-	private Date date;
+	private final String age;
+	private final Date date;
+
+	public DateAgeRecordDetail(
+		@JsonProperty("age") String age,
+		@JsonProperty("date") Date date
+	) {
+		this.age = age;
+		this.date = date;
+	}
 
 	public String getAge() {
 		return age;
@@ -16,10 +25,5 @@ public class DateAgeRecordDetail implements RecordDetail {
 
 	public Date getDate() {
 		return date;
-	}
-
-	public void read(ResultSet rs, boolean activePlayers) throws SQLException {
-		age = rs.getString("age");
-		date = rs.getDate("date");
 	}
 }

@@ -1,22 +1,36 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import java.sql.*;
-import java.util.Date;
+import java.util.*;
+
+import org.strangeforest.tcb.stats.model.*;
 
 import com.fasterxml.jackson.annotation.*;
 
 public class RankingDiffRecordDetail extends IntegerRecordDetail {
 
-	private PlayerDetail player2;
-	private int value1;
-	private int value2;
-	private Date date;
+	private final PlayerRow player2;
+	private final int value1;
+	private final int value2;
+	private final Date date;
 
-	public RankingDiffRecordDetail(@JsonProperty("value") int value) {
+	public RankingDiffRecordDetail(
+		@JsonProperty("value") int value,
+		@JsonProperty("player_id2") int playerId2,
+		@JsonProperty("name2") String name2,
+		@JsonProperty("country_id2") String countryId2,
+		@JsonProperty("active2") Boolean active2,
+		@JsonProperty("value1") int value1,
+		@JsonProperty("value2") int value2,
+		@JsonProperty("date") Date date
+	) {
 		super(value);
+		this.value1 = value1;
+		this.value2 = value2;
+		this.date = date;
+		player2 = new PlayerRow(2, playerId2, name2, countryId2, active2);
 	}
 
-	public PlayerDetail getPlayer2() {
+	public PlayerRow getPlayer2() {
 		return player2;
 	}
 
@@ -30,12 +44,5 @@ public class RankingDiffRecordDetail extends IntegerRecordDetail {
 
 	public Date getDate() {
 		return date;
-	}
-
-	public void read(ResultSet rs, boolean activePlayers) throws SQLException {
-		player2 = new PlayerDetail(rs, activePlayers);
-		value1 = rs.getInt("value1");
-		value2 = rs.getInt("value2");
-		date = rs.getDate("date");
 	}
 }

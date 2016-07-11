@@ -6,7 +6,6 @@ public class SeasonIntegerRecordDetail extends IntegerRecordDetail {
 
 	private final int season;
 
-	@JsonCreator
 	public SeasonIntegerRecordDetail(
 		@JsonProperty("value") int value,
 		@JsonProperty("season") int season

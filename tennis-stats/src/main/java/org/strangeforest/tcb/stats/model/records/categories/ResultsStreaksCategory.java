@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
 
@@ -49,7 +50,7 @@ public abstract class ResultsStreaksCategory extends RecordCategory {
 			"FROM player_event_result_streak s\n" +
 			"INNER JOIN tournament_event fe ON fe.tournament_event_id = s.first_event_id\n" +
 			"INNER JOIN tournament_event le ON le.tournament_event_id = s.last_event_id",
-			"r.value, r.start_season, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_season, r.end_tournament_event_id, r.end_tournament, r.end_level", "r.value DESC", "r.value DESC, r.end_date", RecordDetailFactory.STREAK,
+			"r.value, r.start_season, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_season, r.end_tournament_event_id, r.end_tournament, r.end_level", "r.value DESC", "r.value DESC, r.end_date", StreakRecordDetail.class,
          asList(
 				new RecordColumn("value", "numeric", null, STREAK_WIDTH, "right", "Streak"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),

@@ -19,7 +19,6 @@ public class RecordsResource {
 		@RequestParam(value = "rowCount") int rowCount
 	) {
 		int pageSize = rowCount > 0 ? rowCount : RecordsService.MAX_PLAYER_COUNT;
-		recordsService.updateRecord(recordId, active);
 		return recordsService.getRecordTable(recordId, active, pageSize, current);
 	}
 }

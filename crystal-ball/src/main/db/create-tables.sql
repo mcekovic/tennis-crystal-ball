@@ -397,6 +397,15 @@ CREATE TABLE active_player_record (
 );
 
 
+-- saved_record
+
+CREATE TABLE saved_record (
+	record_id TEXT NOT NULL,
+	active_players BOOLEAN NOT NULL,
+	PRIMARY KEY (record_id, active_players)
+);
+
+
 -- visitor
 
 CREATE TABLE visitor (

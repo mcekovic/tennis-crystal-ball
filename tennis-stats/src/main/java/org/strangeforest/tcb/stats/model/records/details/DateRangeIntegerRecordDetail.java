@@ -18,6 +18,7 @@ public class DateRangeIntegerRecordDetail extends IntegerRecordDetail {
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
+
 	public Date getStartDate() {
 		return startDate;
 	}

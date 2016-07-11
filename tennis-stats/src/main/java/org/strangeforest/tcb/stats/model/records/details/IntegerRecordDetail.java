@@ -8,7 +8,6 @@ public class IntegerRecordDetail implements RecordDetail {
 
 	private final int value;
 
-	@JsonCreator
 	public IntegerRecordDetail(
 		@JsonProperty("value") int value
 	) {

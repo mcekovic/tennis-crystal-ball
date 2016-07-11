@@ -12,7 +12,6 @@ public class CareerSpanRecordDetail implements RecordDetail {
 	private final Date startDate;
 	private final Date endDate;
 
-	@JsonCreator
 	public CareerSpanRecordDetail(
 		@JsonProperty("span") String span,
 		@JsonProperty("start_date") Date startDate,

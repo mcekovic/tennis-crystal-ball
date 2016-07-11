@@ -1,17 +1,15 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import java.sql.*;
-
 public abstract class SeasonWonLostRecordDetail extends WonLostRecordDetail {
 
-	private int season;
+	private final int season;
+
+	protected SeasonWonLostRecordDetail(int won, int lost, int season) {
+		super(won, lost);
+		this.season = season;
+	}
 
 	public int getSeason() {
 		return season;
-	}
-
-	@Override public void read(ResultSet rs, boolean activePlayers) throws SQLException {
-		super.read(rs, activePlayers);
-		season = rs.getInt("season");
 	}
 }

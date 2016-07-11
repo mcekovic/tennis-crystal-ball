@@ -7,14 +7,12 @@ import java.util.concurrent.atomic.*;
 import org.postgresql.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
+import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.table.*;
-
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
@@ -23,8 +21,6 @@ import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 public class RecordsService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
-
-	private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
 	public static final int MAX_PLAYER_COUNT = 100;
 
@@ -57,12 +53,27 @@ public class RecordsService {
 		"DELETE FROM %1$s\n" +
 		"WHERE record_id = :recordId";
 
-	private static final String DELETE_RECORDS = //language=SQL
+	private static final String DELETE_ALL_RECORDS = //language=SQL
 		"DELETE FROM %1$s";
 
+	private static final String IS_RECORD_SAVED = //language=SQL
+		"SELECT record_id FROM saved_record\n" +
+		"WHERE record_id = :recordId AND active_players = :activePlayers";
 
+	private static final String MARKED_RECORD_SAVED = //language=SQL
+		"INSERT INTO saved_record\n" +
+		"(record_id, active_players)\n" +
+		"VALUES\n" +
+		"(:recordId, :activePlayers)";
+
+	private static final String DELETE_ALL_SAVED_RECORDS = //language=SQL
+		"DELETE FROM saved_record";
+
+
+	@Transactional
 	@Cacheable("Records.Table")
 	public BootgridTable<RecordRow> getRecordTable(String recordId, boolean activePlayers, int pageSize, int currentPage) {
+		ensureSaveRecord(recordId, activePlayers);
 		Record record = Records.getRecord(recordId);
 		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
@@ -78,9 +89,7 @@ public class RecordsService {
 					String name = rs.getString("name");
 					String countryId = rs.getString("country_id");
 					Boolean active = !activePlayers ? rs.getBoolean("active") : null;
-//					RecordDetail detail = record.getDetailFactory().createDetail();
-//					populateDetail(detail, rs.getString("detail"));
-					RecordDetail detail = getDetail(record.getDetailFactory().getDetailClass(), rs.getString("detail"));
+					RecordDetail detail = getDetail(record, rs.getString("detail"));
 					table.addRow(new RecordRow(rank, playerId, name, countryId, active, detail));
 				}
 			}
@@ -89,36 +98,56 @@ public class RecordsService {
 		return table;
 	}
 
-	private RecordDetail getDetail(Class<? extends RecordDetail> detailClass, String json) throws SQLDataException {
+	private RecordDetail getDetail(Record record, String json) throws SQLDataException {
 		try {
-			return JSON_MAPPER.readValue(json, detailClass);
+			return record.getDetailFactory().createDetail(json);
 		}
 		catch (IOException ex) {
 			throw new SQLDataException("Unable to parse JSON value: " + json, PSQLState.DATA_ERROR.getState(), ex);
 		}
 	}
 
-	private void populateDetail(RecordDetail detail, String json) throws SQLDataException {
-		try {
-			JSON_MAPPER.readerForUpdating(detail).readValue(json);
-		}
-		catch (IOException ex) {
-			throw new SQLDataException("Unable to parse JSON value.", PSQLState.DATA_ERROR.getState(), ex);
+	private void ensureSaveRecord(String recordId, boolean activePlayers) {
+		if (!isRecordSaved(recordId, activePlayers)) {
+			deleteRecord(recordId, activePlayers);
+			saveRecord(recordId, activePlayers);
+			markRecordSaved(recordId, activePlayers);
 		}
 	}
 
-	@Transactional
-	public void updateRecord(String recordId, boolean activePlayers) {
+	private void saveRecord(String recordId, boolean activePlayers) {
 		Record record = Records.getRecord(recordId);
-		jdbcTemplate.update(format(DELETE_RECORD, getTableName(activePlayers)), params("recordId", recordId));
 		jdbcTemplate.update(
 			format(SAVE_RECORD, record.getSql(), record.getRankOrder(), record.getDisplayOrder(), record.getColumns(), activePlayers ? ACTIVE_CONDITION : "", getTableName(activePlayers)),
 			params("recordId", recordId).addValue("maxPlayers", MAX_PLAYER_COUNT)
 		);
 	}
 
-	public void deleteRecords(boolean activePlayers) {
-		jdbcTemplate.getJdbcOperations().update(format(DELETE_RECORDS, getTableName(activePlayers)));
+	private void deleteRecord(String recordId, boolean activePlayers) {
+		jdbcTemplate.update(format(DELETE_RECORD, getTableName(activePlayers)), params("recordId", recordId));
+	}
+
+	private boolean isRecordSaved(String recordId, boolean activePlayers) {
+		return jdbcTemplate.query(IS_RECORD_SAVED, params("recordId", recordId).addValue("activePlayers", activePlayers), ResultSet::next);
+	}
+
+	private void markRecordSaved(String recordId, boolean activePlayers) {
+		jdbcTemplate.update(MARKED_RECORD_SAVED, params("recordId", recordId).addValue("activePlayers", activePlayers));
+	}
+
+	@Transactional
+	public void clearRecords() {
+		deleteAllRecords(false);
+		deleteAllRecords(true);
+		deleteAllSavedRecords();
+	}
+
+	private void deleteAllRecords(boolean activePlayers) {
+		jdbcTemplate.getJdbcOperations().update(format(DELETE_ALL_RECORDS, getTableName(activePlayers)));
+	}
+
+	private void deleteAllSavedRecords() {
+		jdbcTemplate.getJdbcOperations().update(DELETE_ALL_SAVED_RECORDS);
 	}
 
 	private static String getTableName(boolean activePlayers) {

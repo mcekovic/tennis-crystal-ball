@@ -1,18 +1,18 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
-import static org.strangeforest.tcb.stats.model.records.RecordDetailFactory.*;
 
 public class GreatestTitlePctCategory extends RecordCategory {
 
 	public enum RecordType {
-		WINNING("Final/Title", "Winning", "finals_won", "CASE r.result WHEN 'W' THEN 1 ELSE 0 END", "wonLostPct", WINNING_PCT,
+		WINNING("Final/Title", "Winning", "finals_won", "CASE r.result WHEN 'W' THEN 1 ELSE 0 END", "wonLostPct", WinningPctRecordDetail.class,
 			new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", "Won")
 		),
-		LOSING("Final", "Losing", "finals_lost", "CASE r.result WHEN 'W' THEN 0 ELSE 1 END", "lostWonPct", LOSING_PCT,
+		LOSING("Final", "Losing", "finals_lost", "CASE r.result WHEN 'W' THEN 0 ELSE 1 END", "lostWonPct", LosingPctRecordDetail.class,
 			new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost")
 		);
 
@@ -20,16 +20,16 @@ public class GreatestTitlePctCategory extends RecordCategory {
 		final String name;
 		final String expression1, expression2;
 		final String pctAttr;
-		final RecordDetailFactory detailFactory;
+		final Class<? extends RecordDetail> detailClass;
 		final RecordColumn valueRecordColumn;
 
-		RecordType(String categoryName, String name, String expression1, String expression2, String pctAttr, RecordDetailFactory detailFactory, RecordColumn valueRecordColumn) {
+		RecordType(String categoryName, String name, String expression1, String expression2, String pctAttr, Class<? extends RecordDetail> detailClass, RecordColumn valueRecordColumn) {
 			this.categoryName = categoryName;
 			this.name = name;
 			this.expression1 = expression1;
 			this.expression2 = expression2;
 			this.pctAttr = pctAttr;
-			this.detailFactory = detailFactory;
+			this.detailClass = detailClass;
 			this.valueRecordColumn = valueRecordColumn;
 		}
 	}
@@ -75,7 +75,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, " + type.expression1 + "::REAL / (finals_won + finals_lost) AS pct, finals_won AS won, finals_lost AS lost\n" +
 			"FROM player_performance WHERE finals_won + finals_lost >= performance_min_entries('finals')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailFactory,
+			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailClass,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct."),
 				type.valueRecordColumn,
@@ -92,7 +92,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE r.result IN ('W', 'F') AND e." + filter.condition + "\n" +
 			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('finals') * performance_min_entries('" + filter.perfCategory + "') / performance_min_entries('matches')",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailFactory,
+			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailClass,
 			asList(
 				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(filter.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
@@ -109,7 +109,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE e." + filter.condition + "\n" +
 			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('" + filter.perfCategory + "') / 5",
-			"r.pct, r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", WINNING_PCT,
+			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", WinningPctRecordDetail.class,
 			asList(
 				new RecordColumn("wonLostPct", null, null, PCT_WIDTH, "right", suffix(filter.name, " ") + "Winning Pct."),
 				RecordType.WINNING.valueRecordColumn,

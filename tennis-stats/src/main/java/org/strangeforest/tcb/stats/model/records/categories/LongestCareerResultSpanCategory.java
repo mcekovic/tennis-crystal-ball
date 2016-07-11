@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 import java.util.*;
 
 import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
@@ -78,7 +79,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"INNER JOIN tournament_event fe ON fe.tournament_event_id = r.first_event_id\n" +
 			"INNER JOIN tournament_event le ON le.tournament_event_id = r.last_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'",
-			SPAN_COLUMNS, "r.span DESC", "r.span DESC, r.end_date", RecordDetailFactory.TOURNAMENT_CAREER_SPAN,
+			SPAN_COLUMNS, "r.span DESC", "r.span DESC, r.end_date", TournamentCareerSpanRecordDetail.class,
 			SPAN_RECORD_COLUMNS
 		);
 	}
@@ -104,7 +105,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"INNER JOIN match lm ON lm.match_id = w.last_match_id INNER JOIN tournament_event le ON le.tournament_event_id = lm.tournament_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'\n" +
 			"AND p.name NOT IN ('Alexander Zverev', 'Fred Hemmes', 'Miloslav Mecir')", // TODO Remove after data is fixed
-			SPAN_COLUMNS, "r.span DESC", "r.span DESC, r.end_date", RecordDetailFactory.TOURNAMENT_CAREER_SPAN,
+			SPAN_COLUMNS, "r.span DESC", "r.span DESC, r.end_date", TournamentCareerSpanRecordDetail.class,
 			SPAN_RECORD_COLUMNS
 		);
 	}
@@ -138,7 +139,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"FROM player_consecutive_seasons\n" +
 			"GROUP BY player_id, grouping_season\n" +
 			"HAVING max(consecutive_seasons) > 1",
-			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season", RecordDetailFactory.SEASON_RANGE_INTEGER,
+			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season", SeasonRangeIntegerRecordDetail.class,
          asList(
 				new RecordColumn("value", "numeric", null, SEASONS_WIDTH, "right", "Seasons"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),

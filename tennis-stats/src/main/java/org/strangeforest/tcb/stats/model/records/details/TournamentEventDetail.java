@@ -1,32 +1,19 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import java.sql.*;
-
-import com.fasterxml.jackson.annotation.*;
-
 public class TournamentEventDetail {
 
-	private int tournamentEventId;
-	private String name;
-	private String level;
+	private final int tournamentEventId;
+	private final String name;
+	private final String level;
 
-	public TournamentEventDetail() {}
-
-	public TournamentEventDetail(ResultSet rs, String prefix) throws SQLException {
-		tournamentEventId = rs.getInt(prefix + "tournament_event_id");
-		name = rs.getString(prefix + "tournament");
-		level = rs.getString(prefix + "level");
+	TournamentEventDetail(int tournamentEventId, String name, String level) {
+		this.tournamentEventId = tournamentEventId;
+		this.name = name;
+		this.level = level;
 	}
 
-
-	@JsonGetter("tournamentEventId")
 	public int getTournamentEventId() {
 		return tournamentEventId;
-	}
-
-	@JsonSetter("tournament_event_id")
-	public void setTournamentEventId(int tournamentEventId) {
-		this.tournamentEventId = tournamentEventId;
 	}
 
 	public String getName() {

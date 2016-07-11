@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.categories.RankingCategory.AgeType.*;
@@ -111,7 +112,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"WHERE rank " + condition + "\n" +
 			"AND p.name NOT IN (" + INVALID_RANKING_PLAYERS + ")\n" + // TODO Remove after data is fixed
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.last_date", RecordDetailFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC, r.last_date", IntegerRecordDetail.class,
 			asList(new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Weeks At " + name))
 		);
 	}
@@ -140,7 +141,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM player_consecutive_weeks INNER JOIN player_v USING (player_id)\n" +
 			"WHERE rank " + condition + " AND prev_rank " + condition + "\n" +
 			"GROUP BY player_id, name, start_date, end_date",
-			"r.value, r.start_date, r.end_date", "r.value DESC", "r.value DESC, r.end_date", RecordDetailFactory.DATE_RANGE_INTEGER,
+			"r.value, r.start_date, r.end_date", "r.value DESC", "r.value DESC, r.end_date", DateRangeIntegerRecordDetail.class,
 			asList(
 				new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Weeks at " + name),
 				new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
@@ -157,7 +158,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM player_year_end" + rankDBName + "_rank\n" +
 			"WHERE year_end_rank " + condition + "\n" +
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.last_season", RecordDetailFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC, r.last_season", IntegerRecordDetail.class,
 			asList(new RecordColumn("value", "numeric", null, SEASONS_WIDTH, "right", "Seasons at " + name))
 		);
 	}
@@ -181,7 +182,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM player_consecutive_seasons\n" +
 			"GROUP BY player_id, grouping_season\n" +
 			"HAVING max(consecutive_seasons) > 1",
-			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season", RecordDetailFactory.SEASON_RANGE_INTEGER,
+			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season", SeasonRangeIntegerRecordDetail.class,
 			asList(
 				new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Seasons at " + name),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
@@ -204,7 +205,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM ranking\n" +
 			"WHERE rank " + condition + " AND (NOT prev_rank " + condition + " OR prev_rank IS NULL)\n" +
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.last_date", RecordDetailFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC, r.last_date", IntegerRecordDetail.class,
 			asList(new RecordColumn("value", "numeric", null, TIMES_WIDTH, "right", "Times at " + name))
 		);
 	}
@@ -218,7 +219,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"WHERE rank " + condition + "\n" +
 			"AND p.name NOT IN (" + INVALID_RANKING_PLAYERS + ")\n" + // TODO Remove after data is fixed
 			"GROUP BY player_id",
-			"r.age, r.date", type.order, type.order + ", r.date", RecordDetailFactory.DATE_AGE,
+			"r.age, r.date", type.order, type.order + ", r.date", DateAgeRecordDetail.class,
 			asList(
 				new RecordColumn("age", null, null, AGE_WIDTH, "left", "Age"),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
@@ -234,7 +235,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM player" + rankDBName + "_ranking\n" +
 			"WHERE rank " + condition + "\n" +
 			"GROUP BY player_id",
-			"r.span, r.start_date, r.end_date", "r.span DESC", "r.span DESC, r.end_date", RecordDetailFactory.CAREER_SPAN,
+			"r.span, r.start_date, r.end_date", "r.span DESC", "r.span DESC, r.end_date", CareerSpanRecordDetail.class,
 			asList(
 				new RecordColumn("span", null, null, SPAN_WIDTH, "left", "Career Span"),
 				new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
@@ -249,7 +250,7 @@ public abstract class RankingCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, " + columnName + " AS value, " + dateColumnName + " AS date\n" +
 			"FROM " + tableName,
-			"r.value, r.date", "r.value DESC", "r.value DESC, r.date", RecordDetailFactory.DATE_INTEGER,
+			"r.value, r.date", "r.value DESC", "r.value DESC, r.date", DateIntegerRecordDetail.class,
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
@@ -269,7 +270,7 @@ public abstract class RankingCategory extends RecordCategory {
          ")\n" +
 			"SELECT player_id, value, (SELECT min(r.rank_date) FROM " + tableName + " r WHERE r.player_id = l.player_id AND r.rank = 1 AND " + expression + " = l.value) AS date\n" +
 			"FROM least_points l",
-			"r.value, r.date", "r.value", "r.value, r.date", RecordDetailFactory.DATE_INTEGER,
+			"r.value, r.date", "r.value", "r.value, r.date", DateIntegerRecordDetail.class,
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
@@ -284,7 +285,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"SELECT player_id, " + columnName + " AS value, year_end_rank AS value2, season\n" +
 			"FROM " + tableName + "\n" +
 			"WHERE " + columnName + " > 0",
-			"r.value, r.value2, r.season", "r.value DESC", "r.value DESC, r.value2, r.season", RecordDetailFactory.SEASON_TWO_INTEGERS,
+			"r.value, r.value2, r.season", "r.value DESC", "r.value DESC, r.value2, r.season", SeasonTwoIntegersRecordDetail.class,
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("value2", "numeric", null, RANK_WIDTH, "right", "Rank"),
@@ -300,7 +301,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"SELECT player_id, " + columnName + " AS value, season\n" +
 			"FROM " + tableName + "\n" +
 			"WHERE year_end_rank = 1 AND " + columnName + " > 0",
-			"r.value, r.season", "r.value", "r.value, r.season", RecordDetailFactory.SEASON_INTEGER,
+			"r.value, r.season", "r.value", "r.value, r.season", SeasonIntegerRecordDetail.class,
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
@@ -332,7 +333,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"SELECT DISTINCT d.player_id, d.player_id2, p2.name AS name2, p2.country_id AS country_id2, p2.active AS active2, d.value1, d.value2, d.value, d.date\n" +
 			"FROM ranking_diff2 d\n" +
 			"INNER JOIN player_v p2 ON p2.player_id = d.player_id2",
-			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.date", order, order + ", r.date", RecordDetailFactory.RANKING_DIFF,
+			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.date", order, order + ", r.date", RankingDiffRecordDetail.class,
 			asList(
 				new RecordColumn("player2", null, "player2", PLAYER_WIDTH, "left", "No. 2 Player"),
 				new RecordColumn("value1", "numeric", null, POINTS_WIDTH, "right", caption + " No. 1"),

@@ -60,6 +60,7 @@ dependencies {
 	testCompile ("junit:junit:$junitVersion")
 	testCompile ("org.assertj:assertj-core:$assertjCoreVersion")
 	testCompile ("org.mockito:mockito-all:$mockitoAllVersion")
+	testCompile ("org.testng:testng:$testngVersion")
 	testCompile ('org.springframework:spring-test')
 	integrationTestCompile sourceSets.main.output
 	integrationTestCompile sourceSets.test.output

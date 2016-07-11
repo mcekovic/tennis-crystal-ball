@@ -1,16 +1,20 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import java.sql.*;
-
 import com.fasterxml.jackson.annotation.*;
 
 public class SeasonTwoIntegersRecordDetail extends IntegerRecordDetail {
 
-	private int value2;
-	private int season;
+	private final int value2;
+	private final int season;
 
-	public SeasonTwoIntegersRecordDetail(@JsonProperty("value") int value) {
+	public SeasonTwoIntegersRecordDetail(
+      @JsonProperty("value") int value,
+      @JsonProperty("value2") int value2,
+      @JsonProperty("season") int season
+	) {
 		super(value);
+		this.value2 = value2;
+		this.season = season;
 	}
 
 	public int getValue2() {
@@ -19,10 +23,5 @@ public class SeasonTwoIntegersRecordDetail extends IntegerRecordDetail {
 
 	public int getSeason() {
 		return season;
-	}
-
-	public void read(ResultSet rs, boolean activePlayers) throws SQLException {
-		value2 = rs.getInt("value2");
-		season = rs.getInt("season");
 	}
 }

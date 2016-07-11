@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.util.*;
 
 import static com.google.common.base.Strings.*;
@@ -75,7 +76,7 @@ public class MostMatchesCategory extends RecordCategory {
 			filter.id + "Matches" + type.name, "Most " + suffix(filter.name, " ") + "Matches " + type.name,
 			/* language=SQL */
 			"SELECT player_id, " + type.expression(filter.columnPrefix + "matches") + " AS value FROM player_performance",
-			"r.value", "r.value DESC", "r.value DESC", RecordDetailFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,
 			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(filter.name, " ") + "Matches " + type.name))
 		);
 	}
@@ -85,7 +86,7 @@ public class MostMatchesCategory extends RecordCategory {
 			"MatchesVs" + filter.id + type.name, "Most Matches " + type.name + " Vs. " + filter.name,
 			/* language=SQL */
 			"SELECT player_id, " + type.expression(filter.columnPrefix) + " AS value FROM player_performance",
-			"r.value", "r.value DESC", "r.value DESC", RecordDetailFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,
 			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", "Matches " + type.name + " Vs. " + filter.name))
 		);
 	}
@@ -95,7 +96,7 @@ public class MostMatchesCategory extends RecordCategory {
 			"SeasonMatches" + type.name, "Most Matches " + type.name + " in Single Season",
 			/* language=SQL */
 			"SELECT player_id, season, " + type.expression("matches") + " AS value FROM player_season_performance",
-			"r.value, r.season", "r.value DESC", "r.value DESC, r.season", RecordDetailFactory.SEASON_INTEGER,
+			"r.value, r.season", "r.value DESC", "r.value DESC, r.season", SeasonIntegerRecordDetail.class,
 			asList(
 				new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", "Matches " + type.name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
@@ -109,7 +110,7 @@ public class MostMatchesCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + filter.columnPrefix + "matches") + " AS value\n" +
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id) WHERE t." + ALL_TOURNAMENTS,
-			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.tournament", RecordDetailFactory.TOURNAMENT_INTEGER,
+			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.tournament", TournamentIntegerRecordDetail.class,
 			asList(
 				new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(filter.name, " ") + "Matches " + type.name),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
@@ -124,7 +125,7 @@ public class MostMatchesCategory extends RecordCategory {
 			"SELECT " + type.playerColumn + " AS player_id, count(match_id) AS value FROM match\n" +
 			"WHERE outcome = '" + outcome + "'\n" +
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC", RecordDetailFactory.INTEGER,
+			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,
 			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", "Matches " + type.name + " by " + name))
 		);
 	}

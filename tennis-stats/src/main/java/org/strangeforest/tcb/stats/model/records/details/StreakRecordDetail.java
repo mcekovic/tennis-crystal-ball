@@ -1,53 +1,45 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import java.sql.*;
-
 import com.fasterxml.jackson.annotation.*;
 
 public class StreakRecordDetail extends IntegerRecordDetail {
 
-	private int startSeason;
-	private TournamentEventDetail startEvent;
-	private int endSeason;
-	private TournamentEventDetail endEvent;
+	private final int startSeason;
+	private final TournamentEventDetail startEvent;
+	private final int endSeason;
+	private final TournamentEventDetail endEvent;
 
-	public StreakRecordDetail(@JsonProperty("value") int value) {
+	public StreakRecordDetail(
+      @JsonProperty("value") int value,
+      @JsonProperty("start_season") int startSeason,
+      @JsonProperty("start_tournament_event_id") int startTournamentEventId,
+      @JsonProperty("start_tournament") String startTournament,
+      @JsonProperty("start_level") String startLevel,
+      @JsonProperty("end_season") int endSeason,
+      @JsonProperty("end_tournament_event_id") int endTournamentEventId,
+      @JsonProperty("end_tournament") String endTournament,
+      @JsonProperty("end_level") String endLevel
+	) {
 		super(value);
+		this.startSeason = startSeason;
+		startEvent = new TournamentEventDetail(startTournamentEventId, startTournament, startLevel);
+		this.endSeason = endSeason;
+		endEvent = new TournamentEventDetail(endTournamentEventId, endTournament, endLevel);
 	}
 
-	@JsonGetter("startSeason")
 	public int getStartSeason() {
 		return startSeason;
-	}
-
-	@JsonSetter("start_season")
-	public void setStartSeason(int startSeason) {
-		this.startSeason = startSeason;
 	}
 
 	public TournamentEventDetail getStartEvent() {
 		return startEvent;
 	}
 
-
-	@JsonGetter("endSeason")
 	public int getEndSeason() {
 		return endSeason;
 	}
 
-	@JsonGetter("end_season")
-	public void setEndSeason(int endSeason) {
-		this.endSeason = endSeason;
-	}
-
 	public TournamentEventDetail getEndEvent() {
 		return endEvent;
-	}
-
-	public void read(ResultSet rs, boolean activePlayers) throws SQLException {
-		startSeason = rs.getInt("start_season");
-		startEvent = new TournamentEventDetail(rs, "start_");
-		endSeason = rs.getInt("end_season");
-		endEvent = new TournamentEventDetail(rs, "end_");
 	}
 }

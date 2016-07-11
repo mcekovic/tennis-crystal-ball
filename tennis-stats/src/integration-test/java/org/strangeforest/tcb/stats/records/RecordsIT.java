@@ -2,41 +2,55 @@ package org.strangeforest.tcb.stats.records;
 
 import java.util.*;
 
-import org.junit.*;
-import org.junit.runner.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.test.annotation.*;
 import org.springframework.test.context.*;
-import org.springframework.test.context.junit4.*;
+import org.springframework.test.context.testng.*;
 import org.springframework.transaction.annotation.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
+import org.testng.annotations.*;
 
 import static java.util.Comparator.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = RecordsITsConfig.class)
-@Transactional
-public class RecordsIT {
+@Transactional @Commit
+public class RecordsIT extends AbstractTransactionalTestNGSpringContextTests {
 
 	@Autowired private RecordsService recordsService;
 	@Autowired private PlayerService playerService;
 
+	@BeforeClass
+	public void setUp() {
+		recordsService.clearRecords();
+	}
+
 	@Test
 	public void testAllFamousRecords() {
-		testRecords(Records.getRecordCategories());
+		testRecords(Records.getRecordCategories(), false);
 	}
 
 	@Test
 	public void testAllInfamousRecords() {
-		testRecords(Records.getInfamousRecordCategories());
+		testRecords(Records.getInfamousRecordCategories(), false);
 	}
 
-	private void testRecords(List<RecordCategory> categories) {
+	@Test
+	public void testAllFamousRecordsForActivePlayers() {
+		testRecords(Records.getRecordCategories(), true);
+	}
+
+	@Test
+	public void testAllInfamousRecordsForActivePlayers() {
+		testRecords(Records.getInfamousRecordCategories(), true);
+	}
+
+	private void testRecords(List<RecordCategory> categories, boolean active) {
 		Map<Integer, PlayerRecords> records = new HashMap<>();
 		for (RecordCategory recordCategory : categories) {
 			for (Record record : recordCategory.getRecords()) {
-				BootgridTable<RecordRow> table = recordsService.getRecordTable(record.getId(), false, 100, 1);
+				BootgridTable<RecordRow> table = recordsService.getRecordTable(record.getId(), active, 100, 1);
 				if (table.getRowCount() > 0) {
 					for (RecordRow row : table.getRows()) {
 						if (row.getRank() == 1)
