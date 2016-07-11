@@ -3,10 +3,8 @@ package org.strangeforest.tcb.stats.records;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.test.annotation.*;
 import org.springframework.test.context.*;
 import org.springframework.test.context.testng.*;
-import org.springframework.transaction.annotation.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
@@ -15,8 +13,7 @@ import org.testng.annotations.*;
 import static java.util.Comparator.*;
 
 @ContextConfiguration(classes = RecordsITsConfig.class)
-@Transactional @Commit
-public class RecordsIT extends AbstractTransactionalTestNGSpringContextTests {
+public class RecordsIT extends AbstractTestNGSpringContextTests {
 
 	@Autowired private RecordsService recordsService;
 	@Autowired private PlayerService playerService;
