@@ -16,12 +16,12 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost")
 		);
 
-		final String categoryName;
-		final String name;
-		final String expression1, expression2;
-		final String pctAttr;
-		final Class<? extends RecordDetail> detailClass;
-		final RecordColumn valueRecordColumn;
+		private final String categoryName;
+		private final String name;
+		private final String expression1, expression2;
+		private final String pctAttr;
+		private final Class<? extends RecordDetail> detailClass;
+		private final RecordColumn valueRecordColumn;
 
 		RecordType(String categoryName, String name, String expression1, String expression2, String pctAttr, Class<? extends RecordDetail> detailClass, RecordColumn valueRecordColumn) {
 			this.categoryName = categoryName;

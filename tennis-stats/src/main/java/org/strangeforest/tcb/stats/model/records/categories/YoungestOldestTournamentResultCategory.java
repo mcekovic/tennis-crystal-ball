@@ -14,8 +14,8 @@ public class YoungestOldestTournamentResultCategory extends RecordCategory {
 		YOUNGEST("Youngest", "r.age"),
 		OLDEST("Oldest", "r.age DESC");
 
-		final String name;
-		final String order;
+		private final String name;
+		private final String order;
 
 		RecordType(String name, String order) {
 			this.name = name;
@@ -27,8 +27,8 @@ public class YoungestOldestTournamentResultCategory extends RecordCategory {
 		CHAMPION("Champion", TITLES),
 		FINALIST("Finalist", FINALS);
 
-		final String name;
-		final String condition;
+		private final String name;
+		private final String condition;
 
 		ResultType(String name, String condition) {
 			this.name = name;

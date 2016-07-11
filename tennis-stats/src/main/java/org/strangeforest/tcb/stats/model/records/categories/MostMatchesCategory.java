@@ -15,8 +15,8 @@ public class MostMatchesCategory extends RecordCategory {
 		WON("Won", "winner_id"),
 		LOST("Lost", "loser_id");
 
-		final String name;
-		final String playerColumn;
+		private final String name;
+		private final String playerColumn;
 
 		RecordType(String name, String playerColumn) {
 			this.name = name;

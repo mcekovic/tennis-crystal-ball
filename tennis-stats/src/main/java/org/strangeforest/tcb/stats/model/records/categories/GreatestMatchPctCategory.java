@@ -16,13 +16,13 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost")
 		);
 
-		final String name;
-		final String columnSuffix;
-		final String pctAttr;
-		final Class<? extends RecordDetail> detailClass;
-		final Class<? extends RecordDetail> seasonDetailClass;
-		final Class<? extends RecordDetail> tournamentDetailClass;
-		final RecordColumn valueRecordColumn;
+		private final String name;
+		private final String columnSuffix;
+		private final String pctAttr;
+		private final Class<? extends RecordDetail> detailClass;
+		private final Class<? extends RecordDetail> seasonDetailClass;
+		private final Class<? extends RecordDetail> tournamentDetailClass;
+		private final RecordColumn valueRecordColumn;
 
 		RecordType(String name, String column, String pctAttr, Class<? extends RecordDetail> detailClass, Class<? extends RecordDetail> seasonDetailClass, Class<? extends RecordDetail> tournamentDetailClass, RecordColumn valueRecordColumn) {
 			this.name = name;

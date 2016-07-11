@@ -15,8 +15,8 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 		TITLE("Title", TITLES),
 		FINAL("Final", FINALS);
 
-		final String name;
-		final String condition;
+		private final String name;
+		private final String condition;
 
 		ResultType(String name, String condition) {
 			this.name = name;

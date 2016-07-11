@@ -14,8 +14,8 @@ public class HeadToHeadCategory extends RecordCategory {
 		MOST("Most", "r.value DESC"),
 		LEAST("Least", "r.value");
 
-		final String name;
-		final String order;
+		private final String name;
+		private final String order;
 
 		MostLeast(String name, String order) {
 			this.name = name;
@@ -29,8 +29,8 @@ public class HeadToHeadCategory extends RecordCategory {
 		DRAW("Draw", "h2h_draw"),
 		LOST("Lost", "h2h_lost");
 
-		final String name;
-		final String column;
+		private final String name;
+		private final String column;
 
 		RecordType(String name, String column) {
 			this.name = name;
@@ -42,12 +42,12 @@ public class HeadToHeadCategory extends RecordCategory {
 		WINNING("Winning", "(h2h_won + 0.5 * h2h_draw) / (" + HTH_TOTAL + ")", "wonLostPct", WinningWDrawPctRecordDetail.class, WON_COLUMN, LOST_COLUMN),
 		LOSING("Losing", "(h2h_lost + 0.5 * h2h_draw) / (" + HTH_TOTAL + ")", "lostWonPct", LosingWDrawPctRecordDetail.class, LOST_COLUMN, WON_COLUMN);
 
-		final String name;
-		final String expression;
-		final String pctAttr;
-		final Class<? extends RecordDetail> detailClass;
-		final RecordColumn value1RecordColumn;
-		final RecordColumn value2RecordColumn;
+		private final String name;
+		private final String expression;
+		private final String pctAttr;
+		private final Class<? extends RecordDetail> detailClass;
+		private final RecordColumn value1RecordColumn;
+		private final RecordColumn value2RecordColumn;
 
 		PctRecordType(String name, String expression, String pctAttr, Class<? extends RecordDetail> detailClass, RecordColumn value1RecordColumn, RecordColumn value2RecordColumn) {
 			this.name = name;

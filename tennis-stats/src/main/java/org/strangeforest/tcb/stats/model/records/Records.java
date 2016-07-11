@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.model.records;
 import java.util.*;
 
 import org.strangeforest.tcb.stats.model.records.categories.*;
+import org.strangeforest.tcb.stats.model.records.categories.MostRecordsCategory.*;
 
 public abstract class Records {
 
@@ -61,6 +62,7 @@ public abstract class Records {
 		register(new LongestCareerResultSpanCategory(), false);
 		register(new HeadToHeadCategory(false), false);
 		register(new GOATPointsCategory(), false);
+		register(new MostRecordsCategory(false), false);
 		// Infamous Records
 		register(new BestPlayerThatNeverCategory(), true);
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.LOST), true);
@@ -70,5 +72,6 @@ public abstract class Records {
 		register(new InfamousATPRankingCategory(), true);
 		register(new InfamousEloRankingCategory(), true);
 		register(new HeadToHeadCategory(true), true);
+		register(new MostRecordsCategory(true), true);
 	}
 }

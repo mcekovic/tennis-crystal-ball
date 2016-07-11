@@ -13,8 +13,8 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		LEAST("Least", "r.value, r.matches DESC"),
 		MOST("Most", "r.value DESC, r.matches");
 
-		final String name;
-		final String order;
+		private final String name;
+		private final String order;
 
 		RecordType(String name, String order) {
 			this.name = name;
@@ -26,8 +26,8 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		GAMES("Games", "o_games"),
 		SETS("Sets", "o_sets");
 
-		final String name;
-		final String column;
+		private final String name;
+		private final String column;
 
 		ItemType(String name, String column) {
 			this.name = name;

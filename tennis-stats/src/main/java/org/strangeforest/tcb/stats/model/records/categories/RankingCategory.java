@@ -25,9 +25,9 @@ public abstract class RankingCategory extends RecordCategory {
 		YOUNGEST("Youngest", "min", "r.age"),
 		OLDEST("Oldest", "max", "r.age DESC");
 
-		final String name;
-		final String function;
-		final String order;
+		private final String name;
+		private final String function;
+		private final String order;
 
 		AgeType(String name, String function, String order) {
 			this.name = name;

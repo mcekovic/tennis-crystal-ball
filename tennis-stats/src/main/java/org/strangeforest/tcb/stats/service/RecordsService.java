@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.*;
 import org.postgresql.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
-import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.*;
@@ -62,9 +61,9 @@ public class RecordsService {
 
 	private static final String MARKED_RECORD_SAVED = //language=SQL
 		"INSERT INTO saved_record\n" +
-		"(record_id, active_players)\n" +
+		"(record_id, active_players, infamous)\n" +
 		"VALUES\n" +
-		"(:recordId, :activePlayers)";
+		"(:recordId, :activePlayers, :infamous)";
 
 	private static final String DELETE_ALL_SAVED_RECORDS = //language=SQL
 		"DELETE FROM saved_record";
@@ -73,8 +72,8 @@ public class RecordsService {
 	@Transactional
 	@Cacheable("Records.Table")
 	public BootgridTable<RecordRow> getRecordTable(String recordId, boolean activePlayers, int pageSize, int currentPage) {
-		ensureSaveRecord(recordId, activePlayers);
 		Record record = Records.getRecord(recordId);
+		ensureSaveRecord(record, activePlayers);
 		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
@@ -107,32 +106,44 @@ public class RecordsService {
 		}
 	}
 
-	private void ensureSaveRecord(String recordId, boolean activePlayers) {
-		if (!isRecordSaved(recordId, activePlayers)) {
-			deleteRecord(recordId, activePlayers);
-			saveRecord(recordId, activePlayers);
-			markRecordSaved(recordId, activePlayers);
+	private void ensureSaveRecord(Record record, boolean activePlayers) {
+		if (!isRecordSaved(record, activePlayers)) {
+			deleteRecord(record, activePlayers);
+			saveRecord(record, activePlayers);
+			markRecordSaved(record, activePlayers);
 		}
 	}
 
-	private void saveRecord(String recordId, boolean activePlayers) {
-		Record record = Records.getRecord(recordId);
+	private void saveRecord(Record record, boolean activePlayers) {
 		jdbcTemplate.update(
 			format(SAVE_RECORD, record.getSql(), record.getRankOrder(), record.getDisplayOrder(), record.getColumns(), activePlayers ? ACTIVE_CONDITION : "", getTableName(activePlayers)),
-			params("recordId", recordId).addValue("maxPlayers", MAX_PLAYER_COUNT)
+			params("recordId", record.getId()).addValue("maxPlayers", MAX_PLAYER_COUNT)
 		);
 	}
 
-	private void deleteRecord(String recordId, boolean activePlayers) {
-		jdbcTemplate.update(format(DELETE_RECORD, getTableName(activePlayers)), params("recordId", recordId));
+	private void deleteRecord(Record record, boolean activePlayers) {
+		jdbcTemplate.update(
+			format(DELETE_RECORD, getTableName(activePlayers)),
+			params("recordId", record.getId())
+		);
 	}
 
-	private boolean isRecordSaved(String recordId, boolean activePlayers) {
-		return jdbcTemplate.query(IS_RECORD_SAVED, params("recordId", recordId).addValue("activePlayers", activePlayers), ResultSet::next);
+	private boolean isRecordSaved(Record record, boolean activePlayers) {
+		return jdbcTemplate.query(
+			IS_RECORD_SAVED,
+			params("recordId", record.getId())
+				.addValue("activePlayers", activePlayers),
+			ResultSet::next
+		);
 	}
 
-	private void markRecordSaved(String recordId, boolean activePlayers) {
-		jdbcTemplate.update(MARKED_RECORD_SAVED, params("recordId", recordId).addValue("activePlayers", activePlayers));
+	private void markRecordSaved(Record record, boolean activePlayers) {
+		jdbcTemplate.update(
+			MARKED_RECORD_SAVED,
+			params("recordId", record.getId())
+				.addValue("activePlayers", activePlayers)
+				.addValue("infamous", record.isInfamous())
+		);
 	}
 
 	@Transactional
