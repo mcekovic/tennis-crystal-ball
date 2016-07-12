@@ -1,20 +1,45 @@
 package org.strangeforest.tcb.stats.model.records;
 
-import org.strangeforest.tcb.stats.model.*;
+import java.util.*;
 
-import com.fasterxml.jackson.annotation.*;
+public class RecordRow {
 
-public class RecordRow extends PlayerRow {
+	private final String id;
+	private final String category;
+	private final String name;
+	private final boolean infamous;
+	private final List<PlayerRecordRow> playerRecords;
 
-	private final RecordDetail detail;
-
-	public RecordRow(int rank, int playerId, String name, String countryId, Boolean active, RecordDetail detail) {
-		super(rank, playerId, name, countryId, active);
-		this.detail = detail;
+	public RecordRow(Record record) {
+		this.id = record.getId();
+		this.category = record.getCategory();
+		this.name = record.getName();
+		this.infamous = record.isInfamous();
+		playerRecords = new ArrayList<>();
 	}
 
-	@JsonUnwrapped
-	public RecordDetail getDetail() {
-		return detail;
+	public String getId() {
+		return id;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public boolean isInfamous() {
+		return infamous;
+	}
+
+	public List<PlayerRecordRow> getPlayerRecords() {
+		return playerRecords;
+	}
+
+	public void addPlayerRecord(PlayerRecordRow playerRecord) {
+		playerRecords.add(playerRecord);
+
 	}
 }

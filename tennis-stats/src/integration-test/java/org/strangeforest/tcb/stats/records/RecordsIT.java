@@ -47,9 +47,9 @@ public class RecordsIT extends AbstractTestNGSpringContextTests {
 		Map<Integer, PlayerRecords> records = new HashMap<>();
 		for (RecordCategory recordCategory : categories) {
 			for (Record record : recordCategory.getRecords()) {
-				BootgridTable<RecordRow> table = recordsService.getRecordTable(record.getId(), active, 100, 1);
+				BootgridTable<RecordDetailRow> table = recordsService.getRecordTable(record.getId(), active, 100, 1);
 				if (table.getRowCount() > 0) {
-					for (RecordRow row : table.getRows()) {
+					for (RecordDetailRow row : table.getRows()) {
 						if (row.getRank() == 1)
 							incRecords(records, row.getPlayerId());
 						else

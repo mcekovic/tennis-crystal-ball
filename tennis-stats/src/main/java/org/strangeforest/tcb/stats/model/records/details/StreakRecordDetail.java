@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model.records.details;
 
 import com.fasterxml.jackson.annotation.*;
 
+import static java.lang.String.*;
+
 public class StreakRecordDetail extends IntegerRecordDetail {
 
 	private final int startSeason;
@@ -41,5 +43,9 @@ public class StreakRecordDetail extends IntegerRecordDetail {
 
 	public TournamentEventDetail getEndEvent() {
 		return endEvent;
+	}
+
+	@Override public String toString() {
+		return format("%1$d (%2$d %3$s - %4$d %5$s)", getValue(), startSeason, startEvent.getName(), endSeason, endEvent.getName());
 	}
 }

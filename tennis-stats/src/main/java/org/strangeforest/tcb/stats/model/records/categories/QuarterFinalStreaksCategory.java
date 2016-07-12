@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
 
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class QuarterFinalStreaksCategory extends ResultsStreaksCategory {
 
@@ -28,11 +28,11 @@ public class QuarterFinalStreaksCategory extends ResultsStreaksCategory {
 		register(tournamentQuarterFinalStreak(ATP_250));
 	}
 
-	private static Record quarterFinalStreak(RecordFilter filter) {
-		return resultStreak(filter.id + "QuarterFinal", suffix(filter.name, " ") + "Quarter-Final", filter.nameSuffix, QUARTER_FINALS, filter.condition);
+	private static Record quarterFinalStreak(RecordDomain domain) {
+		return resultStreak(domain.id + "QuarterFinal", suffix(domain.name, " ") + "Quarter-Final", domain.nameSuffix, QUARTER_FINALS, domain.condition);
 	}
 
-	private static Record tournamentQuarterFinalStreak(RecordFilter filter) {
-		return tournamentResultStreak(filter.id + "QuarterFinal", filter.name, "Quarter-Final", QUARTER_FINALS, filter.condition);
+	private static Record tournamentQuarterFinalStreak(RecordDomain domain) {
+		return tournamentResultStreak(domain.id + "QuarterFinal", domain.name, "Quarter-Final", QUARTER_FINALS, domain.condition);
 	}
 }

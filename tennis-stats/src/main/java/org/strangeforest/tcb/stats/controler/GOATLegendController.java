@@ -14,7 +14,7 @@ public class GOATLegendController extends BaseController {
 
 	@RequestMapping("/goatLegend")
 	public ModelAndView goatLegend(
-		@RequestParam(value = "forSeason", required = false) boolean forSeason
+		@RequestParam(name = "forSeason", required = false) boolean forSeason
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("forSeason", forSeason);

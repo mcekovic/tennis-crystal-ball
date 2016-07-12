@@ -4,6 +4,8 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.*;
 
+import static java.lang.String.*;
+
 public class DateRangeIntegerRecordDetail extends IntegerRecordDetail {
 
 	private final Date startDate;
@@ -25,5 +27,9 @@ public class DateRangeIntegerRecordDetail extends IntegerRecordDetail {
 
 	public Date getEndDate() {
 		return endDate;
+	}
+
+	@Override public String toString() {
+		return format("%1$d (%2$td-%2$tm-%2$tY-%3$td-%3$tm-%3$tY)", getValue(), startDate, endDate);
 	}
 }

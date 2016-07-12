@@ -4,7 +4,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class BestPlayerThatNeverCategory extends RecordCategory {
 
@@ -32,9 +32,9 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 		register(bestPlayerThatNeverReachedTopN(TOP_10, TOP_10_NAME, ELO, "best_elo_rank", 10));
 	}
 
-	private static Record bestPlayerThatNeverWon(RecordFilter filter, String titleColumn) {
+	private static Record bestPlayerThatNeverWon(RecordDomain domain, String titleColumn) {
 		return new Record(
-			"BestPlayerThatNeverWon" + filter.id + "Title", "Best Player That Never Won" + prefix(filter.name, " ") + " Title" + prefix(filter.nameSuffix, " "),
+			"BestPlayerThatNeverWon" + domain.id + "Title", "Best Player That Never Won" + prefix(domain.name, " ") + " Title" + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
 			"SELECT player_id, goat_points AS value FROM player_v WHERE goat_points > 0 AND " + titleColumn + " = 0",
 			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,

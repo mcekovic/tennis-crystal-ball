@@ -14,7 +14,7 @@ public class PlayerAutocompleteResource {
 
 	@RequestMapping("/autocompletePlayer")
 	public List<AutocompleteOption> autocompletePlayer(
-		@RequestParam(value = "term") String term
+		@RequestParam(name = "term") String term
 	) {
 		return playerService.autocompletePlayer(term.trim().replace("\\s*", " "));
 	}

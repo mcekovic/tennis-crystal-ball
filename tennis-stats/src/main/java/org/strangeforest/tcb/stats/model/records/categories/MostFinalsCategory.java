@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
 
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class MostFinalsCategory extends TournamentResultsCategory {
 
@@ -37,19 +37,19 @@ public class MostFinalsCategory extends TournamentResultsCategory {
 		register(mostDifferentTournamentFinals(ATP_250));
 	}
 
-	private static Record mostFinals(RecordFilter filter) {
-		return mostResults(filter.id + "Finals", suffix(filter.name, " ") + "Finals", filter.nameSuffix, FINALS, filter.condition);
+	private static Record mostFinals(RecordDomain domain) {
+		return mostResults(domain.id + "Finals", suffix(domain.name, " ") + "Finals", domain.nameSuffix, FINALS, domain.condition);
 	}
 
-	private static Record mostSeasonFinals(RecordFilter filter) {
-		return mostSeasonResults(filter.id + "Finals", suffix(filter.name, " ") + "Finals", filter.nameSuffix, FINALS, filter.condition);
+	private static Record mostSeasonFinals(RecordDomain domain) {
+		return mostSeasonResults(domain.id + "Finals", suffix(domain.name, " ") + "Finals", domain.nameSuffix, FINALS, domain.condition);
 	}
 
-	private static Record mostTournamentFinals(RecordFilter filter) {
-		return mostTournamentResults(filter.id + "Finals", suffix(filter.name, " ") + "Finals", FINALS, filter.condition);
+	private static Record mostTournamentFinals(RecordDomain domain) {
+		return mostTournamentResults(domain.id + "Finals", suffix(domain.name, " ") + "Finals", FINALS, domain.condition);
 	}
 
-	private static Record mostDifferentTournamentFinals(RecordFilter filter) {
-		return mostDifferentTournamentResults(filter.id + "Finals", suffix(filter.name, " ") + "Finals", FINALS, filter.condition);
+	private static Record mostDifferentTournamentFinals(RecordDomain domain) {
+		return mostDifferentTournamentResults(domain.id + "Finals", suffix(domain.name, " ") + "Finals", FINALS, domain.condition);
 	}
 }

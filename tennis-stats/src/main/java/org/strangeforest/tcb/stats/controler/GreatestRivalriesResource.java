@@ -28,12 +28,12 @@ public class GreatestRivalriesResource {
 
 	@RequestMapping("/greatestRivalriesTable")
 	public BootgridTable<GreatestRivalry> greatestRivalriesTable(
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "round", required = false) String round,
-		@RequestParam(value = "bestRank", required = false) Integer bestRank,
-		@RequestParam(value = "current") int current,
-		@RequestParam(value = "rowCount") int rowCount,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "bestRank", required = false) Integer bestRank,
+		@RequestParam(name = "current") int current,
+		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam Map<String, String> requestParams
 	) {
 		RivalryFilter filter = new RivalryFilter(Range.all(), level, surface, round);
@@ -44,9 +44,9 @@ public class GreatestRivalriesResource {
 
 	@RequestMapping("/greatestRivalriesMinMatches")
 	public int greatestRivalriesMinMatches(
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "round", required = false) String round
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "round", required = false) String round
 	) {
 		RivalryFilter filter = new RivalryFilter(Range.all(), level, surface, round);
 		return rivalriesService.getGreatestRivalriesMinMatches(filter);

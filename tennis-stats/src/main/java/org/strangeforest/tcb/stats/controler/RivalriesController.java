@@ -43,13 +43,13 @@ public class RivalriesController extends PageController {
 
 	@RequestMapping("/headsToHeadsTable")
 	public ModelAndView headsToHeadsTable(
-		@RequestParam(value = "players") String playersCSV,
-		@RequestParam(value = "fromSeason", required = false) Integer fromSeason,
-		@RequestParam(value = "toSeason", required = false) Integer toSeason,
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "round", required = false) String round,
-		@RequestParam(value = "statsVsAll") boolean statsVsAll
+		@RequestParam(name = "players") String playersCSV,
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "statsVsAll") boolean statsVsAll
 	) {
 		List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, surface, round);

@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
 
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class MostEntriesCategory extends TournamentResultsCategory {
 
@@ -30,19 +30,19 @@ public class MostEntriesCategory extends TournamentResultsCategory {
 		register(mostDifferentTournamentEntries(ALL));
 	}
 
-	private static Record mostEntries(RecordFilter filter) {
-		return mostResults(filter.id + "Entries", suffix(filter.name, " ") + "Entries", filter.nameSuffix, ENTRIES, filter.condition);
+	private static Record mostEntries(RecordDomain domain) {
+		return mostResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", domain.nameSuffix, ENTRIES, domain.condition);
 	}
 
-	private static Record mostSeasonEntries(RecordFilter filter) {
-		return mostSeasonResults(filter.id + "Entries", suffix(filter.name, " ") + "Entries", filter.nameSuffix, ENTRIES, filter.condition);
+	private static Record mostSeasonEntries(RecordDomain domain) {
+		return mostSeasonResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", domain.nameSuffix, ENTRIES, domain.condition);
 	}
 
-	private static Record mostTournamentEntries(RecordFilter filter) {
-		return mostTournamentResults(filter.id + "Entries", suffix(filter.name, " ") + "Entries", ENTRIES, filter.condition);
+	private static Record mostTournamentEntries(RecordDomain domain) {
+		return mostTournamentResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", ENTRIES, domain.condition);
 	}
 
-	private static Record mostDifferentTournamentEntries(RecordFilter filter) {
-		return mostDifferentTournamentResults(filter.id + "Entries", suffix(filter.name, " ") + "Entries", ENTRIES, filter.condition);
+	private static Record mostDifferentTournamentEntries(RecordDomain domain) {
+		return mostDifferentTournamentResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", ENTRIES, domain.condition);
 	}
 }

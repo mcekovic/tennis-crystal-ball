@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.service;
 
 import java.io.*;
 import java.sql.*;
+import java.util.*;
 import java.util.concurrent.atomic.*;
 
 import org.postgresql.util.*;
@@ -14,6 +15,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
@@ -22,6 +24,12 @@ public class RecordsService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	public static final int MAX_PLAYER_COUNT = 100;
+
+	private static final String RECORDS_TABLE_QUERY = //language=SQL
+		"SELECT r.record_id, p.player_id, p.name, p.country_id, p.active, r.detail\n" +
+		"FROM player_record r\n" +
+		"INNER JOIN player_v p ON p.player_id = r.player_id AND r.rank = 1\n" +
+		"WHERE record_id IN (:recordIds)";
 
 	private static final String RECORD_TABLE_QUERY = //language=SQL
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.detail\n" +
@@ -69,12 +77,42 @@ public class RecordsService {
 		"DELETE FROM saved_record";
 
 
-	@Transactional
 	@Cacheable("Records.Table")
-	public BootgridTable<RecordRow> getRecordTable(String recordId, boolean activePlayers, int pageSize, int currentPage) {
+	public BootgridTable<RecordRow> getRecordsTable(RecordFilter filter, int pageSize, int currentPage) {
+		List<Record> records = Records.getRecords().stream()
+			.filter(filter::predicate)
+			.collect(toList());
+		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage, records.size());
+		int offset = (currentPage - 1) * pageSize;
+		List<RecordRow> recordRows = records.stream()
+			.skip(offset).limit(pageSize)
+			.map(RecordRow::new)
+			.collect(toList());
+		jdbcTemplate.query(
+			RECORDS_TABLE_QUERY,
+			params("recordIds", recordRows.stream().map(RecordRow::getId).collect(toList())),
+			rs -> {
+				String recordId = rs.getString("record_id");
+				int playerId = rs.getInt("player_id");
+				String name = rs.getString("name");
+				String countryId = rs.getString("country_id");
+				boolean active = rs.getBoolean("active");
+				Record record = Records.getRecord(recordId);
+				RecordDetail detail = getDetail(record, rs.getString("detail"));
+				RecordRow recordRow = recordRows.stream().filter(row -> row.getId().equals(recordId)).findFirst().get();
+				recordRow.addPlayerRecord(new PlayerRecordRow(playerId, name, countryId, active, detail.toString()));
+			}
+		);
+		recordRows.stream().forEach(table::addRow);
+		return table;
+	}
+
+	@Transactional
+	@Cacheable("Record.Table")
+	public BootgridTable<RecordDetailRow> getRecordTable(String recordId, boolean activePlayers, int pageSize, int currentPage) {
 		Record record = Records.getRecord(recordId);
 		ensureSaveRecord(record, activePlayers);
-		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage);
+		BootgridTable<RecordDetailRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
@@ -89,7 +127,7 @@ public class RecordsService {
 					String countryId = rs.getString("country_id");
 					Boolean active = !activePlayers ? rs.getBoolean("active") : null;
 					RecordDetail detail = getDetail(record, rs.getString("detail"));
-					table.addRow(new RecordRow(rank, playerId, name, countryId, active, detail));
+					table.addRow(new RecordDetailRow(rank, playerId, name, countryId, active, detail));
 				}
 			}
 		);

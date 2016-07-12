@@ -6,6 +6,8 @@ import org.strangeforest.tcb.stats.model.records.*;
 
 import com.fasterxml.jackson.annotation.*;
 
+import static java.lang.String.*;
+
 public class DateAgeRecordDetail implements RecordDetail {
 
 	private final String age;
@@ -25,5 +27,9 @@ public class DateAgeRecordDetail implements RecordDetail {
 
 	public Date getDate() {
 		return date;
+	}
+
+	@Override public String toString() {
+		return format("%1$s (%2$td-%2$tm-%2$tY)", age, date);
 	}
 }

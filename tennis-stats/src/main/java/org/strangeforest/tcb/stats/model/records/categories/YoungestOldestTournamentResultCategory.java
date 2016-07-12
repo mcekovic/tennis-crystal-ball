@@ -4,13 +4,12 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
-import static org.strangeforest.tcb.stats.model.records.categories.YoungestOldestTournamentResultCategory.RecordType.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.YoungestOldestTournamentResultCategory.ResultType.*;
 
 public class YoungestOldestTournamentResultCategory extends RecordCategory {
 
-	enum RecordType {
+	public enum RecordType {
 		YOUNGEST("Youngest", "r.age"),
 		OLDEST("Oldest", "r.age DESC");
 
@@ -40,12 +39,10 @@ public class YoungestOldestTournamentResultCategory extends RecordCategory {
 	private static final String TOURNAMENT_WIDTH = "100";
 	private static final String SEASON_WIDTH =      "60";
 
-	public YoungestOldestTournamentResultCategory() {
-		super("Youngest/Oldest Tournament Champion/Finalist");
-		registerAgeTournamentResults(YOUNGEST, CHAMPION);
-		registerAgeTournamentResults(OLDEST, CHAMPION);
-		registerAgeTournamentResults(YOUNGEST, FINALIST);
-		registerAgeTournamentResults(OLDEST, FINALIST);
+	public YoungestOldestTournamentResultCategory(RecordType type) {
+		super(type.name + " Tournament Champion/Finalist");
+		registerAgeTournamentResults(type, CHAMPION);
+		registerAgeTournamentResults(type, FINALIST);
 	}
 
 	private void registerAgeTournamentResults(RecordType recordType, ResultType resultType) {
@@ -62,8 +59,8 @@ public class YoungestOldestTournamentResultCategory extends RecordCategory {
 		register(ageTournamentResult(recordType, resultType, CARPET));
 	}
 
-	private static Record ageTournamentResult(RecordType type, ResultType resultType, RecordFilter filter) {
-		return ageTournamentResult(type, resultType, filter.id, filter.name, filter.condition);
+	private static Record ageTournamentResult(RecordType type, ResultType resultType, RecordDomain domain) {
+		return ageTournamentResult(type, resultType, domain.id, domain.name, domain.condition);
 	}
 
 	private static Record ageTournamentResult(RecordType type, ResultType resultType, String id, String name, String condition) {

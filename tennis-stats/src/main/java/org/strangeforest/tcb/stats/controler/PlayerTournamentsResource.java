@@ -28,15 +28,15 @@ public class PlayerTournamentsResource {
 
 	@RequestMapping("/playerTournamentsTable")
 	public BootgridTable<PlayerTournamentEvent> playerTournamentsTable(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "season", required = false) Integer season,
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "tournamentId", required = false) Integer tournamentId,
-		@RequestParam(value = "result", required = false) String result,
-		@RequestParam(value = "current") int current,
-		@RequestParam(value = "rowCount") int rowCount,
-		@RequestParam(value = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "result", required = false) String result,
+		@RequestParam(name = "current") int current,
+		@RequestParam(name = "rowCount") int rowCount,
+		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		TournamentEventResultFilter filter = new TournamentEventResultFilter(season, level, surface, tournamentId, result, searchPhrase);

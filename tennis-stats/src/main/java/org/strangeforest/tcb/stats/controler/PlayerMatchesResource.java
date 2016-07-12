@@ -28,18 +28,18 @@ public class PlayerMatchesResource {
 
 	@RequestMapping("/matchesTable")
 	public BootgridTable<Match> matchesTable(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "season", required = false) Integer season,
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "tournamentId", required = false) Integer tournamentId,
-		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(value = "round", required = false) String round,
-		@RequestParam(value = "opponent", required = false) String opponent,
-		@RequestParam(value = "outcome", required = false) String outcome,
-		@RequestParam(value = "current") int current,
-		@RequestParam(value = "rowCount") int rowCount,
-		@RequestParam(value = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "opponent", required = false) String opponent,
+		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "current") int current,
+		@RequestParam(name = "rowCount") int rowCount,
+		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		MatchFilter filter = new MatchFilter(season, level, surface, tournamentId, tournamentEventId, round, OpponentFilter.forMatches(opponent), OutcomeFilter.forMatches(outcome), searchPhrase);

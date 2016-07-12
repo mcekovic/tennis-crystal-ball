@@ -4,6 +4,8 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.*;
 
+import static java.lang.String.*;
+
 public class TournamentCareerSpanRecordDetail extends CareerSpanRecordDetail {
 
 	private final TournamentEventDetail startEvent;
@@ -31,5 +33,9 @@ public class TournamentCareerSpanRecordDetail extends CareerSpanRecordDetail {
 
 	public TournamentEventDetail getEndEvent() {
 		return endEvent;
+	}
+
+	@Override public String toString() {
+		return format("%1$s (%2$td-%2$tm-%2$tY %3$s - %4$td-%4$tm-%4$tY %5$s)", getSpan(), getStartDate(), startEvent.getName(), getEndDate(), endEvent.getName());
 	}
 }

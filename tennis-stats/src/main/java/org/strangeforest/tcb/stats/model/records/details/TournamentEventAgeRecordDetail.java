@@ -4,6 +4,8 @@ import org.strangeforest.tcb.stats.model.records.*;
 
 import com.fasterxml.jackson.annotation.*;
 
+import static java.lang.String.*;
+
 public class TournamentEventAgeRecordDetail implements RecordDetail {
 
 	private final String age;
@@ -44,5 +46,9 @@ public class TournamentEventAgeRecordDetail implements RecordDetail {
 
 	public String getLevel() {
 		return level;
+	}
+
+	@Override public String toString() {
+		return format("%1$s (%2$d %3$s)", age, season, tournament);
 	}
 }

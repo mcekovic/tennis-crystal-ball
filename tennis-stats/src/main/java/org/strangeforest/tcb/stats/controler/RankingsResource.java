@@ -30,13 +30,13 @@ public class RankingsResource {
 
 	@RequestMapping("/rankingsTableTable")
 	public BootgridTable<PlayerRankingsRow> rankingsTable(
-		@RequestParam(value = "rankType") RankType rankType,
-		@RequestParam(value = "season", required = false) Integer season,
-		@RequestParam(value = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date,
-		@RequestParam(value = "allTime", required = false) boolean allTime,
-		@RequestParam(value = "current") int current,
-		@RequestParam(value = "rowCount") int rowCount,
-		@RequestParam(value = "searchPhrase") String searchPhrase
+		@RequestParam(name = "rankType") RankType rankType,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date,
+		@RequestParam(name = "allTime", required = false) boolean allTime,
+		@RequestParam(name = "current") int current,
+		@RequestParam(name = "rowCount") int rowCount,
+		@RequestParam(name = "searchPhrase") String searchPhrase
 	) {
 		if (date == null) {
 			if (season != null)
@@ -51,25 +51,25 @@ public class RankingsResource {
 
 	@RequestMapping("/seasonRankingDates")
 	public List<Date> rankingDates(
-		@RequestParam(value = "rankType") RankType rankType,
-		@RequestParam(value = "season") int season
+		@RequestParam(name = "rankType") RankType rankType,
+		@RequestParam(name = "season") int season
 	) {
 		return rankingsService.getSeasonRankingDates(rankType, season);
 	}
 
 	@RequestMapping("/playerRankingsTable")
 	public DataTable playerRankingsTable(
-		@RequestParam(value = "playerId", required = false) Integer playerId,
-		@RequestParam(value = "players", required = false) String playersCSV,
-		@RequestParam(value = "rankType", defaultValue = "RANK") RankType rankType,
-		@RequestParam(value = "timeSpan", defaultValue = CAREER) String timeSpan,
-		@RequestParam(value = "bySeason", defaultValue = "false") boolean bySeason,
-		@RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
-		@RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
-		@RequestParam(value = "fromSeason", required = false) Integer fromSeason,
-		@RequestParam(value = "toSeason", required = false) Integer toSeason,
-		@RequestParam(value = "byAge", defaultValue = "false") boolean byAge,
-		@RequestParam(value = "compensatePoints", defaultValue = "false") boolean compensatePoints
+		@RequestParam(name = "playerId", required = false) Integer playerId,
+		@RequestParam(name = "players", required = false) String playersCSV,
+		@RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType,
+		@RequestParam(name = "timeSpan", defaultValue = CAREER) String timeSpan,
+		@RequestParam(name = "bySeason", defaultValue = "false") boolean bySeason,
+		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
+		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
+		@RequestParam(name = "byAge", defaultValue = "false") boolean byAge,
+		@RequestParam(name = "compensatePoints", defaultValue = "false") boolean compensatePoints
 	) {
 		Range<LocalDate> dateRange = !bySeason ? toDateRange(timeSpan, fromDate, toDate) : null;
 		Range<Integer> seasonRange = bySeason ? toSeasonRange(timeSpan, fromSeason, toSeason) : null;

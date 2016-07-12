@@ -25,16 +25,16 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerProfile")
 	public ModelAndView playerProfile(
-		@RequestParam(value = "playerId", required = false) Integer playerId,
-		@RequestParam(value = "name", required = false) String name,
-		@RequestParam(value = "season", required = false) Integer season,
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "result", required = false) String result,
-		@RequestParam(value = "round", required = false) String round,
-		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(value = "opponentId", required = false) Integer opponentId,
-		@RequestParam(value = "goatPoints", required = false) Boolean goatPoints
+		@RequestParam(name = "playerId", required = false) Integer playerId,
+		@RequestParam(name = "name", required = false) String name,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "result", required = false) String result,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(name = "opponentId", required = false) Integer opponentId,
+		@RequestParam(name = "goatPoints", required = false) Boolean goatPoints
 	) {
 		if (playerId == null && name == null)
 			return new ModelAndView("playerProfile");
@@ -59,7 +59,7 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerProfileTab")
 	public ModelAndView playerProfileTab(
-		@RequestParam(value = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId
 	) {
 		Player player = playerService.getPlayer(playerId).get();
 		return new ModelAndView("playerProfileTab", "player", player);
@@ -67,11 +67,11 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerTournaments")
 	public ModelAndView playerTournaments(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "season", required = false) Integer season,
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "result", required = false) String result
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "result", required = false) String result
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
@@ -91,12 +91,12 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerMatches")
 	public ModelAndView playerMatches(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "round", required = false) String round,
-		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(value = "opponentId", required = false) Integer opponentId
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(name = "opponentId", required = false) Integer opponentId
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
@@ -125,7 +125,7 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerTimeline")
 	public ModelAndView playerTimeline(
-		@RequestParam(value = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId
 	) {
 		PlayerTimeline timeline = timelineService.getPlayerTimeline(playerId);
 
@@ -137,7 +137,7 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerRivalries")
 	public ModelAndView playerRivalries(
-		@RequestParam(value = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
@@ -149,7 +149,7 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerRankings")
 	public ModelAndView playerRankings(
-		@RequestParam(value = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
@@ -160,8 +160,8 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerPerformance")
 	public ModelAndView playerPerformance(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "season", required = false) Integer season
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		PlayerPerformance perf = season == null
@@ -178,7 +178,7 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerPerformanceChart")
 	public ModelAndView playerPerformanceChart(
-		@RequestParam(value = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 
@@ -191,9 +191,9 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerStatsTab")
 	public ModelAndView playerStatsTab(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "season", required = false) Integer season,
-		@RequestParam(value = "surface", required = false) String surface
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "surface", required = false) String surface
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		PlayerStats stats;
@@ -220,7 +220,7 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerStatsChart")
 	public ModelAndView playerStatsChart(
-		@RequestParam(value = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 
@@ -235,7 +235,7 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerGOATPoints")
 	public ModelAndView playerGOATPoints(
-		@RequestParam(value = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId
 	) {
 		Map<String, List<String>> levelResults = goatPointsService.getLevelResults();
 		PlayerGOATPoints goatPoints = goatPointsService.getPlayerGOATPoints(playerId);

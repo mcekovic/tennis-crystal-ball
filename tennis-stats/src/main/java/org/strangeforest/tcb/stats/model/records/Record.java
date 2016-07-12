@@ -12,6 +12,7 @@ public class Record {
 	private final String displayOrder;
 	private final RecordDetailFactory detailFactory;
 	private final List<RecordColumn> columnInfos;
+	private String category;
 	private boolean infamous;
 
 	public Record(String id, String name, String sql, String columns, String rankOrder, String displayOrder, Class<? extends RecordDetail> detailClass, List<RecordColumn> columnInfos) {
@@ -55,6 +56,14 @@ public class Record {
 
 	public List<RecordColumn> getColumnInfos() {
 		return columnInfos;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	void setCategory(String category) {
+		this.category = category;
 	}
 
 	public boolean isInfamous() {

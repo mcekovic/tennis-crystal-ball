@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
 
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class MostSemiFinalsCategory extends TournamentResultsCategory {
 
@@ -30,15 +30,15 @@ public class MostSemiFinalsCategory extends TournamentResultsCategory {
 		register(mostTournamentSemiFinals(MASTERS));
 	}
 
-	private static Record mostSemiFinals(RecordFilter filter) {
-		return mostResults(filter.id + "SemiFinals", suffix(filter.name, " ") + "Semi-Finals", filter.nameSuffix, SEMI_FINALS, filter.condition);
+	private static Record mostSemiFinals(RecordDomain domain) {
+		return mostResults(domain.id + "SemiFinals", suffix(domain.name, " ") + "Semi-Finals", domain.nameSuffix, SEMI_FINALS, domain.condition);
 	}
 
-	private static Record mostSeasonSemiFinals(RecordFilter filter) {
-		return mostSeasonResults(filter.id + "SemiFinals", suffix(filter.name, " ") + "Semi-Finals", filter.nameSuffix, SEMI_FINALS, filter.condition);
+	private static Record mostSeasonSemiFinals(RecordDomain domain) {
+		return mostSeasonResults(domain.id + "SemiFinals", suffix(domain.name, " ") + "Semi-Finals", domain.nameSuffix, SEMI_FINALS, domain.condition);
 	}
 
-	private static Record mostTournamentSemiFinals(RecordFilter filter) {
-		return mostTournamentResults(filter.id + "SemiFinals", suffix(filter.name, " ") + "Semi-Finals", SEMI_FINALS, filter.condition);
+	private static Record mostTournamentSemiFinals(RecordDomain domain) {
+		return mostTournamentResults(domain.id + "SemiFinals", suffix(domain.name, " ") + "Semi-Finals", SEMI_FINALS, domain.condition);
 	}
 }

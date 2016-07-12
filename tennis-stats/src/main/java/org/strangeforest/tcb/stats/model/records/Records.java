@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.model.records;
 import java.util.*;
 
 import org.strangeforest.tcb.stats.model.records.categories.*;
-import org.strangeforest.tcb.stats.model.records.categories.MostRecordsCategory.*;
 
 public abstract class Records {
 
@@ -26,9 +25,14 @@ public abstract class Records {
 		return recordCount;
 	}
 
+	public static Collection<Record> getRecords() {
+		return RECORDS.values();
+	}
+
 	private static void register(RecordCategory recordCategory, boolean infamous) {
 		(infamous ? INFAMOUS_RECORD_CATEGORIES : RECORD_CATEGORIES).add(recordCategory);
 		for (Record record : recordCategory.getRecords()) {
+			record.setCategory(recordCategory.getName());
 			record.setInfamous(infamous);
 			RECORDS.put(record.getId(), record);
 			recordCount++;
@@ -37,7 +41,7 @@ public abstract class Records {
 
 	private static final List<RecordCategory> RECORD_CATEGORIES = new ArrayList<>();
 	private static final List<RecordCategory> INFAMOUS_RECORD_CATEGORIES = new ArrayList<>();
-	private static final Map<String, Record> RECORDS = new HashMap<>();
+	private static final Map<String, Record> RECORDS = new LinkedHashMap<>();
 	private static int recordCount;
 	static {
 		// Famous Records
@@ -58,7 +62,8 @@ public abstract class Records {
 		register(new QuarterFinalStreaksCategory(), false);
 		register(new ATPRankingCategory(), false);
 		register(new EloRankingCategory(), false);
-		register(new YoungestOldestTournamentResultCategory(), false);
+		register(new YoungestOldestTournamentResultCategory(YoungestOldestTournamentResultCategory.RecordType.YOUNGEST), false);
+		register(new YoungestOldestTournamentResultCategory(YoungestOldestTournamentResultCategory.RecordType.OLDEST), false);
 		register(new LongestCareerResultSpanCategory(), false);
 		register(new HeadToHeadCategory(false), false);
 		register(new GOATPointsCategory(), false);

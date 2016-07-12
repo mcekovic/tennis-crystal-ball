@@ -6,7 +6,7 @@ import org.strangeforest.tcb.stats.util.*;
 
 import static com.google.common.base.Strings.*;
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class MostMatchesCategory extends RecordCategory {
 
@@ -71,23 +71,23 @@ public class MostMatchesCategory extends RecordCategory {
 		}
 	}
 
-	private static Record mostMatches(RecordType type, RecordFilter filter) {
+	private static Record mostMatches(RecordType type, RecordDomain domain) {
 		return new Record(
-			filter.id + "Matches" + type.name, "Most " + suffix(filter.name, " ") + "Matches " + type.name,
+			domain.id + "Matches" + type.name, "Most " + suffix(domain.name, " ") + "Matches " + type.name,
 			/* language=SQL */
-			"SELECT player_id, " + type.expression(filter.columnPrefix + "matches") + " AS value FROM player_performance",
+			"SELECT player_id, " + type.expression(domain.columnPrefix + "matches") + " AS value FROM player_performance",
 			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,
-			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(filter.name, " ") + "Matches " + type.name))
+			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(domain.name, " ") + "Matches " + type.name))
 		);
 	}
 
-	private static Record mostMatchesVs(RecordType type, RecordFilter filter) {
+	private static Record mostMatchesVs(RecordType type, RecordDomain domain) {
 		return new Record(
-			"MatchesVs" + filter.id + type.name, "Most Matches " + type.name + " Vs. " + filter.name,
+			"MatchesVs" + domain.id + type.name, "Most Matches " + type.name + " Vs. " + domain.name,
 			/* language=SQL */
-			"SELECT player_id, " + type.expression(filter.columnPrefix) + " AS value FROM player_performance",
+			"SELECT player_id, " + type.expression(domain.columnPrefix) + " AS value FROM player_performance",
 			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,
-			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", "Matches " + type.name + " Vs. " + filter.name))
+			asList(new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", "Matches " + type.name + " Vs. " + domain.name))
 		);
 	}
 
@@ -104,15 +104,15 @@ public class MostMatchesCategory extends RecordCategory {
 		);
 	}
 
-	private static Record mostTournamentMatches(RecordType type, RecordFilter filter) {
+	private static Record mostTournamentMatches(RecordType type, RecordDomain domain) {
 		return new Record(
-			filter.id + "TournamentMatches" + type.name, "Most Matches " + type.name + " at Single " + suffix(filter.name, " ") + "Tournament",
+			domain.id + "TournamentMatches" + type.name, "Most Matches " + type.name + " at Single " + suffix(domain.name, " ") + "Tournament",
 			/* language=SQL */
-			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + filter.columnPrefix + "matches") + " AS value\n" +
+			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + domain.columnPrefix + "matches") + " AS value\n" +
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id) WHERE t." + ALL_TOURNAMENTS,
 			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.tournament", TournamentIntegerRecordDetail.class,
 			asList(
-				new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(filter.name, " ") + "Matches " + type.name),
+				new RecordColumn("value", "numeric", null, MATCHES_WIDTH, "right", suffix(domain.name, " ") + "Matches " + type.name),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
 			)
 		);

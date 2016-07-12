@@ -4,7 +4,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class GreatestMatchPctCategory extends RecordCategory {
 
@@ -69,30 +69,30 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		register(greatestTournamentMatchPct(type, ATP_250));
 	}
 
-	private static Record greatestMatchPct(RecordType type, RecordFilter filter) {
+	private static Record greatestMatchPct(RecordType type, RecordDomain domain) {
 		return new Record(
-			filter.id + type.name + "Pct", "Greatest " + suffix(filter.name, " ") + type.name + " Pct.",
+			domain.id + type.name + "Pct", "Greatest " + suffix(domain.name, " ") + type.name + " Pct.",
 			/* language=SQL */
-			"SELECT player_id, " + type.expression(filter.columnPrefix + "matches") + " AS pct, " + filter.columnPrefix + "matches_won AS won, " + filter.columnPrefix + "matches_lost AS lost\n" +
-			"FROM player_performance WHERE " + filter.columnPrefix + "matches_won + " + filter.columnPrefix + "matches_lost >= performance_min_entries('" + filter.perfCategory + "')",
+			"SELECT player_id, " + type.expression(domain.columnPrefix + "matches") + " AS pct, " + domain.columnPrefix + "matches_won AS won, " + domain.columnPrefix + "matches_lost AS lost\n" +
+			"FROM player_performance WHERE " + domain.columnPrefix + "matches_won + " + domain.columnPrefix + "matches_lost >= performance_min_entries('" + domain.perfCategory + "')",
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailClass,
 			asList(
-				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(filter.name, " ") + type.name + " Pct."),
+				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
 			)
 		);
 	}
 
-	private static Record greatestMatchPctVs(RecordType type, RecordFilter filter) {
+	private static Record greatestMatchPctVs(RecordType type, RecordDomain domain) {
 		return new Record(
-			type.name + "PctVs" + filter.id, "Greatest " + type.name + " Pct. Vs. " + filter.name,
+			type.name + "PctVs" + domain.id, "Greatest " + type.name + " Pct. Vs. " + domain.name,
 			/* language=SQL */
-			"SELECT player_id, " + type.expression(filter.columnPrefix) + " AS pct, " + filter.columnPrefix + "_won AS won, " + filter.columnPrefix + "_lost AS lost\n" +
-			"FROM player_performance WHERE " + filter.columnPrefix + "_won + " + filter.columnPrefix + "_lost >= performance_min_entries('" + filter.perfCategory + "')",
+			"SELECT player_id, " + type.expression(domain.columnPrefix) + " AS pct, " + domain.columnPrefix + "_won AS won, " + domain.columnPrefix + "_lost AS lost\n" +
+			"FROM player_performance WHERE " + domain.columnPrefix + "_won + " + domain.columnPrefix + "_lost >= performance_min_entries('" + domain.perfCategory + "')",
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailClass,
 			asList(
-				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct. Vs. " + filter.name),
+				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct. Vs. " + domain.name),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
 			)
@@ -115,16 +115,16 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		);
 	}
 
-	private static Record greatestTournamentMatchPct(RecordType type, RecordFilter filter) {
+	private static Record greatestTournamentMatchPct(RecordType type, RecordDomain domain) {
 		return new Record(
-			"Tournament" + filter.id + type.name + "Pct", "Greatest " + type.name + " Pct. at Single " + suffix(filter.name, " ") + "Tournament",
+			"Tournament" + domain.id + type.name + "Pct", "Greatest " + type.name + " Pct. at Single " + suffix(domain.name, " ") + "Tournament",
 			/* language=SQL */
-			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + filter.columnPrefix + "matches") + " AS pct, p." + filter.columnPrefix + "matches_won AS won, p." + filter.columnPrefix + "matches_lost AS lost\n" +
+			"SELECT p.player_id, tournament_id, t.name AS tournament, t.level, " + type.expression("p." + domain.columnPrefix + "matches") + " AS pct, p." + domain.columnPrefix + "matches_won AS won, p." + domain.columnPrefix + "matches_lost AS lost\n" +
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id)\n" +
-			"WHERE t." + ALL_TOURNAMENTS + " AND p." + filter.columnPrefix + "matches_won + p." + filter.columnPrefix + "matches_lost >= performance_min_entries('" + filter.perfCategory + "') / 5",
+			"WHERE t." + ALL_TOURNAMENTS + " AND p." + domain.columnPrefix + "matches_won + p." + domain.columnPrefix + "matches_lost >= performance_min_entries('" + domain.perfCategory + "') / 5",
 			"r.won, r.lost, r.tournament_id, r.tournament, r.level", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.tournament", type.tournamentDetailClass,
 			asList(
-				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(filter.name, " ") + type.name + " Pct."),
+				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played"),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")

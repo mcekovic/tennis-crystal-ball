@@ -31,8 +31,8 @@ public class GeoLocationMvcEndpoint implements MvcEndpoint {
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView geolocationChart(
-		@RequestParam(value = "stat", defaultValue = "VISITS") VisitorStat stat,
-		@RequestParam(value = "interval", defaultValue = "DAY") VisitorInterval interval
+		@RequestParam(name = "stat", defaultValue = "VISITS") VisitorStat stat,
+		@RequestParam(name = "interval", defaultValue = "DAY") VisitorInterval interval
 	) {
 		List<Object[]> countries = repository.getVisitorsByCountry(stat, interval);
 		countries.add(0, new Object[] {"Country", stat.getCaption()});

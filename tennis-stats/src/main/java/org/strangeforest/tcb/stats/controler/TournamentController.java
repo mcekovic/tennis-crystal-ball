@@ -22,7 +22,7 @@ public class TournamentController extends PageController {
 
 	@RequestMapping("/tournament")
 	public ModelAndView tournament(
-		@RequestParam(value = "tournamentId") int tournamentId
+		@RequestParam(name = "tournamentId") int tournamentId
 	) {
 		Tournament tournament = tournamentService.getTournament(tournamentId);
 		ModelMap modelMap = new ModelMap();
@@ -47,7 +47,7 @@ public class TournamentController extends PageController {
 
 	@RequestMapping("/tournamentEvent")
 	public ModelAndView tournamentEvent(
-		@RequestParam(value = "tournamentEventId") int tournamentEventId
+		@RequestParam(name = "tournamentEventId") int tournamentEventId
 	) {
 		TournamentEvent tournamentEvent = tournamentService.getTournamentEvent(tournamentEventId);
 		TournamentEventDraw draw = matchesService.getTournamentEventDraw(tournamentEventId);
@@ -62,7 +62,7 @@ public class TournamentController extends PageController {
 
 	@RequestMapping("/tournamentEventStats")
 	public ModelAndView tournamentEventStats(
-		@RequestParam(value = "tournamentEventId") int tournamentEventId
+		@RequestParam(name = "tournamentEventId") int tournamentEventId
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
@@ -72,12 +72,12 @@ public class TournamentController extends PageController {
 
 	@RequestMapping("/tournamentRecords")
 	public ModelAndView tournamentRecords(
-		@RequestParam(value = "tournamentId") int tournamentId
+		@RequestParam(name = "tournamentId") int tournamentId
 	) {
-		List<RecordRow> recordTitles = tournamentService.getTournamentRecord(tournamentId, "W", MAX_RECORD_PLAYERS);
-		List<RecordRow> recordFinals = tournamentService.getTournamentRecord(tournamentId, "F", MAX_RECORD_PLAYERS);
-		List<RecordRow> recordSemiFinals = tournamentService.getTournamentRecord(tournamentId, "SF", MAX_RECORD_PLAYERS);
-		List<RecordRow> recordAppearances = tournamentService.getTournamentRecord(tournamentId, "RR", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> recordTitles = tournamentService.getTournamentRecord(tournamentId, "W", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> recordFinals = tournamentService.getTournamentRecord(tournamentId, "F", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> recordSemiFinals = tournamentService.getTournamentRecord(tournamentId, "SF", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> recordAppearances = tournamentService.getTournamentRecord(tournamentId, "RR", MAX_RECORD_PLAYERS);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("recordTitles", recordTitles);
@@ -89,7 +89,7 @@ public class TournamentController extends PageController {
 
 	@RequestMapping("/tournamentStats")
 	public ModelAndView tournamentStats(
-		@RequestParam(value = "tournamentId") int tournamentId
+		@RequestParam(name = "tournamentId") int tournamentId
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentId", tournamentId);

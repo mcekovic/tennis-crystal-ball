@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model.records;
 
 import static org.strangeforest.tcb.stats.model.records.RecordCategory.*;
 
-public enum RecordFilter {
+public enum RecordDomain {
 	ALL(N_A, N_A, N_A, ALL_TOURNAMENTS, N_A, "matches"),
 	GRAND_SLAM("GrandSlam", "Grand Slam", N_A, "level = 'G'", "grand_slam_", "grandSlamMatches"),
 	TOUR_FINALS("TourFinals", "Tour Finals", N_A, "level = 'F'", "tour_finals_", "tourFinalsMatches"),
@@ -28,7 +28,7 @@ public enum RecordFilter {
 	public final String columnPrefix;
 	public final String perfCategory;
 
-	RecordFilter(String id, String name, String nameSuffix, String condition, String columnPrefix, String perfCategory) {
+	RecordDomain(String id, String name, String nameSuffix, String condition, String columnPrefix, String perfCategory) {
 		this.id = id;
 		this.name = name;
 		this.nameSuffix = nameSuffix;

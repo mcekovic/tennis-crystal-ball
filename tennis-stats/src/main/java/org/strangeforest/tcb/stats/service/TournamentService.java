@@ -180,14 +180,14 @@ public class TournamentService {
 		return tournamentEvent;
 	}
 
-	public List<RecordRow> getTournamentRecord(int tournamentId, String result, int maxPlayers) {
+	public List<RecordDetailRow> getTournamentRecord(int tournamentId, String result, int maxPlayers) {
 		return jdbcTemplate.query(
 			TOURNAMENT_RECORD_QUERY,
 			params("tournamentId", tournamentId)
 				.addValue("result", result)
 				.addValue("maxPlayers", maxPlayers),
 			(rs, rowNum) -> {
-				return new RecordRow(
+				return new RecordDetailRow(
 					rs.getInt("rank"),
 					rs.getInt("player_id"),
 					rs.getString("name"),

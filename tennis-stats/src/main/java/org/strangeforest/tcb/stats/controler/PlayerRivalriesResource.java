@@ -31,13 +31,13 @@ public class PlayerRivalriesResource {
 
 	@RequestMapping("/playerRivalriesTable")
 	public BootgridTable<PlayerRivalryRow> playerRivalriesTable(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "round", required = false) String round,
-		@RequestParam(value = "current") int current,
-		@RequestParam(value = "rowCount") int rowCount,
-		@RequestParam(value = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "current") int current,
+		@RequestParam(name = "rowCount") int rowCount,
+		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		RivalryFilter rivalryFilter = new RivalryFilter(Range.all(), level, surface, round);

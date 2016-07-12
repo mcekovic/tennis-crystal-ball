@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model.records.details;
 
 import com.fasterxml.jackson.annotation.*;
 
+import static java.lang.String.*;
+
 public class TournamentLosingPctRecordDetail extends TournamentWonLostRecordDetail {
 
 	public TournamentLosingPctRecordDetail(
@@ -24,5 +26,9 @@ public class TournamentLosingPctRecordDetail extends TournamentWonLostRecordDeta
 
 	public int getPlayed() {
 		return wonLost.getTotal();
+	}
+
+	@Override public String toString() {
+		return format("%1$s (%2$d/%3$d in %4$s)", getLostWonPct(), wonLost.getLost(), wonLost.getTotal(), getTournament());
 	}
 }

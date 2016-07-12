@@ -6,6 +6,8 @@ import org.strangeforest.tcb.stats.model.records.*;
 
 import com.fasterxml.jackson.annotation.*;
 
+import static java.lang.String.*;
+
 public class CareerSpanRecordDetail implements RecordDetail {
 
 	private final String span;
@@ -32,5 +34,9 @@ public class CareerSpanRecordDetail implements RecordDetail {
 
 	public Date getEndDate() {
 		return endDate;
+	}
+
+	@Override public String toString() {
+		return format("%1$s (%2$td-%2$tm-%2$tY-%3$td-%3$tm-%3$tY)", span, startDate, endDate);
 	}
 }

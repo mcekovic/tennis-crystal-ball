@@ -33,10 +33,10 @@ public class GOATListResource {
 
 	@RequestMapping("/goatTable")
 	public BootgridTable<GOATListRow> goatTable(
-		@RequestParam(value = "active", required = false) Boolean active,
-		@RequestParam(value = "current") int current,
-		@RequestParam(value = "rowCount") int rowCount,
-		@RequestParam(value = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "active", required = false) Boolean active,
+		@RequestParam(name = "current") int current,
+		@RequestParam(name = "rowCount") int rowCount,
+		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);

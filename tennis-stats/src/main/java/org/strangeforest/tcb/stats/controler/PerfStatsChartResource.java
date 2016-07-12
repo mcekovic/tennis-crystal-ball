@@ -22,12 +22,12 @@ public class PerfStatsChartResource {
 
 	@RequestMapping("/playerPerformanceTable")
 	public DataTable playerPerformanceTable(
-		@RequestParam(value = "playerId", required = false) Integer playerId,
-		@RequestParam(value = "players", required = false) String playersCSV,
-		@RequestParam(value = "category", defaultValue = "matches") String category,
-		@RequestParam(value = "fromSeason", required = false) Integer fromSeason,
-		@RequestParam(value = "toSeason", required = false) Integer toSeason,
-		@RequestParam(value = "byAge", defaultValue = "false") boolean byAge
+		@RequestParam(name = "playerId", required = false) Integer playerId,
+		@RequestParam(name = "players", required = false) String playersCSV,
+		@RequestParam(name = "category", defaultValue = "matches") String category,
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
+		@RequestParam(name = "byAge", defaultValue = "false") boolean byAge
 	) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
@@ -43,13 +43,13 @@ public class PerfStatsChartResource {
 
 	@RequestMapping("/playerStatisticsTable")
 	public DataTable playerStatisticsTable(
-		@RequestParam(value = "playerId", required = false) Integer playerId,
-		@RequestParam(value = "players", required = false) String playersCSV,
-		@RequestParam(value = "category", defaultValue = "aces") String category,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "fromSeason", required = false) Integer fromSeason,
-		@RequestParam(value = "toSeason", required = false) Integer toSeason,
-		@RequestParam(value = "byAge", defaultValue = "false") boolean byAge
+		@RequestParam(name = "playerId", required = false) Integer playerId,
+		@RequestParam(name = "players", required = false) String playersCSV,
+		@RequestParam(name = "category", defaultValue = "aces") String category,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
+		@RequestParam(name = "byAge", defaultValue = "false") boolean byAge
 	) {
 		StatsCategory statsCategory = StatsCategory.get(category);
 		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);

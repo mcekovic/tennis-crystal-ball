@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
 
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class MostQuarterFinalsCategory extends TournamentResultsCategory {
 
@@ -30,15 +30,15 @@ public class MostQuarterFinalsCategory extends TournamentResultsCategory {
 		register(mostTournamentQuarterFinals(MASTERS));
 	}
 
-	private static Record mostQuarterFinals(RecordFilter filter) {
-		return mostResults(filter.id + "QuarterFinals", suffix(filter.name, " ") + "Quarter-Finals", filter.nameSuffix, QUARTER_FINALS, filter.condition);
+	private static Record mostQuarterFinals(RecordDomain domain) {
+		return mostResults(domain.id + "QuarterFinals", suffix(domain.name, " ") + "Quarter-Finals", domain.nameSuffix, QUARTER_FINALS, domain.condition);
 	}
 
-	private static Record mostSeasonQuarterFinals(RecordFilter filter) {
-		return mostSeasonResults(filter.id + "QuarterFinals", suffix(filter.name, " ") + "Quarter-Finals", filter.nameSuffix, QUARTER_FINALS, filter.condition);
+	private static Record mostSeasonQuarterFinals(RecordDomain domain) {
+		return mostSeasonResults(domain.id + "QuarterFinals", suffix(domain.name, " ") + "Quarter-Finals", domain.nameSuffix, QUARTER_FINALS, domain.condition);
 	}
 
-	private static Record mostTournamentQuarterFinals(RecordFilter filter) {
-		return mostTournamentResults(filter.id + "QuarterFinals", suffix(filter.name, " ") + "Quarter-Finals", QUARTER_FINALS, filter.condition);
+	private static Record mostTournamentQuarterFinals(RecordDomain domain) {
+		return mostTournamentResults(domain.id + "QuarterFinals", suffix(domain.name, " ") + "Quarter-Finals", QUARTER_FINALS, domain.condition);
 	}
 }

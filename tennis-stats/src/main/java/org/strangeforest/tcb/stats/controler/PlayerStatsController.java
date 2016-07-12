@@ -21,8 +21,8 @@ public class PlayerStatsController extends BaseController {
 
 	@RequestMapping("/eventStats")
 	public ModelAndView eventStats(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "tournamentEventId") int tournamentEventId
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "tournamentEventId") int tournamentEventId
 	) {
 		MatchFilter filter = MatchFilter.forTournamentEvent(tournamentEventId);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
@@ -35,11 +35,11 @@ public class PlayerStatsController extends BaseController {
 
 	@RequestMapping("/rivalryStats")
 	public ModelAndView rivalryStats(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "opponentId") int opponentId,
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "round", required = false) String round
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "opponentId") int opponentId,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "round", required = false) String round
 	) {
 		MatchFilter filter = MatchFilter.forOpponent(opponentId, level, surface, round);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
@@ -52,16 +52,16 @@ public class PlayerStatsController extends BaseController {
 
 	@RequestMapping("/playerStats")
 	public ModelAndView playerStats(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "season", required = false) Integer season,
-		@RequestParam(value = "level", required = false) String level,
-		@RequestParam(value = "surface", required = false) String surface,
-		@RequestParam(value = "tournamentId", required = false) Integer tournamentId,
-		@RequestParam(value = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(value = "round", required = false) String round,
-		@RequestParam(value = "opponent", required = false) String opponent,
-		@RequestParam(value = "outcome", required = false) String outcome,
-		@RequestParam(value = "searchPhrase", required = false) String searchPhrase
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "opponent", required = false) String opponent,
+		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
 	) {
 		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, OpponentFilter.forStats(opponent), OutcomeFilter.forStats(outcome), searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
@@ -71,7 +71,7 @@ public class PlayerStatsController extends BaseController {
 
 	@RequestMapping("/matchStats")
 	public ModelAndView matchStats(
-		@RequestParam(value = "matchId") long matchId
+		@RequestParam(name = "matchId") long matchId
 	) {
 		MatchStats matchStats = statisticsService.getMatchStats(matchId);
 
@@ -83,8 +83,8 @@ public class PlayerStatsController extends BaseController {
 
 	@RequestMapping("/playerTimelineStats")
 	public ModelAndView playerTimelineStats(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "seasons") String seasons
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "seasons") String seasons
 	) {
 		PlayerStats careerStats = statisticsService.getPlayerStats(playerId);
 		List<Integer> seasonList = toSeasons(seasons);
@@ -100,8 +100,8 @@ public class PlayerStatsController extends BaseController {
 
 	@RequestMapping("/playerTimelinePerformance")
 	public ModelAndView playerTimelinePerformance(
-		@RequestParam(value = "playerId") int playerId,
-		@RequestParam(value = "seasons") String seasons
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "seasons") String seasons
 	) {
 		Map<Integer, Integer> titles = timelineService.getPlayerSeasonTitles(playerId);
 		Map<Integer, Integer> yearEndRanks = timelineService.getPlayerYearEndRanks(playerId);

@@ -4,7 +4,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class GreatestTitlePctCategory extends RecordCategory {
 
@@ -84,34 +84,34 @@ public class GreatestTitlePctCategory extends RecordCategory {
 		);
 	}
 
-	private static Record greatestFinalPct(RecordType type, RecordFilter filter) {
+	private static Record greatestFinalPct(RecordType type, RecordDomain domain) {
 		return new Record(
-			filter.id + "Final" + type.name + "Pct", "Greatest " + suffix(filter.name, " ") + "Final " + type.name + " Pct." + prefix(filter.nameSuffix, " "),
+			domain.id + "Final" + type.name + "Pct", "Greatest " + suffix(domain.name, " ") + "Final " + type.name + " Pct." + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
 			"SELECT r.player_id, sum(" + type.expression2 + ")::REAL / count(r.player_id) AS pct, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END) AS won, sum(CASE r.result WHEN 'W' THEN 0 ELSE 1 END) AS lost\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-			"WHERE r.result IN ('W', 'F') AND e." + filter.condition + "\n" +
-			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('finals') * performance_min_entries('" + filter.perfCategory + "') / performance_min_entries('matches')",
+			"WHERE r.result IN ('W', 'F') AND e." + domain.condition + "\n" +
+			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('finals') * performance_min_entries('" + domain.perfCategory + "') / performance_min_entries('matches')",
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailClass,
 			asList(
-				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(filter.name, " ") + type.name + " Pct."),
+				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
 			)
 		);
 	}
 
-	private static Record greatestTitlePct(RecordFilter filter) {
+	private static Record greatestTitlePct(RecordDomain domain) {
 		return new Record(
-			filter.id + "TitleWinningPct", "Greatest " + suffix(filter.name, " ") + "Title/Entry Winning Pct." + prefix(filter.nameSuffix, " "),
+			domain.id + "TitleWinningPct", "Greatest " + suffix(domain.name, " ") + "Title/Entry Winning Pct." + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
 			"SELECT r.player_id, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END)::REAL / count(r.player_id) AS pct, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END) AS won, sum(CASE r.result WHEN 'W' THEN 0 ELSE 1 END) AS lost\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-			"WHERE e." + filter.condition + "\n" +
-			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('" + filter.perfCategory + "') / 5",
+			"WHERE e." + domain.condition + "\n" +
+			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('" + domain.perfCategory + "') / 5",
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", WinningPctRecordDetail.class,
 			asList(
-				new RecordColumn("wonLostPct", null, null, PCT_WIDTH, "right", suffix(filter.name, " ") + "Winning Pct."),
+				new RecordColumn("wonLostPct", null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + "Winning Pct."),
 				RecordType.WINNING.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Entries")
 			)

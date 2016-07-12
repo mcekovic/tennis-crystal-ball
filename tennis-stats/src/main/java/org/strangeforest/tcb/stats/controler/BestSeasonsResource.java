@@ -33,9 +33,9 @@ public class BestSeasonsResource {
 
 	@RequestMapping("/bestSeasonsTable")
 	public BootgridTable<BestSeasonRow> bestSeasonsTable(
-		@RequestParam(value = "current") int current,
-		@RequestParam(value = "rowCount") int rowCount,
-		@RequestParam(value = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "current") int current,
+		@RequestParam(name = "rowCount") int rowCount,
+		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		PlayerListFilter filter = new PlayerListFilter(searchPhrase);

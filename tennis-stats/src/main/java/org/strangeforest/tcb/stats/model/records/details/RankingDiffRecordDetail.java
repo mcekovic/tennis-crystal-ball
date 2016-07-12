@@ -6,6 +6,8 @@ import org.strangeforest.tcb.stats.model.*;
 
 import com.fasterxml.jackson.annotation.*;
 
+import static java.lang.String.*;
+
 public class RankingDiffRecordDetail extends IntegerRecordDetail {
 
 	private final PlayerRow player2;
@@ -44,5 +46,9 @@ public class RankingDiffRecordDetail extends IntegerRecordDetail {
 
 	public Date getDate() {
 		return date;
+	}
+
+	@Override public String toString() {
+		return format("%1$d (%2$td-%2$tm-%2$tY)", getValue(), date);
 	}
 }

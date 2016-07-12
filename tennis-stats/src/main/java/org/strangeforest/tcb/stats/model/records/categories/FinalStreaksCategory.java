@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
 
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class FinalStreaksCategory extends ResultsStreaksCategory {
 
@@ -28,11 +28,11 @@ public class FinalStreaksCategory extends ResultsStreaksCategory {
 		register(tournamentFinalStreak(ATP_250));
 	}
 
-	private static Record finalStreak(RecordFilter filter) {
-		return resultStreak(filter.id + "Final", suffix(filter.name, " ") + "Final", filter.nameSuffix, FINALS, filter.condition);
+	private static Record finalStreak(RecordDomain domain) {
+		return resultStreak(domain.id + "Final", suffix(domain.name, " ") + "Final", domain.nameSuffix, FINALS, domain.condition);
 	}
 
-	private static Record tournamentFinalStreak(RecordFilter filter) {
-		return tournamentResultStreak(filter.id + "Final", filter.name, "Final", FINALS, filter.condition);
+	private static Record tournamentFinalStreak(RecordDomain domain) {
+		return tournamentResultStreak(domain.id + "Final", domain.name, "Final", FINALS, domain.condition);
 	}
 }

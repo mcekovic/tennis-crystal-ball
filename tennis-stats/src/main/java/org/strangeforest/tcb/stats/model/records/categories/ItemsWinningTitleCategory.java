@@ -4,7 +4,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.ItemsWinningTitleCategory.ItemType.*;
 
 public class ItemsWinningTitleCategory extends RecordCategory {
@@ -59,15 +59,15 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		register(itemsLostWinningTitle(type, SETS, OLYMPICS));
 	}
 
-	private static Record itemsLostWinningTitle(RecordType type, ItemType item, RecordFilter filter) {
-		return itemsLostWinningTitle(type, item, filter, null);
+	private static Record itemsLostWinningTitle(RecordType type, ItemType item, RecordDomain domain) {
+		return itemsLostWinningTitle(type, item, domain, null);
 	}
 
-	private static Record itemsLostWinningTitle(RecordType type, ItemType item, RecordFilter filter, String condition) {
+	private static Record itemsLostWinningTitle(RecordType type, ItemType item, RecordDomain domain, String condition) {
 		if (condition == null)
-			condition = filter.condition;
+			condition = domain.condition;
 		return new Record(
-			type.name + item.name + "LostWinning" + filter.id + "Title", suffix(type.name, " ") + item.name + " Lost Winning " + suffix(filter.name, " ") + "Title",
+			type.name + item.name + "LostWinning" + domain.id + "Title", suffix(type.name, " ") + item.name + " Lost Winning " + suffix(domain.name, " ") + "Title",
 			/* language=SQL */
 			"SELECT player_id, tournament_event_id, e.name AS tournament, e.level, e.season, e.date, sum(m." + item.column + ") AS value, count(m.match_id) AS matches\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) LEFT JOIN player_match_for_stats_v m USING (player_id, tournament_event_id)\n" +

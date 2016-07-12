@@ -26,12 +26,12 @@ public class TopPerformersResource {
 
 	@RequestMapping("/topPerformersTable")
 	public BootgridTable<TopPerformerRow> topPerformersTable(
-		@RequestParam(value = "category") String category,
-		@RequestParam(value = "season", required = false) Integer season,
-		@RequestParam(value = "active", required = false) Boolean active,
-		@RequestParam(value = "current") int current,
-		@RequestParam(value = "rowCount") int rowCount,
-		@RequestParam(value = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "category") String category,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "active", required = false) Boolean active,
+		@RequestParam(name = "current") int current,
+		@RequestParam(name = "rowCount") int rowCount,
+		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		StatsPlayerListFilter filter = new StatsPlayerListFilter(active, searchPhrase, season);
@@ -44,8 +44,8 @@ public class TopPerformersResource {
 
 	@RequestMapping("/topPerformersMinEntries")
 	public String topPerformersMinEntries(
-		@RequestParam(value = "category") String category,
-		@RequestParam(value = "season", required = false) Integer season
+		@RequestParam(name = "category") String category,
+		@RequestParam(name = "season", required = false) Integer season
 	) {
 		StatsPlayerListFilter filter = new StatsPlayerListFilter(season);
 		return topPerformersService.getTopPerformersMinEntries(category, filter);

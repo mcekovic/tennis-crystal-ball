@@ -4,7 +4,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.model.records.RecordFilter.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class WinningStreaksCategory extends RecordCategory {
 
@@ -38,28 +38,28 @@ public class WinningStreaksCategory extends RecordCategory {
 		register(tournamentWinningStreak(ATP_250, "_tournament_level"));
 	}
 
-	private static Record winningStreak(RecordFilter filter, String nameSuffix, String tableName) {
-		return winningStreak(filter, nameSuffix, tableName, null);
+	private static Record winningStreak(RecordDomain domain, String nameSuffix, String tableName) {
+		return winningStreak(domain, nameSuffix, tableName, null);
 	}
 
-	private static Record winningStreak(RecordFilter filter, String nameSuffix, String tableName, String condition) {
+	private static Record winningStreak(RecordDomain domain, String nameSuffix, String tableName, String condition) {
 		if (condition == null)
-			condition = filter.condition;
-		return winningStreakRecord(filter.id + nameSuffix + "WinningStreak", suffix(filter.name, " ") + suffix(nameSuffix, " ") + "Winning Streak" + prefix(filter.nameSuffix, " "), tableName, condition);
+			condition = domain.condition;
+		return winningStreakRecord(domain.id + nameSuffix + "WinningStreak", suffix(domain.name, " ") + suffix(nameSuffix, " ") + "Winning Streak" + prefix(domain.nameSuffix, " "), tableName, condition);
 	}
 
-	private static Record winningStreakVs(RecordFilter filter, String tableName) {
-		return winningStreakRecord("WinningStreakVs" + filter.id, "Winning Streak Vs " + filter.name, "_vs_" + tableName, N_A);
+	private static Record winningStreakVs(RecordDomain domain, String tableName) {
+		return winningStreakRecord("WinningStreakVs" + domain.id, "Winning Streak Vs " + domain.name, "_vs_" + tableName, N_A);
 	}
 
-	private static Record tournamentWinningStreak(RecordFilter filter, String tableName) {
-		return tournamentWinningStreak(filter, tableName, null);
+	private static Record tournamentWinningStreak(RecordDomain domain, String tableName) {
+		return tournamentWinningStreak(domain, tableName, null);
 	}
 
-	private static Record tournamentWinningStreak(RecordFilter filter, String tableName, String condition) {
+	private static Record tournamentWinningStreak(RecordDomain domain, String tableName, String condition) {
 		if (condition == null)
-			condition = filter.condition;
-		return winningStreakRecord(filter.id + "TournamentWinningStreak", "Winning Streak at Single " + suffix(filter.name, " ") + "Tournament", tableName, condition);
+			condition = domain.condition;
+		return winningStreakRecord(domain.id + "TournamentWinningStreak", "Winning Streak at Single " + suffix(domain.name, " ") + "Tournament", tableName, condition);
 	}
 
 	private static Record winningStreakRecord(String id, String name, String tableName, String condition) {
