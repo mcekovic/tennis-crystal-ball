@@ -8,4 +8,8 @@ public abstract class ResultSetUtil {
 		int i = rs.getInt(column);
 		return rs.wasNull() ? null : i;
 	}
+
+	public static void bindStringArray(PreparedStatement ps, int index, String[] strings) throws SQLException {
+		ps.setArray(index, ps.getConnection().createArrayOf("text", strings));
+	}
 }

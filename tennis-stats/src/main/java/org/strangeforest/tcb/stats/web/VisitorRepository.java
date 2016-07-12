@@ -102,9 +102,7 @@ public class VisitorRepository {
 	public List<Object[]> getVisitorsByCountry(VisitorStat stat, VisitorInterval interval) {
 		return jdbcTemplate.getJdbcOperations().query(
 			format(STATS_QUERY, stat.getExpression(), interval.getExpression()),
-			(rs, rowNum) -> {
-				return new Object[] {rs.getString("country"), rs.getObject("value")};
-			}
+			(rs, rowNum) -> new Object[] {rs.getString("country"), rs.getObject("value")}
 		);
 	}
 }

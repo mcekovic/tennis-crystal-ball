@@ -94,6 +94,7 @@
 			<li><a data-toggle="pill" href="#statistics" data-url="/playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
 			<li><a data-toggle="pill" href="#statisticsChart" data-url="/playerStatsChart?playerId=" th:attrappend="data-url=${player.id}" title="Statistics Chart">Stats. Chart</a></li>
 			<li><a id="goatPointsPill" data-toggle="pill" href="#goatPoints" data-url="/playerGOATPoints?playerId=" th:attrappend="data-url=${player.id}" title="GOAT Points Breakdown">GOAT Points</a></li>
+			<li><a data-toggle="pill" href="#records" data-url="/playerRecords?playerId=" th:attrappend="data-url=${player.id}">Records</a></li>
 		</ul>
 		<div class="tab-content">
 			<div id="profile" class="tab-pane fade"><br/>Loading...</div>
@@ -107,6 +108,7 @@
 			<div id="statistics" class="tab-pane fade"><br/>Loading...</div>
 			<div id="statisticsChart" class="tab-pane fade"><br/>Loading...</div>
 			<div id="goatPoints" class="tab-pane fade"><br/>Loading...</div>
+			<div id="records" class="tab-pane fade"><br/>Loading...</div>
 		</div>
 	</th:block>
 	<h4 th:unless="${player}" th:text="'Player ' + ${playerRef}  + ' not found.'">Player bot found.</h4>

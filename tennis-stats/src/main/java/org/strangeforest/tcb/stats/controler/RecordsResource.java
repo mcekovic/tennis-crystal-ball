@@ -26,6 +26,20 @@ public class RecordsResource {
 		return recordsService.getRecordsTable(filter, pageSize, current);
 	}
 
+	@RequestMapping("/playerRecordsTable")
+	public BootgridTable<RecordRow> playerRecordsTable(
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "category", required = false) String category,
+		@RequestParam(name = "infamous", required = false, defaultValue = "false") boolean infamous,
+		@RequestParam(name = "current") int current,
+		@RequestParam(name = "rowCount") int rowCount,
+		@RequestParam(name = "searchPhrase") String searchPhrase
+	) {
+		int pageSize = rowCount > 0 ? rowCount : MAX_RECORDS;
+		RecordFilter filter = new RecordFilter(category, searchPhrase, infamous);
+		return recordsService.getPlayerRecordsTable(filter, playerId, pageSize, current);
+	}
+
 	@RequestMapping("/recordTable")
 	public BootgridTable<RecordDetailRow> recordTable(
 		@RequestParam(name = "recordId") String recordId,

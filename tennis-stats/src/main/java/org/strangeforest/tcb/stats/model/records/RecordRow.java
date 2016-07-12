@@ -5,41 +5,36 @@ import java.util.*;
 public class RecordRow {
 
 	private final String id;
-	private final String category;
 	private final String name;
-	private final boolean infamous;
-	private final List<PlayerRecordRow> playerRecords;
+	private final List<RecordHolderRow> recordHolders;
 
 	public RecordRow(Record record) {
 		this.id = record.getId();
-		this.category = record.getCategory();
 		this.name = record.getName();
-		this.infamous = record.isInfamous();
-		playerRecords = new ArrayList<>();
+		recordHolders = new ArrayList<>();
 	}
 
 	public String getId() {
 		return id;
 	}
 
-	public String getCategory() {
-		return category;
-	}
-
 	public String getName() {
 		return name;
 	}
 
-	public boolean isInfamous() {
-		return infamous;
+	public List<RecordHolderRow> getRecordHolders() {
+		return recordHolders;
 	}
 
-	public List<PlayerRecordRow> getPlayerRecords() {
-		return playerRecords;
+	public void topPlayer(int playerId) {
+		Collections.sort(recordHolders, (holder1, holder2) -> Boolean.compare(holder1.getPlayerId() != playerId, holder2.getPlayerId() != playerId));
 	}
 
-	public void addPlayerRecord(PlayerRecordRow playerRecord) {
-		playerRecords.add(playerRecord);
+	public void addRecordHolder(RecordHolderRow recordHolder) {
+		recordHolders.add(recordHolder);
+	}
 
+	public boolean hasHolders() {
+		return !recordHolders.isEmpty();
 	}
 }

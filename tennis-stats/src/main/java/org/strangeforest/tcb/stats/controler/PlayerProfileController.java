@@ -8,6 +8,7 @@ import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
 
 import static java.util.stream.Collectors.*;
@@ -245,5 +246,16 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levelResultCount", levelResults.values().stream().mapToInt(List::size).sum());
 		modelMap.addAttribute("goatPoints", goatPoints);
 		return new ModelAndView("playerGOATPoints", modelMap);
+	}
+
+	@RequestMapping("/playerRecords")
+	public ModelAndView playerRecords(
+		@RequestParam(name = "playerId") int playerId
+	) {
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("recordCategories", Records.getRecordCategories());
+		modelMap.addAttribute("infamousRecordCategories", Records.getInfamousRecordCategories());
+		return new ModelAndView("playerRecords", modelMap);
 	}
 }

@@ -1,31 +1,17 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="recordCount" type="java.lang.Integer"*/-->
-<!--/*@thymesVar id="recordCategories" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>"*/-->
-<!--/*@thymesVar id="infamousRecordCategories" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>"*/-->
-<head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Ultimate Tennis Statistics - Records Book</title>
-	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{|/webjars/jquery-ui-themes/${versions['jquery-ui']}/smoothness/jquery-ui.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{|/webjars/jquery/${versions['jquery']}/jquery.min.js|}"></script>
-	<script th:src="@{|/webjars/jquery-ui/${versions['jquery-ui']}/jquery-ui.min.js|}"></script>
-	<script th:src="@{|/webjars/bootstrap/${versions['bootstrap']}/js/bootstrap.min.js|}"></script>
-	<script th:src="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.js|}"></script>
-	<script th:src="@{/js/tennis-stats.js}"></script>
-	<script type="text/javascript">
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="recordCategories" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>"*/-->
+	<!--/*@thymesVar id="infamousRecordCategories" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>"*/-->
+	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 		$(function() {
-			$("#recordsTable").bootgrid({
+			$("#playerRecordsTable").bootgrid({
 				ajax: true,
 				ajaxSettings: {
 					method: "GET",
 					cache: false
 				},
-				url: "/recordsTable",
+				url: "/playerRecordsTable?playerId=[[${playerId}]]",
 				requestHandler: function (request) {
 					var infamous = $("#infamous").prop("checked");
 					request.category = !infamous ? $("#category").val() : $("#infamousCategory").val();
@@ -33,7 +19,7 @@
 					return request;
 				},
 				sorting: false,
-				rowCount: [20, 50, -1],
+				rowCount: [10, 20, 50, -1],
 				formatters: {
 					"record": recordFormatter,
 					"recordHolders": function(column, row) {
@@ -53,9 +39,9 @@
 				}
 			});
 			showRecordCategories();
-			var $recordsTableHeader = $("#recordsTable-header");
-			$recordsTableHeader.find(".actionBar").css("padding-left", "0");
-			$recordsTableHeader.find("div.search").before($("#categoryDiv").remove()).before($("#infamousDiv").remove());
+			var $playerRecordsTableHeader = $("#playerRecordsTable-header");
+			$playerRecordsTableHeader.find(".actionBar").css("padding-left", "0");
+			$playerRecordsTableHeader.find("div.search").before($("#categoryDiv").remove()).before($("#infamousDiv").remove());
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function showRecordCategories() {
@@ -65,31 +51,24 @@
 		}
 		function infamousChanged() {
 			showRecordCategories();
-			reloadRecordsTable();
+			reloadPlayerRecordsTable();
 		}
-		function reloadRecordsTable() {
-			$("#recordsTable").bootgrid("reload");
+		function reloadPlayerRecordsTable() {
+			$("#playerRecordsTable").bootgrid("reload");
 		}
 		/*]]>*/
 	</script>
-</head>
-<body class="container">
-	<header th:include="fragments/header :: title"></header>
-	<div class="text-nowrap">
-		<h3 style="float: left; margin-top: 5px">Records Book</h3>
-		<h5 style="font-style: italic" th:text="'&nbsp;' + ${recordCount} + ' Different Records!'">&nbsp;100 Different Records</h5>
-	</div>
 	<div id="categoryDiv" class="col-sm-7" style="padding-left: 0">
 		<div id="categoryControl" class="input-group" style="float: left">
 			<label for="category" class="input-group-addon">Category:</label>
-			<select id="category" class="form-control" onchange="reloadRecordsTable()" data-toggle="tooltip" data-placement="top" title="Select Record Category">
+			<select id="category" class="form-control" onchange="reloadPlayerRecordsTable()" data-toggle="tooltip" data-placement="top" title="Select Record Category">
 				<option value="">All Records</option>
 				<option th:each="recordCategory : ${recordCategories}" th:value="${recordCategory.name}" value="Most Matches" th:text="${recordCategory.name}">Most Matches</option>
 			</select>
 		</div>
 		<div id="infamousRecordControl" class="input-group" style="float: left; display: none">
 			<label for="infamousCategory" class="input-group-addon">Infamous:</label>
-			<select id="infamousCategory" class="form-control" onchange="reloadRecordsTable()" data-toggle="tooltip" data-placement="top" title="Select Infamous Record">
+			<select id="infamousCategory" class="form-control" onchange="reloadPlayerRecordsTable()" data-toggle="tooltip" data-placement="top" title="Select Infamous Record">
 				<option value="">All Infamous Records</option>
 				<option th:each="recordCategory : ${infamousRecordCategories}" th:value="${recordCategory.name}" value="Most Matches" th:text="${recordCategory.name}">Most Matches</option>
 			</select>
@@ -102,7 +81,7 @@
 			</label>
 		</div>
 	</div>
-	<table id="recordsTable" class="table table-condensed table-hover table-striped">
+	<table id="playerRecordsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
 			<th data-column-id="record" data-formatter="record" data-sortable="false" data-width="300">Record</th>
@@ -110,6 +89,4 @@
 		</tr>
 		</thead>
 	</table>
-	<footer th:include="fragments/footer :: copy"></footer>
-</body>
-</html>
+</th:block>

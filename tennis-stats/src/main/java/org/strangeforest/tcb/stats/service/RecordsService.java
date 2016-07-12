@@ -17,6 +17,7 @@ import org.strangeforest.tcb.stats.model.table.*;
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
 @Service
 public class RecordsService {
@@ -28,8 +29,11 @@ public class RecordsService {
 	private static final String RECORDS_TABLE_QUERY = //language=SQL
 		"SELECT r.record_id, p.player_id, p.name, p.country_id, p.active, r.detail\n" +
 		"FROM player_record r\n" +
-		"INNER JOIN player_v p ON p.player_id = r.player_id AND r.rank = 1\n" +
-		"WHERE record_id IN (:recordIds)";
+		"INNER JOIN player_v p ON p.player_id = r.player_id\n" +
+		"WHERE r.rank = 1 AND r.record_id = ANY(?)%1$s";
+
+	private static final String PLAYER_RECORDS_CONDITION = //language=SQL
+		"\n AND EXISTS(SELECT TRUE FROM player_record r2 WHERE r2.record_id = r.record_id AND r2.player_id = ? AND r2.rank = 1)";
 
 	private static final String RECORD_TABLE_QUERY = //language=SQL
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.detail\n" +
@@ -79,32 +83,75 @@ public class RecordsService {
 
 	@Cacheable("Records.Table")
 	public BootgridTable<RecordRow> getRecordsTable(RecordFilter filter, int pageSize, int currentPage) {
-		List<Record> records = Records.getRecords().stream()
-			.filter(filter::predicate)
-			.collect(toList());
-		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage, records.size());
+		List<Record> records = getRecords(filter);
 		int offset = (currentPage - 1) * pageSize;
 		List<RecordRow> recordRows = records.stream()
 			.skip(offset).limit(pageSize)
 			.map(RecordRow::new)
 			.collect(toList());
-		jdbcTemplate.query(
-			RECORDS_TABLE_QUERY,
-			params("recordIds", recordRows.stream().map(RecordRow::getId).collect(toList())),
+		jdbcTemplate.getJdbcOperations().query(
+			format(RECORDS_TABLE_QUERY, ""),
+			ps -> {
+				bindStringArray(ps, 1, recordRows.stream().map(RecordRow::getId).toArray(String[]::new));
+			},
 			rs -> {
-				String recordId = rs.getString("record_id");
-				int playerId = rs.getInt("player_id");
-				String name = rs.getString("name");
-				String countryId = rs.getString("country_id");
-				boolean active = rs.getBoolean("active");
-				Record record = Records.getRecord(recordId);
-				RecordDetail detail = getDetail(record, rs.getString("detail"));
-				RecordRow recordRow = recordRows.stream().filter(row -> row.getId().equals(recordId)).findFirst().get();
-				recordRow.addPlayerRecord(new PlayerRecordRow(playerId, name, countryId, active, detail.toString()));
+				addRecordHolders(recordRows, rs);
 			}
 		);
+		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage, records.size());
 		recordRows.stream().forEach(table::addRow);
 		return table;
+	}
+
+	@Cacheable("PlayerRecords.Table")
+	public BootgridTable<RecordRow> getPlayerRecordsTable(RecordFilter filter, int playerId, int pageSize, int currentPage) {
+		List<Record> records = getRecords(filter);
+		List<RecordRow> recordRows = records.stream()
+			.map(RecordRow::new)
+			.collect(toList());
+		jdbcTemplate.getJdbcOperations().query(
+			format(RECORDS_TABLE_QUERY, PLAYER_RECORDS_CONDITION),
+			ps -> {
+				bindStringArray(ps, 1, recordRows.stream().map(RecordRow::getId).toArray(String[]::new));
+				ps.setInt(2, playerId);
+			},
+			rs -> {
+				addRecordHolders(recordRows, rs);
+			}
+		);
+		List<RecordRow> playerRecordRows = recordRows.stream().filter(RecordRow::hasHolders).collect(toList());
+		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage, playerRecordRows.size());
+		int offset = (currentPage - 1) * pageSize;
+		playerRecordRows.stream().skip(offset).limit(pageSize).forEach(row -> {
+			row.topPlayer(playerId);
+			table.addRow(row);
+		});
+		return table;
+	}
+
+	private static List<Record> getRecords(RecordFilter filter) {
+		return Records.getRecords().stream()
+			.filter(filter::predicate)
+			.collect(toList());
+	}
+
+	private void addRecordHolders(List<RecordRow> recordRows, ResultSet rs) throws SQLException {
+		String recordId = rs.getString("record_id");
+		int playerId = rs.getInt("player_id");
+		String name = rs.getString("name");
+		String countryId = rs.getString("country_id");
+		boolean active = rs.getBoolean("active");
+		Record record = Records.getRecord(recordId);
+		RecordDetail detail = getDetail(record, rs.getString("detail"));
+		RecordHolderRow recordHolder = new RecordHolderRow(playerId, name, countryId, active, detail.toString());
+		Optional<RecordRow> recordRow = findRecordRow(recordRows, recordId);
+		recordRow.orElseThrow(
+			() -> new IllegalStateException("Cannot find record: " + recordId)
+		).addRecordHolder(recordHolder);
+	}
+
+	private static Optional<RecordRow> findRecordRow(List<RecordRow> recordRows, String recordId) {
+		return recordRows.stream().filter(row -> row.getId().equals(recordId)).findFirst();
 	}
 
 	@Transactional

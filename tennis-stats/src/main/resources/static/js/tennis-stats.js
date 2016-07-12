@@ -283,6 +283,11 @@ function formatMatchPlayer(player, winner) {
 		+ (player.seed ? (" (" + player.seed  + (player.entry ? " " + player.entry : "") + ")") : (player.entry ? " (" + player.entry + ")" : "")) + "</a>";
 }
 
+// Record Formatter
+function recordFormatter(column, row) {
+	return "<a href='/record?recordId=" + row.id + "' title='Show Record'>" + row.name + "</a>";
+}
+
 
 // Misc
 
