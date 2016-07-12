@@ -48,7 +48,7 @@ public class RankingDiffRecordDetail extends IntegerRecordDetail {
 		return date;
 	}
 
-	@Override public String toString() {
-		return format("%1$d (%2$td-%2$tm-%2$tY)", getValue(), date);
+	@Override public String toDetailString() {
+		return format("%1$td-%1$tm-%1$tY", date);
 	}
 }

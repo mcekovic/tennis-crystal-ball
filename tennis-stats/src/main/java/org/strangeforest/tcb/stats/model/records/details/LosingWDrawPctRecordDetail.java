@@ -14,11 +14,11 @@ public class LosingWDrawPctRecordDetail extends WonDrawLostRecordDetail {
 		super(won, draw, lost);
 	}
 
-	public String getLostWonPct() {
+	@Override public String getValue() {
 		return wonDrawLost.inverted().getWonPctStr(2);
 	}
 
-	@Override public String toString() {
-		return format("%1$s (%2$d-%3$d-%4$d/%5$d)", getLostWonPct(), wonDrawLost.getLost(), wonDrawLost.getDraw(), wonDrawLost.getWon(), wonDrawLost.getTotal());
+	@Override public String toDetailString() {
+		return format("%1$d-%2$d-%3$d/%4$d", wonDrawLost.getLost(), wonDrawLost.getDraw(), wonDrawLost.getWon(), wonDrawLost.getTotal());
 	}
 }

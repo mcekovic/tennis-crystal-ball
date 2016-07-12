@@ -9,26 +9,24 @@ import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 public class GreatestTitlePctCategory extends RecordCategory {
 
 	public enum RecordType {
-		WINNING("Final/Title", "Winning", "finals_won", "CASE r.result WHEN 'W' THEN 1 ELSE 0 END", "wonLostPct", WinningPctRecordDetail.class,
+		WINNING("Final/Title", "Winning", "finals_won", "CASE r.result WHEN 'W' THEN 1 ELSE 0 END", WinningPctRecordDetail.class,
 			new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", "Won")
 		),
-		LOSING("Final", "Losing", "finals_lost", "CASE r.result WHEN 'W' THEN 0 ELSE 1 END", "lostWonPct", LosingPctRecordDetail.class,
+		LOSING("Final", "Losing", "finals_lost", "CASE r.result WHEN 'W' THEN 0 ELSE 1 END", LosingPctRecordDetail.class,
 			new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost")
 		);
 
 		private final String categoryName;
 		private final String name;
 		private final String expression1, expression2;
-		private final String pctAttr;
 		private final Class<? extends RecordDetail> detailClass;
 		private final RecordColumn valueRecordColumn;
 
-		RecordType(String categoryName, String name, String expression1, String expression2, String pctAttr, Class<? extends RecordDetail> detailClass, RecordColumn valueRecordColumn) {
+		RecordType(String categoryName, String name, String expression1, String expression2, Class<? extends RecordDetail> detailClass, RecordColumn valueRecordColumn) {
 			this.categoryName = categoryName;
 			this.name = name;
 			this.expression1 = expression1;
 			this.expression2 = expression2;
-			this.pctAttr = pctAttr;
 			this.detailClass = detailClass;
 			this.valueRecordColumn = valueRecordColumn;
 		}
@@ -77,7 +75,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"FROM player_performance WHERE finals_won + finals_lost >= performance_min_entries('finals')",
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailClass,
 			asList(
-				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct."),
+				new RecordColumn("value", null, null, PCT_WIDTH, "right", type.name + " Pct."),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
 			)
@@ -94,7 +92,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('finals') * performance_min_entries('" + domain.perfCategory + "') / performance_min_entries('matches')",
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailClass,
 			asList(
-				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
+				new RecordColumn("value", null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
 			)
@@ -111,7 +109,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('" + domain.perfCategory + "') / 5",
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", WinningPctRecordDetail.class,
 			asList(
-				new RecordColumn("wonLostPct", null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + "Winning Pct."),
+				new RecordColumn("value", null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + "Winning Pct."),
 				RecordType.WINNING.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Entries")
 			)

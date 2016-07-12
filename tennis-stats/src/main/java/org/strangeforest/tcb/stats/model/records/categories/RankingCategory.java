@@ -22,8 +22,8 @@ public abstract class RankingCategory extends RecordCategory {
 	private static final String INVALID_RANKING_PLAYERS = "'Jaime Fillol', 'Chris Lewis', 'Olivier Cayla'";
 
 	enum AgeType {
-		YOUNGEST("Youngest", "min", "r.age"),
-		OLDEST("Oldest", "max", "r.age DESC");
+		YOUNGEST("Youngest", "min", "r.value"),
+		OLDEST("Oldest", "max", "r.value DESC");
 
 		private final String name;
 		private final String function;
@@ -214,14 +214,14 @@ public abstract class RankingCategory extends RecordCategory {
 		return new Record(
 			id, name,
 			/* language=SQL */
-			"SELECT player_id, " + type.function + "(age(r.rank_date, p.dob)) AS age, " + type.function + "(r.rank_date) AS date\n" +
+			"SELECT player_id, " + type.function + "(age(r.rank_date, p.dob)) AS value, " + type.function + "(r.rank_date) AS date\n" +
 			"FROM player" + rankDBName + "_ranking r INNER JOIN player_v p USING (player_id)\n" +
 			"WHERE rank " + condition + "\n" +
 			"AND p.name NOT IN (" + INVALID_RANKING_PLAYERS + ")\n" + // TODO Remove after data is fixed
 			"GROUP BY player_id",
-			"r.age, r.date", type.order, type.order + ", r.date", DateAgeRecordDetail.class,
+			"r.value, r.date", type.order, type.order + ", r.date", DateAgeRecordDetail.class,
 			asList(
-				new RecordColumn("age", null, null, AGE_WIDTH, "left", "Age"),
+				new RecordColumn("value", null, null, AGE_WIDTH, "left", "Age"),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
 			)
 		);
@@ -231,13 +231,13 @@ public abstract class RankingCategory extends RecordCategory {
 		return new Record(
 			"LongestATP" + id + "Span", "Longest Career First " + name + " to Last " + name,
 			/* language=SQL */
-			"SELECT player_id, age(max(rank_date), min(rank_date)) AS span, min(rank_date) AS start_date, max(rank_date) AS end_date\n" +
+			"SELECT player_id, age(max(rank_date), min(rank_date)) AS value, min(rank_date) AS start_date, max(rank_date) AS end_date\n" +
 			"FROM player" + rankDBName + "_ranking\n" +
 			"WHERE rank " + condition + "\n" +
 			"GROUP BY player_id",
-			"r.span, r.start_date, r.end_date", "r.span DESC", "r.span DESC, r.end_date", CareerSpanRecordDetail.class,
+			"r.value, r.start_date, r.end_date", "r.value DESC", "r.value DESC, r.end_date", CareerSpanRecordDetail.class,
 			asList(
-				new RecordColumn("span", null, null, SPAN_WIDTH, "left", "Career Span"),
+				new RecordColumn("value", null, null, SPAN_WIDTH, "left", "Career Span"),
 				new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
 				new RecordColumn("endDate", null, "endDate", DATE_WIDTH, "center", "End Date")
 			)

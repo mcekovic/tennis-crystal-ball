@@ -288,6 +288,20 @@ function recordFormatter(column, row) {
 	return "<a href='/record?recordId=" + row.id + "' title='Show Record'>" + row.name + "</a>";
 }
 
+function recordHoldersFormatter(column, row) {
+	var recordHolders = row.recordHolders;
+	var len = recordHolders.length;
+	var s = "";
+	for (var i = 0; i < len; i++) {
+		var recordHolder = recordHolders[i];
+		s = s ? s + ", " : "";
+		s += playerCountryFormatter(column, recordHolder);
+		if (recordHolder.detail)
+			s += " (" + recordHolder.detail + ")";
+	}
+	return s;
+}
+
 
 // Misc
 

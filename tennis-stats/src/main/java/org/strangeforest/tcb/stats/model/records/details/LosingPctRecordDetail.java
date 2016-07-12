@@ -13,7 +13,7 @@ public class LosingPctRecordDetail extends WonLostRecordDetail {
 		super(won, lost);
 	}
 
-	public String getLostWonPct() {
+	@Override public String getValue() {
 		return wonLost.inverted().getWonPctStr(2);
 	}
 
@@ -21,7 +21,7 @@ public class LosingPctRecordDetail extends WonLostRecordDetail {
 		return wonLost.getLost();
 	}
 
-	@Override public String toString() {
-		return format("%1$s (%2$d/%3$d)", getLostWonPct(), wonLost.getLost(), wonLost.getTotal());
+	@Override public String toDetailString() {
+		return format("%1$d/%2$d", wonLost.getLost(), wonLost.getTotal());
 	}
 }

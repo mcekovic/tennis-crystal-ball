@@ -20,7 +20,7 @@ public class SeasonIntegerRecordDetail extends IntegerRecordDetail {
 		return season;
 	}
 
-	@Override public String toString() {
-		return format("%1$d (%2$d)", getValue(), season);
+	@Override public String toDetailString() {
+		return format("%1$d", season);
 	}
 }

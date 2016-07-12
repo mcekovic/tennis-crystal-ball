@@ -27,7 +27,7 @@ public class RecordsResource {
 	}
 
 	@RequestMapping("/playerRecordsTable")
-	public BootgridTable<RecordRow> playerRecordsTable(
+	public BootgridTable<PlayerRecordRow> playerRecordsTable(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "category", required = false) String category,
 		@RequestParam(name = "infamous", required = false, defaultValue = "false") boolean infamous,

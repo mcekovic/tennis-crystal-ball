@@ -36,17 +36,7 @@
 				rowCount: [20, 50, -1],
 				formatters: {
 					"record": recordFormatter,
-					"recordHolders": function(column, row) {
-						var recordHolders = row.recordHolders;
-						var len = recordHolders.length;
-						var s = null;
-						for (var i = 0; i < len; i++) {
-							var recordHolder = recordHolders[i];
-							s = s ? s + ", " : "";
-							s += playerCountryFormatter(column, recordHolder) + " " + recordHolder.detail;
-						}
-						return s;
-					}
+					"recordHolders": recordHoldersFormatter
 				},
 				templates: {
 					paginationItem: bootgridTemplatePaginationItem
@@ -105,8 +95,9 @@
 	<table id="recordsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
-			<th data-column-id="record" data-formatter="record" data-sortable="false" data-width="300">Record</th>
-			<th data-column-id="recordHolders" data-formatter="recordHolders" data-sortable="false" data-width="500">Record Holder(s)</th>
+			<th data-column-id="record" data-formatter="record" data-width="300">Record</th>
+			<th data-column-id="value" data-align="right" data-header-align="right" data-width="130">Result</th>
+			<th data-column-id="recordHolders" data-formatter="recordHolders" data-width="400">Record Holder(s)</th>
 		</tr>
 		</thead>
 	</table>

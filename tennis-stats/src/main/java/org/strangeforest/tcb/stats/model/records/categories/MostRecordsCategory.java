@@ -9,7 +9,7 @@ import static org.strangeforest.tcb.stats.model.records.categories.MostRecordsCa
 public class MostRecordsCategory extends RecordCategory {
 
 	enum RecordType {
-		FAMOUS(N_A, "Famous", "NOT sr.infamous"),
+		FAMOUS(N_A, N_A, "NOT sr.infamous"),
 		INFAMOUS("Infamous", "Infamous", "sr.infamous");
 
 		private final String id;

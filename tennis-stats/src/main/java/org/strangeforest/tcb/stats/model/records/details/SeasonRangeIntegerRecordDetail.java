@@ -27,7 +27,7 @@ public class SeasonRangeIntegerRecordDetail extends IntegerRecordDetail {
 		return endSeason;
 	}
 
-	@Override public String toString() {
-		return format("%1$d (%2$d-%3$d)", getValue(), startSeason, endSeason);
+	@Override public String toDetailString() {
+		return format("%1$d-%2$d", startSeason, endSeason);
 	}
 }

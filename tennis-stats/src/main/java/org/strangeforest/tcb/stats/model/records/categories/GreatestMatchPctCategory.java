@@ -9,25 +9,23 @@ import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 public class GreatestMatchPctCategory extends RecordCategory {
 
 	public enum RecordType {
-		WINNING("Winning", "_won", "wonLostPct", WinningPctRecordDetail.class, SeasonWinningPctRecordDetail.class, TournamentWinningPctRecordDetail.class,
+		WINNING("Winning", "_won", WinningPctRecordDetail.class, SeasonWinningPctRecordDetail.class, TournamentWinningPctRecordDetail.class,
 			new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", "Won")
 		),
-		LOSING("Losing", "_lost", "lostWonPct", LosingPctRecordDetail.class, SeasonLosingPctRecordDetail.class, TournamentLosingPctRecordDetail.class,
+		LOSING("Losing", "_lost", LosingPctRecordDetail.class, SeasonLosingPctRecordDetail.class, TournamentLosingPctRecordDetail.class,
 			new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost")
 		);
 
 		private final String name;
 		private final String columnSuffix;
-		private final String pctAttr;
 		private final Class<? extends RecordDetail> detailClass;
 		private final Class<? extends RecordDetail> seasonDetailClass;
 		private final Class<? extends RecordDetail> tournamentDetailClass;
 		private final RecordColumn valueRecordColumn;
 
-		RecordType(String name, String column, String pctAttr, Class<? extends RecordDetail> detailClass, Class<? extends RecordDetail> seasonDetailClass, Class<? extends RecordDetail> tournamentDetailClass, RecordColumn valueRecordColumn) {
+		RecordType(String name, String column, Class<? extends RecordDetail> detailClass, Class<? extends RecordDetail> seasonDetailClass, Class<? extends RecordDetail> tournamentDetailClass, RecordColumn valueRecordColumn) {
 			this.name = name;
 			this.columnSuffix = column;
-			this.pctAttr = pctAttr;
 			this.detailClass = detailClass;
 			this.seasonDetailClass = seasonDetailClass;
 			this.tournamentDetailClass = tournamentDetailClass;
@@ -77,7 +75,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"FROM player_performance WHERE " + domain.columnPrefix + "matches_won + " + domain.columnPrefix + "matches_lost >= performance_min_entries('" + domain.perfCategory + "')",
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailClass,
 			asList(
-				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
+				new RecordColumn("value", null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
 			)
@@ -92,7 +90,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"FROM player_performance WHERE " + domain.columnPrefix + "_won + " + domain.columnPrefix + "_lost >= performance_min_entries('" + domain.perfCategory + "')",
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailClass,
 			asList(
-				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct. Vs. " + domain.name),
+				new RecordColumn("value", null, null, PCT_WIDTH, "right", type.name + " Pct. Vs. " + domain.name),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
 			)
@@ -107,7 +105,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"FROM player_season_performance WHERE matches_won + matches_lost >= performance_min_entries('matches') / 10",
 			"r.won, r.lost, r.season", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.season", type.seasonDetailClass,
 			asList(
-				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", type.name + " Pct."),
+				new RecordColumn("value", null, null, PCT_WIDTH, "right", type.name + " Pct."),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
@@ -124,7 +122,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"WHERE t." + ALL_TOURNAMENTS + " AND p." + domain.columnPrefix + "matches_won + p." + domain.columnPrefix + "matches_lost >= performance_min_entries('" + domain.perfCategory + "') / 5",
 			"r.won, r.lost, r.tournament_id, r.tournament, r.level", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.tournament", type.tournamentDetailClass,
 			asList(
-				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
+				new RecordColumn("value", null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played"),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")

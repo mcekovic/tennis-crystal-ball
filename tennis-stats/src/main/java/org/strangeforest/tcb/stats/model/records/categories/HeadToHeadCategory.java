@@ -39,19 +39,17 @@ public class HeadToHeadCategory extends RecordCategory {
 	}
 
 	enum PctRecordType {
-		WINNING("Winning", "(h2h_won + 0.5 * h2h_draw) / (" + HTH_TOTAL + ")", "wonLostPct", WinningWDrawPctRecordDetail.class, WON_COLUMN, LOST_COLUMN),
-		LOSING("Losing", "(h2h_lost + 0.5 * h2h_draw) / (" + HTH_TOTAL + ")", "lostWonPct", LosingWDrawPctRecordDetail.class, LOST_COLUMN, WON_COLUMN);
+		WINNING("Winning", "(h2h_won + 0.5 * h2h_draw) / (" + HTH_TOTAL + ")", WinningWDrawPctRecordDetail.class, WON_COLUMN, LOST_COLUMN),
+		LOSING("Losing", "(h2h_lost + 0.5 * h2h_draw) / (" + HTH_TOTAL + ")", LosingWDrawPctRecordDetail.class, LOST_COLUMN, WON_COLUMN);
 
 		private final String name;
 		private final String expression;
-		private final String pctAttr;
 		private final Class<? extends RecordDetail> detailClass;
 		private final RecordColumn value1RecordColumn;
 		private final RecordColumn value2RecordColumn;
 
-		PctRecordType(String name, String expression, String pctAttr, Class<? extends RecordDetail> detailClass, RecordColumn value1RecordColumn, RecordColumn value2RecordColumn) {
+		PctRecordType(String name, String expression, Class<? extends RecordDetail> detailClass, RecordColumn value1RecordColumn, RecordColumn value2RecordColumn) {
 			this.name = name;
-			this.pctAttr = pctAttr;
 			this.expression = expression;
 			this.detailClass = detailClass;
 			this.value1RecordColumn = value1RecordColumn;
@@ -105,7 +103,7 @@ public class HeadToHeadCategory extends RecordCategory {
 			"WHERE " + HTH_TOTAL + " >= 10",
 			"r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC", type.detailClass,
 			asList(
-				new RecordColumn(type.pctAttr, null, null, PCT_WIDTH, "right", "H2H " + type.name + " Pct."),
+				new RecordColumn("value", null, null, PCT_WIDTH, "right", "H2H " + type.name + " Pct."),
 				type.value1RecordColumn,
 				new RecordColumn("draw", "numeric", null, H2H_SMALL_WIDTH, "right", "Draw"),
 				type.value2RecordColumn,

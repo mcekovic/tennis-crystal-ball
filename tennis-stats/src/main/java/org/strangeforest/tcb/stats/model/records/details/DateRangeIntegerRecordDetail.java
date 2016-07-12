@@ -29,7 +29,7 @@ public class DateRangeIntegerRecordDetail extends IntegerRecordDetail {
 		return endDate;
 	}
 
-	@Override public String toString() {
-		return format("%1$d (%2$td-%2$tm-%2$tY-%3$td-%3$tm-%3$tY)", getValue(), startDate, endDate);
+	@Override public String toDetailString() {
+		return format("%1$td-%1$tm-%1$tY - %2$td-%2$tm-%2$tY", startDate, endDate);
 	}
 }

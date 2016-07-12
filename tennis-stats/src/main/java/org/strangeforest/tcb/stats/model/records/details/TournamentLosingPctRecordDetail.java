@@ -16,7 +16,7 @@ public class TournamentLosingPctRecordDetail extends TournamentWonLostRecordDeta
 		super(won, lost, tournamentId, tournament, level);
 	}
 
-	public String getLostWonPct() {
+	@Override public String getValue() {
 		return wonLost.inverted().getWonPctStr(2);
 	}
 
@@ -24,11 +24,7 @@ public class TournamentLosingPctRecordDetail extends TournamentWonLostRecordDeta
 		return wonLost.getLost();
 	}
 
-	public int getPlayed() {
-		return wonLost.getTotal();
-	}
-
-	@Override public String toString() {
-		return format("%1$s (%2$d/%3$d in %4$s)", getLostWonPct(), wonLost.getLost(), wonLost.getTotal(), getTournament());
+	@Override public String toDetailString() {
+		return format("%3$s %1$d/%2$d", wonLost.getLost(), wonLost.getTotal(), getTournament());
 	}
 }

@@ -34,7 +34,7 @@ public class TournamentIntegerRecordDetail extends IntegerRecordDetail {
 		return level;
 	}
 
-	@Override public String toString() {
-		return format("%1$d (%2$s)", getValue(), tournament);
+	@Override public String toDetailString() {
+		return format("%1$s", tournament);
 	}
 }

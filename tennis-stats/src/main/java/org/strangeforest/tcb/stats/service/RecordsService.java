@@ -99,33 +99,30 @@ public class RecordsService {
 			}
 		);
 		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage, records.size());
-		recordRows.stream().forEach(table::addRow);
+		recordRows.forEach(table::addRow);
 		return table;
 	}
 
 	@Cacheable("PlayerRecords.Table")
-	public BootgridTable<RecordRow> getPlayerRecordsTable(RecordFilter filter, int playerId, int pageSize, int currentPage) {
+	public BootgridTable<PlayerRecordRow> getPlayerRecordsTable(RecordFilter filter, int playerId, int pageSize, int currentPage) {
 		List<Record> records = getRecords(filter);
-		List<RecordRow> recordRows = records.stream()
-			.map(RecordRow::new)
+		List<PlayerRecordRow> recordRows = records.stream()
+			.map(record -> new PlayerRecordRow(record, playerId))
 			.collect(toList());
 		jdbcTemplate.getJdbcOperations().query(
 			format(RECORDS_TABLE_QUERY, PLAYER_RECORDS_CONDITION),
 			ps -> {
-				bindStringArray(ps, 1, recordRows.stream().map(RecordRow::getId).toArray(String[]::new));
+				bindStringArray(ps, 1, recordRows.stream().map(PlayerRecordRow::getId).toArray(String[]::new));
 				ps.setInt(2, playerId);
 			},
 			rs -> {
 				addRecordHolders(recordRows, rs);
 			}
 		);
-		List<RecordRow> playerRecordRows = recordRows.stream().filter(RecordRow::hasHolders).collect(toList());
-		BootgridTable<RecordRow> table = new BootgridTable<>(currentPage, playerRecordRows.size());
+		List<PlayerRecordRow> playerRecordRows = recordRows.stream().filter(PlayerRecordRow::hasHolders).collect(toList());
+		BootgridTable<PlayerRecordRow> table = new BootgridTable<>(currentPage, playerRecordRows.size());
 		int offset = (currentPage - 1) * pageSize;
-		playerRecordRows.stream().skip(offset).limit(pageSize).forEach(row -> {
-			row.topPlayer(playerId);
-			table.addRow(row);
-		});
+		playerRecordRows.stream().skip(offset).limit(pageSize).forEach(table::addRow);
 		return table;
 	}
 
@@ -135,7 +132,7 @@ public class RecordsService {
 			.collect(toList());
 	}
 
-	private void addRecordHolders(List<RecordRow> recordRows, ResultSet rs) throws SQLException {
+	private static void addRecordHolders(List<? extends RecordRow> recordRows, ResultSet rs) throws SQLException {
 		String recordId = rs.getString("record_id");
 		int playerId = rs.getInt("player_id");
 		String name = rs.getString("name");
@@ -143,14 +140,14 @@ public class RecordsService {
 		boolean active = rs.getBoolean("active");
 		Record record = Records.getRecord(recordId);
 		RecordDetail detail = getDetail(record, rs.getString("detail"));
-		RecordHolderRow recordHolder = new RecordHolderRow(playerId, name, countryId, active, detail.toString());
-		Optional<RecordRow> recordRow = findRecordRow(recordRows, recordId);
+		RecordHolderRow recordHolder = new RecordHolderRow(playerId, name, countryId, active, String.valueOf(detail.getValue()), detail.toDetailString());
+		Optional<RecordRow> recordRow = findRecordRow((List)recordRows, recordId);
 		recordRow.orElseThrow(
 			() -> new IllegalStateException("Cannot find record: " + recordId)
 		).addRecordHolder(recordHolder);
 	}
 
-	private static Optional<RecordRow> findRecordRow(List<RecordRow> recordRows, String recordId) {
+	private static <R extends RecordRow> Optional<R> findRecordRow(List<R> recordRows, String recordId) {
 		return recordRows.stream().filter(row -> row.getId().equals(recordId)).findFirst();
 	}
 
@@ -182,7 +179,7 @@ public class RecordsService {
 		return table;
 	}
 
-	private RecordDetail getDetail(Record record, String json) throws SQLDataException {
+	private static RecordDetail getDetail(Record record, String json) throws SQLDataException {
 		try {
 			return record.getDetailFactory().createDetail(json);
 		}

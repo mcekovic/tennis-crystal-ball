@@ -14,7 +14,7 @@ public class SeasonLosingPctRecordDetail extends SeasonWonLostRecordDetail {
 		super(won, lost, season);
 	}
 
-	public String getLostWonPct() {
+	@Override public String getValue() {
 		return wonLost.inverted().getWonPctStr(2);
 	}
 
@@ -22,7 +22,7 @@ public class SeasonLosingPctRecordDetail extends SeasonWonLostRecordDetail {
 		return wonLost.getLost();
 	}
 
-	@Override public String toString() {
-		return format("%1$s (%2$d/%3$d in %4$d)", getLostWonPct(), wonLost.getLost(), wonLost.getTotal(), getSeason());
+	@Override public String toDetailString() {
+		return format("%3$d %1$d/%2$d", wonLost.getLost(), wonLost.getTotal(), getSeason());
 	}
 }

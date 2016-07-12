@@ -10,8 +10,8 @@ import static org.strangeforest.tcb.stats.model.records.categories.YoungestOldes
 public class YoungestOldestTournamentResultCategory extends RecordCategory {
 
 	public enum RecordType {
-		YOUNGEST("Youngest", "r.age"),
-		OLDEST("Oldest", "r.age DESC");
+		YOUNGEST("Youngest", "r.value"),
+		OLDEST("Oldest", "r.value DESC");
 
 		private final String name;
 		private final String order;
@@ -67,12 +67,12 @@ public class YoungestOldestTournamentResultCategory extends RecordCategory {
 		return new Record(
 			type.name + id + resultType.name, suffix(type.name, " ") + suffix(name, " ") + resultType.name,
 			/* language=SQL */
-			"SELECT player_id, tournament_event_id, e.name AS tournament, e.level, e.season, e.date, age(e.date, p.dob) AS age\n" +
+			"SELECT player_id, tournament_event_id, e.name AS tournament, e.level, e.season, e.date, age(e.date, p.dob) AS value\n" +
 			"FROM player_tournament_event_result r INNER JOIN player p USING (player_id) INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE p.dob IS NOT NULL AND r." + resultType.condition + prefix(condition, " AND e."),
-			"r.age, r.tournament_event_id, r.tournament, r.level, r.season", type.order, type.order + ", r.date", TournamentEventAgeRecordDetail.class,
+			"r.value, r.tournament_event_id, r.tournament, r.level, r.season", type.order, type.order + ", r.date", TournamentEventAgeRecordDetail.class,
 			asList(
-				new RecordColumn("age", null, null, AGE_WIDTH, "left", "Age"),
+				new RecordColumn("value", null, null, AGE_WIDTH, "left", "Age"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")
 			)

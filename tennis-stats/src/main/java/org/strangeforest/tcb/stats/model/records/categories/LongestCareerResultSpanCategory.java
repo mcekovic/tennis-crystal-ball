@@ -72,14 +72,14 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"  FROM result_with_span\n" +
 			"  GROUP BY player_id, first_event_id, last_event_id\n" +
 			")\n" +
-			"SELECT r.player_id, age(le.date, fe.date) AS span,\n" +
+			"SELECT r.player_id, age(le.date, fe.date) AS value,\n" +
 			"  fe.date AS start_date, r.first_event_id AS start_tournament_event_id, fe.name AS start_tournament, fe.level AS start_level,\n" +
 			"  le.date AS end_date, r.last_event_id AS end_tournament_event_id, le.name AS end_tournament, le.level AS end_level\n" +
 			"FROM result_span r\n" +
 			"INNER JOIN tournament_event fe ON fe.tournament_event_id = r.first_event_id\n" +
 			"INNER JOIN tournament_event le ON le.tournament_event_id = r.last_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'",
-			SPAN_COLUMNS, "r.span DESC", "r.span DESC, r.end_date", TournamentCareerSpanRecordDetail.class,
+			SPAN_COLUMNS, "r.value DESC", "r.value DESC, r.end_date", TournamentCareerSpanRecordDetail.class,
 			SPAN_RECORD_COLUMNS
 		);
 	}
@@ -97,7 +97,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"  FROM match_win_span\n" +
 			"  GROUP BY player_id, first_match_id, last_match_id\n" +
 			")\n" +
-			"SELECT w.player_id, age(le.date, fe.date) AS span,\n" +
+			"SELECT w.player_id, age(le.date, fe.date) AS value,\n" +
 			"  fe.date AS start_date, fe.tournament_event_id AS start_tournament_event_id, fe.name AS start_tournament, fe.level AS start_level,\n" +
 			"  le.date AS end_date, le.tournament_event_id AS end_tournament_event_id, le.name AS end_tournament, le.level AS end_level\n" +
 			"FROM win_span w INNER JOIN player_v p USING (player_id)\n" +
@@ -105,15 +105,15 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"INNER JOIN match lm ON lm.match_id = w.last_match_id INNER JOIN tournament_event le ON le.tournament_event_id = lm.tournament_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'\n" +
 			"AND p.name NOT IN ('Alexander Zverev', 'Fred Hemmes', 'Miloslav Mecir')", // TODO Remove after data is fixed
-			SPAN_COLUMNS, "r.span DESC", "r.span DESC, r.end_date", TournamentCareerSpanRecordDetail.class,
+			SPAN_COLUMNS, "r.value DESC", "r.value DESC, r.end_date", TournamentCareerSpanRecordDetail.class,
 			SPAN_RECORD_COLUMNS
 		);
 	}
 
-	private static final String SPAN_COLUMNS = "r.span, r.start_date, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_date, r.end_tournament_event_id, r.end_tournament, r.end_level";
+	private static final String SPAN_COLUMNS = "r.value, r.start_date, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_date, r.end_tournament_event_id, r.end_tournament, r.end_level";
 
 	private static final List<RecordColumn> SPAN_RECORD_COLUMNS = asList(
-		new RecordColumn("span", null, null, SPAN_WIDTH, "left", "Career Span"),
+		new RecordColumn("value", null, null, SPAN_WIDTH, "left", "Career Span"),
 		new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
 		new RecordColumn("startEvent", null, "startTournamentEvent", TOURNAMENT_WIDTH, "left", "Start Tournament"),
 		new RecordColumn("endDate", null, "endDate", DATE_WIDTH, "center", "End Date"),

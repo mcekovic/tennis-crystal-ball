@@ -2,11 +2,13 @@ package org.strangeforest.tcb.stats.model.records;
 
 import java.util.*;
 
+import static java.util.Collections.*;
+
 public class RecordRow {
 
 	private final String id;
 	private final String name;
-	private final List<RecordHolderRow> recordHolders;
+	protected final List<RecordHolderRow> recordHolders;
 
 	public RecordRow(Record record) {
 		this.id = record.getId();
@@ -22,12 +24,12 @@ public class RecordRow {
 		return name;
 	}
 
-	public List<RecordHolderRow> getRecordHolders() {
-		return recordHolders;
+	public String getValue() {
+		return hasHolders() ? recordHolders.get(0).getValue() : "";
 	}
 
-	public void topPlayer(int playerId) {
-		Collections.sort(recordHolders, (holder1, holder2) -> Boolean.compare(holder1.getPlayerId() != playerId, holder2.getPlayerId() != playerId));
+	public List<RecordHolderRow> getRecordHolders() {
+		return recordHolders;
 	}
 
 	public void addRecordHolder(RecordHolderRow recordHolder) {

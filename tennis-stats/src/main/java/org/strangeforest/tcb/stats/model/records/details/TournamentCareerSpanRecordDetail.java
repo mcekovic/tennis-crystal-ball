@@ -12,7 +12,7 @@ public class TournamentCareerSpanRecordDetail extends CareerSpanRecordDetail {
 	private final TournamentEventDetail endEvent;
 
 	public TournamentCareerSpanRecordDetail(
-		@JsonProperty("span") String span,
+		@JsonProperty("value") String value,
 		@JsonProperty("start_date") Date startDate,
 		@JsonProperty("start_tournament_event_id") int startTournamentEventId,
 		@JsonProperty("start_tournament") String startTournament,
@@ -22,7 +22,7 @@ public class TournamentCareerSpanRecordDetail extends CareerSpanRecordDetail {
 		@JsonProperty("end_tournament") String endTournament,
 		@JsonProperty("end_level") String endLevel
 	) {
-		super(span, startDate, endDate);
+		super(value, startDate, endDate);
 		startEvent = new TournamentEventDetail(startTournamentEventId, startTournament, startLevel);
 		endEvent = new TournamentEventDetail(endTournamentEventId, endTournament, endLevel);
 	}
@@ -35,7 +35,7 @@ public class TournamentCareerSpanRecordDetail extends CareerSpanRecordDetail {
 		return endEvent;
 	}
 
-	@Override public String toString() {
-		return format("%1$s (%2$td-%2$tm-%2$tY %3$s - %4$td-%4$tm-%4$tY %5$s)", getSpan(), getStartDate(), startEvent.getName(), getEndDate(), endEvent.getName());
+	@Override public String toDetailString() {
+		return format("%1$td-%1$tm-%1$tY %2$s - %3$td-%3$tm-%3$tY %4$s", getStartDate(), startEvent.getName(), getEndDate(), endEvent.getName());
 	}
 }

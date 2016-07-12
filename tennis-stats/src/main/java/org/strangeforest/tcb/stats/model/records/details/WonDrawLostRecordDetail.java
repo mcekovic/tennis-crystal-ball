@@ -3,7 +3,7 @@ package org.strangeforest.tcb.stats.model.records.details;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.records.*;
 
-public abstract class WonDrawLostRecordDetail implements RecordDetail {
+public abstract class WonDrawLostRecordDetail implements RecordDetail<String> {
 
 	protected final WonDrawLost wonDrawLost;
 

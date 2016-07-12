@@ -45,7 +45,7 @@ public class StreakRecordDetail extends IntegerRecordDetail {
 		return endEvent;
 	}
 
-	@Override public String toString() {
-		return format("%1$d (%2$d %3$s - %4$d %5$s)", getValue(), startSeason, startEvent.getName(), endSeason, endEvent.getName());
+	@Override public String toDetailString() {
+		return format("%1$d %2$s - %3$d %4$s", startSeason, startEvent.getName(), endSeason, endEvent.getName());
 	}
 }

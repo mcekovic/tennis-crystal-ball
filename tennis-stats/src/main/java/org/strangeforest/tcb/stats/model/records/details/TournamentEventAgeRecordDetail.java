@@ -1,35 +1,28 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import org.strangeforest.tcb.stats.model.records.*;
-
 import com.fasterxml.jackson.annotation.*;
 
 import static java.lang.String.*;
 
-public class TournamentEventAgeRecordDetail implements RecordDetail {
+public class TournamentEventAgeRecordDetail extends SimpleRecordDetail<String> {
 
-	private final String age;
 	private final int season;
 	private final int tournamentEventId;
 	private final String tournament;
 	private final String level;
 
 	public TournamentEventAgeRecordDetail(
-		@JsonProperty("age") String age,
+		@JsonProperty("value") String value,
 		@JsonProperty("season") int season,
 		@JsonProperty("tournament_event_id") int tournamentEventId,
 		@JsonProperty("tournament") String tournament,
 		@JsonProperty("level") String level
 	) {
-		this.age = age;
+		super(value);
 		this.season = season;
 		this.tournamentEventId = tournamentEventId;
 		this.tournament = tournament;
 		this.level = level;
-	}
-
-	public String getAge() {
-		return age;
 	}
 
 	public int getSeason() {
@@ -48,7 +41,7 @@ public class TournamentEventAgeRecordDetail implements RecordDetail {
 		return level;
 	}
 
-	@Override public String toString() {
-		return format("%1$s (%2$d %3$s)", age, season, tournament);
+	@Override public String toDetailString() {
+		return format("%1$d %2$s", season, tournament);
 	}
 }
