@@ -2,8 +2,6 @@ package org.strangeforest.tcb.stats.model.records;
 
 import java.util.*;
 
-import static java.util.Collections.*;
-
 public class RecordRow {
 
 	private final String id;
