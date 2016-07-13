@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.*;
 
 import static java.lang.String.*;
 
-public class DateRangeIntegerRecordDetail extends IntegerRecordDetail {
+public class DateRangeIntegerRecordDetail extends SimpleRecordDetail<Integer> {
 
 	private final Date startDate;
 	private final Date endDate;

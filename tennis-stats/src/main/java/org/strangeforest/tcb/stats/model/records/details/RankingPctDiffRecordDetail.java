@@ -4,10 +4,12 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.*;
 
-public class RankingDiffRecordDetail extends BaseRankingDiffRecordDetail<Integer> {
+import static java.lang.String.*;
 
-	public RankingDiffRecordDetail(
-		@JsonProperty("value") int value,
+public class RankingPctDiffRecordDetail extends BaseRankingDiffRecordDetail<String> {
+
+	public RankingPctDiffRecordDetail(
+		@JsonProperty("value") double value,
 		@JsonProperty("player_id2") int playerId2,
 		@JsonProperty("name2") String name2,
 		@JsonProperty("country_id2") String countryId2,
@@ -16,6 +18,6 @@ public class RankingDiffRecordDetail extends BaseRankingDiffRecordDetail<Integer
 		@JsonProperty("value2") int value2,
 		@JsonProperty("date") Date date
 	) {
-		super(value, playerId2, name2, countryId2, active2, value1, value2, date);
+		super(format("%1$.1f%%", value), playerId2, name2, countryId2, active2, value1, value2, date);
 	}
 }

@@ -312,7 +312,7 @@ public abstract class RankingCategory extends RecordCategory {
 	protected static Record pointsDifferenceBetweenNo1andNo2(
 		String id, String name, String tableName, String columnName, String condition,
 		String expression, String expression1, String expression2, String order,
-		String type, String formatter, String caption, String diffCaption
+		Class<? extends RecordDetail> detailClass, String type, String caption, String diffCaption
 	) {
 		return new Record(
 			id, name,
@@ -333,12 +333,12 @@ public abstract class RankingCategory extends RecordCategory {
 			"SELECT DISTINCT d.player_id, d.player_id2, p2.name AS name2, p2.country_id AS country_id2, p2.active AS active2, d.value1, d.value2, d.value, d.date\n" +
 			"FROM ranking_diff2 d\n" +
 			"INNER JOIN player_v p2 ON p2.player_id = d.player_id2",
-			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.date", order, order + ", r.date", RankingDiffRecordDetail.class,
+			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.date", order, order + ", r.date", detailClass,
 			asList(
 				new RecordColumn("player2", null, "player2", PLAYER_WIDTH, "left", "No. 2 Player"),
 				new RecordColumn("value1", "numeric", null, POINTS_WIDTH, "right", caption + " No. 1"),
 				new RecordColumn("value2", "numeric", null, POINTS_WIDTH, "right", caption + " No. 2"),
-				new RecordColumn("value", type, formatter, POINTS_WIDTH, "right", diffCaption),
+				new RecordColumn("value", type, null, POINTS_WIDTH, "right", diffCaption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
 			)
 		);

@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import org.strangeforest.tcb.stats.model.records.details.*;
+
 public class EloRankingCategory extends RankingCategory {
 
 	private static final String ELO_DIFF_CONDITION = "r1.rank_date >= DATE '1968-07-01'";
@@ -12,12 +14,12 @@ public class EloRankingCategory extends RankingCategory {
 		register(pointsDifferenceBetweenNo1andNo2(
 			"EloPointsNo1No2Difference", "Elo Rating Difference Between No. 1 and No. 2", "player_elo_ranking", "elo_rating", ELO_DIFF_CONDITION,
 			"r1.elo_rating - r2.elo_rating", "r1.elo_rating", "r2.elo_rating", "r.value DESC",
-			"numeric", null, "Rating", "Rating Diff."
+			RankingDiffRecordDetail.class, "numeric", "Rating", "Rating Diff."
 		));
 		register(pointsDifferenceBetweenNo1andNo2(
 			"EloPointsNo1No2DifferencePct", "Elo Rating Pct. Difference Between No. 1 and No. 2", "player_elo_ranking", "elo_rating", "r1.rank_date >= DATE '1968-07-01'",
-			"round(100 * (r1.elo_rating - r2.elo_rating) / r2.elo_rating)::INTEGER", "r1.elo_rating", "r2.elo_rating", "r.value DESC",
-			null, "pct", "Rating", "Rating Pct. Diff."
+			"100.0 * (r1.elo_rating - r2.elo_rating) / r2.elo_rating", "r1.elo_rating", "r2.elo_rating", "r.value DESC",
+			RankingPctDiffRecordDetail.class, null, "Rating", "Rating Pct. Diff."
 		));
 	}
 }

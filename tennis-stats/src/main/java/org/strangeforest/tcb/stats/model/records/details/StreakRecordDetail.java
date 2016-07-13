@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 
 import static java.lang.String.*;
 
-public class StreakRecordDetail extends IntegerRecordDetail {
+public class StreakRecordDetail extends SimpleRecordDetail<Integer> {
 
 	private final int startSeason;
 	private final TournamentEventDetail startEvent;

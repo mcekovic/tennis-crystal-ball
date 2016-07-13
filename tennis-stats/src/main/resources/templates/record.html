@@ -41,8 +41,7 @@
 					"date": dateFormatter,
 					"startDate": function(column, row) { return formatDate(row.startDate); },
 					"endDate": function(column, row) { return formatDate(row.endDate); },
-					"player2": function(column, row) { return playerCountryFormatter(column, row.player2); },
-					"pct": function(column, row) { return row.value + " %"; }
+					"player2": function(column, row) { return playerCountryFormatter(column, row.player2); }
 				},
 				templates: {
 					paginationItem: bootgridTemplatePaginationItem

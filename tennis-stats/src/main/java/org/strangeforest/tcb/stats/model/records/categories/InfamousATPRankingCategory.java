@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import org.strangeforest.tcb.stats.model.records.details.*;
+
 public class InfamousATPRankingCategory extends RankingCategory {
 
 	private static final String ADJUSTMENT = " (adjusted by factor 1.9 before 2009)";
@@ -11,7 +13,7 @@ public class InfamousATPRankingCategory extends RankingCategory {
 		register(pointsDifferenceBetweenNo1andNo2(
 			"SmallestATPPointsNo1No2Difference", "Smallest ATP Points Difference Between No. 1 and No. 2" + ADJUSTMENT, "player_ranking", "rank_points", N_A,
 			"adjust_atp_rank_points(r1.rank_points - r2.rank_points, r1.rank_date)", "adjust_atp_rank_points(r1.rank_points, r1.rank_date)", "adjust_atp_rank_points(r2.rank_points, r1.rank_date)", "r.value",
-			"numeric", null, "Points", "Points Diff."
+			RankingDiffRecordDetail.class, "numeric", "Points", "Points Diff."
 		));
 	}
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 
 import static java.lang.String.*;
 
-public class SeasonIntegerRecordDetail extends IntegerRecordDetail {
+public class SeasonIntegerRecordDetail extends SimpleRecordDetail<Integer> {
 
 	private final int season;
 

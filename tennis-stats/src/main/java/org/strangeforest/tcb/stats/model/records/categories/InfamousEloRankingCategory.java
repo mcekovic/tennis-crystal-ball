@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import org.strangeforest.tcb.stats.model.records.details.*;
+
 public class InfamousEloRankingCategory extends RankingCategory {
 
 	private static final String ELO_DIFF_CONDITION = "r1.rank_date >= DATE '1968-07-01'";
@@ -11,7 +13,7 @@ public class InfamousEloRankingCategory extends RankingCategory {
 		register(pointsDifferenceBetweenNo1andNo2(
 			"SmallestEloPointsNo1No2Difference", "Smallest Elo Rating Difference Between No. 1 and No. 2", "player_elo_ranking", "elo_rating", ELO_DIFF_CONDITION,
 			"r1.elo_rating - r2.elo_rating", "r1.elo_rating", "r2.elo_rating", "r.value",
-			"numeric", null, "Rating", "Rating Diff."
+			RankingDiffRecordDetail.class, "numeric", "Rating", "Rating Diff."
 		));
 	}
 }
