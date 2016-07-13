@@ -133,7 +133,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"), player_consecutive_weeks AS (\n" +
 			"  SELECT player_id, rank, prev_rank, ceil(sum(weeks) OVER rs) AS weeks,\n" +
 			"    first_value(rank_date) OVER rs AS start_date,\n" +
-			"    last_value(rank_date) OVER (PARTITION BY player_id, not_rank ORDER BY rank_date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) - INTERVAL '1 day' AS end_date\n" +
+			"    (last_value(rank_date) OVER (PARTITION BY player_id, not_rank ORDER BY rank_date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) - INTERVAL '1 day')::DATE AS end_date\n" +
 			"  FROM player_ranking_weeks2\n" +
 			"  WINDOW rs AS (PARTITION BY player_id, not_rank ORDER BY rank_date)\n" +
 			")\n" +
