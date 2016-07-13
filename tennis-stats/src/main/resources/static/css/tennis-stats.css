@@ -18,6 +18,10 @@
 	position: absolute;
 	margin-top: 5px;
 }
+.new-feature {
+	font-size: x-small;
+	color: crimson;
+}
 .label {
 	font-size: 87.5%;
 }
