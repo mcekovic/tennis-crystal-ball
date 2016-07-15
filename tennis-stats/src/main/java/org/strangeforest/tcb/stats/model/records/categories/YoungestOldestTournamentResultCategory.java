@@ -40,7 +40,7 @@ public class YoungestOldestTournamentResultCategory extends RecordCategory {
 	private static final String SEASON_WIDTH =      "60";
 
 	public YoungestOldestTournamentResultCategory(RecordType type) {
-		super(type.name + " Tournament Champion/Finalist");
+		super(type.name + " Tournament Champion / Finalist");
 		registerAgeTournamentResults(type, CHAMPION);
 		registerAgeTournamentResults(type, FINALIST);
 	}

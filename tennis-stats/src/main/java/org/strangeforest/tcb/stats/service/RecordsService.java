@@ -188,6 +188,11 @@ public class RecordsService {
 		}
 	}
 
+	@Transactional
+	public void ensureSaveRecord(String recordId, boolean activePlayers) {
+		ensureSaveRecord(Records.getRecord(recordId), activePlayers);
+	}
+
 	private void ensureSaveRecord(Record record, boolean activePlayers) {
 		if (!isRecordSaved(record, activePlayers)) {
 			deleteRecord(record, activePlayers);

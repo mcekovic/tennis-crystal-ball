@@ -41,7 +41,7 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 	private static final String MATCHES_WIDTH =     "60";
 
 	public ItemsWinningTitleCategory(RecordType type) {
-		super(type.name + " Games/Sets Lost Winning Title");
+		super(type.name + " Games / Sets Lost Winning Title");
 		register(itemsLostWinningTitle(type, GAMES, ALL));
 		register(itemsLostWinningTitle(type, GAMES, GRAND_SLAM));
 		register(itemsLostWinningTitle(type, GAMES, TOUR_FINALS));

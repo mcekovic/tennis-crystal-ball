@@ -17,9 +17,9 @@ public enum RecordDomain {
 	CLAY("Clay", "Clay", N_A, "surface = 'C' AND " + ALL_TOURNAMENTS, "clay_", "clayMatches"),
 	GRASS("Grass", "Grass", N_A, "surface = 'G' AND " + ALL_TOURNAMENTS, "grass_", "grassMatches"),
 	CARPET("Carpet", "Carpet", N_A, "surface = 'P' AND " + ALL_TOURNAMENTS, "carpet_", "carpetMatches"),
-	NO_1_FILTER(NO_1, NO_1_NAME, N_A, null, "vs_no1", "vsNo1"),
-	TOP_5_FILTER(TOP_5, TOP_5_NAME, N_A, null, "vs_top5", "vsTop5"),
-	TOP_10_FILTER(TOP_10, TOP_10_NAME, N_A, null, "vs_top10", "vsTop10");
+	NO_1_FILTER(NO_1, NO_1_NAME, N_A, NO_1_RANK, "vs_no1", "vsNo1"),
+	TOP_5_FILTER(TOP_5, TOP_5_NAME, N_A, TOP_5_RANK, "vs_top5", "vsTop5"),
+	TOP_10_FILTER(TOP_10, TOP_10_NAME, N_A, TOP_10_RANK, "vs_top10", "vsTop10");
 
 	public final String id;
 	public final String name;

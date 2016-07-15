@@ -31,7 +31,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 	private static final String SEASON_WIDTH =      "80";
 
 	public LongestCareerResultSpanCategory() {
-		super("Longest Career Title/Final Span");
+		super("Longest Career Title / Final Span");
 		registerResultCareerSpans(TITLE);
 		registerResultCareerSpans(FINAL);
 		registerWinCareerSpans();

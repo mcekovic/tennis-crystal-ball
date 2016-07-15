@@ -66,6 +66,7 @@ public abstract class Records {
 		register(new YoungestOldestTournamentResultCategory(YoungestOldestTournamentResultCategory.RecordType.OLDEST), false);
 		register(new LongestCareerResultSpanCategory(), false);
 		register(new HeadToHeadCategory(false), false);
+		register(new MostBagelsBreadsticksCategory(MostBagelsBreadsticksCategory.RecordType.SCORED), false);
 		register(new GOATPointsCategory(), false);
 		register(new MostRecordsCategory(false), false);
 		// Infamous Records
@@ -76,6 +77,7 @@ public abstract class Records {
 		register(new ItemsWinningTitleCategory(ItemsWinningTitleCategory.RecordType.MOST), true);
 		register(new InfamousATPRankingCategory(), true);
 		register(new InfamousEloRankingCategory(), true);
+		register(new MostBagelsBreadsticksCategory(MostBagelsBreadsticksCategory.RecordType.AGAINST), true);
 		register(new HeadToHeadCategory(true), true);
 		register(new MostRecordsCategory(true), true);
 	}
