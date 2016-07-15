@@ -17,7 +17,7 @@ def showCurrent(EloRatings eloRatings, Sql sql) {
 	printf '%n%1$4s %2$-30s %3$4s%n', 'Rank', 'Player', 'Elo'
 	def i = 0
 	eloRatings.current(100).each {
-		printf '%1$4s %2$-30s %3$4s%n', ++i, getPlayerName(sql, it.key), it.value
+		printf '%1$4s %2$-30s %3$4s%n', ++i, getPlayerName(sql, it.playerId), it
 	}
 }
 
@@ -25,9 +25,8 @@ def showAllTime(EloRatings eloRatings, Sql sql) {
 	printf '%n%1$4s %2$-30s %3$4s %4$10s %5$4s/%6$4s%n', 'Rank', 'Player', 'Elo', 'Date', 'PkMt', 'AlMt'
 	def i = 0
 	eloRatings.allTime(100).each {
-		def rating = it.value
-		def bestRating = rating.bestRating
-		printf '%1$4s %2$-30s %3$4s %4$10s %5$4s/%6$4s%n', ++i, getPlayerName(sql, it.key), bestRating, bestRating.date.format('dd-MM-yyyy'), bestRating.matches, rating.matches
+		def bestRating = it.bestRating
+		printf '%1$4s %2$-30s %3$4s %4$10s %5$4s/%6$4s%n', ++i, getPlayerName(sql, it.playerId), bestRating, bestRating.lastDate.format('dd-MM-yyyy'), bestRating.matches, it.matches
 	}
 }
 
