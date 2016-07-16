@@ -45,9 +45,10 @@ class EloRatings {
 		"DELETE FROM player_elo_ranking"
 
 	private static final int MIN_MATCHES = 10
-	private static final int MIN_MATCHES_PERIOD = 2 * 365
+	private static final int MIN_MATCHES_PERIOD = 365
+	private static final int MIN_MATCHES_IN_PERIOD = 3
 
-	private static final double SAVE_RANK_RATIO = 1.0
+	private static final double SAVE_RANK_THREAD_RATIO = 1.0
 	private static final int MATCHES_PER_DOT = 1000
 	private static final int SAVES_PER_PLUS = 20
 	private static final int PROGRESS_LINE_WRAP = 100
@@ -72,8 +73,8 @@ class EloRatings {
 		rankFetches = new AtomicInteger()
 		progress = new AtomicInteger()
 		def remainingPoolSize = sqlPool.size() - 1
-		int saveThreads = save ? (SAVE_RANK_RATIO ? remainingPoolSize * SAVE_RANK_RATIO / (1 + SAVE_RANK_RATIO) : remainingPoolSize) : 0
-		int rankThreads = SAVE_RANK_RATIO ? remainingPoolSize - saveThreads : 0
+		int saveThreads = save ? (SAVE_RANK_THREAD_RATIO ? remainingPoolSize * SAVE_RANK_THREAD_RATIO / (1 + SAVE_RANK_THREAD_RATIO) : remainingPoolSize) : 0
+		int rankThreads = SAVE_RANK_THREAD_RATIO ? remainingPoolSize - saveThreads : 0
 		if (rankThreads) {
 			println "Using $rankThreads rank threads"
 			rankExecutor = Executors.newFixedThreadPool(rankThreads)
@@ -281,7 +282,7 @@ class EloRatings {
 
 		private def addDate(Date date) {
 			dates.addLast(date)
-			while (dates.size() > MIN_MATCHES)
+			while (dates.size() > MIN_MATCHES_IN_PERIOD)
 				dates.removeFirst()
 		}
 
