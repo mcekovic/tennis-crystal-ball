@@ -479,7 +479,7 @@ WITH rivalry AS (
 SELECT player_id, h2h_won, h2h_draw, h2h_lost, CASE WHEN h2h_count >= 10 THEN CASE
 	WHEN h2h_lost_factor = 0 THEN 100
 	WHEN h2h_won_factor = 0 THEN 0
-	ELSE round(10 * ln(h2h_won_factor / h2h_lost_factor))::INTEGER
+	ELSE greatest(round(10 * ln(h2h_won_factor / h2h_lost_factor))::INTEGER, 0)
 END ELSE 0 END AS goat_points
 FROM h2h;
 
