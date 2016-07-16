@@ -45,7 +45,7 @@ class EloRatings {
 		"DELETE FROM player_elo_ranking"
 
 	private static final int MIN_MATCHES = 10
-	private static final int MAX_DAYS_FOR_MIN_MATCHES = 2*365
+	private static final int MIN_MATCHES_PERIOD = 2 * 365
 
 	private static final double SAVE_RANK_RATIO = 1.0
 	private static final int MATCHES_PER_DOT = 1000
@@ -127,7 +127,7 @@ class EloRatings {
 	def current(int count, Date date = new Date()) {
 		Date minDate = toDate(toLocalDate(date).minusYears(1))
 		def i = 0
-		playerRatings.values().findAll { it.matches >= MIN_MATCHES && it.lastDate >= minDate && it.getDaysSpan(date) <= MAX_DAYS_FOR_MIN_MATCHES }
+		playerRatings.values().findAll { it.matches >= MIN_MATCHES && it.lastDate >= minDate && it.getDaysSpan(date) <= MIN_MATCHES_PERIOD }
 			.sort(comparator)
 			.findAll { ++i <= count }
 	}
