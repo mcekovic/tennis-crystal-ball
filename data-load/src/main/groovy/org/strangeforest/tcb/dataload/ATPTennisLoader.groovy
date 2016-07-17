@@ -172,12 +172,6 @@ class ATPTennisLoader {
 		println "Materialized view '$viewName' refreshed in $stopwatch"
 	}
 
-	def clearSavedRecords(Sql sql) {
-		sql.execute('DELETE FROM player_record')
-		sql.execute('DELETE FROM active_player_record')
-		sql.execute('DELETE FROM saved_record')
-	}
-
 	def createDatabase(Sql sql) {
 		def stopwatch = Stopwatch.createStarted();
 
