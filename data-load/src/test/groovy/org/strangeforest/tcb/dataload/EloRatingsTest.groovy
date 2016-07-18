@@ -25,6 +25,6 @@ public class EloRatingsTest {
 	}
 
 	static def rankHasStartRating(int rank, int startRating) {
-		new EloRating(rank).rating == startRating
+		new EloRating(100, rank).rating == startRating
 	}
 }
