@@ -31,16 +31,17 @@ processResources {
 }
 
 dependencies {
-	compile project(':crystal-ball')
+	compile project (':crystal-ball')
+
 	compile ('org.springframework.boot:spring-boot-starter-aop')
 	compile ('org.springframework.boot:spring-boot-starter-jdbc')
+	compile ('org.springframework.boot:spring-boot-starter-cache')
 	compile ('org.springframework.boot:spring-boot-starter-web')
 	compile ('org.springframework.boot:spring-boot-starter-thymeleaf') {
 		exclude group: 'org.codehaus.groovy'
 	}
 	compile ('org.springframework.boot:spring-boot-starter-logging')
 	compile ('org.springframework.boot:spring-boot-starter-actuator')
-	compile ('org.springframework:spring-context-support')
 	compile ("com.google.guava:guava:$guavaVersion")
 	compile ("org.postgresql:postgresql:$postgresqlJdbcVersion")
 	compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
@@ -56,12 +57,14 @@ dependencies {
 	compile ("com.maxmind.geoip2:geoip2:$geoip2Version") {
 		exclude group: 'com.google.http-client'
 	}
-	compile files('lib/GeoLite2-Country.zip')
+	compile files ('lib/GeoLite2-Country.zip')
+
+	testCompile ('org.springframework.boot:spring-boot-starter-test')
 	testCompile ("junit:junit:$junitVersion")
 	testCompile ("org.assertj:assertj-core:$assertjCoreVersion")
 	testCompile ("org.mockito:mockito-all:$mockitoAllVersion")
 	testCompile ("org.testng:testng:$testngVersion")
-	testCompile ('org.springframework:spring-test')
+
 	integrationTestCompile sourceSets.main.output
 	integrationTestCompile sourceSets.test.output
 	integrationTestCompile configurations.testCompile
