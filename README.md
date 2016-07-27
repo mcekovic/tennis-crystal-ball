@@ -1,6 +1,7 @@
 # Tennis Crystal Ball
 
 [![Build Status](https://travis-ci.org/mcekovic/tennis-crystal-ball.svg?branch=master)](https://travis-ci.org/mcekovic/tennis-crystal-ball)
+[![Preview](https://img.shields.io/badge/preview-UP-brightgreen.svg)](http://tennis-strangeforest.rhcloud.com)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 Ultimate Tennis statistics and data analysis with nice web GUI.
@@ -70,3 +71,5 @@ http://tennis-strangeforest.rhcloud.com
 
 ##### Top Performers
 ![Top Performers](https://github.com/mcekovic/open-box/blob/master/TopPerformers.png?raw=true)
+
+Licensed with [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).
