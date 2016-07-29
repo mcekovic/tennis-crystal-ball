@@ -14,7 +14,6 @@ import static org.springframework.test.util.ReflectionTestUtils.*;
 @RunWith(MockitoJUnitRunner.class)
 public class VisitorManagerTimedIT extends BaseVisitorManagerTest {
 
-
 	@Before
 	@Override public void setUp() {
 		setField(manager, "expiryPeriod", Duration.ofSeconds(1L));
