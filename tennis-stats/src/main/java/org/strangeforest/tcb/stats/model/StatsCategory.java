@@ -39,6 +39,7 @@ public final class StatsCategory {
 		addCategory(SERVE, "doubleFaultPct", "p_df::REAL / p_sv_pt", PERCENTAGE, true, "Double Fault %");
 		addCategory(SERVE, "dfsPerMatch", "p_df::REAL / (p_matches + o_matches)", RATIO, true, "DFs per Match");
 		addCategory(SERVE, "dfsPerSvcGame", "CASE WHEN p_sv_gms > 0 THEN p_df::REAL / p_sv_gms ELSE NULL END", RATIO, true, "DFs per Svc. Game");
+		addCategory(SERVE, "acesDfsRatio", "CASE WHEN p_df > 0 THEN p_ace::REAL / p_df ELSE NULL END", RATIO, true, "Aces / DFs Ratio");
 		addCategory(SERVE, "firstServePct", "p_1st_in::REAL / p_sv_pt", PERCENTAGE, true, "1st Serve %");
 		addCategory(SERVE, "firstServeWonPct", "p_1st_won::REAL / p_1st_in", PERCENTAGE, true, "1st Serve Won %");
 		addCategory(SERVE, "secondServeWonPct", "p_2nd_won::REAL / (p_sv_pt - p_1st_in)", PERCENTAGE, true, "2nd Serve Won %");

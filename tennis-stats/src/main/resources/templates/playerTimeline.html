@@ -2,7 +2,6 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"*/-->
 	<script type="text/javascript" th:inline="javascript">
-		/*<![CDATA[*/
 		$(function() {
 			// Tournaments
 			var $tournamentsBody = $("#bigTournamentsBody, #otherTournamentsBody");
@@ -52,7 +51,6 @@
 				$head.find(".btn-stats").hide();
 			});
 		}
-		/*]]>*/
 	</script>
 	<style scoped="scoped">
 		th.season {

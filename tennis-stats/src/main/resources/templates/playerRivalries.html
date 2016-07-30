@@ -4,7 +4,6 @@
 	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 	<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 	<script type="text/javascript" th:inline="javascript">
-		/*<![CDATA[*/
 		$(function() {
 			var $rivalriesTable = $("#rivalriesTable");
 			$rivalriesTable.bootgrid({
@@ -24,7 +23,7 @@
 				formatters: {
 					"player": playerCountryFormatter,
 					"matches": function(column, row) {
-						return "<a href='/playerProfile?playerId=[[${playerId}]]&opponentId=" + row.playerId + rivalryFilterParams() + "' title='Show rivalry matches'>" + row.matches + "</a>"
+						return "<a href='/playerProfile?playerId=[[${playerId}]]&tab=matches&opponentId=" + row.playerId + rivalryFilterParams() + "' title='Show rivalry matches'>" + row.matches + "</a>"
 					},
 					"wonPctStr": function(column, row) {
 						return "<span data-won-pct='" + row.wonPctClass + "'>" + row.wonPctStr + "</span>";
@@ -90,7 +89,6 @@
 				params += "&round=" + round;
 			return params;
 		}
-		/*]]>*/
 	</script>
 	<div id="rivalriesTitle" class="col-sm-1" style="font-size: large; font-weight: bold">Rivalries</div>
 	<div id="rivalryLevelDiv" class="btn-group" style="margin-right: 20px">

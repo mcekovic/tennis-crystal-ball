@@ -28,14 +28,14 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerProfile(
 		@RequestParam(name = "playerId", required = false) Integer playerId,
 		@RequestParam(name = "name", required = false) String name,
+		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(name = "opponentId", required = false) Integer opponentId,
-		@RequestParam(name = "goatPoints", required = false) Boolean goatPoints
+		@RequestParam(name = "opponentId", required = false) Integer opponentId
 	) {
 		if (playerId == null && name == null)
 			return new ModelAndView("playerProfile");
@@ -47,6 +47,7 @@ public class PlayerProfileController extends PageController {
 			modelMap.addAttribute("player", player.get());
 		else
 			modelMap.addAttribute("playerRef", playerId != null ? playerId : name);
+		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
@@ -54,7 +55,6 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("opponentId", opponentId);
-		modelMap.addAttribute("goatPoints", goatPoints);
 		return new ModelAndView("playerProfile", modelMap);
 	}
 

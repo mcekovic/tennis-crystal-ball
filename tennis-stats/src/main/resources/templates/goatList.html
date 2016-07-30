@@ -1,21 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="versions" type="java.util.Map<String, String>"*/-->
-<head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Ultimate Tennis Statistics - GOAT List</title>
-	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{|/webjars/jquery-ui-themes/${versions['jquery-ui']}/smoothness/jquery-ui.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{|/webjars/jquery/${versions['jquery']}/jquery.min.js|}"></script>
-	<script th:src="@{|/webjars/jquery-ui/${versions['jquery-ui']}/jquery-ui.min.js|}"></script>
-	<script th:src="@{|/webjars/bootstrap/${versions['bootstrap']}/js/bootstrap.min.js|}"></script>
-	<script th:src="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.js|}"></script>
-	<script th:src="@{/js/tennis-stats.js}"></script>
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, _, ~{::script}, _)">
+	<title>GOAT List</title>
 	<script type="text/javascript">
-		/*<![CDATA[*/
 		$(function() {
 			var $goatTable = $("#goatTable");
 			$goatTable.bootgrid({
@@ -39,7 +27,7 @@
 				formatters: {
 					"player": playerCountryFormatter,
 					"goatPoints": function(column, row) {
-						return "<a href='/playerProfile?playerId=" + row.playerId + "&goatPoints=true' title='Show GOAT points distribution'><b>" + row.goatPoints + "</b></a>";
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=goatPoints' title='Show GOAT points distribution'><b>" + row.goatPoints + "</b></a>";
 					},
 					"rankingGoatPoints": function(column, row) {
 						if (row.rankingGoatPoints > 0) {
@@ -100,7 +88,6 @@
 		function reloadGOATTable() {
 			$("#goatTable").bootgrid("reload");
 		}
-		/*]]>*/
 	</script>
 </head>
 <body class="container">

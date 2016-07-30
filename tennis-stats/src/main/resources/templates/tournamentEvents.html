@@ -19,7 +19,6 @@
 	<script th:src="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.js|}"></script>
 	<script th:src="@{/js/tennis-stats.js}"></script>
 	<script type="text/javascript">
-		/*<![CDATA[*/
 		$(function() {
 			var $tournamentEventsTable = $("#tournamentEventsTable");
 			$tournamentEventsTable.bootgrid({
@@ -83,7 +82,6 @@
 			$("#tournamentEventsTable").bootgrid("search", "");
 			reloadTournamentEvents();
 		}
-		/*]]>*/
 	</script>
 </head>
 <body class="container">

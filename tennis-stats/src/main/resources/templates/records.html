@@ -17,7 +17,6 @@
 	<script th:src="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.js|}"></script>
 	<script th:src="@{/js/tennis-stats.js}"></script>
 	<script type="text/javascript">
-		/*<![CDATA[*/
 		$(function() {
 			$("#recordsTable").bootgrid({
 				ajax: true,
@@ -63,7 +62,6 @@
 		function reloadRecordsTable() {
 			$("#recordsTable").bootgrid("reload");
 		}
-		/*]]>*/
 	</script>
 </head>
 <body class="container">

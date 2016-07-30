@@ -2,11 +2,9 @@
 	<!--/*@thymesVar id="stats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 	<div th:id="${elementId}">
 		<script type="text/javascript" th:inline="javascript">
-			/*<![CDATA[*/
 			$(function() {
 				$("#" + [[${elementId}]]).find(".raw-data").hide();
 			});
-			/*]]>*/
 		</script>
 		<div th:unless="${stats.empty}" class="row text-nowrap">
 			<div th:if="${stats.hasPointStats()}" th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">

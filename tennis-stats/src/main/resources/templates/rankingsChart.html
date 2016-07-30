@@ -16,7 +16,6 @@
 	<script th:src="@{/js/tennis-chart.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript">
-		/*<![CDATA[*/
 		google.load("visualization", "1.0", {packages:["corechart"]});
 		var chartData, bySeason, pointCount, isRank, logScale, legendPosition;
 		function drawChart() {
@@ -95,7 +94,6 @@
 			onRankTypeChange();
 			$("[data-toggle='tooltip']").tooltip();
 		});
-		/*]]>*/
 	</script>
 	<style>
 		.checkbox {

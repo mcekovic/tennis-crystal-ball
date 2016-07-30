@@ -3,20 +3,10 @@
 <!--/*@thymesVar id="versions" type="java.util.Map<String, String>"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.BigGunsTimeline"*/-->
 <!--/*@thymesVar id="minGOATPoints" type="java.lang.Integer"*/-->
-<head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Ultimate Tennis Statistics - Big Guns Timeline</title>
-	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{|/webjars/jquery-ui-themes/${versions['jquery-ui']}/smoothness/jquery-ui.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{|/webjars/jquery/${versions['jquery']}/jquery.min.js|}"></script>
-	<script th:src="@{|/webjars/jquery-ui/${versions['jquery-ui']}/jquery-ui.min.js|}"></script>
-	<script th:src="@{|/webjars/bootstrap/${versions['bootstrap']}/js/bootstrap.min.js|}"></script>
-	<script th:src="@{/js/tennis-stats.js}"></script>
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, _, ~{::script}, ~{::style})">
+	<title>Big Guns Timeline</title>
 	<script th:src="@{/js/jquery.resize.js}"></script>
 	<script type="text/javascript">
-		/*<![CDATA[*/
 		function correctInitPositions() {
 			var $timelineHeader = $("#timelineHeader");
 			$timelineHeader.find("span.best-player").each(function() {
@@ -63,7 +53,6 @@
 			$("#navbar").resize(correctPositionsOnResize);
 			$("[data-toggle='collapse']").click(collapseClick);
 		});
-		/*]]>*/
 	</script>
 	<style>
 		.container {
@@ -151,9 +140,9 @@
 			</td>
 			<td style="padding: 1px 4px" th:text="${#dates.format(player.dob, 'yyyy')}">1985</td>
 			<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray">
-				<a th:href="'/playerProfile?playerId=' + ${player.playerId} + '&amp;goatPoints=true'" th:text="${player.goatPoints}" title="Show GOAT points distribution">585</a>
+				<a th:href="'/playerProfile?playerId=' + ${player.playerId} + '&amp;tab=goatPoints'" th:text="${player.goatPoints}" title="Show GOAT points distribution">585</a>
 			</td>
-			<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${seasonPoint.pointsRounded}" class="points-10"><a th:href="'playerProfile?playerId=' + ${player.playerId} + '&amp;season=' + ${seasonPoint.season}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points" title="Show season results">15</a></td>
+			<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${seasonPoint.pointsRounded}" class="points-10"><a th:href="'playerProfile?playerId=' + ${player.playerId} + '&amp;tab=tournaments&amp;season=' + ${seasonPoint.season}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points" title="Show season results">15</a></td>
 		</tr>
 		</tbody>
 		<thead>

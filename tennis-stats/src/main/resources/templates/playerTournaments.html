@@ -10,7 +10,6 @@
 	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="result" type="java.lang.String"*/-->
 	<script type="text/javascript" th:inline="javascript">
-		/*<![CDATA[*/
 		$(function() {
 			$("[data-toggle='tooltip']").tooltip();
 			$("#tournamentsTable").bootgrid({
@@ -34,7 +33,7 @@
 					"tournament": tournamentEventFormatter,
 					"surface": surfaceFormatter,
 					"result": function(column, row) {
-						return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[[${playerId}]]&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
+						return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[[${playerId}]]&tab=matches&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
 					},
 					"stats": function(column, row) {
 						return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='" + row.name + " " + row.season + " Statistics'> Stats</a>";
@@ -70,7 +69,6 @@
 				});
 			}
 		}
-		/*]]>*/
 	</script>
 	<div class="row">
 		<div class="col-md-2">

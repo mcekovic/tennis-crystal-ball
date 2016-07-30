@@ -15,7 +15,6 @@
 	<script th:src="@{|/webjars/jquery/${versions['jquery']}/jquery.min.js|}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" th:inline="javascript">
-		/*<![CDATA[*/
 		google.load("visualization", "1", {packages:["geochart"]});
 		google.setOnLoadCallback(drawGeolocationChart);
 
@@ -31,7 +30,6 @@
 		function chartChanged() {
 			window.location = "/manage/geolocationChart?stat=" + $("#chartStat").val() + "&interval=" + $("#chartInterval").val();
 		}
-		/*]]>*/
 	</script>
 </head>
 <body>

@@ -4,7 +4,6 @@
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <script type="text/javascript" th:inline="javascript">
-	/*<![CDATA[*/
 	function reloadStats() {
 		var url = "/playerStatsTab?playerId=[[${playerId}]]";
 		var season = $("#statsSeason").val();
@@ -15,7 +14,6 @@
 			url += "&surface=" + surface;
 		$("#statistics").load(url);
 	}
-	/*]]>*/
 </script>
 <br/>
 <div class="row">

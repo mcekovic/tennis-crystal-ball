@@ -6,25 +6,16 @@
 <!--/*@thymesVar id="path" type="java.lang.String"*/-->
 <!--/*@thymesVar id="timestamp" type="java.util.Date"*/-->
 <!--/*@thymesVar id="message" type="java.lang.String"*/-->
-<head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Ultimate Tennis Statistics - Error</title>
-	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{|/webjars/jquery-ui-themes/${versions['jquery-ui']}/smoothness/jquery-ui.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{|/webjars/jquery/${versions['jquery']}/jquery.min.js|}"></script>
-	<script th:src="@{|/webjars/jquery-ui/${versions['jquery-ui']}/jquery-ui.min.js|}"></script>
-	<script th:src="@{|/webjars/bootstrap/${versions['bootstrap']}/js/bootstrap.min.js|}"></script>
-	<script th:src="@{/js/tennis-stats.js}"></script>
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, _, _, _)">
+	<title>Error</title>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3>Unexpected error occurred</h3>
-	<div th:text="|Error: ${error} (${status})|">Error (status)</div>
-	<div th:text="|Path: ${path}|">Path</div>
-	<div id="created" th:text="|Timestamp: ${timestamp}|">Timestamp</div>
-	<div th:text="|Message: ${message}|">Message</div>
+	<div>Error: [[${error}]] ([[${status}]])</div>
+	<div>Path: [[${path}]]</div>
+	<div id="created">Timestamp: [[${timestamp}]]</div>
+	<div>Message: [[${message}]]</div>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

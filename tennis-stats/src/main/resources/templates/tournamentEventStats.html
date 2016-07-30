@@ -1,7 +1,6 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 	<script type="text/javascript" th:inline="javascript">
-		/*<![CDATA[*/
 		$(function() {
 			$("#statsLeadersTable").bootgrid({
 				ajax: true,
@@ -46,7 +45,6 @@
 			categoryChanged();
 			$("#statsLeadersTable").bootgrid("reload");
 		}
-		/*]]>*/
 	</script>
 	<h3 class="grid-title">Statistics Leaders</h3>
 	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">

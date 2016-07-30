@@ -3,7 +3,6 @@
 	<!--/*@thymesVar id="recordCategories" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>"*/-->
 	<!--/*@thymesVar id="infamousRecordCategories" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>"*/-->
 	<script type="text/javascript" th:inline="javascript">
-		/*<![CDATA[*/
 		$(function() {
 			$("#playerRecordsTable").bootgrid({
 				ajax: true,
@@ -61,7 +60,6 @@
 		function reloadPlayerRecordsTable() {
 			$("#playerRecordsTable").bootgrid("reload");
 		}
-		/*]]>*/
 	</script>
 	<div id="categoryDiv" class="col-sm-7" style="padding-left: 0">
 		<div id="categoryControl" class="input-group" style="float: left">

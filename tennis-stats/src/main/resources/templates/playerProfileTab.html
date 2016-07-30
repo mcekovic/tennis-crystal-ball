@@ -45,23 +45,23 @@
 			<!--/* Titles */-->
 			<tr th:if="${player.titles > 0}">
 				<th>Titles</th>
-				<td width="100%"><a class="label label-default" th:text="${player.titles}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;result=W'" title="Show titles">10</a></td>
+				<td width="100%"><a class="label label-default" th:text="${player.titles}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=tournaments&amp;result=W'" title="Show titles">10</a></td>
 			</tr>
 			<tr th:if="${player.grandSlams > 0}">
 				<th>Grand Slams</th>
-				<td><a class="label label-danger" th:text="${player.grandSlams}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;level=G&amp;result=W'" title="Show Grand Slam titles">1</a></td>
+				<td><a class="label label-danger" th:text="${player.grandSlams}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=tournaments&amp;level=G&amp;result=W'" title="Show Grand Slam titles">1</a></td>
 			</tr>
 			<tr th:if="${player.tourFinals > 0}">
 				<th>Tour Finals</th>
-				<td><a class="label label-warning" th:text="${player.tourFinals}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;level=F&amp;result=W'" title="Show Tour Finals titles">1</a></td>
+				<td><a class="label label-warning" th:text="${player.tourFinals}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=tournaments&amp;level=F&amp;result=W'" title="Show Tour Finals titles">1</a></td>
 			</tr>
 			<tr th:if="${player.masters > 0}">
 				<th>Masters</th>
-				<td><a class="label label-info" th:text="${player.masters}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;level=M&amp;result=W'" title="Show Masters titles">5</a></td>
+				<td><a class="label label-info" th:text="${player.masters}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=tournaments&amp;level=M&amp;result=W'" title="Show Masters titles">5</a></td>
 			</tr>
 			<tr th:if="${player.olympics > 0}">
 				<th>Olympics</th>
-				<td><a class="label label-success" th:text="${player.olympics}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;level=O&amp;result=W'" title="Show Olympics titles">1</a></td>
+				<td><a class="label label-success" th:text="${player.olympics}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=tournaments&amp;level=O&amp;result=W'" title="Show Olympics titles">1</a></td>
 			</tr>
 			<!--/* Ranking */-->
 			<tr th:if="${player.currentRank > 0}">
@@ -76,7 +76,7 @@
 				<th>GOAT Rank</th>
 				<td>
 					<th:block th:text="${player.goatRank}">50</th:block>
-					(<a th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;goatPoints=true'" th:text="${player.goatPoints}" title="Show GOAT points distribution">25</a>)
+					(<a th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=goatPoints'" th:text="${player.goatPoints}" title="Show GOAT points distribution">25</a>)
 				</td>
 			</tr>
 			<tr th:if="${player.weeksAtNo1 > 0}">

@@ -7,7 +7,7 @@
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title th:text="'Ultimate Tennis Statistics - ' + ${tournament.name}">Ultimate Tennis Statistics - Australian Open</title>
+	<title>Ultimate Tennis Statistics - [[${tournament.name}]]</title>
 	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
 	<link th:href="@{|/webjars/jquery-ui-themes/${versions['jquery-ui']}/smoothness/jquery-ui.css|}" rel="stylesheet" media="screen"/>
 	<link th:href="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.css|}" rel="stylesheet" media="screen"/>
@@ -18,7 +18,6 @@
 	<script th:src="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.js|}"></script>
 	<script th:src="@{/js/tennis-stats.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
-		/*<![CDATA[*/
 		$(function() {
 			$("[data-toggle=pill]").click(tabClick);
 			var $tournamentHistoryTable = $("#tournamentHistoryTable");
@@ -54,7 +53,6 @@
 			]);
 			$("#tournamentHistoryTable-header").find("div.search").remove();
 		});
-		/*]]>*/
 	</script>
 </head>
 <body class="container">

@@ -3,7 +3,6 @@
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="perf" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
 <script type="text/javascript" th:inline="javascript">
-	/*<![CDATA[*/
 	$(function() {
 		$("#playerPerformance").find(".raw-data").hide();
 	});
@@ -14,7 +13,6 @@
 			url += "&season=" + season;
 		$("#performance").load(url);
 	}
-	/*]]>*/
 </script>
 <br/>
 <div class="row">
