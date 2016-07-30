@@ -11,19 +11,8 @@
 <!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="opponentId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="tab" type="java.lang.String"*/-->
-<head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Ultimate Tennis Statistics - [[${player != null ? player.name : 'Player Profile'}]]</title>
-	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{|/webjars/jquery-ui-themes/${versions['jquery-ui']}/smoothness/jquery-ui.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{|/webjars/jquery/${versions['jquery']}/jquery.min.js|}"></script>
-	<script th:src="@{|/webjars/jquery-ui/${versions['jquery-ui']}/jquery-ui.min.js|}"></script>
-	<script th:src="@{|/webjars/bootstrap/${versions['bootstrap']}/js/bootstrap.min.js|}"></script>
-	<script th:src="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.js|}"></script>
-	<script th:src="@{/js/tennis-stats.js}"></script>
+<head th:replace="fragments/head :: commonHead(${player} ? ${player.name} : ~{::title/text()}, true, ~{::script}, _)">
+	<title>Player Profile</title>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("#player").autocomplete({

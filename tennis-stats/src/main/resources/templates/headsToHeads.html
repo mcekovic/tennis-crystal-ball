@@ -5,7 +5,7 @@
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, _, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, _)">
 	<title>Heads-to-Heads</title>
 	<script type="text/javascript">
 		$(function() {

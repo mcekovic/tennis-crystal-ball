@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="versions" type="java.util.Map<String, String>"*/-->
 <!--/*@thymesVar id="minSeasonGOATPoints" type="java.lang.Integer"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, _, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
 	<title>Best Seasons</title>
 	<script type="text/javascript">
 		$(function() {

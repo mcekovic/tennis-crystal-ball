@@ -4,19 +4,7 @@
 <!--/*@thymesVar id="tournament" type="org.strangeforest.tcb.stats.model.Tournament"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Map"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
-<head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Ultimate Tennis Statistics - [[${tournament.name}]]</title>
-	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{|/webjars/jquery-ui-themes/${versions['jquery-ui']}/smoothness/jquery-ui.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-	<script th:src="@{|/webjars/jquery/${versions['jquery']}/jquery.min.js|}"></script>
-	<script th:src="@{|/webjars/jquery-ui/${versions['jquery-ui']}/jquery-ui.min.js|}"></script>
-	<script th:src="@{|/webjars/bootstrap/${versions['bootstrap']}/js/bootstrap.min.js|}"></script>
-	<script th:src="@{|/webjars/jquery-bootgrid/${versions['bootgrid']}/dist/jquery.bootgrid.min.js|}"></script>
-	<script th:src="@{/js/tennis-stats.js}"></script>
+<head th:replace="fragments/head :: commonHead(${tournament.name}, true, ~{::script}, _)">
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("[data-toggle=pill]").click(tabClick);

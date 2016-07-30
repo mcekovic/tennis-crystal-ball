@@ -3,7 +3,7 @@
 <!--/*@thymesVar id="versions" type="java.util.Map<String, String>"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.BigGunsTimeline"*/-->
 <!--/*@thymesVar id="minGOATPoints" type="java.lang.Integer"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, _, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
 	<title>Big Guns Timeline</title>
 	<script th:src="@{/js/jquery.resize.js}"></script>
 	<script type="text/javascript">

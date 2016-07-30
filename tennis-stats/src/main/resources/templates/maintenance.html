@@ -2,15 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="versions" type="java.util.Map<String, String>"*/-->
 <!--/*@thymesVar id="maintenanceMessage" type="java.lang.String>"*/-->
-<head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Ultimate Tennis Statistics</title>
-	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{/css/tennis-stats.css}" rel="stylesheet" media="screen"/>
-</head>
+<head th:replace="fragments/head :: commonHead(null, false, _, _)">
 <body class="container">
-<br/>
+	<br/>
 	<h4 class="text-nowrap"><a href="/"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></a> - Down for Maintenance</h4>
 	<p>Ultimate Tennis Statistics is down for maintenance and will be back soon.</p>
 	<p th:text="${maintenanceMessage}">Maintenance message</p>

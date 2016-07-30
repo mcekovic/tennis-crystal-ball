@@ -6,13 +6,8 @@
 <!--/*@thymesVar id="stats" type="org.strangeforest.tcb.stats.web.VisitorStat[]"*/-->
 <!--/*@thymesVar id="intervals" type="org.strangeforest.tcb.stats.web.VisitorInterval[]"*/-->
 <!--/*@thymesVar id="countries" type="java.lang.Object[]"*/-->
-<head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<title>Ultimate Tennis Statistics - Visitors</title>
-	<link th:href="@{|/webjars/bootstrap/${versions['bootstrap']}/css/bootstrap.min.css|}" rel="stylesheet" media="screen"/>
-	<link th:href="@{|/webjars/jquery-ui-themes/${versions['jquery-ui']}/smoothness/jquery-ui.css|}" rel="stylesheet" media="screen"/>
-	<script th:src="@{|/webjars/jquery/${versions['jquery']}/jquery.min.js|}"></script>
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, _)">
+	<title>Visitors</title>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" th:inline="javascript">
 		google.load("visualization", "1", {packages:["geochart"]});
