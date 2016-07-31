@@ -11,19 +11,19 @@
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" th:inline="javascript">
 		google.load("visualization", "1", {packages:["geochart"]});
-		google.setOnLoadCallback(drawGeolocationChart);
+		google.setOnLoadCallback(drawVisitorsChart);
 
-		function drawGeolocationChart() {
+		function drawVisitorsChart() {
 			var countries = [[${countries}]];
 			var data = google.visualization.arrayToDataTable(countries);
 			var options = {
 				colorAxis: {colors: ["#ffdddd", "#ff0000"]}
 			};
-			var chart = new google.visualization.GeoChart(document.getElementById("geolocationChart"));
+			var chart = new google.visualization.GeoChart(document.getElementById("visitorsChart"));
 			chart.draw(data, options);
 		}
 		function chartChanged() {
-			window.location = "/manage/geolocationChart?stat=" + $("#chartStat").val() + "&interval=" + $("#chartInterval").val();
+			window.location = "/manage/visitorsChart?stat=" + $("#chartStat").val() + "&interval=" + $("#chartInterval").val();
 		}
 	</script>
 </head>
@@ -50,6 +50,6 @@
 		</div>
 	</div>
 	<br/>
-	<div id="geolocationChart" style="width: 900px; height: 500px;"></div>
+	<div id="visitorsChart" style="width: 900px; height: 500px;"></div>
 </body>
 </html>

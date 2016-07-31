@@ -13,12 +13,12 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.controler.*;
 
 @Component @VisitorSupport
-public class GeoLocationMvcEndpoint implements MvcEndpoint {
+public class VisitorsMvcEndpoint implements MvcEndpoint {
 
 	@Autowired private VisitorRepository repository;
 
 	@Override public String getPath() {
-		return "/geolocationChart";
+		return "/visitorsChart";
 	}
 
 	@Override public boolean isSensitive() {
@@ -30,7 +30,7 @@ public class GeoLocationMvcEndpoint implements MvcEndpoint {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-	public ModelAndView geolocationChart(
+	public ModelAndView visitorsChart(
 		@RequestParam(name = "stat", defaultValue = "VISITS") VisitorStat stat,
 		@RequestParam(name = "interval", defaultValue = "DAY") VisitorInterval interval
 	) {
@@ -44,6 +44,6 @@ public class GeoLocationMvcEndpoint implements MvcEndpoint {
 		modelMap.put("stats", VisitorStat.values());
 		modelMap.put("intervals", VisitorInterval.values());
 		modelMap.put("countries", countries.toArray());
-		return new ModelAndView("manage/geolocationChart", modelMap);
+		return new ModelAndView("manage/visitorsChart", modelMap);
 	}
 }
