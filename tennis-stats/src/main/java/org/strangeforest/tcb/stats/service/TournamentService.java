@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.service;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
-import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
@@ -15,7 +14,7 @@ import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
-import static java.util.stream.Collectors.*;
+import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.MatchesService.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
@@ -114,8 +113,8 @@ public class TournamentService {
 					String level = rs.getString("level");
 					String surface = rs.getString("surface");
 					boolean indoor = rs.getBoolean("indoor");
-					Object[] seasons = (Object[])rs.getArray("seasons").getArray();
-					return new Tournament(tournamentId, name, level, surface, indoor, Stream.of(seasons).map(o -> (Integer)o).collect(toList()));
+					Integer[] seasons = (Integer[])rs.getArray("seasons").getArray();
+					return new Tournament(tournamentId, name, level, surface, indoor, asList(seasons));
 				}
 				else
 					throw new IllegalArgumentException(format("Tournament %1$d not found.", tournamentId));

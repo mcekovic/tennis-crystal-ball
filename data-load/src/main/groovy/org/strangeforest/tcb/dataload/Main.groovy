@@ -13,10 +13,8 @@ if (options && (options.c || options.d || options.r || options.e || options.a)) 
 		callLoader('createDatabase')
 	if (options.d)
 		callLoader('dropDatabase')
-	if (options.r) {
+	if (options.r)
 		callLoader('refreshMaterializedViews')
-		callLoader('clearSavedRecords')
-	}
 	if (options.e)
 		new ComputeEloRatings().run()
 	if (options.a)
