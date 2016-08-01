@@ -1,15 +1,7 @@
 <div class="input-group-btn" xmlns:th="http://www.thymeleaf.org" th:fragment="quickPicks">
+	<!--/*@thymesVar id="playerQuickPicks" type="java.util.Map<String, String>"*/-->
 	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Quick Picks <span class="caret"></span></button>
 	<ul class="dropdown-menu">
-		<li><a href="#" onclick="selectPlayers(this)" title="Roger Federer, Rafael Nadal, Novak Djokovic, Andy Murray">Big Four</a></li>
-		<li><a href="#" onclick="selectPlayers(this)" title="Marin Cilic, Kei Nishikori, Milos Raonic, Grigor Dimitrov, Bernard Tomic">Young Guns</a></li>
-		<li><a href="#" onclick="selectPlayers(this)" title="Dominic Thiem, Nick Kyrgios, Borna Coric, Alexander Zverev">Youngest Guns</a></li>
-		<li><a href="#" onclick="selectPlayers(this)" title="Gustavo Kuerten, Marat Safin, Juan Carlos Ferrero, Lleyton Hewitt, Andy Roddick">Week Era</a></li>
-		<li><a href="#" onclick="selectPlayers(this)" title="Pete Sampras, Andre Agassi, Jim Courier, Michael Chang">Americans rule '90</a></li>
-		<li><a href="#" onclick="selectPlayers(this)" title="Mats Wilander, Stefan Edberg, Boris Becker, Thomas Muster">Late '80 / Early '90</a></li>
-		<li><a href="#" onclick="selectPlayers(this)" title="Jimmy Connors, Guillermo Vilas, Bjorn Borg, John Mcenroe, Ivan Lendl">'70 / Early '80 dominance</a></li>
-		<li><a href="#" onclick="selectPlayers(this)" title="Rod Laver, Ken Rosewall, Arthur Ashe, John Newcombe, Ilie Nastase, Manuel Orantes">Dawn of Open Era</a></li>
-		<li><a href="#" onclick="selectPlayers(this)" title="Roger Federer, Novak Djokovic, Rafael Nadal, Ivan Lendl, Jimmy Connors, Pete Sampras, John Mcenroe, Bjorn Borg, Andre Agassi, Boris Becker">Top 10 GOATs</a></li>
-		<li><a href="#" onclick="selectPlayers(this)" title="Roger Federer, Novak Djokovic, Rafael Nadal, Ivan Lendl, Jimmy Connors, Pete Sampras, John Mcenroe, Bjorn Borg, Andre Agassi, Boris Becker, Stefan Edberg, Andy Murray, Rod Laver, Guillermo Vilas, Mats Wilander, Ilie Nastase, John Newcombe, Ken Rosewall, Lleyton Hewitt, Andy Roddick">Top 20 GOATs</a></li>
+		<li th:each="quickPick : ${playerQuickPicks}"><a href="#" onclick="selectPlayers(this)" th:text="${quickPick.key}" th:title="${quickPick.value}"></a></li>
 	</ul>
 </div>

@@ -19,8 +19,8 @@ public class RivalriesController extends PageController {
 
 	@Autowired private RivalriesService rivalriesService;
 	@Autowired private DataService dataService;
-	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerService playerService;
+	@Autowired private StatisticsService statisticsService;
 
 	@RequestMapping("/greatestRivalries")
 	public ModelAndView greatestRivalries() {
@@ -34,6 +34,7 @@ public class RivalriesController extends PageController {
 	@RequestMapping("/headsToHeads")
 	public ModelAndView headsToHeads() {
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Surface.values());

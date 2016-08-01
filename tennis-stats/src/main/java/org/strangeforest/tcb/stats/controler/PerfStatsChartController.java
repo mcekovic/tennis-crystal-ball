@@ -16,11 +16,13 @@ import static java.util.stream.Collectors.*;
 public class PerfStatsChartController extends PageController {
 
 	@Autowired private TopPerformersService topPerformersService;
+	@Autowired private PlayerService playerService;
 	@Autowired private StatisticsService statisticsService;
 
 	@RequestMapping("/performanceChart")
 	public ModelAndView performanceChart() {
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
 		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
 		modelMap.addAttribute("seasons", topPerformersService.getSeasons());
 		return new ModelAndView("performanceChart", modelMap);
@@ -29,6 +31,7 @@ public class PerfStatsChartController extends PageController {
 	@RequestMapping("/statsChart")
 	public ModelAndView statsChart() {
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
 		modelMap.addAttribute("categoryTypes",  StatsCategory.getCategories().entrySet().stream().collect(toMap(Map.Entry::getKey, e -> e.getValue().getType().name())));
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		modelMap.addAttribute("surfaces", Surface.values());

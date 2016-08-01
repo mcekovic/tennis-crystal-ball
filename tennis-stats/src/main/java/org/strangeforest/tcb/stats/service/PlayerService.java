@@ -11,6 +11,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static com.google.common.base.Strings.*;
+import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
@@ -48,6 +49,10 @@ public class PlayerService {
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE r.player_id = :playerId\n" +
 		"ORDER BY season DESC";
+
+	private static final String TOP_N_QUERY = //language=SQL
+		"SELECT name FROM player_v\n" +
+		"ORDER BY %1$s LIMIT :count";
 
 
 	@Cacheable("Player.ById")
@@ -100,6 +105,28 @@ public class PlayerService {
 				indexedPlayers.addPlayer(playerId.get(), player, index++);
 		}
 		return indexedPlayers;
+	}
+
+	@Cacheable("PlayerQuickPicks")
+	public Map<String, String> getPlayerQuickPicks() {
+		Map<String, String> quickPicks = new LinkedHashMap<>();
+		quickPicks.put("Big Four", "Roger Federer, Rafael Nadal, Novak Djokovic, Andy Murray");
+		quickPicks.put("Young Guns", "Marin Cilic, Kei Nishikori, Milos Raonic, Grigor Dimitrov, Bernard Tomic");
+		quickPicks.put("Youngest Guns", "Dominic Thiem, Nick Kyrgios, Borna Coric, Alexander Zverev");
+		quickPicks.put("Week Era", "Gustavo Kuerten, Marat Safin, Juan Carlos Ferrero, Lleyton Hewitt, Andy Roddick");
+		quickPicks.put("Americans rule '90", "Pete Sampras, Andre Agassi, Jim Courier, Michael Chang");
+		quickPicks.put("Late '80 / Early '90", "Mats Wilander, Stefan Edberg, Boris Becker, Thomas Muster");
+		quickPicks.put("'70 / Early '80 dominance", "Jimmy Connors, Guillermo Vilas, Bjorn Borg, John Mcenroe, Ivan Lendl");
+		quickPicks.put("Dawn of Open Era", "Rod Laver, Ken Rosewall, Arthur Ashe, John Newcombe, Ilie Nastase, Manuel Orantes");
+		quickPicks.put("Top 10", join(", ", topN("current_rank", 10)));
+		quickPicks.put("Top 20", join(", ", topN("current_rank", 20)));
+		quickPicks.put("GOAT 10", join(", ", topN("goat_points DESC", 10)));
+		quickPicks.put("GOAT 20", join(", ", topN("goat_points DESC", 20)));
+		return quickPicks;
+	}
+
+	private List<String> topN(String orderBy, int count) {
+		return jdbcTemplate.queryForList(format(TOP_N_QUERY, orderBy), params("count", count), String.class);
 	}
 
 	private Optional<Player> playerExtractor(ResultSet rs) throws SQLException {

@@ -11,6 +11,7 @@ import org.strangeforest.tcb.stats.service.*;
 public class RankingsController extends PageController {
 
 	@Autowired private DataService dataService;
+	@Autowired private PlayerService playerService;
 
 	@RequestMapping("rankingsTable")
 	public ModelAndView rankingsTable() {
@@ -27,6 +28,7 @@ public class RankingsController extends PageController {
 	@RequestMapping("/rankingsChart")
 	public ModelAndView rankingsChart() {
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		return new ModelAndView("rankingsChart", modelMap);
 	}
