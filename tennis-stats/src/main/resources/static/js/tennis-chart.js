@@ -34,8 +34,10 @@ function useLogScale(json) {
 		for (var j = 0, jlen = row.c.length; j < jlen; j++) {
 			if (j > 0) {
 				var value = row.c[j].v;
-				min = Math.min(min, value);
-				max = Math.max(max, value);
+				if (value) {
+					min = Math.min(min, value);
+					max = Math.max(max, value);
+				}
 			}
 		}
 	}
