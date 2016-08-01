@@ -9,6 +9,8 @@ import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
+import com.google.common.collect.*;
+
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
 
 @RestController
@@ -18,15 +20,15 @@ public class TournamentEventsResource {
 
 	private static final int MAX_TOURNAMENT_EVENTS = 1000;
 
-	private static Map<String, String> ORDER_MAP = new TreeMap<String, String>() {{
-		put("date", "date");
-		put("name", "name");
-		put("surface", "surface");
-		put("draw", "draw_type, draw_size");
-		put("playerCount", "player_count NULLS LAST");
-		put("participationPoints", "participation_points NULLS LAST");
-		put("participationPct", "participation_points::REAL / max_participation_points NULLS LAST");
-	}};
+	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
+		.put("date", "date")
+		.put("name", "name")
+		.put("surface", "surface")
+		.put("draw", "draw_type, draw_size")
+		.put("playerCount", "player_count NULLS LAST")
+		.put("participationPoints", "participation_points NULLS LAST")
+		.put("participationPct", "participation_points::REAL / max_participation_points NULLS LAST")
+	.build();
 	private static final OrderBy[] DEFAULT_ORDER = new OrderBy[] {desc("date"), asc("level"), asc("name")};
 
 	@RequestMapping("/tournamentEventsTable")

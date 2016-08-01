@@ -28,10 +28,15 @@ public class DataService {
 	private static final String SEASONS_QUERY =
 		"SELECT DISTINCT season FROM tournament_event ORDER BY season DESC";
 
-	private final Supplier<Integer> dbServerVersion = Memoizer.of(() -> dbServerVersion().getVersionNum());
+	private final Supplier<String> dbServerVersionString = Memoizer.of(this::dbServerVersionString);
+	private final Supplier<Version> dbServerVersion = Memoizer.of(this::dbServerVersion);
+
+	private String dbServerVersionString() {
+		return jdbcTemplate.queryForObject(DB_SERVER_VERSION_QUERY, String.class);
+	}
 
 	private Version dbServerVersion() {
-		String versionStr = jdbcTemplate.queryForObject(DB_SERVER_VERSION_QUERY, String.class);
+		String versionStr = getDBServerVersionString();
 		String[] versionArr = versionStr.split(" ");
 		if (versionArr.length >= 2) {
 			String version = versionArr[1];
@@ -40,11 +45,15 @@ public class DataService {
 			return ServerVersion.from(version);
 		}
 		else
-			return ServerVersion.v9_4;
+			return ServerVersion.v9_5;
+	}
+
+	public String getDBServerVersionString() {
+		return dbServerVersionString.get();
 	}
 
 	public int getDBServerVersion() {
-		return dbServerVersion.get();
+		return dbServerVersion.get().getVersionNum();
 	}
 
 	@Cacheable(value = "Global", key = "'LastUpdate'")

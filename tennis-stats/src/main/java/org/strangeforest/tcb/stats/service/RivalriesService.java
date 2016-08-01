@@ -13,6 +13,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import com.fasterxml.jackson.databind.*;
+import com.google.common.collect.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
@@ -25,38 +26,38 @@ public class RivalriesService {
 
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES = 20;
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES_MIN = 2;
-	private static final Map<String, Double> MIN_MATCHES_LEVEL_FACTOR = new HashMap<String, Double>() {{
-		put("G",  4.0);
-		put("F",  8.0);
-		put("M",  3.0);
-		put("O", 20.0);
-		put("A",  3.5);
-		put("B",  2.5);
-		put("D",  8.0);
-	}};
-	private static final Map<String, Double> MIN_MATCHES_SURFACE_FACTOR = new HashMap<String, Double>() {{
-		put("H",  2.0);
-		put("C",  2.0);
-		put("G",  5.0);
-		put("P",  3.0);
-	}};
-	private static final Map<String, Double> MIN_MATCHES_ROUND_FACTOR = new HashMap<String, Double>() {{
-		put("F",     5.0);
-		put("SF",    4.0);
-		put("SF+",   2.5);
-		put("QF",    3.5);
-		put("QF+",   1.5);
-		put("R16",   3.5);
-		put("R16+",  1.2);
-		put("R32",   4.0);
-		put("R32+",  1.2);
-		put("R64",   5.0);
-		put("R64+",  1.1);
-		put("R128",  8.0);
-		put("RR",    8.0);
-		put("BR",   20.0);
-		put("BR+",   5.0);
-	}};
+	private static final Map<String, Double> MIN_MATCHES_LEVEL_FACTOR = ImmutableMap.<String, Double>builder()
+		.put("G",  4.0)
+		.put("F",  8.0)
+		.put("M",  3.0)
+		.put("O", 20.0)
+		.put("A",  3.5)
+		.put("B",  2.5)
+		.put("D",  8.0)
+	.build();
+	private static final Map<String, Double> MIN_MATCHES_SURFACE_FACTOR = ImmutableMap.<String, Double>builder()
+		.put("H",  2.0)
+		.put("C",  2.0)
+		.put("G",  5.0)
+		.put("P",  3.0)
+	.build();
+	private static final Map<String, Double> MIN_MATCHES_ROUND_FACTOR = ImmutableMap.<String, Double>builder()
+		.put("F",     5.0)
+		.put("SF",    4.0)
+		.put("SF+",   2.5)
+		.put("QF",    3.5)
+		.put("QF+",   1.5)
+		.put("R16",   3.5)
+		.put("R16+",  1.2)
+		.put("R32",   4.0)
+		.put("R32+",  1.2)
+		.put("R64",   5.0)
+		.put("R64+",  1.1)
+		.put("R128",  8.0)
+		.put("RR",    8.0)
+		.put("BR",   20.0)
+		.put("BR+",   5.0)
+	.build();
 
 	private static final String PLAYER_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +

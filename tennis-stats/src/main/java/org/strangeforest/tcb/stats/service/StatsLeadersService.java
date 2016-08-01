@@ -26,12 +26,12 @@ public class StatsLeadersService {
 	private static final int MIN_ENTRIES_SEASON_FACTOR  =    10;
 	private static final int MIN_ENTRIES_SURFACE_FACTOR =     4;
 	private static final int MIN_ENTRIES_EVENT_FACTOR   =   100;
-	private static final Map<Range<Integer>, Integer> MIN_ENTRIES_TOURNAMENT_FACTOR = new HashMap<Range<Integer>, Integer>() {{
-		put(Range.closed(1, 2), 100);
-		put(Range.closed(3, 5), 50);
-		put(Range.closed(6, 9), 25);
-		put(Range.atLeast(5), 20);
-	}};
+	private static final Map<Range<Integer>, Integer> MIN_ENTRIES_TOURNAMENT_FACTOR = ImmutableMap.<Range<Integer>, Integer>builder()
+		.put(Range.closed(1, 2), 100)
+		.put(Range.closed(3, 5), 50)
+		.put(Range.closed(6, 9), 25)
+		.put(Range.atLeast(5), 20)
+	.build();
 
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +

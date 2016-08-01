@@ -6,16 +6,18 @@ import javax.servlet.http.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
+import com.google.common.collect.*;
+
 public abstract class BaseController {
 
 	@Autowired private HttpServletRequest request;
 
-	public static final Map<String, String> VERSIONS = new HashMap<String, String>() {{
-		put("jquery", "2.2.4");
-		put("jquery-ui", "1.11.4");
-		put("bootstrap", "3.3.6");
-		put("bootgrid", "1.3.1");
-	}};
+	public static final Map<String, String> VERSIONS = ImmutableMap.of(
+		"jquery", "2.2.4",
+		"jquery-ui", "1.11.4",
+		"bootstrap", "3.3.6",
+		"bootgrid", "1.3.1"
+	);
 
 	@ModelAttribute("versions")
 	public Map<String, String> getVersions() {

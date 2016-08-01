@@ -9,6 +9,8 @@ import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
+import com.google.common.collect.*;
+
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
 
 @RestController
@@ -16,12 +18,12 @@ public class TopPerformersResource {
 
 	@Autowired private TopPerformersService topPerformersService;
 
-	private static Map<String, String> ORDER_MAP = new TreeMap<String, String>() {{
-		put("wonLostPct", "won_lost_pct");
-		put("won", "won");
-		put("lost", "lost");
-		put("played", "played");
-	}};
+	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
+		.put("wonLostPct", "won_lost_pct")
+		.put("won", "won")
+		.put("lost", "lost")
+		.put("played", "played")
+	.build();
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("won"), asc("lost"), asc("name")};
 
 	@RequestMapping("/topPerformersTable")

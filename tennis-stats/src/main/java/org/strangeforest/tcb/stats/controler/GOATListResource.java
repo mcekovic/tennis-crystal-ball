@@ -9,6 +9,8 @@ import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
+import com.google.common.collect.*;
+
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
 
 @RestController
@@ -16,19 +18,19 @@ public class GOATListResource {
 
 	@Autowired private GOATListService goatListService;
 
-	private static Map<String, String> ORDER_MAP = new TreeMap<String, String>() {{
-		put("goatPoints", "goat_points");
-		put("tournamentGoatPoints", "tournament_goat_points");
-		put("rankingGoatPoints", "ranking_goat_points");
-		put("achievementsGoatPoints", "achievements_goat_points");
-		put("grandSlams", "grand_slams");
-		put("tourFinals", "tour_finals");
-		put("masters", "masters");
-		put("olympics", "olympics");
-		put("bigTitles", "big_titles");
-		put("titles", "titles");
-		put("bestEloRating", "best_elo_rating NULLS LAST");
-	}};
+	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
+		.put("goatPoints", "goat_points")
+		.put("tournamentGoatPoints", "tournament_goat_points")
+		.put("rankingGoatPoints", "ranking_goat_points")
+		.put("achievementsGoatPoints", "achievements_goat_points")
+		.put("grandSlams", "grand_slams")
+		.put("tourFinals", "tour_finals")
+		.put("masters", "masters")
+		.put("olympics", "olympics")
+		.put("bigTitles", "big_titles")
+		.put("titles", "titles")
+		.put("bestEloRating", "best_elo_rating NULLS LAST")
+	.build();
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("goat_points"), asc("name")};
 
 	@RequestMapping("/goatTable")

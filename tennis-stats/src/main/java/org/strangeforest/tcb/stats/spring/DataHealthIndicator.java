@@ -8,15 +8,15 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Component
-public class DataHealthIndicator implements HealthIndicator {
+public class DataHealthIndicator extends AbstractHealthIndicator {
 
 	@Autowired private DataService dataService;
 
-	@Override public Health health() {
+	@Override protected void doHealthCheck(Health.Builder builder) throws Exception {
 		Date lastUpdate = dataService.getLastUpdate();
 		if (lastUpdate != null)
-			return Health.up().withDetail("lastUpdate", lastUpdate).build();
+			builder.up().withDetail("lastUpdate", lastUpdate).build();
 		else
-			return Health.down().build();
+			builder.down().build();
 	}
 }

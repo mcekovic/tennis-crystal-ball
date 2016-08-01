@@ -9,6 +9,8 @@ import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
+import com.google.common.collect.*;
+
 @RestController
 public class PlayerTournamentsResource {
 
@@ -16,14 +18,14 @@ public class PlayerTournamentsResource {
 
 	private static final int MAX_TOURNAMENTS = 1000;
 
-	private static Map<String, String> ORDER_MAP = new TreeMap<String, String>() {{
-		put("season", "season");
-		put("date", "date");
-		put("name", "name");
-		put("surface", "surface");
-		put("draw", "draw_type, draw_size");
-		put("result", "result");
-	}};
+	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
+		.put("season", "season")
+		.put("date", "date")
+		.put("name", "name")
+		.put("surface", "surface")
+		.put("draw", "draw_type, draw_size")
+		.put("result", "result")
+	.build();
 	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("date");
 
 	@RequestMapping("/playerTournamentsTable")
