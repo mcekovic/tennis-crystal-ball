@@ -5,6 +5,7 @@ import java.util.*;
 import org.junit.*;
 import org.junit.runner.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
 import org.springframework.test.context.junit4.*;
 import org.springframework.transaction.annotation.*;
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.*;
 import static org.assertj.core.api.Assertions.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = VisitorITsConfig.class)
+@ContextConfiguration(classes = VisitorITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 @Transactional
 public class VisitorManagerIT {
 
