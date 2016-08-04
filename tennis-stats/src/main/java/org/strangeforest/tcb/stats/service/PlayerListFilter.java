@@ -67,7 +67,7 @@ public class PlayerListFilter {
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(active, searchPhrase);
+		return Objects.hash(active, emptyToNull(searchPhrase));
 	}
 
 	@Override public final String toString() {

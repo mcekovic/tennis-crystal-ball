@@ -91,7 +91,7 @@ public class OutcomeFilter {
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(won, outcome);
+		return Objects.hash(won, emptyToNull(outcome));
 	}
 
 	@Override public String toString() {

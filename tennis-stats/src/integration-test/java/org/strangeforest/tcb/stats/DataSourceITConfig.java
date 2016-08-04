@@ -4,12 +4,13 @@ import javax.sql.*;
 
 import org.postgresql.ds.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.test.context.*;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.jdbc.datasource.*;
 import org.springframework.transaction.*;
 
-@Configuration
+@TestConfiguration
 public class DataSourceITConfig {
 
 	@Value("${spring.datasource.url}")

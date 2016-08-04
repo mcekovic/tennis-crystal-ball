@@ -10,7 +10,7 @@ import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
-import org.strangeforest.tcb.stats.controler.*;
+import org.strangeforest.tcb.stats.controller.*;
 
 @Component @VisitorSupport
 public class VisitorsMvcEndpoint implements MvcEndpoint {

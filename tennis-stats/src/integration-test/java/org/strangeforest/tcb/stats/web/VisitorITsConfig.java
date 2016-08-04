@@ -1,12 +1,13 @@
 package org.strangeforest.tcb.stats.web;
 
+import org.springframework.boot.test.context.*;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.*;
 import org.springframework.transaction.annotation.*;
 import org.strangeforest.tcb.stats.*;
 import org.strangeforest.tcb.stats.spring.*;
 
-@Configuration
+@TestConfiguration
 @PropertySource("/application-test.properties")
 @EnableTransactionManagement
 @Import({TennisStatsConfig.class, DataSourceITConfig.class})

@@ -122,7 +122,7 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(super.hashCode(), season, surface, tournamentId, tournamentEventId);
+		return Objects.hash(super.hashCode(), season, emptyToNull(surface), tournamentId, tournamentEventId);
 	}
 
 	@Override protected MoreObjects.ToStringHelper toStringHelper() {

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.autoconfigure.web.*;
 import org.springframework.context.annotation.*;
 import org.springframework.web.servlet.config.annotation.*;
-import org.strangeforest.tcb.stats.controler.*;
+import org.strangeforest.tcb.stats.controller.*;
 
 @Configuration
 public class TennisStatsWebConfig extends WebMvcConfigurerAdapter {

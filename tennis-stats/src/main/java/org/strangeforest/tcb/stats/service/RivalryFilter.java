@@ -97,7 +97,7 @@ public class RivalryFilter {
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(seasonRange, level, surface, round);
+		return Objects.hash(seasonRange, emptyToNull(level), emptyToNull(surface), emptyToNull(round));
 	}
 
 	@Override public String toString() {
