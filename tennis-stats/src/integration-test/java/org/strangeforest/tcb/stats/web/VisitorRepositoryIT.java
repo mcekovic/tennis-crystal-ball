@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = VisitorITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 @Transactional
 public class VisitorRepositoryIT {
