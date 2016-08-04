@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.boot;
 
 import java.util.*;
 
+import org.hamcrest.*;
 import org.junit.*;
 import org.junit.runner.*;
 import org.springframework.beans.factory.annotation.*;
@@ -16,6 +17,8 @@ import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -29,7 +32,7 @@ public class BootIT {
 
 	private MockMvc mvc;
 
-	private static final Iterable<String> PLAYERS = Arrays.asList("Roger Federer", "Novak Djokovic", "Rafael Nadal");
+	private static final Collection<String> PLAYERS = Arrays.asList("Roger Federer", "Novak Djokovic", "Rafael Nadal");
 
 	@Before
 	public void setUp() {
@@ -64,9 +67,8 @@ public class BootIT {
 
 	@Test
 	public void goatListTable() throws Exception {
-		String response = mvc.perform(get("/goatListTable").param("current", "1").param("rowCount", "20").accept(MediaType.APPLICATION_JSON))
+		mvc.perform(get("/goatListTable").param("current", "1").param("rowCount", "20").accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-         .andReturn().getResponse().getContentAsString();
-		assertThat(response).contains(PLAYERS);
+			.andExpect(jsonPath("$.rows[*].name").value(allOf(hasSize(20), (Matcher)hasItems(PLAYERS.toArray()))));
 	}
 }
