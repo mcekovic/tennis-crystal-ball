@@ -13,7 +13,7 @@ public abstract class BaseController {
 	@Autowired private HttpServletRequest request;
 
 	public static final Map<String, String> VERSIONS = ImmutableMap.of(
-		"jquery", "3.1.0",
+		"jquery", "2.2.4",
 		"jquery-ui", "1.11.4",
 		"bootstrap", "3.3.7",
 		"bootgrid", "1.3.1"
