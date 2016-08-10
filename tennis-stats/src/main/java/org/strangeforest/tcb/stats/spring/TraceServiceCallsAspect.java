@@ -5,10 +5,11 @@ import org.springframework.aop.*;
 import org.springframework.aop.interceptor.*;
 import org.springframework.aop.support.*;
 import org.springframework.aop.support.annotation.*;
+import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 
-@Configuration
+@Configuration @ConditionalOnProperty("tennis-stats.enable-tracing")
 public class TraceServiceCallsAspect {
 
 	@Bean

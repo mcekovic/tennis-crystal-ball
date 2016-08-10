@@ -12,7 +12,13 @@ public class DBInfoContributor implements InfoContributor {
 
 	@Autowired private DataService dataService;
 
+	@Value("${tennis-stats.database-name:postgres}")
+	private String databaseName;
+
 	@Override public void contribute(Info.Builder builder) {
-		builder.withDetail("db", ImmutableMap.of("version", dataService.getDBServerVersionString()));
+		builder.withDetail("db", ImmutableMap.of(
+			"version", dataService.getDBServerVersionString(),
+			"size", dataService.getDatabaseSize(databaseName)
+		));
 	}
 }

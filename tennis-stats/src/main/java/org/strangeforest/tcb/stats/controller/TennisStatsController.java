@@ -18,11 +18,16 @@ public class TennisStatsController extends PageController {
 		return "goatList";
 	}
 
+	@Value("${tennis-stats.down-for-maintenance:false}")
+	private boolean downForMaintenance;
+
 	@Value("${tennis-stats.down-for-maintenance.message:}")
 	private String maintenanceMessage;
 
 	@RequestMapping("/maintenance")
 	public ModelAndView maintenance() {
-		return new ModelAndView("maintenance", "maintenanceMessage", maintenanceMessage);
+		return downForMaintenance
+			? new ModelAndView("maintenance", "maintenanceMessage", maintenanceMessage)
+			: new ModelAndView("index");
 	}
 }

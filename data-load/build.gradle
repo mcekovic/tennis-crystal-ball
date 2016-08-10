@@ -21,13 +21,12 @@ dependencies {
 
 task quickDeployToOpenShift << {
 	def version = project.property('version')
-	def dataLoad = "data-load-${version}"
-	def dataLoadJar = "${dataLoad}.jar"
 	def srcPath = 'build/libs'
-	def destPath = "app-root/data/${dataLoad}/lib"
+	def destPath = "app-root/data/data-load/lib"
 	ssh.run {
 		session(remotes.openShift) {
-			put from: "${srcPath}/${dataLoadJar}", into: destPath
+			put from: "${srcPath}/data-load-${version}.jar", into: destPath
+			put from: "../crystal-ball/${srcPath}/crystal-ball-${version}.jar", into: destPath
 		}
 	}
 }
@@ -40,10 +39,9 @@ task fullDeployToOpenShift << {
 	def destPath = 'app-root/data'
 	ssh.run {
 		session(remotes.openShift) {
+			execute "rm -rf ${destPath}/data-load"
 			put from: "${srcPath}/${dataLoadDist}", into: destPath
-			execute "rm -rf ${destPath}/${dataLoad}"
-			execute "cd ${destPath}; tar -xvf ${dataLoadDist}"
-			execute "rm ${destPath}/${dataLoadDist}"
+			execute "cd ${destPath}; tar -xvf ${dataLoadDist}; rm ${dataLoadDist}; mv ${dataLoad} data-load"
 		}
 	}
 }

@@ -11,6 +11,8 @@ import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.util.*;
 
+import static java.lang.String.*;
+
 @Service
 public class DataService {
 
@@ -54,6 +56,10 @@ public class DataService {
 
 	public int getDBServerVersion() {
 		return dbServerVersion.get().getVersionNum();
+	}
+
+	public String getDatabaseSize(String databaseName) {
+		return jdbcTemplate.queryForObject(format("SELECT pg_size_pretty(pg_database_size('%1$s'))", databaseName), String.class);
 	}
 
 	@Cacheable(value = "Global", key = "'LastUpdate'")
