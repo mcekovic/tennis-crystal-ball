@@ -18,7 +18,8 @@ public class DBInfoContributor implements InfoContributor {
 	@Override public void contribute(Info.Builder builder) {
 		builder.withDetail("db", ImmutableMap.of(
 			"version", dataService.getDBServerVersionString(),
-			"size", dataService.getDatabaseSize(databaseName)
+			"size", dataService.getDatabaseSize(databaseName),
+			"lastUpdate", dataService.getLastUpdate()
 		));
 	}
 }
