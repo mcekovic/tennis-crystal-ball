@@ -104,7 +104,7 @@ task fullDeployToOpenShift << {
 			put from: "${srcPath}/${tennisStatsDist}", into: destPath
 			execute "cd ${destPath}; tar -xvf ${tennisStatsDist}; rm ${tennisStatsDist}"
 			execute 'gear stop'
-			execute "rm -rf ${destPath}/tennisStats app-root/logs/*"
+			execute "rm -rf ${destPath}/tennis-stats app-root/logs/*"
 			execute "cd ${destPath}; mv ${tennisStats} tennis-stats"
 			execute 'gear start'
 		}
