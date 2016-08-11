@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.web;
 
+import java.math.*;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
@@ -31,6 +32,9 @@ public class VisitorRepository {
 		"UPDATE visitor SET hits = :hits, last_hit = :lastHit%1$s WHERE visitor_id = :visitorId";
 
 	private static final String STATS_QUERY = // language=SQL
+		"SELECT %1$s AS value FROM visitor WHERE last_hit >= now() - INTERVAL '%2$s'";
+
+	private static final String STATS_BY_COUNTRY_QUERY = // language=SQL
 		"SELECT country, %1$s AS value FROM visitor WHERE last_hit >= now() - INTERVAL '%2$s' GROUP BY country";
 
 
@@ -99,9 +103,16 @@ public class VisitorRepository {
 
 	// Queries
 
+	public BigDecimal getVisitors(VisitorStat stat, VisitorInterval interval) {
+		return jdbcTemplate.getJdbcOperations().queryForObject(
+			format(STATS_QUERY, stat.getExpression(), interval.getExpression()),
+			(rs, rowNum) -> rs.getBigDecimal("value")
+		);
+	}
+
 	public List<Object[]> getVisitorsByCountry(VisitorStat stat, VisitorInterval interval) {
 		return jdbcTemplate.getJdbcOperations().query(
-			format(STATS_QUERY, stat.getExpression(), interval.getExpression()),
+			format(STATS_BY_COUNTRY_QUERY, stat.getExpression(), interval.getExpression()),
 			(rs, rowNum) -> new Object[] {rs.getString("country"), rs.getObject("value")}
 		);
 	}

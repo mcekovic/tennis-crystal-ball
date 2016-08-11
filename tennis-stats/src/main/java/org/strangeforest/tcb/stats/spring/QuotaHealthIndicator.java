@@ -56,7 +56,7 @@ public class QuotaHealthIndicator implements HealthIndicator {
 		if (blocksFree >= blocksThreshold && filesFree >= filesThreshold)
 			builder.up();
 		else
-			builder.down();
+			builder.outOfService();
 		builder.withDetail("blocks", ImmutableMap.of(
 			"limit", blocksLimit,
 			"free", blocksFree,
