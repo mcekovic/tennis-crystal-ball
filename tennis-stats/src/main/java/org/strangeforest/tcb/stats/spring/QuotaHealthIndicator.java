@@ -60,18 +60,18 @@ public class QuotaHealthIndicator implements HealthIndicator {
 		builder.withDetail("blocks", ImmutableMap.of(
 			"limit", blocksLimit,
 			"free", blocksFree,
-			"pctFree", pct(blocksFree, blocksLimit),
-			"threshold", blocksThreshold
+			"threshold", blocksThreshold,
+			"pctUsed", pct(blocksUsed, blocksLimit)
 		)).withDetail("files", ImmutableMap.of(
 			"limit", filesLimit,
 			"free", filesFree,
-			"pctFree", pct(filesFree, filesLimit),
-			"threshold", filesThreshold
+			"threshold", filesThreshold,
+			"pctUsed", pct(filesUsed, filesLimit)
 		));
 	}
 
-	private static String pct(long free, long limit) {
-		return new DecimalFormat("0.##%").format((double)free / limit);
+	private static String pct(long part, long total) {
+		return new DecimalFormat("0.##%").format((double)part / total);
 	}
 
 	private void parseError(BufferedReader reader, Health.Builder builder) throws IOException {
