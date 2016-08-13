@@ -14,7 +14,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 sourceSets {
-	integrationTest { sourceSet ->
+	"integration-test" { sourceSet ->
 		['java', 'groovy', 'resources'].each {
 			if (!sourceSet.hasProperty(it)) return
 			sourceSet."$it".srcDir file("src/integration-test/${it}")
@@ -73,8 +73,8 @@ dependencies {
 }
 
 task integrationTest(type: Test) {
-	testClassesDir = sourceSets.integrationTest.output.classesDir
-	classpath = sourceSets.integrationTest.runtimeClasspath
+	testClassesDir = sourceSets."integration-test".output.classesDir
+	classpath = sourceSets."integration-test".runtimeClasspath
 }
 
 task quickDeployToOpenShift << {
