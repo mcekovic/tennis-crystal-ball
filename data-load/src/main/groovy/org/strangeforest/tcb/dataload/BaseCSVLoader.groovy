@@ -30,7 +30,7 @@ abstract class BaseCSVLoader {
 
 	def loadFile(String file) {
 		println "Loading file '$file'"
-		def stopwatch = Stopwatch.createStarted();
+		def stopwatch = Stopwatch.createStarted()
 		List columnNames = columnNames()
 		def csvParams = columnNames ? [columnNames: columnNames, readFirstLine: true] : [:]
 		def data = CsvParser.parseCsv(csvParams, new FileReader(file))
@@ -40,7 +40,7 @@ abstract class BaseCSVLoader {
 	}
 
 	def load(Iterable data) {
-		def stopwatch = Stopwatch.createStarted();
+		def stopwatch = Stopwatch.createStarted()
 		int rows = load(data.iterator())
 		printLoadInfo(stopwatch, rows)
 		return rows

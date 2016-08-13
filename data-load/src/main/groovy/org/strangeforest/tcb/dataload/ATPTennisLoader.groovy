@@ -50,7 +50,7 @@ class ATPTennisLoader {
 	}
 
 	private static load(loader) {
-		def stopwatch = Stopwatch.createStarted();
+		def stopwatch = Stopwatch.createStarted()
 
 		def rows = loader()
 
@@ -125,7 +125,7 @@ class ATPTennisLoader {
 	}
 
 	def refreshMaterializedViews(Sql sql) {
-		def stopwatch = Stopwatch.createStarted();
+		def stopwatch = Stopwatch.createStarted()
 		refreshMaterializedView(sql, 'player_current_rank')
 		refreshMaterializedView(sql, 'player_best_rank')
 		refreshMaterializedView(sql, 'player_best_rank_points')
@@ -160,7 +160,7 @@ class ATPTennisLoader {
 	}
 
 	def refreshMaterializedView(Sql sql, String viewName) {
-		def stopwatch = Stopwatch.createStarted();
+		def stopwatch = Stopwatch.createStarted()
 		println "Refreshing materialized view '$viewName'"
 		if (useMaterializedViews)
 			sql.execute("REFRESH MATERIALIZED VIEW $viewName".toString())
@@ -173,7 +173,7 @@ class ATPTennisLoader {
 	}
 
 	def createDatabase(Sql sql) {
-		def stopwatch = Stopwatch.createStarted();
+		def stopwatch = Stopwatch.createStarted()
 
 		println 'Creating types...'
 		executeSQLFile(sql, '../crystal-ball/src/main/db/create-types.sql')
@@ -200,7 +200,7 @@ class ATPTennisLoader {
 	}
 
 	def dropDatabase(Sql sql) {
-		def stopwatch = Stopwatch.createStarted();
+		def stopwatch = Stopwatch.createStarted()
 
 		println 'Dropping load functions...'
 		executeSQLFile(sql, 'src/main/db/drop-load-functions.sql')
@@ -223,11 +223,31 @@ class ATPTennisLoader {
 		println "Database dropped in $stopwatch"
 	}
 
+	def vacuum(Sql sql) {
+		def stopwatch = Stopwatch.createStarted()
+
+		println 'Vacuuming tables and materialized views...'
+		executeSQLFileWithAutoCommit(sql, '../crystal-ball/src/main/db/vacuum.sql')
+
+		println "Vacuuming finished in $stopwatch"
+	}
+
 	private static executeSQLFile(Sql sql, String file, String replaceTarget = null, String replacement = null) {
 		def sqlText = new File(file).text
 		if (replaceTarget && replacement)
 			sqlText = sqlText.replace(replaceTarget, replacement)
 		sql.execute(sqlText)
 		sql.commit()
+	}
+
+	private static executeSQLFileWithAutoCommit(Sql sql, String file) {
+		def sqlText = new File(file).text
+		sql.connection.autoCommit = true
+		try {
+			sql.execute(sqlText)
+		}
+		finally {
+			sql.connection.autoCommit = false
+		}
 	}
 }

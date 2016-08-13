@@ -25,7 +25,7 @@ abstract class BaseXMLLoader {
 
 	def loadFile(String file) {
 		println "Loading file '$file'"
-		def stopwatch = Stopwatch.createStarted();
+		def stopwatch = Stopwatch.createStarted()
 		def batch = batch()
 		def data = new XmlSlurper().parse(getReader(file))
 		def rows = 0

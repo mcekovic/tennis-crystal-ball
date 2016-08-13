@@ -25,9 +25,9 @@ class TournamentFetcher {
 		def records = []
 		matches.each { m ->
 			Map match = m.value
-			def round = match[1]
+			def round = match['1']
 			if (round == 'QF' || !round.startsWith('Q')) {
-				def match_num = matchNum match[0]
+				def match_num = matchNum match['0']
 				records.add([
 					'tourney_id': id,
 					'match_num': match_num,
@@ -37,46 +37,46 @@ class TournamentFetcher {
 					'surface': surface,
 					'draw_size': drawSize,
 					'round': round,
-					'score': match[2],
-					'best_of': match[3],
+					'score': match['2'],
+					'best_of': match['3'],
 
-					'winner_name': match[5],
-					'winner_rank': match[6],
-					'winner_seed': match[7],
-					'winner_entry': match[8],
-					'winner_hand': match[9],
-					'winner_age': age(match[10]),
-					'winner_ioc': match[11],
+					'winner_name': match['5'],
+					'winner_rank': match['6'],
+					'winner_seed': match['7'],
+					'winner_entry': match['8'],
+					'winner_hand': match['9'],
+					'winner_age': age(match['10']),
+					'winner_ioc': match['11'],
 
-					'loser_name': match[12],
-					'loser_rank': match[13],
-					'loser_seed': match[14],
-					'loser_entry': match[15],
-					'loser_hand': match[16],
-					'loser_age': age(match[17]),
-					'loser_ioc': match[18],
+					'loser_name': match['12'],
+					'loser_rank': match['13'],
+					'loser_seed': match['14'],
+					'loser_entry': match['15'],
+					'loser_hand': match['16'],
+					'loser_age': age(match['17']),
+					'loser_ioc': match['18'],
 
-					'minutes': match[19],
+					'minutes': match['19'],
 
-					'w_ace': match[20],
-					'w_df': match[21],
-					'w_svpt': match[22],
-					'w_1stIn': match[23],
-					'w_1stWon': match[24],
-					'w_2ndWon': match[25],
-					'w_SvGms': match[26],
-					'w_bpSaved': match[27],
-					'w_bpFaced': match[28],
+					'w_ace': match['20'],
+					'w_df': match['21'],
+					'w_svpt': match['22'],
+					'w_1stIn': match['23'],
+					'w_1stWon': match['24'],
+					'w_2ndWon': match['25'],
+					'w_SvGms': match['26'],
+					'w_bpSaved': match['27'],
+					'w_bpFaced': match['28'],
 
-					'l_ace': match[29],
-					'l_df': match[30],
-					'l_svpt': match[31],
-					'l_1stIn': match[32],
-					'l_1stWon': match[33],
-					'l_2ndWon': match[34],
-					'l_SvGms': match[35],
-					'l_bpSaved': match[36],
-					'l_bpFaced': match[37]
+					'l_ace': match['29'],
+					'l_df': match['30'],
+					'l_svpt': match['31'],
+					'l_1stIn': match['32'],
+					'l_1stWon': match['33'],
+					'l_2ndWon': match['34'],
+					'l_SvGms': match['35'],
+					'l_bpSaved': match['36'],
+					'l_bpFaced': match['37']
 				])
 			}
 		}

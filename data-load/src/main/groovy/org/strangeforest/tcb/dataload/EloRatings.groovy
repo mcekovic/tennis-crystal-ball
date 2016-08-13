@@ -65,7 +65,7 @@ class EloRatings {
 	}
 
 	def compute(save = false, deltaSave = false, saveFromDate = null) {
-		def stopwatch = Stopwatch.createStarted();
+		def stopwatch = Stopwatch.createStarted()
 		int matches = 0
 		playerRatings = new ConcurrentHashMap<>()
 		lastDate = null
