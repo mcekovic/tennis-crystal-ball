@@ -88,6 +88,6 @@ class TournamentFetcher {
 	}
 
 	static age(dob) {
-		String.valueOf(ChronoUnit.DAYS.between(LocalDate.parse(dob, DateTimeFormatter.BASIC_ISO_DATE), LocalDate.now())/365.2524)
+		dob ? String.valueOf(ChronoUnit.DAYS.between(LocalDate.parse(dob, DateTimeFormatter.BASIC_ISO_DATE), LocalDate.now())/365.2524) : null
 	}
 }
