@@ -179,6 +179,14 @@ public class RecordsService {
 		return table;
 	}
 
+	private void ensureSaveRecord(Record record, boolean activePlayers) {
+		if (!isRecordSaved(record, activePlayers)) {
+			deleteRecord(record, activePlayers);
+			saveRecord(record, activePlayers);
+			markRecordSaved(record, activePlayers);
+		}
+	}
+
 	private static RecordDetail getDetail(Record record, String json) throws SQLDataException {
 		try {
 			return record.getDetailFactory().createDetail(json);
@@ -189,16 +197,12 @@ public class RecordsService {
 	}
 
 	@Transactional
-	public void ensureSaveRecord(String recordId, boolean activePlayers) {
-		ensureSaveRecord(Records.getRecord(recordId), activePlayers);
-	}
-
-	private void ensureSaveRecord(Record record, boolean activePlayers) {
-		if (!isRecordSaved(record, activePlayers)) {
-			deleteRecord(record, activePlayers);
-			saveRecord(record, activePlayers);
+	public void refreshRecord(String recordId, boolean activePlayers) {
+		Record record = Records.getRecord(recordId);
+		deleteRecord(record, activePlayers);
+		saveRecord(record, activePlayers);
+		if (!isRecordSaved(record, activePlayers))
 			markRecordSaved(record, activePlayers);
-		}
 	}
 
 	private void saveRecord(Record record, boolean activePlayers) {

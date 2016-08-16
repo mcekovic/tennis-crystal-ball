@@ -8,13 +8,15 @@ public class ATPRankingLoader {
 
 	private Sql sql
 
+	private static final int TIMEOUT = 10 * 1000L
+
 	public ATPRankingLoader(Sql sql) {
 		this.sql = sql
 	}
 
 	def load(String rankDate, int playerCount) {
 		def parsedDate = date rankDate
-		def doc = Jsoup.connect(rankingsURL(rankDate, playerCount)).get()
+		def doc = Jsoup.connect(rankingsURL(rankDate, playerCount)).timeout(TIMEOUT).get()
 		def paramsBatch = []
 		doc.select("tbody tr").each {
 			def player = player it.select('td.player-cell').text().replace('-', ' ')
