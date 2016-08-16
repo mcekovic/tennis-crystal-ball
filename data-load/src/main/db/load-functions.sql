@@ -361,6 +361,7 @@ DECLARE
 	l_winner_id INTEGER;
 	l_loser_id INTEGER;
 	l_match_id BIGINT;
+	l_rank_points rank_points;
 	l_has_stats BOOLEAN;
 	l_new BOOLEAN;
 	l_set_count SMALLINT;
@@ -388,6 +389,16 @@ BEGIN
 	PERFORM merge_player(l_loser_id, p_loser_country_id, p_loser_name, p_loser_height, p_loser_hand);
 
 	-- add data if missing
+	IF p_winner_rank IS NULL OR p_winner_rank_points IS NULL THEN
+		l_rank_points = player_rank_points(l_winner_id, p_date);
+		p_winner_rank = coalesce(p_winner_rank, l_rank_points.rank);
+		p_winner_rank_points = coalesce(p_winner_rank_points, l_rank_points.rank_points);
+	END IF;
+	IF p_loser_rank IS NULL OR p_loser_rank_points IS NULL THEN
+		l_rank_points = player_rank_points(l_loser_id, p_date);
+		p_loser_rank = coalesce(p_loser_rank, l_rank_points.rank);
+		p_loser_rank_points = coalesce(p_loser_rank_points, l_rank_points.rank_points);
+	END IF;
 	IF p_winner_country_id IS NULL THEN
 		SELECT country_id INTO p_winner_country_id FROM player WHERE player_id = l_winner_id;
 	END IF;

@@ -10,7 +10,8 @@ LoadATPTennis.groovy
 LoadAddHocTournaments.groovy
 missing-atp-rankings.sql
 rankings-pre-atp.sql
-update-data.sql
+update-data-full.sql
+update-data-delta.sql
 Main.groovy -e
 Main.groovy -r
 vacuum.sql

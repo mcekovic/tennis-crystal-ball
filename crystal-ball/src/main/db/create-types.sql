@@ -7,3 +7,7 @@ CREATE TYPE tournament_event_result AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 
 CREATE TYPE match_round AS ENUM ('RR', 'R128', 'R64', 'R32', 'R16', 'QF', 'SF', 'BR', 'F');
 CREATE TYPE tournament_entry AS ENUM ('Q', 'WC', 'LL', 'PR', 'SE');
 CREATE TYPE match_outcome AS ENUM ('RET', 'W/O', 'DEF', 'ABD');
+CREATE TYPE rank_points AS (
+	rank INTEGER,
+	rank_points INTEGER
+);
