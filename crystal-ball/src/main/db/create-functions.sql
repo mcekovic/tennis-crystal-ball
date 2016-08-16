@@ -108,9 +108,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION player_rank_points(
 	p_player_id INTEGER,
 	p_date DATE
-) RETURNS rank_points AS $$
+-- ) RETURNS rank_points AS $$
+) RETURNS TABLE(rank INTEGER, rank_points INTEGER) AS $$
 BEGIN
-	RETURN (SELECT ROW(r.rank, r.rank_points) FROM player_ranking r WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1);
+-- 	RETURN (SELECT (r.rank, r.rank_points) FROM player_ranking r WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1);
+	RETURN QUERY SELECT r.rank, r.rank_points FROM player_ranking r WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
 

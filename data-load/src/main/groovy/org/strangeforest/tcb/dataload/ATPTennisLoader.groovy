@@ -76,52 +76,74 @@ class ATPTennisLoader {
 			loadAdditionalData(new AdditionalPlayerDataLoader(sql), 'player', 'classpath:/player-data.xml')
 	}
 
-	def loadAdditionalTournamentData(sql) {
+	def loadAdditionalRankingData(sql) {
 		if (full) {
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1969-fort-worth.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1969-johannesburg.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1969-los-angeles.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1969-wembley.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-fort-worth.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-johannesburg.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-salisbury.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-sydney.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-tennis-champions-classic.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-vancouver.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1970-wembley.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1971-johannesburg.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1971-tennis-champions-classic.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1972-roanoke.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1973-washington-indoor-2.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1974-auckland.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1977-johannesburg.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1977-johannesburg-2.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1979-dorado-beach.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1981-monte-carlo.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1984-memphis+.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1984-rotterdam.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1987-stratton-mountain.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1990-dusseldorf.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1990-tour-finals.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/1999-tour-finals+.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/2000-dusseldorf+.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/2000-tour-finals+.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/2002-tour-finals+.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/2003-tour-finals+.xml')
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', 'classpath:/tournaments/2004-tour-finals+.xml')
+			println 'Loading missing ATP rankings...'
+			executeSQLFile(sql, 'src/main/db/missing-atp-rankings.sql')
+			println 'Loading pre-ATP rankings...'
+			executeSQLFile(sql, 'src/main/db/rankings-pre-atp.sql')
 		}
 	}
 
-	public static loadAdditionalTournament(sqlPool, file) {
-		sqlPool.withSql { sql ->
-			loadAdditionalData(new XMLMatchLoader(sql), 'match', file)
+	def loadAdditionalTournamentData(sql) {
+		if (full) {
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1969-fort-worth.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1969-johannesburg.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1969-los-angeles.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1969-wembley.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1970-fort-worth.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1970-johannesburg.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1970-salisbury.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1970-sydney.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1970-tennis-champions-classic.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1970-vancouver.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1970-wembley.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1971-johannesburg.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1971-tennis-champions-classic.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1972-roanoke.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1973-washington-indoor-2.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1974-auckland.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1977-johannesburg.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1977-johannesburg-2.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1979-dorado-beach.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1981-monte-carlo.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1984-memphis+.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1984-rotterdam.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1987-stratton-mountain.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1990-dusseldorf.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1990-tour-finals.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/1999-tour-finals+.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/2000-dusseldorf+.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/2000-tour-finals+.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/2002-tour-finals+.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/2003-tour-finals+.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/2004-tour-finals+.xml')
 		}
+	}
+
+	static def loadAdditionalTournament(sqlPool, file) {
+		sqlPool.withSql { sql ->
+			loadAdditionalMatchData(sql, file)
+		}
+	}
+
+	private static loadAdditionalMatchData(Sql sql, file) {
+		loadAdditionalData(new XMLMatchLoader(sql), 'match', file)
 	}
 
 	private static loadAdditionalData(loader, name, file) {
 		println "Loading additional $name data"
 		loader.loadFile(file)
 		println()
+	}
+
+	def correctData(sql) {
+		if (full) {
+			println 'Correcting data (full)...'
+			executeSQLFile(sql, 'src/main/db/correct-data-full.sql')
+			println 'Correcting data (delta)...'
+			executeSQLFile(sql, 'src/main/db/correct-data-delta.sql')
+		}
 	}
 
 	def refreshMaterializedViews(Sql sql) {

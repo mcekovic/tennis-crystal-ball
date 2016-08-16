@@ -1,4 +1,4 @@
--- Adjust invalid rankings
+-- Correct invalid rankings
 
 UPDATE player_ranking
 SET rank_points = 14
@@ -26,7 +26,7 @@ WHERE loser_rank IS NULL OR loser_rank_points IS NULL;
 COMMIT;
 
 
--- Update tournament event level for ATP seasons pre 1990
+-- Adjust tournament event level for ATP seasons pre 1990
 
 REFRESH MATERIALIZED VIEW event_participation;
 

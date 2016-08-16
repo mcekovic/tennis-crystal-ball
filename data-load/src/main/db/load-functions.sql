@@ -24,7 +24,11 @@ BEGIN
 	SELECT player_id INTO l_player_id FROM player
 	WHERE first_name || ' ' || last_name = p_name;
 	IF l_player_id IS NULL THEN
-		RAISE EXCEPTION 'Player % not found', p_name;
+		SELECT player_id INTO l_player_id FROM player
+		WHERE lower(first_name) || ' ' || lower(last_name) = lower(p_name);
+		IF l_player_id IS NULL THEN
+			RAISE EXCEPTION 'Player % not found', p_name;
+		END IF;
 	END IF;
 	RETURN l_player_id;
 END;

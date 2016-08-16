@@ -9,7 +9,9 @@ loader.loadMatches(new MatchLoader(sqlPool))
 
 sqlPool.withSql { sql ->
 	loader.loadAdditionalPlayerData(sql)
+	loader.loadAdditionalRankingData(sql)
 	loader.loadAdditionalTournamentData(sql)
+	loader.correctData(sql)
 
 	loader.refreshMaterializedViews(sql)
 }

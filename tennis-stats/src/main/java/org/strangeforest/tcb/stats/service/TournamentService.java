@@ -14,7 +14,6 @@ import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
-import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.MatchesService.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
@@ -113,8 +112,8 @@ public class TournamentService {
 					String level = rs.getString("level");
 					String surface = rs.getString("surface");
 					boolean indoor = rs.getBoolean("indoor");
-					Integer[] seasons = (Integer[])rs.getArray("seasons").getArray();
-					return new Tournament(tournamentId, name, level, surface, indoor, asList(seasons));
+					List<Integer> seasons = getIntegers(rs, "seasons");
+					return new Tournament(tournamentId, name, level, surface, indoor, seasons);
 				}
 				else
 					throw new IllegalArgumentException(format("Tournament %1$d not found.", tournamentId));

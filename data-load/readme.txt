@@ -7,11 +7,11 @@ or
 	initial-load.sql
 	load-functions.sql
 LoadATPTennis.groovy
-LoadAddHocTournaments.groovy
-missing-atp-rankings.sql
-rankings-pre-atp.sql
-update-data-full.sql
-update-data-delta.sql
+Main.groovy -a
+or
+	LoadAddHocRankings.groovy
+	LoadAddHocTournaments.groovy
 Main.groovy -e
 Main.groovy -r
-vacuum.sql
+RecordsITLoader
+Main.groovy -v

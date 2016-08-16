@@ -1,13 +1,33 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
+import java.util.*;
+import java.util.stream.*;
+
+import static java.util.Arrays.*;
+import static java.util.stream.Collectors.*;
 
 public abstract class ResultSetUtil {
+
+	// Extracting
 
 	public static Integer getInteger(ResultSet rs, String column) throws SQLException {
 		int i = rs.getInt(column);
 		return rs.wasNull() ? null : i;
 	}
+
+	public static List<Integer> getIntegers(ResultSet rs, String column) throws SQLException {
+		Object array = rs.getArray(column).getArray();
+		if (array instanceof Integer[])
+			return asList((Integer[])array);
+		else if (array instanceof Number[])
+			return Stream.of((Number[])array).map(Number::intValue).collect(toList());
+		else
+			throw new IllegalArgumentException("Incompatible type with Integer[]: " + array.getClass());
+	}
+
+
+	// Binding
 
 	public static void bindStringArray(PreparedStatement ps, int index, String[] strings) throws SQLException {
 		ps.setArray(index, ps.getConnection().createArrayOf("text", strings));
