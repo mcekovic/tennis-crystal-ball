@@ -16,7 +16,6 @@ public class TournamentController extends PageController {
 
 	@Autowired private TournamentService tournamentService;
 	@Autowired private MatchesService matchesService;
-	@Autowired private DataService dateService;
 
 	private static final int MAX_RECORD_PLAYERS = 10;
 
@@ -34,7 +33,7 @@ public class TournamentController extends PageController {
 
 	@RequestMapping("/tournamentEvents")
 	public ModelAndView tournamentEvents() {
-		List<Integer> seasons = dateService.getSeasons();
+		List<Integer> seasons = dataService.getSeasons();
 		List<TournamentItem> tournaments = tournamentService.getTournaments();
 
 		ModelMap modelMap = new ModelMap();

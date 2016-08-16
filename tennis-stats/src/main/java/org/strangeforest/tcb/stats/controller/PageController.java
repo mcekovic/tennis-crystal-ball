@@ -8,7 +8,7 @@ import org.strangeforest.tcb.stats.service.*;
 
 public abstract class PageController extends BaseController {
 
-	@Autowired private DataService dataService;
+	@Autowired protected DataService dataService;
 
 	@ModelAttribute("lastDataUpdate")
 	public Date getLastDataUpdate() {

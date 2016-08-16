@@ -19,7 +19,6 @@ public class PlayerProfileController extends PageController {
 	@Autowired private PlayerService playerService;
 	@Autowired private TournamentService tournamentService;
 	@Autowired private RankingsService rankingsService;
-	@Autowired private DataService dataService;
 	@Autowired private PlayerTimelineService timelineService;
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private GOATPointsService goatPointsService;

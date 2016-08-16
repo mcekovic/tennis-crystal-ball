@@ -13,20 +13,12 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.controller.*;
 
 @Component @VisitorSupport
-public class VisitorsMvcEndpoint implements MvcEndpoint {
+public class VisitorsMvcEndpoint extends AbstractMvcEndpoint {
 
 	@Autowired private VisitorRepository repository;
 
-	@Override public String getPath() {
-		return "/visitorsChart";
-	}
-
-	@Override public boolean isSensitive() {
-		return false;
-	}
-
-	@Override public Class<? extends Endpoint> getEndpointType() {
-		return null;
+	public VisitorsMvcEndpoint() {
+		super("/visitorsChart", false);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)

@@ -18,7 +18,6 @@ import static java.util.stream.Collectors.*;
 public class RivalriesController extends PageController {
 
 	@Autowired private RivalriesService rivalriesService;
-	@Autowired private DataService dataService;
 	@Autowired private PlayerService playerService;
 	@Autowired private StatisticsService statisticsService;
 

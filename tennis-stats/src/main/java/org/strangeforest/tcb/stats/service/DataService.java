@@ -6,6 +6,7 @@ import java.util.function.*;
 
 import org.postgresql.core.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
@@ -17,6 +18,7 @@ import static java.lang.String.*;
 public class DataService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
+	@Autowired private CacheManager cacheManager;
 
 	private static final String DB_SERVER_VERSION_QUERY = "SELECT version()";
 
@@ -70,5 +72,10 @@ public class DataService {
 	@Cacheable(value = "Global", key = "'Seasons'")
 	public List<Integer> getSeasons() {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
+	}
+
+	public void clearCaches() {
+		for (String cacheName : cacheManager.getCacheNames())
+			cacheManager.getCache(cacheName).clear();
 	}
 }

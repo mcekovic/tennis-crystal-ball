@@ -10,7 +10,6 @@ import org.strangeforest.tcb.stats.service.*;
 @Controller
 public class RankingsController extends PageController {
 
-	@Autowired private DataService dataService;
 	@Autowired private PlayerService playerService;
 
 	@RequestMapping("rankingsTable")
