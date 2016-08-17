@@ -15,11 +15,6 @@ public class RecordsLoaderIT extends AbstractTestNGSpringContextTests {
 
 	@Autowired private RecordsService recordsService;
 
-	@BeforeClass
-	public void setUp() {
-		recordsService.clearRecords();
-	}
-
 	@Test
 	public void loadAllFamousRecords() {
 		loadRecords(Records.getRecordCategories());
@@ -33,7 +28,7 @@ public class RecordsLoaderIT extends AbstractTestNGSpringContextTests {
 	private void loadRecords(List<RecordCategory> categories) {
 		for (RecordCategory recordCategory : categories) {
 			for (Record record : recordCategory.getRecords())
-				recordsService.ensureSaveRecord(record.getId(), false);
+				recordsService.refreshRecord(record.getId(), false);
 		}
 	}
 }
