@@ -6,7 +6,7 @@ import groovy.sql.*
 
 public class ATPRankingLoader {
 
-	private Sql sql
+	private final Sql sql
 
 	private static final int TIMEOUT = 10 * 1000L
 

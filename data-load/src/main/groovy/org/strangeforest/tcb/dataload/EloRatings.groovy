@@ -14,17 +14,17 @@ import static org.strangeforest.tcb.util.DateUtil.*
 
 class EloRatings {
 
-	private final SqlPool sqlPool
-	private final LockManager<Integer> lockManager
-	private final Map<Integer, CompletableFuture> playerMatchFutures
-	private Map<Integer, EloRating> playerRatings
-	private volatile Date lastDate
-	private AtomicInteger saves, rankFetches
-	private AtomicInteger progress
-	private ExecutorService rankExecutor, saveExecutor
-	private Date saveFromDate
+	final SqlPool sqlPool
+	final LockManager<Integer> lockManager
+	final Map<Integer, CompletableFuture> playerMatchFutures
+	Map<Integer, EloRating> playerRatings
+	volatile Date lastDate
+	AtomicInteger saves, rankFetches
+	AtomicInteger progress
+	ExecutorService rankExecutor, saveExecutor
+	Date saveFromDate
 
-	private static final String QUERY_MATCHES = //language=SQL
+	static final String QUERY_MATCHES = //language=SQL
 		"SELECT m.winner_id, m.loser_id, tournament_end(e.date, e.level, e.draw_size) AS end_date, e.level, m.round, m.best_of, m.outcome\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
@@ -32,31 +32,31 @@ class EloRatings {
 		"AND (m.outcome IS NULL OR m.outcome <> 'ABD')\n" +
 		"ORDER BY end_date, m.round, m.winner_id, m.loser_id, m.match_num"
 
-	private static final String QUERY_LAST_DATE = //language=SQL
+	static final String QUERY_LAST_DATE = //language=SQL
 		"SELECT max(rank_date) AS last_date FROM player_elo_ranking"
 
-	private static final String QUERY_PLAYER_RANK = //language=SQL
+	static final String QUERY_PLAYER_RANK = //language=SQL
 		"SELECT player_rank(?, ?) AS rank"
 
-	private static final String MERGE_ELO_RANKING = //language=SQL
+	static final String MERGE_ELO_RANKING = //language=SQL
 		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating)}"
 
-	private static final String DELETE_ALL = //language=SQL
+	static final String DELETE_ALL = //language=SQL
 		"DELETE FROM player_elo_ranking"
 
-	private static final int MIN_MATCHES = 10
-	private static final int MIN_MATCHES_PERIOD = 365
-	private static final int MIN_MATCHES_IN_PERIOD = 3
+	static final int MIN_MATCHES = 10
+	static final int MIN_MATCHES_PERIOD = 365
+	static final int MIN_MATCHES_IN_PERIOD = 3
 
-	private static final double SAVE_RANK_THREAD_RATIO = 1.0
-	private static final int MATCHES_PER_DOT = 1000
-	private static final int SAVES_PER_PLUS = 20
-	private static final int PROGRESS_LINE_WRAP = 100
-	private static final int PLAYERS_TO_SAVE = 200
+	static final double SAVE_RANK_THREAD_RATIO = 1.0
+	static final int MATCHES_PER_DOT = 1000
+	static final int SAVES_PER_PLUS = 20
+	static final int PROGRESS_LINE_WRAP = 100
+	static final int PLAYERS_TO_SAVE = 200
 
-	private static final def comparator = { a, b -> b <=> a }
-	private static final def bestComparator = { a, b -> b.bestRating <=> a.bestRating }
-	private static final def nullFuture = CompletableFuture.completedFuture(null)
+	static final def comparator = { a, b -> b <=> a }
+	static final def bestComparator = { a, b -> b.bestRating <=> a.bestRating }
+	static final def nullFuture = CompletableFuture.completedFuture(null)
 
 	EloRatings(SqlPool sqlPool) {
 		this.sqlPool = sqlPool
@@ -64,7 +64,7 @@ class EloRatings {
 		playerMatchFutures = new HashMap<>()
 	}
 
-	def compute(save = false, deltaSave = false, saveFromDate = null) {
+	def compute(boolean save = false, boolean deltaSave = false, Date saveFromDate = null) {
 		def stopwatch = Stopwatch.createStarted()
 		int matches = 0
 		playerRatings = new ConcurrentHashMap<>()
@@ -181,23 +181,23 @@ class EloRatings {
 		}
 	}
 
-	def EloRating newEloRating(int playerId) {
+	private EloRating newEloRating(int playerId) {
 		new EloRating(playerId, playerRank(playerId, lastDate))
 	}
 
-	def getRating(int playerId, Date date) {
+	private getRating(int playerId, Date date) {
 		def rating = playerRatings.get(playerId)
 		if (rating)
 			rating.adjustRating(date)
 		rating
 	}
 
-	def putNewRatings(int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date) {
+	private putNewRatings(int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date) {
 		playerRatings.put(winnerId, winnerRating.newRating(deltaRating, date))
 		playerRatings.put(loserId, loserRating.newRating(-deltaRating, date))
 	}
 
-	def static double deltaRating(EloRating winnerRating, EloRating loserRating, String level, String round, short bestOf, String outcome) {
+	private static double deltaRating(EloRating winnerRating, EloRating loserRating, String level, String round, short bestOf, String outcome) {
 		double winnerQ = pow(10, winnerRating.rating / 400)
 		double loserQ = pow(10, loserRating.rating / 400)
 		double loserExpectedScore = loserQ / (winnerQ + loserQ)
@@ -205,7 +205,7 @@ class EloRatings {
 		kFactor(level, round, bestOf, outcome) * loserExpectedScore
 	}
 
-	static double kFactor(level, round, bestOf, outcome) {
+	private static double kFactor(level, round, bestOf, outcome) {
 		double kFactor = 100
 		switch (level) {
 			case 'G': break
@@ -272,21 +272,21 @@ class EloRatings {
 			newRating
 		}
 
-		def Date getLastDate() {
+		Date getLastDate() {
 			dates.peekLast()
 		}
 
-		def Date getFirstDate() {
+		Date getFirstDate() {
 			dates.peekFirst()
 		}
 
-		private def addDate(Date date) {
+		private addDate(Date date) {
 			dates.addLast(date)
 			while (dates.size() > MIN_MATCHES_IN_PERIOD)
 				dates.removeFirst()
 		}
 
-		def long getDaysSpan(Date date) {
+		long getDaysSpan(Date date) {
 			ChronoUnit.DAYS.between(toLocalDate(firstDate), toLocalDate(date))
 		}
 
@@ -297,7 +297,7 @@ class EloRatings {
 		 * For rating 2000+ returns 1/2
 		 * @return values from 1/2 to 1, depending on current rating
 		 */
-		private def double kFunction() {
+		private double kFunction() {
 			if (rating <= 1800)
 				1.0
 			else if (rating <= 2000)
@@ -315,7 +315,7 @@ class EloRatings {
 			}
 		}
 
-		private def ratingAdjusted(long daysSinceLastMatch) {
+		private ratingAdjusted(long daysSinceLastMatch) {
 			max(START_RATING, rating - (daysSinceLastMatch - 365) * 200 / 365)
 		}
 
@@ -326,7 +326,7 @@ class EloRatings {
 				null
 		}
 
-		private static def ratingPoint(int rank, int eloRating) {
+		private static ratingPoint(int rank, int eloRating) {
 			return new RatingPoint(rank: rank, eloRating: eloRating)
 		}
 
@@ -363,7 +363,7 @@ class EloRatings {
 	}
 
 
-	def Date lastDate() {
+	Date lastDate() {
 		sqlPool.withSql { sql ->
 			sql.firstRow(QUERY_LAST_DATE).last_date
 		}

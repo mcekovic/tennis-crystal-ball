@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import java.sql.*
+
 class MatchLoader extends BaseCSVLoader {
 
 	MatchLoader(SqlPool sqlPool) {
@@ -22,7 +24,7 @@ class MatchLoader extends BaseCSVLoader {
 
 	int batchSize() { 100 }
 
-	Map params(record, conn) {
+	Map params(def record, Connection conn) {
 		def params = [:]
 
 		def tourneyId = string record.tourney_id
@@ -341,7 +343,7 @@ class MatchLoader extends BaseCSVLoader {
 		String round
 	}
 
-	static SAME_TOURNAMENT_MAP = [
+	static final SAME_TOURNAMENT_MAP = [
 		'2013': '393',
 		'2041': '393',
 		'6116': '409',

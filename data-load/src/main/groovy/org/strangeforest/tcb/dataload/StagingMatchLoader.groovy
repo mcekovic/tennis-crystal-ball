@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import java.sql.*
+
 class StagingMatchLoader extends BaseCSVLoader {
 
 	StagingMatchLoader(SqlPool sqlPool) {
@@ -19,7 +21,7 @@ class StagingMatchLoader extends BaseCSVLoader {
 
 	int batchSize() { 100 }
 
-	Map params(record, conn) {
+	Map params(def record, Connection conn) {
 		def params = [:]
 		params.tourney_id = record.tourney_id
 		params.tourney_name = record.tourney_name

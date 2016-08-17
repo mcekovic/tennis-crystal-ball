@@ -30,6 +30,6 @@ def showAllTime(EloRatings eloRatings, Sql sql) {
 	}
 }
 
-def getPlayerName(Sql sql, playerId) {
+def getPlayerName(Sql sql, int playerId) {
 	sql.firstRow('SELECT name FROM player_v WHERE player_id = ?', [playerId]).name
 }

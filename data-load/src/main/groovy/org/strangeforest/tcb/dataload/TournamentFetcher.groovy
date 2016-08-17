@@ -7,8 +7,8 @@ import java.time.temporal.*
 
 class TournamentFetcher {
 
-	static fetchTournament(season, urlId, extId, level = null) {
-		def url = "http://www.minorleaguesplits.com/tennisabstract/cgi-bin/jstourneys/${season}${urlId}.js"
+	static fetchTournament(int season, String urlId, def extId, String level = null) {
+		def url = tournamentUrl(season, urlId)
 		println "Fetching URL '$url'"
 		def manager = new ScriptEngineManager()
 		def engine = manager.getEngineByName("JavaScript")
@@ -18,14 +18,14 @@ class TournamentFetcher {
 		def id = season + '-' + extId
 		def name = engine.get('tname')
 		def date = engine.get('tdate')
-		def tlevel = level ? level : engine.get('tlev')
+		def tLevel = level ? level : engine.get('tlev')
 		def surface = engine.get('tsurf')
 		def drawSize = engine.get('tsize')
 		def matches = engine.get('matchmx')
 		def records = []
 		matches.each { m ->
 			Map match = m.value
-			def round = match['1']
+			String round = match['1']
 			if (round == 'QF' || !round.startsWith('Q')) {
 				def match_num = matchNum match['0']
 				records.add([
@@ -33,7 +33,7 @@ class TournamentFetcher {
 					'match_num': match_num,
 					'tourney_name': name,
 					'tourney_date': date,
-					'tourney_level': tlevel,
+					'tourney_level': tLevel,
 					'surface': surface,
 					'draw_size': drawSize,
 					'round': round,
@@ -83,11 +83,15 @@ class TournamentFetcher {
 		records
 	}
 
-	static matchNum(match_id) {
+	static tournamentUrl(int season, String urlId) {
+		"http://www.minorleaguesplits.com/tennisabstract/cgi-bin/jstourneys/${season}${urlId}.js"
+	}
+
+	static matchNum(String match_id) {
 		String.valueOf(Integer.parseInt(match_id) % 1000)
 	}
 
-	static age(dob) {
+	static age(String dob) {
 		dob ? String.valueOf(ChronoUnit.DAYS.between(LocalDate.parse(dob, DateTimeFormatter.BASIC_ISO_DATE), LocalDate.now())/365.2524) : null
 	}
 }

@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import java.sql.*
+
 class StagingPlayerLoader extends BaseCSVLoader {
 
 	StagingPlayerLoader(SqlPool sqlPool) {
@@ -16,7 +18,7 @@ class StagingPlayerLoader extends BaseCSVLoader {
 
 	int batchSize() { 500 }
 
-	Map params(record, conn) {
+	Map params(def record, Connection conn) {
 		def params = [:]
 		params.player_id = integer record.player_id
 		params.first_name = record.first_name

@@ -11,7 +11,7 @@ import groovy.sql.*
 
 abstract class BaseXMLLoader {
 
-	protected Sql sql
+	protected final Sql sql
 
 	private static def CLASSPATH_PREFIX = 'classpath:'
 	private static def PROGRESS_LINE_WRAP = 100
@@ -49,7 +49,7 @@ abstract class BaseXMLLoader {
 		return rows
 	}
 
-	private def getReader(String file) {
+	private getReader(String file) {
 		if (file.startsWith(CLASSPATH_PREFIX)) {
 			def path = file.substring(CLASSPATH_PREFIX.length())
 			def stream = getClass().getResourceAsStream(path)

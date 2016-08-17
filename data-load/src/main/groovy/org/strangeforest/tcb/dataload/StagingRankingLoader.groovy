@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import java.sql.*
+
 class StagingRankingLoader extends BaseCSVLoader {
 
 	StagingRankingLoader(SqlPool sqlPool) {
@@ -16,7 +18,7 @@ class StagingRankingLoader extends BaseCSVLoader {
 
 	int batchSize() { 500 }
 
-	Map params(record, conn) {
+	Map params(def record, Connection conn) {
 		def params = [:]
 		params.rank_date = date record.rank_date
 		params.rank = integer record.rank

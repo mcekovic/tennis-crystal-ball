@@ -71,12 +71,12 @@ class ATPTennisLoader {
 		return baseDir
 	}
 
-	def loadAdditionalPlayerData(sql) {
+	def loadAdditionalPlayerData(Sql sql) {
 		if (full)
 			loadAdditionalData(new AdditionalPlayerDataLoader(sql), 'player', 'classpath:/player-data.xml')
 	}
 
-	def loadAdditionalRankingData(sql) {
+	def loadAdditionalRankingData(Sql sql) {
 		if (full) {
 			println 'Loading missing ATP rankings...'
 			executeSQLFile(sql, 'src/main/db/missing-atp-rankings.sql')
@@ -85,7 +85,7 @@ class ATPTennisLoader {
 		}
 	}
 
-	def loadAdditionalTournamentData(sql) {
+	def loadAdditionalTournamentData(Sql sql) {
 		if (full) {
 			loadAdditionalMatchData(sql, 'classpath:/tournaments/1969-fort-worth.xml')
 			loadAdditionalMatchData(sql, 'classpath:/tournaments/1969-johannesburg.xml')
@@ -121,17 +121,17 @@ class ATPTennisLoader {
 		}
 	}
 
-	static def loadAdditionalTournament(sqlPool, file) {
+	static loadAdditionalTournament(SqlPool sqlPool, String file) {
 		sqlPool.withSql { sql ->
 			loadAdditionalMatchData(sql, file)
 		}
 	}
 
-	private static loadAdditionalMatchData(Sql sql, file) {
+	private static loadAdditionalMatchData(Sql sql, String file) {
 		loadAdditionalData(new XMLMatchLoader(sql), 'match', file)
 	}
 
-	private static loadAdditionalData(loader, name, file) {
+	private static loadAdditionalData(def loader, String name, String file) {
 		println "Loading additional $name data"
 		loader.loadFile(file)
 		println()
@@ -139,11 +139,15 @@ class ATPTennisLoader {
 
 	def correctData(sql) {
 		if (full) {
+			def stopwatch = Stopwatch.createStarted()
 			println 'Correcting data (full)...'
 			executeSQLFile(sql, 'src/main/db/correct-data-full.sql')
-			println 'Correcting data (delta)...'
-			executeSQLFile(sql, 'src/main/db/correct-data-delta.sql')
+			println "Correcting data (full) finished in $stopwatch"
 		}
+		def stopwatch = Stopwatch.createStarted()
+		println 'Correcting data (delta)...'
+		executeSQLFile(sql, 'src/main/db/correct-data-delta.sql')
+		println "Correcting data (delta) finished in $stopwatch\n"
 	}
 
 	def refreshMaterializedViews(Sql sql) {

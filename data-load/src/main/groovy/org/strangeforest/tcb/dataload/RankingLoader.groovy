@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import java.sql.*
+
 class RankingLoader extends BaseCSVLoader {
 
 	Integer maxRank
@@ -19,7 +21,7 @@ class RankingLoader extends BaseCSVLoader {
 
 	int batchSize() { 500 }
 
-	Map params(record, conn) {
+	Map params(def record, Connection conn) {
 		def rank = integer record.rank
 		if (maxRank && rank > maxRank)
 			return null

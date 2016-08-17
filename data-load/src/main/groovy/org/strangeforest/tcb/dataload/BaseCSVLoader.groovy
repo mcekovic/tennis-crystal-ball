@@ -14,7 +14,7 @@ import static org.strangeforest.tcb.dataload.LoaderUtil.*
 
 abstract class BaseCSVLoader {
 
-	protected SqlPool sqlPool
+	protected final SqlPool sqlPool
 
 	private static def PROGRESS_LINE_WRAP = 100
 
@@ -28,7 +28,7 @@ abstract class BaseCSVLoader {
 	int threadCount() { Integer.MAX_VALUE }
 	abstract String loadSql()
 	abstract int batchSize()
-	abstract Map params(record, conn)
+	abstract Map params(def record, Connection conn)
 
 	def loadFile(String file) {
 		println "Loading file '$file'"
@@ -48,7 +48,7 @@ abstract class BaseCSVLoader {
 		return rows
 	}
 
-	def static printLoadInfo(Stopwatch stopwatch, int rows) {
+	static printLoadInfo(Stopwatch stopwatch, int rows) {
 		println()
 		stopwatch.stop()
 		def seconds = stopwatch.elapsed(TimeUnit.SECONDS)

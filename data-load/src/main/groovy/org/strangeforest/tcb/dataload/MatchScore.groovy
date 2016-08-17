@@ -104,23 +104,17 @@ class MatchScore {
 	}
 
 
-	@Override boolean equals(Object o) {
+	boolean equals(Object o) {
 		if (!(o instanceof MatchScore)) false
 		MatchScore score = (MatchScore)o
-		Objects.equals(w_sets, score.w_sets) &&
-			Objects.equals(l_sets, score.l_sets) &&
-			Objects.equals(w_games, score.w_games) &&
-			Objects.equals(l_games, score.l_games) &&
-			Objects.equals(outcome, score.outcome) &&
-			Objects.equals(setScores, score.setScores)
+		w_sets == score.w_sets && l_sets == score.l_sets && w_games == score.w_games && l_games == score.l_games	&& outcome == score.outcome && setScores == score.setScores
 	}
 
-	@Override int hashCode() {
+	int hashCode() {
 		Objects.hash(w_sets, l_sets, w_games, l_games, outcome, setScores)
 	}
 
-
-	@Override public String toString() {
+	String toString() {
 		StringBuilder sb = new StringBuilder("MatchScore{")
 		sb.append("w_sets=").append(w_sets)
 		sb.append(", l_sets=").append(l_sets)

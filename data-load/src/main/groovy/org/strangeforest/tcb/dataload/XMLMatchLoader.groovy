@@ -4,11 +4,7 @@ import groovy.sql.*
 
 class XMLMatchLoader extends BaseXMLLoader {
 
-	XMLMatchLoader(Sql sql) {
-		super(sql)
-	}
-
-	String loadSql() {
+	static final String LOAD_SQL =
 		'{call load_match(' +
 			':ext_tournament_id, :season, :tournament_date, :tournament_name, :event_name, :tournament_level, :surface, :indoor, :draw_type, :draw_size, :rank_points, ' +
 			':match_num, :date, :round, :best_of, ' +
@@ -18,6 +14,9 @@ class XMLMatchLoader extends BaseXMLLoader {
 			':w_ace, :w_df, :w_sv_pt, :w_1st_in, :w_1st_won, :w_2nd_won, :w_sv_gms, :w_bp_sv, :w_bp_fc, ' +
 			':l_ace, :l_df, :l_sv_pt, :l_1st_in, :l_1st_won, :l_2nd_won, :l_sv_gms, :l_bp_sv, :l_bp_fc' +
 		')}'
+
+	XMLMatchLoader(Sql sql) {
+		super(sql)
 	}
 
 	int batch() { 1 }
@@ -25,7 +24,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 	boolean loadItem(item) {
 		def players = playerMap(item.player.list())
 		def matches = item.match.list()
-		sql.withBatch(loadSql()) { ps ->
+		sql.withBatch(LOAD_SQL) { ps ->
 			matches.each { match ->
 				Map params = tournamentParams(item)
 				params.match_num = smallint match.@'match-num'
@@ -47,11 +46,11 @@ class XMLMatchLoader extends BaseXMLLoader {
 		}
 	}
 
-	Map playerMap(players) {
+	static Map playerMap(players) {
 		players.collectEntries { [(it.@name.toString()): playerItem(it)] }
 	}
 
-	Map playerItem(player) {
+	static Map playerItem(player) {
 		def playerItem = [:]
 		playerItem.seed = smallint player.@seed
 		playerItem.entry = string player.@entry
@@ -63,7 +62,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 		return playerItem
 	}
 
-	Map tournamentParams(tournament) {
+	static Map tournamentParams(tournament) {
 		def params = [:]
 		params.ext_tournament_id = string tournament.@'ext-id'
 		params.season = smallint tournament.@season
@@ -81,7 +80,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 		return params
 	}
 
-	Map playerParams(match, type, players) {
+	static Map playerParams(match, type, players) {
 		def name = match['@' +type].toString()
 		def player = players[name]
 		def params = [:]
@@ -98,7 +97,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 		params
 	}
 
-	Map scoreParams(match, conn) {
+	static Map scoreParams(match, conn) {
 		def params = [:]
 		def score = string match.@score
 		def matchScore = MatchScore.parse(score)
@@ -116,7 +115,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 		return params
 	}
 
-	Map statsParams(match) {
+	static Map statsParams(match) {
 		def params = [:]
 		params.minutes = smallint match.@minutes
 		setStatsParams(params, match.'winner-stats', 'w_')
@@ -124,7 +123,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 		return params
 	}
 
-	def setStatsParams(Map params, stats, prefix) {
+	static setStatsParams(Map params, stats, prefix) {
 		params[prefix + 'ace'] = smallint stats?.ace
 		params[prefix + 'df'] = smallint stats?.df
 		params[prefix + 'sv_pt'] = smallint stats?.'sv-pt'
