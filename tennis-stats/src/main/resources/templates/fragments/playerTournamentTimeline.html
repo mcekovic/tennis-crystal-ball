@@ -1,11 +1,15 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="playerTournamentTimeline(tournament)">
 	<!--/*@thymesVar id="tournament" type="org.strangeforest.tcb.stats.model.PlayerTournamentTimeline"*/-->
 	<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
-		<span th:unless="${tournament.maxLevel} == 'O'" th:each="levelAndName : ${tournament.levelsAndNames}" th:text="${levelAndName.value}" th:attr="data-level=${levelAndName.key}" data-level="G" class="label level">Wimbledon</span>
+		<th:block th:unless="${tournament.maxLevel} == 'O'" th:each="levelAndName : ${tournament.levelsAndNames}">
+			<span th:text="${levelAndName.value}" th:attr="data-level=${levelAndName.key}" data-level="G" class="label level">Wimbledon</span>
+		</th:block>
 		<span th:if="${tournament.maxLevel} == 'O'" th:text="${tournament.name}" th:attr="data-level=${tournament.maxLevel}" data-level="O" class="label level">Olympics</span>
 	</td>
 	<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
-		<span th:each="surface : ${tournament.surfaces}" th:text="${surface.surface}" class="label surface" th:title="${surface.indoor ? 'Indoor' : 'Outdoor'}">G</span>
+		<th:block th:each="surface : ${tournament.surfaces}">
+			<span th:text="${surface.surface}" class="label surface" th:title="${surface.indoor ? 'Indoor' : 'Outdoor'}">G</span>
+		</th:block>
 	</td>
 	<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
 		<a th:if="${item.result}" th:href="'/playerProfile?playerId=' + ${playerId} + '&amp;tab=matches&amp;tournamentEventId=' + ${item.tournamentEventId}" th:attr="data-level=${tournament.levelCount > 1 ? item.level : ''}, data-surface=${tournament.surfaceCount > 1 ? item.surface : ''}">
