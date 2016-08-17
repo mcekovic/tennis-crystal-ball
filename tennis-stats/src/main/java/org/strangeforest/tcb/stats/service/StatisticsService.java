@@ -90,7 +90,7 @@ public class StatisticsService {
 
 	private static final String PLAYER_PERFORMANCE_COLUMNS =
 		"matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, tour_finals_matches_won, tour_finals_matches_lost, masters_matches_won, masters_matches_lost, olympics_matches_won, olympics_matches_lost,\n" +
-		"clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, hard_matches_won, hard_matches_lost, carpet_matches_won, carpet_matches_lost,\n" +
+		"hard_matches_won, hard_matches_lost, clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, carpet_matches_won, carpet_matches_lost,\n" +
 		"deciding_sets_won, deciding_sets_lost, fifth_sets_won, fifth_sets_lost, finals_won, finals_lost, vs_no1_won, vs_no1_lost, vs_top5_won, vs_top5_lost, vs_top10_won, vs_top10_lost,\n" +
 		"after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost, tie_breaks_won, tie_breaks_lost\n";
 
@@ -289,9 +289,9 @@ public class StatisticsService {
 		perf.setTourFinalsMatches(mapWonLost(rs, "tour_finals_matches"));
 		perf.setMastersMatches(mapWonLost(rs, "masters_matches"));
 		perf.setOlympicsMatches(mapWonLost(rs, "olympics_matches"));
+		perf.setHardMatches(mapWonLost(rs, "hard_matches"));
 		perf.setClayMatches(mapWonLost(rs, "clay_matches"));
 		perf.setGrassMatches(mapWonLost(rs, "grass_matches"));
-		perf.setHardMatches(mapWonLost(rs, "hard_matches"));
 		perf.setCarpetMatches(mapWonLost(rs, "carpet_matches"));
 		// Pressure situations
 		perf.setDecidingSets(mapWonLost(rs, "deciding_sets"));

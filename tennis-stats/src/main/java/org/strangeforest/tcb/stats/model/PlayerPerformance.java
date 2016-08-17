@@ -8,9 +8,9 @@ public class PlayerPerformance {
 	private WonLost tourFinalsMatches;
 	private WonLost mastersMatches;
 	private WonLost olympicsMatches;
+	private WonLost hardMatches;
 	private WonLost clayMatches;
 	private WonLost grassMatches;
-	private WonLost hardMatches;
 	private WonLost carpetMatches;
 
 	// Pressure situations
@@ -67,6 +67,14 @@ public class PlayerPerformance {
 		this.olympicsMatches = olympicsMatches;
 	}
 
+	public WonLost getHardMatches() {
+		return hardMatches;
+	}
+
+	public void setHardMatches(WonLost hardMatches) {
+		this.hardMatches = hardMatches;
+	}
+
 	public WonLost getClayMatches() {
 		return clayMatches;
 	}
@@ -81,14 +89,6 @@ public class PlayerPerformance {
 
 	public void setGrassMatches(WonLost grassMatches) {
 		this.grassMatches = grassMatches;
-	}
-
-	public WonLost getHardMatches() {
-		return hardMatches;
-	}
-
-	public void setHardMatches(WonLost hardMatches) {
-		this.hardMatches = hardMatches;
 	}
 
 	public WonLost getCarpetMatches() {
@@ -190,9 +190,9 @@ public class PlayerPerformance {
 		empty.tourFinalsMatches = WonLost.EMPTY;
 		empty.mastersMatches = WonLost.EMPTY;
 		empty.olympicsMatches = WonLost.EMPTY;
+		empty.hardMatches = WonLost.EMPTY;
 		empty.clayMatches = WonLost.EMPTY;
 		empty.grassMatches = WonLost.EMPTY;
-		empty.hardMatches = WonLost.EMPTY;
 		empty.carpetMatches = WonLost.EMPTY;
 		empty.decidingSets = WonLost.EMPTY;
 		empty.fifthSets = WonLost.EMPTY;
