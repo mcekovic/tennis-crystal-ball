@@ -62,7 +62,12 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "playerId") int playerId
 	) {
 		Player player = playerService.getPlayer(playerId).get();
-		return new ModelAndView("playerProfileTab", "player", player);
+		PlayerPerformance playerPerf = statisticsService.getPlayerPerformance(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("player", player);
+		modelMap.addAttribute("playerPerf", playerPerf);
+		return new ModelAndView("playerProfileTab", modelMap);
 	}
 
 	@RequestMapping("/playerTournaments")

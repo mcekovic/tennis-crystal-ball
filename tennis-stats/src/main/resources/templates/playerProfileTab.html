@@ -1,5 +1,6 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"*/-->
+<!--/*@thymesVar id="playerPerf" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
 <br/>
 <div class="row">
 	<div class="col-md-3">
@@ -36,6 +37,32 @@
 			<tr th:if="${player.backhand}">
 				<th>Backhand</th>
 				<td th:text="${player.backhandName}">Two-handed</td>
+			</tr>
+			<!--/* Tennis */-->
+			<tr>
+				<th>Active</th>
+				<td th:text="${player.active ? 'Yes' : 'No'}">Yes</td>
+			</tr>
+			<tr th:if="${player.turnedPro > 0}">
+				<th>Turned Pro</th>
+				<td th:text="${player.turnedPro}">2005</td>
+			</tr>
+			<tr th:if="${player.coach}">
+				<th>Coach</th>
+				<td th:text="${player.coach}">Brad Gilbert</td>
+			</tr>
+			<!--/* Social */-->
+			<tr th:if="${player.webSite}">
+				<th>Web Site</th>
+				<td><a th:href="'http://' + ${player.webSite}" href="http://www.johnsmith.com" target="_blank" th:text="${player.webSite}">www.johnsmith.com</a></td>
+			</tr>
+			<tr th:if="${player.twitter}">
+				<th>Twitter</th>
+				<td><a th:href="'https://twitter.com/' + ${player.twitter}" href="https://twitter.com/JohnSmith" target="_blank" th:text="'@'+ ${player.twitter}">@JohnSmith</a></td>
+			</tr>
+			<tr th:if="${player.facebook}">
+				<th>Facebook</th>
+				<td><a th:href="'https://www.facebook.com/' + ${player.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" th:text="${player.facebook}">JohnSmith</a></td>
 			</tr>
 		</table>
 	</div>
@@ -87,33 +114,66 @@
 	</div>
 	<div class="col-md-1">&nbsp;</div>
 	<div class="col-md-4">
+		<style th:scoped="scoped">
+			.progress-profile {
+				background-color: #cccccc;
+				margin-bottom: 0;
+			}
+			.progress-bar-profile {
+				font-size: 14px;
+			}
+		</style>
 		<table class="table table-condensed text-nowrap">
-			<!--/* Tennis */-->
-			<tr>
-				<th>Active</th>
-				<td th:text="${player.active ? 'Yes' : 'No'}">Yes</td>
+			<th:block th:with="wl=${playerPerf.matches}">
+			<tr th:unless="${wl.empty}">
+				<th>Overall</th>
+				<th>
+					<div class="progress progress-profile">
+						<div class="progress-bar progress-bar-profile" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					</div>
+				</th>
 			</tr>
-			<tr th:if="${player.turnedPro > 0}">
-				<th>Turned Pro</th>
-				<td th:text="${player.turnedPro}">2005</td>
+			</th:block>
+			<th:block th:with="wl=${playerPerf.hardMatches}">
+			<tr th:unless="${wl.empty}">
+				<th>Hard</th>
+				<th>
+					<div class="progress progress-profile">
+						<div class="progress-bar progress-bar-profile progress-bar-info" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					</div>
+				</th>
 			</tr>
-			<tr th:if="${player.coach}">
-				<th>Coach</th>
-				<td th:text="${player.coach}">Brad Gilbert</td>
+			</th:block>
+			<th:block th:with="wl=${playerPerf.clayMatches}">
+			<tr th:unless="${wl.empty}">
+				<th>Clay</th>
+				<th>
+					<div class="progress progress-profile">
+						<div class="progress-bar progress-bar-profile progress-bar-danger" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					</div>
+				</th>
 			</tr>
-         <!--/* Social */-->
-			<tr th:if="${player.webSite}">
-				<th>Web Site</th>
-				<td><a th:href="'http://' + ${player.webSite}" href="http://www.johnsmith.com" target="_blank" th:text="${player.webSite}">www.johnsmith.com</a></td>
+			</th:block>
+			<th:block th:with="wl=${playerPerf.grassMatches}">
+			<tr th:unless="${wl.empty}">
+				<th>Grass</th>
+				<th>
+					<div class="progress progress-profile">
+						<div class="progress-bar progress-bar-profile progress-bar-success" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					</div>
+				</th>
 			</tr>
-			<tr th:if="${player.twitter}">
-				<th>Twitter</th>
-				<td><a th:href="'https://twitter.com/' + ${player.twitter}" href="https://twitter.com/JohnSmith" target="_blank" th:text="'@'+ ${player.twitter}">@JohnSmith</a></td>
+			</th:block>
+			<th:block th:with="wl=${playerPerf.carpetMatches}">
+			<tr th:unless="${wl.empty}">
+				<th>Carpet</th>
+				<th>
+					<div class="progress progress-profile">
+						<div class="progress-bar progress-bar-profile progress-bar-warning" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					</div>
+				</th>
 			</tr>
-			<tr th:if="${player.facebook}">
-				<th>Facebook</th>
-				<td><a th:href="'https://www.facebook.com/' + ${player.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" th:text="${player.facebook}">JohnSmith</a></td>
-			</tr>
+			</th:block>
 		</table>
 	</div>
 </div>
