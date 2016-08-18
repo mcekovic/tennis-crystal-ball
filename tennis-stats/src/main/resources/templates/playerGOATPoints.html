@@ -3,6 +3,7 @@
 	<!--/*@thymesVar id="levelResults" type="java.util.Map<java.lang.String, java.util.List<java.lang.String>>"*/-->
 	<!--/*@thymesVar id="levelResultCount" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="goatPoints" type="org.strangeforest.tcb.stats.model.PlayerGOATPoints"*/-->
+	<!--/*@thymesVar id="highlightSeason" type="java.lang.Integer"*/-->
 	<script type="text/javascript">
 		$(function() {
 			var $goatPointsTable = $("#goatPointsTable");
@@ -51,6 +52,10 @@
 		.points {
 			text-align: right;
 		}
+		.highlight {
+			background-color: #e8f4ff;
+			border: 3px solid darkblue;
+		}
 		.result {
 			width: 50px;
 		}
@@ -85,7 +90,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr th:each="season : ${goatPoints.getPlayerSeasonsPoints()}">
+		<tr th:each="season : ${goatPoints.getPlayerSeasonsPoints()}" th:class="${season.season == highlightSeason ? 'highlight' : _}">
 			<th class="first-column points-" th:attrappend="class=${season.totalPointsRounded}" th:text="${season.season}">2000</th>
 			<th class="points first-column points-" th:attrappend="class=${season.totalPointsRounded}" th:text="${season.totalPoints}">50</th>
 			<th:block th:each="level : ${levelResults}">

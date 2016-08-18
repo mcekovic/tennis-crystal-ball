@@ -31,7 +31,7 @@
 							title = appendGoatPointsTitle(title, row, "weeksAtNo1GoatPoints", "Weeks at No 1.");
 							title = appendGoatPointsTitle(title, row, "bigWinsGoatPoints", "Big wins");
 							title = appendGoatPointsTitle(title, row, "grandSlamGoatPoints", "Grand Slam");
-							return "<span title='" + title + "'>" + row.goatPoints + "</span>";
+							return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=goatPoints&season=" + row.season + "' title='" + title + "'>" + row.goatPoints + "</a>";
 						}
 						else
 							return row.achievementsGoatPoints;

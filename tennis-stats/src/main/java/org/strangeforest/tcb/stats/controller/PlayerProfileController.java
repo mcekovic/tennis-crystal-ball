@@ -235,7 +235,8 @@ public class PlayerProfileController extends PageController {
 
 	@RequestMapping("/playerGOATPoints")
 	public ModelAndView playerGOATPoints(
-		@RequestParam(name = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season
 	) {
 		Map<String, List<String>> levelResults = goatPointsService.getLevelResults();
 		PlayerGOATPoints goatPoints = goatPointsService.getPlayerGOATPoints(playerId);
@@ -244,6 +245,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levelResults", levelResults);
 		modelMap.addAttribute("levelResultCount", levelResults.values().stream().mapToInt(List::size).sum());
 		modelMap.addAttribute("goatPoints", goatPoints);
+		modelMap.addAttribute("highlightSeason", season);
 		return new ModelAndView("playerGOATPoints", modelMap);
 	}
 
