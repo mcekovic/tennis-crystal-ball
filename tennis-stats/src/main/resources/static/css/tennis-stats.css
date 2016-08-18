@@ -1,3 +1,7 @@
+.component {
+	border: 1px solid #c0c0c0;
+	border-radius: 5px;
+}
 .navbar-brand {
 	height: 40px;
 	padding: 10px 15px;
