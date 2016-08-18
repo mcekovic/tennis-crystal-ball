@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
+import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -13,11 +14,16 @@ import org.strangeforest.tcb.stats.service.*;
 public class TennisStatsController extends PageController {
 
 	@Autowired private GOATListService goatListService;
+	@Autowired private RankingsService rankingsService;
 
 	@RequestMapping("/")
 	public ModelAndView index() {
 		List<PlayerRanking> goatTop10 = goatListService.getGOATTopN(10);
-		return new ModelAndView("index", "goatTop10", goatTop10);
+		List<PlayerRanking> rankingTop10 = rankingsService.getRankingsTopN(RankType.POINTS, 10);
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("goatTop10", goatTop10);
+		modelMap.addAttribute("rankingTop10", rankingTop10);
+		return new ModelAndView("index", modelMap);
 	}
 
 	@RequestMapping("/goatList")

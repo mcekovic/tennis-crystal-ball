@@ -10,6 +10,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
 public class GOATListService {
@@ -43,7 +44,7 @@ public class GOATListService {
 	public List<PlayerRanking> getGOATTopN(int playerCount) {
 		return jdbcTemplate.query(
 			GOAT_TOP_N_QUERY,
-			ParamsUtil.params("playerCount", playerCount),
+			params("playerCount", playerCount),
 			(rs, rowNum) -> {
 				int goatRank = rs.getInt("goat_rank");
 				int playerId = rs.getInt("player_id");

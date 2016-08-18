@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="goatTop10" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
+<!--/*@thymesVar id="rankingTop10" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
 <head th:replace="fragments/head :: commonHead(null, false, ~{::script}, ~{::style})">
 	<script type="text/javascript">
 		$(function(){
@@ -12,6 +13,9 @@
 		body {
 			background: url("/images/home-bg.png") no-repeat center center fixed;
 			background-size: cover;
+		}
+		.component-header {
+			margin: 0;
 		}
 	</style>
 </head>
@@ -76,14 +80,14 @@
 		<div class="col-lg-2 col-md-3">
 			<div class="panel panel-default component text-nowrap">
 				<div class="panel-heading">
-					<h4 class="text-center">Top 10 GOATs</h4>
+					<h4 class="text-center component-header">Top 10 GOATs</h4>
 				</div>
 				<table class="table table-condensed table-hover table-striped small">
 					<thead>
 					<tr>
-						<th title="GOAT Rank">R.</th>
+						<th class="text-right" title="GOAT Rank">R.</th>
 						<th>Name</th>
-						<th title="GOAT Points">Pts.</th>
+						<th class="text-right" title="GOAT Points">Pts.</th>
 					</tr>
 					</thead>
 					<tbody>
@@ -95,6 +99,30 @@
 							<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 						</td>
 						<td th:text="${player.points}" align="right">600</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="panel panel-default component text-nowrap">
+				<div class="panel-heading">
+					<h4 class="text-center component-header">Top 10 ATP</h4>
+				</div>
+				<table class="table table-condensed table-hover table-striped small">
+					<thead>
+					<tr>
+						<th class="text-right" title="ATP Rank">R.</th>
+						<th>Name</th>
+						<th class="text-right" title="Ranking Points">Pts.</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr th:each="player : ${rankingTop10}">
+						<td th:text="${player.rank}" align="right">1</td>
+						<td style="padding: 3px 3px">
+							<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
+							<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Federer</a>
+						</td>
+						<td th:text="${player.points}" align="right">1000</td>
 					</tr>
 					</tbody>
 				</table>

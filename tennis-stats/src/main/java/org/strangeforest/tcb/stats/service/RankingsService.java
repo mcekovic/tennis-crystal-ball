@@ -36,6 +36,13 @@ public class RankingsService {
 		"WHERE date_part('year', rank_date) = :season\n" +
 		"ORDER BY rank_date DESC";
 
+	private static final String RANKING_TOP_N_QUERY = //language=SQL
+		"SELECT player_id, r.rank, p.last_name, p.country_id, %1$s AS points\n" +
+		"FROM %2$s r\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"WHERE r.rank_date = :date\n" +
+		"ORDER BY rank LIMIT :playerCount";
+
 	private static final String RANKING_TABLE_QUERY = //language=SQL
 		"SELECT r.rank, player_id, p.name, p.country_id, %1$s AS points, %2$s AS best_rank, %3$s AS best_rank_date\n" +
 		"FROM %4$s r\n" +
@@ -86,6 +93,8 @@ public class RankingsService {
 		"SELECT year_end_rank FROM player_year_end_rank\n" +
 		"WHERE player_id = :playerId";
 
+	private static final EnumSet<RankType> RANK_TYPES = EnumSet.of(POINTS, ELO_RATING);
+
 
 	@Cacheable("RankingsTable.CurrentDate")
 	public LocalDate getCurrentRankingDate(RankType rankType) {
@@ -105,17 +114,34 @@ public class RankingsService {
 		return jdbcTemplate.queryForList(sql, params("season", season), Date.class);
 	}
 
+	@Cacheable("RankingsTable.TopN")
+	public List<PlayerRanking> getRankingsTopN(RankType rankType, int playerCount) {
+		checkRankType(rankType);
+		LocalDate date = getCurrentRankingDate(rankType);
+		return jdbcTemplate.query(
+			format(RANKING_TOP_N_QUERY, pointsColumn(rankType), rankingTable(rankType)),
+			params("date", date).addValue("playerCount", playerCount),
+			(rs, rowNum) -> {
+				int goatRank = rs.getInt("rank");
+				int playerId = rs.getInt("player_id");
+				String name = rs.getString("last_name");
+				String countryId = rs.getString("country_id");
+				int goatPoints = rs.getInt("points");
+				return new PlayerRanking(goatRank, playerId, name, countryId, null, goatPoints);
+			}
+		);
+	}
+
 	@Cacheable("RankingsTable.Table")
 	public BootgridTable<PlayerRankingsRow> getRankingsTable(RankType rankType, LocalDate date, PlayerListFilter filter, int pageSize, int currentPage) {
-		if (!EnumSet.of(POINTS, ELO_RATING).contains(rankType))
-			throw new IllegalArgumentException("Unsupported rankings table RankType: " + rankType);
+		checkRankType(rankType);
 		if (date == null && rankType != ELO_RATING)
 			throw new IllegalArgumentException("All-time ranking is available only for " + ELO_RATING);
 
 		BootgridTable<PlayerRankingsRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
-		String pointsColumn = rankColumn(rankType);
+		String pointsColumn = pointsColumn(rankType);
 		boolean allTimeElo = rankType == ELO_RATING && date == null;
 		jdbcTemplate.query(
 			allTimeElo
@@ -143,6 +169,11 @@ public class RankingsService {
 		return table;
 	}
 
+	private static void checkRankType(RankType rankType) {
+		if (!RANK_TYPES.contains(rankType))
+			throw new IllegalArgumentException("Unsupported rankings table RankType: " + rankType);
+	}
+
 	private MapSqlParameterSource getTableParams(PlayerListFilter filter, boolean allTimeElo, LocalDate date, int offset) {
 		MapSqlParameterSource params = filter.getParams();
 		if (!allTimeElo)
@@ -150,7 +181,7 @@ public class RankingsService {
 		return params.addValue("offset", offset);
 	}
 
-	private String rankColumn(RankType rankType) {
+	private String pointsColumn(RankType rankType) {
 		switch (rankType) {
 			case POINTS: return "r.rank_points";
 			case ELO_RATING: return "r.elo_rating";
