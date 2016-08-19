@@ -18,12 +18,20 @@ public class TennisStatsController extends PageController {
 
 	@RequestMapping("/")
 	public ModelAndView index() {
-		List<PlayerRanking> goatTop10 = goatListService.getGOATTopN(10);
-		List<PlayerRanking> rankingTop10 = rankingsService.getRankingsTopN(RankType.POINTS, 10);
+		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+		return new ModelAndView("index", "goatTopN", goatTopN);
+	}
+
+	@RequestMapping("/rankingTopN")
+	public ModelAndView rankingTopN(
+      @RequestParam(name = "rankType") RankType rankType
+	) {
+		List<PlayerRanking> rankingTopN = rankingsService.getRankingsTopN(rankType, 10);
+
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("goatTop10", goatTop10);
-		modelMap.addAttribute("rankingTop10", rankingTop10);
-		return new ModelAndView("index", modelMap);
+		modelMap.addAttribute("rankType", rankType);
+		modelMap.addAttribute("rankingTopN", rankingTopN);
+		return new ModelAndView("rankingTopN", modelMap);
 	}
 
 	@RequestMapping("/goatList")

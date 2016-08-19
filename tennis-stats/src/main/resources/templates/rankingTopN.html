@@ -1,0 +1,46 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="rankingTopN">
+	<!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
+	<!--/*@thymesVar id="rankingTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
+	<style>
+		button.rank-type {
+			padding: 0px 4px;
+			background-color: inherit;
+			font-size: inherit;
+		}
+	</style>
+	<div class="panel panel-default component text-nowrap">
+		<div class="panel-heading" style="padding: 6px 15px">
+			<h4 class="text-center component-header"><span style="vertical-align: middle">Top [[${rankingTopN.size()}]]</span>
+				<div class="btn-group">
+					<button type="button" class="btn btn-default rank-type">[[${rankType.name() == 'POINTS' ? 'ATP' : 'Elo'}]]</button>
+					<button type="button" class="btn btn-default dropdown-toggle rank-type" data-toggle="dropdown">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a href="#" onclick="event.preventDefault(); loadRankingTopN('POINTS')">ATP</a></li>
+						<li><a href="#" target="" onclick="event.preventDefault(); loadRankingTopN('ELO_RATING')">Elo</a></li>
+					</ul>
+				</div>
+			</h4>
+		</div>
+		<table class="table table-condensed table-hover table-striped small">
+			<thead>
+			<tr>
+				<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'ATP Rank' : 'Elo Rank'}">R.</th>
+				<th>Name</th>
+				<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'Ranking Points' : 'Elo Rating'}" th:text="${rankType.name() == 'POINTS' ? 'Pts.' : 'Elo'}">Pts.</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="player : ${rankingTopN}">
+				<td th:text="${player.rank}" align="right">1</td>
+				<td style="padding: 3px 3px">
+					<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
+					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Federer</a>
+				</td>
+				<td th:text="${player.points}" align="right">1000</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</th:block>
