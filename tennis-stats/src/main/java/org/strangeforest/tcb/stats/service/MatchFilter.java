@@ -51,6 +51,7 @@ public class MatchFilter extends TournamentEventFilter {
 	private final OpponentFilter opponentFilter;
 	private final OutcomeFilter outcomeFilter;
 
+	private static final String SURFACE_CRITERION        = " AND m.surface = :surface::surface";
 	private static final String ROUND_CRITERION          = " AND m.round %1$s :round::match_round";
 	private static final String MATCHES_SEARCH_CRITERION = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR pw.name ILIKE '%' || :searchPhrase || '%' OR pl.name ILIKE '%' || :searchPhrase || '%')";
 	private static final String STATS_SEARCH_CRITERION   = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR o.name ILIKE '%' || :searchPhrase || '%')";
@@ -76,6 +77,10 @@ public class MatchFilter extends TournamentEventFilter {
 			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 		opponentFilter.addParams(params);
 		outcomeFilter.addParams(params);
+	}
+
+	@Override protected String getSurfaceCriterion() {
+		return SURFACE_CRITERION;
 	}
 
 	@Override protected String getSearchCriterion() {

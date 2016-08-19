@@ -47,7 +47,7 @@ public class TournamentEventFilter {
 		if (!isNullOrEmpty(level))
 			criteria.append(LEVEL_CRITERION);
 		if (!isNullOrEmpty(surface))
-			criteria.append(SURFACE_CRITERION);
+			criteria.append(getSurfaceCriterion());
 		if (tournamentId != null)
 			criteria.append(TOURNAMENT_CRITERION);
 		if (tournamentEventId != null)
@@ -75,6 +75,10 @@ public class TournamentEventFilter {
 			params.addValue("tournamentEventId", tournamentEventId);
 		if (!isNullOrEmpty(searchPhrase))
 			params.addValue("searchPhrase", searchPhrase);
+	}
+
+	protected String getSurfaceCriterion() {
+		return SURFACE_CRITERION;
 	}
 
 	protected String getSearchCriterion() {

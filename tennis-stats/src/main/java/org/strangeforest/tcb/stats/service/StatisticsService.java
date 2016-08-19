@@ -185,9 +185,7 @@ public class StatisticsService {
 			return jdbcTemplate.queryForObject(
 				format(PLAYER_FILTERED_STATS_QUERY, join(filter), filter.getCriteria()),
 				filter.getParams().addValue("playerId", playerId),
-				(rs, rowNum) -> {
-					return mapPlayerStats(rs);
-				}
+				(rs, rowNum) -> mapPlayerStats(rs)
 			);
 		}
 	}
