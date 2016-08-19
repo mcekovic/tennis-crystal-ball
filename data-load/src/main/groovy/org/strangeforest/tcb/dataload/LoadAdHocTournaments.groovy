@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.dataload
 
-import static org.strangeforest.tcb.dataload.TournamentFetcher.*
+import static TennisAbstractTournamentFetcher.*
 
 def sqlPool = new SqlPool()
 

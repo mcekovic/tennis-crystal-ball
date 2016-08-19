@@ -56,11 +56,11 @@ class MatchScore {
 						if (w_win) w_games--
 						if (l_win) l_games--
 					}
-					setScores.add(new SetScore(
+					setScores << new SetScore(
 						w_games: w_gms, l_games: l_gms,
 						w_tb_pt: tb_pt >= 0 ? (w_win ? max(tb_pt + 2, 7) : tb_pt) : null,
 						l_tb_pt: tb_pt >= 0 ? (l_win ? max(tb_pt + 2, 7) : tb_pt) : null
-					))
+					)
 				}
 				catch (Exception ex) {
 					println("Invalid set: $set")

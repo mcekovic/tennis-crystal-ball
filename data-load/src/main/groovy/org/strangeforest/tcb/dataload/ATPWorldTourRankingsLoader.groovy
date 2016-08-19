@@ -4,25 +4,27 @@ import org.jsoup.*
 
 import groovy.sql.*
 
-public class ATPRankingLoader {
+class ATPWorldTourRankingsLoader {
 
 	private final Sql sql
 
 	private static final int TIMEOUT = 10 * 1000L
 
-	public ATPRankingLoader(Sql sql) {
+	ATPWorldTourRankingsLoader(Sql sql) {
 		this.sql = sql
 	}
 
 	def load(String rankDate, int playerCount) {
 		def parsedDate = date rankDate
-		def doc = Jsoup.connect(rankingsURL(rankDate, playerCount)).timeout(TIMEOUT).get()
+		def url = rankingsUrl(rankDate, playerCount)
+		println "Fetching URL '$url'"
+		def doc = Jsoup.connect(url).timeout(TIMEOUT).get()
 		def paramsBatch = []
 		doc.select("tbody tr").each {
 			def player = player it.select('td.player-cell').text().replace('-', ' ')
 			def rank = integer it.select('td.rank-cell').text()
 			def points = integer it.select('td.points-cell').text().replace(',', '')
-			paramsBatch.add([rank_date: parsedDate, player_name: player, rank: rank, rank_points: points])
+			paramsBatch << [rank_date: parsedDate, player_name: player, rank: rank, rank_points: points]
 		}
 		sql.withBatch('{call load_ranking(:rank_date, :player_name, :rank, :rank_points)}') { ps ->
 			paramsBatch.each { params ->
@@ -48,7 +50,7 @@ public class ATPRankingLoader {
 		}
 	}
 
-	static rankingsURL(String date, int topN) {
+	static rankingsUrl(String date, int topN) {
 		"http://www.atpworldtour.com/en/rankings/singles?rankDate=$date&&rankRange=1-$topN"
 	}
 

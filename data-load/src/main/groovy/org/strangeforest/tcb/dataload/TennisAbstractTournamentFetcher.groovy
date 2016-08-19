@@ -1,11 +1,8 @@
 package org.strangeforest.tcb.dataload
 
 import javax.script.*
-import java.time.*
-import java.time.format.*
-import java.time.temporal.*
 
-class TournamentFetcher {
+class TennisAbstractTournamentFetcher {
 
 	static fetchTournament(int season, String urlId, def extId, String level = null) {
 		def url = tournamentUrl(season, urlId)
@@ -28,7 +25,7 @@ class TournamentFetcher {
 			String round = match['1']
 			if (round == 'QF' || !round.startsWith('Q')) {
 				def match_num = matchNum match['0']
-				records.add([
+				records << [
 					'tourney_id': id,
 					'match_num': match_num,
 					'tourney_name': name,
@@ -45,7 +42,7 @@ class TournamentFetcher {
 					'winner_seed': match['7'],
 					'winner_entry': match['8'],
 					'winner_hand': match['9'],
-					'winner_age': age(match['10']),
+					'winner_age': null,
 					'winner_ioc': match['11'],
 
 					'loser_name': match['12'],
@@ -53,7 +50,7 @@ class TournamentFetcher {
 					'loser_seed': match['14'],
 					'loser_entry': match['15'],
 					'loser_hand': match['16'],
-					'loser_age': age(match['17']),
+					'loser_age': null,
 					'loser_ioc': match['18'],
 
 					'minutes': match['19'],
@@ -77,7 +74,7 @@ class TournamentFetcher {
 					'l_SvGms': match['35'],
 					'l_bpSaved': match['36'],
 					'l_bpFaced': match['37']
-				])
+				]
 			}
 		}
 		records
@@ -89,9 +86,5 @@ class TournamentFetcher {
 
 	static matchNum(String match_id) {
 		String.valueOf(Integer.parseInt(match_id) % 1000)
-	}
-
-	static age(String dob) {
-		dob ? String.valueOf(ChronoUnit.DAYS.between(LocalDate.parse(dob, DateTimeFormatter.BASIC_ISO_DATE), LocalDate.now())/365.2524) : null
 	}
 }

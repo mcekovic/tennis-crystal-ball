@@ -4,7 +4,7 @@ import groovy.sql.*
 
 def sqlPool = new SqlPool()
 sqlPool.withSql { Sql sql ->
-	def rankingsLoader = new ATPRankingLoader(sql)
+	def rankingsLoader = new ATPWorldTourRankingsLoader(sql)
 	rankingsLoader.load('2016-02-08', 200)
 	rankingsLoader.load('2016-02-15', 200)
 	rankingsLoader.load('2016-02-22', 200)

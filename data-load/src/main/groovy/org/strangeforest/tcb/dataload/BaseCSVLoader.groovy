@@ -68,7 +68,7 @@ abstract class BaseCSVLoader {
 			for (record in data) {
 				def params = params(record, paramsConn)
 				if (params) {
-					paramsBatch.add params
+					paramsBatch << params
 					if (++rows % batchSize == 0) {
 						execute(executor, loadSql, paramsBatch, batches)
 						paramsBatch = []
