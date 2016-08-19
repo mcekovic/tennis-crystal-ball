@@ -39,10 +39,6 @@
 				<td th:text="${player.backhandName}">Two-handed</td>
 			</tr>
 			<!--/* Tennis */-->
-			<tr>
-				<th>Active</th>
-				<td th:text="${player.active ? 'Yes' : 'No'}">Yes</td>
-			</tr>
 			<tr th:if="${player.turnedPro > 0}">
 				<th>Turned Pro</th>
 				<td th:text="${player.turnedPro}">2005</td>
@@ -63,6 +59,10 @@
 			<tr th:if="${player.facebook}">
 				<th>Facebook</th>
 				<td><a th:href="'https://www.facebook.com/' + ${player.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" th:text="${player.facebook}">JohnSmith</a></td>
+			</tr>
+			<tr>
+				<th>Active</th>
+				<td>[[${player.active ? 'Yes' : 'No'}]] <img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/></td>
 			</tr>
 		</table>
 	</div>
@@ -116,7 +116,7 @@
 	<div class="col-md-4">
 		<style th:scoped="scoped">
 			.progress-profile {
-				background-color: #cccccc;
+				background-color: #dddddd;
 				margin-bottom: 0;
 			}
 			.progress-bar-profile {
