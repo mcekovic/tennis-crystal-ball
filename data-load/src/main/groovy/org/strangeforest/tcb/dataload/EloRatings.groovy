@@ -64,7 +64,7 @@ class EloRatings {
 		playerMatchFutures = new HashMap<>()
 	}
 
-	def compute(boolean save = false, boolean deltaSave = false, Date saveFromDate = null) {
+	def compute(boolean save = false, boolean fullSave = true, Date saveFromDate = null) {
 		def stopwatch = Stopwatch.createStarted()
 		int matches = 0
 		playerRatings = new ConcurrentHashMap<>()
@@ -82,13 +82,12 @@ class EloRatings {
 		if (save) {
 			saveExecutor = Executors.newFixedThreadPool(saveThreads)
 			println "Using $saveThreads saving threads"
-			if (deltaSave) {
-				this.saveFromDate = saveFromDate ? saveFromDate : lastDate()
-			}
-			else {
+			if (fullSave) {
 				println 'Deleting all Elo ratings'
 				deleteAll()
 			}
+			else
+				this.saveFromDate = saveFromDate ? saveFromDate : lastDate()
 		}
 		println 'Processing matches'
 		sqlPool.withSql { sql ->

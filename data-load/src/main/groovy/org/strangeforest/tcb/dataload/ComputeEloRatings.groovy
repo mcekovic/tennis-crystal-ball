@@ -5,7 +5,7 @@ import groovy.sql.*
 def sqlPool = new SqlPool()
 
 def eloRatings = new EloRatings(sqlPool)
-eloRatings.compute(true)
+eloRatings.compute(true, System.getProperty('tcb.data.full-load', 'true').toBoolean())
 
 sqlPool.withSql { sql ->
 	showCurrent(eloRatings, sql)
