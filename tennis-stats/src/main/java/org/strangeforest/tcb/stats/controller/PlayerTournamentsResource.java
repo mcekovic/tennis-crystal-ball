@@ -28,7 +28,7 @@ public class PlayerTournamentsResource {
 	.build();
 	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("date");
 
-	@RequestMapping("/playerTournamentsTable")
+	@GetMapping("/playerTournamentsTable")
 	public BootgridTable<PlayerTournamentEvent> playerTournamentsTable(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,

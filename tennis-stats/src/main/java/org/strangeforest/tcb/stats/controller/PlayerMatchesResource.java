@@ -28,7 +28,7 @@ public class PlayerMatchesResource {
 	.build();
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("date"), desc("round"), desc("match_num")};
 
-	@RequestMapping("/matchesTable")
+	@GetMapping("/matchesTable")
 	public BootgridTable<Match> matchesTable(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,

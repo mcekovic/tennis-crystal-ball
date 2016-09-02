@@ -21,7 +21,7 @@ public class RivalriesController extends PageController {
 	@Autowired private PlayerService playerService;
 	@Autowired private StatisticsService statisticsService;
 
-	@RequestMapping("/greatestRivalries")
+	@GetMapping("/greatestRivalries")
 	public ModelAndView greatestRivalries() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
@@ -30,7 +30,7 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("greatestRivalries", modelMap);
 	}
 
-	@RequestMapping("/headsToHeads")
+	@GetMapping("/headsToHeads")
 	public ModelAndView headsToHeads() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
@@ -41,7 +41,7 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("headsToHeads", modelMap);
 	}
 
-	@RequestMapping("/headsToHeadsTable")
+	@GetMapping("/headsToHeadsTable")
 	public ModelAndView headsToHeadsTable(
 		@RequestParam(name = "players") String playersCSV,
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,

@@ -12,7 +12,7 @@ public class GOATLegendController extends BaseController {
 
 	@Autowired private GOATLegendService goatLegendService;
 
-	@RequestMapping("/goatLegend")
+	@GetMapping("/goatLegend")
 	public ModelAndView goatLegend(
 		@RequestParam(name = "forSeason", required = false) boolean forSeason
 	) {

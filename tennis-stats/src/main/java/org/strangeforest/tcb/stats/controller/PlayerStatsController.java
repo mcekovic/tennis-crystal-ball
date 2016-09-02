@@ -19,7 +19,7 @@ public class PlayerStatsController extends BaseController {
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerTimelineService timelineService;
 
-	@RequestMapping("/eventStats")
+	@GetMapping("/eventStats")
 	public ModelAndView eventStats(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "tournamentEventId") int tournamentEventId
@@ -33,7 +33,7 @@ public class PlayerStatsController extends BaseController {
 		return new ModelAndView("eventStats", modelMap);
 	}
 
-	@RequestMapping("/rivalryStats")
+	@GetMapping("/rivalryStats")
 	public ModelAndView rivalryStats(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "opponentId") int opponentId,
@@ -50,7 +50,7 @@ public class PlayerStatsController extends BaseController {
 		return new ModelAndView("rivalryStats", modelMap);
 	}
 
-	@RequestMapping("/playerStats")
+	@GetMapping("/playerStats")
 	public ModelAndView playerStats(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
@@ -69,7 +69,7 @@ public class PlayerStatsController extends BaseController {
 		return new ModelAndView("playerStats", "stats", stats);
 	}
 
-	@RequestMapping("/matchStats")
+	@GetMapping("/matchStats")
 	public ModelAndView matchStats(
 		@RequestParam(name = "matchId") long matchId
 	) {
@@ -81,7 +81,7 @@ public class PlayerStatsController extends BaseController {
 		return new ModelAndView("matchStats", modelMap);
 	}
 
-	@RequestMapping("/playerTimelineStats")
+	@GetMapping("/playerTimelineStats")
 	public ModelAndView playerTimelineStats(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "seasons") String seasons
@@ -98,7 +98,7 @@ public class PlayerStatsController extends BaseController {
 		return new ModelAndView("playerTimelineStats", modelMap);
 	}
 
-	@RequestMapping("/playerTimelinePerformance")
+	@GetMapping("/playerTimelinePerformance")
 	public ModelAndView playerTimelinePerformance(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "seasons") String seasons

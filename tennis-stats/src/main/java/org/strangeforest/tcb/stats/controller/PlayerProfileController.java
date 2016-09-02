@@ -23,7 +23,7 @@ public class PlayerProfileController extends PageController {
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private GOATPointsService goatPointsService;
 
-	@RequestMapping("/playerProfile")
+	@GetMapping("/playerProfile")
 	public ModelAndView playerProfile(
 		@RequestParam(name = "playerId", required = false) Integer playerId,
 		@RequestParam(name = "name", required = false) String name,
@@ -57,7 +57,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerProfile", modelMap);
 	}
 
-	@RequestMapping("/playerProfileTab")
+	@GetMapping("/playerProfileTab")
 	public ModelAndView playerProfileTab(
 		@RequestParam(name = "playerId") int playerId
 	) {
@@ -70,7 +70,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerProfileTab", modelMap);
 	}
 
-	@RequestMapping("/playerTournaments")
+	@GetMapping("/playerTournaments")
 	public ModelAndView playerTournaments(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
@@ -94,7 +94,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerTournaments", modelMap);
 	}
 
-	@RequestMapping("/playerMatches")
+	@GetMapping("/playerMatches")
 	public ModelAndView playerMatches(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "level", required = false) String level,
@@ -128,7 +128,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerMatches", modelMap);
 	}
 
-	@RequestMapping("/playerTimeline")
+	@GetMapping("/playerTimeline")
 	public ModelAndView playerTimeline(
 		@RequestParam(name = "playerId") int playerId
 	) {
@@ -140,7 +140,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerTimeline", modelMap);
 	}
 
-	@RequestMapping("/playerRivalries")
+	@GetMapping("/playerRivalries")
 	public ModelAndView playerRivalries(
 		@RequestParam(name = "playerId") int playerId
 	) {
@@ -152,7 +152,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerRivalries", modelMap);
 	}
 
-	@RequestMapping("/playerRankings")
+	@GetMapping("/playerRankings")
 	public ModelAndView playerRankings(
 		@RequestParam(name = "playerId") int playerId
 	) {
@@ -163,7 +163,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerRankings", modelMap);
 	}
 
-	@RequestMapping("/playerPerformance")
+	@GetMapping("/playerPerformance")
 	public ModelAndView playerPerformance(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season
@@ -181,7 +181,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerPerformance", modelMap);
 	}
 
-	@RequestMapping("/playerPerformanceChart")
+	@GetMapping("/playerPerformanceChart")
 	public ModelAndView playerPerformanceChart(
 		@RequestParam(name = "playerId") int playerId
 	) {
@@ -194,7 +194,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerPerformanceChart", modelMap);
 	}
 
-	@RequestMapping("/playerStatsTab")
+	@GetMapping("/playerStatsTab")
 	public ModelAndView playerStatsTab(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
@@ -223,7 +223,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerStatsTab", modelMap);
 	}
 
-	@RequestMapping("/playerStatsChart")
+	@GetMapping("/playerStatsChart")
 	public ModelAndView playerStatsChart(
 		@RequestParam(name = "playerId") int playerId
 	) {
@@ -238,7 +238,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerStatsChart", modelMap);
 	}
 
-	@RequestMapping("/playerGOATPoints")
+	@GetMapping("/playerGOATPoints")
 	public ModelAndView playerGOATPoints(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season
@@ -254,7 +254,7 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerGOATPoints", modelMap);
 	}
 
-	@RequestMapping("/playerRecords")
+	@GetMapping("/playerRecords")
 	public ModelAndView playerRecords(
 		@RequestParam(name = "playerId") int playerId
 	) {

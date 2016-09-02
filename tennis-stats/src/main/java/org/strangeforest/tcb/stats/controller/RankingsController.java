@@ -12,19 +12,19 @@ public class RankingsController extends PageController {
 
 	@Autowired private PlayerService playerService;
 
-	@RequestMapping("rankingsTable")
+	@GetMapping("rankingsTable")
 	public ModelAndView rankingsTable() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		return new ModelAndView("rankingsTable", modelMap);
 	}
 
-	@RequestMapping({"allTimeEloRatings", "/eloRankingsTable"})
+	@GetMapping({"allTimeEloRatings", "/eloRankingsTable"})
 	public ModelAndView allTimeEloRatings() {
 		return new ModelAndView("allTimeEloRatings", "allTimeElo", true);
 	}
 
-	@RequestMapping("/rankingsChart")
+	@GetMapping("/rankingsChart")
 	public ModelAndView rankingsChart() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());

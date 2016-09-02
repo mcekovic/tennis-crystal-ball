@@ -26,7 +26,7 @@ public class TopPerformersResource {
 	.build();
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("won"), asc("lost"), asc("name")};
 
-	@RequestMapping("/topPerformersTable")
+	@GetMapping("/topPerformersTable")
 	public BootgridTable<TopPerformerRow> topPerformersTable(
 		@RequestParam(name = "category") String category,
 		@RequestParam(name = "season", required = false) Integer season,
@@ -44,7 +44,7 @@ public class TopPerformersResource {
 		return topPerformersService.getTopPerformersTable(category, playerCount, filter, orderBy, pageSize, current);
 	}
 
-	@RequestMapping("/topPerformersMinEntries")
+	@GetMapping("/topPerformersMinEntries")
 	public String topPerformersMinEntries(
 		@RequestParam(name = "category") String category,
 		@RequestParam(name = "season", required = false) Integer season

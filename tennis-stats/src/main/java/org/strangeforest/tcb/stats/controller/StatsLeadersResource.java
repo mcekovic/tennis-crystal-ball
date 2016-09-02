@@ -17,7 +17,7 @@ public class StatsLeadersResource {
 	private static Map<String, String> ORDER_MAP = Collections.singletonMap("value", "value");
 	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("name");
 
-	@RequestMapping("/statsLeadersTable")
+	@GetMapping("/statsLeadersTable")
 	public BootgridTable<StatsLeaderRow> statsLeadersTable(
 		@RequestParam(name = "category") String category,
 		@RequestParam(name = "season", required = false) Integer season,
@@ -38,7 +38,7 @@ public class StatsLeadersResource {
 		return statsLeadersService.getStatsLeadersTable(category, playerCount, filter, orderBy, pageSize, current);
 	}
 
-	@RequestMapping("/statsLeadersMinEntries")
+	@GetMapping("/statsLeadersMinEntries")
 	public String statsLeadersMinEntries(
 		@RequestParam(name = "category") String category,
 		@RequestParam(name = "season", required = false) Integer season,

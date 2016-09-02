@@ -8,12 +8,13 @@ import org.strangeforest.tcb.stats.service.*;
 
 @RestController
 public class RecordsResource {
+
 	@Autowired private RecordsService recordsService;
 
 	private static final int MAX_RECORDS = 1000;
 	private static final int MAX_PLAYERS =  500;
 
-	@RequestMapping("/recordsTable")
+	@GetMapping("/recordsTable")
 	public BootgridTable<RecordRow> recordsTable(
 		@RequestParam(name = "category", required = false) String category,
 		@RequestParam(name = "infamous", required = false, defaultValue = "false") boolean infamous,
@@ -26,7 +27,7 @@ public class RecordsResource {
 		return recordsService.getRecordsTable(filter, pageSize, current);
 	}
 
-	@RequestMapping("/playerRecordsTable")
+	@GetMapping("/playerRecordsTable")
 	public BootgridTable<PlayerRecordRow> playerRecordsTable(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "category", required = false) String category,
@@ -40,7 +41,7 @@ public class RecordsResource {
 		return recordsService.getPlayerRecordsTable(filter, playerId, pageSize, current);
 	}
 
-	@RequestMapping("/recordTable")
+	@GetMapping("/recordTable")
 	public BootgridTable<RecordDetailRow> recordTable(
 		@RequestParam(name = "recordId") String recordId,
 		@RequestParam(name = "active") boolean active,

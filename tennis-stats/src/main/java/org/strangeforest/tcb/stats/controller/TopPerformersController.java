@@ -13,7 +13,7 @@ public class TopPerformersController extends PageController {
 
 	@Autowired private TopPerformersService topPerformersService;
 
-	@RequestMapping("/topPerformers")
+	@GetMapping("/topPerformers")
 	public ModelAndView topPerformers() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());

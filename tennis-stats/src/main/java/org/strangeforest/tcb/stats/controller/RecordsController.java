@@ -9,7 +9,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 @Controller
 public class RecordsController extends PageController {
 
-	@RequestMapping("/records")
+	@GetMapping("/records")
 	public ModelAndView records() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("recordCount", Records.getRecordCount());
@@ -18,7 +18,7 @@ public class RecordsController extends PageController {
 		return new ModelAndView("records", modelMap);
 	}
 
-	@RequestMapping("/record")
+	@GetMapping("/record")
 	public ModelAndView record(
 		@RequestParam(name = "recordId") String recordId,
 		@RequestParam(name = "active", required = false, defaultValue = "false") boolean active

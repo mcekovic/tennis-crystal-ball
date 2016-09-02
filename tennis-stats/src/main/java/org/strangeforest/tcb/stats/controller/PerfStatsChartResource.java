@@ -20,7 +20,7 @@ public class PerfStatsChartResource {
 	@Autowired private PerformanceChartService perfChartService;
 	@Autowired private StatisticsChartService statsChartService;
 
-	@RequestMapping("/playerPerformanceTable")
+	@GetMapping("/playerPerformanceTable")
 	public DataTable playerPerformanceTable(
 		@RequestParam(name = "playerId", required = false) Integer playerId,
 		@RequestParam(name = "players", required = false) String playersCSV,
@@ -41,7 +41,7 @@ public class PerfStatsChartResource {
 		}
 	}
 
-	@RequestMapping("/playerStatisticsTable")
+	@GetMapping("/playerStatisticsTable")
 	public DataTable playerStatisticsTable(
 		@RequestParam(name = "playerId", required = false) Integer playerId,
 		@RequestParam(name = "players", required = false) String playersCSV,

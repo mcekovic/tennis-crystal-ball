@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.web;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.actuate.endpoint.*;
 import org.springframework.boot.actuate.endpoint.mvc.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.*;
@@ -21,7 +20,7 @@ public class VisitorsMvcEndpoint extends AbstractMvcEndpoint {
 		super("/visitorsChart", false);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	@GetMapping(produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView visitorsChart(
 		@RequestParam(name = "stat", defaultValue = "VISITS") VisitorStat stat,
 		@RequestParam(name = "interval", defaultValue = "DAY") VisitorInterval interval

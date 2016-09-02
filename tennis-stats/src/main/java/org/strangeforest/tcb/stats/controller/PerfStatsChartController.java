@@ -19,7 +19,7 @@ public class PerfStatsChartController extends PageController {
 	@Autowired private PlayerService playerService;
 	@Autowired private StatisticsService statisticsService;
 
-	@RequestMapping("/performanceChart")
+	@GetMapping("/performanceChart")
 	public ModelAndView performanceChart() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
@@ -28,7 +28,7 @@ public class PerfStatsChartController extends PageController {
 		return new ModelAndView("performanceChart", modelMap);
 	}
 
-	@RequestMapping("/statsChart")
+	@GetMapping("/statsChart")
 	public ModelAndView statsChart() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());

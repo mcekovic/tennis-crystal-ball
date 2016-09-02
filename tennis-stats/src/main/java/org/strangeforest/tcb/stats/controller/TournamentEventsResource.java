@@ -31,7 +31,7 @@ public class TournamentEventsResource {
 	.build();
 	private static final OrderBy[] DEFAULT_ORDER = new OrderBy[] {desc("date"), asc("level"), asc("name")};
 
-	@RequestMapping("/tournamentEventsTable")
+	@GetMapping("/tournamentEventsTable")
 	public BootgridTable<TournamentEvent> tournamentEventsTable(
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
