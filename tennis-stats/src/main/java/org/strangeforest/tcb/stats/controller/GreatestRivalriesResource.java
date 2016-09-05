@@ -26,7 +26,7 @@ public class GreatestRivalriesResource {
 	.build();
 	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("rivalry_rank");
 
-	@RequestMapping("/greatestRivalriesTable")
+	@GetMapping("/greatestRivalriesTable")
 	public BootgridTable<GreatestRivalry> greatestRivalriesTable(
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
@@ -42,7 +42,7 @@ public class GreatestRivalriesResource {
 		return rivalriesService.getGreatestRivalriesTable(filter, bestRank, orderBy, pageSize, current);
 	}
 
-	@RequestMapping("/greatestRivalriesMinMatches")
+	@GetMapping("/greatestRivalriesMinMatches")
 	public int greatestRivalriesMinMatches(
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,

@@ -15,7 +15,7 @@ public class StatsLeadersController extends PageController {
 
 	@Autowired private StatisticsService statisticsService;
 
-	@RequestMapping("/statsLeaders")
+	@GetMapping("/statsLeaders")
 	public ModelAndView statsLeaders() {
 		List<Integer> seasons = statisticsService.getSeasons();
 

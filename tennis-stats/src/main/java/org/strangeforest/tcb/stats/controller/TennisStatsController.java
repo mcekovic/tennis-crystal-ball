@@ -16,13 +16,13 @@ public class TennisStatsController extends PageController {
 	@Autowired private GOATListService goatListService;
 	@Autowired private RankingsService rankingsService;
 
-	@RequestMapping("/")
+	@GetMapping("/")
 	public ModelAndView index() {
 		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
 		return new ModelAndView("index", "goatTopN", goatTopN);
 	}
 
-	@RequestMapping("/rankingTopN")
+	@GetMapping("/rankingTopN")
 	public ModelAndView rankingTopN(
       @RequestParam(name = "rankType") RankType rankType
 	) {
@@ -34,7 +34,7 @@ public class TennisStatsController extends PageController {
 		return new ModelAndView("rankingTopN", modelMap);
 	}
 
-	@RequestMapping("/goatList")
+	@GetMapping("/goatList")
 	public String goatList() {
 		return "goatList";
 	}
@@ -45,7 +45,7 @@ public class TennisStatsController extends PageController {
 	@Value("${tennis-stats.down-for-maintenance.message:}")
 	private String maintenanceMessage;
 
-	@RequestMapping("/maintenance")
+	@GetMapping("/maintenance")
 	public ModelAndView maintenance() {
 		return downForMaintenance
 			? new ModelAndView("maintenance", "maintenanceMessage", maintenanceMessage)

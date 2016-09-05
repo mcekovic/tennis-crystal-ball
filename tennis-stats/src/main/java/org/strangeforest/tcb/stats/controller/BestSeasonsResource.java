@@ -33,7 +33,7 @@ public class BestSeasonsResource {
 	.build();
 	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("season_rank");
 
-	@RequestMapping("/bestSeasonsTable")
+	@GetMapping("/bestSeasonsTable")
 	public BootgridTable<BestSeasonRow> bestSeasonsTable(
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,

@@ -24,7 +24,7 @@ public class RecordsService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
-	public static final int MAX_PLAYER_COUNT = 100;
+	private static final int MAX_PLAYER_COUNT = 100;
 
 	private static final String RECORDS_TABLE_QUERY = //language=SQL
 		"SELECT r.record_id, p.player_id, p.name, p.country_id, p.active, r.detail\n" +

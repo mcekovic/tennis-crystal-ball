@@ -33,7 +33,7 @@ public class GOATListResource {
 	.build();
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("goat_points"), asc("name")};
 
-	@RequestMapping("/goatListTable")
+	@GetMapping("/goatListTable")
 	public BootgridTable<GOATListRow> goatListTable(
 		@RequestParam(name = "active", required = false) Boolean active,
 		@RequestParam(name = "current") int current,

@@ -13,7 +13,7 @@ public class BigGunsTimelineController extends PageController {
 
 	@Autowired private BigGunsTimelineService timelineService;
 
-	@RequestMapping("/bigGunsTimeline")
+	@GetMapping("/bigGunsTimeline")
 	public ModelAndView bigGunsTimeline() {
 		BigGunsTimeline timeline = timelineService.getBigGunsTimeline();
 		int minGOATPoints = timelineService.getMinGOATPoints();

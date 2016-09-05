@@ -29,7 +29,7 @@ public class PlayerRivalriesResource {
 	.build();
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("matches"), desc("won")};
 
-	@RequestMapping("/playerRivalriesTable")
+	@GetMapping("/playerRivalriesTable")
 	public BootgridTable<PlayerRivalryRow> playerRivalriesTable(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "level", required = false) String level,

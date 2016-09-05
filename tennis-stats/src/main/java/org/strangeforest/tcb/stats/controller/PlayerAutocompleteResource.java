@@ -12,7 +12,7 @@ public class PlayerAutocompleteResource {
 
 	@Autowired private PlayerService playerService;
 
-	@RequestMapping("/autocompletePlayer")
+	@GetMapping("/autocompletePlayer")
 	public List<AutocompleteOption> autocompletePlayer(
 		@RequestParam(name = "term") String term
 	) {

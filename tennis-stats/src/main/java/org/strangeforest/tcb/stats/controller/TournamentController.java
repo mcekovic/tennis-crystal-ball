@@ -19,7 +19,7 @@ public class TournamentController extends PageController {
 
 	private static final int MAX_RECORD_PLAYERS = 10;
 
-	@RequestMapping("/tournament")
+	@GetMapping("/tournament")
 	public ModelAndView tournament(
 		@RequestParam(name = "tournamentId") int tournamentId
 	) {
@@ -31,7 +31,7 @@ public class TournamentController extends PageController {
 		return new ModelAndView("tournament", modelMap);
 	}
 
-	@RequestMapping("/tournamentEvents")
+	@GetMapping("/tournamentEvents")
 	public ModelAndView tournamentEvents() {
 		List<Integer> seasons = dataService.getSeasons();
 		List<TournamentItem> tournaments = tournamentService.getTournaments();
@@ -44,7 +44,7 @@ public class TournamentController extends PageController {
 		return new ModelAndView("tournamentEvents", modelMap);
 	}
 
-	@RequestMapping("/tournamentEvent")
+	@GetMapping("/tournamentEvent")
 	public ModelAndView tournamentEvent(
 		@RequestParam(name = "tournamentEventId") int tournamentEventId
 	) {
@@ -59,7 +59,7 @@ public class TournamentController extends PageController {
 		return new ModelAndView("tournamentEvent", modelMap);
 	}
 
-	@RequestMapping("/tournamentEventStats")
+	@GetMapping("/tournamentEventStats")
 	public ModelAndView tournamentEventStats(
 		@RequestParam(name = "tournamentEventId") int tournamentEventId
 	) {
@@ -69,7 +69,7 @@ public class TournamentController extends PageController {
 		return new ModelAndView("tournamentEventStats", modelMap);
 	}
 
-	@RequestMapping("/tournamentRecords")
+	@GetMapping("/tournamentRecords")
 	public ModelAndView tournamentRecords(
 		@RequestParam(name = "tournamentId") int tournamentId
 	) {
@@ -86,7 +86,7 @@ public class TournamentController extends PageController {
 		return new ModelAndView("tournamentRecords", modelMap);
 	}
 
-	@RequestMapping("/tournamentStats")
+	@GetMapping("/tournamentStats")
 	public ModelAndView tournamentStats(
 		@RequestParam(name = "tournamentId") int tournamentId
 	) {

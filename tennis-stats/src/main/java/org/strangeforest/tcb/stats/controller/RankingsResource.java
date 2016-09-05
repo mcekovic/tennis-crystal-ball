@@ -28,7 +28,7 @@ public class RankingsResource {
 
 	private static final int MAX_PLAYERS = 1000;
 
-	@RequestMapping("/rankingsTableTable")
+	@GetMapping("/rankingsTableTable")
 	public BootgridTable<PlayerRankingsRow> rankingsTable(
 		@RequestParam(name = "rankType") RankType rankType,
 		@RequestParam(name = "season", required = false) Integer season,
@@ -49,7 +49,7 @@ public class RankingsResource {
 		return rankingsService.getRankingsTable(rankType, date, filter, pageSize, current);
 	}
 
-	@RequestMapping("/seasonRankingDates")
+	@GetMapping("/seasonRankingDates")
 	public List<Date> rankingDates(
 		@RequestParam(name = "rankType") RankType rankType,
 		@RequestParam(name = "season") int season
@@ -57,7 +57,7 @@ public class RankingsResource {
 		return rankingsService.getSeasonRankingDates(rankType, season);
 	}
 
-	@RequestMapping("/playerRankingsTable")
+	@GetMapping("/playerRankingsTable")
 	public DataTable playerRankingsTable(
 		@RequestParam(name = "playerId", required = false) Integer playerId,
 		@RequestParam(name = "players", required = false) String playersCSV,

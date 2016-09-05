@@ -16,7 +16,7 @@ public class CacheMvcEndpoint extends AbstractMvcEndpoint {
 		super("/clearCache", false);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+	@GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
 	public String clearCache() {
 		dataService.clearCaches();

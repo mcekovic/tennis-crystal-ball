@@ -11,7 +11,7 @@ public class BestSeasonsController extends PageController {
 
 	@Autowired private BestSeasonsService bestSeasonsService;
 
-	@RequestMapping("/bestSeasons")
+	@GetMapping("/bestSeasons")
 	public ModelAndView bestSeasons() {
 		int minSeasonGOATPoints = bestSeasonsService.getMinSeasonGOATPoints();
 		return new ModelAndView("bestSeasons", "minSeasonGOATPoints", minSeasonGOATPoints);
