@@ -50,4 +50,6 @@ static loadTournaments(SqlPool sqlPool) {
 	matchLoader.load(fetchTournament(2016, 'Olympics', 'O'))
 	matchLoader.load(fetchTournament(2016, 'Los_Cabos', 7480))
 	matchLoader.load(fetchTournament(2016, 'Cincinnati_Masters', 422))
+	matchLoader.load(fetchTournament(2016, 'Winston-Salem', 6242))
+	matchLoader.load(fetchTournament(2016, 'Us_Open', 560))
 }
