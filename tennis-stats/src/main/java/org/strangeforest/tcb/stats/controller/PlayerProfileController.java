@@ -247,6 +247,7 @@ public class PlayerProfileController extends PageController {
 		PlayerGOATPoints goatPoints = goatPointsService.getPlayerGOATPoints(playerId);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("levelResults", levelResults);
 		modelMap.addAttribute("levelResultCount", levelResults.values().stream().mapToInt(List::size).sum());
 		modelMap.addAttribute("goatPoints", goatPoints);

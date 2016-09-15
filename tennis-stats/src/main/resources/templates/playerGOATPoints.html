@@ -1,5 +1,6 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="levelResults" type="java.util.Map<java.lang.String, java.util.List<java.lang.String>>"*/-->
 	<!--/*@thymesVar id="levelResultCount" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="goatPoints" type="org.strangeforest.tcb.stats.model.PlayerGOATPoints"*/-->
@@ -91,7 +92,9 @@
 		</thead>
 		<tbody>
 		<tr th:each="season : ${goatPoints.getPlayerSeasonsPoints()}" th:class="${season.season == highlightSeason ? 'highlight' : _}">
-			<th class="first-column points-" th:attrappend="class=${season.totalPointsRounded}" th:text="${season.season}">2000</th>
+			<th class="first-column points-" th:attrappend="class=${season.totalPointsRounded}">
+				<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season.season}" th:text="${season.season}" title="Show season results">2000</a>
+			</th>
 			<th class="points first-column points-" th:attrappend="class=${season.totalPointsRounded}" th:text="${season.totalPoints}">50</th>
 			<th:block th:each="level : ${levelResults}">
 				<td th:each="result : ${level.value}" class="points" th:attrappend="class=${resultStat.first ? ' first-column' : ''}" th:text="${season.getTournamentItem(level.key, result)}">1</td>
