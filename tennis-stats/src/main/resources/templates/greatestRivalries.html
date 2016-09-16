@@ -40,21 +40,14 @@
 						return playerCountryFormatter(column, row.player1) + " - " + playerCountryFormatter(column, row.player2) + (active ? " <img src='/images/active.png' title='Active' width='12' height='12'/>" : "");
 					},
 					"h2h": function(column, row) {
-						var params = "";
-						var level = $("#level").val();
-						if (level)
-							params += "&level=" + level;
-						var surface = $("#surface").val();
-						if (surface)
-							params += "&surface=" + surface;
-						var round = $("#round").val();
-						if (round)
-							params += "&round=" + round;
-						return "<a href='/playerProfile?playerId=" + row.player1.playerId + "&tab=matches&opponentId=" + row.player2.playerId + params + "' title='Show " + row.player1.name + " - " + row.player2.name + " matches'>" + row.won + "</a>" +
-							" - <a href='/playerProfile?playerId=" + row.player2.playerId + "&tab=matches&opponentId=" + row.player1.playerId + params + "' title='Show " + row.player2.name + " - " + row.player1.name + " matches'>" + row.lost + "</a>";
+						var params = "&outcome=won" + rivalryFilterParams();
+						return "<a href='/playerProfile?playerId=" + row.player1.playerId + "&tab=matches&opponentId=" + row.player2.playerId + params + "' title='Show " + row.player1.name + " def. " + row.player2.name + " matches'>" + row.won + "</a>" +
+							" - <a href='/playerProfile?playerId=" + row.player2.playerId + "&tab=matches&opponentId=" + row.player1.playerId + params + "' title='Show " + row.player2.name + " def. " + row.player1.name + " matches'>" + row.lost + "</a>";
 					},
 					"h2hPct": function(column, row) {
-						return "<span data-won-pct='" + row.wonPctClass + "' class='rivalry-pct'>" + row.wonPctStr + "</span> - <span data-won-pct='" + row.lostPctClass + "' class='rivalry-pct'>" + row.lostPctStr + "</span>";
+						var params = rivalryFilterParams();
+						return "<span data-won-pct='" + row.wonPctClass + "' class='rivalry-pct'>" + "<a href='/playerProfile?playerId=" + row.player1.playerId + "&tab=matches&opponentId=" + row.player2.playerId + params + "' title='Show " + row.player1.name + " - " + row.player2.name + " matches'>" + row.wonPctStr + "</a>" +
+							"</span> - <span data-won-pct='" + row.lostPctClass + "' class='rivalry-pct'>" + "<a href='/playerProfile?playerId=" + row.player2.playerId + "&tab=matches&opponentId=" + row.player1.playerId + params + "' title='Show " + row.player2.name + " - " + row.player1.name + " matches'>" + row.lostPctStr + "</a>" + "</span>";
 					},
 					"lastMatch": function(column, row) {
 						var match = row.lastMatch;
@@ -93,6 +86,19 @@
 		function reloadGreatestRivalries() {
 			filterChanged();
 			$("#greatestRivalriesTable").bootgrid("reload");
+		}
+		function rivalryFilterParams() {
+			var params = "";
+			var level = $("#level").val();
+			if (level)
+				params += "&level=" + level;
+			var surface = $("#surface").val();
+			if (surface)
+				params += "&surface=" + surface;
+			var round = $("#round").val();
+			if (round)
+				params += "&round=" + round;
+			return params;
 		}
 	</script>
 	<style>

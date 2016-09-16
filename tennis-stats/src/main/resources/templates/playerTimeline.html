@@ -1,5 +1,6 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"*/-->
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
@@ -56,6 +57,9 @@
 		th.season {
 			text-align: center;
 		}
+		a.season {
+			color: white;
+		}
 		tr.first-row {
 			border-top: 3px solid lightgray;
 		}
@@ -68,7 +72,9 @@
 		<tr class="bg-primary">
 			<th>Tournament</th>
 			<th>Surface</th>
-			<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+			<th th:each="season : ${timeline.seasons}" class="season">
+				<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
+			</th>
 		</tr>
 		</thead>
 		<th:block th:unless="${timeline.empty}">
@@ -81,7 +87,9 @@
 		<tr class="bg-primary">
 			<th>Tournament</th>
 			<th>Surface</th>
-			<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+			<th th:each="season : ${timeline.seasons}" class="season">
+				<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
+			</th>
 		</tr>
 		</thead>
 		<tbody id="otherTournamentsBody">
@@ -99,7 +107,9 @@
 				</div>
 			</th>
 			<th class="text-center">Career</th>
-			<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+			<th th:each="season : ${timeline.seasons}" class="season">
+				<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
+			</th>
 		</tr>
 		</thead>
 		<tbody id="performanceBody"></tbody>
@@ -113,7 +123,9 @@
 				</div>
 			</th>
 			<th class="text-center">Career</th>
-			<th th:each="season : ${timeline.seasons}" th:text="${season}" class="season">2015</th>
+			<th th:each="season : ${timeline.seasons}" class="season">
+				<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
+			</th>
 		</tr>
 		</thead>
 		<tbody id="statisticsBody"></tbody>

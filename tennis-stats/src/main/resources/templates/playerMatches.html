@@ -11,9 +11,10 @@
 	<!--/*@thymesVar id="level" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="round" type="java.lang.String"*/-->
-	<!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
 	<!--/*@thymesVar id="opponentId" type="java.lang.Integer>"*/-->
 	<!--/*@thymesVar id="opponentName" type="java.lang.String>"*/-->
+	<!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
+	<!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("#matchesTable").bootgrid({
@@ -29,9 +30,9 @@
 					request.surface = $("#matchesSurface").val();
 					request.round = $("#matchesRound").val();
 					request.opponent = $("#matchesOpponent").val();
-					request.outcome = $("#matchesOutcome").val();
 					request.tournamentId = $("#matchesTournament").val();
 					request.tournamentEventId = $("#tournamentEvent").val();
+					request.outcome = $("#matchesOutcome").val();
 					return request;
 				},
 				rowCount: [10, 20, 50, -1],
@@ -168,8 +169,8 @@
 	<div id="matchesOutcomeDiv" class="col-md-2">
 		<select id="matchesOutcome" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outcome">
 			<option value="">All matches</option>
-			<option value="won">Won</option>
-			<option value="lost">Lost</option>
+			<option value="won" th:selected="${outcome == 'won'}">Won</option>
+			<option value="lost" th:selected="${outcome == 'lost'}">Lost</option>
 			<option value="wonRET">Won by retirement</option>
 			<option value="lostRET">Lost by retirement</option>
 			<option value="wonW/O">Won by walkover</option>

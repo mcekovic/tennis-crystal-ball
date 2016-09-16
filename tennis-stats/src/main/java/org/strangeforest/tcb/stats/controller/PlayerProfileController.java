@@ -33,8 +33,9 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "opponentId", required = false) Integer opponentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(name = "opponentId", required = false) Integer opponentId
+		@RequestParam(name = "outcome", required = false) String outcome
 	) {
 		if (playerId == null && name == null)
 			return new ModelAndView("playerProfile");
@@ -52,8 +53,9 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("result", result);
 		modelMap.addAttribute("round", round);
-		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("opponentId", opponentId);
+		modelMap.addAttribute("tournamentEventId", tournamentEventId);
+		modelMap.addAttribute("outcome", outcome);
 		return new ModelAndView("playerProfile", modelMap);
 	}
 
@@ -100,8 +102,9 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "opponentId", required = false) Integer opponentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(name = "opponentId", required = false) Integer opponentId
+		@RequestParam(name = "outcome", required = false) String outcome
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
@@ -120,11 +123,12 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("round", round);
-		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		if (opponentId != null) {
 			modelMap.addAttribute("opponentId", opponentId);
 			modelMap.addAttribute("opponentName", playerService.getPlayerName(opponentId));
 		}
+		modelMap.addAttribute("tournamentEventId", tournamentEventId);
+		modelMap.addAttribute("outcome", outcome);
 		return new ModelAndView("playerMatches", modelMap);
 	}
 
