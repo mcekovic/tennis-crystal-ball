@@ -151,18 +151,16 @@
 					<strong>Head-to-Head Points<sup class="new-feature">&nbsp;New!</sup></strong>
 					<p>Points assigned for exceptional Head-to-Head ratios against fellow players in the same Era</p>
 					<p class="text-nowrap">
-						10 * <i>ln</i>(<br/>
+						20 * <i>ln</i>(<br/>
 						&nbsp;<i>sum</i>(Wh2h * Wh2hWeight * RankFactor)<br/>
 						&nbsp;/<br/>
 						&nbsp;<i>sum</i>(Lh2h * Lh2hWeight * RankFactor)<br/>
 						)<br/>
 						<span style="font-size: smaller">
-							Wh2h = Won: 1, Draw H2H: 0.5, Lost H2H: 0<br/>
-							Wh2hWeight = 1 + H2HWonFactor + H2HMatches/10<br/>
-							H2HWonFactor = H2HMatchesWon / H2HMatches<br/>
-							Lh2h = Won H2H: 0, Draw H2H: 0.5, Lost H2H: 1<br/>
-							Lh2hWeight = 1 + H2HLostFactor + H2HMatches/10<br/>
-							H2HLostFactor = H2HMatchesLost / H2HMatches<br/>
+							Wh2h = Won: 3, Draw H2H: 2, Lost H2H: 1<br/>
+							Wh2hWeight = 1 + H2HMatchesWon / 10<br/>
+							Lh2h = Won H2H: 1, Draw H2H: 2, Lost H2H: 3<br/>
+							Lh2hWeight = 1 + H2HMatchesLost / 10<br/>
 							RankFactor = <i>factor</i>(OpponentRank)<br/>
 							* minimum 3 H2H series matches<br/>
 							** minimum 10 H2H series

@@ -469,8 +469,8 @@ WITH rivalry AS (
 		sum(CASE WHEN r.p_matches = r.o_matches THEN 1 ELSE 0 END) AS h2h_draw,
 		sum(CASE WHEN r.p_matches < r.o_matches THEN 1 ELSE 0 END) AS h2h_lost,
 		count(r.opponent_id) AS h2h_count,
-		sum((1 + sign(r.p_matches - r.o_matches)) * (1 + r.p_matches / (r.p_matches + r.o_matches) + (r.p_matches + r.o_matches) / 10.0) * f.rank_factor) AS h2h_won_factor,
-		sum((1 + sign(r.o_matches - r.p_matches)) * (1 + r.o_matches / (r.p_matches + r.o_matches) + (r.p_matches + r.o_matches) / 10.0) * f.rank_factor) AS h2h_lost_factor
+		sum((2 + sign(r.p_matches - r.o_matches)) * (1 + r.p_matches / 10.0) * f.rank_factor) AS h2h_won_factor,
+		sum((2 + sign(r.o_matches - r.p_matches)) * (1 + r.o_matches / 10.0) * f.rank_factor) AS h2h_lost_factor
 	FROM rivalry r
 	LEFT JOIN player_best_rank br ON br.player_id = r.opponent_id
 	LEFT JOIN h2h_rank_factor f ON br.best_rank BETWEEN f.rank_from AND f.rank_to
@@ -479,7 +479,7 @@ WITH rivalry AS (
 SELECT player_id, h2h_won, h2h_draw, h2h_lost, CASE WHEN h2h_count >= 10 THEN CASE
 	WHEN h2h_lost_factor = 0 THEN 100
 	WHEN h2h_won_factor = 0 THEN 0
-	ELSE greatest(round(10 * ln(h2h_won_factor / h2h_lost_factor))::INTEGER, 0)
+	ELSE greatest(round(20 * ln(h2h_won_factor / h2h_lost_factor))::INTEGER, 0)
 END ELSE 0 END AS goat_points
 FROM h2h;
 
