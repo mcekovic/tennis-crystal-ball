@@ -241,14 +241,14 @@
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
 					<tr>
-						<th title="Performance Category">Perform. Category</th>
+						<th class="text-nowrap" title="Performance Category">Perform. Category</th>
 						<th>Points</th>
 					</tr>
 					</thead>
 					<tbody>
 					<tr th:each="point : ${performanceGOATPoints}">
-						<td th:text="${point.category}">1</td>
-						<td th:text="${point.goatPoints}">8</td>
+						<td class="text-nowrap" th:text="${point.category}">Overall Matches</td>
+						<td th:text="${point.goatPoints}">4</td>
 					</tr>
 					</tbody>
 				</table>
@@ -259,14 +259,14 @@
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
 					<tr>
-						<th>Statistics Category</th>
+						<th class="text-nowrap">Statistics Category</th>
 						<th>Points</th>
 					</tr>
 					</thead>
 					<tbody>
 					<tr th:each="point : ${statisticsGOATPoints}">
-						<td th:text="${point.category}">1</td>
-						<td th:text="${point.goatPoints}">8</td>
+						<td class="text-nowrap" th:text="${point.category}">Ace %</td>
+						<td th:text="${point.goatPoints}">2</td>
 					</tr>
 					</tbody>
 				</table>
