@@ -279,8 +279,11 @@ function finalFormatter(column, row) {
 }
 
 function formatMatchPlayer(player, winner) {
-	return "<a href='/playerProfile?playerId=" + player.id + "' title='Show profile'>" + (winner ? "<strong>" : "") + player.name + (winner ? "</strong>" : "")
-		+ (player.seed ? (" (" + player.seed  + (player.entry ? " " + player.entry : "") + ")") : (player.entry ? " (" + player.entry + ")" : "")) + "</a>";
+	return "<a href='/playerProfile?playerId=" + player.id + "' title='Show profile'>" + (winner ? "<strong>" : "") + player.name + (winner ? "</strong>" : "") + formatSeedEntry(player.seed, player.entry) + "</a>";
+}
+
+function formatSeedEntry(seed, entry) {
+	return (seed ? (" (" + seed + (entry ? " " + entry : "") + ")") : (entry ? " (" + entry + ")" : ""));
 }
 
 // Record Formatter

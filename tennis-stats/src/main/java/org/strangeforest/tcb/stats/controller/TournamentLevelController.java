@@ -18,21 +18,30 @@ public class TournamentLevelController extends PageController {
 
 	@GetMapping("/grandSlamTimeline")
 	public ModelAndView grandSlamTimeline() {
-		return tournamentLevelTimeline(GRAND_SLAM, false);
+		return tournamentLevelTimeline(GRAND_SLAM);
+	}
+
+	@GetMapping("/tourFinalsTimeline")
+	public ModelAndView tourFinalsTimeline() {
+		return tournamentLevelTimeline(TOUR_FINALS);
 	}
 
 	@GetMapping("/mastersTimeline")
 	public ModelAndView mastersTimeline() {
-		return tournamentLevelTimeline(MASTERS, true);
+		return tournamentLevelTimeline(MASTERS);
 	}
 
-	private ModelAndView tournamentLevelTimeline(TournamentLevel level, boolean condensed) {
-		TournamentLevelTimeline timeline = tournamentLevelService.getTournamentLevelTimeline(level.getCode(), condensed);
+	@GetMapping("/olympicsTimeline")
+	public ModelAndView olympicsTimeline() {
+		return tournamentLevelTimeline(OLYMPICS);
+	}
+
+	private ModelAndView tournamentLevelTimeline(TournamentLevel level) {
+		TournamentLevelTimeline timeline = tournamentLevelService.getTournamentLevelTimeline(level.getCode(), level != MASTERS);
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("name", level.getText());
+		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("timeline", timeline);
-		modelMap.addAttribute("condensed", condensed);
 		return new ModelAndView("tournamentLevelTimeline", modelMap);
 	}
 }

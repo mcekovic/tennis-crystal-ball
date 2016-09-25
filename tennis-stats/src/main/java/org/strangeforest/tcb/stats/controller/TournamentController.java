@@ -32,11 +32,16 @@ public class TournamentController extends PageController {
 	}
 
 	@GetMapping("/tournamentEvents")
-	public ModelAndView tournamentEvents() {
+	public ModelAndView tournamentEvents(
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level
+	) {
 		List<Integer> seasons = dataService.getSeasons();
 		List<TournamentItem> tournaments = tournamentService.getTournaments();
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Surface.values());

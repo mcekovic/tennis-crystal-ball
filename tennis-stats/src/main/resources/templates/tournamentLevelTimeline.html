@@ -1,44 +1,64 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="name" type="java.lang.String"*/-->
+<!--/*@thymesVar id="level" type="org.strangeforest.tcb.stats.model.TournamentLevel"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.TournamentLevelTimeline"*/-->
-<!--/*@thymesVar id="condensed" type="java.lang.Boolean"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, _, ~{::style})">
-	<title>[[${name}]] Timeline</title>
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
+	<title>[[${level.text}]] Timeline</title>
+	<script type="text/javascript">
+		$(function() {
+			$("#timelineTable").find("td>span").each(function() {
+				var $event = $(this);
+				var title = $event.data("winner") + formatSeedEntry($event.data("winner-seed"), $event.data("winner-entry")) + " " + ($event.data("outcome") != "ABD" ? "d." : "vs") + " "
+					+ $event.data("runner-up") + formatSeedEntry($event.data("runner-up-seed"), $event.data("runner-up-entry")) + "<br/>" + $event.data("score");
+				$event.tooltip({title: title, html: true, placement: "top"});
+			});
+		});
+	</script>
 	<style th:inline="javascript">
-		[# th:if="${condensed}"]
+		[# th:if="${level.code == 'M'}"]
 		.container {
 			width: 1400px;
+		}
+		[/]
+		[# th:if="${level.code == 'F' || level.code == 'O'}"]
+		.table {
+			width: 50%;
 		}
 		[/]
 		span.wins {
 			font-size: smaller;
 			color: #444;
 		}
+		.tooltip-inner {
+			background-color: #444444;
+			max-width: 400px;
+		}
 	</style>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>[[${name}]] Timeline</h3>
-	<table class="table table-condensed table-hover table-bordered text-nowrap">
+	<h3>[[${level.text}]] Timeline</h3>
+	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<th:block th:each="season : ${timeline.seasons}">
 		<thead th:unless="${timeline.areSameTournaments(season)}">
 			<tr>
-				<th>Tourney</th>
+				<th>Season</th>
 				<th th:each="tournament : ${timeline.getTournaments(season)}">
 					<a th:href="'/tournament?tournamentId=' + ${tournament.id}" th:text="${tournament.name}" title="Show tournament">Wimbledon</a>
 				</th>
 			</tr>
 		</thead>
 		<tr>
-			<th th:text="${season}">2000</th>
-			<td th:each="event : ${timeline.getSeasonEvents(season)}" th:with="winner=${event.winner}">
-				<th:block th:if="${winner}">
-					<img th:src="'/images/flags/' + ${winner.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${winner.countryId}" title="SUI" width="24" height="20"/>
-					<a th:href="'/playerProfile?playerId=' + ${winner.playerId}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
-					<img th:if="${winner.active}" src="/images/active.png" title="Active" width="12" height="12"/>
-					<span class="wins" th:text="'(' + ${event.winnerWins} + '/' + ${timeline.getWins(winner.playerId)} + ')'">(2/5)</span>
-				</th:block>
+			<th>
+				<a th:href="'/tournamentEvents?season=' + ${season} + '&level=' + ${level.code}" th:text="${season}" title="Show season tournaments">2000</a>
+			</th>
+			<td th:each="event : ${timeline.getSeasonEvents(season)}" th:with="player=${event.player}" th:class="${event.surface != null ? 'bg-surface-' + event.surface : _}">
+				<span th:if="${player}" th:attr="data-winner=${event.winner.name}, data-winner-seed=${event.winner.seed}, data-winner-entry=${event.winner.entry}, data-runner-up=${event.runnerUp.name}, data-runner-up-seed=${event.runnerUp.seed}, data-runner-up-entry=${event.runnerUp.entry}, data-score=${event.score}, data-outcome=${event.outcome}">
+					<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
+					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+					<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
+					<span class="wins" th:text="'(' + ${event.playerWins} + '/' + ${timeline.getWins(player.playerId)} + ')'">(2/5)</span>
+				</span>
 			</td>
 		</tr>
 		</th:block>

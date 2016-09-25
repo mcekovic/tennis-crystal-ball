@@ -21,7 +21,7 @@ public class TournamentLevelTimeline {
 
 	public boolean areSameTournaments(int season) {
 		Optional<Integer> nextSeason = getNextSeason(season);
-		return nextSeason.isPresent() && seasonsTournaments.get(season).equals(seasonsTournaments.get(nextSeason.get()));
+		return nextSeason.isPresent() && startsWith(seasonsTournaments.get(nextSeason.get()), seasonsTournaments.get(season));
 	}
 
 	public List<TournamentItem> getTournaments(int season) {
@@ -63,26 +63,30 @@ public class TournamentLevelTimeline {
 	}
 
 	private void updatePlayerWins(TournamentLevelTimelineItem item) {
-		PlayerRow winner = item.getWinner();
-		if (winner == null)
+		PlayerRow player = item.getPlayer();
+		if (player == null)
 			return;
-		int playerId = winner.getPlayerId();
+		int playerId = player.getPlayerId();
 		Integer wins = playerWins.get(playerId);
 		wins = wins != null ? wins + 1 : 1;
-		item.setWinnerWins(wins);
+		item.setPlayerWins(wins);
 		playerWins.put(playerId, wins);
 	}
 
-	public void addMissingLastSeasonTournaments() {
-		int season = getLastSeason();
-		int prevSeason = getPrevSeason(season).get();
-		List<TournamentItem> seasonTournaments = seasonsTournaments.get(season);
-		List<TournamentItem> prevSeasonTournaments = seasonsTournaments.get(prevSeason);
-		if (startsWith(prevSeasonTournaments, seasonTournaments)) {
-			List<TournamentLevelTimelineItem> prevSeasonEvents = seasonsEvents.get(prevSeason);
-			for (int index = seasonTournaments.size(); index < prevSeasonEvents.size(); index++) {
-				TournamentLevelTimelineItem item = prevSeasonEvents.get(index);
-				addItem(new TournamentLevelTimelineItem(item.getTournamentId(), item.getName(), season, 0, null, null));
+	public void addMissingSeasonLastTournaments() {
+		for (int season : getSeasons()) {
+			Optional<Integer> optionalPrevSeason = getPrevSeason(season);
+			if (!optionalPrevSeason.isPresent())
+				continue;
+			int prevSeason = optionalPrevSeason.get();
+			List<TournamentItem> seasonTournaments = seasonsTournaments.get(season);
+			List<TournamentItem> prevSeasonTournaments = seasonsTournaments.get(prevSeason);
+			if (startsWith(prevSeasonTournaments, seasonTournaments)) {
+				List<TournamentLevelTimelineItem> prevSeasonEvents = seasonsEvents.get(prevSeason);
+				for (int index = seasonTournaments.size(); index < prevSeasonEvents.size(); index++) {
+					TournamentLevelTimelineItem item = prevSeasonEvents.get(index);
+					addItem(new TournamentLevelTimelineItem(item.getTournamentId(), item.getName(), season, 0, null, null));
+				}
 			}
 		}
 	}
@@ -99,10 +103,9 @@ public class TournamentLevelTimeline {
 		if (seasons.stream().sorted(naturalOrder()).findFirst().get() == season)
 			return Optional.empty();
 		else {
-			while (true) {
-				int nextSeason = season - 1;
-				if (seasons.contains(nextSeason))
-					return Optional.of(nextSeason);
+			for (int prevSeason = season - 1; true; prevSeason--) {
+				if (seasons.contains(prevSeason))
+					return Optional.of(prevSeason);
 			}
 		}
 	}
@@ -112,15 +115,14 @@ public class TournamentLevelTimeline {
 		if (seasons.stream().findFirst().get() == season)
 			return Optional.empty();
 		else {
-			while (true) {
-				int nextSeason = season + 1;
+			for (int nextSeason = season + 1; true; nextSeason++) {
 				if (seasons.contains(nextSeason))
 					return Optional.of(nextSeason);
 			}
 		}
 	}
 
-	private static boolean startsWith(List<TournamentItem> list, List<TournamentItem> subList) {
-		return subList.size() < list.size() && list.subList(0, subList.size()).equals(subList);
+	private static <T> boolean startsWith(List<T> list, List<T> subList) {
+		return subList.size() <= list.size() && list.subList(0, subList.size()).equals(subList);
 	}
 }

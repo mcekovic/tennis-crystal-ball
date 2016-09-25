@@ -28,12 +28,14 @@
 			<div id="menuNavbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
 					<li th:class="${servletPath == '/goatList' ? 'active' : ''}"><a href="/goatList">GOAT List</a></li>
-					<li th:class="${servletPath == '/bigGunsTimeline' || servletPath == '/grandSlamTimeline' || servletPath == '/mastersTimeline' ? 'active dropdown' : 'dropdown'}">
+					<li th:class="${servletPath != null and servletPath.endsWith('Timeline') ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Timelines<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li th:class="${servletPath == '/bigGunsTimeline' ? 'active' : ''}"><a href="/bigGunsTimeline">Big Guns Timeline</a></li>
 							<li th:class="${servletPath == '/grandSlamTimeline' ? 'active' : ''}"><a href="/grandSlamTimeline">Grand Slam Timeline</a></li>
+							<li th:class="${servletPath == '/tourFinalsTimeline' ? 'active' : ''}"><a href="/tourFinalsTimeline">Tour Finals Timeline</a></li>
 							<li th:class="${servletPath == '/mastersTimeline' ? 'active' : ''}"><a href="/mastersTimeline">Masters Timeline</a></li>
+							<li th:class="${servletPath == '/olympicsTimeline' ? 'active' : ''}"><a href="/olympicsTimeline">Olympics Timeline</a></li>
 						</ul>
 					</li>
 					<li th:class="${servletPath == '/greatestRivalries' || servletPath == '/headsToHeads' ? 'active dropdown' : 'dropdown'}">

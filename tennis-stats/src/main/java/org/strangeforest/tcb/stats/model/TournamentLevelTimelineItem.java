@@ -10,8 +10,12 @@ public class TournamentLevelTimelineItem {
 	private final int tournamentEventId;
 	private final Date date;
 	private final String surface;
-	private PlayerRow winner;
-	private int winnerWins;
+	private PlayerRow player;
+	private int playerWins;
+	private MatchPlayer winner;
+	private MatchPlayer runnerUp;
+	private String score;
+	private String outcome;
 
 	public TournamentLevelTimelineItem(int tournamentId, String name, int season, int tournamentEventId, Date date, String surface) {
 		this.tournamentId = tournamentId;
@@ -46,19 +50,51 @@ public class TournamentLevelTimelineItem {
 		return surface;
 	}
 
-	public PlayerRow getWinner() {
+	public PlayerRow getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(PlayerRow player) {
+		this.player = player;
+	}
+
+	public int getPlayerWins() {
+		return playerWins;
+	}
+
+	public void setPlayerWins(int playerWins) {
+		this.playerWins = playerWins;
+	}
+
+	public MatchPlayer getWinner() {
 		return winner;
 	}
 
-	public void setWinner(PlayerRow winner) {
+	public void setWinner(MatchPlayer winner) {
 		this.winner = winner;
 	}
 
-	public int getWinnerWins() {
-		return winnerWins;
+	public MatchPlayer getRunnerUp() {
+		return runnerUp;
 	}
 
-	public void setWinnerWins(int winnerWins) {
-		this.winnerWins = winnerWins;
+	public void setRunnerUp(MatchPlayer runnerUp) {
+		this.runnerUp = runnerUp;
+	}
+
+	public String getScore() {
+		return score;
+	}
+
+	public void setScore(String score) {
+		this.score = score;
+	}
+
+	public String getOutcome() {
+		return outcome;
+	}
+
+	public void setOutcome(String outcome) {
+		this.outcome = outcome;
 	}
 }
