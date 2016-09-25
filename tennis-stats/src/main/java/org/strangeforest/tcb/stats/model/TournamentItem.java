@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.util.*;
+
 public class TournamentItem {
 
 	private final int id;
@@ -22,5 +24,19 @@ public class TournamentItem {
 
 	public String getLevel() {
 		return level;
+	}
+
+
+	// Object methods
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		TournamentItem tournament = (TournamentItem)o;
+		return id == tournament.id && Objects.equals(name, tournament.name) && Objects.equals(level, tournament.level);
+	}
+
+	@Override public int hashCode() {
+		return Objects.hash(id, name, level);
 	}
 }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="name" type="java.lang.String"*/-->
+<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.TournamentLevelTimeline"*/-->
+<!--/*@thymesVar id="condensed" type="java.lang.Boolean"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, _, ~{::style})">
+	<title>[[${name}]] Timeline</title>
+	<style th:inline="javascript">
+		[# th:if="${condensed}"]
+		.container {
+			width: 1400px;
+		}
+		[/]
+		span.wins {
+			font-size: smaller;
+			color: #444;
+		}
+	</style>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3>[[${name}]] Timeline</h3>
+	<table class="table table-condensed table-hover table-bordered text-nowrap">
+		<th:block th:each="season : ${timeline.seasons}">
+		<thead th:unless="${timeline.areSameTournaments(season)}">
+			<tr>
+				<th>Tourney</th>
+				<th th:each="tournament : ${timeline.getTournaments(season)}">
+					<a th:href="'/tournament?tournamentId=' + ${tournament.id}" th:text="${tournament.name}" title="Show tournament">Wimbledon</a>
+				</th>
+			</tr>
+		</thead>
+		<tr>
+			<th th:text="${season}">2000</th>
+			<td th:each="event : ${timeline.getSeasonEvents(season)}" th:with="winner=${event.winner}">
+				<th:block th:if="${winner}">
+					<img th:src="'/images/flags/' + ${winner.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${winner.countryId}" title="SUI" width="24" height="20"/>
+					<a th:href="'/playerProfile?playerId=' + ${winner.playerId}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+					<img th:if="${winner.active}" src="/images/active.png" title="Active" width="12" height="12"/>
+					<span class="wins" th:text="'(' + ${event.winnerWins} + '/' + ${timeline.getWins(winner.playerId)} + ')'">(2/5)</span>
+				</th:block>
+			</td>
+		</tr>
+		</th:block>
+	</table>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>
