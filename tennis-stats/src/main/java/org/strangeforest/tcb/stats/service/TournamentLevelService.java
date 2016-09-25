@@ -29,7 +29,7 @@ public class TournamentLevelService {
 		"ORDER BY e.season, e.date";
 
 
-	@Cacheable(value = "Global", key = "'TournamentLevelTimeline'")
+	@Cacheable("TournamentLevelTimeline")
 	public TournamentLevelTimeline getTournamentLevelTimeline(String level, boolean fullName) {
 		TournamentLevelTimeline timeline = new TournamentLevelTimeline(level);
 		jdbcTemplate.query(
