@@ -63,10 +63,10 @@ public class TournamentLevelTimeline {
 	}
 
 	private void updatePlayerWins(TournamentLevelTimelineItem item) {
-		PlayerRow player = item.getPlayer();
-		if (player == null)
+		PlayerRow winner = item.getWinner();
+		if (winner == null)
 			return;
-		int playerId = player.getPlayerId();
+		int playerId = winner.getPlayerId();
 		Integer wins = playerWins.get(playerId);
 		wins = wins != null ? wins + 1 : 1;
 		item.setPlayerWins(wins);

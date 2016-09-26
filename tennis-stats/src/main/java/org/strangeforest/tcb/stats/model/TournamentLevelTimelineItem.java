@@ -10,10 +10,9 @@ public class TournamentLevelTimelineItem {
 	private final int tournamentEventId;
 	private final Date date;
 	private final String surface;
-	private PlayerRow player;
+	private TournamentLevelTimelinePlayer winner;
 	private int playerWins;
-	private MatchPlayer winner;
-	private MatchPlayer runnerUp;
+	private TournamentLevelTimelinePlayer runnerUp;
 	private String score;
 	private String outcome;
 
@@ -50,12 +49,12 @@ public class TournamentLevelTimelineItem {
 		return surface;
 	}
 
-	public PlayerRow getPlayer() {
-		return player;
+	public TournamentLevelTimelinePlayer getWinner() {
+		return winner;
 	}
 
-	public void setPlayer(PlayerRow player) {
-		this.player = player;
+	public void setWinner(TournamentLevelTimelinePlayer winner) {
+		this.winner = winner;
 	}
 
 	public int getPlayerWins() {
@@ -66,19 +65,11 @@ public class TournamentLevelTimelineItem {
 		this.playerWins = playerWins;
 	}
 
-	public MatchPlayer getWinner() {
-		return winner;
-	}
-
-	public void setWinner(MatchPlayer winner) {
-		this.winner = winner;
-	}
-
-	public MatchPlayer getRunnerUp() {
+	public TournamentLevelTimelinePlayer getRunnerUp() {
 		return runnerUp;
 	}
 
-	public void setRunnerUp(MatchPlayer runnerUp) {
+	public void setRunnerUp(TournamentLevelTimelinePlayer runnerUp) {
 		this.runnerUp = runnerUp;
 	}
 

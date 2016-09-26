@@ -25,7 +25,7 @@
 			width: 50%;
 		}
 		[/]
-		span.wins {
+		span.small-dimmed {
 			font-size: smaller;
 			color: #444;
 		}
@@ -52,12 +52,22 @@
 			<th>
 				<a th:href="'/tournamentEvents?season=' + ${season} + '&level=' + ${level.code}" th:text="${season}" title="Show season tournaments">2000</a>
 			</th>
-			<td th:each="event : ${timeline.getSeasonEvents(season)}" th:with="player=${event.player}" th:class="${event.surface != null ? 'bg-surface-' + event.surface : _}">
-				<span th:if="${player}" th:attr="data-winner=${event.winner.name}, data-winner-seed=${event.winner.seed}, data-winner-entry=${event.winner.entry}, data-runner-up=${event.runnerUp.name}, data-runner-up-seed=${event.runnerUp.seed}, data-runner-up-entry=${event.runnerUp.entry}, data-score=${event.score}, data-outcome=${event.outcome}">
-					<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
-					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
-					<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
-					<span class="wins" th:text="'(' + ${event.playerWins} + '/' + ${timeline.getWins(player.playerId)} + ')'">(2/5)</span>
+			<td th:each="event : ${timeline.getSeasonEvents(season)}" th:with="winner=${event.winner}, runnerUp=${event.runnerUp}" th:class="${event.surface != null ? 'bg-surface-' + event.surface : _}">
+				<span th:if="${winner}" th:attr="data-winner=${winner.name}, data-winner-seed=${winner.seed}, data-winner-entry=${winner.entry}, data-runner-up=${runnerUp.name}, data-runner-up-seed=${runnerUp.seed}, data-runner-up-entry=${runnerUp.entry}, data-score=${event.score}, data-outcome=${event.outcome}">
+					<th:block th:unless="${event.outcome} == 'ABD'">
+						<img th:src="'/images/flags/' + ${winner.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${winner.countryId}" title="SUI" width="24" height="20"/>
+						<a th:href="'/playerProfile?playerId=' + ${winner.playerId}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+						<img th:if="${winner.active}" src="/images/active.png" title="Active" width="12" height="12"/>
+						<span class="small-dimmed" th:text="'(' + ${event.playerWins} + '/' + ${timeline.getWins(winner.playerId)} + ')'">(2/5)</span>
+					</th:block>
+					<span th:if="${event.outcome} == 'ABD'" class="small-dimmed">
+						<a th:href="'/playerProfile?playerId=' + ${winner.playerId}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+						<img th:if="${winner.active}" src="/images/active.png" title="Active" width="12" height="12"/>
+						vs
+						<a th:href="'/playerProfile?playerId=' + ${runnerUp.playerId}" th:text="${runnerUp.name}" style="vertical-align: middle" title="Show profile">Novak Djokovic</a>
+						<img th:if="${runnerUp.active}" src="/images/active.png" title="Active" width="12" height="12"/>
+						([[${event.outcome}]])
+					</span>
 				</span>
 			</td>
 		</tr>

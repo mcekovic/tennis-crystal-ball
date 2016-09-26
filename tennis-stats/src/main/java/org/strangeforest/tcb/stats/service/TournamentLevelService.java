@@ -1,13 +1,15 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.sql.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
-import static org.strangeforest.tcb.stats.service.MatchesService.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
 @Service
 public class TournamentLevelService {
@@ -15,17 +17,15 @@ public class TournamentLevelService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String TIMELINE_QUERY = //language=SQL
-		"SELECT tournament_id, t.name, r.tournament_event_id, e.season, e.date, e.surface,\n" +
-		"  r.player_id, p.%1$s player_name, p.country_id, p.active, m.score, m.outcome,\n" +
-		"  m.winner_id, p.name winner_name, m.winner_seed, m.winner_entry,\n" +
-		"  m.loser_id runner_up_id, pl.name runner_up_name, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry\n" +
-		"FROM player_tournament_event_result r\n" +
-		"INNER JOIN player_v p USING (player_id)\n" +
-		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"SELECT e.tournament_id, t.name, e.tournament_event_id, e.season, e.date, e.surface,\n" +
+		"  m.winner_id, pw.%1$s winner_name, pw.name winner_full_name, pw.country_id winner_country_id, pw.active winner_active, m.winner_seed, m.winner_entry,\n" +
+		"  m.loser_id runner_up_id, pl.%1$s runner_up_name, pl.name runner_up_full_name, pl.country_id runner_up_country_id, pl.active runner_up_active, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry, m.score, m.outcome\n" +
+		"FROM tournament_event e\n" +
 		"INNER JOIN tournament t USING (tournament_id)\n" +
 		"LEFT JOIN match m ON m.tournament_event_id = e.tournament_event_id AND m.round = 'F'\n" +
-		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id\n" +
-		"WHERE r.result = 'W' AND e.level = :level::tournament_level\n" +
+		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
+		"INNER JOIN player_v pl ON pl.player_id = m.loser_id\n" +
+		"WHERE e.level = :level::tournament_level\n" +
 		"ORDER BY e.season, e.date";
 
 
@@ -44,15 +44,8 @@ public class TournamentLevelService {
 					rs.getDate("date"),
 					rs.getString("surface")
 				);
-				PlayerRow player = new PlayerRow(1,
-					rs.getInt("player_id"),
-					rs.getString("player_name"),
-					rs.getString("country_id"),
-					rs.getBoolean("active")
-				);
-				item.setPlayer(player);
-				item.setWinner(mapMatchPlayer(rs, "winner_"));
-				item.setRunnerUp(mapMatchPlayer(rs, "runner_up_"));
+				item.setWinner(mapPlayer(rs, "winner_", 1));
+				item.setRunnerUp(mapPlayer(rs, "runner_up_", 2));
 				item.setScore(rs.getString("score"));
 				item.setOutcome(rs.getString("outcome"));
 				timeline.addItem(item);
@@ -60,6 +53,19 @@ public class TournamentLevelService {
 		);
 		timeline.addMissingSeasonLastTournaments();
 		return timeline;
+	}
+
+	private TournamentLevelTimelinePlayer mapPlayer(ResultSet rs, String prefix, int rank) throws SQLException {
+		TournamentLevelTimelinePlayer player = new TournamentLevelTimelinePlayer(rank,
+			rs.getInt(prefix + "id"),
+			rs.getString(prefix + "name"),
+			rs.getString(prefix + "country_id"),
+			rs.getBoolean(prefix + "active")
+		);
+		player.setFullName(rs.getString(prefix + "full_name"));
+		player.setSeed(getInteger(rs, prefix + "seed"));
+		player.setEntry(rs.getString(prefix + "entry"));
+		return player;
 	}
 }
 
