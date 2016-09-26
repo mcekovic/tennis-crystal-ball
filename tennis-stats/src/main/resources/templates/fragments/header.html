@@ -1,10 +1,9 @@
 <header xmlns:th="http://www.thymeleaf.org" th:fragment="title">
 	<!--/*@thymesVar id="lastDataUpdate" type="java.util.Date"*/-->
-	<!--/*@thymesVar id="servletPath" type="java.lang.String"*/-->
 	<script type="text/javascript">
 		autocompletePlayer("player");
 	</script>
-	<nav id="navbar" class="navbar navbar-default component">
+	<nav id="navbar" class="navbar navbar-default component" th:with="path=${#httpServletRequest.getServletPath()}">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<div class="navbar-brand text-nowrap" style="float: left">
@@ -27,49 +26,49 @@
 			</div>
 			<div id="menuNavbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
-					<li th:class="${servletPath == '/goatList' ? 'active' : ''}"><a href="/goatList">GOAT List</a></li>
-					<li th:class="${servletPath == '/bigGunsTimeline' || servletPath == '/bigTournamentsTimeline' ? 'active dropdown' : 'dropdown'}">
+					<li th:class="${path == '/goatList' ? 'active' : ''}"><a href="/goatList">GOAT List</a></li>
+					<li th:class="${path == '/bigGunsTimeline' || path == '/tournamentLevelTimeline' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Timelines<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${servletPath == '/bigGunsTimeline' ? 'active' : ''}"><a href="/bigGunsTimeline">Big Guns Timeline</a></li>
-							<li th:class="${servletPath == '/tournamentLevelTimeline' && param.level[0] == 'G' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=G">Grand Slam Timeline</a></li>
-							<li th:class="${servletPath == '/tournamentLevelTimeline' && param.level[0] == 'F' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=F">Tour Finals Timeline</a></li>
-							<li th:class="${servletPath == '/tournamentLevelTimeline' && param.level[0] == 'M' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=M">Masters Timeline</a></li>
-							<li th:class="${servletPath == '/tournamentLevelTimeline' && param.level[0] == 'O' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=O">Olympics Timeline</a></li>
+							<li th:class="${path == '/bigGunsTimeline' ? 'active' : ''}"><a href="/bigGunsTimeline">Big Guns Timeline</a></li>
+							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'G' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=G">Grand Slam Timeline</a></li>
+							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'F' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=F">Tour Finals Timeline</a></li>
+							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'M' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=M">Masters Timeline</a></li>
+							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'O' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=O">Olympics Timeline</a></li>
 						</ul>
 					</li>
-					<li th:class="${servletPath == '/greatestRivalries' || servletPath == '/headsToHeads' ? 'active dropdown' : 'dropdown'}">
+					<li th:class="${path == '/greatestRivalries' || path == '/headsToHeads' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rivalries<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${servletPath == '/greatestRivalries' ? 'active' : ''}"><a href="/greatestRivalries">Greatest Rivalries</a></li>
-							<li th:class="${servletPath == '/headsToHeads' ? 'active' : ''}"><a href="/headsToHeads">Heads-to-Heads</a></li>
+							<li th:class="${path == '/greatestRivalries' ? 'active' : ''}"><a href="/greatestRivalries">Greatest Rivalries</a></li>
+							<li th:class="${path == '/headsToHeads' ? 'active' : ''}"><a href="/headsToHeads">Heads-to-Heads</a></li>
 						</ul>
 					</li>
-					<li th:class="${servletPath == '/rankingsTable' || servletPath == '/rankingsChart' || servletPath == '/allTimeEloRatings' ? 'active dropdown' : 'dropdown'}">
+					<li th:class="${path == '/rankingsTable' || path == '/rankingsChart' || path == '/allTimeEloRatings' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rankings<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${servletPath == '/rankingsTable' ? 'active' : ''}"><a href="/rankingsTable">Rankings Table</a></li>
-							<li th:class="${servletPath == '/rankingsChart' ? 'active' : ''}"><a href="/rankingsChart">Rankings Chart</a></li>
-							<li th:class="${servletPath == '/allTimeEloRatings' ? 'active' : ''}"><a href="/allTimeEloRatings">All-time Highest Elo Ratings</a></li>
+							<li th:class="${path == '/rankingsTable' ? 'active' : ''}"><a href="/rankingsTable">Rankings Table</a></li>
+							<li th:class="${path == '/rankingsChart' ? 'active' : ''}"><a href="/rankingsChart">Rankings Chart</a></li>
+							<li th:class="${path == '/allTimeEloRatings' ? 'active' : ''}"><a href="/allTimeEloRatings">All-time Highest Elo Ratings</a></li>
 						</ul>
 					</li>
-					<li th:class="${servletPath == '/topPerformers' || servletPath == '/performanceChart' ? 'active dropdown' : 'dropdown'}">
+					<li th:class="${path == '/topPerformers' || path == '/performanceChart' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Performance<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${servletPath == '/topPerformers' ? 'active' : ''}"><a href="/topPerformers">Top Performers</a></li>
-							<li th:class="${servletPath == '/performanceChart' ? 'active' : ''}"><a href="/performanceChart">Performance Chart</a></li>
+							<li th:class="${path == '/topPerformers' ? 'active' : ''}"><a href="/topPerformers">Top Performers</a></li>
+							<li th:class="${path == '/performanceChart' ? 'active' : ''}"><a href="/performanceChart">Performance Chart</a></li>
 						</ul>
 					</li>
-					<li th:class="${servletPath == '/statsLeaders' || servletPath == '/statsChart' ? 'active dropdown' : 'dropdown'}">
+					<li th:class="${path == '/statsLeaders' || path == '/statsChart' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Statistics<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${servletPath == '/statsLeaders' ? 'active' : ''}"><a href="/statsLeaders">Statistics Leaders</a></li>
-							<li th:class="${servletPath == '/statsChart' ? 'active' : ''}"><a href="/statsChart">Statistics Chart</a></li>
+							<li th:class="${path == '/statsLeaders' ? 'active' : ''}"><a href="/statsLeaders">Statistics Leaders</a></li>
+							<li th:class="${path == '/statsChart' ? 'active' : ''}"><a href="/statsChart">Statistics Chart</a></li>
 						</ul>
 					</li>
-					<li th:class="${servletPath == '/records' ? 'active' : ''}"><a href="/records">Records<sup class="new-feature">&nbsp;New!</sup></a></li>
-					<li th:class="${servletPath == '/bestSeasons' ? 'active' : ''}"><a href="/bestSeasons">Best Seasons</a></li>
-					<li th:class="${servletPath != null && servletPath.startsWith('/tournament') ? 'active' : ''}"><a href="/tournamentEvents">Tournaments</a></li>
+					<li th:class="${path == '/records' || path == '/record' ? 'active' : ''}"><a href="/records">Records<sup class="new-feature">&nbsp;New!</sup></a></li>
+					<li th:class="${path == '/bestSeasons' ? 'active' : ''}"><a href="/bestSeasons">Best Seasons</a></li>
+					<li th:class="${path == '/tournament' || path == '/tournamentEvents' || path == '/tournamentEvent' ? 'active' : ''}"><a href="/tournamentEvents">Tournaments</a></li>
 				</ul>
 			</div>
 		</div>
