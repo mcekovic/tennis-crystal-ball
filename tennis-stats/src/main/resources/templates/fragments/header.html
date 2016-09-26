@@ -32,10 +32,10 @@
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Timelines<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li th:class="${servletPath == '/bigGunsTimeline' ? 'active' : ''}"><a href="/bigGunsTimeline">Big Guns Timeline</a></li>
-							<li th:class="${servletPath == '/tournamentLevelTimeline?level=G' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=G">Grand Slam Timeline</a></li>
-							<li th:class="${servletPath == '/tournamentLevelTimeline?level=F' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=F">Tour Finals Timeline</a></li>
-							<li th:class="${servletPath == '/tournamentLevelTimeline?level=M' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=M">Masters Timeline</a></li>
-							<li th:class="${servletPath == '/tournamentLevelTimeline?level=O' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=O">Olympics Timeline</a></li>
+							<li th:class="${servletPath == '/tournamentLevelTimeline' && param.level[0] == 'G' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=G">Grand Slam Timeline</a></li>
+							<li th:class="${servletPath == '/tournamentLevelTimeline' && param.level[0] == 'F' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=F">Tour Finals Timeline</a></li>
+							<li th:class="${servletPath == '/tournamentLevelTimeline' && param.level[0] == 'M' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=M">Masters Timeline</a></li>
+							<li th:class="${servletPath == '/tournamentLevelTimeline' && param.level[0] == 'O' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=O">Olympics Timeline</a></li>
 						</ul>
 					</li>
 					<li th:class="${servletPath == '/greatestRivalries' || servletPath == '/headsToHeads' ? 'active dropdown' : 'dropdown'}">
@@ -69,7 +69,7 @@
 					</li>
 					<li th:class="${servletPath == '/records' ? 'active' : ''}"><a href="/records">Records<sup class="new-feature">&nbsp;New!</sup></a></li>
 					<li th:class="${servletPath == '/bestSeasons' ? 'active' : ''}"><a href="/bestSeasons">Best Seasons</a></li>
-					<li th:class="${servletPath != null and servletPath.startsWith('/tournament') ? 'active' : ''}"><a href="/tournamentEvents">Tournaments</a></li>
+					<li th:class="${servletPath != null && servletPath.startsWith('/tournament') ? 'active' : ''}"><a href="/tournamentEvents">Tournaments</a></li>
 				</ul>
 			</div>
 		</div>
