@@ -43,7 +43,9 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
-			$("#statsLeadersTable-header").find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove()).before($("#surfaceDiv").remove()).before($("#activeDiv").remove());
+			var $statsLeadersTableHeader = $("#statsLeadersTable-header");
+			$statsLeadersTableHeader.find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove()).before($("#surfaceDiv").remove()).before($("#activeDiv").remove());
+			setBootgridTitle($statsLeadersTableHeader, $("#statsLeadersTable-title"));
 			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
@@ -77,7 +79,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 class="grid-title">Statistics Leaders</h3>
+	<h3 id="statsLeadersTable-title" class="grid-title">Statistics Leaders</h3>
 	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">
 		<select id="category" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
 			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">

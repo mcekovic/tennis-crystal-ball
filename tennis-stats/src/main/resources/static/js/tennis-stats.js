@@ -161,6 +161,9 @@ function dateRangePicker(fromId, toId) {
 
 // Bootgrid
 
+function setBootgridTitle($gridTableHeader, $gridTableTitle) {
+	$gridTableHeader.find("div.actionBar>*:first-child").before($gridTableTitle.remove());
+}
 function setBootgridTitles($gridTable, titles) {
 	for (var i = 0, count = titles.length; i < count; i++) {
 		var title = titles[i];

@@ -33,12 +33,14 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
+			var $tournamentHistoryTableHeader = $("#tournamentHistoryTable-header");
+			$tournamentHistoryTableHeader.find("div.search").remove();
+			setBootgridTitle($tournamentHistoryTableHeader, $("#tournamentHistoryTable-title"));
 			setBootgridTitles($tournamentHistoryTable, [
 				{id: "playerCount", title: "Players"},
 				{id: "participationPoints", title: "Participation points"},
 				{id: "participationPct", title: "Participation percentage"}
 			]);
-			$("#tournamentHistoryTable-header").find("div.search").remove();
 		});
 	</script>
 </head>
@@ -78,7 +80,7 @@
 	</ul>
 	<div class="tab-content">
 		<div id="events" class="tab-pane fade in active">
-			<h3 class="grid-title" th:text="${tournament.name} + ' Events'">Australian Open Events</h3>
+			<h3 id="tournamentHistoryTable-title" class="grid-title" th:text="${tournament.name} + ' Events'">Australian Open Events</h3>
 			<table id="tournamentHistoryTable" class="table table-condensed table-hover table-striped">
 				<thead>
 				<tr>

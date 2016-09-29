@@ -47,6 +47,7 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
+			setBootgridTitle($("#bestSeasonsTable-header"), $("#bestSeasonsTable-title"));
 			setBootgridTitles($bestSeasonsTable, [
 				{id: "rank", title: "Season rank"},
 				{id: "goatPoints", title: "GOAT points"},
@@ -67,7 +68,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 class="grid-title">Best Seasons</h3>
+	<h3 id="bestSeasonsTable-title" class="grid-title">Best Seasons</h3>
 	<table id="bestSeasonsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>

@@ -67,7 +67,9 @@
 					$span.addClass("bg-won-" + $span.data("won-pct"));
 				});
 			});
-			$("#greatestRivalriesTable-header").find("div.search").before($("#levelDiv").remove()).before($("#surfaceDiv").remove()).before($("#roundDiv").remove()).before($("#bestRankDiv").remove()).remove();
+			var $rivalriesTableHeader = $("#greatestRivalriesTable-header");
+			$rivalriesTableHeader.find("div.search").before($("#levelDiv").remove()).before($("#surfaceDiv").remove()).before($("#roundDiv").remove()).before($("#bestRankDiv").remove()).remove();
+			setBootgridTitle($rivalriesTableHeader, $("#greatestRivalriesTable-title"));
 			$rivalriesTable.find("th[data-column-id='rivalry'] > a > span.text").html("<span title='Player with more GOAT points is on the left side'>Rivalry</span>");
 			filterChanged();
 			$("[data-toggle='tooltip']").tooltip();
@@ -109,7 +111,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 class="grid-title">Greatest Rivalries</h3>
+	<h3 id="greatestRivalriesTable-title" class="grid-title">Greatest Rivalries</h3>
 	<div id="levelDiv" class="btn-group" style="margin-right: 20px">
 		<select id="level" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>

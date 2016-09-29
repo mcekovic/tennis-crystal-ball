@@ -34,6 +34,7 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
+			setBootgridTitle($("#rankingsTable-header"), $("#rankingsTable-title"));
 			$("[data-toggle='tooltip']").tooltip();
 			bindPopovers();
 		});
@@ -41,7 +42,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 class="grid-title">All-Time Highest Elo Ratings</h3>
+	<h3 id="rankingsTable-title" class="grid-title">All-Time Highest Elo Ratings</h3>
 	<table id="rankingsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>

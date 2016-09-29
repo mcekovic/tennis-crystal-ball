@@ -42,7 +42,9 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
-			$("#rankingsTable-header").find("div.search").before($("#rankTypeDiv").remove()).before($("#seasonDiv").remove()).before($("#dateDiv").remove());
+			var $rankingsTableHeader = $("#rankingsTable-header");
+			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove()).before($("#seasonDiv").remove()).before($("#dateDiv").remove());
+			setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
 			rankTypeChanged();
 			$("[data-toggle='tooltip']").tooltip();
 			bindPopovers();
@@ -77,7 +79,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 class="grid-title">Rankings Table</h3>
+	<h3 id="rankingsTable-title" class="grid-title">Rankings Table</h3>
 	<div id="rankTypeDiv" class="btn-group" style="margin-right: 20px">
 		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
 			<option value="POINTS">ATP Ranking</option>

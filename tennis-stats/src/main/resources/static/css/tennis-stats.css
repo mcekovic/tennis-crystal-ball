@@ -19,8 +19,9 @@
 	background: white url("/images/ui-anim_basic_16x16.gif") right center no-repeat;
 }
 .grid-title {
-	position: absolute;
-	margin-top: 5px;
+	display: inline;
+	float: left;
+	margin: 5px 5px 0 -15px
 }
 .new-feature {
 	font-size: x-small;

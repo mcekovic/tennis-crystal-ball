@@ -66,7 +66,9 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
-			$("#goatListTable-header").find("div.search").before($("#activeDiv").remove());
+			var $goatListTableHeader = $("#goatListTable-header");
+			$goatListTableHeader.find("div.search").before($("#activeDiv").remove());
+			setBootgridTitle($goatListTableHeader, $("#goatListTable-title"));
 			setBootgridTitles($goatListTable, [
 				{id: "goatRank", title: "GOAT rank"},
 				{id: "goatPoints", title: "GOAT points"},
@@ -91,7 +93,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 class="grid-title">GOAT List</h3>
+	<h3 id="goatListTable-title" class="grid-title">GOAT List</h3>
 	<div id="activeDiv" class="btn-group" style="margin-right: 20px">
 		<div class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
@@ -99,7 +101,7 @@
 			</label>
 		</div>
 	</div>
-	<table id="goatListTable" class="table table-condensed table-hover table-striped">
+	<table id="goatListTable" class="table table-condensed table-hover table-striped" title="Pera">
 		<thead>
 		<tr>
 			<th data-column-id="goatRank" data-type="numeric" data-sortable="false" data-width="45">Rank</th>

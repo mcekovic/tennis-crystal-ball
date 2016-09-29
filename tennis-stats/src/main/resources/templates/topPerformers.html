@@ -36,7 +36,9 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
-			$("#topPerformersTable-header").find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove()).before($("#activeDiv").remove());
+			var $topPerformersTableHeader = $("#topPerformersTable-header");
+			$topPerformersTableHeader.find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove()).before($("#activeDiv").remove());
+			setBootgridTitle($topPerformersTableHeader, $("#topPerformersTable-title"));
 			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
@@ -67,7 +69,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 class="grid-title">Top Performers</h3>
+	<h3 id="topPerformersTable-title" class="grid-title">Top Performers</h3>
 	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">
 		<select id="category" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
 			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
