@@ -6,10 +6,12 @@ buildscript {
 		classpath "com.github.ben-manes:gradle-versions-plugin:$gradleVersionsVersion"
 		classpath "org.hidetake:gradle-ssh-plugin:$gradleSshVersion"
 		classpath "org.ajoberstar:gradle-git:$gradleGitVersion"
+		classpath "org.standardout:gradle-versioneye-plugin:$gradleVersionEyeVersion"
 	}
 }
 
 apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'org.standardout.versioneye'
 
 allprojects {
 	version = "$projectVersion"
@@ -48,4 +50,9 @@ task wrapper(type: Wrapper) {
 def releaseVersion(version) {
 	def SNAPSHOT_SUFFIX = '-SNAPSHOT'
 	version.endsWith(SNAPSHOT_SUFFIX) ? version.substring(0, version.length() - SNAPSHOT_SUFFIX.length()) : version
+}
+
+versioneye {
+	includeSubProjects = true
+	dependencies = transitive
 }
