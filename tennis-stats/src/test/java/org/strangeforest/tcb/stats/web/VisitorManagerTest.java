@@ -52,8 +52,7 @@ public class VisitorManagerTest extends BaseVisitorManagerTest {
 
 		assertThat(visitor.getHits()).isEqualTo(3);
 
-		verify(repository).save(visitorCaptor.capture());
-		assertThat(visitorCaptor.getValue().getIpAddress()).isEqualTo(ipAddress);
+		verify(repository).save(argThat(v -> v.getIpAddress().equals(ipAddress)));
 		verifyNoMoreInteractions(repository);
 	}
 
