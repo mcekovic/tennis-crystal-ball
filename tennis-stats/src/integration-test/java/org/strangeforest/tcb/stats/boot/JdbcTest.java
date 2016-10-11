@@ -19,13 +19,13 @@ import org.springframework.transaction.annotation.*;
 
 @BootstrapWith(SpringBootTestContextBootstrapper.class)
 @OverrideAutoConfiguration(enabled = false)
-@TypeExcludeFilters(DataJdbcTypeExcludeFilter.class)
+@TypeExcludeFilters(JdbcTypeExcludeFilter.class)
 @Transactional
 @AutoConfigureCache
-@AutoconfigureDataJdbc
+@AutoconfigureJdbc
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ImportAutoConfiguration
-public @interface DataJdbcTest {
+public @interface JdbcTest {
 	boolean useDefaultFilters() default true;
 	ComponentScan.Filter[] includeFilters() default {};
 	ComponentScan.Filter[] excludeFilters() default {};

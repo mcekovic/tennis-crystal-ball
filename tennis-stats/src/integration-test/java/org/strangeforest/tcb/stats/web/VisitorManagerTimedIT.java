@@ -7,6 +7,7 @@ import org.junit.runner.*;
 import org.mockito.runners.*;
 
 import static java.util.Arrays.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.*;
 
@@ -30,7 +31,8 @@ public class VisitorManagerTimedIT extends BaseVisitorManagerTest {
 		Thread.sleep(2000L);
 
 		verify(repository, atLeast(1)).findAll();
-		verify(repository, atLeast(1)).expire(argThat(v -> v.getIpAddress().equals(ipAddress)));
+		verify(repository, atLeast(1)).expire(visitorCaptor.capture());
+		assertThat(visitorCaptor.getValue().getIpAddress()).isEqualTo(ipAddress);
 
 		visitAndVerifyFirstVisit(ipAddress, times(2));
 	}

@@ -8,6 +8,6 @@ import org.springframework.boot.autoconfigure.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ImportAutoConfiguration
-public @interface AutoconfigureDataJdbc {}
+public @interface AutoconfigureJdbc {}
 
 

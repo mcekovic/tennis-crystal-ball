@@ -16,6 +16,7 @@ public abstract class BaseVisitorManagerTest {
 	@InjectMocks protected VisitorManager manager;
 	@Mock protected VisitorRepository repository;
 	@Mock protected GeoIPService geoIPService;
+	@Captor protected ArgumentCaptor<Visitor> visitorCaptor;
 
 	@Before
 	public void setUp() {

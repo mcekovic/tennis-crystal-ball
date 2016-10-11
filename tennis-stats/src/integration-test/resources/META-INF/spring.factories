@@ -1,4 +1,4 @@
-org.strangeforest.tcb.stats.boot.AutoconfigureDataJdbc=\
+org.strangeforest.tcb.stats.boot.AutoconfigureJdbc=\
 org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,\
 org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration,\
 org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration,\

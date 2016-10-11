@@ -9,7 +9,7 @@ import org.strangeforest.tcb.stats.web.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@DataJdbcTest(
+@JdbcTest(
 	includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Service.class),
 	excludeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = VisitorSupport.class)
 )

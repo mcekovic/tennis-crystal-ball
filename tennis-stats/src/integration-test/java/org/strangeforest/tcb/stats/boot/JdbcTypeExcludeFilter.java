@@ -8,12 +8,12 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.*;
 import org.springframework.core.type.classreading.*;
 
-class DataJdbcTypeExcludeFilter extends AnnotationCustomizableTypeExcludeFilter {
+class JdbcTypeExcludeFilter extends AnnotationCustomizableTypeExcludeFilter {
 
-	private final DataJdbcTest annotation;
+	private final JdbcTest annotation;
 
-	DataJdbcTypeExcludeFilter(Class<?> testClass) {
-		annotation = AnnotatedElementUtils.getMergedAnnotation(testClass, DataJdbcTest.class);
+	JdbcTypeExcludeFilter(Class<?> testClass) {
+		annotation = AnnotatedElementUtils.getMergedAnnotation(testClass, JdbcTest.class);
 	}
 
 	@Override protected boolean hasAnnotation() {
