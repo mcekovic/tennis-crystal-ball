@@ -85,7 +85,7 @@ class MatchLoader extends BaseCSVLoader {
 		params.loser_hand = hand record.loser_hand
 
 		def score = record.score.trim()
-		def matchScore = MatchScore.parse(score)
+		def matchScore = MatchScoreParser.parse(score)
 		params.score = string score
 		params.outcome = matchScore?.outcome
 		params.w_sets = matchScore?.w_sets

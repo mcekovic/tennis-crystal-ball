@@ -3,13 +3,11 @@ package org.strangeforest.tcb.dataload
 import org.jsoup.*
 import org.jsoup.select.*
 
-import java.text.SimpleDateFormat
-
 class ATPWorldTourTournamentFetcher {
 
 	private static final int TIMEOUT = 10 * 1000L
 
-	static fetchTournament(int season, String urlId, def extId, String level = null) {
+	static fetchATPTournament(int season, String urlId, def extId, String level = null) {
 		def url = tournamentUrl(season, urlId, extId)
 		println "Fetching URL '$url'"
 		def doc = Jsoup.connect(url).timeout(TIMEOUT).get()
@@ -19,7 +17,7 @@ class ATPWorldTourTournamentFetcher {
 		def dates = doc.select('.tourney-dates').text()
 		println "Dates: $dates"
 		def atpLevel = extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1)
-		println "Level: $level"
+		println "Level: $atpLevel"
 		def surface = doc.select('td.tourney-details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)').text()
 		println "Surface: $surface"
 		def drawSize = doc.select('a.not-in-system:nth-child(1) > span:nth-child(1)').text()
@@ -64,7 +62,7 @@ class ATPWorldTourTournamentFetcher {
 						'surface': mapSurface(surface),
 						'draw_size': drawSize,
 						'round': round,
-						'score': match['2'],
+						'score': score,
 						'best_of': match['3'],
 
 						'winner_name': match['5'],
@@ -111,7 +109,7 @@ class ATPWorldTourTournamentFetcher {
 		matches
 	}
 
-	static tournamentUrl(int season, String urlId, String extId) {
+	static tournamentUrl(int season, String urlId, def extId) {
 		"http://www.atpworldtour.com/en/scores/archive/$urlId/$extId/$season/results"
 	}
 

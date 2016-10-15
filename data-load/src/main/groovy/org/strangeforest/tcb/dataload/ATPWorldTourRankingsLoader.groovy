@@ -8,7 +8,7 @@ class ATPWorldTourRankingsLoader {
 
 	private final Sql sql
 
-	private static final int TIMEOUT = 10 * 1000L
+	private static final int TIMEOUT = 30 * 1000L
 
 	ATPWorldTourRankingsLoader(Sql sql) {
 		this.sql = sql
