@@ -6,7 +6,7 @@ class TennisAbstractTournamentFetcher {
 
 	static fetchTournament(int season, String urlId, def extId, String level = null) {
 		def url = tournamentUrl(season, urlId)
-		println "Fetching URL '$url'"
+		println "Fetching tournament URL '$url'"
 		def manager = new ScriptEngineManager()
 		def engine = manager.getEngineByName("JavaScript")
 		def data = new URL(url).getText()

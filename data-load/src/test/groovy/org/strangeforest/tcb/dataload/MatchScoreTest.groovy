@@ -6,7 +6,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test best-of-3 match score"() {
-		MatchScore score = MatchScore.parse('6-3 0-6 7-5')
+		MatchScore score = MatchScoreParser.parse('6-3 0-6 7-5')
 
 		assert score.outcome == null
 		assert score.w_sets == 2
@@ -21,7 +21,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test best-of-5 match score"() {
-		MatchScore score = MatchScore.parse('2-6 6-1 6-0 5-7 12-10')
+		MatchScore score = MatchScoreParser.parse('2-6 6-1 6-0 5-7 12-10')
 
 		assert score.outcome == null
 		assert score.w_sets == 3
@@ -38,7 +38,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test match score with tie-break"() {
-		MatchScore score = MatchScore.parse('7-6(4) 6-7(0) 7-6(12)')
+		MatchScore score = MatchScoreParser.parse('7-6(4) 6-7(0) 7-6(12)')
 
 		assert score.outcome == null
 		assert score.w_sets == 2
@@ -53,7 +53,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test walk-over"() {
-		MatchScore score = MatchScore.parse('W/O')
+		MatchScore score = MatchScoreParser.parse('W/O')
 
 		assert score.outcome == 'W/O'
 		assert score.w_sets == 0
@@ -65,7 +65,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test walk-over 2"() {
-		MatchScore score = MatchScore.parse('RET')
+		MatchScore score = MatchScoreParser.parse('RET')
 
 		assert score.outcome == 'W/O'
 		assert score.w_sets == 0
@@ -77,7 +77,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test retired"() {
-		MatchScore score = MatchScore.parse('6-4 3-0 RET')
+		MatchScore score = MatchScoreParser.parse('6-4 3-0 RET')
 
 		assert score.outcome == 'RET'
 		assert score.w_sets == 1
@@ -91,7 +91,7 @@ class MatchScoreTest {
 
 	@Test
 	void "Test retired 2"() {
-		MatchScore score = MatchScore.parse('6-6 RET')
+		MatchScore score = MatchScoreParser.parse('6-6 RET')
 
 		assert score.outcome == 'RET'
 		assert score.w_sets == 0

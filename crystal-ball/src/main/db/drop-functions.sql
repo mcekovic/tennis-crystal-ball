@@ -7,6 +7,7 @@ DROP FUNCTION tournament_end(DATE, tournament_level, SMALLINT);
 DROP FUNCTION player_rank(INTEGER, DATE);
 DROP FUNCTION player_rank_points(INTEGER, DATE);
 DROP FUNCTION adjust_atp_rank_points(INTEGER, DATE);
+DROP FUNCTION player_elo_rating(INTEGER, DATE);
 DROP FUNCTION merge_elo_ranking(DATE, INTEGER, INTEGER, INTEGER);
 DROP FUNCTION performance_min_entries(TEXT);
 DROP FUNCTION statistics_min_entries(TEXT);

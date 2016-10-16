@@ -1,32 +1,43 @@
 package org.strangeforest.tcb.dataload
 
+import com.google.common.base.*
+import groovy.json.*
+import groovy.sql.*
 import org.jsoup.*
 import org.jsoup.select.*
 
-class ATPWorldTourTournamentFetcher {
+import java.util.concurrent.atomic.*
 
-	private static final int TIMEOUT = 10 * 1000L
+import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
+import static org.strangeforest.tcb.dataload.XMLMatchLoader.LOAD_SQL
 
-	static fetchATPTournament(int season, String urlId, def extId, String level = null) {
+class ATPWorldTourTournamentLoader {
+
+	private final Sql sql
+
+	private static final int TIMEOUT = 30 * 1000L
+
+	private static def PROGRESS_LINE_WRAP = 100
+
+	ATPWorldTourTournamentLoader(Sql sql) {
+		this.sql = sql
+	}
+
+	def loadTournament(int season, String urlId, def extId, String level = null) {
 		def url = tournamentUrl(season, urlId, extId)
-		println "Fetching URL '$url'"
+		println "Fetching tournament URL '$url'"
+		def stopwatch = Stopwatch.createStarted()
 		def doc = Jsoup.connect(url).timeout(TIMEOUT).get()
-
 		def name = doc.select('span.tourney-title').text() ?: doc.select('td.title-content > a:nth-child(1)').text()
-		println "Name: $name"
 		def dates = doc.select('.tourney-dates').text()
-		println "Dates: $dates"
 		def atpLevel = extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1)
 		level = level ?: mapLevel(atpLevel)
-		println "Level: $level"
 		def surface = doc.select('td.tourney-details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)').text()
-		println "Surface: $surface"
 		def drawSize = doc.select('a.not-in-system:nth-child(1) > span:nth-child(1)').text()
-		println "Draw: $drawSize"
 
 		def matches = []
 		def matchNum = 0
-		def startDate = extractStartDate(dates)
+		def startDate = date extractStartDate(dates)
 
 		Elements rounds = doc.select('#scoresResultsContent div table')
 		rounds.each {
@@ -39,82 +50,120 @@ class ATPWorldTourTournamentFetcher {
 				def roundBody = itBodies.next()
 				def round = mapRound roundHead.select('tr th').text()
 				if (!round) continue
-				println "$round:"
 				roundBody.select('tr').each { match ->
 					def seeds = match.select('td.day-table-seed')
 					def players = match.select('td.day-table-name a')
 					def wSeedEntry = extractSeedEntry seeds.get(0).select('span').text()
 					def wPlayer = players.get(0)
 					def wName = player wPlayer.text()
-					def wId = extract(wPlayer.attr('href'), '/', 4)
+//					def wId = extract(wPlayer.attr('href'), '/', 4)
 					def wIsSeed = allDigits wSeedEntry
 					def lSeedEntry = extractSeedEntry seeds.get(1).select('span').text()
 					def lPlayer = players.get(1)
 					def lName = player lPlayer.text()
-					def lId = extract(lPlayer.attr('href'), '/', 4)
+//					def lId = extract(lPlayer.attr('href'), '/', 4)
 					def lIsSeed = allDigits lSeedEntry
 					def scoreElem = match.select('td.day-table-score a')
 					def score = fitScore scoreElem.html().replace('<sup>', '(').replace('</sup>', ')')
 					def bestOf = MatchScoreParser.parse(score).bestOf
 
-					println "$wSeedEntry $wName [$wId] - $lSeedEntry $lName [$lId]: $score"
+					def params = [:]
+					params.ext_tournament_id = string extId
+					params.season = smallint season
+					params.tournament_date = startDate
+					params.tournament_name = name
+					params.event_name = name
+					params.tournament_level = level
+					params.surface = mapSurface surface
+					params.indoor = false
+					params.draw_size = smallint drawSize
 
-					matches << [
-						'tourney_id': "$season-$extId",
-						'match_num': String.valueOf(++matchNum),
-						'tourney_name': name,
-						'tourney_date': startDate,
-						'tourney_level': level,
-						'surface': surface,
-						'draw_size': drawSize,
-						'round': round,
-						'score': score,
-						'best_of': String.valueOf(bestOf ?: mapBestOf(level)),
+					params.match_num = smallint(++matchNum)
+					params.date = startDate
+					params.round = round
+					params.best_of = smallint bestOf ?: mapBestOf(level)
 
-						'winner_name': wName,
-						'winner_seed': wIsSeed ? wSeedEntry : null,
-						'winner_entry': !wIsSeed ? wSeedEntry : null,
+					params.winner_name = wName
+					params.winner_seed = wIsSeed ? smallint(wSeedEntry) : null
+					params.winner_entry = !wIsSeed ? string(wSeedEntry) : null
 
-						'loser_name': lName,
-						'loser_seed': lIsSeed ? lSeedEntry : null,
-						'loser_entry': !lIsSeed ? lSeedEntry : null,
+					params.loser_name = lName
+					params.loser_seed = lIsSeed ? smallint(lSeedEntry) : null
+					params.loser_entry = !lIsSeed ? string(lSeedEntry) : null
 
-//						'minutes': match['19'],
-//
-//						'w_ace': match['20'],
-//						'w_df': match['21'],
-//						'w_svpt': match['22'],
-//						'w_1stIn': match['23'],
-//						'w_1stWon': match['24'],
-//						'w_2ndWon': match['25'],
-//						'w_SvGms': match['26'],
-//						'w_bpSaved': match['27'],
-//						'w_bpFaced': match['28'],
-//
-//						'l_ace': match['29'],
-//						'l_df': match['30'],
-//						'l_svpt': match['31'],
-//						'l_1stIn': match['32'],
-//						'l_1stWon': match['33'],
-//						'l_2ndWon': match['34'],
-//						'l_SvGms': match['35'],
-//						'l_bpSaved': match['36'],
-//						'l_bpFaced': match['37']
-					]
+					setScoreParams(params, score, sql.connection)
+					params.statsUrl = matchStatsUrl(scoreElem.attr('href'))
+
+					matches << params
 				}
 			}
 		}
-		matches
+
+		AtomicInteger rows = new AtomicInteger()
+		matches.parallelStream().forEach { params ->
+			def statsUrl = params.statsUrl
+			def statsDoc = Jsoup.connect(statsUrl).timeout(TIMEOUT).get()
+			def json = statsDoc.select('#matchStatsData').html()
+			def matchStats = new JsonSlurper().parseText(json)[0]
+			def wStats = matchStats.playerStats
+			def lStats = matchStats.opponentStats
+
+			params.minutes = minutes wStats.Time
+			this.setStatsParams(params, wStats, 'w_')
+			this.setStatsParams(params, lStats, 'l_')
+
+			print '.'
+			if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
+				println()
+		}
+
+		sql.withBatch(LOAD_SQL) { ps ->
+			matches.each { match ->
+				ps.addBatch(match)
+			}
+		}
+		sql.commit()
+		println "$matches.size matches loaded in $stopwatch"
+	}
+
+	def setScoreParams(Map params, score, conn) {
+		def matchScore = MatchScoreParser.parse(score)
+		params.score = string score
+		params.outcome = matchScore.outcome
+		params.w_sets = matchScore?.w_sets
+		params.l_sets = matchScore?.l_sets
+		params.w_games = matchScore?.w_games
+		params.l_games = matchScore?.l_games
+		params.w_set_games = matchScore ? shortArray(conn, matchScore.w_set_games) : null
+		params.l_set_games = matchScore ? shortArray(conn, matchScore.l_set_games) : null
+		params.w_set_tb_pt = matchScore ? shortArray(conn, matchScore.w_set_tb_pt) : null
+		params.l_set_tb_pt = matchScore ? shortArray(conn, matchScore.l_set_tb_pt) : null
+	}
+
+	def setStatsParams(Map params, stats, prefix) {
+		params[prefix + 'ace'] = smallint stats?.Aces
+		params[prefix + 'df'] = smallint stats?.DoubleFaults
+		params[prefix + 'sv_pt'] = smallint stats?.FirstServeDivisor
+		params[prefix + '1st_in'] = smallint stats?.FirstServeDividend
+		params[prefix + '1st_won'] = smallint stats?.FirstServePointsWonDividend
+		params[prefix + '2nd_won'] = smallint stats?.SecondServePointsWonDividend
+		params[prefix + 'sv_gms'] = smallint stats?.ServiceGamesPlayed
+		params[prefix + 'bp_sv'] = smallint stats?.BreakPointsSavedDividend
+		params[prefix + 'bp_fc'] = smallint stats?.BreakPointsSavedDivisor
 	}
 
 	static tournamentUrl(int season, String urlId, def extId) {
 		"http://www.atpworldtour.com/en/scores/archive/$urlId/$extId/$season/results"
 	}
 
+	static matchStatsUrl(String url) {
+		"http://www.atpworldtour.com" + url
+	}
+
 	static extractStartDate(String dates) {
 		int end = dates.indexOf('-')
 		def startDate = end > 0 ? dates.substring(0, end) : dates
-		startDate.trim().replace('.', '')
+		startDate.trim().replace('.', '-')
 	}
 
 	static mapLevel(String level) {
@@ -125,6 +174,16 @@ class ATPWorldTourTournamentFetcher {
 			case '500': return 'A'
 			case '250': return 'B'
 			default: throw new IllegalArgumentException('Unknown tournament level: ' + level)
+		}
+	}
+
+	static mapSurface(String surface) {
+		switch (surface) {
+			case 'Hard': return 'H'
+			case 'Clay': return 'C'
+			case 'Grass': return 'G'
+			case 'Carpet': return 'P'
+			default: return null
 		}
 	}
 
@@ -173,6 +232,10 @@ class ATPWorldTourTournamentFetcher {
 		if (seedEntry.endsWith(')'))
 			seedEntry = seedEntry.substring(0, seedEntry.length() - 1)
 		seedEntry
+	}
+
+	static minutes(String time) {
+		time ? smallint(60 * Integer.parseInt(time.substring(0, 2)) + Integer.parseInt(time.substring(3, 5))) : null
 	}
 
 	static allDigits(String s) {

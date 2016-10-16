@@ -117,7 +117,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- player_rank_points
+-- adjust_atp_rank_points
 
 CREATE OR REPLACE FUNCTION adjust_atp_rank_points(
 	p_points INTEGER,
@@ -125,6 +125,18 @@ CREATE OR REPLACE FUNCTION adjust_atp_rank_points(
 ) RETURNS INTEGER AS $$
 BEGIN
 	RETURN CASE WHEN p_date < DATE '2009-01-01' THEN round(p_points * 1.9)::INTEGER ELSE p_points END;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- player_elo_rating
+
+CREATE OR REPLACE FUNCTION player_elo_rating(
+	p_player_id INTEGER,
+	p_date DATE
+) RETURNS INTEGER AS $$
+BEGIN
+	RETURN (SELECT elo_rating FROM player_elo_ranking WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1);
 END;
 $$ LANGUAGE plpgsql;
 

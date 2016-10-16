@@ -1,7 +1,6 @@
 package org.strangeforest.tcb.dataload
 
-import static org.strangeforest.tcb.dataload.ATPWorldTourTournamentFetcher.*
-import static org.strangeforest.tcb.dataload.TennisAbstractTournamentFetcher.*
+import static ATPWorldTourTournamentLoader.*
 
 loadTournaments(new SqlPool())
 
@@ -59,5 +58,8 @@ static loadTournaments(SqlPool sqlPool) {
 	matchLoader.load(fetchTournament(2016, 'Shenzhen', 6967))
 	matchLoader.load(fetchTournament(2016, 'Beijing', 747))
 	matchLoader.load(fetchTournament(2016, 'Tokyo', 329))
-	matchLoader.load(fetchATPTournament(2016, 'shanghai', 5014))
+	sqlPool.withSql {sql ->
+		def atpWorldTourMatchLoader = new ATPWorldTourTournamentLoader(sql)
+		atpWorldTourMatchLoader.loadTournament(2016, 'shanghai', 5014)
+	}
 }

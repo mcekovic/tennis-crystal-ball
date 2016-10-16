@@ -100,7 +100,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 	static Map scoreParams(match, conn) {
 		def params = [:]
 		def score = string match.@score
-		def matchScore = MatchScore.parse(score)
+		def matchScore = MatchScoreParser.parse(score)
 		params.score = string score
 		def outcome = string(match.@outcome)
 		params.outcome = outcome ?: matchScore.outcome

@@ -1,8 +1,8 @@
 package org.strangeforest.tcb.dataload
 
-import org.jsoup.*
-
+import com.google.common.base.*
 import groovy.sql.*
+import org.jsoup.*
 
 class ATPWorldTourRankingsLoader {
 
@@ -17,7 +17,8 @@ class ATPWorldTourRankingsLoader {
 	def load(String rankDate, int playerCount) {
 		def parsedDate = date rankDate
 		def url = rankingsUrl(rankDate, playerCount)
-		println "Fetching URL '$url'"
+		println "Fetching rankings URL '$url'"
+		def stopwatch = Stopwatch.createStarted()
 		def doc = Jsoup.connect(url).timeout(TIMEOUT).get()
 		def paramsBatch = []
 		doc.select("tbody tr").each {
@@ -31,7 +32,7 @@ class ATPWorldTourRankingsLoader {
 				ps.addBatch(params)
 			}
 		}
-		println "$rankDate: $paramsBatch.size rankings loaded"
+		println "$rankDate: $paramsBatch.size rankings loaded in $stopwatch"
 	}
 
 	static player(String name) {
