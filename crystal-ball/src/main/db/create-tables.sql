@@ -95,6 +95,14 @@ CREATE TABLE player_mapping (
 CREATE INDEX ON player_mapping (player_id);
 
 
+-- player_alias
+
+CREATE TABLE player_alias (
+	alias TEXT PRIMARY KEY,
+	name TEXT
+);
+
+
 -- player_ranking
 
 CREATE TABLE player_ranking (

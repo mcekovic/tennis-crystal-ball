@@ -32,5 +32,6 @@ DROP TABLE tournament CASCADE;
 
 DROP TABLE player_elo_ranking CASCADE;
 DROP TABLE player_ranking CASCADE;
+DROP TABLE player_alias CASCADE;
 DROP TABLE player_mapping CASCADE;
 DROP TABLE player CASCADE;

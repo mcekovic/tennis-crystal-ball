@@ -367,5 +367,20 @@ VALUES
 ('setsWonPct', 1, 2),
 ('setsWonPct', 2, 1);
 
+DELETE FROM player_alias;
+INSERT INTO player_alias
+(alias, name)
+VALUES
+('Albert Ramos Vinolas', 'Albert Ramos'),
+('Diego Schwartzman', 'Diego Sebastian Schwartzman'),
+('Duckhee Lee', 'Duck Hee Lee'),
+('Frances Tiafoe', 'Francis Tiafoe'),
+('Franko Skugor', 'Franco Skugor'),
+('Inigo Cervantes', 'Inigo Cervantes Huegun'),
+('Sam Groth', 'Samuel Groth'),
+('Stan Wawrinka', 'Stanislas Wawrinka'),
+('Taylor Fritz', 'Taylor Harry Fritz'),
+('Victor Estrella Burgos', 'Victor Estrella');
+
 COMMIT;
 

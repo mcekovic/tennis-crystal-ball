@@ -20,17 +20,33 @@ CREATE OR REPLACE FUNCTION find_player(
 ) RETURNS INTEGER AS $$
 DECLARE
 	l_player_id INTEGER;
+	l_name TEXT;
 BEGIN
 	SELECT player_id INTO l_player_id FROM player
 	WHERE first_name || ' ' || last_name = p_name;
-	IF l_player_id IS NULL THEN
-		SELECT player_id INTO l_player_id FROM player
-		WHERE lower(first_name) || ' ' || lower(last_name) = lower(p_name);
-		IF l_player_id IS NULL THEN
-			RAISE EXCEPTION 'Player % not found', p_name;
-		END IF;
+	IF l_player_id IS NOT NULL THEN
+		RETURN l_player_id;
 	END IF;
-	RETURN l_player_id;
+
+	SELECT player_id INTO l_player_id FROM player
+	WHERE lower(first_name) || ' ' || lower(last_name) = lower(p_name);
+	IF l_player_id IS NOT NULL THEN
+		RETURN l_player_id;
+	END IF;
+
+	SELECT name INTO l_name FROM player_alias
+	WHERE alias = p_name;
+	IF l_name IS NOT NULL THEN
+		RETURN find_player(l_name);
+	END IF;
+
+	SELECT name INTO l_name FROM player_alias
+	WHERE lower(alias) = lower(p_name);
+	IF l_name IS NOT NULL THEN
+		RETURN find_player(l_name);
+	END IF;
+
+	RAISE EXCEPTION 'Player % not found', p_name;
 END;
 $$ LANGUAGE plpgsql;
 

@@ -23,6 +23,10 @@ class MatchScore {
 		setScores.collect({setScore -> setScore.l_tb_pt});
 	}
 
+	Short getBestOf() {
+		outcome == null ? w_sets : null
+	}
+
 	boolean equals(Object o) {
 		if (!(o instanceof MatchScore)) false
 		MatchScore score = (MatchScore)o

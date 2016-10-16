@@ -21,7 +21,7 @@ class ATPWorldTourRankingsLoader {
 		def doc = Jsoup.connect(url).timeout(TIMEOUT).get()
 		def paramsBatch = []
 		doc.select("tbody tr").each {
-			def player = player it.select('td.player-cell').text().replace('-', ' ')
+			def player = player it.select('td.player-cell').text()
 			def rank = integer it.select('td.rank-cell').text()
 			def points = integer it.select('td.points-cell').text().replace(',', '')
 			paramsBatch << [rank_date: parsedDate, player_name: player, rank: rank, rank_points: points]
@@ -35,19 +35,7 @@ class ATPWorldTourRankingsLoader {
 	}
 
 	static player(String name) {
-		switch (name) {
-			case 'Albert Ramos Vinolas': return 'Albert Ramos'
-			case 'Diego Schwartzman': return 'Diego Sebastian Schwartzman'
-			case 'Duckhee Lee': return 'Duck Hee Lee'
-			case 'Frances Tiafoe': return 'Francis Tiafoe'
-			case 'Franko Skugor': return 'Franco Skugor'
-			case 'Inigo Cervantes': return 'Inigo Cervantes Huegun'
-			case 'Sam Groth': return 'Samuel Groth'
-			case 'Stan Wawrinka': return 'Stanislas Wawrinka'
-			case 'Taylor Fritz': return 'Taylor Harry Fritz'
-			case 'Victor Estrella Burgos': return 'Victor Estrella'
-			default: return name;
-		}
+		name.replace('-', ' ')
 	}
 
 	static rankingsUrl(String date, int topN) {

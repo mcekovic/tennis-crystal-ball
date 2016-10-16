@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import static java.lang.Integer.*
+
 class MatchScoreParser {
 
 	static MatchScore parse(String match) {
