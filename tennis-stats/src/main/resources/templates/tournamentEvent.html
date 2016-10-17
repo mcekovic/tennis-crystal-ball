@@ -86,7 +86,7 @@
 				</tr>
 				<tr>
 					<th>Surface</th>
-					<td th:text="${(tournamentEvent.indoor ? 'Indoor ' : '') + surfaces[tournamentEvent.surface]}">Hard</td>
+					<td th:text="${(tournamentEvent.indoor ? 'Indoor ' : '') + (tournamentEvent.surface != null ? surfaces[tournamentEvent.surface] : '')}">Hard</td>
 				</tr>
 				<tr>
 					<th>Date</th>
