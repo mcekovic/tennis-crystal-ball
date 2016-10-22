@@ -148,20 +148,28 @@ CREATE OR REPLACE FUNCTION merge_elo_ranking(
 	p_player_id INTEGER,
 	p_rank INTEGER,
 	p_elo_rating INTEGER,
+	p_hard_rank INTEGER,
 	p_hard_elo_rating INTEGER,
+	p_clay_rank INTEGER,
 	p_clay_elo_rating INTEGER,
+	p_grass_rank INTEGER,
 	p_grass_elo_rating INTEGER,
+	p_carpet_rank INTEGER,
 	p_carpet_elo_rating INTEGER
 ) RETURNS VOID AS $$
 BEGIN
 	BEGIN
 		INSERT INTO player_elo_ranking
-		(rank_date, player_id, rank, elo_rating, hard_elo_rating, clay_elo_rating, grass_elo_rating, carpet_elo_rating)
+		(rank_date, player_id, rank, elo_rating, hard_rank, hard_elo_rating, clay_rank, clay_elo_rating, grass_rank, grass_elo_rating, carpet_rank, carpet_elo_rating)
 		VALUES
-		(p_rank_date, p_player_id, p_rank, p_elo_rating, p_hard_elo_rating, p_clay_elo_rating, p_grass_elo_rating, p_carpet_elo_rating);
+		(p_rank_date, p_player_id, p_rank, p_elo_rating, p_hard_rank, p_hard_elo_rating, p_clay_rank, p_clay_elo_rating, p_grass_rank, p_grass_elo_rating, p_carpet_rank, p_carpet_elo_rating);
 	EXCEPTION WHEN unique_violation THEN
 		UPDATE player_elo_ranking
-		SET rank = p_rank, elo_rating = p_elo_rating, hard_elo_rating = p_hard_elo_rating, clay_elo_rating = p_clay_elo_rating, grass_elo_rating = p_grass_elo_rating, carpet_elo_rating = p_carpet_elo_rating
+		SET rank = p_rank, elo_rating = p_elo_rating,
+			hard_rank = p_hard_rank, hard_elo_rating = p_hard_elo_rating,
+			clay_rank = p_clay_rank, clay_elo_rating = p_clay_elo_rating,
+			grass_rank = p_grass_rank, grass_elo_rating = p_grass_elo_rating,
+			carpet_rank = p_carpet_rank, carpet_elo_rating = p_carpet_elo_rating
 		WHERE rank_date = p_rank_date AND player_id = p_player_id;
 	END;
 END;

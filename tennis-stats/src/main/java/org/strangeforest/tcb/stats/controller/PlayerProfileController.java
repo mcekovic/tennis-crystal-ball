@@ -164,6 +164,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("highlights", rankingsService.getRankingHighlights(playerId));
 		modelMap.addAttribute("seasons", dataService.getSeasons());
+		modelMap.addAttribute("rankTypes", RankType.values());
 		return new ModelAndView("playerRankings", modelMap);
 	}
 

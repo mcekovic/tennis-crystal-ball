@@ -123,7 +123,9 @@ public class RankingChartService {
 			rs -> {
 				Object x;
 				int playerId = rs.getInt("player_id");
-				int y = rs.getInt("rank_value");
+				int y =  rs.getInt("rank_value");
+				if (rs.wasNull())
+					return;
 				if (bySeason) {
 					Integer season = rs.getInt("season");
 					if (compensate)
@@ -151,7 +153,7 @@ public class RankingChartService {
 		else
 			table.addColumn("date", "Date");
 		for (String player : players.getPlayers())
-			table.addColumn("number", player + " " + getRankName(rankType));
+			table.addColumn("number", player + " " + rankType.text);
 	}
 
 	private String getSQL(RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge) {
@@ -188,10 +190,18 @@ public class RankingChartService {
 
 	private String rankColumn(RankType rankType) {
 		switch (rankType) {
-			case RANK:
-			case ELO_RANK: return "r.rank";
+			case RANK: return "r.rank";
 			case POINTS: return "r.rank_points";
+			case ELO_RANK: return "r.rank";
 			case ELO_RATING: return "r.elo_rating";
+			case HARD_ELO_RANK: return "r.hard_rank";
+			case HARD_ELO_RATING: return "r.hard_elo_rating";
+			case CLAY_ELO_RANK: return "r.clay_rank";
+			case CLAY_ELO_RATING: return "r.clay_elo_rating";
+			case GRASS_ELO_RANK: return "r.grass_rank";
+			case GRASS_ELO_RATING: return "r.grass_elo_rating";
+			case CARPET_ELO_RANK: return "r.carpet_rank";
+			case CARPET_ELO_RATING: return "r.carpet_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -207,22 +217,18 @@ public class RankingChartService {
 	}
 
 	private String rankingTable(RankType rankType) {
-		switch (rankType) {
-			case RANK:
-			case POINTS: return "player_ranking";
-			case ELO_RANK:
-			case ELO_RATING: return "player_elo_ranking";
-			default: throw unknownEnum(rankType);
+		switch (rankType.category) {
+			case ATP: return "player_ranking";
+			case ELO: return "player_elo_ranking";
+			default: throw unknownEnum(rankType.category);
 		}
 	}
 
 	private String rankingTableBySeason(RankType rankType) {
-		switch (rankType) {
-			case RANK:
-			case POINTS: return "player_year_end_rank";
-			case ELO_RANK:
-			case ELO_RATING: return "player_year_end_elo_rank";
-			default: throw unknownEnum(rankType);
+		switch (rankType.category) {
+			case ATP: return "player_year_end_rank";
+			case ELO: return "player_year_end_elo_rank";
+			default: throw unknownEnum(rankType.category);
 		}
 	}
 
@@ -241,17 +247,6 @@ public class RankingChartService {
 
 	private int compensateRankingPoints(Integer season, int rank) {
 		return season < START_SEASON_OF_NEW_RANKING_SYSTEM ? (int)(rank * RANKING_POINTS_COMPENSATION_FACTOR) : rank;
-	}
-
-	private static String getRankName(RankType rankType) {
-		switch (rankType) {
-			case RANK: return "ATP Ranking";
-			case POINTS: return "ATP Points";
-			case ELO_RANK: return "Elo Ranking";
-			case ELO_RATING: return "Elo Rating";
-			case GOAT_POINTS: return "GOAT Points";
-			default: throw unknownEnum(rankType);
-		}
 	}
 
 	private static final double MONTH_FACTOR = 1.0 / 12.0;

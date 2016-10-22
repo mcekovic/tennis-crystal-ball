@@ -3,6 +3,7 @@
 <!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="highlights" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.RankType[]"*/-->
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 	$(document.body).append("<script type='text/javascript' src='https://www.google.com/jsapi?callback=loadGoogleChartsForRanking'>&lt;/script>");
@@ -16,7 +17,7 @@
 		var rankType = $("#rankType").val();
 		var timeSpan = $("#rankingTimeSpan").val();
 		bySeason = $("#rankingBySeason").prop("checked");
-		isRank = rankType == "RANK" || rankType == "ELO_RANK";
+		isRank = rankType.endsWith("RANK");
 		var dataUrl = "/playerRankingsTable?playerId=[[${playerId}]]&rankType=" + rankType + "&timeSpan=" + timeSpan;
 		if (timeSpan != "1")
 			dataUrl += "&bySeason=" + bySeason;
@@ -142,11 +143,7 @@
 		<div class="input-group">
 			<label for="rankType" class="input-group-addon">Rank type:</label>
 			<select id="rankType" class="form-control" onchange="onRankTypeChange()">
-				<option value="RANK">ATP Ranking</option>
-				<option value="POINTS">ATP Points</option>
-				<option value="ELO_RANK">Elo Ranking</option>
-				<option value="ELO_RATING">Elo Rating</option>
-				<option value="GOAT_POINTS">GOAT points</option>
+				<option th:each="rankType : ${rankTypes}" th:value="${rankType}" th:class="${rankType.surface == null ? _ : 'bg-surface-' + rankType.surface.code}" value="RANK" th:text="${rankType.text}">ATP Ranking</option>
 			</select>
 		</div>
 	</div>
@@ -178,7 +175,7 @@
 </div>
 <div id="rankChart"></div>
 <div class="row">
-	<div class="col-md-4">
+	<div class="col-md-5">
 		<h4>Ranking Highlights</h4>
 		<table class="table table-condensed text-nowrap">
 			<tr th:if="${highlights.currentRank > 0}">
@@ -209,14 +206,6 @@
 				<th>Most Frequent Year-End Rank</th>
 				<td th:text="${mostFrequentRank.rank} + ' (' + ${mostFrequentRank.duration} + ' year' + ${mostFrequentRank.duration > 1 ? 's' : ''} + ')'">10 (3 years)</td>
 			</tr>
-			<tr th:if="${highlights.bestEloRank > 0}">
-				<th>Best Elo Rank</th>
-				<td th:text="${highlights.bestEloRank} + ' (' + ${#dates.format(highlights.bestEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
-			</tr>
-			<tr th:if="${highlights.bestEloRating > 0}">
-				<th>Highest Elo Rating</th>
-				<td th:text="${highlights.bestEloRating} + ' (' + ${#dates.format(highlights.bestEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
-			</tr>
 			<tr th:if="${highlights.goatPoints > 0}">
 				<th>GOAT Rank</th>
 				<td>
@@ -226,66 +215,93 @@
 			</tr>
 		</table>
 	</div>
+	<div class="col-md-4">
+		<h4>Elo Ranking</h4>
+		<table class="table table-condensed text-nowrap">
+			<tr th:if="${highlights.bestEloRank > 0}">
+				<th>Best Elo Rank</th>
+				<td th:text="${highlights.bestEloRank} + ' (' + ${#dates.format(highlights.bestEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
+			</tr>
+			<tr th:if="${highlights.bestEloRating > 0}">
+				<th>Highest Elo Rating</th>
+				<td th:text="${highlights.bestEloRating} + ' (' + ${#dates.format(highlights.bestEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
+			</tr>
+			<tr th:if="${highlights.bestHardEloRank > 0}">
+				<th>Best Hard Elo Rank</th>
+				<td th:text="${highlights.bestHardEloRank} + ' (' + ${highlights.bestHardEloRating} + ')'">5 (2210)</td>
+			</tr>
+			<tr th:if="${highlights.bestClayEloRank > 0}">
+				<th>Best Clay Elo Rank</th>
+				<td th:text="${highlights.bestClayEloRank} + ' (' + ${highlights.bestClayEloRating} + ')'">5 (2210)</td>
+			</tr>
+			<tr th:if="${highlights.bestGrassEloRank > 0}">
+				<th>Best Grass Elo Rank</th>
+				<td th:text="${highlights.bestGrassEloRank} + ' (' + ${highlights.bestGrassEloRating} + ')'">5 (2210)</td>
+			</tr>
+			<tr th:if="${highlights.bestCarpetEloRank > 0}">
+				<th>Best Carpet Elo Rank</th>
+				<td th:text="${highlights.bestCarpetEloRank} + ' (' + ${highlights.bestCarpetEloRating} + ')'">5 (2210)</td>
+			</tr>
+		</table>
+	</div>
 	<th:block th:if="${highlights.weeksInTop100 > 0}">
-	<div class="col-md-1">&nbsp;</div>
-	<div class="col-md-3">
+	<div class="col-md-2">
 		<h4>Weeks</h4>
 		<table class="table table-condensed text-nowrap">
 			<tr th:if="${highlights.weeksAtNo1 > 0}">
 				<th>At No. 1</th>
-				<td th:text="${highlights.weeksAtNo1}">50</td>
+				<td th:text="${highlights.weeksAtNo1}" align="right">50</td>
 			</tr>
 			<tr th:if="${highlights.weeksInTop5 > 0}">
 				<th>In Top 5</th>
-				<td th:text="${highlights.weeksInTop5}">100</td>
+				<td th:text="${highlights.weeksInTop5}" align="right">100</td>
 			</tr>
 			<tr th:if="${highlights.weeksInTop10 > 0}">
 				<th>In Top 10</th>
-				<td th:text="${highlights.weeksInTop10}">200</td>
+				<td th:text="${highlights.weeksInTop10}" align="right">200</td>
 			</tr>
 			<tr th:if="${highlights.weeksInTop20 > 0}">
 				<th>In Top 20</th>
-				<td th:text="${highlights.weeksInTop20}">300</td>
+				<td th:text="${highlights.weeksInTop20}" align="right">300</td>
 			</tr>
 			<tr th:if="${highlights.weeksInTop50 > 0}">
 				<th>In Top 50</th>
-				<td th:text="${highlights.weeksInTop50}">400</td>
+				<td th:text="${highlights.weeksInTop50}" align="right">400</td>
 			</tr>
 			<tr th:if="${highlights.weeksInTop100 > 0}">
 				<th>In Top 100</th>
-				<td th:text="${highlights.weeksInTop100}">500</td>
+				<td th:text="${highlights.weeksInTop100}" align="right">500</td>
 			</tr>
 		</table>
 	</div>
 	</th:block>
 	<th:block th:if="${highlights.yearEndsInTop100 > 0}">
-	<div class="col-md-1">&nbsp;</div>
-	<div class="col-md-3">
+	<div class="col-md-1">
 		<h4>Year-Ends</h4>
 		<table class="table table-condensed text-nowrap">
 			<tr th:if="${highlights.yearEndsAtNo1 > 0}">
 				<th>At No. 1</th>
-				<td th:text="${highlights.yearEndsAtNo1}">50</td>
+				<td th:text="${highlights.yearEndsAtNo1}" align="right">1</td>
 			</tr>
 			<tr th:if="${highlights.yearEndsInTop5 > 0}">
 				<th>In Top 5</th>
-				<td th:text="${highlights.yearEndsInTop5}">100</td>
+				<td th:text="${highlights.yearEndsInTop5}" align="right">1</td>
 			</tr>
 			<tr th:if="${highlights.yearEndsInTop10 > 0}">
 				<th>In Top 10</th>
-				<td th:text="${highlights.yearEndsInTop10}">200</td>
+				<td th:text="${highlights.yearEndsInTop10}" align="right">2</td>
 			</tr>
 			<tr th:if="${highlights.yearEndsInTop20 > 0}">
 				<th>In Top 20</th>
-				<td th:text="${highlights.yearEndsInTop20}">300</td>
+				<td th:text="${highlights.yearEndsInTop20}" align="right">3</td>
 			</tr>
 			<tr th:if="${highlights.yearEndsInTop50 > 0}">
 				<th>In Top 50</th>
-				<td th:text="${highlights.yearEndsInTop50}">400</td>
+				<td th:text="${highlights.yearEndsInTop50}" align="right">4</td>
 			</tr>
 			<tr th:if="${highlights.yearEndsInTop100 > 0}">
 				<th>In Top 100</th>
-				<td th:text="${highlights.yearEndsInTop100}">500</td>
+				<td th:text="${highlights.yearEndsInTop100}" align="right">5</td>
 			</tr>
 		</table>
 	</div>

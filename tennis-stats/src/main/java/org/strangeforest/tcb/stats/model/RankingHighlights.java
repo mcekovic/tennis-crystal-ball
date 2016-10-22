@@ -20,12 +20,20 @@ public class RankingHighlights {
 	private String bestYearEndRankSeasons;
 	private int bestYearEndRankPoints;
 	private String bestYearEndRankPointsSeasons;
+	private int goatRank;
+	private int goatPoints;
 	private int bestEloRank;
 	private Date bestEloRankDate;
 	private int bestEloRating;
 	private Date bestEloRatingDate;
-	private int goatRank;
-	private int goatPoints;
+	private int bestHardEloRank;
+	private int bestHardEloRating;
+	private int bestClayEloRank;
+	private int bestClayEloRating;
+	private int bestGrassEloRank;
+	private int bestGrassEloRating;
+	private int bestCarpetEloRank;
+	private int bestCarpetEloRating;
 	private Map<Integer, Double> weeksAt = new HashMap<>();
 	private Map<Integer, Integer> yearEndsAt = new HashMap<>();
 
@@ -130,6 +138,22 @@ public class RankingHighlights {
 		this.bestYearEndRankPointsSeasons = bestYearEndRankPointsSeasons;
 	}
 
+	public int getGoatRank() {
+		return goatRank;
+	}
+
+	public void setGoatRank(int goatRank) {
+		this.goatRank = goatRank;
+	}
+
+	public int getGoatPoints() {
+		return goatPoints;
+	}
+
+	public void setGoatPoints(int goatPoints) {
+		this.goatPoints = goatPoints;
+	}
+
 	public int getBestEloRank() {
 		return bestEloRank;
 	}
@@ -162,20 +186,68 @@ public class RankingHighlights {
 		this.bestEloRatingDate = bestEloRatingDate;
 	}
 
-	public int getGoatRank() {
-		return goatRank;
+	public int getBestHardEloRank() {
+		return bestHardEloRank;
 	}
 
-	public void setGoatRank(int goatRank) {
-		this.goatRank = goatRank;
+	public void setBestHardEloRank(int bestHardEloRank) {
+		this.bestHardEloRank = bestHardEloRank;
 	}
 
-	public int getGoatPoints() {
-		return goatPoints;
+	public int getBestHardEloRating() {
+		return bestHardEloRating;
 	}
 
-	public void setGoatPoints(int goatPoints) {
-		this.goatPoints = goatPoints;
+	public void setBestHardEloRating(int bestHardEloRating) {
+		this.bestHardEloRating = bestHardEloRating;
+	}
+
+	public int getBestClayEloRank() {
+		return bestClayEloRank;
+	}
+
+	public void setBestClayEloRank(int bestClayEloRank) {
+		this.bestClayEloRank = bestClayEloRank;
+	}
+
+	public int getBestClayEloRating() {
+		return bestClayEloRating;
+	}
+
+	public void setBestClayEloRating(int bestClayEloRating) {
+		this.bestClayEloRating = bestClayEloRating;
+	}
+
+	public int getBestGrassEloRank() {
+		return bestGrassEloRank;
+	}
+
+	public void setBestGrassEloRank(int bestGrassEloRank) {
+		this.bestGrassEloRank = bestGrassEloRank;
+	}
+
+	public int getBestGrassEloRating() {
+		return bestGrassEloRating;
+	}
+
+	public void setBestGrassEloRating(int bestGrassEloRating) {
+		this.bestGrassEloRating = bestGrassEloRating;
+	}
+
+	public int getBestCarpetEloRank() {
+		return bestCarpetEloRank;
+	}
+
+	public void setBestCarpetEloRank(int bestCarpetEloRank) {
+		this.bestCarpetEloRank = bestCarpetEloRank;
+	}
+
+	public int getBestCarpetEloRating() {
+		return bestCarpetEloRating;
+	}
+
+	public void setBestCarpetEloRating(int bestCarpetEloRating) {
+		this.bestCarpetEloRating = bestCarpetEloRating;
 	}
 
 	private Supplier<FrequentRank<Double>> mostFrequentRank = Memoizer.of(() -> findMostFrequentRank(weeksAt));

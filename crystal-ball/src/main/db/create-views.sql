@@ -88,10 +88,12 @@ CREATE INDEX ON player_year_end_rank (player_id);
 
 CREATE OR REPLACE VIEW player_best_elo_rank_v AS
 WITH best_elo_rank AS (
-	SELECT player_id, min(rank) AS best_elo_rank FROM player_elo_ranking
+	SELECT player_id, min(rank) AS best_elo_rank, min(hard_rank) AS best_hard_elo_rank, min(clay_rank) AS best_clay_elo_rank, min(grass_rank) AS best_grass_elo_rank, min(carpet_rank) AS best_carpet_elo_rank
+	FROM player_elo_ranking
 	GROUP BY player_id
 )
-SELECT player_id, best_elo_rank, (SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.rank = b.best_elo_rank) AS best_elo_rank_date
+SELECT player_id, best_elo_rank, best_hard_elo_rank, best_clay_elo_rank, best_grass_elo_rank, best_carpet_elo_rank,
+	(SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.rank = b.best_elo_rank) AS best_elo_rank_date
 FROM best_elo_rank b;
 
 CREATE MATERIALIZED VIEW player_best_elo_rank AS SELECT * FROM player_best_elo_rank_v;
@@ -103,10 +105,12 @@ CREATE UNIQUE INDEX ON player_best_elo_rank (player_id);
 
 CREATE OR REPLACE VIEW player_best_elo_rating_v AS
 WITH best_elo_rating AS (
-	SELECT player_id, max(elo_rating) AS best_elo_rating FROM player_elo_ranking
+	SELECT player_id, max(elo_rating) AS best_elo_rating, max(hard_elo_rating) AS best_hard_elo_rating, max(clay_elo_rating) AS best_clay_elo_rating, max(grass_elo_rating) AS best_grass_elo_rating, max(carpet_elo_rating) AS best_carpet_elo_rating
+	FROM player_elo_ranking
 	GROUP BY player_id
 )
-SELECT player_id, best_elo_rating, (SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.elo_rating = b.best_elo_rating) AS best_elo_rating_date
+SELECT player_id, best_elo_rating, best_hard_elo_rating, best_clay_elo_rating, best_grass_elo_rating, best_carpet_elo_rating,
+	(SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.elo_rating = b.best_elo_rating) AS best_elo_rating_date
 FROM best_elo_rating b;
 
 CREATE MATERIALIZED VIEW player_best_elo_rating AS SELECT * FROM player_best_elo_rating_v;
@@ -1458,7 +1462,8 @@ CREATE UNIQUE INDEX ON player_goat_points (player_id);
 
 CREATE OR REPLACE VIEW player_v AS
 SELECT p.*, first_name || ' ' || last_name AS name, regexp_replace(initcap(first_name), '[^A-Z\s]+', '.', 'g') || ' ' || last_name AS short_name, age(dob) AS age,
-	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,
+	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date,
+	best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date, best_hard_elo_rank, best_hard_elo_rating, best_clay_elo_rank, best_clay_elo_rating, best_grass_elo_rank, best_grass_elo_rating, best_carpet_elo_rank, best_carpet_elo_rating,
 	goat_rank, coalesce(goat_points, 0) AS goat_points, coalesce(weeks_at_no1, 0) weeks_at_no1,
 	coalesce(titles, 0) AS titles, coalesce(big_titles, 0) AS big_titles,
 	coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals, coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics

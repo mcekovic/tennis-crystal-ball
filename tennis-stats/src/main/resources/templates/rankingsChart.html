@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.RankType[]"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
 	<title>Rankings Chart</title>
 	<script th:src="@{/js/tennis-chart.js}"></script>
@@ -20,7 +21,7 @@
 			var rankType = $("#rankType").val();
 			var timeSpan = $("#timeSpan").val();
 			bySeason = $("#bySeason").prop("checked");
-			isRank = rankType == "RANK" || rankType == "ELO_RANK";
+			isRank = rankType.endsWith("RANK");
 			var dataUrl = "/playerRankingsTable?players=" + players + "&rankType=" + rankType + "&timeSpan=" + timeSpan;
 			if (timeSpan != "1")
 				dataUrl += "&bySeason=" + bySeason;
@@ -163,11 +164,7 @@
 			<div class="input-group">
 				<label for="rankType" class="input-group-addon">Rank type:</label>
 				<select id="rankType" class="form-control" onchange="onRankTypeChange()">
-					<option value="RANK">ATP Ranking</option>
-					<option value="POINTS">ATP Points</option>
-					<option value="ELO_RANK">Elo Ranking</option>
-					<option value="ELO_RATING">Elo Rating</option>
-					<option value="GOAT_POINTS">GOAT points</option>
+					<option th:each="rankType : ${rankTypes}" th:value="${rankType}" th:class="${rankType.surface == null ? _ : 'bg-surface-' + rankType.surface.code}" value="RANK" th:text="${rankType.text}">ATP Ranking</option>
 				</select>
 			</div>
 		</div>

@@ -13,7 +13,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
-import static org.strangeforest.tcb.stats.model.RankType.*;
+import static org.strangeforest.tcb.stats.model.RankCategory.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.EnumUtil.*;
@@ -44,10 +44,10 @@ public class RankingsService {
 		"ORDER BY rank LIMIT :playerCount";
 
 	private static final String RANKING_TABLE_QUERY = //language=SQL
-		"SELECT r.rank, player_id, p.name, p.country_id, %1$s AS points, %2$s AS best_rank, %3$s AS best_rank_date\n" +
-		"FROM %4$s r\n" +
+		"SELECT %1$s AS rank, player_id, p.name, p.country_id, %2$s AS points, %3$s AS best_rank, %4$s AS best_rank_date\n" +
+		"FROM %5$s r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE r.rank_date = :date%5$s\n" +
+		"WHERE r.rank_date = :date%6$s\n" +
 		"ORDER BY rank OFFSET :offset";
 
 	private static final String HIGHEST_ELO_RATING_TABLE_QUERY = //language=SQL
@@ -61,7 +61,8 @@ public class RankingsService {
 		"ORDER BY rank, best_rank_date OFFSET :offset";
 
 	private static final String PLAYER_RANKING_QUERY =
-		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date, goat_rank, goat_points\n" +
+		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points," +
+		"  best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date, best_hard_elo_rank, best_hard_elo_rating, best_clay_elo_rank, best_clay_elo_rating, best_grass_elo_rank, best_grass_elo_rating, best_carpet_elo_rank, best_carpet_elo_rating\n" +
 		"FROM player_v\n" +
 		"WHERE player_id = :playerId";
 
@@ -92,8 +93,6 @@ public class RankingsService {
 	private static final String PLAYER_YEAR_END_RANKINGS_FOR_HIGHLIGHTS_QUERY =
 		"SELECT year_end_rank FROM player_year_end_rank\n" +
 		"WHERE player_id = :playerId";
-
-	private static final EnumSet<RankType> RANK_TYPES = EnumSet.of(POINTS, ELO_RATING);
 
 
 	@Cacheable("RankingsTable.CurrentDate")
@@ -135,34 +134,33 @@ public class RankingsService {
 	@Cacheable("RankingsTable.Table")
 	public BootgridTable<PlayerRankingsRow> getRankingsTable(RankType rankType, LocalDate date, PlayerListFilter filter, int pageSize, int currentPage) {
 		checkRankType(rankType);
-		if (date == null && rankType != ELO_RATING)
-			throw new IllegalArgumentException("All-time ranking is available only for " + ELO_RATING);
+		if (date == null && rankType.category != ELO)
+			throw new IllegalArgumentException("All-time ranking is available only for Elo ranking.");
 
 		BootgridTable<PlayerRankingsRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
-		String pointsColumn = pointsColumn(rankType);
-		boolean allTimeElo = rankType == ELO_RATING && date == null;
+		boolean allTimeElo = rankType.category == ELO && date == null;
 		jdbcTemplate.query(
 			allTimeElo
 				? format(HIGHEST_ELO_RATING_TABLE_QUERY, where(filter.getCriteria()))
-				: format(RANKING_TABLE_QUERY, pointsColumn, bestRankColumn(rankType), bestRankDateColumn(rankType), rankingTable(rankType), filter.getCriteria()),
+				: format(RANKING_TABLE_QUERY, rankColumn(rankType), pointsColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), rankingTable(rankType), filter.getCriteria()),
 			getTableParams(filter, allTimeElo, date, offset),
 			rs -> {
-				if (players.incrementAndGet() <= pageSize) {
-					int rank = rs.getInt("rank");
-					int playerId = rs.getInt("player_id");
-					String name = rs.getString("name");
-					String countryId = rs.getString("country_id");
-					Boolean active = allTimeElo ? rs.getBoolean("active") : null;
-					int points = rs.getInt("points");
-					int bestRank = rs.getInt("best_rank");
-					Date bestRankDate = rs.getDate("best_rank_date");
-					PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, active, points, bestRank, bestRankDate);
-					if (allTimeElo)
-						row.setPointsDate(rs.getDate("points_date"));
-					table.addRow(row);
-				}
+				int rank = rs.getInt("rank");
+				if (rs.wasNull() || players.incrementAndGet() > pageSize)
+					return;
+				int playerId = rs.getInt("player_id");
+				String name = rs.getString("name");
+				String countryId = rs.getString("country_id");
+				Boolean active = allTimeElo ? rs.getBoolean("active") : null;
+				int points = rs.getInt("points");
+				int bestRank = rs.getInt("best_rank");
+				Date bestRankDate = rs.getDate("best_rank_date");
+				PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, active, points, bestRank, bestRankDate);
+				if (allTimeElo)
+					row.setPointsDate(rs.getDate("points_date"));
+				table.addRow(row);
 			}
 		);
 		table.setTotal(offset + players.get());
@@ -170,7 +168,7 @@ public class RankingsService {
 	}
 
 	private static void checkRankType(RankType rankType) {
-		if (!RANK_TYPES.contains(rankType))
+		if (!rankType.points)
 			throw new IllegalArgumentException("Unsupported rankings table RankType: " + rankType);
 	}
 
@@ -181,10 +179,26 @@ public class RankingsService {
 		return params.addValue("offset", offset);
 	}
 
+	private String rankColumn(RankType rankType) {
+		switch (rankType) {
+			case POINTS:
+			case ELO_RATING: return "r.rank";
+			case HARD_ELO_RATING: return "r.hard_rank";
+			case CLAY_ELO_RATING: return "r.clay_rank";
+			case GRASS_ELO_RATING: return "r.grass_rank";
+			case CARPET_ELO_RATING: return "r.carpet_rank";
+			default: throw unknownEnum(rankType);
+		}
+	}
+
 	private String pointsColumn(RankType rankType) {
 		switch (rankType) {
 			case POINTS: return "r.rank_points";
 			case ELO_RATING: return "r.elo_rating";
+			case HARD_ELO_RATING: return "r.hard_elo_rating";
+			case CLAY_ELO_RATING: return "r.clay_elo_rating";
+			case GRASS_ELO_RATING: return "r.grass_elo_rating";
+			case CARPET_ELO_RATING: return "r.carpet_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -193,6 +207,10 @@ public class RankingsService {
 		switch (rankType) {
 			case POINTS: return "p.best_rank";
 			case ELO_RATING: return "p.best_elo_rank";
+			case HARD_ELO_RATING: return "p.best_hard_elo_rank";
+			case CLAY_ELO_RATING: return "p.best_clay_elo_rank";
+			case GRASS_ELO_RATING: return "p.best_grass_elo_rank";
+			case CARPET_ELO_RATING: return "p.best_carpet_elo_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -201,6 +219,10 @@ public class RankingsService {
 		switch (rankType) {
 			case POINTS: return "p.best_rank_date";
 			case ELO_RATING: return "p.best_elo_rank_date";
+			case HARD_ELO_RATING:
+			case CLAY_ELO_RATING:
+			case GRASS_ELO_RATING:
+			case CARPET_ELO_RATING: return "NULL";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -208,7 +230,11 @@ public class RankingsService {
 	private String rankingTable(RankType rankType) {
 		switch (rankType) {
 			case POINTS: return "player_ranking";
-			case ELO_RATING: return "player_elo_ranking";
+			case ELO_RATING:
+			case HARD_ELO_RATING:
+			case CLAY_ELO_RATING:
+			case GRASS_ELO_RATING:
+			case CARPET_ELO_RATING: return "player_elo_ranking";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -226,12 +252,20 @@ public class RankingsService {
 			highlights.setBestRankDate(rs.getDate("best_rank_date"));
 			highlights.setBestRankPoints(rs.getInt("best_rank_points"));
 			highlights.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
+			highlights.setGoatRank(rs.getInt("goat_rank"));
+			highlights.setGoatPoints(rs.getInt("goat_points"));
 			highlights.setBestEloRank(rs.getInt("best_elo_rank"));
 			highlights.setBestEloRankDate(rs.getDate("best_elo_rank_date"));
 			highlights.setBestEloRating(rs.getInt("best_elo_rating"));
 			highlights.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
-			highlights.setGoatRank(rs.getInt("goat_rank"));
-			highlights.setGoatPoints(rs.getInt("goat_points"));
+			highlights.setBestHardEloRank(rs.getInt("best_hard_elo_rank"));
+			highlights.setBestHardEloRating(rs.getInt("best_hard_elo_rating"));
+			highlights.setBestClayEloRank(rs.getInt("best_clay_elo_rank"));
+			highlights.setBestClayEloRating(rs.getInt("best_clay_elo_rating"));
+			highlights.setBestGrassEloRank(rs.getInt("best_grass_elo_rank"));
+			highlights.setBestGrassEloRating(rs.getInt("best_grass_elo_rating"));
+			highlights.setBestCarpetEloRank(rs.getInt("best_carpet_elo_rank"));
+			highlights.setBestCarpetEloRating(rs.getInt("best_carpet_elo_rating"));
 		});
 
 		jdbcTemplate.query(PLAYER_YEAR_END_RANK_QUERY, params("playerId", playerId), rs -> {

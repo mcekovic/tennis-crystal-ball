@@ -5,6 +5,7 @@ import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
+import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
 @Controller
@@ -15,6 +16,7 @@ public class RankingsController extends PageController {
 	@GetMapping("rankingsTable")
 	public ModelAndView rankingsTable() {
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		return new ModelAndView("rankingsTable", modelMap);
 	}
@@ -29,6 +31,7 @@ public class RankingsController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
+		modelMap.addAttribute("rankTypes", RankType.values());
 		return new ModelAndView("rankingsChart", modelMap);
 	}
 }

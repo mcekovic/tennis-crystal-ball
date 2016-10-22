@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
 	<title>Rankings Table</title>
@@ -30,7 +31,8 @@
 				},
 				formatters: {
 					"bestRank": function(column, row) {
-						return "<span title='" + formatDate(row.bestRankDate) + "'>" + row.bestRank + "</span>";
+						var date = row.bestRankDate;
+						return date ? ("<span title='" + formatDate(date) + "'>" + row.bestRank + "</span>") : row.bestRank;
 					},
 					"country": countryFormatter,
 					"player": playerFormatter
@@ -84,6 +86,7 @@
 		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
 			<option value="POINTS">ATP Ranking</option>
 			<option value="ELO_RATING">Elo Ranking</option>
+			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|">Hard Elo Ranking</option>
 		</select>
 	</div>
 	<div id="seasonDiv" class="btn-group" style="margin-right: 20px">

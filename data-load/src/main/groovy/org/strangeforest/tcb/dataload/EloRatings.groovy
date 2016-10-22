@@ -18,6 +18,7 @@ class EloRatings {
 	final LockManager<Integer> lockManager
 	final Map<Integer, CompletableFuture> playerMatchFutures
 	Map<Integer, EloRating> playerRatings
+	Map<String, Map<Integer, EloRating>> surfacePlayerRatings
 	volatile Date lastDate
 	AtomicInteger saves, rankFetches
 	AtomicInteger progress
@@ -39,7 +40,7 @@ class EloRatings {
 		"SELECT player_rank(?, ?) AS rank"
 
 	static final String MERGE_ELO_RANKING = //language=SQL
-		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating, :hard_elo_rating, :clay_elo_rating, :grass_elo_rating, :carpet_elo_rating)}"
+		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating, :hard_rank, :hard_elo_rating, :clay_rank, :clay_elo_rating, :grass_rank, :grass_elo_rating, :carpet_rank, :carpet_elo_rating)}"
 
 	static final String DELETE_ALL = //language=SQL
 		"DELETE FROM player_elo_ranking"
@@ -54,16 +55,7 @@ class EloRatings {
 	static final int PROGRESS_LINE_WRAP = 100
 	static final int PLAYERS_TO_SAVE = 200
 
-	static final String OVERALL = 'O'
-	static final String UNKNOWN = 'U'
-	static final List<String> SURFACES = [OVERALL, 'H', 'C', 'G', 'P']
-	static final Map<String, Map<String, Double>> SURFACE_FACTORS = [
-		O: [H: 1.0, C: 1.0, G: 1.0, P: 1.0, U: 1.0],
-		H: [H: 1.0, C: 0.5, G: 0.7, P: 0.9, U: 0.7],
-		C: [H: 0.5, C: 1.0, G: 0.7, P: 0.5, U: 0.7],
-		G: [H: 0.7, C: 0.7, G: 1.0, P: 0.7, U: 0.7],
-		P: [H: 0.9, C: 0.5, G: 0.7, P: 1.0, U: 0.7],
-	]
+	static final List<String> SURFACES = ['H', 'C', 'G', 'P']
 
 	static final def comparator = { a, b -> b <=> a }
 	static final def bestComparator = { a, b -> b.bestRating <=> a.bestRating }
@@ -79,6 +71,8 @@ class EloRatings {
 		def stopwatch = Stopwatch.createStarted()
 		int matches = 0
 		playerRatings = new ConcurrentHashMap<>()
+		surfacePlayerRatings = [:]
+		SURFACES.each { surfacePlayerRatings[it] = new ConcurrentHashMap<>()}
 		lastDate = null
 		saves = new AtomicInteger()
 		rankFetches = new AtomicInteger()
@@ -109,7 +103,8 @@ class EloRatings {
 						waitForAllMatchesToComplete()
 						saveCurrentRatings()
 					}
-					processMatch(match)
+					processMatch(match, false)
+					processMatch(match, true)
 					lastDate = date
 					if (++matches % MATCHES_PER_DOT == 0)
 						progressTick '.'
@@ -135,10 +130,10 @@ class EloRatings {
 		playerMatchFutures.clear()
 	}
 
-	def current(int count, Date date = new Date()) {
+	def current(int count, Date date = new Date(), String surface = null) {
 		Date minDate = toDate(toLocalDate(date).minusYears(1))
 		def i = 0
-		playerRatings.values().findAll { it.matches >= MIN_MATCHES && it.lastDate >= minDate && it.getDaysSpan(date) <= MIN_MATCHES_PERIOD }
+		getRatings(surface).values().findAll { it.matches >= MIN_MATCHES && it.lastDate >= minDate && it.getDaysSpan(date) <= MIN_MATCHES_PERIOD }
 			.sort(comparator)
 			.findAll { ++i <= count }
 	}
@@ -150,20 +145,22 @@ class EloRatings {
 			.findAll { ++i <= count }
 	}
 
-	def processMatch(match) {
+	def processMatch(match, boolean forSurface) {
+		if (forSurface && !match.surface)
+			return
 		int winnerId = match.winner_id
 		int loserId = match.loser_id
 		def playerId1 = min(winnerId, loserId)
 		def playerId2 = max(winnerId, loserId)
+		String level = match.level
+		String surface = forSurface ? match.surface : null
+		String round = match.round
+		short bestOf = match.best_of
+		String outcome = match.outcome
+		Date date = match.end_date
 		lockManager.withLock(playerId1, playerId2) {
-			String level = match.level
-			String surface = match.surface ?: UNKNOWN
-			String round = match.round
-			short bestOf = match.best_of
-			String outcome = match.outcome
-			Date date = match.end_date
-			def winnerRating = getRating(winnerId, date)
-			def loserRating = getRating(loserId, date)
+			def winnerRating = getRating(surface, winnerId, date)
+			def loserRating = getRating(surface, loserId, date)
 			boolean schedule = false;
 			if (!(winnerRating && loserRating)) {
 				if (rankExecutor)
@@ -176,18 +173,18 @@ class EloRatings {
 			if (schedule) {
 				def future = CompletableFuture.allOf(playerMatchFutures.get(playerId1) ?: nullFuture, playerMatchFutures.get(playerId2) ?: nullFuture).thenRunAsync({
 					lockManager.withLock(playerId1, playerId2) {
-						winnerRating = getRating(winnerId, date) ?: newEloRating(winnerId)
-						loserRating = getRating(loserId, date) ?: newEloRating(loserId)
-						def deltaRatings = deltaRatings(winnerRating.ratings, loserRating.ratings, level, round, bestOf, outcome)
-						putNewRatings(winnerId, loserId, winnerRating, loserRating, deltaRatings, surface, date)
+						winnerRating = getRating(surface, winnerId, date) ?: newEloRating(winnerId)
+						loserRating = getRating(surface, loserId, date) ?: newEloRating(loserId)
+						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
+						putNewRatings(surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date)
 					}
 				}, rankExecutor);
 				playerMatchFutures.put(playerId1, future)
 				playerMatchFutures.put(playerId2, future)
 			}
 			else {
-				def deltaRatings = deltaRatings(winnerRating.ratings, loserRating.ratings, level, round, bestOf, outcome)
-				putNewRatings(winnerId, loserId, winnerRating, loserRating, deltaRatings, surface, date)
+				def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
+				putNewRatings(surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date)
 			}
 		}
 	}
@@ -196,31 +193,27 @@ class EloRatings {
 		new EloRating(playerId, playerRank(playerId, lastDate))
 	}
 
-	private getRating(int playerId, Date date) {
-		def rating = playerRatings.get(playerId)
+	private getRatings(String surface) {
+		surface == null ? playerRatings : surfacePlayerRatings[surface]
+	}
+
+	private getRating(String surface, int playerId, Date date) {
+		def rating = getRatings(surface).get(playerId)
 		if (rating)
 			rating.adjustRating(date)
 		rating
 	}
 
-	private putNewRatings(int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, Map<String, Double> deltaRatings, String surface, Date date) {
-		playerRatings.put(winnerId, winnerRating.newRating(deltaRatings, 1, surface, date))
-		playerRatings.put(loserId, loserRating.newRating(deltaRatings, -1, surface, date))
-	}
-
-	private static Map<String, Double> deltaRatings(Map<String, Double> winnerRatings, Map<String, Double> loserRatings, String level, String round, short bestOf, String outcome) {
-		def deltaRatings = [:]
-		SURFACES.each { ratingSurface ->
-			deltaRatings[ratingSurface] = deltaRating(winnerRatings[ratingSurface], loserRatings[ratingSurface], level, round, bestOf, outcome)
-		}
-		deltaRatings
+	private putNewRatings(String surface, int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date) {
+		def ratings = getRatings(surface)
+		ratings.put(winnerId, winnerRating.newRating(deltaRating, date))
+		ratings.put(loserId, loserRating.newRating(-deltaRating, date))
 	}
 
 	private static double deltaRating(double winnerRating, double loserRating, String level, String round, short bestOf, String outcome) {
 		double winnerQ = pow(10, winnerRating / 400)
 		double loserQ = pow(10, loserRating / 400)
 		double loserExpectedScore = loserQ / (winnerQ + loserQ)
-
 		kFactor(level, round, bestOf, outcome) * loserExpectedScore
 	}
 
@@ -252,27 +245,27 @@ class EloRatings {
 	static class EloRating implements Comparable<EloRating> {
 
 		volatile int playerId
-		volatile Map<String, Double> ratings
+		volatile double rating
 		volatile int matches
 		volatile Deque<Date> dates
 		volatile EloRating bestRating
 
 		private static final START_RATING_TABLE = [
-			ratingPoint(1, 2365),
+			ratingPoint(1, 2370),
 			ratingPoint(2, 2290),
-			ratingPoint(3, 2235),
-			ratingPoint(4, 2195),
-			ratingPoint(5, 2160),
+			ratingPoint(3, 2236),
+			ratingPoint(4, 2192),
+			ratingPoint(5, 2158),
 			ratingPoint(7, 2110),
-			ratingPoint(10, 2060),
+			ratingPoint(10, 2063),
 			ratingPoint(15, 2015),
-			ratingPoint(20, 1980),
-			ratingPoint(30, 1925),
-			ratingPoint(50, 1840),
-			ratingPoint(70, 1770),
-			ratingPoint(100, 1695),
-			ratingPoint(150, 1615),
-			ratingPoint(200, 1555),
+			ratingPoint(20, 1981),
+			ratingPoint(30, 1924),
+			ratingPoint(50, 1838),
+			ratingPoint(70, 1769),
+			ratingPoint(100, 1693),
+			ratingPoint(150, 1606),
+			ratingPoint(200, 1550),
 			ratingPoint(300, 1500)
 		]
 		static final int START_RATING = START_RATING_TABLE[START_RATING_TABLE.size() - 1].eloRating
@@ -281,24 +274,14 @@ class EloRatings {
 
 		EloRating(int playerId, Integer rank) {
 			this.playerId = playerId
-			ratings = startRatings(rank)
+			rating = startRating(rank)
 		}
 
-		EloRating newRating(Map<String, Double> deltas, int sign, String surface, Date date) {
-			def newRating = new EloRating(playerId: playerId, matches: matches + 1, dates: new ArrayDeque<>(dates ?: []))
-			newRating.ratings = newRatings(deltas, sign, surface)
+		EloRating newRating(double delta, Date date) {
+			def newRating = new EloRating(playerId: playerId, rating: rating + delta * kFunction(), matches: matches + 1, dates: new ArrayDeque<>(dates ?: []))
 			newRating.bestRating = bestRating(newRating)
 			newRating.addDate(date)
 			newRating
-		}
-
-		def newRatings(Map<String, Double> deltas, int sign, String surface) {
-			def newRatings = [:]
-			SURFACES.each { ratingSurface ->
-				def rating = ratings[ratingSurface]
-				newRatings[ratingSurface] = rating + deltas[ratingSurface] * sign * kFunction(rating) * SURFACE_FACTORS[ratingSurface][surface]
-			}
-			newRatings
 		}
 
 		Date getLastDate() {
@@ -307,10 +290,6 @@ class EloRatings {
 
 		Date getFirstDate() {
 			dates.peekFirst()
-		}
-
-		double getOverallRating() {
-			ratings[OVERALL]
 		}
 
 		private addDate(Date date) {
@@ -330,7 +309,7 @@ class EloRatings {
 		 * For rating 2000+ returns 1/2
 		 * @return values from 1/2 to 1, depending on current rating
 		 */
-		private static kFunction(double rating) {
+		private double kFunction() {
 			if (rating <= 1800)
 				1.0
 			else if (rating <= 2000)
@@ -344,19 +323,11 @@ class EloRatings {
 			if (lastDate) {
 				def daysSinceLastMatch = ChronoUnit.DAYS.between(toLocalDate(lastDate), toLocalDate(date))
 				if (daysSinceLastMatch > 365)
-					ratings = ratingsAdjusted(daysSinceLastMatch)
+					rating = ratingAdjusted(daysSinceLastMatch)
 			}
 		}
 
-		private ratingsAdjusted(long daysSinceLastMatch) {
-			def ratingsAdjusted = [:]
-			SURFACES.each { ratingSurface ->
-				ratingsAdjusted[ratingSurface] = ratingAdjusted(ratings[ratingSurface], daysSinceLastMatch)
-			}
-			ratingsAdjusted
-		}
-
-		private static ratingAdjusted(double rating, long daysSinceLastMatch) {
+		private ratingAdjusted(long daysSinceLastMatch) {
 			max(START_RATING, rating - (daysSinceLastMatch - 365) * 200 / 365)
 		}
 
@@ -369,15 +340,6 @@ class EloRatings {
 
 		private static ratingPoint(int rank, int eloRating) {
 			return new RatingPoint(rank: rank, eloRating: eloRating)
-		}
-
-		static Map<String, Integer> startRatings(Integer rank) {
-			def ratings = [:]
-			def rating = startRating(rank)
-			SURFACES.each { surface ->
-				ratings[surface] = rating
-			}
-			ratings
 		}
 
 		static int startRating(Integer rank) {
@@ -404,11 +366,11 @@ class EloRatings {
 		}
 
 		String toString() {
-			round overallRating
+			round rating
 		}
 
 		int compareTo(EloRating eloRating) {
-			overallRating <=> eloRating.overallRating
+			rating <=> eloRating.rating
 		}
 	}
 
@@ -434,26 +396,55 @@ class EloRatings {
 
 	def saveCurrentRatings() {
 		if (saveExecutor && playerRatings && (!saveFromDate || lastDate >= saveFromDate)) {
-			def ratingsToSave = current(PLAYERS_TO_SAVE, lastDate).collectEntries() { [(it.playerId): it.ratings] }
-			def dateToSave = lastDate
-			saveExecutor.execute { saveRatings(ratingsToSave, dateToSave) }
+			def eloRatings = setRanks(current(Integer.MAX_VALUE, lastDate).collect { new EloRatingValue(it) })
+			def playerRatings = new LinkedHashMap<Integer, EloRatingValue>(eloRatings.collectEntries({[(it.playerId): it]}))
+			SURFACES.each { surface ->
+				def surfaceEloRatings = current(PLAYERS_TO_SAVE, lastDate, surface).collect { new EloRatingValue(it, surface) }
+				mergeRatings(playerRatings, setRanks(surfaceEloRatings, surface))
+			}
+			def ratingsForSave = playerRatings.values().findAll { it.forSave }
+			def date = lastDate
+			saveExecutor.execute { saveRatings(ratingsForSave, date) }
 		}
 	}
 
-	def saveRatings(Map<Integer, Map<String, Double>> playerRatings, Date date) {
+	private static mergeRatings(Map<Integer, EloRatingValue> playerRatings, Collection<EloRatingValue> ratings) {
+		for (EloRatingValue aRating : ratings) {
+			def playerId = aRating.playerId
+			def rating = playerRatings[playerId]
+			if (rating)
+				rating.merge(aRating)
+			else
+				playerRatings[playerId] = aRating
+		}
+	}
+
+	private static setRanks(Collection<EloRatingValue> eloRatings, String surface = null) {
+		int rank = 0
+		for (def eloRating : eloRatings)
+			eloRating.ranks[surface] = ++rank
+		eloRatings
+	}
+
+	def saveRatings(Iterable<EloRatingValue> eloRatings, Date date) {
 		sqlPool.withSql { sql ->
 			sql.withBatch(MERGE_ELO_RANKING) { ps ->
-				def i = 0
-				playerRatings.each { playerId, ratings ->
+				eloRatings.each { eloRating ->
 					Map params = [:]
 					params.rank_date = new java.sql.Date(date.time)
-					params.player_id = playerId
-					params.rank = ++i
-					params.elo_rating = (int)round(ratings[OVERALL])
-					params.hard_elo_rating = (int)round(ratings['H'])
-					params.clay_elo_rating = (int)round(ratings['C'])
-					params.grass_elo_rating = (int)round(ratings['G'])
-					params.carpet_elo_rating = (int)round(ratings['P'])
+					params.player_id = eloRating.playerId
+					def ranks = eloRating.ranks
+					def ratings = eloRating.ratings
+					params.rank = ranks[null]
+					params.elo_rating = intRound ratings[null]
+					params.hard_rank = ranks['H']
+					params.hard_elo_rating = intRound ratings['H']
+					params.clay_rank = ranks['C']
+					params.clay_elo_rating = intRound ratings['C']
+					params.grass_rank = ranks['G']
+					params.grass_elo_rating = intRound ratings['G']
+					params.carpet_rank = ranks['P']
+					params.carpet_elo_rating = intRound ratings['P']
 					ps.addBatch(params)
 				}
 			}
@@ -462,9 +453,48 @@ class EloRatings {
 			progressTick '+'
 	}
 
+	private static intRound(Double d) {
+		d ? (int)round(d) : null
+	}
+
 	private progressTick(tick) {
 		print tick
 		if (progress.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
 			println()
+	}
+
+	static class EloRatingValue {
+
+		int playerId
+		Map<String, Integer> ranks = [:]
+		Map<String, Double> ratings = [:]
+
+		EloRatingValue(EloRating eloRating, String surface = null) {
+			playerId = eloRating.playerId
+			ratings[surface] = eloRating.rating
+		}
+
+		def merge(EloRatingValue eloRating) {
+			ranks.putAll(eloRating.ranks)
+			ratings.putAll(eloRating.ratings)
+		}
+
+		boolean isForSave() {
+			for (Integer rank : ranks.values()) {
+				if (rank <= PLAYERS_TO_SAVE)
+					return true
+			}
+			false
+		}
+
+		@Override boolean equals(o) {
+			if (this.is(o)) return true
+			if (getClass() != o.class) return false
+			playerId == ((EloRatingValue)o).playerId
+		}
+
+		@Override int hashCode() {
+			return playerId
+		}
 	}
 }
