@@ -46,7 +46,7 @@ public class GOATPointsService {
 		"SELECT e.season, count(*) AS count\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"LEFT OUTER JOIN match m ON m.tournament_event_id = r.tournament_event_id AND m.winner_id = r.player_id\n" +
+		"LEFT JOIN match m ON m.tournament_event_id = r.tournament_event_id AND m.winner_id = r.player_id\n" +
 		"WHERE e.level IN ('D', 'T') AND m.round = 'F' AND r.goat_points > 0 AND r.player_id = :playerId\n" +
 		"GROUP BY e.season";
 
