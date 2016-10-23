@@ -695,12 +695,36 @@ CREATE INDEX ON player_tournament_level_win_streak (tournament_id);
 
 CREATE OR REPLACE VIEW player_best_elo_rating_goat_points_v AS
 WITH best_elo_rating_ranked AS (
-	SELECT player_id, rank() OVER (ORDER BY best_elo_rating DESC) AS best_elo_rating_rank
+	SELECT player_id, rank() OVER (ORDER BY best_elo_rating DESC) AS best_elo_rating_rank,
+		rank() OVER (ORDER BY best_hard_elo_rating DESC NULLS LAST) AS best_hard_elo_rating_rank,
+		rank() OVER (ORDER BY best_clay_elo_rating DESC NULLS LAST) AS best_clay_elo_rating_rank,
+		rank() OVER (ORDER BY best_grass_elo_rating DESC NULLS LAST) AS best_grass_elo_rating_rank,
+		rank() OVER (ORDER BY best_carpet_elo_rating DESC NULLS LAST) AS best_carpet_elo_rating_rank
 	FROM player_best_elo_rating
+), goat_points AS (
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_elo_rating_goat_points USING (best_elo_rating_rank)
+	UNION
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_surface_elo_rating_goat_points gh ON gh.best_elo_rating_rank = best_hard_elo_rating_rank
+	UNION
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_surface_elo_rating_goat_points gc ON gc.best_elo_rating_rank = best_clay_elo_rating_rank
+	UNION
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_surface_elo_rating_goat_points gg ON gg.best_elo_rating_rank = best_grass_elo_rating_rank
+	UNION
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_surface_elo_rating_goat_points gp ON gp.best_elo_rating_rank = best_carpet_elo_rating_rank
 )
-SELECT player_id, goat_points
-FROM best_elo_rating_ranked
-INNER JOIN best_elo_rating_goat_points USING (best_elo_rating_rank);
+SELECT player_id, sum(goat_points) AS goat_points
+FROM goat_points
+GROUP BY player_id;
 
 
 -- no1_player_ranking_v

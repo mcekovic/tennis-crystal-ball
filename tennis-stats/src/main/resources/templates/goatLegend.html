@@ -4,6 +4,7 @@
 	<!--/*@thymesVar id="yearEndRankGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="bestRankGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="bestEloRatingGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
+	<!--/*@thymesVar id="bestSurfaceEloRatingGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="weeksAtNo1ForGOATPoint" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="bigWinMatchFactors" type="java.util.List<org.strangeforest.tcb.stats.model.BigWinMatchFactor>"*/-->
 	<!--/*@thymesVar id="bigWinRankFactors" type="java.util.List<org.strangeforest.tcb.stats.model.RankRangeGOATPoints>"*/-->
@@ -47,7 +48,8 @@
 		</table>
 		<p><em>+ is for tournaments where points are assigned for wins in each round rather then for tournament result</em></p>
 		<p><em>* Tour Finals draw is normally round-robin, but was knock-out from 1982 to 1985</em></p>
-		<br/>
+	</div>
+	<div class="col-md-3">
 		<h4>Ranking Points</h4>
 		<strong th:unless="${forSeason}">Each Season's Year-End Rank</strong>
 		<strong th:if="${forSeason}">Season's Year-End Rank</strong>
@@ -95,15 +97,30 @@
 			</tr>
 			</tbody>
 		</table>
+		<strong th:unless="${forSeason}">All-Time Highest Surface Elo Rating</strong>
+		<table th:unless="${forSeason}" class="table table-condensed table-hover table-striped">
+			<thead>
+			<tr>
+				<th>All-Time Elo Ranking</th>
+				<th class="text-center">Points</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="point : ${bestSurfaceEloRatingGOATPoints}">
+				<td class="text-center" th:text="${point.rank}">1</td>
+				<td class="text-center" th:text="${point.goatPoints}">8</td>
+			</tr>
+			</tbody>
+		</table>
 		<div>
 			<strong>Weeks at No. 1</strong>
 			<p>+1 point for each <th:block th:text="${weeksAtNo1ForGOATPoint}">10</th:block> weeks as ATP No. 1</p>
 		</div>
 	</div>
-	<div class="col-md-9">
+	<div class="col-md-6">
 		<h4>Achievements<th:block th:unless="${forSeason}">, Performance and Statistics</th:block> Points</h4>
 		<div class="row">
-			<div class="col-md-4">
+			<div class="col-md-6">
 				<div>
 					<strong>Big Wins Points</strong>
 					<p>Points assigned for winning big matches in the end-rounds of important tournaments against high-ranked opponents or as a high-ranked player</p>
@@ -183,7 +200,7 @@
 				</table>
 				</th:block>
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-6">
 				<div th:unless="${forSeason}">
 					<strong>Career Grand Slam</strong>
 					<p>+<th:block th:text="${careerGrandSlamGOATPoints}">8</th:block> points for Career Grand Slam</p>
@@ -232,8 +249,7 @@
 					</tbody>
 				</table>
 				</th:block>
-			</div>
-			<div th:unless="${forSeason}" class="col-md-4">
+				<br/>
 				<div>
 					<strong>Performance Points</strong>
 				</div>

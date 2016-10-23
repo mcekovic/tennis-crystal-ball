@@ -52,12 +52,12 @@ public class RankingsService {
 
 	private static final String HIGHEST_ELO_RATING_TABLE_QUERY = //language=SQL
 		"WITH best_elo_rating_ranked AS (\n" +
-		"  SELECT rank() OVER (ORDER BY best_elo_rating DESC) AS rank, player_id, best_elo_rating\n" +
+		"  SELECT rank() OVER (ORDER BY %1$s DESC NULLS LAST) AS rank, player_id, %1$s AS best_elo_rating\n" +
 		"  FROM player_best_elo_rating\n" +
 		")\n" +
-		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, p.best_elo_rating_date AS points_date, p.best_elo_rank AS best_rank, p.best_elo_rank_date AS best_rank_date\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, %2$s AS points_date, %3$s AS best_rank, %4$s AS best_rank_date\n" +
 		"FROM best_elo_rating_ranked r\n" +
-		"INNER JOIN player_v p USING (player_id)%1$s\n" +
+		"INNER JOIN player_v p USING (player_id)%5$s\n" +
 		"ORDER BY rank, best_rank_date OFFSET :offset";
 
 	private static final String PLAYER_RANKING_QUERY =
@@ -143,7 +143,7 @@ public class RankingsService {
 		boolean allTimeElo = rankType.category == ELO && date == null;
 		jdbcTemplate.query(
 			allTimeElo
-				? format(HIGHEST_ELO_RATING_TABLE_QUERY, where(filter.getCriteria()))
+				? format(HIGHEST_ELO_RATING_TABLE_QUERY, bestEloRatingColumn(rankType), bestEloRatingDateColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), where(filter.getCriteria()))
 				: format(RANKING_TABLE_QUERY, rankColumn(rankType), pointsColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), rankingTable(rankType), filter.getCriteria()),
 			getTableParams(filter, allTimeElo, date, offset),
 			rs -> {
@@ -219,6 +219,28 @@ public class RankingsService {
 		switch (rankType) {
 			case POINTS: return "p.best_rank_date";
 			case ELO_RATING: return "p.best_elo_rank_date";
+			case HARD_ELO_RATING:
+			case CLAY_ELO_RATING:
+			case GRASS_ELO_RATING:
+			case CARPET_ELO_RATING: return "NULL";
+			default: throw unknownEnum(rankType);
+		}
+	}
+
+	private String bestEloRatingColumn(RankType rankType) {
+		switch (rankType) {
+			case ELO_RATING: return "best_elo_rating";
+			case HARD_ELO_RATING: return "best_hard_elo_rating";
+			case CLAY_ELO_RATING: return "best_clay_elo_rating";
+			case GRASS_ELO_RATING: return "best_grass_elo_rating";
+			case CARPET_ELO_RATING: return "best_carpet_elo_rating";
+			default: throw unknownEnum(rankType);
+		}
+	}
+
+	private String bestEloRatingDateColumn(RankType rankType) {
+		switch (rankType) {
+			case ELO_RATING: return "p.best_elo_rating_date";
 			case HARD_ELO_RATING:
 			case CLAY_ELO_RATING:
 			case GRASS_ELO_RATING:

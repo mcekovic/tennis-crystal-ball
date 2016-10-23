@@ -8,6 +8,7 @@ DROP TABLE tournament_rank_points CASCADE;
 DROP TABLE year_end_rank_goat_points CASCADE;
 DROP TABLE best_rank_goat_points CASCADE;
 DROP TABLE best_elo_rating_goat_points CASCADE;
+DROP TABLE best_surface_elo_rating_goat_points CASCADE;
 DROP TABLE weeks_at_no1_goat_points CASCADE;
 
 DROP TABLE big_win_match_factor CASCADE;

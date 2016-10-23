@@ -8,12 +8,14 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
+import static java.lang.Boolean.*;
+
 @Controller
 public class RankingsController extends PageController {
 
 	@Autowired private PlayerService playerService;
 
-	@GetMapping("rankingsTable")
+	@GetMapping("/rankingsTable")
 	public ModelAndView rankingsTable() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -21,9 +23,12 @@ public class RankingsController extends PageController {
 		return new ModelAndView("rankingsTable", modelMap);
 	}
 
-	@GetMapping({"allTimeEloRatings", "/eloRankingsTable"})
+	@GetMapping("/allTimeEloRatings")
 	public ModelAndView allTimeEloRatings() {
-		return new ModelAndView("allTimeEloRatings", "allTimeElo", true);
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("allTimeElo", TRUE);
+		return new ModelAndView("allTimeEloRatings", modelMap);
 	}
 
 	@GetMapping("/rankingsChart")

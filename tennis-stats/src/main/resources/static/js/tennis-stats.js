@@ -121,7 +121,7 @@ function loadCollapse($button, url) {
 const date_format = "dd-mm-yy";
 
 function formatDate(date) {
-	return $.datepicker.formatDate(date_format, new Date(date));
+	return date ? $.datepicker.formatDate(date_format, new Date(date)) : "";
 }
 
 function getDate(id) {

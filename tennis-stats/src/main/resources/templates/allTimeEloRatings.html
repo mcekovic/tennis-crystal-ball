@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
 	<title>All-Time Highest Elo Ratings</title>
 	<script type="text/javascript">
@@ -10,7 +11,12 @@
 					method: "GET",
 					cache: false
 				},
-				url: "/rankingsTableTable?rankType=ELO_RATING&allTime=true",
+				url: "/rankingsTableTable",
+				requestHandler: function (request) {
+					request.rankType = $("#rankType").val();
+					request.allTime = true;
+					return request;
+				},
 				sorting: false,
 				rowCount: [20, 50, -1],
 				searchSettings: {
@@ -19,7 +25,8 @@
 				},
 				formatters: {
 					"bestRank": function(column, row) {
-						return "<span title='" + formatDate(row.bestRankDate) + "'>" + row.bestRank + "</span>";
+						var date = row.bestRankDate;
+						return date ? ("<span title='" + formatDate(date) + "'>" + row.bestRank + "</span>") : row.bestRank;
 					},
 					"country": countryFormatter,
 					"player": playerFormatter,
@@ -34,15 +41,26 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
-			setBootgridTitle($("#rankingsTable-header"), $("#rankingsTable-title"));
+			var $rankingsTableHeader = $("#rankingsTable-header");
+			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove());
+			setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
 			$("[data-toggle='tooltip']").tooltip();
 			bindPopovers();
 		});
+		function reloadRankings() {
+			$("#rankingsTable").bootgrid("reload");
+		}
 	</script>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 id="rankingsTable-title" class="grid-title">All-Time Highest Elo Ratings</h3>
+	<div id="rankTypeDiv" class="btn-group" style="margin-right: 20px">
+		<select id="rankType" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select overall or Elo rating by surface">
+			<option value="ELO_RATING">Overall</option>
+			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+		</select>
+	</div>
 	<table id="rankingsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>

@@ -80,6 +80,11 @@ public class GOATLegendService {
 		return getRankGOATPoints("best_elo_rating_goat_points", "best_elo_rating_rank", "goat_points");
 	}
 
+	@Cacheable(value = "Global", key = "'BestSurfaceEloRatingGOATPoints'")
+	public List<RankGOATPoints> getBestSurfaceEloRatingGOATPoints() {
+		return getRankGOATPoints("best_surface_elo_rating_goat_points", "best_elo_rating_rank", "goat_points");
+	}
+
 	@Cacheable(value = "Global", key = "'WeeksAtNo1ForGOATPoint'")
 	public int getWeeksAtNo1ForGOATPoint() {
 		return jdbcTemplate.queryForObject(WEEKS_AT_NO1_FOR_GOAT_POINT, Integer.class);

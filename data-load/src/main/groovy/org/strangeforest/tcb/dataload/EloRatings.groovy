@@ -1,15 +1,15 @@
 package org.strangeforest.tcb.dataload
 
+import com.google.common.base.*
+import groovy.sql.*
+import org.strangeforest.tcb.util.*
+
 import java.time.temporal.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 
-import org.strangeforest.tcb.util.*
-
-import com.google.common.base.*
-import groovy.sql.*
-
 import static java.lang.Math.*
+import static org.strangeforest.tcb.dataload.StartEloRatings.*
 import static org.strangeforest.tcb.util.DateUtil.*
 
 class EloRatings {
@@ -45,7 +45,7 @@ class EloRatings {
 	static final String DELETE_ALL = //language=SQL
 		"DELETE FROM player_elo_ranking"
 
-	static final int MIN_MATCHES = 10
+	static final Map<String, Integer> MIN_MATCHES = [(null): 10, H: 5, C: 5, G: 5, P: 5]
 	static final int MIN_MATCHES_PERIOD = 365
 	static final int MIN_MATCHES_IN_PERIOD = 3
 
@@ -133,7 +133,7 @@ class EloRatings {
 	def current(int count, Date date = new Date(), String surface = null) {
 		Date minDate = toDate(toLocalDate(date).minusYears(1))
 		def i = 0
-		getRatings(surface).values().findAll { it.matches >= MIN_MATCHES && it.lastDate >= minDate && it.getDaysSpan(date) <= MIN_MATCHES_PERIOD }
+		getRatings(surface).values().findAll { it.matches >= MIN_MATCHES[surface] && it.lastDate >= minDate && it.getDaysSpan(date) <= MIN_MATCHES_PERIOD }
 			.sort(comparator)
 			.findAll { ++i <= count }
 	}
@@ -161,36 +161,36 @@ class EloRatings {
 		lockManager.withLock(playerId1, playerId2) {
 			def winnerRating = getRating(surface, winnerId, date)
 			def loserRating = getRating(surface, loserId, date)
-			boolean schedule = false;
+			boolean schedule = false
 			if (!(winnerRating && loserRating)) {
 				if (rankExecutor)
 					schedule = true
 				else {
-					winnerRating = winnerRating ?: newEloRating(winnerId)
-					loserRating = loserRating ?: newEloRating(loserId)
+					winnerRating = winnerRating ?: newEloRating(winnerId, surface)
+					loserRating = loserRating ?: newEloRating(loserId, surface)
 				}
 			}
 			if (schedule) {
 				def future = CompletableFuture.allOf(playerMatchFutures.get(playerId1) ?: nullFuture, playerMatchFutures.get(playerId2) ?: nullFuture).thenRunAsync({
 					lockManager.withLock(playerId1, playerId2) {
-						winnerRating = getRating(surface, winnerId, date) ?: newEloRating(winnerId)
-						loserRating = getRating(surface, loserId, date) ?: newEloRating(loserId)
-						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
+						winnerRating = getRating(surface, winnerId, date) ?: newEloRating(winnerId, surface)
+						loserRating = getRating(surface, loserId, date) ?: newEloRating(loserId, surface)
+						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome)
 						putNewRatings(surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date)
 					}
-				}, rankExecutor);
+				}, rankExecutor)
 				playerMatchFutures.put(playerId1, future)
 				playerMatchFutures.put(playerId2, future)
 			}
 			else {
-				def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
+				def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome)
 				putNewRatings(surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date)
 			}
 		}
 	}
 
-	private EloRating newEloRating(int playerId) {
-		new EloRating(playerId, playerRank(playerId, lastDate))
+	private EloRating newEloRating(int playerId, String surface) {
+		new EloRating(playerId, playerRank(playerId, lastDate), surface)
 	}
 
 	private getRatings(String surface) {
@@ -206,18 +206,18 @@ class EloRatings {
 
 	private putNewRatings(String surface, int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date) {
 		def ratings = getRatings(surface)
-		ratings.put(winnerId, winnerRating.newRating(deltaRating, date))
-		ratings.put(loserId, loserRating.newRating(-deltaRating, date))
+		ratings.put(winnerId, winnerRating.newRating(deltaRating, date, surface))
+		ratings.put(loserId, loserRating.newRating(-deltaRating, date, surface))
 	}
 
-	private static double deltaRating(double winnerRating, double loserRating, String level, String round, short bestOf, String outcome) {
+	private static double deltaRating(double winnerRating, double loserRating, String level, String surface, String round, short bestOf, String outcome) {
 		double winnerQ = pow(10, winnerRating / 400)
 		double loserQ = pow(10, loserRating / 400)
 		double loserExpectedScore = loserQ / (winnerQ + loserQ)
-		kFactor(level, round, bestOf, outcome) * loserExpectedScore
+		kFactor(level, surface, round, bestOf, outcome) * loserExpectedScore
 	}
 
-	private static double kFactor(level, round, bestOf, outcome) {
+	private static double kFactor(String level, String surface, String round, short bestOf, String outcome) {
 		double kFactor = 100
 		switch (level) {
 			case 'G': break
@@ -225,6 +225,12 @@ class EloRatings {
 			case 'M': kFactor *= 0.8; break
 			case 'A': kFactor *= 0.7; break
 			default: kFactor *= 0.6; break
+		}
+		switch (surface) {
+			case 'H': kFactor *= 1.5; break
+			case 'C': kFactor *= 1.6; break
+			case 'G': kFactor *= 2.2; break
+			case 'P': kFactor *= 2.2; break
 		}
 		switch (round) {
 			case 'F': break
@@ -250,36 +256,16 @@ class EloRatings {
 		volatile Deque<Date> dates
 		volatile EloRating bestRating
 
-		private static final START_RATING_TABLE = [
-			ratingPoint(1, 2370),
-			ratingPoint(2, 2290),
-			ratingPoint(3, 2236),
-			ratingPoint(4, 2192),
-			ratingPoint(5, 2158),
-			ratingPoint(7, 2110),
-			ratingPoint(10, 2063),
-			ratingPoint(15, 2015),
-			ratingPoint(20, 1981),
-			ratingPoint(30, 1924),
-			ratingPoint(50, 1838),
-			ratingPoint(70, 1769),
-			ratingPoint(100, 1693),
-			ratingPoint(150, 1606),
-			ratingPoint(200, 1550),
-			ratingPoint(300, 1500)
-		]
-		static final int START_RATING = START_RATING_TABLE[START_RATING_TABLE.size() - 1].eloRating
-
 		EloRating() {}
 
-		EloRating(int playerId, Integer rank) {
+		EloRating(int playerId, Integer rank, String surface) {
 			this.playerId = playerId
-			rating = startRating(rank)
+			rating = startRating(rank, surface)
 		}
 
-		EloRating newRating(double delta, Date date) {
+		EloRating newRating(double delta, Date date, String surface) {
 			def newRating = new EloRating(playerId: playerId, rating: rating + delta * kFunction(), matches: matches + 1, dates: new ArrayDeque<>(dates ?: []))
-			newRating.bestRating = bestRating(newRating)
+			newRating.bestRating = bestRating(newRating, surface)
 			newRating.addDate(date)
 			newRating
 		}
@@ -331,38 +317,11 @@ class EloRatings {
 			max(START_RATING, rating - (daysSinceLastMatch - 365) * 200 / 365)
 		}
 
-		def bestRating(EloRating newRating) {
-			if (matches >= MIN_MATCHES)
+		def bestRating(EloRating newRating, String surface) {
+			if (matches >= MIN_MATCHES[surface])
 				bestRating && bestRating >= newRating ? bestRating : newRating
 			else
 				null
-		}
-
-		private static ratingPoint(int rank, int eloRating) {
-			return new RatingPoint(rank: rank, eloRating: eloRating)
-		}
-
-		static int startRating(Integer rank) {
-			if (rank) {
-				RatingPoint prevPoint
-				for (RatingPoint point : START_RATING_TABLE) {
-					if (rank == point.rank)
-						return point.eloRating
-					else if (rank < point.rank) {
-						if (prevPoint != null)
-							return prevPoint.eloRating - (prevPoint.eloRating - point.eloRating) * (rank - prevPoint.rank) / (point.rank - prevPoint.rank)
-						else
-							return point.eloRating
-					}
-					prevPoint = point
-				}
-			}
-			START_RATING
-		}
-
-		static class RatingPoint {
-			int rank;
-			int eloRating;
 		}
 
 		String toString() {
@@ -480,6 +439,8 @@ class EloRatings {
 		}
 
 		boolean isForSave() {
+			if (!ranks[null])
+				return false
 			for (Integer rank : ranks.values()) {
 				if (rank <= PLAYERS_TO_SAVE)
 					return true
