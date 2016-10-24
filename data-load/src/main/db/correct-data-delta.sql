@@ -13,3 +13,12 @@ WHERE (first_name = 'Lleyton' AND last_name = 'Hewitt')
 OR (first_name = 'Mardy' AND last_name = 'Fish');
 
 COMMIT;
+
+
+-- Delete Active Player Records
+
+DELETE FROM active_player_record;
+
+DELETE FROM saved_record WHERE active_players;
+
+COMMIT;
