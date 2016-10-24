@@ -12,6 +12,7 @@ import static java.lang.Math.*
 import static org.strangeforest.tcb.dataload.StartEloRatings.*
 import static org.strangeforest.tcb.util.DateUtil.*
 
+//TODO Cache player start rankings, optionally batch rankings fetch for the whole day
 class EloRatings {
 
 	final SqlPool sqlPool
@@ -248,7 +249,7 @@ class EloRatings {
 		kFactor
 	}
 
-	static class EloRating implements Comparable<EloRating> {
+	private static class EloRating implements Comparable<EloRating> {
 
 		volatile int playerId
 		volatile double rating
@@ -334,26 +335,26 @@ class EloRatings {
 	}
 
 
-	Date lastDate() {
+	private Date lastDate() {
 		sqlPool.withSql { sql ->
 			sql.firstRow(QUERY_LAST_DATE).last_date
 		}
 	}
 
-	def deleteAll() {
+	private deleteAll() {
 		sqlPool.withSql { sql ->
 			sql.execute(DELETE_ALL)
 		}
 	}
 
-	def Integer playerRank(int playerId, Date date) {
+	private Integer playerRank(int playerId, Date date) {
 		rankFetches.incrementAndGet()
 		sqlPool.withSql { Sql sql ->
 			sql.firstRow(QUERY_PLAYER_RANK, [playerId, date]).rank
 		}
 	}
 
-	def saveCurrentRatings() {
+	private saveCurrentRatings() {
 		if (saveExecutor && playerRatings && (!saveFromDate || lastDate >= saveFromDate)) {
 			def eloRatings = setRanks(current(Integer.MAX_VALUE, lastDate).collect { new EloRatingValue(it) })
 			def playerRatings = new LinkedHashMap<Integer, EloRatingValue>(eloRatings.collectEntries({[(it.playerId): it]}))
@@ -385,7 +386,7 @@ class EloRatings {
 		eloRatings
 	}
 
-	def saveRatings(Iterable<EloRatingValue> eloRatings, Date date) {
+	private saveRatings(Iterable<EloRatingValue> eloRatings, Date date) {
 		sqlPool.withSql { sql ->
 			sql.withBatch(MERGE_ELO_RANKING) { ps ->
 				eloRatings.each { eloRating ->
@@ -422,7 +423,7 @@ class EloRatings {
 			println()
 	}
 
-	static class EloRatingValue {
+	private static class EloRatingValue {
 
 		int playerId
 		Map<String, Integer> ranks = [:]
