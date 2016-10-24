@@ -61,8 +61,12 @@ public class RankingsService {
 		"ORDER BY rank, best_rank_date OFFSET :offset";
 
 	private static final String PLAYER_RANKING_QUERY =
-		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points," +
-		"  best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date, best_hard_elo_rank, best_hard_elo_rating, best_clay_elo_rank, best_clay_elo_rating, best_grass_elo_rank, best_grass_elo_rating, best_carpet_elo_rank, best_carpet_elo_rating\n" +
+		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points,\n" +
+		"  best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,\n" +
+		"  best_hard_elo_rank, best_hard_elo_rank_date, best_hard_elo_rating, best_hard_elo_rating_date,\n" +
+		"  best_clay_elo_rank, best_clay_elo_rank_date, best_clay_elo_rating, best_clay_elo_rating_date,\n" +
+		"  best_grass_elo_rank, best_grass_elo_rank_date, best_grass_elo_rating, best_grass_elo_rating_date,\n" +
+		"  best_carpet_elo_rank, best_carpet_elo_rank_date, best_carpet_elo_rating, best_carpet_elo_rating_date\n" +
 		"FROM player_v\n" +
 		"WHERE player_id = :playerId";
 
@@ -219,10 +223,10 @@ public class RankingsService {
 		switch (rankType) {
 			case POINTS: return "p.best_rank_date";
 			case ELO_RATING: return "p.best_elo_rank_date";
-			case HARD_ELO_RATING:
-			case CLAY_ELO_RATING:
-			case GRASS_ELO_RATING:
-			case CARPET_ELO_RATING: return "NULL";
+			case HARD_ELO_RATING: return "p.best_hard_elo_rank_date";
+			case CLAY_ELO_RATING: return "p.best_clay_elo_rank_date";
+			case GRASS_ELO_RATING: return "p.best_grass_elo_rank_date";
+			case CARPET_ELO_RATING: return "p.best_carpet_elo_rank_date";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -241,10 +245,10 @@ public class RankingsService {
 	private String bestEloRatingDateColumn(RankType rankType) {
 		switch (rankType) {
 			case ELO_RATING: return "p.best_elo_rating_date";
-			case HARD_ELO_RATING:
-			case CLAY_ELO_RATING:
-			case GRASS_ELO_RATING:
-			case CARPET_ELO_RATING: return "NULL";
+			case HARD_ELO_RATING: return "p.best_hard_elo_rating_date";
+			case CLAY_ELO_RATING: return "p.best_clay_elo_rating_date";
+			case GRASS_ELO_RATING: return "p.best_grass_elo_rating_date";
+			case CARPET_ELO_RATING: return "p.best_carpet_elo_rating_date";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -281,13 +285,21 @@ public class RankingsService {
 			highlights.setBestEloRating(rs.getInt("best_elo_rating"));
 			highlights.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
 			highlights.setBestHardEloRank(rs.getInt("best_hard_elo_rank"));
+			highlights.setBestHardEloRankDate(rs.getDate("best_hard_elo_rank_date"));
 			highlights.setBestHardEloRating(rs.getInt("best_hard_elo_rating"));
+			highlights.setBestHardEloRatingDate(rs.getDate("best_hard_elo_rating_date"));
 			highlights.setBestClayEloRank(rs.getInt("best_clay_elo_rank"));
+			highlights.setBestClayEloRankDate(rs.getDate("best_clay_elo_rank_date"));
 			highlights.setBestClayEloRating(rs.getInt("best_clay_elo_rating"));
+			highlights.setBestClayEloRatingDate(rs.getDate("best_clay_elo_rating_date"));
 			highlights.setBestGrassEloRank(rs.getInt("best_grass_elo_rank"));
+			highlights.setBestGrassEloRankDate(rs.getDate("best_grass_elo_rank_date"));
 			highlights.setBestGrassEloRating(rs.getInt("best_grass_elo_rating"));
+			highlights.setBestGrassEloRatingDate(rs.getDate("best_grass_elo_rating_date"));
 			highlights.setBestCarpetEloRank(rs.getInt("best_carpet_elo_rank"));
+			highlights.setBestCarpetEloRankDate(rs.getDate("best_carpet_elo_rank_date"));
 			highlights.setBestCarpetEloRating(rs.getInt("best_carpet_elo_rating"));
+			highlights.setBestCarpetEloRatingDate(rs.getDate("best_carpet_elo_rating_date"));
 		});
 
 		jdbcTemplate.query(PLAYER_YEAR_END_RANK_QUERY, params("playerId", playerId), rs -> {

@@ -27,13 +27,21 @@ public class RankingHighlights {
 	private int bestEloRating;
 	private Date bestEloRatingDate;
 	private int bestHardEloRank;
+	private Date bestHardEloRankDate;
 	private int bestHardEloRating;
+	private Date bestHardEloRatingDate;
 	private int bestClayEloRank;
+	private Date bestClayEloRankDate;
 	private int bestClayEloRating;
+	private Date bestClayEloRatingDate;
 	private int bestGrassEloRank;
+	private Date bestGrassEloRankDate;
 	private int bestGrassEloRating;
+	private Date bestGrassEloRatingDate;
 	private int bestCarpetEloRank;
+	private Date bestCarpetEloRankDate;
 	private int bestCarpetEloRating;
+	private Date bestCarpetEloRatingDate;
 	private Map<Integer, Double> weeksAt = new HashMap<>();
 	private Map<Integer, Integer> yearEndsAt = new HashMap<>();
 
@@ -194,12 +202,28 @@ public class RankingHighlights {
 		this.bestHardEloRank = bestHardEloRank;
 	}
 
+	public Date getBestHardEloRankDate() {
+		return bestHardEloRankDate;
+	}
+
+	public void setBestHardEloRankDate(Date bestHardEloRankDate) {
+		this.bestHardEloRankDate = bestHardEloRankDate;
+	}
+
 	public int getBestHardEloRating() {
 		return bestHardEloRating;
 	}
 
 	public void setBestHardEloRating(int bestHardEloRating) {
 		this.bestHardEloRating = bestHardEloRating;
+	}
+
+	public Date getBestHardEloRatingDate() {
+		return bestHardEloRatingDate;
+	}
+
+	public void setBestHardEloRatingDate(Date bestHardEloRatingDate) {
+		this.bestHardEloRatingDate = bestHardEloRatingDate;
 	}
 
 	public int getBestClayEloRank() {
@@ -210,12 +234,28 @@ public class RankingHighlights {
 		this.bestClayEloRank = bestClayEloRank;
 	}
 
+	public Date getBestClayEloRankDate() {
+		return bestClayEloRankDate;
+	}
+
+	public void setBestClayEloRankDate(Date bestClayEloRankDate) {
+		this.bestClayEloRankDate = bestClayEloRankDate;
+	}
+
 	public int getBestClayEloRating() {
 		return bestClayEloRating;
 	}
 
 	public void setBestClayEloRating(int bestClayEloRating) {
 		this.bestClayEloRating = bestClayEloRating;
+	}
+
+	public Date getBestClayEloRatingDate() {
+		return bestClayEloRatingDate;
+	}
+
+	public void setBestClayEloRatingDate(Date bestClayEloRatingDate) {
+		this.bestClayEloRatingDate = bestClayEloRatingDate;
 	}
 
 	public int getBestGrassEloRank() {
@@ -226,12 +266,28 @@ public class RankingHighlights {
 		this.bestGrassEloRank = bestGrassEloRank;
 	}
 
+	public Date getBestGrassEloRankDate() {
+		return bestGrassEloRankDate;
+	}
+
+	public void setBestGrassEloRankDate(Date bestGrassEloRankDate) {
+		this.bestGrassEloRankDate = bestGrassEloRankDate;
+	}
+
 	public int getBestGrassEloRating() {
 		return bestGrassEloRating;
 	}
 
 	public void setBestGrassEloRating(int bestGrassEloRating) {
 		this.bestGrassEloRating = bestGrassEloRating;
+	}
+
+	public Date getBestGrassEloRatingDate() {
+		return bestGrassEloRatingDate;
+	}
+
+	public void setBestGrassEloRatingDate(Date bestGrassEloRatingDate) {
+		this.bestGrassEloRatingDate = bestGrassEloRatingDate;
 	}
 
 	public int getBestCarpetEloRank() {
@@ -242,12 +298,28 @@ public class RankingHighlights {
 		this.bestCarpetEloRank = bestCarpetEloRank;
 	}
 
+	public Date getBestCarpetEloRankDate() {
+		return bestCarpetEloRankDate;
+	}
+
+	public void setBestCarpetEloRankDate(Date bestCarpetEloRankDate) {
+		this.bestCarpetEloRankDate = bestCarpetEloRankDate;
+	}
+
 	public int getBestCarpetEloRating() {
 		return bestCarpetEloRating;
 	}
 
 	public void setBestCarpetEloRating(int bestCarpetEloRating) {
 		this.bestCarpetEloRating = bestCarpetEloRating;
+	}
+
+	public Date getBestCarpetEloRatingDate() {
+		return bestCarpetEloRatingDate;
+	}
+
+	public void setBestCarpetEloRatingDate(Date bestCarpetEloRatingDate) {
+		this.bestCarpetEloRatingDate = bestCarpetEloRatingDate;
 	}
 
 	private Supplier<FrequentRank<Double>> mostFrequentRank = Memoizer.of(() -> findMostFrequentRank(weeksAt));

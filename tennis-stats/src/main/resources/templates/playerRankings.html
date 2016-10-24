@@ -228,19 +228,35 @@
 			</tr>
 			<tr th:if="${highlights.bestHardEloRank > 0}">
 				<th>Best Hard Elo Rank</th>
-				<td th:text="${highlights.bestHardEloRank} + ' (' + ${highlights.bestHardEloRating} + ')'">5 (2210)</td>
+				<td th:text="${highlights.bestHardEloRank} + ' (' + ${#dates.format(highlights.bestHardEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
+			</tr>
+			<tr th:if="${highlights.bestHardEloRating > 0}">
+				<th>Highest Hard Elo Rating</th>
+				<td th:text="${highlights.bestHardEloRating} + ' (' + ${#dates.format(highlights.bestHardEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
 			</tr>
 			<tr th:if="${highlights.bestClayEloRank > 0}">
 				<th>Best Clay Elo Rank</th>
-				<td th:text="${highlights.bestClayEloRank} + ' (' + ${highlights.bestClayEloRating} + ')'">5 (2210)</td>
+				<td th:text="${highlights.bestClayEloRank} + ' (' + ${#dates.format(highlights.bestClayEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
+			</tr>
+			<tr th:if="${highlights.bestClayEloRating > 0}">
+				<th>Highest Clay Elo Rating</th>
+				<td th:text="${highlights.bestClayEloRating} + ' (' + ${#dates.format(highlights.bestClayEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
 			</tr>
 			<tr th:if="${highlights.bestGrassEloRank > 0}">
 				<th>Best Grass Elo Rank</th>
-				<td th:text="${highlights.bestGrassEloRank} + ' (' + ${highlights.bestGrassEloRating} + ')'">5 (2210)</td>
+				<td th:text="${highlights.bestGrassEloRank} + ' (' + ${#dates.format(highlights.bestGrassEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
+			</tr>
+			<tr th:if="${highlights.bestGrassEloRating > 0}">
+				<th>Highest Grass Elo Rating</th>
+				<td th:text="${highlights.bestGrassEloRating} + ' (' + ${#dates.format(highlights.bestGrassEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
 			</tr>
 			<tr th:if="${highlights.bestCarpetEloRank > 0}">
 				<th>Best Carpet Elo Rank</th>
-				<td th:text="${highlights.bestCarpetEloRank} + ' (' + ${highlights.bestCarpetEloRating} + ')'">5 (2210)</td>
+				<td th:text="${highlights.bestCarpetEloRank} + ' (' + ${#dates.format(highlights.bestCarpetEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
+			</tr>
+			<tr th:if="${highlights.bestCarpetEloRating > 0}">
+				<th>Highest Carpet Elo Rating</th>
+				<td th:text="${highlights.bestCarpetEloRating} + ' (' + ${#dates.format(highlights.bestCarpetEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
 			</tr>
 		</table>
 	</div>
