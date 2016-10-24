@@ -8,23 +8,23 @@ public class EloRatingsTest {
 
 	@Test
 	void "Start rating is calculated correctly"() {
-		assert rankHasStartRating(1, 2365)
-		assert rankHasStartRating(2, 2290)
-		assert rankHasStartRating(3, 2235)
-		assert rankHasStartRating(4, 2195)
-		assert rankHasStartRating(5, 2160)
-		assert rankHasStartRating(6, 2135)
-		assert rankHasStartRating(7, 2110)
-		assert rankHasStartRating(8, 2093)
-		assert rankHasStartRating(9, 2076)
-		assert rankHasStartRating(10, 2060);
-		assert rankHasStartRating(40, 1882);
-		assert rankHasStartRating(125, 1655);
-		assert rankHasStartRating(250, 1527);
-		assert rankHasStartRating(500, 1500);
+		assert startRating(  1) == 2368
+		assert startRating(  2) == 2288
+		assert startRating(  3) == 2234
+		assert startRating(  4) == 2191
+		assert startRating(  5) == 2157
+		assert startRating(  6) == 2132
+		assert startRating(  7) == 2108
+		assert startRating(  8) == 2092
+		assert startRating(  9) == 2077
+		assert startRating( 10) == 2062
+		assert startRating( 40) == 1879
+		assert startRating(125) == 1648
+		assert startRating(250) == 1516
+		assert startRating(500) == 1500
 	}
 
-	static def rankHasStartRating(int rank, int startRating) {
-		new EloRating(100, rank).rating == startRating
+	static def startRating(int rank) {
+		new EloRating(100, rank, null).rating
 	}
 }

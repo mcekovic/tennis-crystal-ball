@@ -249,7 +249,7 @@ class EloRatings {
 		kFactor
 	}
 
-	private static class EloRating implements Comparable<EloRating> {
+	static class EloRating implements Comparable<EloRating> {
 
 		volatile int playerId
 		volatile double rating
