@@ -59,6 +59,9 @@ static loadTournaments(SqlPool sqlPool) {
 	matchLoader.load(fetchTournament(2016, 'Beijing', 747))
 	matchLoader.load(fetchTournament(2016, 'Tokyo', 329))
 	matchLoader.load(fetchTournament(2016, 'Shanghai', 5014))
+	matchLoader.load(fetchTournament(2016, 'Stockholm', 429))
+	matchLoader.load(fetchTournament(2016, 'Antwerp', 7485))
+	matchLoader.load(fetchTournament(2016, 'Moscow', 438))
 	sqlPool.withSql {sql ->
 		def atpWorldTourMatchLoader = new ATPWorldTourTournamentLoader(sql)
 //		atpWorldTourMatchLoader.loadTournament(2016, 'shanghai', 5014)

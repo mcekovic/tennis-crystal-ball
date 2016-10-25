@@ -19,9 +19,12 @@ class EloRatings {
 
 	final SqlPool sqlPool
 	final LockManager<Integer> lockManager
+	final LockManager<RankKey> rankLockManager
 	final Map<Integer, CompletableFuture> playerMatchFutures
 	Map<Integer, EloRating> playerRatings
 	Map<String, Map<Integer, EloRating>> surfacePlayerRatings
+	Map<RankKey, Integer> rankCache
+	Map<Date, Map<Integer, Integer>> rankDateCache
 	volatile Date lastDate
 	AtomicInteger saves, rankFetches
 	AtomicInteger progress
@@ -42,35 +45,44 @@ class EloRatings {
 	static final String QUERY_PLAYER_RANK = //language=SQL
 		"SELECT player_rank(?, ?) AS rank"
 
+	static final String QUERY_ALL_RANKS = //language=SQL
+		"SELECT player_id, rank_date, rank FROM player_ranking ORDER BY rank_date, player_id"
+
 	static final String MERGE_ELO_RANKING = //language=SQL
 		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating, :hard_rank, :hard_elo_rating, :clay_rank, :clay_elo_rating, :grass_rank, :grass_elo_rating, :carpet_rank, :carpet_elo_rating)}"
 
 	static final String DELETE_ALL = //language=SQL
 		"DELETE FROM player_elo_ranking"
 
+	static final List<String> SURFACES = ['H', 'C', 'G', 'P']
+	static final Date CARPET_EOL = toDate(LocalDate.of(2008, 1, 1))
 	static final Map<String, Integer> MIN_MATCHES = [(null): 10, H: 5, C: 5, G: 5, P: 5]
 	static final int MIN_MATCHES_PERIOD = 365
 	static final int MIN_MATCHES_IN_PERIOD = 3
-
-	static final double SAVE_RANK_THREAD_RATIO = 1.0
-	static final int MATCHES_PER_DOT = 1000
-	static final int SAVES_PER_PLUS = 20
-	static final int PROGRESS_LINE_WRAP = 100
 	static final int PLAYERS_TO_SAVE = 200
 
-	static final List<String> SURFACES = ['H', 'C', 'G', 'P']
-	static final Date CARPET_DISCONTINUED = toDate(LocalDate.of(2008, 1, 1))
+	static final int MATCHES_FETCH_SIZE = 200
+	static final int RANK_PRELOAD_FETCH_SIZE = 1000
+	static final double SAVE_RANK_THREAD_RATIO = 1.0
+
 	static final def comparator = { a, b -> b <=> a }
 	static final def bestComparator = { a, b -> b.bestRating <=> a.bestRating }
 	static final def nullFuture = CompletableFuture.completedFuture(null)
 
+	static final int MATCHES_PER_DOT = 1000
+	static final int SAVES_PER_PLUS = 20
+	static final int RANK_FETCHES_PER_QUESTION_MARK = 200
+	static final int RANK_PRELOADS_PER_QUESTION_MARK = 20000
+	static final int PROGRESS_LINE_WRAP = 100
+
 	EloRatings(SqlPool sqlPool) {
 		this.sqlPool = sqlPool
 		lockManager = new LockManager<>()
+		rankLockManager = new LockManager<>()
 		playerMatchFutures = new HashMap<>()
 	}
 
-	def compute(boolean save = false, boolean fullSave = true, Date saveFromDate = null) {
+	def compute(boolean save = false, boolean fullSave = true, Date saveFromDate = null, boolean preLoadRanks = true) {
 		def stopwatch = Stopwatch.createStarted()
 		int matches = 0
 		playerRatings = new ConcurrentHashMap<>()
@@ -80,9 +92,14 @@ class EloRatings {
 		saves = new AtomicInteger()
 		rankFetches = new AtomicInteger()
 		progress = new AtomicInteger()
+		if (preLoadRanks)
+			loadRanks()
+		else
+			rankCache = [:]
 		def remainingPoolSize = sqlPool.size() - 1
-		int saveThreads = save ? (SAVE_RANK_THREAD_RATIO ? remainingPoolSize * SAVE_RANK_THREAD_RATIO / (1 + SAVE_RANK_THREAD_RATIO) : remainingPoolSize) : 0
-		int rankThreads = SAVE_RANK_THREAD_RATIO ? remainingPoolSize - saveThreads : 0
+		def useRankExecutor = SAVE_RANK_THREAD_RATIO != null && !preLoadRanks
+		int saveThreads = save ? (useRankExecutor ? remainingPoolSize * SAVE_RANK_THREAD_RATIO / (1 + SAVE_RANK_THREAD_RATIO) : remainingPoolSize) : 0
+		int rankThreads = useRankExecutor ? remainingPoolSize - saveThreads : 0
 		if (rankThreads) {
 			println "Using $rankThreads rank threads"
 			rankExecutor = Executors.newFixedThreadPool(rankThreads)
@@ -100,6 +117,7 @@ class EloRatings {
 		println 'Processing matches'
 		sqlPool.withSql { sql ->
 			try {
+				sql.withStatement { st -> st.fetchSize = MATCHES_FETCH_SIZE }
 				sql.eachRow(QUERY_MATCHES) { match ->
 					def date = match.end_date
 					if (lastDate && date != lastDate) {
@@ -350,10 +368,54 @@ class EloRatings {
 	}
 
 	private Integer playerRank(int playerId, Date date) {
-		rankFetches.incrementAndGet()
-		sqlPool.withSql { Sql sql ->
-			sql.firstRow(QUERY_PLAYER_RANK, [playerId, date]).rank
+		if (rankDateCache) {
+			Map.Entry<Date, Map<Integer, Integer>> prevCachedDateEntry = null
+			for (Map.Entry<Date, Map<Integer, Integer>> cachedDateEntry : rankDateCache.entrySet()) {
+				if (date < cachedDateEntry.key)
+					break
+				else
+					prevCachedDateEntry = cachedDateEntry
+			}
+			prevCachedDateEntry && date <= toDate(toLocalDate(prevCachedDateEntry.key).plusYears(1)) ? prevCachedDateEntry.value[playerId] : null
 		}
+		else {
+			def rankKey = new RankKey(playerId: playerId, date: date)
+			rankLockManager.withLock(rankKey) {
+				Integer rank = rankCache[rankKey]
+				if (rank)
+					return rank
+				rank = sqlPool.withSql { Sql sql ->
+					sql.firstRow(QUERY_PLAYER_RANK, [playerId, date]).rank
+				}
+				rankCache[rankKey] = rank
+				if (rankFetches.incrementAndGet() % RANK_FETCHES_PER_QUESTION_MARK == 0)
+					progressTick '?'
+				rank
+			}
+		}
+	}
+
+	private loadRanks() {
+		println 'Preloading ranks...'
+		def stopwatch = Stopwatch.createStarted()
+		rankDateCache = new LinkedHashMap<>()
+		def rankPreloads = 0
+		sqlPool.withSql { sql ->
+			sql.withStatement { st -> st.fetchSize = RANK_PRELOAD_FETCH_SIZE }
+			sql.eachRow(QUERY_ALL_RANKS) { rankRecord ->
+				def date = rankRecord.rank_date
+				def rankTable = rankDateCache[date]
+				if (!rankTable) {
+					rankTable = [:]
+					rankDateCache[date] = rankTable
+				}
+				rankTable[rankRecord.player_id] = rankRecord.rank
+				if (++rankPreloads % RANK_PRELOADS_PER_QUESTION_MARK == 0)
+					progressTick '?'
+			}
+		}
+		println "\nRanks preloaded in $stopwatch"
+		progress = new AtomicInteger()
 	}
 
 	private saveCurrentRatings() {
@@ -405,9 +467,9 @@ class EloRatings {
 					params.clay_elo_rating = intRound ratings['C']
 					params.grass_rank = ranks['G']
 					params.grass_elo_rating = intRound ratings['G']
-					boolean isCarpetDiscontinued = date >= CARPET_DISCONTINUED
-					params.carpet_rank = isCarpetDiscontinued ? ranks['P'] : null
-					params.carpet_elo_rating = isCarpetDiscontinued ? intRound(ratings['P']) : null
+					boolean isCarpetUsed = date < CARPET_EOL
+					params.carpet_rank = isCarpetUsed ? ranks['P'] : null
+					params.carpet_elo_rating = isCarpetUsed ? intRound(ratings['P']) : null
 					ps.addBatch(params)
 				}
 			}
@@ -460,6 +522,23 @@ class EloRatings {
 
 		@Override int hashCode() {
 			return playerId
+		}
+	}
+
+	private static class RankKey {
+
+		int playerId
+		Date date
+
+		@Override boolean equals(o) {
+			if (this.is(o)) return true
+			if (getClass() != o.class) return false
+			RankKey rankKey = (RankKey) o
+			playerId == rankKey.playerId && Objects.equal(date, rankKey.date)
+		}
+
+		@Override int hashCode() {
+			Objects.hashCode(playerId, date)
 		}
 	}
 }
