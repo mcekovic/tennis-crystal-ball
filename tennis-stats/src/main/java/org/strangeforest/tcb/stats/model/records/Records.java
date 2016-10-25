@@ -61,7 +61,11 @@ public abstract class Records {
 		register(new SemiFinalStreaksCategory(), false);
 		register(new QuarterFinalStreaksCategory(), false);
 		register(new ATPRankingCategory(), false);
-		register(new EloRankingCategory(), false);
+		register(new EloRankingCategory(RecordDomain.ALL), false);
+		register(new EloRankingCategory(RecordDomain.HARD), false);
+		register(new EloRankingCategory(RecordDomain.CLAY), false);
+		register(new EloRankingCategory(RecordDomain.GRASS), false);
+		register(new EloRankingCategory(RecordDomain.CARPET), false);
 		register(new YoungestOldestTournamentResultCategory(YoungestOldestTournamentResultCategory.RecordType.YOUNGEST), false);
 		register(new YoungestOldestTournamentResultCategory(YoungestOldestTournamentResultCategory.RecordType.OLDEST), false);
 		register(new LongestCareerResultSpanCategory(), false);

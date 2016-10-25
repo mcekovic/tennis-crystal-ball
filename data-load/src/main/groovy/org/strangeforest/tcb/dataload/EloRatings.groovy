@@ -1,12 +1,14 @@
 package org.strangeforest.tcb.dataload
 
-import com.google.common.base.*
-import groovy.sql.*
-import org.strangeforest.tcb.util.*
-
+import java.time.*
 import java.time.temporal.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.*
+
+import org.strangeforest.tcb.util.*
+
+import com.google.common.base.*
+import groovy.sql.*
 
 import static java.lang.Math.*
 import static org.strangeforest.tcb.dataload.StartEloRatings.*
@@ -57,7 +59,7 @@ class EloRatings {
 	static final int PLAYERS_TO_SAVE = 200
 
 	static final List<String> SURFACES = ['H', 'C', 'G', 'P']
-
+	static final Date CARPET_DISCONTINUED = toDate(LocalDate.of(2008, 1, 1))
 	static final def comparator = { a, b -> b <=> a }
 	static final def bestComparator = { a, b -> b.bestRating <=> a.bestRating }
 	static final def nullFuture = CompletableFuture.completedFuture(null)
@@ -403,8 +405,9 @@ class EloRatings {
 					params.clay_elo_rating = intRound ratings['C']
 					params.grass_rank = ranks['G']
 					params.grass_elo_rating = intRound ratings['G']
-					params.carpet_rank = ranks['P']
-					params.carpet_elo_rating = intRound ratings['P']
+					boolean isCarpetDiscontinued = date >= CARPET_DISCONTINUED
+					params.carpet_rank = isCarpetDiscontinued ? ranks['P'] : null
+					params.carpet_elo_rating = isCarpetDiscontinued ? intRound(ratings['P']) : null
 					ps.addBatch(params)
 				}
 			}

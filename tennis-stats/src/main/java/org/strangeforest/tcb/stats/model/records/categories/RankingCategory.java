@@ -4,6 +4,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
+import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.RankingCategory.AgeType.*;
 
 public abstract class RankingCategory extends RecordCategory {
@@ -40,72 +41,74 @@ public abstract class RankingCategory extends RecordCategory {
 		super(name);
 	}
 
-	protected void registerRanking(String type, String rankDBName) {
-		register(mostWeeksAt(type, NO_1, NO_1_NAME, rankDBName, NO_1_RANK, NO_1_RANK));
-		register(mostWeeksAt(type, NO_2, NO_2_NAME, rankDBName, NO_2_RANK, TOP_2_RANK));
-		register(mostWeeksAt(type, NO_3, NO_3_NAME, rankDBName, NO_3_RANK, TOP_3_RANK));
-		register(mostWeeksAt(type, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK, TOP_2_RANK));
-		register(mostWeeksAt(type, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK, TOP_3_RANK));
-		register(mostWeeksAt(type, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK, TOP_5_RANK));
-		register(mostWeeksAt(type, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK, TOP_10_RANK));
-		register(mostWeeksAt(type, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK, TOP_20_RANK));
-		register(mostConsecutiveWeeksAt(type, NO_1, NO_1_NAME, rankDBName, NO_1_RANK, NO_1_RANK));
-		register(mostConsecutiveWeeksAt(type, NO_2, NO_2_NAME, rankDBName, NO_2_RANK, TOP_2_RANK));
-		register(mostConsecutiveWeeksAt(type, NO_3, NO_3_NAME, rankDBName, NO_3_RANK, TOP_3_RANK));
-		register(mostConsecutiveWeeksAt(type, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK, TOP_2_RANK));
-		register(mostConsecutiveWeeksAt(type, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK, TOP_3_RANK));
-		register(mostConsecutiveWeeksAt(type, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK, TOP_5_RANK));
-		register(mostConsecutiveWeeksAt(type, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK, TOP_10_RANK));
-		register(mostConsecutiveWeeksAt(type, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK, TOP_20_RANK));
-		register(mostEndsOfSeasonAt(type, NO_1, NO_1_NAME, rankDBName, NO_1_RANK));
-		register(mostEndsOfSeasonAt(type, NO_2, NO_2_NAME, rankDBName, NO_2_RANK));
-		register(mostEndsOfSeasonAt(type, NO_3, NO_3_NAME, rankDBName, NO_3_RANK));
-		register(mostEndsOfSeasonAt(type, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK));
-		register(mostEndsOfSeasonAt(type, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK));
-		register(mostEndsOfSeasonAt(type, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK));
-		register(mostEndsOfSeasonAt(type, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK));
-		register(mostEndsOfSeasonAt(type, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
-		register(mostConsecutiveEndsOfSeasonAt(type, NO_1, NO_1_NAME, rankDBName, NO_1_RANK));
-		register(mostConsecutiveEndsOfSeasonAt(type, NO_2, NO_2_NAME, rankDBName, NO_2_RANK));
-		register(mostConsecutiveEndsOfSeasonAt(type, NO_3, NO_3_NAME, rankDBName, NO_3_RANK));
-		register(mostConsecutiveEndsOfSeasonAt(type, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK));
-		register(mostConsecutiveEndsOfSeasonAt(type, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK));
-		register(mostConsecutiveEndsOfSeasonAt(type, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK));
-		register(mostConsecutiveEndsOfSeasonAt(type, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK));
-		register(mostConsecutiveEndsOfSeasonAt(type, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
-		register(mostTimesAt(type, NO_1, NO_1_NAME, rankDBName, NO_1_RANK, NO_1_RANK));
-		register(mostTimesAt(type, NO_2, NO_2_NAME, rankDBName, NO_2_RANK, TOP_2_RANK));
-		register(mostTimesAt(type, NO_3, NO_3_NAME, rankDBName, NO_3_RANK, TOP_3_RANK));
-		register(youngestOldestRanking(YOUNGEST, YOUNGEST.name + type + NO_1, YOUNGEST.name + prefix(type, " ") + prefix(NO_1_NAME, " "), rankDBName, NO_1_RANK));
-		register(youngestOldestRanking(YOUNGEST, YOUNGEST.name + type + TOP_2, YOUNGEST.name + prefix(type, " ") + prefix(TOP_2_NAME, " "), rankDBName, TOP_2_RANK));
-		register(youngestOldestRanking(YOUNGEST, YOUNGEST.name + type + TOP_3, YOUNGEST.name + prefix(type, " ") + prefix(TOP_3_NAME, " "), rankDBName, TOP_3_RANK));
-		register(youngestOldestRanking(YOUNGEST, YOUNGEST.name + type + TOP_5, YOUNGEST.name + prefix(type, " ") + prefix(TOP_5_NAME, " "), rankDBName, TOP_5_RANK));
-		register(youngestOldestRanking(YOUNGEST, YOUNGEST.name + type + TOP_10, YOUNGEST.name + prefix(type, " ") + prefix(TOP_10_NAME, " "), rankDBName, TOP_10_RANK));
-		register(youngestOldestRanking(YOUNGEST, YOUNGEST.name + type + TOP_20, YOUNGEST.name + prefix(type, " ") + prefix(TOP_20_NAME, " "), rankDBName, TOP_20_RANK));
-		register(youngestOldestRanking(OLDEST, OLDEST.name + type + NO_1, OLDEST.name + prefix(type, " ") + prefix(NO_1_NAME, " "), rankDBName, NO_1_RANK));
-		register(youngestOldestRanking(OLDEST, OLDEST.name + type + TOP_2, OLDEST.name + prefix(type, " ") + prefix(TOP_2_NAME, " "), rankDBName, TOP_2_RANK));
-		register(youngestOldestRanking(OLDEST, OLDEST.name + type + TOP_3, OLDEST.name + prefix(type, " ") + prefix(TOP_3_NAME, " "), rankDBName, TOP_3_RANK));
-		register(youngestOldestRanking(OLDEST, OLDEST.name + type + TOP_5, OLDEST.name + prefix(type, " ") + prefix(TOP_5_NAME, " "), rankDBName, TOP_5_RANK));
-		register(youngestOldestRanking(OLDEST, OLDEST.name + type + TOP_10, OLDEST.name + prefix(type, " ") + prefix(TOP_10_NAME, " "), rankDBName, TOP_10_RANK));
-		register(youngestOldestRanking(OLDEST, OLDEST.name + type + TOP_20, OLDEST.name + prefix(type, " ") + prefix(TOP_20_NAME, " "), rankDBName, TOP_20_RANK));
-		register(careerSpanRanking(type + NO_1, suffix(type, " ") + NO_1_NAME, rankDBName, NO_1_RANK));
-		register(careerSpanRanking(type + TOP_2, suffix(type, " ") + TOP_2_NAME, rankDBName, TOP_2_RANK));
-		register(careerSpanRanking(type + TOP_3, suffix(type, " ") + TOP_3_NAME, rankDBName, TOP_3_RANK));
-		register(careerSpanRanking(type + TOP_5, suffix(type, " ") + TOP_5_NAME, rankDBName, TOP_5_RANK));
-		register(careerSpanRanking(type + TOP_10, suffix(type, " ") + TOP_10_NAME, rankDBName, TOP_10_RANK));
-		register(careerSpanRanking(type + TOP_20, suffix(type, " ") + TOP_20_NAME, rankDBName, TOP_20_RANK));
+	protected void registerRanking(String type, RecordDomain domain, String rankDBName) {
+		register(mostWeeksAt(type, domain, NO_1, NO_1_NAME, rankDBName, NO_1_RANK, NO_1_RANK));
+		register(mostWeeksAt(type, domain, NO_2, NO_2_NAME, rankDBName, NO_2_RANK, TOP_2_RANK));
+		register(mostWeeksAt(type, domain, NO_3, NO_3_NAME, rankDBName, NO_3_RANK, TOP_3_RANK));
+		register(mostWeeksAt(type, domain, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK, TOP_2_RANK));
+		register(mostWeeksAt(type, domain, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK, TOP_3_RANK));
+		register(mostWeeksAt(type, domain, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK, TOP_5_RANK));
+		register(mostWeeksAt(type, domain, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK, TOP_10_RANK));
+		register(mostWeeksAt(type, domain, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK, TOP_20_RANK));
+		register(mostConsecutiveWeeksAt(type, domain, NO_1, NO_1_NAME, rankDBName, NO_1_RANK, NO_1_RANK));
+		register(mostConsecutiveWeeksAt(type, domain, NO_2, NO_2_NAME, rankDBName, NO_2_RANK, TOP_2_RANK));
+		register(mostConsecutiveWeeksAt(type, domain, NO_3, NO_3_NAME, rankDBName, NO_3_RANK, TOP_3_RANK));
+		register(mostConsecutiveWeeksAt(type, domain, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK, TOP_2_RANK));
+		register(mostConsecutiveWeeksAt(type, domain, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK, TOP_3_RANK));
+		register(mostConsecutiveWeeksAt(type, domain, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK, TOP_5_RANK));
+		register(mostConsecutiveWeeksAt(type, domain, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK, TOP_10_RANK));
+		register(mostConsecutiveWeeksAt(type, domain, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK, TOP_20_RANK));
+		if (domain == ALL) {
+			register(mostEndsOfSeasonAt(type, NO_1, NO_1_NAME, rankDBName, NO_1_RANK));
+			register(mostEndsOfSeasonAt(type, NO_2, NO_2_NAME, rankDBName, NO_2_RANK));
+			register(mostEndsOfSeasonAt(type, NO_3, NO_3_NAME, rankDBName, NO_3_RANK));
+			register(mostEndsOfSeasonAt(type, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK));
+			register(mostEndsOfSeasonAt(type, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK));
+			register(mostEndsOfSeasonAt(type, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK));
+			register(mostEndsOfSeasonAt(type, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK));
+			register(mostEndsOfSeasonAt(type, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
+			register(mostConsecutiveEndsOfSeasonAt(type, NO_1, NO_1_NAME, rankDBName, NO_1_RANK));
+			register(mostConsecutiveEndsOfSeasonAt(type, NO_2, NO_2_NAME, rankDBName, NO_2_RANK));
+			register(mostConsecutiveEndsOfSeasonAt(type, NO_3, NO_3_NAME, rankDBName, NO_3_RANK));
+			register(mostConsecutiveEndsOfSeasonAt(type, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK));
+			register(mostConsecutiveEndsOfSeasonAt(type, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK));
+			register(mostConsecutiveEndsOfSeasonAt(type, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK));
+			register(mostConsecutiveEndsOfSeasonAt(type, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK));
+			register(mostConsecutiveEndsOfSeasonAt(type, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
+		}
+		register(mostTimesAt(type, domain, NO_1, NO_1_NAME, rankDBName, NO_1_RANK, NO_1_RANK));
+		register(mostTimesAt(type, domain, NO_2, NO_2_NAME, rankDBName, NO_2_RANK, TOP_2_RANK));
+		register(mostTimesAt(type, domain, NO_3, NO_3_NAME, rankDBName, NO_3_RANK, TOP_3_RANK));
+		register(youngestOldestRanking(type, domain, YOUNGEST, NO_1, NO_1_NAME, rankDBName, NO_1_RANK));
+		register(youngestOldestRanking(type, domain, YOUNGEST, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK));
+		register(youngestOldestRanking(type, domain, YOUNGEST, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK));
+		register(youngestOldestRanking(type, domain, YOUNGEST, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK));
+		register(youngestOldestRanking(type, domain, YOUNGEST, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK));
+		register(youngestOldestRanking(type, domain, YOUNGEST, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
+		register(youngestOldestRanking(type, domain, OLDEST, NO_1, NO_1_NAME, rankDBName, NO_1_RANK));
+		register(youngestOldestRanking(type, domain, OLDEST, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK));
+		register(youngestOldestRanking(type, domain, OLDEST, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK));
+		register(youngestOldestRanking(type, domain, OLDEST, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK));
+		register(youngestOldestRanking(type, domain, OLDEST, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK));
+		register(youngestOldestRanking(type, domain, OLDEST, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
+		register(careerSpanRanking(type, domain, NO_1, NO_1_NAME, rankDBName, NO_1_RANK));
+		register(careerSpanRanking(type, domain, TOP_2, TOP_2_NAME, rankDBName, TOP_2_RANK));
+		register(careerSpanRanking(type, domain, TOP_3, TOP_3_NAME, rankDBName, TOP_3_RANK));
+		register(careerSpanRanking(type, domain, TOP_5, TOP_5_NAME, rankDBName, TOP_5_RANK));
+		register(careerSpanRanking(type, domain, TOP_10, TOP_10_NAME, rankDBName, TOP_10_RANK));
+		register(careerSpanRanking(type, domain, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
 	}
 
 	// PostgreSQL FILTER should be used instead of CASE in PostgreSQL 9.4+
-	protected static Record mostWeeksAt(String rankType, String id, String name, String rankDBName, String condition, String bestCondition) {
+	protected static Record mostWeeksAt(String rankType, RecordDomain domain, String id, String name, String rankDBName, String condition, String bestCondition) {
 		return new Record(
-			"WeeksAt" + rankType + id, "Most Weeks at " + rankType + " " + name,
+			"WeeksAt" + domain.id + rankType + id, "Most Weeks at " + suffix(domain.name, " ") + rankType + " " + name,
 			/* language=SQL */
 			"WITH player_ranking_weeks AS (\n" +
-			"  SELECT player_id, rank_date, rank, weeks(rank_date, lead(rank_date) OVER (PARTITION BY player_id ORDER BY rank_date)) AS weeks\n" +
-			"  FROM player" + rankDBName + "_ranking\n" +
-			"  INNER JOIN player_best" + rankDBName + "_rank USING (player_id)\n" +
-			"  WHERE best" + rankDBName + "_rank " + bestCondition + "\n" +
+			"  SELECT player_id, rank_date, " + domain.columnPrefix + "rank AS rank, weeks(rank_date, lead(rank_date) OVER (PARTITION BY player_id ORDER BY rank_date)) AS weeks\n" +
+			"  FROM player_" + rankDBName + "ranking\n" +
+			"  INNER JOIN player_best_" + rankDBName + "rank USING (player_id)\n" +
+			"  WHERE best_" + domain.columnPrefix + rankDBName + "rank " + bestCondition + "\n" +
 			")\n" +
 			"SELECT player_id, ceil(sum(CASE WHEN weeks <= 52 THEN weeks ELSE 0 END)) AS value, max(rank_date) AS last_date\n" +
 			"FROM player_ranking_weeks\n" +
@@ -118,15 +121,15 @@ public abstract class RankingCategory extends RecordCategory {
 		);
 	}
 
-	protected static Record mostConsecutiveWeeksAt(String rankType, String id, String name, String rankDBName, String condition, String bestCondition) {
+	protected static Record mostConsecutiveWeeksAt(String rankType, RecordDomain domain, String id, String name, String rankDBName, String condition, String bestCondition) {
 		return new Record(
-			"ConsecutiveWeeksAt" + rankType + id, "Most Consecutive Weeks at " + rankType + " " + name,
+			"ConsecutiveWeeksAt" + domain.id + rankType + id, "Most Consecutive Weeks at " + suffix(domain.name, " ") + rankType + " " + name,
 			/* language=SQL */
 			"WITH player_ranking_weeks AS (\n" +
-			"  SELECT player_id, rank_date, rank, lag(rank) OVER pr AS prev_rank, weeks(rank_date, lead(rank_date) OVER pr) AS weeks\n" +
-			"  FROM player" + rankDBName + "_ranking\n" +
-			"  INNER JOIN player_best" + rankDBName + "_rank USING (player_id)\n" +
-			"  WHERE best" + rankDBName + "_rank " + bestCondition + "\n" +
+			"  SELECT player_id, rank_date, " + domain.columnPrefix + "rank AS rank, lag(" + domain.columnPrefix + "rank) OVER pr AS prev_rank, weeks(rank_date, lead(rank_date) OVER pr) AS weeks\n" +
+			"  FROM player_" + rankDBName + "ranking\n" +
+			"  INNER JOIN player_best_" + rankDBName + "rank USING (player_id)\n" +
+			"  WHERE best_" + domain.columnPrefix + rankDBName + "rank " + bestCondition + "\n" +
 			"  WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)\n" +
 			"), player_ranking_weeks2 AS (\n" +
 			"  SELECT player_id, rank, rank_date, prev_rank, weeks, sum(CASE WHEN prev_rank " + condition + " THEN 0 ELSE 1 END) OVER (PARTITION BY player_id ORDER BY rank_date) AS not_rank\n" +
@@ -156,7 +159,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"EndsOfSeasonAt" + rankType + id, "Most Ends of Season at " + rankType + " " + name,
 			/* language=SQL */
 			"SELECT player_id, count(*) AS value, max(season) AS last_season\n" +
-			"FROM player_year_end" + rankDBName + "_rank\n" +
+			"FROM player_year_end_" + rankDBName + "rank\n" +
 			"WHERE year_end_rank " + condition + "\n" +
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_season", IntegerRecordDetail.class,
@@ -170,7 +173,7 @@ public abstract class RankingCategory extends RecordCategory {
 			/* language=SQL */
 			"WITH player_seasons AS (\n" +
 			"  SELECT DISTINCT player_id, season\n" +
-			"  FROM player_year_end" + rankDBName + "_rank\n" +
+			"  FROM player_year_end_" + rankDBName + "rank\n" +
 			"  WHERE year_end_rank " + condition + "\n" +
 			"), player_seasons_2 AS (\n" +
 			"  SELECT player_id, season, season - row_number() OVER (PARTITION BY player_id ORDER BY season) AS grouping_season\n" +
@@ -192,15 +195,15 @@ public abstract class RankingCategory extends RecordCategory {
 		);
 	}
 
-	protected static Record mostTimesAt(String rankType, String id, String name, String rankDBName, String condition, String bestCondition) {
+	protected static Record mostTimesAt(String rankType, RecordDomain domain, String id, String name, String rankDBName, String condition, String bestCondition) {
 		return new Record(
-			"TimesAt" + rankType + id, "Most Times at " + rankType + " " + name,
+			"TimesAt" + domain.id + rankType + id, "Most Times at " + suffix(domain.name, " ") + rankType + " " + name,
 			/* language=SQL */
 			"WITH ranking AS (\n" +
-			"  SELECT player_id, rank_date, rank, lag(rank) OVER (PARTITION BY player_id ORDER BY rank_date) AS prev_rank\n" +
-			"  FROM player" + rankDBName + "_ranking\n" +
-			"  INNER JOIN player_best" + rankDBName + "_rank USING (player_id)\n" +
-			"  WHERE best" + rankDBName + "_rank " + bestCondition + "\n" +
+			"  SELECT player_id, rank_date, " + domain.columnPrefix + "rank AS rank, lag(" + domain.columnPrefix + "rank) OVER (PARTITION BY player_id ORDER BY rank_date) AS prev_rank\n" +
+			"  FROM player_" + rankDBName + "ranking\n" +
+			"  INNER JOIN player_best_" + rankDBName + "rank USING (player_id)\n" +
+			"  WHERE best_" + domain.columnPrefix + rankDBName + "rank " + bestCondition + "\n" +
 			")\n" +
 			"SELECT player_id, count(rank_date) AS value, max(rank_date) AS last_date\n" +
 			"FROM ranking\n" +
@@ -211,13 +214,13 @@ public abstract class RankingCategory extends RecordCategory {
 		);
 	}
 
-	protected static Record youngestOldestRanking(AgeType type, String id, String name, String rankDBName, String condition) {
+	protected static Record youngestOldestRanking(String rankType, RecordDomain domain, AgeType type, String id, String name, String rankDBName, String condition) {
 		return new Record(
-			id, name,
+			type.name + domain.id + rankType + id, type.name + prefix(domain.name, " ") + prefix(rankType, " ") + prefix(name, " "),
 			/* language=SQL */
 			"SELECT player_id, " + type.function + "(age(r.rank_date, p.dob)) AS value, " + type.function + "(r.rank_date) AS date\n" +
-			"FROM player" + rankDBName + "_ranking r INNER JOIN player_v p USING (player_id)\n" +
-			"WHERE rank " + condition + "\n" +
+			"FROM player_" + rankDBName + "ranking r INNER JOIN player_v p USING (player_id)\n" +
+			"WHERE " + domain.columnPrefix + "rank " + condition + "\n" +
 			"AND p.name NOT IN (" + INVALID_RANKING_PLAYERS + ")\n" + // TODO Remove after data is fixed
 			"GROUP BY player_id",
 			"r.value, r.date", type.order, type.order + ", r.date", DateAgeRecordDetail.class,
@@ -228,13 +231,14 @@ public abstract class RankingCategory extends RecordCategory {
 		);
 	}
 
-	protected static Record careerSpanRanking(String id, String name, String rankDBName, String condition) {
+	protected static Record careerSpanRanking(String rankType, RecordDomain domain, String id, String name, String rankDBName, String condition) {
+		name = suffix(domain.name, " ") + suffix(rankType, " ") + name;
 		return new Record(
-			"LongestATP" + id + "Span", "Longest Career First " + name + " to Last " + name,
+			"Longest" + domain.id + rankType + id + "Span", "Longest Career First " + name + " to Last " + name,
 			/* language=SQL */
 			"SELECT player_id, age(max(rank_date), min(rank_date)) AS value, min(rank_date) AS start_date, max(rank_date) AS end_date\n" +
-			"FROM player" + rankDBName + "_ranking\n" +
-			"WHERE rank " + condition + "\n" +
+			"FROM player_" + rankDBName + "ranking\n" +
+			"WHERE " + domain.columnPrefix + "rank " + condition + "\n" +
 			"GROUP BY player_id",
 			"r.value, r.start_date, r.end_date", "r.value DESC", "r.value DESC, r.end_date", CareerSpanRecordDetail.class,
 			asList(
@@ -251,7 +255,7 @@ public abstract class RankingCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT player_id, " + columnName + " AS value, " + dateColumnName + " AS date\n" +
 			"FROM " + tableName,
-			"r.value, r.date", "r.value DESC", "r.value DESC, r.date", DateIntegerRecordDetail.class,
+			"r.value, r.date", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.date", DateIntegerRecordDetail.class,
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
@@ -311,7 +315,7 @@ public abstract class RankingCategory extends RecordCategory {
 	}
 
 	protected static Record pointsDifferenceBetweenNo1andNo2(
-		String id, String name, String tableName, String columnName, String condition,
+		String id, String name, String tableName, String columnName, String rankColumnName, String condition,
 		String expression, String expression1, String expression2, String order,
 		Class<? extends RecordDetail> detailClass, String type, String caption, String diffCaption
 	) {
@@ -322,8 +326,8 @@ public abstract class RankingCategory extends RecordCategory {
 			"  SELECT r1.player_id, r2.player_id AS player_id2, " + expression1 + " AS value1, " + expression2 + " AS value2,\n" +
 			"    " + expression + " AS value, r1.rank_date\n" +
 			"  FROM " + tableName + " r1\n" +
-			"  INNER JOIN " + tableName + " r2 ON r2.rank_date = r1.rank_date AND r2.rank = 2 AND r2." + columnName + " > 0\n" +
-			"  WHERE r1.rank = 1 AND r1." + columnName + " > 0" + prefix(condition, " AND ") + "\n" +
+			"  INNER JOIN " + tableName + " r2 ON r2.rank_date = r1.rank_date AND r2." + rankColumnName + " = 2 AND r2." + columnName + " > 0\n" +
+			"  WHERE r1." + rankColumnName + " = 1 AND r1." + columnName + " > 0" + prefix(condition, " AND ") + "\n" +
 			"), ranking_diff2 AS (\n" +
 			"  SELECT player_id, player_id2, first_value(value1) OVER diff AS value1, first_value(value2) OVER diff AS value2,\n" +
 			"    first_value(value) OVER diff AS value, first_value(rank_date) OVER diff AS date\n" +
