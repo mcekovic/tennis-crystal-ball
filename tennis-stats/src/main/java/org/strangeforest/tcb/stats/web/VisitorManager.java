@@ -11,7 +11,7 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
 
-import com.google.common.cache.*;
+import com.github.benmanes.caffeine.cache.*;
 import com.maxmind.geoip2.record.*;
 import com.neovisionaries.i18n.*;
 
@@ -43,7 +43,7 @@ public class VisitorManager {
 	@PostConstruct
 	public void init() {
 		lockManager = new LockManager<>();
-		visitors = CacheBuilder.newBuilder()
+		visitors = Caffeine.newBuilder()
 			.maximumSize(cacheSize)
 			.removalListener(this::visitorRemoved)
 			.build(new VisitorCacheLoader());
@@ -144,15 +144,14 @@ public class VisitorManager {
 			visitors.invalidateAll();
 	}
 
-	private class VisitorCacheLoader extends CacheLoader<String, Optional<Visitor>> {
+	private class VisitorCacheLoader implements CacheLoader<String, Optional<Visitor>> {
 		public Optional<Visitor> load(String ipAddress) {
 			return repository.find(ipAddress);
 		}
 	}
 
-	private void visitorRemoved(RemovalNotification<String, Optional<Visitor>> notification) {
-		if (notification.wasEvicted()) {
-			Optional<Visitor> optionalVisitor = notification.getValue();
+	private void visitorRemoved(String ipAddress, Optional<Visitor> optionalVisitor, RemovalCause cause) {
+		if (cause.wasEvicted()) {
 			if (optionalVisitor != null && optionalVisitor.isPresent())
 				repository.save(optionalVisitor.get());
 		}
