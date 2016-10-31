@@ -46,7 +46,10 @@ class EloRatings {
 		"SELECT player_rank(?, ?) AS rank"
 
 	static final String QUERY_ALL_RANKS = //language=SQL
-		"SELECT player_id, rank_date, rank FROM player_ranking ORDER BY rank_date, player_id"
+		"SELECT player_id, rank_date, rank\n" +
+		"FROM player_ranking\n" +
+		"WHERE rank <= :maxRank\n" +
+		"ORDER BY rank_date, player_id"
 
 	static final String MERGE_ELO_RANKING = //language=SQL
 		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating, :hard_rank, :hard_elo_rating, :clay_rank, :clay_elo_rating, :grass_rank, :grass_elo_rating, :carpet_rank, :carpet_elo_rating)}"
@@ -402,7 +405,7 @@ class EloRatings {
 		def rankPreloads = 0
 		sqlPool.withSql { sql ->
 			sql.withStatement { st -> st.fetchSize = RANK_PRELOAD_FETCH_SIZE }
-			sql.eachRow(QUERY_ALL_RANKS) { rankRecord ->
+			sql.eachRow(QUERY_ALL_RANKS, [maxRank: START_RATING_RANK]) { rankRecord ->
 				def date = rankRecord.rank_date
 				def rankTable = rankDateCache[date]
 				if (!rankTable) {

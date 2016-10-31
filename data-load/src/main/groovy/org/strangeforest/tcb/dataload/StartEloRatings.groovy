@@ -3,6 +3,7 @@ package org.strangeforest.tcb.dataload
 class StartEloRatings {
 
 	static final int START_RATING = 1500
+	static final int START_RATING_RANK = 300
 	static final Map<String, List<RatingPoint>> START_RATING_TABLE = [
 		(null): [
 			ratingPoint(  1, 2368),
@@ -20,7 +21,7 @@ class StartEloRatings {
 			ratingPoint(100, 1691),
 			ratingPoint(150, 1605),
 			ratingPoint(200, 1533),
-			ratingPoint(300, START_RATING)
+			ratingPoint(START_RATING_RANK, START_RATING)
 		],
 		H: [
 			ratingPoint(  1, 2327),
@@ -38,7 +39,7 @@ class StartEloRatings {
 			ratingPoint(100, 1669),
 			ratingPoint(150, 1598),
 			ratingPoint(200, 1539),
-			ratingPoint(300, START_RATING)
+			ratingPoint(START_RATING_RANK, START_RATING)
 		],
 		C: [
 			ratingPoint(  1, 2320),
@@ -56,7 +57,7 @@ class StartEloRatings {
 			ratingPoint(100, 1681),
 			ratingPoint(150, 1613),
 			ratingPoint(200, 1549),
-			ratingPoint(300, START_RATING)
+			ratingPoint(START_RATING_RANK, START_RATING)
 		],
 		G: [
 			ratingPoint(  1, 2399),
@@ -74,7 +75,7 @@ class StartEloRatings {
 			ratingPoint(100, 1717),
 			ratingPoint(150, 1644),
 			ratingPoint(200, 1573),
-			ratingPoint(300, START_RATING)
+			ratingPoint(START_RATING_RANK, START_RATING)
 		],
 		P: [
 			ratingPoint(  1, 2293),
@@ -92,7 +93,7 @@ class StartEloRatings {
 			ratingPoint(100, 1655),
 			ratingPoint(150, 1598),
 			ratingPoint(200, 1551),
-			ratingPoint(300, START_RATING)
+			ratingPoint(START_RATING_RANK, START_RATING)
 		]
 	]
 
