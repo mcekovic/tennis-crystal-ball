@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, _)">
+	<title>Live Scores</title>
+	<script th:src="@{/js/livescore.js}"></script>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3>Live Scores</h3>
+	<iframe id="inscore-xdc-171996" src="http://www.livescore.in/free/171996/" width="624" height="500" frameborder="0" scrolling="no"></iframe>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

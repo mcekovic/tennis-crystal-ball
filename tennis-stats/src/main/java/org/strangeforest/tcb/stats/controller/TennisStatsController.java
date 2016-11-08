@@ -39,6 +39,11 @@ public class TennisStatsController extends PageController {
 		return "goatList";
 	}
 
+	@GetMapping("/liveScores")
+	public String liveScores() {
+		return "liveScores";
+	}
+
 	@Value("${tennis-stats.down-for-maintenance:false}")
 	private boolean downForMaintenance;
 
