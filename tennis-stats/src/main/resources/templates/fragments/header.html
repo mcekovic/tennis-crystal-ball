@@ -36,6 +36,7 @@
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'M' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=M">Masters Timeline</a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'O' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=O">Olympics Timeline</a></li>
 							<li th:class="${path == '/teamTournamentLevelTimeline' && param.level[0] == 'D' ? 'active' : ''}"><a href="/teamTournamentLevelTimeline?level=D">Davis Cup</a></li>
+							<li th:class="${path == '/teamTournamentLevelTimeline' && param.level[0] == 'T' ? 'active' : ''}"><a href="/teamTournamentLevelTimeline?level=T">World Team Cup</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/greatestRivalries' || path == '/headsToHeads' ? 'active dropdown' : 'dropdown'}">

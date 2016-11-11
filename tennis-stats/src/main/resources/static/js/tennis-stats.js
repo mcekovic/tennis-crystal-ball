@@ -213,7 +213,7 @@ function levelName(level) {
 		case "E": return "Exhibitions";
 		case "H": return "Others";
 		case "D": return "Davis Cup";
-		case "T": return "Others Team";
+		case "T": return "World Team Cup";
 		default: return level;
 	}
 }

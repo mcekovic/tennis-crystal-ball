@@ -77,18 +77,18 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 th:text="${tournamentEvent.name} + ' ' + ${tournamentEvent.season}">Australian Open 2016</h3>
-	<div class="row">
+	<div class="row" th:with="isTeam=${tournamentEvent.level == 'D' || tournamentEvent.level == 'T'}">
 		<div class="col-md-3">
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Level</th>
 					<td th:text="${levels[tournamentEvent.level]}">Grand Slam</td>
 				</tr>
-				<tr>
+				<tr th:unless="${isTeam}">
 					<th>Surface</th>
 					<td th:text="${(tournamentEvent.indoor ? 'Indoor ' : '') + (tournamentEvent.surface != null ? surfaces[tournamentEvent.surface] : '')}">Hard</td>
 				</tr>
-				<tr>
+				<tr th:unless="${isTeam}">
 					<th>Date</th>
 					<td th:text="${#dates.format(tournamentEvent.date, 'dd-MM-yyyy')}">1-1-1990</td>
 				</tr>
@@ -100,11 +100,11 @@
 					<th>Draw</th>
 					<td th:text="${tournamentEvent.draw}">KO 128</td>
 				</tr>
-				<tr>
+				<tr th:unless="${isTeam}">
 					<th>Players</th>
 					<td th:text="${tournamentEvent.playerCount}">128</td>
 				</tr>
-				<tr>
+				<tr th:unless="${isTeam}">
 					<th>Participation</th>
 					<td th:text="${tournamentEvent.participationPoints} + ' (' + ${#numbers.formatDecimal(tournamentEvent.participationPct, 1, 1) + '%'} + ')'">832 (67.3%)</td>
 				</tr>
@@ -130,8 +130,16 @@
 					</td>
 				</tr>
 				<tr>
-					<th colspan="2">
-						<a role="button" th:href="'/tournament?tournamentId=' + ${tournamentEvent.tournamentId}" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Tournament history">
+					<th>Score</th>
+					<td th:text="${tournamentEvent.score}">6-4 6-3</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-md-3">
+			<table class="table table-condensed text-nowrap">
+				<tr>
+					<th>
+						<a role="button" th:href="${!isTeam ? ('/tournament?tournamentId=' + tournamentEvent.tournamentId) : ('/teamTournamentLevelTimeline?level=' + tournamentEvent.level)}" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Tournament history">
 							<span class="glyphicon glyphicon-calendar"></span> History
 						</a>
 					</th>

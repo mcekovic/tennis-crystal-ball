@@ -56,7 +56,7 @@ VALUES
 ('D', 'KO', 'SF',    70, NULL, NULL, TRUE),
 ('D', 'KO', 'QF',    65, NULL, NULL, TRUE),
 ('D', 'KO', 'R16',   40, NULL, NULL, TRUE),
--- Others Team
+-- World Team Cup
 ('T', 'KO', 'F',   NULL, NULL,    1, TRUE);
 
 DELETE FROM tournament_event_rank_factor;
@@ -167,7 +167,7 @@ VALUES
 ('B', 'F',  1),
 -- Davis Cup
 ('D', 'F',  1),
--- Others Team
+-- World Team Cup
 ('T', 'F',  1);
 
 DELETE FROM big_win_rank_factor;
@@ -396,6 +396,7 @@ DELETE FROM team_tournament_event_winner;
 INSERT INTO team_tournament_event_winner
 (season, level, winner_id, runner_up_id, score)
 VALUES
+-- Davis Cup
 (1968, 'D', 'USA', 'AUS', '4–1'),
 (1969, 'D', 'USA', 'ROU', '5–0'),
 (1970, 'D', 'USA', 'GER', '5–0'),
@@ -443,7 +444,44 @@ VALUES
 (2012, 'D', 'CZE', 'ESP', '3–2'),
 (2013, 'D', 'CZE', 'SRB', '3–2'),
 (2014, 'D', 'SUI', 'FRA', '3–1'),
-(2015, 'D', 'GBR', 'BEL', '3–1');
+(2015, 'D', 'GBR', 'BEL', '3–1'),
+-- World Team Cup
+(1975, 'T', 'USA', 'GBR', '2–1'),
+(1978, 'T', 'ESP', 'AUS', '2–1'),
+(1979, 'T', 'AUS', 'ITA', '2-1'),
+(1980, 'T', 'ARG', 'ITA', '3-0'),
+(1981, 'T', 'CZE', 'AUS', '2-1'),
+(1982, 'T', 'USA', 'AUS', '2-0'),
+(1983, 'T', 'ESP', 'AUS', '2-1'),
+(1984, 'T', 'USA', 'CZE', '2-1'),
+(1985, 'T', 'USA', 'CZE', '2-1'),
+(1986, 'T', 'FRA', 'SWE', '2-1'),
+(1987, 'T', 'CZE', 'USA', '2-1'),
+(1988, 'T', 'SWE', 'USA', '2-0'),
+(1989, 'T', 'GER', 'ARG', '2-1'),
+(1990, 'T', 'YUG', 'USA', '3-0'),
+(1991, 'T', 'SWE', 'YUG', '2-1'),
+(1992, 'T', 'ESP', 'CZE', '2-0'),
+(1993, 'T', 'USA', 'GER', '3-0'),
+(1994, 'T', 'GER', 'ESP', '2-1'),
+(1995, 'T', 'SWE', 'CRO', '2-1'),
+(1996, 'T', 'SUI', 'CZE', '2-1'),
+(1997, 'T', 'ESP', 'AUS', '3-0'),
+(1998, 'T', 'GER', 'CZE', '3-0'),
+(1999, 'T', 'AUS', 'SWE', '2-1'),
+(2000, 'T', 'SVK', 'RUS', '3-0'),
+(2001, 'T', 'AUS', 'RUS', '2-1'),
+(2002, 'T', 'ARG', 'RUS', '3-0'),
+(2003, 'T', 'CHI', 'CZE', '2-1'),
+(2004, 'T', 'CHI', 'AUS', '2-1'),
+(2005, 'T', 'GER', 'ARG', '2-1'),
+(2006, 'T', 'CRO', 'GER', '2-1'),
+(2007, 'T', 'ARG', 'CZE', '2-1'),
+(2008, 'T', 'SWE', 'RUS', '2-1'),
+(2009, 'T', 'SRB', 'GER', '2-1'),
+(2010, 'T', 'ARG', 'USA', '2-1'),
+(2011, 'T', 'GER', 'ARG', '2-1'),
+(2012, 'T', 'SRB', 'CZE', '3-0');
 
 COMMIT;
 

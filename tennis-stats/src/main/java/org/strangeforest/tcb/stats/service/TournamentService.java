@@ -12,8 +12,10 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.model.table.*;
+import org.strangeforest.tcb.util.*;
 
 import static java.lang.String.*;
+import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
@@ -52,6 +54,11 @@ public class TournamentService {
 	private static final String TOURNAMENT_EVENT_QUERY =
 		TOURNAMENT_EVENT_SELECT +
 		"WHERE e.tournament_event_id = :tournamentEventId";
+
+	private static final String TEAM_TOURNAMENT_EVENT_WINNER_QUERY =
+		"SELECT winner_id, runner_up_id, score\n" +
+		"FROM team_tournament_event_winner \n" +
+		"WHERE level = :level::tournament_level AND season = :season";
 
 	private static final String TOURNAMENT_RECORD_QUERY =
 		"WITH record_results AS (\n" +
@@ -139,7 +146,7 @@ public class TournamentService {
 	}
 
 	public TournamentEvent getTournamentEvent(int tournamentEventId) {
-		return jdbcTemplate.query(
+		TournamentEvent event = jdbcTemplate.query(
 			TOURNAMENT_EVENT_QUERY, params("tournamentEventId", tournamentEventId),
 			rs -> {
 				if (rs.next())
@@ -148,6 +155,26 @@ public class TournamentService {
 					throw new IllegalArgumentException(format("Tournament event %1$d not found.", tournamentEventId));
 			}
 		);
+		String level = event.getLevel();
+		if (asList("D", "T").contains(level)) {
+			int season = event.getSeason();
+			jdbcTemplate.query(
+				TEAM_TOURNAMENT_EVENT_WINNER_QUERY, params("level", level).addValue("season", season),
+				rs -> {
+					if (rs.next()) {
+						event.setFinal(
+							countryParticipant(rs.getString("winner_id")),
+							countryParticipant(rs.getString("runner_up_id")),
+							rs.getString("score"), null
+						);
+						return event;
+					}
+					else
+						throw new IllegalArgumentException(format("Team tournament event for level %1$s and season %2$d not found.", level, season));
+				}
+			);
+		}
+		return event;
 	}
 
 	private static TournamentEvent mapTournamentEvent(ResultSet rs, boolean withCountry) throws SQLException {
@@ -182,22 +209,25 @@ public class TournamentService {
 		return withCountry ? MatchesService.mapMatchPlayerEx(rs, prefix) :  MatchesService.mapMatchPlayer(rs, prefix);
 	}
 
+	private MatchPlayerEx countryParticipant(String countryId) {
+		return new MatchPlayerEx(0, new Country(countryId).getName(), null, null, countryId);
+	}
+
+
 	public List<RecordDetailRow> getTournamentRecord(int tournamentId, String result, int maxPlayers) {
 		return jdbcTemplate.query(
 			TOURNAMENT_RECORD_QUERY,
 			params("tournamentId", tournamentId)
 				.addValue("result", result)
 				.addValue("maxPlayers", maxPlayers),
-			(rs, rowNum) -> {
-				return new RecordDetailRow(
-					rs.getInt("rank"),
-					rs.getInt("player_id"),
-					rs.getString("name"),
-					rs.getString("country_id"),
-					rs.getBoolean("active"),
-					new IntegerRecordDetail(rs.getInt("count"))
-				);
-			}
+			(rs, rowNum) -> new RecordDetailRow(
+				rs.getInt("rank"),
+				rs.getInt("player_id"),
+				rs.getString("name"),
+				rs.getString("country_id"),
+				rs.getBoolean("active"),
+				new IntegerRecordDetail(rs.getInt("count"))
+			)
 		);
 	}
 
