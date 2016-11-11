@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.servlet.handler.*;
 
-@Component @ConditionalOnProperty(name = "tennis-stats.down-for-maintenance")
+@Component @ConditionalOnProperty("tennis-stats.down-for-maintenance")
 public class DownForMaintenanceInterceptor extends HandlerInterceptorAdapter {
 
 	private static final String MAINTENANCE_PATH = "/maintenance";

@@ -156,7 +156,7 @@ abstract class BaseCSVLoader {
 	}
 
 	static String country(c, d = null) {
-		c && CountryUtil.code(c) ? c : d
+		c && Country.code(c) ? c : d
 	}
 
 	static String hand(c) {

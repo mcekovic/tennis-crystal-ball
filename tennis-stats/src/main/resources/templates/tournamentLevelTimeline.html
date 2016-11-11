@@ -55,7 +55,7 @@
 			<td th:each="event : ${timeline.getSeasonEvents(season)}" th:with="winner=${event.winner}, runnerUp=${event.runnerUp}" th:class="${event.surface != null ? 'bg-surface-' + event.surface : _}">
 				<span th:if="${winner}" th:attr="data-winner=${winner.fullName}, data-winner-seed=${winner.seed}, data-winner-entry=${winner.entry}, data-runner-up=${runnerUp.fullName}, data-runner-up-seed=${runnerUp.seed}, data-runner-up-entry=${runnerUp.entry}, data-score=${event.score}, data-outcome=${event.outcome}">
 					<th:block th:unless="${event.outcome} == 'ABD'">
-						<img th:src="'/images/flags/' + ${winner.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${winner.countryId}" title="SUI" width="24" height="20"/>
+						<img th:src="'/images/flags/' + ${winner.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${winner.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="'/playerProfile?playerId=' + ${winner.playerId}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 						<img th:if="${winner.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 						<span class="small-dimmed" th:text="'(' + ${event.playerWins} + '/' + ${timeline.getWins(winner.playerId)} + ')'">(2/5)</span>

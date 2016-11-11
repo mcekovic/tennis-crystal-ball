@@ -85,7 +85,7 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<th:block th:if="${player}">
-		<img th:src="@{/images/flags/{code}.png(code=${player.countryCode})}" src="/images/flags/ch.png'" style="float: left; margin-top: 2px; margin-right: 8px" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
+		<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" style="float: left; margin-top: 2px; margin-right: 8px" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 		<h3 th:text="${player.name}">Roger Federer</h3>
 		<ul id="playerPills" class="nav nav-pills">
 			<li><a id="profilePill" data-toggle="pill" href="#profile" data-url="/playerProfileTab?playerId=" th:attrappend="data-url=${player.id}">Profile</a></li>

@@ -49,7 +49,6 @@
 				<li><a href="/goatList">'GOAT' List</a> - Best players of Open Era ranked by 'GOAT' Points</li>
 				<li>Player Profile - Player information, tournament results, matches, timeline, rivalries, ranking, performance indicators and statistics, 'GOAT' points breakdown and records</li>
 				<li><a href="/bigGunsTimeline">'Big Guns' Timeline</a> - 'GOAT' points distribution among top players and seasons</li>
-				<li><a href="/bestSeasons">Best Seasons</a> - Find which are the best seasons of Open Era based on 'GOAT' points</li>
 				<li><a href="/greatestRivalries">Greatest Rivalries</a> - Explore greatest rivalries, overall or by tournament level and surface</li>
 				<li><a href="/headsToHeads">Heads-to-Heads</a> - Heads-to-heads clusters among several players (i.e. among 'Big 4')</li>
 				<li><a href="/rankingsTable">Ranking Tables</a> - Player ranking tables, including <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> using customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-popover="#eloRatingPopover">Elo rating formula</a></li>
@@ -59,6 +58,7 @@
 				<li><a href="/performanceChart">Performance Charts</a> - Performance charts for various performance categories, filtered by seasons</li>
 				<li><a href="/statsLeaders">Statistics Leaders</a> - Find statistics leaders in various statistics categories, including dominance and break points ratios</li>
 				<li><a href="/statsChart">Statistics Charts</a> - Statistics charts for various statistics categories, filtered by seasons and surface</li>
+				<li><a href="/bestSeasons">Best Seasons</a> - Find which are the best seasons of Open Era based on 'GOAT' points</li>
 				<li><a href="/tournamentEvents">Tournaments Browser</a> - Browse all Open Era tournaments, see tournament draw, statistics, historical winners and records</li>
 			</ul>
 			<h4 class="text-nowrap">Tennis Data</h4>
@@ -94,7 +94,7 @@
 					<tr th:each="player : ${goatTopN}">
 						<td th:text="${player.rank}" align="right">1</td>
 						<td style="padding: 3px 3px">
-							<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
+							<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 							<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Federer</a>
 							<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 						</td>

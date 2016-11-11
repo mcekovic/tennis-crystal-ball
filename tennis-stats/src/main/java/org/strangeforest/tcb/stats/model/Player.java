@@ -11,7 +11,7 @@ public class Player {
 	private String name;
 	private Date dob;
 	private int age;
-	private String countryId;
+	private Country country;
 	private String birthplace;
 	private String residence;
 	private int height;
@@ -82,20 +82,12 @@ public class Player {
 		this.age = age;
 	}
 
-	public String getCountryId() {
-		return countryId;
-	}
-
-	public String getCountryCode() {
-		return CountryUtil.getISOAlpha2Code(countryId);
-	}
-
-	public String getCountryName() {
-		return CountryUtil.getCountryName(countryId);
+	public Country getCountry() {
+		return country;
 	}
 
 	public void setCountryId(String countryId) {
-		this.countryId = countryId;
+		country = new Country(countryId);
 	}
 
 	public String getBirthplace() {

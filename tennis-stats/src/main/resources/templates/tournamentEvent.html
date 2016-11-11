@@ -115,13 +115,17 @@
 				<tr>
 					<th>Winner</th>
 					<td th:with="player=${tournamentEvent.winner}">
-						<a th:unless="${tournamentEvent.outcome == 'ABD'}" th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+						<th:block th:unless="${tournamentEvent.outcome == 'ABD'}">
+							<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+							<strong><a th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Roger Federer</a></strong>
+						</th:block>
 						<th:block th:if="${tournamentEvent.outcome == 'ABD'}">ABD</th:block>
 					</td>
 				</tr>
 				<tr th:unless="${tournamentEvent.outcome == 'ABD'}">
 					<th>Runner-up</th>
 					<td th:with="player=${tournamentEvent.runnerUp}">
+						<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Rafael Nadal</a>
 					</td>
 				</tr>
@@ -160,7 +164,7 @@
 									<span th:text="${winner.seedAndEntry}"></span>
 								</td>
 								<td class="player">
-									<img th:src="'/images/flags/' + ${winner.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${winner.countryId}" title="SUI" width="24" height="20"/>
+									<img th:src="'/images/flags/' + ${winner.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${winner.country.id}" title="SUI" width="24" height="20"/>
 									<strong><a th:href="'/playerProfile?playerId=' + ${winner.id}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a></strong>
 								</td>
 								<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.wGames}">6</th:block><sup th:if="${score.wTBPoints}" th:text="|(${score.wTBPoints})|"></sup></td>
@@ -171,7 +175,7 @@
 									<span th:text="${loser.seedAndEntry}"></span>
 								</td>
 								<td class="player">
-									<img th:src="'/images/flags/' + ${loser.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${loser.countryId}" title="ESP" width="24" height="20"/>
+									<img th:src="'/images/flags/' + ${loser.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${loser.country.id}" title="ESP" width="24" height="20"/>
 									<a th:href="'/playerProfile?playerId=' + ${loser.id}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
 								</td>
 								<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.lGames}">3</th:block><sup th:if="${score.lTBPoints}" th:text="|(${score.lTBPoints})|"></sup></td>

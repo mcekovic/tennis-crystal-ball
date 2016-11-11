@@ -96,6 +96,6 @@ abstract class BaseXMLLoader {
 
 	static String country(c) {
 		c = c?.toString()
-		c && CountryUtil.code(c) ? c : null
+		c && Country.code(c) ? c : null
 	}
 }

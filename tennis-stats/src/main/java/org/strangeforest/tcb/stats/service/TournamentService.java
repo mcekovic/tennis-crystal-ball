@@ -14,7 +14,6 @@ import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
-import static org.strangeforest.tcb.stats.service.MatchesService.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
@@ -35,8 +34,9 @@ public class TournamentService {
 	private static final String TOURNAMENT_EVENT_SELECT = //language=SQL
 		"SELECT e.tournament_event_id, e.tournament_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
 		"  p.player_count, p.participation_points, p.max_participation_points,\n" +
-		"  m.winner_id, pw.name winner_name, m.winner_seed, m.winner_entry,\n" +
-		"  m.loser_id runner_up_id, pl.name runner_up_name, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry, m.score, m.outcome\n" +
+		"  m.winner_id, pw.name winner_name, m.winner_seed, m.winner_entry, m.winner_country_id,\n" +
+		"  m.loser_id runner_up_id, pl.name runner_up_name, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry, m.loser_country_id runner_up_country_id,\n" +
+		"  m.score, m.outcome\n" +
 		"FROM tournament_event e\n" +
 		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
 		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
@@ -131,7 +131,7 @@ public class TournamentService {
 			filter.getParams().addValue("offset", offset),
 			rs -> {
 				if (tournamentEvents.incrementAndGet() <= pageSize)
-					table.addRow(mapTournamentEvent(rs));
+					table.addRow(mapTournamentEvent(rs, false));
 			}
 		);
 		table.setTotal(offset + tournamentEvents.get());
@@ -143,14 +143,14 @@ public class TournamentService {
 			TOURNAMENT_EVENT_QUERY, params("tournamentEventId", tournamentEventId),
 			rs -> {
 				if (rs.next())
-					return mapTournamentEvent(rs);
+					return mapTournamentEvent(rs, true);
 				else
 					throw new IllegalArgumentException(format("Tournament event %1$d not found.", tournamentEventId));
 			}
 		);
 	}
 
-	private static TournamentEvent mapTournamentEvent(ResultSet rs) throws SQLException {
+	private static TournamentEvent mapTournamentEvent(ResultSet rs, boolean withCountry) throws SQLException {
 		TournamentEvent tournamentEvent = new TournamentEvent(
 			rs.getInt("tournament_event_id"),
 			rs.getInt("tournament_id"),
@@ -170,12 +170,16 @@ public class TournamentService {
 			rs.getInt("max_participation_points")
 		);
 		tournamentEvent.setFinal(
-			mapMatchPlayer(rs, "winner_"),
-			mapMatchPlayer(rs, "runner_up_"),
+			mapMatchPlayer(rs, "winner_", withCountry),
+			mapMatchPlayer(rs, "runner_up_", withCountry),
 			rs.getString("score"),
 			rs.getString("outcome")
 		);
 		return tournamentEvent;
+	}
+
+	private static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix, boolean withCountry) throws SQLException {
+		return withCountry ? MatchesService.mapMatchPlayerEx(rs, prefix) :  MatchesService.mapMatchPlayer(rs, prefix);
 	}
 
 	public List<RecordDetailRow> getTournamentRecord(int tournamentId, String result, int maxPlayers) {

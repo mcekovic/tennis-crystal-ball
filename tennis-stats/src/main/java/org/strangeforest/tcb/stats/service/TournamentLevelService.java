@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
@@ -27,6 +28,14 @@ public class TournamentLevelService {
 		"INNER JOIN player_v pl ON pl.player_id = m.loser_id\n" +
 		"WHERE e.level = :level::tournament_level\n" +
 		"ORDER BY e.season, e.date";
+
+	private static final String TEAM_TIMELINE_QUERY =
+		"SELECT w.season, e.tournament_event_id, e.surface, w.winner_id, w.runner_up_id, w.score\n" +
+		"FROM team_tournament_event_winner w\n" +
+		"LEFT JOIN tournament_event e ON e.level = w.level AND e.season = w.season\n" +
+		"WHERE w.level = :level::tournament_level\n" +
+		"AND e.name LIKE '%WG'\n" +
+		"ORDER BY w.season DESC, e.date DESC";
 
 
 	@Cacheable("TournamentLevelTimeline")
@@ -66,6 +75,26 @@ public class TournamentLevelService {
 		player.setSeed(getInteger(rs, prefix + "seed"));
 		player.setEntry(rs.getString(prefix + "entry"));
 		return player;
+	}
+
+
+	@Cacheable("TeamTournamentLevelTimeline")
+	public List<TeamTournamentLevelTimelineItem> getTeamTournamentLevelTimeline(String level) {
+		return jdbcTemplate.query(
+			TEAM_TIMELINE_QUERY,
+			params("level", level),
+			(rs, rowNum) -> {
+				TeamTournamentLevelTimelineItem item = new TeamTournamentLevelTimelineItem(
+					rs.getInt("season"),
+					rs.getInt("tournament_event_id"),
+					rs.getString("surface")
+				);
+				item.setWinnerId(rs.getString("winner_id"));
+				item.setRunnerUpId(rs.getString("runner_up_id"));
+				item.setScore(rs.getString("score"));
+				return item;
+			}
+		);
 	}
 }
 

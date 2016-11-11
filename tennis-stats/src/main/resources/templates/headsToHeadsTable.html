@@ -51,7 +51,7 @@
 		<tbody class="text-nowrap">
 		<tr th:unless="${headsToHeads.empty}" th:each="hRivalry : ${headsToHeads.rivalries}">
 			<th th:with="player=${hRivalry.player1}">
-				<img th:src="'/images/flags/' + ${player.countryCode} + '.png'" src="/images/flags/ch.png'" th:title="${player.countryId}" title="SUI" width="24" height="20"/>
+				<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 				<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 				<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 			</th>

@@ -5,9 +5,52 @@ import java.util.*;
 import com.google.common.collect.*;
 import com.neovisionaries.i18n.*;
 
-public abstract class CountryUtil {
+public class Country {
 
-	public static final String UNKNOWN = "???";
+	public static final String UNKNOWN_ID = "???";
+	private static final String UNKNOWN_NAME = "Unknown";
+	private static final String UNKNOWN_CODE = "__";
+
+	private final String countryId;
+
+	public Country(String countryId) {
+		this.countryId = countryId;
+	}
+
+	public String getId() {
+		return countryId;
+	}
+
+	public String getCode() {
+		CountryCode code = code(countryId);
+		return code != null ? code.getAlpha2().toLowerCase() : UNKNOWN_CODE;
+	}
+
+	public String getName() {
+		CountryCode code = code(countryId);
+		return code != null ? code.getName() : UNKNOWN_NAME;
+	}
+
+
+	// Object methods
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Country)) return false;
+		Country country = (Country)o;
+		return Objects.equals(countryId, country.countryId);
+	}
+
+	@Override public int hashCode() {
+		return Objects.hash(countryId);
+	}
+
+	@Override public String toString() {
+		return getName() + " (" + countryId + ')';
+	}
+
+
+	// Codes
 
 	private static final Map<String, String> OVERRIDES = ImmutableMap.<String, String>builder()
 		.put("AHO", "NLD")
@@ -103,10 +146,10 @@ public abstract class CountryUtil {
 	.build();
 
 	public static CountryCode code(String countryId) {
-		if (!UNKNOWN.equals(countryId)) {
+		if (!UNKNOWN_ID.equals(countryId)) {
 			String override = OVERRIDES.get(countryId);
 			String isoAlpha3 = override == null ? countryId : override;
-			if (!UNKNOWN.equals(isoAlpha3)) {
+			if (!UNKNOWN_ID.equals(isoAlpha3)) {
 				CountryCode code = CountryCode.getByCode(isoAlpha3);
 				if (code != null)
 					return code;
@@ -115,15 +158,5 @@ public abstract class CountryUtil {
 			}
 		}
 		return null;
-	}
-
-	public static String getISOAlpha2Code(String countryId) {
-		CountryCode code = code(countryId);
-		return code != null ? code.getAlpha2().toLowerCase() : "__";
-	}
-
-	public static String getCountryName(String countryId) {
-		CountryCode code = code(countryId);
-		return code != null ? code.getName() : "Unknown";
 	}
 }

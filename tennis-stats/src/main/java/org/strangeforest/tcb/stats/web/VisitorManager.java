@@ -12,7 +12,7 @@ import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
 
 import com.github.benmanes.caffeine.cache.*;
-import com.maxmind.geoip2.record.*;
+import com.maxmind.geoip2.record.Country;
 import com.neovisionaries.i18n.*;
 
 import static java.util.stream.Collectors.*;

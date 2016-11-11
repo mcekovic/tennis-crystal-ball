@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.controller;
 
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
@@ -27,6 +29,19 @@ public class TournamentLevelTimelineController extends PageController {
 		modelMap.addAttribute("level", tournamentLevel);
 		modelMap.addAttribute("timeline", timeline);
 		return new ModelAndView("tournamentLevelTimeline", modelMap);
+	}
+
+	@GetMapping("/teamTournamentLevelTimeline")
+	public ModelAndView teamTournamentLevelTimeline(
+      @RequestParam(name = "level") String level
+	) {
+		TournamentLevel tournamentLevel = TournamentLevel.decode(level);
+		List<TeamTournamentLevelTimelineItem> timeline = tournamentLevelService.getTeamTournamentLevelTimeline(level);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("level", tournamentLevel);
+		modelMap.addAttribute("timeline", timeline);
+		return new ModelAndView("teamTournamentLevelTimeline", modelMap);
 	}
 }
 

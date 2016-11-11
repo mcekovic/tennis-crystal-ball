@@ -6,17 +6,15 @@ public class RivalryPlayer implements Comparable<RivalryPlayer> {
 
 	private final int playerId;
 	private final String name;
-	private final String countryId;
-	private final String countryCode;
+	private final Country country;
 	private final boolean active;
 	private final int goatPoints;
 
 	public RivalryPlayer(int playerId, String name, String countryId, boolean active, int goatPoints) {
 		this.playerId = playerId;
 		this.name = name;
-		this.countryId = countryId;
+		country = new Country(countryId);
 		this.active = active;
-		this.countryCode = CountryUtil.getISOAlpha2Code(countryId);
 		this.goatPoints = goatPoints;
 	}
 
@@ -35,12 +33,8 @@ public class RivalryPlayer implements Comparable<RivalryPlayer> {
 		return sb.toString();
 	}
 
-	public String getCountryId() {
-		return countryId;
-	}
-
-	public String getCountryCode() {
-		return countryCode;
+	public Country getCountry() {
+		return country;
 	}
 
 	public boolean isActive() {

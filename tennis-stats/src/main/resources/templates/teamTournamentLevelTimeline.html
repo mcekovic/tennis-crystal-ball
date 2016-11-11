@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="level" type="org.strangeforest.tcb.stats.model.TournamentLevel"*/-->
+<!--/*@thymesVar id="timeline" type="java.util.List<org.strangeforest.tcb.stats.model.TeamTournamentLevelTimelineItem>"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, _, _)">
+	<title>[[${level.text}]] Timeline</title>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3>[[${level.text}]] Timeline</h3>
+	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap" style="width: 50%">
+		<thead>
+			<tr>
+				<th>Season</th>
+				<th>Winner</th>
+				<th>Runner-up</th>
+				<th>Score</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="item : ${timeline}">
+				<td><a th:href="'/tournamentEvent?tournamentEventId=' + ${item.tournamentEventId}" th:text="${item.season}">2005</a></td>
+				<td>
+					<img th:src="'/images/flags/' + ${item.winner.code} + '.png'" src="/images/flags/us.png'" th:title="${item.winner.id}" title="USA" width="24" height="20"/>
+					<strong th:text="${item.winner.name}">United States</strong>
+				</td>
+				<td>
+					<img th:src="'/images/flags/' + ${item.runnerUp.code} + '.png'" src="/images/flags/au.png'" th:title="${item.runnerUp.id}" title="AUS" width="24" height="20"/>
+					<span th:text="${item.runnerUp.name}">Australia</span>
+				</td>
+				<td th:class="|bg-surface-${item.surface}|" class="bg-surface-H" th:text="${item.score}">4-1</td>
+			<tr>
+		</tbody>
+	</table>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

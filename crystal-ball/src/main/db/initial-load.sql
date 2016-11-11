@@ -392,5 +392,58 @@ VALUES
 ('Taylor Fritz', 'Taylor Harry Fritz'),
 ('Victor Estrella Burgos', 'Victor Estrella');
 
+DELETE FROM team_tournament_event_winner;
+INSERT INTO team_tournament_event_winner
+(season, level, winner_id, runner_up_id, score)
+VALUES
+(1968, 'D', 'USA', 'AUS', '4–1'),
+(1969, 'D', 'USA', 'ROU', '5–0'),
+(1970, 'D', 'USA', 'GER', '5–0'),
+(1971, 'D', 'USA', 'ROU', '3–2'),
+(1972, 'D', 'USA', 'ROU', '3–2'),
+(1973, 'D', 'AUS', 'USA', '5–0'),
+(1974, 'D', 'RSA', 'IND', 'W/O'),
+(1975, 'D', 'SWE', 'CZE', '3–2'),
+(1976, 'D', 'ITA', 'CHI', '4–1'),
+(1977, 'D', 'AUS', 'ITA', '3–1'),
+(1978, 'D', 'USA', 'GBR', '4–1'),
+(1979, 'D', 'USA', 'GBR', '5-0'),
+(1980, 'D', 'CZE', 'ITA', '4–1'),
+(1981, 'D', 'USA', 'ARG', '3–1'),
+(1982, 'D', 'USA', 'FRA', '4–1'),
+(1983, 'D', 'AUS', 'SWE', '3–2'),
+(1984, 'D', 'SWE', 'USA', '4–1'),
+(1985, 'D', 'SWE', 'GER', '3–2'),
+(1986, 'D', 'AUS', 'SWE', '3–2'),
+(1987, 'D', 'SWE', 'IND', '5-0'),
+(1988, 'D', 'GER', 'SWE', '4–1'),
+(1989, 'D', 'GER', 'SWE', '3–2'),
+(1990, 'D', 'USA', 'AUS', '3–2'),
+(1991, 'D', 'FRA', 'USA', '3–1'),
+(1992, 'D', 'USA', 'SUI', '3–1'),
+(1993, 'D', 'GER', 'AUS', '4–1'),
+(1994, 'D', 'SWE', 'RUS', '4–1'),
+(1995, 'D', 'USA', 'RUS', '3–2'),
+(1996, 'D', 'FRA', 'SWE', '3–2'),
+(1997, 'D', 'SWE', 'USA', '5-0'),
+(1998, 'D', 'SWE', 'ITA', '4–1'),
+(1999, 'D', 'AUS', 'FRA', '3–2'),
+(2000, 'D', 'ESP', 'AUS', '3–1'),
+(2001, 'D', 'FRA', 'AUS', '3–2'),
+(2002, 'D', 'RUS', 'FRA', '3–2'),
+(2003, 'D', 'AUS', 'ESP', '3–1'),
+(2004, 'D', 'ESP', 'USA', '3–2'),
+(2005, 'D', 'CRO', 'SVK', '3–2'),
+(2006, 'D', 'RUS', 'ARG', '3–2'),
+(2007, 'D', 'USA', 'RUS', '4–1'),
+(2008, 'D', 'ESP', 'ARG', '3–1'),
+(2009, 'D', 'ESP', 'CZE', '5–0'),
+(2010, 'D', 'SRB', 'FRA', '3–2'),
+(2011, 'D', 'ESP', 'ARG', '3–1'),
+(2012, 'D', 'CZE', 'ESP', '3–2'),
+(2013, 'D', 'CZE', 'SRB', '3–2'),
+(2014, 'D', 'SUI', 'FRA', '3–1'),
+(2015, 'D', 'GBR', 'BEL', '3–1');
+
 COMMIT;
 

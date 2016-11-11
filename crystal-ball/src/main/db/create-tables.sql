@@ -238,6 +238,18 @@ CREATE TABLE match_stats (
 );
 
 
+-- team_tournament_event_winner
+
+CREATE TABLE team_tournament_event_winner (
+	season INTEGER NOT NULL,
+	level tournament_level NOT NULL,
+	winner_id TEXT NOT NULL,
+	runner_up_id TEXT NOT NULL,
+	score TEXT,
+	PRIMARY KEY (season, level)
+);
+
+
 -- tournament_rank_points
 
 CREATE TABLE tournament_rank_points (
