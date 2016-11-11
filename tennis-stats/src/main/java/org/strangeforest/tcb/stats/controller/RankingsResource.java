@@ -34,6 +34,7 @@ public class RankingsResource {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date,
 		@RequestParam(name = "allTime", required = false) boolean allTime,
+		@RequestParam(name = "active", required = false) Boolean active,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam(name = "searchPhrase") String searchPhrase
@@ -44,7 +45,7 @@ public class RankingsResource {
 			if (date == null && !allTime)
 				date = rankingsService.getCurrentRankingDate(rankType);
 		}
-		PlayerListFilter filter = new PlayerListFilter(searchPhrase);
+		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);
 		int pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
 		return rankingsService.getRankingsTable(rankType, date, filter, pageSize, current);
 	}
