@@ -1,11 +1,13 @@
 VACUUM FULL ANALYSE VERBOSE player;
 VACUUM FULL ANALYSE VERBOSE player_mapping;
+VACUUM FULL ANALYSE VERBOSE player_alias;
 VACUUM FULL ANALYSE VERBOSE player_ranking;
 VACUUM FULL ANALYSE VERBOSE player_elo_ranking;
 
 VACUUM FULL ANALYSE VERBOSE tournament;
 VACUUM FULL ANALYSE VERBOSE tournament_mapping;
 VACUUM FULL ANALYSE VERBOSE tournament_event;
+VACUUM FULL ANALYSE VERBOSE tournament_event_rank_factor;
 VACUUM FULL ANALYSE VERBOSE match;
 VACUUM FULL ANALYSE VERBOSE set_score;
 VACUUM FULL ANALYSE VERBOSE match_stats;
@@ -15,6 +17,7 @@ VACUUM FULL ANALYSE VERBOSE tournament_rank_points;
 VACUUM FULL ANALYSE VERBOSE year_end_rank_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_rank_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_elo_rating_goat_points;
+VACUUM FULL ANALYSE VERBOSE best_surface_elo_rating_goat_points;
 VACUUM FULL ANALYSE VERBOSE weeks_at_no1_goat_points;
 
 VACUUM FULL ANALYSE VERBOSE big_win_match_factor;
@@ -67,3 +70,5 @@ VACUUM FULL ANALYSE VERBOSE player_tournament_level_win_streak;
 VACUUM FULL ANALYSE VERBOSE player_record;
 VACUUM FULL ANALYSE VERBOSE active_player_record;
 VACUUM FULL ANALYSE VERBOSE saved_record;
+
+VACUUM FULL ANALYSE VERBOSE visitor;

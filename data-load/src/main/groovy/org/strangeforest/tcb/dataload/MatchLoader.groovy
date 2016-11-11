@@ -354,6 +354,7 @@ class MatchLoader extends BaseCSVLoader {
 				break;
 			case 1985:
 				if (isDCTieBetween(match, 'NZL', 'KOR')) return 'RR'
+				if (isDCTieBetween(match, 'GBR', 'KOR')) return 'RR'
 				break;
 		}
 		switch (round) {
