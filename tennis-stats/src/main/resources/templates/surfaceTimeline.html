@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="timeline" type="java.util.List<org.strangeforest.tcb.stats.model.SurfaceTimelineItem>"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, _, _)">
+	<title>Surface Timeline</title>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3>Surface Timeline</h3>
+	<table class="table table-condensed table-hover table-bordered text-nowrap">
+		<tbody>
+			<tr th:each="item : ${timeline}">
+				<td>
+					<div class="progress">
+						<div class="progress-bar progress-bar-default" role="progressbar" th:style="|width: ${item.hardPct}|">Hard</div>
+						<div class="progress-bar progress-bar-danger" role="progressbar" th:style="|width: ${item.clayPct}|">Clay</div>
+						<div class="progress-bar progress-bar-success" role="progressbar" th:style="|width: ${item.grassPct}|">Grass</div>
+						<div class="progress-bar progress-bar-warning" role="progressbar" th:style="|width: ${item.carpetPct}|">Carpet</div>
+					</div>
+				</td>
+			<tr>
+		</tbody>
+	</table>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

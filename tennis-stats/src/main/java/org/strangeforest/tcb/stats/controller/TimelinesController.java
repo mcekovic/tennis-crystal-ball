@@ -13,16 +13,28 @@ import org.strangeforest.tcb.stats.service.*;
 import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
 
 @Controller
-public class TournamentLevelTimelineController extends PageController {
+public class TimelinesController extends PageController {
 
-	@Autowired
-	private TournamentLevelService tournamentLevelService;
+	@Autowired private BigGunsTimelineService timelineService;
+	@Autowired private TournamentLevelService tournamentLevelService;
+	@Autowired private SurfaceService surfaceService;
+
+	@GetMapping("/bigGunsTimeline")
+	public ModelAndView bigGunsTimeline() {
+		BigGunsTimeline timeline = timelineService.getBigGunsTimeline();
+		int minGOATPoints = timelineService.getMinGOATPoints();
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("timeline", timeline);
+		modelMap.addAttribute("minGOATPoints", minGOATPoints);
+		return new ModelAndView("bigGunsTimeline", modelMap);
+	}
 
 	@GetMapping("/tournamentLevelTimeline")
 	public ModelAndView tournamentLevelTimeline(
       @RequestParam(name = "level") String level
 	) {
-		TournamentLevel tournamentLevel = TournamentLevel.decode(level);
+		TournamentLevel tournamentLevel = decode(level);
 		TournamentLevelTimeline timeline = tournamentLevelService.getTournamentLevelTimeline(level, tournamentLevel != MASTERS);
 
 		ModelMap modelMap = new ModelMap();
@@ -35,7 +47,7 @@ public class TournamentLevelTimelineController extends PageController {
 	public ModelAndView teamTournamentLevelTimeline(
       @RequestParam(name = "level") String level
 	) {
-		TournamentLevel tournamentLevel = TournamentLevel.decode(level);
+		TournamentLevel tournamentLevel = decode(level);
 		List<TeamTournamentLevelTimelineItem> timeline = tournamentLevelService.getTeamTournamentLevelTimeline(level);
 
 		ModelMap modelMap = new ModelMap();
@@ -43,5 +55,13 @@ public class TournamentLevelTimelineController extends PageController {
 		modelMap.addAttribute("timeline", timeline);
 		return new ModelAndView("teamTournamentLevelTimeline", modelMap);
 	}
-}
 
+	@GetMapping("/surfaceTimeline")
+	public ModelAndView surfaceTimeline() {
+		List<SurfaceTimelineItem> timeline = surfaceService.getSurfaceTimeline();
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("timeline", timeline);
+		return new ModelAndView("surfaceTimeline", modelMap);
+	}
+}
