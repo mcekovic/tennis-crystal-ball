@@ -7,10 +7,33 @@
 			loadRankingTopN("POINTS");
 			bindPopovers();
 			$("[data-toggle='collapse']").click(collapseClick);
+			$("#goatLegend").on("show.bs.collapse", setGOATLegendWidth);
 		});
 		function loadRankingTopN(rankType) {
 			$("#rankingTopN").load("/rankingTopN?rankType=" + rankType);
 		}
+		function goatLegendWidth() {
+			switch ($(".device-check:visible").attr("data-device")) {
+				case "md": return "133%";
+				case "lg": return "120%";
+				default: return "100%";
+			}
+		}
+		function setGOATLegendWidth() {
+			$("#goatLegend").css("width", goatLegendWidth());
+		}
+		var waitForFinalEvent = function() {
+			var b = {};
+			return function(c, d, a) {
+				a || (a = "dummy");
+				b[a] && clearTimeout(b[a]);
+				b[a] = setTimeout(c, d);
+			}
+		}();
+		var fullDateString = new Date();
+		$(window).resize(function() {
+			waitForFinalEvent(setGOATLegendWidth, 100, fullDateString.getTime());
+		});
 	</script>
 	<style>
 		body {
@@ -76,6 +99,9 @@
 				For visual description of 'GOAT' formula please click:
 			</p>
 			<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend</button>
+			<div id="goatLegend" class="collapse">Loading...</div>
+			<br/>
+			<br/>
 		</div>
 		<div class="col-lg-2 col-md-3">
 			<div class="panel panel-default component text-nowrap">
@@ -106,14 +132,12 @@
 			<div id="rankingTopN"></div>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<div id="goatLegend" class="collapse">Loading...</div>
-			<br/>
-		</div>
-	</div>
 	<h4 class="text-nowrap">Partners</h4>
 	<p><a href="http://www.livescore.in/" title="Livescore.in" target="_blank">Livescore.in</a></p>
+	<div class="device-check visible-xs" data-device="xs"></div>
+	<div class="device-check visible-sm" data-device="sm"></div>
+	<div class="device-check visible-md" data-device="md"></div>
+	<div class="device-check visible-lg" data-device="lg"></div>
 	<footer th:include="fragments/footer :: copy"></footer>
 	<div th:include="fragments/aboutElo :: aboutElo"></div>
 </body>

@@ -15,6 +15,9 @@
 				requestHandler: function (request) {
 					request.rankType = $("#rankType").val();
 					request.allTime = true;
+					var active = $("#active").prop("checked");
+					if (active)
+						request.active = active;
 					return request;
 				},
 				sorting: false,
@@ -42,7 +45,7 @@
 				}
 			});
 			var $rankingsTableHeader = $("#rankingsTable-header");
-			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove());
+			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove()).before($("#activeDiv").remove());
 			setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
 			$("[data-toggle='tooltip']").tooltip();
 			bindPopovers();
@@ -60,6 +63,13 @@
 			<option value="ELO_RATING">Overall</option>
 			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 		</select>
+	</div>
+	<div id="activeDiv" class="btn-group" style="margin-right: 20px">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
+				<input id="active" type="checkbox" onchange="reloadRankings()"/> Active players
+			</label>
+		</div>
 	</div>
 	<table id="rankingsTable" class="table table-condensed table-hover table-striped">
 		<thead>

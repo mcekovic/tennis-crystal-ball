@@ -30,11 +30,10 @@ class MatchLoader extends BaseCSVLoader {
 		def tourneyId = string record.tourney_id
 		if (tourneyId[4] != '-')
 			throw new IllegalArgumentException("Invalid tourney_id: $tourneyId")
-		def extTourneyId = string(tourneyId.substring(5))
+		def extTourneyId = string tourneyId.substring(5)
 		def level = string record.tourney_level
 		def name = string record.tourney_name
-		def dcInfo = level == 'D' ? extractDCTournamentInfo(name) : null;
-		def season = smallint(tourneyId.substring(0, 4))
+		def season = smallint tourneyId.substring(0, 4)
 		params.season = season
 		def date = date record.tourney_date
 		params.tournament_date = date
@@ -44,6 +43,7 @@ class MatchLoader extends BaseCSVLoader {
 		def mappedLevel = mapLevel(level, drawSize, name, season, extTourneyId)
 		if (mappedLevel == 'C' || mappedLevel == 'U')
 			return null
+		def dcInfo = level == 'D' ? extractDCTournamentInfo(record, season) : null;
 		params.ext_tournament_id = mapExtTournamentId(extTourneyId, mappedLevel, dcInfo)
 		def eventName = mappedLevel != 'D' ? name : dcInfo.name
 		params.tournament_name = mappedLevel != 'O' ? eventName : 'Olympics'
@@ -310,7 +310,8 @@ class MatchLoader extends BaseCSVLoader {
 
 	// Davis Cup
 
-	static DavisCupTournamentInfo extractDCTournamentInfo(String name) {
+	static DavisCupTournamentInfo extractDCTournamentInfo(def match, int season) {
+		String name = match.tourney_name
 		String[] parts = name.split(' ')
 		if (parts.length < 4)
 			throw new IllegalArgumentException("Invalid Davis Cup tournament name: $name")
@@ -318,10 +319,47 @@ class MatchLoader extends BaseCSVLoader {
 		def round = parts[3]
 		if (round.endsWith(':'))
 			round = round.substring(0, round.length() - 1)
-		new DavisCupTournamentInfo(extId: 'D' + group, name: 'Davis Cup ' + group, round: mapDCRound(round, group))
+		new DavisCupTournamentInfo(extId: 'D' + group, name: 'Davis Cup ' + group, round: mapDCRound(round, group, match, season))
 	}
 
-	static mapDCRound(String round, String group) {
+	static mapDCRound(String round, String group, def match, int season) {
+		switch (season) {
+			case 1968:
+				if (isDCTieBetween(match, 'USA', 'AUS')) return 'F'
+				if (isDCTieBetween(match, 'IND', 'SRI')) return 'RR'
+				if (isDCTieBetween(match, 'USA', 'IND')) return 'RR'
+				break;
+			case 1969:
+				if (isDCTieBetween(match, 'USA', 'ROU')) return 'F'
+				if (isDCTieBetween(match, 'IND', 'SRI')) return 'RR'
+				break;
+			case 1970:
+				if (isDCTieBetween(match, 'USA', 'GER')) return 'F'
+				if (isDCTieBetween(match, 'IND', 'SRI')) return 'RR'
+				if (isDCTieBetween(match, 'AUS', 'IND')) return 'RR'
+				break;
+			case 1971:
+				if (isDCTieBetween(match, 'USA', 'ROU')) return 'F'
+				if (isDCTieBetween(match, 'IND', 'SRI')) return 'RR'
+				break;
+			case 1972:
+				if (isDCTieBetween(match, 'AUS', 'IND')) return 'RR'
+				if (isDCTieBetween(match, 'IND', 'SRI')) return 'RR'
+				break;
+			case 1973:
+				if (isDCTieBetween(match, 'AUS', 'IND')) return 'SF'
+				break;
+			case 1974:
+				if (isDCTieBetween(match, 'AUS', 'IND')) return 'RR'
+				break;
+			case 1980:
+				if (isDCTieBetween(match, 'USA', 'ITA')) return 'SF'
+				break;
+			case 1985:
+				if (isDCTieBetween(match, 'NZL', 'KOR')) return 'RR'
+				if (isDCTieBetween(match, 'GBR', 'KOR')) return 'RR'
+				break;
+		}
 		switch (round) {
 			case 'F': return 'F'
 			case 'SF': return 'SF'
@@ -341,6 +379,12 @@ class MatchLoader extends BaseCSVLoader {
 		String extId
 		String name
 		String round
+	}
+
+	static isDCTieBetween(def match, String country1, String country2) {
+		String winnerCountry = country match.winner_ioc
+		String loserCountry = country match.loser_ioc
+		(winnerCountry == country1 && loserCountry == country2) || (winnerCountry == country2 && loserCountry == country1)
 	}
 
 	static final SAME_TOURNAMENT_MAP = [
