@@ -62,6 +62,7 @@ dependencies {
 		exclude group: 'com.google.http-client'
 	}
 	compile files ('lib/GeoLite2-Country.zip')
+	compile ("eu.bitwalker:UserAgentUtils:$userAgentUtilsVersion")
 
 	testCompile ('org.springframework.boot:spring-boot-starter-test')
 	testCompile ("junit:junit:$junitVersion")

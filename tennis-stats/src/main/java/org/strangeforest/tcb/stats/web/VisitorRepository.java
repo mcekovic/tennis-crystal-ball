@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.jdbc.support.*;
 import org.springframework.stereotype.*;
+import org.strangeforest.tcb.util.*;
+
+import eu.bitwalker.useragentutils.*;
 
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
@@ -20,22 +23,29 @@ public class VisitorRepository {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String FIND = // language=SQL
-		"SELECT visitor_id, country_id, country, hits, last_hit FROM visitor WHERE ip_address = :ipAddress AND active ORDER BY last_hit DESC";
+		"SELECT visitor_id, country_id, country, agent_type, hits, last_hit FROM visitor\n" +
+		"WHERE ip_address = :ipAddress AND active ORDER BY last_hit DESC";
 
 	private static final String FIND_ALL = // language=SQL
-		"SELECT max(visitor_id) AS visitor_id, country_id, country, ip_address, sum(hits) AS hits, max(last_hit) AS last_hit FROM visitor WHERE active GROUP by country_id, country, ip_address";
+		"SELECT max(visitor_id) AS visitor_id, ip_address, country_id, country, agent_type, sum(hits) AS hits, max(last_hit) AS last_hit FROM visitor\n" +
+		"WHERE active GROUP by ip_address, country_id, country, agent_type";
 
 	private static final String CREATE = // language=SQL
-		"INSERT INTO visitor (ip_address, country_id, country, hits, last_hit) VALUES (:ipAddress, :countryId, :country, :hits, :lastHit)";
+		"INSERT INTO visitor (ip_address, country_id, country, agent_type, hits, last_hit)\n" +
+		"VALUES (:ipAddress, :countryId, :country, :agentType, :hits, :lastHit)";
 
 	private static final String SAVE = // language=SQL
-		"UPDATE visitor SET hits = :hits, last_hit = :lastHit%1$s WHERE visitor_id = :visitorId";
+		"UPDATE visitor SET hits = :hits, last_hit = :lastHit%1$s\n" +
+		"WHERE visitor_id = :visitorId";
 
 	private static final String STATS_QUERY = // language=SQL
-		"SELECT %1$s AS value FROM visitor WHERE last_hit >= now() - INTERVAL '%2$s'";
+		"SELECT %1$s AS value FROM visitor\n" +
+		"WHERE last_hit >= now() - INTERVAL '%2$s'";
 
-	private static final String STATS_BY_COUNTRY_QUERY = // language=SQL
-		"SELECT country, %1$s AS value FROM visitor WHERE last_hit >= now() - INTERVAL '%2$s' GROUP BY country";
+	private static final String STATS_BY_QUERY = // language=SQL
+		"SELECT %1$s, %2$s AS value FROM visitor\n" +
+		"WHERE last_hit >= now() - INTERVAL '%3$s'\n" +
+		"GROUP BY %1$s HAVING %2$s > 0 ORDER BY value DESC";
 
 
 	// CRUD
@@ -56,12 +66,13 @@ public class VisitorRepository {
 			ipAddress,
 			rs.getString("country_id"),
 			rs.getString("country"),
+			rs.getString("agent_type"),
 			rs.getInt("hits"),
 			rs.getTimestamp("last_hit").toInstant()
 		);
 	}
 
-	public Visitor create(String ipAddress, String countryId, String country) {
+	public Visitor create(String ipAddress, String countryId, String country, String agentType) {
 		int hits = 1;
 		Instant lastHit = Instant.now();
 		KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -69,10 +80,11 @@ public class VisitorRepository {
 			params("ipAddress", ipAddress)
 				.addValue("countryId", countryId)
 				.addValue("country", country)
+				.addValue("agentType", agentType)
 				.addValue("hits", hits)
 				.addValue("lastHit", Timestamp.from(lastHit)),
 		keyHolder, new String[] {"visitor_id"});
-		return new Visitor(keyHolder.getKey().longValue(), ipAddress, countryId, country, hits, lastHit);
+		return new Visitor(keyHolder.getKey().longValue(), ipAddress, countryId, country, agentType, hits, lastHit);
 	}
 
 	public void save(Visitor visitor) {
@@ -110,10 +122,30 @@ public class VisitorRepository {
 		);
 	}
 
-	public List<Object[]> getVisitorsByCountry(VisitorStat stat, VisitorInterval interval) {
-		return jdbcTemplate.getJdbcOperations().query(
-			format(STATS_BY_COUNTRY_QUERY, stat.getExpression(), interval.getExpression()),
-			(rs, rowNum) -> new Object[] {rs.getString("country"), rs.getObject("value")}
+	public Map<String, BigDecimal> getVisitorsByCountry(VisitorStat stat, VisitorInterval interval) {
+		return replaceNullKey(getVisitorsBy("country", stat, interval), Country.UNKNOWN_NAME);
+	}
+
+	public Map<String, BigDecimal> getVisitorsByAgentType(VisitorStat stat, VisitorInterval interval) {
+		return replaceNullKey(getVisitorsBy("agent_type", stat, interval), BrowserType.UNKNOWN.name());
+	}
+
+	private Map<String, BigDecimal> getVisitorsBy(String dimension, VisitorStat stat, VisitorInterval interval) {
+		Map<String, BigDecimal> visitorsMap = new LinkedHashMap<>();
+		jdbcTemplate.getJdbcOperations().query(
+			format(STATS_BY_QUERY, dimension, stat.getExpression(), interval.getExpression()),
+			rs -> {
+				String country = rs.getString(dimension);
+				BigDecimal value = rs.getBigDecimal("value");
+				visitorsMap.put(country, value);
+			}
 		);
+		return visitorsMap;
+	}
+
+	private static <K, V> Map<K, V> replaceNullKey(Map<K, V> map, K nullKey) {
+		if (map.containsKey(null))
+			map.put(nullKey, map.remove(null));
+		return map;
 	}
 }

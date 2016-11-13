@@ -10,6 +10,7 @@ import org.springframework.test.context.*;
 import org.springframework.test.context.junit4.*;
 import org.springframework.transaction.annotation.*;
 
+import static eu.bitwalker.useragentutils.BrowserType.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -25,7 +26,8 @@ public class VisitorRepositoryIT {
 		String ipAddress = "192.168.1.1";
 		String countryId = "SRB";
 		String country = "Serbia";
-		Visitor visitor = repository.create(ipAddress, countryId, country);
+		String agentType = WEB_BROWSER.name();
+		Visitor visitor = repository.create(ipAddress, countryId, country, agentType);
 
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
 		assertThat(visitor.getHits()).isEqualTo(1);
@@ -35,6 +37,7 @@ public class VisitorRepositoryIT {
 		Visitor savedVisitor = optionalSavedVisitor.get();
 		assertThat(savedVisitor.getCountryId()).isEqualTo(countryId);
 		assertThat(savedVisitor.getCountry()).isEqualTo(country);
+		assertThat(savedVisitor.getAgentType()).isEqualTo(agentType);
 		assertThat(savedVisitor.getHits()).isEqualTo(1);
 	}
 
@@ -50,9 +53,9 @@ public class VisitorRepositoryIT {
 	public void visitorsAreAllFound() {
 		int existingVisitors = getExistingVisitors();
 		String ipAddress1 = "192.168.1.1";
-		repository.create(ipAddress1, "SRB", "Serbia");
+		repository.create(ipAddress1, "SRB", "Serbia", WEB_BROWSER.name());
 		String ipAddress2 = "192.168.1.2";
-		repository.create(ipAddress2, "USA", "United States");
+		repository.create(ipAddress2, "USA", "United States", MOBILE_BROWSER.name());
 
 		List<Visitor> visitors = repository.findAll();
 
@@ -63,7 +66,7 @@ public class VisitorRepositoryIT {
 	@Test
 	public void visitorIsSaved() {
 		String ipAddress = "192.168.1.1";
-		Visitor visitor = repository.create(ipAddress, "SRB", "Serbia");
+		Visitor visitor = repository.create(ipAddress, "SRB", "Serbia", WEB_BROWSER.name());
 
 		visitor.visit();
 		repository.save(visitor);
@@ -77,9 +80,9 @@ public class VisitorRepositoryIT {
 	public void allVisitorAreSaved() {
 		int existingVisitors = getExistingVisitors();
 		String ipAddress1 = "192.168.1.1";
-		Visitor visitor1 = repository.create(ipAddress1, "SRB", "Serbia");
+		Visitor visitor1 = repository.create(ipAddress1, "SRB", "Serbia", WEB_BROWSER.name());
 		String ipAddress2 = "192.168.1.2";
-		Visitor visitor2 = repository.create(ipAddress2, "USA", "United States");
+		Visitor visitor2 = repository.create(ipAddress2, "USA", "United States", MOBILE_BROWSER.name());
 
 		visitor1.visit();
 		visitor2.visit();
@@ -94,7 +97,7 @@ public class VisitorRepositoryIT {
 	@Test
 	public void visitorIsExpired() {
 		String ipAddress = "192.168.1.1";
-		Visitor visitor = repository.create(ipAddress, "SRB", "Serbia");
+		Visitor visitor = repository.create(ipAddress, "SRB", "Serbia", WEB_BROWSER.name());
 		Optional<Visitor> optionalVisitor = repository.find(ipAddress);
 		assertThat(optionalVisitor).isNotEmpty();
 

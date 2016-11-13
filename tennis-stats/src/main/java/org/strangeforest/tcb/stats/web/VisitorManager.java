@@ -80,9 +80,9 @@ public class VisitorManager {
 		}
 	}
 
-	public Visitor visit(String ipAddress) {
+	public Visitor visit(String ipAddress, String agentType) {
 		try {
-			return doVisit(ipAddress);
+			return doVisit(ipAddress, agentType);
 		}
 		catch (ExecutionException ex) {
 			throw new TennisStatsException("Error tracking visit.", Optional.ofNullable(ex.getCause()).orElse(ex));
@@ -92,7 +92,7 @@ public class VisitorManager {
 		}
 	}
 
-	private Visitor doVisit(String ipAddress) throws Exception {
+	private Visitor doVisit(String ipAddress, String agentType) throws Exception {
 		return lockManager.withLock(ipAddress, () -> {
 			Optional<Visitor> optionalVisitor = visitors.get(ipAddress);
 			if (!optionalVisitor.isPresent()) {
@@ -106,7 +106,7 @@ public class VisitorManager {
 						countryId = code.getAlpha3();
 					countryName = country.getName();
 				}
-				Visitor visitor = repository.create(ipAddress, countryId, countryName);
+				Visitor visitor = repository.create(ipAddress, countryId, countryName, agentType);
 				visitors.put(ipAddress, Optional.of(visitor));
 				return visitor;
 			}

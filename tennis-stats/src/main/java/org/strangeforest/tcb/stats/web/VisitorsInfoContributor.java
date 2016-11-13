@@ -18,7 +18,9 @@ public class VisitorsInfoContributor implements InfoContributor {
 		builder.withDetail("visitors", ImmutableMap.of(
 			"active", repository.getVisitors(ACTIVE_VISITORS, HOUR),
 			"lastDayVisits", repository.getVisitors(VISITS, DAY),
-			"lastDayHits", repository.getVisitors(HITS, DAY)
+			"lastDayHits", repository.getVisitors(HITS, DAY),
+			"activeByCountry", repository.getVisitorsByCountry(ACTIVE_VISITORS, HOUR),
+			"lastDayHitsByAgentType", repository.getVisitorsByAgentType(HITS, DAY)
 		));
 	}
 }

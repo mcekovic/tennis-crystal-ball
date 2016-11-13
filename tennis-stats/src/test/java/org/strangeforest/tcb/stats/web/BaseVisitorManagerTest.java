@@ -8,6 +8,7 @@ import org.junit.*;
 import org.mockito.*;
 import org.mockito.verification.*;
 
+import static eu.bitwalker.useragentutils.BrowserType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,18 +40,18 @@ public abstract class BaseVisitorManagerTest {
 
 	protected Visitor visitAndVerifyFirstVisit(String ipAddress, VerificationMode mode) {
 		when(repository.find(ipAddress)).thenReturn(Optional.empty());
-		when(repository.create(any(), any(), any())).thenAnswer(invocation -> {
+		when(repository.create(any(), any(), any(), any())).thenAnswer(invocation -> {
 			Object[] args = invocation.getArguments();
-			return new Visitor(1L, (String)args[0], (String)args[1], (String)args[2], 1, Instant.now());
+			return new Visitor(1L, (String)args[0], (String)args[1], (String)args[2], (String)args[3], 1, Instant.now());
 		});
 
-		Visitor visitor = manager.visit(ipAddress);
+		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
 
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
 		assertThat(visitor.getHits()).isEqualTo(1);
 
 		verify(repository, mode).find(ipAddress);
-		verify(repository, mode).create(matches(ipAddress), any(), any());
+		verify(repository, mode).create(matches(ipAddress), any(), any(), any());
 		verifyNoMoreInteractions(repository);
 		verify(geoIPService, mode).getCountry(ipAddress);
 		verifyNoMoreInteractions(geoIPService);

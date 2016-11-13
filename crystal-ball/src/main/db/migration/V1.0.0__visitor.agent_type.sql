@@ -1,0 +1,1 @@
+ALTER TABLE visitor ADD COLUMN agent_type TEXT;

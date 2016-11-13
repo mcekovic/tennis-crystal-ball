@@ -451,6 +451,7 @@ CREATE TABLE visitor (
 	ip_address TEXT NOT NULL,
 	country_id TEXT,
 	country TEXT,
+	agent_type TEXT,
 	hits INTEGER NOT NULL,
 	active BOOLEAN NOT NULL DEFAULT TRUE,
 	first_hit TIMESTAMP(3) NOT NULL DEFAULT now(),

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="stat" type="org.strangeforest.tcb.stats.web.VisitorStat"*/-->
+<!--/*@thymesVar id="interval" type="org.strangeforest.tcb.stats.web.VisitorInterval"*/-->
+<!--/*@thymesVar id="stats" type="org.strangeforest.tcb.stats.web.VisitorStat[]"*/-->
+<!--/*@thymesVar id="intervals" type="org.strangeforest.tcb.stats.web.VisitorInterval[]"*/-->
+<!--/*@thymesVar id="countries" type="java.lang.Object[]"*/-->
+<!--/*@thymesVar id="agentTypes" type="java.lang.Object[]"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
+	<title>Visitors</title>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript" th:inline="javascript">
+		google.charts.load("current", {"packages": ["corechart", "geochart"]});
+		google.charts.setOnLoadCallback(drawVisitorsChart);
+		function drawVisitorsChart() {
+			var countries = [[${countries}]];
+			var countriesData = google.visualization.arrayToDataTable(countries);
+			var countriesGeoChart = new google.visualization.GeoChart(document.getElementById("countriesGeoChart"));
+			countriesGeoChart.draw(countriesData, {colorAxis: {colors: ["#ffdddd", "#ff0000"]}});
+			var countriesPieChart = new google.visualization.PieChart(document.getElementById("countriesPieChart"));
+			countriesPieChart.draw(countriesData, {sliceVisibilityThreshold: 0.01});
+			var agentTypes = [[${agentTypes}]];
+			var agentTypesData = google.visualization.arrayToDataTable(agentTypes);
+			var agentsTypesPieChart = new google.visualization.PieChart(document.getElementById("agentTypesPieChart"));
+			agentsTypesPieChart.draw(agentTypesData, {sliceVisibilityThreshold: 0.01});
+		}
+		function chartChanged() {
+			window.location = "/manage/visitors?stat=" + $("#chartStat").val() + "&interval=" + $("#chartInterval").val();
+		}
+	</script>
+	<style>
+		table.table-condensed > thead > tr > th {
+			padding: 3px 5px;
+		}
+		table.table-condensed > tbody > tr > td {
+			padding: 3px 5px;
+		}
+	</style>
+</head>
+<body>
+	<div class="row">
+		<div class="col-md-2">
+			<div class="input-group">
+				<label for="chartStat" class="input-group-addon">Chart by:</label>
+				<select id="chartStat" class="form-control" onchange="chartChanged()">
+					<option th:each="aStat : ${stats}" th:value="${aStat}" th:selected="${aStat == stat}" th:text="${aStat.caption}">Hits</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<div class="input-group">
+				<label for="chartInterval" class="input-group-addon">Interval:</label>
+				<select id="chartInterval" class="form-control" onchange="chartChanged()">
+					<option th:each="anInterval : ${intervals}" th:value="${anInterval}" th:selected="${anInterval == interval}" th:text="${anInterval.caption}">Day</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-md-1">
+			<button class="btn btn-default glyphicon glyphicon-home" title="Ultimate Tennis Statistics Home" onclick="window.location = '/'"> Home</button>
+		</div>
+	</div>
+	<br/>
+	<div class="row">
+		<div class="col-md-12">
+			<div id="countriesGeoChart" style="width: 900px; height: 500px;"></div>
+			<div id="countriesPieChart" style="width: 700px; height: 500px; float: left"></div>
+			<table class="table table-condensed table-hover table-bordered text-nowrap" style="width: 200px">
+				<thead>
+					<tr th:if="${#arrays.length(countries) > 0}">
+						<th th:text="${countries[0][0]}">Country</th>
+						<th th:text="${countries[0][1]}">Visits</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${countries}" th:unless="${itemStat.first}">
+						<td th:text="${item[0]}">United States</td>
+						<td th:text="${item[1]}">100</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div id="agentTypesPieChart" style="width: 700px; height: 500px; float: left"></div>
+			<table class="table table-condensed table-hover table-bordered text-nowrap" style="width: 200px">
+				<thead>
+					<tr th:if="${#arrays.length(agentTypes) > 0}">
+						<th th:text="${agentTypes[0][0]}">Agent</th>
+						<th th:text="${agentTypes[0][1]}">Visits</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${agentTypes}" th:unless="${itemStat.first}">
+						<td th:text="${item[0]}">BROWSER</td>
+						<td th:text="${item[1]}">100</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

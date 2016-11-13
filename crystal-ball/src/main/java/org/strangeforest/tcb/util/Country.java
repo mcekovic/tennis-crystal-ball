@@ -8,7 +8,7 @@ import com.neovisionaries.i18n.*;
 public class Country {
 
 	public static final String UNKNOWN_ID = "???";
-	private static final String UNKNOWN_NAME = "Unknown";
+	public static final String UNKNOWN_NAME = "Unknown";
 	private static final String UNKNOWN_CODE = "__";
 
 	private final String countryId;

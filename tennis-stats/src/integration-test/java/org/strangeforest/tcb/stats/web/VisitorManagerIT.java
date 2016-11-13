@@ -10,6 +10,7 @@ import org.springframework.test.context.*;
 import org.springframework.test.context.junit4.*;
 import org.springframework.transaction.annotation.*;
 
+import static eu.bitwalker.useragentutils.BrowserType.*;
 import static org.assertj.core.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
@@ -29,7 +30,7 @@ public class VisitorManagerIT {
 	public void firstVisitCreatesVisitor() {
 		String ipAddress = "178.148.80.189";
 
-		Visitor visitor = manager.visit(ipAddress);
+		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
 
 		assertThat(visitor.getIpAddress()).isEqualTo(ipAddress);
 		assertThat(visitor.getCountryId()).isEqualTo("SRB");
@@ -40,9 +41,9 @@ public class VisitorManagerIT {
 	@Test
 	public void secondVisitIncrementHitsButDoesNotSaveVisitor() {
 		String ipAddress = "178.148.80.189";
-		manager.visit(ipAddress);
+		manager.visit(ipAddress, WEB_BROWSER.name());
 
-		Visitor visitor = manager.visit(ipAddress);
+		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
 		assertThat(visitor.getCountryId()).isEqualTo("SRB");
 		assertThat(visitor.getHits()).isEqualTo(2);
 
@@ -55,10 +56,10 @@ public class VisitorManagerIT {
 	@Test
 	public void thirdVisitIncrementHitsButAndSaveVisitor() {
 		String ipAddress = "178.148.80.189";
-		manager.visit(ipAddress);
-		manager.visit(ipAddress);
+		manager.visit(ipAddress, WEB_BROWSER.name());
+		manager.visit(ipAddress, WEB_BROWSER.name());
 
-		Visitor visitor = manager.visit(ipAddress);
+		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
 		assertThat(visitor.getHits()).isEqualTo(3);
 
 		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);
@@ -70,9 +71,9 @@ public class VisitorManagerIT {
 	@Test
 	public void visitorsAreSavedOnExit() throws InterruptedException {
 		String ipAddress = "178.148.80.189";
-		manager.visit(ipAddress);
+		manager.visit(ipAddress, MOBILE_BROWSER.name());
 
-		Visitor visitor = manager.visit(ipAddress);
+		Visitor visitor = manager.visit(ipAddress, MOBILE_BROWSER.name());
 		assertThat(visitor.getHits()).isEqualTo(2);
 
 		Optional<Visitor> optionalSavedVisitor = repository.find(ipAddress);

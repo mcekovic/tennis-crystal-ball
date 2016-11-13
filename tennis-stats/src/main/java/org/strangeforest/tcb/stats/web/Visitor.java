@@ -8,15 +8,17 @@ public class Visitor {
 	private final String ipAddress;
 	private final String countryId;
 	private final String country;
+	private final String agentType;
 	private int hits;
 	private Instant lastHit;
 	private boolean dirty;
 
-	public Visitor(long id, String ipAddress, String countryId, String country, int hits, Instant lastHit) {
+	public Visitor(long id, String ipAddress, String countryId, String country, String agentType, int hits, Instant lastHit) {
 		this.id = id;
 		this.ipAddress = ipAddress;
 		this.countryId = countryId;
 		this.country = country;
+		this.agentType = agentType;
 		this.hits = hits;
 		this.lastHit = lastHit;
 	}
@@ -35,6 +37,10 @@ public class Visitor {
 
 	public String getCountry() {
 		return country;
+	}
+
+	public String getAgentType() {
+		return agentType;
 	}
 
 	public synchronized int getHits() {

@@ -7,6 +7,7 @@ import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.runners.*;
 
+import static eu.bitwalker.useragentutils.BrowserType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.*;
@@ -33,7 +34,7 @@ public class VisitorManagerTest extends BaseVisitorManagerTest {
 		String ipAddress = "192.168.1.1";
 
 		visitAndVerifyFirstVisit(ipAddress);
-		Visitor visitor = manager.visit(ipAddress);
+		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
 
 		assertThat(visitor.getHits()).isEqualTo(2);
 
@@ -47,8 +48,8 @@ public class VisitorManagerTest extends BaseVisitorManagerTest {
 		String ipAddress = "192.168.1.1";
 
 		visitAndVerifyFirstVisit(ipAddress);
-		manager.visit(ipAddress);
-		Visitor visitor = manager.visit(ipAddress);
+		manager.visit(ipAddress, WEB_BROWSER.name());
+		Visitor visitor = manager.visit(ipAddress, WEB_BROWSER.name());
 
 		assertThat(visitor.getHits()).isEqualTo(3);
 
@@ -65,7 +66,7 @@ public class VisitorManagerTest extends BaseVisitorManagerTest {
 
 		visitAndVerifyFirstVisit(ipAddress1);
 		visitAndVerifyFirstVisit(ipAddress2);
-		manager.visit(ipAddress1);
+		manager.visit(ipAddress1, WEB_BROWSER.name());
 
 		verifyNoMoreInteractions(repository);
 
