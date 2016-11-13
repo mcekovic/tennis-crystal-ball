@@ -6,10 +6,11 @@ cli.d('Drop database objects')
 cli.a('Load add-hoc rankings and tournaments')
 cli.e('Compute Elo ratings')
 cli.r('Refresh computed data')
+cli.rc('Refresh Records')
 cli.v('Vacuum space')
 def options = cli.parse(args)
 
-if (options && (options.c || options.d || options.a || options.e || options.r || options.v)) {
+if (options && (options.c || options.d || options.a || options.e || options.r || options.rc || options.v)) {
 	if (options.c)
 		callLoader('createDatabase')
 	if (options.d)
@@ -22,6 +23,8 @@ if (options && (options.c || options.d || options.a || options.e || options.r ||
 		new ComputeEloRatings().run()
 	if (options.r)
 		callLoader('refreshMaterializedViews')
+	if (options.rc)
+		new RecordsLoader().loadRecords()
 	if (options.v)
 		callLoader('vacuum')
 }

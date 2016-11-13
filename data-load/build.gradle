@@ -11,13 +11,24 @@ applicationDefaultJvmArgs = [
 
 dependencies {
 	compile project(':crystal-ball')
+	compile project(':tennis-stats')
 	compile ("org.codehaus.groovy:groovy-all:$groovyVersion")
 	compile ("com.xlson.groovycsv:groovycsv:$groovyCsvVersion")
 	compile ("com.google.guava:guava:$guavaVersion")
 	compile ("org.jsoup:jsoup:$jsoupVersion")
 	runtime ("org.postgresql:postgresql:$postgresqlJdbcVersion")
+	compile ("org.springframework:spring-jdbc:$springJdbcVersion")
 	runtime ("commons-cli:commons-cli:$commonsCliVersion")
 	testCompile ("junit:junit:$junitVersion")
+}
+
+configurations {
+	compile.exclude group: 'org.springframework.boot'
+	compile.exclude group: 'com.github.ben-manes.caffeine'
+	compile.exclude group: 'org.webjars'
+	compile.exclude group: 'org.webjars.bower'
+	compile.exclude group: 'com.maxmind.geoip2'
+	compile.exclude group: 'eu.bitwalker'
 }
 
 task quickDeployToOpenShift << {

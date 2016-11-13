@@ -81,6 +81,13 @@ public class RecordsService {
 		"DELETE FROM saved_record";
 
 
+	public RecordsService() {}
+
+	public RecordsService(NamedParameterJdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
+
+
 	@Cacheable("Records.Table")
 	public BootgridTable<RecordRow> getRecordsTable(RecordFilter filter, int pageSize, int currentPage) {
 		List<Record> records = getRecords(filter);

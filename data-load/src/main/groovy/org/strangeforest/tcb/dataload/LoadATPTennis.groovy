@@ -16,13 +16,12 @@ sqlPool.withSql { sql ->
 
 LoadAdHocTournaments.loadTournaments(sqlPool)
 
-sqlPool.withSql { sql ->
-	loader.correctData(sql)
-}
+sqlPool.withSql { sql -> loader.correctData(sql) }
 
 new EloRatings(sqlPool).compute(true)
 
-sqlPool.withSql { sql ->
-	loader.refreshMaterializedViews(sql)
-	loader.vacuum(sql)
-}
+sqlPool.withSql { sql -> loader.refreshMaterializedViews(sql) }
+
+new RecordsLoader().loadRecords()
+
+sqlPool.withSql { sql -> loader.vacuum(sql) }

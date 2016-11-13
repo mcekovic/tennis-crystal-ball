@@ -81,6 +81,10 @@ task integrationTest(type: Test) {
 	classpath = sourceSets."integration-test".runtimeClasspath
 }
 
+bootRepackage {
+	enabled = false
+}
+
 task quickDeployToOpenShift << {
 	def version = project.property('version')
 	def tennisStatsJar = "tennis-stats-${version}.jar"
@@ -88,10 +92,10 @@ task quickDeployToOpenShift << {
 	def destPath = "app-root/data/tennis-stats/lib"
 	ssh.run {
 		session(remotes.openShift) {
-			put from: "${srcPath}/${tennisStatsJar}.original", into: destPath
+			put from: "${srcPath}/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
 			execute 'gear stop'
 			execute 'rm -rf app-root/logs/*'
-			execute "mv -f ${destPath}/${tennisStatsJar}.original ${destPath}/${tennisStatsJar}"
+			execute "mv -f ${destPath}/${tennisStatsJar}.new ${destPath}/${tennisStatsJar}"
 			execute 'gear start'
 		}
 	}

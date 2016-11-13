@@ -4,19 +4,16 @@ def sqlPool = new SqlPool()
 
 def loader = new ATPTennisLoader()
 
-sqlPool.withSql { sql ->
-	LoadAdHocRankings.loadRankings(sql)
-}
+sqlPool.withSql { sql -> LoadAdHocRankings.loadRankings(sql) }
 
 LoadAdHocTournaments.loadTournaments(sqlPool)
 
-sqlPool.withSql { sql ->
-	loader.correctData(sql)
-}
+sqlPool.withSql { sql -> loader.correctData(sql) }
 
 new EloRatings(sqlPool).compute(save = true, fullSave = false)
 
-sqlPool.withSql { sql ->
-	loader.refreshMaterializedViews(sql)
-	loader.vacuum(sql)
-}
+sqlPool.withSql { sql -> loader.refreshMaterializedViews(sql) }
+
+new RecordsLoader().loadRecords()
+
+sqlPool.withSql { sql -> loader.vacuum(sql) }
