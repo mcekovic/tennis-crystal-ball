@@ -277,6 +277,7 @@ function matchFormatter(column, row) {
 }
 
 function finalFormatter(column, row) {
+	if (!row.winner && !row.runnerUp) return "";
 	var victory = row.outcome != "ABD";
 	return formatMatchPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchPlayer(row.runnerUp) + " " + row.score;
 }

@@ -33,6 +33,7 @@ class ATPWorldTourTournamentLoader {
 		def atpLevel = extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1)
 		level = level ?: mapLevel(atpLevel)
 		def surface = doc.select('td.tourney-details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)').text()
+		def drawType = 'KO'
 		def drawSize = doc.select('a.not-in-system:nth-child(1) > span:nth-child(1)').text()
 
 		def matches = []
@@ -40,6 +41,8 @@ class ATPWorldTourTournamentLoader {
 		def startDate = date extractStartDate(dates)
 
 		Elements rounds = doc.select('#scoresResultsContent div table')
+		if (rounds.toString().contains('Round Robin'))
+			drawType = 'RR'
 		rounds.each {
 			def roundHeads = it.select('thead')
 			def roundBodies = it.select('tbody')
@@ -76,6 +79,7 @@ class ATPWorldTourTournamentLoader {
 					params.tournament_level = level
 					params.surface = mapSurface surface
 					params.indoor = false
+					params.draw_type = drawType;
 					params.draw_size = smallint drawSize
 
 					params.match_num = smallint(++matchNum)
@@ -123,7 +127,7 @@ class ATPWorldTourTournamentLoader {
 			}
 		}
 		sql.commit()
-		println "$matches.size matches loaded in $stopwatch"
+		println "\n$matches.size matches loaded in $stopwatch"
 	}
 
 	def setScoreParams(Map params, score, conn) {
@@ -227,10 +231,12 @@ class ATPWorldTourTournamentLoader {
 	}
 
 	static extractSeedEntry(String seedEntry) {
-		if (seedEntry.startsWith('('))
-			seedEntry = seedEntry.substring(1)
-		if (seedEntry.endsWith(')'))
-			seedEntry = seedEntry.substring(0, seedEntry.length() - 1)
+		def openingBrace = seedEntry.indexOf('(')
+		if (openingBrace >= 0)
+			seedEntry = seedEntry.substring(openingBrace + 1)
+		def closingBrace = seedEntry.indexOf(')')
+		if (closingBrace >= 0)
+			seedEntry = seedEntry.substring(0, closingBrace - 1)
 		seedEntry
 	}
 

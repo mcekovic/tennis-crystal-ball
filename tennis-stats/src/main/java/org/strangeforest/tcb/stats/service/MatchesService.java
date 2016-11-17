@@ -116,21 +116,31 @@ public class MatchesService {
 	}
 
 	static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix) throws SQLException {
-		return new MatchPlayer(
-			rs.getInt(prefix + "id"),
-			rs.getString(prefix + "name"),
-			getInteger(rs, prefix + "seed"),
-			rs.getString(prefix + "entry")
-		);
+		int playerId = rs.getInt(prefix + "id");
+		if (!rs.wasNull()) {
+			return new MatchPlayer(
+				playerId,
+				rs.getString(prefix + "name"),
+				getInteger(rs, prefix + "seed"),
+				rs.getString(prefix + "entry")
+			);
+		}
+		else
+			return null;
 	}
 
 	static MatchPlayerEx mapMatchPlayerEx(ResultSet rs, String prefix) throws SQLException {
-		return new MatchPlayerEx(
-			rs.getInt(prefix + "id"),
-			rs.getString(prefix + "name"),
-			getInteger(rs, prefix + "seed"),
-			rs.getString(prefix + "entry"),
-			rs.getString(prefix + "country_id")
-		);
+		int playerId = rs.getInt(prefix + "id");
+		if (!rs.wasNull()) {
+			return new MatchPlayerEx(
+				playerId,
+				rs.getString(prefix + "name"),
+				getInteger(rs, prefix + "seed"),
+				rs.getString(prefix + "entry"),
+				rs.getString(prefix + "country_id")
+			);
+		}
+		else
+			return null;
 	}
 }

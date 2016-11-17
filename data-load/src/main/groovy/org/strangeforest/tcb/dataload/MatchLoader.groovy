@@ -52,7 +52,7 @@ class MatchLoader extends BaseCSVLoader {
 		def surface = string record.surface
 		params.surface = mapSurface surface
 		params.indoor = mapIndoor surface
-		params.draw_type = mapDrawType(mappedLevel, season);
+		params.draw_type = mapDrawType(mappedLevel, season)
 		params.draw_size = mapDrawSize(drawSize, mappedLevel, season)
 		params.rank_points = mapRankPoints mappedLevel
 

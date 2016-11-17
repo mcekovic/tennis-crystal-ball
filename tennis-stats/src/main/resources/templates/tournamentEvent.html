@@ -112,9 +112,9 @@
 		</div>
 		<div class="col-md-3">
 			<table class="table table-condensed text-nowrap">
-				<tr>
+				<tr th:with="player=${tournamentEvent.winner}" th:if="${player}">
 					<th>Winner</th>
-					<td th:with="player=${tournamentEvent.winner}">
+					<td>
 						<th:block th:unless="${tournamentEvent.outcome == 'ABD'}">
 							<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 							<strong><a th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Roger Federer</a></strong>
@@ -122,14 +122,14 @@
 						<th:block th:if="${tournamentEvent.outcome == 'ABD'}">ABD</th:block>
 					</td>
 				</tr>
-				<tr th:unless="${tournamentEvent.outcome == 'ABD'}">
+				<tr th:with="player=${tournamentEvent.runnerUp}" th:if="${player != null && tournamentEvent.outcome != 'ABD'}">
 					<th>Runner-up</th>
-					<td th:with="player=${tournamentEvent.runnerUp}">
+					<td>
 						<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Rafael Nadal</a>
 					</td>
 				</tr>
-				<tr>
+				<tr th:if="${tournamentEvent.score}">
 					<th>Score</th>
 					<td th:text="${tournamentEvent.score}">6-4 6-3</td>
 				</tr>
