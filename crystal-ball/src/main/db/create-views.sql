@@ -147,7 +147,10 @@ CREATE INDEX ON player_year_end_elo_rank (player_id);
 CREATE OR REPLACE VIEW player_tournament_event_result_v AS
 WITH match_result AS (
 	SELECT m.winner_id AS player_id, tournament_event_id,
-		(CASE WHEN m.round = 'F' AND e.level NOT IN ('D', 'T') AND (outcome IS NULL OR outcome <> 'ABD') THEN 'W' ELSE m.round::TEXT END)::tournament_event_result AS result
+		(CASE WHEN m.round <> 'RR' AND e.level NOT IN ('D', 'T') AND (outcome IS NULL OR outcome <> 'ABD')
+			THEN (CASE m.round WHEN 'R128' THEN 'R64' WHEN 'R64' THEN 'R32' WHEN 'R32' THEN 'R16' WHEN 'R16' THEN 'QF' WHEN 'QF' THEN 'SF' WHEN 'SF' THEN 'F' WHEN 'F' THEN 'W' ELSE m.round::TEXT END)
+			ELSE m.round::TEXT
+		 END)::tournament_event_result AS result
 	FROM match m
 	INNER JOIN tournament_event e USING (tournament_event_id)
 	UNION ALL
