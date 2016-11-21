@@ -900,7 +900,7 @@ WITH rivalries AS (
   FROM rivalries_4 r
   INNER JOIN greatest_rivalries_goat_points g USING (rivalry_rank)
 )
-SELECT player_id, round(sum(goat_points))::INTEGER AS goat_points, sum(goat_points) AS unrounded_goat_points
+SELECT player_id, sum(round(goat_points))::INTEGER AS goat_points, sum(goat_points) AS unrounded_goat_points
 FROM goat_points
 GROUP BY player_id;
 
