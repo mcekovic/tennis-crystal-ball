@@ -29,6 +29,7 @@ public class BestSeasonsResource {
 		.put("olympicsTitles", "olympics_titles")
 		.put("olympicsFinals", "olympics_finals")
 		.put("titles", "titles")
+		.put("wonPct", "matches_won::REAL / (matches_won + matches_lost)")
 		.put("yearEndRank", "year_end_rank")
 	.build();
 	private static final OrderBy DEFAULT_ORDER = OrderBy.asc("season_rank");

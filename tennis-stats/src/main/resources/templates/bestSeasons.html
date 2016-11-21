@@ -36,6 +36,9 @@
 						else
 							return row.achievementsGoatPoints;
 					},
+					"wonPct": function(column, row) {
+						return "<span title='" + row.wonLost + "'>" + row.wonPct + "</span>";
+					},
 					"yearEndRank": function(column, row) {
 						return row.yearEndRank != null ? row.yearEndRank : "";
 					}
@@ -60,6 +63,7 @@
 				{id: "mastersFinals", title: "Masters finals"},
 				{id: "olympicsTitles", title: "Olympics titles"},
 				{id: "titles", title: "Titles"},
+				{id: "wonPct", title: "Won-Lost percentage"},
 				{id: "yearEndRank", title: "Year-end ranking"}
 			]);
 			$("[data-toggle='collapse']").click(collapseClick);
@@ -79,13 +83,14 @@
 			<th data-column-id="grandSlamTitles" data-type="numeric" data-width="45" data-align="right" data-header-align="right">GS W</th>
 			<th data-column-id="grandSlamFinals" data-type="numeric" data-width="45" data-align="right" data-header-align="right">GS F</th>
 			<th data-column-id="grandSlamSemiFinals" data-type="numeric" data-width="45" data-align="right" data-header-align="right">GS SF</th>
-			<th data-column-id="tourFinalsTitles" data-type="numeric" data-width="45" data-align="right" data-header-align="right">TF W</th>
-			<th data-column-id="tourFinalsFinals" data-type="numeric" data-width="45" data-align="right" data-header-align="right">TF F</th>
-			<th data-column-id="mastersTitles" data-type="numeric" data-width="45" data-align="right" data-header-align="right">M W</th>
-			<th data-column-id="mastersFinals" data-type="numeric" data-width="45" data-align="right" data-header-align="right">M F</th>
-			<th data-column-id="olympicsTitles" data-type="numeric" data-width="45" data-align="right" data-header-align="right">O W</th>
+			<th data-column-id="tourFinalsTitles" data-type="numeric" data-width="40" data-align="right" data-header-align="right">TF W</th>
+			<th data-column-id="tourFinalsFinals" data-type="numeric" data-width="40" data-align="right" data-header-align="right">TF F</th>
+			<th data-column-id="mastersTitles" data-type="numeric" data-width="40" data-align="right" data-header-align="right">M W</th>
+			<th data-column-id="mastersFinals" data-type="numeric" data-width="40" data-align="right" data-header-align="right">M F</th>
+			<th data-column-id="olympicsTitles" data-type="numeric" data-width="40" data-align="right" data-header-align="right">O W</th>
 			<th data-column-id="titles" data-type="numeric" data-width="45" data-align="right" data-header-align="right">Titles</th>
-			<th data-column-id="yearEndRank" data-formatter="yearEndRank" data-width="45" data-align="right" data-header-align="right">YER</th>
+			<th data-column-id="wonPct" data-formatter="wonPct" data-width="45" data-align="right" data-header-align="right">W/L</th>
+			<th data-column-id="yearEndRank" data-formatter="yearEndRank" data-width="40" data-align="right" data-header-align="right">YER</th>
 		</tr>
 		</thead>
 	</table>

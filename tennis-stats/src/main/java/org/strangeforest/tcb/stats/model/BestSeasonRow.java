@@ -10,6 +10,7 @@ public class BestSeasonRow extends PlayerRow {
 	private int mastersTitles, mastersFinals;
 	private int olympicsTitles;
 	private int titles;
+	private WonLost wonLost;
 	private Integer yearEndRank;
 
 	public BestSeasonRow(int seasonRank, int playerId, String name, String countryId, int season, int goatPoints) {
@@ -142,6 +143,18 @@ public class BestSeasonRow extends PlayerRow {
 
 	public void setTitles(int titles) {
 		this.titles = titles;
+	}
+
+	public String getWonPct() {
+		return wonLost.getWonPctStr();
+	}
+
+	public String getWonLost() {
+		return wonLost.getWL();
+	}
+
+	public void setWonLost(WonLost wonLost) {
+		this.wonLost = wonLost;
 	}
 
 	public Integer getYearEndRank() {

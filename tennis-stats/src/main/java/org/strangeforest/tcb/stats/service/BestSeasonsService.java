@@ -51,9 +51,10 @@ public class BestSeasonsService {
 		"SELECT season_rank, player_id, p.name, rank() OVER (PARTITION BY player_id ORDER BY season_rank) player_season_rank,\n" +
 		"  p.country_id, s.season, s.goat_points, s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points,\n" +
 		"  s.grand_slam_titles, s.grand_slam_finals, s.grand_slam_semi_finals, s.tour_finals_titles, s.tour_finals_finals,\n" +
-		"  s.masters_titles, s.masters_finals, s.olympics_titles, s.titles, y.year_end_rank\n" +
+		"  s.masters_titles, s.masters_finals, s.olympics_titles, s.titles, sp.matches_won, sp.matches_lost, y.year_end_rank\n" +
 		"FROM pleayer_season_ranked s\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
+		"LEFT JOIN player_season_performance sp USING (player_id, season)\n" +
 		"LEFT JOIN player_year_end_rank y USING (player_id, season)%1$s\n" +
 		"ORDER BY %2$s OFFSET :offset LIMIT :limit";
 
@@ -104,6 +105,8 @@ public class BestSeasonsService {
 				row.setMastersFinals(rs.getInt("masters_finals"));
 				row.setOlympicsTitles(rs.getInt("olympics_titles"));
 				row.setTitles(rs.getInt("titles"));
+				// Misc
+				row.setWonLost(new WonLost(rs.getInt("matches_won"), rs.getInt("matches_lost")));
 				row.setYearEndRank(getInteger(rs, "year_end_rank"));
 				table.addRow(row);
 			}
