@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="stat" type="org.strangeforest.tcb.stats.web.VisitorStat"*/-->
 <!--/*@thymesVar id="interval" type="org.strangeforest.tcb.stats.web.VisitorInterval"*/-->
+<!--/*@thymesVar id="robots" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="stats" type="org.strangeforest.tcb.stats.web.VisitorStat[]"*/-->
 <!--/*@thymesVar id="intervals" type="org.strangeforest.tcb.stats.web.VisitorInterval[]"*/-->
 <!--/*@thymesVar id="countries" type="java.lang.Object[]"*/-->
@@ -25,7 +26,11 @@
 			agentsTypesPieChart.draw(agentTypesData, {sliceVisibilityThreshold: 0.01});
 		}
 		function chartChanged() {
-			window.location = "/manage/visitors?stat=" + $("#chartStat").val() + "&interval=" + $("#chartInterval").val();
+			var url = "/manage/visitors?stat=" + $("#chartStat").val() + "&interval=" + $("#chartInterval").val();
+			var robots = $("#robots").prop("checked");
+			if (robots)
+				url += "&robots=true";
+			window.location = url;
 		}
 	</script>
 	<style>
@@ -53,6 +58,13 @@
 				<select id="chartInterval" class="form-control" onchange="chartChanged()">
 					<option th:each="anInterval : ${intervals}" th:value="${anInterval}" th:selected="${anInterval == interval}" th:text="${anInterval.caption}">Day</option>
 				</select>
+			</div>
+		</div>
+		<div class="col-md-1">
+			<div class="checkbox">
+				<label title="Include robots">
+					<input id="robots" type="checkbox" th:checked="${robots}" onchange="chartChanged()"/> Robots
+				</label>
 			</div>
 		</div>
 		<div class="col-md-1">

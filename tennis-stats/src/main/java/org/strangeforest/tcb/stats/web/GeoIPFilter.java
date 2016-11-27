@@ -31,7 +31,7 @@ public class GeoIPFilter implements Filter {
 		int commaPos = remoteAddr.indexOf(',');
 		if (commaPos > 0)
 			remoteAddr = remoteAddr.substring(0, commaPos);
-		String agentType = getBrowserType(httpRequest).name();
+		String agentType = getAgentType(httpRequest).name();
 		Visitor visitor = visitorManager.visit(remoteAddr, agentType);
 		String country = visitor.getCountry();
 		if (!isNullOrEmpty(country))
@@ -39,7 +39,7 @@ public class GeoIPFilter implements Filter {
 		chain.doFilter(request, response);
 	}
 
-	private static BrowserType getBrowserType(HttpServletRequest httpRequest) {
+	private static BrowserType getAgentType(HttpServletRequest httpRequest) {
 		return UserAgent.parseUserAgentString(httpRequest.getHeader("User-Agent")).getBrowser().getBrowserType();
 	}
 }

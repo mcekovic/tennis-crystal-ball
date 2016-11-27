@@ -40,12 +40,15 @@ public class VisitorRepository {
 
 	private static final String STATS_QUERY = // language=SQL
 		"SELECT %1$s AS value FROM visitor\n" +
-		"WHERE last_hit >= now() - INTERVAL '%2$s'";
+		"WHERE last_hit >= now() - INTERVAL '%2$s'%3$s";
 
 	private static final String STATS_BY_QUERY = // language=SQL
 		"SELECT %1$s, %2$s AS value FROM visitor\n" +
-		"WHERE last_hit >= now() - INTERVAL '%3$s'\n" +
+		"WHERE last_hit >= now() - INTERVAL '%3$s'%4$s\n" +
 		"GROUP BY %1$s HAVING %2$s > 0 ORDER BY value DESC";
+
+	private static final String NO_ROBOTS_CONDITION = // language=SQL
+		" AND agent_type <> 'ROBOT'";
 
 
 	// CRUD
@@ -115,25 +118,25 @@ public class VisitorRepository {
 
 	// Queries
 
-	public BigDecimal getVisitors(VisitorStat stat, VisitorInterval interval) {
+	public BigDecimal getVisitors(VisitorStat stat, VisitorInterval interval, boolean robots) {
 		return jdbcTemplate.getJdbcOperations().queryForObject(
-			format(STATS_QUERY, stat.getExpression(), interval.getExpression()),
+			format(STATS_QUERY, stat.getExpression(), interval.getExpression(), robotsCondition(robots)),
 			(rs, rowNum) -> rs.getBigDecimal("value")
 		);
 	}
 
-	public Map<String, BigDecimal> getVisitorsByCountry(VisitorStat stat, VisitorInterval interval) {
-		return replaceNullKey(getVisitorsBy("country", stat, interval), Country.UNKNOWN_NAME);
+	public Map<String, BigDecimal> getVisitorsByCountry(VisitorStat stat, VisitorInterval interval, boolean robots) {
+		return replaceNullKey(getVisitorsBy("country", stat, interval, robots), Country.UNKNOWN_NAME);
 	}
 
-	public Map<String, BigDecimal> getVisitorsByAgentType(VisitorStat stat, VisitorInterval interval) {
-		return replaceNullKey(getVisitorsBy("agent_type", stat, interval), BrowserType.UNKNOWN.name());
+	public Map<String, BigDecimal> getVisitorsByAgentType(VisitorStat stat, VisitorInterval interval, boolean robots) {
+		return replaceNullKey(getVisitorsBy("agent_type", stat, interval, robots), BrowserType.UNKNOWN.name());
 	}
 
-	private Map<String, BigDecimal> getVisitorsBy(String dimension, VisitorStat stat, VisitorInterval interval) {
+	private Map<String, BigDecimal> getVisitorsBy(String dimension, VisitorStat stat, VisitorInterval interval, boolean robots) {
 		Map<String, BigDecimal> visitorsMap = new LinkedHashMap<>();
 		jdbcTemplate.getJdbcOperations().query(
-			format(STATS_BY_QUERY, dimension, stat.getExpression(), interval.getExpression()),
+			format(STATS_BY_QUERY, dimension, stat.getExpression(), interval.getExpression(), robotsCondition(robots)),
 			rs -> {
 				String country = rs.getString(dimension);
 				BigDecimal value = rs.getBigDecimal("value");
@@ -141,6 +144,10 @@ public class VisitorRepository {
 			}
 		);
 		return visitorsMap;
+	}
+
+	private static String robotsCondition(boolean robots) {
+		return robots ? "" : NO_ROBOTS_CONDITION;
 	}
 
 	private static <K, V> Map<K, V> replaceNullKey(Map<K, V> map, K nullKey) {

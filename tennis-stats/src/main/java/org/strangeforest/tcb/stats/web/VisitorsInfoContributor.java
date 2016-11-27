@@ -16,11 +16,11 @@ public class VisitorsInfoContributor implements InfoContributor {
 
 	@Override public void contribute(Info.Builder builder) {
 		builder.withDetail("visitors", ImmutableMap.of(
-			"active", repository.getVisitors(ACTIVE_VISITORS, HOUR),
-			"lastDayVisits", repository.getVisitors(VISITS, DAY),
-			"lastDayHits", repository.getVisitors(HITS, DAY),
-			"activeByCountry", repository.getVisitorsByCountry(ACTIVE_VISITORS, HOUR),
-			"lastDayHitsByAgentType", repository.getVisitorsByAgentType(HITS, DAY)
+			"active", repository.getVisitors(ACTIVE_VISITORS, HOUR, false),
+			"lastDayVisits", repository.getVisitors(VISITS, DAY, false),
+			"lastDayHits", repository.getVisitors(HITS, DAY, false),
+			"activeByCountry", repository.getVisitorsByCountry(ACTIVE_VISITORS, HOUR, false),
+			"lastDayHitsByAgentType", repository.getVisitorsByAgentType(HITS, DAY, false)
 		));
 	}
 }

@@ -24,18 +24,20 @@ public class VisitorsMvcEndpoint extends AbstractMvcEndpoint {
 
 	@GetMapping(produces = MediaType.TEXT_HTML_VALUE)
 	public ModelAndView visitors(
-		@RequestParam(name = "stat", defaultValue = "VISITS") VisitorStat stat,
-		@RequestParam(name = "interval", defaultValue = "DAY") VisitorInterval interval
+		@RequestParam(name = "stat", defaultValue = "HITS") VisitorStat stat,
+		@RequestParam(name = "interval", defaultValue = "DAY") VisitorInterval interval,
+		@RequestParam(name = "robots", defaultValue = "false") boolean robots
 	) {
-		Map<String, BigDecimal> countriesMap = repository.getVisitorsByCountry(stat, interval);
+		Map<String, BigDecimal> countriesMap = repository.getVisitorsByCountry(stat, interval, robots);
 		List<Object[]> countries = mapToDataArray(countriesMap, "Country", stat.getCaption());
-		Map<String, BigDecimal> agentTypeMap = repository.getVisitorsByAgentType(stat, interval);
+		Map<String, BigDecimal> agentTypeMap = repository.getVisitorsByAgentType(stat, interval, robots);
 		List<Object[]> agentTypes = mapToDataArray(agentTypeMap, "Agent Type", stat.getCaption());
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.put("versions", BaseController.VERSIONS);
 		modelMap.put("stat", stat);
 		modelMap.put("interval", interval);
+		modelMap.put("robots", robots);
 		modelMap.put("stats", VisitorStat.values());
 		modelMap.put("intervals", VisitorInterval.values());
 		modelMap.put("countries", countries.toArray());
