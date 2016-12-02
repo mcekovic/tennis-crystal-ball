@@ -31,7 +31,7 @@ CREATE OR REPLACE FUNCTION season_end(
 	p_season INTEGER
 ) RETURNS DATE AS $$
 DECLARE
-	curr_date DATE = current_date;
+	curr_date DATE := current_date;
 BEGIN
 	IF p_season = date_part('year', curr_date)::INTEGER THEN
 		RETURN curr_date;
@@ -135,8 +135,12 @@ CREATE OR REPLACE FUNCTION player_elo_rating(
 	p_player_id INTEGER,
 	p_date DATE
 ) RETURNS INTEGER AS $$
+DECLARE
+	l_elo_rating INTEGER;
 BEGIN
-	RETURN (SELECT elo_rating FROM player_elo_ranking WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1);
+	SELECT elo_rating INTO l_elo_rating FROM player_elo_ranking
+	WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1;
+	RETURN coalesce(l_elo_rating, 1500);
 END;
 $$ LANGUAGE plpgsql;
 

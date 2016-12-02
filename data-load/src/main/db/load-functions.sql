@@ -64,7 +64,7 @@ CREATE OR REPLACE FUNCTION load_player(
 DECLARE
 	l_player_id INTEGER;
 BEGIN
-	l_player_id = map_ext_player(p_ext_player_id);
+	l_player_id := map_ext_player(p_ext_player_id);
 	IF l_player_id IS NULL THEN
 		BEGIN
 			INSERT INTO player
@@ -106,7 +106,7 @@ CREATE OR REPLACE FUNCTION load_ranking(
 DECLARE
 	l_player_id INTEGER;
 BEGIN
-	l_player_id = map_ext_player(p_ext_player_id);
+	l_player_id := map_ext_player(p_ext_player_id);
 	IF l_player_id IS NULL THEN
 		RAISE EXCEPTION 'Player % not found', p_ext_player_id;
 	END IF;
@@ -135,7 +135,7 @@ CREATE OR REPLACE FUNCTION load_ranking(
 DECLARE
 	l_player_id INTEGER;
 BEGIN
-	l_player_id = find_player(p_player_name);
+	l_player_id := find_player(p_player_name);
 	BEGIN
 		INSERT INTO player_ranking
 		(rank_date, player_id, rank, rank_points)
@@ -177,7 +177,7 @@ CREATE OR REPLACE FUNCTION merge_tournament(
 DECLARE
 	l_tournament_id INTEGER;
 BEGIN
-	l_tournament_id = map_ext_tournament(p_ext_tournament_id);
+	l_tournament_id := map_ext_tournament(p_ext_tournament_id);
 	IF l_tournament_id IS NULL THEN
 		INSERT INTO tournament
 		(name, level, surface, indoor)
@@ -217,7 +217,7 @@ DECLARE
 	l_tournament_id INTEGER;
 	l_tournament_event_id INTEGER;
 BEGIN
-	l_tournament_id = merge_tournament(p_ext_tournament_id, p_tournament_name, p_level, p_surface, p_indoor);
+	l_tournament_id := merge_tournament(p_ext_tournament_id, p_tournament_name, p_level, p_surface, p_indoor);
 	BEGIN
 		INSERT INTO tournament_event
 		(tournament_id, season, date, name, level, surface, indoor, draw_type, draw_size, rank_points)
@@ -243,7 +243,7 @@ CREATE OR REPLACE FUNCTION extract_first_name(
 DECLARE
 	l_pos INTEGER;
 BEGIN
-	l_pos = position(' ' IN p_name);
+	l_pos := position(' ' IN p_name);
 	IF l_pos > 0 THEN
 		RETURN substring(p_name, 1, l_pos - 1);
 	ELSE
@@ -261,7 +261,7 @@ CREATE OR REPLACE FUNCTION extract_last_name(
 DECLARE
 	l_pos INTEGER;
 BEGIN
-	l_pos = position(' ' IN p_name);
+	l_pos := position(' ' IN p_name);
 	IF l_pos > 0 THEN
 		RETURN substring(p_name, l_pos + 1);
 	ELSE
@@ -280,9 +280,6 @@ CREATE OR REPLACE FUNCTION merge_player(
 	p_height SMALLINT,
 	p_hand TEXT
 ) RETURNS VOID AS $$
-DECLARE
-	l_tournament_id INTEGER;
-	l_tournament_event_id INTEGER;
 BEGIN
 	IF p_country_id IS NOT NULL THEN
 		UPDATE player
@@ -388,20 +385,20 @@ DECLARE
 	l_set SMALLINT;
 BEGIN
 	-- merge tournament_event
-	l_tournament_event_id = merge_tournament_event(
+	l_tournament_event_id := merge_tournament_event(
 		p_ext_tournament_id, p_season, p_tournament_date, p_tournament_name, p_event_name, p_tournament_level, p_surface, p_indoor, p_draw_type, p_draw_size, p_rank_points
 	);
 
 	-- find players
 	IF p_ext_winner_id IS NOT NULL THEN
-		l_winner_id = map_ext_player(p_ext_winner_id);
+		l_winner_id := map_ext_player(p_ext_winner_id);
 	ELSE
-		l_winner_id = find_player(p_winner_name);
+		l_winner_id := find_player(p_winner_name);
 	END IF;
 	IF p_ext_loser_id IS NOT NULL THEN
-		l_loser_id = map_ext_player(p_ext_loser_id);
+		l_loser_id := map_ext_player(p_ext_loser_id);
 	ELSE
-		l_loser_id = find_player(p_loser_name);
+		l_loser_id := find_player(p_loser_name);
 	END IF;
 
 	-- merge players
@@ -410,14 +407,14 @@ BEGIN
 
 	-- add data if missing
 	IF p_winner_rank IS NULL OR p_winner_rank_points IS NULL THEN
-		l_rank_points = player_rank_points(l_winner_id, p_date);
-		p_winner_rank = coalesce(p_winner_rank, l_rank_points.rank);
-		p_winner_rank_points = coalesce(p_winner_rank_points, l_rank_points.rank_points);
+		l_rank_points := player_rank_points(l_winner_id, p_date);
+		p_winner_rank := coalesce(p_winner_rank, l_rank_points.rank);
+		p_winner_rank_points := coalesce(p_winner_rank_points, l_rank_points.rank_points);
 	END IF;
 	IF p_loser_rank IS NULL OR p_loser_rank_points IS NULL THEN
-		l_rank_points = player_rank_points(l_loser_id, p_date);
-		p_loser_rank = coalesce(p_loser_rank, l_rank_points.rank);
-		p_loser_rank_points = coalesce(p_loser_rank_points, l_rank_points.rank_points);
+		l_rank_points := player_rank_points(l_loser_id, p_date);
+		p_loser_rank := coalesce(p_loser_rank, l_rank_points.rank);
+		p_loser_rank_points := coalesce(p_loser_rank_points, l_rank_points.rank_points);
 	END IF;
 	IF p_winner_country_id IS NULL THEN
 		SELECT country_id INTO p_winner_country_id FROM player WHERE player_id = l_winner_id;
@@ -512,5 +509,3 @@ BEGIN
 
 END;
 $$ LANGUAGE plpgsql;
-
-

@@ -10,7 +10,7 @@ WITH storage AS (
 SELECT oid, schema, type, name, rows,
    pg_size_pretty(index_bytes) AS index,
    pg_size_pretty(toast_bytes) AS toast,
-   pg_size_pretty(total_bytes - index_bytes - COALESCE(toast_bytes, 0)) AS table,
+   pg_size_pretty(total_bytes - index_bytes - coalesce(toast_bytes, 0)) AS table,
    pg_size_pretty(total_bytes) AS total,
    round(100.0 * total_bytes / sum(total_bytes) OVER (), 2) AS total_pct,
    pg_size_pretty(sum(total_bytes) OVER ()) AS tablespace

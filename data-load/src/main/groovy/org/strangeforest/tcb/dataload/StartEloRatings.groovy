@@ -97,7 +97,7 @@ class StartEloRatings {
 		]
 	]
 
-	static int startRating(Integer rank, String surface) {
+	static int startRating(Integer rank, String surface = null) {
 		if (rank) {
 			RatingPoint prevPoint
 			for (RatingPoint point : START_RATING_TABLE[surface]) {
