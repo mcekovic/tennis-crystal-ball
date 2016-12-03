@@ -5,7 +5,7 @@
 	<script type="text/javascript">
 		$(function() {
 			var $goatListTable = $("#goatListTable");
-			var device = $(".device-check:visible").attr("data-device");
+			var device = detectDevice();
 			setBootgridColumnsVisible($goatListTable, ["bestEloRating"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($goatListTable, ["tourFinals", "masters", "olympics", "bigTitles"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($goatListTable, ["tournamentGoatPoints", "rankingGoatPoints", "achievementsGoatPoints"], deviceGreaterOrEqual(device, "sm"));

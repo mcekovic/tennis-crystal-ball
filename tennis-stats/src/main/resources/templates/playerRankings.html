@@ -68,8 +68,8 @@
 		$("#rankChartSize").slider({
 			min: 500,
 			max: 1500,
-			value: 1000,
-			step: 100,
+			value: defaultChartWOLegendSize(detectDevice()),
+			step: 50,
 			slide: function(event, ui) {
 				showRankingChart(chartData, "rankChart", ui.value, bySeason, pointCount, isRank, logScale, "none");
 			}

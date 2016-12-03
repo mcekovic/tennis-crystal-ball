@@ -6,7 +6,10 @@
 	<title>Rankings Table</title>
 	<script type="text/javascript">
 		$(function() {
-			$("#rankingsTable").bootgrid({
+			const $rankingsTable = $("#rankingsTable");
+			if (detectDevice() == "xs")
+				setBootgridColumnsWidths($rankingsTable, ["name"], [150]);
+			$rankingsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
 					method: "GET",
@@ -101,17 +104,18 @@
 	<table id="rankingsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
-			<th data-column-id="rank" data-type="numeric" data-width="55">Rank</th>
-			<th data-column-id="best_rank" data-formatter="bestRank" data-width="70">Best Rank</th>
-			<th data-column-id="country" data-formatter="country" data-width="70">Country</th>
-			<th data-column-id="name" data-formatter="player" data-width="250">Name</th>
-			<th data-column-id="points" data-type="numeric" data-width="80" data-align="right" data-header-align="right">Points</th>
+			<th data-column-id="rank" data-type="numeric" data-width="65">Rank</th>
+			<th data-column-id="bestRank" data-formatter="bestRank" data-width="100">Best Rank</th>
+			<th data-column-id="country" data-formatter="country" data-width="85">Country</th>
+			<th data-column-id="name" data-formatter="player">Name</th>
+			<th data-column-id="points" data-type="numeric" data-width="100" data-align="right" data-header-align="right">Points</th>
 		</tr>
 		</thead>
 	</table>
 	<div id="eloInfo" style="display: none">
 		<em><strong>*</strong> <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> considers opponent rating as well, meaning wins over quality opponents are worth more then wins over lesser rated players.<br/>Ultimate Tennis Statistics use sophisticated tennis-customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-popover="#eloRatingPopover">Elo rating formula</a>.</em>
 	</div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 	<div th:include="fragments/aboutElo :: aboutElo"></div>
 </body>

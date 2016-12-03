@@ -8,6 +8,9 @@
 	<script type="text/javascript">
 		$(function() {
 			var $rivalriesTable = $("#greatestRivalriesTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($rivalriesTable, ["lastMatch"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($rivalriesTable, ["h2hPct"], deviceGreaterOrEqual(device, "sm"));
 			$rivalriesTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -154,6 +157,7 @@
 		</thead>
 	</table>
 	<p><i>* Minimum <span id="minMatches">10</span> rivalry matches</i></p>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

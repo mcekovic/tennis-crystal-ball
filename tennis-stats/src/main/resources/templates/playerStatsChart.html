@@ -35,8 +35,8 @@
 		$("#statsChartSize").slider({
 			min: 500,
 			max: 1500,
-			value: 1000,
-			step: 100,
+			value: defaultChartWOLegendSize(detectDevice()),
+			step: 50,
 			slide: function(event, ui) {
 				showStatsChart(chartData, "statsChart", ui.value, pointCount, isPct, "none");
 			}

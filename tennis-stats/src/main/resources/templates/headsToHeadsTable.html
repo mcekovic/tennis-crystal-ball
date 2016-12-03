@@ -71,6 +71,7 @@
 		</tr>
 		</tbody>
 	</table>
+	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
 	<table th:unless="${headsToHeads.empty}" id="playersStatsTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
 		<tr>

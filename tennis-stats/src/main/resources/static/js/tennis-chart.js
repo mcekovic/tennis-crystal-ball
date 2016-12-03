@@ -43,3 +43,15 @@ function useLogScale(json) {
 	}
 	return max - min >= 50;
 }
+
+function defaultChartSize(device) {
+	switch (device) {
+		case "sm": return 750;
+		case "xs": return 600;
+		default: return 1000;
+	}
+}
+
+function defaultChartWOLegendSize(device) {
+	return device == "xs" ? 750 : 1000;
+}

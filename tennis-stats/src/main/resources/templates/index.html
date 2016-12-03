@@ -13,9 +13,9 @@
 			$("#rankingTopN").load("/rankingTopN?rankType=" + rankType);
 		}
 		function goatLegendWidth() {
-			switch ($(".device-check:visible").attr("data-device")) {
-				case "md": return "133%";
+			switch (detectDevice()) {
 				case "lg": return "120%";
+				case "md": return "133%";
 				default: return "100%";
 			}
 		}

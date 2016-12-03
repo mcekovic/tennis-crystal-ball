@@ -40,8 +40,8 @@
 			$("#perfChartSize").slider({
 				min: 500,
 				max: 1500,
-				value: 1000,
-				step: 100,
+				value: defaultChartSize(detectDevice()),
+				step: 50,
 				slide: function(event, ui) {
 					showPerformanceChart(chartData, "perfChart", ui.value, pointCount, legendPosition);
 				}
@@ -128,6 +128,7 @@
 		</div>
 	</div>
 	<div id="perfChart"></div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

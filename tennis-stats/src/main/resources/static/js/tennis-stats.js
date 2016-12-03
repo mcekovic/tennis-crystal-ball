@@ -165,6 +165,12 @@ function setBootgridColumnsVisible($gridTable, columns, visible) {
 	for (var i = 0, count = columns.length; i < count; i++)
 		$gridTable.find("th[data-column-id='" + columns[i] + "']").attr("data-visible", visible);
 }
+function setBootgridColumnsWidths($gridTable, columns, widths) {
+	console.log(columns);
+	console.log(widths);
+	for (var i = 0, count = columns.length; i < count; i++)
+		$gridTable.find("th[data-column-id='" + columns[i] + "']").attr("data-width", widths[i]);
+}
 function setBootgridTitle($gridTableHeader, $gridTableTitle) {
 	$gridTableHeader.find("div.actionBar>*:first-child").before($gridTableTitle.remove());
 }
@@ -316,12 +322,18 @@ function recordHoldersFormatter(column, row) {
 }
 
 
-// Misc
+// Devices
 
 var deviceMatrix = {"xs": ["xs", "sm", "md", "lg"], "sm": ["sm", "md", "lg"], "md": ["md", "lg"], "lg": ["lg"]};
 function deviceGreaterOrEqual(device1, device2) {
 	return deviceMatrix[device2].indexOf(device1) >= 0;
 }
+function detectDevice() {
+	return $(".device-check:visible").attr("data-device");
+}
+
+
+// Misc
 
 function bindPopovers() {
 	$("[data-toggle=popover]").popover({

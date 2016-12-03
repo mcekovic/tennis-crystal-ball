@@ -117,6 +117,7 @@
 		</div>
 	</th:block>
 	<h4 th:unless="${player}" th:text="'Player ' + ${playerRef}  + ' not found.'">Player bot found.</h4>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

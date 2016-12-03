@@ -75,8 +75,8 @@
 			$("#rankChartSize").slider({
 				min: 500,
 				max: 1500,
-				value: 1000,
-				step: 100,
+				value: defaultChartSize(detectDevice()),
+				step: 50,
 				slide: function(event, ui) {
 					showRankingChart(chartData, "rankChart", ui.value, bySeason, pointCount, isRank, logScale, legendPosition);
 				}
@@ -195,6 +195,7 @@
 		</div>
 	</div>
 	<div id="rankChart"></div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

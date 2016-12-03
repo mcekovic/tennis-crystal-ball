@@ -44,8 +44,8 @@
 			$("#statsChartSize").slider({
 				min: 500,
 				max: 1500,
-				value: 1000,
-				step: 100,
+				value: defaultChartSize(detectDevice()),
+				step: 50,
 				slide: function(event, ui) {
 					showStatsChart(chartData, "statsChart", ui.value, pointCount, isPct, legendPosition);
 				}
@@ -141,6 +141,7 @@
 		</div>
 	</div>
 	<div id="statsChart"></div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>
