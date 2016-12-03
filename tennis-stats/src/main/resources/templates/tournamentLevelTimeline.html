@@ -38,6 +38,7 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3>[[${level.text}]] Timeline</h3>
+	<th:block th:with="minDevice=${level.code == 'G' ? 'md' : (level.code == 'M' ? 'lg' : _)}" th:include="fragments/deviceDetector :: largeDeviceRequired(${minDevice})"/>
 	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<th:block th:each="season : ${timeline.seasons}">
 		<thead th:unless="${timeline.areSameTournaments(season)}">
@@ -73,6 +74,7 @@
 		</tr>
 		</th:block>
 	</table>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

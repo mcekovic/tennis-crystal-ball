@@ -1,0 +1,11 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="largeDeviceRequired(minDevice)">
+	<div th:if="${minDevice}" class="alert alert-warning" th:attrappend="class=${minDevice == 'lg' ? ' visible-xs visible-sm visible-md' : (minDevice == 'md' ? ' visible-xs visible-sm' : (minDevice == 'sm' ? ' visible-xs' : _))}">
+		<strong>Warning:</strong> Requires higher resolution screen.
+	</div>
+</th:block>
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="deviceDetectors">
+	<div class="device-check visible-xs" data-device="xs"></div>
+	<div class="device-check visible-sm" data-device="sm"></div>
+	<div class="device-check visible-md" data-device="md"></div>
+	<div class="device-check visible-lg" data-device="lg"></div>
+</th:block>

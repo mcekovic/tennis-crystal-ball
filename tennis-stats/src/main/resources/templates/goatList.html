@@ -5,6 +5,10 @@
 	<script type="text/javascript">
 		$(function() {
 			var $goatListTable = $("#goatListTable");
+			var device = $(".device-check:visible").attr("data-device");
+			setBootgridColumnsVisible($goatListTable, ["bestEloRating"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($goatListTable, ["tourFinals", "masters", "olympics", "bigTitles"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($goatListTable, ["tournamentGoatPoints", "rankingGoatPoints", "achievementsGoatPoints"], deviceGreaterOrEqual(device, "sm"));
 			$goatListTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -106,7 +110,7 @@
 		<tr>
 			<th data-column-id="goatRank" data-type="numeric" data-sortable="false" data-width="45">Rank</th>
 			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="130">Name</th>
-			<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="80" data-align="right" data-header-align="right">GOAT Points</th>
+			<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right">GOAT Pts.</th>
 			<th data-column-id="tournamentGoatPoints" data-type="numeric" data-order="desc" data-width="70" data-align="right" data-header-align="right">Tourn. Pts.</th>
 			<th data-column-id="rankingGoatPoints" data-formatter="rankingGoatPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right">Rank. Pts.</th>
 			<th data-column-id="achievementsGoatPoints" data-formatter="achievementsGoatPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right">Ach. Pts.</th>
@@ -123,6 +127,7 @@
 	<br/>
 	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend</button>
 	<div id="goatLegend" class="collapse">Loading...</div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

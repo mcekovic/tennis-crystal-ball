@@ -149,10 +149,7 @@
 	</div>
 	<h4 class="text-nowrap">Partners</h4>
 	<p><a href="http://www.livescore.in/" title="Livescore.in" target="_blank">Livescore.in</a></p>
-	<div class="device-check visible-xs" data-device="xs"></div>
-	<div class="device-check visible-sm" data-device="sm"></div>
-	<div class="device-check visible-md" data-device="md"></div>
-	<div class="device-check visible-lg" data-device="lg"></div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 	<div th:include="fragments/aboutElo :: aboutElo"></div>
 </body>

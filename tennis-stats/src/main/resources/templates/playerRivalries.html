@@ -51,7 +51,7 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			}).on("loaded.rs.jquery.bootgrid", function() {
-				$rivalriesTable.find("span[data-won-pct]").each(function () {
+				$rivalriesTable.find("span[data-won-pct]").each(function() {
 					var $span = $(this);
 					$span.parent().addClass("bg-won-" + $span.data("won-pct"));
 				});

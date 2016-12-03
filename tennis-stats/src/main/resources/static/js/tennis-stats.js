@@ -161,14 +161,20 @@ function dateRangePicker(fromId, toId) {
 
 // Bootgrid
 
+function setBootgridColumnsVisible($gridTable, columns, visible) {
+	for (var i = 0, count = columns.length; i < count; i++)
+		$gridTable.find("th[data-column-id='" + columns[i] + "']").attr("data-visible", visible);
+}
 function setBootgridTitle($gridTableHeader, $gridTableTitle) {
 	$gridTableHeader.find("div.actionBar>*:first-child").before($gridTableTitle.remove());
 }
 function setBootgridTitles($gridTable, titles) {
-	for (var i = 0, count = titles.length; i < count; i++) {
-		var title = titles[i];
-		$gridTable.find("th[data-column-id='" + title.id + "'] > a > span[class='text']").attr("title", title.title);
-	}
+	$gridTable.bootgrid().on("loaded.rs.jquery.bootgrid", function() {
+		for (var i = 0, count = titles.length; i < count; i++) {
+			var title = titles[i];
+			$gridTable.find("th[data-column-id='" + title.id + "'] > a > span[class='text']").attr("title", title.title);
+		}
+	});
 }
 /* Fixes Bootgrid Issue with no link cursors on pagination buttons */
 var bootgridTemplatePaginationItem = "<li class=\"{{ctx.css}}\"><a href=\"#\" data-page=\"{{ctx.page}}\" class=\"{{css.paginationButton}}\">{{ctx.text}}</a></li>";
@@ -311,6 +317,11 @@ function recordHoldersFormatter(column, row) {
 
 
 // Misc
+
+var deviceMatrix = {"xs": ["xs", "sm", "md", "lg"], "sm": ["sm", "md", "lg"], "md": ["md", "lg"], "lg": ["lg"]};
+function deviceGreaterOrEqual(device1, device2) {
+	return deviceMatrix[device2].indexOf(device1) >= 0;
+}
 
 function bindPopovers() {
 	$("[data-toggle=popover]").popover({
