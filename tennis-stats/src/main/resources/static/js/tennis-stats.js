@@ -206,7 +206,6 @@ function playerCountryFormatter(column, row) {
 		playerFormatter(column, row);
 }
 
-
 // Level Formatter
 function levelFormatter(column, row) {
 	return "<span class='label label-" + row.level + "'>" + levelName(row.level) + "</span>";
@@ -254,6 +253,11 @@ function surfaceName(surface) {
 		case "P": return "Carpet";
 		default: return surface;
 	}
+}
+
+// Won/Lost Formatter
+function wonLostFormatter(column, row) {
+	return "<span title='" + row.wonLost + "'>" + row.wonPct + "</span>";
 }
 
 // Tournament Formatter

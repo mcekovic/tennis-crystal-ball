@@ -6,9 +6,11 @@
 		$(function() {
 			var $goatListTable = $("#goatListTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($goatListTable, ["bestEloRating"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($goatListTable, ["wonPct", "bestEloRating"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($goatListTable, ["tourFinals", "masters", "olympics", "bigTitles"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($goatListTable, ["tournamentGoatPoints", "rankingGoatPoints", "achievementsGoatPoints"], deviceGreaterOrEqual(device, "sm"));
+			if (deviceGreaterOrEqual("md", device))
+				setBootgridColumnsWidths($goatListTable, ["name"], [150]);
 			$goatListTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -59,6 +61,7 @@
 						else
 							return row.achievementsGoatPoints;
 					},
+					"wonPct": wonLostFormatter,
 					"bestEloRating": function(column, row) {
 						return "<span title='" + formatDate(row.bestEloRatingDate) + "'>" + row.bestEloRating + "</span>";
 					}
@@ -108,18 +111,19 @@
 	<table id="goatListTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
-			<th data-column-id="goatRank" data-type="numeric" data-sortable="false" data-width="45">Rank</th>
-			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="130">Name</th>
-			<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right">GOAT Pts.</th>
-			<th data-column-id="tournamentGoatPoints" data-type="numeric" data-order="desc" data-width="70" data-align="right" data-header-align="right">Tourn. Pts.</th>
-			<th data-column-id="rankingGoatPoints" data-formatter="rankingGoatPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right">Rank. Pts.</th>
-			<th data-column-id="achievementsGoatPoints" data-formatter="achievementsGoatPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right">Ach. Pts.</th>
-			<th data-column-id="grandSlams" data-type="numeric" data-width="40" data-align="right" data-header-align="right">GS</th>
-			<th data-column-id="tourFinals" data-type="numeric" data-width="40" data-align="right" data-header-align="right">TF</th>
-			<th data-column-id="masters" data-type="numeric" data-width="40" data-align="right" data-header-align="right">M</th>
-			<th data-column-id="olympics" data-type="numeric" data-width="40" data-align="right" data-header-align="right">O</th>
-			<th data-column-id="bigTitles" data-type="numeric" data-width="40" data-align="right" data-header-align="right">BT</th>
-			<th data-column-id="titles" data-type="numeric" data-width="40" data-align="right" data-header-align="right">T</th>
+			<th data-column-id="goatRank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
+			<th data-column-id="name" data-formatter="player" data-width="200" data-sortable="false">Name</th>
+			<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="100" data-align="right" data-header-align="right">GOAT Pts.</th>
+			<th data-column-id="tournamentGoatPoints" data-type="numeric" data-order="desc" data-width="100" data-align="right" data-header-align="right">Tourn. Pts.</th>
+			<th data-column-id="rankingGoatPoints" data-formatter="rankingGoatPoints" data-order="desc" data-width="100" data-align="right" data-header-align="right">Rank. Pts.</th>
+			<th data-column-id="achievementsGoatPoints" data-formatter="achievementsGoatPoints" data-order="desc" data-width="100" data-align="right" data-header-align="right">Ach. Pts.</th>
+			<th data-column-id="grandSlams" data-type="numeric" data-width="50" data-align="right" data-header-align="right">GS</th>
+			<th data-column-id="tourFinals" data-type="numeric" data-width="50" data-align="right" data-header-align="right">TF</th>
+			<th data-column-id="masters" data-type="numeric" data-width="50" data-align="right" data-header-align="right">M</th>
+			<th data-column-id="olympics" data-type="numeric" data-width="50" data-align="right" data-header-align="right">O</th>
+			<th data-column-id="bigTitles" data-type="numeric" data-width="50" data-align="right" data-header-align="right">BT</th>
+			<th data-column-id="titles" data-type="numeric" data-width="50" data-align="right" data-header-align="right">T</th>
+			<th data-column-id="wonPct" data-formatter="wonPct" data-width="50" data-align="right" data-header-align="right">W/L</th>
 			<th data-column-id="bestEloRating" data-formatter="bestEloRating" data-width="50" data-align="right" data-header-align="right">Elo</th>
 		</tr>
 		</thead>

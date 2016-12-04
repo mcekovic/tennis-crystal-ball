@@ -36,9 +36,7 @@
 						else
 							return row.achievementsGoatPoints;
 					},
-					"wonPct": function(column, row) {
-						return "<span title='" + row.wonLost + "'>" + row.wonPct + "</span>";
-					},
+					"wonPct": wonLostFormatter,
 					"yearEndRank": function(column, row) {
 						return row.yearEndRank != null ? row.yearEndRank : "";
 					}

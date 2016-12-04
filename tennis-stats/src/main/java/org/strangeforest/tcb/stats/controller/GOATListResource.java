@@ -29,6 +29,7 @@ public class GOATListResource {
 		.put("olympics", "olympics")
 		.put("bigTitles", "big_titles")
 		.put("titles", "titles")
+		.put("wonPct", "matches_won::REAL / (matches_won + matches_lost)")
 		.put("bestEloRating", "best_elo_rating NULLS LAST")
 	.build();
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("goat_points"), asc("name")};
