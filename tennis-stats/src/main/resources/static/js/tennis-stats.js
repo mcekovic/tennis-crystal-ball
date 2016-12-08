@@ -118,7 +118,7 @@ function loadCollapse($button, url) {
 
 // Dates
 
-const date_format = "dd-mm-yy";
+var date_format = "dd-mm-yy";
 
 function formatDate(date) {
 	return date ? $.datepicker.formatDate(date_format, new Date(date)) : "";
