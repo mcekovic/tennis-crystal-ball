@@ -8,7 +8,7 @@ import static java.util.Arrays.*;
 public class GOATPointsCategory extends RecordCategory {
 
 	private static final String POINTS_WIDTH =  "150";
-	private static final String SEASON_WIDTH =   "60";
+	private static final String SEASON_WIDTH =   "80";
 	private static final String SEASONS_WIDTH = "150";
 
 	public GOATPointsCategory() {

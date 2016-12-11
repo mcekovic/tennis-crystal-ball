@@ -12,7 +12,11 @@
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("[data-toggle='tooltip']").tooltip();
-			$("#tournamentsTable").bootgrid({
+			var $tournamentsTable = $("#tournamentsTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($tournamentsTable, ["draw"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsWidths($tournamentsTable, ["name"], [device == "xs" ? 150 : (device == "sm" ? 200 : (device == "md" ? 300 : 400))]);
+			$tournamentsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
 					method: "GET",
@@ -126,13 +130,13 @@
 	<table id="tournamentsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
-			<th data-column-id="season" data-type="numeric" data-width="60">Season</th>
-			<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
+			<th data-column-id="season" data-type="numeric" data-width="80">Season</th>
+			<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
 			<th data-column-id="name" data-formatter="tournament" data-width="200">Tournament</th>
 			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
-			<th data-column-id="draw" data-width="80">Draw</th>
-			<th data-column-id="result" data-formatter="result" data-width="60" data-align="center" data-header-align="center">Result</th>
-			<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="50">Stats</th>
+			<th data-column-id="draw" data-width="65">Draw</th>
+			<th data-column-id="result" data-formatter="result" data-width="75" data-align="center" data-header-align="center">Result</th>
+			<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="80">Stats</th>
 		</tr>
 		</thead>
 	</table>

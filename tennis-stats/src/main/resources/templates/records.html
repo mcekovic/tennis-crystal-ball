@@ -55,10 +55,11 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<div class="text-nowrap">
+	<div class="text-nowrap" style="margin-bottom: 20px">
 		<h3 style="float: left; margin-top: 5px">Records Book</h3>
 		<h5 style="font-style: italic" th:text="'&nbsp;' + ${recordCount} + ' Different Records!'">&nbsp;100 Different Records</h5>
 	</div>
+	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('sm')"/>
 	<div id="categoryDiv" class="col-sm-7" style="padding-left: 0">
 		<div id="categoryControl" class="input-group" style="float: left">
 			<label for="category" class="input-group-addon">Category:</label>

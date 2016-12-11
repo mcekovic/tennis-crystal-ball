@@ -166,8 +166,6 @@ function setBootgridColumnsVisible($gridTable, columns, visible) {
 		$gridTable.find("th[data-column-id='" + columns[i] + "']").attr("data-visible", visible);
 }
 function setBootgridColumnsWidths($gridTable, columns, widths) {
-	console.log(columns);
-	console.log(widths);
 	for (var i = 0, count = columns.length; i < count; i++)
 		$gridTable.find("th[data-column-id='" + columns[i] + "']").attr("data-width", widths[i]);
 }

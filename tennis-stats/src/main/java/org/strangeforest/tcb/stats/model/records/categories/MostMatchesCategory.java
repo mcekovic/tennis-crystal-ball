@@ -38,7 +38,7 @@ public class MostMatchesCategory extends RecordCategory {
 	}
 
 	private static final String MATCHES_WIDTH =    "120";
-	private static final String SEASON_WIDTH =      "60";
+	private static final String SEASON_WIDTH =      "80";
 	private static final String TOURNAMENT_WIDTH = "100";
 
 	public MostMatchesCategory(RecordType type) {

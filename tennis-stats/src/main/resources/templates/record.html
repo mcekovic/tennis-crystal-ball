@@ -57,9 +57,9 @@
 	<table th:if="${record}" id="recordTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
-			<th data-column-id="rank" data-type="numeric" data-width="45">Rank</th>
-			<th data-column-id="country" data-formatter="country" data-width="60">Country</th>
-			<th data-column-id="name" data-formatter="player" data-width="180">Name</th>
+			<th data-column-id="rank" data-type="numeric" data-width="65">Rank</th>
+			<th data-column-id="country" data-formatter="country" data-width="85">Country</th>
+			<th data-column-id="name" data-formatter="player" data-width="200">Name</th>
 			<th th:each="column : ${record.getColumnInfos()}" th:attr="data-column-id=${column.name},data-type=${column.type},data-formatter=${column.formatter},data-width=${column.width},data-align=${column.align},data-header-align=${column.align}" th:text="${column.caption}">Value</th>
 		</tr>
 		</thead>

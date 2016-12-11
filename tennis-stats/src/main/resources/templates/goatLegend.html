@@ -98,6 +98,7 @@
 			</tbody>
 		</table>
 		<strong th:unless="${forSeason}">All-Time Highest Surface Elo Rating<sup class="new-feature">&nbsp;New!</sup></strong>
+		<p>Points assigned for each of the surfaces (hard, clay, grass & carpet)</p>
 		<table th:unless="${forSeason}" class="table table-condensed table-hover table-striped">
 			<thead>
 			<tr>
@@ -165,7 +166,7 @@
 				</table>
 				<th:block th:unless="${forSeason}">
 				<div>
-					<strong>Head-to-Head Points<sup class="new-feature">&nbsp;New!</sup></strong>
+					<strong>Head-to-Head Points</strong>
 					<p>Points assigned for exceptional Head-to-Head ratios against fellow players in the same Era</p>
 					<p class="text-nowrap">
 						20 * <i>ln</i>(<br/>

@@ -147,6 +147,7 @@
 			</table>
 		</div>
 	</div>
+	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
 	<ul id="tournamentEventPills" class="nav nav-pills">
 		<li class="active"><a data-toggle="pill" href="#draw">Draw</a></li>
 		<li><a data-toggle="pill" href="#statistics" data-url="/tournamentEventStats?tournamentEventId=" th:attrappend="data-url=${tournamentEvent.id}">Statistics</a></li>

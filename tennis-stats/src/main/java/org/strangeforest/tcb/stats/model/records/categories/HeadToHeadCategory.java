@@ -60,7 +60,7 @@ public class HeadToHeadCategory extends RecordCategory {
 	private static final String HTH_TOTAL = "h2h_won + h2h_draw + h2h_lost";
 
 	private static final String H2H_WIDTH =      "100";
-	private static final String H2H_SMALL_WIDTH = "60";
+	private static final String H2H_SMALL_WIDTH = "70";
 	private static final String PCT_WIDTH =      "100";
 
 	private static final RecordColumn WON_COLUMN = new RecordColumn("won", "numeric", null, H2H_SMALL_WIDTH, "right", "Won");

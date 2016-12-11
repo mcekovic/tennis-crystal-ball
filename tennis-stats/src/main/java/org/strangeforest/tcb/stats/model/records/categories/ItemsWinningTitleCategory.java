@@ -35,10 +35,10 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		}
 	}
 
-	private static final String ITEMS_WIDTH =       "60";
+	private static final String ITEMS_WIDTH =       "70";
 	private static final String TOURNAMENT_WIDTH = "100";
-	private static final String SEASON_WIDTH =      "60";
-	private static final String MATCHES_WIDTH =     "60";
+	private static final String SEASON_WIDTH =      "80";
+	private static final String MATCHES_WIDTH =     "80";
 
 	public ItemsWinningTitleCategory(RecordType type) {
 		super(type.name + " Games / Sets Lost Winning Title");

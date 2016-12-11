@@ -6,7 +6,11 @@
 	<title>Top Performers</title>
 	<script type="text/javascript">
 		$(function() {
-			$("#topPerformersTable").bootgrid({
+			var $topPerformersTable = $("#topPerformersTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($topPerformersTable, ["won", "lost", "played"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsWidths($topPerformersTable, ["name"], [device == "xs" ? 200 : (device == "sm" ? 250 : (device == "md" ? 300 : 400))]);
+			$topPerformersTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
 					method: "GET",
@@ -93,17 +97,18 @@
 	<table id="topPerformersTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
-			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="55">Rank</th>
-			<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="70">Country</th>
-			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="200">Name</th>
-			<th data-column-id="wonLostPct" data-order="desc" data-width="100" data-align="right" data-header-align="right">Pct.</th>
+			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
+			<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="85">Country</th>
+			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="250">Name</th>
+			<th data-column-id="wonLostPct" data-order="desc" data-width="175" data-align="right" data-header-align="right">Pct.</th>
 			<th data-column-id="won" data-type="numeric" data-width="70" data-align="right" data-header-align="right">Won</th>
 			<th data-column-id="lost" data-type="numeric" data-width="70" data-align="right" data-header-align="right">Lost</th>
-			<th data-column-id="played" data-type="numeric" data-width="70" data-align="right" data-header-align="right">Played</th>
+			<th data-column-id="played" data-type="numeric" data-width="75" data-align="right" data-header-align="right">Played</th>
 		</tr>
 		</thead>
 	</table>
 	<p><i>* Minimum <span id="minEntries">100 matches</span></i></p>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>
