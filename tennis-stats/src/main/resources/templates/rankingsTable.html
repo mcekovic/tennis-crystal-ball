@@ -8,6 +8,7 @@
 		$(function() {
 			var $rankingsTable = $("#rankingsTable");
 			var device = detectDevice();
+			setBootgridColumnsVisible($rankingsTable, ["bestRank"], deviceGreaterOrEqual(device, "sm"));
 			setBootgridColumnsWidths($rankingsTable, ["name"], [device == "xs" ? 150 : (device == "sm" ? 200 : (device == "md" ? 300 : 400))]);
 			$rankingsTable.bootgrid({
 				ajax: true,

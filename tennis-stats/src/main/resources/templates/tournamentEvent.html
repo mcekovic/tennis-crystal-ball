@@ -147,13 +147,13 @@
 			</table>
 		</div>
 	</div>
-	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
 	<ul id="tournamentEventPills" class="nav nav-pills">
 		<li class="active"><a data-toggle="pill" href="#draw">Draw</a></li>
 		<li><a data-toggle="pill" href="#statistics" data-url="/tournamentEventStats?tournamentEventId=" th:attrappend="data-url=${tournamentEvent.id}">Statistics</a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="draw" class="tab-pane fade in active">
+			<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
 			<table id="drawTable" class="table-condensed text-nowrap" width="100%">
 				<thead>
 				<tr>
