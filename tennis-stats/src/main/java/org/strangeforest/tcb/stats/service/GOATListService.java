@@ -38,7 +38,7 @@ public class GOATListService {
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"INNER JOIN player_performance pf USING (player_id)\n" +
 		"WHERE g.goat_points > 0 AND g.goat_rank <= :maxPlayers%1$s\n" +
-		"ORDER BY %2$s, p.name OFFSET :offset LIMIT :limit";
+		"ORDER BY %2$s OFFSET :offset LIMIT :limit";
 
 
 	@Cacheable("GOATList.TopN")

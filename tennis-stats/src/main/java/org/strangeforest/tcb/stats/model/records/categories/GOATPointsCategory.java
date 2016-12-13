@@ -16,15 +16,24 @@ public class GOATPointsCategory extends RecordCategory {
 		register(mostGOATPoints(N_A, N_A, "goat_points"));
 		register(mostGOATPoints("Tournament", "Tournament", "tournament_goat_points"));
 		register(mostGOATPoints("Ranking", "Ranking", "ranking_goat_points"));
+		register(mostGOATPoints("YearEndRanking", "Year-End Ranking", "year_end_rank_goat_points"));
+		register(mostGOATPoints("BestEloRating", "Best Elo Rating", "best_elo_rating_goat_points"));
+		register(mostGOATPoints("WeeksAtNo1", "Weeks at No 1.", "weeks_at_no1_goat_points"));
 		register(mostGOATPoints("Achievements", "Achievements", "achievements_goat_points"));
 		register(mostGOATPoints("BigWins", "Big Wins", "big_wins_goat_points"));
 		register(mostGOATPoints("H2H", "Head-to-Head", "h2h_goat_points"));
+		register(mostGOATPoints("GrandSlam", "Grand Slam", "grand_slam_goat_points"));
+		register(mostGOATPoints("BestSeasons", "Best Seasons", "best_season_goat_points"));
+		register(mostGOATPoints("GreatestRivalries", "Greatest Rivalries", "greatest_rivalries_goat_points"));
 		register(mostGOATPoints("Performance", "Performance", "performance_goat_points"));
 		register(mostGOATPoints("Statistics", "Statistics", "statistics_goat_points"));
 		register(mostSeasonGOATPoints(N_A, N_A, "goat_points"));
 		register(mostSeasonGOATPoints("Tournament", "Tournament", "tournament_goat_points"));
 		register(mostSeasonGOATPoints("Ranking", "Ranking", "ranking_goat_points"));
+		register(mostSeasonGOATPoints("WeeksAtNo1", "Weeks at No 1.", "weeks_at_no1_goat_points"));
+		register(mostSeasonGOATPoints("Achievements", "Achievements", "achievements_goat_points"));
 		register(mostSeasonGOATPoints("BigWins", "Big Wins", "big_wins_goat_points"));
+		register(mostSeasonGOATPoints("GrandSlam", "Grand Slam", "grand_slam_goat_points"));
 		register(mostConsecutiveSeasonWithGOATPoints());
 	}
 

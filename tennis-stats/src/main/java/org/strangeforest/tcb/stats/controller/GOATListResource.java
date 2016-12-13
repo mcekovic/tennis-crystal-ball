@@ -32,7 +32,7 @@ public class GOATListResource {
 		.put("wonPct", "matches_won::REAL / (matches_won + matches_lost)")
 		.put("bestEloRating", "best_elo_rating NULLS LAST")
 	.build();
-	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("goat_points"), asc("name")};
+	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("goat_points"), desc("grand_slams"), desc("tour_finals"), desc("masters"), desc("titles"), asc("name")};
 
 	@GetMapping("/goatListTable")
 	public BootgridTable<GOATListRow> goatListTable(
