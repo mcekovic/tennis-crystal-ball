@@ -36,7 +36,7 @@ public class MostRecordsCategory extends RecordCategory {
 			/* language=SQL */
 			"SELECT pr.player_id, count(DISTINCT record_id) AS value\n" +
 			"FROM saved_record sr INNER JOIN player_record pr USING (record_id)\n" +
-			"WHERE pr.rank = 1 AND record_id NOT IN ('Records', '" + INFAMOUS.id + "Records') AND " + type.condition + "\n" +
+			"WHERE NOT sr.active_players AND pr.rank = 1 AND pr.record_id NOT IN ('Records', '" + INFAMOUS.id + "Records') AND " + type.condition + "\n" +
 			"GROUP BY pr.player_id",
 			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,
 			asList(new RecordColumn("value", "numeric", null, RECORDS_WIDTH, "right", "Records"))

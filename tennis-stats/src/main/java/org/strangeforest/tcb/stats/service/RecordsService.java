@@ -27,9 +27,9 @@ public class RecordsService {
 	private static final int MAX_PLAYER_COUNT = 100;
 
 	private static final String RECORDS_TABLE_QUERY = //language=SQL
-		"SELECT r.record_id, p.player_id, p.name, p.country_id, p.active, r.detail\n" +
+		"SELECT r.record_id, player_id, p.name, p.country_id, p.active, r.detail\n" +
 		"FROM player_record r\n" +
-		"INNER JOIN player_v p ON p.player_id = r.player_id\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.rank = 1 AND r.record_id = ANY(?)%1$s";
 
 	private static final String PLAYER_RECORDS_CONDITION = //language=SQL
