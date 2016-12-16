@@ -6,7 +6,7 @@
 <head th:replace="fragments/head :: commonHead(${tournament.name}, true, ~{::script}, _)">
 	<script type="text/javascript">
 		$(function() {
-			$("[data-toggle=pill]").click(tabClick);
+			$("#tournamentPills").find("a").click(tabClick);
 			var $tournamentHistoryTable = $("#tournamentHistoryTable");
 			var device = detectDevice();
 			setBootgridColumnsVisible($tournamentHistoryTable, ["playerCount", "participationPoints"], deviceGreaterOrEqual(device, "lg"));
