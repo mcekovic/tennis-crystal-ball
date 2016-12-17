@@ -35,11 +35,8 @@ public class GOATLegendService {
 		"SELECT level, round, match_factor FROM big_win_match_factor\n" +
 		"ORDER BY level, round DESC";
 
-	private static final String CAREER_GRAND_SLAM_GOAT_POINTS =
-		"SELECT career_grand_slam FROM grand_slam_goat_points";
-
-	private static final String SEASON_GRAND_SLAM_GOAT_POINTS =
-		"SELECT season_grand_slam FROM grand_slam_goat_points";
+	private static final String GRAND_SLAM_GOAT_POINTS = //language=SQL
+		"SELECT %1$s FROM grand_slam_goat_points";
 
 	private static final String PERF_STAT_GOAT_POINTS_QUERY = //language=SQL
 		"SELECT name AS category, string_agg(goat_points::TEXT, ', ' ORDER BY rank) AS goat_points\n" +
@@ -115,12 +112,17 @@ public class GOATLegendService {
 
 	@Cacheable(value = "Global", key = "'CareerGrandSlamGOATPoints'")
 	public int getCareerGrandSlamGOATPoints() {
-		return jdbcTemplate.queryForObject(CAREER_GRAND_SLAM_GOAT_POINTS, Integer.class);
+		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "career_grand_slam"), Integer.class);
 	}
 
 	@Cacheable(value = "Global", key = "'SeasonGrandSlamGOATPoints'")
 	public int getSeasonGrandSlamGOATPoints() {
-		return jdbcTemplate.queryForObject(SEASON_GRAND_SLAM_GOAT_POINTS, Integer.class);
+		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "season_grand_slam"), Integer.class);
+	}
+
+	@Cacheable(value = "Global", key = "'GrandSlamHolderGOATPoints'")
+	public int getGrandSlamHolderGOATPoints() {
+		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "grand_slam_holder"), Integer.class);
 	}
 
 	@Cacheable(value = "Global", key = "'BestSeasonGOATPoints'")

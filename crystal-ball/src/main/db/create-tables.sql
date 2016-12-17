@@ -343,7 +343,8 @@ CREATE TABLE h2h_rank_factor (
 CREATE TABLE grand_slam_goat_points (
 	career_grand_slam INTEGER NOT NULL,
 	season_grand_slam INTEGER NOT NULL,
-	PRIMARY KEY (career_grand_slam, season_grand_slam)
+	grand_slam_holder INTEGER NOT NULL,
+	PRIMARY KEY (career_grand_slam, season_grand_slam, grand_slam_holder)
 );
 
 

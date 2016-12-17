@@ -11,6 +11,7 @@
 	<!--/*@thymesVar id="h2hRankFactors" type="java.util.List<org.strangeforest.tcb.stats.model.RankRangeGOATPoints>"*/-->
 	<!--/*@thymesVar id="careerGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="seasonGrandSlamGOATPoints" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="grandSlamHolderGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="bestSeasonGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="greatestRivalriesGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="performanceGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.PerfStatGOATPoints>"*/-->
@@ -232,8 +233,9 @@
 					<a th:unless="${forSeason}" href="/record?recordId=GrandSlamGOATPoints" title="Players with most Grand Slam GOAT Points">Grand Slam Points</a>
 					<a th:if="${forSeason}" href="/record?recordId=SeasonGrandSlamGOATPoints" title="Players with most Grand Slam GOAT Points in the single season">Grand Slam Points</a>
 				</strong>
-				<div th:unless="${forSeason}">+<th:block th:text="${careerGrandSlamGOATPoints}">8</th:block> points for Career Grand Slam</div>
+				<div th:unless="${forSeason}">+<th:block th:text="${careerGrandSlamGOATPoints}">8</th:block> points for each Career Grand Slam</div>
 				<div>+<th:block th:text="${seasonGrandSlamGOATPoints}">8</th:block> points for<th:block th:unless="${forSeason}"> each</th:block> Calendar Year Grand Slam</div>
+				<div th:unless="${forSeason}">+<th:block th:text="${grandSlamHolderGOATPoints}">4</th:block> points each time when holding all 4 Grand Slams<sup class="new-feature">&nbsp;New!</sup></div>
 				<br/>
 				<th:block th:unless="${forSeason}">
 				<div>

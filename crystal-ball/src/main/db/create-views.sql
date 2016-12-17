@@ -832,18 +832,22 @@ GROUP BY player_id;
 -- player_career_grand_slam_goat_points_v
 
 CREATE OR REPLACE VIEW player_career_grand_slam_goat_points_v AS
-WITH player_distinct_grand_slams AS (
-	SELECT player_id, count(DISTINCT e.tournament_id) grand_slams
+WITH player_grand_slams AS (
+	SELECT player_id, e.tournament_id, count(r.tournament_event_id) grand_slams
 	FROM player_tournament_event_result r
 	INNER JOIN tournament_event e USING (tournament_event_id)
 	WHERE e.level = 'G'
 	AND r.result = 'W'
+	GROUP BY player_id, e.tournament_id
+), player_career_grand_slams AS (
+	SELECT player_id, count(DISTINCT tournament_id) different_grand_slams, min(grand_slams) career_grand_slams
+	FROM player_grand_slams
 	GROUP BY player_id
+	HAVING count(DISTINCT tournament_id) >= 4
 )
 SELECT gs.player_id, g.career_grand_slam goat_points
-FROM player_distinct_grand_slams gs
-INNER JOIN grand_slam_goat_points g ON TRUE
-WHERE gs.grand_slams >= 4;
+FROM player_career_grand_slams gs
+INNER JOIN grand_slam_goat_points g ON TRUE;
 
 
 -- player_season_grand_slam_goat_points_v
@@ -861,6 +865,24 @@ SELECT gs.player_id, gs.season, g.season_grand_slam goat_points
 FROM player_season_grand_slams gs
 INNER JOIN grand_slam_goat_points g ON TRUE
 WHERE gs.grand_slams >= 4;
+
+
+-- player_grand_slam_holder_goat_points_v
+
+CREATE OR REPLACE VIEW player_grand_slam_holder_goat_points_v AS
+WITH event_not_count AS (
+  SELECT r.player_id, e.date, r.result, sum(CASE WHEN r.result = 'W' THEN 0 ELSE 1 END) OVER (PARTITION BY player_id ORDER BY date) AS not_count
+  FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE e.level = 'G'
+), grand_slam_streak AS (
+  SELECT player_id, rank() OVER rs AS streak
+  FROM event_not_count
+  WHERE result = 'W'
+  WINDOW rs AS (PARTITION BY player_id, not_count ORDER BY date)
+)
+SELECT gs.player_id, g.grand_slam_holder goat_points
+FROM grand_slam_streak gs
+INNER JOIN grand_slam_goat_points g ON TRUE
+WHERE gs.streak >= 4;
 
 
 -- player_greatest_rivalries_goat_points_v
@@ -1459,6 +1481,11 @@ WITH goat_points AS (
 		0, 0, 0, 0,
 		0, 0, goat_points, 0, 0, 0, 0
 	FROM player_career_grand_slam_goat_points_v
+	UNION ALL
+	SELECT player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0, 0,
+		0, 0, goat_points, 0, 0, 0, 0
+	FROM player_grand_slam_holder_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
 		0, 0, 0, 0,
