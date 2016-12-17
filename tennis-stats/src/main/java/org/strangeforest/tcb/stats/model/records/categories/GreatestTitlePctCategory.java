@@ -32,8 +32,8 @@ public class GreatestTitlePctCategory extends RecordCategory {
 		}
 	}
 
-	private static final String PCT_WIDTH =   "100";
-	private static final String ITEM_WIDTH =   "70";
+	private static final String PCT_WIDTH =   "140";
+	private static final String ITEM_WIDTH =   "80";
 
 	public GreatestTitlePctCategory(RecordType type) {
 		super("Greatest " + suffix(type.categoryName, " ") + type.name + " Pct.");

@@ -7,9 +7,9 @@ import static java.util.Arrays.*;
 
 public abstract class ResultsStreaksCategory extends RecordCategory {
 
-	private static final String STREAK_WIDTH =      "90";
-	private static final String SEASON_WIDTH =      "80";
-	private static final String TOURNAMENT_WIDTH = "110";
+	private static final String STREAK_WIDTH =     "120";
+	private static final String SEASON_WIDTH =      "90";
+	private static final String TOURNAMENT_WIDTH = "120";
 
 	protected ResultsStreaksCategory(String name) {
 		super(name);

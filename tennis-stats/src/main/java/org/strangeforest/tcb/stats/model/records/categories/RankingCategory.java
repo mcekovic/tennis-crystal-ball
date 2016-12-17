@@ -12,13 +12,13 @@ public abstract class RankingCategory extends RecordCategory {
 	private static final String WEEKS_WIDTH =   "120";
 	private static final String SEASONS_WIDTH = "120";
 	private static final String TIMES_WIDTH =   "120";
-	private static final String POINTS_WIDTH =  "100";
+	private static final String POINTS_WIDTH =  "110";
 	private static final String DATE_WIDTH =     "85";
 	private static final String RANK_WIDTH =     "65";
 	private static final String SEASON_WIDTH =   "80";
-	private static final String AGE_WIDTH =     "130";
-	private static final String SPAN_WIDTH =    "130";
-	private static final String PLAYER_WIDTH =  "130";
+	private static final String AGE_WIDTH =     "150";
+	private static final String SPAN_WIDTH =    "150";
+	private static final String PLAYER_WIDTH =  "150";
 
 	private static final String INVALID_RANKING_PLAYERS = "'Jaime Fillol', 'Chris Lewis', 'Olivier Cayla'";
 

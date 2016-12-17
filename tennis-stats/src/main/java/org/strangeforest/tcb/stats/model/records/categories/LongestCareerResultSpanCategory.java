@@ -24,9 +24,9 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 		}
 	}
 
-	private static final String SPAN_WIDTH =       "130";
-	private static final String DATE_WIDTH =        "80";
-	private static final String TOURNAMENT_WIDTH = "100";
+	private static final String SPAN_WIDTH =       "150";
+	private static final String DATE_WIDTH =        "90";
+	private static final String TOURNAMENT_WIDTH = "120";
 	private static final String SEASONS_WIDTH =     "80";
 	private static final String SEASON_WIDTH =      "80";
 

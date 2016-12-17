@@ -10,9 +10,9 @@ import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class WinningStreaksCategory extends RecordCategory {
 
-	private static final String STREAK_WIDTH =      "90";
-	private static final String SEASON_WIDTH =      "80";
-	private static final String TOURNAMENT_WIDTH = "110";
+	private static final String STREAK_WIDTH =     "120";
+	private static final String SEASON_WIDTH =      "90";
+	private static final String TOURNAMENT_WIDTH = "120";
 
 	public WinningStreaksCategory() {
 		super("Winning Streaks");
