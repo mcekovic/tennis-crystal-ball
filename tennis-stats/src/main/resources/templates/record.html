@@ -30,6 +30,10 @@
 					"endDate": function(column, row) { return formatDate(row.endDate); },
 					"player2": function(column, row) { return playerCountryFormatter(column, row.player2); }
 				},
+				labels: {
+					loading: bootgridTemplateLoading,
+					noResults: "No record results found"
+				},
 				templates: {
 					paginationItem: bootgridTemplatePaginationItem
 				}

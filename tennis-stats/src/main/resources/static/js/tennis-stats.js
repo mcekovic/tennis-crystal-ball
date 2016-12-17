@@ -180,6 +180,7 @@ function setBootgridTitles($gridTable, titles) {
 		}
 	});
 }
+var bootgridTemplateLoading = "Loading... <img src='/images/ui-anim_basic_16x16.gif' width='16' height='16'/>"
 /* Fixes Bootgrid Issue with no link cursors on pagination buttons */
 var bootgridTemplatePaginationItem = "<li class=\"{{ctx.css}}\"><a href=\"#\" data-page=\"{{ctx.page}}\" class=\"{{css.paginationButton}}\">{{ctx.text}}</a></li>";
 
