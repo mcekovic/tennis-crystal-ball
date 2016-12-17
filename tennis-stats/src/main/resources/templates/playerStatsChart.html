@@ -18,7 +18,6 @@
 		var dataUrl = "/playerStatisticsTable?playerId=[[${playerId}]]&category=" + category + "&surface=" + $("#statsChartSurface").val();
 		dataUrl += "&fromSeason=" + $("#statsFromSeason").val() + "&toSeason=" + $("#statsToSeason").val();
 		dataUrl += "&byAge=" + $("#statsByAge").prop("checked");
-		$("#statsChart").html("");
 		var $loading = $("#statsChartLoading");
 		$loading.show();
 		$.ajax(dataUrl).done(function(json) {
@@ -113,7 +112,7 @@
 	<div class="row col-md-9 text-center">
 		<div id="loading" style="width: 100%; display: none">
 			<br/>
-			<img src="/images/loading.gif" width="128" height="128" alt="Loading chart..."/>
+			<img src="/images/loading-chart.gif" width="128" height="128" alt="Loading chart..."/>
 			<br/>
 		</div>
 	</div>

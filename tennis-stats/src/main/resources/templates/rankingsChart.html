@@ -44,7 +44,6 @@
 				dataUrl += "&byAge=" + $("#byAge").prop("checked");
 			if (rankType == "POINTS")
 				dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
-			$("#rankChart").html("");
 			var $loading = $("#loading");
 			$loading.show();
 			$.ajax(dataUrl).done(function(json) {
@@ -189,7 +188,7 @@
 		<div class="row col-md-10 text-center">
 			<div id="loading" style="width: 100%; display: none">
 				<br/>
-				<img src="/images/loading.gif" width="128" height="128" alt="Loading chart..."/>
+				<img src="/images/loading-chart.gif" width="128" height="128" alt="Loading chart..."/>
 				<br/>
 			</div>
 		</div>
