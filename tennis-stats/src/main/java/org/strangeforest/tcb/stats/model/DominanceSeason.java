@@ -1,16 +1,16 @@
 package org.strangeforest.tcb.stats.model;
 
-public class BigGunsSeason {
+public class DominanceSeason {
 
 	private final int season;
 	private int dominanceRatioPoints;
-	private BigGunsPlayerTimeline bestPlayer;
-	private BigGunsPlayerTimeline eraPlayer;
+	private PlayerDominanceTimeline bestPlayer;
+	private PlayerDominanceTimeline eraPlayer;
 	private int bestPlayerPoints;
 
 	private static final double DOMINANCE_RATIO_COEFFICIENT = 1000.0;
 
-	public BigGunsSeason(int season) {
+	public DominanceSeason(int season) {
 		this.season = season;
 	}
 
@@ -23,22 +23,22 @@ public class BigGunsSeason {
 	}
 
 	public int getDominanceRatioRounded() {
-		return BigGunsTimeline.roundDominanceRatio(getDominanceRatio());
+		return DominanceTimeline.roundDominanceRatio(getDominanceRatio());
 	}
 
-	public BigGunsPlayerTimeline getBestPlayer() {
+	public PlayerDominanceTimeline getBestPlayer() {
 		return bestPlayer;
 	}
 
-	BigGunsPlayerTimeline getEraPlayer() {
+	PlayerDominanceTimeline getEraPlayer() {
 		return eraPlayer;
 	}
 
-	void setEraPlayer(BigGunsPlayerTimeline eraPlayer) {
+	void setEraPlayer(PlayerDominanceTimeline eraPlayer) {
 		this.eraPlayer = eraPlayer;
 	}
 
-	public void processPlayer(BigGunsPlayerTimeline player) {
+	public void processPlayer(PlayerDominanceTimeline player) {
 		SeasonPoints seasonPoints = player.getSeasonPoints(season);
 		if (seasonPoints != null) {
 			int playerPoints = seasonPoints.getPoints();

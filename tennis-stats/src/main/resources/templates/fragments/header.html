@@ -30,7 +30,7 @@
 					<li th:class="${path != null && path.endsWith('Timeline') ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Timelines<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/bigGunsTimeline' ? 'active' : ''}"><a href="/bigGunsTimeline">Big Guns Timeline</a></li>
+							<li th:class="${path == '/dominanceTimeline' ? 'active' : ''}"><a href="/dominanceTimeline">Dominance Timeline</a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'G' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=G">Grand Slam Timeline</a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'F' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=F">Tour Finals Timeline</a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'M' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=M">Masters Timeline</a></li>

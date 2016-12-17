@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.BigGunsTimeline"*/-->
+<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.DominanceTimeline"*/-->
 <!--/*@thymesVar id="minGOATPoints" type="java.lang.Integer"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
-	<title>Big Guns Timeline</title>
+	<title>Dominance Timeline</title>
 	<script th:src="@{/js/jquery.resize.js}"></script>
 	<script type="text/javascript">
 		function correctInitPositions() {
@@ -27,12 +27,12 @@
 			});
 		}
 		function correctPositionsOnResize() {
-			var newOffset = $("#bigGunsTable").offset();
-			var dLeft = newOffset.left - bigGunsTableOffset.left;
-			var dTop = newOffset.top - bigGunsTableOffset.top;
+			var newOffset = $("#dominanceTable").offset();
+			var dLeft = newOffset.left - dominanceTableOffset.left;
+			var dTop = newOffset.top - dominanceTableOffset.top;
 			correctPosOnResize("span.best-player", dLeft + 20, dTop - 20);
 			correctPosOnResize("span.era-factor", dLeft + 2.5, dTop - 2.5);
-			bigGunsTableOffset = newOffset;
+			dominanceTableOffset = newOffset;
 		}
 		function correctPosOnResize(selector, dLeft, dTop) {
 			$("#timelineHeader").find(selector).each(function() {
@@ -44,10 +44,10 @@
 				});
 			});
 		}
-		var bigGunsTableOffset;
+		var dominanceTableOffset;
 		$(function() {
 			correctInitPositions();
-			bigGunsTableOffset = $("#bigGunsTable").offset();
+			dominanceTableOffset = $("#dominanceTable").offset();
 			$(window).resize(correctPositionsOnResize);
 			$("#navbar").resize(correctPositionsOnResize);
 			$("[data-toggle='collapse']").click(collapseClick);
@@ -57,14 +57,14 @@
 		.container {
 			width: 1600px;
 		}
-		#bigGunsTable > thead > tr.season > th {
+		#dominanceTable > thead > tr.season > th {
 			line-height: 2.5;
 		}
-		#bigGunsTable > thead > tr.best-player > th {
+		#dominanceTable > thead > tr.best-player > th {
 			line-height: 5.0;
 		}
-		#bigGunsTable > tbody > tr > th,
-		#bigGunsTable > tbody > tr > td {
+		#dominanceTable > tbody > tr > th,
+		#dominanceTable > tbody > tr > td {
 			line-height: 1.0;
 			vertical-align: middle;
 		}
@@ -96,31 +96,31 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>Big Guns Timeline</h3>
+	<h3>Dominance Timeline</h3>
 	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('lg')"/>
-	<table id="bigGunsTable" class="table table-condensed table-hover table-bordered text-nowrap">
+	<table id="dominanceTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead id="timelineHeader">
 		<tr class="best-player">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Era</th>
-			<th th:each="era : ${timeline.bigGunsEras}" th:class="'points-' + ${era.dominanceRatioRounded}" style="padding: 1px" th:colspan="${era.seasonCount}">
+			<th th:each="era : ${timeline.dominanceEras}" th:class="'points-' + ${era.dominanceRatioRounded}" style="padding: 1px" th:colspan="${era.seasonCount}">
 				<span th:if="${era.player}" th:text="${era.player.lastName}" class="best-player era-player">Sampras</span>
 			</th>
 		</tr>
 		<tr class="season">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average dominance ratio in the Era">Era Dominance Ratio</th>
-			<th th:each="era : ${timeline.bigGunsEras}" th:class="'points-' + ${era.dominanceRatioRounded}" style="padding: 1px" th:colspan="${era.seasonCount}">
+			<th th:each="era : ${timeline.dominanceEras}" th:class="'points-' + ${era.dominanceRatioRounded}" style="padding: 1px" th:colspan="${era.seasonCount}">
 				<span th:text="${#numbers.formatDecimal(era.dominanceRatio, 1, 1)}" class="era-factor">66.7</span>
 			</th>
 		</tr>
 		<tr class="best-player">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Season Best Player</th>
-			<th th:each="season : ${timeline.bigGunsSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
 				<span th:text="${season.bestPlayer.lastName}" class="best-player">Federer</span>
 			</th>
 		</tr>
 		<tr class="season">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" th:title="'For all players with minimum ' + ${minGOATPoints} + ' GOAT points: SUM(player season GOAT points * player GOAT points) / 1000'">Season Dominance Ratio</th>
-			<th th:each="season : ${timeline.bigGunsSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
 				<span th:text="${#numbers.formatDecimal(season.dominanceRatio, 1, 1)}" class="season">66.7</span>
 			</th>
 		</tr>

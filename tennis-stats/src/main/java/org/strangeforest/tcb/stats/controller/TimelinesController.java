@@ -15,19 +15,19 @@ import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
 @Controller
 public class TimelinesController extends PageController {
 
-	@Autowired private BigGunsTimelineService timelineService;
+	@Autowired private DominanceTimelineService timelineService;
 	@Autowired private TournamentLevelService tournamentLevelService;
 	@Autowired private SurfaceService surfaceService;
 
-	@GetMapping("/bigGunsTimeline")
-	public ModelAndView bigGunsTimeline() {
-		BigGunsTimeline timeline = timelineService.getBigGunsTimeline();
+	@GetMapping({"dominanceTimeline", "/bigGunsTimeline"})
+	public ModelAndView dominanceTimeline() {
+		DominanceTimeline timeline = timelineService.getDominanceTimeline();
 		int minGOATPoints = timelineService.getMinGOATPoints();
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("timeline", timeline);
 		modelMap.addAttribute("minGOATPoints", minGOATPoints);
-		return new ModelAndView("bigGunsTimeline", modelMap);
+		return new ModelAndView("dominanceTimeline", modelMap);
 	}
 
 	@GetMapping("/tournamentLevelTimeline")

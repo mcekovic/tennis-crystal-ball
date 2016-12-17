@@ -12,7 +12,7 @@ import org.strangeforest.tcb.stats.model.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
-public class BigGunsTimelineService {
+public class DominanceTimelineService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -30,22 +30,22 @@ public class BigGunsTimelineService {
 		"ORDER BY p.dob DESC, p.name";
 
 
-	@Cacheable(value = "Global", key = "'BigGunsTimeline'")
-	public BigGunsTimeline getBigGunsTimeline() {
-		BigGunsTimeline timeline = new BigGunsTimeline();
+	@Cacheable(value = "Global", key = "'DominanceTimeline'")
+	public DominanceTimeline getDominanceTimeline() {
+		DominanceTimeline timeline = new DominanceTimeline();
 		AtomicInteger rank = new AtomicInteger();
 		jdbcTemplate.query(
 			TIMELINE_QUERY, params("minGOATPoints", MIN_GOAT_POINTS),
 			rs -> {
-				BigGunsPlayerTimeline player = mapPlayer(rank, rs);
+				PlayerDominanceTimeline player = mapPlayer(rank, rs);
 				Object[] seasonsPoints = (Object[])rs.getArray("seasons_points").getArray();
 				for (Object seasonsPoint : seasonsPoints)
 					player.addSeasonPoints(mapSeasonPoints(seasonsPoint.toString()));
 				timeline.addPlayer(player);
 			}
 		);
-		timeline.calculateBigGunsSeasons();
-		timeline.calculateBigGunsEras();
+		timeline.calculateDominanceSeasons();
+		timeline.calculateDominanceEras();
 		return timeline;
 	}
 
@@ -53,7 +53,7 @@ public class BigGunsTimelineService {
 		return MIN_GOAT_POINTS;
 	}
 
-	private BigGunsPlayerTimeline mapPlayer(AtomicInteger rank, ResultSet rs) throws SQLException {
+	private PlayerDominanceTimeline mapPlayer(AtomicInteger rank, ResultSet rs) throws SQLException {
 		int playerId = rs.getInt("player_id");
 		String name = rs.getString("name");
 		String lastName = rs.getString("last_name");
@@ -61,7 +61,7 @@ public class BigGunsTimelineService {
 		boolean active = rs.getBoolean("active");
 		Date dob = rs.getDate("dob");
 		int goatPoints = rs.getInt("goat_points");
-		return new BigGunsPlayerTimeline(rank.incrementAndGet(), playerId, name, lastName, countryId, active, dob, goatPoints);
+		return new PlayerDominanceTimeline(rank.incrementAndGet(), playerId, name, lastName, countryId, active, dob, goatPoints);
 	}
 
 	private SeasonPoints mapSeasonPoints(String seasonPoints) {

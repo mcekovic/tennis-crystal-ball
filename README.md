@@ -10,8 +10,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 
 - 'GOAT' List - Best players of Open Era ranked by 'GOAT' Points
 - Player Profile - Player information, tournament results, matches, timeline, rivalries, ranking, performance, statistics and 'GOAT' points breakdown
-- 'Big Guns' Timeline - 'GOAT' points distribution among top players and seasons
-- Best Seasons - Find which are the best seasons of Open Era based on 'GOAT' points
+- Timeline - Dominance ('GOAT' points distribution among top players and seasons), Grand Slam, Tour Finals, Masters, Olympics, Davis Cup, World Team Cup and Surface
 - Greatest Rivalries - Explore greatest rivalries, overall or by tournament level and surface
 - Heads-to-Heads - Heads-to-heads clusters among several players (i.e. among 'Big 4')
 - Ranking Tables - Player ranking tables, including [Elo rating](https://en.wikipedia.org/wiki/Elo_rating_system) using customized Elo rating formula
@@ -22,7 +21,9 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Statistics Leaders - Find statistics leaders in different statistics categories, including dominance and break points ratios
 - Statistics Charts - Statistics charts for various statistics categories, including dominance and break points ratios
 - Records Book - Various match, tournament result and ranking records, famous and infamous (best player that never...)
+- Best Seasons - Find which are the best seasons of Open Era based on 'GOAT' points
 - Tournaments Browser - Browse all Open Era tournaments, see tournament draw, statistics, historical winners and records
+- Live Scores - Live Scores integration
 
 ## Roadmap
 
@@ -58,8 +59,8 @@ http://tennis-strangeforest.rhcloud.com
 ##### Player Rivalries
 ![Player Rivalries](https://github.com/mcekovic/open-box/blob/master/PlayerRivalries.png?raw=true)
 
-##### 'Big Guns' Timeline
-![Big Guns Timeline](https://github.com/mcekovic/open-box/blob/master/BigGunsTimeline.png?raw=true)
+##### Dominance Timeline
+![Dominance Timeline](https://github.com/mcekovic/open-box/blob/master/BigGunsTimeline.png?raw=true)
 
 ##### Best Seasons
 ![Best Seasons](https://github.com/mcekovic/open-box/blob/master/BestSeasons.png?raw=true)

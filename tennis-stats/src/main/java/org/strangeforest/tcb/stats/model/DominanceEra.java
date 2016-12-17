@@ -2,15 +2,15 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
-public class BigGunsEra {
+public class DominanceEra {
 
 	private final int seasonCount;
 	private double dominanceRatio;
-	private BigGunsPlayerTimeline player;
+	private PlayerDominanceTimeline player;
 
-	public BigGunsEra(List<BigGunsSeason> seasons) {
+	public DominanceEra(List<DominanceSeason> seasons) {
 		seasonCount = seasons.size();
-		dominanceRatio = seasons.stream().mapToDouble(BigGunsSeason::getDominanceRatio).average().getAsDouble();
+		dominanceRatio = seasons.stream().mapToDouble(DominanceSeason::getDominanceRatio).average().getAsDouble();
 		player = seasons.get(0).getEraPlayer();
 	}
 
@@ -23,10 +23,10 @@ public class BigGunsEra {
 	}
 
 	public int getDominanceRatioRounded() {
-		return BigGunsTimeline.roundDominanceRatio(dominanceRatio);
+		return DominanceTimeline.roundDominanceRatio(dominanceRatio);
 	}
 
-	public BigGunsPlayerTimeline getPlayer() {
+	public PlayerDominanceTimeline getPlayer() {
 		return player;
 	}
 }
