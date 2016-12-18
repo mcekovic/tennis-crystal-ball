@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.controller;
 
 import java.util.*;
 
+import javax.servlet.http.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
@@ -35,16 +37,20 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "opponentId", required = false) Integer opponentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(name = "outcome", required = false) String outcome
+		@RequestParam(name = "outcome", required = false) String outcome,
+	   HttpServletRequest request
 	) {
 		if (playerId == null && name == null)
 			return new ModelAndView("playerProfile");
 
-		Optional<Player> player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
+		Optional<Player> optionalPlayer = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
 
 		ModelMap modelMap = new ModelMap();
-		if (player.isPresent())
-			modelMap.addAttribute("player", player.get());
+		if (optionalPlayer.isPresent()) {
+			Player player = optionalPlayer.get();
+			modelMap.addAttribute("player", player);
+			modelMap.addAttribute("permalink", playerPermalink(player, request));
+		}
 		else
 			modelMap.addAttribute("playerRef", playerId != null ? playerId : name);
 		modelMap.addAttribute("tab", tab);
@@ -57,6 +63,10 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("outcome", outcome);
 		return new ModelAndView("playerProfile", modelMap);
+	}
+
+	private static String playerPermalink(Player player, HttpServletRequest request) {
+		return request.getServletPath() + '?' + request.getQueryString().replaceFirst("playerId=\\d+", "name=" + player.getName());
 	}
 
 	@GetMapping("/playerProfileTab")
