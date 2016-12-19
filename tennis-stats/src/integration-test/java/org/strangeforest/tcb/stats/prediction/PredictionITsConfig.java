@@ -11,12 +11,16 @@ import org.strangeforest.tcb.stats.spring.*;
 @TestConfiguration
 @EnableTransactionManagement
 @Import({TennisStatsConfig.class, DataSourceITConfig.class})
-@ComponentScan("org.strangeforest.tcb.stats.service.prediction")
 public class PredictionITsConfig {
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertyPlaceholderConfigurer() {
 		return new PropertySourcesPlaceholderConfigurer();
+	}
+
+	@Bean
+	public MatchPredictionService matchPredictionService() {
+		return new MatchPredictionService();
 	}
 
 	@Bean

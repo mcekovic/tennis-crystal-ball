@@ -46,13 +46,13 @@ public class MatchPrediction {
 		return itemProbabilities1.isEmpty() && itemProbabilities2.isEmpty();
 	}
 
-	public void addItemProbability1(PredictionItem item,  double weight, double probability) {
-		itemProbabilities1.add(new WeightedProbability(item, weight, probability));
+	public void addItemProbability1(PredictionArea area, PredictionItem item, double weight, double probability) {
+		itemProbabilities1.add(new WeightedProbability(area, item, weight, probability));
 		winProbability1 = null;
 	}
 
-	public void addItemProbability2(PredictionItem item,  double weight, double probability) {
-		itemProbabilities2.add(new WeightedProbability(item, weight, probability));
+	public void addItemProbability2(PredictionArea area, PredictionItem item, double weight, double probability) {
+		itemProbabilities2.add(new WeightedProbability(area, item, weight, probability));
 		winProbability2 = null;
 	}
 

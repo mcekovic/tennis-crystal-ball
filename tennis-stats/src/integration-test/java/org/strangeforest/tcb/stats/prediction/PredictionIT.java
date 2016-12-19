@@ -8,7 +8,6 @@ import org.springframework.test.context.*;
 import org.springframework.test.context.testng.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.service.*;
-import org.strangeforest.tcb.stats.service.prediction.*;
 import org.testng.annotations.*;
 
 import static org.strangeforest.tcb.stats.model.Round.*;
@@ -22,7 +21,7 @@ public class PredictionIT extends AbstractTestNGSpringContextTests {
 	@Autowired private MatchPredictionService predictionService;
 
 	@Test
-	public void testPrediction() {
+	public void novakDjokovicVsRafaelNadalPotentialRolandGarrosFinalPrediction() {
 		int playerId1 = playerService.findPlayerId("Novak Djokovic").get();
 		int playerId2 = playerService.findPlayerId("Rafael Nadal").get();
 		MatchPrediction prediction = predictionService.predictMatch(playerId1, playerId2, new Date(), CLAY, GRAND_SLAM, F, (short)5);

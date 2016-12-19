@@ -2,8 +2,8 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 public enum EloPredictionItem implements PredictionItem {
 
-	ELO(1.0),
-	SURFACE_ELO(2.0);
+	OVERALL(1.0),
+	SURFACE(2.0);
 
 	private final double weight;
 
