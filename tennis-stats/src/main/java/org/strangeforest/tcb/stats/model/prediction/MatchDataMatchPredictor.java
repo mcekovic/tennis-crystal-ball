@@ -7,12 +7,10 @@ import java.util.function.*;
 import org.strangeforest.tcb.stats.model.*;
 
 import static java.lang.Math.*;
-import static org.strangeforest.tcb.stats.model.prediction.MatchPredictionItem.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
 public abstract class MatchDataMatchPredictor implements MatchPredictor {
 
-	private static final Period RECENT_PERIOD = Period.ofYears(2);
 	protected final List<MatchData> matchData1;
 	protected final List<MatchData> matchData2;
 	protected final int playerId1;
@@ -34,21 +32,30 @@ public abstract class MatchDataMatchPredictor implements MatchPredictor {
 		this.round = round;
 		this.surface = surface;
 	}
+	protected abstract Period recentPeriod();
 
 	@Override public MatchPrediction predictMatch() {
 		MatchPrediction prediction = new MatchPrediction();
-		addItemProbabilities(prediction, OVERALL, ALWAYS_TRUE);
-		addItemProbabilities(prediction, SURFACE, isSurface(surface.getCode()));
-		addItemProbabilities(prediction, LEVEL, isLevel(level.getCode()));
-		addItemProbabilities(prediction, ROUND, isRound(round.getCode()));
-		addItemProbabilities(prediction, RECENT, isRecent(date, RECENT_PERIOD));
-		addItemProbabilities(prediction, SURFACE_RECENT, isSurface(surface.getCode()).and(isRecent(date, RECENT_PERIOD)));
-		addItemProbabilities(prediction, SET, ALWAYS_TRUE);
-		addItemProbabilities(prediction, SURFACE_SET, isSurface(surface.getCode()));
+		addItemProbabilities(prediction, "MATCH", ALWAYS_TRUE);
+		addItemProbabilities(prediction, "SURFACE", isSurface(surface));
+		addItemProbabilities(prediction, "LEVEL", isLevel(level));
+		addItemProbabilities(prediction, "ROUND", isRound(round));
+		addItemProbabilities(prediction, "RECENT", isRecent(date, recentPeriod()));
+		addItemProbabilities(prediction, "SURFACE_RECENT", isSurface(surface).and(isRecent(date, recentPeriod())));
+		addItemProbabilities(prediction, "LEVEL_RECENT", isLevel(level).and(isRecent(date, recentPeriod())));
+		addItemProbabilities(prediction, "ROUND_RECENT", isRound(round).and(isRecent(date, recentPeriod())));
+		addItemProbabilities(prediction, "SET", ALWAYS_TRUE);
+		addItemProbabilities(prediction, "SURFACE_SET", isSurface(surface));
+		addItemProbabilities(prediction, "LEVEL_SET", isLevel(level));
+		addItemProbabilities(prediction, "ROUND_SET", isRound(round));
+		addItemProbabilities(prediction, "RECENT_SET", isRecent(date, recentPeriod()));
+		addItemProbabilities(prediction, "SURFACE_RECENT_SET", isSurface(surface).and(isRecent(date, recentPeriod())));
+		addItemProbabilities(prediction, "LEVEL_RECENT_SET", isLevel(level).and(isRecent(date, recentPeriod())));
+		addItemProbabilities(prediction, "ROUND_RECENT_SET", isRound(round).and(isRecent(date, recentPeriod())));
 		return prediction;
 	}
 
-	protected abstract void addItemProbabilities(MatchPrediction prediction, MatchPredictionItem item, Predicate<MatchData> filter);
+	protected abstract void addItemProbabilities(MatchPrediction prediction, String itemName, Predicate<MatchData> filter);
 
 	protected static double weight(long total) {
 		return total > 10 ? 1.0 : total / 10.0;
@@ -58,8 +65,8 @@ public abstract class MatchDataMatchPredictor implements MatchPredictor {
 		return sqrt(weight(total1) * weight(total2));
 	}
 
-	protected DoubleUnaryOperator probabilityTransformer(MatchPredictionItem item) {
-		return item.forSet() ? matchProbability() : DoubleUnaryOperator.identity();
+	protected DoubleUnaryOperator probabilityTransformer(boolean forSet) {
+		return forSet ? matchProbability() : DoubleUnaryOperator.identity();
 	}
 
 	private DoubleUnaryOperator matchProbability() {
@@ -80,19 +87,19 @@ public abstract class MatchDataMatchPredictor implements MatchPredictor {
 
 	private static final Predicate<MatchData> ALWAYS_TRUE = m -> Boolean.TRUE;
 
-	private static Predicate<MatchData> isSurface(String surface) {
-		return m -> Objects.equals(m.getSurface(), surface);
+	private static Predicate<MatchData> isSurface(Surface surface) {
+		return match -> Objects.equals(match.getSurface(), surface != null ? surface.getCode() : null);
 	}
 
-	private static Predicate<MatchData> isLevel(String level) {
-		return m -> Objects.equals(m.getLevel(), level);
+	private static Predicate<MatchData> isLevel(TournamentLevel level) {
+		return match -> Objects.equals(match.getLevel(), level.getCode());
 	}
 
-	private static Predicate<MatchData> isRound(String round) {
-		return m -> Objects.equals(m.getRound(), round);
+	private static Predicate<MatchData> isRound(Round round) {
+		return match -> Objects.equals(match.getRound(), round.getCode());
 	}
 
 	private static Predicate<MatchData> isRecent(Date date, Period period) {
-		return m -> toLocalDate(m.getDate()).compareTo(toLocalDate(date).minus(period)) >= 0;
+		return match -> toLocalDate(match.getDate()).compareTo(toLocalDate(date).minus(period)) >= 0;
 	}
 }

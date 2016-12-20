@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 import static com.google.common.base.MoreObjects.*;
 
-public class WeightedProbability {
+public final class WeightedProbability {
 
 	private final PredictionArea area;
 	private final PredictionItem item;

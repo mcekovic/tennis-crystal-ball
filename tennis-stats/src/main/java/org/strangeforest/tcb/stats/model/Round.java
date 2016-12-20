@@ -40,4 +40,8 @@ public enum Round implements CodedEnum {
 	@Override public String getText() {
 		return text;
 	}
+
+	public static Round decode(String code) {
+		return CodedEnum.decode(Round.class, code);
+	}
 }

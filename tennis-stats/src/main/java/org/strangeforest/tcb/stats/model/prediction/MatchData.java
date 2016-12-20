@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 import java.util.*;
 
-public class MatchData {
+public final class MatchData {
 
 	private final Date date;
 	private final String level;

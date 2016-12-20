@@ -1,6 +1,8 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
-public class EloRating {
+public final class EloRating {
+
+	public static final EloRating NO_RATING = new EloRating(null, null);
 
 	private final Integer eloRating;
 	private final Integer surfaceEloRating;

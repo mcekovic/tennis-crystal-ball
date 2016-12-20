@@ -24,7 +24,13 @@ class MatchScore {
 	}
 
 	Short getBestOf() {
-		outcome == null ? w_sets : null
+		if (!outcome) {
+			if (w_sets == (short)2)
+				3
+			else if (w_sets == (short)3)
+				5
+		}
+		null
 	}
 
 	boolean equals(Object o) {

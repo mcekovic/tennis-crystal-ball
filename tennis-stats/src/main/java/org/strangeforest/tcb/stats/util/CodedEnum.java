@@ -18,7 +18,11 @@ public interface CodedEnum {
 		throw new IllegalArgumentException(String.format("Invalid %1$s code: %2$s", enumClass.getSimpleName(), code));
 	}
 
+	static <E extends Enum<E> & CodedEnum> E safeDecode(Class<E> enumClass, String code) {
+		return code != null ? decode(enumClass, code) : null;
+	}
+
 	static <E extends Enum<E> & CodedEnum> Map<String, String> asMap(Class<E> enumClass) {
-		return Stream.of(enumClass.getEnumConstants()).collect(toMap(e -> e.getCode(), e -> e.getText()));
+		return Stream.of(enumClass.getEnumConstants()).collect(toMap(CodedEnum::getCode, CodedEnum::getText));
 	}
 }

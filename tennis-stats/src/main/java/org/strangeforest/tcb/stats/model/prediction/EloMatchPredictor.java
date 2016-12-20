@@ -17,10 +17,10 @@ public class EloMatchPredictor implements MatchPredictor {
 
 	@Override public MatchPrediction predictMatch() {
 		MatchPrediction prediction = new MatchPrediction();
-		EloRating eloRatings1 = eloRatings.getEloRatings1();
-		EloRating eloRatings2 = eloRatings.getEloRatings2();
-		addItemProbabilities(prediction, OVERALL, eloRatings1.getEloRating(), eloRatings2.getEloRating());
-		addItemProbabilities(prediction, SURFACE, eloRatings1.getSurfaceEloRating(), eloRatings2.getSurfaceEloRating());
+		EloRating eloRating1 = eloRatings.getEloRating1();
+		EloRating eloRating2 = eloRatings.getEloRating2();
+		addItemProbabilities(prediction, OVERALL, eloRating1.getEloRating(), eloRating2.getEloRating());
+		addItemProbabilities(prediction, SURFACE, eloRating1.getSurfaceEloRating(), eloRating2.getSurfaceEloRating());
 		return prediction;
 	}
 

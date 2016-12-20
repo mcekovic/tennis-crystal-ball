@@ -1,20 +1,20 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
-public class MatchEloRatings {
+public final class MatchEloRatings {
 
-	private final EloRating eloRatings1;
-	private final EloRating eloRatings2;
+	private final EloRating eloRating1;
+	private final EloRating eloRating2;
 
-	public MatchEloRatings(EloRating eloRatings1, EloRating eloRatings2) {
-		this.eloRatings1 = eloRatings1;
-		this.eloRatings2 = eloRatings2;
+	public MatchEloRatings(EloRating eloRating1, EloRating eloRating2) {
+		this.eloRating1 = eloRating1;
+		this.eloRating2 = eloRating2;
 	}
 
-	public EloRating getEloRatings1() {
-		return eloRatings1;
+	public EloRating getEloRating1() {
+		return eloRating1;
 	}
 
-	public EloRating getEloRatings2() {
-		return eloRatings2;
+	public EloRating getEloRating2() {
+		return eloRating2;
 	}
 }

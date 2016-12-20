@@ -4,7 +4,7 @@ import java.util.*;
 
 import static java.util.stream.Collectors.*;
 
-public class MatchPrediction {
+public final class MatchPrediction {
 
 	private final List<WeightedProbability> itemProbabilities1 = new ArrayList<>();
 	private final List<WeightedProbability> itemProbabilities2 = new ArrayList<>();
@@ -42,27 +42,41 @@ public class MatchPrediction {
 		return itemProbabilities2;
 	}
 
+	public double getItemProbabilitiesWeight1() {
+		return itemProbabilities1.stream().mapToDouble(WeightedProbability::getWeight).sum();
+	}
+
+	public double getItemProbabilitiesWeight2() {
+		return itemProbabilities2.stream().mapToDouble(WeightedProbability::getWeight).sum();
+	}
+
 	public boolean isEmpty() {
 		return itemProbabilities1.isEmpty() && itemProbabilities2.isEmpty();
 	}
 
 	public void addItemProbability1(PredictionArea area, PredictionItem item, double weight, double probability) {
-		itemProbabilities1.add(new WeightedProbability(area, item, weight, probability));
-		winProbability1 = null;
+		if (weight > 0.0) {
+			itemProbabilities1.add(new WeightedProbability(area, item, weight, probability));
+			winProbability1 = null;
+		}
 	}
 
 	public void addItemProbability2(PredictionArea area, PredictionItem item, double weight, double probability) {
-		itemProbabilities2.add(new WeightedProbability(area, item, weight, probability));
-		winProbability2 = null;
+		if (weight > 0.0) {
+			itemProbabilities2.add(new WeightedProbability(area, item, weight, probability));
+			winProbability2 = null;
+		}
 	}
 
 	public void addAreaProbabilities(PredictionArea area, MatchPrediction prediction) {
-		if (!prediction.isEmpty()) {
+		if (!prediction.isEmpty() && area.weight() > 0.0) {
 			double weight = area.itemAdjustmentWeight();
-			itemProbabilities1.addAll(prediction.getItemProbabilities1(weight));
-			itemProbabilities2.addAll(prediction.getItemProbabilities2(weight));
-			winProbability1 = null;
-			winProbability2 = null;
+			if (weight > 0.0) {
+				itemProbabilities1.addAll(prediction.getItemProbabilities1(weight));
+				itemProbabilities2.addAll(prediction.getItemProbabilities2(weight));
+				winProbability1 = null;
+				winProbability2 = null;
+			}
 		}
 	}
 

@@ -2,11 +2,11 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 import java.util.stream.*;
 
-public enum PredictionArea implements PredictionItem {
+public enum PredictionArea implements Weighted {
 
 	ELO(1.0, EloPredictionItem.class),
-	H2H(1.0, MatchPredictionItem.class),
-	WINNING_PCT(1.0, MatchPredictionItem.class);
+	H2H(1.0, H2HPredictionItem.class),
+	WINNING_PCT(1.0, WinningPctPredictionItem.class);
 
 	private final double weight;
 	private final Class<? extends PredictionItem> itemClass;
