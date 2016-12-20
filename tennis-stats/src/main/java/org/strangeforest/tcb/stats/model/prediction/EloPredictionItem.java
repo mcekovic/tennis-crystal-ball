@@ -5,13 +5,17 @@ public enum EloPredictionItem implements PredictionItem, Weighted {
 	OVERALL(1.0),
 	SURFACE(1.0);
 
-	private final double weight;
+	private volatile double weight;
 
 	EloPredictionItem(double weight) {
 		this.weight = weight;
 	}
 
-	@Override public double weight() {
+	@Override public double getWeight() {
 		return weight;
+	}
+
+	@Override public void setWeight(double weight) {
+		this.weight = weight;
 	}
 }

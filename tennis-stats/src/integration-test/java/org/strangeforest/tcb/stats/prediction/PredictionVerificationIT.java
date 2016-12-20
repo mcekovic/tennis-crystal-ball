@@ -37,7 +37,7 @@ public class PredictionVerificationIT extends AbstractTestNGSpringContextTests {
 		AtomicInteger total = new AtomicInteger();
 		AtomicInteger predicted = new AtomicInteger();
 		AtomicInteger hits = new AtomicInteger();
-		for (MatchForVerification match : matches(LocalDate.of(1970, 1, 1), LocalDate.now())) {
+		for (MatchForVerification match : matches(LocalDate.of(2000, 1, 1), LocalDate.now())) {
 			executor.execute(() -> {
 				MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.surface, match.level, match.round, match.best_of);
 				if (!prediction.isEmpty()) {

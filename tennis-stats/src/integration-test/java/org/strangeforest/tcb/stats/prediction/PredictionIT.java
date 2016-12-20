@@ -39,7 +39,7 @@ public class PredictionIT extends AbstractTestNGSpringContextTests {
 		System.out.println(prediction.getItemProbabilitiesWeight1());
 		System.out.println(prediction.getItemProbabilitiesWeight2());
 		assertThat(prediction.getItemProbabilitiesWeight1()).isEqualTo(prediction.getItemProbabilitiesWeight2());
-		double totalWeight = Stream.of(PredictionArea.values()).mapToDouble(PredictionArea::weight).sum();
+		double totalWeight = Stream.of(PredictionArea.values()).mapToDouble(PredictionArea::getWeight).sum();
 		assertThat(prediction.getItemProbabilitiesWeight1()).isLessThanOrEqualTo(totalWeight);
 		assertThat(prediction.getItemProbabilitiesWeight2()).isLessThanOrEqualTo(totalWeight);
 	}

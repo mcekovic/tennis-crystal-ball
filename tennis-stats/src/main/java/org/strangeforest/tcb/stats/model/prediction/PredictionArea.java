@@ -4,29 +4,34 @@ import java.util.stream.*;
 
 public enum PredictionArea implements Weighted {
 
-	ELO(1.0, EloPredictionItem.class),
-	H2H(1.0, H2HPredictionItem.class),
-	WINNING_PCT(1.0, WinningPctPredictionItem.class);
+	ELO(EloPredictionItem.class, 1.0),
+	H2H(H2HPredictionItem.class, 1.0),
+	WINNING_PCT(WinningPctPredictionItem.class, 1.0);
 
-	private final double weight;
 	private final Class<? extends PredictionItem> itemClass;
-	private final double itemAdjustmentWeight;
+	private volatile double weight;
+	private volatile double itemAdjustmentWeight;
 
-	PredictionArea(double weight, Class<? extends PredictionItem> itemClass) {
-		this.weight = weight;
+	PredictionArea(Class<? extends PredictionItem> itemClass, double weight) {
 		this.itemClass = itemClass;
-		itemAdjustmentWeight = calculateItemAdjustmentWeight();
+		setWeight(weight);
 	}
 
-	@Override public double weight() {
+	public PredictionItem[] getItems() {
+		return itemClass.getEnumConstants();
+	}
+
+	@Override public double getWeight() {
 		return weight;
+	}
+
+	@Override public void setWeight(double weight) {
+		this.weight = weight;
+		itemAdjustmentWeight = weight / Stream.of(getItems()).mapToDouble(PredictionItem::getWeight).sum();
 	}
 
 	public double itemAdjustmentWeight() {
 		return itemAdjustmentWeight;
 	}
 
-	private double calculateItemAdjustmentWeight() {
-		return weight / Stream.of(itemClass.getEnumConstants()).mapToDouble(PredictionItem::weight).sum();
-	}
 }

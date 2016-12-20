@@ -13,7 +13,7 @@ public class EloMatchPredictor implements MatchPredictor {
 		this.rankingData2 = rankingData2;
 	}
 
-	@Override public PredictionArea area() {
+	@Override public PredictionArea getArea() {
 		return PredictionArea.ELO;
 	}
 
@@ -25,10 +25,10 @@ public class EloMatchPredictor implements MatchPredictor {
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, EloPredictionItem item, Integer eloRating1, Integer eloRating2) {
-		double eloWeight = item.weight() * eloWeight(eloRating1, eloRating2);
+		double eloWeight = item.getWeight() * eloWeight(eloRating1, eloRating2);
 		if (eloWeight > 0.0) {
-			prediction.addItemProbability1(area(), item, eloWeight, eloWinProbability(eloRating1, eloRating2));
-			prediction.addItemProbability2(area(), item, eloWeight, eloWinProbability(eloRating2, eloRating1));
+			prediction.addItemProbability1(getArea(), item, eloWeight, eloWinProbability(eloRating1, eloRating2));
+			prediction.addItemProbability2(getArea(), item, eloWeight, eloWinProbability(eloRating2, eloRating1));
 		}
 	}
 
