@@ -56,8 +56,9 @@ public class MatchPrediction {
 		winProbability2 = null;
 	}
 
-	public void addPrediction(MatchPrediction prediction, double weight) {
+	public void addAreaProbabilities(PredictionArea area, MatchPrediction prediction) {
 		if (!prediction.isEmpty()) {
+			double weight = area.itemAdjustmentWeight();
 			itemProbabilities1.addAll(prediction.getItemProbabilities1(weight));
 			itemProbabilities2.addAll(prediction.getItemProbabilities2(weight));
 			winProbability1 = null;
@@ -66,12 +67,10 @@ public class MatchPrediction {
 	}
 
 	private List<WeightedProbability> getItemProbabilities1(double weight) {
-		double proportionalWeight = weight / itemProbabilities1.stream().mapToDouble(WeightedProbability::getWeight).sum();
-		return itemProbabilities1.stream().map(p -> p.weighted(proportionalWeight)).collect(toList());
+		return itemProbabilities1.stream().map(p -> p.weighted(weight)).collect(toList());
 	}
 
 	private List<WeightedProbability> getItemProbabilities2(double weight) {
-		double proportionalWeight = weight / itemProbabilities2.stream().mapToDouble(WeightedProbability::getWeight).sum();
-		return itemProbabilities2.stream().map(p -> p.weighted(proportionalWeight)).collect(toList());
+		return itemProbabilities2.stream().map(p -> p.weighted(weight)).collect(toList());
 	}
 }

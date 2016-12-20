@@ -45,7 +45,7 @@ public class MatchPredictionService {
 	private MatchPrediction predictMatch(Iterable<MatchPredictor> predictors) {
 		MatchPrediction prediction = new MatchPrediction();
 		for (MatchPredictor predictor : predictors)
-			prediction.addPrediction(predictor.predictMatch(), predictor.area().weight());
+			prediction.addAreaProbabilities(predictor.area(), predictor.predictMatch());
 		return prediction;
 	}
 
