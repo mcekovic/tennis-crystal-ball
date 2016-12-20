@@ -9,17 +9,23 @@ public final class MatchData {
 	private final String surface;
 	private final String round;
 	private final int opponentId;
+	private final Integer opponentRank;
+	private final String opponentHand;
+	private final String opponentBackhand;
 	private final int pMatches;
 	private final int oMatches;
 	private final int pSets;
 	private final int oSets;
 
-	public MatchData(Date date, String level, String surface, String round, int opponentId, int pMatches, int oMatches, int pSets, int oSets) {
+	public MatchData(Date date, String level, String surface, String round, int opponentId, Integer opponentRank, String opponentHand, String opponentBackhand, int pMatches, int oMatches, int pSets, int oSets) {
 		this.date = date;
 		this.level = level;
 		this.surface = surface;
 		this.round = round;
 		this.opponentId = opponentId;
+		this.opponentRank = opponentRank;
+		this.opponentHand = opponentHand;
+		this.opponentBackhand = opponentBackhand;
 		this.pMatches = pMatches;
 		this.oMatches = oMatches;
 		this.pSets = pSets;
@@ -44,6 +50,18 @@ public final class MatchData {
 
 	public int getOpponentId() {
 		return opponentId;
+	}
+
+	public Integer getOpponentRank() {
+		return opponentRank;
+	}
+
+	public String getOpponentHand() {
+		return opponentHand;
+	}
+
+	public String getOpponentBackhand() {
+		return opponentBackhand;
 	}
 
 	public int getPMatches() {

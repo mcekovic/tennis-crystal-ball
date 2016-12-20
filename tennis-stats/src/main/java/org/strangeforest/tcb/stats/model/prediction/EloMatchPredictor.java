@@ -5,10 +5,12 @@ import static org.strangeforest.tcb.stats.model.prediction.EloPredictionItem.*;
 
 public class EloMatchPredictor implements MatchPredictor {
 
-	private final MatchEloRatings eloRatings;
+	private final RankingData rankingData1;
+	private final RankingData rankingData2;
 
-	public EloMatchPredictor(MatchEloRatings eloRatings) {
-		this.eloRatings = eloRatings;
+	public EloMatchPredictor(RankingData rankingData1, RankingData rankingData2) {
+		this.rankingData1 = rankingData1;
+		this.rankingData2 = rankingData2;
 	}
 
 	@Override public PredictionArea area() {
@@ -17,10 +19,8 @@ public class EloMatchPredictor implements MatchPredictor {
 
 	@Override public MatchPrediction predictMatch() {
 		MatchPrediction prediction = new MatchPrediction();
-		EloRating eloRating1 = eloRatings.getEloRating1();
-		EloRating eloRating2 = eloRatings.getEloRating2();
-		addItemProbabilities(prediction, OVERALL, eloRating1.getEloRating(), eloRating2.getEloRating());
-		addItemProbabilities(prediction, SURFACE, eloRating1.getSurfaceEloRating(), eloRating2.getSurfaceEloRating());
+		addItemProbabilities(prediction, OVERALL, rankingData1.getEloRating(), rankingData2.getEloRating());
+		addItemProbabilities(prediction, SURFACE, rankingData1.getSurfaceEloRating(), rankingData2.getSurfaceEloRating());
 		return prediction;
 	}
 

@@ -7,46 +7,58 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
-import org.strangeforest.tcb.stats.model.prediction.EloRating;
 
 import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.model.prediction.EloRating.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
 @Service
 public class MatchPredictionService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
-	private ConcurrentMap<EloRatingKey, EloRating> playersEloRatings = new ConcurrentHashMap<>();
+	private ConcurrentMap<Integer, PlayerData> players = new ConcurrentHashMap<>();
+	private ConcurrentMap<RankingKey, RankingData> playersRankings = new ConcurrentHashMap<>();
 	private ConcurrentMap<Integer, List<MatchData>> playersMatches = new ConcurrentHashMap<>();
+
+	private static final String PLAYER_QUERY =
+		"SELECT hand, backhand FROM player\n" +
+		"WHERE player_id = :playerId";
+
+	private static final String PLAYER_RANKING_QUERY =
+		"SELECT rank FROM player_ranking\n" +
+		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1' YEAR) AND :date\n" +
+		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_ELO_RATINGS_QUERY = //language=SQL
 		"SELECT elo_rating, %1$selo_rating FROM player_elo_ranking\n" +
 		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1' YEAR) AND :date\n" +
 		"ORDER BY rank_date DESC LIMIT 1";
 
-	private static final String PLAYER_MATCHES_QUERY = //language=SQL
-		"SELECT date, level, surface, round, opponent_id, p_matches, o_matches, p_sets, o_sets\n" +
-		"FROM player_match_for_stats_v\n" +
-		"WHERE player_id = :playerId\n" +
-		"ORDER BY date";
+	private static final String PLAYER_MATCHES_QUERY =
+		"SELECT m.date, m.level, m.surface, m.round, m.opponent_id, m.opponent_rank, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
+		"FROM player_match_for_stats_v m\n" +
+		"LEFT JOIN player p ON p.player_id = m.opponent_id\n" +
+		"WHERE m.player_id = :playerId\n" +
+		"ORDER BY m.date";
 
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date, Surface surface, TournamentLevel level, Round round, short bestOf) {
-		MatchEloRatings eloRatings = getMatchEloRatings(playerId1, playerId2, date, surface);
+		PlayerData playerData1 = getPlayerData(playerId1);
+		PlayerData playerData2 = getPlayerData(playerId2);
+		RankingData rankingData1 = getRankingData(playerId1, date, surface);
+		RankingData rankingData2 = getRankingData(playerId2, date, surface);
 		List<MatchData> matchData1 = getMatchData(playerId1, date);
 		List<MatchData> matchData2 = getMatchData(playerId2, date);
 		return predictMatch(asList(
-			new EloMatchPredictor(eloRatings),
+			new EloMatchPredictor(rankingData1, rankingData2),
 			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date, surface, level, round, bestOf),
-			new WinningPctMatchPredictor(matchData1, matchData2, playerId1, playerId2, date, surface, level, round, bestOf)
+			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date, surface, level, round, bestOf)
 		));
 	}
 
@@ -58,37 +70,55 @@ public class MatchPredictionService {
 	}
 
 
-	// Elo Data
+	// Player Data
 
-	private MatchEloRatings getMatchEloRatings(int playerId1, int playerId2, Date date, Surface surface) {
-		EloRating eloRating1 = getEloRating(playerId1, date, surface);
-		EloRating eloRating2 = getEloRating(playerId2, date, surface);
-		return new MatchEloRatings(eloRating1, eloRating2);
+	private PlayerData getPlayerData(int playerId) {
+		return players.computeIfAbsent(playerId, this::fetchPlayerData);
 	}
 
-	private EloRating getEloRating(int playerId, Date date, Surface surface) {
-		return playersEloRatings.computeIfAbsent(new EloRatingKey(playerId, date, surface), this::fetchEloRating);
-	}
-
-	private EloRating fetchEloRating(EloRatingKey key) {
-		String surfacePrefix = key.surface != null ? key.surface.getText().toLowerCase() + '_' : "";
+	private PlayerData fetchPlayerData(int playerId) {
 		return jdbcTemplate.query(
-			format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix),
-			params("playerId", key.playerId).addValue("date", key.date),
-			eloRatingExtractor(surfacePrefix)
+			PLAYER_QUERY,
+			params("playerId", playerId),
+			rs -> {
+				if (rs.next()) {
+					String hand = rs.getString("hand");
+					String backhand = rs.getString("backhand");
+					return new PlayerData(hand, backhand);
+				}
+				else
+					throw new IllegalArgumentException(format("Player %1$d not found.", playerId));
+			}
 		);
 	}
 
-	private static ResultSetExtractor<EloRating> eloRatingExtractor(String surfacePrefix) {
-		return rs -> {
-			if (rs.next()) {
-				Integer eloRating = rs.getInt("elo_rating");
-				Integer surfaceEloRating = !surfacePrefix.isEmpty() ? rs.getInt(surfacePrefix + "elo_rating") : null;
-				return new EloRating(eloRating, surfaceEloRating);
+
+	// Ranking Data
+
+	private RankingData getRankingData(int playerId, Date date, Surface surface) {
+		return playersRankings.computeIfAbsent(new RankingKey(playerId, date, surface), this::fetchRankingData);
+	}
+
+	private RankingData fetchRankingData(RankingKey key) {
+		RankingData rankingData = new RankingData();
+		jdbcTemplate.query(
+			PLAYER_RANKING_QUERY,
+			params("playerId", key.playerId).addValue("date", key.date),
+			rs -> {
+				rankingData.setRank(getInteger(rs, "rank"));
 			}
-			else
-				return NO_RATING;
-		};
+		);
+		String surfacePrefix = key.surface != null ? key.surface.getText().toLowerCase() + '_' : "";
+		jdbcTemplate.query(
+			format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix),
+			params("playerId", key.playerId).addValue("date", key.date),
+			rs -> {
+				rankingData.setEloRating(getInteger(rs, "elo_rating"));
+				if (!surfacePrefix.isEmpty())
+					rankingData.setSurfaceEloRating(getInteger(rs, surfacePrefix + "elo_rating"));
+			}
+		);
+		return rankingData;
 	}
 
 
@@ -114,6 +144,9 @@ public class MatchPredictionService {
 			rs.getString("surface"),
 			rs.getString("round"),
 			rs.getInt("opponent_id"),
+			getInteger(rs, "opponent_rank"),
+			rs.getString("opponent_hand"),
+			rs.getString("opponent_backhand"),
 			rs.getInt("p_matches"),
 			rs.getInt("o_matches"),
 			rs.getInt("p_sets"),
@@ -121,13 +154,13 @@ public class MatchPredictionService {
 		);
 	}
 
-	private static final class EloRatingKey {
+	private static final class RankingKey {
 
 		public final int playerId;
 		public final Date date;
 		public final Surface surface;
 
-		public EloRatingKey(int playerId, Date date, Surface surface) {
+		public RankingKey(int playerId, Date date, Surface surface) {
 			this.playerId = playerId;
 			this.date = date;
 			this.surface = surface;
@@ -135,8 +168,8 @@ public class MatchPredictionService {
 
 		@Override public boolean equals(Object o) {
 			if (this == o) return true;
-			if (!(o instanceof EloRatingKey)) return false;
-			EloRatingKey key = (EloRatingKey)o;
+			if (!(o instanceof RankingKey)) return false;
+			RankingKey key = (RankingKey)o;
 			return playerId == key.playerId && Objects.equals(date, key.date) && Objects.equals(surface, key.surface);
 		}
 

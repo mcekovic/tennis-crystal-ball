@@ -10,6 +10,9 @@ public enum WinningPctPredictionItem implements MatchPredictionItem {
 	SURFACE_RECENT(1.0, false),
 	LEVEL_RECENT(0.0, false),
 	ROUND_RECENT(0.0, false),
+	VS_RANK(1.0, false),
+	VS_HAND(1.0, false),
+	VS_BACKHAND(1.0, false),
 	SET(1.0, true),
 	SURFACE_SET(1.0, true),
 	LEVEL_SET(0.0, true),
@@ -17,7 +20,10 @@ public enum WinningPctPredictionItem implements MatchPredictionItem {
 	RECENT_SET(0.0, true),
 	SURFACE_RECENT_SET(0.0, true),
 	LEVEL_RECENT_SET(0.0, true),
-	ROUND_RECENT_SET(0.0, true);
+	ROUND_RECENT_SET(0.0, true),
+	VS_RANK_SET(1.0, true),
+	VS_HAND_SET(1.0, true),
+	VS_BACKHAND_SET(1.0, true);
 
 	private final double weight;
 	private final boolean forSet;
