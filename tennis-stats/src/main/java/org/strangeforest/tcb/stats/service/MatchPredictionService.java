@@ -56,7 +56,7 @@ public class MatchPredictionService {
 		List<MatchData> matchData1 = getMatchData(playerId1, date);
 		List<MatchData> matchData2 = getMatchData(playerId2, date);
 		return predictMatch(asList(
-			new EloMatchPredictor(rankingData1, rankingData2),
+			new RankingMatchPredictor(rankingData1, rankingData2),
 			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date, surface, level, round, bestOf),
 			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date, surface, level, round, bestOf)
 		));

@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 import java.util.*;
 import java.util.Optional;
+import java.util.regex.*;
 import java.util.stream.*;
 
 import com.google.common.base.*;
@@ -10,17 +11,20 @@ public class PredictionConfig {
 
 	private static volatile Properties props = new Properties();
 
+	private static final Pattern AREA_PATTERN = Pattern.compile("area\\.\\w+");
+	private static final Pattern ITEM_PATTERN = Pattern.compile("item\\.\\w+\\.\\w+");
+
 	public static void set(Properties props) {
 		for (String name : props.stringPropertyNames()) {
 			String value = props.getProperty(name);
 			if (Strings.isNullOrEmpty(value))
 				continue;
-			if (name.matches("area\\.\\w+")) {
+			if (AREA_PATTERN.matcher(name).matches()) {
 				String areaName = name.substring(5);
 				double weight = Double.parseDouble(value);
 				PredictionArea.valueOf(areaName).setWeight(weight);
 			}
-			else if (name.matches("item\\.\\w+\\.\\w+")) {
+			else if (ITEM_PATTERN.matcher(name).matches()) {
 				int pos = name.indexOf('.', 5);
 				String areaName = name.substring(5, pos);
 				String itemName = name.substring(pos + 1);
