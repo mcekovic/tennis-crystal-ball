@@ -14,7 +14,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	}
 
 	@Override public PredictionArea getArea() {
-		return PredictionArea.ELO;
+		return PredictionArea.RANKING;
 	}
 
 	@Override public MatchPrediction predictMatch() {

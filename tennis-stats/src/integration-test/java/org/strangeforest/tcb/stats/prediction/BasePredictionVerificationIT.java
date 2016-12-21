@@ -15,7 +15,9 @@ import org.strangeforest.tcb.stats.service.*;
 
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.params;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+
+import java.lang.String;
 
 public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringContextTests {
 
@@ -33,7 +35,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		"ORDER BY date";
 
 
-	protected void verifyPrediction(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
+	protected PredictionResult verifyPrediction(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
 		System.out.printf("\nVerifying prediction from %1$s to %2$s and weights:\n", fromDate, toDate);
 		printWeights();
 		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
@@ -58,8 +60,11 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		}
 		executor.shutdown();
 		executor.awaitTermination(1L, TimeUnit.HOURS);
-		System.out.printf("\nPredicted: %1$.2f%%\n", 100.0 * predicted.get() / total.get());
-		System.out.printf("Prediction rate: %1$.2f%%\n", 100.0 * hits.get() / predicted.get());
+		double predictablePct = 100.0 * predicted.get() / total.get();
+		double predictionRate = 100.0 * hits.get() / predicted.get();
+		System.out.printf("\nPredictable: %1$.2f%%\n", predictablePct);
+		System.out.printf("Prediction rate: %1$.2f%%\n", predictionRate);
+		return new PredictionResult(predictablePct, predictionRate);
 	}
 
 	private List<MatchForVerification> matches(LocalDate date1, LocalDate date2) {
@@ -82,7 +87,26 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		);
 	}
 
-	private static void printWeights() {
+	protected static void resetWeights(double weight) {
+		resetWeights(weight, weight);
+	}
+
+	protected static void resetWeights(double areaWeight, double itemWeight) {
+		for (PredictionArea area : PredictionArea.values())
+			resetWeights(area, areaWeight, itemWeight);
+	}
+
+	protected static void resetWeights(PredictionArea area, double weight) {
+		resetWeights(area, weight, weight);
+	}
+
+	private static void resetWeights(PredictionArea area, double areaWeight, double itemWeight) {
+		area.setWeight(areaWeight);
+		for (PredictionItem item : area.getItems())
+			item.setWeight(itemWeight);
+	}
+
+	protected static void printWeights() {
 		for (PredictionArea area : PredictionArea.values()) {
 			double areaWeight = area.getWeight();
 			if (areaWeight > 0.0) {

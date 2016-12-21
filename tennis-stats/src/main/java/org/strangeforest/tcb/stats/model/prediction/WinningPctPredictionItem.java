@@ -25,12 +25,21 @@ public enum WinningPctPredictionItem implements MatchPredictionItem {
 	VS_HAND_SET(true, 1.0),
 	VS_BACKHAND_SET(true, 1.0);
 
+	private volatile PredictionArea area;
 	private final boolean forSet;
 	private volatile double weight;
 
 	WinningPctPredictionItem(boolean forSet, double weight) {
 		this.forSet = forSet;
 		this.weight = weight;
+	}
+
+	@Override public PredictionArea getArea() {
+		return area;
+	}
+
+	@Override public void setArea(PredictionArea area) {
+		this.area = area;
 	}
 
 	@Override public boolean isForSet() {
@@ -43,5 +52,6 @@ public enum WinningPctPredictionItem implements MatchPredictionItem {
 
 	@Override public void setWeight(double weight) {
 		this.weight = weight;
+		area.calculateItemAdjustmentWeight();
 	}
 }

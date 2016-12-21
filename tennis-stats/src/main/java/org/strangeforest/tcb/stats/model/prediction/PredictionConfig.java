@@ -9,14 +9,24 @@ import com.google.common.base.*;
 
 public class PredictionConfig {
 
-	private static volatile Properties props = new Properties();
+	private static volatile Properties config = new Properties();
 
 	private static final Pattern AREA_PATTERN = Pattern.compile("area\\.\\w+");
 	private static final Pattern ITEM_PATTERN = Pattern.compile("item\\.\\w+\\.\\w+");
 
-	public static void set(Properties props) {
-		for (String name : props.stringPropertyNames()) {
-			String value = props.getProperty(name);
+	public static Properties get() {
+		Properties config = new Properties(PredictionConfig.config);
+		for (PredictionArea area : PredictionArea.values()) {
+			config.setProperty("area." + area, String.valueOf(area.getWeight()));
+			for (PredictionItem item : area.getItems())
+				config.setProperty("item." + area + '.' + item, String.valueOf(item.getWeight()));
+		}
+		return config;
+	}
+
+	public static void set(Properties config) {
+		for (String name : config.stringPropertyNames()) {
+			String value = config.getProperty(name);
 			if (Strings.isNullOrEmpty(value))
 				continue;
 			if (AREA_PATTERN.matcher(name).matches()) {
@@ -32,11 +42,11 @@ public class PredictionConfig {
 				Stream.of(PredictionArea.valueOf(areaName).getItems()).filter(item -> item.toString().equals(itemName)).findFirst().get().setWeight(weight);
 			}
 		}
-		PredictionConfig.props = props;
+		PredictionConfig.config = config;
 	}
 
 	public static Optional<Integer> getIntegerProperty(String name) {
-		String value = props.getProperty(name);
+		String value = config.getProperty(name);
 		return !Strings.isNullOrEmpty(value) ? Optional.of(Integer.parseInt(value)) : Optional.empty();
 	}
 }

@@ -19,12 +19,21 @@ public enum H2HPredictionItem implements MatchPredictionItem {
 	LEVEL_RECENT_SET(true, 0.0),
 	ROUND_RECENT_SET(true, 0.0);
 
+	private volatile PredictionArea area;
 	private final boolean forSet;
 	private volatile double weight;
 
 	H2HPredictionItem(boolean forSet, double weight) {
 		this.forSet = forSet;
 		this.weight = weight;
+	}
+
+	@Override public PredictionArea getArea() {
+		return area;
+	}
+
+	@Override public void setArea(PredictionArea area) {
+		this.area = area;
 	}
 
 	@Override public boolean isForSet() {
@@ -37,5 +46,6 @@ public enum H2HPredictionItem implements MatchPredictionItem {
 
 	@Override public void setWeight(double weight) {
 		this.weight = weight;
+		area.calculateItemAdjustmentWeight();
 	}
 }

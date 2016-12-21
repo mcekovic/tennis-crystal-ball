@@ -11,17 +11,6 @@ public final class MatchPrediction {
 	private Double winProbability1 = 0.5;
 	private Double winProbability2 = 0.5;
 
-	private double weightAverage(List<WeightedProbability> weightedProbabilities) {
-		double weightProbabilitySum = 0.0;
-		double weightSum = 0.0;
-		for (WeightedProbability itemProbability : weightedProbabilities) {
-			double weight = itemProbability.getWeight();
-			weightProbabilitySum += weight * itemProbability.getProbability();
-			weightSum += weight;
-		}
-		return weightProbabilitySum / weightSum;
-	}
-
 	public double getWinProbability1() {
 		if (winProbability1 == null)
 			winProbability1 = weightAverage(itemProbabilities1);
@@ -32,6 +21,17 @@ public final class MatchPrediction {
 		if (winProbability2 == null)
 			winProbability2 = weightAverage(itemProbabilities2);
 		return winProbability2;
+	}
+
+	private double weightAverage(List<WeightedProbability> weightedProbabilities) {
+		double weightProbabilitySum = 0.0;
+		double weightSum = 0.0;
+		for (WeightedProbability itemProbability : weightedProbabilities) {
+			double weight = itemProbability.getWeight();
+			weightProbabilitySum += weight * itemProbability.getProbability();
+			weightSum += weight;
+		}
+		return weightProbabilitySum / weightSum;
 	}
 
 	public List<WeightedProbability> getItemProbabilities1() {
