@@ -111,7 +111,7 @@ abstract class BaseCSVLoader {
 							executeWithBatch(loadSql, paramsSubBatch)
 						break
 					default:
-						throw buEx;
+						throw buEx
 				}
 			}
 		}

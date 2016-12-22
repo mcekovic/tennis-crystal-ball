@@ -17,13 +17,13 @@ class ATPTennisLoader {
 	}
 
 	def loadPlayers(loader) {
-		println 'Loading ATP players'
+		println 'Loading players'
 		loader.loadFile(baseDir() + 'atp_players.csv')
 		println()
 	}
 
 	def loadRankings(loader) {
-		println 'Loading ATP rankings'
+		println 'Loading rankings'
 		load {
 			def rows = 0
 			if (full) {
@@ -36,7 +36,7 @@ class ATPTennisLoader {
 	}
 
 	def loadMatches(loader) {
-		println 'Loading ATP matches'
+		println 'Loading matches'
 		load {
 			def rows = 0
 			if (full) {
@@ -45,6 +45,20 @@ class ATPTennisLoader {
 			}
 			def year = 2016
 			rows += loader.loadFile(baseDir() + "atp_matches_${year}.csv")
+		}
+		println()
+	}
+
+	def loadMatchPrices(loader) {
+		println 'Loading match prices'
+		load {
+			def rows = 0
+			if (full) {
+				for (year in 2001..2015)
+					rows += loader.loadFile(baseDir() + "match_prices_${year}.csv")
+			}
+			def year = 2016
+			rows += loader.loadFile(baseDir() + "match_prices_${year}.csv")
 		}
 		println()
 	}
@@ -64,7 +78,7 @@ class ATPTennisLoader {
 		if (!baseDir) {
 			baseDir = System.properties['tcb.data.base-dir']
 			if (!baseDir)
-				throw new IllegalArgumentException('No ATP Tennis data base directory is set, please specify it in tcb.data.base-dir system property.')
+				throw new IllegalArgumentException('No Tennis data base directory is set, please specify it in tcb.data.base-dir system property.')
 			if (!baseDir.endsWith(File.separator))
 				baseDir += File.separator
 		}
@@ -78,7 +92,7 @@ class ATPTennisLoader {
 
 	def loadAdditionalRankingData(Sql sql) {
 		if (full) {
-			println 'Loading missing ATP rankings...'
+			println 'Loading missing rankings...'
 			executeSQLFile(sql, 'src/main/db/missing-atp-rankings.sql')
 			println 'Loading pre-ATP rankings...'
 			executeSQLFile(sql, 'src/main/db/rankings-pre-atp.sql')

@@ -328,37 +328,37 @@ class MatchLoader extends BaseCSVLoader {
 				if (isDCTieBetween(match, 'USA', 'AUS')) return 'F'
 				if (isDCTieBetween(match, 'IND', 'SRI')) return 'RR'
 				if (isDCTieBetween(match, 'USA', 'IND')) return 'RR'
-				break;
+				break
 			case 1969:
 				if (isDCTieBetween(match, 'USA', 'ROU')) return 'F'
 				if (isDCTieBetween(match, 'IND', 'SRI')) return 'RR'
-				break;
+				break
 			case 1970:
 				if (isDCTieBetween(match, 'USA', 'GER')) return 'F'
 				if (isDCTieBetween(match, 'IND', 'SRI')) return 'RR'
 				if (isDCTieBetween(match, 'AUS', 'IND')) return 'RR'
-				break;
+				break
 			case 1971:
 				if (isDCTieBetween(match, 'USA', 'ROU')) return 'F'
 				if (isDCTieBetween(match, 'IND', 'SRI')) return 'RR'
-				break;
+				break
 			case 1972:
 				if (isDCTieBetween(match, 'AUS', 'IND')) return 'RR'
 				if (isDCTieBetween(match, 'IND', 'SRI')) return 'RR'
-				break;
+				break
 			case 1973:
 				if (isDCTieBetween(match, 'AUS', 'IND')) return 'SF'
-				break;
+				break
 			case 1974:
 				if (isDCTieBetween(match, 'AUS', 'IND')) return 'RR'
-				break;
+				break
 			case 1980:
 				if (isDCTieBetween(match, 'USA', 'ITA')) return 'SF'
-				break;
+				break
 			case 1985:
 				if (isDCTieBetween(match, 'NZL', 'KOR')) return 'RR'
 				if (isDCTieBetween(match, 'GBR', 'KOR')) return 'RR'
-				break;
+				break
 		}
 		switch (round) {
 			case 'F': return 'F'
@@ -372,7 +372,7 @@ class MatchLoader extends BaseCSVLoader {
 	static dcMatchNum(String extTourneyId, String matchNum) {
 		if (extTourneyId.startsWith('D'))
 			extTourneyId = extTourneyId.substring(1)
-		extTourneyId + matchNum;
+		extTourneyId + matchNum
 	}
 
 	static class DavisCupTournamentInfo {

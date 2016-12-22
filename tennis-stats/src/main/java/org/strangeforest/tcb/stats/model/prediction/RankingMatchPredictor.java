@@ -34,7 +34,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	// Rank
 
 	private void addRankItemProbabilities(MatchPrediction prediction, RankingPredictionItem item, Integer rank1, Integer rank2) {
-		double weight = item.getWeight() * dataPresenceWeight(rank1, rank2);
+		double weight = item.getWeight() * presenceWeight(rank1, rank2);
 		if (weight > 0.0) {
 			prediction.addItemProbability1(getArea(), item, weight, rankWinProbability(rank1, rank2));
 			prediction.addItemProbability2(getArea(), item, weight, rankWinProbability(rank2, rank1));
@@ -51,7 +51,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	// Rank Points
 
 	private void addRankPointsItemProbabilities(MatchPrediction prediction, RankingPredictionItem item, Integer rankPoints1, Integer rankPoints2) {
-		double weight = item.getWeight() * dataPresenceWeight(rankPoints1, rankPoints2);
+		double weight = item.getWeight() * presenceWeight(rankPoints1, rankPoints2);
 		if (weight > 0.0) {
 			prediction.addItemProbability1(getArea(), item, weight, rankPointsWinProbability(rankPoints1, rankPoints2));
 			prediction.addItemProbability2(getArea(), item, weight, rankPointsWinProbability(rankPoints2, rankPoints1));
@@ -68,7 +68,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	// Elo
 
 	private void addEloItemProbabilities(MatchPrediction prediction, RankingPredictionItem item, Integer eloRating1, Integer eloRating2) {
-		double weight = item.getWeight() * dataPresenceWeight(eloRating1, eloRating2);
+		double weight = item.getWeight() * presenceWeight(eloRating1, eloRating2);
 		if (weight > 0.0) {
 			prediction.addItemProbability1(getArea(), item, weight, eloWinProbability(eloRating1, eloRating2));
 			prediction.addItemProbability2(getArea(), item, weight, eloWinProbability(eloRating2, eloRating1));
@@ -84,16 +84,22 @@ public class RankingMatchPredictor implements MatchPredictor {
 
 	// Util
 
-	private static double dataPresenceWeight(Object data1, Object data2) {
-		if (data1 != null && data2 != null)
+	private static double presenceWeight(Integer value1, Integer value2) {
+		boolean present1 = isPresent(value1);
+		boolean present2 = isPresent(value2);
+		if (present1 && present2)
 			return 1.0;
-		else if (data1 == null && data2 == null)
+		else if (!present1 && !present2)
 			return 0.0;
 		else
 			return 0.5;
 	}
 
-	private static <T> T defaultIfNull(T value, T defaultValue) {
-		return value != null ? value : defaultValue;
+	private static Integer defaultIfNull(Integer value, Integer defaultValue) {
+		return isPresent(value) ? value : defaultValue;
+	}
+
+	private static boolean isPresent(Integer value) {
+		return value != null && value != 0;
 	}
 }

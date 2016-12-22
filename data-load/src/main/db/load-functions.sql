@@ -496,8 +496,7 @@ BEGIN
 				(match_id, set, w_games, l_games, w_tb_pt, l_tb_pt)
 				VALUES
 				(l_match_id, l_set, p_w_set_games[l_set], p_l_set_games[l_set], p_w_set_tb_pt[l_set], p_l_set_tb_pt[l_set]);
-			EXCEPTION WHEN unique_violation
-				THEN
+			EXCEPTION WHEN unique_violation THEN
 				UPDATE set_score
 				SET w_games = p_w_set_games[l_set], l_games = p_l_set_games[l_set], w_tb_pt = p_w_set_tb_pt[l_set], l_tb_pt = p_l_set_tb_pt[l_set]
 				WHERE match_id = l_match_id AND set = l_set;
@@ -507,5 +506,123 @@ BEGIN
 		WHERE match_id = l_match_id AND set > l_set_count;
 	END IF;
 
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- find_players_by_short_name
+
+CREATE OR REPLACE FUNCTION find_players(
+	p_last_name TEXT
+) RETURNS INTEGER[] AS $$
+DECLARE
+	l_player_ids INTEGER[];
+BEGIN
+	WITH player_ids AS (
+		SELECT player_id FROM player
+		WHERE lower(last_name) LIKE '%' || lower(p_last_name) || '%' OR lower(p_last_name) LIKE '%' || lower(last_name) || '%'
+		ORDER BY dob DESC NULLS LAST
+	)
+	SELECT array_agg(player_id) INTO l_player_ids FROM player_ids;
+	IF l_player_ids IS NULL THEN
+		RAISE EXCEPTION 'Player % not found', p_last_name;
+	END IF;
+	RETURN l_player_ids;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- merge_match_prices
+
+CREATE OR REPLACE FUNCTION merge_match_prices(
+	p_match_id BIGINT,
+	p_source TEXT,
+	p_winner_price REAL,
+	p_loser_price REAL
+) RETURNS VOID AS $$
+BEGIN
+	IF p_winner_price IS NOT NULL AND p_loser_price IS NOT NULL THEN
+		IF 1.0 / p_winner_price + 1.0 / p_loser_price > 1 THEN
+			BEGIN
+				INSERT INTO match_price
+				(match_id, source, winner_price, loser_price)
+				VALUES
+				(p_match_id, p_source, p_winner_price, p_loser_price);
+			EXCEPTION WHEN unique_violation THEN
+				UPDATE match_price
+				SET winner_price = p_winner_price, loser_price = p_loser_price
+				WHERE match_id = p_match_id AND source = p_source;
+			END;
+		ELSE
+			RAISE WARNING 'Invalid prices % and %', p_winner_price, p_loser_price;
+		END IF;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- load_match_prices
+
+CREATE OR REPLACE FUNCTION load_match_prices(
+	p_season SMALLINT,
+	p_location TEXT,
+	p_tournament TEXT,
+	p_date DATE,
+	p_surface TEXT,
+	p_round TEXT,
+	p_winner TEXT,
+	p_loser TEXT,
+	p_B365W REAL,
+	p_B365L REAL,
+	p_EXW REAL,
+	p_EXL REAL,
+	p_LBW REAL,
+	p_LBL REAL,
+	p_PSW REAL,
+	p_PSL REAL
+) RETURNS VOID AS $$
+DECLARE
+	l_tournament_event_id INTEGER;
+	l_winner_ids INTEGER[];
+	l_loser_ids INTEGER[];
+	l_match_id BIGINT;
+BEGIN
+	-- find tournament event
+	SELECT tournament_event_id INTO l_tournament_event_id FROM tournament_event
+	WHERE season = p_season
+	AND (lower(name) = lower(p_location) OR lower(name) = lower(p_tournament))
+   AND abs(p_date - date) <= 15
+	AND surface = p_surface::surface;
+
+	IF l_tournament_event_id IS NULL THEN
+		SELECT tournament_event_id INTO l_tournament_event_id FROM tournament_event
+		WHERE season = p_season
+      AND (lower(name) = lower(p_location) OR lower(name) = lower(p_tournament))
+      AND abs(p_date - date) <= 15;
+		IF l_tournament_event_id IS NULL THEN
+			RAISE EXCEPTION 'Tournament % (%), surface %, not found', p_tournament, p_location, p_surface;
+		END IF;
+	END IF;
+
+	-- find players
+	l_winner_ids := find_players(p_winner);
+	l_loser_ids:= find_players(p_loser);
+
+	-- find match
+	SELECT match_id INTO l_match_id FROM match
+	WHERE tournament_event_id = l_tournament_event_id
+	AND (round = p_round::match_round OR (round IN ('R128', 'R64', 'R32', 'R16') AND p_round IS NULL))
+   AND winner_id = ANY(l_winner_ids)
+   AND loser_id = ANY(l_loser_ids);
+
+	-- merge match prices
+	IF l_match_id IS NOT NULL THEN
+		PERFORM merge_match_prices(l_match_id, 'B365', p_B365W, p_B365L);
+		PERFORM merge_match_prices(l_match_id, 'EX', p_EXW, p_EXL);
+		PERFORM merge_match_prices(l_match_id, 'LB', p_LBW, p_LBL);
+		PERFORM merge_match_prices(l_match_id, 'PS', p_PSW, p_PSL);
+	ELSE
+		RAISE WARNING 'Match between % and % at % (%) not found', p_winner, p_loser, p_tournament, p_location;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;

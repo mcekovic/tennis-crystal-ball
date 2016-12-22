@@ -21,6 +21,8 @@ static loadTournaments(SqlPool sqlPool) {
 	matchLoader.load(fetchTournament(2016, 'Sao_Paulo', 533))
 	matchLoader.load(fetchTournament(2016, 'Indian_Wells_Masters', 404))
 	matchLoader.load(fetchTournament(2016, 'Miami_Masters', 403))
+	matchLoader.load(fetchTournament(2016, 'Houston', 717))
+	matchLoader.load(fetchTournament(2016, 'Marrakech', 360))
 	matchLoader.load(fetchTournament(2016, 'Monte_Carlo_Masters', 410))
 	matchLoader.load(fetchTournament(2016, 'Barcelona', 425))
 	matchLoader.load(fetchTournament(2016, 'Bucharest', 773))
