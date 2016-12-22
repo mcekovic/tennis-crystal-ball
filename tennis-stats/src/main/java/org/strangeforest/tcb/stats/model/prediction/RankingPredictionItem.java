@@ -2,7 +2,8 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 public enum RankingPredictionItem implements PredictionItem {
 
-	RANK(1.0),
+	RANK(0.0),
+	RANK_POINTS(1.0),
 	ELO(1.0),
 	SURFACE_ELO(1.0);
 

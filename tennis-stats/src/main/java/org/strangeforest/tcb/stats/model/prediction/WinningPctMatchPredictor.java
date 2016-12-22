@@ -8,7 +8,8 @@ import org.strangeforest.tcb.stats.model.*;
 
 import com.google.common.collect.*;
 
-import static java.util.Arrays.asList;
+import static java.util.Arrays.*;
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
 import static org.strangeforest.tcb.stats.model.prediction.WinningPctPredictionItem.*;
 
@@ -26,7 +27,9 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	private final Round round;
 	private final short bestOf;
 
-	private static final int RECENT_PERIOD_YEARS = 2;
+	private static final int MATCH_RECENT_PERIOD_YEARS = 2;
+	private static final int SET_RECENT_PERIOD_YEARS = 1;
+	private static final int RECENT_FORM_MATCHES = 20;
 
 	public WinningPctMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, RankingData rankingData1, RankingData rankingData2, PlayerData playerData1, PlayerData playerData2,
 	                                Date date, Surface surface, TournamentLevel level, Round round, short bestOf) {
@@ -53,10 +56,11 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
 		addItemProbabilities(prediction, ROUND, isRound(round));
-		addItemProbabilities(prediction, RECENT, isRecent(date, getRecentPeriod()));
-		addItemProbabilities(prediction, SURFACE_RECENT, isSurface(surface).and(isRecent(date, getRecentPeriod())));
-		addItemProbabilities(prediction, LEVEL_RECENT, isLevel(level).and(isRecent(date, getRecentPeriod())));
-		addItemProbabilities(prediction, ROUND_RECENT, isRound(round).and(isRecent(date, getRecentPeriod())));
+		addItemProbabilities(prediction, RECENT, isRecent(date, getMatchRecentPeriod()));
+		addItemProbabilities(prediction, SURFACE_RECENT, isSurface(surface).and(isRecent(date, getMatchRecentPeriod())));
+		addItemProbabilities(prediction, LEVEL_RECENT, isLevel(level).and(isRecent(date, getMatchRecentPeriod())));
+		addItemProbabilities(prediction, ROUND_RECENT, isRound(round).and(isRecent(date, getMatchRecentPeriod())));
+		addItemProbabilities(prediction, RECENT_FORM, ALWAYS_TRUE, getRecentFormMatches());
 		addItemProbabilities(prediction, VS_RANK, isOpponentRankInRange(rankRange2), isOpponentRankInRange(rankRange1));
 		addItemProbabilities(prediction, VS_HAND, isOpponentHand(playerData2.getHand()), isOpponentHand(playerData1.getHand()));
 		addItemProbabilities(prediction, VS_BACKHAND, isOpponentBackhand(playerData2.getBackhand()), isOpponentBackhand(playerData1.getBackhand()));
@@ -64,32 +68,55 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 		addItemProbabilities(prediction, SURFACE_SET, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL_SET, isLevel(level));
 		addItemProbabilities(prediction, ROUND_SET, isRound(round));
-		addItemProbabilities(prediction, RECENT_SET, isRecent(date, getRecentPeriod()));
-		addItemProbabilities(prediction, SURFACE_RECENT_SET, isSurface(surface).and(isRecent(date, getRecentPeriod())));
-		addItemProbabilities(prediction, LEVEL_RECENT_SET, isLevel(level).and(isRecent(date, getRecentPeriod())));
-		addItemProbabilities(prediction, ROUND_RECENT_SET, isRound(round).and(isRecent(date, getRecentPeriod())));
+		addItemProbabilities(prediction, RECENT_SET, isRecent(date, getSetRecentPeriod()));
+		addItemProbabilities(prediction, SURFACE_RECENT_SET, isSurface(surface).and(isRecent(date, getSetRecentPeriod())));
+		addItemProbabilities(prediction, LEVEL_RECENT_SET, isLevel(level).and(isRecent(date, getSetRecentPeriod())));
+		addItemProbabilities(prediction, ROUND_RECENT_SET, isRound(round).and(isRecent(date, getSetRecentPeriod())));
+		addItemProbabilities(prediction, RECENT_FORM_SET, ALWAYS_TRUE, getRecentFormMatches());
 		addItemProbabilities(prediction, VS_RANK_SET, isOpponentRankInRange(rankRange2), isOpponentRankInRange(rankRange1));
 		addItemProbabilities(prediction, VS_HAND_SET, isOpponentHand(playerData2.getHand()), isOpponentHand(playerData1.getHand()));
 		addItemProbabilities(prediction, VS_BACKHAND_SET, isOpponentBackhand(playerData2.getBackhand()), isOpponentBackhand(playerData1.getBackhand()));
 		return prediction;
 	}
 
-	private Period getRecentPeriod() {
-		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period." + getArea()).orElse(RECENT_PERIOD_YEARS));
+	private Period getMatchRecentPeriod() {
+		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period.match." + getArea()).orElse(MATCH_RECENT_PERIOD_YEARS));
+	}
+
+	private Period getSetRecentPeriod() {
+		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period.set." + getArea()).orElse(SET_RECENT_PERIOD_YEARS));
+	}
+
+	private int getRecentFormMatches() {
+		return PredictionConfig.getIntegerProperty("recent_form.matches." + getArea()).orElse(RECENT_FORM_MATCHES);
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, WinningPctPredictionItem item, Predicate<MatchData> filter) {
-		addItemProbabilities(prediction, item, filter, filter);
+		addItemProbabilities(prediction, item, filter, filter, null);
+	}
+
+	private void addItemProbabilities(MatchPrediction prediction, WinningPctPredictionItem item, Predicate<MatchData> filter, Integer matches) {
+		addItemProbabilities(prediction, item, filter, filter, matches);
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, WinningPctPredictionItem item, Predicate<MatchData> filter1, Predicate<MatchData> filter2) {
+		addItemProbabilities(prediction, item, filter1, filter2, null);
+	}
+
+	private void addItemProbabilities(MatchPrediction prediction, WinningPctPredictionItem item, Predicate<MatchData> filter1, Predicate<MatchData> filter2, Integer matches) {
 		if (item.getWeight() > 0.0) {
+			int matches1 = matchData1.size();
+			int matches2 = matchData2.size();
+			int skipMatches1 = matches != null && matches1 > matches ? matches1 - matches : 0;
+			int skipMatches2 = matches != null && matches2 > matches ? matches2 - matches : 0;
 			ToIntFunction<MatchData> wonDimension = item.isForSet() ? MatchData::getPSets : MatchData::getPMatches;
 			ToIntFunction<MatchData> lostDimension = item.isForSet() ? MatchData::getOSets : MatchData::getOMatches;
-			long won1 = matchData1.stream().filter(filter1).mapToInt(wonDimension).sum();
-			long lost1 = matchData1.stream().filter(filter1).mapToInt(lostDimension).sum();
-			long won2 = matchData2.stream().filter(filter2).mapToInt(wonDimension).sum();
-			long lost2 = matchData2.stream().filter(filter2).mapToInt(lostDimension).sum();
+			List<MatchData> filteredMatchData1 = matchData1.stream().skip(skipMatches1).filter(filter1).collect(toList());
+			List<MatchData> filteredMatchData2 = matchData2.stream().skip(skipMatches2).filter(filter2).collect(toList());
+			long won1 = filteredMatchData1.stream().mapToInt(wonDimension).sum();
+			long lost1 = filteredMatchData1.stream().mapToInt(lostDimension).sum();
+			long won2 = filteredMatchData2.stream().mapToInt(wonDimension).sum();
+			long lost2 = filteredMatchData2.stream().mapToInt(lostDimension).sum();
 			long total1 = won1 + lost1;
 			long total2 = won2 + lost2;
 			if (total1 > 0 && total2 > 0) {

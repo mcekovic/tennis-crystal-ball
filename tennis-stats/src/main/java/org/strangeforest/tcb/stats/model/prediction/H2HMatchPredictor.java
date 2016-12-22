@@ -21,7 +21,8 @@ public class H2HMatchPredictor implements MatchPredictor {
 	private final Round round;
 	private final short bestOf;
 
-	private static final int RECENT_PERIOD_YEARS = 3;
+	private static final int MATCH_RECENT_PERIOD_YEARS = 3;
+	private static final int SET_RECENT_PERIOD_YEARS = 2;
 
 	public H2HMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, int playerId1, int playerId2, Date date, Surface surface, TournamentLevel level, Round round, short bestOf) {
 		this.matchData1 = matchData1;
@@ -45,23 +46,27 @@ public class H2HMatchPredictor implements MatchPredictor {
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
 		addItemProbabilities(prediction, ROUND, isRound(round));
-		addItemProbabilities(prediction, RECENT, isRecent(date, getRecentPeriod()));
-		addItemProbabilities(prediction, SURFACE_RECENT, isSurface(surface).and(isRecent(date, getRecentPeriod())));
-		addItemProbabilities(prediction, LEVEL_RECENT, isLevel(level).and(isRecent(date, getRecentPeriod())));
-		addItemProbabilities(prediction, ROUND_RECENT, isRound(round).and(isRecent(date, getRecentPeriod())));
+		addItemProbabilities(prediction, RECENT, isRecent(date, getMatchRecentPeriod()));
+		addItemProbabilities(prediction, SURFACE_RECENT, isSurface(surface).and(isRecent(date, getMatchRecentPeriod())));
+		addItemProbabilities(prediction, LEVEL_RECENT, isLevel(level).and(isRecent(date, getMatchRecentPeriod())));
+		addItemProbabilities(prediction, ROUND_RECENT, isRound(round).and(isRecent(date, getMatchRecentPeriod())));
 		addItemProbabilities(prediction, SET, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE_SET, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL_SET, isLevel(level));
 		addItemProbabilities(prediction, ROUND_SET, isRound(round));
-		addItemProbabilities(prediction, RECENT_SET, isRecent(date, getRecentPeriod()));
-		addItemProbabilities(prediction, SURFACE_RECENT_SET, isSurface(surface).and(isRecent(date, getRecentPeriod())));
-		addItemProbabilities(prediction, LEVEL_RECENT_SET, isLevel(level).and(isRecent(date, getRecentPeriod())));
-		addItemProbabilities(prediction, ROUND_RECENT_SET, isRound(round).and(isRecent(date, getRecentPeriod())));
+		addItemProbabilities(prediction, RECENT_SET, isRecent(date, getSetRecentPeriod()));
+		addItemProbabilities(prediction, SURFACE_RECENT_SET, isSurface(surface).and(isRecent(date, getSetRecentPeriod())));
+		addItemProbabilities(prediction, LEVEL_RECENT_SET, isLevel(level).and(isRecent(date, getSetRecentPeriod())));
+		addItemProbabilities(prediction, ROUND_RECENT_SET, isRound(round).and(isRecent(date, getSetRecentPeriod())));
 		return prediction;
 	}
 
-	private Period getRecentPeriod() {
-		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period." + getArea()).orElse(RECENT_PERIOD_YEARS));
+	private Period getMatchRecentPeriod() {
+		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period.match." + getArea()).orElse(MATCH_RECENT_PERIOD_YEARS));
+	}
+
+	private Period getSetRecentPeriod() {
+		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period.set." + getArea()).orElse(SET_RECENT_PERIOD_YEARS));
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, H2HPredictionItem item, Predicate<MatchData> filter) {

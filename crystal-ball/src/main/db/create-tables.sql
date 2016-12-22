@@ -238,6 +238,17 @@ CREATE TABLE match_stats (
 );
 
 
+-- match_price
+
+CREATE TABLE match_price (
+	match_id BIGINT NOT NULL REFERENCES match (match_id) ON DELETE CASCADE,
+	source TEXT NOT NULL,
+	winner_price REAL NOT NULL,
+	loser_price REAL NOT NULL,
+	PRIMARY KEY (match_id, source)
+);
+
+
 -- team_tournament_event_winner
 
 CREATE TABLE team_tournament_event_winner (

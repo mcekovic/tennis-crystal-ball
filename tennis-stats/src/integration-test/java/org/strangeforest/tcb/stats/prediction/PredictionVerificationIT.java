@@ -11,7 +11,7 @@ import org.testng.annotations.*;
 @Test(sequential = true)
 public class PredictionVerificationIT extends BasePredictionVerificationIT {
 
-	private static final LocalDate FROM_DATE = LocalDate.of(2000, 1, 1);
+	private static final LocalDate FROM_DATE = LocalDate.of(2005, 1, 1);
 	private static final LocalDate TO_DATE = LocalDate.now();
 
 	@Test
@@ -21,15 +21,15 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 
 	@Test
 	public void allAreasAllItemsPredictions() throws InterruptedException {
-		resetWeights(1.0);
+		setWeights(1.0);
 		verifyPrediction(FROM_DATE, TO_DATE);
 	}
 
 	@Test
 	public void singleAreaAllItemsPredictions() throws InterruptedException {
 		for (PredictionArea area : PredictionArea.values()) {
-			resetWeights(0.0, 1.0);
-			area.setWeight(1.0);
+			setWeights(0.0);
+			area.setWeights(1.0);
 			verifyPrediction(FROM_DATE, TO_DATE);
 		}
 	}
@@ -38,9 +38,9 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 	public void singleItemPredictions() throws InterruptedException {
 		for (PredictionArea area : PredictionArea.values()) {
 			for (PredictionItem item : area.getItems()) {
-				resetWeights(0.0, 0.0);
-				item.setWeight(1.0);
+				setWeights(0.0);
 				area.setWeight(1.0);
+				item.setWeight(1.0);
 				verifyPrediction(FROM_DATE, TO_DATE);
 			}
 		}

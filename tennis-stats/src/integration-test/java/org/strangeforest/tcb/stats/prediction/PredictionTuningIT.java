@@ -15,19 +15,19 @@
  @ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 public class PredictionTuningIT extends BasePredictionVerificationIT {
 
-	private static final LocalDate FROM_DATE = LocalDate.of(2000, 1, 1);
+	private static final LocalDate FROM_DATE = LocalDate.of(2005, 1, 1);
 	private static final LocalDate TO_DATE = LocalDate.now();
 	private static final double PREDICTION_RATE_DELTA = 1.0;
 
 	@Test
 	public void tunePredictionByArea() throws InterruptedException {
-		resetWeights(1.0);
+		setWeights(1.0);
 		tunePrediction(PredictionTuningIT::toggleNextArea);
 	}
 
 	@Test
 	public void tunePredictionByItem() throws InterruptedException {
-		resetWeights(1.0);
+		setWeights(1.0);
 		tunePrediction(PredictionTuningIT::toggleNextItem);
 	}
 
@@ -47,8 +47,8 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 	}
 
 	private void tunePredictionInArea(PredictionArea area) throws InterruptedException {
-		resetWeights(0.0);
-		resetWeights(area, 1.0);
+		setWeights(0.0);
+		area.setWeights(1.0);
 		tunePrediction(configs -> toggleNextAreaItem(area, configs));
 	}
 
@@ -58,7 +58,9 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 		results.put(bestResult.getConfig(), bestResult);
 		System.out.println("***** Starting result: " + bestResult);
 		Properties currentConfig = bestResult.getConfig();
+		int step = 0;
 		while (toggle.test(results.keySet())) {
+			System.out.println("Tuning step " + (++step));
 			PredictionResult result = verifyPrediction(FROM_DATE, TO_DATE);
 			results.put(result.getConfig(), result);
 			if (result.getPredictionRate() > bestResult.getPredictionRate()) {

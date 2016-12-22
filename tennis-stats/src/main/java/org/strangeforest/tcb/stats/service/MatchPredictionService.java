@@ -21,6 +21,9 @@ import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 @Service
 public class MatchPredictionService {
 
+	//TODO Remove noisy matches from training (matches that do not have enough prediction weight)
+	//TODO Implement more smart tuning (select next step from set of next steps based on maximal improvement
+
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	private ConcurrentMap<Integer, PlayerData> players = new ConcurrentHashMap<>();
 	private ConcurrentMap<RankingKey, RankingData> playersRankings = new ConcurrentHashMap<>();
@@ -31,7 +34,7 @@ public class MatchPredictionService {
 		"WHERE player_id = :playerId";
 
 	private static final String PLAYER_RANKING_QUERY =
-		"SELECT rank FROM player_ranking\n" +
+		"SELECT rank, adjust_atp_rank_points(rank_points, rank_date) rank_points FROM player_ranking\n" +
 		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1' YEAR) AND :date\n" +
 		"ORDER BY rank_date DESC LIMIT 1";
 
@@ -106,6 +109,7 @@ public class MatchPredictionService {
 			params("playerId", key.playerId).addValue("date", key.date),
 			rs -> {
 				rankingData.setRank(getInteger(rs, "rank"));
+				rankingData.setRankPoints(getInteger(rs, "rank_points"));
 			}
 		);
 		String surfacePrefix = key.surface != null ? key.surface.getText().toLowerCase() + '_' : "";

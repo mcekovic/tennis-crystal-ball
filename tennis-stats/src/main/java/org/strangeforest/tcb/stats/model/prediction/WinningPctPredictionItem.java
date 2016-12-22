@@ -2,27 +2,29 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 public enum WinningPctPredictionItem implements MatchPredictionItem {
 
-	MATCH(false, 1.0),
+	MATCH(false, 0.0),
 	SURFACE(false, 1.0),
 	LEVEL(false, 1.0),
-	ROUND(false, 1.0),
+	ROUND(false, 0.0),
 	RECENT(false, 1.0),
 	SURFACE_RECENT(false, 1.0),
-	LEVEL_RECENT(false, 0.0),
+	LEVEL_RECENT(false, 1.0),
 	ROUND_RECENT(false, 0.0),
+	RECENT_FORM(false, 0.0),
 	VS_RANK(false, 1.0),
-	VS_HAND(false, 1.0),
+	VS_HAND(false, 2.0),
 	VS_BACKHAND(false, 1.0),
 	SET(true, 1.0),
 	SURFACE_SET(true, 1.0),
 	LEVEL_SET(true, 0.0),
 	ROUND_SET(true, 0.0),
-	RECENT_SET(true, 0.0),
-	SURFACE_RECENT_SET(true, 0.0),
-	LEVEL_RECENT_SET(true, 0.0),
+	RECENT_SET(true, 1.0),
+	SURFACE_RECENT_SET(true, 1.0),
+	LEVEL_RECENT_SET(true, 1.0),
 	ROUND_RECENT_SET(true, 0.0),
+	RECENT_FORM_SET(true, 0.0),
 	VS_RANK_SET(true, 1.0),
-	VS_HAND_SET(true, 1.0),
+	VS_HAND_SET(true, 2.0),
 	VS_BACKHAND_SET(true, 1.0);
 
 	private volatile PredictionArea area;

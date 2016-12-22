@@ -32,11 +32,21 @@ public enum PredictionArea implements Weighted {
 		calculateItemAdjustmentWeight();
 	}
 
+	public void setWeights(double weight) {
+		setWeights(weight, weight);
+	}
+
+	public void setWeights(double areaWeight, double itemWeight) {
+		setWeight(areaWeight);
+		for (PredictionItem item : getItems())
+			item.setWeight(itemWeight);
+	}
+
 	void calculateItemAdjustmentWeight() {
 		itemAdjustmentWeight = weight / Stream.of(getItems()).mapToDouble(PredictionItem::getWeight).sum();
 	}
 
-	public double itemAdjustmentWeight() {
+	public double getItemAdjustmentWeight() {
 		return itemAdjustmentWeight;
 	}
 

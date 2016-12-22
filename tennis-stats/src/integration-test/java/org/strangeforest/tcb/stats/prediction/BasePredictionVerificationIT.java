@@ -62,8 +62,8 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		executor.awaitTermination(1L, TimeUnit.HOURS);
 		double predictablePct = 100.0 * predicted.get() / total.get();
 		double predictionRate = 100.0 * hits.get() / predicted.get();
-		System.out.printf("\nPredictable: %1$.2f%%\n", predictablePct);
-		System.out.printf("Prediction rate: %1$.2f%%\n", predictionRate);
+		System.out.printf("\nPredictable: %1$.3f%%\n", predictablePct);
+		System.out.printf("Prediction rate: %1$.3f%%\n", predictionRate);
 		return new PredictionResult(predictablePct, predictionRate);
 	}
 
@@ -87,23 +87,13 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		);
 	}
 
-	protected static void resetWeights(double weight) {
-		resetWeights(weight, weight);
+	protected static void setWeights(double weight) {
+		setWeights(weight, weight);
 	}
 
-	protected static void resetWeights(double areaWeight, double itemWeight) {
+	protected static void setWeights(double areaWeight, double itemWeight) {
 		for (PredictionArea area : PredictionArea.values())
-			resetWeights(area, areaWeight, itemWeight);
-	}
-
-	protected static void resetWeights(PredictionArea area, double weight) {
-		resetWeights(area, weight, weight);
-	}
-
-	private static void resetWeights(PredictionArea area, double areaWeight, double itemWeight) {
-		area.setWeight(areaWeight);
-		for (PredictionItem item : area.getItems())
-			item.setWeight(itemWeight);
+			area.setWeights(areaWeight, itemWeight);
 	}
 
 	protected static void printWeights() {

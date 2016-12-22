@@ -70,7 +70,7 @@ public final class MatchPrediction {
 
 	public void addAreaProbabilities(PredictionArea area, MatchPrediction prediction) {
 		if (!prediction.isEmpty() && area.getWeight() > 0.0) {
-			double weight = area.itemAdjustmentWeight();
+			double weight = area.getItemAdjustmentWeight();
 			if (weight > 0.0) {
 				itemProbabilities1.addAll(prediction.getItemProbabilities1(weight));
 				itemProbabilities2.addAll(prediction.getItemProbabilities2(weight));
