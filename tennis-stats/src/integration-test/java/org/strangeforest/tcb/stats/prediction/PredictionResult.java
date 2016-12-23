@@ -6,7 +6,7 @@ import org.strangeforest.tcb.stats.model.prediction.*;
 
 import static com.google.common.base.MoreObjects.*;
 
-public class PredictionResult implements Comparable<PredictionResult> {
+public class PredictionResult {
 
 	private final double predictablePct;
 	private final double predictionRate;
@@ -46,9 +46,5 @@ public class PredictionResult implements Comparable<PredictionResult> {
 			.add("profit", profit)
 			.add("config", config)
 			.toString();
-	}
-
-	@Override public int compareTo(PredictionResult result) {
-		return Double.compare(predictionRate, result.getPredictionRate());
 	}
 }
