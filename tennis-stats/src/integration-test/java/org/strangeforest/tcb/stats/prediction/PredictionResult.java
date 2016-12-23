@@ -10,11 +10,13 @@ public class PredictionResult implements Comparable<PredictionResult> {
 
 	private final double predictablePct;
 	private final double predictionRate;
+	private final double profit;
 	private final Properties config;
 
-	public PredictionResult(double predictablePct, double predictionRate) {
+	public PredictionResult(double predictablePct, double predictionRate, double profit) {
 		this.predictablePct = predictablePct;
 		this.predictionRate = predictionRate;
+		this.profit = profit;
 		config = PredictionConfig.get();
 	}
 
@@ -24,6 +26,10 @@ public class PredictionResult implements Comparable<PredictionResult> {
 
 	public double getPredictionRate() {
 		return predictionRate;
+	}
+
+	public double getProfit() {
+		return profit;
 	}
 
 	public Properties getConfig() {
@@ -37,6 +43,7 @@ public class PredictionResult implements Comparable<PredictionResult> {
 		return toStringHelper(this)
 			.add("predictablePct", predictablePct)
 			.add("predictionRate", predictionRate)
+			.add("profit", profit)
 			.add("config", config)
 			.toString();
 	}

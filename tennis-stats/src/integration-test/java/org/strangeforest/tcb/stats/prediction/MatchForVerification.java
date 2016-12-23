@@ -13,8 +13,10 @@ public class MatchForVerification {
 	public final Surface surface;
 	public final Round round;
 	public final short best_of;
+	public final Double winnerPrice;
+	public final Double loserPrice;
 
-	public MatchForVerification(int winnerId, int loserId, Date date, String level, String surface, String round, short best_of) {
+	public MatchForVerification(int winnerId, int loserId, Date date, String level, String surface, String round, short best_of, Double winnerPrice, Double loserPrice) {
 		this.winnerId = winnerId;
 		this.loserId = loserId;
 		this.date = date;
@@ -22,5 +24,7 @@ public class MatchForVerification {
 		this.surface = Surface.safeDecode(surface);
 		this.round = Round.decode(round);
 		this.best_of = best_of;
+		this.winnerPrice = winnerPrice;
+		this.loserPrice = loserPrice;
 	}
 }

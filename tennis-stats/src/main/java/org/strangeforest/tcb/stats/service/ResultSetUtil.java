@@ -26,6 +26,11 @@ public abstract class ResultSetUtil {
 			throw new IllegalArgumentException("Incompatible type with Integer[]: " + array.getClass());
 	}
 
+	public static Double getDouble(ResultSet rs, String column) throws SQLException {
+		double d = rs.getDouble(column);
+		return rs.wasNull() ? null : d;
+	}
+
 
 	// Binding
 
