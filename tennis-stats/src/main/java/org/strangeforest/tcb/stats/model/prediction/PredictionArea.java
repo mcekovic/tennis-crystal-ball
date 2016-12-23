@@ -61,4 +61,8 @@ public enum PredictionArea implements Weighted {
 		}
 		return false;
 	}
+
+	public static double getTotalAreaWeight() {
+		return Stream.of(PredictionArea.values()).mapToDouble(PredictionArea::getWeight).sum();
+	}
 }

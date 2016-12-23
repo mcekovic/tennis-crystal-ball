@@ -50,6 +50,14 @@ public final class MatchPrediction {
 		return itemProbabilities2.stream().mapToDouble(WeightedProbability::getWeight).sum();
 	}
 
+	public double getPredictability1() {
+		return getItemProbabilitiesWeight1() / PredictionArea.getTotalAreaWeight();
+	}
+
+	public double getPredictability2() {
+		return getItemProbabilitiesWeight2() / PredictionArea.getTotalAreaWeight();
+	}
+
 	public boolean isEmpty() {
 		return itemProbabilities1.isEmpty() && itemProbabilities2.isEmpty();
 	}

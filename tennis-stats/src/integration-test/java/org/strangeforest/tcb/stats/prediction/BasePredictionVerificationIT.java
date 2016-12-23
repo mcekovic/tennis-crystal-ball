@@ -26,8 +26,9 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired private MatchPredictionService predictionService;
 
+	private static final double MIN_PREDICTABILITY = 0.5;
 	private static final String PRICE_SOURCE = "B365";
-	private static final boolean BET_ON_OUTSIDER = true;
+	private static final boolean BET_ON_OUTSIDER = false;
 	private static final boolean KELLY_STAKE = true;
 
 	private static final int THREADS = 8;
@@ -57,24 +58,25 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		for (MatchForVerification match : matches(fromDate, toDate)) {
 			executor.execute(() -> {
 				MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.surface, match.level, match.round, match.best_of);
-				if (!prediction.isEmpty()) {
+				if (prediction.getPredictability1() > MIN_PREDICTABILITY) {
 					predicted.incrementAndGet();
 					double winnerProbability = prediction.getWinProbability1();
 					double loserProbability = prediction.getWinProbability2();
 					Double winnerPrice = match.winnerPrice;
 					Double loserPrice = match.loserPrice;
-					boolean hit = winnerProbability > 0.5;
-					if (hit)
+					if (winnerProbability > 0.5)
 						hits.incrementAndGet();
 					if (winnerPrice != null || loserPrice != null)
 						hasPrice.incrementAndGet();
-					if (hit || BET_ON_OUTSIDER) {
+					if (winnerProbability > 0.5 || BET_ON_OUTSIDER) {
 						if (winnerPrice != null && winnerProbability > 1.0 / winnerPrice) {
 							beatingPrice.incrementAndGet();
 							profitable.incrementAndGet();
 							double stake = KELLY_STAKE ? kellyStake(winnerProbability, winnerPrice) : 1.0;
 							profit.addAndGet(stake * (winnerPrice - 1.0));
 						}
+					}
+					if (loserProbability > 0.5 || BET_ON_OUTSIDER) {
 						if (loserPrice != null && loserProbability > 1.0 / loserPrice) {
 							beatingPrice.incrementAndGet();
 							double stake = KELLY_STAKE ? kellyStake(loserProbability, loserPrice) : 1.0;
@@ -110,7 +112,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	}
 
 	private static double kellyStake(double probability, double price) {
-		return (probability * (price + 1) - 1) / price;
+		return (probability * price - 1) / (price - 1);
 	}
 
 	private List<MatchForVerification> matches(LocalDate date1, LocalDate date2) {
