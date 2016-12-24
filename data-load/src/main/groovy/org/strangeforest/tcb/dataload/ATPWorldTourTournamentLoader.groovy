@@ -89,11 +89,11 @@ class ATPWorldTourTournamentLoader {
 
 					params.winner_name = wName
 					params.winner_seed = wIsSeed ? smallint(wSeedEntry) : null
-					params.winner_entry = !wIsSeed ? string(wSeedEntry) : null
+					params.winner_entry = !wIsSeed ? mapEntry(string(wSeedEntry)) : null
 
 					params.loser_name = lName
 					params.loser_seed = lIsSeed ? smallint(lSeedEntry) : null
-					params.loser_entry = !lIsSeed ? string(lSeedEntry) : null
+					params.loser_entry = !lIsSeed ? mapEntry(string(lSeedEntry)) : null
 
 					setScoreParams(params, score, sql.connection)
 					params.statsUrl = matchStatsUrl(scoreElem.attr('href'))
@@ -106,17 +106,18 @@ class ATPWorldTourTournamentLoader {
 		AtomicInteger rows = new AtomicInteger()
 		matches.parallelStream().forEach { params ->
 			def statsUrl = params.statsUrl
-			def statsDoc = Jsoup.connect(statsUrl).timeout(TIMEOUT).get()
-			def json = statsDoc.select('#matchStatsData').html()
-			def matchStats = new JsonSlurper().parseText(json)[0]
-			def wStats = matchStats.playerStats
-			def lStats = matchStats.opponentStats
+			if (statsUrl) {
+				def statsDoc = Jsoup.connect(statsUrl).timeout(TIMEOUT).get()
+				def json = statsDoc.select('#matchStatsData').html()
+				def matchStats = new JsonSlurper().parseText(json)[0]
+				def wStats = matchStats.playerStats
+				def lStats = matchStats.opponentStats
 
-			params.minutes = minutes wStats.Time
-			this.setStatsParams(params, wStats, 'w_')
-			this.setStatsParams(params, lStats, 'l_')
-
-			print '.'
+				params.minutes = minutes wStats.Time
+				this.setStatsParams(params, wStats, 'w_')
+				this.setStatsParams(params, lStats, 'l_')
+				print '.'
+			}
 			if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
 				println()
 		}
@@ -161,7 +162,7 @@ class ATPWorldTourTournamentLoader {
 	}
 
 	static matchStatsUrl(String url) {
-		"http://www.atpworldtour.com" + url
+		url ? "http://www.atpworldtour.com" + url : null
 	}
 
 	static extractStartDate(String dates) {
@@ -207,7 +208,15 @@ class ATPWorldTourTournamentLoader {
 	}
 
 	static mapBestOf(String level) {
-		level == 'G' ? 3 : 2
+		level == 'G' ? 5 : 3
+	}
+
+	def mapEntry(String entry) {
+		switch (entry) {
+			case 'W': return 'WC'
+			case 'L': return 'LL'
+			default: return entry
+		}
 	}
 
 	static fitScore(String score) {

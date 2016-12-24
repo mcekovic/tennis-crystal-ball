@@ -135,6 +135,15 @@ abstract class BaseCSVLoader {
 		d ? d.toBigDecimal() : null
 	}
 
+	static BigDecimal safeDecimal(d) {
+		try {
+			d ? d.toBigDecimal() : null
+		}
+		catch (NumberFormatException ex) {
+			null
+		}
+	}
+
 	static Float real(f) {
 		f ? f.toFloat() : null
 	}
@@ -165,5 +174,9 @@ abstract class BaseCSVLoader {
 			case 'L': return 'L'
 			default: return null
 		}
+	}
+
+	static Object safeProperty(obj,  String propName) {
+		obj.toMap()[propName]
 	}
 }

@@ -542,7 +542,7 @@ CREATE OR REPLACE FUNCTION merge_match_prices(
 ) RETURNS VOID AS $$
 BEGIN
 	IF p_winner_price IS NOT NULL AND p_loser_price IS NOT NULL THEN
-		IF 1.0 / p_winner_price + 1.0 / p_loser_price > 1 THEN
+		IF p_winner_price > 0.0 AND p_loser_price > 0.0 AND 1.0 / p_winner_price + 1.0 / p_loser_price > 1 THEN
 			BEGIN
 				INSERT INTO match_price
 				(match_id, source, winner_price, loser_price)
@@ -599,8 +599,15 @@ BEGIN
 		WHERE season = p_season
       AND (lower(name) = lower(p_location) OR lower(name) = lower(p_tournament))
       AND abs(p_date - date) <= 15;
+
 		IF l_tournament_event_id IS NULL THEN
-			RAISE EXCEPTION 'Tournament % (%), surface %, not found', p_tournament, p_location, p_surface;
+			SELECT tournament_event_id INTO l_tournament_event_id FROM tournament_event
+			WHERE season = p_season
+	      AND (lower(name) = lower(p_location) OR lower(name) = lower(p_tournament));
+
+			IF l_tournament_event_id IS NULL THEN
+				RAISE EXCEPTION 'Tournament % (%), surface %, not found', p_tournament, p_location, p_surface;
+			END IF;
 		END IF;
 	END IF;
 

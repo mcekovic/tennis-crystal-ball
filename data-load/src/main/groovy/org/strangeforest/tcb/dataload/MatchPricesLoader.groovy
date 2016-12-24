@@ -40,14 +40,14 @@ class MatchPricesLoader extends BaseCSVLoader {
 		params.winner = mapPlayer lastName(record.Winner)
 		params.loser = mapPlayer lastName(record.Loser)
 
-		params.B365W = decimal record.B365W
-		params.B365L = decimal record.B365L
-		params.EXW = decimal record.EXW
-		params.EXL = decimal record.EXL
-		params.LBW = decimal record.LBW
-		params.LBL = decimal record.LBL
-		params.PSW = decimal record.PSW
-		params.PSL = decimal record.PSL
+		params.B365W = safeDecimal safeProperty(record, 'B365W')
+		params.B365L = safeDecimal safeProperty(record, 'B365L')
+		params.EXW = safeDecimal safeProperty(record, 'EXW')
+		params.EXL = safeDecimal safeProperty(record, 'EXL')
+		params.LBW = safeDecimal safeProperty(record, 'LBW')
+		params.LBL = safeDecimal safeProperty(record, 'LBL')
+		params.PSW = safeDecimal safeProperty(record, 'PSW')
+		params.PSL = safeDecimal safeProperty(record, 'PSL')
 
 		return params
 	}
@@ -91,18 +91,26 @@ class MatchPricesLoader extends BaseCSVLoader {
 
 	String mapTournament(String name) {
 		switch (name) {
-			case 'BNP Paribas Open': return 'Indian Wells Masters'
-			case 'Sony Ericsson Open': return 'Miami Masters'
-			case 'Mutua Madrid Open': return 'Madrid Masters'
-			case 'Internazionali BNL d\'Italia': return 'Rome Masters'
+			case 'Indian Wells': return 'Indian Wells Masters'
+			case 'Miami': return 'Miami Masters'
+			case 'VTR Open': return 'Santiago'
+			case 'Portugal Open': return 'Estoril'
+			case 'Movistar Open': return season <= 2009 ? 'Viña del Mar' : name
+			case 'Portschach': return 'Poertschach'
+			case 'Madrid': return 'Madrid Masters'
+			case 'Hamburg': return season <= 2008 ? 'Hamburg Masters' : name
+			case 'Rome': return 'Rome Masters'
+			case 'St. Polten': return 'St. Poelten'
 			case 'French Open': return 'Roland Garros'
 			case 'AEGON Championships': return 'London'
-			case 'Topshelf Open': return 's-Hertogenbosch'
-			case 'Rogers Masters': return 'Canada Masters'
+			case 'Queens Club': return season <= 2014 ? 'Queen\'s Club' : name
+			case '\'s-Hertogenbosch': return season >= 2008 ? 's-Hertogenbosch' : name
+			case 'Rogers Masters': case 'Rogers Cup': return 'Canada Masters'
 			case 'Western & Southern Financial Group Masters': return 'Cincinnati Masters'
+			case 'Ho Chi Min City': return 'Ho Chi Minh City'
 			case 'St. Petersburg Open': return 'St.Petersburg'
 			case 'Paris': return season == 2016 as short ? 'Paris' : 'Paris Masters'
-			case 'Masters Cup': return season == 2016 as short ? 'Barclays ATP World Tour Finals' : 'Tour Finals'
+			case 'Masters Cup': return season == 2016 as short ? 'Barclays ATP World Tour Finals' : (season >= 2009 ? 'Tour Finals': name)
 			default: return name
 		}
 	}
