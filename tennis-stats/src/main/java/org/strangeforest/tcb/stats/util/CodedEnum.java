@@ -23,6 +23,6 @@ public interface CodedEnum {
 	}
 
 	static <E extends Enum<E> & CodedEnum> Map<String, String> asMap(Class<E> enumClass) {
-		return Stream.of(enumClass.getEnumConstants()).collect(toMap(CodedEnum::getCode, CodedEnum::getText));
+		return Stream.<CodedEnum>of(enumClass.getEnumConstants()).collect(toMap(CodedEnum::getCode, CodedEnum::getText));
 	}
 }
