@@ -21,7 +21,7 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	private static final LocalDate FROM_DATE = LocalDate.of(2005, 1, 1);
 	private static final LocalDate TO_DATE = LocalDate.now();
-	private static final Function<PredictionResult, Double> METRICS = PredictionResult::getPredictionRate;
+	private static final Function<PredictionResult, Double> METRICS = PredictionResult::getProfit;
 
 	@Test
 	public void tunePredictionByArea() throws InterruptedException {
@@ -64,7 +64,6 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 		Properties currentConfig = bestResult.getConfig();
 		int stepCount = 0;
 		while (true) {
-			System.out.println("Tuning step " + (++stepCount));
 			PredictionResult bestStepResult = null;
 			for (Weighted weighted : features) {
 				PredictionConfig.set(currentConfig);
@@ -80,8 +79,10 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 						bestStepResult = result;
 				}
 			}
-			if (bestStepResult != null)
+			if (bestStepResult != null) {
 				currentConfig = bestStepResult.getConfig();
+				System.out.println("*** Tuning step " + (++stepCount) + " finished: " + bestStepResult);
+			}
 			else
 				break;
 		}
