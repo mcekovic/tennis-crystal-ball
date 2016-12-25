@@ -24,6 +24,8 @@ public class RankingsService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
+	private static final int TOP_RANKS_FOR_TIMELINE = 5;
+
  	private static final String CURRENT_RANKING_DATE_QUERY = //language=SQL
 		"SELECT max(rank_date) AS rank_date FROM %1$s";
 
@@ -97,6 +99,13 @@ public class RankingsService {
 	private static final String PLAYER_YEAR_END_RANKINGS_FOR_HIGHLIGHTS_QUERY =
 		"SELECT year_end_rank FROM player_year_end_rank\n" +
 		"WHERE player_id = :playerId";
+
+	private static final String TOP_RANKINGS_TIMELINE_QUERY = //language=SQL
+		"SELECT r.season, r.year_end_rank, player_id, p.short_name, p.country_id, p.active\n" +
+		"FROM %1$s r\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"WHERE r.year_end_rank <= :topRanks\n" +
+		"ORDER BY r.season, r.year_end_rank";
 
 
 	@Cacheable("RankingsTable.CurrentDate")
@@ -324,5 +333,34 @@ public class RankingsService {
 		});
 
 		return highlights;
+	}
+
+
+	// Top Rankings Timeline
+
+	public TopRankingsTimeline getTopRankingsTimeline(RankType rankType) {
+		TopRankingsTimeline timeline = new TopRankingsTimeline(TOP_RANKS_FOR_TIMELINE);
+		jdbcTemplate.query(
+			format(TOP_RANKINGS_TIMELINE_QUERY, yearEndRankingTable(rankType)),
+			params("topRanks", TOP_RANKS_FOR_TIMELINE),
+			rs -> {
+				timeline.addSeasonTopPlayer(rs.getInt("season"), new TopRankingsPlayer(
+					rs.getInt("year_end_rank"),
+					rs.getInt("player_id"),
+					rs.getString("short_name"),
+					rs.getString("country_id"),
+					rs.getBoolean("active")
+				));
+			}
+		);
+		return timeline;
+	}
+
+	private String yearEndRankingTable(RankType rankType) {
+		switch (rankType) {
+			case POINTS: return "player_year_end_rank";
+			case ELO_RATING: return "player_year_end_elo_rank";
+			default: throw unknownEnum(rankType);
+		}
 	}
 }

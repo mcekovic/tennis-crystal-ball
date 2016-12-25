@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
+<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
 	<title>Rankings Table</title>
 	<script type="text/javascript">
@@ -39,7 +41,11 @@
 						return date ? ("<span title='" + formatDate(date) + "'>" + row.bestRank + "</span>") : row.bestRank;
 					},
 					"country": countryFormatter,
-					"player": playerFormatter
+					"player": playerFormatter,
+					"points": function(column, row) {
+						var points = row.points;
+						return points > 0 ? points : "";
+					}
 				},
 				labels: {
 					loading: bootgridTemplateLoading,
@@ -89,15 +95,15 @@
 	<h3 id="rankingsTable-title" class="grid-title">Rankings Table</h3>
 	<div id="rankTypeDiv" class="btn-group" style="margin-right: 20px">
 		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
-			<option value="POINTS">ATP Ranking</option>
-			<option value="ELO_RATING">Elo Ranking</option>
-			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|">Hard Elo Ranking</option>
+			<option value="POINTS" th:selected="${rankType.name() == 'POINTS'}">ATP Ranking</option>
+			<option value="ELO_RATING" th:selected="${rankType.name() == 'ELO_RATING'}">Elo Ranking</option>
+			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|" th:selected="${rankType.name() == (surface + '_ELO_RATING')}">Hard Elo Ranking</option>
 		</select>
 	</div>
 	<div id="seasonDiv" class="btn-group" style="margin-right: 20px">
 		<select id="season" class="form-control" onchange="seasonChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select season">
 			<option value="">Current</option>
-			<option th:each="season : ${seasons}" th:value="${season}" value="2015" th:text="${season}">2015</option>
+			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2015" th:text="${aSeason}" th:selected="${aSeason == season}">2015</option>
 		</select>
 	</div>
 	<div id="dateDiv" class="btn-group" style="width: 120px; margin-right: 20px">
@@ -110,7 +116,7 @@
 			<th data-column-id="bestRank" data-formatter="bestRank" data-width="100">Best Rank</th>
 			<th data-column-id="country" data-formatter="country" data-width="85">Country</th>
 			<th data-column-id="name" data-formatter="player" data-width="250">Name</th>
-			<th data-column-id="points" data-type="numeric" data-width="100" data-align="right" data-header-align="right">Points</th>
+			<th data-column-id="points" data-formatter="points" data-width="100" data-align="right" data-header-align="right">Points</th>
 		</tr>
 		</thead>
 	</table>

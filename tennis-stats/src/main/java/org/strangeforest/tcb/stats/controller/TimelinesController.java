@@ -17,6 +17,7 @@ public class TimelinesController extends PageController {
 
 	@Autowired private DominanceTimelineService timelineService;
 	@Autowired private TournamentLevelService tournamentLevelService;
+	@Autowired private RankingsService rankingsService;
 	@Autowired private SurfaceService surfaceService;
 
 	@GetMapping({"dominanceTimeline", "/bigGunsTimeline"})
@@ -54,6 +55,18 @@ public class TimelinesController extends PageController {
 		modelMap.addAttribute("level", tournamentLevel);
 		modelMap.addAttribute("timeline", timeline);
 		return new ModelAndView("teamTournamentLevelTimeline", modelMap);
+	}
+
+	@GetMapping("/topRankingsTimeline")
+	public ModelAndView topRankingsTimeline(
+		@RequestParam(name = "rankType", defaultValue = "POINTS") RankType rankType
+	) {
+		TopRankingsTimeline timeline = rankingsService.getTopRankingsTimeline(rankType);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("timeline", timeline);
+		modelMap.addAttribute("rankType", rankType);
+		return new ModelAndView("topRankingsTimeline", modelMap);
 	}
 
 	@GetMapping("/surfaceTimeline")

@@ -43,23 +43,12 @@ public class TournamentLevelTimeline {
 	}
 
 	private void addSeasonTournament(TournamentLevelTimelineItem item) {
-		int season = item.getSeason();
-		List<TournamentItem> seasonTournaments = seasonsTournaments.get(season);
-		if (seasonTournaments == null) {
-			seasonTournaments = new ArrayList<>();
-			seasonsTournaments.put(season, seasonTournaments);
-		}
-		seasonTournaments.add(new TournamentItem(item.getTournamentId(), item.getName(), level));
+		TournamentItem tournamentItem = new TournamentItem(item.getTournamentId(), item.getName(), level);
+		seasonsTournaments.computeIfAbsent(item.getSeason(), ArrayList::new).add(tournamentItem);
 	}
 
 	private void addSeasonEvent(TournamentLevelTimelineItem item) {
-		int season = item.getSeason();
-		List<TournamentLevelTimelineItem> seasonEvents = seasonsEvents.get(season);
-		if (seasonEvents == null) {
-			seasonEvents = new ArrayList<>();
-			seasonsEvents.put(season, seasonEvents);
-		}
-		seasonEvents.add(item);
+		seasonsEvents.computeIfAbsent(item.getSeason(), ArrayList::new).add(item);
 	}
 
 	private void updatePlayerWins(TournamentLevelTimelineItem item) {
@@ -93,10 +82,6 @@ public class TournamentLevelTimeline {
 
 
 	// Util
-
-	private int getLastSeason() {
-		return getSeasons().iterator().next();
-	}
 
 	private Optional<Integer> getPrevSeason(int season) {
 		Set<Integer> seasons = getSeasons();

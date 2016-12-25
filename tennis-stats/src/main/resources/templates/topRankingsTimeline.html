@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.TopRankingsTimeline"*/-->
+<!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
+	<title>Top Rankings Timeline</title>
+	<script type="text/javascript">
+		function onRankTypeChange() {
+			window.location = "/topRankingsTimeline?rankType=" + $("#rankType").val();
+		}
+	</script>
+	<style>
+		span.small-dimmed {
+			font-size: smaller;
+			color: #444;
+		}
+	</style>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3>Top Rankings Timeline</h3>
+	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('sm')"/>
+	<row>
+		<div class="col-md-4 input-group">
+			<label for="rankType" class="input-group-addon">Ranking type:</label>
+			<select id="rankType" class="form-control" onchange="onRankTypeChange()">
+				<option value="POINTS" th:selected="${rankType.name() == 'POINTS'}">ATP Ranking</option>
+				<option value="ELO_RATING" th:selected="${rankType.name() == 'ELO_RATING'}">Elo Ranking</option>
+			</select>
+		</div>
+	</row>
+	<br/>
+	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
+		<thead>
+			<tr>
+				<th>Season</th>
+				<th th:each="rank : ${#numbers.sequence(1, timeline.topRanks)}" th:text="'No. ' + ${rank}">No. 1</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="season : ${timeline.seasons}">
+				<th>
+					<a th:href="'/rankingsTable?rankType=' + ${rankType} + '&season=' + ${season}" th:text="${season}" title="Show season year-end rankings">2000</a>
+					<th:block th:if="${season < 1973}"> *</th:block>
+				</th>
+				<td th:each="player : ${timeline.getTopPlayers(season)}">
+					<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+					<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
+					<span th:if="${player.rank == 1}" class="small-dimmed" th:text="'(' + ${player.yeNo1} + '/' + ${timeline.getYENo1(player.playerId)} + ')'">(2/5)</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<p><i>* Estimated rankings</i></p>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

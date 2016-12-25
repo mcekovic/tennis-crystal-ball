@@ -16,10 +16,15 @@ public class RankingsController extends PageController {
 	@Autowired private PlayerService playerService;
 
 	@GetMapping("/rankingsTable")
-	public ModelAndView rankingsTable() {
+	public ModelAndView rankingsTable(
+		@RequestParam(name = "rankType", required = false) RankType rankType,
+		@RequestParam(name = "season", required = false) Integer season
+	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
+		modelMap.addAttribute("rankType", rankType);
+		modelMap.addAttribute("season", season);
 		return new ModelAndView("rankingsTable", modelMap);
 	}
 
