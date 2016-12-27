@@ -72,6 +72,7 @@
 		function showEventsStats(event) {
 			var $eventsStats = $("#eventsStats");
 			if (!$eventsStats.hasClass("loaded")) {
+				event.preventDefault();
 				var url = "/eventsStats?playerId=[[${playerId}]]";
 				url += "&season=" + $("#season").val();
 				url += "&level=" + $("#level").val();
@@ -80,7 +81,6 @@
 				url += "&result=" + $("#result").val();
 				url += "&searchPhrase=" + $("#tournamentsTable-header").find("input.search-field").val();
 				$.get(url, function(data) {
-					event.preventDefault();
 					$eventsStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
 					$eventsStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
 				});

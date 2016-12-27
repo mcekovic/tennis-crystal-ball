@@ -68,18 +68,6 @@ public class PlayerStatsController extends BaseController {
 		return new ModelAndView("eventStats", modelMap);
 	}
 
-	@GetMapping("/matchStats")
-	public ModelAndView matchStats(
-		@RequestParam(name = "matchId") long matchId
-	) {
-		MatchStats matchStats = statisticsService.getMatchStats(matchId);
-
-		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("matchId", matchId);
-		modelMap.addAttribute("matchStats", matchStats);
-		return new ModelAndView("matchStats", modelMap);
-	}
-
 	@GetMapping("/rivalryStats")
 	public ModelAndView rivalryStats(
 		@RequestParam(name = "playerId") int playerId,
@@ -95,6 +83,18 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("opponentId", opponentId);
 		modelMap.addAttribute("stats", stats);
 		return new ModelAndView("rivalryStats", modelMap);
+	}
+
+	@GetMapping("/matchStats")
+	public ModelAndView matchStats(
+		@RequestParam(name = "matchId") long matchId
+	) {
+		MatchStats matchStats = statisticsService.getMatchStats(matchId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("matchId", matchId);
+		modelMap.addAttribute("matchStats", matchStats);
+		return new ModelAndView("matchStats", modelMap);
 	}
 
 	@GetMapping("/playerTimelineStats")

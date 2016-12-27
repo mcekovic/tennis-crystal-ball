@@ -212,14 +212,16 @@
 				</table>
 			</div>
 		</div>
-		<th:block th:if="${stats.empty}"><p>No statistics available</p></th:block>
+		<p th:if="${stats.empty}">No statistics available</p>
 		<div class="row">
-			<div th:unless="${stats.empty}" class="pct-data col-md-6">
+			<th:block th:unless="${stats.empty}">
+			<div class="pct-data col-md-6">
 				<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('#${elementId}')|" title="Show raw data"> Raw Data</button>
 			</div>
-			<div th:unless="${stats.empty}" class="raw-data col-md-6">
+			<div class="raw-data col-md-6">
 				<button class="btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('#${elementId}')|" title="Show percentage data"> Pct. Data</button>
 			</div>
+			</th:block>
 			<div th:if="${popover}" class="col-md-6">
 				<button class="btn btn-default btn-xs glyphicon glyphicon-remove pull-right" th:onclick="|$('#${buttonId}').click()|"> Close</button>
 			</div>
