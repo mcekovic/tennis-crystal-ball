@@ -6,11 +6,11 @@ public class SetOutcome extends DiffOutcome {
 	private final double pReturn;
 	private final boolean tieBreak;
 
-	SetOutcome(double pServe, double pReturn) {
+	public SetOutcome(double pServe, double pReturn) {
 		this(pServe, pReturn, true);
 	}
 
-	SetOutcome(double pServe, double pReturn, boolean tieBreak) {
+	public SetOutcome(double pServe, double pReturn, boolean tieBreak) {
 		super(6, 2, gameNo -> gameNo % 2 == 0 ? new GameOutcome(pServe).pWin() : new GameOutcome(pReturn).pWin());
 		this.pServe = pServe;
 		this.pReturn = pReturn;

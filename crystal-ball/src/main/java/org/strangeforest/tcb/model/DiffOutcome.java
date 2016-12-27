@@ -2,19 +2,19 @@ package org.strangeforest.tcb.model;
 
 import java.util.function.*;
 
-class DiffOutcome {
+public abstract class DiffOutcome {
 
 	private final int maxItems;
 	private final int itemsDiff;
 	private final Function<Integer, Double> pItemWin;
 
-	DiffOutcome(int maxItems, int itemsDiff, Function<Integer, Double> pItemWin) {
+	protected DiffOutcome(int maxItems, int itemsDiff, Function<Integer, Double> pItemWin) {
 		this.maxItems = maxItems;
 		this.itemsDiff = itemsDiff;
 		this.pItemWin = pItemWin;
 	}
 
-	double pWin() {
+	public double pWin() {
 		return pWin(0, 0);
 	}
 

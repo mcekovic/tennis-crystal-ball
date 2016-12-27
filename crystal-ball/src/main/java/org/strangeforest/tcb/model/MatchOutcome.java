@@ -2,11 +2,11 @@ package org.strangeforest.tcb.model;
 
 public class MatchOutcome extends DiffOutcome {
 
-	MatchOutcome(double pServe, double pReturn, int bestOf) {
+	public MatchOutcome(double pServe, double pReturn, int bestOf) {
 		this(pServe, pReturn, bestOf, finalSetTieBreaker(bestOf));
 	}
 
-	MatchOutcome(double pServe, double pReturn, int bestOf, boolean finalSetTieBreaker) {
+	public MatchOutcome(double pServe, double pReturn, int bestOf, boolean finalSetTieBreaker) {
 		super(maxSets(bestOf), 1, setNo -> new SetOutcome(pServe, pReturn, finalSetTieBreaker || setNo < maxSets(bestOf)).pWin());
 	}
 
