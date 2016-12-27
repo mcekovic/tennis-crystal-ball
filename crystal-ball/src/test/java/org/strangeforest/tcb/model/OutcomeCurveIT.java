@@ -4,7 +4,7 @@ import org.junit.*;
 
 public class OutcomeCurveIT {
 
-	@Test
+	@Test @Ignore
 	public void testCurve() {
 		System.out.println("Point    Game     TieBreak Set      NoTB Set BestOf3  BestOf5  BestOf5TB");
 		for (double p = 0.0; p <= 1.0; p += 0.01) {
