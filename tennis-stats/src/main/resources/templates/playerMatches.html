@@ -15,7 +15,7 @@
 	<!--/*@thymesVar id="opponentName" type="java.lang.String>"*/-->
 	<!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
 	<!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
-	<script type="text/javascript" th:inline="javascript">
+	<script type="text/javascript">
 		$(function() {
 			var $matchesTable = $("#matchesTable");
 			var device = detectDevice();
@@ -59,10 +59,10 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			}).on("loaded.rs.jquery.bootgrid", function() {
-				$("#playerStats").popover("destroy").removeClass("loaded");
+				$("#matchesStats").popover("destroy").removeClass("loaded");
 			});
 			var $matchesTableHeader = $("#matchesTable-header");
-			$matchesTableHeader.find("div.search").before($("#playerStats").remove());
+			$matchesTableHeader.find("div.search").before($("#matchesStats").remove());
 			var $actionBar = $matchesTableHeader.find("div.actionBar");
 			$actionBar.removeClass("col-sm-12").addClass("col-sm-5");
 			$actionBar.before($("#matchesTournamentDiv").remove());
@@ -85,10 +85,10 @@
 			$("#matchesTable").bootgrid("search", "");
 			reloadMatches();
 		}
-		function showPlayerStats(event) {
-			var $playerStats = $("#playerStats");
-			if (!$playerStats.hasClass("loaded")) {
-				var url = "/playerStats?playerId=[[${playerId}]]";
+		function showMatchesStats(event) {
+			var $matchesStats = $("#matchesStats");
+			if (!$matchesStats.hasClass("loaded")) {
+				var url = "/matchesStats?playerId=[[${playerId}]]";
 				url += "&season=" + $("#matchesSeason").val();
 				url += "&level=" + $("#matchesLevel").val();
 				url += "&surface=" + $("#matchesSurface").val();
@@ -100,8 +100,8 @@
 				url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 				$.get(url, function(data) {
 					event.preventDefault();
-					$playerStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
-					$playerStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
+					$matchesStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
+					$matchesStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
 				});
 			}
 		}
@@ -187,7 +187,7 @@
 			<option value="ABD">Abandoned</option>
 		</select>
 	</div>
-	<button id="playerStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showPlayerStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for selected matches)|">
+	<button id="matchesStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showMatchesStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for selected matches)|">
 		<span class="glyphicon glyphicon-stats"></span> Stats
 	</button>
 	<table id="matchesTable" class="table table-condensed table-hover table-striped">

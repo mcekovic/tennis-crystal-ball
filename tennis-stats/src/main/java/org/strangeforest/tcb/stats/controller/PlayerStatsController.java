@@ -19,6 +19,41 @@ public class PlayerStatsController extends BaseController {
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerTimelineService timelineService;
 
+	@GetMapping("/eventsStats")
+	public ModelAndView eventsStats(
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "result", required = false) String result,
+		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
+	) {
+		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, null, result, null, null, null, searchPhrase);
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+
+		return new ModelAndView("eventsStats", "stats", stats);
+	}
+
+	@GetMapping("/matchesStats")
+	public ModelAndView matchesStats(
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "opponent", required = false) String opponent,
+		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
+	) {
+		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, null, round, OpponentFilter.forStats(opponent), OutcomeFilter.forStats(outcome), searchPhrase);
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+
+		return new ModelAndView("matchesStats", "stats", stats);
+	}
+
 	@GetMapping("/eventStats")
 	public ModelAndView eventStats(
 		@RequestParam(name = "playerId") int playerId,
@@ -31,6 +66,18 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("stats", stats);
 		return new ModelAndView("eventStats", modelMap);
+	}
+
+	@GetMapping("/matchStats")
+	public ModelAndView matchStats(
+		@RequestParam(name = "matchId") long matchId
+	) {
+		MatchStats matchStats = statisticsService.getMatchStats(matchId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("matchId", matchId);
+		modelMap.addAttribute("matchStats", matchStats);
+		return new ModelAndView("matchStats", modelMap);
 	}
 
 	@GetMapping("/rivalryStats")
@@ -48,37 +95,6 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("opponentId", opponentId);
 		modelMap.addAttribute("stats", stats);
 		return new ModelAndView("rivalryStats", modelMap);
-	}
-
-	@GetMapping("/playerStats")
-	public ModelAndView playerStats(
-		@RequestParam(name = "playerId") int playerId,
-		@RequestParam(name = "season", required = false) Integer season,
-		@RequestParam(name = "level", required = false) String level,
-		@RequestParam(name = "surface", required = false) String surface,
-		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
-		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(name = "round", required = false) String round,
-		@RequestParam(name = "opponent", required = false) String opponent,
-		@RequestParam(name = "outcome", required = false) String outcome,
-		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
-	) {
-		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, OpponentFilter.forStats(opponent), OutcomeFilter.forStats(outcome), searchPhrase);
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
-
-		return new ModelAndView("playerStats", "stats", stats);
-	}
-
-	@GetMapping("/matchStats")
-	public ModelAndView matchStats(
-		@RequestParam(name = "matchId") long matchId
-	) {
-		MatchStats matchStats = statisticsService.getMatchStats(matchId);
-
-		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("matchId", matchId);
-		modelMap.addAttribute("matchStats", matchStats);
-		return new ModelAndView("matchStats", modelMap);
 	}
 
 	@GetMapping("/playerTimelineStats")

@@ -1,6 +1,7 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="playerName" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
@@ -9,7 +10,7 @@
 	<!--/*@thymesVar id="level" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="result" type="java.lang.String"*/-->
-	<script type="text/javascript" th:inline="javascript">
+	<script type="text/javascript">
 		$(function() {
 			$("[data-toggle='tooltip']").tooltip();
 			var $tournamentsTable = $("#tournamentsTable");
@@ -40,7 +41,7 @@
 						return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[[${playerId}]]&tab=matches&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
 					},
 					"stats": function(column, row) {
-						return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='" + row.name + " " + row.season + " Statistics'> Stats</a>";
+						return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='[[${playerName}]] " + row.name + " " + row.season + " Statistics'> Stats</a>";
 					}
 				},
 				labels: {
@@ -50,7 +51,11 @@
 				templates: {
 					paginationItem: bootgridTemplatePaginationItem
 				}
+			}).on("loaded.rs.jquery.bootgrid", function() {
+				$("#eventsStats").popover("destroy").removeClass("loaded");
 			});
+			var $tournamentsTableHeader = $("#tournamentsTable-header");
+			$tournamentsTableHeader.find("div.search").before($("#eventsStats").remove());
 		});
 		function reloadTournaments() {
 			$("#tournamentsTable").bootgrid("reload");
@@ -64,11 +69,28 @@
 			$("#tournamentsTable").bootgrid("search", "");
 			reloadTournaments();
 		}
+		function showEventsStats(event) {
+			var $eventsStats = $("#eventsStats");
+			if (!$eventsStats.hasClass("loaded")) {
+				var url = "/eventsStats?playerId=[[${playerId}]]";
+				url += "&season=" + $("#season").val();
+				url += "&level=" + $("#level").val();
+				url += "&surface=" + $("#surface").val();
+				url += "&tournamentId=" + $("#tournament").val();
+				url += "&result=" + $("#result").val();
+				url += "&searchPhrase=" + $("#tournamentsTable-header").find("input.search-field").val();
+				$.get(url, function(data) {
+					event.preventDefault();
+					$eventsStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
+					$eventsStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
+				});
+			}
+		}
 		function showEventStats(tournamentEventId, event) {
 			var $eventStats = $("#eventStats-" + tournamentEventId);
 			if (!$eventStats.hasClass("loaded")) {
 				event.preventDefault();
-				$.get("eventStats?playerId=[[${playerId}]]&tournamentEventId=" + tournamentEventId, function(data) {
+				$.get("/eventStats?playerId=[[${playerId}]]&tournamentEventId=" + tournamentEventId, function(data) {
 					$eventStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 					$eventStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
 				});
@@ -128,6 +150,9 @@
 			</button>
 		</div>
 	</div>
+	<button id="eventsStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showEventsStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for selected tournaments)|">
+		<span class="glyphicon glyphicon-stats"></span> Stats
+	</button>
 	<table id="tournamentsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>

@@ -1,14 +1,19 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
-<script type="text/javascript" th:inline="javascript">
+<script type="text/javascript">
 	function reloadStats() {
 		var url = "/playerStatsTab?playerId=[[${playerId}]]";
 		var season = $("#statsSeason").val();
 		if (season != "")
 			url += "&season=" + season;
+		var level = $("#statsLevel").val();
+		if (level != "")
+			url += "&level=" + level;
 		var surface = $("#statsSurface").val();
 		if (surface != "")
 			url += "&surface=" + surface;
@@ -23,6 +28,15 @@
 			<select id="statsSeason" class="form-control" onchange="reloadStats()">
 				<option value="">All seasons</option>
 				<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
+			</select>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="input-group">
+			<label for="statsLevel" class="input-group-addon">Level:</label>
+			<select id="statsLevel" class="form-control" onchange="reloadStats()">
+				<option value="">All levels</option>
+				<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
 			</select>
 		</div>
 	</div>

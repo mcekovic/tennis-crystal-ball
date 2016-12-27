@@ -76,6 +76,9 @@ public class StatisticsService {
 	private static final String TOURNAMENT_EVENT_JOIN = //language=SQL
 	 	"\nINNER JOIN tournament_event e USING (tournament_event_id)";
 
+	private static final String TOURNAMENT_EVENT_RESULT_JOIN = //language=SQL
+	 	"\nINNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)";
+
 	private static final String OPPONENT_JOIN = //language=SQL
 	 	"\nINNER JOIN player_v o ON o.player_id = opponent_id";
 
@@ -207,6 +210,8 @@ public class StatisticsService {
 		StringBuilder sb = new StringBuilder(100);
 		if (!filter.isTournamentEventFilterEmpty())
 			sb.append(TOURNAMENT_EVENT_JOIN);
+		if (filter.hasResult())
+			sb.append(TOURNAMENT_EVENT_RESULT_JOIN);
 		OpponentFilter opponentFilter = filter.getOpponentFilter();
 		if (opponentFilter.isOpponentRequired() || filter.hasSearchPhrase())
 			sb.append(OPPONENT_JOIN);

@@ -10,34 +10,38 @@ import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
-public class MatchFilter extends TournamentEventFilter {
+public class MatchFilter extends TournamentEventResultFilter {
 
 	// Factory
 
-	public static final MatchFilter ALL = new MatchFilter(null, null, null, null, null, null, null, null, null);
+	public static final MatchFilter ALL = new MatchFilter(null, null, null, null, null, null, null, null, null, null);
 
 	public static MatchFilter forTournamentEvent(int tournamentEventId) {
-		return new MatchFilter(null, null, null, null, tournamentEventId, null, null, null, null);
+		return new MatchFilter(null, null, null, null, tournamentEventId, null, null, null, null, null);
 	}
 
 	public static MatchFilter forOpponent(int opponentId, String level, String surface, String round) {
-		return new MatchFilter(null, level, surface, null, null, round, OpponentFilter.forStats(null, opponentId), null, null);
+		return new MatchFilter(null, level, surface, null, null, null, round, OpponentFilter.forStats(null, opponentId), null, null);
 	}
 
 	public static MatchFilter forSeason(int season) {
-		return new MatchFilter(season, null, null, null, null, null, null, null, null);
+		return new MatchFilter(season, null, null, null, null, null, null, null, null, null);
 	}
 
 	public static MatchFilter forSurface(String surface) {
-		return new MatchFilter(null, null, surface, null, null, null, null, null, null);
+		return new MatchFilter(null, null, surface, null, null, null, null, null, null, null);
 	}
 
 	public static MatchFilter forSeasonAndSurface(int season, String surface) {
-		return new MatchFilter(season, null, surface, null, null, null, null, null, null);
+		return new MatchFilter(season, null, surface, null, null, null, null, null, null, null);
 	}
 
-	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, String searchPhrase) {
-		return new MatchFilter(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, searchPhrase) {
+	public static MatchFilter forStats(Integer season, String level, String surface) {
+		return new MatchFilter(season, level, surface, null, null, null, null, null, null, null);
+	}
+
+	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String result, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, String searchPhrase) {
+		return new MatchFilter(season, level, surface, tournamentId, tournamentEventId, result, round, opponentFilter, outcomeFilter, searchPhrase) {
 			@Override protected String getSearchCriterion() {
 				return STATS_SEARCH_CRITERION;
 			}
@@ -56,8 +60,8 @@ public class MatchFilter extends TournamentEventFilter {
 	private static final String MATCHES_SEARCH_CRITERION = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR pw.name ILIKE '%' || :searchPhrase || '%' OR pl.name ILIKE '%' || :searchPhrase || '%')";
 	private static final String STATS_SEARCH_CRITERION   = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR o.name ILIKE '%' || :searchPhrase || '%')";
 
-	public MatchFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, String searchPhrase) {
-		super(season, level, surface, tournamentId, tournamentEventId, searchPhrase);
+	public MatchFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String result, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, String searchPhrase) {
+		super(season, level, surface, tournamentId, tournamentEventId, result, searchPhrase);
 		this.round = round;
 		this.opponentFilter = opponentFilter != null ? opponentFilter : OpponentFilter.ALL;
 		this.outcomeFilter = outcomeFilter != null ? outcomeFilter : OutcomeFilter.ALL;

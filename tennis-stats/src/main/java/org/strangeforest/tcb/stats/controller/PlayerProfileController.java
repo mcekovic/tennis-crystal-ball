@@ -90,11 +90,13 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "result", required = false) String result
 	) {
+		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("playerName", name);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -158,8 +160,11 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerRivalries(
 		@RequestParam(name = "playerId") int playerId
 	) {
+		String name = playerService.getPlayerName(playerId);
+
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("playerName", name);
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("rounds", Round.values());
@@ -213,26 +218,19 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerStatsTab(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		PlayerStats stats;
-		if (season != null) {
-			stats = surface != null
-				? statisticsService.getPlayerSeasonSurfaceStats(playerId, season, surface)
-				: statisticsService.getPlayerSeasonStats(playerId, season);
-		}
-		else {
-			stats = surface != null
-				? statisticsService.getPlayerSurfaceStats(playerId, surface)
-				: statisticsService.getPlayerStats(playerId);
-		}
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(season, level, surface));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("stats", stats);
 		return new ModelAndView("playerStatsTab", modelMap);

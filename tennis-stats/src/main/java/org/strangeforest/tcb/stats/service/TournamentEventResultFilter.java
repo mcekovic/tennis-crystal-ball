@@ -17,7 +17,11 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 	private static final String RESULT_CRITERION = " AND r.result %1$s :result::tournament_event_result";
 
 	public TournamentEventResultFilter(Integer season, String level, String surface, Integer tournamentId, String result, String searchPhrase) {
-		super(season, level, surface, tournamentId, null, searchPhrase);
+		this(season, level, surface, tournamentId, null, result, searchPhrase);
+	}
+
+	protected TournamentEventResultFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String result, String searchPhrase) {
+		super(season, level, surface, tournamentId, tournamentEventId, searchPhrase);
 		this.result = result;
 	}
 
@@ -31,6 +35,10 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 		super.addParams(params);
 		if (!isNullOrEmpty(result))
 			params.addValue("result", result.endsWith("+") ? result.substring(0, result.length() - 1) : result);
+	}
+
+	public boolean hasResult() {
+		return !isNullOrEmpty(result);
 	}
 
 	@Override public boolean isEmpty() {
