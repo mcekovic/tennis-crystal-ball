@@ -69,10 +69,11 @@
 			$("#tournamentsTable").bootgrid("search", "");
 			reloadTournaments();
 		}
-		function showEventsStats(event) {
+		function showEventsStats(event, compare, compareSeason, compareLevel, compareSurface) {
 			var $eventsStats = $("#eventsStats");
 			if (!$eventsStats.hasClass("loaded")) {
-				event.preventDefault();
+				if (event)
+					event.preventDefault();
 				var url = "/eventsStats?playerId=[[${playerId}]]";
 				url += "&season=" + $("#season").val();
 				url += "&level=" + $("#level").val();
@@ -80,6 +81,12 @@
 				url += "&tournamentId=" + $("#tournament").val();
 				url += "&result=" + $("#result").val();
 				url += "&searchPhrase=" + $("#tournamentsTable-header").find("input.search-field").val();
+				if (compare) {
+					url += "&compare=true";
+					url += "&compareSeason=" + compareSeason;
+					url += "&compareLevel=" + compareLevel;
+					url += "&compareSurface=" + compareSurface;
+				}
 				$.get(url, function(data) {
 					$eventsStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
 					$eventsStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
@@ -95,6 +102,14 @@
 					$eventStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
 				});
 			}
+		}
+		function compareEventsStats(selector) {
+			var compare = selector + "Compare";
+			var compareSeason = $(compare + "Season").val();
+			var compareLevel = $(compare + "Level").val();
+			var compareSurface = $(compare + "Surface").val();
+			$("#eventsStats").removeClass("loaded").popover("destroy");
+			showEventsStats(null, true, compareSeason, compareLevel, compareSurface);
 		}
 	</script>
 	<div class="row">

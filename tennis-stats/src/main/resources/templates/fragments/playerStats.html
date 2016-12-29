@@ -1,15 +1,22 @@
 <div xmlns:th="http://www.thymeleaf.org" th:fragment="playerStats(elementId, popover, buttonId)">
 	<!--/*@thymesVar id="stats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
-	<!--/*@thymesVar id="compareStats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 	<!--/*@thymesVar id="pctFormat" type="java.text.NumberFormat"*/-->
 	<!--/*@thymesVar id="pctDiffFormat" type="java.text.NumberFormat"*/-->
 	<!--/*@thymesVar id="ratioFormat" type="java.text.NumberFormat"*/-->
 	<!--/*@thymesVar id="ratioDiffFormat" type="java.text.NumberFormat"*/-->
 	<!--/*@thymesVar id="statsFormatUtil" type="org.strangeforest.tcb.stats.controller.StatsFormatUtil"*/-->
+	<!--/*@thymesVar id="compareStats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
+	<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+	<!--/*@thymesVar id="compareSeason" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="compareLevel" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="compareSurface" type="java.lang.String"*/-->
 	<div th:id="${elementId}">
-		<script type="text/javascript">
+		<script type="text/javascript" th:inline="javascript">
 			$(function() {
-				$("#[[${elementId}]]").find(".raw-data").hide();
+				$("#" + [[${elementId}]]).find(".raw-data").hide();
+				[# th:if="${compareStats}"]$("#" + [[${buttonId}]] + "Compare").collapse("show");[/]
 			});
 		</script>
 		<div th:unless="${stats.empty}" class="row text-nowrap">
@@ -156,8 +163,8 @@
 						<tr class="pct-data">
 							<td>Break Points Won</td>
 							<th th:text="${stats.breakPointsWonPct != null ? pctFormat.format(stats.breakPointsWonPct) : ''}" class="text-right">35%</th>
-							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.breakPointsWonPct - compareStats.breakPointsWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.breakPointsWonPct - compareStats.breakPointsWonPct)}">0%</th>
-							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.breakPointsWonPct)}" class="text-right">35%</th>
+							<th th:if="${stats.breakPointsWonPct != null && compareStats != null && compareStats.breakPointsWonPct != null}" th:text="${pctDiffFormat.format(stats.breakPointsWonPct - compareStats.breakPointsWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.breakPointsWonPct - compareStats.breakPointsWonPct)}">0%</th>
+							<th th:if="${compareStats != null && compareStats.breakPointsWonPct != null}" th:text="${pctFormat.format(compareStats.breakPointsWonPct)}" class="text-right">35%</th>
 						</tr>
 						<tr class="pct-data">
 							<td>Return Pts. Won</td>
@@ -224,35 +231,51 @@
 							<tr>
 								<td th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</td>
 								<th th:text="${ratioFormat.format(stats.pointsDominanceRatio)}" class="text-right">1.07</th>
+								<th th:if="${compareStats}" th:text="${ratioDiffFormat.format(stats.pointsDominanceRatio - compareStats.pointsDominanceRatio)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.pointsDominanceRatio - compareStats.pointsDominanceRatio)}">0%</th>
+								<th th:if="${compareStats}" th:text="${ratioFormat.format(compareStats.pointsDominanceRatio)}" class="text-right">1.07</th>
 							</tr>
 							<tr>
 								<td th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</td>
 								<th th:text="${ratioFormat.format(stats.gamesDominanceRatio)}" class="text-right">1.07</th>
+								<th th:if="${compareStats}" th:text="${ratioDiffFormat.format(stats.gamesDominanceRatio - compareStats.gamesDominanceRatio)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.gamesDominanceRatio - compareStats.gamesDominanceRatio)}">0%</th>
+								<th th:if="${compareStats}" th:text="${ratioFormat.format(compareStats.gamesDominanceRatio)}" class="text-right">1.07</th>
 							</tr>
 							<tr>
 								<td th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</td>
 								<th th:text="${stats.breakPointsRatio != null ? ratioFormat.format(stats.breakPointsRatio) : ''}" class="text-right">1.03</th>
+								<th th:if="${stats.breakPointsRatio != null && compareStats != null && compareStats.breakPointsRatio != null}" th:text="${ratioDiffFormat.format(stats.breakPointsRatio - compareStats.breakPointsRatio)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.breakPointsRatio - compareStats.breakPointsRatio)}">0%</th>
+								<th th:if="${compareStats != null && compareStats.breakPointsRatio != null}" th:text="${ratioFormat.format(compareStats.breakPointsRatio)}" class="text-right">1.03</th>
 							</tr>
 							<tr>
 								<td th:title="#{stats.overPerformingRatio.title}">Over-Performing</td>
 								<th th:text="${stats.overPerformingRatio != null ? ratioFormat.format(stats.overPerformingRatio) : ''}" class="text-right">1.01</th>
+								<th th:if="${stats.overPerformingRatio != null && compareStats != null && compareStats.overPerformingRatio != null}" th:text="${ratioDiffFormat.format(stats.overPerformingRatio - compareStats.overPerformingRatio)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.overPerformingRatio - compareStats.overPerformingRatio)}">0%</th>
+								<th th:if="${compareStats != null && compareStats.overPerformingRatio != null}" th:text="${ratioFormat.format(compareStats.overPerformingRatio)}" class="text-right">1.01</th>
 							</tr>
 							<tr class="pct-data">
 								<td>Total Pts. Won</td>
 								<th th:text="${pctFormat.format(stats.totalPointsWonPct)}" class="text-right">56%</th>
+								<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.totalPointsWonPct - compareStats.totalPointsWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.totalPointsWonPct - compareStats.totalPointsWonPct)}">0%</th>
+								<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.totalPointsWonPct)}" class="text-right">56%</th>
 							</tr>
 						</th:block>
 						<tr class="pct-data">
 							<td>Total Games Won</td>
 							<th th:text="${pctFormat.format(stats.totalGamesWonPct)}" class="text-right">58%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.totalGamesWonPct - compareStats.totalGamesWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.totalGamesWonPct - compareStats.totalGamesWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.totalGamesWonPct)}" class="text-right">58%</th>
 						</tr>
 						<tr class="pct-data">
 							<td>Sets Won</td>
 							<th th:text="${pctFormat.format(stats.setsWonPct)}" class="text-right">62%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.setsWonPct - compareStats.setsWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.setsWonPct - compareStats.setsWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.setsWonPct)}" class="text-right">62%</th>
 						</tr>
 						<tr class="pct-data">
 							<td>Matches Won</td>
 							<th th:text="${pctFormat.format(stats.matchesWonPct)}" class="text-right">69%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.matchesWonPct - compareStats.matchesWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.matchesWonPct - compareStats.matchesWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.matchesWonPct)}" class="text-right">69%</th>
 						</tr>
 						<!-- Total Raw Data -->
 						<th:block th:if="${stats.hasPointStats()}">
@@ -281,15 +304,50 @@
 		<p th:if="${stats.empty}">No statistics available</p>
 		<div class="row">
 			<th:block th:unless="${stats.empty}">
-			<div class="pct-data col-md-6">
+			<div class="pct-data col-md-2">
 				<button class="btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('#${elementId}')|" title="Show raw data"> Raw Data</button>
 			</div>
-			<div class="raw-data col-md-6">
+			<div class="raw-data col-md-2">
 				<button class="btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('#${elementId}')|" title="Show percentage data"> Pct. Data</button>
+			</div>
+			<div class="col-md-4">
+				<button class="btn btn-default btn-xs glyphicon glyphicon-object-align-left" data-toggle="collapse" th:onclick="|$('#${buttonId}Compare').collapse('toggle')|" title="Compare statistics"> Compare</button>
 			</div>
 			</th:block>
 			<div th:if="${popover}" class="col-md-6">
 				<button class="btn btn-default btn-xs glyphicon glyphicon-remove pull-right" th:onclick="|$('#${buttonId}').click()|"> Close</button>
+			</div>
+		</div>
+		<div th:id="|${buttonId}Compare|" class="collapse">
+			<br/>
+			<div class="row">
+				<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
+					<div class="input-group">
+						<label th:for="|${buttonId}CompareSeason|" class="input-group-addon">Season:</label>
+						<select th:id="|${buttonId}CompareSeason|" class="form-control" th:onchange="|compareEventsStats('#${buttonId}')|">
+							<option value="">All seasons</option>
+							<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == compareSeason}">2005</option>
+						</select>
+					</div>
+				</div>
+				<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
+					<div class="input-group">
+						<label th:for="|${buttonId}CompareLevel|" class="input-group-addon">Level:</label>
+						<select th:id="|${buttonId}CompareLevel|" class="form-control" th:onchange="|compareEventsStats('#${buttonId}')|">
+							<option value="">All levels</option>
+							<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == compareLevel}">Grand Slam</option>
+						</select>
+					</div>
+				</div>
+				<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
+					<div class="input-group">
+						<label th:for="|${buttonId}CompareSurface|" class="input-group-addon">Surface:</label>
+						<select th:id="|${buttonId}CompareSurface|" class="form-control" th:onchange="|compareEventsStats('#${buttonId}')|">
+							<option value="">All surfaces</option>
+							<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == compareSsurface}">Hard</option>
+						</select>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

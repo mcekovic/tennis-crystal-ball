@@ -17,6 +17,7 @@ import static java.util.stream.Collectors.*;
 @Controller
 public class PlayerStatsController extends BaseController {
 
+	@Autowired private PlayerService playerService;
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerTimelineService timelineService;
 
@@ -33,16 +34,19 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "result", required = false) String result,
-		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
+		@RequestParam(name = "searchPhrase", required = false) String searchPhrase,
+		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
+		@RequestParam(name = "compareLevel", required = false) String compareLevel,
+		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
 		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, null, result, null, null, null, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
-		PlayerStats compareStats = statisticsService.getPlayerStats(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("stats", stats);
-		modelMap.addAttribute("compareStats", compareStats);
 		addStatsFormats(modelMap);
+		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("eventsStats", modelMap);
 	}
 
@@ -57,7 +61,11 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "outcome", required = false) String outcome,
-		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
+		@RequestParam(name = "searchPhrase", required = false) String searchPhrase,
+		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
+		@RequestParam(name = "compareLevel", required = false) String compareLevel,
+		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
 		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, null, round, OpponentFilter.forStats(opponent), OutcomeFilter.forStats(outcome), searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
@@ -65,13 +73,18 @@ public class PlayerStatsController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("stats", stats);
 		addStatsFormats(modelMap);
+		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("matchesStats", modelMap);
 	}
 
 	@GetMapping("/eventStats")
 	public ModelAndView eventStats(
 		@RequestParam(name = "playerId") int playerId,
-		@RequestParam(name = "tournamentEventId") int tournamentEventId
+		@RequestParam(name = "tournamentEventId") int tournamentEventId,
+		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
+		@RequestParam(name = "compareLevel", required = false) String compareLevel,
+		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
 		MatchFilter filter = MatchFilter.forTournamentEvent(tournamentEventId);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
@@ -80,6 +93,7 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("stats", stats);
 		addStatsFormats(modelMap);
+		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("eventStats", modelMap);
 	}
 
@@ -89,7 +103,11 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "opponentId") int opponentId,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
-		@RequestParam(name = "round", required = false) String round
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
+		@RequestParam(name = "compareLevel", required = false) String compareLevel,
+		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
 		MatchFilter filter = MatchFilter.forOpponent(opponentId, level, surface, round);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
@@ -98,6 +116,7 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("opponentId", opponentId);
 		modelMap.addAttribute("stats", stats);
 		addStatsFormats(modelMap);
+		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("rivalryStats", modelMap);
 	}
 
@@ -174,7 +193,20 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("pctFormat", new DecimalFormat(PCT_FORMAT));
 		modelMap.addAttribute("pctDiffFormat", new DecimalFormat(PCT_DIFF_FORMAT));
 		modelMap.addAttribute("ratioFormat", new DecimalFormat(RATIO_FORMAT));
-		modelMap.addAttribute("ratioDiffFormat", new DecimalFormat(PCT_DIFF_FORMAT));
+		modelMap.addAttribute("ratioDiffFormat", new DecimalFormat(RATIO_DIFF_FORMAT));
 		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
+	}
+
+	private void addCompareStats(ModelMap modelMap, int playerId, boolean compare, Integer compareSeason, String compareLevel, String compareSurface) {
+		if (compare) {
+			PlayerStats compareStats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(compareSeason, compareLevel, compareSurface));
+			modelMap.addAttribute("compareStats", compareStats);
+		}
+		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("compareSeason", compareSeason);
+		modelMap.addAttribute("compareLevel", compareLevel);
+		modelMap.addAttribute("compareSurface", compareSurface);
 	}
 }
