@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
+import java.text.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -19,6 +20,11 @@ public class PlayerStatsController extends BaseController {
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerTimelineService timelineService;
 
+	private static final String PCT_FORMAT = "0.0'%'";
+	private static final String RATIO_FORMAT = "0.00";
+	private static final String PCT_DIFF_FORMAT = "+0.0'%';-0.0'%'";
+	private static final String RATIO_DIFF_FORMAT = "+0.00;-0.00";
+
 	@GetMapping("/eventsStats")
 	public ModelAndView eventsStats(
 		@RequestParam(name = "playerId") int playerId,
@@ -31,8 +37,13 @@ public class PlayerStatsController extends BaseController {
 	) {
 		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, null, result, null, null, null, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+		PlayerStats compareStats = statisticsService.getPlayerStats(playerId);
 
-		return new ModelAndView("eventsStats", "stats", stats);
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("stats", stats);
+		modelMap.addAttribute("compareStats", compareStats);
+		addStatsFormats(modelMap);
+		return new ModelAndView("eventsStats", modelMap);
 	}
 
 	@GetMapping("/matchesStats")
@@ -51,7 +62,10 @@ public class PlayerStatsController extends BaseController {
 		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, null, round, OpponentFilter.forStats(opponent), OutcomeFilter.forStats(outcome), searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
-		return new ModelAndView("matchesStats", "stats", stats);
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("stats", stats);
+		addStatsFormats(modelMap);
+		return new ModelAndView("matchesStats", modelMap);
 	}
 
 	@GetMapping("/eventStats")
@@ -65,6 +79,7 @@ public class PlayerStatsController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("stats", stats);
+		addStatsFormats(modelMap);
 		return new ModelAndView("eventStats", modelMap);
 	}
 
@@ -82,6 +97,7 @@ public class PlayerStatsController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("opponentId", opponentId);
 		modelMap.addAttribute("stats", stats);
+		addStatsFormats(modelMap);
 		return new ModelAndView("rivalryStats", modelMap);
 	}
 
@@ -94,6 +110,7 @@ public class PlayerStatsController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("matchId", matchId);
 		modelMap.addAttribute("matchStats", matchStats);
+		addStatsFormats(modelMap);
 		return new ModelAndView("matchStats", modelMap);
 	}
 
@@ -148,5 +165,16 @@ public class PlayerStatsController extends BaseController {
 			if (!seasonsData.containsKey(season))
 				seasonsData.put(season, empty);
 		}
+	}
+
+
+	// Util
+
+	private static void addStatsFormats(ModelMap modelMap) {
+		modelMap.addAttribute("pctFormat", new DecimalFormat(PCT_FORMAT));
+		modelMap.addAttribute("pctDiffFormat", new DecimalFormat(PCT_DIFF_FORMAT));
+		modelMap.addAttribute("ratioFormat", new DecimalFormat(RATIO_FORMAT));
+		modelMap.addAttribute("ratioDiffFormat", new DecimalFormat(PCT_DIFF_FORMAT));
+		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 	}
 }

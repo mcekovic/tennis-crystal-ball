@@ -15,7 +15,7 @@
 			$("[data-toggle='tooltip']").tooltip();
 			var $tournamentsTable = $("#tournamentsTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($tournamentsTable, ["draw"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsVisible($tournamentsTable, ["season", "draw"], deviceGreaterOrEqual(device, "sm"));
 			setBootgridColumnsWidths($tournamentsTable, ["name"], [device == "xs" ? 150 : (device == "sm" ? 200 : (device == "md" ? 300 : 400))]);
 			$tournamentsTable.bootgrid({
 				ajax: true,
@@ -82,7 +82,7 @@
 				url += "&searchPhrase=" + $("#tournamentsTable-header").find("input.search-field").val();
 				$.get(url, function(data) {
 					$eventsStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
-					$eventsStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
+					$eventsStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
 				});
 			}
 		}
@@ -92,7 +92,7 @@
 				event.preventDefault();
 				$.get("/eventStats?playerId=[[${playerId}]]&tournamentEventId=" + tournamentEventId, function(data) {
 					$eventStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
-					$eventStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
+					$eventStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
 				});
 			}
 		}

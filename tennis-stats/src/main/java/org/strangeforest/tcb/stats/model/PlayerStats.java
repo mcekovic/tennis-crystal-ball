@@ -353,29 +353,6 @@ public class PlayerStats {
 		this.opponentStats = opponentStats;
 	}
 
-	public PlayerStats add(PlayerStats stats) {
-		PlayerStats sum = doAdd(stats);
-		sum.setOpponentStats(opponentStats.doAdd(stats.opponentStats));
-		return sum;
-	}
-
-	private PlayerStats doAdd(PlayerStats stats) {
-		return new PlayerStats(
-			matchesWon + stats.matchesWon,
-			setsWon + stats.setsWon,
-			gamesWon + stats.gamesWon,
-			aces + stats.aces,
-			doubleFaults + stats.doubleFaults,
-			servicePoints + stats.servicePoints,
-			firstServesIn + stats.firstServesIn,
-			firstServesWon + stats.firstServesWon,
-			secondServesWon + stats.secondServesWon,
-			serviceGames + stats.serviceGames,
-			breakPointsSaved + stats.breakPointsSaved,
-			breakPointsFaced + stats.breakPointsFaced
-		);
-	}
-
 	public static final PlayerStats EMPTY = empty();
 
 	private static PlayerStats empty() {

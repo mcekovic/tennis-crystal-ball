@@ -1,214 +1,280 @@
 <div xmlns:th="http://www.thymeleaf.org" th:fragment="playerStats(elementId, popover, buttonId)">
 	<!--/*@thymesVar id="stats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
+	<!--/*@thymesVar id="compareStats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
+	<!--/*@thymesVar id="pctFormat" type="java.text.NumberFormat"*/-->
+	<!--/*@thymesVar id="pctDiffFormat" type="java.text.NumberFormat"*/-->
+	<!--/*@thymesVar id="ratioFormat" type="java.text.NumberFormat"*/-->
+	<!--/*@thymesVar id="ratioDiffFormat" type="java.text.NumberFormat"*/-->
+	<!--/*@thymesVar id="statsFormatUtil" type="org.strangeforest.tcb.stats.controller.StatsFormatUtil"*/-->
 	<div th:id="${elementId}">
-		<script type="text/javascript" th:inline="javascript">
+		<script type="text/javascript">
 			$(function() {
-				$("#" + [[${elementId}]]).find(".raw-data").hide();
+				$("#[[${elementId}]]").find(".raw-data").hide();
 			});
 		</script>
 		<div th:unless="${stats.empty}" class="row text-nowrap">
 			<div th:if="${stats.hasPointStats()}" th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
 				<table class="table table-condensed table-hover table-striped">
-					<tr>
-						<th>Serve</th>
-						<th></th>
-					</tr>
-					<!-- Serve Pct. Data -->
-					<tr class="pct-data">
-						<td>Ace %</td>
-						<th th:text="${#numbers.formatDecimal(stats.acePct, 1, 1) + '%'}">10%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>Double Fault %</td>
-						<th th:text="${#numbers.formatDecimal(stats.doubleFaultPct, 1, 1) + '%'}">3%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>1st Serve</td>
-						<th th:text="${#numbers.formatDecimal(stats.firstServePct, 1, 1) + '%'}">64%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>1st Serve Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.firstServeWonPct, 1, 1) + '%'}">75%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>2nd Serve Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.secondServeWonPct, 1, 1) + '%'}">45%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>Break Points Saved</td>
-						<th th:text="${stats.breakPointsSavedPct != null ? #numbers.formatDecimal(stats.breakPointsSavedPct, 1, 1) + '%' : ''}">35%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>Service Pts. Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.servicePointsWonPct, 1, 1) + '%'}">85%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>Service Games Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.serviceGamesWonPct, 1, 1) + '%'}">85%</th>
-					</tr>
-					<!-- Serve Raw Data -->
-					<tr class="raw-data">
-						<td>Aces</td>
-						<th th:text="${stats.aces}">5</th>
-					</tr>
-					<tr class="raw-data">
-						<td>Double Faults</td>
-						<th th:text="${stats.doubleFaults}">3</th>
-					</tr>
-					<tr class="raw-data">
-						<td>1st Serve In</td>
-						<th th:text="${stats.firstServesIn + ' / ' + stats.servicePoints}">43 / 52</th>
-					</tr>
-					<tr class="raw-data">
-						<td>1st Serve Won</td>
-						<th th:text="${stats.firstServesWon + ' / ' + stats.firstServesIn}">27 / 43</th>
-					</tr>
-					<tr class="raw-data">
-						<td>2nd Serve Won</td>
-						<th th:text="${stats.secondServesWon + ' / ' + stats.secondServes}">12 / 15</th>
-					</tr>
-					<tr class="raw-data">
-						<td>Break Points Saved</td>
-						<th th:text="${stats.breakPointsSaved + ' / ' + stats.breakPointsFaced}">1 / 2</th>
-					</tr>
-					<tr class="raw-data">
-						<td>Service Pts. Won</td>
-						<th th:text="${stats.servicePointsWon + ' / ' + stats.servicePoints}">39 / 52</th>
-					</tr>
-					<tr class="raw-data">
-						<td>Service Games Won</td>
-						<th th:text="${stats.serviceGamesWon + ' / ' + stats.serviceGames}">12 / 15</th>
-					</tr>
+					<thead>
+						<tr>
+							<th>Serve</th>
+							<th:block th:if="${compareStats}">
+								<th class="pct-data text-right" title="Actual"><span class="glyphicon glyphicon-scale"></span></th>
+								<th class="pct-data text-right" title="Difference"><span class="glyphicon glyphicon-sort"></span></th>
+								<th class="pct-data text-right" title="Relative to"><span class="glyphicon glyphicon-pushpin"></span></th>
+							</th:block>
+							<th th:unless="${compareStats}" class="pct-data text-right"><span class="glyphicon glyphicon-scale"></span></th>
+							<th class="raw-data text-right"><span class="glyphicon glyphicon-equalizer"></span></th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Serve Pct. Data -->
+						<tr class="pct-data">
+							<td>Ace %</td>
+							<th th:text="${pctFormat.format(stats.acePct)}" class="text-right">10%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.acePct - compareStats.acePct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.acePct - compareStats.acePct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.acePct)}" class="text-right">10%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>Double Fault %</td>
+							<th th:text="${pctFormat.format(stats.doubleFaultPct)}" class="text-right">3%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.doubleFaultPct - compareStats.doubleFaultPct)}" class="text-right " th:class="${statsFormatUtil.pnClass(stats.doubleFaultPct - compareStats.doubleFaultPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.doubleFaultPct)}" class="text-right">3%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>1st Serve</td>
+							<th th:text="${pctFormat.format(stats.firstServePct)}" class="text-right">64%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.firstServePct - compareStats.firstServePct)}" class="text-right " th:class="${statsFormatUtil.pnClass(stats.firstServePct - compareStats.firstServePct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.firstServePct)}" class="text-right">64%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>1st Serve Won</td>
+							<th th:text="${pctFormat.format(stats.firstServeWonPct)}" class="text-right">75%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.firstServeWonPct - compareStats.firstServeWonPct)}" class="text-right " th:class="${statsFormatUtil.pnClass(stats.firstServeWonPct - compareStats.firstServeWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.firstServeWonPct)}" class="text-right">75%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>2nd Serve Won</td>
+							<th th:text="${pctFormat.format(stats.secondServeWonPct)}" class="text-right">45%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.secondServeWonPct - compareStats.secondServeWonPct)}" class="text-right " th:class="${statsFormatUtil.pnClass(stats.secondServeWonPct - compareStats.secondServeWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.secondServeWonPct)}" class="text-right">45%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>Break Points Saved</td>
+							<th th:text="${stats.breakPointsSavedPct != null ? pctFormat.format(stats.breakPointsSavedPct) : ''}" class="text-right">35%</th>
+							<th th:if="${stats.breakPointsSavedPct != null && compareStats != null && compareStats.breakPointsSavedPct != null}" th:text="${pctDiffFormat.format(stats.breakPointsSavedPct - compareStats.breakPointsSavedPct)}" class="text-right " th:class="${statsFormatUtil.pnClass(stats.breakPointsSavedPct - compareStats.breakPointsSavedPct)}">0%</th>
+							<th th:if="${compareStats != null && compareStats.breakPointsSavedPct != null}" th:text="${pctFormat.format(compareStats.breakPointsSavedPct)}" class="text-right">35%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>Service Pts. Won</td>
+							<th th:text="${pctFormat.format(stats.servicePointsWonPct)}" class="text-right">85%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.servicePointsWonPct - compareStats.servicePointsWonPct)}" class="text-right " th:class="${statsFormatUtil.pnClass(stats.servicePointsWonPct - compareStats.servicePointsWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.servicePointsWonPct)}" class="text-right">85%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>Service Games Won</td>
+							<th th:text="${pctFormat.format(stats.serviceGamesWonPct)}" class="text-right">75%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.serviceGamesWonPct - compareStats.serviceGamesWonPct)}" class="text-right " th:class="${statsFormatUtil.pnClass(stats.serviceGamesWonPct - compareStats.serviceGamesWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.serviceGamesWonPct)}" class="text-right">75%</th>
+						</tr>
+						<!-- Serve Raw Data -->
+						<tr class="raw-data">
+							<td>Aces</td>
+							<th th:text="${stats.aces}" class="text-right">5</th>
+						</tr>
+						<tr class="raw-data">
+							<td>Double Faults</td>
+							<th th:text="${stats.doubleFaults}" class="text-right">3</th>
+						</tr>
+						<tr class="raw-data">
+							<td>1st Serve In</td>
+							<th th:text="${stats.firstServesIn + ' / ' + stats.servicePoints}" class="text-right">43 / 52</th>
+						</tr>
+						<tr class="raw-data">
+							<td>1st Serve Won</td>
+							<th th:text="${stats.firstServesWon + ' / ' + stats.firstServesIn}" class="text-right">27 / 43</th>
+						</tr>
+						<tr class="raw-data">
+							<td>2nd Serve Won</td>
+							<th th:text="${stats.secondServesWon + ' / ' + stats.secondServes}" class="text-right">12 / 15</th>
+						</tr>
+						<tr class="raw-data">
+							<td>Break Points Saved</td>
+							<th th:text="${stats.breakPointsSaved + ' / ' + stats.breakPointsFaced}" class="text-right">1 / 2</th>
+						</tr>
+						<tr class="raw-data">
+							<td>Service Pts. Won</td>
+							<th th:text="${stats.servicePointsWon + ' / ' + stats.servicePoints}" class="text-right">39 / 52</th>
+						</tr>
+						<tr class="raw-data">
+							<td>Service Games Won</td>
+							<th th:text="${stats.serviceGamesWon + ' / ' + stats.serviceGames}" class="text-right">12 / 15</th>
+						</tr>
+					</tbody>
 				</table>
 			</div>
 			<div th:if="${stats.hasPointStats()}" th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
 				<table class="table table-condensed table-hover table-striped">
-					<tr>
-						<th>Return</th>
-						<th></th>
-					</tr>
-					<!-- Return Pct. Data -->
-					<tr class="pct-data">
-						<td>Ace Against %</td>
-						<th th:text="${#numbers.formatDecimal(stats.aceAgainstPct, 1, 1) + '%'}">10%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>Dbl. Flt. Against %</td>
-						<th th:text="${#numbers.formatDecimal(stats.doubleFaultAgainstPct, 1, 1) + '%'}">3%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>1st Srv. Rtn. Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.firstServeReturnPointsWonPct, 1, 1) + '%'}">28%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>2nd Srv. Rtn. Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.secondServeReturnPointsWonPct, 1, 1) + '%'}">22%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>Break Points Won</td>
-						<th th:text="${stats.breakPointsWonPct != null ? #numbers.formatDecimal(stats.breakPointsWonPct, 1, 1) + '%' : ''}">35%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>Return Pts. Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.returnPointsWonPct, 1, 1) + '%'}">35%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>Return Games Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.returnGamesWonPct, 1, 1) + '%'}">35%</th>
-					</tr>
-					<!-- Return Raw Data -->
-					<tr class="raw-data"></tr>
-					<tr class="raw-data">
-						<td>Aces Against</td>
-						<th th:text="${stats.acesAgainst}">5</th>
-					</tr>
-					<tr class="raw-data">
-						<td>Dbl. Flts. Against</td>
-						<th th:text="${stats.doubleFaultsAgainst}">3</th>
-					</tr>
-					<tr class="raw-data">
-						<td>1st Srv. Rtn. Won</td>
-						<th th:text="${stats.firstServeReturnPointsWon + ' / ' + stats.firstServeReturnPoints}">25 / 60</th>
-					</tr>
-					<tr class="raw-data">
-						<td>2nd Srv. Rtn. Won</td>
-						<th th:text="${stats.secondServeReturnPointsWon + ' / ' + stats.secondServeReturnPoints}">25 / 50</th>
-					</tr>
-					<tr class="raw-data">
-						<td>Break Points Won</td>
-						<th th:text="${stats.breakPointsWon + ' / ' + stats.breakPoints}">0 / 0</th>
-					</tr>
-					<tr class="raw-data">
-						<td>Return Pts. Won</td>
-						<th th:text="${stats.returnPointsWon + ' / ' + stats.returnPoints}">25 / 55</th>
-					</tr>
-					<tr class="raw-data">
-						<td>Return Games Won</td>
-						<th th:text="${stats.returnGamesWon + ' / ' + stats.returnGames}">3 / 12</th>
-					</tr>
+					<thead>
+						<tr>
+							<th>Return</th>
+							<th:block th:if="${compareStats}">
+								<th class="pct-data text-right" title="Actual"><span class="glyphicon glyphicon-scale"></span></th>
+								<th class="pct-data text-right" title="Difference"><span class="glyphicon glyphicon-sort"></span></th>
+								<th class="pct-data text-right" title="Relative to"><span class="glyphicon glyphicon-pushpin"></span></th>
+							</th:block>
+							<th th:unless="${compareStats}" class="pct-data text-right"><span class="glyphicon glyphicon-scale"></span></th>
+							<th class="raw-data text-right"><span class="glyphicon glyphicon-equalizer"></span></th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Return Pct. Data -->
+						<tr class="pct-data">
+							<td>Ace Against %</td>
+							<th th:text="${pctFormat.format(stats.aceAgainstPct)}" class="text-right">10%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.aceAgainstPct - compareStats.aceAgainstPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.aceAgainstPct - compareStats.aceAgainstPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.aceAgainstPct)}" class="text-right">10%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>Dbl. Flt. Against %</td>
+							<th th:text="${pctFormat.format(stats.doubleFaultAgainstPct)}" class="text-right">3%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.doubleFaultAgainstPct - compareStats.doubleFaultAgainstPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.doubleFaultAgainstPct - compareStats.doubleFaultAgainstPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.doubleFaultAgainstPct)}" class="text-right">3%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>1st Srv. Rtn. Won</td>
+							<th th:text="${pctFormat.format(stats.firstServeReturnPointsWonPct)}" class="text-right">28%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.firstServeReturnPointsWonPct - compareStats.firstServeReturnPointsWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.firstServeReturnPointsWonPct - compareStats.firstServeReturnPointsWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.firstServeReturnPointsWonPct)}" class="text-right">28%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>2nd Srv. Rtn. Won</td>
+							<th th:text="${pctFormat.format(stats.secondServeReturnPointsWonPct)}" class="text-right">22%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.secondServeReturnPointsWonPct - compareStats.secondServeReturnPointsWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.secondServeReturnPointsWonPct - compareStats.secondServeReturnPointsWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.secondServeReturnPointsWonPct)}" class="text-right">22%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>Break Points Won</td>
+							<th th:text="${stats.breakPointsWonPct != null ? pctFormat.format(stats.breakPointsWonPct) : ''}" class="text-right">35%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.breakPointsWonPct - compareStats.breakPointsWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.breakPointsWonPct - compareStats.breakPointsWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.breakPointsWonPct)}" class="text-right">35%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>Return Pts. Won</td>
+							<th th:text="${pctFormat.format(stats.returnPointsWonPct)}" class="text-right">35%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.returnPointsWonPct - compareStats.returnPointsWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.returnPointsWonPct - compareStats.returnPointsWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.returnPointsWonPct)}" class="text-right">35%</th>
+						</tr>
+						<tr class="pct-data">
+							<td>Return Games Won</td>
+							<th th:text="${pctFormat.format(stats.returnGamesWonPct)}" class="text-right">35%</th>
+							<th th:if="${compareStats}" th:text="${pctDiffFormat.format(stats.returnGamesWonPct - compareStats.returnGamesWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.returnGamesWonPct - compareStats.returnGamesWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${pctFormat.format(compareStats.returnGamesWonPct)}" class="text-right">35%</th>
+						</tr>
+						<!-- Return Raw Data -->
+						<tr class="raw-data"></tr>
+						<tr class="raw-data">
+							<td>Aces Against</td>
+							<th th:text="${stats.acesAgainst}" class="text-right">5</th>
+						</tr>
+						<tr class="raw-data">
+							<td>Dbl. Flts. Against</td>
+							<th th:text="${stats.doubleFaultsAgainst}" class="text-right">3</th>
+						</tr>
+						<tr class="raw-data">
+							<td>1st Srv. Rtn. Won</td>
+							<th th:text="${stats.firstServeReturnPointsWon + ' / ' + stats.firstServeReturnPoints}" class="text-right">25 / 60</th>
+						</tr>
+						<tr class="raw-data">
+							<td>2nd Srv. Rtn. Won</td>
+							<th th:text="${stats.secondServeReturnPointsWon + ' / ' + stats.secondServeReturnPoints}" class="text-right">25 / 50</th>
+						</tr>
+						<tr class="raw-data">
+							<td>Break Points Won</td>
+							<th th:text="${stats.breakPointsWon + ' / ' + stats.breakPoints}" class="text-right">0 / 0</th>
+						</tr>
+						<tr class="raw-data">
+							<td>Return Pts. Won</td>
+							<th th:text="${stats.returnPointsWon + ' / ' + stats.returnPoints}" class="text-right">25 / 55</th>
+						</tr>
+						<tr class="raw-data">
+							<td>Return Games Won</td>
+							<th th:text="${stats.returnGamesWon + ' / ' + stats.returnGames}" class="text-right">3 / 12</th>
+						</tr>
+					</thead>
 				</table>
 			</div>
 			<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
 				<table class="table table-condensed table-hover table-striped">
-					<tr>
-						<th>Total</th>
-						<th></th>
-					</tr>
-					<!-- Total Pct. Data -->
-					<th:block th:if="${stats.hasPointStats()}">
+					<thead>
 						<tr>
-							<td th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</td>
-							<th th:text="${#numbers.formatDecimal(stats.pointsDominanceRatio, 1, 2)}">1.07</th>
+							<th>Total</th>
+							<th:block th:if="${compareStats}">
+								<th class="pct-data text-right" title="Actual"><span class="glyphicon glyphicon-scale"></span></th>
+								<th class="pct-data text-right" title="Difference"><span class="glyphicon glyphicon-sort"></span></th>
+								<th class="pct-data text-right" title="Relative to"><span class="glyphicon glyphicon-pushpin"></span></th>
+							</th:block>
+							<th th:unless="${compareStats}" class="pct-data text-right"><span class="glyphicon glyphicon-scale"></span></th>
+							<th class="raw-data text-right"><span class="glyphicon glyphicon-equalizer"></span></th>
 						</tr>
-						<tr>
-							<td th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</td>
-							<th th:text="${#numbers.formatDecimal(stats.gamesDominanceRatio, 1, 2)}">1.07</th>
-						</tr>
-						<tr>
-							<td th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</td>
-							<th th:text="${stats.breakPointsRatio != null ? #numbers.formatDecimal(stats.breakPointsRatio, 1, 2) : ''}">1.03</th>
-						</tr>
-						<tr>
-							<td th:title="#{stats.overPerformingRatio.title}">Over-Performing</td>
-							<th th:text="${stats.overPerformingRatio != null ? #numbers.formatDecimal(stats.overPerformingRatio, 1, 2) : ''}">1.01</th>
+					</thead>
+					<tbody>
+						<!-- Total Pct. Data -->
+						<th:block th:if="${stats.hasPointStats()}">
+							<tr>
+								<td th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</td>
+								<th th:text="${ratioFormat.format(stats.pointsDominanceRatio)}" class="text-right">1.07</th>
+							</tr>
+							<tr>
+								<td th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</td>
+								<th th:text="${ratioFormat.format(stats.gamesDominanceRatio)}" class="text-right">1.07</th>
+							</tr>
+							<tr>
+								<td th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</td>
+								<th th:text="${stats.breakPointsRatio != null ? ratioFormat.format(stats.breakPointsRatio) : ''}" class="text-right">1.03</th>
+							</tr>
+							<tr>
+								<td th:title="#{stats.overPerformingRatio.title}">Over-Performing</td>
+								<th th:text="${stats.overPerformingRatio != null ? ratioFormat.format(stats.overPerformingRatio) : ''}" class="text-right">1.01</th>
+							</tr>
+							<tr class="pct-data">
+								<td>Total Pts. Won</td>
+								<th th:text="${pctFormat.format(stats.totalPointsWonPct)}" class="text-right">56%</th>
+							</tr>
+						</th:block>
+						<tr class="pct-data">
+							<td>Total Games Won</td>
+							<th th:text="${pctFormat.format(stats.totalGamesWonPct)}" class="text-right">58%</th>
 						</tr>
 						<tr class="pct-data">
-							<td>Total Pts. Won</td>
-							<th th:text="${#numbers.formatDecimal(stats.totalPointsWonPct, 1, 1) + '%'}">56%</th>
+							<td>Sets Won</td>
+							<th th:text="${pctFormat.format(stats.setsWonPct)}" class="text-right">62%</th>
 						</tr>
-					</th:block>
-					<tr class="pct-data">
-						<td>Total Games Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.totalGamesWonPct, 1, 1) + '%'}">58%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>Sets Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.setsWonPct, 1, 1) + '%'}">62%</th>
-					</tr>
-					<tr class="pct-data">
-						<td>Matches Won</td>
-						<th th:text="${#numbers.formatDecimal(stats.matchesWonPct, 1, 1) + '%'}">69%</th>
-					</tr>
-					<!-- Total Raw Data -->
-					<th:block th:if="${stats.hasPointStats()}">
+						<tr class="pct-data">
+							<td>Matches Won</td>
+							<th th:text="${pctFormat.format(stats.matchesWonPct)}" class="text-right">69%</th>
+						</tr>
+						<!-- Total Raw Data -->
+						<th:block th:if="${stats.hasPointStats()}">
+							<tr class="raw-data">
+								<td>Total Pts. Won</td>
+								<th th:text="${stats.totalPointsWon + ' / ' + stats.totalPoints}" class="text-right">1299 / 2234</th>
+							</tr>
+						</th:block>
+						<tr th:unless="${stats.hasPointStats()}" class="raw-data"></tr>
 						<tr class="raw-data">
-							<td>Total Pts. Won</td>
-							<th th:text="${stats.totalPointsWon + ' / ' + stats.totalPoints}">1299 / 2234</th>
+							<td>Total Games Won</td>
+							<th th:text="${stats.totalGamesWon + ' / ' + stats.totalGames}" class="text-right">86 / 125</th>
 						</tr>
-					</th:block>
-					<tr th:unless="${stats.hasPointStats()}" class="raw-data"></tr>
-					<tr class="raw-data">
-						<td>Total Games Won</td>
-						<th th:text="${stats.totalGamesWon + ' / ' + stats.totalGames}">86 / 125</th>
-					</tr>
-					<tr class="raw-data">
-						<td>Sets Won</td>
-						<th th:text="${stats.setsWon + ' / ' + stats.sets}">16 / 27</th>
-					</tr>
-					<tr class="raw-data">
-						<td>Matches Won</td>
-						<th th:text="${stats.matchesWon + ' / ' + stats.matches}">6 / 10</th>
-					</tr>
+						<tr class="raw-data">
+							<td>Sets Won</td>
+							<th th:text="${stats.setsWon + ' / ' + stats.sets}" class="text-right">16 / 27</th>
+						</tr>
+						<tr class="raw-data">
+							<td>Matches Won</td>
+							<th th:text="${stats.matchesWon + ' / ' + stats.matches}" class="text-right">6 / 10</th>
+						</tr>
+					</tbody>
 				</table>
 			</div>
 		</div>

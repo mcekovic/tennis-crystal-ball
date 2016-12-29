@@ -242,3 +242,12 @@ div.loading {
 .stats-total {
 	background-color: #ffffe8;
 }
+.positive {
+	color: seagreen;
+}
+.negative {
+	color: crimson;
+}
+.no-diff {
+	color: darkgray;
+}
