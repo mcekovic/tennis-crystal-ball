@@ -8,9 +8,7 @@
 	});
 	function reloadPerformance() {
 		var url = "/playerPerformance?playerId=[[${playerId}]]";
-		var season = $("#perfSeason").val();
-		if (season != "")
-			url += "&season=" + season;
+		url += "&season=" + $("#perfSeason").val();
 		$("#performance").load(url);
 	}
 </script>

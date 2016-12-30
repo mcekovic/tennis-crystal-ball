@@ -82,7 +82,6 @@
 			$(selector).find(".pct-data, .raw-data").toggle();
 		}
 		function compareStats(containerId, statsId, close) {
-			console.log(containerId);
 			var url = $("#" + containerId).data("statsURL");
 			if (!close) {
 				url += "&compare=true";

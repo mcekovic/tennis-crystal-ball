@@ -1,8 +1,7 @@
 <div th:id="'matchStatsPopover-' + ${matchId}" xmlns:th="http://www.thymeleaf.org">
 	<!--/*@thymesVar id="matchId" type="java.lang.Long"*/-->
 	<!--/*@thymesVar id="matchStats" type="org.strangeforest.tcb.stats.model.MatchStats"*/-->
-	<!--/*@thymesVar id="pctFormat" type="java.text.NumberFormat"*/-->
-	<!--/*@thymesVar id="ratioFormat" type="java.text.NumberFormat"*/-->
+	<!--/*@thymesVar id="statsFormatUtil" type="org.strangeforest.tcb.stats.controller.StatsFormatUtil"*/-->
 	<script type="text/javascript">
 		$(function() {
 			$("#matchStatsPopover-[[${matchId}]]").find(".raw-data").hide();
@@ -24,39 +23,39 @@
 		</tr>
 		<!-- Serve Pct. Data -->
 		<tr class="pct-data">
-			<th th:text="${pctFormat.format(winnerStats.acePct)}">10%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.acePct)}">10%</th>
 			<td>Ace %</td>
-			<th th:text="${pctFormat.format(loserStats.acePct)}">5%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.acePct)}">5%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${pctFormat.format(winnerStats.doubleFaultPct)}">2%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.doubleFaultPct)}">2%</th>
 			<td>Double Fault %</td>
-			<th th:text="${pctFormat.format(loserStats.doubleFaultPct)}">3%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.doubleFaultPct)}">3%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${pctFormat.format(winnerStats.firstServePct)}">66%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.firstServePct)}">66%</th>
 			<td>1st Serve</td>
-			<th th:text="${pctFormat.format(loserStats.firstServePct)}">64%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.firstServePct)}">64%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${pctFormat.format(winnerStats.firstServeWonPct)}">80%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.firstServeWonPct)}">80%</th>
 			<td>1st Serve Won</td>
-			<th th:text="${pctFormat.format(loserStats.firstServeWonPct)}">75%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.firstServeWonPct)}">75%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${pctFormat.format(winnerStats.secondServeWonPct)}">60%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.secondServeWonPct)}">60%</th>
 			<td>2nd Serve Won</td>
-			<th th:text="${pctFormat.format(loserStats.secondServeWonPct)}">45%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.secondServeWonPct)}">45%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${winnerStats.breakPointsSavedPct != null ? pctFormat.format(winnerStats.breakPointsSavedPct) : ''}">50%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.breakPointsSavedPct)}">50%</th>
 			<td>Break Points Saved</td>
-			<th th:text="${loserStats.breakPointsSavedPct != null ? pctFormat.format(loserStats.breakPointsSavedPct) : ''}">35%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.breakPointsSavedPct)}">35%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${pctFormat.format(winnerStats.servicePointsWonPct)}">50%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.servicePointsWonPct)}">50%</th>
 			<td>Service Pts. Won</td>
-			<th th:text="${pctFormat.format(loserStats.servicePointsWonPct)}">35%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.servicePointsWonPct)}">35%</th>
 		</tr>
 		<!-- Serve Raw Data -->
 		<tr class="raw-data"></tr>
@@ -102,24 +101,24 @@
 		</tr>
 		<!-- Return Pct. Data -->
 		<tr class="pct-data">
-			<th th:text="${pctFormat.format(winnerStats.firstServeReturnPointsWonPct)}">15%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.firstServeReturnPointsWonPct)}">15%</th>
 			<td>1st Srv. Rtn. Won</td>
-			<th th:text="${pctFormat.format(loserStats.firstServeReturnPointsWonPct)}">28%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.firstServeReturnPointsWonPct)}">28%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${pctFormat.format(winnerStats.secondServeReturnPointsWonPct)}">33%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.secondServeReturnPointsWonPct)}">33%</th>
 			<td>2nd Srv. Rtn. Won</td>
-			<th th:text="${pctFormat.format(loserStats.secondServeReturnPointsWonPct)}">22%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.secondServeReturnPointsWonPct)}">22%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${winnerStats.breakPointsWonPct != null ? pctFormat.format(winnerStats.breakPointsWonPct) : ''}">50%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.breakPointsWonPct)}">50%</th>
 			<td>Break Points Won</td>
-			<th th:text="${loserStats.breakPointsWonPct != null ? pctFormat.format(loserStats.breakPointsWonPct) : ''}">35%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.breakPointsWonPct)}">35%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${pctFormat.format(winnerStats.returnPointsWonPct)}">50%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.returnPointsWonPct)}">50%</th>
 			<td>Return Pts. Won</td>
-			<th th:text="${pctFormat.format(loserStats.returnPointsWonPct)}">35%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.returnPointsWonPct)}">35%</th>
 		</tr>
 		<!-- Return Raw Data -->
 		<tr class="raw-data">
@@ -148,24 +147,24 @@
 			<th></th>
 		</tr>
 		<tr>
-			<th th:text="${ratioFormat.format(winnerStats.pointsDominanceRatio)}">1.64</th>
+			<th th:text="${statsFormatUtil.formatRatio(winnerStats.pointsDominanceRatio)}">1.64</th>
 			<td th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</td>
-			<th th:text="${ratioFormat.format(loserStats.pointsDominanceRatio)}">0.67</th>
+			<th th:text="${statsFormatUtil.formatRatio(loserStats.pointsDominanceRatio)}">0.67</th>
 		</tr>
 		<tr>
-			<th th:text="${ratioFormat.format(winnerStats.gamesDominanceRatio)}">1.64</th>
+			<th th:text="${statsFormatUtil.formatRatio(winnerStats.gamesDominanceRatio)}">1.64</th>
 			<td th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</td>
-			<th th:text="${ratioFormat.format(loserStats.gamesDominanceRatio)}">0.67</th>
+			<th th:text="${statsFormatUtil.formatRatio(loserStats.gamesDominanceRatio)}">0.67</th>
 		</tr>
 		<tr>
-			<th th:text="${winnerStats.breakPointsRatio != null ? ratioFormat.format(winnerStats.breakPointsRatio) : ''}">1.24</th>
+			<th th:text="${statsFormatUtil.formatRatio(winnerStats.breakPointsRatio)}">1.24</th>
 			<td th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</td>
-			<th th:text="${loserStats.breakPointsRatio != null ? ratioFormat.format(loserStats.breakPointsRatio) : ''}">0.37</th>
+			<th th:text="${statsFormatUtil.formatRatio(loserStats.breakPointsRatio)}">0.37</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${pctFormat.format(winnerStats.totalPointsWonPct)}">55%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.totalPointsWonPct)}">55%</th>
 			<td>Total Pts. Won</td>
-			<th th:text="${pctFormat.format(loserStats.totalPointsWonPct)}">45%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.totalPointsWonPct)}">45%</th>
 		</tr>
 		<tr class="pct-data" th:if="${matchStats.minutes > 0}">
 			<th></th>

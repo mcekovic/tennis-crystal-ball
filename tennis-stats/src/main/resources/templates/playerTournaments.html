@@ -69,24 +69,17 @@
 			$("#tournamentsTable").bootgrid("search", "");
 			reloadTournaments();
 		}
-		function getEventsStatsURL() {
-			var url = "/eventsStats?playerId=[[${playerId}]]";
-			url += "&season=" + $("#season").val();
-			url += "&level=" + $("#level").val();
-			url += "&surface=" + $("#surface").val();
-			url += "&tournamentId=" + $("#tournament").val();
-			url += "&result=" + $("#result").val();
-			url += "&searchPhrase=" + $("#tournamentsTable-header").find("input.search-field").val();
-			return url;
-		}
-		function getEventStatsURL(tournamentEventId) {
-			return "/eventStats?playerId=[[${playerId}]]&tournamentEventId=" + tournamentEventId;
-		}
 		function showEventsStats(event) {
 			var $eventsStats = $("#eventsStats");
 			if (!$eventsStats.hasClass("loaded")) {
 				event.preventDefault();
-				var url = getEventsStatsURL();
+				var url = "/eventsStats?playerId=[[${playerId}]]";
+				url += "&season=" + $("#season").val();
+				url += "&level=" + $("#level").val();
+				url += "&surface=" + $("#surface").val();
+				url += "&tournamentId=" + $("#tournament").val();
+				url += "&result=" + $("#result").val();
+				url += "&searchPhrase=" + $("#tournamentsTable-header").find("input.search-field").val();
 				$.get(url, function(data) {
 					$eventsStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
 					$eventsStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
@@ -98,7 +91,7 @@
 			var $eventStats = $("#eventStats-" + tournamentEventId);
 			if (!$eventStats.hasClass("loaded")) {
 				event.preventDefault();
-				var url = getEventStatsURL(tournamentEventId);
+				var url = "/eventStats?playerId=[[${playerId}]]&tournamentEventId=" + tournamentEventId;
 				$.get(url, function(data) {
 					$eventStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 					$eventStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();

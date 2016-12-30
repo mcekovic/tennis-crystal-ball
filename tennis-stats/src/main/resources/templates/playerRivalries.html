@@ -68,6 +68,7 @@
 			var $actionBar = $matchesTableHeader.find("div.actionBar");
 			$actionBar.removeClass("col-sm-12").addClass("col-sm-11");
 			$actionBar.before($("#rivalriesTitle").remove());
+			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadRivalries() {
 			$("#rivalriesTable").bootgrid("reload");
@@ -83,9 +84,11 @@
 			var $rivalryStats = $("#rivalryStats-" + opponentId);
 			if (!$rivalryStats.hasClass("loaded")) {
 				event.preventDefault();
-				$.get("rivalryStats?playerId=[[${playerId}]]&opponentId=" + opponentId + rivalryFilterParams(), function(data) {
+				var url = "rivalryStats?playerId=[[${playerId}]]&opponentId=" + opponentId + rivalryFilterParams();
+				$.get(url, function(data) {
 					$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
-					$rivalryStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "800px"); }).click();
+					$rivalryStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
+					$("#rivalryStatsPopover-" + opponentId).data("statsURL", url);
 				});
 			}
 		}

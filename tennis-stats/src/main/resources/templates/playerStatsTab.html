@@ -6,18 +6,18 @@
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <script type="text/javascript">
-	function reloadStats() {
+	$(function() {
+		$("#statistics").data("statsURL", getStatsURL());
+	});
+	function getStatsURL() {
 		var url = "/playerStatsTab?playerId=[[${playerId}]]";
-		var season = $("#statsSeason").val();
-		if (season != "")
-			url += "&season=" + season;
-		var level = $("#statsLevel").val();
-		if (level != "")
-			url += "&level=" + level;
-		var surface = $("#statsSurface").val();
-		if (surface != "")
-			url += "&surface=" + surface;
-		$("#statistics").load(url);
+		url += "&season=" + $("#statsSeason").val();
+		url += "&level=" + $("#statsLevel").val();
+		url += "&surface=" + $("#statsSurface").val();
+		return url;
+	}
+	function reloadStats() {
+		$("#statistics").load(getStatsURL());
 	}
 </script>
 <br/>
@@ -51,5 +51,5 @@
 	</div>
 </div>
 <br/>
-<div th:include="fragments/playerStats :: playerStats(containerId='playerStatsTab', statsId=null, popover=false)"></div>
+<div th:include="fragments/playerStats :: playerStats(containerId='statistics', statsContainerId='playerStatsTab', statsId='stats', popover=false)"></div>
 </th:block>

@@ -1,7 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.util.*;
-
 import javax.servlet.http.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -14,6 +13,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
 
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 
 @Controller
 public class PlayerProfileController extends PageController {
@@ -219,7 +219,11 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
-		@RequestParam(name = "surface", required = false) String surface
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
+		@RequestParam(name = "compareLevel", required = false) String compareLevel,
+		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(season, level, surface));
@@ -233,6 +237,18 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("stats", stats);
+		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
+		modelMap.addAttribute("compare", compare);
+		if (compare) {
+			MatchFilter compareFilter = MatchFilter.forStats(compareSeason, compareLevel, compareSurface);
+			PlayerStats compareStats = statisticsService.getPlayerStats(playerId, compareFilter);
+			if (!compareStats.isEmpty())
+				modelMap.addAttribute("compareStats", compareStats);
+			modelMap.addAttribute("compareSeason", compareSeason);
+			modelMap.addAttribute("compareLevel", compareLevel);
+			modelMap.addAttribute("compareSurface", compareSurface);
+			modelMap.addAttribute("relativeTo", relativeTo(compareSeason, compareLevel, compareSurface));
+		}
 		return new ModelAndView("playerStatsTab", modelMap);
 	}
 

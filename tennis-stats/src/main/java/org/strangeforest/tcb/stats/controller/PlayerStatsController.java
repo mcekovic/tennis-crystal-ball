@@ -1,6 +1,5 @@
 package org.strangeforest.tcb.stats.controller;
 
-import java.text.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -12,9 +11,8 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
-import com.google.common.base.*;
-
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 
 @Controller
 public class PlayerStatsController extends BaseController {
@@ -22,11 +20,6 @@ public class PlayerStatsController extends BaseController {
 	@Autowired private PlayerService playerService;
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerTimelineService timelineService;
-
-	private static final String PCT_FORMAT = "0.0'%'";
-	private static final String RATIO_FORMAT = "0.00";
-	private static final String PCT_DIFF_FORMAT = "+0.0'%';-0.0'%'";
-	private static final String RATIO_DIFF_FORMAT = "+0.00;-0.00";
 
 	@GetMapping("/eventsStats")
 	public ModelAndView eventsStats(
@@ -47,7 +40,7 @@ public class PlayerStatsController extends BaseController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("stats", stats);
-		addStatsFormats(modelMap);
+		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("eventsStats", modelMap);
 	}
@@ -74,7 +67,7 @@ public class PlayerStatsController extends BaseController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("stats", stats);
-		addStatsFormats(modelMap);
+		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("matchesStats", modelMap);
 	}
@@ -94,7 +87,7 @@ public class PlayerStatsController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("stats", stats);
-		addStatsFormats(modelMap);
+		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("eventStats", modelMap);
 	}
@@ -117,7 +110,7 @@ public class PlayerStatsController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("opponentId", opponentId);
 		modelMap.addAttribute("stats", stats);
-		addStatsFormats(modelMap);
+		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("rivalryStats", modelMap);
 	}
@@ -131,7 +124,7 @@ public class PlayerStatsController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("matchId", matchId);
 		modelMap.addAttribute("matchStats", matchStats);
-		addStatsFormats(modelMap);
+		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
 		return new ModelAndView("matchStats", modelMap);
 	}
 
@@ -191,14 +184,6 @@ public class PlayerStatsController extends BaseController {
 
 	// Util
 
-	private static void addStatsFormats(ModelMap modelMap) {
-		modelMap.addAttribute("pctFormat", new DecimalFormat(PCT_FORMAT));
-		modelMap.addAttribute("pctDiffFormat", new DecimalFormat(PCT_DIFF_FORMAT));
-		modelMap.addAttribute("ratioFormat", new DecimalFormat(RATIO_FORMAT));
-		modelMap.addAttribute("ratioDiffFormat", new DecimalFormat(RATIO_DIFF_FORMAT));
-		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
-	}
-
 	private void addCompareStats(ModelMap modelMap, int playerId, boolean compare, Integer compareSeason, String compareLevel, String compareSurface) {
 		modelMap.addAttribute("compare", compare);
 		if (compare) {
@@ -206,30 +191,13 @@ public class PlayerStatsController extends BaseController {
 			PlayerStats compareStats = statisticsService.getPlayerStats(playerId, compareFilter);
 			if (!compareStats.isEmpty())
 				modelMap.addAttribute("compareStats", compareStats);
+			modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
+			modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+			modelMap.addAttribute("surfaces", Surface.values());
+			modelMap.addAttribute("compareSeason", compareSeason);
+			modelMap.addAttribute("compareLevel", compareLevel);
+			modelMap.addAttribute("compareSurface", compareSurface);
+			modelMap.addAttribute("relativeTo", relativeTo(compareSeason, compareLevel, compareSurface));
 		}
-		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
-		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
-		modelMap.addAttribute("surfaces", Surface.values());
-		modelMap.addAttribute("compareSeason", compareSeason);
-		modelMap.addAttribute("compareLevel", compareLevel);
-		modelMap.addAttribute("compareSurface", compareSurface);
-		modelMap.addAttribute("relativeTo", relativeTo(compareSeason, compareLevel, compareSurface));
-	}
-
-	private static String relativeTo(Integer compareSeason, String compareLevel, String compareSurface) {
-		StringBuilder relativeTo = new StringBuilder();
-		if (compareSeason != null)
-			relativeTo.append(compareSeason);
-		if (!Strings.isNullOrEmpty(compareLevel)) {
-			if (relativeTo.length() > 0)
-				relativeTo.append(", ");
-			relativeTo.append(TournamentLevel.decode(compareLevel).getText());
-		}
-		if (!Strings.isNullOrEmpty(compareSurface)) {
-			if (relativeTo.length() > 0)
-				relativeTo.append(", ");
-			relativeTo.append(Surface.decode(compareSurface).getText());
-		}
-		return relativeTo.length() > 0 ? relativeTo.toString() : "Career";
 	}
 }
