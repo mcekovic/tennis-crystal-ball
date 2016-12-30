@@ -12,6 +12,8 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
 
+import com.google.common.base.*;
+
 import static java.util.stream.Collectors.*;
 
 @Controller
@@ -198,9 +200,12 @@ public class PlayerStatsController extends BaseController {
 	}
 
 	private void addCompareStats(ModelMap modelMap, int playerId, boolean compare, Integer compareSeason, String compareLevel, String compareSurface) {
+		modelMap.addAttribute("compare", compare);
 		if (compare) {
-			PlayerStats compareStats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(compareSeason, compareLevel, compareSurface));
-			modelMap.addAttribute("compareStats", compareStats);
+			MatchFilter compareFilter = MatchFilter.forStats(compareSeason, compareLevel, compareSurface);
+			PlayerStats compareStats = statisticsService.getPlayerStats(playerId, compareFilter);
+			if (!compareStats.isEmpty())
+				modelMap.addAttribute("compareStats", compareStats);
 		}
 		modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
@@ -208,5 +213,23 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("compareSeason", compareSeason);
 		modelMap.addAttribute("compareLevel", compareLevel);
 		modelMap.addAttribute("compareSurface", compareSurface);
+		modelMap.addAttribute("relativeTo", relativeTo(compareSeason, compareLevel, compareSurface));
+	}
+
+	private static String relativeTo(Integer compareSeason, String compareLevel, String compareSurface) {
+		StringBuilder relativeTo = new StringBuilder();
+		if (compareSeason != null)
+			relativeTo.append(compareSeason);
+		if (!Strings.isNullOrEmpty(compareLevel)) {
+			if (relativeTo.length() > 0)
+				relativeTo.append(", ");
+			relativeTo.append(TournamentLevel.decode(compareLevel).getText());
+		}
+		if (!Strings.isNullOrEmpty(compareSurface)) {
+			if (relativeTo.length() > 0)
+				relativeTo.append(", ");
+			relativeTo.append(Surface.decode(compareSurface).getText());
+		}
+		return relativeTo.length() > 0 ? relativeTo.toString() : "Career";
 	}
 }
