@@ -34,6 +34,10 @@ public class OpponentFilter {
 		return new OpponentFilter(Opponent.forValue(opponent), opponentId, true);
 	}
 
+	public static OpponentFilter forStats(Integer opponentId) {
+		return new OpponentFilter(null, opponentId, true);
+	}
+
 	private static boolean isSinglePlayer(String opponent) {
 		return opponent != null && opponent.startsWith(OPPONENT_PREFIX);
 	}

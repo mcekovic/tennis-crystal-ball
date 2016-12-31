@@ -4,9 +4,9 @@ public class Rivalry {
 
 	private final RivalryPlayer player1, player2;
 	private WonLost wonLost;
-	private final LastMatch lastMatch;
+	private final MatchInfo lastMatch;
 
-	public Rivalry(RivalryPlayer player1, RivalryPlayer player2, WonLost wonLost, LastMatch lastMatch) {
+	public Rivalry(RivalryPlayer player1, RivalryPlayer player2, WonLost wonLost, MatchInfo lastMatch) {
 		this.player1 = player1;
 		this.player2 = player2;
 		this.wonLost = wonLost;
@@ -57,7 +57,7 @@ public class Rivalry {
 		return wonLost.inverted().getWonPctClass();
 	}
 
-	public LastMatch getLastMatch() {
+	public MatchInfo getLastMatch() {
 		return lastMatch;
 	}
 

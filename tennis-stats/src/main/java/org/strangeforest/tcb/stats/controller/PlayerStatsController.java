@@ -20,6 +20,7 @@ public class PlayerStatsController extends BaseController {
 	@Autowired private PlayerService playerService;
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerTimelineService timelineService;
+	@Autowired private MatchesService matchesService;
 
 	@GetMapping("/eventsStats")
 	public ModelAndView eventsStats(
@@ -117,7 +118,13 @@ public class PlayerStatsController extends BaseController {
 
 	@GetMapping("/matchStats")
 	public ModelAndView matchStats(
-		@RequestParam(name = "matchId") long matchId
+		@RequestParam(name = "matchId") long matchId,
+		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "playerId", required = false) Integer playerId,
+		@RequestParam(name = "compareSeason", defaultValue = "false") boolean compareSeason,
+		@RequestParam(name = "compareLevel", defaultValue = "false") boolean compareLevel,
+		@RequestParam(name = "compareSurface", defaultValue = "false") boolean compareSurface,
+		@RequestParam(name = "compareOpponent", defaultValue = "false") boolean compareOpponent
 	) {
 		MatchStats matchStats = statisticsService.getMatchStats(matchId);
 
@@ -125,6 +132,23 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("matchId", matchId);
 		modelMap.addAttribute("matchStats", matchStats);
 		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
+		modelMap.addAttribute("compare", compare);
+		if (compare) {
+			MatchInfo match = compareSeason || compareLevel || compareSurface || compareOpponent ? matchesService.getMatch(matchId) : null;
+			Integer season = compareSeason ? match.getSeason() : null;
+			String level = compareLevel ? match.getLevel() : null;
+			String surface = compareSurface ? match.getSurface() : null;
+			Integer opponentId = compareOpponent ? (playerId == match.getWinnerId() ? match.getLoserId() : match.getWinnerId()) : null;
+			MatchFilter compareFilter = MatchFilter.forStats(season, level, surface, opponentId);
+			PlayerStats compareStats = statisticsService.getPlayerStats(playerId, compareFilter);
+			if (!compareStats.isEmpty())
+				modelMap.addAttribute("compareStats", compareStats);
+			modelMap.addAttribute("compareSeason", compareSeason);
+			modelMap.addAttribute("compareLevel", compareLevel);
+			modelMap.addAttribute("compareSurface", compareSurface);
+			String relativeTo = relativeTo(season, level, surface, opponentId != null ? playerService.getPlayerName(opponentId) : null);
+			modelMap.addAttribute("relativeTo", relativeTo);
+		}
 		return new ModelAndView("matchStats", modelMap);
 	}
 

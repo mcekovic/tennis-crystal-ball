@@ -3,7 +3,7 @@ package org.strangeforest.tcb.stats.model;
 public class PlayerRivalryRow extends PlayerRow {
 
 	private WonLost wonLost;
-	private LastMatch lastMatch;
+	private MatchInfo lastMatch;
 
 	public PlayerRivalryRow(int rank, int playerId, String name, String countryId, boolean active) {
 		super(rank, playerId, name, countryId, active);
@@ -37,11 +37,11 @@ public class PlayerRivalryRow extends PlayerRow {
 		this.wonLost = wonLost;
 	}
 
-	public LastMatch getLastMatch() {
+	public MatchInfo getLastMatch() {
 		return lastMatch;
 	}
 
-	public void setLastMatch(LastMatch lastMatch) {
+	public void setLastMatch(MatchInfo lastMatch) {
 		this.lastMatch = lastMatch;
 	}
 }

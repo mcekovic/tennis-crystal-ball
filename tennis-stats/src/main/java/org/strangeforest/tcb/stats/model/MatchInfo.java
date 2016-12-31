@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
-public class LastMatch {
+public class MatchInfo {
 
 	private final long id;
 	private final int season;
@@ -14,7 +14,7 @@ public class LastMatch {
 	private final int loserId;
 	private final String score;
 
-	public LastMatch(long id, int season, String level, String surface, boolean indoor, int tournamentEventId, String tournament, String round, int winnerId, int loserId, String score) {
+	public MatchInfo(long id, int season, String level, String surface, boolean indoor, int tournamentEventId, String tournament, String round, int winnerId, int loserId, String score) {
 		this.id = id;
 		this.season = season;
 		this.level = level;

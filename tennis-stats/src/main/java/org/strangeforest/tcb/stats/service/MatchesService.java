@@ -31,7 +31,7 @@ public class MatchesService {
 		"ORDER BY match_num";
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
-		"SELECT m.match_id, m.date, e.tournament_event_id, e.name AS tournament, e.level, m.surface, m.indoor, m.round," +
+		"SELECT m.match_id, m.date, tournament_event_id, e.name AS tournament, e.level, m.surface, m.indoor, m.round,\n" +
 		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.score, m.outcome, m.has_stats\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
@@ -39,6 +39,13 @@ public class MatchesService {
 		"INNER JOIN player_v pl ON pl.player_id = m.loser_id\n" +
 		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%1$s\n" +
 		"ORDER BY %2$s OFFSET :offset";
+
+	private static final String MATCH_QUERY = //language=SQL
+		"SELECT m.match_id, e.season, e.level, m.surface, m.indoor, tournament_event_id, e.name AS tournament,\n" +
+		"  m.round, m.winner_id, m.loser_id, m.score\n" +
+		"FROM match m\n" +
+		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"WHERE m.match_id = :matchId";
 
 
 	public TournamentEventDraw getTournamentEventDraw(int tournamentEventId) {
@@ -81,6 +88,7 @@ public class MatchesService {
 		Integer lTBPoints = pos4 > pos3 ? Integer.valueOf(setScore.substring(pos3, pos4)) : null;
 		return new SetScore(wGames, lGames, wTBPoints, lTBPoints);
 	}
+
 
 	public BootgridTable<Match> getPlayerMatchesTable(int playerId, MatchFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<Match> table = new BootgridTable<>(currentPage);
@@ -142,5 +150,26 @@ public class MatchesService {
 		}
 		else
 			return null;
+	}
+
+
+	public MatchInfo getMatch(long matchId) {
+		return jdbcTemplate.queryForObject(
+			MATCH_QUERY,
+			params("matchId", matchId),
+			(rs, rowNum) -> new MatchInfo(
+				rs.getLong("match_id"),
+				rs.getInt("season"),
+				rs.getString("level"),
+				rs.getString("surface"),
+				rs.getBoolean("indoor"),
+				rs.getInt("tournament_event_id"),
+				rs.getString("tournament"),
+				rs.getString("round"),
+				rs.getInt("winner_id"),
+				rs.getInt("loser_id"),
+				rs.getString("score")
+			)
+		);
 	}
 }

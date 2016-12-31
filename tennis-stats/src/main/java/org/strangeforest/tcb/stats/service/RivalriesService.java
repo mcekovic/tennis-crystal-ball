@@ -242,7 +242,7 @@ public class RivalriesService {
 				RivalryPlayer player1 = mapPlayer(rs, "_1");
 				RivalryPlayer player2 = mapPlayer(rs, "_2");
 				WonLost wonLost = mapWonLost(rs);
-				LastMatch lastMatch = mapLastMatch(rs, lateralSupported);
+				MatchInfo lastMatch = mapLastMatch(rs, lateralSupported);
 				return new Rivalry(player1, player2, wonLost, lastMatch);
 			}
 		));
@@ -278,7 +278,7 @@ public class RivalriesService {
 					RivalryPlayer player1 = mapPlayer(rs, "_1");
 					RivalryPlayer player2 = mapPlayer(rs, "_2");
 					WonLost wonLost = mapWonLost(rs);
-					LastMatch lastMatch = mapLastMatch(rs, lateralSupported);
+					MatchInfo lastMatch = mapLastMatch(rs, lateralSupported);
 					table.addRow(new GreatestRivalry(rank, player1, player2, wonLost, lastMatch));
 				}
 			}
@@ -313,12 +313,12 @@ public class RivalriesService {
 		);
 	}
 
-	private LastMatch mapLastMatch(ResultSet rs, boolean lateralSupported) throws SQLException {
+	private MatchInfo mapLastMatch(ResultSet rs, boolean lateralSupported) throws SQLException {
 		return lateralSupported ? mapLastMatchLateral(rs) : mapLastMatchJson(rs);
 	}
 
-	private LastMatch mapLastMatchLateral(ResultSet rs) throws SQLException {
-		return new LastMatch(
+	private MatchInfo mapLastMatchLateral(ResultSet rs) throws SQLException {
+		return new MatchInfo(
 			rs.getLong("match_id"),
 			rs.getInt("season"),
 			rs.getString("level"),
@@ -335,10 +335,10 @@ public class RivalriesService {
 
 	private static final ObjectReader READER = new ObjectMapper().reader();
 
-	private LastMatch mapLastMatchJson(ResultSet rs) throws SQLException {
+	private MatchInfo mapLastMatchJson(ResultSet rs) throws SQLException {
 		try {
 			JsonNode lastMatch = READER.readTree(rs.getString("last_match"));
-			return new LastMatch(
+			return new MatchInfo(
 				lastMatch.get("match_id").asLong(),
 				lastMatch.get("season").asInt(),
 				lastMatch.get("level").asText(),
