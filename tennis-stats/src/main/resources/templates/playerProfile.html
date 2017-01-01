@@ -82,7 +82,8 @@
 			$(selector).find(".pct-data, .raw-data").toggle();
 		}
 		function compareStats(containerId, statsId, close) {
-			var url = $("#" + containerId).data("statsURL");
+			const $container = $("#" + containerId);
+			var url = $container.data("statsURL");
 			if (!close) {
 				url += "&compare=true";
 				var compareSelector = "#" + statsId + "Compare";
@@ -97,7 +98,7 @@
 					url += "&compareSurface=" + $compareSurface.val();
 			}
 			$.get(url, function (data) {
-				$("#" + containerId).html(data);
+				$container.html(data);
 			});
 		}
 	</script>

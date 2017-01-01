@@ -368,9 +368,38 @@ function showMatchStats(matchId, event) {
 	var $matchStats = $("#matchStats-" + matchId);
 	if (!$matchStats.hasClass("loaded")) {
 		event.preventDefault();
-		$.get("matchStats?matchId=" + matchId, function(data) {
+		var url = "matchStats?matchId=" + matchId;
+		$.get(url, function(data) {
 			$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
-			$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "400px"); }).click();
+			$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "500px"); }).click();
+			$("#matchStatsPopover-" + matchId).data("statsURL", url);
 		});
 	}
+}
+
+function compareMatchStats(matchId, close) {
+	const $popover = $("#matchStatsPopover-" + matchId);
+	var url = $popover.data("statsURL");
+	if (!close) {
+		url += "&compare=true";
+		var compareSelector = "#matchStats-" + matchId + "Compare";
+		var $compareSeason = $(compareSelector + "Season");
+		if ($compareSeason.length)
+			url += "&compareSeason=" + $compareSeason.prop("checked");
+		var $compareLevel = $(compareSelector + "Level");
+		if ($compareLevel.length)
+			url += "&compareLevel=" + $compareLevel.prop("checked");
+		var $compareSurface = $(compareSelector + "Surface");
+		if ($compareSurface.length)
+			url += "&compareSurface=" + $compareSurface.prop("checked");
+		var $compareRound = $(compareSelector + "Round");
+		if ($compareRound.length)
+			url += "&compareRound=" + $compareRound.prop("checked");
+		var $compareOpponent = $(compareSelector + "Opponent");
+		if ($compareOpponent.length)
+			url += "&compareOpponent=" + $compareOpponent.prop("checked");
+	}
+	$.get(url, function (data) {
+		$popover.html(data);
+	});
 }

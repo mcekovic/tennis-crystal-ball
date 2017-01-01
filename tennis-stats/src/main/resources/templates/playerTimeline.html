@@ -2,7 +2,7 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"*/-->
-	<script type="text/javascript" th:inline="javascript">
+	<script type="text/javascript">
 		$(function() {
 			// Tournaments
 			var $tournamentsBody = $("#bigTournamentsBody, #otherTournamentsBody");
@@ -41,7 +41,7 @@
 			var $body = $("#" + elementPrefix + "Body");
 			$body.on("shown.bs.collapse", function () {
 				if (!$body.hasClass("loaded")) {
-					$($body).load(url + "?playerId=[[${playerId}]]&seasons=" + [[${#strings.listJoin(timeline.seasons, ",")}]], function () {
+					$($body).load(url + "?playerId=[[${playerId}]]&seasons=[[${#strings.listJoin(timeline.seasons, ",")}]]", function () {
 						$body.find(".raw-data").hide();
 						$body.addClass("loaded");
 					});

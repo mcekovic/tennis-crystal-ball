@@ -39,10 +39,10 @@ public class StatsFormatUtil {
 	}
 
 	public static String relativeTo(Integer compareSeason, String compareLevel, String compareSurface) {
-		return relativeTo(compareSeason, compareLevel, compareSurface, null);
+		return relativeTo(compareSeason, compareLevel, compareSurface, null, null);
 	}
 
-	public static String relativeTo(Integer compareSeason, String compareLevel, String compareSurface, String compareOpponent) {
+	public static String relativeTo(Integer compareSeason, String compareLevel, String compareSurface, String compareRound, String compareOpponent) {
 		StringBuilder relativeTo = new StringBuilder();
 		if (compareSeason != null)
 			relativeTo.append(compareSeason);
@@ -56,9 +56,15 @@ public class StatsFormatUtil {
 				relativeTo.append(", ");
 			relativeTo.append(Surface.decode(compareSurface).getText());
 		}
+		if (!Strings.isNullOrEmpty(compareRound)) {
+			if (relativeTo.length() > 0)
+				relativeTo.append(", ");
+			relativeTo.append(Round.decode(compareRound).getText());
+		}
 		if (!Strings.isNullOrEmpty(compareOpponent)) {
 			if (relativeTo.length() > 0)
 				relativeTo.append(", ");
+			relativeTo.append("vs ");
 			relativeTo.append(compareOpponent);
 		}
 		return relativeTo.length() > 0 ? relativeTo.toString() : "Career";

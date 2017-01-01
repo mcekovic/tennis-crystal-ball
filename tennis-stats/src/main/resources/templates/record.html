@@ -3,7 +3,7 @@
 <!--/*@thymesVar id="record" type="org.strangeforest.tcb.stats.model.records.Record"*/-->
 <!--/*@thymesVar id="active" type="java.lang.Boolean"*/-->
 <head th:replace="fragments/head :: commonHead(${record.name}, true, ~{::script}, _)">
-	<script type="text/javascript" th:inline="javascript">
+	<script type="text/javascript">
 		$(function() {
 			$("#recordTable").bootgrid({
 				ajax: true,
@@ -11,7 +11,7 @@
 					method: "GET",
 					cache: false
 				},
-				url: "/recordTable?recordId=" + [[${record.id}]],
+				url: "/recordTable?recordId=[[${record.id}]]",
 				requestHandler: function (request) {
 					request.active = $("#active").prop("checked");
 					return request;

@@ -2,7 +2,6 @@
 	<!--/*@thymesVar id="stats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 	<!--/*@thymesVar id="statsFormatUtil" type="org.strangeforest.tcb.stats.controller.StatsFormatUtil"*/-->
 	<!--/*@thymesVar id="compare" type="java.lang.Boolean"*/-->
-	<!--/*@thymesVar id="relativeTo" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="compareStats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 	<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
@@ -10,6 +9,7 @@
 	<!--/*@thymesVar id="compareSeason" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="compareLevel" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="compareSurface" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="relativeTo" type="java.lang.String"*/-->
 	<div th:id="${statsContainerId}">
 		<script type="text/javascript">
 			$(function() {
@@ -228,25 +228,25 @@
 							<tr>
 								<td th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</td>
 								<th th:text="${statsFormatUtil.formatRatio(stats.pointsDominanceRatio)}" class="text-right">1.07</th>
-								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatioDiff(compareStats.pointsDominanceRatio, stats.pointsDominanceRatio)}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.pointsDominanceRatio, stats.pointsDominanceRatio)}">0%</th>
+								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatioDiff(compareStats.pointsDominanceRatio, stats.pointsDominanceRatio)}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.pointsDominanceRatio, stats.pointsDominanceRatio)}">0</th>
 								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatio(compareStats.pointsDominanceRatio)}" class="pct-data text-right">1.07</th>
 							</tr>
 							<tr>
 								<td th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</td>
 								<th th:text="${statsFormatUtil.formatRatio(stats.gamesDominanceRatio)}" class="text-right">1.07</th>
-								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatioDiff(compareStats.gamesDominanceRatio, stats.gamesDominanceRatio)}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.gamesDominanceRatio, stats.gamesDominanceRatio)}">0%</th>
+								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatioDiff(compareStats.gamesDominanceRatio, stats.gamesDominanceRatio)}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.gamesDominanceRatio, stats.gamesDominanceRatio)}">0</th>
 								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatio(compareStats.gamesDominanceRatio)}" class="pct-data text-right">1.07</th>
 							</tr>
 							<tr>
 								<td th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</td>
 								<th th:text="${statsFormatUtil.formatRatio(stats.breakPointsRatio)}" class="text-right">1.03</th>
-								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatioDiff(compareStats.breakPointsRatio, stats.breakPointsRatio)}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.breakPointsRatio, stats.breakPointsRatio)}">0%</th>
+								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatioDiff(compareStats.breakPointsRatio, stats.breakPointsRatio)}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.breakPointsRatio, stats.breakPointsRatio)}">0</th>
 								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatio(compareStats.breakPointsRatio)}" class="pct-data text-right">1.03</th>
 							</tr>
 							<tr>
 								<td th:title="#{stats.overPerformingRatio.title}">Over-Performing</td>
 								<th th:text="${statsFormatUtil.formatRatio(stats.overPerformingRatio)}" class="text-right">1.01</th>
-								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatioDiff(compareStats.overPerformingRatio, stats.overPerformingRatio)}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.overPerformingRatio, stats.overPerformingRatio)}">0%</th>
+								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatioDiff(compareStats.overPerformingRatio, stats.overPerformingRatio)}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.overPerformingRatio, stats.overPerformingRatio)}">0</th>
 								<th th:if="${compareStats}" th:text="${statsFormatUtil.formatRatio(compareStats.overPerformingRatio)}" class="pct-data text-right">1.01</th>
 							</tr>
 							<tr class="pct-data">
@@ -302,8 +302,8 @@
 		<div class="row">
 			<th:block th:unless="${stats.empty}">
 			<div th:class="'text-nowrap col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
-				<button class="raw-data btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('#${statsContainerId}')|" title="Show percentage data"> Pct. Data</button>
 				<button class="pct-data btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('#${statsContainerId}')|" title="Show raw data"> Raw Data</button>
+				<button class="raw-data btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('#${statsContainerId}')|" title="Show percentage data"> Pct. Data</button>
 				&nbsp;&nbsp;<button class="btn btn-default btn-xs glyphicon glyphicon-object-align-left" th:onclick="|compareStats('${containerId}', '${statsId}', ${compare})|" title="Compare statistics"> Compare</button>
 			</div>
 			<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">

@@ -124,6 +124,7 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareSeason", defaultValue = "false") boolean compareSeason,
 		@RequestParam(name = "compareLevel", defaultValue = "false") boolean compareLevel,
 		@RequestParam(name = "compareSurface", defaultValue = "false") boolean compareSurface,
+		@RequestParam(name = "compareRound", defaultValue = "false") boolean compareRound,
 		@RequestParam(name = "compareOpponent", defaultValue = "false") boolean compareOpponent
 	) {
 		MatchStats matchStats = statisticsService.getMatchStats(matchId);
@@ -132,23 +133,7 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("matchId", matchId);
 		modelMap.addAttribute("matchStats", matchStats);
 		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
-		modelMap.addAttribute("compare", compare);
-		if (compare) {
-			MatchInfo match = compareSeason || compareLevel || compareSurface || compareOpponent ? matchesService.getMatch(matchId) : null;
-			Integer season = compareSeason ? match.getSeason() : null;
-			String level = compareLevel ? match.getLevel() : null;
-			String surface = compareSurface ? match.getSurface() : null;
-			Integer opponentId = compareOpponent ? (playerId == match.getWinnerId() ? match.getLoserId() : match.getWinnerId()) : null;
-			MatchFilter compareFilter = MatchFilter.forStats(season, level, surface, opponentId);
-			PlayerStats compareStats = statisticsService.getPlayerStats(playerId, compareFilter);
-			if (!compareStats.isEmpty())
-				modelMap.addAttribute("compareStats", compareStats);
-			modelMap.addAttribute("compareSeason", compareSeason);
-			modelMap.addAttribute("compareLevel", compareLevel);
-			modelMap.addAttribute("compareSurface", compareSurface);
-			String relativeTo = relativeTo(season, level, surface, opponentId != null ? playerService.getPlayerName(opponentId) : null);
-			modelMap.addAttribute("relativeTo", relativeTo);
-		}
+		addCompareMatchStats(modelMap, matchId, compare, compareSeason, compareLevel, compareSurface, compareRound, compareOpponent);
 		return new ModelAndView("matchStats", modelMap);
 	}
 
@@ -206,13 +191,15 @@ public class PlayerStatsController extends BaseController {
 	}
 
 
-	// Util
+	// Compare statistics util
 
 	private void addCompareStats(ModelMap modelMap, int playerId, boolean compare, Integer compareSeason, String compareLevel, String compareSurface) {
 		modelMap.addAttribute("compare", compare);
 		if (compare) {
 			MatchFilter compareFilter = MatchFilter.forStats(compareSeason, compareLevel, compareSurface);
 			PlayerStats compareStats = statisticsService.getPlayerStats(playerId, compareFilter);
+			String relativeTo = relativeTo(compareSeason, compareLevel, compareSurface);
+
 			if (!compareStats.isEmpty())
 				modelMap.addAttribute("compareStats", compareStats);
 			modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
@@ -221,7 +208,43 @@ public class PlayerStatsController extends BaseController {
 			modelMap.addAttribute("compareSeason", compareSeason);
 			modelMap.addAttribute("compareLevel", compareLevel);
 			modelMap.addAttribute("compareSurface", compareSurface);
-			modelMap.addAttribute("relativeTo", relativeTo(compareSeason, compareLevel, compareSurface));
+			modelMap.addAttribute("relativeTo", relativeTo);
+		}
+	}
+
+	private void addCompareMatchStats(ModelMap modelMap, long matchId, boolean compare, boolean compareSeason, boolean compareLevel, boolean compareSurface, boolean compareRound, boolean compareOpponent) {
+		modelMap.addAttribute("compare", compare);
+		if (compare) {
+			MatchInfo match = matchesService.getMatch(matchId);
+			Integer season = compareSeason ? match.getSeason() : null;
+			String level = compareLevel ? match.getLevel() : null;
+			String surface = compareSurface ? match.getSurface() : null;
+			String round = compareRound ? match.getRound() : null;
+			Integer winnerOpponentId = compareOpponent ? match.getLoserId() : null;
+			Integer loserOpponentId = compareOpponent ? match.getWinnerId() : null;
+			MatchFilter winnerCompareFilter = MatchFilter.forStats(season, level, surface, round, winnerOpponentId);
+			PlayerStats winnerCompareStats = statisticsService.getPlayerStats(match.getWinnerId(), winnerCompareFilter);
+			String winnerRelativeTo = relativeTo(season, level, surface, round, winnerOpponentId != null ? playerService.getPlayerName(winnerOpponentId) : null);
+			MatchFilter loserCompareFilter = MatchFilter.forStats(season, level, surface, round, loserOpponentId);
+			PlayerStats loserCompareStats = statisticsService.getPlayerStats(match.getLoserId(), loserCompareFilter);
+			String loserRelativeTo = relativeTo(season, level, surface, round, loserOpponentId != null ? playerService.getPlayerName(loserOpponentId) : null);
+
+			if (!winnerCompareStats.isEmpty())
+				modelMap.addAttribute("winnerCompareStats", winnerCompareStats);
+			if (!loserCompareStats.isEmpty())
+				modelMap.addAttribute("loserCompareStats", loserCompareStats);
+			modelMap.addAttribute("match", match);
+			modelMap.addAttribute("matchLevel", TournamentLevel.decode(match.getLevel()).getText());
+			if (match.getSurface() != null)
+				modelMap.addAttribute("matchSurface", Surface.decode(match.getSurface()).getText());
+			modelMap.addAttribute("matchRound", Round.decode(match.getRound()).getText());
+			modelMap.addAttribute("compareSeason", compareSeason);
+			modelMap.addAttribute("compareLevel", compareLevel);
+			modelMap.addAttribute("compareSurface", compareSurface);
+			modelMap.addAttribute("compareRound", compareRound);
+			modelMap.addAttribute("compareOpponent", compareOpponent);
+			modelMap.addAttribute("winnerRelativeTo", winnerRelativeTo);
+			modelMap.addAttribute("loserRelativeTo", loserRelativeTo);
 		}
 	}
 }
