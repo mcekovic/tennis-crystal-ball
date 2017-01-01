@@ -88,7 +88,7 @@
 				$.get(url, function(data) {
 					$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 					$rivalryStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
-					$("#rivalryStatsPopover-" + opponentId).data("statsURL", url);
+					$rivalryStats.data("statsURL", url);
 				});
 			}
 		}

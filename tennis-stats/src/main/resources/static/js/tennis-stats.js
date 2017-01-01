@@ -372,14 +372,13 @@ function showMatchStats(matchId, event) {
 		$.get(url, function(data) {
 			$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 			$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "500px"); }).click();
-			$("#matchStatsPopover-" + matchId).data("statsURL", url);
+			$matchStats.data("statsURL", url);
 		});
 	}
 }
 
 function compareMatchStats(matchId, close) {
-	const $popover = $("#matchStatsPopover-" + matchId);
-	var url = $popover.data("statsURL");
+	var url = $("#matchStats-" + matchId).data("statsURL");
 	if (!close) {
 		url += "&compare=true";
 		var compareSelector = "#matchStats-" + matchId + "Compare";
@@ -400,6 +399,6 @@ function compareMatchStats(matchId, close) {
 			url += "&compareOpponent=" + $compareOpponent.prop("checked");
 	}
 	$.get(url, function (data) {
-		$popover.html(data);
+		$("#matchStatsPopover-" + matchId).html(data);
 	});
 }

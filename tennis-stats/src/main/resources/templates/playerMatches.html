@@ -102,7 +102,7 @@
 				$.get(url, function(data) {
 					$matchesStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
 					$matchesStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
-					$("#matchesStatsPopover").data("statsURL", url);
+					$matchesStats.data("statsURL", url);
 				});
 			}
 		}

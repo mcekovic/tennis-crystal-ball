@@ -83,7 +83,7 @@
 				$.get(url, function(data) {
 					$eventsStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
 					$eventsStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
-					$("#eventsStatsPopover").data("statsURL", url);
+					$eventsStats.data("statsURL", url);
 				});
 			}
 		}
@@ -95,7 +95,7 @@
 				$.get(url, function(data) {
 					$eventStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 					$eventStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
-					$("#eventStatsPopover-" + tournamentEventId).data("statsURL", url);
+					$eventStats.data("statsURL", url);
 				});
 			}
 		}
