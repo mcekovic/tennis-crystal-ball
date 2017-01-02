@@ -8,8 +8,8 @@
 		<turned-pro>1998</turned-pro>
 		<coach>Severin Luthi and Ivan Ljubicic</coach>
 		<web-site>www.rogerfederer.com</web-site>
-		<twitter>rogerfederer</twitter>
 		<facebook>Federer</facebook>
+		<twitter>rogerfederer</twitter>
 	</player>
 	<player name="Novak Djokovic">
 		<birthplace>Belgrade, Serbia</birthplace>
@@ -19,8 +19,8 @@
 		<turned-pro>2003</turned-pro>
 		<coach>Boris Becker, Marian Vajda</coach>
 		<web-site>novakdjokovic.com</web-site>
-		<twitter>DjokerNole</twitter>
 		<facebook>djokovic.official</facebook>
+		<twitter>DjokerNole</twitter>
 	</player>
 	<player name="Rafael Nadal">
 		<birthplace>Manacor, Mallorca, Spain</birthplace>
@@ -30,8 +30,8 @@
 		<turned-pro>2001</turned-pro>
 		<coach>Toni Nadal</coach>
 		<web-site>www.rafaelnadal.com</web-site>
-		<twitter>RafaelNadal</twitter>
 		<facebook>Nadal</facebook>
+		<twitter>RafaelNadal</twitter>
 	</player>
 	<player name="Ivan Lendl">
 		<birthplace>Ostrava, Czechoslovakia</birthplace>
@@ -114,8 +114,8 @@
 		<turned-pro>2005</turned-pro>
 		<coach>Ivan Lendl</coach>
 		<web-site>www.andymurray.com</web-site>
-		<twitter>andy_murray</twitter>
 		<facebook>andymurrayofficial</facebook>
+		<twitter>andy_murray</twitter>
 	</player>
 	<player name="David Ferrer">
 		<birthplace>Javea, Spain</birthplace>
@@ -135,8 +135,8 @@
 		<turned-pro>2002</turned-pro>
 		<coach>Goran Ivanisevic</coach>
 		<web-site>tomasberdych.cz</web-site>
-		<twitter>tomasberdych</twitter>
 		<facebook>tomasberdych</facebook>
+		<twitter>tomasberdych</twitter>
 	</player>
 	<player name="Juan Martin Del Potro">
 		<birthplace>Tandil, Argentina</birthplace>
@@ -144,8 +144,8 @@
 		<weight>97</weight>
 		<backhand>2</backhand>
 		<turned-pro>2005</turned-pro>
-		<twitter>delpotrojuan</twitter>
 		<facebook>JuanMartinDelPotro.Ok</facebook>
+		<twitter>delpotrojuan</twitter>
 	</player>
 	<player name="Tommy Haas">
 		<birthplace>Hamburg, Germany</birthplace>
@@ -155,8 +155,8 @@
 		<turned-pro>1996</turned-pro>
 		<coach>Alexander Waske</coach>
 		<web-site>www.tommyhaas.com</web-site>
-		<twitter>TommyHaas13</twitter>
 		<facebook>pages/Tommy-Haas/133144376702967</facebook>
+		<twitter>TommyHaas13</twitter>
 	</player>
 	<player name="Jo Wilfried Tsonga">
 		<birthplace>Le Mans, France</birthplace>
@@ -166,8 +166,8 @@
 		<turned-pro>2004</turned-pro>
 		<coach>Thierry Ascione</coach>
 		<web-site>www.jowiltsonga.fr</web-site>
-		<twitter>tsonga7</twitter>
 		<facebook>tsonga</facebook>
+		<twitter>tsonga7</twitter>
 	</player>
 	<player name="Stanislas Wawrinka">
 		<birthplace>Lausanne, Switzerland</birthplace>
@@ -177,8 +177,8 @@
 		<turned-pro>2002</turned-pro>
 		<coach>Magnus Norman</coach>
 		<web-site>www.stanwawrinka.com</web-site>
-		<twitter>stanwawrinka</twitter>
 		<facebook>stanwawrinka</facebook>
+		<twitter>stanwawrinka</twitter>
 	</player>
 	<player name="Richard Gasquet">
 		<birthplace>Beziers, France</birthplace>
@@ -207,8 +207,8 @@
 		<backhand>2</backhand>
 		<turned-pro>2005</turned-pro>
 		<web-site>www.marin-cilic.net</web-site>
-		<twitter>cilic_marin</twitter>
 		<facebook>MarinCilic</facebook>
+		<twitter>cilic_marin</twitter>
 	</player>
 	<player name="Robin Soderling">
 		<birthplace>Tibro, Sweden</birthplace>
@@ -235,8 +235,8 @@
 		<turned-pro>2004</turned-pro>
 		<coach>Mikael Tillstrom</coach>
 		<web-site>www.lamonf.com</web-site>
-		<twitter>Gael_Monfils</twitter>
 		<facebook>pages/Gael-Monfils-Tennis/128049253953369</facebook>
+		<twitter>Gael_Monfils</twitter>
 	</player>
 	<player name="Kei Nishikori">
 		<birthplace>Shimane, Japan</birthplace>
@@ -246,8 +246,8 @@
 		<turned-pro>2007</turned-pro>
 		<coach>Dante Bottini &amp; Michael Chang</coach>
 		<web-site>www.keinishikori.com</web-site>
-		<twitter>keinishikori</twitter>
 		<facebook>keinishikori</facebook>
+		<twitter>keinishikori</twitter>
 	</player>
 	<player name="Milos Raonic">
 		<birthplace>Podgorica, Montenegro</birthplace>
@@ -257,8 +257,8 @@
 		<turned-pro>2008</turned-pro>
 		<coach>Riccardo Piatti &amp; Carlos Moya</coach>
 		<web-site>milosraonicofficial.com</web-site>
-		<twitter>milosraonic</twitter>
 		<facebook>MilosRaonicOfficial</facebook>
+		<twitter>milosraonic</twitter>
 	</player>
 	<player name="Janko Tipsarevic">
 		<birthplace>Belgrade, Serbia</birthplace>
@@ -268,8 +268,8 @@
 		<turned-pro>2002</turned-pro>
 		<coach>Dirk Hordorff</coach>
 		<web-site>www.jtipsarevic.com</web-site>
-		<twitter>TipsarevicJanko</twitter>
 		<facebook>JankoOfficial</facebook>
+		<twitter>TipsarevicJanko</twitter>
 	</player>
 	<player name="Viktor Troicki">
 		<birthplace>Belgrade, Serbia</birthplace>
@@ -279,7 +279,7 @@
 		<turned-pro>2006</turned-pro>
 		<coach>Jack Reader</coach>
 		<web-site>www.viktortroicki.com</web-site>
-		<twitter>troicki_viktor</twitter>
 		<facebook>viktortroicki</facebook>
+		<twitter>troicki_viktor</twitter>
 	</player>
 </player-data>

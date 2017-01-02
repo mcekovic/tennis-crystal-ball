@@ -76,8 +76,8 @@ CREATE TABLE player (
 	turned_pro SMALLINT,
 	coach TEXT,
 	web_site TEXT,
-	twitter TEXT,
 	facebook TEXT,
+	twitter TEXT,
 	UNIQUE (first_name, last_name, dob)
 );
 

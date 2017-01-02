@@ -20,15 +20,15 @@ public class PlayerService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
-	private static final String PLAYER_QUERY =
+	private static final String PLAYER_SELECT =
 		"SELECT player_id, name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight, hand, backhand,\n" +
 		"  titles, grand_slams, tour_finals, masters, olympics,\n" +
 		"  current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points, weeks_at_no1,\n" +
-		"  active, turned_pro, coach, web_site, twitter, facebook\n" +
+		"  active, turned_pro, coach, web_site, facebook, twitter\n" +
 		"FROM player_v";
 
-	private static final String PLAYER_BY_NAME_QUERY = PLAYER_QUERY + "\nWHERE name = :name ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
-	private static final String PLAYER_BY_ID_QUERY = PLAYER_QUERY + "\nWHERE player_id = :playerId";
+	private static final String PLAYER_BY_NAME_QUERY = PLAYER_SELECT + "\nWHERE name = :name ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
+	private static final String PLAYER_BY_ID_QUERY = PLAYER_SELECT + "\nWHERE player_id = :playerId";
 
 	private static final String PLAYER_NAME_QUERY =
 		"SELECT name FROM player_v\n" +
@@ -112,7 +112,7 @@ public class PlayerService {
 		Map<String, String> quickPicks = new LinkedHashMap<>();
 		quickPicks.put("Big Four", "Roger Federer, Rafael Nadal, Novak Djokovic, Andy Murray");
 		quickPicks.put("Young Guns", "Marin Cilic, Kei Nishikori, Milos Raonic, Grigor Dimitrov, Bernard Tomic");
-		quickPicks.put("Youngest Guns", "Dominic Thiem, Nick Kyrgios, Borna Coric, Alexander Zverev");
+		quickPicks.put("Youngest Guns", "Dominic Thiem, Lucas Pouille, Nick Kyrgios, Borna Coric, Alexander Zverev");
 		quickPicks.put("Week Era", "Gustavo Kuerten, Marat Safin, Juan Carlos Ferrero, Lleyton Hewitt, Andy Roddick");
 		quickPicks.put("Americans rule '90", "Pete Sampras, Andre Agassi, Jim Courier, Michael Chang");
 		quickPicks.put("Late '80 / Early '90", "Mats Wilander, Stefan Edberg, Boris Becker, Thomas Muster");
@@ -163,8 +163,8 @@ public class PlayerService {
 			p.setTurnedPro(rs.getInt("turned_pro"));
 			p.setCoach(rs.getString("coach"));
 			p.setWebSite(rs.getString("web_site"));
-			p.setTwitter(rs.getString("twitter"));
 			p.setFacebook(rs.getString("facebook"));
+			p.setTwitter(rs.getString("twitter"));
 
 			return Optional.of(p);
 		}

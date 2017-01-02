@@ -52,8 +52,8 @@ class AdditionalPlayerDataLoader extends SimpleXMLLoader {
 		params.turned_pro = integer item.'turned-pro'
 		params.coach = string item.coach
 		params.web_site = string item.'web-site'
-		params.twitter = string item.twitter
 		params.facebook = string item.facebook
+		params.twitter = string item.twitter
 		return params
 	}
 
