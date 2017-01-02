@@ -1,0 +1,15 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="" type="java.lang.Integer"*/-->
+	<br/>
+	<div id="mapView" style="height: 600px"></div>
+	<script>
+		function initMap() {
+			var map = new google.maps.Map(document.getElementById("mapView"), {
+				center: {lat: -37.821428, lng: 144.9781302},
+				zoom: 16,
+				mapTypeId: "satellite"
+			});
+		}
+	</script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEhXr5D80L13sXmucPWYMmDSp47qr4Jes&callback=initMap"></script>
+</th:block>

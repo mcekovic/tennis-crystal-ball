@@ -150,6 +150,7 @@
 	<ul id="tournamentEventPills" class="nav nav-pills">
 		<li class="active"><a data-toggle="pill" href="#draw">Draw</a></li>
 		<li><a data-toggle="pill" href="#statistics" data-url="/tournamentEventStats?tournamentEventId=" th:attrappend="data-url=${tournamentEvent.id}">Statistics</a></li>
+		<li><a data-toggle="pill" href="#map" data-url="/tournamentEventMap?tournamentEventId=" th:attrappend="data-url=${tournamentEvent.id}">Map</a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="draw" class="tab-pane fade in active">
@@ -199,6 +200,7 @@
 			</table>
 		</div>
 		<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="map" class="tab-pane fade" style="height: 620px"><div class="loading"></div></div>
 	</div>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
