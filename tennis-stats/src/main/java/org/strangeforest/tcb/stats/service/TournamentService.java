@@ -80,6 +80,10 @@ public class TournamentService {
 		"FROM tournament_event\n" +
 		"WHERE tournament_id = :tournamentId";
 
+	private static final String TOURNAMENT_EVENT_MAP_PROPERTIES_QUERY =
+		"SELECT map_properties FROM tournament_event\n" +
+		"WHERE tournament_event_id = :tournamentEventId";
+
 	private static final String PLAYER_TOURNAMENTS_QUERY =
 		"SELECT DISTINCT tournament_id, t.name, t.level\n" +
 		"FROM player_tournament_event_result r\n" +
@@ -234,6 +238,14 @@ public class TournamentService {
 	@Cacheable("Tournament.EventCount")
 	public int getTournamentEventCount(int tournamentId) {
 		return jdbcTemplate.queryForObject(TOURNAMENT_EVENT_COUNT_QUERY, params("tournamentId", tournamentId), Integer.class);
+	}
+
+	public String getTournamentEventMapProperties(int tournamentEventId) {
+		return jdbcTemplate.queryForObject(
+			TOURNAMENT_EVENT_MAP_PROPERTIES_QUERY,
+			params("tournamentEventId",
+			tournamentEventId), String.class
+		);
 	}
 
 

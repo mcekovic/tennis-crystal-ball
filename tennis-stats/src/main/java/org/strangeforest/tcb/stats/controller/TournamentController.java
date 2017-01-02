@@ -80,8 +80,10 @@ public class TournamentController extends PageController {
 	public ModelAndView tournamentEventMap(
 		@RequestParam(name = "tournamentEventId") int tournamentEventId
 	) {
+		String mapProperties = tournamentService.getTournamentEventMapProperties(tournamentEventId);
+
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("tournamentEventId", tournamentEventId);
+		modelMap.addAttribute("mapProperties", mapProperties);
 		return new ModelAndView("tournamentEventMap", modelMap);
 	}
 

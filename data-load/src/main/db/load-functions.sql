@@ -510,7 +510,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- find_players_by_short_name
+-- find_players
 
 CREATE OR REPLACE FUNCTION find_players(
 	p_last_name TEXT
@@ -630,6 +630,31 @@ BEGIN
 		PERFORM merge_match_prices(l_match_id, 'PS', p_PSW, p_PSL);
 	ELSE
 		RAISE WARNING 'Match between % and % at % (%) not found', p_winner, p_loser, p_tournament, p_location;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- set_tournament_map_properties
+
+CREATE OR REPLACE FUNCTION set_tournament_map_properties(
+	p_ext_tournament_id TEXT,
+	p_from_season INTEGER,
+	p_to_season INTEGER,
+	p_map_properties JSON
+) RETURNS VOID AS $$
+DECLARE
+	l_tournament_id INTEGER;
+BEGIN
+	l_tournament_id := map_ext_tournament(p_ext_tournament_id);
+	IF l_tournament_id IS NOT NULL THEN
+		UPDATE tournament_event
+		SET map_properties = p_map_properties
+		WHERE tournament_id = l_tournament_id
+		AND (p_from_season IS NULL OR season >= p_from_season)
+		AND (p_to_season IS NULL OR season <= p_to_season);
+	ELSE
+		RAISE EXCEPTION 'Tournament % not found', p_ext_tournament_id;
 	END IF;
 END;
 $$ LANGUAGE plpgsql;

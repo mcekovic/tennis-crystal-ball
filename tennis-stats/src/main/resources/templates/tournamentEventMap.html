@@ -1,15 +1,15 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="mapProperties" type="java.lang.String"*/-->
 	<br/>
+	<th:block th:if="${mapProperties}">
 	<div id="mapView" style="height: 600px"></div>
-	<script>
+	<script type="text/javascript" th:inline="javascript">
 		function initMap() {
-			var map = new google.maps.Map(document.getElementById("mapView"), {
-				center: {lat: -37.821428, lng: 144.9781302},
-				zoom: 16,
-				mapTypeId: "satellite"
-			});
+			new google.maps.Map(document.getElementById("mapView"), JSON.parse([[${mapProperties}]]));
 		}
 	</script>
 	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEhXr5D80L13sXmucPWYMmDSp47qr4Jes&callback=initMap"></script>
+	</th:block>
+	<th:block>
+	<div th:unless="${mapProperties}" class="alert alert-warning">Tournament location not available.</div>
 </th:block>

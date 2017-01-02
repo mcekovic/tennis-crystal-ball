@@ -39,6 +39,7 @@ CREATE TABLE tournament_event (
 	draw_type draw_type,
 	draw_size SMALLINT,
 	rank_points INTEGER,
+	map_properties JSON,
 	UNIQUE (tournament_id, season)
 );
 
