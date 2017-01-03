@@ -25,6 +25,7 @@ public class TournamentEvent {
 	private MatchPlayer runnerUp;
 	private String score;
 	private String outcome;
+	private String mapProperties;
 
 	public TournamentEvent(int id, int tournamentId, String tournamentExtId, int season, Date date, String name, String level, String surface, boolean indoor) {
 		this.id = id;
@@ -52,6 +53,10 @@ public class TournamentEvent {
 		this.runnerUp = loser;
 		this.score = score;
 		this.outcome = outcome;
+	}
+
+	public void setMapProperties(String mapProperties) {
+		this.mapProperties = mapProperties;
 	}
 
 	public int getId() {
@@ -132,5 +137,9 @@ public class TournamentEvent {
 
 	public String getOutcome() {
 		return outcome;
+	}
+
+	public String getMapProperties() {
+		return mapProperties;
 	}
 }

@@ -36,9 +36,9 @@ public class TournamentService {
 	private static final String TOURNAMENT_EVENT_SELECT = //language=SQL
 		"SELECT e.tournament_event_id, e.tournament_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
 		"  p.player_count, p.participation_points, p.max_participation_points,\n" +
-		"  m.winner_id, pw.name winner_name, m.winner_seed, m.winner_entry, m.winner_country_id,\n" +
-		"  m.loser_id runner_up_id, pl.name runner_up_name, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry, m.loser_country_id runner_up_country_id,\n" +
-		"  m.score, m.outcome\n" +
+		"  m.winner_id, pw.name winner_name, m.winner_seed, m.winner_entry,\n" +
+		"  m.loser_id runner_up_id, pl.name runner_up_name, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry,\n" +
+		"  m.score, m.outcome%1$s\n" +
 		"FROM tournament_event e\n" +
 		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
 		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
@@ -46,10 +46,13 @@ public class TournamentService {
 		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id\n" +
 		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id\n";
 
+	private static final String TOURNAMENT_EVENT_EXTRA_COLUMNS = //language=SQL
+		", m.winner_country_id, m.loser_country_id runner_up_country_id, e.map_properties";
+
 	private static final String TOURNAMENT_EVENTS_QUERY = //language=SQL
 		TOURNAMENT_EVENT_SELECT +
-		"WHERE e.level NOT IN ('D', 'T')%1$s\n" +
-		"ORDER BY %2$s OFFSET :offset";
+		"WHERE e.level NOT IN ('D', 'T')%2$s\n" +
+		"ORDER BY %3$s OFFSET :offset";
 
 	private static final String TOURNAMENT_EVENT_QUERY =
 		TOURNAMENT_EVENT_SELECT +
@@ -138,7 +141,7 @@ public class TournamentService {
 		AtomicInteger tournamentEvents = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(TOURNAMENT_EVENTS_QUERY, filter.getCriteria(), orderBy),
+			format(TOURNAMENT_EVENTS_QUERY, "", filter.getCriteria(), orderBy),
 			filter.getParams().addValue("offset", offset),
 			rs -> {
 				if (tournamentEvents.incrementAndGet() <= pageSize)
@@ -151,7 +154,8 @@ public class TournamentService {
 
 	public TournamentEvent getTournamentEvent(int tournamentEventId) {
 		TournamentEvent event = jdbcTemplate.query(
-			TOURNAMENT_EVENT_QUERY, params("tournamentEventId", tournamentEventId),
+			format(TOURNAMENT_EVENT_QUERY, TOURNAMENT_EVENT_EXTRA_COLUMNS),
+			params("tournamentEventId", tournamentEventId),
 			rs -> {
 				if (rs.next())
 					return mapTournamentEvent(rs, true);
@@ -181,7 +185,7 @@ public class TournamentService {
 		return event;
 	}
 
-	private static TournamentEvent mapTournamentEvent(ResultSet rs, boolean withCountry) throws SQLException {
+	private static TournamentEvent mapTournamentEvent(ResultSet rs, boolean withExtraAttrs) throws SQLException {
 		TournamentEvent tournamentEvent = new TournamentEvent(
 			rs.getInt("tournament_event_id"),
 			rs.getInt("tournament_id"),
@@ -201,11 +205,13 @@ public class TournamentService {
 			rs.getInt("max_participation_points")
 		);
 		tournamentEvent.setFinal(
-			mapMatchPlayer(rs, "winner_", withCountry),
-			mapMatchPlayer(rs, "runner_up_", withCountry),
+			mapMatchPlayer(rs, "winner_", withExtraAttrs),
+			mapMatchPlayer(rs, "runner_up_", withExtraAttrs),
 			rs.getString("score"),
 			rs.getString("outcome")
 		);
+		if (withExtraAttrs)
+			tournamentEvent.setMapProperties(rs.getString("map_properties"));
 		return tournamentEvent;
 	}
 

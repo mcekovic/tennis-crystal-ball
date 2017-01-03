@@ -112,9 +112,9 @@
 		</div>
 		<div class="col-md-3">
 			<table class="table table-condensed text-nowrap">
-				<tr th:with="player=${tournamentEvent.winner}" th:if="${player}">
+				<tr th:if="${tournamentEvent.winner}">
 					<th>Winner</th>
-					<td>
+					<td th:with="player=${tournamentEvent.winner}">
 						<th:block th:unless="${tournamentEvent.outcome == 'ABD'}">
 							<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 							<strong><a th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Roger Federer</a></strong>
@@ -122,9 +122,9 @@
 						<th:block th:if="${tournamentEvent.outcome == 'ABD'}">ABD</th:block>
 					</td>
 				</tr>
-				<tr th:with="player=${tournamentEvent.runnerUp}" th:if="${player != null && tournamentEvent.outcome != 'ABD'}">
+				<tr th:if="${tournamentEvent.runnerUp != null && tournamentEvent.outcome != 'ABD'}">
 					<th>Runner-up</th>
-					<td>
+					<td th:with="player=${tournamentEvent.runnerUp}">
 						<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Rafael Nadal</a>
 					</td>
@@ -150,7 +150,7 @@
 	<ul id="tournamentEventPills" class="nav nav-pills">
 		<li class="active"><a data-toggle="pill" href="#draw">Draw</a></li>
 		<li><a data-toggle="pill" href="#statistics" data-url="/tournamentEventStats?tournamentEventId=" th:attrappend="data-url=${tournamentEvent.id}">Statistics</a></li>
-		<li><a data-toggle="pill" href="#map" data-url="/tournamentEventMap?tournamentEventId=" th:attrappend="data-url=${tournamentEvent.id}">Map</a></li>
+		<li th:if="${tournamentEvent.mapProperties}"><a data-toggle="pill" href="#map" data-url="/tournamentEventMap?tournamentEventId=" th:attrappend="data-url=${tournamentEvent.id}">Map</a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="draw" class="tab-pane fade in active">
@@ -200,7 +200,7 @@
 			</table>
 		</div>
 		<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
-		<div id="map" class="tab-pane fade" style="height: 620px"><div class="loading"></div></div>
+		<div th:if="${tournamentEvent.mapProperties}" id="map" class="tab-pane fade" style="height: 620px"><div class="loading"></div></div>
 	</div>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
