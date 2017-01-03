@@ -5,7 +5,6 @@
 <!--/*@thymesVar id="categoryTypes" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript" th:inline="javascript">
-	$(document.body).append("<script type='text/javascript' src='https://www.google.com/jsapi?callback=loadGoogleChartsForStats'>&lt;/script>");
 	var chartData, pointCount, isPct;
 	var categoryTypes = [[${categoryTypes}]];
 	function loadGoogleChartsForStats() {
@@ -47,6 +46,7 @@
 		$("#statsByAgeDiv").css("display", $("#statsFromSeason").val() == "" && $("#statsToSeason").val() == "" ? "block" : "none");
 	}
 </script>
+<script async defer type="text/javascript" src="https://www.google.com/jsapi?callback=loadGoogleChartsForStats"></script>
 <style scoped="scoped">
 	.checkbox {
 		margin-top: 7px;

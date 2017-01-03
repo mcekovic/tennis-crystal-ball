@@ -6,7 +6,6 @@
 <!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.RankType[]"*/-->
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript">
-	$(document.body).append("<script type='text/javascript' src='https://www.google.com/jsapi?callback=loadGoogleChartsForRanking'>&lt;/script>");
 	var chartData, bySeason, pointCount, isRank, logScale;
 	function loadGoogleChartsForRanking() {
 		google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
@@ -79,6 +78,7 @@
 		$("[data-toggle='tooltip']").tooltip();
 	});
 </script>
+<script async defer type="text/javascript" src="https://www.google.com/jsapi?callback=loadGoogleChartsForRanking"></script>
 <style scoped="scoped">
 	.checkbox {
 		margin-top: 7px;

@@ -641,6 +641,7 @@ CREATE OR REPLACE FUNCTION set_tournament_map_properties(
 	p_ext_tournament_id TEXT,
 	p_from_season INTEGER,
 	p_to_season INTEGER,
+	p_seasons INTEGER[],
 	p_map_properties JSON
 ) RETURNS VOID AS $$
 DECLARE
@@ -651,8 +652,11 @@ BEGIN
 		UPDATE tournament_event
 		SET map_properties = p_map_properties
 		WHERE tournament_id = l_tournament_id
-		AND (p_from_season IS NULL OR season >= p_from_season)
-		AND (p_to_season IS NULL OR season <= p_to_season);
+		AND (
+			((p_from_season IS NULL OR season >= p_from_season)
+			AND (p_to_season IS NULL OR season <= p_to_season))
+			OR (p_seasons IS NOT NULL AND season = ANY(p_seasons))
+		);
 	ELSE
 		RAISE EXCEPTION 'Tournament % not found', p_ext_tournament_id;
 	END IF;
