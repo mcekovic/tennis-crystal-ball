@@ -212,6 +212,14 @@ public class RankingChartService {
 			case ELO_RANK: return "r.year_end_rank";
 			case POINTS: return "r.year_end_rank_points";
 			case ELO_RATING: return "r.year_end_elo_rating";
+			case HARD_ELO_RANK: return "r.hard_year_end_rank";
+			case HARD_ELO_RATING: return "r.hard_year_end_elo_rating";
+			case CLAY_ELO_RANK: return "r.clay_year_end_rank";
+			case CLAY_ELO_RATING: return "r.clay_year_end_elo_rating";
+			case GRASS_ELO_RANK: return "r.grass_year_end_rank";
+			case GRASS_ELO_RATING: return "r.grass_year_end_elo_rating";
+			case CARPET_ELO_RANK: return "r.carpet_year_end_rank";
+			case CARPET_ELO_RATING: return "r.carpet_year_end_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}

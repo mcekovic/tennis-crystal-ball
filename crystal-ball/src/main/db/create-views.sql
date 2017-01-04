@@ -76,7 +76,7 @@ SELECT DISTINCT player_id, date_part('year', rank_date)::INTEGER AS season,
    first_value(rank_points) OVER player_season_rank AS year_end_rank_points
 FROM player_ranking
 WHERE date_part('year', rank_date) < date_part('year', current_date) OR date_part('month', current_date) >= 11
-GROUP BY player_id, season, rank_date, rank
+GROUP BY player_id, season, rank_date
 WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_date)::INTEGER ORDER BY rank_date DESC);
 
 CREATE MATERIALIZED VIEW player_year_end_rank AS SELECT * FROM player_year_end_rank_v;
@@ -131,11 +131,19 @@ CREATE UNIQUE INDEX ON player_best_elo_rating (player_id);
 CREATE OR REPLACE VIEW player_year_end_elo_rank_v AS
 SELECT DISTINCT player_id, date_part('year', rank_date)::INTEGER AS season,
    first_value(rank) OVER player_season_rank AS year_end_rank,
-   first_value(elo_rating) OVER player_season_rank AS year_end_elo_rating
+   first_value(elo_rating) OVER player_season_rank AS year_end_elo_rating,
+   first_value(hard_rank) OVER player_season_rank AS hard_year_end_rank,
+   first_value(hard_elo_rating) OVER player_season_rank AS hard_year_end_elo_rating,
+	first_value(clay_rank) OVER player_season_rank AS clay_year_end_rank,
+	first_value(clay_elo_rating) OVER player_season_rank AS clay_year_end_elo_rating,
+	first_value(grass_rank) OVER player_season_rank AS grass_year_end_rank,
+	first_value(grass_elo_rating) OVER player_season_rank AS grass_year_end_elo_rating,
+	first_value(carpet_rank) OVER player_season_rank AS carpet_year_end_rank,
+	first_value(carpet_elo_rating) OVER player_season_rank AS carpet_year_end_elo_rating
 FROM player_elo_ranking
 WHERE (date_part('year', rank_date) < date_part('year', current_date) OR date_part('month', current_date) >= 11)
 AND date_part('month', rank_date) > 6
-GROUP BY player_id, season, rank_date, rank
+GROUP BY player_id, season, rank_date
 WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_date)::INTEGER ORDER BY rank_date DESC);
 
 CREATE MATERIALIZED VIEW player_year_end_elo_rank AS SELECT * FROM player_year_end_elo_rank_v;
