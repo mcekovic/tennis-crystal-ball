@@ -145,7 +145,7 @@ public class VisitorManager {
 	}
 
 	private class VisitorCacheLoader implements CacheLoader<String, Optional<Visitor>> {
-		public Optional<Visitor> load(String ipAddress) {
+		@Override public Optional<Visitor> load(String ipAddress) {
 			return repository.find(ipAddress);
 		}
 	}
