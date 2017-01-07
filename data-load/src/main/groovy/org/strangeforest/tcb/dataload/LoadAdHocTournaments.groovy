@@ -71,5 +71,8 @@ static loadTournaments(SqlPool sqlPool) {
 		def atpWorldTourMatchLoader = new ATPWorldTourTournamentLoader(sql)
 		atpWorldTourMatchLoader.loadTournament(2007, 'vina-del-mar', 505)
 		atpWorldTourMatchLoader.loadTournament(2016, 'barclays-atp-world-tour-finals', 605)
+		atpWorldTourMatchLoader.loadTournament(2017, 'brisbane', 339)
+		atpWorldTourMatchLoader.loadTournament(2017, 'doha', 451)
+		atpWorldTourMatchLoader.loadTournament(2017, 'chennai', 891)
 	}
 }
