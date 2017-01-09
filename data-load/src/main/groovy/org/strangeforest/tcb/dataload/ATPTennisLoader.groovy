@@ -162,6 +162,12 @@ class ATPTennisLoader {
 		println 'Correcting data (delta)...'
 		executeSQLFile(sql, 'src/main/db/correct-data-delta.sql')
 		println "Correcting data (delta) finished in $stopwatch\n"
+		if (full) {
+			stopwatch = Stopwatch.createStarted()
+			println 'Updating tournament event map properties...'
+			executeSQLFile(sql, 'src/main/db/tournament-map-properties.sql')
+			println "Updating tournament event map properties finished in $stopwatch"
+		}
 	}
 
 	def refreshMaterializedViews(Sql sql) {
