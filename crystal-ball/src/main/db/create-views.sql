@@ -728,19 +728,19 @@ WITH best_elo_rating_ranked AS (
 	SELECT player_id, goat_points
 	FROM best_elo_rating_ranked
 	INNER JOIN best_elo_rating_goat_points USING (best_elo_rating_rank)
-	UNION
+	UNION ALL
 	SELECT player_id, goat_points
 	FROM best_elo_rating_ranked
 	INNER JOIN best_surface_elo_rating_goat_points gh ON gh.best_elo_rating_rank = best_hard_elo_rating_rank
-	UNION
+	UNION ALL
 	SELECT player_id, goat_points
 	FROM best_elo_rating_ranked
 	INNER JOIN best_surface_elo_rating_goat_points gc ON gc.best_elo_rating_rank = best_clay_elo_rating_rank
-	UNION
+	UNION ALL
 	SELECT player_id, goat_points
 	FROM best_elo_rating_ranked
 	INNER JOIN best_surface_elo_rating_goat_points gg ON gg.best_elo_rating_rank = best_grass_elo_rating_rank
-	UNION
+	UNION ALL
 	SELECT player_id, goat_points
 	FROM best_elo_rating_ranked
 	INNER JOIN best_surface_elo_rating_goat_points gp ON gp.best_elo_rating_rank = best_carpet_elo_rating_rank

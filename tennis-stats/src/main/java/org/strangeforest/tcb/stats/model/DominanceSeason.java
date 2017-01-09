@@ -1,8 +1,12 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.time.*;
+
 public class DominanceSeason {
 
 	private final int season;
+	private final boolean eligibleForEra;
+	private final boolean ongoing;
 	private int dominanceRatioPoints;
 	private PlayerDominanceTimeline bestPlayer;
 	private PlayerDominanceTimeline eraPlayer;
@@ -12,10 +16,22 @@ public class DominanceSeason {
 
 	public DominanceSeason(int season) {
 		this.season = season;
+		LocalDate today = LocalDate.now();
+		int year = today.getYear();
+		ongoing = season == year && today.getMonth().compareTo(Month.NOVEMBER) < 0;
+		eligibleForEra = season < year || !ongoing;
 	}
 
 	public int getSeason() {
 		return season;
+	}
+
+	public boolean isEligibleForEra() {
+		return eligibleForEra;
+	}
+
+	public boolean isOngoingSeason() {
+		return ongoing;
 	}
 
 	public double getDominanceRatio() {

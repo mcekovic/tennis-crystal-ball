@@ -1,20 +1,17 @@
 package org.strangeforest.tcb.stats.model;
 
-import java.time.*;
 import java.util.*;
 
 public class DominanceTimeline {
 
 	private final List<PlayerDominanceTimeline> players;
 	private final SortedSet<Integer> seasons;
-	private final LocalDate now;
 	private List<DominanceSeason> dominanceSeasons;
 	private List<DominanceEra> dominanceEras;
 
 	public DominanceTimeline() {
 		players = new ArrayList<>();
 		seasons = new TreeSet<>(Comparator.reverseOrder());
-		now = LocalDate.now();
 	}
 
 	public List<PlayerDominanceTimeline> getPlayers() {
@@ -53,10 +50,10 @@ public class DominanceTimeline {
 		int seasonCount = dominanceSeasons.size();
 		for (int i = 0; i < seasonCount; i++) {
 			DominanceSeason dominanceSeason = dominanceSeasons.get(i);
-			if (isEligibleForEra(dominanceSeason.getSeason())) {
+			if (dominanceSeason.isEligibleForEra()) {
 				PlayerDominanceTimeline bestPlayer = dominanceSeason.getBestPlayer();
-				PlayerDominanceTimeline prevBestPlayer = i > 0 ? dominanceSeasons.get(i - 1).getBestPlayer() : null;
-				PlayerDominanceTimeline nextBestPlayer = i < seasonCount - 1 ? dominanceSeasons.get(i + 1).getBestPlayer() : null;
+				PlayerDominanceTimeline prevBestPlayer = i > 0 ? getAdjacentSeasonBestPlayer(i - 1) : null;
+				PlayerDominanceTimeline nextBestPlayer = i < seasonCount - 1 ? getAdjacentSeasonBestPlayer(i + 1) : null;
 				dominanceSeason.setEraPlayer(prevBestPlayer == null || prevBestPlayer != nextBestPlayer ? bestPlayer : prevBestPlayer);
 			}
 		}
@@ -74,9 +71,9 @@ public class DominanceTimeline {
 		dominanceEras.add(new DominanceEra(eraSeasons));
 	}
 
-	private boolean isEligibleForEra(int season) {
-		int year = now.getYear();
-		return season < year || (season == year && now.getMonthValue() >= 11);
+	private PlayerDominanceTimeline getAdjacentSeasonBestPlayer(int seasonIndex) {
+		DominanceSeason prevSeason = dominanceSeasons.get(seasonIndex);
+		return !prevSeason.isOngoingSeason() ? prevSeason.getBestPlayer() : null;
 	}
 
 

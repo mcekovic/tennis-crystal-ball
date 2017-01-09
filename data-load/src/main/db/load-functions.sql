@@ -218,18 +218,17 @@ DECLARE
 	l_tournament_event_id INTEGER;
 BEGIN
 	l_tournament_id := merge_tournament(p_ext_tournament_id, p_tournament_name, p_level, p_surface, p_indoor);
-	BEGIN
+	UPDATE tournament_event
+	SET date = p_date, name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor, draw_type = p_draw_type::draw_type, draw_size = p_draw_size, rank_points = p_rank_points
+	WHERE tournament_id = l_tournament_id AND season = p_season
+	RETURNING tournament_event_id INTO l_tournament_event_id;
+	IF l_tournament_event_id IS NULL THEN
 		INSERT INTO tournament_event
 		(tournament_id, season, date, name, level, surface, indoor, draw_type, draw_size, rank_points)
 		VALUES
 		(l_tournament_id, p_season, p_date, p_name, p_level::tournament_level, p_surface::surface, p_indoor, p_draw_type::draw_type, p_draw_size, p_rank_points)
 		RETURNING tournament_event_id INTO l_tournament_event_id;
-	EXCEPTION WHEN unique_violation THEN
-		UPDATE tournament_event
-		SET date = p_date, name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor, draw_type = p_draw_type::draw_type, draw_size = p_draw_size, rank_points = p_rank_points
-		WHERE tournament_id = l_tournament_id AND season = p_season
-		RETURNING tournament_event_id INTO l_tournament_event_id;
-   END;
+	END IF;
 	RETURN l_tournament_event_id;
 END;
 $$ LANGUAGE plpgsql;

@@ -4,34 +4,33 @@ import com.google.common.base.*
 import groovy.json.*
 import groovy.sql.*
 import org.jsoup.*
+import org.jsoup.nodes.*
 import org.jsoup.select.*
 
 import java.util.concurrent.atomic.*
 
-import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
-import static org.strangeforest.tcb.dataload.XMLMatchLoader.LOAD_SQL
+import static org.strangeforest.tcb.dataload.XMLMatchLoader.*
 
 class ATPWorldTourTournamentLoader {
 
 	private final Sql sql
 
 	private static final int TIMEOUT = 30 * 1000L
-
-	private static def PROGRESS_LINE_WRAP = 100
+	private static final int PROGRESS_LINE_WRAP = 100
 
 	ATPWorldTourTournamentLoader(Sql sql) {
 		this.sql = sql
 	}
 
-	def loadTournament(int season, String urlId, def extId, String level = null) {
-		def url = tournamentUrl(season, urlId, extId)
+	def loadTournament(int season, String urlId, extId, String level = null, boolean current = false) {
+		def url = tournamentUrl(current, season, urlId, extId)
 		println "Fetching tournament URL '$url'"
 		def stopwatch = Stopwatch.createStarted()
 		def doc = Jsoup.connect(url).timeout(TIMEOUT).get()
-		def name = doc.select('span.tourney-title').text() ?: doc.select('td.title-content > a:nth-child(1)').text()
 		def dates = doc.select('.tourney-dates').text()
 		def atpLevel = extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1)
 		level = level ?: mapLevel(atpLevel)
+		def name = getName(doc, level)
 		def surface = doc.select('td.tourney-details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)').text()
 		def drawType = 'KO'
 		def drawSize = doc.select('a.not-in-system:nth-child(1) > span:nth-child(1)').text()
@@ -79,7 +78,7 @@ class ATPWorldTourTournamentLoader {
 					params.tournament_level = level
 					params.surface = mapSurface surface
 					params.indoor = false
-					params.draw_type = drawType;
+					params.draw_type = drawType
 					params.draw_size = smallint drawSize
 
 					params.match_num = smallint(++matchNum)
@@ -89,11 +88,11 @@ class ATPWorldTourTournamentLoader {
 
 					params.winner_name = wName
 					params.winner_seed = wIsSeed ? smallint(wSeedEntry) : null
-					params.winner_entry = !wIsSeed ? mapEntry(string(wSeedEntry)) : null
+					params.winner_entry = !wIsSeed ? string(wSeedEntry) : null
 
 					params.loser_name = lName
 					params.loser_seed = lIsSeed ? smallint(lSeedEntry) : null
-					params.loser_entry = !lIsSeed ? mapEntry(string(lSeedEntry)) : null
+					params.loser_entry = !lIsSeed ? string(lSeedEntry) : null
 
 					setScoreParams(params, score, sql.connection)
 					params.statsUrl = matchStatsUrl(scoreElem.attr('href'))
@@ -157,8 +156,9 @@ class ATPWorldTourTournamentLoader {
 		params[prefix + 'bp_fc'] = smallint stats?.BreakPointsSavedDivisor
 	}
 
-	static tournamentUrl(int season, String urlId, def extId) {
-		"http://www.atpworldtour.com/en/scores/archive/$urlId/$extId/$season/results"
+	static tournamentUrl(boolean current, int season, String urlId, extId) {
+		def type = current ? 'current' : 'archive'
+		"http://www.atpworldtour.com/en/scores/$type/$urlId/$extId/$season/results"
 	}
 
 	static matchStatsUrl(String url) {
@@ -169,6 +169,17 @@ class ATPWorldTourTournamentLoader {
 		int end = dates.indexOf('-')
 		def startDate = end > 0 ? dates.substring(0, end) : dates
 		startDate.trim().replace('.', '-')
+	}
+
+	static getName(Document doc, String level) {
+		switch (level) {
+			case 'G': return doc.select('span.tourney-title').text() ?: doc.select('td.title-content > a:nth-child(1)').text()
+			case 'F': return 'Tour Finals'
+			default:
+				def location = doc.select('td.title-content > span:nth-child(2)').text()
+				def pos = location.indexOf(',')
+				return pos > 0 ? location.substring(0, pos) : location
+		}
 	}
 
 	static mapLevel(String level) {
@@ -211,14 +222,6 @@ class ATPWorldTourTournamentLoader {
 		level == 'G' ? 5 : 3
 	}
 
-	def mapEntry(String entry) {
-		switch (entry) {
-			case 'W': return 'WC'
-			case 'L': return 'LL'
-			default: return entry
-		}
-	}
-
 	static fitScore(String score) {
 		def setScores = []
 		for (String setScore : score.split('\\s+'))
@@ -245,7 +248,7 @@ class ATPWorldTourTournamentLoader {
 			seedEntry = seedEntry.substring(openingBrace + 1)
 		def closingBrace = seedEntry.indexOf(')')
 		if (closingBrace >= 0)
-			seedEntry = seedEntry.substring(0, closingBrace - 1)
+			seedEntry = seedEntry.substring(0, closingBrace)
 		seedEntry
 	}
 

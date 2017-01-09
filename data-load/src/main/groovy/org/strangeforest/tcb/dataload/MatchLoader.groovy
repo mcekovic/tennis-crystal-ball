@@ -31,6 +31,8 @@ class MatchLoader extends BaseCSVLoader {
 		if (tourneyId[4] != '-')
 			throw new IllegalArgumentException("Invalid tourney_id: $tourneyId")
 		def extTourneyId = string tourneyId.substring(5)
+		if (extTourneyId.startsWith('0'))
+			extTourneyId = extTourneyId.substring(1)
 		def level = string record.tourney_level
 		def name = string record.tourney_name
 		def season = smallint tourneyId.substring(0, 4)

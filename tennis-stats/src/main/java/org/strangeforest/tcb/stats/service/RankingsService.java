@@ -24,6 +24,7 @@ public class RankingsService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
+	private static final int HIGHEST_ELO_RATING_MAX_PLAYERS = 1000;
 	private static final int TOP_RANKS_FOR_TIMELINE = 5;
 
  	private static final String CURRENT_RANKING_DATE_QUERY = //language=SQL
@@ -60,7 +61,7 @@ public class RankingsService {
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, %2$s AS points_date, %3$s AS best_rank, %4$s AS best_rank_date\n" +
 		"FROM best_elo_rating_ranked r\n" +
 		"INNER JOIN player_v p USING (player_id)%5$s\n" +
-		"ORDER BY rank, best_rank_date OFFSET :offset";
+		"ORDER BY rank, best_rank_date OFFSET :offset LIMIT " + HIGHEST_ELO_RATING_MAX_PLAYERS;
 
 	private static final String PLAYER_RANKING_QUERY =
 		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points,\n" +
