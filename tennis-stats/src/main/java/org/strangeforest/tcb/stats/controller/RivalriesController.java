@@ -21,13 +21,29 @@ public class RivalriesController extends PageController {
 	@Autowired private PlayerService playerService;
 	@Autowired private StatisticsService statisticsService;
 
-	@GetMapping("/greatestRivalries")
-	public ModelAndView greatestRivalries() {
+	@GetMapping("/headToHead")
+	public ModelAndView headToHead(
+		@RequestParam(name = "playerId1", required = false) Integer playerId1,
+		@RequestParam(name = "name1", required = false) String name1,
+		@RequestParam(name = "playerId2", required = false) Integer playerId2,
+		@RequestParam(name = "name2", required = false) String name2,
+		@RequestParam(name = "tab", required = false) String tab
+	) {
+		Optional<Player> optionalPlayer1 = playerId1 != null ? playerService.getPlayer(playerId1) : (name1 != null ? playerService.getPlayer(name1) : Optional.empty());
+		Optional<Player> optionalPlayer2 = playerId2 != null ? playerService.getPlayer(playerId2) : (name2 != null ? playerService.getPlayer(name2) : Optional.empty());
+
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
-		modelMap.addAttribute("surfaces", Surface.values());
-		modelMap.addAttribute("rounds", Round.values());
-		return new ModelAndView("greatestRivalries", modelMap);
+		addPlayer(modelMap, playerId1, name1, optionalPlayer1, 1);
+		addPlayer(modelMap, playerId2, name2, optionalPlayer2, 2);
+		modelMap.addAttribute("tab", tab);
+		return new ModelAndView("headToHead", modelMap);
+	}
+
+	private static void addPlayer(ModelMap modelMap, Integer playerId, String name, Optional<Player> optionalPlayer, int index) {
+		if (optionalPlayer.isPresent())
+			modelMap.addAttribute("player" + index, optionalPlayer.get());
+		else
+			modelMap.addAttribute("playerRef" + index, playerId != null ? playerId : name);
 	}
 
 	@GetMapping("/headsToHeads")
@@ -65,5 +81,14 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("headsToHeads", headsToHeads);
 		modelMap.addAttribute("playersStats", playersStats);
 		return new ModelAndView("headsToHeadsTable", modelMap);
+	}
+
+	@GetMapping("/greatestRivalries")
+	public ModelAndView greatestRivalries() {
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("rounds", Round.values());
+		return new ModelAndView("greatestRivalries", modelMap);
 	}
 }

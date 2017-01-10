@@ -47,11 +47,12 @@
 							<li th:class="${path == '/surfaceTimeline' ? 'active' : ''}"><a href="/surfaceTimeline">Surface Timeline<sup class="new-feature">&nbsp;New!</sup></a></li>
 						</ul>
 					</li>
-					<li th:class="${path == '/greatestRivalries' || path == '/headsToHeads' ? 'active dropdown' : 'dropdown'}">
+					<li th:class="${path == '/headToHead' || path == '/headsToHeads' || path == '/greatestRivalries' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rivalries<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/greatestRivalries' ? 'active' : ''}"><a href="/greatestRivalries">Greatest Rivalries</a></li>
+							<li th:class="${path == '/headToHead' ? 'active' : ''}"><a href="/headToHead">Head-to-Head</a></li>
 							<li th:class="${path == '/headsToHeads' ? 'active' : ''}"><a href="/headsToHeads">Heads-to-Heads</a></li>
+							<li th:class="${path == '/greatestRivalries' ? 'active' : ''}"><a href="/greatestRivalries">Greatest Rivalries</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/rankingsTable' || path == '/rankingsChart' || path == '/allTimeEloRatings' ? 'active dropdown' : 'dropdown'}">
