@@ -44,6 +44,10 @@
 						row.player2.active = false;
 						return playerCountryFormatter(column, row.player1) + " - " + playerCountryFormatter(column, row.player2) + (active ? " <img src='/images/active.png' title='Active' width='12' height='12'/>" : "");
 					},
+					"matches": function(column, row) {
+						var params = "&tab=matches" + rivalryFilterParams();
+						return "<a href='/headToHead?playerId1=" + row.player1.playerId + "&playerId2=" + row.player2.playerId + params + "' title='Shot Head-to-Head matches'>" + row.matches + "</a>";
+					},
 					"h2h": function(column, row) {
 						var params = "&outcome=won" + rivalryFilterParams();
 						return "<a href='/playerProfile?playerId=" + row.player1.playerId + "&tab=matches&opponentId=" + row.player2.playerId + params + "' title='Show " + row.player1.name + " def. " + row.player2.name + " matches'>" + row.won + "</a>" +
@@ -152,7 +156,7 @@
 		<tr>
 			<th data-column-id="rank" data-type="numeric" data-width="65">Rank</th>
 			<th data-column-id="rivalry" data-formatter="rivalry" data-width="300">Rivalry</th>
-			<th data-column-id="matches" data-type="numeric" data-order="desc" data-width="90" data-align="right" data-header-align="right">Matches</th>
+			<th data-column-id="matches" data-formatter="matches" data-order="desc" data-width="90" data-align="right" data-header-align="right">Matches</th>
 			<th data-column-id="h2h" data-formatter="h2h" data-width="55" data-align="center" data-header-align="center">H2H</th>
 			<th data-column-id="h2hPct" data-formatter="h2hPct" data-width="120" data-align="center" data-header-align="center">H2H %</th>
 			<th data-column-id="lastMatch" data-formatter="lastMatch" data-width="450">Last Match</th>

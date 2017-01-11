@@ -5,7 +5,7 @@
 	<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
-	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+	<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 	<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 	<!--/*@thymesVar id="tournamentEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEventItem>"*/-->
 	<!--/*@thymesVar id="level" type="java.lang.String"*/-->
@@ -37,7 +37,7 @@
 					request.round = $("#matchesRound").val();
 					request.opponent = $("#matchesOpponent").val();
 					request.tournamentId = $("#matchesTournament").val();
-					request.tournamentEventId = $("#tournamentEvent").val();
+					request.tournamentEventId = $("#matchesTournamentEvent").val();
 					request.outcome = $("#matchesOutcome").val();
 					return request;
 				},
@@ -66,7 +66,7 @@
 			var $actionBar = $matchesTableHeader.find("div.actionBar");
 			$actionBar.removeClass("col-sm-12").addClass("col-sm-5");
 			$actionBar.before($("#matchesTournamentDiv").remove());
-			$actionBar.before($("#tournamentEventDiv").remove());
+			$actionBar.before($("#matchesTournamentEventDiv").remove());
 			$actionBar.before($("#matchesOutcomeDiv").remove());
 			$("[data-toggle='tooltip']").tooltip();
 		});
@@ -80,7 +80,7 @@
 			$("#matchesRound").val("");
 			$("#matchesOpponent").val("");
 			$("#matchesTournament").val("");
-			$("#tournamentEvent").val("");
+			$("#matchesTournamentEvent").val("");
 			$("#matchesOutcome").val("");
 			$("#matchesTable").bootgrid("search", "");
 			reloadMatches();
@@ -96,7 +96,7 @@
 				url += "&round=" + $("#matchesRound").val();
 				url += "&opponent=" + $("#matchesOpponent").val();
 				url += "&tournamentId=" + $("#matchesTournament").val();
-				url += "&tournamentEventId=" + $("#tournamentEvent").val();
+				url += "&tournamentEventId=" + $("#matchesTournamentEvent").val();
 				url += "&outcome=" + $("#matchesOutcome").val();
 				url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 				$.get(url, function(data) {
@@ -167,8 +167,8 @@
 			<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
 		</select>
 	</div>
-	<div id="tournamentEventDiv" class="col-sm-3">
-		<select id="tournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournament events">
+	<div id="matchesTournamentEventDiv" class="col-sm-3">
+		<select id="matchesTournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournament events">
 			<option value="">All events</option>
 			<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="|${tournamentEvent.name} ${tournamentEvent.season}|"
 			        th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon 2008</option>
@@ -188,7 +188,7 @@
 			<option value="ABD">Abandoned</option>
 		</select>
 	</div>
-	<button id="matchesStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showMatchesStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for selected matches)|">
+	<button id="matchesStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showMatchesStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected matches)|">
 		<span class="glyphicon glyphicon-stats"></span> Stats
 	</button>
 	<table id="matchesTable" class="table table-condensed table-hover table-striped">

@@ -20,6 +20,7 @@ public class RivalriesController extends PageController {
 	@Autowired private RivalriesService rivalriesService;
 	@Autowired private PlayerService playerService;
 	@Autowired private StatisticsService statisticsService;
+	@Autowired private TournamentService tournamentService;
 
 	@GetMapping("/headToHead")
 	public ModelAndView headToHead(
@@ -27,7 +28,10 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "name1", required = false) String name1,
 		@RequestParam(name = "playerId2", required = false) Integer playerId2,
 		@RequestParam(name = "name2", required = false) String name2,
-		@RequestParam(name = "tab", required = false) String tab
+		@RequestParam(name = "tab", required = false) String tab,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "round", required = false) String round
 	) {
 		Optional<Player> optionalPlayer1 = playerId1 != null ? playerService.getPlayer(playerId1) : (name1 != null ? playerService.getPlayer(name1) : Optional.empty());
 		Optional<Player> optionalPlayer2 = playerId2 != null ? playerService.getPlayer(playerId2) : (name2 != null ? playerService.getPlayer(name2) : Optional.empty());
@@ -36,6 +40,9 @@ public class RivalriesController extends PageController {
 		addPlayer(modelMap, playerId1, name1, optionalPlayer1, 1);
 		addPlayer(modelMap, playerId2, name2, optionalPlayer2, 2);
 		modelMap.addAttribute("tab", tab);
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("round", round);
 		return new ModelAndView("headToHead", modelMap);
 	}
 
@@ -58,6 +65,37 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("player1", player1);
 		modelMap.addAttribute("player2", player2);
 		return new ModelAndView("h2hProfiles", modelMap);
+	}
+
+	@GetMapping("/h2hMatches")
+	public ModelAndView h2hMatches(
+      @RequestParam(name = "playerId1") int playerId1,
+      @RequestParam(name = "playerId2") int playerId2,
+		@RequestParam(name = "level", required = false) String level,
+      @RequestParam(name = "surface", required = false) String surface,
+      @RequestParam(name = "round", required = false) String round
+   ) {
+		String name1 = playerService.getPlayerName(playerId1);
+		String name2 = playerService.getPlayerName(playerId2);
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId1);
+		seasons.retainAll(playerService.getPlayerSeasons(playerId2));
+		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId1);
+		tournaments.retainAll(tournamentService.getPlayerTournaments(playerId2));
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId1", playerId1);
+		modelMap.addAttribute("playerName1", name1);
+		modelMap.addAttribute("playerId2", playerId2);
+		modelMap.addAttribute("playerName2", name2);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("round", round);
+		return new ModelAndView("h2hMatches", modelMap);
 	}
 
 	@GetMapping("/headsToHeads")

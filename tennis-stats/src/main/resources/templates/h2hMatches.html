@@ -1,0 +1,121 @@
+<br/>
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="playerId1" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="playerName1" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="playerId2" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="playerName2" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+	<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+	<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
+	<!--/*@thymesVar id="level" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="round" type="java.lang.String"*/-->
+	<script type="text/javascript">
+		$(function() {
+			var $matchesTable = $("#matchesTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($matchesTable, ["stats"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($matchesTable, ["surface"], deviceGreaterOrEqual(device, "sm"));
+			if (!deviceGreaterOrEqual(device, "md"))
+				setBootgridColumnsWidths($matchesTable, ["tournament", "match", "score"], [150, 250, 125]);
+			$matchesTable.bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/matchesTable?playerId=[[${playerId1}]]&opponent=OPP_[[${playerId2}]]",
+				requestHandler: function (request) {
+					request.season = $("#matchesSeason").val();
+					request.level = $("#matchesLevel").val();
+					request.surface = $("#matchesSurface").val();
+					request.round = $("#matchesRound").val();
+					request.tournamentId = $("#matchesTournament").val();
+					return request;
+				},
+				rowCount: [10, 20, 50, -1],
+				formatters: {
+					"date": dateFormatter,
+					"tournament": tournamentEventFormatter,
+					"surface": surfaceFormatter,
+					"match": h2hMatchFormatter,
+					"stats": function(column, row) {
+						return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event, true)' title='Match Statistics'> Stats</a>" : "";
+					}
+				},
+				labels: {
+					loading: bootgridTemplateLoading,
+					noResults: "No matches found"
+				},
+				templates: {
+					paginationItem: bootgridTemplatePaginationItem
+				}
+			});
+			$("[data-toggle='tooltip']").tooltip();
+		});
+		function reloadMatches() {
+			$("#matchesTable").bootgrid("reload");
+		}
+		function clearMatchesFilter() {
+			$("#matchesSeason").val("");
+			$("#matchesLevel").val("");
+			$("#matchesSurface").val("");
+			$("#matchesRound").val("");
+			$("#matchesTournament").val("");
+			$("#matchesTable").bootgrid("search", "");
+			reloadMatches();
+		}
+	</script>
+	<div class="row">
+		<div class="col-md-2">
+			<select id="matchesSeason" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
+				<option value="">All seasons</option>
+				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="matchesLevel" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+				<option value="">All levels</option>
+				<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="matchesSurface" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+				<option value="">All surfaces</option>
+				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="matchesRound" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+				<option value="">All rounds</option>
+				<option th:each="aRound : ${rounds}" th:value="${aRound.code}" th:class="|bg-result-${aRound.baseCode}|" value="F" class="bg-result-F" th:text="${aRound.text}" th:selected="${aRound.code == round}">Final</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="matchesTournament" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+			</select>
+		</div>
+		<div class="col-md-1">
+			<button type="button" class="btn btn-default" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+				<span class="glyphicon glyphicon-remove"></span> Clear
+			</button>
+		</div>
+	</div>
+	<table id="matchesTable" class="table table-condensed table-hover table-striped">
+		<thead>
+		<tr>
+			<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
+			<th data-column-id="tournament" data-formatter="tournament" data-width="175">Tournament</th>
+			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
+			<th data-column-id="round" data-width="75">Round</th>
+			<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
+			<th data-column-id="score" data-sortable="false" data-width="175">Score</th>
+			<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="80">Stats</th>
+		</tr>
+		</thead>
+	</table>
+</th:block>

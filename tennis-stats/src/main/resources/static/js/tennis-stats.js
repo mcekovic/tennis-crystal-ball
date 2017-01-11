@@ -291,6 +291,11 @@ function matchFormatter(column, row) {
 	return formatMatchPlayer(row.winner) + " " + (row.outcome != "ABD" ? "d." : "vs") + " " + formatMatchPlayer(row.loser);
 }
 
+function h2hMatchFormatter(column, row) {
+	var victory = row.outcome != "ABD";
+	return formatMatchPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchPlayer(row.loser);
+}
+
 function finalFormatter(column, row) {
 	if (!row.winner && !row.runnerUp) return "";
 	var victory = row.outcome != "ABD";
@@ -364,11 +369,13 @@ function appendGoatPointsTitle(title, row, propertyName, propertyTitle) {
 	return title;
 }
 
-function showMatchStats(matchId, event) {
+function showMatchStats(matchId, event, disableCompare) {
 	var $matchStats = $("#matchStats-" + matchId);
 	if (!$matchStats.hasClass("loaded")) {
 		event.preventDefault();
 		var url = "matchStats?matchId=" + matchId;
+		if (disableCompare)
+			url += "&enableCompare=false";
 		$.get(url, function(data) {
 			$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 			$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "500px"); }).click();

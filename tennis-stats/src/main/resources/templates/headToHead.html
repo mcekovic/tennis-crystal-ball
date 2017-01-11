@@ -5,6 +5,9 @@
 <!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.Player"*/-->
 <!--/*@thymesVar id="playerRef2" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tab" type="java.lang.String"*/-->
+<!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <head th:replace="fragments/head :: commonHead(${player1 != null || player2 != null} ? ${player1 != null ? player1.name : '?'} + ' vs ' +  ${player2 != null ? player2.name : '?'} : ~{::title/text()}, true, ~{::script}, _)">
 	<title>Head-to-Head</title>
 	<script type="text/javascript" th:inline="javascript">
@@ -27,8 +30,13 @@
 				}
 			});
 			$("#h2hPills").find("a").click(tabClick);
-			[# th:if="${tab}"]
+			[# th:if="${tab}" th:switch="${tab}"]
+				[# th:case="'matches'"]
+				h2hMatches([[${level}]], [[${surface}]], [[${round}]]);
+				[/]
+				[# th:case="*"]
 				$([['#' + ${tab} + 'Pill']]).click();
+				[/]
 			[/]
 			[# th:unless="${tab}"]
 				$("#profilesPill").click();
@@ -42,6 +50,17 @@
 					$player2.focus();
 			}
 		});
+		function h2hMatches(level, surface, round) {
+			var $pill = $("#matchesPill");
+			var url = $pill.attr("data-url");
+			if (level)
+				url += "&level=" + level;
+			if (surface)
+				url += "&surface=" + surface;
+			if (round)
+				url += "&round=" + round;
+			loadTab($pill, url)
+		}
 		function toggleStatsData(selector) {
 			$(selector).find(".pct-data, .raw-data").toggle();
 		}
