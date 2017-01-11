@@ -21,9 +21,6 @@ import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 @Service
 public class MatchPredictionService {
 
-	//TODO Remove noisy matches from training (matches that do not have enough prediction weight)
-	//TODO Implement more smart tuning (select next step from set of next steps based on maximal improvement
-
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	private ConcurrentMap<Integer, PlayerData> players = new ConcurrentHashMap<>();
 	private ConcurrentMap<RankingKey, RankingData> playersRankings = new ConcurrentHashMap<>();
@@ -51,18 +48,43 @@ public class MatchPredictionService {
 		"ORDER BY m.date";
 
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date, Surface surface, TournamentLevel level, Round round, short bestOf) {
+	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date, Surface surface, TournamentLevel level, Round round) {
+		return predictMatch(playerId1, playerId2, date, surface, level, round, null);
+	}
+
+	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date, Surface surface, TournamentLevel level, Round round, Short bestOf) {
+		return predictMatch(playerId1, playerId2, date, date, surface, level, round, bestOf);
+	}
+
+	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date1, Date date2, Surface surface, TournamentLevel level, Round round) {
+		return predictMatch(playerId1, playerId2, date1, date2, surface, level, round, null);
+	}
+
+	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date1, Date date2, Surface surface, TournamentLevel level, Round round, Short bestOf) {
 		PlayerData playerData1 = getPlayerData(playerId1);
 		PlayerData playerData2 = getPlayerData(playerId2);
-		RankingData rankingData1 = getRankingData(playerId1, date, surface);
-		RankingData rankingData2 = getRankingData(playerId2, date, surface);
-		List<MatchData> matchData1 = getMatchData(playerId1, date);
-		List<MatchData> matchData2 = getMatchData(playerId2, date);
+		RankingData rankingData1 = getRankingData(playerId1, date1, surface);
+		RankingData rankingData2 = getRankingData(playerId2, date2, surface);
+		List<MatchData> matchData1 = getMatchData(playerId1, date1);
+		List<MatchData> matchData2 = getMatchData(playerId2, date2);
+		short bstOf = defaultBestOf(level, bestOf);
 		return predictMatch(asList(
 			new RankingMatchPredictor(rankingData1, rankingData2),
-			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date, surface, level, round, bestOf),
-			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date, surface, level, round, bestOf)
+			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date1, date2, surface, level, round, bstOf),
+			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, bstOf)
 		));
+	}
+
+	private short defaultBestOf(TournamentLevel level, Short bestOf) {
+		if (bestOf != null)
+			return bestOf;
+		else {
+			switch (level) {
+				case GRAND_SLAM:
+				case DAVIS_CUP: return 5;
+				default: return 3;
+			}
+		}
 	}
 
 	private MatchPrediction predictMatch(Iterable<MatchPredictor> predictors) {

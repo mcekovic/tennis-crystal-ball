@@ -21,7 +21,8 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	private final Range<Integer> rankRange2;
 	private final PlayerData playerData1;
 	private final PlayerData playerData2;
-	private final Date date;
+	private final Date date1;
+	private final Date date2;
 	private final Surface surface;
 	private final TournamentLevel level;
 	private final Round round;
@@ -32,14 +33,15 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	private static final int RECENT_FORM_MATCHES = 20;
 
 	public WinningPctMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, RankingData rankingData1, RankingData rankingData2, PlayerData playerData1, PlayerData playerData2,
-	                                Date date, Surface surface, TournamentLevel level, Round round, short bestOf) {
+	                                Date date1, Date date2, Surface surface, TournamentLevel level, Round round, short bestOf) {
 		this.matchData1 = matchData1;
 		this.matchData2 = matchData2;
 		this.rankRange1 = rankRange(rankingData1.getRank());
 		this.rankRange2 = rankRange(rankingData2.getRank());
 		this.playerData1 = playerData1;
 		this.playerData2 = playerData2;
-		this.date = date;
+		this.date1 = date1;
+		this.date2 = date2;
 		this.surface = surface;
 		this.level = level;
 		this.round = round;
@@ -56,10 +58,10 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
 		addItemProbabilities(prediction, ROUND, isRound(round));
-		addItemProbabilities(prediction, RECENT, isRecent(date, getMatchRecentPeriod()));
-		addItemProbabilities(prediction, SURFACE_RECENT, isSurface(surface).and(isRecent(date, getMatchRecentPeriod())));
-		addItemProbabilities(prediction, LEVEL_RECENT, isLevel(level).and(isRecent(date, getMatchRecentPeriod())));
-		addItemProbabilities(prediction, ROUND_RECENT, isRound(round).and(isRecent(date, getMatchRecentPeriod())));
+		addItemProbabilities(prediction, RECENT, isRecent(date1, getMatchRecentPeriod()), isRecent(date2, getMatchRecentPeriod()));
+		addItemProbabilities(prediction, SURFACE_RECENT, isSurface(surface).and(isRecent(date1, getMatchRecentPeriod())), isSurface(surface).and(isRecent(date2, getMatchRecentPeriod())));
+		addItemProbabilities(prediction, LEVEL_RECENT, isLevel(level).and(isRecent(date1, getMatchRecentPeriod())), isLevel(level).and(isRecent(date2, getMatchRecentPeriod())));
+		addItemProbabilities(prediction, ROUND_RECENT, isRound(round).and(isRecent(date1, getMatchRecentPeriod())), isRound(round).and(isRecent(date2, getMatchRecentPeriod())));
 		addItemProbabilities(prediction, RECENT_FORM, ALWAYS_TRUE, getRecentFormMatches());
 		addItemProbabilities(prediction, VS_RANK, isOpponentRankInRange(rankRange2), isOpponentRankInRange(rankRange1));
 		addItemProbabilities(prediction, VS_HAND, isOpponentHand(playerData2.getHand()), isOpponentHand(playerData1.getHand()));
@@ -68,10 +70,10 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 		addItemProbabilities(prediction, SURFACE_SET, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL_SET, isLevel(level));
 		addItemProbabilities(prediction, ROUND_SET, isRound(round));
-		addItemProbabilities(prediction, RECENT_SET, isRecent(date, getSetRecentPeriod()));
-		addItemProbabilities(prediction, SURFACE_RECENT_SET, isSurface(surface).and(isRecent(date, getSetRecentPeriod())));
-		addItemProbabilities(prediction, LEVEL_RECENT_SET, isLevel(level).and(isRecent(date, getSetRecentPeriod())));
-		addItemProbabilities(prediction, ROUND_RECENT_SET, isRound(round).and(isRecent(date, getSetRecentPeriod())));
+		addItemProbabilities(prediction, RECENT_SET, isRecent(date1, getSetRecentPeriod()), isRecent(date2, getSetRecentPeriod()));
+		addItemProbabilities(prediction, SURFACE_RECENT_SET, isSurface(surface).and(isRecent(date1, getSetRecentPeriod())), isSurface(surface).and(isRecent(date2, getSetRecentPeriod())));
+		addItemProbabilities(prediction, LEVEL_RECENT_SET, isLevel(level).and(isRecent(date1, getSetRecentPeriod())), isLevel(level).and(isRecent(date2, getSetRecentPeriod())));
+		addItemProbabilities(prediction, ROUND_RECENT_SET, isRound(round).and(isRecent(date1, getSetRecentPeriod())), isRound(round).and(isRecent(date2, getSetRecentPeriod())));
 		addItemProbabilities(prediction, RECENT_FORM_SET, ALWAYS_TRUE, getRecentFormMatches());
 		addItemProbabilities(prediction, VS_RANK_SET, isOpponentRankInRange(rankRange2), isOpponentRankInRange(rankRange1));
 		addItemProbabilities(prediction, VS_HAND_SET, isOpponentHand(playerData2.getHand()), isOpponentHand(playerData1.getHand()));

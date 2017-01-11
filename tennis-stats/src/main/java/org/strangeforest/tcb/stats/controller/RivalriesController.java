@@ -1,18 +1,22 @@
 package org.strangeforest.tcb.stats.controller;
 
+import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.format.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Controller
 public class RivalriesController extends PageController {
@@ -21,6 +25,7 @@ public class RivalriesController extends PageController {
 	@Autowired private PlayerService playerService;
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private TournamentService tournamentService;
+	@Autowired private MatchPredictionService matchPredictionService;
 
 	@GetMapping("/headToHead")
 	public ModelAndView headToHead(
@@ -96,6 +101,42 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("round", round);
 		return new ModelAndView("h2hMatches", modelMap);
+	}
+
+	@GetMapping("/h2hHypotheticalMatchup")
+	public ModelAndView h2hHypotheticalMatchup(
+      @RequestParam(name = "playerId1") int playerId1,
+      @RequestParam(name = "playerId2") int playerId2,
+      @RequestParam(name = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date,
+      @RequestParam(name = "date1", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date1,
+      @RequestParam(name = "date2", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date2,
+      @RequestParam(name = "surface", required = false) String surface,
+      @RequestParam(name = "level", required = false) String level,
+      @RequestParam(name = "round", required = false) String round
+   ) {
+		Player player1 = playerService.getPlayer(playerId1).get();
+		Player player2 = playerService.getPlayer(playerId2).get();
+		LocalDate today = LocalDate.now();
+		date1 = date != null ? date : (date1 != null ? date1 : today);
+		date2 = date != null ? date : (date2 != null ? date2 : today);
+		MatchPrediction prediction = matchPredictionService.predictMatch(
+			playerId1, playerId2, toDate(date1), toDate(date2),
+			Surface.safeDecode(surface), TournamentLevel.decode(level), Round.decode(round)
+		);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("player1", player1);
+		modelMap.addAttribute("player2", player2);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("date1", date1);
+		modelMap.addAttribute("date2", date2);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("round", round);
+		modelMap.addAttribute("prediction", prediction);
+		return new ModelAndView("h2hHypotheticalMatchup", modelMap);
 	}
 
 	@GetMapping("/headsToHeads")

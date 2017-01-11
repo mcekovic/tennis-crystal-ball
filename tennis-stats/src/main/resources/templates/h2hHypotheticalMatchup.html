@@ -1,0 +1,49 @@
+<br/>
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="player1" type="org.strangeforest.tcb.stats.model.Player"*/-->
+	<!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.Player"*/-->
+	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+	<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+	<!--/*@thymesVar id="date1" type="java.time.LocalDate"*/-->
+	<!--/*@thymesVar id="date2" type="java.time.LocalDate"*/-->
+	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="level" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="round" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="prediction" type="org.strangeforest.tcb.stats.model.prediction.MatchPrediction"*/-->
+	<script type="text/javascript">
+		function predictMatch() {
+			var url = "/h2hHypotheticalMatchup?playerId1=[[${player1.id}]]?playerId2=[[${player2.id}]]";
+			var surface = $("#predictionSurface").val();
+			if (surface)
+				url += "&surface=" + surface;
+			var level = $("#predictionLevel").val();
+			if (level)
+				url += "&level=" + level;
+			var round = $("#predictionRound").val();
+			if (round)
+				url += "&round=" + round;
+			$("#hypotheticalMatchup").load(url);
+		}
+	</script>
+	<div class="row">
+		<div class="col-md-2">
+			<select id="predictionSurface" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+				<option value="">Unknown surface</option>
+				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="predictionLevel" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+				<option value="">Unknown level</option>
+				<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id=predictionRound" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+				<option value="">Unknown round</option>
+				<option th:each="aRound : ${rounds}" th:value="${aRound.code}" th:class="|bg-result-${aRound.baseCode}|" value="F" class="bg-result-F" th:text="${aRound.text}" th:selected="${aRound.code == round}">Final</option>
+			</select>
+		</div>
+	</div>
+</th:block>

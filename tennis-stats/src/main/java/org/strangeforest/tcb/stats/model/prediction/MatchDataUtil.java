@@ -44,7 +44,8 @@ public abstract class MatchDataUtil {
 	public static final Predicate<MatchData> ALWAYS_TRUE = m -> Boolean.TRUE;
 
 	public static Predicate<MatchData> isRecent(Date date, Period period) {
-		return match -> toLocalDate(match.getDate()).compareTo(toLocalDate(date).minus(period)) >= 0;
+		LocalDate afterDate = toLocalDate(date).minus(period);
+		return match -> toLocalDate(match.getDate()).compareTo(afterDate) >= 0;
 	}
 
 	public static Predicate<MatchData> isSurface(Surface surface) {
