@@ -93,18 +93,15 @@
 			<!--/* Ranking */-->
 			<tr th:if="${player.currentRank > 0}">
 				<th>Current Rank</th>
-				<td th:text="${player.currentRank} + ' (' + ${player.currentRankPoints} + ')'">10 (3000)</td>
+				<td th:text="${player.currentRank + ' (' + player.currentRankPoints + ')'}">10 (3000)</td>
 			</tr>
 			<tr th:if="${player.bestRank > 0}">
 				<th>Best Rank</th>
-				<td th:text="${player.bestRank} + ' (' + ${#dates.format(player.bestRankDate, 'dd-MM-yyyy')} + ')'">5 (1.1.2010)</td>
+				<td th:text="${player.bestRank + ' (' + #dates.format(player.bestRankDate, 'dd-MM-yyyy') + ')'}">5 (1.1.2010)</td>
 			</tr>
 			<tr th:if="${player.goatPoints > 0}">
 				<th>GOAT Rank</th>
-				<td>
-					<th:block th:text="${player.goatRank}">50</th:block>
-					(<a th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=goatPoints'" th:text="${player.goatPoints}" title="Show GOAT points distribution">25</a>)
-				</td>
+				<td>[[${player.goatRank}]] (<a th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=goatPoints'" th:text="${player.goatPoints}" title="Show GOAT points distribution">25</a>)</td>
 			</tr>
 			<tr th:if="${player.weeksAtNo1 > 0}">
 				<th>Weeks at No. 1</th>

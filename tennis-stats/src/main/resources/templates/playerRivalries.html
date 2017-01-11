@@ -40,6 +40,9 @@
 					"wonPctStr": function(column, row) {
 						return "<span data-won-pct='" + row.wonPctClass + "'>" + row.wonPctStr + "</span>";
 					},
+					"h2h": function(column, row) {
+						return "<a href='/headToHead?playerId1=[[${playerId}]]&playerId2=" + row.playerId + "' class='label label-primary' title='Show Head-to-Head'>H2H</a>"
+					},
 					"lastMatch": function(column, row) {
 						var match = row.lastMatch;
 						var won = match.winnerId == [[${playerId}]];
@@ -148,6 +151,7 @@
 			<th data-column-id="wonPctStr" data-formatter="wonPctStr" data-width="70" data-align="right" data-header-align="right">Win %</th>
 			<th data-column-id="lastMatch" data-formatter="lastMatch" data-sortable="false" data-width="450">Last Match</th>
 			<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="80">Stats</th>
+			<th data-column-id="h2h" data-formatter="h2h" data-sortable="false" data-width="55">H2H</th>
 		</tr>
 		</thead>
 	</table>

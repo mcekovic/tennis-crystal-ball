@@ -44,7 +44,7 @@
 			</thead>
 			<tbody>
 			<tr th:each="point : ${tournamentGOATPoints}">
-				<td><span th:attr="data-level=${point.level}" data-level="G" class="label level"></span></td>
+				<td><span th:data-level="${point.level}" data-level="G" class="label level"></span></td>
 				<td class="text-center"><span th:class="'label black bg-result-' + ${point.result}" class="label black" th:text="${point.result}">W</span></td>
 				<td class="text-center" th:text="${(point.additive ? '+' : '') + point.goatPoints}">8</td>
 			</tr>
@@ -168,7 +168,7 @@
 					</thead>
 					<tbody>
 					<tr th:each="point : ${bigWinMatchFactors}">
-						<td><span th:attr="data-level=${point.level}" data-level="G" class="label level"></span></td>
+						<td><span th:data-level="${point.level}" data-level="G" class="label level"></span></td>
 						<td class="text-center"><span th:text="${point.round}">F</span></td>
 						<td class="text-center" th:text="${point.matchFactor}">8</td>
 					</tr>

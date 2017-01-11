@@ -162,12 +162,12 @@
 					<th colspan="2" style="text-align: right"><button id="drawRight" type="button" class="btn btn-info btn-xs glyphicon glyphicon-chevron-right" onclick="roundRight()"></button></th>
 				</tr>
 				<tr>
-					<th th:each="round : ${draw.rounds}" th:text="${round.description}" th:attr="data-round-index=${roundStat.index}">Final</th>
+					<th th:each="round : ${draw.rounds}" th:text="${round.description}" th:data-round-index="${roundStat.index}">Final</th>
 				</tr>
 				</thead>
 				<tbody>
 				<tr th:each="i : ${#numbers.sequence(0, draw.maxRoundMatches - 1)}">
-					<td th:each="round : ${draw.rounds}" th:with="matches=${draw.getRoundMatches(round)}, match=${i lt matches.size() ? matches[i] : null}" th:attr="data-round-index=${roundStat.index}">
+					<td th:each="round : ${draw.rounds}" th:with="matches=${draw.getRoundMatches(round)}, match=${i lt matches.size() ? matches[i] : null}" th:data-round-index="${roundStat.index}">
 						<table th:if="${match}" class="table-bordered" th:with="outcomeOrStats=${match.outcome != null || match.hasStats}">
 							<tr th:with="winner=${match.winner}">
 								<td class="seed">

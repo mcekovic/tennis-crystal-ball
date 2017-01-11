@@ -50,7 +50,7 @@
 					<li th:class="${path == '/headToHead' || path == '/headsToHeads' || path == '/greatestRivalries' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rivalries<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/headToHead' ? 'active' : ''}"><a href="/headToHead">Head-to-Head</a></li>
+							<li th:class="${path == '/headToHead' ? 'active' : ''}"><a href="/headToHead">Head-to-Head<sup class="new-feature">&nbsp;New!</sup></a></li>
 							<li th:class="${path == '/headsToHeads' ? 'active' : ''}"><a href="/headsToHeads">Heads-to-Heads</a></li>
 							<li th:class="${path == '/greatestRivalries' ? 'active' : ''}"><a href="/greatestRivalries">Greatest Rivalries</a></li>
 						</ul>

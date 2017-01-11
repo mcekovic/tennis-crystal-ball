@@ -11,8 +11,8 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - 'GOAT' List - Best players of Open Era ranked by 'GOAT' Points
 - Player Profile - Player information, tournament results, matches, timeline, rivalries, ranking, performance, statistics and 'GOAT' points breakdown
 - Timeline - Dominance ('GOAT' points distribution among top players and seasons), Grand Slam, Tour Finals, Masters, Olympics, Davis Cup, World Team Cup and Surface
-- Greatest Rivalries - Explore greatest rivalries, overall or by tournament level and surface
 - Heads-to-Heads - Heads-to-heads clusters among several players (i.e. among 'Big 4')
+- Greatest Rivalries - Explore greatest rivalries, overall or by tournament level and surface
 - Ranking Tables - Player ranking tables, including [Elo rating](https://en.wikipedia.org/wiki/Elo_rating_system) using customized Elo rating formula
 - Ranking Charts - Player ranking and ranking point charts, compare players by constructing custom charts
 - All-time Highest Elo Ratings - All-time list of highest Elo ratings

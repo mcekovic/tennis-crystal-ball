@@ -46,6 +46,20 @@ public class RivalriesController extends PageController {
 			modelMap.addAttribute("playerRef" + index, playerId != null ? playerId : name);
 	}
 
+	@GetMapping("/h2hProfiles")
+	public ModelAndView h2hProfiles(
+		@RequestParam(name = "playerId1") int playerId1,
+		@RequestParam(name = "playerId2") int playerId2
+	) {
+		Player player1 = playerService.getPlayer(playerId1).get();
+		Player player2 = playerService.getPlayer(playerId2).get();
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("player1", player1);
+		modelMap.addAttribute("player2", player2);
+		return new ModelAndView("h2hProfiles", modelMap);
+	}
+
 	@GetMapping("/headsToHeads")
 	public ModelAndView headsToHeads() {
 		ModelMap modelMap = new ModelMap();
