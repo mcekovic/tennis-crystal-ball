@@ -1,8 +1,11 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.util.*;
+
 import org.strangeforest.tcb.stats.util.*;
 
 public enum Round implements CodedEnum {
+
 	F("F", "Final"),
 	SF("SF", "Semi-Final"),
 	SF_PLUS("SF+", "Semi-Final +"),
@@ -44,4 +47,10 @@ public enum Round implements CodedEnum {
 	public static Round decode(String code) {
 		return CodedEnum.decode(Round.class, code);
 	}
+
+	public static Round safeDecode(String code) {
+		return CodedEnum.safeDecode(Round.class, code);
+	}
+
+	public static EnumSet<Round> ROUNDS = EnumSet.of(F, SF, QF, R16, R32, R64, R128, RR, BR);
 }

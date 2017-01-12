@@ -140,6 +140,13 @@ function getDate(id) {
 	}
 }
 
+function datePicker(id) {
+	$("#" + id).datepicker({
+		defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: date_format
+	});
+	$("div.ui-datepicker").css({fontSize: "12px"});
+}
+
 function dateRangePicker(fromId, toId) {
 	var $from = $("#" + fromId);
 	var $to = $("#" + toId);

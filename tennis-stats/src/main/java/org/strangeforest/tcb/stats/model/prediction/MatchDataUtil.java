@@ -9,6 +9,7 @@ import org.strangeforest.tcb.stats.model.*;
 import com.google.common.collect.*;
 
 import static java.lang.Math.*;
+import static org.strangeforest.tcb.stats.util.CodedEnum.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
 public abstract class MatchDataUtil {
@@ -49,15 +50,15 @@ public abstract class MatchDataUtil {
 	}
 
 	public static Predicate<MatchData> isSurface(Surface surface) {
-		return match -> nonNullEquals(match.getSurface(), surface != null ? surface.getCode() : null);
+		return match -> nonNullEquals(match.getSurface(), safeEncode(surface));
 	}
 
 	public static Predicate<MatchData> isLevel(TournamentLevel level) {
-		return match -> nonNullEquals(match.getLevel(), level.getCode());
+		return match -> nonNullEquals(match.getLevel(), safeEncode(level));
 	}
 
 	public static Predicate<MatchData> isRound(Round round) {
-		return match -> nonNullEquals(match.getRound(), round.getCode());
+		return match -> nonNullEquals(match.getRound(), safeEncode(round));
 	}
 
 	public static Predicate<MatchData> isOpponent(int playerId) {

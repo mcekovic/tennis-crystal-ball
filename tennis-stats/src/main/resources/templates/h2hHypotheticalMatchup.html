@@ -5,15 +5,20 @@
 	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 	<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
-	<!--/*@thymesVar id="date1" type="java.time.LocalDate"*/-->
-	<!--/*@thymesVar id="date2" type="java.time.LocalDate"*/-->
+	<!--/*@thymesVar id="date" type="java.util.Date"*/-->
+	<!--/*@thymesVar id="date1" type="java.util.Date"*/-->
+	<!--/*@thymesVar id="date2" type="java.util.Date"*/-->
 	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="level" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="round" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="prediction" type="org.strangeforest.tcb.stats.model.prediction.MatchPrediction"*/-->
 	<script type="text/javascript">
+		$(function() {
+			datePicker("predictionDate");
+			$("[data-toggle='tooltip']").tooltip();
+		});
 		function predictMatch() {
-			var url = "/h2hHypotheticalMatchup?playerId1=[[${player1.id}]]?playerId2=[[${player2.id}]]";
+			var url = "/h2hHypotheticalMatchup?playerId1=[[${player1.id}]]&playerId2=[[${player2.id}]]";
 			var surface = $("#predictionSurface").val();
 			if (surface)
 				url += "&surface=" + surface;
@@ -23,27 +28,93 @@
 			var round = $("#predictionRound").val();
 			if (round)
 				url += "&round=" + round;
+			var date = getDate("predictionDate");
+			if (date)
+				url += "&date=" + date;
 			$("#hypotheticalMatchup").load(url);
+		}
+		function onSameDateChanged() {
+			console.log("onSameDateChanged");
+			var sameDate = $("#predictionSameDate").prop("checked");
+			console.log(sameDate);
+			if (!sameDate) {
+				var date = $("#predictionDate").val();
+				$("#predictionDate1").val(date);
+				$("#predictionDate2").val(date);
+				$("#predictionDate").val("");
+			}
+			$("#predictionDateDiv").css("visibility", sameDate ? "visible" : "hidden");
+			$("#predictionDatesDiv").css("display", !sameDate ? "block" : "none");
 		}
 	</script>
 	<div class="row">
 		<div class="col-md-2">
-			<select id="predictionSurface" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+			<select id="predictionSurface" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select surface">
 				<option value="">Unknown surface</option>
 				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id="predictionLevel" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+			<select id="predictionLevel" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select tournament level">
 				<option value="">Unknown level</option>
 				<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id=predictionRound" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+			<select id="predictionRound" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select round">
 				<option value="">Unknown round</option>
 				<option th:each="aRound : ${rounds}" th:value="${aRound.code}" th:class="|bg-result-${aRound.baseCode}|" value="F" class="bg-result-F" th:text="${aRound.text}" th:selected="${aRound.code == round}">Final</option>
 			</select>
+		</div>
+		<div class="col-md-2">
+			<div class="checkbox">
+				<label data-toggle="tooltip" data-placement="top" class="text-nowrap" title="Predict match with current form on the same date for both players">
+					<input id="predictionSameDate" type="checkbox" th:checked="${date1.equals(date2)}" onchange="onSameDateChanged()"/> On Same Date
+				</label>
+			</div>
+		</div>
+		<div id="predictionDateDiv" class="col-md-3">
+			<div class="input-group">
+				<label for="predictionDate" class="input-group-addon">On Date:</label>
+				<input id="predictionDate" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
+			</div>
+		</div>
+	</div>
+	<div id="predictionDatesDiv" class="row" style="display: none">
+		<div class="col-md-3">
+			<div class="input-group">
+				<label for="predictionDate1" class="input-group-addon">On Date:</label>
+				<input id="predictionDate1" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
+			</div>
+		</div>
+		<div class="col-md-3 pull-right">
+			<div class="input-group">
+				<label for="predictionDate2" class="input-group-addon">On Date:</label>
+				<input id="predictionDate2" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-1">
+			<h3 th:text="${#numbers.formatDecimal(100 * prediction.winProbability1, 1, 1) + '%'}" th:title="${'Predictability: ' + #numbers.formatDecimal(100 * prediction.predictability1, 1, 1) + '%'}" data-toggle="tooltip">60.0%</h3>
+		</div>
+		<div class="col-md-4">
+			<h3 class="text-nowrap">
+				<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -4px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
+				<a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a>
+			</h3>
+		</div>
+		<div class="col-md-2">
+			<h3 class="text-center">vs</h3>
+		</div>
+		<div class="col-md-4">
+			<h3 class="text-nowrap pull-right">
+				<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="margin-top: -4px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
+				<a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a>
+			</h3>
+		</div>
+		<div class="col-md-1">
+			<h3 class="pull-right" th:text="${#numbers.formatDecimal(100 * prediction.winProbability2, 1, 1) + '%'}" th:title="${'Predictability: ' + #numbers.formatDecimal(100 * prediction.predictability2, 1, 1) + '%'}" data-toggle="tooltip">40.0%</h3>
 		</div>
 	</div>
 </th:block>

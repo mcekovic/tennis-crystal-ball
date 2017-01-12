@@ -119,19 +119,22 @@ public class RivalriesController extends PageController {
 		LocalDate today = LocalDate.now();
 		date1 = date != null ? date : (date1 != null ? date1 : today);
 		date2 = date != null ? date : (date2 != null ? date2 : today);
+		Date aDate1 = toDate(date1);
+		Date aDate2 = toDate(date2);
 		MatchPrediction prediction = matchPredictionService.predictMatch(
-			playerId1, playerId2, toDate(date1), toDate(date2),
-			Surface.safeDecode(surface), TournamentLevel.decode(level), Round.decode(round)
-		);
+			playerId1, playerId2, aDate1, aDate2,
+			Surface.safeDecode(surface), TournamentLevel.safeDecode(level), Round.safeDecode(round)
+      );
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
 		modelMap.addAttribute("player2", player2);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
-		modelMap.addAttribute("rounds", Round.values());
-		modelMap.addAttribute("date1", date1);
-		modelMap.addAttribute("date2", date2);
+		modelMap.addAttribute("rounds", Round.ROUNDS);
+		modelMap.addAttribute("date", toDate(date));
+		modelMap.addAttribute("date1", aDate1);
+		modelMap.addAttribute("date2", aDate2);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("round", round);

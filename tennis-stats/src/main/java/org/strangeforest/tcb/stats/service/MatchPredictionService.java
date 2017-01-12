@@ -78,13 +78,15 @@ public class MatchPredictionService {
 	private short defaultBestOf(TournamentLevel level, Short bestOf) {
 		if (bestOf != null)
 			return bestOf;
-		else {
+		else if (level != null) {
 			switch (level) {
 				case GRAND_SLAM:
 				case DAVIS_CUP: return 5;
 				default: return 3;
 			}
 		}
+		else
+			return 3;
 	}
 
 	private MatchPrediction predictMatch(Iterable<MatchPredictor> predictors) {

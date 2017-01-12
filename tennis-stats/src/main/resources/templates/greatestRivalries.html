@@ -10,7 +10,7 @@
 			var $rivalriesTable = $("#greatestRivalriesTable");
 			var device = detectDevice();
 			setBootgridColumnsVisible($rivalriesTable, ["lastMatch"], deviceGreaterOrEqual(device, "lg"));
-			setBootgridColumnsVisible($rivalriesTable, ["h2hPct"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsVisible($rivalriesTable, ["h2hPct", "h2h2"], deviceGreaterOrEqual(device, "sm"));
 			if (device == "xs")
 				setBootgridColumnsWidths($rivalriesTable, ["rivalry"], [250]);
 			$rivalriesTable.bootgrid({
@@ -62,6 +62,9 @@
 						var match = row.lastMatch;
 						return (match.winnerId == row.player1.playerId ? row.player1.name : row.player2.name) + " [ " + match.score + " ] at " +
 							match.season + " " + tournamentEventFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
+					},
+					"h2h2": function(column, row) {
+						return "<a href='/headToHead?playerId1=" + row.player1.playerId + "&playerId2=" + row.player2.playerId + "' class='label label-primary' title='Show Head-to-Head'>H2H</a>"
 					}
 				},
 				labels: {
@@ -160,6 +163,7 @@
 			<th data-column-id="h2h" data-formatter="h2h" data-width="55" data-align="center" data-header-align="center">H2H</th>
 			<th data-column-id="h2hPct" data-formatter="h2hPct" data-width="120" data-align="center" data-header-align="center">H2H %</th>
 			<th data-column-id="lastMatch" data-formatter="lastMatch" data-width="450">Last Match</th>
+			<th data-column-id="h2h2" data-formatter="h2h2" data-sortable="false" data-width="55">H2H</th>
 		</tr>
 		</thead>
 	</table>

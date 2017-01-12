@@ -39,6 +39,10 @@ public enum TournamentLevel implements CodedEnum {
 		return CodedEnum.decode(TournamentLevel.class, code);
 	}
 
+	public static TournamentLevel safeDecode(String code) {
+		return CodedEnum.safeDecode(TournamentLevel.class, code);
+	}
+
 	public static Map<String, String> asMap() {
 		return CodedEnum.asMap(TournamentLevel.class);
 	}

@@ -83,18 +83,21 @@
 		</div>
 	</div>
 	<div th:if="${anyPlayerSelected}" class="row">
-		<div class="col-md-6">
-			<div th:if="${player1}" class="text-nowrap">
-				<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="float: left; margin-top: 2px; margin-right: 8px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
-				<h3><a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a></h3>
-			</div>
+		<div class="col-md-5">
+			<h3 th:if="${player1}" class="text-nowrap">
+				<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -3px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
+				<a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a>
+			</h3>
 			<h4 th:if="${player1 == null && playerRef1 != null}" th:text="'Player ' + ${playerRef1}  + ' not found.'">Player not found.</h4>
 		</div>
-		<div class="col-md-6">
-			<div th:if="${player2}" class="text-nowrap">
-				<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="float: left; margin-top: 2px; margin-right: 8px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
-				<h3><a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a></h3>
-			</div>
+		<div class="col-md-2">
+			<h3 class="text-center">vs</h3>
+		</div>
+		<div class="col-md-5">
+			<h3 th:if="${player2}" class="text-nowrap pull-right">
+				<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="margin-top: -3px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
+				<a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a>
+			</h3>
 			<h4 th:if="${player2 == null && playerRef2 != null}" th:text="'Player ' + ${playerRef2}  + ' not found.'">Player not found.</h4>
 		</div>
 	</div>
