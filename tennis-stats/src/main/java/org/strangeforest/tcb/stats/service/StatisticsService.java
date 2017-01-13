@@ -195,14 +195,16 @@ public class StatisticsService {
 
 	public Map<Integer, PlayerStats> getPlayersStats(List<Integer> playerIds, RivalryFilter filter, boolean vsAll) {
 		Map<Integer, PlayerStats> playersStats = new HashMap<>();
-		jdbcTemplate.query(
-			format(PLAYERS_FILTERED_STATS_QUERY, filter.getCriteria(), vsAll ? "" : OPPONENTS_CRITERIA),
-			filter.getParams().addValue("playerIds", playerIds),
-			rs -> {
-				int playerId = rs.getInt("player_id");
-				playersStats.put(playerId, mapPlayerStats(rs));
-			}
-		);
+		if (!playerIds.isEmpty()) {
+			jdbcTemplate.query(
+				format(PLAYERS_FILTERED_STATS_QUERY, filter.getCriteria(), vsAll ? "" : OPPONENTS_CRITERIA),
+				filter.getParams().addValue("playerIds", playerIds),
+				rs -> {
+					int playerId = rs.getInt("player_id");
+					playersStats.put(playerId, mapPlayerStats(rs));
+				}
+			);
+		}
 		return playersStats;
 	}
 

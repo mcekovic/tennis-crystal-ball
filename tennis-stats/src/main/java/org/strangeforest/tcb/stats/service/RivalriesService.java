@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.io.*;
+import java.lang.String;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
+import static java.util.Collections.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 @Service
@@ -231,7 +233,7 @@ public class RivalriesService {
 	public HeadsToHeads getHeadsToHeads(List<Integer> playerIds, RivalryFilter filter) {
 		String criteria = filter.getCriteria();
 		boolean lateralSupported = lateralSupported();
-		return new HeadsToHeads(jdbcTemplate.query(
+		List<Rivalry> rivalries = !playerIds.isEmpty() ? jdbcTemplate.query(
 			format(HEADS_TO_HEADS_QUERY,
 				criteria,
 				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),
@@ -245,7 +247,8 @@ public class RivalriesService {
 				MatchInfo lastMatch = mapLastMatch(rs, lateralSupported);
 				return new Rivalry(player1, player2, wonLost, lastMatch);
 			}
-		));
+		) : emptyList();
+		return new HeadsToHeads(rivalries);
 	}
 
 	@Cacheable("GreatestRivalries.Table")
