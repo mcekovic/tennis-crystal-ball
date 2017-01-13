@@ -15,6 +15,7 @@ import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
+import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
@@ -102,6 +103,28 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("round", round);
 		return new ModelAndView("h2hMatches", modelMap);
+	}
+
+	@GetMapping("/h2hPerformance")
+	public ModelAndView h2hPerformance(
+		@RequestParam(name = "playerId1") int playerId1,
+		@RequestParam(name = "playerId2") int playerId2,
+		@RequestParam(name = "season", required = false) Integer season
+	) {
+		Set<Integer> seasons = new TreeSet<>(reverseOrder());
+		seasons.addAll(playerService.getPlayerSeasons(playerId1));
+		seasons.addAll(playerService.getPlayerSeasons(playerId2));
+		PlayerPerformance perf1 = season == null ? statisticsService.getPlayerPerformance(playerId1) : statisticsService.getPlayerSeasonPerformance(playerId1, season);
+		PlayerPerformance perf2 = season == null ? statisticsService.getPlayerPerformance(playerId2) : statisticsService.getPlayerSeasonPerformance(playerId2, season);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId1", playerId1);
+		modelMap.addAttribute("playerId2", playerId2);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("perf1", perf1);
+		modelMap.addAttribute("perf2", perf2);
+		return new ModelAndView("h2hPerformance", modelMap);
 	}
 
 	@GetMapping("/h2hHypotheticalMatchup")
