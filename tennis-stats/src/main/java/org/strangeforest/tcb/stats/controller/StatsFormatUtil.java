@@ -10,15 +10,17 @@ public class StatsFormatUtil {
 
 	private static final NumberFormat PCT_FORMAT = new DecimalFormat("0.0'%'");
 	private static final NumberFormat PCT_DIFF_FORMAT = new DecimalFormat("+0.0'%';-0.0'%'");
+	private static final double DIFF_SCALE = 10.0;
 	private static final NumberFormat RATIO_FORMAT = new DecimalFormat("0.00");
 	private static final NumberFormat RATIO_DIFF_FORMAT = new DecimalFormat("+0.00;-0.00");
+	private static final double RATIO_SCALE = 100.0;
 
 	public String formatPct(Double pct) {
 		return pct != null ? PCT_FORMAT.format(pct) : "";
 	}
 
 	public String formatPctDiff(Double fromPct, Double toPct) {
-		return fromPct != null && toPct != null ? PCT_DIFF_FORMAT.format(toPct - fromPct) : "";
+		return fromPct != null && toPct != null ? PCT_DIFF_FORMAT.format(round(toPct, DIFF_SCALE) - round(fromPct, DIFF_SCALE)) : "";
 	}
 
 	public String formatRatio(Double ratio) {
@@ -26,7 +28,11 @@ public class StatsFormatUtil {
 	}
 
 	public String formatRatioDiff(Double fromRatio, Double toRatio) {
-		return fromRatio != null && toRatio != null ? RATIO_DIFF_FORMAT.format(toRatio - fromRatio) : "";
+		return fromRatio != null && toRatio != null ? RATIO_DIFF_FORMAT.format(round(toRatio, RATIO_SCALE) - round(fromRatio, RATIO_SCALE)) : "";
+	}
+
+	private static double round(double d, double scale) {
+		return Math.round(d * scale) / scale;
 	}
 
 	public String pnClass(Double from, Double to) {
