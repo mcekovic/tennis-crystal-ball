@@ -26,6 +26,7 @@ public class RivalriesController extends PageController {
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private TournamentService tournamentService;
 	@Autowired private MatchPredictionService matchPredictionService;
+	@Autowired private RankingsService rankingsService;
 
 	@GetMapping("/headToHead")
 	public ModelAndView headToHead(
@@ -117,14 +118,16 @@ public class RivalriesController extends PageController {
 		Player player1 = playerService.getPlayer(playerId1).get();
 		Player player2 = playerService.getPlayer(playerId2).get();
 		LocalDate today = LocalDate.now();
-		date1 = date != null ? date : (date1 != null ? date1 : today);
-		date2 = date != null ? date : (date2 != null ? date2 : today);
-		Date aDate1 = toDate(date1);
-		Date aDate2 = toDate(date2);
+		if (date == null && date1 == null && date2 == null)
+			date = today;
+		Date aDate1 = toDate(date1 != null ? date1 : date);
+		Date aDate2 = toDate(date2 != null ? date2 : date);
 		MatchPrediction prediction = matchPredictionService.predictMatch(
 			playerId1, playerId2, aDate1, aDate2,
 			Surface.safeDecode(surface), TournamentLevel.safeDecode(level), Round.safeDecode(round)
       );
+		RankingHighlights rankingHighlights1 = rankingsService.getRankingHighlights(playerId1);
+		RankingHighlights rankingHighlights2 = rankingsService.getRankingHighlights(playerId2);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
@@ -132,13 +135,16 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("rounds", Round.ROUNDS);
-		modelMap.addAttribute("date", toDate(date));
+		modelMap.addAttribute("date", date != null ? toDate(date) : aDate1);
 		modelMap.addAttribute("date1", aDate1);
 		modelMap.addAttribute("date2", aDate2);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("prediction", prediction);
+		modelMap.addAttribute("rankingHighlights1", rankingHighlights1);
+		modelMap.addAttribute("rankingHighlights2", rankingHighlights2);
+		modelMap.addAttribute("today", toDate(today));
 		return new ModelAndView("h2hHypotheticalMatchup", modelMap);
 	}
 

@@ -68,11 +68,14 @@ public class MatchPredictionService {
 		List<MatchData> matchData1 = getMatchData(playerId1, date1);
 		List<MatchData> matchData2 = getMatchData(playerId2, date2);
 		short bstOf = defaultBestOf(level, bestOf);
-		return predictMatch(asList(
+		MatchPrediction prediction = predictMatch(asList(
 			new RankingMatchPredictor(rankingData1, rankingData2),
 			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date1, date2, surface, level, round, bstOf),
 			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, bstOf)
 		));
+		prediction.setRankingData1(rankingData1);
+		prediction.setRankingData2(rankingData2);
+		return prediction;
 	}
 
 	private short defaultBestOf(TournamentLevel level, Short bestOf) {

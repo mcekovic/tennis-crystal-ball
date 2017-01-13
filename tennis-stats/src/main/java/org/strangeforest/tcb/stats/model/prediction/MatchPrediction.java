@@ -10,6 +10,8 @@ public final class MatchPrediction {
 	private final List<WeightedProbability> itemProbabilities2 = new ArrayList<>();
 	private Double winProbability1 = 0.5;
 	private Double winProbability2 = 0.5;
+	private RankingData rankingData1;
+	private RankingData rankingData2;
 
 	public double getWinProbability1() {
 		if (winProbability1 == null)
@@ -94,5 +96,21 @@ public final class MatchPrediction {
 
 	private List<WeightedProbability> getItemProbabilities2(double weight) {
 		return itemProbabilities2.stream().map(p -> p.weighted(weight)).collect(toList());
+	}
+
+	public RankingData getRankingData1() {
+		return rankingData1;
+	}
+
+	public void setRankingData1(RankingData rankingData1) {
+		this.rankingData1 = rankingData1;
+	}
+
+	public RankingData getRankingData2() {
+		return rankingData2;
+	}
+
+	public void setRankingData2(RankingData rankingData2) {
+		this.rankingData2 = rankingData2;
 	}
 }
