@@ -150,13 +150,13 @@
 		</div>
 	</div>
 	<div id="predictionDatesDiv" class="row" th:style="'display: ' + ${sameDates ? 'none' : 'block'}">
-		<div class="col-md-3">
+		<div class="col-md-3 pull-left">
 			<div class="input-group">
 				<label for="predictionDate1" class="input-group-addon">On Date:</label>
 				<input id="predictionDate1" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date1, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
 			</div>
 		</div>
-		<div class="col-md-2">
+		<div class="col-md-2 pull-left">
 			<select id="predictionDateSelector1" class="form-control" onchange="selectPredictionDate1()">
 				<option value="">Pick date</option>
 				<option value="Today">Today</option>

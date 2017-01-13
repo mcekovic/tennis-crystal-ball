@@ -93,6 +93,7 @@
 			]);
 			$("[data-toggle='collapse']").click(collapseClick);
 			$("[data-toggle='tooltip']").tooltip();
+			$("#goatLegendButton").click();
 		});
 		function reloadGOATListTable() {
 			$("#goatListTable").bootgrid("reload");
@@ -130,7 +131,7 @@
 		</thead>
 	</table>
 	<br/>
-	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend</button>
+	<button id="goatLegendButton" type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span></button>
 	<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
