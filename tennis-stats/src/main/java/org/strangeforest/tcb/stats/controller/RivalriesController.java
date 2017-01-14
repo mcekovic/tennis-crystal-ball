@@ -96,9 +96,9 @@ public class RivalriesController extends PageController {
 		Player player1 = playerService.getPlayer(playerId1).get();
 		Player player2 = playerService.getPlayer(playerId2).get();
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, round));
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId1);
+		List<Integer> seasons = new ArrayList<>(playerService.getPlayerSeasons(playerId1));
 		seasons.retainAll(playerService.getPlayerSeasons(playerId2));
-		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId1);
+		List<TournamentItem> tournaments = new ArrayList<>(tournamentService.getPlayerTournaments(playerId1));
 		tournaments.retainAll(tournamentService.getPlayerTournaments(playerId2));
 
 		ModelMap modelMap = new ModelMap();
