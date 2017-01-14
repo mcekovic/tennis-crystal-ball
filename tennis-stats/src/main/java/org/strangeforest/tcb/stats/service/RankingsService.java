@@ -149,17 +149,17 @@ public class RankingsService {
 	public BootgridTable<PlayerRankingsRow> getRankingsTable(RankType rankType, LocalDate date, PlayerListFilter filter, int pageSize, int currentPage) {
 		checkRankType(rankType);
 		if (date == null && rankType.category != ELO)
-			throw new IllegalArgumentException("All-time ranking is available only for Elo ranking.");
+			throw new IllegalArgumentException("Peak ranking is available only for Elo ranking.");
 
 		BootgridTable<PlayerRankingsRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
-		boolean allTimeElo = rankType.category == ELO && date == null;
+		boolean peakElo = rankType.category == ELO && date == null;
 		jdbcTemplate.query(
-			allTimeElo
+			peakElo
 				? format(HIGHEST_ELO_RATING_TABLE_QUERY, bestEloRatingColumn(rankType), bestEloRatingDateColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), where(filter.getCriteria()))
 				: format(RANKING_TABLE_QUERY, rankColumn(rankType), pointsColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), rankingTable(rankType), filter.getCriteria()),
-			getTableParams(filter, allTimeElo, date, offset),
+			getTableParams(filter, peakElo, date, offset),
 			rs -> {
 				int rank = rs.getInt("rank");
 				if (rs.wasNull() || players.incrementAndGet() > pageSize)
@@ -167,12 +167,12 @@ public class RankingsService {
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
-				Boolean active = allTimeElo ? rs.getBoolean("active") : null;
+				Boolean active = peakElo ? rs.getBoolean("active") : null;
 				int points = rs.getInt("points");
 				int bestRank = rs.getInt("best_rank");
 				Date bestRankDate = rs.getDate("best_rank_date");
 				PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, active, points, bestRank, bestRankDate);
-				if (allTimeElo)
+				if (peakElo)
 					row.setPointsDate(rs.getDate("points_date"));
 				table.addRow(row);
 			}
@@ -186,9 +186,9 @@ public class RankingsService {
 			throw new IllegalArgumentException("Unsupported rankings table RankType: " + rankType);
 	}
 
-	private MapSqlParameterSource getTableParams(PlayerListFilter filter, boolean allTimeElo, LocalDate date, int offset) {
+	private MapSqlParameterSource getTableParams(PlayerListFilter filter, boolean peakElo, LocalDate date, int offset) {
 		MapSqlParameterSource params = filter.getParams();
-		if (!allTimeElo)
+		if (!peakElo)
 			params.addValue("date", date);
 		return params.addValue("offset", offset);
 	}

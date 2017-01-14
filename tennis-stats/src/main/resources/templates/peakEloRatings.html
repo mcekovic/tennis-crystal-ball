@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
-	<title>All-Time Highest Elo Ratings</title>
+	<title>Peak Elo Ratings</title>
 	<script type="text/javascript">
 		$(function() {
 			var $rankingsTable = $("#rankingsTable");
@@ -18,7 +18,7 @@
 				url: "/rankingsTableTable",
 				requestHandler: function (request) {
 					request.rankType = $("#rankType").val();
-					request.allTime = true;
+					request.peak = true;
 					var active = $("#active").prop("checked");
 					if (active)
 						request.active = active;
@@ -62,7 +62,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 id="rankingsTable-title" class="grid-title">All-Time Highest Elo Ratings</h3>
+	<h3 id="rankingsTable-title" class="grid-title">Peak Elo Ratings</h3>
 	<div id="rankTypeDiv" class="btn-group" style="margin-right: 20px">
 		<select id="rankType" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select overall or Elo rating by surface">
 			<option value="ELO_RATING">Overall</option>

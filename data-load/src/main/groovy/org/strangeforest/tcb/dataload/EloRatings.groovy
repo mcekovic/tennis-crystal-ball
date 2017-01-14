@@ -162,7 +162,7 @@ class EloRatings {
 			.findAll { ++i <= count }
 	}
 
-	def allTime(int count) {
+	def peak(int count) {
 		def i = 0
 		playerRatings.values().findAll {	it.bestRating }
 			.sort(bestComparator)

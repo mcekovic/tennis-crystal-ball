@@ -55,12 +55,12 @@
 							<li th:class="${path == '/greatestRivalries' ? 'active' : ''}"><a href="/greatestRivalries">Greatest Rivalries</a></li>
 						</ul>
 					</li>
-					<li th:class="${path == '/rankingsTable' || path == '/rankingsChart' || path == '/allTimeEloRatings' ? 'active dropdown' : 'dropdown'}">
+					<li th:class="${path == '/rankingsTable' || path == '/rankingsChart' || path == '/peakEloRatings' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rankings<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li th:class="${path == '/rankingsTable' ? 'active' : ''}"><a href="/rankingsTable">Rankings Table</a></li>
 							<li th:class="${path == '/rankingsChart' ? 'active' : ''}"><a href="/rankingsChart">Rankings Chart</a></li>
-							<li th:class="${path == '/allTimeEloRatings' ? 'active' : ''}"><a href="/allTimeEloRatings">All-time Highest Elo Ratings</a></li>
+							<li th:class="${path == '/peakEloRatings' ? 'active' : ''}"><a href="/peakEloRatings">Peak Elo Ratings</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/topPerformers' || path == '/performanceChart' ? 'active dropdown' : 'dropdown'}">

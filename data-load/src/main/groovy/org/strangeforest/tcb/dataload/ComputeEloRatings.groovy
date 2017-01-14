@@ -9,7 +9,7 @@ eloRatings.compute(true, System.getProperty('tcb.data.full-load', 'true').toBool
 
 sqlPool.withSql { sql ->
 	showCurrent(eloRatings, sql)
-	showAllTime(eloRatings, sql)
+	showPeak(eloRatings, sql)
 }
 
 
@@ -21,10 +21,10 @@ def showCurrent(EloRatings eloRatings, Sql sql) {
 	}
 }
 
-def showAllTime(EloRatings eloRatings, Sql sql) {
+def showPeak(EloRatings eloRatings, Sql sql) {
 	printf '%n%1$4s %2$-30s %3$4s %4$10s %5$4s/%6$4s%n', 'Rank', 'Player', 'Elo', 'Date', 'PkMt', 'AlMt'
 	def i = 0
-	eloRatings.allTime(100).each {
+	eloRatings.peak(100).each {
 		def bestRating = it.bestRating
 		printf '%1$4s %2$-30s %3$4s %4$10s %5$4s/%6$4s%n', ++i, getPlayerName(sql, it.playerId), bestRating, bestRating.lastDate.format('dd-MM-yyyy'), bestRating.matches, it.matches
 	}

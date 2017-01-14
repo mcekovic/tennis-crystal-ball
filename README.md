@@ -16,7 +16,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Greatest Rivalries - Explore greatest rivalries, overall or by tournament level and surface
 - Ranking Tables - Player ranking tables, including [Elo rating](https://en.wikipedia.org/wiki/Elo_rating_system) using customized Elo rating formula
 - Ranking Charts - Player ranking and ranking point charts, compare players by constructing custom charts
-- All-time Highest Elo Ratings - All-time list of highest Elo ratings
+- Peak Elo Ratings - Peak Elo ratings list for comparing players in their peaks
 - Top Performers - Find top performers in both performance and pressure situations figures
 - Performance Charts - Performance charts for various performance categories, filtered by seasons
 - Statistics Leaders - Find statistics leaders in different statistics categories, including dominance and break points ratios

@@ -28,12 +28,12 @@ public class RankingsController extends PageController {
 		return new ModelAndView("rankingsTable", modelMap);
 	}
 
-	@GetMapping("/allTimeEloRatings")
-	public ModelAndView allTimeEloRatings() {
+	@GetMapping({"/peakEloRatings", "/allTimeEloRatings"})
+	public ModelAndView peakEloRatings() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("surfaces", Surface.values());
-		modelMap.addAttribute("allTimeElo", TRUE);
-		return new ModelAndView("allTimeEloRatings", modelMap);
+		modelMap.addAttribute("peakElo", TRUE);
+		return new ModelAndView("peakEloRatings", modelMap);
 	}
 
 	@GetMapping("/rankingsChart")
