@@ -67,10 +67,12 @@ public class RivalriesController extends PageController {
 	) {
 		Player player1 = playerService.getPlayer(playerId1).get();
 		Player player2 = playerService.getPlayer(playerId2).get();
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
 		modelMap.addAttribute("player2", player2);
+		modelMap.addAttribute("stats1", stats1);
 		return new ModelAndView("h2hProfiles", modelMap);
 	}
 
@@ -82,18 +84,18 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "surface", required = false) String surface,
       @RequestParam(name = "round", required = false) String round
    ) {
-		String name1 = playerService.getPlayerName(playerId1);
-		String name2 = playerService.getPlayerName(playerId2);
+		Player player1 = playerService.getPlayer(playerId1).get();
+		Player player2 = playerService.getPlayer(playerId2).get();
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, round));
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId1);
 		seasons.retainAll(playerService.getPlayerSeasons(playerId2));
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId1);
 		tournaments.retainAll(tournamentService.getPlayerTournaments(playerId2));
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("playerId1", playerId1);
-		modelMap.addAttribute("playerName1", name1);
-		modelMap.addAttribute("playerId2", playerId2);
-		modelMap.addAttribute("playerName2", name2);
+		modelMap.addAttribute("player1", player1);
+		modelMap.addAttribute("player2", player2);
+		modelMap.addAttribute("stats1", stats1);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Surface.values());
@@ -127,6 +129,35 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("h2hPerformance", modelMap);
 	}
 
+	@GetMapping("/h2hStats")
+	public ModelAndView h2hStats(
+		@RequestParam(name = "playerId1") int playerId1,
+		@RequestParam(name = "playerId2") int playerId2,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface
+	) {
+		Set<Integer> seasons = new TreeSet<>(reverseOrder());
+		seasons.addAll(playerService.getPlayerSeasons(playerId1));
+		seasons.addAll(playerService.getPlayerSeasons(playerId2));
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forStats(season, level, surface));
+		PlayerStats stats2 = statisticsService.getPlayerStats(playerId2, MatchFilter.forStats(season, level, surface));
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId1", playerId1);
+		modelMap.addAttribute("playerId2", playerId2);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("stats1", stats1);
+		modelMap.addAttribute("stats2", stats2);
+		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
+		return new ModelAndView("h2hStats", modelMap);
+	}
+
 	@GetMapping("/h2hHypotheticalMatchup")
 	public ModelAndView h2hHypotheticalMatchup(
       @RequestParam(name = "playerId1") int playerId1,
@@ -151,6 +182,7 @@ public class RivalriesController extends PageController {
       );
 		RankingHighlights rankingHighlights1 = rankingsService.getRankingHighlights(playerId1);
 		RankingHighlights rankingHighlights2 = rankingsService.getRankingHighlights(playerId2);
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, round));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
@@ -167,6 +199,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("prediction", prediction);
 		modelMap.addAttribute("rankingHighlights1", rankingHighlights1);
 		modelMap.addAttribute("rankingHighlights2", rankingHighlights2);
+		modelMap.addAttribute("stats1", stats1);
 		modelMap.addAttribute("today", toDate(today));
 		return new ModelAndView("h2hHypotheticalMatchup", modelMap);
 	}

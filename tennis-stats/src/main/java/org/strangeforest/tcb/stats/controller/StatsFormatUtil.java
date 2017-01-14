@@ -35,6 +35,18 @@ public class StatsFormatUtil {
 		return Math.round(d * scale) / scale;
 	}
 
+	public int compare(int i1, int i2) {
+		return Integer.compare(i1, i2);
+	}
+
+	public int compare(double d1, double d2) {
+		return Double.compare(d1, d2);
+	}
+
+	public int compare(Double d1, Double d2) {
+		return d1 != null && d2 != null ? Double.compare(d1, d2) : 0;
+	}
+
 	public String pnClass(Double from, Double to) {
 		if (from != null && to != null) {
 			double diff = to - from;

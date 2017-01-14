@@ -58,10 +58,10 @@
 			$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
 			var url = "/statsLeadersMinEntries?category=" + $category.val();
 			var season = $("#season").val();
-			if (season != "")
+			if (season)
 				url += "&season=" + season;
 			var surface = $("#surface").val();
-			if (surface != "")
+			if (surface)
 				url += "&surface=" + surface;
 			$.get(url, function (data) {
 				$("#minEntries").html(data);

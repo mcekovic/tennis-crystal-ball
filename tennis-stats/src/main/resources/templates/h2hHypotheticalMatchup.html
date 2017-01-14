@@ -14,6 +14,8 @@
 	<!--/*@thymesVar id="prediction" type="org.strangeforest.tcb.stats.model.prediction.MatchPrediction"*/-->
 	<!--/*@thymesVar id="rankingHighlights1" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
 	<!--/*@thymesVar id="rankingHighlights2" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
+	<!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
+	<!--/*@thymesVar id="today" type="java.util.Date"*/-->
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			datePicker("predictionDate");
@@ -258,11 +260,20 @@
 				<div th:if="${eloRating2}" th:text="${eloRating2}">2250</div>
 			</td>
 		</tr>
+		<tr th:if="${stats1.matches > 0}">
+			<td class="text-right">
+				<div th:text="${stats1.matchesWon}">15</div>
+			</td>
+			<th class="text-center">H2H</th>
+			<td class="text-left">
+				<div th:text="${stats1.matchesLost}">9</div>
+			</td>
+		</tr>
 	</table>
 	<p><em>
-		<strong>Match Prediction</strong> is based on neural network with ~50 neurons for different features about players, like ATP Ranking, ATP Points, Elo Rating,
+		<strong>Match Prediction</strong> is based on neural network with ~50 neurons (features) for different features about players, like ATP Ranking, ATP Points, Elo Rating,
 		Head-to-Head ratios and Winning Percentages varied by surface, tournament level, round, recency, match or set ratios, vs rank, vs hand, vs backhand...<br/>
-		Neural Network is trained on historical data for highest prediction rates.<br/>
+		Neural Network is trained on historical data for highest prediction rates to determine optimal feature weights.<br/>
 		Prediction can be for specific surface, tournament level and/or round.<br/>
 		Prediction can be for the same date for both players, but also for hypothetical matchup between two players on their peaks!
 	</em></p>

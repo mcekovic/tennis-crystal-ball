@@ -55,7 +55,7 @@
 			$("#topPerformersTable").find("th[data-column-id='wonLostPct'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
 			var url = "/topPerformersMinEntries?category=" + $category.val();
 			var season = $("#season").val();
-			if (season != "")
+			if (season)
 				url += "&season=" + season;
 			$.get(url, function (data) {
 				$("#minEntries").html(data);

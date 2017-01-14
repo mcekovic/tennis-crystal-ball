@@ -1,12 +1,23 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="player1" type="org.strangeforest.tcb.stats.model.Player"*/-->
 <!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.Player"*/-->
+<!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 	<br/>
 	<table class="table table-condensed text-nowrap">
 		<!--/* General */-->
+		<tr>
+			<th class="text-right"><a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a></th>
+			<th class="text-center" style="width: 300px">vs</th>
+			<th class="text-left"><a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a></th>
+		</tr>
+		<tr>
+			<th class="text-right" th:text="${stats1.matchesWon}">15</th>
+			<th class="text-center">H2H</th>
+			<th class="text-left" th:text="${stats1.matchesLost}">9</th>
+		</tr>
 		<tr th:if="${player1.dob != null || player2.dob != null}">
 			<td class="text-right" th:text="${player1.age != null ? player1.age + ' (' + #dates.format(player1.dob, 'dd-MM-yyyy') + ')' : _}">25 (1-1-1990)</td>
-			<th class="text-center" style="width: 300px">Age</th>
+			<th class="text-center">Age</th>
 			<td class="text-left" th:text="${player2.age != null ? player2.age + ' (' + #dates.format(player2.dob, 'dd-MM-yyyy') + ')' : _}">25 (1-1-1990)</td>
 		</tr>
 		<tr>

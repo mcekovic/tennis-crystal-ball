@@ -11,12 +11,14 @@ import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.collect.*;
 
+import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
 
 @RestController
 public class PlayerRivalriesResource {
 
 	@Autowired private RivalriesService rivalriesService;
+	@Autowired private StatisticsService statisticsService;
 
 	private static final int MAX_RIVALRIES = 1000;
 
@@ -45,5 +47,19 @@ public class PlayerRivalriesResource {
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
 		return rivalriesService.getPlayerRivalriesTable(playerId, filter, orderBy, pageSize, current);
+	}
+
+	@GetMapping("/h2h")
+	public List<Integer> h2h(
+		@RequestParam(name = "playerId1") int playerId1,
+		@RequestParam(name = "playerId2") int playerId2,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "round", required = false) String round
+	) {
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, level, surface, tournamentId, round));
+		return asList(stats1.getMatchesWon(), stats1.getMatchesLost());
 	}
 }
