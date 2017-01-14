@@ -4,6 +4,8 @@ import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
+import javax.servlet.http.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.format.annotation.*;
 import org.springframework.stereotype.*;
@@ -38,7 +40,8 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
-		@RequestParam(name = "round", required = false) String round
+		@RequestParam(name = "round", required = false) String round,
+	   HttpServletRequest request
 	) {
 		Optional<Player> optionalPlayer1 = playerId1 != null ? playerService.getPlayer(playerId1) : (name1 != null ? playerService.getPlayer(name1) : Optional.empty());
 		Optional<Player> optionalPlayer2 = playerId2 != null ? playerService.getPlayer(playerId2) : (name2 != null ? playerService.getPlayer(name2) : Optional.empty());
@@ -46,6 +49,8 @@ public class RivalriesController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		addPlayer(modelMap, playerId1, name1, optionalPlayer1, 1);
 		addPlayer(modelMap, playerId2, name2, optionalPlayer2, 2);
+		if (optionalPlayer1.isPresent() && optionalPlayer2.isPresent())
+			modelMap.addAttribute("permalink", h2hPermalink(optionalPlayer1.get(), optionalPlayer2.get(), request));
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
@@ -58,6 +63,10 @@ public class RivalriesController extends PageController {
 			modelMap.addAttribute("player" + index, optionalPlayer.get());
 		else
 			modelMap.addAttribute("playerRef" + index, playerId != null ? playerId : name);
+	}
+
+	private static String h2hPermalink(Player player1, Player player2, HttpServletRequest request) {
+		return request.getServletPath() + '?' + request.getQueryString().replaceFirst("playerId1=\\d+", "name1=" + player1.getName()).replaceFirst("playerId2=\\d+", "name2=" + player2.getName());
 	}
 
 	@GetMapping("/h2hProfiles")

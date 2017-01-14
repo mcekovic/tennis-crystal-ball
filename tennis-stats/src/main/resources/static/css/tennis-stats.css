@@ -27,6 +27,10 @@
 	font-size: x-small;
 	color: crimson;
 }
+.cool-feature {
+	font-size: x-small;
+	color: deeppink;
+}
 div.loading {
 	background: white url("/images/loading.gif") center center no-repeat;
 	width: 100%;

@@ -6,9 +6,9 @@
 	<table class="table table-condensed text-nowrap">
 		<!--/* General */-->
 		<tr>
-			<th class="text-right"><a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a></th>
-			<th class="text-center" style="width: 300px">vs</th>
-			<th class="text-left"><a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a></th>
+			<th class="text-right" width="40%"><a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a></th>
+			<th class="text-center">vs</th>
+			<th class="text-left" width="40%"><a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a></th>
 		</tr>
 		<tr>
 			<th class="text-right" th:text="${stats1.matchesWon}">15</th>

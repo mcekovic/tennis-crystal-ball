@@ -70,28 +70,6 @@
 				url += "&season=" + season;
 			loadTab($pill, url)
 		}
-		function toggleStatsData(selector) {
-			$(selector).find(".pct-data, .raw-data").toggle();
-		}
-		function compareStats(containerId, statsId, close) {
-			var url = $("#" + statsId).data("statsURL");
-			if (!close) {
-				url += "&compare=true";
-				var compareSelector = "#" + statsId + "Compare";
-				var $compareSeason = $(compareSelector + "Season");
-				if ($compareSeason.length)
-					url += "&compareSeason=" + $compareSeason.val();
-				var $compareLevel = $(compareSelector + "Level");
-				if ($compareLevel.length)
-					url += "&compareLevel=" + $compareLevel.val();
-				var $compareSurface = $(compareSelector + "Surface");
-				if ($compareSurface.length)
-					url += "&compareSurface=" + $compareSurface.val();
-			}
-			$.get(url, function (data) {
-				$("#" + containerId).html(data);
-			});
-		}
 	</script>
 </head>
 <body class="container">

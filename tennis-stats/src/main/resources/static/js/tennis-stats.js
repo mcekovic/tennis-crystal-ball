@@ -376,6 +376,33 @@ function appendGoatPointsTitle(title, row, propertyName, propertyTitle) {
 	return title;
 }
 
+function toggleStatsData(selector) {
+	if (selector)
+		$(selector).find(".pct-data, .raw-data").toggle();
+	else
+		$(".pct-data, .raw-data").toggle();
+}
+
+function compareStats(containerId, statsId, close) {
+	var url = $("#" + statsId).data("statsURL");
+	if (!close) {
+		url += "&compare=true";
+		var compareSelector = "#" + statsId + "Compare";
+		var $compareSeason = $(compareSelector + "Season");
+		if ($compareSeason.length)
+			url += "&compareSeason=" + $compareSeason.val();
+		var $compareLevel = $(compareSelector + "Level");
+		if ($compareLevel.length)
+			url += "&compareLevel=" + $compareLevel.val();
+		var $compareSurface = $(compareSelector + "Surface");
+		if ($compareSurface.length)
+			url += "&compareSurface=" + $compareSurface.val();
+	}
+	$.get(url, function (data) {
+		$("#" + containerId).html(data);
+	});
+}
+
 function showMatchStats(matchId, event, disableCompare) {
 	var $matchStats = $("#matchStats-" + matchId);
 	if (!$matchStats.hasClass("loaded")) {

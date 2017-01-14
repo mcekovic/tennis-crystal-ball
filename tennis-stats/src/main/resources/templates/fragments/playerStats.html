@@ -260,20 +260,20 @@
 						<tr class="pct-data">
 							<td>Total Games Won</td>
 							<th th:text="${statsFormatUtil.formatPct(stats.totalGamesWonPct)}" class="text-right">58%</th>
-							<th th:if="${compareStats}" th:text="${statsFormatUtil.formatPctDiff(compareStats.totalGamesWonPct, stats.totalGamesWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.totalGamesWonPct, stats.totalGamesWonPct)}">0%</th>
-							<th th:if="${compareStats}" th:text="${statsFormatUtil.formatPct(compareStats.totalGamesWonPct)}" class="text-right">58%</th>
+							<th th:if="${compareStats}" th:text="${!compareStats.empty ? statsFormatUtil.formatPctDiff(compareStats.totalGamesWonPct, stats.totalGamesWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.totalGamesWonPct, stats.totalGamesWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${!compareStats.empty ? statsFormatUtil.formatPct(compareStats.totalGamesWonPct) : _}" class="text-right">58%</th>
 						</tr>
 						<tr class="pct-data">
 							<td>Sets Won</td>
 							<th th:text="${statsFormatUtil.formatPct(stats.setsWonPct)}" class="text-right">62%</th>
-							<th th:if="${compareStats}" th:text="${statsFormatUtil.formatPctDiff(compareStats.setsWonPct, stats.setsWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.setsWonPct, stats.setsWonPct)}">0%</th>
-							<th th:if="${compareStats}" th:text="${statsFormatUtil.formatPct(compareStats.setsWonPct)}" class="text-right">62%</th>
+							<th th:if="${compareStats}" th:text="${!compareStats.empty ? statsFormatUtil.formatPctDiff(compareStats.setsWonPct, stats.setsWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.setsWonPct, stats.setsWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${!compareStats.empty ? statsFormatUtil.formatPct(compareStats.setsWonPct) : _}" class="text-right">62%</th>
 						</tr>
 						<tr class="pct-data">
 							<td>Matches Won</td>
 							<th th:text="${statsFormatUtil.formatPct(stats.matchesWonPct)}" class="text-right">69%</th>
-							<th th:if="${compareStats}" th:text="${statsFormatUtil.formatPctDiff(compareStats.matchesWonPct, stats.matchesWonPct)}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.matchesWonPct, stats.matchesWonPct)}">0%</th>
-							<th th:if="${compareStats}" th:text="${statsFormatUtil.formatPct(compareStats.matchesWonPct)}" class="text-right">69%</th>
+							<th th:if="${compareStats}" th:text="${!compareStats.empty ? statsFormatUtil.formatPctDiff(compareStats.matchesWonPct, stats.matchesWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.matchesWonPct, stats.matchesWonPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${!compareStats.empty ? statsFormatUtil.formatPct(compareStats.matchesWonPct) : _}" class="text-right">69%</th>
 						</tr>
 						<!-- Total Raw Data -->
 						<th:block th:if="${hasPointStats}">

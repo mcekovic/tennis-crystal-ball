@@ -20,7 +20,7 @@ public class StatsFormatUtil {
 	}
 
 	public String formatPctDiff(Double fromPct, Double toPct) {
-		return fromPct != null && toPct != null ? PCT_DIFF_FORMAT.format(round(toPct, DIFF_SCALE) - round(fromPct, DIFF_SCALE)) : "";
+		return fromPct != null && toPct != null ? PCT_DIFF_FORMAT.format(diff(fromPct, toPct, DIFF_SCALE)) : "";
 	}
 
 	public String formatRatio(Double ratio) {
@@ -28,7 +28,11 @@ public class StatsFormatUtil {
 	}
 
 	public String formatRatioDiff(Double fromRatio, Double toRatio) {
-		return fromRatio != null && toRatio != null ? RATIO_DIFF_FORMAT.format(round(toRatio, RATIO_SCALE) - round(fromRatio, RATIO_SCALE)) : "";
+		return fromRatio != null && toRatio != null ? RATIO_DIFF_FORMAT.format(diff(fromRatio, toRatio, RATIO_SCALE)) : "";
+	}
+
+	private static double diff(double from, double to, double scale) {
+		return Double.isFinite(to) && Double.isFinite(from) ? round(to, scale) - round(from, scale) : (to > from ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY);
 	}
 
 	private static double round(double d, double scale) {

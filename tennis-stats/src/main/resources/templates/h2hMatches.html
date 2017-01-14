@@ -50,7 +50,13 @@
 				templates: {
 					paginationItem: bootgridTemplatePaginationItem
 				}
+			}).on("loaded.rs.jquery.bootgrid", function() {
+				$("#rivalryStats-[[${player1.id}]]").popover("destroy").removeClass("loaded");
+				$("#rivalryStats-[[${player2.id}]]").popover("destroy").removeClass("loaded");
 			});
+			var $matchesTableHeader = $("#matchesTable-header");
+			$matchesTableHeader.find("div.search").before($("#rivalryStats-[[${player2.id}]]").remove());
+			$matchesTableHeader.find("div.search").before($("#rivalryStats-[[${player1.id}]]").remove());
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadMatches() {
@@ -87,6 +93,24 @@
 			$("#matchesTournament").val("");
 			$("#matchesTable").bootgrid("search", "");
 			reloadMatches();
+		}
+		function showRivalryStats(playerId1, playerId2, placement, event) {
+			var $rivalryStats = $("#rivalryStats-" + playerId2);
+			if (!$rivalryStats.hasClass("loaded")) {
+				event.preventDefault();
+				var url = "/rivalryStats?playerId=" + playerId1 + "&opponentId=" + playerId2;
+				url += "&season=" + $("#matchesSeason").val();
+				url += "&level=" + $("#matchesLevel").val();
+				url += "&surface=" + $("#matchesSurface").val();
+				url += "&tournamentId=" + $("#matchesTournament").val();
+				url += "&round=" + $("#matchesRound").val();
+				url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
+				$.get(url, function(data) {
+					$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto " + placement});
+					$rivalryStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
+					$rivalryStats.data("statsURL", url);
+				});
+			}
 		}
 	</script>
 	<div class="row">
@@ -144,6 +168,12 @@
 			</button>
 		</div>
 	</div>
+	<button th:id="|rivalryStats-${player2.id}|" type="button" class="btn btn-info grid-control pull-left" style="margin-left: -15px" th:onclick="|showRivalryStats(${player1.id}, ${player2.id}, 'left', event)|" data-toggle="tooltip" data-placement="top" th:title="|${player1.name} vs ${player2.name} Statistics (for the selected matches)|">
+		<span class="glyphicon glyphicon-stats"></span> Stats 1
+	</button>
+	<button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control" style="margin-right: 20px" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'right', event)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">
+		<span class="glyphicon glyphicon-stats"></span> Stats 2
+	</button>
 	<table id="matchesTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>

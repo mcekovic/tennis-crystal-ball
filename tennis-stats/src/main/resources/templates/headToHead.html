@@ -4,6 +4,7 @@
 <!--/*@thymesVar id="playerRef1" type="java.lang.String"*/-->
 <!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.Player"*/-->
 <!--/*@thymesVar id="playerRef2" type="java.lang.String"*/-->
+<!--/*@thymesVar id="permalink" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tab" type="java.lang.String"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
@@ -66,9 +67,6 @@
 				url += "&round=" + round;
 			loadTab($pill, url)
 		}
-		function toggleStatsData(selector) {
-			$(selector).find(".pct-data, .raw-data").toggle();
-		}
 	</script>
 </head>
 <body class="container" th:with="bothPlayersSelected=${player1 != null && player2 != null}, anyPlayerSelected=${player1 != null || player2 != null}, neitherPlayerSelected=${player1 == null && player2 == null}, samePlayersSelected=${bothPlayersSelected && player1.id == player2.id}">
@@ -93,17 +91,17 @@
 				<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -3px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
 				<a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a>
 			</h3>
-			<h4 th:if="${player1 == null && playerRef1 != null}" th:text="'Player ' + ${playerRef1}  + ' not found.'">Player not found.</h4>
+			<h3 th:if="${player1 == null && playerRef1 != null}" th:text="'Player ' + ${playerRef1}  + ' not found.'">Player not found.</h3>
 		</div>
 		<div class="col-md-2">
-			<h3 class="text-center">vs</h3>
+			<h3 class="text-center">vs <a th:if="${permalink}" th:href="${permalink}" th:title="|Permalink to ${player1.name} vs ${player2.name} Rivalry|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a></h3>
 		</div>
 		<div class="col-md-5">
 			<h3 th:if="${player2}" class="text-nowrap pull-right">
 				<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="margin-top: -3px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
 				<a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a>
 			</h3>
-			<h4 th:if="${player2 == null && playerRef2 != null}" th:text="'Player ' + ${playerRef2}  + ' not found.'">Player not found.</h4>
+			<h3 th:if="${player2 == null && playerRef2 != null}" th:text="'Player ' + ${playerRef2}  + ' not found.'">Player not found.</h3>
 		</div>
 	</div>
 	<br th:if="${neitherPlayerSelected}"/>
@@ -116,7 +114,7 @@
 		<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/h2hMatches' + ${playerIdsParams}">Matches</a></li>
 		<li><a id="performancePill" data-toggle="pill" href="#performance" th:data-url="'/h2hPerformance' + ${playerIdsParams}">Performance</a></li>
 		<li><a id="statisticsPill" data-toggle="pill" href="#statistics" th:data-url="'/h2hStats' + ${playerIdsParams}">Statistics</a></li>
-		<li><a id="hypotheticalMatchupPill" data-toggle="pill" href="#hypotheticalMatchup" th:data-url="'/h2hHypotheticalMatchup' + ${playerIdsParams}">Hypothetical Matchup<sup class="new-feature">&nbsp;Cool!</sup></a></li>
+		<li><a id="hypotheticalMatchupPill" data-toggle="pill" href="#hypotheticalMatchup" th:data-url="'/h2hHypotheticalMatchup' + ${playerIdsParams}">Hypothetical Matchup<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="profiles" class="tab-pane fade"><div class="loading"></div></div>

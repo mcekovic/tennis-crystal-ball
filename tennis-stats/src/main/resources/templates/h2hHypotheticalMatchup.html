@@ -192,14 +192,14 @@
 			}
 		</style>
 		<tr>
-			<td class="text-right">
+			<td class="text-right" width="40%">
 				<h4 class="text-nowrap">
 					<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -4px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
 					<a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a>
 				</h4>
 			</td>
 			<th class="text-center">vs</th>
-			<td class="text-left">
+			<td class="text-left" width="40%">
 				<h4 class="text-nowrap">
 					<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="margin-top: -4px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
 					<a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a>
@@ -271,10 +271,10 @@
 		</tr>
 	</table>
 	<p><em>
-		<strong>Match Prediction</strong> is based on neural network with ~50 neurons (features) for different features about players, like ATP Ranking, ATP Points, Elo Rating,
+		<strong>Match Prediction</strong> is based on neural network with ~50 neurons for different features about players, like ATP Ranking, ATP Points, Elo Rating,
 		Head-to-Head ratios and Winning Percentages varied by surface, tournament level, round, recency, match or set ratios, vs rank, vs hand, vs backhand...<br/>
 		Neural Network is trained on historical data for highest prediction rates to determine optimal feature weights.<br/>
 		Prediction can be for specific surface, tournament level and/or round.<br/>
-		Prediction can be for the same date for both players, but also for hypothetical matchup between two players on their peaks!
+		Prediction can be for the same date for both players, but also for Hypothetical Matchup between two players on their peaks!
 	</em></p>
 </th:block>

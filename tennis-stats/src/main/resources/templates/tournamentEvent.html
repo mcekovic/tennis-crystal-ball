@@ -45,9 +45,6 @@
 			$drawRight.prop("disabled", roundPos == maxRoundPos);
 			$drawRight.html(" " + rounds[Math.min(maxRoundPos, roundPos + 1) + roundsToShow - 1]);
 		}
-		function toggleStatsData(selector) {
-			$(selector).find(".pct-data, .raw-data").toggle();
-		}
 	</script>
 	<style>
 		td.seed {

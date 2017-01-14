@@ -21,4 +21,20 @@
 			<email>mcekovic@gmail.com</email>
 		</author>
 	</entry>
+	<entry>
+		<title>New Feature - Head-to-Head</title>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/headToHead"/>
+		<id>urn:uuid:827430b9-ba27-44c8-8485-8669ff68c1b8</id>
+		<updated>2017-01-14T12:00:00Z</updated>
+		<summary>Head-to-Head - Head-to-head between two players with Hypothetical Matchup prediction</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Head-to-Head - Head-to-head between two players with H2H matches, performance and statistics comparision and hypothetical matchup prediction based on neural network algorithm.</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 </feed>

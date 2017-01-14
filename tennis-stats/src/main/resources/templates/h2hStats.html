@@ -277,19 +277,19 @@
 			</tr>
 		</th:block>
 		<tr class="pct-data" th:with="sc=${statsFormatUtil.compare(stats1.totalGamesWonPct, stats2.totalGamesWonPct)}">
-			<th th:text="${statsFormatUtil.formatPct(stats1.totalGamesWonPct)}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">58%</th>
+			<th th:text="${!stats1.empty ? statsFormatUtil.formatPct(stats1.totalGamesWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">58%</th>
 			<td class="text-center">Total Games Won</td>
-			<th th:text="${statsFormatUtil.formatPct(stats2.totalGamesWonPct)}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">58%</th>
+			<th th:text="${!stats2.empty ? statsFormatUtil.formatPct(stats2.totalGamesWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">58%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${statsFormatUtil.compare(stats1.setsWonPct, stats2.setsWonPct)}">
-			<th th:text="${statsFormatUtil.formatPct(stats1.setsWonPct)}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">62%</th>
+			<th th:text="${!stats1.empty ? statsFormatUtil.formatPct(stats1.setsWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">62%</th>
 			<td class="text-center">Sets Won</td>
-			<th th:text="${statsFormatUtil.formatPct(stats2.setsWonPct)}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">62%</th>
+			<th th:text="${!stats2.empty ? statsFormatUtil.formatPct(stats2.setsWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">62%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${statsFormatUtil.compare(stats1.matchesWonPct, stats2.matchesWonPct)}">
-			<th th:text="${statsFormatUtil.formatPct(stats1.matchesWonPct)}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">69%</th>
+			<th th:text="${!stats1.empty ? statsFormatUtil.formatPct(stats1.matchesWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">69%</th>
 			<td class="text-center">Matches Won</td>
-			<th th:text="${statsFormatUtil.formatPct(stats2.matchesWonPct)}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">69%</th>
+			<th th:text="${!stats2.empty ? statsFormatUtil.formatPct(stats2.matchesWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">69%</th>
 		</tr>
 		<!-- Total Raw Data -->
 		<th:block th:if="${hasPointsStats}">
@@ -301,26 +301,24 @@
 		</th:block>
 		<tr th:unless="${hasPointsStats}" class="raw-data"></tr>
 		<tr class="raw-data" th:with="sc=${statsFormatUtil.compare(stats1.totalGamesWonPct, stats2.totalGamesWonPct)}">
-			<th th:text="${stats1.totalGamesWon + ' / ' + stats1.totalGames}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">86 / 125</th>
+			<th th:text="${!stats1.empty ? stats1.totalGamesWon + ' / ' + stats1.totalGames : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">86 / 125</th>
 			<td class="text-center">Total Games Won</td>
-			<th th:text="${stats2.totalGamesWon + ' / ' + stats2.totalGames}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">86 / 125</th>
+			<th th:text="${!stats2.empty ? stats2.totalGamesWon + ' / ' + stats2.totalGames : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">86 / 125</th>
 		</tr>
 		<tr class="raw-data" th:with="sc=${statsFormatUtil.compare(stats1.setsWonPct, stats2.setsWonPct)}">
-			<th th:text="${stats1.setsWon + ' / ' + stats1.sets}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">16 / 27</th>
+			<th th:text="${!stats1.empty ? stats1.setsWon + ' / ' + stats1.sets : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">16 / 27</th>
 			<td class="text-center">Sets Won</td>
-			<th th:text="${stats2.setsWon + ' / ' + stats2.sets}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">16 / 27</th>
+			<th th:text="${!stats2.empty ? stats2.setsWon + ' / ' + stats2.sets : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">16 / 27</th>
 		</tr>
 		<tr class="raw-data" th:with="sc=${statsFormatUtil.compare(stats1.matchesWonPct, stats2.matchesWonPct)}">
-			<th th:text="${stats1.matchesWon + ' / ' + stats1.matches}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">6 / 10</th>
+			<th th:text="${!stats1.empty ? stats1.matchesWon + ' / ' + stats1.matches : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">6 / 10</th>
 			<td class="text-center">Matches Won</td>
-			<th th:text="${stats2.matchesWon + ' / ' + stats2.matches}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">6 / 10</th>
+			<th th:text="${!stats2.empty ? stats2.matchesWon + ' / ' + stats2.matches : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">6 / 10</th>
 		</tr>
 	</table>
 	<div th:unless="${stats1.empty && stats2.empty}" class="row">
-		<div class="pct-data col-md-3">
+		<div class="col-md-12 text-center">
 			<button class="pct-data btn btn-default btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#h2hStats')" title="Show raw data"> Raw Data</button>
-		</div>
-		<div class="raw-data col-md-3">
 			<button class="raw-data btn btn-default btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#h2hStats')" title="Show percentage data"> Pct. Data</button>
 		</div>
 	</div>
