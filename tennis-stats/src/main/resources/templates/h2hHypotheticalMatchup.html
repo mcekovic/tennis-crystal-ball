@@ -37,12 +37,14 @@
 			var date = getDate("predictionDate");
 			var date1 = getDate("predictionDate1");
 			var date2 = getDate("predictionDate2");
-			if (date && date1 != date2)
+			if (date && date1 == date2)
 				url += "&date=" + date;
-			if (date1)
-				url += "&date1=" + date1;
-			if (date2)
-				url += "&date2=" + date2;
+			else {
+				if (date1)
+					url += "&date1=" + date1;
+				if (date2)
+					url += "&date2=" + date2;
+			}
 			$("#hypotheticalMatchup").load(url);
 		}
 		function onSameDateChanged() {
@@ -62,6 +64,8 @@
 			}
 			$("#predictionDateDiv").css("display", sameDate ? "block" : "none");
 			$("#predictionDatesDiv").css("display", !sameDate ? "block" : "none");
+			if (sameDate)
+				predictMatch();
 		}
 		function selectPredictionDate1() {
 			var dateType = $("#predictionDateSelector1").val();
