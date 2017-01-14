@@ -434,9 +434,7 @@ BEGIN
 		SELECT height INTO p_loser_height FROM player WHERE player_id = l_loser_id;
 	END IF;
 
-	l_has_stats := p_minutes IS NOT NULL
-	   OR p_w_ace IS NOT NULL OR p_w_df IS NOT NULL OR p_w_sv_pt IS NOT NULL OR p_w_1st_in IS NOT NULL OR p_w_1st_won IS NOT NULL OR p_w_2nd_won IS NOT NULL OR p_w_sv_gms IS NOT NULL AND p_w_bp_sv IS NOT NULL OR p_w_bp_fc IS NOT NULL
-	   OR p_l_ace IS NOT NULL OR p_l_df IS NOT NULL OR p_l_sv_pt IS NOT NULL OR p_l_1st_in IS NOT NULL OR p_l_1st_won IS NOT NULL OR p_l_2nd_won IS NOT NULL OR p_l_sv_gms IS NOT NULL AND p_l_bp_sv IS NOT NULL OR p_l_bp_fc IS NOT NULL;
+	l_has_stats := p_minutes IS NOT NULL OR (coalesce(p_w_sv_pt, 0) + coalesce(p_l_sv_pt, 0) > 0);
 
 	-- merge match
 	BEGIN
