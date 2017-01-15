@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.controller;
 import java.time.*;
 import java.util.*;
 import java.util.stream.*;
-
 import javax.servlet.http.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -17,6 +16,7 @@ import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
+import static com.google.common.base.Strings.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
@@ -171,26 +171,25 @@ public class RivalriesController extends PageController {
 	public ModelAndView h2hHypotheticalMatchup(
       @RequestParam(name = "playerId1") int playerId1,
       @RequestParam(name = "playerId2") int playerId2,
+      @RequestParam(name = "surface", required = false) String surface,
+      @RequestParam(name = "level", required = false) String level,
+      @RequestParam(name = "round", required = false) String round,
       @RequestParam(name = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date,
       @RequestParam(name = "date1", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date1,
       @RequestParam(name = "date2", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date2,
-      @RequestParam(name = "surface", required = false) String surface,
-      @RequestParam(name = "level", required = false) String level,
-      @RequestParam(name = "round", required = false) String round
+      @RequestParam(name = "dateSelector1", required = false) String dateSelector1,
+      @RequestParam(name = "dateSelector2", required = false) String dateSelector2
    ) {
 		Player player1 = playerService.getPlayer(playerId1).get();
 		Player player2 = playerService.getPlayer(playerId2).get();
-		LocalDate today = LocalDate.now();
-		if (date == null && date1 == null && date2 == null)
-			date = today;
-		Date aDate1 = toDate(date1 != null ? date1 : date);
-		Date aDate2 = toDate(date2 != null ? date2 : date);
+		if (date == null && date1 == null && date2 == null && isNullOrEmpty(dateSelector1) && isNullOrEmpty(dateSelector2))
+			date = LocalDate.now();
+		Date aDate1 = isNullOrEmpty(dateSelector1) ? toDate(date1 != null ? date1 : date) : selectDate(playerId1, dateSelector1);
+		Date aDate2 = isNullOrEmpty(dateSelector2) ? toDate(date2 != null ? date2 : date) : selectDate(playerId2, dateSelector2);
 		MatchPrediction prediction = matchPredictionService.predictMatch(
 			playerId1, playerId2, aDate1, aDate2,
 			Surface.safeDecode(surface), TournamentLevel.safeDecode(level), Round.safeDecode(round)
       );
-		RankingHighlights rankingHighlights1 = rankingsService.getRankingHighlights(playerId1);
-		RankingHighlights rankingHighlights2 = rankingsService.getRankingHighlights(playerId2);
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, round));
 
 		ModelMap modelMap = new ModelMap();
@@ -199,18 +198,36 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("rounds", Round.ROUNDS);
-		modelMap.addAttribute("date", date != null ? toDate(date) : aDate1);
-		modelMap.addAttribute("date1", aDate1);
-		modelMap.addAttribute("date2", aDate2);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("round", round);
+		modelMap.addAttribute("date", date != null ? toDate(date) : aDate1);
+		modelMap.addAttribute("date1", aDate1);
+		modelMap.addAttribute("date2", aDate2);
+		modelMap.addAttribute("dateSelector1", dateSelector1);
+		modelMap.addAttribute("dateSelector2", dateSelector2);
 		modelMap.addAttribute("prediction", prediction);
-		modelMap.addAttribute("rankingHighlights1", rankingHighlights1);
-		modelMap.addAttribute("rankingHighlights2", rankingHighlights2);
 		modelMap.addAttribute("stats1", stats1);
-		modelMap.addAttribute("today", toDate(today));
 		return new ModelAndView("h2hHypotheticalMatchup", modelMap);
+	}
+
+	private Date selectDate(int playerId, String dateSelector) {
+		switch (dateSelector) {
+			case "Today": return toDate(LocalDate.now());
+			case "PeakRank": return rankingsService.getRankingHighlights(playerId).getBestRankDate();
+			case "PeakRankPoints": return rankingsService.getRankingHighlights(playerId).getBestRankPointsDate();
+			case "PeakEloRank": return rankingsService.getRankingHighlights(playerId).getBestEloRankDate();
+			case "PeakEloRating": return rankingsService.getRankingHighlights(playerId).getBestEloRatingDate();
+			case "PeakHardEloRank": return rankingsService.getRankingHighlights(playerId).getBestHardEloRankDate();
+			case "PeakHardEloRating": return rankingsService.getRankingHighlights(playerId).getBestHardEloRatingDate();
+			case "PeakClayEloRank": return rankingsService.getRankingHighlights(playerId).getBestClayEloRankDate();
+			case "PeakClayEloRating": return rankingsService.getRankingHighlights(playerId).getBestClayEloRatingDate();
+			case "PeakGrassEloRank": return rankingsService.getRankingHighlights(playerId).getBestGrassEloRankDate();
+			case "PeakGrassEloRating": return rankingsService.getRankingHighlights(playerId).getBestGrassEloRatingDate();
+			case "PeakCarpetEloRank": return rankingsService.getRankingHighlights(playerId).getBestCarpetEloRankDate();
+			case "PeakCarpetEloRating": return rankingsService.getRankingHighlights(playerId).getBestCarpetEloRatingDate();
+			default: return null;
+		}
 	}
 
 	@GetMapping("/headsToHeads")

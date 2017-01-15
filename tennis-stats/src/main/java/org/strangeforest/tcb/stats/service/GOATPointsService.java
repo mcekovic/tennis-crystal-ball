@@ -57,12 +57,7 @@ public class GOATPointsService {
 		jdbcTemplate.query(LEVEL_RESULTS_QUERY, rs -> {
 			String level = rs.getString("level");
 			String result = mapResult(level, rs.getString("result"));
-			List<String> results = levelResults.get(level);
-			if (results == null) {
-				results = new ArrayList<>();
-				levelResults.put(level, results);
-			}
-			results.add(result);
+			levelResults.computeIfAbsent(level, aLevel -> new ArrayList<>()).add(result);
 		});
 		return levelResults;
 	}

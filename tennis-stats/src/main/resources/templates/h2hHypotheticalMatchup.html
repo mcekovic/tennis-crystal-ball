@@ -5,18 +5,17 @@
 	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 	<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
-	<!--/*@thymesVar id="date" type="java.util.Date"*/-->
-	<!--/*@thymesVar id="date1" type="java.util.Date"*/-->
-	<!--/*@thymesVar id="date2" type="java.util.Date"*/-->
 	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="level" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="round" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="date" type="java.util.Date"*/-->
+	<!--/*@thymesVar id="date1" type="java.util.Date"*/-->
+	<!--/*@thymesVar id="date2" type="java.util.Date"*/-->
+	<!--/*@thymesVar id="dateSelector1" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="dateSelector2" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="prediction" type="org.strangeforest.tcb.stats.model.prediction.MatchPrediction"*/-->
-	<!--/*@thymesVar id="rankingHighlights1" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
-	<!--/*@thymesVar id="rankingHighlights2" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
 	<!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
-	<!--/*@thymesVar id="today" type="java.util.Date"*/-->
-	<script type="text/javascript" th:inline="javascript">
+	<script type="text/javascript">
 		$(function() {
 			datePicker("predictionDate");
 			datePicker("predictionDate1");
@@ -44,6 +43,12 @@
 					url += "&date1=" + date1;
 				if (date2)
 					url += "&date2=" + date2;
+				var dateSelector1 = $("#predictionDateSelector1").val();
+				if (dateSelector1)
+					url += "&dateSelector1=" + dateSelector1;
+				var dateSelector2 = $("#predictionDateSelector2").val();
+				if (dateSelector2)
+					url += "&dateSelector2=" + dateSelector2;
 			}
 			$("#hypotheticalMatchup").load(url);
 		}
@@ -66,60 +71,6 @@
 			$("#predictionDatesDiv").css("display", !sameDate ? "block" : "none");
 			if (sameDate)
 				predictMatch();
-		}
-		function selectPredictionDate1() {
-			var dateType = $("#predictionDateSelector1").val();
-			switch (dateType) {
-				case "Today":
-					$("#predictionDate1").val([[${#dates.format(today, 'dd-MM-yyyy')}]]);
-					predictMatch();
-					break;
-				case "PeakRank":
-					[# th:if="${rankingHighlights1.bestRankDate}"]
-					$("#predictionDate1").val([[${#dates.format(rankingHighlights1.bestRankDate, 'dd-MM-yyyy')}]]);
-					predictMatch();
-					[/]
-					break;
-				case "PeakRankPoints":
-					[# th:if="${rankingHighlights1.bestRankPointsDate}"]
-					$("#predictionDate1").val([[${#dates.format(rankingHighlights1.bestRankPointsDate, 'dd-MM-yyyy')}]]);
-					predictMatch();
-					[/]
-					break;
-				case "PeakEloRating":
-					[# th:if="${rankingHighlights1.bestEloRatingDate}"]
-					$("#predictionDate1").val([[${#dates.format(rankingHighlights1.bestEloRatingDate, 'dd-MM-yyyy')}]]);
-					predictMatch();
-					[/]
-					break;
-			}
-		}
-		function selectPredictionDate2() {
-			var dateType = $("#predictionDateSelector2").val();
-			switch (dateType) {
-				case "Today":
-					$("#predictionDate2").val([[${#dates.format(today, 'dd-MM-yyyy')}]]);
-					predictMatch();
-					break;
-				case "PeakRank":
-					[# th:if="${rankingHighlights1.bestRankDate}"]
-					$("#predictionDate2").val([[${#dates.format(rankingHighlights2.bestRankDate, 'dd-MM-yyyy')}]]);
-					predictMatch();
-					[/]
-					break;
-				case "PeakRankPoints":
-					[# th:if="${rankingHighlights1.bestRankPointsDate}"]
-					$("#predictionDate2").val([[${#dates.format(rankingHighlights2.bestRankPointsDate, 'dd-MM-yyyy')}]]);
-					predictMatch();
-					[/]
-					break;
-				case "PeakEloRating":
-					[# th:if="${rankingHighlights1.bestEloRatingDate}"]
-					$("#predictionDate2").val([[${#dates.format(rankingHighlights2.bestEloRatingDate, 'dd-MM-yyyy')}]]);
-					predictMatch();
-					[/]
-					break;
-			}
 		}
 	</script>
 	<div class="row">
@@ -156,34 +107,44 @@
 		</div>
 	</div>
 	<div id="predictionDatesDiv" class="row" th:style="'display: ' + ${sameDates ? 'none' : 'block'}">
-		<div class="col-md-3 pull-left">
+		<div class="col-md-3">
+			<select id="predictionDateSelector1" class="form-control" onchange="predictMatch()">
+				<option value="">Pick date</option>
+				<option value="Today" th:selected="${dateSelector1 == 'Today'}">Today</option>
+				<option value="PeakRank" th:selected="${dateSelector1 == 'PeakRank'}">Peak ATP Ranking</option>
+				<option value="PeakRankPoints" th:selected="${dateSelector1 == 'PeakRankPoints'}">Peak ATP Points</option>
+				<option value="PeakEloRank" th:selected="${dateSelector1 == 'PeakEloRank'}">Peak Elo Ranking</option>
+				<option value="PeakEloRating" th:selected="${dateSelector1 == 'PeakEloRating'}">Peak Elo Rating</option>
+				<th:block th:each="aSurface : ${surfaces}">
+					<option th:value="|Peak${aSurface.text}EloRank|" value="PeakHardEloRank" th:text="|Peak ${aSurface.text} Elo Ranking|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector1 == 'Peak' + aSurface.text + 'EloRank'}">Peak Hard Elo Ranking</option>
+					<option th:value="|Peak${aSurface.text}EloRating|" value="PeakHardEloRating" th:text="|Peak ${aSurface.text} Elo Rating|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector1 == 'Peak' + aSurface.text + 'EloRating'}">Peak Hard Elo Rating</option>
+				</th:block>
+			</select>
+		</div>
+		<div class="col-md-3">
 			<div class="input-group">
 				<label for="predictionDate1" class="input-group-addon">On Date:</label>
 				<input id="predictionDate1" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date1, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
 			</div>
 		</div>
-		<div class="col-md-2 pull-left">
-			<select id="predictionDateSelector1" class="form-control" onchange="selectPredictionDate1()">
-				<option value="">Pick date</option>
-				<option value="Today">Today</option>
-				<option value="PeakRank">Peak ATP Ranking</option>
-				<option value="PeakRankPoints">Peak ATP Points</option>
-				<option value="PeakEloRating">Peak Elo Rating</option>
-			</select>
-		</div>
-		<div class="col-md-3 pull-right">
+		<div class="col-md-3">
 			<div class="input-group">
 				<label for="predictionDate2" class="input-group-addon">On Date:</label>
 				<input id="predictionDate2" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date2, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
 			</div>
 		</div>
-		<div class="col-md-2 pull-right">
-			<select id="predictionDateSelector2" class="form-control" onchange="selectPredictionDate2()">
+		<div class="col-md-3">
+			<select id="predictionDateSelector2" class="form-control" onchange="predictMatch()">
 				<option value="">Pick date</option>
-				<option value="Today">Today</option>
-				<option value="PeakRank">Peak ATP Ranking</option>
-				<option value="PeakRankPoints">Peak ATP Points</option>
-				<option value="PeakEloRating">Peak Elo Rating</option>
+				<option value="Today" th:selected="${dateSelector2 == 'Today'}">Today</option>
+				<option value="PeakRank" th:selected="${dateSelector2 == 'PeakRank'}">Peak ATP Ranking</option>
+				<option value="PeakRankPoints" th:selected="${dateSelector2 == 'PeakRankPoints'}">Peak ATP Points</option>
+				<option value="PeakEloRank" th:selected="${dateSelector2 == 'PeakEloRank'}">Peak Elo Ranking</option>
+				<option value="PeakEloRating" th:selected="${dateSelector2 == 'PeakEloRating'}">Peak Elo Rating</option>
+				<th:block th:each="aSurface : ${surfaces}">
+					<option th:value="|Peak${aSurface.text}EloRank|" value="PeakHardEloRank" th:text="|Peak ${aSurface.text} Elo Ranking|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector2 == 'Peak' + aSurface.text + 'EloRank'}">Peak Hard Elo Ranking</option>
+					<option th:value="|Peak${aSurface.text}EloRating|" value="PeakHardEloRating" th:text="|Peak ${aSurface.text} Elo Rating|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector2 == 'Peak' + aSurface.text + 'EloRating'}">Peak Hard Elo Rating</option>
+				</th:block>
 			</select>
 		</div>
 	</div>
