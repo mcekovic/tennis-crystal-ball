@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.*;
+
 public class PlayerGOATPoints {
 
 	// Totals
@@ -202,6 +204,10 @@ public class PlayerGOATPoints {
 
 
 	// Seasons
+
+	public List<Integer> getPlayerSeasons() {
+		return playerSeasonsPoints.stream().map(PlayerSeasonGOATPoints::getSeason).collect(toList());
+	}
 
 	public List<PlayerSeasonGOATPoints> getPlayerSeasonsPoints() {
 		return playerSeasonsPoints;

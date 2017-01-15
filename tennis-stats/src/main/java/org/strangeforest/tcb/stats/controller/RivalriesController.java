@@ -28,6 +28,7 @@ public class RivalriesController extends PageController {
 	@Autowired private PlayerService playerService;
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private TournamentService tournamentService;
+	@Autowired private GOATPointsService goatPointsService;
 	@Autowired private MatchPredictionService matchPredictionService;
 	@Autowired private RankingsService rankingsService;
 
@@ -165,6 +166,26 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("stats2", stats2);
 		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
 		return new ModelAndView("h2hStats", modelMap);
+	}
+
+	@GetMapping("/h2hGOATPoints")
+	public ModelAndView h2hGOATPoints(
+		@RequestParam(name = "playerId1") int playerId1,
+		@RequestParam(name = "playerId2") int playerId2
+	) {
+		PlayerGOATPoints goatPoints1 = goatPointsService.getPlayerGOATPoints(playerId1);
+		PlayerGOATPoints goatPoints2 = goatPointsService.getPlayerGOATPoints(playerId2);
+		Set<Integer> seasons = new TreeSet<>(reverseOrder());
+		seasons.addAll(goatPoints1.getPlayerSeasons());
+		seasons.addAll(goatPoints2.getPlayerSeasons());
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId1", playerId1);
+		modelMap.addAttribute("playerId2", playerId2);
+		modelMap.addAttribute("goatPoints1", goatPoints1);
+		modelMap.addAttribute("goatPoints2", goatPoints2);
+		modelMap.addAttribute("seasons", seasons);
+		return new ModelAndView("h2hGOATPoints", modelMap);
 	}
 
 	@GetMapping("/h2hHypotheticalMatchup")
