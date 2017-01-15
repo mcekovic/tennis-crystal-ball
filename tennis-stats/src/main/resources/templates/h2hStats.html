@@ -66,7 +66,7 @@
 </div>
 <br/>
 <div id="h2hStats">
-	<table th:unless="${stats1.empty && stats2.empty}" class="table table-condensed table-hover table-striped" th:with="hasPointsStats1=${stats1.hasPointStats()}, hasPointsStats2=${stats2.hasPointStats()}, hasPointsStats=${hasPointsStats1 || hasPointsStats2}, hasBothPointsStats=${hasPointsStats1 && hasPointsStats2}">
+	<table th:unless="${stats1.empty && stats2.empty}" class="table table-condensed table-hover table-striped text-nowrap" th:with="hasPointsStats1=${stats1.hasPointStats()}, hasPointsStats2=${stats2.hasPointStats()}, hasPointsStats=${hasPointsStats1 || hasPointsStats2}, hasBothPointsStats=${hasPointsStats1 && hasPointsStats2}">
 		<th:block th:if="${hasPointsStats}">
 		<tr>
 			<th class="pct-data text-right" width="40%"><span class="glyphicon glyphicon-scale"></span></th>

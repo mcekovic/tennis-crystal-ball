@@ -109,7 +109,7 @@
 	<div id="predictionDatesDiv" class="row" th:style="'display: ' + ${sameDates ? 'none' : 'block'}">
 		<div class="col-md-3">
 			<select id="predictionDateSelector1" class="form-control" onchange="predictMatch()">
-				<option value="">Pick date</option>
+				<option value="">Pick date 1</option>
 				<option th:if="${player1.active}" value="Today" th:selected="${dateSelector1 == 'Today'}">Today</option>
 				<option th:unless="${player1.active}" value="CareerEnd" th:selected="${dateSelector1 == 'CareerEnd'}">Career End</option>
 				<option value="PeakRank" th:selected="${dateSelector1 == 'PeakRank'}">Peak ATP Ranking</option>
@@ -124,19 +124,19 @@
 		</div>
 		<div class="col-md-3">
 			<div class="input-group">
-				<label for="predictionDate1" class="input-group-addon">On Date:</label>
+				<label for="predictionDate1" class="input-group-addon">On Date 1:</label>
 				<input id="predictionDate1" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date1, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
 			</div>
 		</div>
 		<div class="col-md-3">
 			<div class="input-group">
-				<label for="predictionDate2" class="input-group-addon">On Date:</label>
+				<label for="predictionDate2" class="input-group-addon">On Date 2:</label>
 				<input id="predictionDate2" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date2, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
 			</div>
 		</div>
 		<div class="col-md-3">
 			<select id="predictionDateSelector2" class="form-control" onchange="predictMatch()">
-				<option value="">Pick date</option>
+				<option value="">Pick date 2</option>
 				<option th:if="${player2.active}" value="Today" th:selected="${dateSelector2 == 'Today'}">Today</option>
 				<option th:unless="${player2.active}" value="CareerEnd" th:selected="${dateSelector2 == 'CareerEnd'}">Career End</option>
 				<option value="PeakRank" th:selected="${dateSelector2 == 'PeakRank'}">Peak ATP Ranking</option>
@@ -238,7 +238,7 @@
 		</tr>
 	</table>
 	<p><em>
-		<strong>Match Prediction</strong> is based on neural network with ~50 neurons for different features about players, like ATP Ranking, ATP Points, Elo Rating,
+		<strong>Match Prediction</strong> is based on neural network with ~50 neurons for different features about players like ATP Ranking, ATP Points, Elo Rating,
 		Head-to-Head ratios and Winning Percentages varied by surface, tournament level, round, recency, match or set ratios, vs rank, vs hand, vs backhand...<br/>
 		Neural Network is trained on historical data for highest prediction rates to determine optimal feature weights.<br/>
 		Prediction can be for specific surface, tournament level and/or round.<br/>

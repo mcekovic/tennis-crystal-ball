@@ -85,19 +85,19 @@
 			</div>
 		</div>
 	</div>
-	<div th:if="${anyPlayerSelected}" class="row">
-		<div class="col-md-5">
-			<h3 th:if="${player1}" class="text-nowrap pull-left">
+	<div th:if="${anyPlayerSelected}" class="row text-nowrap">
+		<div class="col-xs-5 text-left">
+			<h3 th:if="${player1}">
 				<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -3px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
 				<a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a>
 			</h3>
 			<h3 th:if="${player1 == null && playerRef1 != null}" th:text="'Player ' + ${playerRef1}  + ' not found.'">Player not found.</h3>
 		</div>
-		<div class="col-md-2">
-			<h3 class="text-center">vs <a th:if="${permalink}" th:href="${permalink}" th:title="|Permalink to ${player1.name} vs ${player2.name} Rivalry|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a></h3>
+		<div class="col-xs-2 text-center">
+			<h3>vs <a th:if="${permalink}" th:href="${permalink}" th:title="|Permalink to ${player1.name} vs ${player2.name} Rivalry|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a></h3>
 		</div>
-		<div class="col-md-5">
-			<h3 th:if="${player2}" class="text-nowrap pull-right">
+		<div class="col-xs-5 text-right">
+			<h3 th:if="${player2}">
 				<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="margin-top: -3px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
 				<a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a>
 			</h3>
