@@ -110,7 +110,8 @@
 		<div class="col-md-3">
 			<select id="predictionDateSelector1" class="form-control" onchange="predictMatch()">
 				<option value="">Pick date</option>
-				<option value="Today" th:selected="${dateSelector1 == 'Today'}">Today</option>
+				<option th:if="${player1.active}" value="Today" th:selected="${dateSelector1 == 'Today'}">Today</option>
+				<option th:unless="${player1.active}" value="CareerEnd" th:selected="${dateSelector1 == 'CareerEnd'}">Career End</option>
 				<option value="PeakRank" th:selected="${dateSelector1 == 'PeakRank'}">Peak ATP Ranking</option>
 				<option value="PeakRankPoints" th:selected="${dateSelector1 == 'PeakRankPoints'}">Peak ATP Points</option>
 				<option value="PeakEloRank" th:selected="${dateSelector1 == 'PeakEloRank'}">Peak Elo Ranking</option>
@@ -136,7 +137,8 @@
 		<div class="col-md-3">
 			<select id="predictionDateSelector2" class="form-control" onchange="predictMatch()">
 				<option value="">Pick date</option>
-				<option value="Today" th:selected="${dateSelector2 == 'Today'}">Today</option>
+				<option th:if="${player2.active}" value="Today" th:selected="${dateSelector2 == 'Today'}">Today</option>
+				<option th:unless="${player2.active}" value="CareerEnd" th:selected="${dateSelector2 == 'CareerEnd'}">Career End</option>
 				<option value="PeakRank" th:selected="${dateSelector2 == 'PeakRank'}">Peak ATP Ranking</option>
 				<option value="PeakRankPoints" th:selected="${dateSelector2 == 'PeakRankPoints'}">Peak ATP Points</option>
 				<option value="PeakEloRank" th:selected="${dateSelector2 == 'PeakEloRank'}">Peak Elo Ranking</option>

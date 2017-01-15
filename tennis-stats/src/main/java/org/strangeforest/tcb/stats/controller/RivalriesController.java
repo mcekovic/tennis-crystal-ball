@@ -182,10 +182,8 @@ public class RivalriesController extends PageController {
    ) {
 		Player player1 = playerService.getPlayer(playerId1).get();
 		Player player2 = playerService.getPlayer(playerId2).get();
-		if (date == null && date1 == null && date2 == null && isNullOrEmpty(dateSelector1) && isNullOrEmpty(dateSelector2))
-			date = LocalDate.now();
-		Date aDate1 = isNullOrEmpty(dateSelector1) ? toDate(date1 != null ? date1 : date) : selectDate(playerId1, dateSelector1);
-		Date aDate2 = isNullOrEmpty(dateSelector2) ? toDate(date2 != null ? date2 : date) : selectDate(playerId2, dateSelector2);
+		Date aDate1 = dateForMatchup(dateSelector1, date1, date, player1);
+		Date aDate2 = dateForMatchup(dateSelector2, date2, date, player2);
 		MatchPrediction prediction = matchPredictionService.predictMatch(
 			playerId1, playerId2, aDate1, aDate2,
 			Surface.safeDecode(surface), TournamentLevel.safeDecode(level), Round.safeDecode(round)
@@ -211,9 +209,21 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("h2hHypotheticalMatchup", modelMap);
 	}
 
+	public Date dateForMatchup(String dateSelector, LocalDate playerDate, LocalDate date, Player player) {
+		if (!isNullOrEmpty(dateSelector))
+			return selectDate(player.getId(), dateSelector);
+		else if (playerDate != null)
+			return toDate(playerDate);
+		else if (date != null)
+			return toDate(date);
+		else
+			return defaultDate(player);
+	}
+
 	private Date selectDate(int playerId, String dateSelector) {
 		switch (dateSelector) {
 			case "Today": return toDate(LocalDate.now());
+			case "CareerEnd": return playerService.getPlayerCareerEnd(playerId);
 			case "PeakRank": return rankingsService.getRankingHighlights(playerId).getBestRankDate();
 			case "PeakRankPoints": return rankingsService.getRankingHighlights(playerId).getBestRankPointsDate();
 			case "PeakEloRank": return rankingsService.getRankingHighlights(playerId).getBestEloRankDate();
@@ -228,6 +238,10 @@ public class RivalriesController extends PageController {
 			case "PeakCarpetEloRating": return rankingsService.getRankingHighlights(playerId).getBestCarpetEloRatingDate();
 			default: return null;
 		}
+	}
+
+	private Date defaultDate(Player player) {
+		return player.isActive() ? toDate(LocalDate.now()) : playerService.getPlayerCareerEnd(player.getId());
 	}
 
 	@GetMapping("/headsToHeads")

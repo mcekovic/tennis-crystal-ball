@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
+import java.util.Date;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -14,6 +15,7 @@ import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Service
 public class PlayerService {
@@ -33,6 +35,10 @@ public class PlayerService {
 	private static final String PLAYER_NAME_QUERY =
 		"SELECT name FROM player_v\n" +
 		"WHERE player_id = :playerId";
+
+	private static final String PLAYER_CAREER_END_QUERY =
+		"SELECT max(date) FROM match\n" +
+		"WHERE winner_id = :playerId OR loser_id = :playerId";
 
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
 		"SELECT player_id, name, country_id FROM player_v\n" +
@@ -55,26 +61,32 @@ public class PlayerService {
 		"ORDER BY %1$s LIMIT :count";
 
 
-	@Cacheable("Player.ById")
+	@Cacheable("Player")
 	public Optional<Player> getPlayer(int playerId) {
 		return jdbcTemplate.query(PLAYER_BY_ID_QUERY, params("playerId", playerId), this::playerExtractor);
 	}
 
-	@Cacheable("Player.ByName")
+	@Cacheable("PlayerByName")
 	public Optional<Player> getPlayer(String name) {
 		return jdbcTemplate.query(PLAYER_BY_NAME_QUERY, params("name", name), this::playerExtractor);
 	}
 
-	@Cacheable("PlayerName.ById")
+	@Cacheable("PlayerName")
 	public String getPlayerName(int playerId) {
 		return jdbcTemplate.queryForObject(PLAYER_NAME_QUERY, params("playerId", playerId), String.class);
+	}
+
+	@Cacheable("PlayerCareerEnd")
+	public Date getPlayerCareerEnd(int playerId) {
+		Date lastMatchDate = jdbcTemplate.queryForObject(PLAYER_CAREER_END_QUERY, params("playerId", playerId), Date.class);
+		return lastMatchDate != null ? toDate(toLocalDate(lastMatchDate).plusDays(1L)) : null;
 	}
 
 	public List<AutocompleteOption> autocompletePlayer(String name) {
 		return jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, params("name", name), this::playerAutocompleteOptionMapper);
 	}
 
-	@Cacheable("PlayerId.ByName")
+	@Cacheable("PlayerId")
 	public Optional<Integer> findPlayerId(String name) {
 		return jdbcTemplate.queryForList(PLAYER_ID_QUERY, params("name", name), Integer.class).stream().findFirst();
 	}
@@ -128,6 +140,9 @@ public class PlayerService {
 	private List<String> topN(String orderBy, int count) {
 		return jdbcTemplate.queryForList(format(TOP_N_QUERY, orderBy), params("count", count), String.class);
 	}
+
+
+	// Util
 
 	private Optional<Player> playerExtractor(ResultSet rs) throws SQLException {
 		if (rs.next()) {
