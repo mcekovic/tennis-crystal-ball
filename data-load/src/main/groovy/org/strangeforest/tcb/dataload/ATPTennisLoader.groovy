@@ -145,7 +145,7 @@ class ATPTennisLoader {
 		loadAdditionalData(new XMLMatchLoader(sql), 'match', file)
 	}
 
-	private static loadAdditionalData(def loader, String name, String file) {
+	private static loadAdditionalData(loader, String name, String file) {
 		println "Loading additional $name data"
 		loader.loadFile(file)
 		println()

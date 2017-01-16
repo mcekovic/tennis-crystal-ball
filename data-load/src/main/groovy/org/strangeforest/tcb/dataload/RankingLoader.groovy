@@ -21,7 +21,7 @@ class RankingLoader extends BaseCSVLoader {
 
 	int batchSize() { 500 }
 
-	Map params(def record, Connection conn) {
+	Map params(record, Connection conn) {
 		def rank = integer record.rank
 		if (maxRank && rank > maxRank)
 			return null

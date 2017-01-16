@@ -4,7 +4,7 @@ import javax.script.*
 
 class TennisAbstractTournamentFetcher {
 
-	static fetchTournament(int season, String urlId, def extId, String level = null) {
+	static fetchTournament(int season, String urlId, extId, String level = null) {
 		def url = tournamentUrl(season, urlId)
 		println "Fetching tournament URL '$url'"
 		def manager = new ScriptEngineManager()

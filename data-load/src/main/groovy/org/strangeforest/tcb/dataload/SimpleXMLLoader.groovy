@@ -8,9 +8,9 @@ abstract class SimpleXMLLoader extends BaseXMLLoader {
 		super(sql)
 	}
 
-	abstract String loadSql(def item)
-	abstract Map params(def item)
-	abstract String toString(def item)
+	abstract String loadSql(item)
+	abstract Map params(item)
+	abstract String toString(item)
 
 	boolean loadItem(item) {
 		def loadSql = loadSql(item)

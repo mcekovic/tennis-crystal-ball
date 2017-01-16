@@ -68,9 +68,9 @@ class EloRatings {
 	static final int RANK_PRELOAD_FETCH_SIZE = 1000
 	static final double SAVE_RANK_THREAD_RATIO = 1.0
 
-	static final def comparator = { a, b -> b <=> a }
-	static final def bestComparator = { a, b -> b.bestRating <=> a.bestRating }
-	static final def nullFuture = CompletableFuture.completedFuture(null)
+	static final comparator = { a, b -> b <=> a }
+	static final bestComparator = { a, b -> b.bestRating <=> a.bestRating }
+	static final nullFuture = CompletableFuture.completedFuture(null)
 
 	static final int MATCHES_PER_DOT = 1000
 	static final int SAVES_PER_PLUS = 20

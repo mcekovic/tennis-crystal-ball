@@ -391,7 +391,8 @@ VALUES
 ('Stan Wawrinka', 'Stanislas Wawrinka'),
 ('Taylor Fritz', 'Taylor Harry Fritz'),
 ('Victor Estrella Burgos', 'Victor Estrella'),
-('Mubarak Shannan Zayid', 'Mubarak Zaid');
+('Mubarak Shannan Zayid', 'Mubarak Zaid'),
+('Jose Statham', 'Jose Rubin Statham');
 
 DELETE FROM team_tournament_event_winner;
 INSERT INTO team_tournament_event_winner

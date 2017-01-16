@@ -24,7 +24,7 @@ class MatchLoader extends BaseCSVLoader {
 
 	int batchSize() { 100 }
 
-	Map params(def record, Connection conn) {
+	Map params(record, Connection conn) {
 		def params = [:]
 
 		def tourneyId = string record.tourney_id
@@ -47,7 +47,7 @@ class MatchLoader extends BaseCSVLoader {
 			return null
 		def dcInfo = level == 'D' ? extractDCTournamentInfo(record, season) : null;
 		params.ext_tournament_id = mapExtTournamentId(extTourneyId, mappedLevel, dcInfo)
-		def eventName = mappedLevel != 'D' ? name : dcInfo.name
+		def eventName = mapEventName(name, mappedLevel, season, dcInfo)
 		params.tournament_name = mappedLevel != 'O' ? eventName : 'Olympics'
 		params.event_name = eventName
 		params.tournament_level = mappedLevel
@@ -140,6 +140,14 @@ class MatchLoader extends BaseCSVLoader {
 			case 'D': return dcInfo.extId
 			case 'O': return level
 			default: return extTourneyId
+		}
+	}
+
+	static mapEventName(String name, String level, int season, DavisCupTournamentInfo dcInfo) {
+		switch (level) {
+			case 'M': return season >= 1990 && !name.endsWith(' Masters') ? name + ' Masters' : name
+			case 'D': return dcInfo.name
+			default: return name
 		}
 	}
 
@@ -312,7 +320,7 @@ class MatchLoader extends BaseCSVLoader {
 
 	// Davis Cup
 
-	static DavisCupTournamentInfo extractDCTournamentInfo(def match, int season) {
+	static DavisCupTournamentInfo extractDCTournamentInfo(match, int season) {
 		String name = match.tourney_name
 		String[] parts = name.split(' ')
 		if (parts.length < 4)
@@ -324,7 +332,7 @@ class MatchLoader extends BaseCSVLoader {
 		new DavisCupTournamentInfo(extId: 'D' + group, name: 'Davis Cup ' + group, round: mapDCRound(round, group, match, season))
 	}
 
-	static mapDCRound(String round, String group, def match, int season) {
+	static mapDCRound(String round, String group, match, int season) {
 		switch (season) {
 			case 1968:
 				if (isDCTieBetween(match, 'USA', 'AUS')) return 'F'
@@ -383,7 +391,7 @@ class MatchLoader extends BaseCSVLoader {
 		String round
 	}
 
-	static isDCTieBetween(def match, String country1, String country2) {
+	static isDCTieBetween(match, String country1, String country2) {
 		String winnerCountry = country match.winner_ioc
 		String loserCountry = country match.loser_ioc
 		(winnerCountry == country1 && loserCountry == country2) || (winnerCountry == country2 && loserCountry == country1)

@@ -120,7 +120,7 @@ class StartEloRatings {
 	}
 
 	private static class RatingPoint {
-		int rank;
-		int eloRating;
+		int rank
+		int eloRating
 	}
 }

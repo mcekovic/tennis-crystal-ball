@@ -27,7 +27,7 @@ class MatchPricesLoader extends BaseCSVLoader {
 
 	int batchSize() { 100 }
 
-	Map params(def record, Connection conn) {
+	Map params(record, Connection conn) {
 		def params = [:]
 
 		params.season = season

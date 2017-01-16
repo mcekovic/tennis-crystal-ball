@@ -16,7 +16,7 @@ abstract class BaseCSVLoader {
 
 	protected final SqlPool sqlPool
 
-	private static def PROGRESS_LINE_WRAP = 100
+	private static final int PROGRESS_LINE_WRAP = 100
 
 	private static final String DEADLOCK_DETECTED = "40P01"
 
@@ -28,7 +28,7 @@ abstract class BaseCSVLoader {
 	int threadCount() { Integer.MAX_VALUE }
 	abstract String loadSql()
 	abstract int batchSize()
-	abstract Map params(def record, Connection conn)
+	abstract Map params(record, Connection conn)
 
 	def loadFile(String file) {
 		println "Loading file '$file'"

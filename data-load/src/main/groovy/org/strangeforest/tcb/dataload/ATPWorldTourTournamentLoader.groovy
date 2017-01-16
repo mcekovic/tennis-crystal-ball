@@ -30,7 +30,7 @@ class ATPWorldTourTournamentLoader {
 		def dates = doc.select('.tourney-dates').text()
 		def atpLevel = extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1)
 		level = level ?: mapLevel(atpLevel)
-		def name = getName(doc, level)
+		def name = getName(doc, level, season)
 		def surface = doc.select('td.tourney-details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)').text()
 		def drawType = 'KO'
 		def drawSize = doc.select('a.not-in-system:nth-child(1) > span:nth-child(1)').text()
@@ -171,14 +171,15 @@ class ATPWorldTourTournamentLoader {
 		startDate.trim().replace('.', '-')
 	}
 
-	static getName(Document doc, String level) {
+	static getName(Document doc, String level, int season) {
 		switch (level) {
 			case 'G': return doc.select('span.tourney-title').text() ?: doc.select('td.title-content > a:nth-child(1)').text()
 			case 'F': return 'Tour Finals'
 			default:
 				def location = doc.select('td.title-content > span:nth-child(2)').text()
 				def pos = location.indexOf(',')
-				return pos > 0 ? location.substring(0, pos) : location
+				def name = pos > 0 ? location.substring(0, pos) : location
+				return level == 'M' && season >= 1990 && !name.endsWith(' Masters') ? name + ' Masters' : name
 		}
 	}
 
@@ -266,7 +267,7 @@ class ATPWorldTourTournamentLoader {
 	}
 
 	static player(String name) {
-		name.replace('-', ' ')
+		name.replace('-', ' ').replace('\'', '')
 	}
 
 	static extract(String s, String delimiter, int occurrence) {

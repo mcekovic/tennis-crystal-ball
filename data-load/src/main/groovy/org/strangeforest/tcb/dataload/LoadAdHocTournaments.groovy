@@ -19,7 +19,6 @@ static loadTournaments(SqlPool sqlPool) {
 	matchLoader.load(fetchTournament(2016, 'Dubai', 495))
 	matchLoader.load(fetchTournament(2016, 'Acapulco', 807))
 	matchLoader.load(fetchTournament(2016, 'Sao_Paulo', 533))
-	matchLoader.load(fetchTournament(2016, 'Indian_Wells_Masters', 404))
 	matchLoader.load(fetchTournament(2016, 'Miami_Masters', 403))
 	matchLoader.load(fetchTournament(2016, 'Houston', 717))
 	matchLoader.load(fetchTournament(2016, 'Marrakech', 360))
@@ -70,9 +69,12 @@ static loadTournaments(SqlPool sqlPool) {
 	sqlPool.withSql {sql ->
 		def atpWorldTourMatchLoader = new ATPWorldTourTournamentLoader(sql)
 		atpWorldTourMatchLoader.loadTournament(2007, 'vina-del-mar', 505)
+		atpWorldTourMatchLoader.loadTournament(2016, 'indian-wells', 404)
 		atpWorldTourMatchLoader.loadTournament(2016, 'atp-finals', 605, 'F')
 		atpWorldTourMatchLoader.loadTournament(2017, 'brisbane', 339)
 		atpWorldTourMatchLoader.loadTournament(2017, 'doha', 451)
 		atpWorldTourMatchLoader.loadTournament(2017, 'chennai', 891)
+		atpWorldTourMatchLoader.loadTournament(2017, 'sydney', 338)
+		atpWorldTourMatchLoader.loadTournament(2017, 'auckland', 301)
 	}
 }

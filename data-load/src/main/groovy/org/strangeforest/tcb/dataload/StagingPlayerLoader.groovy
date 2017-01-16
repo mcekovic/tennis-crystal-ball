@@ -18,7 +18,7 @@ class StagingPlayerLoader extends BaseCSVLoader {
 
 	int batchSize() { 500 }
 
-	Map params(def record, Connection conn) {
+	Map params(record, Connection conn) {
 		def params = [:]
 		params.player_id = integer record.player_id
 		params.first_name = record.first_name

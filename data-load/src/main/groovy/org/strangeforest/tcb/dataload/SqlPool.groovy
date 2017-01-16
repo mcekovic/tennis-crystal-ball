@@ -36,12 +36,12 @@ class SqlPool extends LinkedBlockingDeque<Sql> {
 		catch (BatchUpdateException buEx) {
 			sql.rollback()
 			for (def nextEx = buEx.getNextException(); nextEx ; nextEx = nextEx.getNextException())
-				System.err.println(nextEx);
-			throw buEx;
+				System.err.println(nextEx)
+			throw buEx
 		}
 		catch (Throwable th) {
 			sql.rollback()
-			throw th;
+			throw th
 		}
 		finally {
 			put(sql)
