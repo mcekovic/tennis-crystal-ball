@@ -262,7 +262,12 @@ public class RivalriesController extends PageController {
 	}
 
 	private Date defaultDate(Player player) {
-		return player.isActive() ? toDate(LocalDate.now()) : playerService.getPlayerCareerEnd(player.getId());
+		if (player.isActive())
+			return toDate(LocalDate.now());
+		else {
+			Date careerEndDate = playerService.getPlayerCareerEnd(player.getId());
+			return careerEndDate != null ? careerEndDate : toDate(LocalDate.now());
+		}
 	}
 
 	@GetMapping("/headsToHeads")
