@@ -22,7 +22,7 @@ public class SurfaceService {
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING(tournament_event_id)\n" +
 		"GROUP BY e.season\n" +
-		"ORDER BY e.season DESC;";
+		"ORDER BY e.season DESC";
 
 
 	@Cacheable("SurfaceTimeline")

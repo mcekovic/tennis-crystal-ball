@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -12,12 +14,45 @@ import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
 @Service
-public class BestSeasonsService {
+public class SeasonsService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
-	private static final int MAX_SEASON_COUNT = 200;
+	private static final int MAX_BEST_SEASON_COUNT = 200;
 	private static final int MIN_SEASON_GOAT_POINTS = 25;
+
+	private static final String SEASONS_QUERY = //language=SQL
+		"WITH season_match_count AS (\n" +
+		"  SELECT e.season, count(*) match_count,\n" +
+		"    sum(CASE m.surface WHEN 'H' THEN 1 ELSE 0 END) AS hard_match_count,\n" +
+		"    sum(CASE m.surface WHEN 'C' THEN 1 ELSE 0 END) AS clay_match_count,\n" +
+		"    sum(CASE m.surface WHEN 'G' THEN 1 ELSE 0 END) AS grass_match_count,\n" +
+		"    sum(CASE m.surface WHEN 'P' THEN 1 ELSE 0 END) AS carpet_match_count\n" +
+		"  FROM match m\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  GROUP BY e.season\n" +
+		")\n" +
+		"SELECT season, count(*) AS tournament_count,\n" +
+		"  sum(CASE WHEN level = 'G' THEN 1 ELSE 0 END) AS grand_slam_count,\n" +
+		"  sum(CASE WHEN level = 'F' THEN 1 ELSE 0 END) AS tour_finals_count,\n" +
+		"  sum(CASE WHEN level = 'M' THEN 1 ELSE 0 END) AS masters_count,\n" +
+		"  sum(CASE WHEN level = 'O' THEN 1 ELSE 0 END) AS olympics_count,\n" +
+		"  sum(CASE WHEN level = 'A' THEN 1 ELSE 0 END) AS atp500_count,\n" +
+		"  sum(CASE WHEN level = 'B' THEN 1 ELSE 0 END) AS atp250_count,\n" +
+		"  sum(CASE WHEN surface = 'H' THEN 1 ELSE 0 END) AS hard_count,\n" +
+		"  sum(CASE WHEN surface = 'C' THEN 1 ELSE 0 END) AS clay_count,\n" +
+		"  sum(CASE WHEN surface = 'G' THEN 1 ELSE 0 END) AS grass_count,\n" +
+		"  sum(CASE WHEN surface = 'P' THEN 1 ELSE 0 END) AS carpet_count,\n" +
+		"  match_count,\n" +
+		"  hard_match_count,\n" +
+		"  clay_match_count,\n" +
+		"  grass_match_count,\n" +
+		"  carpet_match_count\n" +
+		"FROM tournament_event e\n" +
+		"LEFT JOIN season_match_count USING (season)\n" +
+		"WHERE level NOT IN ('D', 'T')\n" +
+		"GROUP BY season, match_count, hard_match_count, clay_match_count, grass_match_count, carpet_match_count\n" +
+		"ORDER BY season DESC";
 
 	private static final String BEST_SEASON_COUNT_QUERY = //language=SQL
 		"SELECT count(s.season) AS season_count FROM player_season_goat_points s\n" +
@@ -59,9 +94,36 @@ public class BestSeasonsService {
 		"ORDER BY %2$s OFFSET :offset LIMIT :limit";
 
 
+	@Cacheable("Seasons")
+	public List<Season> getSeasons() {
+		return jdbcTemplate.query(
+			SEASONS_QUERY,
+			(rs, rowNum) -> new Season(
+				rs.getInt("season"),
+				rs.getInt("tournament_count"),
+				rs.getInt("grand_slam_count"),
+				rs.getInt("tour_finals_count"),
+				rs.getInt("masters_count"),
+				rs.getInt("olympics_count"),
+				rs.getInt("atp500_count"),
+				rs.getInt("atp250_count"),
+				rs.getInt("hard_count"),
+				rs.getInt("clay_count"),
+				rs.getInt("grass_count"),
+				rs.getInt("carpet_count"),
+				rs.getInt("match_count"),
+				rs.getInt("hard_match_count"),
+				rs.getInt("clay_match_count"),
+				rs.getInt("grass_match_count"),
+				rs.getInt("carpet_match_count")
+			)
+		);
+	}
+
+
 	@Cacheable("BestSeasons.Count")
 	public int getBestSeasonCount(PlayerListFilter filter) {
-		return Math.min(MAX_SEASON_COUNT, jdbcTemplate.queryForObject(
+		return Math.min(MAX_BEST_SEASON_COUNT, jdbcTemplate.queryForObject(
 			format(BEST_SEASON_COUNT_QUERY, filter.getCriteria()),
 			filter.getParams().addValue("minPoints", MIN_SEASON_GOAT_POINTS),
 			Integer.class

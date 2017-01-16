@@ -12,9 +12,9 @@ import org.strangeforest.tcb.stats.util.*;
 import com.google.common.collect.*;
 
 @RestController
-public class BestSeasonsResource {
+public class SeasonsResource {
 
-	@Autowired private BestSeasonsService bestSeasonsService;
+	@Autowired private SeasonsService seasonsService;
 
 	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
 		.put("season", "season")
@@ -42,10 +42,10 @@ public class BestSeasonsResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		PlayerListFilter filter = new PlayerListFilter(searchPhrase);
-		int seasonCount = bestSeasonsService.getBestSeasonCount(filter);
+		int seasonCount = seasonsService.getBestSeasonCount(filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : seasonCount;
-		return bestSeasonsService.getBestSeasonsTable(seasonCount, filter, orderBy, pageSize, current);
+		return seasonsService.getBestSeasonsTable(seasonCount, filter, orderBy, pageSize, current);
 	}
 }

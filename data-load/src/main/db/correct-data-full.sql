@@ -50,7 +50,6 @@ WITH ranked_atp_event AS (
 	LEFT JOIN event_participation p USING (tournament_event_id)
 	WHERE e.level = 'B'
 	AND e.season < 1990
-	AND p.participation_points > 0
 )
 UPDATE tournament_event
 SET level = 'A'
