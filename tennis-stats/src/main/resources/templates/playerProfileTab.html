@@ -1,6 +1,18 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"*/-->
 <!--/*@thymesVar id="playerPerf" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
+<script type="text/javascript">
+	$(function() {
+		$("#h2hPlayer").autocomplete({
+			source: "/autocompletePlayer",
+			minLength: 2,
+			select: function (event, ui) {
+				if (ui.item)
+					window.location = "/headToHead?playerId1=[[${player.id}]]&playerId2=" + ui.item.id;
+			}
+		});
+	});
+</script>
 <br/>
 <div class="row">
 	<div class="col-md-3">
@@ -182,6 +194,11 @@
 			</tr>
 			</th:block>
 		</table>
+		<br/>
+		<div class="input-group">
+			<label for="h2hPlayer" class="input-group-addon">H2H with:</label>
+			<input id="h2hPlayer" type="text" class="ui-widget search-field form-control" size="30" placeholder="Search Player"/>
+		</div>
 	</div>
 </div>
 </th:block>
