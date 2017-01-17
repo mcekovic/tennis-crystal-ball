@@ -6,7 +6,7 @@ public class Season extends SurfaceTimelineItem {
 	private final int grandSlamCount;
 	private final int tourFinalsCount;
 	private final int mastersCount;
-	private final int olympics_count;
+	private final int olympicsCount;
 	private final int atp500Count;
 	private final int atp250Count;
 	private final int hardCount;
@@ -14,19 +14,16 @@ public class Season extends SurfaceTimelineItem {
 	private final int grassCount;
 	private final int carpetCount;
 	private final int matchCount;
-	private final int hardMatchCount;
-	private final int clayMatchCount;
-	private final int grassMatchCount;
-	private final int carpetMatchCount;
+	private final PlayerRow bestPlayer;
 
-	public Season(int season, int tournamentCount, int grandSlamCount, int tourFinalsCount, int mastersCount, int olympics_count, int atp500Count, int atp250Count,
-	              int hardCount, int clayCount, int grassCount, int carpetCount, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount) {
+	public Season(int season, int tournamentCount, int grandSlamCount, int tourFinalsCount, int mastersCount, int olympicsCount, int atp500Count, int atp250Count,
+	              int hardCount, int clayCount, int grassCount, int carpetCount, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, PlayerRow bestPlayer) {
 		super(season, matchCount, hardMatchCount, clayMatchCount, grassMatchCount, carpetMatchCount);
 		this.tournamentCount = tournamentCount;
 		this.grandSlamCount = grandSlamCount;
 		this.tourFinalsCount = tourFinalsCount;
 		this.mastersCount = mastersCount;
-		this.olympics_count = olympics_count;
+		this.olympicsCount = olympicsCount;
 		this.atp500Count = atp500Count;
 		this.atp250Count = atp250Count;
 		this.hardCount = hardCount;
@@ -34,10 +31,7 @@ public class Season extends SurfaceTimelineItem {
 		this.grassCount = grassCount;
 		this.carpetCount = carpetCount;
 		this.matchCount = matchCount;
-		this.hardMatchCount = hardMatchCount;
-		this.clayMatchCount = clayMatchCount;
-		this.grassMatchCount = grassMatchCount;
-		this.carpetMatchCount = carpetMatchCount;
+		this.bestPlayer = bestPlayer;
 	}
 
 	public int getTournamentCount() {
@@ -56,8 +50,8 @@ public class Season extends SurfaceTimelineItem {
 		return mastersCount;
 	}
 
-	public int getOlympics_count() {
-		return olympics_count;
+	public int getOlympicsCount() {
+		return olympicsCount;
 	}
 
 	public int getAtp500Count() {
@@ -88,19 +82,7 @@ public class Season extends SurfaceTimelineItem {
 		return matchCount;
 	}
 
-	public int getHardMatchCount() {
-		return hardMatchCount;
-	}
-
-	public int getClayMatchCount() {
-		return clayMatchCount;
-	}
-
-	public int getGrassMatchCount() {
-		return grassMatchCount;
-	}
-
-	public int getCarpetMatchCount() {
-		return carpetMatchCount;
+	public PlayerRow getBestPlayer() {
+		return bestPlayer;
 	}
 }

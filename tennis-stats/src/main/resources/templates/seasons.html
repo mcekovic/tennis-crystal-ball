@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script},  ~{::style})">
+	<title>Seasons</title>
+	<script type="text/javascript">
+		function tournamentCountFormatter(row, params, attr) {
+			return "<a href='/tournamentEvents?season=" + row.season + params + "'>" + row[attr] + "</a>";
+		}
+		$(function() {
+			var $seasonsTable = $("#seasonsTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($seasonsTable, ["hardCount", "clayCount", "grassCount", "carpetCount"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsVisible($seasonsTable, ["bestPlayer"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($seasonsTable, ["surfaces"], deviceGreaterOrEqual(device, "lg"));
+			$seasonsTable.bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/seasonsTable",
+				rowCount: [20, 50, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				},
+				formatters: {
+					"season": function(column, row) {
+						return "<a href='/season?season=" + row.season + "'>" + row.season + "</a>";
+					},
+					"tournamentCount": function(column, row) {
+						return tournamentCountFormatter(row, "", "tournamentCount");
+					},
+					"grandSlamCount": function(column, row) {
+						return tournamentCountFormatter(row, "&level=G", "grandSlamCount");
+					},
+					"surfaces": function(column, row) {
+						return "<div class='progress'>"
+							+ "<div class='progress-bar progress-bar-default' role='progressbar' style='width: " + row.hardPct + "' data-toggle='tooltip' data-placement='top' title='Hard " + row.hardPct + "'>" + row.hardPct + "</div>"
+							+ "<div class='progress-bar progress-bar-warning' role='progressbar' style='width: " + row.carpetPct + "' data-toggle='tooltip' data-placement='top' title='Carpet " + row.carpetPct + "'>" + row.carpetPct + "</div>"
+							+ "<div class='progress-bar progress-bar-danger' role='progressbar' style='width: " + row.clayPct + "' data-toggle='tooltip' data-placement='top' title='Clay " + row.clayPct + "'>" + row.clayPct + "</div>"
+							+ "<div class='progress-bar progress-bar-success' role='progressbar' style='width: " + row.grassPct + "' data-toggle='tooltip' data-placement='top' title='Grass " + row.grassPct + "'>" + row.grassPct + "</div>"
+							+ "</div>";
+					},
+					"player": function(column, row) {
+						return playerCountryFormatter(column, row.bestPlayer);
+					}
+				},
+				labels: {
+					loading: bootgridTemplateLoading,
+					noResults: "No seasons found"
+				},
+				templates: {
+					paginationItem: bootgridTemplatePaginationItem
+				}
+			});
+			setBootgridTitle($("#seasonsTable-header"), $("#seasonsTable-title"));
+			setBootgridTitles($seasonsTable, [
+				{id: "tournamentCount", title: "Tournaments"},
+				{id: "grandSlamCount", title: "Grand Slam tournaments"},
+				{id: "tourFinalsCount", title: "Tour Finals tournaments"},
+				{id: "mastersCount", title: "Masters tournaments"},
+				{id: "olympicsCount", title: "Olympics tournaments"},
+				{id: "atp500Count", title: "ATP 500 tournaments"},
+				{id: "atp250Count", title: "ATP 250 tournaments"},
+				{id: "hardCount", title: "Hard tournaments"},
+				{id: "clayCount", title: "Clay tournaments"},
+				{id: "grassCount", title: "Grass tournaments"},
+				{id: "carpetCount", title: "Carpet tournaments"},
+				{id: "bestPlayer", title: "Player with most GOAT points in the season"}
+			]);
+		});
+	</script>
+	<style>
+		.progress {
+			margin-bottom: 0;
+		}
+	</style>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3 id="seasonsTable-title" class="grid-title">Seasons</h3>
+	<table id="seasonsTable" class="table table-condensed table-hover table-striped">
+		<thead>
+		<tr>
+			<th data-column-id="season" data-formatter="season" data-width="80">Season</th>
+			<th data-column-id="tournamentCount" data-formatter="tournamentCount" data-width="50" data-align="right" data-header-align="right">T</th>
+			<th data-column-id="grandSlamCount" data-formatter="grandSlamCount" data-width="50" data-align="right" data-header-align="right">GS</th>
+			<th data-column-id="tourFinalsCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right">TF</th>
+			<th data-column-id="mastersCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right">M</th>
+			<th data-column-id="olympicsCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right">O</th>
+			<th data-column-id="atp500Count" data-type="numeric" data-width="50" data-align="right" data-header-align="right">500</th>
+			<th data-column-id="atp250Count" data-type="numeric" data-width="50" data-align="right" data-header-align="right">250</th>
+			<th data-column-id="hardCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-H">H</th>
+			<th data-column-id="clayCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-C">C</th>
+			<th data-column-id="grassCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-G">G</th>
+			<th data-column-id="carpetCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-P">P</th>
+			<th data-column-id="matchCount" data-type="numeric" data-width="90" data-align="right" data-header-align="right">Matches</th>
+			<th data-column-id="surfaces" data-formatter="surfaces" data-sortable="false" data-width="150" data-align="center" data-header-align="center">Surfaces</th>
+			<th data-column-id="bestPlayer" data-formatter="player" data-sortable="false" data-width="150">Best Player</th>
+		</tr>
+		</thead>
+	</table>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>
