@@ -34,6 +34,33 @@
 					"grandSlamCount": function(column, row) {
 						return tournamentCountFormatter(row, "&level=G", "grandSlamCount");
 					},
+					"tourFinalsCount": function(column, row) {
+						return tournamentCountFormatter(row, "&level=F", "tourFinalsCount");
+					},
+					"mastersCount": function(column, row) {
+						return tournamentCountFormatter(row, "&level=M", "mastersCount");
+					},
+					"olympicsCount": function(column, row) {
+						return tournamentCountFormatter(row, "&level=O", "olympicsCount");
+					},
+					"atp500Count": function(column, row) {
+						return tournamentCountFormatter(row, "&level=A", "atp500Count");
+					},
+					"atp250Count": function(column, row) {
+						return tournamentCountFormatter(row, "&level=B", "atp250Count");
+					},
+					"hardCount": function(column, row) {
+						return tournamentCountFormatter(row, "&surface=H", "hardCount");
+					},
+					"clayCount": function(column, row) {
+						return tournamentCountFormatter(row, "&surface=C", "clayCount");
+					},
+					"grassCount": function(column, row) {
+						return tournamentCountFormatter(row, "&surface=G", "grassCount");
+					},
+					"carpetCount": function(column, row) {
+						return tournamentCountFormatter(row, "&surface=P", "carpetCount");
+					},
 					"surfaces": function(column, row) {
 						return "<div class='progress'>"
 							+ "<div class='progress-bar progress-bar-default' role='progressbar' style='width: " + row.hardPct + "' data-toggle='tooltip' data-placement='top' title='Hard " + row.hardPct + "'>" + row.hardPct + "</div>"
@@ -86,17 +113,17 @@
 			<th data-column-id="season" data-formatter="season" data-width="80">Season</th>
 			<th data-column-id="tournamentCount" data-formatter="tournamentCount" data-width="50" data-align="right" data-header-align="right">T</th>
 			<th data-column-id="grandSlamCount" data-formatter="grandSlamCount" data-width="50" data-align="right" data-header-align="right">GS</th>
-			<th data-column-id="tourFinalsCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right">TF</th>
-			<th data-column-id="mastersCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right">M</th>
-			<th data-column-id="olympicsCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right">O</th>
-			<th data-column-id="atp500Count" data-type="numeric" data-width="50" data-align="right" data-header-align="right">500</th>
-			<th data-column-id="atp250Count" data-type="numeric" data-width="50" data-align="right" data-header-align="right">250</th>
-			<th data-column-id="hardCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-H">H</th>
-			<th data-column-id="clayCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-C">C</th>
-			<th data-column-id="grassCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-G">G</th>
-			<th data-column-id="carpetCount" data-type="numeric" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-P">P</th>
+			<th data-column-id="tourFinalsCount" data-formatter="tourFinalsCount" data-width="50" data-align="right" data-header-align="right">TF</th>
+			<th data-column-id="mastersCount" data-formatter="mastersCount" data-width="50" data-align="right" data-header-align="right">M</th>
+			<th data-column-id="olympicsCount" data-formatter="olympicsCount" data-width="50" data-align="right" data-header-align="right">O</th>
+			<th data-column-id="atp500Count" data-formatter="atp500Count" data-width="50" data-align="right" data-header-align="right">500</th>
+			<th data-column-id="atp250Count" data-formatter="atp250Count" data-width="50" data-align="right" data-header-align="right">250</th>
+			<th data-column-id="hardCount" data-formatter="hardCount" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-H">H</th>
+			<th data-column-id="clayCount" data-formatter="clayCount" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-C">C</th>
+			<th data-column-id="grassCount" data-formatter="grassCount" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-G">G</th>
+			<th data-column-id="carpetCount" data-formatter="carpetCount" data-width="50" data-align="right" data-header-align="right" data-header-css-class="bg-surface-P">P</th>
 			<th data-column-id="matchCount" data-type="numeric" data-width="90" data-align="right" data-header-align="right">Matches</th>
-			<th data-column-id="surfaces" data-formatter="surfaces" data-sortable="false" data-width="150" data-align="center" data-header-align="center">Surfaces</th>
+			<th data-column-id="surfaces" data-formatter="surfaces" data-sortable="false" data-width="200" data-align="center" data-header-align="center">Surfaces</th>
 			<th data-column-id="bestPlayer" data-formatter="player" data-sortable="false" data-width="150">Best Player</th>
 		</tr>
 		</thead>
