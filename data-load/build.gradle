@@ -31,29 +31,33 @@ configurations {
 	compile.exclude group: 'eu.bitwalker'
 }
 
-task quickDeployToOpenShift << {
-	def version = project.property('version')
-	def srcPath = 'build/libs'
-	def destPath = "app-root/data/data-load/lib"
-	ssh.run {
-		session(remotes.openShift) {
-			put from: "${srcPath}/data-load-${version}.jar", into: destPath
-			put from: "../crystal-ball/${srcPath}/crystal-ball-${version}.jar", into: destPath
+task quickDeployToOpenShift {
+	doLast {
+		def version = project.property('version')
+		def srcPath = 'build/libs'
+		def destPath = "app-root/data/data-load/lib"
+		ssh.run {
+			session(remotes.openShift) {
+				put from: "${srcPath}/data-load-${version}.jar", into: destPath
+				put from: "../crystal-ball/${srcPath}/crystal-ball-${version}.jar", into: destPath
+			}
 		}
 	}
 }
 
-task fullDeployToOpenShift << {
-	def version = project.property('version')
-	def dataLoad = "data-load-${version}"
-	def dataLoadDist = "${dataLoad}.tar"
-	def srcPath = 'build/distributions'
-	def destPath = 'app-root/data'
-	ssh.run {
-		session(remotes.openShift) {
-			execute "rm -rf ${destPath}/data-load"
-			put from: "${srcPath}/${dataLoadDist}", into: destPath
-			execute "cd ${destPath}; tar -xvf ${dataLoadDist}; rm ${dataLoadDist}; mv ${dataLoad} data-load"
+task fullDeployToOpenShift {
+	doLast {
+		def version = project.property('version')
+		def dataLoad = "data-load-${version}"
+		def dataLoadDist = "${dataLoad}.tar"
+		def srcPath = 'build/distributions'
+		def destPath = 'app-root/data'
+		ssh.run {
+			session(remotes.openShift) {
+				execute "rm -rf ${destPath}/data-load"
+				put from: "${srcPath}/${dataLoadDist}", into: destPath
+				execute "cd ${destPath}; tar -xvf ${dataLoadDist}; rm ${dataLoadDist}; mv ${dataLoad} data-load"
+			}
 		}
 	}
 }
