@@ -8,7 +8,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 
 ## Features
 
-- 'GOAT' List - Best players of Open Era ranked by 'GOAT' Points
+- 'GOAT' List - Best players of Open Era ranked by 'GOAT' points
 - Player Profile - Player information, tournament results, matches, timeline, rivalries, ranking, performance, statistics and 'GOAT' points breakdown
 - Timeline - Dominance ('GOAT' points distribution among top players and seasons), Grand Slam, Tour Finals, Masters, Olympics, Davis Cup, World Team Cup and Surface
 - Head-to-Head - Head-to-head between two players with H2H matches, performance and statistics comparision and Hypothetical Matchup prediction based on neural network algorithm
@@ -22,7 +22,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Statistics Leaders - Find statistics leaders in different statistics categories, including dominance and break points ratios
 - Statistics Charts - Statistics charts for various statistics categories, including dominance and break points ratios
 - Records Book - Various match, tournament result and ranking records, famous and infamous (best player that never...)
-- Seasons Browser - Browse seasons and check season tournaments, records, rankings, performance, statistics and 'GOAT' Points distribution among top players</li>
+- Seasons Browser - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players</li>
 - Best Seasons - Find which are the best seasons of Open Era based on 'GOAT' points
 - Tournaments Browser - Browse all Open Era tournaments, see tournament draw, statistics, historical winners and records
 - Live Scores - Live Scores integration
