@@ -1,5 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 	<script type="text/javascript">
 		$(function() {
@@ -9,9 +9,9 @@
 					method: "GET",
 					cache: false
 				},
-				url: "/statsLeadersTable?tournamentEventId=[[${tournamentEventId}]]",
+				url: "/statsLeadersTable?season=[[${season}]]",
 				requestHandler: function (request) {
-					request.category = $("#category").val();
+					request.category = $("#statsCategory").val();
 					return request;
 				},
 				rowCount: [10, 20, 50, -1],
@@ -32,27 +32,27 @@
 				}
 			});
 			var $statsLeadersTableHeader = $("#statsLeadersTable-header");
-			$statsLeadersTableHeader.find("div.search").before($("#categoryDiv").remove());
+			$statsLeadersTableHeader.find("div.search").before($("#statsCategoryDiv").remove());
 			setBootgridTitle($statsLeadersTableHeader, $("#statsLeadersTable-title"));
-			categoryChanged();
+			statsCategoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
-		function categoryChanged() {
-			var $category = $("#category");
+		function statsCategoryChanged() {
+			var $category = $("#statsCategory");
 			$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
-			var url = "/statsLeadersMinEntries?category=" + $category.val() + "&tournamentEventId=[[${tournamentEventId}]]";
+			var url = "/statsLeadersMinEntries?category=" + $category.val() + "&season=[[${season}]]";
 			$.get(url, function (data) {
 				$("#minEntries").html(data);
 			});
 		}
 		function reloadStatsLeaders() {
-			categoryChanged();
+			statsCategoryChanged();
 			$("#statsLeadersTable").bootgrid("reload");
 		}
 	</script>
 	<h3 id="statsLeadersTable-title" class="grid-title">Statistics Leaders</h3>
-	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">
-		<select id="category" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+	<div id="statsCategoryDiv" class="btn-group" style="margin-right: 20px">
+		<select id="statsCategory" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
 			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
 				<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
 			</optgroup>

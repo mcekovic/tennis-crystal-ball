@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.util.*;
 import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -7,6 +8,8 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
@@ -59,6 +62,21 @@ public class SeasonsService {
 		"INNER JOIN player_season_ranked ps ON ps.season = t.season AND ps.rank = 1\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"ORDER BY %1$s OFFSET :offset";
+
+	private static final String SEASON_RECORD_QUERY =
+		"WITH record_results AS (\n" +
+		"  SELECT player_id, count(result) AS count,\n" +
+		"    rank() OVER (ORDER BY count(result) DESC) AS rank, rank() OVER (ORDER BY count(result) DESC, min(e.level)) AS order\n" +
+		"  FROM player_tournament_event_result r\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  WHERE e.season = :season AND r.result >= :result::tournament_event_result\n" +
+		"  GROUP BY player_id\n" +
+		")\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.count\n" +
+		"FROM record_results r\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"WHERE r.rank <= coalesce((SELECT max(r2.rank) FROM record_results r2 WHERE r2.order = :maxPlayers), :maxPlayers)\n" +
+		"ORDER BY r.order, p.goat_points DESC, p.name";
 
 	private static final String BEST_SEASON_COUNT_QUERY = //language=SQL
 		"SELECT count(s.season) AS season_count FROM player_season_goat_points s\n" +
@@ -141,6 +159,23 @@ public class SeasonsService {
 		);
 		table.setTotal(offset + seasons.get());
 		return table;
+	}
+
+	public List<RecordDetailRow> getSeasonRecord(int season, String result, int maxPlayers) {
+		return jdbcTemplate.query(
+			SEASON_RECORD_QUERY,
+			params("season", season)
+				.addValue("result", result)
+				.addValue("maxPlayers", maxPlayers),
+			(rs, rowNum) -> new RecordDetailRow(
+				rs.getInt("rank"),
+				rs.getInt("player_id"),
+				rs.getString("name"),
+				rs.getString("country_id"),
+				rs.getBoolean("active"),
+				new IntegerRecordDetail(rs.getInt("count"))
+			)
+		);
 	}
 
 

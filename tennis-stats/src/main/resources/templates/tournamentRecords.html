@@ -6,16 +6,16 @@
 	<!--/*@thymesVar id="recordAppearances" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
 	<div class="row">
 		<div class="col-md-3">
-			<th:block th:include="fragments/tournamentRecord :: tournamentRecord('Titles', ${recordTitles})"/>
+			<th:block th:include="fragments/record :: record('Titles', ${recordTitles})"/>
 		</div>
 		<div class="col-md-3">
-			<th:block th:include="fragments/tournamentRecord :: tournamentRecord('Finals', ${recordFinals})"/>
+			<th:block th:include="fragments/record :: record('Finals', ${recordFinals})"/>
 		</div>
 		<div class="col-md-3">
-			<th:block th:include="fragments/tournamentRecord :: tournamentRecord('Semi-Finals', ${recordSemiFinals})"/>
+			<th:block th:include="fragments/record :: record('Semi-Finals', ${recordSemiFinals})"/>
 		</div>
 		<div class="col-md-3">
-			<th:block th:include="fragments/tournamentRecord :: tournamentRecord('Appearances', ${recordAppearances})"/>
+			<th:block th:include="fragments/record :: record('Appearances', ${recordAppearances})"/>
 		</div>
 	</div>
 </th:block>

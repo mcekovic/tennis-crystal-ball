@@ -83,8 +83,8 @@
 	</div>
 	<ul id="tournamentPills" class="nav nav-pills">
 		<li class="active"><a data-toggle="pill" href="#events">Events</a></li>
-		<li><a data-toggle="pill" href="#records" data-url="/tournamentRecords?tournamentId=" th:attrappend="data-url=${tournament.id}">Records</a></li>
-		<li><a data-toggle="pill" href="#statistics" data-url="/tournamentStats?tournamentId=" th:attrappend="data-url=${tournament.id}">Statistics</a></li>
+		<li><a data-toggle="pill" href="#records" th:data-url="'/tournamentRecords?tournamentId=' + ${tournament.id}">Records</a></li>
+		<li><a data-toggle="pill" href="#statistics" th:data-url="'/tournamentStats?tournamentId=' + ${tournament.id}">Statistics</a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="events" class="tab-pane fade in active">

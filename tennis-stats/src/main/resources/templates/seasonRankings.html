@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
-<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
-<!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
-<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
-	<title>Rankings Table</title>
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 	<script type="text/javascript">
 		$(function() {
 			var $rankingsTable = $("#rankingsTable");
@@ -18,19 +13,16 @@
 					method: "GET",
 					cache: false
 				},
-				url: "/rankingsTableTable",
+				url: "/rankingsTableTable?season=[[${season}]]",
 				requestHandler: function (request) {
 					request.rankType = $("#rankType").val();
-					var season = $("#season").val();
-					if (season != "")
-						request.season = season;
 					var date = $("#date").val();
 					if (date != "")
 						request.date = date;
 					return request;
 				},
 				sorting: false,
-				rowCount: [20, 50, -1],
+				rowCount: [10, 20, 50, -1],
 				searchSettings: {
 					delay: 300,
 					characters: 2
@@ -56,7 +48,7 @@
 				}
 			});
 			var $rankingsTableHeader = $("#rankingsTable-header");
-			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove()).before($("#seasonDiv").remove()).before($("#dateDiv").remove());
+			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove()).before($("#dateDiv").remove());
 			setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
 			rankTypeChanged();
 			$("[data-toggle='tooltip']").tooltip();
@@ -66,43 +58,27 @@
 			var rankType = $("#rankType").val();
 			$("#rankingsTable").find("th[data-column-id='points'] > a > span.text").html(rankType == "POINTS" ? "Points" : "Elo Rating");
 			$("#eloInfo").css("display", rankType == "ELO_RATING" ? "inline" : "none");
-			seasonChanged();
-		}
-		function seasonChanged() {
-			var season = $("#season").val();
 			var $date = $("#date");
 			$date.find("option").remove();
-			$date.prop("disabled", season == "");
-			if (season != "") {
-				var url = "/seasonRankingDates?rankType=" + $("#rankType").val() + "&season=" + season;
-				$.get(url, function (data) {
-					$date.append("<option value=''>" + (season == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
-					for (var i = 0; i < data.length; i++) {
-						var date = formatDate(data[i]);
-						$date.append("<option value='" + date + "'>" + date + "</option>");
-					}
-				});
-			}
+			var url = "/seasonRankingDates?rankType=" + $("#rankType").val() + "&season=" + [[${season}]];
+			$.get(url, function (data) {
+				$date.append("<option value=''>" + ([[${season}]] == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
+				for (var i = 0; i < data.length; i++) {
+					var date = formatDate(data[i]);
+					$date.append("<option value='" + date + "'>" + date + "</option>");
+				}
+			});
 		}
 		function reloadRankings() {
 			$("#rankingsTable").bootgrid("reload");
 		}
 	</script>
-</head>
-<body class="container">
-	<header th:include="fragments/header :: title"></header>
 	<h3 id="rankingsTable-title" class="grid-title">Rankings Table</h3>
 	<div id="rankTypeDiv" class="btn-group" style="margin-right: 20px">
 		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
-			<option value="POINTS" th:selected="${rankType != null && rankType.name() == 'POINTS'}">ATP Ranking</option>
-			<option value="ELO_RATING" th:selected="${rankType != null && rankType.name() == 'ELO_RATING'}">Elo Ranking</option>
-			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|" th:selected="${rankType != null && rankType.name() == (surface + '_ELO_RATING')}">Hard Elo Ranking</option>
-		</select>
-	</div>
-	<div id="seasonDiv" class="btn-group" style="margin-right: 20px">
-		<select id="season" class="form-control" onchange="seasonChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select season">
-			<option value="">Current</option>
-			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2015" th:text="${aSeason}" th:selected="${aSeason == season}">2015</option>
+			<option value="POINTS">ATP Ranking</option>
+			<option value="ELO_RATING">Elo Ranking</option>
+			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|">Hard Elo Ranking</option>
 		</select>
 	</div>
 	<div id="dateDiv" class="btn-group" style="width: 120px; margin-right: 20px">
@@ -122,8 +98,4 @@
 	<div id="eloInfo" style="display: none">
 		<em><strong>*</strong> <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> considers opponent rating as well, meaning wins over quality opponents are worth more then wins over lesser rated players.<br/>Ultimate Tennis Statistics use sophisticated tennis-customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-popover="#eloRatingPopover">Elo rating formula</a>.</em>
 	</div>
-	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
-	<footer th:include="fragments/footer :: copy"></footer>
-	<div th:include="fragments/aboutElo :: aboutElo"></div>
-</body>
-</html>
+</th:block>

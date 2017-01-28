@@ -80,18 +80,18 @@
 			<th:block th:text="${player.name}">Roger Federer</th:block> <a th:href="${permalink}" th:title="|Permalink to ${player.name} profile|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
 		</h3>
 		<ul id="playerPills" class="nav nav-pills">
-			<li><a id="profilePill" data-toggle="pill" href="#profile" data-url="/playerProfileTab?playerId=" th:attrappend="data-url=${player.id}">Profile</a></li>
-			<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" data-url="/playerTournaments?playerId=" th:attrappend="data-url=${player.id}">Tournaments</a></li>
-			<li><a id="matchesPill" data-toggle="pill" href="#matches" data-url="/playerMatches?playerId=" th:attrappend="data-url=${player.id}">Matches</a></li>
-			<li><a id="timelinePill" data-toggle="pill" href="#timeline" data-url="/playerTimeline?playerId=" th:attrappend="data-url=${player.id}">Timeline</a></li>
-			<li><a id="rivalriesPill" data-toggle="pill" href="#rivalries" data-url="/playerRivalries?playerId=" th:attrappend="data-url=${player.id}">Rivalries</a></li>
-			<li><a id="rankingPill" data-toggle="pill" href="#ranking" data-url="/playerRankings?playerId=" th:attrappend="data-url=${player.id}">Ranking</a></li>
-			<li><a id="performancePill" data-toggle="pill" href="#performance" data-url="/playerPerformance?playerId=" th:attrappend="data-url=${player.id}">Performance</a></li>
-			<li><a id="performanceChartPill" data-toggle="pill" href="#performanceChart" data-url="/playerPerformanceChart?playerId=" th:attrappend="data-url=${player.id}" title="Performance Chart">Perf. Chart</a></li>
-			<li><a id="statisticsPill" data-toggle="pill" href="#statistics" data-url="/playerStatsTab?playerId=" th:attrappend="data-url=${player.id}">Statistics</a></li>
-			<li><a id="statisticsChartPill" data-toggle="pill" href="#statisticsChart" data-url="/playerStatsChart?playerId=" th:attrappend="data-url=${player.id}" title="Statistics Chart">Stats. Chart</a></li>
-			<li><a id="goatPointsPill" data-toggle="pill" href="#goatPoints" data-url="/playerGOATPoints?playerId=" th:attrappend="data-url=${player.id}" title="GOAT Points Breakdown">GOAT Points</a></li>
-			<li><a id="recordsPill" data-toggle="pill" href="#records" data-url="/playerRecords?playerId=" th:attrappend="data-url=${player.id}">Records</a></li>
+			<li><a id="profilePill" data-toggle="pill" href="#profile" th:data-url="'/playerProfileTab?playerId=' + ${player.id}">Profile</a></li>
+			<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" th:data-url="'/playerTournaments?playerId=' + ${player.id}">Tournaments</a></li>
+			<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/playerMatches?playerId=' + ${player.id}">Matches</a></li>
+			<li><a id="timelinePill" data-toggle="pill" href="#timeline" th:data-url="'/playerTimeline?playerId=' + ${player.id}">Timeline</a></li>
+			<li><a id="rivalriesPill" data-toggle="pill" href="#rivalries" th:data-url="'/playerRivalries?playerId=' + ${player.id}">Rivalries</a></li>
+			<li><a id="rankingPill" data-toggle="pill" href="#ranking" th:data-url="'/playerRankings?playerId=' + ${player.id}">Ranking</a></li>
+			<li><a id="performancePill" data-toggle="pill" href="#performance" th:data-url="'/playerPerformance?playerId=' + ${player.id}">Performance</a></li>
+			<li><a id="performanceChartPill" data-toggle="pill" href="#performanceChart" th:data-url="'/playerPerformanceChart?playerId=' + ${player.id}" title="Performance Chart">Perf. Chart</a></li>
+			<li><a id="statisticsPill" data-toggle="pill" href="#statistics" th:data-url="'/playerStatsTab?playerId=' + ${player.id}">Statistics</a></li>
+			<li><a id="statisticsChartPill" data-toggle="pill" href="#statisticsChart" th:data-url="'/playerStatsChart?playerId=' + ${player.id}" title="Statistics Chart">Stats. Chart</a></li>
+			<li><a id="goatPointsPill" data-toggle="pill" href="#goatPoints" th:data-url="'/playerGOATPoints?playerId=' + ${player.id}" title="GOAT Points Breakdown">GOAT Points</a></li>
+			<li><a id="recordsPill" data-toggle="pill" href="#records" th:data-url="'/playerRecords?playerId=' + ${player.id}">Records</a></li>
 		</ul>
 		<div class="tab-content">
 			<div id="profile" class="tab-pane fade"><div class="loading"></div></div>
