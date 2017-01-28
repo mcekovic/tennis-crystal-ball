@@ -33,7 +33,7 @@ public class RecordsService {
 		"WHERE r.rank = 1 AND r.record_id = ANY(?)%1$s";
 
 	private static final String PLAYER_RECORDS_CONDITION = //language=SQL
-		"\n AND EXISTS(SELECT TRUE FROM player_record r2 WHERE r2.record_id = r.record_id AND r2.player_id = ? AND r2.rank = 1)";
+		"\n AND exists(SELECT TRUE FROM player_record r2 WHERE r2.record_id = r.record_id AND r2.player_id = ? AND r2.rank = 1)";
 
 	private static final String RECORD_TABLE_QUERY = //language=SQL
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.detail\n" +

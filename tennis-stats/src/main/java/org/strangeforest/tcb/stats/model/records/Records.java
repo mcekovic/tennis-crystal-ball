@@ -78,6 +78,7 @@ public abstract class Records {
 		register(new MostMatchesCategory(MostMatchesCategory.RecordType.LOST), true);
 		register(new GreatestMatchPctCategory(GreatestMatchPctCategory.RecordType.LOSING), true);
 		register(new GreatestTitlePctCategory(GreatestTitlePctCategory.RecordType.LOSING), true);
+		register(new TournamentFinalsLostButNeverWonCategory(), true);
 		register(new ItemsWinningTitleCategory(ItemsWinningTitleCategory.RecordType.MOST), true);
 		register(new InfamousATPRankingCategory(), true);
 		register(new InfamousEloRankingCategory(), true);

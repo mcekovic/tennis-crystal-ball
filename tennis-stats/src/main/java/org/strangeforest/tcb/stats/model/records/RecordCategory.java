@@ -37,6 +37,7 @@ public abstract class RecordCategory {
 	protected static final String SEMI_FINALS = "result IN ('W', 'F', 'SF')";
 	protected static final String QUARTER_FINALS = "result IN ('W', 'F', 'SF', 'QF')";
 	protected static final String ENTRIES = "result IS NOT NULL";
+	protected static final String MAX_FINALS = "result = 'F'";
 	protected static final String NO_1_RANK = "= 1";
 	protected static final String NO_2_RANK = "= 2";
 	protected static final String TOP_2_RANK = "<= 2";

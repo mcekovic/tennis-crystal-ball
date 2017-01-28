@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.model.records.RecordDomain;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
 import static java.util.Arrays.*;
@@ -36,7 +37,8 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 		return new Record(
 			"BestPlayerThatNeverWon" + domain.id + "Title", "Best Player That Never Won" + prefix(domain.name, " ") + " Title" + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
-			"SELECT player_id, goat_points AS value FROM player_v WHERE goat_points > 0 AND " + titleColumn + " = 0",
+			"SELECT player_id, goat_points AS value FROM player_v\n" +
+			"WHERE goat_points > 0 AND " + titleColumn + " = 0",
 			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,
 			asList(GOAT_POINTS_COLUMN)
 		);
@@ -46,7 +48,8 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 		return new Record(
 			"BestPlayerThatNeverReached" + id + rankType + "Ranking", "Best Player That Never Reached" + prefix(name, " ") + prefix(rankType, " ") + " Ranking",
 			/* language=SQL */
-			"SELECT player_id, goat_points AS value FROM player_v WHERE goat_points > 0 AND " + rankColumn + " > " + bestRank,
+			"SELECT player_id, goat_points AS value FROM player_v\n" +
+			"WHERE goat_points > 0 AND " + rankColumn + " > " + bestRank,
 			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,
 			asList(GOAT_POINTS_COLUMN)
 		);
