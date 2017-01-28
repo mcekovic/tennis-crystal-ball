@@ -360,7 +360,16 @@ SELECT player_id, tournament_id,
 	count(DISTINCT masters_match_id_won) masters_matches_won, count(DISTINCT masters_match_id_lost) masters_matches_lost,
 	count(DISTINCT atp500_match_id_won) atp500_matches_won, count(DISTINCT atp500_match_id_lost) atp500_matches_lost,
 	count(DISTINCT atp250_match_id_won) atp250_matches_won, count(DISTINCT atp250_match_id_lost) atp250_matches_lost,
-	count(DISTINCT davis_cup_match_id_won) davis_cup_matches_won, count(DISTINCT davis_cup_match_id_lost) davis_cup_matches_lost
+	count(DISTINCT davis_cup_match_id_won) davis_cup_matches_won, count(DISTINCT davis_cup_match_id_lost) davis_cup_matches_lost,
+	count(DISTINCT deciding_set_match_id_won) deciding_sets_won, count(DISTINCT deciding_set_match_id_lost) deciding_sets_lost,
+	count(DISTINCT fifth_set_match_id_won) fifth_sets_won, count(DISTINCT fifth_set_match_id_lost) fifth_sets_lost,
+	count(DISTINCT final_match_id_won) finals_won, count(DISTINCT final_match_id_lost) finals_lost,
+	count(DISTINCT vs_no1_match_id_won) vs_no1_won, count(DISTINCT vs_no1_match_id_lost) vs_no1_lost,
+	count(DISTINCT vs_top5_match_id_won) vs_top5_won, count(DISTINCT vs_top5_match_id_lost) vs_top5_lost,
+	count(DISTINCT vs_top10_match_id_won) vs_top10_won, count(DISTINCT vs_top10_match_id_lost) vs_top10_lost,
+	count(DISTINCT after_winning_first_set_match_id_won) after_winning_first_set_won, count(DISTINCT after_winning_first_set_match_id_lost) after_winning_first_set_lost,
+	count(DISTINCT after_losing_first_set_match_id_won) after_losing_first_set_won, count(DISTINCT after_losing_first_set_match_id_lost) after_losing_first_set_lost,
+	count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost
 FROM player_match_performance_v
 GROUP BY player_id, tournament_id;
 

@@ -1,5 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.PerformanceCategory>>"*/-->
 	<script type="text/javascript">
 		$(function() {
@@ -13,7 +13,7 @@
 					method: "GET",
 					cache: false
 				},
-				url: "/topPerformersTable?season=[[${season}]]",
+				url: "/topPerformersTable?tournamentId=[[${tournamentId}]]",
 				requestHandler: function (request) {
 					request.category = $("#performanceCategory").val();
 					return request;
@@ -44,7 +44,7 @@
 		function performanceCategoryChanged() {
 			var $category = $("#performanceCategory");
 			$("#topPerformersTable").find("th[data-column-id='wonLostPct'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
-			var url = "/topPerformersMinEntries?category=" + $category.val() + "&season=[[${season}]]";
+			var url = "/topPerformersMinEntries?category=" + $category.val() + "&tournamentId=[[${tournamentId}]]";
 			$.get(url, function (data) {
 				$("#performanceMinEntries").html(data);
 			});
@@ -57,8 +57,9 @@
 	<h3 id="topPerformersTable-title" class="grid-title">Top Performers</h3>
 	<div id="performanceCategoryDiv" class="btn-group" style="margin-right: 20px">
 		<select id="performanceCategory" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
+			<option value="matches">Overall Matches</option>
 			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
-				<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="matches" th:class="${category.cssClass}" th:text="${category.title}">Overall Matches</option>
+				<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="matches" th:class="${category.cssClass}" th:text="${category.title}">Overall</option>
 			</optgroup>
 		</select>
 	</div>

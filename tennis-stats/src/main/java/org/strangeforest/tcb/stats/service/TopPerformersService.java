@@ -11,16 +11,25 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
+import com.google.common.collect.*;
+
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 @Service
 public class TopPerformersService {
 
+	@Autowired private TournamentService tournamentService;
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int MAX_PLAYER_COUNT          = 1000;
 	private static final int MIN_ENTRIES_SEASON_FACTOR =   10;
+	private static final Map<Range<Integer>, Integer> MIN_ENTRIES_TOURNAMENT_FACTOR = ImmutableMap.<Range<Integer>, Integer>builder()
+		.put(Range.closed(1, 2), 100)
+		.put(Range.closed(3, 5), 50)
+		.put(Range.closed(6, 9), 25)
+		.put(Range.atLeast(5), 20)
+	.build();
 
 	private static final String SEASONS_QUERY =
 		"SELECT DISTINCT season\n" +
@@ -90,7 +99,12 @@ public class TopPerformersService {
 	}
 
 	private static String perfTableName(StatsPlayerListFilter filter) {
-		return filter.hasSeason() ? "player_season_performance" : "player_performance";
+		if (filter.hasSeason())
+			return "player_season_performance";
+		else if (filter.hasTournament())
+			return "player_tournament_performance";
+		else
+			return "player_performance";
 	}
 
 	private static WonLost mapWonLost(ResultSet rs) throws SQLException {
@@ -105,6 +119,12 @@ public class TopPerformersService {
 			if (filter.getSeason() == today.getYear() && today.getMonth().compareTo(Month.SEPTEMBER) <= 0)
 				minEntries /= 12.0 / today.getMonth().getValue();
 		}
-		return Math.max( minEntries, 1);
+		if (filter.hasTournament())
+			minEntries /= getMinEntriesTournamentFactor(tournamentService.getTournamentEventCount(filter.getTournamentId()));
+		return Math.max(minEntries, 2);
+	}
+
+	private int getMinEntriesTournamentFactor(int eventCount) {
+		return MIN_ENTRIES_TOURNAMENT_FACTOR.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().get().getValue();
 	}
 }

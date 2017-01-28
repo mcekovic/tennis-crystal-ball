@@ -83,12 +83,7 @@ public final class StatsCategory {
 	private static void addCategory(String categoryClass, String name, String expression, StatsCategory.Type type, boolean needsStats, String title, String descriptionId) {
 		StatsCategory category = new StatsCategory(name, expression, type, needsStats, title, descriptionId);
 		CATEGORIES.put(name, category);
-		List<StatsCategory> categoryList = CATEGORY_CLASSES.get(categoryClass);
-		if (categoryList == null) {
-			categoryList = new ArrayList<>();
-			CATEGORY_CLASSES.put(categoryClass, categoryList);
-		}
-		categoryList.add(category);
+		CATEGORY_CLASSES.computeIfAbsent(categoryClass, catCls -> new ArrayList<>()).add(category);
 	}
 
 	public static StatsCategory get(String category) {

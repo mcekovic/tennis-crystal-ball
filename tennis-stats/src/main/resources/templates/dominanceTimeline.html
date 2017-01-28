@@ -80,7 +80,7 @@
 			width: 20px;
 			height: 25px;
 		}
-		span.season {
+		.vseason {
 			transform: rotate(-90deg);
 			display: block;
 			width: 20px;
@@ -121,14 +121,14 @@
 		<tr class="season">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" th:title="'For all players with minimum ' + ${minGOATPoints} + ' GOAT points: SUM(player season GOAT points * player GOAT points) / 1000'">Season Dominance Ratio</th>
 			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
-				<span th:text="${#numbers.formatDecimal(season.dominanceRatio, 1, 1)}" class="season">66.7</span>
+				<span th:text="${#numbers.formatDecimal(season.dominanceRatio, 1, 1)}" class="vseason">66.7</span>
 			</th>
 		</tr>
 		<tr class="season" style="border-bottom: 3px solid lightgray">
 			<th style="padding: 1px 4px">Player</th>
 			<th style="padding: 1px 4px">Born</th>
 			<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
-			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><span th:text="${season}" class="season">2015</span></th>
+			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="'/season?season=' + ${season}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -150,7 +150,7 @@
 			<th style="padding: 1px 4px">Player</th>
 			<th style="padding: 1px 4px">Born</th>
 			<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
-			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><span th:text="${season}" class="season">2015</span></th>
+			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="'/season?season=' + ${season}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
 		</tr>
 		</thead>
 	</table>

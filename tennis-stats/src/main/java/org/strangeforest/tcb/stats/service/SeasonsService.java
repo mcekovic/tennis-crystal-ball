@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
@@ -65,18 +66,30 @@ public class SeasonsService {
 
 	private static final String SEASON_RECORD_QUERY =
 		"WITH record_results AS (\n" +
-		"  SELECT player_id, count(result) AS count,\n" +
+		"  SELECT player_id, count(result) AS value,\n" +
 		"    rank() OVER (ORDER BY count(result) DESC) AS rank, rank() OVER (ORDER BY count(result) DESC, min(e.level)) AS order\n" +
 		"  FROM player_tournament_event_result r\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE e.season = :season AND r.result >= :result::tournament_event_result\n" +
 		"  GROUP BY player_id\n" +
 		")\n" +
-		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.count\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.value\n" +
 		"FROM record_results r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.rank <= coalesce((SELECT max(r2.rank) FROM record_results r2 WHERE r2.order = :maxPlayers), :maxPlayers)\n" +
 		"ORDER BY r.order, p.goat_points DESC, p.name";
+
+	private static final String SEASON_GOAT_POINTS_QUERY = //language=SQL
+		"WITH goat_points AS (\n" +
+		"  SELECT player_id, %1$sgoat_points AS value, rank() OVER (ORDER BY %1$sgoat_points DESC) AS rank\n" +
+		"  FROM player_season_goat_points\n" +
+		"  WHERE season = :season AND %1$sgoat_points > 0\n" +
+		")\n" +
+		"SELECT g.rank, player_id, p.name, p.country_id, p.active, g.value\n" +
+		"FROM goat_points g\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"WHERE g.rank <= :maxPlayers\n" +
+		"ORDER BY g.value DESC, p.goat_points DESC, p.name";
 
 	private static final String BEST_SEASON_COUNT_QUERY = //language=SQL
 		"SELECT count(s.season) AS season_count FROM player_season_goat_points s\n" +
@@ -167,14 +180,27 @@ public class SeasonsService {
 			params("season", season)
 				.addValue("result", result)
 				.addValue("maxPlayers", maxPlayers),
-			(rs, rowNum) -> new RecordDetailRow(
-				rs.getInt("rank"),
-				rs.getInt("player_id"),
-				rs.getString("name"),
-				rs.getString("country_id"),
-				rs.getBoolean("active"),
-				new IntegerRecordDetail(rs.getInt("count"))
-			)
+			this::recordDetailRowMapper
+		);
+	}
+
+	public List<RecordDetailRow> getSeasonGOATPoints(int season, String pointsColumnPrefix, int maxPlayers) {
+		return jdbcTemplate.query(
+			format(SEASON_GOAT_POINTS_QUERY, pointsColumnPrefix),
+			params("season", season)
+				.addValue("maxPlayers", maxPlayers),
+			this::recordDetailRowMapper
+		);
+	}
+
+	private RecordDetailRow recordDetailRowMapper(ResultSet rs, int rowNum) throws SQLException {
+		return new RecordDetailRow(
+			rs.getInt("rank"),
+			rs.getInt("player_id"),
+			rs.getString("name"),
+			rs.getString("country_id"),
+			rs.getBoolean("active"),
+			new IntegerRecordDetail(rs.getInt("value"))
 		);
 	}
 

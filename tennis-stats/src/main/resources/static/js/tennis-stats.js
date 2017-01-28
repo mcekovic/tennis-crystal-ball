@@ -293,6 +293,10 @@ function formatTournamentEvent(id, level, name, extId) {
 	return (link ? "<a href='/tournamentEvent?tournamentEventId=" + id + "'" : "<div") + " class='label label-" + level + "' title='" + levelName(level) + (extId ? " - " +  extId : "") +"'>" + name + (link ? "</a>" : "</div>");
 }
 
+function participationFormatter(column, row) {
+	return row.participationPct.toFixed(1) + "%";
+}
+
 // Match Formatter
 function matchFormatter(column, row) {
 	return formatMatchPlayer(row.winner) + " " + (row.outcome != "ABD" ? "d." : "vs") + " " + formatMatchPlayer(row.loser);

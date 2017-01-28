@@ -43,9 +43,7 @@
 					"event": tournamentEventFormatterExtId,
 					"level": levelFormatter,
 					"surface": surfaceFormatter,
-					"participationPct": function(column, row) {
-						return row.participationPct.toFixed(1) + "%";
-					},
+					"participationPct": participationFormatter,
 					"match": finalFormatter
 				},
 				labels: {

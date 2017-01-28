@@ -16,13 +16,13 @@
 				url: "/rankingsTableTable?season=[[${season}]]",
 				requestHandler: function (request) {
 					request.rankType = $("#rankType").val();
-					var date = $("#date").val();
+					var date = $("#rankDate").val();
 					if (date != "")
 						request.date = date;
 					return request;
 				},
 				sorting: false,
-				rowCount: [10, 20, 50, -1],
+				rowCount: [15, 20, 50, -1],
 				searchSettings: {
 					delay: 300,
 					characters: 2
@@ -48,7 +48,7 @@
 				}
 			});
 			var $rankingsTableHeader = $("#rankingsTable-header");
-			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove()).before($("#dateDiv").remove());
+			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove()).before($("#rankDateDiv").remove());
 			setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
 			rankTypeChanged();
 			$("[data-toggle='tooltip']").tooltip();
@@ -58,7 +58,7 @@
 			var rankType = $("#rankType").val();
 			$("#rankingsTable").find("th[data-column-id='points'] > a > span.text").html(rankType == "POINTS" ? "Points" : "Elo Rating");
 			$("#eloInfo").css("display", rankType == "ELO_RATING" ? "inline" : "none");
-			var $date = $("#date");
+			var $date = $("#rankDate");
 			$date.find("option").remove();
 			var url = "/seasonRankingDates?rankType=" + $("#rankType").val() + "&season=" + [[${season}]];
 			$.get(url, function (data) {
@@ -81,8 +81,8 @@
 			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|">Hard Elo Ranking</option>
 		</select>
 	</div>
-	<div id="dateDiv" class="btn-group" style="width: 120px; margin-right: 20px">
-		<select id="date" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
+	<div id="rankDateDiv" class="btn-group" style="width: 120px; margin-right: 20px">
+		<select id="rankDate" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
 	</div>
 	<table id="rankingsTable" class="table table-condensed table-hover table-striped">
 		<thead>

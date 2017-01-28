@@ -104,6 +104,16 @@ public class TournamentController extends PageController {
 		return new ModelAndView("tournamentRecords", modelMap);
 	}
 
+	@GetMapping("/tournamentPerformance")
+	public ModelAndView tournamentPerformance(
+		@RequestParam(name = "tournamentId") int tournamentId
+	) {
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("tournamentId", tournamentId);
+		modelMap.addAttribute("categoryClasses", PerformanceCategory.getPressureSituationsCategoryClasses());
+		return new ModelAndView("tournamentPerformance", modelMap);
+	}
+
 	@GetMapping("/tournamentStats")
 	public ModelAndView tournamentStats(
 		@RequestParam(name = "tournamentId") int tournamentId

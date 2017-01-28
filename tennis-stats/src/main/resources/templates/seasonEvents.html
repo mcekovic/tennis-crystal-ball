@@ -1,0 +1,103 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="level" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+	<script type="text/javascript">
+		$(function() {
+			var $seasonEventsTable = $("#seasonEventsTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($seasonEventsTable, ["playerCount", "participationPoints"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($seasonEventsTable, ["final"], deviceGreaterOrEqual(device, "md"));
+			if (device != "lg")
+				setBootgridColumnsWidths($seasonEventsTable, ["name"], [175]);
+			if (device == "md")
+				setBootgridColumnsWidths($seasonEventsTable, ["final"], [400]);
+			$seasonEventsTable.bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/tournamentEventsTable?season=[[${season}]]",
+				requestHandler: function (request) {
+					request.level = $("#eventsLevel").val();
+					request.surface = $("#eventsSurface").val();
+					return request;
+				},
+				rowCount: [15, 20, 50, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				},
+				formatters: {
+					"date": dateFormatter,
+					"event": tournamentEventFormatterExtId,
+					"level": levelFormatter,
+					"surface": surfaceFormatter,
+					"participationPct": participationFormatter,
+					"match": finalFormatter
+				},
+				labels: {
+					loading: bootgridTemplateLoading,
+					noResults: "No tournaments found"
+				},
+				templates: {
+					paginationItem: bootgridTemplatePaginationItem
+				}
+			});
+			var $seasonEventsTableHeader = $("#seasonEventsTable-header");
+			$seasonEventsTableHeader.find("div.search").before($("#eventsLevelDiv").remove()).before($("#eventsSurfaceDiv").remove());
+			$seasonEventsTableHeader.find("div.actions").after($("#eventsClearDiv").remove());
+			setBootgridTitle($seasonEventsTableHeader, $("#seasonEventsTable-title"));
+			setBootgridTitles($seasonEventsTable, [
+				{id: "playerCount", title: "Players"},
+				{id: "participationPoints", title: "[[#{events.participationPoints.title}]]"},
+				{id: "participationPct", title: "[[#{events.participationPercentage.title}]]"}
+			]);
+			$("[data-toggle='tooltip']").tooltip();
+		});
+		function reloadSeasonEvents() {
+			$("#seasonEventsTable").bootgrid("reload");
+		}
+		function clearSeasonEventsFilter() {
+			$("#eventsLevel").val("");
+			$("#eventsSurface").val("");
+			$("#seasonEventsTable").bootgrid("search", "");
+			reloadSeasonEvents();
+		}
+	</script>
+	<h3 id="seasonEventsTable-title" class="grid-title" th:text="|Season ${season} Events|">Season 2000 Events</h3>
+	<div id="eventsLevelDiv" class="btn-group" style="margin-right: 20px">
+		<select id="eventsLevel" class="form-control" onchange="reloadSeasonEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+			<option value="">All levels</option>
+			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
+		</select>
+	</div>
+	<div id="eventsSurfaceDiv" class="btn-group" style="margin-right: 20px">
+		<select id="eventsSurface" class="form-control" onchange="reloadSeasonEvents()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+			<option value="">All surfaces</option>
+			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
+		</select>
+	</div>
+	<div id="eventsClearDiv" class="btn-group" style="margin-left: 20px">
+		<button type="button" class="btn btn-default" onclick="clearSeasonEventsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+			<span class="glyphicon glyphicon-remove"></span> Clear
+		</button>
+	</div>
+	<table id="seasonEventsTable" class="table table-condensed table-hover table-striped">
+		<thead>
+		<tr>
+			<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
+			<th data-column-id="name" data-formatter="event" data-width="200">Name</th>
+			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
+			<th data-column-id="draw" data-width="65">Draw</th>
+			<th data-column-id="playerCount" data-width="55">Pls.</th>
+			<th data-column-id="participationPoints" data-width="70">P. Pts.</th>
+			<th data-column-id="participationPct" data-formatter="participationPct" data-width="70">P. Pct.</th>
+			<th data-column-id="final" data-formatter="match" data-sortable="false" data-width="500">Final</th>
+		</tr>
+		</thead>
+	</table>
+</th:block>

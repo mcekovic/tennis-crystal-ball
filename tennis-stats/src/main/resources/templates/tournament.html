@@ -22,15 +22,13 @@
 					cache: false
 				},
 				url: "/tournamentEventsTable?tournamentId=[[${tournament.id}]]",
-				rowCount: [20, 50, -1],
+				rowCount: [15, 20, 50, -1],
 				formatters: {
 					"date": dateFormatter,
 					"event": tournamentEventFormatterExtId,
 					"level": levelFormatter,
 					"surface": surfaceFormatter,
-					"participationPct": function(column, row) {
-						return row.participationPct.toFixed(1) + "%";
-					},
+					"participationPct": participationFormatter,
 					"match": finalFormatter
 				},
 				labels: {
@@ -84,6 +82,7 @@
 	<ul id="tournamentPills" class="nav nav-pills">
 		<li class="active"><a data-toggle="pill" href="#events">Events</a></li>
 		<li><a data-toggle="pill" href="#records" th:data-url="'/tournamentRecords?tournamentId=' + ${tournament.id}">Records</a></li>
+		<li><a data-toggle="pill" href="#performance" th:data-url="'/tournamentPerformance?tournamentId=' + ${tournament.id}">Performance<sup class="new-feature">&nbsp;New!</sup></a></li>
 		<li><a data-toggle="pill" href="#statistics" th:data-url="'/tournamentStats?tournamentId=' + ${tournament.id}">Statistics</a></li>
 	</ul>
 	<div class="tab-content">
@@ -105,6 +104,7 @@
 			</table>
 		</div>
 		<div id="records" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="performance" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
 	</div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>

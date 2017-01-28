@@ -3,7 +3,10 @@
 	<!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 	<script type="text/javascript">
 		$(function() {
-			$("#statsLeadersTable").bootgrid({
+			var $statsLeadersTable = $("#statsLeadersTable");
+			var device = detectDevice();
+			setBootgridColumnsWidths($statsLeadersTable, ["name"], [device == "xs" ? 200 : (device == "sm" ? 250 : (device == "md" ? 300 : 400))]);
+			$statsLeadersTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
 					method: "GET",
@@ -14,7 +17,7 @@
 					request.category = $("#category").val();
 					return request;
 				},
-				rowCount: [10, 20, 50, -1],
+				rowCount: [15, 20, 50, -1],
 				searchSettings: {
 					delay: 300,
 					characters: 2
@@ -63,8 +66,8 @@
 		<tr>
 			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
 			<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="85">Country</th>
-			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="200">Name</th>
-			<th data-column-id="value" data-order="desc" data-width="120" data-align="right" data-header-align="right">Value</th>
+			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="220">Name</th>
+			<th data-column-id="value" data-order="desc" data-width="175" data-align="right" data-header-align="right">Value</th>
 		</tr>
 		</thead>
 	</table>

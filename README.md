@@ -22,6 +22,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Statistics Leaders - Find statistics leaders in different statistics categories, including dominance and break points ratios
 - Statistics Charts - Statistics charts for various statistics categories, including dominance and break points ratios
 - Records Book - Various match, tournament result and ranking records, famous and infamous (best player that never...)
+- Seasons Browser - Browse seasons and check season tournaments, records, rankings, performance, statistics and 'GOAT' Points distribution among top players</li>
 - Best Seasons - Find which are the best seasons of Open Era based on 'GOAT' points
 - Tournaments Browser - Browse all Open Era tournaments, see tournament draw, statistics, historical winners and records
 - Live Scores - Live Scores integration

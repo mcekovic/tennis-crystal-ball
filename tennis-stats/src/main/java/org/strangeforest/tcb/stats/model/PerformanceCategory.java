@@ -8,6 +8,7 @@ public final class PerformanceCategory {
 
 	private static final Map<String, PerformanceCategory> CATEGORIES = new HashMap<>();
 	private static final Map<String, List<PerformanceCategory>> CATEGORY_CLASSES = new LinkedHashMap<>();
+	private static final Map<String, List<PerformanceCategory>> PRESSURE_SITUATIONS_CATEGORY_CLASSES = new LinkedHashMap<>();
 
 	private static final String PERFORMANCE = "Performance";
 	private static final String SURFACE_PERFORMANCE = "Surface Performance";
@@ -34,6 +35,7 @@ public final class PerformanceCategory {
 		addCategory(PRESSURE_SITUATIONS, "afterWinningFirstSet", "after_winning_first_set", "After Winning 1st Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "afterLosingFirstSet", "after_losing_first_set", "After Losing 1st Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "tieBreaks", "tie_breaks", "Tie breaks", 100, "tie breaks");
+		PRESSURE_SITUATIONS_CATEGORY_CLASSES.put(PRESSURE_SITUATIONS, CATEGORY_CLASSES.get(PRESSURE_SITUATIONS));
 	}
 
 	private static void addCategory(String categoryClass, String name, String column, String title, int minEntries, String entriesName) {
@@ -43,12 +45,7 @@ public final class PerformanceCategory {
 	private static void addCategory(String categoryClass, String name, String column, String title, int minEntries, String entriesName, String cssClass) {
 		PerformanceCategory category = new PerformanceCategory(name, column, title, minEntries, entriesName, cssClass);
 		CATEGORIES.put(name, category);
-		List<PerformanceCategory> categoryList = CATEGORY_CLASSES.get(categoryClass);
-		if (categoryList == null) {
-			categoryList = new ArrayList<>();
-			CATEGORY_CLASSES.put(categoryClass, categoryList);
-		}
-		categoryList.add(category);
+		CATEGORY_CLASSES.computeIfAbsent(categoryClass, catCls -> new ArrayList<>()).add(category);
 	}
 
 	public static PerformanceCategory get(String category) {
@@ -64,6 +61,10 @@ public final class PerformanceCategory {
 
 	public static Map<String, List<PerformanceCategory>> getCategoryClasses() {
 		return CATEGORY_CLASSES;
+	}
+
+	public static Map<String, List<PerformanceCategory>> getPressureSituationsCategoryClasses() {
+		return PRESSURE_SITUATIONS_CATEGORY_CLASSES;
 	}
 
 

@@ -37,4 +37,20 @@
 			<email>mcekovic@gmail.com</email>
 		</author>
 	</entry>
+	<entry>
+		<title>New Feature - Seasons Browser</title>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/seasons"/>
+		<id>urn:uuid:f6c96a45-59c8-4a2d-909e-584d51bcad27</id>
+		<updated>2017-01-28T12:00:00Z</updated>
+		<summary>Seasons Browser - Browse seasons and check season details</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Seasons Browser - Browse seasons and check season tournaments, records, rankings, performance, statistics and 'GOAT' Points distribution among top players.</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 </feed>

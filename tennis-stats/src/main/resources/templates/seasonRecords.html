@@ -1,0 +1,21 @@
+<br/>
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="seasonTitles" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+	<!--/*@thymesVar id="seasonFinals" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+	<!--/*@thymesVar id="seasonSemiFinals" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+	<!--/*@thymesVar id="seasonAppearances" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+	<div class="row">
+		<div class="col-md-3">
+			<th:block th:include="fragments/record :: record('Titles', ${seasonTitles})"/>
+		</div>
+		<div class="col-md-3">
+			<th:block th:include="fragments/record :: record('Finals', ${seasonFinals})"/>
+		</div>
+		<div class="col-md-3">
+			<th:block th:include="fragments/record :: record('Semi-Finals', ${seasonSemiFinals})"/>
+		</div>
+		<div class="col-md-3">
+			<th:block th:include="fragments/record :: record('Appearances', ${seasonAppearances})"/>
+		</div>
+	</div>
+</th:block>

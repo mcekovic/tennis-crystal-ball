@@ -1,45 +1,50 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
-<!--/*@thymesVar id="seasonTitles" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
-<!--/*@thymesVar id="seasonFinals" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
-<!--/*@thymesVar id="seasonSemiFinals" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
-<!--/*@thymesVar id="seasonAppearances" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+<!--/*@thymesVar id="tab" type="java.lang.String"*/-->
+<!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <head th:replace="fragments/head :: commonHead('Season ' + ${season}, true, ~{::script}, _)">
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("#seasonPills").find("a").click(tabClick);
+			[# th:if="${tab}" th:switch="${tab}"]
+				[# th:case="'events'"]
+				seasonEvents([[${level}]], [[${surface}]]);
+				[/]
+				[# th:case="*"]
+				$([['#' + ${tab} + 'Pill']]).click();
+				[/]
+			[/]
+			[# th:unless="${tab}"]
+				$("#recordsPill").click();
+			[/]
 		});
+		function seasonEvents(level, surface) {
+			var $pill = $("#eventsPill");
+			var url = $pill.attr("data-url");
+			if (level)
+				url += "&level=" + level;
+			if (surface)
+				url += "&surface=" + surface;
+			loadTab($pill, url)
+		}
 	</script>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 th:text="|Season ${season}|">Season 2000</h3>
 	<ul id="seasonPills" class="nav nav-pills">
-		<li class="active"><a data-toggle="pill" href="#titles">Titles</a></li>
-		<li><a data-toggle="pill" href="#rankings" th:data-url="'/seasonRankings?season=' + ${season}">Rankings</a></li>
-		<li><a data-toggle="pill" href="#performance" th:data-url="'/seasonPerformance?season=' + ${season}">Performance</a></li>
-		<li><a data-toggle="pill" href="#statistics" th:data-url="'/seasonStats?season=' + ${season}">Statistics</a></li>
-		<li><a data-toggle="pill" href="#goatPoints" th:data-url="'/seasonGOATPoints?season=' + ${season}">GOAT Points</a></li>
+		<li><a id="recordsPill" data-toggle="pill" href="#records" th:data-url="'/seasonRecords?season=' + ${season}">Records</a></li>
+		<li><a id="eventsPill" data-toggle="pill" href="#events" th:data-url="'/seasonEvents?season=' + ${season}">Events</a></li>
+		<li><a id="rankingsPill" data-toggle="pill" href="#rankings" th:data-url="'/seasonRankings?season=' + ${season}">Rankings</a></li>
+		<li><a id="performancePill" data-toggle="pill" href="#performance" th:data-url="'/seasonPerformance?season=' + ${season}">Performance</a></li>
+		<li><a id="statisticsPill" data-toggle="pill" href="#statistics" th:data-url="'/seasonStats?season=' + ${season}">Statistics</a></li>
+		<li><a id="goatPointsPill" data-toggle="pill" href="#goatPoints" th:data-url="'/seasonGOATPoints?season=' + ${season}">GOAT Points</a></li>
 	</ul>
 	<div class="tab-content">
-		<div id="titles" class="tab-pane fade in active">
-			<br/>
-			<div class="row">
-				<div class="col-md-3">
-					<th:block th:include="fragments/record :: record('Titles', ${seasonTitles})"/>
-				</div>
-				<div class="col-md-3">
-					<th:block th:include="fragments/record :: record('Finals', ${seasonFinals})"/>
-				</div>
-				<div class="col-md-3">
-					<th:block th:include="fragments/record :: record('Semi-Finals', ${seasonSemiFinals})"/>
-				</div>
-				<div class="col-md-3">
-					<th:block th:include="fragments/record :: record('Appearances', ${seasonAppearances})"/>
-				</div>
-			</div>
-		</div>
+		<div id="records" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="events" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="rankings" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="performance" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>

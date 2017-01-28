@@ -21,12 +21,12 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 	private static final String TOURNAMENT_CRITERION = " AND tournament_id = :tournamentId";
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND tournament_event_id = :tournamentEventId";
 
-	public StatsPlayerListFilter(Integer season) {
-		this(null, null, season);
+	public StatsPlayerListFilter(Integer season, Integer tournamentId) {
+		this(null, null, season, null, tournamentId, null);
 	}
 
-	public StatsPlayerListFilter(Boolean active, String searchPhrase, Integer season) {
-		this(active, searchPhrase, season, null, null, null);
+	public StatsPlayerListFilter(Boolean active, String searchPhrase, Integer season, Integer tournamentId) {
+		this(active, searchPhrase, season, null, tournamentId, null);
 	}
 
 	public StatsPlayerListFilter(Integer season, String surface, Integer tournamentId, Integer tournamentEventId) {
