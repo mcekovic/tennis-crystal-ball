@@ -79,7 +79,8 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 				new RecordColumn("matches", "numeric", null, MATCHES_WIDTH, "right", "Matches"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")
-			)
+			),
+			"Minimum 3 matches played to won the title"
 		);
 	}
 }

@@ -12,10 +12,15 @@ public class Record {
 	private final String displayOrder;
 	private final RecordDetailFactory detailFactory;
 	private final List<RecordColumn> columnInfos;
+	private final String notes;
 	private String category;
 	private boolean infamous;
 
 	public Record(String id, String name, String sql, String columns, String rankOrder, String displayOrder, Class<? extends RecordDetail> detailClass, List<RecordColumn> columnInfos) {
+		this(id, name, sql, columns, rankOrder, displayOrder, detailClass, columnInfos, null);
+	}
+
+	public Record(String id, String name, String sql, String columns, String rankOrder, String displayOrder, Class<? extends RecordDetail> detailClass, List<RecordColumn> columnInfos, String notes) {
 		this.id = id;
 		this.name = name;
 		this.sql = sql;
@@ -24,6 +29,7 @@ public class Record {
 		this.displayOrder = displayOrder;
 		this.detailFactory = RecordDetailFactory.forClass(detailClass);
 		this.columnInfos = columnInfos;
+		this.notes = notes;
 	}
 
 	public String getId() {
@@ -56,6 +62,10 @@ public class Record {
 
 	public List<RecordColumn> getColumnInfos() {
 		return columnInfos;
+	}
+
+	public String getNotes() {
+		return notes;
 	}
 
 	public String getCategory() {

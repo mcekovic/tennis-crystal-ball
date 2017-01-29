@@ -76,5 +76,6 @@ static loadTournaments(SqlPool sqlPool) {
 		atpWorldTourMatchLoader.loadTournament(2017, 'chennai', 891)
 		atpWorldTourMatchLoader.loadTournament(2017, 'sydney', 338)
 		atpWorldTourMatchLoader.loadTournament(2017, 'auckland', 301)
+		atpWorldTourMatchLoader.loadTournament(2017, 'australian-open', 580)
 	}
 }

@@ -68,6 +68,7 @@
 		</tr>
 		</thead>
 	</table>
+	<p th:if="${record.notes}"><i th:text="'* ' + ${record.notes}">* Minimum 100 matches</i></p>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

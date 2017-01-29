@@ -66,8 +66,10 @@ public class HeadToHeadCategory extends RecordCategory {
 	private static final RecordColumn WON_COLUMN = new RecordColumn("won", "numeric", null, H2H_SMALL_WIDTH, "right", "Won");
 	private static final RecordColumn LOST_COLUMN = new RecordColumn("lost", "numeric", null, H2H_SMALL_WIDTH, "right", "Lost");
 
+	private static final String NOTES = "Minimum 3 matches in H2H series, minimum 10 H2H series";
+
 	public HeadToHeadCategory(boolean infamous) {
-		super("Head-to-Head (minimum 3 matches in H2H series, minimum 10 H2H series)");
+		super("Head-to-Head");
 		if (!infamous) {
 			register(mostH2HSeries(MOST, PLAYED));
 			register(mostH2HSeries(MOST, WON));
@@ -90,7 +92,8 @@ public class HeadToHeadCategory extends RecordCategory {
 			"FROM player_h2h\n" +
 			"WHERE " + HTH_TOTAL + " >= 10",
 			"r.value", mostLeast.order, mostLeast.order, IntegerRecordDetail.class,
-			asList(new RecordColumn("value", "numeric", null, H2H_WIDTH, "right", "H2H Series " + type.name))
+			asList(new RecordColumn("value", "numeric", null, H2H_WIDTH, "right", "H2H Series " + type.name)),
+			NOTES
 		);
 	}
 
@@ -108,7 +111,8 @@ public class HeadToHeadCategory extends RecordCategory {
 				new RecordColumn("draw", "numeric", null, H2H_SMALL_WIDTH, "right", "Draw"),
 				type.value2RecordColumn,
 				new RecordColumn("played", "numeric", null, H2H_SMALL_WIDTH, "right", "Played")
-			)
+			),
+			NOTES
 		);
 	}
 }

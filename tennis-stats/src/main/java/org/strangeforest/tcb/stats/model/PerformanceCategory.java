@@ -17,14 +17,14 @@ public final class PerformanceCategory {
 	static {
 		// Performance
 		addCategory(PERFORMANCE, "matches", "matches", "Overall Matches", 200, "matches");
-		addCategory(PERFORMANCE, "grandSlamMatches", "grand_slam_matches", "Grand Slam Matches", 50, "Grand Slam matches", "bg-level-G");
-		addCategory(PERFORMANCE, "tourFinalsMatches", "tour_finals_matches", "Tour Finals Matches", 10, "Tour Finals matches", "bg-level-F");
-		addCategory(PERFORMANCE, "mastersMatches", "masters_matches", "Masters Matches", 50, "Masters matches", "bg-level-M");
-		addCategory(PERFORMANCE, "olympicsMatches", "olympics_matches", "Olympics Matches", 5, "Olympics matches", "bg-level-O");
-		addCategory(SURFACE_PERFORMANCE, "hardMatches", "hard_matches", "Hard Matches", 100, "hard court matches", "bg-surface-H");
-		addCategory(SURFACE_PERFORMANCE, "clayMatches", "clay_matches", "Clay Matches", 100, "clay court matches", "bg-surface-C");
-		addCategory(SURFACE_PERFORMANCE, "grassMatches", "grass_matches", "Grass Matches", 50, "grass court matches", "bg-surface-G");
-		addCategory(SURFACE_PERFORMANCE, "carpetMatches", "carpet_matches", "Carpet Matches", 50, "carpet court matches", "bg-surface-P");
+		addCategory(PERFORMANCE, "grandSlamMatches", "grand_slam_matches", "Grand Slam Matches", 50, "matches", "bg-level-G");
+		addCategory(PERFORMANCE, "tourFinalsMatches", "tour_finals_matches", "Tour Finals Matches", 10, "matches", "bg-level-F");
+		addCategory(PERFORMANCE, "mastersMatches", "masters_matches", "Masters Matches", 50, "matches", "bg-level-M");
+		addCategory(PERFORMANCE, "olympicsMatches", "olympics_matches", "Olympics Matches", 5, "matches", "bg-level-O");
+		addCategory(SURFACE_PERFORMANCE, "hardMatches", "hard_matches", "Hard Matches", 100, "matches", "bg-surface-H");
+		addCategory(SURFACE_PERFORMANCE, "clayMatches", "clay_matches", "Clay Matches", 100, "matches", "bg-surface-C");
+		addCategory(SURFACE_PERFORMANCE, "grassMatches", "grass_matches", "Grass Matches", 50, "matches", "bg-surface-G");
+		addCategory(SURFACE_PERFORMANCE, "carpetMatches", "carpet_matches", "Carpet Matches", 50, "matches", "bg-surface-P");
 		// Pressure situations
 		addCategory(PRESSURE_SITUATIONS, "decidingSets", "deciding_sets", "Deciding Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "fifthSets", "fifth_sets", "5th Set", 20, "matches");

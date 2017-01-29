@@ -54,4 +54,5 @@ static loadRankings(Sql sql) {
 	rankingsLoader.load('2017-01-02', 200)
 	rankingsLoader.load('2017-01-09', 200)
 	rankingsLoader.load('2017-01-16', 200)
+	rankingsLoader.load('2017-01-30', 200)
 }

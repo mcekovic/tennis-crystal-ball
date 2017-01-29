@@ -6,13 +6,13 @@
 	<nav id="navbar" class="navbar navbar-default component" th:with="path=${#httpServletRequest.getServletPath()}">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<div class="navbar-brand text-nowrap" style="float: left">
+				<div class="navbar-brand text-nowrap pull-left">
 					<a href="/" style="font-size: larger"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></a>
 				</div>
-				<div class="navbar-text" style="margin-left: 15px; float: left">
+				<div class="navbar-text pull-left">
 					<span th:if="${lastDataUpdate}" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}" class="text-nowrap">Last data update: 21-09-2015</span>
 				</div>
-				<div class="navbar-text text-nowrap" style="margin: 5px 10px; float: left">
+				<div class="navbar-text pull-left text-nowrap" style="margin-top: 5px">
 					<a href="https://www.facebook.com/profile.php?id=100014697018141" target="_blank" title="Ultimate Tennis Statistics on Facebook"><img src="/images/glyphicons-social-facebook.png" width="24" height="24"/></a>
 					<a href="https://twitter.com/UltmTennisStats" target="_blank" title="Ultimate Tennis Statistics on Twitter"><img src="/images/glyphicons-social-twitter.png" width="24" height="24"/></a>
 					<a href="https://github.com/mcekovic/tennis-crystal-ball" target="_blank" title="Ultimate Tennis Statistics on GitHub"><img src="/images/glyphicons-social-github.png" width="24" height="24"/></a>

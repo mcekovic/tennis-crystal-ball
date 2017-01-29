@@ -1,8 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.model.records.RecordDomain;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
+import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
@@ -68,51 +71,57 @@ public class GreatestTitlePctCategory extends RecordCategory {
 	}
 
 	private static Record greatestFinalPct(RecordType type) {
+		int minEntries = PerformanceCategory.get("finals").getMinEntries() / 2;
 		return new Record(
 			"Final" + type.name + "Pct", "Greatest Final " + type.name + " Pct.",
 			/* language=SQL */
 			"SELECT player_id, " + type.expression1 + "::REAL / (finals_won + finals_lost) AS pct, finals_won AS won, finals_lost AS lost\n" +
-			"FROM player_performance WHERE finals_won + finals_lost >= performance_min_entries('finals')",
+			"FROM player_performance WHERE finals_won + finals_lost >= " + minEntries,
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailClass,
 			asList(
 				new RecordColumn("value", null, null, PCT_WIDTH, "right", type.name + " Pct."),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
-			)
+			),
+			format("Minimum %1$d %2$s", minEntries, "finals")
 		);
 	}
 
 	private static Record greatestFinalPct(RecordType type, RecordDomain domain) {
+		int minEntries = Math.max(2, PerformanceCategory.get(domain.perfCategory).getMinEntries() * PerformanceCategory.get("finals").getMinEntries() / PerformanceCategory.get("matches").getMinEntries());
 		return new Record(
 			domain.id + "Final" + type.name + "Pct", "Greatest " + suffix(domain.name, " ") + "Final " + type.name + " Pct." + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
 			"SELECT r.player_id, sum(" + type.expression2 + ")::REAL / count(r.player_id) AS pct, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END) AS won, sum(CASE r.result WHEN 'W' THEN 0 ELSE 1 END) AS lost\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE r.result IN ('W', 'F') AND e." + domain.condition + "\n" +
-			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('finals') * performance_min_entries('" + domain.perfCategory + "') / performance_min_entries('matches')",
+			"GROUP BY r.player_id HAVING count(r.player_id) >= " + minEntries,
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", type.detailClass,
 			asList(
 				new RecordColumn("value", null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
-			)
+			),
+			format("Minimum %1$d %2$s", minEntries, "finals")
 		);
 	}
 
 	private static Record greatestTitlePct(RecordDomain domain) {
+		int minEntries = PerformanceCategory.get(domain.perfCategory).getMinEntries() / 5;
 		return new Record(
 			domain.id + "TitleWinningPct", "Greatest " + suffix(domain.name, " ") + "Title/Entry Winning Pct." + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
 			"SELECT r.player_id, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END)::REAL / count(r.player_id) AS pct, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END) AS won, sum(CASE r.result WHEN 'W' THEN 0 ELSE 1 END) AS lost\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE e." + domain.condition + "\n" +
-			"GROUP BY r.player_id HAVING count(r.player_id) >= performance_min_entries('" + domain.perfCategory + "') / 5",
+			"GROUP BY r.player_id HAVING count(r.player_id) >= " + minEntries,
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC", WinningPctRecordDetail.class,
 			asList(
 				new RecordColumn("value", null, null, PCT_WIDTH, "right", suffix(domain.name, " ") + "Winning Pct."),
 				RecordType.WINNING.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Entries")
-			)
+			),
+			format("Minimum %1$d %2$s", minEntries, "entries")
 		);
 	}
 }
