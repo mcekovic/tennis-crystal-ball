@@ -4,7 +4,8 @@
 	<title>Seasons</title>
 	<script type="text/javascript">
 		function tournamentCountFormatter(row, params, attr) {
-			return "<a href='/season?season=" + row.season + "&tab=events" + params + "'>" + row[attr] + "</a>";
+			const count = row[attr];
+			return count > 0 ? "<a href='/season?season=" + row.season + "&tab=events" + params + "'>" + count + "</a>" : "";
 		}
 		$(function() {
 			var $seasonsTable = $("#seasonsTable");
