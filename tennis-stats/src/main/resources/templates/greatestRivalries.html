@@ -35,7 +35,6 @@
 						request.bestRank = bestRank;
 					return request;
 				},
-				sorting: false,
 				rowCount: [20, 50, -1],
 				formatters: {
 					"rivalry": function(column, row) {
@@ -88,8 +87,10 @@
 			$("[data-toggle='tooltip']").tooltip();
 			setBootgridTitles($rivalriesTable, [
 				{id: "rank", title: "Rivalry rank"},
+				{id: "matches", title: "Matches"},
+				{id: "rivalryScore", title: "Rivalry score: sum(1 + match GOAT points)\nWhere match GOAT points is: [GS F: 8, GS SF: 4, GS QF: 2, GS R16: 1, TF F: 6, TF SF: 3, TF RR: 1, M F: 4, M SF: 2...] as in Big Wins match factor in GOAT Points legend"},
 				{id: "h2h", title: "Head-to-head"},
-				{id: "h2hPct", title: "Head-to-head percentages"}
+				{id: "h2hPct", title: "Head-to-head winning percentages"}
 			]);
 		});
 		function filterChanged() {
@@ -157,12 +158,13 @@
 	<table id="greatestRivalriesTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
-			<th data-column-id="rank" data-type="numeric" data-width="65">Rank</th>
-			<th data-column-id="rivalry" data-formatter="rivalry" data-width="300">Rivalry</th>
-			<th data-column-id="matches" data-formatter="matches" data-order="desc" data-width="90" data-align="right" data-header-align="right">Matches</th>
-			<th data-column-id="h2h" data-formatter="h2h" data-width="55" data-align="center" data-header-align="center">H2H</th>
-			<th data-column-id="h2hPct" data-formatter="h2hPct" data-width="120" data-align="center" data-header-align="center">H2H %</th>
-			<th data-column-id="lastMatch" data-formatter="lastMatch" data-width="450">Last Match</th>
+			<th data-column-id="rank" data-type="numeric" data-width="55" data-sortable="false">Rnk</th>
+			<th data-column-id="rivalry" data-formatter="rivalry" data-width="300" data-sortable="false">Rivalry</th>
+			<th data-column-id="matches" data-formatter="matches" data-order="desc" data-width="45" data-align="right" data-header-align="right">M</th>
+			<th data-column-id="rivalryScore" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Scr</th>
+			<th data-column-id="h2h" data-formatter="h2h" data-width="55" data-sortable="false" data-align="center" data-header-align="center">H2H</th>
+			<th data-column-id="h2hPct" data-formatter="h2hPct" data-width="120" data-sortable="false" data-align="center" data-header-align="center">H2H %</th>
+			<th data-column-id="lastMatch" data-formatter="lastMatch" data-sortable="false" data-width="450">Last Match</th>
 			<th data-column-id="h2h2" data-formatter="h2h2" data-sortable="false" data-width="55">H2H</th>
 		</tr>
 		</thead>

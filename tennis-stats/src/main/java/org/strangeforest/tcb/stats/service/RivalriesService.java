@@ -131,23 +131,24 @@ public class RivalriesService {
 
 	private static final String GREATEST_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
-		"  SELECT winner_id, loser_id, count(match_id) matches, 0 won\n" +
+		"  SELECT winner_id, loser_id, count(match_id) matches, 0 won, 0 rivalry_score\n" +
 		"  FROM match_for_rivalry_v m%1$s%2$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"  UNION ALL\n" +
-		"  SELECT winner_id, loser_id, 0, count(match_id)\n" +
-		"  FROM match_for_stats_v m%1$s%2$s\n" +
+		"  SELECT winner_id, loser_id, 0, count(match_id), sum(1 + coalesce(mf.match_factor, 0)) rivalry_score\n" +
+		"  FROM match_for_stats_v m\n" +
+		"  LEFT JOIN big_win_match_factor mf USING(level, round)%1$s%2$s\n" +
 		"  GROUP BY winner_id, loser_id\n" +
 		"), rivalries_2 AS (\n" +
-		"  SELECT winner_id player_id_1, loser_id player_id_2, sum(matches) matches, sum(won) won, 0 lost\n" +
+		"  SELECT winner_id player_id_1, loser_id player_id_2, sum(matches) matches, sum(won) won, 0 lost, sum(rivalry_score) rivalry_score\n" +
 		"  FROM rivalries\n" +
 		"  GROUP BY player_id_1, player_id_2\n" +
 		"  UNION ALL\n" +
-		"  SELECT loser_id player_id_1, winner_id player_id_2, sum(matches), 0, sum(won)\n" +
+		"  SELECT loser_id player_id_1, winner_id player_id_2, sum(matches), 0, sum(won), sum(rivalry_score) rivalry_score\n" +
 		"  FROM rivalries\n" +
 		"  GROUP BY player_id_1, player_id_2\n" +
 		"), rivalries_3 AS (\n" +
-		"  SELECT rank() OVER riv AS rank, player_id_1, player_id_2, sum(matches) matches, sum(won) won, sum(lost) lost, coalesce(g1.goat_points, 0) + coalesce(g2.goat_points, 0) rivalry_goat_points\n" +
+		"  SELECT rank() OVER riv AS rank, player_id_1, player_id_2, sum(matches) matches, sum(won) won, sum(lost) lost, sum(rivalry_score) rivalry_score\n" +
 		"  FROM rivalries_2\n" +
 		"  LEFT JOIN player_goat_points g1 ON g1.player_id = player_id_1\n" +
 		"  LEFT JOIN player_goat_points g2 ON g2.player_id = player_id_2\n" +
@@ -157,13 +158,13 @@ public class RivalriesService {
 		"    PARTITION BY CASE WHEN coalesce(g1.goat_points, 0) > coalesce(g2.goat_points, 0) OR (coalesce(g1.goat_points, 0) = coalesce(g2.goat_points, 0) AND player_id_1 < player_id_2) THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY coalesce(g1.goat_points, 0) DESC, player_id_1\n" +
 		"  )\n" +
 		")\n" +
-		"SELECT rank() OVER (ORDER BY matches DESC, (won + lost) DESC, rivalry_goat_points DESC) AS rivalry_rank, r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.active active_1, p1.goat_points goat_points_1,\n" +
-		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.active active_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost,\n" +
+		"SELECT rank() OVER (ORDER BY r.matches DESC, (r.won + r.lost) DESC, r.rivalry_score DESC) AS rivalry_rank, r.player_id_1, p1.name name_1, p1.country_id country_id_1, p1.active active_1, p1.goat_points goat_points_1,\n" +
+		"  r.player_id_2, p2.name name_2, p2.country_id country_id_2, p2.active active_2, p2.goat_points goat_points_2, r.matches, r.won, r.lost, r.rivalry_score,\n" +
 		"%3$s\n" +
 		"FROM rivalries_3 r\n" +
 		"INNER JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
 		"INNER JOIN player_v p2 ON p2.player_id = r.player_id_2%4$s\n" +
-		"WHERE rank = 1\n" +
+		"WHERE r.rank = 1\n" +
 		"ORDER BY %5$s OFFSET :offset";
 
 	private static final String BEST_RANK_JOIN = //language=SQL
@@ -281,8 +282,9 @@ public class RivalriesService {
 					RivalryPlayer player1 = mapPlayer(rs, "_1");
 					RivalryPlayer player2 = mapPlayer(rs, "_2");
 					WonLost wonLost = mapWonLost(rs);
+					int rivalryScore = rs.getInt("rivalry_score");
 					MatchInfo lastMatch = mapLastMatch(rs, lateralSupported);
-					table.addRow(new GreatestRivalry(rank, player1, player2, wonLost, lastMatch));
+					table.addRow(new GreatestRivalry(rank, player1, player2, wonLost, rivalryScore, lastMatch));
 				}
 			}
 		);
