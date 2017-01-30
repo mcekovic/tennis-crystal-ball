@@ -25,7 +25,7 @@
 				formatters: {
 					"player": playerCountryFormatter,
 					"season": function(column, row) {
-						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&season=" + row.season + "' title='Show season'>" + row.season + "</a>";
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&season=" + row.season + "' title='Show " + row.name + "&apos;s season'>" + row.season + "</a>";
 					},
 					"goatPoints": function(column, row) {
 						if (row.goatPoints > 0) {
@@ -39,6 +39,33 @@
 						}
 						else
 							return row.achievementsGoatPoints;
+					},
+					"grandSlamTitles": function(column, row) {
+						return playerTournamentsFormatter(row, "grandSlamTitles", "&level=G&result=W");
+					},
+					"grandSlamFinals": function(column, row) {
+						return playerTournamentsFormatter(row, "grandSlamFinals", "&level=G&result=F");
+					},
+					"grandSlamSemiFinals": function(column, row) {
+						return playerTournamentsFormatter(row, "grandSlamSemiFinals", "&level=G&result=SF");
+					},
+					"tourFinalsTitles": function(column, row) {
+						return playerTournamentsFormatter(row, "tourFinalsTitles", "&level=F&result=W");
+					},
+					"tourFinalsFinals": function(column, row) {
+						return playerTournamentsFormatter(row, "tourFinalsFinals", "&level=F&result=F");
+					},
+					"mastersTitles": function(column, row) {
+						return playerTournamentsFormatter(row, "mastersTitles", "&level=M&result=W");
+					},
+					"mastersFinals": function(column, row) {
+						return playerTournamentsFormatter(row, "mastersFinals", "&level=M&result=F");
+					},
+					"olympicsTitles": function(column, row) {
+						return playerTournamentsFormatter(row, "olympicsTitles", "&level=O&result=W");
+					},
+					"titles": function(column, row) {
+						return playerTournamentsFormatter(row, "titles", "&result=W");
 					},
 					"wonPct": wonLostFormatter,
 					"yearEndRank": function(column, row) {
@@ -71,6 +98,10 @@
 			]);
 			$("[data-toggle='collapse']").click(collapseClick);
 		});
+		function playerTournamentsFormatter(row, attr, params) {
+			const count = row[attr];
+			return count > 0 ? "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&season=" + row.season + params + "'>" + count + "</a>" : "<span class='text-muted'>0</span>";
+		}
 	</script>
 </head>
 <body class="container">
@@ -83,15 +114,15 @@
 			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="200">Name</th>
 			<th data-column-id="season" data-formatter="season" data-width="80" data-align="center">Season</th>
 			<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="100" data-align="right" data-header-align="right">GOAT Pts.</th>
-			<th data-column-id="grandSlamTitles" data-type="numeric" data-width="70" data-align="right" data-header-align="right">GS W</th>
-			<th data-column-id="grandSlamFinals" data-type="numeric" data-width="70" data-align="right" data-header-align="right">GS F</th>
-			<th data-column-id="grandSlamSemiFinals" data-type="numeric" data-width="70" data-align="right" data-header-align="right">GS SF</th>
-			<th data-column-id="tourFinalsTitles" data-type="numeric" data-width="70" data-align="right" data-header-align="right">TF W</th>
-			<th data-column-id="tourFinalsFinals" data-type="numeric" data-width="70" data-align="right" data-header-align="right">TF F</th>
-			<th data-column-id="mastersTitles" data-type="numeric" data-width="60" data-align="right" data-header-align="right">M W</th>
-			<th data-column-id="mastersFinals" data-type="numeric" data-width="60" data-align="right" data-header-align="right">M F</th>
-			<th data-column-id="olympicsTitles" data-type="numeric" data-width="60" data-align="right" data-header-align="right">O G</th>
-			<th data-column-id="titles" data-type="numeric" data-width="65" data-align="right" data-header-align="right">Titles</th>
+			<th data-column-id="grandSlamTitles" data-formatter="grandSlamTitles" data-width="70" data-align="right" data-header-align="right">GS W</th>
+			<th data-column-id="grandSlamFinals" data-formatter="grandSlamFinals" data-width="70" data-align="right" data-header-align="right">GS F</th>
+			<th data-column-id="grandSlamSemiFinals" data-formatter="grandSlamSemiFinals" data-width="70" data-align="right" data-header-align="right">GS SF</th>
+			<th data-column-id="tourFinalsTitles" data-formatter="tourFinalsTitles" data-width="70" data-align="right" data-header-align="right">TF W</th>
+			<th data-column-id="tourFinalsFinals" data-formatter="tourFinalsFinals" data-width="70" data-align="right" data-header-align="right">TF F</th>
+			<th data-column-id="mastersTitles" data-formatter="mastersTitles" data-width="60" data-align="right" data-header-align="right">M W</th>
+			<th data-column-id="mastersFinals" data-formatter="mastersFinals" data-width="60" data-align="right" data-header-align="right">M F</th>
+			<th data-column-id="olympicsTitles" data-formatter="olympicsTitles" data-width="60" data-align="right" data-header-align="right">O G</th>
+			<th data-column-id="titles" data-formatter="titles" data-width="65" data-align="right" data-header-align="right">Titles</th>
 			<th data-column-id="wonPct" data-formatter="wonPct" data-width="55" data-align="right" data-header-align="right">W/L</th>
 			<th data-column-id="yearEndRank" data-formatter="yearEndRank" data-width="55" data-align="right" data-header-align="right">YER</th>
 		</tr>

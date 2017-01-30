@@ -3,10 +3,6 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script},  ~{::style})">
 	<title>Seasons</title>
 	<script type="text/javascript">
-		function tournamentCountFormatter(row, params, attr) {
-			const count = row[attr];
-			return count > 0 ? "<a href='/season?season=" + row.season + "&tab=events" + params + "'>" + count + "</a>" : "";
-		}
 		$(function() {
 			var $seasonsTable = $("#seasonsTable");
 			var device = detectDevice();
@@ -30,37 +26,37 @@
 						return "<a href='/season?season=" + row.season + "' title='Show season'>" + row.season + "</a>";
 					},
 					"tournamentCount": function(column, row) {
-						return tournamentCountFormatter(row, "", "tournamentCount");
+						return tournamentCountFormatter(row, "tournamentCount", "");
 					},
 					"grandSlamCount": function(column, row) {
-						return tournamentCountFormatter(row, "&level=G", "grandSlamCount");
+						return tournamentCountFormatter(row, "grandSlamCount", "&level=G");
 					},
 					"tourFinalsCount": function(column, row) {
-						return tournamentCountFormatter(row, "&level=F", "tourFinalsCount");
+						return tournamentCountFormatter(row, "tourFinalsCount", "&level=F");
 					},
 					"mastersCount": function(column, row) {
-						return tournamentCountFormatter(row, "&level=M", "mastersCount");
+						return tournamentCountFormatter(row, "mastersCount", "&level=M");
 					},
 					"olympicsCount": function(column, row) {
-						return tournamentCountFormatter(row, "&level=O", "olympicsCount");
+						return tournamentCountFormatter(row, "olympicsCount", "&level=O");
 					},
 					"atp500Count": function(column, row) {
-						return tournamentCountFormatter(row, "&level=A", "atp500Count");
+						return tournamentCountFormatter(row, "atp500Count", "&level=A");
 					},
 					"atp250Count": function(column, row) {
-						return tournamentCountFormatter(row, "&level=B", "atp250Count");
+						return tournamentCountFormatter(row, "atp250Count", "&level=B");
 					},
 					"hardCount": function(column, row) {
-						return tournamentCountFormatter(row, "&surface=H", "hardCount");
+						return tournamentCountFormatter(row, "hardCount", "&surface=H");
 					},
 					"clayCount": function(column, row) {
-						return tournamentCountFormatter(row, "&surface=C", "clayCount");
+						return tournamentCountFormatter(row, "clayCount", "&surface=C");
 					},
 					"grassCount": function(column, row) {
-						return tournamentCountFormatter(row, "&surface=G", "grassCount");
+						return tournamentCountFormatter(row, "grassCount", "&surface=G");
 					},
 					"carpetCount": function(column, row) {
-						return tournamentCountFormatter(row, "&surface=P", "carpetCount");
+						return tournamentCountFormatter(row, "carpetCount", "&surface=P");
 					},
 					"surfaces": function(column, row) {
 						return "<div class='progress'>"
@@ -98,6 +94,10 @@
 				{id: "bestPlayer", title: "Player with most GOAT points in the season"}
 			]);
 		});
+		function tournamentCountFormatter(row, attr, params) {
+			const count = row[attr];
+			return count > 0 ? "<a href='/season?season=" + row.season + "&tab=events" + params + "'>" + count + "</a>" : "";
+		}
 	</script>
 	<style>
 		.progress {
