@@ -9,13 +9,14 @@ WITH event_player_ranks AS (
 	SELECT tournament_event_id, player_id, avg(rank) AS rank FROM event_player_ranks
 	GROUP BY tournament_event_id, player_id
 )
-SELECT p.tournament_event_id, count(p.player_id) player_count, sum(f.rank_factor) participation_points,
-	max_event_participation(count(p.player_id)::INTEGER) AS max_participation_points
+SELECT tournament_event_id, count(p.player_id) AS player_count,
+	(sum(f.rank_factor) * (CASE WHEN e.level = 'G' THEN 5.0 / 3.0 ELSE 1.0 END))::INTEGER AS participation_points,
+	(max_event_participation(count(p.player_id)::INTEGER) * (CASE WHEN e.level = 'G' THEN 5.0 / 3.0 ELSE 1.0 END))::INTEGER AS max_participation_points
 FROM event_players p
 INNER JOIN tournament_event e USING (tournament_event_id)
 LEFT JOIN tournament_event_rank_factor f ON p.rank BETWEEN f.rank_from AND f.rank_to
 WHERE e.level NOT IN ('D', 'T')
-GROUP BY p.tournament_event_id;
+GROUP BY tournament_event_id, e.level;
 
 CREATE MATERIALIZED VIEW event_participation AS SELECT * FROM event_participation_v;
 

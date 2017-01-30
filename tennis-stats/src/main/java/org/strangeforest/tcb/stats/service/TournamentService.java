@@ -104,9 +104,10 @@ public class TournamentService {
 		"ORDER BY name, season";
 
 	private static final String PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY = //language=SQL
-		"SELECT tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, r.result\n" +
+		"SELECT tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.participation_points, p.max_participation_points, r.result\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
 		"WHERE r.player_id = :playerId\n" +
 		"AND e.level <> 'D'%1$s\n" +
 		"ORDER BY %2$s OFFSET :offset";
@@ -286,6 +287,8 @@ public class TournamentService {
 						rs.getBoolean("indoor"),
 						rs.getString("draw_type"),
 						getInteger(rs, "draw_size"),
+						rs.getInt("participation_points"),
+						rs.getInt("max_participation_points"),
 						rs.getString("result")
 					));
 				}

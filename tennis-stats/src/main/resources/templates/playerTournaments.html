@@ -14,8 +14,9 @@
 		$(function() {
 			var $tournamentsTable = $("#tournamentsTable");
 			var device = detectDevice();
+			setBootgridColumnsVisible($tournamentsTable, ["participationPoints", "participationPct"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($tournamentsTable, ["season", "draw"], deviceGreaterOrEqual(device, "sm"));
-			setBootgridColumnsWidths($tournamentsTable, ["name"], [device == "xs" ? 150 : (device == "sm" ? 200 : (device == "md" ? 300 : 400))]);
+			setBootgridColumnsWidths($tournamentsTable, ["name"], [device == "xs" ? 150 : (device == "sm" ? 200 : (device == "md" ? 250 : 300))]);
 			$tournamentsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -36,6 +37,7 @@
 					"date": dateFormatter,
 					"tournament": tournamentEventFormatter,
 					"surface": surfaceFormatter,
+					"participationPct": participationFormatter,
 					"result": function(column, row) {
 						return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[[${playerId}]]&tab=matches&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
 					},
@@ -55,6 +57,10 @@
 			});
 			var $tournamentsTableHeader = $("#tournamentsTable-header");
 			$tournamentsTableHeader.find("div.search").before($("#eventsStats").remove());
+			setBootgridTitles($tournamentsTable, [
+				{id: "participationPoints", title: "[[#{events.participationPoints.title}]]"},
+				{id: "participationPct", title: "[[#{events.participationPercentage.title}]]"}
+			]);
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadTournaments() {
@@ -164,6 +170,8 @@
 			<th data-column-id="name" data-formatter="tournament" data-width="200">Tournament</th>
 			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
 			<th data-column-id="draw" data-width="65">Draw</th>
+			<th data-column-id="participationPoints" data-type="numeric" data-width="70">P. Pts.</th>
+			<th data-column-id="participationPct" data-formatter="participationPct" data-width="70">P. Pct.</th>
 			<th data-column-id="result" data-formatter="result" data-width="75" data-align="center" data-header-align="center">Result</th>
 			<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="80">Stats</th>
 		</tr>

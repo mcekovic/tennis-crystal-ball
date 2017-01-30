@@ -19,7 +19,6 @@ public class TournamentEvent {
 	private Integer drawSize;
 	private int playerCount;
 	private int participationPoints;
-	private int maxParticipationPoints;
 	private double participationPct;
 	private MatchPlayer winner;
 	private MatchPlayer runnerUp;
@@ -44,7 +43,6 @@ public class TournamentEvent {
 		this.drawSize = drawSize;
 		this.playerCount = playerCount;
 		this.participationPoints = participationPoints;
-		this.maxParticipationPoints = maxParticipationPoints;
 		participationPct = pct(participationPoints, maxParticipationPoints);
 	}
 
@@ -113,10 +111,6 @@ public class TournamentEvent {
 
 	public int getParticipationPoints() {
 		return participationPoints;
-	}
-
-	public int getMaxParticipationPoints() {
-		return maxParticipationPoints;
 	}
 
 	public double getParticipationPct() {
