@@ -12,7 +12,7 @@ import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 public class GreatestTitlePctCategory extends RecordCategory {
 
 	public enum RecordType {
-		WINNING("Final/Title", "Winning", "finals_won", "CASE r.result WHEN 'W' THEN 1 ELSE 0 END", WinningPctRecordDetail.class,
+		WINNING("Final / Title", "Winning", "finals_won", "CASE r.result WHEN 'W' THEN 1 ELSE 0 END", WinningPctRecordDetail.class,
 			new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", "Won")
 		),
 		LOSING("Final", "Losing", "finals_lost", "CASE r.result WHEN 'W' THEN 0 ELSE 1 END", LosingPctRecordDetail.class,
@@ -109,7 +109,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 	private static Record greatestTitlePct(RecordDomain domain) {
 		int minEntries = PerformanceCategory.get(domain.perfCategory).getMinEntries() / 5;
 		return new Record(
-			domain.id + "TitleWinningPct", "Greatest " + suffix(domain.name, " ") + "Title/Entry Winning Pct." + prefix(domain.nameSuffix, " "),
+			domain.id + "TitleWinningPct", "Greatest " + suffix(domain.name, " ") + "Title / Entry Winning Pct." + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
 			"SELECT r.player_id, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END)::REAL / count(r.player_id) AS pct, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END) AS won, sum(CASE r.result WHEN 'W' THEN 0 ELSE 1 END) AS lost\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
