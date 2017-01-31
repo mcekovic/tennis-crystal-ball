@@ -22,6 +22,12 @@ public class TennisStatsController extends PageController {
 		return new ModelAndView("index", "goatTopN", goatTopN);
 	}
 
+	@GetMapping("/about")
+	public ModelAndView about() {
+		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+		return new ModelAndView("about", "goatTopN", goatTopN);
+	}
+
 	@GetMapping("/rankingTopN")
 	public ModelAndView rankingTopN(
       @RequestParam(name = "rankType") RankType rankType
