@@ -1,3 +1,5 @@
+DROP VIEW visitor_summary_v;
+
 DROP VIEW player_v;
 
 DROP MATERIALIZED VIEW player_goat_points;

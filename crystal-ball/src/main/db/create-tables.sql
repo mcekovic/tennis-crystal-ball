@@ -52,10 +52,9 @@ CREATE INDEX ON tournament_event (surface);
 -- tournament_event_rank_factor
 
 CREATE TABLE tournament_event_rank_factor (
-	rank_from INTEGER NOT NULL,
+	rank_from INTEGER NOT NULL PRIMARY KEY,
 	rank_to INTEGER NOT NULL,
-	rank_factor INTEGER,
-	PRIMARY KEY (rank_from)
+	rank_factor INTEGER
 );
 
 
@@ -315,8 +314,7 @@ CREATE TABLE best_surface_elo_rating_goat_points (
 -- weeks_at_no1_goat_points
 
 CREATE TABLE weeks_at_no1_goat_points (
-	weeks_for_point INTEGER NOT NULL,
-	PRIMARY KEY (weeks_for_point)
+	weeks_for_point INTEGER NOT NULL PRIMARY KEY
 );
 
 
@@ -333,20 +331,18 @@ CREATE TABLE big_win_match_factor (
 -- big_win_rank_factor
 
 CREATE TABLE big_win_rank_factor (
-	rank_from INTEGER NOT NULL,
+	rank_from INTEGER NOT NULL PRIMARY KEY,
 	rank_to INTEGER NOT NULL,
-	rank_factor INTEGER,
-	PRIMARY KEY (rank_from)
+	rank_factor INTEGER
 );
 
 
 -- h2h_rank_factor
 
 CREATE TABLE h2h_rank_factor (
-	rank_from INTEGER NOT NULL,
+	rank_from INTEGER NOT NULL PRIMARY KEY,
 	rank_to INTEGER NOT NULL,
-	rank_factor INTEGER,
-	PRIMARY KEY (rank_from)
+	rank_factor INTEGER
 );
 
 
@@ -363,29 +359,26 @@ CREATE TABLE grand_slam_goat_points (
 -- best_season_goat_points
 
 CREATE TABLE best_season_goat_points (
-	season_rank INTEGER NOT NULL,
-	goat_points INTEGER NOT NULL,
-	PRIMARY KEY (season_rank)
+	season_rank INTEGER NOT NULL PRIMARY KEY,
+	goat_points INTEGER NOT NULL
 );
 
 
 -- greatest_rivalries_goat_points
 
 CREATE TABLE greatest_rivalries_goat_points (
-	rivalry_rank INTEGER NOT NULL,
-	goat_points INTEGER NOT NULL,
-	PRIMARY KEY (rivalry_rank)
+	rivalry_rank INTEGER NOT NULL PRIMARY KEY,
+	goat_points INTEGER NOT NULL
 );
 
 
 -- performance_category
 
 CREATE TABLE performance_category (
-	category_id TEXT NOT NULL,
+	category_id TEXT NOT NULL PRIMARY KEY,
 	name TEXT NOT NULL,
 	min_entries INTEGER NOT NULL,
-	sort_order INTEGER NOT NULL,
-	PRIMARY KEY (category_id)
+	sort_order INTEGER NOT NULL
 );
 
 
@@ -402,11 +395,10 @@ CREATE TABLE performance_goat_points (
 -- statistics_category
 
 CREATE TABLE statistics_category (
-	category_id TEXT NOT NULL,
+	category_id TEXT NOT NULL PRIMARY KEY,
 	name TEXT NOT NULL,
 	min_entries INTEGER NOT NULL,
-	sort_order INTEGER NOT NULL,
-	PRIMARY KEY (category_id)
+	sort_order INTEGER NOT NULL
 );
 
 
@@ -474,3 +466,17 @@ CREATE TABLE visitor (
 CREATE INDEX ON visitor (ip_address);
 CREATE INDEX ON visitor (active);
 CREATE INDEX ON visitor (last_hit);
+
+
+-- visitor_summary
+
+CREATE TABLE visitor_summary (
+	date DATE NOT NULL,
+	country_id TEXT,
+	agent_type TEXT,
+	visits BIGINT NOT NULL,
+	hits BIGINT NOT NULL,
+	visit_duration INTERVAL NOT NULL
+);
+
+CREATE UNIQUE INDEX ON visitor_summary (date, country_id, agent_type);

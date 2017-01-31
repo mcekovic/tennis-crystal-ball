@@ -1564,3 +1564,12 @@ LEFT JOIN player_best_elo_rating USING (player_id)
 LEFT JOIN player_goat_points USING (player_id)
 LEFT JOIN player_weeks_at_no1 USING (player_id)
 LEFT JOIN player_titles USING (player_id);
+
+
+-- visitor_summary_v
+
+CREATE OR REPLACE VIEW visitor_summary_v AS
+SELECT first_hit::DATE AS date, country_id, agent_type, count(*) AS visits, sum(hits) AS hits, avg(last_hit - first_hit) AS visit_duration
+FROM visitor
+GROUP BY date, country_id, agent_type
+ORDER BY date DESC, country_id, agent_type;
