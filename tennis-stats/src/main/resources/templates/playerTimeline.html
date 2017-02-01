@@ -6,13 +6,13 @@
 		$(function() {
 			// Tournaments
 			var $tournamentsBody = $("#bigTournamentsBody, #otherTournamentsBody");
-			$tournamentsBody.find("span.surface").each(function() {
+			$tournamentsBody.find("div.surface").each(function() {
 				var $surface = $(this);
 				var surface = $surface.text();
 				$surface.text(surfaceName(surface));
 				$surface.addClass("label-" + surfaceClassSuffix(surface));
 			});
-			$tournamentsBody.find("span.level").each(function() {
+			$tournamentsBody.find("a.tournament").each(function() {
 				var $tournament = $(this);
 				var level = $tournament.data("level");
 				$tournament.addClass("label-" + level);
