@@ -10,7 +10,7 @@
 			var lg = deviceGreaterOrEqual(device, "lg");
 			setBootgridColumnsVisible($latestEvents, ["final"], lg);
 			setBootgridColumnsVisible($latestEvents, ["winner"], !lg);
-			setBootgridColumnsVisible($latestEvents, ["draw"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsVisible($latestEvents, ["date", "draw"], deviceGreaterOrEqual(device, "sm"));
 			if (!lg)
 				setBootgridColumnsWidths($latestEvents, ["name"], [175]);
 			$latestEvents.bootgrid({
