@@ -93,8 +93,8 @@ a.label-btn {
 .black {
 	color: black;
 }
-.black:hover,
-.black:focus {
+a.black:hover,
+a.black:focus {
 	color: #23527c !important;
 }
 .bg-level-G {
