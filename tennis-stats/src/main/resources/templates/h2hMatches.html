@@ -40,7 +40,7 @@
 					"surface": surfaceFormatter,
 					"match": h2hMatchFormatter,
 					"stats": function(column, row) {
-						return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event, true)' title='Match Statistics'> Stats</a>" : "";
+						return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event, true)' title='Match Statistics'> Stats</a>" : "";
 					}
 				},
 				labels: {

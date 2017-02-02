@@ -40,9 +40,6 @@
 					"wonPctStr": function(column, row) {
 						return "<span data-won-pct='" + row.wonPctClass + "'>" + row.wonPctStr + "</span>";
 					},
-					"h2h": function(column, row) {
-						return "<a href='/headToHead?playerId1=[[${playerId}]]&playerId2=" + row.playerId + "' class='label label-primary' title='Show Head-to-Head'>H2H</a>"
-					},
 					"lastMatch": function(column, row) {
 						var match = row.lastMatch;
 						var won = match.winnerId == [[${playerId}]];
@@ -50,7 +47,10 @@
 							match.season + " " + tournamentEventFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
 					},
 					"stats": function(column, row) {
-						return "<a id='rivalryStats-" + row.playerId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showRivalryStats(" + row.playerId + ", event)' title='[[${playerName}]] vs " + row.name + " Rivalry Statistics'> Stats</a>";
+						return "<a id='rivalryStats-" + row.playerId + "' href='#' class='label label-info label-btn glyphicon glyphicon-stats' onclick='showRivalryStats(" + row.playerId + ", event)' title='[[${playerName}]] vs " + row.name + " Rivalry Statistics'> Stats</a>";
+					},
+					"h2h": function(column, row) {
+						return "<a href='/headToHead?playerId1=[[${playerId}]]&playerId2=" + row.playerId + "' class='label label-primary label-btn' title='Show Head-to-Head'>H2H</a>"
 					}
 				},
 				labels: {

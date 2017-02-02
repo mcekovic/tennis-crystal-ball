@@ -43,6 +43,9 @@ a.label:hover,
 a.label:focus {
 	text-decoration: underline;
 }
+a.label-btn {
+	text-decoration: none !important;
+}
 .label-won {
 	color: black;
 	background-color: lime;
@@ -89,6 +92,10 @@ a.label:focus {
 }
 .black {
 	color: black;
+}
+.black:hover,
+.black:focus {
+	color: #23527c !important;
 }
 .bg-level-G {
 	background: #f2dede;

@@ -42,7 +42,7 @@
 						return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[[${playerId}]]&tab=matches&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
 					},
 					"stats": function(column, row) {
-						return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='[[${playerName}]] " + row.name + " " + row.season + " Statistics'> Stats</a>";
+						return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info label-btn glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='[[${playerName}]] " + row.name + " " + row.season + " Statistics'> Stats</a>";
 					}
 				},
 				labels: {
