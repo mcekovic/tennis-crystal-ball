@@ -10,7 +10,7 @@
 					<a href="/" style="font-size: larger" title="Home"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></a>
 				</div>
 				<div class="navbar-text pull-left">
-					<span th:if="${lastDataUpdate}" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}" class="text-nowrap">Last data update: 21-09-2015</span>
+					<small th:if="${lastDataUpdate}" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}" class="text-nowrap text-muted">Last data update: 21-09-2015</small>
 				</div>
 				<div class="navbar-text pull-left text-nowrap" style="margin-top: 5px">
 					<a href="https://www.facebook.com/profile.php?id=100014697018141" target="_blank" title="Ultimate Tennis Statistics on Facebook"><img src="/images/glyphicons-social-facebook.png" width="24" height="24"/></a>

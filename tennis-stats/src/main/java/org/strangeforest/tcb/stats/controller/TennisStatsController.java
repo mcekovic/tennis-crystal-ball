@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
+import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
+
+import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Controller
 public class TennisStatsController extends PageController {
@@ -32,10 +35,12 @@ public class TennisStatsController extends PageController {
 	public ModelAndView rankingTopN(
       @RequestParam(name = "rankType") RankType rankType
 	) {
-		List<PlayerRanking> rankingTopN = rankingsService.getRankingsTopN(rankType, 10);
+		LocalDate date = rankingsService.getCurrentRankingDate(rankType);
+		List<PlayerRanking> rankingTopN = rankingsService.getRankingsTopN(rankType, date, 10);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("rankType", rankType);
+		modelMap.addAttribute("date", toDate(date));
 		modelMap.addAttribute("rankingTopN", rankingTopN);
 		return new ModelAndView("rankingTopN", modelMap);
 	}

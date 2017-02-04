@@ -128,9 +128,8 @@ public class RankingsService {
 	}
 
 	@Cacheable("RankingsTable.TopN")
-	public List<PlayerRanking> getRankingsTopN(RankType rankType, int playerCount) {
+	public List<PlayerRanking> getRankingsTopN(RankType rankType, LocalDate date, int playerCount) {
 		checkRankType(rankType);
-		LocalDate date = getCurrentRankingDate(rankType);
 		return jdbcTemplate.query(
 			format(RANKING_TOP_N_QUERY, pointsColumn(rankType), rankingTable(rankType)),
 			params("date", date).addValue("playerCount", playerCount),
