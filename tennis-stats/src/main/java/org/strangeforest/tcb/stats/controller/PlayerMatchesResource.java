@@ -39,12 +39,18 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "statsCategory", required = false) String statsCategory,
+		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
+		@RequestParam(name = "statsTo", required = false) Double statsTo,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		MatchFilter filter = new MatchFilter(season, level, surface, tournamentId, tournamentEventId, null, round, OpponentFilter.forMatches(opponent), OutcomeFilter.forMatches(outcome), searchPhrase);
+		OpponentFilter opponentFilter = OpponentFilter.forMatches(opponent);
+		OutcomeFilter outcomeFilter = OutcomeFilter.forMatches(outcome);
+		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
+		MatchFilter filter = MatchFilter.forMatches(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, statsFilter, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
 		return matchesService.getPlayerMatchesTable(playerId, filter, orderBy, pageSize, current);

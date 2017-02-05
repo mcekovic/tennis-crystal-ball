@@ -141,6 +141,7 @@ public class PlayerProfileController extends PageController {
 		}
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("outcome", outcome);
+		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerMatches", modelMap);
 	}
 

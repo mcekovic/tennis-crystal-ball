@@ -164,7 +164,7 @@ public class RivalriesService {
 		"FROM rivalries_3 r\n" +
 		"INNER JOIN player_v p1 ON p1.player_id = r.player_id_1\n" +
 		"INNER JOIN player_v p2 ON p2.player_id = r.player_id_2%4$s\n" +
-		"WHERE r.rank = 1\n" +
+		"WHERE r.rank = 1 AND NOT lower(p1.last_name) LIKE '%%unknown%%' AND NOT lower(p2.last_name) LIKE '%%unknown%%'\n" +
 		"ORDER BY %5$s OFFSET :offset";
 
 	private static final String BEST_RANK_JOIN = //language=SQL

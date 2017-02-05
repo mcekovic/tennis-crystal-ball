@@ -31,14 +31,17 @@ public class MatchesService {
 		"ORDER BY match_num";
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
-		"SELECT m.match_id, m.date, tournament_event_id, e.name AS tournament, e.level, m.surface, m.indoor, m.round,\n" +
+		"SELECT m.match_id, m.date, m.tournament_event_id, e.name AS tournament, e.level, m.surface, m.indoor, m.round,\n" +
 		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.score, m.outcome, m.has_stats\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
-		"INNER JOIN player_v pl ON pl.player_id = m.loser_id\n" +
-		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%1$s\n" +
-		"ORDER BY %2$s OFFSET :offset";
+		"INNER JOIN player_v pl ON pl.player_id = m.loser_id%1$s\n" +
+		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%2$s\n" +
+		"ORDER BY %3$s OFFSET :offset";
+
+	private static final String MATCH_STATS_JOIN = //language=SQL
+		"\nLEFT JOIN player_match_stats_v ms ON ms.match_id = m.match_id AND ms.player_id = :playerId";
 
 	private static final String MATCH_QUERY = //language=SQL
 		"SELECT m.match_id, e.season, e.level, m.surface, m.indoor, tournament_event_id, e.name AS tournament,\n" +
@@ -95,7 +98,7 @@ public class MatchesService {
 		AtomicInteger matches = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(PLAYER_MATCHES_QUERY, filter.getCriteria(), orderBy),
+			format(PLAYER_MATCHES_QUERY, filter.hasStatsFilter() ? MATCH_STATS_JOIN : "", filter.getCriteria(), orderBy),
 			filter.getParams()
 				.addValue("playerId", playerId)
 				.addValue("offset", offset),

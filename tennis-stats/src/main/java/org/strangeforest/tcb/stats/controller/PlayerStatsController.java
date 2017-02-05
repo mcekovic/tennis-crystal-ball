@@ -36,7 +36,7 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, null, result, null, null, null, searchPhrase);
+		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, result, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();
@@ -57,13 +57,19 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "statsCategory", required = false) String statsCategory,
+		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
+		@RequestParam(name = "statsTo", required = false) Double statsTo,
 		@RequestParam(name = "searchPhrase", required = false) String searchPhrase,
 		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, null, round, OpponentFilter.forStats(opponent), OutcomeFilter.forStats(outcome), searchPhrase);
+		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent);
+		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
+		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
+		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, statsFilter, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();

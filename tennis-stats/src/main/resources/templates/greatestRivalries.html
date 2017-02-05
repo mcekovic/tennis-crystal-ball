@@ -59,7 +59,7 @@
 					},
 					"lastMatch": function(column, row) {
 						var match = row.lastMatch;
-						return (match.winnerId == row.player1.playerId ? row.player1.name : row.player2.name) + " [ " + match.score + " ] at " +
+						return shortName(match.winnerId == row.player1.playerId ? row.player1.name : row.player2.name) + " [ " + match.score + " ] at " +
 							match.season + " " + tournamentEventFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
 					},
 					"h2h2": function(column, row) {
@@ -93,6 +93,12 @@
 				{id: "h2hPct", title: "Head-to-head winning percentages"}
 			]);
 		});
+		function shortName(name) {
+			var names = name.match(/[^A-Z\s]+/g);
+			for (var i = 0; i < names.length - 1; i++)
+				name = name.replace(names[i], '.');
+			return name;
+		}
 		function filterChanged() {
 			var url = "/greatestRivalriesMinMatches?level=" + $("#level").val() + "&surface=" + $("#surface").val() + "&round=" + encodeURIComponent($("#round").val());
 			$.get(url, function (data) {
@@ -159,7 +165,7 @@
 		<thead>
 		<tr>
 			<th data-column-id="rank" data-type="numeric" data-width="55" data-sortable="false">Rnk</th>
-			<th data-column-id="rivalry" data-formatter="rivalry" data-width="300" data-sortable="false">Rivalry</th>
+			<th data-column-id="rivalry" data-formatter="rivalry" data-width="320" data-sortable="false">Rivalry</th>
 			<th data-column-id="matches" data-formatter="matches" data-order="desc" data-width="45" data-align="right" data-header-align="right">M</th>
 			<th data-column-id="rivalryScore" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Scr</th>
 			<th data-column-id="h2h" data-formatter="h2h" data-width="55" data-sortable="false" data-align="center" data-header-align="center">H2H</th>

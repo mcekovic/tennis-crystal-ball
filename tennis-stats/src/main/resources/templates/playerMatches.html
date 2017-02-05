@@ -15,6 +15,7 @@
 	<!--/*@thymesVar id="opponentName" type="java.lang.String>"*/-->
 	<!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
 	<!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 	<script type="text/javascript">
 		$(function() {
 			var $matchesTable = $("#matchesTable");
@@ -39,6 +40,9 @@
 					request.tournamentId = $("#matchesTournament").val();
 					request.tournamentEventId = $("#matchesTournamentEvent").val();
 					request.outcome = $("#matchesOutcome").val();
+					request.statsCategory = $("#matchesStatsCategory").val();
+					request.statsFrom = $("#matchesStatsFrom").val();
+					request.statsTo = $("#matchesStatsTo").val();
 					return request;
 				},
 				rowCount: [15, 20, 50, -1],
@@ -83,6 +87,9 @@
 			$("#matchesTournamentEvent").val("");
 			$("#matchesOutcome").val("");
 			$("#matchesTable").bootgrid("search", "");
+			$("#matchesStatsCategory").val("");
+			$("#matchesStatsFrom").val("");
+			$("#matchesStatsTo").val("");
 			reloadMatches();
 		}
 		function showMatchesStats(event) {
@@ -159,6 +166,29 @@
 			<button type="button" class="btn btn-default" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
 				<span class="glyphicon glyphicon-remove"></span> Clear
 			</button>
+		</div>
+		<div class="col-md-1">
+			<div data-toggle="tooltip" data-placement="right" title="Advanced filters">
+				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advancedFilter">
+					<span class="glyphicon glyphicon-collapse-down"></span> Adv.
+				</button>
+			</div>
+		</div>
+	</div>
+	<div id="advancedFilter" class="collapse row" style="margin-top: 15px">
+		<div class="col-md-6">
+			<div class="input-group">
+				<select id="matchesStatsCategory" style="width: 220px" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+					<option value="">Select statistics category</option>
+					<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
+						<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+					</optgroup>
+				</select>
+				<label for="matchesStatsFrom" class="input-group-addon">From:</label>
+				<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" onchange="reloadMatches()"/>
+				<label for="matchesStatsTo" class="input-group-addon">To:</label>
+				<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" onchange="reloadMatches()"/>
+			</div>
 		</div>
 	</div>
 	<div id="matchesTournamentDiv" class="col-sm-2" style="padding-left: 0">
