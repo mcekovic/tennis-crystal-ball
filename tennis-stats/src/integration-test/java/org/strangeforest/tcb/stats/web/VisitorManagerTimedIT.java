@@ -4,7 +4,7 @@ import java.time.*;
 
 import org.junit.*;
 import org.junit.runner.*;
-import org.mockito.runners.*;
+import org.mockito.junit.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;

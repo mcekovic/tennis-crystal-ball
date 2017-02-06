@@ -18,11 +18,17 @@
 	<!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 	<script type="text/javascript">
 		function StatsFilter() {
-			var category = $("#matchesStatsCategory").val();
+			var $category = $("#matchesStatsCategory");
+			var category = $category.val();
+			var type = $category.find(":selected").data("type");
 			var from = $("#matchesStatsFrom").val();
 			var to = $("#matchesStatsTo").val();
 			if (category && (from || to)) {
 				this.category = category;
+				if (type == "PERCENTAGE") {
+					if (from) from /= 100.0;
+					if (to) to /= 100.0;
+				}
 				this.from = from;
 				this.to = to;
 			}
@@ -92,8 +98,37 @@
 		function reloadMatches() {
 			$("#matchesTable").bootgrid("reload");
 		}
+		function validateNumber(selector) {
+			var $selector = $(selector);
+			var value = $selector.val();
+			if (!value || $.isNumeric(value)) {
+				$selector.tooltip("destroy");
+				return true;
+			}
+			else {
+				$selector.tooltip({title: "Invalid number"}).tooltip("show");
+				return false;
+			}
+		}
+		function validateFromLessThenTo() {
+			var from = $("#matchesStatsFrom").val();
+			var to = $("#matchesStatsTo").val();
+			if ($.isNumeric(from) && $.isNumeric(to)) {
+				var $range = $("#matchesStatsRange");
+				if (from <= to) {
+					$range.tooltip("destroy");
+					return true;
+				}
+				else {
+					$range.tooltip({title: "From is greater then to"}).tooltip("show");
+					return false;
+				}
+			}
+			else
+				return true;
+		}
 		function advancedFilterChanged() {
-			if (!lastStatsFilter.equals(new StatsFilter()))
+			if (validateNumber("#matchesStatsFrom") && validateNumber("#matchesStatsTo") && validateFromLessThenTo() && !lastStatsFilter.equals(new StatsFilter()))
 				reloadMatches();
 		}
 		function clearMatchesFilter() {
@@ -209,7 +244,7 @@
 				</select>
 				<label for="matchesStatsFrom" class="input-group-addon">From:</label>
 				<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" oninput="advancedFilterChanged()" onchange="advancedFilterChanged()"/>
-				<label for="matchesStatsTo" class="input-group-addon">To:</label>
+				<label id="matchesStatsRange" for="matchesStatsTo" class="input-group-addon">To:</label>
 				<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" oninput="advancedFilterChanged()" onchange="advancedFilterChanged()"/>
 			</div>
 		</div>
