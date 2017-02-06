@@ -25,7 +25,7 @@
 					cache: false
 				},
 				url: "/matchesTable?playerId=[[${player1.id}]]&opponent=OPP_[[${player2.id}]]",
-				requestHandler: function (request) {
+				requestHandler: function(request) {
 					request.season = $("#matchesSeason").val();
 					request.level = $("#matchesLevel").val();
 					request.surface = $("#matchesSurface").val();

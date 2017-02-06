@@ -21,7 +21,7 @@
 					cache: false
 				},
 				url: "/tournamentEventsTable?season=[[${season}]]",
-				requestHandler: function (request) {
+				requestHandler: function(request) {
 					request.level = $("#eventsLevel").val();
 					request.surface = $("#eventsSurface").val();
 					return request;

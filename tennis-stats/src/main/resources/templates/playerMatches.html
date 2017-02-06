@@ -17,6 +17,20 @@
 	<!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 	<script type="text/javascript">
+		function StatsFilter() {
+			var category = $("#matchesStatsCategory").val();
+			var from = $("#matchesStatsFrom").val();
+			var to = $("#matchesStatsTo").val();
+			if (category && (from || to)) {
+				this.category = category;
+				this.from = from;
+				this.to = to;
+			}
+			this.equals = function(o) {
+				return this.category == o.category && this.from == o.from && this.to == o.to;
+			}
+		}
+		var lastStatsFilter;
 		$(function() {
 			var $matchesTable = $("#matchesTable");
 			var device = detectDevice();
@@ -31,7 +45,7 @@
 					cache: false
 				},
 				url: "/matchesTable?playerId=[[${playerId}]]",
-				requestHandler: function (request) {
+				requestHandler: function(request) {
 					request.season = $("#matchesSeason").val();
 					request.level = $("#matchesLevel").val();
 					request.surface = $("#matchesSurface").val();
@@ -40,9 +54,10 @@
 					request.tournamentId = $("#matchesTournament").val();
 					request.tournamentEventId = $("#matchesTournamentEvent").val();
 					request.outcome = $("#matchesOutcome").val();
-					request.statsCategory = $("#matchesStatsCategory").val();
-					request.statsFrom = $("#matchesStatsFrom").val();
-					request.statsTo = $("#matchesStatsTo").val();
+					lastStatsFilter = new StatsFilter();
+					request.statsCategory = lastStatsFilter.category;
+					request.statsFrom = lastStatsFilter.from;
+					request.statsTo = lastStatsFilter.to;
 					return request;
 				},
 				rowCount: [15, 20, 50, -1],
@@ -77,6 +92,10 @@
 		function reloadMatches() {
 			$("#matchesTable").bootgrid("reload");
 		}
+		function advancedFilterChanged() {
+			if (!lastStatsFilter.equals(new StatsFilter()))
+				reloadMatches();
+		}
 		function clearMatchesFilter() {
 			$("#matchesSeason").val("");
 			$("#matchesLevel").val("");
@@ -104,6 +123,10 @@
 				url += "&opponent=" + $("#matchesOpponent").val();
 				url += "&tournamentId=" + $("#matchesTournament").val();
 				url += "&tournamentEventId=" + $("#matchesTournamentEvent").val();
+				var statsFilter = new StatsFilter();
+				url += "&statsCategory=" + statsFilter.category;
+				url += "&statsFrom=" + statsFilter.from;
+				url += "&statsTo=" + statsFilter.to;
 				url += "&outcome=" + $("#matchesOutcome").val();
 				url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 				$.get(url, function(data) {
@@ -170,7 +193,7 @@
 		<div class="col-md-1">
 			<div data-toggle="tooltip" data-placement="right" title="Advanced filters">
 				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advancedFilter">
-					<span class="glyphicon glyphicon-collapse-down"></span> Adv.
+					<span class="glyphicon glyphicon-cog"></span> Adv.
 				</button>
 			</div>
 		</div>
@@ -178,16 +201,16 @@
 	<div id="advancedFilter" class="collapse row" style="margin-top: 15px">
 		<div class="col-md-6">
 			<div class="input-group">
-				<select id="matchesStatsCategory" style="width: 220px" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+				<select id="matchesStatsCategory" style="width: 220px" class="form-control" onchange="advancedFilterChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
 					<option value="">Select statistics category</option>
 					<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
-						<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+						<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:data-type="${category.type}" data-type="COUNT" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
 					</optgroup>
 				</select>
 				<label for="matchesStatsFrom" class="input-group-addon">From:</label>
-				<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" onchange="reloadMatches()"/>
+				<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" oninput="advancedFilterChanged()" onchange="advancedFilterChanged()"/>
 				<label for="matchesStatsTo" class="input-group-addon">To:</label>
-				<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" onchange="reloadMatches()"/>
+				<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" oninput="advancedFilterChanged()" onchange="advancedFilterChanged()"/>
 			</div>
 		</div>
 	</div>

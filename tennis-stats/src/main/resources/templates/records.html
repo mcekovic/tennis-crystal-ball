@@ -14,7 +14,7 @@
 					cache: false
 				},
 				url: "/recordsTable",
-				requestHandler: function (request) {
+				requestHandler: function(request) {
 					var infamous = $("#infamous").prop("checked");
 					request.category = !infamous ? $("#category").val() : $("#infamousCategory").val();
 					request.infamous = infamous;

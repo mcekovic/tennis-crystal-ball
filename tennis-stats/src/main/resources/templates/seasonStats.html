@@ -14,7 +14,7 @@
 					cache: false
 				},
 				url: "/statsLeadersTable?season=[[${season}]]",
-				requestHandler: function (request) {
+				requestHandler: function(request) {
 					request.category = $("#statsCategory").val();
 					var surface = $("#statsSurface").val();
 					if (surface)
