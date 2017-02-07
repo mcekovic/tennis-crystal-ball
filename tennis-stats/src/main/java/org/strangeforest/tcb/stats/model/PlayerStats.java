@@ -120,6 +120,10 @@ public class PlayerStats {
 		return acesPerServiceGame;
 	}
 
+	public double getAcesPerMatch() {
+		return ratio(aces, getMatches());
+	}
+
 	public int getDoubleFaults() {
 		return doubleFaults;
 	}
@@ -130,6 +134,14 @@ public class PlayerStats {
 
 	public double getDoubleFaultsPerServiceGame() {
 		return doubleFaultsPerServiceGame;
+	}
+
+	public double getDoubleFaultsPerMatch() {
+		return ratio(doubleFaults, getMatches());
+	}
+
+	public double getAcesDoubleFaultsRatio() {
+		return ratio(aces, doubleFaults);
 	}
 
 	public int getServicePoints() {
@@ -190,6 +202,10 @@ public class PlayerStats {
 
 	public double getBreakPointsPerServiceGame() {
 		return breakPointsPerServiceGame;
+	}
+
+	public double getBreakPointsFacedPerMatch() {
+		return ratio(breakPointsFaced, getMatches());
 	}
 
 	public int getServiceGamesWon() {
@@ -273,6 +289,10 @@ public class PlayerStats {
 
 	public double getBreakPointsPerReturnGame() {
 		return opponentStats.breakPointsPerServiceGame;
+	}
+
+	public double getBreakPointsPerMatch() {
+		return opponentStats.getBreakPointsFacedPerMatch();
 	}
 
 	public int getReturnGamesWon() {

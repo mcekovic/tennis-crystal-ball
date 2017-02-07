@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
+import java.util.function.*;
 
 import static org.strangeforest.tcb.stats.model.StatsCategory.Type.*;
 
@@ -35,59 +36,59 @@ public final class StatsCategory {
 
 	static {
 		// Serve
-		addCategory(SERVE, "aces", "p_ace", COUNT, true, "Aces");
-		addCategory(SERVE, "acePct", "CASE WHEN p_sv_pt > 0 THEN p_ace::REAL / p_sv_pt ELSE NULL END", PERCENTAGE, true, "Ace %");
-		addCategory(SERVE, "acesPerSvcGame", "CASE WHEN p_sv_gms > 0 THEN p_ace::REAL / p_sv_gms ELSE NULL END", RATIO, true, "Aces per Svc. Game");
-		addCategory(SERVE, "acesPerMatch", "p_ace::REAL / (" + TOTAL_MATCHES + ")", RATIO, true, "Aces per Match");
-		addCategory(SERVE, "doubleFault", "p_df", COUNT, true, "Double Faults");
-		addCategory(SERVE, "doubleFaultPct", "CASE WHEN p_sv_pt > 0 THEN p_df::REAL / p_sv_pt ELSE NULL END", PERCENTAGE, true, "Double Fault %");
-		addCategory(SERVE, "dfsPerSvcGame", "CASE WHEN p_sv_gms > 0 THEN p_df::REAL / p_sv_gms ELSE NULL END", RATIO, true, "DFs per Svc. Game");
-		addCategory(SERVE, "dfsPerMatch", "p_df::REAL / (" + TOTAL_MATCHES + ")", RATIO, true, "DFs per Match");
-		addCategory(SERVE, "acesDfsRatio", "CASE WHEN p_df > 0 THEN p_ace::REAL / p_df ELSE NULL END", RATIO, true, "Aces / DFs Ratio");
-		addCategory(SERVE, "firstServePct", "CASE WHEN p_sv_pt > 0 THEN p_1st_in::REAL / p_sv_pt ELSE NULL END", PERCENTAGE, true, "1st Serve %");
-		addCategory(SERVE, "firstServeWonPct", "CASE WHEN p_1st_in > 0 THEN p_1st_won::REAL / p_1st_in ELSE NULL END", PERCENTAGE, true, "1st Serve Won %");
-		addCategory(SERVE, "secondServeWonPct", "CASE WHEN p_sv_pt - p_1st_in > 0 THEN p_2nd_won::REAL / (p_sv_pt - p_1st_in) ELSE NULL END", PERCENTAGE, true, "2nd Serve Won %");
-		addCategory(SERVE, "breakPointsSavedPct", "CASE WHEN p_bp_fc > 0 THEN p_bp_sv::REAL / p_bp_fc ELSE NULL END", PERCENTAGE, true, "Break Points Saved %");
-		addCategory(SERVE, "bpsPerSvcGame", "CASE WHEN p_sv_gms > 0 THEN p_bp_fc::REAL / p_sv_gms ELSE NULL END", RATIO, true, "BPs per Svc. Game");
-		addCategory(SERVE, "bpsFacedPerMatch", "p_bp_fc::REAL / (" + TOTAL_MATCHES + ")", RATIO, true, "BPs Faced per Match");
-		addCategory(SERVE, "servicePointsWonPct", "CASE WHEN p_sv_pt > 0 THEN (p_1st_won + p_2nd_won)::REAL / p_sv_pt ELSE NULL END", PERCENTAGE, true, "Service Pts. Won %");
-		addCategory(SERVE, "serviceGamesWonPct", "CASE WHEN p_sv_gms > 0 THEN (p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / p_sv_gms ELSE NULL END", PERCENTAGE, true, "Service Games Won %");
+		addCategory(SERVE, "aces", "p_ace", PlayerStats::getAces, COUNT, true, "Aces");
+		addCategory(SERVE, "acePct", "CASE WHEN p_sv_pt > 0 THEN p_ace::REAL / p_sv_pt ELSE NULL END", PlayerStats::getAcePct, PERCENTAGE, true, "Ace %");
+		addCategory(SERVE, "acesPerSvcGame", "CASE WHEN p_sv_gms > 0 THEN p_ace::REAL / p_sv_gms ELSE NULL END", PlayerStats::getAcesPerServiceGame, RATIO, true, "Aces per Svc. Game");
+		addCategory(SERVE, "acesPerMatch", "p_ace::REAL / (" + TOTAL_MATCHES + ")", PlayerStats::getAcesPerMatch, RATIO, true, "Aces per Match");
+		addCategory(SERVE, "doubleFault", "p_df", PlayerStats::getDoubleFaults, COUNT, true, "Double Faults");
+		addCategory(SERVE, "doubleFaultPct", "CASE WHEN p_sv_pt > 0 THEN p_df::REAL / p_sv_pt ELSE NULL END", PlayerStats::getDoubleFaultPct, PERCENTAGE, true, "Double Fault %");
+		addCategory(SERVE, "dfsPerSvcGame", "CASE WHEN p_sv_gms > 0 THEN p_df::REAL / p_sv_gms ELSE NULL END", PlayerStats::getDoubleFaultsPerServiceGame, RATIO, true, "DFs per Svc. Game");
+		addCategory(SERVE, "dfsPerMatch", "p_df::REAL / (" + TOTAL_MATCHES + ")", PlayerStats::getDoubleFaultsPerMatch, RATIO, true, "DFs per Match");
+		addCategory(SERVE, "acesDfsRatio", "CASE WHEN p_df > 0 THEN p_ace::REAL / p_df ELSE NULL END", PlayerStats::getAcesDoubleFaultsRatio, RATIO, true, "Aces / DFs Ratio");
+		addCategory(SERVE, "firstServePct", "CASE WHEN p_sv_pt > 0 THEN p_1st_in::REAL / p_sv_pt ELSE NULL END", PlayerStats::getFirstServePct, PERCENTAGE, true, "1st Serve %");
+		addCategory(SERVE, "firstServeWonPct", "CASE WHEN p_1st_in > 0 THEN p_1st_won::REAL / p_1st_in ELSE NULL END", PlayerStats::getFirstServeWonPct, PERCENTAGE, true, "1st Serve Won %");
+		addCategory(SERVE, "secondServeWonPct", "CASE WHEN p_sv_pt - p_1st_in > 0 THEN p_2nd_won::REAL / (p_sv_pt - p_1st_in) ELSE NULL END", PlayerStats::getSecondServeWonPct, PERCENTAGE, true, "2nd Serve Won %");
+		addCategory(SERVE, "breakPointsSavedPct", "CASE WHEN p_bp_fc > 0 THEN p_bp_sv::REAL / p_bp_fc ELSE NULL END", PlayerStats::getBreakPointsSavedPct, PERCENTAGE, true, "Break Points Saved %");
+		addCategory(SERVE, "bpsPerSvcGame", "CASE WHEN p_sv_gms > 0 THEN p_bp_fc::REAL / p_sv_gms ELSE NULL END", PlayerStats::getBreakPointsPerServiceGame, RATIO, true, "BPs per Svc. Game");
+		addCategory(SERVE, "bpsFacedPerMatch", "p_bp_fc::REAL / (" + TOTAL_MATCHES + ")", PlayerStats::getBreakPointsFacedPerMatch, RATIO, true, "BPs Faced per Match");
+		addCategory(SERVE, "servicePointsWonPct", "CASE WHEN p_sv_pt > 0 THEN (p_1st_won + p_2nd_won)::REAL / p_sv_pt ELSE NULL END", PlayerStats::getServicePointsWonPct, PERCENTAGE, true, "Service Pts. Won %");
+		addCategory(SERVE, "serviceGamesWonPct", "CASE WHEN p_sv_gms > 0 THEN (p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / p_sv_gms ELSE NULL END", PlayerStats::getServiceGamesWonPct, PERCENTAGE, true, "Service Games Won %");
 		// Return
-		addCategory(RETURN, "aceAgainst", "o_ace", COUNT, true, "Ace Against");
-		addCategory(RETURN, "aceAgainstPct", "CASE WHEN o_sv_pt > 0 THEN o_ace::REAL / o_sv_pt ELSE NULL END", PERCENTAGE, true, "Ace Against %");
-		addCategory(RETURN, "doubleFaultAgainst", "o_df", COUNT, true, "Dbl. Flt. Against");
-		addCategory(RETURN, "doubleFaultAgainstPct", "CASE WHEN o_sv_pt > 0 THEN o_df::REAL / o_sv_pt ELSE NULL END", PERCENTAGE, true, "Dbl. Flt. Against %");
-		addCategory(RETURN, "firstServeReturnWonPct", "CASE WHEN o_1st_in > 0 THEN (o_1st_in - o_1st_won)::REAL / o_1st_in ELSE NULL END", PERCENTAGE, true, "1st Srv. Rtn. Won %");
-		addCategory(RETURN, "secondServeReturnWonPct", "CASE WHEN o_sv_pt - o_1st_in > 0 THEN (o_sv_pt - o_1st_in - o_2nd_won)::REAL / (o_sv_pt - o_1st_in) ELSE NULL END", PERCENTAGE, true, "2nd Srv. Rtn. Won %");
-		addCategory(RETURN, "breakPointsPct", "CASE WHEN o_bp_fc > 0 THEN " + BREAK_POINTS_CONVERTED_PCT + " ELSE NULL END", PERCENTAGE, true, "Break Points Won %");
-		addCategory(RETURN, "bpsPerRtnGame", "CASE WHEN o_sv_gms > 0 THEN o_bp_fc::REAL / o_sv_gms ELSE NULL END", RATIO, true, "BPs per Rtn. Game");
-		addCategory(RETURN, "bpsPerMatch", "o_bp_fc::REAL / (" + TOTAL_MATCHES + ")", RATIO, true, "BPs per Match");
-		addCategory(RETURN, "returnPointsWonPct", RETURN_POINTS_WON_PCT, PERCENTAGE, true, "Return Pts. Won %");
-		addCategory(RETURN, "returnGamesWonPct", RETURN_GAMES_WON_PCT, PERCENTAGE, true, "Return Games Won %");
+		addCategory(RETURN, "aceAgainst", "o_ace", PlayerStats::getAcesAgainst, COUNT, true, "Ace Against");
+		addCategory(RETURN, "aceAgainstPct", "CASE WHEN o_sv_pt > 0 THEN o_ace::REAL / o_sv_pt ELSE NULL END", PlayerStats::getAceAgainstPct, PERCENTAGE, true, "Ace Against %");
+		addCategory(RETURN, "doubleFaultAgainst", "o_df", PlayerStats::getDoubleFaultsAgainst, COUNT, true, "Dbl. Flt. Against");
+		addCategory(RETURN, "doubleFaultAgainstPct", "CASE WHEN o_sv_pt > 0 THEN o_df::REAL / o_sv_pt ELSE NULL END", PlayerStats::getDoubleFaultAgainstPct, PERCENTAGE, true, "Dbl. Flt. Against %");
+		addCategory(RETURN, "firstServeReturnWonPct", "CASE WHEN o_1st_in > 0 THEN (o_1st_in - o_1st_won)::REAL / o_1st_in ELSE NULL END", PlayerStats::getFirstServeReturnPointsWonPct, PERCENTAGE, true, "1st Srv. Rtn. Won %");
+		addCategory(RETURN, "secondServeReturnWonPct", "CASE WHEN o_sv_pt - o_1st_in > 0 THEN (o_sv_pt - o_1st_in - o_2nd_won)::REAL / (o_sv_pt - o_1st_in) ELSE NULL END", PlayerStats::getSecondServeReturnPointsWonPct, PERCENTAGE, true, "2nd Srv. Rtn. Won %");
+		addCategory(RETURN, "breakPointsPct", "CASE WHEN o_bp_fc > 0 THEN " + BREAK_POINTS_CONVERTED_PCT + " ELSE NULL END", PlayerStats::getBreakPointsWonPct, PERCENTAGE, true, "Break Points Won %");
+		addCategory(RETURN, "bpsPerRtnGame", "CASE WHEN o_sv_gms > 0 THEN o_bp_fc::REAL / o_sv_gms ELSE NULL END", PlayerStats::getBreakPointsPerReturnGame, RATIO, true, "BPs per Rtn. Game");
+		addCategory(RETURN, "bpsPerMatch", "o_bp_fc::REAL / (" + TOTAL_MATCHES + ")", PlayerStats::getBreakPointsPerMatch, RATIO, true, "BPs per Match");
+		addCategory(RETURN, "returnPointsWonPct", RETURN_POINTS_WON_PCT, PlayerStats::getReturnPointsWonPct, PERCENTAGE, true, "Return Pts. Won %");
+		addCategory(RETURN, "returnGamesWonPct", RETURN_GAMES_WON_PCT, PlayerStats::getReturnGamesWonPct, PERCENTAGE, true, "Return Games Won %");
 		// Total
-		addCategory(TOTAL, "pointsDominanceRatio", POINTS_DOMINANCE_RATIO, RATIO, true, "Points Dominance", "stats.pointsDominanceRatio.title");
-		addCategory(TOTAL, "gamesDominanceRatio", GAMES_DOMINANCE_RATIO, RATIO, true, "Games Dominance", "stats.gamesDominanceRatio.title");
-		addCategory(TOTAL, "breakPointsRatio", BREAK_POINTS_RATIO, RATIO, true, "Brk. Pts. Ratio", "stats.breakPointsRatio.title");
-		addCategory(TOTAL, "overPerformingRatio", OVER_PERFORMING_RATIO, RATIO, true, "Over-Performing", "stats.overPerformingRatio.title");
-		addCategory(TOTAL, "totalPoints", TOTAL_POINTS, COUNT, true, "Total Pts. Played");
-		addCategory(TOTAL, "totalPointsWon", TOTAL_POINTS_WON, COUNT, true, "Total Pts. Won");
-		addCategory(TOTAL, "totalPointsWonPct", TOTAL_POINTS_WON_PCT, PERCENTAGE, true, "Total Pts. Won %");
-		addCategory(TOTAL, "totalGames", TOTAL_GAMES, COUNT, false, "Total Games Played");
-		addCategory(TOTAL, "totalGamesWon", "p_games", COUNT, false, "Total Games Won");
-		addCategory(TOTAL, "totalGamesWonPct", "p_games::REAL / (" + TOTAL_GAMES + ")", PERCENTAGE, false, "Total Games Won %");
-		addCategory(TOTAL, "sets", TOTAL_SETS, COUNT, false, "Sets Played");
-		addCategory(TOTAL, "setsWon", "p_sets", COUNT, false, "Sets Won");
-		addCategory(TOTAL, "setsWonPct", "p_sets::REAL / (" + TOTAL_SETS + ")", PERCENTAGE, false, "Sets Won %");
-		addCategory(TOTAL, "matches", TOTAL_MATCHES, COUNT, false, "Matches Played");
-		addCategory(TOTAL, "matchesWon", "p_matches", COUNT, false, "Matches Won");
-		addCategory(TOTAL, "matchesWonPct", MATCHES_WON_PCT, PERCENTAGE, false, "Matches Won %");
+		addCategory(TOTAL, "pointsDominanceRatio", POINTS_DOMINANCE_RATIO, PlayerStats::getPointsDominanceRatio, RATIO, true, "Points Dominance", "stats.pointsDominanceRatio.title");
+		addCategory(TOTAL, "gamesDominanceRatio", GAMES_DOMINANCE_RATIO, PlayerStats::getGamesDominanceRatio, RATIO, true, "Games Dominance", "stats.gamesDominanceRatio.title");
+		addCategory(TOTAL, "breakPointsRatio", BREAK_POINTS_RATIO, PlayerStats::getBreakPointsRatio, RATIO, true, "Brk. Pts. Ratio", "stats.breakPointsRatio.title");
+		addCategory(TOTAL, "overPerformingRatio", OVER_PERFORMING_RATIO, PlayerStats::getOverPerformingRatio, RATIO, true, "Over-Performing", "stats.overPerformingRatio.title");
+		addCategory(TOTAL, "totalPoints", TOTAL_POINTS, PlayerStats::getTotalPoints, COUNT, true, "Total Pts. Played");
+		addCategory(TOTAL, "totalPointsWon", TOTAL_POINTS_WON, PlayerStats::getTotalPointsWon, COUNT, true, "Total Pts. Won");
+		addCategory(TOTAL, "totalPointsWonPct", TOTAL_POINTS_WON_PCT, PlayerStats::getTotalPointsWonPct, PERCENTAGE, true, "Total Pts. Won %");
+		addCategory(TOTAL, "totalGames", TOTAL_GAMES, PlayerStats::getTotalGames, COUNT, false, "Total Games Played");
+		addCategory(TOTAL, "totalGamesWon", "p_games", PlayerStats::getTotalGamesWon, COUNT, false, "Total Games Won");
+		addCategory(TOTAL, "totalGamesWonPct", "p_games::REAL / (" + TOTAL_GAMES + ")", PlayerStats::getTotalGamesWonPct, PERCENTAGE, false, "Total Games Won %");
+		addCategory(TOTAL, "sets", TOTAL_SETS, PlayerStats::getSets, COUNT, false, "Sets Played");
+		addCategory(TOTAL, "setsWon", "p_sets", PlayerStats::getSetsWon, COUNT, false, "Sets Won");
+		addCategory(TOTAL, "setsWonPct", "p_sets::REAL / (" + TOTAL_SETS + ")", PlayerStats::getSetsWonPct, PERCENTAGE, false, "Sets Won %");
+		addCategory(TOTAL, "matches", TOTAL_MATCHES, PlayerStats::getMatches, COUNT, false, "Matches Played");
+		addCategory(TOTAL, "matchesWon", "p_matches", PlayerStats::getMatchesWon, COUNT, false, "Matches Won");
+		addCategory(TOTAL, "matchesWonPct", MATCHES_WON_PCT, PlayerStats::getMatchesWonPct, PERCENTAGE, false, "Matches Won %");
 	}
 
-	private static void addCategory(String categoryClass, String name, String expression, StatsCategory.Type type, boolean needsStats, String title) {
-		addCategory(categoryClass, name, expression, type, needsStats, title, null);
+	private static void addCategory(String categoryClass, String name, String expression, Function<PlayerStats, ? extends Number> statFunction, StatsCategory.Type type, boolean needsStats, String title) {
+		addCategory(categoryClass, name, expression, statFunction, type, needsStats, title, null);
 	}
-	private static void addCategory(String categoryClass, String name, String expression, StatsCategory.Type type, boolean needsStats, String title, String descriptionId) {
-		StatsCategory category = new StatsCategory(name, expression, type, needsStats, title, descriptionId);
+	private static void addCategory(String categoryClass, String name, String expression, Function<PlayerStats, ? extends Number> statFunction, StatsCategory.Type type, boolean needsStats, String title, String descriptionId) {
+		StatsCategory category = new StatsCategory(name, expression, statFunction, type, needsStats, title, descriptionId);
 		CATEGORIES.put(name, category);
 		CATEGORY_CLASSES.computeIfAbsent(categoryClass, catCls -> new ArrayList<>()).add(category);
 	}
@@ -112,14 +113,16 @@ public final class StatsCategory {
 
 	private final String name;
 	private final String expression;
+	private final Function<PlayerStats, ? extends Number> statFunction;
 	private final Type type;
 	private final boolean needsStats;
 	private final String title;
 	private final String descriptionId;
 
-	private StatsCategory(String name, String expression, Type type, boolean needsStats, String title, String descriptionId) {
+	private StatsCategory(String name, String expression, Function<PlayerStats, ? extends Number> statFunction, Type type, boolean needsStats, String title, String descriptionId) {
 		this.name = name;
 		this.expression = expression;
+		this.statFunction = statFunction;
 		this.type = type;
 		this.needsStats = needsStats;
 		this.title = title;
@@ -132,6 +135,10 @@ public final class StatsCategory {
 
 	public String getExpression() {
 		return expression;
+	}
+
+	public Number getStat(PlayerStats stats) {
+		return statFunction.apply(stats);
 	}
 
 	public Type getType() {

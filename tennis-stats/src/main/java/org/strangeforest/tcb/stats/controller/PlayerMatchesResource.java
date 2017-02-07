@@ -17,6 +17,7 @@ import static org.strangeforest.tcb.stats.util.OrderBy.*;
 public class PlayerMatchesResource {
 
 	@Autowired private MatchesService matchesService;
+	@Autowired private StatisticsService statisticsService;
 
 	private static final int MAX_MATCHES = 10000;
 
@@ -54,5 +55,26 @@ public class PlayerMatchesResource {
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
 		return matchesService.getPlayerMatchesTable(playerId, filter, orderBy, pageSize, current);
+	}
+	
+	@GetMapping("/matchesStat")
+	public Number matchesStat(
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "opponent", required = false) String opponent,
+		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "statsCategory", required = false) String statsCategory,
+		@RequestParam(name = "searchPhrase") String searchPhrase
+	) {
+		OpponentFilter opponentFilter = OpponentFilter.forMatches(opponent);
+		OutcomeFilter outcomeFilter = OutcomeFilter.forMatches(outcome);
+		MatchFilter filter = MatchFilter.forMatches(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, StatsFilter.ALL, searchPhrase);
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+		return StatsCategory.get(statsCategory).getStat(stats);
 	}
 }

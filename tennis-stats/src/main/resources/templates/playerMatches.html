@@ -96,10 +96,10 @@
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadMatches() {
+			updateStatsCategoryStat();
 			$("#matchesTable").bootgrid("reload");
 		}
-		function validateNumber(selector) {
-			var $selector = $(selector);
+		function validateNumber($selector) {
 			var value = $selector.val();
 			if (!value || $.isNumeric(value)) {
 				$selector.tooltip("destroy");
@@ -107,29 +107,55 @@
 			}
 			else {
 				$selector.tooltip({title: "Invalid number"}).tooltip("show");
+				$selector.focus();
 				return false;
 			}
 		}
-		function validateFromLessThenTo() {
-			var from = $("#matchesStatsFrom").val();
-			var to = $("#matchesStatsTo").val();
-			if ($.isNumeric(from) && $.isNumeric(to)) {
-				var $range = $("#matchesStatsRange");
-				if (from <= to) {
-					$range.tooltip("destroy");
-					return true;
-				}
-				else {
-					$range.tooltip({title: "From is greater then to"}).tooltip("show");
-					return false;
-				}
+		function validateAdvancedFilter() {
+			var $matchesStatsFrom = $("#matchesStatsFrom");
+			var $matchesStatsTo = $("#matchesStatsTo");
+			if (!(validateNumber($matchesStatsFrom) && validateNumber($matchesStatsTo)))
+				return false;
+			var from = $matchesStatsFrom.val();
+			var to = $matchesStatsTo.val();
+			var $range = $("#matchesStatsRange");
+			if ($.isNumeric(from) && $.isNumeric(to) && parseFloat(from) > parseFloat(to)) {
+				$range.tooltip({title: "From is greater then to"}).tooltip("show");
+				$matchesStatsTo.focus();
+				return false;
 			}
-			else
+			else {
+				$range.tooltip("destroy");
 				return true;
+			}
 		}
 		function advancedFilterChanged() {
-			if (validateNumber("#matchesStatsFrom") && validateNumber("#matchesStatsTo") && validateFromLessThenTo() && !lastStatsFilter.equals(new StatsFilter()))
+			if (validateAdvancedFilter() && !lastStatsFilter.equals(new StatsFilter()))
 				reloadMatches();
+		}
+		function updateStatsCategoryStat() {
+			var $category = $("#matchesStatsCategory");
+			var $label = $("#matchesStatsCategoryLabel");
+			var category = $category.val();
+			if (category) {
+				var url = "/matchesStat" + matchStatsParams();
+				url += "&statsCategory=" + category;
+				$.get(url, function (data) {
+					var type = $category.find(":selected").data("type");
+					var stat = parseFloat(data);
+					switch (type) {
+						case "PERCENTAGE": stat = stat.toFixed(1) + "%"; break;
+						case "RATIO": stat = stat.toFixed(2); break;
+					}
+					$label.html(stat);
+				});
+			}
+			else
+				$label.html("");
+		}
+		function statsCategoryChanged() {
+			updateStatsCategoryStat();
+			advancedFilterChanged();
 		}
 		function clearMatchesFilter() {
 			$("#matchesSeason").val("");
@@ -140,30 +166,36 @@
 			$("#matchesTournament").val("");
 			$("#matchesTournamentEvent").val("");
 			$("#matchesOutcome").val("");
-			$("#matchesTable").bootgrid("search", "");
 			$("#matchesStatsCategory").val("");
 			$("#matchesStatsFrom").val("");
 			$("#matchesStatsTo").val("");
+			$("#matchesTable").bootgrid("search", "");
 			reloadMatches();
+		}
+		function matchStatsParams() {
+			var params = "?playerId=[[${playerId}]]";
+			params += "&season=" + $("#matchesSeason").val();
+			params += "&level=" + $("#matchesLevel").val();
+			params += "&surface=" + $("#matchesSurface").val();
+			params += "&round=" + $("#matchesRound").val();
+			params += "&opponent=" + $("#matchesOpponent").val();
+			params += "&tournamentId=" + $("#matchesTournament").val();
+			params += "&tournamentEventId=" + $("#matchesTournamentEvent").val();
+			params += "&outcome=" + $("#matchesOutcome").val();
+			params += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
+			return params;
 		}
 		function showMatchesStats(event) {
 			var $matchesStats = $("#matchesStats");
 			if (!$matchesStats.hasClass("loaded")) {
 				event.preventDefault();
-				var url = "/matchesStats?playerId=[[${playerId}]]";
-				url += "&season=" + $("#matchesSeason").val();
-				url += "&level=" + $("#matchesLevel").val();
-				url += "&surface=" + $("#matchesSurface").val();
-				url += "&round=" + $("#matchesRound").val();
-				url += "&opponent=" + $("#matchesOpponent").val();
-				url += "&tournamentId=" + $("#matchesTournament").val();
-				url += "&tournamentEventId=" + $("#matchesTournamentEvent").val();
+				if (!validateAdvancedFilter())
+					return;
+				var url = "/matchesStats" + matchStatsParams();
 				var statsFilter = new StatsFilter();
 				url += "&statsCategory=" + statsFilter.category;
 				url += "&statsFrom=" + statsFilter.from;
 				url += "&statsTo=" + statsFilter.to;
-				url += "&outcome=" + $("#matchesOutcome").val();
-				url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 				$.get(url, function(data) {
 					$matchesStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
 					$matchesStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
@@ -236,12 +268,13 @@
 	<div id="advancedFilter" class="collapse row" style="margin-top: 15px">
 		<div class="col-md-6">
 			<div class="input-group">
-				<select id="matchesStatsCategory" style="width: 220px" class="form-control" onchange="advancedFilterChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+				<select id="matchesStatsCategory" style="width: 220px" class="form-control" onchange="statsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
 					<option value="">Select statistics category</option>
 					<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
 						<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:data-type="${category.type}" data-type="COUNT" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
 					</optgroup>
 				</select>
+				<label id="matchesStatsCategoryLabel" for="matchesStatsCategory" class="input-group-addon" style="width: 75px"></label>
 				<label for="matchesStatsFrom" class="input-group-addon">From:</label>
 				<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" oninput="advancedFilterChanged()" onchange="advancedFilterChanged()"/>
 				<label id="matchesStatsRange" for="matchesStatsTo" class="input-group-addon">To:</label>

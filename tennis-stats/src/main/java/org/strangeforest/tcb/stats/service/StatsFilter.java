@@ -42,7 +42,8 @@ public class StatsFilter {
 	}
 
 	void addParams(MapSqlParameterSource params) {
-		addRangeParams(params, range, "stats");
+		if (!isNullOrEmpty(category))
+			addRangeParams(params, range, "stats");
 	}
 
 	public boolean isEmpty() {
