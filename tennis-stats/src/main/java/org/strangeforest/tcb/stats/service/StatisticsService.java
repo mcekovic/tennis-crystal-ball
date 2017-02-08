@@ -236,7 +236,7 @@ public class StatisticsService {
 	private PlayerStats mapPlayerStats(ResultSet rs) throws SQLException {
 		PlayerStats playerStats = mapPlayerStats(rs, "p_");
 		PlayerStats opponentStats = mapPlayerStats(rs, "o_");
-		playerStats.setOpponentStats(opponentStats);
+		playerStats.crossLinkOpponentStats(opponentStats);
 		return playerStats;
 	}
 

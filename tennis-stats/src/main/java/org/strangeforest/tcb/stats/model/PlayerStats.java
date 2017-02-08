@@ -369,15 +369,16 @@ public class PlayerStats {
 		return servicePoints > 0 || getReturnPoints() > 0;
 	}
 
-	public void setOpponentStats(PlayerStats opponentStats) {
+	public void crossLinkOpponentStats(PlayerStats opponentStats) {
 		this.opponentStats = opponentStats;
+		opponentStats.opponentStats = this;
 	}
 
 	public static final PlayerStats EMPTY = empty();
 
 	private static PlayerStats empty() {
 		PlayerStats empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-		empty.setOpponentStats(empty);
+		empty.crossLinkOpponentStats(empty);
 		return empty;
 	}
 }

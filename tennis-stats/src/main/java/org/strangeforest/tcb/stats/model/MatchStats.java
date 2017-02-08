@@ -14,8 +14,7 @@ public class MatchStats {
 		this.minutes = minutes;
 		this.winnerStats = winnerStats;
 		this.loserStats = loserStats;
-		winnerStats.setOpponentStats(loserStats);
-		loserStats.setOpponentStats(winnerStats);
+		winnerStats.crossLinkOpponentStats(loserStats);
 	}
 
 	public String getWinner() {
