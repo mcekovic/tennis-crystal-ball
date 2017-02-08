@@ -341,44 +341,7 @@ function recordHoldersFormatter(column, row) {
 }
 
 
-// Devices
-
-var deviceMatrix = {"xs": ["xs", "sm", "md", "lg"], "sm": ["sm", "md", "lg"], "md": ["md", "lg"], "lg": ["lg"]};
-function deviceGreaterOrEqual(device1, device2) {
-	return deviceMatrix[device2].indexOf(device1) >= 0;
-}
-function detectDevice() {
-	return $(".device-check:visible").attr("data-device");
-}
-
-
-// Misc
-
-function bindPopovers() {
-	$("[data-toggle=popover]").popover({
-		html: true,
-		content: function () {
-			var content = $(this).attr("data-popover");
-			return $(content).children(".popover-content").html();
-		},
-		title: function () {
-			var title = $(this).attr("data-popover");
-			return $(title).children(".popover-title").html();
-		}
-	}).on("show.bs.popover", function () {
-		$(this).data("bs.popover").tip().css("max-width", "900px");
-	});
-}
-
-function appendGoatPointsTitle(title, row, propertyName, propertyTitle) {
-	var points = row[propertyName];
-	if (points > 0) {
-		if (title)
-			title += ", ";
-		title += propertyTitle + ": " + points;
-	}
-	return title;
-}
+// Stats
 
 function toggleStatsData(selector) {
 	if (selector)
@@ -446,4 +409,79 @@ function compareMatchStats(matchId, close) {
 	$.get(url, function (data) {
 		$("#matchStatsPopover-" + matchId).html(data);
 	});
+}
+
+function StatsFilter($category, $from, $to) {
+	var category = $category.val();
+	var type = $category.find(":selected").data("type");
+	var from = $from.val();
+	var to = $to.val();
+	if (category && (from || to)) {
+		this.category = category;
+		if (type == "PERCENTAGE") {
+			if (from) from /= 100.0;
+			if (to) to /= 100.0;
+		}
+		this.from = from;
+		this.to = to;
+	}
+	this.equals = function(o) {
+		return this.category == o.category && this.from == o.from && this.to == o.to;
+	}
+	this.hasFilter = function() {
+		return this.category && (this.from || this.to);
+	}
+}
+
+
+// Devices
+
+var deviceMatrix = {"xs": ["xs", "sm", "md", "lg"], "sm": ["sm", "md", "lg"], "md": ["md", "lg"], "lg": ["lg"]};
+function deviceGreaterOrEqual(device1, device2) {
+	return deviceMatrix[device2].indexOf(device1) >= 0;
+}
+function detectDevice() {
+	return $(".device-check:visible").attr("data-device");
+}
+
+
+// Misc
+
+function bindPopovers() {
+	$("[data-toggle=popover]").popover({
+		html: true,
+		content: function () {
+			var content = $(this).attr("data-popover");
+			return $(content).children(".popover-content").html();
+		},
+		title: function () {
+			var title = $(this).attr("data-popover");
+			return $(title).children(".popover-title").html();
+		}
+	}).on("show.bs.popover", function () {
+		$(this).data("bs.popover").tip().css("max-width", "900px");
+	});
+}
+
+function validateNumber($selector) {
+	var value = $selector.val();
+	if (!value || $.isNumeric(value)) {
+		$selector.tooltip("destroy");
+		return true;
+	}
+	else {
+		$selector.tooltip({title: "Invalid number"}).tooltip("show");
+		$selector.focus();
+		return false;
+	}
+}
+
+function appendGoatPointsTitle(title, row, propertyName, propertyTitle) {
+	var points = row[propertyName];
+	if (points > 0) {
+		if (title)
+			title += ", ";
+		title += propertyTitle + ": " + points;
+	}
+	return title;
 }
