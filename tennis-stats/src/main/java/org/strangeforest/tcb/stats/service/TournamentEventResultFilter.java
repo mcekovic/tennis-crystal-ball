@@ -13,36 +13,44 @@ import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 public class TournamentEventResultFilter extends TournamentEventFilter {
 
 	private final String result;
+	private final StatsFilter statsFilter;
 
 	private static final String RESULT_CRITERION = " AND r.result %1$s :result::tournament_event_result";
 
-	public TournamentEventResultFilter(Integer season, String level, String surface, Integer tournamentId, String result, String searchPhrase) {
-		this(season, level, surface, tournamentId, null, result, searchPhrase);
+	public TournamentEventResultFilter(Integer season, String level, String surface, Integer tournamentId, String result, StatsFilter statsFilter, String searchPhrase) {
+		this(season, level, surface, tournamentId, null, result, statsFilter, searchPhrase);
 	}
 
-	protected TournamentEventResultFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String result, String searchPhrase) {
+	protected TournamentEventResultFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String result, StatsFilter statsFilter, String searchPhrase) {
 		super(season, level, surface, tournamentId, tournamentEventId, searchPhrase);
 		this.result = result;
+		this.statsFilter = statsFilter != null ? statsFilter : StatsFilter.ALL;
 	}
 
 	@Override protected void appendCriteria(StringBuilder criteria) {
 		super.appendCriteria(criteria);
 		if (!isNullOrEmpty(result))
 			criteria.append(format(RESULT_CRITERION, result.endsWith("+") ? ">=" : "="));
+		statsFilter.appendCriteria(criteria);
 	}
 
 	@Override protected void addParams(MapSqlParameterSource params) {
 		super.addParams(params);
 		if (!isNullOrEmpty(result))
 			params.addValue("result", result.endsWith("+") ? result.substring(0, result.length() - 1) : result);
+		statsFilter.addParams(params);
 	}
 
 	public boolean hasResult() {
 		return !isNullOrEmpty(result);
 	}
 
+	public boolean hasStatsFilter() {
+		return !statsFilter.isEmpty();
+	}
+
 	@Override public boolean isEmpty() {
-		return super.isEmpty() && isNullOrEmpty(result);
+		return super.isEmpty() && isNullOrEmpty(result) && statsFilter.isEmpty();
 	}
 
 
@@ -53,15 +61,16 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 		if (!(o instanceof TournamentEventResultFilter)) return false;
 		if (!super.equals(o)) return false;
 		TournamentEventResultFilter filter = (TournamentEventResultFilter)o;
-		return stringsEqual(result, filter.result);
+		return stringsEqual(result, filter.result) && statsFilter.equals(filter.statsFilter);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(super.hashCode(), emptyToNull(result));
+		return Objects.hash(super.hashCode(), emptyToNull(result), statsFilter);
 	}
 
 	@Override protected ToStringHelper toStringHelper() {
 		return super.toStringHelper()
-			.add("result", result);
+			.add("result", result)
+			.add("statsFilter", statsFilter);
 	}
 }

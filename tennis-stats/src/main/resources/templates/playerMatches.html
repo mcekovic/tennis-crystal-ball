@@ -85,26 +85,11 @@
 		function matchesStatsFilter() {
 			return new StatsFilter($("#matchesStatsCategory"), $("#matchesStatsFrom"), $("#matchesStatsTo"))
 		}
-		function validateMatchesAdvancedFilter() {
-			var $matchesStatsFrom = $("#matchesStatsFrom");
-			var $matchesStatsTo = $("#matchesStatsTo");
-			if (!(validateNumber($matchesStatsFrom) && validateNumber($matchesStatsTo)))
-				return false;
-			var from = $matchesStatsFrom.val();
-			var to = $matchesStatsTo.val();
-			var $range = $("#matchesStatsRange");
-			if ($.isNumeric(from) && $.isNumeric(to) && parseFloat(from) > parseFloat(to)) {
-				$range.tooltip({title: "From is greater then to"}).tooltip("show");
-				$matchesStatsTo.focus();
-				return false;
-			}
-			else {
-				$range.tooltip("destroy");
-				return true;
-			}
+		function validateMatchesStatsFilter() {
+			return validateStatsFilter($("#matchesStatsFrom"), $("#matchesStatsTo"), $("#matchesStatsRange"))
 		}
-		function matchesAdvancedFilterChanged() {
-			if (validateMatchesAdvancedFilter() && !lastMatchesStatsFilter.equals(matchesStatsFilter()))
+		function matchesStatsFilterChanged() {
+			if (validateMatchesStatsFilter() && !lastMatchesStatsFilter.equals(matchesStatsFilter()))
 				reloadMatches();
 		}
 		function updateMatchesStatsCategoryStat() {
@@ -129,7 +114,7 @@
 		}
 		function matchesStatsCategoryChanged() {
 			updateMatchesStatsCategoryStat();
-			matchesAdvancedFilterChanged();
+			matchesStatsFilterChanged();
 		}
 		function clearMatchesFilter() {
 			$("#matchesSeason").val("");
@@ -163,10 +148,8 @@
 			var $matchesStats = $("#matchesStats");
 			if (!$matchesStats.hasClass("loaded")) {
 				event.preventDefault();
-				console.log("Not loaded");
-				if (!validateMatchesAdvancedFilter())
+				if (!validateMatchesStatsFilter())
 					return;
-				console.log("Validated");
 				var url = "/matchesStats" + matchStatsParams();
 				var statsFilter = matchesStatsFilter();
 				if (statsFilter.hasFilter()) {
@@ -237,13 +220,13 @@
 		</div>
 		<div class="col-md-1">
 			<div data-toggle="tooltip" data-placement="right" title="Advanced filters">
-				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advancedFilter">
+				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#matchesAdvancedFilter">
 					<span class="glyphicon glyphicon-cog"></span> Adv.
 				</button>
 			</div>
 		</div>
 	</div>
-	<div id="advancedFilter" class="collapse row" style="margin-top: 15px">
+	<div id="matchesAdvancedFilter" class="collapse row" style="margin-top: 15px">
 		<div class="col-md-6">
 			<div class="input-group">
 				<select id="matchesStatsCategory" style="width: 220px" class="form-control" onchange="matchesStatsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
@@ -254,9 +237,9 @@
 				</select>
 				<label id="matchesStatsCategoryLabel" for="matchesStatsCategory" class="input-group-addon" style="width: 75px" data-toggle="tooltip" data-placement="top" title="Statistics category value for the selected filter"></label>
 				<label for="matchesStatsFrom" class="input-group-addon">From:</label>
-				<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" oninput="matchesAdvancedFilterChanged()" onchange="matchesAdvancedFilterChanged()"/>
+				<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
 				<label id="matchesStatsRange" for="matchesStatsTo" class="input-group-addon">To:</label>
-				<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" oninput="matchesAdvancedFilterChanged()" onchange="matchesAdvancedFilterChanged()"/>
+				<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
 			</div>
 		</div>
 	</div>

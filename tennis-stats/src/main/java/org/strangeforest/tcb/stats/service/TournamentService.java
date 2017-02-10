@@ -18,6 +18,7 @@ import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.service.StatisticsService.PLAYER_STATS_SUMMED_COLUMNS;
 
 @Service
 public class TournamentService {
@@ -104,13 +105,21 @@ public class TournamentService {
 		"ORDER BY name, season";
 
 	private static final String PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY = //language=SQL
-		"SELECT tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.participation_points, p.max_participation_points, r.result\n" +
+		"SELECT r.tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.participation_points, p.max_participation_points, r.result\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
+		"LEFT JOIN event_participation p USING (tournament_event_id)%1$s\n" +
 		"WHERE r.player_id = :playerId\n" +
-		"AND e.level <> 'D'%1$s\n" +
-		"ORDER BY %2$s OFFSET :offset";
+		"AND e.level <> 'D'%2$s\n" +
+		"ORDER BY %3$s OFFSET :offset";
+
+	private static final String TOURNAMENT_STATS_JOIN = //language=SQL
+		"\nLEFT JOIN (\n" +
+		"  SELECT ms.tournament_event_id, " + PLAYER_STATS_SUMMED_COLUMNS +
+		"  FROM player_match_stats_v ms\n" +
+		"  WHERE ms.player_id = :playerId\n" +
+		"  GROUP BY ms.tournament_event_id\n" +
+		") AS ts ON ts.tournament_event_id = e.tournament_event_id";
 
 
 	@Cacheable(value = "Global", key = "'Tournaments'")
@@ -271,7 +280,7 @@ public class TournamentService {
 		AtomicInteger tournamentEvents = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY, filter.getCriteria(), orderBy),
+			format(PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY, filter.hasStatsFilter() ? TOURNAMENT_STATS_JOIN : "", filter.getCriteria(), orderBy),
 			filter.getParams()
 				.addValue("playerId", playerId)
 				.addValue("offset", offset),

@@ -56,8 +56,8 @@ public class MatchFilter extends TournamentEventResultFilter {
 		return new MatchFilter(season, level, surface, null, null, null, round, OpponentFilter.forStats(opponentId), null, null, null);
 	}
 
-	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, String result, String searchPhrase) {
-		return new MatchFilter(season, level, surface, tournamentId, null, result, null, null, null, null, searchPhrase);
+	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, String result, StatsFilter statsFilter, String searchPhrase) {
+		return new MatchFilter(season, level, surface, tournamentId, null, result, null, null, null, statsFilter, searchPhrase);
 	}
 
 	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, StatsFilter statsFilter, String searchPhrase) {
@@ -74,7 +74,6 @@ public class MatchFilter extends TournamentEventResultFilter {
 	private final String round;
 	private final OpponentFilter opponentFilter;
 	private final OutcomeFilter outcomeFilter;
-	private final StatsFilter statsFilter;
 
 	private static final String SURFACE_CRITERION        = " AND m.surface = :surface::surface";
 	private static final String ROUND_CRITERION          = " AND m.round %1$s :round::match_round";
@@ -82,11 +81,10 @@ public class MatchFilter extends TournamentEventResultFilter {
 	private static final String STATS_SEARCH_CRITERION   = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR o.name ILIKE '%' || :searchPhrase || '%')";
 
 	private MatchFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String result, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, StatsFilter statsFilter, String searchPhrase) {
-		super(season, level, surface, tournamentId, tournamentEventId, result, searchPhrase);
+		super(season, level, surface, tournamentId, tournamentEventId, result, statsFilter, searchPhrase);
 		this.round = round;
 		this.opponentFilter = opponentFilter != null ? opponentFilter : OpponentFilter.ALL;
 		this.outcomeFilter = outcomeFilter != null ? outcomeFilter : OutcomeFilter.ALL;
-		this.statsFilter = statsFilter != null ? statsFilter : StatsFilter.ALL;
 	}
 
 	@Override protected void appendCriteria(StringBuilder criteria) {
@@ -95,7 +93,6 @@ public class MatchFilter extends TournamentEventResultFilter {
 			criteria.append(format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
 		opponentFilter.appendCriteria(criteria);
 		outcomeFilter.appendCriteria(criteria);
-		statsFilter.appendCriteria(criteria);
 	}
 
 	@Override public void addParams(MapSqlParameterSource params) {
@@ -104,7 +101,6 @@ public class MatchFilter extends TournamentEventResultFilter {
 			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 		opponentFilter.addParams(params);
 		outcomeFilter.addParams(params);
-		statsFilter.addParams(params);
 	}
 
 	@Override protected String getSurfaceCriterion() {
@@ -116,7 +112,7 @@ public class MatchFilter extends TournamentEventResultFilter {
 	}
 
 	@Override public boolean isEmpty() {
-		return super.isEmpty() && isNullOrEmpty(round) && opponentFilter.isEmpty() && outcomeFilter.isEmpty() && statsFilter.isEmpty();
+		return super.isEmpty() && isNullOrEmpty(round) && opponentFilter.isEmpty() && outcomeFilter.isEmpty();
 	}
 
 	public boolean isTournamentEventFilterEmpty() {
@@ -143,10 +139,6 @@ public class MatchFilter extends TournamentEventResultFilter {
 		return season != null && !isNullOrEmpty(surface) && equals(forSeasonAndSurface(season, surface));
 	}
 
-	public boolean hasStatsFilter() {
-		return !statsFilter.isEmpty();
-	}
-
 
 	// Object methods
 
@@ -155,18 +147,17 @@ public class MatchFilter extends TournamentEventResultFilter {
 		if (!(o instanceof MatchFilter)) return false;
 		if (!super.equals(o)) return false;
 		MatchFilter filter = (MatchFilter)o;
-		return stringsEqual(round, filter.round) && opponentFilter.equals(filter.opponentFilter) && outcomeFilter.equals(filter.outcomeFilter) && statsFilter.equals(filter.statsFilter);
+		return stringsEqual(round, filter.round) && opponentFilter.equals(filter.opponentFilter) && outcomeFilter.equals(filter.outcomeFilter);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(super.hashCode(), emptyToNull(round), opponentFilter, outcomeFilter, statsFilter);
+		return Objects.hash(super.hashCode(), emptyToNull(round), opponentFilter, outcomeFilter);
 	}
 
 	@Override protected ToStringHelper toStringHelper() {
 		return super.toStringHelper()
 			.add("round", round)
 			.add("opponentFilter", opponentFilter)
-			.add("outcomeFilter", outcomeFilter)
-			.add("statsFilter", statsFilter);
+			.add("outcomeFilter", outcomeFilter);
 	}
 }

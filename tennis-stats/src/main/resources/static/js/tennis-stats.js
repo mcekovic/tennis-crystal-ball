@@ -427,9 +427,25 @@ function StatsFilter($category, $from, $to) {
 	}
 	this.equals = function(o) {
 		return this.category == o.category && this.from == o.from && this.to == o.to;
-	}
+	};
 	this.hasFilter = function() {
 		return this.category && (this.from || this.to);
+	};
+}
+
+function validateStatsFilter($matchesStatsFrom, $matchesStatsTo, $range) {
+	if (!(validateNumber($matchesStatsFrom) && validateNumber($matchesStatsTo)))
+		return false;
+	var from = $matchesStatsFrom.val();
+	var to = $matchesStatsTo.val();
+	if ($.isNumeric(from) && $.isNumeric(to) && parseFloat(from) > parseFloat(to)) {
+		$range.tooltip({title: "From is greater then to"}).tooltip("show");
+		$matchesStatsTo.focus();
+		return false;
+	}
+	else {
+		$range.tooltip("destroy");
+		return true;
 	}
 }
 

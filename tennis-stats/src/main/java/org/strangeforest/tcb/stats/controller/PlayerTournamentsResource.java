@@ -15,6 +15,7 @@ import com.google.common.collect.*;
 public class PlayerTournamentsResource {
 
 	@Autowired private TournamentService tournamentService;
+	@Autowired private StatisticsService statisticsService;
 
 	private static final int MAX_TOURNAMENTS = 1000;
 
@@ -38,14 +39,34 @@ public class PlayerTournamentsResource {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "result", required = false) String result,
+		@RequestParam(name = "statsCategory", required = false) String statsCategory,
+		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
+		@RequestParam(name = "statsTo", required = false) Double statsTo,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		TournamentEventResultFilter filter = new TournamentEventResultFilter(season, level, surface, tournamentId, result, searchPhrase);
+		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
+		TournamentEventResultFilter filter = new TournamentEventResultFilter(season, level, surface, tournamentId, result, statsFilter, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
 		return tournamentService.getPlayerTournamentEventResultsTable(playerId, filter, orderBy, pageSize, current);
+	}
+
+	@GetMapping("/playerTournamentsStat")
+	public Number playerTournamentsTable(
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "result", required = false) String result,
+		@RequestParam(name = "statsCategory", required = false) String statsCategory,
+		@RequestParam(name = "searchPhrase") String searchPhrase
+	) {
+		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, result, StatsFilter.ALL, searchPhrase);
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+		return StatsCategory.get(statsCategory).getStat(stats);
 	}
 }

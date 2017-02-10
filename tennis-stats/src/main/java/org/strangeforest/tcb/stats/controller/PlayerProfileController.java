@@ -105,6 +105,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("result", result);
+		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerTournaments", modelMap);
 	}
 
