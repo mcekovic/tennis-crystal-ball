@@ -136,7 +136,7 @@
 			params += "&season=" + $("#matchesSeason").val();
 			params += "&level=" + $("#matchesLevel").val();
 			params += "&surface=" + $("#matchesSurface").val();
-			params += "&round=" + $("#matchesRound").val();
+			params += "&round=" + encodeURIComponent($("#matchesRound").val());
 			params += "&opponent=" + $("#matchesOpponent").val();
 			params += "&tournamentId=" + $("#matchesTournament").val();
 			params += "&tournamentEventId=" + $("#matchesTournamentEvent").val();

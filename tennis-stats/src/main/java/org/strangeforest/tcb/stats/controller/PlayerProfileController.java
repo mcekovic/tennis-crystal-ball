@@ -163,10 +163,12 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "playerId") int playerId
 	) {
 		String name = playerService.getPlayerName(playerId);
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("playerName", name);
+		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("rounds", Round.values());

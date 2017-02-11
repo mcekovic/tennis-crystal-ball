@@ -34,6 +34,7 @@ public class PlayerRivalriesResource {
 	@GetMapping("/playerRivalriesTable")
 	public BootgridTable<PlayerRivalryRow> playerRivalriesTable(
 		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round,
@@ -42,7 +43,7 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		RivalryFilter rivalryFilter = new RivalryFilter(Range.all(), level, surface, round);
+		RivalryFilter rivalryFilter = new RivalryFilter(RangeUtil.toRange(season, season), level, surface, round);
 		RivalryPlayerListFilter filter = new RivalryPlayerListFilter(searchPhrase, rivalryFilter);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;

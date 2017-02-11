@@ -1,6 +1,7 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="playerName" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 	<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
@@ -20,6 +21,7 @@
 				},
 				url: "/playerRivalriesTable?playerId=[[${playerId}]]",
 				requestHandler: function(request) {
+					request.season = $("#rivalrySeason").val();
 					request.level = $("#rivalryLevel").val();
 					request.surface = $("#rivalrySurface").val();
 					request.round = $("#rivalryRound").val();
@@ -67,18 +69,19 @@
 				});
 			});
 			var $matchesTableHeader = $("#rivalriesTable-header");
-			var $actionBar = $matchesTableHeader.find("div.actionBar");
-			$actionBar.removeClass("col-sm-12").addClass("col-sm-5");
-			$actionBar.before($("#rivalryLevelDiv").remove());
-			$actionBar.before($("#rivalrySurfaceDiv").remove());
-			$actionBar.before($("#rivalryRoundDiv").remove());
-			$actionBar.before($("#clearRivalryFilterButton").remove());
+			var $search = $matchesTableHeader.find("div.search");
+			$search.before($("#rivalrySeasonDiv").remove());
+			$search.before($("#rivalryLevelDiv").remove());
+			$search.before($("#rivalrySurfaceDiv").remove());
+			$search.before($("#rivalryRoundDiv").remove());
+			$search.after($("#clearRivalryFilterButton").remove());
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadRivalries() {
 			$("#rivalriesTable").bootgrid("reload");
 		}
 		function clearRivalryFilter() {
+			$("#rivalrySeason").val("");
 			$("#rivalryLevel").val("");
 			$("#rivalrySurface").val("");
 			$("#rivalryRound").val("");
@@ -118,25 +121,31 @@
 			return url;
 		}
 	</script>
-	<div id="rivalryLevelDiv" class="col-sm-2" style="padding-left: 0">
+	<div id="rivalrySeasonDiv" class="btn-group pull-left" style="margin-left: -15px; margin-right: 20px">
+		<select id="rivalrySeason" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
+			<option value="">All seasons</option>
+			<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+		</select>
+	</div>
+	<div id="rivalryLevelDiv" class="btn-group pull-left" style="margin-right: 20px">
 		<select id="rivalryLevel" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
 			<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
 		</select>
 	</div>
-	<div id="rivalrySurfaceDiv" class="col-sm-2">
+	<div id="rivalrySurfaceDiv" class="btn-group pull-left" style="margin-right: 20px">
 		<select id="rivalrySurface" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 			<option value="">All surfaces</option>
 			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 		</select>
 	</div>
-	<div id="rivalryRoundDiv" class="col-sm-2">
+	<div id="rivalryRoundDiv" class="btn-group pull-left" style="margin-right: 20px">
 		<select id="rivalryRound" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by round">
 			<option value="">All rounds</option>
 			<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
 		</select>
 	</div>
-	<div id="clearRivalryFilterButton" class="col-sm-1">
+	<div id="clearRivalryFilterButton" class="btn-group" style="margin-right: 20px">
 		<button type="button" class="btn btn-default" onclick="clearRivalryFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
 			<span class="glyphicon glyphicon-remove"></span> Clear
 		</button>
