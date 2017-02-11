@@ -27,7 +27,7 @@ class ATPTennisLoader {
 		load {
 			def rows = 0
 			if (full) {
-				for (decade in ['70s', '80s', '90s', '00s-mc', '10s'])
+				for (decade in ['70s', '80s', '90s', '00s-mc', '10s-mc'])
 					rows += loader.loadFile(baseDir() + "atp_rankings_${decade}.csv")
 			}
 			rows += loader.loadFile(baseDir() + "atp_rankings_current.csv")
@@ -40,10 +40,10 @@ class ATPTennisLoader {
 		load {
 			def rows = 0
 			if (full) {
-				for (year in 1968..2015)
+				for (year in 1968..2016)
 					rows += loader.loadFile(baseDir() + "atp_matches_${year}.csv")
 			}
-			def year = 2016
+			def year = 2017
 			rows += loader.loadFile(baseDir() + "atp_matches_${year}.csv")
 		}
 		println()
@@ -54,10 +54,10 @@ class ATPTennisLoader {
 		load {
 			def rows = 0
 			if (full) {
-				for (year in 2001..2015)
+				for (year in 2001..2016)
 					rows += loader.loadFile(baseDir() + "match_prices_${year}.csv")
 			}
-			def year = 2016
+			def year = 2017
 			rows += loader.loadFile(baseDir() + "match_prices_${year}.csv")
 		}
 		println()
