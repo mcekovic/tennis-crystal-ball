@@ -19,15 +19,15 @@ public final class StatsCategory {
 	private static final String TOTAL_GAMES = "p_games + o_games";
 	private static final String TOTAL_SETS = "p_sets + o_sets";
 	private static final String TOTAL_MATCHES = "p_matches + o_matches";
-	private static final String BREAK_POINTS_CONVERTED_PCT = "(o_bp_fc - o_bp_sv)::REAL / o_bp_fc";
-	private static final String RETURN_POINTS_WON_PCT = "(o_sv_pt - o_1st_won - o_2nd_won)::REAL / o_sv_pt";
+	private static final String BREAK_POINTS_CONVERTED_PCT = "CASE WHEN o_bp_fc > 0 THEN (o_bp_fc - o_bp_sv)::REAL / o_bp_fc ELSE NULL END";
+	private static final String RETURN_POINTS_WON_PCT = "CASE WHEN o_sv_pt > 0 THEN (o_sv_pt - o_1st_won - o_2nd_won)::REAL / o_sv_pt ELSE NULL END";
 	private static final String RETURN_GAMES_WON_PCT = "CASE WHEN o_sv_gms > 0 THEN (o_bp_fc - o_bp_sv)::REAL / o_sv_gms ELSE NULL END";
 	private static final String TOTAL_POINTS_WON = "p_1st_won + p_2nd_won + o_sv_pt - o_1st_won - o_2nd_won";
-	private static final String TOTAL_POINTS_WON_PCT = "(" + TOTAL_POINTS_WON + ")::REAL / (" + TOTAL_POINTS + ")";
+	private static final String TOTAL_POINTS_WON_PCT = "CASE WHEN " + TOTAL_POINTS + " > 0 THEN (" + TOTAL_POINTS_WON + ")::REAL / (" + TOTAL_POINTS + ") ELSE NULL END";
 	private static final String MATCHES_WON_PCT = "p_matches::REAL / (" + TOTAL_MATCHES + ")";
-	private static final String POINTS_DOMINANCE_RATIO = "(" + RETURN_POINTS_WON_PCT + ") / ((p_sv_pt - p_1st_won - p_2nd_won)::REAL / p_sv_pt)";
-	private static final String GAMES_DOMINANCE_RATIO = "CASE WHEN p_sv_gms > 0 THEN (" + RETURN_GAMES_WON_PCT + ") / ((p_bp_fc - p_bp_sv)::REAL / p_sv_gms) ELSE NULL END";
-	private static final String BREAK_POINTS_RATIO = "CASE WHEN p_bp_fc > 0 AND o_bp_fc > 0 THEN (" + BREAK_POINTS_CONVERTED_PCT + ") / ((p_bp_fc - p_bp_sv)::REAL / p_bp_fc) ELSE NULL END";
+	private static final String POINTS_DOMINANCE_RATIO = "CASE WHEN p_sv_pt > 0 AND p_sv_pt - p_1st_won - p_2nd_won > 0 THEN (" + RETURN_POINTS_WON_PCT + ") / ((p_sv_pt - p_1st_won - p_2nd_won)::REAL / p_sv_pt) ELSE NULL END";
+	private static final String GAMES_DOMINANCE_RATIO = "CASE WHEN p_sv_gms > 0 AND p_bp_fc - p_bp_sv > 0 THEN (" + RETURN_GAMES_WON_PCT + ") / ((p_bp_fc - p_bp_sv)::REAL / p_sv_gms) ELSE NULL END";
+	private static final String BREAK_POINTS_RATIO = "CASE WHEN p_bp_fc > 0 AND p_bp_fc - p_bp_sv > 0 THEN (" + BREAK_POINTS_CONVERTED_PCT + ") / ((p_bp_fc - p_bp_sv)::REAL / p_bp_fc) ELSE NULL END";
 	private static final String OVER_PERFORMING_RATIO = "(" + MATCHES_WON_PCT + ") / (" + TOTAL_POINTS_WON_PCT + ")";
 
 	private static final String SERVE = "Serve";
@@ -60,7 +60,7 @@ public final class StatsCategory {
 		addCategory(RETURN, "doubleFaultAgainstPct", "CASE WHEN o_sv_pt > 0 THEN o_df::REAL / o_sv_pt ELSE NULL END", PlayerStats::getDoubleFaultAgainstPct, PERCENTAGE, true, "Dbl. Flt. Against %");
 		addCategory(RETURN, "firstServeReturnWonPct", "CASE WHEN o_1st_in > 0 THEN (o_1st_in - o_1st_won)::REAL / o_1st_in ELSE NULL END", PlayerStats::getFirstServeReturnPointsWonPct, PERCENTAGE, true, "1st Srv. Rtn. Won %");
 		addCategory(RETURN, "secondServeReturnWonPct", "CASE WHEN o_sv_pt - o_1st_in > 0 THEN (o_sv_pt - o_1st_in - o_2nd_won)::REAL / (o_sv_pt - o_1st_in) ELSE NULL END", PlayerStats::getSecondServeReturnPointsWonPct, PERCENTAGE, true, "2nd Srv. Rtn. Won %");
-		addCategory(RETURN, "breakPointsPct", "CASE WHEN o_bp_fc > 0 THEN " + BREAK_POINTS_CONVERTED_PCT + " ELSE NULL END", PlayerStats::getBreakPointsWonPct, PERCENTAGE, true, "Break Points Won %");
+		addCategory(RETURN, "breakPointsPct", BREAK_POINTS_CONVERTED_PCT, PlayerStats::getBreakPointsWonPct, PERCENTAGE, true, "Break Points Won %");
 		addCategory(RETURN, "bpsPerRtnGame", "CASE WHEN o_sv_gms > 0 THEN o_bp_fc::REAL / o_sv_gms ELSE NULL END", PlayerStats::getBreakPointsPerReturnGame, RATIO, true, "BPs per Rtn. Game");
 		addCategory(RETURN, "bpsPerMatch", "o_bp_fc::REAL / (" + TOTAL_MATCHES + ")", PlayerStats::getBreakPointsPerMatch, RATIO, true, "BPs per Match");
 		addCategory(RETURN, "returnPointsWonPct", RETURN_POINTS_WON_PCT, PlayerStats::getReturnPointsWonPct, PERCENTAGE, true, "Return Pts. Won %");
@@ -75,10 +75,10 @@ public final class StatsCategory {
 		addCategory(TOTAL, "totalPointsWonPct", TOTAL_POINTS_WON_PCT, PlayerStats::getTotalPointsWonPct, PERCENTAGE, true, "Total Pts. Won %");
 		addCategory(TOTAL, "totalGames", TOTAL_GAMES, PlayerStats::getTotalGames, COUNT, false, "Total Games Played");
 		addCategory(TOTAL, "totalGamesWon", "p_games", PlayerStats::getTotalGamesWon, COUNT, false, "Total Games Won");
-		addCategory(TOTAL, "totalGamesWonPct", "p_games::REAL / (" + TOTAL_GAMES + ")", PlayerStats::getTotalGamesWonPct, PERCENTAGE, false, "Total Games Won %");
+		addCategory(TOTAL, "totalGamesWonPct", "CASE WHEN " + TOTAL_GAMES + " > 0 THEN p_games::REAL / (" + TOTAL_GAMES + ") ELSE NULL END", PlayerStats::getTotalGamesWonPct, PERCENTAGE, false, "Games Won %");
 		addCategory(TOTAL, "sets", TOTAL_SETS, PlayerStats::getSets, COUNT, false, "Sets Played");
 		addCategory(TOTAL, "setsWon", "p_sets", PlayerStats::getSetsWon, COUNT, false, "Sets Won");
-		addCategory(TOTAL, "setsWonPct", "p_sets::REAL / (" + TOTAL_SETS + ")", PlayerStats::getSetsWonPct, PERCENTAGE, false, "Sets Won %");
+		addCategory(TOTAL, "setsWonPct", "CASE WHEN " + TOTAL_SETS + " > 0 THEN p_sets::REAL / (" + TOTAL_SETS + ") ELSE NULL END", PlayerStats::getSetsWonPct, PERCENTAGE, false, "Sets Won %");
 		addCategory(TOTAL, "matches", TOTAL_MATCHES, PlayerStats::getMatches, COUNT, false, "Matches Played");
 		addCategory(TOTAL, "matchesWon", "p_matches", PlayerStats::getMatchesWon, COUNT, false, "Matches Won");
 		addCategory(TOTAL, "matchesWonPct", MATCHES_WON_PCT, PlayerStats::getMatchesWonPct, PERCENTAGE, false, "Matches Won %");

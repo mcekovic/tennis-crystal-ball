@@ -65,6 +65,9 @@
 			});
 			var $eventsTableHeader = $("#eventsTable-header");
 			$eventsTableHeader.find("div.search").before($("#eventsStats").remove());
+			var $actionBar = $eventsTableHeader.find("div.actionBar");
+			$actionBar.removeClass("col-sm-12").addClass("col-sm-6");
+			$actionBar.before($("#eventsAdvancedFilter").remove());
 			setBootgridTitles($eventsTable, [
 				{id: "participationPoints", title: "[[#{events.participationPoints.title}]]"},
 				{id: "participationPct", title: "[[#{events.participationPercentage.title}]]"}
@@ -216,29 +219,20 @@
 				<span class="glyphicon glyphicon-remove"></span> Clear
 			</button>
 		</div>
-		<div class="col-md-1">
-			<div data-toggle="tooltip" data-placement="right" title="Advanced filters">
-				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#eventsAdvancedFilter">
-					<span class="glyphicon glyphicon-cog"></span> Adv.
-				</button>
-			</div>
-		</div>
 	</div>
-	<div id="eventsAdvancedFilter" class="collapse row" style="margin-top: 15px">
-		<div class="col-md-6">
-			<div class="input-group">
-				<select id="eventsStatsCategory" style="width: 220px" class="form-control" onchange="eventsStatsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
-					<option value="">Select statistics category</option>
-					<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
-						<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:data-type="${category.type}" data-type="COUNT" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
-					</optgroup>
-				</select>
-				<label id="eventsStatsCategoryLabel" for="eventsStatsCategory" class="input-group-addon" style="width: 75px" data-toggle="tooltip" data-placement="top" title="Statistics category value for the selected filter"></label>
-				<label for="eventsStatsFrom" class="input-group-addon">From:</label>
-				<input id="eventsStatsFrom" type="text" maxlength="6" class="form-control" oninput="eventsStatsFilterChanged()" onchange="eventsStatsFilterChanged()"/>
-				<label id="eventsStatsRange" for="eventsStatsTo" class="input-group-addon">To:</label>
-				<input id="eventsStatsTo" type="text" maxlength="6" class="form-control" oninput="eventsStatsFilterChanged()" onchange="eventsStatsFilterChanged()"/>
-			</div>
+	<div id="eventsAdvancedFilter" class="col-md-6" style="padding-left: 0">
+		<div class="input-group">
+			<select id="eventsStatsCategory" style="width: 220px" class="form-control" onchange="eventsStatsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+				<option value="">Select statistics category</option>
+				<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
+					<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:data-type="${category.type}" data-type="COUNT" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+				</optgroup>
+			</select>
+			<label id="eventsStatsCategoryLabel" for="eventsStatsCategory" class="input-group-addon" style="width: 75px" data-toggle="tooltip" data-placement="top" title="Statistics category value for the selected filter"></label>
+			<label for="eventsStatsFrom" class="input-group-addon">From:</label>
+			<input id="eventsStatsFrom" type="text" maxlength="6" class="form-control" oninput="eventsStatsFilterChanged()" onchange="eventsStatsFilterChanged()"/>
+			<label id="eventsStatsRange" for="eventsStatsTo" class="input-group-addon">To:</label>
+			<input id="eventsStatsTo" type="text" maxlength="6" class="form-control" oninput="eventsStatsFilterChanged()" onchange="eventsStatsFilterChanged()"/>
 		</div>
 	</div>
 	<button id="eventsStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showEventsStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected tournaments)|">

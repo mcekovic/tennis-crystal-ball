@@ -232,7 +232,7 @@
 				<select id="matchesStatsCategory" style="width: 220px" class="form-control" onchange="matchesStatsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
 					<option value="">Select statistics category</option>
 					<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
-						<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:data-type="${category.type}" data-type="COUNT" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+						<option th:each="category : ${categoryClass.value}" th:unless="${category.name.startsWith('matches')}" th:value="${category.name}" value="aces" th:data-type="${category.type}" data-type="COUNT" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
 					</optgroup>
 				</select>
 				<label id="matchesStatsCategoryLabel" for="matchesStatsCategory" class="input-group-addon" style="width: 75px" data-toggle="tooltip" data-placement="top" title="Statistics category value for the selected filter"></label>

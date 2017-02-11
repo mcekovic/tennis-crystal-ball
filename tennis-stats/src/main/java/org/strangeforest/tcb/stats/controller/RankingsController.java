@@ -28,7 +28,7 @@ public class RankingsController extends PageController {
 		return new ModelAndView("rankingsTable", modelMap);
 	}
 
-	@GetMapping({"/peakEloRatings", "/allTimeEloRatings"})
+	@GetMapping("/peakEloRatings")
 	public ModelAndView peakEloRatings() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("surfaces", Surface.values());

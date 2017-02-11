@@ -20,7 +20,7 @@ public class TimelinesController extends PageController {
 	@Autowired private RankingsService rankingsService;
 	@Autowired private SurfaceService surfaceService;
 
-	@GetMapping({"dominanceTimeline", "/bigGunsTimeline"})
+	@GetMapping("dominanceTimeline")
 	public ModelAndView dominanceTimeline() {
 		DominanceTimeline timeline = timelineService.getDominanceTimeline();
 		int minGOATPoints = timelineService.getMinGOATPoints();

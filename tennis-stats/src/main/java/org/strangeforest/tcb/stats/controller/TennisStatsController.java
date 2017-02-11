@@ -33,7 +33,7 @@ public class TennisStatsController extends PageController {
 
 	@GetMapping("/rankingTopN")
 	public ModelAndView rankingTopN(
-      @RequestParam(name = "rankType") RankType rankType
+      @RequestParam(name = "rankType", defaultValue = "POINTS") RankType rankType
 	) {
 		LocalDate date = rankingsService.getCurrentRankingDate(rankType);
 		List<PlayerRanking> rankingTopN = rankingsService.getRankingsTopN(rankType, date, 10);

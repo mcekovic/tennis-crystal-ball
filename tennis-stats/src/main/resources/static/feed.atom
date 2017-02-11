@@ -1,19 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 	<title>Ultimate Tennis Statistics Feed</title>
-	<subtitle>Ultimate Tennis Statistics - an Ultimate Tennis Statistics destination for die-hard tennis fans</subtitle>
+	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for die-hard tennis fans</subtitle>
 	<link href="http://tennis-strangeforest.rhcloud.com/feed.atom" rel="self"/>
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
 	<updated>2017-01-02T12:00:01Z</updated>
 	<entry>
-		<title>New Feature - Statistics Comparision</title>
-		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/playerProfile?name=Roger%20Federer&amp;tab=statistics"/>
-		<id>urn:uuid:a5526244-d0da-11e6-bf26-cec0c932ce01</id>
-		<updated>2017-01-02T12:00:01Z</updated>
-		<summary>Statistics comparision - Compare match or selected matches statistics with career, season, tournament level or surface statistics</summary>
+		<title>New Feature - Filtering by Statistics Conditions</title>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/seasons"/>
+		<id>urn:uuid:0eb7f97a-1a0b-48f7-a123-877511fc85bd</id>
+		<updated>2017-02-11T12:00:00Z</updated>
+		<summary>Filtering by Statistics Conditions - Player matches and tournament can be filtered by statistics conditions</summary>
 		<content type="xhtml">
 			<div xmlns="http://www.w3.org/1999/xhtml">
-				<p>Statistics comparision - Compare match or selected matches statistics with career, season, tournament level or surface statistics.</p>
+				<p>Filtering by Statistics Conditions - Player matches and tournament can be filtered by statistics conditions (advanced filter), like filter all tournaments with 1st serve % >= 75%</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
+	<entry>
+		<title>New Feature - Seasons Browser</title>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/seasons"/>
+		<id>urn:uuid:f6c96a45-59c8-4a2d-909e-584d51bcad27</id>
+		<updated>2017-01-28T12:00:00Z</updated>
+		<summary>Seasons Browser - Browse seasons and check season details</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Seasons Browser - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players.</p>
 			</div>
 		</content>
 		<author>
@@ -38,14 +54,14 @@
 		</author>
 	</entry>
 	<entry>
-		<title>New Feature - Seasons Browser</title>
-		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/seasons"/>
-		<id>urn:uuid:f6c96a45-59c8-4a2d-909e-584d51bcad27</id>
-		<updated>2017-01-28T12:00:00Z</updated>
-		<summary>Seasons Browser - Browse seasons and check season details</summary>
+		<title>New Feature - Statistics Comparision</title>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/playerProfile?name=Roger%20Federer&amp;tab=statistics"/>
+		<id>urn:uuid:a5526244-d0da-11e6-bf26-cec0c932ce01</id>
+		<updated>2017-01-02T12:00:01Z</updated>
+		<summary>Statistics comparision - Compare match or selected matches statistics with career, season, tournament level or surface statistics</summary>
 		<content type="xhtml">
 			<div xmlns="http://www.w3.org/1999/xhtml">
-				<p>Seasons Browser - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players.</p>
+				<p>Statistics comparision - Compare match or selected matches statistics with career, season, tournament level or surface statistics.</p>
 			</div>
 		</content>
 		<author>
