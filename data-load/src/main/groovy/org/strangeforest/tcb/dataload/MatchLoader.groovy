@@ -45,7 +45,7 @@ class MatchLoader extends BaseCSVLoader {
 		def mappedLevel = mapLevel(level, drawSize, name, season, extTourneyId)
 		if (mappedLevel == 'C' || mappedLevel == 'U')
 			return null
-		def dcInfo = level == 'D' ? extractDCTournamentInfo(record, season) : null;
+		def dcInfo = level == 'D' ? extractDCTournamentInfo(record, season) : null
 		params.ext_tournament_id = mapExtTournamentId(extTourneyId, mappedLevel, dcInfo)
 		def eventName = mapEventName(name, mappedLevel, season, dcInfo)
 		params.tournament_name = mappedLevel != 'O' ? eventName : 'Olympics'
@@ -59,7 +59,7 @@ class MatchLoader extends BaseCSVLoader {
 		params.rank_points = mapRankPoints mappedLevel
 
 		def matchNum = record.match_num
-		params.match_num = level != 'D' ? smallint(matchNum) : smallint(dcMatchNum(extTourneyId, matchNum))
+		params.match_num = level != 'D' ? smallint(matchNum) : smallint(dcMatchNum(extTourneyId, season, matchNum))
 		def round = string record.round
 		params.round = level != 'D' ? mapRound(round) : dcInfo.round
 		params.best_of = smallint record.best_of
@@ -139,13 +139,30 @@ class MatchLoader extends BaseCSVLoader {
 		switch (level) {
 			case 'D': return dcInfo.extId
 			case 'O': return level
-			default: return extTourneyId
+			default: switch (extTourneyId) {
+				case 'M001': return '338'
+				case 'M004': return '807'
+				case 'M006': return '404'
+				case 'M007': return '403'
+				case 'M009': return '416'
+				case 'M010': return '440'
+				case 'M014': return '438'
+				case 'M015': return '747'
+				case 'M020': return '339'
+				case 'M021': return '1536'
+				case 'M024': return '422'
+				case 'M035': return '418'
+				case 'M052': return '6932'
+				default:	return extTourneyId
+			}
 		}
 	}
 
 	static mapEventName(String name, String level, int season, DavisCupTournamentInfo dcInfo) {
 		switch (level) {
+			case 'F': return season == 2016 ? 'Tour Finals' : name
 			case 'M': return season >= 1990 && !name.endsWith(' Masters') ? name + ' Masters' : name
+			case 'O': return season == 2016 ? 'Rio Olympics' : name
 			case 'D': return dcInfo.name
 			default: return name
 		}
@@ -168,7 +185,9 @@ class MatchLoader extends BaseCSVLoader {
 				else
 					return 'M'
 			case 'A':
-				if (name.contains('Olympics'))
+				if (name == 'London' && season == 2016)
+					return 'F'
+				else if (name.contains('Olympics'))
 					return 'O'
 				else if (name.startsWith('Australian Open') && season == 1977)
 					return 'G'
@@ -379,10 +398,21 @@ class MatchLoader extends BaseCSVLoader {
 		}
 	}
 
-	static dcMatchNum(String extTourneyId, String matchNum) {
+	static final Map dcMatchNumMap = [:]
+
+	static synchronized dcMatchNum(int season) {
+		def matchNum = dcMatchNumMap[season]
+		matchNum = matchNum ? ++matchNum : 1
+		dcMatchNumMap[season] = matchNum
+	}
+
+	static dcMatchNum(String extTourneyId, int season, String matchNum) {
 		if (extTourneyId.startsWith('D'))
 			extTourneyId = extTourneyId.substring(1)
-		extTourneyId + matchNum
+		if (extTourneyId.startsWith('M-DC'))
+			10 * dcMatchNum(season) + matchNum
+		else
+			extTourneyId + matchNum
 	}
 
 	static class DavisCupTournamentInfo {
@@ -401,7 +431,6 @@ class MatchLoader extends BaseCSVLoader {
 		'2013': '393',
 		'2041': '393',
 		'6116': '409',
-		'M020': '339',
 		'0891': '891',
 		'0451': '451',
 		'3937': '301',

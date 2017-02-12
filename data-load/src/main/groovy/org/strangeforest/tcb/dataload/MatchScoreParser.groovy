@@ -49,7 +49,8 @@ class MatchScoreParser {
 			else {
 				switch (set) {
 					case 'W/O':
-					case '(W/O)':	outcome = 'W/O'; break
+					case '(W/O)':
+					case 'Walkover': outcome = 'W/O'; break
 					case 'RET':
 					case '(RET)': outcome = setScores.isEmpty() ? 'W/O' : 'RET'; break
 					case 'ABD':
