@@ -48,7 +48,11 @@
 				}
 			});
 			var $statsLeadersTableHeader = $("#statsLeadersTable-header");
-			$statsLeadersTableHeader.find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove()).before($("#surfaceDiv").remove()).before($("#activeDiv").remove());
+			var $search = $statsLeadersTableHeader.find("div.search");
+			$search.before($("#categoryDiv").remove());
+			$search.before($("#seasonDiv").remove());
+			$search.before($("#surfaceDiv").remove());
+			$search.before($("#activeDiv").remove());
 			setBootgridTitle($statsLeadersTableHeader, $("#statsLeadersTable-title"));
 			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
@@ -84,26 +88,26 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 id="statsLeadersTable-title" class="grid-title">Statistics Leaders</h3>
-	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">
+	<div id="categoryDiv" class="btn-group margin-right">
 		<select id="category" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
 			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
 				<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
 			</optgroup>
 		</select>
 	</div>
-	<div id="seasonDiv" class="btn-group" style="margin-right: 20px">
+	<div id="seasonDiv" class="btn-group margin-right">
 		<select id="season" class="form-control" onchange="seasonChanged()" data-toggle="tooltip" data-placement="top" title="Select career or season">
 			<option value="">Career</option>
 			<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 		</select>
 	</div>
-	<div id="surfaceDiv" class="btn-group" style="margin-right: 20px">
+	<div id="surfaceDiv" class="btn-group margin-right">
 		<select id="surface" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select surface">
 			<option value="">All surfaces</option>
 			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 		</select>
 	</div>
-	<div id="activeDiv" class="btn-group" style="margin-right: 20px">
+	<div id="activeDiv" class="btn-group margin-right">
 		<div class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
 				<input id="active" type="checkbox" onchange="reloadStatsLeaders()"/> Active

@@ -70,12 +70,11 @@
 				$("#matchesStats").popover("destroy").removeClass("loaded");
 			});
 			var $matchesTableHeader = $("#matchesTable-header");
-			$matchesTableHeader.find("div.search").before($("#matchesStats").remove());
-			var $actionBar = $matchesTableHeader.find("div.actionBar");
-			$actionBar.removeClass("col-sm-12").addClass("col-sm-5");
-			$actionBar.before($("#matchesTournamentDiv").remove());
-			$actionBar.before($("#matchesTournamentEventDiv").remove());
-			$actionBar.before($("#matchesOutcomeDiv").remove());
+			var $search = $matchesTableHeader.find("div.search");
+			$search.before($("#matchesStats").remove());
+			$search.before($("#matchesTournamentDiv").remove());
+			$search.before($("#matchesTournamentEventDiv").remove());
+			$search.before($("#matchesOutcomeDiv").remove());
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadMatches() {
@@ -243,20 +242,20 @@
 			</div>
 		</div>
 	</div>
-	<div id="matchesTournamentDiv" class="col-sm-2" style="padding-left: 0">
+	<div id="matchesTournamentDiv" class="btn-group pull-left margin-right no-margin-left">
 		<select id="matchesTournament" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
 			<option value="">All tournaments</option>
 			<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
 		</select>
 	</div>
-	<div id="matchesTournamentEventDiv" class="col-sm-3">
+	<div id="matchesTournamentEventDiv" class="btn-group pull-left margin-right">
 		<select id="matchesTournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournament events">
 			<option value="">All events</option>
 			<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="|${tournamentEvent.name} ${tournamentEvent.season}|"
 			        th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon 2008</option>
 		</select>
 	</div>
-	<div id="matchesOutcomeDiv" class="col-md-2">
+	<div id="matchesOutcomeDiv" class="btn-group pull-left margin-right">
 		<select id="matchesOutcome" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outcome">
 			<option value="">All matches</option>
 			<option value="won" th:selected="${outcome == 'won'}">Won</option>
@@ -270,7 +269,7 @@
 			<option value="ABD">Abandoned</option>
 		</select>
 	</div>
-	<button id="matchesStats" type="button" class="btn btn-info grid-control" style="margin-right: 20px" onclick="showMatchesStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected matches)|">
+	<button id="matchesStats" type="button" class="btn btn-info grid-control margin-right" onclick="showMatchesStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected matches)|">
 		<span class="glyphicon glyphicon-stats"></span> Stats
 	</button>
 	<table id="matchesTable" class="table table-condensed table-hover table-striped">

@@ -39,7 +39,9 @@
 				}
 			});
 			var $statsLeadersTableHeader = $("#statsLeadersTable-header");
-			$statsLeadersTableHeader.find("div.search").before($("#statsCategoryDiv").remove()).before($("#statsSurfaceDiv").remove());
+			var $search = $statsLeadersTableHeader.find("div.search");
+			$search.before($("#statsCategoryDiv").remove());
+			$search.before($("#statsSurfaceDiv").remove());
 			setBootgridTitle($statsLeadersTableHeader, $("#statsLeadersTable-title"));
 			statsCategoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
@@ -61,14 +63,14 @@
 		}
 	</script>
 	<h3 id="statsLeadersTable-title" class="grid-title">Statistics Leaders</h3>
-	<div id="statsCategoryDiv" class="btn-group" style="margin-right: 20px">
+	<div id="statsCategoryDiv" class="btn-group margin-right">
 		<select id="statsCategory" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
 			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
 				<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
 			</optgroup>
 		</select>
 	</div>
-	<div id="statsSurfaceDiv" class="btn-group" style="margin-right: 20px">
+	<div id="statsSurfaceDiv" class="btn-group margin-right">
 		<select id="statsSurface" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select surface">
 			<option value="">All surfaces</option>
 			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>

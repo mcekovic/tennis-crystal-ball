@@ -45,7 +45,10 @@
 				}
 			});
 			var $topPerformersTableHeader = $("#topPerformersTable-header");
-			$topPerformersTableHeader.find("div.search").before($("#categoryDiv").remove()).before($("#seasonDiv").remove()).before($("#activeDiv").remove());
+			var $search = $topPerformersTableHeader.find("div.search");
+			$search.before($("#categoryDiv").remove());
+			$search.before($("#seasonDiv").remove());
+			$search.before($("#activeDiv").remove());
 			setBootgridTitle($topPerformersTableHeader, $("#topPerformersTable-title"));
 			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
@@ -78,20 +81,20 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 id="topPerformersTable-title" class="grid-title">Top Performers</h3>
-	<div id="categoryDiv" class="btn-group" style="margin-right: 20px">
+	<div id="categoryDiv" class="btn-group margin-right">
 		<select id="category" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
 			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
 				<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="matches" th:class="${category.cssClass}" th:text="${category.title}">Overall Matches</option>
 			</optgroup>
 		</select>
 	</div>
-	<div id="seasonDiv" class="btn-group" style="margin-right: 20px">
+	<div id="seasonDiv" class="btn-group margin-right">
 		<select id="season" class="form-control" onchange="seasonChanged()" data-toggle="tooltip" data-placement="top" title="Select career or season">
 			<option value="">Career</option>
 			<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 		</select>
 	</div>
-	<div id="activeDiv" class="btn-group" style="margin-right: 20px">
+	<div id="activeDiv" class="btn-group margin-right">
 		<div class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
 				<input id="active" type="checkbox" onchange="reloadTopPerformers()"/> Active

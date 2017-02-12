@@ -185,10 +185,10 @@ public class TournamentService {
 							countryParticipant(rs.getString("runner_up_id")),
 							rs.getString("score"), null
 						);
-						return event;
 					}
 					else
-						throw new IllegalArgumentException(format("Team tournament event for level %1$s and season %2$d not found.", level, season));
+						event.clearFinal();
+					return event;
 				}
 			);
 		}

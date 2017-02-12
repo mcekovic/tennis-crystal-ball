@@ -53,6 +53,13 @@ public class TournamentEvent {
 		this.outcome = outcome;
 	}
 
+	public void clearFinal() {
+		winner = null;
+		runnerUp = null;
+		score = null;
+		outcome = null;
+	}
+
 	public void setMapProperties(String mapProperties) {
 		this.mapProperties = mapProperties;
 	}

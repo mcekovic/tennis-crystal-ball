@@ -48,7 +48,9 @@
 				}
 			});
 			var $rankingsTableHeader = $("#rankingsTable-header");
-			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove()).before($("#rankDateDiv").remove());
+			var $search = $rankingsTableHeader.find("div.search");
+			$search.before($("#rankTypeDiv").remove());
+			$search.before($("#rankDateDiv").remove());
 			setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
 			rankTypeChanged();
 			$("[data-toggle='tooltip']").tooltip();
@@ -74,14 +76,14 @@
 		}
 	</script>
 	<h3 id="rankingsTable-title" class="grid-title">Rankings Table</h3>
-	<div id="rankTypeDiv" class="btn-group" style="margin-right: 20px">
+	<div id="rankTypeDiv" class="btn-group margin-right">
 		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
 			<option value="POINTS">ATP Ranking</option>
 			<option value="ELO_RATING">Elo Ranking</option>
 			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|">Hard Elo Ranking</option>
 		</select>
 	</div>
-	<div id="rankDateDiv" class="btn-group" style="width: 120px; margin-right: 20px">
+	<div id="rankDateDiv" class="btn-group margin-right" style="width: 120px">
 		<select id="rankDate" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
 	</div>
 	<table id="rankingsTable" class="table table-condensed table-hover table-striped">

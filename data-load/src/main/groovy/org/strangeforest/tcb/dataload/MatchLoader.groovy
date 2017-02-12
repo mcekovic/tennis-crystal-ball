@@ -185,7 +185,7 @@ class MatchLoader extends BaseCSVLoader {
 				else
 					return 'M'
 			case 'A':
-				if (name == 'London' && season == 2016)
+				if (extTournamentId == '605' && season == 2016)
 					return 'F'
 				else if (name.contains('Olympics'))
 					return 'O'

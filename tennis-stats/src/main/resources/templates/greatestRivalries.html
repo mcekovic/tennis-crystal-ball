@@ -80,7 +80,12 @@
 				});
 			});
 			var $rivalriesTableHeader = $("#greatestRivalriesTable-header");
-			$rivalriesTableHeader.find("div.search").before($("#levelDiv").remove()).before($("#surfaceDiv").remove()).before($("#roundDiv").remove()).before($("#bestRankDiv").remove()).remove();
+			var $search = $rivalriesTableHeader.find("div.search");
+			$search.before($("#levelDiv").remove());
+			$search.before($("#surfaceDiv").remove());
+			$search.before($("#roundDiv").remove());
+			$search.before($("#bestRankDiv").remove());
+			$search.remove();
 			setBootgridTitle($rivalriesTableHeader, $("#greatestRivalriesTable-title"));
 			$rivalriesTable.find("th[data-column-id='rivalry'] > a > span.text").html("<span title='Player with more GOAT points is on the left side'>Rivalry</span>");
 			filterChanged();
@@ -132,25 +137,25 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 id="greatestRivalriesTable-title" class="grid-title">Greatest Rivalries</h3>
-	<div id="levelDiv" class="btn-group" style="margin-right: 20px">
+	<div id="levelDiv" class="btn-group margin-right">
 		<select id="level" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
 			<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
 		</select>
 	</div>
-	<div id="surfaceDiv" class="btn-group" style="margin-right: 20px">
+	<div id="surfaceDiv" class="btn-group margin-right">
 		<select id="surface" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 			<option value="">All surfaces</option>
 			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 		</select>
 	</div>
-	<div id="roundDiv" class="btn-group" style="margin-right: 20px">
+	<div id="roundDiv" class="btn-group margin-right">
 		<select id="round" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by round">
 			<option value="">All rounds</option>
 			<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
 		</select>
 	</div>
-	<div id="bestRankDiv" class="btn-group" style="margin-right: 20px">
+	<div id="bestRankDiv" class="btn-group margin-right">
 		<select id="bestRank" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by player best rank">
 			<option value="">All players</option>
 			<option value="1">Between once No. 1</option>

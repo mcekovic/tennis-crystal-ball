@@ -55,8 +55,9 @@
 				$("#rivalryStats-[[${player2.id}]]").popover("destroy").removeClass("loaded");
 			});
 			var $matchesTableHeader = $("#matchesTable-header");
-			$matchesTableHeader.find("div.search").before($("#rivalryStats-[[${player2.id}]]").remove());
-			$matchesTableHeader.find("div.search").before($("#rivalryStats-[[${player1.id}]]").remove());
+			var $search = $matchesTableHeader.find("div.search");
+			$search.before($("#rivalryStats-[[${player2.id}]]").remove());
+			$search.before($("#rivalryStats-[[${player1.id}]]").remove());
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadMatches() {
@@ -168,10 +169,10 @@
 			</button>
 		</div>
 	</div>
-	<button th:id="|rivalryStats-${player2.id}|" type="button" class="btn btn-info grid-control pull-left" style="margin-left: -15px" th:onclick="|showRivalryStats(${player1.id}, ${player2.id}, 'left', event)|" data-toggle="tooltip" data-placement="top" th:title="|${player1.name} vs ${player2.name} Statistics (for the selected matches)|">
+	<button th:id="|rivalryStats-${player2.id}|" type="button" class="btn btn-info grid-control pull-left no-margin-left" th:onclick="|showRivalryStats(${player1.id}, ${player2.id}, 'left', event)|" data-toggle="tooltip" data-placement="top" th:title="|${player1.name} vs ${player2.name} Statistics (for the selected matches)|">
 		<span class="glyphicon glyphicon-stats"></span> Stats 1
 	</button>
-	<button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control" style="margin-right: 20px" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'right', event)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">
+	<button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control margin-right" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'right', event)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">
 		<span class="glyphicon glyphicon-stats"></span> Stats 2
 	</button>
 	<table id="matchesTable" class="table table-condensed table-hover table-striped">

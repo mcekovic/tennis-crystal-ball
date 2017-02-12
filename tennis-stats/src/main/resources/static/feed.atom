@@ -10,10 +10,10 @@
 		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/seasons"/>
 		<id>urn:uuid:0eb7f97a-1a0b-48f7-a123-877511fc85bd</id>
 		<updated>2017-02-11T12:00:00Z</updated>
-		<summary>Filtering by Statistics Conditions - Player matches and tournament can be filtered by statistics conditions</summary>
+		<summary>Filtering by Statistics Conditions - Player matches and tournaments can be filtered by statistics conditions</summary>
 		<content type="xhtml">
 			<div xmlns="http://www.w3.org/1999/xhtml">
-				<p>Filtering by Statistics Conditions - Player matches and tournament can be filtered by statistics conditions (advanced filter), like filter all tournaments with 1st serve % >= 75%</p>
+				<p>Filtering by Statistics Conditions - Player matches and tournaments can be filtered by statistics conditions (advanced filter), like filter all tournaments with 1st serve % >= 75%</p>
 			</div>
 		</content>
 		<author>

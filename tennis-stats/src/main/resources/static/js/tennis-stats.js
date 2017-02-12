@@ -289,8 +289,7 @@ function endTournamentEventFormatter(column, row) {
 }
 
 function formatTournamentEvent(id, level, name, extId) {
-	var link = level != "D" && level != "T";
-	return (link ? "<a href='/tournamentEvent?tournamentEventId=" + id + "'" : "<div") + " class='label label-" + level + "' title='" + levelName(level) + (extId ? " - " +  extId : "") +"'>" + name + (link ? "</a>" : "</div>");
+	return "<a href='/tournamentEvent?tournamentEventId=" + id + "' class='label label-" + level + "' title='" + levelName(level) + (extId ? " - " +  extId : "") +"'>" + name + "</a>";
 }
 
 function participationFormatter(column, row) {

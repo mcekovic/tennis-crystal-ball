@@ -51,7 +51,7 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 id="recordTable-title" class="grid-title" th:text="${record.name}">Record</h3>
-	<div id="activeDiv" class="btn-group" style="margin-right: 20px">
+	<div id="activeDiv" class="btn-group margin-right">
 		<div class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
 				<input id="active" type="checkbox" onchange="reloadRecordTable()" th:checked="${active}"/> Active players

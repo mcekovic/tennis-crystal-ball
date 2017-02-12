@@ -50,7 +50,9 @@
 				}
 			});
 			var $rankingsTableHeader = $("#rankingsTable-header");
-			$rankingsTableHeader.find("div.search").before($("#rankTypeDiv").remove()).before($("#activeDiv").remove());
+			var $search = $rankingsTableHeader.find("div.search");
+			$search.before($("#rankTypeDiv").remove());
+			$search.before($("#activeDiv").remove());
 			setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
 			$("[data-toggle='tooltip']").tooltip();
 			bindPopovers();
@@ -63,13 +65,13 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 id="rankingsTable-title" class="grid-title">Peak Elo Ratings</h3>
-	<div id="rankTypeDiv" class="btn-group" style="margin-right: 20px">
+	<div id="rankTypeDiv" class="btn-group margin-right">
 		<select id="rankType" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select overall or Elo rating by surface">
 			<option value="ELO_RATING">Overall</option>
 			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 		</select>
 	</div>
-	<div id="activeDiv" class="btn-group" style="margin-right: 20px">
+	<div id="activeDiv" class="btn-group margin-right">
 		<div class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
 				<input id="active" type="checkbox" onchange="reloadRankings()"/> Active players
