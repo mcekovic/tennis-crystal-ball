@@ -19,7 +19,7 @@
 			$("#playerPills").find("a").click(tabClick);
 			[# th:if="${tab}" th:switch="${tab}"]
 				[# th:case="'matches'"]
-					playerMatches([[${level}]], [[${surface}]], [[${round}]], [[${opponentId}]], [[${tournamentEventId}]], [[${outcome}]]);
+					playerMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]], [[${opponentId}]], [[${tournamentEventId}]], [[${outcome}]]);
 				[/]
 				[# th:case="'tournaments'"]
 					playerTournaments([[${season}]], [[${level}]], [[${result}]]);
@@ -46,9 +46,11 @@
 				url += "&result=" + result;
 			loadTab($pill, url)
 		}
-		function playerMatches(level, surface, round, opponentId, tournamentEventId, outcome) {
+		function playerMatches(season, level, surface, round, opponentId, tournamentEventId, outcome) {
 			var $pill = $("#matchesPill");
 			var url = $pill.attr("data-url");
+			if (season)
+				url += "&season=" + season;
 			if (level)
 				url += "&level=" + level;
 			if (surface)

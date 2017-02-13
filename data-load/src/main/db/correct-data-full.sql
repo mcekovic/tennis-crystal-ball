@@ -23,12 +23,33 @@ SET (loser_rank, loser_rank_points) = (
 )
 WHERE loser_rank IS NULL OR loser_rank_points IS NULL;
 
+-- PostgreSQL 9.2 compatibility
+
+-- UPDATE match m
+-- SET winner_rank = player_rank(winner_id, (SELECT date FROM tournament_event e WHERE e.tournament_event_id = m.tournament_event_id))
+-- WHERE winner_rank IS NULL;
+--
+-- UPDATE match m
+-- SET loser_rank = player_rank(loser_id, (SELECT date FROM tournament_event e WHERE e.tournament_event_id = m.tournament_event_id))
+-- WHERE loser_rank IS NULL;
+--
+-- UPDATE match m
+-- SET winner_rank_points = (SELECT rank_points FROM player_rank_points(winner_id, (SELECT date FROM tournament_event e WHERE e.tournament_event_id = m.tournament_event_id)))
+-- WHERE winner_rank_points IS NULL;
+--
+-- UPDATE match m
+-- SET loser_rank_points = (SELECT rank_points FROM player_rank_points(loser_id, (SELECT date FROM tournament_event e WHERE e.tournament_event_id = m.tournament_event_id)))
+-- WHERE loser_rank_points IS NULL;
+
 COMMIT;
 
 
 -- Adjust tournament event level for ATP seasons pre 1990
 
 REFRESH MATERIALIZED VIEW event_participation;
+-- PostgreSQL 9.2 compatibility
+-- DELETE FROM event_participation;
+-- INSERT INTO event_participation SELECT * FROM event_participation_v;
 
 UPDATE tournament_event
 SET level = 'B'

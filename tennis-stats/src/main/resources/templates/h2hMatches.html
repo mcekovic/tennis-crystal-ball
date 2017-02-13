@@ -7,6 +7,7 @@
 	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 	<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 	<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
+	<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="level" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="round" type="java.lang.String"*/-->
@@ -136,7 +137,7 @@
 		<div class="col-md-2">
 			<select id="matchesSeason" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
 				<option value="">All seasons</option>
-				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
 			</select>
 		</div>
 		<div class="col-md-2">

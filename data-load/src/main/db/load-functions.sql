@@ -16,20 +16,25 @@ $$ LANGUAGE plpgsql;
 -- find_player
 
 CREATE OR REPLACE FUNCTION find_player(
-	p_name TEXT
+	p_name TEXT,
+	p_date DATE
 ) RETURNS INTEGER AS $$
 DECLARE
 	l_player_id INTEGER;
 	l_name TEXT;
 BEGIN
 	SELECT player_id INTO l_player_id FROM player
-	WHERE first_name || ' ' || last_name = p_name;
+	WHERE first_name || ' ' || last_name = p_name
+	AND (p_date >= dob + (INTERVAL '10' YEAR) OR dob IS NULL)
+	ORDER BY dob NULLS LAST, player_id;
 	IF l_player_id IS NOT NULL THEN
 		RETURN l_player_id;
 	END IF;
 
 	SELECT player_id INTO l_player_id FROM player
-	WHERE lower(first_name) || ' ' || lower(last_name) = lower(p_name);
+	WHERE lower(first_name) || ' ' || lower(last_name) = lower(p_name)
+	AND (p_date >= dob + (INTERVAL '10' YEAR) OR dob IS NULL)
+	ORDER BY dob NULLS LAST, player_id;
 	IF l_player_id IS NOT NULL THEN
 		RETURN l_player_id;
 	END IF;
@@ -37,13 +42,13 @@ BEGIN
 	SELECT name INTO l_name FROM player_alias
 	WHERE alias = p_name;
 	IF l_name IS NOT NULL THEN
-		RETURN find_player(l_name);
+		RETURN find_player(l_name, p_date);
 	END IF;
 
 	SELECT name INTO l_name FROM player_alias
 	WHERE lower(alias) = lower(p_name);
 	IF l_name IS NOT NULL THEN
-		RETURN find_player(l_name);
+		RETURN find_player(l_name, p_date);
 	END IF;
 
 	RAISE EXCEPTION 'Player % not found', p_name;
@@ -135,7 +140,7 @@ CREATE OR REPLACE FUNCTION load_ranking(
 DECLARE
 	l_player_id INTEGER;
 BEGIN
-	l_player_id := find_player(p_player_name);
+	l_player_id := find_player(p_player_name, p_rank_date);
 	BEGIN
 		INSERT INTO player_ranking
 		(rank_date, player_id, rank, rank_points)
@@ -392,12 +397,12 @@ BEGIN
 	IF p_ext_winner_id IS NOT NULL THEN
 		l_winner_id := map_ext_player(p_ext_winner_id);
 	ELSE
-		l_winner_id := find_player(p_winner_name);
+		l_winner_id := find_player(p_winner_name, p_date);
 	END IF;
 	IF p_ext_loser_id IS NOT NULL THEN
 		l_loser_id := map_ext_player(p_ext_loser_id);
 	ELSE
-		l_loser_id := find_player(p_loser_name);
+		l_loser_id := find_player(p_loser_name, p_date);
 	END IF;
 
 	-- merge players
@@ -510,7 +515,8 @@ $$ LANGUAGE plpgsql;
 -- find_players
 
 CREATE OR REPLACE FUNCTION find_players(
-	p_last_name TEXT
+	p_last_name TEXT,
+	p_date DATE
 ) RETURNS INTEGER[] AS $$
 DECLARE
 	l_player_ids INTEGER[];
@@ -518,7 +524,8 @@ BEGIN
 	WITH player_ids AS (
 		SELECT player_id FROM player
 		WHERE lower(last_name) LIKE '%' || lower(p_last_name) || '%' OR lower(p_last_name) LIKE '%' || lower(last_name) || '%'
-		ORDER BY dob DESC NULLS LAST
+		AND (p_date >= dob + (INTERVAL '10' YEAR) OR dob IS NULL)
+		ORDER BY dob DESC NULLS LAST, player_id
 	)
 	SELECT array_agg(player_id) INTO l_player_ids FROM player_ids;
 	IF l_player_ids IS NULL THEN
@@ -609,8 +616,8 @@ BEGIN
 	END IF;
 
 	-- find players
-	l_winner_ids := find_players(p_winner);
-	l_loser_ids:= find_players(p_loser);
+	l_winner_ids := find_players(p_winner, p_date);
+	l_loser_ids:= find_players(p_loser, p_date);
 
 	-- find match
 	SELECT match_id INTO l_match_id FROM match

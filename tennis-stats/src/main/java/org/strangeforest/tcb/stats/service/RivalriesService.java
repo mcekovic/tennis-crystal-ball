@@ -28,6 +28,7 @@ public class RivalriesService {
 
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES = 20;
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES_MIN = 2;
+	private static final int MIN_MATCHES_SEASON_FACTOR = 8;
 	private static final Map<String, Double> MIN_MATCHES_LEVEL_FACTOR = ImmutableMap.<String, Double>builder()
 		.put("G",  4.0)
 		.put("F",  8.0)
@@ -294,6 +295,8 @@ public class RivalriesService {
 
 	public int getGreatestRivalriesMinMatches(RivalryFilter filter) {
 		double minMatches = MIN_GREATEST_RIVALRIES_MATCHES;
+		if (filter.hasSeason())
+			minMatches /= MIN_MATCHES_SEASON_FACTOR;
 		if (filter.hasLevel())
 			minMatches /= MIN_MATCHES_LEVEL_FACTOR.get(filter.getLevel());
 		if (filter.hasSurface())

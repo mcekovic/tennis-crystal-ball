@@ -31,6 +31,7 @@ public class RivalriesController extends PageController {
 	@Autowired private GOATPointsService goatPointsService;
 	@Autowired private MatchPredictionService matchPredictionService;
 	@Autowired private RankingsService rankingsService;
+	@Autowired private DataService dataService;
 
 	@GetMapping("/headToHead")
 	public ModelAndView headToHead(
@@ -39,6 +40,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "playerId2", required = false) Integer playerId2,
 		@RequestParam(name = "name2", required = false) String name2,
 		@RequestParam(name = "tab", required = false) String tab,
+		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round,
@@ -53,6 +55,7 @@ public class RivalriesController extends PageController {
 		if (optionalPlayer1.isPresent() && optionalPlayer2.isPresent())
 			modelMap.addAttribute("permalink", h2hPermalink(optionalPlayer1.get(), optionalPlayer2.get(), request));
 		modelMap.addAttribute("tab", tab);
+		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("round", round);
@@ -90,6 +93,7 @@ public class RivalriesController extends PageController {
 	public ModelAndView h2hMatches(
       @RequestParam(name = "playerId1") int playerId1,
       @RequestParam(name = "playerId2") int playerId2,
+		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
       @RequestParam(name = "surface", required = false) String surface,
       @RequestParam(name = "round", required = false) String round
@@ -111,6 +115,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("round", round);
@@ -310,6 +315,7 @@ public class RivalriesController extends PageController {
 	@GetMapping("/greatestRivalries")
 	public ModelAndView greatestRivalries() {
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("rounds", Round.values());

@@ -6,6 +6,7 @@
 <!--/*@thymesVar id="playerRef2" type="java.lang.String"*/-->
 <!--/*@thymesVar id="permalink" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tab" type="java.lang.String"*/-->
+<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
@@ -38,7 +39,7 @@
 			});
 			[# th:if="${tab}" th:switch="${tab}"]
 				[# th:case="'matches'"]
-				h2hMatches([[${level}]], [[${surface}]], [[${round}]]);
+				h2hMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]]);
 				[/]
 				[# th:case="*"]
 				$([['#' + ${tab} + 'Pill']]).click();
@@ -56,9 +57,11 @@
 					$player2.focus();
 			}
 		});
-		function h2hMatches(level, surface, round) {
+		function h2hMatches(season, level, surface, round) {
 			var $pill = $("#matchesPill");
 			var url = $pill.attr("data-url");
+			if (season)
+				url += "&season=" + season;
 			if (level)
 				url += "&level=" + level;
 			if (surface)

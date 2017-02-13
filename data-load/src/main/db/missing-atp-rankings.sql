@@ -679,7 +679,7 @@ PERFORM load_ranking(DATE '1984-06-11', 'Tomas Smid', 15, NULL);
 PERFORM load_ranking(DATE '1984-06-11', 'Bill Scanlon', 16, NULL);
 PERFORM load_ranking(DATE '1984-06-11', 'Guillermo Vilas', 17, NULL);
 PERFORM load_ranking(DATE '1984-06-11', 'Vitas Gerulaitis', 18, NULL);
-PERFORM load_ranking(DATE '1984-06-11', 'Chris Lewis', 19, NULL);
+PERFORM load_ranking(DATE '1984-06-11', 'Chris Lewis Nzl', 19, NULL);
 PERFORM load_ranking(DATE '1984-06-11', 'Gene Mayer', 20, NULL);
 
 PERFORM load_ranking(DATE '1984-06-18', 'John Mcenroe', 1, NULL);

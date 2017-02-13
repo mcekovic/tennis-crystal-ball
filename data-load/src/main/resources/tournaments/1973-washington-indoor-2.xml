@@ -18,11 +18,11 @@
 		<match match-num="9" round="R32" best-of="3" winner="Karl Meiler" loser="Bob Goeltz" score="6-2 6-0"/>
 		<match match-num="10" round="R32" best-of="3" winner="Ion Tiriac" loser="Vitas Gerulaitis" score="W/O"/>
 		<match match-num="11" round="R32" best-of="3" winner="Jaime Pinto Bravo" loser="U Unknown" score="W/O"/>
-		<match match-num="12" round="R32" best-of="3" winner="Paul Gerken" loser="Brady Bohrnstedt" score="6-0 6-0"/>
+		<match match-num="12" round="R32" best-of="3" winner="Paul Gerken" loser="Ron Bohrnstedt" score="6-0 6-0"/>
 		<match match-num="13" round="R32" best-of="3" winner="Ian Fletcher" loser="Robert Kreiss" score="7-6 4-6 6-3"/>
 		<match match-num="14" round="R32" best-of="3" winner="Pat Cramer" loser="Steve Turner" score="6-1 6-4"/>
 		<match match-num="15" round="R32" best-of="3" winner="Dick R Bohrnstedt" loser="Gavorielle Marcu" score="5-7 6-2 6-1"/>
-		<match match-num="16" round="R32" best-of="3" winner="Jimmy Connors" loser="Francisco Castello Branco" score="6-3 6-3"/>
+		<match match-num="16" round="R32" best-of="3" winner="Jimmy Connors" loser="Francisco Castillo" score="6-3 6-3"/>
 		<!-- R16 -->
 		<match match-num="17" round="R16" best-of="3" winner="Ilie Nastase" loser="Sherwood Stewart" score="7-5 6-4"/>
 		<match match-num="18" round="R16" best-of="3" winner="Nicholas Kalogeropoulos" loser="Byron Bertram" score="W/O"/>
@@ -41,6 +41,6 @@
 		<match match-num="29" round="SF" best-of="3" winner="Ilie Nastase" loser="Jurgen Fassbender" score="4-6 6-1 7-5"/>
 		<match match-num="30" round="SF" best-of="3" winner="Jimmy Connors" loser="Karl Meiler" score="6-3 6-1"/>
 		<!-- F -->
-		<match match-num="31" round="F" best-of="5" winner="Ilie Nastase" loser="Jimmy Connors" score="4-6 6-2 7-5 6-2"/>
+		<match match-num="31" round="F" best-of="5" winner="Ilie Nastase" loser="Jimmy Connors" score="4-6 6-4 6-2 5-7 6-2"/>
 	</tournament>
 </tournament-data>

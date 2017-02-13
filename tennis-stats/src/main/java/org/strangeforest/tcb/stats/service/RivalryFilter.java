@@ -42,6 +42,10 @@ public class RivalryFilter {
 		return round;
 	}
 
+	public boolean hasSeason() {
+		return !seasonRange.equals(Range.all());
+	}
+
 	public boolean hasLevel() {
 		return !isNullOrEmpty(level);
 	}
