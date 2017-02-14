@@ -7,7 +7,7 @@ public class InfamousATPRankingCategory extends RankingCategory {
 	private static final String ADJUSTMENT = " (adjusted by factor 1.9 before 2009)";
 
 	public InfamousATPRankingCategory() {
-		super("ATP Ranking");
+		super("Infamous ATP Ranking");
 		register(leastPointsAsNo1("LeastATPPointsAsNo1", "Least ATP Points as No. 1" + ADJUSTMENT, "player_ranking", "adjust_atp_rank_points(rank_points, rank_date)", "rank_points", "ATP Points"));
 		register(leastEndOfSeasonPointsAsNo1("LeastEndOfSeasonATPPointsAsNo1", "Least End of Season ATP Points as No. 1" + ADJUSTMENT, "player_year_end_rank", "adjust_atp_rank_points(year_end_rank_points, season_start(season))", "ATP Points"));
 		register(pointsDifferenceBetweenNo1andNo2(

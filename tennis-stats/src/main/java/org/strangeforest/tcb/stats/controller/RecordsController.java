@@ -13,8 +13,8 @@ public class RecordsController extends PageController {
 	public ModelAndView records() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("recordCount", Records.getRecordCount());
-		modelMap.addAttribute("recordCategories", Records.getRecordCategories());
-		modelMap.addAttribute("infamousRecordCategories", Records.getInfamousRecordCategories());
+		modelMap.addAttribute("recordCategoryClasses", Records.getRecordCategoryClasses());
+		modelMap.addAttribute("infamousRecordCategoryClasses", Records.getInfamousRecordCategoryClasses());
 		return new ModelAndView("records", modelMap);
 	}
 

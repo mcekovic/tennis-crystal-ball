@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="recordCount" type="java.lang.Integer"*/-->
-<!--/*@thymesVar id="recordCategories" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>"*/-->
-<!--/*@thymesVar id="infamousRecordCategories" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>"*/-->
+<!--/*@thymesVar id="recordCategoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>>"*/-->
+<!--/*@thymesVar id="infamousRecordCategoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
 	<title>Records Book</title>
 	<script type="text/javascript">
@@ -63,19 +63,23 @@
 		<h5 style="font-style: italic" th:text="'&nbsp;' + ${recordCount} + ' Different Records!'">&nbsp;100 Different Records</h5>
 	</div>
 	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('sm')"/>
-	<div id="categoryDiv" class="btn-group pull-left margin-right" style="width: 400px">
+	<div id="categoryDiv" class="btn-group pull-left margin-right" style="width: 420px">
 		<div id="categoryControl" class="input-group pull-left">
 			<label for="category" class="input-group-addon">Category:</label>
 			<select id="category" class="form-control" onchange="reloadRecordsTable()" data-toggle="tooltip" data-placement="top" title="Select Record Category">
 				<option value="">All Records</option>
-				<option th:each="recordCategory : ${recordCategories}" th:value="${recordCategory.name}" value="Most Matches" th:text="${recordCategory.name}">Most Matches</option>
+				<optgroup th:each="recordCategoryClass : ${recordCategoryClasses}" th:label="${recordCategoryClass.key}" label="Titles and Tournament Results">
+					<option th:each="recordCategory : ${recordCategoryClass.value}" th:value="${recordCategory.name}" value="Most Titles" th:text="${recordCategory.name}">Most Titles</option>
+				</optgroup>
 			</select>
 		</div>
 		<div id="infamousRecordControl" class="input-group pull-left" style="display: none">
 			<label for="infamousCategory" class="input-group-addon">Infamous:</label>
 			<select id="infamousCategory" class="form-control" onchange="reloadRecordsTable()" data-toggle="tooltip" data-placement="top" title="Select Infamous Record">
 				<option value="">All Infamous Records</option>
-				<option th:each="recordCategory : ${infamousRecordCategories}" th:value="${recordCategory.name}" value="Most Matches" th:text="${recordCategory.name}">Most Matches</option>
+				<optgroup th:each="recordCategoryClass : ${infamousRecordCategoryClasses}" th:label="${recordCategoryClass.key}" label="Titles and Tournament Results">
+					<option th:each="recordCategory : ${recordCategoryClass.value}" th:value="${recordCategory.name}" value="Most Titles" th:text="${recordCategory.name}">Most Titles</option>
+				</optgroup>
 			</select>
 		</div>
 	</div>

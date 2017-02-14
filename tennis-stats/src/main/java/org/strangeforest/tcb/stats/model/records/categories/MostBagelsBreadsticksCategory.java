@@ -57,7 +57,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 	private static final String SEASON_WIDTH =  "80";
 
 	public MostBagelsBreadsticksCategory(RecordType type) {
-		super("Most Bagels / Breadsticks");
+		super("Most Bagels / Breadsticks " + type.name);
 		registerForItem(type, BAGELS);
 		registerForItem(type, BREADSTICKS);
 	}

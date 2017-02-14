@@ -69,7 +69,7 @@ public class HeadToHeadCategory extends RecordCategory {
 	private static final String NOTES = "Minimum 3 matches in H2H series, minimum 10 H2H series";
 
 	public HeadToHeadCategory(boolean infamous) {
-		super("Head-to-Head");
+		super((infamous ? "Infamous " : "") + "Head-to-Head");
 		if (!infamous) {
 			register(mostH2HSeries(MOST, PLAYED));
 			register(mostH2HSeries(MOST, WON));

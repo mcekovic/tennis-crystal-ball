@@ -26,7 +26,7 @@ public class MostRecordsCategory extends RecordCategory {
 	private static final String RECORDS_WIDTH = "120";
 
 	public MostRecordsCategory(boolean infamous) {
-		super("Most Records");
+		super("Most " + (infamous ? "Infamous " : "") + "Records");
 		register(mostRecords(infamous ? INFAMOUS : FAMOUS));
 	}
 
