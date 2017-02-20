@@ -88,11 +88,11 @@ class ATPWorldTourTournamentLoader {
 
 					params.winner_name = wName
 					params.winner_seed = wIsSeed ? smallint(wSeedEntry) : null
-					params.winner_entry = !wIsSeed ? string(wSeedEntry) : null
+					params.winner_entry = !wIsSeed ? mapEntry(string(wSeedEntry)) : null
 
 					params.loser_name = lName
 					params.loser_seed = lIsSeed ? smallint(lSeedEntry) : null
-					params.loser_entry = !lIsSeed ? string(lSeedEntry) : null
+					params.loser_entry = !lIsSeed ? mapEntry(string(lSeedEntry)) : null
 
 					setScoreParams(params, score, sql.connection)
 					params.statsUrl = matchStatsUrl(scoreElem.attr('href'))
@@ -221,6 +221,14 @@ class ATPWorldTourTournamentLoader {
 
 	static mapBestOf(String level) {
 		level == 'G' ? 5 : 3
+	}
+
+	static mapEntry(String entry) {
+		if (entry) {
+			if (entry == 'S')
+				return 'SE'
+		}
+		entry
 	}
 
 	static fitScore(String score) {
