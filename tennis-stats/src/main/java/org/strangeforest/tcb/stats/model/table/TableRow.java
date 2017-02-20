@@ -22,4 +22,11 @@ public class TableRow {
 	public void addCell(String value) {
 		c.add(new TableCell(value));
 	}
+
+
+	// Object methods
+
+	@Override public String toString() {
+		return String.valueOf(c);
+	}
 }

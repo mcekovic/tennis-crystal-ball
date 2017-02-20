@@ -85,7 +85,7 @@ public class SeasonsService {
 		"  FROM player_season_goat_points\n" +
 		"  WHERE season = :season AND %1$sgoat_points > 0\n" +
 		")\n" +
-		"SELECT g.rank, player_id, p.name, p.country_id, p.active, g.value\n" +
+		"SELECT g.rank, player_id, p.name, p.country_id, g.value\n" +
 		"FROM goat_points g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE g.rank <= :maxPlayers\n" +
@@ -199,7 +199,7 @@ public class SeasonsService {
 			rs.getInt("player_id"),
 			rs.getString("name"),
 			rs.getString("country_id"),
-			rs.getBoolean("active"),
+			null,
 			new IntegerRecordDetail(rs.getInt("value"))
 		);
 	}

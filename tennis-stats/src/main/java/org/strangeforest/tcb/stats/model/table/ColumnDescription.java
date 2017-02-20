@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model.table;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
+
 public class ColumnDescription {
 
 	private final String type;
@@ -16,5 +18,15 @@ public class ColumnDescription {
 
 	public String getLabel() {
 		return label;
+	}
+
+
+	// Object methods
+
+	@Override public String toString() {
+		return toStringHelper(this).omitNullValues()
+			.add("type", type)
+			.add("label", label)
+			.toString();
 	}
 }

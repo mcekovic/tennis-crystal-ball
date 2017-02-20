@@ -15,4 +15,11 @@ public class TableCell {
 	public void setV(String v) {
 		this.v = v;
 	}
+
+
+	// Object methods
+
+	@Override public String toString() {
+		return v;
+	}
 }

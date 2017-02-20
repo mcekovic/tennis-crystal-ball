@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model.table;
 
 import java.util.*;
 
+import static com.google.common.base.MoreObjects.*;
+
 public class DataTable {
 
 	private final List<ColumnDescription> cols = new ArrayList<>();
@@ -29,5 +31,15 @@ public class DataTable {
 		TableRow row = new TableRow(values);
 		rows.add(row);
 		return row;
+	}
+
+
+	// Object methods
+
+	@Override public String toString() {
+		return toStringHelper(this).omitNullValues()
+			.add("cols", cols)
+			.add("rows", rows)
+			.toString();
 	}
 }

@@ -156,4 +156,11 @@ public final class StatsCategory {
 	public String getDescriptionId() {
 		return descriptionId != null ? descriptionId : "empty";
 	}
+
+
+	// Object methods
+
+	@Override public String toString() {
+		return name;
+	}
 }

@@ -31,4 +31,11 @@ public class IndexedPlayers {
 	int getIndex(int playerId) {
 		return playerIndexMap.get(playerId);
 	}
+
+
+	// Object methods
+
+	@Override public String toString() {
+		return String.valueOf(players);
+	}
 }

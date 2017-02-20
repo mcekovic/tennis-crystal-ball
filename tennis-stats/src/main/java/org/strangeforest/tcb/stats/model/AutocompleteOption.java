@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import static com.google.common.base.MoreObjects.*;
+
 public class AutocompleteOption {
 
 	private final String id;
@@ -22,5 +24,15 @@ public class AutocompleteOption {
 
 	public String getLabel() {
 		return label;
+	}
+
+
+	// Object methods
+	
+	@Override public String toString() {
+		return toStringHelper(this).omitNullValues()
+			.add("id", id)
+			.add("value", value)
+			.toString();
 	}
 }
