@@ -381,18 +381,33 @@ DELETE FROM player_alias;
 INSERT INTO player_alias
 (alias, name)
 VALUES
+('Andre Thielemans', 'Andre Tielemans'),
+('Axel Geuer', 'Alex Geuer'),
 ('Albert Ramos Vinolas', 'Albert Ramos'),
+('Brendan OShea', 'Bill Oshea'),
 ('Diego Schwartzman', 'Diego Sebastian Schwartzman'),
 ('Duckhee Lee', 'Duck Hee Lee'),
+('Eugene Cantin', 'Eugene T Cantin'),
 ('Frances Tiafoe', 'Francis Tiafoe'),
 ('Franko Skugor', 'Franco Skugor'),
+('Fred Hemmes Sr', 'Fred Hemmes'),
+('Hans Joachim Ploetz', 'Hans Jaochim Plotz'),
+('Jose Edison Mandarino', 'Jose Mandarino'),
 ('Inigo Cervantes', 'Inigo Cervantes Huegun'),
+('Ivor Warwick', 'Ivor J Warwick'),
+('Jaime Fillol Sr', 'Jaime Fillol'),
+('John Satchwell Smith', 'Sj Smith'),
+('Jose Statham', 'Jose Rubin Statham'),
+('Juan Gisbert Sr', 'Juan Gisbert'),
+('Junjo Kawamuri', 'Junzo Kawamori'),
+('Mubarak Shannan Zayid', 'Mubarak Zaid'),
+('Pancho JF Guzman', 'Pancho Guzman'),
 ('Sam Groth', 'Samuel Groth'),
 ('Stan Wawrinka', 'Stanislas Wawrinka'),
 ('Taylor Fritz', 'Taylor Harry Fritz'),
+('Thomas Koch', 'Thomaz Koch'),
 ('Victor Estrella Burgos', 'Victor Estrella'),
-('Mubarak Shannan Zayid', 'Mubarak Zaid'),
-('Jose Statham', 'Jose Rubin Statham');
+('Victor Palman', 'Viktor Palman');
 
 DELETE FROM team_tournament_event_winner;
 INSERT INTO team_tournament_event_winner

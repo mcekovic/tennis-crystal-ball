@@ -22,7 +22,7 @@ class ATPWorldTourTournamentLoader {
 		this.sql = sql
 	}
 
-	def loadTournament(int season, String urlId, extId, String level = null, boolean current = false) {
+	def loadTournament(int season, String urlId, extId, String level = null, boolean current = false, Collection<String> skipRounds = Collections.emptySet()) {
 		def url = tournamentUrl(current, season, urlId, extId)
 		println "Fetching tournament URL '$url'"
 		def stopwatch = Stopwatch.createStarted()
@@ -51,7 +51,7 @@ class ATPWorldTourTournamentLoader {
 				def roundHead = itHeads.next()
 				def roundBody = itBodies.next()
 				def round = mapRound roundHead.select('tr th').text()
-				if (!round) continue
+				if (!round || skipRounds.contains(round)) continue
 				roundBody.select('tr').each { match ->
 					def seeds = match.select('td.day-table-seed')
 					def players = match.select('td.day-table-name a')
@@ -97,6 +97,9 @@ class ATPWorldTourTournamentLoader {
 					setScoreParams(params, score, sql.connection)
 					params.statsUrl = matchStatsUrl(scoreElem.attr('href'))
 
+					if ((wName.contains('QUALIFIER') || lName.contains('QUALIFIER')) && score == 'W/O')
+						return
+					
 					matches << params
 				}
 			}
@@ -189,7 +192,9 @@ class ATPWorldTourTournamentLoader {
 			case 'finals-pos': return 'F'
 			case '1000s': return 'M'
 			case '500': return 'A'
-			case '250': return 'B'
+			case '250':
+			case 'atpwt':
+			case 'challenger': return 'B'
 			default: throw new IllegalArgumentException('Unknown tournament level: ' + level)
 		}
 	}
@@ -232,6 +237,8 @@ class ATPWorldTourTournamentLoader {
 	}
 
 	static fitScore(String score) {
+		if (!score)
+			return 'W/O'
 		def setScores = []
 		for (String setScore : score.split('\\s+'))
 			setScores << fitSetScore(setScore)
@@ -275,7 +282,7 @@ class ATPWorldTourTournamentLoader {
 	}
 
 	static player(String name) {
-		name.replace('-', ' ').replace('\'', '')
+		name.replace('-', ' ').replace('\'', '').replace('.', '')
 	}
 
 	static extract(String s, String delimiter, int occurrence) {
