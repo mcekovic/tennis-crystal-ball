@@ -1,10 +1,10 @@
-package org.strangeforest.tcb.dataload;
+package org.strangeforest.tcb.dataload
 
 import org.junit.*
 
-import static org.strangeforest.tcb.dataload.EloRatings.*;
+import static org.strangeforest.tcb.dataload.EloRatings.*
 
-public class EloRatingsTest {
+class EloRatingsTest {
 
 	@Test
 	void "Start rating is calculated correctly"() {
@@ -24,7 +24,7 @@ public class EloRatingsTest {
 		assert startRating(500) == 1500
 	}
 
-	static def startRating(int rank) {
+	static startRating(int rank) {
 		new EloRating(100, rank, null).rating
 	}
 }

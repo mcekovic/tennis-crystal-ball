@@ -666,3 +666,35 @@ BEGIN
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- set_tournament_event_surface
+
+CREATE OR REPLACE FUNCTION set_tournament_event_surface(
+	p_season INTEGER,
+	p_name TEXT,
+	p_surface TEXT,
+	p_indoor BOOLEAN
+) RETURNS VOID AS $$
+DECLARE
+	l_tournament_event_id INTEGER;
+BEGIN
+	SELECT tournament_event_id INTO l_tournament_event_id FROM tournament_event
+	WHERE season = p_season AND name = p_name;
+	IF l_tournament_event_id IS NULL THEN
+		RAISE EXCEPTION 'Tournament event % for season % not found', p_name, p_season;
+	END IF;
+
+	UPDATE tournament_event
+	SET surface = p_surface::surface, indoor = p_indoor
+	WHERE tournament_event_id = l_tournament_event_id;
+
+	UPDATE match
+	SET surface = p_surface::surface, indoor = p_indoor
+	WHERE tournament_event_id = l_tournament_event_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+

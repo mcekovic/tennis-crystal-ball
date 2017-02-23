@@ -97,7 +97,7 @@ class ATPWorldTourTournamentLoader {
 					setScoreParams(params, score, sql.connection)
 					params.statsUrl = matchStatsUrl(scoreElem.attr('href'))
 
-					if ((wName.contains('QUALIFIER') || lName.contains('QUALIFIER')) && score == 'W/O')
+					if ((isUnknownPlayer(wName) || isUnknownPlayer(lName)))
 						return
 					
 					matches << params
@@ -294,5 +294,10 @@ class ATPWorldTourTournamentLoader {
 		}
 		int end = s.indexOf(delimiter, start)
 		return end > 0 ? s.substring(start, end) : s.substring(start)
+	}
+
+	static isUnknownPlayer(String name) {
+		def upperName = name.toUpperCase()
+		upperName.contains('UNKNOWN') || upperName.contains('QUALIFIER')
 	}
 }

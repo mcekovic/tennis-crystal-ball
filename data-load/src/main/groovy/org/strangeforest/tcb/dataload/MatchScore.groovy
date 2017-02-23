@@ -8,19 +8,19 @@ class MatchScore {
 	List setScores
 
 	short[] getW_set_games() {
-		setScores.collect({setScore -> setScore.w_games});
+		setScores.collect({setScore -> setScore.w_games})
 	}
 
 	short[] getL_set_games() {
-		setScores.collect({setScore -> setScore.l_games});
+		setScores.collect({setScore -> setScore.l_games})
 	}
 
 	Short[] getW_set_tb_pt() {
-		setScores.collect({setScore -> setScore.w_tb_pt});
+		setScores.collect({setScore -> setScore.w_tb_pt})
 	}
 
 	Short[] getL_set_tb_pt() {
-		setScores.collect({setScore -> setScore.l_tb_pt});
+		setScores.collect({setScore -> setScore.l_tb_pt})
 	}
 
 	Short getBestOf() {

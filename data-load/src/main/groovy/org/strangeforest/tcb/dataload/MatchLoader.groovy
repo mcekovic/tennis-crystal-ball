@@ -36,6 +36,8 @@ class MatchLoader extends BaseCSVLoader {
 		def level = string record.tourney_level
 		def name = string record.tourney_name
 		def season = smallint tourneyId.substring(0, 4)
+		if (season == ((short)1971) && name == 'Toronto WCT')
+			return null
 		params.season = season
 		def date = date record.tourney_date
 		params.tournament_date = date

@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.dataload;
+package org.strangeforest.tcb.dataload
 
 abstract class LoaderUtil {
 

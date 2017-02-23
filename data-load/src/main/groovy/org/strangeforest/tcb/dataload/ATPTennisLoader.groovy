@@ -157,6 +157,11 @@ class ATPTennisLoader {
 			println 'Correcting data (full)...'
 			executeSQLFile(sql, 'src/main/db/correct-data-full.sql')
 			println "Correcting data (full) finished in $stopwatch"
+
+			stopwatch = Stopwatch.createStarted()
+			println 'Updating tournament event surfaces...'
+			executeSQLFile(sql, 'src/main/db/tournament-event-surfaces.sql')
+			println "Updating tournament event surfaces finished in $stopwatch"
 		}
 		def stopwatch = Stopwatch.createStarted()
 		println 'Correcting data (delta)...'
