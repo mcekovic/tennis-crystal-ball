@@ -33,6 +33,32 @@ PERFORM set_tournament_event_surface(1973, 'New Delhi', 'H', FALSE);
 PERFORM set_tournament_event_surface(1973, 'Djkarta', 'H', FALSE);
 PERFORM set_tournament_event_surface(1973, 'Christchurch', 'H', FALSE);
 
+-- 1974
+PERFORM set_tournament_event_surface(1974, 'Roanoke', 'H', TRUE);
+PERFORM set_tournament_event_surface(1974, 'Omaha', 'H', FALSE);
+PERFORM set_tournament_event_surface(1974, 'Paramus', 'H', TRUE);
+PERFORM set_tournament_event_surface(1974, 'Calgary', 'H', TRUE);
+PERFORM set_tournament_event_surface(1974, 'Salt Lake City', 'H', TRUE);
+PERFORM set_tournament_event_surface(1974, 'New Orleans WCT', 'H', FALSE);
+PERFORM set_tournament_event_surface(1974, 'Washington', 'H', FALSE);
+PERFORM set_tournament_event_surface(1974, 'Tokyo WCT', 'H', FALSE);
+PERFORM set_tournament_event_surface(1974, 'Dublin', 'H', FALSE);
+PERFORM set_tournament_event_surface(1974, 'Cedar Grove', 'H', FALSE);
+PERFORM set_tournament_event_surface(1974, 'Tokyo', 'H', FALSE);
+PERFORM set_tournament_event_surface(1974, 'Christchurch', 'H', FALSE);
+PERFORM set_tournament_event_surface(1974, 'Oslo', 'H', TRUE);
+
+-- 1975
+PERFORM set_tournament_event_surface(1975, 'Bahamas', 'H', FALSE);
+PERFORM set_tournament_event_surface(1975, 'Roanoke', 'H', TRUE);
+PERFORM set_tournament_event_surface(1975, 'Shreveport', 'H', FALSE);
+PERFORM set_tournament_event_surface(1975, 'New York', 'H', TRUE);
+PERFORM set_tournament_event_surface(1975, 'Istanbul', 'C', FALSE);
+PERFORM set_tournament_event_surface(1975, 'Washington', 'C', FALSE);
+
+
+PERFORM set_tournament_event_surface(1977, 'Tournament of Champions WCT', 'H', FALSE);
+
 END $$;
 
 COMMIT;
