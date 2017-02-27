@@ -11,4 +11,5 @@ static loadRankings(Sql sql) {
 	def rankingsLoader = new ATPWorldTourRankingsLoader(sql)
 	rankingsLoader.load('2017-02-13', 200)
 	rankingsLoader.load('2017-02-20', 200)
+	rankingsLoader.load('2017-02-27', 200)
 }
