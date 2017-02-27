@@ -639,6 +639,25 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- create_player
+
+CREATE OR REPLACE FUNCTION create_player(
+	p_first_name TEXT,
+	p_last_name TEXT,
+	p_dob DATE,
+	p_country_id TEXT
+) RETURNS VOID AS $$
+BEGIN
+	IF (NOT EXISTS(SELECT player_id FROM player WHERE first_name = p_first_name AND last_name = p_last_name AND (dob = p_dob OR (dob IS NULL AND p_dob IS NULL)))) THEN
+		INSERT INTO player
+		(first_name, last_name, dob, country_id)
+		VALUES
+		(p_first_name, p_last_name, p_dob, p_country_id);
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- set_tournament_map_properties
 
 CREATE OR REPLACE FUNCTION set_tournament_map_properties(

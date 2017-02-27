@@ -86,8 +86,12 @@ class ATPTennisLoader {
 	}
 
 	def loadAdditionalPlayerData(Sql sql) {
-		if (full)
+		if (full) {
 			loadAdditionalData(new AdditionalPlayerDataLoader(sql), 'player', 'classpath:/player-data.xml')
+
+			println 'Adding player aliases and missing players...'
+			executeSQLFile(sql, 'src/main/db/player-aliases-missing-players.sql')
+		}
 	}
 
 	def loadAdditionalRankingData(Sql sql) {
@@ -158,20 +162,19 @@ class ATPTennisLoader {
 			executeSQLFile(sql, 'src/main/db/correct-data-full.sql')
 			println "Correcting data (full) finished in $stopwatch"
 
-			stopwatch = Stopwatch.createStarted()
 			println 'Updating tournament event surfaces...'
 			executeSQLFile(sql, 'src/main/db/tournament-event-surfaces.sql')
-			println "Updating tournament event surfaces finished in $stopwatch"
+
+			println 'Loading team tournament winners...'
+			executeSQLFile(sql, 'src/main/db/team-tournament-winners.sql')
 		}
 		def stopwatch = Stopwatch.createStarted()
 		println 'Correcting data (delta)...'
 		executeSQLFile(sql, 'src/main/db/correct-data-delta.sql')
 		println "Correcting data (delta) finished in $stopwatch\n"
 
-		stopwatch = Stopwatch.createStarted()
 		println 'Updating tournament event map properties...'
 		executeSQLFile(sql, 'src/main/db/tournament-map-properties.sql')
-		println "Updating tournament event map properties finished in $stopwatch"
 	}
 
 	def refreshMaterializedViews(Sql sql) {

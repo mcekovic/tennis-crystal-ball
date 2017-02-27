@@ -22,7 +22,7 @@ class ATPWorldTourTournamentLoader {
 		this.sql = sql
 	}
 
-	def loadTournament(int season, String urlId, extId, String level = null, boolean current = false, Collection<String> skipRounds = Collections.emptySet()) {
+	def loadTournament(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, Collection<String> skipRounds = Collections.emptySet()) {
 		def url = tournamentUrl(current, season, urlId, extId)
 		println "Fetching tournament URL '$url'"
 		def stopwatch = Stopwatch.createStarted()
@@ -31,7 +31,8 @@ class ATPWorldTourTournamentLoader {
 		def atpLevel = extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1)
 		level = level ?: mapLevel(atpLevel)
 		def name = getName(doc, level, season)
-		def surface = doc.select('td.tourney-details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)').text()
+		def atpSurface = doc.select('td.tourney-details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)').text()
+		surface = surface ?: mapSurface(atpSurface)
 		def drawType = 'KO'
 		def drawSize = doc.select('a.not-in-system:nth-child(1) > span:nth-child(1)').text()
 
@@ -76,8 +77,8 @@ class ATPWorldTourTournamentLoader {
 					params.tournament_name = name
 					params.event_name = name
 					params.tournament_level = level
-					params.surface = mapSurface surface
-					params.indoor = false
+					params.surface = surface
+					params.indoor = surface == 'P'
 					params.draw_type = drawType
 					params.draw_size = smallint drawSize
 
@@ -251,7 +252,14 @@ class ATPWorldTourTournamentLoader {
 		if (allDigits(gamesScore)) {
 			int len = gamesScore.length()
 			int half = (len + 1) / 2
-			String fitSetScore = gamesScore.substring(0, half) + '-' + gamesScore.substring(half)
+			def leftGames = gamesScore.substring(0, half)
+			def rightGames = gamesScore.substring(half)
+			if (len % 2 == 1 && Math.abs(Integer.parseInt(leftGames) - Integer.parseInt(rightGames)) > 2) {
+				--half
+				leftGames = gamesScore.substring(0, half)
+				rightGames = gamesScore.substring(half)
+			}
+			String fitSetScore = leftGames + '-' + rightGames
 			tb >= 0 ? fitSetScore + setScore.substring(tb) : fitSetScore
 		}
 		else
