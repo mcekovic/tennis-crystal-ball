@@ -78,7 +78,7 @@ class ATPWorldTourTournamentLoader {
 					params.event_name = name
 					params.tournament_level = level
 					params.surface = surface
-					params.indoor = surface == 'P'
+					params.indoor = surface == 'P' || name.toLowerCase().contains('indoor')
 					params.draw_type = drawType
 					params.draw_size = smallint drawSize
 

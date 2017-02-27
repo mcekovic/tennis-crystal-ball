@@ -55,7 +55,7 @@ class MatchLoader extends BaseCSVLoader {
 		params.tournament_level = mappedLevel
 		def surface = string record.surface
 		params.surface = mapSurface surface
-		params.indoor = mapIndoor surface
+		params.indoor = mapIndoor(surface) || eventName.toLowerCase().contains('indoor')
 		params.draw_type = mapDrawType(mappedLevel, season)
 		params.draw_size = mapDrawSize(drawSize, mappedLevel, season)
 		params.rank_points = mapRankPoints mappedLevel

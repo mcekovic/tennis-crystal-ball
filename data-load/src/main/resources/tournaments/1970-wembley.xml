@@ -2,7 +2,7 @@
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
 	<tournament season="1970" name="Wembley" date="1970-11-16" ext-id="430">
 		<level>M</level>
-		<surface>H</surface>
+		<surface>P</surface>
 		<indoor>true</indoor>
 		<draw-type>KO</draw-type>
 		<draw-size>32</draw-size>

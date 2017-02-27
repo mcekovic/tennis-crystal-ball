@@ -2,7 +2,7 @@
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
 	<tournament season="1970" name="Salisbury" date="1970-02-16" ext-id="A2">
 		<level>B</level>
-		<surface>H</surface>
+		<surface>P</surface>
 		<indoor>true</indoor>
 		<draw-type>KO</draw-type>
 		<draw-size>48</draw-size>

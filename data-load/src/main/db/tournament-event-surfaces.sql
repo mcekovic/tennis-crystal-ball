@@ -8,6 +8,7 @@ PERFORM set_tournament_event_surface(1971, 'New York', 'H', TRUE);
 PERFORM set_tournament_event_surface(1971, 'Queen''s Club', 'G', FALSE);
 PERFORM set_tournament_event_surface(1971, 'Quebec WCT', 'H', TRUE);
 PERFORM set_tournament_event_surface(1971, 'Vancouver WCT', 'H', FALSE);
+PERFORM set_tournament_event_surface(1971, 'Paris Indoor', 'P', TRUE);
 
 -- 1972
 PERFORM set_tournament_event_surface(1972, 'Des Moines', 'H', TRUE);
@@ -41,6 +42,7 @@ PERFORM set_tournament_event_surface(1974, 'Calgary', 'H', TRUE);
 PERFORM set_tournament_event_surface(1974, 'Salt Lake City', 'H', TRUE);
 PERFORM set_tournament_event_surface(1974, 'New Orleans WCT', 'H', FALSE);
 PERFORM set_tournament_event_surface(1974, 'Washington', 'H', FALSE);
+PERFORM set_tournament_event_surface(1974, 'Montreal / Toronto', 'C', FALSE);
 PERFORM set_tournament_event_surface(1974, 'Tokyo WCT', 'H', FALSE);
 PERFORM set_tournament_event_surface(1974, 'Dublin', 'H', FALSE);
 PERFORM set_tournament_event_surface(1974, 'Cedar Grove', 'H', FALSE);
