@@ -249,7 +249,7 @@ public abstract class RankingCategory extends RecordCategory {
 		);
 	}
 
-	protected static Record mostPoints(String id, String name, String tableName, String columnName, String dateColumnName, String caption) {
+	protected static Record mostPoints(String id, String name, String tableName, String columnName, String dateColumnName, String caption, String notes) {
 		return new Record(
 			id, name,
 			/* language=SQL */
@@ -259,11 +259,12 @@ public abstract class RankingCategory extends RecordCategory {
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
-			)
+			),
+			notes
 		);
 	}
 
-	protected static Record leastPointsAsNo1(String id, String name, String tableName, String expression, String columnName, String caption) {
+	protected static Record leastPointsAsNo1(String id, String name, String tableName, String expression, String columnName, String caption, String notes) {
 		return new Record(
 			id, name,
 			/* language=SQL */
@@ -279,11 +280,12 @@ public abstract class RankingCategory extends RecordCategory {
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
-			)
+			),
+			notes
 		);
 	}
 
-	protected static Record mostEndOfSeasonPoints(String id, String name, String tableName, String columnName, String caption) {
+	protected static Record mostEndOfSeasonPoints(String id, String name, String tableName, String columnName, String caption, String notes) {
 		return new Record(
 			id, name,
 			/* language=SQL */
@@ -295,11 +297,12 @@ public abstract class RankingCategory extends RecordCategory {
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("value2", "numeric", null, RANK_WIDTH, "right", "Rank"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
-			)
+			),
+			notes
 		);
 	}
 
-	protected static Record leastEndOfSeasonPointsAsNo1(String id, String name, String tableName, String columnName, String caption) {
+	protected static Record leastEndOfSeasonPointsAsNo1(String id, String name, String tableName, String columnName, String caption, String notes) {
 		return new Record(
 			id, name,
 			/* language=SQL */
@@ -310,14 +313,15 @@ public abstract class RankingCategory extends RecordCategory {
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
-			)
+			),
+			notes
 		);
 	}
 
 	protected static Record pointsDifferenceBetweenNo1andNo2(
 		String id, String name, String tableName, String columnName, String rankColumnName, String condition,
 		String expression, String expression1, String expression2, String order,
-		Class<? extends RecordDetail> detailClass, String type, String caption, String diffCaption
+		Class<? extends RecordDetail> detailClass, String type, String caption, String diffCaption, String notes
 	) {
 		return new Record(
 			id, name,
@@ -345,7 +349,8 @@ public abstract class RankingCategory extends RecordCategory {
 				new RecordColumn("value2", "numeric", null, POINTS_WIDTH, "right", caption + " No. 2"),
 				new RecordColumn("value", type, null, POINTS_WIDTH, "right", diffCaption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
-			)
+			),
+			notes
 		);
 	}
 }
