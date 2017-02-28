@@ -46,11 +46,8 @@ public class PlayerProfileController extends PageController {
 		Optional<Player> optionalPlayer = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
 
 		ModelMap modelMap = new ModelMap();
-		if (optionalPlayer.isPresent()) {
-			Player player = optionalPlayer.get();
-			modelMap.addAttribute("player", player);
-			modelMap.addAttribute("permalink", playerPermalink(player, request));
-		}
+		if (optionalPlayer.isPresent())
+			modelMap.addAttribute("player", optionalPlayer.get());
 		else
 			modelMap.addAttribute("playerRef", playerId != null ? playerId : name);
 		modelMap.addAttribute("tab", tab);
@@ -63,10 +60,6 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("outcome", outcome);
 		return new ModelAndView("playerProfile", modelMap);
-	}
-
-	private static String playerPermalink(Player player, HttpServletRequest request) {
-		return request.getServletPath() + '?' + request.getQueryString().replaceFirst("playerId=\\d+", "name=" + player.getName());
 	}
 
 	@GetMapping("/playerProfileTab")
