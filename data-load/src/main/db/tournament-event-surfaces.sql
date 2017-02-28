@@ -27,7 +27,7 @@ PERFORM set_tournament_event_surface(1972, 'Vancouver WCT', 'H', FALSE);
 PERFORM set_tournament_event_surface(1973, 'Calgary', 'H', TRUE);
 PERFORM set_tournament_event_surface(1973, 'Vancouver WCT', 'H', FALSE);
 PERFORM set_tournament_event_surface(1973, 'Tanglewood', 'H', FALSE);
-PERFORM set_tournament_event_surface(1977, 'Montreal / Toronto', 'C', FALSE);
+PERFORM set_tournament_event_surface(1973, 'Montreal / Toronto', 'C', FALSE);
 PERFORM set_tournament_event_surface(1973, 'Seattle', 'H', TRUE);
 PERFORM set_tournament_event_surface(1973, 'Quebec', 'H', TRUE);
 PERFORM set_tournament_event_surface(1973, 'Tokyo', 'H', FALSE);
