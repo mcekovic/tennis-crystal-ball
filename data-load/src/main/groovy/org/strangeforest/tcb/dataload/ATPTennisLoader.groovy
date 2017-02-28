@@ -149,7 +149,7 @@ class ATPTennisLoader {
 			atpWorldTourMatchLoader.loadTournament(1970, 'vancouver', 2048)
 			atpWorldTourMatchLoader.loadTournament(1970, 'midland', 6832)
 			atpWorldTourMatchLoader.loadTournament(1970, 'tucson', 6833)
-			atpWorldTourMatchLoader.loadTournament(1970, 'antwerp', 430, false, null, 'P')
+			atpWorldTourMatchLoader.loadTournament(1970, 'antwerp', 430, false, 'M', 'P')
 			atpWorldTourMatchLoader.loadTournament(1971, 'bristol', 313)
 			atpWorldTourMatchLoader.loadTournament(1971, 'eastbourne', 2049)
 			atpWorldTourMatchLoader.loadTournament(1971, 'senigallia', 6834, false, null, null, ['R64'])
