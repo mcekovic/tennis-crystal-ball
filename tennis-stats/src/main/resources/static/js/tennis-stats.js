@@ -297,8 +297,8 @@ function participationFormatter(column, row) {
 }
 
 // Match Formatter
-function matchFormatter(column, row) {
-	return formatMatchPlayer(row.winner) + " " + (row.outcome != "ABD" ? "d." : "vs") + " " + formatMatchPlayer(row.loser);
+function formatMatch(row, playerId) {
+	return formatMatchPlayer(row.winner, false, playerId) + " " + (row.outcome != "ABD" ? "d." : "vs") + " " + formatMatchPlayer(row.loser, false, playerId);
 }
 
 function h2hMatchFormatter(column, row) {
@@ -312,8 +312,9 @@ function finalFormatter(column, row) {
 	return formatMatchPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchPlayer(row.runnerUp) + " " + row.score;
 }
 
-function formatMatchPlayer(player, winner) {
-	return "<a href='/playerProfile?playerId=" + player.id + "' title='Show profile'>" + (winner ? "<strong>" : "") + player.name + (winner ? "</strong>" : "") + formatSeedEntry(player.seed, player.entry) + "</a>";
+function formatMatchPlayer(player, winner, playerId) {
+	var name = (winner ? "<strong>" : "") + player.name + (winner ? "</strong>" : "") + formatSeedEntry(player.seed, player.entry);
+	return player.id == playerId ? name : "<a href='/playerProfile?playerId=" + player.id + "' title='Show profile'>" + name + "</a>";
 }
 
 function formatSeedEntry(seed, entry) {

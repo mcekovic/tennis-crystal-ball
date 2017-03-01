@@ -22,6 +22,7 @@
 		$(function() {
 			var $matchesTable = $("#matchesTable");
 			var device = detectDevice();
+			setBootgridColumnsVisible($matchesTable, ["wonLost"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($matchesTable, ["stats"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($matchesTable, ["surface"], deviceGreaterOrEqual(device, "sm"));
 			if (!deviceGreaterOrEqual(device, "md"))
@@ -55,7 +56,12 @@
 					"date": dateFormatter,
 					"tournament": tournamentEventFormatter,
 					"surface": surfaceFormatter,
-					"match": matchFormatter,
+					"wonLost": function(column, row) {
+						return row.winner.id == [[${playerId}]] ? "W" : "L";
+					},
+					"match": function(column, row) {
+						return formatMatch(row, [[${playerId}]]);
+					},
 					"stats": function(column, row) {
 						return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'> Stats</a>" : "";
 					}
@@ -280,6 +286,7 @@
 			<th data-column-id="tournament" data-formatter="tournament" data-width="175">Tournament</th>
 			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
 			<th data-column-id="round" data-width="75">Round</th>
+			<th data-column-id="wonLost" data-formatter="wonLost" data-width="55">W / L</th>
 			<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
 			<th data-column-id="score" data-sortable="false" data-width="175">Score</th>
 			<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="80">Stats</th>

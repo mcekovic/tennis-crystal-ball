@@ -26,6 +26,7 @@ public class PlayerMatchesResource {
 		.put("tournament", "tournament")
 		.put("surface", "surface")
 		.put("round", "round")
+		.put("wonLost", "CASE WHEN pw.player_id = :playerId THEN 1 ELSE 0 END")
 	.build();
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("date"), desc("round"), desc("match_num")};
 

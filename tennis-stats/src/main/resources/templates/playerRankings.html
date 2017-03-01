@@ -187,7 +187,7 @@
 				<td th:text="${highlights.bestRank} + ' (' + ${#dates.format(highlights.bestRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
 			</tr>
 			<tr th:if="${highlights.bestRankPoints > 0}">
-				<th>Best Rank Points</th>
+				<th>Most Rank Points</th>
 				<td th:text="${highlights.bestRankPoints} + ' (' + ${#dates.format(highlights.bestRankPointsDate, 'dd-MM-yyyy')} + ')'">5000 (01-01-2011)</td>
 			</tr>
 			<tr th:if="${highlights.bestYearEndRank > 0}">
@@ -195,7 +195,7 @@
 				<td th:text="${highlights.bestYearEndRank} + ' (' + ${highlights.bestYearEndRankSeasons} + ')'">10 (2001, 2003)</td>
 			</tr>
 			<tr th:if="${highlights.bestYearEndRankPoints > 0}">
-				<th>Best Year-End Rank Points</th>
+				<th>Most Year-End Rank Points</th>
 				<td th:text="${highlights.bestYearEndRankPoints} + ' (' + ${highlights.bestYearEndRankPointsSeasons} + ')'">3450 (2001, 2003)</td>
 			</tr>
 			<tr th:if="${highlights.mostFrequentRank}" th:with="mostFrequentRank=${highlights.mostFrequentRank}">
