@@ -208,8 +208,7 @@ function playerFormatter(column, row) {
 }
 
 function playerCountryFormatter(column, row) {
-	return "<img src='/images/flags/" + row.country.code + ".png' title='" + row.country.id + "' width='24' height='20'/> " +
-		playerFormatter(column, row);
+	return "<img src='/images/flags/" + row.country.code + ".png' title='" + row.country.id + "' width='24' height='20'/> " + playerFormatter(column, row);
 }
 
 // Level Formatter
@@ -297,8 +296,10 @@ function participationFormatter(column, row) {
 }
 
 // Match Formatter
-function formatMatch(row, playerId) {
-	return formatMatchPlayer(row.winner, false, playerId) + " " + (row.outcome != "ABD" ? "d." : "vs") + " " + formatMatchPlayer(row.loser, false, playerId);
+function matchFormatter(playerId) {
+	return function(column, row) {
+		return formatMatchPlayer(row.winner, false, playerId) + " " + (row.outcome != "ABD" ? "d." : "vs") + " " + formatMatchPlayer(row.loser, false, playerId);
+	};
 }
 
 function h2hMatchFormatter(column, row) {

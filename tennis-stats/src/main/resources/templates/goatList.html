@@ -61,25 +61,15 @@
 						else
 							return row.achievementsGoatPoints;
 					},
-					"grandSlams": function(column, row) {
-						return playerTitlesFormatter(row, "grandSlams", "&level=G");
-					},
-					"tourFinals": function(column, row) {
-						return playerTitlesFormatter(row, "tourFinals", "&level=F");
-					},
-					"masters": function(column, row) {
-						return playerTitlesFormatter(row, "masters", "&level=M");
-					},
-					"olympics": function(column, row) {
-						return playerTitlesFormatter(row, "olympics", "&level=O");
-					},
+					"grandSlams": playerTitlesFormatter("grandSlams", "&level=G"),
+					"tourFinals": playerTitlesFormatter("tourFinals", "&level=F"),
+					"masters": playerTitlesFormatter("masters", "&level=M"),
+					"olympics": playerTitlesFormatter("olympics", "&level=O"),
 					"bigTitles": function(column, row) {
-						const count = row.bigTitles;
+						var count = row.bigTitles;
 						return count > 0 ? count : "<span class='text-muted'>0</span>";
 					},
-					"titles": function(column, row) {
-						return playerTitlesFormatter(row, "titles", "");
-					},
+					"titles": playerTitlesFormatter("titles", ""),
 					"wonPct": wonLostFormatter,
 					"bestEloRating": function(column, row) {
 						return "<span title='" + formatDate(row.bestEloRatingDate) + "'>" + row.bestEloRating + "</span>";
@@ -114,9 +104,11 @@
 			$("[data-toggle='tooltip']").tooltip();
 			$("#goatLegendButton").click();
 		});
-		function playerTitlesFormatter(row, attr, params) {
-			const count = row[attr];
-			return count > 0 ? "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&result=W" + params + "'>" + count + "</a>" : "<span class='text-muted'>0</span>";
+		function playerTitlesFormatter(attr, params) {
+			return function(column, row) {
+				var count = row[attr];
+				return count > 0 ? "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&result=W" + params + "'>" + count + "</a>" : "<span class='text-muted'>0</span>";
+			};
 		}
 		function reloadGOATListTable() {
 			$("#goatListTable").bootgrid("reload");

@@ -25,39 +25,17 @@
 					"season": function(column, row) {
 						return "<a href='/season?season=" + row.season + "' title='Show season'>" + row.season + "</a>";
 					},
-					"tournamentCount": function(column, row) {
-						return tournamentCountFormatter(row, "tournamentCount", "");
-					},
-					"grandSlamCount": function(column, row) {
-						return tournamentCountFormatter(row, "grandSlamCount", "&level=G");
-					},
-					"tourFinalsCount": function(column, row) {
-						return tournamentCountFormatter(row, "tourFinalsCount", "&level=F");
-					},
-					"mastersCount": function(column, row) {
-						return tournamentCountFormatter(row, "mastersCount", "&level=M");
-					},
-					"olympicsCount": function(column, row) {
-						return tournamentCountFormatter(row, "olympicsCount", "&level=O");
-					},
-					"atp500Count": function(column, row) {
-						return tournamentCountFormatter(row, "atp500Count", "&level=A");
-					},
-					"atp250Count": function(column, row) {
-						return tournamentCountFormatter(row, "atp250Count", "&level=B");
-					},
-					"hardCount": function(column, row) {
-						return tournamentCountFormatter(row, "hardCount", "&surface=H");
-					},
-					"clayCount": function(column, row) {
-						return tournamentCountFormatter(row, "clayCount", "&surface=C");
-					},
-					"grassCount": function(column, row) {
-						return tournamentCountFormatter(row, "grassCount", "&surface=G");
-					},
-					"carpetCount": function(column, row) {
-						return tournamentCountFormatter(row, "carpetCount", "&surface=P");
-					},
+					"tournamentCount": tournamentCountFormatter("tournamentCount", ""),
+					"grandSlamCount": tournamentCountFormatter("grandSlamCount", "&level=G"),
+					"tourFinalsCount": tournamentCountFormatter("tourFinalsCount", "&level=F"),
+					"mastersCount": tournamentCountFormatter("mastersCount", "&level=M"),
+					"olympicsCount": tournamentCountFormatter("olympicsCount", "&level=O"),
+					"atp500Count": tournamentCountFormatter("atp500Count", "&level=A"),
+					"atp250Count": tournamentCountFormatter("atp250Count", "&level=B"),
+					"hardCount": tournamentCountFormatter("hardCount", "&surface=H"),
+					"clayCount": tournamentCountFormatter("clayCount", "&surface=C"),
+					"grassCount": tournamentCountFormatter("grassCount", "&surface=G"),
+					"carpetCount": tournamentCountFormatter("carpetCount", "&surface=P"),
 					"surfaces": function(column, row) {
 						return "<div class='progress'>"
 							+ "<div class='progress-bar progress-bar-default' role='progressbar' style='width: " + row.hardPct + "' data-toggle='tooltip' data-placement='top' title='Hard " + row.hardPct + "'>" + row.hardPct + "</div>"
@@ -94,9 +72,11 @@
 				{id: "bestPlayer", title: "Player with most GOAT points in the season"}
 			]);
 		});
-		function tournamentCountFormatter(row, attr, params) {
-			const count = row[attr];
-			return count > 0 ? "<a href='/season?season=" + row.season + "&tab=events" + params + "'>" + count + "</a>" : "";
+		function tournamentCountFormatter(attr, params) {
+			return function(column, row) {
+				var count = row[attr];
+				return count > 0 ? "<a href='/season?season=" + row.season + "&tab=events" + params + "'>" + count + "</a>" : "";
+			};
 		}
 	</script>
 	<style>

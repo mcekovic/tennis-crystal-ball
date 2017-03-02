@@ -59,9 +59,7 @@
 					"wonLost": function(column, row) {
 						return row.winner.id == [[${playerId}]] ? "W" : "L";
 					},
-					"match": function(column, row) {
-						return formatMatch(row, [[${playerId}]]);
-					},
+					"match": matchFormatter([[${playerId}]]),
 					"stats": function(column, row) {
 						return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'> Stats</a>" : "";
 					}
