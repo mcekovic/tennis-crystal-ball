@@ -278,6 +278,10 @@
 	<div class="col-md-4">
 		<h4>Elo Ranking</h4>
 		<table class="table table-condensed text-nowrap">
+			<tr th:if="${highlights.currentEloRank > 0}">
+				<th>Current Elo Rank</th>
+				<td th:text="${highlights.currentEloRank} + ' (' + ${highlights.currentEloRating} + ')'">5 (2210)</td>
+			</tr>
 			<tr th:if="${highlights.bestEloRank > 0}">
 				<th>Best Elo Rank</th>
 				<td th:text="${highlights.bestEloRank} + ' (' + ${#dates.format(highlights.bestEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>

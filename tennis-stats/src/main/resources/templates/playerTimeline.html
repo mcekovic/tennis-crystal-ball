@@ -1,140 +1,140 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
-	<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"*/-->
-	<script type="text/javascript">
-		$(function() {
-			// Tournaments
-			var $tournamentsBody = $("#bigTournamentsBody, #otherTournamentsBody");
-			$tournamentsBody.find("div.surface").each(function() {
-				var $surface = $(this);
-				var surface = $surface.text();
-				$surface.text(surfaceName(surface));
-				$surface.addClass("label-" + surfaceClassSuffix(surface));
-			});
-			$tournamentsBody.find("a.tournament").each(function() {
-				var $tournament = $(this);
-				var level = $tournament.data("level");
-				$tournament.addClass("label-" + level);
-				$tournament.attr("title", levelName(level));
-			});
-			$tournamentsBody.find("a[data-level], a[data-surface]").each(function() {
-				var $result = $(this);
-				var level = $result.data("level");
-				var surface = $result.data("surface");
-				var title = "";
-				if (level)
-					title += "<span class='label label-" + level + "'>" + levelName(level) + "</span>";
-				if (surface) {
-					if (level)
-						title += " ";
-					title += "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + "</span>";
-				}
-				$result.tooltip({title: title, html: true});
-			});
-			bindTimelineExtraData("performance", "/playerTimelinePerformance");
-			bindTimelineExtraData("statistics", "/playerTimelineStats");
+<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"*/-->
+<script type="text/javascript">
+	$(function() {
+		// Tournaments
+		var $tournamentsBody = $("#bigTournamentsBody, #otherTournamentsBody");
+		$tournamentsBody.find("div.surface").each(function() {
+			var $surface = $(this);
+			var surface = $surface.text();
+			$surface.text(surfaceName(surface));
+			$surface.addClass("label-" + surfaceClassSuffix(surface));
 		});
-		function bindTimelineExtraData(elementPrefix, url) {
-			var $head = $("#" + elementPrefix + "Head");
-			$head.find(".raw-data").hide();
-			var $body = $("#" + elementPrefix + "Body");
-			$body.on("shown.bs.collapse", function () {
-				if (!$body.hasClass("loaded")) {
-					$($body).load(url + "?playerId=[[${playerId}]]&seasons=[[${#strings.listJoin(timeline.seasons, ",")}]]", function () {
-						$body.find(".raw-data").hide();
-						$body.addClass("loaded");
-					});
-				}
-				$head.find(".btn-stats").css("display", "inline");
-				$("html, body").scrollTop($(document).height() - $(window).height());
-			}).on("hidden.bs.collapse", function () {
-				$head.find(".btn-stats").hide();
-			});
-		}
-	</script>
-	<style scoped="scoped">
-		th.season {
-			text-align: center;
-		}
-		a.season {
-			color: white;
-		}
-		tr.first-row {
-			border-top: 3px solid lightgray;
-		}
-		span.absent {
-			color: gray;
-		}
-	</style>
-	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
-	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
-		<thead>
-		<tr class="bg-primary">
-			<th>Tournament</th>
-			<th>Surface</th>
-			<th th:each="season : ${timeline.seasons}" class="season">
-				<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
-			</th>
-		</tr>
-		</thead>
-		<th:block th:unless="${timeline.empty}">
-		<tbody id="bigTournamentsBody">
-		<tr th:each="tournament : ${timeline.bigTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
-			<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
-		</tr>
-		</tbody>
-		<thead>
-		<tr class="bg-primary">
-			<th>Tournament</th>
-			<th>Surface</th>
-			<th th:each="season : ${timeline.seasons}" class="season">
-				<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
-			</th>
-		</tr>
-		</thead>
-		<tbody id="otherTournamentsBody">
-		<tr th:each="tournament : ${timeline.otherTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
-			<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
-		</tr>
-		</tbody>
-		<thead id="performanceHead">
-		<tr class="bg-primary">
-			<th>
-				<button id="timelinePerf" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#performanceBody" title="Toggle seasons performance"> Performance</button>
-				<div class="btn-stats" style="display: none">
-					<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#performanceHead, #performanceBody')" title="Show raw data"> Raw Data</button>
-					<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#performanceHead, #performanceBody')" title="Show percentage data"> Pct. Data</button>
-				</div>
-			</th>
-			<th class="text-center">Career</th>
-			<th th:each="season : ${timeline.seasons}" class="season">
-				<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
-			</th>
-		</tr>
-		</thead>
-		<tbody id="performanceBody"></tbody>
-		<thead id="statisticsHead">
-		<tr class="bg-primary">
-			<th>
-				<button id="timelineStats" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"> Stats</button>
-				<div class="btn-stats" style="display: none">
-					<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show raw data"> Raw Data</button>
-					<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show percentage data"> Pct. Data</button>
-				</div>
-			</th>
-			<th class="text-center">Career</th>
-			<th th:each="season : ${timeline.seasons}" class="season">
-				<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
-			</th>
-		</tr>
-		</thead>
-		<tbody id="statisticsBody"></tbody>
-		</th:block>
-		<tbody th:if="${timeline.empty}">
-		<tr>
-			<td colspan="2" align="center">No data found</td>
-		</tr>
-		</tbody>
-	</table>
+		$tournamentsBody.find("a.tournament").each(function() {
+			var $tournament = $(this);
+			var level = $tournament.data("level");
+			$tournament.addClass("label-" + level);
+			$tournament.attr("title", levelName(level));
+		});
+		$tournamentsBody.find("a[data-level], a[data-surface]").each(function() {
+			var $result = $(this);
+			var level = $result.data("level");
+			var surface = $result.data("surface");
+			var title = "";
+			if (level)
+				title += "<span class='label label-" + level + "'>" + levelName(level) + "</span>";
+			if (surface) {
+				if (level)
+					title += " ";
+				title += "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + "</span>";
+			}
+			$result.tooltip({title: title, html: true});
+		});
+		bindTimelineExtraData("performance", "/playerTimelinePerformance");
+		bindTimelineExtraData("statistics", "/playerTimelineStats");
+	});
+	function bindTimelineExtraData(elementPrefix, url) {
+		var $head = $("#" + elementPrefix + "Head");
+		$head.find(".raw-data").hide();
+		var $body = $("#" + elementPrefix + "Body");
+		$body.on("shown.bs.collapse", function () {
+			if (!$body.hasClass("loaded")) {
+				$($body).load(url + "?playerId=[[${playerId}]]&seasons=[[${#strings.listJoin(timeline.seasons, ",")}]]", function () {
+					$body.find(".raw-data").hide();
+					$body.addClass("loaded");
+				});
+			}
+			$head.find(".btn-stats").css("display", "inline");
+			$("html, body").scrollTop($(document).height() - $(window).height());
+		}).on("hidden.bs.collapse", function () {
+			$head.find(".btn-stats").hide();
+		});
+	}
+</script>
+<style scoped="scoped">
+	th.season {
+		text-align: center;
+	}
+	a.season {
+		color: white;
+	}
+	tr.first-row {
+		border-top: 3px solid lightgray;
+	}
+	span.absent {
+		color: gray;
+	}
+</style>
+<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
+<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
+	<thead>
+	<tr class="bg-primary">
+		<th>Tournament</th>
+		<th>Surface</th>
+		<th th:each="season : ${timeline.seasons}" class="season">
+			<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
+		</th>
+	</tr>
+	</thead>
+	<th:block th:unless="${timeline.empty}">
+	<tbody id="bigTournamentsBody">
+	<tr th:each="tournament : ${timeline.bigTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
+		<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
+	</tr>
+	</tbody>
+	<thead>
+	<tr class="bg-primary">
+		<th>Tournament</th>
+		<th>Surface</th>
+		<th th:each="season : ${timeline.seasons}" class="season">
+			<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
+		</th>
+	</tr>
+	</thead>
+	<tbody id="otherTournamentsBody">
+	<tr th:each="tournament : ${timeline.otherTournaments}" th:class="${tournament.firstByLevel ? 'first-row' : ''}">
+		<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
+	</tr>
+	</tbody>
+	<thead id="performanceHead">
+	<tr class="bg-primary">
+		<th>
+			<button id="timelinePerf" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#performanceBody" title="Toggle seasons performance"> Performance</button>
+			<div class="btn-stats" style="display: none">
+				<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#performanceHead, #performanceBody')" title="Show raw data"> Raw Data</button>
+				<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#performanceHead, #performanceBody')" title="Show percentage data"> Pct. Data</button>
+			</div>
+		</th>
+		<th class="text-center">Career</th>
+		<th th:each="season : ${timeline.seasons}" class="season">
+			<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
+		</th>
+	</tr>
+	</thead>
+	<tbody id="performanceBody"></tbody>
+	<thead id="statisticsHead">
+	<tr class="bg-primary">
+		<th>
+			<button id="timelineStats" class="btn btn-info btn-xs glyphicon glyphicon-stats" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"> Stats</button>
+			<div class="btn-stats" style="display: none">
+				<button class="pct-data btn btn-info btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show raw data"> Raw Data</button>
+				<button class="raw-data btn btn-info btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show percentage data"> Pct. Data</button>
+			</div>
+		</th>
+		<th class="text-center">Career</th>
+		<th th:each="season : ${timeline.seasons}" class="season">
+			<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season}" th:text="${season}" class="season" title="Show season results">2015</a>
+		</th>
+	</tr>
+	</thead>
+	<tbody id="statisticsBody"></tbody>
+	</th:block>
+	<tbody th:if="${timeline.empty}">
+	<tr>
+		<td colspan="2" align="center">No data found</td>
+	</tr>
+	</tbody>
+</table>
 </th:block>

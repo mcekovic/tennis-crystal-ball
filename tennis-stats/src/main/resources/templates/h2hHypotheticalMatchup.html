@@ -1,247 +1,247 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org" th:with="sameDates=${date1.equals(date2)}">
-	<!--/*@thymesVar id="player1" type="org.strangeforest.tcb.stats.model.Player"*/-->
-	<!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.Player"*/-->
-	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
-	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
-	<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
-	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
-	<!--/*@thymesVar id="level" type="java.lang.String"*/-->
-	<!--/*@thymesVar id="round" type="java.lang.String"*/-->
-	<!--/*@thymesVar id="date" type="java.util.Date"*/-->
-	<!--/*@thymesVar id="date1" type="java.util.Date"*/-->
-	<!--/*@thymesVar id="date2" type="java.util.Date"*/-->
-	<!--/*@thymesVar id="dateSelector1" type="java.lang.String"*/-->
-	<!--/*@thymesVar id="dateSelector2" type="java.lang.String"*/-->
-	<!--/*@thymesVar id="prediction" type="org.strangeforest.tcb.stats.model.prediction.MatchPrediction"*/-->
-	<!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
-	<script type="text/javascript">
-		$(function() {
-			datePicker("predictionDate");
-			datePicker("predictionDate1");
-			datePicker("predictionDate2");
-			$("[data-toggle='tooltip']").tooltip();
-		});
-		function predictMatch() {
-			var url = "/h2hHypotheticalMatchup?playerId1=[[${player1.id}]]&playerId2=[[${player2.id}]]";
-			var surface = $("#predictionSurface").val();
-			if (surface)
-				url += "&surface=" + surface;
-			var level = $("#predictionLevel").val();
-			if (level)
-				url += "&level=" + level;
-			var round = $("#predictionRound").val();
-			if (round)
-				url += "&round=" + round;
-			var date = getDate("predictionDate");
-			var date1 = getDate("predictionDate1");
-			var date2 = getDate("predictionDate2");
-			if (date && date1 == date2)
-				url += "&date=" + date;
-			else {
-				if (date1)
-					url += "&date1=" + date1;
-				if (date2)
-					url += "&date2=" + date2;
-				var dateSelector1 = $("#predictionDateSelector1").val();
-				if (dateSelector1)
-					url += "&dateSelector1=" + dateSelector1;
-				var dateSelector2 = $("#predictionDateSelector2").val();
-				if (dateSelector2)
-					url += "&dateSelector2=" + dateSelector2;
-			}
-			$("#hypotheticalMatchup").load(url);
+<!--/*@thymesVar id="player1" type="org.strangeforest.tcb.stats.model.Player"*/-->
+<!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.Player"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="round" type="java.lang.String"*/-->
+<!--/*@thymesVar id="date" type="java.util.Date"*/-->
+<!--/*@thymesVar id="date1" type="java.util.Date"*/-->
+<!--/*@thymesVar id="date2" type="java.util.Date"*/-->
+<!--/*@thymesVar id="dateSelector1" type="java.lang.String"*/-->
+<!--/*@thymesVar id="dateSelector2" type="java.lang.String"*/-->
+<!--/*@thymesVar id="prediction" type="org.strangeforest.tcb.stats.model.prediction.MatchPrediction"*/-->
+<!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
+<script type="text/javascript">
+	$(function() {
+		datePicker("predictionDate");
+		datePicker("predictionDate1");
+		datePicker("predictionDate2");
+		$("[data-toggle='tooltip']").tooltip();
+	});
+	function predictMatch() {
+		var url = "/h2hHypotheticalMatchup?playerId1=[[${player1.id}]]&playerId2=[[${player2.id}]]";
+		var surface = $("#predictionSurface").val();
+		if (surface)
+			url += "&surface=" + surface;
+		var level = $("#predictionLevel").val();
+		if (level)
+			url += "&level=" + level;
+		var round = $("#predictionRound").val();
+		if (round)
+			url += "&round=" + round;
+		var date = getDate("predictionDate");
+		var date1 = getDate("predictionDate1");
+		var date2 = getDate("predictionDate2");
+		if (date && date1 == date2)
+			url += "&date=" + date;
+		else {
+			if (date1)
+				url += "&date1=" + date1;
+			if (date2)
+				url += "&date2=" + date2;
+			var dateSelector1 = $("#predictionDateSelector1").val();
+			if (dateSelector1)
+				url += "&dateSelector1=" + dateSelector1;
+			var dateSelector2 = $("#predictionDateSelector2").val();
+			if (dateSelector2)
+				url += "&dateSelector2=" + dateSelector2;
 		}
-		function onSameDateChanged() {
-			var sameDate = $("#predictionSameDate").prop("checked");
-			if (sameDate) {
-				var date1 = $("#predictionDate1").val();
-				var date2 = $("#predictionDate2").val();
-				$("#predictionDate").val(date1 ? date1 : date2);
-				$("#predictionDate1").val("");
-				$("#predictionDate2").val("");
-			}
-			else {
-				var date = $("#predictionDate").val();
-				$("#predictionDate1").val(date);
-				$("#predictionDate2").val(date);
-				$("#predictionDate").val("");
-			}
-			$("#predictionDateDiv").css("display", sameDate ? "block" : "none");
-			$("#predictionDatesDiv").css("display", !sameDate ? "block" : "none");
-			if (sameDate)
-				predictMatch();
+		$("#hypotheticalMatchup").load(url);
+	}
+	function onSameDateChanged() {
+		var sameDate = $("#predictionSameDate").prop("checked");
+		if (sameDate) {
+			var date1 = $("#predictionDate1").val();
+			var date2 = $("#predictionDate2").val();
+			$("#predictionDate").val(date1 ? date1 : date2);
+			$("#predictionDate1").val("");
+			$("#predictionDate2").val("");
 		}
-	</script>
-	<div class="row">
-		<div class="col-md-2">
-			<select id="predictionSurface" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select surface">
-				<option value="">Unknown surface</option>
-				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
-			</select>
-		</div>
-		<div class="col-md-2">
-			<select id="predictionLevel" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select tournament level">
-				<option value="">Unknown level</option>
-				<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
-			</select>
-		</div>
-		<div class="col-md-2">
-			<select id="predictionRound" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select round">
-				<option value="">Unknown round</option>
-				<option th:each="aRound : ${rounds}" th:value="${aRound.code}" th:class="|bg-result-${aRound.baseCode}|" value="F" class="bg-result-F" th:text="${aRound.text}" th:selected="${aRound.code == round}">Final</option>
-			</select>
-		</div>
-		<div class="col-md-2">
-			<div class="checkbox">
-				<label data-toggle="tooltip" data-placement="top" class="text-nowrap" title="Predict match with current form on the same date for both players">
-					<input id="predictionSameDate" type="checkbox" th:checked="${sameDates}" onchange="onSameDateChanged()"/> On Same Date
-				</label>
-			</div>
-		</div>
-		<div id="predictionDateDiv" class="col-md-3" th:style="'display: ' + ${sameDates ? 'block' : 'none'}">
-			<div class="input-group">
-				<label for="predictionDate" class="input-group-addon">On Date:</label>
-				<input id="predictionDate" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
-			</div>
+		else {
+			var date = $("#predictionDate").val();
+			$("#predictionDate1").val(date);
+			$("#predictionDate2").val(date);
+			$("#predictionDate").val("");
+		}
+		$("#predictionDateDiv").css("display", sameDate ? "block" : "none");
+		$("#predictionDatesDiv").css("display", !sameDate ? "block" : "none");
+		if (sameDate)
+			predictMatch();
+	}
+</script>
+<div class="row">
+	<div class="col-md-2">
+		<select id="predictionSurface" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select surface">
+			<option value="">Unknown surface</option>
+			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<select id="predictionLevel" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select tournament level">
+			<option value="">Unknown level</option>
+			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<select id="predictionRound" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select round">
+			<option value="">Unknown round</option>
+			<option th:each="aRound : ${rounds}" th:value="${aRound.code}" th:class="|bg-result-${aRound.baseCode}|" value="F" class="bg-result-F" th:text="${aRound.text}" th:selected="${aRound.code == round}">Final</option>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" class="text-nowrap" title="Predict match with current form on the same date for both players">
+				<input id="predictionSameDate" type="checkbox" th:checked="${sameDates}" onchange="onSameDateChanged()"/> On Same Date
+			</label>
 		</div>
 	</div>
-	<div id="predictionDatesDiv" class="row" th:style="'display: ' + ${sameDates ? 'none' : 'block'}">
-		<div class="col-md-3">
-			<select id="predictionDateSelector1" class="form-control" onchange="predictMatch()">
-				<option value="">Pick date 1</option>
-				<option th:if="${player1.active}" value="Today" th:selected="${dateSelector1 == 'Today'}">Today</option>
-				<option th:unless="${player1.active}" value="CareerEnd" th:selected="${dateSelector1 == 'CareerEnd'}">Career End</option>
-				<option value="PeakRank" th:selected="${dateSelector1 == 'PeakRank'}">Peak ATP Ranking</option>
-				<option value="PeakRankPoints" th:selected="${dateSelector1 == 'PeakRankPoints'}">Peak ATP Points</option>
-				<option value="PeakEloRank" th:selected="${dateSelector1 == 'PeakEloRank'}">Peak Elo Ranking</option>
-				<option value="PeakEloRating" th:selected="${dateSelector1 == 'PeakEloRating'}">Peak Elo Rating</option>
-				<th:block th:each="aSurface : ${surfaces}">
-					<option th:value="|Peak${aSurface.text}EloRank|" value="PeakHardEloRank" th:text="|Peak ${aSurface.text} Elo Ranking|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector1 == 'Peak' + aSurface.text + 'EloRank'}">Peak Hard Elo Ranking</option>
-					<option th:value="|Peak${aSurface.text}EloRating|" value="PeakHardEloRating" th:text="|Peak ${aSurface.text} Elo Rating|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector1 == 'Peak' + aSurface.text + 'EloRating'}">Peak Hard Elo Rating</option>
-				</th:block>
-			</select>
-		</div>
-		<div class="col-md-3">
-			<div class="input-group">
-				<label for="predictionDate1" class="input-group-addon">On Date 1:</label>
-				<input id="predictionDate1" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date1, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
-			</div>
-		</div>
-		<div class="col-md-3">
-			<div class="input-group">
-				<label for="predictionDate2" class="input-group-addon">On Date 2:</label>
-				<input id="predictionDate2" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date2, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
-			</div>
-		</div>
-		<div class="col-md-3">
-			<select id="predictionDateSelector2" class="form-control" onchange="predictMatch()">
-				<option value="">Pick date 2</option>
-				<option th:if="${player2.active}" value="Today" th:selected="${dateSelector2 == 'Today'}">Today</option>
-				<option th:unless="${player2.active}" value="CareerEnd" th:selected="${dateSelector2 == 'CareerEnd'}">Career End</option>
-				<option value="PeakRank" th:selected="${dateSelector2 == 'PeakRank'}">Peak ATP Ranking</option>
-				<option value="PeakRankPoints" th:selected="${dateSelector2 == 'PeakRankPoints'}">Peak ATP Points</option>
-				<option value="PeakEloRank" th:selected="${dateSelector2 == 'PeakEloRank'}">Peak Elo Ranking</option>
-				<option value="PeakEloRating" th:selected="${dateSelector2 == 'PeakEloRating'}">Peak Elo Rating</option>
-				<th:block th:each="aSurface : ${surfaces}">
-					<option th:value="|Peak${aSurface.text}EloRank|" value="PeakHardEloRank" th:text="|Peak ${aSurface.text} Elo Ranking|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector2 == 'Peak' + aSurface.text + 'EloRank'}">Peak Hard Elo Ranking</option>
-					<option th:value="|Peak${aSurface.text}EloRating|" value="PeakHardEloRating" th:text="|Peak ${aSurface.text} Elo Rating|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector2 == 'Peak' + aSurface.text + 'EloRating'}">Peak Hard Elo Rating</option>
-				</th:block>
-			</select>
+	<div id="predictionDateDiv" class="col-md-3" th:style="'display: ' + ${sameDates ? 'block' : 'none'}">
+		<div class="input-group">
+			<label for="predictionDate" class="input-group-addon">On Date:</label>
+			<input id="predictionDate" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
 		</div>
 	</div>
-	<br/>
-	<table class="table table-condensed text-nowrap">
-		<style scoped="scoped">
-			h4 {
-				margin-top: 0;
-				margin-bottom: 0;
-			}
-		</style>
-		<tr>
-			<td class="text-right" width="40%">
-				<h4 class="text-nowrap">
-					<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -4px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
-					<a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a>
-				</h4>
-			</td>
-			<th class="text-center">vs</th>
-			<td class="text-left" width="40%">
-				<h4 class="text-nowrap">
-					<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="margin-top: -4px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
-					<a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a>
-				</h4>
-			</td>
-		</tr>
-		<tr>
-			<td class="text-right">
-				<h4 th:text="${#numbers.formatDecimal(100 * prediction.winProbability1, 1, 1) + '%'}">60.0%</h4>
-			</td>
-			<th class="text-center">Win Probability</th>
-			<td class="text-left">
-				<h4 th:text="${#numbers.formatDecimal(100 * prediction.winProbability2, 1, 1) + '%'}">40.0%</h4>
-			</td>
-		</tr>
-		<tr>
-			<td class="text-right">
-				<div th:text="${#numbers.formatDecimal(100 * prediction.predictability1, 1, 1) + '%'}">50.0%</div>
-			</td>
-			<th class="text-center">Predictability</th>
-			<td class="text-left">
-				<div th:text="${#numbers.formatDecimal(100 * prediction.predictability2, 1, 1) + '%'}">50.0%</div>
-			</td>
-		</tr>
-		<tr th:if="${prediction.rankingData1.rank != null || prediction.rankingData2.rank != null}">
-			<td th:with="rank1=${prediction.rankingData1.rank}" class="text-right">
-				<div th:if="${rank1}" th:text="${rank1}">10</div>
-			</td>
-			<th class="text-center">ATP Ranking</th>
-			<td th:with="rank2=${prediction.rankingData2.rank}" class="text-left">
-				<div th:if="${rank2}" th:text="${rank2}">15</div>
-			</td>
-		</tr>
-		<tr th:if="${prediction.rankingData1.rankPoints != null || prediction.rankingData2.rankPoints != null}">
-			<td th:with="rankPoints1=${prediction.rankingData1.rankPoints}" class="text-right">
-				<div th:if="${rankPoints1}" th:text="${rankPoints1}">10400</div>
-			</td>
-			<th class="text-center">ATP Points</th>
-			<td th:with="rankPoints2=${prediction.rankingData2.rankPoints}" class="text-left">
-				<div th:if="${rankPoints2}" th:text="${rankPoints2}">5600</div>
-			</td>
-		</tr>
-		<tr th:if="${prediction.rankingData1.eloRating != null || prediction.rankingData2.eloRating != null}">
-			<td th:with="eloRating1=${prediction.rankingData1.eloRating}" class="text-right">
-				<div th:if="${eloRating1}" th:text="${eloRating1}">2350</div>
-			</td>
-			<th class="text-center">Elo Rating</th>
-			<td th:with="eloRating2=${prediction.rankingData2.eloRating}" class="text-left">
-				<div th:if="${eloRating2}" th:text="${eloRating2}">2250</div>
-			</td>
-		</tr>
-		<tr th:if="${surface != null && prediction.rankingData1.surfaceEloRating != null || prediction.rankingData2.surfaceEloRating != null}">
-			<td th:with="eloRating1=${prediction.rankingData1.surfaceEloRating}" class="text-right">
-				<div th:if="${eloRating1}" th:text="${eloRating1}">2350</div>
-			</td>
-			<th class="text-center" th:text="${T(org.strangeforest.tcb.stats.model.Surface).decode(surface).text + ' Elo Rating'}">Hard Elo Rating</th>
-			<td th:with="eloRating2=${prediction.rankingData2.surfaceEloRating}" class="text-left">
-				<div th:if="${eloRating2}" th:text="${eloRating2}">2250</div>
-			</td>
-		</tr>
-		<tr th:if="${stats1.matches > 0}">
-			<td class="text-right">
-				<div th:text="${stats1.matchesWon}">15</div>
-			</td>
-			<th class="text-center">H2H</th>
-			<td class="text-left">
-				<div th:text="${stats1.matchesLost}">9</div>
-			</td>
-		</tr>
-	</table>
-	<p><em>
-		<strong>Match Prediction</strong> is based on neural network with ~50 neurons for different features about players like ATP Ranking, ATP Points, Elo Rating,
-		Head-to-Head ratios and Winning Percentages varied by surface, tournament level, round, recency, match or set ratios, vs rank, vs hand, vs backhand...<br/>
-		Neural Network is trained on historical data for highest prediction rates to determine optimal feature weights.<br/>
-		Prediction can be for specific surface, tournament level and/or round.<br/>
-		Prediction can be for the same date for both players, but also for Hypothetical Matchup between two players on their peaks!
-	</em></p>
+</div>
+<div id="predictionDatesDiv" class="row" th:style="'display: ' + ${sameDates ? 'none' : 'block'}">
+	<div class="col-md-3">
+		<select id="predictionDateSelector1" class="form-control" onchange="predictMatch()">
+			<option value="">Pick date 1</option>
+			<option th:if="${player1.active}" value="Today" th:selected="${dateSelector1 == 'Today'}">Today</option>
+			<option th:unless="${player1.active}" value="CareerEnd" th:selected="${dateSelector1 == 'CareerEnd'}">Career End</option>
+			<option value="PeakRank" th:selected="${dateSelector1 == 'PeakRank'}">Peak ATP Ranking</option>
+			<option value="PeakRankPoints" th:selected="${dateSelector1 == 'PeakRankPoints'}">Peak ATP Points</option>
+			<option value="PeakEloRank" th:selected="${dateSelector1 == 'PeakEloRank'}">Peak Elo Ranking</option>
+			<option value="PeakEloRating" th:selected="${dateSelector1 == 'PeakEloRating'}">Peak Elo Rating</option>
+			<th:block th:each="aSurface : ${surfaces}">
+				<option th:value="|Peak${aSurface.text}EloRank|" value="PeakHardEloRank" th:text="|Peak ${aSurface.text} Elo Ranking|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector1 == 'Peak' + aSurface.text + 'EloRank'}">Peak Hard Elo Ranking</option>
+				<option th:value="|Peak${aSurface.text}EloRating|" value="PeakHardEloRating" th:text="|Peak ${aSurface.text} Elo Rating|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector1 == 'Peak' + aSurface.text + 'EloRating'}">Peak Hard Elo Rating</option>
+			</th:block>
+		</select>
+	</div>
+	<div class="col-md-3">
+		<div class="input-group">
+			<label for="predictionDate1" class="input-group-addon">On Date 1:</label>
+			<input id="predictionDate1" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date1, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="input-group">
+			<label for="predictionDate2" class="input-group-addon">On Date 2:</label>
+			<input id="predictionDate2" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date2, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<select id="predictionDateSelector2" class="form-control" onchange="predictMatch()">
+			<option value="">Pick date 2</option>
+			<option th:if="${player2.active}" value="Today" th:selected="${dateSelector2 == 'Today'}">Today</option>
+			<option th:unless="${player2.active}" value="CareerEnd" th:selected="${dateSelector2 == 'CareerEnd'}">Career End</option>
+			<option value="PeakRank" th:selected="${dateSelector2 == 'PeakRank'}">Peak ATP Ranking</option>
+			<option value="PeakRankPoints" th:selected="${dateSelector2 == 'PeakRankPoints'}">Peak ATP Points</option>
+			<option value="PeakEloRank" th:selected="${dateSelector2 == 'PeakEloRank'}">Peak Elo Ranking</option>
+			<option value="PeakEloRating" th:selected="${dateSelector2 == 'PeakEloRating'}">Peak Elo Rating</option>
+			<th:block th:each="aSurface : ${surfaces}">
+				<option th:value="|Peak${aSurface.text}EloRank|" value="PeakHardEloRank" th:text="|Peak ${aSurface.text} Elo Ranking|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector2 == 'Peak' + aSurface.text + 'EloRank'}">Peak Hard Elo Ranking</option>
+				<option th:value="|Peak${aSurface.text}EloRating|" value="PeakHardEloRating" th:text="|Peak ${aSurface.text} Elo Rating|" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:selected="${dateSelector2 == 'Peak' + aSurface.text + 'EloRating'}">Peak Hard Elo Rating</option>
+			</th:block>
+		</select>
+	</div>
+</div>
+<br/>
+<table class="table table-condensed text-nowrap">
+	<style scoped="scoped">
+		h4 {
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+	</style>
+	<tr>
+		<td class="text-right" width="40%">
+			<h4 class="text-nowrap">
+				<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -4px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
+				<a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a>
+			</h4>
+		</td>
+		<th class="text-center">vs</th>
+		<td class="text-left" width="40%">
+			<h4 class="text-nowrap">
+				<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="margin-top: -4px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
+				<a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a>
+			</h4>
+		</td>
+	</tr>
+	<tr>
+		<td class="text-right">
+			<h4 th:text="${#numbers.formatDecimal(100 * prediction.winProbability1, 1, 1) + '%'}">60.0%</h4>
+		</td>
+		<th class="text-center">Win Probability</th>
+		<td class="text-left">
+			<h4 th:text="${#numbers.formatDecimal(100 * prediction.winProbability2, 1, 1) + '%'}">40.0%</h4>
+		</td>
+	</tr>
+	<tr>
+		<td class="text-right">
+			<div th:text="${#numbers.formatDecimal(100 * prediction.predictability1, 1, 1) + '%'}">50.0%</div>
+		</td>
+		<th class="text-center">Predictability</th>
+		<td class="text-left">
+			<div th:text="${#numbers.formatDecimal(100 * prediction.predictability2, 1, 1) + '%'}">50.0%</div>
+		</td>
+	</tr>
+	<tr th:if="${prediction.rankingData1.rank != null || prediction.rankingData2.rank != null}">
+		<td th:with="rank1=${prediction.rankingData1.rank}" class="text-right">
+			<div th:if="${rank1}" th:text="${rank1}">10</div>
+		</td>
+		<th class="text-center">ATP Ranking</th>
+		<td th:with="rank2=${prediction.rankingData2.rank}" class="text-left">
+			<div th:if="${rank2}" th:text="${rank2}">15</div>
+		</td>
+	</tr>
+	<tr th:if="${prediction.rankingData1.rankPoints != null || prediction.rankingData2.rankPoints != null}">
+		<td th:with="rankPoints1=${prediction.rankingData1.rankPoints}" class="text-right">
+			<div th:if="${rankPoints1}" th:text="${rankPoints1}">10400</div>
+		</td>
+		<th class="text-center">ATP Points</th>
+		<td th:with="rankPoints2=${prediction.rankingData2.rankPoints}" class="text-left">
+			<div th:if="${rankPoints2}" th:text="${rankPoints2}">5600</div>
+		</td>
+	</tr>
+	<tr th:if="${prediction.rankingData1.eloRating != null || prediction.rankingData2.eloRating != null}">
+		<td th:with="eloRating1=${prediction.rankingData1.eloRating}" class="text-right">
+			<div th:if="${eloRating1}" th:text="${eloRating1}">2350</div>
+		</td>
+		<th class="text-center">Elo Rating</th>
+		<td th:with="eloRating2=${prediction.rankingData2.eloRating}" class="text-left">
+			<div th:if="${eloRating2}" th:text="${eloRating2}">2250</div>
+		</td>
+	</tr>
+	<tr th:if="${surface != null && prediction.rankingData1.surfaceEloRating != null || prediction.rankingData2.surfaceEloRating != null}">
+		<td th:with="eloRating1=${prediction.rankingData1.surfaceEloRating}" class="text-right">
+			<div th:if="${eloRating1}" th:text="${eloRating1}">2350</div>
+		</td>
+		<th class="text-center" th:text="${T(org.strangeforest.tcb.stats.model.Surface).decode(surface).text + ' Elo Rating'}">Hard Elo Rating</th>
+		<td th:with="eloRating2=${prediction.rankingData2.surfaceEloRating}" class="text-left">
+			<div th:if="${eloRating2}" th:text="${eloRating2}">2250</div>
+		</td>
+	</tr>
+	<tr th:if="${stats1.matches > 0}">
+		<td class="text-right">
+			<div th:text="${stats1.matchesWon}">15</div>
+		</td>
+		<th class="text-center">H2H</th>
+		<td class="text-left">
+			<div th:text="${stats1.matchesLost}">9</div>
+		</td>
+	</tr>
+</table>
+<p><em>
+	<strong>Match Prediction</strong> is based on neural network with ~50 neurons for different features about players like ATP Ranking, ATP Points, Elo Rating,
+	Head-to-Head ratios and Winning Percentages varied by surface, tournament level, round, recency, match or set ratios, vs rank, vs hand, vs backhand...<br/>
+	Neural Network is trained on historical data for highest prediction rates to determine optimal feature weights.<br/>
+	Prediction can be for specific surface, tournament level and/or round.<br/>
+	Prediction can be for the same date for both players, but also for Hypothetical Matchup between two players on their peaks!
+</em></p>
 </th:block>

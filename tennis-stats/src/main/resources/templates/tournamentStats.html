@@ -1,75 +1,75 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
-	<!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
-	<script type="text/javascript">
-		$(function() {
-			var $statsLeadersTable = $("#statsLeadersTable");
-			var device = detectDevice();
-			setBootgridColumnsWidths($statsLeadersTable, ["name"], [device == "xs" ? 200 : (device == "sm" ? 250 : (device == "md" ? 300 : 400))]);
-			$statsLeadersTable.bootgrid({
-				ajax: true,
-				ajaxSettings: {
-					method: "GET",
-					cache: false
-				},
-				url: "/statsLeadersTable?tournamentId=[[${tournamentId}]]",
-				requestHandler: function(request) {
-					request.category = $("#statsCategory").val();
-					return request;
-				},
-				rowCount: [15, 20, 50, -1],
-				searchSettings: {
-					delay: 300,
-					characters: 2
-				},
-				formatters: {
-					"country": countryFormatter,
-					"player": playerFormatter
-				},
-				labels: {
-					loading: bootgridTemplateLoading,
-					noResults: "No statistics found"
-				},
-				templates: {
-					paginationItem: bootgridTemplatePaginationItem
-				}
-			});
-			var $statsLeadersTableHeader = $("#statsLeadersTable-header");
-			$statsLeadersTableHeader.find("div.search").before($("#statsCategoryDiv").remove());
-			setBootgridTitle($statsLeadersTableHeader, $("#statsLeadersTable-title"));
-			categoryChanged();
-			$("[data-toggle='tooltip']").tooltip();
+<!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
+<script type="text/javascript">
+	$(function() {
+		var $statsLeadersTable = $("#statsLeadersTable");
+		var device = detectDevice();
+		setBootgridColumnsWidths($statsLeadersTable, ["name"], [device == "xs" ? 200 : (device == "sm" ? 250 : (device == "md" ? 300 : 400))]);
+		$statsLeadersTable.bootgrid({
+			ajax: true,
+			ajaxSettings: {
+				method: "GET",
+				cache: false
+			},
+			url: "/statsLeadersTable?tournamentId=[[${tournamentId}]]",
+			requestHandler: function(request) {
+				request.category = $("#statsCategory").val();
+				return request;
+			},
+			rowCount: [15, 20, 50, -1],
+			searchSettings: {
+				delay: 300,
+				characters: 2
+			},
+			formatters: {
+				"country": countryFormatter,
+				"player": playerFormatter
+			},
+			labels: {
+				loading: bootgridTemplateLoading,
+				noResults: "No statistics found"
+			},
+			templates: {
+				paginationItem: bootgridTemplatePaginationItem
+			}
 		});
-		function categoryChanged() {
-			var $category = $("#statsCategory");
-			$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
-			var url = "/statsLeadersMinEntries?category=" + $category.val() + "&tournamentId=[[${tournamentId}]]";
-			$.get(url, function (data) {
-				$("#statsMinEntries").html(data);
-			});
-		}
-		function reloadStatsLeaders() {
-			categoryChanged();
-			$("#statsLeadersTable").bootgrid("reload");
-		}
-	</script>
-	<h3 id="statsLeadersTable-title" class="grid-title">Statistics Leaders</h3>
-	<div id="statsCategoryDiv" class="btn-group margin-right">
-		<select id="statsCategory" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
-			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
-				<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
-			</optgroup>
-		</select>
-	</div>
-	<table id="statsLeadersTable" class="table table-condensed table-hover table-striped">
-		<thead>
-		<tr>
-			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
-			<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="85">Country</th>
-			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="250">Name</th>
-			<th data-column-id="value" data-order="desc" data-width="175" data-align="right" data-header-align="right">Value</th>
-		</tr>
-		</thead>
-	</table>
-	<p><i>* Minimum <span id="statsMinEntries">10 matches</span></i></p>
+		var $statsLeadersTableHeader = $("#statsLeadersTable-header");
+		$statsLeadersTableHeader.find("div.search").before($("#statsCategoryDiv").remove());
+		setBootgridTitle($statsLeadersTableHeader, $("#statsLeadersTable-title"));
+		categoryChanged();
+		$("[data-toggle='tooltip']").tooltip();
+	});
+	function categoryChanged() {
+		var $category = $("#statsCategory");
+		$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
+		var url = "/statsLeadersMinEntries?category=" + $category.val() + "&tournamentId=[[${tournamentId}]]";
+		$.get(url, function (data) {
+			$("#statsMinEntries").html(data);
+		});
+	}
+	function reloadStatsLeaders() {
+		categoryChanged();
+		$("#statsLeadersTable").bootgrid("reload");
+	}
+</script>
+<h3 id="statsLeadersTable-title" class="grid-title">Statistics Leaders</h3>
+<div id="statsCategoryDiv" class="btn-group margin-right">
+	<select id="statsCategory" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+		<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
+			<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+		</optgroup>
+	</select>
+</div>
+<table id="statsLeadersTable" class="table table-condensed table-hover table-striped">
+	<thead>
+	<tr>
+		<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
+		<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="85">Country</th>
+		<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="250">Name</th>
+		<th data-column-id="value" data-order="desc" data-width="175" data-align="right" data-header-align="right">Value</th>
+	</tr>
+	</thead>
+</table>
+<p><i>* Minimum <span id="statsMinEntries">10 matches</span></i></p>
 </th:block>

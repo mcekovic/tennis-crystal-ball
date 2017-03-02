@@ -38,6 +38,7 @@ VACUUM FULL ANALYSE VERBOSE player_current_rank;
 VACUUM FULL ANALYSE VERBOSE player_best_rank;
 VACUUM FULL ANALYSE VERBOSE player_best_rank_points;
 VACUUM FULL ANALYSE VERBOSE player_year_end_rank;
+VACUUM FULL ANALYSE VERBOSE player_current_elo_rank;
 VACUUM FULL ANALYSE VERBOSE player_best_elo_rank;
 VACUUM FULL ANALYSE VERBOSE player_best_elo_rating;
 VACUUM FULL ANALYSE VERBOSE player_year_end_elo_rank;

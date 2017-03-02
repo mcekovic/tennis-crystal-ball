@@ -22,6 +22,8 @@ public class RankingHighlights {
 	private String bestYearEndRankPointsSeasons;
 	private int goatRank;
 	private int goatPoints;
+	private int currentEloRank;
+	private int currentEloRating;
 	private int bestEloRank;
 	private Date bestEloRankDate;
 	private int bestEloRating;
@@ -160,6 +162,22 @@ public class RankingHighlights {
 
 	public void setGoatPoints(int goatPoints) {
 		this.goatPoints = goatPoints;
+	}
+
+	public int getCurrentEloRank() {
+		return currentEloRank;
+	}
+
+	public void setCurrentEloRank(int currentEloRank) {
+		this.currentEloRank = currentEloRank;
+	}
+
+	public int getCurrentEloRating() {
+		return currentEloRating;
+	}
+
+	public void setCurrentEloRating(int currentEloRating) {
+		this.currentEloRating = currentEloRating;
 	}
 
 	public int getBestEloRank() {

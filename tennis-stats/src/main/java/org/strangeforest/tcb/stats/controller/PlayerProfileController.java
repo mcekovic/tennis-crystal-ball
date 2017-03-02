@@ -1,7 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.util.*;
-import javax.servlet.http.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -19,6 +18,7 @@ import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 public class PlayerProfileController extends PageController {
 
 	@Autowired private PlayerService playerService;
+	@Autowired private RivalriesService rivalriesService;
 	@Autowired private TournamentService tournamentService;
 	@Autowired private RankingsService rankingsService;
 	@Autowired private PlayerTimelineService timelineService;
@@ -37,8 +37,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "opponentId", required = false) Integer opponentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(name = "outcome", required = false) String outcome,
-	   HttpServletRequest request
+		@RequestParam(name = "outcome", required = false) String outcome
 	) {
 		if (playerId == null && name == null)
 			return new ModelAndView("playerProfile");
@@ -68,10 +67,12 @@ public class PlayerProfileController extends PageController {
 	) {
 		Player player = playerService.getPlayer(playerId).get();
 		PlayerPerformance playerPerf = statisticsService.getPlayerPerformance(playerId);
+		WonDrawLost playerH2H = rivalriesService.getPlayerH2H(playerId).orElse(null);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player", player);
 		modelMap.addAttribute("playerPerf", playerPerf);
+		modelMap.addAttribute("playerH2H", playerH2H);
 		return new ModelAndView("playerProfileTab", modelMap);
 	}
 
@@ -174,9 +175,11 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerRankings(
 		@RequestParam(name = "playerId") int playerId
 	) {
+		RankingHighlights rankingHighlights = rankingsService.getRankingHighlights(playerId);
+
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
-		modelMap.addAttribute("highlights", rankingsService.getRankingHighlights(playerId));
+		modelMap.addAttribute("highlights", rankingHighlights);
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("rankTypes", RankType.values());
 		return new ModelAndView("playerRankings", modelMap);

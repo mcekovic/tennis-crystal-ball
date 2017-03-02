@@ -1,21 +1,21 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="recordTitles" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
-	<!--/*@thymesVar id="recordFinals" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
-	<!--/*@thymesVar id="recordSemiFinals" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
-	<!--/*@thymesVar id="recordAppearances" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
-	<div class="row">
-		<div class="col-md-3">
-			<th:block th:include="fragments/record :: record('Titles', ${recordTitles})"/>
-		</div>
-		<div class="col-md-3">
-			<th:block th:include="fragments/record :: record('Finals', ${recordFinals})"/>
-		</div>
-		<div class="col-md-3">
-			<th:block th:include="fragments/record :: record('Semi-Finals', ${recordSemiFinals})"/>
-		</div>
-		<div class="col-md-3">
-			<th:block th:include="fragments/record :: record('Appearances', ${recordAppearances})"/>
-		</div>
+<!--/*@thymesVar id="recordTitles" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+<!--/*@thymesVar id="recordFinals" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+<!--/*@thymesVar id="recordSemiFinals" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+<!--/*@thymesVar id="recordAppearances" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+<div class="row">
+	<div class="col-md-3">
+		<th:block th:include="fragments/record :: record('Titles', ${recordTitles})"/>
 	</div>
+	<div class="col-md-3">
+		<th:block th:include="fragments/record :: record('Finals', ${recordFinals})"/>
+	</div>
+	<div class="col-md-3">
+		<th:block th:include="fragments/record :: record('Semi-Finals', ${recordSemiFinals})"/>
+	</div>
+	<div class="col-md-3">
+		<th:block th:include="fragments/record :: record('Appearances', ${recordAppearances})"/>
+	</div>
+</div>
 </th:block>

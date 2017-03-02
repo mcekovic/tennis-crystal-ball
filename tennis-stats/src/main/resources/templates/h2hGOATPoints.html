@@ -1,261 +1,261 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="playerId1" type="java.lang.Integer"*/-->
-	<!--/*@thymesVar id="playerId2" type="java.lang.Integer"*/-->
-	<!--/*@thymesVar id="goatPoints1" type="org.strangeforest.tcb.stats.model.PlayerGOATPoints"*/-->
-	<!--/*@thymesVar id="goatPoints2" type="org.strangeforest.tcb.stats.model.PlayerGOATPoints"*/-->
-	<!--/*@thymesVar id="seasons" type="java.util.Set<java.lang.Integer>"*/-->
-	<!--/*@thymesVar id="_" type="java.lang.String"*/-->
-	<script type="text/javascript">
-		$(function() {
-			$("[data-toggle='collapse']").click(collapseClick);
-		});
-	</script>
-	<style scoped="scoped">
-		th.grand-total {
-			background-color: tomato;
-		}
-		th.total {
-			background-color: orange;
-		}
-		th.tournament {
-			background-color: palegreen;
-		}
-		th.ranking {
-			background-color: paleturquoise;
-		}
-		th.achievements {
-			background-color: pink;
-		}
-		.first-header {
-			border-top: 2px solid lightgray;
-		}
-		.first-column {
-			border-left: 2px solid lightgray;
-		}
-		.last-column {
-			border-right: 2px solid lightgray;
-		}
-		.valign-middle {
-			vertical-align: middle;
-		}
-		.points {
-			text-align: right;
-		}
-	</style>
-	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
-	<table id="goatPointsTable" class="table table-condensed table-hover table-bordered text-nowrap">
-		<thead>
-		<tr>
-			<th colspan="3" class="first-header first-column last-column text-center valign-middle achievements">Achievements</th>
-			<th colspan="3" class="first-header first-column text-center valign-middle ranking">Ranking</th>
-			<th class="first-header first-column text-center tournament">Tournament</th>
-			<th colspan="3" class="first-header first-column text-center valign-middle grand-total">GOAT Points</th>
-			<th class="first-header first-column text-center tournament">Tournament</th>
-			<th colspan="3" class="first-header first-column text-center valign-middle ranking">Ranking</th>
-			<th colspan="3" class="first-header first-column last-column text-center valign-middle achievements">Achievements</th>
-		</tr>
-		<tr>
-			<th class="first-column last-column text-center achievements" th:title="#{goatPoints.achievements.title}">A Pts</th>
-			<th class="text-center achievements" th:title="#{goatPoints.seasonGS.title}">GS Pts</th>
-			<th class="last-column text-center achievements" th:title="#{goatPoints.bigWins.title}">BW Pts</th>
-			<th class="first-column text-center ranking" th:title="#{goatPoints.ranking.title}">R Pts</th>
-			<th class="first-column text-center ranking" th:title="#{goatPoints.weeksAtNo1.title}">W@1 Pts</th>
-			<th class="text-center ranking" th:title="#{goatPoints.yearEndRanking.title}">YER Pts</th>
-			<th class="first-column text-center tournament" th:title="#{goatPoints.tournament.title}">T Pts</th>
-			<th class="first-column text-center total" th:title="#{goatPoints.total.title}">Pts</th>
-			<th class="first-column text-center total">Season</th>
-			<th class="first-column text-center total" th:title="#{goatPoints.total.title}">Pts</th>
-			<th class="first-column text-center tournament" th:title="#{goatPoints.tournament.title}">T Pts</th>
-			<th class="first-column text-center ranking" th:title="#{goatPoints.yearEndRanking.title}">YER Pts</th>
-			<th class="text-center ranking" th:title="#{goatPoints.weeksAtNo1.title}">W@1 Pts</th>
-			<th class="first-column text-center ranking" th:title="#{goatPoints.ranking.title}">R Pts</th>
-			<th class="first-column text-center achievements" th:title="#{goatPoints.bigWins.title}">BW Pts</th>
-			<th class="text-center achievements" th:title="#{goatPoints.seasonGS.title}">GS Pts</th>
-			<th class="first-column last-column text-center achievements" th:title="#{goatPoints.achievements.title}">A Pts</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr th:each="season : ${seasons}" th:with="season1=${goatPoints1.getPlayerSeasonPoints(season)}, season2=${goatPoints2.getPlayerSeasonPoints(season)}">
-			<td class="points first-column last-column" th:text="${season1.achievementsPoints}">4</td>
-			<td class="points" th:text="${season1.grandSlamPoints}">0</td>
-			<td class="points last-column" th:text="${season1.bigWinsPoints}">4</td>
-			<td class="points first-column" th:text="${season1.rankingPoints}">13</td>
-			<td class="points first-column" th:text="${season1.weeksAtNo1Points}">5</td>
-			<td class="points" th:text="${season1.yearEndRankPoints}">8</td>
-			<td class="points first-column" th:text="${season1.tournamentPoints}">35</td>
-			<th class="points first-column points-" th:attrappend="class=${season1.totalPointsRounded}" th:text="${season1.totalPoints > 0 ? season1.totalPoints : _}">50</th>
-			<th class="first-column text-center" th:text="${season}">2000</th>
-			<th class="points first-column points-" th:attrappend="class=${season2.totalPointsRounded}" th:text="${season2.totalPoints > 0 ? season2.totalPoints : _}">50</th>
-			<td class="points first-column" th:text="${season2.tournamentPoints}">35</td>
-			<td class="points first-column" th:text="${season2.yearEndRankPoints}">8</td>
-			<td class="points" th:text="${season2.weeksAtNo1Points}">5</td>
-			<td class="points first-column" th:text="${season2.rankingPoints}">13</td>
-			<td class="points first-column" th:text="${season2.bigWinsPoints}">4</td>
-			<td class="points" th:text="${season2.grandSlamPoints}">0</td>
-			<td class="points first-column last-column" th:text="${season2.achievementsPoints}">4</td>
-		</tr>
-		</tbody>
-		<thead>
-		<tr>
-			<th class="points first-header first-column last-column achievements" th:text="${goatPoints1.seasonsAchievementsPoints}">4</th>
-			<th class="points first-header achievements" th:text="${goatPoints1.seasonsGrandSlamPoints}">0</th>
-			<th class="points first-header last-column achievements" th:text="${goatPoints1.bigWinsPoints}">4</th>
-			<th class="points first-header first-column ranking" th:text="${goatPoints1.seasonsRankingPoints}">13</th>
-			<th class="points first-header first-column ranking" th:text="${goatPoints1.weeksAtNo1Points}">5</th>
-			<th class="points first-header ranking" th:text="${goatPoints1.yearEndRankPoints}">8</th>
-			<th class="points first-header first-column tournament" th:title="#{goatPoints.totalTournament.title}" th:text="${goatPoints1.tournamentPoints}">235</th>
-			<th class="points first-header first-column total" th:text="${goatPoints1.seasonsPoints}">250</th>
-			<th class="first-header first-column text-center total">All Seasons</th>
-			<th class="points first-header first-column total" th:text="${goatPoints2.seasonsPoints}">250</th>
-			<th class="points first-header first-column tournament" th:title="#{goatPoints.totalTournament.title}" th:text="${goatPoints2.tournamentPoints}">235</th>
-			<th class="points first-header first-column ranking" th:text="${goatPoints2.yearEndRankPoints}">8</th>
-			<th class="points first-header ranking" th:text="${goatPoints2.weeksAtNo1Points}">5</th>
-			<th class="points first-header first-column ranking" th:text="${goatPoints2.seasonsRankingPoints}">13</th>
-			<th class="points first-header first-column achievements" th:text="${goatPoints2.bigWinsPoints}">4</th>
-			<th class="points first-header achievements" th:text="${goatPoints2.seasonsGrandSlamPoints}">0</th>
-			<th class="points first-header first-column last-column achievements" th:text="${goatPoints2.seasonsAchievementsPoints}">4</th>
-		</tr>
-		</thead>
-		<th:block th:if="${goatPoints1.careerRankingPoints > 0 || goatPoints2.careerRankingPoints > 0}">
-		<tbody>
-		<tr th:if="${goatPoints1.bestRankPoints > 0 || goatPoints2.bestRankPoints > 0}">
-			<td colspan="3" class="first-column last-column"></td>
-			<td class="points first-column" th:text="${goatPoints1.bestRankPoints > 0 ? goatPoints1.bestRankPoints : _}"></td>
-			<td colspan="2" class="first-column text-left">Best Rank</td>
-			<td class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints1.bestRankPoints > 0 ? goatPoints1.bestRankPoints : _}"></td>
-			<td class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints2.bestRankPoints > 0 ? goatPoints2.bestRankPoints : _}"></td>
-			<td class="first-column"></td>
-			<td colspan="2" class="first-column text-right">Best Rank</td>
-			<td class="points first-column" th:text="${goatPoints2.bestRankPoints > 0 ? goatPoints2.bestRankPoints : _}"></td>
-			<td colspan="3" class="first-column last-column"></td>
-		</tr>
-		<tr th:if="${goatPoints1.bestEloRatingPoints > 0 || goatPoints2.bestEloRatingPoints > 0}">
-			<td colspan="3" class="first-column last-column"></td>
-			<td class="points first-column" th:text="${goatPoints1.bestEloRatingPoints > 0 ? goatPoints1.bestEloRatingPoints : _}"></td>
-			<td colspan="2" class="first-column text-left">Best Elo Rating</td>
-			<td class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints1.bestEloRatingPoints > 0 ? goatPoints1.bestEloRatingPoints : _}"></td>
-			<td class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints2.bestEloRatingPoints > 0 ? goatPoints2.bestEloRatingPoints : _}"></td>
-			<td class="first-column"></td>
-			<td colspan="2" class="first-column text-right">Best Elo Rating</td>
-			<td class="points first-column" th:text="${goatPoints2.bestEloRatingPoints > 0 ? goatPoints2.bestEloRatingPoints : _}"></td>
-			<td colspan="3" class="first-column last-column"></td>
-		</tr>
-		</tbody>
-		<thead>
-		<tr>
-			<th colspan="3" class="first-header first-column last-column"></th>
-			<th class="points first-header first-column ranking" th:text="${goatPoints1.rankingPoints}"></th>
-			<th colspan="2" class="first-header first-column text-left ranking" th:title="#{goatPoints.totalRanking.title}">Total Ranking</th>
-			<th class="first-header first-column"></th>
-			<th class="points first-header first-column ranking" th:text="${goatPoints1.careerRankingPoints}"></th>
-			<th class="first-header first-column text-center ranking" th:title="#{goatPoints.careerRanking.title}">Career Rnk.</th>
-			<th class="points first-header first-column ranking" th:text="${goatPoints2.careerRankingPoints}"></th>
-			<th class="first-header first-column"></th>
-			<th colspan="2" class="first-header first-column text-right ranking" th:title="#{goatPoints.totalRanking.title}">Total Ranking</th>
-			<th class="points first-header first-column ranking" th:text="${goatPoints2.rankingPoints}"></th>
-			<th colspan="3" class="first-header first-column last-column"></th>
-		</tr>
-		</thead>
-		</th:block>
-		<th:block th:if="${goatPoints1.careerAchievementsPoints > 0 || goatPoints2.careerAchievementsPoints > 0}">
-		<tbody>
-		<tr th:if="${goatPoints1.h2hPoints > 0 || goatPoints2.h2hPoints > 0}">
-			<td class="points first-column last-column" th:text="${goatPoints1.h2hPoints > 0 ? goatPoints1.h2hPoints : _}"></td>
-			<td colspan="2" class="first-column text-left">Head-to-Head</td>
-			<td colspan="4" class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints1.h2hPoints > 0 ? goatPoints1.h2hPoints : _}"></td>
-			<td class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints2.h2hPoints > 0 ? goatPoints2.h2hPoints : _}"></td>
-			<td colspan="4" class="first-column"></td>
-			<td colspan="2" class="first-column text-right">Head-to-Head</td>
-			<td class="points first-column last-column" th:text="${goatPoints2.h2hPoints > 0 ? goatPoints2.h2hPoints : _}"></td>
-		</tr>
-		<tr th:if="${goatPoints1.careerGrandSlamPoints > 0 || goatPoints2.careerGrandSlamPoints > 0}">
-			<td class="points first-column last-column" th:text="${goatPoints1.careerGrandSlamPoints > 0 ? goatPoints1.careerGrandSlamPoints : _}"></td>
-			<td colspan="2" class="first-column text-left" th:title="#{goatPoints.careerGS.title}">Grand Slam</td>
-			<td colspan="4" class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints1.careerGrandSlamPoints > 0 ? goatPoints1.careerGrandSlamPoints : _}"></td>
-			<td class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints2.careerGrandSlamPoints > 0 ? goatPoints2.careerGrandSlamPoints : _}"></td>
-			<td colspan="4" class="first-column"></td>
-			<td colspan="2" class="first-column text-right" th:title="#{goatPoints.careerGS.title}">Grand Slam</td>
-			<td class="points first-column last-column" th:text="${goatPoints2.careerGrandSlamPoints > 0 ? goatPoints2.careerGrandSlamPoints : _}"></td>
-		</tr>
-		<tr th:if="${goatPoints1.bestSeasonPoints > 0 || goatPoints2.bestSeasonPoints > 0}">
-			<td class="points first-column last-column" th:text="${goatPoints1.bestSeasonPoints > 0 ? goatPoints1.bestSeasonPoints : _}"></td>
-			<td colspan="2" class="first-column text-left">Best Seasons</td>
-			<td colspan="4" class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints1.bestSeasonPoints > 0 ? goatPoints1.bestSeasonPoints : _}"></td>
-			<td class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints2.bestSeasonPoints > 0 ? goatPoints2.bestSeasonPoints : _}"></td>
-			<td colspan="4" class="first-column"></td>
-			<td colspan="2" class="first-column text-right">Best Seasons</td>
-			<td class="points first-column last-column" th:text="${goatPoints2.bestSeasonPoints > 0 ? goatPoints2.bestSeasonPoints : _}"></td>
-		</tr>
-		<tr th:if="${goatPoints1.greatestRivalriesPoints > 0 || goatPoints2.greatestRivalriesPoints > 0}">
-			<td class="points first-column last-column" th:text="${goatPoints1.greatestRivalriesPoints > 0 ? goatPoints1.greatestRivalriesPoints : _}"></td>
-			<td colspan="2" class="first-column text-left">Greatest Rivalries</td>
-			<td colspan="4" class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints1.greatestRivalriesPoints > 0 ? goatPoints1.greatestRivalriesPoints : _}"></td>
-			<td class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints2.greatestRivalriesPoints > 0 ? goatPoints2.greatestRivalriesPoints : _}"></td>
-			<td colspan="4" class="first-column"></td>
-			<td colspan="2" class="first-column text-right">Greatest Rivalries</td>
-			<td class="points first-column last-column" th:text="${goatPoints2.greatestRivalriesPoints > 0 ? goatPoints2.greatestRivalriesPoints : _}"></td>
-		</tr>
-		<tr th:if="${goatPoints1.performancePoints > 0 || goatPoints2.performancePoints > 0}">
-			<td class="points first-column last-column" th:text="${goatPoints1.performancePoints > 0 ? goatPoints1.performancePoints : _}"></td>
-			<td colspan="2" class="first-column text-left">Performance</td>
-			<td colspan="4" class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints1.performancePoints > 0 ? goatPoints1.performancePoints : _}"></td>
-			<td class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints2.performancePoints > 0 ? goatPoints2.performancePoints : _}"></td>
-			<td colspan="4" class="first-column"></td>
-			<td colspan="2" class="first-column text-right">Performance</td>
-			<td class="points first-column last-column" th:text="${goatPoints2.performancePoints > 0 ? goatPoints2.performancePoints : _}"></td>
-		</tr>
-		<tr th:if="${goatPoints1.statisticsPoints > 0 || goatPoints2.statisticsPoints > 0}">
-			<td class="points first-column last-column" th:text="${goatPoints1.statisticsPoints > 0 ? goatPoints1.statisticsPoints : _}"></td>
-			<td colspan="2" class="first-column text-left">Statistics</td>
-			<td colspan="4" class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints1.statisticsPoints > 0 ? goatPoints1.statisticsPoints : _}"></td>
-			<td class="first-column"></td>
-			<td class="points first-column" th:text="${goatPoints2.statisticsPoints > 0 ? goatPoints2.statisticsPoints : _}"></td>
-			<td colspan="4" class="first-column"></td>
-			<td colspan="2" class="first-column text-right">Statistics</td>
-			<td class="points first-column last-column" th:text="${goatPoints2.statisticsPoints > 0 ? goatPoints2.statisticsPoints : _}"></td>
-		</tr>
-		</tbody>
-		<thead>
-		<tr>
-			<th class="points first-header first-column last-column achievements" th:text="${goatPoints1.achievementsPoints}"></th>
-			<th colspan="2" class="first-header first-column text-left achievements" th:title="#{goatPoints.totalAchievements.title}">Total Achievements</th>
-			<th colspan="4" class="first-header first-column"></th>
-			<th class="points first-header first-column achievements" th:text="${goatPoints1.careerAchievementsPoints}"></th>
-			<th class="first-header first-column text-center achievements" th:title="#{goatPoints.careerAchievements.title}">Career Ach.</th>
-			<th class="points first-header first-column achievements" th:text="${goatPoints2.careerAchievementsPoints}"></th>
-			<th colspan="4" class="first-header first-column"></th>
-			<th colspan="2" class="first-header first-column text-right achievements" th:title="#{goatPoints.totalAchievements.title}">Total Achievements</th>
-			<th class="points first-header first-column last-column achievements" th:text="${goatPoints2.achievementsPoints}"></th>
-		</tr>
-		</thead>
-		</th:block>
-		<thead>
-		<tr>
-			<th colspan="7" class="first-header first-column last-column"></th>
-			<th class="points first-header first-column grand-total" th:text="${goatPoints1.totalPoints}"></th>
-			<th class="first-header first-column text-center grand-total">Total</th>
-			<th class="points first-header first-column grand-total" th:text="${goatPoints2.totalPoints}"></th>
-			<th colspan="7" class="first-header first-column last-column"></th>
-		</tr>
-		</thead>
-	</table>
-	<br/>
-	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span></button>
-	<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
+<!--/*@thymesVar id="playerId1" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="playerId2" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="goatPoints1" type="org.strangeforest.tcb.stats.model.PlayerGOATPoints"*/-->
+<!--/*@thymesVar id="goatPoints2" type="org.strangeforest.tcb.stats.model.PlayerGOATPoints"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.Set<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="_" type="java.lang.String"*/-->
+<script type="text/javascript">
+	$(function() {
+		$("[data-toggle='collapse']").click(collapseClick);
+	});
+</script>
+<style scoped="scoped">
+	th.grand-total {
+		background-color: tomato;
+	}
+	th.total {
+		background-color: orange;
+	}
+	th.tournament {
+		background-color: palegreen;
+	}
+	th.ranking {
+		background-color: paleturquoise;
+	}
+	th.achievements {
+		background-color: pink;
+	}
+	.first-header {
+		border-top: 2px solid lightgray;
+	}
+	.first-column {
+		border-left: 2px solid lightgray;
+	}
+	.last-column {
+		border-right: 2px solid lightgray;
+	}
+	.valign-middle {
+		vertical-align: middle;
+	}
+	.points {
+		text-align: right;
+	}
+</style>
+<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
+<table id="goatPointsTable" class="table table-condensed table-hover table-bordered text-nowrap">
+	<thead>
+	<tr>
+		<th colspan="3" class="first-header first-column last-column text-center valign-middle achievements">Achievements</th>
+		<th colspan="3" class="first-header first-column text-center valign-middle ranking">Ranking</th>
+		<th class="first-header first-column text-center tournament">Tournament</th>
+		<th colspan="3" class="first-header first-column text-center valign-middle grand-total">GOAT Points</th>
+		<th class="first-header first-column text-center tournament">Tournament</th>
+		<th colspan="3" class="first-header first-column text-center valign-middle ranking">Ranking</th>
+		<th colspan="3" class="first-header first-column last-column text-center valign-middle achievements">Achievements</th>
+	</tr>
+	<tr>
+		<th class="first-column last-column text-center achievements" th:title="#{goatPoints.achievements.title}">A Pts</th>
+		<th class="text-center achievements" th:title="#{goatPoints.seasonGS.title}">GS Pts</th>
+		<th class="last-column text-center achievements" th:title="#{goatPoints.bigWins.title}">BW Pts</th>
+		<th class="first-column text-center ranking" th:title="#{goatPoints.ranking.title}">R Pts</th>
+		<th class="first-column text-center ranking" th:title="#{goatPoints.weeksAtNo1.title}">W@1 Pts</th>
+		<th class="text-center ranking" th:title="#{goatPoints.yearEndRanking.title}">YER Pts</th>
+		<th class="first-column text-center tournament" th:title="#{goatPoints.tournament.title}">T Pts</th>
+		<th class="first-column text-center total" th:title="#{goatPoints.total.title}">Pts</th>
+		<th class="first-column text-center total">Season</th>
+		<th class="first-column text-center total" th:title="#{goatPoints.total.title}">Pts</th>
+		<th class="first-column text-center tournament" th:title="#{goatPoints.tournament.title}">T Pts</th>
+		<th class="first-column text-center ranking" th:title="#{goatPoints.yearEndRanking.title}">YER Pts</th>
+		<th class="text-center ranking" th:title="#{goatPoints.weeksAtNo1.title}">W@1 Pts</th>
+		<th class="first-column text-center ranking" th:title="#{goatPoints.ranking.title}">R Pts</th>
+		<th class="first-column text-center achievements" th:title="#{goatPoints.bigWins.title}">BW Pts</th>
+		<th class="text-center achievements" th:title="#{goatPoints.seasonGS.title}">GS Pts</th>
+		<th class="first-column last-column text-center achievements" th:title="#{goatPoints.achievements.title}">A Pts</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr th:each="season : ${seasons}" th:with="season1=${goatPoints1.getPlayerSeasonPoints(season)}, season2=${goatPoints2.getPlayerSeasonPoints(season)}">
+		<td class="points first-column last-column" th:text="${season1.achievementsPoints}">4</td>
+		<td class="points" th:text="${season1.grandSlamPoints}">0</td>
+		<td class="points last-column" th:text="${season1.bigWinsPoints}">4</td>
+		<td class="points first-column" th:text="${season1.rankingPoints}">13</td>
+		<td class="points first-column" th:text="${season1.weeksAtNo1Points}">5</td>
+		<td class="points" th:text="${season1.yearEndRankPoints}">8</td>
+		<td class="points first-column" th:text="${season1.tournamentPoints}">35</td>
+		<th class="points first-column points-" th:attrappend="class=${season1.totalPointsRounded}" th:text="${season1.totalPoints > 0 ? season1.totalPoints : _}">50</th>
+		<th class="first-column text-center" th:text="${season}">2000</th>
+		<th class="points first-column points-" th:attrappend="class=${season2.totalPointsRounded}" th:text="${season2.totalPoints > 0 ? season2.totalPoints : _}">50</th>
+		<td class="points first-column" th:text="${season2.tournamentPoints}">35</td>
+		<td class="points first-column" th:text="${season2.yearEndRankPoints}">8</td>
+		<td class="points" th:text="${season2.weeksAtNo1Points}">5</td>
+		<td class="points first-column" th:text="${season2.rankingPoints}">13</td>
+		<td class="points first-column" th:text="${season2.bigWinsPoints}">4</td>
+		<td class="points" th:text="${season2.grandSlamPoints}">0</td>
+		<td class="points first-column last-column" th:text="${season2.achievementsPoints}">4</td>
+	</tr>
+	</tbody>
+	<thead>
+	<tr>
+		<th class="points first-header first-column last-column achievements" th:text="${goatPoints1.seasonsAchievementsPoints}">4</th>
+		<th class="points first-header achievements" th:text="${goatPoints1.seasonsGrandSlamPoints}">0</th>
+		<th class="points first-header last-column achievements" th:text="${goatPoints1.bigWinsPoints}">4</th>
+		<th class="points first-header first-column ranking" th:text="${goatPoints1.seasonsRankingPoints}">13</th>
+		<th class="points first-header first-column ranking" th:text="${goatPoints1.weeksAtNo1Points}">5</th>
+		<th class="points first-header ranking" th:text="${goatPoints1.yearEndRankPoints}">8</th>
+		<th class="points first-header first-column tournament" th:title="#{goatPoints.totalTournament.title}" th:text="${goatPoints1.tournamentPoints}">235</th>
+		<th class="points first-header first-column total" th:text="${goatPoints1.seasonsPoints}">250</th>
+		<th class="first-header first-column text-center total">All Seasons</th>
+		<th class="points first-header first-column total" th:text="${goatPoints2.seasonsPoints}">250</th>
+		<th class="points first-header first-column tournament" th:title="#{goatPoints.totalTournament.title}" th:text="${goatPoints2.tournamentPoints}">235</th>
+		<th class="points first-header first-column ranking" th:text="${goatPoints2.yearEndRankPoints}">8</th>
+		<th class="points first-header ranking" th:text="${goatPoints2.weeksAtNo1Points}">5</th>
+		<th class="points first-header first-column ranking" th:text="${goatPoints2.seasonsRankingPoints}">13</th>
+		<th class="points first-header first-column achievements" th:text="${goatPoints2.bigWinsPoints}">4</th>
+		<th class="points first-header achievements" th:text="${goatPoints2.seasonsGrandSlamPoints}">0</th>
+		<th class="points first-header first-column last-column achievements" th:text="${goatPoints2.seasonsAchievementsPoints}">4</th>
+	</tr>
+	</thead>
+	<th:block th:if="${goatPoints1.careerRankingPoints > 0 || goatPoints2.careerRankingPoints > 0}">
+	<tbody>
+	<tr th:if="${goatPoints1.bestRankPoints > 0 || goatPoints2.bestRankPoints > 0}">
+		<td colspan="3" class="first-column last-column"></td>
+		<td class="points first-column" th:text="${goatPoints1.bestRankPoints > 0 ? goatPoints1.bestRankPoints : _}"></td>
+		<td colspan="2" class="first-column text-left">Best Rank</td>
+		<td class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints1.bestRankPoints > 0 ? goatPoints1.bestRankPoints : _}"></td>
+		<td class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints2.bestRankPoints > 0 ? goatPoints2.bestRankPoints : _}"></td>
+		<td class="first-column"></td>
+		<td colspan="2" class="first-column text-right">Best Rank</td>
+		<td class="points first-column" th:text="${goatPoints2.bestRankPoints > 0 ? goatPoints2.bestRankPoints : _}"></td>
+		<td colspan="3" class="first-column last-column"></td>
+	</tr>
+	<tr th:if="${goatPoints1.bestEloRatingPoints > 0 || goatPoints2.bestEloRatingPoints > 0}">
+		<td colspan="3" class="first-column last-column"></td>
+		<td class="points first-column" th:text="${goatPoints1.bestEloRatingPoints > 0 ? goatPoints1.bestEloRatingPoints : _}"></td>
+		<td colspan="2" class="first-column text-left">Best Elo Rating</td>
+		<td class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints1.bestEloRatingPoints > 0 ? goatPoints1.bestEloRatingPoints : _}"></td>
+		<td class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints2.bestEloRatingPoints > 0 ? goatPoints2.bestEloRatingPoints : _}"></td>
+		<td class="first-column"></td>
+		<td colspan="2" class="first-column text-right">Best Elo Rating</td>
+		<td class="points first-column" th:text="${goatPoints2.bestEloRatingPoints > 0 ? goatPoints2.bestEloRatingPoints : _}"></td>
+		<td colspan="3" class="first-column last-column"></td>
+	</tr>
+	</tbody>
+	<thead>
+	<tr>
+		<th colspan="3" class="first-header first-column last-column"></th>
+		<th class="points first-header first-column ranking" th:text="${goatPoints1.rankingPoints}"></th>
+		<th colspan="2" class="first-header first-column text-left ranking" th:title="#{goatPoints.totalRanking.title}">Total Ranking</th>
+		<th class="first-header first-column"></th>
+		<th class="points first-header first-column ranking" th:text="${goatPoints1.careerRankingPoints}"></th>
+		<th class="first-header first-column text-center ranking" th:title="#{goatPoints.careerRanking.title}">Career Rnk.</th>
+		<th class="points first-header first-column ranking" th:text="${goatPoints2.careerRankingPoints}"></th>
+		<th class="first-header first-column"></th>
+		<th colspan="2" class="first-header first-column text-right ranking" th:title="#{goatPoints.totalRanking.title}">Total Ranking</th>
+		<th class="points first-header first-column ranking" th:text="${goatPoints2.rankingPoints}"></th>
+		<th colspan="3" class="first-header first-column last-column"></th>
+	</tr>
+	</thead>
+	</th:block>
+	<th:block th:if="${goatPoints1.careerAchievementsPoints > 0 || goatPoints2.careerAchievementsPoints > 0}">
+	<tbody>
+	<tr th:if="${goatPoints1.h2hPoints > 0 || goatPoints2.h2hPoints > 0}">
+		<td class="points first-column last-column" th:text="${goatPoints1.h2hPoints > 0 ? goatPoints1.h2hPoints : _}"></td>
+		<td colspan="2" class="first-column text-left">Head-to-Head</td>
+		<td colspan="4" class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints1.h2hPoints > 0 ? goatPoints1.h2hPoints : _}"></td>
+		<td class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints2.h2hPoints > 0 ? goatPoints2.h2hPoints : _}"></td>
+		<td colspan="4" class="first-column"></td>
+		<td colspan="2" class="first-column text-right">Head-to-Head</td>
+		<td class="points first-column last-column" th:text="${goatPoints2.h2hPoints > 0 ? goatPoints2.h2hPoints : _}"></td>
+	</tr>
+	<tr th:if="${goatPoints1.careerGrandSlamPoints > 0 || goatPoints2.careerGrandSlamPoints > 0}">
+		<td class="points first-column last-column" th:text="${goatPoints1.careerGrandSlamPoints > 0 ? goatPoints1.careerGrandSlamPoints : _}"></td>
+		<td colspan="2" class="first-column text-left" th:title="#{goatPoints.careerGS.title}">Grand Slam</td>
+		<td colspan="4" class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints1.careerGrandSlamPoints > 0 ? goatPoints1.careerGrandSlamPoints : _}"></td>
+		<td class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints2.careerGrandSlamPoints > 0 ? goatPoints2.careerGrandSlamPoints : _}"></td>
+		<td colspan="4" class="first-column"></td>
+		<td colspan="2" class="first-column text-right" th:title="#{goatPoints.careerGS.title}">Grand Slam</td>
+		<td class="points first-column last-column" th:text="${goatPoints2.careerGrandSlamPoints > 0 ? goatPoints2.careerGrandSlamPoints : _}"></td>
+	</tr>
+	<tr th:if="${goatPoints1.bestSeasonPoints > 0 || goatPoints2.bestSeasonPoints > 0}">
+		<td class="points first-column last-column" th:text="${goatPoints1.bestSeasonPoints > 0 ? goatPoints1.bestSeasonPoints : _}"></td>
+		<td colspan="2" class="first-column text-left">Best Seasons</td>
+		<td colspan="4" class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints1.bestSeasonPoints > 0 ? goatPoints1.bestSeasonPoints : _}"></td>
+		<td class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints2.bestSeasonPoints > 0 ? goatPoints2.bestSeasonPoints : _}"></td>
+		<td colspan="4" class="first-column"></td>
+		<td colspan="2" class="first-column text-right">Best Seasons</td>
+		<td class="points first-column last-column" th:text="${goatPoints2.bestSeasonPoints > 0 ? goatPoints2.bestSeasonPoints : _}"></td>
+	</tr>
+	<tr th:if="${goatPoints1.greatestRivalriesPoints > 0 || goatPoints2.greatestRivalriesPoints > 0}">
+		<td class="points first-column last-column" th:text="${goatPoints1.greatestRivalriesPoints > 0 ? goatPoints1.greatestRivalriesPoints : _}"></td>
+		<td colspan="2" class="first-column text-left">Greatest Rivalries</td>
+		<td colspan="4" class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints1.greatestRivalriesPoints > 0 ? goatPoints1.greatestRivalriesPoints : _}"></td>
+		<td class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints2.greatestRivalriesPoints > 0 ? goatPoints2.greatestRivalriesPoints : _}"></td>
+		<td colspan="4" class="first-column"></td>
+		<td colspan="2" class="first-column text-right">Greatest Rivalries</td>
+		<td class="points first-column last-column" th:text="${goatPoints2.greatestRivalriesPoints > 0 ? goatPoints2.greatestRivalriesPoints : _}"></td>
+	</tr>
+	<tr th:if="${goatPoints1.performancePoints > 0 || goatPoints2.performancePoints > 0}">
+		<td class="points first-column last-column" th:text="${goatPoints1.performancePoints > 0 ? goatPoints1.performancePoints : _}"></td>
+		<td colspan="2" class="first-column text-left">Performance</td>
+		<td colspan="4" class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints1.performancePoints > 0 ? goatPoints1.performancePoints : _}"></td>
+		<td class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints2.performancePoints > 0 ? goatPoints2.performancePoints : _}"></td>
+		<td colspan="4" class="first-column"></td>
+		<td colspan="2" class="first-column text-right">Performance</td>
+		<td class="points first-column last-column" th:text="${goatPoints2.performancePoints > 0 ? goatPoints2.performancePoints : _}"></td>
+	</tr>
+	<tr th:if="${goatPoints1.statisticsPoints > 0 || goatPoints2.statisticsPoints > 0}">
+		<td class="points first-column last-column" th:text="${goatPoints1.statisticsPoints > 0 ? goatPoints1.statisticsPoints : _}"></td>
+		<td colspan="2" class="first-column text-left">Statistics</td>
+		<td colspan="4" class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints1.statisticsPoints > 0 ? goatPoints1.statisticsPoints : _}"></td>
+		<td class="first-column"></td>
+		<td class="points first-column" th:text="${goatPoints2.statisticsPoints > 0 ? goatPoints2.statisticsPoints : _}"></td>
+		<td colspan="4" class="first-column"></td>
+		<td colspan="2" class="first-column text-right">Statistics</td>
+		<td class="points first-column last-column" th:text="${goatPoints2.statisticsPoints > 0 ? goatPoints2.statisticsPoints : _}"></td>
+	</tr>
+	</tbody>
+	<thead>
+	<tr>
+		<th class="points first-header first-column last-column achievements" th:text="${goatPoints1.achievementsPoints}"></th>
+		<th colspan="2" class="first-header first-column text-left achievements" th:title="#{goatPoints.totalAchievements.title}">Total Achievements</th>
+		<th colspan="4" class="first-header first-column"></th>
+		<th class="points first-header first-column achievements" th:text="${goatPoints1.careerAchievementsPoints}"></th>
+		<th class="first-header first-column text-center achievements" th:title="#{goatPoints.careerAchievements.title}">Career Ach.</th>
+		<th class="points first-header first-column achievements" th:text="${goatPoints2.careerAchievementsPoints}"></th>
+		<th colspan="4" class="first-header first-column"></th>
+		<th colspan="2" class="first-header first-column text-right achievements" th:title="#{goatPoints.totalAchievements.title}">Total Achievements</th>
+		<th class="points first-header first-column last-column achievements" th:text="${goatPoints2.achievementsPoints}"></th>
+	</tr>
+	</thead>
+	</th:block>
+	<thead>
+	<tr>
+		<th colspan="7" class="first-header first-column last-column"></th>
+		<th class="points first-header first-column grand-total" th:text="${goatPoints1.totalPoints}"></th>
+		<th class="first-header first-column text-center grand-total">Total</th>
+		<th class="points first-header first-column grand-total" th:text="${goatPoints2.totalPoints}"></th>
+		<th colspan="7" class="first-header first-column last-column"></th>
+	</tr>
+	</thead>
+</table>
+<br/>
+<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span></button>
+<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
 </th:block>

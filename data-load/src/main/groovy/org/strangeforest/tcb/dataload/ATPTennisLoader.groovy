@@ -238,6 +238,7 @@ class ATPTennisLoader {
 		refreshMaterializedView(sql, 'player_best_rank')
 		refreshMaterializedView(sql, 'player_best_rank_points')
 		refreshMaterializedView(sql, 'player_year_end_rank')
+		refreshMaterializedView(sql, 'player_current_elo_rank')
 		refreshMaterializedView(sql, 'player_best_elo_rank')
 		refreshMaterializedView(sql, 'player_best_elo_rating')
 		refreshMaterializedView(sql, 'player_year_end_elo_rank')

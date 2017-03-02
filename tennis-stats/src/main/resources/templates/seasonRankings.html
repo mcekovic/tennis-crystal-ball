@@ -1,103 +1,103 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
-	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
-	<script type="text/javascript">
-		$(function() {
-			var $rankingsTable = $("#rankingsTable");
-			var device = detectDevice();
-			setBootgridColumnsVisible($rankingsTable, ["bestRank"], deviceGreaterOrEqual(device, "sm"));
-			setBootgridColumnsWidths($rankingsTable, ["name"], [device == "xs" ? 150 : (device == "sm" ? 200 : (device == "md" ? 300 : 400))]);
-			$rankingsTable.bootgrid({
-				ajax: true,
-				ajaxSettings: {
-					method: "GET",
-					cache: false
+<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<script type="text/javascript">
+	$(function() {
+		var $rankingsTable = $("#rankingsTable");
+		var device = detectDevice();
+		setBootgridColumnsVisible($rankingsTable, ["bestRank"], deviceGreaterOrEqual(device, "sm"));
+		setBootgridColumnsWidths($rankingsTable, ["name"], [device == "xs" ? 150 : (device == "sm" ? 200 : (device == "md" ? 300 : 400))]);
+		$rankingsTable.bootgrid({
+			ajax: true,
+			ajaxSettings: {
+				method: "GET",
+				cache: false
+			},
+			url: "/rankingsTableTable?season=[[${season}]]",
+			requestHandler: function(request) {
+				request.rankType = $("#rankType").val();
+				var date = $("#rankDate").val();
+				if (date != "")
+					request.date = date;
+				return request;
+			},
+			sorting: false,
+			rowCount: [15, 20, 50, -1],
+			searchSettings: {
+				delay: 300,
+				characters: 2
+			},
+			formatters: {
+				"bestRank": function(column, row) {
+					var date = row.bestRankDate;
+					return date ? ("<span title='" + formatDate(date) + "'>" + row.bestRank + "</span>") : row.bestRank;
 				},
-				url: "/rankingsTableTable?season=[[${season}]]",
-				requestHandler: function(request) {
-					request.rankType = $("#rankType").val();
-					var date = $("#rankDate").val();
-					if (date != "")
-						request.date = date;
-					return request;
-				},
-				sorting: false,
-				rowCount: [15, 20, 50, -1],
-				searchSettings: {
-					delay: 300,
-					characters: 2
-				},
-				formatters: {
-					"bestRank": function(column, row) {
-						var date = row.bestRankDate;
-						return date ? ("<span title='" + formatDate(date) + "'>" + row.bestRank + "</span>") : row.bestRank;
-					},
-					"country": countryFormatter,
-					"player": playerFormatter,
-					"points": function(column, row) {
-						var points = row.points;
-						return points > 0 ? points : "";
-					}
-				},
-				labels: {
-					loading: bootgridTemplateLoading,
-					noResults: "No rankings found"
-				},
-				templates: {
-					paginationItem: bootgridTemplatePaginationItem
+				"country": countryFormatter,
+				"player": playerFormatter,
+				"points": function(column, row) {
+					var points = row.points;
+					return points > 0 ? points : "";
 				}
-			});
-			var $rankingsTableHeader = $("#rankingsTable-header");
-			var $search = $rankingsTableHeader.find("div.search");
-			$search.before($("#rankTypeDiv").remove());
-			$search.before($("#rankDateDiv").remove());
-			setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
-			rankTypeChanged();
-			$("[data-toggle='tooltip']").tooltip();
-			bindPopovers();
+			},
+			labels: {
+				loading: bootgridTemplateLoading,
+				noResults: "No rankings found"
+			},
+			templates: {
+				paginationItem: bootgridTemplatePaginationItem
+			}
 		});
-		function rankTypeChanged() {
-			var rankType = $("#rankType").val();
-			$("#rankingsTable").find("th[data-column-id='points'] > a > span.text").html(rankType == "POINTS" ? "Points" : "Elo Rating");
-			$("#eloInfo").css("display", rankType == "ELO_RATING" ? "inline" : "none");
-			var $date = $("#rankDate");
-			$date.find("option").remove();
-			var url = "/seasonRankingDates?rankType=" + $("#rankType").val() + "&season=" + [[${season}]];
-			$.get(url, function (data) {
-				$date.append("<option value=''>" + ([[${season}]] == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
-				for (var i = 0; i < data.length; i++) {
-					var date = formatDate(data[i]);
-					$date.append("<option value='" + date + "'>" + date + "</option>");
-				}
-			});
-		}
-		function reloadRankings() {
-			$("#rankingsTable").bootgrid("reload");
-		}
-	</script>
-	<h3 id="rankingsTable-title" class="grid-title">Rankings Table</h3>
-	<div id="rankTypeDiv" class="btn-group margin-right">
-		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
-			<option value="POINTS">ATP Ranking</option>
-			<option value="ELO_RATING">Elo Ranking</option>
-			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|">Hard Elo Ranking</option>
-		</select>
-	</div>
-	<div id="rankDateDiv" class="btn-group margin-right" style="width: 120px">
-		<select id="rankDate" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
-	</div>
-	<table id="rankingsTable" class="table table-condensed table-hover table-striped">
-		<thead>
-		<tr>
-			<th data-column-id="rank" data-type="numeric" data-width="65">Rank</th>
-			<th data-column-id="bestRank" data-formatter="bestRank" data-width="100">Best Rank</th>
-			<th data-column-id="country" data-formatter="country" data-width="85">Country</th>
-			<th data-column-id="name" data-formatter="player" data-width="250">Name</th>
-			<th data-column-id="points" data-formatter="points" data-width="100" data-align="right" data-header-align="right">Points</th>
-		</tr>
-		</thead>
-	</table>
-	<div id="eloInfo" style="display: none">
-		<em><strong>*</strong> <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> considers opponent rating as well, meaning wins over quality opponents are worth more then wins over lesser rated players.<br/>Ultimate Tennis Statistics use sophisticated tennis-customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-popover="#eloRatingPopover">Elo rating formula</a>.</em>
-	</div>
+		var $rankingsTableHeader = $("#rankingsTable-header");
+		var $search = $rankingsTableHeader.find("div.search");
+		$search.before($("#rankTypeDiv").remove());
+		$search.before($("#rankDateDiv").remove());
+		setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
+		rankTypeChanged();
+		$("[data-toggle='tooltip']").tooltip();
+		bindPopovers();
+	});
+	function rankTypeChanged() {
+		var rankType = $("#rankType").val();
+		$("#rankingsTable").find("th[data-column-id='points'] > a > span.text").html(rankType == "POINTS" ? "Points" : "Elo Rating");
+		$("#eloInfo").css("display", rankType == "ELO_RATING" ? "inline" : "none");
+		var $date = $("#rankDate");
+		$date.find("option").remove();
+		var url = "/seasonRankingDates?rankType=" + $("#rankType").val() + "&season=" + [[${season}]];
+		$.get(url, function (data) {
+			$date.append("<option value=''>" + ([[${season}]] == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
+			for (var i = 0; i < data.length; i++) {
+				var date = formatDate(data[i]);
+				$date.append("<option value='" + date + "'>" + date + "</option>");
+			}
+		});
+	}
+	function reloadRankings() {
+		$("#rankingsTable").bootgrid("reload");
+	}
+</script>
+<h3 id="rankingsTable-title" class="grid-title">Rankings Table</h3>
+<div id="rankTypeDiv" class="btn-group margin-right">
+	<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
+		<option value="POINTS">ATP Ranking</option>
+		<option value="ELO_RATING">Elo Ranking</option>
+		<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|">Hard Elo Ranking</option>
+	</select>
+</div>
+<div id="rankDateDiv" class="btn-group margin-right" style="width: 120px">
+	<select id="rankDate" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
+</div>
+<table id="rankingsTable" class="table table-condensed table-hover table-striped">
+	<thead>
+	<tr>
+		<th data-column-id="rank" data-type="numeric" data-width="65">Rank</th>
+		<th data-column-id="bestRank" data-formatter="bestRank" data-width="100">Best Rank</th>
+		<th data-column-id="country" data-formatter="country" data-width="85">Country</th>
+		<th data-column-id="name" data-formatter="player" data-width="250">Name</th>
+		<th data-column-id="points" data-formatter="points" data-width="100" data-align="right" data-header-align="right">Points</th>
+	</tr>
+	</thead>
+</table>
+<div id="eloInfo" style="display: none">
+	<em><strong>*</strong> <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> considers opponent rating as well, meaning wins over quality opponents are worth more then wins over lesser rated players.<br/>Ultimate Tennis Statistics use sophisticated tennis-customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-popover="#eloRatingPopover">Elo rating formula</a>.</em>
+</div>
 </th:block>

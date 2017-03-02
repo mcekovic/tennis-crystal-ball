@@ -8,6 +8,8 @@ import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
+import org.springframework.dao.*;
+import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -19,6 +21,7 @@ import com.google.common.collect.*;
 import static java.lang.String.*;
 import static java.util.Collections.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
 public class RivalriesService {
@@ -62,6 +65,10 @@ public class RivalriesService {
 		.put("BR+",   5.0)
 	.build();
 
+	private static final String PLAYER_H2H_QUERY = //language=SQL
+		"SELECT h2h_won, h2h_draw, h2h_lost FROM player_h2h\n" +
+		"WHERE player_id = :playerId";
+	
 	private static final String PLAYER_RIVALRIES_QUERY = //language=SQL
 		"WITH rivalries AS (\n" +
 		"  SELECT winner_id player_id, loser_id opponent_id, count(match_id) matches, 0 won, 0 lost\n" +
@@ -199,6 +206,23 @@ public class RivalriesService {
 		"  ) AS lm) AS last_match";
 
 
+	@Cacheable("PlayerH2H")
+	public Optional<WonDrawLost> getPlayerH2H(int playerId) {
+		return jdbcTemplate.query(PLAYER_H2H_QUERY, params("playerId", playerId), new ResultSetExtractor<Optional<WonDrawLost>>() {
+			@Override public Optional<WonDrawLost> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				if (rs.next()) {
+					return Optional.of(new WonDrawLost(
+				      rs.getInt("h2h_won"),
+				      rs.getInt("h2h_draw"),
+				      rs.getInt("h2h_lost")
+					));
+				}
+				else
+					return Optional.empty();
+			}
+		});
+	}
+
 	public BootgridTable<PlayerRivalryRow> getPlayerRivalriesTable(int playerId, RivalryPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<PlayerRivalryRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();
@@ -235,7 +259,7 @@ public class RivalriesService {
 	public HeadsToHeads getHeadsToHeads(List<Integer> playerIds, RivalryFilter filter) {
 		String criteria = filter.getCriteria();
 		boolean lateralSupported = lateralSupported();
-		List<Rivalry> rivalries = !playerIds.isEmpty() ? jdbcTemplate.query(
+		List<HeadsToHeadsRivalry> rivalries = !playerIds.isEmpty() ? jdbcTemplate.query(
 			format(HEADS_TO_HEADS_QUERY,
 				criteria,
 				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),
@@ -247,7 +271,7 @@ public class RivalriesService {
 				RivalryPlayer player2 = mapPlayer(rs, "_2");
 				WonLost wonLost = mapWonLost(rs);
 				MatchInfo lastMatch = mapLastMatch(rs, lateralSupported);
-				return new Rivalry(player1, player2, wonLost, lastMatch);
+				return new HeadsToHeadsRivalry(player1, player2, wonLost, lastMatch);
 			}
 		) : emptyList();
 		return new HeadsToHeads(rivalries);

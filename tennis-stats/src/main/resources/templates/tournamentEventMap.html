@@ -1,13 +1,13 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="mapProperties" type="java.lang.String"*/-->
-	<br/>
-	<div id="mapView" style="height: 600px"></div>
-	<script type="text/javascript" th:inline="javascript">
-		function initMap() {
-			var map = new google.maps.Map(document.getElementById("mapView"), JSON.parse([[${mapProperties}]]));
-			map.setMapTypeId(google.maps.MapTypeId.HYBRID);
-			map.setTilt(45);
-		}
-	</script>
-	<script async defer type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEhXr5D80L13sXmucPWYMmDSp47qr4Jes&callback=initMap"></script>
+<!--/*@thymesVar id="mapProperties" type="java.lang.String"*/-->
+<br/>
+<div id="mapView" style="height: 600px"></div>
+<script type="text/javascript" th:inline="javascript">
+	function initMap() {
+		var map = new google.maps.Map(document.getElementById("mapView"), JSON.parse([[${mapProperties}]]));
+		map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+		map.setTilt(45);
+	}
+</script>
+<script async defer type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEhXr5D80L13sXmucPWYMmDSp47qr4Jes&callback=initMap"></script>
 </th:block>

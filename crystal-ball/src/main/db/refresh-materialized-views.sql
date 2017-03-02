@@ -2,6 +2,7 @@ REFRESH MATERIALIZED VIEW player_current_rank;
 REFRESH MATERIALIZED VIEW player_best_rank;
 REFRESH MATERIALIZED VIEW player_best_rank_points;
 REFRESH MATERIALIZED VIEW player_year_end_rank;
+REFRESH MATERIALIZED VIEW player_current_elo_rank;
 REFRESH MATERIALIZED VIEW player_best_elo_rank;
 REFRESH MATERIALIZED VIEW player_best_elo_rating;
 REFRESH MATERIALIZED VIEW player_year_end_elo_rank;

@@ -2,9 +2,9 @@ package org.strangeforest.tcb.stats.model;
 
 public class Rivalry {
 
-	private final RivalryPlayer player1, player2;
-	private WonLost wonLost;
-	private final MatchInfo lastMatch;
+	protected final RivalryPlayer player1, player2;
+	protected WonLost wonLost;
+	protected final MatchInfo lastMatch;
 
 	public Rivalry(RivalryPlayer player1, RivalryPlayer player2, WonLost wonLost, MatchInfo lastMatch) {
 		this.player1 = player1;
@@ -19,10 +19,6 @@ public class Rivalry {
 
 	public RivalryPlayer getPlayer2() {
 		return player2;
-	}
-
-	public WonLost getWonLost() {
-		return wonLost;
 	}
 
 	void addWonLost(WonLost wonLost) {

@@ -1,172 +1,172 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
-	<!--/*@thymesVar id="playerName" type="java.lang.String"*/-->
-	<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
-	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
-	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
-	<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
-	<script type="text/javascript">
-		$(function() {
-			var $rivalriesTable = $("#rivalriesTable");
-			var device = detectDevice();
-			setBootgridColumnsVisible($rivalriesTable, ["lastMatch"], deviceGreaterOrEqual(device, "lg"));
-			setBootgridColumnsVisible($rivalriesTable, ["bestRank"], deviceGreaterOrEqual(device, "sm"));
-			if (!deviceGreaterOrEqual(device, "sm"))
-				setBootgridColumnsWidths($rivalriesTable, ["name"], [150]);
-			$rivalriesTable.bootgrid({
-				ajax: true,
-				ajaxSettings: {
-					method: "GET",
-					cache: false
+<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="playerName" type="java.lang.String"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<script type="text/javascript">
+	$(function() {
+		var $rivalriesTable = $("#rivalriesTable");
+		var device = detectDevice();
+		setBootgridColumnsVisible($rivalriesTable, ["lastMatch"], deviceGreaterOrEqual(device, "lg"));
+		setBootgridColumnsVisible($rivalriesTable, ["bestRank"], deviceGreaterOrEqual(device, "sm"));
+		if (!deviceGreaterOrEqual(device, "sm"))
+			setBootgridColumnsWidths($rivalriesTable, ["name"], [150]);
+		$rivalriesTable.bootgrid({
+			ajax: true,
+			ajaxSettings: {
+				method: "GET",
+				cache: false
+			},
+			url: "/playerRivalriesTable?playerId=[[${playerId}]]",
+			requestHandler: function(request) {
+				request.season = $("#rivalrySeason").val();
+				request.level = $("#rivalryLevel").val();
+				request.surface = $("#rivalrySurface").val();
+				request.round = $("#rivalryRound").val();
+				return request;
+			},
+			rowCount: [15, 20, 50, -1],
+			formatters: {
+				"player": playerCountryFormatter,
+				"matches": function(column, row) {
+					return "<a href='" + playerMatchesUrl(row.playerId) + "' title='Show rivalry matches'>" + row.matches + "</a>"
 				},
-				url: "/playerRivalriesTable?playerId=[[${playerId}]]",
-				requestHandler: function(request) {
-					request.season = $("#rivalrySeason").val();
-					request.level = $("#rivalryLevel").val();
-					request.surface = $("#rivalrySurface").val();
-					request.round = $("#rivalryRound").val();
-					return request;
+				"matchesWon": function(column, row) {
+					return "<a href='" + playerMatchesUrl(row.playerId, 'won') + "' title='Show rivalry won matches'>" + row.won + "</a>"
 				},
-				rowCount: [15, 20, 50, -1],
-				formatters: {
-					"player": playerCountryFormatter,
-					"matches": function(column, row) {
-						return "<a href='" + playerMatchesUrl(row.playerId) + "' title='Show rivalry matches'>" + row.matches + "</a>"
-					},
-					"matchesWon": function(column, row) {
-						return "<a href='" + playerMatchesUrl(row.playerId, 'won') + "' title='Show rivalry won matches'>" + row.won + "</a>"
-					},
-					"matchesLost": function(column, row) {
-						return "<a href='" + playerMatchesUrl(row.playerId, 'lost') + "' title='Show rivalry lost matches'>" + row.lost + "</a>"
-					},
-					"wonPctStr": function(column, row) {
-						return "<span data-won-pct='" + row.wonPctClass + "'>" + row.wonPctStr + "</span>";
-					},
-					"lastMatch": function(column, row) {
-						var match = row.lastMatch;
-						var won = match.winnerId == [[${playerId}]];
-						return "<span class='label label-" + (won ? "won" : "lost") + "'>" + (won ? "Won" : "Lost") + "</span> [ " + match.score + " ] at " +
-							match.season + " " + tournamentEventFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
-					},
-					"stats": function(column, row) {
-						return "<a id='rivalryStats-" + row.playerId + "' href='#' class='label label-info label-btn glyphicon glyphicon-stats' onclick='showRivalryStats(" + row.playerId + ", event)' title='[[${playerName}]] vs " + row.name + " Rivalry Statistics'> Stats</a>";
-					},
-					"h2h": function(column, row) {
-						return "<a href='/headToHead?playerId1=[[${playerId}]]&playerId2=" + row.playerId + "' class='label label-primary label-btn' title='Show Head-to-Head'>H2H</a>"
-					}
+				"matchesLost": function(column, row) {
+					return "<a href='" + playerMatchesUrl(row.playerId, 'lost') + "' title='Show rivalry lost matches'>" + row.lost + "</a>"
 				},
-				labels: {
-					loading: bootgridTemplateLoading,
-					noResults: "No rivalries found"
+				"wonPctStr": function(column, row) {
+					return "<span data-won-pct='" + row.wonPctClass + "'>" + row.wonPctStr + "</span>";
 				},
-				templates: {
-					paginationItem: bootgridTemplatePaginationItem
+				"lastMatch": function(column, row) {
+					var match = row.lastMatch;
+					var won = match.winnerId == [[${playerId}]];
+					return "<span class='label label-" + (won ? "won" : "lost") + "'>" + (won ? "Won" : "Lost") + "</span> [ " + match.score + " ] at " +
+						match.season + " " + tournamentEventFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
+				},
+				"stats": function(column, row) {
+					return "<a id='rivalryStats-" + row.playerId + "' href='#' class='label label-info label-btn glyphicon glyphicon-stats' onclick='showRivalryStats(" + row.playerId + ", event)' title='[[${playerName}]] vs " + row.name + " Rivalry Statistics'> Stats</a>";
+				},
+				"h2h": function(column, row) {
+					return "<a href='/headToHead?playerId1=[[${playerId}]]&playerId2=" + row.playerId + "' class='label label-primary label-btn' title='Show Head-to-Head'>H2H</a>"
 				}
-			}).on("loaded.rs.jquery.bootgrid", function() {
-				$rivalriesTable.find("span[data-won-pct]").each(function() {
-					var $span = $(this);
-					$span.parent().addClass("bg-won-" + $span.data("won-pct"));
-				});
-			});
-			var $search = $("#rivalriesTable-header").find("div.search");
-			$search.before($("#rivalrySeasonDiv").remove());
-			$search.before($("#rivalryLevelDiv").remove());
-			$search.before($("#rivalrySurfaceDiv").remove());
-			$search.before($("#rivalryRoundDiv").remove());
-			$search.after($("#clearRivalryFilterButton").remove());
-			$("[data-toggle='tooltip']").tooltip();
-		});
-		function reloadRivalries() {
-			$("#rivalriesTable").bootgrid("reload");
-		}
-		function clearRivalryFilter() {
-			$("#rivalrySeason").val("");
-			$("#rivalryLevel").val("");
-			$("#rivalrySurface").val("");
-			$("#rivalryRound").val("");
-			$("#rivalriesTable").bootgrid("search", "");
-			reloadRivalries();
-		}
-		function showRivalryStats(opponentId, event) {
-			var $rivalryStats = $("#rivalryStats-" + opponentId);
-			if (!$rivalryStats.hasClass("loaded")) {
-				event.preventDefault();
-				var url = "rivalryStats?playerId=[[${playerId}]]&opponentId=" + opponentId + rivalryFilterParams();
-				$.get(url, function(data) {
-					$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
-					$rivalryStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
-					$rivalryStats.data("statsURL", url);
-				});
+			},
+			labels: {
+				loading: bootgridTemplateLoading,
+				noResults: "No rivalries found"
+			},
+			templates: {
+				paginationItem: bootgridTemplatePaginationItem
 			}
+		}).on("loaded.rs.jquery.bootgrid", function() {
+			$rivalriesTable.find("span[data-won-pct]").each(function() {
+				var $span = $(this);
+				$span.parent().addClass("bg-won-" + $span.data("won-pct"));
+			});
+		});
+		var $search = $("#rivalriesTable-header").find("div.search");
+		$search.before($("#rivalrySeasonDiv").remove());
+		$search.before($("#rivalryLevelDiv").remove());
+		$search.before($("#rivalrySurfaceDiv").remove());
+		$search.before($("#rivalryRoundDiv").remove());
+		$search.after($("#clearRivalryFilterButton").remove());
+		$("[data-toggle='tooltip']").tooltip();
+	});
+	function reloadRivalries() {
+		$("#rivalriesTable").bootgrid("reload");
+	}
+	function clearRivalryFilter() {
+		$("#rivalrySeason").val("");
+		$("#rivalryLevel").val("");
+		$("#rivalrySurface").val("");
+		$("#rivalryRound").val("");
+		$("#rivalriesTable").bootgrid("search", "");
+		reloadRivalries();
+	}
+	function showRivalryStats(opponentId, event) {
+		var $rivalryStats = $("#rivalryStats-" + opponentId);
+		if (!$rivalryStats.hasClass("loaded")) {
+			event.preventDefault();
+			var url = "rivalryStats?playerId=[[${playerId}]]&opponentId=" + opponentId + rivalryFilterParams();
+			$.get(url, function(data) {
+				$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
+				$rivalryStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
+				$rivalryStats.data("statsURL", url);
+			});
 		}
-		function rivalryFilterParams() {
-			var params = "";
-			var level = $("#rivalryLevel").val();
-			if (level)
-				params += "&level=" + level;
-			var surface = $("#rivalrySurface").val();
-			if (surface)
-				params += "&surface=" + surface;
-			var round = $("#rivalryRound").val();
-			if (round)
-				params += "&round=" + round;
-			return params;
-		}
-		function playerMatchesUrl(opponentId, outcome) {
-			var url = "/playerProfile?playerId=[[${playerId}]]&tab=matches&opponentId=" + opponentId;
-			if (outcome)
-				url += "&outcome=" + outcome;
-			url += rivalryFilterParams();
-			return url;
-		}
-	</script>
-	<div id="rivalrySeasonDiv" class="btn-group pull-left margin-right no-margin-left">
-		<select id="rivalrySeason" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
-			<option value="">All seasons</option>
-			<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
-		</select>
-	</div>
-	<div id="rivalryLevelDiv" class="btn-group pull-left margin-right">
-		<select id="rivalryLevel" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
-			<option value="">All levels</option>
-			<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
-		</select>
-	</div>
-	<div id="rivalrySurfaceDiv" class="btn-group pull-left margin-right">
-		<select id="rivalrySurface" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
-			<option value="">All surfaces</option>
-			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
-		</select>
-	</div>
-	<div id="rivalryRoundDiv" class="btn-group pull-left margin-right">
-		<select id="rivalryRound" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by round">
-			<option value="">All rounds</option>
-			<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
-		</select>
-	</div>
-	<div id="clearRivalryFilterButton" class="btn-group margin-right">
-		<button type="button" class="btn btn-default" onclick="clearRivalryFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<span class="glyphicon glyphicon-remove"></span> Clear
-		</button>
-	</div>
-	<style scoped="scoped">
-		td.h2h-column {
-			padding: 4px;
-		}
-	</style>
-	<table id="rivalriesTable" class="table table-condensed table-hover table-striped">
-		<thead>
-		<tr>
-			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="200">Opponent</th>
-			<th data-column-id="bestRank" data-type="numeric" data-width="100" data-align="right" data-header-align="right">Best Rank</th>
-			<th data-column-id="matches" data-formatter="matches" data-order="desc" data-width="90" data-align="right" data-header-align="right">Matches</th>
-			<th data-column-id="won" data-formatter="matchesWon" data-width="60" data-align="right" data-header-align="right">Won</th>
-			<th data-column-id="lost" data-formatter="matchesLost" data-width="60" data-align="right" data-header-align="right">Lost</th>
-			<th data-column-id="wonPctStr" data-formatter="wonPctStr" data-width="70" data-align="right" data-header-align="right">Win %</th>
-			<th data-column-id="lastMatch" data-formatter="lastMatch" data-sortable="false" data-width="450">Last Match</th>
-			<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="80">Stats</th>
-			<th data-column-id="h2h" data-formatter="h2h" data-sortable="false" data-width="55" data-css-class="h2h-column">H2H</th>
-		</tr>
-		</thead>
-	</table>
+	}
+	function rivalryFilterParams() {
+		var params = "";
+		var level = $("#rivalryLevel").val();
+		if (level)
+			params += "&level=" + level;
+		var surface = $("#rivalrySurface").val();
+		if (surface)
+			params += "&surface=" + surface;
+		var round = $("#rivalryRound").val();
+		if (round)
+			params += "&round=" + round;
+		return params;
+	}
+	function playerMatchesUrl(opponentId, outcome) {
+		var url = "/playerProfile?playerId=[[${playerId}]]&tab=matches&opponentId=" + opponentId;
+		if (outcome)
+			url += "&outcome=" + outcome;
+		url += rivalryFilterParams();
+		return url;
+	}
+</script>
+<div id="rivalrySeasonDiv" class="btn-group pull-left margin-right no-margin-left">
+	<select id="rivalrySeason" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
+		<option value="">All seasons</option>
+		<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+	</select>
+</div>
+<div id="rivalryLevelDiv" class="btn-group pull-left margin-right">
+	<select id="rivalryLevel" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+		<option value="">All levels</option>
+		<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
+	</select>
+</div>
+<div id="rivalrySurfaceDiv" class="btn-group pull-left margin-right">
+	<select id="rivalrySurface" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+		<option value="">All surfaces</option>
+		<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+	</select>
+</div>
+<div id="rivalryRoundDiv" class="btn-group pull-left margin-right">
+	<select id="rivalryRound" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+		<option value="">All rounds</option>
+		<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+	</select>
+</div>
+<div id="clearRivalryFilterButton" class="btn-group margin-right">
+	<button type="button" class="btn btn-default" onclick="clearRivalryFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+		<span class="glyphicon glyphicon-remove"></span> Clear
+	</button>
+</div>
+<style scoped="scoped">
+	td.h2h-column {
+		padding: 4px;
+	}
+</style>
+<table id="rivalriesTable" class="table table-condensed table-hover table-striped">
+	<thead>
+	<tr>
+		<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="200">Opponent</th>
+		<th data-column-id="bestRank" data-type="numeric" data-width="100" data-align="right" data-header-align="right">Best Rank</th>
+		<th data-column-id="matches" data-formatter="matches" data-order="desc" data-width="90" data-align="right" data-header-align="right">Matches</th>
+		<th data-column-id="won" data-formatter="matchesWon" data-width="60" data-align="right" data-header-align="right">Won</th>
+		<th data-column-id="lost" data-formatter="matchesLost" data-width="60" data-align="right" data-header-align="right">Lost</th>
+		<th data-column-id="wonPctStr" data-formatter="wonPctStr" data-width="70" data-align="right" data-header-align="right">Win %</th>
+		<th data-column-id="lastMatch" data-formatter="lastMatch" data-sortable="false" data-width="450">Last Match</th>
+		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="80">Stats</th>
+		<th data-column-id="h2h" data-formatter="h2h" data-sortable="false" data-width="55" data-css-class="h2h-column">H2H</th>
+	</tr>
+	</thead>
+</table>
 </th:block>

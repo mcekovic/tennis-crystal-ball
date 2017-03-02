@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.controller;
 import java.time.*;
 import java.util.*;
 import java.util.stream.*;
-import javax.servlet.http.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.format.annotation.*;
@@ -43,8 +42,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
-		@RequestParam(name = "round", required = false) String round,
-	   HttpServletRequest request
+		@RequestParam(name = "round", required = false) String round
 	) {
 		Optional<Player> optionalPlayer1 = playerId1 != null ? playerService.getPlayer(playerId1) : (name1 != null ? playerService.getPlayer(name1) : Optional.empty());
 		Optional<Player> optionalPlayer2 = playerId2 != null ? playerService.getPlayer(playerId2) : (name2 != null ? playerService.getPlayer(name2) : Optional.empty());

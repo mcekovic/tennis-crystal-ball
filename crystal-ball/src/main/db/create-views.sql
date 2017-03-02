@@ -85,6 +85,19 @@ CREATE MATERIALIZED VIEW player_year_end_rank AS SELECT * FROM player_year_end_r
 CREATE INDEX ON player_year_end_rank (player_id);
 
 
+-- player_current_elo_rank
+
+CREATE OR REPLACE VIEW player_current_elo_rank_v AS
+	WITH current_rank_date AS (SELECT max(rank_date) AS rank_date FROM player_elo_ranking)
+	SELECT player_id, rank AS current_elo_rank, elo_rating AS current_elo_rating
+	FROM player_elo_ranking
+	WHERE rank_date = (SELECT rank_date FROM current_rank_date);
+
+CREATE MATERIALIZED VIEW player_current_elo_rank AS SELECT * FROM player_current_elo_rank_v;
+
+CREATE UNIQUE INDEX ON player_current_elo_rank (player_id);
+
+
 -- player_best_elo_rank
 
 CREATE OR REPLACE VIEW player_best_elo_rank_v AS
@@ -1547,7 +1560,7 @@ CREATE UNIQUE INDEX ON player_goat_points (player_id);
 CREATE OR REPLACE VIEW player_v AS
 SELECT p.*, first_name || ' ' || last_name AS name, regexp_replace(initcap(first_name), '[^A-Z\s]+', '.', 'g') || ' ' || last_name AS short_name, age(dob) AS age,
 	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date,
-	best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,
+	current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,
 	best_hard_elo_rank, best_hard_elo_rank_date, best_hard_elo_rating, best_hard_elo_rating_date,
 	best_clay_elo_rank, best_clay_elo_rank_date, best_clay_elo_rating, best_clay_elo_rating_date,
 	best_grass_elo_rank, best_grass_elo_rank_date, best_grass_elo_rating, best_grass_elo_rating_date,
@@ -1559,6 +1572,7 @@ FROM player p
 LEFT JOIN player_current_rank USING (player_id)
 LEFT JOIN player_best_rank USING (player_id)
 LEFT JOIN player_best_rank_points USING (player_id)
+LEFT JOIN player_current_elo_rank USING (player_id)
 LEFT JOIN player_best_elo_rank USING (player_id)
 LEFT JOIN player_best_elo_rating USING (player_id)
 LEFT JOIN player_goat_points USING (player_id)

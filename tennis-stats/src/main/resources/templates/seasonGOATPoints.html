@@ -1,29 +1,29 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
-	<!--/*@thymesVar id="totalPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
-	<!--/*@thymesVar id="tournamentPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
-	<!--/*@thymesVar id="rankingPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
-	<!--/*@thymesVar id="achievementsPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
-	<script type="text/javascript">
-		$(function() {
-			$("[data-toggle='collapse']").click(collapseClick);
-		});
-	</script>
-	<div class="row">
-		<div class="col-md-3">
-			<th:block th:include="fragments/record :: record('Total Points', ${totalPoints})"/>
-		</div>
-		<div class="col-md-3">
-			<th:block th:include="fragments/record :: record('Tournament Points', ${tournamentPoints})"/>
-		</div>
-		<div class="col-md-3">
-			<th:block th:include="fragments/record :: record('Ranking Points', ${rankingPoints})"/>
-		</div>
-		<div class="col-md-3">
-			<th:block th:include="fragments/record :: record('Achievements Points', ${achievementsPoints})"/>
-		</div>
+<!--/*@thymesVar id="totalPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+<!--/*@thymesVar id="tournamentPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+<!--/*@thymesVar id="rankingPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+<!--/*@thymesVar id="achievementsPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
+<script type="text/javascript">
+	$(function() {
+		$("[data-toggle='collapse']").click(collapseClick);
+	});
+</script>
+<div class="row">
+	<div class="col-md-3">
+		<th:block th:include="fragments/record :: record('Total Points', ${totalPoints})"/>
 	</div>
-	<br/>
-	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend?forSeason=true">GOAT Pts. Legend&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span></button>
-	<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
+	<div class="col-md-3">
+		<th:block th:include="fragments/record :: record('Tournament Points', ${tournamentPoints})"/>
+	</div>
+	<div class="col-md-3">
+		<th:block th:include="fragments/record :: record('Ranking Points', ${rankingPoints})"/>
+	</div>
+	<div class="col-md-3">
+		<th:block th:include="fragments/record :: record('Achievements Points', ${achievementsPoints})"/>
+	</div>
+</div>
+<br/>
+<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend?forSeason=true">GOAT Pts. Legend&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span></button>
+<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
 </th:block>

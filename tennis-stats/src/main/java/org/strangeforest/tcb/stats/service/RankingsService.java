@@ -65,7 +65,7 @@ public class RankingsService {
 
 	private static final String PLAYER_RANKING_QUERY =
 		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points,\n" +
-		"  best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,\n" +
+		"  current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,\n" +
 		"  best_hard_elo_rank, best_hard_elo_rank_date, best_hard_elo_rating, best_hard_elo_rating_date,\n" +
 		"  best_clay_elo_rank, best_clay_elo_rank_date, best_clay_elo_rating, best_clay_elo_rating_date,\n" +
 		"  best_grass_elo_rank, best_grass_elo_rank_date, best_grass_elo_rating, best_grass_elo_rating_date,\n" +
@@ -289,6 +289,8 @@ public class RankingsService {
 			highlights.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
 			highlights.setGoatRank(rs.getInt("goat_rank"));
 			highlights.setGoatPoints(rs.getInt("goat_points"));
+			highlights.setCurrentEloRank(rs.getInt("current_elo_rank"));
+			highlights.setCurrentEloRating(rs.getInt("current_elo_rating"));
 			highlights.setBestEloRank(rs.getInt("best_elo_rank"));
 			highlights.setBestEloRankDate(rs.getDate("best_elo_rank_date"));
 			highlights.setBestEloRating(rs.getInt("best_elo_rating"));
