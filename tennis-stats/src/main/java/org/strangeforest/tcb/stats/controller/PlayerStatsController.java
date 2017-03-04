@@ -64,13 +64,14 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
 		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
 		@RequestParam(name = "statsTo", required = false) Double statsTo,
+		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "searchPhrase", required = false) String searchPhrase,
 		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent);
+		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, countryId);
 		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
 		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
 		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, statsFilter, searchPhrase);

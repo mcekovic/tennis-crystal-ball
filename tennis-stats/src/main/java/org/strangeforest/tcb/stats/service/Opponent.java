@@ -1,7 +1,10 @@
 package org.strangeforest.tcb.stats.service;
 
+import com.google.common.collect.*;
+
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public enum Opponent {
 
@@ -11,6 +14,11 @@ public enum Opponent {
 	TOP_20(matchesRankCriterion(20), statsRankCriterion(20), false),
 	TOP_50(matchesRankCriterion(50), statsRankCriterion(50), false),
 	TOP_100(matchesRankCriterion(100), statsRankCriterion(100), false),
+	UNDER_18(matchesAgeCriterion(Range.atMost(18)), statsAgeCriterion(Range.atMost(18)), false),
+	UNDER_21(matchesAgeCriterion(Range.atMost(21)), statsAgeCriterion(Range.atMost(21)), false),
+	UNDER_25(matchesAgeCriterion(Range.atMost(25)), statsAgeCriterion(Range.atMost(25)), false),
+	OVER_30(matchesAgeCriterion(Range.atLeast(30)), statsAgeCriterion(Range.atLeast(30)), false),
+	OVER_35(matchesAgeCriterion(Range.atLeast(35)), statsAgeCriterion(Range.atLeast(35)), false),
 	RIGHT_HANDED(matchesHandCriterion("R"), statsHandCriterion("R"), true),
 	LEFT_HANDED(matchesHandCriterion("L"), statsHandCriterion("L"), true),
 	BACKHAND_2(matchesBackhandCriterion("2"), statsBackhandCriterion("2"), true),
@@ -32,6 +40,7 @@ public enum Opponent {
 	private final boolean opponentRequired;
 
 	private static final String MATCHES_RANK_CRITERION = " AND ((m.winner_rank <= %1$d AND m.winner_id <> :playerId) OR (m.loser_rank <= %1$d AND m.loser_id <> :playerId))";
+	private static final String MATCHES_AGE_CRITERION = " AND ((m.winner_id <> :playerId%1$s) OR (m.loser_id <> :playerId%2$s))";
 	private static final String MATCHES_SEED_CRITERION = " AND ((m.winner_seed %1$s AND m.winner_id <> :playerId) OR (m.loser_seed %1$s AND m.loser_id <> :playerId))";
 	private static final String MATCHES_ENTRY_CRITERION = " AND ((m.winner_entry = '%1$s' AND m.winner_id <> :playerId) OR (m.loser_entry = '%1$s' AND m.loser_id <> :playerId))";
 	private static final String MATCHES_HAND_CRITERION = " AND ((pw.hand = '%1$s' AND m.winner_id <> :playerId) OR (pl.hand = '%1$s' AND m.loser_id <> :playerId))";
@@ -65,6 +74,10 @@ public enum Opponent {
 		return format(MATCHES_RANK_CRITERION, rank);
 	}
 
+	private static String matchesAgeCriterion(Range<Integer> ageRange) {
+		return format(MATCHES_AGE_CRITERION, rangeFilter(ageRange, "m.winner_age"), rangeFilter(ageRange, "m.loser_age"));
+	}
+
 	private static String matchesSeedCriterion(String seedExpression) {
 		return format(MATCHES_SEED_CRITERION, seedExpression);
 	}
@@ -83,6 +96,10 @@ public enum Opponent {
 
 	private static String statsRankCriterion(int rank) {
 		return format(STATS_RANK_CRITERION, rank);
+	}
+
+	private static String statsAgeCriterion(Range<Integer> ageRange) {
+		return rangeFilter(ageRange, "opponent_age");
 	}
 
 	private static String statsSeedCriterion(String seedExpression) {

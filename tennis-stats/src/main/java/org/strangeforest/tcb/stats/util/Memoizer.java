@@ -16,16 +16,11 @@ public final class Memoizer<T> implements Supplier<T> {
 		this.supplier = supplier;
 	}
 
-	@Override public final T get() {
+	@Override public synchronized final T get() {
 		if (!calculated) {
 			cachedResult = supplier.get();
 			calculated = true;
 		}
 		return cachedResult;
-	}
-
-	public void clear() {
-		cachedResult = null;
-		calculated = false;
 	}
 }

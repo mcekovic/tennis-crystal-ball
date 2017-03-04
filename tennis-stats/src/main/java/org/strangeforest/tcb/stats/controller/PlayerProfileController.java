@@ -1,6 +1,8 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -10,7 +12,11 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
+import org.strangeforest.tcb.stats.util.*;
 
+import com.neovisionaries.i18n.*;
+
+import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 
@@ -128,6 +134,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("tournamentEvents", tournamentEvents);
+		modelMap.addAttribute("countries", countries.get());
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
@@ -140,6 +147,12 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("outcome", outcome);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerMatches", modelMap);
+	}
+
+	private Supplier<List<CountryCode>> countries = Memoizer.of(this::getCountries);
+
+	private List<CountryCode> getCountries() {
+		return Stream.of(CountryCode.values()).filter(c -> c.getAlpha3() != null).sorted(comparing(CountryCode::getName)).collect(toList());
 	}
 
 	@GetMapping("/playerTimeline")

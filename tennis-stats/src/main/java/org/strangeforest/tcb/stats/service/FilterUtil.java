@@ -22,10 +22,23 @@ abstract class FilterUtil {
 		return condition.startsWith(AND) ? condition.substring(AND.length() - 1) : condition;
 	}
 
+	static String rangeFilter(Range<?> range, String column) {
+		StringBuilder condition = new StringBuilder();
+		appendRangeFilter(condition, range, column);
+		return condition.toString();
+	}
+
 	static String rangeFilter(Range<?> range, String column, String param) {
 		StringBuilder condition = new StringBuilder();
 		appendRangeFilter(condition, range, column, param);
 		return condition.toString();
+	}
+
+	static void appendRangeFilter(StringBuilder sb, Range<?> range, String column) {
+		if (range.hasLowerBound())
+			sb.append(AND).append(column).append(" >= ").append(range.lowerEndpoint());
+		if (range.hasUpperBound())
+			sb.append(AND).append(column).append(" <= ").append(range.upperEndpoint());
 	}
 
 	static void appendRangeFilter(StringBuilder sb, Range<?> range, String column, String param) {

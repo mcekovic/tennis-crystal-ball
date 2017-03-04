@@ -44,12 +44,13 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
 		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
 		@RequestParam(name = "statsTo", required = false) Double statsTo,
+		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		OpponentFilter opponentFilter = OpponentFilter.forMatches(opponent);
+		OpponentFilter opponentFilter = OpponentFilter.forMatches(opponent, countryId);
 		OutcomeFilter outcomeFilter = OutcomeFilter.forMatches(outcome);
 		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
 		MatchFilter filter = MatchFilter.forMatches(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, statsFilter, searchPhrase);
@@ -70,9 +71,10 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
+		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "searchPhrase") String searchPhrase
 	) {
-		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent);
+		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, countryId);
 		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
 		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, StatsFilter.ALL, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);

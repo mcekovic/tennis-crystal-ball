@@ -69,6 +69,9 @@
 				url += "&round=" + round;
 			loadTab($pill, url)
 		}
+		function swapPlayers() {
+			window.location.href = '/headToHead?playerId1=[[${player2.id}]]&playerId2=[[${player1.id}]]&tab=' + $("#h2hPills li.active a").attr("href").substr(1);
+		}
 	</script>
 </head>
 <body class="container" th:with="bothPlayersSelected=${player1 != null && player2 != null}, anyPlayerSelected=${player1 != null || player2 != null}, neitherPlayerSelected=${player1 == null && player2 == null}, samePlayersSelected=${bothPlayersSelected && player1.id == player2.id}">
@@ -97,7 +100,7 @@
 		</div>
 		<div class="col-xs-2 text-center">
 			<h3>
-				<a th:if="${bothPlayersSelected}" th:href="'/headToHead?playerId1=' + ${player2.id} + '&playerId2=' + ${player1.id}" title="Swap players"><h4 style="margin: 0" class="glyphicon glyphicon-transfer"></h4></a>
+				<a th:if="${bothPlayersSelected}" href="javascript:swapPlayers()" title="Swap players"><h4 style="margin: 0" class="glyphicon glyphicon-transfer"></h4></a>
 				vs
 				<a th:if="${bothPlayersSelected}" th:href="'/headToHead?name1=' + ${player1.name} + '&name2=' + ${player2.name}" th:title="|Permalink to ${player1.name} vs ${player2.name} Rivalry|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
 			</h3>

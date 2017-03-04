@@ -17,6 +17,7 @@
 <!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
+<!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <script type="text/javascript">
 	var lastMatchesStatsFilter;
 	$(function() {
@@ -49,6 +50,7 @@
 					request.statsFrom = lastMatchesStatsFilter.from;
 					request.statsTo = lastMatchesStatsFilter.to;
 				}
+				request.countryId = $("#matchesCountry").val();
 				return request;
 			},
 			rowCount: [15, 20, 50, -1],
@@ -133,6 +135,7 @@
 		$("#matchesStatsCategory").val("");
 		$("#matchesStatsFrom").val("");
 		$("#matchesStatsTo").val("");
+		$("#matchesCountry").val("");
 		$("#matchesTable").bootgrid("search", "");
 		reloadMatches();
 	}
@@ -146,6 +149,7 @@
 		params += "&tournamentId=" + $("#matchesTournament").val();
 		params += "&tournamentEventId=" + $("#matchesTournamentEvent").val();
 		params += "&outcome=" + $("#matchesOutcome").val();
+		params += "&countryId=" + $("#matchesCountry").val();
 		params += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 		return params;
 	}
@@ -204,6 +208,11 @@
 			<option value="TOP_20">Vs Top 20</option>
 			<option value="TOP_50">Vs Top 50</option>
 			<option value="TOP_100">Vs Top 100</option>
+			<option value="UNDER_18">Vs Under 18</option>
+			<option value="UNDER_21">Vs Under 21</option>
+			<option value="UNDER_25">Vs Under 25</option>
+			<option value="OVER_30">Vs Over 30</option>
+			<option value="OVER_35">Vs Over 35</option>
 			<option value="RIGHT_HANDED">Vs Right-handed</option>
 			<option value="LEFT_HANDED">Vs Left-handed</option>
 			<option value="BACKHAND_2">Vs Two-handed bh.</option>
@@ -246,6 +255,12 @@
 			<label id="matchesStatsRange" for="matchesStatsTo" class="input-group-addon">To:</label>
 			<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
 		</div>
+	</div>
+	<div class="col-md-3">
+		<select id="matchesCountry" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter opponent country">
+			<option value="">All countries</option>
+			<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
+		</select>
 	</div>
 </div>
 <div id="matchesTournamentDiv" class="btn-group pull-left margin-right no-margin-left" style="width: 210px">
