@@ -60,6 +60,8 @@
 			templates: {
 				paginationItem: bootgridTemplatePaginationItem
 			}
+		}).on("load.rs.jquery.bootgrid", function() {
+			updateEventsStatsCategoryStat();
 		}).on("loaded.rs.jquery.bootgrid", function() {
 			$("#eventsStats").popover("destroy").removeClass("loaded");
 		});
@@ -75,7 +77,6 @@
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function reloadEvents() {
-		updateEventsStatsCategoryStat();
 		$("#eventsTable").bootgrid("reload");
 	}
 	function eventsStatsFilter() {

@@ -72,9 +72,9 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
 		@RequestParam(name = "searchPhrase") String searchPhrase
 	) {
-		OpponentFilter opponentFilter = OpponentFilter.forMatches(opponent);
-		OutcomeFilter outcomeFilter = OutcomeFilter.forMatches(outcome);
-		MatchFilter filter = MatchFilter.forMatches(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, StatsFilter.ALL, searchPhrase);
+		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent);
+		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
+		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, StatsFilter.ALL, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 		return StatsCategory.get(statsCategory).getStat(stats);
 	}

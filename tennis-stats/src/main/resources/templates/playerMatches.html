@@ -71,6 +71,8 @@
 			templates: {
 				paginationItem: bootgridTemplatePaginationItem
 			}
+		}).on("load.rs.jquery.bootgrid", function() {
+			updateMatchesStatsCategoryStat();
 		}).on("loaded.rs.jquery.bootgrid", function() {
 			$("#matchesStats").popover("destroy").removeClass("loaded");
 		});
@@ -83,7 +85,6 @@
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function reloadMatches() {
-		updateMatchesStatsCategoryStat();
 		$("#matchesTable").bootgrid("reload");
 	}
 	function matchesStatsFilter() {

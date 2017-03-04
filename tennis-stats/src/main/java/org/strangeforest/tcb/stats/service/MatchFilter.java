@@ -57,11 +57,15 @@ public class MatchFilter extends TournamentEventResultFilter {
 	}
 
 	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, String result, StatsFilter statsFilter, String searchPhrase) {
-		return new MatchFilter(season, level, surface, tournamentId, null, result, null, null, null, statsFilter, searchPhrase);
+		return forStats(season, level, surface, tournamentId, null, result, null, null, null, statsFilter, searchPhrase);
 	}
 
 	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, StatsFilter statsFilter, String searchPhrase) {
-		return new MatchFilter(season, level, surface, tournamentId, tournamentEventId, null, round, opponentFilter, outcomeFilter, statsFilter, searchPhrase) {
+		return forStats(season, level, surface, tournamentId, tournamentEventId, null, round, opponentFilter, outcomeFilter, statsFilter, searchPhrase);
+	}
+
+	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String result, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, StatsFilter statsFilter, String searchPhrase) {
+		return new MatchFilter(season, level, surface, tournamentId, tournamentEventId, result, round, opponentFilter, outcomeFilter, statsFilter, searchPhrase) {
 			@Override protected String getSearchCriterion() {
 				return STATS_SEARCH_CRITERION;
 			}
