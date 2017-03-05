@@ -56,6 +56,13 @@ public class PlayerService {
 		"WHERE r.player_id = :playerId\n" +
 		"ORDER BY season DESC";
 
+	private static final String OPPONENT_COUNTRIES_QUERY = //language=SQL
+		"SELECT DISTINCT loser_country_id FROM match\n" +
+		"WHERE winner_id = :playerId\n" +
+		"UNION\n" +
+		"SELECT DISTINCT winner_country_id FROM match\n" +
+		"WHERE loser_id = :playerId";
+
 	private static final String TOP_N_QUERY = //language=SQL
 		"SELECT name FROM player_v\n" +
 		"ORDER BY %1$s LIMIT :count";
@@ -98,6 +105,11 @@ public class PlayerService {
 	@Cacheable("PlayerSeasons")
 	public List<Integer> getPlayerSeasons(int playerId) {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, params("playerId", playerId), Integer.class);
+	}
+
+	@Cacheable("PlayerOpponentCountryIds")
+	public List<String> getPlayerOpponentCountryIds(int playerId) {
+		return jdbcTemplate.queryForList(OPPONENT_COUNTRIES_QUERY, params("playerId", playerId), String.class);
 	}
 
 	public IndexedPlayers getIndexedPlayers(int playerId) {

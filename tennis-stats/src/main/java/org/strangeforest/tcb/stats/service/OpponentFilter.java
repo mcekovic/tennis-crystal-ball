@@ -1,13 +1,11 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.util.*;
 import java.util.Objects;
 
 import org.springframework.jdbc.core.namedparam.*;
 
 import com.google.common.base.*;
-
-import static com.google.common.base.Strings.*;
-import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class OpponentFilter {
 
@@ -15,26 +13,26 @@ public class OpponentFilter {
 
 	public static final OpponentFilter ALL = new OpponentFilter(null, null, null, false);
 
-	public static OpponentFilter forMatches(String opponent, String countryId) {
+	public static OpponentFilter forMatches(String opponent, Collection<String> countryIds) {
 		if (isSinglePlayer(opponent))
-			return forMatches(null, extractOpponentId(opponent), countryId);
+			return forMatches(null, extractOpponentId(opponent), countryIds);
 		else
-			return forMatches(opponent, null, countryId);
+			return forMatches(opponent, null, countryIds);
 	}
 
-	private static OpponentFilter forMatches(String opponent, Integer opponentId, String countryId) {
-		return new OpponentFilter(Opponent.forValue(opponent), opponentId, countryId, false);
+	private static OpponentFilter forMatches(String opponent, Integer opponentId, Collection<String> countryIds) {
+		return new OpponentFilter(Opponent.forValue(opponent), opponentId, countryIds, false);
 	}
 
-	public static OpponentFilter forStats(String opponent, String countryId) {
+	public static OpponentFilter forStats(String opponent, Collection<String> countryIds) {
 		if (isSinglePlayer(opponent))
-			return forStats(null, extractOpponentId(opponent), countryId);
+			return forStats(null, extractOpponentId(opponent), countryIds);
 		else
-			return forStats(opponent, null, countryId);
+			return forStats(opponent, null, countryIds);
 	}
 
-	private static OpponentFilter forStats(String opponent, Integer opponentId, String countryId) {
-		return new OpponentFilter(Opponent.forValue(opponent), opponentId, countryId, true);
+	private static OpponentFilter forStats(String opponent, Integer opponentId, Collection<String> countryIds) {
+		return new OpponentFilter(Opponent.forValue(opponent), opponentId, countryIds, true);
 	}
 
 	static OpponentFilter forStats(Integer opponentId) {
@@ -56,19 +54,19 @@ public class OpponentFilter {
 
 	private final Opponent opponent;
 	private final Integer opponentId;
-	private final String countryId;
+	private final Collection<String> countryIds;
 	private final boolean forStats;
 
 	private static final String MATCHES_OPPONENT_CRITERION = " AND ((m.winner_id = :playerId AND m.loser_id = :opponentId) OR (m.winner_id = :opponentId AND m.loser_id = :playerId))";
-	private static final String MATCHES_COUNTRY_CRITERION = " AND ((m.winner_id = :playerId AND m.loser_country_id = :countryId) OR (m.winner_country_id = :countryId AND m.loser_id = :playerId))";
+	private static final String MATCHES_COUNTRY_CRITERION = " AND ((m.winner_id = :playerId AND m.loser_country_id IN (:countryIds)) OR (m.winner_country_id IN (:countryIds) AND m.loser_id = :playerId))";
 
-	private static final String STATS_OPPONENT_CRITERION   = " AND opponent_id = :opponentId";
-	private static final String STATS_COUNTRY_CRITERION   = " AND opponent_country_id = :countryId";
+	private static final String STATS_OPPONENT_CRITERION = " AND opponent_id = :opponentId";
+	private static final String STATS_COUNTRY_CRITERION = " AND opponent_country_id IN (:countryIds)";
 
-	private OpponentFilter(Opponent opponent, Integer opponentId, String countryId, boolean forStats) {
+	private OpponentFilter(Opponent opponent, Integer opponentId, Collection<String> countryIds, boolean forStats) {
 		this.opponent = opponent;
 		this.opponentId = opponentId;
-		this.countryId = countryId;
+		this.countryIds = countryIds != null ? countryIds : Collections.emptyList();
 		this.forStats = forStats;
 	}
 
@@ -77,19 +75,19 @@ public class OpponentFilter {
 			criteria.append(forStats ? opponent.getStatsCriterion() : opponent.getMatchesCriterion());
 		if (opponentId != null)
 			criteria.append(forStats ? STATS_OPPONENT_CRITERION : MATCHES_OPPONENT_CRITERION);
-		if (!isNullOrEmpty(countryId))
+		if (!countryIds.isEmpty())
 			criteria.append(forStats ? STATS_COUNTRY_CRITERION : MATCHES_COUNTRY_CRITERION);
 	}
 
 	void addParams(MapSqlParameterSource params) {
 		if (opponentId != null)
 			params.addValue("opponentId", opponentId);
-		if (!isNullOrEmpty(countryId))
-			params.addValue("countryId", countryId);
+		if (!countryIds.isEmpty())
+			params.addValue("countryIds", countryIds);
 	}
 
 	public boolean isEmpty() {
-		return opponent == null && opponentId == null && isNullOrEmpty(countryId);
+		return opponent == null && opponentId == null && countryIds.isEmpty();
 	}
 
 	public boolean isOpponentRequired() {
@@ -103,18 +101,18 @@ public class OpponentFilter {
 		if (this == o) return true;
 		if (!(o instanceof OpponentFilter)) return false;
 		OpponentFilter filter = (OpponentFilter)o;
-		return opponent == filter.opponent && Objects.equals(opponentId, filter.opponentId) && stringsEqual(countryId, filter.countryId) && forStats == filter.forStats;
+		return opponent == filter.opponent && Objects.equals(opponentId, filter.opponentId) && countryIds.equals(filter.countryIds) && forStats == filter.forStats;
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(opponent, opponentId, emptyToNull(countryId));
+		return Objects.hash(opponent, opponentId, countryIds);
 	}
 
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("opponent", opponent)
 			.add("opponentId", opponentId)
-			.add("countryId", countryId)
+			.add("countryIds", countryIds)
 			.toString();
 	}
 }

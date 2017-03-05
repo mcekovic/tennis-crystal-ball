@@ -3,16 +3,25 @@ package org.strangeforest.tcb.stats.service;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
+import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
+import com.neovisionaries.i18n.*;
+
+import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
+import static java.util.Collections.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+
+import java.lang.String;
 
 @Service
 public class MatchesService {
@@ -49,6 +58,11 @@ public class MatchesService {
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE m.match_id = :matchId";
+
+	private static final String MATCHES_COUNTRIES_QUERY = //language=SQL
+		"SELECT DISTINCT loser_country_id FROM match\n" +
+		"UNION\n" +
+		"SELECT DISTINCT winner_country_id FROM match";
 
 
 	public TournamentEventDraw getTournamentEventDraw(int tournamentEventId) {
@@ -174,5 +188,23 @@ public class MatchesService {
 				rs.getString("score")
 			)
 		);
+	}
+
+
+	private Supplier<Map<String, List<String>>> sameCountryIdsMap = Memoizer.of(this::getSameCountryIds);
+
+	private Map<String, List<String>> getSameCountryIds() {
+		List<String> countryIds = jdbcTemplate.getJdbcOperations().queryForList(MATCHES_COUNTRIES_QUERY, String.class);
+		Map<String, List<String>> sameCountryIdsMap = new HashMap<>();
+		for (String countryId : countryIds) {
+			CountryCode countryCode = Country.code(countryId);
+			if (countryCode != null)
+				sameCountryIdsMap.computeIfAbsent(countryCode.getAlpha3(), mainCountryId -> new ArrayList<>()).add(countryId);
+		}
+		return sameCountryIdsMap;
+	}
+
+	public List<String> getSameCountryIds(String countryId) {
+		return isNullOrEmpty(countryId) ? emptyList() : sameCountryIdsMap.get().getOrDefault(countryId, singletonList(countryId));
 	}
 }
