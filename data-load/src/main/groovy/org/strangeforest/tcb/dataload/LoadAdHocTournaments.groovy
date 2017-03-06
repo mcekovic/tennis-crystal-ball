@@ -16,5 +16,8 @@ static loadTournaments(SqlPool sqlPool) {
 		atpWorldTourMatchLoader.loadTournament(2017, 'delray-beach', 499)
 		atpWorldTourMatchLoader.loadTournament(2017, 'marseille', 496)
 		atpWorldTourMatchLoader.loadTournament(2017, 'rio-de-janeiro', 6932)
+		atpWorldTourMatchLoader.loadTournament(2017, 'acapulco', 807)
+		atpWorldTourMatchLoader.loadTournament(2017, 'dubai', 495)
+		atpWorldTourMatchLoader.loadTournament(2017, 'sao-paulo', 533)
 	}
 }

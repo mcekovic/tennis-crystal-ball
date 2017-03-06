@@ -71,6 +71,7 @@ PERFORM create_player('Louis', 'Pretorius', NULL, 'RSA');
 PERFORM create_player('Mauro', 'Rezzonico', DATE '1944-12-23', 'ITA');
 PERFORM create_player('Milan', 'Vopicka', NULL, 'CZE');
 PERFORM create_player('Norman', 'Schellenger', NULL, 'USA');
+PERFORM create_player('Omar', 'Alawadhi', DATE '1982-01-16', 'UAE');
 PERFORM create_player('Peter', 'Rigg', DATE '1948-10-25', 'AUS');
 PERFORM create_player('Philip', 'Holton', NULL, 'AUS');
 PERFORM create_player('Ryoichi', 'Miyake', NULL, 'JPN');
