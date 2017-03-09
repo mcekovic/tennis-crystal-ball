@@ -69,9 +69,11 @@
 				url += "&round=" + round;
 			loadTab($pill, url)
 		}
+		[# th:if="${bothPlayersSelected}"]
 		function swapPlayers() {
 			window.location.href = '/headToHead?playerId1=[[${player2.id}]]&playerId2=[[${player1.id}]]&tab=' + $("#h2hPills li.active a").attr("href").substr(1);
 		}
+		[/]
 	</script>
 </head>
 <body class="container" th:with="bothPlayersSelected=${player1 != null && player2 != null}, anyPlayerSelected=${player1 != null || player2 != null}, neitherPlayerSelected=${player1 == null && player2 == null}, samePlayersSelected=${bothPlayersSelected && player1.id == player2.id}">
