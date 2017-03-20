@@ -78,7 +78,7 @@
 			url += "&surface=" + surface;
 		var round = $("#matchesRound").val();
 		if (round)
-			url += "&round=" + round;
+			url += "&round=" + encodeURIComponent(round);
 		var tournamentId = $("#matchesTournament").val();
 		if (tournamentId)
 			url += "&tournamentId=" + tournamentId;
@@ -105,7 +105,7 @@
 			url += "&level=" + $("#matchesLevel").val();
 			url += "&surface=" + $("#matchesSurface").val();
 			url += "&tournamentId=" + $("#matchesTournament").val();
-			url += "&round=" + $("#matchesRound").val();
+			url += "&round=" + encodeURIComponent($("#matchesRound").val());
 			url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 			$.get(url, function(data) {
 				$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto " + placement});
