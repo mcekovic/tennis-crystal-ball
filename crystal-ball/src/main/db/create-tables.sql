@@ -261,6 +261,56 @@ CREATE TABLE team_tournament_event_winner (
 );
 
 
+-- current_event
+
+CREATE TABLE current_event (
+	current_event_id SERIAL PRIMARY KEY,
+	tournament_id INTEGER NOT NULL REFERENCES tournament (tournament_id),
+	season SMALLINT NOT NULL,
+	date DATE NOT NULL,
+	name TEXT NOT NULL,
+	level tournament_level NOT NULL,
+	surface surface,
+	indoor BOOLEAN NOT NULL,
+	draw_type draw_type,
+	draw_size SMALLINT
+);
+
+
+-- current_match
+
+CREATE TABLE current_match (
+	current_match_id BIGSERIAL PRIMARY KEY,
+	current_event_id INTEGER NOT NULL REFERENCES current_event (current_event_id) ON DELETE CASCADE,
+	prev_match1_id INTEGER NOT NULL REFERENCES current_match (current_match_id) ON DELETE CASCADE,
+	prev_match2_id INTEGER NOT NULL REFERENCES current_match (current_match_id) ON DELETE CASCADE,
+	match_num SMALLINT,
+	date DATE,
+	surface surface,
+	indoor BOOLEAN,
+	round match_round NOT NULL,
+	best_of SMALLINT,
+	player1_id INTEGER REFERENCES player (player_id),
+	player1_country_id TEXT,
+	player1_seed SMALLINT,
+	player1_entry tournament_entry,
+	player2_id INTEGER REFERENCES player (player_id),
+	player2_country_id TEXT,
+	player2_seed SMALLINT,
+	player2_entry tournament_entry,
+	winner SMALLINT,
+	score TEXT,
+	outcome match_outcome,
+	w_sets SMALLINT,
+	l_sets SMALLINT,
+	UNIQUE (current_event_id, match_num)
+);
+
+CREATE INDEX ON current_match (current_match_id);
+CREATE INDEX ON current_match (prev_match1_id);
+CREATE INDEX ON current_match (prev_match2_id);
+
+
 -- tournament_rank_points
 
 CREATE TABLE tournament_rank_points (
