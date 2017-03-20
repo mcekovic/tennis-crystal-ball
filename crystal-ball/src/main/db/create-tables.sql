@@ -282,9 +282,9 @@ CREATE TABLE current_event (
 CREATE TABLE current_match (
 	current_match_id BIGSERIAL PRIMARY KEY,
 	current_event_id INTEGER NOT NULL REFERENCES current_event (current_event_id) ON DELETE CASCADE,
+	match_num SMALLINT,
 	prev_match1_id INTEGER NOT NULL REFERENCES current_match (current_match_id) ON DELETE CASCADE,
 	prev_match2_id INTEGER NOT NULL REFERENCES current_match (current_match_id) ON DELETE CASCADE,
-	match_num SMALLINT,
 	date DATE,
 	surface surface,
 	indoor BOOLEAN,
@@ -301,8 +301,6 @@ CREATE TABLE current_match (
 	winner SMALLINT,
 	score TEXT,
 	outcome match_outcome,
-	w_sets SMALLINT,
-	l_sets SMALLINT,
 	UNIQUE (current_event_id, match_num)
 );
 

@@ -458,9 +458,9 @@ BEGIN
    EXCEPTION WHEN unique_violation THEN
 		UPDATE match
 		SET date = p_date, surface = p_surface::surface, indoor = p_indoor, round = p_round::match_round, best_of = p_best_of,
-		 winner_id = l_winner_id, winner_country_id = p_winner_country_id, winner_seed = p_winner_seed, winner_entry = p_winner_entry::tournament_entry, winner_rank = p_winner_rank, winner_rank_points = p_winner_rank_points, winner_age = p_winner_age, winner_height = p_winner_height,
-		 loser_id = l_loser_id, loser_country_id = p_loser_country_id, loser_seed = p_loser_seed, loser_entry = p_loser_entry::tournament_entry, loser_rank = p_loser_rank, loser_rank_points = p_loser_rank_points, loser_age = p_loser_age, loser_height = p_loser_height,
-		 score = p_score, outcome = p_outcome::match_outcome, w_sets = p_w_sets, l_sets = p_l_sets, w_games = p_w_games, l_games = p_l_games, has_stats = l_has_stats
+			winner_id = l_winner_id, winner_country_id = p_winner_country_id, winner_seed = p_winner_seed, winner_entry = p_winner_entry::tournament_entry, winner_rank = p_winner_rank, winner_rank_points = p_winner_rank_points, winner_age = p_winner_age, winner_height = p_winner_height,
+			loser_id = l_loser_id, loser_country_id = p_loser_country_id, loser_seed = p_loser_seed, loser_entry = p_loser_entry::tournament_entry, loser_rank = p_loser_rank, loser_rank_points = p_loser_rank_points, loser_age = p_loser_age, loser_height = p_loser_height,
+			score = p_score, outcome = p_outcome::match_outcome, w_sets = p_w_sets, l_sets = p_l_sets, w_games = p_w_games, l_games = p_l_games, has_stats = l_has_stats
 		WHERE tournament_event_id = l_tournament_event_id AND match_num = p_match_num
 		RETURNING match_id INTO l_match_id;
 		l_new := FALSE;
@@ -508,6 +508,111 @@ BEGIN
 		WHERE match_id = l_match_id AND set > l_set_count;
 	END IF;
 
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- load_current_event
+
+CREATE OR REPLACE FUNCTION load_current_event(
+	p_ext_tournament_id TEXT,
+	p_season SMALLINT,
+	p_date DATE,
+	p_name TEXT,
+	p_level TEXT,
+	p_surface TEXT,
+	p_indoor BOOLEAN,
+	p_draw_type TEXT,
+	p_draw_size SMALLINT
+) RETURNS INTEGER AS $$
+DECLARE
+	l_tournament_id INTEGER;
+	l_current_event_id INTEGER;
+BEGIN
+	l_tournament_id := merge_tournament(p_ext_tournament_id, p_name, p_level, p_surface, p_indoor);
+	UPDATE current_event
+	SET date = p_date, name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor, draw_type = p_draw_type::draw_type, draw_size = p_draw_size
+	WHERE tournament_id = l_tournament_id AND season = p_season
+	RETURNING current_event_id INTO l_current_event_id;
+	IF l_current_event_id IS NULL THEN
+		INSERT INTO current_event
+		(tournament_id, season, date, name, level, surface, indoor, draw_type, draw_size)
+		VALUES
+		(l_tournament_id, p_season, p_date, p_name, p_level::tournament_level, p_surface::surface, p_indoor, p_draw_type::draw_type, p_draw_size)
+		RETURNING current_event_id INTO l_current_event_id;
+	END IF;
+	RETURN l_current_event_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- load_current_match
+
+CREATE OR REPLACE FUNCTION load_current_match(
+	p_current_event_id INTEGER,
+	p_match_num SMALLINT,
+	p_prev_match1_id INTEGER,
+	p_prev_match2_id INTEGER,
+	p_date DATE,
+	p_surface TEXT,
+	p_indoor BOOLEAN,
+	p_round TEXT,
+	p_best_of SMALLINT,
+	p_player1_name INTEGER,
+	p_player1_country_id SMALLINT,
+	p_player1_seed TEXT,
+	p_player1_entry INTEGER,
+	p_player2_name INTEGER,
+	p_player2_country_id SMALLINT,
+	p_player2_seed TEXT,
+	p_player2_entry INTEGER,
+	p_winner SMALLINT,
+	p_score TEXT,
+	p_outcome TEXT
+) RETURNS INTEGER AS $$
+DECLARE
+	l_player1_id INTEGER;
+	l_player2_id INTEGER;
+	l_current_match_id INTEGER;
+BEGIN
+	-- find players
+	IF p_player1_name IS NOT NULL THEN
+		l_player1_id := find_player(p_player1_name, p_date);
+	END IF;
+	IF p_player2_name IS NOT NULL THEN
+		l_player2_id := find_player(p_player2_name, p_date);
+	END IF;
+
+	-- add data if missing
+	IF l_player1_id IS NOT NULL AND p_player1_country_id IS NULL THEN
+		SELECT country_id INTO p_player1_country_id FROM player WHERE player_id = l_player1_id;
+	END IF;
+	IF l_player2_id IS NOT NULL AND p_player2_country_id IS NULL THEN
+		SELECT country_id INTO p_player2_country_id FROM player WHERE player_id = l_player2_id;
+	END IF;
+
+	-- merge current_match
+	BEGIN
+		INSERT INTO current_match
+		(current_event_id, match_num, prev_match1_id, prev_match2_id, date, surface, indoor, round, best_of,
+		 player1_id, player1_country_id, player1_seed, player1_entry,
+		 player2_id, player2_country_id, player2_seed, player2_entry,
+		 winner, score, outcome)
+		VALUES
+		(p_current_event_id, p_match_num, p_prev_match1_id, p_prev_match2_id, p_date, p_surface::surface, p_indoor, p_round::match_round, p_best_of,
+		 l_player1_id, p_player1_country_id, p_player1_seed, p_player1_entry::tournament_entry,
+		 l_player2_id, p_player2_country_id, p_player2_seed, p_player2_entry::tournament_entry,
+		 p_winner, p_score, p_outcome::match_outcome)
+		RETURNING current_match_id INTO l_current_match_id;
+   EXCEPTION WHEN unique_violation THEN
+		UPDATE current_match
+		SET prev_match1_id = p_prev_match1_id, prev_match2_id = p_prev_match2_id, date = p_date, surface = p_surface::surface, indoor = p_indoor, round = p_round::match_round, best_of = p_best_of,
+			player1_id = l_player1_id, player1_country_id = p_player1_country_id, player1_seed = p_player1_seed, player1_entry = p_player1_entry::tournament_entry,
+			player2_id = l_player2_id, player2_country_id = p_player2_country_id, player2_seed = p_player2_seed, player2_entry = p_player2_entry::tournament_entry,
+			winner = p_winner, score = p_score, outcome = p_outcome::match_outcome
+		WHERE current_event_id = p_current_event_id AND match_num = p_match_num
+		RETURNING current_match_id INTO l_current_match_id;
+   END;
 END;
 $$ LANGUAGE plpgsql;
 
