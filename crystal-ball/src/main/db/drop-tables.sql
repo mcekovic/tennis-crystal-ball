@@ -24,6 +24,7 @@ DROP TABLE performance_category CASCADE;
 DROP TABLE statistics_goat_points CASCADE;
 DROP TABLE statistics_category CASCADE;
 
+DROP TABLE player_current_event_result CASCADE;
 DROP TABLE current_match CASCADE;
 DROP TABLE current_event CASCADE;
 DROP TABLE team_tournament_event_winner CASCADE;

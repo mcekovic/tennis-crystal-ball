@@ -516,7 +516,6 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION load_current_event(
 	p_ext_tournament_id TEXT,
-	p_season SMALLINT,
 	p_date DATE,
 	p_name TEXT,
 	p_level TEXT,
@@ -524,24 +523,21 @@ CREATE OR REPLACE FUNCTION load_current_event(
 	p_indoor BOOLEAN,
 	p_draw_type TEXT,
 	p_draw_size SMALLINT
-) RETURNS INTEGER AS $$
+) RETURNS VOID AS $$
 DECLARE
 	l_tournament_id INTEGER;
-	l_current_event_id INTEGER;
 BEGIN
-	l_tournament_id := merge_tournament(p_ext_tournament_id, p_name, p_level, p_surface, p_indoor);
-	UPDATE current_event
-	SET date = p_date, name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor, draw_type = p_draw_type::draw_type, draw_size = p_draw_size
-	WHERE tournament_id = l_tournament_id AND season = p_season
-	RETURNING current_event_id INTO l_current_event_id;
-	IF l_current_event_id IS NULL THEN
+	l_tournament_id := map_ext_tournament(p_ext_tournament_id);
+	BEGIN
 		INSERT INTO current_event
-		(tournament_id, season, date, name, level, surface, indoor, draw_type, draw_size)
+		(tournament_id, date, name, level, surface, indoor, draw_type, draw_size)
 		VALUES
-		(l_tournament_id, p_season, p_date, p_name, p_level::tournament_level, p_surface::surface, p_indoor, p_draw_type::draw_type, p_draw_size)
-		RETURNING current_event_id INTO l_current_event_id;
-	END IF;
-	RETURN l_current_event_id;
+		(l_tournament_id, p_date, p_name, p_level::tournament_level, p_surface::surface, p_indoor, p_draw_type::draw_type, p_draw_size);
+	EXCEPTION WHEN unique_violation THEN
+		UPDATE current_event
+		SET date = p_date, name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor, draw_type = p_draw_type::draw_type, draw_size = p_draw_size
+		WHERE tournament_id = l_tournament_id;
+	END;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -549,7 +545,7 @@ $$ LANGUAGE plpgsql;
 -- load_current_match
 
 CREATE OR REPLACE FUNCTION load_current_match(
-	p_current_event_id INTEGER,
+	p_ext_tournament_id TEXT,
 	p_match_num SMALLINT,
 	p_prev_match1_id INTEGER,
 	p_prev_match2_id INTEGER,
@@ -558,23 +554,28 @@ CREATE OR REPLACE FUNCTION load_current_match(
 	p_indoor BOOLEAN,
 	p_round TEXT,
 	p_best_of SMALLINT,
-	p_player1_name INTEGER,
-	p_player1_country_id SMALLINT,
-	p_player1_seed TEXT,
-	p_player1_entry INTEGER,
-	p_player2_name INTEGER,
-	p_player2_country_id SMALLINT,
-	p_player2_seed TEXT,
-	p_player2_entry INTEGER,
+	p_player1_name TEXT,
+	p_player1_country_id TEXT,
+	p_player1_seed SMALLINT,
+	p_player1_entry TEXT,
+	p_player2_name TEXT,
+	p_player2_country_id TEXT,
+	p_player2_seed SMALLINT,
+	p_player2_entry TEXT,
 	p_winner SMALLINT,
 	p_score TEXT,
 	p_outcome TEXT
-) RETURNS INTEGER AS $$
+) RETURNS VOID AS $$
 DECLARE
+	l_tournament_id INTEGER;
 	l_player1_id INTEGER;
 	l_player2_id INTEGER;
-	l_current_match_id INTEGER;
 BEGIN
+	l_tournament_id := map_ext_tournament(p_ext_tournament_id);
+	IF l_tournament_id IS NULL THEN
+		RAISE EXCEPTION 'Tournament % not found', p_ext_tournament_id;
+	END IF;
+
 	-- find players
 	IF p_player1_name IS NOT NULL THEN
 		l_player1_id := find_player(p_player1_name, p_date);
@@ -594,25 +595,52 @@ BEGIN
 	-- merge current_match
 	BEGIN
 		INSERT INTO current_match
-		(current_event_id, match_num, prev_match1_id, prev_match2_id, date, surface, indoor, round, best_of,
+		(tournament_id, match_num, prev_match1_id, prev_match2_id, date, surface, indoor, round, best_of,
 		 player1_id, player1_country_id, player1_seed, player1_entry,
 		 player2_id, player2_country_id, player2_seed, player2_entry,
 		 winner, score, outcome)
 		VALUES
-		(p_current_event_id, p_match_num, p_prev_match1_id, p_prev_match2_id, p_date, p_surface::surface, p_indoor, p_round::match_round, p_best_of,
+		(l_tournament_id, p_match_num, p_prev_match1_id, p_prev_match2_id, p_date, p_surface::surface, p_indoor, p_round::match_round, p_best_of,
 		 l_player1_id, p_player1_country_id, p_player1_seed, p_player1_entry::tournament_entry,
 		 l_player2_id, p_player2_country_id, p_player2_seed, p_player2_entry::tournament_entry,
-		 p_winner, p_score, p_outcome::match_outcome)
-		RETURNING current_match_id INTO l_current_match_id;
+		 p_winner, p_score, p_outcome::match_outcome);
    EXCEPTION WHEN unique_violation THEN
 		UPDATE current_match
 		SET prev_match1_id = p_prev_match1_id, prev_match2_id = p_prev_match2_id, date = p_date, surface = p_surface::surface, indoor = p_indoor, round = p_round::match_round, best_of = p_best_of,
 			player1_id = l_player1_id, player1_country_id = p_player1_country_id, player1_seed = p_player1_seed, player1_entry = p_player1_entry::tournament_entry,
 			player2_id = l_player2_id, player2_country_id = p_player2_country_id, player2_seed = p_player2_seed, player2_entry = p_player2_entry::tournament_entry,
 			winner = p_winner, score = p_score, outcome = p_outcome::match_outcome
-		WHERE current_event_id = p_current_event_id AND match_num = p_match_num
-		RETURNING current_match_id INTO l_current_match_id;
+		WHERE tournament_id = l_tournament_id AND match_num = p_match_num;
    END;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- load_player_current_event_result
+
+CREATE OR REPLACE FUNCTION load_player_current_event_result(
+	p_ext_tournament_id TEXT,
+	p_player_id INTEGER,
+	p_result TEXT,
+	p_probability REAL
+) RETURNS VOID AS $$
+DECLARE
+	l_tournament_id INTEGER;
+BEGIN
+	l_tournament_id := map_ext_tournament(p_ext_tournament_id);
+	IF l_tournament_id IS NULL THEN
+		RAISE EXCEPTION 'Tournament % not found', p_ext_tournament_id;
+	END IF;
+	BEGIN
+		INSERT INTO player_current_event_result
+		(tournament_id, player_id, result, probability)
+		VALUES
+		(l_tournament_id, p_player_id, p_result::tournament_event_result, p_probability);
+	EXCEPTION WHEN unique_violation THEN
+		UPDATE player_current_event_result
+		SET probability = p_probability
+		WHERE tournament_id = l_tournament_id AND player_id = p_player_id AND result = p_result;
+	END;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -818,7 +846,3 @@ BEGIN
 	WHERE tournament_event_id = l_tournament_event_id;
 END;
 $$ LANGUAGE plpgsql;
-
-
-
-

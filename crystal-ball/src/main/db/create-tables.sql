@@ -142,7 +142,7 @@ CREATE INDEX ON player_elo_ranking (player_id);
 CREATE TABLE match (
 	match_id BIGSERIAL PRIMARY KEY,
 	tournament_event_id INTEGER NOT NULL REFERENCES tournament_event (tournament_event_id) ON DELETE CASCADE,
-	match_num SMALLINT,
+	match_num SMALLINT NOT NULL,
 	date DATE NOT NULL,
 	surface surface,
 	indoor BOOLEAN NOT NULL,
@@ -264,9 +264,7 @@ CREATE TABLE team_tournament_event_winner (
 -- current_event
 
 CREATE TABLE current_event (
-	current_event_id SERIAL PRIMARY KEY,
-	tournament_id INTEGER NOT NULL REFERENCES tournament (tournament_id),
-	season SMALLINT NOT NULL,
+	tournament_id INTEGER NOT NULL REFERENCES tournament (tournament_id) ON DELETE CASCADE PRIMARY KEY,
 	date DATE NOT NULL,
 	name TEXT NOT NULL,
 	level tournament_level NOT NULL,
@@ -281,10 +279,10 @@ CREATE TABLE current_event (
 
 CREATE TABLE current_match (
 	current_match_id BIGSERIAL PRIMARY KEY,
-	current_event_id INTEGER NOT NULL REFERENCES current_event (current_event_id) ON DELETE CASCADE,
-	match_num SMALLINT,
-	prev_match1_id INTEGER NOT NULL REFERENCES current_match (current_match_id) ON DELETE CASCADE,
-	prev_match2_id INTEGER NOT NULL REFERENCES current_match (current_match_id) ON DELETE CASCADE,
+	tournament_id INTEGER NOT NULL REFERENCES tournament (tournament_id) ON DELETE CASCADE,
+	match_num SMALLINT NOT NULL,
+	prev_match1_id INTEGER REFERENCES current_match (current_match_id) ON DELETE CASCADE,
+	prev_match2_id INTEGER REFERENCES current_match (current_match_id) ON DELETE CASCADE,
 	date DATE,
 	surface surface,
 	indoor BOOLEAN,
@@ -301,12 +299,23 @@ CREATE TABLE current_match (
 	winner SMALLINT,
 	score TEXT,
 	outcome match_outcome,
-	UNIQUE (current_event_id, match_num)
+	UNIQUE (tournament_id, match_num)
 );
 
-CREATE INDEX ON current_match (current_match_id);
+CREATE INDEX ON current_match (tournament_id);
 CREATE INDEX ON current_match (prev_match1_id);
 CREATE INDEX ON current_match (prev_match2_id);
+
+
+-- player_current_event_result
+
+CREATE TABLE player_current_event_result (
+	tournament_id INTEGER NOT NULL REFERENCES tournament (tournament_id) ON DELETE CASCADE,
+	player_id INTEGER REFERENCES player (player_id) ON DELETE CASCADE,
+	result tournament_event_result,
+	probability REAL NOT NULL,
+	PRIMARY KEY (tournament_id, player_id, result)
+);
 
 
 -- tournament_rank_points
