@@ -74,6 +74,11 @@ public class DataService {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
 	}
 
+	public Integer getLastSeason() {
+		List<Integer> seasons = getSeasons();
+		return !seasons.isEmpty() ? seasons.get(0) : null;
+	}
+
 	public void clearCaches() {
 		for (String cacheName : cacheManager.getCacheNames())
 			cacheManager.getCache(cacheName).clear();

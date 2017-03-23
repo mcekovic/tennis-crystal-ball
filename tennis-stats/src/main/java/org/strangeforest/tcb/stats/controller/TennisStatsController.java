@@ -16,13 +16,18 @@ import static org.strangeforest.tcb.util.DateUtil.*;
 @Controller
 public class TennisStatsController extends PageController {
 
+	@Autowired private DataService dataService;
 	@Autowired private GOATListService goatListService;
 	@Autowired private RankingsService rankingsService;
 
 	@GetMapping("/")
 	public ModelAndView index() {
 		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
-		return new ModelAndView("index", "goatTopN", goatTopN);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("currentSeason", dataService.getLastSeason());
+		modelMap.addAttribute("goatTopN", goatTopN);
+		return new ModelAndView("index", modelMap);
 	}
 
 	@GetMapping("/about")

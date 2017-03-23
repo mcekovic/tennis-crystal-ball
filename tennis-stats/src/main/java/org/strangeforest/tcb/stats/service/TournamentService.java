@@ -140,7 +140,7 @@ public class TournamentService {
 					return new Tournament(tournamentId, name, level, surface, indoor, seasons);
 				}
 				else
-					throw new IllegalArgumentException(format("Tournament %1$d not found.", tournamentId));
+					throw new NotFoundException("Tournament", tournamentId);
 			}
 		);
 	}
@@ -170,7 +170,7 @@ public class TournamentService {
 				if (rs.next())
 					return mapTournamentEvent(rs, true);
 				else
-					throw new IllegalArgumentException(format("Tournament event %1$d not found.", tournamentEventId));
+					throw new NotFoundException("Tournament event", tournamentEventId);
 			}
 		);
 		String level = event.getLevel();

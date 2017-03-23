@@ -117,7 +117,7 @@ public class MatchPredictionService {
 					return new PlayerData(hand, backhand);
 				}
 				else
-					throw new IllegalArgumentException(format("Player %1$d not found.", playerId));
+					throw new NotFoundException("Player", playerId);
 			}
 		);
 	}

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="latestEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEvent>"*/-->
+<!--/*@thymesVar id="currentSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="goatTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
 <head th:replace="fragments/head :: commonHead(null, true, ~{::script}, ~{::style})">
 	<script type="text/javascript">
@@ -65,7 +65,7 @@
 				For more information please click <a href="/about">here</a>.
 			</p>
 			<h4 class="text-nowrap">Latest Results</h4>
-			<table id="latestEvents" class="table table-condensed table-hover table-striped">
+			<table id="latestEvents" class="table table-condensed table-hover table-striped" style="margin-bottom: 0">
 				<thead>
 				<tr>
 					<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
@@ -77,6 +77,11 @@
 				</tr>
 				</thead>
 			</table>
+			<div class="pull-right">
+				<a href="/tournamentEvents" class="label label-B" title="Show more tournament results">More Results</a>
+				<a th:href="|/season?season=${currentSeason}|" class="label label-default" th:title="|Show season ${currentSeason} figures|">Season [[${currentSeason}]]</a>
+			</div>
+			<br/>
 			<h4 class="text-nowrap">Latest New Features<sup class="new-feature">&nbsp;New!</sup></h4>
 			<ul>
 				<li>Filtering by Statistics Conditions - Player matches and tournaments can be filtered by statistics conditions (advanced filter), like filter all tournaments with 1st serve % >= 75%</li>
