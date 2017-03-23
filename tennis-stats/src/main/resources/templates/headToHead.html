@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:with="bothPlayersSelected=${player1 != null && player2 != null}, anyPlayerSelected=${player1 != null || player2 != null}, neitherPlayerSelected=${player1 == null && player2 == null}, samePlayersSelected=${bothPlayersSelected && player1.id == player2.id}">
 <!--/*@thymesVar id="player1" type="org.strangeforest.tcb.stats.model.Player"*/-->
 <!--/*@thymesVar id="playerRef1" type="java.lang.String"*/-->
 <!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.Player"*/-->
@@ -76,7 +76,7 @@
 		[/]
 	</script>
 </head>
-<body class="container" th:with="bothPlayersSelected=${player1 != null && player2 != null}, anyPlayerSelected=${player1 != null || player2 != null}, neitherPlayerSelected=${player1 == null && player2 == null}, samePlayersSelected=${bothPlayersSelected && player1.id == player2.id}">
+<body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<div class="row">
 		<div class="col-md-6">
