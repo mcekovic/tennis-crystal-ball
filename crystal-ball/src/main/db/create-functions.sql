@@ -82,8 +82,10 @@ CREATE OR REPLACE FUNCTION tournament_end(
 	p_draw_size SMALLINT
 ) RETURNS DATE AS $$
 BEGIN
-	IF p_level = 'G' OR p_draw_size >= 96 THEN
+	IF p_level = 'G' OR p_draw_size >= 128 THEN
 		RETURN p_date + INTEGER '14';
+	ELSEIF p_draw_size >= 96 THEN
+		RETURN p_date + INTEGER '11';
 	ELSE
 		RETURN p_date + INTEGER '7';
 	END IF;
