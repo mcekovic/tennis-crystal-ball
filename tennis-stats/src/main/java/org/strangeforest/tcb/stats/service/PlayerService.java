@@ -136,7 +136,7 @@ public class PlayerService {
 		Map<String, String> quickPicks = new LinkedHashMap<>();
 		quickPicks.put("Big Four", "Roger Federer, Rafael Nadal, Novak Djokovic, Andy Murray");
 		quickPicks.put("Young Guns", "Marin Cilic, Kei Nishikori, Milos Raonic, Grigor Dimitrov, Bernard Tomic");
-		quickPicks.put("Youngest Guns", "Dominic Thiem, Lucas Pouille, Nick Kyrgios, Borna Coric, Alexander Zverev");
+		quickPicks.put("Next Gen", "Dominic Thiem, Lucas Pouille, Nick Kyrgios, Borna Coric, Alexander Zverev");
 		quickPicks.put("Week Era", "Gustavo Kuerten, Marat Safin, Juan Carlos Ferrero, Lleyton Hewitt, Andy Roddick");
 		quickPicks.put("Americans rule '90", "Pete Sampras, Andre Agassi, Jim Courier, Michael Chang");
 		quickPicks.put("Late '80 / Early '90", "Mats Wilander, Stefan Edberg, Boris Becker, Thomas Muster");
