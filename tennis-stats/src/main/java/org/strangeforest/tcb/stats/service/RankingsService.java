@@ -44,7 +44,7 @@ public class RankingsService {
 		"FROM %2$s r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.rank_date = :date\n" +
-		"ORDER BY rank LIMIT :playerCount";
+		"ORDER BY %3$s LIMIT :playerCount";
 
 	private static final String RANKING_TABLE_QUERY = //language=SQL
 		"SELECT %1$s AS rank, player_id, p.name, p.country_id, %2$s AS points, %3$s AS best_rank, %4$s AS best_rank_date\n" +
@@ -131,7 +131,7 @@ public class RankingsService {
 	public List<PlayerRanking> getRankingsTopN(RankType rankType, LocalDate date, int playerCount) {
 		checkRankType(rankType);
 		return jdbcTemplate.query(
-			format(RANKING_TOP_N_QUERY, pointsColumn(rankType), rankingTable(rankType)),
+			format(RANKING_TOP_N_QUERY, pointsColumn(rankType), rankingTable(rankType), rankColumn(rankType)),
 			params("date", date).addValue("playerCount", playerCount),
 			(rs, rowNum) -> {
 				int goatRank = rs.getInt("rank");

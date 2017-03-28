@@ -2,6 +2,8 @@
 	<!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
 	<!--/*@thymesVar id="date" type="java.util.Date"*/-->
 	<!--/*@thymesVar id="rankingTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
+	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 	<style>
 		button.rank-type {
 			padding: 0px 4px;
@@ -16,14 +18,15 @@
 					<div>Top [[${rankingTopN.size()}]]</div>
 					<div class="text-muted" style="font-size: 60%" th:text="${#dates.format(date, 'dd-MM-yyyy')}">01-11-2015</div>
 				</div>
-				<div class="btn-group">
+				<div class="btn-group" th:attrappend="class=${surface != null ? ' bg-surface-' + surface : _}">
 					<button type="button" class="btn btn-default rank-type">[[${rankType.name() == 'POINTS' ? 'ATP' : 'Elo'}]]</button>
 					<button type="button" class="btn btn-default dropdown-toggle rank-type" data-toggle="dropdown">
 						<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu">
+					<ul id="rankingTopNSelect" class="dropdown-menu" role="menu">
 						<li><a href="#" onclick="event.preventDefault(); loadRankingTopN('POINTS')">ATP</a></li>
 						<li><a href="#" target="" onclick="event.preventDefault(); loadRankingTopN('ELO_RATING')">Elo</a></li>
+						<li th:each="aSurface : ${surfaces}" th:unless="${aSurface.code == 'P'}"><a href="#" target="" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:text="|${aSurface.text} Elo|" th:onclick="'event.preventDefault(); loadRankingTopN(\'' + ${aSurface} + '_ELO_RATING\', \'' + ${aSurface.code} + '\')'">Hard Elo</a></li>
 					</ul>
 				</div>
 			</h4>

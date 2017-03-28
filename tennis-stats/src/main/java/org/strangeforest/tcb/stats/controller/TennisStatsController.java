@@ -38,7 +38,8 @@ public class TennisStatsController extends PageController {
 
 	@GetMapping("/rankingTopN")
 	public ModelAndView rankingTopN(
-      @RequestParam(name = "rankType", defaultValue = "POINTS") RankType rankType
+      @RequestParam(name = "rankType", defaultValue = "POINTS") RankType rankType,
+      @RequestParam(name = "surface", required = false) String surface
 	) {
 		LocalDate date = rankingsService.getCurrentRankingDate(rankType);
 		List<PlayerRanking> rankingTopN = rankingsService.getRankingsTopN(rankType, date, 10);
@@ -47,6 +48,8 @@ public class TennisStatsController extends PageController {
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("date", toDate(date));
 		modelMap.addAttribute("rankingTopN", rankingTopN);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surface", surface);
 		return new ModelAndView("rankingTopN", modelMap);
 	}
 

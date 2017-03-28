@@ -10,9 +10,6 @@
 			$("[data-toggle='collapse']").click(collapseClick);
 			$("#goatLegend").on("show.bs.collapse", setGOATLegendWidth);
 		});
-		function loadRankingTopN(rankType) {
-			$("#rankingTopN").load("/rankingTopN?rankType=" + rankType);
-		}
 		function goatLegendWidth() {
 			switch (detectDevice()) {
 				case "lg": return "120%";
