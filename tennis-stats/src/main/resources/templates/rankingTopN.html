@@ -33,10 +33,10 @@
 		</div>
 		<table class="table table-condensed table-hover table-striped small">
 			<thead>
-			<tr>
-				<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'ATP Rank' : 'Elo Rank'}">R.</th>
+			<tr th:class="${surface != null ? ' bg-surface-' + surface : _}" th:with="surfaceText=${surface != null ? T(org.strangeforest.tcb.stats.model.Surface).decode(surface).text : _}">
+				<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'ATP Rank' : ((surfaceText != null ? surfaceText + ' ' : '') + 'Elo Rank')}">R.</th>
 				<th>Name</th>
-				<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'Ranking Points' : 'Elo Rating'}" th:text="${rankType.name() == 'POINTS' ? 'Pts.' : 'Elo'}">Pts.</th>
+				<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'Ranking Points' : ((surfaceText != null ? surfaceText + ' ' : '') + 'Elo Rating')}" th:text="${rankType.name() == 'POINTS' ? 'Pts.' : 'Elo'}">Pts.</th>
 			</tr>
 			</thead>
 			<tbody>
