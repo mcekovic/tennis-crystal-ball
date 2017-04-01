@@ -512,9 +512,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- load_current_event
+-- load_in_progress_event
 
-CREATE OR REPLACE FUNCTION load_current_event(
+CREATE OR REPLACE FUNCTION load_in_progress_event(
 	p_ext_tournament_id TEXT,
 	p_date DATE,
 	p_name TEXT,
@@ -526,52 +526,72 @@ CREATE OR REPLACE FUNCTION load_current_event(
 ) RETURNS VOID AS $$
 DECLARE
 	l_tournament_id INTEGER;
+	l_in_progress_event_id INTEGER;
 BEGIN
 	l_tournament_id := map_ext_tournament(p_ext_tournament_id);
-	BEGIN
-		INSERT INTO current_event
+	UPDATE in_progress_event
+	SET date = p_date, name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor, draw_type = p_draw_type::draw_type, draw_size = p_draw_size
+	WHERE tournament_id = l_tournament_id
+	RETURNING in_progress_event_id INTO l_in_progress_event_id;
+	IF l_in_progress_event_id IS NULL THEN
+		INSERT INTO in_progress_event
 		(tournament_id, date, name, level, surface, indoor, draw_type, draw_size)
 		VALUES
 		(l_tournament_id, p_date, p_name, p_level::tournament_level, p_surface::surface, p_indoor, p_draw_type::draw_type, p_draw_size);
-	EXCEPTION WHEN unique_violation THEN
-		UPDATE current_event
-		SET date = p_date, name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor, draw_type = p_draw_type::draw_type, draw_size = p_draw_size
-		WHERE tournament_id = l_tournament_id;
-	END;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 
 
--- load_current_event
+-- find_in_progress_event
 
-CREATE OR REPLACE FUNCTION find_current_event(
+CREATE OR REPLACE FUNCTION find_in_progress_event(
 	p_ext_tournament_id TEXT
 ) RETURNS INTEGER AS $$
 DECLARE
 	l_tournament_id INTEGER;
-	l_current_event_id INTEGER;
+	l_in_progress_event_id INTEGER;
 BEGIN
 	l_tournament_id := map_ext_tournament(p_ext_tournament_id);
 	IF l_tournament_id IS NULL THEN
 		RAISE EXCEPTION 'Tournament % not found', p_ext_tournament_id;
 	END IF;
-	SELECT current_event_id INTO l_current_event_id FROM current_event
+	SELECT in_progress_event_id INTO l_in_progress_event_id FROM in_progress_event
 	WHERE	tournament_id = l_tournament_id;
-	IF l_current_event_id IS NULL THEN
-		RAISE EXCEPTION 'Current Event for Tournament % not found', l_tournament_id;
+	IF l_in_progress_event_id IS NULL THEN
+		RAISE EXCEPTION 'In-Progress Event for Tournament % not found', l_tournament_id;
 	END IF;
-	RETURN l_current_event_id;
+	RETURN l_in_progress_event_id;
 END;
 $$ LANGUAGE plpgsql;
 
 
--- load_current_match
+-- find_in_progress_match
 
-CREATE OR REPLACE FUNCTION load_current_match(
+CREATE OR REPLACE FUNCTION find_in_progress_match(
+	p_in_progress_event_id INTEGER,
+	p_match_num SMALLINT
+) RETURNS INTEGER AS $$
+DECLARE
+	l_in_progress_match_id INTEGER;
+BEGIN
+	SELECT in_progress_match_id INTO l_in_progress_match_id FROM in_progress_match
+	WHERE	in_progress_event_id = p_in_progress_event_id AND match_num = p_match_num;
+	IF l_in_progress_match_id IS NULL THEN
+		RAISE EXCEPTION 'In-Progress Match % for In-Progress Event % not found', p_match_num, p_in_progress_event_id;
+	END IF;
+	RETURN l_in_progress_match_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- load_in_progress_match
+
+CREATE OR REPLACE FUNCTION load_in_progress_match(
 	p_ext_tournament_id TEXT,
 	p_match_num SMALLINT,
-	p_prev_match1_id INTEGER,
-	p_prev_match2_id INTEGER,
+	p_prev_match_num1 SMALLINT,
+	p_prev_match_num2 SMALLINT,
 	p_date DATE,
 	p_surface TEXT,
 	p_indoor BOOLEAN,
@@ -590,11 +610,22 @@ CREATE OR REPLACE FUNCTION load_current_match(
 	p_outcome TEXT
 ) RETURNS VOID AS $$
 DECLARE
-	l_current_event_id INTEGER;
+	l_in_progress_event_id INTEGER;
+	l_prev_match1_id INTEGER;
+	l_prev_match2_id INTEGER;
 	l_player1_id INTEGER;
 	l_player2_id INTEGER;
+	l_in_progress_match_id BIGINT;
 BEGIN
-	l_current_event_id := find_current_event(p_ext_tournament_id);
+	l_in_progress_event_id := find_in_progress_event(p_ext_tournament_id);
+
+	-- find previous matches
+	IF p_prev_match_num1 > 0 THEN
+		l_prev_match1_id := find_in_progress_match(l_in_progress_event_id, p_prev_match_num1);
+	END IF;
+	IF p_prev_match_num2 > 0 THEN
+		l_prev_match2_id := find_in_progress_match(l_in_progress_event_id, p_prev_match_num2);
+	END IF;
 
 	-- find players
 	IF p_player1_name IS NOT NULL THEN
@@ -612,51 +643,48 @@ BEGIN
 		SELECT country_id INTO p_player2_country_id FROM player WHERE player_id = l_player2_id;
 	END IF;
 
-	-- merge current_match
-	BEGIN
-		INSERT INTO current_match
-		(current_event_id, match_num, prev_match1_id, prev_match2_id, date, surface, indoor, round, best_of,
+	-- merge in_progress_match
+	UPDATE in_progress_match
+	SET prev_match1_id = l_prev_match1_id, prev_match2_id = l_prev_match2_id, date = p_date, surface = p_surface::surface, indoor = p_indoor, round = p_round::match_round, best_of = p_best_of,
+		player1_id = l_player1_id, player1_country_id = p_player1_country_id, player1_seed = p_player1_seed, player1_entry = p_player1_entry::tournament_entry,
+		player2_id = l_player2_id, player2_country_id = p_player2_country_id, player2_seed = p_player2_seed, player2_entry = p_player2_entry::tournament_entry,
+		winner = p_winner, score = p_score, outcome = p_outcome::match_outcome
+	WHERE in_progress_event_id = l_in_progress_event_id AND match_num = p_match_num
+	RETURNING in_progress_match_id INTO l_in_progress_match_id;
+	IF l_in_progress_match_id IS NULL THEN
+		INSERT INTO in_progress_match
+		(in_progress_event_id, match_num, prev_match1_id, prev_match2_id, date, surface, indoor, round, best_of,
 		 player1_id, player1_country_id, player1_seed, player1_entry,
 		 player2_id, player2_country_id, player2_seed, player2_entry,
 		 winner, score, outcome)
 		VALUES
-		(l_current_event_id, p_match_num, p_prev_match1_id, p_prev_match2_id, p_date, p_surface::surface, p_indoor, p_round::match_round, p_best_of,
+		(l_in_progress_event_id, p_match_num, l_prev_match1_id, l_prev_match2_id, p_date, p_surface::surface, p_indoor, p_round::match_round, p_best_of,
 		 l_player1_id, p_player1_country_id, p_player1_seed, p_player1_entry::tournament_entry,
 		 l_player2_id, p_player2_country_id, p_player2_seed, p_player2_entry::tournament_entry,
 		 p_winner, p_score, p_outcome::match_outcome);
-   EXCEPTION WHEN unique_violation THEN
-		UPDATE current_match
-		SET prev_match1_id = p_prev_match1_id, prev_match2_id = p_prev_match2_id, date = p_date, surface = p_surface::surface, indoor = p_indoor, round = p_round::match_round, best_of = p_best_of,
-			player1_id = l_player1_id, player1_country_id = p_player1_country_id, player1_seed = p_player1_seed, player1_entry = p_player1_entry::tournament_entry,
-			player2_id = l_player2_id, player2_country_id = p_player2_country_id, player2_seed = p_player2_seed, player2_entry = p_player2_entry::tournament_entry,
-			winner = p_winner, score = p_score, outcome = p_outcome::match_outcome
-		WHERE current_event_id = l_current_event_id AND match_num = p_match_num;
-   END;
+   END IF;
 END;
 $$ LANGUAGE plpgsql;
 
 
--- load_player_current_event_result
+-- load_player_in_progress_result
 
-CREATE OR REPLACE FUNCTION load_player_current_event_result(
-	p_ext_tournament_id TEXT,
+CREATE OR REPLACE FUNCTION load_player_in_progress_result(
+	p_in_progress_event_id INTEGER,
 	p_player_id INTEGER,
 	p_result TEXT,
 	p_probability REAL
 ) RETURNS VOID AS $$
-DECLARE
-	l_current_event_id INTEGER;
 BEGIN
-	l_current_event_id := find_current_event(p_ext_tournament_id);
 	BEGIN
-		INSERT INTO player_current_event_result
-		(current_event_id, player_id, result, probability)
+		INSERT INTO player_in_progress_result
+		(in_progress_event_id, player_id, result, probability)
 		VALUES
-		(l_current_event_id, p_player_id, p_result::tournament_event_result, p_probability);
+		(p_in_progress_event_id, p_player_id, p_result::tournament_event_result, p_probability);
 	EXCEPTION WHEN unique_violation THEN
-		UPDATE player_current_event_result
+		UPDATE player_in_progress_result
 		SET probability = p_probability
-		WHERE current_event_id = l_current_event_id AND player_id = p_player_id AND result = p_result;
+		WHERE in_progress_event_id = p_in_progress_event_id AND player_id = p_player_id AND result = p_result;
 	END;
 END;
 $$ LANGUAGE plpgsql;

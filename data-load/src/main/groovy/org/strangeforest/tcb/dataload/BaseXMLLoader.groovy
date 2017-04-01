@@ -85,6 +85,11 @@ abstract class BaseXMLLoader {
 		b ? b.toBoolean() : d
 	}
 
+	static Float real(f) {
+		f = f?.toFloat()
+		f != null ? f.toFloat() : null
+	}
+
 	static java.sql.Date date(d) {
 		d = d?.toString()
 		d ? new java.sql.Date(Date.parse('yyyy-MM-dd', d).time) : null

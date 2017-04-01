@@ -261,10 +261,10 @@ CREATE TABLE team_tournament_event_winner (
 );
 
 
--- current_event
+-- in_progress_event
 
-CREATE TABLE current_event (
-	current_event_id SERIAL PRIMARY KEY,
+CREATE TABLE in_progress_event (
+	in_progress_event_id SERIAL PRIMARY KEY,
 	tournament_id INTEGER NOT NULL REFERENCES tournament (tournament_id) ON DELETE CASCADE,
 	date DATE NOT NULL,
 	name TEXT NOT NULL,
@@ -272,18 +272,19 @@ CREATE TABLE current_event (
 	surface surface,
 	indoor BOOLEAN NOT NULL,
 	draw_type draw_type,
-	draw_size SMALLINT
+	draw_size SMALLINT,
+	UNIQUE (tournament_id)
 );
 
 
--- current_match
+-- in_progress_match
 
-CREATE TABLE current_match (
-	current_match_id BIGSERIAL PRIMARY KEY,
-	current_event_id INTEGER NOT NULL REFERENCES current_event (current_event_id) ON DELETE CASCADE,
+CREATE TABLE in_progress_match (
+	in_progress_match_id BIGSERIAL PRIMARY KEY,
+	in_progress_event_id INTEGER NOT NULL REFERENCES in_progress_event (in_progress_event_id) ON DELETE CASCADE,
 	match_num SMALLINT NOT NULL,
-	prev_match1_id INTEGER REFERENCES current_match (current_match_id) ON DELETE CASCADE,
-	prev_match2_id INTEGER REFERENCES current_match (current_match_id) ON DELETE CASCADE,
+	prev_match1_id INTEGER REFERENCES in_progress_match (in_progress_match_id) ON DELETE CASCADE,
+	prev_match2_id INTEGER REFERENCES in_progress_match (in_progress_match_id) ON DELETE CASCADE,
 	date DATE,
 	surface surface,
 	indoor BOOLEAN,
@@ -300,22 +301,22 @@ CREATE TABLE current_match (
 	winner SMALLINT,
 	score TEXT,
 	outcome match_outcome,
-	UNIQUE (current_event_id, match_num)
+	UNIQUE (in_progress_event_id, match_num)
 );
 
-CREATE INDEX ON current_match (current_event_id);
-CREATE INDEX ON current_match (prev_match1_id);
-CREATE INDEX ON current_match (prev_match2_id);
+CREATE INDEX ON in_progress_match (in_progress_event_id);
+CREATE INDEX ON in_progress_match (prev_match1_id);
+CREATE INDEX ON in_progress_match (prev_match2_id);
 
 
--- player_current_event_result
+-- player_in_progress_result
 
-CREATE TABLE player_current_event_result (
-	current_event_id INTEGER NOT NULL REFERENCES current_event (current_event_id) ON DELETE CASCADE,
+CREATE TABLE player_in_progress_result (
+	in_progress_event_id INTEGER NOT NULL REFERENCES in_progress_event (in_progress_event_id) ON DELETE CASCADE,
 	player_id INTEGER REFERENCES player (player_id) ON DELETE CASCADE,
 	result tournament_event_result,
 	probability REAL NOT NULL,
-	PRIMARY KEY (current_event_id, player_id, result)
+	PRIMARY KEY (in_progress_event_id, player_id, result)
 );
 
 

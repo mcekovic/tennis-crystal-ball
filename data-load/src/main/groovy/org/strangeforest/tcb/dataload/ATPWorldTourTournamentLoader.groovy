@@ -128,7 +128,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		println "\n$matches.size matches loaded in $stopwatch"
 	}
 
-	def setScoreParams(Map params, score, conn) {
+	static setScoreParams(Map params, score, conn) {
 		def matchScore = MatchScoreParser.parse(score)
 		params.score = string score
 		params.outcome = matchScore.outcome
@@ -142,7 +142,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		params.l_set_tb_pt = matchScore ? shortArray(conn, matchScore.l_set_tb_pt) : null
 	}
 
-	def setStatsParams(Map params, stats, prefix) {
+	static setStatsParams(Map params, stats, prefix) {
 		params[prefix + 'ace'] = smallint stats?.Aces
 		params[prefix + 'df'] = smallint stats?.DoubleFaults
 		params[prefix + 'sv_pt'] = smallint stats?.FirstServeDivisor

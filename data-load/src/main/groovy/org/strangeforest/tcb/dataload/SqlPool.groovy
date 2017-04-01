@@ -1,9 +1,11 @@
 package org.strangeforest.tcb.dataload
 
+import groovy.sql.*
+import org.springframework.jdbc.datasource.*
+
+import javax.sql.*
 import java.sql.*
 import java.util.concurrent.*
-
-import groovy.sql.*
 
 class SqlPool extends LinkedBlockingDeque<Sql> {
 
@@ -46,5 +48,12 @@ class SqlPool extends LinkedBlockingDeque<Sql> {
 		finally {
 			put(sql)
 		}
+	}
+
+	static DataSource dataSource() {
+		def dbURL = System.getProperty('tcb.db.url', 'jdbc:postgresql://localhost:5432/postgres?prepareThreshold=0')
+		def username = System.getProperty('tcb.db.username', 'tcb')
+		def password = System.getProperty('tcb.db.password', 'tcb')
+		new DriverManagerDataSource(dbURL, username, password)
 	}
 }

@@ -22,6 +22,7 @@ import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 public class MatchPredictionService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
+
 	private ConcurrentMap<Integer, PlayerData> players = new ConcurrentHashMap<>();
 	private ConcurrentMap<RankingKey, RankingData> playersRankings = new ConcurrentHashMap<>();
 	private ConcurrentMap<Integer, List<MatchData>> playersMatches = new ConcurrentHashMap<>();
@@ -47,6 +48,11 @@ public class MatchPredictionService {
 		"WHERE m.player_id = :playerId\n" +
 		"ORDER BY m.date";
 
+	public MatchPredictionService() {}
+
+	public MatchPredictionService(NamedParameterJdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date, Surface surface, TournamentLevel level, Round round) {
 		return predictMatch(playerId1, playerId2, date, surface, level, round, null);

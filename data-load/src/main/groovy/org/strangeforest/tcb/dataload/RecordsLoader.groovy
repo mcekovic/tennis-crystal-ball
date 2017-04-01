@@ -2,7 +2,6 @@ package org.strangeforest.tcb.dataload
 
 import com.google.common.base.*
 import org.springframework.jdbc.core.namedparam.*
-import org.springframework.jdbc.datasource.*
 import org.strangeforest.tcb.stats.model.records.*
 import org.strangeforest.tcb.stats.service.*
 
@@ -15,11 +14,7 @@ class RecordsLoader {
 	static final int PROGRESS_LINE_WRAP = 100
 
 	RecordsLoader() {
-		def dbURL = System.getProperty('tcb.db.url', 'jdbc:postgresql://localhost:5432/postgres?prepareThreshold=0')
-		def username = System.getProperty('tcb.db.username', 'tcb')
-		def password = System.getProperty('tcb.db.password', 'tcb')
-		def dataSource = new DriverManagerDataSource(dbURL, username, password)
-		recordsService = new RecordsService(new NamedParameterJdbcTemplate(dataSource))
+		recordsService = new RecordsService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
 	}
 
 	def loadRecords() {
