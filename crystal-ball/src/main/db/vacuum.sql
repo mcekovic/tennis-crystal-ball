@@ -12,6 +12,9 @@ VACUUM FULL ANALYSE VERBOSE match;
 VACUUM FULL ANALYSE VERBOSE set_score;
 VACUUM FULL ANALYSE VERBOSE match_stats;
 VACUUM FULL ANALYSE VERBOSE team_tournament_event_winner;
+VACUUM FULL ANALYSE VERBOSE in_progress_event;
+VACUUM FULL ANALYSE VERBOSE in_progress_match;
+VACUUM FULL ANALYSE VERBOSE player_in_progress_result;
 
 VACUUM FULL ANALYSE VERBOSE tournament_rank_points;
 VACUUM FULL ANALYSE VERBOSE year_end_rank_goat_points;

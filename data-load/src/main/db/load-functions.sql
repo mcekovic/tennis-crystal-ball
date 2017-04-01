@@ -684,7 +684,7 @@ BEGIN
 	EXCEPTION WHEN unique_violation THEN
 		UPDATE player_in_progress_result
 		SET probability = p_probability
-		WHERE in_progress_event_id = p_in_progress_event_id AND player_id = p_player_id AND result = p_result;
+		WHERE in_progress_event_id = p_in_progress_event_id AND player_id = p_player_id AND result = p_result::tournament_event_result;
 	END;
 END;
 $$ LANGUAGE plpgsql;

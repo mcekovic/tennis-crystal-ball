@@ -34,7 +34,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		'INNER JOIN in_progress_event e USING (in_progress_event_id)\n' +
 		'INNER JOIN tournament_mapping tm USING (tournament_id)\n' +
 		'WHERE tm.ext_tournament_id = ?\n' +
-		'ORDER BY in_progress_event_id, match_num'
+		'ORDER BY in_progress_event_id, round, match_num'
 
 	static final String LOAD_PLAYER_RESULT_SQL =
 		'{call load_player_in_progress_result(' +
