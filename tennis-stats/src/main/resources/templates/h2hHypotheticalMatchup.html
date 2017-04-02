@@ -14,12 +14,15 @@
 <!--/*@thymesVar id="dateSelector1" type="java.lang.String"*/-->
 <!--/*@thymesVar id="dateSelector2" type="java.lang.String"*/-->
 <!--/*@thymesVar id="prediction" type="org.strangeforest.tcb.stats.model.prediction.MatchPrediction"*/-->
+<!--/*@thymesVar id="priceFormats" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat[]"*/-->
+<!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat"*/-->
 <!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 <script type="text/javascript">
 	$(function() {
 		datePicker("predictionDate");
 		datePicker("predictionDate1");
 		datePicker("predictionDate2");
+		priceFormatChanged();
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function predictMatch() {
@@ -50,6 +53,7 @@
 			if (dateSelector2)
 				url += "&dateSelector2=" + dateSelector2;
 		}
+		url += "&priceFormat=" + $("#h2hPriceFormat").val();
 		$("#hypotheticalMatchup").load(url);
 	}
 	function onSameDateChanged() {
@@ -71,6 +75,13 @@
 		$("#predictionDatesDiv").css("display", !sameDate ? "block" : "none");
 		if (sameDate)
 			predictMatch();
+	}
+	function priceFormatChanged() {
+		var priceFormat = $("#h2hPriceFormat").val();
+		$("#h2hPrices").find("h4[data-price-format]").each(function() {
+			var $price = $(this);
+			$price.css("display", $price.data("price-format") == priceFormat ? "block" : "none");
+		});
 	}
 </script>
 <div class="row">
@@ -180,6 +191,20 @@
 		<th class="text-center">Win Probability</th>
 		<td class="text-left">
 			<h4 th:text="${#numbers.formatDecimal(100 * prediction.winProbability2, 1, 1) + '%'}">40.0%</h4>
+		</td>
+	</tr>
+	<tr id="h2hPrices">
+		<td class="text-right">
+			<h4 th:each="aPriceFormat : ${priceFormats}" th:data-price-format="${aPriceFormat}" th:text="${prediction.winPrices1[aPriceFormat.name()]}">1.50</h4>
+		</td>
+		<th class="text-center">
+			<select id="h2hPriceFormat" class="" onchange="priceFormatChanged()">
+				<option th:each="aPriceFormat : ${priceFormats}" th:value="${aPriceFormat}" th:text="${aPriceFormat.text}" th:selected="${aPriceFormat == priceFormat}">
+			</select>
+			&nbsp;Odds
+		</th>
+		<td class="text-left">
+			<h4 th:each="aPriceFormat : ${priceFormats}" th:data-price-format="${aPriceFormat}" th:text="${prediction.winPrices2[aPriceFormat.name()]}">3.00</h4>
 		</td>
 	</tr>
 	<tr>

@@ -196,7 +196,8 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "date1", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date1,
       @RequestParam(name = "date2", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date2,
       @RequestParam(name = "dateSelector1", required = false) String dateSelector1,
-      @RequestParam(name = "dateSelector2", required = false) String dateSelector2
+      @RequestParam(name = "dateSelector2", required = false) String dateSelector2,
+      @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat
    ) {
 		Player player1 = playerService.getPlayer(playerId1).get();
 		Player player2 = playerService.getPlayer(playerId2).get();
@@ -223,6 +224,8 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("dateSelector1", dateSelector1);
 		modelMap.addAttribute("dateSelector2", dateSelector2);
 		modelMap.addAttribute("prediction", prediction);
+		modelMap.addAttribute("priceFormats", PriceFormat.values());
+		modelMap.addAttribute("priceFormat", priceFormat);
 		modelMap.addAttribute("stats1", stats1);
 		return new ModelAndView("h2hHypotheticalMatchup", modelMap);
 	}

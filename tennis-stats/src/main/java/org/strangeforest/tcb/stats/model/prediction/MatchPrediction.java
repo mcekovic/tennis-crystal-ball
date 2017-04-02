@@ -1,6 +1,8 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
+import java.math.*;
 import java.util.*;
+import java.util.stream.*;
 
 import static java.util.stream.Collectors.*;
 
@@ -23,6 +25,19 @@ public final class MatchPrediction {
 		if (winProbability2 == null)
 			winProbability2 = weightAverage(itemProbabilities2);
 		return winProbability2;
+	}
+
+	public Map<PriceFormat, String> getWinPrices1() {
+		return getPriceMap(getWinProbability1());
+	}
+
+	public Map<PriceFormat, String> getWinPrices2() {
+		return getPriceMap(getWinProbability2());
+	}
+
+	private Map<PriceFormat, String> getPriceMap(double probability) {
+		BigDecimal price = BigDecimal.valueOf(1.0 / probability);
+		return Stream.of(PriceFormat.values()).collect(Collectors.toMap(format -> format, format -> format.format(price)));
 	}
 
 	private double weightAverage(List<WeightedProbability> weightedProbabilities) {

@@ -672,19 +672,21 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION load_player_in_progress_result(
 	p_in_progress_event_id INTEGER,
 	p_player_id INTEGER,
+	p_base_result TEXT,
 	p_result TEXT,
 	p_probability REAL
 ) RETURNS VOID AS $$
 BEGIN
 	BEGIN
 		INSERT INTO player_in_progress_result
-		(in_progress_event_id, player_id, result, probability)
+		(in_progress_event_id, player_id, base_result, result, probability)
 		VALUES
-		(p_in_progress_event_id, p_player_id, p_result::tournament_event_result, p_probability);
+		(p_in_progress_event_id, p_player_id, p_base_result::tournament_event_result, p_result::tournament_event_result, p_probability);
 	EXCEPTION WHEN unique_violation THEN
 		UPDATE player_in_progress_result
 		SET probability = p_probability
-		WHERE in_progress_event_id = p_in_progress_event_id AND player_id = p_player_id AND result = p_result::tournament_event_result;
+		WHERE in_progress_event_id = p_in_progress_event_id AND player_id = p_player_id
+		AND base_result = p_base_result::tournament_event_result AND result = p_result::tournament_event_result;
 	END;
 END;
 $$ LANGUAGE plpgsql;

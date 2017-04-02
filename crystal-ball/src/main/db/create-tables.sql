@@ -304,9 +304,10 @@ CREATE TABLE in_progress_match (
 	UNIQUE (in_progress_event_id, match_num)
 );
 
-CREATE INDEX ON in_progress_match (in_progress_event_id);
 CREATE INDEX ON in_progress_match (prev_match1_id);
 CREATE INDEX ON in_progress_match (prev_match2_id);
+CREATE INDEX ON in_progress_match (player1_id);
+CREATE INDEX ON in_progress_match (player2_id);
 
 
 -- player_in_progress_result
@@ -314,9 +315,10 @@ CREATE INDEX ON in_progress_match (prev_match2_id);
 CREATE TABLE player_in_progress_result (
 	in_progress_event_id INTEGER NOT NULL REFERENCES in_progress_event (in_progress_event_id) ON DELETE CASCADE,
 	player_id INTEGER REFERENCES player (player_id) ON DELETE CASCADE,
+	base_result tournament_event_result,
 	result tournament_event_result,
 	probability REAL NOT NULL,
-	PRIMARY KEY (in_progress_event_id, player_id, result)
+	PRIMARY KEY (in_progress_event_id, player_id, base_result, result)
 );
 
 
@@ -496,6 +498,8 @@ CREATE TABLE active_player_record (
 	detail JSON NOT NULL,
 	PRIMARY KEY (record_id, sort_order)
 );
+
+CREATE INDEX ON active_player_record (player_id);
 
 
 -- saved_record

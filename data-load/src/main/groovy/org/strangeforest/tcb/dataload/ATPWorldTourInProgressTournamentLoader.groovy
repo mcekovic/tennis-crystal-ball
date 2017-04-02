@@ -38,14 +38,19 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 	static final String LOAD_PLAYER_RESULT_SQL =
 		'{call load_player_in_progress_result(' +
-			':in_progress_event_id, :player_id, :result, :probability' +
+			':in_progress_event_id, :player_id, :base_result, :result, :probability' +
 		')}'
 
 	ATPWorldTourInProgressTournamentLoader(Sql sql) {
 		super(sql)
 	}
 
-	def loadTournament(String urlId, extId, String level = null, String surface = null) {
+	def loadAndSimulateTournament(String urlId, extId, String level = null, String surface = null) {
+		level = loadTournament(urlId, extId, level, surface)
+		tournamentSimulation(extId, level)
+	}
+
+	def loadTournament(String urlId, extId, String level, String surface) {
 		def stopwatch = Stopwatch.createStarted()
 		def url = tournamentUrl(urlId, extId)
 		println "Fetching in-progress tournament URL '$url'"
@@ -196,75 +201,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		sql.commit()
 		println "\n${matches.size()} matches loaded in $stopwatch"
 
-		tournamentSimulation(extId, level)
-	}
-
-	def tournamentSimulation(extId, String level) {
-		println '\nStarting tournament simulation'
-		def stopwatch = Stopwatch.createStarted()
-		def matches = sql.rows(FETCH_MATCHES_SQL, [string(extId)])
-		MatchPredictionService predictor = new MatchPredictionService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
-		def probabilities = [:]
-		def results = []
-		matches.each { match ->
-			def inProgressEventId = match.in_progress_event_id
-			def playerId1 = match.player1_id
-			def playerId2 = match.player2_id
-			def tournamentLevel = TournamentLevel.decode(level)
-			def surface = Surface.decode(match.surface)
-			def round = Round.decode(match.round)
-			def bestOf = (Short) match.best_of
-			def result = nextResult(round)
-			Integer winner = match.winner
-
-			MatchPrediction prediction
-			if (playerId1 && playerId2 && !winner)
-				prediction = predictor.predictMatch(playerId1, playerId2, match.date, surface, tournamentLevel, round, bestOf)
-
-			if (playerId1) {
-				def params1 = [:]
-				params1.in_progress_event_id = inProgressEventId
-				params1.player_id = playerId1
-				params1.result = result
-				def prevProbability1 = probabilities[playerId1] ?: 1.0
-				def probability1 = winner == 1 ? 1.0 : (winner == 2 ? 0.0 : prediction.winProbability1)
-				params1.probability = real prevProbability1 * probability1
-				println params1
-				results << params1
-			}
-			if (playerId2) {
-				def params2 = [:]
-				params2.in_progress_event_id = inProgressEventId
-				params2.player_id = playerId2
-				params2.result = result
-				def prevProbability2 = probabilities[playerId2] ?: 1.0
-				def probability2 = winner == 2 ? 1.0 : (winner == 1 ? 0.0 : prediction.winProbability2)
-				params2.probability = real prevProbability2 * probability2
-				println params2
-				results << params2
-			}
-		}
-		
-		sql.withBatch(LOAD_PLAYER_RESULT_SQL) { ps ->
-			results.each { result ->
-				ps.addBatch(result)
-			}
-		}
-		sql.commit()
-		println "\nTournament simulation: ${matches.size()} result loaded in $stopwatch"
-	}
-
-	def nextResult(Round round) {
-		switch (round) {
-			case Round.F: return 'W'
-			case Round.SF: return 'F'
-			case Round.QF: return 'SF'
-			case Round.R16: return 'QF'
-			case Round.R32: return 'R16'
-			case Round.R64: return 'R32'
-			case Round.R128: return 'R64'
-			default: return round.name()
-		}
+		level
 	}
 
 	static setScoreParams(Map params, scoreElem = null, winnerName = null) {
@@ -282,5 +219,123 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 	static tournamentUrl(String urlId, extId) {
 		"http://www.atpworldtour.com/en/scores/current/$urlId/$extId/draws"
+	}
+
+
+	// Tournament Simulation
+
+	def tournamentSimulation(extId, String level) {
+		println '\nStarting tournament simulation'
+		def stopwatch = Stopwatch.createStarted()
+		def matches = sql.rows(FETCH_MATCHES_SQL, [string(extId)])
+		MatchPredictionService predictor = new MatchPredictionService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
+		tournamentSimulation(matches, level, 'W', predictor)
+		tournamentSimulation(matches, level, 'R128', predictor)
+		sql.commit()
+		println "\nTournament simulation: ${matches.size()} result loaded in $stopwatch"
+	}
+
+	def tournamentSimulation(matches, String level, String baseResult, MatchPredictionService predictor) {
+		def results = []
+		matches.each { match ->
+			int inProgressEventId = match.in_progress_event_id
+			short matchNum = match.match_num
+			Integer playerId1 = match.player1_id
+			Integer playerId2 = match.player2_id
+			def tournamentLevel = TournamentLevel.decode(level)
+			def surface = Surface.decode(match.surface)
+			def round = Round.decode(match.round)
+			def bestOf = (Short) match.best_of
+			def result = nextResult(round)
+			Integer winner = match.winner
+
+			MatchPrediction prediction
+			if (playerId1 && playerId2)
+				prediction = predictor.predictMatch(playerId1, playerId2, match.date, surface, tournamentLevel, round, bestOf)
+
+			if (TournamentEventResult.valueOf(result) < TournamentEventResult.valueOf(baseResult)) {
+				if (playerId1) {
+					def params1 = [:]
+					params1.in_progress_event_id = inProgressEventId
+					params1.player_id = playerId1
+					params1.base_result = baseResult
+					params1.result = result
+					def probability = winProbability(1, winner, prediction)
+					params1.probability = real probability
+					println params1
+					results << params1
+				}
+				if (playerId2) {
+					def params2 = [:]
+					params2.in_progress_event_id = inProgressEventId
+					params2.player_id = playerId2
+					params2.base_result = baseResult
+					params2.result = result
+					def probability = winProbability(2, winner, prediction)
+					params2.probability = real probability
+					println params2
+					results << params2
+				}
+			}
+			else {
+				if (playerId1) {
+					def nextProbability = playerId2 ? prediction.winProbability1 : 1.0
+					results.addAll(nextResultsForPlayer(inProgressEventId, playerId1, baseResult, nextProbability, matches, matchNum, predictor))
+				}
+				if (playerId2) {
+					def nextProbability = playerId1 ? prediction.winProbability2 : 1.0
+					results.addAll(nextResultsForPlayer(inProgressEventId, playerId2, baseResult, nextProbability, matches, matchNum, predictor))
+				}
+			}
+		}
+
+		sql.withBatch(LOAD_PLAYER_RESULT_SQL) { ps ->
+			results.each { result ->
+				ps.addBatch(result)
+			}
+		}
+	}
+
+	static nextResult(Round round) {
+		switch (round) {
+			case Round.F: return 'W'
+			case Round.SF: return 'F'
+			case Round.QF: return 'SF'
+			case Round.R16: return 'QF'
+			case Round.R32: return 'R16'
+			case Round.R64: return 'R32'
+			case Round.R128: return 'R64'
+			default: return round.name()
+		}
+	}
+
+	def winProbability(int forWinner, Integer winner, MatchPrediction prediction) {
+		if (winner == forWinner)
+			return 1.0
+		else if (winner == 3 - forWinner)
+			return 0.0
+		else
+		   return forWinner == 1 ? prediction.winProbability1 : prediction.winProbability2
+	}
+
+	def nextResultsForPlayer(int inProgressEventId, int playerId, String baseResult, double probability, matches, short matchNum, MatchPredictionService predictor) {
+		def results = []
+		def fromResult = TournamentEventResult.valueOf(baseResult)
+		def nextResults = TournamentEventResult.values().findAll { result -> result > fromResult }
+		for (TournamentEventResult result : nextResults) {
+			def params = [:]
+			params.in_progress_event_id = inProgressEventId
+			params.player_id = playerId
+			params.base_result = baseResult
+			params.result = result.name()
+			params.probability = real probability
+			println params
+			results << params
+		}
+		results
+	}
+
+	def findNextPlayers(matches, short matchNum, TournamentEventResult result) {
+		
 	}
 }
