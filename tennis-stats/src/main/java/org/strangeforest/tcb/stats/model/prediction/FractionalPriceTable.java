@@ -9,6 +9,11 @@ public abstract class FractionalPriceTable {
 
 	private static final List<FractionalPrice> PRICES = new ArrayList<>(100);
 	static {
+		addPrice(1, 1000);
+		addPrice(1, 500);
+		addPrice(1, 200);
+		addPrice(1, 100);
+		addPrice(1, 50);
 		addPrice(1, 20);
 		addPrice(1, 15);
 		addPrice(1, 10);
@@ -87,6 +92,7 @@ public abstract class FractionalPriceTable {
 		addPrice(17, 2);
 		addPrice(9, 1);
 		addPrice(10, 1);
+		addPrice(20, 1);
 		addPrice(50, 1);
 		addPrice(100, 1);
 		addPrice(200, 1);
