@@ -36,7 +36,7 @@ public final class MatchPrediction {
 	}
 
 	private Map<PriceFormat, String> getPriceMap(double probability) {
-		BigDecimal price = BigDecimal.valueOf(1.0 / probability);
+		BigDecimal price = probability > 0.000001 ? BigDecimal.valueOf(1.0 / probability) : BigDecimal.valueOf(1000000L);
 		return Stream.of(PriceFormat.values()).collect(Collectors.toMap(format -> format, format -> format.format(price)));
 	}
 
