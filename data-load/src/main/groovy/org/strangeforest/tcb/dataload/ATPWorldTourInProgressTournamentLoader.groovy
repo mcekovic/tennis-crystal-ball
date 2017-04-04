@@ -227,32 +227,35 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 	def tournamentSimulation(extId, String level) {
 		println '\nStarting tournament simulation'
 		def stopwatch = Stopwatch.createStarted()
-		def matches = sql.rows(FETCH_MATCHES_SQL, [string(extId)])
+		def matches = new TournamentMatches(sql.rows(FETCH_MATCHES_SQL, [string(extId)]))
 		MatchPredictionService predictor = new MatchPredictionService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
-		tournamentSimulation(matches, level, 'W', predictor)
-		tournamentSimulation(matches, level, 'R128', predictor)
+		def results = 0
+		results += tournamentSimulation(matches, level, 'W', predictor)
+		results += tournamentSimulation(matches, level, 'R128', predictor)
 		sql.commit()
-		println "\nTournament simulation: ${matches.size()} result loaded in $stopwatch"
+		println "\nTournament simulation: ${results} results loaded in $stopwatch"
 	}
 
-	def tournamentSimulation(matches, String level, String baseResult, MatchPredictionService predictor) {
+	def tournamentSimulation(TournamentMatches matches, String level, String baseResult, MatchPredictionService predictor) {
 		def results = []
-		matches.each { match ->
-			int inProgressEventId = match.in_progress_event_id
-			short matchNum = match.match_num
-			Integer playerId1 = match.player1_id
-			Integer playerId2 = match.player2_id
-			def tournamentLevel = TournamentLevel.decode(level)
-			def surface = Surface.decode(match.surface)
-			def round = Round.decode(match.round)
-			def bestOf = (Short) match.best_of
-			def result = nextResult(round)
-			Integer winner = match.winner
+		matches.playerIds().each { playerId ->
+			def entryMatch = matches.entryMatch(playerId, baseResult)
+			if (entryMatch) {
+				int inProgressEventId = entryMatch.in_progress_event_id
+				short matchNum = match.match_num
+				Integer playerId1 = match.player1_id
+				Integer playerId2 = match.player2_id
+				def tournamentLevel = TournamentLevel.decode(level)
+				def surface = Surface.decode(match.surface)
+				def round = Round.decode(match.round)
+				def bestOf = (Short) match.best_of
+				def result = nextResult(round)
+				Integer winner = match.winner
 
-			MatchPrediction prediction
-			if (playerId1 && playerId2)
-				prediction = predictor.predictMatch(playerId1, playerId2, match.date, surface, tournamentLevel, round, bestOf)
-
+				MatchPrediction prediction
+				if (playerId1 && playerId2)
+					prediction = predictor.predictMatch(playerId1, playerId2, match.date, surface, tournamentLevel, round, bestOf)
+			}
 			if (TournamentEventResult.valueOf(result) < TournamentEventResult.valueOf(baseResult)) {
 				if (playerId1) {
 					def params1 = [:]

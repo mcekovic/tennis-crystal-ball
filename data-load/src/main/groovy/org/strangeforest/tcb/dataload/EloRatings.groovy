@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import groovy.transform.EqualsAndHashCode
+
 import java.time.*
 import java.time.temporal.*
 import java.util.concurrent.*
@@ -528,20 +530,9 @@ class EloRatings {
 		}
 	}
 
+	@EqualsAndHashCode(includeFields = true)
 	private static class RankKey {
-
 		int playerId
 		Date date
-
-		@Override boolean equals(o) {
-			if (this.is(o)) return true
-			if (getClass() != o.class) return false
-			RankKey rankKey = (RankKey) o
-			playerId == rankKey.playerId && Objects.equal(date, rankKey.date)
-		}
-
-		@Override int hashCode() {
-			Objects.hashCode(playerId, date)
-		}
 	}
 }

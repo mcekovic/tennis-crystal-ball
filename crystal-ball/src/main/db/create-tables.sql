@@ -283,8 +283,8 @@ CREATE TABLE in_progress_match (
 	in_progress_match_id BIGSERIAL PRIMARY KEY,
 	in_progress_event_id INTEGER NOT NULL REFERENCES in_progress_event (in_progress_event_id) ON DELETE CASCADE,
 	match_num SMALLINT NOT NULL,
-	prev_match1_id INTEGER REFERENCES in_progress_match (in_progress_match_id) ON DELETE CASCADE,
-	prev_match2_id INTEGER REFERENCES in_progress_match (in_progress_match_id) ON DELETE CASCADE,
+	prev_match_num1 SMALLINT,
+	prev_match_num2 SMALLINT,
 	date DATE,
 	surface surface,
 	indoor BOOLEAN,
@@ -304,8 +304,6 @@ CREATE TABLE in_progress_match (
 	UNIQUE (in_progress_event_id, match_num)
 );
 
-CREATE INDEX ON in_progress_match (prev_match1_id);
-CREATE INDEX ON in_progress_match (prev_match2_id);
 CREATE INDEX ON in_progress_match (player1_id);
 CREATE INDEX ON in_progress_match (player2_id);
 
