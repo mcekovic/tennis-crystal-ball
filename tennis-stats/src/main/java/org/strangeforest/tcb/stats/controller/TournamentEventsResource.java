@@ -17,6 +17,7 @@ import static org.strangeforest.tcb.stats.util.OrderBy.*;
 public class TournamentEventsResource {
 
 	@Autowired private TournamentService tournamentService;
+	@Autowired private TournamentForecastService forecastService;
 
 	private static final int MAX_TOURNAMENT_EVENTS = 1000;
 
@@ -46,5 +47,10 @@ public class TournamentEventsResource {
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENT_EVENTS;
 		return tournamentService.getTournamentEventsTable(filter, orderBy, pageSize, current);
+	}
+
+	@GetMapping("/inProgressEventsTable")
+	public BootgridTable<InProgressEvent> inProgressEventsTable() {
+		return forecastService.getInProgressEventsTable();
 	}
 }

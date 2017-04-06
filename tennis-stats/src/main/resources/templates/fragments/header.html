@@ -84,7 +84,13 @@
 							<li th:class="${path == '/bestSeasons' ? 'active' : ''}"><a href="/bestSeasons">Best Seasons</a></li>
 						</ul>
 					</li>
-					<li th:class="${path == '/tournament' || path == '/tournamentEvents' || path == '/tournamentEvent' ? 'active' : ''}"><a href="/tournamentEvents">Tournaments</a></li>
+					<li th:class="${path == '/tournamentEventForecasts' || path == '/tournamentEventForecast' || path == '/tournamentEvents' || path == '/tournamentEvent' || path == '/tournament' ? 'active dropdown' : 'dropdown'}">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Tournaments<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li th:class="${path == '/tournamentEventForecasts' || path == '/tournamentEventForecast' ? 'active' : ''}"><a href="/tournamentEventForecasts">Tournament Forecasts<sup class="new-feature">&nbsp;New!</sup></a></li>
+							<li th:class="${path == '/tournamentEvents' || path == '/tournamentEvent' || path == '/tournament' ? 'active' : ''}"><a href="/tournamentEvents">Tournaments</a></li>
+						</ul>
+					</li>
 					<li th:class="${path == '/records' || path == '/record' ? 'active' : ''}"><a href="/records">Records<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
 					<li th:class="${path == '/liveScores' ? 'active' : ''}"><a href="/liveScores">Live Scores <img src="/images/active.png" style="vertical-align: top" title="Live" width="12" height="12"/></a></li>
 					<li th:class="${path == '/about' ? 'active' : ''}"><a href="/about">About</a></li>

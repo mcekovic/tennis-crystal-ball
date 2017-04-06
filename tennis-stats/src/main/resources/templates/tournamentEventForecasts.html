@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
+	<title>Tournament Event Forecasts</title>
+	<script type="text/javascript">
+		$(function() {
+			var $inProgressEventsTable = $("#inProgressEventsTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($inProgressEventsTable, ["favourite1"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsVisible($inProgressEventsTable, ["favourite2"], deviceGreaterOrEqual(device, "md"));
+			if (deviceGreaterOrEqual("md", device))
+				setBootgridColumnsWidths($inProgressEventsTable, ["name"], [175]);
+			$inProgressEventsTable.bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/inProgressEventsTable",
+				rowCount: [-1],
+				navigation: 0,
+				sorting: false,
+				formatters: {
+					"event": function(column, row) {
+						return "<a href='/tournamentEventForecast?inProgressEventId=" + row.id + "' class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + row.name + "</a>";
+					},
+					"surface": surfaceFormatter,
+					"favourite1":  function(column, row) {
+						return formatFavourite(column, row.favourite1);
+					},
+					"favourite2":  function(column, row) {
+						return formatFavourite(column, row.favourite2);
+					},
+					"forecast": function(column, row) {
+						return "<a href='/tournamentEventForecast?inProgressEventId=" + row.id + "' class='label label-primary glyphicon glyphicon-cog' title='Show Forecast'> Forecast</a>";
+					}
+				},
+				labels: {
+					loading: bootgridTemplateLoading,
+					noResults: "No in-progress tournaments found"
+				},
+				templates: {
+					paginationItem: bootgridTemplatePaginationItem
+				}
+			});
+		});
+		function formatFavourite(column, favourite) {
+			return favourite ? playerCountryFormatter(column, favourite) + " " + (100 * favourite.probability.toFixed(1)) + "%" : "";
+		}
+	</script>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3>Tournament Event Forecasts</h3>
+	<table id="inProgressEventsTable" class="table table-condensed table-hover table-striped">
+		<thead>
+		<tr>
+			<th data-column-id="name" data-formatter="event" data-width="200">Name</th>
+			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
+			<th data-column-id="draw" data-width="65">Draw</th>
+			<th data-column-id="favourite1" data-formatter="favourite1" data-width="200">1-st Favourite</th>
+			<th data-column-id="favourite2" data-formatter="favourite2" data-width="200">2-nd Favourite</th>
+			<th data-column-id="forecast" data-formatter="forecast" data-width="75">Forecast</th>
+		</tr>
+		</thead>
+	</table>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

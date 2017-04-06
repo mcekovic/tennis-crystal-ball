@@ -16,6 +16,7 @@ public class TournamentController extends PageController {
 
 	@Autowired private TournamentService tournamentService;
 	@Autowired private MatchesService matchesService;
+	@Autowired private TournamentForecastService forecastService;
 
 	private static final int MAX_RECORD_PLAYERS = 10;
 
@@ -122,5 +123,21 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("tournamentStats", modelMap);
+	}
+
+	@GetMapping("/tournamentEventForecasts")
+	public String tournamentEventForecasts() {
+		return "tournamentEventForecasts";
+	}
+
+	@GetMapping("/tournamentEventForecast")
+	public ModelAndView tournamentEventForecast(
+		@RequestParam(name = "inProgressEventId") int inProgressEventId
+	) {
+		InProgressEventForecast forecast = forecastService.getInProgressEventForecast(inProgressEventId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("forecast", forecast);
+		return new ModelAndView("tournamentEventForecast", modelMap);
 	}
 }

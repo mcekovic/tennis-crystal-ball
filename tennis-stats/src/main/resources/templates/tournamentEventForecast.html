@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="forecast" type="org.strangeforest.tcb.stats.model.InProgressEventForecast"*/-->
+<head th:replace="fragments/head :: commonHead(${forecast.event.name}, false, ~{::script}, ~{::style})">
+	<script type="text/javascript">
+	</script>
+	<style>
+	</style>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3 th:text="|${forecast.event.name} Forecast|">Australian Open Forecast</h3>
+	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>
