@@ -2,90 +2,98 @@ package org.strangeforest.tcb.dataload
 
 import groovy.transform.*
 import org.strangeforest.tcb.stats.model.*
-import org.strangeforest.tcb.stats.service.*
 
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
+import static org.strangeforest.tcb.dataload.KOTournamentSimulator.MatchResult.*
 
 class KOTournamentSimulator {
 
-	MatchPredictionService predictor
+	enum MatchResult { WON, LOST, UNKNOWN, N_A }
+
+	TournamentMacthPredictor predictor
 	int inProgressEventId
-	TournamentLevel tournamentLevel
-	Surface surface
-	Date date
-	short bestOf
-	List entryMatches = []
 	Map matchMap = [:]
 	Map playerEntries = [:]
 	Map entryPlayers = [:]
 	KOResult baseResult
+	boolean current
+	boolean debug
 	Map probabilities = [:]
 
-	KOTournamentSimulator(MatchPredictionService predictor, int inProgressEventId, TournamentLevel tournamentLevel, Surface surface, Date date, int bestOf, List matches, KOResult baseResult) {
+	KOTournamentSimulator(TournamentMacthPredictor predictor, int inProgressEventId, List matches, KOResult baseResult, boolean current = true, boolean debug = false) {
+		this.debug = debug
+		this.current = current
 		this.predictor = predictor
-		this.tournamentLevel = tournamentLevel
 		this.inProgressEventId = inProgressEventId
-		this.surface = surface
-		this.date = date
-		this.bestOf = bestOf
-		matches = matches.findAll { match -> KOResult.valueOf(match.round) >= baseResult }.collect { match -> new HashMap<>(match) }
 		this.baseResult = baseResult
 		int playerEntry = 0
 		matches.each { match ->
-			matchMap[match.match_num] = match
-			if (match.prev_match_num1) {
-				def prevMatch1 = matchMap[match.prev_match_num1]
-				if (prevMatch1) {
-					match.prev_match1 = prevMatch1
-					prevMatch1.next_match = match
-				}
+			def playerId1 = match.player1_id
+			def playerId2 = match.player2_id
+			def round = KOResult.valueOf(match.round)
+			if (current) {
+				if (playerId1)
+					matchMap[new PlayerResult(playerId: playerId1, result: round)] = match
+				if (playerId2)
+					matchMap[new PlayerResult(playerId: playerId2, result: round)] = match
 			}
-			if (match.prev_match_num2) {
-				def prevMatch2 = matchMap[match.prev_match_num2]
-				if (prevMatch2) {
-					match.prev_match2 = prevMatch2
-					prevMatch2.next_match = match
-				}
-			}
-			if (match.round == baseResult.name()) {
-				entryMatches << match
+			if (round.name() == baseResult.name()) {
 				playerEntry++
-				if (match.player1_id) {
-					playerEntries[match.player1_id] = playerEntry
-					entryPlayers[playerEntry] = match.player1_id
+				if (playerId1) {
+					playerEntries[playerId1] = playerEntry
+					entryPlayers[playerEntry] = playerId1
 				}
 				playerEntry++
-				if (match.player2_id) {
-					playerEntries[match.player2_id] = playerEntry
-					entryPlayers[playerEntry] = match.player2_id
+				if (playerId2) {
+					playerEntries[playerId2] = playerEntry
+					entryPlayers[playerEntry] = playerId2
 				}
 			}
 		}
 	}
 
-	List simulate() {
+	def simulate() {
 		def results = []
 		KOResult.values().findAll { r -> r >= baseResult && r < KOResult.W }.each { result ->
 			def nextResult = nextKOResult(result)
-			println "$baseResult -> $nextResult"
+			if (debug)
+				println "${current ? 'Current' : baseResult} -> $nextResult"
 			playerEntries.keySet().each { playerId ->
 				def probability = getProbability(playerId, result)
-				probabilities[new PlayerResult(playerId: playerId, result: nextResult)] = probability
+				if (probability != null) {
+					probabilities[new PlayerResult(playerId: playerId, result: nextResult)] = probability
 
-				def params = [:]
-				params.in_progress_event_id = inProgressEventId
-				params.player_id = playerId
-				params.base_result = baseResult.name()
-				params.result = nextResult.name()
-				params.probability = real probability
-				println params
-				results << params
+					def params = [:]
+					params.in_progress_event_id = inProgressEventId
+					params.player_id = playerId
+					params.base_result = current ? 'W' : baseResult.name()
+					params.result = nextResult.name()
+					params.probability = real probability
+					if (debug)
+						println params
+					results << params
+				}
 			}
 		}
+		if (debug)
+			println()
 		results
 	}
 
+	static nextKOResult(KOResult result) {
+		KOResult.values()[result.ordinal() + 1]
+	}
+
 	def getProbability(int playerId, KOResult result) {
+		if (current) {
+			def hasWon = hasWon(playerId, result)
+			if (hasWon == WON)
+				return 1.0
+			else if (hasWon == LOST)
+				return 0.0
+			else if (hasWon == N_A)
+				return null
+		}
 		def baseProbability = probabilities[new PlayerResult(playerId: playerId, result: result)] ?: 1.0
 		def opponentIds = findOpponentIds(playerEntries[playerId], result)
 		if (!opponentIds)
@@ -93,13 +101,13 @@ class KOTournamentSimulator {
 		def probability = 0.0
 		opponentIds.each { opponentId ->
 			def opponentBaseProbability = probabilities[new PlayerResult(playerId: opponentId, result: result)] ?: 1.0
-			def prediction = predictor.predictMatch(playerId, opponentId, date, surface, tournamentLevel, Round.valueOf(result.name()), bestOf)
-			probability += opponentBaseProbability * prediction.winProbability1
+			def round = Round.valueOf(result.name())
+			probability += opponentBaseProbability * predictor.getWinProbability(playerId, opponentId, round)
 		}
 		baseProbability * probability
 	}
 
-	List findOpponentIds(int entry, KOResult result) {
+	def findOpponentIds(int entry, KOResult result) {
 		def drawFactor = 2 << (result.ordinal() - baseResult.ordinal())
 		def startEntry = entry - (entry - 1) % drawFactor
 		def endEntry = startEntry + drawFactor - 1
@@ -112,12 +120,14 @@ class KOTournamentSimulator {
 		playerIds.findAll { o -> o}
 	}
 
-	static nextKOResult(KOResult result) {
-		KOResult.values()[result.ordinal() + 1]
-	}
-
-	static hasWon(match, int playerId) {
-		(match.winner == 1 && match.player1_id == playerId) || (match.winner == 2 && match.player2_id == playerId)
+	def hasWon(int playerId, KOResult round) {
+		def match = matchMap[new PlayerResult(playerId: playerId, result: round)]
+		if (!match)
+			return N_A
+		def winner = match.winner
+		if (!winner)
+			return UNKNOWN
+		(winner == 1 && match.player1_id == playerId) || (winner == 2 && match.player2_id == playerId) ? WON : LOST
 	}
 
 	@EqualsAndHashCode

@@ -88,8 +88,6 @@ abstract class BaseATPWorldTourTournamentLoader {
 	static fitScore(String score) {
 		if (!score)
 			return 'W/O'
-		if (score.startsWith('(') && score.endsWith(')'))
-			score = score.substring(1, score.length() - 2)
 		def setScores = []
 		for (String setScore : score.split('\\s+'))
 			setScores << fitSetScore(setScore)

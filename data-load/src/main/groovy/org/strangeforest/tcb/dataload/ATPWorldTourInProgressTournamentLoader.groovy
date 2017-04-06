@@ -235,22 +235,25 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def drawType = firstMatch.draw_type
 		def entryResult = KOResult.valueOf(matches[0].round)
 
-		MatchPredictionService predictor = new MatchPredictionService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
+		MatchPredictionService predictionService = new MatchPredictionService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
+		TournamentMacthPredictor predictor = new TournamentMacthPredictor(predictionService, level, surface, date, bestOf)
 
 		def resultCount = 0
 		def tournamentSimulator
 		if (drawType == 'KO') {
-			KOResult.values().findAll { r -> r >= entryResult && r < KOResult.W }.each { result ->
-				println result
-				tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, level, surface, date, bestOf, matches, result)
-				def results = tournamentSimulator.simulate()
-				sql.withBatch(LOAD_PLAYER_RESULT_SQL) { ps ->
-					results.each { r ->
-						ps.addBatch(r)
-					}
-				}
+			println 'Current'
+			tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, matches, entryResult, true, true)
+			def results = tournamentSimulator.simulate()
+			saveResults(results)
+			resultCount += results.size()
+
+			KOResult.values().findAll { r -> r >= entryResult && r < KOResult.W }.each { baseResult ->
+				println baseResult
+				def selectedMatches = matches.findAll { match -> KOResult.valueOf(match.round) >= baseResult }
+				tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, selectedMatches, baseResult, false, true)
+				results = tournamentSimulator.simulate()
+				saveResults(results)
 				resultCount += results.size()
-				println()
 			}
 		}
 		else
@@ -258,5 +261,13 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 		sql.commit()
 		println "\nTournament simulation: ${resultCount} results loaded in $stopwatch"
+	}
+
+	def saveResults(results) {
+		sql.withBatch(LOAD_PLAYER_RESULT_SQL) { ps ->
+			results.each { result ->
+				ps.addBatch(result)
+			}
+		}
 	}
 }
