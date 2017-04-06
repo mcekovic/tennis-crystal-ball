@@ -6,7 +6,6 @@ import org.jsoup.*
 import org.jsoup.select.*
 import org.springframework.jdbc.core.namedparam.*
 import org.strangeforest.tcb.stats.model.*
-import org.strangeforest.tcb.stats.model.prediction.*
 import org.strangeforest.tcb.stats.service.*
 
 import java.time.*
@@ -30,7 +29,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		')}'
 
 	static final String FETCH_MATCHES_SQL =
-		'SELECT m.* FROM in_progress_match m\n' +
+		'SELECT m.*, e.level, e.draw_type FROM in_progress_match m\n' +
 		'INNER JOIN in_progress_event e USING (in_progress_event_id)\n' +
 		'INNER JOIN tournament_mapping tm USING (tournament_id)\n' +
 		'WHERE tm.ext_tournament_id = ?\n' +
@@ -46,8 +45,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 	}
 
 	def loadAndSimulateTournament(String urlId, extId, String level = null, String surface = null) {
-		level = loadTournament(urlId, extId, level, surface)
-		tournamentSimulation(extId, level)
+		loadTournament(urlId, extId, level, surface)
+		simulateTournament(extId)
 	}
 
 	def loadTournament(String urlId, extId, String level, String surface) {
@@ -129,7 +128,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 		def drawRowSpan = 1
 		short prevMatchNumOffset = 1
-		rounds.findAll({round -> round != entryRound}).each { round ->
+		rounds.findAll { round -> round != entryRound }.each { round ->
 			println '\n' + round
 			short matchNumOffset = matchNum + 1
 			Elements roundPlayers = drawTable.select("tbody > tr > td[rowspan=$drawRowSpan")
@@ -200,8 +199,6 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		}
 		sql.commit()
 		println "\n${matches.size()} matches loaded in $stopwatch"
-
-		level
 	}
 
 	static setScoreParams(Map params, scoreElem = null, winnerName = null) {
@@ -221,124 +218,45 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		"http://www.atpworldtour.com/en/scores/current/$urlId/$extId/draws"
 	}
 
-
+	
 	// Tournament Simulation
 
-	def tournamentSimulation(extId, String level) {
+	def simulateTournament(extId) {
 		println '\nStarting tournament simulation'
 		def stopwatch = Stopwatch.createStarted()
-		def matches = new TournamentMatches(sql.rows(FETCH_MATCHES_SQL, [string(extId)]))
+		def matches = sql.rows(FETCH_MATCHES_SQL, [string(extId)])
+
+		def firstMatch = matches[0]
+		def inProgressEventId = firstMatch.in_progress_event_id
+		def level = TournamentLevel.decode(firstMatch.level)
+		def surface = Surface.decode(firstMatch.surface)
+		def date = firstMatch.date
+		def bestOf = firstMatch.best_of
+		def drawType = firstMatch.draw_type
+		def entryResult = KOResult.valueOf(matches[0].round)
+
 		MatchPredictionService predictor = new MatchPredictionService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
-		def results = 0
-		results += tournamentSimulation(matches, level, 'W', predictor)
-		results += tournamentSimulation(matches, level, 'R128', predictor)
-		sql.commit()
-		println "\nTournament simulation: ${results} results loaded in $stopwatch"
-	}
 
-	def tournamentSimulation(TournamentMatches matches, String level, String baseResult, MatchPredictionService predictor) {
-		def results = []
-		matches.playerIds().each { playerId ->
-			def entryMatch = matches.entryMatch(playerId, baseResult)
-			if (entryMatch) {
-				int inProgressEventId = entryMatch.in_progress_event_id
-				short matchNum = match.match_num
-				Integer playerId1 = match.player1_id
-				Integer playerId2 = match.player2_id
-				def tournamentLevel = TournamentLevel.decode(level)
-				def surface = Surface.decode(match.surface)
-				def round = Round.decode(match.round)
-				def bestOf = (Short) match.best_of
-				def result = nextResult(round)
-				Integer winner = match.winner
-
-				MatchPrediction prediction
-				if (playerId1 && playerId2)
-					prediction = predictor.predictMatch(playerId1, playerId2, match.date, surface, tournamentLevel, round, bestOf)
-			}
-			if (TournamentEventResult.valueOf(result) < TournamentEventResult.valueOf(baseResult)) {
-				if (playerId1) {
-					def params1 = [:]
-					params1.in_progress_event_id = inProgressEventId
-					params1.player_id = playerId1
-					params1.base_result = baseResult
-					params1.result = result
-					def probability = winProbability(1, winner, prediction)
-					params1.probability = real probability
-					println params1
-					results << params1
+		def resultCount = 0
+		def tournamentSimulator
+		if (drawType == 'KO') {
+			KOResult.values().findAll { r -> r >= entryResult && r < KOResult.W }.each { result ->
+				println result
+				tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, level, surface, date, bestOf, matches, result)
+				def results = tournamentSimulator.simulate()
+				sql.withBatch(LOAD_PLAYER_RESULT_SQL) { ps ->
+					results.each { r ->
+						ps.addBatch(r)
+					}
 				}
-				if (playerId2) {
-					def params2 = [:]
-					params2.in_progress_event_id = inProgressEventId
-					params2.player_id = playerId2
-					params2.base_result = baseResult
-					params2.result = result
-					def probability = winProbability(2, winner, prediction)
-					params2.probability = real probability
-					println params2
-					results << params2
-				}
-			}
-			else {
-				if (playerId1) {
-					def nextProbability = playerId2 ? prediction.winProbability1 : 1.0
-					results.addAll(nextResultsForPlayer(inProgressEventId, playerId1, baseResult, nextProbability, matches, matchNum, predictor))
-				}
-				if (playerId2) {
-					def nextProbability = playerId1 ? prediction.winProbability2 : 1.0
-					results.addAll(nextResultsForPlayer(inProgressEventId, playerId2, baseResult, nextProbability, matches, matchNum, predictor))
-				}
+				resultCount += results.size()
+				println()
 			}
 		}
-
-		sql.withBatch(LOAD_PLAYER_RESULT_SQL) { ps ->
-			results.each { result ->
-				ps.addBatch(result)
-			}
-		}
-	}
-
-	static nextResult(Round round) {
-		switch (round) {
-			case Round.F: return 'W'
-			case Round.SF: return 'F'
-			case Round.QF: return 'SF'
-			case Round.R16: return 'QF'
-			case Round.R32: return 'R16'
-			case Round.R64: return 'R32'
-			case Round.R128: return 'R64'
-			default: return round.name()
-		}
-	}
-
-	def winProbability(int forWinner, Integer winner, MatchPrediction prediction) {
-		if (winner == forWinner)
-			return 1.0
-		else if (winner == 3 - forWinner)
-			return 0.0
 		else
-		   return forWinner == 1 ? prediction.winProbability1 : prediction.winProbability2
-	}
+			throw new UnsupportedOperationException("Draw type $drawType is not supported.")
 
-	def nextResultsForPlayer(int inProgressEventId, int playerId, String baseResult, double probability, matches, short matchNum, MatchPredictionService predictor) {
-		def results = []
-		def fromResult = TournamentEventResult.valueOf(baseResult)
-		def nextResults = TournamentEventResult.values().findAll { result -> result > fromResult }
-		for (TournamentEventResult result : nextResults) {
-			def params = [:]
-			params.in_progress_event_id = inProgressEventId
-			params.player_id = playerId
-			params.base_result = baseResult
-			params.result = result.name()
-			params.probability = real probability
-			println params
-			results << params
-		}
-		results
-	}
-
-	def findNextPlayers(matches, short matchNum, TournamentEventResult result) {
-		
+		sql.commit()
+		println "\nTournament simulation: ${resultCount} results loaded in $stopwatch"
 	}
 }
