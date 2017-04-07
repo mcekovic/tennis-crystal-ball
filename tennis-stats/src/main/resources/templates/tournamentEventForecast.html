@@ -78,9 +78,17 @@
 	<div id="forecastTables" class="tab-content">
 		<div th:each="baseResult : ${forecast.baseResults}" th:id="'baseResult' + ${baseResult}" th:with="playersForecast = ${forecast.getPlayersForecasts(baseResult)}" class="tab-pane fade" th:attrappend="class=${baseResultStat.last ? ' in active' : _}">
 			<br/>
-			<table class="table table-condensed table-hover text-nowrap" style="width: auto">
+			<table class="table table-condensed table-hover text-nowrap" style="width: auto" th:with="columnCount=${2 + playersForecast.results.size()}, playerCount=${playersForecast.playerForecasts.size()}">
 				<th:block th:each="playerForecast : ${playersForecast.playerForecasts}">
 				<thead th:if="${playerForecastStat.index % 8 == 0}">
+					<tr th:if="${playerCount == 16}">
+						<th th:colspan="${columnCount}" th:text="${playerForecastStat.index == 0 ? 'Top Half' : 'Bottom Half'}">Top Half</th>
+					</tr>
+					<th:block th:if="${playerCount >= 32}" th:with="quarterIndex=${4 * playerForecastStat.index / playerCount}">
+					<tr th:if="${playerForecastStat.index == quarterIndex * playerCount / 4}">
+						<th th:colspan="${columnCount}" th:text="${quarterIndex == 0 ? '1-st Quarter' : (quarterIndex == 1 ? '2-nd Quarter' : (quarterIndex == 2 ? '3-rd Quarter' : '4-th Quarter'))}">First Half</th>
+					</tr>
+					</th:block>
 					<tr>
 						<th class="text-right" title="Seed/Entry">S/E</th>
 						<th>Player</th>
@@ -98,7 +106,9 @@
 						<td th:each="result : ${playersForecast.results}" th:with="probability = ${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}">58.2%</td>
 					</tr>
 				</tbody>
-				<thead th:if="${playerForecastStat.index % 8 == 7 && !playerForecastStat.last}"><tr><td th:colspan="${2 + playersForecast.results.size()}">&nbsp;</td></tr></thead>
+				<thead th:if="${playerForecastStat.index % 8 == 7 && !playerForecastStat.last}">
+					<tr><td th:colspan="${columnCount}">&nbsp;</td></tr>
+				</thead>
 				</th:block>
 			</table>
 		</div>
