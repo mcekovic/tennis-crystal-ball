@@ -318,8 +318,8 @@
 	</table>
 	<div th:unless="${stats1.empty && stats2.empty}" class="row">
 		<div class="col-md-12 text-center">
-			<button class="pct-data btn btn-default btn-xs glyphicon glyphicon-equalizer" onclick="toggleStatsData('#h2hStats')" title="Show raw data"> Raw Data</button>
-			<button class="raw-data btn btn-default btn-xs glyphicon glyphicon-scale" onclick="toggleStatsData('#h2hStats')" title="Show percentage data"> Pct. Data</button>
+			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats')" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
+			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats')" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
 		</div>
 	</div>
 	<p th:if="${stats1.empty && stats2.empty}">No statistics available</p>

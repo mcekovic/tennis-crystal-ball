@@ -32,7 +32,7 @@
 						return formatFavourite(column, row.favourite2);
 					},
 					"forecast": function(column, row) {
-						return "<a href='/tournamentEventForecast?inProgressEventId=" + row.id + "' class='label label-primary glyphicon glyphicon-cog' title='Show Forecast'> Forecast</a>";
+						return "<a href='/tournamentEventForecast?inProgressEventId=" + row.id + "' class='label label-primary label-btn' title='Show full forecast'><span class='glyphicon glyphicon-eye-open'></span>&nbsp;&nbsp;Forecast</a>";
 					}
 				},
 				labels: {
@@ -60,7 +60,7 @@
 			<th data-column-id="draw" data-width="65">Draw</th>
 			<th data-column-id="favourite1" data-formatter="favourite1" data-width="200">1-st Favourite</th>
 			<th data-column-id="favourite2" data-formatter="favourite2" data-width="200">2-nd Favourite</th>
-			<th data-column-id="forecast" data-formatter="forecast" data-width="75">Forecast</th>
+			<th data-column-id="forecast" data-formatter="forecast" data-width="95">Forecast</th>
 		</tr>
 		</thead>
 	</table>

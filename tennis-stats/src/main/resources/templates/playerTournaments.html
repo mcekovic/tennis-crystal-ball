@@ -50,7 +50,7 @@
 					return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[[${playerId}]]&tab=matches&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
 				},
 				"stats": function(column, row) {
-					return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info label-btn glyphicon glyphicon-stats' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='[[${playerName}]] " + row.name + " " + row.season + " Statistics'> Stats</a>";
+					return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info label-btn' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='[[${playerName}]] " + row.name + " " + row.season + " Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>";
 				}
 			},
 			labels: {
@@ -217,7 +217,7 @@
 	</div>
 	<div class="col-md-1">
 		<button type="button" class="btn btn-default" onclick="clearEventsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<span class="glyphicon glyphicon-remove"></span> Clear
+			<span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Clear
 		</button>
 	</div>
 </div>
@@ -237,7 +237,7 @@
 	</div>
 </div>
 <button id="eventsStats" type="button" class="btn btn-info grid-control margin-right" onclick="showEventsStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected tournaments)|">
-	<span class="glyphicon glyphicon-stats"></span> Stats
+	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats
 </button>
 <table id="eventsTable" class="table table-condensed table-hover table-striped">
 	<thead>
@@ -250,7 +250,7 @@
 		<th data-column-id="participationPoints" data-type="numeric" data-width="70">P. Pts.</th>
 		<th data-column-id="participationPct" data-formatter="participationPct" data-width="70">P. Pct.</th>
 		<th data-column-id="result" data-formatter="result" data-width="75" data-align="center" data-header-align="center">Result</th>
-		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="80">Stats</th>
+		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>
 	</tr>
 	</thead>
 </table>

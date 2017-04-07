@@ -303,16 +303,16 @@
 		<div class="row">
 			<th:block th:unless="${stats.empty}">
 			<div th:class="'text-nowrap col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
-				<button class="pct-data btn btn-default btn-xs glyphicon glyphicon-equalizer" th:onclick="|toggleStatsData('#${statsContainerId}')|" title="Show raw data"> Raw Data</button>
-				<button class="raw-data btn btn-default btn-xs glyphicon glyphicon-scale" th:onclick="|toggleStatsData('#${statsContainerId}')|" title="Show percentage data"> Pct. Data</button>
-				&nbsp;&nbsp;<button class="btn btn-default btn-xs glyphicon glyphicon-object-align-left" th:onclick="|compareStats('${containerId}', '${statsId}', ${compare})|" title="Compare statistics"> Compare</button>
+				<button class="pct-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#${statsContainerId}')|" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
+				<button class="raw-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#${statsContainerId}')|" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
+				&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareStats('${containerId}', '${statsId}', ${compare})|" title="Compare statistics"><span class="glyphicon glyphicon-object-align-left"></span>&nbsp;&nbsp;Compare</button>
 			</div>
 			<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
 				<small th:if="${compare}">Compare statistics with:</small>
 			</div>
 			</th:block>
 			<div th:if="${popover}" class="col-md-4">
-				<button class="btn btn-default btn-xs glyphicon glyphicon-remove pull-right" th:onclick="|$('#${statsId}').click()|"> Close</button>
+				<button class="btn btn-default btn-xs pull-right" th:onclick="|$('#${statsId}').click()|"><span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Close</button>
 			</div>
 		</div>
 		<div th:if="${compare}">

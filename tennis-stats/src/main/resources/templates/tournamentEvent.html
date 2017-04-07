@@ -40,10 +40,10 @@
 			});
 			var $drawLeft = $("#drawLeft");
 			$drawLeft.prop("disabled", roundPos == 0);
-			$drawLeft.html(" " + rounds[Math.max(0, roundPos - 1)]);
+			$drawLeft.html("<span class='glyphicon glyphicon-chevron-left'></span>&nbsp;&nbsp;" + rounds[Math.max(0, roundPos - 1)]);
 			var $drawRight = $("#drawRight");
 			$drawRight.prop("disabled", roundPos == maxRoundPos);
-			$drawRight.html(" " + rounds[Math.min(maxRoundPos, roundPos + 1) + roundsToShow - 1]);
+			$drawRight.html("<span class='glyphicon glyphicon-chevron-right'></span>&nbsp;&nbsp;" + rounds[Math.min(maxRoundPos, roundPos + 1) + roundsToShow - 1]);
 		}
 	</script>
 	<style>
@@ -137,7 +137,7 @@
 				<tr>
 					<th>
 						<a role="button" th:href="${!isTeam ? ('/tournament?tournamentId=' + tournamentEvent.tournamentId) : ('/teamTournamentLevelTimeline?level=' + tournamentEvent.level)}" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Tournament history">
-							<span class="glyphicon glyphicon-calendar"></span> History
+							<span class="glyphicon glyphicon-calendar"></span>&nbsp;&nbsp;History
 						</a>
 					</th>
 				</tr>
@@ -155,8 +155,8 @@
 			<table id="drawTable" class="table-condensed text-nowrap" width="100%">
 				<thead>
 				<tr>
-					<th colspan="2"><button id="drawLeft" type="button" class="btn btn-info btn-xs glyphicon glyphicon-chevron-left" onclick="roundLeft()"></button></th>
-					<th colspan="2" style="text-align: right"><button id="drawRight" type="button" class="btn btn-info btn-xs glyphicon glyphicon-chevron-right" onclick="roundRight()"></button></th>
+					<th colspan="2"><button id="drawLeft" type="button" class="btn btn-info btn-xs" onclick="roundLeft()"></button></th>
+					<th colspan="2" style="text-align: right"><button id="drawRight" type="button" class="btn btn-info btn-xs" onclick="roundRight()"></button></th>
 				</tr>
 				<tr>
 					<th th:each="round : ${draw.rounds}" th:text="${round.description}" th:data-round-index="${roundStat.index}">Final</th>

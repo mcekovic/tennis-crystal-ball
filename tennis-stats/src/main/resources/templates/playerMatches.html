@@ -63,7 +63,7 @@
 				},
 				"match": matchFormatter([[${playerId}]]),
 				"stats": function(column, row) {
-					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn glyphicon glyphicon-stats' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'> Stats</a>" : "";
+					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>" : "";
 				}
 			},
 			labels: {
@@ -229,13 +229,13 @@
 	</div>
 	<div class="col-md-1">
 		<button type="button" class="btn btn-default" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<span class="glyphicon glyphicon-remove"></span> Clear
+			<span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Clear
 		</button>
 	</div>
 	<div class="col-md-1">
 		<div data-toggle="tooltip" data-placement="right" title="Advanced filters">
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#matchesAdvancedFilter">
-				<span class="glyphicon glyphicon-cog"></span> Adv.
+				<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Adv.
 			</button>
 		</div>
 	</div>
@@ -291,7 +291,7 @@
 	</select>
 </div>
 <button id="matchesStats" type="button" class="btn btn-info grid-control margin-right" onclick="showMatchesStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected matches)|">
-	<span class="glyphicon glyphicon-stats"></span> Stats
+	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats
 </button>
 <table id="matchesTable" class="table table-condensed table-hover table-striped">
 	<thead>
@@ -303,7 +303,7 @@
 		<th data-column-id="wonLost" data-formatter="wonLost" data-width="55">W / L</th>
 		<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
 		<th data-column-id="score" data-sortable="false" data-width="175">Score</th>
-		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="80">Stats</th>
+		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>
 	</tr>
 	</thead>
 </table>

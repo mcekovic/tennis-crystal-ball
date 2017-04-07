@@ -87,8 +87,8 @@
 					<li th:class="${path == '/tournamentEventForecasts' || path == '/tournamentEventForecast' || path == '/tournamentEvents' || path == '/tournamentEvent' || path == '/tournament' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Tournaments<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/tournamentEventForecasts' || path == '/tournamentEventForecast' ? 'active' : ''}"><a href="/tournamentEventForecasts">Tournament Forecasts<sup class="new-feature">&nbsp;New!</sup></a></li>
-							<li th:class="${path == '/tournamentEvents' || path == '/tournamentEvent' || path == '/tournament' ? 'active' : ''}"><a href="/tournamentEvents">Tournaments</a></li>
+							<li th:class="${path == '/tournamentEventForecasts' || path == '/tournamentEventForecast' ? 'active' : ''}"><a href="/tournamentEventForecasts">Tournament Forecasts<sup class="new-feature">&nbsp;Experimental!</sup></a></li>
+							<li th:class="${path == '/tournamentEvents' || path == '/tournamentEvent' || path == '/tournament' ? 'active' : ''}"><a href="/tournamentEvents">Tournament Events</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/records' || path == '/record' ? 'active' : ''}"><a href="/records">Records<sup class="cool-feature">&nbsp;Cool!</sup></a></li>

@@ -102,9 +102,9 @@
 		</div>
 		<div class="col-xs-2 text-center">
 			<h3>
-				<a th:if="${bothPlayersSelected}" href="javascript:swapPlayers()" title="Swap players"><h4 style="margin: 0" class="glyphicon glyphicon-transfer"></h4></a>
+				<a th:if="${bothPlayersSelected && !samePlayersSelected}" href="javascript:swapPlayers()" title="Swap players"><h4 style="margin: 0" class="glyphicon glyphicon-transfer"></h4></a>
 				vs
-				<a th:if="${bothPlayersSelected}" th:href="'/headToHead?name1=' + ${player1.name} + '&name2=' + ${player2.name}" th:title="|Permalink to ${player1.name} vs ${player2.name} Rivalry|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
+				<a th:if="${bothPlayersSelected && !samePlayersSelected}" th:href="'/headToHead?name1=' + ${player1.name} + '&name2=' + ${player2.name}" th:title="|Permalink to ${player1.name} vs ${player2.name} Rivalry|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
 			</h3>
 		</div>
 		<div class="col-xs-5 text-right">
