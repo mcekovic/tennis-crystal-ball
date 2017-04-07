@@ -222,3 +222,14 @@ BEGIN
 	RETURN l_max_participation;
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- tournament_level_factor
+
+CREATE OR REPLACE FUNCTION tournament_level_factor(
+	p_level tournament_level
+) RETURNS REAL AS $$
+BEGIN
+	RETURN CASE WHEN p_level = 'G' THEN 5.0 / 3.0 ELSE 1.0 END;
+END;
+$$ LANGUAGE plpgsql;

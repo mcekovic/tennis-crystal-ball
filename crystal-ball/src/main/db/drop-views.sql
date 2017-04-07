@@ -89,5 +89,6 @@ DROP VIEW player_match_for_stats_v;
 DROP VIEW match_for_stats_v;
 DROP VIEW match_for_rivalry_v;
 
+DROP VIEW in_progress_event_participation_v;
 DROP MATERIALIZED VIEW event_participation;
 DROP VIEW event_participation_v;

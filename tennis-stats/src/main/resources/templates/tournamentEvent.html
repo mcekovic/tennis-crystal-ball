@@ -50,6 +50,7 @@
 		td.seed {
 			width: 20px;
 			padding: 0 2px;
+			text-align: right;
 		}
 		td.player {
 			padding: 0 2px;
@@ -103,7 +104,7 @@
 				</tr>
 				<tr th:unless="${isTeam}">
 					<th>Participation</th>
-					<td th:text="${tournamentEvent.participationPoints} + ' (' + ${#numbers.formatDecimal(tournamentEvent.participationPct, 1, 1) + '%'} + ')'">832 (67.3%)</td>
+					<td><span th:text="${tournamentEvent.participationPoints}" th:title="#{events.participationPoints.title}">832</span> <span th:text="'(' + ${#numbers.formatDecimal(tournamentEvent.participationPct, 1, 1)} + '%)'" th:title="#{events.participationPercentage.title}">(67.3%)</span></td>
 				</tr>
 			</table>
 		</div>

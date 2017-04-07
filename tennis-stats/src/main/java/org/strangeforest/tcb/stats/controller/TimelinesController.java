@@ -66,6 +66,7 @@ public class TimelinesController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("timeline", timeline);
 		modelMap.addAttribute("rankType", rankType);
+		modelMap.addAttribute("surfaces", Surface.values());
 		return new ModelAndView("topRankingsTimeline", modelMap);
 	}
 

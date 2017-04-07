@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.TopRankingsTimeline"*/-->
 <!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
 	<title>Top Rankings Timeline</title>
 	<script type="text/javascript">
@@ -26,6 +27,7 @@
 			<select id="rankType" class="form-control" onchange="onRankTypeChange()">
 				<option value="POINTS" th:selected="${rankType.name() == 'POINTS'}">ATP Ranking</option>
 				<option value="ELO_RATING" th:selected="${rankType.name() == 'ELO_RATING'}">Elo Ranking</option>
+				<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|" th:selected="${rankType != null && rankType.name() == (surface + '_ELO_RATING')}">Hard Elo Ranking</option>
 			</select>
 		</div>
 	</row>
@@ -38,10 +40,10 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="season : ${timeline.seasons}">
+			<tr th:each="season : ${timeline.seasons}" th:unless="${season > 2007 && rankType.name() == 'CARPET_ELO_RATING'}">
 				<th>
 					<a th:href="'/rankingsTable?rankType=' + ${rankType} + '&season=' + ${season}" th:text="${season}" title="Show season year-end rankings">2000</a>
-					<th:block th:if="${season < 1973}"> *</th:block>
+					<th:block th:if="${season < 1973 && rankType.name() == 'POINTS'}"> *</th:block>
 				</th>
 				<td th:each="player : ${timeline.getTopPlayers(season)}">
 					<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
@@ -52,7 +54,7 @@
 			</tr>
 		</tbody>
 	</table>
-	<p><i>* Estimated rankings</i></p>
+	<p th:if="${rankType.name() == 'POINTS'}"><i>* Estimated rankings</i></p>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

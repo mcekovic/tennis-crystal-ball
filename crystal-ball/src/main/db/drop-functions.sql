@@ -12,3 +12,4 @@ DROP FUNCTION merge_elo_ranking(DATE, INTEGER, INTEGER, INTEGER, INTEGER, INTEGE
 DROP FUNCTION performance_min_entries(TEXT);
 DROP FUNCTION statistics_min_entries(TEXT);
 DROP FUNCTION max_event_participation(INTEGER);
+DROP FUNCTION tournament_level_factor(tournament_level);

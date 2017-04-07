@@ -613,6 +613,8 @@ DECLARE
 	l_in_progress_event_id INTEGER;
 	l_player1_id INTEGER;
 	l_player2_id INTEGER;
+	l_player1_rank INTEGER;
+	l_player2_rank INTEGER;
 	l_in_progress_match_id BIGINT;
 BEGIN
 	l_in_progress_event_id := find_in_progress_event(p_ext_tournament_id);
@@ -632,25 +634,27 @@ BEGIN
 	IF l_player2_id IS NOT NULL AND p_player2_country_id IS NULL THEN
 		SELECT country_id INTO p_player2_country_id FROM player WHERE player_id = l_player2_id;
 	END IF;
+	l_player1_rank := player_rank(l_player1_id, p_date);
+	l_player2_rank := player_rank(l_player2_id, p_date);
 
 	-- merge in_progress_match
 	UPDATE in_progress_match
 	SET prev_match_num1 = p_prev_match_num1, prev_match_num2 = p_prev_match_num2, date = p_date, surface = p_surface::surface, indoor = p_indoor, round = p_round::match_round, best_of = p_best_of,
-		player1_id = l_player1_id, player1_country_id = p_player1_country_id, player1_seed = p_player1_seed, player1_entry = p_player1_entry::tournament_entry,
-		player2_id = l_player2_id, player2_country_id = p_player2_country_id, player2_seed = p_player2_seed, player2_entry = p_player2_entry::tournament_entry,
+		player1_id = l_player1_id, player1_country_id = p_player1_country_id, player1_seed = p_player1_seed, player1_entry = p_player1_entry::tournament_entry, player1_rank = l_player1_rank,
+		player2_id = l_player2_id, player2_country_id = p_player2_country_id, player2_seed = p_player2_seed, player2_entry = p_player2_entry::tournament_entry, player2_rank = l_player2_rank,
 		winner = p_winner, score = p_score, outcome = p_outcome::match_outcome
 	WHERE in_progress_event_id = l_in_progress_event_id AND match_num = p_match_num
 	RETURNING in_progress_match_id INTO l_in_progress_match_id;
 	IF l_in_progress_match_id IS NULL THEN
 		INSERT INTO in_progress_match
 		(in_progress_event_id, match_num, prev_match_num1, prev_match_num2, date, surface, indoor, round, best_of,
-		 player1_id, player1_country_id, player1_seed, player1_entry,
-		 player2_id, player2_country_id, player2_seed, player2_entry,
+		 player1_id, player1_country_id, player1_seed, player1_entry, player1_rank,
+		 player2_id, player2_country_id, player2_seed, player2_entry, player2_rank,
 		 winner, score, outcome)
 		VALUES
 		(l_in_progress_event_id, p_match_num, p_prev_match_num1, p_prev_match_num2, p_date, p_surface::surface, p_indoor, p_round::match_round, p_best_of,
-		 l_player1_id, p_player1_country_id, p_player1_seed, p_player1_entry::tournament_entry,
-		 l_player2_id, p_player2_country_id, p_player2_seed, p_player2_entry::tournament_entry,
+		 l_player1_id, p_player1_country_id, p_player1_seed, p_player1_entry::tournament_entry, l_player1_rank,
+		 l_player2_id, p_player2_country_id, p_player2_seed, p_player2_entry::tournament_entry, l_player2_rank,
 		 p_winner, p_score, p_outcome::match_outcome);
    END IF;
 END;

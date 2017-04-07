@@ -6,6 +6,7 @@
 		$(function() {
 			var $inProgressEventsTable = $("#inProgressEventsTable");
 			var device = detectDevice();
+			setBootgridColumnsVisible($inProgressEventsTable, ["playerCount", "participationPoints"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($inProgressEventsTable, ["favourite1"], deviceGreaterOrEqual(device, "sm"));
 			setBootgridColumnsVisible($inProgressEventsTable, ["favourite2"], deviceGreaterOrEqual(device, "md"));
 			if (deviceGreaterOrEqual("md", device))
@@ -25,6 +26,7 @@
 						return "<a href='/tournamentEventForecast?inProgressEventId=" + row.id + "' class='label label-" + row.level + "' title='Show full forecast'>" + row.name + "</a>";
 					},
 					"surface": surfaceFormatter,
+					"participationPct": participationFormatter,
 					"favourite1":  function(column, row) {
 						return formatFavourite(column, row.favourite1);
 					},
@@ -43,6 +45,11 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
+			setBootgridTitles($inProgressEventsTable, [
+				{id: "playerCount", title: "Players"},
+				{id: "participationPoints", title: "[[#{events.participationPoints.title}]]"},
+				{id: "participationPct", title: "[[#{events.participationPercentage.title}]]"}
+			]);
 		});
 		function formatFavourite(column, favourite) {
 			return favourite ? playerCountryFormatter(column, favourite) + " " + (100 * favourite.probability.toFixed(1)) + "%" : "";
@@ -58,6 +65,9 @@
 			<th data-column-id="name" data-formatter="event" data-width="200">Name</th>
 			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
 			<th data-column-id="draw" data-width="65">Draw</th>
+			<th data-column-id="playerCount" data-width="55">Pls.</th>
+			<th data-column-id="participationPoints" data-type="numeric" data-width="70">P. Pts.</th>
+			<th data-column-id="participationPct" data-formatter="participationPct" data-width="70">P. Pct.</th>
 			<th data-column-id="favourite1" data-formatter="favourite1" data-width="200">1-st Favourite</th>
 			<th data-column-id="favourite2" data-formatter="favourite2" data-width="200">2-nd Favourite</th>
 			<th data-column-id="forecast" data-formatter="forecast" data-width="95">Forecast</th>

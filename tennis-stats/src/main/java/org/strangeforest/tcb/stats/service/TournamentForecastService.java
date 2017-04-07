@@ -19,16 +19,18 @@ public class TournamentForecastService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String IN_PROGRESS_EVENTS_QUERY = //language=SQL
-		"SELECT in_progress_event_id, tournament_id, date, name, level, surface, indoor, draw_type, draw_size\n" +
-		"FROM in_progress_event\n" +
-		"ORDER BY date, level, in_progress_event_id";
+		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation_points, p.max_participation_points\n" +
+		"FROM in_progress_event e\n" +
+		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
+		"ORDER BY e.date, e.level, e.in_progress_event_id";
 
-	private static final String IN_PROGRESS_EVENT_QUERY = //language=SQL
-		"SELECT in_progress_event_id, tournament_id, date, name, level, surface, indoor, draw_type, draw_size\n" +
-		"FROM in_progress_event\n" +
+	private static final String IN_PROGRESS_EVENT_QUERY =
+		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation_points, p.max_participation_points\n" +
+		"FROM in_progress_event e\n" +
+		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
 		"WHERE in_progress_event_id = :inProgressEventId";
 
-	private static final String FIND_FAVOURITES_QUERY = //language=SQL
+	private static final String FIND_FAVOURITES_QUERY =
 		"SELECT player_id, p.name, p.country_id, r.probability\n" +
 		"FROM player_in_progress_result r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
@@ -36,7 +38,7 @@ public class TournamentForecastService {
 		"AND r.base_result = 'W' AND r.result = 'W' AND probability > 0\n" +
 		"ORDER BY r.probability DESC LIMIT 2";
 
-	private static final String IN_PROGRESS_EVEN_FORECAST_QUERY = //language=SQL
+	private static final String IN_PROGRESS_EVENT_FORECAST_QUERY =
 		"WITH entry_round AS (\n" +
 		"  SELECT min(round) AS entry_round FROM in_progress_match WHERE in_progress_event_id = :inProgressEventId\n" +
 		")\n" +
@@ -70,17 +72,23 @@ public class TournamentForecastService {
 	}
 
 	private static InProgressEvent mapInProgressEvent(ResultSet rs) throws SQLException {
-		return new InProgressEvent(
+		InProgressEvent inProgressEvent = new InProgressEvent(
 			rs.getInt("in_progress_event_id"),
 			rs.getInt("tournament_id"),
 			rs.getDate("date"),
 			rs.getString("name"),
 			rs.getString("level"),
 			rs.getString("surface"),
-			rs.getBoolean("indoor"),
-			rs.getString("draw_type"),
-			getInteger(rs, "draw_size")
+			rs.getBoolean("indoor")
 		);
+		inProgressEvent.setDraw(
+			rs.getString("draw_type"),
+			getInteger(rs, "draw_size"),
+			rs.getInt("player_count"),
+			rs.getInt("participation_points"),
+			rs.getInt("max_participation_points")
+		);
+		return inProgressEvent;
 	}
 	
 	private FavouritePlayer mapFavouritePlayer(ResultSet rs, int rowNum) throws SQLException {
@@ -100,7 +108,7 @@ public class TournamentForecastService {
 		List<FavouritePlayer> favourites = jdbcTemplate.query(FIND_FAVOURITES_QUERY, inProgressEventIdParam, this::mapFavouritePlayer);
 		inProgressEvent.setFavourites(favourites);
 		InProgressEventForecast forecast = new InProgressEventForecast(inProgressEvent);
-		jdbcTemplate.query(IN_PROGRESS_EVEN_FORECAST_QUERY, inProgressEventIdParam, rs -> {
+		jdbcTemplate.query(IN_PROGRESS_EVENT_FORECAST_QUERY, inProgressEventIdParam, rs -> {
 			forecast.addForecast(
 				rs.getString("base_result"),
 				rs.getInt("player_num"),

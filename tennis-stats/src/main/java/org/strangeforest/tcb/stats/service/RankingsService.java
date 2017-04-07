@@ -40,14 +40,14 @@ public class RankingsService {
 		"ORDER BY rank_date DESC";
 
 	private static final String RANKING_TOP_N_QUERY = //language=SQL
-		"SELECT player_id, r.rank, p.last_name, p.country_id, %1$s AS points\n" +
+		"SELECT player_id, r.rank, p.last_name, p.country_id, r.%1$s AS points\n" +
 		"FROM %2$s r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.rank_date = :date\n" +
-		"ORDER BY %3$s LIMIT :playerCount";
+		"ORDER BY r.%3$s LIMIT :playerCount";
 
 	private static final String RANKING_TABLE_QUERY = //language=SQL
-		"SELECT %1$s AS rank, player_id, p.name, p.country_id, %2$s AS points, %3$s AS best_rank, %4$s AS best_rank_date\n" +
+		"SELECT r.%1$s AS rank, player_id, p.name, p.country_id, r.%2$s AS points, p.%3$s AS best_rank, p.%4$s AS best_rank_date\n" +
 		"FROM %5$s r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.rank_date = :date%6$s\n" +
@@ -58,7 +58,7 @@ public class RankingsService {
 		"  SELECT rank() OVER (ORDER BY %1$s DESC NULLS LAST) AS rank, player_id, %1$s AS best_elo_rating\n" +
 		"  FROM player_best_elo_rating\n" +
 		")\n" +
-		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, %2$s AS points_date, %3$s AS best_rank, %4$s AS best_rank_date\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, p.%2$s AS points_date, p.%3$s AS best_rank, p.%4$s AS best_rank_date\n" +
 		"FROM best_elo_rating_ranked r\n" +
 		"INNER JOIN player_v p USING (player_id)%5$s\n" +
 		"ORDER BY rank, best_rank_date OFFSET :offset LIMIT " + HIGHEST_ELO_RATING_MAX_PLAYERS;
@@ -102,11 +102,11 @@ public class RankingsService {
 		"WHERE player_id = :playerId";
 
 	private static final String TOP_RANKINGS_TIMELINE_QUERY = //language=SQL
-		"SELECT r.season, r.year_end_rank, player_id, p.short_name, p.country_id, p.active\n" +
-		"FROM %1$s r\n" +
+		"SELECT r.season, r.%1$s AS year_end_rank, player_id, p.short_name, p.country_id, p.active\n" +
+		"FROM %2$s r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.year_end_rank <= :topRanks\n" +
-		"ORDER BY r.season, r.year_end_rank";
+		"ORDER BY r.season, r.%1$s";
 
 
 	@Cacheable("RankingsTable.CurrentDate")
@@ -195,47 +195,47 @@ public class RankingsService {
 	private String rankColumn(RankType rankType) {
 		switch (rankType) {
 			case POINTS:
-			case ELO_RATING: return "r.rank";
-			case HARD_ELO_RATING: return "r.hard_rank";
-			case CLAY_ELO_RATING: return "r.clay_rank";
-			case GRASS_ELO_RATING: return "r.grass_rank";
-			case CARPET_ELO_RATING: return "r.carpet_rank";
+			case ELO_RATING: return "rank";
+			case HARD_ELO_RATING: return "hard_rank";
+			case CLAY_ELO_RATING: return "clay_rank";
+			case GRASS_ELO_RATING: return "grass_rank";
+			case CARPET_ELO_RATING: return "carpet_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}
 
 	private String pointsColumn(RankType rankType) {
 		switch (rankType) {
-			case POINTS: return "r.rank_points";
-			case ELO_RATING: return "r.elo_rating";
-			case HARD_ELO_RATING: return "r.hard_elo_rating";
-			case CLAY_ELO_RATING: return "r.clay_elo_rating";
-			case GRASS_ELO_RATING: return "r.grass_elo_rating";
-			case CARPET_ELO_RATING: return "r.carpet_elo_rating";
+			case POINTS: return "rank_points";
+			case ELO_RATING: return "elo_rating";
+			case HARD_ELO_RATING: return "hard_elo_rating";
+			case CLAY_ELO_RATING: return "clay_elo_rating";
+			case GRASS_ELO_RATING: return "grass_elo_rating";
+			case CARPET_ELO_RATING: return "carpet_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
 
 	private String bestRankColumn(RankType rankType) {
 		switch (rankType) {
-			case POINTS: return "p.best_rank";
-			case ELO_RATING: return "p.best_elo_rank";
-			case HARD_ELO_RATING: return "p.best_hard_elo_rank";
-			case CLAY_ELO_RATING: return "p.best_clay_elo_rank";
-			case GRASS_ELO_RATING: return "p.best_grass_elo_rank";
-			case CARPET_ELO_RATING: return "p.best_carpet_elo_rank";
+			case POINTS: return "best_rank";
+			case ELO_RATING: return "best_elo_rank";
+			case HARD_ELO_RATING: return "best_hard_elo_rank";
+			case CLAY_ELO_RATING: return "best_clay_elo_rank";
+			case GRASS_ELO_RATING: return "best_grass_elo_rank";
+			case CARPET_ELO_RATING: return "best_carpet_elo_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}
 
 	private String bestRankDateColumn(RankType rankType) {
 		switch (rankType) {
-			case POINTS: return "p.best_rank_date";
-			case ELO_RATING: return "p.best_elo_rank_date";
-			case HARD_ELO_RATING: return "p.best_hard_elo_rank_date";
-			case CLAY_ELO_RATING: return "p.best_clay_elo_rank_date";
-			case GRASS_ELO_RATING: return "p.best_grass_elo_rank_date";
-			case CARPET_ELO_RATING: return "p.best_carpet_elo_rank_date";
+			case POINTS: return "best_rank_date";
+			case ELO_RATING: return "best_elo_rank_date";
+			case HARD_ELO_RATING: return "best_hard_elo_rank_date";
+			case CLAY_ELO_RATING: return "best_clay_elo_rank_date";
+			case GRASS_ELO_RATING: return "best_grass_elo_rank_date";
+			case CARPET_ELO_RATING: return "best_carpet_elo_rank_date";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -253,11 +253,11 @@ public class RankingsService {
 
 	private String bestEloRatingDateColumn(RankType rankType) {
 		switch (rankType) {
-			case ELO_RATING: return "p.best_elo_rating_date";
-			case HARD_ELO_RATING: return "p.best_hard_elo_rating_date";
-			case CLAY_ELO_RATING: return "p.best_clay_elo_rating_date";
-			case GRASS_ELO_RATING: return "p.best_grass_elo_rating_date";
-			case CARPET_ELO_RATING: return "p.best_carpet_elo_rating_date";
+			case ELO_RATING: return "best_elo_rating_date";
+			case HARD_ELO_RATING: return "best_hard_elo_rating_date";
+			case CLAY_ELO_RATING: return "best_clay_elo_rating_date";
+			case GRASS_ELO_RATING: return "best_grass_elo_rating_date";
+			case CARPET_ELO_RATING: return "best_carpet_elo_rating_date";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -343,7 +343,7 @@ public class RankingsService {
 	public TopRankingsTimeline getTopRankingsTimeline(RankType rankType) {
 		TopRankingsTimeline timeline = new TopRankingsTimeline(TOP_RANKS_FOR_TIMELINE);
 		jdbcTemplate.query(
-			format(TOP_RANKINGS_TIMELINE_QUERY, yearEndRankingTable(rankType)),
+			format(TOP_RANKINGS_TIMELINE_QUERY, yearEndRankColumn(rankType), yearEndRankingTable(rankType)),
 			params("topRanks", TOP_RANKS_FOR_TIMELINE),
 			rs -> {
 				timeline.addSeasonTopPlayer(rs.getInt("season"), new TopRankingsPlayer(
@@ -358,10 +358,26 @@ public class RankingsService {
 		return timeline;
 	}
 
+	private String yearEndRankColumn(RankType rankType) {
+		switch (rankType) {
+			case POINTS:
+			case ELO_RATING: return "year_end_rank";
+			case HARD_ELO_RATING: return "hard_year_end_rank";
+			case CLAY_ELO_RATING: return "clay_year_end_rank";
+			case GRASS_ELO_RATING: return "grass_year_end_rank";
+			case CARPET_ELO_RATING: return "carpet_year_end_rank";
+			default: throw unknownEnum(rankType);
+		}
+	}
+
 	private String yearEndRankingTable(RankType rankType) {
 		switch (rankType) {
 			case POINTS: return "player_year_end_rank";
-			case ELO_RATING: return "player_year_end_elo_rank";
+			case ELO_RATING:
+			case HARD_ELO_RATING:
+			case CLAY_ELO_RATING:
+			case GRASS_ELO_RATING:
+			case CARPET_ELO_RATING: return "player_year_end_elo_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}

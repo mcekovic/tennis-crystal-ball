@@ -5,14 +5,17 @@
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
 <head th:replace="fragments/head :: commonHead(${inProgressEvent.name}, false, ~{::script}, ~{::style})">
 	<script type="text/javascript">
+		$(function() {
+			bindPopovers();
+		});
 	</script>
 	<style>
-		#forecastTables >> thead > tr > th {
+		#forecastTables > div > table > thead > tr > th {
 			height: 24px;
 			vertical-align: middle;
 			padding: 4px 5px;
 		}
-		#forecastTables >> tbody > tr > td {
+		#forecastTables > div > table > tbody > tr > td {
 			height: 24px;
 			vertical-align: middle;
 			padding: 1px 5px;
@@ -47,7 +50,11 @@
 				</tr>
 				<tr>
 					<th>Players</th>
-					<td th:text="${forecast.playerCount}">128</td>
+					<td th:text="${inProgressEvent.playerCount}">128</td>
+				</tr>
+				<tr>
+					<th>Participation</th>
+					<td><span th:text="${inProgressEvent.participationPoints}" th:title="#{events.participationPoints.title}">832</span> <span th:text="'(' + ${#numbers.formatDecimal(inProgressEvent.participationPct, 1, 1)} + '%)'" th:title="#{events.participationPercentage.title}">(67.3%)</span></td>
 				</tr>
 			</table>
 		</div>
@@ -96,6 +103,11 @@
 			</table>
 		</div>
 	</div>
+	<br/>
+	<p>
+		<em>Tournament Event Forecasts are based on Tournament Simulation driven by <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><strong>Neural Network Match Prediction Algorithm</strong></a></em>
+	</p>
+	<div th:include="fragments/aboutPrediction :: aboutPrediction"></div>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

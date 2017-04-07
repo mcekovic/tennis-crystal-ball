@@ -10,8 +10,8 @@ WITH event_player_ranks AS (
 	GROUP BY tournament_event_id, player_id
 )
 SELECT tournament_event_id, count(p.player_id) AS player_count,
-	(sum(f.rank_factor) * (CASE WHEN e.level = 'G' THEN 5.0 / 3.0 ELSE 1.0 END))::INTEGER AS participation_points,
-	(max_event_participation(count(p.player_id)::INTEGER) * (CASE WHEN e.level = 'G' THEN 5.0 / 3.0 ELSE 1.0 END))::INTEGER AS max_participation_points
+	(sum(f.rank_factor) * tournament_level_factor(e.level))::INTEGER AS participation_points,
+	(max_event_participation(count(p.player_id)::INTEGER) * tournament_level_factor(e.level))::INTEGER AS max_participation_points
 FROM event_players p
 INNER JOIN tournament_event e USING (tournament_event_id)
 LEFT JOIN tournament_event_rank_factor f ON p.rank BETWEEN f.rank_from AND f.rank_to
@@ -21,6 +21,26 @@ GROUP BY tournament_event_id, e.level;
 CREATE MATERIALIZED VIEW event_participation AS SELECT * FROM event_participation_v;
 
 CREATE UNIQUE INDEX ON event_participation (tournament_event_id);
+
+
+-- in_progress_event_participation
+
+CREATE OR REPLACE VIEW in_progress_event_participation_v AS
+WITH event_player_ranks AS (
+	SELECT DISTINCT in_progress_event_id, player1_id AS player_id, player1_rank AS rank FROM in_progress_match
+	UNION DISTINCT
+	SELECT DISTINCT in_progress_event_id, player2_id, player2_rank FROM in_progress_match
+), event_players AS (
+	SELECT in_progress_event_id, player_id, avg(rank) AS rank FROM event_player_ranks
+	GROUP BY in_progress_event_id, player_id
+)
+SELECT in_progress_event_id, count(p.player_id) AS player_count,
+	(sum(f.rank_factor) * tournament_level_factor(e.level))::INTEGER AS participation_points,
+	(max_event_participation(count(p.player_id)::INTEGER) * tournament_level_factor(e.level))::INTEGER AS max_participation_points
+FROM event_players p
+INNER JOIN in_progress_event e USING (in_progress_event_id)
+LEFT JOIN tournament_event_rank_factor f ON p.rank BETWEEN f.rank_from AND f.rank_to
+GROUP BY in_progress_event_id, e.level;
 
 
 -- player_current_rank

@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
+
 public class InProgressEvent {
 
 	private final int id;
@@ -13,9 +15,12 @@ public class InProgressEvent {
 	private final boolean indoor;
 	private String drawType;
 	private Integer drawSize;
+	private int playerCount;
+	private int participationPoints;
+	private double participationPct;
 	private List<FavouritePlayer> favourites;
 
-	public InProgressEvent(int id, int tournamentId, Date date, String name, String level, String surface, boolean indoor, String drawType, Integer drawSize) {
+	public InProgressEvent(int id, int tournamentId, Date date, String name, String level, String surface, boolean indoor) {
 		this.id = id;
 		this.tournamentId = tournamentId;
 		this.date = date;
@@ -23,8 +28,14 @@ public class InProgressEvent {
 		this.level = level;
 		this.surface = surface;
 		this.indoor = indoor;
+	}
+
+	public void setDraw(String drawType, Integer drawSize, int playerCount, int participationPoints, int maxParticipationPoints) {
 		this.drawType = drawType;
 		this.drawSize = drawSize;
+		this.playerCount = playerCount;
+		this.participationPoints = participationPoints;
+		participationPct = pct(participationPoints, maxParticipationPoints);
 	}
 
 	public int getId() {
@@ -57,6 +68,18 @@ public class InProgressEvent {
 
 	public String getDraw() {
 		return drawType + (drawSize != null ? " " + drawSize : "");
+	}
+
+	public int getPlayerCount() {
+		return playerCount;
+	}
+
+	public int getParticipationPoints() {
+		return participationPoints;
+	}
+
+	public double getParticipationPct() {
+		return participationPct;
 	}
 
 	public FavouritePlayer getFavourite1() {

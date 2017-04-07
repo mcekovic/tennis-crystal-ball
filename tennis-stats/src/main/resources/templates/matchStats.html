@@ -41,84 +41,84 @@
 		<tbody th:with="winnerStats=${matchStats.winnerStats}, loserStats=${matchStats.loserStats}" class="text-nowrap">
 		<tr>
 			<th:block th:if="${compare}">
-				<th class="pct-data" title="Actual"><span class="glyphicon glyphicon-scale"></span></th>
-				<th class="pct-data" title="Difference"><span class="glyphicon glyphicon-sort"></span></th>
-				<th class="pct-data" th:title="|Relative to ${winnerRelativeTo}|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" th:title="|${winnerRelativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th class="pct-data" title="Match statistics"><span class="glyphicon glyphicon-scale"></span></th>
 			</th:block>
 			<th th:unless="${compare}" class="pct-data"><span class="glyphicon glyphicon-scale"></span></th>
 			<th class="raw-data"><span class="glyphicon glyphicon-equalizer"></span></th>
 			<th>Serve</th>
 			<th:block th:if="${compare}">
-				<th class="pct-data" title="Actual"><span class="glyphicon glyphicon-scale"></span></th>
-				<th class="pct-data" title="Difference"><span class="glyphicon glyphicon-sort"></span></th>
-				<th class="pct-data" th:title="|Relative to ${loserRelativeTo}|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" th:title="|${loserRelativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th class="pct-data" title="Match statistics"><span class="glyphicon glyphicon-scale"></span></th>
 			</th:block>
 			<th th:unless="${compare}" class="pct-data"><span class="glyphicon glyphicon-scale"></span></th>
 			<th class="raw-data"><span class="glyphicon glyphicon-equalizer"></span></th>
 		</tr>
 		<!-- Serve Pct. Data -->
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.acePct)}">10%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.acePct, winnerStats.acePct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.acePct, winnerStats.acePct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.acePct)}">10%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.acePct, winnerStats.acePct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.acePct, winnerStats.acePct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.acePct)}">10%</th>
 			<td>Ace %</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.acePct)}">5%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.acePct, loserStats.acePct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.acePct, loserStats.acePct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.acePct)}">5%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.acePct, loserStats.acePct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.acePct, loserStats.acePct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.acePct)}">5%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.doubleFaultPct)}">2%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.doubleFaultPct, winnerStats.doubleFaultPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.doubleFaultPct, winnerStats.doubleFaultPct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.doubleFaultPct)}">2%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.doubleFaultPct, winnerStats.doubleFaultPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.doubleFaultPct, winnerStats.doubleFaultPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.doubleFaultPct)}">2%</th>
 			<td>Double Fault %</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.doubleFaultPct)}">3%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.doubleFaultPct, loserStats.doubleFaultPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.doubleFaultPct, loserStats.doubleFaultPct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.doubleFaultPct)}">3%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.doubleFaultPct, loserStats.doubleFaultPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.doubleFaultPct, loserStats.doubleFaultPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.doubleFaultPct)}">3%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.firstServePct)}">66%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.firstServePct, winnerStats.firstServePct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.firstServePct, winnerStats.firstServePct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.firstServePct)}">66%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.firstServePct, winnerStats.firstServePct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.firstServePct, winnerStats.firstServePct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.firstServePct)}">66%</th>
 			<td>1st Serve</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.firstServePct)}">64%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.firstServePct, loserStats.firstServePct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.firstServePct, loserStats.firstServePct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.firstServePct)}">64%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.firstServePct, loserStats.firstServePct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.firstServePct, loserStats.firstServePct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.firstServePct)}">64%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.firstServeWonPct)}">80%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.firstServeWonPct, winnerStats.firstServeWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.firstServeWonPct, winnerStats.firstServeWonPct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.firstServeWonPct)}">80%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.firstServeWonPct, winnerStats.firstServeWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.firstServeWonPct, winnerStats.firstServeWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.firstServeWonPct)}">80%</th>
 			<td>1st Serve Won</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.firstServeWonPct)}">75%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.firstServeWonPct, loserStats.firstServeWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.firstServeWonPct, loserStats.firstServeWonPct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.firstServeWonPct)}">75%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.firstServeWonPct, loserStats.firstServeWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.firstServeWonPct, loserStats.firstServeWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.firstServeWonPct)}">75%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.secondServeWonPct)}">60%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.secondServeWonPct, winnerStats.secondServeWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.secondServeWonPct, winnerStats.secondServeWonPct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.secondServeWonPct)}">60%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.secondServeWonPct, winnerStats.secondServeWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.secondServeWonPct, winnerStats.secondServeWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.secondServeWonPct)}">60%</th>
 			<td>2nd Serve Won</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.secondServeWonPct)}">45%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.secondServeWonPct, loserStats.secondServeWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.secondServeWonPct, loserStats.secondServeWonPct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.secondServeWonPct)}">45%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.secondServeWonPct, loserStats.secondServeWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.secondServeWonPct, loserStats.secondServeWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.secondServeWonPct)}">45%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.breakPointsSavedPct)}">50%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.breakPointsSavedPct, winnerStats.breakPointsSavedPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.breakPointsSavedPct, winnerStats.breakPointsSavedPct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.breakPointsSavedPct)}">50%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.breakPointsSavedPct, winnerStats.breakPointsSavedPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.breakPointsSavedPct, winnerStats.breakPointsSavedPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.breakPointsSavedPct)}">50%</th>
 			<td>Break Points Saved</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.breakPointsSavedPct)}">35%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.breakPointsSavedPct, loserStats.breakPointsSavedPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.breakPointsSavedPct, loserStats.breakPointsSavedPct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.breakPointsSavedPct)}">35%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.breakPointsSavedPct, loserStats.breakPointsSavedPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.breakPointsSavedPct, loserStats.breakPointsSavedPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.breakPointsSavedPct)}">35%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.servicePointsWonPct)}">50%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.servicePointsWonPct, winnerStats.servicePointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.servicePointsWonPct, winnerStats.servicePointsWonPct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.servicePointsWonPct)}">50%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.servicePointsWonPct, winnerStats.servicePointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.servicePointsWonPct, winnerStats.servicePointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.servicePointsWonPct)}">50%</th>
 			<td>Service Pts. Won</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.servicePointsWonPct)}">35%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.servicePointsWonPct, loserStats.servicePointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.servicePointsWonPct, loserStats.servicePointsWonPct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.servicePointsWonPct)}">35%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.servicePointsWonPct, loserStats.servicePointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.servicePointsWonPct, loserStats.servicePointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.servicePointsWonPct)}">35%</th>
 		</tr>
 		<!-- Serve Raw Data -->
 		<tr class="raw-data"></tr>
@@ -159,57 +159,57 @@
 		</tr>
 		<tr>
 			<th:block th:if="${compare}">
-				<th class="pct-data" title="Actual"><span class="glyphicon glyphicon-scale"></span></th>
-				<th class="pct-data" title="Difference"><span class="glyphicon glyphicon-sort"></span></th>
-				<th class="pct-data" th:title="|Relative to ${winnerRelativeTo}|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" th:title="|${winnerRelativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th class="pct-data" title="Match statistics"><span class="glyphicon glyphicon-scale"></span></th>
 			</th:block>
 			<th th:unless="${compare}" class="pct-data"><span class="glyphicon glyphicon-scale"></span></th>
 			<th class="raw-data"><span class="glyphicon glyphicon-equalizer"></span></th>
 			<th>Return</th>
 			<th:block th:if="${compare}">
-				<th class="pct-data" title="Actual"><span class="glyphicon glyphicon-scale"></span></th>
-				<th class="pct-data" title="Difference"><span class="glyphicon glyphicon-sort"></span></th>
-				<th class="pct-data" th:title="|Relative to ${loserRelativeTo}|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" th:title="|${loserRelativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th class="pct-data" title="Match statistics"><span class="glyphicon glyphicon-scale"></span></th>
 			</th:block>
 			<th th:unless="${compare}" class="pct-data"><span class="glyphicon glyphicon-scale"></span></th>
 			<th class="raw-data"><span class="glyphicon glyphicon-equalizer"></span></th>
 		</tr>
 		<!-- Return Pct. Data -->
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.firstServeReturnPointsWonPct)}">15%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.firstServeReturnPointsWonPct, winnerStats.firstServeReturnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.firstServeReturnPointsWonPct, winnerStats.firstServeReturnPointsWonPct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.firstServeReturnPointsWonPct)}">15%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.firstServeReturnPointsWonPct, winnerStats.firstServeReturnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.firstServeReturnPointsWonPct, winnerStats.firstServeReturnPointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.firstServeReturnPointsWonPct)}">15%</th>
 			<td>1st Srv. Rtn. Won</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.firstServeReturnPointsWonPct)}">28%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.firstServeReturnPointsWonPct, loserStats.firstServeReturnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.firstServeReturnPointsWonPct, loserStats.firstServeReturnPointsWonPct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.firstServeReturnPointsWonPct)}">28%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.firstServeReturnPointsWonPct, loserStats.firstServeReturnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.firstServeReturnPointsWonPct, loserStats.firstServeReturnPointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.firstServeReturnPointsWonPct)}">28%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.secondServeReturnPointsWonPct)}">33%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.secondServeReturnPointsWonPct, winnerStats.secondServeReturnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.secondServeReturnPointsWonPct, winnerStats.secondServeReturnPointsWonPct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.secondServeReturnPointsWonPct)}">33%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.secondServeReturnPointsWonPct, winnerStats.secondServeReturnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.secondServeReturnPointsWonPct, winnerStats.secondServeReturnPointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.secondServeReturnPointsWonPct)}">33%</th>
 			<td>2nd Srv. Rtn. Won</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.secondServeReturnPointsWonPct)}">22%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.secondServeReturnPointsWonPct, loserStats.secondServeReturnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.secondServeReturnPointsWonPct, loserStats.secondServeReturnPointsWonPct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.secondServeReturnPointsWonPct)}">22%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.secondServeReturnPointsWonPct, loserStats.secondServeReturnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.secondServeReturnPointsWonPct, loserStats.secondServeReturnPointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.secondServeReturnPointsWonPct)}">22%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.breakPointsWonPct)}">50%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.breakPointsWonPct, winnerStats.breakPointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.breakPointsWonPct, winnerStats.breakPointsWonPct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.breakPointsWonPct)}">50%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.breakPointsWonPct, winnerStats.breakPointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.breakPointsWonPct, winnerStats.breakPointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.breakPointsWonPct)}">50%</th>
 			<td>Break Points Won</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.breakPointsWonPct)}">35%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.breakPointsWonPct, loserStats.breakPointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.breakPointsWonPct, loserStats.breakPointsWonPct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.breakPointsWonPct)}">35%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.breakPointsWonPct, loserStats.breakPointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.breakPointsWonPct, loserStats.breakPointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.breakPointsWonPct)}">35%</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.returnPointsWonPct)}">50%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.returnPointsWonPct, winnerStats.returnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.returnPointsWonPct, winnerStats.returnPointsWonPct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.returnPointsWonPct)}">50%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.returnPointsWonPct, winnerStats.returnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.returnPointsWonPct, winnerStats.returnPointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.returnPointsWonPct)}">50%</th>
 			<td>Return Pts. Won</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.returnPointsWonPct)}">35%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.returnPointsWonPct, loserStats.returnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.returnPointsWonPct, loserStats.returnPointsWonPct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.returnPointsWonPct)}">35%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.returnPointsWonPct, loserStats.returnPointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.returnPointsWonPct, loserStats.returnPointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.returnPointsWonPct)}">35%</th>
 		</tr>
 		<!-- Return Raw Data -->
 		<tr class="raw-data">
@@ -234,56 +234,56 @@
 		</tr>
 		<tr>
 			<th:block th:if="${compare}">
-				<th class="pct-data" title="Actual"><span class="glyphicon glyphicon-scale"></span></th>
-				<th class="pct-data" title="Difference"><span class="glyphicon glyphicon-sort"></span></th>
-				<th class="pct-data" th:title="|Relative to ${winnerRelativeTo}|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" th:title="|${winnerRelativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th class="pct-data" title="Match statistics"><span class="glyphicon glyphicon-scale"></span></th>
 			</th:block>
 			<th th:unless="${compare}" class="pct-data"><span class="glyphicon glyphicon-scale"></span></th>
 			<th class="raw-data"><span class="glyphicon glyphicon-equalizer"></span></th>
 			<th>Total</th>
 			<th:block th:if="${compare}">
-				<th class="pct-data" title="Actual"><span class="glyphicon glyphicon-scale"></span></th>
-				<th class="pct-data" title="Difference"><span class="glyphicon glyphicon-sort"></span></th>
-				<th class="pct-data" th:title="|Relative to ${loserRelativeTo}|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" th:title="|${loserRelativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th class="pct-data" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th class="pct-data" title="Match statistics"><span class="glyphicon glyphicon-scale"></span></th>
 			</th:block>
 			<th th:unless="${compare}" class="pct-data"><span class="glyphicon glyphicon-scale"></span></th>
 			<th class="raw-data"><span class="glyphicon glyphicon-equalizer"></span></th>
 		</tr>
 		<tr>
-			<th th:text="${statsFormatUtil.formatRatio(winnerStats.pointsDominanceRatio)}">1.64</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(winnerCompareStats.pointsDominanceRatio, winnerStats.pointsDominanceRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(winnerCompareStats.pointsDominanceRatio, winnerStats.pointsDominanceRatio)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatRatio(winnerCompareStats.pointsDominanceRatio)}" class="pct-data">1.64</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(winnerCompareStats.pointsDominanceRatio, winnerStats.pointsDominanceRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(winnerCompareStats.pointsDominanceRatio, winnerStats.pointsDominanceRatio)}">0%</th>
+			<th th:text="${statsFormatUtil.formatRatio(winnerStats.pointsDominanceRatio)}">1.64</th>
 			<td th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</td>
-			<th th:text="${statsFormatUtil.formatRatio(loserStats.pointsDominanceRatio)}">0.67</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(loserCompareStats.pointsDominanceRatio, loserStats.pointsDominanceRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(loserCompareStats.pointsDominanceRatio, loserStats.pointsDominanceRatio)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatRatio(loserCompareStats.pointsDominanceRatio)}" class="pct-data">0.67</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(loserCompareStats.pointsDominanceRatio, loserStats.pointsDominanceRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(loserCompareStats.pointsDominanceRatio, loserStats.pointsDominanceRatio)}">0%</th>
+			<th th:text="${statsFormatUtil.formatRatio(loserStats.pointsDominanceRatio)}">0.67</th>
 		</tr>
 		<tr>
-			<th th:text="${statsFormatUtil.formatRatio(winnerStats.gamesDominanceRatio)}">1.64</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(winnerCompareStats.gamesDominanceRatio, winnerStats.gamesDominanceRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(winnerCompareStats.gamesDominanceRatio, winnerStats.gamesDominanceRatio)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatRatio(winnerCompareStats.gamesDominanceRatio)}" class="pct-data">1.64</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(winnerCompareStats.gamesDominanceRatio, winnerStats.gamesDominanceRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(winnerCompareStats.gamesDominanceRatio, winnerStats.gamesDominanceRatio)}">0%</th>
+			<th th:text="${statsFormatUtil.formatRatio(winnerStats.gamesDominanceRatio)}">1.64</th>
 			<td th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</td>
-			<th th:text="${statsFormatUtil.formatRatio(loserStats.gamesDominanceRatio)}">0.67</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(loserCompareStats.gamesDominanceRatio, loserStats.gamesDominanceRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(loserCompareStats.gamesDominanceRatio, loserStats.gamesDominanceRatio)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatRatio(loserCompareStats.gamesDominanceRatio)}" class="pct-data">0.67</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(loserCompareStats.gamesDominanceRatio, loserStats.gamesDominanceRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(loserCompareStats.gamesDominanceRatio, loserStats.gamesDominanceRatio)}">0%</th>
+			<th th:text="${statsFormatUtil.formatRatio(loserStats.gamesDominanceRatio)}">0.67</th>
 		</tr>
 		<tr>
-			<th th:text="${statsFormatUtil.formatRatio(winnerStats.breakPointsRatio)}">1.24</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(winnerCompareStats.breakPointsRatio, winnerStats.breakPointsRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(winnerCompareStats.breakPointsRatio, winnerStats.breakPointsRatio)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatRatio(winnerCompareStats.breakPointsRatio)}" class="pct-data">1.24</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(winnerCompareStats.breakPointsRatio, winnerStats.breakPointsRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(winnerCompareStats.breakPointsRatio, winnerStats.breakPointsRatio)}">0%</th>
+			<th th:text="${statsFormatUtil.formatRatio(winnerStats.breakPointsRatio)}">1.24</th>
 			<td th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</td>
-			<th th:text="${statsFormatUtil.formatRatio(loserStats.breakPointsRatio)}">0.37</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(loserCompareStats.breakPointsRatio, loserStats.breakPointsRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(loserCompareStats.breakPointsRatio, loserStats.breakPointsRatio)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatRatio(loserCompareStats.breakPointsRatio)}" class="pct-data">0.37</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatRatioDiff(loserCompareStats.breakPointsRatio, loserStats.breakPointsRatio)}" class="pct-data " th:attrappend="class=${statsFormatUtil.pnClass(loserCompareStats.breakPointsRatio, loserStats.breakPointsRatio)}">0%</th>
+			<th th:text="${statsFormatUtil.formatRatio(loserStats.breakPointsRatio)}">0.37</th>
 		</tr>
 		<tr class="pct-data">
-			<th th:text="${statsFormatUtil.formatPct(winnerStats.totalPointsWonPct)}">55%</th>
-			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.totalPointsWonPct, winnerStats.totalPointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.totalPointsWonPct, winnerStats.totalPointsWonPct)}">0%</th>
 			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPct(winnerCompareStats.totalPointsWonPct)}">55%</th>
+			<th th:if="${winnerCompareStats}" th:text="${statsFormatUtil.formatPctDiff(winnerCompareStats.totalPointsWonPct, winnerStats.totalPointsWonPct)}" th:class="${statsFormatUtil.pnClass(winnerCompareStats.totalPointsWonPct, winnerStats.totalPointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(winnerStats.totalPointsWonPct)}">55%</th>
 			<td>Total Pts. Won</td>
-			<th th:text="${statsFormatUtil.formatPct(loserStats.totalPointsWonPct)}">45%</th>
-			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.totalPointsWonPct, loserStats.totalPointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.totalPointsWonPct, loserStats.totalPointsWonPct)}">0%</th>
 			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPct(loserCompareStats.totalPointsWonPct)}">45%</th>
+			<th th:if="${loserCompareStats}" th:text="${statsFormatUtil.formatPctDiff(loserCompareStats.totalPointsWonPct, loserStats.totalPointsWonPct)}" th:class="${statsFormatUtil.pnClass(loserCompareStats.totalPointsWonPct, loserStats.totalPointsWonPct)}">0%</th>
+			<th th:text="${statsFormatUtil.formatPct(loserStats.totalPointsWonPct)}">45%</th>
 		</tr>
 		<tr class="pct-data" th:if="${matchStats.minutes > 0}">
 			<th th:colspan="${compare ? 3 : _}"></th>
