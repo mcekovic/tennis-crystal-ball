@@ -40,7 +40,10 @@ public class TournamentForecastService {
 		"WITH entry_round AS (\n" +
 		"  SELECT min(round) AS entry_round FROM in_progress_match WHERE in_progress_event_id = :inProgressEventId\n" +
 		")\n" +
-		"SELECT r.base_result, player_id, p.name, p.country_id, r.result, r.probability\n" +
+		"SELECT r.base_result, 2 * m.match_num - CASE WHEN m.player1_id = r.player_id THEN 1 ELSE 0 END AS player_num,\n" +
+		"  CASE WHEN m.player1_id = r.player_id THEN m.player1_seed ELSE m.player2_seed END AS seed,\n" +
+		"  CASE WHEN m.player1_id = r.player_id THEN m.player1_entry ELSE m.player2_entry END AS entry,\n" +
+		"  player_id, p.name, p.country_id, r.result, r.probability\n" +
 		"FROM player_in_progress_result r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"INNER JOIN entry_round er ON TRUE\n" +
@@ -98,8 +101,19 @@ public class TournamentForecastService {
 		inProgressEvent.setFavourites(favourites);
 		InProgressEventForecast forecast = new InProgressEventForecast(inProgressEvent);
 		jdbcTemplate.query(IN_PROGRESS_EVEN_FORECAST_QUERY, inProgressEventIdParam, rs -> {
-			
+			forecast.addForecast(
+				rs.getString("base_result"),
+				rs.getInt("player_num"),
+				rs.getInt("player_Id"),
+				rs.getString("name"),
+				getInteger(rs, "seed"),
+				rs.getString("entry"),
+				rs.getString("country_id"),
+				rs.getString("result"),
+				rs.getDouble("probability")
+			);
 		});
+		forecast.addByes();
 		return forecast;
 	}
 }

@@ -5,22 +5,37 @@ import java.util.*;
 public class InProgressEventForecast {
 
 	private final InProgressEvent event;
-	private final Map<String, List<PlayerForecast>> playerForecasts;
+	private final Set<String> baseResults;
+	private final Map<String, PlayersForecast> playersForecasts;
 
 	public InProgressEventForecast(InProgressEvent event) {
 		this.event = event;
-		playerForecasts = new TreeMap<>();
+		baseResults = new LinkedHashSet<>();
+		playersForecasts = new LinkedHashMap<>();
 	}
 
 	public InProgressEvent getEvent() {
 		return event;
 	}
 
-	public Map<String, List<PlayerForecast>> getPlayerForecasts() {
-		return playerForecasts;
+	public Set<String> getBaseResults() {
+		return baseResults;
 	}
 
-	public void addPlayerForecasts(String round, List<PlayerForecast> playerForecasts) {
-		this.playerForecasts.put(round, playerForecasts);
+	public PlayersForecast getPlayersForecasts(String baseResult) {
+		return playersForecasts.get(baseResult);
+	}
+
+	public void addForecast(String baseResult, int playerNum, int playerId, String name, Integer seed, String entry, String countryId, String result, double probability) {
+		playersForecasts.computeIfAbsent(baseResult, round -> new PlayersForecast()).addForecast(playerNum, playerId, name, seed, entry, countryId, result, probability);
+		baseResults.add(baseResult);
+	}
+
+	public void addByes() {
+		if (!playersForecasts.isEmpty())
+			playersForecasts.values().iterator().next().addByes();
+		PlayersForecast currentForecast = playersForecasts.get("W");
+		if (currentForecast != null)
+			currentForecast.addByes();
 	}
 }

@@ -5,12 +5,44 @@
 	<script type="text/javascript">
 	</script>
 	<style>
+		#forecastTable > thead > tr > th {
+			height: 24px;
+			vertical-align: middle;
+			padding: 4px 5px;
+		}
+		#forecastTable > tbody > tr > td {
+			height: 24px;
+			vertical-align: middle;
+			padding: 1px 5px;
+		}
 	</style>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 th:text="|${forecast.event.name} Forecast|">Australian Open Forecast</h3>
 	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
+	<table id="forecastTable" class="table table-condensed table-hover table-bordered text-nowrap">
+		<th:block th:each="baseResult : ${forecast.baseResults}" th:with="playersForecast = ${forecast.getPlayersForecasts(baseResult)}">
+		<thead>
+			<tr>
+				<th class="text-right" title="Seed/Entry">S/E</th>
+				<th>Player</th>
+				<th th:each="result : ${playersForecast.results}" class="text-right" th:text="${result}">W</th>
+			</tr>
+		</thead>
+		<tbody>
+		<tr th:each="playerForecast : ${playersForecast.playerForecasts}">
+			<td class="text-right" th:text="${playerForecast.seedAndEntry}">1</td>
+			<td th:unless="${playerForecast.bye}">
+				<img th:src="'/images/flags/' + ${playerForecast.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${playerForecast.country.id}" title="SUI" width="24" height="20"/>
+				<a th:href="'/playerProfile?playerId=' + ${playerForecast.id}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+			</td>
+			<td th:if="${playerForecast.bye}">Bye</td>
+			<td th:each="result : ${playersForecast.results}" th:with="probability = ${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}">58.2%</td>
+		</tr>
+		</tbody>
+		</th:block>
+	</table>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>
