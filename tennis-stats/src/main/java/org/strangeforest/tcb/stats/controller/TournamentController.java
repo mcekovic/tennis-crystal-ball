@@ -138,6 +138,8 @@ public class TournamentController extends PageController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("forecast", forecast);
+		modelMap.addAttribute("levels", TournamentLevel.asMap());
+		modelMap.addAttribute("surfaces", Surface.asMap());
 		return new ModelAndView("tournamentEventForecast", modelMap);
 	}
 }

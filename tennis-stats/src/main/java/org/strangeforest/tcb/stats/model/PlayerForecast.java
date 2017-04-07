@@ -6,9 +6,11 @@ import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class PlayerForecast extends MatchPlayerEx {
 
+	static final PlayerForecast BYE = new PlayerForecast(0, null, null, null, null);
+
 	private final Map<String, Double> forecast;
 
-	public PlayerForecast(int playerId, String name, Integer seed, String entry, String countryId) {
+	PlayerForecast(int playerId, String name, Integer seed, String entry, String countryId) {
 		super(playerId, name, seed, entry, countryId);
 		forecast = new LinkedHashMap<>();
 	}
@@ -22,7 +24,15 @@ public class PlayerForecast extends MatchPlayerEx {
 		return probability != null ? PCT * probability : null;
 	}
 
-	public void addForecast(String result, double probability) {
+	void addForecast(String result, double probability) {
 		forecast.put(result, probability);
+	}
+
+	boolean hasAnyResult(Iterable<String> results) {
+		for (String result : results) {
+			if (forecast.containsKey(result))
+				return true;
+		}
+		return false;
 	}
 }

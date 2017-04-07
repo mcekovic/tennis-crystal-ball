@@ -1,16 +1,18 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:with="inProgressEvent=${forecast.event}">
 <!--/*@thymesVar id="forecast" type="org.strangeforest.tcb.stats.model.InProgressEventForecast"*/-->
-<head th:replace="fragments/head :: commonHead(${forecast.event.name}, false, ~{::script}, ~{::style})">
+<!--/*@thymesVar id="levels" type="java.util.Map"*/-->
+<!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
+<head th:replace="fragments/head :: commonHead(${inProgressEvent.name}, false, ~{::script}, ~{::style})">
 	<script type="text/javascript">
 	</script>
 	<style>
-		#forecastTable > thead > tr > th {
+		#forecastTables >> thead > tr > th {
 			height: 24px;
 			vertical-align: middle;
 			padding: 4px 5px;
 		}
-		#forecastTable > tbody > tr > td {
+		#forecastTables >> tbody > tr > td {
 			height: 24px;
 			vertical-align: middle;
 			padding: 1px 5px;
@@ -19,30 +21,81 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 th:text="|${forecast.event.name} Forecast|">Australian Open Forecast</h3>
-	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
-	<table id="forecastTable" class="table table-condensed table-hover table-bordered text-nowrap">
-		<th:block th:each="baseResult : ${forecast.baseResults}" th:with="playersForecast = ${forecast.getPlayersForecasts(baseResult)}">
-		<thead>
-			<tr>
-				<th class="text-right" title="Seed/Entry">S/E</th>
-				<th>Player</th>
-				<th th:each="result : ${playersForecast.results}" class="text-right" th:text="${result}">W</th>
-			</tr>
-		</thead>
-		<tbody>
-		<tr th:each="playerForecast : ${playersForecast.playerForecasts}">
-			<td class="text-right" th:text="${playerForecast.seedAndEntry}">1</td>
-			<td th:unless="${playerForecast.bye}">
-				<img th:src="'/images/flags/' + ${playerForecast.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${playerForecast.country.id}" title="SUI" width="24" height="20"/>
-				<a th:href="'/playerProfile?playerId=' + ${playerForecast.id}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
-			</td>
-			<td th:if="${playerForecast.bye}">Bye</td>
-			<td th:each="result : ${playersForecast.results}" th:with="probability = ${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}">58.2%</td>
-		</tr>
-		</tbody>
-		</th:block>
-	</table>
+	<h3 th:text="|${inProgressEvent.name} Forecast|">Australian Open Forecast</h3>
+	<div class="row">
+		<div class="col-md-3">
+			<table class="table table-condensed text-nowrap">
+				<tr>
+					<th>Level</th>
+					<td th:text="${levels[inProgressEvent.level]}">Grand Slam</td>
+				</tr>
+				<tr>
+					<th>Surface</th>
+					<td th:text="${(inProgressEvent.indoor ? 'Indoor ' : '') + (inProgressEvent.surface != null ? surfaces[inProgressEvent.surface] : '')}">Hard</td>
+				</tr>
+				<tr>
+					<th>Date</th>
+					<td th:text="${#dates.format(inProgressEvent.date, 'dd-MM-yyyy')}">1-1-2017</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-md-3">
+			<table class="table table-condensed text-nowrap">
+				<tr>
+					<th>Draw</th>
+					<td th:text="${inProgressEvent.draw}">KO 128</td>
+				</tr>
+				<tr>
+					<th>Players</th>
+					<td th:text="${forecast.playerCount}">128</td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-md-3">
+			<table class="table table-condensed text-nowrap">
+				<tr>
+					<th>
+						<a role="button" th:href="'/tournament?tournamentId=' + ${inProgressEvent.tournamentId}" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Tournament history">
+							<span class="glyphicon glyphicon-calendar"></span>&nbsp;&nbsp;History
+						</a>
+					</th>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<ul class="nav nav-pills">
+		<li th:each="baseResult : ${forecast.baseResults}" th:class="${baseResultStat.last ? 'active' : _}">
+			<a data-toggle="pill" th:href="'#baseResult' + ${baseResult}" th:text="${baseResult}">W</a>
+		</li>
+	</ul>
+	<div id="forecastTables" class="tab-content">
+		<div th:each="baseResult : ${forecast.baseResults}" th:id="'baseResult' + ${baseResult}" th:with="playersForecast = ${forecast.getPlayersForecasts(baseResult)}" class="tab-pane fade" th:attrappend="class=${baseResultStat.last ? ' in active' : _}">
+			<br/>
+			<table class="table table-condensed table-hover text-nowrap" style="width: auto">
+				<th:block th:each="playerForecast : ${playersForecast.playerForecasts}">
+				<thead th:if="${playerForecastStat.index % 8 == 0}">
+					<tr>
+						<th class="text-right" title="Seed/Entry">S/E</th>
+						<th>Player</th>
+						<th th:each="result : ${playersForecast.results}" class="text-right" th:text="${result}">W</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="text-right" th:text="${playerForecast.seedAndEntry}">1</td>
+						<td th:unless="${playerForecast.bye}">
+							<img th:src="'/images/flags/' + ${playerForecast.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${playerForecast.country.id}" title="SUI" width="24" height="20"/>
+							<a th:href="'/playerProfile?playerId=' + ${playerForecast.id}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+						</td>
+						<td th:if="${playerForecast.bye}">Bye</td>
+						<td th:each="result : ${playersForecast.results}" th:with="probability = ${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}">58.2%</td>
+					</tr>
+				</tbody>
+				<thead th:if="${playerForecastStat.index % 8 == 7 && !playerForecastStat.last}"><tr><td th:colspan="${2 + playersForecast.results.size()}">&nbsp;</td></tr></thead>
+				</th:block>
+			</table>
+		</div>
+	</div>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

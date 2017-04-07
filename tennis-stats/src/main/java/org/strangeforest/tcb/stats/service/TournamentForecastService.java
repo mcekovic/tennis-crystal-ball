@@ -113,7 +113,7 @@ public class TournamentForecastService {
 				rs.getDouble("probability")
 			);
 		});
-		forecast.addByes();
+		forecast.process();
 		return forecast;
 	}
 }

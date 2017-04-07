@@ -7,6 +7,9 @@ public class InProgressEventForecast {
 	private final InProgressEvent event;
 	private final Set<String> baseResults;
 	private final Map<String, PlayersForecast> playersForecasts;
+	private Integer playerCount;
+
+	private static final String CURRENT = "Current";
 
 	public InProgressEventForecast(InProgressEvent event) {
 		this.event = event;
@@ -26,16 +29,24 @@ public class InProgressEventForecast {
 		return playersForecasts.get(baseResult);
 	}
 
+	public Integer getPlayerCount() {
+		return playerCount;
+	}
+
 	public void addForecast(String baseResult, int playerNum, int playerId, String name, Integer seed, String entry, String countryId, String result, double probability) {
+		baseResult = baseResult.equals("W") ? CURRENT : baseResult;
 		playersForecasts.computeIfAbsent(baseResult, round -> new PlayersForecast()).addForecast(playerNum, playerId, name, seed, entry, countryId, result, probability);
 		baseResults.add(baseResult);
 	}
 
-	public void addByes() {
+	public void process() {
 		if (!playersForecasts.isEmpty())
 			playersForecasts.values().iterator().next().addByes();
-		PlayersForecast currentForecast = playersForecasts.get("W");
-		if (currentForecast != null)
+		PlayersForecast currentForecast = getPlayersForecasts(CURRENT);
+		if (currentForecast != null) {
+			playerCount = currentForecast.getPlayerForecasts().size();
 			currentForecast.addByes();
+			currentForecast.removePastRounds();
+		}
 	}
 }
