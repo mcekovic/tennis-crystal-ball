@@ -81,34 +81,39 @@
 			<div id="forecastTables" class="tab-content">
 				<div th:each="baseResult : ${forecast.baseResults}" th:id="'baseResult' + ${baseResult}" th:with="playersForecast = ${forecast.getPlayersForecasts(baseResult)}" class="tab-pane fade" th:attrappend="class=${baseResultStat.last ? ' in active' : _}">
 					<br/>
-					<table class="table table-condensed table-hover text-nowrap" style="width: auto" th:with="columnCount=${2 + playersForecast.results.size()}, entryCount=${playersForecast.playerForecasts.size()}">
+					<table class="table table-condensed table-hover text-nowrap" style="width: auto" th:with="columnCount=${3 + playersForecast.results.size()}, entryCount=${playersForecast.playerForecasts.size()}">
 						<th:block th:each="playerForecast : ${playersForecast.playerForecasts}">
 						<thead th:if="${playerForecastStat.index % 8 == 0}">
 							<th:block th:if="${entryCount == 32}" th:with="halfIndex=${2 * playerForecastStat.index / entryCount}">
-								<tr th:if="${playerForecastStat.index == halfIndex * entryCount / 2}">
-									<th th:colspan="${columnCount}" th:text="${halfIndex == 0 ? 'Top Half' : 'Bottom Half'}">Top Half</th>
+								<tr th:if="${playerForecastStat.index == halfIndex * entryCount / 2}" th:with="drawSection=${halfIndex == 0 ? 'Top Half' : 'Bottom Half'}">
+									<th colspan="2" th:text="${drawSection}">Top Half</th>
+									<th class="text-right" th:text="${#numbers.formatDecimal(playersForecast.getStrength(playerForecastStat.index, entryCount / 2), 1, 1)} + '%'" th:title="${drawSection} + ' strength'">25.4%</th>
+									<th th:colspan="${columnCount}">&nbsp;</th>
 								</tr>
 							</th:block>
 							<th:block th:if="${entryCount >= 64}" th:with="quarterIndex=${4 * playerForecastStat.index / entryCount}">
-							<tr th:if="${playerForecastStat.index == quarterIndex * entryCount / 4}">
-								<th th:colspan="${columnCount}" th:text="${quarterIndex == 0 ? '1-st Quarter' : (quarterIndex == 1 ? '2-nd Quarter' : (quarterIndex == 2 ? '3-rd Quarter' : '4-th Quarter'))}">First Half</th>
+							<tr th:if="${playerForecastStat.index == quarterIndex * entryCount / 4}" th:with="drawSection=${quarterIndex == 0 ? '1-st Quarter' : (quarterIndex == 1 ? '2-nd Quarter' : (quarterIndex == 2 ? '3-rd Quarter' : '4-th Quarter'))}">
+								<th colspan="2" th:text="${drawSection}">First Half</th>
+								<th class="text-right" th:text="${#numbers.formatDecimal(playersForecast.getStrength(playerForecastStat.index, entryCount / 4), 1, 1)} + '%'" th:title="${drawSection} + ' strength'">25.4%</th>
+								<th th:colspan="${columnCount}">&nbsp;</th>
 							</tr>
 							</th:block>
 							<tr>
 								<th class="text-right" title="Seed/Entry">S/E</th>
-								<th>Player</th>
+								<th th:colspan="${entryCount >= 16 ? 1 : 2}">Player</th>
+								<th th:if="${entryCount >= 16}" class="text-right" th:text="${#numbers.formatDecimal(playersForecast.getStrength(playerForecastStat.index, 8), 1, 1)} + '%'" title="Draw section strength">25.4%</th>
 								<th th:each="result : ${playersForecast.results}" class="text-right" th:text="${result}">W</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
 								<td class="text-right" th:text="${playerForecast.seedAndEntry}">1</td>
-								<td th:if="${playerForecast.known}">
+								<td th:if="${playerForecast.known}" colspan="2">
 									<img th:src="'/images/flags/' + ${playerForecast.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${playerForecast.country.id}" title="SUI" width="24" height="20"/>
 									<a th:href="'/playerProfile?playerId=' + ${playerForecast.id}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 								</td>
-								<td th:if="${playerForecast.bye}">Bye</td>
-								<td th:if="${playerForecast.qualifier}">Qualifier</td>
+								<td th:if="${playerForecast.bye}" colspan="2">Bye</td>
+								<td th:if="${playerForecast.qualifier}" colspan="2">Qualifier</td>
 								<td th:each="result : ${playersForecast.results}" th:with="probability = ${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}">58.2%</td>
 							</tr>
 						</tbody>

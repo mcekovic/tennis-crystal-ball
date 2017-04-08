@@ -41,6 +41,15 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			':in_progress_event_id, :player_id, :base_result, :result, :probability' +
 		')}'
 
+	static final String SELECT_EVENT_EXT_IDS_SQL =
+		'SELECT ext_tournament_id FROM in_progress_event\n' +
+		'INNER JOIN tournament_mapping USING (tournament_id)'
+
+	static final String DELETE_EVENT_SQL =
+		'DELETE FROM in_progress_event\n' +
+		'WHERE tournament_id = (SELECT tournament_id FROM tournament_mapping WHERE ext_tournament_id = :extId)'
+
+
 	ATPWorldTourInProgressTournamentLoader(Sql sql) {
 		super(sql)
 	}
@@ -259,9 +268,9 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def matches = sql.rows(FETCH_MATCHES_SQL, [string(extId)])
 		int qualifierIndex
 		matches.each { match ->
-			if (match.player1_entry == 'Q')
+			if (!match.player1_id && match.player1_entry == 'Q')
 				match.player1_id = -(++qualifierIndex)
-			if (match.player2_entry == 'Q')
+			if (!match.player2_id && match.player2_entry == 'Q')
 				match.player2_id = -(++qualifierIndex)
 		}
 
@@ -308,5 +317,21 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				ps.addBatch(result)
 			}
 		}
+	}
+
+
+	// Maintenance
+
+	def findInProgressEventExtIds() {
+		sql.rows(SELECT_EVENT_EXT_IDS_SQL).collect { row -> row.ext_tournament_id }
+	}
+
+	def deleteInProgressEventExtIds(Collection extIds) {
+		sql.withBatch(DELETE_EVENT_SQL) { ps ->
+			extIds.each { extId ->
+				ps.addBatch([extId: extId])
+			}
+		}
+		sql.commit()
 	}
 }

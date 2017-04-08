@@ -4,14 +4,15 @@ def cli = new CliBuilder(usage: 'data-load [commands]', header: 'Commands:')
 cli.c('Create database objects')
 cli.d('Drop database objects')
 cli.p('Load additional player data')
-cli.a('Load add-hoc rankings and tournaments')
+cli.a('Load ad-hoc rankings and tournaments')
+cli.i('Load in-progress tournaments')
 cli.e('Compute Elo ratings')
 cli.r('Refresh computed data')
 cli.rc('Refresh Records')
 cli.v('Vacuum space')
 def options = cli.parse(args)
 
-if (options && (options.c || options.d || options.p || options.a || options.e || options.r || options.rc || options.v)) {
+if (options && (options.c || options.d || options.p || options.a || options.i || options.e || options.r || options.rc || options.v)) {
 	if (options.c)
 		callLoader('createDatabase')
 	if (options.d)
@@ -22,6 +23,8 @@ if (options && (options.c || options.d || options.p || options.a || options.e ||
 		new LoadAdHocRankings().run()
 		new LoadAdHocTournaments().run()
 	}
+	if (options.i)
+		new LoadInProgressTournaments().run()
 	if (options.e)
 		new ComputeEloRatings().run()
 	if (options.r)

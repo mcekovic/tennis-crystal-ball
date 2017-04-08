@@ -23,6 +23,10 @@ public class PlayersForecast {
 		return playerForecasts.values();
 	}
 
+	public double getStrength(int fromIndex, int count) {
+		return playerForecasts.values().stream().skip(fromIndex).limit(count).mapToDouble(PlayerForecast::getWinProbability).sum();
+	}
+
 	void addResult(int playerId, String result, double probability) {
 		playerForecasts.get(playerId).addForecast(result, probability);
 		results.add(result);

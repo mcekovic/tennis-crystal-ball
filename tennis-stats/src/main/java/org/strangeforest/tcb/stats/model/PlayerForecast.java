@@ -28,6 +28,11 @@ public class PlayerForecast extends MatchPlayerEx {
 		return getName() == null && "Q".equals(getEntry());
 	}
 
+	public double getWinProbability() {
+		Double probability = getProbability("W");
+		return probability != null ? probability : 0.0;
+	}
+
 	public Double getProbability(String result) {
 		if (isEmpty())
 			return null;
