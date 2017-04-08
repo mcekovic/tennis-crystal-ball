@@ -38,6 +38,7 @@
 					noResults: "No tournaments found"
 				}
 			});
+			bindPopovers();
 			loadRankingTopN("POINTS");
 		});
 	</script>
@@ -86,6 +87,10 @@
 				<li><a href="/headToHead">Head-to-Head</a><sup class="cool-feature">&nbsp;Cool!</sup> - Head-to-head between two players with H2H matches, performance and statistics comparision and Hypothetical Matchup prediction based on neural network algorithm</li>
 				<li>Statistics comparision - Compare match or selected matches statistics with career, season, tournament level or surface statistics</li>
 			</ul>
+			<h4 class="text-nowrap">Coming Soon<sup class="new-feature">&nbsp;Experimental!</sup></h4>
+			<ul>
+				<li><a href="/tournamentEventForecasts">Tournament Forecasts</a> - Tournament Event Forecasts based on the <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover">Neural Network Match Prediction Algorithm</a></li>
+			</ul>
 			<h4 class="text-nowrap">Partners</h4>
 			<p><a href="http://www.livescore.in/" title="Livescore.in" target="_blank">Livescore.in</a></p>
 		</div>
@@ -119,6 +124,7 @@
 		</div>
 	</div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
+	<div th:include="fragments/aboutPrediction :: aboutPrediction"></div>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

@@ -17,6 +17,7 @@ import static org.strangeforest.tcb.stats.model.RankCategory.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.util.EnumUtil.*;
+import static org.strangeforest.tcb.stats.util.NameUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Service
@@ -40,11 +41,11 @@ public class RankingsService {
 		"ORDER BY rank_date DESC";
 
 	private static final String RANKING_TOP_N_QUERY = //language=SQL
-		"SELECT player_id, r.rank, p.last_name, p.country_id, r.%1$s AS points\n" +
-		"FROM %2$s r\n" +
+		"SELECT player_id, r.%1$s AS rank, p.last_name, p.country_id, r.%2$s AS points\n" +
+		"FROM %3$s r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.rank_date = :date\n" +
-		"ORDER BY r.%3$s LIMIT :playerCount";
+		"ORDER BY r.%1$s LIMIT :playerCount";
 
 	private static final String RANKING_TABLE_QUERY = //language=SQL
 		"SELECT r.%1$s AS rank, player_id, p.name, p.country_id, r.%2$s AS points, p.%3$s AS best_rank, p.%4$s AS best_rank_date\n" +
@@ -131,12 +132,12 @@ public class RankingsService {
 	public List<PlayerRanking> getRankingsTopN(RankType rankType, LocalDate date, int playerCount) {
 		checkRankType(rankType);
 		return jdbcTemplate.query(
-			format(RANKING_TOP_N_QUERY, pointsColumn(rankType), rankingTable(rankType), rankColumn(rankType)),
+			format(RANKING_TOP_N_QUERY, rankColumn(rankType), pointsColumn(rankType), rankingTable(rankType)),
 			params("date", date).addValue("playerCount", playerCount),
 			(rs, rowNum) -> {
 				int goatRank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
-				String name = rs.getString("last_name");
+				String name = shortenName(rs.getString("last_name"));
 				String countryId = rs.getString("country_id");
 				int goatPoints = rs.getInt("points");
 				return new PlayerRanking(goatRank, playerId, name, countryId, null, goatPoints);

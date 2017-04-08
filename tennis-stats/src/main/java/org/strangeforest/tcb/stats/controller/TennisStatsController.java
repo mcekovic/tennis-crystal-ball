@@ -36,16 +36,21 @@ public class TennisStatsController extends PageController {
 		return new ModelAndView("about", "goatTopN", goatTopN);
 	}
 
+	private static final String ELO_RATING_SUFFIX = "_ELO_RATING";
+
 	@GetMapping("/rankingTopN")
 	public ModelAndView rankingTopN(
       @RequestParam(name = "rankType", defaultValue = "POINTS") RankType rankType,
-      @RequestParam(name = "surface", required = false) String surface
+      @RequestParam(name = "count", defaultValue = "10") int count
 	) {
 		LocalDate date = rankingsService.getCurrentRankingDate(rankType);
-		List<PlayerRanking> rankingTopN = rankingsService.getRankingsTopN(rankType, date, 10);
+		List<PlayerRanking> rankingTopN = rankingsService.getRankingsTopN(rankType, date, count);
+		String rankTypeName = rankType.name();
+		Surface surface = rankTypeName.endsWith(ELO_RATING_SUFFIX) ? Surface.valueOf(rankTypeName.substring(0, rankTypeName.length() - ELO_RATING_SUFFIX.length())) : null;
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("rankType", rankType);
+		modelMap.addAttribute("count", count);
 		modelMap.addAttribute("date", toDate(date));
 		modelMap.addAttribute("rankingTopN", rankingTopN);
 		modelMap.addAttribute("surfaces", Surface.values());

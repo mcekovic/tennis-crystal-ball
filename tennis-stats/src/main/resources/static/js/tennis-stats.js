@@ -464,8 +464,8 @@ function detectDevice() {
 
 // Misc
 
-function loadRankingTopN(rankType, surface) {
-	$("#rankingTopN").load("/rankingTopN?rankType=" + rankType + (surface ? "&surface=" + surface : ""));
+function loadRankingTopN(rankType, count) {
+	$("#rankingTopN").load("/rankingTopN?rankType=" + rankType + (count ? "&count=" + count : ""));
 }
 
 function bindPopovers() {

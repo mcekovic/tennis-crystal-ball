@@ -24,7 +24,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 th:text="|${inProgressEvent.name} Forecast|">Australian Open Forecast</h3>
+	<h3>[[${inProgressEvent.name}]] Forecast<sup class="new-feature">&nbsp;Experimental!</sup></h3>
 	<div class="row">
 		<div class="col-md-3">
 			<table class="table table-condensed text-nowrap">
@@ -78,14 +78,16 @@
 	<div id="forecastTables" class="tab-content">
 		<div th:each="baseResult : ${forecast.baseResults}" th:id="'baseResult' + ${baseResult}" th:with="playersForecast = ${forecast.getPlayersForecasts(baseResult)}" class="tab-pane fade" th:attrappend="class=${baseResultStat.last ? ' in active' : _}">
 			<br/>
-			<table class="table table-condensed table-hover text-nowrap" style="width: auto" th:with="columnCount=${2 + playersForecast.results.size()}, playerCount=${playersForecast.playerForecasts.size()}">
+			<table class="table table-condensed table-hover text-nowrap" style="width: auto" th:with="columnCount=${2 + playersForecast.results.size()}, entryCount=${playersForecast.playerForecasts.size()}">
 				<th:block th:each="playerForecast : ${playersForecast.playerForecasts}">
 				<thead th:if="${playerForecastStat.index % 8 == 0}">
-					<tr th:if="${playerCount == 16}">
-						<th th:colspan="${columnCount}" th:text="${playerForecastStat.index == 0 ? 'Top Half' : 'Bottom Half'}">Top Half</th>
-					</tr>
-					<th:block th:if="${playerCount >= 32}" th:with="quarterIndex=${4 * playerForecastStat.index / playerCount}">
-					<tr th:if="${playerForecastStat.index == quarterIndex * playerCount / 4}">
+					<th:block th:if="${entryCount == 32}" th:with="halfIndex=${2 * playerForecastStat.index / entryCount}">
+						<tr th:if="${playerForecastStat.index == halfIndex * entryCount / 2}">
+							<th th:colspan="${columnCount}" th:text="${halfIndex == 0 ? 'Top Half' : 'Bottom Half'}">Top Half</th>
+						</tr>
+					</th:block>
+					<th:block th:if="${entryCount >= 64}" th:with="quarterIndex=${4 * playerForecastStat.index / entryCount}">
+					<tr th:if="${playerForecastStat.index == quarterIndex * entryCount / 4}">
 						<th th:colspan="${columnCount}" th:text="${quarterIndex == 0 ? '1-st Quarter' : (quarterIndex == 1 ? '2-nd Quarter' : (quarterIndex == 2 ? '3-rd Quarter' : '4-th Quarter'))}">First Half</th>
 					</tr>
 					</th:block>
@@ -114,10 +116,7 @@
 		</div>
 	</div>
 	<br/>
-	<p>
-		<em>Tournament Event Forecasts are based on Tournament Simulation driven by <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><strong>Neural Network Match Prediction Algorithm</strong></a></em>
-	</p>
-	<div th:include="fragments/aboutPrediction :: aboutPrediction"></div>
+	<div th:include="fragments/aboutForecast :: aboutForecast"></div>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

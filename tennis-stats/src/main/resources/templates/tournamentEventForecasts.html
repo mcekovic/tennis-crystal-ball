@@ -50,6 +50,7 @@
 				{id: "participationPoints", title: "[[#{events.participationPoints.title}]]"},
 				{id: "participationPct", title: "[[#{events.participationPercentage.title}]]"}
 			]);
+			bindPopovers();
 		});
 		function formatFavourite(column, favourite) {
 			return favourite ? playerCountryFormatter(column, favourite) + " " + (100 * favourite.probability.toFixed(1)) + "%" : "";
@@ -74,6 +75,8 @@
 		</tr>
 		</thead>
 	</table>
+	<br/>
+	<div th:include="fragments/aboutForecast :: aboutForecast"></div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
