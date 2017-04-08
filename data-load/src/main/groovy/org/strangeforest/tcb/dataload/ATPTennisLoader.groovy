@@ -159,6 +159,7 @@ class ATPTennisLoader {
 			atpWorldTourMatchLoader.loadTournament(1974, 'lakeway', 6836)
 			atpWorldTourMatchLoader.loadTournament(1974, 'hong-kong', 336)
 			atpWorldTourMatchLoader.loadTournament(2007, 'vina-del-mar', 505)
+			atpWorldTourMatchLoader.loadTournament(2008, 'moscow', 438)
 
 			loadAdditionalMatchData(sql, 'classpath:/tournaments/1969-fort-worth.xml')
 			loadAdditionalMatchData(sql, 'classpath:/tournaments/1969-johannesburg.xml')
