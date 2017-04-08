@@ -15,8 +15,16 @@ public class PlayerForecast extends MatchPlayerEx {
 		forecast = new LinkedHashMap<>();
 	}
 
-	public boolean isBye() {
+	public boolean isEmpty() {
 		return getName() == null;
+	}
+
+	public boolean isBye() {
+		return isEmpty() && getEntry() == null;
+	}
+
+	public boolean isQualifier() {
+		return isEmpty() && "Q".equals(getEntry());
 	}
 
 	public Double getProbability(String result) {

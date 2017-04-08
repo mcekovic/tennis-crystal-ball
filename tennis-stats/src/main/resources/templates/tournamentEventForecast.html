@@ -100,11 +100,12 @@
 				<tbody>
 					<tr>
 						<td class="text-right" th:text="${playerForecast.seedAndEntry}">1</td>
-						<td th:unless="${playerForecast.bye}">
+						<td th:unless="${playerForecast.isEmpty()}">
 							<img th:src="'/images/flags/' + ${playerForecast.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${playerForecast.country.id}" title="SUI" width="24" height="20"/>
 							<a th:href="'/playerProfile?playerId=' + ${playerForecast.id}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 						</td>
 						<td th:if="${playerForecast.bye}">Bye</td>
+						<td th:if="${playerForecast.qualifier}">Qualifier</td>
 						<td th:each="result : ${playersForecast.results}" th:with="probability = ${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}">58.2%</td>
 					</tr>
 				</tbody>

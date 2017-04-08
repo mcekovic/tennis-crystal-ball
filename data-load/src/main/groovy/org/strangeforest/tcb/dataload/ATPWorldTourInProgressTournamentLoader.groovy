@@ -3,6 +3,7 @@ package org.strangeforest.tcb.dataload
 import com.google.common.base.*
 import groovy.sql.*
 import org.jsoup.*
+import org.jsoup.nodes.*
 import org.jsoup.select.*
 import org.springframework.jdbc.core.namedparam.*
 import org.strangeforest.tcb.stats.model.*
@@ -89,10 +90,20 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		Elements entryMatches = drawTable.select('table.scores-draw-entry-box-table')
 		entryMatches.each { entryMatch ->
 			matchNum += 1
-			def name1 = emptyToNull(player(entryMatch.select('tbody > tr:nth-child(1) > td > a.scores-draw-entry-box-players-item').text()))
-			def name2 = emptyToNull(player(entryMatch.select('tbody > tr:nth-child(2) > td > a.scores-draw-entry-box-players-item').text()))
+			def name1 = extractEntryPlayer(entryMatch, 1)
+			def name2 = extractEntryPlayer(entryMatch, 2)
 			def seedEntry1 = extractSeedEntry entryMatch.select('tbody > tr:nth-child(1) > td:nth-child(2)').text()
 			def seedEntry2 = extractSeedEntry entryMatch.select('tbody > tr:nth-child(2) > td:nth-child(2)').text()
+			if (isQualifier(name1)) {
+				name1 = null
+				if (!seedEntry1)
+					seedEntry1 = 'Q'
+			}
+			if (isQualifier(name2)) {
+				name2 = null
+				if (!seedEntry1)
+					seedEntry2 = 'Q'
+			}
 			def isSeed1 = allDigits seedEntry1
 			def isSeed2 = allDigits seedEntry2
 			def seed1 = isSeed1 ? smallint(seedEntry1) : null
@@ -144,22 +155,22 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				roundPlayers.eachWithIndex { roundPlayer, index ->
 					if (index % 2 == 0) {
 						prevMatchNum1 = prevMatchNumOffset + index
-						name1 = player roundPlayer.select('a.scores-draw-entry-box-players-item').text()
+						name1 = extractPlayer(roundPlayer)
 						def prevScoreElem = roundPlayer.select('a.scores-draw-entry-box-score')
 						setScoreParams(matches[prevMatchNum1], prevScoreElem, name1)
 					}
 					else {
 						matchNum += 1
 						short prevMatchNum2 = prevMatchNumOffset + index
-						def name2 = player roundPlayer.select('a.scores-draw-entry-box-players-item').text()
+						def name2 = extractPlayer(roundPlayer)
 						def prevScoreElem = roundPlayer.select('a.scores-draw-entry-box-score')
 						setScoreParams(matches[prevMatchNum2], prevScoreElem, name2)
 						def seedEntry1 = seedEntries[name1]
 						def seedEntry2 = seedEntries[name2]
-						def seed1 = seedEntry1.seed
-						def seed2 = seedEntry2.seed
-						def entry1 = seedEntry1.entry
-						def entry2 = seedEntry2.entry
+						def seed1 = seedEntry1?.seed
+						def seed2 = seedEntry2?.seed
+						def entry1 = seedEntry1?.entry
+						def entry2 = seedEntry2?.entry
 
 						params = [:]
 						params.ext_tournament_id = string extId
@@ -199,6 +210,21 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		}
 		sql.commit()
 		println "\n${matches.size()} matches loaded in $stopwatch"
+	}
+
+	def extractEntryPlayer(Element entryMatch, int index) {
+		def playerBox = entryMatch.select("tbody > tr:nth-child($index) > td:nth-child(3)")
+		def name = playerBox.select("a.scores-draw-entry-box-players-item").text()
+		if (!name) {
+			name = playerBox.text()
+			if (isBye(name))
+				return null
+		}
+		emptyToNull(player(name))
+	}
+
+	static extractPlayer(Element roundPlayer) {
+		emptyToNull(player(roundPlayer.select('a.scores-draw-entry-box-players-item').text()))
 	}
 
 	static setScoreParams(Map params, scoreElem = null, winnerName = null) {

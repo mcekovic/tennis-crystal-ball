@@ -141,6 +141,18 @@ abstract class BaseATPWorldTourTournamentLoader {
 		name.replace('-', ' ').replace('\'', '').replace('.', '').replace('ó', 'o')
 	}
 
+	static isUnknown(String name) {
+		name?.toUpperCase()?.contains('UNKNOWN')
+	}
+
+	static isQualifier(String name) {
+		name?.toUpperCase()?.contains('QUALIFIER')
+	}
+
+	static isBye(String name) {
+		name?.toUpperCase()?.contains('BYE')
+	}
+
 	static extract(String s, String delimiter, int occurrence) {
 		int start = 0
 		for (int i in 1..occurrence) {

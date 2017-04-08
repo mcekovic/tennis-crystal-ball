@@ -92,7 +92,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 					setScoreParams(params, score, sql.connection)
 					params.statsUrl = matchStatsUrl(scoreElem.attr('href'))
 
-					if ((isUnknownPlayer(wName) || isUnknownPlayer(lName)))
+					if ((isUnknownOrQualifier(wName) || isUnknownOrQualifier(lName)))
 						return
 					
 					matches << params
@@ -163,8 +163,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		url ? "http://www.atpworldtour.com" + url : null
 	}
 
-	static isUnknownPlayer(String name) {
-		def upperName = name.toUpperCase()
-		upperName.contains('UNKNOWN') || upperName.contains('QUALIFIER')
+	static isUnknownOrQualifier(String name) {
+		isUnknown(name) || isQualifier(name)
 	}
 }
