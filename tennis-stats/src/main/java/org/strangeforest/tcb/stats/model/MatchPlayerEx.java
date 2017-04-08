@@ -11,6 +11,11 @@ public class MatchPlayerEx extends MatchPlayer {
 		country = new Country(countryId);
 	}
 
+	public MatchPlayerEx(MatchPlayerEx player) {
+		super(player);
+		country = player.country;
+	}
+
 	public Country getCountry() {
 		return country;
 	}

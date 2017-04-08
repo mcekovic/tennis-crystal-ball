@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
@@ -38,21 +39,24 @@ public class TournamentForecastService {
 		"AND r.base_result = 'W' AND r.result = 'W' AND probability > 0\n" +
 		"ORDER BY r.probability DESC LIMIT 2";
 
-	private static final String IN_PROGRESS_EVENT_FORECAST_QUERY =
+	private static final String IN_PROGRESS_MATCHES_QUERY = //language=SQL
 		"WITH entry_round AS (\n" +
 		"  SELECT min(round) AS entry_round FROM in_progress_match WHERE in_progress_event_id = :inProgressEventId\n" +
 		")\n" +
-		"SELECT r.base_result, 2 * m.match_num - CASE WHEN m.player1_id = r.player_id THEN 1 ELSE 0 END AS player_num,\n" +
-		"  CASE WHEN m.player1_id = r.player_id THEN m.player1_seed ELSE m.player2_seed END AS seed,\n" +
-		"  CASE WHEN m.player1_id = r.player_id THEN m.player1_entry ELSE m.player2_entry END AS entry,\n" +
-		"  player_id, p.name, p.country_id, r.result, r.probability\n" +
-		"FROM player_in_progress_result r\n" +
-		"INNER JOIN player_v p USING (player_id)\n" +
+		"SELECT m.player1_id, m.player1_seed, m.player1_entry, p1.name player1_name, p1.country_id player1_country_id,\n" +
+		"  m.player2_id, m.player2_seed, m.player2_entry, p2.name player2_name, p2.country_id player2_country_id\n" +
+		"FROM in_progress_match m\n" +
+		"LEFT JOIN player_v p1 ON p1.player_id = player1_id\n" +
+		"LEFT JOIN player_v p2 ON p2.player_id = player2_id\n" +
 		"INNER JOIN entry_round er ON TRUE\n" +
-		"INNER JOIN in_progress_match m ON m.in_progress_event_id = r.in_progress_event_id\n" +
-		"  AND m.round = er.entry_round AND (m.player1_id = r.player_id OR m.player2_id = r.player_id)\n" +
-		"WHERE r.in_progress_event_id = :inProgressEventId\n" +
-		"ORDER BY r.base_result, m.match_num, m.player1_id = r.player_id DESC, r.result";
+		"WHERE m.in_progress_event_id = :inProgressEventId AND m.round = er.entry_round\n" +
+		"ORDER BY m.match_num";
+
+	private static final String PLAYER_IN_PROGRESS_RESULTS_QUERY = //language=SQL
+		"SELECT player_id, base_result, result, probability\n" +
+		"FROM player_in_progress_result\n" +
+		"WHERE in_progress_event_id = :inProgressEventId\n" +
+		"ORDER BY base_result, result";
 
 
 	@Cacheable(value = "Global", key = "'InProgressEvents'")
@@ -108,20 +112,33 @@ public class TournamentForecastService {
 		List<FavouritePlayer> favourites = jdbcTemplate.query(FIND_FAVOURITES_QUERY, inProgressEventIdParam, this::mapFavouritePlayer);
 		inProgressEvent.setFavourites(favourites);
 		InProgressEventForecast forecast = new InProgressEventForecast(inProgressEvent);
-		jdbcTemplate.query(IN_PROGRESS_EVENT_FORECAST_QUERY, inProgressEventIdParam, rs -> {
-			forecast.addForecast(
+		List<PlayerForecast> players = new ArrayList<>();
+		AtomicInteger emptyCount = new AtomicInteger();
+		jdbcTemplate.query(IN_PROGRESS_MATCHES_QUERY, inProgressEventIdParam, rs -> {
+			players.add(mapForecastPlayer(rs, "player1_", emptyCount));
+			players.add(mapForecastPlayer(rs, "player2_", emptyCount));
+		});
+		jdbcTemplate.query(PLAYER_IN_PROGRESS_RESULTS_QUERY, inProgressEventIdParam, rs -> {
+			forecast.addForecast(players,
+				rs.getInt("player_id"),
 				rs.getString("base_result"),
-				rs.getInt("player_num"),
-				rs.getInt("player_Id"),
-				rs.getString("name"),
-				getInteger(rs, "seed"),
-				rs.getString("entry"),
-				rs.getString("country_id"),
 				rs.getString("result"),
 				rs.getDouble("probability")
 			);
 		});
 		forecast.process();
 		return forecast;
+	}
+
+	private PlayerForecast mapForecastPlayer(ResultSet rs, String prefix, AtomicInteger emptyCount) throws SQLException {
+		int id = rs.getInt(prefix + "id");
+		if (id == 0)
+			id = -emptyCount.incrementAndGet();
+		return new PlayerForecast(id,
+			rs.getString(prefix + "name"),
+			getInteger(rs, prefix + "seed"),
+			rs.getString(prefix + "entry"),
+			rs.getString(prefix + "country_id")
+		);
 	}
 }

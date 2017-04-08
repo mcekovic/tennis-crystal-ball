@@ -16,6 +16,13 @@ public class MatchPlayer {
 		this.entry = entry;
 	}
 
+	public MatchPlayer(MatchPlayer player) {
+		id = player.id;
+		name = player.name;
+		seed = player.seed;
+		entry = player.entry;
+	}
+
 	public int getId() {
 		return id;
 	}

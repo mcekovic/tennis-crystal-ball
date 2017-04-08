@@ -84,6 +84,10 @@ public abstract class MatchDataUtil {
 		return match -> nonNullEquals(match.getOpponentBackhand(), backhand);
 	}
 
+	public static Predicate<MatchData> isOpponentQualifier() {
+		return match -> "Q".equals(match.getOpponentEntry());
+	}
+
 	private static boolean nonNullEquals(Object o1, Object o2) {
 		return o1 != null && o2 != null && o1.equals(o2);
 	}

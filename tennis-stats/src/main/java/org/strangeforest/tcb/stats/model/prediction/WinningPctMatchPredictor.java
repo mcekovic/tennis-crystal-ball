@@ -115,12 +115,12 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 			ToIntFunction<MatchData> lostDimension = item.isForSet() ? MatchData::getOSets : MatchData::getOMatches;
 			List<MatchData> filteredMatchData1 = matchData1.stream().skip(skipMatches1).filter(filter1).collect(toList());
 			List<MatchData> filteredMatchData2 = matchData2.stream().skip(skipMatches2).filter(filter2).collect(toList());
-			long won1 = filteredMatchData1.stream().mapToInt(wonDimension).sum();
-			long lost1 = filteredMatchData1.stream().mapToInt(lostDimension).sum();
-			long won2 = filteredMatchData2.stream().mapToInt(wonDimension).sum();
-			long lost2 = filteredMatchData2.stream().mapToInt(lostDimension).sum();
-			long total1 = won1 + lost1;
-			long total2 = won2 + lost2;
+			int won1 = filteredMatchData1.stream().mapToInt(wonDimension).sum();
+			int lost1 = filteredMatchData1.stream().mapToInt(lostDimension).sum();
+			int won2 = filteredMatchData2.stream().mapToInt(wonDimension).sum();
+			int lost2 = filteredMatchData2.stream().mapToInt(lostDimension).sum();
+			int total1 = won1 + lost1;
+			int total2 = won2 + lost2;
 			if (total1 > 0 && total2 > 0) {
 				double weight = item.getWeight() * weight(total1, total2);
 				double p1 = 1.0 * won1 / total1;

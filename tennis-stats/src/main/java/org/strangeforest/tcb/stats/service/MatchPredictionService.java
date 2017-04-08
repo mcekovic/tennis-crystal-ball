@@ -1,6 +1,5 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.lang.String;
 import java.sql.*;
 import java.util.Date;
 import java.util.*;
@@ -42,7 +41,7 @@ public class MatchPredictionService {
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_MATCHES_QUERY =
-		"SELECT m.date, m.level, m.surface, m.round, m.opponent_id, m.opponent_rank, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
+		"SELECT m.date, m.level, m.surface, m.round, m.opponent_id, m.opponent_rank, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
 		"FROM player_match_for_stats_v m\n" +
 		"LEFT JOIN player p ON p.player_id = m.opponent_id\n" +
 		"WHERE m.player_id = :playerId\n" +
@@ -82,6 +81,12 @@ public class MatchPredictionService {
 		prediction.setRankingData1(rankingData1);
 		prediction.setRankingData2(rankingData2);
 		return prediction;
+	}
+
+	public MatchPrediction predictMatchVsQualifier(int playerId, Date date, Surface surface, TournamentLevel level, Round round, Short bestOf) {
+		List<MatchData> matchData = getMatchData(playerId, date);
+		short bstOf = defaultBestOf(level, bestOf);
+		return new VsQualifierMatchPredictor(matchData, date, surface, level, round, bstOf).predictMatch();
 	}
 
 	private short defaultBestOf(TournamentLevel level, Short bestOf) {
@@ -167,14 +172,10 @@ public class MatchPredictionService {
 	}
 
 	private List<MatchData> getMatchData(int playerId) {
-		return jdbcTemplate.query(
-			PLAYER_MATCHES_QUERY,
-			params("playerId", playerId),
-			(rs, rowNum) -> matchData(rs)
-		);
+		return jdbcTemplate.query(PLAYER_MATCHES_QUERY, params("playerId", playerId), this::matchData);
 	}
 
-	private static MatchData matchData(ResultSet rs) throws SQLException {
+	private MatchData matchData(ResultSet rs, int rowNum) throws SQLException {
 		return new MatchData(
 			rs.getDate("date"),
 			rs.getString("level"),
@@ -184,6 +185,7 @@ public class MatchPredictionService {
 			getInteger(rs, "opponent_rank"),
 			rs.getString("opponent_hand"),
 			rs.getString("opponent_backhand"),
+			rs.getString("opponent_entry"),
 			rs.getInt("p_matches"),
 			rs.getInt("o_matches"),
 			rs.getInt("p_sets"),

@@ -12,12 +12,13 @@ public final class MatchData {
 	private final Integer opponentRank;
 	private final String opponentHand;
 	private final String opponentBackhand;
+	private final String opponentEntry;
 	private final int pMatches;
 	private final int oMatches;
 	private final int pSets;
 	private final int oSets;
 
-	public MatchData(Date date, String level, String surface, String round, int opponentId, Integer opponentRank, String opponentHand, String opponentBackhand, int pMatches, int oMatches, int pSets, int oSets) {
+	public MatchData(Date date, String level, String surface, String round, int opponentId, Integer opponentRank, String opponentHand, String opponentBackhand, String opponentEntry, int pMatches, int oMatches, int pSets, int oSets) {
 		this.date = date;
 		this.level = level;
 		this.surface = surface;
@@ -26,6 +27,7 @@ public final class MatchData {
 		this.opponentRank = opponentRank;
 		this.opponentHand = opponentHand;
 		this.opponentBackhand = opponentBackhand;
+		this.opponentEntry = opponentEntry;
 		this.pMatches = pMatches;
 		this.oMatches = oMatches;
 		this.pSets = pSets;
@@ -64,6 +66,10 @@ public final class MatchData {
 		return opponentBackhand;
 	}
 
+	public String getOpponentEntry() {
+		return opponentEntry;
+	}
+
 	public int getPMatches() {
 		return pMatches;
 	}
@@ -72,11 +78,19 @@ public final class MatchData {
 		return oMatches;
 	}
 
+	public int getMatches() {
+		return pMatches + oMatches;
+	}
+
 	public int getPSets() {
 		return pSets;
 	}
 
 	public int getOSets() {
 		return oSets;
+	}
+
+	public int getSets() {
+		return pSets + oSets;
 	}
 }

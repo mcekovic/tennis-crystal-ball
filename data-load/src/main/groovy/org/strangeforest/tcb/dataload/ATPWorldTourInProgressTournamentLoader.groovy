@@ -45,14 +45,14 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		super(sql)
 	}
 
-	def loadAndSimulateTournament(String urlId, extId, String level = null, String surface = null) {
-		loadTournament(urlId, extId, level, surface)
+	def loadAndSimulateTournament(String urlId, extId, Integer season = null, String level = null, String surface = null) {
+		loadTournament(urlId, extId, season, level, surface)
 		simulateTournament(extId)
 	}
 
-	def loadTournament(String urlId, extId, String level, String surface) {
+	def loadTournament(String urlId, extId, Integer season, String level, String surface) {
 		def stopwatch = Stopwatch.createStarted()
-		def url = tournamentUrl(urlId, extId)
+		def url = tournamentUrl(urlId, extId, season)
 		println "Fetching in-progress tournament URL '$url'"
 		def doc = Jsoup.connect(url).timeout(TIMEOUT).get()
 		def dates = doc.select('.tourney-dates').text()
@@ -87,6 +87,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def entryRound = rounds[0]
 		println '\n' + entryRound
 
+		// Processing entry round
 		Elements entryMatches = drawTable.select('table.scores-draw-entry-box-table')
 		entryMatches.each { entryMatch ->
 			matchNum += 1
@@ -101,7 +102,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			}
 			if (isQualifier(name2)) {
 				name2 = null
-				if (!seedEntry1)
+				if (!seedEntry2)
 					seedEntry2 = 'Q'
 			}
 			def isSeed1 = allDigits seedEntry1
@@ -137,12 +138,15 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			println "$seedEntry1 $name1 vs $seedEntry2 $name2"
 		}
 
+		// Processing other rounds
 		def drawRowSpan = 1
 		short prevMatchNumOffset = 1
 		rounds.findAll { round -> round != entryRound }.each { round ->
 			println '\n' + round
 			short matchNumOffset = matchNum + 1
 			Elements roundPlayers = drawTable.select("tbody > tr > td[rowspan=$drawRowSpan")
+			if (roundPlayers.select('div.scores-draw-entry-box').find { e -> !e.text() })
+				return
 			if (round == 'Winner') {
 				def winner = roundPlayers.get(0)
 				def winnerName = player winner.select('a.scores-draw-entry-box-players-item').text()
@@ -240,8 +244,10 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		}
 	}
 
-	static tournamentUrl(String urlId, extId) {
-		"http://www.atpworldtour.com/en/scores/current/$urlId/$extId/draws"
+	static tournamentUrl(String urlId, extId, Integer season) {
+		def type = !season ? 'current' : 'archive'
+		def seasonStr = !season ? '' : "/$season"
+		"http://www.atpworldtour.com/en/scores/$type/$urlId/$extId$seasonStr/draws"
 	}
 
 	
@@ -251,6 +257,13 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		println '\nStarting tournament simulation'
 		def stopwatch = Stopwatch.createStarted()
 		def matches = sql.rows(FETCH_MATCHES_SQL, [string(extId)])
+		int qualifierIndex
+		matches.each { match ->
+			if (match.player1_entry == 'Q')
+				match.player1_id = -(++qualifierIndex)
+			if (match.player2_entry == 'Q')
+				match.player2_id = -(++qualifierIndex)
+		}
 
 		def firstMatch = matches[0]
 		def inProgressEventId = firstMatch.in_progress_event_id
@@ -262,7 +275,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def entryResult = KOResult.valueOf(matches[0].round)
 
 		MatchPredictionService predictionService = new MatchPredictionService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
-		TournamentMacthPredictor predictor = new TournamentMacthPredictor(predictionService, level, surface, date, bestOf)
+		TournamentMatchPredictor predictor = new TournamentMatchPredictor(predictionService, level, surface, date, bestOf)
 
 		def resultCount = 0
 		def tournamentSimulator

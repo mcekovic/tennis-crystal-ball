@@ -1,18 +1,17 @@
 package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
+import java.util.Map.*;
 
 public class InProgressEventForecast {
 
 	private final InProgressEvent event;
-	private final Set<String> baseResults;
 	private final Map<String, PlayersForecast> playersForecasts;
 
 	private static final String CURRENT = "Current";
 
 	public InProgressEventForecast(InProgressEvent event) {
 		this.event = event;
-		baseResults = new LinkedHashSet<>();
 		playersForecasts = new LinkedHashMap<>();
 	}
 
@@ -21,26 +20,31 @@ public class InProgressEventForecast {
 	}
 
 	public Set<String> getBaseResults() {
-		return baseResults;
+		return playersForecasts.keySet();
 	}
 
 	public PlayersForecast getPlayersForecasts(String baseResult) {
 		return playersForecasts.get(baseResult);
 	}
 
-	public void addForecast(String baseResult, int playerNum, int playerId, String name, Integer seed, String entry, String countryId, String result, double probability) {
+	public void addForecast(List<PlayerForecast> players, int playerId, String baseResult, String result, double probability) {
 		baseResult = baseResult.equals("W") ? CURRENT : baseResult;
-		playersForecasts.computeIfAbsent(baseResult, round -> new PlayersForecast()).addForecast(playerNum, playerId, name, seed, entry, countryId, result, probability);
-		baseResults.add(baseResult);
+		playersForecasts.computeIfAbsent(baseResult, round -> new PlayersForecast(players)).addResult(playerId, result, probability);
 	}
 
 	public void process() {
-		if (!playersForecasts.isEmpty())
-			playersForecasts.values().iterator().next().addByes();
-		PlayersForecast currentForecast = getPlayersForecasts(CURRENT);
-		if (currentForecast != null) {
-			currentForecast.addByes();
-			currentForecast.removePastRounds();
+		if (playersForecasts.isEmpty())
+			return;
+		Set<String> baseResults = getBaseResults();
+		if (baseResults.size() <= 2)
+			return;
+		String entryRound = baseResults.iterator().next();
+		for (Entry<String, PlayersForecast> forecastEntry : playersForecasts.entrySet()) {
+			if (!forecastEntry.getKey().equals(entryRound))
+				forecastEntry.getValue().removePlayersWOResults();
 		}
+		PlayersForecast currentForecast = getPlayersForecasts(CURRENT);
+		if (currentForecast != null)
+			currentForecast.removePastRounds();
 	}
 }

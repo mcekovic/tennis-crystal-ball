@@ -10,27 +10,31 @@ class KOTournamentSimulator {
 
 	enum MatchResult { WON, LOST, UNKNOWN, N_A }
 
-	TournamentMacthPredictor predictor
+	TournamentMatchPredictor predictor
 	int inProgressEventId
 	Map matchMap = [:]
 	Map playerEntries = [:]
 	Map entryPlayers = [:]
 	KOResult baseResult
+	KOResult maxResult
 	boolean current
 	boolean debug
 	Map probabilities = [:]
 
-	KOTournamentSimulator(TournamentMacthPredictor predictor, int inProgressEventId, List matches, KOResult baseResult, boolean current = true, boolean debug = false) {
+	KOTournamentSimulator(TournamentMatchPredictor predictor, int inProgressEventId, List matches, KOResult baseResult, boolean current = true, boolean debug = false) {
 		this.debug = debug
 		this.current = current
 		this.predictor = predictor
 		this.inProgressEventId = inProgressEventId
 		this.baseResult = baseResult
+		maxResult = baseResult
 		int playerEntry = 0
 		matches.each { match ->
 			def playerId1 = match.player1_id
 			def playerId2 = match.player2_id
 			def round = KOResult.valueOf(match.round)
+			if (round > maxResult)
+				maxResult = round
 			if (current) {
 				if (playerId1)
 					matchMap[new PlayerResult(playerId: playerId1, result: round)] = match
@@ -71,7 +75,8 @@ class KOTournamentSimulator {
 					params.probability = real probability
 					if (debug)
 						println params
-					results << params
+					if (playerId > 0)
+						results << params
 				}
 			}
 		}
@@ -94,17 +99,22 @@ class KOTournamentSimulator {
 			else if (hasWon == N_A)
 				return null
 		}
-		def baseProbability = probabilities[new PlayerResult(playerId: playerId, result: result)] ?: 1.0
+		def baseProbability = findProbability(playerId, result)
 		def opponentIds = findOpponentIds(playerEntries[playerId], result)
 		if (!opponentIds)
 			return baseProbability
 		def probability = 0.0
 		opponentIds.each { opponentId ->
-			def opponentBaseProbability = probabilities[new PlayerResult(playerId: opponentId, result: result)] ?: 1.0
-			def round = Round.valueOf(result.name())
-			probability += opponentBaseProbability * predictor.getWinProbability(playerId, opponentId, round)
+			def opponentBaseProbability = findProbability(opponentId, result)
+			def opponentProbability = predictor.getWinProbability(playerId, opponentId, Round.valueOf(result.name()))
+			probability += opponentBaseProbability * opponentProbability
 		}
 		baseProbability * probability
+	}
+
+	def findProbability(int playerId, KOResult result) {
+		def probability = probabilities[new PlayerResult(playerId: playerId, result: result)]
+		probability != null ? probability : 1.0
 	}
 
 	def findOpponentIds(int entry, KOResult result) {
@@ -123,14 +133,14 @@ class KOTournamentSimulator {
 	def hasWon(int playerId, KOResult round) {
 		def match = matchMap[new PlayerResult(playerId: playerId, result: round)]
 		if (!match)
-			return N_A
+			return round > maxResult ? UNKNOWN : N_A
 		def winner = match.winner
 		if (!winner)
 			return UNKNOWN
 		(winner == 1 && match.player1_id == playerId) || (winner == 2 && match.player2_id == playerId) ? WON : LOST
 	}
 
-	@EqualsAndHashCode
+	@EqualsAndHashCode @ToString
 	static class PlayerResult {
 		int playerId
 		KOResult result

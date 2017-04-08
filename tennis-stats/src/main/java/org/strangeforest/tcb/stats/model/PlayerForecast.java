@@ -6,37 +6,48 @@ import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class PlayerForecast extends MatchPlayerEx {
 
-	static final PlayerForecast BYE = new PlayerForecast(0, null, null, null, null);
+	private Map<String, Double> forecast;
 
-	private final Map<String, Double> forecast;
-
-	PlayerForecast(int playerId, String name, Integer seed, String entry, String countryId) {
+	public PlayerForecast(int playerId, String name, Integer seed, String entry, String countryId) {
 		super(playerId, name, seed, entry, countryId);
-		forecast = new LinkedHashMap<>();
 	}
 
-	public boolean isEmpty() {
-		return getName() == null;
+	PlayerForecast(PlayerForecast player) {
+		super(player);
+	}
+
+	public boolean isKnown() {
+		return getName() != null;
 	}
 
 	public boolean isBye() {
-		return isEmpty() && getEntry() == null;
+		return getName() == null && getEntry() == null;
 	}
 
 	public boolean isQualifier() {
-		return isEmpty() && "Q".equals(getEntry());
+		return getName() == null && "Q".equals(getEntry());
 	}
 
 	public Double getProbability(String result) {
+		if (isEmpty())
+			return null;
 		Double probability = forecast.get(result);
 		return probability != null ? PCT * probability : null;
 	}
 
 	void addForecast(String result, double probability) {
+		if (forecast == null)
+			forecast = new HashMap<>();
 		forecast.put(result, probability);
 	}
 
+	boolean isEmpty() {
+		return forecast == null;
+	}
+	
 	boolean hasAnyResult(Iterable<String> results) {
+		if (isEmpty())
+			return false;
 		for (String result : results) {
 			if (forecast.containsKey(result))
 				return true;

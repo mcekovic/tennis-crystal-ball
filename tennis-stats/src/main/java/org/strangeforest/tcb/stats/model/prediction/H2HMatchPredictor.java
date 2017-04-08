@@ -22,8 +22,8 @@ public class H2HMatchPredictor implements MatchPredictor {
 	private final Round round;
 	private final short bestOf;
 
-	private static final int MATCH_RECENT_PERIOD_YEARS = 3;
-	private static final int SET_RECENT_PERIOD_YEARS = 2;
+	static final int MATCH_RECENT_PERIOD_YEARS = 3;
+	static final int SET_RECENT_PERIOD_YEARS = 2;
 
 	public H2HMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, int playerId1, int playerId2, Date date1, Date date2,
 	                         Surface surface, TournamentLevel level, Round round, short bestOf) {
@@ -79,9 +79,9 @@ public class H2HMatchPredictor implements MatchPredictor {
 	private void addItemProbabilities(MatchPrediction prediction, H2HPredictionItem item, Predicate<MatchData> filter1, Predicate<MatchData> filter2) {
 		if (item.getWeight() > 0.0) {
 			ToIntFunction<MatchData> dimension = item.isForSet() ? MatchData::getPSets : MatchData::getPMatches;
-			long won1 = matchData1.stream().filter(filter1.and(isOpponent(playerId2))).mapToInt(dimension).sum();
-			long won2 = matchData2.stream().filter(filter2.and(isOpponent(playerId1))).mapToInt(dimension).sum();
-			long total = won1 + won2;
+			int won1 = matchData1.stream().filter(filter1.and(isOpponent(playerId2))).mapToInt(dimension).sum();
+			int won2 = matchData2.stream().filter(filter2.and(isOpponent(playerId1))).mapToInt(dimension).sum();
+			int total = won1 + won2;
 			if (total > 0) {
 				double weight = item.getWeight() * weight(total);
 				DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
