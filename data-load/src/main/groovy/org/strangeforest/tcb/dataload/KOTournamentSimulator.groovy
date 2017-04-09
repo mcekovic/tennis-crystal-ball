@@ -18,15 +18,15 @@ class KOTournamentSimulator {
 	KOResult baseResult
 	KOResult maxResult
 	boolean current
-	boolean debug
+	boolean verbose
 	Map probabilities = [:]
 
-	KOTournamentSimulator(TournamentMatchPredictor predictor, int inProgressEventId, List matches, KOResult baseResult, boolean current = true, boolean debug = false) {
-		this.debug = debug
-		this.current = current
+	KOTournamentSimulator(TournamentMatchPredictor predictor, int inProgressEventId, List matches, KOResult baseResult, boolean current = true, boolean verbose = false) {
 		this.predictor = predictor
 		this.inProgressEventId = inProgressEventId
 		this.baseResult = baseResult
+		this.current = current
+		this.verbose = verbose
 		maxResult = baseResult
 		int playerEntry = 0
 		matches.each { match ->
@@ -60,7 +60,7 @@ class KOTournamentSimulator {
 		def results = []
 		KOResult.values().findAll { r -> r >= baseResult && r < KOResult.W }.each { result ->
 			def nextResult = nextKOResult(result)
-			if (debug)
+			if (verbose)
 				println "${current ? 'Current' : baseResult} -> $nextResult"
 			playerEntries.keySet().each { playerId ->
 				def probability = getProbability(playerId, result)
@@ -73,14 +73,14 @@ class KOTournamentSimulator {
 					params.base_result = current ? 'W' : baseResult.name()
 					params.result = nextResult.name()
 					params.probability = real probability
-					if (debug)
+					if (verbose)
 						println params
 					if (playerId > 0)
 						results << params
 				}
 			}
 		}
-		if (debug)
+		if (verbose)
 			println()
 		results
 	}

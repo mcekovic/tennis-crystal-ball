@@ -54,12 +54,12 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		super(sql)
 	}
 
-	def loadAndSimulateTournament(String urlId, extId, Integer season = null, String level = null, String surface = null) {
-		loadTournament(urlId, extId, season, level, surface)
-		simulateTournament(extId)
+	def loadAndSimulateTournament(String urlId, extId, Integer season = null, String level = null, String surface = null, boolean verbose = false) {
+		loadTournament(urlId, extId, season, level, surface, verbose)
+		simulateTournament(extId, verbose)
 	}
 
-	def loadTournament(String urlId, extId, Integer season, String level, String surface) {
+	def loadTournament(String urlId, extId, Integer season, String level, String surface, boolean verbose) {
 		def stopwatch = Stopwatch.createStarted()
 		def url = tournamentUrl(urlId, extId, season)
 		println "Fetching in-progress tournament URL '$url'"
@@ -94,7 +94,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def drawTable = doc.select('#scoresDrawTable')
 		def rounds = drawTable.select('thead > tr > th').findAll().collect { round -> round.text() }
 		def entryRound = rounds[0]
-		println '\n' + entryRound
+		if (verbose)
+			println '\n' + entryRound
 
 		// Processing entry round
 		Elements entryMatches = drawTable.select('table.scores-draw-entry-box-table')
@@ -144,14 +145,16 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 			matches[matchNum] = params
 
-			println "$seedEntry1 $name1 vs $seedEntry2 $name2"
+			if (verbose)
+				println "$seedEntry1 $name1 vs $seedEntry2 $name2"
 		}
 
 		// Processing other rounds
 		def drawRowSpan = 1
 		short prevMatchNumOffset = 1
 		rounds.findAll { round -> round != entryRound }.each { round ->
-			println '\n' + round
+			if (verbose)
+				println '\n' + round
 			short matchNumOffset = matchNum + 1
 			Elements roundPlayers = drawTable.select("tbody > tr > td[rowspan=$drawRowSpan")
 			if (roundPlayers.select('div.scores-draw-entry-box').find { e -> !e.text() })
@@ -208,7 +211,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 						matches[matchNum] = params
 
-						println "${seed1 ?: ''}${entry1 ?: ''} $name1 vs ${seed2 ?: ''}${entry2 ?: ''} $name2"
+						if (verbose)
+							println "${seed1 ?: ''}${entry1 ?: ''} $name1 vs ${seed2 ?: ''}${entry2 ?: ''} $name2"
 					}
 				}
 			}
@@ -222,7 +226,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			}
 		}
 		sql.commit()
-		println "\n${matches.size()} matches loaded in $stopwatch"
+		println "${matches.size()} matches loaded in $stopwatch"
 	}
 
 	def extractEntryPlayer(Element entryMatch, int index) {
@@ -262,8 +266,9 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 	
 	// Tournament Simulation
 
-	def simulateTournament(extId) {
-		println '\nStarting tournament simulation'
+	def simulateTournament(extId, boolean verbose) {
+		if (verbose)
+			println '\nStarting tournament simulation'
 		def stopwatch = Stopwatch.createStarted()
 		def matches = sql.rows(FETCH_MATCHES_SQL, [string(extId)])
 		int qualifierIndex
@@ -289,16 +294,18 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def resultCount = 0
 		def tournamentSimulator
 		if (drawType == 'KO') {
-			println 'Current'
-			tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, matches, entryResult, true, true)
+			if (verbose)
+				println 'Current'
+			tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, matches, entryResult, true, verbose)
 			def results = tournamentSimulator.simulate()
 			saveResults(results)
 			resultCount += results.size()
 
 			KOResult.values().findAll { r -> r >= entryResult && r < KOResult.W }.each { baseResult ->
-				println baseResult
+				if (verbose)
+					println baseResult
 				def selectedMatches = matches.findAll { match -> KOResult.valueOf(match.round) >= baseResult }
-				tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, selectedMatches, baseResult, false, true)
+				tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, selectedMatches, baseResult, false, verbose)
 				results = tournamentSimulator.simulate()
 				saveResults(results)
 				resultCount += results.size()
@@ -308,7 +315,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			throw new UnsupportedOperationException("Draw type $drawType is not supported.")
 
 		sql.commit()
-		println "\nTournament simulation: ${resultCount} results loaded in $stopwatch"
+		println "Tournament simulation: ${resultCount} results loaded in $stopwatch"
 	}
 
 	def saveResults(results) {
