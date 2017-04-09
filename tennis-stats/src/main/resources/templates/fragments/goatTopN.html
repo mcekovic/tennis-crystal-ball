@@ -1,0 +1,41 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="goatTopN">
+	<!--/*@thymesVar id="goatTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
+	<style>
+		td.goat-rank {
+			width: 25px;
+			text-align: right;
+		}
+		td.goat-player {
+			padding: 3px 3px !important;
+			max-width: 100px;
+		}
+		td.goat-points {
+			text-align: right;
+		}
+	</style>
+	<div class="panel panel-default component text-nowrap">
+		<div class="panel-heading">
+			<h4 class="text-center component-header">Top [[${goatTopN.size()}]] GOATs</h4>
+		</div>
+		<table id="goatTopNTable" class="table table-condensed table-hover table-striped small">
+			<thead>
+			<tr>
+				<th class="text-right" title="GOAT Rank">R.</th>
+				<th>Name</th>
+				<th class="text-right" title="GOAT Points">Pts.</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="player : ${goatTopN}">
+				<td th:text="${player.rank}" class="goat-rank">1</td>
+				<td class="goat-player" >
+					<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Federer</a>
+					<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
+				</td>
+				<td th:text="${player.points}" class="goat-points">600</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</th:block>
