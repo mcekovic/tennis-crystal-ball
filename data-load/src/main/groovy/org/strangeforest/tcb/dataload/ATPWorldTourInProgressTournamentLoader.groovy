@@ -43,7 +43,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 	static final String SELECT_EVENT_EXT_IDS_SQL =
 		'SELECT ext_tournament_id FROM in_progress_event\n' +
-		'INNER JOIN tournament_mapping USING (tournament_id)'
+		'INNER JOIN tournament_mapping USING (tournament_id)\n' +
+		'ORDER BY ext_tournament_id'
 
 	static final String DELETE_EVENT_SQL =
 		'DELETE FROM in_progress_event\n' +

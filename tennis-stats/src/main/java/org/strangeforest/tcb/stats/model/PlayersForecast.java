@@ -23,6 +23,11 @@ public class PlayersForecast {
 		return playerForecasts.values();
 	}
 
+	public PlayerForecast getOtherPlayer(int index) {
+		int otherIndex = index + (index % 2 == 0 ? 1 : -1);
+		return otherIndex < playerForecasts.size() ? new ArrayList<>(playerForecasts.values()).get(otherIndex) : null;
+	}
+
 	public double getStrength(int fromIndex, int count) {
 		return playerForecasts.values().stream().skip(fromIndex).limit(count).mapToDouble(PlayerForecast::getWinProbability).sum();
 	}

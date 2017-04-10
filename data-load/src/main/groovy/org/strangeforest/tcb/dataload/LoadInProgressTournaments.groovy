@@ -2,6 +2,8 @@ package org.strangeforest.tcb.dataload
 
 import org.jsoup.*
 
+import groovy.transform.*
+
 import static org.strangeforest.tcb.dataload.BaseATPWorldTourTournamentLoader.*
 
 loadTournaments(new SqlPool())
@@ -27,13 +29,23 @@ static loadTournaments(SqlPool sqlPool) {
 
 static findInProgressEvents() {
 	def doc = Jsoup.connect('http://www.atpworldtour.com/en/scores/current').timeout(TIMEOUT).get()
-	doc.select('div.arrow-next-tourney > div > a.tourney-title').collect { a ->
+	def eventInfos = new TreeSet(doc.select('div.arrow-next-tourney > div > a.tourney-title').collect { a ->
 		def url = a.attr('href')
-		new InProgressEventInfo(urlId: extract(url, '/', 4), extId: extract(url, '/', 5))
-	}
+		new InProgressEventInfo(url)
+	})
+	def url = doc.select('div.module-header > div.module-tabs > div.module-tab.current > span > a').attr('href')
+	eventInfos << new InProgressEventInfo(url)
+	eventInfos
 }
 
+@EqualsAndHashCode @Sortable
 class InProgressEventInfo {
-	String urlId
+
 	String extId
+	String urlId
+
+	InProgressEventInfo(String url) {
+		extId = extract(url, '/', 5)
+		urlId = extract(url, '/', 4)
+	}
 }
