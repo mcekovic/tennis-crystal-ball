@@ -158,7 +158,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				println '\n' + round
 			short matchNumOffset = matchNum + 1
 			Elements roundPlayers = drawTable.select("tbody > tr > td[rowspan=$drawRowSpan")
-			if (roundPlayers.select('div.scores-draw-entry-box').find { e -> !e.text() })
+			if (!roundPlayers.select('div.scores-draw-entry-box').find { e -> e.text() })
 				return
 			if (round == 'Winner') {
 				def winner = roundPlayers.get(0)
@@ -302,7 +302,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			saveResults(results)
 			resultCount += results.size()
 
-			KOResult.values().findAll { r -> r >= entryResult && r < KOResult.W }.each { baseResult ->
+			for (baseResult in KOResult.values().findAll { r -> r >= entryResult && r < KOResult.W }) {
 				if (verbose)
 					println baseResult
 				def selectedMatches = matches.findAll { match -> KOResult.valueOf(match.round) >= baseResult }
@@ -310,6 +310,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				results = tournamentSimulator.simulate()
 				saveResults(results)
 				resultCount += results.size()
+				if (selectedMatches.find { match -> !match.winner })
+					break
 			}
 		}
 		else

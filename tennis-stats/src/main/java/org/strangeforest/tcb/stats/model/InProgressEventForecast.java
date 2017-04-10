@@ -36,15 +36,20 @@ public class InProgressEventForecast {
 		if (playersForecasts.isEmpty())
 			return;
 		Set<String> baseResults = getBaseResults();
-		if (baseResults.size() <= 2)
-			return;
 		String entryRound = baseResults.iterator().next();
 		for (Entry<String, PlayersForecast> forecastEntry : playersForecasts.entrySet()) {
-			if (!forecastEntry.getKey().equals(entryRound))
+			String baseResult = forecastEntry.getKey();
+			if (!(baseResult.equals(entryRound) || baseResult.equals(CURRENT)))
 				forecastEntry.getValue().removePlayersWOResults();
 		}
 		PlayersForecast currentForecast = getPlayersForecasts(CURRENT);
-		if (currentForecast != null)
+		if (currentForecast != null) {
 			currentForecast.removePastRounds();
+			if (!currentForecast.getResults().isEmpty()) {
+				String firstResult = currentForecast.getFirstResult();
+				if (!entryRound.equals("W") && !KOResult.valueOf(entryRound).next().name().equals(firstResult))
+					currentForecast.removePlayersWORemainingResults();
+			}
+		}
 	}
 }

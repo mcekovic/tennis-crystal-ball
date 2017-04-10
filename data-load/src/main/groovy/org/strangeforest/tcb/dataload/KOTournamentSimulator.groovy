@@ -8,7 +8,7 @@ import static org.strangeforest.tcb.dataload.KOTournamentSimulator.MatchResult.*
 
 class KOTournamentSimulator {
 
-	enum MatchResult { WON, LOST, UNKNOWN, N_A }
+	enum MatchResult { WON, LOST, N_A }
 
 	TournamentMatchPredictor predictor
 	int inProgressEventId
@@ -16,7 +16,6 @@ class KOTournamentSimulator {
 	Map playerEntries = [:]
 	Map entryPlayers = [:]
 	KOResult baseResult
-	KOResult maxResult
 	boolean current
 	boolean verbose
 	Map probabilities = [:]
@@ -27,14 +26,11 @@ class KOTournamentSimulator {
 		this.baseResult = baseResult
 		this.current = current
 		this.verbose = verbose
-		maxResult = baseResult
 		int playerEntry = 0
 		matches.each { match ->
 			def playerId1 = match.player1_id
 			def playerId2 = match.player2_id
 			def round = KOResult.valueOf(match.round)
-			if (round > maxResult)
-				maxResult = round
 			if (current) {
 				if (playerId1)
 					matchMap[new PlayerResult(playerId: playerId1, result: round)] = match
@@ -59,13 +55,13 @@ class KOTournamentSimulator {
 	def simulate() {
 		def results = []
 		KOResult.values().findAll { r -> r >= baseResult && r < KOResult.W }.each { result ->
-			def nextResult = nextKOResult(result)
+			def nextResult = result.next()
 			if (verbose)
 				println "${current ? 'Current' : baseResult} -> $nextResult"
 			playerEntries.keySet().each { playerId ->
-				def probability = getProbability(playerId, result)
+				def probability = getProbability(playerId, result, nextResult)
 				if (probability != null) {
-					probabilities[new PlayerResult(playerId: playerId, result: nextResult)] = probability
+					setProbability(playerId, nextResult, probability)
 
 					def params = [:]
 					params.in_progress_event_id = inProgressEventId
@@ -85,21 +81,19 @@ class KOTournamentSimulator {
 		results
 	}
 
-	static nextKOResult(KOResult result) {
-		KOResult.values()[result.ordinal() + 1]
-	}
-
-	def getProbability(int playerId, KOResult result) {
+	def getProbability(int playerId, KOResult result, KOResult nextResult) {
+		def baseProbability = findProbability(playerId, result)
 		if (current) {
+			if (baseProbability == 0.0) {
+				setProbability(playerId, nextResult, 0.0)
+				return null
+			}
 			def hasWon = hasWon(playerId, result)
 			if (hasWon == WON)
 				return 1.0
 			else if (hasWon == LOST)
 				return 0.0
-			else if (hasWon == N_A)
-				return null
 		}
-		def baseProbability = findProbability(playerId, result)
 		def opponentIds = findOpponentIds(playerEntries[playerId], result)
 		if (!opponentIds)
 			return baseProbability
@@ -115,6 +109,10 @@ class KOTournamentSimulator {
 	def findProbability(int playerId, KOResult result) {
 		def probability = probabilities[new PlayerResult(playerId: playerId, result: result)]
 		probability != null ? probability : 1.0
+	}
+
+	def setProbability(int playerId, KOResult result, Number probability) {
+		probabilities[new PlayerResult(playerId: playerId, result: result)] = probability
 	}
 
 	def findOpponentIds(int entry, KOResult result) {
@@ -133,10 +131,10 @@ class KOTournamentSimulator {
 	def hasWon(int playerId, KOResult round) {
 		def match = matchMap[new PlayerResult(playerId: playerId, result: round)]
 		if (!match)
-			return round > maxResult ? UNKNOWN : N_A
+			return N_A
 		def winner = match.winner
 		if (!winner)
-			return UNKNOWN
+			return N_A
 		(winner == 1 && match.player1_id == playerId) || (winner == 2 && match.player2_id == playerId) ? WON : LOST
 	}
 

@@ -3,6 +3,8 @@ package org.strangeforest.tcb.stats.model;
 import java.util.*;
 import java.util.Map.*;
 
+import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
+
 public class PlayersForecast {
 
 	private final Set<String> results;
@@ -17,6 +19,10 @@ public class PlayersForecast {
 
 	public Set<String> getResults() {
 		return results;
+	}
+
+	public String getFirstResult() {
+		return results.iterator().next();
 	}
 
 	public Collection<PlayerForecast> getPlayerForecasts() {
@@ -45,11 +51,7 @@ public class PlayersForecast {
 		}
 	}
 
-	void removePastRounds() {
-		for (String result : new ArrayList<>(results)) {
-			if (!"W".equals(result) && isPastRound(result))
-				results.remove(result);
-		}
+	void removePlayersWORemainingResults() {
 		for (Entry<Integer, PlayerForecast> forecastEntry : new HashMap<>(playerForecasts).entrySet()) {
 			PlayerForecast playerForecast = forecastEntry.getValue();
 			if (!playerForecast.hasAnyResult(results))
@@ -57,10 +59,17 @@ public class PlayersForecast {
 		}
 	}
 
+	void removePastRounds() {
+		for (String result : new ArrayList<>(results)) {
+			if (!"W".equals(result) && isPastRound(result))
+				results.remove(result);
+		}
+	}
+
 	private boolean isPastRound(String result) {
 		for (PlayerForecast playerForecast : getPlayerForecasts()) {
 			Double probability = playerForecast.getProbability(result);
-			if (probability != null && probability > 0.0 && probability < 1.0)
+			if (probability != null && probability > 0.0 && probability < PCT)
 				return false;
 		}
 		return true;
