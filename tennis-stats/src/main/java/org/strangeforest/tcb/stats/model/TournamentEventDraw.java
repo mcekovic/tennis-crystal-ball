@@ -38,12 +38,7 @@ public class TournamentEventDraw {
 	public void addMatch(short matchNum, TournamentEventMatch match) {
 		matches.put(matchNum, match);
 		Round round = Round.valueOf(match.getRound());
-		List<TournamentEventMatch> roundMatches = matchesByRound.get(round);
-		if (roundMatches == null) {
-			roundMatches = new ArrayList<>();
-			matchesByRound.put(round, roundMatches);
-		}
-		roundMatches.add(match);
+		matchesByRound.computeIfAbsent(round, r -> new ArrayList<>()).add(match);
 	}
 
 	public Collection<Round> getRounds() {

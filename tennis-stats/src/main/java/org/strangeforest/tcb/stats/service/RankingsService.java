@@ -106,9 +106,14 @@ public class RankingsService {
 		"SELECT r.season, r.%1$s AS year_end_rank, player_id, p.short_name, p.country_id, p.active\n" +
 		"FROM %2$s r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE r.year_end_rank <= :topRanks\n" +
+		"WHERE r.%1$s <= :topRanks\n" +
 		"ORDER BY r.season, r.%1$s";
 
+	private static final String PLAYER_YEAR_END_GOAT_RANK = //language=SQL
+		"WITH player_year_end_goat_rank AS (\n" +
+		"  SELECT player_id, season, rank() OVER (PARTITION BY season ORDER BY goat_points DESC) AS year_end_rank\n" +
+		"  FROM player_season_goat_points\n" +
+		")\n";
 
 	@Cacheable("RankingsTable.CurrentDate")
 	public LocalDate getCurrentRankingDate(RankType rankType) {
@@ -344,6 +349,7 @@ public class RankingsService {
 	public TopRankingsTimeline getTopRankingsTimeline(RankType rankType) {
 		TopRankingsTimeline timeline = new TopRankingsTimeline(TOP_RANKS_FOR_TIMELINE);
 		jdbcTemplate.query(
+			(rankType == RankType.GOAT_POINTS ? PLAYER_YEAR_END_GOAT_RANK : "") +
 			format(TOP_RANKINGS_TIMELINE_QUERY, yearEndRankColumn(rankType), yearEndRankingTable(rankType)),
 			params("topRanks", TOP_RANKS_FOR_TIMELINE),
 			rs -> {
@@ -367,6 +373,7 @@ public class RankingsService {
 			case CLAY_ELO_RATING: return "clay_year_end_rank";
 			case GRASS_ELO_RATING: return "grass_year_end_rank";
 			case CARPET_ELO_RATING: return "carpet_year_end_rank";
+			case GOAT_POINTS: return "year_end_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -379,6 +386,7 @@ public class RankingsService {
 			case CLAY_ELO_RATING:
 			case GRASS_ELO_RATING:
 			case CARPET_ELO_RATING: return "player_year_end_elo_rank";
+			case GOAT_POINTS: return "player_year_end_goat_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}
