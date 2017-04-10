@@ -28,7 +28,7 @@
 				<option value="POINTS" th:selected="${rankType.name() == 'POINTS'}">ATP Ranking</option>
 				<option value="ELO_RATING" th:selected="${rankType.name() == 'ELO_RATING'}">Elo Ranking</option>
 				<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|" th:selected="${rankType != null && rankType.name() == (surface + '_ELO_RATING')}">Hard Elo Ranking</option>
-				<option value="GOAT_POINTS" th:selected="${rankType.name() == 'GOAT_POINTS'}">GOAT Points</option>
+				<option value="GOAT_POINTS" th:selected="${rankType.name() == 'GOAT_POINTS'}">GOAT Points Ranking</option>
 			</select>
 		</div>
 	</row>

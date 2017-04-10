@@ -113,6 +113,7 @@ public class RankingsService {
 		"WITH player_year_end_goat_rank AS (\n" +
 		"  SELECT player_id, season, rank() OVER (PARTITION BY season ORDER BY goat_points DESC) AS year_end_rank\n" +
 		"  FROM player_season_goat_points\n" +
+		"  WHERE season < date_part('year', current_date) OR date_part('month', current_date) >= 11\n" +
 		")\n";
 
 	@Cacheable("RankingsTable.CurrentDate")
