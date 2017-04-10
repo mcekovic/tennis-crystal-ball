@@ -13,7 +13,7 @@ public class InProgressEventsJob {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InProgressEventsJob.class);
 
-	@Scheduled(cron = "${tennis-stats.jobs.reload-in-progress-events}")
+	@Scheduled(cron = "${tennis-stats.jobs.reload-in-progress-events:0 0 * * * *}")
 	public void reloadInProgressEvents() {
 		try {
 			LOGGER.info("Executing InProgressEventsJob...");

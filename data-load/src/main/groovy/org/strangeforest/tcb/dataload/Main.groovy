@@ -15,8 +15,8 @@ cli.help('Print this message')
 def options = cli.parse(args)
 
 if (options && (options.cd || options.dd || options.lp || options.la || options.ip || options.ce || options.rc || options.rr || options.vc)) {
-	def dbConns = options.c ? options.getProperty('c') : (options.ce ? 3 : 1)
-	System.setProperty(SqlPool.DB_CONNECTIONS_PROPERTY, String.valueOf(dbConns))
+	def dbConns = String.valueOf(options.c ? options.getProperty('c') : (options.ce ? 3 : 1)).trim()
+	System.setProperty(SqlPool.DB_CONNECTIONS_PROPERTY, dbConns)
 	if (options.cd)
 		callLoader('createDatabase')
 	if (options.dd)
