@@ -1,43 +1,47 @@
 package org.strangeforest.tcb.dataload
 
 def cli = new CliBuilder(usage: 'data-load [commands]', header: 'Commands:')
-cli.c('Create database objects')
-cli.d('Drop database objects')
-cli.p('Load additional player data')
-cli.a('Load ad-hoc rankings and tournaments')
-cli.i('Load in-progress tournaments')
-cli.e('Compute Elo ratings')
-cli.r('Refresh computed data')
-cli.rc('Refresh Records')
-cli.v('Vacuum space')
+cli.c(args: 1, argName: 'DB connections', 'Number of database connections to allocate')
+cli.cd('Create database objects')
+cli.dd('Drop database objects')
+cli.lp('Load additional player data')
+cli.la('Load ad-hoc rankings and tournaments')
+cli.ip('Load in-progress tournaments')
+cli.ce('Compute Elo ratings')
+cli.rc('Refresh computed data')
+cli.rr('Refresh Records')
+cli.vc('Vacuum space')
+cli.help('Print this message')
 def options = cli.parse(args)
 
-if (options && (options.c || options.d || options.p || options.a || options.i || options.e || options.r || options.rc || options.v)) {
-	if (options.c)
+if (options && (options.cd || options.dd || options.lp || options.la || options.ip || options.ce || options.rc || options.rr || options.vc)) {
+	def dbConns = options.c ? options.getProperty('c') : (options.ce ? 3 : 1)
+	System.setProperty(SqlPool.DB_CONNECTIONS_PROPERTY, String.valueOf(dbConns))
+	if (options.cd)
 		callLoader('createDatabase')
-	if (options.d)
+	if (options.dd)
 		callLoader('dropDatabase')
-	if (options.p)
+	if (options.lp)
 		callLoader('loadAdditionalPlayerData')
-	if (options.a) {
+	if (options.la) {
 		new LoadAdHocRankings().run()
 		new LoadAdHocTournaments().run()
 	}
-	if (options.i)
+	if (options.ip)
 		new LoadInProgressTournaments().run()
-	if (options.e)
+	if (options.ce)
 		new ComputeEloRatings().run()
-	if (options.r)
-		callLoader('refreshMaterializedViews')
 	if (options.rc)
+		callLoader('refreshMaterializedViews')
+	if (options.rr)
 		new RecordsLoader().loadRecords()
-	if (options.v)
+	if (options.vc)
 		callLoader('vacuum')
 }
 else
-	println cli.usage()
+	cli.usage()
 
-def callLoader(methodName) {
+static def callLoader(methodName) {
 	new SqlPool().withSql { sql ->
 		new ATPTennisLoader()."$methodName"(sql)
 	}

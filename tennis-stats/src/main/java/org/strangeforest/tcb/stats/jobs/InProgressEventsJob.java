@@ -17,15 +17,16 @@ public class InProgressEventsJob {
 	public void reloadInProgressEvents() {
 		try {
 			LOGGER.info("Executing InProgressEventsJob...");
-			Process process = new ProcessBuilder("../data-load/bin/data-load", "-i", "-Dtcb.db.connections=1").redirectErrorStream(true).start();
+			Process process = new ProcessBuilder("../data-load/bin/data-load", "-ip", "-c 1").redirectErrorStream(true).start();
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 				int exitCode = process.waitFor();
 				StringBuilder sb = new StringBuilder(200);
+				sb.append("InProgressEventsJob output:");
 				while (true) {
 					String line = reader.readLine();
 					if (line == null)
 						break;
-					sb.append(line).append('\n');
+					sb.append('\n').append(line);
 				}
 				LOGGER.info(sb.toString());
 				if (exitCode == 0)
