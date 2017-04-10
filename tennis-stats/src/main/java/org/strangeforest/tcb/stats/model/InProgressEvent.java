@@ -18,7 +18,7 @@ public class InProgressEvent {
 	private int playerCount;
 	private int participationPoints;
 	private double participationPct;
-	private List<FavouritePlayer> favourites;
+	private List<FavoritePlayer> favorites;
 
 	public InProgressEvent(int id, int tournamentId, Date date, String name, String level, String surface, boolean indoor) {
 		this.id = id;
@@ -82,15 +82,19 @@ public class InProgressEvent {
 		return participationPct;
 	}
 
-	public FavouritePlayer getFavourite1() {
-		return favourites.size() > 0 ? favourites.get(0) : null;
+	public FavoritePlayer getFavorite1() {
+		return favorites.size() >= 1 ? favorites.get(0) : null;
 	}
 
-	public FavouritePlayer getFavourite2() {
-		return favourites.size() > 1 ? favourites.get(1) : null;
+	public FavoritePlayer getFavorite2() {
+		return favorites.size() >= 2 ? favorites.get(1) : null;
 	}
 
-	public void setFavourites(List<FavouritePlayer> favourites) {
-		this.favourites = favourites;
+	public FavoritePlayer getFavorite3() {
+		return favorites.size() >= 3 ? favorites.get(2) : null;
+	}
+
+	public void setFavorites(List<FavoritePlayer> favorites) {
+		this.favorites = favorites;
 	}
 }

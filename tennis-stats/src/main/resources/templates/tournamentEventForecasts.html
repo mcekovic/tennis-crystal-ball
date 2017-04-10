@@ -7,8 +7,8 @@
 			var $inProgressEventsTable = $("#inProgressEventsTable");
 			var device = detectDevice();
 			setBootgridColumnsVisible($inProgressEventsTable, ["playerCount", "participationPoints"], deviceGreaterOrEqual(device, "lg"));
-			setBootgridColumnsVisible($inProgressEventsTable, ["favourite1"], deviceGreaterOrEqual(device, "sm"));
-			setBootgridColumnsVisible($inProgressEventsTable, ["favourite2"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($inProgressEventsTable, ["favorite1"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsVisible($inProgressEventsTable, ["favorite2"], deviceGreaterOrEqual(device, "md"));
 			if (deviceGreaterOrEqual("md", device))
 				setBootgridColumnsWidths($inProgressEventsTable, ["name"], [175]);
 			$inProgressEventsTable.bootgrid({
@@ -27,11 +27,11 @@
 					},
 					"surface": surfaceFormatter,
 					"participationPct": participationFormatter,
-					"favourite1":  function(column, row) {
-						return formatFavourite(column, row.favourite1);
+					"favorite1":  function(column, row) {
+						return formatFavorite(column, row.favorite1);
 					},
-					"favourite2":  function(column, row) {
-						return formatFavourite(column, row.favourite2);
+					"favorite2":  function(column, row) {
+						return formatFavorite(column, row.favorite2);
 					},
 					"forecast": function(column, row) {
 						return "<a href='/tournamentEventForecast?inProgressEventId=" + row.id + "' class='label label-primary label-btn' title='Show full forecast'><span class='glyphicon glyphicon-eye-open'></span>&nbsp;&nbsp;Forecast</a>";
@@ -52,8 +52,8 @@
 			]);
 			bindPopovers();
 		});
-		function formatFavourite(column, favourite) {
-			return favourite ? playerCountryFormatter(column, favourite) + " " + ((100 * favourite.probability).toFixed(1)) + "%" : "";
+		function formatFavorite(column, favorite) {
+			return favorite ? playerCountryFormatter(column, favorite) + " " + ((100 * favorite.probability).toFixed(1)) + "%" : "";
 		}
 	</script>
 </head>
@@ -69,8 +69,8 @@
 			<th data-column-id="playerCount" data-width="55">Pls.</th>
 			<th data-column-id="participationPoints" data-type="numeric" data-width="70">P. Pts.</th>
 			<th data-column-id="participationPct" data-formatter="participationPct" data-width="70">P. Pct.</th>
-			<th data-column-id="favourite1" data-formatter="favourite1" data-width="220">1-st Favourite</th>
-			<th data-column-id="favourite2" data-formatter="favourite2" data-width="220">2-nd Favourite</th>
+			<th data-column-id="favorite1" data-formatter="favorite1" data-width="220">1-st Favorite</th>
+			<th data-column-id="favorite2" data-formatter="favorite2" data-width="220">2-nd Favorite</th>
 			<th data-column-id="forecast" data-formatter="forecast" data-width="95">Forecast</th>
 		</tr>
 		</thead>

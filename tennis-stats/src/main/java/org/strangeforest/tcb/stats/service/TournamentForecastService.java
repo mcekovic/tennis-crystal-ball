@@ -31,13 +31,13 @@ public class TournamentForecastService {
 		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
 		"WHERE in_progress_event_id = :inProgressEventId";
 
-	private static final String FIND_FAVOURITES_QUERY =
+	private static final String FIND_FAVORITES_QUERY =
 		"SELECT player_id, p.name, p.country_id, r.probability\n" +
 		"FROM player_in_progress_result r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.in_progress_event_id = :inProgressEventId\n" +
 		"AND r.base_result = 'W' AND r.result = 'W' AND probability > 0\n" +
-		"ORDER BY r.probability DESC LIMIT 2";
+		"ORDER BY r.probability DESC LIMIT 3";
 
 	private static final String IN_PROGRESS_MATCHES_QUERY = //language=SQL
 		"WITH entry_round AS (\n" +
@@ -69,8 +69,8 @@ public class TournamentForecastService {
 			}
 		);
 		for (InProgressEvent inProgressEvent : table.getRows()) {
-			List<FavouritePlayer> favourites = jdbcTemplate.query(FIND_FAVOURITES_QUERY, params("inProgressEventId", inProgressEvent.getId()), this::mapFavouritePlayer);
-			inProgressEvent.setFavourites(favourites);
+			List<FavoritePlayer> favorites = jdbcTemplate.query(FIND_FAVORITES_QUERY, params("inProgressEventId", inProgressEvent.getId()), this::mapFavoritePlayer);
+			inProgressEvent.setFavorites(favorites);
 		}
 		return table;
 	}
@@ -95,8 +95,8 @@ public class TournamentForecastService {
 		return inProgressEvent;
 	}
 	
-	private FavouritePlayer mapFavouritePlayer(ResultSet rs, int rowNum) throws SQLException {
-		return new FavouritePlayer(
+	private FavoritePlayer mapFavoritePlayer(ResultSet rs, int rowNum) throws SQLException {
+		return new FavoritePlayer(
 			rowNum,
 			rs.getInt("player_id"),
 			rs.getString("name"),
@@ -109,8 +109,8 @@ public class TournamentForecastService {
 	public InProgressEventForecast getInProgressEventForecast(int inProgressEventId) {
 		MapSqlParameterSource inProgressEventIdParam = params("inProgressEventId", inProgressEventId);
 		InProgressEvent inProgressEvent = jdbcTemplate.queryForObject(IN_PROGRESS_EVENT_QUERY, inProgressEventIdParam, (rs, rowNum) -> mapInProgressEvent(rs));
-		List<FavouritePlayer> favourites = jdbcTemplate.query(FIND_FAVOURITES_QUERY, inProgressEventIdParam, this::mapFavouritePlayer);
-		inProgressEvent.setFavourites(favourites);
+		List<FavoritePlayer> favorites = jdbcTemplate.query(FIND_FAVORITES_QUERY, inProgressEventIdParam, this::mapFavoritePlayer);
+		inProgressEvent.setFavorites(favorites);
 		InProgressEventForecast forecast = new InProgressEventForecast(inProgressEvent);
 		List<PlayerForecast> players = new ArrayList<>();
 		AtomicInteger emptyCount = new AtomicInteger();
