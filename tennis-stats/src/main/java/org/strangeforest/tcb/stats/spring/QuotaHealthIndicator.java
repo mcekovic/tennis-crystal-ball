@@ -3,40 +3,25 @@ package org.strangeforest.tcb.stats.spring;
 import java.io.*;
 import java.text.*;
 
-import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.health.*;
+import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 
 import com.google.common.collect.*;
 
 @Component
-public class QuotaHealthIndicator implements HealthIndicator {
+@Profile("openshift")
+public class QuotaHealthIndicator extends OpenShiftHealthIndicator {
 
 	@Value("${management.health.quota.block-threshold:10240}") private int blocksThreshold;
 	@Value("${management.health.quota.files-threshold:100}") private int filesThreshold;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(QuotaHealthIndicator.class);
-
-	@Override public final Health health() {
-		Health.Builder builder = new Health.Builder();
-		try {
-			Process process = new ProcessBuilder("/bin/sh", "-c", "quota | tail -n 1").redirectErrorStream(true).start();
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-				if (process.waitFor() == 0)
-					parseQuota(reader, builder);
-				else
-					parseError(reader, builder);
-			}
-		}
-		catch (Exception ex) {
-			LOGGER.error("Error getting quota.", ex);
-			builder.withException(ex);
-		}
-		return builder.build();
+	@Override protected String getCommand() {
+		return "quota | tail -n 1";
 	}
 
-	private void parseQuota(BufferedReader reader, Health.Builder builder) throws IOException {
+	@Override protected void parseOutput(BufferedReader reader, Health.Builder builder) throws IOException {
 		String line = reader.readLine();
 		if (line == null) {
 			builder.withDetail("quota", "");
@@ -72,15 +57,5 @@ public class QuotaHealthIndicator implements HealthIndicator {
 
 	private static String pct(long part, long total) {
 		return new DecimalFormat("0.##%").format((double)part / total);
-	}
-
-	private void parseError(BufferedReader reader, Health.Builder builder) throws IOException {
-		for (int i = 1; true; i++) {
-			String line = reader.readLine();
-			if (line != null)
-				builder.withDetail("message" + i, line);
-			else
-				break;
-		}
 	}
 }
