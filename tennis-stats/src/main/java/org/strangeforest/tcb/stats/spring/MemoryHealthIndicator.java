@@ -6,6 +6,8 @@ import org.springframework.boot.actuate.health.*;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 
+import ch.qos.logback.core.util.*;
+
 @Component
 @Profile("openshift")
 public class MemoryHealthIndicator extends OpenShiftHealthIndicator {
@@ -28,7 +30,7 @@ public class MemoryHealthIndicator extends OpenShiftHealthIndicator {
 	private static boolean readMemoryDetail(BufferedReader reader, Health.Builder builder, String name) throws IOException {
 		String usageInBytes = reader.readLine();
 		if (usageInBytes != null) {
-			builder.withDetail(name, usageInBytes);
+			builder.withDetail(name, new FileSize(Integer.parseInt(usageInBytes.trim())));
 			return true;
 		}
 		else
