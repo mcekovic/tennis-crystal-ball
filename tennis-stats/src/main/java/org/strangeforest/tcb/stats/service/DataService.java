@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.service;
 import java.sql.Date;
 import java.util.*;
 import java.util.function.*;
+import java.util.regex.*;
 
 import org.postgresql.core.*;
 import org.springframework.beans.factory.annotation.*;
@@ -79,8 +80,15 @@ public class DataService {
 		return !seasons.isEmpty() ? seasons.get(0) : null;
 	}
 
-	public void clearCaches() {
-		for (String cacheName : cacheManager.getCacheNames())
-			cacheManager.getCache(cacheName).clear();
+	public int clearCaches(String name) {
+		Pattern pattern = Pattern.compile(name);
+		int cacheCount = 0;
+		for (String cacheName : cacheManager.getCacheNames()) {
+			if (pattern.matcher(cacheName).matches()) {
+				cacheManager.getCache(cacheName).clear();
+				cacheCount++;
+			}
+		}
+		return cacheCount;
 	}
 }

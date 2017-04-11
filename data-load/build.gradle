@@ -3,6 +3,7 @@ apply plugin: 'application'
 
 mainClassName = 'org.strangeforest.tcb.dataload.Main'
 applicationDefaultJvmArgs = [
+	'-Xmx128m',
 	'-Dtcb.db.connections=5',
 	'-Dtcb.db.username=adminbnga3sx',
 	'-Dtcb.db.password=I1KZe338nRAX',

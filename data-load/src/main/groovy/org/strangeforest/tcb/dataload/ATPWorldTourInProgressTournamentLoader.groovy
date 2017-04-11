@@ -33,13 +33,17 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		'SELECT m.*, e.level, e.draw_type FROM in_progress_match m\n' +
 		'INNER JOIN in_progress_event e USING (in_progress_event_id)\n' +
 		'INNER JOIN tournament_mapping tm USING (tournament_id)\n' +
-		'WHERE tm.ext_tournament_id = ?\n' +
+		'WHERE tm.ext_tournament_id = :extId\n' +
 		'ORDER BY in_progress_event_id, round, match_num'
 
 	static final String LOAD_PLAYER_RESULT_SQL =
 		'{call load_player_in_progress_result(' +
 			':in_progress_event_id, :player_id, :base_result, :result, :probability' +
 		')}'
+
+	static final String DELETE_PLAYER_PROGRESS_RESULTS_SQL =
+		'DELETE FROM player_in_progress_result\n' +
+		'WHERE in_progress_event_id = :inProgressEventId'
 
 	static final String SELECT_EVENT_EXT_IDS_SQL =
 		'SELECT ext_tournament_id FROM in_progress_event\n' +
@@ -271,7 +275,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		if (verbose)
 			println '\nStarting tournament simulation'
 		def stopwatch = Stopwatch.createStarted()
-		def matches = sql.rows(FETCH_MATCHES_SQL, [string(extId)])
+		def matches = sql.rows([extId: string(extId)], FETCH_MATCHES_SQL)
 		int qualifierIndex
 		matches.each { match ->
 			if (!match.player1_id && match.player1_entry == 'Q')
@@ -295,6 +299,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def resultCount = 0
 		def tournamentSimulator
 		if (drawType == 'KO') {
+			sql.execute([inProgressEventId: inProgressEventId], DELETE_PLAYER_PROGRESS_RESULTS_SQL)
 			if (verbose)
 				println 'Current'
 			tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, matches, entryResult, true, verbose)

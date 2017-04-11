@@ -7,6 +7,8 @@ import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.service.*;
 
+import static java.lang.String.*;
+
 @Component
 public class CacheMvcEndpoint extends AbstractMvcEndpoint {
 
@@ -18,8 +20,10 @@ public class CacheMvcEndpoint extends AbstractMvcEndpoint {
 
 	@GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public String clearCache() {
-		dataService.clearCaches();
-		return "OK";
+	public String clearCache(
+		@RequestParam(name = "name", defaultValue = ".*") String name
+	) {
+		int cacheCount = dataService.clearCaches(name);
+		return format("OK (%1$d caches cleared", cacheCount);
 	}
 }
