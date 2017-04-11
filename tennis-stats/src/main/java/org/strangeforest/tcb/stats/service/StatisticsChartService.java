@@ -33,8 +33,8 @@ public class StatisticsChartService {
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
 
-	public DataTable getStatisticsDataTable(int playerId, StatsCategory category, String surface, Range<Integer> seasonRange, boolean byAge) {
-		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerId);
+	public DataTable getStatisticsDataTable(int[] playerIds, StatsCategory category, String surface, Range<Integer> seasonRange, boolean byAge) {
+		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerIds);
 		DataTable table = fetchStatisticsDataTable(indexedPlayers, category, surface, seasonRange, byAge);
 		addColumns(table, indexedPlayers, category, surface, byAge);
 		return table;

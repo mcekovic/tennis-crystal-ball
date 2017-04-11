@@ -22,7 +22,7 @@ public class PerfStatsChartResource {
 
 	@GetMapping("/playerPerformanceTable")
 	public DataTable playerPerformanceTable(
-		@RequestParam(name = "playerId", required = false) Integer playerId,
+		@RequestParam(name = "playerId", required = false) int[] playerId,
 		@RequestParam(name = "players", required = false) String playersCSV,
 		@RequestParam(name = "category", defaultValue = "matches") String category,
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
@@ -33,7 +33,7 @@ public class PerfStatsChartResource {
 		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
 		if (!seasonRange.equals(Range.all()))
 			byAge = false;
-		if (playerId != null)
+		if (playerId != null && playerId.length > 0)
 			return perfChartService.getPerformanceDataTable(playerId, perfCategory, seasonRange, byAge);
 		else {
 			List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
@@ -43,7 +43,7 @@ public class PerfStatsChartResource {
 
 	@GetMapping("/playerStatisticsTable")
 	public DataTable playerStatisticsTable(
-		@RequestParam(name = "playerId", required = false) Integer playerId,
+		@RequestParam(name = "playerId", required = false) int[] playerId,
 		@RequestParam(name = "players", required = false) String playersCSV,
 		@RequestParam(name = "category", defaultValue = "aces") String category,
 		@RequestParam(name = "surface", required = false) String surface,
@@ -55,7 +55,7 @@ public class PerfStatsChartResource {
 		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
 		if (!seasonRange.equals(Range.all()))
 			byAge = false;
-		if (playerId != null)
+		if (playerId != null && playerId.length > 0)
 			return statsChartService.getStatisticsDataTable(playerId, statsCategory, surface, seasonRange, byAge);
 		else {
 			List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());

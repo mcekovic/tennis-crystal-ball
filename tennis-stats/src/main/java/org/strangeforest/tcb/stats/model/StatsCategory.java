@@ -14,6 +14,7 @@ public final class StatsCategory {
 
 	private static final Map<String, StatsCategory> CATEGORIES = new HashMap<>();
 	private static final Map<String, List<StatsCategory>> CATEGORY_CLASSES = new LinkedHashMap<>();
+	private static final Map<String, String> CATEGORY_TYPES = new LinkedHashMap<>();
 
 	private static final String TOTAL_POINTS = "p_sv_pt + o_sv_pt";
 	private static final String TOTAL_GAMES = "p_games + o_games";
@@ -91,6 +92,7 @@ public final class StatsCategory {
 		StatsCategory category = new StatsCategory(name, expression, statFunction, type, needsStats, title, descriptionId);
 		CATEGORIES.put(name, category);
 		CATEGORY_CLASSES.computeIfAbsent(categoryClass, catCls -> new ArrayList<>()).add(category);
+		CATEGORY_TYPES.put(name, category.getType().name());
 	}
 
 	public static StatsCategory get(String category) {
@@ -106,6 +108,10 @@ public final class StatsCategory {
 
 	public static Map<String, List<StatsCategory>> getCategoryClasses() {
 		return CATEGORY_CLASSES;
+	}
+
+	public static Map<String, String> getCategoryTypes() {
+		return CATEGORY_TYPES;
 	}
 
 

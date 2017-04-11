@@ -1,9 +1,10 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="playerId" type="int[]"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.PerformanceCategory>>"*/-->
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript">
-	var chartData, pointCount;
+	var perfChartData, perfPointCount;
 	function loadGoogleChartsForPerf() {
 		google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
 			drawPerformanceChart();
@@ -11,16 +12,16 @@
 	}
 	function drawPerformanceChart() {
 		var category = $("#perfCategory").val();
-		var dataUrl = "/playerPerformanceTable?playerId=[[${playerId}]]&category=" + category;
+		var dataUrl = "[[@{/playerPerformanceTable(playerId=${playerId})}]]".replace("&amp;", "&") + "&category=" + category;
 		dataUrl += "&fromSeason=" + $("#perfFromSeason").val() + "&toSeason=" + $("#perfToSeason").val();
 		dataUrl += "&byAge=" + $("#perfByAge").prop("checked");
 		var $loading = $("#perfChartLoading");
 		$loading.show();
 		$.ajax(dataUrl).done(function(json) {
-			chartData = new google.visualization.DataTable(JSON.stringify(json));
-			pointCount = json.rows.length;
+			perfChartData = new google.visualization.DataTable(JSON.stringify(json));
+			perfPointCount = json.rows.length;
 			var width = $("#perfChartSize").slider("value");
-			showPerformanceChart(chartData, "perfChart", width, pointCount, "none");
+			showPerformanceChart(perfChartData, "perfChart", width, perfPointCount, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
 		}).always(function() {
 			$loading.hide().css("position", "absolute").css("z-index", "100");
 		});
@@ -32,7 +33,7 @@
 			value: defaultChartWOLegendSize(detectDevice()),
 			step: 50,
 			slide: function(event, ui) {
-				showPerformanceChart(chartData, "perfChart", ui.value, pointCount, "none");
+				showPerformanceChart(perfChartData, "perfChart", ui.value, perfPointCount, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
 			}
 		});
 		onPerfSeasonRangeChange();

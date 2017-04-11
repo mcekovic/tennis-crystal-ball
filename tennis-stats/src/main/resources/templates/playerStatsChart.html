@@ -1,12 +1,15 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="playerId" type="int[]"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="categoryTypes" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript" th:inline="javascript">
-	var chartData, pointCount, isPct;
 	var categoryTypes = [[${categoryTypes}]];
+</script>
+<script type="text/javascript">
+	var statsChartData, statsPointCount, isPct;
 	function loadGoogleChartsForStats() {
 		google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
 			drawStatsChart();
@@ -14,17 +17,17 @@
 	}
 	function drawStatsChart() {
 		var category = $("#statsCategory").val();
-		var dataUrl = "/playerStatisticsTable?playerId=[[${playerId}]]&category=" + category + "&surface=" + $("#statsChartSurface").val();
+		var dataUrl = "[[@{/playerStatisticsTable(playerId=${playerId})}]]".replace("&amp;", "&") + "&category=" + category + "&surface=" + $("#statsChartSurface").val();
 		dataUrl += "&fromSeason=" + $("#statsFromSeason").val() + "&toSeason=" + $("#statsToSeason").val();
 		dataUrl += "&byAge=" + $("#statsByAge").prop("checked");
 		var $loading = $("#statsChartLoading");
 		$loading.show();
 		$.ajax(dataUrl).done(function(json) {
-			chartData = new google.visualization.DataTable(JSON.stringify(json));
-			pointCount = json.rows.length;
+			statsChartData = new google.visualization.DataTable(JSON.stringify(json));
+			statsPointCount = json.rows.length;
 			isPct = categoryTypes[category] == "PERCENTAGE";
 			var width = $("#statsChartSize").slider("value");
-			showStatsChart(chartData, "statsChart", width, pointCount, isPct, "none");
+			showStatsChart(statsChartData, "statsChart", width, statsPointCount, isPct, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
 		}).always(function() {
 			$loading.hide().css("position", "absolute").css("z-index", "100");
 		});
@@ -36,7 +39,7 @@
 			value: defaultChartWOLegendSize(detectDevice()),
 			step: 50,
 			slide: function(event, ui) {
-				showStatsChart(chartData, "statsChart", ui.value, pointCount, isPct, "none");
+				showStatsChart(statsChartData, "statsChart", ui.value, statsPointCount, isPct, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
 			}
 		});
 		onStatsSeasonRangeChange();

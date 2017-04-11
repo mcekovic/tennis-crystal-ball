@@ -29,8 +29,8 @@ public class PerformanceChartService {
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
 
-	public DataTable getPerformanceDataTable(int playerId, PerformanceCategory category, Range<Integer> seasonRange, boolean byAge) {
-		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerId);
+	public DataTable getPerformanceDataTable(int[] playerIds, PerformanceCategory category, Range<Integer> seasonRange, boolean byAge) {
+		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerIds);
 		DataTable table = fetchPerformanceDataTable(indexedPlayers, category, seasonRange, byAge);
 		addColumns(table, indexedPlayers, category, byAge);
 		return table;

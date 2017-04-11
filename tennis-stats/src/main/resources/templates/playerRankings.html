@@ -1,12 +1,12 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="playerId" type="int[]"*/-->
 <!--/*@thymesVar id="highlights" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.RankType[]"*/-->
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript">
-	var chartData, bySeason, pointCount, isRank, logScale;
+	var rankChartData, bySeason, rankPointCount, isRank, logScale;
 	function loadGoogleChartsForRanking() {
 		google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
 			drawRankingChart();
@@ -17,7 +17,7 @@
 		var timeSpan = $("#rankingTimeSpan").val();
 		bySeason = $("#rankingBySeason").prop("checked");
 		isRank = rankType.endsWith("RANK");
-		var dataUrl = "/playerRankingsTable?playerId=[[${playerId}]]&rankType=" + rankType + "&timeSpan=" + timeSpan;
+		var dataUrl = "[[@{/playerRankingsTable(playerId=${playerId})}]]".replace("&amp;", "&") + "&rankType=" + rankType + "&timeSpan=" + timeSpan;
 		if (timeSpan != "1")
 			dataUrl += "&bySeason=" + bySeason;
 		else
@@ -42,11 +42,11 @@
 		var $loading = $("#rankChartLoading");
 		$loading.show();
 		$.ajax(dataUrl).done(function(json) {
-			chartData = new google.visualization.DataTable(JSON.stringify(json));
+			rankChartData = new google.visualization.DataTable(JSON.stringify(json));
 			logScale = isRank ? useLogScale(json) : false;
-			pointCount = json.rows.length;
+			rankPointCount = json.rows.length;
 			var width = $("#rankChartSize").slider("value");
-			showRankingChart(chartData, "rankChart", width, bySeason, pointCount, isRank, logScale, "none");
+			showRankingChart(rankChartData, "rankChart", width, bySeason, rankPointCount, isRank, logScale, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
 		}).always(function() {
 			$loading.hide().css("position", "absolute").css("z-index", "100");
 		});
@@ -70,7 +70,7 @@
 			value: defaultChartWOLegendSize(detectDevice()),
 			step: 50,
 			slide: function(event, ui) {
-				showRankingChart(chartData, "rankChart", ui.value, bySeason, pointCount, isRank, logScale, "none");
+				showRankingChart(rankChartData, "rankChart", ui.value, bySeason, rankPointCount, isRank, logScale, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
 			}
 		});
 		onRankingTimeSpanChange();
@@ -174,7 +174,7 @@
 	</div>
 </div>
 <div id="rankChart"></div>
-<div class="row">
+<div th:if="${highlights}" class="row">
 	<div class="col-md-5">
 		<h4>Ranking Highlights</h4>
 		<table class="table table-condensed text-nowrap">

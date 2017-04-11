@@ -120,19 +120,25 @@
 	<div th:if="${anyPlayerSelected && !bothPlayersSelected}" class="alert alert-info">Please select another player for H2H comparision.</div>
 	<div th:if="${bothPlayersSelected && samePlayersSelected}" class="alert alert-warning">Cannot compare the same player!</div>
 	<th:block th:if="${bothPlayersSelected && !samePlayersSelected}">
-	<ul id="h2hPills" class="nav nav-pills" th:with="playerIdsParams='?playerId1=' + ${player1.id} + '&playerId2=' + ${player2.id}">
+	<ul id="h2hPills" class="nav nav-pills" th:with="playerIdsParams='?playerId1=' + ${player1.id} + '&playerId2=' + ${player2.id}, playerIdParams='?playerId=' + ${player1.id} + '&playerId=' + ${player2.id}">
 		<li><a id="profilesPill" data-toggle="pill" href="#profiles" th:data-url="'/h2hProfiles' + ${playerIdsParams}">Profiles</a></li>
 		<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/h2hMatches' + ${playerIdsParams}">Matches</a></li>
+		<li><a id="rankingPill" data-toggle="pill" href="#ranking" th:data-url="'/h2hRankings' + ${playerIdParams}">Ranking<sup class="new-feature">&nbsp;New!</sup></a></li>
 		<li><a id="performancePill" data-toggle="pill" href="#performance" th:data-url="'/h2hPerformance' + ${playerIdsParams}">Performance</a></li>
+		<li><a id="performanceChartPill" data-toggle="pill" href="#performanceChart" th:data-url="'/h2hPerformanceChart' + ${playerIdParams}" title="Performance Chart">Perf. Chart<sup class="new-feature">&nbsp;New!</sup></a></li>
 		<li><a id="statisticsPill" data-toggle="pill" href="#statistics" th:data-url="'/h2hStats' + ${playerIdsParams}">Statistics</a></li>
+		<li><a id="statisticsChartPill" data-toggle="pill" href="#statisticsChart" th:data-url="'/h2hStatsChart' + ${playerIdParams}" title="Statistics Chart">Stats. Chart<sup class="new-feature">&nbsp;New!</sup></a></li>
 		<li><a id="goatPointsPill" data-toggle="pill" href="#goatPoints" th:data-url="'/h2hGOATPoints' + ${playerIdsParams}" title="GOAT Points Breakdown">GOAT Points</a></li>
 		<li><a id="hypotheticalMatchupPill" data-toggle="pill" href="#hypotheticalMatchup" th:data-url="'/h2hHypotheticalMatchup' + ${playerIdsParams}">Hypothetical Matchup<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="profiles" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="matches" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="ranking" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="performance" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="performanceChart" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="statisticsChart" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="goatPoints" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="hypotheticalMatchup" class="tab-pane fade"><div class="loading"></div></div>
 	</div>

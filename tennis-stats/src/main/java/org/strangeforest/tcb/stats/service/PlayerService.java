@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.service;
 import java.sql.*;
 import java.util.Date;
 import java.util.*;
+import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
@@ -107,14 +108,21 @@ public class PlayerService {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, params("playerId", playerId), Integer.class);
 	}
 
+	public List<Integer> getPlayersSeasons(int[] playerIds) {
+		return IntStream.of(playerIds).mapToObj(this::getPlayerSeasons).flatMap(List::stream).distinct().collect(toList());
+	}
+
 	@Cacheable("PlayerOpponentCountryIds")
 	public List<String> getPlayerOpponentCountryIds(int playerId) {
 		return jdbcTemplate.queryForList(OPPONENT_COUNTRIES_QUERY, params("playerId", playerId), String.class);
 	}
 
-	public IndexedPlayers getIndexedPlayers(int playerId) {
+	public IndexedPlayers getIndexedPlayers(int... playerIds) {
 		IndexedPlayers indexedPlayers = new IndexedPlayers();
-		indexedPlayers.addPlayer(playerId, getPlayerName(playerId), 0);
+		for (int index = 0; index < playerIds.length; index++) {
+			int playerId = playerIds[index];
+			indexedPlayers.addPlayer(playerId, getPlayerName(playerId), index);
+		}
 		return indexedPlayers;
 	}
 

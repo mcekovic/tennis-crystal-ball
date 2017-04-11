@@ -185,12 +185,13 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerRankings(
 		@RequestParam(name = "playerId") int playerId
 	) {
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		RankingHighlights rankingHighlights = rankingsService.getRankingHighlights(playerId);
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("playerId", new int[] {playerId});
 		modelMap.addAttribute("highlights", rankingHighlights);
-		modelMap.addAttribute("seasons", dataService.getSeasons());
+		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("rankTypes", RankType.values());
 		return new ModelAndView("playerRankings", modelMap);
 	}
@@ -220,7 +221,7 @@ public class PlayerProfileController extends PageController {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("playerId", new int[] {playerId});
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
 		return new ModelAndView("playerPerformanceChart", modelMap);
@@ -271,10 +272,10 @@ public class PlayerProfileController extends PageController {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("playerId", new int[] {playerId});
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("surfaces", Surface.values());
-		modelMap.addAttribute("categoryTypes",  StatsCategory.getCategories().entrySet().stream().collect(toMap(Map.Entry::getKey, e -> e.getValue().getType().name())));
+		modelMap.addAttribute("categoryTypes", StatsCategory.getCategoryTypes());
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerStatsChart", modelMap);
 	}

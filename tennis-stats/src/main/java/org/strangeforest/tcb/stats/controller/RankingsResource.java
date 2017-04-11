@@ -29,7 +29,7 @@ public class RankingsResource {
 	private static final int MAX_PLAYERS = 1000;
 
 	@GetMapping("/rankingsTableTable")
-	public BootgridTable<PlayerRankingsRow> rankingsTable(
+	public BootgridTable<PlayerRankingsRow> rankingsTableTable(
 		@RequestParam(name = "rankType") RankType rankType,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date,
@@ -51,7 +51,7 @@ public class RankingsResource {
 	}
 
 	@GetMapping("/seasonRankingDates")
-	public List<Date> rankingDates(
+	public List<Date> seasonRankingDates(
 		@RequestParam(name = "rankType") RankType rankType,
 		@RequestParam(name = "season") int season
 	) {
@@ -60,7 +60,7 @@ public class RankingsResource {
 
 	@GetMapping("/playerRankingsTable")
 	public DataTable playerRankingsTable(
-		@RequestParam(name = "playerId", required = false) Integer playerId,
+		@RequestParam(name = "playerId", required = false) int[] playerId,
 		@RequestParam(name = "players", required = false) String playersCSV,
 		@RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType,
 		@RequestParam(name = "timeSpan", defaultValue = CAREER) String timeSpan,
@@ -74,7 +74,7 @@ public class RankingsResource {
 	) {
 		Range<LocalDate> dateRange = !bySeason ? toDateRange(timeSpan, fromDate, toDate) : null;
 		Range<Integer> seasonRange = bySeason ? toSeasonRange(timeSpan, fromSeason, toSeason) : null;
-		if (playerId != null)
+		if (playerId != null && playerId.length > 0)
 			return rankingChartService.getRankingDataTable(playerId, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		else {
 			List<String> inputPlayers = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());

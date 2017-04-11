@@ -6,8 +6,24 @@
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
 	<updated>2017-01-02T12:00:01Z</updated>
 	<entry>
+		<title>New Feature - Head-to-Head Charts</title>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/headToHead"/>
+		<id>urn:uuid:c867bf62-1efb-11e7-93ae-92361f002671</id>
+		<updated>2017-04-11T12:00:00Z</updated>
+		<summary>Head-to-Head Charts - Ranking, performance and statistics charts for comparing head-to-head players</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Head-to-Head Charts - Ranking, performance and statistics charts for comparing head-to-head players</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
+	<entry>
 		<title>New Feature - Filtering by Statistics Conditions</title>
-		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/seasons"/>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com"/>
 		<id>urn:uuid:0eb7f97a-1a0b-48f7-a123-877511fc85bd</id>
 		<updated>2017-02-11T12:00:00Z</updated>
 		<summary>Filtering by Statistics Conditions - Player matches and tournaments can be filtered by statistics conditions</summary>

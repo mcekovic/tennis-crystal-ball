@@ -92,8 +92,8 @@ public class RankingChartService {
 
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
-	public DataTable getRankingDataTable(int playerId, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
-		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerId);
+	public DataTable getRankingDataTable(int[] playerIds, RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge, boolean compensatePoints) {
+		IndexedPlayers indexedPlayers = playerService.getIndexedPlayers(playerIds);
 		DataTable table = fetchRankingsDataTable(indexedPlayers, rankType, bySeason, dateRange, seasonRange, byAge, compensatePoints);
 		addColumns(table, indexedPlayers, rankType, bySeason, byAge);
 		return table;

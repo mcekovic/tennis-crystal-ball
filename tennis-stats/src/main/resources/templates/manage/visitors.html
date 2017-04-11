@@ -78,7 +78,7 @@
 			<div id="countriesPieChart" style="width: 700px; height: 500px; float: left"></div>
 			<table class="table table-condensed table-hover table-bordered text-nowrap" style="width: 200px">
 				<thead>
-					<tr th:if="${#arrays.length(countries) > 0}">
+					<tr th:if="${countries.length > 0}">
 						<th th:text="${countries[0][0]}">Country</th>
 						<th th:text="${countries[0][1]}">Visits</th>
 					</tr>
@@ -97,7 +97,7 @@
 			<div id="agentTypesPieChart" style="width: 700px; height: 500px; float: left"></div>
 			<table class="table table-condensed table-hover table-bordered text-nowrap" style="width: 200px">
 				<thead>
-					<tr th:if="${#arrays.length(agentTypes) > 0}">
+					<tr th:if="${agentTypes.length > 0}">
 						<th th:text="${agentTypes[0][0]}">Agent</th>
 						<th th:text="${agentTypes[0][1]}">Visits</th>
 					</tr>

@@ -114,6 +114,19 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("h2hMatches", modelMap);
 	}
 
+	@GetMapping("/h2hRankings")
+	public ModelAndView h2hRankings(
+		@RequestParam(name = "playerId") int[] playerId
+	) {
+		List<Integer> seasons = playerService.getPlayersSeasons(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("rankTypes", RankType.values());
+		return new ModelAndView("playerRankings", modelMap);
+	}
+
 	@GetMapping("/h2hPerformance")
 	public ModelAndView h2hPerformance(
 		@RequestParam(name = "playerId1") int playerId1,
@@ -134,6 +147,19 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("perf1", perf1);
 		modelMap.addAttribute("perf2", perf2);
 		return new ModelAndView("h2hPerformance", modelMap);
+	}
+
+	@GetMapping("/h2hPerformanceChart")
+	public ModelAndView h2hPerformanceChart(
+		@RequestParam(name = "playerId") int[] playerId
+	) {
+		List<Integer> seasons = playerService.getPlayersSeasons(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
+		return new ModelAndView("playerPerformanceChart", modelMap);
 	}
 
 	@GetMapping("/h2hStats")
@@ -163,6 +189,21 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("stats2", stats2);
 		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
 		return new ModelAndView("h2hStats", modelMap);
+	}
+
+	@GetMapping("/h2hStatsChart")
+	public ModelAndView h2hStatsChart(
+		@RequestParam(name = "playerId") int[] playerId
+	) {
+		List<Integer> seasons = playerService.getPlayersSeasons(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("categoryTypes", StatsCategory.getCategoryTypes());
+		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
+		return new ModelAndView("playerStatsChart", modelMap);
 	}
 
 	@GetMapping("/h2hGOATPoints")

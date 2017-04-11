@@ -1,7 +1,5 @@
 package org.strangeforest.tcb.stats.controller;
 
-import java.util.*;
-
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
@@ -9,8 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
-
-import static java.util.stream.Collectors.*;
 
 @Controller
 public class PerfStatsChartController extends PageController {
@@ -32,7 +28,7 @@ public class PerfStatsChartController extends PageController {
 	public ModelAndView statsChart() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
-		modelMap.addAttribute("categoryTypes",  StatsCategory.getCategories().entrySet().stream().collect(toMap(Map.Entry::getKey, e -> e.getValue().getType().name())));
+		modelMap.addAttribute("categoryTypes", StatsCategory.getCategoryTypes());
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("seasons", statisticsService.getSeasons());
