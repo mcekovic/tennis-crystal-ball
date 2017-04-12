@@ -30,7 +30,7 @@ public class MemoryHealthIndicator extends OpenShiftHealthIndicator {
 	private static boolean readMemoryDetail(BufferedReader reader, Health.Builder builder, String name) throws IOException {
 		String usageInBytes = reader.readLine();
 		if (usageInBytes != null) {
-			builder.withDetail(name, new FileSize(Integer.parseInt(usageInBytes.trim())));
+			builder.withDetail(name, new FileSize(Integer.parseInt(usageInBytes.trim())).toString());
 			return true;
 		}
 		else
