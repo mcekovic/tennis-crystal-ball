@@ -311,12 +311,12 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				if (verbose)
 					println baseResult
 				def selectedMatches = matches.findAll { match -> KOResult.valueOf(match.round) >= baseResult }
+				if (!selectedMatches.find { match -> match.winner })
+					break
 				tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, selectedMatches, baseResult, false, verbose)
 				results = tournamentSimulator.simulate()
 				saveResults(results)
 				resultCount += results.size()
-				if (selectedMatches.find { match -> !match.winner })
-					break
 			}
 		}
 		else
