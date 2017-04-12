@@ -11,8 +11,9 @@ public abstract class OpenShiftHealthIndicator implements HealthIndicator {
 
 	@Override public final Health health() {
 		Health.Builder builder = new Health.Builder();
+		String command = getCommand();
 		try {
-			Process process = new ProcessBuilder("/bin/sh", "-c", getCommand()).redirectErrorStream(true).start();
+			Process process = new ProcessBuilder("/bin/sh", "-c", command).redirectErrorStream(true).start();
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 				if (process.waitFor() == 0)
 					parseOutput(reader, builder);
@@ -21,7 +22,7 @@ public abstract class OpenShiftHealthIndicator implements HealthIndicator {
 			}
 		}
 		catch (Exception ex) {
-			LOGGER.error("Error in {}.", getClass().getSimpleName(), ex);
+			LOGGER.error("Error executing health check command: ", command, ex);
 			builder.withException(ex);
 		}
 		return builder.build();
