@@ -24,6 +24,7 @@ static loadTournaments(SqlPool sqlPool) {
 			println "Removing finished in-progress tournaments: $oldExtIds"
 			atpInProgressTournamentLoader.deleteInProgressEventExtIds(oldExtIds)
 		}
+		sql.commit()
 	}
 }
 

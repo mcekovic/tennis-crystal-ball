@@ -230,7 +230,6 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				ps.addBatch(match)
 			}
 		}
-		sql.commit()
 		println "${matches.size()} matches loaded in $stopwatch"
 	}
 
@@ -311,18 +310,17 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				if (verbose)
 					println baseResult
 				def selectedMatches = matches.findAll { match -> KOResult.valueOf(match.round) >= baseResult }
-				if (!selectedMatches.find { match -> match.winner })
-					break
 				tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, selectedMatches, baseResult, false, verbose)
 				results = tournamentSimulator.simulate()
 				saveResults(results)
 				resultCount += results.size()
+				if (selectedMatches.find { match -> KOResult.valueOf(match.round) == baseResult && !match.winner })
+					break
 			}
 		}
 		else
 			throw new UnsupportedOperationException("Draw type $drawType is not supported.")
 
-		sql.commit()
 		println "Tournament simulation: ${resultCount} results loaded in $stopwatch"
 	}
 
@@ -347,6 +345,5 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				ps.addBatch([extId: extId])
 			}
 		}
-		sql.commit()
 	}
 }

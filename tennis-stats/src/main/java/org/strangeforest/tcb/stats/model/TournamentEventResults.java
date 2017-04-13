@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
-public class TournamentEventDraw {
+public class TournamentEventResults {
 
 	private enum Round {
 
@@ -30,7 +30,7 @@ public class TournamentEventDraw {
 	private final Map<Short, TournamentEventMatch> matches;
 	private final Map<Round, List<TournamentEventMatch>> matchesByRound;
 
-	public TournamentEventDraw() {
+	public TournamentEventResults() {
 		this.matches = new TreeMap<>();
 		matchesByRound = new TreeMap<>();
 	}

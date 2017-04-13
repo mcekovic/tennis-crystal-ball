@@ -57,11 +57,11 @@ public class TournamentController extends PageController {
 		@RequestParam(name = "tournamentEventId") int tournamentEventId
 	) {
 		TournamentEvent tournamentEvent = tournamentService.getTournamentEvent(tournamentEventId);
-		TournamentEventDraw draw = matchesService.getTournamentEventDraw(tournamentEventId);
+		TournamentEventResults results = matchesService.getTournamentEventResults(tournamentEventId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEvent", tournamentEvent);
-		modelMap.addAttribute("draw", draw);
+		modelMap.addAttribute("results", results);
 		modelMap.addAttribute("levels", TournamentLevel.asMap());
 		modelMap.addAttribute("surfaces", Surface.asMap());
 		return new ModelAndView("tournamentEvent", modelMap);

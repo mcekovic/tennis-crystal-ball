@@ -65,8 +65,8 @@ public class MatchesService {
 		"SELECT DISTINCT winner_country_id FROM match";
 
 
-	public TournamentEventDraw getTournamentEventDraw(int tournamentEventId) {
-		TournamentEventDraw draw = new TournamentEventDraw();
+	public TournamentEventResults getTournamentEventResults(int tournamentEventId) {
+		TournamentEventResults results = new TournamentEventResults();
 		jdbcTemplate.query(
 			TOURNAMENT_EVENT_MATCHES_QUERY, params("tournamentEventId", tournamentEventId),
 			rs -> {
@@ -84,10 +84,10 @@ public class MatchesService {
 					rs.getString("outcome"),
 					rs.getBoolean("has_stats")
 				);
-				draw.addMatch(matchNum, match);
+				results.addMatch(matchNum, match);
 			}
 		);
-		return draw;
+		return results;
 	}
 
 	private static SetScore mapSetScore(String setScore) {
