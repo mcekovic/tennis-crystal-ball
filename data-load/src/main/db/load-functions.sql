@@ -607,7 +607,11 @@ CREATE OR REPLACE FUNCTION load_in_progress_match(
 	p_player2_entry TEXT,
 	p_winner SMALLINT,
 	p_score TEXT,
-	p_outcome TEXT
+	p_outcome TEXT,
+	p_player1_games SMALLINT[],
+	p_player1_tb_pt SMALLINT[],
+	p_player2_games SMALLINT[],
+	p_player2_tb_pt SMALLINT[]
 ) RETURNS VOID AS $$
 DECLARE
 	l_in_progress_event_id INTEGER;

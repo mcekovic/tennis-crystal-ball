@@ -26,7 +26,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			':ext_tournament_id, :match_num, :prev_match_num1, :prev_match_num2, :date, :surface, :indoor, :round, :best_of, ' +
 			':player1_name, :player1_country_id, :player1_seed, :player1_entry, ' +
 			':player2_name, :player2_country_id, :player2_seed, :player2_entry, ' +
-			':winner, :score, :outcome' +
+			':winner, :score, :outcome, :player1_games, :player1_tb_pt, :player2_games, :player2_tb_pt' +
 		')}'
 
 	static final String FETCH_MATCHES_SQL =
@@ -252,10 +252,20 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		if (scoreElem) {
 			def score = fitScore scoreElem.html().replace('<sup>', '(').replace('</sup>', ')')
 			def matchScore = MatchScoreParser.parse(score)
-			if (winnerName == params.player1_name)
-				params.winner = (short)1
-			else if (winnerName == params.player2_name)
-				params.winner = (short)2
+			if (winnerName == params.player1_name) {
+				params.winner = (short) 1
+				params.player1_games = matchScore.w_set_games
+				params.player1_tb_pt = matchScore.w_set_tb_pt
+				params.player2_games = matchScore.l_set_games
+				params.player2_tb_pt = matchScore.l_set_tb_pt
+			}
+			else if (winnerName == params.player2_name) {
+				params.winner = (short) 2
+				params.player1_games = matchScore.l_set_games
+				params.player1_tb_pt = matchScore.l_set_tb_pt
+				params.player2_games = matchScore.w_set_games
+				params.player2_tb_pt = matchScore.w_set_tb_pt
+			}
 			params.score = string score
 			params.outcome = matchScore?.outcome
 		}
