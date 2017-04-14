@@ -4,7 +4,7 @@ import java.time.*;
 import java.util.*;
 import java.util.function.*;
 
-import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;

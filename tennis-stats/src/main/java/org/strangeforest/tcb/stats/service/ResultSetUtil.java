@@ -25,7 +25,7 @@ public abstract class ResultSetUtil {
 		if (array instanceof Integer[])
 			return asList((Integer[])array);
 		else if (array instanceof Number[])
-			return Stream.of((Number[])array).map(Number::intValue).collect(toList());
+			return Stream.of((Number[])array).map(n -> n != null ? n.intValue() : null).collect(toList());
 		else
 			throw new IllegalArgumentException("Incompatible type with Integer[]: " + array.getClass());
 	}

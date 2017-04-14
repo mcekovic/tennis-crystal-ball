@@ -3,7 +3,7 @@ package org.strangeforest.tcb.stats.model;
 import java.util.*;
 import java.util.function.*;
 
-import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
 import static java.util.Comparator.*;
 

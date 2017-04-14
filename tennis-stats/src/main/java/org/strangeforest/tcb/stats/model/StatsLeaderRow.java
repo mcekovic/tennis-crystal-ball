@@ -1,7 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
 import static java.lang.String.*;
-import static org.strangeforest.tcb.stats.util.EnumUtil.*;
+import static org.strangeforest.tcb.util.EnumUtil.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class StatsLeaderRow extends PlayerRow {

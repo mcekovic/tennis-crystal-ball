@@ -12,6 +12,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
+import static java.util.Collections.*;
 import static org.strangeforest.tcb.stats.service.MatchesService.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
@@ -54,13 +55,16 @@ public class TournamentForecastService {
 		"WHERE m.in_progress_event_id = :inProgressEventId AND m.round = er.entry_round\n" +
 		"ORDER BY m.match_num";
 
-	private static final String PLAYER_IN_PROGRESS_RESULTS_QUERY =
+	private static final String PLAYER_IN_PROGRESS_RESULTS_QUERY = //language=SQL
 		"SELECT player_id, base_result, result, probability\n" +
 		"FROM player_in_progress_result\n" +
-		"WHERE in_progress_event_id = :inProgressEventId\n" +
+		"WHERE in_progress_event_id = :inProgressEventId%1$s\n" +
 		"ORDER BY base_result, result";
 
-	private static final String COMPLETED_MATCHES_QUERY = //language=SQL
+	private static final String CURRENT_CONDITION = //language=SQL
+		" AND base_result = 'W'";
+
+	private static final String COMPLETED_MATCHES_QUERY =
 		"SELECT m.in_progress_match_id, m.match_num, m.round,\n" +
 		"  m.player1_id, p1.short_name AS player1_name, m.player1_seed, m.player1_entry, m.player1_country_id,\n" +
 		"  m.player2_id, p2.short_name AS player2_name, m.player2_seed, m.player2_entry, m.player2_country_id,\n" +
@@ -125,22 +129,31 @@ public class TournamentForecastService {
 		List<FavoritePlayer> favorites = jdbcTemplate.query(FIND_FAVORITES_QUERY, inProgressEventIdParam, this::mapFavoritePlayer);
 		inProgressEvent.setFavorites(favorites);
 		InProgressEventForecast forecast = new InProgressEventForecast(inProgressEvent);
+		List<PlayerForecast> players = fetchPlayers(inProgressEventIdParam);
+		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, ""), inProgressEventIdParam, rs -> {
+			addForecast(forecast, players, rs);
+		});
+		forecast.process();
+		return forecast;
+	}
+
+	private List<PlayerForecast> fetchPlayers(MapSqlParameterSource inProgressEventIdParam) {
 		List<PlayerForecast> players = new ArrayList<>();
 		AtomicInteger emptyCount = new AtomicInteger();
 		jdbcTemplate.query(IN_PROGRESS_MATCHES_QUERY, inProgressEventIdParam, rs -> {
 			players.add(mapForecastPlayer(rs, "player1_", emptyCount));
 			players.add(mapForecastPlayer(rs, "player2_", emptyCount));
 		});
-		jdbcTemplate.query(PLAYER_IN_PROGRESS_RESULTS_QUERY, inProgressEventIdParam, rs -> {
-			forecast.addForecast(players,
-				rs.getInt("player_id"),
-				rs.getString("base_result"),
-				rs.getString("result"),
-				rs.getDouble("probability")
-			);
-		});
-		forecast.process();
-		return forecast;
+		return players;
+	}
+
+	private void addForecast(InProgressEventForecast forecast, List<PlayerForecast> players, ResultSet rs) throws SQLException {
+		forecast.addForecast(players,
+			rs.getInt("player_id"),
+			rs.getString("base_result"),
+			rs.getString("result"),
+			rs.getDouble("probability")
+		);
 	}
 
 	private PlayerForecast mapForecastPlayer(ResultSet rs, String prefix, AtomicInteger emptyCount) throws SQLException {
@@ -196,5 +209,58 @@ public class TournamentForecastService {
 		for (int index = 0, sets = games1.size(); index < sets; index++)
 			score.add(new SetScore(wGames.get(index), lGames.get(index), wTBPoints.get(index), lTBPoints.get(index)));
 		return score;
+	}
+
+
+	// Probable matches
+
+	public TournamentEventResults getInProgressEventProbableMatches(int inProgressEventId) {
+		InProgressEventForecast forecast = new InProgressEventForecast();
+		MapSqlParameterSource inProgressEventIdParam = params("inProgressEventId", inProgressEventId);
+		List<PlayerForecast> players = fetchPlayers(inProgressEventIdParam);
+		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, CURRENT_CONDITION), inProgressEventIdParam, rs -> {
+			addForecast(forecast, players, rs);
+		});
+		forecast.process();
+
+		PlayersForecast current = forecast.getCurrentForecasts();
+		TournamentEventResults probableMatches = new TournamentEventResults();
+		AtomicInteger matchId = new AtomicInteger();
+		AtomicInteger matchNum = new AtomicInteger();
+		Iterable<PlayerForecast> remainingPlayers = current.getPlayerForecasts();
+		for (KOResult result = KOResult.valueOf(current.getFirstResult()); result.hasNext(); result = result.next())
+			remainingPlayers = addProbableMatches(probableMatches, remainingPlayers, result, matchId, matchNum);
+		return probableMatches;
+	}
+
+	private static List<PlayerForecast> addProbableMatches(TournamentEventResults probableMatches, Iterable<PlayerForecast> remainingPlayers, KOResult result, AtomicInteger matchId, AtomicInteger matchNum) {
+		String round = result.name();
+		String nextRound = result.next().name();
+		List<PlayerForecast> nextRemainingPlayers = new ArrayList<>();
+		for (Iterator<PlayerForecast> iter = remainingPlayers.iterator(); iter.hasNext(); ) {
+			PlayerForecast player1 = getNextCandidate(iter, round);
+			PlayerForecast player2 = getNextCandidate(iter, round);
+			if (player1 != null && player2 != null) {
+				if (player1.getProbability(nextRound) < player2.getProbability(nextRound)) {
+					PlayerForecast player = player1; player1 = player2; player2 = player;
+				}
+				probableMatches.addMatch((short)matchNum.incrementAndGet(),
+					new TournamentEventMatch(matchId.incrementAndGet(), round, player1, player2, emptyList(), null, false)
+				);
+				nextRemainingPlayers.add(player1);
+				nextRemainingPlayers.add(player2);
+			}
+		}
+		return nextRemainingPlayers;
+	}
+
+	private static PlayerForecast getNextCandidate(Iterator<PlayerForecast> iterator, String round) {
+		if (!iterator.hasNext())
+			return null;
+		PlayerForecast candidate1 = iterator.next();
+		if (!iterator.hasNext())
+			return null;
+		PlayerForecast candidate2 = iterator.next();
+		return candidate1.getProbability(round) >= candidate2.getProbability(round) ? candidate1 : candidate2;
 	}
 }

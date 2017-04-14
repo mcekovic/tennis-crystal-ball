@@ -57,20 +57,14 @@ public class TournamentController extends PageController {
 		@RequestParam(name = "tournamentEventId") int tournamentEventId
 	) {
 		TournamentEvent tournamentEvent = tournamentService.getTournamentEvent(tournamentEventId);
+		TournamentEventResults results = matchesService.getTournamentEventResults(tournamentEventId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEvent", tournamentEvent);
+		modelMap.addAttribute("results", results);
 		modelMap.addAttribute("levels", TournamentLevel.asMap());
 		modelMap.addAttribute("surfaces", Surface.asMap());
 		return new ModelAndView("tournamentEvent", modelMap);
-	}
-
-	@GetMapping("/tournamentEventResults")
-	public ModelAndView tournamentEventResults(
-		@RequestParam(name = "tournamentEventId") int tournamentEventId
-	) {
-		TournamentEventResults results = matchesService.getTournamentEventResults(tournamentEventId);
-		return new ModelAndView("eventResults", "results", results);
 	}
 
 	@GetMapping("/tournamentEventStats")
@@ -154,6 +148,14 @@ public class TournamentController extends PageController {
 		@RequestParam(name = "inProgressEventId") int inProgressEventId
 	) {
 		TournamentEventResults results = forecastService.getCompletedMatches(inProgressEventId);
-		return new ModelAndView("eventResults", "results", results);
+		return new ModelAndView("inProgressEventResults", "results", results);
+	}
+
+	@GetMapping("/inProgressEventProbableMatches")
+	public ModelAndView inProgressEventProbableMatches(
+		@RequestParam(name = "inProgressEventId") int inProgressEventId
+	) {
+		TournamentEventResults results = forecastService.getInProgressEventProbableMatches(inProgressEventId);
+		return new ModelAndView("inProgressEventProbableMatches", "results", results);
 	}
 }

@@ -60,8 +60,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 	}
 
 	def loadAndSimulateTournament(String urlId, extId, Integer season = null, String level = null, String surface = null, boolean verbose = false) {
-		loadTournament(urlId, extId, season, level, surface, verbose)
-		simulateTournament(extId, verbose)
+		if (loadTournament(urlId, extId, season, level, surface, verbose))
+			simulateTournament(extId, verbose)
 	}
 
 	def loadTournament(String urlId, extId, Integer season, String level, String surface, boolean verbose) {
@@ -231,9 +231,10 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			}
 		}
 		println "${matches.size()} matches loaded in $stopwatch"
+		matches.size()
 	}
 
-	def extractEntryPlayer(Element entryMatch, int index) {
+	static extractEntryPlayer(Element entryMatch, int index) {
 		def playerBox = entryMatch.select("tbody > tr:nth-child($index) > td:nth-child(3)")
 		def name = playerBox.select("a.scores-draw-entry-box-players-item").text()
 		if (!name) {

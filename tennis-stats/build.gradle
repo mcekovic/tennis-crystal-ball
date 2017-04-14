@@ -48,6 +48,7 @@ dependencies {
 	compile ("com.google.guava:guava:$guavaVersion")
 	compile ("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 	compile ("org.postgresql:postgresql:$postgresqlJdbcVersion")
+	compile ("com.neovisionaries:nv-i18n:$nvi18nVersion")
 	compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
@@ -89,17 +90,14 @@ task quickDeployToOpenShift {
 	doLast {
 		def version = project.property('version')
 		def tennisStatsJar = "tennis-stats-${version}.jar"
-		def crystalBallJar = "crystal-ball-${version}.jar"
 		def srcPath = 'build/libs'
 		def destPath = "app-root/data/tennis-stats/lib"
 		ssh.run {
 			session(remotes.openShift) {
 				put from: "${srcPath}/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
-				put from: "../crystal-ball/${srcPath}/${crystalBallJar}", into: "${destPath}/${crystalBallJar}.new"
 				execute 'gear stop'
 				execute 'rm -rf app-root/logs/*'
 				execute "mv -f ${destPath}/${tennisStatsJar}.new ${destPath}/${tennisStatsJar}"
-				execute "mv -f ${destPath}/${crystalBallJar}.new ${destPath}/${crystalBallJar}"
 				execute 'gear start'
 			}
 		}

@@ -52,4 +52,8 @@ public class TournamentEventResults {
 	public int getMaxRoundMatches() {
 		return matchesByRound.values().stream().mapToInt(List::size).max().getAsInt();
 	}
+
+	public boolean isEmpty() {
+		return matches.isEmpty();
+	}
 }

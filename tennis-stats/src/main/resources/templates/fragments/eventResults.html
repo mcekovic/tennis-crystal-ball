@@ -1,30 +1,27 @@
-<th:block xmlns:th="http://www.thymeleaf.org">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="eventResults(id)">
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
-<script type="text/javascript" th:inline="javascript">
-	var rounds = [[${results.rounds}]];
-	var roundsToShow = Math.min(rounds.length, 4);
-	var maxRoundPos = rounds.length - roundsToShow;
-	var roundPos = maxRoundPos;
-	$(function() {
-		showRounds();
-	});
+<script type="text/javascript">
 	function roundLeft() {
-		if (roundPos > 0) {
-			roundPos--;
-			showRounds()
+		var $resultsTable = $("#resultsTable[[${id}]]");
+		var resultsTable = $resultsTable.get(0);
+		if (resultsTable.roundPos > 0) {
+			resultsTable.roundPos--;
+			showRounds($resultsTable);
 		}
 	}
 	function roundRight() {
-		if (roundPos < maxRoundPos) {
-			roundPos++;
-			showRounds()
+		var $resultsTable = $("#resultsTable[[${id}]]");
+		var resultsTable = $resultsTable.get(0);
+		if (resultsTable.roundPos < resultsTable.maxRoundPos) {
+			resultsTable.roundPos++;
+			showRounds($resultsTable);
 		}
 	}
-	function showRounds() {
-		doShowRounds(roundPos, roundPos + roundsToShow);
-	}
-	function doShowRounds(fromIndex, toIndex) {
-		$("#resultsTable").find("th[data-round-index], td[data-round-index]").each(function () {
+	function showRounds($resultsTable) {
+		var resultsTable = $resultsTable.get(0);
+		var fromIndex = resultsTable.roundPos;
+		var toIndex = resultsTable.roundPos + resultsTable.roundsToShow;
+		$resultsTable.find("th[data-round-index], td[data-round-index]").each(function () {
 			var $match = $(this);
 			var roundIndex = $match.data("round-index");
 			if (fromIndex <= roundIndex && roundIndex < toIndex)
@@ -32,13 +29,24 @@
 			else
 				$match.hide();
 		});
-		var $roundLeft = $("#roundLeft");
-		$roundLeft.prop("disabled", roundPos == 0);
-		$roundLeft.html("<span class='glyphicon glyphicon-chevron-left'></span>&nbsp;&nbsp;" + rounds[Math.max(0, roundPos - 1)]);
-		var $roundRight = $("#roundRight");
-		$roundRight.prop("disabled", roundPos == maxRoundPos);
-		$roundRight.html("<span class='glyphicon glyphicon-chevron-right'></span>&nbsp;&nbsp;" + rounds[Math.min(maxRoundPos, roundPos + 1) + roundsToShow - 1]);
+		var $roundLeft = $("#roundLeft[[${id}]]");
+		$roundLeft.prop("disabled", resultsTable.roundPos == 0);
+		$roundLeft.html("<span class='glyphicon glyphicon-chevron-left'></span>&nbsp;&nbsp;" + resultsTable.rounds[Math.max(0, resultsTable.roundPos - 1)]);
+		var $roundRight = $("#roundRight[[${id}]]");
+		$roundRight.prop("disabled", resultsTable.roundPos == resultsTable.maxRoundPos);
+		$roundRight.html("<span class='glyphicon glyphicon-chevron-right'></span>&nbsp;&nbsp;" + resultsTable.rounds[Math.min(resultsTable.maxRoundPos, resultsTable.roundPos + 1) + resultsTable.roundsToShow - 1]);
 	}
+</script>
+<script type="text/javascript" th:inline="javascript">
+	$(function() {
+		var $resultsTable = $("#resultsTable" + [[${id}]]);
+		var resultsTable = $resultsTable.get(0);
+		resultsTable.rounds = [[${results.rounds}]];
+		resultsTable.roundsToShow = Math.min(resultsTable.rounds.length, 4);
+		resultsTable.maxRoundPos = resultsTable.rounds.length - resultsTable.roundsToShow;
+		resultsTable.roundPos = resultsTable.maxRoundPos;
+		showRounds($resultsTable);
+	});
 </script>
 <style>
 	td.seed {
@@ -66,11 +74,11 @@
 	}
 </style>
 <th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
-<table id="resultsTable" class="table-condensed text-nowrap" width="100%">
+<table th:id="'resultsTable' + ${id}" class="table-condensed text-nowrap" width="100%">
 	<thead>
 	<tr>
-		<th colspan="2"><button id="roundLeft" type="button" class="btn btn-info btn-xs" onclick="roundLeft()"></button></th>
-		<th colspan="2" style="text-align: right"><button id="roundRight" type="button" class="btn btn-info btn-xs" onclick="roundRight()"></button></th>
+		<th colspan="2"><button th:id="'roundLeft' + ${id}" type="button" class="btn btn-info btn-xs" onclick="roundLeft()"></button></th>
+		<th colspan="2" style="text-align: right"><button th:id="'roundRight' + ${id}" type="button" class="btn btn-info btn-xs" onclick="roundRight()"></button></th>
 	</tr>
 	<tr>
 		<th th:each="round : ${results.rounds}" th:text="${round.description}" th:data-round-index="${roundStat.index}">Final</th>
@@ -90,6 +98,9 @@
 					</td>
 					<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.wGames}">6</th:block><sup th:if="${score.wTBPoints}" th:text="|(${score.wTBPoints})|"></sup></td>
 					<td th:if="${outcomeOrStats}" class="score"><th:block th:if="${match.outcome}" th:text="${match.outcome}"/></td>
+					<td th:if="${loser}" rowspan="2" class="player-h2h">
+						<a th:href="'/headToHead?playerId1=' + ${winner.id} + '&playerId2=' + ${loser.id}" class="player-h2h" title="Show Head-to-Head">H<br/>2<br/>H</a>
+					</td>
 				</tr>
 				<tr th:if="${loser}">
 					<td class="seed">

@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.springframework.jdbc.core.namedparam.*;
 import org.strangeforest.tcb.stats.model.*;
-import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;

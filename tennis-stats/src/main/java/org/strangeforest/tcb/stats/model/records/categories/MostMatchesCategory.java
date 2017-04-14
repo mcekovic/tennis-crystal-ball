@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
-import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
 import static com.google.common.base.Strings.*;
 import static java.util.Arrays.*;

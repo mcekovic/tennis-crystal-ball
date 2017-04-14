@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="tournamentEvent" type="org.strangeforest.tcb.stats.model.TournamentEvent"*/-->
+<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Map"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
-<head th:replace="fragments/head :: commonHead(${tournamentEvent.name + ' ' + tournamentEvent.season}, true, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead(${tournamentEvent.name + ' ' + tournamentEvent.season}, true, ~{::script}, ~{::style})">
 	<script type="text/javascript">
 		$(function() {
 			$("#tournamentEventPills").find("a").click(tabClick);
-			$("#resultsPill").click();
 		});
 	</script>
+	<style>
+		td.player-h2h {
+			width: 20px;
+			line-height: 1.0 !important;
+			text-align: center;
+			background-color: #e0f0ff;
+			padding: 0 !important;
+		}
+		td.player-h2h:hover {
+			background-color: #c0e0ff;
+		}
+		a.player-h2h {
+			display: block;
+			text-decoration: none;
+		}
+	</style>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
@@ -85,12 +101,18 @@
 		</div>
 	</div>
 	<ul id="tournamentEventPills" class="nav nav-pills">
-		<li><a id="resultsPill" data-toggle="pill" href="#results" th:data-url="'/tournamentEventResults?tournamentEventId=' + ${tournamentEvent.id}">Results</a></li>
+		<li class="active"><a data-toggle="pill" href="#results">Results</a></li>
 		<li><a data-toggle="pill" href="#statistics" th:data-url="'/tournamentEventStats?tournamentEventId=' + ${tournamentEvent.id}">Statistics</a></li>
 		<li th:if="${tournamentEvent.mapProperties}"><a data-toggle="pill" href="#map" th:data-url="'/tournamentEventMap?tournamentEventId=' + ${tournamentEvent.id}">Map<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
 	</ul>
 	<div class="tab-content">
-		<div id="results" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="results" class="tab-pane fade in active">
+			<div th:unless="${results.isEmpty()}" th:include="fragments/eventResults :: eventResults('')"></div>
+			<th:block th:if="${results.isEmpty()}">
+				<br/>
+				<div class="alert alert-warning">No results found</div>
+			</th:block>
+		</div>
 		<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
 		<div th:if="${tournamentEvent.mapProperties}" id="map" class="tab-pane fade" style="height: 620px"><div class="loading"></div></div>
 	</div>

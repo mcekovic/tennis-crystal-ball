@@ -11,7 +11,7 @@ import org.springframework.cache.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
-import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
 import static java.lang.String.*;
 

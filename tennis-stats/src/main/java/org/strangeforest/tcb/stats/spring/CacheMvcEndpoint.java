@@ -24,6 +24,6 @@ public class CacheMvcEndpoint extends AbstractMvcEndpoint {
 		@RequestParam(name = "name", defaultValue = ".*") String name
 	) {
 		int cacheCount = dataService.clearCaches(name);
-		return format("OK (%1$d caches cleared", cacheCount);
+		return format("OK (%1$d caches cleared)", cacheCount);
 	}
 }

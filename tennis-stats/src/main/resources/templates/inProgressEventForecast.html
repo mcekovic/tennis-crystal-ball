@@ -12,12 +12,15 @@
 		});
 	</script>
 	<style>
-		#forecastTables > div > table > thead > tr > th {
+		table.forecast-table {
+			width: auto;
+		}
+		table.forecast-table > thead > tr > th {
 			height: 24px;
 			vertical-align: middle;
 			padding: 4px 5px;
 		}
-		#forecastTables > div > table > tbody > tr > td {
+		table.forecast-table > tbody > tr > td {
 			height: 24px;
 			vertical-align: middle;
 			padding: 1px 5px;
@@ -124,11 +127,13 @@
 				<li th:each="baseResult : ${forecast.baseResults}" th:class="${baseResultStat.last ? 'active' : _}">
 					<a data-toggle="pill" th:href="'#baseResult' + ${baseResult}" th:text="${baseResult}">W</a>
 				</li>
+				<li><a data-toggle="pill" href="#probable" th:data-url="'/inProgressEventProbableMatches?inProgressEventId=' + ${inProgressEvent.id}">Probable Matchups</a></li>
 			</ul>
-			<div id="forecastTables" class="tab-content">
+			<div class="tab-content">
+				<div id="results" class="tab-pane fade"><div class="loading"></div></div>
 				<div th:each="baseResult : ${forecast.baseResults}" th:id="'baseResult' + ${baseResult}" th:with="playersForecast = ${forecast.getPlayersForecasts(baseResult)}" class="tab-pane fade" th:attrappend="class=${baseResultStat.last ? ' in active' : _}">
 					<br/>
-					<table class="table table-condensed table-hover text-nowrap" style="width: auto" th:with="resultCount=${playersForecast.results.size()}, entryCount=${playersForecast.playerForecasts.size()}">
+					<table class="table table-condensed table-hover text-nowrap forecast-table" th:with="resultCount=${playersForecast.results.size()}, entryCount=${playersForecast.playerForecasts.size()}">
 						<th:block th:each="playerForecast : ${playersForecast.playerForecasts}">
 						<thead th:if="${playerForecastStat.index % 8 == 0}">
 							<th:block th:if="${entryCount == 32}" th:with="halfIndex=${2 * playerForecastStat.index / entryCount}">
@@ -172,7 +177,7 @@
 						</th:block>
 					</table>
 				</div>
-				<div id="results" class="tab-pane fade"><div class="loading"></div></div>
+				<div id="probable" class="tab-pane fade"><div class="loading"></div></div>
 			</div>
 			<br/>
 			<div th:include="fragments/aboutForecast :: aboutForecast"></div>

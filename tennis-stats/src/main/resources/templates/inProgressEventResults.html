@@ -1,0 +1,8 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
+	<div th:unless="${results.isEmpty()}" th:include="fragments/eventResults :: eventResults('')"></div>
+	<th:block th:if="${results.isEmpty()}">
+		<br/>
+		<div class="alert alert-warning">No results found</div>
+	</th:block>
+</th:block>

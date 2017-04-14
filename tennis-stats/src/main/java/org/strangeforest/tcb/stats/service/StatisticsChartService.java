@@ -16,7 +16,7 @@ import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.util.EnumUtil.*;
+import static org.strangeforest.tcb.util.EnumUtil.*;
 
 @Service
 public class StatisticsChartService {

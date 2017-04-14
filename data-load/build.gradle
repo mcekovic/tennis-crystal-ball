@@ -36,17 +36,14 @@ task quickDeployToOpenShift {
 	doLast {
 		def version = project.property('version')
 		def dataLoadJar = "data-load-${version}.jar"
-		def crystalBallJar = "crystal-ball-${version}.jar"
 		def tennisStatsJar = "tennis-stats-${version}.jar"
 		def srcPath = 'build/libs'
 		def destPath = "app-root/data/data-load/lib"
 		ssh.run {
 			session(remotes.openShift) {
 				put from: "${srcPath}/${dataLoadJar}", into: "${destPath}/${dataLoadJar}.new"
-				put from: "../crystal-ball/${srcPath}/${crystalBallJar}", into: "${destPath}/${crystalBallJar}.new"
 				put from: "../tennis-stats/${srcPath}/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
 				execute "mv -f ${destPath}/${dataLoadJar}.new ${destPath}/${dataLoadJar}"
-				execute "mv -f ${destPath}/${crystalBallJar}.new ${destPath}/${crystalBallJar}"
 				execute "mv -f ${destPath}/${tennisStatsJar}.new ${destPath}/${tennisStatsJar}"
 			}
 		}

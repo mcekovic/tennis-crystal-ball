@@ -16,7 +16,7 @@ import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.RankType.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.util.EnumUtil.*;
+import static org.strangeforest.tcb.util.EnumUtil.*;
 
 @Service
 public class RankingChartService {

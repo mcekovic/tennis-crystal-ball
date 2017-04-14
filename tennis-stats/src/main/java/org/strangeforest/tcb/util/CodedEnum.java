@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.util;
+package org.strangeforest.tcb.util;
 
 import java.util.*;
 import java.util.stream.*;

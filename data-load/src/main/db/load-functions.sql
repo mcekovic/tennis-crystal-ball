@@ -439,7 +439,7 @@ BEGIN
 		SELECT height INTO p_loser_height FROM player WHERE player_id = l_loser_id;
 	END IF;
 
-	l_has_stats := p_minutes IS NOT NULL OR (coalesce(p_w_sv_pt, 0) + coalesce(p_l_sv_pt, 0) > 0);
+	l_has_stats := (p_minutes IS NOT NULL AND p_minutes > 0) OR (coalesce(p_w_sv_pt, 0) + coalesce(p_l_sv_pt, 0) > 0);
 
 	-- merge match
 	BEGIN
@@ -647,7 +647,7 @@ BEGIN
 		player1_id = l_player1_id, player1_country_id = p_player1_country_id, player1_seed = p_player1_seed, player1_entry = p_player1_entry::tournament_entry, player1_rank = l_player1_rank,
 		player2_id = l_player2_id, player2_country_id = p_player2_country_id, player2_seed = p_player2_seed, player2_entry = p_player2_entry::tournament_entry, player2_rank = l_player2_rank,
 		winner = p_winner, score = p_score, outcome = p_outcome::match_outcome,
-		player1_games = player1_games, player1_tb_pt = p_player1_tb_pt, player2_games = p_player2_games, player2_tb_pt = p_player2_tb_pt
+		player1_games = p_player1_games, player1_tb_pt = p_player1_tb_pt, player2_games = p_player2_games, player2_tb_pt = p_player2_tb_pt
 	WHERE in_progress_event_id = l_in_progress_event_id AND match_num = p_match_num
 	RETURNING in_progress_match_id INTO l_in_progress_match_id;
 	IF l_in_progress_match_id IS NULL THEN

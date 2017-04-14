@@ -54,7 +54,7 @@ class KOTournamentSimulator {
 
 	def simulate() {
 		def results = []
-		KOResult.values().findAll { r -> r >= baseResult && r < KOResult.W }.each { result ->
+		for (def result = baseResult; result.hasNext(); result = result.next()) {
 			def nextResult = result.next()
 			if (verbose)
 				println "${current ? 'Current' : baseResult} -> $nextResult"

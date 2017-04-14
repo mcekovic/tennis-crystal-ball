@@ -13,7 +13,7 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.service.*;
-import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
 import static com.google.common.base.Strings.*;
 import static java.util.Comparator.*;

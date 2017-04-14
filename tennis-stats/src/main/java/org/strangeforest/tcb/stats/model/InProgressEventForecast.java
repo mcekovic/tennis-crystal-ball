@@ -10,6 +10,10 @@ public class InProgressEventForecast {
 
 	private static final String CURRENT = "Current";
 
+	public InProgressEventForecast() {
+		this(null);
+	}
+
 	public InProgressEventForecast(InProgressEvent event) {
 		this.event = event;
 		playersForecasts = new LinkedHashMap<>();
@@ -21,6 +25,10 @@ public class InProgressEventForecast {
 
 	public Set<String> getBaseResults() {
 		return playersForecasts.keySet();
+	}
+
+	public PlayersForecast getCurrentForecasts() {
+		return getPlayersForecasts(CURRENT);
 	}
 
 	public PlayersForecast getPlayersForecasts(String baseResult) {
@@ -37,17 +45,20 @@ public class InProgressEventForecast {
 			return;
 		Set<String> baseResults = getBaseResults();
 		String entryRound = baseResults.iterator().next();
+		if (entryRound.equals(CURRENT))
+			entryRound = KOResult.valueOf(playersForecasts.values().iterator().next().getFirstResult()).prev().name();
+		KOResult entryResult = KOResult.valueOf(entryRound);
 		for (Entry<String, PlayersForecast> forecastEntry : playersForecasts.entrySet()) {
 			String baseResult = forecastEntry.getKey();
 			if (!(baseResult.equals(entryRound) || baseResult.equals(CURRENT)))
 				forecastEntry.getValue().removePlayersWOResults();
 		}
-		PlayersForecast currentForecast = getPlayersForecasts(CURRENT);
+		PlayersForecast currentForecast = getCurrentForecasts();
 		if (currentForecast != null) {
 			currentForecast.removePastRounds();
 			if (!currentForecast.getResults().isEmpty()) {
 				String firstResult = currentForecast.getFirstResult();
-				if (!entryRound.equals("W") && !KOResult.valueOf(entryRound).next().name().equals(firstResult))
+				if (entryResult.hasNext() && !entryResult.next().name().equals(firstResult))
 					currentForecast.removePlayersWORemainingResults();
 			}
 		}
