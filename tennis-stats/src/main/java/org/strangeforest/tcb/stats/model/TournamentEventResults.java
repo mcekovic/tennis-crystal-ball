@@ -70,7 +70,8 @@ public class TournamentEventResults {
 		return getRoundMatches(firstRound).stream()
 			.map(match -> asList(match.getWinner(), match.getLoser()))
 			.flatMap(Collection::stream)
-			.sorted(comparing(MatchPlayerEx::getSeed, nullsLast(naturalOrder())))
+			.filter(player -> player.getId() > 0)
+			.sorted(comparing(MatchPlayerEx::getSeed, nullsLast(naturalOrder())).thenComparing(MatchPlayerEx::getName, nullsLast(naturalOrder())))
 			.collect(toList());
 	}
 
