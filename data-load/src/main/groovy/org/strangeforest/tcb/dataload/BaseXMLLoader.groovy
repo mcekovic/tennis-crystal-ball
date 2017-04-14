@@ -95,7 +95,7 @@ abstract class BaseXMLLoader {
 		d ? new java.sql.Date(Date.parse('yyyy-MM-dd', d).time) : null
 	}
 
-	static Array shortArray(conn, a) {
+	static Array shortArray(Connection conn, a) {
 		conn.createArrayOf('smallint', a)
 	}
 

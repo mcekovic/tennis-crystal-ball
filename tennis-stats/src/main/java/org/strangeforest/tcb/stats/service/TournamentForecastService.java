@@ -11,6 +11,8 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
+import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.service.MatchesService.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
@@ -39,7 +41,7 @@ public class TournamentForecastService {
 		"AND r.base_result = 'W' AND r.result = 'W' AND probability > 0\n" +
 		"ORDER BY r.probability DESC LIMIT 3";
 
-	private static final String IN_PROGRESS_MATCHES_QUERY = //language=SQL
+	private static final String IN_PROGRESS_MATCHES_QUERY =
 		"WITH entry_round AS (\n" +
 		"  SELECT min(round) AS entry_round FROM in_progress_match WHERE in_progress_event_id = :inProgressEventId\n" +
 		")\n" +
@@ -52,11 +54,22 @@ public class TournamentForecastService {
 		"WHERE m.in_progress_event_id = :inProgressEventId AND m.round = er.entry_round\n" +
 		"ORDER BY m.match_num";
 
-	private static final String PLAYER_IN_PROGRESS_RESULTS_QUERY = //language=SQL
+	private static final String PLAYER_IN_PROGRESS_RESULTS_QUERY =
 		"SELECT player_id, base_result, result, probability\n" +
 		"FROM player_in_progress_result\n" +
 		"WHERE in_progress_event_id = :inProgressEventId\n" +
 		"ORDER BY base_result, result";
+
+	private static final String COMPLETED_MATCHES_QUERY = //language=SQL
+		"SELECT m.in_progress_match_id, m.match_num, m.round,\n" +
+		"  m.player1_id, p1.short_name AS player1_name, m.player1_seed, m.player1_entry, m.player1_country_id,\n" +
+		"  m.player2_id, p2.short_name AS player2_name, m.player2_seed, m.player2_entry, m.player2_country_id,\n" +
+		"  m.winner, m.player1_games, m.player1_tb_pt, m.player2_games, m.player2_tb_pt, m.outcome\n" +
+		"FROM in_progress_match m\n" +
+		"LEFT JOIN player_v p1 ON p1.player_id = player1_id\n" +
+		"LEFT JOIN player_v p2 ON p2.player_id = player2_id\n" +
+		"WHERE m.in_progress_event_id = :inProgressEventId AND m.winner IS NOT NULL\n" +
+		"ORDER BY match_num";
 
 
 	@Cacheable(value = "Global", key = "'InProgressEvents'")
@@ -140,5 +153,48 @@ public class TournamentForecastService {
 			rs.getString(prefix + "entry"),
 			rs.getString(prefix + "country_id")
 		);
+	}
+
+
+	// Completed matches
+
+	public TournamentEventResults getCompletedMatches(int inProgressEventId) {
+		TournamentEventResults results = new TournamentEventResults();
+		jdbcTemplate.query(
+			COMPLETED_MATCHES_QUERY, params("inProgressEventId", inProgressEventId),
+			rs -> {
+				short winnerIndex = rs.getShort("winner");
+				MatchPlayerEx winner = mapMatchPlayerEx(rs, format("player%1$d_", winnerIndex));
+				MatchPlayerEx loser = mapMatchPlayerEx(rs, format("player%1$d_", 3 - winnerIndex));
+				String outcome = loser != null ? rs.getString("outcome") : "BYE";
+				TournamentEventMatch match = new TournamentEventMatch(
+					rs.getLong("in_progress_match_id"),
+					rs.getString("round"),
+					winner,
+					loser,
+					mapSetScores(rs, winnerIndex),
+					outcome,
+					false
+				);
+				short matchNum = rs.getShort("match_num");
+				results.addMatch(matchNum, match);
+			}
+		);
+		return results;
+	}
+
+	private static List<SetScore> mapSetScores(ResultSet rs, short winner) throws SQLException {
+		List<Integer> games1 = getIntegers(rs, "player1_games");
+		List<Integer> tbPoints1 = getIntegers(rs, "player1_tb_pt");
+		List<Integer> games2 = getIntegers(rs, "player2_games");
+		List<Integer> tbPoints2 = getIntegers(rs, "player2_tb_pt");
+		List<Integer> wGames = winner == 1 ? games1 : games2;
+		List<Integer> lGames = winner == 2 ? games1 : games2;
+		List<Integer> wTBPoints = winner == 1 ? tbPoints1 : tbPoints2;
+		List<Integer> lTBPoints = winner == 2 ? tbPoints1 : tbPoints2;
+		List<SetScore> score = new ArrayList<>(games1.size());
+		for (int index = 0, sets = games1.size(); index < sets; index++)
+			score.add(new SetScore(wGames.get(index), lGames.get(index), wTBPoints.get(index), lTBPoints.get(index)));
+		return score;
 	}
 }

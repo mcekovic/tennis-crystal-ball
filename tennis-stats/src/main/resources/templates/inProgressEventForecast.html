@@ -6,6 +6,7 @@
 <head th:replace="fragments/head :: commonHead(${inProgressEvent.name}, false, ~{::script}, ~{::style})">
 	<script type="text/javascript">
 		$(function() {
+			$("#inProgressEventPills").find("a").click(tabClick);
 			bindPopovers();
 			loadRankingTopN("POINTS", 20);
 		});
@@ -118,7 +119,8 @@
 	</div>
 	<div class="row">
 		<div class="col-lg-10 col-md-9 col-sm-9">
-			<ul class="nav nav-pills">
+			<ul id="inProgressEventPills" class="nav nav-pills">
+				<li><a data-toggle="pill" href="#results" th:data-url="'/inProgressEventResults?inProgressEventId=' + ${inProgressEvent.id}">Completed</a></li>
 				<li th:each="baseResult : ${forecast.baseResults}" th:class="${baseResultStat.last ? 'active' : _}">
 					<a data-toggle="pill" th:href="'#baseResult' + ${baseResult}" th:text="${baseResult}">W</a>
 				</li>
@@ -170,6 +172,7 @@
 						</th:block>
 					</table>
 				</div>
+				<div id="results" class="tab-pane fade"><div class="loading"></div></div>
 			</div>
 			<br/>
 			<div th:include="fragments/aboutForecast :: aboutForecast"></div>

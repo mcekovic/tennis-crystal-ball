@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import static java.util.Arrays.*;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 public abstract class ResultSetUtil {
@@ -17,7 +18,10 @@ public abstract class ResultSetUtil {
 	}
 
 	public static List<Integer> getIntegers(ResultSet rs, String column) throws SQLException {
-		Object array = rs.getArray(column).getArray();
+		Array sqlArray = rs.getArray(column);
+		if (sqlArray == null)
+			return emptyList();
+		Object array = sqlArray.getArray();
 		if (array instanceof Integer[])
 			return asList((Integer[])array);
 		else if (array instanceof Number[])

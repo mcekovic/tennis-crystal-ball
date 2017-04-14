@@ -23,7 +23,7 @@
 				sorting: false,
 				formatters: {
 					"event": function(column, row) {
-						return "<a href='/tournamentEventForecast?inProgressEventId=" + row.id + "' class='label label-" + row.level + "' title='Show full forecast'>" + row.name + "</a>";
+						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-" + row.level + "' title='Show full forecast'>" + row.name + "</a>";
 					},
 					"surface": surfaceFormatter,
 					"participationPct": participationFormatter,
@@ -34,7 +34,7 @@
 						return formatFavorite(column, row.favorite2);
 					},
 					"forecast": function(column, row) {
-						return "<a href='/tournamentEventForecast?inProgressEventId=" + row.id + "' class='label label-primary label-btn' title='Show full forecast'><span class='glyphicon glyphicon-eye-open'></span>&nbsp;&nbsp;Forecast</a>";
+						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-primary label-btn' title='Show full forecast'><span class='glyphicon glyphicon-eye-open'></span>&nbsp;&nbsp;Forecast</a>";
 					}
 				},
 				labels: {

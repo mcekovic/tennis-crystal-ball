@@ -57,14 +57,20 @@ public class TournamentController extends PageController {
 		@RequestParam(name = "tournamentEventId") int tournamentEventId
 	) {
 		TournamentEvent tournamentEvent = tournamentService.getTournamentEvent(tournamentEventId);
-		TournamentEventResults results = matchesService.getTournamentEventResults(tournamentEventId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEvent", tournamentEvent);
-		modelMap.addAttribute("results", results);
 		modelMap.addAttribute("levels", TournamentLevel.asMap());
 		modelMap.addAttribute("surfaces", Surface.asMap());
 		return new ModelAndView("tournamentEvent", modelMap);
+	}
+
+	@GetMapping("/tournamentEventResults")
+	public ModelAndView tournamentEventResults(
+		@RequestParam(name = "tournamentEventId") int tournamentEventId
+	) {
+		TournamentEventResults results = matchesService.getTournamentEventResults(tournamentEventId);
+		return new ModelAndView("eventResults", "results", results);
 	}
 
 	@GetMapping("/tournamentEventStats")
@@ -125,13 +131,13 @@ public class TournamentController extends PageController {
 		return new ModelAndView("tournamentStats", modelMap);
 	}
 
-	@GetMapping("/tournamentEventForecasts")
-	public String tournamentEventForecasts() {
-		return "tournamentEventForecasts";
+	@GetMapping("/inProgressEventsForecasts")
+	public String inProgressEventsForecasts() {
+		return "inProgressEventsForecasts";
 	}
 
-	@GetMapping("/tournamentEventForecast")
-	public ModelAndView tournamentEventForecast(
+	@GetMapping("/inProgressEventForecast")
+	public ModelAndView inProgressEventForecast(
 		@RequestParam(name = "inProgressEventId") int inProgressEventId
 	) {
 		InProgressEventForecast forecast = forecastService.getInProgressEventForecast(inProgressEventId);
@@ -140,6 +146,14 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("forecast", forecast);
 		modelMap.addAttribute("levels", TournamentLevel.asMap());
 		modelMap.addAttribute("surfaces", Surface.asMap());
-		return new ModelAndView("tournamentEventForecast", modelMap);
+		return new ModelAndView("inProgressEventForecast", modelMap);
+	}
+
+	@GetMapping("/inProgressEventResults")
+	public ModelAndView inProgressEventResults(
+		@RequestParam(name = "inProgressEventId") int inProgressEventId
+	) {
+		TournamentEventResults results = forecastService.getCompletedMatches(inProgressEventId);
+		return new ModelAndView("eventResults", "results", results);
 	}
 }

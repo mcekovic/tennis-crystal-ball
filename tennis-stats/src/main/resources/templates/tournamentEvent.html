@@ -1,76 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="tournamentEvent" type="org.strangeforest.tcb.stats.model.TournamentEvent"*/-->
-<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Map"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
-<head th:replace="fragments/head :: commonHead(${tournamentEvent.name + ' ' + tournamentEvent.season}, true, ~{::script}, ~{::style})">
-	<script type="text/javascript" th:inline="javascript">
-		var rounds = [[${results.rounds}]];
-		var roundsToShow = Math.min(rounds.length, 4);
-		var maxRoundPos = rounds.length - roundsToShow;
-		var roundPos = maxRoundPos;
+<head th:replace="fragments/head :: commonHead(${tournamentEvent.name + ' ' + tournamentEvent.season}, true, ~{::script}, _)">
+	<script type="text/javascript">
 		$(function() {
 			$("#tournamentEventPills").find("a").click(tabClick);
-			showRounds();
+			$("#resultsPill").click();
 		});
-		function roundLeft() {
-			if (roundPos > 0) {
-				roundPos--;
-				showRounds()
-			}
-		}
-		function roundRight() {
-			if (roundPos < maxRoundPos) {
-				roundPos++;
-				showRounds()
-			}
-		}
-		function showRounds() {
-			doShowRounds(roundPos, roundPos + roundsToShow);
-		}
-		function doShowRounds(fromIndex, toIndex) {
-			$("#resultsTable").find("th[data-round-index], td[data-round-index]").each(function () {
-				var $match = $(this);
-				var roundIndex = $match.data("round-index");
-				if (fromIndex <= roundIndex && roundIndex < toIndex)
-					$match.show();
-				else
-					$match.hide();
-			});
-			var $roundLeft = $("#roundLeft");
-			$roundLeft.prop("disabled", roundPos == 0);
-			$roundLeft.html("<span class='glyphicon glyphicon-chevron-left'></span>&nbsp;&nbsp;" + rounds[Math.max(0, roundPos - 1)]);
-			var $roundRight = $("#roundRight");
-			$roundRight.prop("disabled", roundPos == maxRoundPos);
-			$roundRight.html("<span class='glyphicon glyphicon-chevron-right'></span>&nbsp;&nbsp;" + rounds[Math.min(maxRoundPos, roundPos + 1) + roundsToShow - 1]);
-		}
 	</script>
-	<style>
-		td.seed {
-			width: 20px;
-			padding: 0 2px;
-			text-align: right;
-		}
-		td.player {
-			padding: 0 2px;
-		}
-		td.score {
-			padding: 0 2px;
-		}
-		td.stats {
-			padding: 0 1px;
-			vertical-align: top;
-		}
-		.btn-xxs,
-		.btn-group-xxs > .btn {
-			padding: 1px 3px;
-			font-size: 10px;
-			line-height: 1.5;
-			border-radius: 3px;
-			vertical-align: top;
-		}
-	</style>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
@@ -146,57 +85,12 @@
 		</div>
 	</div>
 	<ul id="tournamentEventPills" class="nav nav-pills">
-		<li class="active"><a data-toggle="pill" href="#results">Results</a></li>
+		<li><a id="resultsPill" data-toggle="pill" href="#results" th:data-url="'/tournamentEventResults?tournamentEventId=' + ${tournamentEvent.id}">Results</a></li>
 		<li><a data-toggle="pill" href="#statistics" th:data-url="'/tournamentEventStats?tournamentEventId=' + ${tournamentEvent.id}">Statistics</a></li>
 		<li th:if="${tournamentEvent.mapProperties}"><a data-toggle="pill" href="#map" th:data-url="'/tournamentEventMap?tournamentEventId=' + ${tournamentEvent.id}">Map<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
 	</ul>
 	<div class="tab-content">
-		<div id="results" class="tab-pane fade in active">
-			<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
-			<table id="resultsTable" class="table-condensed text-nowrap" width="100%">
-				<thead>
-				<tr>
-					<th colspan="2"><button id="roundLeft" type="button" class="btn btn-info btn-xs" onclick="roundLeft()"></button></th>
-					<th colspan="2" style="text-align: right"><button id="roundRight" type="button" class="btn btn-info btn-xs" onclick="roundRight()"></button></th>
-				</tr>
-				<tr>
-					<th th:each="round : ${results.rounds}" th:text="${round.description}" th:data-round-index="${roundStat.index}">Final</th>
-				</tr>
-				</thead>
-				<tbody>
-				<tr th:each="i : ${#numbers.sequence(0, results.maxRoundMatches - 1)}">
-					<td th:each="round : ${results.rounds}" th:with="matches=${results.getRoundMatches(round)}, match=${i lt matches.size() ? matches[i] : null}" th:data-round-index="${roundStat.index}">
-						<table th:if="${match}" class="table-bordered" th:with="outcomeOrStats=${match.outcome != null || match.hasStats}">
-							<tr th:with="winner=${match.winner}">
-								<td class="seed">
-									<span th:text="${winner.seedAndEntry}"></span>
-								</td>
-								<td class="player">
-									<img th:src="'/images/flags/' + ${winner.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${winner.country.id}" title="SUI" width="24" height="20"/>
-									<strong><a th:href="'/playerProfile?playerId=' + ${winner.id}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a></strong>
-								</td>
-								<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.wGames}">6</th:block><sup th:if="${score.wTBPoints}" th:text="|(${score.wTBPoints})|"></sup></td>
-								<td th:if="${outcomeOrStats}" class="score"><th:block th:if="${match.outcome}" th:text="${match.outcome}"/></td>
-							</tr>
-							<tr th:with="loser=${match.loser}">
-								<td class="seed">
-									<span th:text="${loser.seedAndEntry}"></span>
-								</td>
-								<td class="player">
-									<img th:src="'/images/flags/' + ${loser.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${loser.country.id}" title="ESP" width="24" height="20"/>
-									<a th:href="'/playerProfile?playerId=' + ${loser.id}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
-								</td>
-								<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.lGames}">3</th:block><sup th:if="${score.lTBPoints}" th:text="|(${score.lTBPoints})|"></sup></td>
-								<td th:if="${outcomeOrStats}" class="stats">
-									<a th:if="${match.hasStats}" th:id="'matchStats-' + ${match.id}" href="#" class="btn btn-info btn-xxs glyphicon glyphicon-stats" th:onclick="|showMatchStats(${match.id}, event)|" title='Match Statistics'> </a>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				</tbody>
-			</table>
-		</div>
+		<div id="results" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
 		<div th:if="${tournamentEvent.mapProperties}" id="map" class="tab-pane fade" style="height: 620px"><div class="loading"></div></div>
 	</div>

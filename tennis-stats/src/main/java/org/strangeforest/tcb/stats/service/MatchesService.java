@@ -70,24 +70,28 @@ public class MatchesService {
 		jdbcTemplate.query(
 			TOURNAMENT_EVENT_MATCHES_QUERY, params("tournamentEventId", tournamentEventId),
 			rs -> {
-				short matchNum = rs.getShort("match_num");
-				Object[] setScores = (Object[])rs.getArray("set_scores").getArray();
-				List<SetScore> score = new ArrayList<>(5);
-				for (Object setScore : setScores)
-					score.add(mapSetScore(setScore.toString()));
 				TournamentEventMatch match = new TournamentEventMatch(
 					rs.getLong("match_id"),
 					rs.getString("round"),
 					mapMatchPlayerEx(rs, "winner_"),
 					mapMatchPlayerEx(rs, "loser_"),
-					score,
+						mapSetScores(rs),
 					rs.getString("outcome"),
 					rs.getBoolean("has_stats")
 				);
+				short matchNum = rs.getShort("match_num");
 				results.addMatch(matchNum, match);
 			}
 		);
 		return results;
+	}
+
+	private static List<SetScore> mapSetScores(ResultSet rs) throws SQLException {
+		Object[] setScores = (Object[])rs.getArray("set_scores").getArray();
+		List<SetScore> score = new ArrayList<>(setScores.length);
+		for (Object setScore : setScores)
+			score.add(mapSetScore(setScore.toString()));
+		return score;
 	}
 
 	private static SetScore mapSetScore(String setScore) {

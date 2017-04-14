@@ -62,7 +62,8 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 					def lIsSeed = allDigits lSeedEntry
 					def scoreElem = match.select('td.day-table-score a')
 					def score = fitScore scoreElem.html().replace('<sup>', '(').replace('</sup>', ')')
-					def bestOf = MatchScoreParser.parse(score).bestOf
+					def matchScore = MatchScoreParser.parse(score)
+					def bestOf = matchScore.bestOf
 
 					def params = [:]
 					params.ext_tournament_id = string extId
@@ -89,7 +90,8 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 					params.loser_seed = lIsSeed ? smallint(lSeedEntry) : null
 					params.loser_entry = !lIsSeed ? mapEntry(string(lSeedEntry)) : null
 
-					setScoreParams(params, score, sql.connection)
+					params.score = string score
+					setScoreParams(params, matchScore)
 					params.statsUrl = matchStatsUrl(scoreElem.attr('href'))
 
 					if ((isUnknownOrQualifier(wName) || isUnknownOrQualifier(lName)))
@@ -111,8 +113,8 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 				def lStats = matchStats.opponentStats
 
 				params.minutes = minutes wStats.Time
-				this.setStatsParams(params, wStats, 'w_')
-				this.setStatsParams(params, lStats, 'l_')
+				setStatsParams(params, wStats, 'w_')
+				setStatsParams(params, lStats, 'l_')
 				print '.'
 			}
 			if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
@@ -128,30 +130,33 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		println "\n$matches.size matches loaded in $stopwatch"
 	}
 
-	static setScoreParams(Map params, score, conn) {
-		def matchScore = MatchScoreParser.parse(score)
-		params.score = string score
+	def setScoreParams(Map params, MatchScore matchScore) {
 		params.outcome = matchScore.outcome
-		params.w_sets = matchScore?.w_sets
-		params.l_sets = matchScore?.l_sets
-		params.w_games = matchScore?.w_games
-		params.l_games = matchScore?.l_games
-		params.w_set_games = matchScore ? shortArray(conn, matchScore.w_set_games) : null
-		params.l_set_games = matchScore ? shortArray(conn, matchScore.l_set_games) : null
-		params.w_set_tb_pt = matchScore ? shortArray(conn, matchScore.w_set_tb_pt) : null
-		params.l_set_tb_pt = matchScore ? shortArray(conn, matchScore.l_set_tb_pt) : null
+		if (matchScore) {
+			params.w_sets = matchScore.w_sets
+			params.l_sets = matchScore.l_sets
+			params.w_games = matchScore.w_games
+			params.l_games = matchScore.l_games
+			def conn = sql.connection
+			params.w_set_games = shortArray(conn, matchScore.w_set_games)
+			params.l_set_games = shortArray(conn, matchScore.l_set_games)
+			params.w_set_tb_pt = shortArray(conn, matchScore.w_set_tb_pt)
+			params.l_set_tb_pt = shortArray(conn, matchScore.l_set_tb_pt)
+		}
 	}
 
 	static setStatsParams(Map params, stats, prefix) {
-		params[prefix + 'ace'] = smallint stats?.Aces
-		params[prefix + 'df'] = smallint stats?.DoubleFaults
-		params[prefix + 'sv_pt'] = smallint stats?.FirstServeDivisor
-		params[prefix + '1st_in'] = smallint stats?.FirstServeDividend
-		params[prefix + '1st_won'] = smallint stats?.FirstServePointsWonDividend
-		params[prefix + '2nd_won'] = smallint stats?.SecondServePointsWonDividend
-		params[prefix + 'sv_gms'] = smallint stats?.ServiceGamesPlayed
-		params[prefix + 'bp_sv'] = smallint stats?.BreakPointsSavedDividend
-		params[prefix + 'bp_fc'] = smallint stats?.BreakPointsSavedDivisor
+		if (!stats)
+			return
+		params[prefix + 'ace'] = smallint stats.Aces
+		params[prefix + 'df'] = smallint stats.DoubleFaults
+		params[prefix + 'sv_pt'] = smallint stats.FirstServeDivisor
+		params[prefix + '1st_in'] = smallint stats.FirstServeDividend
+		params[prefix + '1st_won'] = smallint stats.FirstServePointsWonDividend
+		params[prefix + '2nd_won'] = smallint stats.SecondServePointsWonDividend
+		params[prefix + 'sv_gms'] = smallint stats.ServiceGamesPlayed
+		params[prefix + 'bp_sv'] = smallint stats.BreakPointsSavedDividend
+		params[prefix + 'bp_fc'] = smallint stats.BreakPointsSavedDivisor
 	}
 
 	static tournamentUrl(boolean current, int season, String urlId, extId) {

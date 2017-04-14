@@ -248,23 +248,29 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		emptyToNull(player(roundPlayer.select('a.scores-draw-entry-box-players-item').text()))
 	}
 
-	static setScoreParams(Map params, scoreElem = null, winnerName = null) {
+	def setScoreParams(Map params, Elements scoreElem = null, String winnerName = null) {
 		if (scoreElem) {
 			def score = fitScore scoreElem.html().replace('<sup>', '(').replace('</sup>', ')')
 			def matchScore = MatchScoreParser.parse(score)
 			if (winnerName == params.player1_name) {
 				params.winner = (short) 1
-				params.player1_games = matchScore.w_set_games
-				params.player1_tb_pt = matchScore.w_set_tb_pt
-				params.player2_games = matchScore.l_set_games
-				params.player2_tb_pt = matchScore.l_set_tb_pt
+				if (matchScore) {
+					def conn = sql.connection
+					params.player1_games = shortArray(conn, matchScore.w_set_games)
+					params.player1_tb_pt = shortArray(conn, matchScore.w_set_tb_pt)
+					params.player2_games = shortArray(conn, matchScore.l_set_games)
+					params.player2_tb_pt = shortArray(conn, matchScore.l_set_tb_pt)
+				}
 			}
 			else if (winnerName == params.player2_name) {
 				params.winner = (short) 2
-				params.player1_games = matchScore.l_set_games
-				params.player1_tb_pt = matchScore.l_set_tb_pt
-				params.player2_games = matchScore.w_set_games
-				params.player2_tb_pt = matchScore.w_set_tb_pt
+				if (matchScore) {
+					def conn = sql.connection
+					params.player1_games = shortArray(conn, matchScore.l_set_games)
+					params.player1_tb_pt = shortArray(conn, matchScore.l_set_tb_pt)
+					params.player2_games = shortArray(conn, matchScore.w_set_games)
+					params.player2_tb_pt = shortArray(conn, matchScore.w_set_tb_pt)
+				}
 			}
 			params.score = string score
 			params.outcome = matchScore?.outcome
