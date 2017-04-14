@@ -214,7 +214,7 @@ public class TournamentForecastService {
 
 	// Probable matches
 
-	public TournamentEventResults getInProgressEventProbableMatches(int inProgressEventId) {
+	public TournamentEventResults getInProgressEventProbableMatches(int inProgressEventId, Integer pinnedPlayerId) {
 		InProgressEventForecast forecast = new InProgressEventForecast();
 		MapSqlParameterSource inProgressEventIdParam = params("inProgressEventId", inProgressEventId);
 		List<PlayerForecast> players = fetchPlayers(inProgressEventIdParam);
@@ -228,20 +228,22 @@ public class TournamentForecastService {
 		AtomicInteger matchId = new AtomicInteger();
 		AtomicInteger matchNum = new AtomicInteger();
 		Iterable<PlayerForecast> remainingPlayers = current.getPlayerForecasts();
-		for (KOResult result = KOResult.valueOf(current.getFirstResult()); result.hasNext(); result = result.next())
-			remainingPlayers = addProbableMatches(probableMatches, remainingPlayers, result, matchId, matchNum);
+		KOResult firstResult = KOResult.valueOf(current.getFirstResult());
+		for (KOResult result = firstResult; result.hasNext(); result = result.next())
+			remainingPlayers = addProbableMatches(probableMatches, remainingPlayers, result, matchId, matchNum, pinnedPlayerId);
 		return probableMatches;
 	}
 
-	private static List<PlayerForecast> addProbableMatches(TournamentEventResults probableMatches, Iterable<PlayerForecast> remainingPlayers, KOResult result, AtomicInteger matchId, AtomicInteger matchNum) {
+	private static List<PlayerForecast> addProbableMatches(TournamentEventResults probableMatches, Iterable<PlayerForecast> remainingPlayers,
+	                                                       KOResult result, AtomicInteger matchId, AtomicInteger matchNum, Integer pinnedPlayerId) {
 		String round = result.name();
 		String nextRound = result.next().name();
 		List<PlayerForecast> nextRemainingPlayers = new ArrayList<>();
 		for (Iterator<PlayerForecast> iter = remainingPlayers.iterator(); iter.hasNext(); ) {
-			PlayerForecast player1 = getNextCandidate(iter, round);
-			PlayerForecast player2 = getNextCandidate(iter, round);
+			PlayerForecast player1 = getNextCandidate(iter, round, pinnedPlayerId);
+			PlayerForecast player2 = getNextCandidate(iter, round, pinnedPlayerId);
 			if (player1 != null && player2 != null) {
-				if (player1.getProbability(nextRound) < player2.getProbability(nextRound)) {
+				if (playerWins(player1, player2, nextRound, pinnedPlayerId) == player2) {
 					PlayerForecast player = player1; player1 = player2; player2 = player;
 				}
 				probableMatches.addMatch((short)matchNum.incrementAndGet(),
@@ -254,13 +256,21 @@ public class TournamentForecastService {
 		return nextRemainingPlayers;
 	}
 
-	private static PlayerForecast getNextCandidate(Iterator<PlayerForecast> iterator, String round) {
+	private static PlayerForecast getNextCandidate(Iterator<PlayerForecast> iterator, String round, Integer pinnedPlayerId) {
 		if (!iterator.hasNext())
 			return null;
 		PlayerForecast candidate1 = iterator.next();
 		if (!iterator.hasNext())
 			return null;
 		PlayerForecast candidate2 = iterator.next();
-		return candidate1.getProbability(round) >= candidate2.getProbability(round) ? candidate1 : candidate2;
+		return playerWins(candidate1, candidate2, round, pinnedPlayerId);
+	}
+
+	private static PlayerForecast playerWins(PlayerForecast player1, PlayerForecast player2, String round, Integer pinnedPlayerId) {
+		if (player2.getId() < 0 || Objects.equals(player1.getId(), pinnedPlayerId))
+			return player1;
+		if (player1.getId() < 0 || Objects.equals(player2.getId(), pinnedPlayerId))
+			return player2;
+		return player1.getProbability(round) >= player2.getProbability(round) ? player1 : player2;
 	}
 }

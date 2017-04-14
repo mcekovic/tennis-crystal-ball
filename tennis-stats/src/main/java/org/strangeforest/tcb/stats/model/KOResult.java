@@ -11,6 +11,10 @@ public enum KOResult {
 		return KOResult.values()[ordinal() + 1];
 	}
 
+	public boolean hasPrev() {
+		return ordinal() > 0;
+	}
+
 	public KOResult prev() {
 		return KOResult.values()[ordinal() - 1];
 	}

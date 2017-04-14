@@ -25,6 +25,11 @@ public class PlayersForecast {
 		return results.iterator().next();
 	}
 
+	public KOResult getEntryRound() {
+		KOResult firstResult = KOResult.valueOf(getFirstResult());
+		return firstResult.hasPrev() ? firstResult.prev() : firstResult;
+	}
+
 	public Collection<PlayerForecast> getPlayerForecasts() {
 		return playerForecasts.values();
 	}

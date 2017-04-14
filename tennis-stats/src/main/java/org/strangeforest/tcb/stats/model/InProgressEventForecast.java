@@ -43,14 +43,10 @@ public class InProgressEventForecast {
 	public void process() {
 		if (playersForecasts.isEmpty())
 			return;
-		Set<String> baseResults = getBaseResults();
-		String entryRound = baseResults.iterator().next();
-		if (entryRound.equals(CURRENT))
-			entryRound = KOResult.valueOf(playersForecasts.values().iterator().next().getFirstResult()).prev().name();
-		KOResult entryResult = KOResult.valueOf(entryRound);
+		KOResult entryRound = playersForecasts.values().iterator().next().getEntryRound();
 		for (Entry<String, PlayersForecast> forecastEntry : playersForecasts.entrySet()) {
 			String baseResult = forecastEntry.getKey();
-			if (!(baseResult.equals(entryRound) || baseResult.equals(CURRENT)))
+			if (!(baseResult.equals(entryRound.name()) || baseResult.equals(CURRENT)))
 				forecastEntry.getValue().removePlayersWOResults();
 		}
 		PlayersForecast currentForecast = getCurrentForecasts();
@@ -58,7 +54,7 @@ public class InProgressEventForecast {
 			currentForecast.removePastRounds();
 			if (!currentForecast.getResults().isEmpty()) {
 				String firstResult = currentForecast.getFirstResult();
-				if (entryResult.hasNext() && !entryResult.next().name().equals(firstResult))
+				if (entryRound.hasNext() && !entryRound.next().name().equals(firstResult))
 					currentForecast.removePlayersWORemainingResults();
 			}
 		}

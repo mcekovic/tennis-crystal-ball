@@ -1,6 +1,12 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.util.ArrayList;
 import java.util.*;
+
+import static java.util.Arrays.*;
+import static java.util.Collections.*;
+import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
 
 public class TournamentEventResults {
 
@@ -35,6 +41,10 @@ public class TournamentEventResults {
 		matchesByRound = new TreeMap<>();
 	}
 
+	public Collection<TournamentEventMatch> getMatches() {
+		return matches.values();
+	}
+
 	public void addMatch(short matchNum, TournamentEventMatch match) {
 		matches.put(matchNum, match);
 		Round round = Round.valueOf(match.getRound());
@@ -50,7 +60,18 @@ public class TournamentEventResults {
 	}
 
 	public int getMaxRoundMatches() {
-		return matchesByRound.values().stream().mapToInt(List::size).max().getAsInt();
+		return matchesByRound.values().stream().mapToInt(List::size).max().orElse(0);
+	}
+
+	public List<MatchPlayerEx> getPlayers() {
+		if (isEmpty())
+			return emptyList();
+		Round firstRound = getRounds().iterator().next();
+		return getRoundMatches(firstRound).stream()
+			.map(match -> asList(match.getWinner(), match.getLoser()))
+			.flatMap(Collection::stream)
+			.sorted(comparing(MatchPlayerEx::getSeed, nullsLast(naturalOrder())))
+			.collect(toList());
 	}
 
 	public boolean isEmpty() {

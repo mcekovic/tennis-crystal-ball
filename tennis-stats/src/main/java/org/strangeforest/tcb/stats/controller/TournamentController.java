@@ -153,9 +153,15 @@ public class TournamentController extends PageController {
 
 	@GetMapping("/inProgressEventProbableMatches")
 	public ModelAndView inProgressEventProbableMatches(
-		@RequestParam(name = "inProgressEventId") int inProgressEventId
+		@RequestParam(name = "inProgressEventId") int inProgressEventId,
+		@RequestParam(name = "pinnedPlayerId", required = false) Integer pinnedPlayerId
 	) {
-		TournamentEventResults results = forecastService.getInProgressEventProbableMatches(inProgressEventId);
-		return new ModelAndView("inProgressEventProbableMatches", "results", results);
+		TournamentEventResults results = forecastService.getInProgressEventProbableMatches(inProgressEventId, pinnedPlayerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("results", results);
+		modelMap.addAttribute("inProgressEventId", inProgressEventId);
+		modelMap.addAttribute("pinnedPlayerId", pinnedPlayerId);
+		return new ModelAndView("inProgressEventProbableMatches", modelMap);
 	}
 }

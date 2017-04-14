@@ -1,6 +1,35 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
-	<div th:unless="${results.isEmpty()}" th:include="fragments/eventResults :: eventResults('Prob')"></div>
+	<!--/*@thymesVar id="inProgressEventId" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="pinnedPlayerId" type="java.lang.Integer"*/-->
+	<th:block th:unless="${results.isEmpty()}">
+		<script type="text/javascript">
+			$(function() {
+				$("[data-toggle='tooltip']").tooltip();
+			});
+			function reloadProbableMatches() {
+				var url = "/inProgressEventProbableMatches?inProgressEventId=[[${inProgressEventId}]]";
+				var pinnedPlayerId = $("#pinnedPlayer").val();
+				if (pinnedPlayerId)
+					url += "&pinnedPlayerId=" + pinnedPlayerId;
+				$("#probable").load(url);
+			}
+		</script>
+		<br/>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="input-group">
+					<label for="pinnedPlayer" class="input-group-addon" data-toggle="tooltip" data-placement="top" title="Choose player to pin">Pinned player:</label>
+					<select id="pinnedPlayer" class="form-control" onchange="reloadProbableMatches()">
+						<option value=""></option>
+						<option th:each="player : ${results.players}" th:with="seedAndEntry=${player.seedAndEntry}" th:value="${player.id}" th:text="${(seedAndEntry != '' ? ('(' + seedAndEntry + ') ') : '') + player.name + ' (' + player.country.id + ')'}" th:selected="${player.id == pinnedPlayerId}">(1) Roger Federer (SUI)</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<br/>
+		<div th:include="fragments/eventResults :: eventResults('Prob')"></div>
+	</th:block>
 	<th:block th:if="${results.isEmpty()}">
 		<br/>
 		<div class="alert alert-warning">No probable matchups found</div>
