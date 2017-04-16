@@ -7,9 +7,11 @@ def sqlPool = new SqlPool()
 def eloRatings = new EloRatings(sqlPool)
 eloRatings.compute(true, System.getProperty('tcb.data.full-load', 'true').toBoolean())
 
-sqlPool.withSql { sql ->
-	showCurrent(eloRatings, sql)
-	showPeak(eloRatings, sql)
+if (System.getProperty('tcb.data.show-elo', 'false').toBoolean()) {
+	sqlPool.withSql { sql ->
+		showCurrent(eloRatings, sql)
+		showPeak(eloRatings, sql)
+	}
 }
 
 

@@ -12,22 +12,21 @@ import static java.util.Arrays.*;
 
 @Component
 @Profile("openshift")
-public class InProgressEventsJob extends DataLoadJob {
+public class NewRankingsJob extends DataLoadJob {
 
 	@Autowired private DataService dataService;
 
-	@Scheduled(cron = "${tennis-stats.jobs.reload-in-progress-events:0 0 * * * *}")
-	public void reloadInProgressEvents() {
+	@Scheduled(cron = "${tennis-stats.jobs.load-new-rankings:0 15 3 * * MON}")
+	public void loadNewRankings() {
 		execute();
 	}
 
 	@Override protected Collection<String> params() {
-		return asList("-ip", "-c 1");
+		return asList("-nr", "-c 1");
 	}
 
 	@Override protected String onSuccess() {
-		dataService.evictGlobal("InProgressEvents");
-		int cacheCount = dataService.clearCaches("InProgressEventForecast");
+		int cacheCount = dataService.clearCaches("Rankings.*");
 		return cacheCount + " cache(s) cleared.";
 	}
 }

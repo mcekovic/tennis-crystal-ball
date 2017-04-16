@@ -80,8 +80,8 @@ public class DataService {
 		return !seasons.isEmpty() ? seasons.get(0) : null;
 	}
 
-	public int clearCaches(String name) {
-		Pattern pattern = Pattern.compile(name);
+	public int clearCaches(String nameRegEx) {
+		Pattern pattern = Pattern.compile(nameRegEx);
 		int cacheCount = 0;
 		for (String cacheName : cacheManager.getCacheNames()) {
 			if (pattern.matcher(cacheName).matches()) {
@@ -90,5 +90,11 @@ public class DataService {
 			}
 		}
 		return cacheCount;
+	}
+
+	public void evictGlobal(Object key) {
+		Cache cache = cacheManager.getCache("Global");
+		if (cache != null)
+			cache.evict(key);
 	}
 }

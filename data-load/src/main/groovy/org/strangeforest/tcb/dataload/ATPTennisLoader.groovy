@@ -1,9 +1,9 @@
 package org.strangeforest.tcb.dataload
 
-import java.util.concurrent.*
-
 import com.google.common.base.*
 import groovy.sql.*
+
+import java.util.concurrent.*
 
 class ATPTennisLoader {
 
@@ -337,7 +337,22 @@ class ATPTennisLoader {
 		def stopwatch = Stopwatch.createStarted()
 
 		println 'Vacuuming tables and materialized views...'
-		executeSQLFileWithAutoCommit(sql, '../crystal-ball/src/main/db/vacuum.sql')
+		def tables = sql.rows('SELECT tablename FROM pg_tables WHERE schemaname = \'public\' ORDER BY tablename')
+			.collect { row -> row.tablename }
+		if (useMaterializedViews) {
+			def matViews = sql.rows('SELECT matviewname FROM pg_matviews WHERE schemaname = \'public\' ORDER BY matviewname')
+				.collect { row -> row.matviewname }
+			tables.addAll matViews
+		}
+		sql.connection.autoCommit = true
+		try {
+			tables.each { name ->
+				sql.execute('VACUUM FULL ANALYSE VERBOSE ' + name)
+			}
+		}
+		finally {
+			sql.connection.autoCommit = false
+		}
 
 		println "Vacuuming finished in $stopwatch"
 	}
@@ -348,16 +363,5 @@ class ATPTennisLoader {
 			sqlText = sqlText.replace(replaceTarget, replacement)
 		sql.execute(sqlText)
 		sql.commit()
-	}
-
-	private static executeSQLFileWithAutoCommit(Sql sql, String file) {
-		def sqlText = new File(file).text
-		sql.connection.autoCommit = true
-		try {
-			sql.execute(sqlText)
-		}
-		finally {
-			sql.connection.autoCommit = false
-		}
 	}
 }

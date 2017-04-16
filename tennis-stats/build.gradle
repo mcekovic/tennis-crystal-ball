@@ -31,8 +31,6 @@ processResources {
 }
 
 dependencies {
-	compile project (':crystal-ball')
-
 	compile ('org.springframework.boot:spring-boot-starter-aop')
 	compile ('org.springframework.boot:spring-boot-starter-jdbc')
 	compile ('org.springframework.boot:spring-boot-starter-cache')

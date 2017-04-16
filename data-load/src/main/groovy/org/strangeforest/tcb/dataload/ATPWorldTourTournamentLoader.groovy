@@ -12,6 +12,13 @@ import static org.strangeforest.tcb.dataload.XMLMatchLoader.*
 
 class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 
+	static final String SELECT_SEASON_EVENT_EXT_IDS_SQL =
+		'SELECT ext_tournament_id FROM tournament_event\n' +
+		'INNER JOIN tournament_mapping USING (tournament_id)\n' +
+		'WHERE season = :season\n' +
+		'ORDER BY ext_tournament_id'
+
+
 	ATPWorldTourTournamentLoader(Sql sql) {
 		super(sql)
 	}
@@ -170,5 +177,12 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 
 	static isUnknownOrQualifier(String name) {
 		isUnknown(name) || isQualifier(name)
+	}
+
+
+	// Maintenance
+
+	def findSeasonEventExtIds(int season) {
+		sql.rows([season: season], SELECT_SEASON_EVENT_EXT_IDS_SQL).collect { row -> row.ext_tournament_id }
 	}
 }

@@ -11,7 +11,6 @@ applicationDefaultJvmArgs = [
 ]
 
 dependencies {
-	compile project(':crystal-ball')
 	compile project(':tennis-stats')
 	compile ("org.codehaus.groovy:groovy-all:$groovyVersion")
 	compile ("com.xlson.groovycsv:groovycsv:$groovyCsvVersion")
