@@ -3,6 +3,8 @@ package org.strangeforest.tcb.stats.model;
 import java.util.*;
 import java.util.Map.*;
 
+import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class PlayersForecast {
@@ -41,6 +43,12 @@ public class PlayersForecast {
 
 	public double getStrength(int fromIndex, int count) {
 		return playerForecasts.values().stream().skip(fromIndex).limit(count).mapToDouble(PlayerForecast::getWinProbability).sum();
+	}
+
+	public List<MatchPlayerEx> getKnownPlayers(String result) {
+		return playerForecasts.values().stream().filter(player -> player.getId() > 0 && player.getProbability(result) > 0.0)
+			.sorted(comparing(MatchPlayerEx::getSeed, nullsLast(naturalOrder())).thenComparing(MatchPlayerEx::getName, nullsLast(naturalOrder())))
+			.collect(toList());
 	}
 
 	void addResult(int playerId, String result, double probability) {

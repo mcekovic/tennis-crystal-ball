@@ -214,7 +214,7 @@ public class TournamentForecastService {
 
 	// Probable matches
 
-	public TournamentEventResults getInProgressEventProbableMatches(int inProgressEventId, Integer pinnedPlayerId) {
+	public ProbableMatches getInProgressEventProbableMatches(int inProgressEventId, Integer pinnedPlayerId) {
 		InProgressEventForecast forecast = new InProgressEventForecast();
 		MapSqlParameterSource inProgressEventIdParam = params("inProgressEventId", inProgressEventId);
 		List<PlayerForecast> players = fetchPlayers(inProgressEventIdParam);
@@ -228,10 +228,10 @@ public class TournamentForecastService {
 		AtomicInteger matchId = new AtomicInteger();
 		AtomicInteger matchNum = new AtomicInteger();
 		Iterable<PlayerForecast> remainingPlayers = current.getPlayerForecasts();
-		KOResult firstResult = KOResult.valueOf(current.getFirstResult());
-		for (KOResult result = firstResult; result.hasNext(); result = result.next())
+		String firstResult = current.getFirstResult();
+		for (KOResult result = KOResult.valueOf(firstResult); result.hasNext(); result = result.next())
 			remainingPlayers = addProbableMatches(probableMatches, remainingPlayers, result, matchId, matchNum, pinnedPlayerId);
-		return probableMatches;
+		return new ProbableMatches(probableMatches, current.getKnownPlayers(firstResult));
 	}
 
 	private static List<PlayerForecast> addProbableMatches(TournamentEventResults probableMatches, Iterable<PlayerForecast> remainingPlayers,
