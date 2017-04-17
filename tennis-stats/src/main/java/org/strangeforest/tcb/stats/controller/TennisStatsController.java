@@ -17,14 +17,17 @@ import static org.strangeforest.tcb.util.DateUtil.*;
 public class TennisStatsController extends PageController {
 
 	@Autowired private DataService dataService;
+	@Autowired private TournamentForecastService forecastService;
 	@Autowired private GOATListService goatListService;
 	@Autowired private RankingsService rankingsService;
 
 	@GetMapping("/")
 	public ModelAndView index() {
+		boolean hasInProgressEvents = forecastService.getInProgressEventsTable().getTotal() > 0;
 		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("hasInProgressEvents", hasInProgressEvents);
 		modelMap.addAttribute("currentSeason", dataService.getLastSeason());
 		modelMap.addAttribute("goatTopN", goatTopN);
 		return new ModelAndView("index", modelMap);

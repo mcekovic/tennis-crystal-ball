@@ -390,6 +390,6 @@ public class RivalriesService {
 	}
 
 	private boolean lateralSupported() {
-		return dataService.getDBServerVersion() >= 90300;
+		return dataService.getDBServerVersion() >= DataService.LATERAL_MIN_VERSION;
 	}
 }

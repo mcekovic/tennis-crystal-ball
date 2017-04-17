@@ -21,7 +21,7 @@ public class RefreshRecordsJob {
 	public void refreshRecords() {
 		if (dataLoad("RefreshRecords", "-rr") == 0) {
 			try {
-				String storageOption = dataService.getDBServerVersion() >= 90300 ? "-m" : "-t";
+				String storageOption = dataService.getDBServerVersion() >= DataService.MATERIALIZED_VIEWS_MIN_VERSION ? "-m" : "-t";
 				dataLoad("Vacuum", "-vc", "-c 1", storageOption);
 			}
 			finally {

@@ -50,7 +50,7 @@
 					<li th:class="${path == '/headToHead' || path == '/headsToHeads' || path == '/greatestRivalries' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rivalries<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/headToHead' ? 'active' : ''}"><a href="/headToHead">Head-to-Head<sup class="new-feature">&nbsp;New!</sup></a></li>
+							<li th:class="${path == '/headToHead' ? 'active' : ''}"><a href="/headToHead">Head-to-Head</a></li>
 							<li th:class="${path == '/headsToHeads' ? 'active' : ''}"><a href="/headsToHeads">Heads-to-Heads</a></li>
 							<li th:class="${path == '/greatestRivalries' ? 'active' : ''}"><a href="/greatestRivalries">Greatest Rivalries</a></li>
 						</ul>
@@ -87,8 +87,8 @@
 					<li th:class="${path == '/inProgressEventsForecasts' || path == '/inProgressEventForecast' || path == '/tournamentEvents' || path == '/tournamentEvent' || path == '/tournament' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Tournaments<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/inProgressEventsForecasts' || path == '/inProgressEventForecast' ? 'active' : ''}"><a href="/inProgressEventsForecasts">Tournament Forecasts<sup class="new-feature">&nbsp;Experimental!</sup></a></li>
 							<li th:class="${path == '/tournamentEvents' || path == '/tournamentEvent' || path == '/tournament' ? 'active' : ''}"><a href="/tournamentEvents">Tournament Events</a></li>
+							<li th:class="${path == '/inProgressEventsForecasts' || path == '/inProgressEventForecast' ? 'active' : ''}"><a href="/inProgressEventsForecasts">Tournament Forecasts<sup class="new-feature">&nbsp;New!</sup></a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/records' || path == '/record' ? 'active' : ''}"><a href="/records">Records<sup class="cool-feature">&nbsp;Cool!</sup></a></li>

@@ -19,7 +19,7 @@ public class RefreshComputedDataJob {
 
 	@Scheduled(cron = "${tennis-stats.jobs.refresh-computed-data:0 25 3 * * MON}")
 	public void refreshComputedData() {
-		String storageOption = dataService.getDBServerVersion() >= 90300 ? "-m" : "-t";
+		String storageOption = dataService.getDBServerVersion() >= DataService.MATERIALIZED_VIEWS_MIN_VERSION ? "-m" : "-t";
 		if (dataLoad("RefreshComputedData", "-rc", "-c 1", storageOption) == 0) {
 			try {
 				dataLoad("Vacuum", "-vc", "-c 1", storageOption);

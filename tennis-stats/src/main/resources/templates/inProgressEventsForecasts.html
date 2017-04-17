@@ -52,14 +52,11 @@
 			]);
 			bindPopovers();
 		});
-		function formatFavorite(column, favorite) {
-			return favorite ? playerCountryFormatter(column, favorite) + " " + ((100 * favorite.probability).toFixed(1)) + "%" : "";
-		}
 	</script>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>Tournament Event Forecasts<sup class="new-feature">&nbsp;Experimental!</sup></h3>
+	<h3>Tournament Event Forecasts</h3>
 	<table id="inProgressEventsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>

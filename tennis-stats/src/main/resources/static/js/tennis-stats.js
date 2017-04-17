@@ -211,6 +211,10 @@ function playerCountryFormatter(column, row) {
 	return "<img src='/images/flags/" + row.country.code + ".png' title='" + row.country.id + "' width='24' height='20'/> " + playerFormatter(column, row);
 }
 
+function formatFavorite(column, favorite) {
+	return favorite ? playerCountryFormatter(column, favorite) + " " + ((100 * favorite.probability).toFixed(1)) + "%" : "";
+}
+
 // Level Formatter
 function levelFormatter(column, row) {
 	return "<span class='label label-" + row.level + "'>" + levelName(row.level) + "</span>";

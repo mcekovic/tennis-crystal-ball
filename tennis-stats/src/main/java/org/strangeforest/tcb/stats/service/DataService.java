@@ -18,6 +18,9 @@ import static java.lang.String.*;
 @Service
 public class DataService {
 
+	public static final int MATERIALIZED_VIEWS_MIN_VERSION = 90300;
+	public static final int LATERAL_MIN_VERSION = 90300;
+
 	@Autowired private JdbcTemplate jdbcTemplate;
 	@Autowired private CacheManager cacheManager;
 

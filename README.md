@@ -11,7 +11,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - 'GOAT' List - Best players of Open Era ranked by 'GOAT' points
 - Player Profile - Player information, tournament results, matches, timeline, rivalries, ranking, performance indicators and statistics with charts, 'GOAT' points breakdown and records
 - Timelines - Dominance ('GOAT' points distribution among top players and seasons), Grand Slam, Tour Finals, Masters, Olympics, Davis Cup, World Team Cup and Surface timeline
-- Head-to-Head - Head-to-head between two players with H2H matches, performance and statistics comparision, ranking, performance and statistics charts, 'GOAT' points breakdown and Hypothetical Matchup prediction based on neural network algorithm
+- Head-to-Head - Head-to-head between two players with H2H matches, performance and statistics comparision, ranking, performance and statistics charts, 'GOAT' points breakdown and Hypothetical Matchup prediction based on the Neural Network Match Prediction Algorithm
 - Heads-to-Heads - Heads-to-heads clusters among several players (i.e. among 'Big 4')
 - Greatest Rivalries - Explore greatest rivalries, overall or by season, tournament level, surface or round
 - Ranking Tables - Player ranking tables, including [Elo rating](https://en.wikipedia.org/wiki/Elo_rating_system) (overall and by surface) using customized Elo rating formula
@@ -24,6 +24,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Seasons Browser - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players</li>
 - Best Seasons - Find which are the best seasons of Open Era based on 'GOAT' points
 - Tournaments Browser - Browse all Open Era tournaments, see tournament draw, performance, statistics, historical winners and records
+- Tournament Forecasts - Tournament Event Forecasts based on the Neural Network Match Prediction Algorithm
 - Records Book - Various match, tournament result and ranking records, famous and infamous (best player that never...)
 - Live Scores - Live Scores integration
 
