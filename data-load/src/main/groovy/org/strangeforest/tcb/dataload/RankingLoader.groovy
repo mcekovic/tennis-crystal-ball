@@ -2,6 +2,8 @@ package org.strangeforest.tcb.dataload
 
 import java.sql.*
 
+import static org.strangeforest.tcb.dataload.LoadParams.*
+
 class RankingLoader extends BaseCSVLoader {
 
 	Integer maxRank
@@ -34,7 +36,7 @@ class RankingLoader extends BaseCSVLoader {
 	}
 
 	static Integer maxRank() {
-		def value = System.getProperty('tcb.data.max-rank')
+		def value = System.getProperty(MAX_RANK_PROPERTY)
 		value ? Integer.parseInt(value) : null
 	}
 }

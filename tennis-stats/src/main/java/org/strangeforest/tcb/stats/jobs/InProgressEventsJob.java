@@ -1,33 +1,31 @@
 package org.strangeforest.tcb.stats.jobs;
 
-import java.util.*;
-
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.context.annotation.*;
 import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.service.*;
 
-import static java.util.Arrays.*;
+import static org.strangeforest.tcb.stats.jobs.DataLoadCommand.*;
 
 @Component
 @Profile("openshift")
-public class InProgressEventsJob extends DataLoadJob {
+public class InProgressEventsJob {
 
 	@Autowired private DataService dataService;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(InProgressEventsJob.class);
+
 	@Scheduled(cron = "${tennis-stats.jobs.reload-in-progress-events:0 0 * * * *}")
 	public void reloadInProgressEvents() {
-		execute();
+		if (dataLoad("ReloadInProgressEvents", "-ip", "-c 1") == 0)
+			clearCaches();
 	}
 
-	@Override protected Collection<String> params() {
-		return asList("-ip", "-c 1");
-	}
-
-	@Override protected String onSuccess() {
+	private void clearCaches() {
 		dataService.evictGlobal("InProgressEvents");
 		int cacheCount = dataService.clearCaches("InProgressEventForecast");
-		return cacheCount + " cache(s) cleared.";
+		LOGGER.info("{} cache(s) cleared.", cacheCount);
 	}
 }

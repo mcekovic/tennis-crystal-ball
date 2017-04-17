@@ -9,15 +9,15 @@ import java.util.concurrent.*
 
 class SqlPool extends LinkedBlockingDeque<Sql> {
 
-	public static final String DB_URL_PROPERTY = 'tcb.db.url'
-	public static final String USERNAME_PROPERTY = 'tcb.db.username'
-	public static final String PASSWORD_PROPERTY = 'tcb.db.password'
-	public static final String DB_CONNECTIONS_PROPERTY = 'tcb.db.connections'
+	static final String DB_URL_PROPERTY = 'tcb.db.url'
+	static final String USERNAME_PROPERTY = 'tcb.db.username'
+	static final String PASSWORD_PROPERTY = 'tcb.db.password'
+	static final String DB_CONNECTIONS_PROPERTY = 'tcb.db.connections'
 
-	public static final String DB_URL_DEFAULT = 'jdbc:postgresql://localhost:5432/postgres?prepareThreshold=0'
-	public static final String USERNAME_DEFAULT = 'tcb'
-	public static final String PASSWORD_DEFAULT = 'tcb'
-	public static final int DB_CONNECTIONS_DEFAULT = 2
+	static final String DB_URL_DEFAULT = 'jdbc:postgresql://localhost:5432/postgres?prepareThreshold=0'
+	static final String USERNAME_DEFAULT = 'tcb'
+	static final String PASSWORD_DEFAULT = 'tcb'
+	static final int DB_CONNECTIONS_DEFAULT = 2
 
 	SqlPool(size = null) {
 		print 'Allocating DB connections'

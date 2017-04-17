@@ -5,6 +5,8 @@ import groovy.sql.*
 
 import java.util.concurrent.*
 
+import static org.strangeforest.tcb.dataload.LoadParams.*
+
 class ATPTennisLoader {
 
 	private final boolean full
@@ -12,8 +14,8 @@ class ATPTennisLoader {
 	private String baseDir
 
 	ATPTennisLoader() {
-		full = System.getProperty('tcb.data.full-load', 'true').toBoolean()
-		useMaterializedViews = System.getProperty('tcb.data.use-materialized-views', 'true').toBoolean()
+		full = System.getProperty(FULL_LOAD_PROPERTY, String.valueOf(FULL_LOAD_DEFAULT)).toBoolean()
+		useMaterializedViews = System.getProperty(USE_MATERIALIZED_VIEWS_PROPERTY, String.valueOf(USE_MATERIALIZED_VIEWS_DEFAULT)).toBoolean()
 	}
 
 	def loadPlayers(loader) {
@@ -76,9 +78,9 @@ class ATPTennisLoader {
 
 	private baseDir() {
 		if (!baseDir) {
-			baseDir = System.properties['tcb.data.base-dir']
+			baseDir = System.properties[BASE_DIR_PROPERTY]
 			if (!baseDir)
-				throw new IllegalArgumentException('No Tennis data base directory is set, please specify it in tcb.data.base-dir system property.')
+				throw new IllegalArgumentException("No Tennis data base directory is set, please specify it in $BASE_DIR_PROPERTY system property.")
 			if (!baseDir.endsWith(File.separator))
 				baseDir += File.separator
 		}

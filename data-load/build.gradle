@@ -18,7 +18,7 @@ dependencies {
 	compile ("org.jsoup:jsoup:$jsoupVersion")
 	runtime ("org.postgresql:postgresql:$postgresqlJdbcVersion")
 	compile ("org.springframework:spring-jdbc:$springJdbcVersion")
-	runtime ("commons-cli:commons-cli:$commonsCliVersion")
+	compile ("commons-cli:commons-cli:$commonsCliVersion")
 	testCompile ("junit:junit:$junitVersion")
 }
 

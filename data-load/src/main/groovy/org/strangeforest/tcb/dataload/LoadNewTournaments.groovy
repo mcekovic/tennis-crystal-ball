@@ -18,7 +18,7 @@ static loadTournaments(SqlPool sqlPool) {
 		def newExtIds = eventInfos.collect { info -> info.extId }
 		println "New completed tournaments for season $season: $newExtIds"
 		eventInfos.each { info ->
-			atpTournamentLoader.loadTournament(season, info.urlId, info.extId)
+			atpTournamentLoader.loadTournament(season, info.urlId, info.extId, info.current)
 		}
 	}
 }
@@ -28,7 +28,7 @@ static findCompletedEvents(int season) {
 	Set eventInfos = new TreeSet()
 	doc.select('tr.tourney-result').each {result ->
 		def url = result.select('td.tourney-details > a.button-border').attr('href')
-		if (url.contains(String.valueOf(season)) && result.select('div.tourney-detail-winner > a'))
+		if (result.select('div.tourney-detail-winner > a'))
 			eventInfos << new EventInfo(url)
 	}
 	eventInfos

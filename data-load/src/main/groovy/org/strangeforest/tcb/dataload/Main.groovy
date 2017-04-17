@@ -1,8 +1,13 @@
 package org.strangeforest.tcb.dataload
 
+import static org.strangeforest.tcb.dataload.LoadParams.*
+
 def cli = new CliBuilder(usage: 'data-load [commands]', header: 'Commands:')
-cli.c(args: 1, argName: 'DB connections', 'Number of database connections to allocate')
-cli.f(args: 1, argName: 'Full load', 'Full or delta load')
+cli.c(args: 1, argName: 'DB connections', 'Number of database connections to allocate [default 2]')
+cli.f('Full load [default]')
+cli.d('Delta load')
+cli.m('Use materialized views for computed data [default]')
+cli.t('Use tables for computed data')
 cli.cd('Create database objects')
 cli.dd('Drop database objects')
 cli.lp('Load additional player data')
@@ -14,18 +19,13 @@ cli.el('Compute Elo ratings')
 cli.rc('Refresh computed data')
 cli.rr('Refresh Records')
 cli.vc('Vacuum space')
+cli.cc('Clear caches')
 cli.help('Print this message')
 def options = cli.parse(args)
 
-if (options && (options.cd || options.dd || options.lp || options.la || options.nt || options.nr || options.ip || options.el || options.rc || options.rr || options.vc)) {
-	if (options.c) {
-		def dbConns = String.valueOf(options.getProperty('c')).trim()
-		System.setProperty(SqlPool.DB_CONNECTIONS_PROPERTY, dbConns)
-	}
-	if (options.f) {
-		def fullLoad = String.valueOf(options.getProperty('f')).trim()
-		System.setProperty('tcb.data.full-load', fullLoad)
-	}
+if (options && (options.cd || options.dd || options.lp || options.la || options.nt || options.nr || options.ip || options.el || options.rc || options.rr || options.vc || options.cc)) {
+	setProperties(options)
+	
 	if (options.cd)
 		callLoader('createDatabase')
 	if (options.dd)
@@ -50,9 +50,28 @@ if (options && (options.cd || options.dd || options.lp || options.la || options.
 		new RecordsLoader().loadRecords()
 	if (options.vc)
 		callLoader('vacuum')
+	if (options.cc)
+		new ClearCaches().run()
 }
 else
 	cli.usage()
+
+def setProperties(def options) {
+	if (options.c) {
+		def dbConns = String.valueOf(options.getProperty('c')).trim()
+		System.setProperty(SqlPool.DB_CONNECTIONS_PROPERTY, dbConns)
+	}
+	
+	if (options.f)
+		System.setProperty(FULL_LOAD_PROPERTY, 'true')
+	else if (options.d)
+		System.setProperty(FULL_LOAD_PROPERTY, 'false')
+
+	if (options.m)
+		System.setProperty(USE_MATERIALIZED_VIEWS_PROPERTY, 'true')
+	else if (options.t)
+		System.setProperty(USE_MATERIALIZED_VIEWS_PROPERTY, 'false')
+}
 
 static def callLoader(methodName) {
 	new SqlPool().withSql { sql ->

@@ -23,7 +23,7 @@ import static org.strangeforest.tcb.util.DateUtil.*;
 @Service
 public class RankingsService {
 
-	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
+	private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int HIGHEST_ELO_RATING_MAX_PLAYERS = 1000;
 	private static final int TOP_RANKS_FOR_TIMELINE = 5;
@@ -115,6 +115,12 @@ public class RankingsService {
 		"  FROM player_season_goat_points\n" +
 		"  WHERE season < date_part('year', current_date) OR date_part('month', current_date) >= 11\n" +
 		")\n";
+
+
+	@Autowired
+	public RankingsService(NamedParameterJdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
 
 	@Cacheable("RankingsTable.CurrentDate")
 	public LocalDate getCurrentRankingDate(RankType rankType) {

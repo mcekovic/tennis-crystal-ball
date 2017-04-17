@@ -1,32 +1,30 @@
 package org.strangeforest.tcb.stats.jobs;
 
-import java.util.*;
-
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.context.annotation.*;
 import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.service.*;
 
-import static java.util.Arrays.*;
+import static org.strangeforest.tcb.stats.jobs.DataLoadCommand.*;
 
 @Component
 @Profile("openshift")
-public class NewRankingsJob extends DataLoadJob {
+public class NewRankingsJob {
 
 	@Autowired private DataService dataService;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(NewRankingsJob.class);
+
 	@Scheduled(cron = "${tennis-stats.jobs.load-new-rankings:0 15 3 * * MON}")
 	public void loadNewRankings() {
-		execute();
+		if (dataLoad("NewRankings", "-nr", "-c 1") == 0)
+			clearCaches();
 	}
 
-	@Override protected Collection<String> params() {
-		return asList("-nr", "-c 1");
-	}
-
-	@Override protected String onSuccess() {
+	private void clearCaches() {
 		int cacheCount = dataService.clearCaches("Rankings.*");
-		return cacheCount + " cache(s) cleared.";
+		LOGGER.info("{} cache(s) cleared.", cacheCount);
 	}
 }

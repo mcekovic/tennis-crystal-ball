@@ -168,7 +168,8 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 
 	static tournamentUrl(boolean current, int season, String urlId, extId) {
 		def type = current ? 'current' : 'archive'
-		"http://www.atpworldtour.com/en/scores/$type/$urlId/$extId/$season/results"
+		def seasonUrl = current ? '' : '/' + season
+		"http://www.atpworldtour.com/en/scores/$type/$urlId/$extId$seasonUrl/results"
 	}
 
 	static matchStatsUrl(String url) {

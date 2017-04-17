@@ -2,12 +2,14 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
+import static org.strangeforest.tcb.dataload.LoadParams.*
+
 def sqlPool = new SqlPool()
 
 def eloRatings = new EloRatings(sqlPool)
-eloRatings.compute(true, System.getProperty('tcb.data.full-load', 'true').toBoolean())
+eloRatings.compute(true, System.getProperty(FULL_LOAD_PROPERTY, String.valueOf(FULL_LOAD_DEFAULT)).toBoolean())
 
-if (System.getProperty('tcb.data.show-elo', 'false').toBoolean()) {
+if (System.getProperty(VERBOSE_PROPERTY, String.valueOf(VERBOSE_DEFAULT)).toBoolean()) {
 	sqlPool.withSql { sql ->
 		showCurrent(eloRatings, sql)
 		showPeak(eloRatings, sql)
