@@ -12,7 +12,7 @@ import static org.strangeforest.tcb.dataload.XMLMatchLoader.*
 
 class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 
-	static final String SELECT_SEASON_EVENT_EXT_IDS_SQL =
+	static final String SELECT_SEASON_EVENT_EXT_IDS_SQL = //language=SQL
 		'SELECT ext_tournament_id FROM tournament_event\n' +
 		'INNER JOIN tournament_mapping USING (tournament_id)\n' +
 		'WHERE season = :season\n' +

@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.dataload
 
 import com.google.common.base.*
+import com.google.common.hash.*
 import groovy.sql.*
 import org.jsoup.*
 import org.jsoup.nodes.*
@@ -16,12 +17,17 @@ import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
 
 class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentLoader {
 
-	static final String LOAD_EVENT_SQL =
+	static final String LOAD_EVENT_SQL = //language=SQL
 		'{call load_in_progress_event(' +
 			':ext_tournament_id, :date, :name, :tournament_level, :surface, :indoor, :draw_type, :draw_size' +
 		')}'
 
-	static final String LOAD_MATCH_SQL =
+	static final String FETCH_EVENT_HASH_SQL = //language=SQL
+		'SELECT matches_hash FROM in_progress_event\n' +
+		'INNER JOIN tournament_mapping USING (tournament_id)\n' +
+		'WHERE ext_tournament_id = :extId'
+
+	static final String LOAD_MATCH_SQL = //language=SQL
 		'{call load_in_progress_match(' +
 			':ext_tournament_id, :match_num, :prev_match_num1, :prev_match_num2, :date, :surface, :indoor, :round, :best_of, ' +
 			':player1_name, :player1_country_id, :player1_seed, :player1_entry, ' +
@@ -29,28 +35,32 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			':winner, :score, :outcome, :player1_games, :player1_tb_pt, :player2_games, :player2_tb_pt' +
 		')}'
 
-	static final String FETCH_MATCHES_SQL =
+	static final String UPDATE_EVENT_HASH_SQL = //language=SQL
+		'UPDATE in_progress_event SET matches_hash = :matchesHash\n' +
+		'WHERE tournament_id = (SELECT tournament_id FROM tournament_mapping WHERE ext_tournament_id = :extId)'
+
+	static final String FETCH_MATCHES_SQL = //language=SQL
 		'SELECT m.*, e.level, e.draw_type FROM in_progress_match m\n' +
 		'INNER JOIN in_progress_event e USING (in_progress_event_id)\n' +
 		'INNER JOIN tournament_mapping tm USING (tournament_id)\n' +
 		'WHERE tm.ext_tournament_id = :extId\n' +
 		'ORDER BY in_progress_event_id, round, match_num'
 
-	static final String LOAD_PLAYER_RESULT_SQL =
+	static final String LOAD_PLAYER_RESULT_SQL = //language=SQL
 		'{call load_player_in_progress_result(' +
 			':in_progress_event_id, :player_id, :base_result, :result, :probability' +
 		')}'
 
-	static final String DELETE_PLAYER_PROGRESS_RESULTS_SQL =
+	static final String DELETE_PLAYER_PROGRESS_RESULTS_SQL = //language=SQL
 		'DELETE FROM player_in_progress_result\n' +
 		'WHERE in_progress_event_id = :inProgressEventId'
 
-	static final String SELECT_EVENT_EXT_IDS_SQL =
+	static final String SELECT_EVENT_EXT_IDS_SQL = //language=SQL
 		'SELECT ext_tournament_id FROM in_progress_event\n' +
 		'INNER JOIN tournament_mapping USING (tournament_id)\n' +
 		'ORDER BY ext_tournament_id'
 
-	static final String DELETE_EVENT_SQL =
+	static final String DELETE_EVENT_SQL = //language=SQL
 		'DELETE FROM in_progress_event\n' +
 		'WHERE tournament_id = (SELECT tournament_id FROM tournament_mapping WHERE ext_tournament_id = :extId)'
 
@@ -225,13 +235,22 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			prevMatchNumOffset = matchNumOffset
 		}
 
-		sql.withBatch(LOAD_MATCH_SQL) { ps ->
-			matches.values().each { match ->
-				ps.addBatch(match)
+		def matchesHash = Hashing.murmur3_128().newHasher().putString(matches.toString(), Charsets.UTF_8).hash().toString()
+		def oldMatchesHash = sql.firstRow([extId: string(extId)], FETCH_EVENT_HASH_SQL).matches_hash
+		if (matchesHash != oldMatchesHash) {
+			sql.withBatch(LOAD_MATCH_SQL) { ps ->
+				matches.values().each { match ->
+					ps.addBatch(match)
+				}
 			}
+			sql.executeUpdate([extId: string(extId), matchesHash: matchesHash], UPDATE_EVENT_HASH_SQL)
+			println "${matches.size()} matches loaded in $stopwatch"
+			matches.size()
 		}
-		println "${matches.size()} matches loaded in $stopwatch"
-		matches.size()
+		else {
+			println 'Matches not changed'
+			0
+		}
 	}
 
 	static extractEntryPlayer(Element entryMatch, int index) {
