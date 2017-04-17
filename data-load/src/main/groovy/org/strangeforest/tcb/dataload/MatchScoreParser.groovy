@@ -4,10 +4,10 @@ import static java.lang.Integer.*
 
 class MatchScoreParser {
 
-	static MatchScore parse(String match) {
-		if (!match)
+	static MatchScore parse(String score) {
+		if (!score)
 			return null
-		List sets = match.tokenize(' ')
+		List sets = score.tokenize(' ')
 		short w_sets = 0, l_sets = 0
 		short w_games = 0, l_games = 0
 		List setScores = new ArrayList(sets.size())

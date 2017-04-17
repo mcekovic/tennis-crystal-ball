@@ -1,5 +1,8 @@
 package org.strangeforest.tcb.dataload
 
+import groovy.transform.*
+
+@EqualsAndHashCode
 class MatchScore {
 
 	short w_sets, l_sets
@@ -33,26 +36,18 @@ class MatchScore {
 		null
 	}
 
-	boolean equals(Object o) {
-		if (!(o instanceof MatchScore)) false
-		MatchScore score = (MatchScore)o
-		w_sets == score.w_sets && l_sets == score.l_sets && w_games == score.w_games && l_games == score.l_games	&& outcome == score.outcome && setScores == score.setScores
-	}
-
-	int hashCode() {
-		Objects.hash(w_sets, l_sets, w_games, l_games, outcome, setScores)
-	}
-
 	String toString() {
-		StringBuilder sb = new StringBuilder("MatchScore{")
-		sb.append("w_sets=").append(w_sets)
-		sb.append(", l_sets=").append(l_sets)
-		sb.append(", w_games=").append(w_games)
-		sb.append(", l_games=").append(l_games)
-		sb.append(", setScores=").append(setScores)
-		if (outcome != null)
-			sb.append(", outcome='").append(outcome).append('\'')
-		sb.append('}')
+		StringBuilder sb = new StringBuilder(48)
+		setScores.eachWithIndex { set, index ->
+			if (index > 0)
+				sb.append(' ')
+			sb.append(set)
+		}
+		if (outcome) {
+			if (sb.length() > 0)
+				sb.append(' ')
+			sb.append(outcome)
+		}
 		sb.toString()
 	}
 }

@@ -273,7 +273,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 					params.player2_tb_pt = shortArray(conn, matchScore.w_set_tb_pt)
 				}
 			}
-			params.score = string score
+			params.score = matchScore?.toString()
 			params.outcome = matchScore?.outcome
 		}
 	}

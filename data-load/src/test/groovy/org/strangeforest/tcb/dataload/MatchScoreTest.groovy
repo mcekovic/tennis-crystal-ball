@@ -17,6 +17,7 @@ class MatchScoreTest {
 		assert score.setScores[0] == new SetScore(w_games: 6, l_games: 3)
 		assert score.setScores[1] == new SetScore(w_games: 0, l_games: 6)
 		assert score.setScores[2] == new SetScore(w_games: 7, l_games: 5)
+		assert score.toString() == '6-3 0-6 7-5'
 	}
 
 	@Test
@@ -34,6 +35,7 @@ class MatchScoreTest {
 		assert score.setScores[2] == new SetScore(w_games: 6, l_games: 0)
 		assert score.setScores[3] == new SetScore(w_games: 5, l_games: 7)
 		assert score.setScores[4] == new SetScore(w_games: 12, l_games: 10)
+		assert score.toString() == '2-6 6-1 6-0 5-7 12-10'
 	}
 
 	@Test
@@ -49,6 +51,7 @@ class MatchScoreTest {
 		assert score.setScores[0] == new SetScore(w_games: 7, l_games: 6, w_tb_pt: 7, l_tb_pt: 4)
 		assert score.setScores[1] == new SetScore(w_games: 6, l_games: 7, w_tb_pt: 0, l_tb_pt: 7)
 		assert score.setScores[2] == new SetScore(w_games: 7, l_games: 6, w_tb_pt: 14, l_tb_pt: 12)
+		assert score.toString() == '7-6(4) 6-7(0) 7-6(12)'
 	}
 
 	@Test
@@ -61,6 +64,7 @@ class MatchScoreTest {
 		assert score.w_games == 0
 		assert score.l_games == 0
 		assert score.setScores.isEmpty()
+		assert score.toString() == 'W/O'
 	}
 
 	@Test
@@ -73,6 +77,20 @@ class MatchScoreTest {
 		assert score.w_games == 0
 		assert score.l_games == 0
 		assert score.setScores.isEmpty()
+		assert score.toString() == 'W/O'
+	}
+
+	@Test
+	void "Test walk-over 3"() {
+		MatchScore score = MatchScoreParser.parse('(W/O)')
+
+		assert score.outcome == 'W/O'
+		assert score.w_sets == 0
+		assert score.l_sets == 0
+		assert score.w_games == 0
+		assert score.l_games == 0
+		assert score.setScores.isEmpty()
+		assert score.toString() == 'W/O'
 	}
 
 	@Test
@@ -87,11 +105,12 @@ class MatchScoreTest {
 		assert score.setScores.size() == 2
 		assert score.setScores[0] == new SetScore(w_games: 6, l_games: 4)
 		assert score.setScores[1] == new SetScore(w_games: 3, l_games: 0)
+		assert score.toString() == '6-4 3-0 RET'
 	}
 
 	@Test
 	void "Test retired 2"() {
-		MatchScore score = MatchScoreParser.parse('6-6 RET')
+		MatchScore score = MatchScoreParser.parse('6-6 (RET)')
 
 		assert score.outcome == 'RET'
 		assert score.w_sets == 0
@@ -100,5 +119,6 @@ class MatchScoreTest {
 		assert score.l_games == 6
 		assert score.setScores.size() == 1
 		assert score.setScores[0] == new SetScore(w_games: 6, l_games: 6)
+		assert score.toString() == '6-6 RET'
 	}
 }

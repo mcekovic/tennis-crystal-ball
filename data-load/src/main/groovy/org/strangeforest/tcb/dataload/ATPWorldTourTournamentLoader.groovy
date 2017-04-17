@@ -97,7 +97,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 					params.loser_seed = lIsSeed ? smallint(lSeedEntry) : null
 					params.loser_entry = !lIsSeed ? mapEntry(string(lSeedEntry)) : null
 
-					params.score = string score
+					params.score = matchScore?.toString()
 					setScoreParams(params, matchScore)
 					params.statsUrl = matchStatsUrl(scoreElem.attr('href'))
 
@@ -120,8 +120,8 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 				def lStats = matchStats.opponentStats
 
 				params.minutes = minutes wStats.Time
-				setStatsParams(params, wStats, 'w_')
-				setStatsParams(params, lStats, 'l_')
+				setATPStatsParams(params, wStats, 'w_')
+				setATPStatsParams(params, lStats, 'l_')
 				print '.'
 			}
 			if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
@@ -152,7 +152,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		}
 	}
 
-	static setStatsParams(Map params, stats, prefix) {
+	static setATPStatsParams(Map params, stats, String prefix) {
 		if (!stats)
 			return
 		params[prefix + 'ace'] = smallint stats.Aces

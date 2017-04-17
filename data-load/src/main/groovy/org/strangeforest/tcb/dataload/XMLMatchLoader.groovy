@@ -2,6 +2,8 @@ package org.strangeforest.tcb.dataload
 
 import groovy.sql.*
 
+import java.sql.*
+
 class XMLMatchLoader extends BaseXMLLoader {
 
 	static final String LOAD_SQL =
@@ -97,11 +99,11 @@ class XMLMatchLoader extends BaseXMLLoader {
 		params
 	}
 
-	static Map scoreParams(match, conn) {
+	static Map scoreParams(match, Connection conn) {
 		def params = [:]
 		def score = string match.@score
 		def matchScore = MatchScoreParser.parse(score)
-		params.score = string score
+		params.score = matchScore?.toString()
 		def outcome = string(match.@outcome)
 		params.outcome = outcome ?: matchScore.outcome
 		params.w_sets = matchScore?.w_sets
@@ -123,15 +125,17 @@ class XMLMatchLoader extends BaseXMLLoader {
 		return params
 	}
 
-	static setStatsParams(Map params, stats, prefix) {
-		params[prefix + 'ace'] = smallint stats?.ace
-		params[prefix + 'df'] = smallint stats?.df
-		params[prefix + 'sv_pt'] = smallint stats?.'sv-pt'
-		params[prefix + '1st_in'] = smallint stats?.'fst-in'
-		params[prefix + '1st_won'] = smallint stats?.'fst-won'
-		params[prefix + '2nd_won'] = smallint stats?.'snd-won'
-		params[prefix + 'sv_gms'] = smallint stats?.'sv-gms'
-		params[prefix + 'bp_sv'] = smallint stats?.'bp-sv'
-		params[prefix + 'bp_fc'] = smallint stats?.'bp-fc'
+	static setStatsParams(Map params, stats, String prefix) {
+		if (!stats)
+			return
+		params[prefix + 'ace'] = smallint stats.ace
+		params[prefix + 'df'] = smallint stats.df
+		params[prefix + 'sv_pt'] = smallint stats.'sv-pt'
+		params[prefix + '1st_in'] = smallint stats.'fst-in'
+		params[prefix + '1st_won'] = smallint stats.'fst-won'
+		params[prefix + '2nd_won'] = smallint stats.'snd-won'
+		params[prefix + 'sv_gms'] = smallint stats.'sv-gms'
+		params[prefix + 'bp_sv'] = smallint stats.'bp-sv'
+		params[prefix + 'bp_fc'] = smallint stats.'bp-fc'
 	}
 }

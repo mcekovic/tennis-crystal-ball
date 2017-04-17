@@ -90,7 +90,7 @@ class MatchLoader extends BaseCSVLoader {
 
 		def score = record.score.trim()
 		def matchScore = MatchScoreParser.parse(score)
-		params.score = string score
+		params.score = matchScore?.toString()
 		params.outcome = matchScore?.outcome
 		params.w_sets = matchScore?.w_sets
 		params.l_sets = matchScore?.l_sets
