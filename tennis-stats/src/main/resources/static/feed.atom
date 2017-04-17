@@ -4,7 +4,25 @@
 	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for die-hard tennis fans</subtitle>
 	<link href="http://tennis-strangeforest.rhcloud.com/feed.atom" rel="self"/>
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
-	<updated>2017-01-02T12:00:01Z</updated>
+	<updated>2017-04-17T12:00:01Z</updated>
+	<entry>
+		<title>New Feature - Tournament Forecasts</title>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/inProgressEventsForecasts"/>
+		<id>urn:uuid:f2a6fd96-2393-11e7-93ae-92361f002671</id>
+		<updated>2017-04-17T12:00:00Z</updated>
+		<summary>Tournament Forecasts - Tournament Event Forecasts based on the Neural Network Match Prediction Algorithm</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Tournament Forecasts - Tournament Event Forecasts based on the Neural Network Match Prediction Algorithm with ~50 neurons for different features about players like Elo Rating, Surface Elo Rating, ATP Ranking, ATP Points,
+					Head-to-Head ratios and Winning Percentages varied by surface, tournament level, round, recency, match or set ratios, vs rank, vs hand, vs backhand...<br/>
+					Neural Network is trained on historical data for highest prediction rates to determine optimal feature weights.</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 	<entry>
 		<title>New Feature - Head-to-Head Charts</title>
 		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/headToHead"/>
