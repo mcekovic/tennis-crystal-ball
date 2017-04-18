@@ -21,7 +21,7 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	private static final LocalDate FROM_DATE = LocalDate.of(2005, 1, 1);
 	private static final LocalDate TO_DATE = LocalDate.now();
-	private static final Function<PredictionResult, Double> METRICS = PredictionResult::getProfit;
+	private static final Function<PredictionResult, Double> METRICS = PredictionResult::getPredictablePredictionRate;
 
 	@Test
 	public void tunePredictionByArea() throws InterruptedException {

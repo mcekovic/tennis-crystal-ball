@@ -40,7 +40,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		'WHERE tournament_id = (SELECT tournament_id FROM tournament_mapping WHERE ext_tournament_id = :extId)'
 
 	static final String FETCH_MATCHES_SQL = //language=SQL
-		'SELECT m.*, e.level, e.draw_type FROM in_progress_match m\n' +
+		'SELECT m.*, e.tournament_id, e.level, e.draw_type FROM in_progress_match m\n' +
 		'INNER JOIN in_progress_event e USING (in_progress_event_id)\n' +
 		'INNER JOIN tournament_mapping tm USING (tournament_id)\n' +
 		'WHERE tm.ext_tournament_id = :extId\n' +
@@ -321,15 +321,16 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 		def firstMatch = matches[0]
 		def inProgressEventId = firstMatch.in_progress_event_id
-		def level = TournamentLevel.decode(firstMatch.level)
-		def surface = Surface.decode(firstMatch.surface)
 		def date = firstMatch.date
+		def surface = Surface.decode(firstMatch.surface)
+		def level = TournamentLevel.decode(firstMatch.level)
+		def tournamentId = firstMatch.tournament_id
 		def bestOf = firstMatch.best_of
 		def drawType = firstMatch.draw_type
 		def entryResult = KOResult.valueOf(matches[0].round)
 
 		MatchPredictionService predictionService = new MatchPredictionService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
-		TournamentMatchPredictor predictor = new TournamentMatchPredictor(predictionService, level, surface, date, bestOf)
+		TournamentMatchPredictor predictor = new TournamentMatchPredictor(predictionService, date, surface, level, tournamentId, bestOf)
 
 		def resultCount = 0
 		def tournamentSimulator

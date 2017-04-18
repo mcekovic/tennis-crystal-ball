@@ -16,14 +16,16 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 	private final Date date;
 	private final Surface surface;
 	private final TournamentLevel level;
+	private final Integer tournamentId;
 	private final Round round;
 	private final short bestOf;
 
-	public VsQualifierMatchPredictor(List<MatchData> matchData, Date date, Surface surface, TournamentLevel level, Round round, short bestOf) {
+	public VsQualifierMatchPredictor(List<MatchData> matchData, Date date, Surface surface, TournamentLevel level, Integer tournamentId, Round round, short bestOf) {
 		this.matchData = matchData;
 		this.date = date;
 		this.surface = surface;
 		this.level = level;
+		this.tournamentId = tournamentId;
 		this.round = round;
 		this.bestOf = bestOf;
 	}
@@ -37,6 +39,7 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 		addItemProbabilities(prediction, MATCH, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
+		addItemProbabilities(prediction, TOURNAMENT, isTournament(tournamentId));
 		addItemProbabilities(prediction, ROUND, isRound(round));
 		addItemProbabilities(prediction, RECENT, isRecent(date, getMatchRecentPeriod()));
 		addItemProbabilities(prediction, SURFACE_RECENT, isSurface(surface).and(isRecent(date, getMatchRecentPeriod())));
@@ -45,6 +48,7 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 		addItemProbabilities(prediction, SET, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE_SET, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL_SET, isLevel(level));
+		addItemProbabilities(prediction, TOURNAMENT_SET, isTournament(tournamentId));
 		addItemProbabilities(prediction, ROUND_SET, isRound(round));
 		addItemProbabilities(prediction, RECENT_SET, isRecent(date, getSetRecentPeriod()));
 		addItemProbabilities(prediction, SURFACE_RECENT_SET, isSurface(surface).and(isRecent(date, getSetRecentPeriod())));

@@ -41,7 +41,7 @@ public class MatchPredictionService {
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_MATCHES_QUERY =
-		"SELECT m.date, m.level, m.surface, m.round, m.opponent_id, m.opponent_rank, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
+		"SELECT m.date, m.level, m.surface, m.tournament_id, m.round, m.opponent_id, m.opponent_rank, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
 		"FROM player_match_for_stats_v m\n" +
 		"LEFT JOIN player p ON p.player_id = m.opponent_id\n" +
 		"WHERE m.player_id = :playerId\n" +
@@ -54,18 +54,18 @@ public class MatchPredictionService {
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date, Surface surface, TournamentLevel level, Round round) {
-		return predictMatch(playerId1, playerId2, date, surface, level, round, null);
+		return predictMatch(playerId1, playerId2, date, date, surface, level, null, round, null);
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date, Surface surface, TournamentLevel level, Round round, Short bestOf) {
-		return predictMatch(playerId1, playerId2, date, date, surface, level, round, bestOf);
+	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date, Surface surface, TournamentLevel level, int tournamentId, Round round, Short bestOf) {
+		return predictMatch(playerId1, playerId2, date, date, surface, level, tournamentId, round, bestOf);
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date1, Date date2, Surface surface, TournamentLevel level, Round round) {
-		return predictMatch(playerId1, playerId2, date1, date2, surface, level, round, null);
+		return predictMatch(playerId1, playerId2, date1, date2, surface, level, null, round, null);
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date1, Date date2, Surface surface, TournamentLevel level, Round round, Short bestOf) {
+	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date1, Date date2, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
 		PlayerData playerData1 = getPlayerData(playerId1);
 		PlayerData playerData2 = getPlayerData(playerId2);
 		RankingData rankingData1 = getRankingData(playerId1, date1, surface);
@@ -75,18 +75,18 @@ public class MatchPredictionService {
 		short bstOf = defaultBestOf(level, bestOf);
 		MatchPrediction prediction = predictMatch(asList(
 			new RankingMatchPredictor(rankingData1, rankingData2),
-			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date1, date2, surface, level, round, bstOf),
-			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, bstOf)
+			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date1, date2, surface, level, tournamentId, round, bstOf),
+			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, tournamentId, bstOf)
 		));
 		prediction.setRankingData1(rankingData1);
 		prediction.setRankingData2(rankingData2);
 		return prediction;
 	}
 
-	public MatchPrediction predictMatchVsQualifier(int playerId, Date date, Surface surface, TournamentLevel level, Round round, Short bestOf) {
+	public MatchPrediction predictMatchVsQualifier(int playerId, Date date, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
 		List<MatchData> matchData = getMatchData(playerId, date);
 		short bstOf = defaultBestOf(level, bestOf);
-		return new VsQualifierMatchPredictor(matchData, date, surface, level, round, bstOf).predictMatch();
+		return new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bstOf).predictMatch();
 	}
 
 	private short defaultBestOf(TournamentLevel level, Short bestOf) {
@@ -180,6 +180,7 @@ public class MatchPredictionService {
 			rs.getDate("date"),
 			rs.getString("level"),
 			rs.getString("surface"),
+			rs.getInt("tournament_id"),
 			rs.getString("round"),
 			rs.getInt("opponent_id"),
 			getInteger(rs, "opponent_rank"),

@@ -28,8 +28,16 @@ public class PredictionResult {
 		return predictionRate;
 	}
 
+	public double getPredictablePredictionRate() {
+		return predictablePct * predictionRate;
+	}
+
 	public double getProfit() {
 		return profit;
+	}
+
+	public double getPredictionProfit() {
+		return predictablePct * profit;
 	}
 
 	public Properties getConfig() {

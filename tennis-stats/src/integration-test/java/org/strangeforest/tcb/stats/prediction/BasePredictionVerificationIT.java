@@ -26,7 +26,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired private MatchPredictionService predictionService;
 
-	private static final double MIN_PREDICTABILITY = 0.25;
+	private static final double MIN_PREDICTABILITY = 0.0;
 	private static final String PRICE_SOURCE = "B365";
 	private static final boolean BET_ON_OUTSIDER = false;
 	private static final boolean KELLY_STAKE = true;
@@ -36,7 +36,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	private static final int PROGRESS_LINE_WRAP = 100;
 
 	private static final String MATCHES_QUERY = //language=SQL
-		"SELECT m.winner_id, m.loser_id, m.date, m.level, m.surface, m.round, m.best_of, p.winner_price, p.loser_price\n" +
+		"SELECT m.winner_id, m.loser_id, m.date, m.level, m.surface, m.tournament_id, m.round, m.best_of, p.winner_price, p.loser_price\n" +
 		"FROM match_for_stats_v m\n" +
 		"LEFT JOIN match_price p ON p.match_id = m.match_id AND source = :source\n" +
 		"WHERE m.date BETWEEN :date1 AND :date2\n" +
@@ -57,7 +57,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		AtomicInteger ticks = new AtomicInteger();
 		for (MatchForVerification match : matches(fromDate, toDate)) {
 			executor.execute(() -> {
-				MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.surface, match.level, match.round, match.best_of);
+				MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.surface, match.level, match.tournamentId, match.round, match.best_of);
 				if (prediction.getPredictability1() > MIN_PREDICTABILITY) {
 					predicted.incrementAndGet();
 					double winnerProbability = prediction.getWinProbability1();
@@ -130,6 +130,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 			rs.getDate("date"),
 			rs.getString("level"),
 			rs.getString("surface"),
+			rs.getInt("tournament_id"),
 			rs.getString("round"),
 			rs.getShort("best_of"),
 			getDouble(rs,"winner_price"),

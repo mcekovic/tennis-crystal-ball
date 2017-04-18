@@ -57,6 +57,10 @@ public abstract class MatchDataUtil {
 		return match -> nonNullEquals(match.getLevel(), safeEncode(level));
 	}
 
+	public static Predicate<MatchData> isTournament(Integer tournamentId) {
+		return match -> nonNullEquals(match.getTournamentId(), tournamentId);
+	}
+
 	public static Predicate<MatchData> isRound(Round round) {
 		return match -> nonNullEquals(match.getRound(), safeEncode(round));
 	}

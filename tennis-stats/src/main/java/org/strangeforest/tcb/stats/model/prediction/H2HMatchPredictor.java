@@ -19,6 +19,7 @@ public class H2HMatchPredictor implements MatchPredictor {
 	private final Date date2;
 	private final Surface surface;
 	private final TournamentLevel level;
+	private final Integer tournamentId;
 	private final Round round;
 	private final short bestOf;
 
@@ -26,7 +27,7 @@ public class H2HMatchPredictor implements MatchPredictor {
 	static final int SET_RECENT_PERIOD_YEARS = 2;
 
 	public H2HMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, int playerId1, int playerId2, Date date1, Date date2,
-	                         Surface surface, TournamentLevel level, Round round, short bestOf) {
+	                         Surface surface, TournamentLevel level, Integer tournamentId,  Round round, short bestOf) {
 		this.matchData1 = matchData1;
 		this.matchData2 = matchData2;
 		this.playerId1 = playerId1;
@@ -35,6 +36,7 @@ public class H2HMatchPredictor implements MatchPredictor {
 		this.date2 = date2;
 		this.surface = surface;
 		this.level = level;
+		this.tournamentId = tournamentId;
 		this.round = round;
 		this.bestOf = bestOf;
 	}
@@ -44,23 +46,27 @@ public class H2HMatchPredictor implements MatchPredictor {
 	}
 
 	@Override public MatchPrediction predictMatch() {
+		Period matchRecentPeriod = getMatchRecentPeriod();
+		Period setRecentPeriod = getSetRecentPeriod();
 		MatchPrediction prediction = new MatchPrediction();
 		addItemProbabilities(prediction, MATCH, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
+		addItemProbabilities(prediction, TOURNAMENT, isTournament(tournamentId));
 		addItemProbabilities(prediction, ROUND, isRound(round));
-		addItemProbabilities(prediction, RECENT, isRecent(date1, getMatchRecentPeriod()), isRecent(date2, getMatchRecentPeriod()));
-		addItemProbabilities(prediction, SURFACE_RECENT, isSurface(surface).and(isRecent(date1, getMatchRecentPeriod())), isSurface(surface).and(isRecent(date2, getMatchRecentPeriod())));
-		addItemProbabilities(prediction, LEVEL_RECENT, isLevel(level).and(isRecent(date1, getMatchRecentPeriod())), isLevel(level).and(isRecent(date2, getMatchRecentPeriod())));
-		addItemProbabilities(prediction, ROUND_RECENT, isRound(round).and(isRecent(date1, getMatchRecentPeriod())), isRound(round).and(isRecent(date2, getMatchRecentPeriod())));
+		addItemProbabilities(prediction, RECENT, isRecent(date1, matchRecentPeriod), isRecent(date2, matchRecentPeriod));
+		addItemProbabilities(prediction, SURFACE_RECENT, isSurface(surface).and(isRecent(date1, matchRecentPeriod)), isSurface(surface).and(isRecent(date2, matchRecentPeriod)));
+		addItemProbabilities(prediction, LEVEL_RECENT, isLevel(level).and(isRecent(date1, matchRecentPeriod)), isLevel(level).and(isRecent(date2, matchRecentPeriod)));
+		addItemProbabilities(prediction, ROUND_RECENT, isRound(round).and(isRecent(date1, matchRecentPeriod)), isRound(round).and(isRecent(date2, matchRecentPeriod)));
 		addItemProbabilities(prediction, SET, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE_SET, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL_SET, isLevel(level));
+		addItemProbabilities(prediction, TOURNAMENT_SET, isTournament(tournamentId));
 		addItemProbabilities(prediction, ROUND_SET, isRound(round));
-		addItemProbabilities(prediction, RECENT_SET, isRecent(date1, getSetRecentPeriod()), isRecent(date2, getSetRecentPeriod()));
-		addItemProbabilities(prediction, SURFACE_RECENT_SET, isSurface(surface).and(isRecent(date1, getSetRecentPeriod())), isSurface(surface).and(isRecent(date2, getSetRecentPeriod())));
-		addItemProbabilities(prediction, LEVEL_RECENT_SET, isLevel(level).and(isRecent(date1, getSetRecentPeriod())), isLevel(level).and(isRecent(date2, getSetRecentPeriod())));
-		addItemProbabilities(prediction, ROUND_RECENT_SET, isRound(round).and(isRecent(date1, getSetRecentPeriod())), isRound(round).and(isRecent(date2, getSetRecentPeriod())));
+		addItemProbabilities(prediction, RECENT_SET, isRecent(date1, setRecentPeriod), isRecent(date2, setRecentPeriod));
+		addItemProbabilities(prediction, SURFACE_RECENT_SET, isSurface(surface).and(isRecent(date1, setRecentPeriod)), isSurface(surface).and(isRecent(date2, setRecentPeriod)));
+		addItemProbabilities(prediction, LEVEL_RECENT_SET, isLevel(level).and(isRecent(date1, setRecentPeriod)), isLevel(level).and(isRecent(date2, setRecentPeriod)));
+		addItemProbabilities(prediction, ROUND_RECENT_SET, isRound(round).and(isRecent(date1, setRecentPeriod)), isRound(round).and(isRecent(date2, setRecentPeriod)));
 		return prediction;
 	}
 

@@ -19,13 +19,13 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 		verifyPrediction(FROM_DATE, TO_DATE);
 	}
 
-	@Test
+	@Test(dependsOnMethods = "verifyDefaultPrediction")
 	public void allAreasAllItemsPredictions() throws InterruptedException {
 		setWeights(1.0);
 		verifyPrediction(FROM_DATE, TO_DATE);
 	}
 
-	@Test
+	@Test(dependsOnMethods = "verifyDefaultPrediction")
 	public void singleAreaAllItemsPredictions() throws InterruptedException {
 		for (PredictionArea area : PredictionArea.values()) {
 			setWeights(0.0);
@@ -34,7 +34,7 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 		}
 	}
 
-	@Test
+	@Test(dependsOnMethods = "verifyDefaultPrediction")
 	public void singleItemPredictions() throws InterruptedException {
 		for (PredictionArea area : PredictionArea.values()) {
 			for (PredictionItem item : area.getItems()) {
