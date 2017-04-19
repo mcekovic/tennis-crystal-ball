@@ -46,7 +46,7 @@
 			<tr th:each="point : ${tournamentGOATPoints}">
 				<td><span th:data-level="${point.level}" data-level="G" class="label level"></span></td>
 				<td class="text-center"><span th:class="'label black bg-result-' + ${point.result}" class="label black" th:text="${point.result}">W</span></td>
-				<td class="text-center" th:text="${(point.additive ? '+' : '') + point.goatPoints}">8</td>
+				<td class="text-center" th:text="${(point.additive ? '+' : '') + point.goatPoints + (point.level == 'F' && !point.additive ? '*' : '')}">8</td>
 			</tr>
 			</tbody>
 		</table>
