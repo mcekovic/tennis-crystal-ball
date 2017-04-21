@@ -528,7 +528,7 @@ DECLARE
 	l_tournament_id INTEGER;
 	l_in_progress_event_id INTEGER;
 BEGIN
-	l_tournament_id := map_ext_tournament(p_ext_tournament_id);
+	l_tournament_id := merge_tournament(p_ext_tournament_id, p_name, p_level, p_surface, p_indoor);
 	UPDATE in_progress_event
 	SET date = p_date, name = p_name, level = p_level::tournament_level, surface = p_surface::surface, indoor = p_indoor, draw_type = p_draw_type::draw_type, draw_size = p_draw_size
 	WHERE tournament_id = l_tournament_id
