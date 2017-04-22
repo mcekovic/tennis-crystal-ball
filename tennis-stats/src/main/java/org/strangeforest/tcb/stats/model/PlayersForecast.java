@@ -42,11 +42,11 @@ public class PlayersForecast {
 	}
 
 	public double getStrength(int fromIndex, int count) {
-		return playerForecasts.values().stream().skip(fromIndex).limit(count).mapToDouble(PlayerForecast::getWinProbability).sum();
+		return playerForecasts.values().stream().skip(fromIndex).limit(count).mapToDouble(PlayerForecast::winProbability).sum();
 	}
 
 	public List<MatchPlayerEx> getKnownPlayers(String result) {
-		return playerForecasts.values().stream().filter(player -> player.getId() > 0 && player.getProbability(result) > 0.0)
+		return playerForecasts.values().stream().filter(player -> player.getId() > 0 && player.probability(result) > 0.0)
 			.sorted(comparing(MatchPlayerEx::getSeed, nullsLast(naturalOrder())).thenComparing(MatchPlayerEx::getName, nullsLast(naturalOrder())))
 			.collect(toList());
 	}
@@ -81,8 +81,8 @@ public class PlayersForecast {
 
 	private boolean isPastRound(String result) {
 		for (PlayerForecast playerForecast : getPlayerForecasts()) {
-			Double probability = playerForecast.getProbability(result);
-			if (probability != null && probability > 0.0 && probability < PCT)
+			double probability = playerForecast.probability(result);
+			if (probability > 0.0 && probability < PCT)
 				return false;
 		}
 		return true;

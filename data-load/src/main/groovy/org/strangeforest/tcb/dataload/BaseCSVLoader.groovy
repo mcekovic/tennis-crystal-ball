@@ -66,6 +66,8 @@ abstract class BaseCSVLoader {
 			def executor = Executors.newFixedThreadPool(Math.min(sqlPool.size(), threadCount()))
 			def paramsConn = sql.connection
 			for (record in data) {
+				if (record.values.size() <= 1)
+					continue
 				def params = params(record, paramsConn)
 				if (params) {
 					paramsBatch << params

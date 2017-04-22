@@ -271,6 +271,6 @@ public class TournamentForecastService {
 			return player1;
 		if (player1.getId() < 0 || Objects.equals(player2.getId(), pinnedPlayerId))
 			return player2;
-		return player1.getProbability(round) >= player2.getProbability(round) ? player1 : player2;
+		return player1.probability(round) >= player2.probability(round) ? player1 : player2;
 	}
 }

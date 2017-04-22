@@ -29,7 +29,7 @@ class ATPTennisLoader {
 		load {
 			def rows = 0
 			if (full) {
-				for (decade in ['70s', '80s', '90s', '00s-mc', '10s-mc'])
+				for (decade in ['70s', '80s', '90s', '00s', '10s'])
 					rows += loader.loadFile(baseDir() + "atp_rankings_${decade}.csv")
 			}
 			rows += loader.loadFile(baseDir() + "atp_rankings_current.csv")
@@ -92,16 +92,16 @@ class ATPTennisLoader {
 			loadAdditionalData(new AdditionalPlayerDataLoader(sql), 'player', 'classpath:/player-data.xml')
 
 			println 'Adding player aliases and missing players...'
-			executeSQLFile(sql, 'src/main/db/player-aliases-missing-players.sql')
+			executeSQLFile(sql, '/player-aliases-missing-players.sql')
 		}
 	}
 
 	def loadAdditionalRankingData(Sql sql) {
 		if (full) {
 			println 'Loading missing rankings...'
-			executeSQLFile(sql, 'src/main/db/missing-atp-rankings.sql')
+			executeSQLFile(sql, '/missing-atp-rankings.sql')
 			println 'Loading pre-ATP rankings...'
-			executeSQLFile(sql, 'src/main/db/rankings-pre-atp.sql')
+			executeSQLFile(sql, '/rankings-pre-atp.sql')
 		}
 	}
 
@@ -217,22 +217,22 @@ class ATPTennisLoader {
 		if (full) {
 			def stopwatch = Stopwatch.createStarted()
 			println 'Correcting data (full)...'
-			executeSQLFile(sql, 'src/main/db/correct-data-full.sql')
+			executeSQLFile(sql, '/correct-data-full.sql')
 			println "Correcting data (full) finished in $stopwatch"
 
 			println 'Updating tournament event surfaces...'
-			executeSQLFile(sql, 'src/main/db/tournament-event-surfaces.sql')
+			executeSQLFile(sql, '/tournament-event-surfaces.sql')
 
 			println 'Loading team tournament winners...'
-			executeSQLFile(sql, 'src/main/db/team-tournament-winners.sql')
+			executeSQLFile(sql, '/team-tournament-winners.sql')
 		}
 		def stopwatch = Stopwatch.createStarted()
 		println 'Correcting data (delta)...'
-		executeSQLFile(sql, 'src/main/db/correct-data-delta.sql')
+		executeSQLFile(sql, '/correct-data-delta.sql')
 		println "Correcting data (delta) finished in $stopwatch\n"
 
 		println 'Updating tournament event map properties...'
-		executeSQLFile(sql, 'src/main/db/tournament-map-properties.sql')
+		executeSQLFile(sql, '/tournament-map-properties.sql')
 	}
 
 	def refreshMaterializedViews(Sql sql) {
@@ -288,25 +288,25 @@ class ATPTennisLoader {
 		def stopwatch = Stopwatch.createStarted()
 
 		println 'Creating types...'
-		executeSQLFile(sql, '../crystal-ball/src/main/db/create-types.sql')
+		executeSQLFile(sql, '/create-types.sql')
 
 		println 'Creating tables...'
-		executeSQLFile(sql, '../crystal-ball/src/main/db/create-tables.sql')
+		executeSQLFile(sql, '/create-tables.sql')
 
 		println 'Creating functions...'
-		executeSQLFile(sql, '../crystal-ball/src/main/db/create-functions.sql')
+		executeSQLFile(sql, '/create-functions.sql')
 
 		println 'Creating views...'
 		if (useMaterializedViews)
-			executeSQLFile(sql, '../crystal-ball/src/main/db/create-views.sql')
+			executeSQLFile(sql, '/create-views.sql')
 		else
-			executeSQLFile(sql, '../crystal-ball/src/main/db/create-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+			executeSQLFile(sql, '/create-views.sql', 'MATERIALIZED VIEW', 'TABLE')
 
 		println 'Loading initial data...'
-		executeSQLFile(sql, '../crystal-ball/src/main/db/initial-load.sql')
+		executeSQLFile(sql, '/initial-load.sql')
 
 		println 'Creating load functions...'
-		executeSQLFile(sql, 'src/main/db/load-functions.sql')
+		executeSQLFile(sql, '/load-functions.sql')
 
 		println "Database created in $stopwatch"
 	}
@@ -315,22 +315,22 @@ class ATPTennisLoader {
 		def stopwatch = Stopwatch.createStarted()
 
 		println 'Dropping load functions...'
-		executeSQLFile(sql, 'src/main/db/drop-load-functions.sql')
+		executeSQLFile(sql, '/drop-load-functions.sql')
 
 		println 'Dropping views...'
 		if (useMaterializedViews)
-			executeSQLFile(sql, '../crystal-ball/src/main/db/drop-views.sql')
+			executeSQLFile(sql, '/drop-views.sql')
 		else
-			executeSQLFile(sql, '../crystal-ball/src/main/db/drop-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+			executeSQLFile(sql, '/drop-views.sql', 'MATERIALIZED VIEW', 'TABLE')
 
 		println 'Dropping functions...'
-		executeSQLFile(sql, '../crystal-ball/src/main/db/drop-functions.sql')
+		executeSQLFile(sql, '/drop-functions.sql')
 
 		println 'Dropping tables...'
-		executeSQLFile(sql, '../crystal-ball/src/main/db/drop-tables.sql')
+		executeSQLFile(sql, '/drop-tables.sql')
 
 		println 'Dropping types...'
-		executeSQLFile(sql, '../crystal-ball/src/main/db/drop-types.sql')
+		executeSQLFile(sql, '/drop-types.sql')
 
 		println "Database dropped in $stopwatch"
 	}
@@ -359,8 +359,8 @@ class ATPTennisLoader {
 		println "Vacuuming finished in $stopwatch"
 	}
 
-	private static executeSQLFile(Sql sql, String file, String replaceTarget = null, String replacement = null) {
-		def sqlText = new File(file).text
+	private executeSQLFile(Sql sql, String file, String replaceTarget = null, String replacement = null) {
+		def sqlText = getClass().getResourceAsStream(file).text
 		if (replaceTarget && replacement)
 			sqlText = sqlText.replace(replaceTarget, replacement)
 		sql.execute(sqlText)

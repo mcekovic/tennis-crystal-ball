@@ -10,7 +10,10 @@ applicationDefaultJvmArgs = [
 	'-Dtcb.db.url=jdbc:postgresql://127.2.254.130:5432/tennis?prepareThreshold=0'
 ]
 
+sourceSets.main.resources.srcDirs = ['src/main/resources', 'src/main/db']
+
 dependencies {
+	compile project(':crystal-ball')
 	compile project(':tennis-stats')
 	compile ("org.codehaus.groovy:groovy-all:$groovyVersion")
 	compile ("com.xlson.groovycsv:groovycsv:$groovyCsvVersion")
@@ -35,14 +38,17 @@ task quickDeployToOpenShift {
 	doLast {
 		def version = project.property('version')
 		def dataLoadJar = "data-load-${version}.jar"
+		def crystalBallJar = "crystal-ball-${version}.jar"
 		def tennisStatsJar = "tennis-stats-${version}.jar"
 		def srcPath = 'build/libs'
 		def destPath = "app-root/data/data-load/lib"
 		ssh.run {
 			session(remotes.openShift) {
 				put from: "${srcPath}/${dataLoadJar}", into: "${destPath}/${dataLoadJar}.new"
+				put from: "../crystal-ball/${srcPath}/${crystalBallJar}", into: "${destPath}/${crystalBallJar}.new"
 				put from: "../tennis-stats/${srcPath}/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
 				execute "mv -f ${destPath}/${dataLoadJar}.new ${destPath}/${dataLoadJar}"
+				execute "mv -f ${destPath}/${crystalBallJar}.new ${destPath}/${crystalBallJar}"
 				execute "mv -f ${destPath}/${tennisStatsJar}.new ${destPath}/${tennisStatsJar}"
 			}
 		}
