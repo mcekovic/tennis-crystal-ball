@@ -21,7 +21,7 @@ static loadRankings(SqlPool sqlPool) {
 		for (def date = lastDate.with(next(MONDAY)); date <= currentDate; date = date.with(next(MONDAY))) {
 			def formattedDate = date.format(ofPattern("yyyy-MM-dd"))
 			println "Loading rankings for $formattedDate"
-			atpRankingsLoader.load(formattedDate, 200)
+			atpRankingsLoader.load(formattedDate, 500)
 		}
 	}
 }

@@ -36,7 +36,7 @@ class ATPWorldTourRankingsLoader {
 	}
 
 	static player(String name) {
-		name.replace('-', ' ')
+		name.replace('-', ' ').replace('.', ' ').replace('\'', '')
 	}
 
 	static rankingsUrl(String date, int topN) {

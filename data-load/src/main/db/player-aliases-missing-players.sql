@@ -2,12 +2,18 @@ DELETE FROM player_alias;
 INSERT INTO player_alias
 (alias, name)
 VALUES
+   ('Alejandro Gomez', 'Alejandro Gomez Gb42'),
+   ('Alexandar Lazov', 'Alexander Lazov'),
    ('Andre Thielemans', 'Andre Tielemans'),
+   ('Andres Artunedo Martinavarro', 'Andres Artunedo Martinavarr'),
    ('Andrew Smith', 'A Smith'),
+   ('Antoine Hoang', 'Antonie Hoang'),
    ('Axel Geuer', 'Alex Geuer'),
    ('Albert Ramos Vinolas', 'Albert Ramos'),
    ('William Freer', 'Bill Freer'),
    ('Brendan OShea', 'Bill Oshea'),
+   ('Christopher O''Connell', 'Christopher Oconnell'),
+   ('Daniel Elahi Galan', 'Daniel Elahi Galan Riveros'),
    ('Dave Phillips', 'David D Phillips'),
    ('Diego Schwartzman', 'Diego Sebastian Schwartzman'),
    ('Duckhee Lee', 'Duck Hee Lee'),
@@ -16,6 +22,7 @@ VALUES
    ('Frances Tiafoe', 'Francis Tiafoe'),
    ('Franko Skugor', 'Franco Skugor'),
    ('Fred Hemmes Sr', 'Fred Hemmes'),
+   ('Fred Gil', 'Frederico Gil'),
    ('Giovanni Capozza', 'Gianni Capozza'),
    ('Graham Primrose', 'Graham B Primrose'),
    ('Hans Joachim Ploetz', 'Hans Jaochim Plotz'),
@@ -29,9 +36,11 @@ VALUES
    ('Jaime Fillol Sr', 'Jaime Fillol'),
    ('Jamie Presslie', 'James Pressly'),
    ('John Satchwell Smith', 'Sj Smith'),
+   ('Jose Hernandez Fernandez', 'Jose Hernandez'),
    ('Jose Statham', 'Jose Rubin Statham'),
    ('Juan Gisbert Sr', 'Juan Gisbert'),
    ('Junjo Kawamuri', 'Junzo Kawamori'),
+   ('Lloyd Harris', 'Lloyd George Muirhead Harris'),
    ('Marcelo Lara', 'Marcello Lara'),
    ('Mubarak Shannan Zayid', 'Mubarak Zaid'),
    ('M Munoz', 'Miguel Cordefors Munoz'),
@@ -39,13 +48,16 @@ VALUES
    ('Freddy Field', 'N Field'),
    ('Pancho JF Guzman', 'Pancho Guzman'),
    ('Patricio Rodriguez', 'Patricio Rodriguez Chi'),
+   ('Roberto Cid Subervi', 'Roberto Cid'),
    ('Sam Groth', 'Samuel Groth'),
    ('Stan Wawrinka', 'Stanislas Wawrinka'),
    ('Taylor Fritz', 'Taylor Harry Fritz'),
    ('Thomas Koch', 'Thomaz Koch'),
    ('Victor Estrella Burgos', 'Victor Estrella'),
    ('Victor Palman', 'Viktor Palman'),
-   ('William Krulewitz', 'Steve Krulevitz');
+   ('William Krulewitz', 'Steve Krulevitz'),
+   ('Yaraslav Shyla', 'Yaraslau Shyla'),
+   ('Yuya Kibi', 'Yuuya Kibi');
 
 DO $$ BEGIN
 
