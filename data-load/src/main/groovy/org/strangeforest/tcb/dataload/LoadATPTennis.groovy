@@ -23,11 +23,12 @@ LoadNewTournaments.loadTournaments(sqlPool)
 
 sqlPool.withSql { sql -> loader.vacuum(sql) }
 
-sqlPool.withSql { sql -> loader.correctData(sql) }
+sqlPool.withSql { sql -> loader.correctDataFull(sql) }
 new EloRatings(sqlPool).compute(true)
 
 sqlPool.withSql { sql -> loader.vacuum(sql) }
 
+sqlPool.withSql { sql -> loader.correctData(sql) }
 sqlPool.withSql { sql -> loader.refreshMaterializedViews(sql) }
 
 sqlPool.withSql { sql -> loader.vacuum(sql) }

@@ -47,8 +47,10 @@ if (options && (options.cd || options.dd || options.lt || options.lp || options.
 		new LoadInProgressTournaments().run()
 	if (options.el)
 		new ComputeEloRatings().run()
-	if (options.rc)
+	if (options.rc) {
+		callLoader('correctData')
 		callLoader('refreshMaterializedViews')
+	}
 	if (options.rr)
 		new RecordsLoader().loadRecords()
 	if (options.vc)

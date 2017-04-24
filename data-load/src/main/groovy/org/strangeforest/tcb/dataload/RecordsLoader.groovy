@@ -22,6 +22,7 @@ class RecordsLoader {
 		def stopwatch = Stopwatch.createStarted()
 		doLoadRecords(Records.getRecordCategories(), 'famous')
 		doLoadRecords(Records.getInfamousRecordCategories(), 'infamous')
+		recordsService.clearActivePlayersRecords()
 		println "Records loaded in $stopwatch"
 	}
 

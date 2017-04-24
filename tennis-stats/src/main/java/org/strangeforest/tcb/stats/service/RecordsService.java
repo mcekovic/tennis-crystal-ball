@@ -80,6 +80,9 @@ public class RecordsService {
 	private static final String DELETE_ALL_SAVED_RECORDS = //language=SQL
 		"DELETE FROM saved_record";
 
+	private static final String ACTIVE_PLAYERS_CONDITION = //language=SQL
+		" WHERE active_players";
+
 
 	public RecordsService() {}
 
@@ -248,15 +251,21 @@ public class RecordsService {
 	public void clearRecords() {
 		deleteAllRecords(false);
 		deleteAllRecords(true);
-		deleteAllSavedRecords();
+		deleteAllSavedRecords(false);
+	}
+
+	@Transactional
+	public void clearActivePlayersRecords() {
+		deleteAllRecords(true);
+		deleteAllSavedRecords(true);
 	}
 
 	private void deleteAllRecords(boolean activePlayers) {
 		jdbcTemplate.getJdbcOperations().update(format(DELETE_ALL_RECORDS, getTableName(activePlayers)));
 	}
 
-	private void deleteAllSavedRecords() {
-		jdbcTemplate.getJdbcOperations().update(DELETE_ALL_SAVED_RECORDS);
+	private void deleteAllSavedRecords(boolean forActivePlayersOnly) {
+		jdbcTemplate.getJdbcOperations().update(DELETE_ALL_SAVED_RECORDS + (forActivePlayersOnly ? ACTIVE_PLAYERS_CONDITION : ""));
 	}
 
 	private static String getTableName(boolean activePlayers) {

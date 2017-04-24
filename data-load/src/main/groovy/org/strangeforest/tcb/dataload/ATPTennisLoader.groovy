@@ -213,19 +213,20 @@ class ATPTennisLoader {
 		println()
 	}
 
+	def correctDataFull(sql) {
+		def stopwatch = Stopwatch.createStarted()
+		println 'Correcting data (full)...'
+		executeSQLFile(sql, '/correct-data-full.sql')
+		println "Correcting data (full) finished in $stopwatch"
+
+		println 'Updating tournament event surfaces...'
+		executeSQLFile(sql, '/tournament-event-surfaces.sql')
+
+		println 'Loading team tournament winners...'
+		executeSQLFile(sql, '/team-tournament-winners.sql')
+	}
+
 	def correctData(sql) {
-		if (full) {
-			def stopwatch = Stopwatch.createStarted()
-			println 'Correcting data (full)...'
-			executeSQLFile(sql, '/correct-data-full.sql')
-			println "Correcting data (full) finished in $stopwatch"
-
-			println 'Updating tournament event surfaces...'
-			executeSQLFile(sql, '/tournament-event-surfaces.sql')
-
-			println 'Loading team tournament winners...'
-			executeSQLFile(sql, '/team-tournament-winners.sql')
-		}
 		def stopwatch = Stopwatch.createStarted()
 		println 'Correcting data (delta)...'
 		executeSQLFile(sql, '/correct-data-delta.sql')
