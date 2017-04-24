@@ -1,13 +1,15 @@
 package org.strangeforest.tcb.dataload
 
-import com.google.common.base.*
-import groovy.json.*
-import groovy.sql.*
+import java.util.concurrent.atomic.*
+
 import org.jsoup.*
 import org.jsoup.select.*
 
-import java.util.concurrent.atomic.*
+import com.google.common.base.*
+import groovy.json.*
+import groovy.sql.*
 
+import static org.strangeforest.tcb.dataload.LoaderUtil.*
 import static org.strangeforest.tcb.dataload.XMLMatchLoader.*
 
 class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
@@ -113,16 +115,18 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		matches.parallelStream().forEach { params ->
 			def statsUrl = params.statsUrl
 			if (statsUrl) {
-				def statsDoc = Jsoup.connect(statsUrl).timeout(TIMEOUT).get()
-				def json = statsDoc.select('#matchStatsData').html()
-				def matchStats = new JsonSlurper().parseText(json)[0]
-				def wStats = matchStats.playerStats
-				def lStats = matchStats.opponentStats
+				retry(5, { th -> th instanceof HttpStatusException }, {
+					def statsDoc = Jsoup.connect(statsUrl).timeout(TIMEOUT).get()
+					def json = statsDoc.select('#matchStatsData').html()
+					def matchStats = new JsonSlurper().parseText(json)[0]
+					def wStats = matchStats.playerStats
+					def lStats = matchStats.opponentStats
 
-				params.minutes = minutes wStats.Time
-				setATPStatsParams(params, wStats, 'w_')
-				setATPStatsParams(params, lStats, 'l_')
-				print '.'
+					params.minutes = minutes wStats.Time
+					setATPStatsParams(params, wStats, 'w_')
+					setATPStatsParams(params, lStats, 'l_')
+					print '.'
+				})
 			}
 			if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
 				println()
