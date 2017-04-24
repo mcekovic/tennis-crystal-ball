@@ -14,7 +14,7 @@ static loadTournaments(SqlPool sqlPool) {
 		def season = LocalDate.now().year
 		def eventInfos = findCompletedEvents(season)
 		def seasonExtIds = atpTournamentLoader.findSeasonEventExtIds(season)
-		eventInfos.removeAll { info -> seasonExtIds.contains(info.extId) }
+		eventInfos.removeAll { info -> info.extId in seasonExtIds }
 		def newExtIds = eventInfos.collect { info -> info.extId }
 		println "New completed tournaments for season $season: $newExtIds"
 		eventInfos.each { info ->

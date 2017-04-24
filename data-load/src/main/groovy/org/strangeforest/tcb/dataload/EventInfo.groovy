@@ -1,9 +1,8 @@
 package org.strangeforest.tcb.dataload
 
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.Sortable
+import groovy.transform.*
 
-@EqualsAndHashCode @Sortable
+@EqualsAndHashCode @ToString @Sortable
 class EventInfo {
 
 	String extId

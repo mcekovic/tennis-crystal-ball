@@ -55,7 +55,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 				def roundHead = itHeads.next()
 				def roundBody = itBodies.next()
 				def round = mapRound roundHead.select('tr th').text()
-				if (!round || skipRounds.contains(round)) continue
+				if (!round || round in skipRounds) continue
 				roundBody.select('tr').each { match ->
 					def seeds = match.select('td.day-table-seed')
 					def players = match.select('td.day-table-name a')

@@ -19,7 +19,7 @@ abstract class LoaderUtil {
 
 	static List<Throwable> getThrowableList(Throwable th) {
 		def ths = []
-		for (Throwable t = th; t && !ths.contains(t); t = t.getCause())
+		for (Throwable t = th; t && !(t in ths); t = t.getCause())
 			ths << t
 		ths
 	}

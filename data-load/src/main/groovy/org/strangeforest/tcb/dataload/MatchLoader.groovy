@@ -178,10 +178,10 @@ class MatchLoader extends BaseCSVLoader {
 				if (name.startsWith('Masters') && drawSize <= 16)
 					return 'F'
 				else if (
-					(name.equals('Cincinnati') && (1968..1980).contains(season)) ||
+					(name.equals('Cincinnati') && season in 1968..1980) ||
 					(name.equals('Delray Beach') && season == 1985) ||
-					(name.equals('Montreal / Toronto') && ((1969..1971).contains(season) || (1976..1977).contains(season))) ||
-					(name.equals('Rome') && (1968..1969).contains(season))
+					(name.equals('Montreal / Toronto') && (season in 1969..1971 || season in 1976..1977)) ||
+					(name.equals('Rome') && season in 1968..1969)
 				)
 					return 'B'
 				else
@@ -194,23 +194,23 @@ class MatchLoader extends BaseCSVLoader {
 				else if (name.startsWith('Australian Open') && season == 1977)
 					return 'G'
 				else if (
-					(name.startsWith('Boston') && (1970..1977).contains(season)) ||
-					(name.startsWith('Forest Hills') && (1982..1985).contains(season)) ||
-					(name.equals('Hamburg') && (1978..1989).contains(season)) ||
-					(name.equals('Indianapolis') && (1974..1977).contains(season)) ||
-					(name.startsWith('Johannesburg') && extTournamentId == '426' && (1972..1973).contains(season))||
+					(name.startsWith('Boston') && season in 1970..1977) ||
+					(name.startsWith('Forest Hills') && season in 1982..1985) ||
+					(name.equals('Hamburg') && season in 1978..1989) ||
+					(name.equals('Indianapolis') && season in 1974..1977) ||
+					(name.startsWith('Johannesburg') && extTournamentId == '426' && season in 1972..1973)||
 					(name.startsWith('Johannesburg') && extTournamentId == '254' && season == 1974)||
-					(name.startsWith('Las Vegas') && (1972..1981).contains(season) && drawSize >= 32) ||
-					(name.startsWith('Los Angeles') && (1970..1973).contains(season) && drawSize >= 64) ||
-					(name.startsWith('Monte Carlo') && (1970..1989).contains(season)) ||
+					(name.startsWith('Las Vegas') && season in 1972..1981 && drawSize >= 32) ||
+					(name.startsWith('Los Angeles') && season in 1970..1973 && drawSize >= 64) ||
+					(name.startsWith('Monte Carlo') && season in 1970..1989) ||
 					(name.startsWith('Paris') && season == 1989) ||
-					(name.startsWith('Philadelphia') && (1970..1986).contains(season)) ||
+					(name.startsWith('Philadelphia') && season in 1970..1986) ||
 					(name.equals('Sydney Outdoor') && season == 1971) ||
-					(name.equals('Stockholm') && ((1972..1980).contains(season) || (1984..1989).contains(season))) ||
-					(name.equals('Stockholm Open') && (1970..1971).contains(season)) ||
-					(name.equals('Tokyo Indoor') && (1978..1988).contains(season)) ||
-					(name.startsWith('Washington') && extTournamentId.equals('418') && (1975..1977).contains(season)) ||
-					(name.equals('Wembley') && ((1970..1971).contains(season) || (1976..1983).contains(season)))
+					(name.equals('Stockholm') && (season in 1972..1980 || season in 1984..1989)) ||
+					(name.equals('Stockholm Open') && season in 1970..1971) ||
+					(name.equals('Tokyo Indoor') && season in 1978..1988) ||
+					(name.startsWith('Washington') && extTournamentId.equals('418') && season in 1975..1977) ||
+					(name.equals('Wembley') && (season in 1970..1971 || season in 1976..1983))
 				)
 					return 'M'
 				else if (
@@ -224,42 +224,42 @@ class MatchLoader extends BaseCSVLoader {
 					return 'T'
 				else if (
 					// Real ATP 500
-					(name.equals('Acapulco') && (2001..2016).contains(season)) ||
-					(name.equals('Antwerp') && (1996..1998).contains(season)) ||
-					(name.equals('Barcelona') && (1990..2016).contains(season)) ||
-					(name.equals('Basel') && (2009..2016).contains(season)) ||
-					(name.equals('Beijing') && (2009..2016).contains(season)) ||
-					(name.equals('Brussels') && (1990..1992).contains(season)) ||
-					(name.equals('Dubai') && (2001..2016).contains(season)) ||
-					(name.equals('Halle') && (2015..2016).contains(season)) ||
-					(name.equals('Hamburg') && (2009..2016).contains(season)) ||
-					(name.equals('Indianapolis') && (1990..2002).contains(season)) ||
-					(name.equals('Kitzbuhel') && (1999..2008).contains(season)) ||
-					(name.equals('London') && ((1998..2000).contains(season) || (2015..2016).contains(season))) ||
-					(name.equals('Memphis') && ((1990..1992).contains(season) || (1994..2013).contains(season))) ||
+					(name.equals('Acapulco') && season in 2001..2016) ||
+					(name.equals('Antwerp') && season in 1996..1998) ||
+					(name.equals('Barcelona') && season in 1990..2016) ||
+					(name.equals('Basel') && season in 2009..2016) ||
+					(name.equals('Beijing') && season in 2009..2016) ||
+					(name.equals('Brussels') && season in 1990..1992) ||
+					(name.equals('Dubai') && season in 2001..2016) ||
+					(name.equals('Halle') && season in 2015..2016) ||
+					(name.equals('Hamburg') && season in 2009..2016) ||
+					(name.equals('Indianapolis') && season in 1990..2002) ||
+					(name.equals('Kitzbuhel') && season in 1999..2008) ||
+					(name.equals('London') && (season in 1998..2000 || season in 2015..2016)) ||
+					(name.equals('Memphis') && (season in 1990..1992 || season in 1994..2013)) ||
 					(name.equals('Mexico City') && season == 2000) ||
-					(name.equals('Milan') && (1991..1997).contains(season)) ||
-					(name.equals('New Haven') && (1990..1998).contains(season)) ||
-					(name.equals('Philadelphia') && (1990..1998).contains(season)) ||
-					(name.equals('Rio de Janeiro') && (2014..2016).contains(season)) ||
-					(name.equals('Rotterdam') && (1999..2016).contains(season)) ||
-					(name.equals('Singapore') && (1997..1999).contains(season)) ||
-					(name.equals('Stuttgart Outdoor') && (1990..2000).contains(season)) ||
-					(name.equals('Stuttgart') && (season == 2001 || (2003..2008).contains(season))) ||
-					(name.equals('Stuttgart Indoor') && (1990..1995).contains(season)) ||
-					(name.equals('Sydney Indoor') && (1990..1994).contains(season)) ||
-					(name.equals('Tokyo') && (1996..2016).contains(season)) ||
-					(name.equals('Tokyo Indoor') && (1990..1995).contains(season)) ||
-					(name.equals('Tokyo Outdoor') && (1990..1995).contains(season)) ||
+					(name.equals('Milan') && season in 1991..1997) ||
+					(name.equals('New Haven') && season in 1990..1998) ||
+					(name.equals('Philadelphia') && season in 1990..1998) ||
+					(name.equals('Rio de Janeiro') && season in 2014..2016) ||
+					(name.equals('Rotterdam') && season in 1999..2016) ||
+					(name.equals('Singapore') && season in 1997..1999) ||
+					(name.equals('Stuttgart Outdoor') && season in 1990..2000) ||
+					(name.equals('Stuttgart') && (season == 2001 || season in 2003..2008)) ||
+					(name.equals('Stuttgart Indoor') && season in 1990..1995) ||
+					(name.equals('Sydney Indoor') && season in 1990..1994) ||
+					(name.equals('Tokyo') && season in 1996..2016) ||
+					(name.equals('Tokyo Indoor') && season in 1990..1995) ||
+					(name.equals('Tokyo Outdoor') && season in 1990..1995) ||
 					(name.equals('Toronto Indoor') && season == 1990) ||
-					(name.equals('Valencia') && (2009..2014).contains(season)) ||
-					(name.equals('Vienna') && ((1996..2008).contains(season) || (2015..2016).contains(season))) ||
-					(name.equals('Washington') && ((1990..2002).contains(season) || (2009..2016).contains(season))) ||
+					(name.equals('Valencia') && season in 2009..2014) ||
+					(name.equals('Vienna') && (season in 1996..2008 || season in 2015..2016)) ||
+					(name.equals('Washington') && (season in 1990..2002 || season in 2009..2016)) ||
 					 // Other distinguished tournaments
-					(name.startsWith('Dallas') && extTournamentId == '610' && (1971..1989).contains(season)) || // WCT Finals
-					(name.equals('Grand Slam Cup') && (1990..1999).contains(season)) ||
-					(name.equals('Pepsi Grand Slam') && (1976..1981).contains(season)) ||
-					(name.equals('WCT Challenge Cup') && (1976..1980).contains(season))
+					(name.startsWith('Dallas') && extTournamentId == '610' && season in 1971..1989) || // WCT Finals
+					(name.equals('Grand Slam Cup') && season in 1990..1999) ||
+					(name.equals('Pepsi Grand Slam') && season in 1976..1981) ||
+					(name.equals('WCT Challenge Cup') && season in 1976..1980)
 				)
 					return 'A'
 				else
@@ -289,7 +289,7 @@ class MatchLoader extends BaseCSVLoader {
 
 	static mapDrawType(String level, int season) {
 		switch (level) {
-			case 'F': return (1982..1985).contains(season) ? 'KO' : 'RR'
+			case 'F': return season in 1982..1985 ? 'KO' : 'RR'
 			default: return 'KO'
 		}
 	}
