@@ -6,43 +6,13 @@
 <head th:replace="fragments/head :: commonHead(null, true, ~{::script}, ~{::style})">
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
-			var $latestEvents = $("#latestEvents");
 			var device = detectDevice();
 			var lg = deviceGreaterOrEqual(device, "lg");
-			setBootgridColumnsVisible($latestEvents, ["final"], lg);
-			setBootgridColumnsVisible($latestEvents, ["winner"], !lg);
-			setBootgridColumnsVisible($latestEvents, ["date", "draw"], deviceGreaterOrEqual(device, "sm"));
-			if (!lg)
-				setBootgridColumnsWidths($latestEvents, ["name"], [175]);
-			$latestEvents.bootgrid({
-				ajax: true,
-				ajaxSettings: {
-					method: "GET",
-					cache: false
-				},
-				url: "/tournamentEventsTable",
-				rowCount: [10],
-				navigation: 0,
-				sorting: false,
-				formatters: {
-					"date": dateFormatter,
-					"event": tournamentEventFormatterExtId,
-					"level": levelFormatter,
-					"surface": surfaceFormatter,
-					"match": finalFormatter,
-					"winner": function(column, row) {
-						return row.winner ? "<a href='/playerProfile?playerId=" + row.winner.id + "' title='Show profile'><strong>" + row.winner.name + "</strong></a>" : "";
-					}
-				},
-				labels: {
-					loading: bootgridTemplateLoading,
-					noResults: "No tournaments found"
-				}
-			});
+			var sm = deviceGreaterOrEqual(device, "sm");
 			[# th:if="${hasInProgressEvents}"]
 			var $inProgressEventsTable = $("#inProgressEventsTable");
-			setBootgridColumnsVisible($inProgressEventsTable, ["surface", "draw"], deviceGreaterOrEqual(device, "sm"));
-			setBootgridColumnsVisible($inProgressEventsTable, ["favorite2"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($inProgressEventsTable, ["surface", "draw"], sm);
+			setBootgridColumnsVisible($inProgressEventsTable, ["favorite2"], lg);
 			if (deviceGreaterOrEqual("md", device))
 				setBootgridColumnsWidths($inProgressEventsTable, ["name"], [175]);
 			$inProgressEventsTable.bootgrid({
@@ -75,6 +45,37 @@
 				}
 			});
 			[/]
+			var $latestEvents = $("#latestEvents");
+			setBootgridColumnsVisible($latestEvents, ["final"], lg);
+			setBootgridColumnsVisible($latestEvents, ["winner"], !lg);
+			setBootgridColumnsVisible($latestEvents, ["date", "draw"], sm);
+			if (!lg)
+				setBootgridColumnsWidths($latestEvents, ["name"], [175]);
+			$latestEvents.bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/tournamentEventsTable",
+				rowCount: [10],
+				navigation: 0,
+				sorting: false,
+				formatters: {
+					"date": dateFormatter,
+					"event": tournamentEventFormatterExtId,
+					"level": levelFormatter,
+					"surface": surfaceFormatter,
+					"match": finalFormatter,
+					"winner": function(column, row) {
+						return row.winner ? "<a href='/playerProfile?playerId=" + row.winner.id + "' title='Show profile'><strong>" + row.winner.name + "</strong></a>" : "";
+					}
+				},
+				labels: {
+					loading: bootgridTemplateLoading,
+					noResults: "No tournaments found"
+				}
+			});
 			bindPopovers();
 			loadRankingTopN("POINTS");
 		});
