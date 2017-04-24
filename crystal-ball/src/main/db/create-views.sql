@@ -1608,3 +1608,14 @@ SELECT first_hit::DATE AS date, country_id, agent_type, count(*) AS visits, sum(
 FROM visitor
 GROUP BY date, country_id, agent_type
 ORDER BY date DESC, country_id, agent_type;
+
+
+-- visitor_summary_all_v
+
+CREATE OR REPLACE VIEW visitor_summary_all_v AS
+SELECT date, country_id, agent_type, visits, hits, visit_duration
+FROM visitor_summary
+UNION ALL
+SELECT date, country_id, agent_type, visits, hits, visit_duration
+FROM visitor_summary_v
+ORDER BY date DESC, country_id, agent_type;

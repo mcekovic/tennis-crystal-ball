@@ -8,7 +8,7 @@ WITH storage AS (
    WHERE relkind IN ('r', 'm')
 )
 SELECT oid, schema, type, name, rows,
-   pg_size_pretty(total_bytes - index_bytes - coalesce(toast_bytes, 0)) AS table,
+   pg_size_pretty(total_bytes - index_bytes - coalesce(toast_bytes, 0)) AS relation,
    pg_size_pretty(index_bytes) AS index,
    pg_size_pretty(toast_bytes) AS toast,
    pg_size_pretty(total_bytes) AS total,
