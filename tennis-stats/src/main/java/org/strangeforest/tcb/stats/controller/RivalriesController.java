@@ -271,7 +271,7 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("h2hHypotheticalMatchup", modelMap);
 	}
 
-	public Date dateForMatchup(String dateSelector, LocalDate playerDate, LocalDate date, Player player) {
+	private Date dateForMatchup(String dateSelector, LocalDate playerDate, LocalDate date, Player player) {
 		if (!isNullOrEmpty(dateSelector))
 			return selectDate(player.getId(), dateSelector);
 		else if (playerDate != null)

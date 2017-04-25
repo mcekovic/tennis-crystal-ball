@@ -2,6 +2,9 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.prediction.*;
+
+import static org.strangeforest.tcb.stats.model.prediction.PriceUtil.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class PlayerForecast extends MatchPlayerEx {
@@ -29,10 +32,17 @@ public class PlayerForecast extends MatchPlayerEx {
 	}
 
 	public Double getProbability(String result) {
-		if (isEmpty())
-			return null;
-		Double probability = forecast.get(result);
+		Double probability = getBareProbability(result);
 		return probability != null ? PCT * probability : null;
+	}
+
+	public String getPrice(String result, String format) {
+		Double probability = getBareProbability(result);
+		return probability != null ? PriceFormat.valueOf(format).format(toPrice(probability)) : null;
+	}
+
+	private Double getBareProbability(String result) {
+		return isEmpty() ? null : forecast.get(result);
 	}
 
 	public double probability(String result) {

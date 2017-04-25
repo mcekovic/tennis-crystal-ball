@@ -8,6 +8,7 @@ import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
 
@@ -132,14 +133,20 @@ public class TournamentController extends PageController {
 
 	@GetMapping("/inProgressEventForecast")
 	public ModelAndView inProgressEventForecast(
-		@RequestParam(name = "inProgressEventId") int inProgressEventId
+		@RequestParam(name = "inProgressEventId") int inProgressEventId,
+		@RequestParam(name = "tab", required = false) String tab,
+      @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat
 	) {
 		InProgressEventForecast forecast = forecastService.getInProgressEventForecast(inProgressEventId);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("inProgressEventId", inProgressEventId);
+		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("forecast", forecast);
 		modelMap.addAttribute("levels", TournamentLevel.asMap());
 		modelMap.addAttribute("surfaces", Surface.asMap());
+		modelMap.addAttribute("priceFormats", PriceFormat.values());
+		modelMap.addAttribute("priceFormat", priceFormat);
 		return new ModelAndView("inProgressEventForecast", modelMap);
 	}
 

@@ -200,7 +200,7 @@
 		</td>
 		<th class="text-center">
 			<select id="h2hPriceFormat" class="" onchange="priceFormatChanged()">
-				<option th:each="aPriceFormat : ${priceFormats}" th:value="${aPriceFormat}" th:text="${aPriceFormat.text}" th:selected="${aPriceFormat == priceFormat}">
+				<option th:each="aPriceFormat : ${priceFormats}" th:value="${aPriceFormat}" value="DECIMAL" th:text="${aPriceFormat.text}" th:selected="${aPriceFormat == priceFormat}">Decimal</option>
 			</select>
 			&nbsp;Odds
 		</th>

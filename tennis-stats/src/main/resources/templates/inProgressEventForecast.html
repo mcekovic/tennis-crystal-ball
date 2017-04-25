@@ -1,15 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:with="inProgressEvent=${forecast.event}">
+<!--/*@thymesVar id="inProgressEventId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="tab" type="java.lang.String"*/-->
 <!--/*@thymesVar id="forecast" type="org.strangeforest.tcb.stats.model.InProgressEventForecast"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Map"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
+<!--/*@thymesVar id="priceFormats" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat[]"*/-->
+<!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat"*/-->
 <head th:replace="fragments/head :: commonHead(${inProgressEvent.name}, false, ~{::script}, ~{::style})">
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("#inProgressEventPills").find("a").click(tabClick);
+			[# th:if="${tab}"]
+				$([['#' + ${tab} + 'Pill']]).click();
+			[/]
 			bindPopovers();
 			loadRankingTopN("POINTS", 20);
 		});
+		function priceFormatChanged() {
+			var url = "/inProgressEventForecast?inProgressEventId=[[${inProgressEventId}]]";
+			var priceFormat = $("#priceFormat").val();
+			if (priceFormat)
+				url += "&priceFormat=" + priceFormat;
+			window.location = url + "&tab=" + $("#inProgressEventPills li.active a").attr("href").substr(1);
+		}
 	</script>
 	<style>
 		table.forecast-table {
@@ -117,23 +131,32 @@
 						</a>
 					</th>
 				</tr>
+				<tr>
+					<td>
+						<label for="priceFormat" title="Choose odds format">Odds:</label>
+						<select id="priceFormat" class="" onchange="priceFormatChanged()">
+							<option value="">None</option>
+							<option th:each="aPriceFormat : ${priceFormats}" th:value="${aPriceFormat}" value="DECIMAL" th:text="${aPriceFormat.text}" th:selected="${aPriceFormat == priceFormat}">Decimal</option>
+						</select>
+					</td>
+				</tr>
 			</table>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-lg-10 col-md-9 col-sm-9">
 			<ul id="inProgressEventPills" class="nav nav-pills">
-				<li><a data-toggle="pill" href="#results" th:data-url="'/inProgressEventResults?inProgressEventId=' + ${inProgressEvent.id}">Completed</a></li>
+				<li><a id="resultsPill" data-toggle="pill" href="#results" th:data-url="'/inProgressEventResults?inProgressEventId=' + ${inProgressEvent.id}">Completed</a></li>
 				<li th:each="baseResult : ${forecast.baseResults}" th:class="${baseResultStat.last ? 'active' : _}">
-					<a data-toggle="pill" th:href="'#baseResult' + ${baseResult}" th:text="${baseResult}">W</a>
+					<a th:id="'baseResult' + ${baseResult} + 'Pill'" data-toggle="pill" th:href="'#baseResult' + ${baseResult}" th:text="${baseResult}">W</a>
 				</li>
-				<li><a data-toggle="pill" href="#probable" th:data-url="'/inProgressEventProbableMatches?inProgressEventId=' + ${inProgressEvent.id}">Probable Matchups</a></li>
+				<li><a id="probablePill" data-toggle="pill" href="#probable" th:data-url="'/inProgressEventProbableMatches?inProgressEventId=' + ${inProgressEvent.id}">Probable Matchups</a></li>
 			</ul>
 			<div class="tab-content">
 				<div id="results" class="tab-pane fade"><div class="loading"></div></div>
 				<div th:each="baseResult : ${forecast.baseResults}" th:id="'baseResult' + ${baseResult}" th:with="playersForecast = ${forecast.getPlayersForecasts(baseResult)}" class="tab-pane fade" th:attrappend="class=${baseResultStat.last ? ' in active' : _}">
 					<br/>
-					<table class="table table-condensed table-hover text-nowrap forecast-table" th:with="resultCount=${playersForecast.results.size()}, entryCount=${playersForecast.playerForecasts.size()}">
+					<table class="table table-condensed table-hover text-nowrap forecast-table" th:with="resultCount=${playersForecast.results.size() + (priceFormat != null ? 1 : 0)}, entryCount=${playersForecast.playerForecasts.size()}">
 						<th:block th:each="playerForecast : ${playersForecast.playerForecasts}">
 						<thead th:if="${playerForecastStat.index % 8 == 0}">
 							<th:block th:if="${entryCount == 32}" th:with="halfIndex=${2 * playerForecastStat.index / entryCount}">
@@ -155,6 +178,7 @@
 								<th th:colspan="${entryCount >= 16 ? 1 : 3}">Player</th>
 								<th th:if="${entryCount >= 16}" colspan="2" class="text-right" th:text="${#numbers.formatDecimal(playersForecast.getStrength(playerForecastStat.index, 8), 1, 1)} + '%'" title="Draw section strength">25.4%</th>
 								<th th:each="result : ${playersForecast.results}" class="text-right" th:text="${result}">W</th>
+								<th th:if="${priceFormat}" class="text-right" title="Tournament winning odds">Odds</th>
 							</tr>
 						</thead>
 						<tr th:with="otherPlayer=${playersForecast.getOtherPlayer(playerForecastStat.index)}, showH2H=${playerForecast != null && playerForecast.known && otherPlayer != null && otherPlayer.known}">
@@ -169,7 +193,8 @@
 								<a th:href="'/headToHead?playerId1=' + ${playerForecast.id} + '&playerId2=' + ${otherPlayer.id}" class="player-h2h" title="Show Head-to-Head">H<br/>2<br/>H</a>
 							</td>
 							<td th:unless="${showH2H}" class="player-noh2h"></td>
-							<td th:each="result : ${playersForecast.results}" th:with="probability = ${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}">58.2%</td>
+							<td th:each="result : ${playersForecast.results}" th:with="probability = ${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + playerForecast.getPrice(result, priceFormat) : _}">58.2%</td>
+							<td th:if="${priceFormat}" class="text-right" th:text="${playerForecast.getPrice('W', priceFormat)}">6.25</td>
 						</tr>
 						<thead th:if="${playerForecastStat.index % 8 == 7 && !playerForecastStat.last}">
 							<tr><td th:colspan="${4 + resultCount}">&nbsp;</td></tr>
