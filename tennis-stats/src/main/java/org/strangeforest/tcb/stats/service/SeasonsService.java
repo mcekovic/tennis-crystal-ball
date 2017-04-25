@@ -99,7 +99,7 @@ public class SeasonsService {
 	private static final String BEST_SEASONS_QUERY = //language=SQL
 		"WITH player_season AS (\n" +
 		"  SELECT player_id, s.season, s.goat_points,\n" +
-		"    s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points,\n" +
+		"    s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.weeks_at_elo_topn_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points,\n" +
 		"    count(CASE WHEN e.level = 'G' AND r.result = 'W' THEN 1 ELSE NULL END) grand_slam_titles,\n" +
 		"    count(CASE WHEN e.level = 'G' AND r.result = 'F' THEN 1 ELSE NULL END) grand_slam_finals,\n" +
 		"    count(CASE WHEN e.level = 'G' AND r.result = 'SF' THEN 1 ELSE NULL END) grand_slam_semi_finals,\n" +
@@ -113,15 +113,15 @@ public class SeasonsService {
 		"  LEFT JOIN player_tournament_event_result r USING (player_id)\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id, season)\n" +
 		"  WHERE s.goat_points >= :minPoints\n" +
-		"  GROUP BY player_id, s.season, s.goat_points, s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points\n" +
+		"  GROUP BY player_id, s.season, s.goat_points, s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.weeks_at_elo_topn_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points\n" +
 		"), player_season_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank,\n" +
-		"     player_id, season, goat_points, tournament_goat_points, year_end_rank_goat_points, weeks_at_no1_goat_points, big_wins_goat_points, grand_slam_goat_points,\n" +
+		"     player_id, season, goat_points, tournament_goat_points, year_end_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, big_wins_goat_points, grand_slam_goat_points,\n" +
 		"     grand_slam_titles, grand_slam_finals, grand_slam_semi_finals, tour_finals_titles, tour_finals_finals, masters_titles, masters_finals, olympics_titles, titles\n" +
 		"  FROM player_season\n" +
 		")\n" +
 		"SELECT season_rank, player_id, p.name, rank() OVER (PARTITION BY player_id ORDER BY season_rank) player_season_rank,\n" +
-		"  p.country_id, s.season, s.goat_points, s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points,\n" +
+		"  p.country_id, s.season, s.goat_points, s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.weeks_at_elo_topn_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points,\n" +
 		"  s.grand_slam_titles, s.grand_slam_finals, s.grand_slam_semi_finals, s.tour_finals_titles, s.tour_finals_finals,\n" +
 		"  s.masters_titles, s.masters_finals, s.olympics_titles, s.titles, sp.matches_won, sp.matches_lost, y.year_end_rank\n" +
 		"FROM player_season_ranked s\n" +
@@ -239,6 +239,7 @@ public class SeasonsService {
 				row.setTournamentGoatPoints(rs.getInt("tournament_goat_points"));
 				row.setYearEndRankGoatPoints(rs.getInt("year_end_rank_goat_points"));
 				row.setWeeksAtNo1GoatPoints(rs.getInt("weeks_at_no1_goat_points"));
+				row.setWeeksAtEloTopNGoatPoints(rs.getInt("weeks_at_elo_topn_goat_points"));
 				row.setBigWinsGoatPoints(rs.getInt("big_wins_goat_points"));
 				row.setGrandSlamGoatPoints(rs.getInt("grand_slam_goat_points"));
 				// Titles

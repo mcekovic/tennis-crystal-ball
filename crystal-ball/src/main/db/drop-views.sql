@@ -10,6 +10,8 @@ DROP MATERIALIZED VIEW player_season_goat_points;
 DROP VIEW player_season_goat_points_v;
 
 DROP VIEW player_best_elo_rating_goat_points_v;
+DROP VIEW player_weeks_at_elo_topn_goat_points_v;
+DROP VIEW player_season_weeks_at_elo_topn_goat_points_v;
 DROP VIEW player_weeks_at_no1_goat_points_v;
 DROP VIEW player_season_weeks_at_no1_goat_points_v;
 DROP VIEW player_big_wins_goat_points_v;
@@ -24,6 +26,9 @@ DROP VIEW player_statistics_goat_points_v;
 DROP MATERIALIZED VIEW player_h2h;
 DROP VIEW player_h2h_v;
 
+DROP VIEW player_weeks_at_elo_topn_v;
+DROP VIEW player_season_weeks_at_elo_topn_v;
+DROP VIEW topn_player_elo_ranking_v;
 DROP MATERIALIZED VIEW player_weeks_at_no1;
 DROP VIEW player_weeks_at_no1_v;
 DROP MATERIALIZED VIEW player_season_weeks_at_no1;

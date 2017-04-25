@@ -758,42 +758,6 @@ CREATE INDEX ON player_tournament_level_win_streak (player_id);
 CREATE INDEX ON player_tournament_level_win_streak (tournament_id);
 
 
--- player_best_elo_rating_goat_points_v
-
-CREATE OR REPLACE VIEW player_best_elo_rating_goat_points_v AS
-WITH best_elo_rating_ranked AS (
-	SELECT player_id, rank() OVER (ORDER BY best_elo_rating DESC) AS best_elo_rating_rank,
-		rank() OVER (ORDER BY best_hard_elo_rating DESC NULLS LAST) AS best_hard_elo_rating_rank,
-		rank() OVER (ORDER BY best_clay_elo_rating DESC NULLS LAST) AS best_clay_elo_rating_rank,
-		rank() OVER (ORDER BY best_grass_elo_rating DESC NULLS LAST) AS best_grass_elo_rating_rank,
-		rank() OVER (ORDER BY best_carpet_elo_rating DESC NULLS LAST) AS best_carpet_elo_rating_rank
-	FROM player_best_elo_rating
-), goat_points AS (
-	SELECT player_id, goat_points
-	FROM best_elo_rating_ranked
-	INNER JOIN best_elo_rating_goat_points USING (best_elo_rating_rank)
-	UNION ALL
-	SELECT player_id, goat_points
-	FROM best_elo_rating_ranked
-	INNER JOIN best_surface_elo_rating_goat_points gh ON gh.best_elo_rating_rank = best_hard_elo_rating_rank
-	UNION ALL
-	SELECT player_id, goat_points
-	FROM best_elo_rating_ranked
-	INNER JOIN best_surface_elo_rating_goat_points gc ON gc.best_elo_rating_rank = best_clay_elo_rating_rank
-	UNION ALL
-	SELECT player_id, goat_points
-	FROM best_elo_rating_ranked
-	INNER JOIN best_surface_elo_rating_goat_points gg ON gg.best_elo_rating_rank = best_grass_elo_rating_rank
-	UNION ALL
-	SELECT player_id, goat_points
-	FROM best_elo_rating_ranked
-	INNER JOIN best_surface_elo_rating_goat_points gp ON gp.best_elo_rating_rank = best_carpet_elo_rating_rank
-)
-SELECT player_id, sum(goat_points) AS goat_points
-FROM goat_points
-GROUP BY player_id;
-
-
 -- no1_player_ranking_v
 
 CREATE OR REPLACE VIEW no1_player_ranking_v AS
@@ -854,6 +818,98 @@ CREATE OR REPLACE VIEW player_weeks_at_no1_goat_points_v AS
 SELECT player_id, round(weeks_at_no1::REAL / weeks_for_point)::INTEGER AS goat_points, weeks_at_no1::REAL / weeks_for_point AS unrounded_goat_points
 FROM player_weeks_at_no1
 INNER JOIN weeks_at_no1_goat_points ON TRUE;
+
+
+-- topn_player_elo_ranking_v
+
+CREATE OR REPLACE VIEW topn_player_elo_ranking_v AS
+WITH topn_player_elo_ranking AS (
+	SELECT player_id, rank, rank_date, date_part('year', rank_date)::INTEGER AS season,
+		weeks(rank_date, lead(rank_date) OVER p) AS weeks,
+		season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks,
+		next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks
+	FROM player_elo_ranking
+	INNER JOIN player_best_elo_rank USING (player_id)
+	WHERE best_elo_rank <= 5
+	WINDOW p AS (PARTITION BY player_id ORDER BY rank_date)
+)
+SELECT player_id, rank, rank_date, season, weeks, season_weeks, next_season_weeks
+FROM topn_player_elo_ranking
+WHERE rank <= 5;
+
+
+-- player_season_weeks_at_elo_topn_v
+
+CREATE OR REPLACE VIEW player_season_weeks_at_elo_topn_v AS
+WITH weeks_at_elo_topn AS (
+	SELECT player_id, rank, season, sum(season_weeks) AS season_weeks, sum(next_season_weeks) AS next_season_weeks
+	FROM topn_player_elo_ranking_v
+	GROUP BY player_id, rank, season
+)
+SELECT player_id, rank, season, round(season_weeks + coalesce(lag(next_season_weeks) OVER (PARTITION BY player_id ORDER BY season), 0))::INTEGER AS weeks
+FROM weeks_at_elo_topn;
+
+
+-- player_weeks_at_elo_topn_v
+
+CREATE OR REPLACE VIEW player_weeks_at_elo_topn_v AS
+SELECT player_id, rank, ceil(sum(CASE WHEN weeks <= 52 THEN weeks ELSE 0 END)) weeks
+FROM topn_player_elo_ranking_v
+GROUP BY player_id, rank;
+
+
+-- player_season_weeks_at_elo_topn_goat_points_v
+
+CREATE OR REPLACE VIEW player_season_weeks_at_elo_topn_goat_points_v AS
+SELECT player_id, season, round(sum(CASE WHEN weeks <= 52 THEN weeks ELSE 0 END::REAL / weeks_for_point))::INTEGER AS goat_points, sum(CASE WHEN weeks <= 52 THEN weeks ELSE 0 END::REAL / weeks_for_point) AS unrounded_goat_points
+FROM player_season_weeks_at_elo_topn_v
+INNER JOIN weeks_at_elo_topn_goat_points USING (rank)
+GROUP BY player_id, season;
+
+
+-- player_weeks_at_elo_topn_goat_points_v
+
+CREATE OR REPLACE VIEW player_weeks_at_elo_topn_goat_points_v AS
+SELECT player_id, round(sum(weeks::REAL / weeks_for_point))::INTEGER AS goat_points, sum(weeks::REAL / weeks_for_point) AS unrounded_goat_points
+FROM player_weeks_at_elo_topn_v
+INNER JOIN weeks_at_elo_topn_goat_points USING (rank)
+GROUP BY player_id;
+
+
+-- player_best_elo_rating_goat_points_v
+
+CREATE OR REPLACE VIEW player_best_elo_rating_goat_points_v AS
+WITH best_elo_rating_ranked AS (
+	SELECT player_id, rank() OVER (ORDER BY best_elo_rating DESC) AS best_elo_rating_rank,
+		rank() OVER (ORDER BY best_hard_elo_rating DESC NULLS LAST) AS best_hard_elo_rating_rank,
+		rank() OVER (ORDER BY best_clay_elo_rating DESC NULLS LAST) AS best_clay_elo_rating_rank,
+		rank() OVER (ORDER BY best_grass_elo_rating DESC NULLS LAST) AS best_grass_elo_rating_rank,
+		rank() OVER (ORDER BY best_carpet_elo_rating DESC NULLS LAST) AS best_carpet_elo_rating_rank
+	FROM player_best_elo_rating
+), goat_points AS (
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_elo_rating_goat_points USING (best_elo_rating_rank)
+	UNION ALL
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_surface_elo_rating_goat_points gh ON gh.best_elo_rating_rank = best_hard_elo_rating_rank
+	UNION ALL
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_surface_elo_rating_goat_points gc ON gc.best_elo_rating_rank = best_clay_elo_rating_rank
+	UNION ALL
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_surface_elo_rating_goat_points gg ON gg.best_elo_rating_rank = best_grass_elo_rating_rank
+	UNION ALL
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_surface_elo_rating_goat_points gp ON gp.best_elo_rating_rank = best_carpet_elo_rating_rank
+)
+SELECT player_id, sum(goat_points) AS goat_points
+FROM goat_points
+GROUP BY player_id;
 
 
 -- player_big_wins_v
@@ -1431,7 +1487,7 @@ CREATE OR REPLACE VIEW player_season_goat_points_v AS
 WITH goat_points AS (
 	SELECT r.player_id, e.season, sum(r.goat_points) goat_points, sum(r.goat_points) tournament_goat_points, 0 ranking_goat_points, 0 achievements_goat_points,
 		sum(r.goat_points) raw_goat_points, 0 raw_ranking_goat_points, 0 raw_achievements_goat_points,
-		0 year_end_rank_goat_points, 0 weeks_at_no1_goat_points, 0 big_wins_goat_points, 0 grand_slam_goat_points
+		0 year_end_rank_goat_points, 0 weeks_at_no1_goat_points, 0 weeks_at_elo_topn_goat_points, 0 big_wins_goat_points, 0 grand_slam_goat_points
 	FROM player_tournament_event_result r
 	INNER JOIN tournament_event e USING (tournament_event_id)
 	WHERE r.goat_points > 0
@@ -1439,29 +1495,34 @@ WITH goat_points AS (
 	UNION ALL
 	SELECT r.player_id, r.season, sum(p.goat_points), 0, sum(p.goat_points), 0,
 		sum(p.goat_points), sum(p.goat_points), 0,
-		sum(p.goat_points), 0, 0, 0
+		sum(p.goat_points), 0, 0, 0, 0
 	FROM player_year_end_rank r
 	INNER JOIN year_end_rank_goat_points p USING (year_end_rank)
 	GROUP BY r.player_id, r.season
 	UNION ALL
 	SELECT player_id, season, goat_points, 0, goat_points, 0,
 		0, 0, 0,
-		0, goat_points, 0, 0
+		0, goat_points, 0, 0, 0
 	FROM player_season_weeks_at_no1_goat_points_v
+	UNION ALL
+	SELECT player_id, season, goat_points, 0, goat_points, 0,
+		0, 0, 0,
+		0, 0, goat_points, 0, 0
+	FROM player_season_weeks_at_elo_topn_goat_points_v
 	UNION ALL
 	SELECT player_id, season, goat_points, 0, 0, goat_points,
 		0, 0, 0,
-		0, 0, goat_points, 0
+		0, 0, 0, goat_points, 0
 	FROM player_season_big_wins_goat_points_v
 	UNION ALL
 	SELECT player_id, season, goat_points, 0, 0, goat_points,
 		goat_points, 0, goat_points,
-		0, 0, 0, goat_points
+		0, 0, 0, 0, goat_points
 	FROM player_season_grand_slam_goat_points_v
 )
 SELECT player_id, season, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points,
 	sum(raw_goat_points) raw_goat_points, sum(raw_ranking_goat_points) raw_ranking_goat_points, sum(raw_achievements_goat_points) raw_achievements_goat_points,
-	sum(year_end_rank_goat_points) year_end_rank_goat_points, sum(weeks_at_no1_goat_points) weeks_at_no1_goat_points, sum(big_wins_goat_points) big_wins_goat_points, sum(grand_slam_goat_points) grand_slam_goat_points
+	sum(year_end_rank_goat_points) year_end_rank_goat_points, sum(weeks_at_no1_goat_points) weeks_at_no1_goat_points, sum(weeks_at_elo_topn_goat_points) weeks_at_elo_topn_goat_points, sum(big_wins_goat_points) big_wins_goat_points, sum(grand_slam_goat_points) grand_slam_goat_points
 FROM goat_points
 GROUP BY player_id, season;
 
@@ -1500,74 +1561,79 @@ INNER JOIN best_season_goat_points USING (season_rank);
 CREATE OR REPLACE VIEW player_goat_points_v AS
 WITH goat_points AS (
 	SELECT player_id, raw_goat_points goat_points, tournament_goat_points, raw_ranking_goat_points ranking_goat_points, raw_achievements_goat_points achievements_goat_points,
-		year_end_rank_goat_points, 0 best_rank_goat_points, 0 best_elo_rating_goat_points, 0 weeks_at_no1_goat_points,
+		year_end_rank_goat_points, 0 best_rank_goat_points, 0 weeks_at_no1_goat_points, 0 weeks_at_elo_topn_goat_points, 0 best_elo_rating_goat_points,
 		0 big_wins_goat_points, 0 h2h_goat_points, grand_slam_goat_points, 0 best_season_goat_points, 0 greatest_rivalries_goat_points, 0 performance_goat_points, 0 statistics_goat_points
 	FROM player_season_goat_points
 	UNION ALL
 	SELECT player_id, goat_points, 0, goat_points, 0,
-		0, goat_points, 0, 0,
+		0, goat_points, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0
 	FROM player_best_rank
 	INNER JOIN best_rank_goat_points USING (best_rank)
 	UNION ALL
 	SELECT player_id, goat_points, 0, goat_points, 0,
-		0, 0, goat_points, 0,
-		0, 0, 0, 0, 0, 0, 0
-	FROM player_best_elo_rating_goat_points_v
-	UNION ALL
-	SELECT player_id, goat_points, 0, goat_points, 0,
-		0, 0, 0, goat_points,
+		0, 0, goat_points, 0, 0,
 		0, 0, 0, 0, 0, 0, 0
 	FROM player_weeks_at_no1_goat_points_v
 	UNION ALL
+	SELECT player_id, goat_points, 0, goat_points, 0,
+		0, 0, 0, goat_points, 0,
+		0, 0, 0, 0, 0, 0, 0
+	FROM player_weeks_at_elo_topn_goat_points_v
+	UNION ALL
+	SELECT player_id, goat_points, 0, goat_points, 0,
+		0, 0, 0, 0, goat_points,
+		0, 0, 0, 0, 0, 0, 0
+	FROM player_best_elo_rating_goat_points_v
+	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0, 0,
+		0, 0, 0, 0, 0,
 		goat_points, 0, 0, 0, 0, 0, 0
 	FROM player_big_wins_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0, 0,
+		0, 0, 0, 0, 0,
 		0, goat_points, 0, 0, 0, 0, 0
 	FROM player_h2h
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0, 0,
+		0, 0, 0, 0, 0,
 		0, 0, goat_points, 0, 0, 0, 0
 	FROM player_career_grand_slam_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0, 0,
+		0, 0, 0, 0, 0,
 		0, 0, goat_points, 0, 0, 0, 0
 	FROM player_grand_slam_holder_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0, 0,
+		0, 0, 0, 0, 0,
 		0, 0, 0, goat_points, 0, 0, 0
 	FROM player_best_season_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0, 0,
+		0, 0, 0, 0, 0,
 		0, 0, 0, 0, goat_points, 0, 0
 	FROM player_greatest_rivalries_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0, 0,
+		0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, goat_points, 0
 	FROM player_performance_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0, 0,
+		0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, goat_points
 	FROM player_statistics_goat_points_v
 ), goat_points_total AS (
 	SELECT player_id, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points,
-		sum(year_end_rank_goat_points) year_end_rank_goat_points, sum(best_rank_goat_points) best_rank_goat_points, sum(best_elo_rating_goat_points) best_elo_rating_goat_points, sum(weeks_at_no1_goat_points) weeks_at_no1_goat_points,
+		sum(year_end_rank_goat_points) year_end_rank_goat_points, sum(best_rank_goat_points) best_rank_goat_points, sum(weeks_at_no1_goat_points) weeks_at_no1_goat_points, sum(weeks_at_elo_topn_goat_points) weeks_at_elo_topn_goat_points, sum(best_elo_rating_goat_points) best_elo_rating_goat_points,
 		sum(big_wins_goat_points) big_wins_goat_points, sum(h2h_goat_points) h2h_goat_points, sum(grand_slam_goat_points) grand_slam_goat_points, sum(best_season_goat_points) best_season_goat_points, sum(greatest_rivalries_goat_points) greatest_rivalries_goat_points, sum(performance_goat_points) performance_goat_points, sum(statistics_goat_points) statistics_goat_points
 	FROM goat_points
 	GROUP BY player_id
 )
 SELECT player_id, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
-	year_end_rank_goat_points, best_rank_goat_points, best_elo_rating_goat_points, weeks_at_no1_goat_points,
+	year_end_rank_goat_points, best_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, best_elo_rating_goat_points,
 	big_wins_goat_points, h2h_goat_points, grand_slam_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points
 FROM goat_points_total;
 

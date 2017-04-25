@@ -135,13 +135,13 @@
 	<tr th:if="${goatPoints1.bestEloRatingPoints > 0 || goatPoints2.bestEloRatingPoints > 0}">
 		<td colspan="3" class="first-column last-column"></td>
 		<td class="points first-column" th:text="${goatPoints1.bestEloRatingPoints > 0 ? goatPoints1.bestEloRatingPoints : _}"></td>
-		<td colspan="2" class="first-column text-left">Best Elo Rating</td>
+		<td colspan="2" class="first-column text-left">Peak Elo Rating</td>
 		<td class="first-column"></td>
 		<td class="points first-column" th:text="${goatPoints1.bestEloRatingPoints > 0 ? goatPoints1.bestEloRatingPoints : _}"></td>
 		<td class="first-column"></td>
 		<td class="points first-column" th:text="${goatPoints2.bestEloRatingPoints > 0 ? goatPoints2.bestEloRatingPoints : _}"></td>
 		<td class="first-column"></td>
-		<td colspan="2" class="first-column text-right">Best Elo Rating</td>
+		<td colspan="2" class="first-column text-right">Peak Elo Rating</td>
 		<td class="points first-column" th:text="${goatPoints2.bestEloRatingPoints > 0 ? goatPoints2.bestEloRatingPoints : _}"></td>
 		<td colspan="3" class="first-column last-column"></td>
 	</tr>

@@ -93,15 +93,15 @@
 		</th:block>
 		<div>
 			<strong>
-				<a th:unless="${forSeason}" href="/record?recordId=WeeksAtNo1GOATPoints" title="Players with most Weeks at No 1. GOAT Points">Weeks at No. 1</a>
-				<a th:if="${forSeason}" href="/record?recordId=SeasonWeeksAtNo1GOATPoints" title="Players with most Weeks at No 1. GOAT Points in the single season">Weeks at No. 1</a>
+				<a th:unless="${forSeason}" href="/record?recordId=WeeksAtNo1GOATPoints" title="Players with most Weeks at No. 1 GOAT Points">Weeks at No. 1</a>
+				<a th:if="${forSeason}" href="/record?recordId=SeasonWeeksAtNo1GOATPoints" title="Players with most Weeks at No. 1 GOAT Points in the single season">Weeks at No. 1</a>
 			</strong>
 			<p>+1 point for each <th:block th:text="${weeksAtNo1ForGOATPoint}">10</th:block> weeks as ATP No. 1</p>
 		</div>
 		<th:block th:unless="${forSeason}">
 		<br/>
 		<h4>
-			<a href="/record?recordId=BestEloRatingGOATPoints" title="Players with most Elo Rating GOAT Points">Elo Rating Points</a>
+			<a href="/record?recordId=BestEloRatingGOATPoints" title="Players with most Peak Elo Rating GOAT Points">Peak Elo Rating Points</a>
 		</h4>
 		<strong>Peak Elo Rating</strong>
 		<table class="table table-condensed table-hover table-striped">

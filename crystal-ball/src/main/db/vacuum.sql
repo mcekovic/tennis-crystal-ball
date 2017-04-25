@@ -19,9 +19,10 @@ VACUUM FULL ANALYSE VERBOSE player_in_progress_result;
 VACUUM FULL ANALYSE VERBOSE tournament_rank_points;
 VACUUM FULL ANALYSE VERBOSE year_end_rank_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_rank_goat_points;
+VACUUM FULL ANALYSE VERBOSE weeks_at_no1_goat_points;
+VACUUM FULL ANALYSE VERBOSE weeks_at_elo_topn_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_elo_rating_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_surface_elo_rating_goat_points;
-VACUUM FULL ANALYSE VERBOSE weeks_at_no1_goat_points;
 
 VACUUM FULL ANALYSE VERBOSE big_win_match_factor;
 VACUUM FULL ANALYSE VERBOSE big_win_rank_factor;

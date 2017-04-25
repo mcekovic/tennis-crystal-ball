@@ -27,17 +27,17 @@ public class GOATListService {
 	private static final String GOAT_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM player_goat_points g\n" +
 		"INNER JOIN player_v USING (player_id)\n" +
-		"WHERE g.goat_points > 0 AND g.goat_rank <= :maxPlayers%1$s";
+		"WHERE g.goat_points > 0 AND NOT lower(name) LIKE '%%unknown%%' AND g.goat_rank <= :maxPlayers%1$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
 		"SELECT player_id, g.goat_rank, p.name, p.country_id, p.active, g.goat_points, g.tournament_goat_points, g.ranking_goat_points, g.achievements_goat_points,\n" +
-		"  g.year_end_rank_goat_points, g.best_rank_goat_points, g.best_elo_rating_goat_points, g.weeks_at_no1_goat_points,\n" +
+		"  g.year_end_rank_goat_points, g.best_rank_goat_points, g.weeks_at_no1_goat_points, g.weeks_at_elo_topn_goat_points, g.best_elo_rating_goat_points,\n" +
 		"  g.big_wins_goat_points, g.h2h_goat_points, g.grand_slam_goat_points, g.best_season_goat_points, g.greatest_rivalries_goat_points, g.performance_goat_points, g.statistics_goat_points,\n" +
 		"  p.grand_slams, p.tour_finals, p.masters, p.olympics, p.big_titles, p.titles, pf.matches_won, pf.matches_lost, p.best_elo_rating, p.best_elo_rating_date\n" +
 		"FROM player_goat_points g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"INNER JOIN player_performance pf USING (player_id)\n" +
-		"WHERE g.goat_points > 0 AND g.goat_rank <= :maxPlayers%1$s\n" +
+		"WHERE g.goat_points > 0 AND NOT lower(name) LIKE '%%unknown%%' AND g.goat_rank <= :maxPlayers%1$s\n" +
 		"ORDER BY %2$s OFFSET :offset LIMIT :limit";
 
 
@@ -91,8 +91,9 @@ public class GOATListService {
 				// GOAT points items
 				row.setYearEndRankGoatPoints(rs.getInt("year_end_rank_goat_points"));
 				row.setBestRankGoatPoints(rs.getInt("best_rank_goat_points"));
-				row.setBestEloRatingGoatPoints(rs.getInt("best_elo_rating_goat_points"));
 				row.setWeeksAtNo1GoatPoints(rs.getInt("weeks_at_no1_goat_points"));
+				row.setWeeksAtEloTopNGoatPoints(rs.getInt("weeks_at_elo_topn_goat_points"));
+				row.setBestEloRatingGoatPoints(rs.getInt("best_elo_rating_goat_points"));
 				row.setBigWinsGoatPoints(rs.getInt("big_wins_goat_points"));
 				row.setH2hGoatPoints(rs.getInt("h2h_goat_points"));
 				row.setGrandSlamGoatPoints(rs.getInt("grand_slam_goat_points"));

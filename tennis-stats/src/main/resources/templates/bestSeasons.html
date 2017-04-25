@@ -32,7 +32,8 @@
 							var title = "";
 							title = appendGoatPointsTitle(title, row, "tournamentGoatPoints", "Tournament");
 							title = appendGoatPointsTitle(title, row, "yearEndRankGoatPoints", "Year-end ranking");
-							title = appendGoatPointsTitle(title, row, "weeksAtNo1GoatPoints", "Weeks at No 1.");
+							title = appendGoatPointsTitle(title, row, "weeksAtNo1GoatPoints", "Weeks at No. 1");
+							title = appendGoatPointsTitle(title, row, "weeksAtEloTopNGoatPoints", "Weeks at Elo Top 5");
 							title = appendGoatPointsTitle(title, row, "bigWinsGoatPoints", "Big wins");
 							title = appendGoatPointsTitle(title, row, "grandSlamGoatPoints", "Grand Slam");
 							return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=goatPoints&season=" + row.season + "' title='" + title + "'>" + row.goatPoints + "</a>";

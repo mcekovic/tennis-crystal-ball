@@ -6,7 +6,7 @@ public class GOATListRow extends PlayerRow {
 
 	private final int goatPoints;
 	private final int tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints;
-	private int yearEndRankGoatPoints, bestRankGoatPoints, bestEloRatingGoatPoints, weeksAtNo1GoatPoints;
+	private int yearEndRankGoatPoints, bestRankGoatPoints, weeksAtNo1GoatPoints, weeksAtEloTopNGoatPoints, bestEloRatingGoatPoints;
 	private int bigWinsGoatPoints, h2hGoatPoints, grandSlamGoatPoints, bestSeasonGoatPoints, greatestRivalriesGoatPoints, performanceGoatPoints, statisticsGoatPoints;
 	private int grandSlams;
 	private int tourFinals;
@@ -65,14 +65,6 @@ public class GOATListRow extends PlayerRow {
 		this.bestRankGoatPoints = bestRankGoatPoints;
 	}
 
-	public int getBestEloRatingGoatPoints() {
-		return bestEloRatingGoatPoints;
-	}
-
-	public void setBestEloRatingGoatPoints(int bestEloRatingGoatPoints) {
-		this.bestEloRatingGoatPoints = bestEloRatingGoatPoints;
-	}
-
 	public int getWeeksAtNo1GoatPoints() {
 		return weeksAtNo1GoatPoints;
 	}
@@ -81,7 +73,23 @@ public class GOATListRow extends PlayerRow {
 		this.weeksAtNo1GoatPoints = weeksAtNo1GoatPoints;
 	}
 
+	public int getWeeksAtEloTopNGoatPoints() {
+		return weeksAtEloTopNGoatPoints;
+	}
 
+	public void setWeeksAtEloTopNGoatPoints(int weeksAtEloTopNGoatPoints) {
+		this.weeksAtEloTopNGoatPoints = weeksAtEloTopNGoatPoints;
+	}
+
+	public int getBestEloRatingGoatPoints() {
+		return bestEloRatingGoatPoints;
+	}
+
+	public void setBestEloRatingGoatPoints(int bestEloRatingGoatPoints) {
+		this.bestEloRatingGoatPoints = bestEloRatingGoatPoints;
+	}
+
+	
 	// Achievements GOAT points
 
 	public int getBigWinsGoatPoints() {

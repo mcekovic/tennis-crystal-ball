@@ -4,7 +4,7 @@ public class BestSeasonRow extends PlayerRow {
 
 	private final int season;
 	private final int goatPoints;
-	private int tournamentGoatPoints, yearEndRankGoatPoints, weeksAtNo1GoatPoints, bigWinsGoatPoints, grandSlamGoatPoints;
+	private int tournamentGoatPoints, yearEndRankGoatPoints, weeksAtNo1GoatPoints, weeksAtEloTopNGoatPoints, bigWinsGoatPoints, grandSlamGoatPoints;
 	private int grandSlamTitles, grandSlamFinals, grandSlamSemiFinals;
 	private int tourFinalsTitles, tourFinalsFinals;
 	private int mastersTitles, mastersFinals;
@@ -52,6 +52,14 @@ public class BestSeasonRow extends PlayerRow {
 
 	public void setWeeksAtNo1GoatPoints(int weeksAtNo1GoatPoints) {
 		this.weeksAtNo1GoatPoints = weeksAtNo1GoatPoints;
+	}
+
+	public int getWeeksAtEloTopNGoatPoints() {
+		return weeksAtEloTopNGoatPoints;
+	}
+
+	public void setWeeksAtEloTopNGoatPoints(int weeksAtEloTopNGoatPoints) {
+		this.weeksAtEloTopNGoatPoints = weeksAtEloTopNGoatPoints;
 	}
 
 	public int getBigWinsGoatPoints() {

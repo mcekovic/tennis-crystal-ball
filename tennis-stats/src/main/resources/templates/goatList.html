@@ -39,8 +39,9 @@
 							var title = "";
 							title = appendGoatPointsTitle(title, row, "yearEndRankGoatPoints", "Year-end ranking");
 							title = appendGoatPointsTitle(title, row, "bestRankGoatPoints", "Best ranking");
-							title = appendGoatPointsTitle(title, row, "bestEloRatingGoatPoints", "Best Elo rating");
-							title = appendGoatPointsTitle(title, row, "weeksAtNo1GoatPoints", "Weeks at No 1.");
+							title = appendGoatPointsTitle(title, row, "weeksAtNo1GoatPoints", "Weeks at No. 1");
+							title = appendGoatPointsTitle(title, row, "weeksAtEloTopNGoatPoints", "Weeks at Elo Top 5");
+							title = appendGoatPointsTitle(title, row, "bestEloRatingGoatPoints", "Peak Elo rating");
 							return "<span title='" + title + "'>" + row.rankingGoatPoints + "</span>";
 						}
 						else

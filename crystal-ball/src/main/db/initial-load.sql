@@ -107,6 +107,22 @@ VALUES
 (4, 2),
 (5, 1);
 
+DELETE FROM weeks_at_no1_goat_points;
+INSERT INTO weeks_at_no1_goat_points
+(weeks_for_point)
+VALUES
+(10);
+
+DELETE FROM weeks_at_elo_topn_goat_points;
+INSERT INTO weeks_at_elo_topn_goat_points
+(rank, weeks_for_point)
+VALUES
+(1,  10),
+(2,  20),
+(3,  30),
+(4,  50),
+(5, 100);
+
 DELETE FROM best_elo_rating_goat_points;
 INSERT INTO best_elo_rating_goat_points
 (best_elo_rating_rank, goat_points)
@@ -131,12 +147,6 @@ VALUES
 ( 3, 3),
 ( 4, 2),
 ( 5, 1);
-
-DELETE FROM weeks_at_no1_goat_points;
-INSERT INTO weeks_at_no1_goat_points
-(weeks_for_point)
-VALUES
-(10);
 
 DELETE FROM big_win_match_factor;
 INSERT INTO big_win_match_factor

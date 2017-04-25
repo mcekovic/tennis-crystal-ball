@@ -359,6 +359,21 @@ CREATE TABLE best_rank_goat_points (
 );
 
 
+-- weeks_at_no1_goat_points
+
+CREATE TABLE weeks_at_no1_goat_points (
+	weeks_for_point INTEGER NOT NULL PRIMARY KEY
+);
+
+
+-- weeks_at_elo_topn_goat_points
+
+CREATE TABLE weeks_at_elo_topn_goat_points (
+	rank INTEGER NOT NULL PRIMARY KEY,
+	weeks_for_point INTEGER NOT NULL
+);
+
+
 -- best_elo_rating_goat_points
 
 CREATE TABLE best_elo_rating_goat_points (
@@ -374,13 +389,6 @@ CREATE TABLE best_surface_elo_rating_goat_points (
 	best_elo_rating_rank INTEGER NOT NULL,
 	goat_points INTEGER NOT NULL,
 	PRIMARY KEY (best_elo_rating_rank, goat_points)
-);
-
-
--- weeks_at_no1_goat_points
-
-CREATE TABLE weeks_at_no1_goat_points (
-	weeks_for_point INTEGER NOT NULL PRIMARY KEY
 );
 
 
