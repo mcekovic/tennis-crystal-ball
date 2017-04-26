@@ -32,68 +32,74 @@
 			</div>
 			<div id="menuNavbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
-					<li th:class="${path == '/goatList' ? 'active' : ''}"><a href="/goatList">GOAT List</a></li>
+					<li th:class="${path == '/goatList' ? 'active' : _}"><a href="/goatList">GOAT List</a></li>
 					<li th:class="${path != null && path.endsWith('Timeline') ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Timelines<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/dominanceTimeline' ? 'active' : ''}"><a href="/dominanceTimeline">Dominance Timeline<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
-							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'G' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=G">Grand Slam Timeline</a></li>
-							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'F' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=F">Tour Finals Timeline</a></li>
-							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'M' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=M">Masters Timeline</a></li>
-							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'O' ? 'active' : ''}"><a href="/tournamentLevelTimeline?level=O">Olympics Timeline</a></li>
-							<li th:class="${path == '/teamTournamentLevelTimeline' && param.level[0] == 'D' ? 'active' : ''}"><a href="/teamTournamentLevelTimeline?level=D">Davis Cup Timeline</a></li>
-							<li th:class="${path == '/teamTournamentLevelTimeline' && param.level[0] == 'T' ? 'active' : ''}"><a href="/teamTournamentLevelTimeline?level=T">World Team Cup Timeline</a></li>
-							<li th:class="${path == '/topRankingsTimeline' ? 'active' : ''}"><a href="/topRankingsTimeline">Top Rankings Timeline</a></li>
-							<li th:class="${path == '/surfaceTimeline' ? 'active' : ''}"><a href="/surfaceTimeline">Surface Timeline</a></li>
+							<li th:class="${path == '/dominanceTimeline' ? 'active' : _}"><a href="/dominanceTimeline">Dominance Timeline<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
+							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'G' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=G">Grand Slam Timeline</a></li>
+							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'F' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=F">Tour Finals Timeline</a></li>
+							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'M' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=M">Masters Timeline</a></li>
+							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'O' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=O">Olympics Timeline</a></li>
+							<li th:class="${path == '/teamTournamentLevelTimeline' && param.level[0] == 'D' ? 'active' : _}"><a href="/teamTournamentLevelTimeline?level=D">Davis Cup Timeline</a></li>
+							<li th:class="${path == '/teamTournamentLevelTimeline' && param.level[0] == 'T' ? 'active' : _}"><a href="/teamTournamentLevelTimeline?level=T">World Team Cup Timeline</a></li>
+							<li th:class="${path == '/topRankingsTimeline' ? 'active' : _}"><a href="/topRankingsTimeline">Top Rankings Timeline</a></li>
+							<li th:class="${path == '/surfaceTimeline' ? 'active' : _}"><a href="/surfaceTimeline">Surface Timeline</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/headToHead' || path == '/headsToHeads' || path == '/greatestRivalries' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rivalries<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/headToHead' ? 'active' : ''}"><a href="/headToHead">Head-to-Head</a></li>
-							<li th:class="${path == '/headsToHeads' ? 'active' : ''}"><a href="/headsToHeads">Heads-to-Heads</a></li>
-							<li th:class="${path == '/greatestRivalries' ? 'active' : ''}"><a href="/greatestRivalries">Greatest Rivalries</a></li>
+							<li th:class="${path == '/headToHead' ? 'active' : _}"><a href="/headToHead">Head-to-Head</a></li>
+							<li th:class="${path == '/headsToHeads' ? 'active' : _}"><a href="/headsToHeads">Heads-to-Heads</a></li>
+							<li th:class="${path == '/greatestRivalries' ? 'active' : _}"><a href="/greatestRivalries">Greatest Rivalries</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/rankingsTable' || path == '/rankingsChart' || path == '/peakEloRatings' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Rankings<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/rankingsTable' ? 'active' : ''}"><a href="/rankingsTable">Rankings Table</a></li>
-							<li th:class="${path == '/rankingsChart' ? 'active' : ''}"><a href="/rankingsChart">Rankings Chart</a></li>
-							<li th:class="${path == '/peakEloRatings' ? 'active' : ''}"><a href="/peakEloRatings">Peak Elo Ratings</a></li>
+							<li th:class="${path == '/rankingsTable' ? 'active' : _}"><a href="/rankingsTable">Rankings Table</a></li>
+							<li th:class="${path == '/rankingsChart' ? 'active' : _}"><a href="/rankingsChart">Rankings Chart</a></li>
+							<li th:class="${path == '/peakEloRatings' ? 'active' : _}"><a href="/peakEloRatings">Peak Elo Ratings</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/topPerformers' || path == '/performanceChart' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Performance<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/topPerformers' ? 'active' : ''}"><a href="/topPerformers">Top Performers</a></li>
-							<li th:class="${path == '/performanceChart' ? 'active' : ''}"><a href="/performanceChart">Performance Chart</a></li>
+							<li th:class="${path == '/topPerformers' ? 'active' : _}"><a href="/topPerformers">Top Performers</a></li>
+							<li th:class="${path == '/performanceChart' ? 'active' : _}"><a href="/performanceChart">Performance Chart</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/statsLeaders' || path == '/statsChart' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Statistics<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/statsLeaders' ? 'active' : ''}"><a href="/statsLeaders">Statistics Leaders</a></li>
-							<li th:class="${path == '/statsChart' ? 'active' : ''}"><a href="/statsChart">Statistics Chart</a></li>
+							<li th:class="${path == '/statsLeaders' ? 'active' : _}"><a href="/statsLeaders">Statistics Leaders</a></li>
+							<li th:class="${path == '/statsChart' ? 'active' : _}"><a href="/statsChart">Statistics Chart</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/seasons' || path == '/season' || path == '/bestSeasons' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Seasons<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/seasons' ? 'active' : ''}"><a href="/seasons">Seasons<sup class="new-feature">&nbsp;New!</sup></a></li>
-							<li th:class="${path == '/bestSeasons' ? 'active' : ''}"><a href="/bestSeasons">Best Seasons</a></li>
+							<li th:class="${path == '/seasons' ? 'active' : _}"><a href="/seasons">Seasons<sup class="new-feature">&nbsp;New!</sup></a></li>
+							<li th:class="${path == '/bestSeasons' ? 'active' : _}"><a href="/bestSeasons">Best Seasons</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/inProgressEventsForecasts' || path == '/inProgressEventForecast' || path == '/tournamentEvents' || path == '/tournamentEvent' || path == '/tournament' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Tournaments<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/tournamentEvents' || path == '/tournamentEvent' || path == '/tournament' ? 'active' : ''}"><a href="/tournamentEvents">Tournament Events</a></li>
-							<li th:class="${path == '/inProgressEventsForecasts' || path == '/inProgressEventForecast' ? 'active' : ''}"><a href="/inProgressEventsForecasts">Tournament Forecasts<sup class="new-feature">&nbsp;New!</sup></a></li>
+							<li th:class="${path == '/tournamentEvents' || path == '/tournamentEvent' || path == '/tournament' ? 'active' : _}"><a href="/tournamentEvents">Tournament Events</a></li>
+							<li th:class="${path == '/inProgressEventsForecasts' || path == '/inProgressEventForecast' ? 'active' : _}"><a href="/inProgressEventsForecasts">Tournament Forecasts<sup class="new-feature">&nbsp;New!</sup></a></li>
 						</ul>
 					</li>
-					<li th:class="${path == '/records' || path == '/record' ? 'active' : ''}"><a href="/records">Records<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
-					<li th:class="${path == '/liveScores' ? 'active' : ''}"><a href="/liveScores">Live Scores <img src="/images/active.png" style="vertical-align: top" title="Live" width="12" height="12"/></a></li>
-					<li th:class="${path == '/about' ? 'active' : ''}"><a href="/about">About</a></li>
+					<li th:class="${path == '/records' || path == '/record' ? 'active' : _}"><a href="/records">Records<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
+					<li th:class="${path == '/liveScores' ? 'active dropdown' : 'dropdown'}">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Live<span class="caret"></span> <img src="/images/active.png" title="Live" width="12" height="12"/></a>
+						<ul class="dropdown-menu">
+							<li th:class="${path == '/liveScores' ? 'active' : _}"><a href="/liveScores">Live Scores</a></li>
+							<li><a href="http://live-tennis.eu" target="_blank">Live Rankings</a></li>
+						</ul>
+					</li>
+					<li th:class="${path == '/about' ? 'active' : _}"><a href="/about">About</a></li>
 				</ul>
 			</div>
 		</div>
