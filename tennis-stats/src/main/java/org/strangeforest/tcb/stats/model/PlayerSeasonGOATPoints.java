@@ -15,6 +15,7 @@ public class PlayerSeasonGOATPoints {
 	// Ranking
 	private int yearEndRankPoints;
 	private int weeksAtNo1Points;
+	private int weeksAtEloTopNPoints;
 	// Achievements
 	private int bigWinsPoints;
 	private int grandSlamPoints;
@@ -94,6 +95,13 @@ public class PlayerSeasonGOATPoints {
 		this.weeksAtNo1Points = weeksAtNo1Points;
 	}
 
+	public Integer getWeeksAtEloTopNPoints() {
+		return zeroToNull(weeksAtEloTopNPoints);
+	}
+
+	public void setWeeksAtEloTopNPoints(int weeksAtEloTopNPoints) {
+		this.weeksAtEloTopNPoints = weeksAtEloTopNPoints;
+	}
 
 	// Achievements
 

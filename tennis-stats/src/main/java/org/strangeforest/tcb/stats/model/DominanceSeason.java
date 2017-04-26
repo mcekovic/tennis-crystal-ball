@@ -12,7 +12,7 @@ public class DominanceSeason {
 	private PlayerDominanceTimeline eraPlayer;
 	private int bestPlayerPoints;
 
-	private static final double DOMINANCE_RATIO_COEFFICIENT = 1000.0;
+	public static final double DOMINANCE_RATIO_COEFFICIENT = 1200.0;
 
 	public DominanceSeason(int season) {
 		this.season = season;
@@ -54,7 +54,7 @@ public class DominanceSeason {
 		this.eraPlayer = eraPlayer;
 	}
 
-	public void processPlayer(PlayerDominanceTimeline player) {
+	void processPlayer(PlayerDominanceTimeline player) {
 		SeasonPoints seasonPoints = player.getSeasonPoints(season);
 		if (seasonPoints != null) {
 			int playerPoints = seasonPoints.getPoints();

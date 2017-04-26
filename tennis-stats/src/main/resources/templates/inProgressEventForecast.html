@@ -101,7 +101,7 @@
 					<td th:with="player=${inProgressEvent.favorite1}">
 						<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
-						[[${#numbers.formatDecimal(100 * player.probability, 1, 1)}]]%
+						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
 					</td>
 				</tr>
 				<tr th:if="${inProgressEvent.favorite2}">
@@ -109,7 +109,7 @@
 					<td th:with="player=${inProgressEvent.favorite2}">
 						<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
-						[[${#numbers.formatDecimal(100 * player.probability, 1, 1)}]]%
+						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
 					</td>
 				</tr>
 				<tr th:if="${inProgressEvent.favorite3}">
@@ -117,7 +117,7 @@
 					<td th:with="player=${inProgressEvent.favorite3}">
 						<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
-						[[${#numbers.formatDecimal(100 * player.probability, 1, 1)}]]%
+						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
 					</td>
 				</tr>
 			</table>

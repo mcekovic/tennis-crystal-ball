@@ -14,8 +14,9 @@ public class PlayerGOATPoints {
 	// Ranking
 	private int yearEndRankPoints;
 	private int bestRankPoints;
-	private int bestEloRatingPoints;
 	private int weeksAtNo1Points;
+	private int weeksAtEloTopNPoints;
+	private int bestEloRatingPoints;
 	// Achievements
 	private int bigWinsPoints;
 	private int h2hPoints;
@@ -103,14 +104,6 @@ public class PlayerGOATPoints {
 		this.bestRankPoints = bestRankPoints;
 	}
 
-	public int getBestEloRatingPoints() {
-		return bestEloRatingPoints;
-	}
-
-	public void setBestEloRatingPoints(int bestEloRatingPoints) {
-		this.bestEloRatingPoints = bestEloRatingPoints;
-	}
-
 	public int getWeeksAtNo1Points() {
 		return weeksAtNo1Points;
 	}
@@ -119,8 +112,24 @@ public class PlayerGOATPoints {
 		this.weeksAtNo1Points = weeksAtNo1Points;
 	}
 
+	public int getWeeksAtEloTopNPoints() {
+		return weeksAtEloTopNPoints;
+	}
+
+	public void setWeeksAtEloTopNPoints(int weeksAtEloTopNPoints) {
+		this.weeksAtEloTopNPoints = weeksAtEloTopNPoints;
+	}
+
+	public int getBestEloRatingPoints() {
+		return bestEloRatingPoints;
+	}
+
+	public void setBestEloRatingPoints(int bestEloRatingPoints) {
+		this.bestEloRatingPoints = bestEloRatingPoints;
+	}
+
 	public int getSeasonsRankingPoints() {
-		return yearEndRankPoints + weeksAtNo1Points;
+		return yearEndRankPoints + weeksAtNo1Points + weeksAtEloTopNPoints;
 	}
 
 	public int getCareerRankingPoints() {

@@ -1,5 +1,9 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.strangeforest.tcb.stats.model.prediction.*;
+
+import static org.strangeforest.tcb.stats.model.prediction.PriceUtil.*;
+
 public class FavoritePlayer extends PlayerRow {
 
 	private double probability;
@@ -11,5 +15,9 @@ public class FavoritePlayer extends PlayerRow {
 
 	public double getProbability() {
 		return probability;
+	}
+
+	public String getPrice(String format) {
+		return PriceFormat.valueOf(format).format(toPrice(probability));
 	}
 }

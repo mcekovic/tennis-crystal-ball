@@ -3,9 +3,10 @@
 	<!--/*@thymesVar id="tournamentGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentGOATPoints>"*/-->
 	<!--/*@thymesVar id="yearEndRankGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="bestRankGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
+	<!--/*@thymesVar id="weeksAtNo1ForGOATPoint" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="weeksAtEloTopNForGOATPoint" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="bestEloRatingGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="bestSurfaceEloRatingGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
-	<!--/*@thymesVar id="weeksAtNo1ForGOATPoint" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="bigWinMatchFactors" type="java.util.List<org.strangeforest.tcb.stats.model.BigWinMatchFactor>"*/-->
 	<!--/*@thymesVar id="bigWinRankFactors" type="java.util.List<org.strangeforest.tcb.stats.model.RankRangeGOATPoints>"*/-->
 	<!--/*@thymesVar id="h2hRankFactors" type="java.util.List<org.strangeforest.tcb.stats.model.RankRangeGOATPoints>"*/-->
@@ -98,11 +99,28 @@
 			</strong>
 			<p>+1 point for each <th:block th:text="${weeksAtNo1ForGOATPoint}">10</th:block> weeks as ATP No. 1</p>
 		</div>
+		<strong>
+			<a th:unless="${forSeason}" href="/record?recordId=WeeksAtEloTopNGOATPoints" title="Players with most Weeks at Elo Top 5 GOAT Points">Weeks at Elo Top 5</a>
+			<a th:if="${forSeason}" href="/record?recordId=SeasonWeeksAtEloTopNGOATPoints" title="Players with most Weeks at Elo Top 5 GOAT Points in the single season">Weeks at Elo Top 5</a><sup class="new-feature">&nbsp;New!</sup>
+		</strong>
+		<table class="table table-condensed table-hover table-striped">
+			<thead>
+			<tr>
+				<th>Rank</th>
+				<th class="text-center">Weeks for Point</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="point : ${weeksAtEloTopNForGOATPoint}">
+				<td class="text-center" th:text="${point.rank}">1</td>
+				<td class="text-center" th:text="${point.goatPoints}">10</td>
+			</tr>
+			</tbody>
+		</table>
 		<th:block th:unless="${forSeason}">
-		<br/>
-		<h4>
+		<h5><strong>
 			<a href="/record?recordId=BestEloRatingGOATPoints" title="Players with most Peak Elo Rating GOAT Points">Peak Elo Rating Points</a>
-		</h4>
+		</strong></h5>
 		<strong>Peak Elo Rating</strong>
 		<table class="table table-condensed table-hover table-striped">
 			<thead>
