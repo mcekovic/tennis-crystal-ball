@@ -31,6 +31,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 ## Roadmap
 
 - ['Make your own GOAT'](https://github.com/mcekovic/tennis-crystal-ball/issues/14) - Enable users to enter 'GOAT' points distribution and calculate their own 'GOAT' list
+- [Glicko Ratings](https://github.com/mcekovic/tennis-crystal-ball/issues/77) - Improve Elo Rating computation with [Glicko 2](https://en.wikipedia.org/wiki/Glicko_rating_system) variant, to better reflect periods when player is out of competition
 
 ### Technology
 
