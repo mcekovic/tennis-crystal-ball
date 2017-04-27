@@ -117,11 +117,11 @@ DELETE FROM weeks_at_elo_topn_goat_points;
 INSERT INTO weeks_at_elo_topn_goat_points
 (rank, weeks_for_point)
 VALUES
-(1,  10),
-(2,  20),
-(3,  30),
-(4,  50),
-(5, 100);
+(1, 10),
+(2, 20),
+(3, 30),
+(4, 50),
+(5, 80);
 
 DELETE FROM best_elo_rating_goat_points;
 INSERT INTO best_elo_rating_goat_points

@@ -29,6 +29,7 @@ public class GOATListResource {
 		.put("olympics", "olympics")
 		.put("bigTitles", "big_titles")
 		.put("titles", "titles")
+		.put("weeksAtNo1", "weeks_at_no1")
 		.put("wonPct", "matches_won::REAL / (matches_won + matches_lost)")
 		.put("bestEloRating", "best_elo_rating NULLS LAST")
 	.build();

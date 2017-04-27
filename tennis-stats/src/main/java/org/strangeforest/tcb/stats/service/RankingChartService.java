@@ -55,6 +55,9 @@ public class RankingChartService {
 		"  SELECT season_end(season), player_id, goat_points\n" +
 		"  FROM player_season_weeks_at_no1_goat_points_v\n" +
 		"  UNION ALL\n" +
+		"  SELECT season_end(season), player_id, goat_points\n" +
+		"  FROM player_season_weeks_at_elo_topn_goat_points_v\n" +
+		"  UNION ALL\n" +
 		"  SELECT date, player_id, goat_points\n" +
 		"  FROM player_big_wins_v\n" +
 		"  UNION ALL\n" +

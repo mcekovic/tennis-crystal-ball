@@ -93,7 +93,7 @@
 					</li>
 					<li th:class="${path == '/records' || path == '/record' ? 'active' : _}"><a href="/records">Records<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
 					<li th:class="${path == '/liveScores' ? 'active dropdown' : 'dropdown'}">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Live<span class="caret"></span> <img src="/images/active.png" title="Live" width="12" height="12"/></a>
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Live<span class="caret"></span> <img src="/images/active.png" title="Live" style="vertical-align: text-top" width="12" height="12"/></a>
 						<ul class="dropdown-menu">
 							<li th:class="${path == '/liveScores' ? 'active' : _}"><a href="/liveScores">Live Scores</a></li>
 							<li><a href="http://live-tennis.eu" target="_blank">Live Rankings</a></li>

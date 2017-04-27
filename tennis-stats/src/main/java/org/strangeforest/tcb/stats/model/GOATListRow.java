@@ -14,6 +14,7 @@ public class GOATListRow extends PlayerRow {
 	private int olympics;
 	private int bigTitles;
 	private int titles;
+	private int weeksAtNo1;
 	private WonLost wonLost;
 	private int bestEloRating;
 	private Date bestEloRatingDate;
@@ -197,6 +198,17 @@ public class GOATListRow extends PlayerRow {
 
 	public void setTitles(int titles) {
 		this.titles = titles;
+	}
+
+
+	// Weeks at No. 1
+
+	public int getWeeksAtNo1() {
+		return weeksAtNo1;
+	}
+
+	public void setWeeksAtNo1(int weeksAtNo1) {
+		this.weeksAtNo1 = weeksAtNo1;
 	}
 
 
