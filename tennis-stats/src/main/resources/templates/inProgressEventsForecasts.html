@@ -7,8 +7,8 @@
 			var $inProgressEventsTable = $("#inProgressEventsTable");
 			var device = detectDevice();
 			setBootgridColumnsVisible($inProgressEventsTable, ["playerCount", "participationPoints"], deviceGreaterOrEqual(device, "lg"));
-			setBootgridColumnsVisible($inProgressEventsTable, ["favorite1"], deviceGreaterOrEqual(device, "sm"));
-			setBootgridColumnsVisible($inProgressEventsTable, ["favorite2"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($inProgressEventsTable, ["participationPct", "favorite2"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($inProgressEventsTable, ["draw"], deviceGreaterOrEqual(device, "sm"));
 			if (deviceGreaterOrEqual("md", device))
 				setBootgridColumnsWidths($inProgressEventsTable, ["name"], [175]);
 			$inProgressEventsTable.bootgrid({
@@ -19,8 +19,7 @@
 				},
 				url: "/inProgressEventsTable",
 				rowCount: [-1],
-				navigation: 0,
-				sorting: false,
+				navigation: 1,
 				formatters: {
 					"event": function(column, row) {
 						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-" + row.level + "' title='Show full forecast'>" + row.name + "</a>";
@@ -32,6 +31,9 @@
 					},
 					"favorite2":  function(column, row) {
 						return formatFavorite(column, row.favorite2);
+					},
+					"favorite3":  function(column, row) {
+						return formatFavorite(column, row.favorite3);
 					},
 					"forecast": function(column, row) {
 						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-primary label-btn' title='Show full forecast'><span class='glyphicon glyphicon-eye-open'></span>&nbsp;&nbsp;Forecast</a>";
@@ -45,6 +47,9 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
+			var $inProgressEventsTableHeader = $("#inProgressEventsTable-header");
+			$inProgressEventsTableHeader.find("div.search").remove();
+			setBootgridTitle($inProgressEventsTableHeader, $("#inProgressEventsTable-title"));
 			setBootgridTitles($inProgressEventsTable, [
 				{id: "playerCount", title: "Players"},
 				{id: "participationPoints", title: "[[#{events.participationPoints.title}]]"},
@@ -56,19 +61,21 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>Tournament Event Forecasts</h3>
+	<h3 id="inProgressEventsTable-title" class="grid-title">Tournament Event Forecasts</h3>
 	<table id="inProgressEventsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
+			<th data-column-id="date" data-formatter="date" data-order="desc" data-visible="false" data-width="85">Date</th>
 			<th data-column-id="name" data-formatter="event" data-width="200">Tournament</th>
 			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
 			<th data-column-id="draw" data-width="65">Draw</th>
 			<th data-column-id="playerCount" data-width="55">Pls.</th>
 			<th data-column-id="participationPoints" data-type="numeric" data-width="70">P. Pts.</th>
 			<th data-column-id="participationPct" data-formatter="participationPct" data-width="70">P. Pct.</th>
-			<th data-column-id="favorite1" data-formatter="favorite1" data-width="220">1-st Favorite</th>
-			<th data-column-id="favorite2" data-formatter="favorite2" data-width="220">2-nd Favorite</th>
-			<th data-column-id="forecast" data-formatter="forecast" data-width="95">Forecast</th>
+			<th data-column-id="favorite1" data-formatter="favorite1" data-sortable="false" data-width="220">1-st Favorite</th>
+			<th data-column-id="favorite2" data-formatter="favorite2" data-sortable="false" data-width="220">2-nd Favorite</th>
+			<th data-column-id="favorite3" data-formatter="favorite3" data-sortable="false" data-visible="false" data-width="220">3-rd Favorite</th>
+			<th data-column-id="forecast" data-formatter="forecast" data-sortable="false" data-width="95">Forecast</th>
 		</tr>
 		</thead>
 	</table>

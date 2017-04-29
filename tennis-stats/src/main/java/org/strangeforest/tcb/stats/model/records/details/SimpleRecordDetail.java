@@ -13,8 +13,4 @@ public abstract class SimpleRecordDetail<T> implements RecordDetail<T> {
 	@Override public T getValue() {
 		return value;
 	}
-
-	@Override public String toDetailString() {
-		return "";
-	}
 }

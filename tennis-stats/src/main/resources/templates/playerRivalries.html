@@ -3,6 +3,7 @@
 <!--/*@thymesVar id="playerName" type="java.lang.String"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 <script type="text/javascript">
@@ -114,7 +115,7 @@
 		return params;
 	}
 	function playerMatchesUrl(opponentId, outcome) {
-		var url = "/playerProfile?playerId=[[${playerId}]]&tab=matches&opponentId=" + opponentId;
+		var url = "/playerProfile?playerId=[[${playerId}]]&tab=matches&opponent=OPP_" + opponentId;
 		if (outcome)
 			url += "&outcome=" + outcome;
 		url += rivalryFilterParams();
@@ -131,6 +132,7 @@
 	<select id="rivalryLevel" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 		<option value="">All levels</option>
 		<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
+		<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}">Big Tournaments</option>
 	</select>
 </div>
 <div id="rivalrySurfaceDiv" class="btn-group pull-left margin-right">

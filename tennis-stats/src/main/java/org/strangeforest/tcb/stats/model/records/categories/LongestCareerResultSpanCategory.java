@@ -59,7 +59,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 	}
 
 	private static Record resultCareerSpan(ResultType type, RecordDomain domain) {
-		return new Record(
+		return new Record<>(
 			"Longest" + domain.id + type.name + "Span", "Longest " + suffix(domain.name, " ") + "First " + type.name + " to Last " + type.name,
 			/* language=SQL */
 			"WITH result_with_span AS (\n" +
@@ -79,13 +79,14 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"INNER JOIN tournament_event fe ON fe.tournament_event_id = r.first_event_id\n" +
 			"INNER JOIN tournament_event le ON le.tournament_event_id = r.last_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'",
-			SPAN_COLUMNS, "r.value DESC", "r.value DESC, r.end_date", TournamentCareerSpanRecordDetail.class,
+			SPAN_COLUMNS, "r.value DESC", "r.value DESC, r.end_date",
+			TournamentCareerSpanRecordDetail.class, null,
 			SPAN_RECORD_COLUMNS
 		);
 	}
 
 	private static Record winCareerSpan(RecordDomain domain) {
-		return new Record(
+		return new Record<>(
 			"Longest" + domain.id + "WinSpan", "Longest " + suffix(domain.name, " ") + "First Win to Last Win",
 			/* language=SQL */
 			"WITH match_win_span AS (\n" +
@@ -105,7 +106,8 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"INNER JOIN match lm ON lm.match_id = w.last_match_id INNER JOIN tournament_event le ON le.tournament_event_id = lm.tournament_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'\n" +
 			"AND p.name NOT IN ('Alexander Zverev', 'Fred Hemmes', 'Miloslav Mecir')", // TODO Remove after data is fixed
-			SPAN_COLUMNS, "r.value DESC", "r.value DESC, r.end_date", TournamentCareerSpanRecordDetail.class,
+			SPAN_COLUMNS, "r.value DESC", "r.value DESC, r.end_date",
+			TournamentCareerSpanRecordDetail.class, null,
 			SPAN_RECORD_COLUMNS
 		);
 	}
@@ -121,7 +123,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 	);
 
  	private static Record consecutiveSeasons(ResultType type, RecordDomain domain) {
-		return new Record(
+		return new Record<>(
 			"ConsecutiveSeasonsWith" + domain.id + type.name, "Consecutive Seasons With at Least One " + suffix(domain.name, " ") + type.name,
 			/* language=SQL */
 			"WITH player_seasons AS (\n" +
@@ -139,8 +141,9 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"FROM player_consecutive_seasons\n" +
 			"GROUP BY player_id, grouping_season\n" +
 			"HAVING max(consecutive_seasons) > 1",
-			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season", SeasonRangeIntegerRecordDetail.class,
-         asList(
+			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
+			SeasonRangeIntegerRecordDetail.class, null,
+			asList(
 				new RecordColumn("value", "numeric", null, SEASONS_WIDTH, "right", "Seasons"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
 				new RecordColumn("endSeason", "numeric", null, SEASON_WIDTH, "center", "End Season")

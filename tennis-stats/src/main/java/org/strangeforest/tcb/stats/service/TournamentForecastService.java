@@ -27,7 +27,7 @@ public class TournamentForecastService {
 		"FROM in_progress_event e\n" +
 		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
 		"WHERE NOT exists(SELECT te.tournament_event_id FROM tournament_event te WHERE te.tournament_id = e.tournament_id AND te.season = date_part('year', tournament_end(e.date, e.level, e.draw_size)))\n" +
-		"ORDER BY e.date, e.level, e.in_progress_event_id";
+		"ORDER BY %1$s";
 
 	private static final String IN_PROGRESS_EVENT_QUERY =
 		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation_points, p.max_participation_points\n" +
@@ -78,10 +78,10 @@ public class TournamentForecastService {
 
 
 	@Cacheable(value = "Global", key = "'InProgressEvents'")
-	public BootgridTable<InProgressEvent> getInProgressEventsTable() {
+	public BootgridTable<InProgressEvent> getInProgressEventsTable(String orderBy) {
 		BootgridTable<InProgressEvent> table = new BootgridTable<>();
 		jdbcTemplate.query(
-			IN_PROGRESS_EVENTS_QUERY,
+			format(IN_PROGRESS_EVENTS_QUERY, orderBy),
 			rs -> {
 				table.addRow(mapInProgressEvent(rs));
 			}

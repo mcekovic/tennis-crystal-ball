@@ -15,7 +15,10 @@
 			<a th:href="'/playerProfile?playerId=' + ${playerRecord.playerId}" th:text="${playerRecord.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 			<img th:if="${playerRecord.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 		</td>
-		<td class="text-right" th:text="${playerRecord.detail.value}">5</td>
+		<td class="text-right" th:with="detailUrl=${playerRecord.detailUrl}">
+			<th:block th:unless="${detailUrl}" th:text="${playerRecord.detail.value}"/>
+			<a th:if="${detailUrl}" th:href="${detailUrl}" th:text="${playerRecord.detail.value}">5</a>
+		</td>
 	</tr>
 	</tbody>
 </table>

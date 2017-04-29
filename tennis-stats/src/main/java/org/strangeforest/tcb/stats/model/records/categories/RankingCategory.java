@@ -101,7 +101,7 @@ public abstract class RankingCategory extends RecordCategory {
 
 	// PostgreSQL FILTER should be used instead of CASE in PostgreSQL 9.4+
 	protected static Record mostWeeksAt(String rankType, RecordDomain domain, String id, String name, String rankDBName, String condition, String bestCondition) {
-		return new Record(
+		return new Record<>(
 			"WeeksAt" + domain.id + rankType + id, "Most Weeks at " + suffix(domain.name, " ") + rankType + " " + name,
 			/* language=SQL */
 			"WITH player_ranking_weeks AS (\n" +
@@ -116,13 +116,14 @@ public abstract class RankingCategory extends RecordCategory {
 			"WHERE rank " + condition + "\n" +
 			"AND p.name NOT IN (" + INVALID_RANKING_PLAYERS + ")\n" + // TODO Remove after data is fixed
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.last_date", IntegerRecordDetail.class,
+			"r.value", "r.value DESC", "r.value DESC, r.last_date",
+			IntegerRecordDetail.class, null,
 			asList(new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Weeks At " + name))
 		);
 	}
 
 	protected static Record mostConsecutiveWeeksAt(String rankType, RecordDomain domain, String id, String name, String rankDBName, String condition, String bestCondition) {
-		return new Record(
+		return new Record<>(
 			"ConsecutiveWeeksAt" + domain.id + rankType + id, "Most Consecutive Weeks at " + suffix(domain.name, " ") + rankType + " " + name,
 			/* language=SQL */
 			"WITH player_ranking_weeks AS (\n" +
@@ -145,7 +146,8 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM player_consecutive_weeks INNER JOIN player_v USING (player_id)\n" +
 			"WHERE rank " + condition + " AND prev_rank " + condition + "\n" +
 			"GROUP BY player_id, name, start_date, end_date",
-			"r.value, r.start_date, r.end_date", "r.value DESC", "r.value DESC, r.end_date", DateRangeIntegerRecordDetail.class,
+			"r.value, r.start_date, r.end_date", "r.value DESC", "r.value DESC, r.end_date",
+			DateRangeIntegerRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Weeks at " + name),
 				new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
@@ -155,20 +157,21 @@ public abstract class RankingCategory extends RecordCategory {
 	}
 
 	protected static Record mostEndsOfSeasonAt(String rankType, String id, String name, String rankDBName, String condition) {
-		return new Record(
+		return new Record<>(
 			"EndsOfSeasonAt" + rankType + id, "Most Ends of Season at " + rankType + " " + name,
 			/* language=SQL */
 			"SELECT player_id, count(*) AS value, max(season) AS last_season\n" +
 			"FROM player_year_end_" + rankDBName + "rank\n" +
 			"WHERE year_end_rank " + condition + "\n" +
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.last_season", IntegerRecordDetail.class,
+			"r.value", "r.value DESC", "r.value DESC, r.last_season",
+			IntegerRecordDetail.class, null,
 			asList(new RecordColumn("value", "numeric", null, SEASONS_WIDTH, "right", "Seasons at " + name))
 		);
 	}
 
 	protected static Record mostConsecutiveEndsOfSeasonAt(String rankType, String id, String name, String rankDBName, String condition) {
-		return new Record(
+		return new Record<>(
          "ConsecutiveEndsOfSeasonAt" + rankType + id, "Most Consecutive Ends of Season at " + rankType + " " + name,
 			/* language=SQL */
 			"WITH player_seasons AS (\n" +
@@ -186,7 +189,8 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM player_consecutive_seasons\n" +
 			"GROUP BY player_id, grouping_season\n" +
 			"HAVING max(consecutive_seasons) > 1",
-			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season", SeasonRangeIntegerRecordDetail.class,
+			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
+			SeasonRangeIntegerRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Seasons at " + name),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
@@ -196,7 +200,7 @@ public abstract class RankingCategory extends RecordCategory {
 	}
 
 	protected static Record mostTimesAt(String rankType, RecordDomain domain, String id, String name, String rankDBName, String condition, String bestCondition) {
-		return new Record(
+		return new Record<>(
 			"TimesAt" + domain.id + rankType + id, "Most Times at " + suffix(domain.name, " ") + rankType + " " + name,
 			/* language=SQL */
 			"WITH ranking AS (\n" +
@@ -209,13 +213,14 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM ranking\n" +
 			"WHERE rank " + condition + " AND (NOT prev_rank " + condition + " OR prev_rank IS NULL)\n" +
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.last_date", IntegerRecordDetail.class,
+			"r.value", "r.value DESC", "r.value DESC, r.last_date",
+			IntegerRecordDetail.class, null,
 			asList(new RecordColumn("value", "numeric", null, TIMES_WIDTH, "right", "Times at " + name))
 		);
 	}
 
 	protected static Record youngestOldestRanking(String rankType, RecordDomain domain, AgeType type, String id, String name, String rankDBName, String condition) {
-		return new Record(
+		return new Record<>(
 			type.name + domain.id + rankType + id, type.name + prefix(domain.name, " ") + prefix(rankType, " ") + prefix(name, " "),
 			/* language=SQL */
 			"SELECT player_id, " + type.function + "(age(r.rank_date, p.dob)) AS value, " + type.function + "(r.rank_date) AS date\n" +
@@ -223,7 +228,8 @@ public abstract class RankingCategory extends RecordCategory {
 			"WHERE " + domain.columnPrefix + "rank " + condition + "\n" +
 			"AND p.name NOT IN (" + INVALID_RANKING_PLAYERS + ")\n" + // TODO Remove after data is fixed
 			"GROUP BY player_id",
-			"r.value, r.date", type.order, type.order + ", r.date", DateAgeRecordDetail.class,
+			"r.value, r.date", type.order, type.order + ", r.date",
+			DateAgeRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", null, null, AGE_WIDTH, "left", "Age"),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
@@ -233,14 +239,15 @@ public abstract class RankingCategory extends RecordCategory {
 
 	protected static Record careerSpanRanking(String rankType, RecordDomain domain, String id, String name, String rankDBName, String condition) {
 		name = suffix(domain.name, " ") + suffix(rankType, " ") + name;
-		return new Record(
+		return new Record<>(
 			"Longest" + domain.id + rankType + id + "Span", "Longest Career First " + name + " to Last " + name,
 			/* language=SQL */
 			"SELECT player_id, age(max(rank_date), min(rank_date)) AS value, min(rank_date) AS start_date, max(rank_date) AS end_date\n" +
 			"FROM player_" + rankDBName + "ranking\n" +
 			"WHERE " + domain.columnPrefix + "rank " + condition + "\n" +
 			"GROUP BY player_id",
-			"r.value, r.start_date, r.end_date", "r.value DESC", "r.value DESC, r.end_date", CareerSpanRecordDetail.class,
+			"r.value, r.start_date, r.end_date", "r.value DESC", "r.value DESC, r.end_date",
+			CareerSpanRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", null, null, SPAN_WIDTH, "left", "Career Span"),
 				new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
@@ -250,12 +257,13 @@ public abstract class RankingCategory extends RecordCategory {
 	}
 
 	protected static Record mostPoints(String id, String name, String tableName, String columnName, String dateColumnName, String caption, String notes) {
-		return new Record(
+		return new Record<>(
 			id, name,
 			/* language=SQL */
 			"SELECT player_id, " + columnName + " AS value, " + dateColumnName + " AS date\n" +
 			"FROM " + tableName,
-			"r.value, r.date", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.date", DateIntegerRecordDetail.class,
+			"r.value, r.date", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.date",
+			DateIntegerRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
@@ -265,7 +273,7 @@ public abstract class RankingCategory extends RecordCategory {
 	}
 
 	protected static Record leastPointsAsNo1(String id, String name, String tableName, String expression, String columnName, String caption, String notes) {
-		return new Record(
+		return new Record<>(
 			id, name,
 			/* language=SQL */
 			"WITH least_points AS (\n" +
@@ -276,7 +284,8 @@ public abstract class RankingCategory extends RecordCategory {
          ")\n" +
 			"SELECT player_id, value, (SELECT min(r.rank_date) FROM " + tableName + " r WHERE r.player_id = l.player_id AND r.rank = 1 AND " + expression + " = l.value) AS date\n" +
 			"FROM least_points l",
-			"r.value, r.date", "r.value", "r.value, r.date", DateIntegerRecordDetail.class,
+			"r.value, r.date", "r.value", "r.value, r.date",
+			DateIntegerRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
@@ -286,13 +295,14 @@ public abstract class RankingCategory extends RecordCategory {
 	}
 
 	protected static Record mostEndOfSeasonPoints(String id, String name, String tableName, String columnName, String caption, String notes) {
-		return new Record(
+		return new Record<>(
 			id, name,
 			/* language=SQL */
 			"SELECT player_id, " + columnName + " AS value, year_end_rank AS value2, season\n" +
 			"FROM " + tableName + "\n" +
 			"WHERE " + columnName + " > 0",
-			"r.value, r.value2, r.season", "r.value DESC", "r.value DESC, r.value2, r.season", SeasonTwoIntegersRecordDetail.class,
+			"r.value, r.value2, r.season", "r.value DESC", "r.value DESC, r.value2, r.season",
+			SeasonTwoIntegersRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("value2", "numeric", null, RANK_WIDTH, "right", "Rank"),
@@ -303,13 +313,14 @@ public abstract class RankingCategory extends RecordCategory {
 	}
 
 	protected static Record leastEndOfSeasonPointsAsNo1(String id, String name, String tableName, String columnName, String caption, String notes) {
-		return new Record(
+		return new Record<>(
 			id, name,
 			/* language=SQL */
 			"SELECT player_id, " + columnName + " AS value, season\n" +
 			"FROM " + tableName + "\n" +
 			"WHERE year_end_rank = 1 AND " + columnName + " > 0",
-			"r.value, r.season", "r.value", "r.value, r.season", SeasonIntegerRecordDetail.class,
+			"r.value, r.season", "r.value", "r.value, r.season",
+			SeasonIntegerRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
@@ -323,7 +334,7 @@ public abstract class RankingCategory extends RecordCategory {
 		String expression, String expression1, String expression2, String order,
 		Class<? extends RecordDetail> detailClass, String type, String caption, String diffCaption, String notes
 	) {
-		return new Record(
+		return new Record<>(
 			id, name,
 			/* language=SQL */
 			"WITH ranking_diff AS (\n" +
@@ -342,7 +353,8 @@ public abstract class RankingCategory extends RecordCategory {
 			"SELECT DISTINCT d.player_id, d.player_id2, p2.name AS name2, p2.country_id AS country_id2, p2.active AS active2, d.value1, d.value2, d.value, d.date\n" +
 			"FROM ranking_diff2 d\n" +
 			"INNER JOIN player_v p2 ON p2.player_id = d.player_id2",
-			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.date", order, order + ", r.date", detailClass,
+			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.date", order, order + ", r.date",
+			detailClass, null,
 			asList(
 				new RecordColumn("player2", null, "player2", PLAYER_WIDTH, "left", "No. 2 Player"),
 				new RecordColumn("value1", "numeric", null, POINTS_WIDTH, "right", caption + " No. 1"),

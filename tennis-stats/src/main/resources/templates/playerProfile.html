@@ -8,23 +8,28 @@
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
-<!--/*@thymesVar id="opponentId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="opponent" type="java.lang.String"*/-->
+<!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
+<!--/*@thymesVar id="infamous" type="java.lang.Boolean"*/-->
 <head th:replace="fragments/head :: commonHead(${player} ? ${player.name} : ~{::title/text()}, true, ~{::script}, _)">
 	<title>Player Profile</title>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("#playerPills").find("a").click(tabClick);
 			[# th:if="${tab}" th:switch="${tab}"]
-				[# th:case="'matches'"]
-					playerMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]], [[${opponentId}]], [[${tournamentEventId}]], [[${outcome}]]);
-				[/]
 				[# th:case="'tournaments'"]
-					playerTournaments([[${season}]], [[${level}]], [[${result}]]);
+					playerTournaments([[${season}]], [[${level}]], [[${surface}]], [[${result}]], [[${tournamentId}]]);
+				[/]
+				[# th:case="'matches'"]
+					playerMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]], [[${opponent}]], [[${tournamentId}]], [[${tournamentEventId}]], [[${outcome}]]);
 				[/]
 				[# th:case="'goatPoints'"]
 					playerGoatPoints([[${season}]]);
+				[/]
+				[# th:case="'records'"]
+					playerRecords([[${infamous}]]);
 				[/]
 				[# th:case="*"]
 					$([['#' + ${tab} + 'Pill']]).click();
@@ -34,18 +39,22 @@
 				$("#profilePill").click();
 			[/]
 		});
-		function playerTournaments(season, level, result) {
+		function playerTournaments(season, level, surface, result, tournamentId) {
 			var $pill = $("#tournamentsPill");
 			var url = $pill.attr("data-url");
 			if (season)
 				url += "&season=" + season;
 			if (level)
 				url += "&level=" + level;
+			if (surface)
+				url += "&surface=" + surface;
 			if (result)
-				url += "&result=" + result;
+				url += "&result=" + encodeURIComponent(result);
+			if (tournamentId)
+				url += "&tournamentId=" + tournamentId;
 			loadTab($pill, url)
 		}
-		function playerMatches(season, level, surface, round, opponentId, tournamentEventId, outcome) {
+		function playerMatches(season, level, surface, round, opponent, tournamentId, tournamentEventId, outcome) {
 			var $pill = $("#matchesPill");
 			var url = $pill.attr("data-url");
 			if (season)
@@ -56,8 +65,10 @@
 				url += "&surface=" + surface;
 			if (round)
 				url += "&round=" + round;
-			if (opponentId)
-				url += "&opponentId=" + opponentId;
+			if (opponent)
+				url += "&opponent=" + opponent;
+			if (tournamentId)
+				url += "&tournamentId=" + tournamentId;
 			if (tournamentEventId)
 				url += "&tournamentEventId=" + tournamentEventId;
 			if (outcome)
@@ -69,6 +80,13 @@
 			var url = $pill.attr("data-url");
 			if (season)
 				url += "&season=" + season;
+			loadTab($pill, url)
+		}
+		function playerRecords(infamous) {
+			var $pill = $("#recordsPill");
+			var url = $pill.attr("data-url");
+			if (infamous)
+				url += "&infamous=" + infamous;
 			loadTab($pill, url)
 		}
 	</script>

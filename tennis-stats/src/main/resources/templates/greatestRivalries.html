@@ -54,13 +54,13 @@
 					},
 					"h2h": function(column, row) {
 						var params = "&outcome=won" + rivalryFilterParams();
-						return "<a href='/playerProfile?playerId=" + row.player1.playerId + "&tab=matches&opponentId=" + row.player2.playerId + params + "' title='Show " + row.player1.name + " def. " + row.player2.name + " matches'>" + row.won + "</a>" +
-							" - <a href='/playerProfile?playerId=" + row.player2.playerId + "&tab=matches&opponentId=" + row.player1.playerId + params + "' title='Show " + row.player2.name + " def. " + row.player1.name + " matches'>" + row.lost + "</a>";
+						return "<a href='/playerProfile?playerId=" + row.player1.playerId + "&tab=matches&opponent=OPP_" + row.player2.playerId + params + "' title='Show " + row.player1.name + " def. " + row.player2.name + " matches'>" + row.won + "</a>" +
+							" - <a href='/playerProfile?playerId=" + row.player2.playerId + "&tab=matches&opponent=OPP_" + row.player1.playerId + params + "' title='Show " + row.player2.name + " def. " + row.player1.name + " matches'>" + row.lost + "</a>";
 					},
 					"h2hPct": function(column, row) {
 						var params = rivalryFilterParams();
-						return "<span data-won-pct='" + row.wonPctClass + "' class='rivalry-pct'>" + "<a href='/playerProfile?playerId=" + row.player1.playerId + "&tab=matches&opponentId=" + row.player2.playerId + params + "' title='Show " + row.player1.name + " - " + row.player2.name + " matches'>" + row.wonPctStr + "</a>" +
-							"</span> - <span data-won-pct='" + row.lostPctClass + "' class='rivalry-pct'>" + "<a href='/playerProfile?playerId=" + row.player2.playerId + "&tab=matches&opponentId=" + row.player1.playerId + params + "' title='Show " + row.player2.name + " - " + row.player1.name + " matches'>" + row.lostPctStr + "</a>" + "</span>";
+						return "<span data-won-pct='" + row.wonPctClass + "' class='rivalry-pct'>" + "<a href='/playerProfile?playerId=" + row.player1.playerId + "&tab=matches&opponent=OPP_" + row.player2.playerId + params + "' title='Show " + row.player1.name + " - " + row.player2.name + " matches'>" + row.wonPctStr + "</a>" +
+							"</span> - <span data-won-pct='" + row.lostPctClass + "' class='rivalry-pct'>" + "<a href='/playerProfile?playerId=" + row.player2.playerId + "&tab=matches&opponent=OPP_" + row.player1.playerId + params + "' title='Show " + row.player2.name + " - " + row.player1.name + " matches'>" + row.lostPctStr + "</a>" + "</span>";
 					},
 					"lastMatch": function(column, row) {
 						var match = row.lastMatch;

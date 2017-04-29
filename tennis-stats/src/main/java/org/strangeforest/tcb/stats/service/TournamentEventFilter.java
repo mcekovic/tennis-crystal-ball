@@ -8,6 +8,7 @@ import com.google.common.base.*;
 import com.google.common.base.MoreObjects.*;
 
 import static com.google.common.base.Strings.*;
+import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class TournamentEventFilter {
@@ -21,6 +22,7 @@ public class TournamentEventFilter {
 
 	private static final String SEASON_CRITERION           = " AND e.season = :season";
 	private static final String LEVEL_CRITERION            = " AND e.level = :level::tournament_level";
+	private static final String LEVELS_CRITERION           = " AND e.level::TEXT IN (:levels)";
 	private static final String SURFACE_CRITERION          = " AND e.surface = :surface::surface";
 	private static final String TOURNAMENT_CRITERION       = " AND e.tournament_id = :tournamentId";
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND e.tournament_event_id = :tournamentEventId";
@@ -45,7 +47,7 @@ public class TournamentEventFilter {
 		if (season != null)
 			criteria.append(SEASON_CRITERION);
 		if (!isNullOrEmpty(level))
-			criteria.append(LEVEL_CRITERION);
+			criteria.append(level.length() == 1 ? LEVEL_CRITERION : LEVELS_CRITERION);
 		if (!isNullOrEmpty(surface))
 			criteria.append(getSurfaceCriterion());
 		if (tournamentId != null)
@@ -65,8 +67,12 @@ public class TournamentEventFilter {
 	protected void addParams(MapSqlParameterSource params) {
 		if (season != null)
 			params.addValue("season", season);
-		if (!isNullOrEmpty(level))
-			params.addValue("level", level);
+		if (!isNullOrEmpty(level)) {
+			if (level.length() == 1)
+				params.addValue("level", level);
+			else
+				params.addValue("levels", asList(level.split("")));
+		}
 		if (!isNullOrEmpty(surface))
 			params.addValue("surface", surface);
 		if (tournamentId != null)

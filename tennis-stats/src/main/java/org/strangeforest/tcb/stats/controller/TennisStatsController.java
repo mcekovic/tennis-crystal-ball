@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.controller;
 
 import java.time.*;
 import java.util.*;
+import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
+import org.strangeforest.tcb.stats.util.*;
 
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Controller
@@ -21,9 +24,11 @@ public class TennisStatsController extends PageController {
 	@Autowired private GOATListService goatListService;
 	@Autowired private RankingsService rankingsService;
 
+	private static final String FORECAST_ORDER_BY = Stream.of(InProgressEventsResource.DEFAULT_ORDER).map(OrderBy::toString).collect(joining(", "));
+
 	@GetMapping("/")
 	public ModelAndView index() {
-		boolean hasInProgressEvents = forecastService.getInProgressEventsTable().getTotal() > 0;
+		boolean hasInProgressEvents = forecastService.getInProgressEventsTable(FORECAST_ORDER_BY).getTotal() > 0;
 		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
 
 		ModelMap modelMap = new ModelMap();

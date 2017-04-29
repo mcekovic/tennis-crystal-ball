@@ -181,7 +181,7 @@ public class RecordsService {
 					String countryId = rs.getString("country_id");
 					Boolean active = !activePlayers ? rs.getBoolean("active") : null;
 					RecordDetail detail = getDetail(record, rs.getString("detail"));
-					table.addRow(new RecordDetailRow(rank, playerId, name, countryId, active, detail));
+					table.addRow(new RecordDetailRow<RecordDetail>(rank, playerId, name, countryId, active, detail, record.getDetailURLFormatter()));
 				}
 			}
 		);

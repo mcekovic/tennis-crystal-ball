@@ -64,13 +64,14 @@ public class YoungestOldestTournamentResultCategory extends RecordCategory {
 	}
 
 	private static Record ageTournamentResult(RecordType type, ResultType resultType, String id, String name, String condition) {
-		return new Record(
+		return new Record<>(
 			type.name + id + resultType.name, suffix(type.name, " ") + suffix(name, " ") + resultType.name,
 			/* language=SQL */
 			"SELECT player_id, tournament_event_id, e.name AS tournament, e.level, e.season, e.date, age(e.date, p.dob) AS value\n" +
 			"FROM player_tournament_event_result r INNER JOIN player p USING (player_id) INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE p.dob IS NOT NULL AND r." + resultType.condition + prefix(condition, " AND e."),
-			"r.value, r.tournament_event_id, r.tournament, r.level, r.season", type.order, type.order + ", r.date", TournamentEventAgeRecordDetail.class,
+			"r.value, r.tournament_event_id, r.tournament, r.level, r.season", type.order, type.order + ", r.date",
+			TournamentEventAgeRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", null, null, AGE_WIDTH, "left", "Age"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),

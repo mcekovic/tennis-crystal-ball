@@ -14,6 +14,7 @@ import org.strangeforest.tcb.util.*;
 
 import com.neovisionaries.i18n.*;
 
+import static com.google.common.base.Strings.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
@@ -39,9 +40,11 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "round", required = false) String round,
-		@RequestParam(name = "opponentId", required = false) Integer opponentId,
+		@RequestParam(name = "opponent", required = false) String opponent,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(name = "outcome", required = false) String outcome
+		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "infamous", required = false) Boolean infamous
 	) {
 		if (playerId == null && name == null)
 			return new ModelAndView("playerProfile");
@@ -59,9 +62,11 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("result", result);
 		modelMap.addAttribute("round", round);
-		modelMap.addAttribute("opponentId", opponentId);
+		modelMap.addAttribute("opponent", opponent);
+		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("outcome", outcome);
+		modelMap.addAttribute("infamous", infamous);
 		return new ModelAndView("playerProfile", modelMap);
 	}
 
@@ -86,6 +91,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "result", required = false) String result
 	) {
 		String name = playerService.getPlayerName(playerId);
@@ -97,11 +103,13 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("playerName", name);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.NON_TEAM_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("result", result);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerTournaments", modelMap);
@@ -114,7 +122,8 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round,
-		@RequestParam(name = "opponentId", required = false) Integer opponentId,
+		@RequestParam(name = "opponent", required = false) String opponent,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(name = "outcome", required = false) String outcome
 	) {
@@ -129,6 +138,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("playerName", name);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("tournaments", tournaments);
@@ -138,10 +148,14 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("round", round);
-		if (opponentId != null) {
-			modelMap.addAttribute("opponentId", opponentId);
-			modelMap.addAttribute("opponentName", playerService.getPlayerName(opponentId));
+		if (!isNullOrEmpty(opponent)) {
+			modelMap.addAttribute("opponent", opponent);
+			if (opponent.startsWith(OpponentFilter.OPPONENT_PREFIX)) {
+				int opponentId = Integer.parseInt(opponent.substring(OpponentFilter.OPPONENT_PREFIX.length()));
+				modelMap.addAttribute("opponentName", playerService.getPlayerName(opponentId));
+			}
 		}
+		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("outcome", outcome);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
@@ -176,6 +190,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("playerName", name);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("rounds", Round.values());
 		return new ModelAndView("playerRivalries", modelMap);
@@ -245,6 +260,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
@@ -299,10 +315,12 @@ public class PlayerProfileController extends PageController {
 
 	@GetMapping("/playerRecords")
 	public ModelAndView playerRecords(
-		@RequestParam(name = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "infamous", required = false) Boolean infamous
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("infamous", infamous);
 		modelMap.addAttribute("recordCategoryClasses", Records.getRecordCategoryClasses());
 		modelMap.addAttribute("infamousRecordCategoryClasses", Records.getInfamousRecordCategoryClasses());
 		return new ModelAndView("playerRecords", modelMap);

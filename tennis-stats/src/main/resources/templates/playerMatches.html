@@ -4,6 +4,7 @@
 <!--/*@thymesVar id="playerName" type="java.lang.String"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
@@ -12,8 +13,9 @@
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
-<!--/*@thymesVar id="opponentId" type="java.lang.Integer>"*/-->
+<!--/*@thymesVar id="opponent" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="opponentName" type="java.lang.String>"*/-->
+<!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
@@ -185,6 +187,7 @@
 		<select id="matchesLevel" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
 			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
+			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
 		</select>
 	</div>
 	<div class="col-md-2">
@@ -202,9 +205,9 @@
 	<div class="col-md-2">
 		<select id="matchesOpponent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
 			<option value="">Vs All</option>
-			<option value="NO_1">Vs No. 1</option>
-			<option value="TOP_5">Vs Top 5</option>
-			<option value="TOP_10">Vs Top 10</option>
+			<option value="NO_1" th:selected="${opponent == 'NO_1'}">Vs No. 1</option>
+			<option value="TOP_5" th:selected="${opponent == 'TOP_5'}">Vs Top 5</option>
+			<option value="TOP_10" th:selected="${opponent == 'TOP_10'}">Vs Top 10</option>
 			<option value="TOP_20">Vs Top 20</option>
 			<option value="TOP_50">Vs Top 50</option>
 			<option value="TOP_100">Vs Top 100</option>
@@ -224,7 +227,7 @@
 			<option value="LUCKY_LOSER">Vs Lucky-Loser</option>
 			<option value="PROTECTED_RANKING">Vs Protected Ranking</option>
 			<option value="SPECIAL_EXEMPT">Vs Special Exempt</option>
-			<option th:if="${opponentId != null}" th:value="${'OPP_' + opponentId}" th:text="${'Vs ' + opponentName}" selected="selected">Vs Roger Federer</option>
+			<option th:if="${opponent != null && opponent.startsWith('OPP_')}" th:value="${opponent}" th:text="${'Vs ' + opponentName}" selected="selected">Vs Roger Federer</option>
 		</select>
 	</div>
 	<div class="col-md-1">
@@ -266,14 +269,13 @@
 <div id="matchesTournamentDiv" class="btn-group pull-left margin-right no-margin-left" style="width: 210px">
 	<select id="matchesTournament" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
 		<option value="">All tournaments</option>
-		<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+		<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
 	</select>
 </div>
 <div id="matchesTournamentEventDiv" class="btn-group pull-left margin-right" style="width: 240px">
 	<select id="matchesTournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter tournament events">
 		<option value="">All events</option>
-		<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="|${tournamentEvent.name} ${tournamentEvent.season}|"
-		        th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon 2008</option>
+		<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="|${tournamentEvent.name} ${tournamentEvent.season}|" th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon 2008</option>
 	</select>
 </div>
 <div id="matchesOutcomeDiv" class="btn-group pull-left margin-right">
@@ -281,13 +283,13 @@
 		<option value="">All matches</option>
 		<option value="won" th:selected="${outcome == 'won'}">Won</option>
 		<option value="lost" th:selected="${outcome == 'lost'}">Lost</option>
-		<option value="wonRET">Won by retirement</option>
-		<option value="lostRET">Lost by retirement</option>
-		<option value="wonW/O">Won by walkover</option>
-		<option value="lostW/O">Lost by walkover</option>
-		<option value="wonDEF">Won by defaulting</option>
-		<option value="lostDEF">Lost by defaulting</option>
-		<option value="ABD">Abandoned</option>
+		<option value="wonRET" th:selected="${outcome == 'wonRET'}">Won by retirement</option>
+		<option value="lostRET" th:selected="${outcome == 'lostRET'}">Lost by retirement</option>
+		<option value="wonW/O" th:selected="${outcome == 'wonW/O'}">Won by walkover</option>
+		<option value="lostW/O" th:selected="${outcome == 'lostW/O'}">Lost by walkover</option>
+		<option value="wonDEF" th:selected="${outcome == 'wonDEF'}">Won by defaulting</option>
+		<option value="lostDEF" th:selected="${outcome == 'lostDEF'}">Lost by defaulting</option>
+		<option value="ABD" th:selected="${outcome == 'ABD'}">Abandoned</option>
 	</select>
 </div>
 <button id="matchesStats" type="button" class="btn btn-info grid-control margin-right" onclick="showMatchesStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected matches)|">
@@ -300,7 +302,7 @@
 		<th data-column-id="tournament" data-formatter="tournament" data-width="175">Tournament</th>
 		<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
 		<th data-column-id="round" data-width="75">Round</th>
-		<th data-column-id="wonLost" data-formatter="wonLost" data-width="60">W / L</th>
+		<th data-column-id="wonLost" data-formatter="wonLost" data-width="50">W/L</th>
 		<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
 		<th data-column-id="score" data-sortable="false" data-width="175">Score</th>
 		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>

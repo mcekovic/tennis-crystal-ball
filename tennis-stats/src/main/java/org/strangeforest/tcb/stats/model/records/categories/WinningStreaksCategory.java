@@ -70,7 +70,7 @@ public class WinningStreaksCategory extends RecordCategory {
 	}
 
 	private static Record winningStreakRecord(String id, String name, String tableName, String condition, boolean useMaterializedView) {
-		return new Record(
+		return new Record<>(
 			id, name,
 			/* language=SQL */
 			(useMaterializedView ? "" : playerWinStreak(condition)) +
@@ -81,7 +81,8 @@ public class WinningStreaksCategory extends RecordCategory {
 			"INNER JOIN match fm ON fm.match_id = s.first_match_id INNER JOIN tournament_event fe ON fe.tournament_event_id = fm.tournament_event_id\n" +
 			"INNER JOIN match lm ON lm.match_id = s.last_match_id INNER JOIN tournament_event le ON le.tournament_event_id = lm.tournament_event_id" +
 			(useMaterializedView ? prefix(condition, "\nWHERE s.") : ""),
-			"r.value, r.start_season, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_season, r.end_tournament_event_id, r.end_tournament, r.end_level", "r.value DESC", "r.value DESC, r.end_date", StreakRecordDetail.class,
+			"r.value, r.start_season, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_season, r.end_tournament_event_id, r.end_tournament, r.end_level", "r.value DESC", "r.value DESC, r.end_date",
+			StreakRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", "numeric", null, STREAK_WIDTH, "right", "Streak"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),

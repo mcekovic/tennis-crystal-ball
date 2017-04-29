@@ -25,20 +25,24 @@ public class MostQuarterFinalsCategory extends TournamentResultsCategory {
 		register(mostSeasonQuarterFinals(GRAND_SLAM));
 		register(mostSeasonQuarterFinals(MASTERS));
 		register(mostSeasonQuarterFinals(BIG_TOURNAMENTS));
+		register(mostSeasonQuarterFinals(HARD));
+		register(mostSeasonQuarterFinals(CLAY));
+		register(mostSeasonQuarterFinals(GRASS));
+		register(mostSeasonQuarterFinals(CARPET));
 		register(mostTournamentQuarterFinals(ALL));
 		register(mostTournamentQuarterFinals(GRAND_SLAM));
 		register(mostTournamentQuarterFinals(MASTERS));
 	}
 
 	private static Record mostQuarterFinals(RecordDomain domain) {
-		return mostResults(domain.id + "QuarterFinals", suffix(domain.name, " ") + "Quarter-Finals", domain.nameSuffix, QUARTER_FINALS, domain.condition);
+		return mostResults(domain.id + "QuarterFinals", suffix(domain.name, " ") + "Quarter-Finals", domain, QUARTER_FINALS, RESULT_QUARTER_FINAL);
 	}
 
 	private static Record mostSeasonQuarterFinals(RecordDomain domain) {
-		return mostSeasonResults(domain.id + "QuarterFinals", suffix(domain.name, " ") + "Quarter-Finals", domain.nameSuffix, QUARTER_FINALS, domain.condition);
+		return mostSeasonResults(domain.id + "QuarterFinals", suffix(domain.name, " ") + "Quarter-Finals", domain, QUARTER_FINALS, RESULT_QUARTER_FINAL);
 	}
 
 	private static Record mostTournamentQuarterFinals(RecordDomain domain) {
-		return mostTournamentResults(domain.id + "QuarterFinals", suffix(domain.name, " ") + "Quarter-Finals", QUARTER_FINALS, domain.condition);
+		return mostTournamentResults(domain.id + "QuarterFinals", suffix(domain.name, " ") + "Quarter-Finals", domain, QUARTER_FINALS, RESULT_QUARTER_FINAL);
 	}
 }

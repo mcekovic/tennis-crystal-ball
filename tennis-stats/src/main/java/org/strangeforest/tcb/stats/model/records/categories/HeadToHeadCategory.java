@@ -85,26 +85,28 @@ public class HeadToHeadCategory extends RecordCategory {
 	}
 
 	private static Record mostH2HSeries(MostLeast mostLeast, RecordType type) {
-		return new Record(
+		return new Record<>(
 			mostLeast.name + "MostH2HSeries" + type.name, mostLeast.name + " Head-to-Head Series " + type.name,
 			/* language=SQL */
 			"SELECT player_id, " + type.column + " AS value\n" +
 			"FROM player_h2h\n" +
 			"WHERE " + HTH_TOTAL + " >= 10",
-			"r.value", mostLeast.order, mostLeast.order, IntegerRecordDetail.class,
+			"r.value", mostLeast.order, mostLeast.order,
+			IntegerRecordDetail.class, null,
 			asList(new RecordColumn("value", "numeric", null, H2H_WIDTH, "right", "H2H Series " + type.name)),
 			NOTES
 		);
 	}
 
 	private static Record greatestH2HSeriesPct(PctRecordType type) {
-		return new Record(
+		return new Record<>(
 			"H2HSeries" + type.name + "Pct", "Greatest Head-to-Head Series " + type.name + " Pct.",
 			/* language=SQL */
 			"SELECT player_id, " + type.expression + " AS pct, h2h_won AS won, h2h_draw AS draw, h2h_lost AS lost\n" +
 			"FROM player_h2h\n" +
 			"WHERE " + HTH_TOTAL + " >= 10",
-			"r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC", type.detailClass,
+			"r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC",
+			type.detailClass, null,
 			asList(
 				new RecordColumn("value", null, null, PCT_WIDTH, "right", "H2H " + type.name + " Pct."),
 				type.value1RecordColumn,

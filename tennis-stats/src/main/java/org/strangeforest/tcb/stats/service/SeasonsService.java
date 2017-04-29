@@ -14,6 +14,7 @@ import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.model.records.details.RecordDetailUtil.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
@@ -64,13 +65,13 @@ public class SeasonsService {
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"ORDER BY %1$s OFFSET :offset";
 
-	private static final String SEASON_RECORD_QUERY =
+	private static final String SEASON_RESULTS_QUERY =
 		"WITH record_results AS (\n" +
 		"  SELECT player_id, count(result) AS value,\n" +
 		"    rank() OVER (ORDER BY count(result) DESC) AS rank, rank() OVER (ORDER BY count(result) DESC, min(e.level)) AS order\n" +
 		"  FROM player_tournament_event_result r\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"  WHERE e.season = :season AND r.result >= :result::tournament_event_result\n" +
+		"  WHERE e.season = :season AND r.result >= :result::tournament_event_result AND e.level NOT IN ('D', 'T')\n" +
 		"  GROUP BY player_id\n" +
 		")\n" +
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.value\n" +
@@ -174,13 +175,25 @@ public class SeasonsService {
 		return table;
 	}
 
-	public List<RecordDetailRow> getSeasonRecord(int season, String result, int maxPlayers) {
+	public List<RecordDetailRow> getSeasonResults(int season, String result, int maxPlayers) {
 		return jdbcTemplate.query(
-			SEASON_RECORD_QUERY,
+			SEASON_RESULTS_QUERY,
 			params("season", season)
 				.addValue("result", result)
 				.addValue("maxPlayers", maxPlayers),
-			this::recordDetailRowMapper
+			(rs, rowNum) -> mapSeasonResultsRecordDetailRow(rs, season, result)
+		);
+	}
+
+	private static RecordDetailRow mapSeasonResultsRecordDetailRow(ResultSet rs, int season, String result) throws SQLException {
+		return new RecordDetailRow<>(
+			rs.getInt("rank"),
+			rs.getInt("player_id"),
+			rs.getString("name"),
+			rs.getString("country_id"),
+			null,
+			new IntegerRecordDetail(rs.getInt("value")),
+			(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments&season=%2$d%3$s", playerId, season, resultURLParam(result))
 		);
 	}
 
@@ -189,18 +202,19 @@ public class SeasonsService {
 			format(SEASON_GOAT_POINTS_QUERY, pointsColumnPrefix),
 			params("season", season)
 				.addValue("maxPlayers", maxPlayers),
-			this::recordDetailRowMapper
+			(rs, rowNum) -> mapSeasonGOATPointsRecordDetailRow(rs, season)
 		);
 	}
 
-	private RecordDetailRow recordDetailRowMapper(ResultSet rs, int rowNum) throws SQLException {
-		return new RecordDetailRow(
+	private static RecordDetailRow mapSeasonGOATPointsRecordDetailRow(ResultSet rs, int season) throws SQLException {
+		return new RecordDetailRow<>(
 			rs.getInt("rank"),
 			rs.getInt("player_id"),
 			rs.getString("name"),
 			rs.getString("country_id"),
 			null,
-			new IntegerRecordDetail(rs.getInt("value"))
+			new IntegerRecordDetail(rs.getInt("value")),
+			(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints&season=%2$d", playerId, season)
 		);
 	}
 

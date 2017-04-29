@@ -42,10 +42,10 @@ public class SeasonsController extends PageController {
 	public ModelAndView seasonRecords(
 		@RequestParam(name = "season") int season
 	) {
-		List<RecordDetailRow> seasonTitles = seasonsService.getSeasonRecord(season, "W", MAX_RECORD_PLAYERS);
-		List<RecordDetailRow> seasonFinals = seasonsService.getSeasonRecord(season, "F", MAX_RECORD_PLAYERS);
-		List<RecordDetailRow> seasonSemiFinals = seasonsService.getSeasonRecord(season, "SF", MAX_RECORD_PLAYERS);
-		List<RecordDetailRow> seasonAppearances = seasonsService.getSeasonRecord(season, "RR", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> seasonTitles = seasonsService.getSeasonResults(season, "W", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> seasonFinals = seasonsService.getSeasonResults(season, "F", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> seasonSemiFinals = seasonsService.getSeasonResults(season, "SF", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> seasonAppearances = seasonsService.getSeasonResults(season, "RR", MAX_RECORD_PLAYERS);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("seasonTitles", seasonTitles);

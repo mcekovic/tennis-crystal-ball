@@ -12,6 +12,7 @@ public class OpponentFilter {
 	// Factory
 
 	public static final OpponentFilter ALL = new OpponentFilter(null, null, null, false);
+	public static final String OPPONENT_PREFIX = "OPP_";
 
 	public static OpponentFilter forMatches(String opponent, Collection<String> countryIds) {
 		if (isSinglePlayer(opponent))
@@ -46,8 +47,6 @@ public class OpponentFilter {
 	private static int extractOpponentId(String opponent) {
 		return Integer.parseInt(opponent.substring(OPPONENT_PREFIX.length()));
 	}
-
-	private static final String OPPONENT_PREFIX = "OPP_";
 
 
 	// Instance

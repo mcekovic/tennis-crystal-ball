@@ -1,9 +1,11 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import java.util.function.*;
+
 import org.strangeforest.tcb.stats.model.records.*;
-import org.strangeforest.tcb.stats.model.records.RecordDomain;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
+import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
@@ -11,7 +13,9 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 
 	private static final String POINTS_WIDTH = "120";
 
-	private static final RecordColumn GOAT_POINTS_COLUMN = new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", "GOAT Points");
+	private static final RecordColumn GOAT_POINTS_COLUMN = new RecordColumn("value", null, "valueUrl", POINTS_WIDTH, "right", "GOAT Points");
+	private static final BiFunction<Integer, IntegerRecordDetail, String> PLAYER_GOAT_POINTS_URL_FORMATTER =
+		(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints", playerId);
 
 	public BestPlayerThatNeverCategory() {
 		super("Best Player That Never...");
@@ -34,23 +38,25 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 	}
 
 	private static Record bestPlayerThatNeverWon(RecordDomain domain, String titleColumn) {
-		return new Record(
+		return new Record<>(
 			"BestPlayerThatNeverWon" + domain.id + "Title", "Best Player That Never Won" + prefix(domain.name, " ") + " Title" + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
 			"SELECT player_id, goat_points AS value FROM player_v\n" +
 			"WHERE goat_points > 0 AND " + titleColumn + " = 0",
-			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,
+			"r.value", "r.value DESC", "r.value DESC",
+			IntegerRecordDetail.class, PLAYER_GOAT_POINTS_URL_FORMATTER,
 			asList(GOAT_POINTS_COLUMN)
 		);
 	}
 
 	private static Record bestPlayerThatNeverReachedTopN(String id, String name, String rankType, String rankColumn, int bestRank) {
-		return new Record(
+		return new Record<>(
 			"BestPlayerThatNeverReached" + id + rankType + "Ranking", "Best Player That Never Reached" + prefix(name, " ") + prefix(rankType, " ") + " Ranking",
 			/* language=SQL */
 			"SELECT player_id, goat_points AS value FROM player_v\n" +
 			"WHERE goat_points > 0 AND " + rankColumn + " > " + bestRank,
-			"r.value", "r.value DESC", "r.value DESC", IntegerRecordDetail.class,
+			"r.value", "r.value DESC", "r.value DESC",
+			IntegerRecordDetail.class, PLAYER_GOAT_POINTS_URL_FORMATTER,
 			asList(GOAT_POINTS_COLUMN)
 		);
 	}

@@ -1,5 +1,6 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="infamous" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="recordCategoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>>"*/-->
 <!--/*@thymesVar id="infamousRecordCategoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>>"*/-->
 <script type="text/javascript">
@@ -87,7 +88,7 @@
 <div id="infamousDiv" class="btn-group pull-left margin-right">
 	<div class="checkbox">
 		<label data-toggle="tooltip" data-placement="top" title="Show famous or infamous records">
-			<input id="infamous" type="checkbox" onchange="infamousChanged()"/> Infamous
+			<input id="infamous" type="checkbox" onchange="infamousChanged()" th:checked="${infamous}"/> Infamous
 		</label>
 	</div>
 </div>

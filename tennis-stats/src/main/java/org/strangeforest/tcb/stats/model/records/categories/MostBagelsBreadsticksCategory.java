@@ -80,7 +80,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 	}
 
 	private static Record mostItems(RecordType type, ItemType itemType, RecordDomain domain) {
-		return new Record(
+		return new Record<>(
 			domain.id + itemType.name + type.id, "Most " + suffix(domain.name, " ") + itemType.name + prefix(type.name, " "),
 			/* language=SQL */
 			"WITH player_items AS (\n" +
@@ -97,13 +97,14 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"SELECT player_id, sum(items) AS value, max(last_date) AS last_date\n" +
 			"FROM player_items\n" +
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.last_date", IntegerRecordDetail.class,
+			"r.value", "r.value DESC", "r.value DESC, r.last_date",
+			IntegerRecordDetail.class, null,
 			asList(new RecordColumn("value", "numeric", null, ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")))
 		);
 	}
 
 	private static Record mostItemsVs(RecordType type, ItemType itemType, RecordDomain domain) {
-		return new Record(
+		return new Record<>(
 			"Vs" + domain.id + itemType.name + type.id, "Most " + itemType.name + prefix(type.name, " ") + " Vs. " + domain.name,
 			/* language=SQL */
 			"WITH player_items AS (\n" +
@@ -120,13 +121,14 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"SELECT player_id, sum(items) AS value, max(last_date) AS last_date\n" +
 			"FROM player_items\n" +
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.last_date", IntegerRecordDetail.class,
+			"r.value", "r.value DESC", "r.value DESC, r.last_date",
+			IntegerRecordDetail.class, null,
 			asList(new RecordColumn("value", "numeric", null, ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")))
 		);
 	}
 
 	private static Record mostSeasonItems(RecordType type, ItemType itemType) {
-		return new Record(
+		return new Record<>(
 			"Season" + itemType.name + type.id, "Most " + itemType.name + prefix(type.name, " ") + " in Single Season",
 			/* language=SQL */
 			"WITH player_items AS (\n" +
@@ -145,7 +147,8 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"SELECT player_id, season, sum(items) AS value, max(last_date) AS last_date\n" +
 			"FROM player_items\n" +
 			"GROUP BY player_id, season",
-			"r.value, r.season", "r.value DESC", "r.value DESC, r.season, r.last_date", SeasonIntegerRecordDetail.class,
+			"r.value, r.season", "r.value DESC", "r.value DESC, r.season, r.last_date",
+			SeasonIntegerRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", "numeric", null, ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")

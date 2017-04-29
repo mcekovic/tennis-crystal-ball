@@ -22,6 +22,10 @@ public class MostEntriesCategory extends TournamentResultsCategory {
 		register(mostEntries(GRASS));
 		register(mostEntries(CARPET));
 		register(mostSeasonEntries(ALL));
+		register(mostSeasonEntries(HARD));
+		register(mostSeasonEntries(CLAY));
+		register(mostSeasonEntries(GRASS));
+		register(mostSeasonEntries(CARPET));
 		register(mostTournamentEntries(ALL));
 		register(mostTournamentEntries(GRAND_SLAM));
 		register(mostTournamentEntries(MASTERS));
@@ -31,18 +35,18 @@ public class MostEntriesCategory extends TournamentResultsCategory {
 	}
 
 	private static Record mostEntries(RecordDomain domain) {
-		return mostResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", domain.nameSuffix, ENTRIES, domain.condition);
+		return mostResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", domain, ENTRIES, N_A);
 	}
 
 	private static Record mostSeasonEntries(RecordDomain domain) {
-		return mostSeasonResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", domain.nameSuffix, ENTRIES, domain.condition);
+		return mostSeasonResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", domain, ENTRIES, N_A);
 	}
 
 	private static Record mostTournamentEntries(RecordDomain domain) {
-		return mostTournamentResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", ENTRIES, domain.condition);
+		return mostTournamentResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", domain, ENTRIES, N_A);
 	}
 
 	private static Record mostDifferentTournamentEntries(RecordDomain domain) {
-		return mostDifferentTournamentResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", ENTRIES, domain.condition);
+		return mostDifferentTournamentResults(domain.id + "Entries", suffix(domain.name, " ") + "Entries", domain, ENTRIES, N_A);
 	}
 }

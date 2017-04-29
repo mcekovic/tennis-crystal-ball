@@ -25,20 +25,24 @@ public class MostSemiFinalsCategory extends TournamentResultsCategory {
 		register(mostSeasonSemiFinals(GRAND_SLAM));
 		register(mostSeasonSemiFinals(MASTERS));
 		register(mostSeasonSemiFinals(BIG_TOURNAMENTS));
+		register(mostSeasonSemiFinals(HARD));
+		register(mostSeasonSemiFinals(CLAY));
+		register(mostSeasonSemiFinals(GRASS));
+		register(mostSeasonSemiFinals(CARPET));
 		register(mostTournamentSemiFinals(ALL));
 		register(mostTournamentSemiFinals(GRAND_SLAM));
 		register(mostTournamentSemiFinals(MASTERS));
 	}
 
 	private static Record mostSemiFinals(RecordDomain domain) {
-		return mostResults(domain.id + "SemiFinals", suffix(domain.name, " ") + "Semi-Finals", domain.nameSuffix, SEMI_FINALS, domain.condition);
+		return mostResults(domain.id + "SemiFinals", suffix(domain.name, " ") + "Semi-Finals", domain, SEMI_FINALS, RESULT_SEMI_FINAL);
 	}
 
 	private static Record mostSeasonSemiFinals(RecordDomain domain) {
-		return mostSeasonResults(domain.id + "SemiFinals", suffix(domain.name, " ") + "Semi-Finals", domain.nameSuffix, SEMI_FINALS, domain.condition);
+		return mostSeasonResults(domain.id + "SemiFinals", suffix(domain.name, " ") + "Semi-Finals", domain, SEMI_FINALS, RESULT_SEMI_FINAL);
 	}
 
 	private static Record mostTournamentSemiFinals(RecordDomain domain) {
-		return mostTournamentResults(domain.id + "SemiFinals", suffix(domain.name, " ") + "Semi-Finals", SEMI_FINALS, domain.condition);
+		return mostTournamentResults(domain.id + "SemiFinals", suffix(domain.name, " ") + "Semi-Finals", domain, SEMI_FINALS, RESULT_SEMI_FINAL);
 	}
 }

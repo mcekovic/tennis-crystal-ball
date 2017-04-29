@@ -9,6 +9,7 @@ import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
+import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
@@ -20,6 +21,7 @@ public class RivalryFilter {
 	private final String round;
 
 	private static final String LEVEL_CRITERION   = " AND level = :level::tournament_level";
+	private static final String LEVELS_CRITERION  = " AND level::TEXT IN (:levels)";
 	private static final String SURFACE_CRITERION = " AND m.surface = :surface::surface";
 	private static final String ROUND_CRITERION   = " AND round %1$s :round::match_round";
 
@@ -67,7 +69,7 @@ public class RivalryFilter {
 	void appendCriteria(StringBuilder criteria) {
 		appendRangeFilter(criteria, seasonRange, "season", "season");
 		if (!isNullOrEmpty(level))
-			criteria.append(LEVEL_CRITERION);
+			criteria.append(level.length() == 1 ? LEVEL_CRITERION : LEVELS_CRITERION);
 		if (!isNullOrEmpty(surface))
 			criteria.append(SURFACE_CRITERION);
 		if (!isNullOrEmpty(round))
@@ -82,8 +84,12 @@ public class RivalryFilter {
 
 	void addParams(MapSqlParameterSource params) {
 		addRangeParams(params, seasonRange, "season");
-		if (!isNullOrEmpty(level))
-			params.addValue("level", level);
+		if (!isNullOrEmpty(level)) {
+			if (level.length() == 1)
+				params.addValue("level", level);
+			else
+				params.addValue("levels", asList(level.split("")));
+		}
 		if (!isNullOrEmpty(surface))
 			params.addValue("surface", surface);
 		if (!isNullOrEmpty(round))

@@ -16,9 +16,9 @@ import org.strangeforest.tcb.util.*;
 
 import static java.lang.String.*;
 import static java.util.Arrays.*;
+import static org.strangeforest.tcb.stats.model.records.details.RecordDetailUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
-import static org.strangeforest.tcb.stats.service.StatisticsService.PLAYER_STATS_SUMMED_COLUMNS;
 
 @Service
 public class TournamentService {
@@ -115,7 +115,7 @@ public class TournamentService {
 
 	private static final String TOURNAMENT_STATS_JOIN = //language=SQL
 		"\nLEFT JOIN (\n" +
-		"  SELECT ms.tournament_event_id, " + PLAYER_STATS_SUMMED_COLUMNS +
+		"  SELECT ms.tournament_event_id, " + StatisticsService.PLAYER_STATS_SUMMED_COLUMNS +
 		"  FROM player_match_stats_v ms\n" +
 		"  WHERE ms.player_id = :playerId\n" +
 		"  GROUP BY ms.tournament_event_id\n" +
@@ -240,13 +240,14 @@ public class TournamentService {
 			params("tournamentId", tournamentId)
 				.addValue("result", result)
 				.addValue("maxPlayers", maxPlayers),
-			(rs, rowNum) -> new RecordDetailRow(
+			(rs, rowNum) -> new RecordDetailRow<RecordDetail>(
 				rs.getInt("rank"),
 				rs.getInt("player_id"),
 				rs.getString("name"),
 				rs.getString("country_id"),
 				rs.getBoolean("active"),
-				new IntegerRecordDetail(rs.getInt("count"))
+				new IntegerRecordDetail(rs.getInt("count")),
+				(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments&tournamentId=%2$d%3$s", playerId, tournamentId, resultURLParam(result))
 			)
 		);
 	}

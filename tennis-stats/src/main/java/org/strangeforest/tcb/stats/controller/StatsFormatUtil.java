@@ -1,10 +1,13 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.text.*;
+import java.util.stream.*;
 
 import org.strangeforest.tcb.stats.model.*;
 
 import com.google.common.base.*;
+
+import static java.util.stream.Collectors.*;
 
 public class StatsFormatUtil {
 
@@ -71,7 +74,10 @@ public class StatsFormatUtil {
 		if (!Strings.isNullOrEmpty(compareLevel)) {
 			if (relativeTo.length() > 0)
 				relativeTo.append(", ");
-			relativeTo.append(TournamentLevel.decode(compareLevel).getText());
+			if (compareLevel.length() == 1)
+				relativeTo.append(TournamentLevel.decode(compareLevel).getText());
+			else
+				relativeTo.append(Stream.of(compareLevel.split("")).map(l -> TournamentLevel.decode(l).getText()).collect(joining(" + ")));
 		}
 		if (!Strings.isNullOrEmpty(compareSurface)) {
 			if (relativeTo.length() > 0)

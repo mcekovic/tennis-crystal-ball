@@ -56,7 +56,9 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
-			setBootgridTitle($("#seasonsTable-header"), $("#seasonsTable-title"));
+			var $seasonsTableHeader = $("#seasonsTable-header");
+			$seasonsTableHeader.find("div.search").remove();
+			setBootgridTitle($seasonsTableHeader, $("#seasonsTable-title"));
 			setBootgridTitles($seasonsTable, [
 				{id: "tournamentCount", title: "Tournaments"},
 				{id: "grandSlamCount", title: "Grand Slam tournaments"},
