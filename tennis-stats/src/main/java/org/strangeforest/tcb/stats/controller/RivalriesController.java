@@ -104,6 +104,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("stats1", stats1);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("tournaments", tournaments);
@@ -181,6 +182,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("playerId2", playerId2);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
@@ -317,6 +319,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("rounds", Round.values());
 		return new ModelAndView("headsToHeads", modelMap);
@@ -353,6 +356,7 @@ public class RivalriesController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("rounds", Round.values());
 		return new ModelAndView("greatestRivalries", modelMap);

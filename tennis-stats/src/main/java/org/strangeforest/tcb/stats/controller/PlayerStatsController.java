@@ -218,6 +218,7 @@ public class PlayerStatsController extends BaseController {
 				modelMap.addAttribute("compareStats", compareStats);
 			modelMap.addAttribute("seasons", playerService.getPlayerSeasons(playerId));
 			modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+			modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 			modelMap.addAttribute("surfaces", Surface.values());
 			modelMap.addAttribute("compareSeason", compareSeason);
 			modelMap.addAttribute("compareLevel", compareLevel);

@@ -48,6 +48,7 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.NON_TEAM_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		return new ModelAndView("tournamentEvents", modelMap);
