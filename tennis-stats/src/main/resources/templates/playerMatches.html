@@ -61,7 +61,7 @@
 				"tournament": tournamentEventFormatter,
 				"surface": surfaceFormatter,
 				"wonLost": function(column, row) {
-					return row.winner.id == [[${playerId}]] ? "W" : "L";
+					return row.outcome != "ABD" ? (row.winner.id == [[${playerId}]] ? "W" : "L") : "A";
 				},
 				"match": matchFormatter([[${playerId}]]),
 				"stats": function(column, row) {
@@ -283,13 +283,20 @@
 		<option value="">All matches</option>
 		<option value="won" th:selected="${outcome == 'won'}">Won</option>
 		<option value="lost" th:selected="${outcome == 'lost'}">Lost</option>
+		<option value="played" th:selected="${outcome == 'played'}">Played</option>
+		<option value="wonplayed" th:selected="${outcome == 'wonplayed'}">Played and won</option>
+		<option value="lostplayed" th:selected="${outcome == 'lostplayed'}">Played and lost</option>
+		<option value="RET" th:selected="${outcome == 'RET'}">Retirement</option>
 		<option value="wonRET" th:selected="${outcome == 'wonRET'}">Won by retirement</option>
 		<option value="lostRET" th:selected="${outcome == 'lostRET'}">Lost by retirement</option>
+		<option value="W/O" th:selected="${outcome == 'W/O'}">Walkover</option>
 		<option value="wonW/O" th:selected="${outcome == 'wonW/O'}">Won by walkover</option>
 		<option value="lostW/O" th:selected="${outcome == 'lostW/O'}">Lost by walkover</option>
+		<option value="DEF" th:selected="${outcome == 'DEF'}">Defaulting</option>
 		<option value="wonDEF" th:selected="${outcome == 'wonDEF'}">Won by defaulting</option>
 		<option value="lostDEF" th:selected="${outcome == 'lostDEF'}">Lost by defaulting</option>
 		<option value="ABD" th:selected="${outcome == 'ABD'}">Abandoned</option>
+		<option value="notPlayed" th:selected="${outcome == 'notPlayed'}">Not played</option>
 	</select>
 </div>
 <button id="matchesStats" type="button" class="btn btn-info grid-control margin-right" onclick="showMatchesStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected matches)|">

@@ -33,20 +33,28 @@ public class OutcomeFilter {
 
 	private static final String WON = "won";
 	private static final String LOST = "lost";
+	private static final String PLAYED = "played";
+	private static final String NOT_PLAYED = "notPlayed";
+	private static final String NOT_ABANDONED = "notAbandoned";
 
 	private static final String MATCHES_WON_CRITERION = " AND m.%1$s = :playerId";
 	private static final String STATS_WON_CRITERION   = " AND %1$s = 1";
 	private static final String OUTCOME_CRITERION = " AND outcome = :outcome::match_outcome";
+	private static final String PLAYED_CRITERION = " AND (outcome IS NULL OR outcome IN ('RET', 'DEF'))";
+	private static final String NOT_PLAYED_CRITERION = " AND outcome IN ('W/O', 'ABD')";
+	private static final String NOT_ABANDONED_CRITERION = " AND (outcome IS NULL OR outcome <> 'ABD')";
 
 	private OutcomeFilter(String outcome, boolean forStats) {
 		if (!isNullOrEmpty(outcome)) {
 			if (outcome.startsWith(WON)) {
 				this.won = Boolean.TRUE;
-				this.outcome = outcome.substring(WON.length());
+				String out = outcome.substring(WON.length());
+				this.outcome = out.isEmpty() ? NOT_ABANDONED : out;
 			}
 			else if (outcome.startsWith(LOST)) {
 				this.won = Boolean.FALSE;
-				this.outcome = outcome.substring(LOST.length());
+				String out = outcome.substring(LOST.length());
+				this.outcome = out.isEmpty() ? NOT_ABANDONED : out;
 			}
 			else {
 				this.won = null;
@@ -67,12 +75,20 @@ public class OutcomeFilter {
 			else
 				criteria.append(format(MATCHES_WON_CRITERION, won ? "winner_id" : "loser_id"));
 		}
-		if (!isNullOrEmpty(outcome))
-			criteria.append(OUTCOME_CRITERION);
+		if (!isNullOrEmpty(outcome)) {
+			if (outcome.equals(PLAYED))
+				criteria.append(PLAYED_CRITERION);
+			else if (outcome.equals(NOT_PLAYED))
+				criteria.append(NOT_PLAYED_CRITERION);
+			else if (outcome.equals(NOT_ABANDONED))
+				criteria.append(NOT_ABANDONED_CRITERION);
+			else
+				criteria.append(OUTCOME_CRITERION);
+		}
 	}
 
 	void addParams(MapSqlParameterSource params) {
-		if (!isNullOrEmpty(outcome))
+		if (!(isNullOrEmpty(outcome) || outcome.equals(PLAYED) || outcome.equals(NOT_PLAYED) || outcome.equals(NOT_ABANDONED)))
 			params.addValue("outcome", outcome);
 	}
 

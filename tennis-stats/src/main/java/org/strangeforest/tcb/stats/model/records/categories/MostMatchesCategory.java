@@ -12,9 +12,9 @@ import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 public class MostMatchesCategory extends RecordCategory {
 
 	public enum RecordType {
-		PLAYED("Played", N_A, N_A),
-		WON("Won", "winner_id", "&outcome=won"),
-		LOST("Lost", "loser_id", "&outcome=lost");
+		PLAYED("Played", N_A, "&outcome=played"),
+		WON("Won", "winner_id", "&outcome=wonplayed"),
+		LOST("Lost", "loser_id", "&outcome=lostplayed");
 
 		private final String name;
 		private final String playerColumn;

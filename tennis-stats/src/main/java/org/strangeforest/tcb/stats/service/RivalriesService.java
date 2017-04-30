@@ -42,7 +42,7 @@ public class RivalriesService {
 		.put("D",      8.0)
 		.put("GFMO",   1.8)
 		.put("AB",     1.8)
-		.put("GFMOAB", 1.0)
+		.put("GFMOAB", 1.1)
 		.put("DT",     6.0)
 	.build();
 	private static final Map<String, Double> MIN_MATCHES_SURFACE_FACTOR = ImmutableMap.<String, Double>builder()

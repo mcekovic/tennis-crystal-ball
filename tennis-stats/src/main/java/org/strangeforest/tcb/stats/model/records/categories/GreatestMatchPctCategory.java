@@ -81,7 +81,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"SELECT player_id, " + type.expression(domain.columnPrefix + "matches") + " AS pct, " + domain.columnPrefix + "matches_won AS won, " + domain.columnPrefix + "matches_lost AS lost\n" +
 			"FROM player_performance WHERE " + domain.columnPrefix + "matches_won + " + domain.columnPrefix + "matches_lost >= " + perfCategory.getMinEntries(),
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC",
-			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s", playerId, domain.urlParam),
+			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&outcome=played", playerId, domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
@@ -99,7 +99,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"SELECT player_id, " + type.expression(domain.columnPrefix) + " AS pct, " + domain.columnPrefix + "_won AS won, " + domain.columnPrefix + "_lost AS lost\n" +
 			"FROM player_performance WHERE " + domain.columnPrefix + "_won + " + domain.columnPrefix + "_lost >= " + perfCategory.getMinEntries(),
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC",
-			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s", playerId, domain.urlParam),
+			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&outcome=played", playerId, domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct. Vs. " + domain.name),
 				type.valueRecordColumn,
@@ -118,7 +118,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"SELECT player_id, season, " + type.expression(domain.columnPrefix + "matches") + " AS pct, " + domain.columnPrefix +"matches_won AS won, " + domain.columnPrefix + "matches_lost AS lost\n" +
 			"FROM player_season_performance WHERE " + domain.columnPrefix + "matches_won + " + domain.columnPrefix + "matches_lost >= " + minEntries,
 			"r.won, r.lost, r.season", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.season",
-			type.seasonDetailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d", playerId, recordDetail.getSeason()),
+			type.seasonDetailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d%3$s&outcome=played", playerId, recordDetail.getSeason(), domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
@@ -139,7 +139,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"FROM player_tournament_performance p INNER JOIN tournament t USING (tournament_id)\n" +
 			"WHERE t." + ALL_TOURNAMENTS + " AND p." + domain.columnPrefix + "matches_won + p." + domain.columnPrefix + "matches_lost >= " + minEntries,
 			"r.won, r.lost, r.tournament_id, r.tournament, r.level", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.tournament",
-			type.tournamentDetailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentId=%2$d%3$s", playerId, recordDetail.getTournamentId(), domain.urlParam),
+			type.tournamentDetailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentId=%2$d%3$s&outcome=played", playerId, recordDetail.getTournamentId(), domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
 				type.valueRecordColumn,
