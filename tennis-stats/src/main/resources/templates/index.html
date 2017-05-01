@@ -101,9 +101,8 @@
 				For more information please click <a href="/about">here</a>.
 			</p>
 			<th:block th:if="${hasInProgressEvents}">
-			<h4 class="pull-left text-nowrap" style="margin-top: 0">Latest Forecasts</h4>
-			<a href="/inProgressEventsForecasts" style="margin-left: 10px; vertical-align: top" title="Full forecasts details"><span class="glyphicon glyphicon-eye-open" style="font-size: 18px"></span></a>
-			<table id="inProgressEventsTable" class="table table-condensed table-hover table-striped">
+			<h4 class="text-nowrap">Latest Forecasts</h4>
+			<table id="inProgressEventsTable" class="table table-condensed table-hover table-striped" style="margin-bottom: 0">
 				<thead>
 				<tr>
 					<th data-column-id="name" data-formatter="event" data-width="200">Tournament</th>
@@ -115,6 +114,10 @@
 				</tr>
 				</thead>
 			</table>
+			<div class="pull-right" style="margin: 5px 10px">
+				<a href="/inProgressEventsForecasts" class="label label-default" title="Full forecasts details">All Forecasts</a>
+			</div>
+			<br/>
 			</th:block>
 			<h4 class="text-nowrap">Latest Results</h4>
 			<table id="latestEvents" class="table table-condensed table-hover table-striped" style="margin-bottom: 0">
