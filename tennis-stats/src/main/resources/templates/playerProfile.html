@@ -19,25 +19,13 @@
 		$(function() {
 			$("#playerPills").find("a").click(tabClick);
 			[# th:if="${tab}" th:switch="${tab}"]
-				[# th:case="'tournaments'"]
-					playerTournaments([[${season}]], [[${level}]], [[${surface}]], [[${result}]], [[${tournamentId}]]);
-				[/]
-				[# th:case="'matches'"]
-					playerMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]], [[${opponent}]], [[${tournamentId}]], [[${tournamentEventId}]], [[${outcome}]]);
-				[/]
-				[# th:case="'goatPoints'"]
-					playerGoatPoints([[${season}]]);
-				[/]
-				[# th:case="'records'"]
-					playerRecords([[${infamous}]]);
-				[/]
-				[# th:case="*"]
-					$([['#' + ${tab} + 'Pill']]).click();
-				[/]
+				[# th:case="'tournaments'"] playerTournaments([[${season}]], [[${level}]], [[${surface}]], [[${result}]], [[${tournamentId}]]); [/]
+				[# th:case="'matches'"] playerMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]], [[${opponent}]], [[${tournamentId}]], [[${tournamentEventId}]], [[${outcome}]]); [/]
+				[# th:case="'goatPoints'"] playerGoatPoints([[${season}]]); [/]
+				[# th:case="'records'"] playerRecords([[${infamous}]]); [/]
+				[# th:case="*"] $("#[(${tab})]Pill").click(); [/]
 			[/]
-			[# th:unless="${tab}"]
-				$("#profilePill").click();
-			[/]
+			[# th:unless="${tab}"] $("#profilePill").click(); [/]
 		});
 		function playerTournaments(season, level, surface, result, tournamentId) {
 			var $pill = $("#tournamentsPill");
@@ -96,7 +84,7 @@
 	<th:block th:if="${player}">
 		<h3>
 			<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" style="float: left; margin-top: 2px; margin-right: 8px" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-			<th:block th:text="${player.name}">Roger Federer</th:block> <a th:href="'/playerProfile?name=' + ${player.name}" th:title="|Permalink to ${player.name} profile|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
+			<th:block th:text="${player.name}">Roger Federer</th:block> <a th:href="@{/playerProfile(name=${player.name})}" th:title="|Permalink to ${player.name} profile|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
 		</h3>
 		<ul id="playerPills" class="nav nav-pills">
 			<li><a id="profilePill" data-toggle="pill" href="#profile" th:data-url="'/playerProfileTab?playerId=' + ${player.id}">Profile</a></li>

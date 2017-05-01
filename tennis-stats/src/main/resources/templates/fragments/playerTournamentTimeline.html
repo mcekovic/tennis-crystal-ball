@@ -2,9 +2,9 @@
 	<!--/*@thymesVar id="tournament" type="org.strangeforest.tcb.stats.model.PlayerTournamentTimeline"*/-->
 	<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
 		<th:block th:unless="${tournament.maxLevel} == 'O'" th:each="levelAndName : ${tournament.levelsAndNames}">
-			<a th:href="'/tournament?tournamentId=' + ${tournament.tournamentId}" th:text="${levelAndName.value}" th:data-level="${levelAndName.key}" data-level="G" class="label tournament">Wimbledon</a>
+			<a th:href="@{/tournament(tournamentId=${tournament.tournamentId})}" th:text="${levelAndName.value}" th:data-level="${levelAndName.key}" data-level="G" class="label tournament">Wimbledon</a>
 		</th:block>
-		<a th:if="${tournament.maxLevel} == 'O'" th:href="'/tournament?tournamentId=' + ${tournament.tournamentId}" th:text="${tournament.name}" th:data-level="${tournament.maxLevel}" data-level="O" class="label tournament">Olympics</a>
+		<a th:if="${tournament.maxLevel} == 'O'" th:href="@{/tournament(tournamentId=${tournament.tournamentId})}" th:text="${tournament.name}" th:data-level="${tournament.maxLevel}" data-level="O" class="label tournament">Olympics</a>
 	</td>
 	<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
 		<th:block th:each="surface : ${tournament.surfaces}">
@@ -12,7 +12,7 @@
 		</th:block>
 	</td>
 	<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
-		<a th:if="${item.result}" th:href="'/playerProfile?playerId=' + ${playerId} + '&amp;tab=matches&amp;tournamentEventId=' + ${item.tournamentEventId}" th:data-level="${tournament.levelCount > 1 ? item.level : ''}" th:data-surface="${tournament.surfaceCount > 1 ? item.surface : ''}">
+		<a th:if="${item.result}" th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${item.tournamentEventId})}" th:data-level="${tournament.levelCount > 1 ? item.level : ''}" th:data-surface="${tournament.surfaceCount > 1 ? item.surface : ''}">
 			<span th:text="${item.result}" title="Show tournament matches">W</span>
 		</a>
 		<span th:unless="${item.result}" class="absent">A</span>

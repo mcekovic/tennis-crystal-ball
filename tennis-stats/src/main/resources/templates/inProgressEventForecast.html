@@ -11,9 +11,7 @@
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("#inProgressEventPills").find("a").click(tabClick);
-			[# th:if="${tab}"]
-				$([['#' + ${tab} + 'Pill']]).click();
-			[/]
+			[# th:if="${tab}"] $("#[(${tab})]Pill").click(); [/]
 			bindPopovers();
 			loadRankingTopN("POINTS", 20);
 		});
@@ -99,24 +97,24 @@
 				<tr th:if="${inProgressEvent.favorite1}">
 					<th title="1-st Favorite">1-st Fav.</th>
 					<td th:with="player=${inProgressEvent.favorite1}">
-						<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-						<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
 					</td>
 				</tr>
 				<tr th:if="${inProgressEvent.favorite2}">
 					<th title="2-nd Favorite">2-nd Fav.</th>
 					<td th:with="player=${inProgressEvent.favorite2}">
-						<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-						<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
 					</td>
 				</tr>
 				<tr th:if="${inProgressEvent.favorite3}">
 					<th title="3-rd Favorite">3-rd Fav.</th>
 					<td th:with="player=${inProgressEvent.favorite3}">
-						<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-						<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
 					</td>
 				</tr>
@@ -126,7 +124,7 @@
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>
-						<a role="button" th:href="'/tournament?tournamentId=' + ${inProgressEvent.tournamentId}" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Tournament history">
+						<a role="button" th:href="@{/tournament(tournamentId=${inProgressEvent.tournamentId})}" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Tournament history">
 							<span class="glyphicon glyphicon-calendar"></span>&nbsp;&nbsp;History
 						</a>
 					</th>
@@ -184,13 +182,13 @@
 						<tr th:with="otherPlayer=${playersForecast.getOtherPlayer(playerForecastStat.index)}, showH2H=${playerForecast != null && playerForecast.known && otherPlayer != null && otherPlayer.known}">
 							<td class="text-right" th:text="${playerForecast.seedAndEntry}">1</td>
 							<td th:if="${playerForecast.known}" colspan="2">
-								<img th:src="'/images/flags/' + ${playerForecast.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${playerForecast.country.id}" title="SUI" width="24" height="20"/>
-								<a th:href="'/playerProfile?playerId=' + ${playerForecast.id}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+								<img th:src="@{/images/flags/{code}.png(code=${playerForecast.country.code})}" src="/images/flags/ch.png'" th:title="${playerForecast.country.id}" title="SUI" width="24" height="20"/>
+								<a th:href="@{/playerProfile(playerId=${playerForecast.id})}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 							</td>
 							<td th:if="${playerForecast.bye}" colspan="2">Bye</td>
 							<td th:if="${playerForecast.qualifier}" colspan="2">Qualifier</td>
 							<td th:if="${playerForecastStat.odd && showH2H}" rowspan="2" class="player-h2h">
-								<a th:href="'/headToHead?playerId1=' + ${playerForecast.id} + '&playerId2=' + ${otherPlayer.id}" class="player-h2h" title="Show Head-to-Head">H<br/>2<br/>H</a>
+								<a th:href="@{/headToHead(playerId1=${playerForecast.id}, playerId2=${otherPlayer.id})}" class="player-h2h" title="Show Head-to-Head">H<br/>2<br/>H</a>
 							</td>
 							<td th:unless="${showH2H}" class="player-noh2h"></td>
 							<td th:each="result : ${playersForecast.results}" th:with="probability = ${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + playerForecast.getPrice(result, priceFormat) : _}">58.2%</td>
@@ -211,6 +209,7 @@
 			<div id="rankingTopN"></div>
 		</div>
 	</div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

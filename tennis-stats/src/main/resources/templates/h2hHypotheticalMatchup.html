@@ -174,14 +174,14 @@
 		<td class="text-right" width="40%">
 			<h4 class="text-nowrap">
 				<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -4px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
-				<a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a>
+				<a th:href="@{/playerProfile(playerId=${player1.id})}" th:text="${player1.name}">Roger Federer</a>
 			</h4>
 		</td>
 		<th class="text-center">vs</th>
 		<td class="text-left" width="40%">
 			<h4 class="text-nowrap">
 				<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="margin-top: -4px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
-				<a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a>
+				<a th:href="@{/playerProfile(playerId=${player2.id})}" th:text="${player2.name}">Rafael Nadal</a>
 			</h4>
 		</td>
 	</tr>

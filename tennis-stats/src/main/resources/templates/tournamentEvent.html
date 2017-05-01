@@ -69,8 +69,8 @@
 					<th>Winner</th>
 					<td th:with="player=${tournamentEvent.winner}">
 						<th:block th:unless="${tournamentEvent.outcome == 'ABD'}">
-							<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-							<strong><a th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Roger Federer</a></strong>
+							<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+							<strong><a th:href="@{/playerProfile(playerId=${player.id})}" th:text="${player.name}" title="Show profile">Roger Federer</a></strong>
 						</th:block>
 						<th:block th:if="${tournamentEvent.outcome == 'ABD'}">ABD</th:block>
 					</td>
@@ -78,8 +78,8 @@
 				<tr th:if="${tournamentEvent.runnerUp != null && tournamentEvent.outcome != 'ABD'}">
 					<th>Runner-up</th>
 					<td th:with="player=${tournamentEvent.runnerUp}">
-						<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-						<a th:href="'/playerProfile?playerId=' + ${player.id}" th:text="${player.name}" title="Show profile">Rafael Nadal</a>
+						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+						<a th:href="@{/playerProfile(playerId=${player.id})}" th:text="${player.name}" title="Show profile">Rafael Nadal</a>
 					</td>
 				</tr>
 				<tr th:if="${tournamentEvent.score}">
@@ -107,7 +107,7 @@
 	</ul>
 	<div class="tab-content">
 		<div id="results" class="tab-pane fade in active">
-			<div th:unless="${results.isEmpty()}" th:include="fragments/eventResults :: eventResults('')"></div>
+			<div th:unless="${results.isEmpty()}" th:include="fragments/eventResults :: eventResults('', true)"></div>
 			<th:block th:if="${results.isEmpty()}">
 				<br/>
 				<div class="alert alert-warning">No results found</div>
@@ -116,6 +116,7 @@
 		<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
 		<div th:if="${tournamentEvent.mapProperties}" id="map" class="tab-pane fade" style="height: 620px"><div class="loading"></div></div>
 	</div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

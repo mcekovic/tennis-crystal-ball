@@ -36,21 +36,21 @@
 		<tbody>
 			<tr th:each="item : ${timeline}">
 				<th>
-					<a th:href="'/tournamentEvents?season=' + ${item.season}" title="Show season tournaments" th:text="${item.season}">2005</a>
+					<a th:href="@{/tournamentEvents(season=${item.season})}" title="Show season tournaments" th:text="${item.season}">2005</a>
 				</th>
 				<td>
 					<div class="progress">
 						<div class="progress-bar progress-bar-default" role="progressbar" th:style="|width: ${item.hardPct}|" data-toggle="tooltip" data-placement="top" th:title="|Hard ${item.hardPct}|">
-							<a th:href="'/tournamentEvents?season=' + ${item.season} + '&surface=H'" title="Show hard tournaments"><strong th:text="${item.hardPct}">25.0%</strong></a>
+							<a th:href="@{/tournamentEvents(season=${item.season}, surface=H)}" title="Show hard tournaments"><strong th:text="${item.hardPct}">25.0%</strong></a>
 						</div>
 						<div class="progress-bar progress-bar-warning" role="progressbar" th:style="|width: ${item.carpetPct}|" data-toggle="tooltip" data-placement="top" th:title="|Carpet ${item.carpetPct}|">
-							<a th:href="'/tournamentEvents?season=' + ${item.season} + '&surface=P'" title="Show carpet tournaments"><strong th:text="${item.carpetPct}">25.0%</strong></a>
+							<a th:href="@{/tournamentEvents(season=${item.season}, surface=P)}" title="Show carpet tournaments"><strong th:text="${item.carpetPct}">25.0%</strong></a>
 						</div>
 						<div class="progress-bar progress-bar-danger" role="progressbar" th:style="|width: ${item.clayPct}|" data-toggle="tooltip" data-placement="top" th:title="|Clay ${item.clayPct}|">
-							<a th:href="'/tournamentEvents?season=' + ${item.season} + '&surface=C'" title="Show clay tournaments"><strong th:text="${item.clayPct}">25.0%</strong></a>
+							<a th:href="@{/tournamentEvents(season=${item.season}, surface=C)}" title="Show clay tournaments"><strong th:text="${item.clayPct}">25.0%</strong></a>
 						</div>
 						<div class="progress-bar progress-bar-success" role="progressbar" th:style="|width: ${item.grassPct}|" data-toggle="tooltip" data-placement="top" th:title="|Grass ${item.grassPct}|">
-							<a th:href="'/tournamentEvents?season=' + ${item.season} + '&surface=G'" title="Show grass tournaments"><strong th:text="${item.grassPct}">25.0%</strong></a>
+							<a th:href="@{/tournamentEvents(season=${item.season}, surface=G)}" title="Show grass tournaments"><strong th:text="${item.grassPct}">25.0%</strong></a>
 						</div>
 					</div>
 				</td>

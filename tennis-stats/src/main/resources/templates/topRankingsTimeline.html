@@ -43,12 +43,12 @@
 		<tbody>
 			<tr th:each="season : ${timeline.seasons}" th:unless="${season > 2007 && rankType.name() == 'CARPET_ELO_RATING'}">
 				<th>
-					<a th:href="'/rankingsTable?rankType=' + ${rankType} + '&season=' + ${season}" th:text="${season}" title="Show season year-end rankings">2000</a>
+					<a th:href="@{/rankingsTable(rankType=${rankType}, season=${season})}" th:text="${season}" title="Show season year-end rankings">2000</a>
 					<th:block th:if="${season < 1973 && rankType.name() == 'POINTS'}"> *</th:block>
 				</th>
 				<td th:each="player : ${timeline.getTopPlayers(season)}">
-					<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+					<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+					<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 					<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 					<span th:if="${player.rank == 1}" class="small-dimmed" th:text="'(' + ${player.yeNo1} + '/' + ${timeline.getYENo1(player.playerId)} + ')'">(2/5)</span>
 				</td>

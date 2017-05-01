@@ -7,10 +7,10 @@ import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
 
 public enum TournamentLevelGroup {
 
-	BIG(EnumSet.of(GRAND_SLAM, TOUR_FINALS, MASTERS, OLYMPICS), "Big Tournaments"),
-	SMALL(EnumSet.of(ATP_500, ATP_250), "Small Tournaments"),
-	NON_TEAM(EnumSet.of(GRAND_SLAM, TOUR_FINALS, MASTERS, OLYMPICS, ATP_500, ATP_250), "Non-Team Tournaments"),
-	TEAM(EnumSet.of(DAVIS_CUP, OTHERS_TEAM), "Team Tournaments");
+	BIG(EnumSet.of(GRAND_SLAM, TOUR_FINALS, MASTERS, OLYMPICS), "Big (GS, TF, M, O)"),
+	SMALL(EnumSet.of(ATP_500, ATP_250), "Small (500, 250)"),
+	NON_TEAM(EnumSet.of(GRAND_SLAM, TOUR_FINALS, MASTERS, OLYMPICS, ATP_500, ATP_250), "Individual"),
+	TEAM(EnumSet.of(DAVIS_CUP, OTHERS_TEAM), "Team");
 
 	private final String codes;
 	private final String text;

@@ -1,8 +1,8 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="eventResults(id)">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="eventResults(id, scrollRight)">
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
 	function roundLeft() {
-		var $resultsTable = $("#resultsTable[[${id}]]");
+		var $resultsTable = $("#resultsTable[(${id})]");
 		var resultsTable = $resultsTable.get(0);
 		if (resultsTable.roundPos > 0) {
 			resultsTable.roundPos--;
@@ -10,7 +10,7 @@
 		}
 	}
 	function roundRight() {
-		var $resultsTable = $("#resultsTable[[${id}]]");
+		var $resultsTable = $("#resultsTable[(${id})]");
 		var resultsTable = $resultsTable.get(0);
 		if (resultsTable.roundPos < resultsTable.maxRoundPos) {
 			resultsTable.roundPos++;
@@ -29,22 +29,21 @@
 			else
 				$match.hide();
 		});
-		var $roundLeft = $("#roundLeft[[${id}]]");
+		var $roundLeft = $("#roundLeft[(${id})]");
 		$roundLeft.prop("disabled", resultsTable.roundPos == 0);
 		$roundLeft.html("<span class='glyphicon glyphicon-chevron-left'></span>&nbsp;&nbsp;" + resultsTable.rounds[Math.max(0, resultsTable.roundPos - 1)]);
-		var $roundRight = $("#roundRight[[${id}]]");
+		var $roundRight = $("#roundRight[(${id})]");
 		$roundRight.prop("disabled", resultsTable.roundPos == resultsTable.maxRoundPos);
 		$roundRight.html("<span class='glyphicon glyphicon-chevron-right'></span>&nbsp;&nbsp;" + resultsTable.rounds[Math.min(resultsTable.maxRoundPos, resultsTable.roundPos + 1) + resultsTable.roundsToShow - 1]);
 	}
-</script>
-<script type="text/javascript" th:inline="javascript">
 	$(function() {
-		var $resultsTable = $("#resultsTable" + [[${id}]]);
+		var device = detectDevice();
+		var $resultsTable = $("#resultsTable[(${id})]");
 		var resultsTable = $resultsTable.get(0);
 		resultsTable.rounds = [[${results.rounds}]];
-		resultsTable.roundsToShow = Math.min(resultsTable.rounds.length, 4);
+		resultsTable.roundsToShow = Math.min(resultsTable.rounds.length, {"xs": 2, "sm": 2, "md": 3, "lg": 4}[device]);
 		resultsTable.maxRoundPos = resultsTable.rounds.length - resultsTable.roundsToShow;
-		resultsTable.roundPos = resultsTable.maxRoundPos;
+		resultsTable.roundPos = [(${scrollRight ? 'resultsTable.maxRoundPos' : 0})];
 		showRounds($resultsTable);
 	});
 </script>
@@ -73,7 +72,6 @@
 		vertical-align: top;
 	}
 </style>
-<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
 <table th:id="'resultsTable' + ${id}" class="table-condensed text-nowrap" width="100%">
 	<thead>
 	<tr>
@@ -93,13 +91,13 @@
 						<span th:text="${winner.seedAndEntry}"></span>
 					</td>
 					<td class="player">
-						<img th:if="${winner.country.id}" th:src="'/images/flags/' + ${winner.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${winner.country.id}" title="SUI" width="24" height="20"/>
-						<strong><a th:href="'/playerProfile?playerId=' + ${winner.id}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a></strong>
+						<img th:if="${winner.country.id}" th:src="@{/images/flags/{code}.png(code=${winner.country.code})}" src="/images/flags/ch.png'" th:title="${winner.country.id}" title="SUI" width="24" height="20"/>
+						<strong><a th:href="@{/playerProfile(playerId=${winner.id})}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a></strong>
 					</td>
 					<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.wGames}">6</th:block><sup th:if="${score.wTBPoints}" th:text="|(${score.wTBPoints})|"></sup></td>
 					<td th:if="${outcomeOrStats}" class="score"><th:block th:if="${match.outcome}" th:text="${match.outcome}"/></td>
 					<td th:if="${loser}" rowspan="2" class="player-h2h">
-						<a th:href="'/headToHead?playerId1=' + ${winner.id} + '&playerId2=' + ${loser.id}" class="player-h2h" title="Show Head-to-Head">H<br/>2<br/>H</a>
+						<a th:href="@{/headToHead(playerId1=${winner.id}, playerId2=${loser.id})}" class="player-h2h" title="Show Head-to-Head">H<br/>2<br/>H</a>
 					</td>
 				</tr>
 				<tr th:if="${loser}">
@@ -107,8 +105,8 @@
 						<span th:text="${loser.seedAndEntry}"></span>
 					</td>
 					<td class="player">
-						<img th:if="${loser.country.id}" th:src="'/images/flags/' + ${loser.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${loser.country.id}" title="ESP" width="24" height="20"/>
-						<a th:href="'/playerProfile?playerId=' + ${loser.id}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
+						<img th:if="${loser.country.id}" th:src="@{/images/flags/{code}.png(code=${loser.country.code})}" src="/images/flags/ch.png'" th:title="${loser.country.id}" title="ESP" width="24" height="20"/>
+						<a th:href="@{/playerProfile(playerId=${loser.id})}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
 					</td>
 					<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.lGames}">3</th:block><sup th:if="${score.lTBPoints}" th:text="|(${score.lTBPoints})|"></sup></td>
 					<td th:if="${outcomeOrStats}" class="stats">

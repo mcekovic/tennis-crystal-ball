@@ -15,7 +15,7 @@
 	</style>
 	<div class="panel panel-default component text-nowrap">
 		<div class="panel-heading">
-			<h4 class="text-center component-header">Top [[${goatTopN.size()}]] GOATs</h4>
+			<h4 class="text-center text-nowrap component-header">Top [[${goatTopN.size()}]] GOATs<a href="/goatList" style="margin-left: 4px; vertical-align: top" title="Full GOAT List"><span class="glyphicon glyphicon-zoom-in" style="font-size: 16px"></span></a></h4>
 		</div>
 		<table id="goatTopNTable" class="table table-condensed table-hover table-striped small">
 			<thead>
@@ -29,8 +29,8 @@
 			<tr th:each="player : ${goatTopN}">
 				<td th:text="${player.rank}" class="goat-rank">1</td>
 				<td class="goat-player" >
-					<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-					<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Federer</a>
+					<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+					<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Federer</a>
 					<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 				</td>
 				<td th:text="${player.points}" class="goat-points">600</td>

@@ -5,7 +5,7 @@
 <!--/*@thymesVar id="minGOATPoints" type="java.lang.Integer"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
 	<title>Dominance Timeline</title>
-	<script th:src="@{/js/jquery.resize.js}"></script>
+	<script src="/js/jquery.resize.js"></script>
 	<script type="text/javascript">
 		function correctInitPositions() {
 			var $timelineHeader = $("#timelineHeader");
@@ -32,7 +32,7 @@
 			var dLeft = newOffset.left - dominanceTableOffset.left;
 			var dTop = newOffset.top - dominanceTableOffset.top;
 			correctPosOnResize("span.best-player", dLeft + 20, dTop - 20);
-			correctPosOnResize("span.era-factor", dLeft + 2.5, dTop - 2.5);
+			correctPosOnResize("span.era-factor", dLeft + 2.6, dTop - 2.5);
 			dominanceTableOffset = newOffset;
 		}
 		function correctPosOnResize(selector, dLeft, dTop) {
@@ -130,21 +130,21 @@
 			<th style="padding: 1px 4px">Player</th>
 			<th style="padding: 1px 4px">Born</th>
 			<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
-			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="'/season?season=' + ${season}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
+			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="@{/season(season=${season})}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
 		</tr>
 		</thead>
 		<tbody>
 		<tr th:each="player : ${timeline.players}">
 			<td style="padding: 1px 4px">
-				<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-				<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+				<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+				<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 				<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 			</td>
 			<td style="padding: 1px 4px" th:text="${#dates.format(player.dob, 'yyyy')}">1985</td>
 			<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray">
-				<a th:href="'/playerProfile?playerId=' + ${player.playerId} + '&amp;tab=goatPoints'" th:text="${player.goatPoints}" title="Show GOAT points distribution">585</a>
+				<a th:href="@{/playerProfile(playerId=${player.playerId}, tab=goatPoints)}" th:text="${player.goatPoints}" title="Show GOAT points distribution">585</a>
 			</td>
-			<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${seasonPoint.pointsRounded}" class="points-10"><a th:href="'playerProfile?playerId=' + ${player.playerId} + '&amp;tab=goatPoints&amp;season=' + ${seasonPoint.season}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points" title="Show season GOAT points distribution">15</a></td>
+			<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${seasonPoint.pointsRounded}" class="points-10"><a th:href="@{/playerProfile(playerId=${player.playerId}, tab=goatPoints, season=${seasonPoint.season})}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points" title="Show season GOAT points distribution">15</a></td>
 		</tr>
 		</tbody>
 		<thead>
@@ -152,7 +152,7 @@
 			<th style="padding: 1px 4px">Player</th>
 			<th style="padding: 1px 4px">Born</th>
 			<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
-			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="'/season?season=' + ${season}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
+			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="@{/season(season=${season})}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
 		</tr>
 		</thead>
 	</table>

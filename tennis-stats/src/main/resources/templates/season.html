@@ -9,16 +9,10 @@
 		$(function() {
 			$("#seasonPills").find("a").click(tabClick);
 			[# th:if="${tab}" th:switch="${tab}"]
-				[# th:case="'events'"]
-				seasonEvents([[${level}]], [[${surface}]]);
-				[/]
-				[# th:case="*"]
-				$([['#' + ${tab} + 'Pill']]).click();
-				[/]
+				[# th:case="'events'"] seasonEvents([[${level}]], [[${surface}]]); [/]
+				[# th:case="*"] $("#[(${tab})]Pill").click(); [/]
 			[/]
-			[# th:unless="${tab}"]
-				$("#recordsPill").click();
-			[/]
+			[# th:unless="${tab}"] $("#recordsPill").click(); [/]
 		});
 		function seasonEvents(level, surface) {
 			var $pill = $("#eventsPill");

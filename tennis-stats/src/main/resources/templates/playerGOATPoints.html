@@ -82,7 +82,7 @@
 				<th th:each="result : ${level.value}" class="result text-center" th:attrappend="class=${resultStat.first ? ' first-column' : ''}" th:data-result="${result}" th:text="${result}">W</th>
 			</th:block>
 			<th class="first-column text-center bg-result-W" title="Number of match wins in finals">MW</th>
-			<th class="first-column text-center tournament" th:title="#{goatPoints.tournament.title}">Tourn P</th>
+			<th class="first-column text-center tournament" th:title="#{goatPoints.tournament.title}">Pts</th>
 			<th class="first-column text-center ranking" th:title="#{goatPoints.yearEndRanking.title}">YER P</th>
 			<th class="text-center ranking" th:title="#{goatPoints.weeksAtNo1.title}">W@1 P</th>
 			<th class="text-center ranking" th:title="#{goatPoints.weeksAtEloTopN.title}">W@E5 P</th>
@@ -95,7 +95,7 @@
 		<tbody>
 		<tr th:each="season : ${goatPoints.playerSeasonsPoints}" th:class="${season.season == highlightSeason ? 'highlight' : _}">
 			<th class="first-column points-" th:attrappend="class=${season.totalPointsRounded}">
-				<a th:href="'playerProfile?playerId=' + ${playerId} + '&amp;tab=tournaments&amp;season=' + ${season.season}" th:text="${season.season}" style="color: darkblue" title="Show season results">2000</a>
+				<a th:href="@{playerProfile(playerId=${playerId}, tab=tournaments, season=${season.season})}" th:text="${season.season}" style="color: darkblue" title="Show season results">2000</a>
 			</th>
 			<th class="points first-column points-" th:attrappend="class=${season.totalPointsRounded}" th:text="${season.totalPoints}">50</th>
 			<th:block th:each="level : ${levelResults}">

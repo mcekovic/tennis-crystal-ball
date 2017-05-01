@@ -85,23 +85,23 @@
 			<!--/* Titles */-->
 			<tr th:if="${player.titles > 0}">
 				<th>Titles</th>
-				<td width="100%"><a class="label label-default" th:text="${player.titles}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=tournaments&amp;result=W'" title="Show titles">10</a></td>
+				<td width="100%"><a class="label label-default" th:text="${player.titles}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, result=W)}" title="Show titles">10</a></td>
 			</tr>
 			<tr th:if="${player.grandSlams > 0}">
 				<th>Grand Slams</th>
-				<td><a class="label label-danger" th:text="${player.grandSlams}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=tournaments&amp;level=G&amp;result=W'" title="Show Grand Slam titles">1</a></td>
+				<td><a class="label label-danger" th:text="${player.grandSlams}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, level=G, result=W)}" title="Show Grand Slam titles">1</a></td>
 			</tr>
 			<tr th:if="${player.tourFinals > 0}">
 				<th>Tour Finals</th>
-				<td><a class="label label-warning" th:text="${player.tourFinals}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=tournaments&amp;level=F&amp;result=W'" title="Show Tour Finals titles">1</a></td>
+				<td><a class="label label-warning" th:text="${player.tourFinals}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, level=F, result=W)}" title="Show Tour Finals titles">1</a></td>
 			</tr>
 			<tr th:if="${player.masters > 0}">
 				<th>Masters</th>
-				<td><a class="label label-info" th:text="${player.masters}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=tournaments&amp;level=M&amp;result=W'" title="Show Masters titles">5</a></td>
+				<td><a class="label label-info" th:text="${player.masters}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, level=M, result=W)}" title="Show Masters titles">5</a></td>
 			</tr>
 			<tr th:if="${player.olympics > 0}">
 				<th>Olympics</th>
-				<td><a class="label label-success" th:text="${player.olympics}" th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=tournaments&amp;level=O&amp;result=W'" title="Show Olympics titles">1</a></td>
+				<td><a class="label label-success" th:text="${player.olympics}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, level=O, result=W)}" title="Show Olympics titles">1</a></td>
 			</tr>
 			<tr th:if="${player.titles > 0}"><td colspan="2">&nbsp;</td></tr>
 			<!--/* Ranking */-->
@@ -123,7 +123,7 @@
 			</tr>
 			<tr th:if="${player.goatPoints > 0}">
 				<th>GOAT Rank</th>
-				<td>[[${player.goatRank}]] (<a th:href="'/playerProfile?playerId=' + ${player.id} + '&amp;tab=goatPoints'" th:text="${player.goatPoints}" title="Show GOAT points distribution">25</a>)</td>
+				<td>[[${player.goatRank}]] (<a th:href="@{/playerProfile(playerId=${player.id}, tab=goatPoints)}" th:text="${player.goatPoints}" title="Show GOAT points distribution">25</a>)</td>
 			</tr>
 			<tr th:if="${player.weeksAtNo1 > 0}">
 				<th>Weeks at No. 1</th>
@@ -152,7 +152,7 @@
 				<th>
 					<div class="progress progress-profile">
 						<div class="progress-bar progress-bar-profile" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="'/playerProfile?playerId=' + ${player.id} + '&tab=matches'" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show matches">73%</a>
 						</div>
 					</div>
 				</th>
@@ -164,7 +164,7 @@
 				<th>
 					<div class="progress progress-profile">
 						<div class="progress-bar progress-bar-profile progress-bar-info" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="'/playerProfile?playerId=' + ${player.id} + '&tab=matches&surface=H'" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show hard matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=H)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show hard matches">73%</a>
 						</div>
 					</div>
 				</th>
@@ -176,7 +176,7 @@
 				<th>
 					<div class="progress progress-profile">
 						<div class="progress-bar progress-bar-profile progress-bar-danger" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="'/playerProfile?playerId=' + ${player.id} + '&tab=matches&surface=C'" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show clay matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=C)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show clay matches">73%</a>
 						</div>
 					</div>
 				</th>
@@ -188,7 +188,7 @@
 				<th>
 					<div class="progress progress-profile">
 						<div class="progress-bar progress-bar-profile progress-bar-success" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="'/playerProfile?playerId=' + ${player.id} + '&tab=matches&surface=G'" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show grass matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=G)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show grass matches">73%</a>
 						</div>
 					</div>
 				</th>
@@ -200,7 +200,7 @@
 				<th>
 					<div class="progress progress-profile">
 						<div class="progress-bar progress-bar-profile progress-bar-warning" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="'/playerProfile?playerId=' + ${player.id} + '&tab=matches&surface=P'" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show carpet matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=P)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show carpet matches">73%</a>
 						</div>
 					</div>
 				</th>

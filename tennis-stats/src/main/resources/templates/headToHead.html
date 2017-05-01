@@ -37,16 +37,10 @@
 				currentTab = $(event.target).attr("href").substring(1);
 			});
 			[# th:if="${tab}" th:switch="${tab}"]
-				[# th:case="'matches'"]
-				h2hMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]]);
-				[/]
-				[# th:case="*"]
-				$([['#' + ${tab} + 'Pill']]).click();
-				[/]
+				[# th:case="'matches'"] h2hMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]]); [/]
+				[# th:case="*"] $("#[(${tab})]Pill").click(); [/]
 			[/]
-			[# th:unless="${tab}"]
-				$("#profilesPill").click();
-			[/]
+			[# th:unless="${tab}"] $("#profilesPill").click(); [/]
 			var $player1 = $("#player1");
 			if (!$player1.val())
 				$player1.focus();
@@ -69,11 +63,9 @@
 				url += "&round=" + round;
 			loadTab($pill, url)
 		}
-		[# th:if="${bothPlayersSelected}"]
-		function swapPlayers() {
+		[# th:if="${bothPlayersSelected}"] function swapPlayers() {
 			window.location.href = "/headToHead?playerId1=[[${player2.id}]]&playerId2=[[${player1.id}]]&tab=" + $("#h2hPills li.active a").attr("href").substr(1);
-		}
-		[/]
+		} [/]
 	</script>
 </head>
 <body class="container">
@@ -92,25 +84,25 @@
 			</div>
 		</div>
 	</div>
-	<div th:if="${anyPlayerSelected}" class="row text-nowrap">
+	<div th:if="${anyPlayerSelected}" class="row">
 		<div class="col-xs-5 text-left">
 			<h3 th:if="${player1}">
 				<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -3px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
-				<a th:href="'/playerProfile?playerId=' + ${player1.id}" th:text="${player1.name}">Roger Federer</a>
+				<a th:href="@{/playerProfile(playerId=${player1.id})}" th:text="${player1.name}">Roger Federer</a>
 			</h3>
 			<h3 th:if="${player1 == null && playerRef1 != null}" th:text="'Player ' + ${playerRef1}  + ' not found.'">Player not found.</h3>
 		</div>
-		<div class="col-xs-2 text-center">
+		<div class="col-xs-2 text-center text-nowrap">
 			<h3>
 				<a th:if="${bothPlayersSelected && !samePlayersSelected}" href="javascript:swapPlayers()" title="Swap players"><h4 style="margin: 0" class="glyphicon glyphicon-transfer"></h4></a>
 				vs
-				<a th:if="${bothPlayersSelected && !samePlayersSelected}" th:href="'/headToHead?name1=' + ${player1.name} + '&name2=' + ${player2.name}" th:title="|Permalink to ${player1.name} vs ${player2.name} Rivalry|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
+				<a th:if="${bothPlayersSelected && !samePlayersSelected}" th:href="@{/headToHead(name1=${player1.name}, name2=${player2.name})}" th:title="|Permalink to ${player1.name} vs ${player2.name} Rivalry|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
 			</h3>
 		</div>
 		<div class="col-xs-5 text-right">
 			<h3 th:if="${player2}">
 				<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="margin-top: -3px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
-				<a th:href="'/playerProfile?playerId=' + ${player2.id}" th:text="${player2.name}">Rafael Nadal</a>
+				<a th:href="@{/playerProfile(playerId=${player2.id})}" th:text="${player2.name}">Rafael Nadal</a>
 			</h3>
 			<h3 th:if="${player2 == null && playerRef2 != null}" th:text="'Player ' + ${playerRef2}  + ' not found.'">Player not found.</h3>
 		</div>

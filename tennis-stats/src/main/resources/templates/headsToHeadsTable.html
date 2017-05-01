@@ -41,15 +41,15 @@
 			<th style="border-right: 3px solid lightgray">Player</th>
 			<th style="border-right: 3px solid lightgray; text-align: center">Totals</th>
 			<th th:each="rivalry : ${headsToHeads.rivalries}" style="text-align: center">
-				<a th:with="player=${rivalry.player1}" th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${playerCount &lt;= 10 ? player.name : player.initials}" title="Show profile">Roger Federer</a>
+				<a th:with="player=${rivalry.player1}" th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${playerCount &lt;= 10 ? player.name : player.initials}" title="Show profile">Roger Federer</a>
 			</th>
 		</tr>
 		</thead>
 		<tbody class="text-nowrap">
 		<tr th:unless="${headsToHeads.empty}" th:each="hRivalry : ${headsToHeads.rivalries}">
 			<th th:with="player=${hRivalry.player1}">
-				<img th:src="'/images/flags/' + ${player.country.code} + '.png'" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-				<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+				<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+				<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 				<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
 			</th>
 			<th style="text-align: center">
@@ -57,7 +57,7 @@
 				<span class="pct-data" th:text="${hRivalry.wonLost.wonPctStr}">55.5%</span>
 			</th>
 			<td th:each="vRivalry : ${headsToHeads.rivalries}" th:with="playerId1=${hRivalry.player1.playerId}, playerId2=${vRivalry.player1.playerId}, optionalRivalry=${headsToHeads.getRivalry(playerId1, playerId2)}">
-				<span th:if="${optionalRivalry.isPresent()}" th:with="rivalry=${optionalRivalry.get()}, match=${rivalry.lastMatch}, url=|/headToHead?playerId1=${playerId1}&amp;playerId2=${playerId2}&amp;tab=matches&amp;level=${level}&amp;surface=${surface}&amp;round=${round}|, title=${'Show ' + hRivalry.player1.name + ' - ' + vRivalry.player1.name + ' H2H matches'}" class="rivalry" th:attr="data-won=${match.winnerId == hRivalry.player1.playerId}, data-score=${match.score}, data-season=${match.season}, data-tournamenteventid=${match.tournamentEventId}, data-tournament=${match.tournament}, data-level=${match.level}, data-surface=${match.surface}, data-round=${match.round}">
+				<span th:if="${optionalRivalry.isPresent()}" th:with="rivalry=${optionalRivalry.get()}, match=${rivalry.lastMatch}, url=@{/headToHead(playerId1=${playerId1}, playerId2=${playerId2}, tab=matches, level=${level}, surface=${surface}, round=${round})}, title=${'Show ' + hRivalry.player1.name + ' - ' + vRivalry.player1.name + ' H2H matches'}" class="rivalry" th:attr="data-won=${match.winnerId == hRivalry.player1.playerId}, data-score=${match.score}, data-season=${match.season}, data-tournamenteventid=${match.tournamentEventId}, data-tournament=${match.tournament}, data-level=${match.level}, data-surface=${match.surface}, data-round=${match.round}">
 					<a class="raw-data" th:href="${url}" th:text="${playerCount &lt;= 10 ? rivalry.wonLost.WLT : rivalry.wonLost.WL}" th:title="${title}">4 - 2 / 6</a>
 					<a class="pct-data" th:href="${url}" th:text="${rivalry.wonLost.wonPctStr}" th:title="${title}">66.7%</a>
 				</span>
@@ -109,7 +109,7 @@
 		<tbody class="text-nowrap">
 		<tr th:each="hRivalry : ${headsToHeads.rivalries}" th:with="player=${hRivalry.player1}, stats=${playersStats.get(player.playerId)}">
 			<th>
-				<a th:href="'/playerProfile?playerId=' + ${player.playerId}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+				<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 			</th>
 			<!-- Serve -->
 			<td class="pct-data stats stats-serve" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.acePct, 1, 1) + '%' : ''}">4.5%</td>

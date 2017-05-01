@@ -19,13 +19,13 @@
 		</thead>
 		<tbody>
 			<tr th:each="item : ${timeline}">
-				<td><a th:href="'/tournamentEvent?tournamentEventId=' + ${item.tournamentEventId}" th:text="${item.season}">2005</a></td>
+				<td><a th:href="@{/tournamentEvent(tournamentEventId=${item.tournamentEventId})}" th:text="${item.season}">2005</a></td>
 				<td>
-					<img th:src="'/images/flags/' + ${item.winner.code} + '.png'" src="/images/flags/us.png'" th:title="${item.winner.id}" title="USA" width="24" height="20"/>
+					<img th:src="@{/images/flags/{code}.png(code=${item.winner.code})}" src="/images/flags/us.png'" th:title="${item.winner.id}" title="USA" width="24" height="20"/>
 					<strong th:text="${item.winner.name}">United States</strong>
 				</td>
 				<td>
-					<img th:src="'/images/flags/' + ${item.runnerUp.code} + '.png'" src="/images/flags/au.png'" th:title="${item.runnerUp.id}" title="AUS" width="24" height="20"/>
+					<img th:src="@{/images/flags/{code}.png(code=${item.runnerUp.code})}" src="/images/flags/au.png'" th:title="${item.runnerUp.id}" title="AUS" width="24" height="20"/>
 					<span th:text="${item.runnerUp.name}">Australia</span>
 				</td>
 				<td th:class="|bg-surface-${item.surface}|" class="bg-surface-H" th:text="${item.score}">4-1</td>

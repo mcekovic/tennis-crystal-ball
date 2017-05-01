@@ -177,7 +177,7 @@ function setBootgridColumnsWidths($gridTable, columns, widths) {
 		$gridTable.find("th[data-column-id='" + columns[i] + "']").attr("data-width", widths[i]);
 }
 function setBootgridTitle($gridTableHeader, $gridTableTitle) {
-	$gridTableHeader.find("div.actionBar>*:first-child").before($gridTableTitle.remove());
+	$gridTableHeader.find("div.actionBar > *:first-child").before($gridTableTitle.remove());
 }
 function setBootgridTitles($gridTable, titles) {
 	$gridTable.bootgrid().on("loaded.rs.jquery.bootgrid", function() {

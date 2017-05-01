@@ -56,10 +56,6 @@
 				}
 			});
 			var $search = $("#tournamentEventsTable-header").find("div.search");
-			$search.before($("#seasonDiv").remove());
-			$search.before($("#levelDiv").remove());
-			$search.before($("#surfaceDiv").remove());
-			$search.before($("#tournamentDiv").remove());
 			$search.after($("#clearDiv").remove());
 			setBootgridTitles($tournamentEventsTable, [
 				{id: "playerCount", title: "Players"},
@@ -83,31 +79,35 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>Tournament Events</h3>
-	<div id="seasonDiv" class="btn-group pull-left margin-right no-margin-left">
-		<select id="season" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by season">
-			<option value="">All</option>
-			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
-		</select>
-	</div>
-	<div id="levelDiv" class="btn-group pull-left margin-right">
-		<select id="level" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
-			<option value="">All levels</option>
-			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
-			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
-		</select>
-	</div>
-	<div id="surfaceDiv" class="btn-group pull-left margin-right">
-		<select id="surface" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
-			<option value="">All surfaces</option>
-			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
-		</select>
-	</div>
-	<div id="tournamentDiv" class="btn-group pull-left margin-right">
-		<select id="tournament" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
-			<option value="">All tournaments</option>
-			<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
-		</select>
+	<div class="row">
+		<div class="col-md-3">
+			<h3 class="text-nowrap" style="display: inline">Tournament Events</h3>
+		</div>
+		<div class="col-md-2">
+			<select id="season" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by season">
+				<option value="">All seasons</option>
+				<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="level" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+				<option value="">All levels</option>
+				<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
+				<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="surface" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+				<option value="">All surfaces</option>
+				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="tournament" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+			</select>
+		</div>
 	</div>
 	<div id="clearDiv" class="btn-group margin-right">
 		<button type="button" class="btn btn-default" onclick="clearTournamentEventsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">

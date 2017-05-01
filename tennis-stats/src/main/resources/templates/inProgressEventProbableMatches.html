@@ -29,7 +29,7 @@
 			</div>
 		</div>
 		<br/>
-		<div th:include="fragments/eventResults :: eventResults('Prob')"></div>
+		<div th:include="fragments/eventResults :: eventResults('Prob', false)"></div>
 	</th:block>
 	<th:block th:if="${results.isEmpty()}">
 		<br/>
