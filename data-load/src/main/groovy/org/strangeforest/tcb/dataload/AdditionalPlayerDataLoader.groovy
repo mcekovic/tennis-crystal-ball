@@ -21,7 +21,7 @@ class AdditionalPlayerDataLoader extends SimpleXMLLoader {
 					sql += ','
 				sql += " $column = :$attrCast"
 			}
-			sql + " WHERE first_name || ' ' || last_name = :name"
+			sql + " WHERE full_name(first_name, last_name) = :name"
 		}
 		else
 			null

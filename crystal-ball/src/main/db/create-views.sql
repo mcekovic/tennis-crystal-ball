@@ -1645,7 +1645,7 @@ CREATE UNIQUE INDEX ON player_goat_points (player_id);
 -- player_v
 
 CREATE OR REPLACE VIEW player_v AS
-SELECT p.*, first_name || ' ' || last_name AS name, regexp_replace(initcap(first_name), '[^A-Z\s]+', '.', 'g') || ' ' || last_name AS short_name, age(dob) AS age,
+SELECT p.*, full_name(first_name, last_name) AS name, regexp_replace(initcap(first_name), '[^A-Z\s]+', '.', 'g') || ' ' || last_name AS short_name, age(dob) AS age,
 	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date,
 	current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,
 	best_hard_elo_rank, best_hard_elo_rank_date, best_hard_elo_rating, best_hard_elo_rating_date,

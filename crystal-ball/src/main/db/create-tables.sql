@@ -81,7 +81,23 @@ CREATE TABLE player (
 	UNIQUE (first_name, last_name, dob)
 );
 
-CREATE INDEX player_name_idx ON player ((first_name || ' ' || last_name));
+CREATE OR REPLACE FUNCTION full_name(
+	p_first_name TEXT,
+	p_last_name TEXT
+) RETURNS TEXT IMMUTABLE AS $$
+BEGIN
+	IF p_first_name IS NULL THEN
+		RETURN p_last_name;
+	ELSIF p_last_name IS NULL THEN
+		RETURN p_first_name;
+	ELSE
+		RETURN p_first_name || ' ' || p_last_name;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE INDEX player_name_idx ON player (full_name(first_name, last_name));
+CREATE INDEX player_name_gin_idx ON player USING gin (full_name(first_name, last_name) gin_trgm_ops);
 CREATE INDEX ON player (country_id);
 
 

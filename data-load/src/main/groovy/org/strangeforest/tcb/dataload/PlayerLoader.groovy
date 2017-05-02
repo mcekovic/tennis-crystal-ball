@@ -10,6 +10,8 @@ class PlayerLoader extends BaseCSVLoader {
 		super(sqlPool)
 	}
 
+	int threadCount() { 1 }
+
 	List columnNames() {
 		['player_id', 'first_name', 'last_name', 'hand', 'dob', 'country']
 	}

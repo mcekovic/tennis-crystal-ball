@@ -43,3 +43,4 @@ DROP TABLE player_ranking CASCADE;
 DROP TABLE player_alias CASCADE;
 DROP TABLE player_mapping CASCADE;
 DROP TABLE player CASCADE;
+DROP FUNCTION full_name(TEXT, TEXT);
