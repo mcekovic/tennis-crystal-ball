@@ -18,6 +18,7 @@ sqlPool.withSql { sql -> loader.refreshMaterializedViews(sql) }
 sqlPool.withSql { sql -> loader.vacuum(sql) }
 
 new RecordsLoader().loadRecords()
+LoadInProgressTournaments.loadTournaments(sqlPool)
 
 sqlPool.withSql { sql -> loader.vacuum(sql) }
 
