@@ -44,7 +44,7 @@ public class PlayerService {
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
 		"SELECT player_id, name, country_id FROM player_v\n" +
 		"WHERE name ILIKE '%' || :name || '%'\n" +
-		"ORDER BY goat_points DESC, best_rank LIMIT 20";
+		"ORDER BY goat_points DESC, best_rank, name LIMIT 20";
 
 	private static final String PLAYER_ID_QUERY =
 		"SELECT player_id FROM player_v\n" +
