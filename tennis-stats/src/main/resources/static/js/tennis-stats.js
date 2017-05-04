@@ -141,7 +141,10 @@ function getDate(id) {
 }
 
 function datePicker(id) {
-	$("#" + id).datepicker({
+	var $input = $("#" + id);
+	if ($input.attr("readonly"))
+		return;
+	$input.datepicker({
 		defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: date_format
 	});
 	$("div.ui-datepicker").css({fontSize: "12px"});

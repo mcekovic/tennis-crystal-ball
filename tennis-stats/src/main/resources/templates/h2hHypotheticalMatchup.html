@@ -137,13 +137,13 @@
 	<div class="col-md-3">
 		<div class="input-group">
 			<label for="predictionDate1" class="input-group-addon">On Date 1:</label>
-			<input id="predictionDate1" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date1, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
+			<input id="predictionDate1" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date1, 'dd-MM-yyyy')}" onchange="predictMatch()" th:readonly="${dateSelector1}"/>
 		</div>
 	</div>
 	<div class="col-md-3">
 		<div class="input-group">
 			<label for="predictionDate2" class="input-group-addon">On Date 2:</label>
-			<input id="predictionDate2" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date2, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
+			<input id="predictionDate2" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date2, 'dd-MM-yyyy')}" onchange="predictMatch()" th:readonly="${dateSelector2}"/>
 		</div>
 	</div>
 	<div class="col-md-3">
