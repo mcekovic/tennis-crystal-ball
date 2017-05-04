@@ -26,15 +26,15 @@ BEGIN
 	SELECT player_id INTO l_player_id FROM player
 	WHERE full_name(first_name, last_name) = p_name
 	AND (p_date >= dob + (INTERVAL '10' YEAR) OR dob IS NULL)
-	ORDER BY dob NULLS LAST, player_id;
+	ORDER BY dob, player_id;
 	IF l_player_id IS NOT NULL THEN
 		RETURN l_player_id;
 	END IF;
 
 	SELECT player_id INTO l_player_id FROM player
-	WHERE lower(first_name) || ' ' || lower(last_name) = lower(p_name)
+	WHERE lower(full_name(first_name, last_name)) = lower(p_name)
 	AND (p_date >= dob + (INTERVAL '10' YEAR) OR dob IS NULL)
-	ORDER BY dob NULLS LAST, player_id;
+	ORDER BY dob, player_id;
 	IF l_player_id IS NOT NULL THEN
 		RETURN l_player_id;
 	END IF;

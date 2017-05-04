@@ -1635,7 +1635,8 @@ WITH goat_points AS (
 SELECT player_id, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
 	year_end_rank_goat_points, best_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, best_elo_rating_goat_points,
 	big_wins_goat_points, h2h_goat_points, grand_slam_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points
-FROM goat_points_total;
+FROM goat_points_total
+WHERE goat_points > 0;
 
 CREATE MATERIALIZED VIEW player_goat_points AS SELECT * FROM player_goat_points_v;
 
