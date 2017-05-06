@@ -75,7 +75,7 @@ function tabClick(event) {
 	var $pill = $(this);
 	if ($pill.hasClass("loaded"))
 		return;
-	var url = $pill.attr("data-url");
+	var url = $pill.data("url");
 	if (typeof url !== "undefined")
 		loadTab($pill, url);
 	else
@@ -99,15 +99,15 @@ function collapseClick(event) {
 	var $button = $(this);
 	if ($button.hasClass("loaded"))
 		return;
-	var url = $button.attr("data-url");
+	var url = $button.data("url");
 	if (typeof url !== "undefined")
 		loadCollapse($button, url);
 	else
-		$($button.attr("data-target")).collapse("toggle");
+		$($button.data("target")).collapse("toggle");
 }
 
 function loadCollapse($button, url) {
-	var $pane = $($button.attr("data-target"));
+	var $pane = $($button.data("target"));
 	$pane.load(url, function () {
 		if (!$button.hasClass("loaded"))
 			$button.addClass("loaded");
@@ -173,11 +173,11 @@ function dateRangePicker(fromId, toId) {
 
 function setBootgridColumnsVisible($gridTable, columns, visible) {
 	for (var i = 0, count = columns.length; i < count; i++)
-		$gridTable.find("th[data-column-id='" + columns[i] + "']").attr("data-visible", visible);
+		$gridTable.find("th[data-column-id='" + columns[i] + "']").data("visible", visible);
 }
 function setBootgridColumnsWidths($gridTable, columns, widths) {
 	for (var i = 0, count = columns.length; i < count; i++)
-		$gridTable.find("th[data-column-id='" + columns[i] + "']").attr("data-width", widths[i]);
+		$gridTable.find("th[data-column-id='" + columns[i] + "']").data("width", widths[i]);
 }
 function setBootgridTitle($gridTableHeader, $gridTableTitle) {
 	$gridTableHeader.find("div.actionBar > *:first-child").before($gridTableTitle.remove());
@@ -465,7 +465,7 @@ function deviceGreaterOrEqual(device1, device2) {
 	return deviceMatrix[device2].indexOf(device1) >= 0;
 }
 function detectDevice() {
-	return $(".device-check:visible").attr("data-device");
+	return $(".device-check:visible").data("device");
 }
 
 
@@ -479,11 +479,11 @@ function bindPopovers() {
 	$("[data-toggle=popover]").popover({
 		html: true,
 		content: function () {
-			var content = $(this).attr("data-popover");
+			var content = $(this).data("popover");
 			return $(content).children(".popover-content").html();
 		},
 		title: function () {
-			var title = $(this).attr("data-popover");
+			var title = $(this).data("popover");
 			return $(title).children(".popover-title").html();
 		}
 	}).on("show.bs.popover", function () {

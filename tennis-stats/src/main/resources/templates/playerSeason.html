@@ -1,0 +1,77 @@
+<th:block  xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="playerSeason" type="org.strangeforest.tcb.stats.model.PlayerSeason"*/-->
+<script type="text/javascript">
+	$(function() {
+		$("#playerSeasonSurface").find("div.progress-bar").each(function() {
+			var $progressBar = $(this);
+			var surface = $progressBar.data("surface");
+			$progressBar.addClass("progress-bar-" + surfaceClassSuffix(surface));
+		});
+	});
+</script>
+<style scoped="scoped">
+	.progress-profile {
+		background-color: #dddddd;
+		margin-bottom: 0;
+	}
+	.progress-bar-profile {
+		font-size: 14px;
+	}
+	.progress-bar > a {
+		color: white;
+	}
+</style>
+<br/>
+<div class="row">
+	<div class="col-md-3">
+		<select id="season" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Select season">
+			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2015" th:text="${aSeason}" th:selected="${aSeason == season}">2015</option>
+		</select>
+	</div>
+	<div class="col-md-1">&nbsp;</div>
+	<div class="col-md-1"><strong>Overall</strong></div>
+	<div class="col-md-3" th:with="wl=${playerSeason.overall}">
+		<strong>
+			<div th:unless="${wl.empty}" class="progress progress-profile">
+				<div class="progress-bar progress-bar-profile" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season matches">73%</a>
+				</div>
+			</div>
+		</strong>
+	</div>
+</div>
+<br/>
+<div class="row">
+	<div class="col-md-3">
+		<table id="playerSeasonSurface" class="table table-condensed text-nowrap">
+			<tr th:each="surfaceWL : ${playerSeason.surfaceMatches}" th:with="surface=${surfaceWL.key}, wl=${surfaceWL.value}">
+				<th th:text="${surface.text}">Hard</th>
+				<th>
+					<div class="progress progress-profile">
+						<div class="progress-bar progress-bar-profile" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, surface=${surface.code})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season Hard matches">73%</a>
+						</div>
+					</div>
+				</th>
+			</tr>
+		</table>
+	</div>
+	<div class="col-md-3">
+		<table id="playerSeasonLevel" class="table table-condensed text-nowrap">
+			<tr th:each="levelWL : ${playerSeason.levelMatches}" th:with="level=${levelWL.key}, wl=${levelWL.value}">
+				<th th:text="${level.text}">Grand Slam</th>
+				<th>
+					<div class="progress progress-profile">
+						<div class="progress-bar progress-bar-profile label-" th:attrappend="class=${level.code}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, level=${level.code})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season Grand Slam matches">73%</a>
+						</div>
+					</div>
+				</th>
+			</tr>
+		</table>
+	</div>
+</div>
+</th:block>

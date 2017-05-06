@@ -19,9 +19,9 @@
 				minLength: 2,
 				select: function (event, ui) {
 					if (ui.item) {
-						$(this).attr("data-playerId", ui.item.id);
-						var playerId1 = $("#player1").attr("data-playerId");
-						var playerId2 = $("#player2").attr("data-playerId");
+						$(this).data("playerId", ui.item.id);
+						var playerId1 = $("#player1").data("playerId");
+						var playerId2 = $("#player2").data("playerId");
 						if (playerId1 || playerId2) {
 							var url = "/headToHead?tab=" + currentTab;
 							if (playerId1)
@@ -52,7 +52,7 @@
 		});
 		function h2hMatches(season, level, surface, round) {
 			var $pill = $("#matchesPill");
-			var url = $pill.attr("data-url");
+			var url = $pill.data("url");
 			if (season)
 				url += "&season=" + season;
 			if (level)

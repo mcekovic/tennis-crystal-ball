@@ -29,7 +29,7 @@
 		});
 		function playerTournaments(season, level, surface, result, tournamentId) {
 			var $pill = $("#tournamentsPill");
-			var url = $pill.attr("data-url");
+			var url = $pill.data("url");
 			if (season)
 				url += "&season=" + season;
 			if (level)
@@ -44,7 +44,7 @@
 		}
 		function playerMatches(season, level, surface, round, opponent, tournamentId, tournamentEventId, outcome) {
 			var $pill = $("#matchesPill");
-			var url = $pill.attr("data-url");
+			var url = $pill.data("url");
 			if (season)
 				url += "&season=" + season;
 			if (level)
@@ -65,14 +65,14 @@
 		}
 		function playerGoatPoints(season) {
 			var $pill = $("#goatPointsPill");
-			var url = $pill.attr("data-url");
+			var url = $pill.data("url");
 			if (season)
 				url += "&season=" + season;
 			loadTab($pill, url)
 		}
 		function playerRecords(infamous) {
 			var $pill = $("#recordsPill");
-			var url = $pill.attr("data-url");
+			var url = $pill.data("url");
 			if (infamous)
 				url += "&infamous=" + infamous;
 			loadTab($pill, url)
@@ -88,6 +88,7 @@
 		</h3>
 		<ul id="playerPills" class="nav nav-pills">
 			<li><a id="profilePill" data-toggle="pill" href="#profile" th:data-url="'/playerProfileTab?playerId=' + ${player.id}">Profile</a></li>
+			<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/playerSeason?playerId=' + ${player.id}">Season<sup class="new-feature">&nbsp;New!</sup></a></li>
 			<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" th:data-url="'/playerTournaments?playerId=' + ${player.id}">Tournaments</a></li>
 			<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/playerMatches?playerId=' + ${player.id}">Matches</a></li>
 			<li><a id="timelinePill" data-toggle="pill" href="#timeline" th:data-url="'/playerTimeline?playerId=' + ${player.id}">Timeline</a></li>
@@ -102,6 +103,7 @@
 		</ul>
 		<div class="tab-content">
 			<div id="profile" class="tab-pane fade"><div class="loading"></div></div>
+			<div id="season" class="tab-pane fade"><div class="loading"></div></div>
 			<div id="tournaments" class="tab-pane fade"><div class="loading"></div></div>
 			<div id="matches" class="tab-pane fade"><div class="loading"></div></div>
 			<div id="timeline" class="tab-pane fade"><div class="loading"></div></div>

@@ -18,6 +18,7 @@ import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 public class PlayerStatsController extends BaseController {
 
 	@Autowired private PlayerService playerService;
+	@Autowired private PerformanceService performanceService;
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private PlayerTimelineService timelineService;
 	@Autowired private MatchesService matchesService;
@@ -177,9 +178,9 @@ public class PlayerStatsController extends BaseController {
 		Map<Integer, Integer> yearEndRanks = timelineService.getPlayerYearEndRanks(playerId);
 		Map<Integer, Integer> yearEndEloRatings = timelineService.getPlayerYearEndEloRatings(playerId);
 		Map<Integer, Integer> goatPoints = timelineService.getPlayerSeasonGOATPoints(playerId);
-		PlayerPerformance careerPerf = statisticsService.getPlayerPerformance(playerId);
+		PlayerPerformance careerPerf = performanceService.getPlayerPerformance(playerId);
 		List<Integer> seasonList = toSeasons(seasons);
-		Map<Integer, PlayerPerformance> seasonsPerf = statisticsService.getPlayerSeasonsPerformance(playerId);
+		Map<Integer, PlayerPerformance> seasonsPerf = performanceService.getPlayerSeasonsPerformance(playerId);
 		ensureSeasons(seasonsPerf, seasonList, PlayerPerformance.EMPTY);
 
 		ModelMap modelMap = new ModelMap();

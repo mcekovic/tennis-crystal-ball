@@ -25,6 +25,7 @@ public class RivalriesController extends PageController {
 
 	@Autowired private RivalriesService rivalriesService;
 	@Autowired private PlayerService playerService;
+	@Autowired private PerformanceService performanceService;
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private TournamentService tournamentService;
 	@Autowired private GOATPointsService goatPointsService;
@@ -137,8 +138,8 @@ public class RivalriesController extends PageController {
 		Set<Integer> seasons = new TreeSet<>(reverseOrder());
 		seasons.addAll(playerService.getPlayerSeasons(playerId1));
 		seasons.addAll(playerService.getPlayerSeasons(playerId2));
-		PlayerPerformance perf1 = season == null ? statisticsService.getPlayerPerformance(playerId1) : statisticsService.getPlayerSeasonPerformance(playerId1, season);
-		PlayerPerformance perf2 = season == null ? statisticsService.getPlayerPerformance(playerId2) : statisticsService.getPlayerSeasonPerformance(playerId2, season);
+		PlayerPerformance perf1 = season == null ? performanceService.getPlayerPerformance(playerId1) : performanceService.getPlayerSeasonPerformance(playerId1, season);
+		PlayerPerformance perf2 = season == null ? performanceService.getPlayerPerformance(playerId2) : performanceService.getPlayerSeasonPerformance(playerId2, season);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);

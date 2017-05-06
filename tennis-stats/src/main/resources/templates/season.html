@@ -16,7 +16,7 @@
 		});
 		function seasonEvents(level, surface) {
 			var $pill = $("#eventsPill");
-			var url = $pill.attr("data-url");
+			var url = $pill.data("url");
 			if (level)
 				url += "&level=" + level;
 			if (surface)

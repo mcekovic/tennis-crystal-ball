@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
+import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -27,6 +28,7 @@ public class PlayerProfileController extends PageController {
 	@Autowired private TournamentService tournamentService;
 	@Autowired private RankingsService rankingsService;
 	@Autowired private PlayerTimelineService timelineService;
+	@Autowired private PerformanceService performanceService;
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private GOATPointsService goatPointsService;
 
@@ -75,7 +77,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "playerId") int playerId
 	) {
 		Player player = playerService.getPlayer(playerId).get();
-		PlayerPerformance playerPerf = statisticsService.getPlayerPerformance(playerId);
+		PlayerPerformance playerPerf = performanceService.getPlayerPerformance(playerId);
 		WonDrawLost playerH2H = rivalriesService.getPlayerH2H(playerId).orElse(null);
 
 		ModelMap modelMap = new ModelMap();
@@ -83,6 +85,24 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("playerPerf", playerPerf);
 		modelMap.addAttribute("playerH2H", playerH2H);
 		return new ModelAndView("playerProfileTab", modelMap);
+	}
+
+	@GetMapping("/playerSeason")
+	public ModelAndView playerSeason(
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season
+	) {
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		if (season == null)
+			season = LocalDate.now().getYear();
+		PlayerSeason playerSeason = performanceService.getPlayerSeasonSummary(playerId, season);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("playerSeason", playerSeason);
+		return new ModelAndView("playerSeason", modelMap);
 	}
 
 	@GetMapping("/playerTournaments")
@@ -218,8 +238,8 @@ public class PlayerProfileController extends PageController {
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		PlayerPerformance perf = season == null
-			? statisticsService.getPlayerPerformance(playerId)
-			: statisticsService.getPlayerSeasonPerformance(playerId, season);
+			? performanceService.getPlayerPerformance(playerId)
+			: performanceService.getPlayerSeasonPerformance(playerId, season);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
