@@ -48,6 +48,10 @@
 			</select>
 		</div>
 	</div>
+	<div class="col-md-3">
+		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season})}" title="Show season tournaments">Tournaments</a>
+		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season})}" title="Show season matches" style="margin-left: 20px">Matches</a>
+	</div>
 </div>
 <br/>
 <table th:unless="${seasonHighlights.empty}" class="table table-condensed">

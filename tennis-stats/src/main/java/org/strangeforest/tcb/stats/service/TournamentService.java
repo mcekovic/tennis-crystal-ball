@@ -323,8 +323,10 @@ public class TournamentService {
 		return new TournamentEventItem(tournamentEventId, name, season);
 	}
 
-	public Map<EventResult, List<PlayerTournamentEvent>> getPlayerSeasonHighlights(int playerId, int season) {
-		BootgridTable<PlayerTournamentEvent> results = getPlayerTournamentEventResultsTable(playerId, new TournamentEventResultFilter(season, "QF+"), "result DESC, level, date", Integer.MAX_VALUE, 1);
-		return results.getRows().stream().collect(groupingBy(r -> EventResult.valueOf(r.getResult()), LinkedHashMap::new, toList()));
+	public Map<EventResult, List<PlayerTournamentEvent>> getPlayerSeasonHighlights(int playerId, int season, int maxResults) {
+		BootgridTable<PlayerTournamentEvent> results = getPlayerTournamentEventResultsTable(playerId, new TournamentEventResultFilter(season), "result DESC, level, date", Integer.MAX_VALUE, 1);
+		return results.getRows().stream()
+			.collect(groupingBy(r -> EventResult.valueOf(r.result()), LinkedHashMap::new, toList()))
+			.entrySet().stream().limit(maxResults).collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
 }

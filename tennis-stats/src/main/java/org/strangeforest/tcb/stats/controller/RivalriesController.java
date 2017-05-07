@@ -121,12 +121,12 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "playerId2") int playerId2,
 		@RequestParam(name = "season", required = false) Integer season
 	) {
-		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
-		if (season == null)
-			season = LocalDate.now().getYear();
-		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season);
-		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season);
-		Set<EventResult> eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet());
+		NavigableSet<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
+		if (season == null && !seasons.isEmpty())
+			season = seasons.first();
+		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season, 4);
+		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season, 4);
+		List<EventResult> eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet()).stream().limit(4).collect(toList());
 		PlayerSeason playerSeason1 = performanceService.getPlayerSeasonSummary(playerId1, season);
 		PlayerSeason playerSeason2 = performanceService.getPlayerSeasonSummary(playerId2, season);
 		Set<Surface> surfaces = union(playerSeason1.getSurfaceMatches().keySet(), playerSeason2.getSurfaceMatches().keySet());
@@ -403,8 +403,8 @@ public class RivalriesController extends PageController {
 		return seasons;
 	}
 
-	private Set<Integer> getSeasonsUnion(int playerId1, int playerId2) {
-		Set<Integer> seasons = new TreeSet<>(reverseOrder());
+	private NavigableSet<Integer> getSeasonsUnion(int playerId1, int playerId2) {
+		NavigableSet<Integer> seasons = new TreeSet<>(reverseOrder());
 		seasons.addAll(playerService.getPlayerSeasons(playerId1));
 		seasons.addAll(playerService.getPlayerSeasons(playerId2));
 		return seasons;

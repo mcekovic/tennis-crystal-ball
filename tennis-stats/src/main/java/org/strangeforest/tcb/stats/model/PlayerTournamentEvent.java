@@ -86,4 +86,8 @@ public class PlayerTournamentEvent {
 	public String getResult() {
 		return mapResult(level, result);
 	}
+
+	public String result() {
+		return result;
+	}
 }

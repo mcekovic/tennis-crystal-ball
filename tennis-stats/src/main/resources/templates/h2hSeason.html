@@ -3,7 +3,7 @@
 <!--/*@thymesVar id="playerId2" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
-<!--/*@thymesVar id="eventResults" type="java.util.Set<org.strangeforest.tcb.stats.model.EventResult>"*/-->
+<!--/*@thymesVar id="eventResults" type="java.util.List<org.strangeforest.tcb.stats.model.EventResult>"*/-->
 <!--/*@thymesVar id="seasonHighlights1" type="java.util.Map<org.strangeforest.tcb.stats.model.EventResult, List<org.strangeforest.tcb.stats.model.PlayerTournamentEvent>>"*/-->
 <!--/*@thymesVar id="seasonHighlights2" type="java.util.Map<org.strangeforest.tcb.stats.model.EventResult, List<org.strangeforest.tcb.stats.model.PlayerTournamentEvent>>"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Set<org.strangeforest.tcb.stats.model.Surface>"*/-->
@@ -49,7 +49,11 @@
 </style>
 <br/>
 <div class="row">
-	<div class="col-md-3">
+	<div class="col-md-5 text-right">
+		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season})}" title="Show season matches">Matches</a>
+		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId1}, tab=tournaments, season=${season})}" title="Show season tournaments" style="margin-left: 20px">Tournaments</a>
+	</div>
+	<div class="col-md-2">
 		<div class="input-group">
 			<label for="seasonSeason" class="input-group-addon">Season:</label>
 			<select id="seasonSeason" class="form-control" onchange="changeSeason()" data-toggle="tooltip" data-placement="top" title="Select season">
@@ -57,9 +61,13 @@
 			</select>
 		</div>
 	</div>
+	<div class="col-md-5 text-left">
+		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId2}, tab=tournaments, season=${season})}" title="Show season tournaments">Tournaments</a>
+		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season})}" title="Show season matches" style="margin-left: 20px">Matches</a>
+	</div>
 </div>
 <br/>
-<table th:unless="${seasons.empty}" id="h2hSeasonTable" class="table table-condensed text-nowrap">
+<table th:unless="${seasons.empty}" id="h2hSeasonTable" class="table table-condensed">
 	<th:block th:unless="${eventResults.empty}">
 	<tr>
 		<th width="40%">&nbsp;</th>
@@ -81,7 +89,7 @@
 		<td colspan="3">&nbsp;</td>
 	</tr>
 	</th:block>
-	<tr>
+	<tr class="text-nowrap">
 		<th class="text-right" width="40%" th:with="wl=${playerSeason1.overall}">
 			<div th:unless="${wl.empty}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-season progress-bar-overall" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -98,7 +106,7 @@
 			</div>
 		</th>
 	</tr>
-	<tr th:each="surface : ${surfaces}">
+	<tr th:each="surface : ${surfaces}" class="text-nowrap">
 		<th class="text-right" th:with="wl=${playerSeason1.surfaceMatches.get(surface)}">
 			<div th:if="${wl}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-season progress-bar-surface" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -118,7 +126,7 @@
 	<tr>
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	<tr th:each="level : ${levels}">
+	<tr th:each="level : ${levels}" class="text-nowrap">
 		<th class="text-right" th:with="wl=${playerSeason1.levelMatches.get(level)}">
 			<div th:if="${wl}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-season label-" th:attrappend="class=${level.code}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -139,7 +147,7 @@
 	<tr>
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	<tr th:each="opposition : ${oppositions}">
+	<tr th:each="opposition : ${oppositions}" class="text-nowrap">
 		<th class="text-right" th:with="wl=${playerSeason1.oppositionMatches.get(opposition)}">
 			<div th:if="${wl}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-season progress-bar-default" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -160,7 +168,7 @@
 	<tr>
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	<tr th:each="round : ${rounds}">
+	<tr th:each="round : ${rounds}" class="text-nowrap">
 		<th class="text-right" th:with="wl=${playerSeason1.roundMatches.get(round)}">
 			<div th:if="${wl}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-season progress-bar-default" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">

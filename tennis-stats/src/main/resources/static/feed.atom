@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 	<title>Ultimate Tennis Statistics Feed</title>
-	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for die-hard tennis fans</subtitle>
+	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for the die-hard tennis fans</subtitle>
 	<link href="http://tennis-strangeforest.rhcloud.com/feed.atom" rel="self"/>
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
-	<updated>2017-04-26T12:00:01Z</updated>
+	<updated>2017-05-07T12:00:00Z</updated>
+	<entry>
+		<title>New Feature - Player Season Summary</title>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/playerProfile?name=Roger Federer&amp;tab=season"/>
+		<id>urn:uuid:0535ef3b-84e9-4ef0-9342-221a033a7d82</id>
+		<updated>2017-05-07T12:00:00Z</updated>
+		<summary>New Feature - Player Season Summary</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Player Season Summary on player profile and head-to-head with season highlights and season performance breakdown on the glance</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 	<entry>
 		<title>New Feature - Weeks at Elo Top 5 'GOAT' Points</title>
 		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/record?recordId=WeeksAtEloTopNGOATPoints"/>

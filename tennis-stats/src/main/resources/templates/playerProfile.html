@@ -94,10 +94,20 @@
 			<li><a id="timelinePill" data-toggle="pill" href="#timeline" th:data-url="'/playerTimeline?playerId=' + ${player.id}">Timeline</a></li>
 			<li><a id="rivalriesPill" data-toggle="pill" href="#rivalries" th:data-url="'/playerRivalries?playerId=' + ${player.id}">Rivalries</a></li>
 			<li><a id="rankingPill" data-toggle="pill" href="#ranking" th:data-url="'/playerRankings?playerId=' + ${player.id}">Ranking</a></li>
-			<li><a id="performancePill" data-toggle="pill" href="#performance" th:data-url="'/playerPerformance?playerId=' + ${player.id}">Performance</a></li>
-			<li><a id="performanceChartPill" data-toggle="pill" href="#performanceChart" th:data-url="'/playerPerformanceChart?playerId=' + ${player.id}" title="Performance Chart">Perf. Chart</a></li>
-			<li><a id="statisticsPill" data-toggle="pill" href="#statistics" th:data-url="'/playerStatsTab?playerId=' + ${player.id}">Statistics</a></li>
-			<li><a id="statisticsChartPill" data-toggle="pill" href="#statisticsChart" th:data-url="'/playerStatsChart?playerId=' + ${player.id}" title="Statistics Chart">Stats. Chart</a></li>
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Performance<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a id="performancePill" data-toggle="pill" href="#performance" th:data-url="'/playerPerformance?playerId=' + ${player.id}">Performance</a></li>
+					<li><a id="performanceChartPill" data-toggle="pill" href="#performanceChart" th:data-url="'/playerPerformanceChart?playerId=' + ${player.id}">Performance Chart</a></li>
+				</ul>
+			</li>
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Statistics<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a id="statisticsPill" data-toggle="pill" href="#statistics" th:data-url="'/playerStatsTab?playerId=' + ${player.id}">Statistics</a></li>
+					<li><a id="statisticsChartPill" data-toggle="pill" href="#statisticsChart" th:data-url="'/playerStatsChart?playerId=' + ${player.id}">Statistics Chart</a></li>
+				</ul>
+			</li>
 			<li><a id="goatPointsPill" data-toggle="pill" href="#goatPoints" th:data-url="'/playerGOATPoints?playerId=' + ${player.id}" title="GOAT Points Breakdown">GOAT Points</a></li>
 			<li><a id="recordsPill" data-toggle="pill" href="#records" th:data-url="'/playerRecords?playerId=' + ${player.id}">Records</a></li>
 		</ul>
