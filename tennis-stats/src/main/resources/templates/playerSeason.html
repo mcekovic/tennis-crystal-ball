@@ -4,6 +4,7 @@
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="seasonHighlights" type="java.util.Map<org.strangeforest.tcb.stats.model.EventResult, List<org.strangeforest.tcb.stats.model.PlayerTournamentEvent>>"*/-->
 <!--/*@thymesVar id="playerSeason" type="org.strangeforest.tcb.stats.model.PlayerSeason"*/-->
+<th:block th:unless="${seasons.empty}">
 <script type="text/javascript" th:inline="javascript">
 	$(function() {
 		$("#playerSeasonSurface").find("div.progress-bar").each(function() {
@@ -135,4 +136,6 @@
 		</table>
 	</div>
 </div>
+</th:block>
+<th:block th:if="${seasons.empty}"><br/><p>No seasons data available</p></th:block>
 </th:block>
