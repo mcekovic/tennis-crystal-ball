@@ -45,13 +45,6 @@ public class PerformanceService {
 		"GROUP BY level\n" +
 		"ORDER BY level";
 
-	private static final String PLAYER_SEASON_ROUND_PERFORMANCE_QUERY =
-		"SELECT round, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
-		"FROM player_match_for_stats_v\n" +
-		"WHERE player_id = :playerId AND season = :season\n" +
-		"GROUP BY round\n" +
-		"ORDER BY round DESC";
-
 	private static final String PLAYER_SEASON_OPPOSITION_PERFORMANCE_QUERY =
 		"WITH season_opposition AS (\n" +
 		"  SELECT CASE\n" +
@@ -70,6 +63,13 @@ public class PerformanceService {
 		"FROM season_opposition\n" +
 		"WHERE opposition IS NOT NULL\n" +
 		"ORDER BY opposition";
+
+	private static final String PLAYER_SEASON_ROUND_PERFORMANCE_QUERY =
+		"SELECT round, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
+		"FROM player_match_for_stats_v\n" +
+		"WHERE player_id = :playerId AND season = :season\n" +
+		"GROUP BY round\n" +
+		"ORDER BY round DESC";
 
 
 	public PlayerPerformance getPlayerPerformance(int playerId) {
@@ -150,15 +150,6 @@ public class PerformanceService {
 		);
 
 		jdbcTemplate.query(
-			PLAYER_SEASON_ROUND_PERFORMANCE_QUERY, paramSource,
-			rs -> {
-				Round round = Round.decode(rs.getString("round"));
-				WonLost wonLost = mapWonLost(rs);
-				playerSeason.addRoundMatches(round, wonLost);
-			}
-		);
-
-		jdbcTemplate.query(
 			PLAYER_SEASON_OPPOSITION_PERFORMANCE_QUERY, paramSource,
 			rs -> {
 				Opponent opposition = Opponent.valueOf(rs.getString("opposition"));
@@ -167,6 +158,15 @@ public class PerformanceService {
 			}
 		);
 		playerSeason.processOpposition();
+
+		jdbcTemplate.query(
+			PLAYER_SEASON_ROUND_PERFORMANCE_QUERY, paramSource,
+			rs -> {
+				Round round = Round.decode(rs.getString("round"));
+				WonLost wonLost = mapWonLost(rs);
+				playerSeason.addRoundMatches(round, wonLost);
+			}
+		);
 
 		return playerSeason;
 	}

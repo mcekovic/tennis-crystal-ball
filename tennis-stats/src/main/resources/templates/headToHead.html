@@ -19,9 +19,9 @@
 				minLength: 2,
 				select: function (event, ui) {
 					if (ui.item) {
-						$(this).data("playerId", ui.item.id);
-						var playerId1 = $("#player1").data("playerId");
-						var playerId2 = $("#player2").data("playerId");
+						$(this).attr("data-playerId", ui.item.id);
+						var playerId1 = $("#player1").attr("data-playerId");
+						var playerId2 = $("#player2").attr("data-playerId");
 						if (playerId1 || playerId2) {
 							var url = "/headToHead?tab=" + currentTab;
 							if (playerId1)
@@ -115,6 +115,7 @@
 	<ul id="h2hPills" class="nav nav-pills" th:with="playerIdsParams='?playerId1=' + ${player1.id} + '&playerId2=' + ${player2.id}, playerIdParams='?playerId=' + ${player1.id} + '&playerId=' + ${player2.id}">
 		<li><a id="profilesPill" data-toggle="pill" href="#profiles" th:data-url="'/h2hProfiles' + ${playerIdsParams}">Profiles</a></li>
 		<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/h2hMatches' + ${playerIdsParams}">Matches</a></li>
+		<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/h2hSeason' + ${playerIdsParams}">Season<sup class="new-feature">&nbsp;New!</sup></a></li>
 		<li><a id="rankingPill" data-toggle="pill" href="#ranking" th:data-url="'/h2hRankings' + ${playerIdParams}">Ranking<sup class="new-feature">&nbsp;New!</sup></a></li>
 		<li><a id="performancePill" data-toggle="pill" href="#performance" th:data-url="'/h2hPerformance' + ${playerIdsParams}">Performance</a></li>
 		<li><a id="performanceChartPill" data-toggle="pill" href="#performanceChart" th:data-url="'/h2hPerformanceChart' + ${playerIdParams}" title="Performance Chart">Perf. Chart<sup class="new-feature">&nbsp;New!</sup></a></li>
@@ -126,6 +127,7 @@
 	<div class="tab-content">
 		<div id="profiles" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="matches" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="season" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="ranking" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="performance" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="performanceChart" class="tab-pane fade"><div class="loading"></div></div>

@@ -16,6 +16,7 @@ import org.strangeforest.tcb.util.*;
 
 import static java.lang.String.*;
 import static java.util.Arrays.*;
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.records.details.RecordDetailUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
@@ -320,5 +321,10 @@ public class TournamentService {
 		String name = rs.getString("name");
 		int season = rs.getInt("season");
 		return new TournamentEventItem(tournamentEventId, name, season);
+	}
+
+	public Map<EventResult, List<PlayerTournamentEvent>> getPlayerSeasonHighlights(int playerId, int season) {
+		BootgridTable<PlayerTournamentEvent> results = getPlayerTournamentEventResultsTable(playerId, new TournamentEventResultFilter(season, "QF+"), "result DESC, level, date", Integer.MAX_VALUE, 1);
+		return results.getRows().stream().collect(groupingBy(r -> EventResult.valueOf(r.getResult()), LinkedHashMap::new, toList()));
 	}
 }

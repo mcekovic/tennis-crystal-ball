@@ -17,6 +17,10 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 
 	private static final String RESULT_CRITERION = " AND r.result %1$s :result::tournament_event_result";
 
+	public TournamentEventResultFilter(Integer season, String result) {
+		this(season, null, null, null, null, result, null, null);
+	}
+
 	public TournamentEventResultFilter(Integer season, String level, String surface, Integer tournamentId, String result, StatsFilter statsFilter, String searchPhrase) {
 		this(season, level, surface, tournamentId, null, result, statsFilter, searchPhrase);
 	}

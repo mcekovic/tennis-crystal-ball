@@ -7,6 +7,7 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
+<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.EventResult[]"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
@@ -199,23 +200,7 @@
 	<div class="col-md-2">
 		<select id="eventsResult" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by result">
 			<option value="">All results</option>
-			<option value="W" class="bg-result-W" th:selected="${result == 'W'}">Win</option>
-			<option value="F" class="bg-result-F" th:selected="${result == 'F'}">Final</option>
-			<option value="F+" class="bg-result-F" th:selected="${result == 'F+'}">Final +</option>
-			<option value="SF" class="bg-result-SF" th:selected="${result == 'SF'}">Semi-Final</option>
-			<option value="SF+" class="bg-result-SF" th:selected="${result == 'SF+'}">Semi-Final +</option>
-			<option value="QF" class="bg-result-QF" th:selected="${result == 'QF'}">Quarter-Final</option>
-			<option value="QF+" class="bg-result-QF" th:selected="${result == 'QF+'}">Quarter-Final +</option>
-			<option value="R16" class="bg-result-R16" th:selected="${result == 'R16'}">Round of 16</option>
-			<option value="R16+" class="bg-result-R16" th:selected="${result == 'R16+'}">Round of 16 +</option>
-			<option value="R32" class="bg-result-R32" th:selected="${result == 'R32'}">Round of 32</option>
-			<option value="R32+" class="bg-result-R32" th:selected="${result == 'R32+'}">Round of 32 +</option>
-			<option value="R64" class="bg-result-R64" th:selected="${result == 'R64'}">Round of 64</option>
-			<option value="R64+" class="bg-result-R64" th:selected="${result == 'R64+'}">Round of 64 +</option>
-			<option value="R128" class="bg-result-R128" th:selected="${result == 'R128'}">Round of 128</option>
-			<option value="RR" class="bg-result-RR" th:selected="${result == 'RR'}">Round-Robin</option>
-			<option value="BR" class="bg-result-BR" th:selected="${result == 'BR'}">Bronze Medal</option>
-			<option value="BR+" class="bg-result-BR" th:selected="${result == 'BR+'}">Any Medal</option>
+			<option th:each="aResult : ${results}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}" th:selected="${aResult.code == result}">Win</option>
 		</select>
 	</div>
 	<div class="col-md-1">

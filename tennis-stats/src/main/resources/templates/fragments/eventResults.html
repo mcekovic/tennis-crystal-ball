@@ -79,7 +79,7 @@
 		<th colspan="2" style="text-align: right"><button th:id="'roundRight' + ${id}" type="button" class="btn btn-info btn-xs" onclick="roundRight()"></button></th>
 	</tr>
 	<tr>
-		<th th:each="round : ${results.rounds}" th:text="${round.description}" th:data-round-index="${roundStat.index}">Final</th>
+		<th th:each="round : ${results.rounds}" th:text="${round.text}" th:data-round-index="${roundStat.index}">Final</th>
 	</tr>
 	</thead>
 	<tbody>

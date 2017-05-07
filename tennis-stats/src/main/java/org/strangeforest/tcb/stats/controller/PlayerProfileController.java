@@ -87,24 +87,6 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerProfileTab", modelMap);
 	}
 
-	@GetMapping("/playerSeason")
-	public ModelAndView playerSeason(
-		@RequestParam(name = "playerId") int playerId,
-		@RequestParam(name = "season", required = false) Integer season
-	) {
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		if (season == null)
-			season = LocalDate.now().getYear();
-		PlayerSeason playerSeason = performanceService.getPlayerSeasonSummary(playerId, season);
-
-		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("playerId", playerId);
-		modelMap.addAttribute("season", season);
-		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("playerSeason", playerSeason);
-		return new ModelAndView("playerSeason", modelMap);
-	}
-
 	@GetMapping("/playerTournaments")
 	public ModelAndView playerTournaments(
 		@RequestParam(name = "playerId") int playerId,
@@ -126,6 +108,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.NON_TEAM_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
@@ -185,6 +168,26 @@ public class PlayerProfileController extends PageController {
 
 	private List<CountryCode> getCountries(int playerId) {
 		return playerService.getPlayerOpponentCountryIds(playerId).stream().map(Country::code).filter(code -> code != null && code.getAlpha3() != null).distinct().sorted(comparing(CountryCode::getName)).collect(toList());
+	}
+
+	@GetMapping("/playerSeason")
+	public ModelAndView playerSeason(
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season
+	) {
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		if (season == null)
+			season = LocalDate.now().getYear();
+		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights = tournamentService.getPlayerSeasonHighlights(playerId, season);
+		PlayerSeason playerSeason = performanceService.getPlayerSeasonSummary(playerId, season);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("seasonHighlights", seasonHighlights);
+		modelMap.addAttribute("playerSeason", playerSeason);
+		return new ModelAndView("playerSeason", modelMap);
 	}
 
 	@GetMapping("/playerTimeline")

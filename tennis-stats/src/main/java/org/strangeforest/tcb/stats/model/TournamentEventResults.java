@@ -4,31 +4,31 @@ import java.util.*;
 
 public class TournamentEventResults {
 
-	private enum Round {
+	private enum ResultRound {
 
-		RR("Round-Robin"),
-		R128("Round of 128"),
-		R64("Round of 64"),
-		R32("Round of 32"),
-		R16("Round of 16"),
-		QF("Quarter-Final"),
-		SF("Semi-Final"),
-		BR("For Bronze Medal"),
-		F("Final");
+		RR(Round.RR),
+		R128(Round.R128),
+		R64(Round.R64),
+		R32(Round.R32),
+		R16(Round.R16),
+		QF(Round.QF),
+		SF(Round.SF),
+		BR(Round.BR),
+		F(Round.F);
 
-		private String description;
+		private Round round;
 
-		Round(String description) {
-			this.description = description;
+		ResultRound(Round round) {
+			this.round = round;
 		}
 
-		public String getDescription() {
-			return description;
+		public String getText() {
+			return round.getText();
 		}
 	}
 
 	private final Map<Short, TournamentEventMatch> matches;
-	private final Map<Round, List<TournamentEventMatch>> matchesByRound;
+	private final Map<ResultRound, List<TournamentEventMatch>> matchesByRound;
 
 	public TournamentEventResults() {
 		this.matches = new TreeMap<>();
@@ -41,15 +41,15 @@ public class TournamentEventResults {
 
 	public void addMatch(short matchNum, TournamentEventMatch match) {
 		matches.put(matchNum, match);
-		Round round = Round.valueOf(match.getRound());
+		ResultRound round = ResultRound.valueOf(match.getRound());
 		matchesByRound.computeIfAbsent(round, r -> new ArrayList<>()).add(match);
 	}
 
-	public Collection<Round> getRounds() {
+	public Collection<ResultRound> getRounds() {
 		return matchesByRound.keySet();
 	}
 
-	public List<TournamentEventMatch> getRoundMatches(Round round) {
+	public List<TournamentEventMatch> getRoundMatches(ResultRound round) {
 		return matchesByRound.get(round);
 	}
 

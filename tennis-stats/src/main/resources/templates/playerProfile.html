@@ -88,9 +88,9 @@
 		</h3>
 		<ul id="playerPills" class="nav nav-pills">
 			<li><a id="profilePill" data-toggle="pill" href="#profile" th:data-url="'/playerProfileTab?playerId=' + ${player.id}">Profile</a></li>
-			<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/playerSeason?playerId=' + ${player.id}">Season<sup class="new-feature">&nbsp;New!</sup></a></li>
 			<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" th:data-url="'/playerTournaments?playerId=' + ${player.id}">Tournaments</a></li>
 			<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/playerMatches?playerId=' + ${player.id}">Matches</a></li>
+			<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/playerSeason?playerId=' + ${player.id}">Season<sup class="new-feature">&nbsp;New!</sup></a></li>
 			<li><a id="timelinePill" data-toggle="pill" href="#timeline" th:data-url="'/playerTimeline?playerId=' + ${player.id}">Timeline</a></li>
 			<li><a id="rivalriesPill" data-toggle="pill" href="#rivalries" th:data-url="'/playerRivalries?playerId=' + ${player.id}">Rivalries</a></li>
 			<li><a id="rankingPill" data-toggle="pill" href="#ranking" th:data-url="'/playerRankings?playerId=' + ${player.id}">Ranking</a></li>
@@ -103,9 +103,9 @@
 		</ul>
 		<div class="tab-content">
 			<div id="profile" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="season" class="tab-pane fade"><div class="loading"></div></div>
 			<div id="tournaments" class="tab-pane fade"><div class="loading"></div></div>
 			<div id="matches" class="tab-pane fade"><div class="loading"></div></div>
+			<div id="season" class="tab-pane fade"><div class="loading"></div></div>
 			<div id="timeline" class="tab-pane fade"><div class="loading"></div></div>
 			<div id="rivalries" class="tab-pane fade"><div class="loading"></div></div>
 			<div id="ranking" class="tab-pane fade"><div class="loading"></div></div>

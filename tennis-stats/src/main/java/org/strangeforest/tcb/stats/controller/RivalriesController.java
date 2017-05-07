@@ -94,8 +94,7 @@ public class RivalriesController extends PageController {
 		Player player1 = playerService.getPlayer(playerId1).get();
 		Player player2 = playerService.getPlayer(playerId2).get();
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, round));
-		List<Integer> seasons = new ArrayList<>(playerService.getPlayerSeasons(playerId1));
-		seasons.retainAll(playerService.getPlayerSeasons(playerId2));
+		List<Integer> seasons = getSeasonsIntersection(playerId1, playerId2);
 		List<TournamentItem> tournaments = new ArrayList<>(tournamentService.getPlayerTournaments(playerId1));
 		tournaments.retainAll(tournamentService.getPlayerTournaments(playerId2));
 
@@ -114,6 +113,42 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("round", round);
 		return new ModelAndView("h2hMatches", modelMap);
+	}
+
+	@GetMapping("/h2hSeason")
+	public ModelAndView h2hSeason(
+		@RequestParam(name = "playerId1") int playerId1,
+		@RequestParam(name = "playerId2") int playerId2,
+		@RequestParam(name = "season", required = false) Integer season
+	) {
+		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
+		if (season == null)
+			season = LocalDate.now().getYear();
+		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season);
+		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season);
+		Set<EventResult> eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet());
+		PlayerSeason playerSeason1 = performanceService.getPlayerSeasonSummary(playerId1, season);
+		PlayerSeason playerSeason2 = performanceService.getPlayerSeasonSummary(playerId2, season);
+		Set<Surface> surfaces = union(playerSeason1.getSurfaceMatches().keySet(), playerSeason2.getSurfaceMatches().keySet());
+		Set<TournamentLevel> levels = union(playerSeason1.getLevelMatches().keySet(), playerSeason2.getLevelMatches().keySet());
+		Set<Opponent> oppositions = union(playerSeason1.getOppositionMatches().keySet(), playerSeason2.getOppositionMatches().keySet());
+		Set<Round> rounds = union(playerSeason1.getRoundMatches().keySet(), playerSeason2.getRoundMatches().keySet());
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId1", playerId1);
+		modelMap.addAttribute("playerId2", playerId2);
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("eventResults", eventResults);
+		modelMap.addAttribute("seasonHighlights1", seasonHighlights1);
+		modelMap.addAttribute("seasonHighlights2", seasonHighlights2);
+		modelMap.addAttribute("surfaces", surfaces);
+		modelMap.addAttribute("levels", levels);
+		modelMap.addAttribute("oppositions", oppositions);
+		modelMap.addAttribute("rounds", rounds);
+		modelMap.addAttribute("playerSeason1", playerSeason1);
+		modelMap.addAttribute("playerSeason2", playerSeason2);
+		return new ModelAndView("h2hSeason", modelMap);
 	}
 
 	@GetMapping("/h2hRankings")
@@ -135,9 +170,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "playerId2") int playerId2,
 		@RequestParam(name = "season", required = false) Integer season
 	) {
-		Set<Integer> seasons = new TreeSet<>(reverseOrder());
-		seasons.addAll(playerService.getPlayerSeasons(playerId1));
-		seasons.addAll(playerService.getPlayerSeasons(playerId2));
+		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
 		PlayerPerformance perf1 = season == null ? performanceService.getPlayerPerformance(playerId1) : performanceService.getPlayerSeasonPerformance(playerId1, season);
 		PlayerPerformance perf2 = season == null ? performanceService.getPlayerPerformance(playerId2) : performanceService.getPlayerSeasonPerformance(playerId2, season);
 
@@ -172,9 +205,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface
 	) {
-		Set<Integer> seasons = new TreeSet<>(reverseOrder());
-		seasons.addAll(playerService.getPlayerSeasons(playerId1));
-		seasons.addAll(playerService.getPlayerSeasons(playerId2));
+		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forStats(season, level, surface));
 		PlayerStats stats2 = statisticsService.getPlayerStats(playerId2, MatchFilter.forStats(season, level, surface));
 
@@ -361,5 +392,27 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("rounds", Round.values());
 		return new ModelAndView("greatestRivalries", modelMap);
+	}
+
+
+	// Util
+
+	private List<Integer> getSeasonsIntersection(int playerId1, int playerId2) {
+		List<Integer> seasons = new ArrayList<>(playerService.getPlayerSeasons(playerId1));
+		seasons.retainAll(playerService.getPlayerSeasons(playerId2));
+		return seasons;
+	}
+
+	private Set<Integer> getSeasonsUnion(int playerId1, int playerId2) {
+		Set<Integer> seasons = new TreeSet<>(reverseOrder());
+		seasons.addAll(playerService.getPlayerSeasons(playerId1));
+		seasons.addAll(playerService.getPlayerSeasons(playerId2));
+		return seasons;
+	}
+
+	private static <T> Set<T> union(Collection<T> col1, Collection<T> col2) {
+		Set<T> union = new TreeSet<>(col1);
+		union.addAll(col2);
+		return union;
 	}
 }

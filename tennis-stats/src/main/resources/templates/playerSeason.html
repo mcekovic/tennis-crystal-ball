@@ -2,6 +2,7 @@
 <!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="seasonHighlights" type="java.util.Map<org.strangeforest.tcb.stats.model.EventResult, List<org.strangeforest.tcb.stats.model.PlayerTournamentEvent>>"*/-->
 <!--/*@thymesVar id="playerSeason" type="org.strangeforest.tcb.stats.model.PlayerSeason"*/-->
 <script type="text/javascript" th:inline="javascript">
 	$(function() {
@@ -16,7 +17,7 @@
 	}
 </script>
 <style scoped="scoped">
-	.progress-profile {
+	.progress-season {
 		background-color: #dddddd;
 		margin-bottom: 0;
 	}
@@ -32,6 +33,10 @@
 	.progress-bar > a {
 		color: white;
 	}
+	a.highlight {
+		display: inline-block;
+		margin: 2px;
+	}
 </style>
 <br/>
 <div class="row">
@@ -43,31 +48,40 @@
 			</select>
 		</div>
 	</div>
-	<div class="col-md-3" th:with="wl=${playerSeason.overall}">
-		<table class="table table-condensed text-nowrap">
+</div>
+<br/>
+<table th:unless="${seasonHighlights.empty}" class="table table-condensed">
+	<tr>
+		<th colspan="2">Highlights</th>
+	</tr>
+	<tr th:each="resultHighlights : ${seasonHighlights}">
+		<th>
+			<a class="label highlight black bg-result-" th:attrappend="class=${resultHighlights.key.code}" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season}, result=${resultHighlights.key.code})}" th:text="${resultHighlights.key.code}" th:title="|Show season ${resultHighlights.key.text} results|">W</a>
+		</th>
+		<th width="100%">
+			<a th:each="result : ${resultHighlights.value}" th:href="@{/tournamentEvent(tournamentEventId=${result.tournamentEventId})}" class="label highlight label-" th:attrappend="class=${result.level}" th:text="${result.name}" title="Show tournament event">Wimbledon</a>
+		</th>
+	</tr>
+</table>
+<div class="row">
+	<div class="col-md-3">
+		<table id="playerSeasonSurface" class="table table-condensed text-nowrap">
 			<tr>
 				<th>Overall</th>
-				<th>
-					<div th:unless="${wl.empty}" class="progress progress-profile">
+				<th th:with="wl=${playerSeason.overall}">
+					<div th:unless="${wl.empty}" class="progress progress-season">
 						<div class="progress-bar progress-bar-season progress-bar-overall" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season matches">73%</a>
 						</div>
 					</div>
 				</th>
 			</tr>
-		</table>
-	</div>
-</div>
-<br/>
-<div class="row">
-	<div class="col-md-3">
-		<table id="playerSeasonSurface" class="table table-condensed text-nowrap">
 			<tr th:each="surfaceWL : ${playerSeason.surfaceMatches}" th:with="surface=${surfaceWL.key}, wl=${surfaceWL.value}">
 				<th th:text="${surface.text}">Hard</th>
 				<th>
-					<div class="progress progress-profile">
+					<div class="progress progress-season">
 						<div class="progress-bar progress-bar-season" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, surface=${surface.code})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season Hard matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, surface=${surface.code})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:title="|Show season ${surface.text} matches|">73%</a>
 						</div>
 					</div>
 				</th>
@@ -79,23 +93,9 @@
 			<tr th:each="levelWL : ${playerSeason.levelMatches}" th:with="level=${levelWL.key}, wl=${levelWL.value}">
 				<th th:text="${level.text}">Grand Slam</th>
 				<th>
-					<div class="progress progress-profile">
+					<div class="progress progress-season">
 						<div class="progress-bar progress-bar-season label-" th:attrappend="class=${level.code}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level.code})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season Grand Slam matches">73%</a>
-						</div>
-					</div>
-				</th>
-			</tr>
-		</table>
-	</div>
-	<div class="col-md-3">
-		<table class="table table-condensed text-nowrap">
-			<tr th:each="roundWL : ${playerSeason.roundMatches}" th:with="round=${roundWL.key}, wl=${roundWL.value}">
-				<th th:text="${round.text}">Final</th>
-				<th>
-					<div class="progress progress-profile">
-						<div class="progress-bar progress-bar-season progress-bar-default" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, round=${round.code})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season Final matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level.code})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:title="|Show season ${level.text} matches|">73%</a>
 						</div>
 					</div>
 				</th>
@@ -107,9 +107,23 @@
 			<tr th:each="oppositionWL : ${playerSeason.oppositionMatches}" th:with="opposition=${oppositionWL.key}, wl=${oppositionWL.value}">
 				<th th:text="${opposition.text}">Vs No. 1</th>
 				<th>
-					<div class="progress progress-profile">
+					<div class="progress progress-season">
 						<div class="progress-bar progress-bar-season progress-bar-default" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, opponent=${opposition})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season Final matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, opponent=${opposition})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:title="|Show season ${opposition.text} matches|">73%</a>
+						</div>
+					</div>
+				</th>
+			</tr>
+		</table>
+	</div>
+	<div class="col-md-3">
+		<table class="table table-condensed text-nowrap">
+			<tr th:each="roundWL : ${playerSeason.roundMatches}" th:with="round=${roundWL.key}, wl=${roundWL.value}">
+				<th th:text="${round.text}">Final</th>
+				<th>
+					<div class="progress progress-season">
+						<div class="progress-bar progress-bar-season progress-bar-default" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, round=${round.code})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:title="|Show season ${round.text} matches|">73%</a>
 						</div>
 					</div>
 				</th>

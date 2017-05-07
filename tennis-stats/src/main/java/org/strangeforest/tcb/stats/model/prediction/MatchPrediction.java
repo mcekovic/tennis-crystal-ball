@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.model.prediction;
 import java.util.*;
 import java.util.stream.*;
 
+import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.prediction.PriceUtil.*;
 
@@ -36,7 +37,7 @@ public final class MatchPrediction {
 	}
 
 	private Map<PriceFormat, String> getPriceMap(double probability) {
-		return Stream.of(PriceFormat.values()).collect(Collectors.toMap(format -> format, format -> format.format(toPrice(probability))));
+		return Stream.of(PriceFormat.values()).collect(toMap(identity(), format -> format.format(toPrice(probability))));
 	}
 
 	private double weightAverage(List<WeightedProbability> weightedProbabilities) {
