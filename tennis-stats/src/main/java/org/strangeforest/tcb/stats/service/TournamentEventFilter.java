@@ -24,6 +24,7 @@ public class TournamentEventFilter {
 	private static final String LEVEL_CRITERION            = " AND e.level = :level::tournament_level";
 	private static final String LEVELS_CRITERION           = " AND e.level::TEXT IN (:levels)";
 	private static final String SURFACE_CRITERION          = " AND e.surface = :surface::surface";
+	private static final String SURFACES_CRITERION         = " AND e.surface::TEXT IN (:surfaces)";
 	private static final String TOURNAMENT_CRITERION       = " AND e.tournament_id = :tournamentId";
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND e.tournament_event_id = :tournamentEventId";
 	private static final String SEARCH_CRITERION           = " AND e.name ILIKE '%' || :searchPhrase || '%'";
@@ -49,7 +50,7 @@ public class TournamentEventFilter {
 		if (!isNullOrEmpty(level))
 			criteria.append(level.length() == 1 ? LEVEL_CRITERION : LEVELS_CRITERION);
 		if (!isNullOrEmpty(surface))
-			criteria.append(getSurfaceCriterion());
+			criteria.append(surface.length() == 1 ? getSurfaceCriterion() : getSurfacesCriterion());
 		if (tournamentId != null)
 			criteria.append(TOURNAMENT_CRITERION);
 		if (tournamentEventId != null)
@@ -73,8 +74,12 @@ public class TournamentEventFilter {
 			else
 				params.addValue("levels", asList(level.split("")));
 		}
-		if (!isNullOrEmpty(surface))
-			params.addValue("surface", surface);
+		if (!isNullOrEmpty(surface)) {
+			if (surface.length() == 1)
+				params.addValue("surface", surface);
+			else
+				params.addValue("surfaces", asList(surface.split("")));
+		}
 		if (tournamentId != null)
 			params.addValue("tournamentId", tournamentId);
 		if (tournamentEventId != null)
@@ -85,6 +90,10 @@ public class TournamentEventFilter {
 
 	protected String getSurfaceCriterion() {
 		return SURFACE_CRITERION;
+	}
+
+	protected String getSurfacesCriterion() {
+		return SURFACES_CRITERION;
 	}
 
 	protected String getSearchCriterion() {

@@ -107,6 +107,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.NON_TEAM_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("season", season);

@@ -80,6 +80,7 @@ public class MatchFilter extends TournamentEventResultFilter {
 	private final OutcomeFilter outcomeFilter;
 
 	private static final String SURFACE_CRITERION        = " AND m.surface = :surface::surface";
+	private static final String SURFACES_CRITERION       = " AND m.surface::TEXT IN (:surfaces)";
 	private static final String ROUND_CRITERION          = " AND m.round %1$s :round::match_round";
 	private static final String MATCHES_SEARCH_CRITERION = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR pw.name ILIKE '%' || :searchPhrase || '%' OR pl.name ILIKE '%' || :searchPhrase || '%')";
 	private static final String STATS_SEARCH_CRITERION   = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR o.name ILIKE '%' || :searchPhrase || '%')";
@@ -111,6 +112,10 @@ public class MatchFilter extends TournamentEventResultFilter {
 		return SURFACE_CRITERION;
 	}
 
+	@Override protected String getSurfacesCriterion() {
+		return SURFACES_CRITERION;
+	}
+
 	@Override protected String getSearchCriterion() {
 		return MATCHES_SEARCH_CRITERION;
 	}
@@ -134,13 +139,13 @@ public class MatchFilter extends TournamentEventResultFilter {
 
 	public boolean isForSurface() {
 		String surface = getSurface();
-		return !isNullOrEmpty(surface) && equals(forSurface(surface));
+		return !isNullOrEmpty(surface) && surface.length() == 1 && equals(forSurface(surface));
 	}
 
 	public boolean isForSeasonAndSurface() {
 		Integer season = getSeason();
 		String surface = getSurface();
-		return season != null && !isNullOrEmpty(surface) && equals(forSeasonAndSurface(season, surface));
+		return season != null && !isNullOrEmpty(surface) && surface.length() == 1 && equals(forSeasonAndSurface(season, surface));
 	}
 
 
