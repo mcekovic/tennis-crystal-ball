@@ -122,8 +122,8 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season
 	) {
 		NavigableSet<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
-		if (season == null && !seasons.isEmpty())
-			season = seasons.first();
+		if (season == null)
+			season = !seasons.isEmpty() ? seasons.first() : Integer.valueOf(LocalDate.now().getYear());
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season, 4);
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season, 4);
 		List<EventResult> eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet()).stream().limit(4).collect(toList());

@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
+import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -175,8 +176,8 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		if (season == null && !seasons.isEmpty())
-			season = seasons.get(0);
+		if (season == null)
+			season = !seasons.isEmpty() ? seasons.get(0) : Integer.valueOf(LocalDate.now().getYear());
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights = tournamentService.getPlayerSeasonHighlights(playerId, season, 4);
 		PlayerSeason playerSeason = performanceService.getPlayerSeasonSummary(playerId, season);
 
