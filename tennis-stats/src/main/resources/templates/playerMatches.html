@@ -7,6 +7,7 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="opponents" type="org.strangeforest.tcb.stats.service.Opponent[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 <!--/*@thymesVar id="tournamentEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEventItem>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
@@ -205,28 +206,7 @@
 	<div class="col-md-2">
 		<select id="matchesOpponent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
 			<option value="">Vs All</option>
-			<option value="NO_1" th:selected="${opponent == 'NO_1'}">Vs No. 1</option>
-			<option value="TOP_5" th:selected="${opponent == 'TOP_5'}">Vs Top 5</option>
-			<option value="TOP_10" th:selected="${opponent == 'TOP_10'}">Vs Top 10</option>
-			<option value="TOP_20">Vs Top 20</option>
-			<option value="TOP_50">Vs Top 50</option>
-			<option value="TOP_100">Vs Top 100</option>
-			<option value="UNDER_18">Vs Under 18</option>
-			<option value="UNDER_21">Vs Under 21</option>
-			<option value="UNDER_25">Vs Under 25</option>
-			<option value="OVER_30">Vs Over 30</option>
-			<option value="OVER_35">Vs Over 35</option>
-			<option value="RIGHT_HANDED">Vs Right-handed</option>
-			<option value="LEFT_HANDED">Vs Left-handed</option>
-			<option value="BACKHAND_2">Vs Two-handed bh.</option>
-			<option value="BACKHAND_1">Vs One-handed bh.</option>
-			<option value="SEEDED">Vs Seeded</option>
-			<option value="UNSEEDED">Vs Unseeded</option>
-			<option value="QUALIFIER">Vs Qualifier</option>
-			<option value="WILD_CARD">Vs Wild-Card</option>
-			<option value="LUCKY_LOSER">Vs Lucky-Loser</option>
-			<option value="PROTECTED_RANKING">Vs Protected Ranking</option>
-			<option value="SPECIAL_EXEMPT">Vs Special Exempt</option>
+			<option th:each="anOpponent : ${opponents}" th:value="${anOpponent}" value="NO_1" th:text="${anOpponent.text}" th:selected="${anOpponent.name() == opponent}">Vs No. 1</option>
 			<option th:if="${opponent != null && opponent.startsWith('OPP_')}" th:value="${opponent}" th:text="${'Vs ' + opponentName}" selected="selected">Vs Roger Federer</option>
 		</select>
 	</div>

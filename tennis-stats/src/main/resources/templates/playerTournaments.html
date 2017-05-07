@@ -29,11 +29,11 @@
 			},
 			url: "/playerTournamentsTable?playerId=[[${playerId}]]",
 			requestHandler: function(request) {
-				request.season = $("#season").val();
-				request.level = $("#level").val();
-				request.surface = $("#surface").val();
-				request.tournamentId = $("#tournament").val();
-				request.result = $("#result").val();
+				request.season = $("#eventsSeason").val();
+				request.level = $("#eventsLevel").val();
+				request.surface = $("#eventsSurface").val();
+				request.tournamentId = $("#eventsTournament").val();
+				request.result = $("#eventsResult").val();
 				lastEventsStatsFilter = eventsStatsFilter();
 				if (lastEventsStatsFilter.hasFilter()) {
 					request.statsCategory = lastEventsStatsFilter.category;
@@ -116,11 +116,11 @@
 		eventsStatsFilterChanged();
 	}
 	function clearEventsFilter() {
-		$("#season").val("");
-		$("#level").val("");
-		$("#surface").val("");
-		$("#tournament").val("");
-		$("#result").val("");
+		$("#eventsSeason").val("");
+		$("#eventsLevel").val("");
+		$("#eventsSurface").val("");
+		$("#eventsTournament").val("");
+		$("#eventsResult").val("");
 		$("#eventsStatsCategory").val("");
 		$("#eventsStatsFrom").val("");
 		$("#eventsStatsTo").val("");
@@ -129,11 +129,11 @@
 	}
 	function eventStatsParams() {
 		var params = "?playerId=[[${playerId}]]";
-		params += "&season=" + $("#season").val();
-		params += "&level=" + $("#level").val();
-		params += "&surface=" + $("#surface").val();
-		params += "&tournamentId=" + $("#tournament").val();
-		params += "&result=" + encodeURIComponent($("#result").val());
+		params += "&season=" + $("#eventsSeason").val();
+		params += "&level=" + $("#eventsLevel").val();
+		params += "&surface=" + $("#eventsSurface").val();
+		params += "&tournamentId=" + $("#eventsTournament").val();
+		params += "&result=" + encodeURIComponent($("#eventsResult").val());
 		params += "&searchPhrase=" + $("#eventsTable-header").find("input.search-field").val();
 		return params;
 	}
@@ -172,32 +172,32 @@
 </script>
 <div class="row">
 	<div class="col-md-2">
-		<select id="season" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
+		<select id="eventsSeason" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
 			<option value="">All seasons</option>
 			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
 		</select>
 	</div>
 	<div class="col-md-2">
-		<select id="level" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+		<select id="eventsLevel" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
 			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
 			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
 		</select>
 	</div>
 	<div class="col-md-2">
-		<select id="surface" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+		<select id="eventsSurface" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 			<option value="">All surfaces</option>
 			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
 		</select>
 	</div>
 	<div class="col-md-2">
-		<select id="tournament" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
+		<select id="eventsTournament" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
 			<option value="">All tournaments</option>
 			<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
 		</select>
 	</div>
 	<div class="col-md-2">
-		<select id="result" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by result">
+		<select id="eventsResult" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by result">
 			<option value="">All results</option>
 			<option value="W" class="bg-result-W" th:selected="${result == 'W'}">Win</option>
 			<option value="F" class="bg-result-F" th:selected="${result == 'F'}">Final</option>

@@ -17,7 +17,7 @@ public class PlayerSeason {
 		surfaceMatches = new LinkedHashMap<>();
 		levelMatches = new LinkedHashMap<>();
 		roundMatches = new LinkedHashMap<>();
-		oppositionMatches = new LinkedHashMap<>();
+		oppositionMatches = new TreeMap<>();
 	}
 
 	public WonLost getOverall() {
@@ -58,5 +58,13 @@ public class PlayerSeason {
 	public void addOppositionMatches(Opponent opposition, WonLost wonLost) {
 		if (!wonLost.isEmpty())
 			oppositionMatches.put(opposition, wonLost);
+	}
+
+	public void processOpposition() {
+		WonLost wonLost = WonLost.EMPTY;
+		for (Map.Entry<Opponent, WonLost> entry : oppositionMatches.entrySet()) {
+			wonLost = wonLost.add(entry.getValue());
+			entry.setValue(wonLost);
+		}
 	}
 }

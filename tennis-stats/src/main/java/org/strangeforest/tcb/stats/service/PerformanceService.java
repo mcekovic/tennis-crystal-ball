@@ -50,7 +50,7 @@ public class PerformanceService {
 		"FROM player_match_for_stats_v\n" +
 		"WHERE player_id = :playerId AND season = :season\n" +
 		"GROUP BY round\n" +
-		"ORDER BY round";
+		"ORDER BY round DESC";
 
 	private static final String PLAYER_SEASON_OPPOSITION_PERFORMANCE_QUERY =
 		"WITH season_opposition AS (\n" +
@@ -158,18 +158,15 @@ public class PerformanceService {
 			}
 		);
 
-		AtomicReference<WonLost> wonLostRef = new AtomicReference<>();
 		jdbcTemplate.query(
 			PLAYER_SEASON_OPPOSITION_PERFORMANCE_QUERY, paramSource,
 			rs -> {
 				Opponent opposition = Opponent.valueOf(rs.getString("opposition"));
-				WonLost wonLostItem = mapWonLost(rs);
-				WonLost wonLost = wonLostRef.get();
-				wonLost = wonLost == null ? wonLostItem : wonLost.add(wonLostItem);
+				WonLost wonLost = mapWonLost(rs);
 				playerSeason.addOppositionMatches(opposition, wonLost);
-				wonLostRef.set(wonLost);
 			}
 		);
+		playerSeason.processOpposition();
 
 		return playerSeason;
 	}

@@ -141,6 +141,9 @@
 			.progress-bar-profile {
 				font-size: 14px;
 			}
+			.progress-bar-overall {
+				background-color: #555;
+			}
 			.progress-bar > a {
 				color: white;
 			}
@@ -150,8 +153,8 @@
 			<tr>
 				<th>Overall</th>
 				<th>
-					<div class="progress progress-profile">
-						<div class="progress-bar progress-bar-profile" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<div class="progress progress-profile ">
+						<div class="progress-bar progress-bar-profile progress-bar-overall" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show matches">73%</a>
 						</div>
 					</div>
@@ -163,7 +166,7 @@
 				<th>Hard</th>
 				<th>
 					<div class="progress progress-profile">
-						<div class="progress-bar progress-bar-profile progress-bar-info" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<div class="progress-bar progress-bar-profile progress-bar-primary" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=H)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show hard matches">73%</a>
 						</div>
 					</div>

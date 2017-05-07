@@ -161,6 +161,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("opponents", Opponent.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("tournamentEvents", tournamentEvents);
 		modelMap.addAttribute("countries", countries);
