@@ -12,6 +12,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.model.table.*;
+import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
 
 import static java.lang.String.*;

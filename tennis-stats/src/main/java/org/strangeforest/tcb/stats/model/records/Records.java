@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.model.records;
 import java.util.*;
 
 import org.strangeforest.tcb.stats.model.records.categories.*;
+import org.strangeforest.tcb.stats.util.*;
 
 public abstract class Records {
 
@@ -33,7 +34,7 @@ public abstract class Records {
 	public static Record getRecord(String recordId) {
 		Record record = RECORDS.get(recordId);
 		if (record == null)
-			throw new IllegalArgumentException("Unknown record: " + recordId);
+			throw new NotFoundException("Record", recordId);
 		return record;
 	}
 
