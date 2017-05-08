@@ -31,6 +31,7 @@ VALUES
    ('Harry Sheridan', 'H Sheridan'),
    ('Herbert Browne', 'Herbert H Browne Jr'),
    ('Jose Edison Mandarino', 'Jose Mandarino'),
+   ('Juan Pablo Varillas', 'Juan Pablo Varillas Patino Samudio'),
    ('Inigo Cervantes', 'Inigo Cervantes Huegun'),
    ('Ivor Warwick', 'Ivor J Warwick'),
    ('Jaime Fillol Sr', 'Jaime Fillol'),
