@@ -12,6 +12,8 @@ import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
 
+import static java.util.Collections.*;
+
 @Controller
 public class TournamentController extends PageController {
 
@@ -121,9 +123,13 @@ public class TournamentController extends PageController {
 	public ModelAndView tournamentStats(
 		@RequestParam(name = "tournamentId") int tournamentId
 	) {
+		List<Integer> seasons = tournamentService.getTournament(tournamentId).getSeasons();
+		reverse(seasons);
+
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
+		modelMap.addAttribute("seasons", seasons);
 		return new ModelAndView("tournamentStats", modelMap);
 	}
 

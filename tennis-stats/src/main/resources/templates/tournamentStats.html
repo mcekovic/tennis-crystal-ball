@@ -1,6 +1,7 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <script type="text/javascript">
 	$(function() {
 		var $statsLeadersTable = $("#statsLeadersTable");
@@ -15,6 +16,9 @@
 			url: "/statsLeadersTable?tournamentId=[[${tournamentId}]]",
 			requestHandler: function(request) {
 				request.category = $("#statsCategory").val();
+				var season = $("#season").val();
+				if (season)
+					request.season = season;
 				return request;
 			},
 			rowCount: [15, 20, 50, -1],
@@ -35,7 +39,9 @@
 			}
 		});
 		var $statsLeadersTableHeader = $("#statsLeadersTable-header");
-		$statsLeadersTableHeader.find("div.search").before($("#statsCategoryDiv").remove());
+		var $search = $statsLeadersTableHeader.find("div.search");
+		$search.before($("#statsCategoryDiv").remove());
+		$search.before($("#seasonsDiv").remove());
 		setBootgridTitle($statsLeadersTableHeader, $("#statsLeadersTable-title"));
 		categoryChanged();
 		$("[data-toggle='tooltip']").tooltip();
@@ -44,6 +50,9 @@
 		var $category = $("#statsCategory");
 		$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
 		var url = "/statsLeadersMinEntries?category=" + $category.val() + "&tournamentId=[[${tournamentId}]]";
+		var season = $("#season").val();
+		if (season)
+			url += "&season=" + season;
 		$.get(url, function (data) {
 			$("#statsMinEntries").html(data);
 		});
@@ -59,6 +68,12 @@
 		<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
 			<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
 		</optgroup>
+	</select>
+</div>
+<div id="seasonsDiv" class="btn-group margin-right">
+	<select id="season" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select career or season">
+		<option value="">Career</option>
+		<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 	</select>
 </div>
 <table id="statsLeadersTable" class="table table-condensed table-hover table-striped">

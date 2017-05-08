@@ -3,6 +3,7 @@
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
 	<title>Statistics Leaders</title>
 	<script type="text/javascript">
@@ -47,13 +48,8 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
-			var $statsLeadersTableHeader = $("#statsLeadersTable-header");
-			var $search = $statsLeadersTableHeader.find("div.search");
-			$search.before($("#categoryDiv").remove());
-			$search.before($("#seasonDiv").remove());
-			$search.before($("#surfaceDiv").remove());
-			$search.before($("#activeDiv").remove());
-			setBootgridTitle($statsLeadersTableHeader, $("#statsLeadersTable-title"));
+			var $search = $("#statsLeadersTable-header").find("div.search");
+			$search.after($("#clearDiv").remove());
 			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
@@ -83,36 +79,55 @@
 			$active.prop("disabled", forSeason);
 			reloadStatsLeaders();
 		}
+		function clearStatsLeadersFilter() {
+			$("#season").val("");
+			$("#surface").val("");
+			var $active = $("#active");
+			$active.prop("checked", false);
+			$active.prop("disabled", false);
+			$("#statsLeadersTable").bootgrid("search", "");
+			reloadStatsLeaders();
+		}
 	</script>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 id="statsLeadersTable-title" class="grid-title">Statistics Leaders</h3>
-	<div id="categoryDiv" class="btn-group margin-right">
-		<select id="category" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
-			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
-				<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
-			</optgroup>
-		</select>
-	</div>
-	<div id="seasonDiv" class="btn-group margin-right">
-		<select id="season" class="form-control" onchange="seasonChanged()" data-toggle="tooltip" data-placement="top" title="Select career or season">
-			<option value="">Career</option>
-			<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
-		</select>
-	</div>
-	<div id="surfaceDiv" class="btn-group margin-right">
-		<select id="surface" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select surface">
-			<option value="">All surfaces</option>
-			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
-		</select>
-	</div>
-	<div id="activeDiv" class="btn-group margin-right">
-		<div class="checkbox">
-			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
-				<input id="active" type="checkbox" onchange="reloadStatsLeaders()"/> Active
-			</label>
+	<div class="row">
+		<div class="col-md-5">
+			<h3 class="text-nowrap" style="display: inline">Statistics Leaders</h3>
 		</div>
+		<div class="col-md-2">
+			<select id="category" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+				<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
+					<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+				</optgroup>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="season" class="form-control" onchange="seasonChanged()" data-toggle="tooltip" data-placement="top" title="Select career or season">
+				<option value="">Career</option>
+				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="surface" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select surface">
+				<option value="">All surfaces</option>
+				<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+			</select>
+		</div>
+		<div class="col-md-1">
+			<div class="checkbox">
+				<label data-toggle="tooltip" data-placement="top" title="Show only active players">
+					<input id="active" type="checkbox" onchange="reloadStatsLeaders()"/> Active
+				</label>
+			</div>
+		</div>
+	</div>
+	<div id="clearDiv" class="btn-group margin-right">
+		<button type="button" class="btn btn-default" onclick="clearStatsLeadersFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+			<span class="glyphicon glyphicon-erase"></span>
+		</button>
 	</div>
 	<table id="statsLeadersTable" class="table table-condensed table-hover table-striped">
 		<thead>

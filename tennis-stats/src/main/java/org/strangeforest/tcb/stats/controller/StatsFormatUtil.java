@@ -4,6 +4,7 @@ import java.text.*;
 import java.util.stream.*;
 
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.util.*;
 
 import com.google.common.base.*;
 
@@ -77,12 +78,15 @@ public class StatsFormatUtil {
 			if (compareLevel.length() == 1)
 				relativeTo.append(TournamentLevel.decode(compareLevel).getText());
 			else
-				relativeTo.append(Stream.of(compareLevel.split("")).map(l -> TournamentLevel.decode(l).getText()).collect(joining(" + ")));
+				relativeTo.append(CodedEnum.joinTexts(TournamentLevel.class, compareLevel));
 		}
 		if (!Strings.isNullOrEmpty(compareSurface)) {
 			if (relativeTo.length() > 0)
 				relativeTo.append(", ");
-			relativeTo.append(Surface.decode(compareSurface).getText());
+			if (compareSurface.length() == 1)
+				relativeTo.append(Surface.decode(compareSurface).getText());
+			else
+				relativeTo.append(CodedEnum.joinTexts(Surface.class, compareSurface));
 		}
 		if (!Strings.isNullOrEmpty(compareRound)) {
 			if (relativeTo.length() > 0)

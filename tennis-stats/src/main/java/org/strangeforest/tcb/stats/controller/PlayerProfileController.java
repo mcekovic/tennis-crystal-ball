@@ -144,6 +144,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("opponents", Opponent.values());
 		modelMap.addAttribute("tournaments", tournaments);
@@ -217,6 +218,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
 		return new ModelAndView("playerRivalries", modelMap);
 	}
@@ -287,6 +289,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
@@ -316,6 +319,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("playerId", new int[] {playerId});
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("categoryTypes", StatsCategory.getCategoryTypes());
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerStatsChart", modelMap);

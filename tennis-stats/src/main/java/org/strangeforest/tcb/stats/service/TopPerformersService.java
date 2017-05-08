@@ -61,6 +61,7 @@ public class TopPerformersService {
 		return jdbcTemplate.getJdbcOperations().queryForList(SEASONS_QUERY, Integer.class);
 	}
 
+	@Cacheable("TopPerformers.Count")
 	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
@@ -70,6 +71,7 @@ public class TopPerformersService {
 		));
 	}
 
+	@Cacheable("TopPerformers.Table")
 	public BootgridTable<TopPerformerRow> getTopPerformersTable(String category, int playerCount, StatsPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		BootgridTable<TopPerformerRow> table = new BootgridTable<>(currentPage, playerCount);

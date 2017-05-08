@@ -9,11 +9,13 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.StatsCategory.*;
 import org.strangeforest.tcb.stats.model.table.*;
+import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
+import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.util.EnumUtil.*;
@@ -27,8 +29,8 @@ public class StatisticsChartService {
 	private static final String PLAYER_SEASON_STATISTICS_QUERY = //language=SQL
 		"SELECT %1$s, player_id, %2$s AS value\n" +
 		"FROM %3$s s%4$s\n" +
-		"WHERE player_id IN (:playerIds)%5$s%6$s\n" +
-		"ORDER BY %7$s, player_id";
+		"WHERE player_id IN (:playerIds)%5$s%6$s%7$s\n" +
+		"ORDER BY %8$s, player_id";
 
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
@@ -93,27 +95,34 @@ public class StatisticsChartService {
 		for (String player : players.getPlayers()) {
 			String label = player + " " + category.getTitle();
 			if (!isNullOrEmpty(surface))
-				label += " on " + Surface.decode(surface).getText();
+				label += " on " + (surface.length() == 1 ? Surface.decode(surface).getText() : CodedEnum.joinTexts(Surface.class, surface));
 			table.addColumn("number", label);
 		}
 	}
 
 	private String getSQL(StatsCategory category, String surface, Range<Integer> seasonRange, boolean byAge) {
+		boolean bySurface = !isNullOrEmpty(surface);
+		boolean bySurfaceGroup = bySurface && surface.length() > 1;
 		return format(PLAYER_SEASON_STATISTICS_QUERY,
 			byAge ? "date_part('year', age((s.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "s.season",
-			category.getExpression(),
-			isNullOrEmpty(surface) ? "player_season_stats" : "player_season_surface_stats",
+			bySurfaceGroup ? category.getSummedExpression() : category.getExpression(),
+			bySurface ? "player_season_surface_stats" : "player_season_stats",
 			byAge ? PLAYER_JOIN : "",
-			!isNullOrEmpty(surface) ? " AND s.surface = :surface::surface" : "",
+			bySurface ? (bySurfaceGroup ? " AND s.surface::TEXT IN (:surfaces)" : " AND s.surface = :surface::surface") : "",
 			rangeFilter(seasonRange, "s.season", "season"),
+			bySurfaceGroup ? "\nGROUP BY " + (byAge ? "age" : "s.season") + ", player_id" : "",
 			byAge ? "age" : "season"
 		);
 	}
 
 	private MapSqlParameterSource getParams(IndexedPlayers players, String surface, Range<Integer> seasonRange) {
 		MapSqlParameterSource params = params("playerIds", players.getPlayerIds());
-		if (!isNullOrEmpty(surface))
-			params.addValue("surface", surface);
+		if (!isNullOrEmpty(surface)) {
+			if (surface.length() == 1)
+				params.addValue("surface", surface);
+			else
+				params.addValue("surfaces", asList(surface.split("")));
+		}
 		addRangeParams(params, seasonRange, "season");
 		return params;
 	}

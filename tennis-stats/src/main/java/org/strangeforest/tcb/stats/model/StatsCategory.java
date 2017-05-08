@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.regex.*;
 
 import static org.strangeforest.tcb.stats.model.StatsCategory.Type.*;
 
@@ -142,6 +143,12 @@ public final class StatsCategory {
 	public String getExpression() {
 		return expression;
 	}
+
+	public String getSummedExpression() {
+		return SUMMED_EXPRESSION_PATTERN.matcher(expression).replaceAll("sum($1)");
+	}
+
+	private static final Pattern SUMMED_EXPRESSION_PATTERN = Pattern.compile("(p_[a-z0-9_]+|o_[a-z0-9_]+)");
 
 	public Number getStat(PlayerStats stats) {
 		return statFunction.apply(stats);

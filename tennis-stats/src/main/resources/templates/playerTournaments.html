@@ -190,7 +190,7 @@
 		<select id="eventsSurface" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 			<option value="">All surfaces</option>
 			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
-			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes == level}">Fast (H, G, P)</option>
+			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes == surface}">Fast (H, G, Cp)</option>
 		</select>
 	</div>
 	<div class="col-md-2">
@@ -207,7 +207,7 @@
 	</div>
 	<div class="col-md-1">
 		<button type="button" class="btn btn-default" onclick="clearEventsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Clear
+			<span class="glyphicon glyphicon-erase"></span>&nbsp;&nbsp;Clear
 		</button>
 	</div>
 </div>

@@ -31,6 +31,7 @@ public class PerfStatsChartController extends PageController {
 		modelMap.addAttribute("categoryTypes", StatsCategory.getCategoryTypes());
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("seasons", statisticsService.getSeasons());
 		return new ModelAndView("statsChart", modelMap);
 	}

@@ -2,6 +2,7 @@
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <script type="text/javascript">
 	$(function() {
 		var $statsLeadersTable = $("#statsLeadersTable");
@@ -74,6 +75,7 @@
 	<select id="statsSurface" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select surface">
 		<option value="">All surfaces</option>
 		<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+		<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
 	</select>
 </div>
 <table id="statsLeadersTable" class="table table-condensed table-hover table-striped">

@@ -106,6 +106,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("season", season);
@@ -216,6 +217,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
@@ -235,6 +237,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("categoryTypes", StatsCategory.getCategoryTypes());
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerStatsChart", modelMap);
@@ -353,6 +356,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
 		return new ModelAndView("headsToHeads", modelMap);
 	}
@@ -390,6 +394,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
 		return new ModelAndView("greatestRivalries", modelMap);
 	}

@@ -23,6 +23,7 @@ public class StatsLeadersController extends PageController {
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		return new ModelAndView("statsLeaders", modelMap);
 	}
 }

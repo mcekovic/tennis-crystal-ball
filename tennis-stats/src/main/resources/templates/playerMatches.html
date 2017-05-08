@@ -6,6 +6,7 @@
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 <!--/*@thymesVar id="opponents" type="org.strangeforest.tcb.stats.service.Opponent[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
@@ -195,6 +196,7 @@
 		<select id="matchesSurface" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 			<option value="">All surfaces</option>
 			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
+			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes == surface}">Fast (H, G, Cp)</option>
 		</select>
 	</div>
 	<div class="col-md-2">
@@ -210,13 +212,11 @@
 			<option th:if="${opponent != null && opponent.startsWith('OPP_')}" th:value="${opponent}" th:text="${'Vs ' + opponentName}" selected="selected">Vs Roger Federer</option>
 		</select>
 	</div>
-	<div class="col-md-1">
-		<button type="button" class="btn btn-default" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Clear
+	<div class="col-md-2">
+		<button type="button" class="btn btn-default pull-left margin-right" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+			<span class="glyphicon glyphicon-erase"></span>
 		</button>
-	</div>
-	<div class="col-md-1">
-		<div data-toggle="tooltip" data-placement="right" title="Advanced filters">
+		<div data-toggle="tooltip" data-placement="top" title="Advanced filters">
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#matchesAdvancedFilter">
 				<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Adv.
 			</button>

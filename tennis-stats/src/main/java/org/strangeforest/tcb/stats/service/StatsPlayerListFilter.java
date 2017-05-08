@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.*;
 import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
+import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class StatsPlayerListFilter extends PlayerListFilter {
@@ -18,6 +19,7 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 
 	private static final String SEASON_CRITERION = " AND season = :season";
 	private static final String SURFACE_CRITERION = " AND surface = :surface::surface";
+	private static final String SURFACES_CRITERION = " AND surface::TEXT IN (:surfaces)";
 	private static final String TOURNAMENT_CRITERION = " AND tournament_id = :tournamentId";
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND tournament_event_id = :tournamentEventId";
 
@@ -47,6 +49,10 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 
 	public boolean hasSurface() {
 		return !isNullOrEmpty(surface);
+	}
+
+	public boolean hasSurfaceGroup() {
+		return hasSurface() && surface.length() > 1;
 	}
 
 	public boolean hasTournament() {
@@ -90,7 +96,7 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 		if (season != null)
 			criteria.append(SEASON_CRITERION);
 		if (!isNullOrEmpty(surface))
-			criteria.append(SURFACE_CRITERION);
+			criteria.append(surface.length() == 1 ? SURFACE_CRITERION : SURFACES_CRITERION);
 		if (tournamentId != null)
 			criteria.append(TOURNAMENT_CRITERION);
 		if (tournamentEventId != null)
@@ -101,8 +107,12 @@ public class StatsPlayerListFilter extends PlayerListFilter {
 		super.addParams(params);
 		if (season != null)
 			params.addValue("season", season);
-		if (!isNullOrEmpty(surface))
-			params.addValue("surface", surface);
+		if (!isNullOrEmpty(surface)) {
+			if (surface.length() == 1)
+				params.addValue("surface", surface);
+			else
+				params.addValue("surfaces", asList(surface.split("")));
+		}
 		if (tournamentId != null)
 			params.addValue("tournamentId", tournamentId);
 		if (tournamentEventId != null)

@@ -3,6 +3,7 @@
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="categoryTypes" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
 	<title>Statistics Chart</title>
@@ -93,6 +94,7 @@
 				<select id="surface" class="form-control">
 					<option value="">All surfaces</option>
 					<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+					<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
 				</select>
 			</div>
 		</div>

@@ -4,6 +4,7 @@
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
 	<title>Greatest Rivalries</title>
@@ -171,6 +172,7 @@
 		<select id="surface" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 			<option value="">All surfaces</option>
 			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
 		</select>
 	</div>
 	<div id="roundDiv" class="btn-group pull-left margin-right">
@@ -192,7 +194,7 @@
 	</div>
 	<div id="clearDiv" class="btn-group pull-left margin-right">
 		<button type="button" class="btn btn-default" onclick="clearGreatestRivalriesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Clear
+			<span class="glyphicon glyphicon-erase"></span>
 		</button>
 	</div>
 	<table id="greatestRivalriesTable" class="table table-condensed table-hover table-striped">

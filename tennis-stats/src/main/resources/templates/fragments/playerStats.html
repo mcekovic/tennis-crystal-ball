@@ -7,6 +7,7 @@
 	<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 	<!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+	<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 	<!--/*@thymesVar id="compareSeason" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="compareLevel" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="compareSurface" type="java.lang.String"*/-->
@@ -344,6 +345,7 @@
 						<select th:id="|${statsId}CompareSurface|" class="form-control input-sm" th:onchange="|compareStats('${containerId}', '${statsId}')|">
 							<option value="">All surfaces</option>
 							<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == compareSurface}">Hard</option>
+							<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes == compareSurface}">Fast (H, G, Cp)</option>
 						</select>
 					</div>
 				</div>

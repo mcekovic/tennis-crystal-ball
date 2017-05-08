@@ -7,10 +7,10 @@ import static org.strangeforest.tcb.stats.model.Surface.*;
 
 public enum SurfaceGroup {
 
-	FAST(EnumSet.of(HARD, GRASS, CARPET), "Fast (H, G, P)"),
-	SLOW(EnumSet.of(CLAY), "Slow (C)"),
-	FIRM(EnumSet.of(HARD, CARPET), "Firm (H, P)"),
-	SOFT(EnumSet.of(CLAY, GRASS), "Soft (C, G)");
+	FAST(EnumSet.of(HARD, GRASS, CARPET), "Fast (H, G, Cp)"),
+	SLOW(EnumSet.of(CLAY), "Slow (Cl)"),
+	FIRM(EnumSet.of(HARD, CARPET), "Firm (H, Cp)"),
+	SOFT(EnumSet.of(CLAY, GRASS), "Soft (Cl, G)");
 
 	private final String codes;
 	private final String text;

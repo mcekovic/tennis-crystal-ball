@@ -44,7 +44,7 @@ public class Tournament {
 		return seasons;
 	}
 
-	public String getFormatedSeasons() {
+	public String getFormattedSeasons() {
 		if (seasons.isEmpty())
 			return "";
 		StringBuilder sb = new StringBuilder();

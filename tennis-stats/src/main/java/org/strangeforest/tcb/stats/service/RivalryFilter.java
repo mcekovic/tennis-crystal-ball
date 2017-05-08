@@ -20,10 +20,11 @@ public class RivalryFilter {
 	private final String surface;
 	private final String round;
 
-	private static final String LEVEL_CRITERION   = " AND level = :level::tournament_level";
-	private static final String LEVELS_CRITERION  = " AND level::TEXT IN (:levels)";
-	private static final String SURFACE_CRITERION = " AND m.surface = :surface::surface";
-	private static final String ROUND_CRITERION   = " AND round %1$s :round::match_round";
+	private static final String LEVEL_CRITERION    = " AND level = :level::tournament_level";
+	private static final String LEVELS_CRITERION   = " AND level::TEXT IN (:levels)";
+	private static final String SURFACE_CRITERION  = " AND m.surface = :surface::surface";
+	private static final String SURFACES_CRITERION = " AND m.surface::TEXT IN (:surfaces)";
+	private static final String ROUND_CRITERION    = " AND round %1$s :round::match_round";
 
 	public RivalryFilter(Range<Integer> seasonRange, String level, String surface, String round) {
 		this.seasonRange = seasonRange;
@@ -71,7 +72,7 @@ public class RivalryFilter {
 		if (!isNullOrEmpty(level))
 			criteria.append(level.length() == 1 ? LEVEL_CRITERION : LEVELS_CRITERION);
 		if (!isNullOrEmpty(surface))
-			criteria.append(SURFACE_CRITERION);
+			criteria.append(surface.length() == 1 ? SURFACE_CRITERION : SURFACES_CRITERION);
 		if (!isNullOrEmpty(round))
 			criteria.append(format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
 	}
@@ -90,8 +91,12 @@ public class RivalryFilter {
 			else
 				params.addValue("levels", asList(level.split("")));
 		}
-		if (!isNullOrEmpty(surface))
-			params.addValue("surface", surface);
+		if (!isNullOrEmpty(surface)) {
+			if (surface.length() == 1)
+				params.addValue("surface", surface);
+			else
+				params.addValue("surfaces", asList(surface.split("")));
+		}
 		if (!isNullOrEmpty(round))
 			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 	}

@@ -4,6 +4,7 @@ import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -16,6 +17,8 @@ import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 @Service
 public class StatsLeadersService {
+
+	//TODO Optimize for surface groups
 
 	@Autowired private TournamentService tournamentService;
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
@@ -30,7 +33,7 @@ public class StatsLeadersService {
 		.put(Range.closed(1, 2), 100)
 		.put(Range.closed(3, 5), 50)
 		.put(Range.closed(6, 9), 25)
-		.put(Range.atLeast(5), 20)
+		.put(Range.atLeast(10), 20)
 	.build();
 
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
@@ -83,12 +86,13 @@ public class StatsLeadersService {
 		"ORDER BY %5$s NULLS LAST OFFSET :offset LIMIT :limit";
 
 
+	@Cacheable("StatsLeaders.Count")
 	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
 		return Math.min(MAX_PLAYER_COUNT, getPlayerCount(StatsCategory.get(category), filter));
 	}
 
 	protected int getPlayerCount(StatsCategory statsCategory, StatsPlayerListFilter filter) {
-		if (filter.hasTournamentOrTournamentEvent()) {
+		if (filter.hasTournamentOrTournamentEvent() || filter.hasSurfaceGroup()) {
 			return jdbcTemplate.queryForObject(
 				format(SUMMED_STATS_LEADERS_COUNT_QUERY, where(filter.getCriteria(), 2), minEntriesColumn(statsCategory)),
 				filter.getParams().addValue("minEntries", getMinEntriesValue(statsCategory, filter)),
@@ -104,6 +108,7 @@ public class StatsLeadersService {
 		}
 	}
 
+	@Cacheable("StatsLeaders.Table")
 	public BootgridTable<StatsLeaderRow> getStatsLeadersTable(String category, int playerCount, StatsPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		StatsCategory statsCategory = StatsCategory.get(category);
 		BootgridTable<StatsLeaderRow> table = new BootgridTable<>(currentPage, playerCount);
@@ -130,7 +135,7 @@ public class StatsLeadersService {
 	}
 
 	private String getTableSQL(StatsCategory statsCategory, StatsPlayerListFilter filter, String orderBy) {
-		return filter.hasTournamentOrTournamentEvent()
+		return filter.hasTournamentOrTournamentEvent() || filter.hasSurfaceGroup()
 	       ? format(SUMMED_STATS_LEADERS_QUERY, where(filter.getBaseCriteria(), 2), statsCategory.getExpression(), minEntriesColumn(statsCategory), where(filter.getSearchCriteria()), orderBy)
 	       : format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy);
 	}
