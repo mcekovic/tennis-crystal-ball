@@ -1,5 +1,6 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"*/-->
+<!--/*@thymesVar id="favoriteSurface" type="org.strangeforest.tcb.stats.model.FavoriteSurface"*/-->
 <!--/*@thymesVar id="playerPerf" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
 <!--/*@thymesVar id="playerH2H" type="org.strangeforest.tcb.stats.model.WonDrawLost"*/-->
 <script type="text/javascript">
@@ -11,6 +12,11 @@
 				if (ui.item)
 					window.location = "/headToHead?playerId1=[[${player.id}]]&playerId2=" + ui.item.id;
 			}
+		});
+		$("#favoriteSurface").each(function() {
+			var $span = $(this);
+			var surface = $span.data("surface");
+			$span.addClass("label-" + surfaceClassSuffix(surface));
 		});
 	});
 </script>
@@ -43,6 +49,7 @@
 				<th>Weight</th>
 				<td th:text="|${player.weight} kg|">80 kg</td>
 			</tr>
+			<!--/* Tennis */-->
 			<tr th:if="${player.hand}">
 				<th>Plays</th>
 				<td th:text="${player.handName}">Right-handed</td>
@@ -51,7 +58,10 @@
 				<th>Backhand</th>
 				<td th:text="${player.backhandName}">Two-handed</td>
 			</tr>
-			<!--/* Tennis */-->
+			<tr th:if="${!favoriteSurface.empty}">
+				<th>Favorite Surface</th>
+				<td><span id="favoriteSurface" class="label" th:data-surface="${favoriteSurface.surface != null ? favoriteSurface.surface.code : _}" th:text="${favoriteSurface}" th:title="${favoriteSurface.surfaceGroup != null ? favoriteSurface.surfaceGroup.surfacesText : _}">Hard</span></td>
+			</tr>
 			<tr th:if="${player.turnedPro > 0}">
 				<th>Turned Pro</th>
 				<td th:text="${player.turnedPro}">2005</td>

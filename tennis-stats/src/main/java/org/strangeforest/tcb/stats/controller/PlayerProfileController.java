@@ -78,10 +78,12 @@ public class PlayerProfileController extends PageController {
 	) {
 		Player player = playerService.getPlayer(playerId).get();
 		PlayerPerformance playerPerf = performanceService.getPlayerPerformance(playerId);
+		FavoriteSurface favoriteSurface = new FavoriteSurface(playerPerf);
 		WonDrawLost playerH2H = rivalriesService.getPlayerH2H(playerId).orElse(null);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player", player);
+		modelMap.addAttribute("favoriteSurface", favoriteSurface);
 		modelMap.addAttribute("playerPerf", playerPerf);
 		modelMap.addAttribute("playerH2H", playerH2H);
 		return new ModelAndView("playerProfileTab", modelMap);
