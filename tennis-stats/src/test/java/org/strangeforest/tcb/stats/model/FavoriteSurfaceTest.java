@@ -86,6 +86,19 @@ public class FavoriteSurfaceTest {
 		assertThat(favoriteSurface).hasToString("Fast (H, G, Cp)");
 	}
 
+	@Test
+	public void surfaceGroupIsFavoriteIfItTopsFavoriteSurfaces() {
+		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+			new WonLost(20, 2),
+			new WonLost(15, 5),
+			new WonLost(10, 10),
+			new WonLost(9, 1)
+		));
+
+		assertThat(favoriteSurface.getSurfaceGroup()).isEqualTo(FIRM);
+		assertThat(favoriteSurface).hasToString("Firm (H, Cp)");
+	}
+
 	private static PlayerPerformance performance(WonLost hard, WonLost clay, WonLost grass, WonLost carpet) {
 		PlayerPerformance performance = new PlayerPerformance();
 		performance.setMatches(hard.add(clay).add(grass).add(carpet));

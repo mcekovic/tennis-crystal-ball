@@ -16,8 +16,18 @@ public class Player {
 	private String residence;
 	private int height;
 	private int weight;
+
+	// Tennis
 	private String hand;
 	private String backhand;
+	private boolean active;
+	private int turnedPro;
+	private String coach;
+
+	// Social
+	private String webSite;
+	private String facebook;
+	private String twitter;
 
 	// Titles
 	private int titles;
@@ -38,16 +48,6 @@ public class Player {
 	private int goatRank;
 	private int goatPoints;
 	private int weeksAtNo1;
-
-	// Tennis
-	private boolean active;
-	private int turnedPro;
-	private String coach;
-
-	// Social
-	private String webSite;
-	private String facebook;
-	private String twitter;
 
 	public Player(int id) {
 		this.id = id;
@@ -124,6 +124,9 @@ public class Player {
 		this.weight = weight;
 	}
 
+
+	// Tennis
+
 	public String getHand() {
 		return hand;
 	}
@@ -154,6 +157,57 @@ public class Player {
 
 	public void setBackhand(String backhand) {
 		this.backhand = backhand;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public int getTurnedPro() {
+		return turnedPro;
+	}
+
+	public void setTurnedPro(int turnedPro) {
+		this.turnedPro = turnedPro;
+	}
+
+	public String getCoach() {
+		return coach;
+	}
+
+	public void setCoach(String coach) {
+		this.coach = coach;
+	}
+
+
+	// Social
+
+	public String getWebSite() {
+		return webSite;
+	}
+
+	public void setWebSite(String webSite) {
+		this.webSite = webSite;
+	}
+
+	public String getFacebook() {
+		return facebook;
+	}
+
+	public void setFacebook(String facebook) {
+		this.facebook = facebook;
+	}
+
+	public String getTwitter() {
+		return twitter;
+	}
+
+	public void setTwitter(String twitter) {
+		this.twitter = twitter;
 	}
 
 
@@ -288,59 +342,5 @@ public class Player {
 
 	public void setWeeksAtNo1(int weeksAtNo1) {
 		this.weeksAtNo1 = weeksAtNo1;
-	}
-
-
-	// Tennis
-
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-
-	public int getTurnedPro() {
-		return turnedPro;
-	}
-
-	public void setTurnedPro(int turnedPro) {
-		this.turnedPro = turnedPro;
-	}
-
-	public String getCoach() {
-		return coach;
-	}
-
-	public void setCoach(String coach) {
-		this.coach = coach;
-	}
-
-
-	// Social
-
-	public String getWebSite() {
-		return webSite;
-	}
-
-	public void setWebSite(String webSite) {
-		this.webSite = webSite;
-	}
-
-	public String getFacebook() {
-		return facebook;
-	}
-
-	public void setFacebook(String facebook) {
-		this.facebook = facebook;
-	}
-
-	public String getTwitter() {
-		return twitter;
-	}
-
-	public void setTwitter(String twitter) {
-		this.twitter = twitter;
 	}
 }

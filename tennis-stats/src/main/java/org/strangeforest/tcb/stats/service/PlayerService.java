@@ -24,10 +24,10 @@ public class PlayerService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_SELECT =
-		"SELECT player_id, name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight, hand, backhand,\n" +
+		"SELECT player_id, name, dob, extract(year from age) AS age, country_id, birthplace, residence, height, weight,\n" +
+		"  hand, backhand, active, turned_pro, coach, web_site, facebook, twitter,\n" +
 		"  titles, grand_slams, tour_finals, masters, olympics,\n" +
-		"  current_rank, current_rank_points, best_rank, best_rank_date, current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, goat_rank, goat_points, weeks_at_no1,\n" +
-		"  active, turned_pro, coach, web_site, facebook, twitter\n" +
+		"  current_rank, current_rank_points, best_rank, best_rank_date, current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, goat_rank, goat_points, weeks_at_no1\n" +
 		"FROM player_v";
 
 	private static final String PLAYER_BY_NAME_QUERY = PLAYER_SELECT + "\nWHERE name = :name ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
@@ -177,6 +177,12 @@ public class PlayerService {
 			p.setWeight(rs.getInt("weight"));
 			p.setHand(rs.getString("hand"));
 			p.setBackhand(rs.getString("backhand"));
+			p.setActive(rs.getBoolean("active"));
+			p.setTurnedPro(rs.getInt("turned_pro"));
+			p.setCoach(rs.getString("coach"));
+			p.setWebSite(rs.getString("web_site"));
+			p.setFacebook(rs.getString("facebook"));
+			p.setTwitter(rs.getString("twitter"));
 
 			p.setTitles(rs.getInt("titles"));
 			p.setGrandSlams(rs.getInt("grand_slams"));
@@ -195,13 +201,6 @@ public class PlayerService {
 			p.setGoatRank(rs.getInt("goat_rank"));
 			p.setGoatPoints(rs.getInt("goat_points"));
 			p.setWeeksAtNo1(rs.getInt("weeks_at_no1"));
-
-			p.setActive(rs.getBoolean("active"));
-			p.setTurnedPro(rs.getInt("turned_pro"));
-			p.setCoach(rs.getString("coach"));
-			p.setWebSite(rs.getString("web_site"));
-			p.setFacebook(rs.getString("facebook"));
-			p.setTwitter(rs.getString("twitter"));
 
 			return Optional.of(p);
 		}

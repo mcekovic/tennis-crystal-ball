@@ -94,7 +94,7 @@
 		<th class="text-right" width="40%" th:with="wl=${playerSeason1.overall}">
 			<div th:unless="${wl.empty}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-season progress-bar-overall" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season matches">73%</a>
+					<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season matches">73%</a>
 				</div>
 			</div>
 		</th>
@@ -102,7 +102,7 @@
 		<th class="text-left" width="40%" th:with="wl=${playerSeason2.overall}">
 			<div th:unless="${wl.empty}" class="progress progress-season pull-left">
 				<div class="progress-bar progress-bar-season progress-bar-overall" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season matches">73%</a>
+					<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season matches">73%</a>
 				</div>
 			</div>
 		</th>

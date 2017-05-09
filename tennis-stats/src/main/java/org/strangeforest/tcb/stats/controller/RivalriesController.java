@@ -73,11 +73,19 @@ public class RivalriesController extends PageController {
 	) {
 		Player player1 = playerService.getPlayer(playerId1).get();
 		Player player2 = playerService.getPlayer(playerId2).get();
+		PlayerPerformance playerPerf1 = performanceService.getPlayerPerformance(playerId1);
+		PlayerPerformance playerPerf2 = performanceService.getPlayerPerformance(playerId2);
+		FavoriteSurface favoriteSurface1 = new FavoriteSurface(playerPerf1);
+		FavoriteSurface favoriteSurface2 = new FavoriteSurface(playerPerf2);
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
 		modelMap.addAttribute("player2", player2);
+		modelMap.addAttribute("favoriteSurface1", favoriteSurface1);
+		modelMap.addAttribute("favoriteSurface2", favoriteSurface2);
+		modelMap.addAttribute("playerPerf1", playerPerf1);
+		modelMap.addAttribute("playerPerf2", playerPerf2);
 		modelMap.addAttribute("stats1", stats1);
 		return new ModelAndView("h2hProfiles", modelMap);
 	}

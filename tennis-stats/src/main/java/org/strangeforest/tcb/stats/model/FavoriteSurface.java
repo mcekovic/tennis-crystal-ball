@@ -5,6 +5,7 @@ import java.util.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.Surface.*;
+import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class FavoriteSurface {
 
@@ -12,39 +13,48 @@ public class FavoriteSurface {
 	private final SurfaceGroup surfaceGroup;
 
 	private static final int MIN_MATCHES = 10;
+	private static final double MIN_SURFACE_PCT = 5.0;
 
 	public FavoriteSurface(PlayerPerformance performance) {
-		if (performance.getMatches().getTotal() < MIN_MATCHES) {
+		WonLost overall = performance.getMatches();
+		if (overall.getTotal() < MIN_MATCHES) {
 			surface = null;
 			surfaceGroup = null;
 		}
 		else {
 			List<SurfaceWonPct> surfaces = new ArrayList<>();
-			addSurface(surfaces, performance.getHardMatches(), HARD);
-			addSurface(surfaces, performance.getClayMatches(), CLAY);
-			addSurface(surfaces, performance.getGrassMatches(), GRASS);
-			addSurface(surfaces, performance.getCarpetMatches(), CARPET);
+			addSurface(surfaces, HARD, performance.getHardMatches(), overall);
+			addSurface(surfaces, CLAY, performance.getClayMatches(), overall);
+			addSurface(surfaces, GRASS, performance.getGrassMatches(), overall);
+			addSurface(surfaces, CARPET, performance.getCarpetMatches(), overall);
 			int surfaceCount = surfaces.size();
 			if (surfaceCount > 2) {
 				surfaces.sort(naturalOrder());
-				double maxWonPctGap = 0.0;
-				int maxWonPctGapIndex = 0;
-				for (int index = 1; index < surfaceCount; index++) {
-					double wonPctGap = surfaces.get(index).wonPct - surfaces.get(index - 1).wonPct;
-					if (wonPctGap >= maxWonPctGap) {
-						maxWonPctGap = wonPctGap;
-						maxWonPctGapIndex = index;
-					}
-				}
-				Set<Surface> playedSurfaces = surfaces.stream().map(s -> s.surface).collect(toSet());
-				Set<Surface> favoriteSurfacesSet = surfaces.stream().skip(maxWonPctGapIndex).map(s -> s.surface).collect(toSet());
-				for (SurfaceGroup group : SurfaceGroup.values()) {
-					EnumSet<Surface> groupSurfaces = EnumSet.copyOf(group.getSurfaces());
-					groupSurfaces.retainAll(playedSurfaces);
-					if (groupSurfaces.size() >= 2 && groupSurfaces.equals(favoriteSurfacesSet)) {
-						surface = null;
-						surfaceGroup = group;
-						return;
+				int maxWonPctGapIndex = getMaxWonPctGapIndex(surfaces);
+				List<SurfaceWonPct> favoriteSurfaces = surfaces.stream().skip(maxWonPctGapIndex).collect(toList());
+				int favoriteSurfaceCount = favoriteSurfaces.size();
+				if (favoriteSurfaceCount >= 2) {
+					Set<Surface> playedSurfaces = surfaces.stream().map(s -> s.surface).collect(toSet());
+					for (SurfaceGroup group : SurfaceGroup.values()) {
+						EnumSet<Surface> groupSurfaces = EnumSet.copyOf(group.getSurfaces());
+						groupSurfaces.retainAll(playedSurfaces);
+						int groupSurfaceCount = groupSurfaces.size();
+						if (groupSurfaceCount >= 2) {
+							if (groupSurfaceCount == favoriteSurfaceCount) {
+								if (groupSurfaces.equals(favoriteSurfaces.stream().map(s -> s.surface).collect(toSet()))) {
+									surface = null;
+									surfaceGroup = group;
+									return;
+								}
+							}
+							else if (groupSurfaceCount < favoriteSurfaceCount) {
+								if (groupSurfaces.equals(favoriteSurfaces.stream().skip(getMaxWonPctGapIndex(favoriteSurfaces)).map(s -> s.surface).collect(toSet()))) {
+									surface = null;
+									surfaceGroup = group;
+									return;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -53,9 +63,22 @@ public class FavoriteSurface {
 		}
 	}
 
-	private void addSurface(List<SurfaceWonPct> surfaces, WonLost wonLost, Surface surface) {
-		if (!wonLost.isEmpty())
-			surfaces.add(new SurfaceWonPct(surface, wonLost.getWonPct()));
+	private static int getMaxWonPctGapIndex(List<SurfaceWonPct> surfaces) {
+		double maxWonPctGap = 0.0;
+		int maxWonPctGapIndex = 0;
+		for (int index = 1, count = surfaces.size(); index < count; index++) {
+			double wonPctGap = surfaces.get(index).wonPct - surfaces.get(index - 1).wonPct;
+			if (wonPctGap >= maxWonPctGap) {
+				maxWonPctGap = wonPctGap;
+				maxWonPctGapIndex = index;
+			}
+		}
+		return maxWonPctGapIndex;
+	}
+
+	private void addSurface(List<SurfaceWonPct> surfaces, Surface surface, WonLost surfaceWonLost, WonLost wonLost) {
+		if (!surfaceWonLost.isEmpty() && pct(surfaceWonLost.getTotal(), wonLost.getTotal()) >= MIN_SURFACE_PCT)
+			surfaces.add(new SurfaceWonPct(surface, surfaceWonLost.getWonPct()));
 	}
 
 	public Surface getSurface() {
