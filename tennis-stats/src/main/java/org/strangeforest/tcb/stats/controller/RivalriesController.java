@@ -136,6 +136,8 @@ public class RivalriesController extends PageController {
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season, 4);
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season, 4);
 		List<EventResult> eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet()).stream().limit(4).collect(toList());
+		PlayerSeasonGOATPoints seasonGOATPoints1 = goatPointsService.getPlayerSeasonGOATPoints(playerId1, season);
+		PlayerSeasonGOATPoints seasonGOATPoints2 = goatPointsService.getPlayerSeasonGOATPoints(playerId2, season);
 		PlayerSeason playerSeason1 = performanceService.getPlayerSeasonSummary(playerId1, season);
 		PlayerSeason playerSeason2 = performanceService.getPlayerSeasonSummary(playerId2, season);
 		Set<Surface> surfaces = union(playerSeason1.getSurfaceMatches().keySet(), playerSeason2.getSurfaceMatches().keySet());
@@ -151,6 +153,8 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("eventResults", eventResults);
 		modelMap.addAttribute("seasonHighlights1", seasonHighlights1);
 		modelMap.addAttribute("seasonHighlights2", seasonHighlights2);
+		modelMap.addAttribute("seasonGOATPoints1", seasonGOATPoints1);
+		modelMap.addAttribute("seasonGOATPoints2", seasonGOATPoints2);
 		modelMap.addAttribute("surfaces", surfaces);
 		modelMap.addAttribute("levels", levels);
 		modelMap.addAttribute("oppositions", oppositions);

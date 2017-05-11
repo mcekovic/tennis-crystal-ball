@@ -272,3 +272,19 @@ a.black:focus {
 .no-diff {
 	color: darkgray;
 }
+.progress-bar-overall {
+	background-color: #555;
+	font-size: 14px;
+}
+.progress-bar-perf {
+	background-color: cornflowerblue;
+	font-size: 14px;
+}
+.progress-bar-perf-w {
+	background-color: mediumseagreen;
+	font-size: 14px;
+}
+.progress-bar-perf-l {
+	background-color: #dd7777;
+	font-size: 14px;
+}

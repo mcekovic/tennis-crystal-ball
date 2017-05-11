@@ -18,16 +18,13 @@
 <br/>
 <table class="table table-condensed text-nowrap">
 	<style scoped="scoped">
+		.label-overall {
+			background-color: #555;
+		}
 		.progress-profile {
 			width: 200px;
 			background-color: #dddddd;
 			margin-bottom: 0;
-		}
-		.progress-bar-profile {
-			font-size: 14px;
-		}
-		.progress-bar-overall {
-			background-color: #555;
 		}
 		.progress-bar > a {
 			color: white;
@@ -186,87 +183,87 @@
 	<tr th:if="${!playerPerf1.matches.empty || !playerPerf2.matches.empty}">
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	<tr th:if="${!playerPerf1.matches.empty || !playerPerf2.matches.empty}">
-		<th class="text-right" th:with="wl=${playerPerf1.matches}">
-			<div th:unless="${wl.empty}" class="progress progress-profile pull-right">
-				<div class="progress-bar progress-bar-profile progress-bar-overall" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=matches)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show matches">73%</a>
+	<tr th:if="${!playerPerf1.matches.empty || !playerPerf2.matches.empty}" th:with="wl1=${playerPerf1.matches}, wl2=${playerPerf2.matches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
+		<th class="text-right">
+			<div th:unless="${wl1.empty}" class="progress progress-profile pull-right">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=matches)}" th:text="|${wl1.wonPctStr} (${wl1.getWL()})|" title="Show matches">73%</a>
 				</div>
 			</div>
 		</th>
-		<th class="text-center">Overall</th>
-		<th class="text-left" th:with="wl=${playerPerf2.matches}">
-			<div th:unless="${wl.empty}" class="progress progress-profile pull-left">
-				<div class="progress-bar progress-bar-profile progress-bar-overall" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=matches)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show matches">73%</a>
-				</div>
-			</div>
-		</th>
-	</tr>
-	<tr th:if="${!playerPerf1.hardMatches.empty || !playerPerf2.hardMatches.empty}">
-		<th class="text-right" th:with="wl=${playerPerf1.hardMatches}">
-			<div th:unless="${wl.empty}" class="progress progress-profile pull-right">
-				<div class="progress-bar progress-bar-profile progress-bar-primary" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=matches, surface=H)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show hard matches">73%</a>
-				</div>
-			</div>
-		</th>
-		<th class="text-center">Hard</th>
-		<th class="text-left" th:with="wl=${playerPerf2.hardMatches}">
-			<div th:unless="${wl.empty}" class="progress progress-profile pull-left">
-				<div class="progress-bar progress-bar-profile progress-bar-primary" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=matches, surface=H)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show hard matches">73%</a>
+		<th class="text-center"><span class="label label-overall">Overall</span></th>
+		<th class="text-left">
+			<div th:unless="${wl2.empty}" class="progress progress-profile pull-left">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=matches)}" th:text="|${wl2.wonPctStr} (${wl2.getWL()})|" title="Show matches">73%</a>
 				</div>
 			</div>
 		</th>
 	</tr>
-	<tr th:if="${!playerPerf1.clayMatches.empty || !playerPerf2.clayMatches.empty}">
-		<th class="text-right" th:with="wl=${playerPerf1.clayMatches}">
-			<div th:unless="${wl.empty}" class="progress progress-profile pull-right">
-				<div class="progress-bar progress-bar-profile progress-bar-danger" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=matches, surface=C)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show clay matches">73%</a>
+	<tr th:if="${!playerPerf1.hardMatches.empty || !playerPerf2.hardMatches.empty}" th:with="wl1=${playerPerf1.hardMatches}, wl2=${playerPerf2.hardMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
+		<th class="text-right">
+			<div th:unless="${wl1.empty}" class="progress progress-profile pull-right">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=matches, surface=H)}" th:text="|${wl1.wonPctStr} (${wl1.getWL()})|" title="Show hard matches">73%</a>
 				</div>
 			</div>
 		</th>
-		<th class="text-center">Clay</th>
-		<th class="text-left" th:with="wl=${playerPerf2.clayMatches}">
-			<div th:unless="${wl.empty}" class="progress progress-profile pull-left">
-				<div class="progress-bar progress-bar-profile progress-bar-danger" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=matches, surface=C)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show clay matches">73%</a>
-				</div>
-			</div>
-		</th>
-	</tr>
-	<tr th:if="${!playerPerf1.grassMatches.empty || !playerPerf2.grassMatches.empty}">
-		<th class="text-right" th:with="wl=${playerPerf1.grassMatches}">
-			<div th:unless="${wl.empty}" class="progress progress-profile pull-right">
-				<div class="progress-bar progress-bar-profile progress-bar-success" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=matches, surface=G)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show grass matches">73%</a>
-				</div>
-			</div>
-		</th>
-		<th class="text-center">Grass</th>
-		<th class="text-left" th:with="wl=${playerPerf2.grassMatches}">
-			<div th:unless="${wl.empty}" class="progress progress-profile pull-left">
-				<div class="progress-bar progress-bar-profile progress-bar-success" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=matches, surface=G)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show grass matches">73%</a>
+		<th class="text-center"><span class="label label-primary">Hard</span></th>
+		<th class="text-left">
+			<div th:unless="${wl2.empty}" class="progress progress-profile pull-left">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=matches, surface=H)}" th:text="|${wl2.wonPctStr} (${wl2.getWL()})|" title="Show hard matches">73%</a>
 				</div>
 			</div>
 		</th>
 	</tr>
-	<tr th:if="${!playerPerf1.carpetMatches.empty || !playerPerf2.carpetMatches.empty}">
-		<th class="text-right" th:with="wl=${playerPerf1.carpetMatches}">
-			<div th:unless="${wl.empty}" class="progress progress-profile pull-right">
-				<div class="progress-bar progress-bar-profile progress-bar-warning" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=matches, surface=P)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show carpet matches">73%</a>
+	<tr th:if="${!playerPerf1.clayMatches.empty || !playerPerf2.clayMatches.empty}" th:with="wl1=${playerPerf1.clayMatches}, wl2=${playerPerf2.clayMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
+		<th class="text-right">
+			<div th:unless="${wl1.empty}" class="progress progress-profile pull-right">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=matches, surface=C)}" th:text="|${wl1.wonPctStr} (${wl1.getWL()})|" title="Show clay matches">73%</a>
 				</div>
 			</div>
 		</th>
-		<th class="text-center">Carpet</th>
-		<th class="text-left" th:with="wl=${playerPerf2.carpetMatches}">
-			<div th:unless="${wl.empty}" class="progress progress-profile pull-left">
-				<div class="progress-bar progress-bar-profile progress-bar-warning" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=matches, surface=P)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show carpet matches">73%</a>
+		<th class="text-center"><span class="label label-danger">Clay</span></th>
+		<th class="text-left">
+			<div th:unless="${wl2.empty}" class="progress progress-profile pull-left">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=matches, surface=C)}" th:text="|${wl2.wonPctStr} (${wl2.getWL()})|" title="Show clay matches">73%</a>
+				</div>
+			</div>
+		</th>
+	</tr>
+	<tr th:if="${!playerPerf1.grassMatches.empty || !playerPerf2.grassMatches.empty}" th:with="wl1=${playerPerf1.grassMatches}, wl2=${playerPerf2.grassMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
+		<th class="text-right">
+			<div th:unless="${wl1.empty}" class="progress progress-profile pull-right">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=matches, surface=G)}" th:text="|${wl1.wonPctStr} (${wl1.getWL()})|" title="Show grass matches">73%</a>
+				</div>
+			</div>
+		</th>
+		<th class="text-center"><span class="label label-success">Grass</span></th>
+		<th class="text-left">
+			<div th:unless="${wl2.empty}" class="progress progress-profile pull-left">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=matches, surface=G)}" th:text="|${wl2.wonPctStr} (${wl2.getWL()})|" title="Show grass matches">73%</a>
+				</div>
+			</div>
+		</th>
+	</tr>
+	<tr th:if="${!playerPerf1.carpetMatches.empty || !playerPerf2.carpetMatches.empty}" th:with="wl1=${playerPerf1.carpetMatches}, wl2=${playerPerf2.carpetMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
+		<th class="text-right">
+			<div th:unless="${wl1.empty}" class="progress progress-profile pull-right">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=matches, surface=P)}" th:text="|${wl1.wonPctStr} (${wl1.getWL()})|" title="Show carpet matches">73%</a>
+				</div>
+			</div>
+		</th>
+		<th class="text-center"><span class="label label-warning">Carpet</span></th>
+		<th class="text-left">
+			<div th:unless="${wl2.empty}" class="progress progress-profile pull-left">
+				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=matches, surface=P)}" th:text="|${wl2.wonPctStr} (${wl2.getWL()})|" title="Show carpet matches">73%</a>
 				</div>
 			</div>
 		</th>

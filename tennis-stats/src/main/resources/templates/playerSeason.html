@@ -3,6 +3,7 @@
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="seasonHighlights" type="java.util.Map<org.strangeforest.tcb.stats.model.EventResult, List<org.strangeforest.tcb.stats.model.PlayerTournamentEvent>>"*/-->
+<!--/*@thymesVar id="seasonGOATPoints" type="org.strangeforest.tcb.stats.model.PlayerSeasonGOATPoints"*/-->
 <!--/*@thymesVar id="playerSeason" type="org.strangeforest.tcb.stats.model.PlayerSeason"*/-->
 <th:block th:unless="${seasons.empty}">
 <script type="text/javascript" th:inline="javascript">
@@ -24,12 +25,6 @@
 	}
 	.progress-bar-season {
 		font-size: 14px;
-	}
-	.progress-bar-default {
-		background-color: cornflowerblue;
-	}
-	.progress-bar-overall {
-		background-color: #555;
 	}
 	.progress-bar > a {
 		color: white;
@@ -68,6 +63,16 @@
 		</th>
 	</tr>
 </table>
+<div th:if="${seasonGOATPoints}" class="row" style="margin-bottom: 20px">
+	<div class="col-md-12">
+		<span class="text-nowrap" style="margin-left: 5px; margin-right: 10px"><strong>GOAT Points</strong> <a th:href="@{/playerProfile(playerId=${playerId}, tab=goatPoints, season=${season})}" class="label label-primary" th:text="${seasonGOATPoints.totalPoints}" title="Show season GOAT points">35</a></span>
+		<span class="text-nowrap" style="margin-right: 5px" th:if="${seasonGOATPoints.tournamentPoints > 0}">Tournament Pts. <span class="label label-info" th:text="${seasonGOATPoints.tournamentPoints}">25</span></span>
+		<span class="text-nowrap" style="margin-right: 5px" th:if="${seasonGOATPoints.rankingPoints > 0}">Ranking Pts. <span class="label label-info" th:text="${seasonGOATPoints.rankingPoints}"
+		   th:title="${(seasonGOATPoints.yearEndRankPoints > 0 ? 'Year-end ranking: ' + seasonGOATPoints.yearEndRankPoints : '') + (seasonGOATPoints.weeksAtNo1Points > 0 ? ' Weeks at No. 1: ' + seasonGOATPoints.weeksAtNo1Points : '') + (seasonGOATPoints.weeksAtEloTopNPoints > 0 ? ' Weeks at Elo Top 5: ' + seasonGOATPoints.weeksAtEloTopNPoints : '')}">5</span></span>
+		<span class="text-nowrap" th:if="${seasonGOATPoints.achievementsPoints > 0}">Achievements Pts. <span class="label label-info" th:text="${seasonGOATPoints.achievementsPoints}"
+			th:title="${(seasonGOATPoints.bigWinsPoints > 0 ? 'Big wins: ' + seasonGOATPoints.bigWinsPoints : '') + (seasonGOATPoints.grandSlamPoints > 0 ? ' Grand Slam: ' + seasonGOATPoints.grandSlamPoints : '')}">5</span></span>
+	</div>
+</div>
 <div class="row">
 	<div class="col-md-3">
 		<table id="playerSeasonSurface" class="table table-condensed text-nowrap">
@@ -75,7 +80,7 @@
 				<th>Overall</th>
 				<th th:with="wl=${playerSeason.overall}">
 					<div th:unless="${wl.empty}" class="progress progress-season">
-						<div class="progress-bar progress-bar-season progress-bar-overall" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<div class="progress-bar progress-bar-overall" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season matches">73%</a>
 						</div>
 					</div>
@@ -113,7 +118,7 @@
 				<th th:text="${opposition.text}">Vs No. 1</th>
 				<th>
 					<div class="progress progress-season">
-						<div class="progress-bar progress-bar-season progress-bar-default" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<div class="progress-bar progress-bar-perf" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, opponent=${opposition})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:title="|Show season ${opposition.text} matches|">73%</a>
 						</div>
 					</div>
@@ -127,7 +132,7 @@
 				<th th:text="${round.text}">Final</th>
 				<th>
 					<div class="progress progress-season">
-						<div class="progress-bar progress-bar-season progress-bar-default" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<div class="progress-bar progress-bar-perf" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, round=${round.code})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:title="|Show season ${round.text} matches|">73%</a>
 						</div>
 					</div>

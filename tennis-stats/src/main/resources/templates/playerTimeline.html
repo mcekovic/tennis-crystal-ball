@@ -74,7 +74,7 @@
 		<th>Tournament</th>
 		<th>Surface</th>
 		<th th:each="season : ${timeline.seasons}" class="season">
-			<a th:href="@{playerProfile(playerId=${playerId}, tab=tournaments, season=${season})}" th:text="${season}" class="season" title="Show season results">2015</a>
+			<a th:href="@{playerProfile(playerId=${playerId}, tab=season, season=${season})}" th:text="${season}" class="season" title="Show season">2015</a>
 		</th>
 	</tr>
 	</thead>
@@ -89,7 +89,7 @@
 		<th>Tournament</th>
 		<th>Surface</th>
 		<th th:each="season : ${timeline.seasons}" class="season">
-			<a th:href="@{playerProfile(playerId=${playerId}, tab=tournaments, season=${season})}" th:text="${season}" class="season" title="Show season results">2015</a>
+			<a th:href="@{playerProfile(playerId=${playerId}, tab=season, season=${season})}" th:text="${season}" class="season" title="Show season">2015</a>
 		</th>
 	</tr>
 	</thead>
@@ -109,7 +109,7 @@
 		</th>
 		<th class="text-center">Career</th>
 		<th th:each="season : ${timeline.seasons}" class="season">
-			<a th:href="@{playerProfile(playerId=${playerId}, tab=tournaments, season=${season})}" th:text="${season}" class="season" title="Show season results">2015</a>
+			<a th:href="@{playerProfile(playerId=${playerId}, tab=season, season=${season})}" th:text="${season}" class="season" title="Show season">2015</a>
 		</th>
 	</tr>
 	</thead>
@@ -125,7 +125,7 @@
 		</th>
 		<th class="text-center">Career</th>
 		<th th:each="season : ${timeline.seasons}" class="season">
-			<a th:href="@{playerProfile(playerId=${playerId}, tab=tournaments, season=${season})}" th:text="${season}" class="season" title="Show season results">2015</a>
+			<a th:href="@{playerProfile(playerId=${playerId}, tab=season, season=${season})}" th:text="${season}" class="season" title="Show season">2015</a>
 		</th>
 	</tr>
 	</thead>
