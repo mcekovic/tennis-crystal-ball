@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import static java.lang.String.*;
 import static java.util.Collections.*;
@@ -126,7 +127,12 @@ public class TournamentForecastService {
 	@Cacheable("InProgressEventForecast")
 	public InProgressEventForecast getInProgressEventForecast(int inProgressEventId) {
 		MapSqlParameterSource inProgressEventIdParam = params("inProgressEventId", inProgressEventId);
-		InProgressEvent inProgressEvent = jdbcTemplate.queryForObject(IN_PROGRESS_EVENT_QUERY, inProgressEventIdParam, (rs, rowNum) -> mapInProgressEvent(rs));
+		InProgressEvent inProgressEvent = jdbcTemplate.query(IN_PROGRESS_EVENT_QUERY, inProgressEventIdParam, rs -> {
+			if (rs.next())
+				return mapInProgressEvent(rs);
+			else
+				throw new NotFoundException("In-progress event", inProgressEventId);
+		});
 		List<FavoritePlayer> favorites = jdbcTemplate.query(FIND_FAVORITES_QUERY, inProgressEventIdParam, this::mapFavoritePlayer);
 		inProgressEvent.setFavorites(favorites);
 		InProgressEventForecast forecast = new InProgressEventForecast(inProgressEvent);
