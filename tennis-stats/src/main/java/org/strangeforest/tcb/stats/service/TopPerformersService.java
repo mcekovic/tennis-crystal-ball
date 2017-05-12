@@ -24,11 +24,11 @@ public class TopPerformersService {
 
 	private static final int MAX_PLAYER_COUNT          = 1000;
 	private static final int MIN_ENTRIES_SEASON_FACTOR =   10;
-	private static final Map<Range<Integer>, Integer> MIN_ENTRIES_TOURNAMENT_FACTOR = ImmutableMap.<Range<Integer>, Integer>builder()
-		.put(Range.closed(1, 2), 100)
-		.put(Range.closed(3, 5), 50)
-		.put(Range.closed(6, 9), 25)
-		.put(Range.atLeast(5), 20)
+	private static final Map<Range<Integer>, Double> MIN_ENTRIES_TOURNAMENT_FACTOR = ImmutableMap.<Range<Integer>, Double>builder()
+		.put(Range.closed(1, 2), 100.0)
+		.put(Range.closed(3, 5), 50.0)
+		.put(Range.closed(6, 9), 25.0)
+		.put(Range.atLeast(5), 20.0)
 	.build();
 
 	private static final String SEASONS_QUERY =
@@ -126,7 +126,7 @@ public class TopPerformersService {
 		return Math.max(minEntries, 2);
 	}
 
-	private int getMinEntriesTournamentFactor(int eventCount) {
+	private double getMinEntriesTournamentFactor(int eventCount) {
 		return MIN_ENTRIES_TOURNAMENT_FACTOR.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().get().getValue();
 	}
 }

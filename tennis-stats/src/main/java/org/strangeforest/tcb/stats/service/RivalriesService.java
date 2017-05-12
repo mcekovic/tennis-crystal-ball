@@ -1,7 +1,6 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.io.*;
-import java.lang.String;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -14,6 +13,7 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import com.fasterxml.jackson.databind.*;
 import com.google.common.collect.*;
@@ -329,12 +329,36 @@ public class RivalriesService {
 		if (filter.hasSeason())
 			minMatches /= MIN_MATCHES_SEASON_FACTOR;
 		if (filter.hasLevel())
-			minMatches /= MIN_MATCHES_LEVEL_FACTOR.get(filter.getLevel());
+			minMatches /= getMinMatchesLevelFactor(filter.getLevel());
 		if (filter.hasSurface())
-			minMatches /= MIN_MATCHES_SURFACE_FACTOR.get(filter.getSurface());
+			minMatches /= getMinMatchesSurfaceFactor(filter.getSurface());
 		if (filter.hasRound())
-			minMatches /= MIN_MATCHES_ROUND_FACTOR.get(filter.getRound());
+			minMatches /= getMinMatchesRoundFactor(filter.getRound());
 		return Math.max((int)Math.round(minMatches), MIN_GREATEST_RIVALRIES_MATCHES_MIN);
+	}
+
+	private double getMinMatchesLevelFactor(String level) {
+		Double factor = MIN_MATCHES_LEVEL_FACTOR.get(level);
+		if (factor != null)
+			return factor;
+		else
+			throw new NotFoundException("Level factor", level);
+	}
+
+	private double getMinMatchesSurfaceFactor(String surface) {
+		Double factor = MIN_MATCHES_SURFACE_FACTOR.get(surface);
+		if (factor != null)
+			return factor;
+		else
+			throw new NotFoundException("Surface factor", surface);
+	}
+
+	private double getMinMatchesRoundFactor(String round) {
+		Double factor = MIN_MATCHES_ROUND_FACTOR.get(round);
+		if (factor != null)
+			return factor;
+		else
+			throw new NotFoundException("Round factor", round);
 	}
 
 

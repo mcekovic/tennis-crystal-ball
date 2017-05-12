@@ -322,7 +322,7 @@ public class RivalriesController extends PageController {
 
 	private Date dateForMatchup(String dateSelector, LocalDate playerDate, LocalDate date, Player player) {
 		if (!isNullOrEmpty(dateSelector))
-			return selectDate(player.getId(), dateSelector);
+			return selectDate(player, dateSelector);
 		else if (playerDate != null)
 			return toDate(playerDate);
 		else if (date != null)
@@ -331,7 +331,8 @@ public class RivalriesController extends PageController {
 			return defaultDate(player);
 	}
 
-	private Date selectDate(int playerId, String dateSelector) {
+	private Date selectDate(Player player, String dateSelector) {
+		int playerId = player.getId();
 		switch (dateSelector) {
 			case "Today": return toDate(LocalDate.now());
 			case "CareerEnd": return playerService.getPlayerCareerEnd(playerId);
@@ -347,7 +348,7 @@ public class RivalriesController extends PageController {
 			case "PeakGrassEloRating": return rankingsService.getRankingHighlights(playerId).getBestGrassEloRatingDate();
 			case "PeakCarpetEloRank": return rankingsService.getRankingHighlights(playerId).getBestCarpetEloRankDate();
 			case "PeakCarpetEloRating": return rankingsService.getRankingHighlights(playerId).getBestCarpetEloRatingDate();
-			default: return null;
+			default: return defaultDate(player);
 		}
 	}
 

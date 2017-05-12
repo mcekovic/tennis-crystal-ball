@@ -49,6 +49,7 @@
 			$search.before($("#categoryDiv").remove());
 			$search.before($("#seasonDiv").remove());
 			$search.before($("#activeDiv").remove());
+			$search.after($("#clearDiv").remove());
 			setBootgridTitle($topPerformersTableHeader, $("#topPerformersTable-title"));
 			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
@@ -76,6 +77,14 @@
 			$active.prop("disabled", forSeason);
 			reloadTopPerformers();
 		}
+		function clearTopPerformersFilter() {
+			$("#season").val("");
+			var $active = $("#active");
+			$active.prop("checked", false);
+			$active.prop("disabled", false);
+			$("#topPerformersTable").bootgrid("search", "");
+			reloadTopPerformers();
+		}
 	</script>
 </head>
 <body class="container">
@@ -100,6 +109,11 @@
 				<input id="active" type="checkbox" onchange="reloadTopPerformers()"/> Active
 			</label>
 		</div>
+	</div>
+	<div id="clearDiv" class="btn-group margin-right">
+		<button type="button" class="btn btn-default" onclick="clearTopPerformersFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+			<span class="glyphicon glyphicon-erase"></span>
+		</button>
 	</div>
 	<table id="topPerformersTable" class="table table-condensed table-hover table-striped">
 		<thead>
