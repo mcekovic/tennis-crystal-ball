@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.function.*;
 import java.util.regex.*;
 
+import org.strangeforest.tcb.stats.util.*;
+
 import static org.strangeforest.tcb.stats.model.StatsCategory.Type.*;
 
 public final class StatsCategory {
@@ -99,7 +101,7 @@ public final class StatsCategory {
 	public static StatsCategory get(String category) {
 		StatsCategory statsCategory = CATEGORIES.get(category);
 		if (statsCategory == null)
-			throw new IllegalArgumentException("Unknown statistics category: " + category);
+			throw new NotFoundException("Statistics category", category);
 		return statsCategory;
 	}
 

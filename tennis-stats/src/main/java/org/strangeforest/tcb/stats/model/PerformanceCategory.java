@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.util.*;
+
 public final class PerformanceCategory {
 
 	// Factory
@@ -51,7 +53,7 @@ public final class PerformanceCategory {
 	public static PerformanceCategory get(String category) {
 		PerformanceCategory perfCategory = CATEGORIES.get(category);
 		if (perfCategory == null)
-			throw new IllegalArgumentException("Unknown performance category: " + category);
+			throw new NotFoundException("Performance category", category);
 		return perfCategory;
 	}
 

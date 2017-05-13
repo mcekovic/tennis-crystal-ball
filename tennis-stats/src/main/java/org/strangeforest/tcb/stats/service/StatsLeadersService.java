@@ -27,11 +27,11 @@ public class StatsLeadersService {
 	private static final int MIN_ENTRIES_SEASON_FACTOR  =    10;
 	private static final int MIN_ENTRIES_SURFACE_FACTOR =     4;
 	private static final int MIN_ENTRIES_EVENT_FACTOR   =   100;
-	private static final Map<Range<Integer>, Integer> MIN_ENTRIES_TOURNAMENT_FACTOR = ImmutableMap.<Range<Integer>, Integer>builder()
-		.put(Range.closed(1, 2), 100)
-		.put(Range.closed(3, 5), 50)
-		.put(Range.closed(6, 9), 25)
-		.put(Range.atLeast(10), 20)
+	private static final Map<Range<Integer>, Double> MIN_ENTRIES_TOURNAMENT_FACTOR = ImmutableMap.<Range<Integer>, Double>builder()
+		.put(Range.closed(1, 2), 100.0)
+		.put(Range.closed(3, 5), 50.0)
+		.put(Range.closed(6, 9), 25.0)
+		.put(Range.atLeast(10), 20.0)
 	.build();
 
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
@@ -166,7 +166,7 @@ public class StatsLeadersService {
 		return Math.max(minEntries, 2);
 	}
 
-	private int getMinEntriesTournamentFactor(int eventCount) {
+	private double getMinEntriesTournamentFactor(int eventCount) {
 		return MIN_ENTRIES_TOURNAMENT_FACTOR.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().get().getValue();
 	}
 }
