@@ -73,10 +73,10 @@ public class RivalriesController extends PageController {
 	) {
 		Player player1 = playerService.getPlayer(playerId1).get();
 		Player player2 = playerService.getPlayer(playerId2).get();
-		PlayerPerformance playerPerf1 = performanceService.getPlayerPerformance(playerId1);
-		PlayerPerformance playerPerf2 = performanceService.getPlayerPerformance(playerId2);
-		FavoriteSurface favoriteSurface1 = new FavoriteSurface(playerPerf1);
-		FavoriteSurface favoriteSurface2 = new FavoriteSurface(playerPerf2);
+		PlayerPerformance performance1 = performanceService.getPlayerPerformance(playerId1);
+		PlayerPerformance performance2 = performanceService.getPlayerPerformance(playerId2);
+		FavoriteSurface favoriteSurface1 = new FavoriteSurface(performance1);
+		FavoriteSurface favoriteSurface2 = new FavoriteSurface(performance2);
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2));
 
 		ModelMap modelMap = new ModelMap();
@@ -84,8 +84,8 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("player2", player2);
 		modelMap.addAttribute("favoriteSurface1", favoriteSurface1);
 		modelMap.addAttribute("favoriteSurface2", favoriteSurface2);
-		modelMap.addAttribute("playerPerf1", playerPerf1);
-		modelMap.addAttribute("playerPerf2", playerPerf2);
+		modelMap.addAttribute("performance1", performance1);
+		modelMap.addAttribute("performance2", performance2);
 		modelMap.addAttribute("stats1", stats1);
 		return new ModelAndView("h2hProfiles", modelMap);
 	}
@@ -138,12 +138,12 @@ public class RivalriesController extends PageController {
 		List<EventResult> eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet()).stream().limit(4).collect(toList());
 		PlayerSeasonGOATPoints seasonGOATPoints1 = goatPointsService.getPlayerSeasonGOATPoints(playerId1, season);
 		PlayerSeasonGOATPoints seasonGOATPoints2 = goatPointsService.getPlayerSeasonGOATPoints(playerId2, season);
-		PlayerSeason playerSeason1 = performanceService.getPlayerSeasonSummary(playerId1, season);
-		PlayerSeason playerSeason2 = performanceService.getPlayerSeasonSummary(playerId2, season);
-		Set<Surface> surfaces = union(playerSeason1.getSurfaceMatches().keySet(), playerSeason2.getSurfaceMatches().keySet());
-		Set<TournamentLevel> levels = union(playerSeason1.getLevelMatches().keySet(), playerSeason2.getLevelMatches().keySet());
-		Set<Opponent> oppositions = union(playerSeason1.getOppositionMatches().keySet(), playerSeason2.getOppositionMatches().keySet());
-		Set<Round> rounds = union(playerSeason1.getRoundMatches().keySet(), playerSeason2.getRoundMatches().keySet());
+		PlayerPerformanceEx performance1 = performanceService.getPlayerSeasonPerformanceEx(playerId1, season);
+		PlayerPerformanceEx performance2 = performanceService.getPlayerSeasonPerformanceEx(playerId2, season);
+		Set<Surface> surfaces = union(performance1.getSurfaceMatches().keySet(), performance2.getSurfaceMatches().keySet());
+		Set<TournamentLevel> levels = union(performance1.getLevelMatches().keySet(), performance2.getLevelMatches().keySet());
+		Set<Opponent> oppositions = union(performance1.getOppositionMatches().keySet(), performance2.getOppositionMatches().keySet());
+		Set<Round> rounds = union(performance1.getRoundMatches().keySet(), performance2.getRoundMatches().keySet());
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
@@ -159,8 +159,8 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("levels", levels);
 		modelMap.addAttribute("oppositions", oppositions);
 		modelMap.addAttribute("rounds", rounds);
-		modelMap.addAttribute("playerSeason1", playerSeason1);
-		modelMap.addAttribute("playerSeason2", playerSeason2);
+		modelMap.addAttribute("performance1", performance1);
+		modelMap.addAttribute("performance2", performance2);
 		return new ModelAndView("h2hSeason", modelMap);
 	}
 

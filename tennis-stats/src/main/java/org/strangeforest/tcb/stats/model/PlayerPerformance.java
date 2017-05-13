@@ -24,6 +24,30 @@ public class PlayerPerformance {
 	private WonLost afterLosingFirstSet;
 	private WonLost tieBreaks;
 
+	public PlayerPerformance() {}
+
+	public PlayerPerformance(PlayerPerformance perf) {
+		matches = perf.matches;
+		grandSlamMatches = perf.grandSlamMatches;
+		tourFinalsMatches = perf.tourFinalsMatches;
+		mastersMatches = perf.mastersMatches;
+		olympicsMatches = perf.olympicsMatches;
+		hardMatches = perf.hardMatches;
+		clayMatches = perf.clayMatches;
+		grassMatches = perf.grassMatches;
+		carpetMatches = perf.carpetMatches;
+
+		decidingSets = perf.decidingSets;
+		fifthSets = perf.fifthSets;
+		finals = perf.finals;
+		vsNo1 = perf.vsNo1;
+		vsTop5 = perf.vsTop5;
+		vsTop10 = perf.vsTop10;
+		afterWinningFirstSet = perf.afterWinningFirstSet;
+		afterLosingFirstSet = perf.afterLosingFirstSet;
+		tieBreaks = perf.tieBreaks;
+	}
+
 
 	// Performance
 

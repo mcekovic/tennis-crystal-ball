@@ -1,7 +1,7 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"*/-->
 <!--/*@thymesVar id="favoriteSurface" type="org.strangeforest.tcb.stats.model.FavoriteSurface"*/-->
-<!--/*@thymesVar id="playerPerf" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
+<!--/*@thymesVar id="performance" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
 <!--/*@thymesVar id="playerH2H" type="org.strangeforest.tcb.stats.model.WonDrawLost"*/-->
 <script type="text/javascript">
 	$(function() {
@@ -155,7 +155,7 @@
 				color: white;
 			}
 		</style>
-		<th:block th:with="wl=${playerPerf.matches}">
+		<th:block th:with="wl=${performance.matches}">
 		<table th:unless="${wl.empty}" class="table table-condensed text-nowrap">
 			<tr>
 				<th>Overall</th>
@@ -168,7 +168,7 @@
 				</th>
 			</tr>
 			</th:block>
-			<th:block th:with="wl=${playerPerf.hardMatches}">
+			<th:block th:with="wl=${performance.hardMatches}">
 			<tr th:unless="${wl.empty}">
 				<th>Hard</th>
 				<th>
@@ -180,7 +180,7 @@
 				</th>
 			</tr>
 			</th:block>
-			<th:block th:with="wl=${playerPerf.clayMatches}">
+			<th:block th:with="wl=${performance.clayMatches}">
 			<tr th:unless="${wl.empty}">
 				<th>Clay</th>
 				<th>
@@ -192,7 +192,7 @@
 				</th>
 			</tr>
 			</th:block>
-			<th:block th:with="wl=${playerPerf.grassMatches}">
+			<th:block th:with="wl=${performance.grassMatches}">
 			<tr th:unless="${wl.empty}">
 				<th>Grass</th>
 				<th>
@@ -204,7 +204,7 @@
 				</th>
 			</tr>
 			</th:block>
-			<th:block th:with="wl=${playerPerf.carpetMatches}">
+			<th:block th:with="wl=${performance.carpetMatches}">
 			<tr th:unless="${wl.empty}">
 				<th>Carpet</th>
 				<th>

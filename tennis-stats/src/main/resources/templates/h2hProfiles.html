@@ -3,8 +3,8 @@
 <!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.Player"*/-->
 <!--/*@thymesVar id="favoriteSurface1" type="org.strangeforest.tcb.stats.model.FavoriteSurface"*/-->
 <!--/*@thymesVar id="favoriteSurface2" type="org.strangeforest.tcb.stats.model.FavoriteSurface"*/-->
-<!--/*@thymesVar id="playerPerf1" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
-<!--/*@thymesVar id="playerPerf2" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
+<!--/*@thymesVar id="performance1" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
+<!--/*@thymesVar id="performance2" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
 <!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 <script type="text/javascript">
 	$(function() {
@@ -180,10 +180,10 @@
 		<td class="text-left" th:text="${player2.weeksAtNo1 > 0 ? player2.weeksAtNo1 : _}">50</td>
 	</tr>
 	<!-- Performance -->
-	<tr th:if="${!playerPerf1.matches.empty || !playerPerf2.matches.empty}">
+	<tr th:if="${!performance1.matches.empty || !performance2.matches.empty}">
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	<tr th:if="${!playerPerf1.matches.empty || !playerPerf2.matches.empty}" th:with="wl1=${playerPerf1.matches}, wl2=${playerPerf2.matches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr th:if="${!performance1.matches.empty || !performance2.matches.empty}" th:with="wl1=${performance1.matches}, wl2=${performance2.matches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:unless="${wl1.empty}" class="progress progress-profile pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -200,7 +200,7 @@
 			</div>
 		</th>
 	</tr>
-	<tr th:if="${!playerPerf1.hardMatches.empty || !playerPerf2.hardMatches.empty}" th:with="wl1=${playerPerf1.hardMatches}, wl2=${playerPerf2.hardMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr th:if="${!performance1.hardMatches.empty || !performance2.hardMatches.empty}" th:with="wl1=${performance1.hardMatches}, wl2=${performance2.hardMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:unless="${wl1.empty}" class="progress progress-profile pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -217,7 +217,7 @@
 			</div>
 		</th>
 	</tr>
-	<tr th:if="${!playerPerf1.clayMatches.empty || !playerPerf2.clayMatches.empty}" th:with="wl1=${playerPerf1.clayMatches}, wl2=${playerPerf2.clayMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr th:if="${!performance1.clayMatches.empty || !performance2.clayMatches.empty}" th:with="wl1=${performance1.clayMatches}, wl2=${performance2.clayMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:unless="${wl1.empty}" class="progress progress-profile pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -234,7 +234,7 @@
 			</div>
 		</th>
 	</tr>
-	<tr th:if="${!playerPerf1.grassMatches.empty || !playerPerf2.grassMatches.empty}" th:with="wl1=${playerPerf1.grassMatches}, wl2=${playerPerf2.grassMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr th:if="${!performance1.grassMatches.empty || !performance2.grassMatches.empty}" th:with="wl1=${performance1.grassMatches}, wl2=${performance2.grassMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:unless="${wl1.empty}" class="progress progress-profile pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -251,7 +251,7 @@
 			</div>
 		</th>
 	</tr>
-	<tr th:if="${!playerPerf1.carpetMatches.empty || !playerPerf2.carpetMatches.empty}" th:with="wl1=${playerPerf1.carpetMatches}, wl2=${playerPerf2.carpetMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr th:if="${!performance1.carpetMatches.empty || !performance2.carpetMatches.empty}" th:with="wl1=${performance1.carpetMatches}, wl2=${performance2.carpetMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:unless="${wl1.empty}" class="progress progress-profile pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">

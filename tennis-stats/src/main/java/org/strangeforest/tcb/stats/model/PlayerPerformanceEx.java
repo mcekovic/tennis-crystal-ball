@@ -4,31 +4,30 @@ import java.util.*;
 
 import org.strangeforest.tcb.stats.service.*;
 
-public class PlayerSeason {
+public class PlayerPerformanceEx extends PlayerPerformance {
 
-	private final WonLost overall;
 	private final Map<Surface, WonLost> surfaceMatches;
 	private final Map<TournamentLevel, WonLost> levelMatches;
 	private final Map<Opponent, WonLost> oppositionMatches;
 	private final Map<Round, WonLost> roundMatches;
 
-	public PlayerSeason(WonLost overall) {
-		this.overall = overall;
+	public PlayerPerformanceEx(PlayerPerformance perf) {
+		super(perf);
 		surfaceMatches = new LinkedHashMap<>();
 		levelMatches = new LinkedHashMap<>();
 		oppositionMatches = new TreeMap<>();
 		roundMatches = new LinkedHashMap<>();
-	}
-
-	public WonLost getOverall() {
-		return overall;
+		addSurfaceMatches(Surface.HARD, perf.getHardMatches());
+		addSurfaceMatches(Surface.CLAY, perf.getClayMatches());
+		addSurfaceMatches(Surface.GRASS, perf.getGrassMatches());
+		addSurfaceMatches(Surface.CARPET, perf.getCarpetMatches());
 	}
 
 	public Map<Surface, WonLost> getSurfaceMatches() {
 		return surfaceMatches;
 	}
 
-	public void addSurfaceMatches(Surface surface, WonLost wonLost) {
+	private void addSurfaceMatches(Surface surface, WonLost wonLost) {
 		if (!wonLost.isEmpty())
 			surfaceMatches.put(surface, wonLost);
 	}

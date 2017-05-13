@@ -77,14 +77,14 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "playerId") int playerId
 	) {
 		Player player = playerService.getPlayer(playerId).get();
-		PlayerPerformance playerPerf = performanceService.getPlayerPerformance(playerId);
-		FavoriteSurface favoriteSurface = new FavoriteSurface(playerPerf);
+		PlayerPerformance performance = performanceService.getPlayerPerformance(playerId);
+		FavoriteSurface favoriteSurface = new FavoriteSurface(performance);
 		WonDrawLost playerH2H = rivalriesService.getPlayerH2H(playerId).orElse(null);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player", player);
 		modelMap.addAttribute("favoriteSurface", favoriteSurface);
-		modelMap.addAttribute("playerPerf", playerPerf);
+		modelMap.addAttribute("performance", performance);
 		modelMap.addAttribute("playerH2H", playerH2H);
 		return new ModelAndView("playerProfileTab", modelMap);
 	}
@@ -184,7 +184,7 @@ public class PlayerProfileController extends PageController {
 			season = !seasons.isEmpty() ? seasons.get(0) : Integer.valueOf(LocalDate.now().getYear());
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights = tournamentService.getPlayerSeasonHighlights(playerId, season, 4);
 		PlayerSeasonGOATPoints seasonGOATPoints = goatPointsService.getPlayerSeasonGOATPoints(playerId, season);
-		PlayerSeason playerSeason = performanceService.getPlayerSeasonSummary(playerId, season);
+		PlayerPerformanceEx performance = performanceService.getPlayerSeasonPerformanceEx(playerId, season);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
@@ -192,7 +192,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("seasonHighlights", seasonHighlights);
 		modelMap.addAttribute("seasonGOATPoints", seasonGOATPoints);
-		modelMap.addAttribute("playerSeason", playerSeason);
+		modelMap.addAttribute("performance", performance);
 		return new ModelAndView("playerSeason", modelMap);
 	}
 

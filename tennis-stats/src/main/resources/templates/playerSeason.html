@@ -4,7 +4,7 @@
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="seasonHighlights" type="java.util.Map<org.strangeforest.tcb.stats.model.EventResult, List<org.strangeforest.tcb.stats.model.PlayerTournamentEvent>>"*/-->
 <!--/*@thymesVar id="seasonGOATPoints" type="org.strangeforest.tcb.stats.model.PlayerSeasonGOATPoints"*/-->
-<!--/*@thymesVar id="playerSeason" type="org.strangeforest.tcb.stats.model.PlayerSeason"*/-->
+	<!--/*@thymesVar id="performance" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <th:block th:unless="${seasons.empty}">
 <script type="text/javascript" th:inline="javascript">
 	$(function() {
@@ -78,7 +78,7 @@
 		<table id="playerSeasonSurface" class="table table-condensed text-nowrap">
 			<tr>
 				<th>Overall</th>
-				<th th:with="wl=${playerSeason.overall}">
+				<th th:with="wl=${performance.matches}">
 					<div th:unless="${wl.empty}" class="progress progress-season">
 						<div class="progress-bar progress-bar-overall" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season matches">73%</a>
@@ -86,7 +86,7 @@
 					</div>
 				</th>
 			</tr>
-			<tr th:each="surfaceWL : ${playerSeason.surfaceMatches}" th:with="surface=${surfaceWL.key}, wl=${surfaceWL.value}">
+			<tr th:each="surfaceWL : ${performance.surfaceMatches}" th:with="surface=${surfaceWL.key}, wl=${surfaceWL.value}">
 				<th th:text="${surface.text}">Hard</th>
 				<th>
 					<div class="progress progress-season">
@@ -100,7 +100,7 @@
 	</div>
 	<div class="col-md-3">
 		<table class="table table-condensed text-nowrap">
-			<tr th:each="levelWL : ${playerSeason.levelMatches}" th:with="level=${levelWL.key}, wl=${levelWL.value}">
+			<tr th:each="levelWL : ${performance.levelMatches}" th:with="level=${levelWL.key}, wl=${levelWL.value}">
 				<th th:text="${level.text}">Grand Slam</th>
 				<th>
 					<div class="progress progress-season">
@@ -114,7 +114,7 @@
 	</div>
 	<div class="col-md-3">
 		<table class="table table-condensed text-nowrap">
-			<tr th:each="oppositionWL : ${playerSeason.oppositionMatches}" th:with="opposition=${oppositionWL.key}, wl=${oppositionWL.value}">
+			<tr th:each="oppositionWL : ${performance.oppositionMatches}" th:with="opposition=${oppositionWL.key}, wl=${oppositionWL.value}">
 				<th th:text="${opposition.text}">Vs No. 1</th>
 				<th>
 					<div class="progress progress-season">
@@ -128,7 +128,7 @@
 	</div>
 	<div class="col-md-3">
 		<table class="table table-condensed text-nowrap">
-			<tr th:each="roundWL : ${playerSeason.roundMatches}" th:with="round=${roundWL.key}, wl=${roundWL.value}">
+			<tr th:each="roundWL : ${performance.roundMatches}" th:with="round=${roundWL.key}, wl=${roundWL.value}">
 				<th th:text="${round.text}">Final</th>
 				<th>
 					<div class="progress progress-season">

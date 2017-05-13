@@ -2,7 +2,6 @@ package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -130,13 +129,9 @@ public class PerformanceService {
 
 	// Player Season
 
-	public PlayerSeason getPlayerSeasonSummary(int playerId, int season) {
-		PlayerPerformance seasonPerformance = getPlayerSeasonPerformance(playerId, season);
-		PlayerSeason playerSeason = new PlayerSeason(seasonPerformance.getMatches());
-		playerSeason.addSurfaceMatches(Surface.HARD, seasonPerformance.getHardMatches());
-		playerSeason.addSurfaceMatches(Surface.CLAY, seasonPerformance.getClayMatches());
-		playerSeason.addSurfaceMatches(Surface.GRASS, seasonPerformance.getGrassMatches());
-		playerSeason.addSurfaceMatches(Surface.CARPET, seasonPerformance.getCarpetMatches());
+	public PlayerPerformanceEx getPlayerSeasonPerformanceEx(int playerId, int season) {
+		PlayerPerformance performance = getPlayerSeasonPerformance(playerId, season);
+		PlayerPerformanceEx performanceEx = new PlayerPerformanceEx(performance);
 
 		MapSqlParameterSource paramSource = params("playerId", playerId).addValue("season", season);
 
@@ -145,7 +140,7 @@ public class PerformanceService {
 			rs -> {
 				TournamentLevel level = TournamentLevel.decode(rs.getString("level"));
 				WonLost wonLost = mapWonLost(rs);
-				playerSeason.addLevelMatches(level, wonLost);
+				performanceEx.addLevelMatches(level, wonLost);
 			}
 		);
 
@@ -154,21 +149,21 @@ public class PerformanceService {
 			rs -> {
 				Opponent opposition = Opponent.valueOf(rs.getString("opposition"));
 				WonLost wonLost = mapWonLost(rs);
-				playerSeason.addOppositionMatches(opposition, wonLost);
+				performanceEx.addOppositionMatches(opposition, wonLost);
 			}
 		);
-		playerSeason.processOpposition();
+		performanceEx.processOpposition();
 
 		jdbcTemplate.query(
 			PLAYER_SEASON_ROUND_PERFORMANCE_QUERY, paramSource,
 			rs -> {
 				Round round = Round.decode(rs.getString("round"));
 				WonLost wonLost = mapWonLost(rs);
-				playerSeason.addRoundMatches(round, wonLost);
+				performanceEx.addRoundMatches(round, wonLost);
 			}
 		);
 
-		return playerSeason;
+		return performanceEx;
 	}
 
 	private static WonLost mapWonLost(ResultSet rs) throws SQLException {

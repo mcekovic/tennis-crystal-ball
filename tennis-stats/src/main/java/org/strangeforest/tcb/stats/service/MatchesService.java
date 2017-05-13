@@ -20,8 +20,6 @@ import static java.util.Collections.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
-import java.lang.String;
-
 @Service
 public class MatchesService {
 

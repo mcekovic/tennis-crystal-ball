@@ -12,8 +12,8 @@
 <!--/*@thymesVar id="levels" type="java.util.Set<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="oppositions" type="java.util.Set<org.strangeforest.tcb.stats.service.Opponent>"*/-->
 <!--/*@thymesVar id="rounds" type="java.util.Set<org.strangeforest.tcb.stats.model.Round>"*/-->
-<!--/*@thymesVar id="playerSeason1" type="org.strangeforest.tcb.stats.model.PlayerSeason"*/-->
-<!--/*@thymesVar id="playerSeason2" type="org.strangeforest.tcb.stats.model.PlayerSeason"*/-->
+	<!--/*@thymesVar id="performance1" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
+	<!--/*@thymesVar id="performance2" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <th:block th:unless="${seasons.empty}">
 <script type="text/javascript" th:inline="javascript">
 	$(function() {
@@ -105,7 +105,7 @@
 		</tr>
 	</th:block>
 	<!-- Performance Breakdown -->
-	<tr class="text-nowrap" th:with="wl1=${playerSeason1.overall}, wl2=${playerSeason2.overall}, wlc=${wl2.compareTo(wl1)}">
+	<tr class="text-nowrap" th:with="wl1=${performance1.matches}, wl2=${performance2.matches}, wlc=${wl2.compareTo(wl1)}">
 		<th class="text-right" width="40%">
 			<div th:unless="${wl1.empty}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -122,7 +122,7 @@
 			</div>
 		</th>
 	</tr>
-	<tr th:each="surface : ${surfaces}" class="text-nowrap" th:with="wl1=${playerSeason1.surfaceMatches.get(surface)}, wl2=${playerSeason2.surfaceMatches.get(surface)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr th:each="surface : ${surfaces}" class="text-nowrap" th:with="wl1=${performance1.surfaceMatches.get(surface)}, wl2=${performance2.surfaceMatches.get(surface)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${wl1}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -142,7 +142,7 @@
 	<tr>
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	<tr th:each="level : ${levels}" class="text-nowrap" th:with="wl1=${playerSeason1.levelMatches.get(level)}, wl2=${playerSeason2.levelMatches.get(level)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr th:each="level : ${levels}" class="text-nowrap" th:with="wl1=${performance1.levelMatches.get(level)}, wl2=${performance2.levelMatches.get(level)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${wl1}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -163,7 +163,7 @@
 	<tr>
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	<tr th:each="opposition : ${oppositions}" class="text-nowrap" th:with="wl1=${playerSeason1.oppositionMatches.get(opposition)}, wl2=${playerSeason2.oppositionMatches.get(opposition)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr th:each="opposition : ${oppositions}" class="text-nowrap" th:with="wl1=${performance1.oppositionMatches.get(opposition)}, wl2=${performance2.oppositionMatches.get(opposition)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${wl1}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -184,7 +184,7 @@
 	<tr>
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	<tr th:each="round : ${rounds}" class="text-nowrap" th:with="wl1=${playerSeason1.roundMatches.get(round)}, wl2=${playerSeason2.roundMatches.get(round)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr th:each="round : ${rounds}" class="text-nowrap" th:with="wl1=${performance1.roundMatches.get(round)}, wl2=${performance2.roundMatches.get(round)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${wl1}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-season progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
