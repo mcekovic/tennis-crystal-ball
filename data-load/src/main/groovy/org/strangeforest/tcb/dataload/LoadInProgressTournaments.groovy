@@ -1,8 +1,6 @@
 package org.strangeforest.tcb.dataload
 
-import org.jsoup.*
-
-import static org.strangeforest.tcb.dataload.BaseATPWorldTourTournamentLoader.*
+import static org.strangeforest.tcb.dataload.LoaderUtil.*
 
 loadTournaments(new SqlPool())
 
@@ -26,7 +24,7 @@ static loadTournaments(SqlPool sqlPool) {
 }
 
 static findInProgressEvents(String url, boolean processUrls = true) {
-	def doc = Jsoup.connect('http://www.atpworldtour.com' + url).timeout(TIMEOUT).get()
+	def doc = retriedGetDoc('http://www.atpworldtour.com' + url)
 	def eventInfos = new TreeSet<>()
 	eventInfos.addAll doc.select('div.arrow-next-tourney > div > a.tourney-title').collect { a ->
 		def eventUrl = a.attr('href')

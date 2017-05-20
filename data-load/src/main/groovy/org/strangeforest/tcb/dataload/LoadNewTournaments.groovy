@@ -1,10 +1,8 @@
 package org.strangeforest.tcb.dataload
 
-import org.jsoup.*
-
 import java.time.*
 
-import static org.strangeforest.tcb.dataload.BaseATPWorldTourTournamentLoader.*
+import static org.strangeforest.tcb.dataload.LoaderUtil.*
 
 loadTournaments(new SqlPool())
 
@@ -24,7 +22,7 @@ static loadTournaments(SqlPool sqlPool) {
 }
 
 static findCompletedEvents(int season) {
-	def doc = Jsoup.connect("http://www.atpworldtour.com/en/scores/results-archive?year=$season").timeout(TIMEOUT).get()
+	def doc = retriedGetDoc("http://www.atpworldtour.com/en/scores/results-archive?year=$season")
 	Set eventInfos = new TreeSet()
 	doc.select('tr.tourney-result').each {result ->
 		def url = result.select('td.tourney-details > a.button-border').attr('href')

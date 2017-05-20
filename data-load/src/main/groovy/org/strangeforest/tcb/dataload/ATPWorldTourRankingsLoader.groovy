@@ -2,13 +2,12 @@ package org.strangeforest.tcb.dataload
 
 import com.google.common.base.*
 import groovy.sql.*
-import org.jsoup.*
+
+import static org.strangeforest.tcb.dataload.LoaderUtil.*
 
 class ATPWorldTourRankingsLoader {
 
 	private final Sql sql
-
-	private static final int TIMEOUT = 30 * 1000L
 
 	ATPWorldTourRankingsLoader(Sql sql) {
 		this.sql = sql
@@ -19,7 +18,7 @@ class ATPWorldTourRankingsLoader {
 		def url = rankingsUrl(rankDate, playerCount)
 		println "Fetching rankings URL '$url'"
 		def stopwatch = Stopwatch.createStarted()
-		def doc = Jsoup.connect(url).timeout(TIMEOUT).get()
+		def doc = retriedGetDoc(url)
 		def paramsBatch = []
 		doc.select("tbody tr").each {
 			def player = player it.select('td.player-cell').text()

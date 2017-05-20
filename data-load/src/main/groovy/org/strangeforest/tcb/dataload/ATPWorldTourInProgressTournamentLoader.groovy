@@ -3,7 +3,6 @@ package org.strangeforest.tcb.dataload
 import com.google.common.base.*
 import com.google.common.hash.*
 import groovy.sql.*
-import org.jsoup.*
 import org.jsoup.nodes.*
 import org.jsoup.select.*
 import org.springframework.jdbc.core.namedparam.*
@@ -14,6 +13,7 @@ import java.time.*
 
 import static com.google.common.base.Strings.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
+import static org.strangeforest.tcb.dataload.LoaderUtil.*
 
 class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentLoader {
 
@@ -78,7 +78,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def stopwatch = Stopwatch.createStarted()
 		def url = tournamentUrl(urlId, extId, season)
 		println "Fetching in-progress tournament URL '$url'"
-		def doc = Jsoup.connect(url).timeout(TIMEOUT).get()
+		def doc = retriedGetDoc(url)
 		def dates = doc.select('.tourney-dates').text()
 		def atpLevel = extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1)
 		level = level ?: mapLevel(atpLevel)

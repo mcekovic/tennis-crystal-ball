@@ -1,16 +1,30 @@
 package org.strangeforest.tcb.dataload
 
+import org.jsoup.*
+
 abstract class LoaderUtil {
 
-	static retry(int count, Closure<Boolean> predicate, Closure<?> closure) {
+	private static final int TIMEOUT = 30 * 1000
+	private static final int RETRY_COUNT = 5
+	private static final long RETRY_DELAY = 1000L
+
+	static retriedGetDoc(String url) {
+		retry(RETRY_COUNT, RETRY_DELAY, { th -> th instanceof HttpStatusException }, {
+			Jsoup.connect(url).timeout(TIMEOUT).get()
+		})
+	}
+
+	static retry(int count, long delay, Closure<Boolean> predicate, Closure<Object> closure) {
 		for (int i = 0; i <= count; i++) {
 			try {
-				return closure.run()
+				return closure.call()
 			}
 			catch (Throwable th) {
 				def rootCause = extractRootCause(th)
-				if (i < count && predicate.curry(rootCause))
+				if (i < count && predicate.curry(rootCause)) {
 					println "Exception occurred: ${rootCause} [retry ${i + 1} follows]"
+					Thread.sleep(delay)
+				}
 				else
 					throw th
 			}

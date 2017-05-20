@@ -9,7 +9,7 @@ class LoaderUtilTest {
 	@Test
 	void "Retry test"() {
 		def i = 0
-		retry(5, { th -> th instanceof IllegalArgumentException }) {
+		retry(5, 0L, { th -> th instanceof IllegalArgumentException }) {
 			if (++i <= 2) throw new RuntimeException('Booom!!!', new IllegalArgumentException('Wrong data.'))
 		}
 	}

@@ -10,7 +10,6 @@ abstract class BaseATPWorldTourTournamentLoader {
 
 	protected final Sql sql
 
-	protected static final int TIMEOUT = 30 * 1000L
 	protected static final int PROGRESS_LINE_WRAP = 100
 
 	BaseATPWorldTourTournamentLoader(Sql sql) {

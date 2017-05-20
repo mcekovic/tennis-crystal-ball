@@ -2,7 +2,6 @@ package org.strangeforest.tcb.dataload
 
 import java.util.concurrent.atomic.*
 
-import org.jsoup.*
 import org.jsoup.select.*
 
 import com.google.common.base.*
@@ -29,7 +28,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		def url = tournamentUrl(current, season, urlId, extId)
 		println "Fetching tournament URL '$url'"
 		def stopwatch = Stopwatch.createStarted()
-		def doc = Jsoup.connect(url).timeout(TIMEOUT).get()
+		def doc = retriedGetDoc(url)
 		def dates = doc.select('.tourney-dates').text()
 		def atpLevel = extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1)
 		level = level ?: mapLevel(atpLevel)
@@ -115,18 +114,16 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		matches.parallelStream().forEach { params ->
 			def statsUrl = params.statsUrl
 			if (statsUrl) {
-				retry(5, { th -> th instanceof HttpStatusException }, {
-					def statsDoc = Jsoup.connect(statsUrl).timeout(TIMEOUT).get()
-					def json = statsDoc.select('#matchStatsData').html()
-					def matchStats = new JsonSlurper().parseText(json)[0]
-					def wStats = matchStats.playerStats
-					def lStats = matchStats.opponentStats
+				def statsDoc = retriedGetDoc(statsUrl)
+				def json = statsDoc.select('#matchStatsData').html()
+				def matchStats = new JsonSlurper().parseText(json)[0]
+				def wStats = matchStats.playerStats
+				def lStats = matchStats.opponentStats
 
-					params.minutes = minutes wStats.Time
-					setATPStatsParams(params, wStats, 'w_')
-					setATPStatsParams(params, lStats, 'l_')
-					print '.'
-				})
+				params.minutes = minutes wStats.Time
+				setATPStatsParams(params, wStats, 'w_')
+				setATPStatsParams(params, lStats, 'l_')
+				print '.'
 			}
 			if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
 				println()
