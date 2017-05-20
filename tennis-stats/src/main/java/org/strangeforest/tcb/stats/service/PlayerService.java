@@ -142,14 +142,15 @@ public class PlayerService {
 	@Cacheable("PlayerQuickPicks")
 	public Map<String, String> getPlayerQuickPicks() {
 		Map<String, String> quickPicks = new LinkedHashMap<>();
-		quickPicks.put("Big Four", "Roger Federer, Rafael Nadal, Novak Djokovic, Andy Murray");
-		quickPicks.put("Young Guns", "Marin Cilic, Kei Nishikori, Milos Raonic, Grigor Dimitrov, Bernard Tomic");
-		quickPicks.put("Next Gen", "Dominic Thiem, Lucas Pouille, Nick Kyrgios, Borna Coric, Alexander Zverev");
-		quickPicks.put("Week Era", "Gustavo Kuerten, Marat Safin, Juan Carlos Ferrero, Lleyton Hewitt, Andy Roddick");
+		quickPicks.put("Big Four", "Roger Federer, Novak Djokovic, Rafael Nadal, Andy Murray");
+		quickPicks.put("Second Tier", "David Ferrer, Stanislas Wawrinka, Juan Martin Del Potro, Tomas Berdych, Jo Wilfried Tsonga");
+		quickPicks.put("Lost Generation", "Kei Nishikori, Milos Raonic, Marin Cilic, Grigor Dimitrov, Bernard Tomic");
+		quickPicks.put("Young Guns", "Dominic Thiem, Nick Kyrgios, Lucas Pouille, Jack Sock, Alexander Zverev, Borna Coric");
+		quickPicks.put("Week Era", "Lleyton Hewitt, Andy Roddick, Gustavo Kuerten, Marat Safin, Juan Carlos Ferrero");
 		quickPicks.put("Americans rule '90", "Pete Sampras, Andre Agassi, Jim Courier, Michael Chang");
-		quickPicks.put("Late '80 / Early '90", "Mats Wilander, Stefan Edberg, Boris Becker, Thomas Muster");
-		quickPicks.put("'70 / Early '80 dominance", "Jimmy Connors, Guillermo Vilas, Bjorn Borg, John Mcenroe, Ivan Lendl");
-		quickPicks.put("Dawn of Open Era", "Rod Laver, Ken Rosewall, Arthur Ashe, John Newcombe, Ilie Nastase, Manuel Orantes");
+		quickPicks.put("Late '80 / Early '90", "Boris Becker, Stefan Edberg, Mats Wilander, Thomas Muster");
+		quickPicks.put("'70 / Early '80 dominance", "Jimmy Connors, Ivan Lendl, John Mcenroe, Bjorn Borg, Guillermo Vilas");
+		quickPicks.put("Dawn of Open Era", "Rod Laver, Ken Rosewall, Ilie Nastase, Arthur Ashe, John Newcombe");
 		quickPicks.put("Top 10", join(", ", topN("current_rank", 10)));
 		quickPicks.put("Top 20", join(", ", topN("current_rank", 20)));
 		quickPicks.put("GOAT 10", join(", ", topN("goat_points DESC", 10)));
