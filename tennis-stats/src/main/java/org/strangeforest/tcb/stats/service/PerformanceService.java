@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
+import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
@@ -23,13 +24,8 @@ public class PerformanceService {
 
 	private static final String PLAYER_PERFORMANCE_QUERY =
 		"SELECT " + PLAYER_PERFORMANCE_COLUMNS +
-		"FROM player_performance\n" +
-		"WHERE player_id = :playerId";
-
-	private static final String PLAYER_SEASON_PERFORMANCE_QUERY =
-		"SELECT " + PLAYER_PERFORMANCE_COLUMNS +
-		"FROM player_season_performance\n" +
-		"WHERE player_id = :playerId AND season = :season";
+		"FROM %1$s\n" +
+		"WHERE player_id = :playerId%2$s";
 
 	private static final String PLAYER_SEASONS_PERFORMANCE_QUERY =
 		"SELECT season, " + PLAYER_PERFORMANCE_COLUMNS +
@@ -37,14 +33,17 @@ public class PerformanceService {
 		"WHERE player_id = :playerId\n" +
 		"ORDER BY season";
 
-	private static final String PLAYER_SEASON_LEVEL_PERFORMANCE_QUERY =
-		"SELECT level, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
+	private static final String PLAYER_PERFORMANCE_BREAKDOWN_QUERY = //language=SQL
+		"SELECT %1$s, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
 		"FROM player_match_for_stats_v\n" +
-		"WHERE player_id = :playerId AND season = :season\n" +
-		"GROUP BY level\n" +
-		"ORDER BY level";
+		"WHERE player_id = :playerId%2$s\n" +
+		"GROUP BY %1$s\n" +
+		"ORDER BY %1$s";
 
-	private static final String PLAYER_SEASON_OPPOSITION_PERFORMANCE_QUERY =
+	private static final String SEASON_CONDITION = //language=SQL
+		" AND season = :season";
+
+	private static final String PLAYER_OPPOSITION_PERFORMANCE_QUERY = //language=SQL
 		"WITH season_opposition AS (\n" +
 		"  SELECT CASE\n" +
 		"    WHEN opponent_rank = 1 THEN 'NO_1'\n" +
@@ -55,7 +54,7 @@ public class PerformanceService {
 		"    WHEN opponent_rank <= 100 THEN 'TOP_100'\n" +
 		"  END opposition, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
 		"  FROM player_match_for_stats_v\n" +
-		"  WHERE player_id = :playerId AND season = :season\n" +
+		"  WHERE player_id = :playerId%1$s\n" +
 		"  GROUP BY opposition\n" +
 		")\n" +
 		"SELECT opposition, p_matches, o_matches\n" +
@@ -63,24 +62,22 @@ public class PerformanceService {
 		"WHERE opposition IS NOT NULL\n" +
 		"ORDER BY opposition";
 
-	private static final String PLAYER_SEASON_ROUND_PERFORMANCE_QUERY =
-		"SELECT round, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
-		"FROM player_match_for_stats_v\n" +
-		"WHERE player_id = :playerId AND season = :season\n" +
-		"GROUP BY round\n" +
-		"ORDER BY round DESC";
-
 
 	public PlayerPerformance getPlayerPerformance(int playerId) {
-		return jdbcTemplate.query(
-			PLAYER_PERFORMANCE_QUERY, params("playerId", playerId),
-			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY
-		);
+		return getPlayerPerformance(playerId, null);
 	}
 
 	public PlayerPerformance getPlayerSeasonPerformance(int playerId, int season) {
+		return getPlayerPerformance(playerId, season);
+	}
+
+	private PlayerPerformance getPlayerPerformance(int playerId, Integer season) {
+		MapSqlParameterSource paramSource = params("playerId", playerId);
+		if (season != null)
+			paramSource.addValue("season", season);
 		return jdbcTemplate.query(
-			PLAYER_SEASON_PERFORMANCE_QUERY, params("playerId", playerId).addValue("season", season),
+			format(PLAYER_PERFORMANCE_QUERY, season == null ? "player_performance" : "player_season_performance", season == null ? "" : SEASON_CONDITION),
+				paramSource,
 			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY
 		);
 	}
@@ -129,14 +126,25 @@ public class PerformanceService {
 
 	// Player Season
 
+	public PlayerPerformanceEx getPlayerPerformanceEx(int playerId) {
+		return getPlayerPerformanceEx(playerId, null);
+	}
+
 	public PlayerPerformanceEx getPlayerSeasonPerformanceEx(int playerId, int season) {
-		PlayerPerformance performance = getPlayerSeasonPerformance(playerId, season);
+		return getPlayerPerformanceEx(playerId, season);
+	}
+
+	private PlayerPerformanceEx getPlayerPerformanceEx(int playerId, Integer season) {
+		PlayerPerformance performance = getPlayerPerformance(playerId, season);
 		PlayerPerformanceEx performanceEx = new PlayerPerformanceEx(performance);
 
-		MapSqlParameterSource paramSource = params("playerId", playerId).addValue("season", season);
+		String conditions = season != null ? SEASON_CONDITION : "";
+		MapSqlParameterSource paramSource = params("playerId", playerId);
+		if (season != null)
+			paramSource.addValue("season", season);
 
 		jdbcTemplate.query(
-			PLAYER_SEASON_LEVEL_PERFORMANCE_QUERY, paramSource,
+			format(PLAYER_PERFORMANCE_BREAKDOWN_QUERY, "level", conditions), paramSource,
 			rs -> {
 				TournamentLevel level = TournamentLevel.decode(rs.getString("level"));
 				WonLost wonLost = mapWonLost(rs);
@@ -145,7 +153,7 @@ public class PerformanceService {
 		);
 
 		jdbcTemplate.query(
-			PLAYER_SEASON_OPPOSITION_PERFORMANCE_QUERY, paramSource,
+			format(PLAYER_OPPOSITION_PERFORMANCE_QUERY, conditions), paramSource,
 			rs -> {
 				Opponent opposition = Opponent.valueOf(rs.getString("opposition"));
 				WonLost wonLost = mapWonLost(rs);
@@ -155,7 +163,7 @@ public class PerformanceService {
 		performanceEx.processOpposition();
 
 		jdbcTemplate.query(
-			PLAYER_SEASON_ROUND_PERFORMANCE_QUERY, paramSource,
+			format(PLAYER_PERFORMANCE_BREAKDOWN_QUERY, "round", conditions), paramSource,
 			rs -> {
 				Round round = Round.decode(rs.getString("round"));
 				WonLost wonLost = mapWonLost(rs);

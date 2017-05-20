@@ -136,14 +136,14 @@ public class RivalriesController extends PageController {
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season, 4);
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season, 4);
 		List<EventResult> eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet()).stream().limit(4).collect(toList());
+		PlayerPerformanceEx seasonPerf1 = performanceService.getPlayerSeasonPerformanceEx(playerId1, season);
+		PlayerPerformanceEx seasonPerf2 = performanceService.getPlayerSeasonPerformanceEx(playerId2, season);
+		Set<Surface> surfaces = union(seasonPerf1.getSurfaceMatches().keySet(), seasonPerf2.getSurfaceMatches().keySet());
+		Set<TournamentLevel> levels = union(seasonPerf1.getLevelMatches().keySet(), seasonPerf2.getLevelMatches().keySet());
+		Set<Opponent> oppositions = union(seasonPerf1.getOppositionMatches().keySet(), seasonPerf2.getOppositionMatches().keySet());
+		Set<Round> rounds = union(seasonPerf1.getRoundMatches().keySet(), seasonPerf2.getRoundMatches().keySet());
 		PlayerSeasonGOATPoints seasonGOATPoints1 = goatPointsService.getPlayerSeasonGOATPoints(playerId1, season);
 		PlayerSeasonGOATPoints seasonGOATPoints2 = goatPointsService.getPlayerSeasonGOATPoints(playerId2, season);
-		PlayerPerformanceEx performance1 = performanceService.getPlayerSeasonPerformanceEx(playerId1, season);
-		PlayerPerformanceEx performance2 = performanceService.getPlayerSeasonPerformanceEx(playerId2, season);
-		Set<Surface> surfaces = union(performance1.getSurfaceMatches().keySet(), performance2.getSurfaceMatches().keySet());
-		Set<TournamentLevel> levels = union(performance1.getLevelMatches().keySet(), performance2.getLevelMatches().keySet());
-		Set<Opponent> oppositions = union(performance1.getOppositionMatches().keySet(), performance2.getOppositionMatches().keySet());
-		Set<Round> rounds = union(performance1.getRoundMatches().keySet(), performance2.getRoundMatches().keySet());
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
@@ -153,14 +153,14 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("eventResults", eventResults);
 		modelMap.addAttribute("seasonHighlights1", seasonHighlights1);
 		modelMap.addAttribute("seasonHighlights2", seasonHighlights2);
-		modelMap.addAttribute("seasonGOATPoints1", seasonGOATPoints1);
-		modelMap.addAttribute("seasonGOATPoints2", seasonGOATPoints2);
+		modelMap.addAttribute("seasonPerf1", seasonPerf1);
+		modelMap.addAttribute("seasonPerf2", seasonPerf2);
 		modelMap.addAttribute("surfaces", surfaces);
 		modelMap.addAttribute("levels", levels);
 		modelMap.addAttribute("oppositions", oppositions);
 		modelMap.addAttribute("rounds", rounds);
-		modelMap.addAttribute("performance1", performance1);
-		modelMap.addAttribute("performance2", performance2);
+		modelMap.addAttribute("seasonGOATPoints1", seasonGOATPoints1);
+		modelMap.addAttribute("seasonGOATPoints2", seasonGOATPoints2);
 		return new ModelAndView("h2hSeason", modelMap);
 	}
 
@@ -184,8 +184,8 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season
 	) {
 		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
-		PlayerPerformance perf1 = season == null ? performanceService.getPlayerPerformance(playerId1) : performanceService.getPlayerSeasonPerformance(playerId1, season);
-		PlayerPerformance perf2 = season == null ? performanceService.getPlayerPerformance(playerId2) : performanceService.getPlayerSeasonPerformance(playerId2, season);
+		PlayerPerformanceEx perf1 = season == null ? performanceService.getPlayerPerformanceEx(playerId1) : performanceService.getPlayerSeasonPerformanceEx(playerId1, season);
+		PlayerPerformanceEx perf2 = season == null ? performanceService.getPlayerPerformanceEx(playerId2) : performanceService.getPlayerSeasonPerformanceEx(playerId2, season);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);

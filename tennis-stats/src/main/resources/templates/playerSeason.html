@@ -3,8 +3,8 @@
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="seasonHighlights" type="java.util.Map<org.strangeforest.tcb.stats.model.EventResult, List<org.strangeforest.tcb.stats.model.PlayerTournamentEvent>>"*/-->
+<!--/*@thymesVar id="seasonPerf" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <!--/*@thymesVar id="seasonGOATPoints" type="org.strangeforest.tcb.stats.model.PlayerSeasonGOATPoints"*/-->
-	<!--/*@thymesVar id="performance" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <th:block th:unless="${seasons.empty}">
 <script type="text/javascript" th:inline="javascript">
 	$(function() {
@@ -63,22 +63,12 @@
 		</th>
 	</tr>
 </table>
-<div th:if="${seasonGOATPoints}" class="row" style="margin-bottom: 20px">
-	<div class="col-md-12">
-		<span class="text-nowrap" style="margin-left: 5px; margin-right: 10px"><strong>GOAT Points</strong> <a th:href="@{/playerProfile(playerId=${playerId}, tab=goatPoints, season=${season})}" class="label label-primary" th:text="${seasonGOATPoints.totalPoints}" title="Show season GOAT points">35</a></span>
-		<span class="text-nowrap" style="margin-right: 5px" th:if="${seasonGOATPoints.tournamentPoints > 0}">Tournament Pts. <span class="label label-info" th:text="${seasonGOATPoints.tournamentPoints}">25</span></span>
-		<span class="text-nowrap" style="margin-right: 5px" th:if="${seasonGOATPoints.rankingPoints > 0}">Ranking Pts. <span class="label label-info" th:text="${seasonGOATPoints.rankingPoints}"
-		   th:title="${(seasonGOATPoints.yearEndRankPoints > 0 ? 'Year-end ranking: ' + seasonGOATPoints.yearEndRankPoints : '') + (seasonGOATPoints.weeksAtNo1Points > 0 ? ' Weeks at No. 1: ' + seasonGOATPoints.weeksAtNo1Points : '') + (seasonGOATPoints.weeksAtEloTopNPoints > 0 ? ' Weeks at Elo Top 5: ' + seasonGOATPoints.weeksAtEloTopNPoints : '')}">5</span></span>
-		<span class="text-nowrap" th:if="${seasonGOATPoints.achievementsPoints > 0}">Achievements Pts. <span class="label label-info" th:text="${seasonGOATPoints.achievementsPoints}"
-			th:title="${(seasonGOATPoints.bigWinsPoints > 0 ? 'Big wins: ' + seasonGOATPoints.bigWinsPoints : '') + (seasonGOATPoints.grandSlamPoints > 0 ? ' Grand Slam: ' + seasonGOATPoints.grandSlamPoints : '')}">5</span></span>
-	</div>
-</div>
 <div class="row">
-	<div class="col-md-3">
-		<table id="playerSeasonSurface" class="table table-condensed text-nowrap">
+	<div class="col-md-6">
+		<table class="table table-condensed text-nowrap">
 			<tr>
 				<th>Overall</th>
-				<th th:with="wl=${performance.matches}">
+				<th th:with="wl=${seasonPerf.matches}">
 					<div th:unless="${wl.empty}" class="progress progress-season">
 						<div class="progress-bar progress-bar-overall" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show season matches">73%</a>
@@ -86,8 +76,17 @@
 					</div>
 				</th>
 			</tr>
-			<tr th:each="surfaceWL : ${performance.surfaceMatches}" th:with="surface=${surfaceWL.key}, wl=${surfaceWL.value}">
-				<th th:text="${surface.text}">Hard</th>
+		</table>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-3">
+		<table id="playerSeasonSurface" class="table table-condensed text-nowrap">
+			<tr>
+				<th colspan="2">Surface Breakdown</th>
+			</tr>
+			<tr th:each="surfaceWL : ${seasonPerf.surfaceMatches}" th:with="surface=${surfaceWL.key}, wl=${surfaceWL.value}">
+				<td th:text="${surface.text}">Hard</td>
 				<th>
 					<div class="progress progress-season">
 						<div class="progress-bar progress-bar-season" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -100,8 +99,11 @@
 	</div>
 	<div class="col-md-3">
 		<table class="table table-condensed text-nowrap">
-			<tr th:each="levelWL : ${performance.levelMatches}" th:with="level=${levelWL.key}, wl=${levelWL.value}">
-				<th th:text="${level.text}">Grand Slam</th>
+			<tr>
+				<th colspan="2">Tournament Level Breakdown</th>
+			</tr>
+			<tr th:each="levelWL : ${seasonPerf.levelMatches}" th:with="level=${levelWL.key}, wl=${levelWL.value}">
+				<td th:text="${level.text}">Grand Slam</td>
 				<th>
 					<div class="progress progress-season">
 						<div class="progress-bar progress-bar-season label-" th:attrappend="class=${level.code}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -114,8 +116,11 @@
 	</div>
 	<div class="col-md-3">
 		<table class="table table-condensed text-nowrap">
-			<tr th:each="oppositionWL : ${performance.oppositionMatches}" th:with="opposition=${oppositionWL.key}, wl=${oppositionWL.value}">
-				<th th:text="${opposition.text}">Vs No. 1</th>
+			<tr>
+				<th colspan="2">Opposition Breakdown</th>
+			</tr>
+			<tr th:each="oppositionWL : ${seasonPerf.oppositionMatches}" th:with="opposition=${oppositionWL.key}, wl=${oppositionWL.value}">
+				<td th:text="${opposition.text}">Vs No. 1</td>
 				<th>
 					<div class="progress progress-season">
 						<div class="progress-bar progress-bar-perf" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -128,17 +133,30 @@
 	</div>
 	<div class="col-md-3">
 		<table class="table table-condensed text-nowrap">
-			<tr th:each="roundWL : ${performance.roundMatches}" th:with="round=${roundWL.key}, wl=${roundWL.value}">
-				<th th:text="${round.text}">Final</th>
-				<th>
+			<tr>
+				<th colspan="2">Round Breakdown</th>
+			</tr>
+			<tr th:each="roundWL : ${seasonPerf.roundMatches}" th:with="round=${roundWL.key}, wl=${roundWL.value}">
+				<td th:text="${round.text}">Final</td>
+				<td>
 					<div class="progress progress-season">
 						<div class="progress-bar progress-bar-perf" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, round=${round.code})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:title="|Show season ${round.text} matches|">73%</a>
 						</div>
 					</div>
-				</th>
+				</td>
 			</tr>
 		</table>
+	</div>
+</div>
+<div th:if="${seasonGOATPoints}" class="row">
+	<div class="col-md-12">
+		<span class="text-nowrap" style="margin-left: 5px; margin-right: 10px"><strong>GOAT Points</strong> <a th:href="@{/playerProfile(playerId=${playerId}, tab=goatPoints, season=${season})}" class="label label-primary" th:text="${seasonGOATPoints.totalPoints}" title="Show season GOAT points">35</a></span>
+		<span class="text-nowrap" style="margin-right: 5px" th:if="${seasonGOATPoints.tournamentPoints > 0}">Tournament Pts. <span class="label label-info" th:text="${seasonGOATPoints.tournamentPoints}">25</span></span>
+		<span class="text-nowrap" style="margin-right: 5px" th:if="${seasonGOATPoints.rankingPoints > 0}">Ranking Pts. <span class="label label-info" th:text="${seasonGOATPoints.rankingPoints}"
+			th:title="${(seasonGOATPoints.yearEndRankPoints > 0 ? 'Year-end ranking: ' + seasonGOATPoints.yearEndRankPoints : '') + (seasonGOATPoints.weeksAtNo1Points > 0 ? ' Weeks at No. 1: ' + seasonGOATPoints.weeksAtNo1Points : '') + (seasonGOATPoints.weeksAtEloTopNPoints > 0 ? ' Weeks at Elo Top 5: ' + seasonGOATPoints.weeksAtEloTopNPoints : '')}">5</span></span>
+		<span class="text-nowrap" th:if="${seasonGOATPoints.achievementsPoints > 0}">Achievements Pts. <span class="label label-info" th:text="${seasonGOATPoints.achievementsPoints}"
+			th:title="${(seasonGOATPoints.bigWinsPoints > 0 ? 'Big wins: ' + seasonGOATPoints.bigWinsPoints : '') + (seasonGOATPoints.grandSlamPoints > 0 ? ' Grand Slam: ' + seasonGOATPoints.grandSlamPoints : '')}">5</span></span>
 	</div>
 </div>
 </th:block>

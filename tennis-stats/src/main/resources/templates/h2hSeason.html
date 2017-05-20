@@ -6,14 +6,14 @@
 <!--/*@thymesVar id="eventResults" type="java.util.List<org.strangeforest.tcb.stats.model.EventResult>"*/-->
 <!--/*@thymesVar id="seasonHighlights1" type="java.util.Map<org.strangeforest.tcb.stats.model.EventResult, List<org.strangeforest.tcb.stats.model.PlayerTournamentEvent>>"*/-->
 <!--/*@thymesVar id="seasonHighlights2" type="java.util.Map<org.strangeforest.tcb.stats.model.EventResult, List<org.strangeforest.tcb.stats.model.PlayerTournamentEvent>>"*/-->
-<!--/*@thymesVar id="seasonGOATPoints1" type="org.strangeforest.tcb.stats.model.PlayerSeasonGOATPoints"*/-->
-<!--/*@thymesVar id="seasonGOATPoints2" type="org.strangeforest.tcb.stats.model.PlayerSeasonGOATPoints"*/-->
+<!--/*@thymesVar id="seasonPerf1" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
+<!--/*@thymesVar id="seasonPerf2" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Set<org.strangeforest.tcb.stats.model.Surface>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Set<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="oppositions" type="java.util.Set<org.strangeforest.tcb.stats.service.Opponent>"*/-->
 <!--/*@thymesVar id="rounds" type="java.util.Set<org.strangeforest.tcb.stats.model.Round>"*/-->
-	<!--/*@thymesVar id="performance1" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
-	<!--/*@thymesVar id="performance2" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
+<!--/*@thymesVar id="seasonGOATPoints1" type="org.strangeforest.tcb.stats.model.PlayerSeasonGOATPoints"*/-->
+<!--/*@thymesVar id="seasonGOATPoints2" type="org.strangeforest.tcb.stats.model.PlayerSeasonGOATPoints"*/-->
 <th:block th:unless="${seasons.empty}">
 <script type="text/javascript" th:inline="javascript">
 	$(function() {
@@ -87,25 +87,10 @@
 		<td colspan="3">&nbsp;</td>
 	</tr>
 	</th:block>
-	<!-- GOAT Points -->
-	<th:block th:if="${seasonGOATPoints1 != null || seasonGOATPoints2 != null}">
-		<tr class="text-nowrap">
-			<th class="text-right">
-				<a th:if="${seasonGOATPoints1 != null}" th:href="@{/playerProfile(playerId=${playerId1}, tab=goatPoints, season=${season})}" class="label label-primary" th:text="${seasonGOATPoints1.totalPoints}" title="Show season GOAT points">35</a>
-			</th>
-			<th class="text-center">
-				GOAT Points
-			</th>
-			<th class="text-left">
-				<a th:if="${seasonGOATPoints2 != null}" th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints, season=${season})}" class="label label-primary" th:text="${seasonGOATPoints2.totalPoints}" title="Show season GOAT points">35</a>
-			</th>
-		</tr>
-		<tr>
-			<td colspan="3">&nbsp;</td>
-		</tr>
-	</th:block>
-	<!-- Performance Breakdown -->
-	<tr class="text-nowrap" th:with="wl1=${performance1.matches}, wl2=${performance2.matches}, wlc=${wl2.compareTo(wl1)}">
+	<tr>
+		<td></td><th class="text-center">Performance</th><td></td>
+	</tr>
+	<tr class="text-nowrap" th:with="wl1=${seasonPerf1.matches}, wl2=${seasonPerf2.matches}, wlc=${wl2.compareTo(wl1)}">
 		<th class="text-right" width="40%">
 			<div th:unless="${wl1.empty}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -122,7 +107,13 @@
 			</div>
 		</th>
 	</tr>
-	<tr th:each="surface : ${surfaces}" class="text-nowrap" th:with="wl1=${performance1.surfaceMatches.get(surface)}, wl2=${performance2.surfaceMatches.get(surface)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>
+	<tr>
+		<td></td><th class="text-center">Surface Breakdown</th><td></td>
+	</tr>
+	<tr th:each="surface : ${surfaces}" class="text-nowrap" th:with="wl1=${seasonPerf1.surfaceMatches.get(surface)}, wl2=${seasonPerf2.surfaceMatches.get(surface)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${wl1}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -142,7 +133,10 @@
 	<tr>
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	<tr th:each="level : ${levels}" class="text-nowrap" th:with="wl1=${performance1.levelMatches.get(level)}, wl2=${performance2.levelMatches.get(level)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr>
+		<td></td><th class="text-center" title="Tournament Level Breakdown">Level Breakdown</th><td></td>
+	</tr>
+	<tr th:each="level : ${levels}" class="text-nowrap" th:with="wl1=${seasonPerf1.levelMatches.get(level)}, wl2=${seasonPerf2.levelMatches.get(level)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${wl1}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -163,7 +157,10 @@
 	<tr>
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	<tr th:each="opposition : ${oppositions}" class="text-nowrap" th:with="wl1=${performance1.oppositionMatches.get(opposition)}, wl2=${performance2.oppositionMatches.get(opposition)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr>
+		<td></td><th class="text-center">Opposition Breakdown</th><td></td>
+	</tr>
+	<tr th:each="opposition : ${oppositions}" class="text-nowrap" th:with="wl1=${seasonPerf1.oppositionMatches.get(opposition)}, wl2=${seasonPerf2.oppositionMatches.get(opposition)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${wl1}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -171,7 +168,7 @@
 				</div>
 			</div>
 		</th>
-		<th class="text-center" th:text="${opposition.text}">Vs No. 1</th>
+		<td class="text-center" th:text="${opposition.text}">Vs No. 1</td>
 		<th class="text-left">
 			<div th:if="${wl2}" class="progress progress-season pull-left">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -184,7 +181,10 @@
 	<tr>
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	<tr th:each="round : ${rounds}" class="text-nowrap" th:with="wl1=${performance1.roundMatches.get(round)}, wl2=${performance2.roundMatches.get(round)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+	<tr>
+		<td></td><th class="text-center">Round Breakdown</th><td></td>
+	</tr>
+	<tr th:each="round : ${rounds}" class="text-nowrap" th:with="wl1=${seasonPerf1.roundMatches.get(round)}, wl2=${seasonPerf2.roundMatches.get(round)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${wl1}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-season progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -192,7 +192,7 @@
 				</div>
 			</div>
 		</th>
-		<th class="text-center" th:text="${round.text}">Final</th>
+		<td class="text-center" th:text="${round.text}">Final</td>
 		<th class="text-left">
 			<div th:if="${wl2}" class="progress progress-season pull-left">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -201,6 +201,54 @@
 			</div>
 		</th>
 	</tr>
+	<!-- GOAT Points -->
+	<th:block th:if="${seasonGOATPoints1 != null || seasonGOATPoints2 != null}" th:with="totalPoints1=${seasonGOATPoints1 != null ? seasonGOATPoints1.totalPoints : null}, totalPoints2=${seasonGOATPoints2 != null ? seasonGOATPoints2.totalPoints : null},
+		tournamentPoints1=${seasonGOATPoints1 != null ? seasonGOATPoints1.tournamentPoints : null}, tournamentPoints2=${seasonGOATPoints2 != null ? seasonGOATPoints2.tournamentPoints : null},
+		rankingPoints1=${seasonGOATPoints1 != null ? seasonGOATPoints1.rankingPoints : null}, rankingPoints2=${seasonGOATPoints2 != null ? seasonGOATPoints2.rankingPoints : null},
+		achievementsPoints1=${seasonGOATPoints1 != null ? seasonGOATPoints1.achievementsPoints : null}, achievementsPoints2=${seasonGOATPoints2 != null ? seasonGOATPoints2.achievementsPoints : null}">
+		<tr>
+			<td colspan="3">&nbsp;</td>
+		</tr>
+		<tr>
+			<td></td><th class="text-center">GOAT Points</th><td></td>
+		</tr>
+		<tr class="text-nowrap">
+			<th class="text-right">
+				<a th:if="${totalPoints1 != null}" th:href="@{/playerProfile(playerId=${playerId1}, tab=goatPoints, season=${season})}" class="label label-primary" th:text="${totalPoints1}" title="Show season GOAT points">35</a>
+			</th>
+			<td class="text-center" title="Total Points">Total</td>
+			<th class="text-left">
+				<a th:if="${totalPoints2 != null}" th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints, season=${season})}" class="label label-primary" th:text="${totalPoints2}" title="Show season GOAT points">35</a>
+			</th>
+		</tr>
+		<tr class="text-nowrap">
+			<th class="text-right">
+				<a th:if="${tournamentPoints1 != null}" class="label label-info" th:text="${tournamentPoints1}">25</a>
+			</th>
+			<td class="text-center" title="Tournament Points">Tournament</td>
+			<th class="text-left">
+				<a th:if="${tournamentPoints2 != null}" class="label label-info" th:text="${tournamentPoints2}">25</a>
+			</th>
+		</tr>
+		<tr class="text-nowrap">
+			<th class="text-right">
+				<a th:if="${rankingPoints1 != null}" class="label label-info" th:text="${rankingPoints1}">25</a>
+			</th>
+			<td class="text-center" title="Ranking Points">Ranking</td>
+			<th class="text-left">
+				<a th:if="${rankingPoints2 != null}" class="label label-info" th:text="${rankingPoints2}">25</a>
+			</th>
+		</tr>
+		<tr class="text-nowrap">
+			<th class="text-right">
+				<a th:if="${achievementsPoints1 != null}" class="label label-info" th:text="${achievementsPoints1}">25</a>
+			</th>
+			<td class="text-center" title="Achievements Points">Achievements</td>
+			<th class="text-left">
+				<a th:if="${achievementsPoints2 != null}" class="label label-info" th:text="${achievementsPoints2}">25</a>
+			</th>
+		</tr>
+	</th:block>
 </table>
 </th:block>
 <th:block th:if="${seasons.empty}"><br/><p>No seasons data available</p></th:block>

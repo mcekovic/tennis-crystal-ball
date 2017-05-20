@@ -183,16 +183,16 @@ public class PlayerProfileController extends PageController {
 		if (season == null)
 			season = !seasons.isEmpty() ? seasons.get(0) : Integer.valueOf(LocalDate.now().getYear());
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights = tournamentService.getPlayerSeasonHighlights(playerId, season, 4);
+		PlayerPerformanceEx seasonPerf = performanceService.getPlayerSeasonPerformanceEx(playerId, season);
 		PlayerSeasonGOATPoints seasonGOATPoints = goatPointsService.getPlayerSeasonGOATPoints(playerId, season);
-		PlayerPerformanceEx performance = performanceService.getPlayerSeasonPerformanceEx(playerId, season);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("seasonHighlights", seasonHighlights);
+		modelMap.addAttribute("seasonPerf", seasonPerf);
 		modelMap.addAttribute("seasonGOATPoints", seasonGOATPoints);
-		modelMap.addAttribute("performance", performance);
 		return new ModelAndView("playerSeason", modelMap);
 	}
 
@@ -248,9 +248,9 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		PlayerPerformance perf = season == null
-			? performanceService.getPlayerPerformance(playerId)
-			: performanceService.getPlayerSeasonPerformance(playerId, season);
+		PlayerPerformanceEx perf = season == null
+			? performanceService.getPlayerPerformanceEx(playerId)
+			: performanceService.getPlayerSeasonPerformanceEx(playerId, season);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
