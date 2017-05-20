@@ -321,20 +321,18 @@ public class RivalriesController extends PageController {
 	}
 
 	private Date dateForMatchup(String dateSelector, LocalDate playerDate, LocalDate date, Player player) {
+		Date aDate;
 		if (!isNullOrEmpty(dateSelector))
-			return selectDate(player, dateSelector);
-		else if (playerDate != null)
-			return toDate(playerDate);
-		else if (date != null)
-			return toDate(date);
+			aDate = selectDate(player, dateSelector);
 		else
-			return defaultDate(player);
+			aDate = playerDate != null ? toDate(playerDate) : toDate(date);
+		return aDate != null ? aDate : defaultDate(player);
 	}
 
 	private Date selectDate(Player player, String dateSelector) {
 		int playerId = player.getId();
 		switch (dateSelector) {
-			case "Today": return toDate(LocalDate.now());
+			case "Today": return today();
 			case "CareerEnd": return playerService.getPlayerCareerEnd(playerId);
 			case "PeakRank": return rankingsService.getRankingHighlights(playerId).getBestRankDate();
 			case "PeakRankPoints": return rankingsService.getRankingHighlights(playerId).getBestRankPointsDate();
@@ -348,17 +346,21 @@ public class RivalriesController extends PageController {
 			case "PeakGrassEloRating": return rankingsService.getRankingHighlights(playerId).getBestGrassEloRatingDate();
 			case "PeakCarpetEloRank": return rankingsService.getRankingHighlights(playerId).getBestCarpetEloRankDate();
 			case "PeakCarpetEloRating": return rankingsService.getRankingHighlights(playerId).getBestCarpetEloRatingDate();
-			default: return defaultDate(player);
+			default: return null;
 		}
 	}
 
 	private Date defaultDate(Player player) {
 		if (player.isActive())
-			return toDate(LocalDate.now());
+			return today();
 		else {
 			Date careerEndDate = playerService.getPlayerCareerEnd(player.getId());
-			return careerEndDate != null ? careerEndDate : toDate(LocalDate.now());
+			return careerEndDate != null ? careerEndDate : today();
 		}
+	}
+
+	private static Date today() {
+		return toDate(LocalDate.now());
 	}
 
 	@GetMapping("/headsToHeads")
