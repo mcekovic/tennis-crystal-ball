@@ -3,8 +3,8 @@ package org.strangeforest.tcb.dataload
 loadTournaments(new SqlPool())
 
 static loadTournaments(SqlPool sqlPool) {
-//	def matchLoader = new MatchLoader(sqlPool)
-//	matchLoader.load(fetchTournament(2016, 'Quito', 7161))
+//	def loader = new ATPTennisLoader()
+//	loader.loadAdditionalTournament(sqlPool, 'classpath:/tournaments/2017-davis-cup.xml')
 	sqlPool.withSql {sql ->
 		def atpWorldTourMatchLoader = new ATPWorldTourTournamentLoader(sql)
 		atpWorldTourMatchLoader.loadTournament(2017, 'montpellier', 375)
