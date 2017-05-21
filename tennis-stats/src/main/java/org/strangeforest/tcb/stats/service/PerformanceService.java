@@ -33,20 +33,14 @@ public class PerformanceService {
 		"WHERE player_id = :playerId\n" +
 		"ORDER BY season";
 
-	private static final String PLAYER_PERFORMANCE_BREAKDOWN_QUERY = //language=SQL
-		"SELECT %1$s, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
+	private static final String PLAYER_LEVEL_BREAKDOWN_QUERY = //language=SQL
+		"SELECT level, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
 		"FROM player_match_for_stats_v\n" +
-		"WHERE player_id = :playerId%2$s\n" +
-		"GROUP BY %1$s\n" +
-		"ORDER BY %1$s";
+		"WHERE player_id = :playerId%1$s\n" +
+		"GROUP BY level\n" +
+		"ORDER BY level";
 
-	private static final String SEASON_CONDITION = //language=SQL
-		" AND season = :season";
-
-	private static final String INDIVIDUAL_TOURNAMENTS_CONDITION = //language=SQL
-		" AND level NOT IN ('D', 'T')";
-
-	private static final String PLAYER_OPPOSITION_PERFORMANCE_QUERY = //language=SQL
+	private static final String PLAYER_OPPOSITION_BREAKDOWN_QUERY = //language=SQL
 		"WITH season_opposition AS (\n" +
 		"  SELECT CASE\n" +
 		"    WHEN opponent_rank = 1 THEN 'NO_1'\n" +
@@ -64,6 +58,16 @@ public class PerformanceService {
 		"FROM season_opposition\n" +
 		"WHERE opposition IS NOT NULL\n" +
 		"ORDER BY opposition";
+
+	private static final String PLAYER_ROUND_BREAKDOWN_QUERY = //language=SQL
+		"SELECT round, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
+		"FROM player_match_for_stats_v\n" +
+		"WHERE player_id = :playerId AND level NOT IN ('D', 'T')%1$s\n" +
+		"GROUP BY round\n" +
+		"ORDER BY round DESC";
+
+	private static final String SEASON_CONDITION = //language=SQL
+		" AND season = :season";
 
 
 	public PlayerPerformance getPlayerPerformance(int playerId) {
@@ -147,7 +151,7 @@ public class PerformanceService {
 			paramSource.addValue("season", season);
 
 		jdbcTemplate.query(
-			format(PLAYER_PERFORMANCE_BREAKDOWN_QUERY, "level", conditions), paramSource,
+			format(PLAYER_LEVEL_BREAKDOWN_QUERY, conditions), paramSource,
 			rs -> {
 				TournamentLevel level = TournamentLevel.decode(rs.getString("level"));
 				WonLost wonLost = mapWonLost(rs);
@@ -156,7 +160,7 @@ public class PerformanceService {
 		);
 
 		jdbcTemplate.query(
-			format(PLAYER_OPPOSITION_PERFORMANCE_QUERY, conditions), paramSource,
+			format(PLAYER_OPPOSITION_BREAKDOWN_QUERY, conditions), paramSource,
 			rs -> {
 				Opponent opposition = Opponent.valueOf(rs.getString("opposition"));
 				WonLost wonLost = mapWonLost(rs);
@@ -166,7 +170,7 @@ public class PerformanceService {
 		performanceEx.processOpposition();
 
 		jdbcTemplate.query(
-			format(PLAYER_PERFORMANCE_BREAKDOWN_QUERY, "round", conditions + INDIVIDUAL_TOURNAMENTS_CONDITION), paramSource,
+			format(PLAYER_ROUND_BREAKDOWN_QUERY, conditions), paramSource,
 			rs -> {
 				Round round = Round.decode(rs.getString("round"));
 				WonLost wonLost = mapWonLost(rs);
