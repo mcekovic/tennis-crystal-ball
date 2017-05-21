@@ -138,13 +138,13 @@
 			</tr>
 			<tr th:each="roundWL : ${seasonPerf.roundMatches}" th:with="round=${roundWL.key}, wl=${roundWL.value}">
 				<td th:text="${round.text}">Final</td>
-				<td>
+				<th>
 					<div class="progress progress-season">
 						<div class="progress-bar progress-bar-perf" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, round=${round.code})}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" th:title="|Show season ${round.text} matches|">73%</a>
 						</div>
 					</div>
-				</td>
+				</th>
 			</tr>
 		</table>
 	</div>

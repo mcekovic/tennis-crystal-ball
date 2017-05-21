@@ -43,6 +43,9 @@ public class PerformanceService {
 	private static final String SEASON_CONDITION = //language=SQL
 		" AND season = :season";
 
+	private static final String INDIVIDUAL_TOURNAMENTS_CONDITION = //language=SQL
+		" AND level NOT IN ('D', 'T')";
+
 	private static final String PLAYER_OPPOSITION_PERFORMANCE_QUERY = //language=SQL
 		"WITH season_opposition AS (\n" +
 		"  SELECT CASE\n" +
@@ -163,7 +166,7 @@ public class PerformanceService {
 		performanceEx.processOpposition();
 
 		jdbcTemplate.query(
-			format(PLAYER_PERFORMANCE_BREAKDOWN_QUERY, "round", conditions), paramSource,
+			format(PLAYER_PERFORMANCE_BREAKDOWN_QUERY, "round", conditions + INDIVIDUAL_TOURNAMENTS_CONDITION), paramSource,
 			rs -> {
 				Round round = Round.decode(rs.getString("round"));
 				WonLost wonLost = mapWonLost(rs);
