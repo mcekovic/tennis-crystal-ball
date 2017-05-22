@@ -52,10 +52,10 @@ public class PlayerService {
 		"ORDER BY goat_points DESC, best_rank LIMIT 1";
 
 	private static final String SEASONS_QUERY =
-		"SELECT DISTINCT e.season FROM player_tournament_event_result r\n" +
+		"SELECT DISTINCT e.season FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"WHERE r.player_id = :playerId\n" +
-		"ORDER BY season DESC";
+		"WHERE m.winner_id = :playerId OR m.loser_id = :playerId\n" +
+		"ORDER BY e.season DESC";
 
 	private static final String OPPONENT_COUNTRIES_QUERY = //language=SQL
 		"SELECT DISTINCT loser_country_id FROM match\n" +
