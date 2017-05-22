@@ -90,40 +90,6 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("h2hProfiles", modelMap);
 	}
 
-	@GetMapping("/h2hMatches")
-	public ModelAndView h2hMatches(
-      @RequestParam(name = "playerId1") int playerId1,
-      @RequestParam(name = "playerId2") int playerId2,
-		@RequestParam(name = "season", required = false) Integer season,
-		@RequestParam(name = "level", required = false) String level,
-      @RequestParam(name = "surface", required = false) String surface,
-      @RequestParam(name = "round", required = false) String round
-   ) {
-		Player player1 = playerService.getPlayer(playerId1).get();
-		Player player2 = playerService.getPlayer(playerId2).get();
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, round));
-		List<Integer> seasons = getSeasonsIntersection(playerId1, playerId2);
-		List<TournamentItem> tournaments = new ArrayList<>(tournamentService.getPlayerTournaments(playerId1));
-		tournaments.retainAll(tournamentService.getPlayerTournaments(playerId2));
-
-		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("player1", player1);
-		modelMap.addAttribute("player2", player2);
-		modelMap.addAttribute("stats1", stats1);
-		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
-		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
-		modelMap.addAttribute("surfaces", Surface.values());
-		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
-		modelMap.addAttribute("rounds", Round.values());
-		modelMap.addAttribute("tournaments", tournaments);
-		modelMap.addAttribute("season", season);
-		modelMap.addAttribute("level", level);
-		modelMap.addAttribute("surface", surface);
-		modelMap.addAttribute("round", round);
-		return new ModelAndView("h2hMatches", modelMap);
-	}
-
 	@GetMapping("/h2hSeason")
 	public ModelAndView h2hSeason(
 		@RequestParam(name = "playerId1") int playerId1,
@@ -162,6 +128,40 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("seasonGOATPoints1", seasonGOATPoints1);
 		modelMap.addAttribute("seasonGOATPoints2", seasonGOATPoints2);
 		return new ModelAndView("h2hSeason", modelMap);
+	}
+
+	@GetMapping("/h2hMatches")
+	public ModelAndView h2hMatches(
+      @RequestParam(name = "playerId1") int playerId1,
+      @RequestParam(name = "playerId2") int playerId2,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+      @RequestParam(name = "surface", required = false) String surface,
+      @RequestParam(name = "round", required = false) String round
+   ) {
+		Player player1 = playerService.getPlayer(playerId1).get();
+		Player player2 = playerService.getPlayer(playerId2).get();
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, round));
+		List<Integer> seasons = getSeasonsIntersection(playerId1, playerId2);
+		List<TournamentItem> tournaments = new ArrayList<>(tournamentService.getPlayerTournaments(playerId1));
+		tournaments.retainAll(tournamentService.getPlayerTournaments(playerId2));
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("player1", player1);
+		modelMap.addAttribute("player2", player2);
+		modelMap.addAttribute("stats1", stats1);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("tournaments", tournaments);
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("round", round);
+		return new ModelAndView("h2hMatches", modelMap);
 	}
 
 	@GetMapping("/h2hRankings")

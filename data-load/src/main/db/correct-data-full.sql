@@ -7,6 +7,29 @@ WHERE player_id = (SELECT player_id FROM player_v WHERE name = 'Pat Cash') AND r
 COMMIT;
 
 
+-- Zverev Jr/Sr separation
+
+DO $$
+DECLARE
+	zverevSrId NUMERIC;
+	zverevJrId NUMERIC;
+BEGIN
+	SELECT player_id INTO zverevSrId FROM player_v WHERE name = 'Alexander Zverev Sr';
+	SELECT player_id INTO zverevJrId FROM player_v WHERE name = 'Alexander Zverev';
+
+	UPDATE player_ranking SET player_id = zverevSrId
+	WHERE player_id = zverevJrId AND rank_date < DATE '2000-01-01';
+
+	UPDATE match SET winner_id = zverevSrId
+	WHERE winner_id = zverevJrId AND date < DATE '2000-01-01';
+
+	UPDATE match SET loser_id = zverevSrId
+	WHERE loser_id = zverevJrId AND date < DATE '2000-01-01';
+END$$;;
+
+COMMIT;
+
+
 -- Update match missing rankings
 
 UPDATE match m

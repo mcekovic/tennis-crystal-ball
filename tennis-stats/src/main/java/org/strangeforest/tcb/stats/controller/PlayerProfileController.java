@@ -89,6 +89,28 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerProfileTab", modelMap);
 	}
 
+	@GetMapping("/playerSeason")
+	public ModelAndView playerSeason(
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season
+	) {
+		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		if (season == null)
+			season = !seasons.isEmpty() ? seasons.get(0) : Integer.valueOf(LocalDate.now().getYear());
+		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights = tournamentService.getPlayerSeasonHighlights(playerId, season, 4);
+		PlayerPerformanceEx seasonPerf = performanceService.getPlayerSeasonPerformanceEx(playerId, season);
+		PlayerSeasonGOATPoints seasonGOATPoints = goatPointsService.getPlayerSeasonGOATPoints(playerId, season);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("seasonHighlights", seasonHighlights);
+		modelMap.addAttribute("seasonPerf", seasonPerf);
+		modelMap.addAttribute("seasonGOATPoints", seasonGOATPoints);
+		return new ModelAndView("playerSeason", modelMap);
+	}
+
 	@GetMapping("/playerTournaments")
 	public ModelAndView playerTournaments(
 		@RequestParam(name = "playerId") int playerId,
@@ -172,28 +194,6 @@ public class PlayerProfileController extends PageController {
 
 	private List<CountryCode> getCountries(int playerId) {
 		return playerService.getPlayerOpponentCountryIds(playerId).stream().map(Country::code).filter(code -> code != null && code.getAlpha3() != null).distinct().sorted(comparing(CountryCode::getName)).collect(toList());
-	}
-
-	@GetMapping("/playerSeason")
-	public ModelAndView playerSeason(
-		@RequestParam(name = "playerId") int playerId,
-		@RequestParam(name = "season", required = false) Integer season
-	) {
-		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		if (season == null)
-			season = !seasons.isEmpty() ? seasons.get(0) : Integer.valueOf(LocalDate.now().getYear());
-		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights = tournamentService.getPlayerSeasonHighlights(playerId, season, 4);
-		PlayerPerformanceEx seasonPerf = performanceService.getPlayerSeasonPerformanceEx(playerId, season);
-		PlayerSeasonGOATPoints seasonGOATPoints = goatPointsService.getPlayerSeasonGOATPoints(playerId, season);
-
-		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("playerId", playerId);
-		modelMap.addAttribute("season", season);
-		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("seasonHighlights", seasonHighlights);
-		modelMap.addAttribute("seasonPerf", seasonPerf);
-		modelMap.addAttribute("seasonGOATPoints", seasonGOATPoints);
-		return new ModelAndView("playerSeason", modelMap);
 	}
 
 	@GetMapping("/playerTimeline")
