@@ -35,14 +35,18 @@ public class FavoriteSurface {
 			setNotAvailable();
 			return;
 		}
-		else if (surfaceCount > 2) {
-			surfaces.sort(naturalOrder());
-			SurfaceWonPct worstSurface = surfaces.get(0);
-			SurfaceWonPct bestSurface = surfaces.get(surfaceCount - 1);
-			if (bestSurface.wonPct - worstSurface.wonPct <= ALL_ROUNDER_SPREAD_PCT) {
-				setAllRounder();
-				return;
-			}
+		else if (surfaceCount == 1) {
+			setSurface(surfaces.get(0).surface);
+			return;
+		}
+		surfaces.sort(naturalOrder());
+		SurfaceWonPct worstSurface = surfaces.get(0);
+		SurfaceWonPct bestSurface = surfaces.get(surfaceCount - 1);
+		if (bestSurface.wonPct - worstSurface.wonPct <= ALL_ROUNDER_SPREAD_PCT) {
+			setAllRounder();
+			return;
+		}
+		if (surfaceCount > 2) {
 			int maxWonPctGapIndex = getMaxWonPctGapIndex(surfaces);
 			List<SurfaceWonPct> favoriteSurfaces = surfaces.stream().skip(maxWonPctGapIndex).collect(toList());
 			int favoriteSurfaceCount = favoriteSurfaces.size();
@@ -69,7 +73,7 @@ public class FavoriteSurface {
 				}
 			}
 		}
-		setSurface(surfaces.get(surfaceCount - 1).surface);
+		setSurface(bestSurface.surface);
 	}
 
 	private static int getMaxWonPctGapIndex(List<SurfaceWonPct> surfaces) {
