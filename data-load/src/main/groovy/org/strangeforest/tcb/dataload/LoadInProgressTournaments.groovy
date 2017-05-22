@@ -36,5 +36,6 @@ static findInProgressEvents(String url, boolean processUrls = true) {
 	eventInfos << new EventInfo(eventUrl)
 	if (processUrls)
 		eventInfos.addAll findInProgressEvents(eventUrl, false)
+	eventInfos.removeIf { info -> !info.extId }
 	eventInfos
 }
