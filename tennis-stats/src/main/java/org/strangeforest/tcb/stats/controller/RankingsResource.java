@@ -61,7 +61,7 @@ public class RankingsResource {
 	@GetMapping("/playerRankingsTable")
 	public DataTable playerRankingsTable(
 		@RequestParam(name = "playerId", required = false) int[] playerId,
-		@RequestParam(name = "players", required = false) String playersCSV,
+		@RequestParam(name = "players", defaultValue = "") String playersCSV,
 		@RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType,
 		@RequestParam(name = "timeSpan", defaultValue = CAREER) String timeSpan,
 		@RequestParam(name = "bySeason", defaultValue = "false") boolean bySeason,

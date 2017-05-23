@@ -11,6 +11,7 @@ cli.t('Use tables for computed data')
 cli.cd('Create database objects')
 cli.dd('Drop database objects')
 cli.lt('Load atp_tennis data')
+cli.ln('Load atp_tennis new data')
 cli.lp('Load additional player data')
 cli.la('Load ad-hoc rankings and tournaments')
 cli.nt('Load new completed tournaments')
@@ -24,7 +25,7 @@ cli.cc('Clear caches')
 cli.help('Print this message')
 def options = cli.parse(args)
 
-if (options && (options.cd || options.dd || options.lt || options.lp || options.la || options.nt || options.nr || options.ip || options.el || options.rc || options.rr || options.vc || options.cc)) {
+if (options && (options.cd || options.dd || options.lt || options.ln || options.lp || options.la || options.nt || options.nr || options.ip || options.el || options.rc || options.rr || options.vc || options.cc)) {
 	setProperties(options)
 	
 	if (options.cd)
@@ -33,6 +34,8 @@ if (options && (options.cd || options.dd || options.lt || options.lp || options.
 		callLoader('dropDatabase')
 	if (options.lt)
 		new LoadATPTennis().run()
+	if (options.ln)
+		new LoadATPTennisNew().run()
 	if (options.lp)
 		callLoader('loadAdditionalPlayerData')
 	if (options.la) {

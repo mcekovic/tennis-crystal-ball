@@ -23,7 +23,7 @@ public class PerfStatsChartResource {
 	@GetMapping("/playerPerformanceTable")
 	public DataTable playerPerformanceTable(
 		@RequestParam(name = "playerId", required = false) int[] playerId,
-		@RequestParam(name = "players", required = false) String playersCSV,
+		@RequestParam(name = "players", defaultValue = "") String playersCSV,
 		@RequestParam(name = "category", defaultValue = "matches") String category,
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
@@ -44,7 +44,7 @@ public class PerfStatsChartResource {
 	@GetMapping("/playerStatisticsTable")
 	public DataTable playerStatisticsTable(
 		@RequestParam(name = "playerId", required = false) int[] playerId,
-		@RequestParam(name = "players", required = false) String playersCSV,
+		@RequestParam(name = "players", defaultValue = "") String playersCSV,
 		@RequestParam(name = "category", defaultValue = "aces") String category,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
