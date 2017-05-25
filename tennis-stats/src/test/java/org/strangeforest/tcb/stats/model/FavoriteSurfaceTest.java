@@ -22,6 +22,19 @@ public class FavoriteSurfaceTest {
 	}
 
 	@Test
+	public void similarSurfacesPercentageIsAllRounder() {
+		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
+			new WonLost(50, 50),
+			new WonLost(51, 50),
+			new WonLost(52, 50),
+			new WonLost(0, 0)
+		));
+
+		assertThat(favoriteSurface.isAllRounder()).isTrue();
+		assertThat(favoriteSurface).hasToString("All-Rounder");
+	}
+
+	@Test
 	public void singleSurfaceIsAlwaysFavorite() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(0, 0),

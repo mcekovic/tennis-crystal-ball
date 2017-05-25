@@ -126,12 +126,16 @@ public class FavoriteSurface {
 		return surfaceGroup;
 	}
 
+	public boolean isAllRounder() {
+		return allRounder;
+	}
+
 	public boolean isEmpty() {
 		return surface == null && surfaceGroup == null && !allRounder;
 	}
 
 	@Override public String toString() {
-		return surfaceGroup != null ? surfaceGroup.getText() : (surface != null ? surface.getText() : ALL_ROUNDER);
+		return allRounder ? ALL_ROUNDER : (surfaceGroup != null ? surfaceGroup.getText() : (surface != null ? surface.getText() : ""));
 	}
 
 	private static final class SurfaceWonPct implements Comparable<SurfaceWonPct> {
