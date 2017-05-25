@@ -10,20 +10,27 @@ import org.strangeforest.tcb.stats.service.*;
 import static java.lang.String.*;
 
 @Component
-public class CacheMvcEndpoint extends AbstractMvcEndpoint {
+public class ManagementMvcEndpoint extends AbstractMvcEndpoint {
 
 	@Autowired private DataService dataService;
 
-	public CacheMvcEndpoint() {
-		super("/clearCache", false);
+	public ManagementMvcEndpoint() {
+		super("", false);
 	}
 
-	@GetMapping(produces = MediaType.TEXT_PLAIN_VALUE)
+	@GetMapping(path="/clearCache", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
 	public String clearCache(
 		@RequestParam(name = "name", defaultValue = ".*") String name
 	) {
 		int cacheCount = dataService.clearCaches(name);
 		return format("OK (%1$d caches cleared)", cacheCount);
+	}
+
+	@GetMapping(path="/gc", produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String gc() {
+		System.gc();
+		return "Garbage collection initiated.";
 	}
 }
