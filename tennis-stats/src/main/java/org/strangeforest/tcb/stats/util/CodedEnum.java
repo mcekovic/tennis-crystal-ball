@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.util;
+package org.strangeforest.tcb.stats.util;
 
 import java.util.*;
 import java.util.stream.*;
@@ -15,7 +15,7 @@ public interface CodedEnum {
 			if (e.getCode().equals(code))
 				return e;
 		}
-		throw new IllegalArgumentException(String.format("Invalid %1$s code: %2$s", enumClass.getSimpleName(), code));
+		throw new NotFoundException(enumClass.getSimpleName(), code);
 	}
 
 	static <E extends Enum<E> & CodedEnum> E safeDecode(Class<E> enumClass, String code) {

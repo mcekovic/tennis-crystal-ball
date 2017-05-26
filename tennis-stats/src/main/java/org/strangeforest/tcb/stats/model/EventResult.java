@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
-import org.strangeforest.tcb.util.*;
+import org.strangeforest.tcb.stats.util.*;
 
 public enum EventResult implements CodedEnum {
 

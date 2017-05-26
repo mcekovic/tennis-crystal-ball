@@ -9,7 +9,7 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.StatsCategory.*;
 import org.strangeforest.tcb.stats.model.table.*;
-import org.strangeforest.tcb.util.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.collect.*;
 

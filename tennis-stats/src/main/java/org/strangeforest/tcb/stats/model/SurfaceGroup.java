@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
-import org.strangeforest.tcb.util.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.Surface.*;

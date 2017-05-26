@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
-import org.strangeforest.tcb.util.*;
+import org.strangeforest.tcb.stats.util.*;
 
 public enum Round implements CodedEnum {
 

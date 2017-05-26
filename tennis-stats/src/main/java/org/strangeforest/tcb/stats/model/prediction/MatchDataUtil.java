@@ -9,7 +9,7 @@ import org.strangeforest.tcb.stats.model.*;
 import com.google.common.collect.*;
 
 import static java.lang.Math.*;
-import static org.strangeforest.tcb.util.CodedEnum.*;
+import static org.strangeforest.tcb.stats.util.CodedEnum.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
 public abstract class MatchDataUtil {

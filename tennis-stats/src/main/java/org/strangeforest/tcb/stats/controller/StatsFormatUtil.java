@@ -1,14 +1,11 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.text.*;
-import java.util.stream.*;
 
 import org.strangeforest.tcb.stats.model.*;
-import org.strangeforest.tcb.util.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.base.*;
-
-import static java.util.stream.Collectors.*;
 
 public class StatsFormatUtil {
 
