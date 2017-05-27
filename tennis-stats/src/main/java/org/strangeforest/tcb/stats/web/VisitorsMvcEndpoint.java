@@ -2,7 +2,6 @@ package org.strangeforest.tcb.stats.web;
 
 import java.math.*;
 import java.util.*;
-import java.util.Map.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.endpoint.mvc.*;
@@ -48,8 +47,7 @@ public class VisitorsMvcEndpoint extends AbstractMvcEndpoint {
 	private static <K, V> List<Object[]> mapToDataArray(Map<K, V> map, String keyHeader, String valueHeader) {
 		List<Object[]> array = new ArrayList<>();
 		array.add(new Object[] {keyHeader, valueHeader});
-		for (Entry<K, V> entry : map.entrySet())
-			array.add(new Object[] {entry.getKey(), entry.getValue()});
+		map.forEach((key, value) -> array.add(new Object[] {key, value}));
 		return array;
 	}
 }

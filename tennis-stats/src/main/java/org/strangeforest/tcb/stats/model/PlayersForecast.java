@@ -1,7 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
-import java.util.Map.*;
 
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
@@ -57,19 +56,17 @@ public class PlayersForecast {
 	}
 
 	void removePlayersWOResults() {
-		for (Entry<Integer, PlayerForecast> forecastEntry : new HashMap<>(playerForecasts).entrySet()) {
-			PlayerForecast playerForecast = forecastEntry.getValue();
+		new HashMap<>(playerForecasts).forEach((playerId, playerForecast) -> {
 			if (playerForecast.isEmpty())
-				playerForecasts.remove(forecastEntry.getKey());
-		}
+				playerForecasts.remove(playerId);
+		});
 	}
 
 	void removePlayersWORemainingResults() {
-		for (Entry<Integer, PlayerForecast> forecastEntry : new HashMap<>(playerForecasts).entrySet()) {
-			PlayerForecast playerForecast = forecastEntry.getValue();
+		new HashMap<>(playerForecasts).forEach((playerId, playerForecast) -> {
 			if (!playerForecast.hasAnyResult(results))
-				playerForecasts.remove(forecastEntry.getKey());
-		}
+				playerForecasts.remove(playerId);
+		});
 	}
 
 	void removePastRounds() {

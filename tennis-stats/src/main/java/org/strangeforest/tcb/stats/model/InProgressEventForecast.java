@@ -1,7 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
-import java.util.Map.*;
 
 public class InProgressEventForecast {
 
@@ -44,11 +43,10 @@ public class InProgressEventForecast {
 		if (playersForecasts.isEmpty())
 			return;
 		KOResult entryRound = playersForecasts.values().iterator().next().getEntryRound();
-		for (Entry<String, PlayersForecast> forecastEntry : playersForecasts.entrySet()) {
-			String baseResult = forecastEntry.getKey();
+		playersForecasts.forEach((baseResult, forecast) -> {
 			if (!(baseResult.equals(entryRound.name()) || baseResult.equals(CURRENT)))
-				forecastEntry.getValue().removePlayersWOResults();
-		}
+				forecast.removePlayersWOResults();
+		});
 		PlayersForecast currentForecast = getCurrentForecasts();
 		if (currentForecast != null) {
 			currentForecast.removePastRounds();
