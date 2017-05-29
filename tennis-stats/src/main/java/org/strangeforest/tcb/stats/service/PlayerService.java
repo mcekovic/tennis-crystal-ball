@@ -44,7 +44,12 @@ public class PlayerService {
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
 		"SELECT player_id, name, country_id FROM player_v\n" +
 		"WHERE name ILIKE '%' || :name || '%'\n" +
-		"ORDER BY goat_points DESC, best_rank, name LIMIT 20";
+		"ORDER BY goat_points DESC, best_rank, name LIMIT :count";
+
+	private static final String PLAYER_AUTOCOMPLETE_EX_QUERY =
+		"SELECT player_id, name, country_id, name <-> :name AS dist FROM player_v\n" +
+		"WHERE name <-> :name <= 0.7\n" +
+		"ORDER BY dist, goat_points DESC, best_rank, name LIMIT :count";
 
 	private static final String PLAYER_ID_QUERY =
 		"SELECT player_id FROM player_v\n" +
@@ -69,6 +74,9 @@ public class PlayerService {
 		"ORDER BY %1$s LIMIT :count";
 
 
+	private static final int AUTOCOMPLETE_COUNT = 20;
+	private static final int AUTOCOMPLETE_EX_THRESHOLD = 5;
+
 	@Cacheable("Player")
 	public Optional<Player> getPlayer(int playerId) {
 		return jdbcTemplate.query(PLAYER_BY_ID_QUERY, params("playerId", playerId), this::playerExtractor);
@@ -91,7 +99,17 @@ public class PlayerService {
 	}
 
 	public List<AutocompleteOption> autocompletePlayer(String name) {
-		return jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, params("name", name), this::playerAutocompleteOptionMapper);
+		MapSqlParameterSource paramSource = params("name", name).addValue("count", AUTOCOMPLETE_COUNT);
+		List<AutocompleteOption> options = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, paramSource, this::playerAutocompleteOptionMapper);
+		int count = options.size();
+		if (count <= AUTOCOMPLETE_EX_THRESHOLD) {
+			List<AutocompleteOption> optionsEx = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_EX_QUERY, paramSource, this::playerAutocompleteOptionMapper);
+			for (AutocompleteOption option : optionsEx) {
+				if (options.size() < AUTOCOMPLETE_COUNT && !options.contains(option))
+					options.add(option);
+			}
+		}
+		return options;
 	}
 
 	@Cacheable("PlayerId")
