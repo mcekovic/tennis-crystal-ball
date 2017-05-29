@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
 import static com.google.common.base.MoreObjects.*;
+import static java.util.Objects.*;
 
 public class AutocompleteOption {
 
@@ -9,7 +10,7 @@ public class AutocompleteOption {
 	private final String label;
 
 	public AutocompleteOption(String id, String value, String label) {
-		this.id = id;
+		this.id = requireNonNull(id);
 		this.value = value;
 		this.label = label;
 	}
@@ -28,7 +29,18 @@ public class AutocompleteOption {
 
 
 	// Object methods
-	
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof AutocompleteOption)) return false;
+		AutocompleteOption that = (AutocompleteOption)o;
+		return id.equals(that.id);
+	}
+
+	@Override public int hashCode() {
+		return id.hashCode();
+	}
+
 	@Override public String toString() {
 		return toStringHelper(this).omitNullValues()
 			.add("id", id)
