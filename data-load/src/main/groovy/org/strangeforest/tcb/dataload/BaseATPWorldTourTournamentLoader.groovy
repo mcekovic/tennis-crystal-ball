@@ -137,7 +137,7 @@ abstract class BaseATPWorldTourTournamentLoader {
 	}
 
 	static player(String name) {
-		name.replace('-', ' ').replace('\'', '').replace('.', '').replace('ó', 'o').replace('á', 'a').replace('í', 'i')
+		name.replace('-', ' ').replace('\'', '').replace('.', '').replace('ó', 'o').replace('á', 'a').replace('í', 'i').replace('ñ', 'n')
 	}
 
 	static isUnknown(String name) {
