@@ -174,7 +174,7 @@
 </script>
 <div class="row">
 	<div class="col-md-2">
-		<select id="eventsSeason" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter seasons">
+		<select id="eventsSeason" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by season">
 			<option value="">All seasons</option>
 			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
 		</select>
@@ -194,7 +194,7 @@
 		</select>
 	</div>
 	<div class="col-md-2">
-		<select id="eventsTournament" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter tournaments">
+		<select id="eventsTournament" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
 			<option value="">All tournaments</option>
 			<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
 		</select>

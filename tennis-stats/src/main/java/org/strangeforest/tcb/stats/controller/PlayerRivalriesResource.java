@@ -59,9 +59,10 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
-		@RequestParam(name = "round", required = false) String round
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "score", required = false) String score
 	) {
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, level, surface, tournamentId, round));
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, level, surface, tournamentId, round, score));
 		return asList(stats1.getMatchesWon(), stats1.getMatchesLost());
 	}
 }

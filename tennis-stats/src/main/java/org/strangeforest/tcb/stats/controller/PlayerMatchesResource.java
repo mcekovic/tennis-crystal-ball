@@ -41,6 +41,7 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
 		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
 		@RequestParam(name = "statsTo", required = false) Double statsTo,
@@ -52,8 +53,9 @@ public class PlayerMatchesResource {
 	) {
 		OpponentFilter opponentFilter = OpponentFilter.forMatches(opponent, matchesService.getSameCountryIds(countryId));
 		OutcomeFilter outcomeFilter = OutcomeFilter.forMatches(outcome);
+		ScoreFilter scoreFilter = ScoreFilter.forMatches(score);
 		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
-		MatchFilter filter = MatchFilter.forMatches(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, statsFilter, searchPhrase);
+		MatchFilter filter = MatchFilter.forMatches(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, scoreFilter, statsFilter, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
 		return matchesService.getPlayerMatchesTable(playerId, filter, orderBy, pageSize, current);
@@ -69,6 +71,7 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "opponent", required = false) String opponent,
+		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
 		@RequestParam(name = "countryId", required = false) String countryId,
@@ -76,7 +79,8 @@ public class PlayerMatchesResource {
 	) {
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
 		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
-		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, StatsFilter.ALL, searchPhrase);
+		ScoreFilter scoreFilter = ScoreFilter.forStats(score);
+		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, scoreFilter, StatsFilter.ALL, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 		return StatsCategory.get(statsCategory).getStat(stats);
 	}

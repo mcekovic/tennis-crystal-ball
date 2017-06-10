@@ -62,6 +62,7 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
 		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
 		@RequestParam(name = "statsTo", required = false) Double statsTo,
@@ -75,7 +76,8 @@ public class PlayerStatsController extends BaseController {
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
 		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
 		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
-		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, statsFilter, searchPhrase);
+		ScoreFilter scoreFilter = ScoreFilter.forStats(score);
+		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, round, opponentFilter, outcomeFilter, scoreFilter, statsFilter, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();
@@ -114,12 +116,13 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		MatchFilter filter = MatchFilter.forOpponent(opponentId, season, level, surface, tournamentId, round);
+		MatchFilter filter = MatchFilter.forOpponent(opponentId, season, level, surface, tournamentId, round, score);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();
