@@ -88,7 +88,7 @@
 			url += "&tournamentId=" + tournamentId;
 		var score = $("#matchesScore").val();
 		if (score)
-			url += "&score=" + score;
+			url += "&score=" + encodeURIComponent(score);
 		$.get(url, function (data) {
 			$("#playerWon1").html(data[0]);
 			$("#playerWon2").html(data[1]);
@@ -104,7 +104,7 @@
 		$("#matchesTable").bootgrid("search", "");
 		reloadMatches();
 	}
-	function showRivalryStats(playerId1, playerId2, placement, event) {
+	function showRivalryStats(playerId1, playerId2, placement, event, invertScore) {
 		var $rivalryStats = $("#rivalryStats-" + playerId2);
 		if (!$rivalryStats.hasClass("loaded")) {
 			event.preventDefault();
@@ -112,9 +112,12 @@
 			url += "&season=" + $("#matchesSeason").val();
 			url += "&level=" + $("#matchesLevel").val();
 			url += "&surface=" + $("#matchesSurface").val();
-			url += "&tournamentId=" + $("#matchesTournament").val();
 			url += "&round=" + encodeURIComponent($("#matchesRound").val());
-			url += "&score=" + encodeURIComponent($("#matchesScore").val());
+			url += "&tournamentId=" + $("#matchesTournament").val();
+			var score = $("#matchesScore").val();
+			if (invertScore)
+				score = score.charAt(2) + score.charAt(1) + score.charAt(0) + score.substr(3);
+			url += "&score=" + encodeURIComponent(score);
 			url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 			$.get(url, function(data) {
 				$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto " + placement});
@@ -181,19 +184,34 @@
 			<optgroup label="Best of 3">
 				<option value="2:0">2:0</option>
 				<option value="2:1">2:1</option>
+				<option value="1:2">1:2</option>
+				<option value="0:2">0:2</option>
 			</optgroup>
 			<optgroup label="Best of 5">
 				<option value="3:0">3:0</option>
 				<option value="3:1">3:1</option>
 				<option value="3:2">3:2</option>
+				<option value="2:3">2:3</option>
+				<option value="1:3">1:3</option>
+				<option value="0:3">0:3</option>
+			</optgroup>
+			<optgroup label="After">
+				<option value="1:0+">After 1:0</option>
+				<option value="0:1+">After 0:1</option>
+				<option value="1:1+">After 1:1</option>
+				<option value="2:0+">After 2:0</option>
+				<option value="0:2+">After 0:2</option>
+				<option value="2:1+">After 2:1</option>
+				<option value="1:2+">After 1:2</option>
+				<option value="2:2+">After 2:2</option>
 			</optgroup>
 		</select>
 	</div>
 </div>
-<button th:id="|rivalryStats-${player2.id}|" type="button" class="btn btn-info grid-control pull-left no-margin-left" th:onclick="|showRivalryStats(${player1.id}, ${player2.id}, 'right', event)|" data-toggle="tooltip" data-placement="top" th:title="|${player1.name} vs ${player2.name} Statistics (for the selected matches)|">
+<button th:id="|rivalryStats-${player2.id}|" type="button" class="btn btn-info grid-control pull-left no-margin-left" th:onclick="|showRivalryStats(${player1.id}, ${player2.id}, 'right', event, false)|" data-toggle="tooltip" data-placement="top" th:title="|${player1.name} vs ${player2.name} Statistics (for the selected matches)|">
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats 1
 </button>
-<button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control margin-right" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'left', event)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">
+<button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control margin-right" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'left', event, true)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats 2
 </button>
 <div id="clearDiv" class="btn-group margin-right">

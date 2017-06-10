@@ -34,6 +34,7 @@ public class OutcomeFilter {
 	private static final String WON = "won";
 	private static final String LOST = "lost";
 	private static final String PLAYED = "played";
+	private static final String FINISHED = "finished";
 	private static final String NOT_PLAYED = "notPlayed";
 	private static final String NOT_ABANDONED = "notAbandoned";
 
@@ -41,6 +42,7 @@ public class OutcomeFilter {
 	private static final String STATS_WON_CRITERION   = " AND %1$s = 1";
 	private static final String OUTCOME_CRITERION = " AND outcome = :outcome::match_outcome";
 	private static final String PLAYED_CRITERION = " AND (outcome IS NULL OR outcome IN ('RET', 'DEF'))";
+	private static final String FINISHED_CRITERION = " AND outcome IS NULL";
 	private static final String NOT_PLAYED_CRITERION = " AND outcome IN ('W/O', 'ABD')";
 	private static final String NOT_ABANDONED_CRITERION = " AND (outcome IS NULL OR outcome <> 'ABD')";
 
@@ -78,6 +80,8 @@ public class OutcomeFilter {
 		if (!isNullOrEmpty(outcome)) {
 			if (outcome.equals(PLAYED))
 				criteria.append(PLAYED_CRITERION);
+			else if (outcome.equals(FINISHED))
+				criteria.append(FINISHED_CRITERION);
 			else if (outcome.equals(NOT_PLAYED))
 				criteria.append(NOT_PLAYED_CRITERION);
 			else if (outcome.equals(NOT_ABANDONED))

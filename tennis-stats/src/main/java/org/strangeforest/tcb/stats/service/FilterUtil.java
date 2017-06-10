@@ -15,11 +15,22 @@ abstract class FilterUtil {
 	}
 
 	static String where(String condition, int indent) {
-		return !isNullOrEmpty(condition) ? "\n" + repeat(" ", indent) + "WHERE" + skipAnd(condition) : "";
+		return !isNullOrEmpty(condition) ? "\n" + repeat(" ", indent) + "WHERE " + skipAnd(condition) : "";
 	}
 
 	private static String skipAnd(String condition) {
-		return condition.startsWith(AND) ? condition.substring(AND.length() - 1) : condition;
+		return condition.startsWith(AND) ? condition.substring(AND.length()) : condition;
+	}
+
+	static String or(String... conditions) {
+		StringBuilder or = new StringBuilder();
+		for (int i = 0, len = conditions.length; i < len; i++) {
+			String condition = conditions[i];
+			or.append(i == 0 ? " AND ((" : ") OR (");
+			or.append(skipAnd(condition));
+		}
+		or.append("))");
+		return or.toString();
 	}
 
 	static String rangeFilter(Range<?> range, String column) {
