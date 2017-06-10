@@ -30,8 +30,8 @@ public class ScoreFilter {
 	private final boolean all;
 	private final boolean forStats;
 
-	private static final String MATCHES_SCORE_CRITERION = " AND w_sets = :wSets AND l_sets = :lSets";
-	private static final String STATS_SCORE_CRITERION = " AND ((p_matches = 1 AND p_sets = :wSets AND o_sets = :lSets) OR (o_matches = 1 AND p_sets = :lSets AND o_sets = :wSets))";
+	private static final String MATCHES_SCORE_CRITERION = " AND w_sets = :wSets AND l_sets = :lSets AND outcome IS NULL";
+	private static final String STATS_SCORE_CRITERION = " AND ((p_matches = 1 AND p_sets = :wSets AND o_sets = :lSets) OR (o_matches = 1 AND p_sets = :lSets AND o_sets = :wSets)) AND outcome IS NULL";
 
 	private ScoreFilter(String score, boolean forStats) {
 		this.forStats = forStats;
