@@ -57,7 +57,7 @@ public class MatchFilter extends TournamentEventResultFilter {
 	}
 
 	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, String result, StatsFilter statsFilter, String searchPhrase) {
-		return forStats(season, level, surface, tournamentId, null, result, null, null, null, statsFilter, searchPhrase);
+		return forStats(season, level, surface, tournamentId, null, result, null, null, null, null, statsFilter, searchPhrase);
 	}
 
 	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, ScoreFilter scoreFilter, StatsFilter statsFilter, String searchPhrase) {
