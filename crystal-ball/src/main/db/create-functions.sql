@@ -1,3 +1,27 @@
+-- days
+
+CREATE OR REPLACE FUNCTION days(
+	p_interval INTERVAL
+) RETURNS REAL AS $$
+BEGIN
+	RETURN extract(epoch FROM p_interval) / 86400.0;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- days_in_month
+
+CREATE OR REPLACE FUNCTION days_in_month(
+	p_date DATE
+) RETURNS REAL AS $$
+DECLARE
+	month DATE := date_trunc('month', p_date);
+BEGIN
+	RETURN extract(epoch FROM (month + INTERVAL '1 month') - month) / 86400.0;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- weeks
 
 CREATE OR REPLACE FUNCTION weeks(

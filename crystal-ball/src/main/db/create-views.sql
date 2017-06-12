@@ -1671,7 +1671,7 @@ LEFT JOIN player_titles USING (player_id);
 -- visitor_summary_v
 
 CREATE OR REPLACE VIEW visitor_summary_v AS
-SELECT first_hit::DATE AS date, country_id, agent_type, count(*) AS visits, sum(hits) AS hits, avg(last_hit - first_hit) AS visit_duration, extract(epoch FROM avg(last_hit - first_hit) * count(*)) / 86400 AS average_visitors
+SELECT first_hit::DATE AS date, country_id, agent_type, count(*) AS visits, sum(hits) AS hits, avg(last_hit - first_hit) AS visit_duration, days(sum(last_hit - first_hit)) AS average_visitors
 FROM visitor
 GROUP BY date, country_id, agent_type
 ORDER BY date DESC, country_id, agent_type;
@@ -1680,7 +1680,7 @@ ORDER BY date DESC, country_id, agent_type;
 -- visitor_summary_all_v
 
 CREATE OR REPLACE VIEW visitor_summary_all_v AS
-SELECT date, country_id, agent_type, visits, hits, visit_duration, extract(epoch FROM visit_duration * visits) / 86400 AS average_visitors
+SELECT date, country_id, agent_type, visits, hits, visit_duration, days(visit_duration * visits) AS average_visitors
 FROM visitor_summary
 UNION ALL
 SELECT date, country_id, agent_type, visits, hits, visit_duration, average_visitors
