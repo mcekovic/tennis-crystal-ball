@@ -41,7 +41,10 @@ class RecordsLoader {
 
 	private static progressTick(progress) {
 		print '.'
-		if (progress.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
+		if (progress.incrementAndGet() % PROGRESS_LINE_WRAP == 0) {
 			println()
+			System.gc()
+			Thread.sleep(5000L)
+		}
 	}
 }
