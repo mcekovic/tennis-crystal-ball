@@ -64,7 +64,7 @@ public class FavoriteSurfaceTest {
 	public void oneBestSurfaceIsFavorite() {
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance(
 			new WonLost(15, 5),
-			new WonLost(10, 5),
+			new WonLost(8, 5),
 			new WonLost(5, 5),
 			new WonLost(0, 1)
 		));
@@ -96,7 +96,7 @@ public class FavoriteSurfaceTest {
 		));
 
 		assertThat(favoriteSurface.getSurfaceGroup()).isEqualTo(FAST);
-		assertThat(favoriteSurface).hasToString("Fast (H, G, Cp)");
+		assertThat(favoriteSurface).hasToString("Fast (H, G)");
 	}
 
 	@Test
