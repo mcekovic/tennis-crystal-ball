@@ -127,7 +127,7 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 			"FROM titles_wo_losing_item\n" +
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
-			TournamentEventIntegerRecordDetail.class, null,
+			IntegerRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", "numeric", null, ITEMS_WIDTH, "right", "Titles")
 			),
