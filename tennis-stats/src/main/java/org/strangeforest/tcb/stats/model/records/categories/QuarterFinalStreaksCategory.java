@@ -8,7 +8,7 @@ public class QuarterFinalStreaksCategory extends ResultsStreaksCategory {
 
 	public QuarterFinalStreaksCategory() {
 		super("Quarter-Final Streaks");
-		register(quarterFinalStreak(ALL));
+		register(quarterFinalStreak(ALL_WO_TEAM));
 		register(quarterFinalStreak(GRAND_SLAM));
 		register(quarterFinalStreak(TOUR_FINALS));
 		register(quarterFinalStreak(MASTERS));
@@ -21,7 +21,7 @@ public class QuarterFinalStreaksCategory extends ResultsStreaksCategory {
 		register(quarterFinalStreak(CLAY));
 		register(quarterFinalStreak(GRASS));
 		register(quarterFinalStreak(CARPET));
-		register(tournamentQuarterFinalStreak(ALL));
+		register(tournamentQuarterFinalStreak(ALL_WO_TEAM));
 		register(tournamentQuarterFinalStreak(GRAND_SLAM));
 		register(tournamentQuarterFinalStreak(MASTERS));
 		register(tournamentQuarterFinalStreak(ATP_500));

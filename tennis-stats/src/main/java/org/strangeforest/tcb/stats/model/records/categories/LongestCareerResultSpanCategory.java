@@ -40,20 +40,20 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 	}
 
 	private void registerResultCareerSpans(ResultType type) {
-		register(resultCareerSpan(type, ALL));
+		register(resultCareerSpan(type, ALL_WO_TEAM));
 		register(resultCareerSpan(type, GRAND_SLAM));
 		register(resultCareerSpan(type, TOUR_FINALS));
 		register(resultCareerSpan(type, MASTERS));
 	}
 
 	private void registerWinCareerSpans() {
-		register(winCareerSpan(ALL));
+		register(winCareerSpan(ALL_WO_TEAM));
 		register(winCareerSpan(GRAND_SLAM));
 		register(winCareerSpan(MASTERS));
 	}
 
 	private void registerConsecutiveSeasons(ResultType type) {
-		register(consecutiveSeasons(type, ALL));
+		register(consecutiveSeasons(type, ALL_WO_TEAM));
 		register(consecutiveSeasons(type, GRAND_SLAM));
 		register(consecutiveSeasons(type, MASTERS));
 	}

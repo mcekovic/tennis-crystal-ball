@@ -42,7 +42,7 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 
 	public ItemsWinningTitleCategory(RecordType type) {
 		super(type.name + " Games / Sets Lost Winning Title");
-		register(itemsLostWinningTitle(type, GAMES, ALL));
+		register(itemsLostWinningTitle(type, GAMES, ALL_WO_TEAM));
 		register(itemsLostWinningTitle(type, GAMES, GRAND_SLAM));
 		register(itemsLostWinningTitle(type, GAMES, TOUR_FINALS));
 		register(itemsLostWinningTitle(type, GAMES, MASTERS));
@@ -53,10 +53,17 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		register(itemsLostWinningTitle(type, GAMES, CLAY, surfaceTournaments("C", "e.")));
 		register(itemsLostWinningTitle(type, GAMES, GRASS, surfaceTournaments("G", "e.")));
 		register(itemsLostWinningTitle(type, GAMES, CARPET, surfaceTournaments("P", "e.")));
+		register(itemsLostWinningTitle(type, SETS, ALL_WO_TEAM));
 		register(itemsLostWinningTitle(type, SETS, GRAND_SLAM));
 		register(itemsLostWinningTitle(type, SETS, TOUR_FINALS));
 		register(itemsLostWinningTitle(type, SETS, MASTERS));
 		register(itemsLostWinningTitle(type, SETS, OLYMPICS));
+		register(itemsLostWinningTitle(type, SETS, ATP_500));
+		register(itemsLostWinningTitle(type, SETS, ATP_250));
+		register(itemsLostWinningTitle(type, SETS, HARD, surfaceTournaments("H", "e.")));
+		register(itemsLostWinningTitle(type, SETS, CLAY, surfaceTournaments("C", "e.")));
+		register(itemsLostWinningTitle(type, SETS, GRASS, surfaceTournaments("G", "e.")));
+		register(itemsLostWinningTitle(type, SETS, CARPET, surfaceTournaments("P", "e.")));
 	}
 
 	private static Record itemsLostWinningTitle(RecordType type, ItemType item, RecordDomain domain) {

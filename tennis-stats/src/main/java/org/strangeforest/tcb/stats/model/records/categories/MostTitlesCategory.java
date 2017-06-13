@@ -8,7 +8,7 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 
 	public MostTitlesCategory() {
 		super("Most Titles");
-		register(mostTitles(ALL));
+		register(mostTitles(ALL_WO_TEAM));
 		register(mostTitles(GRAND_SLAM));
 		register(mostTitles(TOUR_FINALS));
 		register(mostTitles(MASTERS));
@@ -21,7 +21,7 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 		register(mostTitles(CLAY));
 		register(mostTitles(GRASS));
 		register(mostTitles(CARPET));
-		register(mostSeasonTitles(ALL));
+		register(mostSeasonTitles(ALL_WO_TEAM));
 		register(mostSeasonTitles(GRAND_SLAM));
 		register(mostSeasonTitles(MASTERS));
 		register(mostSeasonTitles(BIG_TOURNAMENTS));
@@ -29,12 +29,12 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 		register(mostSeasonTitles(CLAY));
 		register(mostSeasonTitles(GRASS));
 		register(mostSeasonTitles(CARPET));
-		register(mostTournamentTitles(ALL));
+		register(mostTournamentTitles(ALL_WO_TEAM));
 		register(mostTournamentTitles(GRAND_SLAM));
 		register(mostTournamentTitles(MASTERS));
 		register(mostTournamentTitles(ATP_500));
 		register(mostTournamentTitles(ATP_250));
-		register(mostDifferentTournamentTitles(ALL));
+		register(mostDifferentTournamentTitles(ALL_WO_TEAM));
 		register(mostDifferentTournamentTitles(GRAND_SLAM));
 		register(mostDifferentTournamentTitles(MASTERS));
 		register(mostDifferentTournamentTitles(ATP_500));

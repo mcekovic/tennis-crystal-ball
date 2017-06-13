@@ -8,7 +8,7 @@ public class FinalStreaksCategory extends ResultsStreaksCategory {
 
 	public FinalStreaksCategory() {
 		super("Final Streaks");
-		register(finalStreak(ALL));
+		register(finalStreak(ALL_WO_TEAM));
 		register(finalStreak(GRAND_SLAM));
 		register(finalStreak(TOUR_FINALS));
 		register(finalStreak(MASTERS));
@@ -21,7 +21,7 @@ public class FinalStreaksCategory extends ResultsStreaksCategory {
 		register(finalStreak(CLAY));
 		register(finalStreak(GRASS));
 		register(finalStreak(CARPET));
-		register(tournamentFinalStreak(ALL));
+		register(tournamentFinalStreak(ALL_WO_TEAM));
 		register(tournamentFinalStreak(GRAND_SLAM));
 		register(tournamentFinalStreak(MASTERS));
 		register(tournamentFinalStreak(ATP_500));

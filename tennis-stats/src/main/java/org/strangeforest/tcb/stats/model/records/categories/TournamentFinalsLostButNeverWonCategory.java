@@ -13,7 +13,7 @@ public class TournamentFinalsLostButNeverWonCategory extends RecordCategory {
 	
 	public TournamentFinalsLostButNeverWonCategory() {
 		super("Most Finals Lost But Never Won");
-		register(mostMaxFinals(ALL));
+		register(mostMaxFinals(ALL_WO_TEAM));
 		register(mostMaxFinals(GRAND_SLAM));
 		register(mostMaxFinals(TOUR_FINALS));
 		register(mostMaxFinals(MASTERS));

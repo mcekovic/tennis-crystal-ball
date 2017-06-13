@@ -16,7 +16,7 @@ public class WinningStreaksCategory extends RecordCategory {
 
 	public WinningStreaksCategory() {
 		super("Winning Streaks");
-		register(winningStreak(ALL, N_A, N_A, N_A));
+		register(winningStreak(ALL, N_A, N_A));
 		register(winningStreak(GRAND_SLAM, N_A, "_level"));
 		register(winningStreak(TOUR_FINALS, N_A, "_level"));
 		register(winningStreak(MASTERS, N_A, "_level"));

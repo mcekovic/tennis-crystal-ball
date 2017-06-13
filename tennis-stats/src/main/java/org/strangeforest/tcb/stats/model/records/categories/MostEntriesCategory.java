@@ -8,7 +8,7 @@ public class MostEntriesCategory extends TournamentResultsCategory {
 
 	public MostEntriesCategory() {
 		super("Most Entries");
-		register(mostEntries(ALL));
+		register(mostEntries(ALL_WO_TEAM));
 		register(mostEntries(GRAND_SLAM));
 		register(mostEntries(TOUR_FINALS));
 		register(mostEntries(MASTERS));
@@ -21,17 +21,17 @@ public class MostEntriesCategory extends TournamentResultsCategory {
 		register(mostEntries(CLAY));
 		register(mostEntries(GRASS));
 		register(mostEntries(CARPET));
-		register(mostSeasonEntries(ALL));
+		register(mostSeasonEntries(ALL_WO_TEAM));
 		register(mostSeasonEntries(HARD));
 		register(mostSeasonEntries(CLAY));
 		register(mostSeasonEntries(GRASS));
 		register(mostSeasonEntries(CARPET));
-		register(mostTournamentEntries(ALL));
+		register(mostTournamentEntries(ALL_WO_TEAM));
 		register(mostTournamentEntries(GRAND_SLAM));
 		register(mostTournamentEntries(MASTERS));
 		register(mostTournamentEntries(ATP_500));
 		register(mostTournamentEntries(ATP_250));
-		register(mostDifferentTournamentEntries(ALL));
+		register(mostDifferentTournamentEntries(ALL_WO_TEAM));
 	}
 
 	private static Record mostEntries(RecordDomain domain) {

@@ -53,7 +53,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 		register(greatestFinalPct(type, GRASS));
 		register(greatestFinalPct(type, CARPET));
 		if (type == RecordType.WINNING) {
-			register(greatestTitlePct(ALL));
+			register(greatestTitlePct(ALL_WO_TEAM));
 			register(greatestTitlePct(GRAND_SLAM));
 			register(greatestTitlePct(TOUR_FINALS));
 			register(greatestTitlePct(MASTERS));

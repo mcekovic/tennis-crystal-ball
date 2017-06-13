@@ -8,7 +8,7 @@ public class MostSemiFinalsCategory extends TournamentResultsCategory {
 
 	public MostSemiFinalsCategory() {
 		super("Most Semi-Finals");
-		register(mostSemiFinals(ALL));
+		register(mostSemiFinals(ALL_WO_TEAM));
 		register(mostSemiFinals(GRAND_SLAM));
 		register(mostSemiFinals(TOUR_FINALS));
 		register(mostSemiFinals(MASTERS));
@@ -21,7 +21,7 @@ public class MostSemiFinalsCategory extends TournamentResultsCategory {
 		register(mostSemiFinals(CLAY));
 		register(mostSemiFinals(GRASS));
 		register(mostSemiFinals(CARPET));
-		register(mostSeasonSemiFinals(ALL));
+		register(mostSeasonSemiFinals(ALL_WO_TEAM));
 		register(mostSeasonSemiFinals(GRAND_SLAM));
 		register(mostSeasonSemiFinals(MASTERS));
 		register(mostSeasonSemiFinals(BIG_TOURNAMENTS));
@@ -29,7 +29,7 @@ public class MostSemiFinalsCategory extends TournamentResultsCategory {
 		register(mostSeasonSemiFinals(CLAY));
 		register(mostSeasonSemiFinals(GRASS));
 		register(mostSeasonSemiFinals(CARPET));
-		register(mostTournamentSemiFinals(ALL));
+		register(mostTournamentSemiFinals(ALL_WO_TEAM));
 		register(mostTournamentSemiFinals(GRAND_SLAM));
 		register(mostTournamentSemiFinals(MASTERS));
 	}

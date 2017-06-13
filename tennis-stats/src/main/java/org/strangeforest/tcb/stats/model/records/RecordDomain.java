@@ -4,7 +4,8 @@ import static org.strangeforest.tcb.stats.model.records.RecordCategory.*;
 
 public enum RecordDomain {
 	
-	ALL(N_A, N_A, N_A, ALL_TOURNAMENTS, N_A, "matches", N_A),
+	ALL(N_A, N_A, N_A, N_A, N_A, "matches", N_A),
+	ALL_WO_TEAM(N_A, N_A, N_A, ALL_TOURNAMENTS, N_A, "matches", N_A),
 	GRAND_SLAM("GrandSlam", "Grand Slam", N_A, "level = 'G'", "grand_slam_", "grandSlamMatches", "&level=G"),
 	TOUR_FINALS("TourFinals", "Tour Finals", N_A, "level = 'F'", "tour_finals_", "tourFinalsMatches", "&level=F"),
 	MASTERS("Masters", "Masters", N_A, "level = 'M'", "masters_", "mastersMatches", "&level=M"),

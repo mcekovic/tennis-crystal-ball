@@ -8,7 +8,7 @@ public class SemiFinalStreaksCategory extends ResultsStreaksCategory {
 
 	public SemiFinalStreaksCategory() {
 		super("Semi-Final Streaks");
-		register(semiFinalStreak(ALL));
+		register(semiFinalStreak(ALL_WO_TEAM));
 		register(semiFinalStreak(GRAND_SLAM));
 		register(semiFinalStreak(TOUR_FINALS));
 		register(semiFinalStreak(MASTERS));
@@ -21,7 +21,7 @@ public class SemiFinalStreaksCategory extends ResultsStreaksCategory {
 		register(semiFinalStreak(CLAY));
 		register(semiFinalStreak(GRASS));
 		register(semiFinalStreak(CARPET));
-		register(tournamentSemiFinalStreak(ALL));
+		register(tournamentSemiFinalStreak(ALL_WO_TEAM));
 		register(tournamentSemiFinalStreak(GRAND_SLAM));
 		register(tournamentSemiFinalStreak(MASTERS));
 		register(tournamentSemiFinalStreak(ATP_500));

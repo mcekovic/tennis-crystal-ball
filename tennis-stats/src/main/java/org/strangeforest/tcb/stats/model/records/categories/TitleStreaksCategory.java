@@ -8,7 +8,7 @@ public class TitleStreaksCategory extends ResultsStreaksCategory {
 
 	public TitleStreaksCategory() {
 		super("Title Streaks");
-		register(titleStreak(ALL));
+		register(titleStreak(ALL_WO_TEAM));
 		register(titleStreak(GRAND_SLAM));
 		register(titleStreak(TOUR_FINALS));
 		register(titleStreak(MASTERS));
@@ -21,7 +21,7 @@ public class TitleStreaksCategory extends ResultsStreaksCategory {
 		register(titleStreak(CLAY));
 		register(titleStreak(GRASS));
 		register(titleStreak(CARPET));
-		register(tournamentTitleStreak(ALL));
+		register(tournamentTitleStreak(ALL_WO_TEAM));
 		register(tournamentTitleStreak(GRAND_SLAM));
 		register(tournamentTitleStreak(MASTERS));
 		register(tournamentTitleStreak(ATP_500));

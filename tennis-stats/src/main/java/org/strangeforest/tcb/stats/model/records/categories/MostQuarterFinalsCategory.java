@@ -8,7 +8,7 @@ public class MostQuarterFinalsCategory extends TournamentResultsCategory {
 
 	public MostQuarterFinalsCategory() {
 		super("Most Quarter-Finals");
-		register(mostQuarterFinals(ALL));
+		register(mostQuarterFinals(ALL_WO_TEAM));
 		register(mostQuarterFinals(GRAND_SLAM));
 		register(mostQuarterFinals(TOUR_FINALS));
 		register(mostQuarterFinals(MASTERS));
@@ -21,7 +21,7 @@ public class MostQuarterFinalsCategory extends TournamentResultsCategory {
 		register(mostQuarterFinals(CLAY));
 		register(mostQuarterFinals(GRASS));
 		register(mostQuarterFinals(CARPET));
-		register(mostSeasonQuarterFinals(ALL));
+		register(mostSeasonQuarterFinals(ALL_WO_TEAM));
 		register(mostSeasonQuarterFinals(GRAND_SLAM));
 		register(mostSeasonQuarterFinals(MASTERS));
 		register(mostSeasonQuarterFinals(BIG_TOURNAMENTS));
@@ -29,7 +29,7 @@ public class MostQuarterFinalsCategory extends TournamentResultsCategory {
 		register(mostSeasonQuarterFinals(CLAY));
 		register(mostSeasonQuarterFinals(GRASS));
 		register(mostSeasonQuarterFinals(CARPET));
-		register(mostTournamentQuarterFinals(ALL));
+		register(mostTournamentQuarterFinals(ALL_WO_TEAM));
 		register(mostTournamentQuarterFinals(GRAND_SLAM));
 		register(mostTournamentQuarterFinals(MASTERS));
 	}
