@@ -6,6 +6,7 @@ import org.strangeforest.tcb.stats.model.records.details.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.ItemsWinningTitleCategory.ItemType.*;
+import static org.strangeforest.tcb.stats.model.records.categories.ItemsWinningTitleCategory.RecordType.*;
 
 public class ItemsWinningTitleCategory extends RecordCategory {
 
@@ -64,6 +65,19 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		register(itemsLostWinningTitle(type, SETS, CLAY, surfaceTournaments("C", "e.")));
 		register(itemsLostWinningTitle(type, SETS, GRASS, surfaceTournaments("G", "e.")));
 		register(itemsLostWinningTitle(type, SETS, CARPET, surfaceTournaments("P", "e.")));
+		if (type == LEAST) {
+			register(titlesWonWOLosingSet(ALL_WO_TEAM));
+			register(titlesWonWOLosingSet(GRAND_SLAM));
+			register(titlesWonWOLosingSet(TOUR_FINALS));
+			register(titlesWonWOLosingSet(MASTERS));
+			register(titlesWonWOLosingSet(OLYMPICS));
+			register(titlesWonWOLosingSet(ATP_500));
+			register(titlesWonWOLosingSet(ATP_250));
+			register(titlesWonWOLosingSet(HARD, surfaceTournaments("H", "e.")));
+			register(titlesWonWOLosingSet(CLAY, surfaceTournaments("C", "e.")));
+			register(titlesWonWOLosingSet(GRASS, surfaceTournaments("G", "e.")));
+			register(titlesWonWOLosingSet(CARPET, surfaceTournaments("P", "e.")));
+		}
 	}
 
 	private static Record itemsLostWinningTitle(RecordType type, ItemType item, RecordDomain domain) {
@@ -88,7 +102,36 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")
 			),
-			"Minimum 3 matches played to won the title"
+			"Minimum 3 matches played to win the title"
+		);
+	}
+
+	private static Record titlesWonWOLosingSet(RecordDomain domain) {
+		return titlesWonWOLosingSet(domain, null);
+	}
+	
+	private static Record titlesWonWOLosingSet(RecordDomain domain, String condition) {
+		if (condition == null)
+			condition = domain.condition;
+		return new Record<>(
+			domain.id + "TitlesWonWOLosingSet", suffix(domain.name, " ") + "Titles Won W/O Losing Set",
+			/* language=SQL */
+			"WITH titles_wo_losing_item AS (\n" +
+			"  SELECT player_id, tournament_event_id, e.date\n" +
+			"  FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) LEFT JOIN player_match_for_stats_v m USING (player_id, tournament_event_id)\n" +
+			"  WHERE result = 'W' AND e." + condition + "\n" +
+			"  GROUP BY player_id, tournament_event_id, e.date\n" +
+			"  HAVING count(m.match_id) >= 3 AND sum(m." + SETS.column + ") = 0\n" +
+			")\n" +
+			"SELECT player_id, count(tournament_event_id) AS value, max(date) AS last_date\n" +
+			"FROM titles_wo_losing_item\n" +
+			"GROUP BY player_id",
+			"r.value", "r.value DESC", "r.value DESC, r.last_date",
+			TournamentEventIntegerRecordDetail.class, null,
+			asList(
+				new RecordColumn("value", "numeric", null, ITEMS_WIDTH, "right", "Titles")
+			),
+			"Minimum 3 matches played to win the title"
 		);
 	}
 }
