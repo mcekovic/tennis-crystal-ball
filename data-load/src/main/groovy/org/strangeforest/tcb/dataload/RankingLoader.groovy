@@ -10,7 +10,7 @@ class RankingLoader extends BaseCSVLoader {
 
 	RankingLoader(SqlPool sqlPool) {
 		super(sqlPool)
-		maxRank = maxRank()
+		maxRank = getLongProperty(MAX_RANK_PROPERTY)
 	}
 
 	List columnNames() {
@@ -33,10 +33,5 @@ class RankingLoader extends BaseCSVLoader {
 		params.rank = rank
 		params.rank_points = integer record.rank_points
 		return params
-	}
-
-	static Integer maxRank() {
-		def value = System.getProperty(MAX_RANK_PROPERTY)
-		value ? Integer.parseInt(value) : null
 	}
 }

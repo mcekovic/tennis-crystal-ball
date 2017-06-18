@@ -17,6 +17,7 @@ cli.la('Load ad-hoc rankings and tournaments')
 cli.nt('Load new completed tournaments')
 cli.nr('Load new rankings')
 cli.ip('Load in-progress tournaments')
+cli.ff('Force in-progress tournaments forecast')
 cli.el('Compute Elo ratings')
 cli.rc('Refresh computed data')
 cli.rr('Refresh Records')
@@ -25,7 +26,7 @@ cli.cc('Clear caches')
 cli.help('Print this message')
 def options = cli.parse(args)
 
-if (options && (options.cd || options.dd || options.lt || options.ln || options.lp || options.la || options.nt || options.nr || options.ip || options.el || options.rc || options.rr || options.vc || options.cc)) {
+if (options && (options.cd || options.dd || options.lt || options.ln || options.lp || options.la || options.nt || options.nr || options.ip || options.ff || options.el || options.rc || options.rr || options.vc || options.cc)) {
 	setProperties(options)
 	
 	if (options.cd)
@@ -79,6 +80,9 @@ def setProperties(def options) {
 		System.setProperty(USE_MATERIALIZED_VIEWS_PROPERTY, 'true')
 	else if (options.t)
 		System.setProperty(USE_MATERIALIZED_VIEWS_PROPERTY, 'false')
+
+	if (options.ff)
+		System.setProperty(FORCE_FORECAST_PROPERTY, 'true')
 }
 
 static def callLoader(methodName) {

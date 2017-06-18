@@ -35,6 +35,7 @@ public class OutcomeFilter {
 	private static final String LOST = "lost";
 	private static final String PLAYED = "played";
 	private static final String FINISHED = "finished";
+	private static final String NOT_FINISHED = "notFinished";
 	private static final String NOT_PLAYED = "notPlayed";
 	private static final String NOT_ABANDONED = "notAbandoned";
 
@@ -43,6 +44,7 @@ public class OutcomeFilter {
 	private static final String OUTCOME_CRITERION = " AND outcome = :outcome::match_outcome";
 	private static final String PLAYED_CRITERION = " AND (outcome IS NULL OR outcome IN ('RET', 'DEF'))";
 	private static final String FINISHED_CRITERION = " AND outcome IS NULL";
+	private static final String NOT_FINISHED_CRITERION = " AND outcome IN ('RET', 'W/O', 'DEF')";
 	private static final String NOT_PLAYED_CRITERION = " AND outcome IN ('W/O', 'ABD')";
 	private static final String NOT_ABANDONED_CRITERION = " AND (outcome IS NULL OR outcome <> 'ABD')";
 
@@ -78,16 +80,26 @@ public class OutcomeFilter {
 				criteria.append(format(MATCHES_WON_CRITERION, won ? "winner_id" : "loser_id"));
 		}
 		if (!isNullOrEmpty(outcome)) {
-			if (outcome.equals(PLAYED))
-				criteria.append(PLAYED_CRITERION);
-			else if (outcome.equals(FINISHED))
-				criteria.append(FINISHED_CRITERION);
-			else if (outcome.equals(NOT_PLAYED))
-				criteria.append(NOT_PLAYED_CRITERION);
-			else if (outcome.equals(NOT_ABANDONED))
-				criteria.append(NOT_ABANDONED_CRITERION);
-			else
-				criteria.append(OUTCOME_CRITERION);
+			switch (outcome) {
+				case PLAYED:
+					criteria.append(PLAYED_CRITERION);
+					break;
+				case FINISHED:
+					criteria.append(FINISHED_CRITERION);
+					break;
+				case NOT_FINISHED:
+					criteria.append(NOT_FINISHED_CRITERION);
+					break;
+				case NOT_PLAYED:
+					criteria.append(NOT_PLAYED_CRITERION);
+					break;
+				case NOT_ABANDONED:
+					criteria.append(NOT_ABANDONED_CRITERION);
+					break;
+				default:
+					criteria.append(OUTCOME_CRITERION);
+					break;
+			}
 		}
 	}
 

@@ -17,7 +17,7 @@ public class RefreshRecordsJob {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RefreshRecordsJob.class);
 
-	@Scheduled(cron = "${tennis-stats.jobs.refresh-records:0 35 3 * * MON}")
+	@Scheduled(cron = "${tennis-stats.jobs.refresh-records:0 35 2 * * MON}")
 	public void refreshRecords() {
 		if (dataLoad("RefreshRecords", "-rr") == 0) {
 			try {

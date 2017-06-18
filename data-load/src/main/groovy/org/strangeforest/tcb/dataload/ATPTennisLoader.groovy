@@ -14,8 +14,8 @@ class ATPTennisLoader {
 	private String baseDir
 
 	ATPTennisLoader() {
-		full = System.getProperty(FULL_LOAD_PROPERTY, String.valueOf(FULL_LOAD_DEFAULT)).toBoolean()
-		useMaterializedViews = System.getProperty(USE_MATERIALIZED_VIEWS_PROPERTY, String.valueOf(USE_MATERIALIZED_VIEWS_DEFAULT)).toBoolean()
+		full = getBooleanProperty(FULL_LOAD_PROPERTY, FULL_LOAD_DEFAULT)
+		useMaterializedViews = getBooleanProperty(USE_MATERIALIZED_VIEWS_PROPERTY, USE_MATERIALIZED_VIEWS_DEFAULT)
 	}
 
 	def loadPlayers(loader) {

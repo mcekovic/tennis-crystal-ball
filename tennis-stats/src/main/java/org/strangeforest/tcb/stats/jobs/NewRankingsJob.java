@@ -17,7 +17,7 @@ public class NewRankingsJob {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(NewRankingsJob.class);
 
-	@Scheduled(cron = "${tennis-stats.jobs.load-new-rankings:0 15 3 * * MON}")
+	@Scheduled(cron = "${tennis-stats.jobs.load-new-rankings:0 15 2 * * MON}")
 	public void loadNewRankings() {
 		if (dataLoad("NewRankings", "-nr", "-c 1") == 0)
 			clearCaches();

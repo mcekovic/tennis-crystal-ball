@@ -13,9 +13,12 @@ import java.time.*
 
 import static com.google.common.base.Strings.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
+import static org.strangeforest.tcb.dataload.LoadParams.*
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
 
 class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentLoader {
+
+	boolean forceForecast
 
 	static final String LOAD_EVENT_SQL = //language=SQL
 		'{call load_in_progress_event(' +
@@ -67,6 +70,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 	ATPWorldTourInProgressTournamentLoader(Sql sql) {
 		super(sql)
+		forceForecast = getBooleanProperty(FORCE_FORECAST_PROPERTY, FORCE_FORECAST_DEFAULT)
 	}
 
 	def loadAndSimulateTournament(String urlId, extId, Integer season = null, String level = null, String surface = null, boolean verbose = false) {
@@ -236,7 +240,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		}
 
 		def matchesHash = Hashing.murmur3_128().newHasher().putString(matches.toString(), Charsets.UTF_8).hash().toString()
-		def oldMatchesHash = sql.firstRow([extId: string(extId)], FETCH_EVENT_HASH_SQL).matches_hash
+		def oldMatchesHash = forceForecast ? null : sql.firstRow([extId: string(extId)], FETCH_EVENT_HASH_SQL).matches_hash
 		if (matchesHash != oldMatchesHash) {
 			sql.withBatch(LOAD_MATCH_SQL) { ps ->
 				matches.values().each { match ->

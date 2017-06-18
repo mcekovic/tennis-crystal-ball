@@ -17,7 +17,7 @@ public class RefreshComputedDataJob {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RefreshComputedDataJob.class);
 
-	@Scheduled(cron = "${tennis-stats.jobs.refresh-computed-data:0 25 3 * * MON}")
+	@Scheduled(cron = "${tennis-stats.jobs.refresh-computed-data:0 25 2 * * MON}")
 	public void refreshComputedData() {
 		String storageOption = dataService.getDBServerVersion() >= DataService.MATERIALIZED_VIEWS_MIN_VERSION ? "-m" : "-t";
 		if (dataLoad("RefreshComputedData", "-rc", "-c 1", storageOption) == 0) {

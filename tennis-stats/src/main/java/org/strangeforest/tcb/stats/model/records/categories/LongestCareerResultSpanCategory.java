@@ -105,7 +105,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"INNER JOIN match fm ON fm.match_id = w.first_match_id INNER JOIN tournament_event fe ON fe.tournament_event_id = fm.tournament_event_id\n" +
 			"INNER JOIN match lm ON lm.match_id = w.last_match_id INNER JOIN tournament_event le ON le.tournament_event_id = lm.tournament_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'\n" +
-			"AND p.name NOT IN ('Alexander Zverev', 'Fred Hemmes', 'Miloslav Mecir')", // TODO Remove after data is fixed
+			"AND p.name NOT IN ('Fred Hemmes', 'Miloslav Mecir')", // TODO Remove after data is fixed
 			SPAN_COLUMNS, "r.value DESC", "r.value DESC, r.end_date",
 			TournamentCareerSpanRecordDetail.class, null,
 			SPAN_RECORD_COLUMNS

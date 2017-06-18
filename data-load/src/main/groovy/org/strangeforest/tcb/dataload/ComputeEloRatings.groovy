@@ -7,9 +7,9 @@ import static org.strangeforest.tcb.dataload.LoadParams.*
 def sqlPool = new SqlPool()
 
 def eloRatings = new EloRatings(sqlPool)
-eloRatings.compute(true, System.getProperty(FULL_LOAD_PROPERTY, String.valueOf(FULL_LOAD_DEFAULT)).toBoolean())
+eloRatings.compute(true, getBooleanProperty(FULL_LOAD_PROPERTY, FULL_LOAD_DEFAULT))
 
-if (System.getProperty(VERBOSE_PROPERTY, String.valueOf(VERBOSE_DEFAULT)).toBoolean()) {
+if (getBooleanProperty(VERBOSE_PROPERTY, VERBOSE_DEFAULT)) {
 	sqlPool.withSql { sql ->
 		showCurrent(eloRatings, sql)
 		showPeak(eloRatings, sql)

@@ -7,7 +7,7 @@
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
 <!--/*@thymesVar id="priceFormats" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat[]"*/-->
 <!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat"*/-->
-<head th:replace="fragments/head :: commonHead(${inProgressEvent.name}, false, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(${inProgressEvent.name} + ' Forecast', false, ~{::script}, ~{::style})">
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("#inProgressEventPills").find("a").click(tabClick);
