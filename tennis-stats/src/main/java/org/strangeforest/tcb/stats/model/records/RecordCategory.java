@@ -4,6 +4,8 @@ import java.util.*;
 
 import com.google.common.base.*;
 
+import static com.google.common.base.Strings.*;
+
 public abstract class RecordCategory {
 
 	private final String name;
@@ -74,5 +76,9 @@ public abstract class RecordCategory {
 
 	protected static String surfaceTournaments(String surface, String prefix) {
 		return "surface = '" + surface + "' AND " + prefix + ALL_TOURNAMENTS;
+	}
+
+	protected static String where(String condition, int indent) {
+		return !isNullOrEmpty(condition) ? "\n" + repeat(" ", indent) + "WHERE " + condition : "";
 	}
 }

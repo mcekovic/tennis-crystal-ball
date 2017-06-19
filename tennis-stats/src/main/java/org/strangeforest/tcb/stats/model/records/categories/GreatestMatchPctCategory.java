@@ -11,26 +11,32 @@ import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 public class GreatestMatchPctCategory extends RecordCategory {
 
 	public enum RecordType {
-		WINNING("Winning", "_won", WinningPctRecordDetail.class, SeasonWinningPctRecordDetail.class, TournamentWinningPctRecordDetail.class,
+		WINNING("Winning", "_won", "p_matches", "pct DESC", WinningPctRecordDetail.class, SeasonWinningPctRecordDetail.class, TournamentWinningPctRecordDetail.class, PeakWinningPctRecordDetail.class,
 			new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", "Won")
 		),
-		LOSING("Losing", "_lost", LosingPctRecordDetail.class, SeasonLosingPctRecordDetail.class, TournamentLosingPctRecordDetail.class,
+		LOSING("Losing", "_lost", "o_matches", "pct", LosingPctRecordDetail.class, SeasonLosingPctRecordDetail.class, TournamentLosingPctRecordDetail.class, PeakLosingPctRecordDetail.class,
 			new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost")
 		);
 
 		private final String name;
 		private final String columnSuffix;
+		private final String peakColumn;
+		private final String peakOrder;
 		private final Class<? extends RecordDetail> detailClass;
 		private final Class<? extends SeasonWonLostRecordDetail> seasonDetailClass;
 		private final Class<? extends TournamentWonLostRecordDetail> tournamentDetailClass;
+		private final Class<? extends PeakWonLostRecordDetail> peakDetailClass;
 		private final RecordColumn valueRecordColumn;
 
-		RecordType(String name, String column, Class<? extends RecordDetail> detailClass, Class<? extends SeasonWonLostRecordDetail> seasonDetailClass, Class<? extends TournamentWonLostRecordDetail> tournamentDetailClass, RecordColumn valueRecordColumn) {
+		RecordType(String name, String column, String peakColumn, String peakOrder, Class<? extends RecordDetail> detailClass, Class<? extends SeasonWonLostRecordDetail> seasonDetailClass, Class<? extends TournamentWonLostRecordDetail> tournamentDetailClass, Class<? extends PeakWonLostRecordDetail> peakDetailClass, RecordColumn valueRecordColumn) {
 			this.name = name;
 			this.columnSuffix = column;
+			this.peakColumn = peakColumn;
+			this.peakOrder = peakOrder;
 			this.detailClass = detailClass;
 			this.seasonDetailClass = seasonDetailClass;
 			this.tournamentDetailClass = tournamentDetailClass;
+			this.peakDetailClass = peakDetailClass;
 			this.valueRecordColumn = valueRecordColumn;
 		}
 
@@ -43,6 +49,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 	private static final String ITEM_WIDTH =        "80";
 	private static final String SEASON_WIDTH =      "80";
 	private static final String TOURNAMENT_WIDTH = "120";
+	private static final String DATE_WIDTH =        "85";
 
 	public GreatestMatchPctCategory(RecordType type) {
 		super("Greatest " + type.name + " Pct.");
@@ -71,6 +78,21 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		register(greatestTournamentMatchPct(type, MASTERS));
 		register(greatestTournamentMatchPct(type, ATP_500));
 		register(greatestTournamentMatchPct(type, ATP_250));
+		register(greatestPeakMatchPct(type, ALL));
+		register(greatestPeakMatchPct(type, GRAND_SLAM));
+		register(greatestPeakMatchPct(type, TOUR_FINALS));
+		register(greatestPeakMatchPct(type, MASTERS));
+		register(greatestPeakMatchPct(type, OLYMPICS));
+		register(greatestPeakMatchPct(type, ATP_500));
+		register(greatestPeakMatchPct(type, ATP_250));
+		register(greatestPeakMatchPct(type, DAVIS_CUP));
+		register(greatestPeakMatchPct(type, HARD));
+		register(greatestPeakMatchPct(type, CLAY));
+		register(greatestPeakMatchPct(type, GRASS));
+		register(greatestPeakMatchPct(type, CARPET));
+		register(greatestPeakMatchPctVs(type, NO_1_FILTER));
+		register(greatestPeakMatchPctVs(type, TOP_5_FILTER));
+		register(greatestPeakMatchPctVs(type, TOP_10_FILTER));
 	}
 
 	private static Record greatestMatchPct(RecordType type, RecordDomain domain) {
@@ -147,6 +169,67 @@ public class GreatestMatchPctCategory extends RecordCategory {
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
 			),
 			format("Minimum %1$d %2$s", minEntries, perfCategory.getEntriesName())
+		);
+	}
+
+	private static Record greatestPeakMatchPct(RecordType type, RecordDomain domain) {
+		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
+		return new Record<>(
+			domain.id + "Peak" + type.name + "Pct", "Greatest " + suffix(domain.name, " ") + "Peak " + type.name + " Pct.",
+			/* language=SQL */
+			"WITH win_pct AS (\n" +
+			"  SELECT player_id, (sum(" + type.peakColumn + ") OVER m)::FLOAT / count(match_id) OVER m AS pct, sum(p_matches) OVER m AS won, sum(o_matches) OVER m AS lost, date\n" +
+			"  FROM player_match_for_stats_v" + where(domain.condition, 2) + "\n" +
+			"  GROUP BY match_id, player_id, date, p_matches, o_matches\n" +
+			"  WINDOW m AS (PARTITION BY player_id ORDER BY date, match_id)\n" +
+			"), ordered_win_pct AS (\n" +
+			"  SELECT player_id, pct, won, lost, date, rank() OVER (PARTITION BY player_id ORDER BY " + type.peakOrder + ", won + lost DESC) AS rank\n" +
+			"  FROM win_pct wp\n" +
+			"  WHERE won + lost >= " + perfCategory.getMinEntries() + "\n" +
+			")\n" +
+			"SELECT player_id, pct, won, lost, date\n" +
+			"FROM ordered_win_pct\n" +
+			"WHERE rank = 1",
+			"r.won, r.lost, r.date", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.date",
+			type.peakDetailClass, null,
+			asList(
+				new RecordColumn("value", null, "value", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
+				type.valueRecordColumn,
+				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played"),
+				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
+			),
+			format("Minimum %1$d %2$s", perfCategory.getMinEntries(), perfCategory.getEntriesName())
+		);
+	}
+
+	private static Record greatestPeakMatchPctVs(RecordType type, RecordDomain domain) {
+		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
+		return new Record<>(
+			"Peak" + type.name + "PctVs" + domain.id, "Greatest Peak " + type.name + " Pct. Vs. " + domain.name,
+			/* language=SQL */
+			"WITH win_pct AS (\n" +
+			"  SELECT player_id, (sum(" + type.peakColumn + ") OVER m)::FLOAT / count(match_id) OVER m AS pct, sum(p_matches) OVER m AS won, sum(o_matches) OVER m AS lost, date\n" +
+			"  FROM player_match_for_stats_v\n" +
+			"  WHERE opponent_rank " + domain.condition + "\n" +
+			"  GROUP BY match_id, player_id, date, p_matches, o_matches\n" +
+			"  WINDOW m AS (PARTITION BY player_id ORDER BY date, match_id)\n" +
+			"), ordered_win_pct AS (\n" +
+			"  SELECT player_id, pct, won, lost, date, rank() OVER (PARTITION BY player_id ORDER BY " + type.peakOrder + ", won + lost DESC) AS rank\n" +
+			"  FROM win_pct wp\n" +
+			"  WHERE won + lost >= " + perfCategory.getMinEntries() + "\n" +
+			")\n" +
+			"SELECT player_id, pct, won, lost, date\n" +
+			"FROM ordered_win_pct\n" +
+			"WHERE rank = 1",
+			"r.won, r.lost, r.date", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.date",
+			type.peakDetailClass, null,
+			asList(
+				new RecordColumn("value", null, "value", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
+				type.valueRecordColumn,
+				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played"),
+				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
+			),
+			format("Minimum %1$d %2$s", perfCategory.getMinEntries(), perfCategory.getEntriesName())
 		);
 	}
 }
