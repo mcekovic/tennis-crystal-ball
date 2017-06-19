@@ -66,10 +66,7 @@
 					"tourFinals": playerTitlesFormatter("tourFinals", "&level=F"),
 					"masters": playerTitlesFormatter("masters", "&level=M"),
 					"olympics": playerTitlesFormatter("olympics", "&level=O"),
-					"bigTitles": function(column, row) {
-						var count = row.bigTitles;
-						return count > 0 ? count : "<span class='text-muted'>0</span>";
-					},
+					"bigTitles": playerTitlesFormatter("bigTitles", "&level=GFMO"),
 					"titles": playerTitlesFormatter("titles", ""),
 					"wonPct": wonLostFormatter,
 					"bestEloRating": function(column, row) {
