@@ -14,10 +14,10 @@
 	<player name="Novak Djokovic">
 		<birthplace>Belgrade, Serbia</birthplace>
 		<residence>Monte Carlo, Monaco</residence>
-		<weight>78</weight>
+		<weight>77</weight>
 		<backhand>2</backhand>
 		<turned-pro>2003</turned-pro>
-		<coach>Marian Vajda</coach>
+		<coach>Andre Agassi</coach>
 		<web-site>novakdjokovic.com</web-site>
 		<facebook>djokovic.official</facebook>
 		<twitter>DjokerNole</twitter>
@@ -49,13 +49,6 @@
 		<turned-pro>1972</turned-pro>
 		<twitter>JimmyConnors</twitter>
 	</player>
-	<player name="John Mcenroe">
-		<birthplace>Wiesbaden, Germany</birthplace>
-		<residence>New York, NY, USA</residence>
-		<weight>75</weight>
-		<backhand>1</backhand>
-		<turned-pro>1978</turned-pro>
-	</player>
 	<player name="Pete Sampras">
 		<birthplace>Washington, D.C., USA</birthplace>
 		<residence>Los Angeles, California, USA</residence>
@@ -64,6 +57,13 @@
 		<turned-pro>1988</turned-pro>
 		<coach>Paul Annacone</coach>
 		<web-site>www.petesampras.com</web-site>
+	</player>
+	<player name="John Mcenroe">
+		<birthplace>Wiesbaden, Germany</birthplace>
+		<residence>New York, NY, USA</residence>
+		<weight>75</weight>
+		<backhand>1</backhand>
+		<turned-pro>1978</turned-pro>
 	</player>
 	<player name="Andre Agassi">
 		<birthplace>Las Vegas, Nevada, USA</birthplace>
@@ -98,14 +98,6 @@
 		<turned-pro>1983</turned-pro>
 		<coach>Tony Pickard</coach>
 	</player>
-	<player name="Mats Wilander">
-		<birthplace>Vaxjo, Sweden</birthplace>
-		<residence>Sun Valley, Idaho, USA</residence>
-		<weight>77</weight>
-		<backhand>1</backhand>
-		<turned-pro>1981</turned-pro>
-		<twitter>mwilander</twitter>
-	</player>
 	<player name="Andy Murray">
 		<birthplace>Dunblane, Scotland</birthplace>
 		<residence>London, England</residence>
@@ -116,6 +108,14 @@
 		<web-site>www.andymurray.com</web-site>
 		<facebook>andymurrayofficial</facebook>
 		<twitter>andy_murray</twitter>
+	</player>
+	<player name="Mats Wilander">
+		<birthplace>Vaxjo, Sweden</birthplace>
+		<residence>Sun Valley, Idaho, USA</residence>
+		<weight>77</weight>
+		<backhand>1</backhand>
+		<turned-pro>1981</turned-pro>
+		<twitter>mwilander</twitter>
 	</player>
 	<player name="David Ferrer">
 		<birthplace>Javea, Spain</birthplace>
@@ -281,5 +281,54 @@
 		<web-site>www.viktortroicki.com</web-site>
 		<facebook>viktortroicki</facebook>
 		<twitter>troicki_viktor</twitter>
+	</player>
+	<player name="Grigor Dimitrov">
+		<birthplace>Haskovo, Bulgaria</birthplace>
+		<residence>Monte-Carlo, Monaco</residence>
+		<weight>80</weight>
+		<backhand>1</backhand>
+		<turned-pro>2008</turned-pro>
+		<coach>Daniel Vallverdu</coach>
+		<facebook>grigordimitrovtennis</facebook>
+		<twitter>grigordimitrov</twitter>
+	</player>
+	<player name="Dominic Thiem">
+		<birthplace>Wiener Neustadt, Austria</birthplace>
+		<residence>Lichtenworth, Austria</residence>
+		<weight>82</weight>
+		<backhand>1</backhand>
+		<turned-pro>2011</turned-pro>
+		<coach>Gunter Bresnik</coach>
+		<facebook>1.Dominic.Thiem</facebook>
+		<twitter>ThiemDomi</twitter>
+	</player>
+	<player name="Alexander Zverev">
+		<birthplace>Hamburg, Germany</birthplace>
+		<residence>Monte-Carlo, Monaco</residence>
+		<weight>86</weight>
+		<backhand>2</backhand>
+		<turned-pro>2013</turned-pro>
+		<coach>Alexander Zverev Sr.</coach>
+	</player>
+	<player name="Nick Kyrgios">
+		<birthplace>Canberra, Australia</birthplace>
+		<residence>Canberra, AUS / Nassau, BAH</residence>
+		<weight>85</weight>
+		<backhand>2</backhand>
+		<turned-pro>2013</turned-pro>
+		<coach>Sebastien Grosjean</coach>
+		<web-site>nickkyrgios.org</web-site>
+		<facebook>nkyrgios</facebook>
+		<twitter>NickKyrgios</twitter>
+	</player>
+	<player name="Lucas Pouille">
+		<birthplace>Grande-Synthe, France</birthplace>
+		<residence>Dubai, U.A.E.</residence>
+		<weight>81</weight>
+		<backhand>2</backhand>
+		<turned-pro>2012</turned-pro>
+		<coach>Emmanuel Planque</coach>
+		<facebook>iamlucaspouille</facebook>
+		<twitter>la_pouille</twitter>
 	</player>
 </player-data>
