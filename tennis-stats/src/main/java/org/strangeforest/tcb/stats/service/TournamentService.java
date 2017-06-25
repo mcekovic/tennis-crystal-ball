@@ -36,6 +36,10 @@ public class TournamentService {
 		"FROM tournament t\n" +
 		"WHERE tournament_id = :tournamentId";
 
+	private static final String TOURNAMENT_SEASONS_QUERY =
+		"SELECT tournament_id, season FROM tournament_event\n" +
+		"WHERE level NOT IN ('D', 'T')";
+
 	private static final String TOURNAMENT_EVENT_SELECT = //language=SQL
 		"SELECT e.tournament_event_id, e.tournament_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
 		"  p.player_count, p.participation_points, p.max_participation_points,\n" +
@@ -112,7 +116,7 @@ public class TournamentService {
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"LEFT JOIN event_participation p USING (tournament_event_id)%1$s\n" +
 		"WHERE r.player_id = :playerId\n" +
-		"AND e.level <> 'D'%2$s\n" +
+		"AND e.level NOT IN ('D', 'T')%2$s\n" +
 		"ORDER BY %3$s OFFSET :offset";
 
 	private static final String TOURNAMENT_STATS_JOIN = //language=SQL
@@ -145,6 +149,14 @@ public class TournamentService {
 					throw new NotFoundException("Tournament", tournamentId);
 			}
 		);
+	}
+
+	@Cacheable(value = "Global", key = "'TournamentSeasons'")
+	public Set<TournamentSeason> getTournamentSeasons() {
+		return new HashSet<>(jdbcTemplate.query(TOURNAMENT_SEASONS_QUERY, (rs, rowNum) -> new TournamentSeason(
+			rs.getInt("tournament_id"),
+			rs.getInt("season")
+		)));
 	}
 
 	@Cacheable("TournamentEvents.Table")

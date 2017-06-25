@@ -6,6 +6,7 @@ import java.util.*;
 import org.junit.*;
 import org.strangeforest.tcb.stats.model.PlayerTournamentTimeline.*;
 
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
@@ -13,7 +14,7 @@ public class PlayerTimelineTest {
 
 	@Test
 	public void simplePlayerTimelineIsCreated() {
-		PlayerTimeline timeline = new PlayerTimeline();
+		PlayerTimeline timeline = new PlayerTimeline(emptySet());
 		timeline.addItem(new PlayerTimelineItem(1, "Australian Open", 2001, 101, toDate(LocalDate.of(2001, 1, 15)), "G", "H", false, "Australian Open", "SF"));
 		timeline.addItem(new PlayerTimelineItem(1, "Australian Open", 2002, 201, toDate(LocalDate.of(2002, 1, 20)), "G", "H", false, "Australian Open", "QF"));
 		timeline.addItem(new PlayerTimelineItem(1, "Australian Open", 2003, 301, toDate(LocalDate.of(2003, 1, 18)), "G", "H", false, "Australian Open", "W"));

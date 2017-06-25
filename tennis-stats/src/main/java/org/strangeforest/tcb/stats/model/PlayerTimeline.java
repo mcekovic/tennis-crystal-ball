@@ -9,10 +9,12 @@ public class PlayerTimeline {
 
 	private final Map<Integer, PlayerTournamentTimeline> tournaments;
 	private final SortedSet<Integer> seasons;
+	private final Set<TournamentSeason> tournamentSeasons;
 
-	public PlayerTimeline() {
+	public PlayerTimeline(Set<TournamentSeason> tournamentSeasons) {
 		tournaments = new HashMap<>();
 		seasons = new TreeSet<>();
+		this.tournamentSeasons = tournamentSeasons;
 	}
 
 	public List<PlayerTournamentTimeline> getBigTournaments() {
@@ -50,11 +52,10 @@ public class PlayerTimeline {
 	}
 
 	private PlayerTournamentTimeline getTournamentTimeline(int tournamentId) {
-		PlayerTournamentTimeline tournament = tournaments.get(tournamentId);
-		if (tournament == null) {
-			tournament = new PlayerTournamentTimeline(this, tournamentId);
-			tournaments.put(tournamentId, tournament);
-		}
-		return tournament;
+		return tournaments.computeIfAbsent(tournamentId, id -> new PlayerTournamentTimeline(this, id));
+	}
+
+	boolean hasSeason(int tournamentId, int season) {
+		return tournamentSeasons.contains(new TournamentSeason(tournamentId, season));
 	}
 }

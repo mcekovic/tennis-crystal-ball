@@ -109,7 +109,7 @@ public class SeasonsService {
 		"    count(CASE WHEN e.level = 'M' AND r.result = 'W' THEN 1 ELSE NULL END) masters_titles,\n" +
 		"    count(CASE WHEN e.level = 'M' AND r.result = 'F' THEN 1 ELSE NULL END) masters_finals,\n" +
 		"    count(CASE WHEN e.level = 'O' AND r.result = 'W' THEN 1 ELSE NULL END) olympics_titles,\n" +
-		"    count(CASE WHEN e.level <> 'D' AND r.result = 'W' THEN 1 ELSE NULL END) titles\n" +
+		"    count(CASE WHEN e.level NOT IN ('D', 'T') AND r.result = 'W' THEN 1 ELSE NULL END) titles\n" +
 		"  FROM player_season_goat_points s\n" +
 		"  LEFT JOIN player_tournament_event_result r USING (player_id)\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id, season)\n" +

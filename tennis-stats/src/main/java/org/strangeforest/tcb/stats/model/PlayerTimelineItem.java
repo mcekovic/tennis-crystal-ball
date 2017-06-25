@@ -17,8 +17,10 @@ public class PlayerTimelineItem {
 	private final String name;
 	private final String result;
 
-	public PlayerTimelineItem(int tournamentId, int season) {
-		this(tournamentId, null, season, 0, null, null, null, false, null, null);
+	static final String ABSENT = "A";
+
+	public PlayerTimelineItem(int tournamentId, int season, String result) {
+		this(tournamentId, null, season, 0, null, null, null, false, null, result);
 	}
 
 	public PlayerTimelineItem(int tournamentId, String tournamentName, int season, int tournamentEventId, Date date, String level, String surface, boolean indoor, String name, String result) {
@@ -72,5 +74,13 @@ public class PlayerTimelineItem {
 
 	public String getResult() {
 		return mapResult(level, result);
+	}
+
+	public boolean hasResult() {
+		return result != null && !result.equals(ABSENT);
+	}
+
+	public boolean isAbsent() {
+		return ABSENT.equals(result);
 	}
 }

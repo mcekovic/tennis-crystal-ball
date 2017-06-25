@@ -13,6 +13,7 @@ import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 @Service
 public class PlayerTimelineService {
 
+	@Autowired private TournamentService tournamentService;
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String TIMELINE_QUERY =
@@ -22,7 +23,7 @@ public class PlayerTimelineService {
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN tournament t USING (tournament_id)\n" +
 		"WHERE r.player_id = :playerId\n" +
-		"AND e.level <> 'D'\n" +
+		"AND e.level NOT IN ('D', 'T')\n" +
 		"ORDER BY tournament_event_id";
 
 	private static final String SEASON_TITLES_QUERY = //language=SQL
@@ -57,7 +58,7 @@ public class PlayerTimelineService {
 
 
 	public PlayerTimeline getPlayerTimeline(int playerId) {
-		PlayerTimeline timeline = new PlayerTimeline();
+		PlayerTimeline timeline = new PlayerTimeline(tournamentService.getTournamentSeasons());
 		jdbcTemplate.query(
 			TIMELINE_QUERY, params("playerId", playerId),
 			rs -> {

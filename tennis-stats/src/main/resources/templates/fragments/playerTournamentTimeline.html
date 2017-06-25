@@ -12,9 +12,9 @@
 		</th:block>
 	</td>
 	<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
-		<a th:if="${item.result}" th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${item.tournamentEventId})}" th:data-level="${tournament.levelCount > 1 ? item.level : ''}" th:data-surface="${tournament.surfaceCount > 1 ? item.surface : ''}">
+		<a th:if="${item.hasResult()}" th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${item.tournamentEventId})}" th:data-level="${tournament.levelCount > 1 ? item.level : ''}" th:data-surface="${tournament.surfaceCount > 1 ? item.surface : ''}">
 			<span th:text="${item.result}" title="Show tournament matches">W</span>
 		</a>
-		<span th:unless="${item.result}" class="absent">A</span>
+		<span th:if="${item.absent}" class="absent">A</span>
 	</td>
 </th:block>
