@@ -21,7 +21,7 @@
 				formatters: {
 					"country": countryFormatter,
 					"player": playerFormatter,
-					"valueUrl": function(column, row) { return "<a href='" + row.detailUrl + "'>" + row.value + "</a>"; },
+					"valueUrl": recordValueFormatter,
 					"tournament": tournamentFormatter,
 					"tournamentEvent": tournamentEventFormatter,
 					"startTournamentEvent": startTournamentEventFormatter,

@@ -22,15 +22,15 @@
 			rowCount: [15, 20, 50, -1],
 			formatters: {
 				"record": recordFormatter,
+				"value": recordValueFormatter,
 				"details": function(column, row) {
 					var details = row.details;
+					var detailUrls = row.detailUrls;
 					var len = details.length;
 					var s = "";
 					for (var i = 0; i < len; i++) {
-						var detail = details[i];
 						s = s ? s + ", " : "";
-						if (detail)
-							s += detail;
+						s += formatRecordDetail(details[i], detailUrls[i]);
 					}
 					return s;
 				},
@@ -96,7 +96,7 @@
 	<thead>
 	<tr>
 		<th data-column-id="record" data-formatter="record" data-width="300">Record</th>
-		<th data-column-id="value" data-align="right" data-header-align="right" data-width="130">Result</th>
+		<th data-column-id="value" data-formatter="value" data-align="right" data-header-align="right" data-width="130">Result</th>
 		<th data-column-id="details" data-formatter="details" data-width="150">Details</th>
 		<th data-column-id="recordHolders" data-formatter="recordHolders" data-width="250">Tied With</th>
 	</tr>

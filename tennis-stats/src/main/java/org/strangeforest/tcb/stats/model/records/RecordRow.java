@@ -23,7 +23,15 @@ public class RecordRow {
 	}
 
 	public String getValue() {
-		return hasHolders() ? recordHolders.get(0).getValue() : "";
+		return hasHolders() ? String.valueOf(firstHolder().detail().getValue()) : "";
+	}
+
+	public String getDetailUrl() {
+		return hasHolders() ? firstHolder().getDetailUrl() : null;
+	}
+
+	private RecordHolderRow firstHolder() {
+		return recordHolders.get(0);
 	}
 
 	public List<RecordHolderRow> getRecordHolders() {

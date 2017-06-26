@@ -334,6 +334,10 @@ function recordFormatter(column, row) {
 	return "<a href='/record?recordId=" + row.id + "' title='Show Record'>" + row.name + "</a>";
 }
 
+function recordValueFormatter(column, row) {
+	return formatRecordDetail(row.value, row.detailUrl);
+}
+
 function recordHoldersFormatter(column, row) {
 	var recordHolders = row.recordHolders;
 	var len = recordHolders.length;
@@ -343,9 +347,13 @@ function recordHoldersFormatter(column, row) {
 		s = s ? s + ", " : "";
 		s += playerCountryFormatter(column, recordHolder);
 		if (recordHolder.detail)
-			s += " (" + recordHolder.detail + ")";
+			s += " (" + formatRecordDetail(recordHolder.detail, recordHolder.detailUrl) + ")";
 	}
 	return s;
+}
+
+function formatRecordDetail(detail, detailUrl) {
+	return detailUrl ? "<a href='" + detailUrl + "' title='Show record detail'>" + detail + "</a>" : detail;
 }
 
 

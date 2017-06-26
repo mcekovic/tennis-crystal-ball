@@ -24,6 +24,7 @@
 				rowCount: [20, 50, -1],
 				formatters: {
 					"record": recordFormatter,
+					"value": recordValueFormatter,
 					"recordHolders": recordHoldersFormatter
 				},
 				labels: {
@@ -94,7 +95,7 @@
 		<thead>
 		<tr>
 			<th data-column-id="record" data-formatter="record" data-width="300">Record</th>
-			<th data-column-id="value" data-align="right" data-header-align="right" data-width="130">Result</th>
+			<th data-column-id="value" data-formatter="value" data-align="right" data-header-align="right" data-width="130">Result</th>
 			<th data-column-id="recordHolders" data-formatter="recordHolders" data-width="400">Record Holder(s)</th>
 		</tr>
 		</thead>

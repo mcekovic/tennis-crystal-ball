@@ -150,7 +150,7 @@ public class RecordsService {
 		boolean active = rs.getBoolean("active");
 		Record record = Records.getRecord(recordId);
 		RecordDetail detail = getDetail(record, rs.getString("detail"));
-		RecordHolderRow recordHolder = new RecordHolderRow(playerId, name, countryId, active, String.valueOf(detail.getValue()), detail.toDetailString());
+		RecordHolderRow recordHolder = new RecordHolderRow<RecordDetail>(playerId, name, countryId, active, detail, record.getDetailURLFormatter());
 		Optional<RecordRow> recordRow = findRecordRow((List)recordRows, recordId);
 		recordRow.orElseThrow(
 			() -> new IllegalStateException("Cannot find record: " + recordId)
