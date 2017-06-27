@@ -18,6 +18,9 @@
 .ui-autocomplete-loading {
 	background: white url("/images/ui-anim_basic_16x16.gif") right center no-repeat;
 }
+.ui-menu .ui-menu-item .ui-state-active {
+	background: linear-gradient(to bottom, #eeeeee, #dddddd);
+}
 .grid-title {
 	display: inline;
 	float: left;
