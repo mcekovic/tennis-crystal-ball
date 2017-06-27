@@ -1,4 +1,4 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="eventResults(id, scrollRight)">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="eventResults(id, columnCountOffset, scrollRight)">
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
 <script type="text/javascript" th:inline="javascript">
 	function roundLeft() {
@@ -41,7 +41,7 @@
 		var $resultsTable = $("#resultsTable[(${id})]");
 		var resultsTable = $resultsTable.get(0);
 		resultsTable.rounds = [[${results.rounds}]];
-		resultsTable.roundsToShow = Math.min(resultsTable.rounds.length, {"xs": 2, "sm": 2, "md": 3, "lg": 4}[device]);
+		resultsTable.roundsToShow = Math.min(resultsTable.rounds.length, {"xs": 2, "sm": 2, "md": [(${3 + columnCountOffset})], "lg": [(${4 + columnCountOffset})]}[device]);
 		resultsTable.maxRoundPos = resultsTable.rounds.length - resultsTable.roundsToShow;
 		resultsTable.roundPos = [(${scrollRight ? 'resultsTable.maxRoundPos' : 0})];
 		showRounds($resultsTable);

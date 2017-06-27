@@ -142,7 +142,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-lg-10 col-md-9 col-sm-9">
+		<div class="col-lg-10 col-md-9">
 			<ul id="inProgressEventPills" class="nav nav-pills">
 				<li><a id="resultsPill" data-toggle="pill" href="#results" th:data-url="'/inProgressEventResults?inProgressEventId=' + ${inProgressEvent.id}">Completed</a></li>
 				<li th:each="baseResult : ${forecast.baseResults}" th:class="${baseResultStat.last ? 'active' : _}">
@@ -205,7 +205,7 @@
 			<br/>
 			<div th:include="fragments/aboutForecast :: aboutForecast"></div>
 		</div>
-		<div class="col-lg-2 col-md-3 col-sm-3">
+		<div class="col-lg-2 col-md-3">
 			<div id="rankingTopN"></div>
 		</div>
 	</div>

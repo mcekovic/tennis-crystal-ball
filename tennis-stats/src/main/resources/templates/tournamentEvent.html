@@ -107,7 +107,7 @@
 	</ul>
 	<div class="tab-content">
 		<div id="results" class="tab-pane fade in active">
-			<div th:unless="${results.isEmpty()}" th:include="fragments/eventResults :: eventResults('', true)"></div>
+			<div th:unless="${results.isEmpty()}" th:include="fragments/eventResults :: eventResults('', 0, true)"></div>
 			<th:block th:if="${results.isEmpty()}">
 				<br/>
 				<div class="alert alert-warning">No results found</div>
