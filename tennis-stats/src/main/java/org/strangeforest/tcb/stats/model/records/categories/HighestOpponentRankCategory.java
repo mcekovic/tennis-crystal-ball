@@ -14,7 +14,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 	private static final String SEASON_WIDTH =  "80";
 
 	public HighestOpponentRankCategory() {
-		super("Highest Mean Opponent Rank");
+		super("Mean Opponent Rank");
 		register(highestOpponentRank(ALL));
 		register(highestOpponentRank(GRAND_SLAM));
 		register(highestOpponentRank(TOUR_FINALS));
