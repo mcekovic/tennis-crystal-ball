@@ -78,7 +78,11 @@ public abstract class RecordCategory {
 		return "surface = '" + surface + "' AND " + prefix + ALL_TOURNAMENTS;
 	}
 
+	protected static String where(String condition) {
+		return where(condition, 0);
+	}
+
 	protected static String where(String condition, int indent) {
-		return !isNullOrEmpty(condition) ? "\n" + repeat(" ", indent) + "WHERE " + condition : "";
+		return !isNullOrEmpty(condition) ? "\n" + (indent > 0 ? repeat(" ", indent) : "") + "WHERE " + condition : "";
 	}
 }

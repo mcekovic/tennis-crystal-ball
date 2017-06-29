@@ -90,6 +90,7 @@ public abstract class Records {
 		register(RANKING, new EloRankingCategory(RecordDomain.GRASS), false);
 		register(RANKING, new EloRankingCategory(RecordDomain.CARPET), false);
 		register(MISC, new HeadToHeadCategory(false), false);
+		register(MISC, new HighestOpponentRankCategory(), false);
 		register(MISC, new MostBagelsBreadsticksCategory(MostBagelsBreadsticksCategory.RecordType.SCORED), false);
 		register(MISC, new GOATPointsCategory(), false);
 		register(MISC, new MostRecordsCategory(false), false);

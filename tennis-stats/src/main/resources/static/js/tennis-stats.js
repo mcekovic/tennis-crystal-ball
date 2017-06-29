@@ -199,6 +199,11 @@ function dateFormatter(column, row) {
 	return formatDate(row.date);
 }
 
+// Factor Formatter
+function factorFormatter(column, row) {
+	return row.value.toFixed(1);
+}
+
 // Country Formatter
 function countryFormatter(column, row) {
 	return "<img src='/images/flags/" + row.country.code + ".png' title='" + row.country.id + "' width='24' height='20'/> " + row.country.id;
