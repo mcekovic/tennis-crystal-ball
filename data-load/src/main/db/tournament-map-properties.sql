@@ -45,6 +45,48 @@ PERFORM set_tournament_map_properties('5014', 2009, NULL, NULL, '{"center": {"la
 -- Paris
 PERFORM set_tournament_map_properties('352', NULL, NULL, NULL, '{"center": {"lat": 48.838524, "lng": 2.3784512}, "zoom": 18}'::JSON);
 
+
+-- ATP 500
+
+-- Rotterdam
+PERFORM set_tournament_map_properties('407', NULL, NULL, NULL, '{"center": {"lat": 51.8828525, "lng": 4.4881466}, "zoom": 18}'::JSON);
+
+-- Rio de Janeiro
+PERFORM set_tournament_map_properties('6932', NULL, NULL, NULL, '{"center": {"lat": -22.9741851, "lng": -43.2193048}, "zoom": 18}'::JSON);
+
+-- Dubai
+PERFORM set_tournament_map_properties('495', NULL, NULL, NULL, '{"center": {"lat": 25.2392831, "lng": 55.3504042}, "zoom": 18}'::JSON);
+
+-- Acapulco
+PERFORM set_tournament_map_properties('807', NULL, NULL, NULL, '{"center": {"lat": 16.7881978, "lng": -99.8118322}, "zoom": 18}'::JSON);
+
+-- Barcelona
+PERFORM set_tournament_map_properties('425', NULL, NULL, NULL, '{"center": {"lat": 41.3935601, "lng": 2.1173231}, "zoom": 18}'::JSON);
+
+-- Queens
+PERFORM set_tournament_map_properties('311', NULL, NULL, NULL, '{"center": {"lat": 51.4878388, "lng": -0.2116654}, "zoom": 18}'::JSON);
+
+-- Halle
+PERFORM set_tournament_map_properties('500', NULL, NULL, NULL, '{"center": {"lat": 52.0636084, "lng": 8.3493754}, "zoom": 18}'::JSON);
+
+-- Hamburg
+PERFORM set_tournament_map_properties('414', NULL, NULL, NULL, '{"center": {"lat": 53.57357, "lng": 9.9908494}, "zoom": 18}'::JSON);
+
+-- Washington
+PERFORM set_tournament_map_properties('418', NULL, NULL, NULL, '{"center": {"lat": 38.954078, "lng": -77.0377643}, "zoom": 18}'::JSON);
+
+-- Tokyo 
+PERFORM set_tournament_map_properties('329', NULL, NULL, NULL, '{"center": {"lat": 35.6895768, "lng": 139.6927919}, "zoom": 18}'::JSON);
+
+-- Beijing 
+PERFORM set_tournament_map_properties('747', NULL, NULL, NULL, '{"center": {"lat": 39.8506515, "lng": 116.413618}, "zoom": 18}'::JSON);
+
+-- Vienna
+PERFORM set_tournament_map_properties('337', NULL, NULL, NULL, '{"center": {"lat": 48.2024032, "lng": 16.3330703}, "zoom": 18}'::JSON);
+
+-- Basel 
+PERFORM set_tournament_map_properties('328', NULL, NULL, NULL, '{"center": {"lat": 47.5391808, "lng": 7.6186382}, "zoom": 18}'::JSON);
+
 END $$;
 
 COMMIT;
