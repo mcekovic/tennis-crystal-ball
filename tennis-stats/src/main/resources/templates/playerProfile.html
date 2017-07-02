@@ -12,6 +12,7 @@
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
+<!--/*@thymesVar id="score" type="java.lang.String"*/-->
 <!--/*@thymesVar id="infamous" type="java.lang.Boolean"*/-->
 <head th:replace="fragments/head :: commonHead(${player} ? ${player.name} : ~{::title/text()}, true, ~{::script}, _)">
 	<title>Player Profile</title>
@@ -21,7 +22,7 @@
 			[# th:if="${tab}" th:switch="${tab}"]
 				[# th:case="'season'"] playerSeason([[${season}]]); [/]
 				[# th:case="'tournaments'"] playerTournaments([[${season}]], [[${level}]], [[${surface}]], [[${result}]], [[${tournamentId}]]); [/]
-				[# th:case="'matches'"] playerMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]], [[${opponent}]], [[${tournamentId}]], [[${tournamentEventId}]], [[${outcome}]]); [/]
+				[# th:case="'matches'"] playerMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]], [[${opponent}]], [[${tournamentId}]], [[${tournamentEventId}]], [[${outcome}]], [[${score}]]); [/]
 				[# th:case="'goatPoints'"] playerGoatPoints([[${season}]]); [/]
 				[# th:case="'records'"] playerRecords([[${infamous}]]); [/]
 				[# th:case="*"] $("#[(${tab})]Pill").click(); [/]
@@ -50,7 +51,7 @@
 				url += "&tournamentId=" + tournamentId;
 			loadTab($pill, url)
 		}
-		function playerMatches(season, level, surface, round, opponent, tournamentId, tournamentEventId, outcome) {
+		function playerMatches(season, level, surface, round, opponent, tournamentId, tournamentEventId, outcome, score) {
 			var $pill = $("#matchesPill");
 			var url = $pill.data("url");
 			if (season)
@@ -69,6 +70,8 @@
 				url += "&tournamentEventId=" + tournamentEventId;
 			if (outcome)
 				url += "&outcome=" + outcome;
+			if (score)
+				url += "&score=" + encodeURIComponent(score);
 			loadTab($pill, url)
 		}
 		function playerGoatPoints(season) {

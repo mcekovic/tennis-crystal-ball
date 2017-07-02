@@ -31,6 +31,7 @@ class ATPWorldTourRankingsLoader {
 				ps.addBatch(params)
 			}
 		}
+		sql.commit()
 		println "$rankDate: $paramsBatch.size rankings loaded in $stopwatch"
 	}
 

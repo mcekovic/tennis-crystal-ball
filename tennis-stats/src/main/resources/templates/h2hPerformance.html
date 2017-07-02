@@ -223,8 +223,10 @@
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
-						<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, score='2:2+', outcome=played)}" title="Show fifth set matches">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
 					</div>
 				</div>
 			</th>
@@ -232,8 +234,10 @@
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
-						<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, score='2:2+', outcome=played)}" title="Show fifth set matches">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
 					</div>
 				</div>
 			</th>
@@ -242,8 +246,10 @@
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
-						<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, score='1:0+', outcome=played)}" title="Show after winning 1st set matches">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
 					</div>
 				</div>
 			</th>
@@ -251,8 +257,10 @@
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
-						<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, score='1:0+', outcome=played)}" title="Show after winning 1st set matches">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
 					</div>
 				</div>
 			</th>
@@ -261,8 +269,10 @@
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
-						<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, score='0:1+', outcome=played)}" title="Show after losing 1st set matches">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
 					</div>
 				</div>
 			</th>
@@ -270,8 +280,10 @@
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
-						<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, score='0:1+', outcome=played)}" title="Show after losing 1st set matches">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
 					</div>
 				</div>
 			</th>

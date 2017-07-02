@@ -46,6 +46,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "infamous", required = false) Boolean infamous
 	) {
 		if (playerId == null && name == null)
@@ -68,6 +69,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("outcome", outcome);
+		modelMap.addAttribute("score", score);
 		modelMap.addAttribute("infamous", infamous);
 		return new ModelAndView("playerProfile", modelMap);
 	}
@@ -153,7 +155,8 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
-		@RequestParam(name = "outcome", required = false) String outcome
+		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "score", required = false) String score
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
@@ -188,6 +191,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("outcome", outcome);
+		modelMap.addAttribute("score", score);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerMatches", modelMap);
 	}

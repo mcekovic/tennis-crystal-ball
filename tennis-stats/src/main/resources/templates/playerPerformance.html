@@ -162,8 +162,10 @@
 						<th th:with="wl=${perf.fifthSets}">
 							<div th:unless="${wl.empty}" class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
-									<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, score='2:2+', outcome=played)}" title="Show fifth set matches">
+										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
+										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									</a>
 								</div>
 							</div>
 						</th>
@@ -173,8 +175,10 @@
 						<th th:with="wl=${perf.afterWinningFirstSet}">
 							<div th:unless="${wl.empty}" class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
-									<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, score='1:0+', outcome=played)}" title="Show after winning 1st set matches">
+										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
+										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									</a>
 								</div>
 							</div>
 						</th>
@@ -184,8 +188,10 @@
 						<th th:with="wl=${perf.afterLosingFirstSet}">
 							<div th:unless="${wl.empty}" class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
-									<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, score='0:1+', outcome=played)}" title="Show after losing 1st set matches">
+										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
+										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									</a>
 								</div>
 							</div>
 						</th>

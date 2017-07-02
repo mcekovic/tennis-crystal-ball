@@ -74,10 +74,6 @@ public class PerformanceService {
 		return getPlayerPerformance(playerId, null);
 	}
 
-	public PlayerPerformance getPlayerSeasonPerformance(int playerId, int season) {
-		return getPlayerPerformance(playerId, season);
-	}
-
 	private PlayerPerformance getPlayerPerformance(int playerId, Integer season) {
 		MapSqlParameterSource paramSource = params("playerId", playerId);
 		if (season != null)
