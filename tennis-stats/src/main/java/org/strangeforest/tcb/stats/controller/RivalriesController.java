@@ -186,6 +186,10 @@ public class RivalriesController extends PageController {
 		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
 		PlayerPerformanceEx perf1 = season == null ? performanceService.getPlayerPerformanceEx(playerId1) : performanceService.getPlayerSeasonPerformanceEx(playerId1, season);
 		PlayerPerformanceEx perf2 = season == null ? performanceService.getPlayerPerformanceEx(playerId2) : performanceService.getPlayerSeasonPerformanceEx(playerId2, season);
+		Set<Surface> surfaces = union(perf1.getSurfaceMatches().keySet(), perf2.getSurfaceMatches().keySet());
+		Set<TournamentLevel> levels = union(perf1.getLevelMatches().keySet(), perf2.getLevelMatches().keySet());
+		Set<Opponent> oppositions = union(perf1.getOppositionMatches().keySet(), perf2.getOppositionMatches().keySet());
+		Set<Round> rounds = union(perf1.getRoundMatches().keySet(), perf2.getRoundMatches().keySet());
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
@@ -194,6 +198,10 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("perf1", perf1);
 		modelMap.addAttribute("perf2", perf2);
+		modelMap.addAttribute("surfaces", surfaces);
+		modelMap.addAttribute("levels", levels);
+		modelMap.addAttribute("oppositions", oppositions);
+		modelMap.addAttribute("rounds", rounds);
 		return new ModelAndView("h2hPerformance", modelMap);
 	}
 

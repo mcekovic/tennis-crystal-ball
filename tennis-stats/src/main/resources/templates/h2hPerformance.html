@@ -5,10 +5,19 @@
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="perf1" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <!--/*@thymesVar id="perf2" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
+<!--/*@thymesVar id="surfaces" type="java.util.Set<org.strangeforest.tcb.stats.model.Surface>"*/-->
+<!--/*@thymesVar id="levels" type="java.util.Set<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="oppositions" type="java.util.Set<org.strangeforest.tcb.stats.service.Opponent>"*/-->
+<!--/*@thymesVar id="rounds" type="java.util.Set<org.strangeforest.tcb.stats.model.Round>"*/-->
 <!--/*@thymesVar id="_" type="java.lang.String"*/-->
 <script type="text/javascript">
 	$(function() {
 		$("#h2hPerformance").find(".raw-data").hide();
+		$("#h2hPerformanceTable").find("span.label-surface").each(function() {
+			var $label = $(this);
+			var surface = $label.data("surface");
+			$label.addClass("label-" + surfaceClassSuffix(surface));
+		});
 	});
 	function reloadPerformance() {
 		var url = "/h2hPerformance?playerId1=[[${playerId1}]]&playerId2=[[${playerId2}]]";
@@ -17,15 +26,21 @@
 	}
 </script>
 <style scoped="scoped">
+	.label-overall {
+		background-color: #555;
+	}
 	.progress-perf {
 		width: 200px;
 		background-color: #dddddd;
 		margin-bottom: 0;
 	}
+	.progress-bar > a {
+		color: white;
+	}
 </style>
 <br/>
 <div class="row">
-	<div class="col-md-3">
+	<div class="col-sm-12 center-block" style="float: none; width: 240px">
 		<div class="input-group">
 			<label for="perfSeason" class="input-group-addon">Season:</label>
 			<select id="perfSeason" class="form-control" onchange="reloadPerformance()">
@@ -37,358 +52,254 @@
 </div>
 <br/>
 <div id="h2hPerformance">
-	<table th:unless="${perf1.empty && perf2.empty}" class="table table-condensed table-hover table-striped text-nowrap">
+	<table id="h2hPerformanceTable" th:unless="${perf1.empty && perf2.empty}" class="table table-condensed table-hover table-striped text-nowrap">
+		<tr class="text-nowrap" th:with="wl1=${perf1.matches}, wl2=${perf2.matches}, wlc=${wl2.compareTo(wl1)}">
+			<th class="text-right" width="40%">
+				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, outcome=played)}" title="Show matches">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+			<th class="text-center"><span class="label label-overall">Overall</span></th>
+			<th class="text-left" width="40%">
+				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, outcome=played)}" title="Show matches">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+		</tr>
 		<tr>
-			<td class="pct-data text-right" width="40%"></td>
-			<td class="raw-data text-right" width="40%">W - L / Played</td>
-			<th class="text-center">Performance</th>
-			<td class="pct-data text-left" width="40%"></td>
-			<td class="raw-data text-left" width="40%">W - L / Played</td>
+			<td colspan="3">&nbsp;</td>
 		</tr>
-		<!-- Performance Pct Data -->
-		<tr class="pct-data" th:with="wl1=${perf1.matches}, wl2=${perf2.matches}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Overall</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.grandSlamMatches}, wl2=${perf2.grandSlamMatches}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Grand Slam</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.tourFinalsMatches}, wl2=${perf2.tourFinalsMatches}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Tour Finals</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.mastersMatches}, wl2=${perf2.mastersMatches}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Masters</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.olympicsMatches}, wl2=${perf2.olympicsMatches}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Olympics</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.hardMatches}, wl2=${perf2.hardMatches}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Hard</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.clayMatches}, wl2=${perf2.clayMatches}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Clay</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.grassMatches}, wl2=${perf2.grassMatches}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Grass</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.carpetMatches}, wl2=${perf2.carpetMatches}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Carpet</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<!-- Performance Raw Data -->
-		<tr class="raw-data"></tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.matches.WLT}">345 - 55 / 456</th>
-			<td class="text-center">Overall</td>
-			<th class="text-left" th:text="${perf2.matches.WLT}">345 - 55 / 456</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.grandSlamMatches.WLT}">123 - 55 / 178</th>
-			<td class="text-center">Grand Slam</td>
-			<th class="text-left" th:text="${perf2.grandSlamMatches.WLT}">123 - 55 / 178</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.tourFinalsMatches.WLT}">123 - 55 / 178</th>
-			<td class="text-center">Tour Finals</td>
-			<th class="text-left" th:text="${perf2.tourFinalsMatches.WLT}">123 - 55 / 178</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.mastersMatches.WLT}">123 - 55 / 178</th>
-			<td class="text-center">Masters</td>
-			<th class="text-left" th:text="${perf2.mastersMatches.WLT}">123 - 55 / 178</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.olympicsMatches.WLT}">123 - 55 / 178</th>
-			<td class="text-center">Olympics</td>
-			<th class="text-left" th:text="${perf2.olympicsMatches.WLT}">123 - 55 / 178</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.hardMatches.WLT}">123 - 55 / 178</th>
-			<td class="text-center">Hard</td>
-			<th class="text-left" th:text="${perf2.hardMatches.WLT}">123 - 55 / 178</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.clayMatches.WLT}">123 - 55 / 178</th>
-			<td class="text-center">Clay</td>
-			<th class="text-left" th:text="${perf2.clayMatches.WLT}">123 - 55 / 178</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.grassMatches.WLT}">123 - 55 / 178</th>
-			<td class="text-center">Grass</td>
-			<th class="text-left" th:text="${perf2.grassMatches.WLT}">123 - 55 / 178</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.carpetMatches.WLT}">123 - 55 / 178</th>
-			<td class="text-center">Carpet</td>
-			<th class="text-left" th:text="${perf2.carpetMatches.WLT}">123 - 55 / 178</th>
-		</tr>
-		<tr></tr>
-		<tr><td colspan="3">&nbsp;</td></tr>
 		<tr>
-			<td class="pct-data text-right"></td>
-			<td class="raw-data text-right">W - L / Played</td>
-			<th class="text-center">Pressure Situations</th>
-			<td class="pct-data text-left"></td>
-			<td class="raw-data text-left">W - L / Played</td>
+			<td></td><th class="text-center">Surface Breakdown</th><td></td>
 		</tr>
-		<!-- Pressure Situations Pct Data -->
-		<tr class="pct-data" th:with="wl1=${perf1.decidingSets}, wl2=${perf2.decidingSets}, wlc=${wl2.compareTo(wl1)}">
+		<tr th:each="surface : ${surfaces}" class="text-nowrap" th:with="wl1=${perf1.surfaceMatches.get(surface)}, wl2=${perf2.surfaceMatches.get(surface)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+			<th class="text-right">
+				<div th:if="${wl1}" class="progress progress-perf pull-right">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, surface=${surface.code}, outcome=played)}" th:title="|Show ${surface.text} matches|">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+			<th class="text-center"><span class="label label-surface" th:data-surface="${surface.code}" th:text="${surface.text}">Hard</span></th>
+			<th class="text-left">
+				<div th:if="${wl2}" class="progress progress-perf pull-left">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, surface=${surface.code}, outcome=played)}" th:title="|Show ${surface.text} matches|">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+		</tr>
+		<tr>
+			<td colspan="3">&nbsp;</td>
+		</tr>
+		<tr>
+			<td></td><th class="text-center" title="Tournament Level Breakdown">Level Breakdown</th><td></td>
+		</tr>
+		<tr th:each="level : ${levels}" class="text-nowrap" th:with="wl1=${perf1.levelMatches.get(level)}, wl2=${perf2.levelMatches.get(level)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+			<th class="text-right">
+				<div th:if="${wl1}" class="progress progress-perf pull-right">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level.code}, outcome=played)}" th:title="|Show ${level.text} matches|">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+			<th class="text-center"><span class="label label-" th:attrappend="class=${level.code}" th:text="${level.text}">Grand Slam</span></th>
+			<th class="text-left">
+				<div th:if="${wl2}" class="progress progress-perf pull-left">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level.code}, outcome=played)}" th:title="|Show ${level.text} matches|">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+		</tr>
+		<th:block th:unless="${oppositions.empty}">
+		<tr>
+			<td colspan="3">&nbsp;</td>
+		</tr>
+		<tr>
+			<td></td><th class="text-center">Opposition Breakdown</th><td></td>
+		</tr>
+		<tr th:each="opposition : ${oppositions}" class="text-nowrap" th:with="wl1=${perf1.oppositionMatches.get(opposition)}, wl2=${perf2.oppositionMatches.get(opposition)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+			<th class="text-right">
+				<div th:if="${wl1}" class="progress progress-perf pull-right">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, opponent=${opposition}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+			<td class="text-center" th:text="${opposition.text}">Vs No. 1</td>
+			<th class="text-left">
+				<div th:if="${wl2}" class="progress progress-perf pull-left">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, opponent=${opposition}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+		</tr>
+		</th:block>
+		<tr>
+			<td colspan="3">&nbsp;</td>
+		</tr>
+		<tr>
+			<td></td><th class="text-center">Round Breakdown</th><td></td>
+		</tr>
+		<tr th:each="round : ${rounds}" class="text-nowrap" th:with="wl1=${perf1.roundMatches.get(round)}, wl2=${perf2.roundMatches.get(round)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+			<th class="text-right">
+				<div th:if="${wl1}" class="progress progress-perf pull-right">
+					<div class="progress-bar progress-bar-season progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, outcome=played)}" th:title="|Show ${round.text} matches|">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+			<td class="text-center" th:text="${round.text}">Final</td>
+			<th class="text-left">
+				<div th:if="${wl2}" class="progress progress-perf pull-left">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, outcome=played)}" th:title="|Show ${round.text} matches|">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+		</tr>
+		<tr>
+			<td colspan="3">&nbsp;</td>
+		</tr>
+		<tr>
+			<td></td><th class="text-center">Pressure Situations</th><td></td>
+		</tr>
+		<tr th:with="wl1=${perf1.decidingSets}, wl2=${perf2.decidingSets}, wlc=${wl2.compareTo(wl1)}">
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+						<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+					</div>
 				</div>
 			</th>
 			<td class="text-center">Deciding Set</td>
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+						<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+					</div>
 				</div>
 			</th>
 		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.fifthSets}, wl2=${perf2.fifthSets}, wlc=${wl2.compareTo(wl1)}">
+		<tr th:with="wl1=${perf1.fifthSets}, wl2=${perf2.fifthSets}, wlc=${wl2.compareTo(wl1)}">
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+						<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+					</div>
 				</div>
 			</th>
 			<td class="text-center">Fifth Set</td>
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+						<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+					</div>
 				</div>
 			</th>
 		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.finals}, wl2=${perf2.finals}, wlc=${wl2.compareTo(wl1)}">
+		<tr th:with="wl1=${perf1.afterWinningFirstSet}, wl2=${perf2.afterWinningFirstSet}, wlc=${wl2.compareTo(wl1)}">
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Finals</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.vsNo1}, wl2=${perf2.vsNo1}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Vs No. 1</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.vsTop5}, wl2=${perf2.vsTop5}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Vs Top 5</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.vsTop10}, wl2=${perf2.vsTop10}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-			<td class="text-center">Vs Top 10</td>
-			<th>
-				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
-				</div>
-			</th>
-		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.afterWinningFirstSet}, wl2=${perf2.afterWinningFirstSet}, wlc=${wl2.compareTo(wl1)}">
-			<th>
-				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+						<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+					</div>
 				</div>
 			</th>
 			<td class="text-center">After Winning 1st Set</td>
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+						<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+					</div>
 				</div>
 			</th>
 		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.afterLosingFirstSet}, wl2=${perf2.afterLosingFirstSet}, wlc=${wl2.compareTo(wl1)}">
+		<tr th:with="wl1=${perf1.afterLosingFirstSet}, wl2=${perf2.afterLosingFirstSet}, wlc=${wl2.compareTo(wl1)}">
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+						<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+					</div>
 				</div>
 			</th>
 			<td class="text-center">After Losing 1st Set</td>
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+						<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+					</div>
 				</div>
 			</th>
 		</tr>
-		<tr class="pct-data" th:with="wl1=${perf1.tieBreaks}, wl2=${perf2.tieBreaks}, wlc=${wl2.compareTo(wl1)}">
+		<tr th:with="wl1=${perf1.tieBreaks}, wl2=${perf2.tieBreaks}, wlc=${wl2.compareTo(wl1)}">
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:text="${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+						<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+					</div>
 				</div>
 			</th>
 			<td class="text-center">Tie Breaks</td>
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:text="${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">73%</div>
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+						<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+					</div>
 				</div>
 			</th>
-		</tr>
-		<!-- Pressure Situations Raw Data -->
-		<tr class="raw-data"></tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.decidingSets.WLT}">95 - 55 / 156</th>
-			<td class="text-center">Deciding Set</td>
-			<th class="text-left" th:text="${perf2.decidingSets.WLT}">95 - 55 / 156</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.fifthSets.WLT}">23 - 55 / 44</th>
-			<td class="text-center">Fifth Set</td>
-			<th class="text-left" th:text="${perf2.fifthSets.WLT}">23 - 55 / 44</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.finals.WLT}">23 - 55 / 48</th>
-			<td class="text-center">Finals</td>
-			<th class="text-left" th:text="${perf2.finals.WLT}">23 - 55 / 48</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.vsNo1.WLT}">7 - 21 / 28</th>
-			<td class="text-center">Vs No. 1</td>
-			<th class="text-left" th:text="${perf2.vsNo1.WLT}">7 - 21 / 28</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.vsTop5.WLT}">57 - 45 / 88</th>
-			<td class="text-center">Vs Top 5</td>
-			<th class="text-left" th:text="${perf2.vsTop5.WLT}">57 - 45 / 88</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.vsTop10.WLT}">67 - 55 / 128</th>
-			<td class="text-center">Vs Top 10</td>
-			<th class="text-left" th:text="${perf2.vsTop10.WLT}">67 - 55 / 128</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.afterWinningFirstSet.WLT}">123 - 55 / 178</th>
-			<td class="text-center">After Winning 1st Set</td>
-			<th class="text-left" th:text="${perf2.afterWinningFirstSet.WLT}">123 - 55 / 178</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.afterLosingFirstSet.WLT}">123 - 55 / 178</th>
-			<td class="text-center">After Losing 1st Set</td>
-			<th class="text-left" th:text="${perf2.afterLosingFirstSet.WLT}">123 - 55 / 178</th>
-		</tr>
-		<tr class="raw-data">
-			<th class="text-right" th:text="${perf1.tieBreaks.WLT}">123 - 55 / 178</th>
-			<td class="text-center">Tie Breaks</td>
-			<th class="text-left" th:text="${perf2.tieBreaks.WLT}">123 - 55 / 178</th>
 		</tr>
 	</table>
 	<div th:unless="${perf1.empty && perf2.empty}" class="row">
 		<div class="col-md-12 text-center">
-			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance')" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
-			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance')" title="Show percentage data"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;Pct. Data</button>
+			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance')" title="Show raw data: Won - Lost / Played"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
+			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance')" title="Show percentage data: Pct. (Won-Lost)"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;Pct. Data</button>
 		</div>
 	</div>
 	<th:block th:if="${perf1.empty && perf2.empty}"><p>No performance data available</p></th:block>

@@ -162,7 +162,7 @@
 				<th>
 					<div class="progress progress-profile ">
 						<div class="progress-bar progress-bar-overall" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, outcome=played)}" th:text="${wl.pctWL}" title="Show matches">50% (10-10)</a>
 						</div>
 					</div>
 				</th>
@@ -174,7 +174,7 @@
 				<th>
 					<div class="progress progress-profile">
 						<div class="progress-bar progress-bar-profile progress-bar-primary" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=H)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show hard matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=H, outcome=played)}" th:text="${wl.pctWL}" title="Show hard matches">50% (10-10)</a>
 						</div>
 					</div>
 				</th>
@@ -186,7 +186,7 @@
 				<th>
 					<div class="progress progress-profile">
 						<div class="progress-bar progress-bar-profile progress-bar-danger" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=C)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show clay matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=C, outcome=played)}" th:text="${wl.pctWL}" title="Show clay matches">50% (10-10)</a>
 						</div>
 					</div>
 				</th>
@@ -198,7 +198,7 @@
 				<th>
 					<div class="progress progress-profile">
 						<div class="progress-bar progress-bar-profile progress-bar-success" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=G)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show grass matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=G, outcome=played)}" th:text="${wl.pctWL}" title="Show grass matches">50% (10-10)</a>
 						</div>
 					</div>
 				</th>
@@ -210,7 +210,7 @@
 				<th>
 					<div class="progress progress-profile">
 						<div class="progress-bar progress-bar-profile progress-bar-warning" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=P)}" th:text="|${wl.wonPctStr} (${wl.getWL()})|" title="Show carpet matches">73%</a>
+							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=P, outcome=played)}" th:text="${wl.pctWL}" title="Show carpet matches">50% (10-10)</a>
 						</div>
 					</div>
 				</th>

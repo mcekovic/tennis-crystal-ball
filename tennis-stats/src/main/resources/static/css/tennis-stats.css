@@ -280,6 +280,9 @@ a.black:focus {
 	font-size: 14px;
 }
 .progress-bar-perf {
+	font-size: 14px;
+}
+.progress-bar-perf-def {
 	background-color: cornflowerblue;
 	font-size: 14px;
 }
