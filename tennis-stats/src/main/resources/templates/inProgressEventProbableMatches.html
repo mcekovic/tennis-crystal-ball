@@ -1,6 +1,6 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
-	<!--/*@thymesVar id="players" type="java.util.List<org.strangeforest.tcb.stats.model.MatchPlayerEx>"*/-->
+	<!--/*@thymesVar id="players" type="java.util.List<org.strangeforest.tcb.stats.model.MatchPlayer>"*/-->
 	<!--/*@thymesVar id="inProgressEventId" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="pinnedPlayerId" type="java.lang.Integer"*/-->
 	<th:block th:unless="${results.isEmpty()}">
@@ -23,7 +23,7 @@
 					<label for="pinnedPlayer" class="input-group-addon" data-toggle="tooltip" data-placement="top" title="Choose player to pin, in order to see player's most probable rivals in the next rounds">Pinned player:</label>
 					<select id="pinnedPlayer" class="form-control" onchange="reloadProbableMatches()">
 						<option value=""></option>
-						<option th:each="player : ${players}" th:with="seedAndEntry=${player.seedAndEntry}" th:value="${player.id}" th:text="${(seedAndEntry != '' ? ('(' + seedAndEntry + ') ') : '') + player.name + ' (' + player.country.id + ')'}" th:selected="${player.id == pinnedPlayerId}">(1) Roger Federer (SUI)</option>
+						<option th:each="player : ${players}" th:with="seedAndEntry=${player.seedAndEntry()}" th:value="${player.id}" th:text="${(seedAndEntry != '' ? ('(' + seedAndEntry + ') ') : '') + player.name + ' (' + player.country.id + ')'}" th:selected="${player.id == pinnedPlayerId}">(1) Roger Federer (SUI)</option>
 					</select>
 				</div>
 			</div>

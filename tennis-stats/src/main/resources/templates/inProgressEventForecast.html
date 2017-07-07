@@ -180,7 +180,7 @@
 							</tr>
 						</thead>
 						<tr th:with="otherPlayer=${playersForecast.getOtherPlayer(playerForecastStat.index)}, showH2H=${playerForecast != null && playerForecast.known && otherPlayer != null && otherPlayer.known}">
-							<td class="text-right" th:text="${playerForecast.seedAndEntry}">1</td>
+							<td class="text-right" th:text="${playerForecast.seedAndEntry()}">1</td>
 							<td th:if="${playerForecast.known}" colspan="2">
 								<img th:src="@{/images/flags/{code}.png(code=${playerForecast.country.code})}" src="/images/flags/ch.png'" th:title="${playerForecast.country.id}" title="SUI" width="24" height="20"/>
 								<a th:href="@{/playerProfile(playerId=${playerForecast.id})}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>

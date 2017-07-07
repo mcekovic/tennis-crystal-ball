@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.strangeforest.tcb.util.*;
+
 import static com.google.common.base.Strings.*;
 
 public class MatchPlayer {
@@ -8,12 +10,18 @@ public class MatchPlayer {
 	private final String name;
 	private final Integer seed;
 	private final String entry;
+	private final Country country;
 
 	public MatchPlayer(int id, String name, Integer seed, String entry) {
+		this(id, name, seed, entry, null);
+	}
+
+	public MatchPlayer(int id, String name, Integer seed, String entry, String countryId) {
 		this.id = id;
 		this.name = name;
 		this.seed = seed;
 		this.entry = entry;
+		country = countryId != null ? new Country(countryId) : null;
 	}
 
 	public MatchPlayer(MatchPlayer player) {
@@ -21,6 +29,7 @@ public class MatchPlayer {
 		name = player.name;
 		seed = player.seed;
 		entry = player.entry;
+		country = player.country;
 	}
 
 	public int getId() {
@@ -39,10 +48,14 @@ public class MatchPlayer {
 		return entry;
 	}
 
-	public String getSeedAndEntry() {
+	public String seedAndEntry() {
 		if (seed != null)
 			return !isNullOrEmpty(entry) ? seed + " " + entry : String.valueOf(seed);
 		else
 			return !isNullOrEmpty(entry) ? entry : "";
+	}
+
+	public Country getCountry() {
+		return country;
 	}
 }

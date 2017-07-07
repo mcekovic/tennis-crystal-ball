@@ -44,9 +44,9 @@ public class PlayersForecast {
 		return playerForecasts.values().stream().skip(fromIndex).limit(count).mapToDouble(PlayerForecast::winProbability).sum();
 	}
 
-	public List<MatchPlayerEx> getKnownPlayers(String result) {
+	public List<MatchPlayer> getKnownPlayers(String result) {
 		return playerForecasts.values().stream().filter(player -> player.getId() > 0 && player.probability(result) > 0.0)
-			.sorted(comparing(MatchPlayerEx::getSeed, nullsLast(naturalOrder())).thenComparing(MatchPlayerEx::getName, nullsLast(naturalOrder())))
+			.sorted(comparing(MatchPlayer::getSeed, nullsLast(naturalOrder())).thenComparing(MatchPlayer::getName, nullsLast(naturalOrder())))
 			.collect(toList());
 	}
 

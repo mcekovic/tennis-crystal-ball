@@ -88,7 +88,7 @@
 			<table th:if="${match}" class="table-bordered" th:with="winner=${match.winner}, loser=${match.loser}, outcomeOrStats=${match.outcome != null || match.hasStats}">
 				<tr>
 					<td class="seed">
-						<span th:text="${winner.seedAndEntry}"></span>
+						<span th:text="${winner.seedAndEntry()}"></span>
 					</td>
 					<td class="player">
 						<img th:if="${winner.country.id}" th:src="@{/images/flags/{code}.png(code=${winner.country.code})}" src="/images/flags/ch.png'" th:title="${winner.country.id}" title="SUI" width="24" height="20"/>
@@ -102,7 +102,7 @@
 				</tr>
 				<tr th:if="${loser}">
 					<td class="seed">
-						<span th:text="${loser.seedAndEntry}"></span>
+						<span th:text="${loser.seedAndEntry()}"></span>
 					</td>
 					<td class="player">
 						<img th:if="${loser.country.id}" th:src="@{/images/flags/{code}.png(code=${loser.country.code})}" src="/images/flags/ch.png'" th:title="${loser.country.id}" title="ESP" width="24" height="20"/>

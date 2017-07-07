@@ -6,13 +6,13 @@ public class TournamentEventMatch {
 
 	private final long id;
 	private final String round;
-	private final MatchPlayerEx winner;
-	private final MatchPlayerEx loser;
+	private final MatchPlayer winner;
+	private final MatchPlayer loser;
 	private final List<SetScore> score;
 	private final String outcome;
 	private final boolean hasStats;
 
-	public TournamentEventMatch(long id, String round, MatchPlayerEx winner, MatchPlayerEx loser, List<SetScore> score, String outcome, boolean hasStats) {
+	public TournamentEventMatch(long id, String round, MatchPlayer winner, MatchPlayer loser, List<SetScore> score, String outcome, boolean hasStats) {
 		this.id = id;
 		this.round = round;
 		this.winner = winner;
@@ -30,11 +30,11 @@ public class TournamentEventMatch {
 		return round;
 	}
 
-	public MatchPlayerEx getWinner() {
+	public MatchPlayer getWinner() {
 		return winner;
 	}
 
-	public MatchPlayerEx getLoser() {
+	public MatchPlayer getLoser() {
 		return loser;
 	}
 

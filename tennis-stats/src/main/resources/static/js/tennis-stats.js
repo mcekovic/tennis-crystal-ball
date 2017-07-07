@@ -206,7 +206,11 @@ function factorFormatter(column, row) {
 
 // Country Formatter
 function countryFormatter(column, row) {
-	return "<img src='/images/flags/" + row.country.code + ".png' title='" + row.country.id + "' width='24' height='20'/> " + row.country.id;
+	return formatCountry(row) + " " + row.country.id;
+}
+
+function formatCountry(row) {
+	return "<img src='/images/flags/" + row.country.code + ".png' title='" + row.country.id + "' width='24' height='20'/>";
 }
 
 // Player Formatter
@@ -216,7 +220,7 @@ function playerFormatter(column, row) {
 }
 
 function playerCountryFormatter(column, row) {
-	return "<img src='/images/flags/" + row.country.code + ".png' title='" + row.country.id + "' width='24' height='20'/> " + playerFormatter(column, row);
+	return formatCountry(row) + " " + playerFormatter(column, row);
 }
 
 function formatFavorite(column, favorite) {
@@ -312,6 +316,18 @@ function matchFormatter(playerId) {
 	return function(column, row) {
 		return formatMatchPlayer(row.winner, false, playerId) + " " + (row.outcome != "ABD" ? "d." : "vs") + " " + formatMatchPlayer(row.loser, false, playerId);
 	};
+}
+
+function matchExFormatter(playerId) {
+	return function(column, row) {
+		return formatCountry(row.winner) + " "  + formatMatchPlayer(row.winner, false, playerId) + formatRank(row.winner) +
+			" " + (row.outcome != "ABD" ? "d." : "vs") + " " +
+			formatCountry(row.loser) + " "  + formatMatchPlayer(row.loser, false, playerId) + formatRank(row.loser);
+	};
+}
+
+function formatRank(row) {
+	return row.rank ? " [" + row.rank + "]" : "";
 }
 
 function h2hMatchFormatter(column, row) {

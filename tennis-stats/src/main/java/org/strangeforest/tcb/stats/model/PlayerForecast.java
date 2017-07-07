@@ -7,7 +7,7 @@ import org.strangeforest.tcb.stats.model.prediction.*;
 import static org.strangeforest.tcb.stats.model.prediction.PriceUtil.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
-public class PlayerForecast extends MatchPlayerEx {
+public class PlayerForecast extends MatchPlayer {
 
 	private Map<String, Double> forecast;
 

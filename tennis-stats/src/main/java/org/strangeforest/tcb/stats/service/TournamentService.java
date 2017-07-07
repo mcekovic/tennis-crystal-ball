@@ -229,8 +229,8 @@ public class TournamentService {
 			rs.getInt("max_participation_points")
 		);
 		tournamentEvent.setFinal(
-			mapMatchPlayer(rs, "winner_", withExtraAttrs),
-			mapMatchPlayer(rs, "runner_up_", withExtraAttrs),
+			MatchesService.mapMatchPlayer(rs, "winner_", withExtraAttrs),
+			MatchesService.mapMatchPlayer(rs, "runner_up_", withExtraAttrs),
 			rs.getString("score"),
 			rs.getString("outcome")
 		);
@@ -239,12 +239,8 @@ public class TournamentService {
 		return tournamentEvent;
 	}
 
-	private static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix, boolean withCountry) throws SQLException {
-		return withCountry ? MatchesService.mapMatchPlayerEx(rs, prefix) :  MatchesService.mapMatchPlayer(rs, prefix);
-	}
-
-	private MatchPlayerEx countryParticipant(String countryId) {
-		return new MatchPlayerEx(0, new Country(countryId).getName(), null, null, countryId);
+	private MatchPlayer countryParticipant(String countryId) {
+		return new MatchPlayer(0, new Country(countryId).getName(), null, null, countryId);
 	}
 
 

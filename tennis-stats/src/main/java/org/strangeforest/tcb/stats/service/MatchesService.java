@@ -38,7 +38,9 @@ public class MatchesService {
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
 		"SELECT m.match_id, m.date, m.tournament_event_id, e.name AS tournament, e.level, m.surface, m.indoor, m.round,\n" +
-		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.score, m.outcome, m.has_stats\n" +
+		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, pw.country_id AS winner_country_id, m.winner_rank,\n" +
+		"  m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, pl.country_id AS loser_country_id, m.loser_rank,\n" +
+		"  m.score, m.outcome, m.has_stats\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
@@ -70,9 +72,9 @@ public class MatchesService {
 				TournamentEventMatch match = new TournamentEventMatch(
 					rs.getLong("match_id"),
 					rs.getString("round"),
-					mapMatchPlayerEx(rs, "winner_"),
-					mapMatchPlayerEx(rs, "loser_"),
-						mapSetScores(rs),
+					mapMatchPlayer(rs, "winner_", true),
+					mapMatchPlayer(rs, "loser_", true),
+					mapSetScores(rs),
 					rs.getString("outcome"),
 					rs.getBoolean("has_stats")
 				);
@@ -128,8 +130,8 @@ public class MatchesService {
 						rs.getString("surface"),
 						rs.getBoolean("indoor"),
 						rs.getString("round"),
-						mapMatchPlayer(rs, "winner_"),
-						mapMatchPlayer(rs, "loser_"),
+						mapMatchPlayerEx(rs, "winner_"),
+						mapMatchPlayerEx(rs, "loser_"),
 						rs.getString("score"),
 						rs.getString("outcome"),
 						rs.getBoolean("has_stats")
@@ -141,21 +143,22 @@ public class MatchesService {
 		return table;
 	}
 
-	static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix) throws SQLException {
+	static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix, boolean withCountry) throws SQLException {
 		int playerId = rs.getInt(prefix + "id");
 		if (!rs.wasNull()) {
 			return new MatchPlayer(
 				playerId,
 				rs.getString(prefix + "name"),
 				getInteger(rs, prefix + "seed"),
-				rs.getString(prefix + "entry")
+				rs.getString(prefix + "entry"),
+				withCountry ? rs.getString(prefix + "country_id") : null
 			);
 		}
 		else
 			return null;
 	}
 
-	static MatchPlayerEx mapMatchPlayerEx(ResultSet rs, String prefix) throws SQLException {
+	private static MatchPlayer mapMatchPlayerEx(ResultSet rs, String prefix) throws SQLException {
 		int playerId = rs.getInt(prefix + "id");
 		if (!rs.wasNull()) {
 			return new MatchPlayerEx(
@@ -163,14 +166,15 @@ public class MatchesService {
 				rs.getString(prefix + "name"),
 				getInteger(rs, prefix + "seed"),
 				rs.getString(prefix + "entry"),
-				rs.getString(prefix + "country_id")
+				rs.getString(prefix + "country_id"),
+				getInteger(rs, prefix + "rank")
 			);
 		}
 		else
 			return null;
 	}
 
-
+	
 	public MatchInfo getMatch(long matchId) {
 		return jdbcTemplate.queryForObject(
 			MATCH_QUERY,

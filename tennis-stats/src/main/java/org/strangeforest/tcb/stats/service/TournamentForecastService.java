@@ -184,8 +184,8 @@ public class TournamentForecastService {
 			COMPLETED_MATCHES_QUERY, params("inProgressEventId", inProgressEventId),
 			rs -> {
 				short winnerIndex = rs.getShort("winner");
-				MatchPlayerEx winner = mapMatchPlayerEx(rs, format("player%1$d_", winnerIndex));
-				MatchPlayerEx loser = mapMatchPlayerEx(rs, format("player%1$d_", 3 - winnerIndex));
+				MatchPlayer winner = mapMatchPlayer(rs, format("player%1$d_", winnerIndex), true);
+				MatchPlayer loser = mapMatchPlayer(rs, format("player%1$d_", 3 - winnerIndex), true);
 				String outcome = loser != null ? rs.getString("outcome") : "BYE";
 				TournamentEventMatch match = new TournamentEventMatch(
 					rs.getLong("in_progress_match_id"),
