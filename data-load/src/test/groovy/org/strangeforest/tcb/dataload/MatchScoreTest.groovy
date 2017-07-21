@@ -121,4 +121,18 @@ class MatchScoreTest {
 		assert score.setScores[0] == new SetScore(w_games: 6, l_games: 6)
 		assert score.toString() == '6-6 RET'
 	}
+
+	@Test
+	void "Test retired 3"() {
+		MatchScore score = MatchScoreParser.parse('7-5 RET')
+
+		assert score.outcome == 'RET'
+		assert score.w_sets == 1
+		assert score.l_sets == 0
+		assert score.w_games == 7
+		assert score.l_games == 5
+		assert score.setScores.size() == 1
+		assert score.setScores[0] == new SetScore(w_games: 7, l_games: 5)
+		assert score.toString() == '7-5 RET'
+	}
 }
