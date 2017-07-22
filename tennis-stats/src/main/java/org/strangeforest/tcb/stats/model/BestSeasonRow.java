@@ -13,8 +13,8 @@ public class BestSeasonRow extends PlayerRow {
 	private WonLost wonLost;
 	private Integer yearEndRank;
 
-	public BestSeasonRow(int seasonRank, int playerId, String name, String countryId, int season, int goatPoints) {
-		super(seasonRank, playerId, name, countryId, null);
+	public BestSeasonRow(int seasonRank, int playerId, String name, String countryId, int season, boolean active, int goatPoints) {
+		super(seasonRank, playerId, name, countryId, active);
 		this.season = season;
 		this.goatPoints = goatPoints;
 	}

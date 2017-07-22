@@ -22,6 +22,7 @@ import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 @Service
 public class SeasonsService {
 
+	@Autowired private DataService dataService;
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int MAX_BEST_SEASON_COUNT = 200;
@@ -232,6 +233,7 @@ public class SeasonsService {
 	public BootgridTable<BestSeasonRow> getBestSeasonsTable(int seasonCount, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<BestSeasonRow> table = new BootgridTable<>(currentPage, seasonCount);
 		int offset = (currentPage - 1) * pageSize;
+		int currentSeason = dataService.getLastSeason();
 		jdbcTemplate.query(
 			format(BEST_SEASONS_QUERY, where(filter.getCriteria()), orderBy),
 			filter.getParams()
@@ -248,7 +250,7 @@ public class SeasonsService {
 				String countryId = rs.getString("country_id");
 				int season = rs.getInt("season");
 				int goatPoints = rs.getInt("goat_points");
-				BestSeasonRow row = new BestSeasonRow(seasonRank, playerId, name, countryId, season, goatPoints);
+				BestSeasonRow row = new BestSeasonRow(seasonRank, playerId, name, countryId, season, season == currentSeason, goatPoints);
 				// GOAT points items
 				row.setTournamentGoatPoints(rs.getInt("tournament_goat_points"));
 				row.setYearEndRankGoatPoints(rs.getInt("year_end_rank_goat_points"));
