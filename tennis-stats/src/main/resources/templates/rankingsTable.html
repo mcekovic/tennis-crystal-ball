@@ -29,7 +29,6 @@
 						request.date = date;
 					return request;
 				},
-				sorting: false,
 				rowCount: [20, 50, 100, -1],
 				searchSettings: {
 					delay: 300,
@@ -126,8 +125,8 @@
 		<tr>
 			<th data-column-id="rank" data-type="numeric" data-width="65">Rank</th>
 			<th data-column-id="bestRank" data-formatter="bestRank" data-width="100">Best Rank</th>
-			<th data-column-id="country" data-formatter="country" data-width="85">Country</th>
-			<th data-column-id="name" data-formatter="player" data-width="250">Name</th>
+			<th data-column-id="country" data-formatter="country" data-width="85" data-sortable="false">Country</th>
+			<th data-column-id="name" data-formatter="player" data-width="250" data-sortable="false">Name</th>
 			<th data-column-id="rankDiff" data-formatter="rankDiff" data-width="50" data-align="right" data-header-align="right">+/-</th>
 			<th data-column-id="pointsDiff" data-formatter="pointsDiff" data-width="75" data-align="right" data-header-align="right">Pts. +/-</th>
 			<th data-column-id="points" data-formatter="points" data-width="100" data-align="right" data-header-align="right">Points</th>

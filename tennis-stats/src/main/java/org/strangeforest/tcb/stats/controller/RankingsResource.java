@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
+import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
 
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.util.OrderBy.*;
 
 @RestController
 public class RankingsResource {
@@ -28,6 +30,15 @@ public class RankingsResource {
 
 	private static final int MAX_PLAYERS = 1000;
 
+	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
+		.put("rank", "rank")
+		.put("bestRank", "best_rank")
+		.put("points", "points NULLS LAST")
+		.put("rankDiff", "rank_diff NULLS LAST")
+		.put("pointsDiff", "points_diff NULLS LAST")
+		.build();
+	private static final OrderBy DEFAULT_ORDER = asc("rank");
+
 	@GetMapping("/rankingsTableTable")
 	public BootgridTable<PlayerRankingsRow> rankingsTableTable(
 		@RequestParam(name = "rankType") RankType rankType,
@@ -37,7 +48,8 @@ public class RankingsResource {
 		@RequestParam(name = "active", required = false) Boolean active,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
-		@RequestParam(name = "searchPhrase") String searchPhrase
+		@RequestParam(name = "searchPhrase") String searchPhrase,
+		@RequestParam Map<String, String> requestParams
 	) {
 		if (date == null) {
 			if (season != null)
@@ -46,8 +58,9 @@ public class RankingsResource {
 				date = rankingsService.getCurrentRankingDate(rankType);
 		}
 		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);
+		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
-		return rankingsService.getRankingsTable(rankType, date, filter, pageSize, current);
+		return rankingsService.getRankingsTable(rankType, date, filter, orderBy, pageSize, current);
 	}
 
 	@GetMapping("/seasonRankingDates")

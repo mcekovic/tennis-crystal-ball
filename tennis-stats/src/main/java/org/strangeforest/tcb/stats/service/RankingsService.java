@@ -65,17 +65,17 @@ public class RankingsService {
 		"FROM ranking_ex r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.rank_date = :date%6$s\n" +
-		"ORDER BY rank OFFSET :offset";
+		"ORDER BY %7$s OFFSET :offset";
 
 	private static final String PEAK_ELO_RATING_TABLE_QUERY = //language=SQL
 		"WITH best_elo_rating_ranked AS (\n" +
-		"  SELECT rank() OVER (ORDER BY %1$s DESC NULLS LAST) AS rank, player_id, %1$s AS best_elo_rating\n" +
+		"  SELECT rank() OVER (ORDER BY %1$s DESC NULLS LAST, %1$s_date) AS rank, player_id, %1$s AS best_elo_rating\n" +
 		"  FROM player_best_elo_rating\n" +
 		")\n" +
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, p.%2$s AS points_date, p.%3$s AS best_rank, p.%4$s AS best_rank_date\n" +
 		"FROM best_elo_rating_ranked r\n" +
 		"INNER JOIN player_v p USING (player_id)%5$s\n" +
-		"ORDER BY rank, best_rank_date OFFSET :offset LIMIT " + HIGHEST_ELO_RATING_MAX_PLAYERS;
+		"ORDER BY rank OFFSET :offset LIMIT " + HIGHEST_ELO_RATING_MAX_PLAYERS;
 
 	private static final String PLAYER_RANKING_QUERY =
 		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points,\n" +
@@ -171,7 +171,7 @@ public class RankingsService {
 	}
 
 	@Cacheable("RankingsTable.Table")
-	public BootgridTable<PlayerRankingsRow> getRankingsTable(RankType rankType, LocalDate date, PlayerListFilter filter, int pageSize, int currentPage) {
+	public BootgridTable<PlayerRankingsRow> getRankingsTable(RankType rankType, LocalDate date, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		checkRankType(rankType);
 		if (date == null && rankType.category != ELO)
 			throw new IllegalArgumentException("Peak ranking is available only for Elo ranking.");
@@ -183,7 +183,7 @@ public class RankingsService {
 		jdbcTemplate.query(
 			peakElo
 				? format(PEAK_ELO_RATING_TABLE_QUERY, bestEloRatingColumn(rankType), bestEloRatingDateColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), where(filter.getCriteria()))
-				: format(RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), filter.getCriteria()),
+				: format(RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), filter.getCriteria(), orderBy),
 			getTableParams(filter, peakElo, date, offset),
 			rs -> {
 				int rank = rs.getInt("rank");
@@ -194,13 +194,15 @@ public class RankingsService {
 				String countryId = rs.getString("country_id");
 				Boolean active = peakElo && !filter.hasActive() ? rs.getBoolean("active") : null;
 				int points = rs.getInt("points");
-				Integer rankDiff = !peakElo ? getInteger(rs, "rank_diff") : null;
-				Integer pointsDiff = !peakElo ? getInteger(rs, "points_diff") : null;
 				int bestRank = rs.getInt("best_rank");
 				Date bestRankDate = rs.getDate("best_rank_date");
-				PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, active, points, rankDiff, pointsDiff, bestRank, bestRankDate);
+				PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, active, points, bestRank, bestRankDate);
 				if (peakElo)
 					row.setPointsDate(rs.getDate("points_date"));
+				else {
+					row.setRankDiff(getInteger(rs, "rank_diff"));
+					row.setPointsDiff(getInteger(rs, "points_diff"));
+				}
 				table.addRow(row);
 			}
 		);
