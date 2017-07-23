@@ -11,6 +11,8 @@ public class Country {
 	public static final String UNKNOWN_NAME = "Unknown";
 	private static final String UNKNOWN_CODE = "__";
 
+	public static final Country UNKNOWN = new Country(UNKNOWN_ID);
+
 	private final String countryId;
 
 	public Country(String countryId) {

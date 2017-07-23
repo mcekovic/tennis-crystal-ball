@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<th:block xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="inFragment" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="error" type="java.lang.String"*/-->
 <!--/*@thymesVar id="status" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="path" type="java.lang.String"*/-->
 <!--/*@thymesVar id="timestamp" type="java.util.Date"*/-->
 <!--/*@thymesVar id="message" type="java.lang.String"*/-->
+<!DOCTYPE html>
+<html th:unless="${inFragment}">
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, _, _)">
 	<title>Error</title>
 </head>
@@ -18,3 +20,5 @@
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>
+<span th:if="${inFragment}" style="background-color: red; color: white">ERROR</span>
+</th:block>

@@ -21,7 +21,7 @@ public class MatchPlayer {
 		this.name = name;
 		this.seed = seed;
 		this.entry = entry;
-		country = countryId != null ? new Country(countryId) : null;
+		country = countryId != null ? new Country(countryId) : Country.UNKNOWN;
 	}
 
 	public MatchPlayer(MatchPlayer player) {
