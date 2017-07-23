@@ -16,9 +16,10 @@ import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.RankCategory.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.util.EnumUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 import static org.strangeforest.tcb.stats.util.NameUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
+import static org.strangeforest.tcb.util.EnumUtil.*;
 
 @Service
 public class RankingsService {
@@ -48,13 +49,25 @@ public class RankingsService {
 		"ORDER BY r.%1$s LIMIT :playerCount";
 
 	private static final String RANKING_TABLE_QUERY = //language=SQL
-		"SELECT r.%1$s AS rank, player_id, p.name, p.country_id, r.%2$s AS points, p.%3$s AS best_rank, p.%4$s AS best_rank_date\n" +
-		"FROM %5$s r\n" +
+		"WITH prev_date AS (\n" +
+		"  SELECT max(rank_date) AS prev_rank_date\n" +
+		"  FROM %1$s\n" +
+		"  WHERE rank_date < :date\n" +
+		"), ranking_ex AS (\n" +
+		"  SELECT rank_date, player_id, %2$s AS rank, %3$s AS points,\n" +
+		"    lag(%2$s) OVER pr - %2$s AS rank_diff,\n" +
+		"    %3$s - lag(%3$s) OVER pr AS points_diff\n" +
+		"  FROM %1$s r\n" +
+		"  WHERE r.rank_date BETWEEN (SELECT pd.prev_rank_date FROM prev_date pd) AND :date\n" +
+		"  WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)\n" +
+		")" +
+		"SELECT r.rank, player_id, p.name, p.country_id, r.points, r.rank_diff, r.points_diff, p.%4$s AS best_rank, p.%5$s AS best_rank_date\n" +
+		"FROM ranking_ex r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.rank_date = :date%6$s\n" +
 		"ORDER BY rank OFFSET :offset";
 
-	private static final String HIGHEST_ELO_RATING_TABLE_QUERY = //language=SQL
+	private static final String PEAK_ELO_RATING_TABLE_QUERY = //language=SQL
 		"WITH best_elo_rating_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY %1$s DESC NULLS LAST) AS rank, player_id, %1$s AS best_elo_rating\n" +
 		"  FROM player_best_elo_rating\n" +
@@ -169,8 +182,8 @@ public class RankingsService {
 		boolean peakElo = rankType.category == ELO && date == null;
 		jdbcTemplate.query(
 			peakElo
-				? format(HIGHEST_ELO_RATING_TABLE_QUERY, bestEloRatingColumn(rankType), bestEloRatingDateColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), where(filter.getCriteria()))
-				: format(RANKING_TABLE_QUERY, rankColumn(rankType), pointsColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), rankingTable(rankType), filter.getCriteria()),
+				? format(PEAK_ELO_RATING_TABLE_QUERY, bestEloRatingColumn(rankType), bestEloRatingDateColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), where(filter.getCriteria()))
+				: format(RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), filter.getCriteria()),
 			getTableParams(filter, peakElo, date, offset),
 			rs -> {
 				int rank = rs.getInt("rank");
@@ -181,9 +194,11 @@ public class RankingsService {
 				String countryId = rs.getString("country_id");
 				Boolean active = peakElo && !filter.hasActive() ? rs.getBoolean("active") : null;
 				int points = rs.getInt("points");
+				Integer rankDiff = !peakElo ? getInteger(rs, "rank_diff") : null;
+				Integer pointsDiff = !peakElo ? getInteger(rs, "points_diff") : null;
 				int bestRank = rs.getInt("best_rank");
 				Date bestRankDate = rs.getDate("best_rank_date");
-				PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, active, points, bestRank, bestRankDate);
+				PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, active, points, rankDiff, pointsDiff, bestRank, bestRankDate);
 				if (peakElo)
 					row.setPointsDate(rs.getDate("points_date"));
 				table.addRow(row);
