@@ -19,7 +19,10 @@ public class TennisStatsErrorAttributes extends DefaultErrorAttributes {
 	}
 
 	private boolean isInFragment(RequestAttributes requestAttributes) {
-		return reverse(getCausalChain(getError(requestAttributes))).stream()
+		Throwable error = getError(requestAttributes);
+		if (error == null)
+			return false;
+		return reverse(getCausalChain(error)).stream()
 			.filter(th -> th instanceof TemplateProcessingException)
 			.map(th -> (TemplateProcessingException)th)
 			.map(tEx -> tEx.hasTemplateName() && tEx.getTemplateName().startsWith("fragments/"))
