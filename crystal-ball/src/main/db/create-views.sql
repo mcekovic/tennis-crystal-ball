@@ -954,7 +954,7 @@ WITH player_grand_slams AS (
 	GROUP BY player_id
 	HAVING count(DISTINCT tournament_id) >= 4
 )
-SELECT gs.player_id, g.career_grand_slam goat_points
+SELECT gs.player_id, g.career_grand_slam * career_grand_slams goat_points
 FROM player_career_grand_slams gs
 INNER JOIN grand_slam_goat_points g ON TRUE;
 
