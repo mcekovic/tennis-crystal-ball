@@ -4,7 +4,7 @@
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
 	<title>Rankings Table</title>
 	<script type="text/javascript">
 		$(function() {
@@ -35,6 +35,9 @@
 					characters: 2
 				},
 				formatters: {
+					"rank": function(column, row) {
+						return row.rank == row.bestRank ? row.rank + " <span class='career-high'>CH</span>" : row.rank;
+					},
 					"bestRank": function(column, row) {
 						var date = row.bestRankDate;
 						return date ? ("<span title='" + formatDate(date) + "'>" + row.bestRank + "</span>") : row.bestRank;
@@ -100,6 +103,16 @@
 				return "<span class='positive small'>+</span>";
 		}
 	</script>
+	<style>
+		.career-high {
+			background-color: coral;
+			color: white;
+			font-size: x-small;
+			padding: 0 2px;
+			border-radius: 3px;
+			vertical-align: text-top;
+		}
+	</style>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
@@ -123,7 +136,7 @@
 	<table id="rankingsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
-			<th data-column-id="rank" data-type="numeric" data-width="65">Rank</th>
+			<th data-column-id="rank" data-formatter="rank" data-width="65">Rank</th>
 			<th data-column-id="bestRank" data-formatter="bestRank" data-width="100">Best Rank</th>
 			<th data-column-id="country" data-formatter="country" data-width="85" data-sortable="false">Country</th>
 			<th data-column-id="name" data-formatter="player" data-width="250" data-sortable="false">Name</th>
