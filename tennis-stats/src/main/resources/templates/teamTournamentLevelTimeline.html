@@ -2,8 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="level" type="org.strangeforest.tcb.stats.model.TournamentLevel"*/-->
 <!--/*@thymesVar id="timeline" type="java.util.List<org.strangeforest.tcb.stats.model.TeamTournamentLevelTimelineItem>"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, _, _)">
-	<title>[[${level.text}]] Timeline</title>
+<head th:replace="fragments/head :: commonHead(${level.text} + ' Timeline', false, _, _)">
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
