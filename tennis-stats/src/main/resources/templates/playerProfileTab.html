@@ -13,11 +13,7 @@
 					window.location = "/headToHead?playerId1=[[${player.id}]]&playerId2=" + ui.item.id;
 			}
 		});
-		$("#favoriteSurface").each(function() {
-			var $span = $(this);
-			var surface = $span.data("surface");
-			$span.addClass("label-" + surfaceClassSuffix(surface));
-		});
+		decorateSurface("#favoriteSurface");
 	});
 </script>
 <br/>

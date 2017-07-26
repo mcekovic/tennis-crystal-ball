@@ -10,6 +10,7 @@
 <head th:replace="fragments/head :: commonHead(${inProgressEvent.name} + ' Forecast', false, ~{::script}, ~{::style})">
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
+			decorateSurface("#eventSurface");
 			$("#inProgressEventPills").find("a").click(tabClick);
 			[# th:if="${tab}"] $("#[(${tab})]Pill").click(); [/]
 			bindPopovers();
@@ -64,11 +65,11 @@
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Level</th>
-					<td th:text="${levels[inProgressEvent.level]}">Grand Slam</td>
+					<td><span class="label label-" th:attrappend="class=${inProgressEvent.level}" th:text="${levels[inProgressEvent.level]}">Grand Slam</span></td>
 				</tr>
 				<tr>
 					<th>Surface</th>
-					<td th:text="${(inProgressEvent.indoor ? 'Indoor ' : '') + (inProgressEvent.surface != null ? surfaces[inProgressEvent.surface] : '')}">Hard</td>
+					<td><span id="eventSurface" th:if="${inProgressEvent.surface}" class="label" th:data-surface="${inProgressEvent.surface}" th:text="${(inProgressEvent.indoor ? 'Indoor ' : '') + surfaces[inProgressEvent.surface]}">Hard</span></td>
 				</tr>
 				<tr>
 					<th>Date</th>

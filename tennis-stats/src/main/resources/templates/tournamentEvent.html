@@ -7,6 +7,7 @@
 <head th:replace="fragments/head :: commonHead(${tournamentEvent.name + ' ' + tournamentEvent.season}, true, ~{::script}, ~{::style})">
 	<script type="text/javascript">
 		$(function() {
+			decorateSurface("#eventSurface");
 			$("#tournamentEventPills").find("a").click(tabClick);
 		});
 	</script>
@@ -35,11 +36,11 @@
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Level</th>
-					<td th:text="${levels[tournamentEvent.level]}">Grand Slam</td>
+					<td><span class="label label-" th:attrappend="class=${tournamentEvent.level}" th:text="${levels[tournamentEvent.level]}">Grand Slam</span></td>
 				</tr>
 				<tr th:unless="${isTeam}">
 					<th>Surface</th>
-					<td th:text="${(tournamentEvent.indoor ? 'Indoor ' : '') + (tournamentEvent.surface != null ? surfaces[tournamentEvent.surface] : '')}">Hard</td>
+					<td><span id="eventSurface" th:if="${tournamentEvent.surface}" class="label" th:data-surface="${tournamentEvent.surface}" th:text="${(tournamentEvent.indoor ? 'Indoor ' : '') + surfaces[tournamentEvent.surface]}">Hard</span></td>
 				</tr>
 				<tr th:unless="${isTeam}">
 					<th>Date</th>

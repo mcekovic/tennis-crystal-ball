@@ -8,11 +8,7 @@
 <!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 <script type="text/javascript">
 	$(function() {
-		$("#favoriteSurface1, #favoriteSurface2").each(function() {
-			var $span = $(this);
-			var surface = $span.data("surface");
-			$span.addClass("label-" + surfaceClassSuffix(surface));
-		});
+		decorateSurface("#favoriteSurface1, #favoriteSurface2");
 	});
 </script>
 <br/>

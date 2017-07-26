@@ -276,6 +276,14 @@ function surfaceName(surface) {
 	}
 }
 
+function decorateSurface(selector) {
+	$(selector).each(function() {
+		var $this = $(this);
+		var surface = $this.data("surface");
+		$this.addClass("label-" + surfaceClassSuffix(surface));
+	});
+}
+
 // Won/Lost Formatter
 function wonLostFormatter(column, row) {
 	return "<span title='" + row.wonLost + "'>" + row.wonPct + "</span>";
