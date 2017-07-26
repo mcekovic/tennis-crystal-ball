@@ -255,7 +255,7 @@
 				<div th:unless="${forSeason}">+[(${careerGrandSlamGOATPoints})] points for each Career Grand Slam</div>
 				<div th:inline="text">+[(${seasonGrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Calendar Year Grand Slam</div>
 				<div th:unless="${forSeason}">+[(${grandSlamHolderGOATPoints})] points each time when holding all 4 Grand Slams</div>
-				<div th:unless="${forSeason}" th:inline="text">+[(${grandSlamOnSameEventGOATPoints})] point[# th:if="${grandSlamOnSameEventGOATPoints > 1}"]s[/] for each repeating win at the same Grand Slam tournament<br/>(i.e. 10 wins at Roland Garros = (10 - 1) * [(${grandSlamOnSameEventGOATPoints})] = [(${9 * grandSlamOnSameEventGOATPoints})] points)</div>
+				<div th:unless="${forSeason}" th:inline="text">+[(${grandSlamOnSameEventGOATPoints})] point[# th:if="${grandSlamOnSameEventGOATPoints > 1}"]s[/] for each repeating win at the same Grand Slam tournament<br/>(i.e. 10 wins at Roland Garros = (10 - 1) * [(${grandSlamOnSameEventGOATPoints})] = [(${9 * grandSlamOnSameEventGOATPoints})] points)<sup class="new-feature">&nbsp;New!</sup></div>
 				<br/>
 				<th:block th:unless="${forSeason}">
 				<div>
