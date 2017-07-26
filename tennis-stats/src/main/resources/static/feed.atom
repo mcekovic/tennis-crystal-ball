@@ -4,7 +4,39 @@
 	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for the die-hard tennis fans</subtitle>
 	<link href="http://tennis-strangeforest.rhcloud.com/feed.atom" rel="self"/>
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
-	<updated>2017-05-07T12:00:00Z</updated>
+	<updated>2017-07-26T12:00:00Z</updated>
+	<entry>
+		<title>New Feature - GOAT Points for repeating wins at the same Grand Slam tournament</title>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/record?recordId=GrandSlamGOATPoints"/>
+		<id>urn:uuid:5f18bd90-0f5e-419b-b541-ba1fc387c3cf</id>
+		<updated>2017-07-26T12:00:00Z</updated>
+		<summary>New Feature - GOAT Points for repeating wins at the same Grand Slam tournament</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>GOAT Points are assigned for repeating wins at the same Grand Slam tournament (i.e. 10 wins at Roland Garros = (10 - 1) * 1 = 9 points, 8 wins at Wimbledon = (8 - 1) * 1 = 7 points).</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
+	<entry>
+		<title>New Feature - Rankings table improvements</title>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/rankingsTable?rankType=ELO_RATING"/>
+		<id>urn:uuid:56556a53-273c-4341-8d87-a61a7ff580c9</id>
+		<updated>2017-07-26T12:00:00Z</updated>
+		<summary>New Feature - Rankings table improvements</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Ranking and ranking points movement columns are added to both ATP and Elo ranking tables. To see ranking and ranking points movers of the week (up and down), use sorting on these columns.</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 	<entry>
 		<title>New Feature - Player Season Summary</title>
 		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/playerProfile?name=Roger Federer&amp;tab=season"/>

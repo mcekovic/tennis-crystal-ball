@@ -13,6 +13,7 @@
 	<!--/*@thymesVar id="careerGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="seasonGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="grandSlamHolderGOATPoints" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="grandSlamOnSameEventGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="bestSeasonGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="greatestRivalriesGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="performanceGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.PerfStatGOATPoints>"*/-->
@@ -97,7 +98,7 @@
 				<a th:unless="${forSeason}" href="/record?recordId=WeeksAtNo1GOATPoints" title="Players with most Weeks at No. 1 GOAT Points">Weeks at No. 1</a>
 				<a th:if="${forSeason}" href="/record?recordId=SeasonWeeksAtNo1GOATPoints" title="Players with most Weeks at No. 1 GOAT Points in the single season">Weeks at No. 1</a>
 			</strong>
-			<p>+1 point for each <th:block th:text="${weeksAtNo1ForGOATPoint}">10</th:block> weeks as ATP No. 1</p>
+			<p>+1 point for each [(${weeksAtNo1ForGOATPoint})] weeks as ATP No. 1</p>
 		</div>
 		<strong>
 			<a th:unless="${forSeason}" href="/record?recordId=WeeksAtEloTopNGOATPoints" title="Players with most Weeks at Elo Top 5 GOAT Points">Weeks at Elo Top 5</a>
@@ -251,9 +252,10 @@
 					<a th:unless="${forSeason}" href="/record?recordId=GrandSlamGOATPoints" title="Players with most Grand Slam GOAT Points">Grand Slam Points</a>
 					<a th:if="${forSeason}" href="/record?recordId=SeasonGrandSlamGOATPoints" title="Players with most Grand Slam GOAT Points in the single season">Grand Slam Points</a>
 				</strong>
-				<div th:unless="${forSeason}">+<th:block th:text="${careerGrandSlamGOATPoints}">8</th:block> points for each Career Grand Slam</div>
-				<div>+<th:block th:text="${seasonGrandSlamGOATPoints}">8</th:block> points for<th:block th:unless="${forSeason}"> each</th:block> Calendar Year Grand Slam</div>
-				<div th:unless="${forSeason}">+<th:block th:text="${grandSlamHolderGOATPoints}">4</th:block> points each time when holding all 4 Grand Slams</div>
+				<div th:unless="${forSeason}">+[(${careerGrandSlamGOATPoints})] points for each Career Grand Slam</div>
+				<div th:inline="text">+[(${seasonGrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Calendar Year Grand Slam</div>
+				<div th:unless="${forSeason}">+[(${grandSlamHolderGOATPoints})] points each time when holding all 4 Grand Slams</div>
+				<div th:unless="${forSeason}" th:inline="text">+[(${grandSlamOnSameEventGOATPoints})] point[# th:if="${grandSlamOnSameEventGOATPoints > 1}"]s[/] for each repeating win at the same Grand Slam tournament<br/>(i.e. 10 wins at Roland Garros = (10 - 1) * [(${grandSlamOnSameEventGOATPoints})] = [(${9 * grandSlamOnSameEventGOATPoints})] points)</div>
 				<br/>
 				<th:block th:unless="${forSeason}">
 				<div>

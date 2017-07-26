@@ -966,8 +966,7 @@ WITH player_season_grand_slams AS (
 	SELECT player_id, e.season, count(e.tournament_id) grand_slams
 	FROM player_tournament_event_result r
 	INNER JOIN tournament_event e USING (tournament_event_id)
-	WHERE e.level = 'G'
-	AND r.result = 'W'
+	WHERE e.level = 'G' AND r.result = 'W'
 	GROUP BY player_id, e.season
 )
 SELECT gs.player_id, gs.season, g.season_grand_slam goat_points
@@ -992,6 +991,22 @@ SELECT gs.player_id, g.grand_slam_holder goat_points
 FROM grand_slam_streak gs
 INNER JOIN grand_slam_goat_points g ON TRUE
 WHERE gs.streak >= 4;
+
+
+-- player_grand_slam_on_same_event_goat_points_v
+
+CREATE OR REPLACE VIEW player_grand_slam_on_same_event_goat_points_v AS
+WITH player_event_grand_slams AS (
+  SELECT r.player_id, e.tournament_id, count(r.tournament_event_id) AS count
+  FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)
+  WHERE e.level = 'G' AND r.result = 'W'
+  GROUP BY r.player_id, e.tournament_id
+)
+SELECT gs.player_id, sum(gs.count - 1) * g.grand_slam_on_same_event goat_points
+FROM player_event_grand_slams gs
+INNER JOIN grand_slam_goat_points g ON TRUE
+WHERE gs.count >= 2
+GROUP BY gs.player_id, grand_slam_on_same_event;
 
 
 -- player_greatest_rivalries_goat_points_v
@@ -1605,6 +1620,11 @@ WITH goat_points AS (
 		0, 0, 0, 0, 0,
 		0, 0, goat_points, 0, 0, 0, 0
 	FROM player_grand_slam_holder_goat_points_v
+	UNION ALL
+	SELECT player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0, 0, 0,
+		0, 0, goat_points, 0, 0, 0, 0
+	FROM player_grand_slam_on_same_event_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
 		0, 0, 0, 0, 0,
