@@ -49,7 +49,9 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 	private void registerWinCareerSpans() {
 		register(winCareerSpan(ALL_WO_TEAM));
 		register(winCareerSpan(GRAND_SLAM));
+		register(winCareerSpan(TOUR_FINALS));
 		register(winCareerSpan(MASTERS));
+		register(winCareerSpan(OLYMPICS));
 	}
 
 	private void registerConsecutiveSeasons(ResultType type) {

@@ -22,9 +22,10 @@ public class GOATPointsCategory extends RecordCategory {
 		register(mostGOATPoints("WeeksAtEloTopN", "Weeks at Elo Top 5", "weeks_at_elo_topn_goat_points"));
 		register(mostGOATPoints("BestEloRating", "Peak Elo Rating", "best_elo_rating_goat_points"));
 		register(mostGOATPoints("Achievements", "Achievements", "achievements_goat_points"));
+		register(mostGOATPoints("GrandSlam", "Grand Slam", "grand_slam_goat_points"));
 		register(mostGOATPoints("BigWins", "Big Wins", "big_wins_goat_points"));
 		register(mostGOATPoints("H2H", "Head-to-Head", "h2h_goat_points"));
-		register(mostGOATPoints("GrandSlam", "Grand Slam", "grand_slam_goat_points"));
+		register(mostGOATPoints("Records", "Records", "records_goat_points"));
 		register(mostGOATPoints("BestSeasons", "Best Seasons", "best_season_goat_points"));
 		register(mostGOATPoints("GreatestRivalries", "Greatest Rivalries", "greatest_rivalries_goat_points"));
 		register(mostGOATPoints("Performance", "Performance", "performance_goat_points"));

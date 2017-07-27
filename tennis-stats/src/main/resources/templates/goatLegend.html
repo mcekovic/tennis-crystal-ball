@@ -27,6 +27,16 @@
 				$level.html(levelName(level));
 			});
 		});
+		function showRecordsGOATPoints(event) {
+			var $recordsGOATPoints = $("#recordsGOATPoints");
+			if (!$recordsGOATPoints.hasClass("loaded")) {
+				event.preventDefault();
+				$.get("/recordsGOATPointsLegend", function(data) {
+					$recordsGOATPoints.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
+					$recordsGOATPoints.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
+				});
+			}
+		}
 	</script>
 <h4>GOAT Points Legend</h4>
 <div id="goatLegendRow" class="row">
@@ -162,6 +172,15 @@
 		</h4>
 		<div class="row">
 			<div class="col-md-6">
+				<strong>
+					<a th:unless="${forSeason}" href="/record?recordId=GrandSlamGOATPoints" title="Players with most Grand Slam GOAT Points">Grand Slam Points</a>
+					<a th:if="${forSeason}" href="/record?recordId=SeasonGrandSlamGOATPoints" title="Players with most Grand Slam GOAT Points in the single season">Grand Slam Points</a>
+				</strong>
+				<div th:unless="${forSeason}">+[(${careerGrandSlamGOATPoints})] points for each Career Grand Slam</div>
+				<div th:inline="text">+[(${seasonGrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Calendar Year Grand Slam</div>
+				<div th:unless="${forSeason}">+[(${grandSlamHolderGOATPoints})] points each time when holding all 4 Grand Slams</div>
+				<div th:unless="${forSeason}" th:inline="text">+[(${grandSlamOnSameEventGOATPoints})] point[# th:if="${grandSlamOnSameEventGOATPoints > 1}"]s[/] for each repeating win at the same Grand Slam tournament<br/>(i.e. 10 wins at Roland Garros = (10 - 1) * [(${grandSlamOnSameEventGOATPoints})] = [(${9 * grandSlamOnSameEventGOATPoints})] points)<sup class="new-feature">&nbsp;New!</sup></div>
+				<br/>
 				<div>
 					<strong>
 						<a th:unless="${forSeason}" href="/record?recordId=BigWinsGOATPoints" title="Players with most Big Wins GOAT Points">Big Wins Points</a>
@@ -248,16 +267,15 @@
 				</th:block>
 			</div>
 			<div class="col-md-6">
-				<strong>
-					<a th:unless="${forSeason}" href="/record?recordId=GrandSlamGOATPoints" title="Players with most Grand Slam GOAT Points">Grand Slam Points</a>
-					<a th:if="${forSeason}" href="/record?recordId=SeasonGrandSlamGOATPoints" title="Players with most Grand Slam GOAT Points in the single season">Grand Slam Points</a>
-				</strong>
-				<div th:unless="${forSeason}">+[(${careerGrandSlamGOATPoints})] points for each Career Grand Slam</div>
-				<div th:inline="text">+[(${seasonGrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Calendar Year Grand Slam</div>
-				<div th:unless="${forSeason}">+[(${grandSlamHolderGOATPoints})] points each time when holding all 4 Grand Slams</div>
-				<div th:unless="${forSeason}" th:inline="text">+[(${grandSlamOnSameEventGOATPoints})] point[# th:if="${grandSlamOnSameEventGOATPoints > 1}"]s[/] for each repeating win at the same Grand Slam tournament<br/>(i.e. 10 wins at Roland Garros = (10 - 1) * [(${grandSlamOnSameEventGOATPoints})] = [(${9 * grandSlamOnSameEventGOATPoints})] points)<sup class="new-feature">&nbsp;New!</sup></div>
-				<br/>
 				<th:block th:unless="${forSeason}">
+				<strong>
+					<a href="/record?recordId=RecordsGOATPoints" title="Players with most Records GOAT Points">Records Points</a><sup class="new-feature">&nbsp;New!</sup>
+				</strong>
+				<br/>
+				<button id="recordsGOATPoints" type="button" class="btn btn-info" onclick="showRecordsGOATPoints(event)" data-toggle="tooltip" data-placement="top" title="Records GOAT Points">
+					Records Points&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<br/><br/>
 				<div>
 					<strong><a href="/record?recordId=BestSeasonsGOATPoints" title="Players with most Best Seasons GOAT Points">Best Seasons Points</a></strong>
 					<p>Points assigned for best rated seasons</p>

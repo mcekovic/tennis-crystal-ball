@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.model.records.categories;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
+import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.ItemsWinningTitleCategory.ItemType.*;
@@ -95,7 +96,7 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 			"WHERE result = 'W' AND e." + condition + "\n" +
 			"GROUP BY player_id, tournament_event_id, e.name, e.level, e.season, e.date HAVING count(m.match_id) >= 3",
 			"r.value, r.tournament_event_id, r.tournament, r.level, r.season, r.matches", type.order, type.order + ", r.date",
-			TournamentEventIntegerRecordDetail.class, null,
+			TournamentEventIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentEventId=%2$d", playerId, recordDetail.getTournamentEventId()),
 			asList(
 				new RecordColumn("value", "numeric", null, ITEMS_WIDTH, "right", item.name),
 				new RecordColumn("matches", "numeric", null, MATCHES_WIDTH, "right", "Matches"),

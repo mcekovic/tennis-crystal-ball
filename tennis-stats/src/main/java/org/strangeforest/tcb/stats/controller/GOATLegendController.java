@@ -28,17 +28,22 @@ public class GOATLegendController extends BaseController {
 		modelMap.addAttribute("bestEloRatingGOATPoints", goatLegendService.getBestEloRatingGOATPoints());
 		modelMap.addAttribute("bestSurfaceEloRatingGOATPoints", goatLegendService.getBestSurfaceEloRatingGOATPoints());
 		// Achievements
-		modelMap.addAttribute("bigWinMatchFactors", goatLegendService.getBigWinMatchFactors());
-		modelMap.addAttribute("bigWinRankFactors", goatLegendService.getBigWinRankFactors());
-		modelMap.addAttribute("h2hRankFactors", goatLegendService.getH2hRankFactors());
 		modelMap.addAttribute("careerGrandSlamGOATPoints", goatLegendService.getCareerGrandSlamGOATPoints());
 		modelMap.addAttribute("seasonGrandSlamGOATPoints", goatLegendService.getSeasonGrandSlamGOATPoints());
 		modelMap.addAttribute("grandSlamHolderGOATPoints", goatLegendService.getGrandSlamHolderGOATPoints());
 		modelMap.addAttribute("grandSlamOnSameEventGOATPoints", goatLegendService.getGrandSlamOnSameEventGOATPoints());
+		modelMap.addAttribute("bigWinMatchFactors", goatLegendService.getBigWinMatchFactors());
+		modelMap.addAttribute("bigWinRankFactors", goatLegendService.getBigWinRankFactors());
+		modelMap.addAttribute("h2hRankFactors", goatLegendService.getH2hRankFactors());
 		modelMap.addAttribute("bestSeasonGOATPoints", goatLegendService.getBestSeasonGOATPoints());
 		modelMap.addAttribute("greatestRivalriesGOATPoints", goatLegendService.getGreatestRivalriesGOATPoints());
 		modelMap.addAttribute("performanceGOATPoints", goatLegendService.getPerformanceGOATPoints());
 		modelMap.addAttribute("statisticsGOATPoints", goatLegendService.getStatisticsGOATPoints());
 		return new ModelAndView("goatLegend", modelMap);
+	}
+
+	@GetMapping("/recordsGOATPointsLegend")
+	public ModelAndView recordsGOATPointsLegend() {
+		return new ModelAndView("recordsGOATPointsLegend", "recordsGOATPoints", goatLegendService.getRecordsGOATPoints());
 	}
 }

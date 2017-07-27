@@ -25,13 +25,13 @@ public class GOATPointsService {
 	private static final String TOTAL_POINTS_QUERY =
 		"SELECT goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,\n" +
 		"  year_end_rank_goat_points, best_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, best_elo_rating_goat_points,\n" +
-		"  big_wins_goat_points, h2h_goat_points, grand_slam_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points\n" +
+		"  grand_slam_goat_points, big_wins_goat_points, h2h_goat_points, records_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points\n" +
 		"FROM player_goat_points\n" +
 		"WHERE player_id = :playerId";
 
 	private static final String SEASON_POINTS_COLUMNS =
 		"season, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,\n" +
-		"  year_end_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, big_wins_goat_points, grand_slam_goat_points";
+		"  year_end_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, grand_slam_goat_points, big_wins_goat_points";
 
 	private static final String SEASON_POINTS_QUERY =
 		"SELECT " + SEASON_POINTS_COLUMNS + "\n" +
@@ -84,9 +84,10 @@ public class GOATPointsService {
 				points.setWeeksAtNo1Points(rs.getInt("weeks_at_no1_goat_points"));
 				points.setWeeksAtEloTopNPoints(rs.getInt("weeks_at_elo_topn_goat_points"));
 				points.setBestEloRatingPoints(rs.getInt("best_elo_rating_goat_points"));
+				points.setGrandSlamPoints(rs.getInt("grand_slam_goat_points"));
 				points.setBigWinsPoints(rs.getInt("big_wins_goat_points"));
 				points.setH2hPoints(rs.getInt("h2h_goat_points"));
-				points.setGrandSlamPoints(rs.getInt("grand_slam_goat_points"));
+				points.setRecordsPoints(rs.getInt("records_goat_points"));
 				points.setBestSeasonPoints(rs.getInt("best_season_goat_points"));
 				points.setGreatestRivalriesPoints(rs.getInt("greatest_rivalries_goat_points"));
 				points.setPerformancePoints(rs.getInt("performance_goat_points"));
@@ -132,8 +133,8 @@ public class GOATPointsService {
 		points.setYearEndRankPoints(rs.getInt("year_end_rank_goat_points"));
 		points.setWeeksAtNo1Points(rs.getInt("weeks_at_no1_goat_points"));
 		points.setWeeksAtEloTopNPoints(rs.getInt("weeks_at_elo_topn_goat_points"));
-		points.setBigWinsPoints(rs.getInt("big_wins_goat_points"));
 		points.setGrandSlamPoints(rs.getInt("grand_slam_goat_points"));
+		points.setBigWinsPoints(rs.getInt("big_wins_goat_points"));
 		return points;
 	}
 }

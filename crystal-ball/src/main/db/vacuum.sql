@@ -24,10 +24,11 @@ VACUUM FULL ANALYSE VERBOSE weeks_at_elo_topn_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_elo_rating_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_surface_elo_rating_goat_points;
 
+VACUUM FULL ANALYSE VERBOSE grand_slam_goat_points;
 VACUUM FULL ANALYSE VERBOSE big_win_match_factor;
 VACUUM FULL ANALYSE VERBOSE big_win_rank_factor;
 VACUUM FULL ANALYSE VERBOSE h2h_rank_factor;
-VACUUM FULL ANALYSE VERBOSE grand_slam_goat_points;
+VACUUM FULL ANALYSE VERBOSE records_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_season_goat_points;
 VACUUM FULL ANALYSE VERBOSE greatest_rivalries_goat_points;
 

@@ -201,7 +201,7 @@ function dateFormatter(column, row) {
 
 // Factor Formatter
 function factorFormatter(column, row) {
-	return row.value.toFixed(1);
+	return formatRecordDetail(row.value.toFixed(1), row.detailUrl);
 }
 
 // Country Formatter

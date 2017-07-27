@@ -408,6 +408,17 @@ CREATE TABLE best_surface_elo_rating_goat_points (
 );
 
 
+-- grand_slam_goat_points
+
+CREATE TABLE grand_slam_goat_points (
+	career_grand_slam INTEGER NOT NULL,
+	season_grand_slam INTEGER NOT NULL,
+	grand_slam_holder INTEGER NOT NULL,
+	grand_slam_on_same_event INTEGER NOT NULL,
+	PRIMARY KEY (career_grand_slam, season_grand_slam, grand_slam_holder)
+);
+
+
 -- big_win_match_factor
 
 CREATE TABLE big_win_match_factor (
@@ -436,14 +447,13 @@ CREATE TABLE h2h_rank_factor (
 );
 
 
--- grand_slam_goat_points
+-- records_goat_points
 
-CREATE TABLE grand_slam_goat_points (
-	career_grand_slam INTEGER NOT NULL,
-	season_grand_slam INTEGER NOT NULL,
-	grand_slam_holder INTEGER NOT NULL,
-	grand_slam_on_same_event INTEGER NOT NULL,
-	PRIMARY KEY (career_grand_slam, season_grand_slam, grand_slam_holder)
+CREATE TABLE records_goat_points (
+	record_id TEXT NOT NULL,
+	rank INTEGER NOT NULL,
+	goat_points INTEGER NOT NULL,
+	PRIMARY KEY (record_id, rank)
 );
 
 

@@ -10,8 +10,9 @@ import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 
 public class HighestOpponentRankCategory extends RecordCategory {
 
-	private static final String RANK_WIDTH =   "180";
-	private static final String SEASON_WIDTH =  "80";
+	private static final String RANK_WIDTH =       "180";
+	private static final String SEASON_WIDTH =      "80";
+	private static final String TOURNAMENT_WIDTH = "120";
 
 	public HighestOpponentRankCategory() {
 		super("Mean Opponent Rank");
@@ -32,6 +33,11 @@ public class HighestOpponentRankCategory extends RecordCategory {
 		register(highestSeasonOpponentRank(CLAY));
 		register(highestSeasonOpponentRank(GRASS));
 		register(highestSeasonOpponentRank(CARPET));
+		register(highestTitleOpponentRank(ALL_WO_TEAM));
+		register(highestTitleOpponentRank(GRAND_SLAM));
+		register(highestTitleOpponentRank(TOUR_FINALS));
+		register(highestTitleOpponentRank(MASTERS));
+		register(highestTitleOpponentRank(OLYMPICS));
 	}
 
 	private static Record highestOpponentRank(RecordDomain domain) {
@@ -65,6 +71,27 @@ public class HighestOpponentRankCategory extends RecordCategory {
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			),
 			format("Minimum %1$d %2$s; Using geometric mean", minEntries, perfCategory.getEntriesName())
+		);
+	}
+
+	private static Record highestTitleOpponentRank(RecordDomain domain) {
+		return new Record<>(
+			"HighestTitle" + domain.id + "OpponentRank", "Highest " + suffix(domain.name, " ") + " Title Mean Opponent Rank",
+			/* language=SQL */
+			"SELECT player_id, tournament_event_id, e.name AS tournament, e.level, e.season, e.date, round(exp(sum(ln(coalesce(opponent_rank, 1000)))/count(*))::NUMERIC, 1) AS value, exp(sum(ln(coalesce(opponent_rank, 1000)))/count(*)) AS unrounded_value\n" +
+			"FROM player_match_for_stats_v INNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)\n" +
+			"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+			"WHERE r.result = 'W' AND e." + domain.condition + "\n" +
+			"GROUP BY player_id, tournament_event_id, e.name, e.level, e.season, e.date\n" +
+			"HAVING count(*) >= 3",
+			"r.value, r.tournament_event_id, r.tournament, r.level, r.season", "r.unrounded_value", "r.unrounded_value, r.date",
+			TournamentEventDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentEventId=%2$d", playerId, recordDetail.getTournamentEventId()),
+			asList(
+				new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent Rank"),
+				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
+				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")
+			),
+			"Using geometric mean"
 		);
 	}
 }

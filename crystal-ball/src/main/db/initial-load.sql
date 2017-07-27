@@ -148,6 +148,12 @@ VALUES
 ( 4, 2),
 ( 5, 1);
 
+DELETE FROM grand_slam_goat_points;
+INSERT INTO grand_slam_goat_points
+(career_grand_slam, season_grand_slam, grand_slam_holder, grand_slam_on_same_event)
+VALUES
+(8, 8, 4, 1);
+
 DELETE FROM big_win_match_factor;
 INSERT INTO big_win_match_factor
 (level, round, match_factor)
@@ -204,11 +210,124 @@ VALUES
 ( 8, 10, 2),
 (11, 20, 1);
 
-DELETE FROM grand_slam_goat_points;
-INSERT INTO grand_slam_goat_points
-(career_grand_slam, season_grand_slam, grand_slam_holder, grand_slam_on_same_event)
+DELETE FROM records_goat_points;
+INSERT INTO records_goat_points
+(record_id, rank, goat_points)
 VALUES
-(8, 8, 4, 1);
+-- Titles
+('Titles', 1, 1),
+('GrandSlamTitles', 1, 4),
+('GrandSlamTitles', 2, 2),
+('GrandSlamTitles', 3, 1),
+('TourFinalsTitles', 1, 2),
+('TourFinalsTitles', 2, 1),
+('MastersTitles', 1, 1),
+('BigTitles', 1, 2),
+('BigTitles', 2, 1),
+('HardTitles', 1, 1),
+('ClayTitles', 1, 1),
+('GrassTitles', 1, 1),
+('CarpetTitles', 1, 1),
+('SeasonTitles', 1, 1),
+('SeasonGrandSlamTitles', 1, 2),
+('SeasonGrandSlamTitles', 2, 1),
+('SeasonMastersTitles', 1, 1),
+('SeasonBigTitles', 1, 1),
+('TournamentTitles', 1, 1),
+('TournamentGrandSlamTitles', 1, 2),
+('TournamentGrandSlamTitles', 2, 1),
+('TournamentMastersTitles', 1, 1),
+-- Finals
+('GrandSlamFinals', 1, 2),
+('GrandSlamFinals', 2, 1),
+('TourFinalsFinals', 1, 1),
+-- Semi-Finals
+('GrandSlamSemiFinals', 1, 1),
+-- Entries
+('GrandSlamEntries', 1, 1),
+('TourFinalsEntries', 1, 1),
+('MastersEntries', 1, 1),
+('BigEntries', 1, 1),
+-- Title Winning Pct.
+('TitleWinningPct', 1, 1),
+('GrandSlamTitleWinningPct', 1, 2),
+('GrandSlamTitleWinningPct', 2, 1),
+('TourFinalsTitleWinningPct', 1, 1),
+('MastersTitleWinningPct', 1, 1),
+-- Title Streaks
+('TitleStreak', 1, 1),
+('GrandSlamTitleStreak', 1, 2),
+('GrandSlamTitleStreak', 2, 1),
+('TourFinalsTitleStreak', 1, 1),
+('MastersTitleStreak', 1, 1),
+('BigTitleStreak', 1, 1),
+-- Final Streaks
+('GrandSlamFinalStreak', 1, 1),
+-- Youngest/Oldest Champion
+('YoungestTournamentChampion', 1, 1),
+('YoungestGrandSlamChampion', 1, 2),
+('YoungestGrandSlamChampion', 2, 1),
+('YoungestTourFinalsChampion', 1, 1),
+('YoungestMastersChampion', 1, 1),
+('OldestTournamentChampion', 1, 1),
+('OldestGrandSlamChampion', 1, 2),
+('OldestGrandSlamChampion', 2, 1),
+('OldestTourFinalsChampion', 1, 1),
+('OldestMastersChampion', 1, 1),
+-- Winning Streak
+('WinningStreak', 1, 1),
+('GrandSlamWinningStreak', 1, 2),
+('GrandSlamWinningStreak', 2, 1),
+('TourFinalsWinningStreak', 1, 1),
+('MastersWinningStreak', 1, 1),
+('BigTournamentWinningStreak', 1, 1),
+('HardWinningStreak', 1, 1),
+('ClayWinningStreak', 1, 1),
+('GrassWinningStreak', 1, 1),
+('CarpetWinningStreak', 1, 1),
+('WinningStreakVsNo1', 1, 1),
+('WinningStreakVsTop5', 1, 1),
+('WinningStreakVsTop10', 1, 1),
+-- ATP Ranking
+('WeeksAtATPNo1', 1, 2),
+('WeeksAtATPNo1', 2, 1),
+('WeeksAtATPTop2', 1, 1),
+('WeeksAtATPTop3', 1, 1),
+('WeeksAtATPTop5', 1, 1),
+('WeeksAtATPTop10', 1, 1),
+('ConsecutiveWeeksAtATPNo1', 1, 2),
+('ConsecutiveWeeksAtATPNo1', 2, 1),
+('ConsecutiveWeeksAtATPTop2', 1, 1),
+('ConsecutiveWeeksAtATPTop3', 1, 1),
+('ConsecutiveWeeksAtATPTop5', 1, 1),
+('ConsecutiveWeeksAtATPTop10', 1, 1),
+('EndsOfSeasonAtATPNo1', 1, 2),
+('EndsOfSeasonAtATPNo1', 2, 1),
+('EndsOfSeasonAtATPTop2', 1, 1),
+('EndsOfSeasonAtATPTop3', 1, 1),
+('EndsOfSeasonAtATPTop5', 1, 1),
+('EndsOfSeasonAtATPTop10', 1, 1),
+('YoungestATPNo1', 1, 1),
+('OldestATPNo1', 1, 1),
+('ATPPoints', 1, 2),
+('ATPPoints', 2, 1),
+('ATPPointsNo1No2DifferencePct', 1, 1),
+-- H2H
+('MostMostH2HSeriesWon', 1, 1),
+('LeastMostH2HSeriesLost', 1, 1),
+('H2HSeriesWinningPct', 1, 1),
+-- Titles Won W/O Losing Set
+('TitlesWonWOLosingSet', 1, 1),
+('GrandSlamTitlesWonWOLosingSet', 1, 2),
+('GrandSlamTitlesWonWOLosingSet', 2, 1),
+('TourFinalsTitlesWonWOLosingSet', 1, 1),
+('MastersTitlesWonWOLosingSet', 1, 1),
+-- Mean Opponent Rank
+('HighestOpponentRank', 1, 1),
+('HighestGrandSlamOpponentRank', 1, 2),
+('HighestGrandSlamOpponentRank', 2, 1),
+('HighestTourFinalsOpponentRank', 1, 1),
+('HighestMastersOpponentRank', 1, 1);
 
 DELETE FROM best_season_goat_points;
 INSERT INTO best_season_goat_points

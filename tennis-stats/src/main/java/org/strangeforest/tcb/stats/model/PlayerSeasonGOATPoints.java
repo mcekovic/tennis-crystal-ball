@@ -17,8 +17,8 @@ public class PlayerSeasonGOATPoints {
 	private int weeksAtNo1Points;
 	private int weeksAtEloTopNPoints;
 	// Achievements
-	private int bigWinsPoints;
 	private int grandSlamPoints;
+	private int bigWinsPoints;
 
 	public PlayerSeasonGOATPoints(int season, int totalPoints) {
 		this.season = season;
@@ -105,14 +105,6 @@ public class PlayerSeasonGOATPoints {
 
 	// Achievements
 
-	public Integer getBigWinsPoints() {
-		return zeroToNull(bigWinsPoints);
-	}
-
-	public void setBigWinsPoints(int bigWinsPoints) {
-		this.bigWinsPoints = bigWinsPoints;
-	}
-
 	public Integer getGrandSlamPoints() {
 		return zeroToNull(grandSlamPoints);
 	}
@@ -123,6 +115,14 @@ public class PlayerSeasonGOATPoints {
 
 	public void setGrandSlamPoints(int grandSlamPoints) {
 		this.grandSlamPoints = grandSlamPoints;
+	}
+
+	public Integer getBigWinsPoints() {
+		return zeroToNull(bigWinsPoints);
+	}
+
+	public void setBigWinsPoints(int bigWinsPoints) {
+		this.bigWinsPoints = bigWinsPoints;
 	}
 
 
