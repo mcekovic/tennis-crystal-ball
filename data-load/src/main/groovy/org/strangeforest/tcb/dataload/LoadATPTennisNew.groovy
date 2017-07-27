@@ -11,13 +11,15 @@ def loader = new ATPTennisLoader()
 LoadNewRankings.loadRankings(sqlPool)
 LoadNewTournaments.loadTournaments(sqlPool)
 
-sqlPool.withSql { sql -> loader.correctData(sql) }
 new EloRatings(sqlPool).compute(save = true, fullSave = false)
+
+sqlPool.withSql { sql -> loader.correctData(sql) }
 sqlPool.withSql { sql -> loader.refreshMaterializedViews(sql) }
 
 sqlPool.withSql { sql -> loader.vacuum(sql) }
 
-new RecordsLoader().loadRecords()
+sqlPool.withSql { sql -> new RecordsLoader().loadRecords(loader, sql) }
+
 LoadInProgressTournaments.loadTournaments(sqlPool)
 
 sqlPool.withSql { sql -> loader.vacuum(sql) }

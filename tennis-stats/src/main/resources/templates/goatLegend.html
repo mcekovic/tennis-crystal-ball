@@ -272,7 +272,7 @@
 					<a href="/record?recordId=RecordsGOATPoints" title="Players with most Records GOAT Points">Records Points</a><sup class="new-feature">&nbsp;New!</sup>
 				</strong>
 				<br/>
-				<button id="recordsGOATPoints" type="button" class="btn btn-info" onclick="showRecordsGOATPoints(event)" data-toggle="tooltip" data-placement="top" title="Records GOAT Points">
+				<button id="recordsGOATPoints" type="button" class="btn btn-info" style="margin-top: 5px" onclick="showRecordsGOATPoints(event)" data-toggle="tooltip" data-placement="top" title="Records GOAT Points">
 					Records Points&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
 				</button>
 				<br/><br/>
@@ -327,7 +327,7 @@
 					</thead>
 					<tbody>
 					<tr th:each="point : ${performanceGOATPoints}">
-						<td class="text-nowrap" th:text="${point.category}">Overall Matches</td>
+						<td><a th:href="@{/topPerformers(category=${point.categoryId})}" class="text-nowrap" th:text="${point.category}" title="Show top performers">Overall Matches</td>
 						<td th:text="${point.goatPoints}">4</td>
 					</tr>
 					</tbody>
@@ -345,7 +345,7 @@
 					</thead>
 					<tbody>
 					<tr th:each="point : ${statisticsGOATPoints}">
-						<td class="text-nowrap" th:text="${point.category}">Ace %</td>
+						<td><a th:href="@{/statsLeaders(category=${point.categoryId})}" class="text-nowrap" th:text="${point.category}" title="Show statistics leaders">Ace %</a></td>
 						<td th:text="${point.goatPoints}">2</td>
 					</tr>
 					</tbody>

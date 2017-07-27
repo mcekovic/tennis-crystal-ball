@@ -237,39 +237,27 @@ class ATPTennisLoader {
 	}
 
 	def refreshMaterializedViews(Sql sql) {
+		refreshMaterializedViews(sql,
+			'player_current_rank', 'player_best_rank', 'player_best_rank_points', 'player_year_end_rank',
+			'player_current_elo_rank', 'player_best_elo_rank', 'player_best_elo_rating', 'player_year_end_elo_rank',
+			'player_season_weeks_at_no1', 'player_weeks_at_no1',
+			'event_participation',
+			'player_tournament_event_result', 'player_titles',
+			'player_season_performance', 'player_tournament_performance', 'player_performance',
+			'player_season_surface_stats', 'player_season_stats', 'player_surface_stats', 'player_stats',
+			'player_h2h',
+			'player_win_streak', 'player_surface_win_streak', 'player_level_win_streak',
+			'player_vs_no1_win_streak', 'player_vs_top5_win_streak', 'player_vs_top10_win_streak',
+			'player_tournament_win_streak', 'player_tournament_level_win_streak',
+			'player_season_goat_points', 'player_goat_points'
+		)
+	}
+
+	def refreshMaterializedViews(Sql sql, String... materializedViews) {
 		def stopwatch = Stopwatch.createStarted()
-		refreshMaterializedView(sql, 'player_current_rank')
-		refreshMaterializedView(sql, 'player_best_rank')
-		refreshMaterializedView(sql, 'player_best_rank_points')
-		refreshMaterializedView(sql, 'player_year_end_rank')
-		refreshMaterializedView(sql, 'player_current_elo_rank')
-		refreshMaterializedView(sql, 'player_best_elo_rank')
-		refreshMaterializedView(sql, 'player_best_elo_rating')
-		refreshMaterializedView(sql, 'player_year_end_elo_rank')
-		refreshMaterializedView(sql, 'player_season_weeks_at_no1')
-		refreshMaterializedView(sql, 'player_weeks_at_no1')
-		refreshMaterializedView(sql, 'event_participation')
-		refreshMaterializedView(sql, 'player_tournament_event_result')
-		refreshMaterializedView(sql, 'player_titles')
-		refreshMaterializedView(sql, 'player_season_performance')
-		refreshMaterializedView(sql, 'player_tournament_performance')
-		refreshMaterializedView(sql, 'player_performance')
-		refreshMaterializedView(sql, 'player_season_surface_stats')
-		refreshMaterializedView(sql, 'player_season_stats')
-		refreshMaterializedView(sql, 'player_surface_stats')
-		refreshMaterializedView(sql, 'player_stats')
-		refreshMaterializedView(sql, 'player_h2h')
-		refreshMaterializedView(sql, 'player_win_streak')
-		refreshMaterializedView(sql, 'player_surface_win_streak')
-		refreshMaterializedView(sql, 'player_level_win_streak')
-		refreshMaterializedView(sql, 'player_vs_no1_win_streak')
-		refreshMaterializedView(sql, 'player_vs_top5_win_streak')
-		refreshMaterializedView(sql, 'player_vs_top10_win_streak')
-		refreshMaterializedView(sql, 'player_tournament_win_streak')
-		refreshMaterializedView(sql, 'player_tournament_level_win_streak')
-		refreshMaterializedView(sql, 'player_season_goat_points')
-		refreshMaterializedView(sql, 'player_goat_points')
-		println "\nMaterialized views refreshed in $stopwatch"
+		for (String materializedView : materializedViews)
+			refreshMaterializedView(sql, materializedView)
+		println "Materialized views refreshed in $stopwatch"
 	}
 
 	def refreshMaterializedView(Sql sql, String viewName) {

@@ -90,4 +90,18 @@ public class Record<D extends RecordDetail> {
 	void setInfamous(boolean infamous) {
 		this.infamous = infamous;
 	}
+
+
+	// Object methods
+
+	@Override public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Record)) return false;
+		Record<?> record = (Record<?>)o;
+		return id.equals(record.id);
+	}
+
+	@Override public int hashCode() {
+		return id.hashCode();
+	}
 }

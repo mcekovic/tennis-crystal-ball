@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="category" type="java.lang.String"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
@@ -93,7 +94,7 @@
 	<div id="categoryDiv" class="btn-group margin-right">
 		<select id="category" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
 			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
-				<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="matches" th:class="${category.cssClass}" th:text="${category.title}">Overall Matches</option>
+				<option th:each="aCategory : ${categoryClass.value}" th:value="${aCategory.name}" value="matches" th:class="${aCategory.cssClass}" th:text="${aCategory.title}" th:selected="${aCategory.name == category}">Overall Matches</option>
 			</optgroup>
 		</select>
 	</div>

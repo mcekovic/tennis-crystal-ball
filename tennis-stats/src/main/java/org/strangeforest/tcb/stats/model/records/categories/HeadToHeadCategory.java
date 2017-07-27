@@ -86,7 +86,7 @@ public class HeadToHeadCategory extends RecordCategory {
 
 	private static Record mostH2HSeries(MostLeast mostLeast, RecordType type) {
 		return new Record<>(
-			mostLeast.name + "MostH2HSeries" + type.name, mostLeast.name + " Head-to-Head Series " + type.name,
+			mostLeast.name + "H2HSeries" + type.name, mostLeast.name + " Head-to-Head Series " + type.name,
 			/* language=SQL */
 			"SELECT player_id, " + type.column + " AS value\n" +
 			"FROM player_h2h\n" +

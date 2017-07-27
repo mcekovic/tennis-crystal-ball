@@ -50,9 +50,10 @@
 					"achievementsGoatPoints": function(column, row) {
 						if (row.achievementsGoatPoints > 0) {
 							var title = "";
+							title = appendGoatPointsTitle(title, row, "grandSlamGoatPoints", "Grand Slam");
 							title = appendGoatPointsTitle(title, row, "bigWinsGoatPoints", "Big wins");
 							title = appendGoatPointsTitle(title, row, "h2hGoatPoints", "Head-to-head");
-							title = appendGoatPointsTitle(title, row, "grandSlamGoatPoints", "Grand Slam");
+							title = appendGoatPointsTitle(title, row, "recordsGoatPoints", "Records");
 							title = appendGoatPointsTitle(title, row, "bestSeasonGoatPoints", "Best seasons");
 							title = appendGoatPointsTitle(title, row, "greatestRivalriesGoatPoints", "Greatest rivalries");
 							title = appendGoatPointsTitle(title, row, "performanceGoatPoints", "Performance");

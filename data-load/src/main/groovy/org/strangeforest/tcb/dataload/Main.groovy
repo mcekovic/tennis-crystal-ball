@@ -55,8 +55,11 @@ if (options && (options.cd || options.dd || options.lt || options.ln || options.
 		callLoader('correctData')
 		callLoader('refreshMaterializedViews')
 	}
-	if (options.rr)
-		new RecordsLoader().loadRecords()
+	if (options.rr) {
+		new SqlPool().withSql { sql ->
+			new RecordsLoader().loadRecords(new ATPTennisLoader(), sql)
+		}
+	}
 	if (options.vc)
 		callLoader('vacuum')
 	if (options.cc)

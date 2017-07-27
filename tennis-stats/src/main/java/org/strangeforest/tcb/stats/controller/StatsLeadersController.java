@@ -16,10 +16,13 @@ public class StatsLeadersController extends PageController {
 	@Autowired private StatisticsService statisticsService;
 
 	@GetMapping("/statsLeaders")
-	public ModelAndView statsLeaders() {
+	public ModelAndView statsLeaders(
+		@RequestParam(name = "category", required = false) String category
+	) {
 		List<Integer> seasons = statisticsService.getSeasons();
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("category", category);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("surfaces", Surface.values());

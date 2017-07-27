@@ -1,5 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="recordsGOATPoints" type="java.util.Map<String, java.util.Map<String, String>>"*/-->
+<!--/*@thymesVar id="recordsGOATPoints" type="java.util.Map<String, java.util.Map<Record, String>>"*/-->
 <h3>Records GOAT Points
 <button class="btn btn-default btn-xs pull-right" onclick="$('#recordsGOATPoints').click()"><span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Close</button>
 </h3>
@@ -8,13 +8,13 @@
 	<table class="table table-condensed table-hover table-striped text-nowrap">
 		<thead>
 		<tr>
-			<th width="100%">Record</th>
-			<th>Points</th>
+			<th>Record</th>
+			<th width="80">Points</th>
 		</tr>
 		</thead>
 		<tbody>
 		<tr th:each="recordPoints : ${categoryPoints.value}">
-			<td th:text="${recordPoints.key}">Most Titles</td>
+			<td th:with="record=${recordPoints.key}"><a th:href="@{/record(recordId=${record.id})}" th:text="${record.name}" title="Show record">Most Titles</a></td>
 			<td th:text="${recordPoints.value}">1</td>
 		</tr>
 		</tbody>

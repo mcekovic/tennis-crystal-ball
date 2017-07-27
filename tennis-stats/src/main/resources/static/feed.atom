@@ -4,7 +4,23 @@
 	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for the die-hard tennis fans</subtitle>
 	<link href="http://tennis-strangeforest.rhcloud.com/feed.atom" rel="self"/>
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
-	<updated>2017-07-26T12:00:00Z</updated>
+	<updated>2017-07-27T12:00:00Z</updated>
+	<entry>
+		<title>New Feature - GOAT Points for selected records</title>
+		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/record?recordId=RecordsGOATPoints"/>
+		<id>urn:uuid:c85750a0-72f2-11e7-8cf7-a6006ad3dba0</id>
+		<updated>2017-07-27T12:00:00Z</updated>
+		<summary>GOAT Points for selected records, see GOAT Legend for the details</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>GOAT Points for selected records, see GOAT Legend for the details.</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 	<entry>
 		<title>New Feature - GOAT Points for repeating wins at the same Grand Slam tournament</title>
 		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/record?recordId=GrandSlamGOATPoints"/>

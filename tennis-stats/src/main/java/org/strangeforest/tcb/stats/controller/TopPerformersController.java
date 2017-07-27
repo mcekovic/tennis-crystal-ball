@@ -14,8 +14,11 @@ public class TopPerformersController extends PageController {
 	@Autowired private TopPerformersService topPerformersService;
 
 	@GetMapping("/topPerformers")
-	public ModelAndView topPerformers() {
+	public ModelAndView topPerformers(
+		@RequestParam(name = "category", required = false) String category
+	) {
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("category", category);
 		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
 		modelMap.addAttribute("seasons", topPerformersService.getSeasons());
 		return new ModelAndView("topPerformers", modelMap);

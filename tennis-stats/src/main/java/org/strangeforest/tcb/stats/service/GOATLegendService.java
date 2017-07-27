@@ -44,10 +44,10 @@ public class GOATLegendService {
 		"FROM records_goat_points GROUP BY record_id";
 
 	private static final String PERF_STAT_GOAT_POINTS_QUERY = //language=SQL
-		"SELECT name AS category, string_agg(goat_points::TEXT, ', ' ORDER BY rank) AS goat_points\n" +
+		"SELECT category_id, name AS category, string_agg(goat_points::TEXT, ', ' ORDER BY rank) AS goat_points\n" +
 		"FROM %1$s\n" +
 		"INNER JOIN %2$s USING (category_id)\n" +
-		"GROUP BY sort_order, category\n" +
+		"GROUP BY sort_order, category, category_id\n" +
 		"ORDER BY sort_order, category";
 
 
@@ -141,17 +141,17 @@ public class GOATLegendService {
 	}
 
 	@Cacheable(value = "Global", key = "'RecordsGOATPoints'")
-	public Map<String, Map<String, String>> getRecordsGOATPoints() {
+	public Map<String, Map<Record, String>> getRecordsGOATPoints() {
 		Map<String, String> goatPoints = new HashMap<>();
 		jdbcTemplate.query(RECORDS_GOAT_POINTS, rs -> {
 			goatPoints.put(rs.getString("record_id"), rs.getString("goat_points"));
 		});
-		Map<String, Map<String, String>> recordGOATPoints = new LinkedHashMap<>();
+		Map<String, Map<Record, String>> recordGOATPoints = new LinkedHashMap<>();
 		for (RecordCategory category : Records.getRecordCategories()) {
 			for (Record record : category.getRecords()) {
 				String points = goatPoints.get(record.getId());
 				if (points != null)
-					recordGOATPoints.computeIfAbsent(record.getCategory(), cat -> new LinkedHashMap<>()).put(record.getName(), points);
+					recordGOATPoints.computeIfAbsent(record.getCategory(), cat -> new LinkedHashMap<>()).put(record, points);
 			}
 		}
 		return recordGOATPoints;
@@ -199,9 +199,10 @@ public class GOATLegendService {
 
 	private List<PerfStatGOATPoints> getPerfStatGOATPoints(String goatPointsTable, String categoryTable) {
 		return jdbcTemplate.query(format(PERF_STAT_GOAT_POINTS_QUERY, goatPointsTable, categoryTable), (rs, rowNum) -> {
+			String categoryId = rs.getString("category_id");
 			String category = rs.getString("category");
 			String goatPoints = rs.getString("goat_points");
-			return new PerfStatGOATPoints(category, goatPoints);
+			return new PerfStatGOATPoints(categoryId, category, goatPoints);
 		});
 	}
 }
