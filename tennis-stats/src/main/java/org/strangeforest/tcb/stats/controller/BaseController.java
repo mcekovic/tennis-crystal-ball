@@ -9,7 +9,7 @@ import com.google.common.collect.*;
 public abstract class BaseController {
 
 	public static final Map<String, String> VERSIONS = ImmutableMap.of(
-		"jquery", "3.2.1",
+		"jquery", "2.2.4",
 		"jquery-ui", "1.12.1",
 		"bootstrap", "3.3.7",
 		"bootgrid", "1.3.1"
