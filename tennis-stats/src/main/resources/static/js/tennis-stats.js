@@ -423,7 +423,7 @@ function showMatchStats(matchId, event, disableCompare) {
 		if (disableCompare)
 			url += "&enableCompare=false";
 		$.get(url, function(data) {
-			$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
+			$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto"});
 			$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "500px"); }).click();
 			$matchStats.data("statsURL", url);
 		});

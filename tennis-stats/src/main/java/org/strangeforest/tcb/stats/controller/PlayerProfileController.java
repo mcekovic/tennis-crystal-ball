@@ -249,7 +249,8 @@ public class PlayerProfileController extends PageController {
 	@GetMapping("/playerPerformance")
 	public ModelAndView playerPerformance(
 		@RequestParam(name = "playerId") int playerId,
-		@RequestParam(name = "season", required = false) Integer season
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		PlayerPerformanceEx perf = season == null
@@ -260,6 +261,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("perf", perf);
 		return new ModelAndView("playerPerformance", modelMap);
 	}
@@ -283,6 +285,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData,
 		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
@@ -301,6 +304,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("stats", stats);
 		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
 		modelMap.addAttribute("compare", compare);

@@ -2,10 +2,12 @@
 <!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="perf" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <script type="text/javascript">
+	var perfRawData = [(${rawData})];
 	$(function() {
-		$("#playerPerformance").find(".raw-data").hide();
+		$("#playerPerformance").find(perfRawData ? ".pct-data" : ".raw-data").hide();
 		$("#playerPerfSurface").find("div.progress-bar").each(function() {
 			var $progressBar = $(this);
 			var surface = $progressBar.data("surface");
@@ -13,8 +15,9 @@
 		});
 	});
 	function reloadPerformance() {
-		var url = "/playerPerformance?playerId=[[${playerId}]]";
+		var url = "/playerPerformance?playerId=[(${playerId})]";
 		url += "&season=" + $("#perfSeason").val();
+		url += "&rawData=" + perfRawData;
 		$("#performance").load(url);
 	}
 </script>
@@ -213,10 +216,10 @@
 	</div>
 	<div th:unless="${perf.empty}" class="row">
 		<div class="pct-data col-md-3">
-			<button class="btn btn-default btn-xs" onclick="toggleStatsData('#playerPerformance')" title="Show raw data: Won - Lost / Played"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
+			<button class="btn btn-default btn-xs" onclick="toggleStatsData('#playerPerformance'); perfRawData = true" title="Show raw data: Won - Lost / Played"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
 		</div>
 		<div class="raw-data col-md-3">
-			<button class="btn btn-default btn-xs" onclick="toggleStatsData('#playerPerformance')" title="Show percentage data: Pct. (Won-Lost)"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;Pct. Data</button>
+			<button class="btn btn-default btn-xs" onclick="toggleStatsData('#playerPerformance'); perfRawData = false" title="Show percentage data: Pct. (Won-Lost)"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;Pct. Data</button>
 		</div>
 	</div>
 	<th:block th:if="${perf.empty}"><p>No performance data available</p></th:block>

@@ -9,19 +9,24 @@
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="opponent" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 <!--/*@thymesVar id="stats2" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 <!--/*@thymesVar id="statsFormatUtil" type="org.strangeforest.tcb.stats.controller.StatsFormatUtil"*/-->
 <!--/*@thymesVar id="_" type="java.lang.String"*/-->
 <script type="text/javascript">
+	var statsRawData = [(${rawData})];
 	$(function() {
-		$("#h2hStats").find(".raw-data").hide();
+		$("#h2hStats").find(statsRawData ? ".pct-data" : ".raw-data").hide();
 	});
 	function reloadStats() {
-		var url = "/h2hStats?playerId1=[[${playerId1}]]&playerId2=[[${playerId2}]]";
+		var url = "/h2hStats?playerId1=[(${playerId1})]&playerId2=[(${playerId2})]";
 		url += "&season=" + $("#statsSeason").val();
 		url += "&level=" + $("#statsLevel").val();
 		url += "&surface=" + $("#statsSurface").val();
+		url += "&opponent=" + $("#statsOpponent").prop("checked");
+		url += "&rawData=" + statsRawData;
 		$("#statistics").load(url);
 	}
 </script>
@@ -65,6 +70,13 @@
 				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
 				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes.length() > 1 && surfaceGroup.codes == surface}">Fast (H, G, Cp)</option>
 			</select>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Include statistics only against H2H opponent">
+				<input id="statsOpponent" type="checkbox" th:checked="${opponent}" onchange="reloadStats()"/> H2H
+			</label>
 		</div>
 	</div>
 </div>
@@ -322,8 +334,8 @@
 	</table>
 	<div th:unless="${stats1.empty && stats2.empty}" class="row">
 		<div class="col-md-12 text-center">
-			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats')" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
-			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats')" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
+			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats'); statsRawData = true" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
+			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats'); statsRawData = false" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
 		</div>
 	</div>
 	<p th:if="${stats1.empty && stats2.empty}">No statistics available</p>

@@ -12,11 +12,13 @@
 	<!--/*@thymesVar id="compareLevel" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="compareSurface" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="relativeTo" type="java.lang.String"*/-->
+	<!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
 	<!--/*@thymesVar id="_" type="java.lang.String"*/-->
 	<div th:id="${statsContainerId}">
 		<script type="text/javascript">
+			var statsRawData = [(${rawData != null && rawData})];
 			$(function() {
-				$("#[[${statsContainerId}]]").find(".raw-data").hide();
+				$("#[(${statsContainerId})]").find(statsRawData ? ".pct-data" : ".raw-data").hide();
 			});
 		</script>
 		<div th:unless="${stats.empty}" class="row text-nowrap" th:with="hasPointStats=${stats.hasPointStats()}, hasPointCompareStats=${compareStats != null && compareStats.hasPointStats()}">
@@ -305,8 +307,8 @@
 		<div class="row">
 			<th:block th:unless="${stats.empty}">
 			<div th:class="'text-nowrap col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
-				<button class="pct-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#${statsContainerId}')|" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
-				<button class="raw-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#${statsContainerId}')|" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
+				<button class="pct-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#${statsContainerId}'); statsRawData = true|" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
+				<button class="raw-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#${statsContainerId}'); statsRawData = false|" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
 				&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareStats('${containerId}', '${statsId}', ${compare})|" title="Compare statistics"><span class="glyphicon glyphicon-object-align-left"></span>&nbsp;&nbsp;Compare</button>
 			</div>
 			<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">

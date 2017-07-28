@@ -3,6 +3,7 @@
 <!--/*@thymesVar id="playerId2" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.Set<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="perf1" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <!--/*@thymesVar id="perf2" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Set<org.strangeforest.tcb.stats.model.Surface>"*/-->
@@ -11,8 +12,9 @@
 <!--/*@thymesVar id="rounds" type="java.util.Set<org.strangeforest.tcb.stats.model.Round>"*/-->
 <!--/*@thymesVar id="_" type="java.lang.String"*/-->
 <script type="text/javascript">
+	var perfRawData = [(${rawData})];
 	$(function() {
-		$("#h2hPerformance").find(".raw-data").hide();
+		$("#h2hPerformance").find(perfRawData ? ".pct-data" : ".raw-data").hide();
 		$("#h2hPerformanceTable").find("span.label-surface").each(function() {
 			var $label = $(this);
 			var surface = $label.data("surface");
@@ -20,8 +22,9 @@
 		});
 	});
 	function reloadPerformance() {
-		var url = "/h2hPerformance?playerId1=[[${playerId1}]]&playerId2=[[${playerId2}]]";
+		var url = "/h2hPerformance?playerId1=[(${playerId1})]&playerId2=[(${playerId2})]";
 		url += "&season=" + $("#perfSeason").val();
+		url += "&rawData=" + perfRawData;
 		$("#performance").load(url);
 	}
 </script>
@@ -310,8 +313,8 @@
 	</table>
 	<div th:unless="${perf1.empty && perf2.empty}" class="row">
 		<div class="col-md-12 text-center">
-			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance')" title="Show raw data: Won - Lost / Played"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
-			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance')" title="Show percentage data: Pct. (Won-Lost)"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;Pct. Data</button>
+			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance'); perfRawData = true" title="Show raw data: Won - Lost / Played"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
+			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance'); perfRawData = false" title="Show percentage data: Pct. (Won-Lost)"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;Pct. Data</button>
 		</div>
 	</div>
 	<th:block th:if="${perf1.empty && perf2.empty}"><p>No performance data available</p></th:block>

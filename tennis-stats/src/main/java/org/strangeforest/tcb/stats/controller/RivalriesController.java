@@ -181,7 +181,8 @@ public class RivalriesController extends PageController {
 	public ModelAndView h2hPerformance(
 		@RequestParam(name = "playerId1") int playerId1,
 		@RequestParam(name = "playerId2") int playerId2,
-		@RequestParam(name = "season", required = false) Integer season
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData
 	) {
 		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
 		PlayerPerformanceEx perf1 = season == null ? performanceService.getPlayerPerformanceEx(playerId1) : performanceService.getPlayerSeasonPerformanceEx(playerId1, season);
@@ -196,6 +197,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("playerId2", playerId2);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("perf1", perf1);
 		modelMap.addAttribute("perf2", perf2);
 		modelMap.addAttribute("surfaces", surfaces);
@@ -224,11 +226,13 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "playerId2") int playerId2,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
-		@RequestParam(name = "surface", required = false) String surface
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "opponent", defaultValue = "false") boolean opponent,
+		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData
 	) {
 		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forStats(season, level, surface));
-		PlayerStats stats2 = statisticsService.getPlayerStats(playerId2, MatchFilter.forStats(season, level, surface));
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forStats(season, level, surface, null, opponent ? playerId2 : null));
+		PlayerStats stats2 = statisticsService.getPlayerStats(playerId2, MatchFilter.forStats(season, level, surface, null, opponent ? playerId1 : null));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
@@ -241,6 +245,8 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("opponent", opponent);
+		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("stats1", stats1);
 		modelMap.addAttribute("stats2", stats2);
 		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());

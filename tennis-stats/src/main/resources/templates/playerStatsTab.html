@@ -8,19 +8,28 @@
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
-<script type="text/javascript">
+<!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="compare" type="java.lang.Boolean"*/-->
+<script type="text/javascript" th:inline="javascript">
 	$(function() {
 		$("#statistics").data("statsURL", getStatsURL());
 	});
 	function getStatsURL() {
-		var url = "/playerStatsTab?playerId=[[${playerId}]]";
+		var url = "/playerStatsTab?playerId=[(${playerId})]";
 		url += "&season=" + $("#statsSeason").val();
 		url += "&level=" + $("#statsLevel").val();
 		url += "&surface=" + $("#statsSurface").val();
 		return url;
 	}
 	function reloadStats() {
-		$("#statistics").load(getStatsURL());
+		var url = getStatsURL() + "&rawData=" + statsRawData;
+		[# th:unless=${compare}]
+		$("#statistics").load(url);
+		[/]
+		[# th:if=${compare}]
+		$("#statistics").data("statsURL", url);
+		compareStats("statistics", "statistics", false);
+		[/]
 	}
 </script>
 <br/>
