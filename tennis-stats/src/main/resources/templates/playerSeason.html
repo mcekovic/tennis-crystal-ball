@@ -47,7 +47,7 @@
 	</div>
 </div>
 <br/>
-<table th:unless="${seasonHighlights.empty}" class="table table-condensed">
+<table th:unless="${seasonHighlights.empty}" class="table table-condensed table-striped">
 	<tr>
 		<th colspan="2">Highlights</th>
 	</tr>
@@ -61,8 +61,8 @@
 	</tr>
 </table>
 <div class="row">
-	<div class="col-md-6">
-		<table class="table table-condensed text-nowrap">
+	<div class="col-md-3">
+		<table id="playerSeasonSurface" class="table table-condensed table-striped text-nowrap">
 			<tr>
 				<th>Overall</th>
 				<th th:with="wl=${seasonPerf.matches}">
@@ -73,12 +73,9 @@
 					</div>
 				</th>
 			</tr>
-		</table>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-3">
-		<table id="playerSeasonSurface" class="table table-condensed text-nowrap">
+			<tr>
+				<th colspan="2">&nbsp;</th>
+			</tr>
 			<tr>
 				<th colspan="2">Surface Breakdown</th>
 			</tr>
@@ -95,7 +92,7 @@
 		</table>
 	</div>
 	<div class="col-md-3">
-		<table class="table table-condensed text-nowrap">
+		<table class="table table-condensed table-striped text-nowrap">
 			<tr>
 				<th colspan="2">Tournament Level Breakdown</th>
 			</tr>
@@ -112,7 +109,7 @@
 		</table>
 	</div>
 	<div class="col-md-3">
-		<table class="table table-condensed text-nowrap">
+		<table class="table table-condensed table-striped text-nowrap">
 			<tr>
 				<th colspan="2">Opposition Breakdown</th>
 			</tr>
@@ -129,7 +126,7 @@
 		</table>
 	</div>
 	<div class="col-md-3">
-		<table class="table table-condensed text-nowrap">
+		<table class="table table-condensed table-striped text-nowrap">
 			<tr>
 				<th colspan="2">Round Breakdown</th>
 			</tr>

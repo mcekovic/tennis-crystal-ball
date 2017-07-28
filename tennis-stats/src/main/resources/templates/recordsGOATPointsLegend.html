@@ -1,10 +1,8 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="recordsGOATPoints" type="java.util.Map<String, java.util.Map<Record, String>>"*/-->
-<h3>Records GOAT Points
-<button class="btn btn-default btn-xs pull-right" onclick="$('#recordsGOATPoints').click()"><span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Close</button>
-</h3>
 <div th:each="categoryPoints : ${recordsGOATPoints}">
 	<strong th:text="${categoryPoints.key}">Titles</strong>
+	<button class="btn btn-default btn-xs pull-right" onclick="$('#recordsGOATPoints').click()" title="Close"><span class="glyphicon glyphicon-remove"></span></button>
 	<table class="table table-condensed table-hover table-striped text-nowrap">
 		<thead>
 		<tr>
