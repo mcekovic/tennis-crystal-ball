@@ -102,8 +102,9 @@ public class RivalriesController extends PageController {
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season, 4);
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season, 4);
 		List<EventResult> eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet()).stream().limit(4).collect(toList());
-		PlayerPerformanceEx seasonPerf1 = performanceService.getPlayerSeasonPerformanceEx(playerId1, season);
-		PlayerPerformanceEx seasonPerf2 = performanceService.getPlayerSeasonPerformanceEx(playerId2, season);
+		PerformanceFilter seasonFilter = PerformanceFilter.forSeason(season);
+		PlayerPerformanceEx seasonPerf1 = performanceService.getPlayerPerformanceEx(playerId1, seasonFilter);
+		PlayerPerformanceEx seasonPerf2 = performanceService.getPlayerPerformanceEx(playerId2, seasonFilter);
 		Set<Surface> surfaces = union(seasonPerf1.getSurfaceMatches().keySet(), seasonPerf2.getSurfaceMatches().keySet());
 		Set<TournamentLevel> levels = union(seasonPerf1.getLevelMatches().keySet(), seasonPerf2.getLevelMatches().keySet());
 		Set<Opponent> oppositions = union(seasonPerf1.getOppositionMatches().keySet(), seasonPerf2.getOppositionMatches().keySet());
@@ -182,11 +183,12 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "playerId1") int playerId1,
 		@RequestParam(name = "playerId2") int playerId2,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "opponent", defaultValue = "false") boolean opponent,
 		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData
 	) {
 		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
-		PlayerPerformanceEx perf1 = season == null ? performanceService.getPlayerPerformanceEx(playerId1) : performanceService.getPlayerSeasonPerformanceEx(playerId1, season);
-		PlayerPerformanceEx perf2 = season == null ? performanceService.getPlayerPerformanceEx(playerId2) : performanceService.getPlayerSeasonPerformanceEx(playerId2, season);
+		PlayerPerformanceEx perf1 = performanceService.getPlayerPerformanceEx(playerId1, new PerformanceFilter(season, opponent ? playerId2 : null));
+		PlayerPerformanceEx perf2 = performanceService.getPlayerPerformanceEx(playerId2, new PerformanceFilter(season, opponent ? playerId1 : null));
 		Set<Surface> surfaces = union(perf1.getSurfaceMatches().keySet(), perf2.getSurfaceMatches().keySet());
 		Set<TournamentLevel> levels = union(perf1.getLevelMatches().keySet(), perf2.getLevelMatches().keySet());
 		Set<Opponent> oppositions = union(perf1.getOppositionMatches().keySet(), perf2.getOppositionMatches().keySet());
@@ -197,6 +199,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("playerId2", playerId2);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("opponent", opponent);
 		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("perf1", perf1);
 		modelMap.addAttribute("perf2", perf2);

@@ -22,10 +22,30 @@ public class PerformanceService {
 		"deciding_sets_won, deciding_sets_lost, fifth_sets_won, fifth_sets_lost, finals_won, finals_lost, vs_no1_won, vs_no1_lost, vs_top5_won, vs_top5_lost, vs_top10_won, vs_top10_lost,\n" +
 		"after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost, tie_breaks_won, tie_breaks_lost\n";
 
+	private static final String PLAYER_PERFORMANCE_SUMMED_COLUMNS =
+		"count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,\n" +
+		"count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,\n" +
+		"count(DISTINCT tour_finals_match_id_won) tour_finals_matches_won, count(DISTINCT tour_finals_match_id_lost) tour_finals_matches_lost,\n" +
+		"count(DISTINCT masters_match_id_won) masters_matches_won, count(DISTINCT masters_match_id_lost) masters_matches_lost,\n" +
+		"count(DISTINCT olympics_match_id_won) olympics_matches_won, count(DISTINCT olympics_match_id_lost) olympics_matches_lost,\n" +
+		"count(DISTINCT hard_match_id_won) hard_matches_won, count(DISTINCT hard_match_id_lost) hard_matches_lost,\n" +
+		"count(DISTINCT clay_match_id_won) clay_matches_won, count(DISTINCT clay_match_id_lost) clay_matches_lost,\n" +
+		"count(DISTINCT grass_match_id_won) grass_matches_won, count(DISTINCT grass_match_id_lost) grass_matches_lost,\n" +
+		"count(DISTINCT carpet_match_id_won) carpet_matches_won, count(DISTINCT carpet_match_id_lost) carpet_matches_lost,\n" +
+		"count(DISTINCT deciding_set_match_id_won) deciding_sets_won, count(DISTINCT deciding_set_match_id_lost) deciding_sets_lost,\n" +
+		"count(DISTINCT fifth_set_match_id_won) fifth_sets_won, count(DISTINCT fifth_set_match_id_lost) fifth_sets_lost,\n" +
+		"count(DISTINCT final_match_id_won) finals_won, count(DISTINCT final_match_id_lost) finals_lost,\n" +
+		"count(DISTINCT vs_no1_match_id_won) vs_no1_won, count(DISTINCT vs_no1_match_id_lost) vs_no1_lost,\n" +
+		"count(DISTINCT vs_top5_match_id_won) vs_top5_won, count(DISTINCT vs_top5_match_id_lost) vs_top5_lost,\n" +
+		"count(DISTINCT vs_top10_match_id_won) vs_top10_won, count(DISTINCT vs_top10_match_id_lost) vs_top10_lost,\n" +
+		"count(DISTINCT after_winning_first_set_match_id_won) after_winning_first_set_won, count(DISTINCT after_winning_first_set_match_id_lost) after_winning_first_set_lost,\n" +
+		"count(DISTINCT after_losing_first_set_match_id_won) after_losing_first_set_won, count(DISTINCT after_losing_first_set_match_id_lost) after_losing_first_set_lost,\n" +
+		"count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost\n";
+
 	private static final String PLAYER_PERFORMANCE_QUERY =
-		"SELECT " + PLAYER_PERFORMANCE_COLUMNS +
-		"FROM %1$s\n" +
-		"WHERE player_id = :playerId%2$s";
+		"SELECT %1$s" +
+		"FROM %2$s\n" +
+		"WHERE player_id = :playerId%3$s";
 
 	private static final String PLAYER_SEASONS_PERFORMANCE_QUERY =
 		"SELECT season, " + PLAYER_PERFORMANCE_COLUMNS +
@@ -66,21 +86,18 @@ public class PerformanceService {
 		"GROUP BY round\n" +
 		"ORDER BY round DESC";
 
-	private static final String SEASON_CONDITION = //language=SQL
-		" AND season = :season";
-
 
 	public PlayerPerformance getPlayerPerformance(int playerId) {
-		return getPlayerPerformance(playerId, null);
+		return getPlayerPerformance(playerId, PerformanceFilter.EMPTY);
 	}
 
-	private PlayerPerformance getPlayerPerformance(int playerId, Integer season) {
-		MapSqlParameterSource paramSource = params("playerId", playerId);
-		if (season != null)
-			paramSource.addValue("season", season);
+	private PlayerPerformance getPlayerPerformance(int playerId, PerformanceFilter filter) {
+		MapSqlParameterSource params = params("playerId", playerId);
+		filter.appendParams(params);
+		String tableName = filter.hasOpponent() ? "player_match_performance_v" : (filter.hasSeason() ? "player_season_performance" : "player_performance");
 		return jdbcTemplate.query(
-			format(PLAYER_PERFORMANCE_QUERY, season == null ? "player_performance" : "player_season_performance", season == null ? "" : SEASON_CONDITION),
-				paramSource,
+			format(PLAYER_PERFORMANCE_QUERY, filter.hasOpponent() ? PLAYER_PERFORMANCE_SUMMED_COLUMNS : PLAYER_PERFORMANCE_COLUMNS, tableName, filter.getCriteria()),
+			params,
 			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY
 		);
 	}
@@ -129,25 +146,16 @@ public class PerformanceService {
 
 	// Player Season
 
-	public PlayerPerformanceEx getPlayerPerformanceEx(int playerId) {
-		return getPlayerPerformanceEx(playerId, null);
-	}
-
-	public PlayerPerformanceEx getPlayerSeasonPerformanceEx(int playerId, int season) {
-		return getPlayerPerformanceEx(playerId, season);
-	}
-
-	private PlayerPerformanceEx getPlayerPerformanceEx(int playerId, Integer season) {
-		PlayerPerformance performance = getPlayerPerformance(playerId, season);
+	public PlayerPerformanceEx getPlayerPerformanceEx(int playerId, PerformanceFilter filter) {
+		PlayerPerformance performance = getPlayerPerformance(playerId, filter);
 		PlayerPerformanceEx performanceEx = new PlayerPerformanceEx(performance);
 
-		String conditions = season != null ? SEASON_CONDITION : "";
-		MapSqlParameterSource paramSource = params("playerId", playerId);
-		if (season != null)
-			paramSource.addValue("season", season);
+		String criteria = filter.getCriteria();
+		MapSqlParameterSource params = params("playerId", playerId);
+		filter.appendParams(params);
 
 		jdbcTemplate.query(
-			format(PLAYER_LEVEL_BREAKDOWN_QUERY, conditions), paramSource,
+			format(PLAYER_LEVEL_BREAKDOWN_QUERY, criteria), params,
 			rs -> {
 				TournamentLevel level = TournamentLevel.decode(rs.getString("level"));
 				WonLost wonLost = mapWonLost(rs);
@@ -156,7 +164,7 @@ public class PerformanceService {
 		);
 
 		jdbcTemplate.query(
-			format(PLAYER_OPPOSITION_BREAKDOWN_QUERY, conditions), paramSource,
+			format(PLAYER_OPPOSITION_BREAKDOWN_QUERY, criteria), params,
 			rs -> {
 				Opponent opposition = Opponent.valueOf(rs.getString("opposition"));
 				WonLost wonLost = mapWonLost(rs);
@@ -166,7 +174,7 @@ public class PerformanceService {
 		performanceEx.processOpposition();
 
 		jdbcTemplate.query(
-			format(PLAYER_ROUND_BREAKDOWN_QUERY, conditions), paramSource,
+			format(PLAYER_ROUND_BREAKDOWN_QUERY, criteria), params,
 			rs -> {
 				Round round = Round.decode(rs.getString("round"));
 				WonLost wonLost = mapWonLost(rs);

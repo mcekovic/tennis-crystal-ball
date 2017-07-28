@@ -299,7 +299,7 @@ FROM match_for_stats_v;
 -- player_match_performance_v
 
 CREATE OR REPLACE VIEW player_match_performance_v AS
-SELECT m.winner_id player_id, m.season, m.surface, m.tournament_id,
+SELECT m.winner_id player_id, m.season, m.surface, m.tournament_id, m.loser_id opponent_id,
 	match_id match_id_won, NULL match_id_lost,
 	CASE WHEN m.level = 'G' THEN match_id ELSE NULL END grand_slam_match_id_won, NULL grand_slam_match_id_lost,
 	CASE WHEN m.level = 'F' THEN match_id ELSE NULL END tour_finals_match_id_won, NULL tour_finals_match_id_lost,
@@ -325,7 +325,7 @@ SELECT m.winner_id player_id, m.season, m.surface, m.tournament_id,
 FROM match_for_stats_v m
 LEFT JOIN set_score s USING (match_id)
 UNION ALL
-SELECT m.loser_id player_id, m.season, m.surface, m.tournament_id,
+SELECT m.loser_id player_id, m.season, m.surface, m.tournament_id, m.winner_id opponent_id,
 	NULL, match_id,
 	NULL, CASE WHEN m.level = 'G' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.level = 'F' THEN match_id ELSE NULL END,

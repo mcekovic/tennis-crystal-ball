@@ -99,11 +99,11 @@ public class PlayerService {
 	}
 
 	public List<AutocompleteOption> autocompletePlayer(String name) {
-		MapSqlParameterSource paramSource = params("name", name).addValue("count", AUTOCOMPLETE_COUNT);
-		List<AutocompleteOption> options = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, paramSource, this::playerAutocompleteOptionMapper);
+		MapSqlParameterSource params = params("name", name).addValue("count", AUTOCOMPLETE_COUNT);
+		List<AutocompleteOption> options = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, params, this::playerAutocompleteOptionMapper);
 		int count = options.size();
 		if (count <= AUTOCOMPLETE_EX_THRESHOLD) {
-			List<AutocompleteOption> optionsEx = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_EX_QUERY, paramSource, this::playerAutocompleteOptionMapper);
+			List<AutocompleteOption> optionsEx = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_EX_QUERY, params, this::playerAutocompleteOptionMapper);
 			for (AutocompleteOption option : optionsEx) {
 				if (options.size() < AUTOCOMPLETE_COUNT && !options.contains(option))
 					options.add(option);
