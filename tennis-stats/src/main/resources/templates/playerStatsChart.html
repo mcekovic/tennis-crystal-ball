@@ -28,7 +28,7 @@
 			statsPointCount = json.rows.length;
 			isPct = categoryTypes[category] == "PERCENTAGE";
 			var width = $("#statsChartSize").slider("value");
-			showStatsChart(statsChartData, "statsChart", width, statsPointCount, isPct, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
+			showStatsChart(statsChartData, "statsChart", width, statsPointCount, isPct, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
 		}).always(function() {
 			$loading.hide().css("position", "absolute").css("z-index", "100");
 		});
@@ -40,7 +40,7 @@
 			value: defaultChartWOLegendSize(detectDevice()),
 			step: 50,
 			slide: function(event, ui) {
-				showStatsChart(statsChartData, "statsChart", ui.value, statsPointCount, isPct, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
+				showStatsChart(statsChartData, "statsChart", ui.value, statsPointCount, isPct, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
 			}
 		});
 		onStatsSeasonRangeChange();

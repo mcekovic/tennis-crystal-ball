@@ -13,7 +13,7 @@
 				method: "GET",
 				cache: false
 			},
-			url: "/statsLeadersTable?tournamentId=[[${tournamentId}]]",
+			url: "/statsLeadersTable?tournamentId=[(${tournamentId})]",
 			requestHandler: function(request) {
 				request.category = $("#statsCategory").val();
 				var season = $("#season").val();
@@ -49,7 +49,7 @@
 	function categoryChanged() {
 		var $category = $("#statsCategory");
 		$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
-		var url = "/statsLeadersMinEntries?category=" + $category.val() + "&tournamentId=[[${tournamentId}]]";
+		var url = "/statsLeadersMinEntries?category=" + $category.val() + "&tournamentId=[(${tournamentId})]";
 		var season = $("#season").val();
 		if (season)
 			url += "&season=" + season;

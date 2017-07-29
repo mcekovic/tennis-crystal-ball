@@ -55,12 +55,12 @@
 						return "<a href='/headToHead?playerId1=" + row.player1.playerId + "&playerId2=" + row.player2.playerId + params + "' title='Show Head-to-Head matches'>" + row.matches + "</a>";
 					},
 					"h2h": function(column, row) {
-						var params = "&outcome=won" + rivalryFilterParams();
+						var params = "&outcome=wonplayed" + rivalryFilterParams();
 						return "<a href='/playerProfile?playerId=" + row.player1.playerId + "&tab=matches&opponent=OPP_" + row.player2.playerId + params + "' title='Show " + row.player1.name + " def. " + row.player2.name + " matches'>" + row.won + "</a>" +
 							" - <a href='/playerProfile?playerId=" + row.player2.playerId + "&tab=matches&opponent=OPP_" + row.player1.playerId + params + "' title='Show " + row.player2.name + " def. " + row.player1.name + " matches'>" + row.lost + "</a>";
 					},
 					"h2hPct": function(column, row) {
-						var params = rivalryFilterParams();
+						var params = rivalryFilterParams() + "&outcome=played";
 						return "<span data-won-pct='" + row.wonPctClass + "' class='rivalry-pct'>" + "<a href='/playerProfile?playerId=" + row.player1.playerId + "&tab=matches&opponent=OPP_" + row.player2.playerId + params + "' title='Show " + row.player1.name + " - " + row.player2.name + " matches'>" + row.wonPctStr + "</a>" +
 							"</span> - <span data-won-pct='" + row.lostPctClass + "' class='rivalry-pct'>" + "<a href='/playerProfile?playerId=" + row.player2.playerId + "&tab=matches&opponent=OPP_" + row.player1.playerId + params + "' title='Show " + row.player2.name + " - " + row.player1.name + " matches'>" + row.lostPctStr + "</a>" + "</span>";
 					},

@@ -46,7 +46,7 @@
 			logScale = isRank ? useLogScale(json) : false;
 			rankPointCount = json.rows.length;
 			var width = $("#rankChartSize").slider("value");
-			showRankingChart(rankChartData, "rankChart", width, bySeason, rankPointCount, isRank, logScale, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
+			showRankingChart(rankChartData, "rankChart", width, bySeason, rankPointCount, isRank, logScale, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
 		}).always(function() {
 			$loading.hide().css("position", "absolute").css("z-index", "100");
 		});
@@ -70,7 +70,7 @@
 			value: defaultChartWOLegendSize(detectDevice()),
 			step: 50,
 			slide: function(event, ui) {
-				showRankingChart(rankChartData, "rankChart", ui.value, bySeason, rankPointCount, isRank, logScale, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
+				showRankingChart(rankChartData, "rankChart", ui.value, bySeason, rankPointCount, isRank, logScale, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
 			}
 		});
 		onRankingTimeSpanChange();

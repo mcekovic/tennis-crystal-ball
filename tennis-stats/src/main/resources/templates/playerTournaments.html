@@ -29,7 +29,7 @@
 				method: "GET",
 				cache: false
 			},
-			url: "/playerTournamentsTable?playerId=[[${playerId}]]",
+			url: "/playerTournamentsTable?playerId=[(${playerId})]",
 			requestHandler: function(request) {
 				request.season = $("#eventsSeason").val();
 				request.level = $("#eventsLevel").val();
@@ -51,7 +51,7 @@
 				"surface": surfaceFormatter,
 				"participationPct": participationFormatter,
 				"result": function(column, row) {
-					return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[[${playerId}]]&tab=matches&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
+					return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[(${playerId})]&tab=matches&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
 				},
 				"stats": function(column, row) {
 					return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info label-btn' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='[[${playerName}]] " + row.name + " " + row.season + " Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>";
@@ -130,7 +130,7 @@
 		reloadEvents();
 	}
 	function eventStatsParams() {
-		var params = "?playerId=[[${playerId}]]";
+		var params = "?playerId=[(${playerId})]";
 		params += "&season=" + $("#eventsSeason").val();
 		params += "&level=" + $("#eventsLevel").val();
 		params += "&surface=" + $("#eventsSurface").val();
@@ -163,7 +163,7 @@
 		var $eventStats = $("#eventStats-" + tournamentEventId);
 		if (!$eventStats.hasClass("loaded")) {
 			event.preventDefault();
-			var url = "/eventStats?playerId=[[${playerId}]]&tournamentEventId=" + tournamentEventId;
+			var url = "/eventStats?playerId=[(${playerId})]&tournamentEventId=" + tournamentEventId;
 			$.get(url, function(data) {
 				$eventStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 				$eventStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();

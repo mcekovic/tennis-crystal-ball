@@ -13,7 +13,7 @@
 				method: "GET",
 				cache: false
 			},
-			url: "/topPerformersTable?tournamentId=[[${tournamentId}]]",
+			url: "/topPerformersTable?tournamentId=[(${tournamentId})]",
 			requestHandler: function(request) {
 				request.category = $("#performanceCategory").val();
 				return request;
@@ -44,7 +44,7 @@
 	function performanceCategoryChanged() {
 		var $category = $("#performanceCategory");
 		$("#topPerformersTable").find("th[data-column-id='wonLostPct'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
-		var url = "/topPerformersMinEntries?category=" + $category.val() + "&tournamentId=[[${tournamentId}]]";
+		var url = "/topPerformersMinEntries?category=" + $category.val() + "&tournamentId=[(${tournamentId})]";
 		$.get(url, function (data) {
 			$("#performanceMinEntries").html(data);
 		});

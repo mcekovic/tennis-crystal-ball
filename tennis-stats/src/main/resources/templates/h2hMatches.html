@@ -27,7 +27,7 @@
 				method: "GET",
 				cache: false
 			},
-			url: "/matchesTable?playerId=[[${player1.id}]]&opponent=OPP_[[${player2.id}]]",
+			url: "/matchesTable?playerId=[(${player1.id})]&opponent=OPP_[(${player2.id})]",
 			requestHandler: function(request) {
 				request.season = $("#matchesSeason").val();
 				request.level = $("#matchesLevel").val();
@@ -55,13 +55,13 @@
 				paginationItem: bootgridTemplatePaginationItem
 			}
 		}).on("loaded.rs.jquery.bootgrid", function() {
-			$("#rivalryStats-[[${player1.id}]]").popover("destroy").removeClass("loaded");
-			$("#rivalryStats-[[${player2.id}]]").popover("destroy").removeClass("loaded");
+			$("#rivalryStats-[(${player1.id})]").popover("destroy").removeClass("loaded");
+			$("#rivalryStats-[(${player2.id})]").popover("destroy").removeClass("loaded");
 		});
 		var $matchesTableHeader = $("#matchesTable-header");
 		var $search = $matchesTableHeader.find("div.search");
-		$search.before($("#rivalryStats-[[${player2.id}]]").remove());
-		$search.before($("#rivalryStats-[[${player1.id}]]").remove());
+		$search.before($("#rivalryStats-[(${player2.id})]").remove());
+		$search.before($("#rivalryStats-[(${player1.id})]").remove());
 		$search.after($("#clearDiv").remove());
 		$("[data-toggle='tooltip']").tooltip();
 	});
@@ -70,7 +70,7 @@
 		$("#matchesTable").bootgrid("reload");
 	}
 	function reloadH2H() {
-		var url = "/h2h?playerId1=[[${player1.id}]]&playerId2=[[${player2.id}]]" ;
+		var url = "/h2h?playerId1=[(${player1.id})]&playerId2=[(${player2.id})]" ;
 		var season = $("#matchesSeason").val();
 		if (season)
 			url += "&season=" + season;

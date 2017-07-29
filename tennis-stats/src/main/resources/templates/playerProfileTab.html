@@ -10,7 +10,7 @@
 			minLength: 2,
 			select: function (event, ui) {
 				if (ui.item)
-					window.location = "/headToHead?playerId1=[[${player.id}]]&playerId2=" + ui.item.id;
+					window.location = "/headToHead?playerId1=[(${player.id})]&playerId2=" + ui.item.id;
 			}
 		});
 		decorateSurface("#favoriteSurface");
@@ -81,7 +81,7 @@
 			</tr>
 			<tr>
 				<th>Active</th>
-				<td>[[${player.active ? 'Yes' : 'No'}]] <img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/></td>
+				<td>[(${player.active ? 'Yes' : 'No'})] <img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/></td>
 			</tr>
 		</table>
 	</div>
@@ -129,7 +129,7 @@
 			</tr>
 			<tr th:if="${player.goatPoints > 0}">
 				<th>GOAT Rank</th>
-				<td>[[${player.goatRank}]] (<a th:href="@{/playerProfile(playerId=${player.id}, tab=goatPoints)}" th:text="${player.goatPoints}" title="Show GOAT points distribution">25</a>)</td>
+				<td>[(${player.goatRank})] (<a th:href="@{/playerProfile(playerId=${player.id}, tab=goatPoints)}" th:text="${player.goatPoints}" title="Show GOAT points distribution">25</a>)</td>
 			</tr>
 			<tr th:if="${player.weeksAtNo1 > 0}">
 				<th>Weeks at No. 1</th>

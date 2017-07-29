@@ -22,7 +22,7 @@
 				method: "GET",
 				cache: false
 			},
-			url: "/playerRivalriesTable?playerId=[[${playerId}]]",
+			url: "/playerRivalriesTable?playerId=[(${playerId})]",
 			requestHandler: function(request) {
 				request.season = $("#rivalrySeason").val();
 				request.level = $("#rivalryLevel").val();
@@ -47,7 +47,7 @@
 				},
 				"lastMatch": function(column, row) {
 					var match = row.lastMatch;
-					var won = match.winnerId == [[${playerId}]];
+					var won = match.winnerId == [(${playerId})];
 					return "<span class='label label-" + (won ? "won" : "lost") + "'>" + (won ? "Won" : "Lost") + "</span> [ " + match.score + " ] at " +
 						match.season + " " + tournamentEventFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
 				},
@@ -55,7 +55,7 @@
 					return "<a id='rivalryStats-" + row.playerId + "' href='#' class='label label-info label-btn' onclick='showRivalryStats(" + row.playerId + ", event)' title='[[${playerName}]] vs " + row.name + " Rivalry Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>";
 				},
 				"h2h": function(column, row) {
-					return "<a href='/headToHead?playerId1=[[${playerId}]]&playerId2=" + row.playerId + "' class='label label-primary label-btn'" + (isChrome ? " style='padding: 3px 7px'" : "") + " title='Show Head-to-Head'>H2H</a>"
+					return "<a href='/headToHead?playerId1=[(${playerId})]&playerId2=" + row.playerId + "' class='label label-primary label-btn'" + (isChrome ? " style='padding: 3px 7px'" : "") + " title='Show Head-to-Head'>H2H</a>"
 				}
 			},
 			labels: {
@@ -94,7 +94,7 @@
 		var $rivalryStats = $("#rivalryStats-" + opponentId);
 		if (!$rivalryStats.hasClass("loaded")) {
 			event.preventDefault();
-			var url = "rivalryStats?playerId=[[${playerId}]]&opponentId=" + opponentId + rivalryFilterParams();
+			var url = "rivalryStats?playerId=[(${playerId})]&opponentId=" + opponentId + rivalryFilterParams();
 			$.get(url, function(data) {
 				$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 				$rivalryStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
@@ -116,9 +116,9 @@
 		return params;
 	}
 	function playerMatchesUrl(opponentId, outcome) {
-		var url = "/playerProfile?playerId=[[${playerId}]]&tab=matches&opponent=OPP_" + opponentId;
+		var url = "/playerProfile?playerId=[(${playerId})]&tab=matches&opponent=OPP_" + opponentId;
 		if (outcome)
-			url += "&outcome=" + outcome;
+			url += "&outcome=" + outcome + "played";
 		url += rivalryFilterParams();
 		return url;
 	}

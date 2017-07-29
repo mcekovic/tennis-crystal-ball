@@ -40,7 +40,7 @@
 				method: "GET",
 				cache: false
 			},
-			url: "/matchesTable?playerId=[[${playerId}]]",
+			url: "/matchesTable?playerId=[(${playerId})]",
 			requestHandler: function(request) {
 				request.season = $("#matchesSeason").val();
 				request.level = $("#matchesLevel").val();
@@ -66,10 +66,10 @@
 				"tournament": tournamentEventFormatter,
 				"surface": surfaceFormatter,
 				"wonLost": function(column, row) {
-					return row.outcome != "ABD" ? (row.winner.id == [[${playerId}]] ? "W" : "L") : "A";
+					return row.outcome != "ABD" ? (row.winner.id == [(${playerId})] ? "W" : "L") : "A";
 				},
-				"match": matchFormatter([[${playerId}]]),
-				"matchEx": matchExFormatter([[${playerId}]]),
+				"match": matchFormatter([(${playerId})]),
+				"matchEx": matchExFormatter([(${playerId})]),
 				"stats": function(column, row) {
 					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>" : "";
 				}
@@ -149,7 +149,7 @@
 		reloadMatches();
 	}
 	function matchStatsParams() {
-		var params = "?playerId=[[${playerId}]]";
+		var params = "?playerId=[(${playerId})]";
 		params += "&season=" + $("#matchesSeason").val();
 		params += "&level=" + $("#matchesLevel").val();
 		params += "&surface=" + $("#matchesSurface").val();

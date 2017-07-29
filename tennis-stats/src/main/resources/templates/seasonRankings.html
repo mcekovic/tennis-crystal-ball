@@ -5,7 +5,7 @@
 	$(function() {
 		var $rankingsTable = $("#rankingsTable");
 		var device = detectDevice();
-		setBootgridColumnsVisible($rankingsTable, ["bestRank"], deviceGreaterOrEqual(device, "sm"));
+		setBootgridColumnsVisible($rankingsTable, ["bestRank", "rankDiff", "pointsDiff"], deviceGreaterOrEqual(device, "sm"));
 		setBootgridColumnsWidths($rankingsTable, ["name"], [device == "xs" ? 150 : (device == "sm" ? 200 : (device == "md" ? 300 : 400))]);
 		$rankingsTable.bootgrid({
 			ajax: true,
@@ -13,7 +13,7 @@
 				method: "GET",
 				cache: false
 			},
-			url: "/rankingsTableTable?season=[[${season}]]",
+			url: "/rankingsTableTable?season=[(${season})]",
 			requestHandler: function(request) {
 				request.rankType = $("#rankType").val();
 				var date = $("#rankDate").val();
@@ -21,19 +21,23 @@
 					request.date = date;
 				return request;
 			},
-			sorting: false,
 			rowCount: [15, 25, 50, -1],
 			searchSettings: {
 				delay: 300,
 				characters: 2
 			},
 			formatters: {
+				"rank": function(column, row) {
+					return row.rank == row.bestRank ? row.rank + " <span class='career-high' title='Career high ranking'>CH</span>" : row.rank;
+				},
 				"bestRank": function(column, row) {
 					var date = row.bestRankDate;
 					return date ? ("<span title='" + formatDate(date) + "'>" + row.bestRank + "</span>") : row.bestRank;
 				},
 				"country": countryFormatter,
 				"player": playerFormatter,
+				"rankDiff": function(column, row) { return formatDiff(row.rankDiff) },
+				"pointsDiff": function(column, row) { return formatDiff(row.pointsDiff) },
 				"points": function(column, row) {
 					var points = row.points;
 					return points > 0 ? points : "";
@@ -58,13 +62,15 @@
 	});
 	function rankTypeChanged() {
 		var rankType = $("#rankType").val();
-		$("#rankingsTable").find("th[data-column-id='points'] > a > span.text").html(rankType == "POINTS" ? "Points" : "Elo Rating");
+		var $rankingsTable = $("#rankingsTable");
+		$rankingsTable.find("th[data-column-id='points'] > a > span.text").html(rankType == "POINTS" ? "Points" : "Elo Rating");
+		$rankingsTable.find("th[data-column-id='pointsDiff'] > a > span.text").html(rankType == "POINTS" ? "Pts. +/-" : "Elo +/-");
 		$("#eloInfo").css("display", rankType == "ELO_RATING" ? "inline" : "none");
 		var $date = $("#rankDate");
 		$date.find("option").remove();
-		var url = "/seasonRankingDates?rankType=" + $("#rankType").val() + "&season=" + [[${season}]];
+		var url = "/seasonRankingDates?rankType=" + $("#rankType").val() + "&season=" + [(${season})];
 		$.get(url, function (data) {
-			$date.append("<option value=''>" + ([[${season}]] == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
+			$date.append("<option value=''>" + ([(${season})] == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
 			for (var i = 0; i < data.length; i++) {
 				var date = formatDate(data[i]);
 				$date.append("<option value='" + date + "'>" + date + "</option>");
@@ -74,7 +80,23 @@
 	function reloadRankings() {
 		$("#rankingsTable").bootgrid("reload");
 	}
+	function formatDiff(diff) {
+		if (diff != undefined)
+			return "<span class='" + (diff > 0 ? "positive" : (diff < 0 ? "negative" : "no-diff")) + " small'>" + (diff > 0 ? "+" + diff : (diff < 0 ? diff : "-"))  + "</span>";
+		else
+			return "<span class='positive small'>+</span>";
+	}
 </script>
+<style>
+	.career-high {
+		background-color: coral;
+		color: white;
+		font-size: x-small;
+		padding: 0 2px;
+		border-radius: 3px;
+		vertical-align: text-top;
+	}
+</style>
 <h3 id="rankingsTable-title" class="grid-title">Rankings Table</h3>
 <div id="rankTypeDiv" class="btn-group margin-right">
 	<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
@@ -89,10 +111,12 @@
 <table id="rankingsTable" class="table table-condensed table-hover table-striped">
 	<thead>
 	<tr>
-		<th data-column-id="rank" data-type="numeric" data-width="65">Rank</th>
+		<th data-column-id="rank" data-formatter="rank" data-width="65">Rank</th>
 		<th data-column-id="bestRank" data-formatter="bestRank" data-width="100">Best Rank</th>
-		<th data-column-id="country" data-formatter="country" data-width="85">Country</th>
-		<th data-column-id="name" data-formatter="player" data-width="250">Name</th>
+		<th data-column-id="country" data-formatter="country" data-width="85" data-sortable="false">Country</th>
+		<th data-column-id="name" data-formatter="player" data-width="250" data-sortable="false">Name</th>
+		<th data-column-id="rankDiff" data-formatter="rankDiff" data-width="50" data-align="right" data-header-align="right">+/-</th>
+		<th data-column-id="pointsDiff" data-formatter="pointsDiff" data-width="75" data-align="right" data-header-align="right">Pts. +/-</th>
 		<th data-column-id="points" data-formatter="points" data-width="100" data-align="right" data-header-align="right">Points</th>
 	</tr>
 	</thead>

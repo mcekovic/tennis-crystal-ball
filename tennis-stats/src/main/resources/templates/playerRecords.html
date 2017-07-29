@@ -11,7 +11,7 @@
 				method: "GET",
 				cache: false
 			},
-			url: "/playerRecordsTable?playerId=[[${playerId}]]",
+			url: "/playerRecordsTable?playerId=[(${playerId})]",
 			requestHandler: function(request) {
 				var infamous = $("#infamous").prop("checked");
 				request.category = !infamous ? $("#category").val() : $("#infamousCategory").val();

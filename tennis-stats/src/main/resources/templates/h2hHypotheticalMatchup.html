@@ -27,7 +27,7 @@
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function predictMatch() {
-		var url = "/h2hHypotheticalMatchup?playerId1=[[${player1.id}]]&playerId2=[[${player2.id}]]";
+		var url = "/h2hHypotheticalMatchup?playerId1=[(${player1.id})]&playerId2=[(${player2.id})]";
 		var surface = $("#predictionSurface").val();
 		if (surface)
 			url += "&surface=" + surface;

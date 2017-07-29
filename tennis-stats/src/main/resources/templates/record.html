@@ -11,7 +11,7 @@
 					method: "GET",
 					cache: false
 				},
-				url: "/recordTable?recordId=[[${record.id}]]",
+				url: "/recordTable?recordId=[(${record.id})]",
 				requestHandler: function(request) {
 					request.active = $("#active").prop("checked");
 					return request;

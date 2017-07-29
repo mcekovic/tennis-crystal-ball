@@ -22,7 +22,7 @@
 				method: "GET",
 				cache: false
 			},
-			url: "/tournamentEventsTable?season=[[${season}]]",
+			url: "/tournamentEventsTable?season=[(${season})]",
 			requestHandler: function(request) {
 				request.level = $("#eventsLevel").val();
 				request.surface = $("#eventsSurface").val();

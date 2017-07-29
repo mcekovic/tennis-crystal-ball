@@ -17,7 +17,7 @@
 			loadRankingTopN("POINTS", 20);
 		});
 		function priceFormatChanged() {
-			var url = "/inProgressEventForecast?inProgressEventId=[[${inProgressEventId}]]";
+			var url = "/inProgressEventForecast?inProgressEventId=[(${inProgressEventId})]";
 			var priceFormat = $("#priceFormat").val();
 			if (priceFormat)
 				url += "&priceFormat=" + priceFormat;

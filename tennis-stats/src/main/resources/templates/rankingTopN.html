@@ -27,11 +27,11 @@
 		<div class="panel-heading" style="padding: 6px 8px">
 			<h4 class="text-center text-nowrap component-header">
 				<div class="pull-left">
-					<div>Top [[${rankingTopN.size()}]]</div>
+					<div>Top [(${rankingTopN.size()})]</div>
 					<div class="text-muted" style="font-size: 60%" th:text="${#dates.format(date, 'dd-MM-yyyy')}">01-11-2015</div>
 				</div>
 				<div class="btn-group" th:attrappend="class=${surface != null ? ' bg-surface-' + surface.code : _}" style="margin-left: 4px">
-					<button type="button" class="btn btn-default rank-type">[[${rankType.name() == 'POINTS' ? 'ATP' : 'Elo'}]]</button>
+					<button type="button" class="btn btn-default rank-type">[(${rankType.name() == 'POINTS' ? 'ATP' : 'Elo'})]</button>
 					<button type="button" class="btn btn-default dropdown-toggle rank-type" data-toggle="dropdown">
 						<span class="caret"></span>
 					</button>

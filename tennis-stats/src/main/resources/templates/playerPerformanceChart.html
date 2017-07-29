@@ -21,7 +21,7 @@
 			perfChartData = new google.visualization.DataTable(JSON.stringify(json));
 			perfPointCount = json.rows.length;
 			var width = $("#perfChartSize").slider("value");
-			showPerformanceChart(perfChartData, "perfChart", width, perfPointCount, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
+			showPerformanceChart(perfChartData, "perfChart", width, perfPointCount, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
 		}).always(function() {
 			$loading.hide().css("position", "absolute").css("z-index", "100");
 		});
@@ -33,7 +33,7 @@
 			value: defaultChartWOLegendSize(detectDevice()),
 			step: 50,
 			slide: function(event, ui) {
-				showPerformanceChart(perfChartData, "perfChart", ui.value, perfPointCount, "[[${playerId.length > 1 ? 'bottom' : 'none'}]]");
+				showPerformanceChart(perfChartData, "perfChart", ui.value, perfPointCount, "[(${playerId.length > 1 ? 'bottom' : 'none'})]");
 			}
 		});
 		onPerfSeasonRangeChange();
