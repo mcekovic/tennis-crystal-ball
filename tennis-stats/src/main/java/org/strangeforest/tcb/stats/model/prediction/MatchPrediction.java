@@ -9,6 +9,20 @@ import static org.strangeforest.tcb.stats.model.prediction.PriceUtil.*;
 
 public final class MatchPrediction {
 
+	// Factory
+
+	public static final MatchPrediction TIE = prediction(0.5);
+
+	private static MatchPrediction prediction(double winProbability1) {
+		MatchPrediction prediction = new MatchPrediction();
+		prediction.addItemProbability1(PredictionArea.RANKING, RankingPredictionItem.RANK, 1.0, winProbability1);
+		prediction.addItemProbability2(PredictionArea.RANKING, RankingPredictionItem.RANK, 1.0, 1.0 - winProbability1);
+		return prediction;
+	}
+
+
+	// Instance
+
 	private final List<WeightedProbability> itemProbabilities1 = new ArrayList<>();
 	private final List<WeightedProbability> itemProbabilities2 = new ArrayList<>();
 	private Double winProbability1 = 0.5;

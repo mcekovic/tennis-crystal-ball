@@ -46,7 +46,7 @@ public class VisitorManager {
 		visitors = Caffeine.newBuilder()
 			.maximumSize(cacheSize)
 			.removalListener(this::visitorRemoved)
-			.build(new VisitorCacheLoader());
+			.build(repository::find);
 		visitors.putAll(repository.findAll().stream().collect(toMap(Visitor::getIpAddress, Optional::of)));
 		visitorExpirer = Executors.newSingleThreadScheduledExecutor();
 		long period = expiryCheckPeriod.getSeconds();
@@ -142,12 +142,6 @@ public class VisitorManager {
 	void clearCache() {
 		if (visitors != null)
 			visitors.invalidateAll();
-	}
-
-	private class VisitorCacheLoader implements CacheLoader<String, Optional<Visitor>> {
-		@Override public Optional<Visitor> load(String ipAddress) {
-			return repository.find(ipAddress);
-		}
 	}
 
 	private void visitorRemoved(String ipAddress, Optional<Visitor> optionalVisitor, RemovalCause cause) {

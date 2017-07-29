@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.Date;
 import java.util.*;
 import java.util.concurrent.*;
+import javax.annotation.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.util.*;
+
+import com.github.benmanes.caffeine.cache.*;
 
 import static java.lang.String.*;
 import static java.util.Arrays.*;
@@ -23,9 +26,9 @@ public class MatchPredictionService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
-	private ConcurrentMap<Integer, PlayerData> players = new ConcurrentHashMap<>();
-	private ConcurrentMap<RankingKey, RankingData> playersRankings = new ConcurrentHashMap<>();
-	private ConcurrentMap<Integer, List<MatchData>> playersMatches = new ConcurrentHashMap<>();
+	private final LoadingCache<Integer, PlayerData> players;
+	private final LoadingCache<RankingKey, RankingData> playersRankings;
+	private final LoadingCache<Integer, List<MatchData>> playersMatches;
 
 	private static final String PLAYER_QUERY =
 		"SELECT hand, backhand FROM player\n" +
@@ -48,9 +51,18 @@ public class MatchPredictionService {
 		"WHERE m.player_id = :playerId\n" +
 		"ORDER BY m.date";
 
-	public MatchPredictionService() {}
+	
+	public MatchPredictionService() {
+		Caffeine<Object, Object> builder = Caffeine.newBuilder()
+			.expireAfterWrite(1, TimeUnit.HOURS)
+			.expireAfterAccess(1, TimeUnit.HOURS);
+		players = builder.build(this::fetchPlayerData);
+		playersRankings = builder.build(this::fetchRankingData);
+		playersMatches = builder.build(this::fetchMatchData);
+	}
 
 	public MatchPredictionService(NamedParameterJdbcTemplate jdbcTemplate) {
+		this();
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
@@ -67,6 +79,21 @@ public class MatchPredictionService {
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date1, Date date2, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
+		if (playerId1 > 0) {
+			if (playerId2 > 0)
+				return predictMatchBetweenEntries(playerId1, playerId2, date1, date2, surface, level, tournamentId, round, bestOf);
+			else
+				return predictMatchVsQualifier(playerId1, date1, surface, level, tournamentId, round, bestOf);
+		}
+		else {
+			if (playerId2 > 0)
+				return predictMatchVsQualifier(playerId2, date2, surface, level, tournamentId, round, bestOf);
+			else
+				return MatchPrediction.TIE;
+		}
+	}
+
+	private MatchPrediction predictMatchBetweenEntries(int playerId1, int playerId2, Date date1, Date date2, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
 		PlayerData playerData1 = getPlayerData(playerId1);
 		PlayerData playerData2 = getPlayerData(playerId2);
 		RankingData rankingData1 = getRankingData(playerId1, date1, surface);
@@ -84,7 +111,7 @@ public class MatchPredictionService {
 		return prediction;
 	}
 
-	public MatchPrediction predictMatchVsQualifier(int playerId, Date date, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
+	private MatchPrediction predictMatchVsQualifier(int playerId, Date date, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
 		List<MatchData> matchData = getMatchData(playerId, date);
 		short bstOf = defaultBestOf(level, bestOf);
 		return new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bstOf).predictMatch();
@@ -115,7 +142,7 @@ public class MatchPredictionService {
 	// Player Data
 
 	private PlayerData getPlayerData(int playerId) {
-		return players.computeIfAbsent(playerId, this::fetchPlayerData);
+		return players.get(playerId);
 	}
 
 	private PlayerData fetchPlayerData(int playerId) {
@@ -138,7 +165,7 @@ public class MatchPredictionService {
 	// Ranking Data
 
 	private RankingData getRankingData(int playerId, Date date, Surface surface) {
-		return playersRankings.computeIfAbsent(new RankingKey(playerId, date, surface), this::fetchRankingData);
+		return playersRankings.get(new RankingKey(playerId, date, surface));
 	}
 
 	private RankingData fetchRankingData(RankingKey key) {
@@ -168,11 +195,11 @@ public class MatchPredictionService {
 	// Match Data
 
 	private List<MatchData> getMatchData(int playerId, Date date) {
-		List<MatchData> matchData = playersMatches.computeIfAbsent(playerId, this::getMatchData);
+		List<MatchData> matchData = playersMatches.get(playerId);
 		return matchData.stream().filter(m -> m.getDate().before(date)).collect(toList());
 	}
 
-	private List<MatchData> getMatchData(int playerId) {
+	private List<MatchData> fetchMatchData(int playerId) {
 		return jdbcTemplate.query(PLAYER_MATCHES_QUERY, params("playerId", playerId), this::matchData);
 	}
 

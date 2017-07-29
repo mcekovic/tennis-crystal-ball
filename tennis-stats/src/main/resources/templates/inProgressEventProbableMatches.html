@@ -3,13 +3,14 @@
 	<!--/*@thymesVar id="players" type="java.util.List<org.strangeforest.tcb.stats.model.MatchPlayer>"*/-->
 	<!--/*@thymesVar id="inProgressEventId" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="pinnedPlayerId" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat"*/-->
 	<th:block th:unless="${results.isEmpty()}">
 		<script type="text/javascript">
 			$(function() {
 				$("[data-toggle='tooltip']").tooltip();
 			});
 			function reloadProbableMatches() {
-				var url = "/inProgressEventProbableMatches?inProgressEventId=[[${inProgressEventId}]]";
+				var url = "/inProgressEventProbableMatches?inProgressEventId=[(${inProgressEventId + (priceFormat != null ? '&priceFormat=' + priceFormat : '')})]";
 				var pinnedPlayerId = $("#pinnedPlayer").val();
 				if (pinnedPlayerId)
 					url += "&pinnedPlayerId=" + pinnedPlayerId;
@@ -29,7 +30,7 @@
 			</div>
 		</div>
 		<br/>
-		<div th:include="fragments/eventResults :: eventResults('Prob', -1, false)"></div>
+		<div th:include="fragments/eventResults :: eventResults('Prob', -1, true)"></div>
 	</th:block>
 	<th:block th:if="${results.isEmpty()}">
 		<br/>

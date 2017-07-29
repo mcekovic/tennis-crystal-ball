@@ -9,10 +9,6 @@ public class InProgressEventForecast {
 
 	private static final String CURRENT = "Current";
 
-	public InProgressEventForecast() {
-		this(null);
-	}
-
 	public InProgressEventForecast(InProgressEvent event) {
 		this.event = event;
 		playersForecasts = new LinkedHashMap<>();

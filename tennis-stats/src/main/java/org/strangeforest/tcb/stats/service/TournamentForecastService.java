@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
 import java.util.*;
+import java.util.Date;
 import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -9,6 +10,7 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.util.*;
 
@@ -22,6 +24,7 @@ import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 public class TournamentForecastService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
+	@Autowired private MatchPredictionService matchPredictionService;
 
 	private static final String IN_PROGRESS_EVENTS_QUERY = //language=SQL
 		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation_points, p.max_participation_points\n" +
@@ -126,13 +129,8 @@ public class TournamentForecastService {
 
 	@Cacheable("InProgressEventForecast")
 	public InProgressEventForecast getInProgressEventForecast(int inProgressEventId) {
+		InProgressEvent inProgressEvent = getInProgressEvent(inProgressEventId);
 		MapSqlParameterSource inProgressEventIdParam = params("inProgressEventId", inProgressEventId);
-		InProgressEvent inProgressEvent = jdbcTemplate.query(IN_PROGRESS_EVENT_QUERY, inProgressEventIdParam, rs -> {
-			if (rs.next())
-				return mapInProgressEvent(rs);
-			else
-				throw new NotFoundException("In-progress event", inProgressEventId);
-		});
 		List<FavoritePlayer> favorites = jdbcTemplate.query(FIND_FAVORITES_QUERY, inProgressEventIdParam, this::mapFavoritePlayer);
 		inProgressEvent.setFavorites(favorites);
 		InProgressEventForecast forecast = new InProgressEventForecast(inProgressEvent);
@@ -142,6 +140,15 @@ public class TournamentForecastService {
 		});
 		forecast.process();
 		return forecast;
+	}
+
+	private InProgressEvent getInProgressEvent(int inProgressEventId) {
+		return jdbcTemplate.query(IN_PROGRESS_EVENT_QUERY, params("inProgressEventId", inProgressEventId), rs -> {
+			if (rs.next())
+				return mapInProgressEvent(rs);
+			else
+				throw new NotFoundException("In-progress event", inProgressEventId);
+		});
 	}
 
 	private List<PlayerForecast> fetchPlayers(MapSqlParameterSource inProgressEventIdParam) {
@@ -222,7 +229,8 @@ public class TournamentForecastService {
 	// Probable matches
 
 	public ProbableMatches getInProgressEventProbableMatches(int inProgressEventId, Integer pinnedPlayerId) {
-		InProgressEventForecast forecast = new InProgressEventForecast();
+		InProgressEvent event = getInProgressEvent(inProgressEventId);
+		InProgressEventForecast forecast = new InProgressEventForecast(event);
 		MapSqlParameterSource inProgressEventIdParam = params("inProgressEventId", inProgressEventId);
 		List<PlayerForecast> players = fetchPlayers(inProgressEventIdParam);
 		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, CURRENT_CONDITION), inProgressEventIdParam, rs -> {
@@ -237,12 +245,12 @@ public class TournamentForecastService {
 		Iterable<PlayerForecast> remainingPlayers = current.getPlayerForecasts();
 		String firstResult = current.getFirstResult();
 		for (KOResult result = KOResult.valueOf(firstResult); result.hasNext(); result = result.next())
-			remainingPlayers = addProbableMatches(probableMatches, remainingPlayers, result, matchId, matchNum, pinnedPlayerId);
+			remainingPlayers = addProbableMatches(event, probableMatches, remainingPlayers, result, matchId, matchNum, pinnedPlayerId);
 		return new ProbableMatches(probableMatches, current.getKnownPlayers(firstResult));
 	}
 
-	private static List<PlayerForecast> addProbableMatches(TournamentEventResults probableMatches, Iterable<PlayerForecast> remainingPlayers,
-	                                                       KOResult result, AtomicInteger matchId, AtomicInteger matchNum, Integer pinnedPlayerId) {
+	private List<PlayerForecast> addProbableMatches(InProgressEvent event, TournamentEventResults probableMatches, Iterable<PlayerForecast> remainingPlayers,
+	                                                KOResult result, AtomicInteger matchId, AtomicInteger matchNum, Integer pinnedPlayerId) {
 		String round = result.name();
 		String nextRound = result.next().name();
 		List<PlayerForecast> nextRemainingPlayers = new ArrayList<>();
@@ -253,6 +261,7 @@ public class TournamentForecastService {
 				if (playerWins(player1, player2, nextRound, pinnedPlayerId) == player2) {
 					PlayerForecast player = player1; player1 = player2; player2 = player;
 				}
+				addMatchProbability(event, player1, player2, round);
 				probableMatches.addMatch((short)matchNum.incrementAndGet(),
 					new TournamentEventMatch(matchId.incrementAndGet(), round, player1, player2, emptyList(), null, false)
 				);
@@ -278,6 +287,15 @@ public class TournamentForecastService {
 			return player1;
 		if (player1.getId() < 0 || Objects.equals(player2.getId(), pinnedPlayerId))
 			return player2;
-		return player1.probability(round) >= player2.probability(round) ? player1 : player2;
+		return player1.getRawProbability(round) >= player2.getRawProbability(round) ? player1 : player2;
+	}
+
+	private void addMatchProbability(InProgressEvent event, PlayerForecast player1, PlayerForecast player2, String round) {
+		MatchPrediction prediction = matchPredictionService.predictMatch(
+			player1.getId(), player2.getId(), new Date(),
+			Surface.safeDecode(event.getSurface()), TournamentLevel.safeDecode(event.getLevel()), Round.safeDecode(round)
+		);
+		player1.addForecast("M_" + round, prediction.getWinProbability1());
+		player2.addForecast("M_" + round, prediction.getWinProbability2());
 	}
 }

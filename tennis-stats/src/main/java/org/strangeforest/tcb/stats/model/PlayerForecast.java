@@ -32,29 +32,30 @@ public class PlayerForecast extends MatchPlayer {
 	}
 
 	public Double getProbability(String result) {
-		Double probability = getBareProbability(result);
+		Double probability = rawProbability(result);
 		return probability != null ? PCT * probability : null;
 	}
 
-	public String getPrice(String result, String format) {
-		Double probability = getBareProbability(result);
-		return probability != null ? PriceFormat.valueOf(format).format(toPrice(probability)) : null;
-	}
-
-	private Double getBareProbability(String result) {
-		return isEmpty() ? null : forecast.get(result);
-	}
-
-	public double probability(String result) {
-		Double probability = getProbability(result);
+	public double getRawProbability(String result) {
+		Double probability = rawProbability(result);
 		return probability != null ? probability : 0.0;
 	}
 
-	public double winProbability() {
-		return probability("W");
+	public double getWinProbability() {
+		Double probability = rawProbability("W");
+		return probability != null ? PCT * probability : 0.0;
 	}
 
-	void addForecast(String result, double probability) {
+	public String getPrice(String result, String format) {
+		Double probability = rawProbability(result);
+		return probability != null ? PriceFormat.valueOf(format).format(toPrice(probability)) : null;
+	}
+
+	private Double rawProbability(String result) {
+		return isEmpty() ? null : forecast.get(result);
+	}
+
+	public void addForecast(String result, double probability) {
 		if (forecast == null)
 			forecast = new HashMap<>();
 		forecast.put(result, probability);

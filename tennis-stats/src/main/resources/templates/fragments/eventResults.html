@@ -1,5 +1,6 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="eventResults(id, columnCountOffset, scrollRight)">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="eventResults(id, columnCountOffset, forecast)">
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
+<!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat"*/-->
 <script type="text/javascript" th:inline="javascript">
 	function roundLeft() {
 		var $resultsTable = $("#resultsTable[(${id})]");
@@ -43,7 +44,7 @@
 		resultsTable.rounds = [[${results.rounds}]];
 		resultsTable.roundsToShow = Math.min(resultsTable.rounds.length, {"xs": 2, "sm": 2, "md": [(${3 + columnCountOffset})], "lg": [(${4 + columnCountOffset})]}[device]);
 		resultsTable.maxRoundPos = resultsTable.rounds.length - resultsTable.roundsToShow;
-		resultsTable.roundPos = [(${scrollRight ? 'resultsTable.maxRoundPos' : 0})];
+		resultsTable.roundPos = [(${forecast ? 0 : 'resultsTable.maxRoundPos'})];
 		showRounds($resultsTable);
 	});
 </script>
@@ -90,11 +91,13 @@
 					<td class="seed">
 						<span th:text="${winner.seedAndEntry()}"></span>
 					</td>
-					<td class="player">
+					<td th:unless="${forecast && winner.qualifier}" class="player">
 						<img th:if="${winner.country.id}" th:src="@{/images/flags/{code}.png(code=${winner.country.code})}" src="/images/flags/ch.png'" th:title="${winner.country.id}" title="SUI" width="24" height="20"/>
 						<strong><a th:href="@{/playerProfile(playerId=${winner.id})}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a></strong>
 					</td>
+					<td th:if="${forecast && winner.qualifier}" class="player">Qualifier</td>
 					<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.wGames}">6</th:block><sup th:if="${score.wTBPoints}" th:text="|(${score.wTBPoints})|"></sup></td>
+					<td th:if="${forecast}" th:with="matchResult=${'M_' + round}, probability=${winner.getProbability(matchResult)}" class="score text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + winner.getPrice(matchResult, priceFormat) : _}">58.2%</td>
 					<td th:if="${outcomeOrStats}" class="score"><th:block th:if="${match.outcome}" th:text="${match.outcome}"/></td>
 					<td th:if="${loser}" rowspan="2" class="player-h2h">
 						<a th:href="@{/headToHead(playerId1=${winner.id}, playerId2=${loser.id})}" class="player-h2h" title="Show Head-to-Head">H<br/>2<br/>H</a>
@@ -104,11 +107,13 @@
 					<td class="seed">
 						<span th:text="${loser.seedAndEntry()}"></span>
 					</td>
-					<td class="player">
+					<td th:unless="${forecast && winner.qualifier}"  class="player">
 						<img th:if="${loser.country.id}" th:src="@{/images/flags/{code}.png(code=${loser.country.code})}" src="/images/flags/ch.png'" th:title="${loser.country.id}" title="ESP" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${loser.id})}" th:text="${loser.name}" style="vertical-align: middle" title="Show profile">Rafael Nadal</a>
 					</td>
+					<td th:if="${forecast && winner.qualifier}" class="player">Qualifier</td>
 					<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.lGames}">3</th:block><sup th:if="${score.lTBPoints}" th:text="|(${score.lTBPoints})|"></sup></td>
+					<td th:if="${forecast}" th:with="matchResult=${'M_' + round}, probability=${loser.getProbability(matchResult)}" class="score text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + loser.getPrice(matchResult, priceFormat) : _}">58.2%</td>
 					<td th:if="${outcomeOrStats}" class="stats">
 						<a th:if="${match.hasStats}" th:id="'matchStats-' + ${match.id}" href="#" class="btn btn-info btn-xxs glyphicon glyphicon-stats" th:onclick="|showMatchStats(${match.id}, event)|" title='Match Statistics'> </a>
 					</td>

@@ -39,18 +39,7 @@ class TournamentMatchPredictor {
 	}
 
 	def predictMatch(int playerId1, int playerId2, Round round) {
-		if (playerId1 > 0) {
-			if (playerId2 > 0)
-				return predictor.predictMatch(playerId1, playerId2, date, surface, level, tournamentId, round, bestOf).winProbability1
-			else
-				return predictor.predictMatchVsQualifier(playerId1, date, surface, level, tournamentId, round, bestOf).winProbability1
-		}
-		else {
-			if (playerId2 > 0)
-				return predictor.predictMatchVsQualifier(playerId2, date, surface, level, tournamentId, round, bestOf).winProbability2
-			else
-				return 0.5
-		}
+		predictor.predictMatch(playerId1, playerId2, date, surface, level, tournamentId, round, bestOf).winProbability1
 	}
 
 	@EqualsAndHashCode

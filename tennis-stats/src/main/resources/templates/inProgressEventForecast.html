@@ -149,7 +149,7 @@
 				<li th:each="baseResult : ${forecast.baseResults}" th:class="${baseResultStat.last ? 'active' : _}">
 					<a th:id="'baseResult' + ${baseResult} + 'Pill'" data-toggle="pill" th:href="'#baseResult' + ${baseResult}" th:text="${baseResult}">W</a>
 				</li>
-				<li><a id="probablePill" data-toggle="pill" href="#probable" th:data-url="'/inProgressEventProbableMatches?inProgressEventId=' + ${inProgressEvent.id}">Probable Matchups</a></li>
+				<li><a id="probablePill" data-toggle="pill" href="#probable" th:data-url="'/inProgressEventProbableMatches?inProgressEventId=' + ${inProgressEvent.id} + ${priceFormat != null ? '&priceFormat=' + priceFormat : ''}">Probable Matchups</a></li>
 			</ul>
 			<div class="tab-content">
 				<div id="results" class="tab-pane fade"><div class="loading"></div></div>
