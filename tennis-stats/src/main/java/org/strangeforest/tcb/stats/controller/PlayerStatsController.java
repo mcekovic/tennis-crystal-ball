@@ -117,12 +117,13 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "score", required = false) String score,
+		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		MatchFilter filter = MatchFilter.forOpponent(opponentId, season, level, surface, tournamentId, round, score);
+		MatchFilter filter = MatchFilter.forOpponent(opponentId, season, level, surface, tournamentId, round, outcome, score);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();

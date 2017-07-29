@@ -35,6 +35,7 @@
 				request.round = $("#matchesRound").val();
 				request.tournamentId = $("#matchesTournament").val();
 				request.score = $("#matchesScore").val();
+				request.outcome = $("#matchesOutcome").val();
 				return request;
 			},
 			rowCount: [15, 25, 50, -1],
@@ -61,6 +62,7 @@
 		var $matchesTableHeader = $("#matchesTable-header");
 		var $search = $matchesTableHeader.find("div.search");
 		$search.before($("#rivalryStats-[(${player2.id})]").remove());
+		$search.before($("#matchesOutcomeDiv").remove());
 		$search.before($("#rivalryStats-[(${player1.id})]").remove());
 		$search.after($("#clearDiv").remove());
 		$("[data-toggle='tooltip']").tooltip();
@@ -89,6 +91,9 @@
 		var score = $("#matchesScore").val();
 		if (score)
 			url += "&score=" + encodeURIComponent(score);
+		var outcome = $("#matchesOutcome").val();
+		if (outcome)
+			url += "&outcome=" + outcome;
 		$.get(url, function (data) {
 			$("#playerWon1").html(data[0]);
 			$("#playerWon2").html(data[1]);
@@ -101,6 +106,7 @@
 		$("#matchesRound").val("");
 		$("#matchesTournament").val("");
 		$("#matchesScore").val("");
+		$("#matchesOutcome").val("");
 		$("#matchesTable").bootgrid("search", "");
 		reloadMatches();
 	}
@@ -118,6 +124,7 @@
 			if (invertScore)
 				score = score.charAt(2) + score.charAt(1) + score.charAt(0) + score.substr(3);
 			url += "&score=" + encodeURIComponent(score);
+			url += "&outcome=" + $("#matchesOutcome").val();
 			url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 			$.get(url, function(data) {
 				$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto " + placement});
@@ -208,9 +215,22 @@
 		</select>
 	</div>
 </div>
-<button th:id="|rivalryStats-${player2.id}|" type="button" class="btn btn-info grid-control pull-left no-margin-left" th:onclick="|showRivalryStats(${player1.id}, ${player2.id}, 'right', event, false)|" data-toggle="tooltip" data-placement="top" th:title="|${player1.name} vs ${player2.name} Statistics (for the selected matches)|">
+<button th:id="|rivalryStats-${player2.id}|" type="button" class="btn btn-info grid-control pull-left no-margin-left margin-right" th:onclick="|showRivalryStats(${player1.id}, ${player2.id}, 'right', event, false)|" data-toggle="tooltip" data-placement="top" th:title="|${player1.name} vs ${player2.name} Statistics (for the selected matches)|">
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats 1
 </button>
+<div id="matchesOutcomeDiv" class="btn-group pull-left">
+	<select id="matchesOutcome" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outcome">
+		<option value="">All matches</option>
+		<option value="played" th:selected="${outcome == 'played'}">Played</option>
+		<option value="finished" th:selected="${outcome == 'finished'}">Finished</option>
+		<option value="notFinished" th:selected="${outcome == 'notFinished'}">Not finished</option>
+		<option value="RET" th:selected="${outcome == 'RET'}">Retirement</option>
+		<option value="W/O" th:selected="${outcome == 'W/O'}">Walkover</option>
+		<option value="DEF" th:selected="${outcome == 'DEF'}">Defaulting</option>
+		<option value="ABD" th:selected="${outcome == 'ABD'}">Abandoned</option>
+		<option value="notPlayed" th:selected="${outcome == 'notPlayed'}">Not played</option>
+	</select>
+</div>
 <button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control margin-right" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'left', event, true)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats 2
 </button>

@@ -28,8 +28,8 @@ public class MatchFilter extends TournamentEventResultFilter {
 		return new MatchFilter(null, level, surface, null, null, null, round, OpponentFilter.forStats(opponentId), null, null, null, null);
 	}
 
-	public static MatchFilter forOpponent(int opponentId, Integer season, String level, String surface, Integer tournamentId, String round, String score) {
-		return new MatchFilter(season, level, surface, tournamentId, null, null, round, OpponentFilter.forStats(opponentId), null, ScoreFilter.forStats(score), null, null);
+	public static MatchFilter forOpponent(int opponentId, Integer season, String level, String surface, Integer tournamentId, String round, String outcome, String score) {
+		return new MatchFilter(season, level, surface, tournamentId, null, null, round, OpponentFilter.forStats(opponentId), OutcomeFilter.forStats(outcome), ScoreFilter.forStats(score), null, null);
 	}
 
 	public static MatchFilter forSeason(int season) {
