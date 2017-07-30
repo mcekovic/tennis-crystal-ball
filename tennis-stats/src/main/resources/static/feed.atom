@@ -29,7 +29,7 @@
 		<summary>New Feature - GOAT Points for the consecutive and repeating wins at the same Grand Slam tournament</summary>
 		<content type="xhtml">
 			<div xmlns="http://www.w3.org/1999/xhtml">
-				<p>GOAT Points are assigned for the consecutive and repeating wins at the same Grand Slam tournament (i.e. 5 consecutive wins at Wimbledon = (5 - 1) * 1 = 4 points, 10 total wins at Roland Garros = (10 - 1) / 2 = 4 points).</p>
+				<p>GOAT Points are assigned for the consecutive and repeating wins at the same Grand Slam tournament (i.e. 5 consecutive wins at Wimbledon = (5 - 1) * 1 = 4 points, 10 total wins at Roland Garros = 10 / 2 = 5 points).</p>
 			</div>
 		</content>
 		<author>

@@ -1001,7 +1001,7 @@ WITH player_event_grand_slams AS (
   WHERE e.level = 'G' AND r.result = 'W'
   GROUP BY r.player_id, e.tournament_id
 )
-SELECT gs.player_id, round(sum(gs.count - 1) * g.grand_slam_on_same_event) AS goat_points
+SELECT gs.player_id, sum(trunc(gs.count * g.grand_slam_on_same_event)) AS goat_points
 FROM player_event_grand_slams gs
 INNER JOIN grand_slam_goat_points g ON TRUE
 WHERE gs.count >= 2
