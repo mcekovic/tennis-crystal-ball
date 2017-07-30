@@ -22,14 +22,14 @@
 		</author>
 	</entry>
 	<entry>
-		<title>New Feature - GOAT Points for repeating wins at the same Grand Slam tournament</title>
+		<title>New Feature - GOAT Points for the consecutive and repeating wins at the same Grand Slam tournament</title>
 		<link rel="alternate" type="text/html" href="http://tennis-strangeforest.rhcloud.com/record?recordId=GrandSlamGOATPoints"/>
 		<id>urn:uuid:5f18bd90-0f5e-419b-b541-ba1fc387c3cf</id>
 		<updated>2017-07-26T12:00:00Z</updated>
-		<summary>New Feature - GOAT Points for repeating wins at the same Grand Slam tournament</summary>
+		<summary>New Feature - GOAT Points for the consecutive and repeating wins at the same Grand Slam tournament</summary>
 		<content type="xhtml">
 			<div xmlns="http://www.w3.org/1999/xhtml">
-				<p>GOAT Points are assigned for repeating wins at the same Grand Slam tournament (i.e. 10 wins at Roland Garros = (10 - 1) * 1 = 9 points, 8 wins at Wimbledon = (8 - 1) * 1 = 7 points).</p>
+				<p>GOAT Points are assigned for the consecutive and repeating wins at the same Grand Slam tournament (i.e. 5 consecutive wins at Wimbledon = (5 - 1) * 1 = 4 points, 10 total wins at Roland Garros = (10 - 1) / 2 = 4 points).</p>
 			</div>
 		</content>
 		<author>

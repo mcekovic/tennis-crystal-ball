@@ -967,6 +967,31 @@ INNER JOIN grand_slam_goat_points g ON TRUE
 WHERE gs.streak >= 4;
 
 
+-- player_consecutive_grand_slam_on_same_event_goat_points_v
+
+CREATE OR REPLACE VIEW player_consecutive_grand_slam_on_same_event_goat_points_v AS
+WITH event_not_count AS (
+  SELECT r.player_id, e.tournament_id, e.tournament_event_id, e.date, r.result,
+    sum(CASE WHEN r.result = 'W' THEN 0 ELSE 1 END) OVER (PARTITION BY r.player_id, e.tournament_id ORDER BY date) AS not_count
+  FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)
+  WHERE e.level = 'G'
+), event_result_streak AS (
+  SELECT player_id, tournament_id, rank() OVER rs AS title_streak, first_value(tournament_event_id) OVER rs AS first_event_id
+  FROM event_not_count
+  WHERE result = 'W'
+  WINDOW rs AS (PARTITION BY player_id, tournament_id, not_count ORDER BY date)
+), player_event_result_streak AS (
+  SELECT player_id, tournament_id, max(title_streak) AS result_streak, first_event_id
+  FROM event_result_streak
+  GROUP BY player_id, tournament_id, first_event_id
+  HAVING max(title_streak) >= 2
+)
+SELECT s.player_id, sum((s.result_streak - 1) * g.consecutive_grand_slam_on_same_event) AS goat_points
+FROM player_event_result_streak s
+INNER JOIN grand_slam_goat_points g ON TRUE
+GROUP BY s.player_id;
+
+
 -- player_grand_slam_on_same_event_goat_points_v
 
 CREATE OR REPLACE VIEW player_grand_slam_on_same_event_goat_points_v AS
@@ -976,7 +1001,7 @@ WITH player_event_grand_slams AS (
   WHERE e.level = 'G' AND r.result = 'W'
   GROUP BY r.player_id, e.tournament_id
 )
-SELECT gs.player_id, sum(gs.count - 1) * g.grand_slam_on_same_event goat_points
+SELECT gs.player_id, round(sum(gs.count - 1) * g.grand_slam_on_same_event) AS goat_points
 FROM player_event_grand_slams gs
 INNER JOIN grand_slam_goat_points g ON TRUE
 WHERE gs.count >= 2
@@ -1623,6 +1648,11 @@ WITH goat_points AS (
 		0, 0, 0, 0, 0,
 		goat_points, 0, 0, 0, 0, 0, 0, 0
 	FROM player_grand_slam_holder_goat_points_v
+	UNION ALL
+	SELECT player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0, 0, 0,
+		goat_points, 0, 0, 0, 0, 0, 0, 0
+	FROM player_consecutive_grand_slam_on_same_event_goat_points_v
 	UNION ALL
 	SELECT player_id, goat_points, 0, 0, goat_points,
 		0, 0, 0, 0, 0,

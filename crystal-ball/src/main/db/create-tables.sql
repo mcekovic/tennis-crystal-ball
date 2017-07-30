@@ -414,8 +414,8 @@ CREATE TABLE grand_slam_goat_points (
 	career_grand_slam INTEGER NOT NULL,
 	season_grand_slam INTEGER NOT NULL,
 	grand_slam_holder INTEGER NOT NULL,
-	grand_slam_on_same_event INTEGER NOT NULL,
-	PRIMARY KEY (career_grand_slam, season_grand_slam, grand_slam_holder)
+	consecutive_grand_slam_on_same_event INTEGER NOT NULL,
+	grand_slam_on_same_event REAL NOT NULL
 );
 
 

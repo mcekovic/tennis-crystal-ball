@@ -150,9 +150,9 @@ VALUES
 
 DELETE FROM grand_slam_goat_points;
 INSERT INTO grand_slam_goat_points
-(career_grand_slam, season_grand_slam, grand_slam_holder, grand_slam_on_same_event)
+(career_grand_slam, season_grand_slam, grand_slam_holder, consecutive_grand_slam_on_same_event, grand_slam_on_same_event)
 VALUES
-(8, 8, 4, 1);
+(8, 8, 4, 1, 0.5);
 
 DELETE FROM big_win_match_factor;
 INSERT INTO big_win_match_factor

@@ -13,7 +13,8 @@
 	<!--/*@thymesVar id="careerGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="seasonGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="grandSlamHolderGOATPoints" type="java.lang.Integer"*/-->
-	<!--/*@thymesVar id="grandSlamOnSameEventGOATPoints" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="consecutiveGrandSlamOnSameEventGOATPoints" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="grandSlamOnSameEventGOATPointsDivider" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="bestSeasonGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="greatestRivalriesGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="performanceGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.PerfStatGOATPoints>"*/-->
@@ -179,7 +180,8 @@
 				<div th:unless="${forSeason}">+[(${careerGrandSlamGOATPoints})] points for each Career Grand Slam</div>
 				<div th:inline="text">+[(${seasonGrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Calendar Year Grand Slam</div>
 				<div th:unless="${forSeason}">+[(${grandSlamHolderGOATPoints})] points each time when holding all 4 Grand Slams</div>
-				<div th:unless="${forSeason}" th:inline="text">+[(${grandSlamOnSameEventGOATPoints})] point[# th:if="${grandSlamOnSameEventGOATPoints > 1}"]s[/] for each repeating win at the same Grand Slam tournament<br/>(i.e. 10 wins at Roland Garros = (10 - 1) * [(${grandSlamOnSameEventGOATPoints})] = [(${9 * grandSlamOnSameEventGOATPoints})] points)<sup class="new-feature">&nbsp;New!</sup></div>
+				<div th:unless="${forSeason}" th:title="${'I.e. 5 consecutive wins at Wimbledon = (5 - 1) * ' + consecutiveGrandSlamOnSameEventGOATPoints + ' = ' + (4 * consecutiveGrandSlamOnSameEventGOATPoints) + ' points'}">+ (N - 1) * [(${consecutiveGrandSlamOnSameEventGOATPoints})] points where N is number of consecutive Grand Slams on the same tournament<sup class="new-feature">&nbsp;New!</sup></div>
+				<div th:unless="${forSeason}" th:title="${'E.e. 10 wins at Roland Garros = (10 - 1) / ' + grandSlamOnSameEventGOATPointsDivider + ' = ' + (9 / grandSlamOnSameEventGOATPointsDivider) + ' points'}">+ (N - 1) / [(${grandSlamOnSameEventGOATPointsDivider})] points where N is number of Grand Slams on the same tournament<sup class="new-feature">&nbsp;New!</sup></div>
 				<br/>
 				<div>
 					<strong>
