@@ -19,9 +19,9 @@ public class RefreshRecordsJob {
 
 	@Scheduled(cron = "${tennis-stats.jobs.refresh-records:0 35 2 * * MON}")
 	public void refreshRecords() {
-		if (dataLoad("RefreshRecords", "-rr") == 0) {
+		String storageOption = dataService.getDBServerVersion() >= DataService.MATERIALIZED_VIEWS_MIN_VERSION ? "-m" : "-t";
+		if (dataLoad("RefreshRecords", "-rr", "-c 1", storageOption) == 0) {
 			try {
-				String storageOption = dataService.getDBServerVersion() >= DataService.MATERIALIZED_VIEWS_MIN_VERSION ? "-m" : "-t";
 				dataLoad("Vacuum", "-vc", "-c 1", storageOption);
 			}
 			finally {
