@@ -193,6 +193,7 @@ public class RivalriesController extends PageController {
 		Set<TournamentLevel> levels = union(perf1.getLevelMatches().keySet(), perf2.getLevelMatches().keySet());
 		Set<Opponent> oppositions = union(perf1.getOppositionMatches().keySet(), perf2.getOppositionMatches().keySet());
 		Set<Round> rounds = union(perf1.getRoundMatches().keySet(), perf2.getRoundMatches().keySet());
+		Set<EventResult> results = union(perf1.getResultCounts().keySet(), perf2.getResultCounts().keySet());
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
@@ -207,6 +208,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("levels", levels);
 		modelMap.addAttribute("oppositions", oppositions);
 		modelMap.addAttribute("rounds", rounds);
+		modelMap.addAttribute("results", results);
 		return new ModelAndView("h2hPerformance", modelMap);
 	}
 

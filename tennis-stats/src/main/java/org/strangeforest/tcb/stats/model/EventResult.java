@@ -47,4 +47,8 @@ public enum EventResult implements CodedEnum {
 	@Override public String getText() {
 		return text;
 	}
+
+	public static EventResult decode(String code) {
+		return CodedEnum.decode(EventResult.class, code);
+	}
 }

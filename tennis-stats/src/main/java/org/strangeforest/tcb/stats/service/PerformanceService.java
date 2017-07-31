@@ -22,7 +22,7 @@ public class PerformanceService {
 		"deciding_sets_won, deciding_sets_lost, fifth_sets_won, fifth_sets_lost, finals_won, finals_lost, vs_no1_won, vs_no1_lost, vs_top5_won, vs_top5_lost, vs_top10_won, vs_top10_lost,\n" +
 		"after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost, tie_breaks_won, tie_breaks_lost\n";
 
-	private static final String PLAYER_PERFORMANCE_SUMMED_COLUMNS =
+	private static final String PLAYER_PERFORMANCE_SUMMED_COLUMNS = //language=SQL
 		"count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,\n" +
 		"count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,\n" +
 		"count(DISTINCT tour_finals_match_id_won) tour_finals_matches_won, count(DISTINCT tour_finals_match_id_lost) tour_finals_matches_lost,\n" +
@@ -85,6 +85,14 @@ public class PerformanceService {
 		"WHERE player_id = :playerId AND level NOT IN ('D', 'T')%1$s\n" +
 		"GROUP BY round\n" +
 		"ORDER BY round DESC";
+
+	private static final String PLAYER_RESULT_BREAKDOWN_QUERY = //language=SQL
+		"SELECT r.result, count(r.result) count\n" +
+		"FROM player_tournament_event_result r\n" +
+		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"WHERE r.player_id = :playerId AND e.level NOT IN ('D', 'T')%1$s\n" +
+		"GROUP BY r.result\n" +
+		"ORDER BY r.result DESC";
 
 
 	public PlayerPerformance getPlayerPerformance(int playerId) {
@@ -163,15 +171,16 @@ public class PerformanceService {
 			}
 		);
 
+		Map<Opponent, WonLost> oppositionMatches = new TreeMap<>();
 		jdbcTemplate.query(
 			format(PLAYER_OPPOSITION_BREAKDOWN_QUERY, criteria), params,
 			rs -> {
 				Opponent opposition = Opponent.valueOf(rs.getString("opposition"));
 				WonLost wonLost = mapWonLost(rs);
-				performanceEx.addOppositionMatches(opposition, wonLost);
+				oppositionMatches.put(opposition, wonLost);
 			}
 		);
-		performanceEx.processOpposition();
+		performanceEx.addOppositionMatches(oppositionMatches);
 
 		jdbcTemplate.query(
 			format(PLAYER_ROUND_BREAKDOWN_QUERY, criteria), params,
@@ -182,6 +191,19 @@ public class PerformanceService {
 			}
 		);
 
+		if (!filter.hasOpponent()) {
+			Map<EventResult, Integer> resultCounts = new TreeMap<>();
+			jdbcTemplate.query(
+				format(PLAYER_RESULT_BREAKDOWN_QUERY, criteria), params,
+				rs -> {
+					EventResult result = EventResult.decode(rs.getString("result"));
+					int count = rs.getInt("count");
+					resultCounts.put(result, count);
+				}
+			);
+			performanceEx.addResultMatches(resultCounts);
+		}
+		
 		return performanceEx;
 	}
 

@@ -102,48 +102,6 @@
 					</tr>
 				</table>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-lg-4 col-sm-6">
-				<table class="table table-condensed table-striped">
-					<tr>
-						<th colspan="2">Opposition Breakdown</th>
-					</tr>
-					<tr th:each="oppositionWL : ${perf.oppositionMatches}" th:with="opposition=${oppositionWL.key}, wl=${oppositionWL.value}">
-						<td width="40%" th:text="${opposition.text}">Vs No. 1</td>
-						<th>
-							<div class="progress progress-perf">
-								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, opponent=${opposition}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
-										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
-										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
-									</a>
-								</div>
-							</div>
-						</th>
-					</tr>
-				</table>
-			</div>
-			<div class="col-lg-4 col-sm-6">
-				<table class="table table-condensed table-striped">
-					<tr>
-						<th colspan="2">Round Breakdown</th>
-					</tr>
-					<tr th:each="roundWL : ${perf.roundMatches}" th:with="round=${roundWL.key}, wl=${roundWL.value}">
-						<td width="40%" th:text="${round.text}">Final</td>
-						<th>
-							<div class="progress progress-perf">
-								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, outcome=played)}" th:title="|Show ${round.text} matches|">
-										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
-										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
-									</a>
-								</div>
-							</div>
-						</th>
-					</tr>
-				</table>
-			</div>
 			<div class="col-lg-4 col-sm-6">
 				<table class="table table-condensed table-striped">
 					<tr>
@@ -206,6 +164,68 @@
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 									<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 									<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+								</div>
+							</div>
+						</th>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-4 col-sm-6">
+				<table class="table table-condensed table-striped">
+					<tr>
+						<th colspan="2">Opposition Breakdown</th>
+					</tr>
+					<tr th:each="oppositionWL : ${perf.oppositionMatches}" th:with="opposition=${oppositionWL.key}, wl=${oppositionWL.value}">
+						<td width="40%" th:text="${opposition.text}">Vs No. 1</td>
+						<th>
+							<div class="progress progress-perf">
+								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, opponent=${opposition}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
+										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
+										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									</a>
+								</div>
+							</div>
+						</th>
+					</tr>
+				</table>
+			</div>
+			<div class="col-lg-4 col-sm-6">
+				<table class="table table-condensed table-striped">
+					<tr>
+						<th colspan="2">Round Breakdown</th>
+					</tr>
+					<tr th:each="roundWL : ${perf.roundMatches}" th:with="round=${roundWL.key}, wl=${roundWL.value}">
+						<td width="40%" th:text="${round.text}">Final</td>
+						<th>
+							<div class="progress progress-perf">
+								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, outcome=played)}" th:title="|Show ${round.text} matches|">
+										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
+										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									</a>
+								</div>
+							</div>
+						</th>
+					</tr>
+				</table>
+			</div>
+			<div class="col-lg-4 col-sm-6">
+				<table class="table table-condensed table-striped">
+					<tr>
+						<th colspan="2">Result Breakdown</th>
+					</tr>
+					<tr th:each="resultWL : ${perf.resultCounts}" th:with="result=${resultWL.key}, wl=${resultWL.value}">
+						<td width="40%" th:text="${result.text}">Win</td>
+						<th>
+							<div class="progress progress-perf">
+								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
+										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
+										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									</a>
 								</div>
 							</div>
 						</th>

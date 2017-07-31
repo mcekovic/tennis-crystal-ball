@@ -11,6 +11,7 @@
 <!--/*@thymesVar id="levels" type="java.util.Set<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="oppositions" type="java.util.Set<org.strangeforest.tcb.stats.service.Opponent>"*/-->
 <!--/*@thymesVar id="rounds" type="java.util.Set<org.strangeforest.tcb.stats.model.Round>"*/-->
+<!--/*@thymesVar id="results" type="java.util.Set<org.strangeforest.tcb.stats.model.EventResult>"*/-->
 <!--/*@thymesVar id="_" type="java.lang.String"*/-->
 <script type="text/javascript">
 	var perfRawData = [(${rawData})];
@@ -146,66 +147,6 @@
 				</div>
 			</th>
 		</tr>
-		<th:block th:unless="${oppositions.empty}">
-		<tr>
-			<td colspan="3">&nbsp;</td>
-		</tr>
-		<tr>
-			<td></td><th class="text-center">Opposition Breakdown</th><td></td>
-		</tr>
-		<tr th:each="opposition : ${oppositions}" class="text-nowrap" th:with="wl1=${perf1.oppositionMatches.get(opposition)}, wl2=${perf2.oppositionMatches.get(opposition)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
-			<th class="text-right">
-				<div th:if="${wl1}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, opponent=${opponent ? 'OPP_' + playerId2 : opposition}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
-							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
-							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
-						</a>
-					</div>
-				</div>
-			</th>
-			<td class="text-center" th:text="${opposition.text}">Vs No. 1</td>
-			<th class="text-left">
-				<div th:if="${wl2}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, opponent=${opponent ? 'OPP_' + playerId1 : opposition}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
-							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
-							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
-						</a>
-					</div>
-				</div>
-			</th>
-		</tr>
-		</th:block>
-		<tr>
-			<td colspan="3">&nbsp;</td>
-		</tr>
-		<tr>
-			<td></td><th class="text-center">Round Breakdown</th><td></td>
-		</tr>
-		<tr th:each="round : ${rounds}" class="text-nowrap" th:with="wl1=${perf1.roundMatches.get(round)}, wl2=${perf2.roundMatches.get(round)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
-			<th class="text-right">
-				<div th:if="${wl1}" class="progress progress-perf pull-right">
-					<div class="progress-bar progress-bar-season progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, opponent=${opponent ? 'OPP_' + playerId2 : _}, outcome=played)}" th:title="|Show ${round.text} matches|">
-							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
-							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
-						</a>
-					</div>
-				</div>
-			</th>
-			<td class="text-center" th:text="${round.text}">Final</td>
-			<th class="text-left">
-				<div th:if="${wl2}" class="progress progress-perf pull-left">
-					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, opponent=${opponent ? 'OPP_' + playerId1 : _}, outcome=played)}" th:title="|Show ${round.text} matches|">
-							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
-							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
-						</a>
-					</div>
-				</div>
-			</th>
-		</tr>
 		<tr>
 			<td colspan="3">&nbsp;</td>
 		</tr>
@@ -319,6 +260,99 @@
 				</div>
 			</th>
 		</tr>
+		<th:block th:unless="${oppositions.empty}">
+		<tr>
+			<td colspan="3">&nbsp;</td>
+		</tr>
+		<tr>
+			<td></td><th class="text-center">Opposition Breakdown</th><td></td>
+		</tr>
+		<tr th:each="opposition : ${oppositions}" class="text-nowrap" th:with="wl1=${perf1.oppositionMatches.get(opposition)}, wl2=${perf2.oppositionMatches.get(opposition)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+			<th class="text-right">
+				<div th:if="${wl1}" class="progress progress-perf pull-right">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, opponent=${opponent ? 'OPP_' + playerId2 : opposition}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+			<td class="text-center" th:text="${opposition.text}">Vs No. 1</td>
+			<th class="text-left">
+				<div th:if="${wl2}" class="progress progress-perf pull-left">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, opponent=${opponent ? 'OPP_' + playerId1 : opposition}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+		</tr>
+		</th:block>
+		<th:block th:unless="${rounds.empty}">
+		<tr>
+			<td colspan="3">&nbsp;</td>
+		</tr>
+		<tr>
+			<td></td><th class="text-center">Round Breakdown</th><td></td>
+		</tr>
+		<tr th:each="round : ${rounds}" class="text-nowrap" th:with="wl1=${perf1.roundMatches.get(round)}, wl2=${perf2.roundMatches.get(round)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+			<th class="text-right">
+				<div th:if="${wl1}" class="progress progress-perf pull-right">
+					<div class="progress-bar progress-bar-season progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, opponent=${opponent ? 'OPP_' + playerId2 : _}, outcome=played)}" th:title="|Show ${round.text} matches|">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+			<td class="text-center" th:text="${round.text}">Final</td>
+			<th class="text-left">
+				<div th:if="${wl2}" class="progress progress-perf pull-left">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, opponent=${opponent ? 'OPP_' + playerId1 : _}, outcome=played)}" th:title="|Show ${round.text} matches|">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+		</tr>
+		</th:block>
+		<th:block th:unless="${results.empty}">
+		<tr>
+			<td colspan="3">&nbsp;</td>
+		</tr>
+		<tr>
+			<td></td><th class="text-center">Result Breakdown</th><td></td>
+		</tr>
+		<tr th:each="result : ${results}" class="text-nowrap" th:with="wl1=${perf1.resultCounts.get(result)}, wl2=${perf2.resultCounts.get(result)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+			<th class="text-right">
+				<div th:if="${wl1}" class="progress progress-perf pull-right">
+					<div class="progress-bar progress-bar-season progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=tournaments, season=${season}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+			<td class="text-center" th:text="${result.text}">Win</td>
+			<th class="text-left">
+				<div th:if="${wl2}" class="progress progress-perf pull-left">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=tournaments, season=${season}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+		</tr>
+		</th:block>
 	</table>
 	<div th:unless="${perf1.empty && perf2.empty}" class="row">
 		<div class="col-md-12 text-center">

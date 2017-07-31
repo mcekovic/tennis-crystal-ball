@@ -10,13 +10,15 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 	private final Map<TournamentLevel, WonLost> levelMatches;
 	private final Map<Opponent, WonLost> oppositionMatches;
 	private final Map<Round, WonLost> roundMatches;
+	private final Map<EventResult, WonLost> resultCounts;
 
 	public PlayerPerformanceEx(PlayerPerformance perf) {
 		super(perf);
 		surfaceMatches = new LinkedHashMap<>();
 		levelMatches = new LinkedHashMap<>();
-		oppositionMatches = new TreeMap<>();
+		oppositionMatches = new LinkedHashMap<>();
 		roundMatches = new LinkedHashMap<>();
+		resultCounts = new LinkedHashMap<>();
 		addSurfaceMatches(Surface.HARD, perf.getHardMatches());
 		addSurfaceMatches(Surface.CLAY, perf.getClayMatches());
 		addSurfaceMatches(Surface.GRASS, perf.getGrassMatches());
@@ -45,16 +47,12 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 		return oppositionMatches;
 	}
 
-	public void addOppositionMatches(Opponent opposition, WonLost wonLost) {
-		if (!wonLost.isEmpty())
-			oppositionMatches.put(opposition, wonLost);
-	}
-
-	public void processOpposition() {
+	public void addOppositionMatches(Map<Opponent, WonLost> opposition) {
 		WonLost wonLost = WonLost.EMPTY;
-		for (Map.Entry<Opponent, WonLost> entry : oppositionMatches.entrySet()) {
+		for (Map.Entry<Opponent, WonLost> entry : opposition.entrySet()) {
 			wonLost = wonLost.add(entry.getValue());
-			entry.setValue(wonLost);
+			if (!wonLost.isEmpty())
+				oppositionMatches.put(entry.getKey(), wonLost);
 		}
 	}
 
@@ -65,5 +63,18 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 	public void addRoundMatches(Round round, WonLost wonLost) {
 		if (!wonLost.isEmpty())
 			roundMatches.put(round, wonLost);
+	}
+
+	public Map<EventResult, WonLost> getResultCounts() {
+		return resultCounts;
+	}
+
+	public void addResultMatches(Map<EventResult, Integer> results) {
+		int total = results.values().stream().mapToInt(Integer::intValue).sum();
+		for (Map.Entry<EventResult, Integer> entry : results.entrySet()) {
+			int count = entry.getValue();
+			if (count > 0)
+				resultCounts.put(entry.getKey(), new WonLost(count, total - count));
+		}
 	}
 }
