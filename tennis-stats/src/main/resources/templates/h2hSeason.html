@@ -48,7 +48,7 @@
 <div class="row">
 	<div class="col-md-5 text-right">
 		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season})}" title="Show season matches">Matches</a>
-		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId1}, tab=tournaments, season=${season})}" title="Show season tournaments" style="margin-left: 20px">Tournaments</a>
+		<a class="btn btn-default margin-left" th:href="@{/playerProfile(playerId=${playerId1}, tab=tournaments, season=${season})}" title="Show season tournaments">Tournaments</a>
 	</div>
 	<div class="col-md-2">
 		<div class="input-group">
@@ -60,7 +60,7 @@
 	</div>
 	<div class="col-md-5 text-left">
 		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId2}, tab=tournaments, season=${season})}" title="Show season tournaments">Tournaments</a>
-		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season})}" title="Show season matches" style="margin-left: 20px">Matches</a>
+		<a class="btn btn-default margin-left" th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season})}" title="Show season matches">Matches</a>
 	</div>
 </div>
 <br/>

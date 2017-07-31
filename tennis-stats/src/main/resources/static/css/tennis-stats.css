@@ -26,11 +26,17 @@
 	float: left;
 	margin: 5px 5px 0 -15px
 }
+.margin-left {
+	margin-left: 20px;
+}
 .margin-right {
 	margin-right: 20px;
 }
 .no-margin-left {
 	margin-left: -15px;
+}
+.no-margin-right {
+	margin-right: -15px;
 }
 .new-feature {
 	font-size: x-small;

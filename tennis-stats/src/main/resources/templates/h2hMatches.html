@@ -63,8 +63,8 @@
 		var $search = $matchesTableHeader.find("div.search");
 		$search.before($("#rivalryStats-[(${player2.id})]").remove());
 		$search.before($("#matchesOutcomeDiv").remove());
-		$search.before($("#rivalryStats-[(${player1.id})]").remove());
 		$search.after($("#clearDiv").remove());
+		$matchesTableHeader.find("div.actions").after($("#rivalryStats-[(${player1.id})]").remove());
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function reloadMatches() {
@@ -231,7 +231,7 @@
 		<option value="notPlayed" th:selected="${outcome == 'notPlayed'}">Not played</option>
 	</select>
 </div>
-<button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control margin-right" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'left', event, true)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">
+<button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control pull-right no-margin-right margin-left" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'left', event, true)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats 2
 </button>
 <div id="clearDiv" class="btn-group margin-right">
