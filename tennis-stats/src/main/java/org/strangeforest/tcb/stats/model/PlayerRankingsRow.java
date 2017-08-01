@@ -10,6 +10,7 @@ public class PlayerRankingsRow extends PlayerRow {
 	private Integer rankDiff;
 	private Integer pointsDiff;
 	private Date pointsDate;
+	private TournamentEventItem tournamentEvent;
 
 	public PlayerRankingsRow(int rank, int playerId, String name, String countryId, Boolean active, int points, int bestRank, Date bestRankDate) {
 		super(rank, playerId, name, countryId, active);
@@ -52,5 +53,13 @@ public class PlayerRankingsRow extends PlayerRow {
 
 	public void setPointsDate(Date pointsDate) {
 		this.pointsDate = pointsDate;
+	}
+
+	public TournamentEventItem getTournamentEvent() {
+		return tournamentEvent;
+	}
+
+	public void setTournamentEvent(TournamentEventItem tournamentEvent) {
+		this.tournamentEvent = tournamentEvent;
 	}
 }

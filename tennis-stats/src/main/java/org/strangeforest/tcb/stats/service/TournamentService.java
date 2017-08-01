@@ -103,7 +103,7 @@ public class TournamentService {
 		"ORDER BY name";
 
 	private static final String PLAYER_TOURNAMENT_EVENTS_QUERY =
-		"SELECT tournament_event_id, t.name, e.season\n" +
+		"SELECT tournament_event_id, t.name, e.season, e.level\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN tournament t USING (tournament_id)\n" +
@@ -329,7 +329,8 @@ public class TournamentService {
 		int tournamentEventId = rs.getInt("tournament_event_id");
 		String name = rs.getString("name");
 		int season = rs.getInt("season");
-		return new TournamentEventItem(tournamentEventId, name, season);
+		String level = rs.getString("level");
+		return new TournamentEventItem(tournamentEventId, name, season, level);
 	}
 
 	public Map<EventResult, List<PlayerTournamentEvent>> getPlayerSeasonHighlights(int playerId, int season, int maxResults) {

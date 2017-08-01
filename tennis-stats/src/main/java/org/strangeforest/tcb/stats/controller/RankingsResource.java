@@ -17,6 +17,7 @@ import org.strangeforest.tcb.util.*;
 import com.google.common.collect.*;
 
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.model.RankCategory.*;
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
 
 @RestController
@@ -51,16 +52,20 @@ public class RankingsResource {
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		if (date == null) {
-			if (season != null)
-				date = rankingsService.getSeasonEndRankingDate(rankType, season);
-			if (date == null && !peak)
-				date = rankingsService.getCurrentRankingDate(rankType);
-		}
 		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
-		return rankingsService.getRankingsTable(rankType, date, filter, orderBy, pageSize, current);
+		if (rankType.category == ELO && peak)
+			return rankingsService.getPeakEloRatingsTable(MAX_PLAYERS, rankType, filter, pageSize, current);
+		else {
+			if (date == null) {
+				if (season != null)
+					date = rankingsService.getSeasonEndRankingDate(rankType, season);
+				if (date == null)
+					date = rankingsService.getCurrentRankingDate(rankType);
+			}
+			String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+			return rankingsService.getRankingsTable(rankType, date, filter, orderBy, pageSize, current);
+		}
 	}
 
 	@GetMapping("/seasonRankingDates")

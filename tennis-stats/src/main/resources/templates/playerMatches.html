@@ -290,7 +290,7 @@
 <div id="matchesTournamentEventDiv" class="btn-group pull-left margin-right" style="width: 240px">
 	<select id="matchesTournamentEvent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament event">
 		<option value="">All events</option>
-		<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="|${tournamentEvent.name} ${tournamentEvent.season}|" th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon 2008</option>
+		<option th:each="tournamentEvent : ${tournamentEvents}" th:value="${tournamentEvent.id}" value="1001" th:text="|${tournamentEvent.name} ${tournamentEvent.season}|" th:class="'bg-level-' + ${tournamentEvent.level}" th:selected="${tournamentEvent.id == tournamentEventId}">Wimbledon 2008</option>
 	</select>
 </div>
 <div id="matchesOutcomeDiv" class="btn-group pull-left margin-right">
