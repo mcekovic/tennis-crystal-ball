@@ -43,7 +43,7 @@
 					},
 					"tournamentEvent": function(column, row) {
 						var event = row.tournamentEvent;
-						return formatTournamentEvent(event.id, event.level, event.name + " " + event.season);
+						return event ? formatTournamentEvent(event.id, event.level, event.name + " " + event.season) : "";
 					}
 				},
 				labels: {

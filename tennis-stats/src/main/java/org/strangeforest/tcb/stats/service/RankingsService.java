@@ -70,16 +70,22 @@ public class RankingsService {
 		"WHERE r.rank_date = :date%6$s\n" +
 		"ORDER BY %7$s OFFSET :offset";
 
+	private static final String PEAK_ELO_RATING_COUNT_QUERY = //language=SQL
+		"SELECT count(player_id) AS player_count\n" +
+		"FROM player_v\n" +
+		"WHERE %1$s IS NOT NULL%2$s";
+
 	private static final String PEAK_ELO_RATING_TABLE_QUERY = //language=SQL
 		"WITH best_elo_rating_ranked AS (\n" +
-		"  SELECT rank() OVER (ORDER BY %1$s DESC NULLS LAST, %1$s_date) AS rank, player_id, %1$s AS best_elo_rating\n" +
+		"  SELECT rank() OVER (ORDER BY %1$s DESC, %1$s_date) AS rank, player_id, %1$s AS best_elo_rating\n" +
 		"  FROM player_best_elo_rating\n" +
+		"  WHERE %1$s IS NOT NULL\n" +
 		")\n" +
 		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, p.%2$s AS points_date, p.%3$s AS best_rank, p.%4$s AS best_rank_date,\n" +
 		"  (SELECT row_to_json(te) FROM (SELECT e.tournament_event_id, e.name, e.season, e.level\n" +
 		"   FROM player_tournament_event_result pr\n" +
 		"   INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"   WHERE pr.player_id = r.player_id AND e.date < p.%2$s\n" +
+		"   WHERE pr.player_id = r.player_id AND e.date < p.%2$s - INTERVAL '2 day'\n" +
 		"   ORDER BY e.date DESC LIMIT 1) AS te) AS tournament_event\n" +
 		"FROM best_elo_rating_ranked r\n" +
 		"INNER JOIN player_v p USING (player_id)%5$s\n" +
@@ -206,6 +212,15 @@ public class RankingsService {
 		);
 		table.setTotal(offset + players.get());
 		return table;
+	}
+
+	@Cacheable("PeakEloRatingsTable.Count")
+	public int getPeakEloRatingsCount(RankType rankType, PlayerListFilter filter) {
+		return jdbcTemplate.queryForObject(
+			format(PEAK_ELO_RATING_COUNT_QUERY, bestEloRatingColumn(rankType), filter.getCriteria()),
+			filter.getParams(),
+			Integer.class
+		);
 	}
 
 	@Cacheable("PeakEloRatingsTable.Table")
@@ -340,12 +355,15 @@ public class RankingsService {
 
 	private TournamentEventItem mapTournamentEventJson(ResultSet rs) throws SQLException {
 		try {
-			JsonNode lastMatch = READER.readTree(rs.getString("tournament_event"));
+			String json = rs.getString("tournament_event");
+			if (json == null)
+				return null;
+			JsonNode jsonNode = READER.readTree(json);
 			return new TournamentEventItem(
-				lastMatch.get("tournament_event_id").asInt(),
-				lastMatch.get("name").asText(),
-				lastMatch.get("season").asInt(),
-				lastMatch.get("level").asText()
+				jsonNode.get("tournament_event_id").asInt(),
+				jsonNode.get("name").asText(),
+				jsonNode.get("season").asInt(),
+				jsonNode.get("level").asText()
 			);
 		}
 		catch (IOException ex) {
