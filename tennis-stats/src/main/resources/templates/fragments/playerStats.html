@@ -22,7 +22,7 @@
 			});
 		</script>
 		<div th:unless="${stats.empty}" class="row text-nowrap" th:with="hasPointStats=${stats.hasPointStats()}, hasPointCompareStats=${compareStats != null && compareStats.hasPointStats()}">
-			<div th:if="${hasPointStats}" th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
+			<div th:if="${hasPointStats}" th:class="'col-lg-' + ${popover ? '4' : '3'}" class="col-lg-4">
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
 						<tr>
@@ -122,7 +122,7 @@
 					</tbody>
 				</table>
 			</div>
-			<div th:if="${hasPointStats}" th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
+			<div th:if="${hasPointStats}" th:class="'col-lg-' + ${popover ? '4' : '3'}" class="col-lg-4">
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
 						<tr>
@@ -213,7 +213,7 @@
 					</thead>
 				</table>
 			</div>
-			<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
+			<div th:class="'col-lg-' + ${popover ? '4' : '3'}" class="col-lg-4">
 				<table class="table table-condensed table-hover table-striped">
 					<thead>
 						<tr>
@@ -306,16 +306,16 @@
 		<p th:if="${stats.empty}">No statistics available</p>
 		<div class="row">
 			<th:block th:unless="${stats.empty}">
-			<div th:class="'text-nowrap col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
+			<div th:class="'text-nowrap col-sm-' + ${popover ? '4' : '3'}" class="col-sm-4">
 				<button class="pct-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#${statsContainerId}'); statsRawData = true|" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
 				<button class="raw-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#${statsContainerId}'); statsRawData = false|" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
 				&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareStats('${containerId}', '${statsId}', ${compare})|" title="Compare statistics"><span class="glyphicon glyphicon-object-align-left"></span>&nbsp;&nbsp;Compare</button>
 			</div>
-			<div th:class="'col-md-' + ${popover ? '4' : '3'}" class="col-md-4">
+			<div th:class="'col-sm-' + ${popover ? '4' : '3'}" class="col-sm-4">
 				<small th:if="${compare}">Compare statistics with:</small>
 			</div>
 			</th:block>
-			<div th:if="${popover}" class="col-md-4">
+			<div th:if="${popover}" class="col-sm-4">
 				<button class="btn btn-default btn-xs pull-right" th:onclick="|$('#${statsId}').click()|"><span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Close</button>
 			</div>
 		</div>

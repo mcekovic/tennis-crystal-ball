@@ -2,7 +2,9 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
-public class TournamentItem {
+import org.strangeforest.tcb.util.*;
+
+public class TournamentItem implements Comparable<TournamentItem> {
 
 	private final int id;
 	private final String name;
@@ -38,5 +40,9 @@ public class TournamentItem {
 
 	@Override public int hashCode() {
 		return Objects.hash(id, name, level);
+	}
+
+	@Override public int compareTo(TournamentItem tournament) {
+		return ObjectUtil.compare(name, tournament.name);
 	}
 }

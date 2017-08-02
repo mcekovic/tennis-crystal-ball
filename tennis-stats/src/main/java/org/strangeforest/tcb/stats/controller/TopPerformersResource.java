@@ -37,7 +37,7 @@ public class TopPerformersResource {
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		StatsPlayerListFilter filter = new StatsPlayerListFilter(active, searchPhrase, season, tournamentId);
+		StatsPertFilter filter = StatsPertFilter.forSeasonAndTournament(active, searchPhrase, season, tournamentId);
 		int playerCount = topPerformersService.getPlayerCount(category, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
@@ -51,7 +51,7 @@ public class TopPerformersResource {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
 	) {
-		StatsPlayerListFilter filter = new StatsPlayerListFilter(season, tournamentId);
+		StatsPertFilter filter = StatsPertFilter.forSeasonAndTournament(season, tournamentId);
 		return topPerformersService.getTopPerformersMinEntries(category, filter);
 	}
 }

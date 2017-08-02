@@ -76,6 +76,10 @@ public class WonLost implements Comparable<WonLost> {
 		return total > 0 ? won + "-" + lost : "";
 	}
 
+	public String getWT() {
+		return total > 0 ? won + " / " + total : "";
+	}
+
 	public String getPctWL() {
 		return total > 0 ? getWonPctStr(1) + " (" + won + "-" + lost + ")" : "";
 	}

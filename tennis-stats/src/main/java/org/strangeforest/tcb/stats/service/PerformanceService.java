@@ -96,18 +96,27 @@ public class PerformanceService {
 
 
 	public PlayerPerformance getPlayerPerformance(int playerId) {
-		return getPlayerPerformance(playerId, PerformanceFilter.EMPTY);
+		return getPlayerPerformance(playerId, StatsPertFilter.EMPTY);
 	}
 
-	private PlayerPerformance getPlayerPerformance(int playerId, PerformanceFilter filter) {
-		MapSqlParameterSource params = params("playerId", playerId);
-		filter.appendParams(params);
-		String tableName = filter.hasOpponent() ? "player_match_performance_v" : (filter.hasSeason() ? "player_season_performance" : "player_performance");
+	private PlayerPerformance getPlayerPerformance(int playerId, StatsPertFilter filter) {
+		MapSqlParameterSource params = filter.getParams().addValue("playerId", playerId);
+		String tableName = getPlayerPerformanceTableName(filter);
+		String perfColumns = filter.isEmpty() || filter.isForSeason() ? PLAYER_PERFORMANCE_COLUMNS : PLAYER_PERFORMANCE_SUMMED_COLUMNS;
 		return jdbcTemplate.query(
-			format(PLAYER_PERFORMANCE_QUERY, filter.hasOpponent() ? PLAYER_PERFORMANCE_SUMMED_COLUMNS : PLAYER_PERFORMANCE_COLUMNS, tableName, filter.getCriteria()),
+			format(PLAYER_PERFORMANCE_QUERY, perfColumns, tableName, filter.getCriteria()),
 			params,
 			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY
 		);
+	}
+
+	private String getPlayerPerformanceTableName(StatsPertFilter filter) {
+		if (filter.isEmpty())
+			return "player_performance";
+		else if (filter.isForSeason())
+			return "player_season_performance";
+		else
+			return "player_match_performance_v";
 	}
 
 	public Map<Integer, PlayerPerformance> getPlayerSeasonsPerformance(int playerId) {
@@ -154,13 +163,12 @@ public class PerformanceService {
 
 	// Player Season
 
-	public PlayerPerformanceEx getPlayerPerformanceEx(int playerId, PerformanceFilter filter) {
+	public PlayerPerformanceEx getPlayerPerformanceEx(int playerId, StatsPertFilter filter) {
 		PlayerPerformance performance = getPlayerPerformance(playerId, filter);
 		PlayerPerformanceEx performanceEx = new PlayerPerformanceEx(performance);
 
 		String criteria = filter.getCriteria();
-		MapSqlParameterSource params = params("playerId", playerId);
-		filter.appendParams(params);
+		MapSqlParameterSource params = filter.getParams().addValue("playerId", playerId);
 
 		jdbcTemplate.query(
 			format(PLAYER_LEVEL_BREAKDOWN_QUERY, criteria), params,

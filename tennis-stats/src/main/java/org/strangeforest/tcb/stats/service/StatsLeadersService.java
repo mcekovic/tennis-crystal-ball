@@ -85,11 +85,11 @@ public class StatsLeadersService {
 
 
 	@Cacheable("StatsLeaders.Count")
-	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
+	public int getPlayerCount(String category, StatsPertFilter filter) {
 		return Math.min(MAX_PLAYER_COUNT, getPlayerCount(StatsCategory.get(category), filter));
 	}
 
-	protected int getPlayerCount(StatsCategory statsCategory, StatsPlayerListFilter filter) {
+	protected int getPlayerCount(StatsCategory statsCategory, StatsPertFilter filter) {
 		if (filter.hasTournamentOrTournamentEvent() || filter.hasSurfaceGroup()) {
 			return jdbcTemplate.queryForObject(
 				format(SUMMED_STATS_LEADERS_COUNT_QUERY, minEntriesColumn(statsCategory), statsTableName(filter), where(filter.getCriteria(), 2)),
@@ -107,7 +107,7 @@ public class StatsLeadersService {
 	}
 
 	@Cacheable("StatsLeaders.Table")
-	public BootgridTable<StatsLeaderRow> getStatsLeadersTable(String category, int playerCount, StatsPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<StatsLeaderRow> getStatsLeadersTable(String category, int playerCount, StatsPertFilter filter, String orderBy, int pageSize, int currentPage) {
 		StatsCategory statsCategory = StatsCategory.get(category);
 		BootgridTable<StatsLeaderRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
@@ -127,18 +127,18 @@ public class StatsLeadersService {
 		return table;
 	}
 
-	public String getStatsLeadersMinEntries(String category, StatsPlayerListFilter filter) {
+	public String getStatsLeadersMinEntries(String category, StatsPertFilter filter) {
 		StatsCategory statsCategory = StatsCategory.get(category);
 		return getMinEntriesValue(statsCategory, filter) + (statsCategory.isNeedsStats() ? " points" : " matches");
 	}
 
-	private String getTableSQL(StatsCategory statsCategory, StatsPlayerListFilter filter, String orderBy) {
+	private String getTableSQL(StatsCategory statsCategory, StatsPertFilter filter, String orderBy) {
 		return filter.hasTournamentOrTournamentEvent() || filter.hasSurfaceGroup()
 	       ? format(SUMMED_STATS_LEADERS_QUERY, statsCategory.getSummedExpression(), minEntriesColumn(statsCategory), statsTableName(filter), where(filter.getBaseCriteria(), 2), where(filter.getSearchCriteria()), orderBy)
 	       : format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy);
 	}
 
-	private static String statsTableName(StatsPlayerListFilter filter) {
+	private static String statsTableName(StatsPertFilter filter) {
 		if (filter.hasTournamentOrTournamentEvent())
 			return "player_match_stats_v";
 		else
@@ -149,7 +149,7 @@ public class StatsLeadersService {
 		return category.isNeedsStats() ? "sv_pt" : "matches";
 	}
 
-	private int getMinEntriesValue(StatsCategory category, StatsPlayerListFilter filter) {
+	private int getMinEntriesValue(StatsCategory category, StatsPertFilter filter) {
 		int minEntries = category.isNeedsStats() ? MIN_POINTS : MIN_MATCHES;
 		if (filter.hasSeason()) {
 			minEntries /= MIN_ENTRIES_SEASON_FACTOR;

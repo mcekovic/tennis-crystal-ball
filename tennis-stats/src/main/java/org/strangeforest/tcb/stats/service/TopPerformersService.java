@@ -62,7 +62,7 @@ public class TopPerformersService {
 	}
 
 	@Cacheable("TopPerformers.Count")
-	public int getPlayerCount(String category, StatsPlayerListFilter filter) {
+	public int getPlayerCount(String category, StatsPertFilter filter) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
 			format(TOP_PERFORMERS_COUNT_QUERY, perfTableName(filter), perfCategory.getColumn(), filter.getCriteria()),
@@ -72,7 +72,7 @@ public class TopPerformersService {
 	}
 
 	@Cacheable("TopPerformers.Table")
-	public BootgridTable<TopPerformerRow> getTopPerformersTable(String category, int playerCount, StatsPlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<TopPerformerRow> getTopPerformersTable(String category, int playerCount, StatsPertFilter filter, String orderBy, int pageSize, int currentPage) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		BootgridTable<TopPerformerRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
@@ -95,12 +95,12 @@ public class TopPerformersService {
 		return table;
 	}
 
-	public String getTopPerformersMinEntries(String category, StatsPlayerListFilter filter) {
+	public String getTopPerformersMinEntries(String category, StatsPertFilter filter) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		return getMinEntriesValue(perfCategory, filter) + " " + perfCategory.getEntriesName();
 	}
 
-	private static String perfTableName(StatsPlayerListFilter filter) {
+	private static String perfTableName(StatsPertFilter filter) {
 		if (filter.hasSeason())
 			return "player_season_performance";
 		else if (filter.hasTournament())
@@ -113,7 +113,7 @@ public class TopPerformersService {
 		return new WonLost(rs.getInt("won"), rs.getInt("lost"));
 	}
 
-	private int getMinEntriesValue(PerformanceCategory category, StatsPlayerListFilter filter) {
+	private int getMinEntriesValue(PerformanceCategory category, StatsPertFilter filter) {
 		int minEntries = category.getMinEntries();
 		if (filter.hasSeason()) {
 			minEntries /= MIN_ENTRIES_SEASON_FACTOR;

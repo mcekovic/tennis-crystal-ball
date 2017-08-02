@@ -1,17 +1,25 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId1" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="playerId2" type="java.lang.Integer"*/-->
-<!--/*@thymesVar id="seasons" type="java.util.Set<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="opponent" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="perf1" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <!--/*@thymesVar id="perf2" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
-<!--/*@thymesVar id="surfaces" type="java.util.Set<org.strangeforest.tcb.stats.model.Surface>"*/-->
-<!--/*@thymesVar id="levels" type="java.util.Set<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
-<!--/*@thymesVar id="oppositions" type="java.util.Set<org.strangeforest.tcb.stats.service.Opponent>"*/-->
-<!--/*@thymesVar id="rounds" type="java.util.Set<org.strangeforest.tcb.stats.model.Round>"*/-->
-<!--/*@thymesVar id="results" type="java.util.Set<org.strangeforest.tcb.stats.model.EventResult>"*/-->
+<!--/*@thymesVar id="perfSurfaces" type="java.util.Set<org.strangeforest.tcb.stats.model.Surface>"*/-->
+<!--/*@thymesVar id="perfLevels" type="java.util.Set<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="perfOppositions" type="java.util.Set<org.strangeforest.tcb.stats.service.Opponent>"*/-->
+<!--/*@thymesVar id="perfRounds" type="java.util.Set<org.strangeforest.tcb.stats.model.Round>"*/-->
+<!--/*@thymesVar id="perfResults" type="java.util.Set<org.strangeforest.tcb.stats.model.EventResult>"*/-->
 <!--/*@thymesVar id="_" type="java.lang.String"*/-->
 <script type="text/javascript">
 	var perfRawData = [(${rawData})];
@@ -22,10 +30,14 @@
 			var surface = $label.data("surface");
 			$label.addClass("label-" + surfaceClassSuffix(surface));
 		});
+		$("[data-toggle='tooltip']").tooltip();
 	});
 	function reloadPerformance() {
 		var url = "/h2hPerformance?playerId1=[(${playerId1})]&playerId2=[(${playerId2})]";
 		url += "&season=" + $("#perfSeason").val();
+		url += "&level=" + $("#perfLevel").val();
+		url += "&surface=" + $("#perfSurface").val();
+		url += "&tournamentId=" + $("#perfTournament").val();
 		url += "&opponent=" + $("#perfOpponent").prop("checked");
 		url += "&rawData=" + perfRawData;
 		$("#performance").load(url);
@@ -46,16 +58,33 @@
 </style>
 <br/>
 <div class="row">
-	<div class="col-md-3 col-md-offset-4 col-xs-9">
-		<div class="input-group">
-			<label for="perfSeason" class="input-group-addon">Season:</label>
-			<select id="perfSeason" class="form-control" onchange="reloadPerformance()">
-				<option value="">All seasons</option>
-				<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
-			</select>
-		</div>
+	<div class="col-md-2">
+		<select id="perfSeason" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by season">
+			<option value="">All seasons</option>
+			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
+		</select>
 	</div>
-	<div class="col-md-1 col-xs-3">
+	<div class="col-md-3">
+		<select id="perfLevel" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+			<option value="">All levels</option>
+			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
+			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
+		</select>
+	</div>
+	<div class="col-md-3">
+		<select id="perfSurface" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+			<option value="">All surfaces</option>
+			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
+			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes.length() > 1 && surfaceGroup.codes == surface}">Fast (H, G, Cp)</option>
+		</select>
+	</div>
+	<div class="col-md-3">
+		<select id="perfTournament" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+			<option value="">All tournaments</option>
+			<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+		</select>
+	</div>
+	<div class="col-md-1">
 		<div class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Include performance only against H2H opponent">
 				<input id="perfOpponent" type="checkbox" th:checked="${opponent}" onchange="reloadPerformance()"/> H2H
@@ -89,13 +118,14 @@
 				</div>
 			</th>
 		</tr>
+		<th:block th:if="${surface == null || surface.empty || surface.length() > 1}">
 		<tr>
 			<td colspan="3">&nbsp;</td>
 		</tr>
 		<tr>
 			<td></td><th class="text-center">Surface Breakdown</th><td></td>
 		</tr>
-		<tr th:each="surface : ${surfaces}" class="text-nowrap" th:with="wl1=${perf1.surfaceMatches.get(surface)}, wl2=${perf2.surfaceMatches.get(surface)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+		<tr th:each="surface : ${perfSurfaces}" class="text-nowrap" th:with="wl1=${perf1.surfaceMatches.get(surface)}, wl2=${perf2.surfaceMatches.get(surface)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 			<th class="text-right">
 				<div th:if="${wl1}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -118,13 +148,15 @@
 				</div>
 			</th>
 		</tr>
+		</th:block>
+		<th:block th:if="${level == null || level.empty || level.length() > 1}">
 		<tr>
 			<td colspan="3">&nbsp;</td>
 		</tr>
 		<tr>
 			<td></td><th class="text-center" title="Tournament Level Breakdown">Level Breakdown</th><td></td>
 		</tr>
-		<tr th:each="level : ${levels}" class="text-nowrap" th:with="wl1=${perf1.levelMatches.get(level)}, wl2=${perf2.levelMatches.get(level)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+		<tr th:each="level : ${perfLevels}" class="text-nowrap" th:with="wl1=${perf1.levelMatches.get(level)}, wl2=${perf2.levelMatches.get(level)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 			<th class="text-right">
 				<div th:if="${wl1}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -147,6 +179,7 @@
 				</div>
 			</th>
 		</tr>
+		</th:block>
 		<tr>
 			<td colspan="3">&nbsp;</td>
 		</tr>
@@ -260,14 +293,14 @@
 				</div>
 			</th>
 		</tr>
-		<th:block th:unless="${oppositions.empty}">
+		<th:block th:unless="${perfOppositions.empty}">
 		<tr>
 			<td colspan="3">&nbsp;</td>
 		</tr>
 		<tr>
 			<td></td><th class="text-center">Opposition Breakdown</th><td></td>
 		</tr>
-		<tr th:each="opposition : ${oppositions}" class="text-nowrap" th:with="wl1=${perf1.oppositionMatches.get(opposition)}, wl2=${perf2.oppositionMatches.get(opposition)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+		<tr th:each="opposition : ${perfOppositions}" class="text-nowrap" th:with="wl1=${perf1.oppositionMatches.get(opposition)}, wl2=${perf2.oppositionMatches.get(opposition)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 			<th class="text-right">
 				<div th:if="${wl1}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -291,14 +324,14 @@
 			</th>
 		</tr>
 		</th:block>
-		<th:block th:unless="${rounds.empty}">
+		<th:block th:unless="${perfRounds.empty}">
 		<tr>
 			<td colspan="3">&nbsp;</td>
 		</tr>
 		<tr>
 			<td></td><th class="text-center">Round Breakdown</th><td></td>
 		</tr>
-		<tr th:each="round : ${rounds}" class="text-nowrap" th:with="wl1=${perf1.roundMatches.get(round)}, wl2=${perf2.roundMatches.get(round)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+		<tr th:each="round : ${perfRounds}" class="text-nowrap" th:with="wl1=${perf1.roundMatches.get(round)}, wl2=${perf2.roundMatches.get(round)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 			<th class="text-right">
 				<div th:if="${wl1}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-season progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
@@ -322,20 +355,20 @@
 			</th>
 		</tr>
 		</th:block>
-		<th:block th:unless="${results.empty}">
+		<th:block th:unless="${perfResults.empty}">
 		<tr>
 			<td colspan="3">&nbsp;</td>
 		</tr>
 		<tr>
 			<td></td><th class="text-center">Result Breakdown</th><td></td>
 		</tr>
-		<tr th:each="result : ${results}" class="text-nowrap" th:with="wl1=${perf1.resultCounts.get(result)}, wl2=${perf2.resultCounts.get(result)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+		<tr th:each="result : ${perfResults}" class="text-nowrap" th:with="wl1=${perf1.resultCounts.get(result)}, wl2=${perf2.resultCounts.get(result)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 			<th class="text-right">
 				<div th:if="${wl1}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-season progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
 						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=tournaments, season=${season}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
-							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
-							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+							<span class="pct-data" th:text="${wl1.wonPctStr}">50%</span>
+							<span class="raw-data" th:text="${wl1.WT}">10 / 20</span>
 						</a>
 					</div>
 				</div>
@@ -345,8 +378,8 @@
 				<div th:if="${wl2}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
 						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=tournaments, season=${season}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
-							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
-							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+							<span class="pct-data" th:text="${wl2.wonPctStr}">50%</span>
+							<span class="raw-data" th:text="${wl2.WT}">10 / 20</span>
 						</a>
 					</div>
 				</div>

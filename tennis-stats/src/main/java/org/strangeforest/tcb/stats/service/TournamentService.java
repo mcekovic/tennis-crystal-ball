@@ -278,10 +278,12 @@ public class TournamentService {
 
 	// Player Tournaments
 
+	@Cacheable("PlayerTournaments")
 	public List<TournamentItem> getPlayerTournaments(int playerId) {
 		return jdbcTemplate.query(PLAYER_TOURNAMENTS_QUERY, params("playerId", playerId), this::tournamentItemMapper);
 	}
 
+	@Cacheable("PlayerTournamentEvents")
 	public List<TournamentEventItem> getPlayerTournamentEvents(int playerId) {
 		return jdbcTemplate.query(PLAYER_TOURNAMENT_EVENTS_QUERY, params("playerId", playerId), this::tournamentEventItemMapper);
 	}

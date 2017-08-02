@@ -100,7 +100,7 @@ public class PlayerProfileController extends PageController {
 		if (season == null)
 			season = !seasons.isEmpty() ? seasons.get(0) : Integer.valueOf(LocalDate.now().getYear());
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights = tournamentService.getPlayerSeasonHighlights(playerId, season, 4);
-		PlayerPerformanceEx seasonPerf = performanceService.getPlayerPerformanceEx(playerId, PerformanceFilter.forSeason(season));
+		PlayerPerformanceEx seasonPerf = performanceService.getPlayerPerformanceEx(playerId, StatsPertFilter.forSeason(season));
 		PlayerSeasonGOATPoints seasonGOATPoints = goatPointsService.getPlayerSeasonGOATPoints(playerId, season);
 
 		ModelMap modelMap = new ModelMap();
@@ -250,15 +250,27 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerPerformance(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		PlayerPerformanceEx perf = performanceService.getPlayerPerformanceEx(playerId, PerformanceFilter.forSeason(season));
+		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
+		PlayerPerformanceEx perf = performanceService.getPlayerPerformanceEx(playerId, new StatsPertFilter(null, null, season, level, surface, tournamentId, null, null));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("perf", perf);
 		return new ModelAndView("playerPerformance", modelMap);
@@ -283,6 +295,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData,
 		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
@@ -290,7 +303,8 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(season, level, surface));
+		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(season, level, surface, tournamentId, null));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
@@ -299,9 +313,11 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("stats", stats);
 		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
