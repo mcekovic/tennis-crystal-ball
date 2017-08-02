@@ -23,7 +23,7 @@
 				var surface = $("#surface").val();
 				var round = encodeURIComponent($("#round").val());
 				var statsVsAll = $("#statsVsAll").prop("checked");
-				var rawData = window.h2hRawData !== undefined && h2hRawData;
+				var rawData = window.h2hRawData === undefined || h2hRawData;
 				var url = "/headsToHeadsTable?players=" + players + "&fromSeason=" + fromSeason + "&toSeason=" + toSeason + "&level=" + level + "&surface=" + surface + "&round=" + round + "&statsVsAll=" + statsVsAll + "&rawData=" + rawData;
 				$.ajax(url).done(function(data) {
 					$("#headsToHeadsDiv").html(data);

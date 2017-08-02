@@ -81,7 +81,7 @@
 		$("#rankingsTable").bootgrid("reload");
 	}
 	function formatDiff(diff) {
-		if (diff != undefined)
+		if (diff !== undefined)
 			return "<span class='" + (diff > 0 ? "positive" : (diff < 0 ? "negative" : "no-diff")) + " small'>" + (diff > 0 ? "+" + diff : (diff < 0 ? diff : "-"))  + "</span>";
 		else
 			return "<span class='positive small'>+</span>";

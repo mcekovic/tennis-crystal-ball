@@ -11,7 +11,7 @@ function showStatsChart(chartData, elementId, width, pointCount, isPct, legendPo
 }
 
 function showChart(chartData, elementId, width, bySeason, pointCount, vDir, vMin, useLogScale, isPct, interpolate, legendPosition) {
-	if (chartData != undefined) {
+	if (chartData !== undefined) {
 		var options = {
 			width: width,
 			height: width / 2,
