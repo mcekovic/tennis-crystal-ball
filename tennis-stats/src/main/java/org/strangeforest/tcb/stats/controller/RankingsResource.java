@@ -41,7 +41,7 @@ public class RankingsResource {
 	private static final OrderBy DEFAULT_ORDER = asc("rank");
 
 	@GetMapping("/rankingsTableTable")
-	public BootgridTable<PlayerRankingsRow> rankingsTableTable(
+	public BootgridTable<? extends PlayerRankingsRow> rankingsTableTable(
 		@RequestParam(name = "rankType") RankType rankType,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date,
@@ -53,11 +53,9 @@ public class RankingsResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);
-		if (rankType.category == ELO && peak) {
-			int playerCount = Math.min(rankingsService.getPeakEloRatingsCount(rankType, filter), MAX_PLAYERS);
-			int pageSize = rowCount > 0 ? rowCount : playerCount;
-			return rankingsService.getPeakEloRatingsTable(playerCount, rankType, filter, pageSize, current);
-		}
+		int pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
+		if (rankType.category == ELO && peak)
+			return rankingsService.getPeakEloRatingsTable(rankType, filter, pageSize, current, MAX_PLAYERS);
 		else {
 			if (date == null) {
 				if (season != null)
@@ -66,7 +64,6 @@ public class RankingsResource {
 					date = rankingsService.getCurrentRankingDate(rankType);
 			}
 			String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-			int pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
 			return rankingsService.getRankingsTable(rankType, date, filter, orderBy, pageSize, current);
 		}
 	}

@@ -146,14 +146,22 @@ WITH best_elo_rating AS (
 	SELECT player_id, max(elo_rating) AS best_elo_rating, max(hard_elo_rating) AS best_hard_elo_rating, max(clay_elo_rating) AS best_clay_elo_rating, max(grass_elo_rating) AS best_grass_elo_rating, max(carpet_elo_rating) AS best_carpet_elo_rating
 	FROM player_elo_ranking
 	GROUP BY player_id
+), best_elo_rating2 AS (
+	SELECT player_id, best_elo_rating, best_hard_elo_rating, best_clay_elo_rating, best_grass_elo_rating, best_carpet_elo_rating,
+		(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.elo_rating = b.best_elo_rating) AS best_elo_rating_date,
+		(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.hard_elo_rating = b.best_hard_elo_rating) AS best_hard_elo_rating_date,
+		(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.clay_elo_rating = b.best_clay_elo_rating) AS best_clay_elo_rating_date,
+		(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.grass_elo_rating = b.best_grass_elo_rating) AS best_grass_elo_rating_date,
+		(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.carpet_elo_rating = b.best_carpet_elo_rating) AS best_carpet_elo_rating_date
+	FROM best_elo_rating b
 )
-SELECT player_id, best_elo_rating, best_hard_elo_rating, best_clay_elo_rating, best_grass_elo_rating, best_carpet_elo_rating,
-	(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.elo_rating = b.best_elo_rating) AS best_elo_rating_date,
-	(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.hard_elo_rating = b.best_hard_elo_rating) AS best_hard_elo_rating_date,
-	(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.clay_elo_rating = b.best_clay_elo_rating) AS best_clay_elo_rating_date,
-	(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.grass_elo_rating = b.best_grass_elo_rating) AS best_grass_elo_rating_date,
-	(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.carpet_elo_rating = b.best_carpet_elo_rating) AS best_carpet_elo_rating_date
-FROM best_elo_rating b;
+SELECT player_id, best_elo_rating, best_elo_rating_date, best_hard_elo_rating, best_hard_elo_rating_date, best_clay_elo_rating, best_clay_elo_rating_date, best_grass_elo_rating, best_grass_elo_rating_date, best_carpet_elo_rating, best_carpet_elo_rating_date,
+	(SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) AS best_elo_rating_event_id,
+	(SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_hard_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) AS best_hard_elo_rating_event_id,
+	(SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_clay_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) AS best_clay_elo_rating_event_id,
+	(SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_grass_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) AS best_grass_elo_rating_event_id,
+	(SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_carpet_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) AS best_carpet_elo_rating_event_id
+FROM best_elo_rating2 b;
 
 CREATE MATERIALIZED VIEW player_best_elo_rating AS SELECT * FROM player_best_elo_rating_v;
 

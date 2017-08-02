@@ -130,7 +130,7 @@
 			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2015" th:text="${aSeason}" th:selected="${aSeason == season}">2015</option>
 		</select>
 	</div>
-	<div id="dateDiv" class="btn-group margin-right" style="width: 120px">
+	<div id="dateDiv" class="btn-group margin-right" style="width: 125px">
 		<select id="date" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
 	</div>
 	<table id="rankingsTable" class="table table-condensed table-hover table-striped">

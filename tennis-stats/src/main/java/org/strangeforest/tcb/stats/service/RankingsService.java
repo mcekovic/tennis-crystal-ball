@@ -1,8 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.io.*;
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -13,8 +12,6 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
-
-import com.fasterxml.jackson.databind.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.RankCategory.*;
@@ -70,25 +67,17 @@ public class RankingsService {
 		"WHERE r.rank_date = :date%6$s\n" +
 		"ORDER BY %7$s OFFSET :offset";
 
-	private static final String PEAK_ELO_RATING_COUNT_QUERY = //language=SQL
-		"SELECT count(player_id) AS player_count\n" +
-		"FROM player_v\n" +
-		"WHERE %1$s IS NOT NULL%2$s";
-
 	private static final String PEAK_ELO_RATING_TABLE_QUERY = //language=SQL
 		"WITH best_elo_rating_ranked AS (\n" +
-		"  SELECT rank() OVER (ORDER BY %1$s DESC, %1$s_date) AS rank, player_id, %1$s AS best_elo_rating\n" +
+		"  SELECT rank() OVER (ORDER BY %1$s DESC, %1$s_date) AS rank, player_id, %1$s AS best_elo_rating, %1$s_date AS best_elo_rating_date, %1$s_event_id AS best_elo_rating_event_id\n" +
 		"  FROM player_best_elo_rating\n" +
 		"  WHERE %1$s IS NOT NULL\n" +
 		")\n" +
-		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, p.%2$s AS points_date, p.%3$s AS best_rank, p.%4$s AS best_rank_date,\n" +
-		"  (SELECT row_to_json(te) FROM (SELECT e.tournament_event_id, e.name, e.season, e.level\n" +
-		"   FROM player_tournament_event_result pr\n" +
-		"   INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"   WHERE pr.player_id = r.player_id AND e.date < p.%2$s - INTERVAL '2 day'\n" +
-		"   ORDER BY e.date DESC LIMIT 1) AS te) AS tournament_event\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, r.best_elo_rating_date AS points_date, p.%3$s AS best_rank, p.%4$s AS best_rank_date,\n" +
+		"  e.tournament_event_id, e.name AS tournament, e.season, e.level\n" +
 		"FROM best_elo_rating_ranked r\n" +
-		"INNER JOIN player_v p USING (player_id)%5$s\n" +
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"INNER JOIN tournament_event e ON e.tournament_event_id = r.best_elo_rating_event_id%5$s\n" +
 		"ORDER BY rank OFFSET :offset LIMIT :limit";
 
 	private static final String PLAYER_RANKING_QUERY =
@@ -185,10 +174,10 @@ public class RankingsService {
 	}
 
 	@Cacheable("RankingsTable.Table")
-	public BootgridTable<PlayerRankingsRow> getRankingsTable(RankType rankType, LocalDate date, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<PlayerDiffRankingsRow> getRankingsTable(RankType rankType, LocalDate date, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
 		checkRankType(rankType);
 
-		BootgridTable<PlayerRankingsRow> table = new BootgridTable<>(currentPage);
+		BootgridTable<PlayerDiffRankingsRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
@@ -204,38 +193,31 @@ public class RankingsService {
 				int points = rs.getInt("points");
 				int bestRank = rs.getInt("best_rank");
 				Date bestRankDate = rs.getDate("best_rank_date");
-				PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, null, points, bestRank, bestRankDate);
-				row.setRankDiff(getInteger(rs, "rank_diff"));
-				row.setPointsDiff(getInteger(rs, "points_diff"));
-				table.addRow(row);
+				Integer rankDiff = getInteger(rs, "rank_diff");
+				Integer pointsDiff = getInteger(rs, "points_diff");
+				table.addRow(new PlayerDiffRankingsRow(rank, playerId, name, countryId, points, bestRank, bestRankDate, rankDiff, pointsDiff));
 			}
 		);
 		table.setTotal(offset + players.get());
 		return table;
 	}
 
-	@Cacheable("PeakEloRatingsTable.Count")
-	public int getPeakEloRatingsCount(RankType rankType, PlayerListFilter filter) {
-		return jdbcTemplate.queryForObject(
-			format(PEAK_ELO_RATING_COUNT_QUERY, bestEloRatingColumn(rankType), filter.getCriteria()),
-			filter.getParams(),
-			Integer.class
-		);
-	}
-
 	@Cacheable("PeakEloRatingsTable.Table")
-	public BootgridTable<PlayerRankingsRow> getPeakEloRatingsTable(int playerCount, RankType rankType, PlayerListFilter filter, int pageSize, int currentPage) {
+	public BootgridTable<PlayerPeakEloRankingsRow> getPeakEloRatingsTable(RankType rankType, PlayerListFilter filter, int pageSize, int currentPage, int maxPlayers) {
 		checkRankType(rankType);
 		if (rankType.category != ELO)
 			throw new IllegalArgumentException("Peak ranking is available only for Elo ranking.");
 
-		BootgridTable<PlayerRankingsRow> table = new BootgridTable<>(currentPage, playerCount);
+		BootgridTable<PlayerPeakEloRankingsRow> table = new BootgridTable<>(currentPage);
+		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(PEAK_ELO_RATING_TABLE_QUERY, bestEloRatingColumn(rankType), bestEloRatingDateColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), where(filter.getCriteria())),
-			getPeakEloTableParams(filter, offset, pageSize),
+			format(PEAK_ELO_RATING_TABLE_QUERY, bestEloRatingColumn(rankType), bestEloRatingDateColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), where(filter.withPrefix("p.").getCriteria())),
+			getPeakEloTableParams(filter, offset, maxPlayers),
 			rs -> {
 				int rank = rs.getInt("rank");
+				if (rs.wasNull() || players.incrementAndGet() > pageSize)
+					return;
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
@@ -243,12 +225,12 @@ public class RankingsService {
 				int points = rs.getInt("points");
 				int bestRank = rs.getInt("best_rank");
 				Date bestRankDate = rs.getDate("best_rank_date");
-				PlayerRankingsRow row = new PlayerRankingsRow(rank, playerId, name, countryId, active, points, bestRank, bestRankDate);
-				row.setPointsDate(rs.getDate("points_date"));
-				row.setTournamentEvent(mapTournamentEventJson(rs));
-				table.addRow(row);
+				Date pointsDate = rs.getDate("points_date");
+				TournamentEventItem tournamentEvent = mapTournamentEvent(rs);
+				table.addRow(new PlayerPeakEloRankingsRow(rank, playerId, name, countryId, active, points, pointsDate, bestRank, bestRankDate, tournamentEvent));
 			}
 		);
+		table.setTotal(offset + players.get());
 		return table;
 	}
 
@@ -263,9 +245,9 @@ public class RankingsService {
 		return params.addValue("offset", offset);
 	}
 
-	private MapSqlParameterSource getPeakEloTableParams(PlayerListFilter filter, int offset, int pageSize) {
+	private MapSqlParameterSource getPeakEloTableParams(PlayerListFilter filter, int offset, int limit) {
 		MapSqlParameterSource params = filter.getParams();
-		params.addValue("limit", pageSize);
+		params.addValue("limit", limit);
 		return params.addValue("offset", offset);
 	}
 
@@ -351,24 +333,13 @@ public class RankingsService {
 		}
 	}
 
-	private static final ObjectReader READER = new ObjectMapper().reader();
-
-	private TournamentEventItem mapTournamentEventJson(ResultSet rs) throws SQLException {
-		try {
-			String json = rs.getString("tournament_event");
-			if (json == null)
-				return null;
-			JsonNode jsonNode = READER.readTree(json);
-			return new TournamentEventItem(
-				jsonNode.get("tournament_event_id").asInt(),
-				jsonNode.get("name").asText(),
-				jsonNode.get("season").asInt(),
-				jsonNode.get("level").asText()
-			);
-		}
-		catch (IOException ex) {
-			throw new SQLException(ex);
-		}
+	private TournamentEventItem mapTournamentEvent(ResultSet rs) throws SQLException {
+		return new TournamentEventItem(
+			rs.getInt("tournament_event_id"),
+			rs.getString("tournament"),
+			rs.getInt("season"),
+			rs.getString("level")
+		);
 	}
 
 

@@ -7,15 +7,17 @@ import org.springframework.jdbc.core.namedparam.*;
 import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
+import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class PlayerListFilter {
 
 	private final Boolean active;
 	private final String searchPhrase;
+	private String prefix = "";
 
-	private static final String ACTIVE_CRITERION = " AND active = :active";
-	private static final String SEARCH_CRITERION = " AND (name ILIKE '%' || :searchPhrase || '%' OR country_id ILIKE '%' || :searchPhrase || '%')";
+	private static final String ACTIVE_CRITERION = " AND %1$sactive = :active";
+	private static final String SEARCH_CRITERION = " AND (%1$sname ILIKE '%%' || :searchPhrase || '%%' OR %1$scountry_id ILIKE '%%' || :searchPhrase || '%%')";
 
 	public PlayerListFilter(String searchPhrase) {
 		this(null, searchPhrase);
@@ -38,9 +40,9 @@ public class PlayerListFilter {
 
 	protected void appendCriteria(StringBuilder criteria) {
 		if (active != null)
-			criteria.append(ACTIVE_CRITERION);
+			criteria.append(format(ACTIVE_CRITERION, prefix));
 		if (!isNullOrEmpty(searchPhrase))
-			criteria.append(SEARCH_CRITERION);
+			criteria.append(format(SEARCH_CRITERION, prefix));
 	}
 
 	public MapSqlParameterSource getParams() {
@@ -54,6 +56,11 @@ public class PlayerListFilter {
 			params.addValue("active", active);
 		if (!isNullOrEmpty(searchPhrase))
 			params.addValue("searchPhrase", searchPhrase);
+	}
+
+	public PlayerListFilter withPrefix(String prefix) {
+		this.prefix = prefix;
+		return this;
 	}
 
 
