@@ -403,7 +403,8 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round,
-		@RequestParam(name = "statsVsAll") boolean statsVsAll
+		@RequestParam(name = "statsVsAll") boolean statsVsAll,
+		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData
 	) {
 		List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, surface, round);
@@ -416,6 +417,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("round", round);
+		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("headsToHeads", headsToHeads);
 		modelMap.addAttribute("playersStats", playersStats);
 		return new ModelAndView("headsToHeadsTable", modelMap);

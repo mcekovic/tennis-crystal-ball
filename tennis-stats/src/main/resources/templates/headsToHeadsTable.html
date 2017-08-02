@@ -2,11 +2,13 @@
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
+<!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="headsToHeads" type="org.strangeforest.tcb.stats.model.HeadsToHeads"*/-->
 <!--/*@thymesVar id="playersStats" type="java.util.Map<java.lang.Integer, org.strangeforest.tcb.stats.model.PlayerStats>"*/-->
 	<script type="text/javascript">
 		$(function() {
-			$(".pct-data").hide();
+			window.h2hRawData = [(${rawData})];
+			$(h2hRawData ? ".pct-data" : ".raw-data").hide();
 			$("#headsToHeadsTable").find("span.rivalry").each(function() {
 				var $match = $(this);
 				var match = {won: $match.data("won"), score: $match.data("score"), season: $match.data("season"), tournamentEventId: $match.data("tournamenteventid"), tournament: $match.data("tournament"),
@@ -164,10 +166,10 @@
 	</table>
 	<div th:unless="${headsToHeads.empty}" class="row">
 		<div class="pct-data col-md-2">
-			<button class="btn btn-default btn-xs" onclick="toggleStatsData()" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
+			<button class="btn btn-default btn-xs" onclick="toggleStatsData(); window.h2hRawData = true" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
 		</div>
 		<div class="raw-data col-md-2">
-			<button class="btn btn-default btn-xs" onclick="toggleStatsData()" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
+			<button class="btn btn-default btn-xs" onclick="toggleStatsData(); window.h2hRawData = false" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
 		</div>
 	</div>
 </th:block>
