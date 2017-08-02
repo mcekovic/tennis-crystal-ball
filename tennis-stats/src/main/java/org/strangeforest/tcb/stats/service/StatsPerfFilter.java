@@ -10,22 +10,22 @@ import static com.google.common.base.Strings.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
-public class StatsPertFilter extends PlayerListFilter {
+public class StatsPerfFilter extends PlayerListFilter {
 
 	// Factory
 
-	public static final StatsPertFilter EMPTY = new StatsPertFilter(null, null, null, null, null, null, null, null);
+	public static final StatsPerfFilter EMPTY = new StatsPerfFilter(null, null, null, null, null, null, null, null);
 
- 	public static StatsPertFilter forSeason(Integer season) {
-		return new StatsPertFilter(null, null, season, null, null, null, null, null);
+ 	public static StatsPerfFilter forSeason(Integer season) {
+		return new StatsPerfFilter(null, null, season, null, null, null, null, null);
 	}
 
-	public static StatsPertFilter forSeasonAndTournament(Integer season, Integer tournamentId) {
-		return new StatsPertFilter(null, null, season, null, null, tournamentId, null, null);
+	public static StatsPerfFilter forSeasonAndTournament(Integer season, Integer tournamentId) {
+		return new StatsPerfFilter(null, null, season, null, null, tournamentId, null, null);
 	}
 
-	public static StatsPertFilter forSeasonAndTournament(Boolean active, String searchPhrase, Integer season, Integer tournamentId) {
-		return new StatsPertFilter(active, searchPhrase, season, null, null, tournamentId, null, null);
+	public static StatsPerfFilter forSeasonAndTournament(Boolean active, String searchPhrase, Integer season, Integer tournamentId) {
+		return new StatsPerfFilter(active, searchPhrase, season, null, null, tournamentId, null, null);
 	}
 
 
@@ -47,11 +47,11 @@ public class StatsPertFilter extends PlayerListFilter {
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND tournament_event_id = :tournamentEventId";
 	private static final String OPPONENT_CRITERION         = " AND opponent_id = :opponentId";
 
-	public StatsPertFilter(Integer season, String surface, Integer tournamentId, Integer tournamentEventId) {
+	public StatsPerfFilter(Integer season, String surface, Integer tournamentId, Integer tournamentEventId) {
 		this(null, null, season, null, surface, tournamentId, tournamentEventId, null);
 	}
 
-	public StatsPertFilter(Boolean active, String searchPhrase, Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, Integer opponentId) {
+	public StatsPerfFilter(Boolean active, String searchPhrase, Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, Integer opponentId) {
 		super(active, searchPhrase);
 		this.season = season;
 		this.level = level;
@@ -166,9 +166,9 @@ public class StatsPertFilter extends PlayerListFilter {
 
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof StatsPertFilter)) return false;
+		if (!(o instanceof StatsPerfFilter)) return false;
 		if (!super.equals(o)) return false;
-		StatsPertFilter filter = (StatsPertFilter)o;
+		StatsPerfFilter filter = (StatsPerfFilter)o;
 		return Objects.equals(season, filter.season) &&	stringsEqual(level, filter.level) &&	stringsEqual(surface, filter.surface)
 		    && Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) && Objects.equals(opponentId, filter.opponentId);
 	}

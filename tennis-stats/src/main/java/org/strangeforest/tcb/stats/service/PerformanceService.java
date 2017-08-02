@@ -96,10 +96,10 @@ public class PerformanceService {
 
 
 	public PlayerPerformance getPlayerPerformance(int playerId) {
-		return getPlayerPerformance(playerId, StatsPertFilter.EMPTY);
+		return getPlayerPerformance(playerId, StatsPerfFilter.EMPTY);
 	}
 
-	private PlayerPerformance getPlayerPerformance(int playerId, StatsPertFilter filter) {
+	private PlayerPerformance getPlayerPerformance(int playerId, StatsPerfFilter filter) {
 		MapSqlParameterSource params = filter.getParams().addValue("playerId", playerId);
 		String tableName = getPlayerPerformanceTableName(filter);
 		String perfColumns = filter.isEmpty() || filter.isForSeason() ? PLAYER_PERFORMANCE_COLUMNS : PLAYER_PERFORMANCE_SUMMED_COLUMNS;
@@ -110,7 +110,7 @@ public class PerformanceService {
 		);
 	}
 
-	private String getPlayerPerformanceTableName(StatsPertFilter filter) {
+	private String getPlayerPerformanceTableName(StatsPerfFilter filter) {
 		if (filter.isEmpty())
 			return "player_performance";
 		else if (filter.isForSeason())
@@ -163,7 +163,7 @@ public class PerformanceService {
 
 	// Player Season
 
-	public PlayerPerformanceEx getPlayerPerformanceEx(int playerId, StatsPertFilter filter) {
+	public PlayerPerformanceEx getPlayerPerformanceEx(int playerId, StatsPerfFilter filter) {
 		PlayerPerformance performance = getPlayerPerformance(playerId, filter);
 		PlayerPerformanceEx performanceEx = new PlayerPerformanceEx(performance);
 

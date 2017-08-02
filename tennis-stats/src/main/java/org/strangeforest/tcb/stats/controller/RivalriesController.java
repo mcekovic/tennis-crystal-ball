@@ -102,7 +102,7 @@ public class RivalriesController extends PageController {
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season, 4);
 		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season, 4);
 		List<EventResult> eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet()).stream().limit(4).collect(toList());
-		StatsPertFilter seasonFilter = StatsPertFilter.forSeason(season);
+		StatsPerfFilter seasonFilter = StatsPerfFilter.forSeason(season);
 		PlayerPerformanceEx seasonPerf1 = performanceService.getPlayerPerformanceEx(playerId1, seasonFilter);
 		PlayerPerformanceEx seasonPerf2 = performanceService.getPlayerPerformanceEx(playerId2, seasonFilter);
 		Set<Surface> surfaces = union(seasonPerf1.getSurfaceMatches().keySet(), seasonPerf2.getSurfaceMatches().keySet());
@@ -191,8 +191,8 @@ public class RivalriesController extends PageController {
 	) {
 		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
 		Set<TournamentItem> tournaments = getTournamentsUnion(playerId1, playerId2);
-		PlayerPerformanceEx perf1 = performanceService.getPlayerPerformanceEx(playerId1, new StatsPertFilter(null, null, season, level, surface, tournamentId, null, opponent ? playerId2 : null));
-		PlayerPerformanceEx perf2 = performanceService.getPlayerPerformanceEx(playerId2, new StatsPertFilter(null, null, season, level, surface, tournamentId, null, opponent ? playerId1 : null));
+		PlayerPerformanceEx perf1 = performanceService.getPlayerPerformanceEx(playerId1, new StatsPerfFilter(null, null, season, level, surface, tournamentId, null, opponent ? playerId2 : null));
+		PlayerPerformanceEx perf2 = performanceService.getPlayerPerformanceEx(playerId2, new StatsPerfFilter(null, null, season, level, surface, tournamentId, null, opponent ? playerId1 : null));
 		Set<Surface> perfSurfaces = union(perf1.getSurfaceMatches().keySet(), perf2.getSurfaceMatches().keySet());
 		Set<TournamentLevel> perfLevels = union(perf1.getLevelMatches().keySet(), perf2.getLevelMatches().keySet());
 		Set<Opponent> perfOppositions = union(perf1.getOppositionMatches().keySet(), perf2.getOppositionMatches().keySet());
