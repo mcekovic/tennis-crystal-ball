@@ -47,7 +47,7 @@
 						<tr class="pct-data">
 							<td>Double Fault %</td>
 							<th th:if="${compareStats}" th:text="${hasPointCompareStats ? statsFormatUtil.formatPct(compareStats.doubleFaultPct) : _}" class="text-right">3%</th>
-							<th th:if="${compareStats}" th:text="${hasPointCompareStats ? statsFormatUtil.formatPctDiff(compareStats.doubleFaultPct, stats.doubleFaultPct) : _}" class="text-right " th:class="${statsFormatUtil.pnClass(compareStats.doubleFaultPct, stats.doubleFaultPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${hasPointCompareStats ? statsFormatUtil.formatPctDiff(compareStats.doubleFaultPct, stats.doubleFaultPct) : _}" class="text-right " th:class="${statsFormatUtil.pnClass(stats.doubleFaultPct, compareStats.doubleFaultPct)}">0%</th>
 							<th th:text="${statsFormatUtil.formatPct(stats.doubleFaultPct)}" class="text-right">3%</th>
 						</tr>
 						<tr class="pct-data">
@@ -141,7 +141,7 @@
 						<tr class="pct-data">
 							<td>Ace Against %</td>
 							<th th:if="${compareStats}" th:text="${hasPointCompareStats ? statsFormatUtil.formatPct(compareStats.aceAgainstPct) : _}" class="text-right">10%</th>
-							<th th:if="${compareStats}" th:text="${hasPointCompareStats ? statsFormatUtil.formatPctDiff(compareStats.aceAgainstPct, stats.aceAgainstPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.aceAgainstPct, stats.aceAgainstPct)}">0%</th>
+							<th th:if="${compareStats}" th:text="${hasPointCompareStats ? statsFormatUtil.formatPctDiff(compareStats.aceAgainstPct, stats.aceAgainstPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats.aceAgainstPct, compareStats.aceAgainstPct)}">0%</th>
 							<th th:text="${statsFormatUtil.formatPct(stats.aceAgainstPct)}" class="text-right">10%</th>
 						</tr>
 						<tr class="pct-data">
