@@ -24,6 +24,7 @@
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <script type="text/javascript">
+	var isChrome = navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
 	var lastMatchesStatsFilter;
 	$(function() {
 		var $matchesTable = $("#matchesTable");
@@ -31,7 +32,7 @@
 		setBootgridColumnsVisible($matchesTable, ["wonLost"], deviceGreaterOrEqual(device, "lg"));
 		setBootgridColumnsVisible($matchesTable, ["stats"], deviceGreaterOrEqual(device, "md"));
 		setBootgridColumnsVisible($matchesTable, ["surface"], deviceGreaterOrEqual(device, "sm"));
-		setBootgridColumnsVisible($matchesTable, ["matchEx"], false);
+		setBootgridColumnsVisible($matchesTable, ["matchEx", "h2h"], false);
 		if (!deviceGreaterOrEqual(device, "md"))
 			setBootgridColumnsWidths($matchesTable, ["tournament", "match", "score"], [150, 250, 125]);
 		$matchesTable.bootgrid({
@@ -72,6 +73,9 @@
 				"matchEx": matchExFormatter([(${playerId})]),
 				"stats": function(column, row) {
 					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>" : "";
+				},
+				"h2h": function(column, row) {
+					return "<a href='/headToHead?playerId1=[(${playerId})]&playerId2=" + (row.winner.id == [(${playerId})] ? row.loser.id : row.winner.id) + "' class='label label-primary label-btn'" + (isChrome ? " style='padding: 3px 7px'" : "") + " title='Show Head-to-Head'>H2H</a>"
 				}
 			},
 			labels: {
@@ -335,6 +339,7 @@
 		<th data-column-id="matchEx" data-formatter="matchEx" data-sortable="false" data-width="420">Match Ex</th>
 		<th data-column-id="score" data-sortable="false" data-width="175">Score</th>
 		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>
+		<th data-column-id="h2h" data-formatter="h2h" data-sortable="false" data-width="55" data-css-class="h2h-column">H2H</th>
 	</tr>
 	</thead>
 </table>

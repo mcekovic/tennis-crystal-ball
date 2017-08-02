@@ -9,7 +9,7 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
 	<title>Greatest Rivalries</title>
 	<script type="text/javascript">
-		var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+		var isChrome = navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
 		$(function() {
 			var $rivalriesTable = $("#greatestRivalriesTable");
 			var device = detectDevice();
