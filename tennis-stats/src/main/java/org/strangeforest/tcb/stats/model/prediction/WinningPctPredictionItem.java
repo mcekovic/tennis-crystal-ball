@@ -58,4 +58,8 @@ public enum WinningPctPredictionItem implements MatchPredictionItem {
 		this.weight = weight;
 		area.calculateItemAdjustmentWeight();
 	}
+
+	@Override public String toString() {
+		return area + "[" + super.toString() + "]";
+	}
 }

@@ -134,8 +134,8 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 				double p12 = p1 + p2;
 				if (p12 > 0.0) {
 					DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
-					prediction.addItemProbability1(getArea(), item, weight, probabilityTransformer.applyAsDouble(p1 / p12));
-					prediction.addItemProbability2(getArea(), item, weight, probabilityTransformer.applyAsDouble(p2 / p12));
+					prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(p1 / p12));
+					prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(p2 / p12));
 				}
 			}
 		}

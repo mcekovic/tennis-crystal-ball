@@ -16,9 +16,12 @@
 <!--/*@thymesVar id="prediction" type="org.strangeforest.tcb.stats.model.prediction.MatchPrediction"*/-->
 <!--/*@thymesVar id="priceFormats" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat[]"*/-->
 <!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat"*/-->
+<!--/*@thymesVar id="showDetails" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 <script type="text/javascript">
+	var showDetails = [(${showDetails})];
 	$(function() {
+		showPredictionDetails(showDetails);
 		datePicker("predictionDate");
 		datePicker("predictionDate1");
 		datePicker("predictionDate2");
@@ -55,6 +58,7 @@
 				url += "&dateSelector2=" + dateSelector2;
 		}
 		url += "&priceFormat=" + $("#h2hPriceFormat").val();
+		url += "&showDetails=" + showDetails;
 		$("#hypotheticalMatchup").load(url);
 	}
 	function onSameDateChanged() {
@@ -83,6 +87,22 @@
 			var $price = $(this);
 			$price.css("display", $price.data("price-format") == priceFormat ? "block" : "none");
 		});
+	}
+	function showPredictionDetails(show) {
+		var $showDetails = $("#showDetails");
+		var $hideDetails = $("#hideDetails");
+		var $details = $("#hypotheticalMatchTable tr.prediction-details");
+		if (show) {
+			$showDetails.hide();
+			$hideDetails.show();
+			$details.show();
+		}
+		else {
+			$showDetails.show();
+			$hideDetails.hide();
+			$details.hide();
+		}
+		showDetails = show;
 	}
 </script>
 <div class="row">
@@ -163,7 +183,7 @@
 	</div>
 </div>
 <br/>
-<table class="table table-condensed text-nowrap">
+<table id="hypotheticalMatchTable" class="table table-condensed text-nowrap">
 	<style scoped="scoped">
 		h4 {
 			margin-top: 0;
@@ -206,15 +226,6 @@
 		</th>
 		<td class="text-left">
 			<h4 th:each="aPriceFormat : ${priceFormats}" th:data-price-format="${aPriceFormat}" th:text="${prediction.winPrices2[aPriceFormat.name()]}">3.00</h4>
-		</td>
-	</tr>
-	<tr>
-		<td class="text-right">
-			<div th:text="${#numbers.formatDecimal(100 * prediction.predictability1, 1, 1) + '%'}">50.0%</div>
-		</td>
-		<th class="text-center">Predictability</th>
-		<td class="text-left">
-			<div th:text="${#numbers.formatDecimal(100 * prediction.predictability2, 1, 1) + '%'}">50.0%</div>
 		</td>
 	</tr>
 	<tr th:if="${prediction.rankingData1.rank != null || prediction.rankingData2.rank != null}">
@@ -260,6 +271,32 @@
 		<th class="text-center">H2H</th>
 		<td class="text-left">
 			<div th:text="${stats1.matchesLost}">9</div>
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+		<td class="text-center">
+			<button id="showDetails" class="pct-data btn btn-default btn-xs" onclick="showPredictionDetails(true)" title="Show prediction details"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Show Details</button>
+			<button id="hideDetails" class="raw-data btn btn-default btn-xs prediction-details" onclick="showPredictionDetails(false)" title="Hide prediction details"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;Hide Details</button>
+		</td>
+		<td></td>
+	</tr>
+	<tr class="prediction-details">
+		<td class="text-right">
+			<div th:text="${#numbers.formatDecimal(100 * prediction.predictability1, 1, 1) + '%'}">50.0%</div>
+		</td>
+		<th class="text-center">Predictability</th>
+		<td class="text-left">
+			<div th:text="${#numbers.formatDecimal(100 * prediction.predictability2, 1, 1) + '%'}">50.0%</div>
+		</td>
+	</tr>
+	<tr th:each="item : ${prediction.items}" class="prediction-details">
+		<td class="text-right">
+			<div th:text="${#numbers.formatDecimal(100 * prediction.getItemProbability1(item).probability, 1, 1) + '%'}">50.0%</div>
+		</td>
+		<th class="text-center" th:text="${item}">ELO</th>
+		<td class="text-left">
+			<div th:text="${#numbers.formatDecimal(100 * prediction.getItemProbability2(item).probability, 1, 1) + '%'}">50.0%</div>
 		</td>
 	</tr>
 </table>

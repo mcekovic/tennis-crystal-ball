@@ -36,8 +36,8 @@ public class RankingMatchPredictor implements MatchPredictor {
 	private void addRankItemProbabilities(MatchPrediction prediction, RankingPredictionItem item, Integer rank1, Integer rank2) {
 		double weight = item.getWeight() * presenceWeight(rank1, rank2);
 		if (weight > 0.0) {
-			prediction.addItemProbability1(getArea(), item, weight, rankWinProbability(rank1, rank2));
-			prediction.addItemProbability2(getArea(), item, weight, rankWinProbability(rank2, rank1));
+			prediction.addItemProbability1(item, weight, rankWinProbability(rank1, rank2));
+			prediction.addItemProbability2(item, weight, rankWinProbability(rank2, rank1));
 		}
 	}
 
@@ -53,8 +53,8 @@ public class RankingMatchPredictor implements MatchPredictor {
 	private void addRankPointsItemProbabilities(MatchPrediction prediction, RankingPredictionItem item, Integer rankPoints1, Integer rankPoints2) {
 		double weight = item.getWeight() * presenceWeight(rankPoints1, rankPoints2);
 		if (weight > 0.0) {
-			prediction.addItemProbability1(getArea(), item, weight, rankPointsWinProbability(rankPoints1, rankPoints2));
-			prediction.addItemProbability2(getArea(), item, weight, rankPointsWinProbability(rankPoints2, rankPoints1));
+			prediction.addItemProbability1(item, weight, rankPointsWinProbability(rankPoints1, rankPoints2));
+			prediction.addItemProbability2(item, weight, rankPointsWinProbability(rankPoints2, rankPoints1));
 		}
 	}
 
@@ -70,8 +70,8 @@ public class RankingMatchPredictor implements MatchPredictor {
 	private void addEloItemProbabilities(MatchPrediction prediction, RankingPredictionItem item, Integer eloRating1, Integer eloRating2) {
 		double weight = item.getWeight() * presenceWeight(eloRating1, eloRating2);
 		if (weight > 0.0) {
-			prediction.addItemProbability1(getArea(), item, weight, eloWinProbability(eloRating1, eloRating2));
-			prediction.addItemProbability2(getArea(), item, weight, eloWinProbability(eloRating2, eloRating1));
+			prediction.addItemProbability1(item, weight, eloWinProbability(eloRating1, eloRating2));
+			prediction.addItemProbability2(item, weight, eloWinProbability(eloRating2, eloRating1));
 		}
 	}
 

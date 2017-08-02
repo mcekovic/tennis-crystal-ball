@@ -15,8 +15,8 @@ public final class MatchPrediction {
 
 	private static MatchPrediction prediction(double winProbability1) {
 		MatchPrediction prediction = new MatchPrediction();
-		prediction.addItemProbability1(PredictionArea.RANKING, RankingPredictionItem.RANK, 1.0, winProbability1);
-		prediction.addItemProbability2(PredictionArea.RANKING, RankingPredictionItem.RANK, 1.0, 1.0 - winProbability1);
+		prediction.addItemProbability1(RankingPredictionItem.RANK, 1.0, winProbability1);
+		prediction.addItemProbability2(RankingPredictionItem.RANK, 1.0, 1.0 - winProbability1);
 		return prediction;
 	}
 
@@ -65,6 +65,10 @@ public final class MatchPrediction {
 		return weightProbabilitySum / weightSum;
 	}
 
+	public List<PredictionItem> getItems() {
+		return itemProbabilities1.stream().map(WeightedProbability::getItem).collect(toList());
+	}
+
 	public List<WeightedProbability> getItemProbabilities1() {
 		return itemProbabilities1;
 	}
@@ -73,12 +77,28 @@ public final class MatchPrediction {
 		return itemProbabilities2;
 	}
 
+	public WeightedProbability getItemProbability1(PredictionItem item) {
+		return getWeightedProbability(itemProbabilities1, item);
+	}
+
+	public WeightedProbability getItemProbability2(PredictionItem item) {
+		return getWeightedProbability(itemProbabilities2, item);
+	}
+
+	private static WeightedProbability getWeightedProbability(List<WeightedProbability> itemProbabilities, PredictionItem item) {
+		return itemProbabilities.stream().filter(p -> p.getItem() == item).findFirst().orElse(new WeightedProbability(item, 0.0, 0.0));
+	}
+
 	public double getItemProbabilitiesWeight1() {
-		return itemProbabilities1.stream().mapToDouble(WeightedProbability::getWeight).sum();
+		return getItemProbabilitiesWeight(itemProbabilities1);
 	}
 
 	public double getItemProbabilitiesWeight2() {
-		return itemProbabilities2.stream().mapToDouble(WeightedProbability::getWeight).sum();
+		return getItemProbabilitiesWeight(itemProbabilities2);
+	}
+
+	private static double getItemProbabilitiesWeight(List<WeightedProbability> itemProbabilities) {
+		return itemProbabilities.stream().mapToDouble(WeightedProbability::getWeight).sum();
 	}
 
 	public double getPredictability1() {
@@ -93,16 +113,16 @@ public final class MatchPrediction {
 		return itemProbabilities1.isEmpty() && itemProbabilities2.isEmpty();
 	}
 
-	public void addItemProbability1(PredictionArea area, PredictionItem item, double weight, double probability) {
+	public void addItemProbability1(PredictionItem item, double weight, double probability) {
 		if (weight > 0.0) {
-			itemProbabilities1.add(new WeightedProbability(area, item, weight, probability));
+			itemProbabilities1.add(new WeightedProbability(item, weight, probability));
 			winProbability1 = null;
 		}
 	}
 
-	public void addItemProbability2(PredictionArea area, PredictionItem item, double weight, double probability) {
+	public void addItemProbability2(PredictionItem item, double weight, double probability) {
 		if (weight > 0.0) {
-			itemProbabilities2.add(new WeightedProbability(area, item, weight, probability));
+			itemProbabilities2.add(new WeightedProbability(item, weight, probability));
 			winProbability2 = null;
 		}
 	}
@@ -120,11 +140,15 @@ public final class MatchPrediction {
 	}
 
 	private List<WeightedProbability> getItemProbabilities1(double weight) {
-		return itemProbabilities1.stream().map(p -> p.weighted(weight)).collect(toList());
+		return getItemProbabilities(itemProbabilities1, weight);
 	}
 
 	private List<WeightedProbability> getItemProbabilities2(double weight) {
-		return itemProbabilities2.stream().map(p -> p.weighted(weight)).collect(toList());
+		return getItemProbabilities(itemProbabilities2, weight);
+	}
+
+	private static List<WeightedProbability> getItemProbabilities(List<WeightedProbability> itemProbabilities, double weight) {
+		return itemProbabilities.stream().map(p -> p.weighted(weight)).collect(toList());
 	}
 
 	public RankingData getRankingData1() {

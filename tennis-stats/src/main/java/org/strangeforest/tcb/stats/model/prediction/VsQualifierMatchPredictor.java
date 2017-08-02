@@ -77,8 +77,8 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 				int lost = total - won;
 				double weight = item.getWeight() * weight(total);
 				DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
-				prediction.addItemProbability1(getArea(), item, weight, probabilityTransformer.applyAsDouble(1.0 * won / total));
-				prediction.addItemProbability2(getArea(), item, weight, probabilityTransformer.applyAsDouble(1.0 * lost / total));
+				prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(1.0 * won / total));
+				prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(1.0 * lost / total));
 			}
 		}
 	}
