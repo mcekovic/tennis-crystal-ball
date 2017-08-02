@@ -310,8 +310,8 @@ public class RivalriesController extends PageController {
    ) {
 		Player player1 = playerService.getPlayer(playerId1).get();
 		Player player2 = playerService.getPlayer(playerId2).get();
-		Date aDate1 = dateForMatchup(dateSelector1, date1, date, player1);
-		Date aDate2 = dateForMatchup(dateSelector2, date2, date, player2);
+		LocalDate aDate1 = dateForMatchup(dateSelector1, date1, date, player1);
+		LocalDate aDate2 = dateForMatchup(dateSelector2, date2, date, player2);
 		MatchPrediction prediction = matchPredictionService.predictMatch(
 			playerId1, playerId2, aDate1, aDate2,
 			Surface.safeDecode(surface), TournamentLevel.safeDecode(level), Round.safeDecode(round)
@@ -327,9 +327,9 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("round", round);
-		modelMap.addAttribute("date", date != null ? toDate(date) : aDate1);
-		modelMap.addAttribute("date1", aDate1);
-		modelMap.addAttribute("date2", aDate2);
+		modelMap.addAttribute("date", toDate(date != null ? date : aDate1));
+		modelMap.addAttribute("date1", toDate(aDate1));
+		modelMap.addAttribute("date2", toDate(aDate2));
 		modelMap.addAttribute("dateSelector1", dateSelector1);
 		modelMap.addAttribute("dateSelector2", dateSelector2);
 		modelMap.addAttribute("prediction", prediction);
@@ -339,47 +339,43 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("h2hHypotheticalMatchup", modelMap);
 	}
 
-	private Date dateForMatchup(String dateSelector, LocalDate playerDate, LocalDate date, Player player) {
-		Date aDate;
+	private LocalDate dateForMatchup(String dateSelector, LocalDate playerDate, LocalDate date, Player player) {
+		LocalDate aDate;
 		if (!isNullOrEmpty(dateSelector))
 			aDate = selectDate(player, dateSelector);
 		else
-			aDate = playerDate != null ? toDate(playerDate) : toDate(date);
+			aDate = playerDate != null ? playerDate : date;
 		return aDate != null ? aDate : defaultDate(player);
 	}
 
-	private Date selectDate(Player player, String dateSelector) {
+	private LocalDate selectDate(Player player, String dateSelector) {
 		int playerId = player.getId();
 		switch (dateSelector) {
-			case "Today": return today();
+			case "Today": return LocalDate.now();
 			case "CareerEnd": return playerService.getPlayerCareerEnd(playerId);
-			case "PeakRank": return rankingsService.getRankingHighlights(playerId).getBestRankDate();
-			case "PeakRankPoints": return rankingsService.getRankingHighlights(playerId).getBestRankPointsDate();
-			case "PeakEloRank": return rankingsService.getRankingHighlights(playerId).getBestEloRankDate();
-			case "PeakEloRating": return rankingsService.getRankingHighlights(playerId).getBestEloRatingDate();
-			case "PeakHardEloRank": return rankingsService.getRankingHighlights(playerId).getBestHardEloRankDate();
-			case "PeakHardEloRating": return rankingsService.getRankingHighlights(playerId).getBestHardEloRatingDate();
-			case "PeakClayEloRank": return rankingsService.getRankingHighlights(playerId).getBestClayEloRankDate();
-			case "PeakClayEloRating": return rankingsService.getRankingHighlights(playerId).getBestClayEloRatingDate();
-			case "PeakGrassEloRank": return rankingsService.getRankingHighlights(playerId).getBestGrassEloRankDate();
-			case "PeakGrassEloRating": return rankingsService.getRankingHighlights(playerId).getBestGrassEloRatingDate();
-			case "PeakCarpetEloRank": return rankingsService.getRankingHighlights(playerId).getBestCarpetEloRankDate();
-			case "PeakCarpetEloRating": return rankingsService.getRankingHighlights(playerId).getBestCarpetEloRatingDate();
+			case "PeakRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestRankDate());
+			case "PeakRankPoints": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestRankPointsDate());
+			case "PeakEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestEloRankDate());
+			case "PeakEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestEloRatingDate());
+			case "PeakHardEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestHardEloRankDate());
+			case "PeakHardEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestHardEloRatingDate());
+			case "PeakClayEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestClayEloRankDate());
+			case "PeakClayEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestClayEloRatingDate());
+			case "PeakGrassEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestGrassEloRankDate());
+			case "PeakGrassEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestGrassEloRatingDate());
+			case "PeakCarpetEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestCarpetEloRankDate());
+			case "PeakCarpetEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestCarpetEloRatingDate());
 			default: return null;
 		}
 	}
 
-	private Date defaultDate(Player player) {
+	private LocalDate defaultDate(Player player) {
 		if (player.isActive())
-			return today();
+			return LocalDate.now();
 		else {
-			Date careerEndDate = playerService.getPlayerCareerEnd(player.getId());
-			return careerEndDate != null ? careerEndDate : today();
+			LocalDate careerEndDate = playerService.getPlayerCareerEnd(player.getId());
+			return careerEndDate != null ? careerEndDate : LocalDate.now();
 		}
-	}
-
-	private static Date today() {
-		return toDate(LocalDate.now());
 	}
 
 	@GetMapping("/headsToHeads")

@@ -1,10 +1,10 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
-import java.util.*;
+import java.time.*;
 
 public final class MatchData {
 
-	private final Date date;
+	private final LocalDate date;
 	private final String level;
 	private final String surface;
 	private final int tournamentId;
@@ -19,7 +19,7 @@ public final class MatchData {
 	private final int pSets;
 	private final int oSets;
 
-	public MatchData(Date date, String level, String surface, int tournamentId, String round, int opponentId, Integer opponentRank, String opponentHand, String opponentBackhand, String opponentEntry, int pMatches, int oMatches, int pSets, int oSets) {
+	public MatchData(LocalDate date, String level, String surface, int tournamentId, String round, int opponentId, Integer opponentRank, String opponentHand, String opponentBackhand, String opponentEntry, int pMatches, int oMatches, int pSets, int oSets) {
 		this.date = date;
 		this.level = level;
 		this.surface = surface;
@@ -36,7 +36,7 @@ public final class MatchData {
 		this.oSets = oSets;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 

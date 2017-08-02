@@ -1,20 +1,23 @@
 package org.strangeforest.tcb.dataload
 
-import groovy.transform.*
+import java.time.*
+
 import org.strangeforest.tcb.stats.model.*
 import org.strangeforest.tcb.stats.service.*
+
+import groovy.transform.*
 
 class TournamentMatchPredictor {
 
 	Map matchProbabilities = [:]
 	MatchPredictionService predictor
-	Date date
+	LocalDate date
 	Surface surface
 	TournamentLevel level
 	int tournamentId
 	short bestOf
 
-	TournamentMatchPredictor(MatchPredictionService predictor, Date date, Surface surface, TournamentLevel level, int tournamentId, int bestOf) {
+	TournamentMatchPredictor(MatchPredictionService predictor, LocalDate date, Surface surface, TournamentLevel level, int tournamentId, int bestOf) {
 		this.predictor = predictor
 		this.date = date
 		this.surface = surface

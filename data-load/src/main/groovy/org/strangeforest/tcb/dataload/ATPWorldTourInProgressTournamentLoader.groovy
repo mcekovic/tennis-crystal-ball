@@ -1,20 +1,22 @@
 package org.strangeforest.tcb.dataload
 
-import com.google.common.base.*
-import com.google.common.hash.*
-import groovy.sql.*
+import java.time.*
+
 import org.jsoup.nodes.*
 import org.jsoup.select.*
 import org.springframework.jdbc.core.namedparam.*
 import org.strangeforest.tcb.stats.model.*
 import org.strangeforest.tcb.stats.service.*
 
-import java.time.*
+import com.google.common.base.*
+import com.google.common.hash.*
+import groovy.sql.*
 
 import static com.google.common.base.Strings.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
 import static org.strangeforest.tcb.dataload.LoadParams.*
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
+import static org.strangeforest.tcb.util.DateUtil.*
 
 class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentLoader {
 
@@ -325,7 +327,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 		def firstMatch = matches[0]
 		def inProgressEventId = firstMatch.in_progress_event_id
-		def date = firstMatch.date
+		def date = toLocalDate firstMatch.date
 		def surface = Surface.decode(firstMatch.surface)
 		def level = TournamentLevel.decode(firstMatch.level)
 		def tournamentId = firstMatch.tournament_id

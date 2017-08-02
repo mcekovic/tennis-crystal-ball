@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
+import java.time.*;
 import java.util.Date;
 import java.util.*;
 import java.util.stream.*;
@@ -93,9 +94,9 @@ public class PlayerService {
 	}
 
 	@Cacheable("PlayerCareerEnd")
-	public Date getPlayerCareerEnd(int playerId) {
+	public LocalDate getPlayerCareerEnd(int playerId) {
 		Date lastMatchDate = jdbcTemplate.queryForObject(PLAYER_CAREER_END_QUERY, params("playerId", playerId), Date.class);
-		return lastMatchDate != null ? toDate(toLocalDate(lastMatchDate).plusDays(1L)) : null;
+		return lastMatchDate != null ? toLocalDate(lastMatchDate).plusDays(1L) : null;
 	}
 
 	public List<AutocompleteOption> autocompletePlayer(String name) {

@@ -15,8 +15,8 @@ public class H2HMatchPredictor implements MatchPredictor {
 	private final List<MatchData> matchData2;
 	private final int playerId1;
 	private final int playerId2;
-	private final Date date1;
-	private final Date date2;
+	private final LocalDate date1;
+	private final LocalDate date2;
 	private final Surface surface;
 	private final TournamentLevel level;
 	private final Integer tournamentId;
@@ -26,8 +26,8 @@ public class H2HMatchPredictor implements MatchPredictor {
 	static final int MATCH_RECENT_PERIOD_YEARS = 3;
 	static final int SET_RECENT_PERIOD_YEARS = 2;
 
-	public H2HMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, int playerId1, int playerId2, Date date1, Date date2,
-	                         Surface surface, TournamentLevel level, Integer tournamentId,  Round round, short bestOf) {
+	public H2HMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, int playerId1, int playerId2, LocalDate date1, LocalDate date2,
+	                         Surface surface, TournamentLevel level, Integer tournamentId, Round round, short bestOf) {
 		this.matchData1 = matchData1;
 		this.matchData2 = matchData2;
 		this.playerId1 = playerId1;

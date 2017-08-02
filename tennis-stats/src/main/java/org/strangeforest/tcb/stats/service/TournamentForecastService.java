@@ -1,8 +1,8 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
+import java.time.*;
 import java.util.*;
-import java.util.Date;
 import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -254,6 +254,7 @@ public class TournamentForecastService {
 		String round = result.name();
 		String nextRound = result.next().name();
 		List<PlayerForecast> nextRemainingPlayers = new ArrayList<>();
+		LocalDate today = LocalDate.now();
 		for (Iterator<PlayerForecast> iter = remainingPlayers.iterator(); iter.hasNext(); ) {
 			PlayerForecast player1 = getNextCandidate(iter, round, pinnedPlayerId);
 			PlayerForecast player2 = getNextCandidate(iter, round, pinnedPlayerId);
@@ -261,7 +262,7 @@ public class TournamentForecastService {
 				if (playerWins(player1, player2, nextRound, pinnedPlayerId) == player2) {
 					PlayerForecast player = player1; player1 = player2; player2 = player;
 				}
-				addMatchProbability(event, player1, player2, round);
+				addMatchProbability(event, player1, player2, round, today);
 				probableMatches.addMatch((short)matchNum.incrementAndGet(),
 					new TournamentEventMatch(matchId.incrementAndGet(), round, player1, player2, emptyList(), null, false)
 				);
@@ -290,9 +291,9 @@ public class TournamentForecastService {
 		return player1.getRawProbability(round) >= player2.getRawProbability(round) ? player1 : player2;
 	}
 
-	private void addMatchProbability(InProgressEvent event, PlayerForecast player1, PlayerForecast player2, String round) {
+	private void addMatchProbability(InProgressEvent event, PlayerForecast player1, PlayerForecast player2, String round, LocalDate date) {
 		MatchPrediction prediction = matchPredictionService.predictMatch(
-			player1.getId(), player2.getId(), new Date(),
+			player1.getId(), player2.getId(), date,
 			Surface.safeDecode(event.getSurface()), TournamentLevel.safeDecode(event.getLevel()), Round.safeDecode(round)
 		);
 		player1.addForecast("M_" + round, prediction.getWinProbability1());

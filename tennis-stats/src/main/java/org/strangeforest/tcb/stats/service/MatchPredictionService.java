@@ -1,10 +1,9 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
-import java.util.Date;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
-import javax.annotation.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -20,6 +19,7 @@ import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Service
 public class MatchPredictionService {
@@ -66,19 +66,19 @@ public class MatchPredictionService {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date, Surface surface, TournamentLevel level, Round round) {
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Surface surface, TournamentLevel level, Round round) {
 		return predictMatch(playerId1, playerId2, date, date, surface, level, null, round, null);
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date, Surface surface, TournamentLevel level, int tournamentId, Round round, Short bestOf) {
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Surface surface, TournamentLevel level, int tournamentId, Round round, Short bestOf) {
 		return predictMatch(playerId1, playerId2, date, date, surface, level, tournamentId, round, bestOf);
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date1, Date date2, Surface surface, TournamentLevel level, Round round) {
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Round round) {
 		return predictMatch(playerId1, playerId2, date1, date2, surface, level, null, round, null);
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, Date date1, Date date2, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
 		if (playerId1 > 0) {
 			if (playerId2 > 0)
 				return predictMatchBetweenEntries(playerId1, playerId2, date1, date2, surface, level, tournamentId, round, bestOf);
@@ -93,7 +93,7 @@ public class MatchPredictionService {
 		}
 	}
 
-	private MatchPrediction predictMatchBetweenEntries(int playerId1, int playerId2, Date date1, Date date2, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
+	private MatchPrediction predictMatchBetweenEntries(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
 		PlayerData playerData1 = getPlayerData(playerId1);
 		PlayerData playerData2 = getPlayerData(playerId2);
 		RankingData rankingData1 = getRankingData(playerId1, date1, surface);
@@ -111,7 +111,7 @@ public class MatchPredictionService {
 		return prediction;
 	}
 
-	private MatchPrediction predictMatchVsQualifier(int playerId, Date date, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
+	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
 		List<MatchData> matchData = getMatchData(playerId, date);
 		short bstOf = defaultBestOf(level, bestOf);
 		return new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bstOf).predictMatch();
@@ -164,7 +164,7 @@ public class MatchPredictionService {
 
 	// Ranking Data
 
-	private RankingData getRankingData(int playerId, Date date, Surface surface) {
+	private RankingData getRankingData(int playerId, LocalDate date, Surface surface) {
 		return playersRankings.get(new RankingKey(playerId, date, surface));
 	}
 
@@ -194,9 +194,9 @@ public class MatchPredictionService {
 
 	// Match Data
 
-	private List<MatchData> getMatchData(int playerId, Date date) {
+	private List<MatchData> getMatchData(int playerId, LocalDate date) {
 		List<MatchData> matchData = playersMatches.get(playerId);
-		return matchData.stream().filter(m -> m.getDate().before(date)).collect(toList());
+		return matchData.stream().filter(m -> m.getDate().isBefore(date)).collect(toList());
 	}
 
 	private List<MatchData> fetchMatchData(int playerId) {
@@ -205,7 +205,7 @@ public class MatchPredictionService {
 
 	private MatchData matchData(ResultSet rs, int rowNum) throws SQLException {
 		return new MatchData(
-			rs.getDate("date"),
+			toLocalDate(rs.getDate("date")),
 			rs.getString("level"),
 			rs.getString("surface"),
 			rs.getInt("tournament_id"),
@@ -222,13 +222,22 @@ public class MatchPredictionService {
 		);
 	}
 
+
+	// Util
+
+	public void clearCache() {
+		players.invalidateAll();
+		playersRankings.invalidateAll();
+		playersMatches.invalidateAll();
+	}
+
 	private static final class RankingKey {
 
 		public final int playerId;
-		public final Date date;
+		public final LocalDate date;
 		public final Surface surface;
 
-		public RankingKey(int playerId, Date date, Surface surface) {
+		public RankingKey(int playerId, LocalDate date, Surface surface) {
 			this.playerId = playerId;
 			this.date = date;
 			this.surface = surface;

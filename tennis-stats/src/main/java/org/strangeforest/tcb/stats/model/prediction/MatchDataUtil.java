@@ -1,7 +1,6 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
 import java.time.*;
-import java.util.*;
 import java.util.function.*;
 
 import org.strangeforest.tcb.stats.model.*;
@@ -10,7 +9,6 @@ import com.google.common.collect.*;
 
 import static java.lang.Math.*;
 import static org.strangeforest.tcb.stats.util.CodedEnum.*;
-import static org.strangeforest.tcb.util.DateUtil.*;
 
 public abstract class MatchDataUtil {
 
@@ -44,9 +42,9 @@ public abstract class MatchDataUtil {
 
 	public static final Predicate<MatchData> ALWAYS_TRUE = m -> Boolean.TRUE;
 
-	public static Predicate<MatchData> isRecent(Date date, Period period) {
-		LocalDate afterDate = toLocalDate(date).minus(period);
-		return match -> toLocalDate(match.getDate()).compareTo(afterDate) >= 0;
+	public static Predicate<MatchData> isRecent(LocalDate date, Period period) {
+		LocalDate afterDate = date.minus(period);
+		return match -> match.getDate().compareTo(afterDate) >= 0;
 	}
 
 	public static Predicate<MatchData> isSurface(Surface surface) {

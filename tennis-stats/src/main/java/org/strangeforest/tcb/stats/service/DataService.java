@@ -23,6 +23,7 @@ public class DataService {
 
 	@Autowired private JdbcTemplate jdbcTemplate;
 	@Autowired private CacheManager cacheManager;
+	@Autowired private MatchPredictionService matchPredictionService;
 
 	private static final String DB_SERVER_VERSION_QUERY = "SELECT version()";
 
@@ -92,6 +93,7 @@ public class DataService {
 				cacheCount++;
 			}
 		}
+		matchPredictionService.clearCache();
 		return cacheCount;
 	}
 

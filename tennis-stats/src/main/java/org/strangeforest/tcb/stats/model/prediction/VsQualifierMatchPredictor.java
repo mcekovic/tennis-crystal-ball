@@ -13,14 +13,14 @@ import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
 public class VsQualifierMatchPredictor implements MatchPredictor {
 
 	private final List<MatchData> matchData;
-	private final Date date;
+	private final LocalDate date;
 	private final Surface surface;
 	private final TournamentLevel level;
 	private final Integer tournamentId;
 	private final Round round;
 	private final short bestOf;
 
-	public VsQualifierMatchPredictor(List<MatchData> matchData, Date date, Surface surface, TournamentLevel level, Integer tournamentId, Round round, short bestOf) {
+	public VsQualifierMatchPredictor(List<MatchData> matchData, LocalDate date, Surface surface, TournamentLevel level, Integer tournamentId, Round round, short bestOf) {
 		this.matchData = matchData;
 		this.date = date;
 		this.surface = surface;

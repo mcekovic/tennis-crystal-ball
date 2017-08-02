@@ -1,6 +1,5 @@
 package org.strangeforest.tcb.stats.prediction;
 
-import java.lang.String;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
@@ -20,6 +19,7 @@ import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.util.DateUtil.*;
 
 public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringContextTests {
 
@@ -127,7 +127,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		return new MatchForVerification(
 			rs.getInt("winner_id"),
 			rs.getInt("loser_id"),
-			rs.getDate("date"),
+			toLocalDate(rs.getDate("date")),
 			rs.getString("level"),
 			rs.getString("surface"),
 			rs.getInt("tournament_id"),

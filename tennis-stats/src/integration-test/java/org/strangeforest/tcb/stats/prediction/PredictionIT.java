@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.prediction;
 
-import java.util.*;
+import java.time.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.context.*;
@@ -27,7 +27,7 @@ public class PredictionIT extends AbstractTestNGSpringContextTests {
 		int playerId1 = playerService.findPlayerId("Novak Djokovic").get();
 		int playerId2 = playerService.findPlayerId("Rafael Nadal").get();
 
-		MatchPrediction prediction = predictionService.predictMatch(playerId1, playerId2, new Date(), CLAY, GRAND_SLAM, 19, F, null);
+		MatchPrediction prediction = predictionService.predictMatch(playerId1, playerId2, LocalDate.now(), CLAY, GRAND_SLAM, 19, F, null);
 
 		System.out.printf("Novak Djokovic win: %1$.2f%%\n", 100.0 * prediction.getWinProbability1());
 		System.out.printf("Rafael Nadal win: %1$.2f%%\n", 100.0 * prediction.getWinProbability2());

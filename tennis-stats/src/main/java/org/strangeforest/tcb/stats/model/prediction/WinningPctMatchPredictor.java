@@ -21,8 +21,8 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	private final Range<Integer> rankRange2;
 	private final PlayerData playerData1;
 	private final PlayerData playerData2;
-	private final Date date1;
-	private final Date date2;
+	private final LocalDate date1;
+	private final LocalDate date2;
 	private final Surface surface;
 	private final TournamentLevel level;
 	private final Round round;
@@ -34,7 +34,7 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	private static final int RECENT_FORM_MATCHES = 20;
 
 	public WinningPctMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, RankingData rankingData1, RankingData rankingData2, PlayerData playerData1, PlayerData playerData2,
-	                                Date date1, Date date2, Surface surface, TournamentLevel level, Round round, Integer tournamentId, short bestOf) {
+	                                LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Round round, Integer tournamentId, short bestOf) {
 		this.matchData1 = matchData1;
 		this.matchData2 = matchData2;
 		this.rankRange1 = rankRange(rankingData1.getRank());
