@@ -8,7 +8,7 @@ import static org.strangeforest.tcb.stats.model.records.categories.EloRankingCat
 public class InfamousEloRankingCategory extends RankingCategory {
 
 	public InfamousEloRankingCategory() {
-		super("Infamous Elo Ranking");
+		super(RankType.ELO_RATING, "Infamous Elo Ranking");
 		register(leastPointsAsNo1("SmallestEloRating", "Smallest Elo Rating as Elo No. 1", "player_elo_ranking", "elo_rating", "elo_rating", "Elo Rating", RankType.ELO_RATING, N_A));
 		register(leastEndOfSeasonPointsAsNo1("SmallestEndOfSeasonEloRating", "Smallest End of Season Elo Rating as Elo No. 1", "player_year_end_elo_rank", "year_end_elo_rating", "Elo Rating", RankType.ELO_RATING, N_A));
 		register(pointsDifferenceBetweenNo1andNo2(

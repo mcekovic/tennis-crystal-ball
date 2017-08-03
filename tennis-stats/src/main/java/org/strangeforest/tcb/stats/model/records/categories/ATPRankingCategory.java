@@ -11,7 +11,7 @@ public class ATPRankingCategory extends RankingCategory {
 	static final String DIFF_ADJUSTMENT_NOTES = "Difference adjusted by factor 1.9 before 2009";
 
 	public ATPRankingCategory() {
-		super("ATP Ranking");
+		super(RankType.POINTS, "ATP Ranking");
 		registerRanking("ATP", ALL, N_A);
 		register(mostPoints("ATPPoints", "Most ATP Points", "player_best_rank_points", "best_rank_points_adjusted", "best_rank_points_adjusted_date", "ATP Points", RankType.POINTS, ADJUSTMENT_NOTES));
 		register(mostEndOfSeasonPoints("EndOfSeasonATPPoints", "Most End of Season ATP Points", "player_year_end_rank", "adjust_atp_rank_points(year_end_rank_points, season_start(season))", "ATP Points", RankType.POINTS, ADJUSTMENT_NOTES));

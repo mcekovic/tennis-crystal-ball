@@ -48,7 +48,7 @@
 					"country": countryFormatter,
 					"player": playerFormatter,
 					"rankDiff": function(column, row) { return formatDiff(row.rankDiff) },
-					"pointsDiff": function(column, row) { return formatDiff(row.pointsDiff) },
+					"pointsDiff": function(column, row) { return formatDiff(row.points > 0 ? row.pointsDiff : null) },
 					"points": function(column, row) {
 						var points = row.points;
 						return points > 0 ? points : "";
@@ -83,8 +83,11 @@
 		function seasonChanged(skipDatesLoad) {
 			var season = $("#season").val();
 			var $date = $("#date");
-			$date.prop("disabled", season == "");
-			if (!skipDatesLoad && season != "") {
+			var current = season == "";
+			$date.prop("disabled", current);
+			if (current)
+				$date.find("option").remove();
+			else if (!skipDatesLoad) {
 				$date.find("option").remove();
 				var url = "/seasonRankingDates?rankType=" + $("#rankType").val() + "&season=" + season;
 				$.get(url, function (data) {
