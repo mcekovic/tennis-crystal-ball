@@ -73,7 +73,7 @@
 				<li><a href="/seasons">Seasons Browser</a> - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players</li>
 				<li><a href="/bestSeasons">Best Seasons</a> - Find which are the best seasons of Open Era based on 'GOAT' points</li>
 				<li><a href="/tournamentEvents">Tournaments Browser</a> - Browse all Open Era tournaments, see tournament draw, performance, statistics, historical winners and records</li>
-				<li><a href="/inProgressEventsForecasts">Tournament Forecasts</a><sup class="cool-feature">&nbsp;Cool!</sup> - Tournament Event Forecasts based on the <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover">Neural Network Match Prediction Algorithm</a></li>
+				<li><a href="/inProgressEventsForecasts">Tournament Forecasts</a><sup class="cool-feature">&nbsp;Cool!</sup> - Tournament Event Forecasts based on the <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#tournamentSimulationPopover">Tournament Simulation</a> driven by <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover">Neural Network Match Prediction Algorithm</a></li>
 				<li><a href="/records">Records</a><sup class="cool-feature">&nbsp;Cool!</sup> - Various match, tournament result and ranking records, famous and infamous (best player that never...)</li>
 				<li><a href="/liveScores">Live Scores</a> <img src="/images/active.png" style="vertical-align: top" title="Live" width="12" height="12"/> - Live Scores integration</li>
 			</ul>
@@ -130,6 +130,7 @@
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 	<div th:include="fragments/aboutElo :: aboutElo"></div>
-	<div th:include="fragments/aboutPrediction :: aboutPrediction"></div>
+	<div th:include="fragments/aboutForecast :: aboutSimulation"></div>
+	<div th:include="fragments/aboutForecast :: aboutPrediction"></div>
 </body>
 </html>
