@@ -4,10 +4,13 @@
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="date" type="java.util.Date"*/-->
+<!--/*@thymesVar id="dates" type="java.util.List<java.util.Date>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
 	<title>Rankings Table</title>
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
 		$(function() {
+			[# th:if=${dates}]populateDates([(${season})], [[${dates}]]);[/]
 			var $rankingsTable = $("#rankingsTable");
 			var device = detectDevice();
 			setBootgridColumnsVisible($rankingsTable, ["bestRank", "rankDiff", "pointsDiff"], deviceGreaterOrEqual(device, "sm"));
@@ -65,32 +68,36 @@
 			$search.before($("#seasonDiv").remove());
 			$search.before($("#dateDiv").remove());
 			setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
-			rankTypeChanged();
+			rankTypeChanged([(${dates != null})]);
 			$("[data-toggle='tooltip']").tooltip();
 			bindPopovers();
 		});
-		function rankTypeChanged() {
+		function rankTypeChanged(skipDatesLoad) {
 			var rankType = $("#rankType").val();
 			var $rankingsTable = $("#rankingsTable");
 			$rankingsTable.find("th[data-column-id='points'] > a > span.text").html(rankType == "POINTS" ? "Points" : "Elo Rating");
 			$rankingsTable.find("th[data-column-id='pointsDiff'] > a > span.text").html(rankType == "POINTS" ? "Pts. +/-" : "Elo +/-");
 			$("#eloInfo").css("display", rankType == "ELO_RATING" ? "inline" : "none");
-			seasonChanged();
+			seasonChanged(skipDatesLoad);
 		}
-		function seasonChanged() {
+		function seasonChanged(skipDatesLoad) {
 			var season = $("#season").val();
 			var $date = $("#date");
-			$date.find("option").remove();
 			$date.prop("disabled", season == "");
-			if (season != "") {
+			if (!skipDatesLoad && season != "") {
+				$date.find("option").remove();
 				var url = "/seasonRankingDates?rankType=" + $("#rankType").val() + "&season=" + season;
 				$.get(url, function (data) {
-					$date.append("<option value=''>" + (season == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
-					for (var i = 0; i < data.length; i++) {
-						var date = formatDate(data[i]);
-						$date.append("<option value='" + date + "'>" + date + "</option>");
-					}
+					populateDates(season, data);
 				});
+			}
+		}
+		function populateDates(season, dates) {
+			var $date = $("#date");
+			$date.append("<option value=''>" + (season == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
+			for (var i = 0; i < dates.length; i++) {
+				var date = formatDate(dates[i]);
+				$date.append("<option value='" + date + "'" + (date == "[(${#dates.format(date, 'dd-MM-yyyy')})]" ? " selected='selected'" : "") + ">" + date + "</option>");
 			}
 		}
 		function reloadRankings() {

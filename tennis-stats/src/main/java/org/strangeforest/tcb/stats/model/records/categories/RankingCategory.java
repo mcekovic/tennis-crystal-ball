@@ -1,8 +1,10 @@
 package org.strangeforest.tcb.stats.model.records.categories;
 
+import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
+import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.RankingCategory.AgeType.*;
@@ -256,23 +258,23 @@ public abstract class RankingCategory extends RecordCategory {
 		);
 	}
 
-	protected static Record mostPoints(String id, String name, String tableName, String columnName, String dateColumnName, String caption, String notes) {
+	protected static Record mostPoints(String id, String name, String tableName, String columnName, String dateColumnName, String caption, RankType rankType, String notes) {
 		return new Record<>(
 			id, name,
 			/* language=SQL */
 			"SELECT player_id, " + columnName + " AS value, " + dateColumnName + " AS date\n" +
 			"FROM " + tableName,
 			"r.value, r.date", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.date",
-			DateIntegerRecordDetail.class, null,
+			DateIntegerRecordDetail.class, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&date=%2$td-%2$tm-%2$tY", rankType, recordDetail.getDate()),
 			asList(
-				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
+				new RecordColumn("value", null, "valueUrl", POINTS_WIDTH, "right", caption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
 			),
 			notes
 		);
 	}
 
-	protected static Record leastPointsAsNo1(String id, String name, String tableName, String expression, String columnName, String caption, String notes) {
+	protected static Record leastPointsAsNo1(String id, String name, String tableName, String expression, String columnName, String caption, RankType rankType, String notes) {
 		return new Record<>(
 			id, name,
 			/* language=SQL */
@@ -285,7 +287,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"SELECT player_id, value, (SELECT min(r.rank_date) FROM " + tableName + " r WHERE r.player_id = l.player_id AND r.rank = 1 AND " + expression + " = l.value) AS date\n" +
 			"FROM least_points l",
 			"r.value, r.date", "r.value", "r.value, r.date",
-			DateIntegerRecordDetail.class, null,
+			DateIntegerRecordDetail.class, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&date=%2$td-%2$tm-%2$tY", rankType, recordDetail.getDate()),
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
@@ -294,7 +296,7 @@ public abstract class RankingCategory extends RecordCategory {
 		);
 	}
 
-	protected static Record mostEndOfSeasonPoints(String id, String name, String tableName, String columnName, String caption, String notes) {
+	protected static Record mostEndOfSeasonPoints(String id, String name, String tableName, String columnName, String caption, RankType rankType, String notes) {
 		return new Record<>(
 			id, name,
 			/* language=SQL */
@@ -302,7 +304,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM " + tableName + "\n" +
 			"WHERE " + columnName + " > 0",
 			"r.value, r.value2, r.season", "r.value DESC", "r.value DESC, r.value2, r.season",
-			SeasonTwoIntegersRecordDetail.class, null,
+			SeasonTwoIntegersRecordDetail.class, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&season=%2$d", rankType, recordDetail.getSeason()),
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("value2", "numeric", null, RANK_WIDTH, "right", "Rank"),
@@ -312,7 +314,7 @@ public abstract class RankingCategory extends RecordCategory {
 		);
 	}
 
-	protected static Record leastEndOfSeasonPointsAsNo1(String id, String name, String tableName, String columnName, String caption, String notes) {
+	protected static Record leastEndOfSeasonPointsAsNo1(String id, String name, String tableName, String columnName, String caption, RankType rankType, String notes) {
 		return new Record<>(
 			id, name,
 			/* language=SQL */
@@ -320,7 +322,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM " + tableName + "\n" +
 			"WHERE year_end_rank = 1 AND " + columnName + " > 0",
 			"r.value, r.season", "r.value", "r.value, r.season",
-			SeasonIntegerRecordDetail.class, null,
+			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&season=%2$d", rankType, recordDetail.getSeason()),
 			asList(
 				new RecordColumn("value", "numeric", null, POINTS_WIDTH, "right", caption),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
@@ -332,7 +334,7 @@ public abstract class RankingCategory extends RecordCategory {
 	protected static Record pointsDifferenceBetweenNo1andNo2(
 		String id, String name, String tableName, String columnName, String rankColumnName, String condition,
 		String expression, String expression1, String expression2, String order,
-		Class<? extends RecordDetail> detailClass, String type, String caption, String diffCaption, String notes
+		Class<? extends BaseRankingDiffRecordDetail> detailClass, String caption, String diffCaption, RankType rankType, String notes
 	) {
 		return new Record<>(
 			id, name,
@@ -348,18 +350,18 @@ public abstract class RankingCategory extends RecordCategory {
 			"    first_value(value) OVER diff AS value, first_value(rank_date) OVER diff AS date\n" +
 			"  FROM ranking_diff\n" +
 			"  GROUP BY player_id, player_id2, value1, value2, value, rank_date\n" +
-			"  WINDOW diff AS (PARTITION BY player_id, player_id2 ORDER BY value DESC)\n" +
+			"  WINDOW diff AS (PARTITION BY player_id, player_id2 ORDER BY " + order + ")\n" +
 			")\n" +
 			"SELECT DISTINCT d.player_id, d.player_id2, p2.name AS name2, p2.country_id AS country_id2, p2.active AS active2, d.value1, d.value2, d.value, d.date\n" +
 			"FROM ranking_diff2 d\n" +
 			"INNER JOIN player_v p2 ON p2.player_id = d.player_id2",
-			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.date", order, order + ", r.date",
-			detailClass, null,
+			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.date", "r." + order, "r." + order + ", r.date",
+			detailClass, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&date=%2$td-%2$tm-%2$tY", rankType, recordDetail.getDate()),
 			asList(
 				new RecordColumn("player2", null, "player2", PLAYER_WIDTH, "left", "No. 2 Player"),
 				new RecordColumn("value1", "numeric", null, POINTS_WIDTH, "right", caption + " No. 1"),
 				new RecordColumn("value2", "numeric", null, POINTS_WIDTH, "right", caption + " No. 2"),
-				new RecordColumn("value", type, null, POINTS_WIDTH, "right", diffCaption),
+				new RecordColumn("value", null, "valueUrl", POINTS_WIDTH, "right", diffCaption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
 			),
 			notes

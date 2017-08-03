@@ -257,3 +257,16 @@ BEGIN
 	RETURN CASE WHEN p_level = 'G' THEN 5.0 / 3.0 ELSE 1.0 END;
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- records
+
+CREATE OR REPLACE FUNCTION delete_records(
+	p_record_id TEXT
+) RETURNS VOID AS $$
+BEGIN
+	DELETE FROM player_record WHERE record_id LIKE p_record_id;
+	DELETE FROM active_player_record WHERE record_id LIKE p_record_id;
+	DELETE FROM saved_record WHERE record_id LIKE p_record_id;
+END;
+$$ LANGUAGE plpgsql;
