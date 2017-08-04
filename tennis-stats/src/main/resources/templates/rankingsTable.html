@@ -47,8 +47,8 @@
 					},
 					"country": countryFormatter,
 					"player": playerFormatter,
-					"rankDiff": function(column, row) { return formatDiff(row.rankDiff) },
-					"pointsDiff": function(column, row) { return formatDiff(row.points > 0 ? row.pointsDiff : null) },
+					"rankDiff": function(column, row) { return formatDiff(row.rankDiff); },
+					"pointsDiff": function(column, row) { return row.points > 0 ? formatDiff(row.pointsDiff) : ""; },
 					"points": function(column, row) {
 						var points = row.points;
 						return points > 0 ? points : "";
@@ -85,6 +85,7 @@
 			var $date = $("#date");
 			var current = season == "";
 			$date.prop("disabled", current);
+			$("#prevDate, #nextDate").prop("disabled", current);
 			if (current)
 				$date.find("option").remove();
 			else if (!skipDatesLoad) {
@@ -101,6 +102,22 @@
 			for (var i = 0; i < dates.length; i++) {
 				var date = formatDate(dates[i]);
 				$date.append("<option value='" + date + "'" + (date == "[(${#dates.format(date, 'dd-MM-yyyy')})]" ? " selected='selected'" : "") + ">" + date + "</option>");
+			}
+		}
+		function prevRankingDate() {
+			var $date = $("#date");
+			var prevDate = $date.find("option:selected").next().val();
+			if (prevDate) {
+				$date.val(prevDate);
+				reloadRankings();
+			}
+		}
+		function nextRankingDate() {
+			var $date = $("#date");
+			var nextDate = $date.find("option:selected").prev().val();
+			if (nextDate) {
+				$date.val(nextDate);
+				reloadRankings();
 			}
 		}
 		function reloadRankings() {
@@ -140,8 +157,14 @@
 			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2015" th:text="${aSeason}" th:selected="${aSeason == season}">2015</option>
 		</select>
 	</div>
-	<div id="dateDiv" class="btn-group margin-right" style="width: 125px">
-		<select id="date" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
+	<div id="dateDiv" class="btn-group margin-right">
+		<button id="prevDate" type="button" class="pull-left btn btn-default" onclick="prevRankingDate()" data-toggle="tooltip" data-placement="top" title="Previous date">
+			<span class="glyphicon glyphicon-backward"></span>
+		</button>
+		<select id="date" class="form-control pull-left" style="width: 125px" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
+		<button id="nextDate" type="button" class="pull-right btn btn-default" onclick="nextRankingDate()" data-toggle="tooltip" data-placement="top" title="Next date">
+			<span class="glyphicon glyphicon-forward"></span>
+		</button>
 	</div>
 	<table id="rankingsTable" class="table table-condensed table-hover table-striped">
 		<thead>

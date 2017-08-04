@@ -4,9 +4,9 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.*;
 
-public class RankingDiffRecordDetail extends BaseRankingDiffRecordDetail<Integer> {
+public class DateRankingDiffRecordDetail extends BaseDateRankingDiffRecordDetail<Integer> {
 
-	public RankingDiffRecordDetail(
+	public DateRankingDiffRecordDetail(
 		@JsonProperty("value") int value,
 		@JsonProperty("player_id2") int playerId2,
 		@JsonProperty("name2") String name2,

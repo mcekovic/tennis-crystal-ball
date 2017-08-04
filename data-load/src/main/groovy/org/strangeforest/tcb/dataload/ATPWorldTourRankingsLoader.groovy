@@ -22,7 +22,7 @@ class ATPWorldTourRankingsLoader {
 		def paramsBatch = []
 		doc.select("tbody tr").each {
 			def player = player it.select('td.player-cell').text()
-			def rank = integer it.select('td.rank-cell').text()
+			def rank = rank it.select('td.rank-cell').text()
 			def points = integer it.select('td.points-cell').text().replace(',', '')
 			paramsBatch << [rank_date: parsedDate, player_name: player, rank: rank, rank_points: points]
 		}
@@ -36,7 +36,11 @@ class ATPWorldTourRankingsLoader {
 	}
 
 	static player(String name) {
-		name.replace('-', ' ').replace('.', ' ').replace('\'', '')
+		name.replace('-', ' ').replace('.', ' ').replace('\'', '').replace('(', '').replace(')', '').replace('  ', ' ').trim()
+	}
+
+	static rank(String rank) {
+		integer(rank.endsWith('T') ? rank.substring(0, rank.length() - 1) : rank)
 	}
 
 	static rankingsUrl(String date, int topN) {

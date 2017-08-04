@@ -18,12 +18,22 @@ public class ATPRankingCategory extends RankingCategory {
 		register(pointsDifferenceBetweenNo1andNo2(
 			"ATPPointsNo1No2Difference", "ATP Points Difference Between No. 1 and No. 2", "player_ranking", "rank_points", "rank", N_A,
 			"adjust_atp_rank_points(r1.rank_points - r2.rank_points, r1.rank_date)", "r1.rank_points", "r2.rank_points", "value DESC",
-			RankingDiffRecordDetail.class, "Points", "Points Diff.", RankType.POINTS, DIFF_ADJUSTMENT_NOTES
+			DateRankingDiffRecordDetail.class, "Points", "Points Diff.", RankType.POINTS, DIFF_ADJUSTMENT_NOTES
 		));
 		register(pointsDifferenceBetweenNo1andNo2(
 			"ATPPointsNo1No2DifferencePct", "ATP Points Pct. Difference Between No. 1 and No. 2", "player_ranking", "rank_points", "rank", N_A,
 			"100.0 * (r1.rank_points - r2.rank_points) / r2.rank_points", "r1.rank_points", "r2.rank_points", "value DESC",
-			RankingPctDiffRecordDetail.class, "Points", "Points Pct. Diff.", RankType.POINTS, N_A
+			DateRankingPctDiffRecordDetail.class, "Points", "Points Pct. Diff.", RankType.POINTS, N_A
+		));
+		register(endOfSeasonPointsDifferenceBetweenNo1andNo2(
+			"EndOfSeasonATPPointsNo1No2Difference", "End of Season ATP Points Difference Between No. 1 and No. 2", "player_year_end_rank", "year_end_rank_points", "year_end_rank", N_A,
+			"adjust_atp_rank_points(r1.year_end_rank_points - r2.year_end_rank_points, season_end(r1.season))", "r1.year_end_rank_points", "r2.year_end_rank_points", "value DESC",
+			SeasonRankingDiffRecordDetail.class, "Points", "Points Diff.", RankType.POINTS, DIFF_ADJUSTMENT_NOTES
+		));
+		register(endOfSeasonPointsDifferenceBetweenNo1andNo2(
+			"EndOfSeasonATPPointsNo1No2DifferencePct", "End of Season ATP Points Pct. Difference Between No. 1 and No. 2", "player_year_end_rank", "year_end_rank_points", "year_end_rank", N_A,
+			"100.0 * (r1.year_end_rank_points - r2.year_end_rank_points) / r2.year_end_rank_points", "r1.year_end_rank_points", "r2.year_end_rank_points", "value DESC",
+			SeasonRankingPctDiffRecordDetail.class, "Points", "Points Pct. Diff.", RankType.POINTS, N_A
 		));
 	}
 }

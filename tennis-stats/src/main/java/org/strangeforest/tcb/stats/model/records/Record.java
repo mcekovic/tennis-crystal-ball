@@ -3,6 +3,9 @@ package org.strangeforest.tcb.stats.model.records;
 import java.util.*;
 import java.util.function.*;
 
+import static com.google.common.base.Strings.*;
+import static org.strangeforest.tcb.stats.model.records.RecordCategory.*;
+
 public class Record<D extends RecordDetail> {
 
 	private final String id;
@@ -19,7 +22,7 @@ public class Record<D extends RecordDetail> {
 	private boolean infamous;
 
 	public Record(String id, String name, String sql, String columns, String rankOrder, String displayOrder, Class<D> detailClass, BiFunction<Integer, D, String> detailURLFormatter, List<RecordColumn> columnInfos) {
-		this(id, name, sql, columns, rankOrder, displayOrder, detailClass, detailURLFormatter, columnInfos, null);
+		this(id, name, sql, columns, rankOrder, displayOrder, detailClass, detailURLFormatter, columnInfos, N_A);
 	}
 
 	public Record(String id, String name, String sql, String columns, String rankOrder, String displayOrder, Class<D> detailClass, BiFunction<Integer, D, String> detailURLFormatter, List<RecordColumn> columnInfos, String notes) {
@@ -32,7 +35,7 @@ public class Record<D extends RecordDetail> {
 		this.detailFactory = new RecordDetailFactory(detailClass);
 		this.detailURLFormatter = detailURLFormatter;
 		this.columnInfos = columnInfos;
-		this.notes = notes;
+		this.notes = !isNullOrEmpty(notes) ? notes : null;
 	}
 
 	public String getId() {

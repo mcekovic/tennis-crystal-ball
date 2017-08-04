@@ -20,13 +20,25 @@ public class EloRankingCategory extends RankingCategory {
 		register(pointsDifferenceBetweenNo1andNo2(
 			domain.id + "EloRatingNo1No2Difference", suffix(domain.name, " ") + "Elo Rating Difference Between No. 1 and No. 2", "player_elo_ranking", ratingColumn, domain.columnPrefix + "rank", ELO_DIFF_CONDITION,
 			"r1." + ratingColumn + " - r2." + ratingColumn, "r1." + ratingColumn, "r2." + ratingColumn, "value DESC",
-			RankingDiffRecordDetail.class, "Rating", "Rating Diff.", getRankType(domain), N_A
+			DateRankingDiffRecordDetail.class, "Rating", "Rating Diff.", getRankType(domain), N_A
 		));
 		register(pointsDifferenceBetweenNo1andNo2(
 			domain.id + "EloRatingNo1No2DifferencePct", suffix(domain.name, " ") + "Elo Rating Pct. Difference Between No. 1 and No. 2", "player_elo_ranking", ratingColumn, domain.columnPrefix + "rank", ELO_DIFF_CONDITION,
 			"100.0 * (r1." + ratingColumn + " - r2." + ratingColumn + ") / r2." + ratingColumn, "r1." + ratingColumn, "r2." + ratingColumn, "value DESC",
-			RankingPctDiffRecordDetail.class, "Rating", "Rating Pct. Diff.", getRankType(domain), N_A
+			DateRankingPctDiffRecordDetail.class, "Rating", "Rating Pct. Diff.", getRankType(domain), N_A
 		));
+		if (domain == ALL) {
+			register(endOfSeasonPointsDifferenceBetweenNo1andNo2(
+				"EndOfSeasonEloRatingNo1No2Difference", "End of Season Elo Rating Difference Between No. 1 and No. 2", "player_year_end_elo_rank", "year_end_elo_rating", "year_end_rank", N_A,
+				"r1.year_end_elo_rating - r2.year_end_elo_rating", "r1.year_end_elo_rating", "r2.year_end_elo_rating", "value DESC",
+				SeasonRankingDiffRecordDetail.class, "Rating", "Rating Diff.", RankType.ELO_RATING, N_A
+			));
+			register(endOfSeasonPointsDifferenceBetweenNo1andNo2(
+				"EndOfSeasonEloRatingNo1No2DifferencePct", "End of Season Elo Rating Pct. Difference Between No. 1 and No. 2", "player_year_end_elo_rank", "year_end_elo_rating", "year_end_rank", N_A,
+				"100.0 * (r1.year_end_elo_rating - r2.year_end_elo_rating) / r2.year_end_elo_rating", "r1.year_end_elo_rating", "r2.year_end_elo_rating", "value DESC",
+				SeasonRankingPctDiffRecordDetail.class, "Rating", "Rating Pct. Diff.", RankType.ELO_RATING, N_A
+			));
+		}
 	}
 
 	static RankType getRankType(RecordDomain domain) {

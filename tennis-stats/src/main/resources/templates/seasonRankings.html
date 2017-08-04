@@ -36,8 +36,8 @@
 				},
 				"country": countryFormatter,
 				"player": playerFormatter,
-				"rankDiff": function(column, row) { return formatDiff(row.rankDiff) },
-				"pointsDiff": function(column, row) { return formatDiff(row.points > 0 ? row.pointsDiff : null) },
+				"rankDiff": function(column, row) { return formatDiff(row.rankDiff); },
+				"pointsDiff": function(column, row) { return row.points > 0 ? formatDiff(row.pointsDiff) : ""; },
 				"points": function(column, row) {
 					var points = row.points;
 					return points > 0 ? points : "";
@@ -77,6 +77,22 @@
 			}
 		});
 	}
+	function prevRankingDate() {
+		var $date = $("#rankDate");
+		var prevDate = $date.find("option:selected").next().val();
+		if (prevDate) {
+			$date.val(prevDate);
+			reloadRankings();
+		}
+	}
+	function nextRankingDate() {
+		var $date = $("#rankDate");
+		var nextDate = $date.find("option:selected").prev().val();
+		if (nextDate) {
+			$date.val(nextDate);
+			reloadRankings();
+		}
+	}
 	function reloadRankings() {
 		$("#rankingsTable").bootgrid("reload");
 	}
@@ -105,8 +121,14 @@
 		<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|">Hard Elo Ranking</option>
 	</select>
 </div>
-<div id="rankDateDiv" class="btn-group margin-right" style="width: 120px">
-	<select id="rankDate" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
+<div id="rankDateDiv" class="btn-group margin-right">
+	<button id="prevDate" type="button" class="pull-left btn btn-default" onclick="prevRankingDate()" data-toggle="tooltip" data-placement="top" title="Previous date">
+		<span class="glyphicon glyphicon-backward"></span>
+	</button>
+	<select id="rankDate" class="form-control pull-left" style="width: 125px" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
+	<button id="nextDate" type="button" class="pull-right btn btn-default" onclick="nextRankingDate()" data-toggle="tooltip" data-placement="top" title="Next date">
+		<span class="glyphicon glyphicon-forward"></span>
+	</button>
 </div>
 <table id="rankingsTable" class="table table-condensed table-hover table-striped">
 	<thead>
