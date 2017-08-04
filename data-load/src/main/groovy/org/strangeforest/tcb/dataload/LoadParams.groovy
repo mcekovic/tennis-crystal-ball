@@ -17,10 +17,10 @@ class LoadParams {
 	static final boolean FORCE_FORECAST_DEFAULT = false
 
 	static Boolean getBooleanProperty(String name, Boolean defValue = null) {
-		System.getProperty(name, defValue?.toString()).toBoolean()
+		System.getProperty(name, defValue?.toString())?.toBoolean()
 	}
 
 	static Long getLongProperty(String name, Long defValue = null) {
-		System.getProperty(name, defValue?.toString()).toLong()
+		System.getProperty(name, defValue?.toString())?.toLong()
 	}
 }

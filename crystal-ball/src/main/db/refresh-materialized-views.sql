@@ -1,3 +1,7 @@
+REFRESH MATERIALIZED VIEW event_participation;
+REFRESH MATERIALIZED VIEW player_tournament_event_result;
+REFRESH MATERIALIZED VIEW player_titles;
+
 REFRESH MATERIALIZED VIEW player_current_rank;
 REFRESH MATERIALIZED VIEW player_best_rank;
 REFRESH MATERIALIZED VIEW player_best_rank_points;
@@ -8,10 +12,6 @@ REFRESH MATERIALIZED VIEW player_best_elo_rating;
 REFRESH MATERIALIZED VIEW player_year_end_elo_rank;
 REFRESH MATERIALIZED VIEW player_season_weeks_at_no1;
 REFRESH MATERIALIZED VIEW player_weeks_at_no1;
-
-REFRESH MATERIALIZED VIEW event_participation;
-REFRESH MATERIALIZED VIEW player_tournament_event_result;
-REFRESH MATERIALIZED VIEW player_titles;
 
 REFRESH MATERIALIZED VIEW player_season_performance;
 REFRESH MATERIALIZED VIEW player_tournament_performance;

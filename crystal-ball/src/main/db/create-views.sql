@@ -43,6 +43,85 @@ LEFT JOIN tournament_event_rank_factor f ON p.rank BETWEEN f.rank_from AND f.ran
 GROUP BY in_progress_event_id, e.level;
 
 
+-- player_tournament_event_result
+
+CREATE OR REPLACE VIEW player_tournament_event_result_v AS
+WITH match_result AS (
+	SELECT m.winner_id AS player_id, tournament_event_id,
+		(CASE WHEN m.round <> 'RR' AND e.level NOT IN ('D', 'T') AND (outcome IS NULL OR outcome <> 'ABD')
+			THEN (CASE m.round WHEN 'R128' THEN 'R64' WHEN 'R64' THEN 'R32' WHEN 'R32' THEN 'R16' WHEN 'R16' THEN 'QF' WHEN 'QF' THEN 'SF' WHEN 'SF' THEN 'F' WHEN 'F' THEN 'W' ELSE m.round::TEXT END)
+			ELSE m.round::TEXT
+		 END)::tournament_event_result AS result
+	FROM match m
+	INNER JOIN tournament_event e USING (tournament_event_id)
+	UNION ALL
+	SELECT loser_id, tournament_event_id,
+		(CASE WHEN round = 'BR' THEN 'SF' ELSE round::TEXT END)::tournament_event_result AS result
+	FROM match
+), best_round AS (
+	SELECT m.player_id, tournament_event_id, max(m.result) AS result
+	FROM match_result m
+	INNER JOIN tournament_event e USING (tournament_event_id)
+	WHERE e.level <> 'D' OR e.name LIKE '%WG'
+	GROUP BY m.player_id, tournament_event_id
+)
+SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, goat_points FROM (
+	SELECT r.player_id, r.tournament_event_id, r.result, p.rank_points, p.rank_points_2008, p.goat_points
+	FROM best_round r
+	INNER JOIN tournament_event e USING (tournament_event_id)
+	LEFT JOIN tournament_rank_points p USING (level, draw_type, result)
+	WHERE NOT p.additive OR p.additive IS NULL
+	UNION
+	SELECT r.player_id, r.tournament_event_id, r.result,
+		sum(CASE WHEN m.winner_id = r.player_id THEN p.rank_points ELSE NULL END), -- TODO Replace with FILTER in PostgreSQL 9.5+
+		sum(CASE WHEN m.winner_id = r.player_id THEN p.rank_points_2008 ELSE NULL END),
+		sum(CASE WHEN m.winner_id = r.player_id THEN p.goat_points ELSE NULL END)
+	FROM best_round r
+	INNER JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
+	LEFT JOIN match m ON m.tournament_event_id = r.tournament_event_id AND (m.winner_id = r.player_id OR m.loser_id = r.player_id)
+	LEFT JOIN tournament_rank_points p ON p.level = e.level AND p.draw_type = e.draw_type AND p.result = m.round::TEXT::tournament_event_result
+	WHERE p.additive
+	GROUP BY r.player_id, r.tournament_event_id, r.result
+) AS player_tournament_event_result;
+
+CREATE MATERIALIZED VIEW player_tournament_event_result AS SELECT * FROM player_tournament_event_result_v;
+
+CREATE INDEX ON player_tournament_event_result (player_id);
+CREATE INDEX ON player_tournament_event_result (result);
+
+
+-- player_titles
+
+CREATE OR REPLACE VIEW player_titles_v AS
+WITH level_titles AS (
+	SELECT player_id, level, count(result) AS titles FROM player_tournament_event_result
+	INNER JOIN tournament_event USING (tournament_event_id)
+	WHERE result = 'W'
+	GROUP BY player_id, level
+), titles AS (
+	SELECT player_id, sum(titles) AS titles FROM level_titles
+	WHERE level IN ('G', 'F', 'M', 'O', 'A', 'B')
+	GROUP BY player_id
+), big_titles AS (
+	SELECT player_id, sum(titles) AS titles FROM level_titles
+	WHERE level IN ('G', 'F', 'M', 'O')
+	GROUP BY player_id
+)
+SELECT p.player_id, t.titles AS titles, bt.titles AS big_titles, gt.titles AS grand_slams, ft.titles AS tour_finals, mt.titles AS masters, ot.titles AS olympics
+FROM player p
+LEFT JOIN titles t USING (player_id)
+LEFT JOIN big_titles bt USING (player_id)
+LEFT JOIN level_titles gt ON gt.player_id = p.player_id AND gt.level = 'G'
+LEFT JOIN level_titles ft ON ft.player_id = p.player_id AND ft.level = 'F'
+LEFT JOIN level_titles mt ON mt.player_id = p.player_id AND mt.level = 'M'
+LEFT JOIN level_titles ot ON ot.player_id = p.player_id AND ot.level = 'O'
+WHERE t.titles > 0;
+
+CREATE MATERIALIZED VIEW player_titles AS SELECT * FROM player_titles_v;
+
+CREATE UNIQUE INDEX ON player_titles (player_id);
+
+
 -- player_current_rank
 
 CREATE OR REPLACE VIEW player_current_rank_v AS
@@ -191,85 +270,6 @@ WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_dat
 CREATE MATERIALIZED VIEW player_year_end_elo_rank AS SELECT * FROM player_year_end_elo_rank_v;
 
 CREATE INDEX ON player_year_end_elo_rank (player_id);
-
-
--- player_tournament_event_result
-
-CREATE OR REPLACE VIEW player_tournament_event_result_v AS
-WITH match_result AS (
-	SELECT m.winner_id AS player_id, tournament_event_id,
-		(CASE WHEN m.round <> 'RR' AND e.level NOT IN ('D', 'T') AND (outcome IS NULL OR outcome <> 'ABD')
-			THEN (CASE m.round WHEN 'R128' THEN 'R64' WHEN 'R64' THEN 'R32' WHEN 'R32' THEN 'R16' WHEN 'R16' THEN 'QF' WHEN 'QF' THEN 'SF' WHEN 'SF' THEN 'F' WHEN 'F' THEN 'W' ELSE m.round::TEXT END)
-			ELSE m.round::TEXT
-		 END)::tournament_event_result AS result
-	FROM match m
-	INNER JOIN tournament_event e USING (tournament_event_id)
-	UNION ALL
-	SELECT loser_id, tournament_event_id,
-		(CASE WHEN round = 'BR' THEN 'SF' ELSE round::TEXT END)::tournament_event_result AS result
-	FROM match
-), best_round AS (
-	SELECT m.player_id, tournament_event_id, max(m.result) AS result
-	FROM match_result m
-	INNER JOIN tournament_event e USING (tournament_event_id)
-	WHERE e.level <> 'D' OR e.name LIKE '%WG'
-	GROUP BY m.player_id, tournament_event_id
-)
-SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, goat_points FROM (
-	SELECT r.player_id, r.tournament_event_id, r.result, p.rank_points, p.rank_points_2008, p.goat_points
-	FROM best_round r
-	INNER JOIN tournament_event e USING (tournament_event_id)
-	LEFT JOIN tournament_rank_points p USING (level, draw_type, result)
-	WHERE NOT p.additive OR p.additive IS NULL
-	UNION
-	SELECT r.player_id, r.tournament_event_id, r.result,
-		sum(CASE WHEN m.winner_id = r.player_id THEN p.rank_points ELSE NULL END), -- TODO Replace with FILTER in PostgreSQL 9.5+
-		sum(CASE WHEN m.winner_id = r.player_id THEN p.rank_points_2008 ELSE NULL END),
-		sum(CASE WHEN m.winner_id = r.player_id THEN p.goat_points ELSE NULL END)
-	FROM best_round r
-	INNER JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
-	LEFT JOIN match m ON m.tournament_event_id = r.tournament_event_id AND (m.winner_id = r.player_id OR m.loser_id = r.player_id)
-	LEFT JOIN tournament_rank_points p ON p.level = e.level AND p.draw_type = e.draw_type AND p.result = m.round::TEXT::tournament_event_result
-	WHERE p.additive
-	GROUP BY r.player_id, r.tournament_event_id, r.result
-) AS player_tournament_event_result;
-
-CREATE MATERIALIZED VIEW player_tournament_event_result AS SELECT * FROM player_tournament_event_result_v;
-
-CREATE INDEX ON player_tournament_event_result (player_id);
-CREATE INDEX ON player_tournament_event_result (result);
-
-
--- player_titles
-
-CREATE OR REPLACE VIEW player_titles_v AS
-WITH level_titles AS (
-	SELECT player_id, level, count(result) AS titles FROM player_tournament_event_result
-	INNER JOIN tournament_event USING (tournament_event_id)
-	WHERE result = 'W'
-	GROUP BY player_id, level
-), titles AS (
-	SELECT player_id, sum(titles) AS titles FROM level_titles
-	WHERE level IN ('G', 'F', 'M', 'O', 'A', 'B')
-	GROUP BY player_id
-), big_titles AS (
-	SELECT player_id, sum(titles) AS titles FROM level_titles
-	WHERE level IN ('G', 'F', 'M', 'O')
-	GROUP BY player_id
-)
-SELECT p.player_id, t.titles AS titles, bt.titles AS big_titles, gt.titles AS grand_slams, ft.titles AS tour_finals, mt.titles AS masters, ot.titles AS olympics
-FROM player p
-LEFT JOIN titles t USING (player_id)
-LEFT JOIN big_titles bt USING (player_id)
-LEFT JOIN level_titles gt ON gt.player_id = p.player_id AND gt.level = 'G'
-LEFT JOIN level_titles ft ON ft.player_id = p.player_id AND ft.level = 'F'
-LEFT JOIN level_titles mt ON mt.player_id = p.player_id AND mt.level = 'M'
-LEFT JOIN level_titles ot ON ot.player_id = p.player_id AND ot.level = 'O'
-WHERE t.titles > 0;
-
-CREATE MATERIALIZED VIEW player_titles AS SELECT * FROM player_titles_v;
-
-CREATE UNIQUE INDEX ON player_titles (player_id);
 
 
 -- match_for_stats_v

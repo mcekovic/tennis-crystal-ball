@@ -238,11 +238,11 @@ class ATPTennisLoader {
 
 	def refreshMaterializedViews(Sql sql) {
 		refreshMaterializedViews(sql,
+			'event_participation',
+			'player_tournament_event_result', 'player_titles',
 			'player_current_rank', 'player_best_rank', 'player_best_rank_points', 'player_year_end_rank',
 			'player_current_elo_rank', 'player_best_elo_rank', 'player_best_elo_rating', 'player_year_end_elo_rank',
 			'player_season_weeks_at_no1', 'player_weeks_at_no1',
-			'event_participation',
-			'player_tournament_event_result', 'player_titles',
 			'player_season_performance', 'player_tournament_performance', 'player_performance',
 			'player_season_surface_stats', 'player_season_stats', 'player_surface_stats', 'player_stats',
 			'player_h2h',

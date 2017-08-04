@@ -54,11 +54,6 @@ DROP VIEW player_best_elo_rating_v;
 DROP MATERIALIZED VIEW player_year_end_elo_rank;
 DROP VIEW player_year_end_elo_rank_v;
 
-DROP MATERIALIZED VIEW player_titles;
-DROP VIEW player_titles_v;
-DROP MATERIALIZED VIEW player_tournament_event_result;
-DROP VIEW player_tournament_event_result_v;
-
 DROP MATERIALIZED VIEW player_performance;
 DROP VIEW player_performance_v;
 DROP MATERIALIZED VIEW player_season_performance;
@@ -97,6 +92,11 @@ DROP VIEW player_match_stats_v;
 DROP VIEW player_match_for_stats_v;
 DROP VIEW match_for_stats_v;
 DROP VIEW match_for_rivalry_v;
+
+DROP MATERIALIZED VIEW player_titles;
+DROP VIEW player_titles_v;
+DROP MATERIALIZED VIEW player_tournament_event_result;
+DROP VIEW player_tournament_event_result_v;
 
 DROP VIEW in_progress_event_participation_v;
 DROP MATERIALIZED VIEW event_participation;
