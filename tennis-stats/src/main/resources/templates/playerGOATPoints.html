@@ -53,7 +53,7 @@
 		.points {
 			text-align: right;
 		}
-		.highlight {
+		.highlight-season {
 			background-color: #e8f4ff;
 			border: 3px solid darkblue;
 		}
@@ -93,7 +93,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr th:each="season : ${goatPoints.playerSeasonsPoints}" th:class="${season.season == highlightSeason ? 'highlight' : _}">
+		<tr th:each="season : ${goatPoints.playerSeasonsPoints}" th:class="${season.season == highlightSeason ? 'highlight-season' : _}">
 			<th class="first-column points-" th:attrappend="class=${season.totalPointsRounded}">
 				<a th:href="@{playerProfile(playerId=${playerId}, tab=tournaments, season=${season.season})}" th:text="${season.season}" style="color: darkblue" title="Show season results">2000</a>
 			</th>
