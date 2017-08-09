@@ -38,8 +38,8 @@ public class HeadsToHeads {
 		return rivalries.isEmpty();
 	}
 
-	public Optional<HeadsToHeadsRivalry> getRivalry(int playerId1, int playerId2) {
-		return Optional.ofNullable(rivalryMap.get(new RivalryKey(playerId1, playerId2)));
+	public HeadsToHeadsRivalry getRivalry(int playerId1, int playerId2) {
+		return rivalryMap.get(new RivalryKey(playerId1, playerId2));
 	}
 
 	private static void addRivalry(Map<Integer, HeadsToHeadsRivalry> rivalryMap, RivalryPlayer player, WonLost wonLost) {

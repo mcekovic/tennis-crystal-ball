@@ -152,8 +152,7 @@ public class Country {
 
 	public static CountryCode code(String countryId) {
 		if (!UNKNOWN_ID.equals(countryId)) {
-			String override = OVERRIDES.get(countryId);
-			String isoAlpha3 = override == null ? countryId : override;
+			String isoAlpha3 = OVERRIDES.getOrDefault(countryId, countryId);
 			if (!UNKNOWN_ID.equals(isoAlpha3)) {
 				CountryCode code = CountryCode.getByCode(isoAlpha3);
 				if (code != null)

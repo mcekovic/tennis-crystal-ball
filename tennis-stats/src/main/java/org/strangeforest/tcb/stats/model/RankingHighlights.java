@@ -396,8 +396,7 @@ public class RankingHighlights {
 			weeksInTop50 += weeks;
 		if (rank <= 100)
 			weeksInTop100 += weeks;
-		Double w = weeksAt.get(rank);
-		weeksAt.put(rank, w != null ? w + weeks : weeks);
+		weeksAt.compute(rank, (r, w) -> w != null ? w + weeks : weeks);
 	}
 
 
@@ -440,8 +439,7 @@ public class RankingHighlights {
 			++yearEndsInTop50;
 		if (rank <= 100)
 			++yearEndsInTop100;
-		Integer s = yearEndsAt.get(rank);
-		yearEndsAt.put(rank, s != null ? s + 1 : 1);
+		yearEndsAt.compute(rank, (r, ye) -> ye != null ? ye + 1 : 1);
 	}
 
 

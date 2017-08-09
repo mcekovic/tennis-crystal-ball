@@ -345,26 +345,23 @@ public class RivalriesService {
 
 	private double getMinMatchesLevelFactor(String level) {
 		Double factor = MIN_MATCHES_LEVEL_FACTOR.get(level);
-		if (factor != null)
-			return factor;
-		else
+		if (factor == null)
 			throw new NotFoundException("Level factor", level);
+		return factor;
 	}
 
 	private double getMinMatchesSurfaceFactor(String surface) {
 		Double factor = MIN_MATCHES_SURFACE_FACTOR.get(surface);
-		if (factor != null)
-			return factor;
-		else
+		if (factor == null)
 			throw new NotFoundException("Surface factor", surface);
+		return factor;
 	}
 
 	private double getMinMatchesRoundFactor(String round) {
 		Double factor = MIN_MATCHES_ROUND_FACTOR.get(round);
-		if (factor != null)
-			return factor;
-		else
+		if (factor == null)
 			throw new NotFoundException("Round factor", round);
+		return factor;
 	}
 
 

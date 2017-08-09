@@ -55,11 +55,7 @@ public class TournamentLevelTimeline {
 		PlayerRow winner = item.getWinner();
 		if (winner == null)
 			return;
-		int playerId = winner.getPlayerId();
-		Integer wins = playerWins.get(playerId);
-		wins = wins != null ? wins + 1 : 1;
-		item.setPlayerWins(wins);
-		playerWins.put(playerId, wins);
+		item.setPlayerWins(playerWins.compute(winner.getPlayerId(), (p, w) -> w != null ? w + 1 : 1));
 	}
 
 	public void addMissingSeasonLastTournaments() {

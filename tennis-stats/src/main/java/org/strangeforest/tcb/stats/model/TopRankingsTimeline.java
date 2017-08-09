@@ -40,12 +40,7 @@ public class TopRankingsTimeline {
 	}
 
 	private void updatePlayerYENo1s(TopRankingsPlayer player) {
-		if (player.getRank() == 1) {
-			int playerId = player.getPlayerId();
-			Integer yeNo1s = playersYENo1.get(playerId);
-			yeNo1s = yeNo1s != null ? yeNo1s + 1 : 1;
-			player.setYeNo1(yeNo1s);
-			playersYENo1.put(playerId, yeNo1s);
-		}
+		if (player.getRank() == 1)
+			player.setYeNo1(playersYENo1.compute(player.getPlayerId(), (p, ye) -> ye != null ? ye + 1 : 1));
 	}
 }
