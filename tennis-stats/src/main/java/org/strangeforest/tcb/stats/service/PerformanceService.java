@@ -110,7 +110,7 @@ public class PerformanceService {
 		);
 	}
 
-	static String getPerformanceTableName(StatsPerfFilter filter) {
+	private static String getPerformanceTableName(StatsPerfFilter filter) {
 		if (filter.isEmpty())
 			return "player_performance";
 		else if (filter.isForSeason())

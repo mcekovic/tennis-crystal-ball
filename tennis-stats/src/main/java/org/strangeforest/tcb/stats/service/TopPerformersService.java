@@ -29,22 +29,29 @@ public class TopPerformersService {
 
 	private static final String TOP_PERFORMERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +
-		"INNER JOIN player_v USING (player_id)%2$s\n" +
-		"%3$s %4$s + %5$s >= :minEntries%6$s";
+		"INNER JOIN player_v USING (player_id)\n" +
+		"WHERE %2$s_won + %2$s_lost >= :minEntries%3$s";
 
 	private static final String TOP_PERFORMERS_QUERY = //language=SQL
 		"WITH top_performers AS (\n" +
-		"  SELECT player_id, %1$s::REAL / (%1$s + %2$s) AS won_lost_pct, %1$s AS won, %2$s AS lost, %1$s + %2$s AS played\n" +
-		"  FROM %3$s\n" +
-		"  WHERE %1$s + %2$s >= :minEntries%4$s\n" +
+		"  SELECT player_id, %1$s_won::REAL / (%1$s_won + %1$s_lost) AS won_lost_pct, %1$s_won AS won, %1$s_lost AS lost, %1$s_won + %1$s_lost AS played\n" +
+		"  FROM %2$s\n" +
+		"  WHERE %1$s_won + %1$s_lost >= :minEntries%3$s\n" +
 		"), top_performers_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id, won_lost_pct, won, lost, played\n" +
 		"  FROM top_performers\n" +
 		")\n" +
 		"SELECT rank, player_id, name, country_id, active, won, lost\n" +
 		"FROM top_performers_ranked\n" +
-		"INNER JOIN player_v USING (player_id)%5$s\n" +
-		"ORDER BY %6$s OFFSET :offset LIMIT :limit";
+		"INNER JOIN player_v USING (player_id)%4$s\n" +
+		"ORDER BY %5$s OFFSET :offset LIMIT :limit";
+
+	private static final String TOP_PERFORMERS_SUMMED = //language=SQL
+		"(\n" +
+		"  SELECT player_id, %1$s items_won, %2$s items_lost\n" +
+		"  FROM player_match_performance_v%3$s\n" +
+		"  GROUP BY player_id\n" +
+		") AS player_performance_summed";
 
 
 	@Cacheable(value = "Global", key = "'PerformanceSeasons'")
@@ -57,7 +64,7 @@ public class TopPerformersService {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		boolean materializedSum = isMaterializedSum(filter);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
-			format(TOP_PERFORMERS_COUNT_QUERY, getPerformanceTableName(filter), materializedSum ? "" : where(filter.getCriteria()), materializedSum ? "WHERE" : "GROUP BY player_id HAVING", getPerfColumnName(perfCategory, filter, "_won"), getPerfColumnName(perfCategory, filter, "_lost"), materializedSum ? filter.getCriteria() : ""),
+			format(TOP_PERFORMERS_COUNT_QUERY, getPerformanceTableName(perfCategory, filter), materializedSum ? perfCategory.getColumn() : "items", materializedSum ? filter.getCriteria() : filter.getSearchCriteria()),
 			filter.getParams().addValue("minEntries", getMinEntries(perfCategory, filter)),
 			Integer.class
 		));
@@ -66,10 +73,11 @@ public class TopPerformersService {
 	@Cacheable("TopPerformers.Table")
 	public BootgridTable<TopPerformerRow> getTopPerformersTable(String category, int playerCount, StatsPerfFilter filter, String orderBy, int pageSize, int currentPage) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
+		boolean materializedSum = isMaterializedSum(filter);
 		BootgridTable<TopPerformerRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(TOP_PERFORMERS_QUERY, getPerfColumnName(perfCategory, filter, "_won"), getPerfColumnName(perfCategory, filter, "_lost"), getPerformanceTableName(filter), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy),
+			format(TOP_PERFORMERS_QUERY, materializedSum ? perfCategory.getColumn() : "items", getPerformanceTableName(perfCategory, filter), materializedSum ? filter.getBaseCriteria() : "", where(filter.getSearchCriteria()), orderBy),
 			filter.getParams()
 				.addValue("minEntries", getMinEntries(perfCategory, filter))
 				.addValue("offset", offset)
@@ -87,8 +95,15 @@ public class TopPerformersService {
 		return table;
 	}
 
-	private static String getPerfColumnName(PerformanceCategory perfCategory, StatsPerfFilter filter, String suffix) {
-		return isMaterializedSum(filter) ? perfCategory.getColumn() + suffix : perfCategory.getSumExpression(suffix);
+	private static String getPerformanceTableName(PerformanceCategory perfCategory, StatsPerfFilter filter) {
+		if (filter.isEmpty())
+			return "player_performance";
+		else if (filter.isForSeason())
+			return "player_season_performance";
+		else if (filter.isForTournament())
+			return "player_tournament_performance";
+		else
+			return format(TOP_PERFORMERS_SUMMED, perfCategory.getSumExpression("_won"), perfCategory.getSumExpression("_lost"), where(filter.getBaseCriteria()));
 	}
 
 	public String getTopPerformersMinEntries(String category, StatsPerfFilter filter) {
