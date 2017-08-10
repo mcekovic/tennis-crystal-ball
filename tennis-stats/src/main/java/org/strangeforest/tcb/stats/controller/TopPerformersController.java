@@ -21,6 +21,10 @@ public class TopPerformersController extends PageController {
 		modelMap.addAttribute("category", category);
 		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
 		modelMap.addAttribute("seasons", topPerformersService.getSeasons());
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		return new ModelAndView("topPerformers", modelMap);
 	}
 }

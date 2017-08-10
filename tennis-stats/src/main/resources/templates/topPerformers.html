@@ -3,6 +3,10 @@
 <!--/*@thymesVar id="category" type="java.lang.String"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
 	<title>Top Performers</title>
 	<script type="text/javascript">
@@ -23,6 +27,12 @@
 					var season = $("#season").val();
 					if (season)
 						request.season = season;
+					var level = $("#level").val();
+					if (level)
+						request.level = level;
+					var surface = $("#surface").val();
+					if (surface)
+						request.surface = surface;
 					var active = $("#active").prop("checked");
 					if (active)
 						request.active = active;
@@ -49,6 +59,8 @@
 			var $search = $topPerformersTableHeader.find("div.search");
 			$search.before($("#categoryDiv").remove());
 			$search.before($("#seasonDiv").remove());
+			$search.before($("#levelDiv").remove());
+			$search.before($("#surfaceDiv").remove());
 			$search.before($("#activeDiv").remove());
 			$search.after($("#clearDiv").remove());
 			setBootgridTitle($topPerformersTableHeader, $("#topPerformersTable-title"));
@@ -62,6 +74,12 @@
 			var season = $("#season").val();
 			if (season)
 				url += "&season=" + season;
+			var level = $("#level").val();
+			if (level)
+				url += "&level=" + level;
+			var surface = $("#surface").val();
+			if (surface)
+				url += "&surface=" + surface;
 			$.get(url, function (data) {
 				$("#minEntries").html(data);
 			});
@@ -80,6 +98,8 @@
 		}
 		function clearTopPerformersFilter() {
 			$("#season").val("");
+			$("#level").val("");
+			$("#surface").val("");
 			var $active = $("#active");
 			$active.prop("checked", false);
 			$active.prop("disabled", false);
@@ -102,6 +122,20 @@
 		<select id="season" class="form-control" onchange="seasonChanged()" data-toggle="tooltip" data-placement="top" title="Select career or season">
 			<option value="">Career</option>
 			<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+		</select>
+	</div>
+	<div id="levelDiv" class="btn-group margin-right">
+		<select id="level" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+			<option value="">All levels</option>
+			<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
+			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}">Big Tournaments</option>
+		</select>
+	</div>
+	<div id="surfaceDiv" class="btn-group margin-right">
+		<select id="surface" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+			<option value="">All surfaces</option>
+			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
 		</select>
 	</div>
 	<div id="activeDiv" class="btn-group margin-right">

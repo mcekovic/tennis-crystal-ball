@@ -257,7 +257,7 @@ public class PlayerProfileController extends PageController {
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
-		PlayerPerformanceEx perf = performanceService.getPlayerPerformanceEx(playerId, new StatsPerfFilter(null, null, season, level, surface, tournamentId, null, null));
+		PlayerPerformanceEx perf = performanceService.getPlayerPerformanceEx(playerId, new StatsPerfFilter(season, level, surface, tournamentId, null, null));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);

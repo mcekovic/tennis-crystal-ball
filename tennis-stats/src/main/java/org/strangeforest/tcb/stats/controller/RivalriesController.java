@@ -191,8 +191,8 @@ public class RivalriesController extends PageController {
 	) {
 		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
 		Set<TournamentItem> tournaments = getTournamentsUnion(playerId1, playerId2);
-		PlayerPerformanceEx perf1 = performanceService.getPlayerPerformanceEx(playerId1, new StatsPerfFilter(null, null, season, level, surface, tournamentId, null, opponent ? playerId2 : null));
-		PlayerPerformanceEx perf2 = performanceService.getPlayerPerformanceEx(playerId2, new StatsPerfFilter(null, null, season, level, surface, tournamentId, null, opponent ? playerId1 : null));
+		PlayerPerformanceEx perf1 = performanceService.getPlayerPerformanceEx(playerId1, new StatsPerfFilter(season, level, surface, tournamentId, null, opponent ? playerId2 : null));
+		PlayerPerformanceEx perf2 = performanceService.getPlayerPerformanceEx(playerId2, new StatsPerfFilter(season, level, surface, tournamentId, null, opponent ? playerId1 : null));
 		Set<Surface> perfSurfaces = union(perf1.getSurfaceMatches().keySet(), perf2.getSurfaceMatches().keySet());
 		Set<TournamentLevel> perfLevels = union(perf1.getLevelMatches().keySet(), perf2.getLevelMatches().keySet());
 		Set<Opponent> perfOppositions = union(perf1.getOppositionMatches().keySet(), perf2.getOppositionMatches().keySet());

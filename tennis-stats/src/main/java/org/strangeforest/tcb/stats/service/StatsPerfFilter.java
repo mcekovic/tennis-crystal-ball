@@ -20,12 +20,8 @@ public class StatsPerfFilter extends PlayerListFilter {
 		return new StatsPerfFilter(null, null, season, null, null, null, null, null);
 	}
 
-	public static StatsPerfFilter forSeasonAndTournament(Integer season, Integer tournamentId) {
-		return new StatsPerfFilter(null, null, season, null, null, tournamentId, null, null);
-	}
-
-	public static StatsPerfFilter forSeasonAndTournament(Boolean active, String searchPhrase, Integer season, Integer tournamentId) {
-		return new StatsPerfFilter(active, searchPhrase, season, null, null, tournamentId, null, null);
+ 	public static StatsPerfFilter forTournament(Integer tournamentId) {
+		return new StatsPerfFilter(null, null, null, null, null, tournamentId, null, null);
 	}
 
 
@@ -51,6 +47,10 @@ public class StatsPerfFilter extends PlayerListFilter {
 		this(null, null, season, null, surface, tournamentId, tournamentEventId, null);
 	}
 
+	public StatsPerfFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, Integer opponentId) {
+		this(null, null, season, level, surface, tournamentId, tournamentEventId, opponentId);
+	}
+	
 	public StatsPerfFilter(Boolean active, String searchPhrase, Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, Integer opponentId) {
 		super(active, searchPhrase);
 		this.season = season;
@@ -97,17 +97,17 @@ public class StatsPerfFilter extends PlayerListFilter {
 		super.addParams(params);
 		if (season != null)
 			params.addValue("season", season);
-		if (!isNullOrEmpty(surface)) {
-			if (surface.length() == 1)
-				params.addValue("surface", surface);
-			else
-				params.addValue("surfaces", asList(surface.split("")));
-		}
 		if (!isNullOrEmpty(level)) {
 			if (level.length() == 1)
 				params.addValue("level", level);
 			else
 				params.addValue("levels", asList(level.split("")));
+		}
+		if (!isNullOrEmpty(surface)) {
+			if (surface.length() == 1)
+				params.addValue("surface", surface);
+			else
+				params.addValue("surfaces", asList(surface.split("")));
 		}
 		if (tournamentId != null)
 			params.addValue("tournamentId", tournamentId);
@@ -121,12 +121,24 @@ public class StatsPerfFilter extends PlayerListFilter {
 		return season;
 	}
 
+	public String getLevel() {
+		return level;
+	}
+
+	public String getSurface() {
+		return surface;
+	}
+
 	public int getTournamentId() {
 		return tournamentId;
 	}
 
 	public boolean hasSeason() {
 		return season != null;
+	}
+
+	public boolean hasLevel() {
+		return !isNullOrEmpty(level);
 	}
 
 	public boolean hasSurface() {
@@ -157,6 +169,10 @@ public class StatsPerfFilter extends PlayerListFilter {
 		return season != null && equals(forSeason(season));
 	}
 
+	public boolean isForTournament() {
+		return tournamentId != null && equals(forTournament(tournamentId));
+	}
+
 	public boolean isEmpty() {
 		return season == null && isNullOrEmpty(level) && isNullOrEmpty(surface) && tournamentId == null && tournamentEventId == null && opponentId == null;
 	}
@@ -169,7 +185,7 @@ public class StatsPerfFilter extends PlayerListFilter {
 		if (!(o instanceof StatsPerfFilter)) return false;
 		if (!super.equals(o)) return false;
 		StatsPerfFilter filter = (StatsPerfFilter)o;
-		return Objects.equals(season, filter.season) &&	stringsEqual(level, filter.level) &&	stringsEqual(surface, filter.surface)
+		return Objects.equals(season, filter.season) &&	stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface)
 		    && Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) && Objects.equals(opponentId, filter.opponentId);
 	}
 
@@ -180,8 +196,8 @@ public class StatsPerfFilter extends PlayerListFilter {
 	@Override protected MoreObjects.ToStringHelper toStringHelper() {
 		return super.toStringHelper()
 			.add("season", season)
-			.add("surface", surface)
 			.add("level", level)
+			.add("surface", surface)
 			.add("tournamentId", tournamentId)
 			.add("tournamentEventId", tournamentEventId)
 			.add("opponentId", opponentId);

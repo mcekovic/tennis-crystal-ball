@@ -101,8 +101,8 @@ public class PerformanceService {
 
 	private PlayerPerformance getPlayerPerformance(int playerId, StatsPerfFilter filter) {
 		MapSqlParameterSource params = filter.getParams().addValue("playerId", playerId);
-		String tableName = getPlayerPerformanceTableName(filter);
-		String perfColumns = filter.isEmpty() || filter.isForSeason() ? PLAYER_PERFORMANCE_COLUMNS : PLAYER_PERFORMANCE_SUMMED_COLUMNS;
+		String tableName = getPerformanceTableName(filter);
+		String perfColumns = isMaterializedSum(filter) ? PLAYER_PERFORMANCE_COLUMNS : PLAYER_PERFORMANCE_SUMMED_COLUMNS;
 		return jdbcTemplate.query(
 			format(PLAYER_PERFORMANCE_QUERY, perfColumns, tableName, filter.getCriteria()),
 			params,
@@ -110,13 +110,19 @@ public class PerformanceService {
 		);
 	}
 
-	private String getPlayerPerformanceTableName(StatsPerfFilter filter) {
+	static String getPerformanceTableName(StatsPerfFilter filter) {
 		if (filter.isEmpty())
 			return "player_performance";
 		else if (filter.isForSeason())
 			return "player_season_performance";
+		else if (filter.isForTournament())
+			return "player_tournament_performance";
 		else
 			return "player_match_performance_v";
+	}
+
+	static boolean isMaterializedSum(StatsPerfFilter filter) {
+		return filter.isEmpty() || filter.isForSeason() || filter.isForTournament();
 	}
 
 	public Map<Integer, PlayerPerformance> getPlayerSeasonsPerformance(int playerId) {

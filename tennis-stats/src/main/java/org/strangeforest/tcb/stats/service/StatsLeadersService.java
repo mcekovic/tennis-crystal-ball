@@ -1,8 +1,5 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.time.*;
-import java.util.*;
-
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -10,29 +7,18 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
-import com.google.common.collect.*;
-
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 @Service
 public class StatsLeadersService {
 
-	@Autowired private TournamentService tournamentService;
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
+	@Autowired private MinEntries minEntries;
 
-	private static final int MAX_PLAYER_COUNT           =  1000;
-	private static final int MIN_MATCHES                =   200;
-	private static final int MIN_POINTS                 = 10000;
-	private static final int MIN_ENTRIES_SEASON_FACTOR  =    10;
-	private static final int MIN_ENTRIES_SURFACE_FACTOR =     4;
-	private static final int MIN_ENTRIES_EVENT_FACTOR   =   100;
-	private static final Map<Range<Integer>, Double> MIN_ENTRIES_TOURNAMENT_FACTOR = ImmutableMap.<Range<Integer>, Double>builder()
-		.put(Range.closed(1, 2), 100.0)
-		.put(Range.closed(3, 5), 50.0)
-		.put(Range.closed(6, 9), 25.0)
-		.put(Range.atLeast(10), 20.0)
-	.build();
+	private static final int MAX_PLAYER_COUNT =  1000;
+	private static final int MIN_MATCHES      =   200;
+	private static final int MIN_POINTS       = 10000;
 
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +
@@ -93,14 +79,14 @@ public class StatsLeadersService {
 		if (filter.hasTournamentOrTournamentEvent() || filter.hasSurfaceGroup()) {
 			return jdbcTemplate.queryForObject(
 				format(SUMMED_STATS_LEADERS_COUNT_QUERY, minEntriesColumn(statsCategory), statsTableName(filter), where(filter.getCriteria(), 2)),
-				filter.getParams().addValue("minEntries", getMinEntriesValue(statsCategory, filter)),
+				filter.getParams().addValue("minEntries", getMinEntries(statsCategory, filter)),
 				Integer.class
 			);
 		}
 		else {
 			return jdbcTemplate.queryForObject(
 				format(STATS_LEADERS_COUNT_QUERY, statsTableName(filter), minEntriesColumn(statsCategory), filter.getCriteria()),
-				filter.getParams().addValue("minEntries", getMinEntriesValue(statsCategory, filter)),
+				filter.getParams().addValue("minEntries", getMinEntries(statsCategory, filter)),
 				Integer.class
 			);
 		}
@@ -113,7 +99,7 @@ public class StatsLeadersService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			getTableSQL(statsCategory, filter, orderBy),
-			filter.getParams().addValue("minEntries", getMinEntriesValue(statsCategory, filter)).addValue("offset", offset).addValue("limit", pageSize),
+			filter.getParams().addValue("minEntries", getMinEntries(statsCategory, filter)).addValue("offset", offset).addValue("limit", pageSize),
 			rs -> {
 				int rank = rs.getInt("rank");
 				int playerId = rs.getInt("player_id");
@@ -129,7 +115,7 @@ public class StatsLeadersService {
 
 	public String getStatsLeadersMinEntries(String category, StatsPerfFilter filter) {
 		StatsCategory statsCategory = StatsCategory.get(category);
-		return getMinEntriesValue(statsCategory, filter) + (statsCategory.isNeedsStats() ? " points" : " matches");
+		return getMinEntries(statsCategory, filter) + (statsCategory.isNeedsStats() ? " points" : " matches");
 	}
 
 	private String getTableSQL(StatsCategory statsCategory, StatsPerfFilter filter, String orderBy) {
@@ -149,24 +135,7 @@ public class StatsLeadersService {
 		return category.isNeedsStats() ? "sv_pt" : "matches";
 	}
 
-	private int getMinEntriesValue(StatsCategory category, StatsPerfFilter filter) {
-		int minEntries = category.isNeedsStats() ? MIN_POINTS : MIN_MATCHES;
-		if (filter.hasSeason()) {
-			minEntries /= MIN_ENTRIES_SEASON_FACTOR;
-			LocalDate today = LocalDate.now();
-			if (filter.getSeason() == today.getYear() && today.getMonth().compareTo(Month.SEPTEMBER) <= 0)
-				minEntries /= 12.0 / today.getMonth().getValue();
-		}
-		if (filter.hasSurface())
-			minEntries /= MIN_ENTRIES_SURFACE_FACTOR;
-		if (filter.hasTournamentEvent())
-			minEntries /= MIN_ENTRIES_EVENT_FACTOR;
-		else if (filter.hasTournament())
-			minEntries /= getMinEntriesTournamentFactor(tournamentService.getTournamentEventCount(filter.getTournamentId()));
-		return Math.max(minEntries, 2);
-	}
-
-	private double getMinEntriesTournamentFactor(int eventCount) {
-		return MIN_ENTRIES_TOURNAMENT_FACTOR.entrySet().stream().filter(entry -> entry.getKey().contains(eventCount)).findFirst().get().getValue();
+	private int getMinEntries(StatsCategory category, StatsPerfFilter filter) {
+		return minEntries.getFilteredMinEntries(category.isNeedsStats() ? MIN_POINTS : MIN_MATCHES, filter);
 	}
 }

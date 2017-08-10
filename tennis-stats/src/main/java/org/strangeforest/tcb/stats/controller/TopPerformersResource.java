@@ -30,6 +30,8 @@ public class TopPerformersResource {
 	public BootgridTable<TopPerformerRow> topPerformersTable(
 		@RequestParam(name = "category") String category,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "active", required = false) Boolean active,
 		@RequestParam(name = "current") int current,
@@ -37,7 +39,7 @@ public class TopPerformersResource {
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		StatsPerfFilter filter = StatsPerfFilter.forSeasonAndTournament(active, searchPhrase, season, tournamentId);
+		StatsPerfFilter filter = new StatsPerfFilter(active, searchPhrase, season, level, surface, tournamentId, null, null);
 		int playerCount = topPerformersService.getPlayerCount(category, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
@@ -49,9 +51,11 @@ public class TopPerformersResource {
 	public String topPerformersMinEntries(
 		@RequestParam(name = "category") String category,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
 	) {
-		StatsPerfFilter filter = StatsPerfFilter.forSeasonAndTournament(season, tournamentId);
+		StatsPerfFilter filter = new StatsPerfFilter(season, level, surface, tournamentId, null, null);
 		return topPerformersService.getTopPerformersMinEntries(category, filter);
 	}
 }
