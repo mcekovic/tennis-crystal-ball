@@ -1,14 +1,16 @@
 package org.strangeforest.tcb.dataload
 
+import java.sql.*
+import java.time.*
+
 import org.springframework.jdbc.core.namedparam.*
 import org.strangeforest.tcb.stats.model.*
 import org.strangeforest.tcb.stats.service.*
 
-import java.time.*
-
 import static java.time.DayOfWeek.*
 import static java.time.format.DateTimeFormatter.*
 import static java.time.temporal.TemporalAdjusters.*
+import static org.strangeforest.tcb.dataload.LoaderUtil.*
 
 loadRankings(new SqlPool())
 
@@ -21,7 +23,10 @@ static loadRankings(SqlPool sqlPool) {
 		for (def date = lastDate.with(next(MONDAY)); date <= currentDate; date = date.with(next(MONDAY))) {
 			def formattedDate = date.format(ofPattern("yyyy-MM-dd"))
 			println "Loading rankings for $formattedDate"
-			atpRankingsLoader.load(formattedDate, 500)
+			def playerCount = 500
+			retry(4, 0L, { th -> th instanceof SQLException }, { retry ->
+				atpRankingsLoader.load(formattedDate, playerCount - 100 * retry)
+			})
 		}
 	}
 }

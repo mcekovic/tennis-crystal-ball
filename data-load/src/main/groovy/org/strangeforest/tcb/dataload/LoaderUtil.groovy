@@ -15,14 +15,14 @@ abstract class LoaderUtil {
 	}
 
 	static retry(int count, long delay, Closure<Boolean> predicate, Closure<Object> closure) {
-		for (int i = 0; i <= count; i++) {
+		for (int retry = 0; retry <= count; retry++) {
 			try {
-				return closure.call()
+				return closure.call(retry)
 			}
 			catch (Throwable th) {
 				def rootCause = extractRootCause(th)
-				if (i < count && predicate.curry(rootCause)) {
-					println "Exception occurred: ${rootCause} [retry ${i + 1} follows]"
+				if (retry < count && predicate.curry(rootCause)) {
+					println "Exception occurred: ${rootCause} [retry ${retry + 1} follows]"
 					Thread.sleep(delay)
 				}
 				else

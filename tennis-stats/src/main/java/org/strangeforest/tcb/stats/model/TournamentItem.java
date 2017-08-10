@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
-import org.strangeforest.tcb.util.*;
+import static java.util.Comparator.*;
 
 public class TournamentItem implements Comparable<TournamentItem> {
 
@@ -42,7 +42,9 @@ public class TournamentItem implements Comparable<TournamentItem> {
 		return Objects.hash(id, name, level);
 	}
 
+	private static final Comparator<String> NULLS_LAST_COMPARATOR = nullsLast(naturalOrder());
+
 	@Override public int compareTo(TournamentItem tournament) {
-		return ObjectUtil.compare(name, tournament.name);
+		return Objects.compare(name, tournament.name, NULLS_LAST_COMPARATOR);
 	}
 }
