@@ -124,7 +124,7 @@ task fullDeployToOpenShift {
 
 task checkHealthAtOpenShift {
 	doLast {
-		def health = new groovy.json.JsonSlurper().parse(new URL('http://tennis-strangeforest.rhcloud.com/manage/health'))
+		def health = new groovy.json.JsonSlurper().parse(new URL('http://www.ultimatetennisstatistics.com/manage/health'))
 		println "Ultimate Tennis Statistics is ${health.status}"
 		println "Disk usage: ${health.quota.blocks.pctUsed}"
 	}
@@ -132,7 +132,7 @@ task checkHealthAtOpenShift {
 
 task infoAtOpenShift {
 	doLast {
-		def info = new groovy.json.JsonSlurper().parse(new URL('http://tennis-strangeforest.rhcloud.com/manage/info'))
+		def info = new groovy.json.JsonSlurper().parse(new URL('http://www.ultimatetennisstatistics.com/manage/info'))
 		println "Ultimate Tennis Statistics: ${info.app.version}"
 		println "DB size: ${info.db.size}"
 		println "Visitors: ${info.visitors}"
