@@ -20,13 +20,20 @@ public class DomainNameRedirectFilter implements Filter {
 		if (httpRequest.getRequestURL().toString().contains("rhcloud.com") && !"true".equals(httpRequest.getParameter("redirected"))) {
 			String url = "http://www.ultimatetennisstatistics.com";
 			String servletPath = httpRequest.getServletPath();
-			if (!isNullOrEmpty(servletPath) && !servletPath.equals("/"))
+			boolean isRootPath = isNullOrEmpty(servletPath) || servletPath.equals("/");
+			if (!isRootPath)
 				url += servletPath;
-			url += '?';
 			String queryString = httpRequest.getQueryString();
-			if (!isNullOrEmpty(queryString))
-				url += queryString + '&';
-			url += "redirected=true";
+			if (!(isRootPath && isNullOrEmpty(queryString))) {
+				url += '?';
+				if (!isNullOrEmpty(queryString)) {
+					url += queryString;
+					if (!isRootPath)
+						url += '&';
+				}
+				if (!isRootPath)
+					url += "redirected=true";
+			}
 			HttpServletResponse httpResponse = (HttpServletResponse)response;
 			httpResponse.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 			httpResponse.setHeader("Location", url);
