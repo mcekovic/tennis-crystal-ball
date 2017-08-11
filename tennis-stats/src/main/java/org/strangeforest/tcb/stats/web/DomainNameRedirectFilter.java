@@ -27,7 +27,9 @@ public class DomainNameRedirectFilter implements Filter {
 			if (!isNullOrEmpty(queryString))
 				url += queryString + '&';
 			url += "redirected=true";
-			((HttpServletResponse)response).sendRedirect(url);
+			HttpServletResponse httpResponse = (HttpServletResponse)response;
+			httpResponse.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+			httpResponse.setHeader("Location", url);
 		}
 		else
 			chain.doFilter(request, response);
