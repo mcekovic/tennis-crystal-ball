@@ -7,7 +7,7 @@ import javax.servlet.http.*;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.*;
 
-import com.google.common.base.*;
+import static com.google.common.base.Strings.*;
 
 @Component @Profile("openshift")
 public class DomainNameRedirectFilter implements Filter {
@@ -17,14 +17,16 @@ public class DomainNameRedirectFilter implements Filter {
 
 	@Override public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest)request;
-		if (httpRequest.getRequestURL().toString().contains("rhcloud.com")) {
+		if (httpRequest.getRequestURL().toString().contains("rhcloud.com") && !"true".equals(httpRequest.getParameter("redirected"))) {
 			String url = "http://www.ultimatetennisstatistics.com";
 			String servletPath = httpRequest.getServletPath();
-			if (!Strings.isNullOrEmpty(servletPath) && !servletPath.equals("/"))
+			if (!isNullOrEmpty(servletPath) && !servletPath.equals("/"))
 				url += servletPath;
+			url += '?';
 			String queryString = httpRequest.getQueryString();
-			if (!Strings.isNullOrEmpty(queryString))
-				url += '?' + queryString;
+			if (!isNullOrEmpty(queryString))
+				url += queryString + '&';
+			url += "redirected=true";
 			((HttpServletResponse)response).sendRedirect(url);
 		}
 		else
