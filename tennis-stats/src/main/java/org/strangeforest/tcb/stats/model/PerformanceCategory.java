@@ -21,14 +21,14 @@ public final class PerformanceCategory {
 	static {
 		// Performance
 		addCategory(PERFORMANCE, "matches", "matches", "count(DISTINCT match_id%1$s)", "Overall Matches", 200, "matches");
-		addCategory(PERFORMANCE, "grandSlamMatches", "grand_slam_matches", "count(DISTINCT grand_slam_match_id%1$s)", "Grand Slam Matches", 50, "matches", "bg-level-G");
-		addCategory(PERFORMANCE, "tourFinalsMatches", "tour_finals_matches", "count(DISTINCT tour_finals_match_id%1$s)", "Tour Finals Matches", 10, "matches", "bg-level-F");
-		addCategory(PERFORMANCE, "mastersMatches", "masters_matches", "count(DISTINCT masters_match_id%1$s)", "Masters Matches", 50, "matches", "bg-level-M");
-		addCategory(PERFORMANCE, "olympicsMatches", "olympics_matches", "count(DISTINCT olympics_match_id%1$s)", "Olympics Matches", 5, "matches", "bg-level-O");
-		addCategory(SURFACE_PERFORMANCE, "hardMatches", "hard_matches", "count(DISTINCT hard_match_id%1$s)", "Hard Matches", 100, "matches", "bg-surface-H");
-		addCategory(SURFACE_PERFORMANCE, "clayMatches", "clay_matches", "count(DISTINCT clay_match_id%1$s)", "Clay Matches", 100, "matches", "bg-surface-C");
-		addCategory(SURFACE_PERFORMANCE, "grassMatches", "grass_matches", "count(DISTINCT grass_match_id%1$s)", "Grass Matches", 50, "matches", "bg-surface-G");
-		addCategory(SURFACE_PERFORMANCE, "carpetMatches", "carpet_matches", "count(DISTINCT carpet_match_id%1$s)", "Carpet Matches", 50, "matches", "bg-surface-P");
+		addCategory(PERFORMANCE, "grandSlamMatches", "grand_slam_matches", "count(DISTINCT grand_slam_match_id%1$s)", "Grand Slam Matches", 50, "matches", "level-category bg-level-G");
+		addCategory(PERFORMANCE, "tourFinalsMatches", "tour_finals_matches", "count(DISTINCT tour_finals_match_id%1$s)", "Tour Finals Matches", 10, "matches", "level-category bg-level-F");
+		addCategory(PERFORMANCE, "mastersMatches", "masters_matches", "count(DISTINCT masters_match_id%1$s)", "Masters Matches", 50, "matches", "level-category bg-level-M");
+		addCategory(PERFORMANCE, "olympicsMatches", "olympics_matches", "count(DISTINCT olympics_match_id%1$s)", "Olympics Matches", 5, "matches", "level-category bg-level-O");
+		addCategory(SURFACE_PERFORMANCE, "hardMatches", "hard_matches", "count(DISTINCT hard_match_id%1$s)", "Hard Matches", 100, "matches", "surface-category bg-surface-H");
+		addCategory(SURFACE_PERFORMANCE, "clayMatches", "clay_matches", "count(DISTINCT clay_match_id%1$s)", "Clay Matches", 100, "matches", "surface-category bg-surface-C");
+		addCategory(SURFACE_PERFORMANCE, "grassMatches", "grass_matches", "count(DISTINCT grass_match_id%1$s)", "Grass Matches", 50, "matches", "surface-category bg-surface-G");
+		addCategory(SURFACE_PERFORMANCE, "carpetMatches", "carpet_matches", "count(DISTINCT carpet_match_id%1$s)", "Carpet Matches", 50, "matches", "surface-category bg-surface-P");
 		// Pressure situations
 		addCategory(PRESSURE_SITUATIONS, "decidingSets", "deciding_sets", "count(DISTINCT deciding_set_match_id%1$s)", "Deciding Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "fifthSets", "fifth_sets", "count(DISTINCT fifth_set_match_id%1$s)", "5th Set", 20, "matches");

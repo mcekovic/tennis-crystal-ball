@@ -55,15 +55,9 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
-			var $topPerformersTableHeader = $("#topPerformersTable-header");
-			var $search = $topPerformersTableHeader.find("div.search");
-			$search.before($("#categoryDiv").remove());
-			$search.before($("#seasonDiv").remove());
-			$search.before($("#levelDiv").remove());
-			$search.before($("#surfaceDiv").remove());
+			var $search = $("#topPerformersTable-header").find("div.search");
 			$search.before($("#activeDiv").remove());
 			$search.after($("#clearDiv").remove());
-			setBootgridTitle($topPerformersTableHeader, $("#topPerformersTable-title"));
 			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
@@ -96,6 +90,29 @@
 			$active.prop("disabled", forSeason);
 			reloadTopPerformers();
 		}
+		function levelChanged() {
+			var forLevel = $("#level").val() != "";
+			var $category = $("#category");
+			$category.find("option.level-category").each(function() {
+				var $this = $(this);
+				if ($this.is(':selected'))
+					$category.val("matches");
+				$this.css("display", forLevel ? "none" : "block");
+			});
+			reloadTopPerformers();
+		}
+		function surfaceChanged() {
+			var forSurface = $("#surface").val() != "";
+			var $category = $("#category");
+			$category.find("option.surface-category").each(function() {
+				var $this = $(this);
+				if ($this.is(':selected'))
+					$category.val("matches");
+				$this.css("display", forSurface ? "none" : "block");
+			});
+			$category.find("optgroup[label='Surface Performance']").css("display", forSurface ? "none" : "block");
+			reloadTopPerformers();
+		}
 		function clearTopPerformersFilter() {
 			$("#season").val("");
 			$("#level").val("");
@@ -110,33 +127,37 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 id="topPerformersTable-title" class="grid-title">Top Performers</h3>
-	<div id="categoryDiv" class="btn-group margin-right">
-		<select id="category" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
-			<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
-				<option th:each="aCategory : ${categoryClass.value}" th:value="${aCategory.name}" value="matches" th:class="${aCategory.cssClass}" th:text="${aCategory.title}" th:selected="${aCategory.name == category}">Overall Matches</option>
-			</optgroup>
-		</select>
-	</div>
-	<div id="seasonDiv" class="btn-group margin-right">
-		<select id="season" class="form-control" onchange="seasonChanged()" data-toggle="tooltip" data-placement="top" title="Select career or season">
-			<option value="">Career</option>
-			<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
-		</select>
-	</div>
-	<div id="levelDiv" class="btn-group margin-right">
-		<select id="level" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
-			<option value="">All levels</option>
-			<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
-			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}">Big Tournaments</option>
-		</select>
-	</div>
-	<div id="surfaceDiv" class="btn-group margin-right">
-		<select id="surface" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
-			<option value="">All surfaces</option>
-			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
-			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
-		</select>
+	<div class="row">
+		<div class="col-md-3">
+			<h3 class="text-nowrap" style="display: inline">Top Performers</h3>
+		</div>
+		<div class="col-md-3">
+			<select id="category" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
+				<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
+					<option th:each="aCategory : ${categoryClass.value}" th:value="${aCategory.name}" value="matches" th:class="${aCategory.cssClass}" th:text="${aCategory.title}" th:selected="${aCategory.name == category}">Overall Matches</option>
+				</optgroup>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="season" class="form-control" onchange="seasonChanged()" data-toggle="tooltip" data-placement="top" title="Select career or season">
+				<option value="">Career</option>
+				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="level" class="form-control" onchange="levelChanged()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+				<option value="">All levels</option>
+				<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
+				<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}">Big Tournaments</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="surface" class="form-control" onchange="surfaceChanged()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+				<option value="">All surfaces</option>
+				<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+			</select>
+		</div>
 	</div>
 	<div id="activeDiv" class="btn-group margin-right">
 		<div class="checkbox">
