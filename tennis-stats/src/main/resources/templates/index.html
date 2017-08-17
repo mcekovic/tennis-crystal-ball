@@ -145,11 +145,13 @@
 				<li>Player Season Summary - On player profile and head-to-head with season highlights and season performance breakdown on the glance</li>
 				<li><a href="/record?recordId=WeeksAtEloTopNGOATPoints">Weeks at Elo Top 5 'GOAT' Points</a> - 'GOAT' Points for weeks at Elo Top 5 (see 'GOAT' Points Legend) to better reflect domination over fellow players in the same Era</li>
 			</ul>
-			<h4 class="text-nowrap">Partners</h4>
-			<p><a href="http://www.livescore.in/" title="Livescore.in" target="_blank">Livescore.in</a></p>
 		</div>
 		<div class="col-lg-2 col-md-3">
 			<div id="rankingTopN"></div>
+			<div class="panel panel-default component text-center text-nowrap">
+				<a href="/liveScores" title="Live scores"><strong>Live Scores</strong> <img src="/images/active.png" style="vertical-align: middle" width="12" height="12"/></a> via<br/>
+				<a href="http://www.livescore.in/" title="Livescore.in" target="_blank">Livescore.in</a>
+			</div>
 			<th:block th:include="fragments/goatTopN :: goatTopN"/>
 		</div>
 	</div>
