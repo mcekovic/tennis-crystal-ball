@@ -17,10 +17,10 @@ public class RefreshRecordsJob {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RefreshRecordsJob.class);
 
-	@Scheduled(cron = "${tennis-stats.jobs.refresh-records:0 35 2 * * MON}")
+	@Scheduled(cron = "${tennis-stats.jobs.refresh-records:0 5 2 * * MON}")
 	public void refreshRecords() {
 		String storageOption = dataService.getDBServerVersion() >= DataService.MATERIALIZED_VIEWS_MIN_VERSION ? "-m" : "-t";
-		if (dataLoad("RefreshRecords", "-rr", "-c 1", storageOption) == 0) {
+		if (dataLoad("RefreshRecords", "-rr", "-c 1", "-rp 500", storageOption) == 0) {
 			try {
 				dataLoad("Vacuum", "-vc", "-c 1", storageOption);
 			}

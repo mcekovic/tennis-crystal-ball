@@ -15,7 +15,7 @@ class RecordsLoader {
 	RecordsService recordsService
 	long pause
 
-	static final int PROGRESS_LINE_WRAP = 100
+	static final int PROGRESS_LINE_WRAP = 0
 
 	RecordsLoader() {
 		recordsService = new RecordsService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
@@ -68,7 +68,7 @@ class RecordsLoader {
 		if (progress.incrementAndGet() % PROGRESS_LINE_WRAP == 0) {
 			println()
 			System.gc()
-			Thread.sleep(5000L)
+			Thread.sleep(pause * 10)
 		}
 	}
 }

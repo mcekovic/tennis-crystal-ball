@@ -17,7 +17,7 @@ public class NewCompletedEventsJob {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(NewCompletedEventsJob.class);
 
-	@Scheduled(cron = "${tennis-stats.jobs.load-new-completed-events:0 10 2 * * *}")
+	@Scheduled(cron = "${tennis-stats.jobs.load-new-completed-events:0 10 1 * * *}")
 	public void loadNewCompletedEvents() {
 		if (dataLoad("LoadNewCompletedEvents", "-nt", "-c 1") == 0)
 			clearCaches();

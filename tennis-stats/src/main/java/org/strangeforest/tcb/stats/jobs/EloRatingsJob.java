@@ -17,7 +17,7 @@ public class EloRatingsJob {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EloRatingsJob.class);
 
-	@Scheduled(cron = "${tennis-stats.jobs.compute-elo-ratings:0 20 2 * * MON}")
+	@Scheduled(cron = "${tennis-stats.jobs.compute-elo-ratings:0 20 1 * * MON}")
 	public void computeEloRatings() {
 		if (dataLoad("EloRatings", "-el", "-c 3", "-d") == 0)
 			clearCaches();

@@ -21,12 +21,13 @@ cli.ff('Force in-progress tournaments forecast')
 cli.el('Compute Elo ratings')
 cli.rc('Refresh computed data')
 cli.rr('Refresh Records')
+cli.rp(args: 1, argName: 'Records pause', 'Pause between refreshing records in ms [default 0]')
 cli.vc('Vacuum space')
 cli.cc('Clear caches')
 cli.help('Print this message')
 def options = cli.parse(args)
 
-if (options && (options.cd || options.dd || options.lt || options.ln || options.lp || options.la || options.nt || options.nr || options.ip || options.ff || options.el || options.rc || options.rr || options.vc || options.cc)) {
+if (options && (options.cd || options.dd || options.lt || options.ln || options.lp || options.la || options.nt || options.nr || options.ip || options.ff || options.el || options.rc || options.rr || options.rp || options.vc || options.cc)) {
 	setProperties(options)
 	
 	if (options.cd)
@@ -86,6 +87,11 @@ def setProperties(def options) {
 
 	if (options.ff)
 		System.setProperty(FORCE_FORECAST_PROPERTY, 'true')
+	
+	if (options.rp) {
+		def recordsPause = String.valueOf(options.getProperty('rp')).trim()
+		System.setProperty(RECORD_PAUSE_PROPERTY, recordsPause)
+	}
 }
 
 static def callLoader(methodName) {
