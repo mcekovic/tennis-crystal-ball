@@ -1,5 +1,5 @@
 <header xmlns:th="http://www.thymeleaf.org" th:fragment="title">
-	<!--/*@thymesVar id="lastDataUpdate" type="java.util.Date"*/-->
+	<!--/*@thymesVar id="dataUpdate" type="java.util.Date"*/-->
 	<script type="text/javascript">
 		autocompletePlayer("player");
 	</script>
@@ -9,8 +9,8 @@
 				<div class="navbar-brand text-nowrap pull-left">
 					<a href="/" style="font-size: larger" title="Home"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></a>
 				</div>
-				<div class="navbar-text pull-left">
-					<small th:if="${lastDataUpdate}" th:text="'Last data update: ' + ${#dates.format(lastDataUpdate, 'dd-MM-yyyy')}" class="text-nowrap text-muted">Last data update: 21-09-2015</small>
+				<div th:if="${dataUpdate}" class="navbar-text pull-left text-nowrap text-muted">
+					<small class="hidden-xs">Updated: </small><small th:text="${#dates.format(dataUpdate, 'dd-MM-yyyy')}" title="Last data update">21-09-2015</small>
 				</div>
 				<div class="navbar-text pull-left text-nowrap" style="margin-top: 5px">
 					<a href="https://www.facebook.com/profile.php?id=100014697018141" target="_blank" title="Ultimate Tennis Statistics on Facebook"><img src="/images/glyphicons-social-facebook.png" width="24" height="24"/></a>

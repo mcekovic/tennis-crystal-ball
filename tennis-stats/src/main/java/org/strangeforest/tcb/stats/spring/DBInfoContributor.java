@@ -19,7 +19,7 @@ public class DBInfoContributor implements InfoContributor {
 		builder.withDetail("db", ImmutableMap.of(
 			"version", dataService.getDBServerVersionString(),
 			"size", dataService.getDatabaseSize(databaseName),
-			"lastUpdate", dataService.getLastUpdate()
+			"dataUpdate", dataService.getDataUpdate()
 		));
 	}
 }

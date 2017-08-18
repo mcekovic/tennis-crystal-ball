@@ -10,8 +10,8 @@ public abstract class PageController extends BaseController {
 
 	@Autowired protected DataService dataService;
 
-	@ModelAttribute("lastDataUpdate")
-	public Date getLastDataUpdate() {
-		return dataService.getLastUpdate();
+	@ModelAttribute("dataUpdate")
+	public Date getDataUpdate() {
+		return dataService.getDataUpdate();
 	}
 }

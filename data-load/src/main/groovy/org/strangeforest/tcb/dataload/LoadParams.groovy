@@ -13,7 +13,7 @@ class LoadParams {
 	static final boolean FULL_LOAD_DEFAULT = true
 	static final boolean USE_MATERIALIZED_VIEWS_DEFAULT = true
 	static final boolean VERBOSE_DEFAULT = false
-	static final long RECORD_PAUSE_DEFAULT = 100L
+	static final long RECORD_PAUSE_DEFAULT = 0L
 	static final boolean FORCE_FORECAST_DEFAULT = false
 
 	static Boolean getBooleanProperty(String name, Boolean defValue = null) {

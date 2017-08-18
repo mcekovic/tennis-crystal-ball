@@ -455,7 +455,9 @@ class EloRatings {
 		eloRatings
 	}
 
-	private saveRatings(Iterable<EloRatingValue> eloRatings, Date date) {
+	private saveRatings(Collection<EloRatingValue> eloRatings, Date date) {
+		if (eloRatings.empty)
+			return
 		sqlPool.withSql { sql ->
 			sql.withBatch(MERGE_ELO_RANKING) { ps ->
 				eloRatings.each { eloRating ->
