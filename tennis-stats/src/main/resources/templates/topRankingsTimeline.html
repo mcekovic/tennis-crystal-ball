@@ -17,7 +17,7 @@
 		}
 	</style>
 </head>
-<body class="container">
+<body th:with="rankTypeName=${rankType.name()}" class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3>Top Rankings Timeline</h3>
 	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('sm')"/>
@@ -25,10 +25,10 @@
 		<div class="col-md-4 input-group">
 			<label for="rankType" class="input-group-addon">Ranking type:</label>
 			<select id="rankType" class="form-control" onchange="onRankTypeChange()">
-				<option value="POINTS" th:selected="${rankType.name() == 'POINTS'}">ATP Ranking</option>
-				<option value="ELO_RATING" th:selected="${rankType.name() == 'ELO_RATING'}">Elo Ranking</option>
-				<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|" th:selected="${rankType != null && rankType.name() == (surface + '_ELO_RATING')}">Hard Elo Ranking</option>
-				<option value="GOAT_POINTS" th:selected="${rankType.name() == 'GOAT_POINTS'}">GOAT Points Ranking</option>
+				<option value="POINTS" th:selected="${rankTypeName == 'POINTS'}">ATP Ranking</option>
+				<option value="ELO_RATING" th:selected="${rankTypeName == 'ELO_RATING'}">Elo Ranking</option>
+				<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|" th:selected="${rankType != null && rankTypeName == (surface + '_ELO_RATING')}">Hard Elo Ranking</option>
+				<option value="GOAT_POINTS" th:selected="${rankTypeName == 'GOAT_POINTS'}">GOAT Points Ranking</option>
 			</select>
 		</div>
 	</row>
@@ -41,10 +41,11 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="season : ${timeline.seasons}" th:unless="${season > 2007 && rankType.name() == 'CARPET_ELO_RATING'}">
+			<tr th:each="season : ${timeline.seasons}" th:unless="${season > 2007 && rankTypeName == 'CARPET_ELO_RATING'}">
 				<th>
-					<a th:href="@{/rankingsTable(rankType=${rankType}, season=${season})}" th:text="${season}" title="Show season year-end rankings">2000</a>
-					<th:block th:if="${season < 1973 && rankType.name() == 'POINTS'}"> *</th:block>
+					<a th:unless="${rankTypeName == 'GOAT_POINTS'}" th:href="@{/rankingsTable(rankType=${rankType}, season=${season})}" th:text="${season}" title="Show season year-end rankings">2000</a>
+					<a th:if="${rankTypeName == 'GOAT_POINTS'}" th:href="@{/season(season=${season}, tab=goatPoints)}" th:text="${season}" title="Show season GOAT Points">2000</a>
+					<th:block th:if="${season < 1973 && rankTypeName == 'POINTS'}"> *</th:block>
 				</th>
 				<td th:each="player : ${timeline.getTopPlayers(season)}">
 					<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
@@ -55,7 +56,7 @@
 			</tr>
 		</tbody>
 	</table>
-	<p th:if="${rankType.name() == 'POINTS'}"><i>* Estimated rankings</i></p>
+	<p th:if="${rankTypeName == 'POINTS'}"><i>* Estimated rankings</i></p>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>
