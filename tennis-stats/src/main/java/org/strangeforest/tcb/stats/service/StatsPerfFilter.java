@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.*;
 import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
+import static java.lang.String.format;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
@@ -14,14 +15,14 @@ public class StatsPerfFilter extends PlayerListFilter {
 
 	// Factory
 
-	public static final StatsPerfFilter EMPTY = new StatsPerfFilter(null, null, null, null, null, null, null, null);
+	public static final StatsPerfFilter EMPTY = new StatsPerfFilter(null, null, null, null, null, null, null, null, null);
 
  	public static StatsPerfFilter forSeason(Integer season) {
-		return new StatsPerfFilter(null, null, season, null, null, null, null, null);
+		return new StatsPerfFilter(null, null, season, null, null, null, null, null, null);
 	}
 
  	public static StatsPerfFilter forTournament(Integer tournamentId) {
-		return new StatsPerfFilter(null, null, null, null, null, tournamentId, null, null);
+		return new StatsPerfFilter(null, null, null, null, null, null, tournamentId, null, null);
 	}
 
 
@@ -30,35 +31,37 @@ public class StatsPerfFilter extends PlayerListFilter {
 	private final Integer season;
 	private final String level;
 	private final String surface;
+	private final String round;
 	private final Integer tournamentId;
 	private final Integer tournamentEventId;
-	private final Integer opponentId;
+	private final OpponentFilter opponentFilter;
 
 	private static final String SEASON_CRITERION           = " AND season = :season";
 	private static final String LEVEL_CRITERION            = " AND level = :level::tournament_level";
 	private static final String LEVELS_CRITERION           = " AND level::TEXT IN (:levels)";
 	private static final String SURFACE_CRITERION          = " AND surface = :surface::surface";
 	private static final String SURFACES_CRITERION         = " AND surface::TEXT IN (:surfaces)";
+	private static final String ROUND_CRITERION            = " AND round %1$s :round::match_round";
 	private static final String TOURNAMENT_CRITERION       = " AND tournament_id = :tournamentId";
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND tournament_event_id = :tournamentEventId";
-	private static final String OPPONENT_CRITERION         = " AND opponent_id = :opponentId";
 
 	public StatsPerfFilter(Integer season, String surface, Integer tournamentId, Integer tournamentEventId) {
-		this(null, null, season, null, surface, tournamentId, tournamentEventId, null);
+		this(null, null, season, null, surface, null, tournamentId, tournamentEventId, null);
 	}
 
 	public StatsPerfFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, Integer opponentId) {
-		this(null, null, season, level, surface, tournamentId, tournamentEventId, opponentId);
+		this(null, null, season, level, surface, null, tournamentId, tournamentEventId, OpponentFilter.forStats(opponentId));
 	}
 	
-	public StatsPerfFilter(Boolean active, String searchPhrase, Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, Integer opponentId) {
+	public StatsPerfFilter(Boolean active, String searchPhrase, Integer season, String level, String surface, String round, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
 		super(active, searchPhrase);
 		this.season = season;
 		this.level = level;
 		this.surface = surface;
+		this.round = round;
 		this.tournamentId = tournamentId;
 		this.tournamentEventId = tournamentEventId;
-		this.opponentId = opponentId;
+		this.opponentFilter = opponentFilter != null ? opponentFilter : OpponentFilter.ALL;
 	}
 
 	public String getBaseCriteria() {
@@ -85,12 +88,13 @@ public class StatsPerfFilter extends PlayerListFilter {
 			criteria.append(level.length() == 1 ? LEVEL_CRITERION : LEVELS_CRITERION);
 		if (!isNullOrEmpty(surface))
 			criteria.append(surface.length() == 1 ? SURFACE_CRITERION : SURFACES_CRITERION);
+		if (!isNullOrEmpty(round))
+			criteria.append(format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
 		if (tournamentId != null)
 			criteria.append(TOURNAMENT_CRITERION);
 		if (tournamentEventId != null)
 			criteria.append(TOURNAMENT_EVENT_CRITERION);
-		if (opponentId != null)
-			criteria.append(OPPONENT_CRITERION);
+		opponentFilter.appendCriteria(criteria);
 	}
 
 	@Override protected void addParams(MapSqlParameterSource params) {
@@ -109,12 +113,13 @@ public class StatsPerfFilter extends PlayerListFilter {
 			else
 				params.addValue("surfaces", asList(surface.split("")));
 		}
+		if (!isNullOrEmpty(round))
+			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 		if (tournamentId != null)
 			params.addValue("tournamentId", tournamentId);
 		if (tournamentEventId != null)
 			params.addValue("tournamentEventId", tournamentEventId);
-		if (opponentId != null)
-			params.addValue("opponentId", opponentId);
+		opponentFilter.addParams(params);
 	}
 
 	public Integer getSeason() {
@@ -162,7 +167,7 @@ public class StatsPerfFilter extends PlayerListFilter {
 	}
 
 	public boolean hasOpponent() {
-		return opponentId != null;
+		return !opponentFilter.isEmpty();
 	}
 
 	public boolean isForSeason() {
@@ -174,7 +179,7 @@ public class StatsPerfFilter extends PlayerListFilter {
 	}
 
 	public boolean isEmpty() {
-		return season == null && isNullOrEmpty(level) && isNullOrEmpty(surface) && tournamentId == null && tournamentEventId == null && opponentId == null;
+		return season == null && isNullOrEmpty(level) && isNullOrEmpty(surface) && isNullOrEmpty(round) && tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty();
 	}
 
 
@@ -185,12 +190,12 @@ public class StatsPerfFilter extends PlayerListFilter {
 		if (!(o instanceof StatsPerfFilter)) return false;
 		if (!super.equals(o)) return false;
 		StatsPerfFilter filter = (StatsPerfFilter)o;
-		return Objects.equals(season, filter.season) &&	stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface)
-		    && Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) && Objects.equals(opponentId, filter.opponentId);
+		return Objects.equals(season, filter.season) &&	stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface) && stringsEqual(round, filter.round)
+		    && Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) && opponentFilter.equals(filter.opponentFilter);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(super.hashCode(), season, emptyToNull(level), emptyToNull(surface), tournamentId, tournamentEventId, opponentId);
+		return Objects.hash(super.hashCode(), season, emptyToNull(level), emptyToNull(surface), emptyToNull(round), tournamentId, tournamentEventId, opponentFilter);
 	}
 
 	@Override protected MoreObjects.ToStringHelper toStringHelper() {
@@ -198,8 +203,9 @@ public class StatsPerfFilter extends PlayerListFilter {
 			.add("season", season)
 			.add("level", level)
 			.add("surface", surface)
+			.add("round", round)
 			.add("tournamentId", tournamentId)
 			.add("tournamentEventId", tournamentEventId)
-			.add("opponentId", opponentId);
+			.add("opponentFilter", opponentFilter);
 	}
 }
