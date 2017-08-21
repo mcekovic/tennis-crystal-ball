@@ -119,7 +119,7 @@ public class OutcomeFilter {
 		if (this == o) return true;
 		if (!(o instanceof OutcomeFilter)) return false;
 		OutcomeFilter filter = (OutcomeFilter)o;
-		return Objects.equals(won, filter.won) && stringsEqual(outcome, filter.outcome) && forStats == filter.forStats;
+		return Objects.equals(won, filter.won) && stringsEqual(outcome, filter.outcome);
 	}
 
 	@Override public int hashCode() {
@@ -129,7 +129,7 @@ public class OutcomeFilter {
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("won", won)
-			.add("outcome", outcome)
+			.add("outcome", emptyToNull(outcome))
 			.toString();
 	}
 }

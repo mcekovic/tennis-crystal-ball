@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.namedparam.*;
 import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
-import static java.lang.String.format;
+import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
@@ -15,14 +15,46 @@ public class PerfStatsFilter extends PlayerListFilter {
 
 	// Factory
 
-	public static final PerfStatsFilter EMPTY = new PerfStatsFilter(null, null, null, null, null, null, null, null, null);
+	public static final PerfStatsFilter ALL = new PerfStatsFilter(null, null, null, null, null, null, null, null, null);
 
  	public static PerfStatsFilter forSeason(Integer season) {
 		return new PerfStatsFilter(null, null, season, null, null, null, null, null, null);
 	}
 
+ 	public static PerfStatsFilter forLevel(String level) {
+		return new PerfStatsFilter(null, null, null, level, null, null, null, null, null);
+	}
+
+ 	public static PerfStatsFilter forSeasonAndLevel(Integer season, String level) {
+		return new PerfStatsFilter(null, null, season, level, null, null, null, null, null);
+	}
+
+ 	public static PerfStatsFilter forSurface(String surface) {
+		return new PerfStatsFilter(null, null, null, null, surface, null, null, null, null);
+	}
+
+ 	public static PerfStatsFilter forSeasonAndSurface(Integer season, String surface) {
+		return new PerfStatsFilter(null, null, season, null, surface, null, null, null, null);
+	}
+
+ 	public static PerfStatsFilter forRound(String round) {
+		return new PerfStatsFilter(null, null, null, null, null, round, null, null, null);
+	}
+
+ 	public static PerfStatsFilter forSeasonAndRound(Integer season, String round) {
+		return new PerfStatsFilter(null, null, season, null, null, round, null, null, null);
+	}
+
  	public static PerfStatsFilter forTournament(Integer tournamentId) {
 		return new PerfStatsFilter(null, null, null, null, null, null, tournamentId, null, null);
+	}
+
+	public static PerfStatsFilter forOpponent(String opponent) {
+		return new PerfStatsFilter(null, null, null, null, null, null, null, null, OpponentFilter.forStats(opponent, null));
+	}
+
+	public static PerfStatsFilter forSeasonAndOpponent(Integer season, String opponent) {
+		return new PerfStatsFilter(null, null, season, null, null, null, null, null, OpponentFilter.forStats(opponent, null));
 	}
 
 
@@ -186,8 +218,40 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return season != null && equals(forSeason(season));
 	}
 
+	public boolean isForLevel() {
+		return !isNullOrEmpty(level) && equals(forLevel(level));
+	}
+
+	public boolean isForSeasonAndLevel() {
+		return season != null && !isNullOrEmpty(level) && equals(forSeasonAndLevel(season, level));
+	}
+
+	public boolean isForSurface() {
+		return !isNullOrEmpty(surface) && equals(forSurface(surface));
+	}
+
+	public boolean isForSeasonAndSurface() {
+		return season != null && !isNullOrEmpty(surface) && equals(forSeasonAndSurface(season, surface));
+	}
+
+	public boolean isForRound() {
+		return !isNullOrEmpty(round) && equals(forRound(round));
+	}
+
+	public boolean isForSeasonAndRound() {
+		return season != null && !isNullOrEmpty(round) && equals(forSeasonAndRound(season, round));
+	}
+
 	public boolean isForTournament() {
 		return tournamentId != null && equals(forTournament(tournamentId));
+	}
+
+	public boolean isForOpposition() {
+		return opponentFilter.getOpponent() != null && equals(forOpponent(opponentFilter.getOpponent().name()));
+	}
+
+	public boolean isForSeasonAndOpposition() {
+		return season != null && opponentFilter.getOpponent() != null && equals(forSeasonAndOpponent(season, opponentFilter.getOpponent().name()));
 	}
 
 	public boolean isEmpty() {
@@ -213,9 +277,9 @@ public class PerfStatsFilter extends PlayerListFilter {
 	@Override protected MoreObjects.ToStringHelper toStringHelper() {
 		return super.toStringHelper()
 			.add("season", season)
-			.add("level", level)
-			.add("surface", surface)
-			.add("round", round)
+			.add("level", emptyToNull(level))
+			.add("surface", emptyToNull(surface))
+			.add("round", emptyToNull(round))
 			.add("tournamentId", tournamentId)
 			.add("tournamentEventId", tournamentEventId)
 			.add("opponentFilter", opponentFilter);

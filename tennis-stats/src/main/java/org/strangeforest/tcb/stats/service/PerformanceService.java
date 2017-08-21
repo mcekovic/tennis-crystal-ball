@@ -96,7 +96,7 @@ public class PerformanceService {
 
 
 	public PlayerPerformance getPlayerPerformance(int playerId) {
-		return getPlayerPerformance(playerId, PerfStatsFilter.EMPTY);
+		return getPlayerPerformance(playerId, PerfStatsFilter.ALL);
 	}
 
 	private PlayerPerformance getPlayerPerformance(int playerId, PerfStatsFilter filter) {

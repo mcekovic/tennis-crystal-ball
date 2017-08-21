@@ -46,11 +46,12 @@ public class TopPerformersResource {
 	) {
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
 		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, level, surface, round, tournamentId, null, opponentFilter);
-		int playerCount = topPerformersService.getPlayerCount(category, filter, minEntries);
+		TopPerformersView view = new TopPerformersView(category, filter).optimize();
+		int playerCount = topPerformersService.getPlayerCount(view.getCategory(), view.getFilter(), minEntries);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : playerCount;
-		return topPerformersService.getTopPerformersTable(category, playerCount, filter, minEntries, orderBy, pageSize, current);
+		return topPerformersService.getTopPerformersTable(view.getCategory(), playerCount, view.getFilter(), minEntries, orderBy, pageSize, current);
 	}
 
 	@GetMapping("/topPerformersMinEntries")
@@ -67,6 +68,7 @@ public class TopPerformersResource {
 	) {
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
 		PerfStatsFilter filter = new PerfStatsFilter(null, null, season, level, surface, round, tournamentId, null, opponentFilter);
-		return topPerformersService.getTopPerformersMinEntries(category, filter, minEntries);
+		TopPerformersView view = new TopPerformersView(category, filter).optimize();
+		return topPerformersService.getTopPerformersMinEntries(view.getCategory(), view.getFilter(), minEntries);
 	}
 }

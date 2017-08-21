@@ -112,7 +112,7 @@ public class OpponentFilter {
 		if (this == o) return true;
 		if (!(o instanceof OpponentFilter)) return false;
 		OpponentFilter filter = (OpponentFilter)o;
-		return opponent == filter.opponent && Objects.equals(opponentId, filter.opponentId) && countryIds.equals(filter.countryIds) && forStats == filter.forStats;
+		return opponent == filter.opponent && Objects.equals(opponentId, filter.opponentId) && countryIds.equals(filter.countryIds);
 	}
 
 	@Override public int hashCode() {

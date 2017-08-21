@@ -142,10 +142,10 @@ public class TournamentEventFilter {
 	protected ToStringHelper toStringHelper() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("season", season)
-			.add("level", level)
-			.add("surface", surface)
+			.add("level", emptyToNull(level))
+			.add("surface", emptyToNull(surface))
 			.add("tournamentId", tournamentId)
 			.add("tournamentEventId", tournamentEventId)
-			.add("searchPhrase", searchPhrase);
+			.add("searchPhrase", emptyToNull(searchPhrase));
 	}
 }

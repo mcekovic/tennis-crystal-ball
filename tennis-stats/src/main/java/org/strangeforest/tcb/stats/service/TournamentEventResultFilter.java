@@ -74,7 +74,7 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 
 	@Override protected ToStringHelper toStringHelper() {
 		return super.toStringHelper()
-			.add("result", result)
+			.add("result", emptyToNull(result))
 			.add("statsFilter", statsFilter);
 	}
 }

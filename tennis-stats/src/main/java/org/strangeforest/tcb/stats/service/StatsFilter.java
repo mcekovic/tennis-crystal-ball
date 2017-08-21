@@ -66,7 +66,7 @@ public class StatsFilter {
 
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
-			.add("category", category)
+			.add("category", emptyToNull(category))
 			.add("range", range)
 			.toString();
 	}}

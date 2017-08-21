@@ -118,9 +118,9 @@ public class RivalryFilter {
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("seasonRange", seasonRange)
-			.add("level", level)
-			.add("surface", surface)
-			.add("round", round)
+			.add("level", emptyToNull(level))
+			.add("surface", emptyToNull(surface))
+			.add("round", emptyToNull(round))
 			.toString();
 	}
 }

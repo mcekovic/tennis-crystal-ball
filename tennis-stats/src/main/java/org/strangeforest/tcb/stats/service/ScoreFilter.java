@@ -170,7 +170,7 @@ public class ScoreFilter {
 		if (this == o) return true;
 		if (!(o instanceof ScoreFilter)) return false;
 		ScoreFilter filter = (ScoreFilter)o;
-		return wSets == filter.wSets && lSets == filter.lSets && after == filter.after && all == filter.all && forStats == filter.forStats;
+		return wSets == filter.wSets && lSets == filter.lSets && after == filter.after && all == filter.all;
 	}
 
 	@Override public int hashCode() {

@@ -101,36 +101,12 @@
 				$active.prop("checked", false);
 			$active.prop("disabled", forSeason);
 		}
-		function levelChanged() {
-			setCategoriesVisible("level-category", !$("#level").val());
-		}
-		function surfaceChanged() {
-			var visible = !$("#surface").val();
-			setCategoriesVisible("surface-category", visible);
-			$("#category").find("optgroup[label='Surface Performance']").css("display", visible ? "block" : "none");
-		}
-		function roundChanged() {
-			setCategoriesVisible("round-category", !$("#round").val());
-		}
-		function opponentChanged() {
-			var opponent = $("#opponent").val();
-			setCategoriesVisible("topn-category", opponent != "NO_1" && !opponent.startsWith("TOP_"));
-		}
-		function setCategoriesVisible(cssClass, visible) {
-			var $category = $("#category");
-			$category.find("option." + cssClass).each(function () {
-				var $this = $(this);
-				if ($this.is(':selected'))
-					$category.val("matches");
-				$this.css("display", visible ? "block" : "none");
-			});
-		}
 		function clearTopPerformersFilter() {
 			$("#season").val(""); seasonChanged();
-			$("#level").val(""); levelChanged();
-			$("#surface").val(""); surfaceChanged();
-			$("#round").val(""); roundChanged();
-			$("#opponent").val(""); opponentChanged();
+			$("#level").val("");
+			$("#surface").val("");
+			$("#round").val("");
+			$("#opponent").val("");
 			$("#tournament").val("");
 			$("#country").val("");
 			$("#minEntriesOverride").val("");
@@ -165,27 +141,27 @@
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id="level" class="form-control" onchange="levelChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+			<select id="level" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 				<option value="">All levels</option>
 				<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
 				<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}">Big Tournaments</option>
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id="surface" class="form-control" onchange="surfaceChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+			<select id="surface" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 				<option value="">All surfaces</option>
 				<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id="round" class="form-control" onchange="roundChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+			<select id="round" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by round">
 				<option value="">All rounds</option>
 				<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id="opponent" class="form-control" onchange="opponentChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+			<select id="opponent" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
 				<option value="">Vs All</option>
 				<option th:each="anOpponent : ${opponents}" th:value="${anOpponent}" value="NO_1" th:text="${anOpponent.text}">Vs No. 1</option>
 			</select>

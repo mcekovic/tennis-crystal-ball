@@ -173,7 +173,7 @@ public class MatchFilter extends TournamentEventResultFilter {
 
 	@Override protected ToStringHelper toStringHelper() {
 		return super.toStringHelper()
-			.add("round", round)
+			.add("round", emptyToNull(round))
 			.add("opponentFilter", opponentFilter)
 			.add("outcomeFilter", outcomeFilter)
 			.add("scoreFilter", scoreFilter);

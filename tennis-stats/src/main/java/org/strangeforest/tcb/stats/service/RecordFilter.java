@@ -7,6 +7,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class RecordFilter {
 
@@ -51,17 +52,17 @@ public class RecordFilter {
 		if (this == o) return true;
 		if (!(o instanceof RecordFilter)) return false;
 		RecordFilter filter = (RecordFilter)o;
-		return Objects.equals(category, filter.category) && Objects.equals(searchPhrase, filter.searchPhrase) && infamous == filter.infamous;
+		return stringsEqual(category, filter.category) && stringsEqual(searchPhrase, filter.searchPhrase) && infamous == filter.infamous;
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(category, searchPhrase, infamous);
+		return Objects.hash(emptyToNull(category), emptyToNull(searchPhrase), infamous);
 	}
 
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
-			.add("category", category)
-			.add("searchPhrase", searchPhrase)
+			.add("category", emptyToNull(category))
+			.add("searchPhrase", emptyToNull(searchPhrase))
 			.add("infamous", infamous)
 		.toString();
 	}

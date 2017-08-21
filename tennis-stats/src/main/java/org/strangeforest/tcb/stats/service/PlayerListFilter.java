@@ -84,6 +84,6 @@ public class PlayerListFilter {
 	protected MoreObjects.ToStringHelper toStringHelper() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("active", active)
-			.add("searchPhrase", searchPhrase);
+			.add("searchPhrase", emptyToNull(searchPhrase));
 	}
 }
