@@ -30,7 +30,7 @@ public class StatsLeadersResource {
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		StatsPerfFilter filter = new StatsPerfFilter(active, searchPhrase, season, null, surface, tournamentId, tournamentEventId, null);
+		StatsPerfFilter filter = new StatsPerfFilter(active, searchPhrase, season, null, surface, null, tournamentId, tournamentEventId, null);
 		int playerCount = statsLeadersService.getPlayerCount(category, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);

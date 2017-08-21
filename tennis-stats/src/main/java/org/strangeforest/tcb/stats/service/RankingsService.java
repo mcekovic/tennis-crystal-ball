@@ -60,12 +60,12 @@ public class RankingsService {
 		"  FROM %1$s r\n" +
 		"  WHERE r.rank_date BETWEEN (SELECT pd.prev_rank_date FROM prev_date pd) AND :date\n" +
 		"  WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)\n" +
-		")" +
-		"SELECT r.rank, player_id, p.name, p.country_id, r.points, r.rank_diff, r.points_diff, p.%4$s AS best_rank, p.%5$s AS best_rank_date\n" +
+		")\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, r.points, r.rank_diff, r.points_diff, p.%4$s AS best_rank, p.%5$s AS best_rank_date, p.%6$s AS best_points\n" +
 		"FROM ranking_ex r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE r.rank_date = :date%6$s\n" +
-		"ORDER BY %7$s OFFSET :offset";
+		"WHERE r.rank_date = :date%7$s\n" +
+		"ORDER BY %8$s OFFSET :offset";
 
 	private static final String PEAK_ELO_RATING_TABLE_QUERY = //language=SQL
 		"WITH best_elo_rating_ranked AS (\n" +
@@ -181,7 +181,7 @@ public class RankingsService {
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), filter.getCriteria(), orderBy),
+			format(RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), bestPointsColumn(rankType), filter.getCriteria(), orderBy),
 			getTableParams(filter, date, offset),
 			rs -> {
 				int rank = rs.getInt("rank");
@@ -195,7 +195,8 @@ public class RankingsService {
 				Date bestRankDate = rs.getDate("best_rank_date");
 				Integer rankDiff = getInteger(rs, "rank_diff");
 				Integer pointsDiff = getInteger(rs, "points_diff");
-				table.addRow(new PlayerDiffRankingsRow(rank, playerId, name, countryId, points, bestRank, bestRankDate, rankDiff, pointsDiff));
+				int bestPoints = rs.getInt("best_points");
+				table.addRow(new PlayerDiffRankingsRow(rank, playerId, name, countryId, points, bestRank, bestRankDate, rankDiff, pointsDiff, bestPoints));
 			}
 		);
 		table.setTotal(offset + players.get());
@@ -212,7 +213,7 @@ public class RankingsService {
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(PEAK_ELO_RATING_TABLE_QUERY, bestEloRatingColumn(rankType), bestEloRatingDateColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), where(filter.withPrefix("p.").getCriteria())),
+			format(PEAK_ELO_RATING_TABLE_QUERY, bestPointsColumn(rankType), bestEloRatingDateColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), where(filter.withPrefix("p.").getCriteria())),
 			getPeakEloTableParams(filter, offset, maxPlayers),
 			rs -> {
 				int rank = rs.getInt("rank");
@@ -299,8 +300,9 @@ public class RankingsService {
 		}
 	}
 
-	private String bestEloRatingColumn(RankType rankType) {
+	private String bestPointsColumn(RankType rankType) {
 		switch (rankType) {
+			case POINTS: return "best_rank_points";
 			case ELO_RATING: return "best_elo_rating";
 			case HARD_ELO_RATING: return "best_hard_elo_rating";
 			case CLAY_ELO_RATING: return "best_clay_elo_rating";

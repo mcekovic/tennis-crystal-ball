@@ -32,6 +32,7 @@ public class TopPerformersResource {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "active", required = false) Boolean active,
 		@RequestParam(name = "current") int current,
@@ -39,7 +40,7 @@ public class TopPerformersResource {
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		StatsPerfFilter filter = new StatsPerfFilter(active, searchPhrase, season, level, surface, tournamentId, null, null);
+		StatsPerfFilter filter = new StatsPerfFilter(active, searchPhrase, season, level, surface, round, tournamentId, null, null);
 		int playerCount = topPerformersService.getPlayerCount(category, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
