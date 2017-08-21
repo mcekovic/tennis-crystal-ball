@@ -1,8 +1,10 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import java.util.*;
+import java.time.*;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.*;
+import com.fasterxml.jackson.datatype.jsr310.deser.*;
 
 public class DateRankingDiffRecordDetail extends BaseDateRankingDiffRecordDetail<Integer> {
 
@@ -14,7 +16,7 @@ public class DateRankingDiffRecordDetail extends BaseDateRankingDiffRecordDetail
 		@JsonProperty("active2") Boolean active2,
 		@JsonProperty("value1") int value1,
 		@JsonProperty("value2") int value2,
-		@JsonProperty("date") Date date
+		@JsonProperty("date") @JsonDeserialize(using = LocalDateDeserializer.class) LocalDate date
 	) {
 		super(value, playerId2, name2, countryId2, active2, value1, value2, date);
 	}

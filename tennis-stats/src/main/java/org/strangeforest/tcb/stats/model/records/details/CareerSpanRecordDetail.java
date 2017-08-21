@@ -1,31 +1,33 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import java.util.*;
+import java.time.*;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.*;
+import com.fasterxml.jackson.datatype.jsr310.deser.*;
 
 import static java.lang.String.*;
 
 public class CareerSpanRecordDetail extends SimpleRecordDetail<String> {
 
-	private final Date startDate;
-	private final Date endDate;
+	private final LocalDate startDate;
+	private final LocalDate endDate;
 
 	public CareerSpanRecordDetail(
 		@JsonProperty("value") String value,
-		@JsonProperty("start_date") Date startDate,
-		@JsonProperty("end_date") Date endDate
+		@JsonProperty("start_date") @JsonDeserialize(using = LocalDateDeserializer.class) LocalDate startDate,
+		@JsonProperty("end_date") @JsonDeserialize(using = LocalDateDeserializer.class) LocalDate endDate
 	) {
 		super(value);
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
 
-	public Date getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
-	public Date getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 

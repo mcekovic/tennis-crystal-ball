@@ -17,6 +17,7 @@ public enum Opponent {
 	UNDER_18("Vs Under 18", matchesAgeCriterion(Range.atMost(18)), statsAgeCriterion(Range.atMost(18)), false),
 	UNDER_21("Vs Under 21", matchesAgeCriterion(Range.atMost(21)), statsAgeCriterion(Range.atMost(21)), false),
 	UNDER_25("Vs Under 25", matchesAgeCriterion(Range.atMost(25)), statsAgeCriterion(Range.atMost(25)), false),
+	OVER_25("Vs Over 25", matchesAgeCriterion(Range.atLeast(25)), statsAgeCriterion(Range.atLeast(25)), false),
 	OVER_30("Vs Over 30", matchesAgeCriterion(Range.atLeast(30)), statsAgeCriterion(Range.atLeast(30)), false),
 	OVER_35("Vs Over 35", matchesAgeCriterion(Range.atLeast(35)), statsAgeCriterion(Range.atLeast(35)), false),
 	RIGHT_HANDED("Vs Right-handed", matchesHandCriterion("R"), statsHandCriterion("R"), true),

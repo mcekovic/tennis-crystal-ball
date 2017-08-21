@@ -85,6 +85,18 @@ public class OpponentFilter {
 			params.addValue("countryIds", countryIds);
 	}
 
+	public Opponent getOpponent() {
+		return opponent;
+	}
+
+	public boolean hasOpponent() {
+		return opponent != null;
+	}
+
+	public boolean hasCountries() {
+		return !countryIds.isEmpty();
+	}
+
 	public boolean isEmpty() {
 		return opponent == null && opponentId == null && countryIds.isEmpty();
 	}

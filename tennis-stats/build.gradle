@@ -50,17 +50,18 @@ dependencies {
 	compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-	compile ("org.webjars:bootstrap:$bootstrapVersion")
-	compile ("org.webjars:jquery:$jQueryVersion")
-	compile ("org.webjars:jquery-ui:$jQueryUIVersion")
-	compile ("org.webjars:jquery-ui-themes:$jQueryUIVersion")
-	compile ("org.webjars.bower:jquery-bootgrid:$jQueryBootgridVersion") {
+	compile ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+	runtime ("org.webjars:bootstrap:$bootstrapVersion")
+	runtime ("org.webjars:jquery:$jQueryVersion")
+	runtime ("org.webjars:jquery-ui:$jQueryUIVersion")
+	runtime ("org.webjars:jquery-ui-themes:$jQueryUIVersion")
+	runtime ("org.webjars.bower:jquery-bootgrid:$jQueryBootgridVersion") {
 		exclude group: 'org.webjars.bower'
 	}
 	compile ("com.maxmind.geoip2:geoip2:$geoip2Version") {
 		exclude group: 'com.google.http-client'
 	}
-	compile files ('lib/GeoLite2-Country.zip')
+	runtime files ('lib/GeoLite2-Country.zip')
 	compile ("eu.bitwalker:UserAgentUtils:$userAgentUtilsVersion")
 
 	testCompile ('org.springframework.boot:spring-boot-starter-test')

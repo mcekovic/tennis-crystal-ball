@@ -17,6 +17,8 @@ import com.neovisionaries.i18n.*;
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static java.util.Collections.*;
+import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
@@ -196,17 +198,30 @@ public class MatchesService {
 	}
 
 
-	private Supplier<Map<String, List<String>>> sameCountryIdsMap = Memoizer.of(this::getSameCountryIds);
+	private Supplier<List<String>> countryIds = Memoizer.of(this::countryIds);
+	private Supplier<List<CountryCode>> countries = Memoizer.of(this::countries);
+	private Supplier<Map<String, List<String>>> sameCountryIdsMap = Memoizer.of(this::sameCountryIdsMap);
 
-	private Map<String, List<String>> getSameCountryIds() {
-		List<String> countryIds = jdbcTemplate.getJdbcOperations().queryForList(MATCHES_COUNTRIES_QUERY, String.class);
+	private List<String> countryIds() {
+		return jdbcTemplate.getJdbcOperations().queryForList(MATCHES_COUNTRIES_QUERY, String.class);
+	}
+
+	private List<CountryCode> countries() {
+		return countryIds.get().stream().map(Country::code).filter(code -> code != null && code.getAlpha3() != null).distinct().sorted(comparing(CountryCode::getName)).collect(toList());
+	}
+
+	private Map<String, List<String>> sameCountryIdsMap() {
 		Map<String, List<String>> sameCountryIdsMap = new HashMap<>();
-		for (String countryId : countryIds) {
+		for (String countryId : countryIds.get()) {
 			CountryCode countryCode = Country.code(countryId);
 			if (countryCode != null)
 				sameCountryIdsMap.computeIfAbsent(countryCode.getAlpha3(), mainCountryId -> new ArrayList<>()).add(countryId);
 		}
 		return sameCountryIdsMap;
+	}
+
+	public List<CountryCode> getCountries() {
+		return countries.get();
 	}
 
 	public List<String> getSameCountryIds(String countryId) {

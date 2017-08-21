@@ -12,6 +12,8 @@ import org.strangeforest.tcb.stats.service.*;
 public class TopPerformersController extends PageController {
 
 	@Autowired private TopPerformersService topPerformersService;
+	@Autowired private TournamentService tournamentService;
+	@Autowired private MatchesService matchesService;
 
 	@GetMapping("/topPerformers")
 	public ModelAndView topPerformers(
@@ -25,6 +27,10 @@ public class TopPerformersController extends PageController {
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("tournaments", tournamentService.getTournaments());
+		modelMap.addAttribute("opponents", Opponent.values());
+		modelMap.addAttribute("countries", matchesService.getCountries());
 		return new ModelAndView("topPerformers", modelMap);
 	}
 }

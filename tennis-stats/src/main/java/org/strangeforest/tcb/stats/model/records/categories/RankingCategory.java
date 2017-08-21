@@ -8,7 +8,6 @@ import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.RankingCategory.AgeType.*;
-import static org.strangeforest.tcb.util.DateUtil.*;
 
 public abstract class RankingCategory extends RecordCategory {
 
@@ -234,7 +233,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"AND p.name NOT IN (" + INVALID_RANKING_PLAYERS + ")\n" + // TODO Remove after data is fixed
 			"GROUP BY player_id",
 			"r.value, r.date", type.order, type.order + ", r.date",
-			DateAgeRecordDetail.class, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&date=%2$td-%2$tm-%2$tY", rankType, toLocalDate(recordDetail.getDate())),
+			DateAgeRecordDetail.class, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&date=%2$td-%2$tm-%2$tY", rankType, recordDetail.getDate()),
 			asList(
 				new RecordColumn("value", null, "valueUrl", AGE_WIDTH, "left", "Age"),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
@@ -268,7 +267,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"SELECT player_id, " + columnName + " AS value, " + dateColumnName + " AS date\n" +
 			"FROM " + tableName,
 			"r.value, r.date", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.date",
-			DateIntegerRecordDetail.class, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&date=%2$td-%2$tm-%2$tY", rankType, toLocalDate(recordDetail.getDate())),
+			DateIntegerRecordDetail.class, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&date=%2$td-%2$tm-%2$tY", rankType, recordDetail.getDate()),
 			asList(
 				new RecordColumn("value", null, "valueUrl", POINTS_WIDTH, "right", caption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
@@ -290,7 +289,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"SELECT player_id, value, (SELECT min(r.rank_date) FROM " + tableName + " r WHERE r.player_id = l.player_id AND r.rank = 1 AND " + expression + " = l.value) AS date\n" +
 			"FROM least_points l",
 			"r.value, r.date", "r.value", "r.value, r.date",
-			DateIntegerRecordDetail.class, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&date=%2$td-%2$tm-%2$tY", rankType, toLocalDate(recordDetail.getDate())),
+			DateIntegerRecordDetail.class, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&date=%2$td-%2$tm-%2$tY", rankType, recordDetail.getDate()),
 			asList(
 				new RecordColumn("value", null, "valueUrl", POINTS_WIDTH, "right", caption),
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
@@ -359,7 +358,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM ranking_diff2 d\n" +
 			"INNER JOIN player_v p2 ON p2.player_id = d.player_id2",
 			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.date", "r." + order, "r." + order + ", r.date",
-			detailClass, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&date=%2$td-%2$tm-%2$tY", rankType, toLocalDate(recordDetail.getDate())),
+			detailClass, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&date=%2$td-%2$tm-%2$tY", rankType, recordDetail.getDate()),
 			asList(
 				new RecordColumn("player2", null, "player2", PLAYER_WIDTH, "left", "No. 2 Player"),
 				new RecordColumn("value1", "numeric", null, POINTS_WIDTH, "right", caption + " No. 1"),

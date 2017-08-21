@@ -11,18 +11,18 @@ import static java.lang.String.format;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
-public class StatsPerfFilter extends PlayerListFilter {
+public class PerfStatsFilter extends PlayerListFilter {
 
 	// Factory
 
-	public static final StatsPerfFilter EMPTY = new StatsPerfFilter(null, null, null, null, null, null, null, null, null);
+	public static final PerfStatsFilter EMPTY = new PerfStatsFilter(null, null, null, null, null, null, null, null, null);
 
- 	public static StatsPerfFilter forSeason(Integer season) {
-		return new StatsPerfFilter(null, null, season, null, null, null, null, null, null);
+ 	public static PerfStatsFilter forSeason(Integer season) {
+		return new PerfStatsFilter(null, null, season, null, null, null, null, null, null);
 	}
 
- 	public static StatsPerfFilter forTournament(Integer tournamentId) {
-		return new StatsPerfFilter(null, null, null, null, null, null, tournamentId, null, null);
+ 	public static PerfStatsFilter forTournament(Integer tournamentId) {
+		return new PerfStatsFilter(null, null, null, null, null, null, tournamentId, null, null);
 	}
 
 
@@ -41,19 +41,19 @@ public class StatsPerfFilter extends PlayerListFilter {
 	private static final String LEVELS_CRITERION           = " AND level::TEXT IN (:levels)";
 	private static final String SURFACE_CRITERION          = " AND surface = :surface::surface";
 	private static final String SURFACES_CRITERION         = " AND surface::TEXT IN (:surfaces)";
-	private static final String ROUND_CRITERION            = " AND round %1$s :round::match_round";
+	private static final String ROUND_CRITERION            = " AND round %1$s :round::match_round AND level NOT IN ('D', 'T')";
 	private static final String TOURNAMENT_CRITERION       = " AND tournament_id = :tournamentId";
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND tournament_event_id = :tournamentEventId";
 
-	public StatsPerfFilter(Integer season, String surface, Integer tournamentId, Integer tournamentEventId) {
+	public PerfStatsFilter(Integer season, String surface, Integer tournamentId, Integer tournamentEventId) {
 		this(null, null, season, null, surface, null, tournamentId, tournamentEventId, null);
 	}
 
-	public StatsPerfFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, Integer opponentId) {
+	public PerfStatsFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, Integer opponentId) {
 		this(null, null, season, level, surface, null, tournamentId, tournamentEventId, OpponentFilter.forStats(opponentId));
 	}
 	
-	public StatsPerfFilter(Boolean active, String searchPhrase, Integer season, String level, String surface, String round, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
+	public PerfStatsFilter(Boolean active, String searchPhrase, Integer season, String level, String surface, String round, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
 		super(active, searchPhrase);
 		this.season = season;
 		this.level = level;
@@ -134,6 +134,14 @@ public class StatsPerfFilter extends PlayerListFilter {
 		return surface;
 	}
 
+	public String getRound() {
+		return round;
+	}
+
+	public OpponentFilter getOpponentFilter() {
+		return opponentFilter;
+	}
+
 	public int getTournamentId() {
 		return tournamentId;
 	}
@@ -152,6 +160,10 @@ public class StatsPerfFilter extends PlayerListFilter {
 
 	public boolean hasSurfaceGroup() {
 		return hasSurface() && surface.length() > 1;
+	}
+
+	public boolean hasRound() {
+		return !isNullOrEmpty(round);
 	}
 
 	public boolean hasTournament() {
@@ -187,9 +199,9 @@ public class StatsPerfFilter extends PlayerListFilter {
 
 	@Override public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof StatsPerfFilter)) return false;
+		if (!(o instanceof PerfStatsFilter)) return false;
 		if (!super.equals(o)) return false;
-		StatsPerfFilter filter = (StatsPerfFilter)o;
+		PerfStatsFilter filter = (PerfStatsFilter)o;
 		return Objects.equals(season, filter.season) &&	stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface) && stringsEqual(round, filter.round)
 		    && Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) && opponentFilter.equals(filter.opponentFilter);
 	}

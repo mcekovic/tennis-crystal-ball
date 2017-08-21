@@ -17,6 +17,7 @@ import static org.strangeforest.tcb.stats.util.OrderBy.*;
 public class TopPerformersResource {
 
 	@Autowired private TopPerformersService topPerformersService;
+	@Autowired private MatchesService matchesService;
 
 	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
 		.put("wonLostPct", "won_lost_pct")
@@ -34,18 +35,22 @@ public class TopPerformersResource {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "opponent", required = false) String opponent,
+		@RequestParam(name = "countryId", required = false) String countryId,
+		@RequestParam(name = "minEntries", required = false) Integer minEntries,
 		@RequestParam(name = "active", required = false) Boolean active,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		StatsPerfFilter filter = new StatsPerfFilter(active, searchPhrase, season, level, surface, round, tournamentId, null, null);
-		int playerCount = topPerformersService.getPlayerCount(category, filter);
+		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
+		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, level, surface, round, tournamentId, null, opponentFilter);
+		int playerCount = topPerformersService.getPlayerCount(category, filter, minEntries);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : playerCount;
-		return topPerformersService.getTopPerformersTable(category, playerCount, filter, orderBy, pageSize, current);
+		return topPerformersService.getTopPerformersTable(category, playerCount, filter, minEntries, orderBy, pageSize, current);
 	}
 
 	@GetMapping("/topPerformersMinEntries")
@@ -54,9 +59,14 @@ public class TopPerformersResource {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
-		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "opponent", required = false) String opponent,
+		@RequestParam(name = "countryId", required = false) String countryId,
+		@RequestParam(name = "minEntries", required = false) Integer minEntries
 	) {
-		StatsPerfFilter filter = new StatsPerfFilter(season, level, surface, tournamentId, null, null);
-		return topPerformersService.getTopPerformersMinEntries(category, filter);
+		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
+		PerfStatsFilter filter = new PerfStatsFilter(null, null, season, level, surface, round, tournamentId, null, opponentFilter);
+		return topPerformersService.getTopPerformersMinEntries(category, filter, minEntries);
 	}
 }

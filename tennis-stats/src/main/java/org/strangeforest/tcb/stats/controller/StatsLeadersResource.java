@@ -30,7 +30,7 @@ public class StatsLeadersResource {
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		StatsPerfFilter filter = new StatsPerfFilter(active, searchPhrase, season, null, surface, null, tournamentId, tournamentEventId, null);
+		PerfStatsFilter filter = new PerfStatsFilter(active, searchPhrase, season, null, surface, null, tournamentId, tournamentEventId, null);
 		int playerCount = statsLeadersService.getPlayerCount(category, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
@@ -46,7 +46,7 @@ public class StatsLeadersResource {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId
 	) {
-		StatsPerfFilter filter = new StatsPerfFilter(season, surface, tournamentId, tournamentEventId);
+		PerfStatsFilter filter = new PerfStatsFilter(season, surface, tournamentId, tournamentEventId);
 		return statsLeadersService.getStatsLeadersMinEntries(category, filter);
 	}
 }

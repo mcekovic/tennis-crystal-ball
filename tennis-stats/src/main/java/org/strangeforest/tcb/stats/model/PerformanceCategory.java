@@ -32,10 +32,10 @@ public final class PerformanceCategory {
 		// Pressure situations
 		addCategory(PRESSURE_SITUATIONS, "decidingSets", "deciding_sets", "count(DISTINCT deciding_set_match_id%1$s)", "Deciding Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "fifthSets", "fifth_sets", "count(DISTINCT fifth_set_match_id%1$s)", "5th Set", 20, "matches");
-		addCategory(PRESSURE_SITUATIONS, "finals", "finals", "count(DISTINCT final_match_id%1$s)", "Finals", 20, "finals");
-		addCategory(PRESSURE_SITUATIONS, "vsNo1", "vs_no1", "count(DISTINCT vs_no1_match_id%1$s)", "Vs No. 1", 10, "matches");
-		addCategory(PRESSURE_SITUATIONS, "vsTop5", "vs_top5", "count(DISTINCT vs_top5_match_id%1$s)", "Vs Top 5", 20, "matches");
-		addCategory(PRESSURE_SITUATIONS, "vsTop10", "vs_top10", "count(DISTINCT vs_top10_match_id%1$s)", "Vs Top 10", 20, "matches");
+		addCategory(PRESSURE_SITUATIONS, "finals", "finals", "count(DISTINCT final_match_id%1$s)", "Finals", 20, "finals", "round-category");
+		addCategory(PRESSURE_SITUATIONS, "vsNo1", "vs_no1", "count(DISTINCT vs_no1_match_id%1$s)", "Vs No. 1", 10, "matches", "topn-category");
+		addCategory(PRESSURE_SITUATIONS, "vsTop5", "vs_top5", "count(DISTINCT vs_top5_match_id%1$s)", "Vs Top 5", 20, "matches", "topn-category");
+		addCategory(PRESSURE_SITUATIONS, "vsTop10", "vs_top10", "count(DISTINCT vs_top10_match_id%1$s)", "Vs Top 10", 20, "matches", "topn-category");
 		addCategory(PRESSURE_SITUATIONS, "afterWinningFirstSet", "after_winning_first_set", "count(DISTINCT after_winning_first_set_match_id%1$s)", "After Winning 1st Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "afterLosingFirstSet", "after_losing_first_set", "count(DISTINCT after_losing_first_set_match_id%1$s)", "After Losing 1st Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "tieBreaks", "tie_breaks", "count(w_tie_break_set%1$s) + count(l_tie_break_set%1$s)", "Tie breaks", 100, "tie breaks");

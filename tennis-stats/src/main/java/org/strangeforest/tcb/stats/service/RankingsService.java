@@ -195,6 +195,8 @@ public class RankingsService {
 				Date bestRankDate = rs.getDate("best_rank_date");
 				Integer rankDiff = getInteger(rs, "rank_diff");
 				Integer pointsDiff = getInteger(rs, "points_diff");
+				if (pointsDiff != null && pointsDiff == points)
+					pointsDiff = null;
 				int bestPoints = rs.getInt("best_points");
 				table.addRow(new PlayerDiffRankingsRow(rank, playerId, name, countryId, points, bestRank, bestRankDate, rankDiff, pointsDiff, bestPoints));
 			}

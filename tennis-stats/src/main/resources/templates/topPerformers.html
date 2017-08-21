@@ -7,6 +7,10 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
+<!--/*@thymesVar id="opponents" type="org.strangeforest.tcb.stats.service.Opponent[]"*/-->
+<!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
 	<title>Top Performers</title>
 	<script type="text/javascript">
@@ -24,15 +28,14 @@
 				url: "/topPerformersTable",
 				requestHandler: function(request) {
 					request.category = $("#category").val();
-					var season = $("#season").val();
-					if (season)
-						request.season = season;
-					var level = $("#level").val();
-					if (level)
-						request.level = level;
-					var surface = $("#surface").val();
-					if (surface)
-						request.surface = surface;
+					request.season = $("#season").val();
+					request.level = $("#level").val();
+					request.surface = $("#surface").val();
+					request.round = $("#round").val();
+					request.tournamentId = $("#tournament").val();
+					request.opponent = $("#opponent").val();
+					request.countryId = $("#country").val();
+					request.minEntries = $("#minEntriesOverride").val();
 					var active = $("#active").prop("checked");
 					if (active)
 						request.active = active;
@@ -65,61 +68,73 @@
 			var $category = $("#category");
 			$("#topPerformersTable").find("th[data-column-id='wonLostPct'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
 			var url = "/topPerformersMinEntries?category=" + $category.val();
-			var season = $("#season").val();
-			if (season)
-				url += "&season=" + season;
-			var level = $("#level").val();
-			if (level)
-				url += "&level=" + level;
-			var surface = $("#surface").val();
-			if (surface)
-				url += "&surface=" + surface;
+			url += "&season=" + $("#season").val();
+			url += "&level=" + $("#level").val();
+			url += "&surface=" + $("#surface").val();
+			url += "&round=" + encodeURIComponent($("#round").val());
+			url += "&tournamentId=" + $("#tournament").val();
+			url += "&opponent=" + $("#opponent").val();
+			url += "&countryId=" + $("#country").val();
+			var $minEntries = $("#minEntriesOverride");
+			if (!validateNumber($minEntries))
+				return false;
+			var minEntries = $minEntries.val();
+			if (minEntries && minEntries < 2) {
+				$minEntries.tooltip({title: "Minimum entries must be greater or equal to 2", placement: "bottom"}).tooltip("show");
+				$minEntries.focus();
+				return false;
+			}
+			url += "&minEntries=" + minEntries;
 			$.get(url, function (data) {
 				$("#minEntries").html(data);
 			});
+			return true;
 		}
 		function reloadTopPerformers() {
-			categoryChanged();
-			$("#topPerformersTable").bootgrid("reload");
+			if (categoryChanged())
+				$("#topPerformersTable").bootgrid("reload");
 		}
 		function seasonChanged() {
 			var $active = $("#active");
-			var forSeason = $("#season").val() != "";
+			var forSeason = $("#season").val();
 			if (forSeason)
 				$active.prop("checked", false);
 			$active.prop("disabled", forSeason);
-			reloadTopPerformers();
 		}
 		function levelChanged() {
-			var forLevel = $("#level").val() != "";
-			var $category = $("#category");
-			$category.find("option.level-category").each(function() {
-				var $this = $(this);
-				if ($this.is(':selected'))
-					$category.val("matches");
-				$this.css("display", forLevel ? "none" : "block");
-			});
-			reloadTopPerformers();
+			setCategoriesVisible("level-category", !$("#level").val());
 		}
 		function surfaceChanged() {
-			var forSurface = $("#surface").val() != "";
+			var visible = !$("#surface").val();
+			setCategoriesVisible("surface-category", visible);
+			$("#category").find("optgroup[label='Surface Performance']").css("display", visible ? "block" : "none");
+		}
+		function roundChanged() {
+			setCategoriesVisible("round-category", !$("#round").val());
+		}
+		function opponentChanged() {
+			var opponent = $("#opponent").val();
+			setCategoriesVisible("topn-category", opponent != "NO_1" && !opponent.startsWith("TOP_"));
+		}
+		function setCategoriesVisible(cssClass, visible) {
 			var $category = $("#category");
-			$category.find("option.surface-category").each(function() {
+			$category.find("option." + cssClass).each(function () {
 				var $this = $(this);
 				if ($this.is(':selected'))
 					$category.val("matches");
-				$this.css("display", forSurface ? "none" : "block");
+				$this.css("display", visible ? "block" : "none");
 			});
-			$category.find("optgroup[label='Surface Performance']").css("display", forSurface ? "none" : "block");
-			reloadTopPerformers();
 		}
 		function clearTopPerformersFilter() {
-			$("#season").val("");
-			$("#level").val("");
-			$("#surface").val("");
-			var $active = $("#active");
-			$active.prop("checked", false);
-			$active.prop("disabled", false);
+			$("#season").val(""); seasonChanged();
+			$("#level").val(""); levelChanged();
+			$("#surface").val(""); surfaceChanged();
+			$("#round").val(""); roundChanged();
+			$("#opponent").val(""); opponentChanged();
+			$("#tournament").val("");
+			$("#country").val("");
+			$("#minEntriesOverride").val("");
+			$("#active").prop("checked", false);
 			$("#topPerformersTable").bootgrid("search", "");
 			reloadTopPerformers();
 		}
@@ -128,35 +143,79 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-8">
 			<h3 class="text-nowrap" style="display: inline">Top Performers</h3>
 		</div>
-		<div class="col-md-3">
-			<select id="category" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
-				<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
-					<option th:each="aCategory : ${categoryClass.value}" th:value="${aCategory.name}" value="matches" th:class="${aCategory.cssClass}" th:text="${aCategory.title}" th:selected="${aCategory.name == category}">Overall Matches</option>
-				</optgroup>
-			</select>
+		<div class="col-md-4">
+			<div class="input-group" data-toggle="tooltip" data-placement="top" title="Select performance category">
+				<label for="category" class="input-group-addon">Category:</label>
+				<select id="category" class="form-control" onchange="reloadTopPerformers()">
+					<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
+						<option th:each="aCategory : ${categoryClass.value}" th:value="${aCategory.name}" value="matches" th:class="${aCategory.cssClass}" th:text="${aCategory.title}" th:selected="${aCategory.name == category}">Overall Matches</option>
+					</optgroup>
+				</select>
+			</div>
 		</div>
+	</div>
+	<div class="row" style="margin-top: 15px">
 		<div class="col-md-2">
-			<select id="season" class="form-control" onchange="seasonChanged()" data-toggle="tooltip" data-placement="top" title="Select career or season">
+			<select id="season" class="form-control" onchange="seasonChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select career or season">
 				<option value="">Career</option>
 				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id="level" class="form-control" onchange="levelChanged()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+			<select id="level" class="form-control" onchange="levelChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 				<option value="">All levels</option>
 				<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
 				<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}">Big Tournaments</option>
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id="surface" class="form-control" onchange="surfaceChanged()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+			<select id="surface" class="form-control" onchange="surfaceChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 				<option value="">All surfaces</option>
 				<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
 				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
 			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="round" class="form-control" onchange="roundChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+				<option value="">All rounds</option>
+				<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="opponent" class="form-control" onchange="opponentChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+				<option value="">Vs All</option>
+				<option th:each="anOpponent : ${opponents}" th:value="${anOpponent}" value="NO_1" th:text="${anOpponent.text}">Vs No. 1</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<div class="pull-right" data-toggle="tooltip" data-placement="left" title="Advanced filters">
+				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advancedFilter">
+					Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div id="advancedFilter" class="collapse row" style="margin-top: 15px">
+		<div class="col-md-3">
+			<select id="tournament" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="country" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+				<option value="">All countries</option>
+				<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum entries">
+				<label for="minEntriesOverride" class="input-group-addon">Min. entries:</label>
+				<input id="minEntriesOverride" type="text" size="6" class="ui-widget form-control" oninput="reloadTopPerformers()" onchange="reloadTopPerformers()"/>
+			</div>
 		</div>
 	</div>
 	<div id="activeDiv" class="btn-group margin-right">

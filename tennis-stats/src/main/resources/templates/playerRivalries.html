@@ -112,7 +112,7 @@
 			params += "&surface=" + surface;
 		var round = $("#rivalryRound").val();
 		if (round)
-			params += "&round=" + round;
+			params += "&round=" + encodeURIComponent(encodeURIComponent(round));
 		return params;
 	}
 	function playerMatchesUrl(opponentId, outcome) {

@@ -48,10 +48,13 @@ public class TopPerformersService {
 
 	private static final String TOP_PERFORMERS_SUMMED = //language=SQL
 		"(\n" +
-		"  SELECT player_id, %1$s items_won, %2$s items_lost\n" +
-		"  FROM player_match_performance_v%3$s\n" +
-		"  GROUP BY player_id\n" +
+		"  SELECT m.player_id, %1$s items_won, %2$s items_lost\n" +
+		"  FROM player_match_performance_v m%3$s%4$s\n" +
+		"  GROUP BY m.player_id\n" +
 		") AS player_performance_summed";
+
+	private static final String OPPONENT_JOIN = //language=SQL
+	 	"\n  INNER JOIN player_v o ON o.player_id = m.opponent_id";
 
 
 	@Cacheable(value = "Global", key = "'PerformanceSeasons'")
@@ -60,18 +63,18 @@ public class TopPerformersService {
 	}
 
 	@Cacheable("TopPerformers.Count")
-	public int getPlayerCount(String category, StatsPerfFilter filter) {
+	public int getPlayerCount(String category, PerfStatsFilter filter, Integer minEntries) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		boolean materializedSum = isMaterializedSum(filter);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
 			format(TOP_PERFORMERS_COUNT_QUERY, getPerformanceTableName(perfCategory, filter), materializedSum ? perfCategory.getColumn() : "items", materializedSum ? filter.getCriteria() : filter.getSearchCriteria()),
-			filter.getParams().addValue("minEntries", getMinEntries(perfCategory, filter)),
+			filter.getParams().addValue("minEntries", minEntries != null ? minEntries : getMinEntries(perfCategory, filter)),
 			Integer.class
 		));
 	}
 
 	@Cacheable("TopPerformers.Table")
-	public BootgridTable<TopPerformerRow> getTopPerformersTable(String category, int playerCount, StatsPerfFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<TopPerformerRow> getTopPerformersTable(String category, int playerCount, PerfStatsFilter filter, Integer minEntries, String orderBy, int pageSize, int currentPage) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		boolean materializedSum = isMaterializedSum(filter);
 		BootgridTable<TopPerformerRow> table = new BootgridTable<>(currentPage, playerCount);
@@ -79,7 +82,7 @@ public class TopPerformersService {
 		jdbcTemplate.query(
 			format(TOP_PERFORMERS_QUERY, materializedSum ? perfCategory.getColumn() : "items", getPerformanceTableName(perfCategory, filter), materializedSum ? filter.getBaseCriteria() : "", where(filter.getSearchCriteria()), orderBy),
 			filter.getParams()
-				.addValue("minEntries", getMinEntries(perfCategory, filter))
+				.addValue("minEntries", minEntries != null ? minEntries : getMinEntries(perfCategory, filter))
 				.addValue("offset", offset)
 				.addValue("limit", pageSize),
 			rs -> {
@@ -95,7 +98,7 @@ public class TopPerformersService {
 		return table;
 	}
 
-	private static String getPerformanceTableName(PerformanceCategory perfCategory, StatsPerfFilter filter) {
+	private static String getPerformanceTableName(PerformanceCategory perfCategory, PerfStatsFilter filter) {
 		if (filter.isEmpty())
 			return "player_performance";
 		else if (filter.isForSeason())
@@ -103,19 +106,19 @@ public class TopPerformersService {
 		else if (filter.isForTournament())
 			return "player_tournament_performance";
 		else
-			return format(TOP_PERFORMERS_SUMMED, perfCategory.getSumExpression("_won"), perfCategory.getSumExpression("_lost"), where(filter.getBaseCriteria()));
+			return format(TOP_PERFORMERS_SUMMED, perfCategory.getSumExpression("_won"), perfCategory.getSumExpression("_lost"), filter.getOpponentFilter().isOpponentRequired() ? OPPONENT_JOIN : "", where(filter.getBaseCriteria(), 2));
 	}
 
-	public String getTopPerformersMinEntries(String category, StatsPerfFilter filter) {
+	public String getTopPerformersMinEntries(String category, PerfStatsFilter filter, Integer minEntries) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
-		return getMinEntries(perfCategory, filter) + " " + perfCategory.getEntriesName();
+		return (minEntries != null ? minEntries : getMinEntries(perfCategory, filter)) + " " + perfCategory.getEntriesName();
 	}
 
 	private static WonLost mapWonLost(ResultSet rs) throws SQLException {
 		return new WonLost(rs.getInt("won"), rs.getInt("lost"));
 	}
 
-	private int getMinEntries(PerformanceCategory category, StatsPerfFilter filter) {
+	private int getMinEntries(PerformanceCategory category, PerfStatsFilter filter) {
 		return minEntries.getFilteredMinEntries(category.getMinEntries(), filter);
 	}
 }

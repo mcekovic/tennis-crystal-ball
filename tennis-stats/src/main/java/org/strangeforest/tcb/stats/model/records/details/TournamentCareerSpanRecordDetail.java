@@ -1,8 +1,10 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import java.util.*;
+import java.time.*;
 
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.*;
+import com.fasterxml.jackson.datatype.jsr310.deser.*;
 
 import static java.lang.String.*;
 
@@ -13,11 +15,11 @@ public class TournamentCareerSpanRecordDetail extends CareerSpanRecordDetail {
 
 	public TournamentCareerSpanRecordDetail(
 		@JsonProperty("value") String value,
-		@JsonProperty("start_date") Date startDate,
+		@JsonProperty("start_date") @JsonDeserialize(using = LocalDateDeserializer.class) LocalDate startDate,
 		@JsonProperty("start_tournament_event_id") int startTournamentEventId,
 		@JsonProperty("start_tournament") String startTournament,
 		@JsonProperty("start_level") String startLevel,
-		@JsonProperty("end_date") Date endDate,
+		@JsonProperty("end_date") @JsonDeserialize(using = LocalDateDeserializer.class) LocalDate endDate,
 		@JsonProperty("end_tournament_event_id") int endTournamentEventId,
 		@JsonProperty("end_tournament") String endTournament,
 		@JsonProperty("end_level") String endLevel
