@@ -57,12 +57,18 @@ public class SeasonsService {
 		"  SELECT g.season, player_id, row_number() OVER (PARTITION BY g.season ORDER BY g.goat_points DESC, p.goat_points DESC, p.dob, p.name DESC) rank\n" +
 		"  FROM player_season_goat_points g\n" +
 		"  INNER JOIN player_v p USING (player_id)\n" +
+		"), season_dominant_age AS (\n" +
+		"  SELECT g.season, sum(g.goat_points * extract(year FROM age(season_end(g.season), p.dob))) / sum(g.goat_points) AS dominant_age\n" +
+		"  FROM player_season_goat_points g\n" +
+		"  INNER JOIN player_v p USING (player_id)\n" +
+		"  GROUP BY g.season\n" +
 		")\n" +
 		"SELECT t.*, m.match_count, m.hard_match_count, m.clay_match_count, m.grass_match_count, m.carpet_match_count,\n" +
-		"  p.player_id, p.name player_name, p.country_id, p.active\n" +
+		"  p.player_id, p.name player_name, p.country_id, p.active, e.dominant_age\n" +
 		"FROM season_tournament_count t\n" +
 		"LEFT JOIN season_match_count m USING (season)\n" +
 		"INNER JOIN player_season_ranked ps ON ps.season = t.season AND ps.rank = 1\n" +
+		"INNER JOIN season_dominant_age e ON e.season = t.season\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"ORDER BY %1$s OFFSET :offset";
 
@@ -167,7 +173,8 @@ public class SeasonsService {
 							rs.getString("player_name"),
 							rs.getString("country_id"),
 							rs.getBoolean("active")
-						)
+						),
+						rs.getInt("dominant_age")
 					));
 				}
 			}

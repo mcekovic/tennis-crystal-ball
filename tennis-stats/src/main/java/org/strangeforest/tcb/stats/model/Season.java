@@ -15,9 +15,11 @@ public class Season extends SurfaceTimelineItem {
 	private final int carpetCount;
 	private final int matchCount;
 	private final PlayerRow bestPlayer;
+	private final int dominantAge;
 
 	public Season(int season, int tournamentCount, int grandSlamCount, int tourFinalsCount, int mastersCount, int olympicsCount, int atp500Count, int atp250Count,
-	              int hardCount, int clayCount, int grassCount, int carpetCount, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, PlayerRow bestPlayer) {
+	              int hardCount, int clayCount, int grassCount, int carpetCount, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount,
+	              PlayerRow bestPlayer, int dominantAge) {
 		super(season, matchCount, hardMatchCount, clayMatchCount, grassMatchCount, carpetMatchCount);
 		this.tournamentCount = tournamentCount;
 		this.grandSlamCount = grandSlamCount;
@@ -32,6 +34,7 @@ public class Season extends SurfaceTimelineItem {
 		this.carpetCount = carpetCount;
 		this.matchCount = matchCount;
 		this.bestPlayer = bestPlayer;
+		this.dominantAge = dominantAge;
 	}
 
 	public int getTournamentCount() {
@@ -84,5 +87,9 @@ public class Season extends SurfaceTimelineItem {
 
 	public PlayerRow getBestPlayer() {
 		return bestPlayer;
+	}
+
+	public int getDominantAge() {
+		return dominantAge;
 	}
 }

@@ -35,9 +35,10 @@
 		</thead>
 		<tbody>
 			<tr th:each="item : ${timeline}">
-				<th>
+				<th th:if="${item.season > 0}">
 					<a th:href="@{/tournamentEvents(season=${item.season})}" title="Show season tournaments" th:text="${item.season}">2005</a>
 				</th>
+				<th th:if="${item.season == 0}">Total</th>
 				<td>
 					<div class="progress">
 						<div class="progress-bar progress-bar-default" role="progressbar" th:style="|width: ${item.hardPct}|" data-toggle="tooltip" data-placement="top" th:title="|Hard ${item.hardPct}|">
