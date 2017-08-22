@@ -316,6 +316,9 @@ VALUES
 ('WinningStreakVsNo1', 1, 1),
 ('WinningStreakVsTop5', 1, 1),
 ('WinningStreakVsTop10', 1, 1),
+-- Winning Pct
+('SeasonWinningPct', 1, 2),
+('SeasonWinningPct', 2, 1),
 -- ATP Ranking
 ('WeeksAtATPNo1', 1, 4),
 ('WeeksAtATPNo1', 2, 2),
@@ -345,7 +348,8 @@ VALUES
 ('ATPPoints', 2, 1),
 ('ATPPointsNo1No2DifferencePct', 1, 1),
 -- H2H
-('H2HSeriesWinningPct', 1, 1),
+('H2HSeriesWinningPct', 1, 2),
+('H2HSeriesWinningPct', 2, 1),
 -- Titles Won W/O Losing Set
 ('TitlesWonWOLosingSet', 1, 1),
 ('GrandSlamTitlesWonWOLosingSet', 1, 2),
