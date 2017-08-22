@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.spring;
 
+import java.text.*;
+
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.actuate.info.*;
 import org.springframework.stereotype.*;
@@ -19,7 +21,7 @@ public class DBInfoContributor implements InfoContributor {
 		builder.withDetail("db", ImmutableMap.of(
 			"version", dataService.getDBServerVersionString(),
 			"size", dataService.getDatabaseSize(databaseName),
-			"dataUpdate", dataService.getDataUpdate()
+			"dataUpdate", new SimpleDateFormat("dd-MM-yyyy").format(dataService.getDataUpdate())
 		));
 	}
 }
