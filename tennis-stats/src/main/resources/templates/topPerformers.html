@@ -9,7 +9,7 @@
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
-<!--/*@thymesVar id="opponents" type="org.strangeforest.tcb.stats.service.Opponent[]"*/-->
+<!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
 	<title>Top Performers</title>
@@ -157,7 +157,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="row" style="margin-top: 15px">
+	<div class="row margin-top">
 		<div class="col-md-2">
 			<select id="season" class="form-control" onchange="seasonChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select career or season">
 				<option value="">Career</option>
@@ -186,8 +186,10 @@
 		</div>
 		<div class="col-md-2">
 			<select id="opponent" class="form-control" onchange="opponentChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
-				<option value="">Vs All</option>
-				<option th:each="anOpponent : ${opponents}" th:value="${anOpponent}" value="NO_1" th:text="${anOpponent.text}">Vs No. 1</option>
+				<option value="">Vs all</option>
+				<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
+					<option th:each="opponent : ${opponentCategory.value}" th:value="${opponent}" value="NO_1" th:text="${opponent.text}">Vs No. 1</option>
+				</optgroup>
 			</select>
 		</div>
 		<div class="col-md-2">
@@ -198,7 +200,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="advancedFilter" class="collapse row" style="margin-top: 15px">
+	<div id="advancedFilter" class="collapse row margin-top">
 		<div class="col-md-3">
 			<select id="tournament" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
 				<option value="">All tournaments</option>
@@ -214,7 +216,7 @@
 		<div class="col-md-2">
 			<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum entries">
 				<label for="minEntriesOverride" class="input-group-addon">Min. entries:</label>
-				<input id="minEntriesOverride" type="text" size="6" class="ui-widget form-control" oninput="reloadTopPerformers()" onchange="reloadTopPerformers()"/>
+				<input id="minEntriesOverride" type="text" size="6" class="form-control" oninput="reloadTopPerformers()" onchange="reloadTopPerformers()"/>
 			</div>
 		</div>
 	</div>

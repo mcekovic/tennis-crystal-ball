@@ -79,6 +79,13 @@ public class TournamentController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("opponentCategories", Opponent.categories());
+		modelMap.addAttribute("countries", matchesService.getTournamentEventCountries(tournamentEventId));
 		return new ModelAndView("tournamentEventStats", modelMap);
 	}
 
@@ -116,7 +123,15 @@ public class TournamentController extends PageController {
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentId", tournamentId);
-		modelMap.addAttribute("categoryClasses", PerformanceCategory.getPressureSituationsCategoryClasses());
+		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
+		modelMap.addAttribute("seasons", tournamentService.getTournamentSeasons(tournamentId));
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("opponentCategories", Opponent.categories());
+		modelMap.addAttribute("countries", matchesService.getTournamentCountries(tournamentId));
 		return new ModelAndView("tournamentPerformance", modelMap);
 	}
 
@@ -124,13 +139,17 @@ public class TournamentController extends PageController {
 	public ModelAndView tournamentStats(
 		@RequestParam(name = "tournamentId") int tournamentId
 	) {
-		List<Integer> seasons = tournamentService.getTournament(tournamentId).getSeasons();
-		reverse(seasons);
-
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
-		modelMap.addAttribute("seasons", seasons);
+		modelMap.addAttribute("seasons", tournamentService.getTournamentSeasons(tournamentId));
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("opponentCategories", Opponent.categories());
+		modelMap.addAttribute("countries", matchesService.getTournamentCountries(tournamentId));
 		return new ModelAndView("tournamentStats", modelMap);
 	}
 

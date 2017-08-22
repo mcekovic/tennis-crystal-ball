@@ -17,6 +17,7 @@ import org.strangeforest.tcb.util.*;
 
 import static java.lang.String.*;
 import static java.util.Arrays.*;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.records.details.RecordDetailUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
@@ -27,8 +28,11 @@ public class TournamentService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
-	private static final String TOURNAMENT_ITEMS_QUERY =
+	private static final String TOURNAMENT_ITEMS_QUERY = //language=SQL
 		"SELECT tournament_id, name, level FROM tournament ORDER BY name";
+
+	private static final String SEASON_TOURNAMENT_ITEMS_QUERY = //language=SQL
+		"SELECT tournament_id, name, level FROM tournament_event WHERE season = :season ORDER BY name";
 
 	private static final String TOURNAMENT_QUERY =
 		"SELECT name, level, surface, indoor,\n" +
@@ -36,7 +40,7 @@ public class TournamentService {
 		"FROM tournament t\n" +
 		"WHERE tournament_id = :tournamentId";
 
-	private static final String TOURNAMENT_SEASONS_QUERY =
+	private static final String TOURNAMENT_SEASONS_QUERY = //language=SQL
 		"SELECT tournament_id, season FROM tournament_event\n" +
 		"WHERE level NOT IN ('D', 'T')";
 
@@ -61,7 +65,7 @@ public class TournamentService {
 		"WHERE e.level NOT IN ('D', 'T')%2$s\n" +
 		"ORDER BY %3$s OFFSET :offset";
 
-	private static final String TOURNAMENT_EVENT_QUERY =
+	private static final String TOURNAMENT_EVENT_QUERY = //language=SQL
 		TOURNAMENT_EVENT_SELECT +
 		"WHERE e.tournament_event_id = :tournamentEventId";
 
@@ -133,6 +137,11 @@ public class TournamentService {
 		return jdbcTemplate.query(TOURNAMENT_ITEMS_QUERY, this::tournamentItemMapper);
 	}
 
+	@Cacheable("SeasonTournaments")
+	public List<TournamentItem> getSeasonTournaments(int season) {
+		return jdbcTemplate.query(SEASON_TOURNAMENT_ITEMS_QUERY, params("season", season), this::tournamentItemMapper);
+	}
+
 	public Tournament getTournament(int tournamentId) {
 		return jdbcTemplate.query(
 			TOURNAMENT_QUERY, params("tournamentId", tournamentId),
@@ -151,8 +160,14 @@ public class TournamentService {
 		);
 	}
 
-	@Cacheable(value = "Global", key = "'TournamentSeasons'")
-	public Set<TournamentSeason> getTournamentSeasons() {
+	public List<Integer> getTournamentSeasons(int tournamentId) {
+		List<Integer> seasons = getTournament(tournamentId).getSeasons();
+		reverse(seasons);
+		return seasons;
+	}
+
+	@Cacheable(value = "Global", key = "'AllTournamentSeasons'")
+	public Set<TournamentSeason> getAllTournamentSeasons() {
 		return new HashSet<>(jdbcTemplate.query(TOURNAMENT_SEASONS_QUERY, (rs, rowNum) -> new TournamentSeason(
 			rs.getInt("tournament_id"),
 			rs.getInt("season")

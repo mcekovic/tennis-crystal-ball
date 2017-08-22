@@ -26,6 +26,9 @@
 	float: left;
 	margin: 5px 5px 0 -15px
 }
+.margin-top {
+	margin-top: 15px;
+}
 .margin-left {
 	margin-left: 20px;
 }

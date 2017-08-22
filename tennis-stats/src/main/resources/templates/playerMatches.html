@@ -8,7 +8,7 @@
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
-<!--/*@thymesVar id="opponents" type="org.strangeforest.tcb.stats.service.Opponent[]"*/-->
+<!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 <!--/*@thymesVar id="tournamentEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEventItem>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
@@ -217,9 +217,13 @@
 	</div>
 	<div class="col-md-2">
 		<select id="matchesOpponent" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
-			<option value="">Vs All</option>
-			<option th:each="anOpponent : ${opponents}" th:value="${anOpponent}" value="NO_1" th:text="${anOpponent.text}" th:selected="${anOpponent.name() == opponent}">Vs No. 1</option>
-			<option th:if="${opponent != null && opponent.startsWith('OPP_')}" th:value="${opponent}" th:text="${'Vs ' + opponentName}" selected="selected">Vs Roger Federer</option>
+			<option value="">Vs all</option>
+			<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
+				<option th:each="anOpponent : ${opponentCategory.value}" th:value="${anOpponent}" value="NO_1" th:text="${anOpponent.text}" th:selected="${anOpponent.name() == opponent}">Vs No. 1</option>
+			</optgroup>
+			<optgroup th:if="${opponent != null && opponent.startsWith('OPP_')}" label="Vs Player">
+				<option th:value="${opponent}" th:text="${'Vs ' + opponentName}" selected="selected">Vs Roger Federer</option>
+			</optgroup>
 		</select>
 	</div>
 	<div class="col-md-2">
@@ -233,7 +237,7 @@
 		</div>
 	</div>
 </div>
-<div id="matchesAdvancedFilter" class="collapse row" th:attrappend="class=${score != null ? ' in' : _}" style="margin-top: 15px">
+<div id="matchesAdvancedFilter" class="collapse row margin-top" th:attrappend="class=${score != null ? ' in' : _}">
 	<div class="col-md-2">
 		<select id="matchesScore" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by match score">
 			<option value="">All scores</option>

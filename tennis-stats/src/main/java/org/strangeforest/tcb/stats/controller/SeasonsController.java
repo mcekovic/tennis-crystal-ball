@@ -15,6 +15,8 @@ import org.strangeforest.tcb.stats.service.*;
 public class SeasonsController extends PageController {
 
 	@Autowired private SeasonsService seasonsService;
+	@Autowired private TournamentService tournamentService;
+	@Autowired private MatchesService matchesService;
 
 	private static final int MAX_RECORD_PLAYERS = 10;
 
@@ -89,6 +91,14 @@ public class SeasonsController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("tournaments", tournamentService.getSeasonTournaments(season));
+		modelMap.addAttribute("opponentCategories", Opponent.categories());
+		modelMap.addAttribute("countries", matchesService.getSeasonCountries(season));
 		return new ModelAndView("seasonPerformance", modelMap);
 	}
 
@@ -99,8 +109,14 @@ public class SeasonsController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("tournaments", tournamentService.getSeasonTournaments(season));
+		modelMap.addAttribute("opponentCategories", Opponent.categories());
+		modelMap.addAttribute("countries", matchesService.getSeasonCountries(season));
 		return new ModelAndView("seasonStats", modelMap);
 	}
 	

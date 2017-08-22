@@ -5,6 +5,9 @@ import java.util.*;
 import com.google.common.collect.*;
 import com.neovisionaries.i18n.*;
 
+import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
+
 public class Country {
 
 	public static final String UNKNOWN_ID = "???";
@@ -162,5 +165,9 @@ public class Country {
 			}
 		}
 		return null;
+	}
+
+	public static List<CountryCode> codes(Collection<String> countryIds) {
+		return countryIds.stream().map(Country::code).filter(code -> code != null && code.getAlpha3() != null).distinct().sorted(comparing(CountryCode::getName)).collect(toList());
 	}
 }

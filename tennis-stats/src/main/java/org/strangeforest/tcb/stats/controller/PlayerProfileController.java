@@ -173,7 +173,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
-		modelMap.addAttribute("opponents", Opponent.values());
+		modelMap.addAttribute("opponentCategories", Opponent.categories());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("tournamentEvents", tournamentEvents);
 		modelMap.addAttribute("countries", countries);
@@ -257,7 +257,7 @@ public class PlayerProfileController extends PageController {
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
-		PlayerPerformanceEx perf = performanceService.getPlayerPerformanceEx(playerId, new PerfStatsFilter(season, level, surface, tournamentId, null, null));
+		PlayerPerformanceEx perf = performanceService.getPlayerPerformanceEx(playerId, PerfStatsFilter.forPlayerPerf(season, level, surface, tournamentId, null));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);

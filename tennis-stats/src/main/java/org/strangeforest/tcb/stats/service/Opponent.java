@@ -1,41 +1,74 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.util.*;
+import java.util.function.*;
+
 import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.stats.service.Opponent.OpponentCategory.*;
 
 public enum Opponent {
 
-	NO_1("Vs No. 1", matchesRankCriterion(1), statsRankCriterion(1), false),
-	TOP_5("Vs Top 5", matchesRankCriterion(5), statsRankCriterion(5), false),
-	TOP_10("Vs Top 10", matchesRankCriterion(10), statsRankCriterion(10), false),
-	TOP_20("Vs Top 20", matchesRankCriterion(20), statsRankCriterion(20), false),
-	TOP_50("Vs Top 50", matchesRankCriterion(50), statsRankCriterion(50), false),
-	TOP_100("Vs Top 100", matchesRankCriterion(100), statsRankCriterion(100), false),
-	UNDER_18("Vs Under 18", matchesAgeCriterion(Range.atMost(18)), statsAgeCriterion(Range.atMost(18)), false),
-	UNDER_21("Vs Under 21", matchesAgeCriterion(Range.atMost(21)), statsAgeCriterion(Range.atMost(21)), false),
-	UNDER_25("Vs Under 25", matchesAgeCriterion(Range.atMost(25)), statsAgeCriterion(Range.atMost(25)), false),
-	OVER_25("Vs Over 25", matchesAgeCriterion(Range.atLeast(25)), statsAgeCriterion(Range.atLeast(25)), false),
-	OVER_30("Vs Over 30", matchesAgeCriterion(Range.atLeast(30)), statsAgeCriterion(Range.atLeast(30)), false),
-	OVER_35("Vs Over 35", matchesAgeCriterion(Range.atLeast(35)), statsAgeCriterion(Range.atLeast(35)), false),
-	RIGHT_HANDED("Vs Right-handed", matchesHandCriterion("R"), statsHandCriterion("R"), true),
-	LEFT_HANDED("Vs Left-handed", matchesHandCriterion("L"), statsHandCriterion("L"), true),
-	BACKHAND_2("Vs Two-handed bh.", matchesBackhandCriterion("2"), statsBackhandCriterion("2"), true),
-	BACKHAND_1("Vs One-handed bh.", matchesBackhandCriterion("1"), statsBackhandCriterion("1"), true),
-	SEEDED("Vs Seeded", matchesSeedCriterion("IS NOT NULL"), statsSeedCriterion("IS NOT NULL"), false),
-	UNSEEDED("Vs Unseeded", matchesSeedCriterion("IS NULL"), statsSeedCriterion("IS NULL"), false),
-	QUALIFIER("Vs Qualifier", matchesEntryCriterion("Q"), statsEntryCriterion("Q"), false),
-	WILD_CARD("Vs Wild-Card", matchesEntryCriterion("WC"), statsEntryCriterion("WC"), false),
-	LUCKY_LOSER("Vs Lucky-Loser", matchesEntryCriterion("LL"), statsEntryCriterion("LL"), false),
-	PROTECTED_RANKING("Vs Protected Ranking", matchesEntryCriterion("PR"), statsEntryCriterion("PR"), false),
-	SPECIAL_EXEMPT("Vs Special Exempt", matchesEntryCriterion("SE"), statsEntryCriterion("SE"), false);
+	NO_1(RANK, "Vs No. 1", matchesRankCriterion(1), statsRankCriterion(1), false),
+	TOP_5(RANK, "Vs Top 5", matchesRankCriterion(5), statsRankCriterion(5), false),
+	TOP_10(RANK, "Vs Top 10", matchesRankCriterion(10), statsRankCriterion(10), false),
+	TOP_20(RANK, "Vs Top 20", matchesRankCriterion(20), statsRankCriterion(20), false),
+	TOP_50(RANK, "Vs Top 50", matchesRankCriterion(50), statsRankCriterion(50), false),
+	TOP_100(RANK, "Vs Top 100", matchesRankCriterion(100), statsRankCriterion(100), false),
+	UNDER_18(AGE, "Vs Under 18", matchesAgeCriterion(Range.atMost(18)), statsAgeCriterion(Range.atMost(18)), false),
+	UNDER_21(AGE, "Vs Under 21", matchesAgeCriterion(Range.atMost(21)), statsAgeCriterion(Range.atMost(21)), false),
+	UNDER_25(AGE, "Vs Under 25", matchesAgeCriterion(Range.atMost(25)), statsAgeCriterion(Range.atMost(25)), false),
+	OVER_25(AGE, "Vs Over 25", matchesAgeCriterion(Range.atLeast(25)), statsAgeCriterion(Range.atLeast(25)), false),
+	OVER_30(AGE, "Vs Over 30", matchesAgeCriterion(Range.atLeast(30)), statsAgeCriterion(Range.atLeast(30)), false),
+	OVER_35(AGE, "Vs Over 35", matchesAgeCriterion(Range.atLeast(35)), statsAgeCriterion(Range.atLeast(35)), false),
+	RIGHT_HANDED(STYLE, "Vs Right-handed", matchesHandCriterion("R"), statsHandCriterion("R"), true),
+	LEFT_HANDED(STYLE, "Vs Left-handed", matchesHandCriterion("L"), statsHandCriterion("L"), true),
+	BACKHAND_2(STYLE, "Vs Two-handed bh.", matchesBackhandCriterion("2"), statsBackhandCriterion("2"), true),
+	BACKHAND_1(STYLE, "Vs One-handed bh.", matchesBackhandCriterion("1"), statsBackhandCriterion("1"), true),
+	SEEDED(SEEDING, "Vs Seeded", matchesSeedCriterion("IS NOT NULL"), statsSeedCriterion("IS NOT NULL"), false),
+	UNSEEDED(SEEDING, "Vs Unseeded", matchesSeedCriterion("IS NULL"), statsSeedCriterion("IS NULL"), false),
+	QUALIFIER(SEEDING, "Vs Qualifier", matchesEntryCriterion("Q"), statsEntryCriterion("Q"), false),
+	WILD_CARD(SEEDING, "Vs Wild-Card", matchesEntryCriterion("WC"), statsEntryCriterion("WC"), false),
+	LUCKY_LOSER(SEEDING, "Vs Lucky-Loser", matchesEntryCriterion("LL"), statsEntryCriterion("LL"), false),
+	PROTECTED_RANKING(SEEDING, "Vs Protected Ranking", matchesEntryCriterion("PR"), statsEntryCriterion("PR"), false),
+	SPECIAL_EXEMPT(SEEDING, "Vs Special Exempt", matchesEntryCriterion("SE"), statsEntryCriterion("SE"), false);
+
+	public enum OpponentCategory {
+		RANK("Vs Rank"),
+		AGE("Vs Age"),
+		STYLE("Vs Playing Style"),
+		SEEDING("Vs Seeding");
+
+		private final String text;
+
+		OpponentCategory(String text) {
+			this.text = text;
+		}
+
+		public String getText() {
+			return text;
+		}
+	}
 
 	public static Opponent forValue(String opponent) {
 		return !isNullOrEmpty(opponent) ? Opponent.valueOf(opponent) : null;
 	}
 
+	private static final Supplier<Map<OpponentCategory, List<Opponent>>> CATEGORIES = () -> {
+		Map<OpponentCategory, List<Opponent>> categories = new LinkedHashMap<>();
+		for (Opponent opponent : Opponent.values())
+			categories.computeIfAbsent(opponent.category, c -> new ArrayList<>()).add(opponent);
+		return categories;
+	};
+
+	public static Map<OpponentCategory, List<Opponent>> categories() {
+		return CATEGORIES.get();
+	}
+
+	private final OpponentCategory category;
 	private final String text;
 	private final String matchesCriterion;
 	private final String statsCriterion;
@@ -54,11 +87,16 @@ public enum Opponent {
 	private static final String STATS_HAND_CRITERION = " AND o.hand = '%1$s'";
 	private static final String STATS_BACKHAND_CRITERION = " AND o.backhand = '%1$s'";
 
-	Opponent(String text, String matchesCriterion, String statsCriterion, boolean opponentRequired) {
+	Opponent(OpponentCategory category, String text, String matchesCriterion, String statsCriterion, boolean opponentRequired) {
+		this.category = category;
 		this.text = text;
 		this.matchesCriterion = matchesCriterion;
 		this.statsCriterion = statsCriterion;
 		this.opponentRequired = opponentRequired;
+	}
+
+	public OpponentCategory getCategory() {
+		return category;
 	}
 
 	public String getText() {

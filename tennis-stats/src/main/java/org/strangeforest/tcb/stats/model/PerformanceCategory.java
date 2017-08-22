@@ -12,7 +12,6 @@ public final class PerformanceCategory {
 
 	private static final Map<String, PerformanceCategory> CATEGORIES = new HashMap<>();
 	private static final Map<String, List<PerformanceCategory>> CATEGORY_CLASSES = new LinkedHashMap<>();
-	private static final Map<String, List<PerformanceCategory>> PRESSURE_SITUATIONS_CATEGORY_CLASSES = new LinkedHashMap<>();
 
 	private static final String PERFORMANCE = "Performance";
 	private static final String SURFACE_PERFORMANCE = "Surface Performance";
@@ -42,7 +41,6 @@ public final class PerformanceCategory {
 		addCategory(PRESSURE_SITUATIONS, "afterWinningFirstSet", "after_winning_first_set", "count(DISTINCT after_winning_first_set_match_id%1$s)", "After Winning 1st Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "afterLosingFirstSet", "after_losing_first_set", "count(DISTINCT after_losing_first_set_match_id%1$s)", "After Losing 1st Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "tieBreaks", "tie_breaks", "count(w_tie_break_set%1$s) + count(l_tie_break_set%1$s)", "Tie breaks", 100, "tie breaks");
-		PRESSURE_SITUATIONS_CATEGORY_CLASSES.put(PRESSURE_SITUATIONS, CATEGORY_CLASSES.get(PRESSURE_SITUATIONS));
 	}
 
 	private static void addCategory(String categoryClass, String name, String column, String expression, String title, int minEntries, String entriesName) {
@@ -69,10 +67,6 @@ public final class PerformanceCategory {
 
 	public static Map<String, List<PerformanceCategory>> getCategoryClasses() {
 		return CATEGORY_CLASSES;
-	}
-
-	public static Map<String, List<PerformanceCategory>> getPressureSituationsCategoryClasses() {
-		return PRESSURE_SITUATIONS_CATEGORY_CLASSES;
 	}
 
 

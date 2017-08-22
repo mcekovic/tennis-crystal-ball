@@ -110,19 +110,17 @@ public class PerformanceService {
 		);
 	}
 
+	private static boolean isMaterializedSum(PerfStatsFilter filter) {
+		return filter.isEmpty() || filter.isForSeason();
+	}
+
 	private static String getPerformanceTableName(PerfStatsFilter filter) {
 		if (filter.isEmpty())
 			return "player_performance";
 		else if (filter.isForSeason())
 			return "player_season_performance";
-		else if (filter.isForTournament())
-			return "player_tournament_performance";
 		else
 			return "player_match_performance_v";
-	}
-
-	static boolean isMaterializedSum(PerfStatsFilter filter) {
-		return filter.isEmpty() || filter.isForSeason() || filter.isForTournament();
 	}
 
 	public Map<Integer, PlayerPerformance> getPlayerSeasonsPerformance(int playerId) {

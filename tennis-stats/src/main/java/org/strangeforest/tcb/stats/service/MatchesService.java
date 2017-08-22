@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -17,8 +18,6 @@ import com.neovisionaries.i18n.*;
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static java.util.Collections.*;
-import static java.util.Comparator.*;
-import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
@@ -64,6 +63,21 @@ public class MatchesService {
 		"SELECT DISTINCT loser_country_id FROM match\n" +
 		"UNION\n" +
 		"SELECT DISTINCT winner_country_id FROM match";
+
+	private static final String SEASON_MATCHES_COUNTRIES_QUERY = //language=SQL
+		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE season = :season\n" +
+		"UNION\n" +
+		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE season = :season";
+
+	private static final String TOURNAMENT_MATCHES_COUNTRIES_QUERY = //language=SQL
+		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_id = :tournamentId\n" +
+		"UNION\n" +
+		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_id = :tournamentId";
+
+	private static final String TOURNAMENT_EVENT_MATCHES_COUNTRIES_QUERY = //language=SQL
+		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_event_id = :tournamentEventId\n" +
+		"UNION\n" +
+		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_event_id = :tournamentEventId";
 
 
 	public TournamentEventResults getTournamentEventResults(int tournamentEventId) {
@@ -198,6 +212,8 @@ public class MatchesService {
 	}
 
 
+	// Match Player Countries
+
 	private Supplier<List<String>> countryIds = Memoizer.of(this::countryIds);
 	private Supplier<List<CountryCode>> countries = Memoizer.of(this::countries);
 	private Supplier<Map<String, List<String>>> sameCountryIdsMap = Memoizer.of(this::sameCountryIdsMap);
@@ -207,7 +223,7 @@ public class MatchesService {
 	}
 
 	private List<CountryCode> countries() {
-		return countryIds.get().stream().map(Country::code).filter(code -> code != null && code.getAlpha3() != null).distinct().sorted(comparing(CountryCode::getName)).collect(toList());
+		return Country.codes(countryIds.get());
 	}
 
 	private Map<String, List<String>> sameCountryIdsMap() {
@@ -226,5 +242,20 @@ public class MatchesService {
 
 	public List<String> getSameCountryIds(String countryId) {
 		return isNullOrEmpty(countryId) ? emptyList() : sameCountryIdsMap.get().getOrDefault(countryId, singletonList(countryId));
+	}
+
+	@Cacheable("SeasonCountries")
+	public List<CountryCode> getSeasonCountries(int season) {
+		return Country.codes(jdbcTemplate.queryForList(SEASON_MATCHES_COUNTRIES_QUERY, params("season", season), String.class));
+	}
+
+	@Cacheable("TournamentCountries")
+	public List<CountryCode> getTournamentCountries(int tournamentId) {
+		return Country.codes(jdbcTemplate.queryForList(TOURNAMENT_MATCHES_COUNTRIES_QUERY, params("tournamentId", tournamentId), String.class));
+	}
+
+	@Cacheable("TournamentEventCountries")
+	public List<CountryCode> getTournamentEventCountries(int tournamentEventId) {
+		return Country.codes(jdbcTemplate.queryForList(TOURNAMENT_EVENT_MATCHES_COUNTRIES_QUERY, params("tournamentEventId", tournamentEventId), String.class));
 	}
 }

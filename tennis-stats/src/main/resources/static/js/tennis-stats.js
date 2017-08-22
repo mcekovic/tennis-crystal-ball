@@ -508,6 +508,14 @@ function detectDevice() {
 
 // Misc
 
+function encodeURIComponentEx(uri, passes) {
+	if (!passes)
+		passes = 1;
+	for (var i = 0; i < passes; i++)
+		uri = encodeURIComponent(uri);
+	return uri;
+}
+
 function loadRankingTopN(rankType, count) {
 	$("#rankingTopN").load("/rankingTopN?rankType=" + rankType + (count ? "&count=" + count : ""));
 }
@@ -535,7 +543,7 @@ function validateNumber($selector) {
 		return true;
 	}
 	else {
-		$selector.tooltip({title: "Invalid number"}).tooltip("show");
+		$selector.tooltip({title: "Invalid number", placement: "bottom"}).tooltip("show");
 		$selector.focus();
 		return false;
 	}

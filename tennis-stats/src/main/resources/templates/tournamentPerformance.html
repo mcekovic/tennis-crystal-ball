@@ -1,6 +1,14 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.PerformanceCategory>>"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
+<!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <script type="text/javascript">
 	$(function() {
 		var $topPerformersTable = $("#topPerformersTable");
@@ -15,7 +23,17 @@
 			},
 			url: "/topPerformersTable?tournamentId=[(${tournamentId})]",
 			requestHandler: function(request) {
-				request.category = $("#performanceCategory").val();
+				request.category = $("#perfCategory").val();
+				request.season = $("#perfSeason").val();
+				request.level = $("#perfLevel").val();
+				request.surface = $("#perfSurface").val();
+				request.round = $("#perfRound").val();
+				request.opponent = $("#perfOpponent").val();
+				request.countryId = $("#perfCountry").val();
+				request.minEntries = $("#perfMinEntriesOverride").val();
+				var active = $("#perfActive").prop("checked");
+				if (active)
+					request.active = active;
 				return request;
 			},
 			rowCount: [15, 25, 50, -1],
@@ -36,32 +54,170 @@
 			}
 		});
 		var $topPerformersTableHeader = $("#topPerformersTable-header");
-		$topPerformersTableHeader.find("div.search").before($("#performanceCategoryDiv").remove());
-		setBootgridTitle($topPerformersTableHeader, $("#topPerformersTable-title"));
-		performanceCategoryChanged();
+		var $search = $topPerformersTableHeader.find("div.search");
+		$search.before($("#perfSeasonDiv").remove());
+		$search.before($("#perfLevelDiv").remove());
+		$search.before($("#perfSurfaceDiv").remove());
+		$search.before($("#perfActiveDiv").remove());
+		$search.after($("#perfClearDiv").remove());
+		$topPerformersTableHeader.find("div.actions").after($("#perfAdvancedFilterDiv").remove());
+		perfCategoryChanged();
 		$("[data-toggle='tooltip']").tooltip();
 	});
-	function performanceCategoryChanged() {
-		var $category = $("#performanceCategory");
+	function perfCategoryChanged() {
+		var $category = $("#perfCategory");
 		$("#topPerformersTable").find("th[data-column-id='wonLostPct'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
 		var url = "/topPerformersMinEntries?category=" + $category.val() + "&tournamentId=[(${tournamentId})]";
+		url += "&season=" + $("#perfSeason").val();
+		url += "&level=" + $("#perfLevel").val();
+		url += "&surface=" + $("#perfSurface").val();
+		url += "&round=" + encodeURIComponent($("#perfRound").val());
+		url += "&opponent=" + $("#perfOpponent").val();
+		url += "&countryId=" + $("#perfCountry").val();
+		var $minEntries = $("#perfMinEntriesOverride");
+		if (!validateNumber($minEntries))
+			return false;
+		var minEntries = $minEntries.val();
+		if (minEntries && minEntries < 2) {
+			$minEntries.tooltip({title: "Minimum entries must be greater or equal to 2", placement: "bottom"}).tooltip("show");
+			$minEntries.focus();
+			return false;
+		}
+		url += "&minEntries=" + minEntries;
 		$.get(url, function (data) {
-			$("#performanceMinEntries").html(data);
+			$("#perfMinEntries").html(data);
 		});
+		return true;
 	}
 	function reloadTopPerformers() {
-		performanceCategoryChanged();
-		$("#topPerformersTable").bootgrid("reload");
+		if (perfCategoryChanged())
+			$("#topPerformersTable").bootgrid("reload");
+	}
+	function perfSeasonChanged() {
+		var $active = $("#perfActive");
+		var forSeason = $("#perfSeason").val();
+		if (forSeason)
+			$active.prop("checked", false);
+		$active.prop("disabled", forSeason);
+	}
+	function perfLevelChanged() {
+		setPerfCategoriesVisible("level-category", !$("#perfLevel").val());
+	}
+	function perfSurfaceChanged() {
+		var visible = !$("#perfSurface").val();
+		setPerfCategoriesVisible("surface-category", visible);
+		$("#perfCategory").find("optgroup[label='Surface Performance']").css("display", visible ? "block" : "none");
+	}
+	function perfRoundChanged() {
+		setPerfCategoriesVisible("round-category", !$("#perfRound").val());
+	}
+	function perfOpponentChanged() {
+		var opponent = $("#perfOpponent").val();
+		setPerfCategoriesVisible("topn-category", opponent != "NO_1" && !opponent.startsWith("TOP_"));
+	}
+	function setPerfCategoriesVisible(cssClass, visible) {
+		var $category = $("#perfCategory");
+		$category.find("option." + cssClass).each(function () {
+			var $this = $(this);
+			if ($this.is(':selected'))
+				$category.val("matches");
+			$this.css("display", visible ? "block" : "none");
+		});
+	}
+	function clearTopPerformersFilter() {
+		$("#perfSeason").val(""); perfSeasonChanged();
+		$("#perfLevel").val(""); perfLevelChanged();
+		$("#perfSurface").val(""); perfSurfaceChanged();
+		$("#perfRound").val(""); perfRoundChanged();
+		$("#perfOpponent").val(""); perfOpponentChanged();
+		$("#perfCountry").val("");
+		$("#perfMinEntriesOverride").val("");
+		$("#perfActive").prop("checked", false);
+		$("#topPerformersTable").bootgrid("search", "");
+		reloadTopPerformers();
 	}
 </script>
-<h3 id="topPerformersTable-title" class="grid-title">Top Performers</h3>
-<div id="performanceCategoryDiv" class="btn-group margin-right">
-	<select id="performanceCategory" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Select performance category">
-		<option value="matches">Overall Matches</option>
-		<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
-			<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="matches" th:class="${category.cssClass}" th:text="${category.title}">Overall</option>
-		</optgroup>
+<div class="row margin-top">
+	<div class="col-md-8">
+		<h3 class="text-nowrap" style="display: inline">Top Performers</h3>
+	</div>
+	<div class="col-md-4">
+		<div class="input-group" data-toggle="tooltip" data-placement="top" title="Select performance category">
+			<label for="perfCategory" class="input-group-addon">Category:</label>
+			<select id="perfCategory" class="form-control" onchange="reloadTopPerformers()">
+				<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Performance">
+					<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="matches" th:class="${category.cssClass}" th:text="${category.title}">Overall Matches</option>
+				</optgroup>
+			</select>
+		</div>
+	</div>
+</div>
+<div id="perfAdvancedFilter" class="collapse row margin-top">
+	<div class="col-md-2">
+		<select id="perfRound" class="form-control" onchange="perfRoundChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+			<option value="">All rounds</option>
+			<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<select id="perfOpponent" class="form-control" onchange="perfOpponentChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+			<option value="">Vs all</option>
+			<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
+				<option th:each="opponent : ${opponentCategory.value}" th:value="${opponent}" value="NO_1" th:text="${opponent.text}">Vs No. 1</option>
+			</optgroup>
+		</select>
+	</div>
+	<div class="col-md-3">
+		<select id="perfCountry" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+			<option value="">All countries</option>
+			<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum entries">
+			<label for="perfMinEntriesOverride" class="input-group-addon">Min. entries:</label>
+			<input id="perfMinEntriesOverride" type="text" size="6" class="form-control" oninput="reloadTopPerformers()" onchange="reloadTopPerformers()"/>
+		</div>
+	</div>
+</div>
+<div id="perfSeasonDiv" class="btn-group pull-left margin-right no-margin-left">
+	<select id="perfSeason" class="form-control" onchange="perfSeasonChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by season">
+		<option value="">All seasons</option>
+		<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 	</select>
+</div>
+<div id="perfLevelDiv" class="btn-group pull-left margin-right">
+	<select id="perfLevel" class="form-control" onchange="perfLevelChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+		<option value="">All levels</option>
+		<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
+		<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}">Big Tournaments</option>
+	</select>
+</div>
+<div id="perfSurfaceDiv" class="btn-group pull-left margin-right">
+	<select id="perfSurface" class="form-control" onchange="perfSurfaceChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+		<option value="">All surfaces</option>
+		<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+		<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+	</select>
+</div>
+<div id="perfActiveDiv" class="btn-group margin-right">
+	<div class="checkbox">
+		<label data-toggle="tooltip" data-placement="top" title="Show only active players">
+			<input id="perfActive" type="checkbox" onchange="reloadTopPerformers()"/> Active
+		</label>
+	</div>
+</div>
+<div id="perfClearDiv" class="btn-group margin-right">
+	<button type="button" class="btn btn-default" onclick="clearTopPerformersFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+		<span class="glyphicon glyphicon-erase"></span>
+	</button>
+</div>
+<div id="perfAdvancedFilterDiv" class="btn-group margin-left no-margin-right">
+	<div class="pull-right" data-toggle="tooltip" data-placement="left" title="Advanced filters">
+		<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#perfAdvancedFilter">
+			Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-up"></span>
+		</button>
+	</div>
 </div>
 <table id="topPerformersTable" class="table table-condensed table-hover table-striped">
 	<thead>
@@ -76,5 +232,5 @@
 	</tr>
 	</thead>
 </table>
-<p><i>* Minimum <span id="performanceMinEntries">10 matches</span></i></p>
+<p><i>* Minimum <span id="perfMinEntries">10 matches</span></i></p>
 </th:block>

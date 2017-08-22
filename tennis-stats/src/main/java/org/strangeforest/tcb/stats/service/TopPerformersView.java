@@ -47,23 +47,32 @@ public class TopPerformersView {
 	}
 
 	public TopPerformersView optimize() {
-		if (category.equals("matches")) {
-			if (filter.isForLevel())
-				return optimizedAll(LEVEL_CATEGORY_MAP.get(filter.getLevel()));
-			else if (filter.isForSurface())
-				return optimizedAll(SURFACE_CATEGORY_MAP.get(filter.getSurface()));
-			else if (filter.isForRound())
-				return optimizedAll(ROUND_CATEGORY_MAP.get(filter.getRound()));
-			else if (filter.isForOpposition())
-				return optimizedAll(OPPOSITION_CATEGORY_MAP.get(filter.getOpponentFilter().getOpponent()));
-			if (filter.isForSeasonAndLevel())
-				return optimizedSeason(LEVEL_CATEGORY_MAP.get(filter.getLevel()), filter.getSeason());
-			else if (filter.isForSeasonAndSurface())
-				return optimizedSeason(SURFACE_CATEGORY_MAP.get(filter.getSurface()), filter.getSeason());
-			else if (filter.isForSeasonAndRound())
-				return optimizedSeason(ROUND_CATEGORY_MAP.get(filter.getRound()), filter.getSeason());
-			else if (filter.isForSeasonAndOpposition())
-				return optimizedSeason(OPPOSITION_CATEGORY_MAP.get(filter.getOpponentFilter().getOpponent()), filter.getSeason());
+		switch (category) {
+			case "matches": {
+				if (filter.isForLevel())
+					return optimizedAll(LEVEL_CATEGORY_MAP.get(filter.getLevel()));
+				else if (filter.isForSurface())
+					return optimizedAll(SURFACE_CATEGORY_MAP.get(filter.getSurface()));
+				else if (filter.isForRound())
+					return optimizedAll(ROUND_CATEGORY_MAP.get(filter.getRound()));
+				else if (filter.isForOpposition())
+					return optimizedAll(OPPOSITION_CATEGORY_MAP.get(filter.getOpponentFilter().getOpponent()));
+				if (filter.isForSeasonAndLevel())
+					return optimizedSeason(LEVEL_CATEGORY_MAP.get(filter.getLevel()), filter.getSeason());
+				else if (filter.isForSeasonAndSurface())
+					return optimizedSeason(SURFACE_CATEGORY_MAP.get(filter.getSurface()), filter.getSeason());
+				else if (filter.isForSeasonAndRound())
+					return optimizedSeason(ROUND_CATEGORY_MAP.get(filter.getRound()), filter.getSeason());
+				else if (filter.isForSeasonAndOpposition())
+					return optimizedSeason(OPPOSITION_CATEGORY_MAP.get(filter.getOpponentFilter().getOpponent()), filter.getSeason());
+				break;
+			}
+			case "tourFinalsMatches": return deoptimizeTournamentLevel("F");
+			case "olympicsMatches": return deoptimizeTournamentLevel("O");
+			case "hardMatches": return deoptimizeTournamentSurface("H");
+			case "clayMatches": return deoptimizeTournamentSurface("C");
+			case "grassMatches": return deoptimizeTournamentSurface("G");
+			case "carpetMatches": return deoptimizeTournamentSurface("P");
 		}
 		return this;
 	}
@@ -74,5 +83,13 @@ public class TopPerformersView {
 
 	private TopPerformersView optimizedSeason(String category, Integer season) {
 		return category != null ? new TopPerformersView(category, PerfStatsFilter.forSeason(season)) : this;
+	}
+
+	private TopPerformersView deoptimizeTournamentLevel(String level) {
+		return filter.isForTournament() ? new TopPerformersView("matches", PerfStatsFilter.forLevelAndTournament(level, filter.getTournamentId())) : this;
+	}
+
+	private TopPerformersView deoptimizeTournamentSurface(String surface) {
+		return filter.isForTournament() ? new TopPerformersView("matches", PerfStatsFilter.forSurfaceAndTournament(surface, filter.getTournamentId())) : this;
 	}
 }

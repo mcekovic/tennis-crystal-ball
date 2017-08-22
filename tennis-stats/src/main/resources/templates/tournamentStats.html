@@ -2,6 +2,13 @@
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
+<!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <script type="text/javascript">
 	$(function() {
 		var $statsLeadersTable = $("#statsLeadersTable");
@@ -16,9 +23,16 @@
 			url: "/statsLeadersTable?tournamentId=[(${tournamentId})]",
 			requestHandler: function(request) {
 				request.category = $("#statsCategory").val();
-				var season = $("#season").val();
-				if (season)
-					request.season = season;
+				request.season = $("#statsSeason").val();
+				request.level = $("#statsLevel").val();
+				request.surface = $("#statsSurface").val();
+				request.round = $("#statsRound").val();
+				request.opponent = $("#statsOpponent").val();
+				request.countryId = $("#statsCountry").val();
+				request.minEntries = $("#statsMinEntriesOverride").val();
+				var active = $("#statsActive").prop("checked");
+				if (active)
+					request.active = active;
 				return request;
 			},
 			rowCount: [15, 25, 50, -1],
@@ -40,41 +54,145 @@
 		});
 		var $statsLeadersTableHeader = $("#statsLeadersTable-header");
 		var $search = $statsLeadersTableHeader.find("div.search");
-		$search.before($("#statsCategoryDiv").remove());
-		$search.before($("#seasonsDiv").remove());
-		setBootgridTitle($statsLeadersTableHeader, $("#statsLeadersTable-title"));
-		categoryChanged();
+		$search.before($("#statsSeasonDiv").remove());
+		$search.before($("#statsLevelDiv").remove());
+		$search.before($("#statsSurfaceDiv").remove());
+		$search.before($("#statsActiveDiv").remove());
+		$search.after($("#statsClearDiv").remove());
+		$statsLeadersTableHeader.find("div.actions").after($("#statsAdvancedFilterDiv").remove());
+		statsCategoryChanged();
 		$("[data-toggle='tooltip']").tooltip();
 	});
-	function categoryChanged() {
+	function statsCategoryChanged() {
 		var $category = $("#statsCategory");
 		$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
 		var url = "/statsLeadersMinEntries?category=" + $category.val() + "&tournamentId=[(${tournamentId})]";
-		var season = $("#season").val();
-		if (season)
-			url += "&season=" + season;
+		url += "&season=" + $("#statsSeason").val();
+		url += "&level=" + $("#statsLevel").val();
+		url += "&surface=" + $("#statsSurface").val();
+		url += "&round=" + encodeURIComponent($("#statsRound").val());
+		url += "&opponent=" + $("#statsOpponent").val();
+		url += "&countryId=" + $("#statsCountry").val();
+		var $minEntries = $("#statsMinEntriesOverride");
+		if (!validateNumber($minEntries))
+			return false;
+		var minEntries = $minEntries.val();
+		if (minEntries && minEntries < 2) {
+			$minEntries.tooltip({title: "Minimum entries must be greater or equal to 2", placement: "bottom"}).tooltip("show");
+			$minEntries.focus();
+			return false;
+		}
+		url += "&minEntries=" + minEntries;
 		$.get(url, function (data) {
 			$("#statsMinEntries").html(data);
 		});
+			return true;
 	}
 	function reloadStatsLeaders() {
-		categoryChanged();
-		$("#statsLeadersTable").bootgrid("reload");
+		if (statsCategoryChanged())
+			$("#statsLeadersTable").bootgrid("reload");
+	}
+	function statsSeasonChanged() {
+		var $active = $("#statsActive");
+		var forSeason = $("#statsSeason").val();
+		if (forSeason)
+			$active.prop("checked", false);
+		$active.prop("disabled", forSeason);
+	}
+	function clearStatsLeadersFilter() {
+		$("#statsSeason").val(""); statsSeasonChanged();
+		$("#statsLevel").val("");
+		$("#statsSurface").val("");
+		$("#statsRound").val("");
+		$("#statsOpponent").val("");
+		$("#statsCountry").val("");
+		$("#statsMinEntriesOverride").val("");
+		$("#statsActive").prop("checked", false);
+		$("#statsLeadersTable").bootgrid("search", "");
+		reloadStatsLeaders();
 	}
 </script>
-<h3 id="statsLeadersTable-title" class="grid-title">Statistics Leaders</h3>
-<div id="statsCategoryDiv" class="btn-group margin-right">
-	<select id="statsCategory" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
-		<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
-			<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
-		</optgroup>
-	</select>
+<div class="row margin-top">
+	<div class="col-md-8">
+		<h3 class="text-nowrap" style="display: inline">Statistics Leaders</h3>
+	</div>
+	<div class="col-md-4">
+		<div class="input-group" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+			<label for="statsCategory" class="input-group-addon">Category:</label>
+			<select id="statsCategory" class="form-control" onchange="reloadStatsLeaders()">
+				<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
+					<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+				</optgroup>
+			</select>
+		</div>
+	</div>
 </div>
-<div id="seasonsDiv" class="btn-group margin-right">
-	<select id="season" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select career or season">
-		<option value="">Career</option>
+<div id="statsAdvancedFilter" class="collapse row margin-top">
+	<div class="col-md-2">
+		<select id="statsRound" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+			<option value="">All rounds</option>
+			<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<select id="statsOpponent" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+			<option value="">Vs all</option>
+			<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
+				<option th:each="opponent : ${opponentCategory.value}" th:value="${opponent}" value="NO_1" th:text="${opponent.text}">Vs No. 1</option>
+			</optgroup>
+		</select>
+	</div>
+	<div class="col-md-3">
+		<select id="statsCountry" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+			<option value="">All countries</option>
+			<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
+		</select>
+	</div>
+	<div class="col-md-3">
+		<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum entries">
+			<label for="statsMinEntriesOverride" class="input-group-addon">Min. entries:</label>
+			<input id="statsMinEntriesOverride" type="text" size="8" class="form-control" oninput="reloadStatsLeaders()" onchange="reloadStatsLeaders()"/>
+		</div>
+	</div>
+</div>
+<div id="statsSeasonDiv" class="btn-group pull-left margin-right no-margin-left">
+	<select id="statsSeason" class="form-control" onchange="statsSeasonChanged(); reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by season">
+		<option value="">All seasons</option>
 		<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 	</select>
+</div>
+<div id="statsLevelDiv" class="btn-group pull-left margin-right">
+	<select id="statsLevel" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+		<option value="">All levels</option>
+		<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
+		<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}">Big Tournaments</option>
+	</select>
+</div>
+<div id="statsSurfaceDiv" class="btn-group pull-left margin-right">
+	<select id="statsSurface" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+		<option value="">All surfaces</option>
+		<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+		<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+	</select>
+</div>
+<div id="statsActiveDiv" class="btn-group margin-right">
+	<div class="checkbox">
+		<label data-toggle="tooltip" data-placement="top" title="Show only active players">
+			<input id="statsActive" type="checkbox" onchange="reloadStatsLeaders()"/> Active
+		</label>
+	</div>
+</div>
+<div id="statsClearDiv" class="btn-group margin-right">
+	<button type="button" class="btn btn-default" onclick="clearStatsLeadersFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+		<span class="glyphicon glyphicon-erase"></span>
+	</button>
+</div>
+<div id="statsAdvancedFilterDiv" class="btn-group margin-left no-margin-right">
+	<div class="pull-right" data-toggle="tooltip" data-placement="left" title="Advanced filters">
+		<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#statsAdvancedFilter">
+			Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-up"></span>
+		</button>
+	</div>
 </div>
 <table id="statsLeadersTable" class="table table-condensed table-hover table-striped">
 	<thead>

@@ -36,7 +36,7 @@ public class OpponentFilter {
 		return new OpponentFilter(Opponent.forValue(opponent), opponentId, countryIds, true);
 	}
 
-	static OpponentFilter forStats(Integer opponentId) {
+	public static OpponentFilter forStats(Integer opponentId) {
 		return new OpponentFilter(null, opponentId, null, true);
 	}
 

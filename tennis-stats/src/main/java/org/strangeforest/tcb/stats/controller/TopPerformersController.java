@@ -29,7 +29,7 @@ public class TopPerformersController extends PageController {
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("tournaments", tournamentService.getTournaments());
-		modelMap.addAttribute("opponents", Opponent.values());
+		modelMap.addAttribute("opponentCategories", Opponent.categories());
 		modelMap.addAttribute("countries", matchesService.getCountries());
 		return new ModelAndView("topPerformers", modelMap);
 	}

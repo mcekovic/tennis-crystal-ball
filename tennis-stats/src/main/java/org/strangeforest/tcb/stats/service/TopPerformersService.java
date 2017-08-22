@@ -12,7 +12,6 @@ import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
-import static org.strangeforest.tcb.stats.service.PerformanceService.*;
 
 @Service
 public class TopPerformersService {
@@ -68,7 +67,7 @@ public class TopPerformersService {
 		boolean materializedSum = isMaterializedSum(filter);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
 			format(TOP_PERFORMERS_COUNT_QUERY, getPerformanceTableName(perfCategory, filter), materializedSum ? perfCategory.getColumn() : "items", materializedSum ? filter.getCriteria() : filter.getSearchCriteria()),
-			filter.getParams().addValue("minEntries", minEntries != null ? minEntries : getMinEntries(perfCategory, filter)),
+			filter.getParams().addValue("minEntries", getMinEntries(perfCategory, filter, minEntries)),
 			Integer.class
 		));
 	}
@@ -82,7 +81,7 @@ public class TopPerformersService {
 		jdbcTemplate.query(
 			format(TOP_PERFORMERS_QUERY, materializedSum ? perfCategory.getColumn() : "items", getPerformanceTableName(perfCategory, filter), materializedSum ? filter.getBaseCriteria() : "", where(filter.getSearchCriteria()), orderBy),
 			filter.getParams()
-				.addValue("minEntries", minEntries != null ? minEntries : getMinEntries(perfCategory, filter))
+				.addValue("minEntries", getMinEntries(perfCategory, filter, minEntries))
 				.addValue("offset", offset)
 				.addValue("limit", pageSize),
 			rs -> {
@@ -98,6 +97,10 @@ public class TopPerformersService {
 		return table;
 	}
 
+	private static boolean isMaterializedSum(PerfStatsFilter filter) {
+		return filter.isEmpty() || filter.isForSeason() || filter.isForTournament();
+	}
+
 	private static String getPerformanceTableName(PerformanceCategory perfCategory, PerfStatsFilter filter) {
 		if (filter.isEmpty())
 			return "player_performance";
@@ -111,14 +114,14 @@ public class TopPerformersService {
 
 	public String getTopPerformersMinEntries(String category, PerfStatsFilter filter, Integer minEntries) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
-		return (minEntries != null ? minEntries : getMinEntries(perfCategory, filter)) + " " + perfCategory.getEntriesName();
+		return getMinEntries(perfCategory, filter, minEntries) + " " + perfCategory.getEntriesName();
 	}
 
 	private static WonLost mapWonLost(ResultSet rs) throws SQLException {
 		return new WonLost(rs.getInt("won"), rs.getInt("lost"));
 	}
 
-	private int getMinEntries(PerformanceCategory category, PerfStatsFilter filter) {
-		return minEntries.getFilteredMinEntries(category.getMinEntries(), filter);
+	private int getMinEntries(PerformanceCategory category, PerfStatsFilter filter, Integer minEntriesOverride) {
+		return minEntriesOverride == null ? minEntries.getFilteredMinEntries(category.getMinEntries(), filter) : minEntriesOverride;
 	}
 }
