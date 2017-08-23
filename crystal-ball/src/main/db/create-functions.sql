@@ -124,7 +124,7 @@ CREATE OR REPLACE FUNCTION player_rank(
 	p_date DATE
 ) RETURNS INTEGER AS $$
 BEGIN
-	RETURN (SELECT rank FROM player_ranking WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1);
+	RETURN (SELECT rank FROM player_ranking WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1 year') AND p_date ORDER BY rank_date DESC LIMIT 1);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -137,8 +137,8 @@ CREATE OR REPLACE FUNCTION player_rank_points(
 -- ) RETURNS rank_points AS $$
 ) RETURNS TABLE(rank INTEGER, rank_points INTEGER) AS $$
 BEGIN
--- 	RETURN (SELECT (r.rank, r.rank_points) FROM player_ranking r WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1);
-	RETURN QUERY SELECT r.rank, r.rank_points FROM player_ranking r WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1;
+-- 	RETURN (SELECT (r.rank, r.rank_points) FROM player_ranking r WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1 year') AND p_date ORDER BY rank_date DESC LIMIT 1);
+	RETURN QUERY SELECT r.rank, r.rank_points FROM player_ranking r WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1 year') AND p_date ORDER BY rank_date DESC LIMIT 1;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -165,7 +165,7 @@ DECLARE
 	l_elo_rating INTEGER;
 BEGIN
 	SELECT elo_rating INTO l_elo_rating FROM player_elo_ranking
-	WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1' YEAR) AND p_date ORDER BY rank_date DESC LIMIT 1;
+	WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1 year') AND p_date ORDER BY rank_date DESC LIMIT 1;
 	RETURN coalesce(l_elo_rating, 1500);
 END;
 $$ LANGUAGE plpgsql;

@@ -57,12 +57,20 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return new PerfStatsFilter(null, null, null, round, null, null, null);
 	}
 
+ 	public static PerfStatsFilter forRoundAndTournament(String round, Integer tournamentId) {
+		return new PerfStatsFilter(null, null, null, round, tournamentId, null, null);
+	}
+
  	public static PerfStatsFilter forTournament(Integer tournamentId) {
 		return new PerfStatsFilter(null, null, null, null, tournamentId, null, null);
 	}
 
 	public static PerfStatsFilter forOpponent(String opponent) {
 		return new PerfStatsFilter(null, null, null, null, null, null, OpponentFilter.forStats(opponent, null));
+	}
+
+	public static PerfStatsFilter forOpponentAndTournament(String opponent, Integer tournamentId) {
+		return new PerfStatsFilter(null, null, null, null, tournamentId, null, OpponentFilter.forStats(opponent, null));
 	}
 
 	public static PerfStatsFilter forPlayerPerf(Integer season, String level, String surface, Integer tournamentId, OpponentFilter opponentFilter) {
@@ -73,6 +81,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 	// Instance
 
 	private final Integer season;
+	private final boolean last52Weeks;
 	private final String level;
 	private final String surface;
 	private final String round;
@@ -81,6 +90,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 	private final OpponentFilter opponentFilter;
 
 	private static final String SEASON_CRITERION           = " AND season = :season";
+	private static final String LAST_52_WEEKS_CRITERION    = " AND date >= current_date - INTERVAL '1 year'";
 	private static final String LEVEL_CRITERION            = " AND level = :level::tournament_level";
 	private static final String LEVELS_CRITERION           = " AND level::TEXT IN (:levels)";
 	private static final String SURFACE_CRITERION          = " AND surface = :surface::surface";
@@ -89,13 +99,16 @@ public class PerfStatsFilter extends PlayerListFilter {
 	private static final String TOURNAMENT_CRITERION       = " AND tournament_id = :tournamentId";
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND tournament_event_id = :tournamentEventId";
 
+	private static final int LAST_52_WEEKS_SEASON = -1;
+
 	public PerfStatsFilter(Integer season, String level, String surface, String round, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
 		this(null, null, season, level, surface, round, tournamentId, tournamentEventId, opponentFilter);
 	}
 	
 	public PerfStatsFilter(Boolean active, String searchPhrase, Integer season, String level, String surface, String round, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
 		super(active, searchPhrase);
-		this.season = season;
+		this.season = season != null && season != LAST_52_WEEKS_SEASON ? season : null;
+		last52Weeks = season != null && season == LAST_52_WEEKS_SEASON;
 		this.level = level;
 		this.surface = surface;
 		this.round = round;
@@ -124,6 +137,8 @@ public class PerfStatsFilter extends PlayerListFilter {
 	private void appendBaseCriteria(StringBuilder criteria) {
 		if (season != null)
 			criteria.append(SEASON_CRITERION);
+		if (last52Weeks)
+			criteria.append(LAST_52_WEEKS_CRITERION);
 		if (!isNullOrEmpty(level))
 			criteria.append(level.length() == 1 ? LEVEL_CRITERION : LEVELS_CRITERION);
 		if (!isNullOrEmpty(surface))
@@ -166,6 +181,10 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return season;
 	}
 
+	public boolean isLast52Weeks() {
+		return last52Weeks;
+	}
+
 	public String getLevel() {
 		return level;
 	}
@@ -184,6 +203,10 @@ public class PerfStatsFilter extends PlayerListFilter {
 
 	public int getTournamentId() {
 		return tournamentId;
+	}
+
+	public boolean isTimeLocalized() {
+		return season != null || last52Weeks;
 	}
 
 	public boolean hasSeason() {
@@ -222,28 +245,40 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return season != null && equals(forSeason(season));
 	}
 
-	public boolean isForLevel() {
-		return !isNullOrEmpty(level) && equals(forLevel(level));
-	}
-
 	public boolean isForSeasonAndLevel() {
 		return season != null && !isNullOrEmpty(level) && equals(forSeasonAndLevel(season, level));
-	}
-
-	public boolean isForSurface() {
-		return !isNullOrEmpty(surface) && equals(forSurface(surface));
 	}
 
 	public boolean isForSeasonAndSurface() {
 		return season != null && !isNullOrEmpty(surface) && equals(forSeasonAndSurface(season, surface));
 	}
 
+	public boolean isForSeasonAndRound() {
+		return season != null && !isNullOrEmpty(round) && equals(forSeasonAndRound(season, round));
+	}
+
+	public boolean isForSeasonAndOpposition() {
+		return season != null && opponentFilter.getOpponent() != null && equals(forSeasonAndOpponent(season, opponentFilter.getOpponent().name()));
+	}
+
+	public boolean isForLevel() {
+		return !isNullOrEmpty(level) && equals(forLevel(level));
+	}
+
+	public boolean isForLevelAndTournament() {
+		return !isNullOrEmpty(level) && tournamentId != null && equals(forLevelAndTournament(level, tournamentId));
+	}
+
+	public boolean isForSurface() {
+		return !isNullOrEmpty(surface) && equals(forSurface(surface));
+	}
+
 	public boolean isForRound() {
 		return !isNullOrEmpty(round) && equals(forRound(round));
 	}
 
-	public boolean isForSeasonAndRound() {
-		return season != null && !isNullOrEmpty(round) && equals(forSeasonAndRound(season, round));
+	public boolean isForRoundAndTournament() {
+		return !isNullOrEmpty(round) && tournamentId != null && equals(forRoundAndTournament(round, tournamentId));
 	}
 
 	public boolean isForTournament() {
@@ -254,16 +289,16 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return opponentFilter.getOpponent() != null && equals(forOpponent(opponentFilter.getOpponent().name()));
 	}
 
-	public boolean isForSeasonAndOpposition() {
-		return season != null && opponentFilter.getOpponent() != null && equals(forSeasonAndOpponent(season, opponentFilter.getOpponent().name()));
+	public boolean isForOppositionAndTournament() {
+		return opponentFilter.getOpponent() != null && tournamentId != null && equals(forOpponentAndTournament(opponentFilter.getOpponent().name(), tournamentId));
 	}
 
 	public boolean isEmpty() {
-		return season == null && isNullOrEmpty(level) && isNullOrEmpty(surface) && isNullOrEmpty(round) && tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty();
+		return season == null && !last52Weeks && isNullOrEmpty(level) && isNullOrEmpty(surface) && isNullOrEmpty(round) && tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty();
 	}
 
 	public boolean isEmptyOrForSeasonOrSurface() {
-		return isNullOrEmpty(level) && isNullOrEmpty(round) && tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty();
+		return !last52Weeks && isNullOrEmpty(level) && isNullOrEmpty(round) && tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty();
 	}
 
 
@@ -274,17 +309,18 @@ public class PerfStatsFilter extends PlayerListFilter {
 		if (!(o instanceof PerfStatsFilter)) return false;
 		if (!super.equals(o)) return false;
 		PerfStatsFilter filter = (PerfStatsFilter)o;
-		return Objects.equals(season, filter.season) &&	stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface) && stringsEqual(round, filter.round)
+		return Objects.equals(season, filter.season) &&	last52Weeks == filter.last52Weeks && stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface) && stringsEqual(round, filter.round)
 		    && Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) && opponentFilter.equals(filter.opponentFilter);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(super.hashCode(), season, emptyToNull(level), emptyToNull(surface), emptyToNull(round), tournamentId, tournamentEventId, opponentFilter);
+		return Objects.hash(super.hashCode(), season, last52Weeks, emptyToNull(level), emptyToNull(surface), emptyToNull(round), tournamentId, tournamentEventId, opponentFilter);
 	}
 
 	@Override protected MoreObjects.ToStringHelper toStringHelper() {
 		return super.toStringHelper()
 			.add("season", season)
+			.add("last52Weeks", last52Weeks ? true : null)
 			.add("level", emptyToNull(level))
 			.add("surface", emptyToNull(surface))
 			.add("round", emptyToNull(round))

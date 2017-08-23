@@ -63,7 +63,7 @@ public class RecordFilter {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("category", emptyToNull(category))
 			.add("searchPhrase", emptyToNull(searchPhrase))
-			.add("infamous", infamous)
+			.add("infamous", infamous ? true : null)
 		.toString();
 	}
 }

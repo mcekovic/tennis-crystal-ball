@@ -14,6 +14,7 @@ import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 public class TournamentEventFilter {
 
 	private final Integer season;
+	private final boolean last52Weeks;
 	private final String level;
 	private final String surface;
 	private final Integer tournamentId;
@@ -21,6 +22,7 @@ public class TournamentEventFilter {
 	private final String searchPhrase;
 
 	private static final String SEASON_CRITERION           = " AND e.season = :season";
+	private static final String LAST_52_WEEKS_CRITERION    = " AND e.date >= current_date - INTERVAL '1 year'";
 	private static final String LEVEL_CRITERION            = " AND e.level = :level::tournament_level";
 	private static final String LEVELS_CRITERION           = " AND e.level::TEXT IN (:levels)";
 	private static final String SURFACE_CRITERION          = " AND e.surface = :surface::surface";
@@ -29,8 +31,11 @@ public class TournamentEventFilter {
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND e.tournament_event_id = :tournamentEventId";
 	private static final String SEARCH_CRITERION           = " AND e.name ILIKE '%' || :searchPhrase || '%'";
 
+	private static final int LAST_52_WEEKS_SEASON = -1;
+
 	public TournamentEventFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String searchPhrase) {
-		this.season = season;
+		this.season = season != null && season != LAST_52_WEEKS_SEASON ? season : null;
+		last52Weeks = season != null && season == LAST_52_WEEKS_SEASON;
 		this.level = level;
 		this.surface = surface;
 		this.tournamentId = tournamentId;
@@ -47,6 +52,8 @@ public class TournamentEventFilter {
 	protected void appendCriteria(StringBuilder criteria) {
 		if (season != null)
 			criteria.append(SEASON_CRITERION);
+		if (last52Weeks)
+			criteria.append(getLast52WeeksCriterion());
 		if (!isNullOrEmpty(level))
 			criteria.append(level.length() == 1 ? LEVEL_CRITERION : LEVELS_CRITERION);
 		if (!isNullOrEmpty(surface))
@@ -88,6 +95,10 @@ public class TournamentEventFilter {
 			params.addValue("searchPhrase", searchPhrase);
 	}
 
+	protected String getLast52WeeksCriterion() {
+		return LAST_52_WEEKS_CRITERION;
+	}
+
 	protected String getSurfaceCriterion() {
 		return SURFACE_CRITERION;
 	}
@@ -113,7 +124,7 @@ public class TournamentEventFilter {
 	}
 
 	public boolean isEmpty() {
-		return season == null && isNullOrEmpty(level) && isNullOrEmpty(surface) && tournamentId == null && tournamentEventId == null && isNullOrEmpty(searchPhrase);
+		return season == null && !last52Weeks && isNullOrEmpty(level) && isNullOrEmpty(surface) && tournamentId == null && tournamentEventId == null && isNullOrEmpty(searchPhrase);
 	}
 
 
@@ -123,16 +134,14 @@ public class TournamentEventFilter {
 		if (this == o) return true;
 		if (!(o instanceof TournamentEventFilter)) return false;
 		TournamentEventFilter filter = (TournamentEventFilter)o;
-		return Objects.equals(season, filter.season) &&
-			stringsEqual(level, filter.level) &&
-			stringsEqual(surface, filter.surface) &&
-			Objects.equals(tournamentId, filter.tournamentId) &&
-			Objects.equals(tournamentEventId, filter.tournamentEventId) &&
+		return Objects.equals(season, filter.season) &&	last52Weeks == filter.last52Weeks &&
+			stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface) &&
+			Objects.equals(tournamentId, filter.tournamentId) && Objects.equals(tournamentEventId, filter.tournamentEventId) &&
 			stringsEqual(searchPhrase, filter.searchPhrase);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(season, emptyToNull(level), emptyToNull(surface), tournamentId, tournamentEventId, emptyToNull(searchPhrase));
+		return Objects.hash(season, last52Weeks, emptyToNull(level), emptyToNull(surface), tournamentId, tournamentEventId, emptyToNull(searchPhrase));
 	}
 
 	@Override public final String toString() {
@@ -142,6 +151,7 @@ public class TournamentEventFilter {
 	protected ToStringHelper toStringHelper() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("season", season)
+			.add("last52Weeks", last52Weeks ? true : null)
 			.add("level", emptyToNull(level))
 			.add("surface", emptyToNull(surface))
 			.add("tournamentId", tournamentId)

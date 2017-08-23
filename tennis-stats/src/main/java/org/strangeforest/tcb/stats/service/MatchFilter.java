@@ -84,6 +84,7 @@ public class MatchFilter extends TournamentEventResultFilter {
 	private final OutcomeFilter outcomeFilter;
 	private final ScoreFilter scoreFilter;
 
+	private static final String LAST_52_WEEKS_CRITERION  = " AND m.date >= current_date - INTERVAL '1 year'";
 	private static final String SURFACE_CRITERION        = " AND m.surface = :surface::surface";
 	private static final String SURFACES_CRITERION       = " AND m.surface::TEXT IN (:surfaces)";
 	private static final String ROUND_CRITERION          = " AND m.round %1$s :round::match_round";
@@ -114,6 +115,10 @@ public class MatchFilter extends TournamentEventResultFilter {
 		opponentFilter.addParams(params);
 		outcomeFilter.addParams(params);
 		scoreFilter.addParams(params);
+	}
+
+	@Override protected String getLast52WeeksCriterion() {
+		return LAST_52_WEEKS_CRITERION;
 	}
 
 	@Override protected String getSurfaceCriterion() {

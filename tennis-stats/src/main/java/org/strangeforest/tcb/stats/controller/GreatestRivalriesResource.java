@@ -8,7 +8,6 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
-import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
 
@@ -36,7 +35,7 @@ public class GreatestRivalriesResource {
 		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam Map<String, String> requestParams
 	) {
-		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(season, season), level, surface, round);
+		RivalryFilter filter = new RivalryFilter(season, level, surface, round);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
 		return rivalriesService.getGreatestRivalriesTable(filter, bestRank, orderBy, pageSize, current);
@@ -49,7 +48,7 @@ public class GreatestRivalriesResource {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round
 	) {
-		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(season, season), level, surface, round);
+		RivalryFilter filter = new RivalryFilter(season, level, surface, round);
 		return rivalriesService.getGreatestRivalriesMinMatches(filter);
 	}
 }

@@ -25,7 +25,7 @@ DECLARE
 BEGIN
 	SELECT player_id INTO l_player_id FROM player
 	WHERE full_name(first_name, last_name) = p_name
-	AND (p_date >= dob + (INTERVAL '10' YEAR) OR dob IS NULL)
+	AND (p_date >= dob + (INTERVAL '10 year') OR dob IS NULL)
 	ORDER BY dob, player_id;
 	IF l_player_id IS NOT NULL THEN
 		RETURN l_player_id;
@@ -33,7 +33,7 @@ BEGIN
 
 	SELECT player_id INTO l_player_id FROM player
 	WHERE lower(full_name(first_name, last_name)) = lower(p_name)
-	AND (p_date >= dob + (INTERVAL '10' YEAR) OR dob IS NULL)
+	AND (p_date >= dob + (INTERVAL '10 year') OR dob IS NULL)
 	ORDER BY dob, player_id;
 	IF l_player_id IS NOT NULL THEN
 		RETURN l_player_id;
@@ -716,7 +716,7 @@ BEGIN
 	WITH player_ids AS (
 		SELECT player_id FROM player
 		WHERE lower(last_name) LIKE '%' || lower(p_last_name) || '%' OR lower(p_last_name) LIKE '%' || lower(last_name) || '%'
-		AND (p_date >= dob + (INTERVAL '10' YEAR) OR dob IS NULL)
+		AND (p_date >= dob + (INTERVAL '10 year') OR dob IS NULL)
 		ORDER BY dob DESC NULLS LAST, player_id
 	)
 	SELECT array_agg(player_id) INTO l_player_ids FROM player_ids;

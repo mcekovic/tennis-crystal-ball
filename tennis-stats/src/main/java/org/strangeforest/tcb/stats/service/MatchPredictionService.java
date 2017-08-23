@@ -36,12 +36,12 @@ public class MatchPredictionService {
 
 	private static final String PLAYER_RANKING_QUERY =
 		"SELECT rank, adjust_atp_rank_points(rank_points, rank_date) rank_points FROM player_ranking\n" +
-		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1' YEAR) AND :date\n" +
+		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1 year') AND :date\n" +
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_ELO_RATINGS_QUERY = //language=SQL
 		"SELECT elo_rating, %1$selo_rating FROM player_elo_ranking\n" +
-		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1' YEAR) AND :date\n" +
+		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1 year') AND :date\n" +
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_MATCHES_QUERY =

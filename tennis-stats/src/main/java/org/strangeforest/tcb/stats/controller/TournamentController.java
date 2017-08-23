@@ -79,10 +79,6 @@ public class TournamentController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
-		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
-		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
-		modelMap.addAttribute("surfaces", Surface.values());
-		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
 		modelMap.addAttribute("countries", matchesService.getTournamentEventCountries(tournamentEventId));

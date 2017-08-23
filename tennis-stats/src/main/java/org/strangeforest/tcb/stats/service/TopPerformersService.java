@@ -89,7 +89,7 @@ public class TopPerformersService {
 				int playerId = rs.getInt("player_id");
 				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
-				Boolean active = !filter.hasActive() && !filter.hasSeason() ? rs.getBoolean("active") : null;
+				Boolean active = !filter.hasActive() && !filter.isTimeLocalized() ? rs.getBoolean("active") : null;
 				WonLost wonLost = mapWonLost(rs);
 				table.addRow(new TopPerformerRow(rank, playerId, name, countryId, active, wonLost));
 			}

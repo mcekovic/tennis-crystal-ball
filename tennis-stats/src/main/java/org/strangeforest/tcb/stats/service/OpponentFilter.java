@@ -123,7 +123,7 @@ public class OpponentFilter {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("opponent", opponent)
 			.add("opponentId", opponentId)
-			.add("countryIds", countryIds)
+			.add("countryIds", countryIds.isEmpty() ? null : countryIds)
 			.toString();
 	}
 }

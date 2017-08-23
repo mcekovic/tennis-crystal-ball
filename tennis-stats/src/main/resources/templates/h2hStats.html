@@ -48,8 +48,9 @@
 <br/>
 <div class="row">
 	<div class="col-md-2">
-		<select id="statsSeason" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by season">
-			<option value="">All seasons</option>
+		<select id="statsSeason" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
+			<option value="">Career</option>
+			<option value="-1" th:selected="${season == -1}">Last 52 weeks</option>
 			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
 		</select>
 	</div>

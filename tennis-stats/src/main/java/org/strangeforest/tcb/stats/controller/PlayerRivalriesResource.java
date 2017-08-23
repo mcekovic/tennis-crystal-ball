@@ -8,7 +8,6 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
-import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
 
@@ -44,7 +43,7 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		RivalryFilter rivalryFilter = new RivalryFilter(RangeUtil.toRange(season, season), level, surface, round);
+		RivalryFilter rivalryFilter = new RivalryFilter(season, level, surface, round);
 		RivalryPlayerListFilter filter = new RivalryPlayerListFilter(searchPhrase, rivalryFilter);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;

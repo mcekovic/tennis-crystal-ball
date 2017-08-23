@@ -104,6 +104,9 @@
 	}
 	function rivalryFilterParams(encodePasses) {
 		var params = "";
+		var season = $("#rivalrySeason").val();
+		if (season)
+			params += "&season=" + season;
 		var level = $("#rivalryLevel").val();
 		if (level)
 			params += "&level=" + level;
@@ -124,8 +127,9 @@
 	}
 </script>
 <div id="rivalrySeasonDiv" class="btn-group pull-left margin-right no-margin-left">
-	<select id="rivalrySeason" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by season">
-		<option value="">All seasons</option>
+	<select id="rivalrySeason" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
+		<option value="">Career</option>
+		<option value="-1">Last 52 weeks</option>
 		<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 	</select>
 </div>

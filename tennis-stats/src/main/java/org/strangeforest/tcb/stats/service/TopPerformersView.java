@@ -15,6 +15,12 @@ public class TopPerformersView {
 		.put("B", "atp250Matches")
 		.put("D", "davisCupMatches")
 	.build();
+	private static final Map<String, String> TOURNAMENT_LEVEL_CATEGORY_MAP = ImmutableMap.<String, String>builder()
+		.put("G", "grandSlamMatches")
+		.put("M", "mastersMatches")
+		.put("A", "atp500Matches")
+		.put("B", "atp250Matches")
+	.build();
 	private static final Map<String, String> SURFACE_CATEGORY_MAP = ImmutableMap.<String, String>builder()
 		.put("H", "hardMatches")
 		.put("C", "clayMatches")
@@ -57,7 +63,7 @@ public class TopPerformersView {
 					return optimizedAll(ROUND_CATEGORY_MAP.get(filter.getRound()));
 				else if (filter.isForOpposition())
 					return optimizedAll(OPPOSITION_CATEGORY_MAP.get(filter.getOpponentFilter().getOpponent()));
-				if (filter.isForSeasonAndLevel())
+				else if (filter.isForSeasonAndLevel())
 					return optimizedSeason(LEVEL_CATEGORY_MAP.get(filter.getLevel()), filter.getSeason());
 				else if (filter.isForSeasonAndSurface())
 					return optimizedSeason(SURFACE_CATEGORY_MAP.get(filter.getSurface()), filter.getSeason());
@@ -65,10 +71,17 @@ public class TopPerformersView {
 					return optimizedSeason(ROUND_CATEGORY_MAP.get(filter.getRound()), filter.getSeason());
 				else if (filter.isForSeasonAndOpposition())
 					return optimizedSeason(OPPOSITION_CATEGORY_MAP.get(filter.getOpponentFilter().getOpponent()), filter.getSeason());
+				else if (filter.isForLevelAndTournament())
+					return optimizedTournament(TOURNAMENT_LEVEL_CATEGORY_MAP.get(filter.getLevel()), filter.getTournamentId());
+				else if (filter.isForRoundAndTournament())
+					return optimizedTournament(ROUND_CATEGORY_MAP.get(filter.getRound()), filter.getTournamentId());
+				else if (filter.isForOppositionAndTournament())
+					return optimizedTournament(OPPOSITION_CATEGORY_MAP.get(filter.getOpponentFilter().getOpponent()), filter.getTournamentId());
 				break;
 			}
 			case "tourFinalsMatches": return deoptimizeTournamentLevel("F");
 			case "olympicsMatches": return deoptimizeTournamentLevel("O");
+			case "davisCupMatches": return deoptimizeTournamentLevel("D");
 			case "hardMatches": return deoptimizeTournamentSurface("H");
 			case "clayMatches": return deoptimizeTournamentSurface("C");
 			case "grassMatches": return deoptimizeTournamentSurface("G");
@@ -83,6 +96,10 @@ public class TopPerformersView {
 
 	private TopPerformersView optimizedSeason(String category, Integer season) {
 		return category != null ? new TopPerformersView(category, PerfStatsFilter.forSeason(season)) : this;
+	}
+
+	private TopPerformersView optimizedTournament(String category, Integer tournamentId) {
+		return category != null ? new TopPerformersView(category, PerfStatsFilter.forTournament(tournamentId)) : this;
 	}
 
 	private TopPerformersView deoptimizeTournamentLevel(String level) {

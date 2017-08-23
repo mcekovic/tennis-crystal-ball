@@ -180,8 +180,7 @@ public class ScoreFilter {
 	@Override public String toString() {
 		ToStringHelper helper = MoreObjects.toStringHelper(this);
 		if (!all) {
-			if (after)
-				helper.add("after", after);
+			helper.add("after", after ? true : null);
 			helper.add("wSets", wSets);
 			helper.add("lSets", lSets);
 		}

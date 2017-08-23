@@ -14,4 +14,8 @@ public abstract class RangeUtil {
 		else
 			return to != null ? Range.atMost(to) : Range.all();
 	}
+
+	public static <T extends Comparable<? super T>> boolean isSingleton(Range<T> range) {
+		return range.hasLowerBound() && range.equals(Range.singleton(range.lowerEndpoint()));
+	}
 }

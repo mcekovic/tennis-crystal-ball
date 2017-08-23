@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.service;
 
 import java.io.*;
 import java.sql.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
 import com.fasterxml.jackson.databind.*;
 import com.google.common.collect.*;
@@ -221,18 +223,16 @@ public class RivalriesService {
 
 	@Cacheable("PlayerH2H")
 	public Optional<WonDrawLost> getPlayerH2H(int playerId) {
-		return jdbcTemplate.query(PLAYER_H2H_QUERY, params("playerId", playerId), new ResultSetExtractor<Optional<WonDrawLost>>() {
-			@Override public Optional<WonDrawLost> extractData(ResultSet rs) throws SQLException, DataAccessException {
-				if (rs.next()) {
-					return Optional.of(new WonDrawLost(
-				      rs.getInt("h2h_won"),
-				      rs.getInt("h2h_draw"),
-				      rs.getInt("h2h_lost")
-					));
-				}
-				else
-					return Optional.empty();
+		return jdbcTemplate.query(PLAYER_H2H_QUERY, params("playerId", playerId), rs -> {
+			if (rs.next()) {
+				return Optional.of(new WonDrawLost(
+			      rs.getInt("h2h_won"),
+			      rs.getInt("h2h_draw"),
+			      rs.getInt("h2h_lost")
+				));
 			}
+			else
+				return Optional.empty();
 		});
 	}
 
@@ -332,7 +332,14 @@ public class RivalriesService {
 
 	public int getGreatestRivalriesMinMatches(RivalryFilter filter) {
 		double minMatches = MIN_GREATEST_RIVALRIES_MATCHES;
-		if (filter.hasSeason())
+		if (filter.hasSeason()) {
+			minMatches /= MIN_MATCHES_SEASON_FACTOR;
+			LocalDate today = LocalDate.now();
+			Range<Integer> seasonRange = filter.getSeasonRange();
+			if (RangeUtil.isSingleton(seasonRange) && seasonRange.lowerEndpoint() == today.getYear() && today.getMonth().compareTo(Month.SEPTEMBER) <= 0)
+				minMatches /= 12.0 / today.getMonth().getValue();
+		}
+		if (filter.isLast52Weeks())
 			minMatches /= MIN_MATCHES_SEASON_FACTOR;
 		if (filter.hasLevel())
 			minMatches /= getMinMatchesLevelFactor(filter.getLevel());

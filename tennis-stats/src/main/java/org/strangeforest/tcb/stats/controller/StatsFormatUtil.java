@@ -68,7 +68,7 @@ public class StatsFormatUtil {
 	public static String relativeTo(Integer compareSeason, String compareLevel, String compareSurface, String compareRound, String compareOpponent) {
 		StringBuilder relativeTo = new StringBuilder();
 		if (compareSeason != null)
-			relativeTo.append(compareSeason);
+			relativeTo.append(compareSeason != -1 ? compareSeason : "Last 52 weeks");
 		if (!Strings.isNullOrEmpty(compareLevel)) {
 			if (relativeTo.length() > 0)
 				relativeTo.append(", ");

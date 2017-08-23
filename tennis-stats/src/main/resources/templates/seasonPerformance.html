@@ -157,7 +157,7 @@
 	</div>
 	<div class="col-md-3">
 		<select id="perfCountry" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
-			<option value="">All countries</option>
+			<option value="">Vs all countries</option>
 			<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
 		</select>
 	</div>

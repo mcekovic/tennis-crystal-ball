@@ -326,7 +326,8 @@
 					<div class="input-group">
 						<label th:for="|${statsId}CompareSeason|" class="input-group-addon input-sm">Season:</label>
 						<select th:id="|${statsId}CompareSeason|" class="form-control input-sm" th:onchange="|compareStats('${containerId}', '${statsId}')|">
-							<option value="">All seasons</option>
+							<option value="">Career</option>
+							<option value="-1" th:selected="${compareSeason == -1}">Last 52 weeks</option>
 							<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == compareSeason}">2005</option>
 						</select>
 					</div>
