@@ -45,6 +45,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "score", required = false) String score,
+		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "infamous", required = false) Boolean infamous
 	) {
 		if (playerId == null && name == null)
@@ -68,6 +69,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("outcome", outcome);
 		modelMap.addAttribute("score", score);
+		modelMap.addAttribute("countryId", countryId);
 		modelMap.addAttribute("infamous", infamous);
 		return new ModelAndView("playerProfile", modelMap);
 	}
@@ -154,13 +156,14 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(name = "outcome", required = false) String outcome,
-		@RequestParam(name = "score", required = false) String score
+		@RequestParam(name = "score", required = false) String score,
+		@RequestParam(name = "countryId", required = false) String countryId
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
 		List<TournamentEventItem> tournamentEvents = tournamentService.getPlayerTournamentEvents(playerId);
-		List<CountryCode> countries = matchesService.getOpponentCountryIds(playerId);
+		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
@@ -190,6 +193,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("outcome", outcome);
 		modelMap.addAttribute("score", score);
+		modelMap.addAttribute("countryId", countryId);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerMatches", modelMap);
 	}
@@ -255,7 +259,7 @@ public class PlayerProfileController extends PageController {
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
-		List<CountryCode> countries = matchesService.getOpponentCountryIds(playerId);
+		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
 		PlayerPerformanceEx perf = performanceService.getPlayerPerformanceEx(playerId, new PerfStatsFilter(season, level, surface, round, tournamentId, opponentFilter));
 
@@ -315,9 +319,9 @@ public class PlayerProfileController extends PageController {
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
-		List<CountryCode> countries = matchesService.getOpponentCountryIds(playerId);
+		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(season, level, surface, tournamentId, null, round, opponentFilter, null, null, null, null));
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, MatchFilter.forStats(season, level, surface, tournamentId, round, opponentFilter));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);

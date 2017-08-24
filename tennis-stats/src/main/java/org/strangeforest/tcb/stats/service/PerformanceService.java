@@ -42,10 +42,10 @@ public class PerformanceService {
 		"count(DISTINCT after_losing_first_set_match_id_won) after_losing_first_set_won, count(DISTINCT after_losing_first_set_match_id_lost) after_losing_first_set_lost,\n" +
 		"count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost\n";
 
-	private static final String PLAYER_PERFORMANCE_QUERY =
+	private static final String PLAYER_PERFORMANCE_QUERY = //language=SQL
 		"SELECT %1$s" +
-		"FROM %2$s\n" +
-		"WHERE player_id = :playerId%3$s";
+		"FROM %2$s m%3$s\n" +
+		"WHERE m.player_id = :playerId%4$s";
 
 	private static final String PLAYER_SEASONS_PERFORMANCE_QUERY =
 		"SELECT season, " + PLAYER_PERFORMANCE_COLUMNS +
@@ -55,8 +55,8 @@ public class PerformanceService {
 
 	private static final String PLAYER_LEVEL_BREAKDOWN_QUERY = //language=SQL
 		"SELECT level, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
-		"FROM player_match_for_stats_v\n" +
-		"WHERE player_id = :playerId%1$s\n" +
+		"FROM player_match_for_stats_v m%1$s\n" +
+		"WHERE m.player_id = :playerId%2$s\n" +
 		"GROUP BY level\n" +
 		"ORDER BY level";
 
@@ -70,8 +70,8 @@ public class PerformanceService {
 		"    WHEN opponent_rank <= 50 THEN 'TOP_50'\n" +
 		"    WHEN opponent_rank <= 100 THEN 'TOP_100'\n" +
 		"  END opposition, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
-		"  FROM player_match_for_stats_v\n" +
-		"  WHERE player_id = :playerId%1$s\n" +
+		"  FROM player_match_for_stats_v m%1$s\n" +
+		"  WHERE m.player_id = :playerId%2$s\n" +
 		"  GROUP BY opposition\n" +
 		")\n" +
 		"SELECT opposition, p_matches, o_matches\n" +
@@ -81,10 +81,13 @@ public class PerformanceService {
 
 	private static final String PLAYER_ROUND_BREAKDOWN_QUERY = //language=SQL
 		"SELECT round, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
-		"FROM player_match_for_stats_v\n" +
-		"WHERE player_id = :playerId AND level NOT IN ('D', 'T')%1$s\n" +
+		"FROM player_match_for_stats_v m%1$s\n" +
+		"WHERE m.player_id = :playerId AND level NOT IN ('D', 'T')%2$s\n" +
 		"GROUP BY round\n" +
 		"ORDER BY round DESC";
+
+	private static final String OPPONENT_JOIN = //language=SQL
+		"\nINNER JOIN player_v o ON o.player_id = m.opponent_id";
 
 	private static final String PLAYER_RESULT_BREAKDOWN_QUERY = //language=SQL
 		"SELECT r.result, count(r.result) count\n" +
@@ -104,7 +107,7 @@ public class PerformanceService {
 		String tableName = getPerformanceTableName(filter);
 		String perfColumns = isMaterializedSum(filter) ? PLAYER_PERFORMANCE_COLUMNS : PLAYER_PERFORMANCE_SUMMED_COLUMNS;
 		return jdbcTemplate.query(
-			format(PLAYER_PERFORMANCE_QUERY, perfColumns, tableName, filter.getCriteria()),
+			format(PLAYER_PERFORMANCE_QUERY, perfColumns, tableName, playerPerformanceJoin(filter), filter.getCriteria()),
 			params,
 			rs -> rs.next() ? mapPlayerPerformance(rs) : PlayerPerformance.EMPTY
 		);
@@ -121,6 +124,10 @@ public class PerformanceService {
 			return "player_season_performance";
 		else
 			return "player_match_performance_v";
+	}
+
+	private static String playerPerformanceJoin(PerfStatsFilter filter) {
+		return filter.getOpponentFilter().isOpponentRequired() ? OPPONENT_JOIN : "";
 	}
 
 	public Map<Integer, PlayerPerformance> getPlayerSeasonsPerformance(int playerId) {
@@ -171,11 +178,12 @@ public class PerformanceService {
 		PlayerPerformance performance = getPlayerPerformance(playerId, filter);
 		PlayerPerformanceEx performanceEx = new PlayerPerformanceEx(performance);
 
+		String join = playerPerformanceJoin(filter);
 		String criteria = filter.getCriteria();
 		MapSqlParameterSource params = filter.getParams().addValue("playerId", playerId);
 
 		jdbcTemplate.query(
-			format(PLAYER_LEVEL_BREAKDOWN_QUERY, criteria), params,
+			format(PLAYER_LEVEL_BREAKDOWN_QUERY, join, criteria), params,
 			rs -> {
 				TournamentLevel level = TournamentLevel.decode(rs.getString("level"));
 				WonLost wonLost = mapWonLost(rs);
@@ -185,7 +193,7 @@ public class PerformanceService {
 
 		Map<Opponent, WonLost> oppositionMatches = new TreeMap<>();
 		jdbcTemplate.query(
-			format(PLAYER_OPPOSITION_BREAKDOWN_QUERY, criteria), params,
+			format(PLAYER_OPPOSITION_BREAKDOWN_QUERY, join, criteria), params,
 			rs -> {
 				Opponent opposition = Opponent.valueOf(rs.getString("opposition"));
 				WonLost wonLost = mapWonLost(rs);
@@ -195,7 +203,7 @@ public class PerformanceService {
 		performanceEx.addOppositionMatches(oppositionMatches);
 
 		jdbcTemplate.query(
-			format(PLAYER_ROUND_BREAKDOWN_QUERY, criteria), params,
+			format(PLAYER_ROUND_BREAKDOWN_QUERY, join, criteria), params,
 			rs -> {
 				Round round = Round.decode(rs.getString("round"));
 				WonLost wonLost = mapWonLost(rs);

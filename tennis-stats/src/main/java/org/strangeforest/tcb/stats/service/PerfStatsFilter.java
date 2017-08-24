@@ -73,10 +73,6 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return new PerfStatsFilter(null, null, null, null, tournamentId, OpponentFilter.forStats(opponent, null));
 	}
 
-	public static PerfStatsFilter forPlayerPerf(Integer season, String level, String surface, Integer tournamentId, OpponentFilter opponentFilter) {
-		return new PerfStatsFilter(season, level, surface, null, tournamentId, opponentFilter);
-	}
-
 
 	// Instance
 

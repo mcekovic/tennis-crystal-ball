@@ -265,7 +265,7 @@ public class MatchesService {
 	}
 
 	@Cacheable("OpponentCountries")
-	public List<CountryCode> getOpponentCountryIds(int playerId) {
+	public List<CountryCode> getOpponentCountries(int playerId) {
 		return Country.codes(jdbcTemplate.queryForList(OPPONENT_COUNTRIES_QUERY, params("playerId", playerId), String.class));
 	}
 }

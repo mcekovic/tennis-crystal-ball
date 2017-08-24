@@ -21,6 +21,7 @@
 <!--/*@thymesVar id="tournamentEventId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
 <!--/*@thymesVar id="score" type="java.lang.String"*/-->
+<!--/*@thymesVar id="countryId" type="java.lang.String"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <script type="text/javascript">
@@ -238,7 +239,7 @@
 		</div>
 	</div>
 </div>
-<div id="matchesAdvancedFilter" class="collapse row margin-top" th:attrappend="class=${score != null ? ' in' : _}">
+<div id="matchesAdvancedFilter" class="row margin-top collapse" th:attrappend="class=${(score != null && score != '') || (countryId != null && countryId != '') ? ' in' : _}">
 	<div class="col-md-2">
 		<select id="matchesScore" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by match score">
 			<option value="">All scores</option>
@@ -286,7 +287,7 @@
 	<div class="col-md-3">
 		<select id="matchesCountry" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
 			<option value="">Vs all countries</option>
-			<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
+			<option th:each="aCountry : ${countries}" th:value="${aCountry.alpha3}" value="SUI" th:text="${aCountry.name}" th:selected="${aCountry.alpha3 == countryId}">Switzerland</option>
 		</select>
 	</div>
 </div>

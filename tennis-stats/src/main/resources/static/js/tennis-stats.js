@@ -508,14 +508,6 @@ function detectDevice() {
 
 // Misc
 
-function encodeURIComponentEx(uri, passes) {
-	if (!passes)
-		passes = 1;
-	for (var i = 0; i < passes; i++)
-		uri = encodeURIComponent(uri);
-	return uri;
-}
-
 function loadRankingTopN(rankType, count) {
 	$("#rankingTopN").load("/rankingTopN?rankType=" + rankType + (count ? "&count=" + count : ""));
 }

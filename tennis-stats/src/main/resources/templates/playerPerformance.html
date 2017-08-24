@@ -138,7 +138,7 @@
 						<th th:with="wl=${perf.matches}">
 							<div th:unless="${wl.empty}" class="progress progress-perf">
 								<div class="progress-bar progress-bar-overall" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, outcome=played)}" title="Show matches">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" title="Show matches">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>
@@ -157,7 +157,7 @@
 						<th>
 							<div class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, surface=${surface.code}, outcome=played)}" th:title="|Show ${surface.text} matches|">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level}, surface=${surface.code}, round=${round}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${surface.text} matches|">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>
@@ -177,7 +177,7 @@
 						<th>
 							<div class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf label-" th:attrappend="class=${level.code}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level.code}, outcome=played)}" th:title="|Show ${level.text} matches|">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level.code}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${level.text} matches|">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>
@@ -208,7 +208,7 @@
 						<th th:with="wl=${perf.fifthSets}">
 							<div th:unless="${wl.empty}" class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, score='2:2+', outcome=played)}" title="Show fifth set matches">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, score='2:2+', outcome=finished)}" title="Show fifth set matches">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>
@@ -221,7 +221,7 @@
 						<th th:with="wl=${perf.afterWinningFirstSet}">
 							<div th:unless="${wl.empty}" class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, score='1:0+', outcome=played)}" title="Show after winning 1st set matches">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, score='1:0+', outcome=played)}" title="Show after winning 1st set matches">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>
@@ -234,7 +234,7 @@
 						<th th:with="wl=${perf.afterLosingFirstSet}">
 							<div th:unless="${wl.empty}" class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, score='0:1+', outcome=played)}" title="Show after losing 1st set matches">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, score='0:1+', outcome=played)}" title="Show after losing 1st set matches">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>
@@ -267,7 +267,7 @@
 						<th>
 							<div class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, opponent=${opposition}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${opposition}, countryId=${countryId}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>
@@ -287,7 +287,7 @@
 						<th>
 							<div class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, outcome=played)}" th:title="|Show ${round.text} matches|">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level != null && level != '' ? level : 'GFMOAB'}, surface=${surface}, round=${round.code}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${round.text} matches|">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>
@@ -307,7 +307,7 @@
 						<th>
 							<div class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season}, level=${level}, surface=${surface}, tournamentId=${tournamentId}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
 										<span class="pct-data" th:text="${wl.wonPctStr}">50%</span>
 										<span class="raw-data" th:text="${wl.WT}">10 / 20</span>
 									</a>

@@ -102,7 +102,7 @@
 			});
 		}
 	}
-	function rivalryFilterParams(encodePasses) {
+	function rivalryFilterParams() {
 		var params = "";
 		var season = $("#rivalrySeason").val();
 		if (season)
@@ -115,14 +115,14 @@
 			params += "&surface=" + surface;
 		var round = $("#rivalryRound").val();
 		if (round)
-			params += "&round=" + encodeURIComponentEx(round, encodePasses);
+			params += "&round=" + encodeURIComponent(round);
 		return params;
 	}
 	function playerMatchesUrl(opponentId, outcome) {
 		var url = "/playerProfile?playerId=[(${playerId})]&tab=matches&opponent=OPP_" + opponentId;
 		if (outcome)
 			url += "&outcome=" + outcome + "played";
-		url += rivalryFilterParams(2);
+		url += rivalryFilterParams();
 		return url;
 	}
 </script>
