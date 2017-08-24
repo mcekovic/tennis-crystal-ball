@@ -295,11 +295,11 @@ WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T');
 -- player_match_for_stats_v
 
 CREATE OR REPLACE VIEW player_match_for_stats_v AS
-SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, round, winner_id player_id, loser_id opponent_id, loser_rank opponent_rank, loser_entry opponent_entry,
+SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, round, winner_id player_id, winner_rank player_rank, winner_age player_age, loser_id opponent_id, loser_rank opponent_rank, loser_entry opponent_entry, loser_country_id opponent_country_id, loser_age opponent_age,
 	1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games
 FROM match_for_stats_v
 UNION ALL
-SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, round, loser_id, winner_id, winner_rank, winner_entry,
+SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, round, loser_id, loser_rank, loser_age, winner_id, winner_rank, winner_entry, winner_country_id, winner_age,
 	0, 1, l_sets, w_sets, l_games, w_games
 FROM match_for_stats_v;
 

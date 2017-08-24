@@ -59,25 +59,30 @@ public class MatchesService {
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE m.match_id = :matchId";
 
-	private static final String MATCHES_COUNTRIES_QUERY = //language=SQL
+	private static final String COUNTRIES_QUERY = //language=SQL
 		"SELECT DISTINCT loser_country_id FROM match\n" +
 		"UNION\n" +
 		"SELECT DISTINCT winner_country_id FROM match";
 
-	private static final String SEASON_MATCHES_COUNTRIES_QUERY = //language=SQL
+	private static final String SEASON_COUNTRIES_QUERY = //language=SQL
 		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE season = :season\n" +
 		"UNION\n" +
 		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE season = :season";
 
-	private static final String TOURNAMENT_MATCHES_COUNTRIES_QUERY = //language=SQL
+	private static final String TOURNAMENT_COUNTRIES_QUERY = //language=SQL
 		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_id = :tournamentId\n" +
 		"UNION\n" +
 		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_id = :tournamentId";
 
-	private static final String TOURNAMENT_EVENT_MATCHES_COUNTRIES_QUERY = //language=SQL
+	private static final String TOURNAMENT_EVENT_COUNTRIES_QUERY = //language=SQL
 		"SELECT DISTINCT loser_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_event_id = :tournamentEventId\n" +
 		"UNION\n" +
 		"SELECT DISTINCT winner_country_id FROM match INNER JOIN tournament_event USING (tournament_event_id) WHERE tournament_event_id = :tournamentEventId";
+
+	private static final String OPPONENT_COUNTRIES_QUERY = //language=SQL
+		"SELECT DISTINCT loser_country_id FROM match WHERE winner_id = :playerId\n" +
+		"UNION\n" +
+		"SELECT DISTINCT winner_country_id FROM match WHERE loser_id = :playerId";
 
 
 	public TournamentEventResults getTournamentEventResults(int tournamentEventId) {
@@ -219,7 +224,7 @@ public class MatchesService {
 	private Supplier<Map<String, List<String>>> sameCountryIdsMap = Memoizer.of(this::sameCountryIdsMap);
 
 	private List<String> countryIds() {
-		return jdbcTemplate.getJdbcOperations().queryForList(MATCHES_COUNTRIES_QUERY, String.class);
+		return jdbcTemplate.getJdbcOperations().queryForList(COUNTRIES_QUERY, String.class);
 	}
 
 	private List<CountryCode> countries() {
@@ -246,16 +251,21 @@ public class MatchesService {
 
 	@Cacheable("SeasonCountries")
 	public List<CountryCode> getSeasonCountries(int season) {
-		return Country.codes(jdbcTemplate.queryForList(SEASON_MATCHES_COUNTRIES_QUERY, params("season", season), String.class));
+		return Country.codes(jdbcTemplate.queryForList(SEASON_COUNTRIES_QUERY, params("season", season), String.class));
 	}
 
 	@Cacheable("TournamentCountries")
 	public List<CountryCode> getTournamentCountries(int tournamentId) {
-		return Country.codes(jdbcTemplate.queryForList(TOURNAMENT_MATCHES_COUNTRIES_QUERY, params("tournamentId", tournamentId), String.class));
+		return Country.codes(jdbcTemplate.queryForList(TOURNAMENT_COUNTRIES_QUERY, params("tournamentId", tournamentId), String.class));
 	}
 
 	@Cacheable("TournamentEventCountries")
 	public List<CountryCode> getTournamentEventCountries(int tournamentEventId) {
-		return Country.codes(jdbcTemplate.queryForList(TOURNAMENT_EVENT_MATCHES_COUNTRIES_QUERY, params("tournamentEventId", tournamentEventId), String.class));
+		return Country.codes(jdbcTemplate.queryForList(TOURNAMENT_EVENT_COUNTRIES_QUERY, params("tournamentEventId", tournamentEventId), String.class));
+	}
+
+	@Cacheable("OpponentCountries")
+	public List<CountryCode> getOpponentCountryIds(int playerId) {
+		return Country.codes(jdbcTemplate.queryForList(OPPONENT_COUNTRIES_QUERY, params("playerId", playerId), String.class));
 	}
 }

@@ -67,7 +67,7 @@ public class TopPerformersResource {
 		@RequestParam(name = "minEntries", required = false) Integer minEntries
 	) {
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
-		PerfStatsFilter filter = new PerfStatsFilter(season, level, surface, round, tournamentId, null, opponentFilter);
+		PerfStatsFilter filter = new PerfStatsFilter(season, level, surface, round, tournamentId, opponentFilter);
 		TopPerformersView view = new TopPerformersView(category, filter).optimize();
 		return topPerformersService.getTopPerformersMinEntries(view.getCategory(), view.getFilter(), minEntries);
 	}

@@ -15,66 +15,66 @@ public class PerfStatsFilter extends PlayerListFilter {
 
 	// Factory
 
-	public static final PerfStatsFilter ALL = new PerfStatsFilter(null, null, null, null, null, null, null);
+	public static final PerfStatsFilter ALL = new PerfStatsFilter(null, null, null, null, null, null);
 
  	public static PerfStatsFilter forSeason(Integer season) {
-		return new PerfStatsFilter(season, null, null, null, null, null, null);
+		return new PerfStatsFilter(season, null, null, null, null, null);
 	}
 
 	public static PerfStatsFilter forSeasonAndLevel(Integer season, String level) {
-		return new PerfStatsFilter(season, level, null, null, null, null, null);
+		return new PerfStatsFilter(season, level, null, null, null, null);
 	}
 
 	public static PerfStatsFilter forSeasonAndSurface(Integer season, String surface) {
-		return new PerfStatsFilter(season, null, surface, null, null, null, null);
+		return new PerfStatsFilter(season, null, surface, null, null, null);
 	}
 
 	public static PerfStatsFilter forSeasonAndRound(Integer season, String round) {
-		return new PerfStatsFilter(season, null, null, round, null, null, null);
+		return new PerfStatsFilter(season, null, null, round, null, null);
 	}
 
 	public static PerfStatsFilter forSeasonAndOpponent(Integer season, String opponent) {
-		return new PerfStatsFilter(season, null, null, null, null, null, OpponentFilter.forStats(opponent, null));
+		return new PerfStatsFilter(season, null, null, null, null, OpponentFilter.forStats(opponent, null));
 	}
 
  	public static PerfStatsFilter forLevel(String level) {
-		return new PerfStatsFilter(null, level, null, null, null, null, null);
+		return new PerfStatsFilter(null, level, null, null, null, null);
 	}
 
  	public static PerfStatsFilter forLevelAndTournament(String level, Integer tournamentId) {
-		return new PerfStatsFilter(null, level, null, null, tournamentId, null, null);
+		return new PerfStatsFilter(null, level, null, null, tournamentId, null);
 	}
 
  	public static PerfStatsFilter forSurface(String surface) {
-		return new PerfStatsFilter(null, null, surface, null, null, null, null);
+		return new PerfStatsFilter(null, null, surface, null, null, null);
 	}
 
  	public static PerfStatsFilter forSurfaceAndTournament(String surface, Integer tournamentId) {
-		return new PerfStatsFilter(null, null, surface, null, tournamentId, null, null);
+		return new PerfStatsFilter(null, null, surface, null, tournamentId, null);
 	}
 
  	public static PerfStatsFilter forRound(String round) {
-		return new PerfStatsFilter(null, null, null, round, null, null, null);
+		return new PerfStatsFilter(null, null, null, round, null, null);
 	}
 
  	public static PerfStatsFilter forRoundAndTournament(String round, Integer tournamentId) {
-		return new PerfStatsFilter(null, null, null, round, tournamentId, null, null);
+		return new PerfStatsFilter(null, null, null, round, tournamentId, null);
 	}
 
  	public static PerfStatsFilter forTournament(Integer tournamentId) {
-		return new PerfStatsFilter(null, null, null, null, tournamentId, null, null);
+		return new PerfStatsFilter(null, null, null, null, tournamentId, null);
 	}
 
 	public static PerfStatsFilter forOpponent(String opponent) {
-		return new PerfStatsFilter(null, null, null, null, null, null, OpponentFilter.forStats(opponent, null));
+		return new PerfStatsFilter(null, null, null, null, null, OpponentFilter.forStats(opponent, null));
 	}
 
 	public static PerfStatsFilter forOpponentAndTournament(String opponent, Integer tournamentId) {
-		return new PerfStatsFilter(null, null, null, null, tournamentId, null, OpponentFilter.forStats(opponent, null));
+		return new PerfStatsFilter(null, null, null, null, tournamentId, OpponentFilter.forStats(opponent, null));
 	}
 
 	public static PerfStatsFilter forPlayerPerf(Integer season, String level, String surface, Integer tournamentId, OpponentFilter opponentFilter) {
-		return new PerfStatsFilter(season, level, surface, null, tournamentId, null, opponentFilter);
+		return new PerfStatsFilter(season, level, surface, null, tournamentId, opponentFilter);
 	}
 
 
@@ -101,10 +101,14 @@ public class PerfStatsFilter extends PlayerListFilter {
 
 	private static final int LAST_52_WEEKS_SEASON = -1;
 
+	public PerfStatsFilter(Integer season, String level, String surface, String round, Integer tournamentId, OpponentFilter opponentFilter) {
+		this(null, null, season, level, surface, round, tournamentId, null, opponentFilter);
+	}
+
 	public PerfStatsFilter(Integer season, String level, String surface, String round, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
 		this(null, null, season, level, surface, round, tournamentId, tournamentEventId, opponentFilter);
 	}
-	
+
 	public PerfStatsFilter(Boolean active, String searchPhrase, Integer season, String level, String surface, String round, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter) {
 		super(active, searchPhrase);
 		this.season = season != null && season != LAST_52_WEEKS_SEASON ? season : null;

@@ -63,13 +63,6 @@ public class PlayerService {
 		"WHERE m.winner_id = :playerId OR m.loser_id = :playerId\n" +
 		"ORDER BY e.season DESC";
 
-	private static final String OPPONENT_COUNTRIES_QUERY = //language=SQL
-		"SELECT DISTINCT loser_country_id FROM match\n" +
-		"WHERE winner_id = :playerId\n" +
-		"UNION\n" +
-		"SELECT DISTINCT winner_country_id FROM match\n" +
-		"WHERE loser_id = :playerId";
-
 	private static final String TOP_N_QUERY = //language=SQL
 		"SELECT name FROM player_v\n" +
 		"ORDER BY %1$s LIMIT :count";
@@ -129,11 +122,6 @@ public class PlayerService {
 
 	public List<Integer> getPlayersSeasons(int[] playerIds) {
 		return IntStream.of(playerIds).mapToObj(this::getPlayerSeasons).flatMap(List::stream).distinct().collect(toList());
-	}
-
-	@Cacheable("PlayerOpponentCountryIds")
-	public List<String> getPlayerOpponentCountryIds(int playerId) {
-		return jdbcTemplate.queryForList(OPPONENT_COUNTRIES_QUERY, params("playerId", playerId), String.class);
 	}
 
 	public IndexedPlayers getIndexedPlayers(int... playerIds) {

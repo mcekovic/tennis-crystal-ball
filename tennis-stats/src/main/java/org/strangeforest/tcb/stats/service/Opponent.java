@@ -78,10 +78,10 @@ public enum Opponent {
 	private final String statsCriterion;
 	private final boolean opponentRequired;
 
+	private static final String MATCHES_PLAYER_CRITERION = " AND ((m.winner_id <> :playerId%1$s) OR (m.loser_id <> :playerId%2$s))";
 	private static final String MATCHES_RANK_CRITERION = " AND ((m.winner_rank <= %1$d AND m.winner_id <> :playerId) OR (m.loser_rank <= %1$d AND m.loser_id <> :playerId))";
 	private static final String MATCHES_WINNER_HIGHER_RANKED_CRITERION = " AND m.winner_rank < m.loser_rank";
 	private static final String MATCHES_WINNER_LOWER_RANKED_CRITERION = " AND m.winner_rank > m.loser_rank";
-	private static final String MATCHES_PLAYER_CRITERION = " AND ((m.winner_id <> :playerId%1$s) OR (m.loser_id <> :playerId%2$s))";
 	private static final String MATCHES_WINNER_YOUNGER_CRITERION = " AND m.winner_age < m.loser_age";
 	private static final String MATCHES_WINNER_OLDER_CRITERION = " AND m.winner_age > m.loser_age";
 	private static final String MATCHES_SEED_CRITERION = " AND ((m.winner_seed %1$s AND m.winner_id <> :playerId) OR (m.loser_seed %1$s AND m.loser_id <> :playerId))";
