@@ -203,7 +203,7 @@ public class PerformanceService {
 			}
 		);
 
-		if (!filter.hasOpponent()) {
+		if (filter.isTournamentGranularity()) {
 			Map<EventResult, Integer> resultCounts = new TreeMap<>();
 			jdbcTemplate.query(
 				format(PLAYER_RESULT_BREAKDOWN_QUERY, criteria), params,

@@ -16,6 +16,7 @@
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="opponent" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="countryId" type="java.lang.String>"*/-->
+<!--/*@thymesVar id="advFilter" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="perf" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <script type="text/javascript">
@@ -34,10 +35,11 @@
 		url += "&season=" + $("#perfSeason").val();
 		url += "&level=" + $("#perfLevel").val();
 		url += "&surface=" + $("#perfSurface").val();
-		url += "&round=" + $("#perfRound").val();
+		url += "&round=" + encodeURIComponent($("#perfRound").val());
 		url += "&tournamentId=" + $("#perfTournament").val();
 		url += "&opponent=" + $("#perfOpponent").val();
 		url += "&countryId=" + $("#perfCountry").val();
+		url += "&advFilter=" + $("#perfAdvancedFilter").hasClass("in");
 		url += "&rawData=" + perfRawData;
 		$("#performance").load(url);
 	}
@@ -111,7 +113,7 @@
 		</div>
 	</div>
 </div>
-<div id="perfAdvancedFilter" class="collapse row margin-top">
+<div id="perfAdvancedFilter" class="row margin-top collapse" th:attrappend="class=${advFilter ? ' in' : _}">
 	<div class="col-md-3">
 		<select id="perfTournament" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
 			<option value="">All tournaments</option>
@@ -295,7 +297,7 @@
 					</tr>
 				</table>
 			</div>
-			<div class="col-lg-4 col-sm-6">
+			<div th:unless="${perf.resultCounts.empty}" class="col-lg-4 col-sm-6">
 				<table class="table table-condensed table-striped">
 					<tr>
 						<th colspan="2">Result Breakdown</th>

@@ -250,6 +250,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "countryId", required = false) String countryId,
+		@RequestParam(name = "advFilter", defaultValue = "false") boolean advFilter,
 		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
@@ -274,8 +275,9 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("tournamentId", tournamentId);
-		modelMap.addAttribute("opponent", round);
+		modelMap.addAttribute("opponent", opponent);
 		modelMap.addAttribute("countryId", countryId);
+		modelMap.addAttribute("advFilter", advFilter);
 		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("perf", perf);
 		return new ModelAndView("playerPerformance", modelMap);
@@ -304,6 +306,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "countryId", required = false) String countryId,
+		@RequestParam(name = "advFilter", defaultValue = "false") boolean advFilter,
 		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData,
 		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
@@ -332,8 +335,9 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("tournamentId", tournamentId);
-		modelMap.addAttribute("opponent", round);
+		modelMap.addAttribute("opponent", opponent);
 		modelMap.addAttribute("countryId", countryId);
+		modelMap.addAttribute("advFilter", advFilter);
 		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("stats", stats);
 		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());

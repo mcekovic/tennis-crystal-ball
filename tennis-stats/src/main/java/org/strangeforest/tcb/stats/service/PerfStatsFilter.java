@@ -297,6 +297,10 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return opponentFilter.getOpponent() != null && tournamentId != null && equals(forOpponentAndTournament(opponentFilter.getOpponent().name(), tournamentId));
 	}
 
+	public boolean isTournamentGranularity() {
+		return isNullOrEmpty(round) && opponentFilter.isEmpty();
+	}
+
 	public boolean isEmpty() {
 		return season == null && !last52Weeks && isNullOrEmpty(level) && isNullOrEmpty(surface) && isNullOrEmpty(round) && tournamentId == null && tournamentEventId == null && opponentFilter.isEmpty();
 	}
