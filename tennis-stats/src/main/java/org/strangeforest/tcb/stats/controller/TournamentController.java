@@ -12,8 +12,6 @@ import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
 
-import static java.util.Collections.*;
-
 @Controller
 public class TournamentController extends PageController {
 
@@ -22,6 +20,16 @@ public class TournamentController extends PageController {
 	@Autowired private TournamentForecastService forecastService;
 
 	private static final int MAX_RECORD_PLAYERS = 10;
+
+	@GetMapping("/tournaments")
+	public ModelAndView tournaments() {
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.NON_TEAM_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		return new ModelAndView("tournaments", modelMap);
+	}
 
 	@GetMapping("/tournament")
 	public ModelAndView tournament(

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
+	<title>Tournament s</title>
+	<script type="text/javascript">
+		$(function() {
+			var $tournamentsTable = $("#tournamentsTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($tournamentsTable, ["seasons", "topPlayers"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($tournamentsTable, ["participationPoints"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($tournamentsTable, ["participationPct"], deviceGreaterOrEqual(device, "sm"));
+			if (device != "lg")
+				setBootgridColumnsWidths($tournamentsTable, ["name"], [175]);
+			$tournamentsTable.bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/tournamentsTable",
+				requestHandler: function(request) {
+					request.level = $("#level").val();
+					request.surface = $("#surface").val();
+					return request;
+				},
+				rowCount: [20, 50, 100, -1],
+				searchSettings: {
+					delay: 300,
+					characters: 2
+				},
+				formatters: {
+					"tournament": function(column, row) {
+						return "<a href='/tournament?tournamentId=" + row.id + "' title='Show tournament'>" + row.name + "</a>";
+					},
+					"levels": function(column, row) {
+						var levels = row.levels;
+						var s = "";
+						for (var i = 0, count = Math.min(2, levels.length); i < count; i++) {
+							if (s != "") s += " ";
+							s += "<div class='label label-" + levels[i] + "'>" + levelName(levels[i]) + "</div>";
+						}
+						return s;
+					},
+					"surfaces": function(column, row) {
+						var surfaces = row.surfaces;
+						var s = "";
+						for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
+							if (s != "") s += " ";
+							s += "<div class='label label-" + surfaceClassSuffix(surfaces[i]) + "'>" + surfaceName(surfaces[i]) + "</div>";
+						}
+						return s;
+					},
+					"participationPct": participationFormatter,
+					"topPlayer": function(column, row) {
+						var topPlayers = row.topPlayers;
+						if (topPlayers.length == 0) return "";
+						var topPlayer = topPlayers[0];
+						return "<a href='/playerProfile?playerId=" + topPlayer.playerId + "&tab=tournaments&tournamentId=" + row.id + "&result=W' title='Show titles'>" + topPlayer.rank + " <span class='glyphicon glyphicon-glass'></span></a> " + playerCountryFormatter(column, topPlayer);
+					}
+				},
+				labels: {
+					loading: bootgridTemplateLoading,
+					noResults: "No tournaments found"
+				},
+				templates: {
+					paginationItem: bootgridTemplatePaginationItem
+				}
+			});
+			var $tournamentsTableHeader = $("#tournamentsTable-header");
+			var $search = $tournamentsTableHeader.find("div.search");
+			$search.before($("#levelDiv").remove());
+			$search.before($("#surfaceDiv").remove());
+			$search.after($("#clearDiv").remove());
+			setBootgridTitle($tournamentsTableHeader, $("#tournamentsTable-title"));
+			setBootgridTitles($tournamentsTable, [
+				{id: "participationPoints", title: "[[#{events.participationPoints.title}]]"},
+				{id: "participationPct", title: "[[#{events.participationPercentage.title}]]"}
+			]);
+			$("[data-toggle='tooltip']").tooltip();
+		});
+		function reloadTournaments() {
+			$("#tournamentsTable").bootgrid("reload");
+		}
+		function clearTournamentsFilter() {
+			$("#level").val("");
+			$("#surface").val("");
+			$("#tournamentsTable").bootgrid("search", "");
+			reloadTournaments();
+		}
+	</script>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3 id="tournamentsTable-title" class="grid-title text-nowrap">Tournaments</h3>
+	<div id="levelDiv" class="btn-group margin-right">
+		<select id="level" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+			<option value="">All levels</option>
+			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}">Grand Slam</option>
+			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}">Big Tournaments</option>
+		</select>
+	</div>
+	<div id="surfaceDiv" class="btn-group margin-right">
+		<select id="surface" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+			<option value="">All surfaces</option>
+			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}">Hard</option>
+			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+		</select>
+	</div>
+	<div id="clearDiv" class="btn-group margin-right">
+		<button type="button" class="btn btn-default" onclick="clearTournamentsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+			<span class="glyphicon glyphicon-erase"></span>
+		</button>
+	</div>
+	<table id="tournamentsTable" class="table table-condensed table-hover table-striped">
+		<thead>
+		<tr>
+			<th data-column-id="name" data-formatter="tournament" data-width="200">Name</th>
+			<th data-column-id="levels" data-formatter="levels" data-width="140">Level</th>
+			<th data-column-id="surfaces" data-formatter="surfaces" data-width="170">Surface</th>
+			<th data-column-id="eventCount" data-type="numeric" data-width="75">Events</th>
+			<th data-column-id="seasons" data-width="180" data-sortable="false">Seasons</th>
+			<th data-column-id="participationPoints" data-type="numeric" data-width="70">P. Pts.</th>
+			<th data-column-id="participationPct" data-formatter="participationPct" data-width="70">P. Pct.</th>
+			<th data-column-id="topPlayers" data-formatter="topPlayer" data-sortable="false" data-width="220">Top Player</th>
+		</tr>
+		</thead>
+	</table>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>
