@@ -65,7 +65,7 @@
 		}
 		[# th:if="${bothPlayersSelected}"] function swapPlayers() {
 			var tab = $("#h2hPills li.active a").attr("href");
-			if (!tab)
+			if (tab == "#")
 				tab = $("#h2hPills li.active li.active a").attr("href");
 			window.location.href = "/headToHead?playerId1=[(${player2.id})]&playerId2=[(${player1.id})]&tab=" + tab.substr(1);
 		} [/]

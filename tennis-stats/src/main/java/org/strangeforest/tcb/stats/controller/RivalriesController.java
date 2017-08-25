@@ -506,7 +506,7 @@ public class RivalriesController extends PageController {
 	}
 
 	private Set<CountryCode> getOpponentCountriesUnion(int playerId1, int playerId2) {
-		NavigableSet<CountryCode> countries = new TreeSet<>();
+		NavigableSet<CountryCode> countries = new TreeSet<>(comparing(CountryCode::getName));
 		countries.addAll(matchesService.getOpponentCountries(playerId1));
 		countries.addAll(matchesService.getOpponentCountries(playerId2));
 		return countries;

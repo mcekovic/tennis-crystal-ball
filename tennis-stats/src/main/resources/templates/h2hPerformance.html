@@ -1,13 +1,13 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId1" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="playerId2" type="java.lang.Integer"*/-->
-<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.Set<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
-<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.Set<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 <!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
@@ -140,7 +140,7 @@
 	<div class="col-md-1">
 		<div class="pull-right" data-toggle="tooltip" data-placement="left" title="Advanced filters">
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#perfAdvancedFilter">
-				Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+				<span class="glyphicon glyphicon-filter"></span>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
 			</button>
 		</div>
 	</div>

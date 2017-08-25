@@ -12,6 +12,7 @@ import static org.strangeforest.tcb.stats.service.Opponent.OpponentCategory.*;
 
 public enum Opponent {
 
+	// Rank
 	NO_1(RANK, "Vs No. 1", matchesRankCriterion(1), statsRankCriterion(1), false),
 	TOP_5(RANK, "Vs Top 5", matchesRankCriterion(5), statsRankCriterion(5), false),
 	TOP_10(RANK, "Vs Top 10", matchesRankCriterion(10), statsRankCriterion(10), false),
@@ -20,31 +21,42 @@ public enum Opponent {
 	TOP_100(RANK, "Vs Top 100", matchesRankCriterion(100), statsRankCriterion(100), false),
 	HIGHER_RANKED(RANK, "Vs Higher Ranked", matchesRankCriterion(true), statsRankCriterion(true), false),
 	LOWER_RANKED(RANK, "Vs Lower Ranked", matchesRankCriterion(false), statsRankCriterion(false), false),
+	// Age
 	UNDER_18(AGE, "Vs Under 18", matchesAgeCriterion(Range.atMost(18)), statsAgeCriterion(Range.atMost(18)), false),
 	UNDER_21(AGE, "Vs Under 21", matchesAgeCriterion(Range.atMost(21)), statsAgeCriterion(Range.atMost(21)), false),
 	UNDER_25(AGE, "Vs Under 25", matchesAgeCriterion(Range.atMost(25)), statsAgeCriterion(Range.atMost(25)), false),
-	OVER_25(AGE, "Vs Over 25", matchesAgeCriterion(Range.atLeast(25)), statsAgeCriterion(Range.atLeast(25)), false),
-	OVER_30(AGE, "Vs Over 30", matchesAgeCriterion(Range.atLeast(30)), statsAgeCriterion(Range.atLeast(30)), false),
-	OVER_35(AGE, "Vs Over 35", matchesAgeCriterion(Range.atLeast(35)), statsAgeCriterion(Range.atLeast(35)), false),
+	OVER_25(AGE, "Vs 25 and Over", matchesAgeCriterion(Range.atLeast(25)), statsAgeCriterion(Range.atLeast(25)), false),
+	OVER_30(AGE, "Vs 30 and Over", matchesAgeCriterion(Range.atLeast(30)), statsAgeCriterion(Range.atLeast(30)), false),
+	OVER_35(AGE, "Vs 35 and Over", matchesAgeCriterion(Range.atLeast(35)), statsAgeCriterion(Range.atLeast(35)), false),
 	YOUNGER(AGE, "Vs Younger", matchesAgeCriterion(true), statsAgeCriterion(true), false),
 	OLDER(AGE, "Vs Older", matchesAgeCriterion(false), statsAgeCriterion(false), false),
+	// Playing style
 	RIGHT_HANDED(STYLE, "Vs Right-handed", matchesHandCriterion("R"), statsHandCriterion("R"), true),
 	LEFT_HANDED(STYLE, "Vs Left-handed", matchesHandCriterion("L"), statsHandCriterion("L"), true),
 	BACKHAND_2(STYLE, "Vs Two-handed bh.", matchesBackhandCriterion("2"), statsBackhandCriterion("2"), true),
 	BACKHAND_1(STYLE, "Vs One-handed bh.", matchesBackhandCriterion("1"), statsBackhandCriterion("1"), true),
+	// Seeding
 	SEEDED(SEEDING, "Vs Seeded", matchesSeedCriterion("IS NOT NULL"), statsSeedCriterion("IS NOT NULL"), false),
 	UNSEEDED(SEEDING, "Vs Unseeded", matchesSeedCriterion("IS NULL"), statsSeedCriterion("IS NULL"), false),
 	QUALIFIER(SEEDING, "Vs Qualifier", matchesEntryCriterion("Q"), statsEntryCriterion("Q"), false),
 	WILD_CARD(SEEDING, "Vs Wild-Card", matchesEntryCriterion("WC"), statsEntryCriterion("WC"), false),
 	LUCKY_LOSER(SEEDING, "Vs Lucky-Loser", matchesEntryCriterion("LL"), statsEntryCriterion("LL"), false),
 	PROTECTED_RANKING(SEEDING, "Vs Protected Ranking", matchesEntryCriterion("PR"), statsEntryCriterion("PR"), false),
-	SPECIAL_EXEMPT(SEEDING, "Vs Special Exempt", matchesEntryCriterion("SE"), statsEntryCriterion("SE"), false);
+	SPECIAL_EXEMPT(SEEDING, "Vs Special Exempt", matchesEntryCriterion("SE"), statsEntryCriterion("SE"), false),
+	// Height
+	H_UNDER_5_10(HEIGHT, "Vs Under 5'10 (178cm)", matchesHeightCriterion(Range.atMost(178)), statsHeightCriterion(Range.atMost(178)), false),
+	H_UNDER_6_0(HEIGHT, "Vs Under 6'0 (183cm)", matchesHeightCriterion(Range.atMost(183)), statsHeightCriterion(Range.atMost(183)), false),
+	H_OVER_6_2(HEIGHT, "Vs Over 6'2 (188cm)", matchesHeightCriterion(Range.atLeast(188)), statsHeightCriterion(Range.atLeast(188)), false),
+	H_OVER_6_4(HEIGHT, "Vs Over 6'4 (193cm)", matchesHeightCriterion(Range.atLeast(193)), statsHeightCriterion(Range.atLeast(193)), false),
+	SHORTER(HEIGHT, "Vs Shorter", matchesHeightCriterion(true), statsHeightCriterion(true), false),
+	TALLER(HEIGHT, "Vs Taller", matchesHeightCriterion(false), statsHeightCriterion(false), false);
 
 	public enum OpponentCategory {
 		RANK("Vs Rank"),
 		AGE("Vs Age"),
 		STYLE("Vs Playing Style"),
-		SEEDING("Vs Seeding");
+		SEEDING("Vs Seeding"),
+		HEIGHT("Vs Height");
 
 		private final String text;
 
@@ -88,6 +100,8 @@ public enum Opponent {
 	private static final String MATCHES_ENTRY_CRITERION = " AND ((m.winner_entry = '%1$s' AND m.winner_id <> :playerId) OR (m.loser_entry = '%1$s' AND m.loser_id <> :playerId))";
 	private static final String MATCHES_HAND_CRITERION = " AND ((pw.hand = '%1$s' AND m.winner_id <> :playerId) OR (pl.hand = '%1$s' AND m.loser_id <> :playerId))";
 	private static final String MATCHES_BACKHAND_CRITERION = " AND ((pw.backhand = '%1$s' AND m.winner_id <> :playerId) OR (pl.backhand = '%1$s' AND m.loser_id <> :playerId))";
+	private static final String MATCHES_WINNER_SHORTER_CRITERION = " AND m.winner_height < m.loser_height";
+	private static final String MATCHES_WINNER_TALLER_CRITERION = " AND m.winner_height > m.loser_height";
 
 	private static final String STATS_RANK_CRITERION = " AND opponent_rank <= %1$d";
 	private static final String STATS_OPPONENT_HIGHER_RANKED_CRITERION = " AND opponent_rank < player_rank";
@@ -98,6 +112,8 @@ public enum Opponent {
 	private static final String STATS_ENTRY_CRITERION = " AND opponent_entry = '%1$s'";
 	private static final String STATS_HAND_CRITERION = " AND o.hand = '%1$s'";
 	private static final String STATS_BACKHAND_CRITERION = " AND o.backhand = '%1$s'";
+	private static final String STATS_OPPONENT_SHORTER_CRITERION = " AND opponent_height < player_height";
+	private static final String STATS_OPPONENT_TALLER_CRITERION = " AND opponent_height > player_height";
 
 	Opponent(OpponentCategory category, String text, String matchesCriterion, String statsCriterion, boolean opponentRequired) {
 		this.category = category;
@@ -159,6 +175,14 @@ public enum Opponent {
 		return format(MATCHES_BACKHAND_CRITERION, backhand);
 	}
 
+	private static String matchesHeightCriterion(Range<Integer> heightRange) {
+		return format(MATCHES_PLAYER_CRITERION, rangeFilter(heightRange, "m.winner_height"), rangeFilter(heightRange, "m.loser_height"));
+	}
+
+	private static String matchesHeightCriterion(boolean shorter) {
+		return format(MATCHES_PLAYER_CRITERION, shorter ? MATCHES_WINNER_SHORTER_CRITERION : MATCHES_WINNER_TALLER_CRITERION, shorter ? MATCHES_WINNER_TALLER_CRITERION : MATCHES_WINNER_SHORTER_CRITERION);
+	}
+
 	private static String statsRankCriterion(int rank) {
 		return format(STATS_RANK_CRITERION, rank);
 	}
@@ -189,5 +213,13 @@ public enum Opponent {
 
 	private static String statsBackhandCriterion(String backhand) {
 		return format(STATS_BACKHAND_CRITERION, backhand);
+	}
+
+	private static String statsHeightCriterion(Range<Integer> heightRange) {
+		return rangeFilter(heightRange, "opponent_height");
+	}
+
+	private static String statsHeightCriterion(boolean shorter) {
+		return shorter ? STATS_OPPONENT_SHORTER_CRITERION : STATS_OPPONENT_TALLER_CRITERION;
 	}
 }

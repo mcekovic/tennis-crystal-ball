@@ -6,12 +6,19 @@
 <!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
-<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.Set<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
+<!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
+<!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="round" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
-<!--/*@thymesVar id="opponent" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="h2h" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="opponent" type="java.lang.String>"*/-->
+<!--/*@thymesVar id="countryId" type="java.lang.String>"*/-->
+<!--/*@thymesVar id="advFilter" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 <!--/*@thymesVar id="stats2" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
@@ -28,10 +35,43 @@
 		url += "&season=" + $("#statsSeason").val();
 		url += "&level=" + $("#statsLevel").val();
 		url += "&surface=" + $("#statsSurface").val();
+		url += "&round=" + encodeURIComponent($("#statsRound").val());
 		url += "&tournamentId=" + $("#statsTournament").val();
-		url += "&opponent=" + $("#statsOpponent").prop("checked");
+		url += "&h2h=" + $("#statsH2h").prop("checked");
+		url += "&opponent=" + $("#statsOpponent").val();
+		url += "&countryId=" + $("#statsCountry").val();
+		url += "&advFilter=" + $("#statsAdvancedFilter").hasClass("in");
 		url += "&rawData=" + statsRawData;
 		$("#statistics").load(url);
+	}
+	function clearStatsFilter() {
+		$("#statsSeason").val("");
+		$("#statsLevel").val("");
+		$("#statsSurface").val("");
+		$("#statsRound").val("");
+		$("#statsTournament").val("");
+		clearH2h();
+		clearOpponent();
+		reloadStats();
+	}
+	function clearH2h() {
+		$("#statsH2h").prop("checked", false);
+	}
+	function clearOpponent() {
+		$("#statsOpponent").val("");
+		$("#statsCountry").val("");
+	}
+	function h2hChanged() {
+		if ($("#statsH2h").prop("checked"))
+			clearOpponent();
+	}
+	function opponentChanged() {
+		if ($("#statsOpponent").val() != "")
+			clearH2h();
+	}
+	function countryChanged() {
+		if ($("#statsCountry").val() != "")
+			clearH2h();
 	}
 </script>
 <style scoped="scoped">
@@ -54,18 +94,53 @@
 			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
 		</select>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-2">
 		<select id="statsLevel" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
 			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
 			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
 		</select>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-2">
 		<select id="statsSurface" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 			<option value="">All surfaces</option>
 			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
 			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes.length() > 1 && surfaceGroup.codes == surface}">Fast (H, G, Cp)</option>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<select id="statsRound" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+			<option value="">All rounds</option>
+			<option th:each="aRound : ${rounds}" th:value="${aRound.code}" th:class="|bg-result-${aRound.baseCode}|" value="F" class="bg-result-F" th:text="${aRound.text}" th:selected="${aRound.code == round}">Final</option>
+		</select>
+	</div>
+	<div class="col-md-1">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Include statistics only against H2H opponent">
+				<input id="statsH2h" type="checkbox" th:checked="${h2h}" onchange="h2hChanged(); reloadStats()"/> H2H
+			</label>
+		</div>
+	</div>
+	<div class="col-md-2">
+		<button type="button" class="btn btn-default" onclick="clearStatsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+			<span class="glyphicon glyphicon-erase"></span>&nbsp;&nbsp;Clear
+		</button>
+	</div>
+	<div class="col-md-1">
+		<div class="pull-right" data-toggle="tooltip" data-placement="left" title="Advanced filters">
+			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#statsAdvancedFilter">
+				<span class="glyphicon glyphicon-filter"></span>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+			</button>
+		</div>
+	</div>
+</div>
+<div id="statsAdvancedFilter" class="row margin-top collapse" th:attrappend="class=${advFilter ? ' in' : _}">
+	<div class="col-md-2">
+		<select id="statsOpponent" class="form-control" onchange="opponentChanged(); reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+			<option value="">Vs all</option>
+			<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
+				<option th:each="anOpponent : ${opponentCategory.value}" th:value="${anOpponent}" value="NO_1" th:text="${anOpponent.text}" th:selected="${anOpponent.name() == opponent}">Vs No. 1</option>
+			</optgroup>
 		</select>
 	</div>
 	<div class="col-md-3">
@@ -74,12 +149,11 @@
 			<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
 		</select>
 	</div>
-	<div class="col-md-1">
-		<div class="checkbox">
-			<label data-toggle="tooltip" data-placement="top" title="Include statistics only against H2H opponent">
-				<input id="statsOpponent" type="checkbox" th:checked="${opponent}" onchange="reloadStats()"/> H2H
-			</label>
-		</div>
+	<div class="col-md-3">
+		<select id="statsCountry" class="form-control" onchange="countryChanged(); reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+			<option value="">Vs all countries</option>
+			<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}" th:selected="${country.alpha3 == countryId}">Switzerland</option>
+		</select>
 	</div>
 </div>
 <br/>
