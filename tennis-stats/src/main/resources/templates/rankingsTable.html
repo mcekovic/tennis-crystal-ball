@@ -24,12 +24,8 @@
 				url: "/rankingsTableTable",
 				requestHandler: function(request) {
 					request.rankType = $("#rankType").val();
-					var season = $("#season").val();
-					if (season != "")
-						request.season = season;
-					var date = $("#date").val();
-					if (date != "")
-						request.date = date;
+					request.season = $("#season").val();
+					request.date = $("#date").val();
 					return request;
 				},
 				rowCount: [20, 50, 100, -1],

@@ -6,6 +6,7 @@
 <head th:replace="fragments/head :: commonHead(${tournament.name}, true, ~{::script}, _)">
 	<script type="text/javascript">
 		$(function() {
+			decorateSurface("#tournamentSurfaces .tournament-surface");
 			$("#tournamentPills").find("a").click(tabClick);
 			var $tournamentHistoryTable = $("#tournamentHistoryTable");
 			var device = detectDevice();
@@ -58,15 +59,19 @@
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Level</th>
-					<td th:text="${levels[tournament.level]}">Grand Slam</td>
+					<td id="tournamentLevels">
+						<div th:each="level : ${tournament.levels}" class="label label-" th:attrappend="class=${level}" th:text="${levels.get(level)}">Grand Slam</div>
+					</td>
 				</tr>
-			</table>
-		</div>
-		<div class="col-md-3">
-			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Surface</th>
-					<td th:text="${(tournament.indoor ? 'Indoor ' : '') + surfaces[tournament.surface]}">Hard</td>
+					<td id="tournamentSurfaces">
+						<div th:each="surface : ${tournament.surfaces}" class="label tournament-surface" th:data-surface="${surface}" th:text="${surfaces.get(surface)}">Hard</div>
+					</td>
+				</tr>
+				<tr>
+					<th>Events</th>
+					<td th:text="${tournament.eventCount}">25</td>
 				</tr>
 			</table>
 		</div>
@@ -74,7 +79,22 @@
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Seasons</th>
-					<td th:text="${tournament.formattedSeasons}">1968-2015</td>
+					<td th:text="${tournament.seasons}">1968-2015</td>
+				</tr>
+				<tr>
+					<th>Average Participation</th>
+					<td><span th:text="${tournament.participationPoints}" th:title="#{events.participationPoints.title}">832</span> <span th:text="'(' + ${#numbers.formatDecimal(tournament.participationPct, 1, 1)} + '%)'" th:title="#{events.participationPercentage.title}">(67.3%)</span></td>
+				</tr>
+			</table>
+		</div>
+		<div class="col-md-3">
+			<table class="table table-condensed text-nowrap">
+				<tr th:each="player : ${tournament.topPlayers}">
+					<th th:text="|${player.rank} Titles|">5 Titles:</th>
+					<td>
+						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+					</td>
 				</tr>
 			</table>
 		</div>

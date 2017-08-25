@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -15,6 +16,8 @@ import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
 
+import com.fasterxml.jackson.databind.*;
+
 import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
@@ -22,6 +25,7 @@ import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.records.details.RecordDetailUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 @Service
 public class TournamentService {
@@ -34,9 +38,60 @@ public class TournamentService {
 	private static final String SEASON_TOURNAMENT_ITEMS_QUERY = //language=SQL
 		"SELECT tournament_id, name, level FROM tournament_event WHERE season = :season ORDER BY name";
 
+	private static final String TOURNAMENTS_QUERY = //language=SQL
+		"WITH player_tournament_titles AS (\n" +
+		"  SELECT e.tournament_id, r.player_id, count(tournament_event_id) titles, max(e.date) last_date\n" +
+		"  FROM player_tournament_event_result r\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  WHERE r.result = 'W'\n" +
+		"  GROUP BY e.tournament_id, r.player_id\n" +
+		"), player_tournament_titles_ranked AS (\n" +
+		"  SELECT tournament_id, player_id, titles, rank() OVER (PARTITION BY tournament_id ORDER BY titles DESC, last_date) AS rank\n" +
+		"  FROM player_tournament_titles\n" +
+		")\n" +
+		"SELECT tournament_id, name, level,\n" +
+		"  array_to_json(array(SELECT row_to_json(event) FROM (\n" +
+		"    SELECT e.level, e.surface, e.season, p.participation_points, p.max_participation_points\n" +
+		"    FROM tournament_event e\n" +
+		"    INNER JOIN event_participation p USING (tournament_event_id)\n" +
+		"    WHERE e.tournament_id = t.tournament_id\n" +
+		"    ORDER BY season\n" +
+		"  ) AS event)) AS events,\n" +
+		"  array_to_json(array(SELECT row_to_json(top_player) FROM (\n" +
+		"    SELECT p.player_id, p.name, p.country_id, p.active, pt.titles\n" +
+		"    FROM player_tournament_titles_ranked pt\n" +
+		"    INNER JOIN player_v p USING (player_id)\n" +
+		"    WHERE pt.tournament_id = t.tournament_id AND pt.rank <= 3\n" +
+		"  ) AS top_player)) AS top_players\n" +
+		"FROM tournament t\n" +
+		"WHERE level NOT IN ('D', 'T')\n" +
+		"ORDER BY tournament_id";
+
 	private static final String TOURNAMENT_QUERY =
-		"SELECT name, level, surface, indoor,\n" +
-		"  array(SELECT e.season FROM tournament_event e WHERE e.tournament_id = t.tournament_id ORDER BY season) AS seasons\n" +
+		"WITH player_tournament_titles AS (\n" +
+		"  SELECT r.player_id, count(tournament_event_id) titles, max(e.date) last_date\n" +
+		"  FROM player_tournament_event_result r\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  WHERE e.tournament_id = :tournamentId AND r.result = 'W'\n" +
+		"  GROUP BY r.player_id\n" +
+		"), player_tournament_titles_ranked AS (\n" +
+		"  SELECT player_id, titles, rank() OVER (ORDER BY titles DESC, last_date) AS rank\n" +
+		"  FROM player_tournament_titles\n" +
+		")\n" +
+		"SELECT tournament_id, name, level,\n" +
+		"  array_to_json(array(SELECT row_to_json(event) FROM (\n" +
+		"    SELECT e.level, e.surface, e.season, p.participation_points, p.max_participation_points\n" +
+		"    FROM tournament_event e\n" +
+		"    INNER JOIN event_participation p USING (tournament_event_id)\n" +
+		"    WHERE e.tournament_id = :tournamentId\n" +
+		"    ORDER BY season\n" +
+		"  ) AS event)) AS events,\n" +
+		"  array_to_json(array(SELECT row_to_json(top_player) FROM (\n" +
+		"    SELECT p.player_id, p.name, p.country_id, p.active, pt.titles\n" +
+		"    FROM player_tournament_titles_ranked pt\n" +
+		"    INNER JOIN player_v p USING (player_id)\n" +
+		"    WHERE pt.rank <= 3\n" +
+		"  ) AS top_player)) AS top_players\n" +
 		"FROM tournament t\n" +
 		"WHERE tournament_id = :tournamentId";
 
@@ -132,6 +187,8 @@ public class TournamentService {
 		") AS ts ON ts.tournament_event_id = e.tournament_event_id";
 
 
+	private static final ObjectReader READER = new ObjectMapper().reader();
+
 	@Cacheable(value = "Global", key = "'Tournaments'")
 	public List<TournamentItem> getTournaments() {
 		return jdbcTemplate.query(TOURNAMENT_ITEMS_QUERY, this::tournamentItemMapper);
@@ -148,11 +205,45 @@ public class TournamentService {
 			rs -> {
 				if (rs.next()) {
 					String name = rs.getString("name");
-					String level = rs.getString("level");
-					String surface = rs.getString("surface");
-					boolean indoor = rs.getBoolean("indoor");
-					List<Integer> seasons = getIntegers(rs, "seasons");
-					return new Tournament(tournamentId, name, level, surface, indoor, seasons);
+					Set<String> levels = new LinkedHashSet<>();
+					Set<String> surfaces = new LinkedHashSet<>();
+					List<Integer> seasons = new ArrayList<>();
+					int participationPoints = 0;
+					int maxParticipationPoints = 0;
+					try {
+						JsonNode events = READER.readTree(rs.getString("events"));
+						for (JsonNode event : events) {
+							levels.add(event.get("level").asText());
+							surfaces.add(event.get("surface").asText());
+							seasons.add(event.get("season").asInt());
+							participationPoints += event.get("participation_points").asInt();
+							maxParticipationPoints += event.get("max_participation_points").asInt();
+						}
+					}
+					catch (IOException ex) {
+						throw new SQLException(ex);
+					}
+					List<PlayerRow> topPlayers = new ArrayList<>();
+					try {
+						JsonNode topPlayersNode = READER.readTree(rs.getString("top_players"));
+						for (JsonNode topPlayer : topPlayersNode) {
+							topPlayers.add(new PlayerRow(
+								topPlayer.get("titles").asInt(),
+								topPlayer.get("player_id").asInt(),
+								topPlayer.get("name").asText(),
+								topPlayer.get("country_id").asText(),
+								topPlayer.get("active").asBoolean()
+							));
+						}
+					}
+					catch (IOException ex) {
+						throw new SQLException(ex);
+					}
+					List<String> levelList = new ArrayList<>(levels); reverse(levelList);
+					List<String> surfaceList = new ArrayList<>(surfaces); reverse(surfaceList);
+					int avgParticipationPoints = participationPoints / seasons.size();
+					double avgParticipationPct = pct(participationPoints, maxParticipationPoints);
+					return new Tournament(tournamentId, name, levelList, surfaceList, seasons, avgParticipationPoints, avgParticipationPct, topPlayers);
 				}
 				else
 					throw new NotFoundException("Tournament", tournamentId);
@@ -161,7 +252,7 @@ public class TournamentService {
 	}
 
 	public List<Integer> getTournamentSeasons(int tournamentId) {
-		List<Integer> seasons = getTournament(tournamentId).getSeasons();
+		List<Integer> seasons = getTournament(tournamentId).seasons();
 		reverse(seasons);
 		return seasons;
 	}

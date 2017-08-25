@@ -6,18 +6,22 @@ public class Tournament {
 
 	private final int id;
 	private final String name;
-	private final String level;
-	private final String surface;
-	private final boolean indoor;
+	private final List<String> levels;
+	private final List<String> surfaces;
 	private final List<Integer> seasons;
+	private final int participationPoints;
+	private final double participationPct;
+	private final List<PlayerRow> topPlayers;
 
-	public Tournament(int id, String name, String level, String surface, boolean indoor, List<Integer> seasons) {
+	public Tournament(int id, String name, List<String> levels, List<String> surfaces, List<Integer> seasons, int participationPoints, double participationPct, List<PlayerRow> topPlayers) {
 		this.id = id;
 		this.name = name;
-		this.level = level;
-		this.surface = surface;
-		this.indoor = indoor;
+		this.levels = levels;
+		this.surfaces = surfaces;
 		this.seasons = seasons;
+		this.participationPoints = participationPoints;
+		this.participationPct = participationPct;
+		this.topPlayers = topPlayers;
 	}
 
 	public int getId() {
@@ -28,23 +32,23 @@ public class Tournament {
 		return name;
 	}
 
-	public String getLevel() {
-		return level;
+	public List<String> getLevels() {
+		return levels;
 	}
 
-	public String getSurface() {
-		return surface;
+	public List<String> getSurfaces() {
+		return surfaces;
 	}
 
-	public boolean isIndoor() {
-		return indoor;
+	public int getEventCount() {
+		return seasons.size();
 	}
 
-	public List<Integer> getSeasons() {
+	public List<Integer> seasons() {
 		return seasons;
 	}
 
-	public String getFormattedSeasons() {
+	public String getSeasons() {
 		if (seasons.isEmpty())
 			return "";
 		StringBuilder sb = new StringBuilder();
@@ -75,5 +79,17 @@ public class Tournament {
 			sb.append("-");
 			sb.append(seasonEnd);
 		}
+	}
+
+	public int getParticipationPoints() {
+		return participationPoints;
+	}
+
+	public double getParticipationPct() {
+		return participationPct;
+	}
+
+	public List<PlayerRow> getTopPlayers() {
+		return topPlayers;
 	}
 }
