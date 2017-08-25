@@ -44,10 +44,10 @@ public enum Opponent {
 	PROTECTED_RANKING(SEEDING, "Vs Protected Ranking", matchesEntryCriterion("PR"), statsEntryCriterion("PR"), false),
 	SPECIAL_EXEMPT(SEEDING, "Vs Special Exempt", matchesEntryCriterion("SE"), statsEntryCriterion("SE"), false),
 	// Height
-	H_UNDER_5_10(HEIGHT, "Vs Under 5'10 (178cm)", matchesHeightCriterion(Range.atMost(178)), statsHeightCriterion(Range.atMost(178)), false),
-	H_UNDER_6_0(HEIGHT, "Vs Under 6'0 (183cm)", matchesHeightCriterion(Range.atMost(183)), statsHeightCriterion(Range.atMost(183)), false),
-	H_OVER_6_2(HEIGHT, "Vs Over 6'2 (188cm)", matchesHeightCriterion(Range.atLeast(188)), statsHeightCriterion(Range.atLeast(188)), false),
-	H_OVER_6_4(HEIGHT, "Vs Over 6'4 (193cm)", matchesHeightCriterion(Range.atLeast(193)), statsHeightCriterion(Range.atLeast(193)), false),
+	UNDER_5_10(HEIGHT, "Vs Under 5'10 (178cm)", matchesHeightCriterion(Range.atMost(178)), statsHeightCriterion(Range.atMost(178)), false),
+	UNDER_6_0(HEIGHT, "Vs Under 6'0 (183cm)", matchesHeightCriterion(Range.atMost(183)), statsHeightCriterion(Range.atMost(183)), false),
+	OVER_6_2(HEIGHT, "Vs Over 6'2 (188cm)", matchesHeightCriterion(Range.atLeast(188)), statsHeightCriterion(Range.atLeast(188)), false),
+	OVER_6_4(HEIGHT, "Vs Over 6'4 (193cm)", matchesHeightCriterion(Range.atLeast(193)), statsHeightCriterion(Range.atLeast(193)), false),
 	SHORTER(HEIGHT, "Vs Shorter", matchesHeightCriterion(true), statsHeightCriterion(true), false),
 	TALLER(HEIGHT, "Vs Taller", matchesHeightCriterion(false), statsHeightCriterion(false), false);
 
