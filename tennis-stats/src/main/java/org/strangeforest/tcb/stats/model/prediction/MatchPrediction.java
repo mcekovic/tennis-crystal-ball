@@ -23,8 +23,8 @@ public final class MatchPrediction {
 
 	// Instance
 
-	private final List<WeightedProbability> itemProbabilities1 = new ArrayList<>();
-	private final List<WeightedProbability> itemProbabilities2 = new ArrayList<>();
+	private List<WeightedProbability> itemProbabilities1 = new ArrayList<>();
+	private List<WeightedProbability> itemProbabilities2 = new ArrayList<>();
 	private Double winProbability1 = 0.5;
 	private Double winProbability2 = 0.5;
 	private RankingData rankingData1;
@@ -165,5 +165,16 @@ public final class MatchPrediction {
 
 	public void setRankingData2(RankingData rankingData2) {
 		this.rankingData2 = rankingData2;
+	}
+
+	public MatchPrediction swap() {
+		MatchPrediction swapped = new MatchPrediction();
+		swapped.itemProbabilities1 = new ArrayList<>(itemProbabilities2);
+		swapped.itemProbabilities2 = new ArrayList<>(itemProbabilities1);
+		swapped.winProbability1 = winProbability2;
+		swapped.winProbability2 = winProbability1;
+		swapped.rankingData1 = rankingData2;
+		swapped.rankingData2 = rankingData1;
+		return swapped;
 	}
 }

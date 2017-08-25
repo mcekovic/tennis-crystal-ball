@@ -87,7 +87,7 @@ public class MatchPredictionService {
 		}
 		else {
 			if (playerId2 > 0)
-				return predictMatchVsQualifier(playerId2, date2, surface, level, tournamentId, round, bestOf);
+				return predictMatchVsQualifier(playerId2, date2, surface, level, tournamentId, round, bestOf).swap();
 			else
 				return MatchPrediction.TIE;
 		}
