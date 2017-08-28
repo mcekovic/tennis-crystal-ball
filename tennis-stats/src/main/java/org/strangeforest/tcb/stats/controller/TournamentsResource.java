@@ -27,8 +27,8 @@ public class TournamentsResource {
 	private static final Comparator<Tournament> BY_LEVEL = (t1, t2) -> compareLists(mapSortList(t1.getLevels(), TournamentLevel::decode), mapSortList(t2.getLevels(), TournamentLevel::decode));
 	private static Map<String, Comparator<Tournament>> ORDER_MAP = ImmutableMap.<String, Comparator<Tournament>>builder()
 		.put("name", BY_NAME)
-		.put("level", BY_LEVEL)
-		.put("surface", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)))
+		.put("levels", BY_LEVEL)
+		.put("surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)))
 		.put("eventCount", comparing(Tournament::getEventCount))
 		.put("participationPoints", comparing(Tournament::getParticipationPoints))
 		.put("participationPct", comparing(Tournament::getParticipationPct))
@@ -72,8 +72,13 @@ public class TournamentsResource {
 				return 1;
 			else if (item2 == null)
 				return -1;
-			else
-				return item1.compareTo(item2);
+			else {
+				int result = item1.compareTo(item2);
+				if (result != 0)
+					return result;
+				else
+					i++;
+			}
 		}
 	}
 }
