@@ -28,7 +28,6 @@
 					return request;
 				},
 				rowCount: [20, 50, 100, -1],
-				sorting: false,
 				searchSettings: {
 					delay: 300,
 					characters: 2
@@ -97,21 +96,21 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 id="tournamentsTable-title" class="grid-title text-nowrap">Tournaments</h3>
-	<div id="levelDiv" class="btn-group margin-right" style="display: none">
+	<div id="levelDiv" class="btn-group margin-right">
 		<select id="level" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
 			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}">Grand Slam</option>
 			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}">Big Tournaments</option>
 		</select>
 	</div>
-	<div id="surfaceDiv" class="btn-group margin-right" style="display: none">
+	<div id="surfaceDiv" class="btn-group margin-right">
 		<select id="surface" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 			<option value="">All surfaces</option>
 			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}">Hard</option>
 			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
 		</select>
 	</div>
-	<div id="clearDiv" class="btn-group margin-right" style="display: none">
+	<div id="clearDiv" class="btn-group margin-right">
 		<button type="button" class="btn btn-default" onclick="clearTournamentsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
 			<span class="glyphicon glyphicon-erase"></span>
 		</button>

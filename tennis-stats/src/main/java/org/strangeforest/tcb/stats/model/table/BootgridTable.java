@@ -39,6 +39,11 @@ public class BootgridTable<R> {
 		rowCount++;
 	}
 
+	public void addRows(List<R> rows) {
+		this.rows.addAll(rows);
+		rowCount += rows.size();
+	}
+
 	public void setTotal(int total) {
 		this.total = total;
 	}

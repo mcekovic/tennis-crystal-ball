@@ -45,7 +45,7 @@ public class TournamentService {
 		"  SELECT e.tournament_id, r.player_id, count(tournament_event_id) titles, max(e.date) last_date\n" +
 		"  FROM player_tournament_event_result r\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"  WHERE r.result = 'W'\n" +
+		"  WHERE r.result = 'W'%1$s\n" +
 		"  GROUP BY e.tournament_id, r.player_id\n" +
 		"), player_tournament_titles_ranked AS (\n" +
 		"  SELECT tournament_id, player_id, titles, rank() OVER (PARTITION BY tournament_id ORDER BY titles DESC, last_date) AS rank\n" +
@@ -56,7 +56,7 @@ public class TournamentService {
 		"    SELECT e.level, e.surface, e.season, p.participation_points, p.max_participation_points\n" +
 		"    FROM tournament_event e\n" +
 		"    INNER JOIN event_participation p USING (tournament_event_id)\n" +
-		"    WHERE e.tournament_id = t.tournament_id\n" +
+		"    WHERE e.tournament_id = t.tournament_id%1$s\n" +
 		"    ORDER BY season\n" +
 		"  ) AS event)) AS events,\n" +
 		"  array_to_json(array(SELECT row_to_json(top_player) FROM (\n" +
@@ -66,8 +66,7 @@ public class TournamentService {
 		"    WHERE pt.tournament_id = t.tournament_id AND pt.rank <= 3\n" +
 		"  ) AS top_player)) AS top_players\n" +
 		"FROM tournament t\n" +
-		"WHERE level NOT IN ('D', 'T')%1$s\n" +
-		"ORDER BY %2$s OFFSET :offset";
+		"WHERE t.level NOT IN ('D', 'T')";
 
 	private static final String TOURNAMENT_QUERY =
 		"WITH player_tournament_titles AS (\n" +
@@ -98,6 +97,11 @@ public class TournamentService {
 		"WHERE tournament_id = :tournamentId";
 
 	private static final String TOURNAMENT_SEASONS_QUERY = //language=SQL
+		"SELECT season FROM tournament_event\n" +
+		"WHERE tournament_id = :tournamentId\n" +
+		"ORDER BY season DESC";
+
+	private static final String ALL_TOURNAMENT_SEASONS_QUERY = //language=SQL
 		"SELECT tournament_id, season FROM tournament_event\n" +
 		"WHERE level NOT IN ('D', 'T')";
 
@@ -202,19 +206,20 @@ public class TournamentService {
 	}
 
 	@Cacheable("Tournaments.Table")
-	public BootgridTable<Tournament> getTournamentsTable(TournamentEventFilter filter, String orderBy, int pageSize, int currentPage) {
-		BootgridTable<Tournament> table = new BootgridTable<>(currentPage);
-		AtomicInteger tournaments = new AtomicInteger();
-		int offset = (currentPage - 1) * pageSize;
-		jdbcTemplate.query(
-			format(TOURNAMENTS_QUERY, filter.getCriteria(), orderBy),
-			filter.getParams().addValue("offset", offset),
-			rs -> {
-				if (tournaments.incrementAndGet() <= pageSize)
-					table.addRow(mapTournament(rs));
-			}
+	public BootgridTable<Tournament> getTournamentsTable(TournamentEventFilter filter, Comparator<Tournament> comparator, int pageSize, int currentPage) {
+		List<Tournament> tournaments = jdbcTemplate.query(
+			format(TOURNAMENTS_QUERY, filter.getCriteria()),
+			filter.getParams(),
+			(rs, rowNum) -> mapTournament(rs)
 		);
-		table.setTotal(offset + tournaments.get());
+		if (!filter.isEmpty())
+			tournaments = tournaments.stream().filter(t -> t.getEventCount() > 0).collect(toList());
+		BootgridTable<Tournament> table = new BootgridTable<>(currentPage);
+		tournaments.sort(comparator);
+		int offset = (currentPage - 1) * pageSize;
+		int endOffset = Math.min(offset + pageSize, tournaments.size());
+		table.addRows(tournaments.subList(offset, endOffset));
+		table.setTotal(tournaments.size());
 		return table;
 	}
 
@@ -254,7 +259,9 @@ public class TournamentService {
 		}
 		List<String> levelList = sortKeysByValuesDesc(levels, comparing(TournamentLevel::decode));
 		List<String> surfaceList = sortKeysByValuesDesc(surfaces, comparing(Surface::decode));
-		int avgParticipationPoints = participationPoints / seasons.size();
+		int eventCount = seasons.size();
+		String formattedSeasons = formatSeasons(seasons);
+		int avgParticipationPoints = eventCount > 0 ? participationPoints / eventCount : 0;
 		double avgParticipationPct = pct(participationPoints, maxParticipationPoints);
 
 		List<PlayerRow> topPlayers = new ArrayList<>();
@@ -274,7 +281,7 @@ public class TournamentService {
 			throw new SQLException(ex);
 		}
 
-		return new Tournament(tournamentId, name, levelList, surfaceList, seasons, avgParticipationPoints, avgParticipationPct, topPlayers);
+		return new Tournament(tournamentId, name, levelList, surfaceList, eventCount, formattedSeasons, avgParticipationPoints, avgParticipationPct, topPlayers);
 	}
 
 	private static Integer increment(String s, Integer i) {
@@ -287,15 +294,47 @@ public class TournamentService {
 			.map(Map.Entry::getKey).collect(toList());
 	}
 
+	private static String formatSeasons(List<Integer> seasons) {
+		if (seasons.isEmpty())
+			return "";
+		StringBuilder sb = new StringBuilder();
+		Integer seasonRangeStart = seasons.get(0);
+		int lastSeason = seasons.get(seasons.size() - 1);
+		for (int season = seasonRangeStart; season <= lastSeason; season++) {
+			if (!seasons.contains(season)) {
+				if (seasonRangeStart != null) {
+					appendSeasonRange(sb, seasonRangeStart, season - 1);
+					seasonRangeStart = null;
+				}
+			}
+			else if (seasonRangeStart == null)
+				seasonRangeStart = season;
+		}
+		if (seasonRangeStart != null)
+			appendSeasonRange(sb, seasonRangeStart, lastSeason);
+		return sb.toString();
+	}
+
+	private static void appendSeasonRange(StringBuilder sb, int seasonStart, int seasonEnd) {
+		if (sb.length() > 0)
+			sb.append(", ");
+		if (seasonStart == seasonEnd)
+			sb.append(seasonStart);
+		else {
+			sb.append(seasonStart);
+			sb.append("-");
+			sb.append(seasonEnd);
+		}
+	}
+
+	@Cacheable("Tournament.Seasons")
 	public List<Integer> getTournamentSeasons(int tournamentId) {
-		List<Integer> seasons = getTournament(tournamentId).seasons();
-		reverse(seasons);
-		return seasons;
+		return jdbcTemplate.queryForList(TOURNAMENT_SEASONS_QUERY, params("tournamentId", tournamentId), Integer.class);
 	}
 
 	@Cacheable(value = "Global", key = "'AllTournamentSeasons'")
 	public Set<TournamentSeason> getAllTournamentSeasons() {
-		return new HashSet<>(jdbcTemplate.query(TOURNAMENT_SEASONS_QUERY, (rs, rowNum) -> new TournamentSeason(
+		return new HashSet<>(jdbcTemplate.query(ALL_TOURNAMENT_SEASONS_QUERY, (rs, rowNum) -> new TournamentSeason(
 			rs.getInt("tournament_id"),
 			rs.getInt("season")
 		)));

@@ -8,16 +8,18 @@ public class Tournament {
 	private final String name;
 	private final List<String> levels;
 	private final List<String> surfaces;
-	private final List<Integer> seasons;
+	private final int eventCount;
+	private final String seasons;
 	private final int participationPoints;
 	private final double participationPct;
 	private final List<PlayerRow> topPlayers;
 
-	public Tournament(int id, String name, List<String> levels, List<String> surfaces, List<Integer> seasons, int participationPoints, double participationPct, List<PlayerRow> topPlayers) {
+	public Tournament(int id, String name, List<String> levels, List<String> surfaces, int eventCount, String seasons, int participationPoints, double participationPct, List<PlayerRow> topPlayers) {
 		this.id = id;
 		this.name = name;
 		this.levels = levels;
 		this.surfaces = surfaces;
+		this.eventCount = eventCount;
 		this.seasons = seasons;
 		this.participationPoints = participationPoints;
 		this.participationPct = participationPct;
@@ -41,44 +43,11 @@ public class Tournament {
 	}
 
 	public int getEventCount() {
-		return seasons.size();
-	}
-
-	public List<Integer> seasons() {
-		return seasons;
+		return eventCount;
 	}
 
 	public String getSeasons() {
-		if (seasons.isEmpty())
-			return "";
-		StringBuilder sb = new StringBuilder();
-		Integer seasonRangeStart = seasons.get(0);
-		int lastSeason = seasons.get(seasons.size() - 1);
-		for (int season = seasonRangeStart; season <= lastSeason; season++) {
-			if (!seasons.contains(season)) {
-				if (seasonRangeStart != null) {
-					appendSeasonRange(sb, seasonRangeStart, season - 1);
-					seasonRangeStart = null;
-				}
-			}
-			else if (seasonRangeStart == null)
-				seasonRangeStart = season;
-		}
-		if (seasonRangeStart != null)
-			appendSeasonRange(sb, seasonRangeStart, lastSeason);
-		return sb.toString();
-	}
-
-	private static void appendSeasonRange(StringBuilder sb, int seasonStart, int seasonEnd) {
-		if (sb.length() > 0)
-			sb.append(", ");
-		if (seasonStart == seasonEnd)
-			sb.append(seasonStart);
-		else {
-			sb.append(seasonStart);
-			sb.append("-");
-			sb.append(seasonEnd);
-		}
+		return seasons;
 	}
 
 	public int getParticipationPoints() {

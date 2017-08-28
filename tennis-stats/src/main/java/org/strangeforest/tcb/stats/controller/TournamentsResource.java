@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,9 @@ import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.collect.*;
 
-import static org.strangeforest.tcb.stats.util.OrderBy.*;
+import static java.util.Collections.*;
+import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
 
 @RestController
 public class TournamentsResource {
@@ -20,15 +23,16 @@ public class TournamentsResource {
 
 	private static final int MAX_TOURNAMENTS = 1000;
 
-	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("name", "name")
-		.put("level", "level")
-		.put("surface", "surface")
-		.put("eventCount", "event_count")
-		.put("participationPoints", "participation_points")
-		.put("participationPct", "participation_points::REAL / max_participation_points NULLS LAST")
+	private static final Comparator<Tournament> BY_NAME = nullsLast(comparing(Tournament::getName));
+	private static final Comparator<Tournament> BY_LEVEL = (t1, t2) -> compareLists(mapSortList(t1.getLevels(), TournamentLevel::decode), mapSortList(t2.getLevels(), TournamentLevel::decode));
+	private static Map<String, Comparator<Tournament>> ORDER_MAP = ImmutableMap.<String, Comparator<Tournament>>builder()
+		.put("name", BY_NAME)
+		.put("level", BY_LEVEL)
+		.put("surface", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)))
+		.put("eventCount", comparing(Tournament::getEventCount))
+		.put("participationPoints", comparing(Tournament::getParticipationPoints))
+		.put("participationPct", comparing(Tournament::getParticipationPct))
 	.build();
-	private static final OrderBy[] DEFAULT_ORDER = new OrderBy[] {asc("level"), asc("name")};
 
 	@GetMapping("/tournamentsTable")
 	public BootgridTable<Tournament> tournamentsTable(
@@ -40,8 +44,36 @@ public class TournamentsResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		TournamentEventFilter filter = new TournamentEventFilter(null, level, surface, null, null, searchPhrase);
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
+		Comparator<Tournament> comparator = BootgridUtil.getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
-		return tournamentService.getTournamentsTable(filter, orderBy, pageSize, current);
+		return tournamentService.getTournamentsTable(filter, comparator, pageSize, current);
+	}
+
+	private static <T, R> List<R> mapList(List<T> items, Function<? super T, ? extends R> mapper) {
+		return items.stream().map(mapper).collect(toList());
+	}
+
+	private static <T, R extends Comparable> List<R> mapSortList(List<T> items, Function<? super T, ? extends R> mapper) {
+		List<R> list = mapList(items, mapper);
+		sort(list);
+		return list;
+	}
+
+	private static <T extends Comparable<T>> int compareLists(List<T> list1, List<T> list2) {
+		int size1 = list1.size();
+		int size2 = list2.size();
+		int i = 0;
+		while (true) {
+			T item1 = i < size1 ? list1.get(i) : null;
+			T item2 = i < size2 ? list2.get(i) : null;
+			if (item1 == null && item2 == null)
+				return 0;
+			else if (item1 == null)
+				return 1;
+			else if (item2 == null)
+				return -1;
+			else
+				return item1.compareTo(item2);
+		}
 	}
 }
