@@ -100,7 +100,9 @@ class MatchLoader extends BaseCSVLoader {
 		params.l_set_games = matchScore ? shortArray(conn, matchScore.l_set_games) : null
 		params.w_set_tb_pt = matchScore ? shortArray(conn, matchScore.w_set_tb_pt) : null
 		params.l_set_tb_pt = matchScore ? shortArray(conn, matchScore.l_set_tb_pt) : null
-
+		if (matchScore?.w_sets >= 3)
+			params.best_of = 5
+		
 		params.minutes = smallint record.minutes
 
 		params.w_ace = smallint record.w_ace

@@ -46,6 +46,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "countryId", required = false) String countryId,
+		@RequestParam(name = "rankType", required = false) String rankType,
 		@RequestParam(name = "infamous", required = false) Boolean infamous
 	) {
 		if (playerId == null && name == null)
@@ -70,6 +71,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("outcome", outcome);
 		modelMap.addAttribute("score", score);
 		modelMap.addAttribute("countryId", countryId);
+		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("infamous", infamous);
 		return new ModelAndView("playerProfile", modelMap);
 	}
@@ -231,13 +233,15 @@ public class PlayerProfileController extends PageController {
 
 	@GetMapping("/playerRankings")
 	public ModelAndView playerRankings(
-		@RequestParam(name = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "rankType", required = false) String rankType
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		RankingHighlights rankingHighlights = rankingsService.getRankingHighlights(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", new int[] {playerId});
+		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("highlights", rankingHighlights);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("rankTypes", RankType.values());

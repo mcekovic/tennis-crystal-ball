@@ -25,7 +25,7 @@
 				formatters: {
 					"player": playerCountryFormatter,
 					"season": function(column, row) {
-						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&season=" + row.season + "' title='Show " + row.name + "&apos;s season'>" + row.season + "</a>";
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&season=" + row.season + "' title='Show " + row.name + "&apos;s " + row.season + " season'>" + row.season + "</a>";
 					},
 					"goatPoints": function(column, row) {
 						if (row.goatPoints > 0) {
@@ -41,18 +41,18 @@
 						else
 							return row.achievementsGoatPoints;
 					},
-					"grandSlamTitles": playerTournamentsFormatter("grandSlamTitles", "&level=G&result=W"),
-					"grandSlamFinals": playerTournamentsFormatter("grandSlamFinals", "&level=G&result=F"),
-					"grandSlamSemiFinals": playerTournamentsFormatter("grandSlamSemiFinals", "&level=G&result=SF"),
-					"tourFinalsTitles": playerTournamentsFormatter("tourFinalsTitles", "&level=F&result=W"),
-					"tourFinalsFinals": playerTournamentsFormatter("tourFinalsFinals", "&level=F&result=F"),
-					"mastersTitles": playerTournamentsFormatter("mastersTitles", "&level=M&result=W"),
-					"mastersFinals": playerTournamentsFormatter("mastersFinals", "&level=M&result=F"),
-					"olympicsTitles": playerTournamentsFormatter("olympicsTitles", "&level=O&result=W"),
-					"titles": playerTournamentsFormatter("titles", "&result=W"),
+					"grandSlamTitles": playerTournamentsFormatter("grandSlamTitles", "&level=G&result=W", "Grand Slam titles"),
+					"grandSlamFinals": playerTournamentsFormatter("grandSlamFinals", "&level=G&result=F", "Grand Slam finals"),
+					"grandSlamSemiFinals": playerTournamentsFormatter("grandSlamSemiFinals", "&level=G&result=SF", "Grand Slam semi-finals"),
+					"tourFinalsTitles": playerTournamentsFormatter("tourFinalsTitles", "&level=F&result=W", "Tour Finals titles"),
+					"tourFinalsFinals": playerTournamentsFormatter("tourFinalsFinals", "&level=F&result=F", "Tour Finals finals"),
+					"mastersTitles": playerTournamentsFormatter("mastersTitles", "&level=M&result=W", "Masters titles"),
+					"mastersFinals": playerTournamentsFormatter("mastersFinals", "&level=M&result=F", "Masters finals"),
+					"olympicsTitles": playerTournamentsFormatter("olympicsTitles", "&level=O&result=W", "Olympics titles"),
+					"titles": playerTournamentsFormatter("titles", "&result=W", "titles"),
 					"wonPct": wonLostFormatter,
 					"yearEndRank": function(column, row) {
-						return row.yearEndRank != null ? row.yearEndRank : "";
+						return row.yearEndRank != null ? ("<a href='/rankingsTable?season=" + row.season + "' title='Show " + row.season + " year end rankings'>" + row.yearEndRank + "</a>") : "";
 					}
 				},
 				labels: {
@@ -81,10 +81,10 @@
 			]);
 			$("[data-toggle='collapse']").click(collapseClick);
 		});
-		function playerTournamentsFormatter(attr, params) {
+		function playerTournamentsFormatter(attr, params, title) {
 			return function(column, row) {
 				var count = row[attr];
-				return count > 0 ? "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&season=" + row.season + params + "'>" + count + "</a>" : "<span class='text-muted'>0</span>";
+				return count > 0 ? "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&season=" + row.season + params + "' title='Show " + title + "'>" + count + "</a>" : "<span class='text-muted'>0</span>";
 			};
 		}
 	</script>

@@ -1,6 +1,7 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId" type="int[]"*/-->
+<!--/*@thymesVar id="rankType" type="java.lang.String"*/-->
 <!--/*@thymesVar id="highlights" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.RankType[]"*/-->
@@ -143,7 +144,7 @@
 		<div class="input-group">
 			<label for="rankType" class="input-group-addon">Rank type:</label>
 			<select id="rankType" class="form-control" onchange="onRankTypeChange()">
-				<option th:each="rankType : ${rankTypes}" th:value="${rankType}" th:class="${rankType.surface == null ? _ : 'bg-surface-' + rankType.surface.code}" value="RANK" th:text="${rankType.text}">ATP Ranking</option>
+				<option th:each="aRankType : ${rankTypes}" th:value="${aRankType}" th:class="${aRankType.surface == null ? _ : 'bg-surface-' + aRankType.surface.code}" value="RANK" th:text="${aRankType.text}" th:selected="${aRankType.name() == rankType}">ATP Ranking</option>
 			</select>
 		</div>
 	</div>

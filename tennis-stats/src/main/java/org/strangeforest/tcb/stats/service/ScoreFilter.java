@@ -30,6 +30,7 @@ public class ScoreFilter {
 
 	private final int wSets, lSets;
 	private final boolean after;
+	private final String misc;
 	private final boolean all;
 	private final boolean forStats;
 
@@ -38,106 +39,149 @@ public class ScoreFilter {
 	private static final String FINISHED_CRITERION = " AND outcome IS NULL";
 	private static final String MATCHES_WON_CRITERION = " AND winner_id = :playerId";
 	private static final String MATCHES_LOST_CRITERION = " AND loser_id = :playerId";
+	private static final String BEST_OF_3 = " AND best_of = 3";
 	private static final String BEST_OF_5 = " AND best_of = 5";
 	private static final String STATS_WON_CRITERION = " AND p_matches = 1";
 	private static final String STATS_LOST_CRITERION = " AND p_matches = 0";
 	private static final String SET_SCORE_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id AND s.set = %1$d AND s.w_games %2$s s.l_games)";
+	private static final String MATCHES_DECIDING_SET_CRITERION = " AND w_sets + l_sets = best_of";
+	private static final String STATS_DECIDING_SET_CRITERION = " AND p_sets + o_sets = best_of";
+	private static final String TIE_BREAK_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id AND (s.w_tb_pt > 0 OR s.w_tb_pt > 0))";
+	private static final String SET_TIE_BREAK_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id AND s.set = %1$d AND (s.w_tb_pt > 0 OR s.w_tb_pt > 0))";
 
 	private ScoreFilter(String score, boolean forStats) {
 		this.forStats = forStats;
 		if (!isNullOrEmpty(score)) {
-			after = score.endsWith("+");
-			int pos = score.indexOf(':');
-			if (pos >= 0) {
-				wSets = pos > 0 ? Integer.parseInt(score.substring(0, pos)) : 0;
-				lSets = pos < score.length() - 1 ? Integer.parseInt(score.substring(pos + 1, score.length() - (after ? 1 : 0))) : 0;
+			if (score.startsWith("*")) {
+				misc = score.substring(1);
+				wSets = lSets = 0;
+				after = false;
 				all = false;
 			}
-			else
-				throw new IllegalArgumentException("Invalid score filter: " + score);
+			else {
+				after = score.endsWith("+");
+				int pos = score.indexOf(':');
+				if (pos >= 0) {
+					wSets = pos > 0 ? Integer.parseInt(score.substring(0, pos)) : 0;
+					lSets = pos < score.length() - 1 ? Integer.parseInt(score.substring(pos + 1, score.length() - (after ? 1 : 0))) : 0;
+					misc = null;
+					all = false;
+				}
+				else
+					throw new IllegalArgumentException("Invalid score filter: " + score);
+			}
 		}
 		else {
-			wSets = 0;
-			lSets = 0;
+			wSets = lSets = 0;
 			after = false;
+			misc = null;
 			all = true;
 		}
 	}
 
 	void appendCriteria(StringBuilder criteria) {
-		if (!all) {
-			if (after) {
-				if (wSets == 1 && lSets == 0) {
-					criteria.append(or(
-						won() + setScore(1, ">"),
-						lost() + setScore(1, "<")
-					));
-				}
-				else if (wSets == 0 && lSets == 1) {
-					criteria.append(or(
-						won() + setScore(1, "<"),
-						lost() + setScore(1, ">")
-					));
-				}
-				else if (wSets == 1 && lSets == 1) {
-					criteria.append(or(
-						setScore(1, ">") + setScore(2, "<"),
-						setScore(1, "<") + setScore(2, ">")
-					));
-				}
-				else if (wSets == 2 && lSets == 0) {
-					criteria.append(BEST_OF_5);
-					criteria.append(or(
-						won() + setScore(1, ">") + setScore(2, ">"),
-						lost() +	setScore(1, "<") + setScore(2, "<")
-					));
-				}
-				else if (wSets == 0 && lSets == 2) {
-					criteria.append(BEST_OF_5);
-					criteria.append(or(
-						won() + setScore(1, "<") + setScore(2, "<"),
-						lost() +	setScore(1, ">") + setScore(2, ">")
-					));
-				}
-				else if (wSets == 2 && lSets == 1) {
-					criteria.append(BEST_OF_5);
-					criteria.append(or(
-						won() + setScore(1, ">") + setScore(2, ">") + setScore(3, "<"),
-						won() + setScore(1, ">") + setScore(2, "<") + setScore(3, ">"),
-						won() + setScore(1, "<") + setScore(2, ">") + setScore(3, ">"),
-						lost() +	setScore(1, "<") + setScore(2, "<") + setScore(3, ">"),
-						lost() +	setScore(1, "<") + setScore(2, ">") + setScore(3, "<"),
-						lost() +	setScore(1, ">") + setScore(2, "<") + setScore(3, "<")
-					));
-				}
-				else if (wSets == 1 && lSets == 2) {
-					criteria.append(BEST_OF_5);
-					criteria.append(or(
-						won() + setScore(1, ">") + setScore(2, "<") + setScore(3, "<"),
-						won() + setScore(1, "<") + setScore(2, ">") + setScore(3, "<"),
-						won() + setScore(1, "<") + setScore(2, "<") + setScore(3, ">"),
-						lost() +	setScore(1, "<") + setScore(2, ">") + setScore(3, ">"),
-						lost() +	setScore(1, ">") + setScore(2, "<") + setScore(3, ">"),
-						lost() +	setScore(1, ">") + setScore(2, ">") + setScore(3, "<")
-					));
-				}
-				else if (wSets == 2 && lSets == 2) {
-					criteria.append(BEST_OF_5);
-					criteria.append(or(
-						setScore(1, ">") + setScore(2, ">") + setScore(3, "<") + setScore(4, "<"),
-						setScore(1, ">") + setScore(2, "<") + setScore(3, ">") + setScore(4, "<"),
-						setScore(1, ">") + setScore(2, "<") + setScore(3, "<") + setScore(4, ">"),
-						setScore(1, "<") + setScore(2, ">") + setScore(3, ">") + setScore(4, "<"),
-						setScore(1, "<") + setScore(2, ">") + setScore(3, "<") + setScore(4, ">"),
-						setScore(1, "<") + setScore(2, "<") + setScore(3, ">") + setScore(4, ">")
-					));
-				}
-			}
-			else {
-				criteria.append(forStats ? STATS_SCORE_CRITERION : MATCHES_SCORE_CRITERION);
-				criteria.append(FINISHED_CRITERION);
-			}
+		if (all)
+			return;
+		if (after) {
+			if (wSets == 1 && lSets == 0)
+				criteria.append(after_1_0());
+			else if (wSets == 0 && lSets == 1)
+				criteria.append(after_0_1());
+			else if (wSets == 1 && lSets == 1)
+				criteria.append(after_1_1());
+			else if (wSets == 2 && lSets == 0)
+				criteria.append(after_2_0());
+			else if (wSets == 0 && lSets == 2)
+				criteria.append(after_0_2());
+			else if (wSets == 2 && lSets == 1)
+				criteria.append(after_2_1());
+			else if (wSets == 1 && lSets == 2)
+				criteria.append(after_1_2());
+			else if (wSets == 2 && lSets == 2)
+				criteria.append(after_2_2());
 		}
+		else if (isNullOrEmpty(misc)) {
+			criteria.append(forStats ? STATS_SCORE_CRITERION : MATCHES_SCORE_CRITERION);
+			criteria.append(FINISHED_CRITERION);
+		}
+		else if (misc.equals("DS"))
+			criteria.append(forStats ? STATS_DECIDING_SET_CRITERION : MATCHES_DECIDING_SET_CRITERION);
+		else if (misc.equals("TB"))
+			criteria.append(TIE_BREAK_CRITERION);
+		else if (misc.equals("DSTB")) {
+			criteria.append(or(
+				BEST_OF_3 + format(SET_TIE_BREAK_CRITERION, 3),
+				BEST_OF_5 + format(SET_TIE_BREAK_CRITERION, 5)
+			));
+		}
+	}
+
+	private String after_1_0() {
+		return or(
+			won() + setScore(1, ">"),
+			lost() + setScore(1, "<")
+		);
+	}
+
+	private String after_0_1() {
+		return or(
+			won() + setScore(1, "<"),
+			lost() + setScore(1, ">")
+		);
+	}
+
+	private String after_1_1() {
+		return or(
+			setScore(1, ">") + setScore(2, "<"),
+			setScore(1, "<") + setScore(2, ">")
+		);
+	}
+
+	private String after_0_2() {
+		return BEST_OF_5 + or(
+			won() + setScore(1, "<") + setScore(2, "<"),
+			lost() +	setScore(1, ">") + setScore(2, ">")
+		);
+	}
+
+	private String after_2_0() {
+		return BEST_OF_5 + or(
+			won() + setScore(1, ">") + setScore(2, ">"),
+			lost() +	setScore(1, "<") + setScore(2, "<")
+		);
+	}
+
+	private String after_2_1() {
+		return BEST_OF_5 + or(
+			won() + setScore(1, ">") + setScore(2, ">") + setScore(3, "<"),
+			won() + setScore(1, ">") + setScore(2, "<") + setScore(3, ">"),
+			won() + setScore(1, "<") + setScore(2, ">") + setScore(3, ">"),
+			lost() +	setScore(1, "<") + setScore(2, "<") + setScore(3, ">"),
+			lost() +	setScore(1, "<") + setScore(2, ">") + setScore(3, "<"),
+			lost() +	setScore(1, ">") + setScore(2, "<") + setScore(3, "<")
+		);
+	}
+
+	private String after_1_2() {
+		return BEST_OF_5 + or(
+			won() + setScore(1, ">") + setScore(2, "<") + setScore(3, "<"),
+			won() + setScore(1, "<") + setScore(2, ">") + setScore(3, "<"),
+			won() + setScore(1, "<") + setScore(2, "<") + setScore(3, ">"),
+			lost() +	setScore(1, "<") + setScore(2, ">") + setScore(3, ">"),
+			lost() +	setScore(1, ">") + setScore(2, "<") + setScore(3, ">"),
+			lost() +	setScore(1, ">") + setScore(2, ">") + setScore(3, "<")
+		);
+	}
+
+	private String after_2_2() {
+		return BEST_OF_5 + or(
+			setScore(1, ">") + setScore(2, ">") + setScore(3, "<") + setScore(4, "<"),
+			setScore(1, ">") + setScore(2, "<") + setScore(3, ">") + setScore(4, "<"),
+			setScore(1, ">") + setScore(2, "<") + setScore(3, "<") + setScore(4, ">"),
+			setScore(1, "<") + setScore(2, ">") + setScore(3, ">") + setScore(4, "<"),
+			setScore(1, "<") + setScore(2, ">") + setScore(3, "<") + setScore(4, ">"),
+			setScore(1, "<") + setScore(2, "<") + setScore(3, ">") + setScore(4, ">")
+		);
 	}
 
 	private String won() {
@@ -170,19 +214,23 @@ public class ScoreFilter {
 		if (this == o) return true;
 		if (!(o instanceof ScoreFilter)) return false;
 		ScoreFilter filter = (ScoreFilter)o;
-		return wSets == filter.wSets && lSets == filter.lSets && after == filter.after && all == filter.all;
+		return wSets == filter.wSets && lSets == filter.lSets && after == filter.after && stringsEqual(misc, filter.misc) && all == filter.all;
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(wSets, lSets, after, all);
+		return Objects.hash(wSets, lSets, after, emptyToNull(misc), all);
 	}
 
 	@Override public String toString() {
-		ToStringHelper helper = MoreObjects.toStringHelper(this);
+		ToStringHelper helper = MoreObjects.toStringHelper(this).omitNullValues();
 		if (!all) {
-			helper.add("after", after ? true : null);
-			helper.add("wSets", wSets);
-			helper.add("lSets", lSets);
+			if (isNullOrEmpty(misc)) {
+				helper.add("after", after ? true : null);
+				helper.add("wSets", wSets);
+				helper.add("lSets", lSets);
+			}
+			else
+				helper.add("misc", misc);
 		}
 		return helper.toString();
 	}

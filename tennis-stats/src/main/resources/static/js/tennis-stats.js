@@ -215,7 +215,7 @@ function formatCountry(row) {
 
 // Player Formatter
 function playerFormatter(column, row) {
-	return "<a href='/playerProfile?playerId=" + row.playerId + "' title='Show profile'>" + row.name + "</a>" +
+	return "<a href='/playerProfile?playerId=" + row.playerId + "' title='Show " + row.name + "&apos;s profile'>" + row.name + "</a>" +
 		(row.active ? " <img src='/images/active.png' title='Active' width='12' height='12'/>" : "");
 }
 
@@ -286,7 +286,7 @@ function decorateSurface(selector) {
 
 // Won/Lost Formatter
 function wonLostFormatter(column, row) {
-	return "<span title='" + row.wonLost + "'>" + row.wonPct + "</span>";
+	return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=performance" + (row.season ? "&season=" + row.season : "") + "' title='" + row.wonLost + "'>" + row.wonPct + "</a>";
 }
 
 // Tournament Formatter

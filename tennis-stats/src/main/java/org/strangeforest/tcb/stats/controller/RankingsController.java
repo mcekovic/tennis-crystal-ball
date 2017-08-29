@@ -22,7 +22,7 @@ public class RankingsController extends PageController {
 
 	@GetMapping("/rankingsTable")
 	public ModelAndView rankingsTable(
-		@RequestParam(name = "rankType", required = false) RankType rankType,
+		@RequestParam(name = "rankType", defaultValue = "POINTS") RankType rankType,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date
 	) {

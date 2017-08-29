@@ -63,15 +63,18 @@
 						else
 							return row.achievementsGoatPoints;
 					},
-					"grandSlams": playerTitlesFormatter("grandSlams", "&level=G"),
-					"tourFinals": playerTitlesFormatter("tourFinals", "&level=F"),
-					"masters": playerTitlesFormatter("masters", "&level=M"),
-					"olympics": playerTitlesFormatter("olympics", "&level=O"),
-					"bigTitles": playerTitlesFormatter("bigTitles", "&level=GFMO"),
-					"titles": playerTitlesFormatter("titles", ""),
+					"grandSlams": playerTitlesFormatter("grandSlams", "&level=G", " Grand Slam"),
+					"tourFinals": playerTitlesFormatter("tourFinals", "&level=F", " Tour Finals"),
+					"masters": playerTitlesFormatter("masters", "&level=M", " Masters"),
+					"olympics": playerTitlesFormatter("olympics", "&level=O", " Olympics"),
+					"bigTitles": playerTitlesFormatter("bigTitles", "&level=GFMO", " Big"),
+					"titles": playerTitlesFormatter("titles", "", ""),
+					"weeksAtNo1":  function(column, row) {
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=ranking' title='Show ATP ranking'>" + row.weeksAtNo1 + "</a>";
+					},
 					"wonPct": wonLostFormatter,
 					"bestEloRating": function(column, row) {
-						return "<span title='" + formatDate(row.bestEloRatingDate) + "'>" + row.bestEloRating + "</span>";
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=ranking&rankType=ELO_RATING' title='" + formatDate(row.bestEloRatingDate) + "'>" + row.bestEloRating + "</a>";
 					}
 				},
 				labels: {
@@ -105,10 +108,10 @@
 			$("[data-toggle='tooltip']").tooltip();
 			$("#goatLegendButton").click();
 		});
-		function playerTitlesFormatter(attr, params) {
+		function playerTitlesFormatter(attr, params, title) {
 			return function(column, row) {
 				var count = row[attr];
-				return count > 0 ? "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&result=W" + params + "'>" + count + "</a>" : "<span class='text-muted'>0</span>";
+				return count > 0 ? "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&result=W" + params + "' title='Show" + title + " titles'>" + count + "</a>" : "<span class='text-muted'>0</span>";
 			};
 		}
 		function reloadGOATListTable() {
@@ -141,7 +144,7 @@
 			<th data-column-id="olympics" data-formatter="olympics" data-width="50" data-align="right" data-header-align="right">O</th>
 			<th data-column-id="bigTitles" data-formatter="bigTitles" data-width="50" data-align="right" data-header-align="right">BT</th>
 			<th data-column-id="titles" data-formatter="titles" data-width="50" data-align="right" data-header-align="right">T</th>
-			<th data-column-id="weeksAtNo1" data-type="numeric" data-width="65" data-align="right" data-header-align="right">W@1</th>
+			<th data-column-id="weeksAtNo1" data-formatter="weeksAtNo1" data-width="65" data-align="right" data-header-align="right">W@1</th>
 			<th data-column-id="wonPct" data-formatter="wonPct" data-width="50" data-align="right" data-header-align="right">W%</th>
 			<th data-column-id="bestEloRating" data-formatter="bestEloRating" data-width="50" data-align="right" data-header-align="right">Elo</th>
 		</tr>

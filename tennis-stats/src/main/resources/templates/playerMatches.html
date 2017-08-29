@@ -267,6 +267,11 @@
 				<option value="1:2+" th:selected="${score == '1:2+'}">After 1:2</option>
 				<option value="2:2+" th:selected="${score == '2:2+'}">After 2:2</option>
 			</optgroup>
+			<optgroup label="Misc">
+				<option value="*DS" th:selected="${score == '*DS'}">Deciding Set</option>
+				<option value="*TB" th:selected="${score == '*TB'}">Tie Break</option>
+				<option value="*DSTB" th:selected="${score == '*DSTB'}">Dec. Set TB</option>
+			</optgroup>
 		</select>
 	</div>
 	<div class="col-md-6">
