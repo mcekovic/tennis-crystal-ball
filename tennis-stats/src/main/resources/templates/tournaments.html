@@ -41,7 +41,8 @@
 						var s = "";
 						for (var i = 0, count = Math.min(2, levels.length); i < count; i++) {
 							if (s != "") s += " ";
-							s += "<div class='label label-" + levels[i] + "'>" + levelName(levels[i]) + "</div>";
+							var name = levelName(levels[i]);
+							s += "<a href='/tournamentEvents?level=" + levels[i] + "' class='label label-" + levels[i] + "' title='Show " + name + " tournament events'>" + name + "</a>";
 						}
 						return s;
 					},
@@ -50,9 +51,13 @@
 						var s = "";
 						for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
 							if (s != "") s += " ";
-							s += "<div class='label label-" + surfaceClassSuffix(surfaces[i]) + "'>" + surfaceName(surfaces[i]) + "</div>";
+							var name = surfaceName(surfaces[i]);
+							s += "<a href='/tournamentEvents?tournamentId=" + row.id + "&surface=" + surfaces[i] + "' class='label label-" + surfaceClassSuffix(surfaces[i]) + "' title='Show " + name + " tournament events'>" + name + "</a>";
 						}
 						return s;
+					},
+					"eventCount": function(column, row) {
+					  	return "<a href='/tournamentEvents?tournamentId=" + row.id + "' title='Show tournament events'>" + row.eventCount + "</a>";
 					},
 					"participationPct": participationFormatter,
 					"topPlayer": function(column, row) {
@@ -121,7 +126,7 @@
 			<th data-column-id="name" data-formatter="tournament" data-width="200">Name</th>
 			<th data-column-id="levels" data-formatter="levels" data-width="140">Level</th>
 			<th data-column-id="surfaces" data-formatter="surfaces" data-width="170">Surface</th>
-			<th data-column-id="eventCount" data-type="numeric" data-width="75">Events</th>
+			<th data-column-id="eventCount" data-formatter="eventCount" data-width="75">Events</th>
 			<th data-column-id="seasons" data-width="180" data-sortable="false">Seasons</th>
 			<th data-column-id="participationPoints" data-type="numeric" data-width="70">P. Pts.</th>
 			<th data-column-id="participationPct" data-formatter="participationPct" data-width="70">P. Pct.</th>
