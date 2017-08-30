@@ -376,6 +376,29 @@
 				</div>
 			</th>
 		</tr>
+		<tr th:with="wl1=${perf1.decidingSetTieBreaks}, wl2=${perf2.decidingSetTieBreaks}, wlc=${wl2.compareTo(wl1)}">
+			<th>
+				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='*DSTB', outcome=finished)}" title="Show deciding set tie break matches">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+			<td class="text-center">Deciding Set Tie Breaks</td>
+			<th>
+				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='*DSTB', outcome=finished)}" title="Show deciding set tie break matches">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+		</tr>
 		<th:block th:unless="${perfOppositions.empty}">
 		<tr>
 			<td colspan="3">&nbsp;</td>

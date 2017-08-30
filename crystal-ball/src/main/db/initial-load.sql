@@ -404,7 +404,8 @@ VALUES
 ('vsTop10',              'Vs Top 10',                20, 15),
 ('afterWinningFirstSet', 'After Winning First Set', 100, 16),
 ('afterLosingFirstSet',  'After Losing First Set',  100, 17),
-('tieBreaks',            'Tie Breaks',              100, 18);
+('tieBreaks',            'Tie Breaks',              100, 18),
+('decidingSetTBs',       'Deciding Set Tie Breaks',  10, 19);
 
 DELETE FROM performance_goat_points;
 INSERT INTO performance_goat_points

@@ -40,7 +40,8 @@ public final class PerformanceCategory {
 		addCategory(PRESSURE_SITUATIONS, "vsTop10", "vs_top10", "count(DISTINCT vs_top10_match_id%1$s)", "Vs Top 10", 20, "matches", "topn-category");
 		addCategory(PRESSURE_SITUATIONS, "afterWinningFirstSet", "after_winning_first_set", "count(DISTINCT after_winning_first_set_match_id%1$s)", "After Winning 1st Set", 100, "matches");
 		addCategory(PRESSURE_SITUATIONS, "afterLosingFirstSet", "after_losing_first_set", "count(DISTINCT after_losing_first_set_match_id%1$s)", "After Losing 1st Set", 100, "matches");
-		addCategory(PRESSURE_SITUATIONS, "tieBreaks", "tie_breaks", "count(w_tie_break_set%1$s) + count(l_tie_break_set%1$s)", "Tie breaks", 100, "tie breaks");
+		addCategory(PRESSURE_SITUATIONS, "tieBreaks", "tie_breaks", "count(w_tie_break_set%1$s) + count(l_tie_break_set%1$s)", "Tie Breaks", 100, "tie breaks");
+		addCategory(PRESSURE_SITUATIONS, "decidingSetTBs", "deciding_set_tbs", "count(DISTINCT deciding_set_tb_match_id%1$s)", "Deciding Set Tie Breaks", 10, "deciding set tie breaks");
 	}
 
 	private static void addCategory(String categoryClass, String name, String column, String expression, String title, int minEntries, String entriesName) {

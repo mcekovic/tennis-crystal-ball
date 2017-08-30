@@ -257,6 +257,19 @@
 							</div>
 						</th>
 					</tr>
+					<tr>
+						<td width="40%">Deciding Set Tie Breaks</td>
+						<th th:with="wl=${perf.decidingSetTieBreaks}">
+							<div th:unless="${wl.empty}" class="progress progress-perf">
+								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, score='*DSTB', outcome=finished)}" title="Show deciding set tie break matches">
+										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
+										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									</a>
+								</div>
+							</div>
+						</th>
+					</tr>
 				</table>
 			</div>
 		</div>

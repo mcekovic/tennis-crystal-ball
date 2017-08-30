@@ -23,6 +23,7 @@ public class PlayerPerformance {
 	private WonLost afterWinningFirstSet;
 	private WonLost afterLosingFirstSet;
 	private WonLost tieBreaks;
+	private WonLost decidingSetTieBreaks;
 
 	public PlayerPerformance() {}
 
@@ -46,6 +47,7 @@ public class PlayerPerformance {
 		afterWinningFirstSet = perf.afterWinningFirstSet;
 		afterLosingFirstSet = perf.afterLosingFirstSet;
 		tieBreaks = perf.tieBreaks;
+		decidingSetTieBreaks = perf.decidingSetTieBreaks;
 	}
 
 
@@ -198,6 +200,14 @@ public class PlayerPerformance {
 		this.tieBreaks = tieBreaks;
 	}
 
+	public WonLost getDecidingSetTieBreaks() {
+		return decidingSetTieBreaks;
+	}
+
+	public void setDecidingSetTieBreaks(WonLost decidingSetTieBreaks) {
+		this.decidingSetTieBreaks = decidingSetTieBreaks;
+	}
+
 
 	// Misc
 
@@ -227,6 +237,7 @@ public class PlayerPerformance {
 		empty.afterWinningFirstSet = WonLost.EMPTY;
 		empty.afterLosingFirstSet = WonLost.EMPTY;
 		empty.tieBreaks = WonLost.EMPTY;
+		empty.decidingSetTieBreaks = WonLost.EMPTY;
 		return empty;
 	}
 }

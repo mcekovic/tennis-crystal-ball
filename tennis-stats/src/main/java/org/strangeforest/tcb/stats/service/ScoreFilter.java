@@ -49,9 +49,9 @@ public class ScoreFilter {
 	private static final String MATCHES_DECIDING_SET_CRITERION = " AND w_sets + l_sets = best_of";
 	private static final String STATS_DECIDING_SET_CRITERION = " AND p_sets + o_sets = best_of";
 	private static final String TIE_BREAK_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id%1$s)";
-	private static final String TIE_BREAK_PLAYED_CRITERION = " AND (s.w_tb_pt > 0 OR s.l_tb_pt > 0)";
-	private static final String TIE_BREAK_WON_CRITERION = " AND s.w_tb_pt > s.l_tb_pt";
-	private static final String TIE_BREAK_LOST_CRITERION = " AND s.w_tb_pt < s.l_tb_pt";
+	private static final String TIE_BREAK_PLAYED_CRITERION = " AND (s.w_tb_pt > 0 OR s.l_tb_pt > 0 OR (s.w_games = 7 AND s.l_games = 6) OR (s.w_games = 6 AND s.l_games = 7))";
+	private static final String TIE_BREAK_WON_CRITERION = " AND (s.w_tb_pt > s.l_tb_pt OR (s.w_games = 7 AND s.l_games = 6))";
+	private static final String TIE_BREAK_LOST_CRITERION = " AND (s.w_tb_pt < s.l_tb_pt OR (s.w_games = 6 AND s.l_games = 7))";
 	private static final String SET_TIE_BREAK_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id AND s.set = %1$d" + TIE_BREAK_PLAYED_CRITERION + ")";
 
 	private ScoreFilter(String score, boolean forStats) {

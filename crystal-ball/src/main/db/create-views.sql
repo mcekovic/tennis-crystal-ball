@@ -332,7 +332,8 @@ SELECT m.season, m.date, m.level, m.surface, m.round, m.tournament_id, m.winner_
 	CASE WHEN s.set = 1 AND s.w_games > s.l_games THEN match_id ELSE NULL END after_winning_first_set_match_id_won, NULL after_winning_first_set_match_id_lost,
 	CASE WHEN s.set = 1 AND s.w_games < s.l_games THEN match_id ELSE NULL END after_losing_first_set_match_id_won, NULL after_losing_first_set_match_id_lost,
 	CASE WHEN s.w_games = s.l_games + 1 AND s.l_games >= 6 THEN s.set ELSE NULL END w_tie_break_set_won, NULL l_tie_break_set_won,
-	CASE WHEN s.l_games = s.w_games + 1 AND s.w_games >= 6 THEN s.set ELSE NULL END w_tie_break_set_lost, NULL l_tie_break_set_lost
+	CASE WHEN s.l_games = s.w_games + 1 AND s.w_games >= 6 THEN s.set ELSE NULL END w_tie_break_set_lost, NULL l_tie_break_set_lost,
+	CASE WHEN m.w_sets + m.l_sets = m.best_of AND m.outcome IS NULL AND s.set = m.w_sets + m.l_sets AND s.w_games = s.l_games + 1 AND s.l_games >= 6 THEN match_id ELSE NULL END deciding_set_tb_match_id_won, NULL deciding_set_tb_match_id_lost
 FROM match_for_stats_v m
 LEFT JOIN set_score s USING (match_id)
 UNION ALL
@@ -359,7 +360,8 @@ SELECT m.season, m.date, m.level, m.surface, m.round, m.tournament_id, m.loser_i
 	NULL, CASE WHEN s.set = 1 AND s.w_games < s.l_games THEN match_id ELSE NULL END,
 	NULL, CASE WHEN s.set = 1 AND s.w_games > s.l_games THEN match_id ELSE NULL END,
 	NULL, CASE WHEN s.l_games = s.w_games + 1 AND s.w_games >= 6 THEN s.set ELSE NULL END,
-	NULL, CASE WHEN s.w_games = s.l_games + 1 AND s.l_games >= 6 THEN s.set ELSE NULL END
+	NULL, CASE WHEN s.w_games = s.l_games + 1 AND s.l_games >= 6 THEN s.set ELSE NULL END,
+	NULL, CASE WHEN m.w_sets + m.l_sets = m.best_of AND m.outcome IS NULL AND s.set = m.w_sets + m.l_sets AND s.w_games = s.l_games + 1 AND s.l_games >= 6 THEN match_id ELSE NULL END
 FROM match_for_stats_v m
 LEFT JOIN set_score s USING (match_id);
 
@@ -388,7 +390,8 @@ SELECT player_id, season,
 	count(DISTINCT vs_top10_match_id_won) vs_top10_won, count(DISTINCT vs_top10_match_id_lost) vs_top10_lost,
 	count(DISTINCT after_winning_first_set_match_id_won) after_winning_first_set_won, count(DISTINCT after_winning_first_set_match_id_lost) after_winning_first_set_lost,
 	count(DISTINCT after_losing_first_set_match_id_won) after_losing_first_set_won, count(DISTINCT after_losing_first_set_match_id_lost) after_losing_first_set_lost,
-	count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost
+	count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost,
+	count(DISTINCT deciding_set_tb_match_id_won) deciding_set_tbs_won, count(DISTINCT deciding_set_tb_match_id_lost) deciding_set_tbs_lost
 FROM player_match_performance_v
 GROUP BY player_id, season;
 
@@ -415,7 +418,8 @@ SELECT player_id, tournament_id,
 	count(DISTINCT vs_top10_match_id_won) vs_top10_won, count(DISTINCT vs_top10_match_id_lost) vs_top10_lost,
 	count(DISTINCT after_winning_first_set_match_id_won) after_winning_first_set_won, count(DISTINCT after_winning_first_set_match_id_lost) after_winning_first_set_lost,
 	count(DISTINCT after_losing_first_set_match_id_won) after_losing_first_set_won, count(DISTINCT after_losing_first_set_match_id_lost) after_losing_first_set_lost,
-	count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost
+	count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost,
+	count(DISTINCT deciding_set_tb_match_id_won) deciding_set_tbs_won, count(DISTINCT deciding_set_tb_match_id_lost) deciding_set_tbs_lost
 FROM player_match_performance_v
 GROUP BY player_id, tournament_id;
 
@@ -449,7 +453,8 @@ SELECT player_id,
 	sum(vs_top10_won) vs_top10_won, sum(vs_top10_lost) vs_top10_lost,
 	sum(after_winning_first_set_won) after_winning_first_set_won, sum(after_winning_first_set_lost) after_winning_first_set_lost,
 	sum(after_losing_first_set_won) after_losing_first_set_won, sum(after_losing_first_set_lost) after_losing_first_set_lost,
-	sum(tie_breaks_won) tie_breaks_won, sum(tie_breaks_lost) tie_breaks_lost
+	sum(tie_breaks_won) tie_breaks_won, sum(tie_breaks_lost) tie_breaks_lost,
+	sum(deciding_set_tbs_won) deciding_set_tbs_won, sum(deciding_set_tbs_lost) deciding_set_tbs_lost
 FROM player_season_performance
 GROUP BY player_id;
 
@@ -1234,6 +1239,13 @@ WITH matches_performers AS (
 ), tie_breaks_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM tie_breaks_performers
+), deciding_set_tbs_performers AS (
+	SELECT player_id, deciding_set_tbs_won::REAL / (deciding_set_tbs_won + deciding_set_tbs_lost) AS won_lost_pct
+	FROM player_performance
+	WHERE deciding_set_tbs_won + deciding_set_tbs_lost >= performance_min_entries('decidingSetTBs')
+), deciding_set_tbs_performers_ranked AS (
+	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+	FROM deciding_set_tbs_performers
 ), goat_points AS (
 	SELECT p.player_id, g.goat_points
 	FROM matches_performers_ranked p
@@ -1306,6 +1318,10 @@ WITH matches_performers AS (
 	SELECT p.player_id, g.goat_points
 	FROM tie_breaks_performers_ranked p
 	INNER JOIN performance_goat_points g ON g.category_id = 'tieBreaks' AND g.rank = p.rank
+	UNION ALL
+	SELECT p.player_id, g.goat_points
+	FROM deciding_set_tbs_performers_ranked p
+	INNER JOIN performance_goat_points g ON g.category_id = 'decidingSetTBs' AND g.rank = p.rank
 )
 SELECT player_id, sum(goat_points) goat_points
 FROM goat_points

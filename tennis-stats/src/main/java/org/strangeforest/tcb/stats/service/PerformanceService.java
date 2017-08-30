@@ -20,7 +20,7 @@ public class PerformanceService {
 		"matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, tour_finals_matches_won, tour_finals_matches_lost, masters_matches_won, masters_matches_lost, olympics_matches_won, olympics_matches_lost,\n" +
 		"hard_matches_won, hard_matches_lost, clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, carpet_matches_won, carpet_matches_lost,\n" +
 		"deciding_sets_won, deciding_sets_lost, fifth_sets_won, fifth_sets_lost, finals_won, finals_lost, vs_no1_won, vs_no1_lost, vs_top5_won, vs_top5_lost, vs_top10_won, vs_top10_lost,\n" +
-		"after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost, tie_breaks_won, tie_breaks_lost\n";
+		"after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost, tie_breaks_won, tie_breaks_lost, deciding_set_tbs_won, deciding_set_tbs_lost\n";
 
 	private static final String PLAYER_PERFORMANCE_SUMMED_COLUMNS = //language=SQL
 		"count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,\n" +
@@ -40,7 +40,8 @@ public class PerformanceService {
 		"count(DISTINCT vs_top10_match_id_won) vs_top10_won, count(DISTINCT vs_top10_match_id_lost) vs_top10_lost,\n" +
 		"count(DISTINCT after_winning_first_set_match_id_won) after_winning_first_set_won, count(DISTINCT after_winning_first_set_match_id_lost) after_winning_first_set_lost,\n" +
 		"count(DISTINCT after_losing_first_set_match_id_won) after_losing_first_set_won, count(DISTINCT after_losing_first_set_match_id_lost) after_losing_first_set_lost,\n" +
-		"count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost\n";
+		"count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost,\n" +
+		"count(DISTINCT deciding_set_tb_match_id_won) deciding_set_tbs_won, count(DISTINCT deciding_set_tb_match_id_lost) deciding_set_tbs_lost\n";
 
 	private static final String PLAYER_PERFORMANCE_QUERY = //language=SQL
 		"SELECT %1$s" +
@@ -164,6 +165,7 @@ public class PerformanceService {
 		perf.setAfterWinningFirstSet(mapWonLost(rs, "after_winning_first_set"));
 		perf.setAfterLosingFirstSet(mapWonLost(rs, "after_losing_first_set"));
 		perf.setTieBreaks(mapWonLost(rs, "tie_breaks"));
+		perf.setDecidingSetTieBreaks(mapWonLost(rs, "deciding_set_tbs"));
 		return perf;
 	}
 
