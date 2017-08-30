@@ -1606,7 +1606,8 @@ SELECT player_id, season, sum(goat_points) goat_points, sum(tournament_goat_poin
 	sum(raw_goat_points) raw_goat_points, sum(raw_ranking_goat_points) raw_ranking_goat_points, sum(raw_achievements_goat_points) raw_achievements_goat_points,
 	sum(year_end_rank_goat_points) year_end_rank_goat_points, sum(weeks_at_no1_goat_points) weeks_at_no1_goat_points, sum(weeks_at_elo_topn_goat_points) weeks_at_elo_topn_goat_points, sum(grand_slam_goat_points) grand_slam_goat_points, sum(big_wins_goat_points) big_wins_goat_points
 FROM goat_points
-GROUP BY player_id, season;
+GROUP BY player_id, season
+HAVING sum(goat_points) > 0;
 
 CREATE MATERIALIZED VIEW player_season_goat_points AS SELECT * FROM player_season_goat_points_v;
 

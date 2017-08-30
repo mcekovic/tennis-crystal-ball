@@ -463,7 +463,10 @@ VALUES
 ('afterLosingFirstSet', 3, 1),
 ('tieBreaks', 1, 4),
 ('tieBreaks', 2, 2),
-('tieBreaks', 3, 1);
+('tieBreaks', 3, 1),
+('decidingSetTBs', 1, 4),
+('decidingSetTBs', 2, 2),
+('decidingSetTBs', 3, 1);
 
 DELETE FROM statistics_category;
 INSERT INTO statistics_category
