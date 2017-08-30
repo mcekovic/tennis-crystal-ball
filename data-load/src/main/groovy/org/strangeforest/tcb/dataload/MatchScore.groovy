@@ -33,6 +33,11 @@ class MatchScore {
 			else if (w_sets == (short)3)
 				5
 		}
+		else {
+			def sets = w_sets + l_sets
+			if (sets > 3 || (sets == 3 && setScores.size() > 3))
+				5
+		}
 		null
 	}
 

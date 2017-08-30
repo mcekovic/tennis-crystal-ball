@@ -69,6 +69,8 @@ class MatchScoreParser {
 				}
 			}
 		}
+		if (!outcome && setScores.size() > w_sets + l_sets)
+			outcome = 'RET'
 		new MatchScore(outcome: outcome, w_sets: w_sets, l_sets: l_sets, w_games: w_games, l_games: l_games, setScores: setScores)
 	}
 
@@ -80,6 +82,6 @@ class MatchScoreParser {
 	}
 
 	private static boolean isWin(int w_games, int l_games) {
-		(w_games >= 6 && w_games >= l_games + 2) || (w_games == 7 && l_games == 6)
+		(w_games >= 6 && w_games >= l_games + 2) || (w_games == 7 && l_games == 6) || (w_games == 9 && l_games == 8)
 	}
 }

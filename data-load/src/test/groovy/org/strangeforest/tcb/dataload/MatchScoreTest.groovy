@@ -55,6 +55,22 @@ class MatchScoreTest {
 	}
 
 	@Test
+	void "Test match score to 9 games"() {
+		MatchScore score = MatchScoreParser.parse('6-3 8-9 9-8')
+
+		assert score.outcome == null
+		assert score.w_sets == 2
+		assert score.l_sets == 1
+		assert score.w_games == 23
+		assert score.l_games == 20
+		assert score.setScores.size() == 3
+		assert score.setScores[0] == new SetScore(w_games: 6, l_games: 3)
+		assert score.setScores[1] == new SetScore(w_games: 8, l_games: 9)
+		assert score.setScores[2] == new SetScore(w_games: 9, l_games: 8)
+		assert score.toString() == '6-3 8-9 9-8'
+	}
+
+	@Test
 	void "Test walk-over"() {
 		MatchScore score = MatchScoreParser.parse('W/O')
 
@@ -134,5 +150,26 @@ class MatchScoreTest {
 		assert score.setScores.size() == 1
 		assert score.setScores[0] == new SetScore(w_games: 7, l_games: 5)
 		assert score.toString() == '7-5 RET'
+	}
+
+	@Test
+	void "Test retired missing"() {
+		MatchScore score = MatchScoreParser.parse('6-4 6-3 3-6 1-6 2-3')
+
+		assert score.outcome == 'RET'
+		assert score.w_sets == 2
+		assert score.l_sets == 2
+		assert score.w_games == 18
+		assert score.l_games == 22
+		assert score.setScores.size() == 5
+		assert score.setScores[4] == new SetScore(w_games: 2, l_games: 3)
+		assert score.toString() == '6-4 6-3 3-6 1-6 2-3 RET'
+	}
+
+	@Test
+	void "Test score missing"() {
+		MatchScore score = MatchScoreParser.parse('')
+
+		assert score == null
 	}
 }
