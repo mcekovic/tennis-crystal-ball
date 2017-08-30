@@ -71,6 +71,22 @@ class MatchScoreTest {
 	}
 
 	@Test
+	void "Test match score 6-5 games"() {
+		MatchScore score = MatchScoreParser.parse('6-5 5-6 6-4')
+
+		assert score.outcome == null
+		assert score.w_sets == 2
+		assert score.l_sets == 1
+		assert score.w_games == 17
+		assert score.l_games == 15
+		assert score.setScores.size() == 3
+		assert score.setScores[0] == new SetScore(w_games: 6, l_games: 5)
+		assert score.setScores[1] == new SetScore(w_games: 5, l_games: 6)
+		assert score.setScores[2] == new SetScore(w_games: 6, l_games: 4)
+		assert score.toString() == '6-5 5-6 6-4'
+	}
+
+	@Test
 	void "Test walk-over"() {
 		MatchScore score = MatchScoreParser.parse('W/O')
 
