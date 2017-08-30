@@ -34,6 +34,8 @@ public class ScoreFilter {
 	private final boolean all;
 	private final boolean forStats;
 
+	private static final String MATCHES_CRITERION_TEMPLATE = " AND ((winner_id = :playerId%1$s) OR (loser_id = :playerId%2$s))";
+	private static final String STATS_CRITERION_TEMPLATE = " AND ((p_matches > 0%1$s) OR (o_matches > 0%2$s))";
 	private static final String MATCHES_SCORE_CRITERION = " AND ((winner_id = :playerId AND w_sets = :wSets AND l_sets = :lSets) OR (loser_id = :playerId AND w_sets = :lSets AND l_sets = :wSets))";
 	private static final String STATS_SCORE_CRITERION = " AND p_sets = :wSets AND o_sets = :lSets";
 	private static final String FINISHED_CRITERION = " AND outcome IS NULL";
@@ -46,8 +48,11 @@ public class ScoreFilter {
 	private static final String SET_SCORE_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id AND s.set = %1$d AND s.w_games %2$s s.l_games)";
 	private static final String MATCHES_DECIDING_SET_CRITERION = " AND w_sets + l_sets = best_of";
 	private static final String STATS_DECIDING_SET_CRITERION = " AND p_sets + o_sets = best_of";
-	private static final String TIE_BREAK_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id AND (s.w_tb_pt > 0 OR s.w_tb_pt > 0))";
-	private static final String SET_TIE_BREAK_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id AND s.set = %1$d AND (s.w_tb_pt > 0 OR s.w_tb_pt > 0))";
+	private static final String TIE_BREAK_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id%1$s)";
+	private static final String TIE_BREAK_PLAYED_CRITERION = " AND (s.w_tb_pt > 0 OR s.l_tb_pt > 0)";
+	private static final String TIE_BREAK_WON_CRITERION = " AND s.w_tb_pt > s.l_tb_pt";
+	private static final String TIE_BREAK_LOST_CRITERION = " AND s.w_tb_pt < s.l_tb_pt";
+	private static final String SET_TIE_BREAK_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id AND s.set = %1$d" + TIE_BREAK_PLAYED_CRITERION + ")";
 
 	private ScoreFilter(String score, boolean forStats) {
 		this.forStats = forStats;
@@ -107,7 +112,11 @@ public class ScoreFilter {
 		else if (misc.equals("DS"))
 			criteria.append(forStats ? STATS_DECIDING_SET_CRITERION : MATCHES_DECIDING_SET_CRITERION);
 		else if (misc.equals("TB"))
-			criteria.append(TIE_BREAK_CRITERION);
+			criteria.append(format(TIE_BREAK_CRITERION, TIE_BREAK_PLAYED_CRITERION));
+		else if (misc.equals("TBW"))
+			criteria.append(format(forStats ? STATS_CRITERION_TEMPLATE : MATCHES_CRITERION_TEMPLATE, format(TIE_BREAK_CRITERION, TIE_BREAK_WON_CRITERION), format(TIE_BREAK_CRITERION, TIE_BREAK_LOST_CRITERION)));
+		else if (misc.equals("TBL"))
+			criteria.append(format(forStats ? STATS_CRITERION_TEMPLATE : MATCHES_CRITERION_TEMPLATE, format(TIE_BREAK_CRITERION, TIE_BREAK_LOST_CRITERION), format(TIE_BREAK_CRITERION, TIE_BREAK_WON_CRITERION)));
 		else if (misc.equals("DSTB")) {
 			criteria.append(or(
 				BEST_OF_3 + format(SET_TIE_BREAK_CRITERION, 3),
