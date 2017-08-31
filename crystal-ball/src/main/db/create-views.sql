@@ -1741,6 +1741,19 @@ CREATE MATERIALIZED VIEW player_goat_points AS SELECT * FROM player_goat_points_
 CREATE UNIQUE INDEX ON player_goat_points (player_id);
 
 
+-- goat_points_age_distribution
+
+CREATE OR REPLACE VIEW goat_points_age_distribution_v AS
+SELECT g.season - extract(YEAR FROM p.dob) AS age, sum(g.goat_points) / (SELECT sum(goat_points) FROM player_season_goat_points) AS goat_points_pct
+FROM player_season_goat_points g
+INNER JOIN player p USING (player_id)
+GROUP BY g.season - extract(YEAR FROM p.dob);
+
+CREATE MATERIALIZED VIEW goat_points_age_distribution AS SELECT * FROM goat_points_age_distribution_v;
+
+CREATE UNIQUE INDEX ON goat_points_age_distribution (age);
+
+
 -- player_v
 
 CREATE OR REPLACE VIEW player_v AS

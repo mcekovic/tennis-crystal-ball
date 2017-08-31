@@ -249,7 +249,7 @@ class ATPTennisLoader {
 			'player_win_streak', 'player_surface_win_streak', 'player_level_win_streak',
 			'player_vs_no1_win_streak', 'player_vs_top5_win_streak', 'player_vs_top10_win_streak',
 			'player_tournament_win_streak', 'player_tournament_level_win_streak',
-			'player_season_goat_points', 'player_goat_points'
+			'player_season_goat_points', 'player_goat_points', 'goat_points_age_distribution'
 		)
 	}
 

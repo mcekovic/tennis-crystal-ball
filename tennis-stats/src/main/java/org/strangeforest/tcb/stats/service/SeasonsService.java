@@ -58,7 +58,7 @@ public class SeasonsService {
 		"  FROM player_season_goat_points g\n" +
 		"  INNER JOIN player_v p USING (player_id)\n" +
 		"), season_dominant_age AS (\n" +
-		"  SELECT g.season, sum(g.goat_points * extract(year FROM age(season_end(g.season), p.dob))) / sum(g.goat_points) AS dominant_age\n" +
+		"  SELECT g.season, sum(g.goat_points * extract(YEAR FROM age(season_end(g.season), p.dob))) / sum(g.goat_points) AS dominant_age\n" +
 		"  FROM player_season_goat_points g\n" +
 		"  INNER JOIN player_v p USING (player_id)\n" +
 		"  GROUP BY g.season\n" +

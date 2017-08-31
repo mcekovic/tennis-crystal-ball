@@ -22,6 +22,9 @@
 					var active = $("#active").prop("checked");
 					if (active)
 						request.active = active;
+					var extrapolate = $("#extrapolate").prop("checked");
+					if (extrapolate)
+						request.extrapolate = extrapolate;
 					return request;
 				},
 				rowCount: [20, 50, 100, -1],
@@ -86,7 +89,9 @@
 				}
 			});
 			var $goatListTableHeader = $("#goatListTable-header");
-			$goatListTableHeader.find("div.search").before($("#activeDiv").remove());
+			var $search = $goatListTableHeader.find("div.search");
+			$search.before($("#activeDiv").remove());
+			$search.before($("#extrapolateDiv").remove());
 			setBootgridTitle($goatListTableHeader, $("#goatListTable-title"));
 			setBootgridTitles($goatListTable, [
 				{id: "goatRank", title: "GOAT rank"},
@@ -121,11 +126,18 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 id="goatListTable-title" class="grid-title text-nowrap">Open Era GOAT List</h3>
+	<h3 id="goatListTable-title" class="grid-title text-nowrap">Open Era GOAT List <span class="glyphicon glyphicon-flag"></span></h3>
 	<div id="activeDiv" class="btn-group margin-right">
 		<div class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
 				<input id="active" type="checkbox" onchange="reloadGOATListTable()"/> Active players
+			</label>
+		</div>
+	</div>
+	<div id="extrapolateDiv" class="btn-group margin-right">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Extrapolate career for active players and players jumping into Open Era in 1968 based on average season GOAT Points for specific player age">
+				<input id="extrapolate" type="checkbox" onchange="reloadGOATListTable()"/> Extrapolate career
 			</label>
 		</div>
 	</div>

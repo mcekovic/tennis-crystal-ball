@@ -2,10 +2,12 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import static java.lang.Math.*;
+
 public class GOATListRow extends PlayerRow {
 
-	private final int goatPoints;
-	private final int tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints;
+	private int goatPoints;
+	private int tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints;
 	private int yearEndRankGoatPoints, bestRankGoatPoints, weeksAtNo1GoatPoints, weeksAtEloTopNGoatPoints, bestEloRatingGoatPoints;
 	private int grandSlamGoatPoints, bigWinsGoatPoints, h2hGoatPoints, recordsGoatPoints, bestSeasonGoatPoints, greatestRivalriesGoatPoints, performanceGoatPoints, statisticsGoatPoints;
 	private int grandSlams;
@@ -251,5 +253,9 @@ public class GOATListRow extends PlayerRow {
 
 	public void setBestEloRatingDate(Date bestEloRatingDate) {
 		this.bestEloRatingDate = bestEloRatingDate;
+	}
+
+	public void extrapolateCareer(float factor) {
+		goatPoints = round(goatPoints * factor);
 	}
 }
