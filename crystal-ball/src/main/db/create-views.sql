@@ -1729,29 +1729,32 @@ WITH goat_points AS (
 		sum(grand_slam_goat_points) grand_slam_goat_points, sum(big_wins_goat_points) big_wins_goat_points, sum(h2h_goat_points) h2h_goat_points, sum(records_goat_points) records_goat_points, sum(best_season_goat_points) best_season_goat_points, sum(greatest_rivalries_goat_points) greatest_rivalries_goat_points, sum(performance_goat_points) performance_goat_points, sum(statistics_goat_points) statistics_goat_points
 	FROM goat_points
 	GROUP BY player_id
+), goat_points_age_distribution AS (
+	SELECT g.season - extract(YEAR FROM p.dob) AS age, sum(g.goat_points) / (SELECT sum(goat_points) FROM player_season_goat_points) AS goat_points_pct
+	FROM player_season_goat_points g
+	INNER JOIN player p USING (player_id)
+	GROUP BY g.season - extract(YEAR FROM p.dob)
+), goat_points_extrapolated AS (
+	SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
+		year_end_rank_goat_points, best_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, best_elo_rating_goat_points,
+		grand_slam_goat_points, big_wins_goat_points, h2h_goat_points, records_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points,
+		goat_points / (1.0 - coalesce(CASE
+			WHEN p.active THEN (SELECT sum(d.goat_points_pct) FROM goat_points_age_distribution d WHERE d.age > extract(YEAR FROM age(p.dob)))
+			ELSE NULL
+		END, 0.0)) AS extrapolated_goat_points
+	FROM goat_points_total
+	INNER JOIN player p USING (player_id)
 )
-SELECT player_id, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
+SELECT player_id, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank, rank() OVER (ORDER BY extrapolated_goat_points DESC NULLS LAST) AS extrapolated_goat_rank,
+	goat_points, extrapolated_goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
 	year_end_rank_goat_points, best_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, best_elo_rating_goat_points,
 	grand_slam_goat_points, big_wins_goat_points, h2h_goat_points, records_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points
-FROM goat_points_total
+FROM goat_points_extrapolated
 WHERE goat_points > 0;
 
 CREATE MATERIALIZED VIEW player_goat_points AS SELECT * FROM player_goat_points_v;
 
 CREATE UNIQUE INDEX ON player_goat_points (player_id);
-
-
--- goat_points_age_distribution
-
-CREATE OR REPLACE VIEW goat_points_age_distribution_v AS
-SELECT g.season - extract(YEAR FROM p.dob) AS age, sum(g.goat_points) / (SELECT sum(goat_points) FROM player_season_goat_points) AS goat_points_pct
-FROM player_season_goat_points g
-INNER JOIN player p USING (player_id)
-GROUP BY g.season - extract(YEAR FROM p.dob);
-
-CREATE MATERIALIZED VIEW goat_points_age_distribution AS SELECT * FROM goat_points_age_distribution_v;
-
-CREATE UNIQUE INDEX ON goat_points_age_distribution (age);
 
 
 -- player_v

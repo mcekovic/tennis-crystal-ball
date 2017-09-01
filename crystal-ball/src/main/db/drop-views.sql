@@ -1,9 +1,6 @@
 DROP VIEW visitor_summary_all_v;
 DROP VIEW visitor_summary_v;
 
-DROP MATERIALIZED VIEW goat_points_age_distribution;
-DROP VIEW goat_points_age_distribution_v;
-
 DROP VIEW player_v;
 
 DROP MATERIALIZED VIEW player_goat_points;

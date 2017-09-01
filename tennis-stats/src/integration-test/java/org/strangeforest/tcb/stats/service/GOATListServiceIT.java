@@ -18,7 +18,7 @@ public class GOATListServiceIT {
 
 	@Test
 	public void goatList() {
-		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, new PlayerListFilter(""), "goat_points", 20, 1);
+		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, new PlayerListFilter(""), false, "goat_points", 20, 1);
 
 		assertThat(goatList.getRowCount()).isEqualTo(20);
 		assertThat(goatList.getTotal()).isGreaterThanOrEqualTo(500);

@@ -109,6 +109,7 @@
 				{id: "wonPct", title: "Winning percentage"},
 				{id: "bestEloRating", title: "Career Peak Elo rating"}
 			]);
+			bindPopovers();
 			$("[data-toggle='collapse']").click(collapseClick);
 			$("[data-toggle='tooltip']").tooltip();
 			$("#goatLegendButton").click();
@@ -135,11 +136,12 @@
 		</div>
 	</div>
 	<div id="extrapolateDiv" class="btn-group margin-right">
-		<div class="checkbox">
-			<label data-toggle="tooltip" data-placement="top" title="Extrapolate career for active players and players jumping into Open Era in 1968 based on average season GOAT Points for specific player age">
+		<div class="checkbox pull-left">
+			<label data-toggle="tooltip" data-placement="bottom" title="Extrapolate career for active players, please see below explanation how this works">
 				<input id="extrapolate" type="checkbox" onchange="reloadGOATListTable()"/> Extrapolate career
 			</label>
 		</div>
+		&nbsp;<div class="glyphicon glyphicon-question-sign" style="margin-top: 10px"></div>
 	</div>
 	<table id="goatListTable" class="table table-condensed table-hover table-striped">
 		<thead>
@@ -162,9 +164,22 @@
 		</tr>
 		</thead>
 	</table>
+	<div class="pull-right">
+		<a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#extrapolateCareerPopover" style="width: 100%"><span class="glyphicon glyphicon-question-sign"></span> GOAT Points Extrapolation</a>
+	</div>
 	<br/>
 	<button id="goatLegendButton" type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span></button>
 	<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
+	<div class="hidden" id="extrapolateCareerPopover">
+		<div class="popover-title"><strong>GOAT Points Extrapolation</strong></div>
+		<div class="popover-content">
+			GOAT Points extrapolation extrapolate GOAT Points for active players to their full hypothetical career.<br/>
+			Extrapolation tries to estimate how much GOAT Points players would earn by the end of their careers by calculating how much GOAT Points average players have earned at specific age and by creating an age-weight curve telling a proportion of GOAT Points earned at specific age.<br/>
+			Example:<br/>
+			Rafael Nadal has 31 year. Through the Open Era, average player earns around 6.6% GOAT Points at age greater then 31.<br>
+			If Nadal now has 657 normal GOAT Points, it is estimated that he would have 654 / (1 - 6.6%) = 703 GOAT Points at the end of his career.
+		</div>
+	</div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
