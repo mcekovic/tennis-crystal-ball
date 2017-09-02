@@ -2,9 +2,12 @@ package org.strangeforest.tcb.stats.controller;
 
 import java.time.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.*;
+import javax.servlet.http.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,7 @@ import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
 import static java.util.stream.Collectors.*;
+import static org.springframework.http.HttpHeaders.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Controller
@@ -45,12 +49,16 @@ public class TennisStatsController extends PageController {
 	}
 
 	private static final String ELO_RATING_SUFFIX = "_ELO_RATING";
+	private static final String MAX_AGE_1_HOUR = CacheControl.maxAge(1L, TimeUnit.HOURS).cachePublic().getHeaderValue();
 
 	@GetMapping("/rankingTopN")
 	public ModelAndView rankingTopN(
       @RequestParam(name = "rankType", defaultValue = "POINTS") RankType rankType,
-      @RequestParam(name = "count", defaultValue = "10") int count
+      @RequestParam(name = "count", defaultValue = "10") int count,
+      HttpServletResponse response
 	) {
+		response.setHeader(CACHE_CONTROL, MAX_AGE_1_HOUR);
+
 		LocalDate date = rankingsService.getCurrentRankingDate(rankType);
 		List<PlayerRanking> rankingTopN = rankingsService.getRankingsTopN(rankType, date, count);
 		String rankTypeName = rankType.name();

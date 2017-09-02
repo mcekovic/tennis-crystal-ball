@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
 	<title>Live Scores</title>
-	<script src="/js/livescore.js"></script>
+	<script th:src="@{/js/livescore.js}"></script>
 	<script type="text/javascript">
 		$(function() {
 			loadRankingTopN("POINTS", 20);

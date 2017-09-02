@@ -4,7 +4,7 @@
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
 	<title>Performance Chart</title>
-	<script src="/js/tennis-chart.js"></script>
+	<script th:src="@{/js/tennis-chart.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript">
 		google.load("visualization", "1.0", {packages:["corechart"]});

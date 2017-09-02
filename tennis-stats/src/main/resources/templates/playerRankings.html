@@ -5,7 +5,7 @@
 <!--/*@thymesVar id="highlights" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.RankType[]"*/-->
-<script src="/js/tennis-chart.js"></script>
+<script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript">
 	var rankChartData, bySeason, rankPointCount, isRank, logScale;
 	function loadGoogleChartsForRanking() {

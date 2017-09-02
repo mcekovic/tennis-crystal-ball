@@ -5,7 +5,7 @@
 <!--/*@thymesVar id="minGOATPoints" type="java.lang.Integer"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
 	<title>Dominance Timeline</title>
-	<script src="/js/jquery.resize.js"></script>
+	<script th:src="@{/js/jquery.resize.js}"></script>
 	<script type="text/javascript">
 		function correctInitPositions() {
 			var $timelineHeader = $("#timelineHeader");

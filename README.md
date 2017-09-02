@@ -10,7 +10,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 
 - 'GOAT' List - Best players of Open Era ranked by 'GOAT' points
 - Player Profile - Player information, tournament results, matches, season summary, timeline, rivalries, ranking, performance indicators and statistics with charts, 'GOAT' points breakdown and records
-- Timelines - Dominance ('GOAT' points distribution among top players and seasons), Grand Slam, Tour Finals, Masters, Olympics, Davis Cup, World Team Cup and Surface timeline
+- Timelines - Dominance ('GOAT' points distribution among top players and seasons), Grand Slam, Tour Finals, Masters, Olympics, Davis Cup, World Team Cup, Top Rankings and Surface timeline
 - Head-to-Head - Head-to-head between two players with H2H matches, season summary, performance and statistics comparision, ranking, performance and statistics charts, 'GOAT' points breakdown and Hypothetical Matchup prediction based on the Neural Network Match Prediction Algorithm
 - Heads-to-Heads - Heads-to-heads clusters among several players (i.e. among 'Big 4')
 - Greatest Rivalries - Explore greatest rivalries, overall or by season, tournament level, surface or round
@@ -21,9 +21,10 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Performance Charts - Performance charts for various performance categories, filtered by seasons
 - Statistics Leaders - Find statistics leaders in different statistics categories, including dominance and break points ratios
 - Statistics Charts - Statistics charts for various statistics categories, including dominance and break points ratios
-- Seasons Browser - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players</li>
+- Seasons - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players
 - Best Seasons - Find which are the best seasons of Open Era based on 'GOAT' points
-- Tournaments Browser - Browse all Open Era tournaments, see tournament draw, performance, statistics, historical winners and records
+- Tournaments - Browse tournaments, see players with most titles, historical tournament levels and surfaces and average participation
+- Tournaments Events - Browse all Open Era tournament events, see tournament event draw, performance, statistics, historical winners and records
 - Tournament Forecasts - Tournament Event Forecasts based on the Neural Network Match Prediction Algorithm
 - Records Book - Various match, tournament result and ranking records, famous and infamous (best player that never...)
 - Live Scores - Live Scores integration
