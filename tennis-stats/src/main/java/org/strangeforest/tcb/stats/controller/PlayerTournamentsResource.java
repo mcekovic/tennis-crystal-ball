@@ -55,7 +55,7 @@ public class PlayerTournamentsResource {
 	}
 
 	@GetMapping("/playerTournamentsStat")
-	public Number playerTournamentsTable(
+	public Number playerTournamentsStat(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
