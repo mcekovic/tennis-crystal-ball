@@ -40,13 +40,13 @@ public class OutcomeFilter {
 	private static final String NOT_ABANDONED = "notAbandoned";
 
 	private static final String MATCHES_WON_CRITERION = " AND m.%1$s = :playerId";
-	private static final String STATS_WON_CRITERION   = " AND %1$s = 1";
-	private static final String OUTCOME_CRITERION = " AND outcome = :outcome::match_outcome";
-	private static final String PLAYED_CRITERION = " AND (outcome IS NULL OR outcome IN ('RET', 'DEF'))";
-	private static final String FINISHED_CRITERION = " AND outcome IS NULL";
-	private static final String NOT_FINISHED_CRITERION = " AND outcome IN ('RET', 'W/O', 'DEF')";
-	private static final String NOT_PLAYED_CRITERION = " AND outcome IN ('W/O', 'ABD')";
-	private static final String NOT_ABANDONED_CRITERION = " AND (outcome IS NULL OR outcome <> 'ABD')";
+	private static final String STATS_WON_CRITERION   = " AND m.%1$s = 1";
+	private static final String OUTCOME_CRITERION = " AND m.outcome = :outcome::match_outcome";
+	private static final String PLAYED_CRITERION = " AND (m.outcome IS NULL OR m.outcome IN ('RET', 'DEF'))";
+	private static final String FINISHED_CRITERION = " AND m.outcome IS NULL";
+	private static final String NOT_FINISHED_CRITERION = " AND m.outcome IN ('RET', 'W/O', 'DEF')";
+	private static final String NOT_PLAYED_CRITERION = " AND m.outcome IN ('W/O', 'ABD')";
+	private static final String NOT_ABANDONED_CRITERION = " AND (m.outcome IS NULL OR m.outcome <> 'ABD')";
 
 	private OutcomeFilter(String outcome, boolean forStats) {
 		if (!isNullOrEmpty(outcome)) {

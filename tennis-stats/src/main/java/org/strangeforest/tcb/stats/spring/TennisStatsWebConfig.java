@@ -13,6 +13,7 @@ public class TennisStatsWebConfig extends WebMvcConfigurerAdapter {
 	@Autowired(required = false) DownForMaintenanceInterceptor downForMaintenanceInterceptor;
 
 	@Override public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new RequestURLLoggingHandlerInterceptor());
 		if (downForMaintenanceInterceptor != null)
 			registry.addInterceptor(downForMaintenanceInterceptor);
 	}
