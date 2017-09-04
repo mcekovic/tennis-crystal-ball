@@ -3,7 +3,6 @@
 	<!--/*@thymesVar id="matchStats" type="org.strangeforest.tcb.stats.model.MatchStats"*/-->
 	<!--/*@thymesVar id="statsFormatUtil" type="org.strangeforest.tcb.stats.controller.StatsFormatUtil"*/-->
 	<!--/*@thymesVar id="compare" type="java.lang.Boolean"*/-->
-	<!--/*@thymesVar id="enableCompare" type="java.lang.enableCompare"*/-->
 	<!--/*@thymesVar id="winnerCompareStats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 	<!--/*@thymesVar id="loserCompareStats" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 	<!--/*@thymesVar id="match" type="org.strangeforest.tcb.stats.model.MatchInfo"*/-->
@@ -308,7 +307,7 @@
 		<div th:if="${matchStats}" class="col-md-8">
 			<button class="pct-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
 			<button class="raw-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
-			<th:block th:if="${enableCompare}">&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareMatchStats(${matchId}, ${compare})|" title="Compare statistics"><span class="glyphicon glyphicon-object-align-left"></span>&nbsp;&nbsp;Compare</button></th:block>
+			&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareMatchStats(${matchId}, ${compare})|" title="Compare statistics"><span class="glyphicon glyphicon-object-align-left"></span>&nbsp;&nbsp;Compare</button>
 		</div>
 		<div class="col-md-4">
 			<button class="btn btn-default btn-xs pull-right" th:onclick="|$('#matchStats-${matchId}').click()|"><span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Close</button>

@@ -415,13 +415,11 @@ function compareStats(containerId, statsId, close) {
 	});
 }
 
-function showMatchStats(matchId, event, disableCompare) {
+function showMatchStats(matchId, event) {
 	var $matchStats = $("#matchStats-" + matchId);
 	if (!$matchStats.hasClass("loaded")) {
 		event.preventDefault();
 		var url = "matchStats?matchId=" + matchId;
-		if (disableCompare)
-			url += "&enableCompare=false";
 		$.get(url, function(data) {
 			$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
 			$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "500px"); }).click();

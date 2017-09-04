@@ -45,7 +45,7 @@
 				"surface": surfaceFormatter,
 				"match": h2hMatchFormatter,
 				"stats": function(column, row) {
-					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event, true)' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>" : "";
+					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>" : "";
 				}
 			},
 			labels: {
@@ -63,8 +63,8 @@
 		var $search = $matchesTableHeader.find("div.search");
 		$search.before($("#rivalryStats-[(${player2.id})]").remove());
 		$search.before($("#matchesOutcomeDiv").remove());
+		$search.after($("#rivalryStats-[(${player1.id})]").remove());
 		$search.after($("#clearDiv").remove());
-		$matchesTableHeader.find("div.actions").after($("#rivalryStats-[(${player1.id})]").remove());
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function reloadMatches() {
@@ -232,14 +232,12 @@
 		<option value="notPlayed" th:selected="${outcome == 'notPlayed'}">Not played</option>
 	</select>
 </div>
-<button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control pull-right no-margin-right margin-left" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'left', event, true)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">
+<button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control margin-right" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'left', event, true)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats 2
 </button>
-<div id="clearDiv" class="btn-group margin-right">
-	<button type="button" class="btn btn-default" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-		<span class="glyphicon glyphicon-erase"></span>&nbsp;&nbsp;Clear
-	</button>
-</div>
+<button id="clearDiv" type="button" class="btn btn-default grid-control margin-right" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+	<span class="glyphicon glyphicon-erase"></span>&nbsp;&nbsp;Clear
+</button>
 <table id="matchesTable" class="table table-condensed table-hover table-striped">
 	<thead>
 	<tr>

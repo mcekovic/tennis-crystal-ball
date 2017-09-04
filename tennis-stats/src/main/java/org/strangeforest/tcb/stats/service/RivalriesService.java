@@ -232,7 +232,7 @@ public class RivalriesService {
 				));
 			}
 			else
-				return Optional.empty();
+				return Optional.<WonDrawLost>empty();
 		});
 	}
 
