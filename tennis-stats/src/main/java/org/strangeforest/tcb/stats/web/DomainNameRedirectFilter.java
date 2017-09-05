@@ -5,6 +5,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.springframework.context.annotation.*;
+import org.springframework.http.*;
 import org.springframework.stereotype.*;
 
 import static com.google.common.base.Strings.*;
@@ -36,7 +37,7 @@ public class DomainNameRedirectFilter implements Filter {
 			}
 			HttpServletResponse httpResponse = (HttpServletResponse)response;
 			httpResponse.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-			httpResponse.setHeader("Location", url);
+			httpResponse.setHeader(HttpHeaders.LOCATION, url);
 		}
 		else
 			chain.doFilter(request, response);
