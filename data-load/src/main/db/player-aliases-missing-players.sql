@@ -50,6 +50,7 @@ VALUES
    ('Marcelo Lara', 'Marcello Lara'),
    ('Matthias A Muller', 'Matthias Muller'),
    ('Michael Brown', 'Michael Brown B395'),
+   ('Moez Echargui', 'Moez Chargui'),
    ('Mubarak Shannan Zayid', 'Mubarak Zaid'),
    ('M Munoz', 'Miguel Cordefors Munoz'),
    ('Niclas Kroon', 'Nicklas Kroon'),
