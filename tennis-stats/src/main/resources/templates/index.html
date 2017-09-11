@@ -107,15 +107,14 @@
 				Welcome to Ultimate Tennis Statistics, the ultimate tennis statistics destination for the die-hard tennis fans!<br/>
 				For more information please click <a href="/about">here</a>.
 			</p>
-			<th:block th:if="${hasInProgressEvents}">
 			<h4 class="text-nowrap">Note <sup class="new-feature">Important!</sup></h4>
 			<p>
 				Please note that old domain name <a href="http://tennis-strangeforest.rhcloud.com">http://tennis-strangeforest.rhcloud.com</a> is shutting down by 30-th September 2017 as hosting platform <a href="https://blog.openshift.com/migrate-to-v3-v2-eol/">OpenShift 2 is being discontinued</a>.
 				Please update your bookmarks to the new domain name <a href="http://www.ultimatetennisstatistics.com">http://www.ultimatetennisstatistics.com</a>.
 				Ultimate Tennis Statistics will try to migrate to the new hosting provider before OpenShit 2 platform discontinuation date.
 			</p>
-			</p>
-			<h4 class="text-nowrap">Latest Forecasts</h4>
+			<th:block th:if="${hasInProgressEvents}">
+			<h4 class="text-nowrap" style="margin-top: 25px">Latest Forecasts</h4>
 			<table id="inProgressEventsTable" class="table table-condensed table-hover table-striped" style="margin-bottom: 0">
 				<thead>
 				<tr>
@@ -131,9 +130,8 @@
 			<div class="pull-right" style="margin: 5px 10px">
 				<a href="/inProgressEventsForecasts" class="label label-default" title="Full forecasts details">All Forecasts</a>
 			</div>
-			<br/>
 			</th:block>
-			<h4 class="text-nowrap">Latest Results</h4>
+			<h4 class="text-nowrap" style="margin-top: 25px">Latest Results</h4>
 			<table id="latestEvents" class="table table-condensed table-hover table-striped" style="margin-bottom: 0">
 				<thead>
 				<tr>
@@ -150,8 +148,7 @@
 				<a href="/tournamentEvents" class="label label-B" title="Show more tournament results">More Results</a>
 				<a th:href="@{/season(season=${currentSeason})}" class="label label-default" th:title="|Show season ${currentSeason} figures|">Season [(${currentSeason})]</a>
 			</div>
-			<br/>
-			<h4 class="text-nowrap">Latest New Features<sup class="new-feature">&nbsp;New!</sup></h4>
+			<h4 class="text-nowrap" style="margin-top: 25px">Latest New Features<sup class="new-feature">&nbsp;New!</sup></h4>
 			<ul>
 				<li><a href="/tournaments">Tournaments</a> browser - Browse tournaments, see players with most titles, historical tournament levels and surfaces and average participation.</li>
 				<li><a href="/topPerformers">Top Performers</a> and <a href="/statsLeaders">Statistics Leaders</a> enhancements - Much more filters: by season, by tournament level, by surface, by round, vs rank, vs age, vs hand/backhand, vs seeding, by height, by tournament and by country.</li>
