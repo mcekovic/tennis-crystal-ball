@@ -40,6 +40,11 @@ allprojects {
 			user = '58f8ee0b2d527165b100008b'
 			identity = file("${home}/.ssh/id_rsa")
 		}
+		digitalOcean {
+			host = '46.101.166.59'
+			user = 'root'
+			identity = file("${home}/.ssh/id_rsa")
+		}
 	}
 }
 

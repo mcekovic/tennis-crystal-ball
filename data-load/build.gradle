@@ -3,11 +3,11 @@ apply plugin: 'application'
 
 mainClassName = 'org.strangeforest.tcb.dataload.Main'
 applicationDefaultJvmArgs = [
-	'-Xmx128m',
-	'-Dtcb.db.connections=5',
-	'-Dtcb.db.username=adminbnga3sx',
-	'-Dtcb.db.password=I1KZe338nRAX',
-	'-Dtcb.db.url=jdbc:postgresql://127.2.254.130:5432/tennis?prepareThreshold=0'
+	'-Xmx192m',
+	'-Dtcb.db.connections=1',
+	'-Dtcb.db.username=tcb',
+	'-Dtcb.db.password=Chicker5cloud',
+	'-Dtcb.db.url=jdbc:postgresql://localhost:5432/tcb?prepareThreshold=0'
 ]
 
 sourceSets.main.resources.srcDirs = ['src/main/resources', 'src/main/db']
@@ -63,6 +63,44 @@ task fullDeployToOpenShift {
 		def destPath = 'app-root/data'
 		ssh.run {
 			session(remotes.openShift) {
+				execute "rm -rf ${destPath}/data-load"
+				put from: "${srcPath}/${dataLoadDist}", into: destPath
+				execute "cd ${destPath}; tar -xvf ${dataLoadDist}; rm ${dataLoadDist}; mv ${dataLoad} data-load"
+			}
+		}
+	}
+}
+
+task quickDeployToDigitalOcean {
+	doLast {
+		def version = project.property('version')
+		def dataLoadJar = "data-load-${version}.jar"
+		def crystalBallJar = "crystal-ball-${version}.jar"
+		def tennisStatsJar = "tennis-stats-${version}.jar"
+		def srcPath = 'build/libs'
+		def destPath = '/tcb'
+		ssh.run {
+			session(remotes.digitalOcean) {
+				put from: "${srcPath}/${dataLoadJar}", into: "${destPath}/${dataLoadJar}.new"
+				put from: "../crystal-ball/${srcPath}/${crystalBallJar}", into: "${destPath}/${crystalBallJar}.new"
+				put from: "../tennis-stats/${srcPath}/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
+				execute "mv -f ${destPath}/${dataLoadJar}.new ${destPath}/${dataLoadJar}"
+				execute "mv -f ${destPath}/${crystalBallJar}.new ${destPath}/${crystalBallJar}"
+				execute "mv -f ${destPath}/${tennisStatsJar}.new ${destPath}/${tennisStatsJar}"
+			}
+		}
+	}
+}
+
+task fullDeployToDigitalOcean {
+	doLast {
+		def version = project.property('version')
+		def dataLoad = "data-load-${version}"
+		def dataLoadDist = "${dataLoad}.tar"
+		def srcPath = 'build/distributions'
+		def destPath = '/tcb'
+		ssh.run {
+			session(remotes.digitalOcean) {
 				execute "rm -rf ${destPath}/data-load"
 				put from: "${srcPath}/${dataLoadDist}", into: destPath
 				execute "cd ${destPath}; tar -xvf ${dataLoadDist}; rm ${dataLoadDist}; mv ${dataLoad} data-load"

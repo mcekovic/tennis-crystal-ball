@@ -123,6 +123,44 @@ task fullDeployToOpenShift {
 	}
 }
 
+task quickDeployToDigitalOcean {
+	doLast {
+		def version = project.property('version')
+		def tennisStatsJar = "tennis-stats-${version}.jar"
+		def srcPath = 'build/libs'
+		def destPath = '/tcb'
+		ssh.run {
+			session(remotes.digitalOcean) {
+				put from: "${srcPath}/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
+				execute 'gear stop'
+				execute 'rm -rf app-root/logs/*'
+				execute "mv -f ${destPath}/${tennisStatsJar}.new ${destPath}/${tennisStatsJar}"
+				execute 'gear start'
+			}
+		}
+	}
+}
+
+task fullDeployToDigitalOcean {
+	doLast {
+		def version = project.property('version')
+		def tennisStats = "tennis-stats-${version}"
+		def tennisStatsDist = "${tennisStats}.tar"
+		def srcPath = 'build/distributions'
+		def destPath = '/tcb'
+		ssh.run {
+			session(remotes.digitalOcean) {
+				put from: "${srcPath}/${tennisStatsDist}", into: destPath
+				execute "cd ${destPath}; tar -xvf ${tennisStatsDist}; rm ${tennisStatsDist}"
+				execute 'gear stop'
+				execute "rm -rf ${destPath}/tennis-stats app-root/logs/*"
+				execute "cd ${destPath}; mv ${tennisStats} tennis-stats"
+				execute 'gear start'
+			}
+		}
+	}
+}
+
 task checkHealthAtOpenShift {
 	doLast {
 		def health = new groovy.json.JsonSlurper().parse(new URL('http://www.ultimatetennisstatistics.com/manage/health'))
