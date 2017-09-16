@@ -79,7 +79,7 @@ task quickDeployToDigitalOcean {
 		def crystalBallJar = "crystal-ball-${version}.jar"
 		def tennisStatsJar = "tennis-stats-${version}.jar"
 		def srcPath = 'build/libs'
-		def destPath = '/tcb'
+		def destPath = '/tcb/data-load/lib'
 		ssh.run {
 			session(remotes.digitalOcean) {
 				put from: "${srcPath}/${dataLoadJar}", into: "${destPath}/${dataLoadJar}.new"
