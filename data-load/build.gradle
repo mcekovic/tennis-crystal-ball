@@ -3,11 +3,12 @@ apply plugin: 'application'
 
 mainClassName = 'org.strangeforest.tcb.dataload.Main'
 applicationDefaultJvmArgs = [
-	'-Xmx192m',
-	'-Dtcb.db.connections=1',
+	'-Xmx256m',
+	'-Dtcb.db.url=jdbc:postgresql://localhost:5432/tcb?prepareThreshold=0',
 	'-Dtcb.db.username=tcb',
-	'-Dtcb.db.password=Chicker5cloud',
-	'-Dtcb.db.url=jdbc:postgresql://localhost:5432/tcb?prepareThreshold=0'
+	'-Dtcb.db.password=tcb',
+	'-Dtcb.db.connections=1',
+	'-Dtcb.data.base-dir=/tcb/tennis_atp'
 ]
 
 sourceSets.main.resources.srcDirs = ['src/main/resources', 'src/main/db']

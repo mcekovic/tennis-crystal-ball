@@ -14,12 +14,10 @@ sqlPool.withSql { sql -> loader.loadAdditionalPlayerData(sql) }
 loader.loadRankings(new RankingLoader(sqlPool))
 sqlPool.withSql { sql -> loader.loadAdditionalRankingData(sql) }
 sqlPool.withSql { sql -> FixInvalidRankings.loadRankings(sql) }
-sqlPool.withSql { sql -> LoadAdHocRankings.loadRankings(sql) }
 LoadNewRankings.loadRankings(sqlPool)
 
 loader.loadMatches(new MatchLoader(sqlPool))
 sqlPool.withSql { sql -> loader.loadAdditionalTournamentData(sql) }
-LoadAdHocTournaments.loadTournaments(sqlPool)
 LoadNewTournaments.loadTournaments(sqlPool)
 
 sqlPool.withSql { sql -> loader.vacuum(sql) }

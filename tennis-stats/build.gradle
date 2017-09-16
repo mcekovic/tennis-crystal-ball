@@ -128,14 +128,13 @@ task quickDeployToDigitalOcean {
 		def version = project.property('version')
 		def tennisStatsJar = "tennis-stats-${version}.jar"
 		def srcPath = 'build/libs'
-		def destPath = '/tcb'
+		def destPath = '/tcb/tennis-stats/lib'
 		ssh.run {
 			session(remotes.digitalOcean) {
 				put from: "${srcPath}/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
-				execute 'gear stop'
-				execute 'rm -rf app-root/logs/*'
+//				execute 'stop'
 				execute "mv -f ${destPath}/${tennisStatsJar}.new ${destPath}/${tennisStatsJar}"
-				execute 'gear start'
+//				execute 'start'
 			}
 		}
 	}
@@ -152,10 +151,10 @@ task fullDeployToDigitalOcean {
 			session(remotes.digitalOcean) {
 				put from: "${srcPath}/${tennisStatsDist}", into: destPath
 				execute "cd ${destPath}; tar -xvf ${tennisStatsDist}; rm ${tennisStatsDist}"
-				execute 'gear stop'
-				execute "rm -rf ${destPath}/tennis-stats app-root/logs/*"
+//				execute 'stop'
+				execute "rm -rf ${destPath}/tennis-stats"
 				execute "cd ${destPath}; mv ${tennisStats} tennis-stats"
-				execute 'gear start'
+//				execute 'start'
 			}
 		}
 	}

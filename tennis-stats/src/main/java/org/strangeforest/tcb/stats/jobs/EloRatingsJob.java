@@ -10,7 +10,7 @@ import org.strangeforest.tcb.stats.service.*;
 import static org.strangeforest.tcb.stats.jobs.DataLoadCommand.*;
 
 @Component
-@Profile("openshift")
+@Profile("jobs")
 public class EloRatingsJob {
 
 	@Autowired private DataService dataService;
