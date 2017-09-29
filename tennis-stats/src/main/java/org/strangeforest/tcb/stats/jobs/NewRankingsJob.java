@@ -7,19 +7,18 @@ import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.service.*;
 
-import static org.strangeforest.tcb.stats.jobs.DataLoadCommand.*;
-
 @Component
 @Profile("jobs")
 public class NewRankingsJob {
 
+	@Autowired private DataLoadCommand dataLoadCommand;
 	@Autowired private DataService dataService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(NewRankingsJob.class);
 
 	@Scheduled(cron = "${tennis-stats.jobs.load-new-rankings:0 15 1 * * MON}")
 	public void loadNewRankings() {
-		if (dataLoad("NewRankings", "-nr", "-c 1") == 0)
+		if (dataLoadCommand.execute("NewRankings", "-nr", "-c 1") == 0)
 			clearCaches();
 	}
 

@@ -7,12 +7,11 @@ import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.service.*;
 
-import static org.strangeforest.tcb.stats.jobs.DataLoadCommand.*;
-
 @Component
 @Profile("jobs")
 public class RefreshRecordsJob {
 
+	@Autowired private DataLoadCommand dataLoadCommand;
 	@Autowired private DataService dataService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RefreshRecordsJob.class);
@@ -20,9 +19,9 @@ public class RefreshRecordsJob {
 	@Scheduled(cron = "${tennis-stats.jobs.refresh-records:0 5 2 * * MON}")
 	public void refreshRecords() {
 		String storageOption = dataService.getDBServerVersion() >= DataService.MATERIALIZED_VIEWS_MIN_VERSION ? "-m" : "-t";
-		if (dataLoad("RefreshRecords", "-rr", "-c 1", storageOption, "-rp 1000") == 0) {
+		if (dataLoadCommand.execute("RefreshRecords", "-rr", "-c 1", storageOption, "-rp 1000") == 0) {
 			try {
-				dataLoad("Vacuum", "-vc", "-c 1", storageOption);
+				dataLoadCommand.execute("Vacuum", "-vc", "-c 1", storageOption);
 			}
 			finally {
 				clearCaches();

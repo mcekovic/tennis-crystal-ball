@@ -7,19 +7,18 @@ import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.service.*;
 
-import static org.strangeforest.tcb.stats.jobs.DataLoadCommand.*;
-
 @Component
 @Profile("jobs")
 public class EloRatingsJob {
 
+	@Autowired private DataLoadCommand dataLoadCommand;
 	@Autowired private DataService dataService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EloRatingsJob.class);
 
 	@Scheduled(cron = "${tennis-stats.jobs.compute-elo-ratings:0 20 1 * * MON}")
 	public void computeEloRatings() {
-		if (dataLoad("EloRatings", "-el", "-c 3", "-d") == 0)
+		if (dataLoadCommand.execute("EloRatings", "-el", "-c 3", "-d") == 0)
 			clearCaches();
 	}
 

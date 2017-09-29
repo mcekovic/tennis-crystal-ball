@@ -6,20 +6,24 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import org.slf4j.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
 
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 
-public abstract class DataLoadCommand {
+@Component
+public class DataLoadCommand {
 
-	private static final String DATA_LOAD_COMMAND = "../data-load/bin/data-load";
+	@Value("${tennis-stats.jobs.data-load.command:../data-load/bin/data-load}")
+	private String dataLoadCommand;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataLoadCommand.class);
 
-	public static int dataLoad(String name, String... params) {
+	public int execute(String name, String... params) {
 		try {
 			List<String> command = new ArrayList<>();
-			command.add(DATA_LOAD_COMMAND);
+			command.add(dataLoadCommand);
 			command.addAll(asList(params));
 			LOGGER.info("Executing {} [{}]", name, command.stream().collect(joining(" ")));
 			Process process = new ProcessBuilder(command).redirectErrorStream(true).start();

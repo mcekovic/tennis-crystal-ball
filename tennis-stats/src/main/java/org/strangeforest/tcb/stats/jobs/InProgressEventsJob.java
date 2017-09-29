@@ -7,19 +7,18 @@ import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.service.*;
 
-import static org.strangeforest.tcb.stats.jobs.DataLoadCommand.*;
-
 @Component
 @Profile("jobs")
 public class InProgressEventsJob {
 
+	@Autowired private DataLoadCommand dataLoadCommand;
 	@Autowired private DataService dataService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InProgressEventsJob.class);
 
 	@Scheduled(cron = "${tennis-stats.jobs.reload-in-progress-events:0 0 * * * *}")
 	public void reloadInProgressEvents() {
-		if (dataLoad("ReloadInProgressEvents", "-ip", "-c 1") == 0)
+		if (dataLoadCommand.execute("ReloadInProgressEvents", "-ip", "-c 1") == 0)
 			clearCaches();
 	}
 
