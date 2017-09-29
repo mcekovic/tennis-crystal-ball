@@ -10,6 +10,13 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'application'
 
+mainClassName = 'org.strangeforest.tcb.stats.TennisStatsApplication'
+applicationDefaultJvmArgs = [
+	'-Xms256m',
+	'-Xmx256m',
+	'-Dspring.profiles.active=digitalocean,jobs',
+]
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
