@@ -1,1 +1,0 @@
-rhc port-forward tennis -s postgresql
