@@ -139,9 +139,9 @@ task quickDeployToDigitalOcean {
 		ssh.run {
 			session(remotes.digitalOcean) {
 				put from: "${srcPath}/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
-				execute '/tcb/stop-tennis-stats.sh'
+				execute 'systemctl stop tennis-stats.service'
 				execute "mv -f ${destPath}/${tennisStatsJar}.new ${destPath}/${tennisStatsJar}"
-				execute '/tcb/start-tennis-stats.sh'
+				execute 'systemctl start tennis-stats.service'
 			}
 		}
 	}
@@ -158,10 +158,10 @@ task fullDeployToDigitalOcean {
 			session(remotes.digitalOcean) {
 				put from: "${srcPath}/${tennisStatsDist}", into: destPath
 				execute "cd ${destPath}; tar -xvf ${tennisStatsDist}; rm ${tennisStatsDist}"
-				execute '/tcb/stop-tennis-stats.sh'
-				execute "rm -rf ${destPath}/tennis-stats"
+				execute 'systemctl stop tennis-stats.service'
+				execute "rm -rf ${destPath}/tennis-stats/lib"
 				execute "cd ${destPath}; mv ${tennisStats} tennis-stats"
-				execute '/tcb/start-tennis-stats.sh'
+				execute 'systemctl start tennis-stats.service'
 			}
 		}
 	}
