@@ -139,9 +139,9 @@ task quickDeployToDigitalOcean {
 		ssh.run {
 			session(remotes.digitalOcean) {
 				put from: "${srcPath}/${tennisStatsJar}", into: "${destPath}/${tennisStatsJar}.new"
-//				execute 'stop'
+				execute '/tcb/stop-tennis-stats.sh'
 				execute "mv -f ${destPath}/${tennisStatsJar}.new ${destPath}/${tennisStatsJar}"
-//				execute 'start'
+				execute '/tcb/start-tennis-stats.sh'
 			}
 		}
 	}
@@ -158,16 +158,16 @@ task fullDeployToDigitalOcean {
 			session(remotes.digitalOcean) {
 				put from: "${srcPath}/${tennisStatsDist}", into: destPath
 				execute "cd ${destPath}; tar -xvf ${tennisStatsDist}; rm ${tennisStatsDist}"
-//				execute 'stop'
+				execute '/tcb/stop-tennis-stats.sh'
 				execute "rm -rf ${destPath}/tennis-stats"
 				execute "cd ${destPath}; mv ${tennisStats} tennis-stats"
-//				execute 'start'
+				execute '/tcb/start-tennis-stats.sh'
 			}
 		}
 	}
 }
 
-task checkHealthAtOpenShift {
+task productionHealthCheck {
 	doLast {
 		def health = new groovy.json.JsonSlurper().parse(new URL('http://www.ultimatetennisstatistics.com/manage/health'))
 		println "Ultimate Tennis Statistics is ${health.status}"
@@ -175,7 +175,7 @@ task checkHealthAtOpenShift {
 	}
 }
 
-task infoAtOpenShift {
+task productionInfo {
 	doLast {
 		def info = new groovy.json.JsonSlurper().parse(new URL('http://www.ultimatetennisstatistics.com/manage/info'))
 		println "Ultimate Tennis Statistics: ${info.app.version}"

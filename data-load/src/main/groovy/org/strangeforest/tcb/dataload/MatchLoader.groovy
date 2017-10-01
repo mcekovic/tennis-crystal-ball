@@ -228,37 +228,37 @@ class MatchLoader extends BaseCSVLoader {
 					return 'T'
 				else if (
 					// Real ATP 500
-					(name.equals('Acapulco') && season in 2001..2016) ||
+					(name.equals('Acapulco') && season >= 2001) ||
 					(name.equals('Antwerp') && season in 1996..1998) ||
-					(name.equals('Barcelona') && season in 1990..2016) ||
-					(name.equals('Basel') && season in 2009..2016) ||
-					(name.equals('Beijing') && season in 2009..2016) ||
+					(name.equals('Barcelona') && season >= 1990) ||
+					(name.equals('Basel') && season >= 2009) ||
+					(name.equals('Beijing') && season >= 2009) ||
 					(name.equals('Brussels') && season in 1990..1992) ||
-					(name.equals('Dubai') && season in 2001..2016) ||
-					(name.equals('Halle') && season in 2015..2016) ||
-					(name.equals('Hamburg') && season in 2009..2016) ||
+					(name.equals('Dubai') && season >= 2001) ||
+					(name.equals('Halle') && season >= 2015) ||
+					(name.equals('Hamburg') && season >= 2009) ||
 					(name.equals('Indianapolis') && season in 1990..2002) ||
 					(name.equals('Kitzbuhel') && season in 1999..2008) ||
-					(name.equals('London') && (season in 1998..2000 || season in 2015..2016)) ||
+					(name.equals('London') && (season in 1998..2000 || season >= 2015)) ||
 					(name.equals('Memphis') && (season in 1990..1992 || season in 1994..2013)) ||
 					(name.equals('Mexico City') && season == 2000) ||
 					(name.equals('Milan') && season in 1991..1997) ||
 					(name.equals('New Haven') && season in 1990..1998) ||
 					(name.equals('Philadelphia') && season in 1990..1998) ||
-					(name.equals('Rio de Janeiro') && season in 2014..2016) ||
-					(name.equals('Rotterdam') && season in 1999..2016) ||
+					(name.equals('Rio de Janeiro') && season >= 2014) ||
+					(name.equals('Rotterdam') && season >= 1999) ||
 					(name.equals('Singapore') && season in 1997..1999) ||
 					(name.equals('Stuttgart Outdoor') && season in 1990..2000) ||
 					(name.equals('Stuttgart') && (season == 2001 || season in 2003..2008)) ||
 					(name.equals('Stuttgart Indoor') && season in 1990..1995) ||
 					(name.equals('Sydney Indoor') && season in 1990..1994) ||
-					(name.equals('Tokyo') && season in 1996..2016) ||
+					(name.equals('Tokyo') && season >= 1996) ||
 					(name.equals('Tokyo Indoor') && season in 1990..1995) ||
 					(name.equals('Tokyo Outdoor') && season in 1990..1995) ||
 					(name.equals('Toronto Indoor') && season == 1990) ||
 					(name.equals('Valencia') && season in 2009..2014) ||
-					(name.equals('Vienna') && (season in 1996..2008 || season in 2015..2016)) ||
-					(name.equals('Washington') && (season in 1990..2002 || season in 2009..2016)) ||
+					(name.equals('Vienna') && (season in 1996..2008 || season >= 2015)) ||
+					(name.equals('Washington') && (season in 1990..2002 || season >= 2009)) ||
 					 // Other distinguished tournaments
 					(name.startsWith('Dallas') && extTournamentId == '610' && season in 1971..1989) || // WCT Finals
 					(name.equals('Grand Slam Cup') && season in 1990..1999) ||
