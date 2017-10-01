@@ -31,25 +31,25 @@ public class SeasonsService {
 	private static final String SEASONS_QUERY = //language=SQL
 		"WITH season_tournament_count AS (\n" +
 		"  SELECT season, count(*) AS tournament_count,\n" +
-		"    sum(CASE WHEN level = 'G' THEN 1 ELSE 0 END) AS grand_slam_count,\n" +
-		"    sum(CASE WHEN level = 'F' THEN 1 ELSE 0 END) AS tour_finals_count,\n" +
-		"    sum(CASE WHEN level = 'M' THEN 1 ELSE 0 END) AS masters_count,\n" +
-		"    sum(CASE WHEN level = 'O' THEN 1 ELSE 0 END) AS olympics_count,\n" +
-		"    sum(CASE WHEN level = 'A' THEN 1 ELSE 0 END) AS atp500_count,\n" +
-		"    sum(CASE WHEN level = 'B' THEN 1 ELSE 0 END) AS atp250_count,\n" +
-		"    sum(CASE WHEN surface = 'H' THEN 1 ELSE 0 END) AS hard_count,\n" +
-		"    sum(CASE WHEN surface = 'C' THEN 1 ELSE 0 END) AS clay_count,\n" +
-		"    sum(CASE WHEN surface = 'G' THEN 1 ELSE 0 END) AS grass_count,\n" +
-		"    sum(CASE WHEN surface = 'P' THEN 1 ELSE 0 END) AS carpet_count\n" +
+		"    count(*) FILTER (WHERE level = 'G') AS grand_slam_count,\n" +
+		"    count(*) FILTER (WHERE level = 'F') AS tour_finals_count,\n" +
+		"    count(*) FILTER (WHERE level = 'M') AS masters_count,\n" +
+		"    count(*) FILTER (WHERE level = 'O') AS olympics_count,\n" +
+		"    count(*) FILTER (WHERE level = 'A') AS atp500_count,\n" +
+		"    count(*) FILTER (WHERE level = 'B') AS atp250_count,\n" +
+		"    count(*) FILTER (WHERE surface = 'H') AS hard_count,\n" +
+		"    count(*) FILTER (WHERE surface = 'C') AS clay_count,\n" +
+		"    count(*) FILTER (WHERE surface = 'G') AS grass_count,\n" +
+		"    count(*) FILTER (WHERE surface = 'P') AS carpet_count\n" +
 		"  FROM tournament_event\n" +
 		"  WHERE level NOT IN ('D', 'T')\n" +
 		"  GROUP BY season\n" +
 		"), season_match_count AS (\n" +
 		"  SELECT e.season, count(*) match_count,\n" +
-		"    sum(CASE m.surface WHEN 'H' THEN 1 ELSE 0 END) AS hard_match_count,\n" +
-		"    sum(CASE m.surface WHEN 'C' THEN 1 ELSE 0 END) AS clay_match_count,\n" +
-		"    sum(CASE m.surface WHEN 'G' THEN 1 ELSE 0 END) AS grass_match_count,\n" +
-		"    sum(CASE m.surface WHEN 'P' THEN 1 ELSE 0 END) AS carpet_match_count\n" +
+		"    count(*) FILTER (WHERE m.surface = 'H') AS hard_match_count,\n" +
+		"    count(*) FILTER (WHERE m.surface = 'C') AS clay_match_count,\n" +
+		"    count(*) FILTER (WHERE m.surface = 'G') AS grass_match_count,\n" +
+		"    count(*) FILTER (WHERE m.surface = 'P') AS carpet_match_count\n" +
 		"  FROM match m\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  GROUP BY e.season\n" +
@@ -108,15 +108,15 @@ public class SeasonsService {
 		"WITH player_season AS (\n" +
 		"  SELECT player_id, s.season, s.goat_points,\n" +
 		"    s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.weeks_at_elo_topn_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points,\n" +
-		"    count(CASE WHEN e.level = 'G' AND r.result = 'W' THEN 1 ELSE NULL END) grand_slam_titles,\n" +
-		"    count(CASE WHEN e.level = 'G' AND r.result = 'F' THEN 1 ELSE NULL END) grand_slam_finals,\n" +
-		"    count(CASE WHEN e.level = 'G' AND r.result = 'SF' THEN 1 ELSE NULL END) grand_slam_semi_finals,\n" +
-		"    count(CASE WHEN e.level = 'F' AND r.result = 'W' THEN 1 ELSE NULL END) tour_finals_titles,\n" +
-		"    count(CASE WHEN e.level = 'F' AND r.result = 'F' THEN 1 ELSE NULL END) tour_finals_finals,\n" +
-		"    count(CASE WHEN e.level = 'M' AND r.result = 'W' THEN 1 ELSE NULL END) masters_titles,\n" +
-		"    count(CASE WHEN e.level = 'M' AND r.result = 'F' THEN 1 ELSE NULL END) masters_finals,\n" +
-		"    count(CASE WHEN e.level = 'O' AND r.result = 'W' THEN 1 ELSE NULL END) olympics_titles,\n" +
-		"    count(CASE WHEN e.level NOT IN ('D', 'T') AND r.result = 'W' THEN 1 ELSE NULL END) titles\n" +
+		"    count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'W') grand_slam_titles,\n" +
+		"    count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'F') grand_slam_finals,\n" +
+		"    count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'SF') grand_slam_semi_finals,\n" +
+		"    count(player_id) FILTER (WHERE e.level = 'F' AND r.result = 'F') tour_finals_finals,\n" +
+		"    count(player_id) FILTER (WHERE e.level = 'M' AND r.result = 'W') masters_titles,\n" +
+		"    count(player_id) FILTER (WHERE e.level = 'M' AND r.result = 'F') masters_finals,\n" +
+		"    count(player_id) FILTER (WHERE e.level = 'F' AND r.result = 'W') tour_finals_titles,\n" +
+		"    count(player_id) FILTER (WHERE e.level = 'O' AND r.result = 'W') olympics_titles,\n" +
+		"    count(player_id) FILTER (WHERE e.level NOT IN ('D', 'T') AND r.result = 'W') titles\n" +
 		"  FROM player_season_goat_points s\n" +
 		"  LEFT JOIN player_tournament_event_result r USING (player_id)\n" +
 		"  INNER JOIN tournament_event e USING (tournament_event_id, season)\n" +

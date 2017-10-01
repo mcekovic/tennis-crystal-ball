@@ -18,10 +18,9 @@ public class RefreshRecordsJob {
 
 	@Scheduled(cron = "${tennis-stats.jobs.refresh-records:0 5 2 * * MON}")
 	public void refreshRecords() {
-		String storageOption = dataService.getDBServerVersion() >= DataService.MATERIALIZED_VIEWS_MIN_VERSION ? "-m" : "-t";
-		if (dataLoadCommand.execute("RefreshRecords", "-rr", "-c 1", storageOption, "-rp 1000") == 0) {
+		if (dataLoadCommand.execute("RefreshRecords", "-rr", "-c 1", "-rp 100") == 0) {
 			try {
-				dataLoadCommand.execute("Vacuum", "-vc", "-c 1", storageOption);
+				dataLoadCommand.execute("Vacuum", "-vc", "-c 1");
 			}
 			finally {
 				clearCaches();

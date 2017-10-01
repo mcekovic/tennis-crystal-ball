@@ -10,12 +10,10 @@ import static org.strangeforest.tcb.dataload.LoadParams.*
 class ATPTennisLoader {
 
 	private final boolean full
-	private final boolean useMaterializedViews
 	private String baseDir
 
 	ATPTennisLoader() {
 		full = getBooleanProperty(FULL_LOAD_PROPERTY, FULL_LOAD_DEFAULT)
-		useMaterializedViews = getBooleanProperty(USE_MATERIALIZED_VIEWS_PROPERTY, USE_MATERIALIZED_VIEWS_DEFAULT)
 	}
 
 	def loadPlayers(loader) {
@@ -263,12 +261,7 @@ class ATPTennisLoader {
 	def refreshMaterializedView(Sql sql, String viewName) {
 		def stopwatch = Stopwatch.createStarted()
 		println "Refreshing materialized view '$viewName'"
-		if (useMaterializedViews)
-			sql.execute("REFRESH MATERIALIZED VIEW $viewName".toString())
-		else {
-			sql.execute("DELETE FROM $viewName".toString())
-			sql.execute("INSERT INTO $viewName SELECT * FROM ${viewName}_v".toString())
-		}
+		sql.execute("REFRESH MATERIALIZED VIEW $viewName".toString())
 		sql.commit()
 		println "Materialized view '$viewName' refreshed in $stopwatch"
 	}
@@ -286,10 +279,7 @@ class ATPTennisLoader {
 		executeSQLFile(sql, '/create-functions.sql')
 
 		println 'Creating views...'
-		if (useMaterializedViews)
-			executeSQLFile(sql, '/create-views.sql')
-		else
-			executeSQLFile(sql, '/create-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+		executeSQLFile(sql, '/create-views.sql')
 
 		println 'Loading initial data...'
 		executeSQLFile(sql, '/initial-load.sql')
@@ -307,10 +297,7 @@ class ATPTennisLoader {
 		executeSQLFile(sql, '/drop-load-functions.sql')
 
 		println 'Dropping views...'
-		if (useMaterializedViews)
-			executeSQLFile(sql, '/drop-views.sql')
-		else
-			executeSQLFile(sql, '/drop-views.sql', 'MATERIALIZED VIEW', 'TABLE')
+		executeSQLFile(sql, '/drop-views.sql')
 
 		println 'Dropping functions...'
 		executeSQLFile(sql, '/drop-functions.sql')
@@ -330,11 +317,9 @@ class ATPTennisLoader {
 		println 'Vacuuming tables and materialized views...'
 		def tables = sql.rows('SELECT tablename FROM pg_tables WHERE schemaname = \'public\' ORDER BY tablename')
 			.collect { row -> row.tablename }
-		if (useMaterializedViews) {
-			def matViews = sql.rows('SELECT matviewname FROM pg_matviews WHERE schemaname = \'public\' ORDER BY matviewname')
-				.collect { row -> row.matviewname }
-			tables.addAll matViews
-		}
+		def matViews = sql.rows('SELECT matviewname FROM pg_matviews WHERE schemaname = \'public\' ORDER BY matviewname')
+			.collect { row -> row.matviewname }
+		tables.addAll matViews
 		sql.connection.autoCommit = true
 		try {
 			tables.each { name ->
@@ -348,11 +333,8 @@ class ATPTennisLoader {
 		println "Vacuuming finished in $stopwatch"
 	}
 
-	private executeSQLFile(Sql sql, String file, String replaceTarget = null, String replacement = null) {
-		def sqlText = getClass().getResourceAsStream(file).text
-		if (replaceTarget && replacement)
-			sqlText = sqlText.replace(replaceTarget, replacement)
-		sql.execute(sqlText)
+	private executeSQLFile(Sql sql, String file) {
+		sql.execute(getClass().getResourceAsStream(file).text)
 		sql.commit()
 	}
 }

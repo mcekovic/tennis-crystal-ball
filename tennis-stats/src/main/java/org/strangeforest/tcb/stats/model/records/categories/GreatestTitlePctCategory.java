@@ -11,10 +11,10 @@ import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 public class GreatestTitlePctCategory extends RecordCategory {
 
 	public enum RecordType {
-		WINNING("Final / Title", "Winning", "finals_won", "CASE r.result WHEN 'W' THEN 1 ELSE 0 END", WinningPctRecordDetail.class,
+		WINNING("Final / Title", "Winning", "finals_won", "count(*) FILTER (WHERE r.result = 'W')", WinningPctRecordDetail.class,
 			new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", "Won")
 		),
-		LOSING("Final", "Losing", "finals_lost", "CASE r.result WHEN 'W' THEN 0 ELSE 1 END", LosingPctRecordDetail.class,
+		LOSING("Final", "Losing", "finals_lost", "count(*) FILTER (WHERE r.result <> 'W')", LosingPctRecordDetail.class,
 			new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost")
 		);
 
@@ -92,7 +92,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 		return new Record<>(
 			domain.id + "Final" + type.name + "Pct", "Greatest " + suffix(domain.name, " ") + "Final " + type.name + " Pct." + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
-			"SELECT r.player_id, sum(" + type.expression2 + ")::REAL / count(r.player_id) AS pct, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END) AS won, sum(CASE r.result WHEN 'W' THEN 0 ELSE 1 END) AS lost\n" +
+			"SELECT r.player_id, (" + type.expression2 + ")::REAL / count(r.player_id) AS pct, count(r.player_id) FILTER (WHERE r.result = 'W') AS won, count(r.player_id) FILTER (WHERE r.result <> 'W') AS lost\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE r.result IN ('W', 'F') AND e." + domain.condition + "\n" +
 			"GROUP BY r.player_id HAVING count(r.player_id) >= " + minEntries,
@@ -112,7 +112,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 		return new Record<>(
 			domain.id + "TitleWinningPct", "Greatest " + suffix(domain.name, " ") + "Title / Entry Winning Pct." + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
-			"SELECT r.player_id, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END)::REAL / count(r.player_id) AS pct, sum(CASE r.result WHEN 'W' THEN 1 ELSE 0 END) AS won, sum(CASE r.result WHEN 'W' THEN 0 ELSE 1 END) AS lost\n" +
+			"SELECT r.player_id, (count(r.player_id) FILTER (WHERE r.result = 'W'))::REAL / count(r.player_id) AS pct, count(r.player_id) FILTER (WHERE r.result = 'W') AS won, count(r.player_id) FILTER (WHERE r.result <> 'W') AS lost AS lost\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE e." + domain.condition + "\n" +
 			"GROUP BY r.player_id HAVING count(r.player_id) >= " + minEntries,

@@ -73,9 +73,9 @@ SELECT player_id, tournament_event_id, result, rank_points, rank_points_2008, go
 	WHERE NOT p.additive OR p.additive IS NULL
 	UNION
 	SELECT r.player_id, r.tournament_event_id, r.result,
-		sum(CASE WHEN m.winner_id = r.player_id THEN p.rank_points ELSE NULL END), -- TODO Replace with FILTER in PostgreSQL 9.5+
-		sum(CASE WHEN m.winner_id = r.player_id THEN p.rank_points_2008 ELSE NULL END),
-		sum(CASE WHEN m.winner_id = r.player_id THEN p.goat_points ELSE NULL END)
+		sum(p.rank_points) FILTER (WHERE m.winner_id = r.player_id),
+		sum(p.rank_points_2008) FILTER (WHERE m.winner_id = r.player_id),
+		sum(p.goat_points) FILTER (WHERE m.winner_id = r.player_id)
 	FROM best_round r
 	INNER JOIN tournament_event e ON e.tournament_event_id = r.tournament_event_id
 	LEFT JOIN match m ON m.tournament_event_id = r.tournament_event_id AND (m.winner_id = r.player_id OR m.loser_id = r.player_id)
@@ -554,9 +554,9 @@ WITH rivalry AS (
 	HAVING count(match_id) >= 3
 ), h2h AS (
 	SELECT r.player_id,
-		sum(CASE WHEN r.p_matches > r.o_matches THEN 1 ELSE 0 END) AS h2h_won,
-		sum(CASE WHEN r.p_matches = r.o_matches THEN 1 ELSE 0 END) AS h2h_draw,
-		sum(CASE WHEN r.p_matches < r.o_matches THEN 1 ELSE 0 END) AS h2h_lost,
+		count(r.opponent_id) FILTER (WHERE r.p_matches > r.o_matches) AS h2h_won,
+		count(r.opponent_id) FILTER (WHERE r.p_matches = r.o_matches) AS h2h_draw,
+		count(r.opponent_id) FILTER (WHERE r.p_matches < r.o_matches) AS h2h_lost,
 		count(r.opponent_id) AS h2h_count,
 		sum((2 + sign(r.p_matches - r.o_matches)) * (1 + r.p_matches / 10.0) * f.rank_factor) AS h2h_won_factor,
 		sum((2 + sign(r.o_matches - r.p_matches)) * (1 + r.o_matches / 10.0) * f.rank_factor) AS h2h_lost_factor
@@ -971,7 +971,7 @@ WHERE gs.grand_slams >= 4;
 
 CREATE OR REPLACE VIEW player_grand_slam_holder_goat_points_v AS
 WITH event_not_count AS (
-  SELECT r.player_id, e.date, r.result, sum(CASE WHEN r.result = 'W' THEN 0 ELSE 1 END) OVER (PARTITION BY player_id ORDER BY date) AS not_count
+  SELECT r.player_id, e.date, r.result, count(r.player_id) FILTER (WHERE r.result <> 'W') OVER (PARTITION BY player_id ORDER BY date) AS not_count
   FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE e.level = 'G'
 ), grand_slam_streak AS (
   SELECT player_id, rank() OVER rs AS streak
@@ -990,7 +990,7 @@ WHERE gs.streak >= 4;
 CREATE OR REPLACE VIEW player_consecutive_grand_slam_on_same_event_goat_points_v AS
 WITH event_not_count AS (
   SELECT r.player_id, e.tournament_id, e.tournament_event_id, e.date, r.result,
-    sum(CASE WHEN r.result = 'W' THEN 0 ELSE 1 END) OVER (PARTITION BY r.player_id, e.tournament_id ORDER BY date) AS not_count
+    count(r.player_id) FILTER (WHERE r.result <> 'W') OVER (PARTITION BY r.player_id, e.tournament_id ORDER BY date) AS not_count
   FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)
   WHERE e.level = 'G'
 ), event_result_streak AS (
@@ -1619,12 +1619,12 @@ CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
 CREATE OR REPLACE VIEW player_best_season_goat_points_v AS
 WITH pleayer_season AS (
 	SELECT player_id, s.season, s.goat_points,
-		count(CASE WHEN e.level = 'G' AND r.result = 'W' THEN 1 ELSE NULL END) grand_slam_titles,
-		count(CASE WHEN e.level = 'G' AND r.result = 'F' THEN 1 ELSE NULL END) grand_slam_finals,
-		count(CASE WHEN e.level = 'F' AND r.result = 'W' THEN 1 ELSE NULL END) tour_finals_titles,
-		count(CASE WHEN e.level = 'M' AND r.result = 'W' THEN 1 ELSE NULL END) masters_titles,
-		count(CASE WHEN e.level = 'O' AND r.result = 'W' THEN 1 ELSE NULL END) olympics_titles,
-		count(CASE WHEN e.level IN ('G', 'F', 'M', 'O', 'A', 'B') AND r.result = 'W' THEN 1 ELSE NULL END) titles
+		count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'W') grand_slam_titles,
+		count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'F') grand_slam_finals,
+		count(player_id) FILTER (WHERE e.level = 'F' AND r.result = 'W') tour_finals_titles,
+		count(player_id) FILTER (WHERE e.level = 'M' AND r.result = 'W') masters_titles,
+		count(player_id) FILTER (WHERE e.level = 'O' AND r.result = 'W') olympics_titles,
+		count(player_id) FILTER (WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B') AND r.result = 'W') titles
 	FROM player_season_goat_points s
 	LEFT JOIN player_tournament_event_result r USING (player_id)
 	LEFT JOIN tournament_event e USING (tournament_event_id, season)

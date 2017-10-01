@@ -29,7 +29,7 @@ public abstract class ResultsStreaksCategory extends RecordCategory {
 			// CASE in second line replaceable by FILTER in PostgreSQL 9.4+
 			/* language=SQL */
 			"WITH event_not_count AS (\n" +
-			"  SELECT r.player_id" + prefix(partition, ", e.") + ", e.tournament_event_id, e.date, r.result, sum(CASE WHEN r." + resultCondition + " THEN 0 ELSE 1 END) OVER (PARTITION BY r.player_id" + prefix(partition, ", e.") + " ORDER BY date) AS not_count\n" +
+			"  SELECT r.player_id" + prefix(partition, ", e.") + ", e.tournament_event_id, e.date, r.result, count(r.player_id) FILTER (WHERE NOT(r." + resultCondition + ")) OVER (PARTITION BY r.player_id" + prefix(partition, ", e.") + " ORDER BY date) AS not_count\n" +
 			"  FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)" + prefix(condition, " WHERE e.") + "\n" +
 			"), event_result_streak AS (\n" +
 			"  SELECT player_id" + prefix(partition, ", ") + ", rank() OVER rs AS result_streak,\n" +

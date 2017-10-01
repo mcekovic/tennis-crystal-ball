@@ -15,6 +15,10 @@ applicationDefaultJvmArgs = [
 	'-Xms256m',
 	'-Xmx256m',
 	'-Dspring.profiles.active=digitalocean,jobs',
+	'-Dcom.sun.management.jmxremote',
+	'-Dcom.sun.management.jmxremote.port=9999',
+	'-Dcom.sun.management.jmxremote.authenticate=false',
+	'-Dcom.sun.management.jmxremote.ssl=false'
 ]
 
 sourceCompatibility = 1.8

@@ -15,17 +15,17 @@ public class SurfaceService {
 
 	private static final String TIMELINE_QUERY = //language=SQL
 		"SELECT NULL AS season, count(match_id) AS match_count,\n" +
-		"  sum(CASE surface WHEN 'H' THEN 1 ELSE 0 END) AS hard_match_count,\n" +
-		"  sum(CASE surface WHEN 'C' THEN 1 ELSE 0 END) AS clay_match_count,\n" +
-		"  sum(CASE surface WHEN 'G' THEN 1 ELSE 0 END) AS grass_match_count,\n" +
-		"  sum(CASE surface WHEN 'P' THEN 1 ELSE 0 END) AS carpet_match_count\n" +
+		"  count(match_id) FILTER (WHERE surface = 'H') AS hard_match_count,\n" +
+		"  count(match_id) FILTER (WHERE surface = 'C') AS clay_match_count,\n" +
+		"  count(match_id) FILTER (WHERE surface = 'G') AS grass_match_count,\n" +
+		"  count(match_id) FILTER (WHERE surface = 'P') AS carpet_match_count\n" +
 		"FROM match\n" +
 		"UNION\n" +
 		"SELECT e.season, count(m.match_id) AS match_count,\n" +
-		"  sum(CASE m.surface WHEN 'H' THEN 1 ELSE 0 END) AS hard_match_count,\n" +
-		"  sum(CASE m.surface WHEN 'C' THEN 1 ELSE 0 END) AS clay_match_count,\n" +
-		"  sum(CASE m.surface WHEN 'G' THEN 1 ELSE 0 END) AS grass_match_count,\n" +
-		"  sum(CASE m.surface WHEN 'P' THEN 1 ELSE 0 END) AS carpet_match_count\n" +
+		"  count(match_id) FILTER (WHERE m.surface = 'H') AS hard_match_count,\n" +
+		"  count(match_id) FILTER (WHERE m.surface = 'C') AS clay_match_count,\n" +
+		"  count(match_id) FILTER (WHERE m.surface = 'G') AS grass_match_count,\n" +
+		"  count(match_id) FILTER (WHERE m.surface = 'P') AS carpet_match_count\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING(tournament_event_id)\n" +
 		"GROUP BY e.season\n" +

@@ -35,11 +35,6 @@ allprojects {
 			user = '5637dc3a0c1e6656ae0001b2'
 			identity = file("${home}/.ssh/id_rsa")
 		}
-		openShiftDB {
-			host = 'tennisdb-strangeforest.rhcloud.com'
-			user = '58f8ee0b2d527165b100008b'
-			identity = file("${home}/.ssh/id_rsa")
-		}
 		digitalOcean {
 			host = '46.101.166.59'
 			user = 'root'

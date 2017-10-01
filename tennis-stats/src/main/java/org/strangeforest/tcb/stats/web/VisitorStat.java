@@ -4,7 +4,7 @@ public enum VisitorStat {
 
 	HITS("sum(hits)", "Hits"),
 	VISITS("count(visitor_id)", "Visits"),
-	ACTIVE_VISITORS("sum(CASE WHEN active THEN 1 ELSE 0 END)", "Active visitors"),
+	ACTIVE_VISITORS("count(visitor_id) FILTER (WHERE active)", "Active visitors"),
 	HITS_PER_VISIT("avg(hits)::INTEGER", "Hits per visit"),
 	VISITS_PER_IP("round(count(visitor_id)::NUMERIC / count(DISTINCT ip_address), 2)", "Visits per IP");
 

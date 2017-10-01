@@ -137,7 +137,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"  WHERE best_" + domain.columnPrefix + rankDBName + "rank " + bestCondition + "\n" +
 			"  WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)\n" +
 			"), player_ranking_weeks2 AS (\n" +
-			"  SELECT player_id, rank, rank_date, prev_rank, weeks, sum(CASE WHEN prev_rank " + condition + " THEN 0 ELSE 1 END) OVER (PARTITION BY player_id ORDER BY rank_date) AS not_rank\n" +
+			"  SELECT player_id, rank, rank_date, prev_rank, weeks, count(player_id) FILTER (WHERE NOT(prev_rank " + condition + ")) OVER (PARTITION BY player_id ORDER BY rank_date) AS not_rank\n" +
 			"  FROM player_ranking_weeks\n" +
 			"), player_consecutive_weeks AS (\n" +
 			"  SELECT player_id, rank, prev_rank, ceil(sum(CASE WHEN weeks <= 52 THEN weeks ELSE 0 END) OVER rs) AS weeks,\n" +

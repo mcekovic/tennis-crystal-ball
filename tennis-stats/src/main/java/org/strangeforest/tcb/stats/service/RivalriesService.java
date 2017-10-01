@@ -1,6 +1,5 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.io.*;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
@@ -8,8 +7,6 @@ import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
-import org.springframework.dao.*;
-import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
@@ -17,7 +14,6 @@ import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
 
-import com.fasterxml.jackson.databind.*;
 import com.google.common.collect.*;
 
 import static java.lang.String.*;
@@ -28,7 +24,6 @@ import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 @Service
 public class RivalriesService {
 
-	@Autowired private DataService dataService;
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES = 20;
@@ -211,15 +206,6 @@ public class RivalriesService {
 		"  ORDER BY e.date DESC, m.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
 		") lm";
 
-	private static final String LAST_MATCH_JSON = //language=SQL
-		"  (SELECT row_to_json(lm) FROM (\n" +
-		"     SELECT m.match_id, e.season, m.date, e.level, m.surface, m.indoor, e.tournament_event_id, e.name AS tournament, m.round, m.winner_id, m.loser_id, m.score\n" +
-		"     FROM match m\n" +
-		"     INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"     WHERE ((m.winner_id = r.%1$s AND m.loser_id = r.%2$s) OR (m.winner_id = r.%2$s AND m.loser_id = r.%1$s))%3$s\n" +
-		"     ORDER BY e.date DESC, m.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
-		"  ) AS lm) AS last_match";
-
 
 	@Cacheable("PlayerH2H")
 	public Optional<WonDrawLost> getPlayerH2H(int playerId) {
@@ -240,12 +226,11 @@ public class RivalriesService {
 		BootgridTable<PlayerRivalryRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
-		boolean lateralSupported = lateralSupported();
 		jdbcTemplate.query(
 			format(PLAYER_RIVALRIES_QUERY,
 			   filter.getCriteria(),
-				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id", "opponent_id", filter.getRivalryCriteria()),
-				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", filter.getRivalryCriteria()) : "",
+				LAST_MATCH_LATERAL,
+				format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", filter.getRivalryCriteria()),
 				orderBy
 			),
 			filter.getParams()
@@ -260,7 +245,7 @@ public class RivalriesService {
 					boolean active = rs.getBoolean("active");
 					PlayerRivalryRow row = new PlayerRivalryRow(bestRank, opponentId, name, countryId, active);
 					row.setWonLost(mapWonLost(rs));
-					row.setLastMatch(mapLastMatch(rs, lateralSupported));
+					row.setLastMatch(mapLastMatch(rs));
 					table.addRow(row);
 				}
 			}
@@ -271,19 +256,18 @@ public class RivalriesService {
 
 	public HeadsToHeads getHeadsToHeads(List<Integer> playerIds, RivalryFilter filter) {
 		String criteria = filter.getCriteria();
-		boolean lateralSupported = lateralSupported();
 		List<HeadsToHeadsRivalry> rivalries = !playerIds.isEmpty() ? jdbcTemplate.query(
 			format(HEADS_TO_HEADS_QUERY,
 				criteria,
-				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", criteria),
-				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", criteria) : ""
+				LAST_MATCH_LATERAL,
+				format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", criteria)
 			),
 			filter.getParams().addValue("playerIds", playerIds),
 			(rs, rowNum) -> {
 				RivalryPlayer player1 = mapPlayer(rs, "_1");
 				RivalryPlayer player2 = mapPlayer(rs, "_2");
 				WonLost wonLost = mapWonLost(rs);
-				MatchInfo lastMatch = mapLastMatch(rs, lateralSupported);
+				MatchInfo lastMatch = mapLastMatch(rs);
 				return new HeadsToHeadsRivalry(player1, player2, wonLost, lastMatch);
 			}
 		) : emptyList();
@@ -304,13 +288,12 @@ public class RivalriesService {
 			criteria += BEST_RANK_CRITERIA;
 			params.addValue("bestRank", bestRank);
 		}
-		boolean lateralSupported = lateralSupported();
 		jdbcTemplate.query(
 			format(GREATEST_RIVALRIES_QUERY,
 				bestRank != null ? BEST_RANK_JOIN : "",
 				where(criteria, 2),
-				lateralSupported ? LAST_MATCH_LATERAL : format(LAST_MATCH_JSON, "player_id_1", "player_id_2", lastMatchCriteria),
-				lateralSupported ? format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", lastMatchCriteria) : "",
+				LAST_MATCH_LATERAL,
+				format(LAST_MATCH_JOIN_LATERAL, "player_id_1", "player_id_2", lastMatchCriteria),
 				orderBy
 			),
 			params,
@@ -321,7 +304,7 @@ public class RivalriesService {
 					RivalryPlayer player2 = mapPlayer(rs, "_2");
 					WonLost wonLost = mapWonLost(rs);
 					int rivalryScore = rs.getInt("rivalry_score");
-					MatchInfo lastMatch = mapLastMatch(rs, lateralSupported);
+					MatchInfo lastMatch = mapLastMatch(rs);
 					table.addRow(new GreatestRivalry(rank, player1, player2, wonLost, rivalryScore, lastMatch));
 				}
 			}
@@ -386,11 +369,7 @@ public class RivalriesService {
 		);
 	}
 
-	private MatchInfo mapLastMatch(ResultSet rs, boolean lateralSupported) throws SQLException {
-		return lateralSupported ? mapLastMatchLateral(rs) : mapLastMatchJson(rs);
-	}
-
-	private MatchInfo mapLastMatchLateral(ResultSet rs) throws SQLException {
+	private MatchInfo mapLastMatch(ResultSet rs) throws SQLException {
 		return new MatchInfo(
 			rs.getLong("match_id"),
 			rs.getInt("season"),
@@ -404,33 +383,5 @@ public class RivalriesService {
 			rs.getInt("loser_id"),
 			rs.getString("score")
 		);
-	}
-
-	private static final ObjectReader READER = new ObjectMapper().reader();
-
-	private MatchInfo mapLastMatchJson(ResultSet rs) throws SQLException {
-		try {
-			JsonNode lastMatch = READER.readTree(rs.getString("last_match"));
-			return new MatchInfo(
-				lastMatch.get("match_id").asLong(),
-				lastMatch.get("season").asInt(),
-				lastMatch.get("level").asText(),
-				lastMatch.get("surface").asText(),
-				lastMatch.get("indoor").asBoolean(),
-				lastMatch.get("tournament_event_id").asInt(),
-				lastMatch.get("tournament").asText(),
-				lastMatch.get("round").asText(),
-				lastMatch.get("winner_id").asInt(),
-				lastMatch.get("loser_id").asInt(),
-				lastMatch.get("score").asText()
-			);
-		}
-		catch (IOException ex) {
-			throw new SQLException(ex);
-		}
-	}
-
-	private boolean lateralSupported() {
-		return dataService.getDBServerVersion() >= DataService.LATERAL_MIN_VERSION;
 	}
 }

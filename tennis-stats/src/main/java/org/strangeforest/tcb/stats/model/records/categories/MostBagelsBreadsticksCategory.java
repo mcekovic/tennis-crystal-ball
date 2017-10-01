@@ -181,12 +181,12 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			/* language=SQL */
 			"WITH player_items AS (\n" +
 			"  SELECT m.winner_id AS player_id, count(match_id) AS total,\n" +
-			"    SUM(CASE WHEN " + type.itemCondition(itemType) + " THEN 1 ELSE 0 END) AS items, max(date) AS last_date\n" +
+			"    count(match_id) FILTER (WHERE " + type.itemCondition(itemType) + ") AS items, max(date) AS last_date\n" +
 			"  FROM match_for_stats_v m INNER JOIN set_score s USING (match_id)" + where(domain.condition, 2) + "\n" +
 			"  GROUP BY m.winner_id\n" +
 			"  UNION ALL\n" +
 			"  SELECT m.loser_id, count(match_id),\n" +
-			"    SUM(CASE WHEN " + type.inverted().itemCondition(itemType) + " THEN 1 ELSE 0 END) AS items, max(date)\n" +
+			"    count(match_id) FILTER (WHERE " + type.inverted().itemCondition(itemType) + " ) AS items, max(date)\n" +
 			"  FROM match_for_stats_v m INNER JOIN set_score s USING (match_id)" + where(domain.condition, 2) + "\n" +
 			"  GROUP BY m.loser_id\n" +
 			")\n" +
@@ -213,13 +213,13 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			/* language=SQL */
 			"WITH player_items AS (\n" +
 			"  SELECT m.winner_id AS player_id, count(match_id) AS total,\n" +
-			"    SUM(CASE WHEN " + type.itemCondition(itemType) + " THEN 1 ELSE 0 END) AS items, max(date) AS last_date\n" +
+			"    count(match_id) FILTER (WHERE " + type.itemCondition(itemType) + ") AS items, max(date) AS last_date\n" +
 			"  FROM match_for_stats_v m INNER JOIN set_score s USING (match_id)\n" +
 			"  WHERE m.loser_rank " + domain.condition + "\n" +
 			"  GROUP BY m.winner_id\n" +
 			"  UNION ALL\n" +
 			"  SELECT m.loser_id, count(match_id),\n" +
-			"    SUM(CASE WHEN " + type.inverted().itemCondition(itemType) + " THEN 1 ELSE 0 END) AS items, max(date)\n" +
+			"    count(match_id) FILTER (WHERE " + type.inverted().itemCondition(itemType) + ") AS items, max(date)\n" +
 			"  FROM match_for_stats_v m INNER JOIN set_score s USING (match_id)\n" +
 			"  WHERE m.winner_rank " + domain.condition + "\n" +
 			"  GROUP BY m.loser_id\n" +
@@ -247,12 +247,12 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			/* language=SQL */
 			"WITH player_items AS (\n" +
 			"  SELECT m.winner_id AS player_id, m.season, count(match_id) AS total,\n" +
-			"    SUM(CASE WHEN " + type.itemCondition(itemType) + " THEN 1 ELSE 0 END) AS items, max(date) AS last_date\n" +
+			"    count(match_id) FILTER (WHERE " + type.itemCondition(itemType) + ") AS items, max(date) AS last_date\n" +
 			"  FROM match_for_stats_v m INNER JOIN set_score s USING (match_id)\n" +
 			"  GROUP BY m.winner_id, m.season\n" +
 			"  UNION ALL\n" +
 			"  SELECT m.loser_id, m.season, count(match_id),\n" +
-			"    SUM(CASE WHEN " + type.inverted().itemCondition(itemType) + " THEN 1 ELSE 0 END) AS items, max(date)\n" +
+			"    count(match_id) FILTER (WHERE " + type.inverted().itemCondition(itemType) + ") AS items, max(date)\n" +
 			"  FROM match_for_stats_v m INNER JOIN set_score s USING (match_id)\n" +
 			"  GROUP BY m.loser_id, m.season\n" +
 			")\n" +

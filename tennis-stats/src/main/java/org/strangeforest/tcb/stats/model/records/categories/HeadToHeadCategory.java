@@ -181,14 +181,13 @@ public class HeadToHeadCategory extends RecordCategory {
 			"  HAVING count(match_id) >= 3\n" +
 			"), player_h2h AS (\n" +
 			"  SELECT player_id,\n" +
-			"    sum(CASE WHEN p_matches > o_matches THEN 1 ELSE 0 END) AS h2h_won,\n" +
-			"    sum(CASE WHEN p_matches = o_matches THEN 1 ELSE 0 END) AS h2h_draw,\n" +
-			"    sum(CASE WHEN p_matches < o_matches THEN 1 ELSE 0 END) AS h2h_lost\n" +
+			"    count(player_id) FILTER (WHERE p_matches > o_matches) AS h2h_won,\n" +
+			"    count(player_id) FILTER (WHERE p_matches = o_matches) AS h2h_draw,\n" +
+			"    count(player_id) FILTER (WHERE p_matches < o_matches) AS h2h_lost\n" +
 			"  FROM rivalry\n" +
 			"  GROUP BY player_id\n" +
 			")\n";
 	}
-
 
 
 	// Util
