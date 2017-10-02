@@ -112,7 +112,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 		return new Record<>(
 			domain.id + "TitleWinningPct", "Greatest " + suffix(domain.name, " ") + "Title / Entry Winning Pct." + prefix(domain.nameSuffix, " "),
 			/* language=SQL */
-			"SELECT r.player_id, (count(r.player_id) FILTER (WHERE r.result = 'W'))::REAL / count(r.player_id) AS pct, count(r.player_id) FILTER (WHERE r.result = 'W') AS won, count(r.player_id) FILTER (WHERE r.result <> 'W') AS lost AS lost\n" +
+			"SELECT r.player_id, (count(r.player_id) FILTER (WHERE r.result = 'W'))::REAL / count(r.player_id) AS pct, count(r.player_id) FILTER (WHERE r.result = 'W') AS won, count(r.player_id) FILTER (WHERE r.result <> 'W') AS lost\n" +
 			"FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 			"WHERE e." + domain.condition + "\n" +
 			"GROUP BY r.player_id HAVING count(r.player_id) >= " + minEntries,
