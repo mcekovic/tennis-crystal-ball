@@ -276,7 +276,7 @@ CREATE INDEX ON player_year_end_elo_rank (player_id);
 
 CREATE OR REPLACE VIEW match_for_stats_v AS
 SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.tournament_id, e.season, m.date, m.match_num, e.level, m.surface, m.round, m.best_of,
-	m.winner_rank, m.loser_rank, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.winner_country_id, m.loser_country_id, m.winner_age, m.loser_age, m.winner_height, m.loser_height,
+	m.winner_rank, m.loser_rank, m.winner_elo_rating, m.loser_elo_rating, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.winner_country_id, m.loser_country_id, m.winner_age, m.loser_age, m.winner_height, m.loser_height,
 	m.w_sets, m.l_sets, m.w_games, m.l_games, m.outcome
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
@@ -296,12 +296,12 @@ WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T');
 
 CREATE OR REPLACE VIEW player_match_for_stats_v AS
 SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, round, winner_id player_id, winner_rank player_rank, winner_age player_age, winner_height player_height,
-	loser_id opponent_id, loser_rank opponent_rank, loser_seed opponent_seed, loser_entry opponent_entry, loser_country_id opponent_country_id, loser_age opponent_age, loser_height opponent_height,
+	loser_id opponent_id, loser_rank opponent_rank, loser_elo_rating opponent_elo_rating, loser_seed opponent_seed, loser_entry opponent_entry, loser_country_id opponent_country_id, loser_age opponent_age, loser_height opponent_height,
 	1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games
 FROM match_for_stats_v
 UNION ALL
 SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, round, loser_id, loser_rank, loser_age, loser_height,
-	winner_id, winner_rank, winner_seed, winner_entry, winner_country_id, winner_age, winner_height,
+	winner_id, winner_rank, winner_elo_rating, winner_seed, winner_entry, winner_country_id, winner_age, winner_height,
 	0, 1, l_sets, w_sets, l_games, w_games
 FROM match_for_stats_v;
 

@@ -59,6 +59,9 @@ class EloRatings {
 	static final String DELETE_ALL = //language=SQL
 		"DELETE FROM player_elo_ranking"
 
+	static final String UPDATE_MATCH_ELO_RATINGS = //language=SQL
+		"UPDATE match SET winner_elo_rating = player_elo_rating(winner_id, date), loser_elo_rating = player_elo_rating(loser_id, date)"
+
 	static final List<String> SURFACES = ['H', 'C', 'G', 'P']
 	static final Date CARPET_EOL = toDate(LocalDate.of(2008, 1, 1))
 	static final Map<String, Integer> MIN_MATCHES = [(null): 10, H: 5, C: 5, G: 5, P: 5]
@@ -112,10 +115,8 @@ class EloRatings {
 		if (save) {
 			saveExecutor = Executors.newFixedThreadPool(saveThreads)
 			println "Using $saveThreads saving threads"
-			if (fullSave) {
-				println 'Deleting all Elo ratings'
+			if (fullSave)
 				deleteAll()
-			}
 			else
 				this.saveFromDate = saveFromDate ? saveFromDate : lastDate()
 		}
@@ -144,7 +145,10 @@ class EloRatings {
 				saveExecutor?.awaitTermination(1L, TimeUnit.DAYS)
 			}
 		}
-		println "\nElo Ratings computed in $stopwatch"
+		println()
+		if (fullSave)
+			updateMatchEloRatings()
+		println "Elo Ratings computed in $stopwatch"
 		println "Rank fetches: $rankFetches"
 		if (save)
 			println "Saves: $saves"
@@ -367,9 +371,19 @@ class EloRatings {
 	}
 
 	private deleteAll() {
+		println 'Deleting all Elo ratings'
 		sqlPool.withSql { sql ->
 			sql.execute(DELETE_ALL)
 		}
+	}
+
+	private updateMatchEloRatings() {
+		println 'Updating matches Elo ratings'
+		def stopwatch = Stopwatch.createStarted()
+		sqlPool.withSql { sql ->
+			sql.execute(UPDATE_MATCH_ELO_RATINGS)
+		}
+		println "Updating matches Elo ratings completed in $stopwatch"
 	}
 
 	private Integer playerRank(int playerId, Date date) {

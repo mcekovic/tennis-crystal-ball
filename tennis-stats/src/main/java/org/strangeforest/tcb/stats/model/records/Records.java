@@ -90,7 +90,8 @@ public abstract class Records {
 		register(RANKING, new EloRankingCategory(RecordDomain.GRASS), false);
 		register(RANKING, new EloRankingCategory(RecordDomain.CARPET), false);
 		register(MISC, new HeadToHeadCategory(false), false);
-		register(MISC, new HighestOpponentRankCategory(), false);
+		register(MISC, new HighestOpponentRankCategory(HighestOpponentRankCategory.RecordType.HIGHEST, HighestOpponentRankCategory.RankingType.RANK), false);
+		register(MISC, new HighestOpponentRankCategory(HighestOpponentRankCategory.RecordType.HIGHEST, HighestOpponentRankCategory.RankingType.ELO_RATING), false);
 		register(MISC, new MostBagelsBreadsticksCategory(MostBagelsBreadsticksCategory.RecordType.SCORED), false);
 		register(MISC, new GOATPointsCategory(), false);
 		register(MISC, new MostRecordsCategory(false), false);
@@ -105,6 +106,7 @@ public abstract class Records {
 		register(RANKING, new InfamousEloRankingCategory(), true);
 		register(MISC, new MostBagelsBreadsticksCategory(MostBagelsBreadsticksCategory.RecordType.AGAINST), true);
 		register(MISC, new HeadToHeadCategory(true), true);
+		register(MISC, new HighestOpponentRankCategory(HighestOpponentRankCategory.RecordType.LOWEST, HighestOpponentRankCategory.RankingType.ELO_RATING), true);
 		register(MISC, new MostRecordsCategory(true), true);
 	}
 }

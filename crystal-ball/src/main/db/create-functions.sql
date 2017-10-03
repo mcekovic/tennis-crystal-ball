@@ -166,7 +166,7 @@ DECLARE
 BEGIN
 	SELECT elo_rating INTO l_elo_rating FROM player_elo_ranking
 	WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1 year') AND p_date ORDER BY rank_date DESC LIMIT 1;
-	RETURN coalesce(l_elo_rating, 1500);
+	RETURN l_elo_rating;
 END;
 $$ LANGUAGE plpgsql;
 
