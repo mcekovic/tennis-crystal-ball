@@ -5,7 +5,6 @@ import java.util.concurrent.atomic.*
 import org.jsoup.select.*
 
 import com.google.common.base.*
-import groovy.json.*
 import groovy.sql.*
 
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
@@ -115,15 +114,12 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 			def statsUrl = params.statsUrl
 			if (statsUrl) {
 				def statsDoc = retriedGetDoc(statsUrl)
-				def json = statsDoc.select('#matchStatsData').html()
-				def matchStats = new JsonSlurper().parseText(json)[0]
-				def wStats = matchStats.playerStats
-				def lStats = matchStats.opponentStats
-
-				params.minutes = minutes wStats.Time
-				setATPStatsParams(params, wStats, 'w_')
-				setATPStatsParams(params, lStats, 'l_')
-				print '.'
+				params.minutes = minutes statsDoc.select('#completedScoreBox table.scores-table tr.match-info-row td.time').text()
+				def matchStats = statsDoc.select('#completedMatchStats > table.match-stats-table')
+				if (matchStats) {
+					setATPStatsParams(params, matchStats)
+					print '.'
+				}
 			}
 			if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
 				println()
@@ -153,18 +149,42 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		}
 	}
 
-	static setATPStatsParams(Map params, stats, String prefix) {
-		if (!stats)
-			return
-		params[prefix + 'ace'] = smallint stats.Aces
-		params[prefix + 'df'] = smallint stats.DoubleFaults
-		params[prefix + 'sv_pt'] = smallint stats.FirstServeDivisor
-		params[prefix + '1st_in'] = smallint stats.FirstServeDividend
-		params[prefix + '1st_won'] = smallint stats.FirstServePointsWonDividend
-		params[prefix + '2nd_won'] = smallint stats.SecondServePointsWonDividend
-		params[prefix + 'sv_gms'] = smallint stats.ServiceGamesPlayed
-		params[prefix + 'bp_sv'] = smallint stats.BreakPointsSavedDividend
-		params[prefix + 'bp_fc'] = smallint stats.BreakPointsSavedDivisor
+	static setATPStatsParams(Map params, stats) {
+		setATPStatParams(params, stats, 'ace', 'Aces')
+		setATPStatParams(params, stats, 'df', 'Double Faults')
+		setATPStatParamsUpDown(params, stats, '1st_in', 'sv_pt', '1st Serve')
+		setATPStatParamsUpDown(params, stats, '1st_won', null, '1st Serve Points Won')
+		setATPStatParamsUpDown(params, stats, '2nd_won', null, '2nd Serve Points Won')
+		setATPStatParams(params, stats, 'sv_gms', 'Service Games Played')
+		setATPStatParamsUpDown(params, stats, 'bp_sv', 'bp_fc', 'Break Points Saved')
+	}
+
+	static setATPStatParams(Map params, stats, String name, String title) {
+		def stat = stats.select("tr.match-stats-row:has(td.match-stats-label:containsOwn(${title}))")
+		params['w_' + name] = smallint stat.select('td.match-stats-number-left').text()
+		params['l_' + name] = smallint stat.select('td.match-stats-number-right').text()
+	}
+
+	static setATPStatParamsUpDown(Map params, stats, String nameUp, String nameDown, String title) {
+		def stat = stats.select("tr.match-stats-row:has(td.match-stats-label:containsOwn(${title}))")
+		String wText = stat.select('td.match-stats-number-left').text()
+		String lText = stat.select('td.match-stats-number-right').text()
+		if (nameUp) {
+			params['w_' + nameUp] = smallint statUp(wText)
+			params['l_' + nameUp] = smallint statUp(lText)
+		}
+		if (nameDown) {
+			params['w_' + nameDown] = smallint statDown(wText)
+			params['l_' + nameDown] = smallint statDown(lText)
+		}
+	}
+
+	static String statUp(String s) {
+		extract(s, '(', '/')
+	}
+
+	static String statDown(String s) {
+		extract(s, '/', ')')
 	}
 
 	static tournamentUrl(boolean current, int season, String urlId, extId) {

@@ -25,6 +25,7 @@ class EloRatings {
 	final Map<Integer, CompletableFuture> playerMatchFutures
 	Map<Integer, EloRating> playerRatings
 	Map<String, Map<Integer, EloRating>> surfacePlayerRatings
+	Map<Long, List<Double>> matchRatings
 	Map<RankKey, Integer> rankCache
 	Map<Date, Map<Integer, Integer>> rankDateCache
 	volatile Date lastDate
@@ -34,7 +35,7 @@ class EloRatings {
 	Date saveFromDate
 
 	static final String QUERY_MATCHES = //language=SQL
-		"SELECT m.winner_id, m.loser_id, tournament_end(e.date, e.level, e.draw_size) AS end_date, e.level, e.surface, m.round, m.best_of, m.outcome\n" +
+		"SELECT m.match_id, m.winner_id, m.loser_id, tournament_end(e.date, e.level, e.draw_size) AS end_date, e.level, e.surface, m.round, m.best_of, m.outcome\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
@@ -60,6 +61,9 @@ class EloRatings {
 		"DELETE FROM player_elo_ranking"
 
 	static final String UPDATE_MATCH_ELO_RATINGS = //language=SQL
+		"UPDATE match SET winner_elo_rating = :winner_elo_rating, loser_elo_rating = :loser_elo_rating WHERE match_id = :match_id"
+
+	static final String UPDATE_MATCHES_ELO_RATINGS = //language=SQL
 		"UPDATE match SET winner_elo_rating = player_elo_rating(winner_id, date), loser_elo_rating = player_elo_rating(loser_id, date)"
 
 	static final List<String> SURFACES = ['H', 'C', 'G', 'P']
@@ -96,6 +100,7 @@ class EloRatings {
 		playerRatings = new ConcurrentHashMap<>()
 		surfacePlayerRatings = [:]
 		SURFACES.each { surfacePlayerRatings[it] = new ConcurrentHashMap<>()}
+		matchRatings = new ConcurrentHashMap<>()
 		lastDate = null
 		saves = new AtomicInteger()
 		rankFetches = new AtomicInteger()
@@ -178,6 +183,7 @@ class EloRatings {
 	def processMatch(match, boolean forSurface) {
 		if (forSurface && !match.surface)
 			return
+		long matchId = match.match_id
 		int winnerId = match.winner_id
 		int loserId = match.loser_id
 		def playerId1 = min(winnerId, loserId)
@@ -206,7 +212,7 @@ class EloRatings {
 						winnerRating = getRating(surface, winnerId, date) ?: newEloRating(winnerId, surface)
 						loserRating = getRating(surface, loserId, date) ?: newEloRating(loserId, surface)
 						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome)
-						putNewRatings(surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date)
+						putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date)
 					}
 				}, rankExecutor)
 				playerMatchFutures.put(playerId1, future)
@@ -214,7 +220,7 @@ class EloRatings {
 			}
 			else {
 				def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome)
-				putNewRatings(surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date)
+				putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date)
 			}
 		}
 	}
@@ -234,10 +240,12 @@ class EloRatings {
 		rating
 	}
 
-	private putNewRatings(String surface, int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date) {
+	private putNewRatings(long matchId, String surface, int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date) {
 		def ratings = getRatings(surface)
 		ratings.put(winnerId, winnerRating.newRating(deltaRating, date, surface))
 		ratings.put(loserId, loserRating.newRating(-deltaRating, date, surface))
+		if (!surface)
+			matchRatings[matchId] = [winnerRating.rating, loserRating.rating]
 	}
 
 	private static double deltaRating(double winnerRating, double loserRating, String level, String surface, String round, short bestOf, String outcome) {
@@ -381,7 +389,7 @@ class EloRatings {
 		println 'Updating matches Elo ratings'
 		def stopwatch = Stopwatch.createStarted()
 		sqlPool.withSql { sql ->
-			sql.execute(UPDATE_MATCH_ELO_RATINGS)
+			sql.execute(UPDATE_MATCHES_ELO_RATINGS)
 		}
 		println "Updating matches Elo ratings completed in $stopwatch"
 	}
@@ -491,6 +499,24 @@ class EloRatings {
 					boolean isCarpetUsed = date < CARPET_EOL
 					params.carpet_rank = isCarpetUsed ? ranks['P'] : null
 					params.carpet_elo_rating = isCarpetUsed ? intRound(ratings['P']) : null
+					ps.addBatch(params)
+				}
+			}
+		}
+		if (saves.incrementAndGet() % SAVES_PER_PLUS == 0)
+			progressTick '+'
+	}
+
+	private updateMatchRatings(Map<Long, List<Integer>> matchRatings) {
+		if (matchRatings.empty)
+			return
+		sqlPool.withSql { sql ->
+			sql.withBatch(UPDATE_MATCH_ELO_RATINGS) { ps ->
+				matchRatings.each { matchId, eloRatings ->
+					Map params = [:]
+					params.match_id = matchId
+					params.winner_elo_rating = eloRatings[0]
+					params.loser_elo_rating = eloRatings[1]
 					ps.addBatch(params)
 				}
 			}

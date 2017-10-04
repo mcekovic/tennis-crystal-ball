@@ -124,6 +124,9 @@ abstract class BaseATPWorldTourTournamentLoader {
 	}
 
 	static minutes(String time) {
+		int pos = time.indexOf('Time:')
+		if (pos >= 0)
+			time = time.substring(pos + 5).trim()
 		time ? smallint(60 * Integer.parseInt(time.substring(0, 2)) + Integer.parseInt(time.substring(3, 5))) : null
 	}
 
@@ -160,6 +163,12 @@ abstract class BaseATPWorldTourTournamentLoader {
 			start++
 		}
 		int end = s.indexOf(delimiter, start)
-		return end > 0 ? s.substring(start, end) : s.substring(start)
+		end > 0 ? s.substring(start, end) : s.substring(start)
+	}
+
+	static extract(String s, String from, String to) {
+		int start = s.indexOf(from)
+		int end = s.indexOf(to)
+		start >= 0 && end > 0 ? s.substring(start + 1, end) : null
 	}
 }

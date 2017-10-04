@@ -142,10 +142,6 @@ class MatchLoader extends BaseCSVLoader {
 
 	static mapExtTournamentId(String extTourneyId, String level, DavisCupTournamentInfo dcInfo) {
 		switch (level) {
-			case 'G': switch (extTourneyId) {
-				case '581': return '581'
-				default:	return extTourneyId
-			}
 			case 'D': return dcInfo.extId
 			case 'O': return level
 			default: switch (extTourneyId) {
@@ -172,7 +168,6 @@ class MatchLoader extends BaseCSVLoader {
 		switch (level) {
 			case 'G': switch (name) {
 				case 'Us Open': return 'US Open'
-				case 'Australian Open-2': return 'Australian Open'
 				default: return name
 			}
 			case 'F': return season == 2016 ? 'Tour Finals' : name
@@ -254,7 +249,7 @@ class MatchLoader extends BaseCSVLoader {
 					(name.equals('Milan') && season in 1991..1997) ||
 					(name.equals('New Haven') && season in 1990..1998) ||
 					(name.equals('Philadelphia') && season in 1990..1998) ||
-					(name.equals('Rio de Janeiro') && season >= 2014) ||
+					(name.equalsIgnoreCase('Rio de Janeiro') && season >= 2014) ||
 					(name.equals('Rotterdam') && season >= 1999) ||
 					(name.equals('Singapore') && season in 1997..1999) ||
 					(name.equals('Stuttgart Outdoor') && season in 1990..2000) ||
