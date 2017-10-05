@@ -25,7 +25,7 @@ class EloRatings {
 	final Map<Integer, CompletableFuture> playerMatchFutures
 	Map<Integer, EloRating> playerRatings
 	Map<String, Map<Integer, EloRating>> surfacePlayerRatings
-	Map<Long, List<Double>> matchRatings
+	BlockingQueue<MatchEloRating> matchRatings
 	Map<RankKey, Integer> rankCache
 	Map<Date, Map<Integer, Integer>> rankDateCache
 	volatile Date lastDate
@@ -63,9 +63,6 @@ class EloRatings {
 	static final String UPDATE_MATCH_ELO_RATINGS = //language=SQL
 		"UPDATE match SET winner_elo_rating = :winner_elo_rating, loser_elo_rating = :loser_elo_rating WHERE match_id = :match_id"
 
-	static final String UPDATE_MATCHES_ELO_RATINGS = //language=SQL
-		"UPDATE match SET winner_elo_rating = player_elo_rating(winner_id, date), loser_elo_rating = player_elo_rating(loser_id, date)"
-
 	static final List<String> SURFACES = ['H', 'C', 'G', 'P']
 	static final Date CARPET_EOL = toDate(LocalDate.of(2008, 1, 1))
 	static final Map<String, Integer> MIN_MATCHES = [(null): 10, H: 5, C: 5, G: 5, P: 5]
@@ -100,7 +97,7 @@ class EloRatings {
 		playerRatings = new ConcurrentHashMap<>()
 		surfacePlayerRatings = [:]
 		SURFACES.each { surfacePlayerRatings[it] = new ConcurrentHashMap<>()}
-		matchRatings = new ConcurrentHashMap<>()
+		matchRatings = new LinkedBlockingDeque<>()
 		lastDate = null
 		saves = new AtomicInteger()
 		rankFetches = new AtomicInteger()
@@ -150,10 +147,7 @@ class EloRatings {
 				saveExecutor?.awaitTermination(1L, TimeUnit.DAYS)
 			}
 		}
-		println()
-		if (fullSave)
-			updateMatchEloRatings()
-		println "Elo Ratings computed in $stopwatch"
+		println "\nElo Ratings computed in $stopwatch"
 		println "Rank fetches: $rankFetches"
 		if (save)
 			println "Saves: $saves"
@@ -245,7 +239,7 @@ class EloRatings {
 		ratings.put(winnerId, winnerRating.newRating(deltaRating, date, surface))
 		ratings.put(loserId, loserRating.newRating(-deltaRating, date, surface))
 		if (!surface)
-			matchRatings[matchId] = [winnerRating.rating, loserRating.rating]
+			matchRatings.put new MatchEloRating(matchId: matchId, winnerRating: winnerRating.rating, loserRating: loserRating.rating)
 	}
 
 	private static double deltaRating(double winnerRating, double loserRating, String level, String surface, String round, short bestOf, String outcome) {
@@ -385,15 +379,6 @@ class EloRatings {
 		}
 	}
 
-	private updateMatchEloRatings() {
-		println 'Updating matches Elo ratings'
-		def stopwatch = Stopwatch.createStarted()
-		sqlPool.withSql { sql ->
-			sql.execute(UPDATE_MATCHES_ELO_RATINGS)
-		}
-		println "Updating matches Elo ratings completed in $stopwatch"
-	}
-
 	private Integer playerRank(int playerId, Date date) {
 		if (rankDateCache) {
 			Map.Entry<Date, Map<Integer, Integer>> prevCachedDateEntry = null
@@ -503,20 +488,15 @@ class EloRatings {
 				}
 			}
 		}
-		if (saves.incrementAndGet() % SAVES_PER_PLUS == 0)
-			progressTick '+'
-	}
-
-	private updateMatchRatings(Map<Long, List<Integer>> matchRatings) {
-		if (matchRatings.empty)
-			return
+		List<MatchEloRating> matchRatingsBatch = new ArrayList<>(matchRatings.size())
+		matchRatings.drainTo(matchRatingsBatch)
 		sqlPool.withSql { sql ->
 			sql.withBatch(UPDATE_MATCH_ELO_RATINGS) { ps ->
-				matchRatings.each { matchId, eloRatings ->
+				matchRatingsBatch.each { matchEloRatings ->
 					Map params = [:]
-					params.match_id = matchId
-					params.winner_elo_rating = eloRatings[0]
-					params.loser_elo_rating = eloRatings[1]
+					params.match_id = matchEloRatings.matchId
+					params.winner_elo_rating = matchEloRatings.winnerRating
+					params.loser_elo_rating = matchEloRatings.loserRating
 					ps.addBatch(params)
 				}
 			}
@@ -576,5 +556,11 @@ class EloRatings {
 	private static class RankKey {
 		int playerId
 		Date date
+	}
+
+	private static class MatchEloRating {
+		long matchId
+		int winnerRating
+		int loserRating
 	}
 }
