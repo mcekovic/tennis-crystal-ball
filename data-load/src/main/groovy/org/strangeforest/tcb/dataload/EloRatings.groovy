@@ -39,7 +39,6 @@ class EloRatings {
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
-		"AND (m.outcome IS NULL OR m.outcome <> 'ABD')\n" +
 		"ORDER BY end_date, m.round, m.winner_id, m.loser_id, m.match_num"
 
 	static final String QUERY_LAST_DATE = //language=SQL
@@ -206,7 +205,7 @@ class EloRatings {
 						winnerRating = getRating(surface, winnerId, date) ?: newEloRating(winnerId, surface)
 						loserRating = getRating(surface, loserId, date) ?: newEloRating(loserId, surface)
 						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome)
-						putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date)
+						putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date, outcome)
 					}
 				}, rankExecutor)
 				playerMatchFutures.put(playerId1, future)
@@ -214,7 +213,7 @@ class EloRatings {
 			}
 			else {
 				def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome)
-				putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date)
+				putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date, outcome)
 			}
 		}
 	}
@@ -234,15 +233,19 @@ class EloRatings {
 		rating
 	}
 
-	private putNewRatings(long matchId, String surface, int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date) {
-		def ratings = getRatings(surface)
-		ratings.put(winnerId, winnerRating.newRating(deltaRating, date, surface))
-		ratings.put(loserId, loserRating.newRating(-deltaRating, date, surface))
+	private putNewRatings(long matchId, String surface, int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date, String outcome) {
+		if (outcome != 'ABD') {
+			def ratings = getRatings(surface)
+			ratings.put(winnerId, winnerRating.newRating(deltaRating, date, surface))
+			ratings.put(loserId, loserRating.newRating(-deltaRating, date, surface))
+		}
 		if (saveExecutor && !surface && (!saveFromDate || lastDate >= saveFromDate))
 			matchRatings.put new MatchEloRating(matchId: matchId, winnerRating: winnerRating.rating, loserRating: loserRating.rating)
 	}
 
 	private static double deltaRating(double winnerRating, double loserRating, String level, String surface, String round, short bestOf, String outcome) {
+		if (outcome == 'ABD')
+			return 0.0
 		double winnerQ = pow(10, winnerRating / 400)
 		double loserQ = pow(10, loserRating / 400)
 		double loserExpectedScore = loserQ / (winnerQ + loserQ)
