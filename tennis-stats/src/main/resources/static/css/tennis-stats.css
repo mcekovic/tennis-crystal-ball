@@ -250,6 +250,12 @@ a.black:focus {
 .points-100 {
 	background-color: #dc1060;
 }
+.rankings-badge {
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 10px;
+	line-height: 1.0;
+}
 .stats-header {
 	font-size: smaller;
 }

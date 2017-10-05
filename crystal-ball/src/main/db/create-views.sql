@@ -295,12 +295,12 @@ WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T');
 -- player_match_for_stats_v
 
 CREATE OR REPLACE VIEW player_match_for_stats_v AS
-SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, round, winner_id player_id, winner_rank player_rank, winner_age player_age, winner_height player_height,
+SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, round, winner_id player_id, winner_rank player_rank, winner_elo_rating player_elo_rating, winner_age player_age, winner_height player_height,
 	loser_id opponent_id, loser_rank opponent_rank, loser_elo_rating opponent_elo_rating, loser_seed opponent_seed, loser_entry opponent_entry, loser_country_id opponent_country_id, loser_age opponent_age, loser_height opponent_height,
 	1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games
 FROM match_for_stats_v
 UNION ALL
-SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, round, loser_id, loser_rank, loser_age, loser_height,
+SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, round, loser_id, loser_rank, loser_elo_rating, loser_age, loser_height,
 	winner_id, winner_rank, winner_elo_rating, winner_seed, winner_entry, winner_country_id, winner_age, winner_height,
 	0, 1, l_sets, w_sets, l_games, w_games
 FROM match_for_stats_v;
@@ -466,8 +466,8 @@ CREATE UNIQUE INDEX ON player_performance (player_id);
 -- player_match_stats_v
 
 CREATE OR REPLACE VIEW player_match_stats_v AS
-SELECT match_id, tournament_event_id, tournament_id, season, date, level, surface, round, best_of, winner_id player_id, winner_rank player_rank, winner_age player_age, winner_height player_height,
-	loser_id opponent_id, loser_rank opponent_rank, loser_seed opponent_seed, loser_entry opponent_entry, loser_country_id opponent_country_id, loser_age opponent_age, loser_height opponent_height,
+SELECT match_id, tournament_event_id, tournament_id, season, date, level, surface, round, best_of, winner_id player_id, winner_rank player_rank, winner_elo_rating player_elo_rating, winner_age player_age, winner_height player_height,
+	loser_id opponent_id, loser_rank opponent_rank, loser_elo_rating opponent_elo_rating, loser_seed opponent_seed, loser_entry opponent_entry, loser_country_id opponent_country_id, loser_age opponent_age, loser_height opponent_height,
 	outcome, 1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games,
 	w_ace p_ace, w_df p_df, w_sv_pt p_sv_pt, w_1st_in p_1st_in, w_1st_won p_1st_won, w_2nd_won p_2nd_won, w_sv_gms p_sv_gms, w_bp_sv p_bp_sv, w_bp_fc p_bp_fc,
 	l_ace o_ace, l_df o_df, l_sv_pt o_sv_pt, l_1st_in o_1st_in, l_1st_won o_1st_won, l_2nd_won o_2nd_won, l_sv_gms o_sv_gms, l_bp_sv o_bp_sv, l_bp_fc o_bp_fc
@@ -475,8 +475,8 @@ FROM match_for_stats_v
 LEFT JOIN match_stats USING (match_id)
 WHERE set = 0 OR set IS NULL
 UNION ALL
-SELECT match_id, tournament_event_id, tournament_id, season, date, level, surface, round, best_of, loser_id, loser_rank, loser_age, loser_height,
-	winner_id, winner_rank, winner_seed, winner_entry, winner_country_id, winner_age, winner_height,
+SELECT match_id, tournament_event_id, tournament_id, season, date, level, surface, round, best_of, loser_id, loser_rank, loser_elo_rating, loser_age, loser_height,
+	winner_id, winner_rank, winner_elo_rating, winner_seed, winner_entry, winner_country_id, winner_age, winner_height,
 	outcome, 0, 1, l_sets, w_sets, l_games, w_games,
 	l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,
 	w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc

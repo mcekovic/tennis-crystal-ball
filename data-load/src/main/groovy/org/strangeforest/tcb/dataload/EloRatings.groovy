@@ -238,7 +238,7 @@ class EloRatings {
 		def ratings = getRatings(surface)
 		ratings.put(winnerId, winnerRating.newRating(deltaRating, date, surface))
 		ratings.put(loserId, loserRating.newRating(-deltaRating, date, surface))
-		if (!surface)
+		if (saveExecutor && !surface && (!saveFromDate || lastDate >= saveFromDate))
 			matchRatings.put new MatchEloRating(matchId: matchId, winnerRating: winnerRating.rating, loserRating: loserRating.rating)
 	}
 
@@ -495,8 +495,8 @@ class EloRatings {
 				matchRatingsBatch.each { matchEloRatings ->
 					Map params = [:]
 					params.match_id = matchEloRatings.matchId
-					params.winner_elo_rating = matchEloRatings.winnerRating
-					params.loser_elo_rating = matchEloRatings.loserRating
+					params.winner_elo_rating = intRound matchEloRatings.winnerRating
+					params.loser_elo_rating = intRound matchEloRatings.loserRating
 					ps.addBatch(params)
 				}
 			}

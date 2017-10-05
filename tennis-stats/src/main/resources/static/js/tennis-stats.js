@@ -328,14 +328,14 @@ function matchFormatter(playerId) {
 
 function matchExFormatter(playerId) {
 	return function(column, row) {
-		return formatCountry(row.winner) + " "  + formatMatchPlayer(row.winner, false, playerId) + formatRank(row.winner) +
+		return formatCountry(row.winner) + " "  + formatMatchPlayer(row.winner, false, playerId) + formatRanking(row.winner) +
 			" " + (row.outcome != "ABD" ? "d." : "vs") + " " +
-			formatCountry(row.loser) + " "  + formatMatchPlayer(row.loser, false, playerId) + formatRank(row.loser);
+			formatCountry(row.loser) + " "  + formatMatchPlayer(row.loser, false, playerId) + formatRanking(row.loser);
 	};
 }
 
-function formatRank(row) {
-	return row.rank ? " [" + row.rank + "]" : "";
+function formatRanking(row) {
+	return row.rank || row.eloRating ? " <div class='rankings-badge'>" + (row.rank ? "ATP " + row.rank : "") + (row.eloRating ? "<br/>Elo " + row.eloRating : "") + "</div>" : "";
 }
 
 function h2hMatchFormatter(column, row) {
@@ -510,9 +510,10 @@ function loadRankingTopN(rankType, count) {
 	$("#rankingTopN").load("/rankingTopN?rankType=" + rankType + (count ? "&count=" + count : ""));
 }
 
-function bindPopovers() {
+function bindPopovers(container) {
 	$("[data-toggle=popover]").popover({
 		html: true,
+		container: container,
 		content: function () {
 			var content = $(this).data("popover");
 			return $(content).children(".popover-content").html();

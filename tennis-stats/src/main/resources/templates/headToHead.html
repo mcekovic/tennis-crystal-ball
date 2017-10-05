@@ -117,7 +117,7 @@
 	<th:block th:if="${bothPlayersSelected && !samePlayersSelected}">
 	<ul id="h2hPills" class="nav nav-pills" th:with="playerIdsParams='?playerId1=' + ${player1.id} + '&playerId2=' + ${player2.id}, playerIdParams='?playerId=' + ${player1.id} + '&playerId=' + ${player2.id}">
 		<li><a id="profilesPill" data-toggle="pill" href="#profiles" th:data-url="'/h2hProfiles' + ${playerIdsParams}">Profiles</a></li>
-		<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/h2hSeason' + ${playerIdsParams}">Season<sup class="new-feature">&nbsp;New!</sup></a></li>
+		<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/h2hSeason' + ${playerIdsParams}">Season</a></li>
 		<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/h2hMatches' + ${playerIdsParams}">Matches</a></li>
 		<li><a id="rankingPill" data-toggle="pill" href="#ranking" th:data-url="'/h2hRankings' + ${playerIdParams}">Ranking</a></li>
 		<li class="dropdown">

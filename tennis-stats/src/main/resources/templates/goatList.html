@@ -109,7 +109,7 @@
 				{id: "wonPct", title: "Winning percentage"},
 				{id: "bestEloRating", title: "Career Peak Elo rating"}
 			]);
-			bindPopovers();
+			bindPopovers("body");
 			$("[data-toggle='collapse']").click(collapseClick);
 			$("[data-toggle='tooltip']").tooltip();
 			$("#goatLegendButton").click();
@@ -137,11 +137,11 @@
 	</div>
 	<div id="extrapolateDiv" class="btn-group margin-right">
 		<div class="checkbox pull-left">
-			<label data-toggle="tooltip" data-placement="bottom" title="Extrapolate career for active players, please see below explanation how this works">
+			<label data-toggle="tooltip" data-placement="bottom" title="Extrapolate career for active players, click questionmark for explanation how this works">
 				<input id="extrapolate" type="checkbox" onchange="reloadGOATListTable()"/> Extrapolate career
 			</label>
 		</div>
-		&nbsp;<div class="glyphicon glyphicon-question-sign" style="margin-top: 10px"></div>
+		&nbsp;<a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#extrapolateCareerPopover"><span style="margin-top: 10px" class="glyphicon glyphicon-question-sign"></span></a>
 	</div>
 	<table id="goatListTable" class="table table-condensed table-hover table-striped">
 		<thead>
@@ -164,9 +164,6 @@
 		</tr>
 		</thead>
 	</table>
-	<div class="pull-right">
-		<a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#extrapolateCareerPopover" style="width: 100%"><span class="glyphicon glyphicon-question-sign"></span> GOAT Points Extrapolation</a>
-	</div>
 	<br/>
 	<button id="goatLegendButton" type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span></button>
 	<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
