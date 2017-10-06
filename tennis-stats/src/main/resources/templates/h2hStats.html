@@ -19,18 +19,27 @@
 <!--/*@thymesVar id="opponent" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="countryId" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="advFilter" type="java.lang.Boolean"*/-->
-<!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 <!--/*@thymesVar id="stats2" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 <!--/*@thymesVar id="statsFormatUtil" type="org.strangeforest.tcb.stats.controller.StatsFormatUtil"*/-->
+<!--/*@thymesVar id="compare" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="compareStats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
+<!--/*@thymesVar id="compareStats2" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
+<!--/*@thymesVar id="compareSeason" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="compareLevel" type="java.lang.String"*/-->
+<!--/*@thymesVar id="compareSurface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="relativeTo" type="java.lang.String"*/-->
+<!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="_" type="java.lang.String"*/-->
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
 	var statsRawData = [(${rawData})];
 	$(function() {
+		setStatsURL();
 		$("#h2hStats").find(statsRawData ? ".pct-data" : ".raw-data").hide();
+		$("#statsAdvancedFilter").on('shown.bs.collapse', setStatsURL).on('hidden.bs.collapse', setStatsURL);
 		$("[data-toggle='tooltip']").tooltip();
 	});
-	function reloadStats() {
+	function getStatsURL() {
 		var url = "/h2hStats?playerId1=[(${playerId1})]&playerId2=[(${playerId2})]";
 		url += "&season=" + $("#statsSeason").val();
 		url += "&level=" + $("#statsLevel").val();
@@ -41,8 +50,20 @@
 		url += "&opponent=" + $("#statsOpponent").val();
 		url += "&countryId=" + $("#statsCountry").val();
 		url += "&advFilter=" + $("#statsAdvancedFilter").hasClass("in");
-		url += "&rawData=" + statsRawData;
+		return url;
+	}
+	function setStatsURL() {
+		$("#statistics").data("statsURL", getStatsURL());
+	}
+	function reloadStats() {
+		var url = getStatsURL() + "&rawData=" + statsRawData;
+		[# th:unless=${compare}]
 		$("#statistics").load(url);
+		[/]
+		[# th:if=${compare}]
+		$("#statistics").data("statsURL", url);
+		compareStats("statistics", "statistics", false);
+		[/]
 	}
 	function clearStatsFilter() {
 		$("#statsSeason").val("");
@@ -158,55 +179,100 @@
 </div>
 <br/>
 <div id="h2hStats">
-	<table th:unless="${stats1.empty && stats2.empty}" class="table table-condensed table-hover table-striped text-nowrap" th:with="hasPointsStats1=${stats1.hasPointStats()}, hasPointsStats2=${stats2.hasPointStats()}, hasPointsStats=${hasPointsStats1 || hasPointsStats2}, hasBothPointsStats=${hasPointsStats1 && hasPointsStats2}">
+	<th:block th:unless="${stats1.empty && stats2.empty}">
+	<table class="table table-condensed table-hover table-striped text-nowrap"
+		th:with="hasPointsStats1=${stats1.hasPointStats()}, hasPointsStats2=${stats2.hasPointStats()}, hasPointsStats=${hasPointsStats1 || hasPointsStats2}, hasBothPointsStats=${hasPointsStats1 && hasPointsStats2},
+		         hasPointCompareStats1=${compareStats1 != null && compareStats1.hasPointStats()}, hasPointCompareStats2=${compareStats2 != null && compareStats2.hasPointStats()}">
 		<th:block th:if="${hasPointsStats}">
 		<tr>
-			<th class="pct-data text-right" width="40%"><span class="glyphicon glyphicon-scale"></span></th>
+			<th:block th:if="${compare}">
+				<th th:if="${compareStats1}" class="pct-data text-right" width="40%" th:title="|${relativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th th:if="${compareStats1}" class="pct-data text-right" width="40px" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th class="pct-data text-right" width="40px" title="Selected matches statistics"><span class="glyphicon glyphicon-scale"></span></th>
+			</th:block>
+			<th th:unless="${compare}" class="pct-data text-right" width="40%"><span class="glyphicon glyphicon-scale"></span></th>
 			<th class="raw-data text-right" width="40%"><span class="glyphicon glyphicon-equalizer"></span></th>
-			<th class="text-center">Serve</th>
-			<th class="pct-data text-left" width="40%"><span class="glyphicon glyphicon-scale"></span></th>
+			<th class="text-center" width="20%">Serve</th>
 			<th class="raw-data text-left" width="40%"><span class="glyphicon glyphicon-equalizer"></span></th>
+			<th th:unless="${compare}" class="pct-data text-left" width="40%"><span class="glyphicon glyphicon-scale"></span></th>
+			<th:block th:if="${compare}">
+				<th class="pct-data text-left" width="40px" title="Selected matches statistics"><span class="glyphicon glyphicon-scale"></span></th>
+				<th th:if="${compareStats2}" class="pct-data text-left" width="40px" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th th:if="${compareStats2}" class="pct-data text-left" width="40%" th:title="|${relativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+			</th:block>
 		</tr>
 		<!-- Serve Pct. Data -->
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.acePct, stats2.acePct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.acePct) : _}" class="text-right">10%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.acePct, stats1.acePct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.acePct, stats1.acePct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.acePct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">10%</th>
 			<td class="text-center">Ace %</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.acePct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">10%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.acePct, stats2.acePct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.acePct, stats2.acePct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.acePct) : _}" class="text-left">10%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats2.doubleFaultPct, stats1.doubleFaultPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.doubleFaultPct) : _}" class="text-right">3%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.doubleFaultPct, stats1.doubleFaultPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats1.doubleFaultPct, compareStats1.doubleFaultPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.doubleFaultPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">3%</th>
 			<td class="text-center">Double Fault %</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.doubleFaultPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">3%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.doubleFaultPct, stats2.doubleFaultPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(stats2.doubleFaultPct, compareStats2.doubleFaultPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.doubleFaultPct) : _}" class="text-left">3%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.firstServePct, stats2.firstServePct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.firstServePct) : _}" class="text-right">64%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.firstServePct, stats1.firstServePct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.firstServePct, stats1.firstServePct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.firstServePct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">64%</th>
 			<td class="text-center">1st Serve</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.firstServePct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">64%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.firstServePct, stats2.firstServePct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.firstServePct, stats2.firstServePct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.firstServePct) : _}" class="text-left">64%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.firstServeWonPct, stats2.firstServeWonPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.firstServeWonPct) : _}" class="text-right">75%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.firstServeWonPct, stats1.firstServeWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.firstServeWonPct, stats1.firstServeWonPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.firstServeWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">75%</th>
 			<td class="text-center">1st Serve Won</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.firstServeWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">75%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.firstServeWonPct, stats2.firstServeWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.firstServeWonPct, stats2.firstServeWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.firstServeWonPct) : _}" class="text-left">75%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.secondServeWonPct, stats2.secondServeWonPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.secondServeWonPct) : _}" class="text-right">45%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.secondServeWonPct, stats1.secondServeWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.secondServeWonPct, stats1.secondServeWonPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.secondServeWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">45%</th>
 			<td class="text-center">2nd Serve Won</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.secondServeWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">45%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.secondServeWonPct, stats2.secondServeWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.secondServeWonPct, stats2.secondServeWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.secondServeWonPct) : _}" class="text-left">45%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.breakPointsSavedPct, stats2.breakPointsSavedPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.breakPointsSavedPct) : _}" class="text-right">35%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.breakPointsSavedPct, stats1.breakPointsSavedPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.breakPointsSavedPct, stats1.breakPointsSavedPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.breakPointsSavedPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">35%</th>
 			<td class="text-center">Break Points Saved</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.breakPointsSavedPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">35%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.breakPointsSavedPct, stats2.breakPointsSavedPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.breakPointsSavedPct, stats2.breakPointsSavedPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.breakPointsSavedPct) : _}" class="text-left">35%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.servicePointsWonPct, stats2.servicePointsWonPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.servicePointsWonPct) : _}" class="text-right">85%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.servicePointsWonPct, stats1.servicePointsWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.servicePointsWonPct, stats1.servicePointsWonPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.servicePointsWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">85%</th>
 			<td class="text-center">Service Pts. Won</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.servicePointsWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">85%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.servicePointsWonPct, stats2.servicePointsWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.servicePointsWonPct, stats2.servicePointsWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.servicePointsWonPct) : _}" class="text-left">85%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.serviceGamesWonPct, stats2.serviceGamesWonPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.serviceGamesWonPct) : _}" class="text-right">75%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.serviceGamesWonPct, stats1.serviceGamesWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.serviceGamesWonPct, stats1.serviceGamesWonPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.serviceGamesWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">75%</th>
 			<td class="text-center">Service Games Won</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.serviceGamesWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">75%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.serviceGamesWonPct, stats2.serviceGamesWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.serviceGamesWonPct, stats2.serviceGamesWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.serviceGamesWonPct) : _}" class="text-left">75%</th>
 		</tr>
 		<!-- Serve Raw Data -->
 		<tr class="raw-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.aces, stats2.aces) : 0}">
@@ -249,49 +315,87 @@
 			<td class="text-center">Service Games Won</td>
 			<th th:text="${hasPointsStats2 ? stats2.serviceGamesWon + ' / ' + stats2.serviceGames : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">12 / 15</th>
 		</tr>
-		<tr><td colspan="3">&nbsp;</td></tr>
+		<tr><td th:colspan="${compare ? 7 : 3}">&nbsp;</td></tr>
 		<tr>
-			<th class="pct-data text-right"><span class="glyphicon glyphicon-scale"></span></th>
+			<th:block th:if="${compare}">
+				<th th:if="${compareStats1}" class="pct-data text-right" th:title="|${relativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th th:if="${compareStats1}" class="pct-data text-right" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th class="pct-data text-right" title="Selected matches statistics"><span class="glyphicon glyphicon-scale"></span></th>
+			</th:block>
+			<th th:unless="${compare}" class="pct-data text-right"><span class="glyphicon glyphicon-scale"></span></th>
 			<th class="raw-data text-right"><span class="glyphicon glyphicon-equalizer"></span></th>
 			<th class="text-center">Return</th>
-			<th class="pct-data text-left"><span class="glyphicon glyphicon-scale"></span></th>
 			<th class="raw-data text-left"><span class="glyphicon glyphicon-equalizer"></span></th>
+			<th th:unless="${compare}" class="pct-data text-left"><span class="glyphicon glyphicon-scale"></span></th>
+			<th:block th:if="${compare}">
+				<th class="pct-data text-left" title="Selected matches statistics"><span class="glyphicon glyphicon-scale"></span></th>
+				<th th:if="${compareStats2}" class="pct-data text-left" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th th:if="${compareStats2}" class="pct-data text-left" th:title="|${relativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+			</th:block>
 		</tr>
 		<!-- Return Pct. Data -->
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats2.aceAgainstPct, stats1.aceAgainstPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.aceAgainstPct) : _}" class="text-right">10%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.aceAgainstPct, stats1.aceAgainstPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(stats1.aceAgainstPct, compareStats1.aceAgainstPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.aceAgainstPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">10%</th>
 			<td class="text-center">Ace Against %</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.aceAgainstPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">10%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.aceAgainstPct, stats2.aceAgainstPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(stats2.aceAgainstPct, compareStats2.aceAgainstPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.aceAgainstPct) : _}" class="text-left">10%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.doubleFaultAgainstPct, stats2.doubleFaultAgainstPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.doubleFaultAgainstPct) : _}" class="text-right">3%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.doubleFaultAgainstPct, stats1.doubleFaultAgainstPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.doubleFaultAgainstPct, stats1.doubleFaultAgainstPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.doubleFaultAgainstPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">3%</th>
 			<td class="text-center">Dbl. Flt. Against %</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.doubleFaultAgainstPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">3%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.doubleFaultAgainstPct, stats2.doubleFaultAgainstPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.doubleFaultAgainstPct, stats2.doubleFaultAgainstPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.doubleFaultAgainstPct) : _}" class="text-left">3%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.firstServeReturnPointsWonPct, stats2.firstServeReturnPointsWonPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.firstServeReturnPointsWonPct) : _}" class="text-right">28%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.firstServeReturnPointsWonPct, stats1.firstServeReturnPointsWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.firstServeReturnPointsWonPct, stats1.firstServeReturnPointsWonPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.firstServeReturnPointsWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">28%</th>
 			<td class="text-center">1st Srv. Rtn. Won</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.firstServeReturnPointsWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">28%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.firstServeReturnPointsWonPct, stats2.firstServeReturnPointsWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.firstServeReturnPointsWonPct, stats2.firstServeReturnPointsWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.firstServeReturnPointsWonPct) : _}" class="text-left">28%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.secondServeReturnPointsWonPct, stats2.secondServeReturnPointsWonPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.secondServeReturnPointsWonPct) : _}" class="text-right">22%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.secondServeReturnPointsWonPct, stats1.secondServeReturnPointsWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.secondServeReturnPointsWonPct, stats1.secondServeReturnPointsWonPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.secondServeReturnPointsWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">22%</th>
 			<td class="text-center">2nd Srv. Rtn. Won</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.secondServeReturnPointsWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">22%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.secondServeReturnPointsWonPct, stats2.secondServeReturnPointsWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.secondServeReturnPointsWonPct, stats2.secondServeReturnPointsWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.secondServeReturnPointsWonPct) : _}" class="text-left">22%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.breakPointsWonPct, stats2.breakPointsWonPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.breakPointsWonPct) : _}" class="text-right">35%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.breakPointsWonPct, stats1.breakPointsWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.breakPointsWonPct, stats1.breakPointsWonPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.breakPointsWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">35%</th>
 			<td class="text-center">Break Points Won</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.breakPointsWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">35%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.breakPointsWonPct, stats2.breakPointsWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.breakPointsWonPct, stats2.breakPointsWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.breakPointsWonPct) : _}" class="text-left">35%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.returnPointsWonPct, stats2.returnPointsWonPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.returnPointsWonPct) : _}" class="text-right">35%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.returnPointsWonPct, stats1.returnPointsWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.returnPointsWonPct, stats1.returnPointsWonPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.returnPointsWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">35%</th>
 			<td class="text-center">Return Pts. Won</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.returnPointsWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">35%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.returnPointsWonPct, stats2.returnPointsWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.returnPointsWonPct, stats2.returnPointsWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.returnPointsWonPct) : _}" class="text-left">35%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.returnGamesWonPct, stats2.returnGamesWonPct) : 0}">
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.returnGamesWonPct) : _}" class="text-right">35%</th>
+			<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.returnGamesWonPct, stats1.returnGamesWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.returnGamesWonPct, stats1.returnGamesWonPct)}">0%</th>
 			<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.returnGamesWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">35%</th>
 			<td class="text-center">Return Games Won</td>
 			<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.returnGamesWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">35%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.returnGamesWonPct, stats2.returnGamesWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.returnGamesWonPct, stats2.returnGamesWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.returnGamesWonPct) : _}" class="text-left">35%</th>
 		</tr>
 		<!-- Return Raw Data -->
 		<tr class="raw-data"></tr>
@@ -331,57 +435,99 @@
 			<th th:text="${hasPointsStats2 ? stats2.returnGamesWon + ' / ' + stats2.returnGames : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">3 / 12</th>
 		</tr>
 		<tr></tr>
-		<tr><td colspan="3">&nbsp;</td></tr>
+		<tr><td th:colspan="${compare ? 7 : 3}">&nbsp;</td></tr>
 		</th:block>
 		<tr>
-			<th class="pct-data text-right" width="40%"><span class="glyphicon glyphicon-scale"></span></th>
-			<th class="raw-data text-right" width="40%"><span class="glyphicon glyphicon-equalizer"></span></th>
+			<th:block th:if="${compare}">
+				<th th:if="${compareStats1}" class="pct-data text-right" th:title="|${relativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+				<th th:if="${compareStats1}" class="pct-data text-right" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th class="pct-data text-right" title="Selected matches statistics"><span class="glyphicon glyphicon-scale"></span></th>
+			</th:block>
+			<th th:unless="${compare}" class="pct-data text-right"><span class="glyphicon glyphicon-scale"></span></th>
+			<th class="raw-data text-right"><span class="glyphicon glyphicon-equalizer"></span></th>
 			<th class="text-center">Total</th>
-			<th class="pct-data text-left" width="40%"><span class="glyphicon glyphicon-scale"></span></th>
-			<th class="raw-data text-left" width="40%"><span class="glyphicon glyphicon-equalizer"></span></th>
+			<th class="raw-data text-left"><span class="glyphicon glyphicon-equalizer"></span></th>
+			<th th:unless="${compare}" class="pct-data text-left"><span class="glyphicon glyphicon-scale"></span></th>
+			<th:block th:if="${compare}">
+				<th class="pct-data text-left" title="Selected matches statistics"><span class="glyphicon glyphicon-scale"></span></th>
+				<th th:if="${compareStats2}" class="pct-data text-left" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
+				<th th:if="${compareStats2}" class="pct-data text-left" th:title="|${relativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+			</th:block>
 		</tr>
 		<!-- Total Pct. Data -->
 		<th:block th:if="${hasPointsStats}">
 			<tr th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.pointsDominanceRatio, stats2.pointsDominanceRatio) : 0}">
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio(compareStats1.pointsDominanceRatio) : _}" class="pct-data text-right">1.07</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatioDiff(compareStats1.pointsDominanceRatio, stats1.pointsDominanceRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.pointsDominanceRatio, stats1.pointsDominanceRatio)}">0</th>
 				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio(stats1.pointsDominanceRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.07</th>
 				<td class="text-center" th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</td>
 				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio(stats2.pointsDominanceRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.07</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatioDiff(compareStats2.pointsDominanceRatio, stats2.pointsDominanceRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.pointsDominanceRatio, stats2.pointsDominanceRatio)}">0</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio(compareStats2.pointsDominanceRatio) : _}" class="pct-data text-left">1.07</th>
 			</tr>
 			<tr th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.gamesDominanceRatio, stats2.gamesDominanceRatio) : 0}">
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio(compareStats1.gamesDominanceRatio) : _}" class="pct-data text-right">1.07</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatioDiff(compareStats1.gamesDominanceRatio, stats1.gamesDominanceRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.gamesDominanceRatio, stats1.gamesDominanceRatio)}">0</th>
 				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio(stats1.gamesDominanceRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.07</th>
 				<td class="text-center" th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</td>
 				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio(stats2.gamesDominanceRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.07</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatioDiff(compareStats2.gamesDominanceRatio, stats2.gamesDominanceRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.gamesDominanceRatio, stats2.gamesDominanceRatio)}">0</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio(compareStats2.gamesDominanceRatio) : _}" class="pct-data text-left">1.07</th>
 			</tr>
 			<tr th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.breakPointsRatio, stats2.breakPointsRatio) : 0}">
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio(compareStats1.breakPointsRatio) : _}" class="pct-data text-right">1.03</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatioDiff(compareStats1.breakPointsRatio, stats1.breakPointsRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.breakPointsRatio, stats1.breakPointsRatio)}">0</th>
 				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio(stats1.breakPointsRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.03</th>
 				<td class="text-center" th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</td>
 				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio(stats2.breakPointsRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.03</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatioDiff(compareStats2.breakPointsRatio, stats2.breakPointsRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.breakPointsRatio, stats2.breakPointsRatio)}">0</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio(compareStats2.breakPointsRatio) : _}" class="pct-data text-left">1.03</th>
 			</tr>
 			<tr th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.overPerformingRatio, stats2.overPerformingRatio) : 0}">
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio(compareStats1.overPerformingRatio) : _}" class="pct-data text-right">1.01</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatioDiff(compareStats1.overPerformingRatio, stats1.overPerformingRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.overPerformingRatio, stats1.overPerformingRatio)}">0</th>
 				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio(stats1.overPerformingRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.01</th>
 				<td class="text-center" th:title="#{stats.overPerformingRatio.title}">Over-Performing</td>
 				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio(stats2.overPerformingRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.01</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatioDiff(compareStats2.overPerformingRatio, stats2.overPerformingRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.overPerformingRatio, stats2.overPerformingRatio)}">0</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio(compareStats2.overPerformingRatio) : _}" class="pct-data text-left">1.01</th>
 			</tr>
 			<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.totalPointsWonPct, stats2.totalPointsWonPct) : 0}">
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.totalPointsWonPct) : _}" class="text-right">56%</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPctDiff(compareStats1.totalPointsWonPct, stats1.totalPointsWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.totalPointsWonPct, stats1.totalPointsWonPct)}">0%</th>
 				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatPct(stats1.totalPointsWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">56%</th>
 				<td class="text-center">Total Pts. Won</td>
 				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatPct(stats2.totalPointsWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">56%</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPctDiff(compareStats2.totalPointsWonPct, stats2.totalPointsWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.totalPointsWonPct, stats2.totalPointsWonPct)}">0%</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatPct(compareStats2.totalPointsWonPct) : _}" class="text-left">56%</th>
 			</tr>
 		</th:block>
 		<tr class="pct-data" th:with="sc=${statsFormatUtil.compare(stats1.totalGamesWonPct, stats2.totalGamesWonPct)}">
+			<th th:if="${compareStats1}" th:text="${!compareStats1.empty ? statsFormatUtil.formatPct(compareStats1.totalGamesWonPct) : _}" class="text-right">58%</th>
+			<th th:if="${compareStats1}" th:text="${!compareStats1.empty ? statsFormatUtil.formatPctDiff(compareStats1.totalGamesWonPct, stats1.totalGamesWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.totalGamesWonPct, stats1.totalGamesWonPct)}">0%</th>
 			<th th:text="${!stats1.empty ? statsFormatUtil.formatPct(stats1.totalGamesWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">58%</th>
 			<td class="text-center">Total Games Won</td>
 			<th th:text="${!stats2.empty ? statsFormatUtil.formatPct(stats2.totalGamesWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">58%</th>
+			<th th:if="${compareStats2}" th:text="${!compareStats2.empty ? statsFormatUtil.formatPctDiff(compareStats2.totalGamesWonPct, stats2.totalGamesWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.totalGamesWonPct, stats2.totalGamesWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${!compareStats2.empty ? statsFormatUtil.formatPct(compareStats2.totalGamesWonPct) : _}" class="text-left">58%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${statsFormatUtil.compare(stats1.setsWonPct, stats2.setsWonPct)}">
+			<th th:if="${compareStats1}" th:text="${!compareStats1.empty ? statsFormatUtil.formatPct(compareStats1.setsWonPct) : _}" class="text-right">62%</th>
+			<th th:if="${compareStats1}" th:text="${!compareStats1.empty ? statsFormatUtil.formatPctDiff(compareStats1.setsWonPct, stats1.setsWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.setsWonPct, stats1.setsWonPct)}">0%</th>
 			<th th:text="${!stats1.empty ? statsFormatUtil.formatPct(stats1.setsWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">62%</th>
 			<td class="text-center">Sets Won</td>
 			<th th:text="${!stats2.empty ? statsFormatUtil.formatPct(stats2.setsWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">62%</th>
+			<th th:if="${compareStats2}" th:text="${!compareStats2.empty ? statsFormatUtil.formatPctDiff(compareStats2.setsWonPct, stats2.setsWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.setsWonPct, stats2.setsWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${!compareStats2.empty ? statsFormatUtil.formatPct(compareStats2.setsWonPct) : _}" class="text-left">62%</th>
 		</tr>
 		<tr class="pct-data" th:with="sc=${statsFormatUtil.compare(stats1.matchesWonPct, stats2.matchesWonPct)}">
+			<th th:if="${compareStats1}" th:text="${!compareStats1.empty ? statsFormatUtil.formatPct(compareStats1.matchesWonPct) : _}" class="text-right">69%</th>
+			<th th:if="${compareStats1}" th:text="${!compareStats1.empty ? statsFormatUtil.formatPctDiff(compareStats1.matchesWonPct, stats1.matchesWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.matchesWonPct, stats1.matchesWonPct)}">0%</th>
 			<th th:text="${!stats1.empty ? statsFormatUtil.formatPct(stats1.matchesWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">69%</th>
 			<td class="text-center">Matches Won</td>
 			<th th:text="${!stats2.empty ? statsFormatUtil.formatPct(stats2.matchesWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">69%</th>
+			<th th:if="${compareStats2}" th:text="${!compareStats2.empty ? statsFormatUtil.formatPctDiff(compareStats2.matchesWonPct, stats2.matchesWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.matchesWonPct, stats2.matchesWonPct)}">0%</th>
+			<th th:if="${compareStats2}" th:text="${!compareStats2.empty ? statsFormatUtil.formatPct(compareStats2.matchesWonPct) : _}" class="text-left">69%</th>
 		</tr>
 		<!-- Total Raw Data -->
 		<th:block th:if="${hasPointsStats}">
@@ -408,12 +554,52 @@
 			<th th:text="${!stats2.empty ? stats2.matchesWon + ' / ' + stats2.matches : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">6 / 10</th>
 		</tr>
 	</table>
-	<div th:unless="${stats1.empty && stats2.empty}" class="row">
+	<div class="row">
 		<div class="col-md-12 text-center">
 			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats'); statsRawData = true" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
 			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats'); statsRawData = false" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
+			&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareStats('statistics', 'statistics', ${compare})|" title="Compare statistics"><span class="glyphicon glyphicon-object-align-left"></span>&nbsp;&nbsp;Compare</button>
 		</div>
 	</div>
+	<div th:if="${compare}">
+		<br/>
+		<div class="row">
+			<div class="col-md-12 text-center"><small>Compare statistics with:</small></div>
+		</div>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="input-group">
+					<label for="statisticsCompareSeason" class="input-group-addon input-sm">Season:</label>
+					<select id="statisticsCompareSeason" class="form-control input-sm" onchange="compareStats('statistics', 'statistics')">
+						<option value="">Career</option>
+						<option value="-1" th:selected="${compareSeason == -1}">Last 52 weeks</option>
+						<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == compareSeason}">2005</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="input-group">
+					<label for="statisticsCompareLevel" class="input-group-addon input-sm">Level:</label>
+					<select id="statisticsCompareLevel" class="form-control input-sm" onchange="compareStats('statistics', 'statistics')">
+						<option value="">All levels</option>
+						<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == compareLevel}">Grand Slam</option>
+						<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == compareLevel}">Big Tournaments</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="input-group">
+					<label for="statisticsCompareSurface" class="input-group-addon input-sm">Surface:</label>
+					<select id="statisticsCompareSurface" class="form-control input-sm" onchange="compareStats('statistics', 'statistics')">
+						<option value="">All surfaces</option>
+						<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == compareSurface}">Hard</option>
+						<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes == compareSurface}">Fast (H, G, Cp)</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+	</th:block>
 	<p th:if="${stats1.empty && stats2.empty}">No statistics available</p>
 </div>
 </th:block>

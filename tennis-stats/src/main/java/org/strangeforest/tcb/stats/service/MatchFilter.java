@@ -60,6 +60,10 @@ public class MatchFilter extends TournamentEventResultFilter {
 		return forStats(season, level, surface, tournamentId, null, result, null, null, null, null, statsFilter, searchPhrase);
 	}
 
+	public static MatchFilter forStats(Integer season, String level, String surface, OpponentFilter opponentFilter) {
+		return forStats(season, level, surface, null, null, null, null, opponentFilter, null, null, null, null);
+	}
+
 	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, String round, OpponentFilter opponentFilter) {
 		return forStats(season, level, surface, tournamentId, null, null, round, opponentFilter, null, null, null, null);
 	}

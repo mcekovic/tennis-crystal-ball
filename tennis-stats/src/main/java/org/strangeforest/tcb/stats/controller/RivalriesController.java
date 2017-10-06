@@ -20,6 +20,7 @@ import com.neovisionaries.i18n.*;
 import static com.google.common.base.Strings.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Controller
@@ -268,7 +269,11 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "advFilter", defaultValue = "false") boolean advFilter,
-		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData
+		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData,
+		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
+		@RequestParam(name = "compareLevel", required = false) String compareLevel,
+		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
 		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
 		Set<TournamentItem> tournaments = getTournamentsUnion(playerId1, playerId2);
@@ -304,6 +309,21 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("stats1", stats1);
 		modelMap.addAttribute("stats2", stats2);
 		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
+		modelMap.addAttribute("compare", compare);
+		if (compare) {
+			MatchFilter compareFilter1 = MatchFilter.forStats(compareSeason, compareLevel, compareSurface, h2h ? OpponentFilter.forStats(playerId2) : null);
+			MatchFilter compareFilter2 = MatchFilter.forStats(compareSeason, compareLevel, compareSurface, h2h ? OpponentFilter.forStats(playerId1) : null);
+			PlayerStats compareStats1 = statisticsService.getPlayerStats(playerId1, compareFilter1);
+			PlayerStats compareStats2 = statisticsService.getPlayerStats(playerId2, compareFilter2);
+			if (!compareStats1.isEmpty())
+				modelMap.addAttribute("compareStats1", compareStats1);
+			if (!compareStats2.isEmpty())
+				modelMap.addAttribute("compareStats2", compareStats2);
+			modelMap.addAttribute("compareSeason", compareSeason);
+			modelMap.addAttribute("compareLevel", compareLevel);
+			modelMap.addAttribute("compareSurface", compareSurface);
+			modelMap.addAttribute("relativeTo", relativeTo(compareSeason, compareLevel, compareSurface));
+		}
 		return new ModelAndView("h2hStats", modelMap);
 	}
 
