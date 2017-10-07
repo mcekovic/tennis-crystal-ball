@@ -30,7 +30,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 
 	public enum RankingType {
 		RANK("Rank", "Rank", "exp(sum(ln(coalesce(opponent_rank, 1500)))/count(*))", " WHERE unrounded_value < 1500", false, "Using geometric mean"),
-		ELO_RATING("EloRating", "Elo Rating", "sum(coalesce(opponent_elo_rating, 1500))/count(*)", "", true, "Using arithmetic mean");
+		ELO_RATING("EloRating", "Elo Rating", "sum(coalesce(opponent_elo_rating, 1500))::REAL/count(*)", "", true, "Using arithmetic mean");
 
 		private final String id;
 		private final String name;
@@ -95,7 +95,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			"FROM opponent_rank" + rankingType.where,
 			"r.value", "r.unrounded_value" + desc, "r.unrounded_value" + desc,
 			DoubleRecordDetail.class, null,
-			asList(new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent Rank")),
+			asList(new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name)),
 			format("Minimum %1$d %2$s; %3$s", minEntries, perfCategory.getEntriesName(), rankingType.notes)
 		);
 	}
@@ -118,7 +118,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			"r.value, r.season", "r.unrounded_value" + desc, "r.unrounded_value" + desc + ", r.season",
 			SeasonDoubleRecordDetail.class, null,
 			asList(
-				new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent Rank"),
+				new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			),
 			format("Minimum %1$d %2$s; %3$s", minEntries, perfCategory.getEntriesName(), rankingType.notes)
@@ -144,7 +144,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			"r.value, r.tournament_event_id, r.tournament, r.level, r.season", "r.unrounded_value" + desc, "r.unrounded_value" + desc + ", r.date",
 			TournamentEventDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentEventId=%2$d", playerId, recordDetail.getTournamentEventId()),
 			asList(
-				new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent Rank"),
+				new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")
 			),
