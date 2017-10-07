@@ -16,7 +16,7 @@ public class InProgressEventsJob {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InProgressEventsJob.class);
 
-	@Scheduled(cron = "${tennis-stats.jobs.reload-in-progress-events:0 0 * * * *}")
+	@Scheduled(cron = "${tennis-stats.jobs.reload-in-progress-events:0 0/30 * * * *}")
 	public void reloadInProgressEvents() {
 		if (dataLoadCommand.execute("ReloadInProgressEvents", "-ip", "-c 1") == 0)
 			clearCaches();

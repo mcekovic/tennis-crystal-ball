@@ -29,7 +29,7 @@ public class PlayerRivalriesResource {
 		.put("lost", "lost")
 		.put("wonPctStr", "CASE WHEN won + lost > 0 THEN won::REAL / (won + lost) ELSE 0 END")
 	.build();
-	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("matches"), desc("won")};
+	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("matches"), asc("best_rank"), desc("won")};
 
 	@GetMapping("/playerRivalriesTable")
 	public BootgridTable<PlayerRivalryRow> playerRivalriesTable(
