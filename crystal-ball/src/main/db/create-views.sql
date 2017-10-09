@@ -1,22 +1,36 @@
 -- event_participation
 
 CREATE OR REPLACE VIEW event_participation_v AS
-WITH event_player_ranks AS (
-	SELECT DISTINCT tournament_event_id, winner_id AS player_id, winner_rank AS rank FROM match
-	UNION DISTINCT
-	SELECT DISTINCT tournament_event_id, loser_id, loser_rank FROM match
+WITH player_match AS (
+	SELECT match_id, tournament_event_id, round, match_num, winner_id player_id, winner_rank rank, coalesce(winner_elo_rating, 1500) elo_rating FROM match
+	UNION
+	SELECT match_id, tournament_event_id, round, match_num, loser_id, loser_rank, coalesce(loser_elo_rating, 1500) FROM match
+), player_match_entry_ranking AS (
+	SELECT tournament_event_id, player_id, first_value(rank) OVER t AS rank, first_value(elo_rating) OVER t AS elo_rating
+	FROM player_match
+	WINDOW t AS (PARTITION BY tournament_event_id, player_id ORDER BY round, match_num, match_id)
 ), event_players AS (
-	SELECT tournament_event_id, player_id, avg(rank) AS rank FROM event_player_ranks
-	GROUP BY tournament_event_id, player_id
+	SELECT tournament_event_id, player_id, rank, elo_rating, row_number() OVER (PARTITION BY tournament_event_id ORDER BY elo_rating DESC NULLS LAST) AS event_elo_rank
+	FROM player_match_entry_ranking
+	GROUP BY tournament_event_id, player_id, rank, elo_rating
+), event_for_participation AS (
+	SELECT tournament_event_id, count(p.player_id) AS player_count, tournament_level_factor(e.level) AS tournament_level_factor,
+		sum(fr.rank_factor) AS participation_points,
+		max_event_participation(count(p.player_id)::INTEGER) AS max_participation_points,
+		sum(fe.rank_factor * (p.elo_rating - 1500))::REAL / 400 AS raw_strength,
+		sum(fe.rank_factor * p.elo_rating) AS weighted_elo_rating_sum
+	FROM event_players p
+	INNER JOIN tournament_event e USING (tournament_event_id)
+	LEFT JOIN tournament_event_rank_factor fr ON p.rank BETWEEN fr.rank_from AND fr.rank_to
+	LEFT JOIN tournament_event_rank_factor fe ON p.event_elo_rank BETWEEN fe.rank_from AND fe.rank_to
+	WHERE e.level NOT IN ('D', 'T')
+	GROUP BY tournament_event_id, e.level
 )
-SELECT tournament_event_id, count(p.player_id) AS player_count,
-	(sum(f.rank_factor) * tournament_level_factor(e.level))::INTEGER AS participation_points,
-	(max_event_participation(count(p.player_id)::INTEGER) * tournament_level_factor(e.level))::INTEGER AS max_participation_points
-FROM event_players p
-INNER JOIN tournament_event e USING (tournament_event_id)
-LEFT JOIN tournament_event_rank_factor f ON p.rank BETWEEN f.rank_from AND f.rank_to
-WHERE e.level NOT IN ('D', 'T')
-GROUP BY tournament_event_id, e.level;
+SELECT tournament_event_id, player_count,
+	coalesce(participation_points, 0)::REAL / max_participation_points AS participation,
+	tournament_level_factor * (CASE WHEN raw_strength > 0 THEN raw_strength ELSE 0 END) AS strength,
+	weighted_elo_rating_sum::REAL / max_participation_points AS average_elo_rating
+FROM event_for_participation;
 
 CREATE MATERIALIZED VIEW event_participation AS SELECT * FROM event_participation_v;
 
@@ -25,22 +39,37 @@ CREATE UNIQUE INDEX ON event_participation (tournament_event_id);
 
 -- in_progress_event_participation
 
+DROP VIEW in_progress_event_participation_v CASCADE;
 CREATE OR REPLACE VIEW in_progress_event_participation_v AS
-WITH event_player_ranks AS (
-	SELECT DISTINCT in_progress_event_id, player1_id AS player_id, player1_rank AS rank FROM in_progress_match
-	UNION DISTINCT
-	SELECT DISTINCT in_progress_event_id, player2_id, player2_rank FROM in_progress_match
+WITH player_match AS (
+	SELECT in_progress_match_id, in_progress_event_id, round, match_num, player1_id player_id, player1_rank rank, coalesce(player1_elo_rating, 1500) elo_rating FROM in_progress_match
+	UNION
+	SELECT in_progress_match_id, in_progress_event_id, round, match_num, player2_id, player2_rank, coalesce(player2_elo_rating, 1500) FROM in_progress_match
+), player_match_entry_ranking AS (
+	SELECT in_progress_event_id, player_id, first_value(rank) OVER t AS rank, first_value(elo_rating) OVER t AS elo_rating
+	FROM player_match
+	WINDOW t AS (PARTITION BY in_progress_event_id, player_id ORDER BY round, match_num, in_progress_match_id)
 ), event_players AS (
-	SELECT in_progress_event_id, player_id, avg(rank) AS rank FROM event_player_ranks
-	GROUP BY in_progress_event_id, player_id
+	SELECT in_progress_event_id, player_id, rank, elo_rating, row_number() OVER (PARTITION BY in_progress_event_id ORDER BY elo_rating DESC NULLS LAST) AS event_elo_rank
+	FROM player_match_entry_ranking
+	GROUP BY in_progress_event_id, player_id, rank, elo_rating
+), event_for_participation AS (
+	SELECT in_progress_event_id, count(p.player_id) AS player_count, tournament_level_factor(e.level) AS tournament_level_factor,
+		sum(fr.rank_factor) AS participation_points,
+		max_event_participation(count(p.player_id)::INTEGER) AS max_participation_points,
+		sum(fe.rank_factor * (p.elo_rating - 1500))::REAL / 400 AS raw_strength,
+		sum(fe.rank_factor * p.elo_rating) AS weighted_elo_rating_sum
+	FROM event_players p
+	INNER JOIN in_progress_event e USING (in_progress_event_id)
+	LEFT JOIN tournament_event_rank_factor fr ON p.rank BETWEEN fr.rank_from AND fr.rank_to
+	LEFT JOIN tournament_event_rank_factor fe ON p.event_elo_rank BETWEEN fe.rank_from AND fe.rank_to
+	GROUP BY in_progress_event_id, e.level
 )
-SELECT in_progress_event_id, count(p.player_id) AS player_count,
-	(sum(f.rank_factor) * tournament_level_factor(e.level))::INTEGER AS participation_points,
-	(max_event_participation(count(p.player_id)::INTEGER) * tournament_level_factor(e.level))::INTEGER AS max_participation_points
-FROM event_players p
-INNER JOIN in_progress_event e USING (in_progress_event_id)
-LEFT JOIN tournament_event_rank_factor f ON p.rank BETWEEN f.rank_from AND f.rank_to
-GROUP BY in_progress_event_id, e.level;
+SELECT in_progress_event_id, player_count,
+	coalesce(participation_points, 0)::REAL / max_participation_points AS participation,
+	tournament_level_factor * (CASE WHEN raw_strength > 0 THEN raw_strength ELSE 0 END) AS strength,
+	weighted_elo_rating_sum::REAL / max_participation_points AS average_elo_rating
+FROM event_for_participation;
 
 
 -- player_tournament_event_result
