@@ -7,7 +7,7 @@
 	<script th:src="@{/js/tennis-chart.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript">
-		google.load("visualization", "1.0", {packages:["corechart"]});
+		google.load("visualization", "1.0", {packages:["corechart"], "language": "en"});
 		var chartData, bySeason, pointCount, isRank, logScale, legendPosition;
 		function drawChart() {
 			var players = $.trim($("#players").val());

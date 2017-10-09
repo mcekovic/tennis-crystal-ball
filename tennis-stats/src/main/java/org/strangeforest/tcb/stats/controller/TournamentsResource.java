@@ -30,8 +30,10 @@ public class TournamentsResource {
 		.put("levels", BY_LEVEL)
 		.put("surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)))
 		.put("eventCount", comparing(Tournament::getEventCount))
-		.put("participationPoints", comparing(Tournament::getParticipationPoints))
-		.put("participationPct", comparing(Tournament::getParticipationPct))
+		.put("playerCount", comparing(Tournament::getPlayerCount))
+		.put("participation", comparing(Tournament::getParticipation))
+		.put("strength", comparing(Tournament::getStrength))
+		.put("averageEloRating", comparing(Tournament::getAverageEloRating))
 	.build();
 
 	@GetMapping("/tournamentsTable")

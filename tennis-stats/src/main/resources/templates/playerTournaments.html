@@ -20,7 +20,8 @@
 	$(function() {
 		var $eventsTable = $("#eventsTable");
 		var device = detectDevice();
-		setBootgridColumnsVisible($eventsTable, ["participationPoints", "participationPct"], deviceGreaterOrEqual(device, "md"));
+		setBootgridColumnsVisible($eventsTable, ["averageEloRating"], deviceGreaterOrEqual(device, "lg"));
+		setBootgridColumnsVisible($eventsTable, ["participation", "strength"], deviceGreaterOrEqual(device, "md"));
 		setBootgridColumnsVisible($eventsTable, ["season", "draw"], deviceGreaterOrEqual(device, "sm"));
 		setBootgridColumnsWidths($eventsTable, ["name"], [device == "xs" ? 150 : (device == "sm" ? 200 : (device == "md" ? 250 : 300))]);
 		$eventsTable.bootgrid({
@@ -49,7 +50,7 @@
 				"date": dateFormatter,
 				"tournament": tournamentEventFormatter,
 				"surface": surfaceFormatter,
-				"participationPct": participationFormatter,
+				"participation": participationFormatter,
 				"result": function(column, row) {
 					return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[(${playerId})]&tab=matches&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
 				},
@@ -75,8 +76,9 @@
 		$actionBar.removeClass("col-sm-12").addClass("col-sm-6");
 		$actionBar.before($("#eventsAdvancedFilter").remove());
 		setBootgridTitles($eventsTable, [
-			{id: "participationPoints", title: "[[#{events.participationPoints.title}]]"},
-			{id: "participationPct", title: "[[#{events.participationPercentage.title}]]"}
+			{id: "participation", title: "[[#{event.participation.title}]]"},
+			{id: "strength", title: "[[#{event.strength.title}]]"},
+			{id: "averageEloRating", title: "[[#{event.averageEloRating.title}]]"}
 		]);
 		$("[data-toggle='tooltip']").tooltip();
 	});
@@ -238,8 +240,9 @@
 		<th data-column-id="name" data-formatter="tournament" data-width="200">Tournament</th>
 		<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
 		<th data-column-id="draw" data-width="65">Draw</th>
-		<th data-column-id="participationPoints" data-type="numeric" data-width="70">P. Pts.</th>
-		<th data-column-id="participationPct" data-formatter="participationPct" data-width="70">P. Pct.</th>
+		<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>
+		<th data-column-id="strength" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Str.</th>
+		<th data-column-id="averageEloRating" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Elo</th>
 		<th data-column-id="result" data-formatter="result" data-width="75" data-align="center" data-header-align="center">Result</th>
 		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>
 	</tr>

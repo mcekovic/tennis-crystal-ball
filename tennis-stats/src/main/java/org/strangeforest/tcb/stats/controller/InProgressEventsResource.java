@@ -23,9 +23,10 @@ public class InProgressEventsResource {
 		.put("name", "name")
 		.put("surface", "surface")
 		.put("draw", "draw_type, draw_size")
-		.put("playerCount", "player_count NULLS LAST")
-		.put("participationPoints", "participation_points NULLS LAST")
-		.put("participationPct", "participation_points::REAL / max_participation_points NULLS LAST")
+		.put("playerCount", "player_count")
+		.put("participation", "participation")
+		.put("strength", "strength")
+		.put("averageEloRating", "average_elo_rating")
 	.build();
 	public static final OrderBy[] DEFAULT_ORDER = new OrderBy[] {desc("date"), asc("level"), asc("name")};
 

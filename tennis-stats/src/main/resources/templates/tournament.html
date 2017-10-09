@@ -10,7 +10,7 @@
 			$("#tournamentPills").find("a").click(tabClick);
 			var $tournamentHistoryTable = $("#tournamentHistoryTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($tournamentHistoryTable, ["playerCount", "participationPoints"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($tournamentHistoryTable, ["playerCount", "strength", "averageEloRating"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($tournamentHistoryTable, ["final"], deviceGreaterOrEqual(device, "md"));
 			if (device != "lg")
 				setBootgridColumnsWidths($tournamentHistoryTable, ["name"], [175]);
@@ -29,7 +29,7 @@
 					"event": tournamentEventFormatterExtId,
 					"level": levelFormatter,
 					"surface": surfaceFormatter,
-					"participationPct": participationFormatter,
+					"participation": participationFormatter,
 					"match": finalFormatter
 				},
 				labels: {
@@ -45,8 +45,9 @@
 			setBootgridTitle($tournamentHistoryTableHeader, $("#tournamentHistoryTable-title"));
 			setBootgridTitles($tournamentHistoryTable, [
 				{id: "playerCount", title: "Players"},
-				{id: "participationPoints", title: "[[#{events.participationPoints.title}]]"},
-				{id: "participationPct", title: "[[#{events.participationPercentage.title}]]"}
+				{id: "participation", title: "[[#{event.participation.title}]]"},
+				{id: "strength", title: "[[#{event.strength.title}]]"},
+				{id: "averageEloRating", title: "[[#{event.averageEloRating.title}]]"}
 			]);
 		});
 	</script>
@@ -55,7 +56,7 @@
 	<header th:include="fragments/header :: title"></header>
 	<h3 th:text="${tournament.name}">Australian Open</h3>
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-6">
 			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Level</th>
@@ -73,17 +74,29 @@
 					<th>Events</th>
 					<td th:text="${tournament.eventCount}">25</td>
 				</tr>
-			</table>
-		</div>
-		<div class="col-md-6">
-			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Seasons</th>
 					<td th:text="${tournament.seasons}">1968-2015</td>
 				</tr>
+			</table>
+		</div>
+		<div class="col-md-3">
+			<table class="table table-condensed text-nowrap">
 				<tr>
+					<th>Average Players</th>
+					<td th:text="${tournament.playerCount}">128</td>
+				</tr>
+				<tr th:title="#{event.participation.title}">
 					<th>Average Participation</th>
-					<td><span th:text="${tournament.participationPoints}" th:title="#{events.participationPoints.title}">832</span> <span th:text="'(' + ${#numbers.formatDecimal(tournament.participationPct, 1, 1)} + '%)'" th:title="#{events.participationPercentage.title}">(67.3%)</span></td>
+					<td th:text="${#numbers.formatDecimal(100 * tournament.participation, 1, 1) + '%'}">67.3%</td>
+				</tr>
+				<tr th:title="#{event.strength.title}">
+					<th>Average Strength</th>
+					<td th:text="${tournament.strength}">1232</td>
+				</tr>
+				<tr th:title="#{event.averageEloRating.title}">
+					<th>Average Elo Rating</th>
+					<td th:text="${tournament.averageEloRating}">832</td>
 				</tr>
 			</table>
 		</div>
@@ -116,9 +129,10 @@
 					<th data-column-id="name" data-formatter="event" data-width="200">Name</th>
 					<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
 					<th data-column-id="draw" data-width="65">Draw</th>
-					<th data-column-id="playerCount" data-width="55">Pls.</th>
-					<th data-column-id="participationPoints" data-type="numeric" data-width="70">P. Pts.</th>
-					<th data-column-id="participationPct" data-formatter="participationPct" data-width="70">P. Pct.</th>
+					<th data-column-id="playerCount" data-type="numeric" data-width="55" data-align="right" data-header-align="right">Pls.</th>
+					<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>
+					<th data-column-id="strength" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Str.</th>
+					<th data-column-id="averageEloRating" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Elo</th>
 					<th data-column-id="final" data-formatter="match" data-sortable="false" data-width="500">Final</th>
 				</tr>
 				</thead>

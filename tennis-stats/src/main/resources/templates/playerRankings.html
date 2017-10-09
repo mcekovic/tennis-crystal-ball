@@ -9,7 +9,7 @@
 <script type="text/javascript">
 	var rankChartData, bySeason, rankPointCount, isRank, logScale;
 	function loadGoogleChartsForRanking() {
-		google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
+		google.load("visualization", "1.0", {packages:["corechart"], "language": "en", callback: function() {
 			drawRankingChart();
 		}});
 	}

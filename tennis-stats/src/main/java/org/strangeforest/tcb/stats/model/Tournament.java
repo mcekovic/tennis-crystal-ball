@@ -10,19 +10,23 @@ public class Tournament {
 	private final List<String> surfaces;
 	private final int eventCount;
 	private final String seasons;
-	private final int participationPoints;
-	private final double participationPct;
+	private double participation;
+	private int playerCount;
+	private int strength;
+	private int averageEloRating;
 	private final List<PlayerRow> topPlayers;
 
-	public Tournament(int id, String name, List<String> levels, List<String> surfaces, int eventCount, String seasons, int participationPoints, double participationPct, List<PlayerRow> topPlayers) {
+	public Tournament(int id, String name, List<String> levels, List<String> surfaces, int eventCount, String seasons, int playerCount, double participation, int strength, int averageEloRating, List<PlayerRow> topPlayers) {
 		this.id = id;
 		this.name = name;
 		this.levels = levels;
 		this.surfaces = surfaces;
 		this.eventCount = eventCount;
 		this.seasons = seasons;
-		this.participationPoints = participationPoints;
-		this.participationPct = participationPct;
+		this.playerCount = playerCount;
+		this.participation = participation;
+		this.strength = strength;
+		this.averageEloRating = averageEloRating;
 		this.topPlayers = topPlayers;
 	}
 
@@ -50,12 +54,20 @@ public class Tournament {
 		return seasons;
 	}
 
-	public int getParticipationPoints() {
-		return participationPoints;
+	public int getPlayerCount() {
+		return playerCount;
 	}
 
-	public double getParticipationPct() {
-		return participationPct;
+	public double getParticipation() {
+		return participation;
+	}
+
+	public int getStrength() {
+		return strength;
+	}
+
+	public int getAverageEloRating() {
+		return averageEloRating;
 	}
 
 	public List<PlayerRow> getTopPlayers() {

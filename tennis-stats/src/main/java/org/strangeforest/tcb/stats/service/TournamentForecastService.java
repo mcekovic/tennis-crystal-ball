@@ -27,14 +27,14 @@ public class TournamentForecastService {
 	@Autowired private MatchPredictionService matchPredictionService;
 
 	private static final String IN_PROGRESS_EVENTS_QUERY = //language=SQL
-		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation_points, p.max_participation_points\n" +
+		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating\n" +
 		"FROM in_progress_event e\n" +
 		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
 		"WHERE NOT exists(SELECT te.tournament_event_id FROM tournament_event te WHERE te.tournament_id = e.tournament_id AND te.season = date_part('year', tournament_end(e.date, e.level, e.draw_size)))\n" +
 		"ORDER BY %1$s";
 
 	private static final String IN_PROGRESS_EVENT_QUERY =
-		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation_points, p.max_participation_points\n" +
+		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating\n" +
 		"FROM in_progress_event e\n" +
 		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
 		"WHERE in_progress_event_id = :inProgressEventId";
@@ -45,7 +45,7 @@ public class TournamentForecastService {
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.in_progress_event_id = :inProgressEventId\n" +
 		"AND r.base_result = 'W' AND r.result = 'W' AND probability > 0\n" +
-		"ORDER BY r.probability DESC LIMIT 3";
+		"ORDER BY r.probability DESC LIMIT 4";
 
 	private static final String IN_PROGRESS_MATCHES_QUERY =
 		"WITH entry_round AS (\n" +
@@ -111,8 +111,9 @@ public class TournamentForecastService {
 			rs.getString("draw_type"),
 			getInteger(rs, "draw_size"),
 			rs.getInt("player_count"),
-			rs.getInt("participation_points"),
-			rs.getInt("max_participation_points")
+			rs.getDouble("participation"),
+			rs.getInt("strength"),
+			rs.getInt("average_elo_rating")
 		);
 		return inProgressEvent;
 	}

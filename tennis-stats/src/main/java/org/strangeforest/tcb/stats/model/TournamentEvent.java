@@ -2,8 +2,6 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
-import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
-
 public class TournamentEvent {
 
 	private final int id;
@@ -18,8 +16,9 @@ public class TournamentEvent {
 	private String drawType;
 	private Integer drawSize;
 	private int playerCount;
-	private int participationPoints;
-	private double participationPct;
+	private double participation;
+	private int strength;
+	private int averageEloRating;
 	private MatchPlayer winner;
 	private MatchPlayer runnerUp;
 	private String score;
@@ -38,12 +37,13 @@ public class TournamentEvent {
 		this.indoor = indoor;
 	}
 
-	public void setDraw(String drawType, Integer drawSize, int playerCount, int participationPoints, int maxParticipationPoints) {
+	public void setDraw(String drawType, Integer drawSize, int playerCount, double participation, int strength, int averageEloRating) {
 		this.drawType = drawType;
 		this.drawSize = drawSize;
 		this.playerCount = playerCount;
-		this.participationPoints = participationPoints;
-		participationPct = pct(participationPoints, maxParticipationPoints);
+		this.participation = participation;
+		this.strength = strength;
+		this.averageEloRating = averageEloRating;
 	}
 
 	public void setFinal(MatchPlayer winner, MatchPlayer loser, String score, String outcome) {
@@ -116,12 +116,16 @@ public class TournamentEvent {
 		return playerCount;
 	}
 
-	public int getParticipationPoints() {
-		return participationPoints;
+	public double getParticipation() {
+		return participation;
 	}
 
-	public double getParticipationPct() {
-		return participationPct;
+	public int getStrength() {
+		return strength;
+	}
+
+	public int getAverageEloRating() {
+		return averageEloRating;
 	}
 
 	public MatchPlayer getWinner() {

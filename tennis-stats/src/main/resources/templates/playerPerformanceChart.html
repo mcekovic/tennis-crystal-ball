@@ -6,7 +6,7 @@
 <script type="text/javascript">
 	var perfChartData, perfPointCount;
 	function loadGoogleChartsForPerf() {
-		google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
+		google.load("visualization", "1.0", {packages:["corechart"], "language": "en", callback: function() {
 			drawPerformanceChart();
 		}});
 	}

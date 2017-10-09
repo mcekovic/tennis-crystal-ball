@@ -46,21 +46,29 @@
 					<th>Date</th>
 					<td th:text="${#dates.format(tournamentEvent.date, 'dd-MM-yyyy')}">1-1-1990</td>
 				</tr>
-			</table>
-		</div>
-		<div class="col-md-3">
-			<table class="table table-condensed text-nowrap">
 				<tr>
 					<th>Draw</th>
 					<td th:text="${tournamentEvent.draw}">KO 128</td>
 				</tr>
-				<tr th:unless="${isTeam}">
+			</table>
+		</div>
+		<div class="col-md-3" th:unless="${isTeam}">
+			<table class="table table-condensed text-nowrap">
+				<tr>
 					<th>Players</th>
 					<td th:text="${tournamentEvent.playerCount}">128</td>
 				</tr>
-				<tr th:unless="${isTeam}">
+				<tr th:title="#{event.participation.title}">
 					<th>Participation</th>
-					<td><span th:text="${tournamentEvent.participationPoints}" th:title="#{events.participationPoints.title}">832</span> <span th:text="'(' + ${#numbers.formatDecimal(tournamentEvent.participationPct, 1, 1)} + '%)'" th:title="#{events.participationPercentage.title}">(67.3%)</span></td>
+					<td th:text="${#numbers.formatDecimal(100 * tournamentEvent.participation, 1, 1) + '%'}">67.3%</td>
+				</tr>
+				<tr th:title="#{event.strength.title}">
+					<th>Strength</th>
+					<td th:text="${tournamentEvent.strength}">1232</td>
+				</tr>
+				<tr th:title="#{event.averageEloRating.title}">
+					<th>Average Elo Rating</th>
+					<td th:text="${tournamentEvent.averageEloRating}">1954</td>
 				</tr>
 			</table>
 		</div>
@@ -84,7 +92,7 @@
 					</td>
 				</tr>
 				<tr th:if="${tournamentEvent.score}">
-					<th>Score</th>
+					<th>Final Score</th>
 					<td th:text="${tournamentEvent.score}">6-4 6-3</td>
 				</tr>
 			</table>

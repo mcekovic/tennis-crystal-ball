@@ -25,8 +25,9 @@ public class PlayerTournamentsResource {
 		.put("name", "name")
 		.put("surface", "surface")
 		.put("draw", "draw_type, draw_size")
-		.put("participationPoints", "participation_points NULLS LAST")
-		.put("participationPct", "participation_points::REAL / max_participation_points NULLS LAST")
+		.put("participation", "participation")
+		.put("strength", "strength")
+		.put("averageEloRating", "average_elo_rating")
 		.put("result", "result")
 	.build();
 	private static final OrderBy DEFAULT_ORDER = OrderBy.desc("date");

@@ -2,8 +2,6 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
-import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
-
 public class InProgressEvent {
 
 	private final int id;
@@ -16,8 +14,9 @@ public class InProgressEvent {
 	private String drawType;
 	private Integer drawSize;
 	private int playerCount;
-	private int participationPoints;
-	private double participationPct;
+	private double participation;
+	private int strength;
+	private int averageEloRating;
 	private List<FavoritePlayer> favorites;
 
 	public InProgressEvent(int id, int tournamentId, Date date, String name, String level, String surface, boolean indoor) {
@@ -30,12 +29,13 @@ public class InProgressEvent {
 		this.indoor = indoor;
 	}
 
-	public void setDraw(String drawType, Integer drawSize, int playerCount, int participationPoints, int maxParticipationPoints) {
+	public void setDraw(String drawType, Integer drawSize, int playerCount, double participation, int strength, int averageEloRating) {
 		this.drawType = drawType;
 		this.drawSize = drawSize;
 		this.playerCount = playerCount;
-		this.participationPoints = participationPoints;
-		participationPct = pct(participationPoints, maxParticipationPoints);
+		this.participation = participation;
+		this.strength = strength;
+		this.averageEloRating = averageEloRating;
 	}
 
 	public int getId() {
@@ -74,24 +74,36 @@ public class InProgressEvent {
 		return playerCount;
 	}
 
-	public int getParticipationPoints() {
-		return participationPoints;
+	public double getParticipation() {
+		return participation;
 	}
 
-	public double getParticipationPct() {
-		return participationPct;
+	public int getStrength() {
+		return strength;
+	}
+
+	public int getAverageEloRating() {
+		return averageEloRating;
 	}
 
 	public FavoritePlayer getFavorite1() {
-		return favorites.size() >= 1 ? favorites.get(0) : null;
+		return getFavorite(1);
 	}
 
 	public FavoritePlayer getFavorite2() {
-		return favorites.size() >= 2 ? favorites.get(1) : null;
+		return getFavorite(2);
 	}
 
 	public FavoritePlayer getFavorite3() {
-		return favorites.size() >= 3 ? favorites.get(2) : null;
+		return getFavorite(3);
+	}
+
+	public FavoritePlayer getFavorite4() {
+		return getFavorite(4);
+	}
+
+	private FavoritePlayer getFavorite(int favorite) {
+		return favorites.size() >= favorite ? favorites.get(favorite - 1) : null;
 	}
 
 	public void setFavorites(List<FavoritePlayer> favorites) {

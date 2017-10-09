@@ -75,21 +75,29 @@
 					<th>Date</th>
 					<td th:text="${#dates.format(inProgressEvent.date, 'dd-MM-yyyy')}">1-1-2017</td>
 				</tr>
+				<tr>
+					<th>Draw</th>
+					<td th:text="${inProgressEvent.draw}">KO 128</td>
+				</tr>
 			</table>
 		</div>
 		<div class="col-md-3">
 			<table class="table table-condensed text-nowrap">
 				<tr>
-					<th>Draw</th>
-					<td th:text="${inProgressEvent.draw}">KO 128</td>
-				</tr>
-				<tr>
 					<th>Players</th>
 					<td th:text="${inProgressEvent.playerCount}">128</td>
 				</tr>
-				<tr>
+				<tr th:title="#{event.participation.title}">
 					<th>Participation</th>
-					<td><span th:text="${inProgressEvent.participationPoints}" th:title="#{events.participationPoints.title}">832</span> <span th:text="'(' + ${#numbers.formatDecimal(inProgressEvent.participationPct, 1, 1)} + '%)'" th:title="#{events.participationPercentage.title}">(67.3%)</span></td>
+					<td th:text="${#numbers.formatDecimal(100 * inProgressEvent.participation, 1, 1) + '%'}">67.3%</td>
+				</tr>
+				<tr th:title="#{event.strength.title}">
+					<th>Strength</th>
+					<td th:text="${inProgressEvent.strength}">1232</td>
+				</tr>
+				<tr th:title="#{event.averageEloRating.title}">
+					<th>Average Elo Rating</th>
+					<td th:text="${inProgressEvent.averageEloRating}">1954</td>
 				</tr>
 			</table>
 		</div>
@@ -114,6 +122,14 @@
 				<tr th:if="${inProgressEvent.favorite3}">
 					<th title="3-rd Favorite">3-rd Fav.</th>
 					<td th:with="player=${inProgressEvent.favorite3}">
+						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
+						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>
+					</td>
+				</tr>
+				<tr th:if="${inProgressEvent.favorite4}">
+					<th title="4-th Favorite">4-th Fav.</th>
+					<td th:with="player=${inProgressEvent.favorite4}">
 						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
 						<span th:text="${#numbers.formatDecimal(100 * player.probability, 1, 1)} + '%'" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(priceFormat) : _}">Roger Federer 45.3%</span>

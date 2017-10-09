@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.model;
 import java.util.*;
 
 import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
-import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class PlayerTournamentEvent {
 
@@ -16,11 +15,12 @@ public class PlayerTournamentEvent {
 	private final boolean indoor;
 	private final String drawType;
 	private final Integer drawSize;
-	private final int participationPoints;
-	private final double participationPct;
+	private double participation;
+	private int strength;
+	private int averageEloRating;
 	private final String result;
 
-	public PlayerTournamentEvent(int tournamentEventId, int season, Date date, String name, String level, String surface, boolean indoor, String drawType, Integer drawSize, int participationPoints, int maxParticipationPoints, String result) {
+	public PlayerTournamentEvent(int tournamentEventId, int season, Date date, String name, String level, String surface, boolean indoor, String drawType, Integer drawSize, double participation, int strength, int averageEloRating, String result) {
 		this.tournamentEventId = tournamentEventId;
 		this.season = season;
 		this.date = date;
@@ -30,8 +30,9 @@ public class PlayerTournamentEvent {
 		this.indoor = indoor;
 		this.drawType = drawType;
 		this.drawSize = drawSize;
-		this.participationPoints = participationPoints;
-		participationPct = pct(participationPoints, maxParticipationPoints);
+		this.participation = participation;
+		this.strength = strength;
+		this.averageEloRating = averageEloRating;
 		this.result = result;
 	}
 
@@ -75,12 +76,16 @@ public class PlayerTournamentEvent {
 		return drawType + (drawSize != null ? " " + drawSize : "");
 	}
 
-	public int getParticipationPoints() {
-		return participationPoints;
+	public double getParticipation() {
+		return participation;
 	}
 
-	public double getParticipationPct() {
-		return participationPct;
+	public int getStrength() {
+		return strength;
+	}
+
+	public int getAverageEloRating() {
+		return averageEloRating;
 	}
 
 	public String getResult() {

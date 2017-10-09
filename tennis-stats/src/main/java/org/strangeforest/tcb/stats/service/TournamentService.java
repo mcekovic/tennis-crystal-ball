@@ -20,14 +20,12 @@ import com.fasterxml.jackson.databind.*;
 
 import static java.lang.String.*;
 import static java.util.Arrays.*;
-import static java.util.Collections.*;
 import static java.util.Collections.reverseOrder;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.records.details.RecordDetailUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
-import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 @Service
 public class TournamentService {
@@ -53,7 +51,7 @@ public class TournamentService {
 		")\n" +
 		"SELECT tournament_id, name, level,\n" +
 		"  array_to_json(array(SELECT row_to_json(event) FROM (\n" +
-		"    SELECT e.level, e.surface, e.season, p.participation_points, p.max_participation_points\n" +
+		"    SELECT e.level, e.surface, e.season, p.player_count, p.participation, p.strength, p.average_elo_rating\n" +
 		"    FROM tournament_event e\n" +
 		"    INNER JOIN event_participation p USING (tournament_event_id)\n" +
 		"    WHERE e.tournament_id = t.tournament_id%1$s\n" +
@@ -63,7 +61,7 @@ public class TournamentService {
 		"    SELECT p.player_id, p.name, p.country_id, p.active, pt.titles\n" +
 		"    FROM player_tournament_titles_ranked pt\n" +
 		"    INNER JOIN player_v p USING (player_id)\n" +
-		"    WHERE pt.tournament_id = t.tournament_id AND pt.rank <= 3\n" +
+		"    WHERE pt.tournament_id = t.tournament_id AND pt.rank <= 1\n" +
 		"  ) AS top_player)) AS top_players\n" +
 		"FROM tournament t\n" +
 		"WHERE t.level NOT IN ('D', 'T')";
@@ -81,7 +79,7 @@ public class TournamentService {
 		")\n" +
 		"SELECT tournament_id, name, level,\n" +
 		"  array_to_json(array(SELECT row_to_json(event) FROM (\n" +
-		"    SELECT e.level, e.surface, e.season, p.participation_points, p.max_participation_points\n" +
+		"    SELECT e.level, e.surface, e.season, p.player_count, p.participation, p.strength, p.average_elo_rating\n" +
 		"    FROM tournament_event e\n" +
 		"    INNER JOIN event_participation p USING (tournament_event_id)\n" +
 		"    WHERE e.tournament_id = :tournamentId\n" +
@@ -91,7 +89,7 @@ public class TournamentService {
 		"    SELECT p.player_id, p.name, p.country_id, p.active, pt.titles\n" +
 		"    FROM player_tournament_titles_ranked pt\n" +
 		"    INNER JOIN player_v p USING (player_id)\n" +
-		"    WHERE pt.rank <= 3\n" +
+		"    WHERE pt.rank <= 4\n" +
 		"  ) AS top_player)) AS top_players\n" +
 		"FROM tournament t\n" +
 		"WHERE tournament_id = :tournamentId";
@@ -107,7 +105,7 @@ public class TournamentService {
 
 	private static final String TOURNAMENT_EVENT_SELECT = //language=SQL
 		"SELECT e.tournament_event_id, e.tournament_id, mp.ext_tournament_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size,\n" +
-		"  p.player_count, p.participation_points, p.max_participation_points,\n" +
+		"  p.player_count, p.participation, p.strength, p.average_elo_rating,\n" +
 		"  m.winner_id, pw.name winner_name, m.winner_seed, m.winner_entry,\n" +
 		"  m.loser_id runner_up_id, pl.name runner_up_name, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry,\n" +
 		"  m.score, m.outcome%1$s\n" +
@@ -176,7 +174,7 @@ public class TournamentService {
 		"ORDER BY name, season";
 
 	private static final String PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY = //language=SQL
-		"SELECT r.tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.participation_points, p.max_participation_points, r.result\n" +
+		"SELECT r.tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.participation, p.strength, p.average_elo_rating, r.result\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"LEFT JOIN event_participation p USING (tournament_event_id)%1$s\n" +
@@ -242,16 +240,20 @@ public class TournamentService {
 		Map<String, Integer> levels = new HashMap<>();
 		Map<String, Integer> surfaces = new HashMap<>();
 		List<Integer> seasons = new ArrayList<>();
-		int participationPoints = 0;
-		int maxParticipationPoints = 0;
+		int playerCount = 0;
+		double participation = 0.0;
+		int strength = 0;
+		int averageEloRating = 0;
 		try {
 			JsonNode events = READER.readTree(rs.getString("events"));
 			for (JsonNode event : events) {
 				levels.compute(event.get("level").asText(), TournamentService::increment);
 				surfaces.compute(event.get("surface").asText(), TournamentService::increment);
 				seasons.add(event.get("season").asInt());
-				participationPoints += event.get("participation_points").asInt();
-				maxParticipationPoints += event.get("max_participation_points").asInt();
+				playerCount += event.get("player_count").asInt();
+				participation += event.get("participation").asDouble();
+				strength += event.get("strength").asInt();
+				averageEloRating += event.get("average_elo_rating").asInt();
 			}
 		}
 		catch (IOException ex) {
@@ -261,8 +263,10 @@ public class TournamentService {
 		List<String> surfaceList = sortKeysByValuesDesc(surfaces, comparing(Surface::decode));
 		int eventCount = seasons.size();
 		String formattedSeasons = formatSeasons(seasons);
-		int avgParticipationPoints = eventCount > 0 ? participationPoints / eventCount : 0;
-		double avgParticipationPct = pct(participationPoints, maxParticipationPoints);
+		int avgPlayerCount = eventCount > 0 ? (int)Math.round((double)playerCount / eventCount) : 0;
+		double avgParticipation = eventCount > 0 ? participation / eventCount : 0.0;
+		int avgStrength =  eventCount > 0 ? (int)Math.round((double)strength / eventCount) : 0;
+		int avgAverageEloRating =  eventCount > 0 ? (int)Math.round((double)averageEloRating / eventCount) : 0;
 
 		List<PlayerRow> topPlayers = new ArrayList<>();
 		try {
@@ -281,7 +285,7 @@ public class TournamentService {
 			throw new SQLException(ex);
 		}
 
-		return new Tournament(tournamentId, name, levelList, surfaceList, eventCount, formattedSeasons, avgParticipationPoints, avgParticipationPct, topPlayers);
+		return new Tournament(tournamentId, name, levelList, surfaceList, eventCount, formattedSeasons, avgPlayerCount, avgParticipation, avgStrength, avgAverageEloRating, topPlayers);
 	}
 
 	private static Integer increment(String s, Integer i) {
@@ -406,8 +410,9 @@ public class TournamentService {
 			rs.getString("draw_type"),
 			getInteger(rs, "draw_size"),
 			rs.getInt("player_count"),
-			rs.getInt("participation_points"),
-			rs.getInt("max_participation_points")
+			rs.getDouble("participation"),
+			rs.getInt("strength"),
+			rs.getInt("average_elo_rating")
 		);
 		tournamentEvent.setFinal(
 			MatchesService.mapMatchPlayer(rs, "winner_", withExtraAttrs),
@@ -490,8 +495,9 @@ public class TournamentService {
 						rs.getBoolean("indoor"),
 						rs.getString("draw_type"),
 						getInteger(rs, "draw_size"),
-						rs.getInt("participation_points"),
-						rs.getInt("max_participation_points"),
+						rs.getDouble("participation"),
+						rs.getInt("strength"),
+						rs.getInt("average_elo_rating"),
 						rs.getString("result")
 					));
 				}

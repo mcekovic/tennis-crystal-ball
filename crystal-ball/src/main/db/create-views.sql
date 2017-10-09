@@ -26,10 +26,10 @@ WITH player_match AS (
 	WHERE e.level NOT IN ('D', 'T')
 	GROUP BY tournament_event_id, e.level
 )
-SELECT tournament_event_id, player_count,
+SELECT tournament_event_id, player_count, participation_points,
 	coalesce(participation_points, 0)::REAL / max_participation_points AS participation,
-	tournament_level_factor * (CASE WHEN raw_strength > 0 THEN raw_strength ELSE 0 END) AS strength,
-	weighted_elo_rating_sum::REAL / max_participation_points AS average_elo_rating
+	round(tournament_level_factor * (CASE WHEN raw_strength > 0 THEN raw_strength ELSE 0 END)) AS strength,
+	round(weighted_elo_rating_sum::REAL / max_participation_points) AS average_elo_rating
 FROM event_for_participation;
 
 CREATE MATERIALIZED VIEW event_participation AS SELECT * FROM event_participation_v;
@@ -39,7 +39,6 @@ CREATE UNIQUE INDEX ON event_participation (tournament_event_id);
 
 -- in_progress_event_participation
 
-DROP VIEW in_progress_event_participation_v CASCADE;
 CREATE OR REPLACE VIEW in_progress_event_participation_v AS
 WITH player_match AS (
 	SELECT in_progress_match_id, in_progress_event_id, round, match_num, player1_id player_id, player1_rank rank, coalesce(player1_elo_rating, 1500) elo_rating FROM in_progress_match
@@ -67,8 +66,8 @@ WITH player_match AS (
 )
 SELECT in_progress_event_id, player_count,
 	coalesce(participation_points, 0)::REAL / max_participation_points AS participation,
-	tournament_level_factor * (CASE WHEN raw_strength > 0 THEN raw_strength ELSE 0 END) AS strength,
-	weighted_elo_rating_sum::REAL / max_participation_points AS average_elo_rating
+	round(tournament_level_factor * (CASE WHEN raw_strength > 0 THEN raw_strength ELSE 0 END)) AS strength,
+	round(weighted_elo_rating_sum::REAL / max_participation_points) AS average_elo_rating
 FROM event_for_participation;
 
 

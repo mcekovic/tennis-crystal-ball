@@ -316,7 +316,7 @@ function formatTournamentEvent(id, level, name, extId) {
 }
 
 function participationFormatter(column, row) {
-	return row.participationPct.toFixed(1) + "%";
+	return (100 * row.participation).toFixed(1) + "%";
 }
 
 // Match Formatter

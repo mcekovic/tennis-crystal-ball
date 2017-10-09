@@ -12,7 +12,7 @@
 <script type="text/javascript">
 	var statsChartData, statsPointCount, isPct;
 	function loadGoogleChartsForStats() {
-		google.load("visualization", "1.0", {packages:["corechart"], callback: function() {
+		google.load("visualization", "1.0", {packages:["corechart"], "language": "en", callback: function() {
 			drawStatsChart();
 		}});
 	}
