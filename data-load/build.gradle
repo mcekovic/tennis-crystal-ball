@@ -64,8 +64,8 @@ task fullDeployToDigitalOcean {
 		def destPath = '/tcb'
 		ssh.run {
 			session(remotes.digitalOcean) {
-				execute "rm -rf ${destPath}/data-load"
 				put from: "${srcPath}/${dataLoadDist}", into: destPath
+				execute "rm -rf ${destPath}/data-load"
 				execute "cd ${destPath}; tar -xvf ${dataLoadDist}; rm ${dataLoadDist}; mv ${dataLoad} data-load"
 			}
 		}

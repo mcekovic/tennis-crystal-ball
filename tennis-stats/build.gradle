@@ -125,10 +125,11 @@ task fullDeployToDigitalOcean {
 				put from: "${srcPath}/${tennisStatsDist}", into: destPath
 				execute "cd ${destPath}; tar -xvf ${tennisStatsDist}; rm ${tennisStatsDist}"
 				execute 'systemctl stop tennis-stats.service'
+				execute "rm -rf ${destPath}/tennis-stats/bin"
 				execute "rm -rf ${destPath}/tennis-stats/lib"
 				execute "rm -rf ${destPath}/tennis-stats/logs/*"
 				execute "rm -rf ${destPath}/tennis-stats/wrapper/logs/*"
-				execute "cd ${destPath}; mv ${tennisStats} tennis-stats"
+				execute "cd ${destPath}; mv -f ${tennisStats}/* tennis-stats; rm -rf ${tennisStats}"
 				execute 'systemctl start tennis-stats.service'
 			}
 		}
