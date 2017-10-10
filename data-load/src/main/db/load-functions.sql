@@ -396,6 +396,8 @@ DECLARE
 	l_loser_id INTEGER;
 	l_match_id BIGINT;
 	l_rank_points rank_points;
+	l_winner_elo_rating INTEGER;
+	l_loser_elo_rating INTEGER;
 	l_has_stats BOOLEAN;
 	l_new BOOLEAN;
 	l_set_count SMALLINT;
@@ -452,27 +454,29 @@ BEGIN
 		SELECT height INTO p_loser_height FROM player WHERE player_id = l_loser_id;
 	END IF;
 
+	l_winner_elo_rating := player_elo_rating(l_winner_id, p_date);
+	l_loser_elo_rating := player_elo_rating(l_loser_id, p_date);
 	l_has_stats := (p_minutes IS NOT NULL AND p_minutes > 0) OR (coalesce(p_w_sv_pt, 0) + coalesce(p_l_sv_pt, 0) > 0);
 
 	-- merge match
 	BEGIN
 		INSERT INTO match
 		(tournament_event_id, match_num, date, surface, indoor, round, best_of,
-		 winner_id, winner_country_id, winner_seed, winner_entry, winner_rank, winner_rank_points, winner_age, winner_height,
-		 loser_id, loser_country_id, loser_seed, loser_entry, loser_rank, loser_rank_points, loser_age, loser_height,
+		 winner_id, winner_country_id, winner_seed, winner_entry, winner_rank, winner_rank_points, winner_elo_rating, winner_age, winner_height,
+		 loser_id, loser_country_id, loser_seed, loser_entry, loser_rank, loser_rank_points, loser_elo_rating, loser_age, loser_height,
 		 score, outcome, w_sets, l_sets, w_games, l_games, has_stats)
 		VALUES
 		(l_tournament_event_id, p_match_num, p_date, p_surface::surface, p_indoor, p_round::match_round, p_best_of,
-		 l_winner_id, p_winner_country_id, p_winner_seed, p_winner_entry::tournament_entry, p_winner_rank, p_winner_rank_points, p_winner_age, p_winner_height,
-		 l_loser_id, p_loser_country_id, p_loser_seed, p_loser_entry::tournament_entry, p_loser_rank, p_loser_rank_points, p_loser_age, p_loser_height,
+		 l_winner_id, p_winner_country_id, p_winner_seed, p_winner_entry::tournament_entry, p_winner_rank, p_winner_rank_points, l_winner_elo_rating, p_winner_age, p_winner_height,
+		 l_loser_id, p_loser_country_id, p_loser_seed, p_loser_entry::tournament_entry, p_loser_rank, p_loser_rank_points, l_loser_elo_rating, p_loser_age, p_loser_height,
 		 p_score, p_outcome::match_outcome, p_w_sets, p_l_sets, p_w_games, p_l_games, l_has_stats)
 		RETURNING match_id INTO l_match_id;
 		l_new := TRUE;
    EXCEPTION WHEN unique_violation THEN
 		UPDATE match
 		SET date = p_date, surface = p_surface::surface, indoor = p_indoor, round = p_round::match_round, best_of = p_best_of,
-			winner_id = l_winner_id, winner_country_id = p_winner_country_id, winner_seed = p_winner_seed, winner_entry = p_winner_entry::tournament_entry, winner_rank = p_winner_rank, winner_rank_points = p_winner_rank_points, winner_age = p_winner_age, winner_height = p_winner_height,
-			loser_id = l_loser_id, loser_country_id = p_loser_country_id, loser_seed = p_loser_seed, loser_entry = p_loser_entry::tournament_entry, loser_rank = p_loser_rank, loser_rank_points = p_loser_rank_points, loser_age = p_loser_age, loser_height = p_loser_height,
+			winner_id = l_winner_id, winner_country_id = p_winner_country_id, winner_seed = p_winner_seed, winner_entry = p_winner_entry::tournament_entry, winner_rank = p_winner_rank, winner_rank_points = p_winner_rank_points, winner_elo_rating = l_winner_elo_rating, winner_age = p_winner_age, winner_height = p_winner_height,
+			loser_id = l_loser_id, loser_country_id = p_loser_country_id, loser_seed = p_loser_seed, loser_entry = p_loser_entry::tournament_entry, loser_rank = p_loser_rank, loser_rank_points = p_loser_rank_points, loser_elo_rating = l_loser_elo_rating, loser_age = p_loser_age, loser_height = p_loser_height,
 			score = p_score, outcome = p_outcome::match_outcome, w_sets = p_w_sets, l_sets = p_l_sets, w_games = p_w_games, l_games = p_l_games, has_stats = l_has_stats
 		WHERE tournament_event_id = l_tournament_event_id AND match_num = p_match_num
 		RETURNING match_id INTO l_match_id;
