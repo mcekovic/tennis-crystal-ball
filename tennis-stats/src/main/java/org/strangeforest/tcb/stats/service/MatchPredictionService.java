@@ -26,6 +26,7 @@ public class MatchPredictionService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
+	private final boolean includeInProgressEventData;
 	private final LoadingCache<Integer, PlayerData> players;
 	private final LoadingCache<RankingKey, RankingData> playersRankings;
 	private final LoadingCache<Integer, List<MatchData>> playersMatches;
@@ -44,15 +45,34 @@ public class MatchPredictionService {
 		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1 year') AND :date\n" +
 		"ORDER BY rank_date DESC LIMIT 1";
 
-	private static final String PLAYER_MATCHES_QUERY =
-		"SELECT m.date, m.level, m.surface, m.tournament_id, m.round, m.opponent_id, m.opponent_rank, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
+	private static final String PLAYER_MATCHES_QUERY = //language=SQL
+		"SELECT m.match_num, m.date, m.level, m.surface, m.tournament_id, m.round, m.opponent_id, m.opponent_rank, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
 		"FROM player_match_for_stats_v m\n" +
 		"LEFT JOIN player p ON p.player_id = m.opponent_id\n" +
 		"WHERE m.player_id = :playerId\n" +
-		"ORDER BY m.date";
+		"%1$sORDER BY date, round, match_num";
+
+	private static final String PLAYER_IN_PROGRESS_MATCHES_UNION = //language=SQL
+		"UNION\n" +
+		"SELECT m.match_num, m.date - INTERVAL '1 day', e.level, m.surface, e.tournament_id, m.round, m.player2_id, m.player2_rank, m.player2_entry, o.hand, o.backhand, 2 - winner, winner - 1, m.player1_sets, m.player2_sets\n" +
+		"FROM in_progress_match m\n" +
+		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
+		"LEFT JOIN player o ON o.player_id = m.player2_id\n" +
+		"WHERE winner IS NOT NULL AND m.player1_id = :playerId AND m.player2_id > 0\n" +
+		"UNION\n" +
+		"SELECT m.match_num, m.date - INTERVAL '1 day', e.level, m.surface, e.tournament_id, m.round, m.player1_id, m.player1_rank, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.player2_sets, m.player1_sets\n" +
+		"FROM in_progress_match m\n" +
+		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
+		"LEFT JOIN player o ON o.player_id = m.player1_id\n" +
+		"WHERE winner IS NOT NULL AND m.player1_id > 0 AND m.player2_id = :playerId\n";
 
 	
 	public MatchPredictionService() {
+		this(true);
+	}
+	
+	public MatchPredictionService(boolean includeInProgressEventData) {
+		this.includeInProgressEventData = includeInProgressEventData;
 		Caffeine<Object, Object> builder = Caffeine.newBuilder()
 			.expireAfterWrite(1, TimeUnit.HOURS)
 			.expireAfterAccess(1, TimeUnit.HOURS);
@@ -200,7 +220,8 @@ public class MatchPredictionService {
 	}
 
 	private List<MatchData> fetchMatchData(int playerId) {
-		return jdbcTemplate.query(PLAYER_MATCHES_QUERY, params("playerId", playerId), this::matchData);
+		String sql = format(PLAYER_MATCHES_QUERY, includeInProgressEventData ? PLAYER_IN_PROGRESS_MATCHES_UNION : "");
+		return jdbcTemplate.query(sql, params("playerId", playerId), this::matchData);
 	}
 
 	private MatchData matchData(ResultSet rs, int rowNum) throws SQLException {

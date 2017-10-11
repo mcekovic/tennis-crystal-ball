@@ -324,8 +324,10 @@ CREATE TABLE in_progress_match (
 	winner SMALLINT,
 	score TEXT,
 	outcome match_outcome,
+	player1_sets SMALLINT,
 	player1_games SMALLINT[],
 	player1_tb_pt SMALLINT[],
+	player2_sets SMALLINT,
 	player2_games SMALLINT[],
 	player2_tb_pt SMALLINT[],
 	UNIQUE (in_progress_event_id, match_num)

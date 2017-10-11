@@ -14,7 +14,7 @@ public class PredictionITsConfig {
 
 	@Bean
 	public MatchPredictionService matchPredictionService() {
-		return new MatchPredictionService();
+		return new MatchPredictionService(false);
 	}
 
 	@Bean

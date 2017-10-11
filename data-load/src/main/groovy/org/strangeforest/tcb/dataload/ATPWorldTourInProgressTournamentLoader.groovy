@@ -37,7 +37,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			':ext_tournament_id, :match_num, :prev_match_num1, :prev_match_num2, :date, :surface, :indoor, :round, :best_of, ' +
 			':player1_name, :player1_country_id, :player1_seed, :player1_entry, ' +
 			':player2_name, :player2_country_id, :player2_seed, :player2_entry, ' +
-			':winner, :score, :outcome, :player1_games, :player1_tb_pt, :player2_games, :player2_tb_pt' +
+			':winner, :score, :outcome, :player1_sets, :player1_games, :player1_tb_pt, :player2_sets, :player2_games, :player2_tb_pt' +
 		')}'
 
 	static final String UPDATE_EVENT_HASH_SQL = //language=SQL
@@ -286,8 +286,10 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				params.winner = (short) 1
 				if (matchScore) {
 					def conn = sql.connection
+					params.player1_sets = matchScore.w_sets
 					params.player1_games = shortArray(conn, matchScore.w_set_games)
 					params.player1_tb_pt = shortArray(conn, matchScore.w_set_tb_pt)
+					params.player2_sets = matchScore.l_sets
 					params.player2_games = shortArray(conn, matchScore.l_set_games)
 					params.player2_tb_pt = shortArray(conn, matchScore.l_set_tb_pt)
 				}
@@ -296,8 +298,10 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				params.winner = (short) 2
 				if (matchScore) {
 					def conn = sql.connection
+					params.player1_sets = matchScore.l_sets
 					params.player1_games = shortArray(conn, matchScore.l_set_games)
 					params.player1_tb_pt = shortArray(conn, matchScore.l_set_tb_pt)
+					params.player2_sets = matchScore.w_sets
 					params.player2_games = shortArray(conn, matchScore.w_set_games)
 					params.player2_tb_pt = shortArray(conn, matchScore.w_set_tb_pt)
 				}

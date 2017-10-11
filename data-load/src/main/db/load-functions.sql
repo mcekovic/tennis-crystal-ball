@@ -625,8 +625,10 @@ CREATE OR REPLACE FUNCTION load_in_progress_match(
 	p_winner SMALLINT,
 	p_score TEXT,
 	p_outcome TEXT,
+	p_player1_sets SMALLINT,
 	p_player1_games SMALLINT[],
 	p_player1_tb_pt SMALLINT[],
+	p_player2_sets SMALLINT,
 	p_player2_games SMALLINT[],
 	p_player2_tb_pt SMALLINT[]
 ) RETURNS VOID AS $$
@@ -668,7 +670,7 @@ BEGIN
 		player1_id = l_player1_id, player1_country_id = p_player1_country_id, player1_seed = p_player1_seed, player1_entry = p_player1_entry::tournament_entry, player1_rank = l_player1_rank, player1_elo_rating = l_player1_elo_rating,
 		player2_id = l_player2_id, player2_country_id = p_player2_country_id, player2_seed = p_player2_seed, player2_entry = p_player2_entry::tournament_entry, player2_rank = l_player2_rank, player2_elo_rating = l_player2_elo_rating,
 		winner = p_winner, score = p_score, outcome = p_outcome::match_outcome,
-		player1_games = p_player1_games, player1_tb_pt = p_player1_tb_pt, player2_games = p_player2_games, player2_tb_pt = p_player2_tb_pt
+		player1_sets = p_player1_sets, player1_games = p_player1_games, player1_tb_pt = p_player1_tb_pt, player2_sets = p_player2_sets, player2_games = p_player2_games, player2_tb_pt = p_player2_tb_pt
 	WHERE in_progress_event_id = l_in_progress_event_id AND match_num = p_match_num
 	RETURNING in_progress_match_id INTO l_in_progress_match_id;
 	IF l_in_progress_match_id IS NULL THEN
@@ -676,12 +678,12 @@ BEGIN
 		(in_progress_event_id, match_num, prev_match_num1, prev_match_num2, date, surface, indoor, round, best_of,
 		 player1_id, player1_country_id, player1_seed, player1_entry, player1_rank, player1_elo_rating,
 		 player2_id, player2_country_id, player2_seed, player2_entry, player2_rank, player2_elo_rating,
-		 winner, score, outcome, player1_games, player1_tb_pt, player2_games, player2_tb_pt)
+		 winner, score, outcome, player1_sets, player1_games, player1_tb_pt, player2_sets, player2_games, player2_tb_pt)
 		VALUES
 		(l_in_progress_event_id, p_match_num, p_prev_match_num1, p_prev_match_num2, p_date, p_surface::surface, p_indoor, p_round::match_round, p_best_of,
 		 l_player1_id, p_player1_country_id, p_player1_seed, p_player1_entry::tournament_entry, l_player1_rank, l_player1_elo_rating,
 		 l_player2_id, p_player2_country_id, p_player2_seed, p_player2_entry::tournament_entry, l_player2_rank, l_player1_elo_rating,
-		 p_winner, p_score, p_outcome::match_outcome, p_player1_games, p_player1_tb_pt, p_player2_games, p_player2_tb_pt);
+		 p_winner, p_score, p_outcome::match_outcome, p_player1_sets, p_player1_games, p_player1_tb_pt, p_player2_sets, p_player2_games, p_player2_tb_pt);
    END IF;
 END;
 $$ LANGUAGE plpgsql;
