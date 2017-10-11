@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
-	<tournament season="1984" name="Monte Carlo" date="1984-02-06" ext-id="402">
+	<tournament season="1984" name="Memphis" date="1984-02-06" ext-id="402">
 		<level>A</level>
 		<surface>C</surface>
 		<draw-type>KO</draw-type>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
-	<tournament season="1981" name="Monte Carlo" date="1981-04-13" ext-id="410">
+	<tournament season="1981" name="Monte Carlo Masters" date="1981-04-13" ext-id="410">
 		<level>M</level>
 		<surface>C</surface>
 		<draw-type>KO</draw-type>
