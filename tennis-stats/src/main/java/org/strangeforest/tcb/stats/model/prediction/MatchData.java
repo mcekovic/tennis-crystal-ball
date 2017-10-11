@@ -11,6 +11,7 @@ public final class MatchData {
 	private final String round;
 	private final int opponentId;
 	private final Integer opponentRank;
+	private final Integer opponentEloRating;
 	private final String opponentHand;
 	private final String opponentBackhand;
 	private final String opponentEntry;
@@ -19,7 +20,9 @@ public final class MatchData {
 	private final int pSets;
 	private final int oSets;
 
-	public MatchData(LocalDate date, String level, String surface, int tournamentId, String round, int opponentId, Integer opponentRank, String opponentHand, String opponentBackhand, String opponentEntry, int pMatches, int oMatches, int pSets, int oSets) {
+	public MatchData(LocalDate date, String level, String surface, int tournamentId, String round,
+	                 int opponentId, Integer opponentRank, Integer opponentEloRating, String opponentHand, String opponentBackhand, String opponentEntry,
+	                 int pMatches, int oMatches, int pSets, int oSets) {
 		this.date = date;
 		this.level = level;
 		this.surface = surface;
@@ -27,6 +30,7 @@ public final class MatchData {
 		this.round = round;
 		this.opponentId = opponentId;
 		this.opponentRank = opponentRank;
+		this.opponentEloRating = opponentEloRating;
 		this.opponentHand = opponentHand;
 		this.opponentBackhand = opponentBackhand;
 		this.opponentEntry = opponentEntry;
@@ -62,6 +66,22 @@ public final class MatchData {
 
 	public Integer getOpponentRank() {
 		return opponentRank;
+	}
+
+	public Integer getOpponentEloRating() {
+		return opponentEloRating;
+	}
+
+	public double getOpponentEloScore() {
+		if (opponentEloRating != null) {
+			int ratingDelta = opponentEloRating - 1500;
+			if (ratingDelta > 0) {
+				if (oMatches > pMatches)
+					ratingDelta = -ratingDelta;
+				return ratingDelta / 400.0;
+			}
+		}
+		return 0.0;
 	}
 
 	public String getOpponentHand() {

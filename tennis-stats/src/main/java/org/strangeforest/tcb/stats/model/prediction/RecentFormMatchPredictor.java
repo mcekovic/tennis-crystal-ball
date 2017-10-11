@@ -1,0 +1,90 @@
+package org.strangeforest.tcb.stats.model.prediction;
+
+import java.time.*;
+import java.util.*;
+import java.util.function.*;
+
+import org.strangeforest.tcb.stats.model.*;
+
+import static java.lang.Math.*;
+import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
+import static org.strangeforest.tcb.stats.model.prediction.RecentFormPredictionItem.*;
+
+public class RecentFormMatchPredictor implements MatchPredictor {
+
+	private final List<MatchData> matchData1;
+	private final List<MatchData> matchData2;
+	private final LocalDate date1;
+	private final LocalDate date2;
+	private final Surface surface;
+	private final TournamentLevel level;
+
+	private static final int MATCH_RECENT_PERIOD_YEARS = 2;
+	private static final int RECENT_FORM_MATCHES = 20;
+
+	public RecentFormMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2,
+	                                LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level) {
+		this.matchData1 = matchData1;
+		this.matchData2 = matchData2;
+		this.date1 = date1;
+		this.date2 = date2;
+		this.surface = surface;
+		this.level = level;
+	}
+
+	@Override public PredictionArea getArea() {
+		return PredictionArea.RECENT_FORM;
+	}
+
+	@Override public MatchPrediction predictMatch() {
+		Period matchRecentPeriod = getMatchRecentPeriod();
+		MatchPrediction prediction = new MatchPrediction();
+		int recentFormMatches = getRecentFormMatches();
+		addItemProbabilities(prediction, OVERALL, isRecent(date1, matchRecentPeriod), isRecent(date2, matchRecentPeriod), recentFormMatches);
+		addItemProbabilities(prediction, SURFACE, isSurface(surface).and(isRecent(date1, matchRecentPeriod)), isSurface(surface).and(isRecent(date2, matchRecentPeriod)), recentFormMatches);
+		addItemProbabilities(prediction, LEVEL, isLevel(level).and(isRecent(date1, matchRecentPeriod)), isLevel(level).and(isRecent(date2, matchRecentPeriod)), recentFormMatches);
+		return prediction;
+	}
+
+	private Period getMatchRecentPeriod() {
+		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period.match." + getArea()).orElse(MATCH_RECENT_PERIOD_YEARS));
+	}
+
+	private int getRecentFormMatches() {
+		return PredictionConfig.getIntegerProperty("recent_form.matches." + getArea()).orElse(RECENT_FORM_MATCHES);
+	}
+
+	private void addItemProbabilities(MatchPrediction prediction, RecentFormPredictionItem item, Predicate<MatchData> filter1, Predicate<MatchData> filter2, Integer matches) {
+		if (item.getWeight() > 0.0) {
+			List<MatchData> filteredMatchData1 = matchData1.stream().filter(filter1).collect(toList());
+			List<MatchData> filteredMatchData2 = matchData2.stream().filter(filter2).collect(toList());
+			if (matches != null) {
+				int matches1 = filteredMatchData1.size();
+				int matches2 = filteredMatchData2.size();
+				if (matches1 > matches)
+					filteredMatchData1 = filteredMatchData1.subList(matches1 - matches, matches1);
+				if (matches2 > matches)
+					filteredMatchData2 = filteredMatchData2.subList(matches2 - matches, matches2);
+			}
+			int matches1 = filteredMatchData1.size();
+			int matches2 = filteredMatchData2.size();
+			if (matches1 > 0 && matches2 > 0) {
+				double form1 = filteredMatchData1.stream().mapToDouble(MatchData::getOpponentEloScore).sum() / matches1;
+				double form2 = filteredMatchData2.stream().mapToDouble(MatchData::getOpponentEloScore).sum() / matches2;
+				double weight = item.getWeight() * weight(matches1, matches2);
+				double p1 = winProbability(form1, form2);
+				double p2 = winProbability(form2, form1);
+				double p12 = p1 + p2;
+				if (p12 > 0.0) {
+					prediction.addItemProbability1(item, weight, p1 / p12);
+					prediction.addItemProbability2(item, weight, p2 / p12);
+				}
+			}
+		}
+	}
+
+	private static double winProbability(double form1, double form2) {
+		return 1 / (1 + pow(10.0, form2 - form1));
+	}
+}

@@ -46,7 +46,7 @@ public class MatchPredictionService {
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
-		"SELECT m.match_num, m.date, m.level, m.surface, m.tournament_id, m.round, m.opponent_id, m.opponent_rank, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
+		"SELECT m.match_num, m.date, m.level, m.surface, m.tournament_id, m.round, m.opponent_id, m.opponent_rank, m.opponent_elo_rating, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
 		"FROM player_match_for_stats_v m\n" +
 		"LEFT JOIN player p ON p.player_id = m.opponent_id\n" +
 		"WHERE m.player_id = :playerId\n" +
@@ -54,13 +54,13 @@ public class MatchPredictionService {
 
 	private static final String PLAYER_IN_PROGRESS_MATCHES_UNION = //language=SQL
 		"UNION\n" +
-		"SELECT m.match_num, m.date - INTERVAL '1 day', e.level, m.surface, e.tournament_id, m.round, m.player2_id, m.player2_rank, m.player2_entry, o.hand, o.backhand, 2 - winner, winner - 1, m.player1_sets, m.player2_sets\n" +
+		"SELECT m.match_num, m.date - INTERVAL '1 day', e.level, m.surface, e.tournament_id, m.round, m.player2_id, m.player2_rank, m.player2_elo_rating, m.player2_entry, o.hand, o.backhand, 2 - winner, winner - 1, m.player1_sets, m.player2_sets\n" +
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player2_id\n" +
 		"WHERE winner IS NOT NULL AND m.player1_id = :playerId AND m.player2_id > 0\n" +
 		"UNION\n" +
-		"SELECT m.match_num, m.date - INTERVAL '1 day', e.level, m.surface, e.tournament_id, m.round, m.player1_id, m.player1_rank, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.player2_sets, m.player1_sets\n" +
+		"SELECT m.match_num, m.date - INTERVAL '1 day', e.level, m.surface, e.tournament_id, m.round, m.player1_id, m.player1_rank, m.player1_elo_rating, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.player2_sets, m.player1_sets\n" +
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player1_id\n" +
@@ -123,6 +123,7 @@ public class MatchPredictionService {
 		short bstOf = defaultBestOf(level, bestOf);
 		MatchPrediction prediction = predictMatch(asList(
 			new RankingMatchPredictor(rankingData1, rankingData2),
+			new RecentFormMatchPredictor(matchData1, matchData2, date1, date2, surface, level),
 			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date1, date2, surface, level, tournamentId, round, bstOf),
 			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, tournamentId, bstOf)
 		));
@@ -233,6 +234,7 @@ public class MatchPredictionService {
 			rs.getString("round"),
 			rs.getInt("opponent_id"),
 			getInteger(rs, "opponent_rank"),
+			getInteger(rs, "opponent_elo_rating"),
 			rs.getString("opponent_hand"),
 			rs.getString("opponent_backhand"),
 			rs.getString("opponent_entry"),

@@ -5,6 +5,7 @@ import java.util.stream.*;
 public enum PredictionArea implements Weighted {
 
 	RANKING(RankingPredictionItem.class, 1.0),
+	RECENT_FORM(RecentFormPredictionItem.class, 0.0),
 	H2H(H2HPredictionItem.class, 1.0),
 	WINNING_PCT(WinningPctPredictionItem.class, 1.0);
 
