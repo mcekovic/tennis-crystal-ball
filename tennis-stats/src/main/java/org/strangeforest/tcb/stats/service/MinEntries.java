@@ -30,6 +30,8 @@ public class MinEntries {
 		.put("GFMO", 0.5)
 		.put("AB", 0.5)
 		.put("DT", 0.1)
+		.put("GD", 0.25)
+		.put("FMOABT", 0.75)
 	.build();
 	private static final Map<String, Double> MIN_ENTRIES_SURFACE_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
 		.put("H", 0.5)

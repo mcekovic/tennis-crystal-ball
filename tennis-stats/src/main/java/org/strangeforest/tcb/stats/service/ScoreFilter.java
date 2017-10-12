@@ -109,6 +109,10 @@ public class ScoreFilter {
 			criteria.append(forStats ? STATS_SCORE_CRITERION : MATCHES_SCORE_CRITERION);
 			criteria.append(FINISHED_CRITERION);
 		}
+		else if (misc.equals("Bo3"))
+			criteria.append(BEST_OF_3);
+		else if (misc.equals("Bo5"))
+			criteria.append(BEST_OF_5);
 		else if (misc.equals("DS"))
 			criteria.append(forStats ? STATS_DECIDING_SET_CRITERION : MATCHES_DECIDING_SET_CRITERION);
 		else if (misc.equals("TB"))
