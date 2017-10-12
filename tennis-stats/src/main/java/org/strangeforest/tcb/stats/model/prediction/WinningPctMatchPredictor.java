@@ -8,6 +8,7 @@ import org.strangeforest.tcb.stats.model.*;
 
 import com.google.common.collect.*;
 
+import static java.lang.Math.*;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
@@ -112,8 +113,10 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 				double weight = item.getWeight() * weight(total1, total2);
 				double p1 = 1.0 * won1 / total1;
 				double p2 = 1.0 * won2 / total2;
-				double p12 = p1 + p2;
-				if (p12 > 0.0) {
+				if (p1 + p2 > 0.0) {
+					p1 = pow(2, p1) - 1;
+					p2 = pow(2, p2) - 1;
+					double p12 = p1 + p2;
 					DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
 					prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(p1 / p12));
 					prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(p2 / p12));

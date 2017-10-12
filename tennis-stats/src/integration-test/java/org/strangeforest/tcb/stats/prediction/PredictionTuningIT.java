@@ -1,37 +1,56 @@
- package org.strangeforest.tcb.stats.prediction;
+package org.strangeforest.tcb.stats.prediction;
 
- import java.time.*;
- import java.util.*;
- import java.util.function.*;
- import java.util.stream.*;
+import java.time.*;
+import java.util.function.*;
+import java.util.stream.*;
 
- import org.springframework.boot.test.context.*;
- import org.springframework.test.context.*;
- import org.strangeforest.tcb.stats.model.prediction.PredictionArea;
- import org.strangeforest.tcb.stats.model.prediction.*;
- import org.testng.annotations.*;
+import org.springframework.boot.test.context.*;
+import org.springframework.test.context.*;
+import org.strangeforest.tcb.stats.model.prediction.*;
+import org.testng.annotations.*;
 
- import static java.util.Arrays.*;
- import static java.util.Comparator.*;
- import static java.util.stream.Collectors.*;
- import static org.strangeforest.tcb.stats.model.prediction.PredictionArea.*;
+import static java.util.Arrays.*;
+import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.model.prediction.PredictionArea.*;
 
- @ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	private static final LocalDate FROM_DATE = LocalDate.of(2005, 1, 1);
 	private static final LocalDate TO_DATE = LocalDate.now();
 	private static final Function<PredictionResult, Double> METRICS = PredictionResult::getPredictablePredictionRate;
+	private static final double MIN_WEIGHT = 0.0;
+	private static final double MAX_WEIGHT = 10.0;
+	private static final double WEIGHT_STEP = 0.5;
 
 	@Test
 	public void tunePredictionByArea() throws InterruptedException {
 		setWeights(1.0);
+		doTunePredictionByArea();
+	}
+
+	@Test
+	public void tuneDefaultPredictionByArea() throws InterruptedException {
+		doTunePredictionByArea();
+	}
+
+	private void doTunePredictionByArea() throws InterruptedException {
 		tunePrediction(asList(PredictionArea.values()), METRICS);
 	}
 
 	@Test
 	public void tunePredictionByItem() throws InterruptedException {
 		setWeights(1.0);
+		doTunePredictionByItem();
+	}
+
+	@Test
+	public void tuneDefaultPredictionByItem() throws InterruptedException {
+		doTunePredictionByItem();
+	}
+
+	private void doTunePredictionByItem() throws InterruptedException {
 		tunePrediction(Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getItems())).collect(toList()), METRICS);
 	}
 
@@ -50,62 +69,53 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 		tunePredictionInArea(WINNING_PCT);
 	}
 
+	@Test
+	public void tunePredictionInRecentFormArea() throws InterruptedException {
+		tunePredictionInArea(RECENT_FORM);
+	}
+
+	@Test
+	public void tuneDefaultPredictionInRankingArea() throws InterruptedException {
+		tuneDefaultPredictionInArea(RANKING);
+	}
+
+	@Test
+	public void tuneDefaultPredictionInH2HArea() throws InterruptedException {
+		tuneDefaultPredictionInArea(H2H);
+	}
+
+	@Test
+	public void tuneDefaultPredictionInWinningPctArea() throws InterruptedException {
+		tuneDefaultPredictionInArea(WINNING_PCT);
+	}
+
+	@Test
+	public void tuneDefaultPredictionInRecentFormArea() throws InterruptedException {
+		tuneDefaultPredictionInArea(RECENT_FORM);
+	}
+
 	private void tunePredictionInArea(PredictionArea area) throws InterruptedException {
 		setWeights(0.0);
 		area.setWeights(1.0);
 		tunePrediction(asList(area.getItems()), METRICS);
 	}
 
+	private void tuneDefaultPredictionInArea(PredictionArea area) throws InterruptedException {
+		tunePrediction(asList(area.getItems()), METRICS);
+	}
+
 	private void tunePrediction(Iterable<Weighted> features, Function<PredictionResult, Double> metrics) throws InterruptedException {
-		Map<Properties, PredictionResult> results = new HashMap<>();
-		PredictionResult bestResult = verifyPrediction(FROM_DATE, TO_DATE);
-		results.put(bestResult.getConfig(), bestResult);
-		System.out.println("***** Starting result: " + bestResult);
-		Properties currentConfig = bestResult.getConfig();
-		int stepCount = 0;
-		while (true) {
-			PredictionResult bestStepResult = null;
+		TuningContext context = new TuningContext(comparing(metrics), MIN_WEIGHT, MAX_WEIGHT, WEIGHT_STEP);
+		PredictionResult result = verifyPrediction(FROM_DATE, TO_DATE);
+
+		for (context.initialResult(result); context.startStep() != null; context.endStep()) {
 			for (Weighted weighted : features) {
-				PredictionConfig.set(currentConfig);
-				if (toggle(weighted, results.keySet())) {
-					PredictionResult result = verifyPrediction(FROM_DATE, TO_DATE);
-					results.put(result.getConfig(), result);
-
-					if (comparing(metrics).compare(result, bestResult) > 0) {
-						bestResult = result;
-						System.out.println("***** New best result: " + bestResult);
-					}
-					if (bestStepResult == null || comparing(metrics).compare(result, bestStepResult) > 0)
-						bestStepResult = result;
-				}
+				if (context.stepDown(weighted))
+					context.nextResult(verifyPrediction(FROM_DATE, TO_DATE));
+				if (context.stepUp(weighted))
+					context.nextResult(verifyPrediction(FROM_DATE, TO_DATE));
 			}
-			if (bestStepResult != null) {
-				currentConfig = bestStepResult.getConfig();
-				System.out.println("*** Tuning step " + (++stepCount) + " finished: " + bestStepResult);
-			}
-			else
-				break;
 		}
-		System.out.println("***** Best result: " + bestResult);
-		PredictionConfig.set(bestResult.getConfig());
-		printWeights();
-	}
-
-	private static boolean toggle(Weighted weighted, Set<Properties> configs) {
-		toggle(weighted);
-		if (isNewConfig(configs))
-			return true;
-		else {
-			toggle(weighted);
-			return false;
-		}
-	}
-
-	private static void toggle(Weighted weighted) {
-		weighted.setWeight(weighted.getWeight() > 0.0 ? 0.0 : 1.0);
-	}
-
-	private static boolean isNewConfig(Set<Properties> configs) {
-		return PredictionArea.isAnyEnabled() && !configs.contains(PredictionConfig.get());
+		context.finish();
 	}
 }

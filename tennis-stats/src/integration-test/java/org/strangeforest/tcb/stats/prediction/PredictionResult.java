@@ -52,7 +52,7 @@ public class PredictionResult {
 			.add("predictablePct", predictablePct)
 			.add("predictionRate", predictionRate)
 			.add("profit", profit)
-			.add("config", config)
+			.add("config", new TreeMap<>(config))
 			.toString();
 	}
 }

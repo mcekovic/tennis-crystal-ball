@@ -4,8 +4,8 @@ public enum RankingPredictionItem implements PredictionItem {
 
 	RANK(0.0),
 	RANK_POINTS(1.0),
-	ELO(1.0),
-	SURFACE_ELO(1.0);
+	ELO(1.5),
+	SURFACE_ELO(2.0);
 
 	private volatile PredictionArea area;
 	private volatile double weight;
