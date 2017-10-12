@@ -49,7 +49,7 @@ public class H2HMatchPredictor implements MatchPredictor {
 		Period matchRecentPeriod = getMatchRecentPeriod();
 		Period setRecentPeriod = getSetRecentPeriod();
 		MatchPrediction prediction = new MatchPrediction();
-		addItemProbabilities(prediction, MATCH, ALWAYS_TRUE);
+		addItemProbabilities(prediction, OVERALL, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
 		addItemProbabilities(prediction, TOURNAMENT, isTournament(tournamentId));
@@ -58,7 +58,7 @@ public class H2HMatchPredictor implements MatchPredictor {
 		addItemProbabilities(prediction, SURFACE_RECENT, isSurface(surface).and(isRecent(date1, matchRecentPeriod)), isSurface(surface).and(isRecent(date2, matchRecentPeriod)));
 		addItemProbabilities(prediction, LEVEL_RECENT, isLevel(level).and(isRecent(date1, matchRecentPeriod)), isLevel(level).and(isRecent(date2, matchRecentPeriod)));
 		addItemProbabilities(prediction, ROUND_RECENT, isRound(round).and(isRecent(date1, matchRecentPeriod)), isRound(round).and(isRecent(date2, matchRecentPeriod)));
-		addItemProbabilities(prediction, SET, ALWAYS_TRUE);
+		addItemProbabilities(prediction, OVERALL_SET, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE_SET, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL_SET, isLevel(level));
 		addItemProbabilities(prediction, TOURNAMENT_SET, isTournament(tournamentId));

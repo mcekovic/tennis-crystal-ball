@@ -58,7 +58,7 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 		Period matchRecentPeriod = getMatchRecentPeriod();
 		Period setRecentPeriod = getSetRecentPeriod();
 		MatchPrediction prediction = new MatchPrediction();
-		addItemProbabilities(prediction, MATCH, ALWAYS_TRUE);
+		addItemProbabilities(prediction, OVERALL, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
 		addItemProbabilities(prediction, TOURNAMENT, isTournament(tournamentId));
@@ -70,7 +70,7 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 		addItemProbabilities(prediction, VS_RANK, isOpponentRankInRange(rankRange2), isOpponentRankInRange(rankRange1));
 		addItemProbabilities(prediction, VS_HAND, isOpponentHand(playerData2.getHand()), isOpponentHand(playerData1.getHand()));
 		addItemProbabilities(prediction, VS_BACKHAND, isOpponentBackhand(playerData2.getBackhand()), isOpponentBackhand(playerData1.getBackhand()));
-		addItemProbabilities(prediction, SET, ALWAYS_TRUE);
+		addItemProbabilities(prediction, OVERALL_SET, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE_SET, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL_SET, isLevel(level));
 		addItemProbabilities(prediction, TOURNAMENT_SET, isTournament(tournamentId));

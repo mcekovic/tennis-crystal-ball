@@ -22,7 +22,7 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 	private static final Function<PredictionResult, Double> METRICS = PredictionResult::getPredictablePredictionRate;
 	private static final double MIN_WEIGHT = 0.0;
 	private static final double MAX_WEIGHT = 10.0;
-	private static final double WEIGHT_STEP = 0.5;
+	private static final double WEIGHT_STEP = 1.0;
 
 	@Test
 	public void tunePredictionByArea() throws InterruptedException {
