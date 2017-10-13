@@ -243,7 +243,7 @@ class EloRatings {
 			matchRatings.put new MatchEloRating(matchId: matchId, winnerRating: winnerRating.rating, loserRating: loserRating.rating)
 	}
 
-	private static double deltaRating(double winnerRating, double loserRating, String level, String surface, String round, short bestOf, String outcome) {
+	static double deltaRating(double winnerRating, double loserRating, String level, String surface, String round, short bestOf, String outcome) {
 		if (outcome == 'ABD')
 			return 0.0
 		double winnerQ = pow(10, winnerRating / 400)
@@ -252,7 +252,7 @@ class EloRatings {
 		kFactor(level, surface, round, bestOf, outcome) * loserExpectedScore
 	}
 
-	private static double kFactor(String level, String surface, String round, short bestOf, String outcome) {
+	static double kFactor(String level, String surface, String round, short bestOf, String outcome) {
 		double kFactor = 100
 		switch (level) {
 			case 'G': break
@@ -283,6 +283,23 @@ class EloRatings {
 		kFactor
 	}
 
+	/**
+	 * K-Function returns values from 1/2 to 1 depending on current rating.
+	 * It stabilizes ratings at the top, while allows fast progress of lower rated players.
+	 * For rating 0-1800 returns 1
+	 * For rating 1800-2000 returns linearly decreased values from 1 to 1/2. For example, for 1900 return 3/4
+	 * For rating 2000+ returns 1/2
+	 * @return values from 1/2 to 1, depending on current rating
+	 */
+	static double kFunction(double rating) {
+		if (rating <= 1800)
+			1.0
+		else if (rating <= 2000)
+			1.0 - (rating - 1800) / 400.0
+		else
+			0.5
+	}
+
 	static class EloRating implements Comparable<EloRating> {
 
 		volatile int playerId
@@ -299,7 +316,7 @@ class EloRatings {
 		}
 
 		EloRating newRating(double delta, Date date, String surface) {
-			def newRating = new EloRating(playerId: playerId, rating: rating + delta * kFunction(), matches: matches + 1, dates: new ArrayDeque<>(dates ?: []))
+			def newRating = new EloRating(playerId: playerId, rating: rating + delta * kFunction(rating), matches: matches + 1, dates: new ArrayDeque<>(dates ?: []))
 			newRating.bestRating = bestRating(newRating, surface)
 			newRating.addDate(date)
 			newRating
@@ -321,22 +338,6 @@ class EloRatings {
 
 		long getDaysSpan(Date date) {
 			ChronoUnit.DAYS.between(toLocalDate(firstDate), toLocalDate(date))
-		}
-
-		/**
-		 * K-Function returns values from 1/2 to 1.
-		 * For rating 0-1800 returns 1
-		 * For rating 1800-2000 returns linearly decreased values from 1 to 1/2. For example, for 1900 return 3/4
-		 * For rating 2000+ returns 1/2
-		 * @return values from 1/2 to 1, depending on current rating
-		 */
-		private double kFunction() {
-			if (rating <= 1800)
-				1.0
-			else if (rating <= 2000)
-				1.0 - (rating - 1800) / 400.0
-			else
-				0.5
 		}
 
 		def adjustRating(Date date) {
