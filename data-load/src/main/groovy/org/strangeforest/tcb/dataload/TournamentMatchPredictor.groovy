@@ -12,17 +12,19 @@ class TournamentMatchPredictor {
 	Map matchProbabilities = [:]
 	MatchPredictionService predictor
 	LocalDate date
+	int tournamentId
+	int inProgressEventId
 	Surface surface
 	TournamentLevel level
-	int tournamentId
 	short bestOf
 
-	TournamentMatchPredictor(MatchPredictionService predictor, LocalDate date, Surface surface, TournamentLevel level, int tournamentId, int bestOf) {
+	TournamentMatchPredictor(MatchPredictionService predictor, LocalDate date, int tournamentId, int inProgressEventId, Surface surface, TournamentLevel level, int bestOf) {
 		this.predictor = predictor
 		this.date = date
+		this.tournamentId = tournamentId
+		this.inProgressEventId = inProgressEventId
 		this.surface = surface
 		this.level = level
-		this.tournamentId = tournamentId
 		this.bestOf = bestOf
 	}
 
@@ -42,7 +44,7 @@ class TournamentMatchPredictor {
 	}
 
 	def predictMatch(int playerId1, int playerId2, Round round) {
-		predictor.predictMatch(playerId1, playerId2, date, surface, level, tournamentId, round, bestOf).winProbability1
+		predictor.predictMatch(playerId1, playerId2, date, tournamentId, inProgressEventId, true, surface, level, round, bestOf).winProbability1
 	}
 
 	@EqualsAndHashCode

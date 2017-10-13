@@ -212,8 +212,9 @@ public class TournamentService {
 		);
 		if (!filter.isEmpty())
 			tournaments = tournaments.stream().filter(t -> t.getEventCount() > 0).collect(toList());
-		BootgridTable<Tournament> table = new BootgridTable<>(currentPage);
 		tournaments.sort(comparator);
+
+		BootgridTable<Tournament> table = new BootgridTable<>(currentPage);
 		int offset = (currentPage - 1) * pageSize;
 		int endOffset = Math.min(offset + pageSize, tournaments.size());
 		table.addRows(tournaments.subList(offset, endOffset));

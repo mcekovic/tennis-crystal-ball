@@ -335,7 +335,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 		def firstMatch = matches[0]
 		def inProgressEventId = firstMatch.in_progress_event_id
-		def date = toLocalDate firstMatch.date
+		def today = LocalDate.now()
 		def surface = Surface.decode(firstMatch.surface)
 		def level = TournamentLevel.decode(firstMatch.level)
 		def tournamentId = firstMatch.tournament_id
@@ -344,7 +344,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def entryResult = KOResult.valueOf(matches[0].round)
 
 		MatchPredictionService predictionService = new MatchPredictionService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
-		TournamentMatchPredictor predictor = new TournamentMatchPredictor(predictionService, date, surface, level, tournamentId, bestOf)
+		TournamentMatchPredictor predictor = new TournamentMatchPredictor(predictionService, today, tournamentId, inProgressEventId, surface, level, bestOf)
 
 		def resultCount = 0
 		def tournamentSimulator

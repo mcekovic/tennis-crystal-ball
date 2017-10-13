@@ -7,6 +7,7 @@ import java.util.stream.*;
 
 import com.google.common.base.*;
 
+//TODO Make PredictionConfig instantiable class, automatically add equivalent config results
 public class PredictionConfig {
 
 	private static volatile Properties config = new Properties();

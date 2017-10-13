@@ -14,6 +14,7 @@ import org.strangeforest.tcb.stats.util.*;
 
 import com.github.benmanes.caffeine.cache.*;
 
+import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
@@ -46,7 +47,7 @@ public class MatchPredictionService {
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
-		"SELECT m.match_num, m.date, m.level, m.surface, m.tournament_id, m.round, m.opponent_id, m.opponent_rank, m.opponent_elo_rating, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
+		"SELECT m.match_num, m.date, m.tournament_id, m.tournament_event_id, FALSE in_progress, m.level, m.surface, m.round, m.opponent_id, m.opponent_rank, m.opponent_elo_rating, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
 		"FROM player_match_for_stats_v m\n" +
 		"LEFT JOIN player p ON p.player_id = m.opponent_id\n" +
 		"WHERE m.player_id = :playerId\n" +
@@ -54,13 +55,13 @@ public class MatchPredictionService {
 
 	private static final String PLAYER_IN_PROGRESS_MATCHES_UNION = //language=SQL
 		"UNION\n" +
-		"SELECT m.match_num, m.date - INTERVAL '1 day', e.level, m.surface, e.tournament_id, m.round, m.player2_id, m.player2_rank, m.player2_elo_rating, m.player2_entry, o.hand, o.backhand, 2 - winner, winner - 1, m.player1_sets, m.player2_sets\n" +
+		"SELECT m.match_num, m.date, e.tournament_id, m.in_progress_event_id, TRUE, e.level, m.surface, m.round, m.player2_id, m.player2_rank, m.player2_elo_rating, m.player2_entry, o.hand, o.backhand, 2 - winner, winner - 1, m.player1_sets, m.player2_sets\n" +
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player2_id\n" +
 		"WHERE winner IS NOT NULL AND m.player1_id = :playerId AND m.player2_id > 0\n" +
 		"UNION\n" +
-		"SELECT m.match_num, m.date - INTERVAL '1 day', e.level, m.surface, e.tournament_id, m.round, m.player1_id, m.player1_rank, m.player1_elo_rating, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.player2_sets, m.player1_sets\n" +
+		"SELECT m.match_num, m.date, e.tournament_id, m.in_progress_event_id, TRUE, e.level, m.surface, m.round, m.player1_id, m.player1_rank, m.player1_elo_rating, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.player2_sets, m.player1_sets\n" +
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player1_id\n" +
@@ -87,39 +88,39 @@ public class MatchPredictionService {
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Surface surface, TournamentLevel level, Round round) {
-		return predictMatch(playerId1, playerId2, date, date, surface, level, null, round, null);
-	}
-
-	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Surface surface, TournamentLevel level, int tournamentId, Round round, Short bestOf) {
-		return predictMatch(playerId1, playerId2, date, date, surface, level, tournamentId, round, bestOf);
+		return predictMatch(playerId1, playerId2, date, date, null, null, true, surface, level, round, null);
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Round round) {
-		return predictMatch(playerId1, playerId2, date1, date2, surface, level, null, round, null);
+		return predictMatch(playerId1, playerId2, date1, date2, null, null, true, surface, level, round, null);
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, TournamentLevel level, Round round, Short bestOf) {
+		return predictMatch(playerId1, playerId2, date, date, tournamentId, tournamentEventId, inProgress, surface, level, round, bestOf);
+	}
+
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, TournamentLevel level, Round round, Short bestOf) {
 		if (playerId1 > 0) {
 			if (playerId2 > 0)
-				return predictMatchBetweenEntries(playerId1, playerId2, date1, date2, surface, level, tournamentId, round, bestOf);
+				return predictMatchBetweenEntries(playerId1, playerId2, date1, date2, tournamentId, tournamentEventId, inProgress, surface, level, round, bestOf);
 			else
-				return predictMatchVsQualifier(playerId1, date1, surface, level, tournamentId, round, bestOf);
+				return predictMatchVsQualifier(playerId1, date1, tournamentId, tournamentEventId, inProgress, surface, level, round, bestOf);
 		}
 		else {
 			if (playerId2 > 0)
-				return predictMatchVsQualifier(playerId2, date2, surface, level, tournamentId, round, bestOf).swap();
+				return predictMatchVsQualifier(playerId2, date2, tournamentId, tournamentEventId, inProgress, surface, level, round, bestOf).swap();
 			else
 				return MatchPrediction.TIE;
 		}
 	}
 
-	private MatchPrediction predictMatchBetweenEntries(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
+	private MatchPrediction predictMatchBetweenEntries(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, TournamentLevel level, Round round, Short bestOf) {
 		PlayerData playerData1 = getPlayerData(playerId1);
 		PlayerData playerData2 = getPlayerData(playerId2);
 		RankingData rankingData1 = getRankingData(playerId1, date1, surface);
 		RankingData rankingData2 = getRankingData(playerId2, date2, surface);
-		List<MatchData> matchData1 = getMatchData(playerId1, date1);
-		List<MatchData> matchData2 = getMatchData(playerId2, date2);
+		List<MatchData> matchData1 = getMatchData(playerId1, date1, tournamentEventId, inProgress, round);
+		List<MatchData> matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
 		short bstOf = defaultBestOf(level, bestOf);
 		MatchPrediction prediction = predictMatch(asList(
 			new RankingMatchPredictor(rankingData1, rankingData2),
@@ -132,8 +133,8 @@ public class MatchPredictionService {
 		return prediction;
 	}
 
-	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Surface surface, TournamentLevel level, Integer tournamentId, Round round, Short bestOf) {
-		List<MatchData> matchData = getMatchData(playerId, date);
+	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, TournamentLevel level, Round round, Short bestOf) {
+		List<MatchData> matchData = getMatchData(playerId, date, tournamentEventId, inProgress, round);
 		short bstOf = defaultBestOf(level, bestOf);
 		return new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bstOf).predictMatch();
 	}
@@ -215,9 +216,23 @@ public class MatchPredictionService {
 
 	// Match Data
 
-	private List<MatchData> getMatchData(int playerId, LocalDate date) {
+	private List<MatchData> getMatchData(int playerId, LocalDate date, Integer tournamentEventId, boolean inProgress, Round round) {
 		List<MatchData> matchData = playersMatches.get(playerId);
-		return matchData.stream().filter(m -> m.getDate().isBefore(date)).collect(toList());
+		return matchData.stream().filter(match -> {
+			LocalDate matchDate = match.getDate();
+			if (matchDate.isBefore(date))
+				return true;
+			else if (matchDate.equals(date) && Objects.equals(match.getTournamentEventId(), tournamentEventId) && match.isInProgress() == inProgress) {
+				if (round == null)
+					return false;
+				String matchRound = match.getRound();
+				if (isNullOrEmpty(matchRound))
+					return false;
+				return Round.decode(matchRound).compareTo(round) > 0;
+			}
+			else
+				return false;
+		}).collect(toList());
 	}
 
 	private List<MatchData> fetchMatchData(int playerId) {
@@ -228,9 +243,11 @@ public class MatchPredictionService {
 	private MatchData matchData(ResultSet rs, int rowNum) throws SQLException {
 		return new MatchData(
 			toLocalDate(rs.getDate("date")),
+			rs.getInt("tournament_id"),
+			rs.getInt("tournament_event_id"),
+			rs.getBoolean("in_progress"),
 			rs.getString("level"),
 			rs.getString("surface"),
-			rs.getInt("tournament_id"),
 			rs.getString("round"),
 			rs.getInt("opponent_id"),
 			getInteger(rs, "opponent_rank"),

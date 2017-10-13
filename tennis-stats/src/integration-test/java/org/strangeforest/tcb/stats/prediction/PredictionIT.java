@@ -27,7 +27,7 @@ public class PredictionIT extends AbstractTestNGSpringContextTests {
 		int playerId1 = playerService.findPlayerId("Novak Djokovic").get();
 		int playerId2 = playerService.findPlayerId("Rafael Nadal").get();
 
-		MatchPrediction prediction = predictionService.predictMatch(playerId1, playerId2, LocalDate.now(), CLAY, GRAND_SLAM, 19, F, null);
+		MatchPrediction prediction = predictionService.predictMatch(playerId1, playerId2, LocalDate.now(), CLAY, GRAND_SLAM, F);
 
 		System.out.printf("Novak Djokovic win: %1$.2f%%\n", 100.0 * prediction.getWinProbability1());
 		System.out.printf("Rafael Nadal win: %1$.2f%%\n", 100.0 * prediction.getWinProbability2());
@@ -35,8 +35,8 @@ public class PredictionIT extends AbstractTestNGSpringContextTests {
 
 		System.out.println(prediction.getItemProbabilities1());
 		System.out.println(prediction.getItemProbabilities2());
-		System.out.println(prediction.getPredictability1());
-		System.out.println(prediction.getPredictability2());
+		System.out.println("Predictability: " + prediction.getPredictability1());
+		System.out.println("Predictability: " + prediction.getPredictability2());
 		assertThat(prediction.getItemProbabilitiesWeight1()).isEqualTo(prediction.getItemProbabilitiesWeight2());
 		assertThat(prediction.getPredictability1()).isLessThanOrEqualTo(1.0);
 		assertThat(prediction.getPredictability2()).isLessThanOrEqualTo(1.0);

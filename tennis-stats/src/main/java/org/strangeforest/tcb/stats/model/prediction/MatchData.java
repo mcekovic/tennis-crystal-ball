@@ -5,9 +5,11 @@ import java.time.*;
 public final class MatchData {
 
 	private final LocalDate date;
+	private final int tournamentId;
+	private final int tournamentEventId;
+	private final boolean inProgress;
 	private final String level;
 	private final String surface;
-	private final int tournamentId;
 	private final String round;
 	private final int opponentId;
 	private final Integer opponentRank;
@@ -20,13 +22,15 @@ public final class MatchData {
 	private final int pSets;
 	private final int oSets;
 
-	public MatchData(LocalDate date, String level, String surface, int tournamentId, String round,
+	public MatchData(LocalDate date, int tournamentId, int tournamentEventId, boolean inProgress, String level, String surface, String round,
 	                 int opponentId, Integer opponentRank, Integer opponentEloRating, String opponentHand, String opponentBackhand, String opponentEntry,
 	                 int pMatches, int oMatches, int pSets, int oSets) {
 		this.date = date;
+		this.tournamentId = tournamentId;
+		this.tournamentEventId = tournamentEventId;
+		this.inProgress = inProgress;
 		this.level = level;
 		this.surface = surface;
-		this.tournamentId = tournamentId;
 		this.round = round;
 		this.opponentId = opponentId;
 		this.opponentRank = opponentRank;
@@ -44,16 +48,24 @@ public final class MatchData {
 		return date;
 	}
 
+	public int getTournamentId() {
+		return tournamentId;
+	}
+
+	public int getTournamentEventId() {
+		return tournamentEventId;
+	}
+
+	public boolean isInProgress() {
+		return inProgress;
+	}
+
 	public String getLevel() {
 		return level;
 	}
 
 	public String getSurface() {
 		return surface;
-	}
-
-	public int getTournamentId() {
-		return tournamentId;
 	}
 
 	public String getRound() {

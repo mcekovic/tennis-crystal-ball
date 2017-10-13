@@ -24,19 +24,13 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 	private static final double MAX_WEIGHT = 10.0;
 	private static final double WEIGHT_STEP = 1.0;
 
+
+	// Starting from equal weights
+
 	@Test
 	public void tunePredictionByArea() throws InterruptedException {
 		setWeights(1.0);
 		doTunePredictionByArea();
-	}
-
-	@Test
-	public void tuneDefaultPredictionByArea() throws InterruptedException {
-		doTunePredictionByArea();
-	}
-
-	private void doTunePredictionByArea() throws InterruptedException {
-		tunePrediction(asList(PredictionArea.values()), METRICS);
 	}
 
 	@Test
@@ -46,61 +40,76 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 	}
 
 	@Test
+	public void tunePredictionInRankingArea() throws InterruptedException {
+		doTunePredictionInAreaFromPointZero(RANKING);
+	}
+
+	@Test
+	public void tunePredictionInRecentFormArea() throws InterruptedException {
+		doTunePredictionInAreaFromPointZero(RECENT_FORM);
+	}
+
+	@Test
+	public void tunePredictionInH2HArea() throws InterruptedException {
+		doTunePredictionInAreaFromPointZero(H2H);
+	}
+
+	@Test
+	public void tunePredictionInWinningPctArea() throws InterruptedException {
+		doTunePredictionInAreaFromPointZero(WINNING_PCT);
+	}
+
+
+	// Starting from default weights
+
+	@Test
+	public void tuneDefaultPredictionByArea() throws InterruptedException {
+		doTunePredictionByArea();
+	}
+
+	@Test
 	public void tuneDefaultPredictionByItem() throws InterruptedException {
 		doTunePredictionByItem();
+	}
+
+	@Test
+	public void tuneDefaultPredictionInRankingArea() throws InterruptedException {
+		doTunePredictionInArea(RANKING);
+	}
+
+	@Test
+	public void tuneDefaultPredictionInRecentFormArea() throws InterruptedException {
+		doTunePredictionInArea(RECENT_FORM);
+	}
+
+	@Test
+	public void tuneDefaultPredictionInH2HArea() throws InterruptedException {
+		doTunePredictionInArea(H2H);
+	}
+
+	@Test
+	public void tuneDefaultPredictionInWinningPctArea() throws InterruptedException {
+		doTunePredictionInArea(WINNING_PCT);
+	}
+
+
+	// Tuning
+
+	private void doTunePredictionByArea() throws InterruptedException {
+		tunePrediction(asList(PredictionArea.values()), METRICS);
 	}
 
 	private void doTunePredictionByItem() throws InterruptedException {
 		tunePrediction(Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getItems())).collect(toList()), METRICS);
 	}
 
-	@Test
-	public void tunePredictionInRankingArea() throws InterruptedException {
-		tunePredictionInArea(RANKING);
-	}
-
-	@Test
-	public void tunePredictionInH2HArea() throws InterruptedException {
-		tunePredictionInArea(H2H);
-	}
-
-	@Test
-	public void tunePredictionInWinningPctArea() throws InterruptedException {
-		tunePredictionInArea(WINNING_PCT);
-	}
-
-	@Test
-	public void tunePredictionInRecentFormArea() throws InterruptedException {
-		tunePredictionInArea(RECENT_FORM);
-	}
-
-	@Test
-	public void tuneDefaultPredictionInRankingArea() throws InterruptedException {
-		tuneDefaultPredictionInArea(RANKING);
-	}
-
-	@Test
-	public void tuneDefaultPredictionInH2HArea() throws InterruptedException {
-		tuneDefaultPredictionInArea(H2H);
-	}
-
-	@Test
-	public void tuneDefaultPredictionInWinningPctArea() throws InterruptedException {
-		tuneDefaultPredictionInArea(WINNING_PCT);
-	}
-
-	@Test
-	public void tuneDefaultPredictionInRecentFormArea() throws InterruptedException {
-		tuneDefaultPredictionInArea(RECENT_FORM);
-	}
-
-	private void tunePredictionInArea(PredictionArea area) throws InterruptedException {
+	private void doTunePredictionInAreaFromPointZero(PredictionArea area) throws InterruptedException {
 		setWeights(0.0);
 		area.setWeights(1.0);
 		tunePrediction(asList(area.getItems()), METRICS);
 	}
 
-	private void tuneDefaultPredictionInArea(PredictionArea area) throws InterruptedException {
+	private void doTunePredictionInArea(PredictionArea area) throws InterruptedException {
 		tunePrediction(asList(area.getItems()), METRICS);
 	}
 

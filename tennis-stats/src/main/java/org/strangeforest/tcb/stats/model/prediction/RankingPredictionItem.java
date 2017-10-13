@@ -3,9 +3,9 @@ package org.strangeforest.tcb.stats.model.prediction;
 public enum RankingPredictionItem implements PredictionItem {
 
 	RANK(0.0),
-	RANK_POINTS(2.0),
-	ELO(3.0),
-	SURFACE_ELO(4.0);
+	RANK_POINTS(4.0),
+	ELO(9.0),
+	SURFACE_ELO(10.0);
 
 	private volatile PredictionArea area;
 	private volatile double weight;

@@ -15,6 +15,7 @@ import com.google.common.collect.*;
 import static java.util.Collections.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.util.CompareUtil.*;
 
 @RestController
 public class TournamentsResource {
@@ -59,28 +60,5 @@ public class TournamentsResource {
 		List<R> list = mapList(items, mapper);
 		sort(list);
 		return list;
-	}
-
-	private static <T extends Comparable<T>> int compareLists(List<T> list1, List<T> list2) {
-		int size1 = list1.size();
-		int size2 = list2.size();
-		int i = 0;
-		while (true) {
-			T item1 = i < size1 ? list1.get(i) : null;
-			T item2 = i < size2 ? list2.get(i) : null;
-			if (item1 == null && item2 == null)
-				return 0;
-			else if (item1 == null)
-				return 1;
-			else if (item2 == null)
-				return -1;
-			else {
-				int result = item1.compareTo(item2);
-				if (result != 0)
-					return result;
-				else
-					i++;
-			}
-		}
 	}
 }
