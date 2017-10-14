@@ -38,6 +38,7 @@
 			});
 			[# th:if="${tab}" th:switch="${tab}"]
 				[# th:case="'matches'"] h2hMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]]); [/]
+				[# th:case="'hypotheticalMatchup'"] h2hHypotheticalMatchup([[${level}]], [[${surface}]], [[${round}]]); [/]
 				[# th:case="*"] $("#[(${tab})]Pill").click(); [/]
 			[/]
 			[# th:unless="${tab}"] $("#profilesPill").click(); [/]
@@ -61,7 +62,18 @@
 				url += "&surface=" + surface;
 			if (round)
 				url += "&round=" + round;
-			loadTab($pill, url)
+			loadTab($pill, url);
+		}
+		function h2hHypotheticalMatchup(level, surface, round) {
+			var $pill = $("#hypotheticalMatchupPill");
+			var url = $pill.data("url");
+			if (level)
+				url += "&level=" + level;
+			if (surface)
+				url += "&surface=" + surface;
+			if (round)
+				url += "&round=" + round;
+			loadTab($pill, url);
 		}
 		[# th:if="${bothPlayersSelected}"] function swapPlayers() {
 			var tab = $("#h2hPills li.active a").attr("href");

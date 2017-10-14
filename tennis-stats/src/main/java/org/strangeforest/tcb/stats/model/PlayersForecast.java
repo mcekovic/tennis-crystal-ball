@@ -4,7 +4,6 @@ import java.util.*;
 
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class PlayersForecast {
 
@@ -83,5 +82,13 @@ public class PlayersForecast {
 				return false;
 		}
 		return true;
+	}
+
+	public void setEloRatings(int playerId, Integer eloRating, Integer nextEloRating) {
+		PlayerForecast playerForecast = playerForecasts.get(playerId);
+		if (playerForecast != null) {
+			playerForecast.setEloRating(eloRating);
+			playerForecast.setNextEloRating(nextEloRating);
+		}
 	}
 }

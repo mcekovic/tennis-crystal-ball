@@ -200,9 +200,9 @@ public class TournamentController extends PageController {
 		ProbableMatches probableMatches = forecastService.getInProgressEventProbableMatches(inProgressEventId, pinnedPlayerId);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("inProgressEvent", probableMatches.getEvent());
 		modelMap.addAttribute("results", probableMatches.getResults());
 		modelMap.addAttribute("players", probableMatches.getPlayers());
-		modelMap.addAttribute("inProgressEventId", inProgressEventId);
 		modelMap.addAttribute("pinnedPlayerId", pinnedPlayerId);
 		modelMap.addAttribute("priceFormat", priceFormat);
 		return new ModelAndView("inProgressEventProbableMatches", modelMap);

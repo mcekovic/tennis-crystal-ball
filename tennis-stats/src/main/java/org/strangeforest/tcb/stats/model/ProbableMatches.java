@@ -4,12 +4,18 @@ import java.util.*;
 
 public class ProbableMatches {
 
+	private final InProgressEvent event;
 	private final TournamentEventResults results;
 	private final List<MatchPlayer> players;
 
-	public ProbableMatches(TournamentEventResults results, List<MatchPlayer> players) {
+	public ProbableMatches(InProgressEvent event, TournamentEventResults results, List<MatchPlayer> players) {
+		this.event = event;
 		this.results = results;
 		this.players = players;
+	}
+
+	public InProgressEvent getEvent() {
+		return event;
 	}
 
 	public TournamentEventResults getResults() {

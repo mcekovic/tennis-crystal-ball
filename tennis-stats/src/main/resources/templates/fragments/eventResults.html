@@ -97,10 +97,12 @@
 					</td>
 					<td th:if="${forecast && winner.qualifier}" class="player">Qualifier</td>
 					<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.wGames}">6</th:block><sup th:if="${score.wTBPoints}" th:text="|(${score.wTBPoints})|"></sup></td>
-					<td th:if="${forecast}" th:with="matchResult=${'M_' + round}, probability=${winner.getProbability(matchResult)}" class="score text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + winner.getPrice(matchResult, priceFormat) : _}">58.2%</td>
+					<td th:if="${forecast}" th:with="matchResult=${'M_' + round}, probability=${winner.getProbability(matchResult)}" class="score text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}"
+					    th:title="${priceFormat != null ? 'Odds ' + winner.getPrice(matchResult, priceFormat) : (winner.rank != null ? 'ATP: ' + winner.rank : '') + (winner.nextEloRating != null ? (winner.rank != null ? ', ' : '') + 'Elo: ' + winner.nextEloRating : '')}">58.2%</td>
 					<td th:if="${outcomeOrStats}" class="score"><th:block th:if="${match.outcome}" th:text="${match.outcome}"/></td>
 					<td th:if="${loser}" rowspan="2" class="player-h2h">
-						<a th:href="@{/headToHead(playerId1=${winner.id}, playerId2=${loser.id})}" class="player-h2h" title="Show Head-to-Head">H<br/>2<br/>H</a>
+						<a th:unless="${forecast}" th:href="@{/headToHead(playerId1=${winner.id}, playerId2=${loser.id})}" class="player-h2h" title="Show Head-to-Head">H<br/>2<br/>H</a>
+						<a th:if="${forecast}" th:href="@{/headToHead(playerId1=${winner.id}, playerId2=${loser.id}, tab=hypotheticalMatchup, level=${inProgressEvent.level}, surface=${inProgressEvent.surface}, round=${round})}" class="player-h2h" title="Show Head-to-Head Hypothetical Matchup">H<br/>2<br/>H</a>
 					</td>
 				</tr>
 				<tr th:if="${loser}">
@@ -113,7 +115,8 @@
 					</td>
 					<td th:if="${forecast && winner.qualifier}" class="player">Qualifier</td>
 					<td th:each="score : ${match.score}" class="score"><th:block th:text="${score.lGames}">3</th:block><sup th:if="${score.lTBPoints}" th:text="|(${score.lTBPoints})|"></sup></td>
-					<td th:if="${forecast}" th:with="matchResult=${'M_' + round}, probability=${loser.getProbability(matchResult)}" class="score text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + loser.getPrice(matchResult, priceFormat) : _}">58.2%</td>
+					<td th:if="${forecast}" th:with="matchResult=${'M_' + round}, probability=${loser.getProbability(matchResult)}" class="score text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}"
+					    th:title="${priceFormat != null ? 'Odds ' + loser.getPrice(matchResult, priceFormat) : (loser.rank != null ? 'ATP: ' + loser.rank : '') + (loser.nextEloRating != null ? (loser.rank != null ? ', ' : '') + 'Elo: ' + loser.nextEloRating : '')}">58.2%</td>
 					<td th:if="${outcomeOrStats}" class="stats">
 						<a th:if="${match.hasStats}" th:id="'matchStats-' + ${match.id}" href="#" class="btn btn-info btn-xxs glyphicon glyphicon-stats" th:onclick="|showMatchStats(${match.id}, event)|" title='Match Statistics'> </a>
 					</td>

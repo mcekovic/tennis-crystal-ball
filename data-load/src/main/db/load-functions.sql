@@ -653,16 +653,20 @@ BEGIN
 	END IF;
 
 	-- add data if missing
-	IF l_player1_id IS NOT NULL AND p_player1_country_id IS NULL THEN
-		SELECT country_id INTO p_player1_country_id FROM player WHERE player_id = l_player1_id;
+	IF l_player1_id IS NOT NULL THEN
+		IF p_player1_country_id IS NULL THEN
+			SELECT country_id INTO p_player1_country_id FROM player WHERE player_id = l_player1_id;
+		END IF;
+		l_player1_rank := player_rank(l_player1_id, current_date);
+		l_player1_elo_rating := player_elo_rating(l_player1_id, current_date);
 	END IF;
-	IF l_player2_id IS NOT NULL AND p_player2_country_id IS NULL THEN
-		SELECT country_id INTO p_player2_country_id FROM player WHERE player_id = l_player2_id;
+	IF l_player2_id IS NOT NULL THEN
+		IF p_player2_country_id IS NULL THEN
+			SELECT country_id INTO p_player2_country_id FROM player WHERE player_id = l_player2_id;
+		END IF;
+		l_player2_rank := player_rank(l_player2_id, current_date);
+		l_player2_elo_rating := player_elo_rating(l_player2_id, current_date);
 	END IF;
-	l_player1_rank := player_rank(l_player1_id, p_date);
-	l_player2_rank := player_rank(l_player2_id, p_date);
-	l_player1_elo_rating := player_elo_rating(l_player1_id, p_date);
-	l_player2_elo_rating := player_elo_rating(l_player2_id, p_date);
 
 	-- merge in_progress_match
 	UPDATE in_progress_match
@@ -682,7 +686,7 @@ BEGIN
 		VALUES
 		(l_in_progress_event_id, p_match_num, p_prev_match_num1, p_prev_match_num2, p_date, p_surface::surface, p_indoor, p_round::match_round, p_best_of,
 		 l_player1_id, p_player1_country_id, p_player1_seed, p_player1_entry::tournament_entry, l_player1_rank, l_player1_elo_rating,
-		 l_player2_id, p_player2_country_id, p_player2_seed, p_player2_entry::tournament_entry, l_player2_rank, l_player1_elo_rating,
+		 l_player2_id, p_player2_country_id, p_player2_seed, p_player2_entry::tournament_entry, l_player2_rank, l_player2_elo_rating,
 		 p_winner, p_score, p_outcome::match_outcome, p_player1_sets, p_player1_games, p_player1_tb_pt, p_player2_sets, p_player2_games, p_player2_tb_pt);
    END IF;
 END;

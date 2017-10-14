@@ -16,7 +16,6 @@ import static com.google.common.base.Strings.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
 import static org.strangeforest.tcb.dataload.LoadParams.*
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
-import static org.strangeforest.tcb.util.DateUtil.*
 
 class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentLoader {
 
@@ -50,6 +49,11 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		'INNER JOIN tournament_mapping tm USING (tournament_id)\n' +
 		'WHERE tm.ext_tournament_id = :extId\n' +
 		'ORDER BY in_progress_event_id, round, match_num'
+
+	static final String UPDATE_MATCH_ELO_RATINGS_SQL = //language=SQL
+		'UPDATE in_progress_match\n' +
+		'SET player1_elo_rating = :player1_elo_rating, player1_next_elo_rating = :player1_next_elo_rating, player2_elo_rating = :player2_elo_rating, player2_next_elo_rating = :player2_next_elo_rating\n' +
+		'WHERE in_progress_match_id = :in_progress_match_id'
 
 	static final String LOAD_PLAYER_RESULT_SQL = //language=SQL
 		'{call load_player_in_progress_result(' +
@@ -325,6 +329,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			println '\nStarting tournament simulation'
 		def stopwatch = Stopwatch.createStarted()
 		def matches = sql.rows([extId: string(extId)], FETCH_MATCHES_SQL)
+
+		// Set qualifier ids as different negative numbers
 		int qualifierIndex
 		matches.each { match ->
 			if (!match.player1_id && match.player1_entry == 'Q')
@@ -350,13 +356,18 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def tournamentSimulator
 		if (drawType == 'KO') {
 			sql.execute([inProgressEventId: inProgressEventId], DELETE_PLAYER_PROGRESS_RESULTS_SQL)
+
+			// Current state simulation
 			if (verbose)
 				println 'Current'
 			tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, matches, entryResult, true, verbose)
+			tournamentSimulator.calculateEloRatings()
+			saveEloRatings(matches)
 			def results = tournamentSimulator.simulate()
 			saveResults(results)
 			resultCount += results.size()
 
+			// Each round state simulation
 			for (baseResult in KOResult.values().findAll { r -> r >= entryResult && r < KOResult.W }) {
 				if (verbose)
 					println baseResult
@@ -373,6 +384,14 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			throw new UnsupportedOperationException("Draw type $drawType is not supported.")
 
 		println "Tournament simulation: ${resultCount} results loaded in $stopwatch"
+	}
+
+	def saveEloRatings(matches) {
+		sql.withBatch(UPDATE_MATCH_ELO_RATINGS_SQL) { ps ->
+			matches.each { match ->
+				ps.addBatch(match)
+			}
+		}
 	}
 
 	def saveResults(results) {

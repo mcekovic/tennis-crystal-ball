@@ -1,7 +1,7 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="inProgressEvent" type="org.strangeforest.tcb.stats.model.InProgressEvent"*/-->
 	<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
 	<!--/*@thymesVar id="players" type="java.util.List<org.strangeforest.tcb.stats.model.MatchPlayer>"*/-->
-	<!--/*@thymesVar id="inProgressEventId" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="pinnedPlayerId" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat"*/-->
 	<th:block th:unless="${results.isEmpty()}">
@@ -10,7 +10,7 @@
 				$("[data-toggle='tooltip']").tooltip();
 			});
 			function reloadProbableMatches() {
-				var url = "/inProgressEventProbableMatches?inProgressEventId=[(${inProgressEventId + (priceFormat != null ? '&priceFormat=' + priceFormat : '')})]";
+				var url = "/inProgressEventProbableMatches?inProgressEventId=[(${inProgressEvent.id + (priceFormat != null ? '&priceFormat=' + priceFormat : '')})]";
 				var pinnedPlayerId = $("#pinnedPlayer").val();
 				if (pinnedPlayerId)
 					url += "&pinnedPlayerId=" + pinnedPlayerId;

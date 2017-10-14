@@ -7,15 +7,16 @@ import org.strangeforest.tcb.stats.model.prediction.*;
 import static org.strangeforest.tcb.stats.model.prediction.PriceUtil.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
-public class PlayerForecast extends MatchPlayer {
+public class PlayerForecast extends MatchPlayerEx {
 
+	private Integer nextEloRating;
 	private Map<String, Double> forecast;
 
-	public PlayerForecast(int playerId, String name, Integer seed, String entry, String countryId) {
-		super(playerId, name, seed, entry, countryId);
+	public PlayerForecast(int playerId, String name, Integer seed, String entry, String countryId, Integer rank, Integer eloRating) {
+		super(playerId, name, seed, entry, countryId, rank, eloRating);
 	}
 
-	PlayerForecast(PlayerForecast player) {
+	public PlayerForecast(PlayerForecast player) {
 		super(player);
 	}
 
@@ -30,6 +31,20 @@ public class PlayerForecast extends MatchPlayer {
 	public boolean isQualifier() {
 		return getName() == null && "Q".equals(getEntry());
 	}
+
+	
+	// Elo ratings
+
+	public Integer getNextEloRating() {
+		return nextEloRating;
+	}
+
+	void setNextEloRating(Integer nextEloRating) {
+		this.nextEloRating = nextEloRating;
+	}
+
+
+	// Forecast
 
 	public Double getProbability(String result) {
 		Double probability = rawProbability(result);

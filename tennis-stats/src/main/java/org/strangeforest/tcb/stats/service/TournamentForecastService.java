@@ -51,14 +51,20 @@ public class TournamentForecastService {
 		"WITH entry_round AS (\n" +
 		"  SELECT min(round) AS entry_round FROM in_progress_match WHERE in_progress_event_id = :inProgressEventId\n" +
 		")\n" +
-		"SELECT m.player1_id, m.player1_seed, m.player1_entry, p1.name player1_name, p1.country_id player1_country_id,\n" +
-		"  m.player2_id, m.player2_seed, m.player2_entry, p2.name player2_name, p2.country_id player2_country_id\n" +
+		"SELECT m.player1_id, m.player1_seed, m.player1_entry, p1.name player1_name, p1.country_id player1_country_id, m.player1_rank, m.player1_elo_rating,\n" +
+		"  m.player2_id, m.player2_seed, m.player2_entry, p2.name player2_name, p2.country_id player2_country_id, m.player2_rank, m.player2_elo_rating\n" +
 		"FROM in_progress_match m\n" +
 		"LEFT JOIN player_v p1 ON p1.player_id = player1_id\n" +
 		"LEFT JOIN player_v p2 ON p2.player_id = player2_id\n" +
 		"INNER JOIN entry_round er ON TRUE\n" +
 		"WHERE m.in_progress_event_id = :inProgressEventId AND m.round = er.entry_round\n" +
 		"ORDER BY m.match_num";
+
+	private static final String IN_PROGRESS_ELO_RATINGS_QUERY =
+		"SELECT round, player1_id, player1_elo_rating, player1_next_elo_rating, player2_id, player2_elo_rating, player2_next_elo_rating\n" +
+		"FROM in_progress_match\n" +
+		"WHERE in_progress_event_id = :inProgressEventId\n" +
+		"ORDER BY match_num";
 
 	private static final String PLAYER_IN_PROGRESS_RESULTS_QUERY = //language=SQL
 		"SELECT player_id, base_result, result, probability\n" +
@@ -135,11 +141,12 @@ public class TournamentForecastService {
 		List<FavoritePlayer> favorites = jdbcTemplate.query(FIND_FAVORITES_QUERY, inProgressEventIdParam, this::mapFavoritePlayer);
 		inProgressEvent.setFavorites(favorites);
 		InProgressEventForecast forecast = new InProgressEventForecast(inProgressEvent);
-		List<PlayerForecast> players = fetchPlayers(inProgressEventIdParam);
+		List<PlayerForecast> players = fetchPlayers(inProgressEventId);
 		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, ""), inProgressEventIdParam, rs -> {
 			addForecast(forecast, players, rs);
 		});
 		forecast.process();
+		addEloRatings(forecast);
 		return forecast;
 	}
 
@@ -152,10 +159,10 @@ public class TournamentForecastService {
 		});
 	}
 
-	private List<PlayerForecast> fetchPlayers(MapSqlParameterSource inProgressEventIdParam) {
+	private List<PlayerForecast> fetchPlayers(int inProgressEventId) {
 		List<PlayerForecast> players = new ArrayList<>();
 		AtomicInteger emptyCount = new AtomicInteger();
-		jdbcTemplate.query(IN_PROGRESS_MATCHES_QUERY, inProgressEventIdParam, rs -> {
+		jdbcTemplate.query(IN_PROGRESS_MATCHES_QUERY, params("inProgressEventId", inProgressEventId), rs -> {
 			players.add(mapForecastPlayer(rs, "player1_", emptyCount));
 			players.add(mapForecastPlayer(rs, "player2_", emptyCount));
 		});
@@ -171,6 +178,30 @@ public class TournamentForecastService {
 		);
 	}
 
+	private void addEloRatings(InProgressEventForecast forecast) {
+		PlayersForecast currentForecast = forecast.getCurrentForecast();
+		jdbcTemplate.query(IN_PROGRESS_ELO_RATINGS_QUERY, params("inProgressEventId", forecast.getEvent().getId()), rs -> {
+			String round = rs.getString("round");
+			PlayersForecast playersForecast = forecast.getPlayersForecast(round);
+			setEloRatings(currentForecast, playersForecast, rs, "player1_");
+			setEloRatings(currentForecast, playersForecast, rs, "player2_");
+		});
+	}
+
+	private void setEloRatings(PlayersForecast currentForecast, PlayersForecast playersForecast, ResultSet rs, String prefix) throws SQLException {
+		Integer playerId = getInteger(rs, prefix + "id");
+		if (playerId != null) {
+			Integer eloRating = getInteger(rs, prefix + "elo_rating");
+			Integer nextEloRating = getInteger(rs, prefix + "next_elo_rating");
+			if (nextEloRating == null)
+				nextEloRating = eloRating;
+			if (currentForecast != null)
+				currentForecast.setEloRatings(playerId, nextEloRating != null ? nextEloRating : eloRating, nextEloRating);
+			if (playersForecast != null)
+				playersForecast.setEloRatings(playerId, eloRating, nextEloRating);
+		}
+	}
+
 	private PlayerForecast mapForecastPlayer(ResultSet rs, String prefix, AtomicInteger emptyCount) throws SQLException {
 		int id = rs.getInt(prefix + "id");
 		if (id == 0)
@@ -179,7 +210,9 @@ public class TournamentForecastService {
 			rs.getString(prefix + "name"),
 			getInteger(rs, prefix + "seed"),
 			rs.getString(prefix + "entry"),
-			rs.getString(prefix + "country_id")
+			rs.getString(prefix + "country_id"),
+			getInteger(rs, prefix + "rank"),
+			getInteger(rs, prefix + "elo_rating")
 		);
 	}
 
@@ -232,14 +265,14 @@ public class TournamentForecastService {
 	public ProbableMatches getInProgressEventProbableMatches(int inProgressEventId, Integer pinnedPlayerId) {
 		InProgressEvent event = getInProgressEvent(inProgressEventId);
 		InProgressEventForecast forecast = new InProgressEventForecast(event);
-		MapSqlParameterSource inProgressEventIdParam = params("inProgressEventId", inProgressEventId);
-		List<PlayerForecast> players = fetchPlayers(inProgressEventIdParam);
-		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, CURRENT_CONDITION), inProgressEventIdParam, rs -> {
+		List<PlayerForecast> players = fetchPlayers(inProgressEventId);
+		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, CURRENT_CONDITION), params("inProgressEventId", inProgressEventId), rs -> {
 			addForecast(forecast, players, rs);
 		});
 		forecast.process();
+		addEloRatings(forecast);
 
-		PlayersForecast current = forecast.getCurrentForecasts();
+		PlayersForecast current = forecast.getCurrentForecast();
 		TournamentEventResults probableMatches = new TournamentEventResults();
 		AtomicInteger matchId = new AtomicInteger();
 		AtomicInteger matchNum = new AtomicInteger();
@@ -247,7 +280,7 @@ public class TournamentForecastService {
 		String firstResult = current.getFirstResult();
 		for (KOResult result = KOResult.valueOf(firstResult); result.hasNext(); result = result.next())
 			remainingPlayers = addProbableMatches(event, probableMatches, remainingPlayers, result, matchId, matchNum, pinnedPlayerId);
-		return new ProbableMatches(probableMatches, current.getKnownPlayers(firstResult));
+		return new ProbableMatches(event, probableMatches, current.getKnownPlayers(firstResult));
 	}
 
 	private List<PlayerForecast> addProbableMatches(InProgressEvent event, TournamentEventResults probableMatches, Iterable<PlayerForecast> remainingPlayers,

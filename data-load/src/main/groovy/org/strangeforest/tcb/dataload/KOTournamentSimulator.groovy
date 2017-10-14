@@ -12,6 +12,7 @@ class KOTournamentSimulator {
 
 	TournamentMatchPredictor predictor
 	int inProgressEventId
+	List matches
 	Map matchMap = [:]
 	Map playerEntries = [:]
 	Map entryPlayers = [:]
@@ -23,6 +24,7 @@ class KOTournamentSimulator {
 	KOTournamentSimulator(TournamentMatchPredictor predictor, int inProgressEventId, List matches, KOResult baseResult, boolean current = true, boolean verbose = false) {
 		this.predictor = predictor
 		this.inProgressEventId = inProgressEventId
+		this.matches = matches
 		this.baseResult = baseResult
 		this.current = current
 		this.verbose = verbose
@@ -49,6 +51,51 @@ class KOTournamentSimulator {
 					entryPlayers[playerEntry] = playerId2
 				}
 			}
+		}
+	}
+
+	def calculateEloRatings() {
+		int count = matches.size()
+		for (int i = 0; i < count; i++) {
+			def match = matches[i]
+			def winner = match.winner
+			if (winner) {
+				def player1Id = match.player1_id
+				def player2Id = match.player2_id
+				def rating1 = match.player1_elo_rating
+				def rating2 = match.player2_elo_rating
+				if (player1Id && player2Id) {
+					def winner1 = winner == 1
+					if (!rating1)
+						rating1 = StartEloRatings.START_RATING
+					if (!rating2)
+						rating2 = StartEloRatings.START_RATING
+					double winneRating = winner1 ? rating1 : rating2
+					double loserRating = winner1 ? rating2 : rating1
+					def deltaRating = EloRatings.deltaRating(winneRating, loserRating, match.level, match.surface, match.round, (short)match.best_of, match.outcome)
+					deltaRating = winner1 ? deltaRating : -deltaRating
+					rating1 += deltaRating * EloRatings.kFunction(rating1)
+					rating2 -= deltaRating * EloRatings.kFunction(rating2)
+					match.player1_next_elo_rating = rating1
+					match.player2_next_elo_rating = rating2
+					setNextMatchesEloRating(player1Id, rating1, i)
+					setNextMatchesEloRating(player2Id, rating2, i)
+				} else {
+					match.player1_next_elo_rating = rating1
+					match.player2_next_elo_rating = rating2
+				}
+			}
+		}
+	}
+
+	private setNextMatchesEloRating(playerId, rating, int fromMatchIndex) {
+		int count = matches.size()
+		for (int i = fromMatchIndex + 1; i < count; i++) {
+			def match = matches[i]
+			if (match.player1_id == playerId)
+				match.player1_elo_rating = rating
+			else if (match.player2_id == playerId)
+				match.player2_elo_rating = rating
 		}
 	}
 

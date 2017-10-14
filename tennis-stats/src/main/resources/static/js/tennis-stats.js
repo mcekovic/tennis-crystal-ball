@@ -335,7 +335,7 @@ function matchExFormatter(playerId) {
 }
 
 function formatRanking(row) {
-	return row.rank || row.eloRating ? " <div class='rankings-badge'>" + (row.rank ? "ATP " + row.rank : "") + (row.eloRating ? "<br/>Elo " + row.eloRating : "") + "</div>" : "";
+	return row.rank || row.eloRating ? " <div class='rankings-badge'>" + (row.rank ? "Rank " + row.rank : "") + (row.eloRating ? "<br/>Elo " + row.eloRating : "") + "</div>" : "";
 }
 
 function h2hMatchFormatter(column, row) {

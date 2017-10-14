@@ -38,7 +38,7 @@
 			var url = $pill.data("url");
 			if (season)
 				url += "&season=" + season;
-			loadTab($pill, url)
+			loadTab($pill, url);
 		}
 		function playerTournaments(season, level, surface, result, tournamentId) {
 			var $pill = $("#tournamentsPill");
@@ -53,7 +53,7 @@
 				url += "&result=" + encodeURIComponent(result);
 			if (tournamentId)
 				url += "&tournamentId=" + tournamentId;
-			loadTab($pill, url)
+			loadTab($pill, url);
 		}
 		function playerMatches(season, level, surface, round, opponent, tournamentId, tournamentEventId, outcome, score, countryId) {
 			var $pill = $("#matchesPill");
@@ -85,28 +85,28 @@
 			var url = $pill.data("url");
 			if (rankType)
 				url += "&rankType=" + rankType;
-			loadTab($pill, url)
+			loadTab($pill, url);
 		}
 		function playerPerformance(season) {
 			var $pill = $("#performancePill");
 			var url = $pill.data("url");
 			if (season)
 				url += "&season=" + season;
-			loadTab($pill, url)
+			loadTab($pill, url);
 		}
 		function playerGoatPoints(season) {
 			var $pill = $("#goatPointsPill");
 			var url = $pill.data("url");
 			if (season)
 				url += "&season=" + season;
-			loadTab($pill, url)
+			loadTab($pill, url);
 		}
 		function playerRecords(infamous) {
 			var $pill = $("#recordsPill");
 			var url = $pill.data("url");
 			if (infamous)
 				url += "&infamous=" + infamous;
-			loadTab($pill, url)
+			loadTab($pill, url);
 		}
 	</script>
 </head>
