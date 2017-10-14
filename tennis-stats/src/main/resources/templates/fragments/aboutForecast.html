@@ -17,11 +17,12 @@
 			Probability of the player A to reach the next round R+1 is calculated this way:<br/>
 			<span class="text-nowrap"><strong>Pr<sub>A</sub>(R+1) = Pr<sub>A</sub>(R) * &Sigma;<sub>N=1-n</sub> ( Pr<sub>N</sub>(R) * Pm<sub>A vs N</sub> )</strong></span><br/>
 			This means that probability for player A to reach the next round R+1 depend on probability for player A to reach the previous round R multiplied by the weighted sum of probabilities for player A to win over his potential opponents in the next round.
-			Weights of the potential opponents are the probabilities of each of the opponent to reach the round R.<br/>
+			Weights of the potential opponents are the probabilities of each opponent to reach the round R.<br/>
 			That means for example, that probability for player A to win the title depends on the probability of the player A to reach the final
 			as well as probabilities of all players in the other half of the draw to reach the final multiplied by probabilities for player A to win the final match over the each of them.<br/>
 			As tournament progresses, outcome of some matches gets known, thus the match probabilities are set to 100% and 0% for the winner and for the loser respectively.<br/>
-			Sometimes, as initial tournament draws are out, they include unknown qualifiers. Probability for the player to win over the unknown qualifier is determined by variation of the Match Prediction algorithm that includes player's winning percentage vs qualifiers, overall and by surface, level...
+			Sometimes, as initial tournament draws are out, they include unknown qualifiers. Probability for the player to win over the unknown qualifier is determined by variation of the Match Prediction algorithm that includes player's winning percentage vs qualifiers, overall and by surface, level, etc...<br/>
+			Elo Ratings are recalculated after each round and Elo rating points earned by wins in previous rounds are presented in brackets.
 		</div>
 	</div>
 </th:block>
@@ -33,8 +34,8 @@
 			Head-to-Head ratios and Winning Percentages varied by surface, tournament level, tournament, round, recency, match or set ratios, vs rank, vs hand, vs backhand...<br/>
 			Neural Network is trained on historical data for highest prediction rates to determine optimal feature weights.<br/>
 			During training, some neurons are determined to be useless and they are removed from the network, thus about ~30 neurons remain.<br/>
-			Elo Ratings, overall and by surface, are main contributors to the match prediction, following by H2H percentages, recent form and vs hand (vs left-hander or vs right-hander).<br/>
-			Elo Rating neurons individually give high prediction rates, but when they are combined with H2H, recent form in short period and various winning percentages, the prediction accuracy is even further increased.
+			Elo Ratings, overall and by surface, are main contributors to the match prediction, following by recent form, H2H percentages and winning percentages vs hand (vs left-hander or vs right-hander).<br/>
+			Elo Rating neurons individually give high prediction rates, but when they are combined with recent form, H2H and various winning percentages, the prediction accuracy is even further increased.
 		</div>
 	</div>
 </th:block>
