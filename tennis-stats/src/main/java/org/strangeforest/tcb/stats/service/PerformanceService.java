@@ -103,7 +103,7 @@ public class PerformanceService {
 		return getPlayerPerformance(playerId, PerfStatsFilter.ALL);
 	}
 
-	private PlayerPerformance getPlayerPerformance(int playerId, PerfStatsFilter filter) {
+	public PlayerPerformance getPlayerPerformance(int playerId, PerfStatsFilter filter) {
 		MapSqlParameterSource params = filter.getParams().addValue("playerId", playerId);
 		String tableName = getPerformanceTableName(filter);
 		String perfColumns = isMaterializedSum(filter) ? PLAYER_PERFORMANCE_COLUMNS : PLAYER_PERFORMANCE_SUMMED_COLUMNS;

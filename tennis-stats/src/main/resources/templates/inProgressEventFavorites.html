@@ -1,0 +1,41 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="surface" type="org.strangeforest.tcb.stats.model.Surface"*/-->
+	<!--/*@thymesVar id="favorites" type="java.util.List<org.strangeforest.tcb.stats.model.FavoritePlayerEx>"*/-->
+	<!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.prediction.PriceFormat"*/-->
+	<br/>
+	<table class="table table-condensed table-hover table-striped text-nowrap">
+		<thead>
+			<tr>
+				<th class="text-right" title="Favorite">Fav.</th>
+				<th>Name</th>
+				<th class="text-right" title="Tournament win probability">Prob.</th>
+				<th class="text-right">Rank</th>
+				<th class="text-right hidden-xs">Best Rank</th>
+				<th class="text-right" title="Elo rating">Elo</th>
+				<th th:if="${surface}" class="text-right hidden-xs" th:text="${surface.text + ' Elo'}" th:title="${surface.text + ' Elo rating'}">Hard Elo</th>
+				<th class="text-right hidden-xs" title="Last 52 weeks overall performance">52W %</th>
+				<th th:if="${surface}" class="text-right hidden-md hidden-sm hidden-xs" th:text="${'52W ' + surface.text + ' %'}" th:title="|Last 52 weeks ${surface.text} performance|">52W Hard %</th>
+				<th class="text-right hidden-md hidden-sm hidden-xs" title="Last 52 weeks titles">52W <span class='glyphicon glyphicon-glass'></span></th>
+				<th class="text-right hidden-md hidden-sm hidden-xs">Age</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="favorite : ${favorites}">
+				<td class="text-right" th:text="${favorite.rank}">1</td>
+				<td>
+					<img th:src="@{/images/flags/{code}.png(code=${favorite.country.code})}" src="/images/flags/ch.png'" th:title="${favorite.country.id}" title="SUI" width="24" height="20"/>
+					<a th:href="@{/playerProfile(playerId=${favorite.playerId})}" th:text="${favorite.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
+				</td>
+				<td class="text-right" th:text="${favorite.probability != null ? #numbers.formatDecimal(100 * favorite.probability, 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + favorite.getPrice(priceFormat) : _}">45.2%</td>
+				<td class="text-right"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=ranking, rankType=RANK)}" th:text="${favorite.currentRank}" title="Show ranking chart">1</a></td>
+				<td class="text-right hidden-xs" th:text="${favorite.bestRank}">1</td>
+				<td class="text-right"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=ranking, rankType=ELO_RATING)}" th:text="${favorite.eloRating}" title="Show Elo rating chart">2432</a></td>
+				<td th:if="${surface}" class="text-right hidden-xs"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=ranking, rankType=${surface + '_ELO_RATING'})}" th:text="${favorite.surfaceEloRating}" th:title="|Show ${surface.text} Elo rating chart|">2432</a></td>
+				<td class="text-right hidden-xs" th:with="wl=${favorite.last52WeeksWonLost}"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=performance, season=-1)}" th:text="${wl != null ? wl.getWonPctStr() : _}" th:title="${wl != null ? wl.getWLT() : _}">85.4%</a></td>
+				<td class="text-right hidden-md hidden-sm hidden-xs" th:with="wl=${favorite.last52WeeksSurfaceWonLost}"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=performance, season=-1, surface=${surface.code})}" th:text="${wl != null ? wl.getWonPctStr() : _}" th:title="${wl != null ? wl.getWLT() : _}">82.9%</a></td>
+				<td class="text-right hidden-md hidden-sm hidden-xs"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=tournaments, result=W, season=-1)}" th:text="${favorite.last52WeeksTitles}" title="Show titles">5</a></td>
+				<td class="text-right hidden-md hidden-sm hidden-xs" th:text="${favorite.age}">35</td>
+			</tr>
+		</tbody>
+	</table>
+</th:block>

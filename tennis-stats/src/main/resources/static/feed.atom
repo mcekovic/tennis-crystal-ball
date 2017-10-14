@@ -4,7 +4,39 @@
 	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for the die-hard tennis fans</subtitle>
 	<link href="http://www.ultimatetennisstatistics.com/feed.atom" rel="self"/>
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
-	<updated>2017-08-22T12:00:00Z</updated>
+	<updated>2017-10-14T12:00:00Z</updated>
+	<entry>
+		<title>Tournament Forecasts enhancements</title>
+		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/inProgressEventsForecasts"/>
+		<id>urn:uuid:8cce3c86-6008-4131-bb3a-27f343eacc1f</id>
+		<updated>2017-10-14T12:00:00Z</updated>
+		<summary>Tournament Forecasts enhancements - Improved match prediction accuracy, progressive Elo rating calculations and Favorites on the glance!</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Tournament Forecasts enhancements - Improved match prediction accuracy, progressive <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> calculations as tournament go and Tournament Favorites on the glance!</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
+	<entry>
+		<title>Tournaments browser</title>
+		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/tournaments"/>
+		<id>urn:uuid:22643f5b-3a8c-43a4-b8e0-c951d983d2108</id>
+		<updated>2017-10-14T12:00:00Z</updated>
+		<summary>Tournaments browser - Browse tournaments, see players with most titles, historical tournament levels and surfaces and average participation</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Tournaments browser - Browse tournaments, see players with most titles, historical tournament levels and surfaces and average participation.</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 	<entry>
 		<title>Top Performers and Statistics Leaders enhancements</title>
 		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/topPerformers"/>

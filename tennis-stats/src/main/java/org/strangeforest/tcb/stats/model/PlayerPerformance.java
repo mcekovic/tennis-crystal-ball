@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.strangeforest.tcb.stats.util.*;
+
 public class PlayerPerformance {
 
 	// Performance
@@ -125,7 +127,17 @@ public class PlayerPerformance {
 		this.carpetMatches = carpetMatches;
 	}
 
+	public WonLost getSurfaceMatches(Surface surface) {
+		switch (surface) {
+			case HARD: return hardMatches;
+			case CLAY: return clayMatches;
+			case GRASS: return grassMatches;
+			case CARPET: return carpetMatches;
+			default: throw new NotFoundException("Surface", surface);
+		}
+	}
 
+	
 	// Pressure situations
 
 	public WonLost getDecidingSets() {

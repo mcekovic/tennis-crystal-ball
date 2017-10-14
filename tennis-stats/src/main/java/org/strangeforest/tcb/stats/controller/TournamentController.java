@@ -207,4 +207,19 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("priceFormat", priceFormat);
 		return new ModelAndView("inProgressEventProbableMatches", modelMap);
 	}
+
+	@GetMapping("/inProgressEventFavorites")
+	public ModelAndView inProgressEventFavorites(
+		@RequestParam(name = "inProgressEventId") int inProgressEventId,
+      @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat
+	) {
+		Surface surface = Surface.safeDecode(forecastService.getInProgressEvent(inProgressEventId).getSurface());
+		List<FavoritePlayerEx> favorites = forecastService.getInProgressEventFavorites(inProgressEventId, surface, 10);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("favorites", favorites);
+		modelMap.addAttribute("priceFormat", priceFormat);
+		return new ModelAndView("inProgressEventFavorites", modelMap);
+	}
 }

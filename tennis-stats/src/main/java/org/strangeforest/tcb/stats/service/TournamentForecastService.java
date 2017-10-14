@@ -25,6 +25,7 @@ public class TournamentForecastService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 	@Autowired private MatchPredictionService matchPredictionService;
+	@Autowired private PerformanceService performanceService;
 
 	private static final String IN_PROGRESS_EVENTS_QUERY = //language=SQL
 		"SELECT in_progress_event_id, e.tournament_id, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.player_count, p.participation, p.strength, p.average_elo_rating\n" +
@@ -40,12 +41,21 @@ public class TournamentForecastService {
 		"WHERE in_progress_event_id = :inProgressEventId";
 
 	private static final String FIND_FAVORITES_QUERY =
-		"SELECT player_id, p.name, p.country_id, r.probability\n" +
+		"SELECT player_id, p.name, p.country_id, r.probability%1$s\n" +
 		"FROM player_in_progress_result r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.in_progress_event_id = :inProgressEventId\n" +
 		"AND r.base_result = 'W' AND r.result = 'W' AND probability > 0\n" +
-		"ORDER BY r.probability DESC LIMIT 4";
+		"ORDER BY r.probability DESC LIMIT :favoriteCount";
+
+	private static final String FAVORITE_EXTRA_COLUMNS = //language=SQL
+		", p.current_rank, p.best_rank, p.current_elo_rating,\n" +
+		"  (%1$s) AS current_surface_elo_rating,\n" +
+		"  nullif((SELECT count(*) FROM player_tournament_event_result t INNER JOIN tournament_event e USING (tournament_event_id) WHERE t.player_id = r.player_id AND t.result = 'W' AND e.date >= current_date - (INTERVAL '1 year') AND e.level IN ('G', 'F', 'M', 'O', 'A', 'B')), 0) AS last52_titles,\n" +
+		"  extract(YEAR FROM age) AS age";
+
+	private static final String PLAYER_SURFACE_ELO_RATING = //language=SQL
+		"SELECT e.%1$s_elo_rating FROM player_elo_ranking e WHERE e.player_id = r.player_id AND e.rank_date BETWEEN current_date - (INTERVAL '1 year') AND current_date ORDER BY e.rank_date DESC LIMIT 1";
 
 	private static final String IN_PROGRESS_MATCHES_QUERY =
 		"WITH entry_round AS (\n" +
@@ -96,10 +106,8 @@ public class TournamentForecastService {
 				table.addRow(mapInProgressEvent(rs));
 			}
 		);
-		for (InProgressEvent inProgressEvent : table.getRows()) {
-			List<FavoritePlayer> favorites = jdbcTemplate.query(FIND_FAVORITES_QUERY, params("inProgressEventId", inProgressEvent.getId()), this::mapFavoritePlayer);
-			inProgressEvent.setFavorites(favorites);
-		}
+		for (InProgressEvent inProgressEvent : table.getRows())
+			inProgressEvent.setFavorites(findFavoritePlayers(inProgressEvent.getId(), 2));
 		return table;
 	}
 
@@ -123,26 +131,15 @@ public class TournamentForecastService {
 		);
 		return inProgressEvent;
 	}
-	
-	private FavoritePlayer mapFavoritePlayer(ResultSet rs, int rowNum) throws SQLException {
-		return new FavoritePlayer(
-			rowNum,
-			rs.getInt("player_id"),
-			rs.getString("name"),
-			rs.getString("country_id"),
-			rs.getDouble("probability")
-		);
-	}
 
 	@Cacheable("InProgressEventForecast")
 	public InProgressEventForecast getInProgressEventForecast(int inProgressEventId) {
 		InProgressEvent inProgressEvent = getInProgressEvent(inProgressEventId);
-		MapSqlParameterSource inProgressEventIdParam = params("inProgressEventId", inProgressEventId);
-		List<FavoritePlayer> favorites = jdbcTemplate.query(FIND_FAVORITES_QUERY, inProgressEventIdParam, this::mapFavoritePlayer);
+		List<FavoritePlayer> favorites = findFavoritePlayers(inProgressEventId, 4);
 		inProgressEvent.setFavorites(favorites);
 		InProgressEventForecast forecast = new InProgressEventForecast(inProgressEvent);
 		List<PlayerForecast> players = fetchPlayers(inProgressEventId);
-		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, ""), inProgressEventIdParam, rs -> {
+		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, ""), params("inProgressEventId", inProgressEventId), rs -> {
 			addForecast(forecast, players, rs);
 		});
 		forecast.process();
@@ -150,7 +147,7 @@ public class TournamentForecastService {
 		return forecast;
 	}
 
-	private InProgressEvent getInProgressEvent(int inProgressEventId) {
+	public InProgressEvent getInProgressEvent(int inProgressEventId) {
 		return jdbcTemplate.query(IN_PROGRESS_EVENT_QUERY, params("inProgressEventId", inProgressEventId), rs -> {
 			if (rs.next())
 				return mapInProgressEvent(rs);
@@ -332,5 +329,49 @@ public class TournamentForecastService {
 		);
 		player1.addForecast("M_" + round, prediction.getWinProbability1());
 		player2.addForecast("M_" + round, prediction.getWinProbability2());
+	}
+
+
+	// Favorites
+
+	public List<FavoritePlayerEx> getInProgressEventFavorites(int inProgressEventId, Surface surface, int count) {
+		String extraColumns = format(FAVORITE_EXTRA_COLUMNS, surface != null ? format(PLAYER_SURFACE_ELO_RATING, surface.getText().toLowerCase()) : "NULL");
+		List<FavoritePlayerEx> favorites = jdbcTemplate.query(format(FIND_FAVORITES_QUERY, extraColumns), params("inProgressEventId", inProgressEventId).addValue("favoriteCount", count), this::mapFavoritePlayerEx);
+		for (FavoritePlayerEx favorite : favorites) {
+			PlayerPerformance performance = performanceService.getPlayerPerformance(favorite.getPlayerId(), PerfStatsFilter.forSeason(-1));
+			favorite.setLast52WeeksWonLost(performance.getMatches());
+			favorite.setLast52WeeksSurfaceWonLost(surface != null ? performance.getSurfaceMatches(surface) : WonLost.EMPTY);
+		}
+		return favorites;
+	}
+
+	private FavoritePlayerEx mapFavoritePlayerEx(ResultSet rs, int rowNum) throws SQLException {
+		return new FavoritePlayerEx(
+			rowNum + 1,
+			rs.getInt("player_id"),
+			rs.getString("name"),
+			rs.getString("country_id"),
+			rs.getDouble("probability"),
+			getInteger(rs, "current_rank"),
+			getInteger(rs, "best_rank"),
+			getInteger(rs, "current_elo_rating"),
+			getInteger(rs, "current_surface_elo_rating"),
+			getInteger(rs, "last52_titles"),
+			getInteger(rs, "age")
+		);
+	}
+
+	private List<FavoritePlayer> findFavoritePlayers(int inProgressEventId, int count) {
+		return jdbcTemplate.query(format(FIND_FAVORITES_QUERY, ""), params("inProgressEventId", inProgressEventId).addValue("favoriteCount", count), this::mapFavoritePlayer);
+	}
+
+	private FavoritePlayer mapFavoritePlayer(ResultSet rs, int rowNum) throws SQLException {
+		return new FavoritePlayer(
+			rowNum + 1,
+			rs.getInt("player_id"),
+			rs.getString("name"),
+			rs.getString("country_id"),
+			rs.getDouble("probability")
+		);
 	}
 }

@@ -32,12 +32,6 @@
 					"favorite2":  function(column, row) {
 						return formatFavorite(column, row.favorite2);
 					},
-					"favorite3":  function(column, row) {
-						return formatFavorite(column, row.favorite3);
-					},
-					"favorite4":  function(column, row) {
-						return formatFavorite(column, row.favorite4);
-					},
 					"forecast": function(column, row) {
 						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-primary label-btn' title='Show full forecast'><span class='glyphicon glyphicon-eye-open'></span>&nbsp;&nbsp;Forecast</a>";
 					}
@@ -79,8 +73,6 @@
 			<th data-column-id="averageEloRating" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Elo</th>
 			<th data-column-id="favorite1" data-formatter="favorite1" data-sortable="false" data-width="220">1-st Favorite</th>
 			<th data-column-id="favorite2" data-formatter="favorite2" data-sortable="false" data-width="220">2-nd Favorite</th>
-			<th data-column-id="favorite3" data-formatter="favorite3" data-sortable="false" data-visible="false" data-width="220">3-rd Favorite</th>
-			<th data-column-id="favorite4" data-formatter="favorite4" data-sortable="false" data-visible="false" data-width="220">4-th Favorite</th>
 			<th data-column-id="forecast" data-formatter="forecast" data-sortable="false" data-width="95">Forecast</th>
 		</tr>
 		</thead>
