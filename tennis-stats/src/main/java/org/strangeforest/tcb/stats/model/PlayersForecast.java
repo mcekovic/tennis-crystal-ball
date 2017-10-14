@@ -8,13 +8,18 @@ import static java.util.stream.Collectors.*;
 public class PlayersForecast {
 
 	private final Set<String> results;
-	private final Map<Integer, PlayerForecast> playerForecasts;
+	private final List<PlayerForecast> playerForecasts;
+	private final Map<Integer, PlayerForecast> playerForecastMap;
 
 	PlayersForecast(List<PlayerForecast> players) {
 		results = new LinkedHashSet<>();
-		playerForecasts = new LinkedHashMap<>();
-		for (PlayerForecast player : players)
-			playerForecasts.put(player.getId(), new PlayerForecast(player));
+		playerForecasts = new ArrayList<>(players.size());
+		playerForecastMap = new HashMap<>();
+		for (PlayerForecast player : players) {
+			PlayerForecast playerForecast = new PlayerForecast(player);
+			playerForecasts.add(playerForecast);
+			playerForecastMap.put(player.getId(), playerForecast);
+		}
 	}
 
 	public Set<String> getResults() {
@@ -31,41 +36,51 @@ public class PlayersForecast {
 	}
 
 	public Collection<PlayerForecast> getPlayerForecasts() {
-		return playerForecasts.values();
+		return playerForecasts;
+	}
+
+	public PlayerForecast getPlayerForecast(int playerId) {
+		return playerForecastMap.get(playerId);
 	}
 
 	public PlayerForecast getOtherPlayer(int index) {
 		int otherIndex = index + (index % 2 == 0 ? 1 : -1);
-		return otherIndex < playerForecasts.size() ? new ArrayList<>(playerForecasts.values()).get(otherIndex) : null;
+		return otherIndex < playerForecasts.size() ? playerForecasts.get(otherIndex) : null;
 	}
 
 	public double getStrength(int fromIndex, int count) {
-		return playerForecasts.values().stream().skip(fromIndex).limit(count).mapToDouble(PlayerForecast::getWinProbability).sum();
+		return playerForecasts.stream().skip(fromIndex).limit(count).mapToDouble(PlayerForecast::getWinProbability).sum();
 	}
 
 	public List<MatchPlayer> getKnownPlayers(String result) {
-		return playerForecasts.values().stream().filter(player -> player.getId() > 0 && player.getRawProbability(result) > 0.0)
+		return playerForecasts.stream().filter(player -> player.getId() > 0 && player.getRawProbability(result) > 0.0)
 			.sorted(comparing(MatchPlayer::getSeed, nullsLast(naturalOrder())).thenComparing(MatchPlayer::getName, nullsLast(naturalOrder())))
 			.collect(toList());
 	}
 
 	void addResult(int playerId, String result, double probability) {
-		playerForecasts.get(playerId).addForecast(result, probability);
+		playerForecastMap.get(playerId).addForecast(result, probability);
 		results.add(result);
 	}
 
 	void removePlayersWOResults() {
-		new HashMap<>(playerForecasts).forEach((playerId, playerForecast) -> {
-			if (playerForecast.isEmpty())
-				playerForecasts.remove(playerId);
-		});
+		for (Iterator<PlayerForecast> iter = playerForecasts.iterator(); iter.hasNext(); ) {
+			PlayerForecast playerForecast = iter.next();
+			if (playerForecast.isEmpty()) {
+				iter.remove();
+				playerForecastMap.remove(playerForecast.getId());
+			}
+		}
 	}
 
 	void removePlayersWORemainingResults() {
-		new HashMap<>(playerForecasts).forEach((playerId, playerForecast) -> {
-			if (!playerForecast.hasAnyResult(results))
-				playerForecasts.remove(playerId);
-		});
+		for (Iterator<PlayerForecast> iter = playerForecasts.iterator(); iter.hasNext(); ) {
+			PlayerForecast playerForecast = iter.next();
+			if (!playerForecast.hasAnyResult(results)) {
+				iter.remove();
+				playerForecastMap.remove(playerForecast.getId());
+			}
+		}
 	}
 
 	void removePastRounds() {
@@ -85,7 +100,7 @@ public class PlayersForecast {
 	}
 
 	public void setEloRatings(int playerId, Integer eloRating, Integer nextEloRating) {
-		PlayerForecast playerForecast = playerForecasts.get(playerId);
+		PlayerForecast playerForecast = playerForecastMap.get(playerId);
 		if (playerForecast != null) {
 			playerForecast.setEloRating(eloRating);
 			playerForecast.setNextEloRating(nextEloRating);

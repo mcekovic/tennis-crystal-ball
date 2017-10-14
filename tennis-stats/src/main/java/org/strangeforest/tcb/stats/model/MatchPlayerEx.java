@@ -3,7 +3,7 @@ package org.strangeforest.tcb.stats.model;
 public class MatchPlayerEx extends MatchPlayer {
 
 	private final Integer rank;
-	private Integer eloRating;
+	protected Integer eloRating;
 
 	public MatchPlayerEx(int id, String name, Integer seed, String entry, String countryId, Integer rank, Integer eloRating) {
 		super(id, name, seed, entry, countryId);

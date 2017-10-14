@@ -178,7 +178,7 @@
 			</ul>
 			<div class="tab-content">
 				<div id="results" class="tab-pane fade"><div class="loading"></div></div>
-				<div th:each="baseResult : ${forecast.baseResults}" th:id="'baseResult' + ${baseResult}" th:with="playersForecast = ${forecast.getPlayersForecast(baseResult)}" class="tab-pane fade" th:attrappend="class=${baseResultStat.last ? ' in active' : _}">
+				<div th:each="baseResult : ${forecast.baseResults}" th:id="'baseResult' + ${baseResult}" th:with="playersForecast=${forecast.getPlayersForecast(baseResult)}, prevPlayersForecast=${forecast.getPrevPlayersForecast(baseResult)}" class="tab-pane fade" th:attrappend="class=${baseResultStat.last ? ' in active' : _}">
 					<br/>
 					<table class="table table-condensed table-hover text-nowrap forecast-table" th:with="resultCount=${playersForecast.results.size() + (priceFormat != null ? 1 : 0)}, entryCount=${playersForecast.playerForecasts.size()}">
 						<th:block th:each="playerForecast : ${playersForecast.playerForecasts}">
@@ -216,7 +216,7 @@
 								<a th:href="@{/playerProfile(playerId=${playerForecast.id})}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 							</td>
 							<td th:text="${playerForecast.rank}" class="player-rank">1</td>
-							<td th:text="${playerForecast.eloRating}" class="player-rank">2432</td>
+								<td th:with="eloRatingDelta=${prevPlayersForecast != null ? prevPlayersForecast.getPlayerForecast(playerForecast.id).eloRatingDelta : null}" class="player-rank"><span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${playerForecast.eloRating})]</td>
 							</th:block>
 							<td th:if="${playerForecast.bye}" colspan="4">Bye</td>
 							<td th:if="${playerForecast.qualifier}" colspan="4">Qualifier</td>
@@ -224,7 +224,7 @@
 								<a th:href="@{/headToHead(playerId1=${playerForecast.id}, playerId2=${otherPlayer.id}, tab=hypotheticalMatchup, level=${inProgressEvent.level}, surface=${inProgressEvent.surface}, round=${baseResult == 'Current' ? forecast.maxResult : baseResult})}" class="player-h2h" title="Show Head-to-Head Hypothetical Matchup">H<br/>2<br/>H</a>
 							</td>
 							<td th:unless="${showH2H}" class="player-noh2h"></td>
-							<td th:each="result : ${playersForecast.results}" th:with="probability = ${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + playerForecast.getPrice(result, priceFormat) : _}">58.2%</td>
+							<td th:each="result : ${playersForecast.results}" th:with="probability=${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + playerForecast.getPrice(result, priceFormat) : _}">58.2%</td>
 							<td th:if="${priceFormat}" class="text-right" th:text="${playerForecast.getPrice('W', priceFormat)}">6.25</td>
 						</tr>
 						<thead th:if="${playerForecastStat.index % 8 == 7 && !playerForecastStat.last}">

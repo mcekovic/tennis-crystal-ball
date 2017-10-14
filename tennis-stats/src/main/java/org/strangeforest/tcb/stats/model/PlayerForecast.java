@@ -39,6 +39,13 @@ public class PlayerForecast extends MatchPlayerEx {
 		return nextEloRating;
 	}
 
+	public Integer getEloRatingDelta() {
+		if (eloRating == null || nextEloRating == null)
+			return null;
+		int delta = nextEloRating - eloRating;
+		return delta != 0 ? delta : null;
+	}
+
 	void setNextEloRating(Integer nextEloRating) {
 		this.nextEloRating = nextEloRating;
 	}

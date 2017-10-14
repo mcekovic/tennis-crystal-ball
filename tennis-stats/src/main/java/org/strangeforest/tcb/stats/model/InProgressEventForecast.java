@@ -35,6 +35,16 @@ public class InProgressEventForecast {
 		return playersForecasts.get(baseResult);
 	}
 
+	public PlayersForecast getPrevPlayersForecast(String baseResult) {
+		String prevResult = null;
+		for (String result : playersForecasts.keySet()) {
+			if (result.equals(baseResult))
+				return prevResult != null ? playersForecasts.get(prevResult) : null;
+			prevResult = result;
+		}
+		return null;
+	}
+
 	public void addForecast(List<PlayerForecast> players, int playerId, String baseResult, String result, double probability) {
 		if (baseResult.equals("W"))
 			baseResult = CURRENT;
