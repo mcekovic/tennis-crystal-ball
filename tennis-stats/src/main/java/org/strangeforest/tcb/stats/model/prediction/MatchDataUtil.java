@@ -60,7 +60,13 @@ public abstract class MatchDataUtil {
 	}
 
 	public static Predicate<MatchData> isRound(Round round) {
-		return match -> nonNullEquals(match.getRound(), safeEncode(round));
+		return match -> nonNullEquals(roundGroup(Round.safeDecode(match.getRound())), roundGroup(round));
+	}
+
+	private static Round roundGroup(Round round) {
+		if (round == null)
+			return null;
+		return round.compareTo(Round.QF) <= 0 ? round : Round.RR;
 	}
 
 	public static Predicate<MatchData> isOpponent(int playerId) {

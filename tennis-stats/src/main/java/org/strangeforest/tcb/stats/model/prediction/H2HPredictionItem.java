@@ -3,12 +3,12 @@ package org.strangeforest.tcb.stats.model.prediction;
 public enum H2HPredictionItem implements MatchPredictionItem {
 
 	OVERALL(false, 0.0),
-	SURFACE(false, 3.0),
+	SURFACE(false, 4.0),
 	LEVEL(false, 2.0),
 	TOURNAMENT(false, 2.0),
 	ROUND(false, 3.0),
-	RECENT(false, 4.0),
-	SURFACE_RECENT(false, 2.0),
+	RECENT(false, 5.0),
+	SURFACE_RECENT(false, 1.0),
 	LEVEL_RECENT(false, 1.0),
 	ROUND_RECENT(false, 2.0),
 	OVERALL_SET(true, 2.0),
@@ -17,7 +17,7 @@ public enum H2HPredictionItem implements MatchPredictionItem {
 	TOURNAMENT_SET(true, 2.0),
 	ROUND_SET(true, 0.0),
 	RECENT_SET(true, 0.0),
-	SURFACE_RECENT_SET(true, 2.0),
+	SURFACE_RECENT_SET(true, 3.0),
 	LEVEL_RECENT_SET(true, 0.0),
 	ROUND_RECENT_SET(true, 0.0);
 
