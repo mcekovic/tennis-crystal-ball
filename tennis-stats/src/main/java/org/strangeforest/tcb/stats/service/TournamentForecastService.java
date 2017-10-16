@@ -4,6 +4,8 @@ import java.sql.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
@@ -16,6 +18,8 @@ import org.strangeforest.tcb.stats.util.*;
 
 import static java.lang.String.*;
 import static java.util.Collections.*;
+import static java.util.function.Function.*;
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.MatchesService.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
@@ -40,7 +44,7 @@ public class TournamentForecastService {
 		"INNER JOIN in_progress_event_participation_v p USING (in_progress_event_id)\n" +
 		"WHERE in_progress_event_id = :inProgressEventId";
 
-	private static final String FIND_FAVORITES_QUERY =
+	private static final String FIND_FAVORITES_QUERY = //language=SQL
 		"SELECT player_id, p.name, p.country_id, r.probability%1$s\n" +
 		"FROM player_in_progress_result r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
@@ -147,7 +151,7 @@ public class TournamentForecastService {
 		return forecast;
 	}
 
-	public InProgressEvent getInProgressEvent(int inProgressEventId) {
+	private InProgressEvent getInProgressEvent(int inProgressEventId) {
 		return jdbcTemplate.query(IN_PROGRESS_EVENT_QUERY, params("inProgressEventId", inProgressEventId), rs -> {
 			if (rs.next())
 				return mapInProgressEvent(rs);
@@ -216,7 +220,8 @@ public class TournamentForecastService {
 
 	// Completed matches
 
-	public TournamentEventResults getCompletedMatches(int inProgressEventId) {
+	@Cacheable("InProgressEventCompletedMatches")
+	public TournamentEventResults getInProgressEventCompletedMatches(int inProgressEventId) {
 		TournamentEventResults results = new TournamentEventResults();
 		jdbcTemplate.query(
 			COMPLETED_MATCHES_QUERY, params("inProgressEventId", inProgressEventId),
@@ -259,6 +264,7 @@ public class TournamentForecastService {
 
 	// Probable matches
 
+	@Cacheable("InProgressEventProbableMatches")
 	public ProbableMatches getInProgressEventProbableMatches(int inProgressEventId, Integer pinnedPlayerId) {
 		InProgressEvent event = getInProgressEvent(inProgressEventId);
 		InProgressEventForecast forecast = new InProgressEventForecast(event);
@@ -334,15 +340,23 @@ public class TournamentForecastService {
 
 	// Favorites
 
-	public List<FavoritePlayerEx> getInProgressEventFavorites(int inProgressEventId, Surface surface, int count) {
+	@Cacheable("InProgressEventFavorites")
+	public InProgressEventFavorites getInProgressEventFavorites(int inProgressEventId, int count) {
+		Surface surface = Surface.safeDecode(getInProgressEvent(inProgressEventId).getSurface());
+		Map<Integer, PlayerForecast> players = fetchPlayers(inProgressEventId).stream().collect(toMap(MatchPlayer::getId, identity()));
 		String extraColumns = format(FAVORITE_EXTRA_COLUMNS, surface != null ? format(PLAYER_SURFACE_ELO_RATING, surface.getText().toLowerCase()) : "NULL");
 		List<FavoritePlayerEx> favorites = jdbcTemplate.query(format(FIND_FAVORITES_QUERY, extraColumns), params("inProgressEventId", inProgressEventId).addValue("favoriteCount", count), this::mapFavoritePlayerEx);
 		for (FavoritePlayerEx favorite : favorites) {
+			PlayerForecast player = players.get(favorite.getPlayerId());
+			if (player != null) {
+				favorite.setSeed(player.getSeed());
+				favorite.setEntry(player.getEntry());
+			}
 			PlayerPerformance performance = performanceService.getPlayerPerformance(favorite.getPlayerId(), PerfStatsFilter.forSeason(-1));
 			favorite.setLast52WeeksWonLost(performance.getMatches());
 			favorite.setLast52WeeksSurfaceWonLost(surface != null ? performance.getSurfaceMatches(surface) : WonLost.EMPTY);
 		}
-		return favorites;
+		return new InProgressEventFavorites(favorites, surface);
 	}
 
 	private FavoritePlayerEx mapFavoritePlayerEx(ResultSet rs, int rowNum) throws SQLException {

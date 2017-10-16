@@ -258,6 +258,7 @@ class EloRatings {
 			case 'G': break
 			case 'F': kFactor *= 0.9; break
 			case 'M': kFactor *= 0.8; break
+			case 'O': kFactor *= 0.75; break
 			case 'A': kFactor *= 0.7; break
 			default: kFactor *= 0.6; break
 		}

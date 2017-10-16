@@ -33,6 +33,7 @@ VALUES
    ('Henry (Hank) Irvine', 'Henry Hank Irvine'),
    ('Harry Sheridan', 'H Sheridan'),
    ('Herbert Browne', 'Herbert H Browne Jr'),
+   ('Joao Menezes', 'Joao Lucas Magalhaes Hueb De Menezes'),
    ('Jose Edison Mandarino', 'Jose Mandarino'),
    ('Juan Luis Rascon Lope', 'Juan Luis Tati Rascon'),
    ('Juan Pablo Varillas', 'Juan Pablo Varillas Patino Samudio'),

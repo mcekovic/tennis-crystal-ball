@@ -51,7 +51,7 @@ public class TuningContext {
 
 	public PredictionResult endStep() {
 		if (bestStepResult != null) 
-			System.out.println("*** Tuning step " + step + " finished [results: " + results.size() + ", pending steps: " + candidateNextResults.size() + "]:" + bestStepResult);
+			System.out.println("*** Tuning step " + step + " finished [results: " + results.size() + ", pending steps: " + candidateNextResults.size() + "]: " + bestStepResult);
 		return bestStepResult;
 	}
 

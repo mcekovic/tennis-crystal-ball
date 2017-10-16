@@ -3,7 +3,7 @@ apply plugin: 'application'
 
 mainClassName = 'org.strangeforest.tcb.dataload.Main'
 applicationDefaultJvmArgs = [
-	'-Xmx192m',
+	'-Xmx160m',
 	'-Dtcb.db.url=jdbc:postgresql://localhost:5432/tcb?prepareThreshold=0',
 	'-Dtcb.db.username=tcb',
 	'-Dtcb.db.password=tcb',
@@ -32,6 +32,7 @@ dependencies {
 	compile ("org.springframework:spring-jdbc:$springJdbcVersion")
 	compile ("commons-cli:commons-cli:$commonsCliVersion")
 	testCompile ("junit:junit:$junitVersion")
+	testCompile ("org.assertj:assertj-core:$assertjCoreVersion")
 }
 
 task quickDeployToDigitalOcean {

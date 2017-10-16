@@ -3,6 +3,7 @@ package org.strangeforest.tcb.dataload
 import groovy.transform.*
 import org.strangeforest.tcb.stats.model.*
 
+import static java.lang.Math.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
 import static org.strangeforest.tcb.dataload.KOTournamentSimulator.MatchResult.*
 
@@ -62,27 +63,27 @@ class KOTournamentSimulator {
 			if (winner) {
 				def player1Id = match.player1_id
 				def player2Id = match.player2_id
-				def rating1 = match.player1_elo_rating
-				def rating2 = match.player2_elo_rating
+				Double rating1 = match.player1_elo_rating
+				Double rating2 = match.player2_elo_rating
 				if (player1Id && player2Id) {
 					def winner1 = winner == 1
 					if (!rating1)
 						rating1 = StartEloRatings.START_RATING
 					if (!rating2)
 						rating2 = StartEloRatings.START_RATING
-					double winneRating = winner1 ? rating1 : rating2
-					double loserRating = winner1 ? rating2 : rating1
+					def winneRating = winner1 ? rating1 : rating2
+					def loserRating = winner1 ? rating2 : rating1
 					def deltaRating = EloRatings.deltaRating(winneRating, loserRating, match.level, match.surface, match.round, (short)match.best_of, match.outcome)
 					deltaRating = winner1 ? deltaRating : -deltaRating
 					rating1 += deltaRating * EloRatings.kFunction(rating1)
 					rating2 -= deltaRating * EloRatings.kFunction(rating2)
-					match.player1_next_elo_rating = rating1
-					match.player2_next_elo_rating = rating2
+					match.player1_next_elo_rating = safeRound rating1
+					match.player2_next_elo_rating = safeRound rating2
 					setNextMatchesEloRating(player1Id, rating1, i)
 					setNextMatchesEloRating(player2Id, rating2, i)
 				} else {
-					match.player1_next_elo_rating = rating1
-					match.player2_next_elo_rating = rating2
+					match.player1_next_elo_rating = safeRound rating1
+					match.player2_next_elo_rating = safeRound rating2
 				}
 			}
 		}
@@ -93,10 +94,14 @@ class KOTournamentSimulator {
 		for (int i = fromMatchIndex + 1; i < count; i++) {
 			def match = matches[i]
 			if (match.player1_id == playerId)
-				match.player1_elo_rating = rating
+				match.player1_elo_rating = safeRound rating
 			else if (match.player2_id == playerId)
-				match.player2_elo_rating = rating
+				match.player2_elo_rating = safeRound rating
 		}
+	}
+
+	private static safeRound(Double d) {
+		d ? (int)round(d) : null
 	}
 
 	def simulate() {

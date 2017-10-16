@@ -66,7 +66,7 @@ public abstract class MatchDataUtil {
 	private static Round roundGroup(Round round) {
 		if (round == null)
 			return null;
-		return round.compareTo(Round.QF) <= 0 ? round : Round.RR;
+		return round.compareTo(Round.QF) <= 0 ? round : null;
 	}
 
 	public static Predicate<MatchData> isOpponent(int playerId) {

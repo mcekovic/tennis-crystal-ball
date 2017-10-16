@@ -1,7 +1,11 @@
 package org.strangeforest.tcb.stats.model;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 public class FavoritePlayerEx extends FavoritePlayer {
 
+	private Integer seed;
+	private String entry;
 	private final Integer currentRank;
 	private final Integer bestRank;
 	private Integer eloRating;
@@ -19,6 +23,29 @@ public class FavoritePlayerEx extends FavoritePlayer {
 		this.surfaceEloRating = surfaceEloRating;
 		this.last52WeeksTitles = last52WeeksTitles;
 		this.age = age;
+	}
+
+	public Integer getSeed() {
+		return seed;
+	}
+
+	public void setSeed(Integer seed) {
+		this.seed = seed;
+	}
+
+	public String getEntry() {
+		return entry;
+	}
+
+	public void setEntry(String entry) {
+		this.entry = entry;
+	}
+	
+	public String seedAndEntry() {
+		if (seed != null)
+			return !isNullOrEmpty(entry) ? seed + " " + entry : String.valueOf(seed);
+		else
+			return !isNullOrEmpty(entry) ? entry : "";
 	}
 
 	public Integer getCurrentRank() {
