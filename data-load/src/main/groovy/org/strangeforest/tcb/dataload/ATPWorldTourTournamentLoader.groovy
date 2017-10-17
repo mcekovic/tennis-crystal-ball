@@ -23,7 +23,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		super(sql)
 	}
 
-	def loadTournament(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, Collection<String> skipRounds = Collections.emptySet(), String name = null, overrideExtId) {
+	def loadTournament(int season, String urlId, extId, boolean current = false, String level = null, String surface = null, Collection<String> skipRounds = Collections.emptySet(), String name = null, overrideExtId = null) {
 		def url = tournamentUrl(current, season, urlId, extId)
 		println "Fetching tournament URL '$url'"
 		def stopwatch = Stopwatch.createStarted()
