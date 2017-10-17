@@ -55,6 +55,7 @@ class MatchScoreParser {
 					case '(RET)': outcome = setScores.isEmpty() ? 'W/O' : 'RET'; break
 					case 'ABD':
 					case 'ABN':
+					case '(ABN)':
 					case 'abandoned':
 					case 'unfinished':
 					case 'Unfinished': outcome = 'ABD'; break

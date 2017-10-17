@@ -30,6 +30,7 @@ VALUES
    ('Graham Primrose', 'Graham B Primrose'),
    ('Hans Joachim Ploetz', 'Hans Jaochim Plotz'),
    ('Hans Jurgen Pohmann', 'Han Jurgen Pohmann'),
+   ('Henry Pfister', 'Hank Pfister'),
    ('Henry (Hank) Irvine', 'Henry Hank Irvine'),
    ('Harry Sheridan', 'H Sheridan'),
    ('Herbert Browne', 'Herbert H Browne Jr'),

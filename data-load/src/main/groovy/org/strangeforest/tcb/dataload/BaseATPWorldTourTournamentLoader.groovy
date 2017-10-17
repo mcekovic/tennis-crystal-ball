@@ -41,6 +41,7 @@ abstract class BaseATPWorldTourTournamentLoader {
 			case '1000s': return 'M'
 			case '500': return 'A'
 			case '250':
+			case 'atp':
 			case 'atpwt':
 			case 'challenger': return 'B'
 			default: throw new IllegalArgumentException('Unknown tournament level: ' + level)
