@@ -16,6 +16,7 @@ class RecordsLoader {
 	long pause
 
 	static final int PROGRESS_LINE_WRAP = 100
+	static final long BIG_PAUSE = 2000L
 
 	RecordsLoader() {
 		recordsService = new RecordsService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
@@ -26,8 +27,11 @@ class RecordsLoader {
 		println 'Loading records'
 		def stopwatch = Stopwatch.createStarted()
 		doLoadRecords(Records.getRecordCategories(), 'famous')
+		doPause()
 		doLoadRecords(Records.getInfamousRecordCategories(), 'infamous')
+		doPause()
 		atpTennisLoader.refreshMaterializedViews(sql, 'player_goat_points')
+		doPause()
 		reloadRecordsGOATPointsRecords()
 		recordsService.clearActivePlayersRecords()
 		println "Records loaded in $stopwatch"
@@ -68,7 +72,12 @@ class RecordsLoader {
 		if (progress.incrementAndGet() % PROGRESS_LINE_WRAP == 0) {
 			println()
 			System.gc()
-			Thread.sleep(pause * 10)
+			Thread.sleep(BIG_PAUSE + pause * 10)
 		}
+	}
+
+	private doPause() {
+		System.gc()
+		Thread.sleep(BIG_PAUSE + pause * 10)
 	}
 }
