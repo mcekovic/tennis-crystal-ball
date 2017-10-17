@@ -160,7 +160,7 @@ class ATPTennisLoader {
 			atpWorldTourMatchLoader.loadTournament(1974, 'hong-kong', 336)
 			atpWorldTourMatchLoader.loadTournament(1976, 'birmingham', 350, false, null, 'G')
 			atpWorldTourMatchLoader.loadTournament(1976, 'pepsi-grand-slam', 1725, false, null, null, [], 'Pepsi Grand Slam')
-			atpWorldTourMatchLoader.loadTournament(1980, 'indian-wells', 404, false, 'B')
+			atpWorldTourMatchLoader.loadTournament(1980, 'indian-wells', 404, false, 'B', null, [], null, 728)
 			atpWorldTourMatchLoader.loadTournament(2007, 'vina-del-mar', 505)
 			atpWorldTourMatchLoader.loadTournament(2008, 'moscow', 438)
 
