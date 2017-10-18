@@ -2,6 +2,13 @@
 	<!--/*@thymesVar id="dataUpdate" type="java.util.Date"*/-->
 	<script type="text/javascript">
 		autocompletePlayer("player");
+		function dominanceTimeline() {
+			var url = "/dominanceTimeline";
+			var width = $(window).width();
+			if (width < 1700)
+				url += "?fromSeason=" + (1969 + Math.round((1700 - width) / 27));
+			window.location.href = url;
+		}
 	</script>
 	<nav id="navbar" class="navbar navbar-default component" th:with="path=${#httpServletRequest.getServletPath()}">
 		<div class="container-fluid">
@@ -37,7 +44,7 @@
 					<li th:class="${path != null && path.endsWith('Timeline') ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Timelines<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/dominanceTimeline' ? 'active' : _}"><a href="/dominanceTimeline">Dominance Timeline<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
+							<li th:class="${path == '/dominanceTimeline' ? 'active' : _}"><a href="javascript:dominanceTimeline()">Dominance Timeline<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'G' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=G">Grand Slam Timeline</a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'F' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=F">Tour Finals Timeline</a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'M' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=M">Masters Timeline</a></li>

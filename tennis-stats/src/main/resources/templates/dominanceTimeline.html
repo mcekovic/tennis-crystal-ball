@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:with="seasonCount=${timeline.seasons.size()}">
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="fromSeason" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="toSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.DominanceTimeline"*/-->
 <!--/*@thymesVar id="dominanceRatioCoefficient" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="minGOATPoints" type="java.lang.Integer"*/-->
@@ -53,11 +56,23 @@
 			$("#navbar").resize(correctPositionsOnResize);
 			$("[data-toggle='collapse']").click(collapseClick);
 		});
-	</script>
-	<style>
-		.container {
-			width: 1700px;
+		function reloadDominanceTimeline() {
+			var url = "/dominanceTimeline"
+			var fromSeason = $("#fromSeason").val();
+			if (fromSeason)
+				url += "?fromSeason=" + fromSeason;
+			var toSeason = $("#toSeason").val();
+			if (toSeason)
+				url += (fromSeason ? "&" : "?") + "toSeason=" + toSeason;
+			window.location = url;
 		}
+	</script>
+	<style th:inline="css">
+		[# th:if="${seasonCount > 30}"]
+		.container {
+			width: [(${1170 + 27 * (seasonCount - 30)})]px;
+		}
+		[/]
 		#dominanceTable > thead > tr.season > th {
 			line-height: 2.5;
 		}
@@ -98,9 +113,28 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>Dominance Timeline</h3>
-	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('lg')"/>
-	<table id="dominanceTable" class="table table-condensed table-hover table-bordered text-nowrap">
+	<div class="row">
+		<div class="col-md-8">
+			<h3 class="text-nowrap" style="display: inline">Dominance Timeline</h3>
+		</div>
+		<div class="col-md-4">
+			<div class="input-group">
+				<label for="fromSeason" class="input-group-addon">From:</label>
+				<select id="fromSeason" class="form-control" onchange="reloadDominanceTimeline()" data-toggle="tooltip" data-placement="top" title="Select from season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="1968" th:selected="${season == fromSeason}" th:text="${season}">1968</option>
+				</select>
+				<label for="toSeason" class="input-group-addon">To:</label>
+				<select id="toSeason" class="form-control" onchange="reloadDominanceTimeline()" data-toggle="tooltip" data-placement="top" title="Select to season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2017" th:selected="${season == toSeason}" th:text="${season}">2017</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<br/>
+	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired(${seasonCount >= 30 ? 'lg' : (seasonCount >= 22 ? 'md' : (seasonCount >= 14 ? 'sm' : _))})"/>
+	<table id="dominanceTable" class="table table-condensed table-hover table-bordered text-nowrap" style="width: auto">
 		<thead id="timelineHeader">
 		<tr class="best-player">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Era</th>

@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import com.google.common.collect.*;
+
 public class DominanceTimeline {
 
 	private final List<PlayerDominanceTimeline> players;
@@ -74,6 +76,20 @@ public class DominanceTimeline {
 	private PlayerDominanceTimeline getAdjacentSeasonBestPlayer(int seasonIndex) {
 		DominanceSeason prevSeason = dominanceSeasons.get(seasonIndex);
 		return !prevSeason.isOngoingSeason() ? prevSeason.getBestPlayer() : null;
+	}
+
+	public DominanceTimeline filterSeasons(Range<Integer> seasonRange) {
+		if (seasonRange.equals(Range.all()))
+			return this;
+		DominanceTimeline timeline = new DominanceTimeline();
+		for (PlayerDominanceTimeline player : players) {
+			player = player.filterSeasons(seasonRange);
+			if (player.hasSeasons())
+				timeline.addPlayer(player);
+		}
+		timeline.calculateDominanceSeasons();
+		timeline.calculateDominanceEras();
+		return timeline;
 	}
 
 

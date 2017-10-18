@@ -18,6 +18,14 @@ public class PlayerRow {
 		this.active = active;
 	}
 
+	public PlayerRow(PlayerRow player) {
+		rank = player.rank;
+		playerId = player.playerId;
+		name = player.name;
+		country = player.country;
+		active = player.active;
+	}
+
 	public int getRank() {
 		return rank;
 	}

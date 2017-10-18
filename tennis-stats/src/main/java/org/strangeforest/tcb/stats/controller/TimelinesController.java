@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
+import org.strangeforest.tcb.util.*;
+
+import com.google.common.collect.*;
 
 import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
 
@@ -21,11 +24,18 @@ public class TimelinesController extends PageController {
 	@Autowired private SurfaceService surfaceService;
 
 	@GetMapping("dominanceTimeline")
-	public ModelAndView dominanceTimeline() {
-		DominanceTimeline timeline = timelineService.getDominanceTimeline();
+	public ModelAndView dominanceTimeline(
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason
+	) {
+		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
+		DominanceTimeline timeline = timelineService.getDominanceTimeline().filterSeasons(seasonRange);
 		int minGOATPoints = timelineService.getMinGOATPoints();
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("seasons", dataService.getSeasons());
+		modelMap.addAttribute("fromSeason", seasonRange.hasLowerBound() ? seasonRange.lowerEndpoint() : null);
+		modelMap.addAttribute("toSeason", seasonRange.hasUpperBound() ? seasonRange.upperEndpoint() : null);
 		modelMap.addAttribute("timeline", timeline);
 		modelMap.addAttribute("minGOATPoints", minGOATPoints);
 		modelMap.addAttribute("dominanceRatioCoefficient", (int)DominanceSeason.DOMINANCE_RATIO_COEFFICIENT);

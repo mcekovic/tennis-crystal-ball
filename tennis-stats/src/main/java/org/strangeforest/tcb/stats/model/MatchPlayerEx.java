@@ -13,8 +13,8 @@ public class MatchPlayerEx extends MatchPlayer {
 
 	public MatchPlayerEx(MatchPlayerEx player) {
 		super(player);
-		this.rank = player.rank;
-		this.eloRating = player.eloRating;
+		rank = player.rank;
+		eloRating = player.eloRating;
 	}
 
 	public Integer getRank() {

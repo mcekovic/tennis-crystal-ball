@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import com.google.common.collect.*;
+
 import static java.util.stream.Collectors.*;
 
 public class PlayerDominanceTimeline extends PlayerRow {
@@ -19,6 +21,14 @@ public class PlayerDominanceTimeline extends PlayerRow {
 		this.goatPoints = goatPoints;
 	}
 
+
+	public PlayerDominanceTimeline(PlayerDominanceTimeline timeline) {
+		super(timeline);
+		lastName = timeline.lastName;
+		dob = timeline.dob;
+		goatPoints = timeline.goatPoints;
+	}
+
 	public String getLastName() {
 		return lastName;
 	}
@@ -32,8 +42,11 @@ public class PlayerDominanceTimeline extends PlayerRow {
 	}
 
 	public Set<Integer> getSeasons() {
-
 		return seasons.keySet();
+	}
+
+	public boolean hasSeasons() {
+		return !seasons.isEmpty();
 	}
 
 	public List<SeasonPoints> getSeasonsPoints() {
@@ -53,5 +66,14 @@ public class PlayerDominanceTimeline extends PlayerRow {
 
 	void setTimeline(DominanceTimeline timeline) {
 		this.timeline = timeline;
+	}
+
+	public PlayerDominanceTimeline filterSeasons(Range<Integer> seasonRange) {
+		PlayerDominanceTimeline player = new PlayerDominanceTimeline(this);
+		for (SeasonPoints seasonPoints : seasons.values()) {
+			if (seasonRange.contains(seasonPoints.getSeason()))
+				player.addSeasonPoints(seasonPoints);
+		}
+		return player;
 	}
 }
