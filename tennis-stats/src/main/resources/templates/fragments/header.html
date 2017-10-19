@@ -6,7 +6,7 @@
 			var url = "/dominanceTimeline";
 			var width = $(window).width();
 			if (width < 1700)
-				url += "?fromSeason=" + (1969 + Math.round((1700 - width) / 27));
+				url += "?fromSeason=" + Math.min(1969 + Math.round((1700 - width) / 27), 2008);
 			window.location.href = url;
 		}
 	</script>

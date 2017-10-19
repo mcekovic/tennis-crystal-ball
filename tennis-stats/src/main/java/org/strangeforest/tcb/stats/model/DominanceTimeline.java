@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.util.*;
+
 import com.google.common.collect.*;
 
 public class DominanceTimeline {
@@ -26,6 +28,14 @@ public class DominanceTimeline {
 
 	public List<DominanceSeason> getDominanceSeasons() {
 		return dominanceSeasons;
+	}
+
+	public DominanceSeason getDominanceSeason(int season) {
+		for (DominanceSeason dominanceSeason : dominanceSeasons) {
+			if (dominanceSeason.getSeason() == season)
+				return dominanceSeason;
+		}
+		throw new NotFoundException("Dominance season", season);
 	}
 
 	public List<DominanceEra> getDominanceEras() {
@@ -89,6 +99,8 @@ public class DominanceTimeline {
 		}
 		timeline.calculateDominanceSeasons();
 		timeline.calculateDominanceEras();
+		for (DominanceSeason dominanceSeason : timeline.getDominanceSeasons())
+			dominanceSeason.setAverageEloRatings(getDominanceSeason(dominanceSeason.getSeason()).getAverageEloRatings());
 		return timeline;
 	}
 

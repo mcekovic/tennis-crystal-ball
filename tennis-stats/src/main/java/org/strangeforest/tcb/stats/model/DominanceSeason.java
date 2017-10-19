@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
 import java.time.*;
+import java.util.*;
 
 public class DominanceSeason {
 
@@ -11,6 +12,7 @@ public class DominanceSeason {
 	private PlayerDominanceTimeline bestPlayer;
 	private PlayerDominanceTimeline eraPlayer;
 	private int bestPlayerPoints;
+	private Map<Integer, Integer> averageEloRatings;
 
 	public static final double DOMINANCE_RATIO_COEFFICIENT = 1500.0;
 
@@ -20,6 +22,7 @@ public class DominanceSeason {
 		int year = today.getYear();
 		ongoing = season == year && today.getMonth().compareTo(Month.NOVEMBER) < 0;
 		eligibleForEra = season < year || !ongoing;
+		averageEloRatings = new HashMap<>();
 	}
 
 	public int getSeason() {
@@ -52,6 +55,26 @@ public class DominanceSeason {
 
 	void setEraPlayer(PlayerDominanceTimeline eraPlayer) {
 		this.eraPlayer = eraPlayer;
+	}
+
+	Map<Integer, Integer> getAverageEloRatings() {
+		return averageEloRatings;
+	}
+
+	void setAverageEloRatings(Map<Integer, Integer> averageEloRatings) {
+		this.averageEloRatings = averageEloRatings;
+	}
+
+	public int getAverageEloRating(int topN) {
+		return averageEloRatings.get(topN);
+	}
+
+	public int getAverageEloRatingPoints(int topN) {
+		return 10 * ((getAverageEloRating(topN) - 1700) / 100);
+	}
+
+	public void addAverageEloRating(int topN, int eloRating) {
+		averageEloRatings.put(topN, eloRating);
 	}
 
 	void processPlayer(PlayerDominanceTimeline player) {

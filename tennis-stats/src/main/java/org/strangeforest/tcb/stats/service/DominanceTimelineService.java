@@ -29,6 +29,20 @@ public class DominanceTimelineService {
 		"WHERE g.goat_points >= :minGOATPoints\n" +
 		"ORDER BY p.dob DESC, p.name";
 
+	private static final String AVERAGE_ELO_RATINGS_QUERY = //language=SQL
+		"SELECT extract(YEAR FROM rank_date) AS season, round(avg(elo_rating) FILTER (WHERE rank = 1)) AS average_no1_elo_rating,\n" +
+		"  round(avg(elo_rating) FILTER (WHERE rank <= 2)) average_top2_elo_rating,\n" +
+		"  round(avg(elo_rating) FILTER (WHERE rank <= 3)) average_top3_elo_rating,\n" +
+		"  round(avg(elo_rating) FILTER (WHERE rank <= 5)) average_top5_elo_rating,\n" +
+		"  round(avg(elo_rating) FILTER (WHERE rank <= 10)) average_top10_elo_rating,\n" +
+		"  round(avg(elo_rating) FILTER (WHERE rank <= 20)) average_top20_elo_rating,\n" +
+		"  round(avg(elo_rating) FILTER (WHERE rank <= 50)) average_top50_elo_rating,\n" +
+		"  round(avg(elo_rating) FILTER (WHERE rank <= 100)) average_top100_elo_rating,\n" +
+		"  round(avg(elo_rating) FILTER (WHERE rank <= 200)) average_top200_elo_rating\n" +
+		"FROM player_elo_ranking\n" +
+		"GROUP BY season\n" +
+		"ORDER BY season DESC";
+	
 
 	@Cacheable(value = "Global", key = "'DominanceTimeline'")
 	public DominanceTimeline getDominanceTimeline() {
@@ -46,6 +60,22 @@ public class DominanceTimelineService {
 		);
 		timeline.calculateDominanceSeasons();
 		timeline.calculateDominanceEras();
+		jdbcTemplate.query(
+			AVERAGE_ELO_RATINGS_QUERY,
+			rs -> {
+				int season = rs.getInt("season");
+				DominanceSeason dominanceSeason = timeline.getDominanceSeason(season);
+				dominanceSeason.addAverageEloRating(1, rs.getInt("average_no1_elo_rating"));
+				dominanceSeason.addAverageEloRating(2, rs.getInt("average_top2_elo_rating"));
+				dominanceSeason.addAverageEloRating(3, rs.getInt("average_top3_elo_rating"));
+				dominanceSeason.addAverageEloRating(5, rs.getInt("average_top5_elo_rating"));
+				dominanceSeason.addAverageEloRating(10, rs.getInt("average_top10_elo_rating"));
+				dominanceSeason.addAverageEloRating(20, rs.getInt("average_top20_elo_rating"));
+				dominanceSeason.addAverageEloRating(50, rs.getInt("average_top50_elo_rating"));
+				dominanceSeason.addAverageEloRating(100, rs.getInt("average_top100_elo_rating"));
+				dominanceSeason.addAverageEloRating(200, rs.getInt("average_top200_elo_rating"));
+			}
+		);
 		return timeline;
 	}
 

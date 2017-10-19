@@ -3,6 +3,7 @@
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="fromSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="toSeason" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="averageElo" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.DominanceTimeline"*/-->
 <!--/*@thymesVar id="dominanceRatioCoefficient" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="minGOATPoints" type="java.lang.Integer"*/-->
@@ -54,7 +55,9 @@
 			dominanceTableOffset = $("#dominanceTable").offset();
 			$(window).resize(correctPositionsOnResize);
 			$("#navbar").resize(correctPositionsOnResize);
+			onAverageEloChange();
 			$("[data-toggle='collapse']").click(collapseClick);
+			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadDominanceTimeline() {
 			var url = "/dominanceTimeline"
@@ -64,7 +67,14 @@
 			var toSeason = $("#toSeason").val();
 			if (toSeason)
 				url += (fromSeason ? "&" : "?") + "toSeason=" + toSeason;
+			var averageElo = $("#averageElo").prop("checked");
+			if (averageElo)
+				url += (fromSeason || toSeason ? "&" : "?") + "averageElo=" + averageElo;
 			window.location = url;
+		}
+		function onAverageEloChange() {
+			var averageElo = $("#averageElo").prop("checked");
+			$("#averageEloTimeline").css("display", averageElo ? "table-header-group" : "none");
 		}
 	</script>
 	<style th:inline="css">
@@ -114,10 +124,10 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<div class="row">
-		<div class="col-md-8">
+		<div class="col-sm-4 col-md-5 col-lg-6">
 			<h3 class="text-nowrap" style="display: inline">Dominance Timeline</h3>
 		</div>
-		<div class="col-md-4">
+		<div class="col-sm-6 col-md-5 col-lg-4">
 			<div class="input-group">
 				<label for="fromSeason" class="input-group-addon">From:</label>
 				<select id="fromSeason" class="form-control" onchange="reloadDominanceTimeline()" data-toggle="tooltip" data-placement="top" title="Select from season">
@@ -131,10 +141,17 @@
 				</select>
 			</div>
 		</div>
+		<div class="col-sm-2 col-md-2 col-lg-2">
+			<div class="checkbox text-nowrap">
+				<label data-toggle="tooltip" data-placement="top" title="Show average Elo ratings">
+					<input id="averageElo" type="checkbox" th:checked="${averageElo}" onchange="onAverageEloChange()"/> Average Elo
+				</label>
+			</div>
+		</div>
 	</div>
 	<br/>
 	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired(${seasonCount >= 30 ? 'lg' : (seasonCount >= 22 ? 'md' : (seasonCount >= 14 ? 'sm' : _))})"/>
-	<table id="dominanceTable" class="table table-condensed table-hover table-bordered text-nowrap" style="width: auto">
+	<table id="dominanceTable" class="table table-condensed table-hover table-bordered text-nowrap" style="width: auto; border: 3px solid lightgray">
 		<thead id="timelineHeader">
 		<tr class="best-player">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Era</th>
@@ -160,6 +177,50 @@
 				<span th:text="${#numbers.formatDecimal(season.dominanceRatio, 1, 1)}" class="vseason">66.7</span>
 			</th>
 		</tr>
+		</thead>
+		<thead id="averageEloTimeline" style="display: none">
+		<tr class="season" style="border-bottom: 3px solid lightgray">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Average Elo Ratings</th>
+			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="@{/season(season=${season})}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
+		</tr>
+		<tr class="season" style="border-top: 3px solid lightgray">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average No 1 Elo Rating">No 1</th>
+			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(1)}"><span class="vseason" th:text="${season.getAverageEloRating(1)}">2100</span></th>
+		</tr>
+		<tr class="season" style="border-top: 3px solid lightgray">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 2 Elo Rating">Top 2</th>
+			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(2)}"><span class="vseason" th:text="${season.getAverageEloRating(2)}">2100</span></th>
+		</tr>
+		<tr class="season" style="border-top: 3px solid lightgray">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 3 Elo Rating">Top 3</th>
+			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(3)}"><span class="vseason" th:text="${season.getAverageEloRating(3)}">2100</span></th>
+		</tr>
+		<tr class="season" style="border-top: 3px solid lightgray">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 5 Elo Rating">Top 5</th>
+			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(5)}"><span class="vseason" th:text="${season.getAverageEloRating(5)}">2100</span></th>
+		</tr>
+		<tr class="season" style="border-top: 3px solid lightgray">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 10 Elo Rating">Top 10</th>
+			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(10)}"><span class="vseason" th:text="${season.getAverageEloRating(10)}">2100</span></th>
+		</tr>
+		<tr class="season" style="border-top: 3px solid lightgray">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 20 Elo Rating">Top 20</th>
+			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(20)}"><span class="vseason" th:text="${season.getAverageEloRating(20)}">2100</span></th>
+		</tr>
+		<tr class="season" style="border-top: 3px solid lightgray">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 50 Elo Rating">Top 50</th>
+			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(50)}"><span class="vseason" th:text="${season.getAverageEloRating(50)}">2100</span></th>
+		</tr>
+		<tr class="season" style="border-top: 3px solid lightgray">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 100 Elo Rating">Top 100</th>
+			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(100)}"><span class="vseason" th:text="${season.getAverageEloRating(100)}">2100</span></th>
+		</tr>
+		<tr class="season" style="border-top: 3px solid lightgray">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 200 Elo Rating">Top 200</th>
+			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(200)}"><span class="vseason" th:text="${season.getAverageEloRating(200)}">2100</span></th>
+		</tr>
+		</thead>
+		<thead>
 		<tr class="season" style="border-bottom: 3px solid lightgray">
 			<th style="padding: 1px 4px">Player</th>
 			<th style="padding: 1px 4px">Born</th>
