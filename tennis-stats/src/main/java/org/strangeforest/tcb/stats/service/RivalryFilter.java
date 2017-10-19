@@ -31,7 +31,7 @@ public class RivalryFilter {
 	private static final int LAST_52_WEEKS_SEASON = -1;
 
 	public RivalryFilter(Range<Integer> seasonRange, String level, String surface, String round) {
-		this.seasonRange = seasonRange;
+		this.seasonRange = seasonRange != null ? seasonRange : Range.all();
 		last52Weeks = false;
 		this.level = level;
 		this.surface = surface;
@@ -131,7 +131,7 @@ public class RivalryFilter {
 		if (this == o) return true;
 		if (!(o instanceof RivalryFilter)) return false;
 		RivalryFilter filter = (RivalryFilter)o;
-		return Objects.equals(seasonRange, filter.seasonRange) && last52Weeks == filter.last52Weeks && stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface) && stringsEqual(round, filter.round);
+		return seasonRange.equals(filter.seasonRange) && last52Weeks == filter.last52Weeks && stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface) && stringsEqual(round, filter.round);
 	}
 
 	@Override public int hashCode() {

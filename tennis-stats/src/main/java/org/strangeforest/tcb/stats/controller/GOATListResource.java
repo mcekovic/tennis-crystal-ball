@@ -38,6 +38,7 @@ public class GOATListResource {
 	@GetMapping("/goatListTable")
 	public BootgridTable<GOATListRow> goatListTable(
 		@RequestParam(name = "active", required = false) Boolean active,
+		@RequestParam(name = "oldLegends", defaultValue = "false") boolean oldLegends,
 		@RequestParam(name = "extrapolate", defaultValue = "false") boolean extrapolate,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
@@ -45,10 +46,10 @@ public class GOATListResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);
-		int playerCount = goatListService.getPlayerCount(filter);
+		int playerCount = goatListService.getPlayerCount(filter, oldLegends);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : playerCount;
-		return goatListService.getGOATListTable(playerCount, filter, extrapolate, orderBy, pageSize, current);
+		return goatListService.getGOATListTable(playerCount, filter, oldLegends, extrapolate, orderBy, pageSize, current);
 	}
 }

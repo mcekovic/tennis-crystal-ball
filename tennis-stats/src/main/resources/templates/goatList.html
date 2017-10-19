@@ -22,6 +22,9 @@
 					var active = $("#active").prop("checked");
 					if (active)
 						request.active = active;
+					var oldLegends = $("#oldLegends").prop("checked");
+					if (oldLegends)
+						request.oldLegends = oldLegends;
 					var extrapolate = $("#extrapolate").prop("checked");
 					if (extrapolate)
 						request.extrapolate = extrapolate;
@@ -91,6 +94,7 @@
 			var $goatListTableHeader = $("#goatListTable-header");
 			var $search = $goatListTableHeader.find("div.search");
 			$search.before($("#activeDiv").remove());
+			$search.before($("#oldLegendsDiv").remove());
 			$search.before($("#extrapolateDiv").remove());
 			setBootgridTitle($goatListTableHeader, $("#goatListTable-title"));
 			setBootgridTitles($goatListTable, [
@@ -132,6 +136,13 @@
 		<div class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
 				<input id="active" type="checkbox" onchange="reloadGOATListTable()"/> Active players
+			</label>
+		</div>
+	</div>
+	<div id="oldLegendsDiv" class="btn-group margin-right">
+		<div class="checkbox">
+			<label data-toggle="tooltip" data-placement="bottom" title="Include 'old legends' born before 1940 (but including only their Open Era achievements)">
+				<input id="oldLegends" type="checkbox" checked="checked" onchange="reloadGOATListTable()"/> Old legends
 			</label>
 		</div>
 	</div>

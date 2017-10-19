@@ -1763,7 +1763,7 @@ WITH goat_points AS (
 	INNER JOIN player p USING (player_id)
 	GROUP BY g.season - extract(YEAR FROM p.dob)
 ), goat_points_extrapolated AS (
-	SELECT player_id, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
+	SELECT player_id, dob, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
 		year_end_rank_goat_points, best_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, best_elo_rating_goat_points,
 		grand_slam_goat_points, big_wins_goat_points, h2h_goat_points, records_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points,
 		goat_points / (1.0 - coalesce(CASE
@@ -1774,6 +1774,7 @@ WITH goat_points AS (
 	INNER JOIN player p USING (player_id)
 )
 SELECT player_id, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank, rank() OVER (ORDER BY extrapolated_goat_points DESC NULLS LAST) AS extrapolated_goat_rank,
+	rank() OVER (ORDER BY (CASE WHEN dob >= DATE '1940-01-01' THEN goat_points ELSE NULL END) DESC NULLS LAST) AS alt_goat_rank, rank() OVER (ORDER BY (CASE WHEN dob >= DATE '1940-01-01' THEN extrapolated_goat_points ELSE NULL END) DESC NULLS LAST) AS alt_extrapolated_goat_rank,
 	goat_points, extrapolated_goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
 	year_end_rank_goat_points, best_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, best_elo_rating_goat_points,
 	grand_slam_goat_points, big_wins_goat_points, h2h_goat_points, records_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points
