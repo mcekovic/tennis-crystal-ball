@@ -53,6 +53,13 @@
 		});
 	}
 </script>
+<style th:inline="css">
+	[# th:if="${timeline.seasonCount > 18}"]
+	.container {
+		width: [(${1170 + 45 * (timeline.seasonCount - 18)})]px;
+	}
+	[/]
+</style>
 <style scoped="scoped">
 	th.season {
 		text-align: center;

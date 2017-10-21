@@ -89,12 +89,12 @@ public class MostMatchesCategory extends RecordCategory {
 
 	private static Record mostMatchesVs(RecordType type, RecordDomain domain) {
 		return new Record<>(
-			"MatchesVs" + domain.id + type.name, "Most Matches " + type.name + " Vs. " + domain.name,
+			"MatchesVs" + domain.id + type.name, "Most Matches " + type.name + " Vs " + domain.name,
 			/* language=SQL */
 			"SELECT player_id, " + type.expression(domain.columnPrefix) + " AS value FROM player_performance",
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s%3$s", playerId, domain.urlParam, type.urlParam + "played"),
-			asList(new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", "Matches " + type.name + " Vs. " + domain.name))
+			asList(new RecordColumn("value", null, "valueUrl", MATCHES_WIDTH, "right", "Matches " + type.name + " Vs " + domain.name))
 		);
 	}
 

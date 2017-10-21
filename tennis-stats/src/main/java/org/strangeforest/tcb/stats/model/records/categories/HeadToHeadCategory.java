@@ -134,7 +134,7 @@ public class HeadToHeadCategory extends RecordCategory {
 	private static Record mostH2HSeriesVs(MostLeast mostLeast, RecordType type, RecordDomain domain) {
 		int minSeries = minSeries(domain);
 		return new Record<>(
-			mostLeast.name + "H2HSeries" + type.name + "Vs" + domain.id, mostLeast.name + " Head-to-Head Series " + type.name + " Vs. Once " + domain.name,
+			mostLeast.name + "H2HSeries" + type.name + "Vs" + domain.id, mostLeast.name + " Head-to-Head Series " + type.name + " Vs Once " + domain.name,
 			/* language=SQL */
 			h2hVsSql(domain) +
 			"SELECT player_id, " + type.column + " AS value\n" +
@@ -150,7 +150,7 @@ public class HeadToHeadCategory extends RecordCategory {
 	private static Record greatestH2HSeriesPctVs(PctRecordType type, RecordDomain domain) {
 		int minSeries = minSeries(domain);
 		return new Record<>(
-			"H2HSeries" + type.name + "PctVs" + domain.id, "Greatest Head-to-Head Series " + type.name + " Pct. Vs. Once " + domain.name,
+			"H2HSeries" + type.name + "PctVs" + domain.id, "Greatest Head-to-Head Series " + type.name + " Pct. Vs Once " + domain.name,
 			/* language=SQL */
 			h2hVsSql(domain) +
 			"SELECT player_id, " + type.expression + " AS pct, h2h_won AS won, h2h_draw AS draw, h2h_lost AS lost\n" +

@@ -41,6 +41,10 @@ public class PlayerTimeline {
 		return seasons;
 	}
 
+	public int getSeasonCount() {
+		return seasons.size();
+	}
+
 	public boolean isEmpty() {
 		return tournaments.isEmpty();
 	}

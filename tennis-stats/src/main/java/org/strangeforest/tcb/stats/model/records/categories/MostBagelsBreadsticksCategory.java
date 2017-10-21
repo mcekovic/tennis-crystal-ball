@@ -124,7 +124,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 
 	private static Record mostItemsVs(RecordType type, ItemType itemType, RecordDomain domain) {
 		return new Record<>(
-			"Vs" + domain.id + itemType.name + type.id, "Most " + itemType.name + prefix(type.name, " ") + " Vs. " + domain.name,
+			"Vs" + domain.id + itemType.name + type.id, "Most " + itemType.name + prefix(type.name, " ") + " Vs " + domain.name,
 			/* language=SQL */
 			"WITH player_items AS (\n" +
 			"  SELECT m.winner_id AS player_id, count(match_id) AS items, max(date) AS last_date\n" +
@@ -209,7 +209,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
 		int minEntries = perfCategory.getMinEntries() * 2;
 		return new Record<>(
-			"Vs" + domain.id + itemType.name + type.id + "Pct", "Greatest " + itemType.name + prefix(type.name, " ") + " Pct. Vs. " + domain.name,
+			"Vs" + domain.id + itemType.name + type.id + "Pct", "Greatest " + itemType.name + prefix(type.name, " ") + " Pct. Vs " + domain.name,
 			/* language=SQL */
 			"WITH player_items AS (\n" +
 			"  SELECT m.winner_id AS player_id, count(match_id) AS total,\n" +

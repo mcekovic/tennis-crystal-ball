@@ -116,14 +116,14 @@ public class GreatestMatchPctCategory extends RecordCategory {
 	private static Record greatestMatchPctVs(RecordType type, RecordDomain domain) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
 		return new Record<>(
-			type.name + "PctVs" + domain.id, "Greatest " + type.name + " Pct. Vs. " + domain.name,
+			type.name + "PctVs" + domain.id, "Greatest " + type.name + " Pct. Vs " + domain.name,
 			/* language=SQL */
 			"SELECT player_id, " + type.expression(domain.columnPrefix) + " AS pct, " + domain.columnPrefix + "_won AS won, " + domain.columnPrefix + "_lost AS lost\n" +
 			"FROM player_performance WHERE " + domain.columnPrefix + "_won + " + domain.columnPrefix + "_lost >= " + perfCategory.getMinEntries(),
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC",
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&outcome=played", playerId, domain.urlParam),
 			asList(
-				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct. Vs. " + domain.name),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct. Vs " + domain.name),
 				type.valueRecordColumn,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
 			),
@@ -205,7 +205,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 	private static Record greatestPeakMatchPctVs(RecordType type, RecordDomain domain) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(domain.perfCategory);
 		return new Record<>(
-			"Peak" + type.name + "PctVs" + domain.id, "Greatest Peak " + type.name + " Pct. Vs. " + domain.name,
+			"Peak" + type.name + "PctVs" + domain.id, "Greatest Peak " + type.name + " Pct. Vs " + domain.name,
 			/* language=SQL */
 			"WITH win_pct AS (\n" +
 			"  SELECT player_id, (sum(" + type.peakColumn + ") OVER m)::FLOAT / count(match_id) OVER m AS pct, sum(p_matches) OVER m AS won, sum(o_matches) OVER m AS lost, date\n" +
