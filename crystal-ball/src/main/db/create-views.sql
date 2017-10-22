@@ -1057,7 +1057,8 @@ GROUP BY gs.player_id, grand_slam_on_same_event;
 -- player_big_wins_v
 
 CREATE OR REPLACE VIEW player_big_wins_v AS
-SELECT m.winner_id AS player_id, m.season, m.date, (mf.match_factor * (wrf.rank_factor + lrf.rank_factor) / 2.0) / 100 AS goat_points
+SELECT m.winner_id AS player_id, m.season, m.date,
+	mf.match_factor * ((wrf.rank_factor + lrf.rank_factor)::NUMERIC / 2 + pow(10, (m.loser_elo_rating - 2000)::NUMERIC / 400)) / 200 AS goat_points
 FROM match_for_stats_v m
 INNER JOIN big_win_match_factor mf ON mf.level = m.level AND mf.round = m.round
 INNER JOIN big_win_rank_factor wrf ON m.winner_rank BETWEEN wrf.rank_from AND wrf.rank_to
@@ -1374,6 +1375,13 @@ WITH acePct_leaders AS (
 ), doubleFaultPct_leaders_ranked AS (
 	SELECT rank() OVER (ORDER BY value ASC) AS rank, player_id
 	FROM doubleFaultPct_leaders
+), acesDfsRatio_leaders AS (
+	SELECT player_id, p_ace::REAL / p_df AS value
+	FROM player_stats
+	WHERE p_sv_pt + o_sv_pt >= statistics_min_entries('acesDfsRatio')
+), acesDfsRatio_leaders_ranked AS (
+	SELECT rank() OVER (ORDER BY value ASC) AS rank, player_id
+	FROM acesDfsRatio_leaders
 ), firstServePct_leaders AS (
 	SELECT player_id, p_1st_in::REAL / p_sv_pt AS value
 	FROM player_stats
@@ -1511,6 +1519,10 @@ WITH acePct_leaders AS (
 	SELECT l.player_id, g.goat_points
 	FROM doubleFaultPct_leaders_ranked l
 	INNER JOIN statistics_goat_points g ON g.category_id = 'doubleFaultPct' AND g.rank = l.rank
+	UNION ALL
+	SELECT l.player_id, g.goat_points
+	FROM acesDfsRatio_leaders_ranked l
+	INNER JOIN statistics_goat_points g ON g.category_id = 'acesDfsRatio' AND g.rank = l.rank
 	UNION ALL
 	SELECT l.player_id, g.goat_points
 	FROM firstServePct_leaders_ranked l

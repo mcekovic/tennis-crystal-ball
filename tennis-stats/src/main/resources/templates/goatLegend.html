@@ -188,13 +188,15 @@
 						<a th:unless="${forSeason}" href="/record?recordId=BigWinsGOATPoints" title="Players with most Big Wins GOAT Points">Big Wins Points</a>
 						<a th:if="${forSeason}" href="/record?recordId=SeasonBigWinsGOATPoints" title="Players with most Big Wins GOAT Points in the single season">Big Wins Points</a>
 					</strong>
-					<p>Points assigned for winning big matches in the end-rounds of important tournaments against high-ranked opponents or as a high-ranked player</p>
+					<p>Points assigned for winning big matches in the end-rounds of important tournaments against high-ranked opponents or as a high-ranked player and against opponents with high Elo rating</p>
 					<p class="text-nowrap">
-						<i>sum</i>(MatchFactor * RankFactor) / 100<br/>
+						<i>sum</i>(MatchFactor *<br/>
+							(RankFactor + EloFactor) / 200)<br/>
 						<span style="font-size: smaller">
 							MatchFactor = <i>factor</i>(Level, Round)<br/>
 							RankFactor =<br/>
-							(<i>factor</i>(WinnerRank) + <i>factor</i>(LoserRank)) / 2
+							(<i>factor</i>(WinnerRank) + <i>factor</i>(LoserRank)) / 2<br/>
+							EloFactor = 10 ^ (LoserEloRating - 2000) / 400
 						</span>
 					</p>
 				</div>
@@ -246,7 +248,7 @@
 							Wh2hWeight = 1 + H2HMatchesWon / 10<br/>
 							Lh2h = H2H Won: 1, H2H Draw: 2, H2H Lost: 3<br/>
 							Lh2hWeight = 1 + H2HMatchesLost / 10<br/>
-							RankFactor = <i>factor</i>(OpponentRank)<br/>
+							RankFactor = <i>factor</i>(OpponentBestRank)<br/>
 							* minimum 3 H2H series matches<br/>
 							** minimum 10 H2H series
 						</span>
