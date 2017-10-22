@@ -76,6 +76,10 @@ public class HighestOpponentRankCategory extends RecordCategory {
 		register(highestTitleOpponentRank(type, rankingType, TOUR_FINALS));
 		register(highestTitleOpponentRank(type, rankingType, MASTERS));
 		register(highestTitleOpponentRank(type, rankingType, OLYMPICS));
+		register(highestTitlesOpponentRank(type, rankingType, ALL_WO_TEAM));
+		register(highestTitlesOpponentRank(type, rankingType, GRAND_SLAM));
+		register(highestTitlesOpponentRank(type, rankingType, TOUR_FINALS));
+		register(highestTitlesOpponentRank(type, rankingType, MASTERS));
 	}
 
 	private static Record highestOpponentRank(RecordType type, RankingType rankingType, RecordDomain domain) {
@@ -129,7 +133,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 		int minEntries = 3;
 		String desc = desc(type.orderDesc ^ rankingType.orderDesc);
 		return new Record<>(
-			type.name + "Title" + domain.id + "Opponent" + rankingType.id, suffix(type.name, " ") + suffix(domain.name, " ") + " Title Mean Opponent " + rankingType.name,
+			type.name + "Title" + domain.id + "Opponent" + rankingType.id, type.name +  " Mean Opponent " + rankingType.name + " Winning " + suffix(domain.name, " ") + "Title",
 			/* language=SQL */
 			"WITH tournament_opponent_rank AS (\n" +
 			"  SELECT player_id, tournament_event_id, e.name AS tournament, e.level, e.season, e.date, " + rankingType.function + " AS unrounded_value\n" +
@@ -148,6 +152,29 @@ public class HighestOpponentRankCategory extends RecordCategory {
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")
 			),
+			format("Minimum %1$d matches; %2$s", minEntries, rankingType.notes)
+		);
+	}
+
+	private static Record highestTitlesOpponentRank(RecordType type, RankingType rankingType, RecordDomain domain) {
+		int minEntries = 10;
+		String desc = desc(type.orderDesc ^ rankingType.orderDesc);
+		return new Record<>(
+			type.name + "Titles" + domain.id + "Opponent" + rankingType.id, type.name + " Mean Opponent " + rankingType.name + " Winning " + suffix(domain.name, " ") + "Titles",
+			/* language=SQL */
+			"WITH titles_opponent_rank AS (\n" +
+			"  SELECT player_id, " + rankingType.function + " AS unrounded_value\n" +
+			"  FROM player_match_for_stats_v INNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)\n" +
+			"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+			"  WHERE r.result = 'W' AND e." + domain.condition + "\n" +
+			"  GROUP BY player_id\n" +
+			"  HAVING count(*) >= " + minEntries + "\n" +
+			")\n" +
+			"SELECT player_id, round(unrounded_value::NUMERIC, 1) AS value, unrounded_value\n" +
+			"FROM titles_opponent_rank" + rankingType.where,
+			"r.value", "r.unrounded_value" + desc, "r.unrounded_value" + desc,
+			DoubleRecordDetail.class, null,
+			asList(new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name)),
 			format("Minimum %1$d matches; %2$s", minEntries, rankingType.notes)
 		);
 	}
