@@ -195,15 +195,15 @@ class EloRatings {
 				if (rankExecutor)
 					schedule = true
 				else {
-					winnerRating = winnerRating ?: newEloRating(winnerId, surface)
-					loserRating = loserRating ?: newEloRating(loserId, surface)
+					winnerRating = winnerRating ?: newEloRating(winnerId)
+					loserRating = loserRating ?: newEloRating(loserId)
 				}
 			}
 			if (schedule) {
 				def future = CompletableFuture.allOf(playerMatchFutures.get(playerId1) ?: nullFuture, playerMatchFutures.get(playerId2) ?: nullFuture).thenRunAsync({
 					lockManager.withLock(playerId1, playerId2) {
-						winnerRating = getRating(surface, winnerId, date) ?: newEloRating(winnerId, surface)
-						loserRating = getRating(surface, loserId, date) ?: newEloRating(loserId, surface)
+						winnerRating = getRating(surface, winnerId, date) ?: newEloRating(winnerId)
+						loserRating = getRating(surface, loserId, date) ?: newEloRating(loserId)
 						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome)
 						putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date, outcome)
 					}
@@ -218,8 +218,8 @@ class EloRatings {
 		}
 	}
 
-	private EloRating newEloRating(int playerId, String surface) {
-		new EloRating(playerId, playerRank(playerId, lastDate), surface)
+	private EloRating newEloRating(int playerId) {
+		new EloRating(playerId, playerRank(playerId, lastDate))
 	}
 
 	private getRatings(String surface) {
@@ -263,10 +263,10 @@ class EloRatings {
 			default: kFactor *= 0.6; break
 		}
 		switch (surface) {
-			case 'H': kFactor *= 1.5; break
-			case 'C': kFactor *= 1.6; break
-			case 'G': kFactor *= 2.2; break
-			case 'P': kFactor *= 2.2; break
+			case 'H': kFactor *= 1.75; break
+			case 'C': kFactor *= 1.85; break
+			case 'G': kFactor *= 2.40; break
+			case 'P': kFactor *= 2.90; break
 		}
 		switch (round) {
 			case 'F': break
@@ -311,9 +311,9 @@ class EloRatings {
 
 		EloRating() {}
 
-		EloRating(int playerId, Integer rank, String surface) {
+		EloRating(int playerId, Integer rank) {
 			this.playerId = playerId
-			rating = startRating(rank, surface)
+			rating = startRating(rank)
 		}
 
 		EloRating newRating(double delta, Date date, String surface) {

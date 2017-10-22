@@ -27,7 +27,7 @@ class EloRatingsTest {
 	}
 
 	static startRating(int rank) {
-		new EloRating(100, rank, null).rating
+		new EloRating(100, rank).rating
 	}
 
 	@Test
