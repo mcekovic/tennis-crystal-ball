@@ -1,7 +1,5 @@
 package org.strangeforest.tcb.dataload
 
-import groovy.transform.EqualsAndHashCode
-
 import java.time.*
 import java.time.temporal.*
 import java.util.concurrent.*
@@ -11,8 +9,10 @@ import org.strangeforest.tcb.util.*
 
 import com.google.common.base.*
 import groovy.sql.*
+import groovy.transform.*
 
 import static java.lang.Math.*
+import static org.strangeforest.tcb.dataload.EloSurfaceFactors.*
 import static org.strangeforest.tcb.dataload.StartEloRatings.*
 import static org.strangeforest.tcb.util.DateUtil.*
 
@@ -204,7 +204,7 @@ class EloRatings {
 					lockManager.withLock(playerId1, playerId2) {
 						winnerRating = getRating(surface, winnerId, date) ?: newEloRating(winnerId)
 						loserRating = getRating(surface, loserId, date) ?: newEloRating(loserId)
-						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome)
+						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome, date)
 						putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date, outcome)
 					}
 				}, rankExecutor)
@@ -212,7 +212,7 @@ class EloRatings {
 				playerMatchFutures.put(playerId2, future)
 			}
 			else {
-				def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome)
+				def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome, date)
 				putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date, outcome)
 			}
 		}
@@ -243,16 +243,16 @@ class EloRatings {
 			matchRatings.put new MatchEloRating(matchId: matchId, winnerRating: winnerRating.rating, loserRating: loserRating.rating)
 	}
 
-	static double deltaRating(double winnerRating, double loserRating, String level, String surface, String round, short bestOf, String outcome) {
+	static double deltaRating(double winnerRating, double loserRating, String level, String surface, String round, short bestOf, String outcome, Date date) {
 		if (outcome == 'ABD')
 			return 0.0
 		double winnerQ = pow(10, winnerRating / 400)
 		double loserQ = pow(10, loserRating / 400)
 		double loserExpectedScore = loserQ / (winnerQ + loserQ)
-		kFactor(level, surface, round, bestOf, outcome) * loserExpectedScore
+		kFactor(level, surface, round, bestOf, outcome, date) * loserExpectedScore
 	}
 
-	static double kFactor(String level, String surface, String round, short bestOf, String outcome) {
+	static double kFactor(String level, String surface, String round, short bestOf, String outcome, Date date = new Date()) {
 		double kFactor = 100
 		switch (level) {
 			case 'G': break

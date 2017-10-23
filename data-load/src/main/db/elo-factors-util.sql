@@ -18,3 +18,9 @@ ORDER BY rank;
 SELECT round(avg(elo_rating)) overall, round(avg(hard_elo_rating)) hard, round(avg(clay_elo_rating)) clay, round(avg(grass_elo_rating)) grass, round(avg(carpet_elo_rating)) carpet
 FROM player_elo_ranking
 WHERE rank <= 50;
+
+SELECT extract(YEAR FROM rank_date) season, round(avg(elo_rating)) overall, round(avg(hard_elo_rating)) hard, round(avg(clay_elo_rating)) clay, round(avg(grass_elo_rating)) grass, round(avg(carpet_elo_rating)) carpet
+FROM player_elo_ranking
+WHERE rank <= 50
+GROUP BY season
+ORDER BY season;
