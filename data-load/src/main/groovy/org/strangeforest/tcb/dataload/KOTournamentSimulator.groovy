@@ -73,7 +73,7 @@ class KOTournamentSimulator {
 						rating2 = StartEloRatings.START_RATING
 					def winneRating = winner1 ? rating1 : rating2
 					def loserRating = winner1 ? rating2 : rating1
-					def deltaRating = EloRatings.deltaRating(winneRating, loserRating, match.level, match.surface, match.round, (short)match.best_of, match.outcome)
+					def deltaRating = EloRatings.deltaRating(winneRating, loserRating, match.level, match.round, (short)match.best_of, match.outcome)
 					deltaRating = winner1 ? deltaRating : -deltaRating
 					rating1 += deltaRating * EloRatings.kFunction(rating1)
 					rating2 -= deltaRating * EloRatings.kFunction(rating2)

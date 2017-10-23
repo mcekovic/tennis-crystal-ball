@@ -12,7 +12,6 @@ import groovy.sql.*
 import groovy.transform.*
 
 import static java.lang.Math.*
-import static org.strangeforest.tcb.dataload.EloSurfaceFactors.*
 import static org.strangeforest.tcb.dataload.StartEloRatings.*
 import static org.strangeforest.tcb.util.DateUtil.*
 
@@ -23,6 +22,7 @@ class EloRatings {
 	final LockManager<Integer> lockManager
 	final LockManager<RankKey> rankLockManager
 	final Map<Integer, CompletableFuture> playerMatchFutures
+	final EloSurfaceFactors eloSurfaceFactors
 	Map<Integer, EloRating> playerRatings
 	Map<String, Map<Integer, EloRating>> surfacePlayerRatings
 	BlockingQueue<MatchEloRating> matchRatings
@@ -88,6 +88,7 @@ class EloRatings {
 		lockManager = new LockManager<>()
 		rankLockManager = new LockManager<>()
 		playerMatchFutures = new HashMap<>()
+		eloSurfaceFactors = new EloSurfaceFactors(sqlPool)
 	}
 
 	def compute(boolean save = false, boolean fullSave = true, Date saveFromDate = null, boolean preLoadRanks = true) {
@@ -114,14 +115,16 @@ class EloRatings {
 			rankExecutor = Executors.newFixedThreadPool(rankThreads)
 		}
 		if (save) {
-			saveExecutor = Executors.newFixedThreadPool(saveThreads)
-			println "Using $saveThreads saving threads"
 			if (fullSave)
 				deleteAll()
 			else
 				this.saveFromDate = saveFromDate ? saveFromDate : lastDate()
+			saveExecutor = Executors.newFixedThreadPool(saveThreads)
+			println "Processing matches using $saveThreads saving threads"
 		}
-		println 'Processing matches'
+		else
+			println 'Processing matches'
+
 		sqlPool.withSql { sql ->
 			try {
 				sql.withStatement { st -> st.fetchSize = MATCHES_FETCH_SIZE }
@@ -204,7 +207,9 @@ class EloRatings {
 					lockManager.withLock(playerId1, playerId2) {
 						winnerRating = getRating(surface, winnerId, date) ?: newEloRating(winnerId)
 						loserRating = getRating(surface, loserId, date) ?: newEloRating(loserId)
-						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome, date)
+						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
+						if (forSurface)
+							deltaRating *= eloSurfaceFactors.surfaceKFactor(surface, date)
 						putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date, outcome)
 					}
 				}, rankExecutor)
@@ -212,7 +217,9 @@ class EloRatings {
 				playerMatchFutures.put(playerId2, future)
 			}
 			else {
-				def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, surface, round, bestOf, outcome, date)
+				def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
+				if (forSurface)
+					deltaRating *= eloSurfaceFactors.surfaceKFactor(surface, date)
 				putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date, outcome)
 			}
 		}
@@ -243,16 +250,16 @@ class EloRatings {
 			matchRatings.put new MatchEloRating(matchId: matchId, winnerRating: winnerRating.rating, loserRating: loserRating.rating)
 	}
 
-	static double deltaRating(double winnerRating, double loserRating, String level, String surface, String round, short bestOf, String outcome, Date date) {
+	static double deltaRating(double winnerRating, double loserRating, String level, String round, short bestOf, String outcome) {
 		if (outcome == 'ABD')
 			return 0.0
 		double winnerQ = pow(10, winnerRating / 400)
 		double loserQ = pow(10, loserRating / 400)
 		double loserExpectedScore = loserQ / (winnerQ + loserQ)
-		kFactor(level, surface, round, bestOf, outcome, date) * loserExpectedScore
+		kFactor(level, round, bestOf, outcome) * loserExpectedScore
 	}
 
-	static double kFactor(String level, String surface, String round, short bestOf, String outcome, Date date = new Date()) {
+	static double kFactor(String level, String round, short bestOf, String outcome) {
 		double kFactor = 100
 		switch (level) {
 			case 'G': break
@@ -261,12 +268,6 @@ class EloRatings {
 			case 'O': kFactor *= 0.75; break
 			case 'A': kFactor *= 0.7; break
 			default: kFactor *= 0.6; break
-		}
-		switch (surface) {
-			case 'H': kFactor *= 1.75; break
-			case 'C': kFactor *= 1.85; break
-			case 'G': kFactor *= 2.40; break
-			case 'P': kFactor *= 2.90; break
 		}
 		switch (round) {
 			case 'F': break
@@ -413,7 +414,7 @@ class EloRatings {
 	}
 
 	private loadRanks() {
-		println 'Preloading ranks...'
+		print 'Preloading ranks'
 		def stopwatch = Stopwatch.createStarted()
 		rankDateCache = new LinkedHashMap<>()
 		def rankPreloads = 0
@@ -428,10 +429,10 @@ class EloRatings {
 				}
 				rankTable[rankRecord.player_id] = rankRecord.rank
 				if (++rankPreloads % RANK_PRELOADS_PER_QUESTION_MARK == 0)
-					progressTick '?'
+					progressTick '.'
 			}
 		}
-		println "\nRanks preloaded in $stopwatch"
+		println " $stopwatch"
 		progress = new AtomicInteger()
 	}
 
