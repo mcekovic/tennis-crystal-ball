@@ -9,7 +9,6 @@ import org.strangeforest.tcb.stats.model.*;
 import com.google.common.collect.*;
 
 import static java.lang.Math.*;
-import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
 import static org.strangeforest.tcb.stats.model.prediction.WinningPctPredictionItem.*;
@@ -123,18 +122,5 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 				}
 			}
 		}
-	}
-
-	private static final List<Range<Integer>> RANK_RANGES = asList(
-		Range.closed(1, 5),
-		Range.openClosed(5, 10),
-		Range.openClosed(10, 20),
-		Range.openClosed(20, 50),
-		Range.openClosed(50, 100),
-		Range.greaterThan(100)
-	);
-
-	private static Range<Integer> rankRange(Integer rank) {
-		return rank != null ? RANK_RANGES.stream().filter(range -> range.contains(rank)).findFirst().orElse(null) : null;
 	}
 }

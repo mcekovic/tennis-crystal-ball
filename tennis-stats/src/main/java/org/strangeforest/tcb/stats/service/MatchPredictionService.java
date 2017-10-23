@@ -124,7 +124,7 @@ public class MatchPredictionService {
 		short bstOf = defaultBestOf(level, bestOf);
 		MatchPrediction prediction = predictMatch(asList(
 			new RankingMatchPredictor(rankingData1, rankingData2),
-			new RecentFormMatchPredictor(matchData1, matchData2, date1, date2, surface, level),
+			new RecentFormMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round),
 			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date1, date2, surface, level, tournamentId, round, bstOf),
 			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, tournamentId, bstOf)
 		));

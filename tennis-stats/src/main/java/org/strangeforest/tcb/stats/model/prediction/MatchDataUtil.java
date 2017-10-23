@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
 import java.time.*;
+import java.util.*;
 import java.util.function.*;
 
 import org.strangeforest.tcb.stats.model.*;
@@ -8,6 +9,7 @@ import org.strangeforest.tcb.stats.model.*;
 import com.google.common.collect.*;
 
 import static java.lang.Math.*;
+import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.util.CodedEnum.*;
 
 public abstract class MatchDataUtil {
@@ -82,6 +84,19 @@ public abstract class MatchDataUtil {
 			else
 				return false;
 		};
+	}
+
+	private static final List<Range<Integer>> RANK_RANGES = asList(
+		Range.closed(1, 5),
+		Range.openClosed(5, 10),
+		Range.openClosed(10, 20),
+		Range.openClosed(20, 50),
+		Range.openClosed(50, 100),
+		Range.greaterThan(100)
+	);
+
+	public static Range<Integer> rankRange(Integer rank) {
+		return rank != null ? RANK_RANGES.stream().filter(range -> range.contains(rank)).findFirst().orElse(null) : null;
 	}
 
 	public static Predicate<MatchData> isOpponentHand(String hand) {

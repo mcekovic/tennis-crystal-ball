@@ -2,9 +2,13 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 public enum RecentFormPredictionItem implements PredictionItem {
 
-	OVERALL(5.0),
-	SURFACE(4.0),
-	LEVEL(5.0);
+	OVERALL(6.0),
+	SURFACE(6.0),
+	LEVEL(9.0),
+	ROUND(0.0),
+	VS_RANK(0.0),
+	VS_HAND(1.0),
+	VS_BACKHAND(0.0);
 
 	private volatile PredictionArea area;
 	private volatile double weight;

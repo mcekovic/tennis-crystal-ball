@@ -3,12 +3,12 @@ package org.strangeforest.tcb.stats.model.prediction;
 public enum WinningPctPredictionItem implements MatchPredictionItem {
 
 	OVERALL(false, 2.0),
-	SURFACE(false, 8.0),
+	SURFACE(false, 9.0),
 	LEVEL(false, 1.0),
 	TOURNAMENT(false, 0.0),
 	ROUND(false, 0.0),
-	RECENT(false, 1.0),
-	SURFACE_RECENT(false, 3.0),
+	RECENT(false, 2.0),
+	SURFACE_RECENT(false, 2.0),
 	LEVEL_RECENT(false, 3.0),
 	ROUND_RECENT(false, 0.0),
 	VS_RANK(false, 0.0),
