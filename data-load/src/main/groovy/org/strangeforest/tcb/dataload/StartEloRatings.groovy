@@ -5,12 +5,12 @@ class StartEloRatings {
 	static final int START_RATING = 1500
 	static final int START_RATING_RANK = 300
 	static final List<RatingPoint> START_RATING_TABLE = [
-		ratingPoint(  1, 2368),
+		ratingPoint(  1, 2367),
 		ratingPoint(  2, 2290),
-		ratingPoint(  3, 2236),
+		ratingPoint(  3, 2235),
 		ratingPoint(  4, 2192),
 		ratingPoint(  5, 2158),
-		ratingPoint(  7, 2130),
+		ratingPoint(  7, 2110),
 		ratingPoint( 10, 2064),
 		ratingPoint( 15, 2016),
 		ratingPoint( 20, 1982),

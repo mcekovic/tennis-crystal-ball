@@ -3,7 +3,7 @@ UNION SELECT 2, round(avg(elo_rating)), round(avg(hard_elo_rating)), round(avg(c
 UNION SELECT 3, round(avg(elo_rating)), round(avg(hard_elo_rating)), round(avg(clay_elo_rating)), round(avg(grass_elo_rating)), round(avg(carpet_elo_rating)) FROM player_elo_ranking WHERE rank = 3
 UNION SELECT 4, round(avg(elo_rating)), round(avg(hard_elo_rating)), round(avg(clay_elo_rating)), round(avg(grass_elo_rating)), round(avg(carpet_elo_rating)) FROM player_elo_ranking WHERE rank = 4
 UNION SELECT 5, round(avg(elo_rating)), round(avg(hard_elo_rating)), round(avg(clay_elo_rating)), round(avg(grass_elo_rating)), round(avg(carpet_elo_rating)) FROM player_elo_ranking WHERE rank = 5
-UNION SELECT 7, round(avg(elo_rating)), round(avg(hard_elo_rating)), round(avg(clay_elo_rating)), round(avg(grass_elo_rating)), round(avg(carpet_elo_rating)) FROM player_elo_ranking WHERE rank = 6
+UNION SELECT 7, round(avg(elo_rating)), round(avg(hard_elo_rating)), round(avg(clay_elo_rating)), round(avg(grass_elo_rating)), round(avg(carpet_elo_rating)) FROM player_elo_ranking WHERE rank = 7
 UNION SELECT 10, round(avg(elo_rating)), round(avg(hard_elo_rating)), round(avg(clay_elo_rating)), round(avg(grass_elo_rating)), round(avg(carpet_elo_rating)) FROM player_elo_ranking WHERE rank = 10
 UNION SELECT 15, round(avg(elo_rating)), round(avg(hard_elo_rating)), round(avg(clay_elo_rating)), round(avg(grass_elo_rating)), round(avg(carpet_elo_rating)) FROM player_elo_ranking WHERE rank = 15
 UNION SELECT 20, round(avg(elo_rating)), round(avg(hard_elo_rating)), round(avg(clay_elo_rating)), round(avg(grass_elo_rating)), round(avg(carpet_elo_rating)) FROM player_elo_ranking WHERE rank = 20
