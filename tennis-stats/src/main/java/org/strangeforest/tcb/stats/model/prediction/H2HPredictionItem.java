@@ -6,7 +6,7 @@ public enum H2HPredictionItem implements MatchPredictionItem {
 	SURFACE(false, 6.0),
 	LEVEL(false, 1.0),
 	TOURNAMENT(false, 2.0),
-	ROUND(false, 3.0),
+	ROUND(false, 4.0),
 	RECENT(false, 5.0),
 	SURFACE_RECENT(false, 0.0),
 	LEVEL_RECENT(false, 3.0),

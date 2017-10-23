@@ -258,15 +258,16 @@ class ATPTennisLoader {
 		def stopwatch = Stopwatch.createStarted()
 		for (String materializedView : materializedViews)
 			refreshMaterializedView(sql, materializedView)
-		println "Materialized views refreshed in $stopwatch"
+		if (materializedViews.length > 1)
+			println "Materialized views refreshed in $stopwatch"
 	}
 
 	def refreshMaterializedView(Sql sql, String viewName) {
 		def stopwatch = Stopwatch.createStarted()
-		println "Refreshing materialized view '$viewName'"
+		print "Refreshing materialized view '$viewName'"
 		sql.execute("REFRESH MATERIALIZED VIEW $viewName".toString())
 		sql.commit()
-		println "Materialized view '$viewName' refreshed in $stopwatch"
+		println " in $stopwatch"
 	}
 
 	def createDatabase(Sql sql) {
