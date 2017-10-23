@@ -30,10 +30,6 @@ class EloSurfaceFactors {
 				carpetFactors[season] = (2.3 + pctToFactor(toDouble(row.carpet_pct))) / 2
 			}
 		}
-		println hardFactors
-		println clayFactors
-		println grassFactors
-		println carpetFactors
 	}
 
 	double surfaceKFactor(String surface, Date date) {
