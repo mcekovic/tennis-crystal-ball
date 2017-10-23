@@ -216,9 +216,9 @@ class ATPTennisLoader {
 
 	def correctDataFull(sql) {
 		def stopwatch = Stopwatch.createStarted()
-		println 'Correcting data (full)...'
+		print 'Correcting data (full)'
 		executeSQLFile(sql, '/correct-data-full.sql')
-		println "Correcting data (full) finished in $stopwatch"
+		println " finished in $stopwatch"
 
 		println 'Updating tournament event surfaces...'
 		executeSQLFile(sql, '/tournament-event-surfaces.sql')
@@ -229,9 +229,9 @@ class ATPTennisLoader {
 
 	def correctData(sql) {
 		def stopwatch = Stopwatch.createStarted()
-		println 'Correcting data (delta)...'
+		print 'Correcting data (delta)'
 		executeSQLFile(sql, '/correct-data-delta.sql')
-		println "Correcting data (delta) finished in $stopwatch\n"
+		println " finished in $stopwatch\n"
 
 		println 'Updating tournament event map properties...'
 		executeSQLFile(sql, '/tournament-map-properties.sql')
@@ -267,7 +267,7 @@ class ATPTennisLoader {
 		print "Refreshing materialized view '$viewName'"
 		sql.execute("REFRESH MATERIALIZED VIEW $viewName".toString())
 		sql.commit()
-		println " in $stopwatch"
+		println " finished in $stopwatch"
 	}
 
 	def createDatabase(Sql sql) {
