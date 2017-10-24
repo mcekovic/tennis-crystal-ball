@@ -31,6 +31,11 @@
 		</div>
 		<br/>
 		<div th:include="fragments/eventResults :: eventResults('Prob', -1, true)"></div>
+		<br/>
+		<p>
+			<em>+ Probable matches are determined by player pairs that are most probable to meet in the some round based on the draw, current tournament results and predictions for future results</em><br/>
+			<em>++ Probabilities and odds in the probable matchup box represent probabilities for one player to win over the other, but only if the matchup really happens</em>
+		</p>
 	</th:block>
 	<th:block th:if="${results.isEmpty()}">
 		<br/>
