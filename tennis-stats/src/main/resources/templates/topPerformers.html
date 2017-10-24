@@ -48,7 +48,16 @@
 				},
 				formatters: {
 					"country": countryFormatter,
-					"player": playerFormatter
+					"player": playerFormatter,
+					"won": function(column, row) {
+						return "<a href='" + playerMatchesUrl(row.playerId, "W") + "' title='Show matches'>" + row.won + "</a>";
+					},
+					"lost": function(column, row) {
+						return "<a href='" + playerMatchesUrl(row.playerId, "L") + "' title='Show matches'>" + row.lost + "</a>";
+					},
+					"played": function(column, row) {
+						return "<a href='" + playerMatchesUrl(row.playerId, "") + "' title='Show matches'>" + row.played + "</a>";
+					}
 				},
 				labels: {
 					loading: bootgridTemplateLoading,
@@ -64,6 +73,90 @@
 			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
+		function playerMatchesUrl(playerId, outcome) {
+			var url = "/playerProfile?playerId=" + playerId + "&tab=matches";
+			var category = $("#category").val();
+			var season = $("#season").val();
+			if (season)
+				url += "&season=" + season;
+			var level = $("#level").val();
+			if (category == "grandSlamMatches")
+				url += "&level=G";
+			else if (category == "tourFinalsMatches")
+				url += "&level=F";
+			else if (category == "mastersMatches")
+				url += "&level=M";
+			else if (category == "olympicsMatches")
+				url += "&level=O";
+			else {
+				if (level)
+					url += "&level=" + level;
+			}
+			if (category == "hardMatches")
+				url += "&surface=H";
+			else if (category == "clayMatches")
+				url += "&surface=C";
+			else if (category == "grassMatches")
+				url += "&surface=G";
+			else if (category == "carpetMatches")
+				url += "&surface=P";
+			else {
+				var surface = $("#surface").val();
+				if (surface)
+					url += "&surface=" + surface;
+			}
+			if (category == "finals") {
+				url += "&round=F";
+				if (!level)
+					url += "&level=GFMOAB";
+			}
+			else {
+				var round = $("#round").val();
+				if (round) {
+					url += "&round=" + encodeURIComponent(round);
+					if (!level)
+						url += "&level=GFMOAB";
+				}
+			}
+			var tournament = $("#tournament").val();
+			if (tournament)
+				url += "&tournamentId=" + tournament;
+			if (category == "vsNo1")
+				url += "&opponent=NO_1";
+			else if (category == "vsTop5")
+				url += "&opponent=TOP_5";
+			else if (category == "vsTop10")
+				url += "&opponent=TOP_10";
+			else {
+				var opponent = $("#opponent").val();
+				if (opponent)
+					url += "&opponent=" + opponent;
+			}
+			var country = $("#country").val();
+			if (country)
+				url += "&countryId=" + country;
+			if (category == "decidingSets")
+				url += "&score=*DS";
+			else if (category == "fifthSets")
+				url += "&score=" + encodeURIComponent("2:2+");
+			else if (category == "afterWinningFirstSet")
+				url += "&score=" + encodeURIComponent("1:0+");
+			else if (category == "afterLosingFirstSet")
+				url += "&score=" + encodeURIComponent("0:1+");
+			else if (category == "tieBreaks")
+				url += "&score=*TB" + outcome;
+			else if (category == "decidingSetTBs")
+				url += "&score=*DSTB";
+			if (category != "tieBreaks") {
+				if (outcome == "W")
+					url += "&outcome=wonplayed";
+				else if (outcome == "L")
+					url += "&outcome=lostplayed";
+				else
+					url += "&outcome=played";
+			}
+			return url;
+		}
 		function categoryChanged() {
 			var $category = $("#category");
 			$("#topPerformersTable").find("th[data-column-id='wonLostPct'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
@@ -240,9 +333,9 @@
 			<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="85">Country</th>
 			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="250">Name</th>
 			<th data-column-id="wonLostPct" data-order="desc" data-width="175" data-align="right" data-header-align="right">Pct.</th>
-			<th data-column-id="won" data-type="numeric" data-width="70" data-align="right" data-header-align="right">Won</th>
-			<th data-column-id="lost" data-type="numeric" data-width="70" data-align="right" data-header-align="right">Lost</th>
-			<th data-column-id="played" data-type="numeric" data-width="75" data-align="right" data-header-align="right">Played</th>
+			<th data-column-id="won" data-formatter="won" data-width="70" data-align="right" data-header-align="right">Won</th>
+			<th data-column-id="lost" data-formatter="lost" data-width="70" data-align="right" data-header-align="right">Lost</th>
+			<th data-column-id="played" data-formatter="played" data-width="75" data-align="right" data-header-align="right">Played</th>
 		</tr>
 		</thead>
 	</table>

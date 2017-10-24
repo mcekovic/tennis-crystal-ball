@@ -38,13 +38,21 @@ public class GOATLegendController extends BaseController {
 		modelMap.addAttribute("h2hRankFactors", goatLegendService.getH2hRankFactors());
 		modelMap.addAttribute("bestSeasonGOATPoints", goatLegendService.getBestSeasonGOATPoints());
 		modelMap.addAttribute("greatestRivalriesGOATPoints", goatLegendService.getGreatestRivalriesGOATPoints());
-		modelMap.addAttribute("performanceGOATPoints", goatLegendService.getPerformanceGOATPoints());
-		modelMap.addAttribute("statisticsGOATPoints", goatLegendService.getStatisticsGOATPoints());
 		return new ModelAndView("goatLegend", modelMap);
 	}
 
 	@GetMapping("/recordsGOATPointsLegend")
 	public ModelAndView recordsGOATPointsLegend() {
 		return new ModelAndView("recordsGOATPointsLegend", "recordsGOATPoints", goatLegendService.getRecordsGOATPoints());
+	}
+
+	@GetMapping("/performanceGOATPointsLegend")
+	public ModelAndView performanceGOATPointsLegend() {
+		return new ModelAndView("performanceGOATPointsLegend", "performanceGOATPoints", goatLegendService.getPerformanceGOATPoints());
+	}
+
+	@GetMapping("/statisticsGOATPointsLegend")
+	public ModelAndView statisticsGOATPointsLegend() {
+		return new ModelAndView("statisticsGOATPointsLegend", "statisticsGOATPoints", goatLegendService.getStatisticsGOATPoints());
 	}
 }

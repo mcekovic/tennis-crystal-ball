@@ -28,7 +28,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 	private static final String DATE_WIDTH =        "90";
 	private static final String TOURNAMENT_WIDTH = "120";
 	private static final String SEASONS_WIDTH =     "80";
-	private static final String SEASON_WIDTH =      "80";
+	private static final String SEASON_WIDTH =     "120";
 
 	public LongestCareerResultSpanCategory() {
 		super("Longest Career Title / Final Span");
@@ -118,10 +118,10 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 
 	private static final List<RecordColumn> SPAN_RECORD_COLUMNS = asList(
 		new RecordColumn("value", null, null, SPAN_WIDTH, "left", "Career Span"),
-		new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "Start Date"),
-		new RecordColumn("startEvent", null, "startTournamentEvent", TOURNAMENT_WIDTH, "left", "Start Tournament"),
-		new RecordColumn("endDate", null, "endDate", DATE_WIDTH, "center", "End Date"),
-		new RecordColumn("endEvent", null, "endTournamentEvent", TOURNAMENT_WIDTH, "left", "End Tournament")
+		new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "First Date"),
+		new RecordColumn("startEvent", null, "startTournamentEvent", TOURNAMENT_WIDTH, "left", "First Tournament"),
+		new RecordColumn("endDate", null, "endDate", DATE_WIDTH, "center", "Last Date"),
+		new RecordColumn("endEvent", null, "endTournamentEvent", TOURNAMENT_WIDTH, "left", "Last Tournament")
 	);
 
  	private static Record consecutiveSeasons(ResultType type, RecordDomain domain) {

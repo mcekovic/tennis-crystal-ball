@@ -265,9 +265,9 @@
 	<thead>
 	<tr>
 		<th colspan="8" class="first-header first-column last-column"></th>
-		<th class="points first-header first-column grand-total" th:text="${goatPoints1.totalPoints}"></th>
+		<th class="points first-header first-column grand-total"><a th:href="@{/playerProfile(playerId=${playerId1}, tab=goatPoints)}" th:text="${goatPoints1.totalPoints}" style="color: darkblue" title="Show GOAT Points distribution">155</a></th>
 		<th class="first-header first-column text-center grand-total">Total</th>
-		<th class="points first-header first-column grand-total" th:text="${goatPoints2.totalPoints}"></th>
+		<th class="points first-header first-column grand-total"><a th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints)}" th:text="${goatPoints2.totalPoints}" style="color: darkblue" title="Show GOAT Points distribution">155</a></th>
 		<th colspan="8" class="first-header first-column last-column"></th>
 	</tr>
 	</thead>

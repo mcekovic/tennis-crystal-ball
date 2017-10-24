@@ -102,7 +102,8 @@ public class PlayersForecast {
 	public void setEloRatings(int playerId, Integer eloRating, Integer nextEloRating) {
 		PlayerForecast playerForecast = playerForecastMap.get(playerId);
 		if (playerForecast != null) {
-			playerForecast.setEloRating(eloRating);
+			if (playerForecast.getEloRating() != null)
+				playerForecast.setEloRating(eloRating);
 			playerForecast.setNextEloRating(nextEloRating);
 		}
 	}

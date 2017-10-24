@@ -1,0 +1,19 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="performanceGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.PerfStatGOATPoints>"*/-->
+<strong>Performance GOAT Points</strong>
+<button class="btn btn-default btn-xs pull-right" onclick="$('#performanceGOATPoints').click()" title="Close"><span class="glyphicon glyphicon-remove"></span></button>
+<table class="table table-condensed table-hover table-striped">
+	<thead>
+	<tr>
+		<th class="text-nowrap" title="Performance Category">Perform. Category</th>
+		<th>Points</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr th:each="point : ${performanceGOATPoints}">
+		<td><a th:href="@{/topPerformers(category=${point.categoryId})}" class="text-nowrap" th:text="${point.category}" title="Show top performers">Overall Matches</td>
+		<td th:text="${point.goatPoints}">4</td>
+	</tr>
+	</tbody>
+</table>
+</th:block>

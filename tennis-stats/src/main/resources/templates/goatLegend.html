@@ -17,8 +17,6 @@
 	<!--/*@thymesVar id="grandSlamOnSameEventGOATPointsDivider" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="bestSeasonGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="greatestRivalriesGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
-	<!--/*@thymesVar id="performanceGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.PerfStatGOATPoints>"*/-->
-	<!--/*@thymesVar id="statisticsGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.PerfStatGOATPoints>"*/-->
 	<script type="text/javascript">
 		$(function() {
 			$("#goatLegendRow").find("span.level").each(function() {
@@ -28,13 +26,13 @@
 				$level.html(levelName(level));
 			});
 		});
-		function showRecordsGOATPoints(event) {
-			var $recordsGOATPoints = $("#recordsGOATPoints");
-			if (!$recordsGOATPoints.hasClass("loaded")) {
+		function showGOATPointsPopover(section, event) {
+			var $button = $("#" + section + "GOATPoints");
+			if (!$button.hasClass("loaded")) {
 				event.preventDefault();
-				$.get("/recordsGOATPointsLegend", function(data) {
-					$recordsGOATPoints.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
-					$recordsGOATPoints.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
+				$.get("/" + section + "GOATPointsLegend", function(data) {
+					$button.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
+					$button.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
 				});
 			}
 		}
@@ -230,8 +228,17 @@
 					</tr>
 					</tbody>
 				</table>
+			</div>
+			<div class="col-md-6">
 				<th:block th:unless="${forSeason}">
-				<br/>
+				<strong>
+					<a href="/record?recordId=RecordsGOATPoints" title="Players with most Records GOAT Points">Records Points</a><sup class="new-feature">&nbsp;New!</sup>
+				</strong>
+				<p>Points assigned for holding most prestigious tennis records</p>
+				<button id="recordsGOATPoints" type="button" class="btn btn-default btn-sm" style="margin-top: 5px" onclick="showGOATPointsPopover('records', event)" data-toggle="tooltip" data-placement="top" title="Records GOAT Points">
+					Records Points&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<br/><br/>
 				<div>
 					<strong>
 						<a href="/record?recordId=H2HGOATPoints" title="Players with most Head-to-Head GOAT Points">Head-to-Head Points</a>
@@ -244,14 +251,14 @@
 						&nbsp;<i>sum</i>(Lh2h * Lh2hWeight * RankFactor)<br/>
 						)<br/>
 						<span style="font-size: smaller">
-							Wh2h = H2H Won: 3, H2H Draw: 2, H2H Lost: 1<br/>
-							Wh2hWeight = 1 + H2HMatchesWon / 10<br/>
-							Lh2h = H2H Won: 1, H2H Draw: 2, H2H Lost: 3<br/>
-							Lh2hWeight = 1 + H2HMatchesLost / 10<br/>
-							RankFactor = <i>factor</i>(OpponentBestRank)<br/>
-							* minimum 3 H2H series matches<br/>
-							** minimum 10 H2H series
-						</span>
+					Wh2h = H2H Won: 3, H2H Draw: 2, H2H Lost: 1<br/>
+					Wh2hWeight = 1 + H2HMatchesWon / 10<br/>
+					Lh2h = H2H Won: 1, H2H Draw: 2, H2H Lost: 3<br/>
+					Lh2hWeight = 1 + H2HMatchesLost / 10<br/>
+					RankFactor = <i>factor</i>(OpponentBestRank)<br/>
+					* minimum 3 H2H series matches<br/>
+					** minimum 10 H2H series
+				</span>
 					</p>
 				</div>
 				<table class="table table-condensed table-hover table-striped">
@@ -268,18 +275,6 @@
 					</tr>
 					</tbody>
 				</table>
-				</th:block>
-			</div>
-			<div class="col-md-6">
-				<th:block th:unless="${forSeason}">
-				<strong>
-					<a href="/record?recordId=RecordsGOATPoints" title="Players with most Records GOAT Points">Records Points</a><sup class="new-feature">&nbsp;New!</sup>
-				</strong>
-				<br/>
-				<button id="recordsGOATPoints" type="button" class="btn btn-info btn-sm" style="margin-top: 5px" onclick="showRecordsGOATPoints(event)" data-toggle="tooltip" data-placement="top" title="Records GOAT Points">
-					Records Points&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
-				</button>
-				<br/><br/>
 				<div>
 					<strong><a href="/record?recordId=BestSeasonsGOATPoints" title="Players with most Best Seasons GOAT Points">Best Seasons Points</a></strong>
 					<p>Points assigned for best rated seasons</p>
@@ -298,7 +293,6 @@
 					</tr>
 					</tbody>
 				</table>
-				<br/>
 				<div>
 					<strong><a href="/record?recordId=GreatestRivalriesGOATPoints" title="Players with most Greatest Rivalries GOAT Points">Greatest Rivalries Points</a></strong>
 					<p>Points assigned for participation in the Greatest Rivalries (points are distributed to both rivalry players by rivalry won/lost ratio)</p>
@@ -317,43 +311,21 @@
 					</tr>
 					</tbody>
 				</table>
-				<br/>
 				<div>
 					<strong><a href="/record?recordId=PerformanceGOATPoints" title="Players with most Performance GOAT Points">Performance Points</a></strong>
 				</div>
 				<p>Points assigned to best players in each performance category</p>
-				<table class="table table-condensed table-hover table-striped">
-					<thead>
-					<tr>
-						<th class="text-nowrap" title="Performance Category">Perform. Category</th>
-						<th>Points</th>
-					</tr>
-					</thead>
-					<tbody>
-					<tr th:each="point : ${performanceGOATPoints}">
-						<td><a th:href="@{/topPerformers(category=${point.categoryId})}" class="text-nowrap" th:text="${point.category}" title="Show top performers">Overall Matches</td>
-						<td th:text="${point.goatPoints}">4</td>
-					</tr>
-					</tbody>
-				</table>
+				<button id="performanceGOATPoints" type="button" class="btn btn-default btn-sm" style="margin-top: 5px" onclick="showGOATPointsPopover('performance', event)" data-toggle="tooltip" data-placement="top" title="Performance GOAT Points">
+					Performance Points&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+				<br/><br/>
 				<div>
 					<strong><a href="/record?recordId=StatisticsGOATPoints" title="Players with most Statistics GOAT Points">Statistics Points</a></strong>
 				</div>
 				<p>Points assigned to best players in each statistics category</p>
-				<table class="table table-condensed table-hover table-striped">
-					<thead>
-					<tr>
-						<th class="text-nowrap">Statistics Category</th>
-						<th>Points</th>
-					</tr>
-					</thead>
-					<tbody>
-					<tr th:each="point : ${statisticsGOATPoints}">
-						<td><a th:href="@{/statsLeaders(category=${point.categoryId})}" class="text-nowrap" th:text="${point.category}" title="Show statistics leaders">Ace %</a></td>
-						<td th:text="${point.goatPoints}">2</td>
-					</tr>
-					</tbody>
-				</table>
+				<button id="statisticsGOATPoints" type="button" class="btn btn-default btn-sm" style="margin-top: 5px" onclick="showGOATPointsPopover('statistics', event)" data-toggle="tooltip" data-placement="top" title="Statistics GOAT Points">
+					Statistics Points&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+				</button>
 				</th:block>
 			</div>
 		</div>

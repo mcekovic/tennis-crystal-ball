@@ -8,9 +8,10 @@ import static java.util.Arrays.*;
 
 public class GOATPointsCategory extends RecordCategory {
 
-	private static final String POINTS_WIDTH =  "150";
-	private static final String SEASON_WIDTH =   "80";
-	private static final String SEASONS_WIDTH = "150";
+	private static final String POINTS_WIDTH =       "150";
+	private static final String SEASON_WIDTH =       "120";
+	private static final String SEASONS_WIDTH =      "100";
+	private static final String CONS_SEASONS_WIDTH = "180";
 
 	public GOATPointsCategory() {
 		super("GOAT Points");
@@ -38,7 +39,8 @@ public class GOATPointsCategory extends RecordCategory {
 		register(mostSeasonGOATPoints("Achievements", "Achievements", "achievements_goat_points"));
 		register(mostSeasonGOATPoints("BigWins", "Big Wins", "big_wins_goat_points"));
 		register(mostSeasonGOATPoints("GrandSlam", "Grand Slam", "grand_slam_goat_points"));
-		register(mostConsecutiveSeasonWithGOATPoints());
+		register(goatPointsCareerSpan());
+		register(mostConsecutiveSeasonsWithGOATPoints());
 	}
 
 	private static Record mostGOATPoints(String id, String name, String columnName) {
@@ -69,8 +71,30 @@ public class GOATPointsCategory extends RecordCategory {
 			)
 		);
 	}
+	
+	private static Record goatPointsCareerSpan() {
+		return new Record<>(
+			"LongestGOATPointsSpan", "Longest First GOAT Point to Last GOAT Point",
+			/* language=SQL */
+			"WITH player_seasons AS (\n" +
+			"  SELECT player_id, min(season) AS start_season, max(season) AS end_season\n" +
+			"  FROM player_season_goat_points\n" +
+			"  GROUP BY player_id\n" +
+			")\n" +
+			"SELECT player_id, 1 + end_season - start_season AS value, start_season, end_season\n" +
+			"FROM player_seasons\n" +
+			"WHERE end_season - start_season > 0",
+         "r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
+         SeasonRangeIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints", playerId),
+			asList(
+				new RecordColumn("value", null, "valueUrl", SEASONS_WIDTH, "right", "Seasons"),
+				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "First Season"),
+				new RecordColumn("endSeason", "numeric", null, SEASON_WIDTH, "center", "Last Season")
+			)
+		);
+	}
 
-	private static Record mostConsecutiveSeasonWithGOATPoints() {
+	private static Record mostConsecutiveSeasonsWithGOATPoints() {
 		return new Record<>(
          "ConsecutiveSeasonsWithGOATPoints", "Most Consecutive Seasons With at Least One GOAT Point",
 			/* language=SQL */
@@ -88,7 +112,7 @@ public class GOATPointsCategory extends RecordCategory {
 			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
 			SeasonRangeIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints", playerId),
 			asList(
-				new RecordColumn("value", null, "valueUrl", SEASONS_WIDTH, "right", "Seasons with GOAT Points"),
+				new RecordColumn("value", null, "valueUrl", CONS_SEASONS_WIDTH, "right", "Consecutive Seasons"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
 				new RecordColumn("endSeason", "numeric", null, SEASON_WIDTH, "center", "End Season")
 			)
