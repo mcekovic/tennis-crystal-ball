@@ -39,6 +39,15 @@ class SqlPool extends LinkedBlockingDeque<Sql> {
 	def withSql(Closure c) {
 		Sql sql = take()
 		try {
+			withTx(sql, c)
+		}
+		finally {
+			put(sql)
+		}
+	}
+
+	static withTx(Sql sql, Closure c) {
+		try {
 			def r = c(sql)
 			sql.commit()
 			r
@@ -52,9 +61,6 @@ class SqlPool extends LinkedBlockingDeque<Sql> {
 		catch (Throwable th) {
 			sql.rollback()
 			throw th
-		}
-		finally {
-			put(sql)
 		}
 	}
 

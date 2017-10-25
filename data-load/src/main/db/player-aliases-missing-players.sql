@@ -62,6 +62,7 @@ VALUES
    ('Patricio Rodriguez', 'Patricio Rodriguez Chi'),
    ('Pedro Martinez', 'Pedro Martinez Portero'),
    ('Roberto Cid Subervi', 'Roberto Cid'),
+   ('Rubin Statham', 'Jose Rubin Statham'),
    ('Sam Groth', 'Samuel Groth'),
    ('Stan Wawrinka', 'Stanislas Wawrinka'),
    ('Taylor Fritz', 'Taylor Harry Fritz'),

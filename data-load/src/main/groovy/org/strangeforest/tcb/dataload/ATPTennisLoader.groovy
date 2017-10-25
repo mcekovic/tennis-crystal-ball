@@ -1,11 +1,12 @@
 package org.strangeforest.tcb.dataload
 
+import java.util.concurrent.*
+
 import com.google.common.base.*
 import groovy.sql.*
 
-import java.util.concurrent.*
-
 import static org.strangeforest.tcb.dataload.LoadParams.*
+import static org.strangeforest.tcb.dataload.SqlPool.*
 
 class ATPTennisLoader {
 
@@ -265,8 +266,9 @@ class ATPTennisLoader {
 	def refreshMaterializedView(Sql sql, String viewName) {
 		def stopwatch = Stopwatch.createStarted()
 		print "Refreshing materialized view '$viewName'"
-		sql.execute("REFRESH MATERIALIZED VIEW $viewName".toString())
-		sql.commit()
+		withTx sql, { Sql s ->
+			s.execute("REFRESH MATERIALIZED VIEW $viewName".toString())
+		}
 		println " finished in $stopwatch"
 	}
 
@@ -338,7 +340,8 @@ class ATPTennisLoader {
 	}
 
 	private executeSQLFile(Sql sql, String file) {
-		sql.execute(getClass().getResourceAsStream(file).text)
-		sql.commit()
+		withTx sql, { Sql s ->
+			s.execute(getClass().getResourceAsStream(file).text)
+		}
 	}
 }

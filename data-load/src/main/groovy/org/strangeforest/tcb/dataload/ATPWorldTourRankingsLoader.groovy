@@ -4,6 +4,7 @@ import com.google.common.base.*
 import groovy.sql.*
 
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
+import static org.strangeforest.tcb.dataload.SqlPool.*
 
 class ATPWorldTourRankingsLoader {
 
@@ -26,12 +27,13 @@ class ATPWorldTourRankingsLoader {
 			def points = integer it.select('td.points-cell').text().replace(',', '')
 			paramsBatch << [rank_date: parsedDate, player_name: player, rank: rank, rank_points: points]
 		}
-		sql.withBatch('{call load_ranking(:rank_date, :player_name, :rank, :rank_points)}') { ps ->
-			paramsBatch.each { params ->
-				ps.addBatch(params)
+		withTx sql, { Sql s ->
+			s.withBatch('{call load_ranking(:rank_date, :player_name, :rank, :rank_points)}') { ps ->
+				paramsBatch.each { params ->
+					ps.addBatch(params)
+				}
 			}
 		}
-		sql.commit()
 		println "$rankDate: $paramsBatch.size rankings loaded in $stopwatch"
 	}
 

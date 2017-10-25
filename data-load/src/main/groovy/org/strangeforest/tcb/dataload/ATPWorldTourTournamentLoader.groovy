@@ -8,6 +8,7 @@ import com.google.common.base.*
 import groovy.sql.*
 
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
+import static org.strangeforest.tcb.dataload.SqlPool.*
 import static org.strangeforest.tcb.dataload.XMLMatchLoader.*
 
 class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
@@ -125,12 +126,13 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 				println()
 		}
 
-		sql.withBatch(LOAD_SQL) { ps ->
-			matches.each { match ->
-				ps.addBatch(match)
+		withTx sql, { Sql s ->
+			s.withBatch(LOAD_SQL) { ps ->
+				matches.each { match ->
+					ps.addBatch(match)
+				}
 			}
 		}
-		sql.commit()
 		println "\n$matches.size matches loaded in $stopwatch"
 	}
 
