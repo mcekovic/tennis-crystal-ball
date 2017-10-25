@@ -209,7 +209,7 @@
 								<th th:if="${priceFormat}" class="text-right" title="Tournament winning odds">Odds</th>
 							</tr>
 						</thead>
-						<tr th:with="otherPlayer=${playersForecast.getOtherPlayer(playerForecastStat.index)}, showH2H=${playerForecast != null && playerForecast.known && otherPlayer != null && otherPlayer.known}">
+						<tr th:with="otherPlayer=${playersForecast.getOtherPlayer(playerForecastStat.index)}, current=${baseResult == 'Current'}, showH2H=${playerForecast != null && playerForecast.known && otherPlayer != null && otherPlayer.known}">
 							<td class="text-right" th:text="${playerForecast.seedAndEntry()}">1</td>
 							<th:block th:if="${playerForecast.known}">
 							<td colspan="2">
@@ -217,7 +217,7 @@
 								<a th:href="@{/playerProfile(playerId=${playerForecast.id})}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 							</td>
 							<td th:text="${playerForecast.rank}" class="player-rank hidden-xs">1</td>
-							<td th:with="eloRatingDelta=${prevPlayersForecast != null ? prevPlayersForecast.getPlayerForecast(playerForecast.id).eloRatingDelta : null}" class="player-rank hidden-xs"><span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${playerForecast.eloRating})]</td>
+							<td th:with="eloRatingDelta=${current ? playersForecast.getPlayerForecast(playerForecast.id).eloRatingDelta : (prevPlayersForecast != null ? prevPlayersForecast.getPlayerForecast(playerForecast.id).eloRatingDelta : null)}" class="player-rank hidden-xs"><span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${current ? playerForecast.nextEloRating : playerForecast.eloRating})]</td>
 							</th:block>
 							<th:block th:if="${playerForecast.bye}">
 							<td colspan="2">Bye</td>
@@ -228,7 +228,7 @@
 							<td colspan="2" class="hidden-xs"></td>
 							</th:block>
 							<td th:if="${playerForecastStat.odd && showH2H}" rowspan="2" class="player-h2h">
-								<a th:href="@{/headToHead(playerId1=${playerForecast.id}, playerId2=${otherPlayer.id}, tab=hypotheticalMatchup, level=${inProgressEvent.level}, surface=${inProgressEvent.surface}, round=${baseResult == 'Current' ? forecast.maxResult : baseResult})}" class="player-h2h" title="Show Head-to-Head Hypothetical Matchup">H<br/>2<br/>H</a>
+								<a th:href="@{/headToHead(playerId1=${playerForecast.id}, playerId2=${otherPlayer.id}, tab=hypotheticalMatchup, level=${inProgressEvent.level}, surface=${inProgressEvent.surface}, round=${current ? forecast.maxResult : baseResult})}" class="player-h2h" title="Show Head-to-Head Hypothetical Matchup">H<br/>2<br/>H</a>
 							</td>
 							<td th:unless="${showH2H}" class="player-noh2h"></td>
 							<td th:each="result : ${playersForecast.results}" th:with="probability=${playerForecast.getProbability(result)}" class="text-right" th:text="${probability != null ? #numbers.formatDecimal(probability, 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + playerForecast.getPrice(result, priceFormat) : _}">58.2%</td>
