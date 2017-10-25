@@ -104,7 +104,11 @@
 			</tr>
 			<tr th:if="${player.tourFinals > 0}">
 				<th>Tour Finals</th>
-				<td><a class="label label-warning player-title" th:text="${player.tourFinals}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, level=F, result=W)}" title="Show Tour Finals titles">1</a> <span class="glyphicon glyphicon-glass text-warning"></span></td>
+				<td><a class="label label-warning2 player-title" th:text="${player.tourFinals}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, level=F, result=W)}" title="Show Tour Finals titles">1</a> <span class="glyphicon glyphicon-glass text-warning"></span></td>
+			</tr>
+			<tr th:if="${player.altFinals > 0}">
+				<th title="Alternative Tour Finals">Alt. Finals</th>
+				<td><a class="label label-warning player-title" th:text="${player.altFinals}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, level=L, result=W)}" title="Show Alternative Tour Finals titles">1</a> <span class="glyphicon glyphicon-glass text-warning"></span></td>
 			</tr>
 			<tr th:if="${player.masters > 0}">
 				<th>Masters</th>

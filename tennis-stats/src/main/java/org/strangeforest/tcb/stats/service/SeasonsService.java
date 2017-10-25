@@ -32,7 +32,7 @@ public class SeasonsService {
 		"WITH season_tournament_count AS (\n" +
 		"  SELECT season, count(*) AS tournament_count,\n" +
 		"    count(*) FILTER (WHERE level = 'G') AS grand_slam_count,\n" +
-		"    count(*) FILTER (WHERE level = 'F') AS tour_finals_count,\n" +
+		"    count(*) FILTER (WHERE level IN ('F', 'L')) AS tour_finals_count,\n" +
 		"    count(*) FILTER (WHERE level = 'M') AS masters_count,\n" +
 		"    count(*) FILTER (WHERE level = 'O') AS olympics_count,\n" +
 		"    count(*) FILTER (WHERE level = 'A') AS atp500_count,\n" +

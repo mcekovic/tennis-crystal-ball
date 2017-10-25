@@ -16,9 +16,13 @@ VALUES
 ('F', 'RR', 'F',    500,  250,    2, TRUE),
 ('F', 'RR', 'SF',   400,  200,    1, TRUE),
 ('F', 'RR', 'RR',   200,  100,    1, TRUE),
-('F', 'KO', 'W',   NULL, NULL,    6, FALSE),
-('F', 'KO', 'F',   NULL, NULL,    3, FALSE),
-('F', 'KO', 'SF',  NULL, NULL,    1, FALSE),
+('F', 'KO', 'W',   1500,  750,    6, FALSE),
+('F', 'KO', 'F',   1000,  600,    3, FALSE),
+('F', 'KO', 'SF',   500,  300,    1, FALSE),
+-- Alt. Finals
+('L', 'KO', 'W',   1000,  500,    4, FALSE),
+('L', 'KO', 'F',    600,  350,    2, FALSE),
+('L', 'KO', 'SF',   360,  225,    1, FALSE),
 -- Masters
 ('M', 'KO', 'W',   1000,  500,    4, FALSE),
 ('M', 'KO', 'F',    600,  350,    2, FALSE),
@@ -168,6 +172,10 @@ VALUES
 ('F', 'SF', 3),
 ('F', 'QF', 1),
 ('F', 'RR', 1),
+-- Alt. Finals
+('L', 'F',  4),
+('L', 'SF', 2),
+('L', 'QF', 1),
 -- Masters
 ('M', 'F',  4),
 ('M', 'SF', 2),

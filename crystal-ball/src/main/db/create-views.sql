@@ -128,19 +128,20 @@ WITH level_titles AS (
 	GROUP BY player_id, level
 ), titles AS (
 	SELECT player_id, sum(titles) AS titles FROM level_titles
-	WHERE level IN ('G', 'F', 'M', 'O', 'A', 'B')
+	WHERE level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')
 	GROUP BY player_id
 ), big_titles AS (
 	SELECT player_id, sum(titles) AS titles FROM level_titles
-	WHERE level IN ('G', 'F', 'M', 'O')
+	WHERE level IN ('G', 'F', 'L', 'M', 'O')
 	GROUP BY player_id
 )
-SELECT p.player_id, t.titles AS titles, bt.titles AS big_titles, gt.titles AS grand_slams, ft.titles AS tour_finals, mt.titles AS masters, ot.titles AS olympics
+SELECT p.player_id, t.titles AS titles, bt.titles AS big_titles, gt.titles AS grand_slams, ft.titles AS tour_finals, lt.titles AS alt_finals, mt.titles AS masters, ot.titles AS olympics
 FROM player p
 LEFT JOIN titles t USING (player_id)
 LEFT JOIN big_titles bt USING (player_id)
 LEFT JOIN level_titles gt ON gt.player_id = p.player_id AND gt.level = 'G'
 LEFT JOIN level_titles ft ON ft.player_id = p.player_id AND ft.level = 'F'
+LEFT JOIN level_titles lt ON lt.player_id = p.player_id AND lt.level = 'L'
 LEFT JOIN level_titles mt ON mt.player_id = p.player_id AND mt.level = 'M'
 LEFT JOIN level_titles ot ON ot.player_id = p.player_id AND ot.level = 'O'
 WHERE t.titles > 0;
@@ -308,7 +309,7 @@ SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.tournament_
 	m.w_sets, m.l_sets, m.w_games, m.l_games, m.outcome
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
-WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T') AND (m.outcome IS NULL OR m.outcome IN ('RET', 'DEF'));
+WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T') AND (m.outcome IS NULL OR m.outcome IN ('RET', 'DEF'));
 
 
 -- match_for_rivalry_v
@@ -317,7 +318,7 @@ CREATE OR REPLACE VIEW match_for_rivalry_v AS
 SELECT m.match_id, m.winner_id, m.loser_id, e.season, m.date, e.level, m.surface, m.round
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
-WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T');
+WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T');
 
 
 -- player_match_for_stats_v
@@ -342,6 +343,7 @@ SELECT m.season, m.date, m.level, m.surface, m.round, m.tournament_id, m.winner_
 	match_id match_id_won, NULL match_id_lost,
 	CASE WHEN m.level = 'G' THEN match_id ELSE NULL END grand_slam_match_id_won, NULL grand_slam_match_id_lost,
 	CASE WHEN m.level = 'F' THEN match_id ELSE NULL END tour_finals_match_id_won, NULL tour_finals_match_id_lost,
+	CASE WHEN m.level = 'L' THEN match_id ELSE NULL END alt_finals_match_id_won, NULL alt_finals_match_id_lost,
 	CASE WHEN m.level = 'M' THEN match_id ELSE NULL END masters_match_id_won, NULL masters_match_id_lost,
 	CASE WHEN m.level = 'O' THEN match_id ELSE NULL END olympics_match_id_won, NULL olympics_match_id_lost,
 	CASE WHEN m.level = 'A' THEN match_id ELSE NULL END atp500_match_id_won, NULL atp500_match_id_lost,
@@ -370,6 +372,7 @@ SELECT m.season, m.date, m.level, m.surface, m.round, m.tournament_id, m.loser_i
 	NULL, match_id,
 	NULL, CASE WHEN m.level = 'G' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.level = 'F' THEN match_id ELSE NULL END,
+	NULL, CASE WHEN m.level = 'L' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.level = 'M' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.level = 'O' THEN match_id ELSE NULL END,
 	NULL, CASE WHEN m.level = 'A' THEN match_id ELSE NULL END,
@@ -401,6 +404,7 @@ SELECT player_id, season,
 	count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,
 	count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,
 	count(DISTINCT tour_finals_match_id_won) tour_finals_matches_won, count(DISTINCT tour_finals_match_id_lost) tour_finals_matches_lost,
+	count(DISTINCT alt_finals_match_id_won) alt_finals_matches_won, count(DISTINCT alt_finals_match_id_lost) alt_finals_matches_lost,
 	count(DISTINCT masters_match_id_won) masters_matches_won, count(DISTINCT masters_match_id_lost) masters_matches_lost,
 	count(DISTINCT olympics_match_id_won) olympics_matches_won, count(DISTINCT olympics_match_id_lost) olympics_matches_lost,
 	count(DISTINCT atp500_match_id_won) atp500_matches_won, count(DISTINCT atp500_match_id_lost) atp500_matches_lost,
@@ -464,6 +468,7 @@ SELECT player_id,
 	sum(matches_won) matches_won, sum(matches_lost) matches_lost,
 	sum(grand_slam_matches_won) grand_slam_matches_won, sum(grand_slam_matches_lost) grand_slam_matches_lost,
 	sum(tour_finals_matches_won) tour_finals_matches_won, sum(tour_finals_matches_lost) tour_finals_matches_lost,
+	sum(alt_finals_matches_won) alt_finals_matches_won, sum(alt_finals_matches_lost) alt_finals_matches_lost,
 	sum(masters_matches_won) masters_matches_won, sum(masters_matches_lost) masters_matches_lost,
 	sum(olympics_matches_won) olympics_matches_won, sum(olympics_matches_lost) olympics_matches_lost,
 	sum(atp500_matches_won) atp500_matches_won, sum(atp500_matches_lost) atp500_matches_lost,
@@ -1662,16 +1667,17 @@ WITH pleayer_season AS (
 		count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'W') grand_slam_titles,
 		count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'F') grand_slam_finals,
 		count(player_id) FILTER (WHERE e.level = 'F' AND r.result = 'W') tour_finals_titles,
+		count(player_id) FILTER (WHERE e.level = 'L' AND r.result = 'W') alt_finals_titles,
 		count(player_id) FILTER (WHERE e.level = 'M' AND r.result = 'W') masters_titles,
 		count(player_id) FILTER (WHERE e.level = 'O' AND r.result = 'W') olympics_titles,
-		count(player_id) FILTER (WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B') AND r.result = 'W') titles
+		count(player_id) FILTER (WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B') AND r.result = 'W') titles
 	FROM player_season_goat_points s
 	LEFT JOIN player_tournament_event_result r USING (player_id)
 	LEFT JOIN tournament_event e USING (tournament_event_id, season)
 	WHERE s.goat_points > 0
 	GROUP BY player_id, s.season, s.goat_points
 ), pleayer_season_ranked AS (
-	SELECT player_id, season, rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank
+	SELECT player_id, season, rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, alt_finals_titles DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank
 	FROM pleayer_season
 )
 SELECT player_id, season, goat_points
@@ -1811,7 +1817,7 @@ SELECT p.*, full_name(first_name, last_name) AS name, regexp_replace(initcap(fir
 	best_carpet_elo_rank, best_carpet_elo_rank_date, best_carpet_elo_rating, best_carpet_elo_rating_date,
 	goat_rank, coalesce(goat_points, 0) AS goat_points, coalesce(weeks_at_no1, 0) weeks_at_no1,
 	coalesce(titles, 0) AS titles, coalesce(big_titles, 0) AS big_titles,
-	coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals, coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics
+	coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals, coalesce(alt_finals, 0) AS alt_finals, coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics
 FROM player p
 LEFT JOIN player_current_rank USING (player_id)
 LEFT JOIN player_best_rank USING (player_id)

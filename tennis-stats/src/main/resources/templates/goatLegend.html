@@ -57,12 +57,13 @@
 			<tr th:each="point : ${tournamentGOATPoints}">
 				<td><span th:data-level="${point.level}" data-level="G" class="label level"></span></td>
 				<td class="text-center"><span th:class="'label black bg-result-' + ${point.result}" class="label black" th:text="${point.result}">W</span></td>
-				<td class="text-center" th:text="${(point.additive ? '+' : '') + point.goatPoints + (point.level == 'F' && !point.additive ? '*' : '')}">8</td>
+				<td class="text-center" th:text="${(point.additive ? '+' : '') + point.goatPoints + (point.level == 'F' && !point.additive ? '*' : '') + (point.level == 'L' ? '**' : '')}">8</td>
 			</tr>
 			</tbody>
 		</table>
 		<p><em>+ is for tournaments where points are assigned for wins in each round rather then for tournament result</em></p>
 		<p><em>* Tour Finals draw is normally round-robin, but was knock-out from 1982 to 1985</em></p>
+		<p><em>** Alternative Tour Finals (Dallas WCT and Grand Slam Cup)</em></p>
 	</div>
 	<div class="col-md-3">
 		<h4>

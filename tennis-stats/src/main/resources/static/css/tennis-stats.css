@@ -76,6 +76,9 @@ a.label-btn {
 	background-color: #d9534f;
 }
 .label-F {
+	background-color: #ec971f;
+}
+.label-L {
 	background-color: #f0ad4e;
 }
 .label-M {
@@ -108,6 +111,13 @@ a.label-btn {
 .label-T {
 	background-color: #f088b0;
 }
+.label-warning2 {
+	background-color: #ec971f;
+}
+.label-warning2[href]:hover,
+.label-warning2[href]:focus {
+	background-color: #da8005;
+}
 .black {
 	color: black;
 }
@@ -119,6 +129,9 @@ a.black:focus {
 	background: #f2dede;
 }
 .bg-level-F {
+	background: #f8f0c9;
+}
+.bg-level-L {
 	background: #fcf8e3;
 }
 .bg-level-M {

@@ -10,6 +10,7 @@ public class GOATListRow extends PlayerRow {
 	private int grandSlamGoatPoints, bigWinsGoatPoints, h2hGoatPoints, recordsGoatPoints, bestSeasonGoatPoints, greatestRivalriesGoatPoints, performanceGoatPoints, statisticsGoatPoints;
 	private int grandSlams;
 	private int tourFinals;
+	private int altFinals;
 	private int masters;
 	private int olympics;
 	private int bigTitles;
@@ -174,6 +175,14 @@ public class GOATListRow extends PlayerRow {
 
 	public void setTourFinals(int tourFinals) {
 		this.tourFinals = tourFinals;
+	}
+
+	public int getAltFinals() {
+		return altFinals;
+	}
+
+	public void setAltFinals(int altFinals) {
+		this.altFinals = altFinals;
 	}
 
 	public int getMasters() {

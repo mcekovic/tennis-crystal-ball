@@ -7,7 +7,7 @@
 			var $goatListTable = $("#goatListTable");
 			var device = detectDevice();
 			setBootgridColumnsVisible($goatListTable, ["tournamentGoatPoints", "rankingGoatPoints", "achievementsGoatPoints"], deviceGreaterOrEqual(device, "sm"));
-			setBootgridColumnsVisible($goatListTable, ["tourFinals", "masters", "olympics", "bigTitles", "weeksAtNo1"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($goatListTable, ["tourFinals", "altFinals", "masters", "olympics", "bigTitles", "weeksAtNo1"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($goatListTable, ["wonPct", "bestEloRating"], deviceGreaterOrEqual(device, "lg"));
 			if (deviceGreaterOrEqual("md", device))
 				setBootgridColumnsWidths($goatListTable, ["name"], [150]);
@@ -71,6 +71,7 @@
 					},
 					"grandSlams": playerTitlesFormatter("grandSlams", "&level=G", " Grand Slam"),
 					"tourFinals": playerTitlesFormatter("tourFinals", "&level=F", " Tour Finals"),
+					"altFinals": playerTitlesFormatter("altFinals", "&level=L", " Alternative Tour Finals"),
 					"masters": playerTitlesFormatter("masters", "&level=M", " Masters"),
 					"olympics": playerTitlesFormatter("olympics", "&level=O", " Olympics"),
 					"bigTitles": playerTitlesFormatter("bigTitles", "&level=GFMO", " Big"),
@@ -105,6 +106,7 @@
 				{id: "achievementsGoatPoints", title: "Achievements, performance and statistics GOAT points"},
 				{id: "grandSlams", title: "Grand Slam titles"},
 				{id: "tourFinals", title: "Tour Finals titles"},
+				{id: "altFinals", title: "Alternative Tour Finals titles"},
 				{id: "masters", title: "Masters titles"},
 				{id: "olympics", title: "Olympics titles"},
 				{id: "bigTitles", title: "Big titles (GS + TF + M + O)"},
@@ -159,18 +161,19 @@
 		<tr>
 			<th data-column-id="goatRank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
 			<th data-column-id="name" data-formatter="player" data-width="200" data-sortable="false">Name</th>
-			<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="100" data-align="right" data-header-align="right">GOAT Pts</th>
+			<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="50" data-align="right" data-header-align="right">Pts</th>
 			<th data-column-id="tournamentGoatPoints" data-type="numeric" data-order="desc" data-width="80" data-align="right" data-header-align="right">Tourn P</th>
 			<th data-column-id="rankingGoatPoints" data-formatter="rankingGoatPoints" data-order="desc" data-width="80" data-align="right" data-header-align="right">Rank P</th>
 			<th data-column-id="achievementsGoatPoints" data-formatter="achievementsGoatPoints" data-order="desc" data-width="80" data-align="right" data-header-align="right">Ach P</th>
 			<th data-column-id="grandSlams" data-formatter="grandSlams" data-width="50" data-align="right" data-header-align="right">GS</th>
 			<th data-column-id="tourFinals" data-formatter="tourFinals" data-width="50" data-align="right" data-header-align="right">TF</th>
+			<th data-column-id="altFinals" data-formatter="altFinals" data-width="50" data-align="right" data-header-align="right">AF</th>
 			<th data-column-id="masters" data-formatter="masters" data-width="50" data-align="right" data-header-align="right">M</th>
 			<th data-column-id="olympics" data-formatter="olympics" data-width="50" data-align="right" data-header-align="right">O</th>
 			<th data-column-id="bigTitles" data-formatter="bigTitles" data-width="50" data-align="right" data-header-align="right">BT</th>
 			<th data-column-id="titles" data-formatter="titles" data-width="50" data-align="right" data-header-align="right">T</th>
 			<th data-column-id="weeksAtNo1" data-formatter="weeksAtNo1" data-width="65" data-align="right" data-header-align="right">W@1</th>
-			<th data-column-id="wonPct" data-formatter="wonPct" data-width="50" data-align="right" data-header-align="right">W%</th>
+			<th data-column-id="wonPct" data-formatter="wonPct" data-width="55" data-align="right" data-header-align="right">W%</th>
 			<th data-column-id="bestEloRating" data-formatter="bestEloRating" data-width="50" data-align="right" data-header-align="right">Elo</th>
 		</tr>
 		</thead>

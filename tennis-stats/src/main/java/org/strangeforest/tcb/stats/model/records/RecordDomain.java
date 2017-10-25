@@ -10,7 +10,7 @@ public enum RecordDomain {
 	TOUR_FINALS("TourFinals", "Tour Finals", N_A, "level = 'F'", "tour_finals_", "tourFinalsMatches", "&level=F"),
 	MASTERS("Masters", "Masters", N_A, "level = 'M'", "masters_", "mastersMatches", "&level=M"),
 	OLYMPICS("Olympics", "Olympics", N_A, "level = 'O'", "olympics_", "olympicsMatches", "&level=O"),
-	BIG_TOURNAMENTS("Big", "Big", "(Grand Slam, Tour Finals, Masters, Olympics)", "level IN ('G', 'F', 'M', 'O')", null, "hardMatches", "&level=GFMO"),
+	BIG_TOURNAMENTS("Big", "Big", "(Grand Slam, Tour Finals, Masters, Olympics)", "level IN ('G', 'F', 'L', 'M', 'O')", null, "hardMatches", "&level=GFMO"),
 	ATP_500("ATP500", "ATP 500/CS", N_A, "level = 'A'", "atp500_", "mastersMatches", "&level=A"),
 	ATP_250("ATP250", "ATP 250/WS", N_A, "level = 'B'", "atp250_", "hardMatches", "&level=B"),
 	SMALL_TOURNAMENTS("Small", "Small", "(ATP 500/CS, ATP 250/WS)", "level IN ('A', 'B')", null, "hardMatches", "&level=AB"),

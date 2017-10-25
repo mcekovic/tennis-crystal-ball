@@ -236,6 +236,7 @@ function levelName(level) {
 	switch (level) {
 		case "G": return "Grand Slam";
 		case "F": return "Tour Finals";
+		case "L": return "Alt. Finals";
 		case "M": return "Masters";
 		case "O": return "Olympics";
 		case "A": return "ATP 500";

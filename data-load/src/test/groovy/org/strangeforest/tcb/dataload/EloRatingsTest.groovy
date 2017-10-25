@@ -47,6 +47,11 @@ class EloRatingsTest {
 		assertThat(kFactor('F', 'QF', (short)3, null)).isCloseTo((double)72.9, offset)
 		assertThat(kFactor('F', 'RR', (short)3, null)).isCloseTo((double)72.9, offset)
 
+		assertThat(kFactor('L', 'F', (short)3, null)).isCloseTo((double)72.0, offset)
+		assertThat(kFactor('L', 'SF', (short)3, null)).isCloseTo((double)68.4, offset)
+		assertThat(kFactor('L', 'QF', (short)3, null)).isCloseTo((double)64.8, offset)
+		assertThat(kFactor('L', 'R16', (short)3, null)).isCloseTo((double)61.2, offset)
+
 		assertThat(kFactor('M', 'F', (short)5, null)).isCloseTo((double)80.0, offset)
 		assertThat(kFactor('M', 'F', (short)3, null)).isCloseTo((double)72.0, offset)
 		assertThat(kFactor('M', 'SF', (short)3, null)).isCloseTo((double)68.4, offset)

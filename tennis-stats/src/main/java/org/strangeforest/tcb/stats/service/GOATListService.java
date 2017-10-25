@@ -33,7 +33,7 @@ public class GOATListService {
 		"SELECT player_id, g.%1$sgoat_rank AS goat_rank, p.name, p.country_id, p.active, g.%2$sgoat_points AS goat_points, g.tournament_goat_points, g.ranking_goat_points, g.achievements_goat_points,\n" +
 		"  g.year_end_rank_goat_points, g.best_rank_goat_points, g.weeks_at_no1_goat_points, g.weeks_at_elo_topn_goat_points, g.best_elo_rating_goat_points,\n" +
 		"  g.grand_slam_goat_points, g.big_wins_goat_points, g.h2h_goat_points, g.records_goat_points, g.best_season_goat_points, g.greatest_rivalries_goat_points, g.performance_goat_points, g.statistics_goat_points,\n" +
-		"  p.grand_slams, p.tour_finals, p.masters, p.olympics, p.big_titles, p.titles, p.weeks_at_no1, pf.matches_won, pf.matches_lost, p.best_elo_rating, p.best_elo_rating_date\n" +
+		"  p.grand_slams, p.tour_finals, p.alt_finals, p.masters, p.olympics, p.big_titles, p.titles, p.weeks_at_no1, pf.matches_won, pf.matches_lost, p.best_elo_rating, p.best_elo_rating_date\n" +
 		"FROM player_goat_points g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"INNER JOIN player_performance pf USING (player_id)\n" +
@@ -108,6 +108,7 @@ public class GOATListService {
 				// Titles
 				row.setGrandSlams(rs.getInt("grand_slams"));
 				row.setTourFinals(rs.getInt("tour_finals"));
+				row.setAltFinals(rs.getInt("alt_finals"));
 				row.setMasters(rs.getInt("masters"));
 				row.setOlympics(rs.getInt("olympics"));
 				row.setBigTitles(rs.getInt("big_titles"));

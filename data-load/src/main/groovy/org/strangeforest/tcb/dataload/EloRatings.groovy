@@ -38,7 +38,7 @@ class EloRatings {
 		"SELECT m.match_id, m.winner_id, m.loser_id, tournament_end(e.date, e.level, e.draw_size) AS end_date, e.level, e.surface, m.round, m.best_of, m.outcome\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"WHERE e.level IN ('G', 'F', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
+		"WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
 		"ORDER BY end_date, m.round, m.winner_id, m.loser_id, m.match_num"
 
 	static final String QUERY_LAST_DATE = //language=SQL
@@ -264,6 +264,7 @@ class EloRatings {
 		switch (level) {
 			case 'G': break
 			case 'F': kFactor *= 0.9; break
+			case 'L': kFactor *= 0.8; break
 			case 'M': kFactor *= 0.8; break
 			case 'O': kFactor *= 0.75; break
 			case 'A': kFactor *= 0.7; break

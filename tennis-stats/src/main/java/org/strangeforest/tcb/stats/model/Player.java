@@ -33,6 +33,7 @@ public class Player {
 	private int titles;
 	private int grandSlams;
 	private int tourFinals;
+	private int altFinals;
 	private int masters;
 	private int olympics;
 
@@ -235,6 +236,14 @@ public class Player {
 
 	public void setTourFinals(int tourFinals) {
 		this.tourFinals = tourFinals;
+	}
+
+	public int getAltFinals() {
+		return altFinals;
+	}
+
+	public void setAltFinals(int altFinals) {
+		this.altFinals = altFinals;
 	}
 
 	public int getMasters() {
