@@ -43,6 +43,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 		register(resultCareerSpan(type, ALL_WO_TEAM));
 		register(resultCareerSpan(type, GRAND_SLAM));
 		register(resultCareerSpan(type, TOUR_FINALS));
+		register(resultCareerSpan(type, ALT_FINALS));
 		register(resultCareerSpan(type, MASTERS));
 	}
 
@@ -50,6 +51,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 		register(winCareerSpan(ALL_WO_TEAM));
 		register(winCareerSpan(GRAND_SLAM));
 		register(winCareerSpan(TOUR_FINALS));
+		register(winCareerSpan(ALT_FINALS));
 		register(winCareerSpan(MASTERS));
 		register(winCareerSpan(OLYMPICS));
 	}

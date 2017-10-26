@@ -11,6 +11,8 @@ public class MostEntriesCategory extends TournamentResultsCategory {
 		register(mostEntries(ALL_WO_TEAM));
 		register(mostEntries(GRAND_SLAM));
 		register(mostEntries(TOUR_FINALS));
+		register(mostEntries(ALT_FINALS));
+		register(mostEntries(ALL_FINALS));
 		register(mostEntries(MASTERS));
 		register(mostEntries(OLYMPICS));
 		register(mostEntries(BIG_TOURNAMENTS));

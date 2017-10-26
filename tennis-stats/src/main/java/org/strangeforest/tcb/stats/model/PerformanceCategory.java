@@ -22,6 +22,7 @@ public final class PerformanceCategory {
 		addCategory(PERFORMANCE, "matches", "matches", "count(DISTINCT match_id%1$s)", "Overall Matches", 200, "matches");
 		addCategory(PERFORMANCE, "grandSlamMatches", "grand_slam_matches", "count(DISTINCT grand_slam_match_id%1$s)", "Grand Slam Matches", 50, "matches", "level-category bg-level-G");
 		addCategory(PERFORMANCE, "tourFinalsMatches", "tour_finals_matches", "count(DISTINCT tour_finals_match_id%1$s)", "Tour Finals Matches", 10, "matches", "level-category bg-level-F");
+		addCategory(PERFORMANCE, "altFinalsMatches", "alt_finals_matches", "count(DISTINCT alt_finals_match_id%1$s)", "Alt. Tour Finals Matches", 10, "matches", "level-category bg-level-L");
 		addCategory(PERFORMANCE, "mastersMatches", "masters_matches", "count(DISTINCT masters_match_id%1$s)", "Masters Matches", 50, "matches", "level-category bg-level-M");
 		addCategory(PERFORMANCE, "olympicsMatches", "olympics_matches", "count(DISTINCT olympics_match_id%1$s)", "Olympics Matches", 5, "matches", "level-category bg-level-O");
 		addCategory(null, "atp500Matches", "atp500_matches", "count(DISTINCT atp500_match_id%1$s)", "ATP 500 Matches", 50, "matches", "level-category bg-level-A");

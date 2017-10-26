@@ -47,6 +47,7 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		register(itemsLostWinningTitle(type, GAMES, ALL_WO_TEAM));
 		register(itemsLostWinningTitle(type, GAMES, GRAND_SLAM));
 		register(itemsLostWinningTitle(type, GAMES, TOUR_FINALS));
+		register(itemsLostWinningTitle(type, GAMES, ALT_FINALS));
 		register(itemsLostWinningTitle(type, GAMES, MASTERS));
 		register(itemsLostWinningTitle(type, GAMES, OLYMPICS));
 		register(itemsLostWinningTitle(type, GAMES, ATP_500));
@@ -58,6 +59,7 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		register(itemsLostWinningTitle(type, SETS, ALL_WO_TEAM));
 		register(itemsLostWinningTitle(type, SETS, GRAND_SLAM));
 		register(itemsLostWinningTitle(type, SETS, TOUR_FINALS));
+		register(itemsLostWinningTitle(type, SETS, ALT_FINALS));
 		register(itemsLostWinningTitle(type, SETS, MASTERS));
 		register(itemsLostWinningTitle(type, SETS, OLYMPICS));
 		register(itemsLostWinningTitle(type, SETS, ATP_500));
@@ -70,6 +72,7 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 			register(titlesWonWOLosingSet(ALL_WO_TEAM));
 			register(titlesWonWOLosingSet(GRAND_SLAM));
 			register(titlesWonWOLosingSet(TOUR_FINALS));
+			register(titlesWonWOLosingSet(ALT_FINALS));
 			register(titlesWonWOLosingSet(MASTERS));
 			register(titlesWonWOLosingSet(OLYMPICS));
 			register(titlesWonWOLosingSet(ATP_500));

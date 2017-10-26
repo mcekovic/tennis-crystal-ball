@@ -56,6 +56,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		register(greatestMatchPct(type, ALL));
 		register(greatestMatchPct(type, GRAND_SLAM));
 		register(greatestMatchPct(type, TOUR_FINALS));
+		register(greatestMatchPct(type, ALT_FINALS));
 		register(greatestMatchPct(type, MASTERS));
 		register(greatestMatchPct(type, OLYMPICS));
 		register(greatestMatchPct(type, ATP_500));
@@ -81,6 +82,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		register(greatestPeakMatchPct(type, ALL));
 		register(greatestPeakMatchPct(type, GRAND_SLAM));
 		register(greatestPeakMatchPct(type, TOUR_FINALS));
+		register(greatestPeakMatchPct(type, ALT_FINALS));
 		register(greatestPeakMatchPct(type, MASTERS));
 		register(greatestPeakMatchPct(type, OLYMPICS));
 		register(greatestPeakMatchPct(type, ATP_500));

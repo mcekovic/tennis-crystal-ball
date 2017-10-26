@@ -4,7 +4,23 @@
 	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for the die-hard tennis fans</subtitle>
 	<link href="http://www.ultimatetennisstatistics.com/feed.atom" rel="self"/>
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
-	<updated>2017-10-14T12:00:00Z</updated>
+	<updated>2017-10-26T12:00:00Z</updated>
+	<entry>
+		<title>Alternative Tour Finals</title>
+		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/tournaments?level=L"/>
+		<id>urn:uuid:b66c3606-720b-4500-9028-44aaf0b1a259</id>
+		<updated>2017-10-26T12:00:00Z</updated>
+		<summary>Alternative Tour Finals - Dallas WCT Finals and Grand Slam Cup recognized as alternative tour Finals, weighted similarly as Masters tournaments</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Alternative Tour Finals - Dallas WCT Finals and Grand Slam Cup recognized as alternative tour Finals, weighted similarly as Masters tournaments</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 	<entry>
 		<title>Tournament Forecasts enhancements</title>
 		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/inProgressEventsForecasts"/>

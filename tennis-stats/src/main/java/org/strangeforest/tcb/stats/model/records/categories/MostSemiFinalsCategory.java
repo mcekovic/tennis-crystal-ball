@@ -11,6 +11,8 @@ public class MostSemiFinalsCategory extends TournamentResultsCategory {
 		register(mostSemiFinals(ALL_WO_TEAM));
 		register(mostSemiFinals(GRAND_SLAM));
 		register(mostSemiFinals(TOUR_FINALS));
+		register(mostSemiFinals(ALT_FINALS));
+		register(mostSemiFinals(ALL_FINALS));
 		register(mostSemiFinals(MASTERS));
 		register(mostSemiFinals(OLYMPICS));
 		register(mostSemiFinals(BIG_TOURNAMENTS));

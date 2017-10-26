@@ -70,6 +70,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 		register(mostItems(type, itemType, ALL));
 		register(mostItems(type, itemType, GRAND_SLAM));
 		register(mostItems(type, itemType, TOUR_FINALS));
+		register(mostItems(type, itemType, ALT_FINALS));
 		register(mostItems(type, itemType, MASTERS));
 		register(mostItems(type, itemType, OLYMPICS));
 		register(mostItems(type, itemType, ATP_500));
@@ -85,6 +86,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 		register(greatestItemPct(type, itemType, ALL));
 		register(greatestItemPct(type, itemType, GRAND_SLAM));
 		register(greatestItemPct(type, itemType, TOUR_FINALS));
+		register(greatestItemPct(type, itemType, ALT_FINALS));
 		register(greatestItemPct(type, itemType, MASTERS));
 		register(greatestItemPct(type, itemType, OLYMPICS));
 		register(greatestItemPct(type, itemType, ATP_500));

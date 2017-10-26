@@ -17,7 +17,7 @@ public class GOATPointsService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
-	private static final String LEVEL_RESULTS_QUERY =
+	private static final String LEVEL_RESULTS_QUERY = //language=SQL
 		"SELECT DISTINCT level, result FROM tournament_rank_points\n" +
 		"WHERE goat_points > 0 AND NOT additive\n" +
 		"ORDER BY level, result DESC";
@@ -61,13 +61,22 @@ public class GOATPointsService {
 
 
 	@Cacheable(value = "Global", key = "'GOATPointsLevelResults'")
-	public Map<String, List<String>> getLevelResults() {
-		Map<String, List<String>> levelResults = new LinkedHashMap<>();
+	public Map<String, Collection<String>> getLevelResults() {
+		Map<String, Collection<String>> levelResults = new LinkedHashMap<>();
 		jdbcTemplate.query(LEVEL_RESULTS_QUERY, rs -> {
 			String level = rs.getString("level");
 			String result = mapResult(level, rs.getString("result"));
-			levelResults.computeIfAbsent(level, aLevel -> new ArrayList<>()).add(result);
+			levelResults.computeIfAbsent(level, aLevel -> new LinkedHashSet<>()).add(result);
 		});
+		// Merge Tour Finals results
+		Collection<String> afResults = levelResults.remove("L");
+		if (afResults != null) {
+			Collection<String> tfResults = levelResults.get("F");
+			if (tfResults != null)
+				tfResults.addAll(afResults);
+			else
+				levelResults.put("F", afResults);
+		}
 		return levelResults;
 	}
 
@@ -107,14 +116,16 @@ public class GOATPointsService {
 			String level = rs.getString("level");
 			String result = mapResult(level, rs.getString("result"));
 			int count = rs.getInt("count");
-			goatPoints.getPlayerSeasonPoints(season).addTournamentItem(level, result, count);
+			goatPoints.getPlayerSeasonPoints(season).getTournamentBreakdown().addItem(level, result, count);
 		});
 
 		jdbcTemplate.query(TEAM_TOURNAMENT_POINTS_QUERY, params("playerId", playerId), rs -> {
 			int season = rs.getInt("season");
 			int count = rs.getInt("count");
-			goatPoints.getPlayerSeasonPoints(season).addTournamentItem("T", "W", count);
+			goatPoints.getPlayerSeasonPoints(season).getTournamentBreakdown().addItem("T", "W", count);
 		});
+
+		goatPoints.aggregateTournamentBreakdownAndMergeTourFinals();
 
 		return goatPoints;
 	}

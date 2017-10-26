@@ -1,7 +1,5 @@
 package org.strangeforest.tcb.stats.model;
 
-import java.util.*;
-
 public class PlayerSeasonGOATPoints {
 
 	private final int season;
@@ -11,7 +9,7 @@ public class PlayerSeasonGOATPoints {
 	private int rankingPoints;
 	private int achievementsPoints;
 	// Tournament
-	private Map<LevelResult, Integer> tournamentBreakdown;
+	private PlayerTournamentGOATPoints tournamentBreakdown;
 	// Ranking
 	private int yearEndRankPoints;
 	private int weeksAtNo1Points;
@@ -23,7 +21,7 @@ public class PlayerSeasonGOATPoints {
 	public PlayerSeasonGOATPoints(int season, int totalPoints) {
 		this.season = season;
 		this.totalPoints = totalPoints;
-		tournamentBreakdown = new HashMap<>();
+		tournamentBreakdown = new PlayerTournamentGOATPoints();
 	}
 
 	public int getSeason() {
@@ -68,12 +66,8 @@ public class PlayerSeasonGOATPoints {
 
 	// Tournament
 
-	public Integer getTournamentItem(String level, String result) {
-		return tournamentBreakdown.get(new LevelResult(level, result));
-	}
-
-	public void addTournamentItem(String level, String result, int count) {
-		tournamentBreakdown.put(new LevelResult(level, result), count);
+	public PlayerTournamentGOATPoints getTournamentBreakdown() {
+		return tournamentBreakdown;
 	}
 
 
@@ -130,35 +124,5 @@ public class PlayerSeasonGOATPoints {
 
 	private static Integer zeroToNull(int i) {
 		return i != 0 ? i : null;
-	}
-
-	private static  class LevelResult {
-
-		private final String level;
-		private final String result;
-
-		public LevelResult(String level, String result) {
-			this.level = level;
-			this.result = result;
-		}
-
-		public String getLevel() {
-			return level;
-		}
-
-		public String getResult() {
-			return result;
-		}
-
-		@Override public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			LevelResult that = (LevelResult)o;
-			return Objects.equals(level, that.level) && Objects.equals(result, that.result);
-		}
-
-		@Override public int hashCode() {
-			return Objects.hash(level, result);
-		}
 	}
 }

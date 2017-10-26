@@ -34,11 +34,11 @@ public class RankingsService {
 
 	private static final String SEASON_END_RANKING_DATE_QUERY = //language=SQL
 		"SELECT max(rank_date) AS rank_date FROM %1$s\n" +
-		"WHERE date_part('year', rank_date) = :season";
+		"WHERE extract(YEAR FROM rank_date) = :season";
 
 	private static final String RANKING_SEASON_DATES_QUERY = //language=SQL
 		"SELECT DISTINCT rank_date FROM %1$s\n" +
-		"WHERE date_part('year', rank_date) = :season\n" +
+		"WHERE extract(YEAR FROM rank_date) = :season\n" +
 		"ORDER BY rank_date DESC";
 
 	private static final String RANKING_TOP_N_QUERY = //language=SQL
@@ -129,7 +129,7 @@ public class RankingsService {
 		"WITH player_year_end_goat_rank AS (\n" +
 		"  SELECT player_id, season, rank() OVER (PARTITION BY season ORDER BY goat_points DESC) AS year_end_rank\n" +
 		"  FROM player_season_goat_points\n" +
-		"  WHERE season < date_part('year', current_date) OR date_part('month', current_date) >= 11\n" +
+		"  WHERE season < extract(YEAR FROM current_date) OR extract(MONTH FROM current_date) >= 11\n" +
 		")\n";
 
 

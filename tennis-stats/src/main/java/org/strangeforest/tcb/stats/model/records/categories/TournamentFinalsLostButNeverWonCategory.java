@@ -16,6 +16,8 @@ public class TournamentFinalsLostButNeverWonCategory extends RecordCategory {
 		register(mostMaxFinals(ALL_WO_TEAM));
 		register(mostMaxFinals(GRAND_SLAM));
 		register(mostMaxFinals(TOUR_FINALS));
+		register(mostMaxFinals(ALT_FINALS));
+		register(mostMaxFinals(ALL_FINALS));
 		register(mostMaxFinals(MASTERS));
 		register(mostMaxFinals(OLYMPICS));
 		register(mostMaxFinals(BIG_TOURNAMENTS));

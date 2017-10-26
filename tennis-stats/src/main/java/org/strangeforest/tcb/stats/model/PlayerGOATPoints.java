@@ -11,6 +11,8 @@ public class PlayerGOATPoints {
 	private int tournamentPoints;
 	private int rankingPoints;
 	private int achievementsPoints;
+	// Tournament
+	private PlayerTournamentGOATPoints tournamentBreakdown = new PlayerTournamentGOATPoints();
 	// Ranking
 	private int yearEndRankPoints;
 	private int bestRankPoints;
@@ -76,14 +78,17 @@ public class PlayerGOATPoints {
 
 	// Tournament
 
-	public Integer getTournamentItem(String level, String result) {
-		int count = 0;
-		for (PlayerSeasonGOATPoints playerSeasonPoints : playerSeasonsPoints) {
-			Integer seasonCount = playerSeasonPoints.getTournamentItem(level, result);
-			if (seasonCount != null)
-				count += seasonCount;
+
+	public PlayerTournamentGOATPoints getTournamentBreakdown() {
+		return tournamentBreakdown;
+	}
+
+	public void aggregateTournamentBreakdownAndMergeTourFinals() {
+		for (PlayerSeasonGOATPoints seasonPoints : playerSeasonsPoints) {
+			PlayerTournamentGOATPoints seasonBreakdown = seasonPoints.getTournamentBreakdown();
+			seasonBreakdown.mergeTourFinals();
+			tournamentBreakdown.addAll(seasonBreakdown);
 		}
-		return count;
 	}
 
 

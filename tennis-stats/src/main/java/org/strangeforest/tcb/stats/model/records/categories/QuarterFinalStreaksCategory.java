@@ -11,6 +11,8 @@ public class QuarterFinalStreaksCategory extends ResultsStreaksCategory {
 		register(quarterFinalStreak(ALL_WO_TEAM));
 		register(quarterFinalStreak(GRAND_SLAM));
 		register(quarterFinalStreak(TOUR_FINALS));
+		register(quarterFinalStreak(ALT_FINALS));
+		register(quarterFinalStreak(ALL_FINALS));
 		register(quarterFinalStreak(MASTERS));
 		register(quarterFinalStreak(OLYMPICS));
 		register(quarterFinalStreak(BIG_TOURNAMENTS));

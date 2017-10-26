@@ -59,7 +59,7 @@ WHERE level = 'A' AND season < 1990;
 
 UPDATE tournament_event e
 SET level = 'L'
-WHERE level = 'B' AND season < 1990
+WHERE level = 'B'
 AND (
 	(name LIKE 'Dallas%' AND season BETWEEN 1971 AND 1989 AND '610' = (SELECT m.ext_tournament_id FROM tournament_mapping m WHERE m.tournament_id = e.tournament_id)) OR
 	(name = 'Grand Slam Cup' AND season BETWEEN 1990 AND 1999)

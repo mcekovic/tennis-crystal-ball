@@ -11,6 +11,8 @@ public class MostQuarterFinalsCategory extends TournamentResultsCategory {
 		register(mostQuarterFinals(ALL_WO_TEAM));
 		register(mostQuarterFinals(GRAND_SLAM));
 		register(mostQuarterFinals(TOUR_FINALS));
+		register(mostQuarterFinals(ALT_FINALS));
+		register(mostQuarterFinals(ALL_FINALS));
 		register(mostQuarterFinals(MASTERS));
 		register(mostQuarterFinals(OLYMPICS));
 		register(mostQuarterFinals(BIG_TOURNAMENTS));

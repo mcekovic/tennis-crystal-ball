@@ -76,7 +76,7 @@
 		<select id="perfLevel" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
 			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
-			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
+			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFLMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
 		</select>
 	</div>
 	<div class="col-md-2">
@@ -304,7 +304,7 @@
 						<th>
 							<div class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level != null && level != '' ? level : 'GFMOAB'}, surface=${surface}, round=${round.code}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${round.text} matches|">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level != null && level != '' ? level : 'GFLMOAB'}, surface=${surface}, round=${round.code}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${round.text} matches|">
 										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
 										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
 									</a>

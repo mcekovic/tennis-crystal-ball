@@ -34,6 +34,11 @@
 	<td th:text="${#numbers.formatDecimal(careerStats.doubleFaultsPerServiceGame, 1, 2)}" class="stats">0.45</td>
 	<td th:each="season : ${seasons}" th:with="stats=${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.doubleFaultsPerServiceGame, 1, 2) : ''}" class="stats">0.45</td>
 </tr>
+<tr>
+	<td class="stats-header stats-serve" title="Aces / double faults ratio">Aces / DFs Ratio</td>
+	<td th:text="${#numbers.formatDecimal(careerStats.acesDoubleFaultsRatio, 1, 2)}" class="stats">0.45</td>
+	<td th:each="season : ${seasons}" th:with="stats=${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.acesDoubleFaultsRatio, 1, 2) : ''}" class="stats">0.45</td>
+</tr>
 <tr class="pct-data">
 	<td class="stats-header stats-serve">1st Serve %</td>
 	<td th:text="${#numbers.formatDecimal(careerStats.firstServePct, 1, 1) + '%'}" class="stats">84.5%</td>

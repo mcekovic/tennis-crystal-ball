@@ -11,6 +11,8 @@ public class TitleStreaksCategory extends ResultsStreaksCategory {
 		register(titleStreak(ALL_WO_TEAM));
 		register(titleStreak(GRAND_SLAM));
 		register(titleStreak(TOUR_FINALS));
+		register(titleStreak(ALT_FINALS));
+		register(titleStreak(ALL_FINALS));
 		register(titleStreak(MASTERS));
 		register(titleStreak(OLYMPICS));
 		register(titleStreak(BIG_TOURNAMENTS));

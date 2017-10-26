@@ -50,6 +50,7 @@ public class YoungestOldestTournamentResultCategory extends RecordCategory {
 		register(ageTournamentResult(recordType, resultType, TOURNAMENT, TOURNAMENT, ALL_TOURNAMENTS));
 		register(ageTournamentResult(recordType, resultType, GRAND_SLAM));
 		register(ageTournamentResult(recordType, resultType, TOUR_FINALS));
+		register(ageTournamentResult(recordType, resultType, ALT_FINALS));
 		register(ageTournamentResult(recordType, resultType, MASTERS));
 		register(ageTournamentResult(recordType, resultType, OLYMPICS));
 		register(ageTournamentResult(recordType, resultType, ATP_500));

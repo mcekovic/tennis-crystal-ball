@@ -57,7 +57,7 @@ CREATE OR REPLACE FUNCTION season_end(
 DECLARE
 	curr_date DATE := current_date;
 BEGIN
-	IF p_season = date_part('year', curr_date)::INTEGER THEN
+	IF p_season = extract(YEAR FROM curr_date)::INTEGER THEN
 		RETURN curr_date;
 	ELSE
 		RETURN (p_season::TEXT || '-12-31')::DATE;
@@ -73,7 +73,7 @@ CREATE OR REPLACE FUNCTION season_weeks(
 	p_to DATE
 ) RETURNS REAL AS $$
 BEGIN
-	IF date_part('year', p_from) = date_part('year', p_to) THEN
+	IF extract(YEAR FROM p_from) = extract(YEAR FROM p_to) THEN
 		RETURN weeks(p_from, p_to);
 	ELSE
 		RETURN weeks(p_from, date_trunc('year', p_to)::DATE);
@@ -89,7 +89,7 @@ CREATE OR REPLACE FUNCTION next_season_weeks(
 	p_to DATE
 ) RETURNS REAL AS $$
 BEGIN
-	IF date_part('year', p_from) = date_part('year', p_to) THEN
+	IF extract(YEAR FROM p_from) = extract(YEAR FROM p_to) THEN
 		RETURN 0;
 	ELSE
 		RETURN weeks(date_trunc('year', p_to)::DATE, p_to);

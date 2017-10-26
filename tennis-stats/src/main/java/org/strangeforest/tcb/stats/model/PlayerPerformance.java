@@ -8,6 +8,7 @@ public class PlayerPerformance {
 	private WonLost matches;
 	private WonLost grandSlamMatches;
 	private WonLost tourFinalsMatches;
+	private WonLost altFinalsMatches;
 	private WonLost mastersMatches;
 	private WonLost olympicsMatches;
 	private WonLost hardMatches;
@@ -33,6 +34,7 @@ public class PlayerPerformance {
 		matches = perf.matches;
 		grandSlamMatches = perf.grandSlamMatches;
 		tourFinalsMatches = perf.tourFinalsMatches;
+		altFinalsMatches = perf.altFinalsMatches;
 		mastersMatches = perf.mastersMatches;
 		olympicsMatches = perf.olympicsMatches;
 		hardMatches = perf.hardMatches;
@@ -77,6 +79,14 @@ public class PlayerPerformance {
 
 	public void setTourFinalsMatches(WonLost tourFinalsMatches) {
 		this.tourFinalsMatches = tourFinalsMatches;
+	}
+
+	public WonLost getAltFinalsMatches() {
+		return altFinalsMatches;
+	}
+
+	public void setAltFinalsMatches(WonLost altFinalsMatches) {
+		this.altFinalsMatches = altFinalsMatches;
 	}
 
 	public WonLost getMastersMatches() {
@@ -234,6 +244,7 @@ public class PlayerPerformance {
 		empty.matches = WonLost.EMPTY;
 		empty.grandSlamMatches = WonLost.EMPTY;
 		empty.tourFinalsMatches = WonLost.EMPTY;
+		empty.altFinalsMatches = WonLost.EMPTY;
 		empty.mastersMatches = WonLost.EMPTY;
 		empty.olympicsMatches = WonLost.EMPTY;
 		empty.hardMatches = WonLost.EMPTY;

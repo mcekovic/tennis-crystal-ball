@@ -22,8 +22,11 @@ public class TournamentController extends PageController {
 	private static final int MAX_RECORD_PLAYERS = 10;
 
 	@GetMapping("/tournaments")
-	public ModelAndView tournaments() {
+	public ModelAndView tournaments(
+		@RequestParam(name = "level", required = false) String level
+	) {
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());

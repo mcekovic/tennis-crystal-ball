@@ -17,7 +17,7 @@ public class PerformanceService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String PLAYER_PERFORMANCE_COLUMNS =
-		"matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, tour_finals_matches_won, tour_finals_matches_lost, masters_matches_won, masters_matches_lost, olympics_matches_won, olympics_matches_lost,\n" +
+		"matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, tour_finals_matches_won, tour_finals_matches_lost, alt_finals_matches_won, alt_finals_matches_lost, masters_matches_won, masters_matches_lost, olympics_matches_won, olympics_matches_lost,\n" +
 		"hard_matches_won, hard_matches_lost, clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, carpet_matches_won, carpet_matches_lost,\n" +
 		"deciding_sets_won, deciding_sets_lost, fifth_sets_won, fifth_sets_lost, finals_won, finals_lost, vs_no1_won, vs_no1_lost, vs_top5_won, vs_top5_lost, vs_top10_won, vs_top10_lost,\n" +
 		"after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost, tie_breaks_won, tie_breaks_lost, deciding_set_tbs_won, deciding_set_tbs_lost\n";
@@ -26,6 +26,7 @@ public class PerformanceService {
 		"count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,\n" +
 		"count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,\n" +
 		"count(DISTINCT tour_finals_match_id_won) tour_finals_matches_won, count(DISTINCT tour_finals_match_id_lost) tour_finals_matches_lost,\n" +
+		"count(DISTINCT alt_finals_match_id_won) alt_finals_matches_won, count(DISTINCT alt_finals_match_id_lost) alt_finals_matches_lost,\n" +
 		"count(DISTINCT masters_match_id_won) masters_matches_won, count(DISTINCT masters_match_id_lost) masters_matches_lost,\n" +
 		"count(DISTINCT olympics_match_id_won) olympics_matches_won, count(DISTINCT olympics_match_id_lost) olympics_matches_lost,\n" +
 		"count(DISTINCT hard_match_id_won) hard_matches_won, count(DISTINCT hard_match_id_lost) hard_matches_lost,\n" +
@@ -149,6 +150,7 @@ public class PerformanceService {
 		perf.setMatches(mapWonLost(rs, "matches"));
 		perf.setGrandSlamMatches(mapWonLost(rs, "grand_slam_matches"));
 		perf.setTourFinalsMatches(mapWonLost(rs, "tour_finals_matches"));
+		perf.setAltFinalsMatches(mapWonLost(rs, "alt_finals_matches"));
 		perf.setMastersMatches(mapWonLost(rs, "masters_matches"));
 		perf.setOlympicsMatches(mapWonLost(rs, "olympics_matches"));
 		perf.setHardMatches(mapWonLost(rs, "hard_matches"));

@@ -111,10 +111,10 @@ public class SeasonsService {
 		"    count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'W') grand_slam_titles,\n" +
 		"    count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'F') grand_slam_finals,\n" +
 		"    count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'SF') grand_slam_semi_finals,\n" +
-		"    count(player_id) FILTER (WHERE e.level = 'F' AND r.result = 'F') tour_finals_finals,\n" +
+		"    count(player_id) FILTER (WHERE e.level IN ('F', 'L') AND r.result = 'W') tour_finals_titles,\n" +
+		"    count(player_id) FILTER (WHERE e.level IN ('F', 'L') AND r.result = 'F') tour_finals_finals,\n" +
 		"    count(player_id) FILTER (WHERE e.level = 'M' AND r.result = 'W') masters_titles,\n" +
 		"    count(player_id) FILTER (WHERE e.level = 'M' AND r.result = 'F') masters_finals,\n" +
-		"    count(player_id) FILTER (WHERE e.level = 'F' AND r.result = 'W') tour_finals_titles,\n" +
 		"    count(player_id) FILTER (WHERE e.level = 'O' AND r.result = 'W') olympics_titles,\n" +
 		"    count(player_id) FILTER (WHERE e.level NOT IN ('D', 'T') AND r.result = 'W') titles\n" +
 		"  FROM player_season_goat_points s\n" +

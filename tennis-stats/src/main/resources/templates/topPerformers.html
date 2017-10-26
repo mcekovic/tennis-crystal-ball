@@ -17,7 +17,8 @@
 		$(function() {
 			var $topPerformersTable = $("#topPerformersTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($topPerformersTable, ["won", "lost", "played"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsVisible($topPerformersTable, ["played"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($topPerformersTable, ["won", "lost"], deviceGreaterOrEqual(device, "sm"));
 			setBootgridColumnsWidths($topPerformersTable, ["name"], [device == "xs" ? 200 : (device == "sm" ? 250 : (device == "md" ? 300 : 400))]);
 			$topPerformersTable.bootgrid({
 				ajax: true,
@@ -108,14 +109,14 @@
 			if (category == "finals") {
 				url += "&round=F";
 				if (!level)
-					url += "&level=GFMOAB";
+					url += "&level=GFLMOAB";
 			}
 			else {
 				var round = $("#round").val();
 				if (round) {
 					url += "&round=" + encodeURIComponent(round);
 					if (!level)
-						url += "&level=GFMOAB";
+						url += "&level=GFLMOAB";
 				}
 			}
 			var tournament = $("#tournament").val();
@@ -262,7 +263,7 @@
 			<select id="level" class="form-control" onchange="levelChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 				<option value="">All levels</option>
 				<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
-				<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFMO" th:text="${levelGroup.text}">Big Tournaments</option>
+				<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFLMO" th:text="${levelGroup.text}">Big Tournaments</option>
 			</select>
 		</div>
 		<div class="col-md-2">
@@ -332,7 +333,7 @@
 			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
 			<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="85">Country</th>
 			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="250">Name</th>
-			<th data-column-id="wonLostPct" data-order="desc" data-width="175" data-align="right" data-header-align="right">Pct.</th>
+			<th data-column-id="wonLostPct" data-order="desc" data-width="190" data-align="right" data-header-align="right">Pct.</th>
 			<th data-column-id="won" data-formatter="won" data-width="70" data-align="right" data-header-align="right">Won</th>
 			<th data-column-id="lost" data-formatter="lost" data-width="70" data-align="right" data-header-align="right">Lost</th>
 			<th data-column-id="played" data-formatter="played" data-width="75" data-align="right" data-header-align="right">Played</th>

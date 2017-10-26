@@ -11,6 +11,8 @@ public class FinalStreaksCategory extends ResultsStreaksCategory {
 		register(finalStreak(ALL_WO_TEAM));
 		register(finalStreak(GRAND_SLAM));
 		register(finalStreak(TOUR_FINALS));
+		register(finalStreak(ALT_FINALS));
+		register(finalStreak(ALL_FINALS));
 		register(finalStreak(MASTERS));
 		register(finalStreak(OLYMPICS));
 		register(finalStreak(BIG_TOURNAMENTS));

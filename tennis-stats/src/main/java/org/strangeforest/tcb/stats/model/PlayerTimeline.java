@@ -18,7 +18,7 @@ public class PlayerTimeline {
 	}
 
 	public List<PlayerTournamentTimeline> getBigTournaments() {
-		return getTournaments(EnumSet.of(GRAND_SLAM, TOUR_FINALS, MASTERS, OLYMPICS));
+		return getTournaments(EnumSet.of(GRAND_SLAM, TOUR_FINALS, ALT_FINALS, MASTERS, OLYMPICS));
 	}
 
 	public List<PlayerTournamentTimeline> getOtherTournaments() {

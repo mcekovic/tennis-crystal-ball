@@ -188,7 +188,7 @@
 		<th class="text-right">
 			<div th:if="${wl1}" class="progress progress-season pull-right">
 				<div class="progress-bar progress-bar-season progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, outcome=played)}" th:text="${wl1.pctWL}" th:title="|Show season ${round.text} matches|">50% (10-10)</a>
+					<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, round=${round.code}, level=GFLMOAB, outcome=played)}" th:text="${wl1.pctWL}" th:title="|Show season ${round.text} matches|">50% (10-10)</a>
 				</div>
 			</div>
 		</th>
@@ -196,7 +196,7 @@
 		<th class="text-left">
 			<div th:if="${wl2}" class="progress progress-season pull-left">
 				<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-					<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, outcome=played)}" th:text="${wl2.pctWL}" th:title="|Show season ${round.text} matches|">50% (10-10)</a>
+					<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, round=${round.code}, level=GFLMOAB, outcome=played)}" th:text="${wl2.pctWL}" th:title="|Show season ${round.text} matches|">50% (10-10)</a>
 				</div>
 			</div>
 		</th>

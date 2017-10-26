@@ -135,7 +135,7 @@
 				<th>
 					<div class="progress progress-season">
 						<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, round=${round.code}, level=GFMOAB, outcome=played)}" th:text="${wl.pctWL}" th:title="|Show season ${round.text} matches|">50% (10-10)</a>
+							<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, round=${round.code}, level=GFLMOAB, outcome=played)}" th:text="${wl.pctWL}" th:title="|Show season ${round.text} matches|">50% (10-10)</a>
 						</div>
 					</div>
 				</th>

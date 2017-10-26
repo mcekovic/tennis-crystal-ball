@@ -11,6 +11,8 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 		register(mostTitles(ALL_WO_TEAM));
 		register(mostTitles(GRAND_SLAM));
 		register(mostTitles(TOUR_FINALS));
+		register(mostTitles(ALT_FINALS));
+		register(mostTitles(ALL_FINALS));
 		register(mostTitles(MASTERS));
 		register(mostTitles(OLYMPICS));
 		register(mostTitles(BIG_TOURNAMENTS));
@@ -23,6 +25,7 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 		register(mostTitles(CARPET));
 		register(mostSeasonTitles(ALL_WO_TEAM));
 		register(mostSeasonTitles(GRAND_SLAM));
+		register(mostSeasonTitles(ALL_FINALS));
 		register(mostSeasonTitles(MASTERS));
 		register(mostSeasonTitles(BIG_TOURNAMENTS));
 		register(mostSeasonTitles(HARD));

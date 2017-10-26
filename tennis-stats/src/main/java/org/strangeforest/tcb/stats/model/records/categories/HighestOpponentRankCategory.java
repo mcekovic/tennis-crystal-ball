@@ -56,6 +56,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			register(highestOpponentRank(type, rankingType, ALL));
 			register(highestOpponentRank(type, rankingType, GRAND_SLAM));
 			register(highestOpponentRank(type, rankingType, TOUR_FINALS));
+			register(highestOpponentRank(type, rankingType, ALT_FINALS));
 			register(highestOpponentRank(type, rankingType, MASTERS));
 			register(highestOpponentRank(type, rankingType, OLYMPICS));
 			register(highestOpponentRank(type, rankingType, ATP_500));
@@ -74,6 +75,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 		register(highestTitleOpponentRank(type, rankingType, ALL_WO_TEAM));
 		register(highestTitleOpponentRank(type, rankingType, GRAND_SLAM));
 		register(highestTitleOpponentRank(type, rankingType, TOUR_FINALS));
+		register(highestTitleOpponentRank(type, rankingType, ALT_FINALS));
 		register(highestTitleOpponentRank(type, rankingType, MASTERS));
 		register(highestTitleOpponentRank(type, rankingType, OLYMPICS));
 		register(highestTitlesOpponentRank(type, rankingType, ALL_WO_TEAM));

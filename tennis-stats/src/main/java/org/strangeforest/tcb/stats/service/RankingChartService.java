@@ -167,7 +167,7 @@ public class RankingChartService {
 		if (rankType == GOAT_POINTS) {
 			if (bySeason) {
 				return format(PLAYER_SEASON_GOAT_POINTS_QUERY,
-					byAge ? ", date_part('year', age((g.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "",
+					byAge ? ", extract(YEAR FROM age((g.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "",
 					playerJoin, rangeFilter(seasonRange, "g.season", "season"), byAge ? ", age" : "", orderBy
 				);
 			}
@@ -181,7 +181,7 @@ public class RankingChartService {
 		else {
 			if (bySeason) {
 				return format(PLAYER_SEASON_RANKINGS_QUERY,
-					byAge ? ", date_part('year', age((r.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "",
+					byAge ? ", extract(YEAR FROM age((r.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "",
 					rankColumnBySeason(rankType), rankingTableBySeason(rankType), playerJoin, rangeFilter(seasonRange, "r.season", "season"), orderBy
 				);
 			}

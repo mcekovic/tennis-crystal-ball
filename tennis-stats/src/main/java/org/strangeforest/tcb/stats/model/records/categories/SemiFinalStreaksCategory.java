@@ -11,6 +11,8 @@ public class SemiFinalStreaksCategory extends ResultsStreaksCategory {
 		register(semiFinalStreak(ALL_WO_TEAM));
 		register(semiFinalStreak(GRAND_SLAM));
 		register(semiFinalStreak(TOUR_FINALS));
+		register(semiFinalStreak(ALT_FINALS));
+		register(semiFinalStreak(ALL_FINALS));
 		register(semiFinalStreak(MASTERS));
 		register(semiFinalStreak(OLYMPICS));
 		register(semiFinalStreak(BIG_TOURNAMENTS));

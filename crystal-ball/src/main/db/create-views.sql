@@ -200,13 +200,13 @@ CREATE UNIQUE INDEX ON player_best_rank_points (player_id);
 -- player_year_end_rank
 
 CREATE OR REPLACE VIEW player_year_end_rank_v AS
-SELECT DISTINCT player_id, date_part('year', rank_date)::INTEGER AS season,
+SELECT DISTINCT player_id, extract(YEAR FROM rank_date)::INTEGER AS season,
    first_value(rank) OVER player_season_rank AS year_end_rank,
    first_value(rank_points) OVER player_season_rank AS year_end_rank_points
 FROM player_ranking
-WHERE date_part('year', rank_date) < date_part('year', current_date) OR date_part('month', current_date) >= 11
+WHERE extract(YEAR FROM rank_date) < extract(YEAR FROM current_date) OR extract(MONTH FROM current_date) >= 11
 GROUP BY player_id, season, rank_date
-WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_date)::INTEGER ORDER BY rank_date DESC);
+WINDOW player_season_rank AS (PARTITION BY player_id, extract(YEAR FROM rank_date)::INTEGER ORDER BY rank_date DESC);
 
 CREATE MATERIALIZED VIEW player_year_end_rank AS SELECT * FROM player_year_end_rank_v;
 
@@ -279,7 +279,7 @@ CREATE UNIQUE INDEX ON player_best_elo_rating (player_id);
 -- player_year_end_elo_rank
 
 CREATE OR REPLACE VIEW player_year_end_elo_rank_v AS
-SELECT DISTINCT player_id, date_part('year', rank_date)::INTEGER AS season,
+SELECT DISTINCT player_id, extract(YEAR FROM rank_date)::INTEGER AS season,
    first_value(rank) OVER player_season_rank AS year_end_rank,
    first_value(elo_rating) OVER player_season_rank AS year_end_elo_rating,
    first_value(hard_rank) OVER player_season_rank AS hard_year_end_rank,
@@ -291,10 +291,10 @@ SELECT DISTINCT player_id, date_part('year', rank_date)::INTEGER AS season,
 	first_value(carpet_rank) OVER player_season_rank AS carpet_year_end_rank,
 	first_value(carpet_elo_rating) OVER player_season_rank AS carpet_year_end_elo_rating
 FROM player_elo_ranking
-WHERE (date_part('year', rank_date) < date_part('year', current_date) OR date_part('month', current_date) >= 11)
-AND date_part('month', rank_date) > 6
+WHERE (extract(YEAR FROM rank_date) < extract(YEAR FROM current_date) OR extract(MONTH FROM current_date) >= 11)
+AND extract(MONTH FROM rank_date) > 6
 GROUP BY player_id, season, rank_date
-WINDOW player_season_rank AS (PARTITION BY player_id, date_part('year', rank_date)::INTEGER ORDER BY rank_date DESC);
+WINDOW player_season_rank AS (PARTITION BY player_id, extract(YEAR FROM rank_date)::INTEGER ORDER BY rank_date DESC);
 
 CREATE MATERIALIZED VIEW player_year_end_elo_rank AS SELECT * FROM player_year_end_elo_rank_v;
 
@@ -813,7 +813,7 @@ CREATE INDEX ON player_tournament_level_win_streak (tournament_id);
 
 CREATE OR REPLACE VIEW no1_player_ranking_v AS
 WITH no1_player_ranking AS (
-	SELECT player_id, rank_date, date_part('year', rank_date)::INTEGER AS season, rank,
+	SELECT player_id, rank_date, extract(YEAR FROM rank_date)::INTEGER AS season, rank,
 		weeks(rank_date, lead(rank_date) OVER p) AS weeks,
 		season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks,
 		next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks
@@ -875,7 +875,7 @@ INNER JOIN weeks_at_no1_goat_points ON TRUE;
 
 CREATE OR REPLACE VIEW topn_player_elo_ranking_v AS
 WITH topn_player_elo_ranking AS (
-	SELECT player_id, rank, rank_date, date_part('year', rank_date)::INTEGER AS season,
+	SELECT player_id, rank, rank_date, extract(YEAR FROM rank_date)::INTEGER AS season,
 		weeks(rank_date, lead(rank_date) OVER p) AS weeks,
 		season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks,
 		next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks
@@ -1168,6 +1168,13 @@ WITH matches_performers AS (
 ), tour_finals_matches_performers_ranked AS (
 	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
 	FROM tour_finals_matches_performers
+), alt_finals_matches_performers AS (
+	SELECT player_id, alt_finals_matches_won::REAL / (alt_finals_matches_won + alt_finals_matches_lost) AS won_lost_pct
+	FROM player_performance
+	WHERE alt_finals_matches_won + alt_finals_matches_lost >= performance_min_entries('altFinalsMatches')
+), alt_finals_matches_performers_ranked AS (
+	SELECT rank() OVER (ORDER BY won_lost_pct DESC) AS rank, player_id
+	FROM alt_finals_matches_performers
 ), masters_matches_performers AS (
 	SELECT player_id, masters_matches_won::REAL / (masters_matches_won + masters_matches_lost) AS won_lost_pct
 	FROM player_performance
@@ -1292,6 +1299,10 @@ WITH matches_performers AS (
 	SELECT p.player_id, g.goat_points
 	FROM tour_finals_matches_performers_ranked p
 	INNER JOIN performance_goat_points g ON g.category_id = 'tourFinalsMatches' AND g.rank = p.rank
+	UNION ALL
+	SELECT p.player_id, g.goat_points
+	FROM alt_finals_matches_performers_ranked p
+	INNER JOIN performance_goat_points g ON g.category_id = 'altFinalsMatches' AND g.rank = p.rank
 	UNION ALL
 	SELECT p.player_id, g.goat_points
 	FROM masters_matches_performers_ranked p

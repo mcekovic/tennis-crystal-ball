@@ -48,6 +48,7 @@ public class MostMatchesCategory extends RecordCategory {
 		register(mostMatches(type, ALL));
 		register(mostMatches(type, GRAND_SLAM));
 		register(mostMatches(type, TOUR_FINALS));
+		register(mostMatches(type, ALT_FINALS));
 		register(mostMatches(type, MASTERS));
 		register(mostMatches(type, OLYMPICS));
 		register(mostMatches(type, ATP_500));

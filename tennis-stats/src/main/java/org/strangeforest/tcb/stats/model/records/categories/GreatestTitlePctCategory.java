@@ -42,6 +42,8 @@ public class GreatestTitlePctCategory extends RecordCategory {
 		register(greatestFinalPct(type));
 		register(greatestFinalPct(type, GRAND_SLAM));
 		register(greatestFinalPct(type, TOUR_FINALS));
+		register(greatestFinalPct(type, ALT_FINALS));
+		register(greatestFinalPct(type, ALL_FINALS));
 		register(greatestFinalPct(type, MASTERS));
 		register(greatestFinalPct(type, OLYMPICS));
 		register(greatestFinalPct(type, BIG_TOURNAMENTS));
@@ -56,6 +58,8 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			register(greatestTitlePct(ALL_WO_TEAM));
 			register(greatestTitlePct(GRAND_SLAM));
 			register(greatestTitlePct(TOUR_FINALS));
+			register(greatestTitlePct(ALT_FINALS));
+			register(greatestTitlePct(ALL_FINALS));
 			register(greatestTitlePct(MASTERS));
 			register(greatestTitlePct(OLYMPICS));
 			register(greatestTitlePct(BIG_TOURNAMENTS));
