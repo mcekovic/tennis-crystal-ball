@@ -21,7 +21,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 		super("Best Player That Never...");
 		register(bestPlayerThatNeverWon(GRAND_SLAM, "grand_slams"));
 		register(bestPlayerThatNeverWon(TOUR_FINALS, "tour_finals"));
-		register(bestPlayerThatNeverWon(ALL_FINALS, "all_finals"));
+		register(bestPlayerThatNeverWon(ALL_FINALS, "tour_finals + alt_finals", "Any Tour Finals Title (Official or Alternative)"));
 		register(bestPlayerThatNeverWon(MASTERS, "masters"));
 		register(bestPlayerThatNeverWon(OLYMPICS, "olympics"));
 		register(bestPlayerThatNeverWon(BIG_TOURNAMENTS, "big_titles"));
@@ -39,8 +39,13 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 	}
 
 	private static Record bestPlayerThatNeverWon(RecordDomain domain, String titleColumn) {
+		return bestPlayerThatNeverWon(domain, titleColumn, null);
+	}
+
+	private static Record bestPlayerThatNeverWon(RecordDomain domain, String titleColumn, String domainTitleOverride) {
+		String domainTitle = domainTitleOverride != null ? prefix(domainTitleOverride, " ") : prefix(domain.name, " ") + " Title" + prefix(domain.nameSuffix, " ");
 		return new Record<>(
-			"BestPlayerThatNeverWon" + domain.id + "Title", "Best Player That Never Won" + prefix(domain.name, " ") + " Title" + prefix(domain.nameSuffix, " "),
+			"BestPlayerThatNeverWon" + domain.id + "Title", "Best Player That Never Won" + domainTitle,
 			/* language=SQL */
 			"SELECT player_id, goat_points AS value FROM player_v\n" +
 			"WHERE goat_points > 0 AND " + titleColumn + " = 0",

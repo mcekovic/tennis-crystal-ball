@@ -48,7 +48,7 @@ public class TimelinesController extends PageController {
 	public ModelAndView tournamentLevelTimeline(
       @RequestParam(name = "level") String level
 	) {
-		TournamentLevel tournamentLevel = decode(level);
+		TournamentLevel tournamentLevel = TournamentLevel.decode(level);
 		TournamentLevelTimeline timeline = tournamentLevelService.getTournamentLevelTimeline(level, tournamentLevel != MASTERS);
 
 		ModelMap modelMap = new ModelMap();
@@ -57,11 +57,26 @@ public class TimelinesController extends PageController {
 		return new ModelAndView("tournamentLevelTimeline", modelMap);
 	}
 
+	@GetMapping("/tournamentLevelGroupTimeline")
+	public ModelAndView tournamentLevelGroupTimeline(
+      @RequestParam(name = "level") String level
+	) {
+		TournamentLevelGroup tournamentLevelGroup = TournamentLevelGroup.decode(level);
+		TournamentLevel tournamentLevel = tournamentLevelGroup.getLevels().iterator().next();
+		TournamentLevelTimeline timeline = tournamentLevelService.getTournamentLevelGroupTimeline(tournamentLevelGroup, tournamentLevel != MASTERS);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("level", tournamentLevel);
+		modelMap.addAttribute("levelGroup", tournamentLevelGroup);
+		modelMap.addAttribute("timeline", timeline);
+		return new ModelAndView("tournamentLevelTimeline", modelMap);
+	}
+
 	@GetMapping("/teamTournamentLevelTimeline")
 	public ModelAndView teamTournamentLevelTimeline(
       @RequestParam(name = "level") String level
 	) {
-		TournamentLevel tournamentLevel = decode(level);
+		TournamentLevel tournamentLevel = TournamentLevel.decode(level);
 		List<TeamTournamentLevelTimelineItem> timeline = tournamentLevelService.getTeamTournamentLevelTimeline(level);
 
 		ModelMap modelMap = new ModelMap();

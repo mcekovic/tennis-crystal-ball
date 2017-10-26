@@ -2,18 +2,15 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import static java.util.Collections.*;
 import static java.util.Comparator.*;
+import static java.util.Comparator.reverseOrder;
 
 public class TournamentLevelTimeline {
 
-	private final String level;
 	private final Map<Integer, List<TournamentItem>> seasonsTournaments = new TreeMap<>(reverseOrder());
 	private final Map<Integer, List<TournamentLevelTimelineItem>> seasonsEvents = new HashMap<>();
-	private final Map<Integer, Integer> playerWins = new HashMap<>();
-
-	public TournamentLevelTimeline(String level) {
-		this.level = level;
-	}
+	private final Map<String, Map<Integer, Integer>> playerWins = new HashMap<>();
 
 	public Set<Integer> getSeasons() {
 		return seasonsTournaments.keySet();
@@ -32,8 +29,8 @@ public class TournamentLevelTimeline {
 		return seasonsEvents.get(season);
 	}
 
-	public int getWins(int playerId) {
-		return playerWins.get(playerId);
+	public int getWins(String level, int playerId) {
+		return playerWins.getOrDefault(level, emptyMap()).get(playerId);
 	}
 
 	public void addItem(TournamentLevelTimelineItem item) {
@@ -43,19 +40,19 @@ public class TournamentLevelTimeline {
 	}
 
 	private void addSeasonTournament(TournamentLevelTimelineItem item) {
-		TournamentItem tournamentItem = new TournamentItem(item.getTournamentId(), item.getName(), level);
-		seasonsTournaments.computeIfAbsent(item.getSeason(), ArrayList::new).add(tournamentItem);
+		TournamentItem tournamentItem = new TournamentItem(item.getTournamentId(), item.getName(), item.getLevel());
+		seasonsTournaments.computeIfAbsent(item.getSeason(), s -> new ArrayList<>()).add(tournamentItem);
 	}
 
 	private void addSeasonEvent(TournamentLevelTimelineItem item) {
-		seasonsEvents.computeIfAbsent(item.getSeason(), ArrayList::new).add(item);
+		seasonsEvents.computeIfAbsent(item.getSeason(), s -> new ArrayList<>()).add(item);
 	}
 
 	private void updatePlayerWins(TournamentLevelTimelineItem item) {
 		PlayerRow winner = item.getWinner();
 		if (winner == null)
 			return;
-		item.setPlayerWins(playerWins.compute(winner.getPlayerId(), (p, w) -> w != null ? w + 1 : 1));
+		item.setPlayerWins(playerWins.computeIfAbsent(item.getLevel(), l -> new HashMap<>()).compute(winner.getPlayerId(), (p, w) -> w != null ? w + 1 : 1));
 	}
 
 	public void addMissingSeasonLastTournaments() {
@@ -70,7 +67,7 @@ public class TournamentLevelTimeline {
 				List<TournamentLevelTimelineItem> prevSeasonEvents = seasonsEvents.get(prevSeason);
 				for (int index = seasonTournaments.size(); index < prevSeasonEvents.size(); index++) {
 					TournamentLevelTimelineItem item = prevSeasonEvents.get(index);
-					addItem(new TournamentLevelTimelineItem(item.getTournamentId(), item.getName(), season, 0, null, null));
+					addItem(new TournamentLevelTimelineItem(item.getTournamentId(), item.getName(), season, 0, null, null, null));
 				}
 			}
 		}

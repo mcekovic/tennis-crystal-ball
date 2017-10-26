@@ -56,6 +56,13 @@
 		.points {
 			text-align: right;
 		}
+		.points-link {
+			color: darkblue;
+		}
+		.points-link[href]:hover,
+		.points-link[href]:focus {
+			color: navy;
+		}
 		.highlight-season {
 			background-color: #e8f4ff;
 			border: 3px solid darkblue;
@@ -98,7 +105,7 @@
 		<tbody>
 		<tr th:each="season : ${goatPoints.playerSeasonsPoints}" th:class="${season.season == highlightSeason ? 'highlight-season' : _}" th:with="breakdown=${season.tournamentBreakdown}">
 			<th class="first-column points-" th:attrappend="class=${season.totalPointsRounded}">
-				<a th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season.season})}" th:text="${season.season}" style="color: darkblue" title="Show season results">2000</a>
+				<a th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season.season})}" th:text="${season.season}" class="points-link" title="Show season results">2000</a>
 			</th>
 			<th class="points first-column points-" th:attrappend="class=${season.totalPointsRounded}" th:text="${season.totalPoints}">50</th>
 			<th:block th:each="level : ${levelResults}">
@@ -123,7 +130,7 @@
 			<th class="points first-header first-column total" th:text="${goatPoints.seasonsPoints}">250</th>
 			<th:block th:each="level : ${levelResults}">
 				<th th:each="result : ${level.value}" class="level points first-header" th:attrappend="class=${resultStat.first ? ' first-column' : ''}" th:data-level="${level.key}">
-					<a th:if="${breakdown.hasItem(level.key, result)}" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, level=${breakdown.getLevel(level.key, result)}, result=${result})}" th:text="${breakdown.getItem(level.key, result)}" title="Show results">1</a>
+					<a th:if="${breakdown.hasItem(level.key, result)}" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, level=${breakdown.getLevel(level.key, result)}, result=${result})}" th:text="${breakdown.getItem(level.key, result)}" class="points-link" title="Show results">1</a>
 				</th>
 			</th:block>
 			<th class="points first-header first-column bg-level-D" th:text="${breakdown.getItem('T', 'W')}">4</th>

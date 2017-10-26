@@ -195,12 +195,15 @@ class MatchLoader extends BaseCSVLoader {
 				else
 					return 'M'
 			case 'A':
-				if (extTournamentId == '605' && season == 2016)
-					return 'F'
-				else if (name.contains('Olympics'))
-					return 'O'
-				else if (name.startsWith('Australian Open') && season == 1977)
+				if (name.startsWith('Australian Open') && season == 1977)
 					return 'G'
+				else if (extTournamentId == '605' && season == 2016)
+					return 'F'
+				else if ( // Alternative Tour Finals
+					(name.startsWith('Dallas') && extTournamentId == '610' && season in 1971..1989) || // WCT Finals
+					(name.equals('Grand Slam Cup') && season in 1990..1999)
+				)
+					return 'L'
 				else if (
 					(name.startsWith('Boston') && season in 1970..1977) ||
 					(name.startsWith('Forest Hills') && season in 1982..1985) ||
@@ -221,15 +224,8 @@ class MatchLoader extends BaseCSVLoader {
 					(name.equals('Wembley') && (season in 1970..1971 || season in 1976..1983))
 				)
 					return 'M'
-				else if (
-					name.equals('Barranquilla')
-				)
-					return 'H'
-				else if (
-					(name.equals('Dusseldorf') && extTournamentId == '615') ||
-					(name.equals('Nations Cup') && extTournamentId == '615')
-				)
-					return 'T'
+				else if (name.contains('Olympics'))
+					return 'O'
 				else if (
 					// Real ATP 500
 					(name.equals('Acapulco') && season >= 2001) ||
@@ -264,12 +260,20 @@ class MatchLoader extends BaseCSVLoader {
 					(name.equals('Vienna') && (season in 1996..2008 || season >= 2015)) ||
 					(name.equals('Washington') && (season in 1990..2002 || season >= 2009)) ||
 					 // Other distinguished tournaments
-					(name.startsWith('Dallas') && extTournamentId == '610' && season in 1971..1989) || // WCT Finals
-					(name.equals('Grand Slam Cup') && season in 1990..1999) ||
 					(name.equals('Pepsi Grand Slam') && season in 1976..1981) ||
-					(name.equals('WCT Challenge Cup') && season in 1976..1980)
+					(name.equals('WCT Challenge Cup') && season in 1976..1980) ||
+					(name.equals('Rome WCT') && season == 1972) ||
+					(name.equals('Naples Finals WCT') && season == 1982) ||
+					(name.equals('Detroit WCT') && season == 1983)
 				)
 					return 'A'
+				else if (
+					(name.equals('Dusseldorf') && extTournamentId == '615') ||
+					(name.equals('Nations Cup') && extTournamentId == '615')
+				)
+					return 'T'
+				else if (name.equals('Barranquilla'))
+					return 'H'
 				else
 					return 'B'
 			case 'D': return 'D'

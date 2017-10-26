@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="level" type="org.strangeforest.tcb.stats.model.TournamentLevel"*/-->
+<!--/*@thymesVar id="levelGroup" type="org.strangeforest.tcb.stats.model.TournamentLevelGroup"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.TournamentLevelTimeline"*/-->
 <head th:replace="fragments/head :: commonHead(${level.text} + ' Timeline', false, ~{::script}, ~{::style})">
 	<script type="text/javascript">
@@ -46,7 +47,7 @@
 		</thead>
 		<tr>
 			<th>
-				<a th:href="@{/tournamentEvents(season=${season}, level=${level.code})}" th:text="${season}" title="Show season tournaments">2000</a>
+				<a th:href="@{/tournamentEvents(season=${season}, level=${levelGroup != null ? levelGroup.codes : level.code})}" th:text="${season}" title="Show season tournaments">2000</a>
 			</th>
 			<td th:each="event : ${timeline.getSeasonEvents(season)}" th:with="winner=${event.winner}, runnerUp=${event.runnerUp}" th:class="${event.surface != null ? 'bg-surface-' + event.surface : _}">
 				<span th:if="${winner}" th:attr="data-winner=${winner.fullName}, data-winner-seed=${winner.seed}, data-winner-entry=${winner.entry}, data-runner-up=${runnerUp.fullName}, data-runner-up-seed=${runnerUp.seed}, data-runner-up-entry=${runnerUp.entry}, data-score=${event.score}, data-outcome=${event.outcome}">
@@ -54,7 +55,7 @@
 						<img th:src="@{/images/flags/{code}.png(code=${winner.country.code})}" src="/images/flags/ch.png'" th:title="${winner.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${winner.playerId})}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 						<img th:if="${winner.active}" src="/images/active.png" title="Active" width="12" height="12"/>
-						<span class="small-dimmed" th:text="'(' + ${event.playerWins} + '/' + ${timeline.getWins(winner.playerId)} + ')'">(2/5)</span>
+						<span class="small-dimmed" th:text="'(' + ${event.playerWins} + '/' + ${timeline.getWins(event.level, winner.playerId)} + ')'">(2/5)</span>
 					</th:block>
 					<span th:if="${event.outcome} == 'ABD'" class="small-dimmed">
 						<a th:href="@{/playerProfile(playerId=${winner.playerId})}" th:text="${winner.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>

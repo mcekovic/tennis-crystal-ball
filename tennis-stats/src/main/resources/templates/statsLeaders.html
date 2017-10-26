@@ -47,7 +47,10 @@
 				},
 				formatters: {
 					"country": countryFormatter,
-					"player": playerFormatter
+					"player": playerFormatter,
+					"value": function(column, row) {
+						return "<a href='" + playerMatchesUrl(row.playerId) + "' title='Show matches'>" + row.value + "</a>";
+					}
 				},
 				labels: {
 					loading: bootgridTemplateLoading,
@@ -63,6 +66,35 @@
 			categoryChanged();
 			$("[data-toggle='tooltip']").tooltip();
 		});
+		function playerMatchesUrl(playerId) {
+			var url = "/playerProfile?playerId=" + playerId + "&tab=matches";
+			var season = $("#season").val();
+			if (season)
+				url += "&season=" + season;
+			var level = $("#level").val();
+			if (level)
+				url += "&level=" + level;
+			var surface = $("#surface").val();
+			if (surface)
+				url += "&surface=" + surface;
+			var round = $("#round").val();
+			if (round) {
+				url += "&round=" + encodeURIComponent(round);
+				if (!level)
+					url += "&level=GFLMOAB";
+			}
+			var tournament = $("#tournament").val();
+			if (tournament)
+				url += "&tournamentId=" + tournament;
+			var opponent = $("#opponent").val();
+			if (opponent)
+				url += "&opponent=" + opponent;
+			var country = $("#country").val();
+			if (country)
+				url += "&countryId=" + country;
+			url += "&outcome=played";
+			return url;
+		}
 		function categoryChanged() {
 			var $category = $("#category");
 			$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
@@ -214,7 +246,7 @@
 			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
 			<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="85">Country</th>
 			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="250">Name</th>
-			<th data-column-id="value" data-order="desc" data-width="175" data-align="right" data-header-align="right">Value</th>
+			<th data-column-id="value" data-formatter="value" data-order="desc" data-width="175" data-align="right" data-header-align="right">Value</th>
 		</tr>
 		</thead>
 	</table>

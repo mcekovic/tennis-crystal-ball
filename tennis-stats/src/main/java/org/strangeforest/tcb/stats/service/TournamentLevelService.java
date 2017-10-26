@@ -40,7 +40,21 @@ public class TournamentLevelService {
 
 	@Cacheable("TournamentLevelTimeline")
 	public TournamentLevelTimeline getTournamentLevelTimeline(String level, boolean fullName) {
-		TournamentLevelTimeline timeline = new TournamentLevelTimeline(level);
+		TournamentLevelTimeline timeline = new TournamentLevelTimeline();
+		fetchTournamentLevelTimeline(timeline, level, fullName);
+		timeline.addMissingSeasonLastTournaments();
+		return timeline;
+	}
+
+	@Cacheable("TournamentLevelsTimeline")
+	public TournamentLevelTimeline getTournamentLevelGroupTimeline(TournamentLevelGroup levelGroup, boolean fullName) {
+		TournamentLevelTimeline timeline = new TournamentLevelTimeline();
+		for (TournamentLevel level : levelGroup.getLevels())
+			fetchTournamentLevelTimeline(timeline, level.getCode(), fullName);
+		return timeline;
+	}
+
+	private void fetchTournamentLevelTimeline(TournamentLevelTimeline timeline, String level, boolean fullName) {
 		jdbcTemplate.query(
 			String.format(TIMELINE_QUERY, fullName ? "name" : "last_name"),
 			params("level", level),
@@ -51,6 +65,7 @@ public class TournamentLevelService {
 					rs.getInt("season"),
 					rs.getInt("tournament_event_id"),
 					rs.getDate("date"),
+					level,
 					rs.getString("surface")
 				);
 				item.setWinner(mapPlayer(rs, "winner_", 1));
@@ -60,8 +75,6 @@ public class TournamentLevelService {
 				timeline.addItem(item);
 			}
 		);
-		timeline.addMissingSeasonLastTournaments();
-		return timeline;
 	}
 
 	private TournamentLevelTimelinePlayer mapPlayer(ResultSet rs, String prefix, int rank) throws SQLException {

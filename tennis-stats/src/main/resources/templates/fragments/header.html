@@ -46,7 +46,7 @@
 						<ul class="dropdown-menu">
 							<li th:class="${path == '/dominanceTimeline' ? 'active' : _}"><a href="javascript:dominanceTimeline()">Dominance Timeline<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'G' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=G">Grand Slam Timeline</a></li>
-							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'F' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=F">Tour Finals Timeline</a></li>
+							<li th:class="${path == '/tournamentLevelGroupTimeline' && param.level[0] == 'FL' ? 'active' : _}"><a href="/tournamentLevelGroupTimeline?level=FL">Tour Finals Timeline</a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'M' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=M">Masters Timeline</a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'O' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=O">Olympics Timeline</a></li>
 							<li th:class="${path == '/teamTournamentLevelTimeline' && param.level[0] == 'D' ? 'active' : _}"><a href="/teamTournamentLevelTimeline?level=D">Davis Cup Timeline</a></li>

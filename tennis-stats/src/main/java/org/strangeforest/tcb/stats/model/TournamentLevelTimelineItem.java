@@ -9,6 +9,7 @@ public class TournamentLevelTimelineItem {
 	private final int season;
 	private final int tournamentEventId;
 	private final Date date;
+	private final String level;
 	private final String surface;
 	private TournamentLevelTimelinePlayer winner;
 	private int playerWins;
@@ -16,12 +17,13 @@ public class TournamentLevelTimelineItem {
 	private String score;
 	private String outcome;
 
-	public TournamentLevelTimelineItem(int tournamentId, String name, int season, int tournamentEventId, Date date, String surface) {
+	public TournamentLevelTimelineItem(int tournamentId, String name, int season, int tournamentEventId, Date date, String level, String surface) {
 		this.tournamentId = tournamentId;
 		this.name = name;
 		this.season = season;
 		this.tournamentEventId = tournamentEventId;
 		this.date = date;
+		this.level = level;
 		this.surface = surface;
 	}
 
@@ -43,6 +45,10 @@ public class TournamentLevelTimelineItem {
 
 	public Date getDate() {
 		return date;
+	}
+
+	public String getLevel() {
+		return level;
 	}
 
 	public String getSurface() {

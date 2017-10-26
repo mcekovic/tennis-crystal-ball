@@ -42,6 +42,13 @@
 	.points {
 		text-align: right;
 	}
+	.points-link {
+		color: darkblue;
+	}
+	.points-link[href]:hover,
+	.points-link[href]:focus {
+		color: navy;
+	}
 </style>
 <th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
 <table id="goatPointsTable" class="table table-condensed table-hover table-bordered text-nowrap">
@@ -87,9 +94,13 @@
 		<td class="points" th:text="${season1.weeksAtNo1Points}">5</td>
 		<td class="points" th:text="${season1.yearEndRankPoints}">8</td>
 		<td class="points first-column" th:text="${season1.tournamentPoints}">35</td>
-		<th class="points first-column points-" th:attrappend="class=${season1.totalPointsRounded}" th:text="${season1.totalPoints > 0 ? season1.totalPoints : _}">50</th>
+		<th class="points first-column points-" th:attrappend="class=${season1.totalPointsRounded}">
+			<a th:if="${season1.totalPoints > 0}" th:href="@{/playerProfile(playerId=${playerId1}, tab=goatPoints, season=${season})}" th:text="${season1.totalPoints}" class="points-link" title="Show season GOAT Points distribution">50</a>
+		</th>
 		<th class="first-column text-center" th:text="${season}">2000</th>
-		<th class="points first-column points-" th:attrappend="class=${season2.totalPointsRounded}" th:text="${season2.totalPoints > 0 ? season2.totalPoints : _}">50</th>
+		<th class="points first-column points-" th:attrappend="class=${season2.totalPointsRounded}">
+			<a th:if="${season2.totalPoints > 0}" th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints, season=${season})}" th:text="${season2.totalPoints}" class="points-link" title="Show season GOAT Points distribution">50</a>
+		</th>
 		<td class="points first-column" th:text="${season2.tournamentPoints}">35</td>
 		<td class="points first-column" th:text="${season2.yearEndRankPoints}">8</td>
 		<td class="points" th:text="${season2.weeksAtNo1Points}">5</td>
@@ -265,9 +276,13 @@
 	<thead>
 	<tr>
 		<th colspan="8" class="first-header first-column last-column"></th>
-		<th class="points first-header first-column grand-total"><a th:href="@{/playerProfile(playerId=${playerId1}, tab=goatPoints)}" th:text="${goatPoints1.totalPoints}" style="color: darkblue" title="Show GOAT Points distribution">155</a></th>
+		<th class="points first-header first-column grand-total">
+			<a th:href="@{/playerProfile(playerId=${playerId1}, tab=goatPoints)}" th:text="${goatPoints1.totalPoints}" class="points-link" title="Show GOAT Points distribution">155</a>
+		</th>
 		<th class="first-header first-column text-center grand-total">Total</th>
-		<th class="points first-header first-column grand-total"><a th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints)}" th:text="${goatPoints2.totalPoints}" style="color: darkblue" title="Show GOAT Points distribution">155</a></th>
+		<th class="points first-header first-column grand-total">
+			<a th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints)}" th:text="${goatPoints2.totalPoints}" class="points-link" title="Show GOAT Points distribution">155</a>
+		</th>
 		<th colspan="8" class="first-header first-column last-column"></th>
 	</tr>
 	</thead>

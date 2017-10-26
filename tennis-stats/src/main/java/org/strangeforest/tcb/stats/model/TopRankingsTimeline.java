@@ -36,7 +36,7 @@ public class TopRankingsTimeline {
 	}
 
 	private void addSeasonPlayer(int season, TopRankingsPlayer player) {
-		seasonsTopPlayers.computeIfAbsent(season, ArrayList::new).add(player);
+		seasonsTopPlayers.computeIfAbsent(season, s -> new ArrayList<>()).add(player);
 	}
 
 	private void updatePlayerYENo1s(TopRankingsPlayer player) {

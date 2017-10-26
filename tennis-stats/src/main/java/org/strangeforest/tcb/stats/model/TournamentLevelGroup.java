@@ -2,10 +2,12 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.util.*;
+
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
 
-public enum TournamentLevelGroup {
+public enum TournamentLevelGroup implements CodedEnum {
 
 	BIG(EnumSet.of(GRAND_SLAM, TOUR_FINALS, ALT_FINALS, MASTERS, OLYMPICS), "Big (GS/TF/AF/M/O)"),
 	SMALL(EnumSet.of(ATP_500, ATP_250), "Small (500/250)"),
@@ -17,20 +19,34 @@ public enum TournamentLevelGroup {
 	BEST_OF_5_IND(EnumSet.of(GRAND_SLAM, ALT_FINALS), "Best of 5"),
 	BEST_OF_3_IND(EnumSet.of(TOUR_FINALS, MASTERS, OLYMPICS, ATP_500, ATP_250), "Best of 3");
 
+	private final EnumSet<TournamentLevel> levels;
 	private final String codes;
 	private final String text;
 
 	TournamentLevelGroup(EnumSet<TournamentLevel> levels, String text) {
+		this.levels = levels;
 		codes = levels.stream().map(TournamentLevel::getCode).collect(joining());
 		this.text = text;
+	}
+
+	public EnumSet<TournamentLevel> getLevels() {
+		return levels;
+	}
+
+	@Override public String getCode() {
+		return codes;
 	}
 
 	public String getCodes() {
 		return codes;
 	}
 
-	public String getText() {
+	@Override public String getText() {
 		return text;
+	}
+
+	public static TournamentLevelGroup decode(String code) {
+		return CodedEnum.decode(TournamentLevelGroup.class, code);
 	}
 
 	public static EnumSet<TournamentLevelGroup> INDIVIDUAL_LEVEL_GROUPS = EnumSet.of(BIG, SMALL, ALL_FINALS, BEST_OF_5_IND, BEST_OF_3_IND);
