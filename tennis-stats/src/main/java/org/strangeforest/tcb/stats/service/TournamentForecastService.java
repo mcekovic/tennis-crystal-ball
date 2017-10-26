@@ -54,8 +54,8 @@ public class TournamentForecastService {
 
 	private static final String FAVORITE_EXTRA_COLUMNS = //language=SQL
 		", p.current_rank, p.best_rank,\n" +
-		"  coalesce((SELECT CASE WHEN m.player1_id = player_id THEN coalesce(m.player1_next_elo_rating, m.player1_next_elo_rating) ELSE coalesce(m.player2_next_elo_rating, m.player2_next_elo_rating) END FROM in_progress_match m\n" +
-		"   WHERE m.in_progress_event_id = r.in_progress_event_id AND (m.player1_id = player_id OR m.player2_id = player_id) ORDER BY m.round, m.match_num LIMIT 1), p.current_elo_rating) AS current_elo_rating,\n" +
+		"  coalesce((SELECT CASE WHEN m.player1_id = player_id THEN coalesce(m.player1_next_elo_rating, m.player1_elo_rating) ELSE coalesce(m.player2_next_elo_rating, m.player2_elo_rating) END FROM in_progress_match m\n" +
+		"   WHERE m.in_progress_event_id = r.in_progress_event_id AND (m.player1_id = player_id OR m.player2_id = player_id) ORDER BY m.round DESC, m.match_num LIMIT 1), p.current_elo_rating) AS current_elo_rating,\n" +
 		"  (%1$s) AS current_surface_elo_rating,\n" +
 		"  nullif((SELECT count(*) FROM player_tournament_event_result t INNER JOIN tournament_event e USING (tournament_event_id) WHERE t.player_id = r.player_id AND t.result = 'W' AND e.date >= current_date - (INTERVAL '1 year') AND e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')), 0) AS last52_titles,\n" +
 		"  extract(YEAR FROM age) AS age";
