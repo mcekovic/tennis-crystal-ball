@@ -48,8 +48,20 @@ public class RankingsController extends PageController {
 	}
 
 	@GetMapping("/rankingsChart")
-	public ModelAndView rankingsChart() {
+	public ModelAndView rankingsChart(
+		@RequestParam(name = "players", required = false) String players,
+		@RequestParam(name = "rankType", required = false) String rankType,
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "byAge", required = false) Boolean byAge
+	) {
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("players", players);
+		modelMap.addAttribute("rankType", rankType);
+		if (season != null) {
+			modelMap.addAttribute("fromDate", "01-01-" + season);
+			modelMap.addAttribute("toDate", "31-12-" + season);
+		}
+		modelMap.addAttribute("byAge", byAge);
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("rankTypes", RankType.values());

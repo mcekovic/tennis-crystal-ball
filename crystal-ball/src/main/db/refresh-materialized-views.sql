@@ -9,6 +9,7 @@ REFRESH MATERIALIZED VIEW player_year_end_rank;
 REFRESH MATERIALIZED VIEW player_current_elo_rank;
 REFRESH MATERIALIZED VIEW player_best_elo_rank;
 REFRESH MATERIALIZED VIEW player_best_elo_rating;
+REFRESH MATERIALIZED VIEW player_season_best_elo_rating;
 REFRESH MATERIALIZED VIEW player_year_end_elo_rank;
 REFRESH MATERIALIZED VIEW player_season_weeks_at_no1;
 REFRESH MATERIALIZED VIEW player_weeks_at_no1;

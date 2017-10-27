@@ -216,15 +216,15 @@ public class RankingChartService {
 			case RANK:
 			case ELO_RANK: return "r.year_end_rank";
 			case POINTS: return "r.year_end_rank_points";
-			case ELO_RATING: return "r.year_end_elo_rating";
+			case ELO_RATING: return "r.best_elo_rating";
 			case HARD_ELO_RANK: return "r.hard_year_end_rank";
-			case HARD_ELO_RATING: return "r.hard_year_end_elo_rating";
+			case HARD_ELO_RATING: return "r.hard_best_elo_rating";
 			case CLAY_ELO_RANK: return "r.clay_year_end_rank";
-			case CLAY_ELO_RATING: return "r.clay_year_end_elo_rating";
+			case CLAY_ELO_RATING: return "r.clay_best_elo_rating";
 			case GRASS_ELO_RANK: return "r.grass_year_end_rank";
-			case GRASS_ELO_RATING: return "r.grass_year_end_elo_rating";
+			case GRASS_ELO_RATING: return "r.grass_best_elo_rating";
 			case CARPET_ELO_RANK: return "r.carpet_year_end_rank";
-			case CARPET_ELO_RATING: return "r.carpet_year_end_elo_rating";
+			case CARPET_ELO_RATING: return "r.carpet_best_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -240,7 +240,7 @@ public class RankingChartService {
 	private String rankingTableBySeason(RankType rankType) {
 		switch (rankType.category) {
 			case ATP: return "player_year_end_rank";
-			case ELO: return "player_year_end_elo_rank";
+			case ELO: return rankType.points ? "player_season_best_elo_rating" : "player_year_end_elo_rank";
 			default: throw unknownEnum(rankType.category);
 		}
 	}

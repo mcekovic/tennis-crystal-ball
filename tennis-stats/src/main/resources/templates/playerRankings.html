@@ -2,6 +2,8 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId" type="int[]"*/-->
 <!--/*@thymesVar id="rankType" type="java.lang.String"*/-->
+<!--/*@thymesVar id="fromDate" type="java.lang.String"*/-->
+<!--/*@thymesVar id="toDate" type="java.lang.String"*/-->
 <!--/*@thymesVar id="highlights" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.RankType[]"*/-->
@@ -97,7 +99,7 @@
 				<option value="3">Last three years</option>
 				<option value="5">Last five years</option>
 				<option value="10">Last ten years</option>
-				<option value="CS">Custom</option>
+				<option value="CS" th:selected="${fromDate != null || toDate != null}">Custom</option>
 			</select>
 		</div>
 	</div>
@@ -111,9 +113,9 @@
 	<div id="rankingDateRange" class="col-md-4" style="display: none">
 		<div class="input-group">
 			<label for="rankingFromDate" class="input-group-addon">From:</label>
-			<input id="rankingFromDate" type="text" maxlength="10" class="form-control"/>
+			<input id="rankingFromDate" type="text" maxlength="10" class="form-control" th:value="${fromDate}"/>
 			<label for="rankingToDate" class="input-group-addon">To:</label>
-			<input id="rankingToDate" type="text" maxlength="10" class="form-control"/>
+			<input id="rankingToDate" type="text" maxlength="10" class="form-control" th:value="${toDate}"/>
 		</div>
 	</div>
 	<div id="rankingSeasonRange" class="col-md-4" style="display: none">

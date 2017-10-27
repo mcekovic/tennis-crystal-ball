@@ -2,7 +2,7 @@
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="titles" type="java.util.Map<java.lang.Integer, java.lang.Integer>"*/-->
 <!--/*@thymesVar id="yearEndRanks" type="java.util.Map<java.lang.Integer, java.lang.Integer>"*/-->
-<!--/*@thymesVar id="yearEndEloRatings" type="java.util.Map<java.lang.Integer, java.lang.Integer>"*/-->
+<!--/*@thymesVar id="bestEloRatings" type="java.util.Map<java.lang.Integer, java.lang.Integer>"*/-->
 <!--/*@thymesVar id="goatPoints" type="java.util.Map<java.lang.Integer, java.lang.Integer>"*/-->
 <!--/*@thymesVar id="careerPerf" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
 <!--/*@thymesVar id="seasonsPerf" type="java.util.Map<java.lang.Integer, org.strangeforest.tcb.stats.model.PlayerPerformance>"*/-->
@@ -18,11 +18,11 @@
 	<td th:text="${yearEndRanks.get(null)}" class="stats">5</td>
 	<td th:each="season : ${seasons}" th:text="${yearEndRanks.get(season)}" class="stats" align="center">5</td>
 </tr>
-<!-- Year-end Elo Rating -->
+<!-- Best Elo Rating -->
 <tr>
-	<td class="stats-header stats-general">Year-End Elo Rating</td>
-	<td th:text="${yearEndEloRatings.get(null)}" class="stats">2350</td>
-	<td th:each="season : ${seasons}" th:text="${yearEndEloRatings.get(season)}" class="stats" align="center">5</td>
+	<td class="stats-header stats-general">Peak Elo Rating</td>
+	<td th:text="${bestEloRatings.get(null)}" class="stats">2350</td>
+	<td th:each="season : ${seasons}" th:text="${bestEloRatings.get(season)}" class="stats" align="center">5</td>
 </tr>
 <!-- GOAT Points -->
 <tr th:unless="${goatPoints.empty}">

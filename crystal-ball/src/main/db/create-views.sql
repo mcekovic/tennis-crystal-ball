@@ -276,6 +276,24 @@ CREATE MATERIALIZED VIEW player_best_elo_rating AS SELECT * FROM player_best_elo
 CREATE UNIQUE INDEX ON player_best_elo_rating (player_id);
 
 
+-- player_season_best_elo_rating
+
+CREATE OR REPLACE VIEW player_season_best_elo_rating_v AS
+SELECT DISTINCT player_id, extract(YEAR FROM rank_date)::INTEGER AS season,
+   max(elo_rating) AS best_elo_rating,
+	max(hard_elo_rating) AS hard_best_elo_rating,
+	max(clay_elo_rating) AS clay_best_elo_rating,
+	max(grass_elo_rating) AS grass_best_elo_rating,
+	max(carpet_elo_rating) AS carpet_best_elo_rating
+FROM player_elo_ranking
+GROUP BY player_id, season;
+
+CREATE MATERIALIZED VIEW player_season_best_elo_rating AS SELECT * FROM player_season_best_elo_rating_v;
+
+CREATE INDEX ON player_season_best_elo_rating (player_id);
+CREATE INDEX ON player_season_best_elo_rating (season);
+
+
 -- player_year_end_elo_rank
 
 CREATE OR REPLACE VIEW player_year_end_elo_rank_v AS

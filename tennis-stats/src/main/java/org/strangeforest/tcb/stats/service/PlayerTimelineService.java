@@ -42,8 +42,8 @@ public class PlayerTimelineService {
 		"SELECT NULL, min(year_end_rank) FROM player_year_end_rank\n" +
 		"WHERE player_id = :playerId";
 
-	private static final String YEAR_END_ELO_RATINGS_QUERY = //language=SQL
-		"SELECT season, year_end_elo_rating FROM player_year_end_elo_rank\n" +
+	private static final String BEST_ELO_RATINGS_QUERY = //language=SQL
+		"SELECT season, best_elo_rating FROM player_season_best_elo_rating\n" +
 		"WHERE player_id = :playerId\n" +
 		"UNION ALL\n" +
 		"SELECT NULL, best_elo_rating FROM player_v\n" +
@@ -87,8 +87,8 @@ public class PlayerTimelineService {
 		return getPlayerSeasonValues(YEAR_END_RANKS_QUERY, "year_end_rank", playerId);
 	}
 
-	public Map<Integer, Integer> getPlayerYearEndEloRatings(int playerId) {
-		return getPlayerSeasonValues(YEAR_END_ELO_RATINGS_QUERY, "year_end_elo_rating", playerId);
+	public Map<Integer, Integer> getPlayerBestEloRatings(int playerId) {
+		return getPlayerSeasonValues(BEST_ELO_RATINGS_QUERY, "best_elo_rating", playerId);
 	}
 
 	public Map<Integer, Integer> getPlayerSeasonGOATPoints(int playerId) {

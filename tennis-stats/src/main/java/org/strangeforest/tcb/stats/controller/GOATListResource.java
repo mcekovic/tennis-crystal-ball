@@ -25,6 +25,7 @@ public class GOATListResource {
 		.put("achievementsGoatPoints", "achievements_goat_points")
 		.put("grandSlams", "grand_slams")
 		.put("tourFinals", "tour_finals")
+		.put("altFinals", "alt_finals")
 		.put("masters", "masters")
 		.put("olympics", "olympics")
 		.put("bigTitles", "big_titles")

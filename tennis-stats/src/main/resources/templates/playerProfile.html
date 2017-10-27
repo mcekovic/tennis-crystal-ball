@@ -25,7 +25,7 @@
 				[# th:case="'season'"] playerSeason([[${season}]]); [/]
 				[# th:case="'tournaments'"] playerTournaments([[${season}]], [[${level}]], [[${surface}]], [[${result}]], [[${tournamentId}]]); [/]
 				[# th:case="'matches'"] playerMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]], [[${opponent}]], [[${tournamentId}]], [[${tournamentEventId}]], [[${outcome}]], [[${score}]], [[${countryId}]]); [/]
-				[# th:case="'ranking'"] playerRanking([[${rankType}]]); [/]
+				[# th:case="'ranking'"] playerRanking([[${rankType}]], [[${season}]]); [/]
 				[# th:case="'performance'"] playerPerformance([[${season}]],[[${surface}]]); [/]
 				[# th:case="'goatPoints'"] playerGoatPoints([[${season}]]); [/]
 				[# th:case="'records'"] playerRecords([[${infamous}]]); [/]
@@ -80,11 +80,13 @@
 				url += "&countryId=" + countryId;
 			loadTab($pill, url)
 		}
-		function playerRanking(rankType) {
+		function playerRanking(rankType, season) {
 			var $pill = $("#rankingPill");
 			var url = $pill.data("url");
 			if (rankType)
 				url += "&rankType=" + rankType;
+			if (season)
+				url += "&season=" + season;
 			loadTab($pill, url);
 		}
 		function playerPerformance(season, surface) {

@@ -51,6 +51,8 @@ DROP MATERIALIZED VIEW player_best_elo_rank;
 DROP VIEW player_best_elo_rank_v;
 DROP MATERIALIZED VIEW player_best_elo_rating;
 DROP VIEW player_best_elo_rating_v;
+DROP MATERIALIZED VIEW player_season_best_elo_rating;
+DROP VIEW player_season_best_elo_rating_v;
 DROP MATERIALIZED VIEW player_year_end_elo_rank;
 DROP VIEW player_year_end_elo_rank_v;
 

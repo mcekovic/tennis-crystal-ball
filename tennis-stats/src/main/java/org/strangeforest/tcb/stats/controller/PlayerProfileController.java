@@ -234,7 +234,8 @@ public class PlayerProfileController extends PageController {
 	@GetMapping("/playerRankings")
 	public ModelAndView playerRankings(
 		@RequestParam(name = "playerId") int playerId,
-		@RequestParam(name = "rankType", required = false) String rankType
+		@RequestParam(name = "rankType", required = false) String rankType,
+		@RequestParam(name = "season", required = false) Integer season
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		RankingHighlights rankingHighlights = rankingsService.getRankingHighlights(playerId);
@@ -242,6 +243,10 @@ public class PlayerProfileController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", new int[] {playerId});
 		modelMap.addAttribute("rankType", rankType);
+		if (season != null) {
+			modelMap.addAttribute("fromDate", "01-01-" + season);
+			modelMap.addAttribute("toDate", "31-12-" + season);
+		}
 		modelMap.addAttribute("highlights", rankingHighlights);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("rankTypes", RankType.values());

@@ -9,7 +9,7 @@
 			var device = detectDevice();
 			setBootgridColumnsVisible($bestSeasonsTable, ["mastersTitles", "wonPct"], deviceGreaterOrEqual(device, "sm"));
 			setBootgridColumnsVisible($bestSeasonsTable, ["grandSlamFinals", "tourFinalsTitles", "olympicsTitles", "yearEndRank"], deviceGreaterOrEqual(device, "md"));
-			setBootgridColumnsVisible($bestSeasonsTable, ["grandSlamSemiFinals", "tourFinalsFinals", "mastersFinals"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($bestSeasonsTable, ["grandSlamSemiFinals", "tourFinalsFinals", "mastersFinals", "bestEloRating"], deviceGreaterOrEqual(device, "lg"));
 			$bestSeasonsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -52,7 +52,10 @@
 					"titles": playerTournamentsFormatter("titles", "&result=W", "titles"),
 					"wonPct": wonLostFormatter,
 					"yearEndRank": function(column, row) {
-						return row.yearEndRank != null ? ("<a href='/rankingsTable?season=" + row.season + "' title='Show " + row.season + " year end rankings'>" + row.yearEndRank + "</a>") : "";
+						return row.yearEndRank != null ? ("<a href='/rankingsTable?season=" + row.season + "' title='Show " + row.season + " year-end rankings'>" + row.yearEndRank + "</a>") : "";
+					},
+					"bestEloRating": function(column, row) {
+						return row.bestEloRating != null ? ("<a href='/playerProfile?playerId=" + row.playerId + "&tab=ranking&rankType=ELO_RATING&season=" + row.season + "' title='Show " + row.season + " Elo rating chart'>" + row.bestEloRating + "</a>") : "";
 					}
 				},
 				labels: {
@@ -77,7 +80,8 @@
 				{id: "olympicsTitles", title: "Olympics golds"},
 				{id: "titles", title: "Titles"},
 				{id: "wonPct", title: "Winning percentage"},
-				{id: "yearEndRank", title: "Year-end ranking"}
+				{id: "yearEndRank", title: "Year-end ranking"},
+				{id: "bestEloRating", title: "Season Peak Elo Rating"}
 			]);
 			$("[data-toggle='collapse']").click(collapseClick);
 		});
@@ -98,18 +102,19 @@
 			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
 			<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="200">Name</th>
 			<th data-column-id="season" data-formatter="season" data-width="80" data-align="center">Season</th>
-			<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="100" data-align="right" data-header-align="right">GOAT Pts.</th>
+			<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="50" data-align="right" data-header-align="right">Pts</th>
 			<th data-column-id="grandSlamTitles" data-formatter="grandSlamTitles" data-width="70" data-align="right" data-header-align="right">GS W</th>
 			<th data-column-id="grandSlamFinals" data-formatter="grandSlamFinals" data-width="70" data-align="right" data-header-align="right">GS F</th>
 			<th data-column-id="grandSlamSemiFinals" data-formatter="grandSlamSemiFinals" data-width="70" data-align="right" data-header-align="right">GS SF</th>
-			<th data-column-id="tourFinalsTitles" data-formatter="tourFinalsTitles" data-width="70" data-align="right" data-header-align="right">TF W</th>
-			<th data-column-id="tourFinalsFinals" data-formatter="tourFinalsFinals" data-width="70" data-align="right" data-header-align="right">TF F</th>
+			<th data-column-id="tourFinalsTitles" data-formatter="tourFinalsTitles" data-width="65" data-align="right" data-header-align="right">TF W</th>
+			<th data-column-id="tourFinalsFinals" data-formatter="tourFinalsFinals" data-width="65" data-align="right" data-header-align="right">TF F</th>
 			<th data-column-id="mastersTitles" data-formatter="mastersTitles" data-width="60" data-align="right" data-header-align="right">M W</th>
 			<th data-column-id="mastersFinals" data-formatter="mastersFinals" data-width="60" data-align="right" data-header-align="right">M F</th>
 			<th data-column-id="olympicsTitles" data-formatter="olympicsTitles" data-width="60" data-align="right" data-header-align="right">O G</th>
 			<th data-column-id="titles" data-formatter="titles" data-width="65" data-align="right" data-header-align="right">Titles</th>
 			<th data-column-id="wonPct" data-formatter="wonPct" data-width="55" data-align="right" data-header-align="right">W%</th>
 			<th data-column-id="yearEndRank" data-formatter="yearEndRank" data-width="55" data-align="right" data-header-align="right">YER</th>
+			<th data-column-id="bestEloRating" data-formatter="bestEloRating" data-width="50" data-align="right" data-header-align="right">Elo</th>
 		</tr>
 		</thead>
 	</table>
