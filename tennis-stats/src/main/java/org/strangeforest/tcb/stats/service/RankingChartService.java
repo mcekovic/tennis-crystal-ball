@@ -40,7 +40,7 @@ public class RankingChartService {
 		"SELECT r.season%1$s, r.player_id, %2$s AS rank_value\n" +
 		"FROM %3$s r%4$s\n" +
 		"WHERE r.player_id IN (:playerIds)\n" +
-		"AND %2$s > 0\n" +
+		"AND %2$s > 0%5$s\n" +
 		"ORDER BY %6$s, r.player_id";
 
 	private static final String PLAYER_GOAT_POINTS_QUERY = //language=SQL
