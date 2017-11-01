@@ -36,7 +36,7 @@ public class DataLoadCommand {
 				readOutput(reader, sb);
 				LOGGER.info(sb.toString());
 				if (exitCode == 0)
-					LOGGER.info("{} finished.", name);
+					LOGGER.debug("{} finished.", name);
 				else
 					LOGGER.error("{} exited with code {}.", name, exitCode);
 				return exitCode;

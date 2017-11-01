@@ -6,7 +6,7 @@ VALUES
    ('Alexandar Lazov', 'Alexander Lazov'),
    ('Andre Thielemans', 'Andre Tielemans'),
    ('Andres Artunedo Martinavarro', 'Andres Artunedo Martinavarr'),
-   ('Andrew Smith', 'A Smith'),
+   ('Andrew Smith', 'Stan Smith'),
    ('Antoine Hoang', 'Antonie Hoang'),
    ('Axel Geuer', 'Alex Geuer'),
    ('Albert Ramos Vinolas', 'Albert Ramos'),
