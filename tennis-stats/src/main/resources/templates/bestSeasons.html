@@ -25,7 +25,7 @@
 				formatters: {
 					"player": playerCountryFormatter,
 					"season": function(column, row) {
-						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&season=" + row.season + "' title='Show " + row.name + "&apos;s " + row.season + " season'>" + row.season + "</a>";
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=season&season=" + row.season + "' title='Show " + row.name + "&apos;s " + row.season + " season'>" + row.season + "</a>";
 					},
 					"goatPoints": function(column, row) {
 						if (row.goatPoints > 0) {
