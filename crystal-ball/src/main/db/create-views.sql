@@ -171,8 +171,10 @@ WITH best_rank AS (
 	SELECT player_id, min(rank) AS best_rank FROM player_ranking
 	GROUP BY player_id
 )
-SELECT player_id, best_rank, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND r.rank = b.best_rank) AS best_rank_date
-FROM best_rank b;
+SELECT player_id, best_rank, min(rank_date) FILTER (WHERE r.rank = b.best_rank) AS best_rank_date
+FROM best_rank b
+INNER JOIN player_ranking r USING (player_id)
+GROUP BY player_id, best_rank;
 
 CREATE MATERIALIZED VIEW player_best_rank AS SELECT * FROM player_best_rank_v;
 
@@ -188,9 +190,11 @@ WITH best_rank_points AS (
 	WHERE rank_points > 0
 	GROUP BY player_id
 )
-SELECT player_id, best_rank_points, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND r.rank_points = b.best_rank_points) AS best_rank_points_date,
-	best_rank_points_adjusted, (SELECT min(rank_date) FROM player_ranking r WHERE r.player_id = b.player_id AND adjust_atp_rank_points(r.rank_points, r.rank_date) = b.best_rank_points_adjusted) AS best_rank_points_adjusted_date
-FROM best_rank_points b;
+SELECT player_id, b.best_rank_points, min(r.rank_date) FILTER (WHERE r.rank_points = b.best_rank_points) AS best_rank_points_date,
+	b.best_rank_points_adjusted, min(r.rank_date) FILTER (WHERE adjust_atp_rank_points(r.rank_points, r.rank_date) = b.best_rank_points_adjusted) AS best_rank_points_adjusted_date
+FROM best_rank_points b
+INNER JOIN player_ranking r USING(player_id)
+GROUP BY b.player_id, b.best_rank_points, b.best_rank_points_adjusted;
 
 CREATE MATERIALIZED VIEW player_best_rank_points AS SELECT * FROM player_best_rank_points_v;
 
@@ -200,13 +204,15 @@ CREATE UNIQUE INDEX ON player_best_rank_points (player_id);
 -- player_year_end_rank
 
 CREATE OR REPLACE VIEW player_year_end_rank_v AS
-SELECT DISTINCT player_id, extract(YEAR FROM rank_date)::INTEGER AS season,
-   first_value(rank) OVER player_season_rank AS year_end_rank,
-   first_value(rank_points) OVER player_season_rank AS year_end_rank_points
-FROM player_ranking
-WHERE extract(YEAR FROM rank_date) < extract(YEAR FROM current_date) OR extract(MONTH FROM current_date) >= 11
-GROUP BY player_id, season, rank_date
-WINDOW player_season_rank AS (PARTITION BY player_id, extract(YEAR FROM rank_date)::INTEGER ORDER BY rank_date DESC);
+WITH year_end_rank_date AS (
+	SELECT player_id, extract(YEAR FROM rank_date)::INTEGER AS season, max(rank_date) AS rank_date
+	FROM player_ranking
+	WHERE extract(YEAR FROM rank_date) < extract(YEAR FROM current_date) OR extract(MONTH FROM current_date) >= 11
+	GROUP BY player_id, season
+)
+SELECT player_id, season, rank AS year_end_rank, rank_points AS year_end_rank_points
+FROM year_end_rank_date
+INNER JOIN player_ranking USING (player_id, rank_date);
 
 CREATE MATERIALIZED VIEW player_year_end_rank AS SELECT * FROM player_year_end_rank_v;
 
@@ -216,10 +222,10 @@ CREATE INDEX ON player_year_end_rank (player_id);
 -- player_current_elo_rank
 
 CREATE OR REPLACE VIEW player_current_elo_rank_v AS
-	WITH current_rank_date AS (SELECT max(rank_date) AS rank_date FROM player_elo_ranking)
-	SELECT player_id, rank AS current_elo_rank, elo_rating AS current_elo_rating
-	FROM player_elo_ranking
-	WHERE rank_date = (SELECT rank_date FROM current_rank_date);
+WITH current_rank_date AS (SELECT max(rank_date) AS rank_date FROM player_elo_ranking)
+SELECT player_id, rank AS current_elo_rank, elo_rating AS current_elo_rating
+FROM player_elo_ranking
+WHERE rank_date = (SELECT rank_date FROM current_rank_date);
 
 CREATE MATERIALIZED VIEW player_current_elo_rank AS SELECT * FROM player_current_elo_rank_v;
 
@@ -235,12 +241,14 @@ WITH best_elo_rank AS (
 	GROUP BY player_id
 )
 SELECT player_id, best_elo_rank, best_hard_elo_rank, best_clay_elo_rank, best_grass_elo_rank, best_carpet_elo_rank,
-	(SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.rank = b.best_elo_rank) AS best_elo_rank_date,
-	(SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.hard_rank = b.best_hard_elo_rank) AS best_hard_elo_rank_date,
-	(SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.clay_rank = b.best_clay_elo_rank) AS best_clay_elo_rank_date,
-	(SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.grass_rank = b.best_grass_elo_rank) AS best_grass_elo_rank_date,
-	(SELECT min(rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.carpet_rank = b.best_carpet_elo_rank) AS best_carpet_elo_rank_date
-FROM best_elo_rank b;
+	min(rank_date) FILTER (WHERE r.rank = b.best_elo_rank) AS best_elo_rank_date,
+	min(rank_date) FILTER (WHERE r.hard_rank = b.best_hard_elo_rank) AS best_hard_elo_rank_date,
+	min(rank_date) FILTER (WHERE r.clay_rank = b.best_clay_elo_rank) AS best_clay_elo_rank_date,
+	min(rank_date) FILTER (WHERE r.grass_rank = b.best_grass_elo_rank) AS best_grass_elo_rank_date,
+	min(rank_date) FILTER (WHERE r.carpet_rank = b.best_carpet_elo_rank) AS best_carpet_elo_rank_date
+FROM best_elo_rank b
+INNER JOIN player_elo_ranking r USING (player_id)
+GROUP BY player_id, best_elo_rank, best_hard_elo_rank, best_clay_elo_rank, best_grass_elo_rank, best_carpet_elo_rank;
 
 CREATE MATERIALIZED VIEW player_best_elo_rank AS SELECT * FROM player_best_elo_rank_v;
 
@@ -255,13 +263,15 @@ WITH best_elo_rating AS (
 	FROM player_elo_ranking
 	GROUP BY player_id
 ), best_elo_rating2 AS (
-	SELECT player_id, best_elo_rating, best_hard_elo_rating, best_clay_elo_rating, best_grass_elo_rating, best_carpet_elo_rating,
-		(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.elo_rating = b.best_elo_rating) AS best_elo_rating_date,
-		(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.hard_elo_rating = b.best_hard_elo_rating) AS best_hard_elo_rating_date,
-		(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.clay_elo_rating = b.best_clay_elo_rating) AS best_clay_elo_rating_date,
-		(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.grass_elo_rating = b.best_grass_elo_rating) AS best_grass_elo_rating_date,
-		(SELECT min(r.rank_date) FROM player_elo_ranking r WHERE r.player_id = b.player_id AND r.carpet_elo_rating = b.best_carpet_elo_rating) AS best_carpet_elo_rating_date
+	SELECT player_id, b.best_elo_rating, b.best_hard_elo_rating, b.best_clay_elo_rating, b.best_grass_elo_rating, b.best_carpet_elo_rating,
+		min(r.rank_date) FILTER (WHERE r.elo_rating = b.best_elo_rating) AS best_elo_rating_date,
+		min(r.rank_date) FILTER (WHERE r.hard_elo_rating = b.best_hard_elo_rating) AS best_hard_elo_rating_date,
+		min(r.rank_date) FILTER (WHERE r.clay_elo_rating = b.best_clay_elo_rating) AS best_clay_elo_rating_date,
+		min(r.rank_date) FILTER (WHERE r.grass_elo_rating = b.best_grass_elo_rating) AS best_grass_elo_rating_date,
+		min(r.rank_date) FILTER (WHERE r.carpet_elo_rating = b.best_carpet_elo_rating) AS best_carpet_elo_rating_date
 	FROM best_elo_rating b
+	INNER JOIN player_elo_ranking r USING (player_id)
+	GROUP BY player_id, b.best_elo_rating, b.best_hard_elo_rating, b.best_clay_elo_rating, b.best_grass_elo_rating, b.best_carpet_elo_rating
 )
 SELECT player_id, best_elo_rating, best_elo_rating_date, best_hard_elo_rating, best_hard_elo_rating_date, best_clay_elo_rating, best_clay_elo_rating_date, best_grass_elo_rating, best_grass_elo_rating_date, best_carpet_elo_rating, best_carpet_elo_rating_date,
 	CASE WHEN best_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_elo_rating_event_id,
@@ -297,22 +307,20 @@ CREATE INDEX ON player_season_best_elo_rating (season);
 -- player_year_end_elo_rank
 
 CREATE OR REPLACE VIEW player_year_end_elo_rank_v AS
-SELECT DISTINCT player_id, extract(YEAR FROM rank_date)::INTEGER AS season,
-   first_value(rank) OVER player_season_rank AS year_end_rank,
-   first_value(elo_rating) OVER player_season_rank AS year_end_elo_rating,
-   first_value(hard_rank) OVER player_season_rank AS hard_year_end_rank,
-   first_value(hard_elo_rating) OVER player_season_rank AS hard_year_end_elo_rating,
-	first_value(clay_rank) OVER player_season_rank AS clay_year_end_rank,
-	first_value(clay_elo_rating) OVER player_season_rank AS clay_year_end_elo_rating,
-	first_value(grass_rank) OVER player_season_rank AS grass_year_end_rank,
-	first_value(grass_elo_rating) OVER player_season_rank AS grass_year_end_elo_rating,
-	first_value(carpet_rank) OVER player_season_rank AS carpet_year_end_rank,
-	first_value(carpet_elo_rating) OVER player_season_rank AS carpet_year_end_elo_rating
-FROM player_elo_ranking
-WHERE (extract(YEAR FROM rank_date) < extract(YEAR FROM current_date) OR extract(MONTH FROM current_date) >= 11)
-AND extract(MONTH FROM rank_date) > 6
-GROUP BY player_id, season, rank_date
-WINDOW player_season_rank AS (PARTITION BY player_id, extract(YEAR FROM rank_date)::INTEGER ORDER BY rank_date DESC);
+WITH year_end_elo_rank_date AS (
+	SELECT player_id, extract(YEAR FROM rank_date)::INTEGER AS season, max(rank_date) AS rank_date
+	FROM player_elo_ranking
+	WHERE (extract(YEAR FROM rank_date) < extract(YEAR FROM current_date) OR extract(MONTH FROM current_date) >= 11)
+	AND extract(MONTH FROM rank_date) > 6
+	GROUP BY player_id, season
+)
+SELECT player_id, season, rank AS year_end_rank, elo_rating AS year_end_elo_rating,
+	hard_rank AS hard_year_end_rank, hard_elo_rating AS hard_year_end_elo_rating,
+	clay_rank AS clay_year_end_rank, clay_elo_rating AS clay_year_end_elo_rating,
+	grass_rank AS grass_year_end_rank, grass_elo_rating AS grass_year_end_elo_rating,
+	carpet_rank AS carpet_year_end_rank, carpet_elo_rating AS carpet_year_end_elo_rating
+FROM year_end_elo_rank_date
+INNER JOIN player_elo_ranking USING (player_id, rank_date);
 
 CREATE MATERIALIZED VIEW player_year_end_elo_rank AS SELECT * FROM player_year_end_elo_rank_v;
 
