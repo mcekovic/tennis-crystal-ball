@@ -26,7 +26,8 @@
 				[# th:case="'tournaments'"] playerTournaments([[${season}]], [[${level}]], [[${surface}]], [[${result}]], [[${tournamentId}]]); [/]
 				[# th:case="'matches'"] playerMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]], [[${opponent}]], [[${tournamentId}]], [[${tournamentEventId}]], [[${outcome}]], [[${score}]], [[${countryId}]]); [/]
 				[# th:case="'ranking'"] playerRanking([[${rankType}]], [[${season}]]); [/]
-				[# th:case="'performance'"] playerPerformance([[${season}]],[[${surface}]]); [/]
+				[# th:case="'performance'"] playerPerformance([[${season}]], [[${level}]], [[${surface}]]); [/]
+				[# th:case="'statistics'"] playerStatistics([[${season}]], [[${level}]], [[${surface}]]); [/]
 				[# th:case="'goatPoints'"] playerGoatPoints([[${season}]]); [/]
 				[# th:case="'records'"] playerRecords([[${infamous}]]); [/]
 				[# th:case="*"] $("#[(${tab})]Pill").click(); [/]
@@ -36,80 +37,67 @@
 		function playerSeason(season) {
 			var $pill = $("#seasonPill");
 			var url = $pill.data("url");
-			if (season)
-				url += "&season=" + season;
+			if (season)	url += "&season=" + season;
 			loadTab($pill, url);
 		}
 		function playerTournaments(season, level, surface, result, tournamentId) {
 			var $pill = $("#tournamentsPill");
 			var url = $pill.data("url");
-			if (season)
-				url += "&season=" + season;
-			if (level)
-				url += "&level=" + level;
-			if (surface)
-				url += "&surface=" + surface;
-			if (result)
-				url += "&result=" + encodeURIComponent(result);
-			if (tournamentId)
-				url += "&tournamentId=" + tournamentId;
+			if (season) url += "&season=" + season;
+			if (level) url += "&level=" + level;
+			if (surface) url += "&surface=" + surface;
+			if (result) url += "&result=" + encodeURIComponent(result);
+			if (tournamentId) url += "&tournamentId=" + tournamentId;
 			loadTab($pill, url);
 		}
 		function playerMatches(season, level, surface, round, opponent, tournamentId, tournamentEventId, outcome, score, countryId) {
 			var $pill = $("#matchesPill");
 			var url = $pill.data("url");
-			if (season)
-				url += "&season=" + season;
-			if (level)
-				url += "&level=" + level;
-			if (surface)
-				url += "&surface=" + surface;
-			if (round)
-				url += "&round=" + encodeURIComponent(round);
-			if (opponent)
-				url += "&opponent=" + opponent;
-			if (tournamentId)
-				url += "&tournamentId=" + tournamentId;
-			if (tournamentEventId)
-				url += "&tournamentEventId=" + tournamentEventId;
-			if (outcome)
-				url += "&outcome=" + encodeURIComponent(outcome);
-			if (score)
-				url += "&score=" + encodeURIComponent(score);
-			if (countryId)
-				url += "&countryId=" + countryId;
+			if (season) url += "&season=" + season;
+			if (level) url += "&level=" + level;
+			if (surface) url += "&surface=" + surface;
+			if (round) url += "&round=" + encodeURIComponent(round);
+			if (opponent) url += "&opponent=" + opponent;
+			if (tournamentId) url += "&tournamentId=" + tournamentId;
+			if (tournamentEventId) url += "&tournamentEventId=" + tournamentEventId;
+			if (outcome) url += "&outcome=" + encodeURIComponent(outcome);
+			if (score) url += "&score=" + encodeURIComponent(score);
+			if (countryId) url += "&countryId=" + countryId;
 			loadTab($pill, url)
 		}
 		function playerRanking(rankType, season) {
 			var $pill = $("#rankingPill");
 			var url = $pill.data("url");
-			if (rankType)
-				url += "&rankType=" + rankType;
-			if (season)
-				url += "&season=" + season;
+			if (rankType) url += "&rankType=" + rankType;
+			if (season) url += "&season=" + season;
 			loadTab($pill, url);
 		}
-		function playerPerformance(season, surface) {
+		function playerPerformance(season, level, surface) {
 			var $pill = $("#performancePill");
 			var url = $pill.data("url");
-			if (season)
-				url += "&season=" + season;
-			if (surface)
-				url += "&surface=" + surface;
+			if (season) url += "&season=" + season;
+			if (level) url += "&level=" + level;
+			if (surface) url += "&surface=" + surface;
+			loadTab($pill, url);
+		}
+		function playerStatistics(season, level, surface) {
+			var $pill = $("#statisticsPill");
+			var url = $pill.data("url");
+			if (season) url += "&season=" + season;
+			if (level) url += "&level=" + level;
+			if (surface) url += "&surface=" + surface;
 			loadTab($pill, url);
 		}
 		function playerGoatPoints(season) {
 			var $pill = $("#goatPointsPill");
 			var url = $pill.data("url");
-			if (season)
-				url += "&season=" + season;
+			if (season) url += "&season=" + season;
 			loadTab($pill, url);
 		}
 		function playerRecords(infamous) {
 			var $pill = $("#recordsPill");
 			var url = $pill.data("url");
-			if (infamous)
-				url += "&infamous=" + infamous;
+			if (infamous) url += "&infamous=" + infamous;
 			loadTab($pill, url);
 		}
 	</script>
