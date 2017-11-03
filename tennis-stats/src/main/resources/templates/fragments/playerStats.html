@@ -277,7 +277,10 @@
 							<td>Matches Won</td>
 							<th th:if="${compareStats}" th:text="${!compareStats.empty ? statsFormatUtil.formatPct(compareStats.matchesWonPct) : _}" class="text-right">69%</th>
 							<th th:if="${compareStats}" th:text="${!compareStats.empty ? statsFormatUtil.formatPctDiff(compareStats.matchesWonPct, stats.matchesWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats.matchesWonPct, stats.matchesWonPct)}">0%</th>
-							<th th:text="${statsFormatUtil.formatPct(stats.matchesWonPct)}" class="text-right">69%</th>
+							<th th:unless="${popover}" class="text-right">
+								<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:text="${statsFormatUtil.formatPct(stats.matchesWonPct)}" title="Show matches">69%</a>
+							</th>
+							<th th:if="${popover}" th:text="${statsFormatUtil.formatPct(stats.matchesWonPct)}" class="text-right">69%</th>
 						</tr>
 						<!-- Total Raw Data -->
 						<th:block th:if="${hasPointStats}">
@@ -297,7 +300,10 @@
 						</tr>
 						<tr class="raw-data">
 							<td>Matches Won</td>
-							<th th:text="${stats.matchesWon + ' / ' + stats.matches}" class="text-right">6 / 10</th>
+							<th th:unless="${popover}" class="text-right">
+								<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:text="${stats.matchesWon + ' / ' + stats.matches}" title="Show matches">6 / 10</a>
+							</th>
+							<th th:if="${popover}" th:text="${stats.matchesWon + ' / ' + stats.matches}" class="text-right">6 / 10</th>
 						</tr>
 					</tbody>
 				</table>
