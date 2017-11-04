@@ -105,7 +105,7 @@
 		<tbody>
 		<tr th:each="season : ${goatPoints.playerSeasonsPoints}" th:class="${season.season == highlightSeason ? 'highlight-season' : _}" th:with="breakdown=${season.tournamentBreakdown}">
 			<th class="first-column points-" th:attrappend="class=${season.totalPointsRounded}">
-				<a th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season.season})}" th:text="${season.season}" class="points-link" title="Show season results">2000</a>
+				<a th:href="@{/playerProfile(playerId=${playerId}, tab=season, season=${season.season})}" th:text="${season.season}" class="points-link" title="Show season">2000</a>
 			</th>
 			<th class="points first-column points-" th:attrappend="class=${season.totalPointsRounded}" th:text="${season.totalPoints}">50</th>
 			<th:block th:each="level : ${levelResults}">

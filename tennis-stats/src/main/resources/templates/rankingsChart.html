@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="players" type="java.lang.String"*/-->
-<!--/*@thymesVar id="rankType" type="java.lang.String"*/-->
-<!--/*@thymesVar id="fromDate" type="java.lang.String"*/-->
-<!--/*@thymesVar id="toDate" type="java.lang.String"*/-->
+<!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
+<!--/*@thymesVar id="compensatePoints" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="timeSpan" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bySeason" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="fromDate" type="java.time.Date"*/-->
+<!--/*@thymesVar id="toDate" type="java.time.Date"*/-->
+<!--/*@thymesVar id="fromSeason" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="toSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="byAge" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.RankType[]"*/-->
@@ -23,20 +28,19 @@
 			else
 				$("#rankChart").html("<div class='row'><div class='col-md-10'><div class='alert alert-warning'>No player selected!</div></div></div>");
 		}
-		function doDrawChart() {
+		function rankingsChartParams() {
 			var players = $("#players").val();
 			var rankType = $("#rankType").val();
 			var timeSpan = $("#timeSpan").val();
-			bySeason = $("#bySeason").prop("checked");
-			isRank = rankType.endsWith("RANK");
-			var dataUrl = "/playerRankingsTable?players=" + players + "&rankType=" + rankType + "&timeSpan=" + timeSpan;
+			var bySeason = $("#bySeason").prop("checked");
+			var params = "?players=" + players + "&rankType=" + rankType + "&timeSpan=" + timeSpan;
 			if (timeSpan != "1")
-				dataUrl += "&bySeason=" + bySeason;
+				params += "&bySeason=" + bySeason;
 			else
 				bySeason = false;
 			if (timeSpan == "CS") {
 				if (bySeason)
-					dataUrl += "&fromSeason=" + $("#fromSeason").val() + "&toSeason=" + $("#toSeason").val();
+					params += "&fromSeason=" + $("#fromSeason").val() + "&toSeason=" + $("#toSeason").val();
 				else {
 					var fromDate = getDate("fromDate");
 					if (fromDate == null)
@@ -44,16 +48,21 @@
 					var toDate = getDate("toDate");
 					if (toDate == null)
 						return;
-					dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
+					params += "&fromDate=" + fromDate + "&toDate=" + toDate;
 				}
 			}
 			if (timeSpan == "CR")
-				dataUrl += "&byAge=" + $("#byAge").prop("checked");
+				params += "&byAge=" + $("#byAge").prop("checked");
 			if (rankType == "POINTS")
-				dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
+				params += "&compensatePoints=" + $("#compensatePoints").prop("checked");
+			return params;
+		}
+		function doDrawChart() {
+			bySeason = $("#bySeason").prop("checked");
+			isRank = $("#rankType").val().endsWith("RANK");
 			var $loading = $("#loading");
 			$loading.show();
-			$.ajax(dataUrl).done(function(json) {
+			$.ajax("/playerRankingsTable" + rankingsChartParams()).done(function(json) {
 				chartData = new google.visualization.DataTable(JSON.stringify(json));
 				logScale = isRank ? useLogScale(json) : false;
 				pointCount = json.rows.length;
@@ -74,6 +83,9 @@
 		}
 		function onRankTypeChange() {
 			$("#compensatePointsDiv").css("visibility", $("#rankType").val() == "POINTS" ? "visible" : "hidden");
+		}
+		function rankingsChartPermalink() {
+			window.location.href = "/rankingsChart" + rankingsChartParams();
 		}
 		$(function() {
 			autocompletePlayers("players", drawChart);
@@ -101,7 +113,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>Rankings Chart</h3>
+	<h3>Rankings Chart <a href="javascript:rankingsChartPermalink()" title="Permalink to this chart"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a></h3>
 	<div class="row">
 		<div class="col-md-10">
 			<div class="input-group">
@@ -117,29 +129,29 @@
 			<div class="input-group">
 				<label for="timeSpan" class="input-group-addon">Time span:</label>
 				<select id="timeSpan" class="form-control" onchange="onTimeSpanChange()">
-					<option value="CR">Career</option>
-					<option value="1">Last 52 weeks</option>
-					<option value="2">Last two years</option>
-					<option value="3">Last three years</option>
-					<option value="5">Last five years</option>
-					<option value="10">Last ten years</option>
-					<option value="CS" th:selected="${fromDate != null || toDate != null}">Custom</option>
+					<option value="CR" th:selected="${timeSpan == 'CR'}">Career</option>
+					<option value="1" th:selected="${timeSpan == '1'}">Last 52 weeks</option>
+					<option value="2" th:selected="${timeSpan == '2'}">Last two years</option>
+					<option value="3" th:selected="${timeSpan == '3'}">Last three years</option>
+					<option value="5" th:selected="${timeSpan == '5'}">Last five years</option>
+					<option value="10" th:selected="${timeSpan == '10'}">Last ten years</option>
+					<option value="CS" th:selected="${timeSpan == 'CS'}">Custom</option>
 				</select>
 			</div>
 		</div>
 		<div id="bySeasonDiv" class="col-md-2">
 			<div class="checkbox">
 				<label data-toggle="tooltip" data-placement="top" title="Show chart by season (year-end)">
-					<input id="bySeason" type="checkbox" onchange="onTimeSpanChange()"/> By season
+					<input id="bySeason" type="checkbox" onchange="onTimeSpanChange()" th:checked="${bySeason}"/> By season
 				</label>
 			</div>
 		</div>
 		<div id="dateRange" class="col-md-4" style="display: none">
 			<div class="input-group">
 				<label for="fromDate" class="input-group-addon">From:</label>
-				<input id="fromDate" type="text" maxlength="10" class="form-control" th:value="${fromDate}"/>
+				<input id="fromDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(fromDate, 'dd-MM-yyyy')}"/>
 				<label for="toDate" class="input-group-addon">To:</label>
-				<input id="toDate" type="text" maxlength="10" class="form-control" th:value="${toDate}"/>
+				<input id="toDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(toDate, 'dd-MM-yyyy')}"/>
 			</div>
 		</div>
 		<div id="seasonRange" class="col-md-4" style="display: none">
@@ -147,12 +159,12 @@
 				<label for="fromSeason" class="input-group-addon">From:</label>
 				<select id="fromSeason" class="form-control">
 					<option value="">All seasons</option>
-					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}" th:selected="${season == fromSeason}">2005</option>
 				</select>
 				<label for="toSeason" class="input-group-addon">To:</label>
 				<select id="toSeason" class="form-control">
 					<option value="">All seasons</option>
-					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}" th:selected="${season == toSeason}">2005</option>
 				</select>
 			</div>
 		</div>
@@ -170,14 +182,14 @@
 			<div class="input-group">
 				<label for="rankType" class="input-group-addon">Rank type:</label>
 				<select id="rankType" class="form-control" onchange="onRankTypeChange()">
-					<option th:each="aRankType : ${rankTypes}" th:value="${aRankType}" th:class="${aRankType.surface == null ? _ : 'bg-surface-' + aRankType.surface.code}" value="RANK" th:text="${aRankType.text}" th:selected="${aRankType.name() == rankType}">ATP Ranking</option>
+					<option th:each="aRankType : ${rankTypes}" th:value="${aRankType}" th:class="${aRankType.surface == null ? _ : 'bg-surface-' + aRankType.surface.code}" value="RANK" th:text="${aRankType.text}" th:selected="${aRankType == rankType}">ATP Ranking</option>
 				</select>
 			</div>
 		</div>
 		<div class="col-md-3">
 			<div id="compensatePointsDiv" class="checkbox">
 				<label data-toggle="tooltip" data-placement="top" title="Compensate ranking points before 2009 to match new ATP ranking system">
-					<input id="compensatePoints" type="checkbox"/> Compensate points
+					<input id="compensatePoints" type="checkbox" th:checked="${compensatePoints}"/> Compensate points
 				</label>
 			</div>
 		</div>

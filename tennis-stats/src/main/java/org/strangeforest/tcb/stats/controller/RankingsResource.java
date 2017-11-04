@@ -26,8 +26,8 @@ public class RankingsResource {
 	@Autowired private RankingsService rankingsService;
 	@Autowired private RankingChartService rankingChartService;
 
-	private static final String CAREER = "CR";
-	private static final String CUSTOM = "CS";
+	static final String CAREER = "CR";
+	static final String CUSTOM = "CS";
 
 	private static final int MAX_PLAYERS = 1000;
 

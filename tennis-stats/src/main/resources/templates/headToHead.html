@@ -54,25 +54,18 @@
 		function h2hMatches(season, level, surface, round) {
 			var $pill = $("#matchesPill");
 			var url = $pill.data("url");
-			if (season)
-				url += "&season=" + season;
-			if (level)
-				url += "&level=" + level;
-			if (surface)
-				url += "&surface=" + surface;
-			if (round)
-				url += "&round=" + round;
+			if (season) url += "&season=" + season;
+			if (level) url += "&level=" + level;
+			if (surface) url += "&surface=" + surface;
+			if (round) url += "&round=" + round;
 			loadTab($pill, url);
 		}
 		function h2hHypotheticalMatchup(level, surface, round) {
 			var $pill = $("#hypotheticalMatchupPill");
 			var url = $pill.data("url");
-			if (level)
-				url += "&level=" + level;
-			if (surface)
-				url += "&surface=" + surface;
-			if (round)
-				url += "&round=" + round;
+			if (level) url += "&level=" + level;
+			if (surface) url += "&surface=" + surface;
+			if (round) url += "&round=" + round;
 			loadTab($pill, url);
 		}
 		[# th:if="${bothPlayersSelected}"] function swapPlayers() {

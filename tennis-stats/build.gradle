@@ -58,6 +58,10 @@ dependencies {
 	compile ("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 	compile ("org.postgresql:postgresql:$postgresqlJdbcVersion")
 	compile ("com.neovisionaries:nv-i18n:$nvi18nVersion")
+	compile ("org.thymeleaf.extras:thymeleaf-extras-java8time:$thymeleafJava8TimeVersion") {
+		exclude group: 'org.slf4j'
+		exclude group: 'org.thymeleaf'
+	}
 	compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")

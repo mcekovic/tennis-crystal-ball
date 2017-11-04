@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
+import org.thymeleaf.util.*;
 
 import static java.lang.Boolean.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
+import static org.thymeleaf.util.StringUtils.*;
 
 @Controller
 public class RankingsController extends PageController {
@@ -50,16 +52,34 @@ public class RankingsController extends PageController {
 	@GetMapping("/rankingsChart")
 	public ModelAndView rankingsChart(
 		@RequestParam(name = "players", required = false) String players,
-		@RequestParam(name = "rankType", required = false) String rankType,
+		@RequestParam(name = "rankType", required = false) RankType rankType,
+		@RequestParam(name = "compensatePoints", required = false) Boolean compensatePoints,
+		@RequestParam(name = "timeSpan", required = false) String timeSpan,
+		@RequestParam(name = "bySeason", required = false) Boolean bySeason,
+		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
+		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "byAge", required = false) Boolean byAge
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("players", players);
 		modelMap.addAttribute("rankType", rankType);
+		modelMap.addAttribute("compensatePoints", compensatePoints);
+		if (isEmpty(timeSpan) && (fromDate != null || toDate != null || season != null || fromSeason != null || toSeason != null))
+			timeSpan = RankingsResource.CUSTOM;
+		modelMap.addAttribute("timeSpan", timeSpan);
+		modelMap.addAttribute("bySeason", bySeason);
+		modelMap.addAttribute("fromDate", fromDate);
+		modelMap.addAttribute("toDate", toDate);
+		modelMap.addAttribute("fromSeason", fromSeason);
+		modelMap.addAttribute("toSeason", toSeason);
 		if (season != null) {
-			modelMap.addAttribute("fromDate", "01-01-" + season);
-			modelMap.addAttribute("toDate", "31-12-" + season);
+			if (fromDate == null)
+				modelMap.addAttribute("fromDate", LocalDate.of(season, 1, 1));
+			if (toDate == null)
+				modelMap.addAttribute("toDate", LocalDate.of(season, 12, 31));
 		}
 		modelMap.addAttribute("byAge", byAge);
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
