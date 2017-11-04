@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.records.*;
 
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
+
 @Controller
 public class RecordsController extends PageController {
 
@@ -21,7 +23,7 @@ public class RecordsController extends PageController {
 	@GetMapping("/record")
 	public ModelAndView record(
 		@RequestParam(name = "recordId") String recordId,
-		@RequestParam(name = "active", required = false, defaultValue = "false") boolean active
+		@RequestParam(name = "active", required = false, defaultValue = F) boolean active
 	) {
 		ModelMap modelMap = new ModelMap();
 		Record record = Records.getRecord(recordId);

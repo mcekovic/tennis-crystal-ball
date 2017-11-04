@@ -5,6 +5,8 @@ import java.util.*;
 
 public abstract class DateUtil {
 
+	public static final String DATE_FORMAT = "dd-MM-yyyy";
+
 	public static Date toDate(LocalDate date) {
 		return date != null ? Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()) : null;
 	}

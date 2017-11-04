@@ -16,35 +16,14 @@
 		}});
 	}
 	function drawRankingChart() {
-		var rankType = $("#rankType").val();
-		var timeSpan = $("#rankingTimeSpan").val();
-		bySeason = $("#rankingBySeason").prop("checked");
-		isRank = rankType.endsWith("RANK");
-		var dataUrl = "[[@{/playerRankingsTable(playerId=${playerId})}]]".replace("&amp;", "&") + "&rankType=" + rankType + "&timeSpan=" + timeSpan;
-		if (timeSpan != "1")
-			dataUrl += "&bySeason=" + bySeason;
-		else
-			bySeason = false;
-		if (timeSpan == "CS") {
-			if (bySeason)
-				dataUrl += "&fromSeason=" + $("#rankingFromSeason").val() + "&toSeason=" + $("#rankingToSeason").val();
-			else {
-				var fromDate = getDate("rankingFromDate");
-				if (fromDate == null)
-					return;
-				var toDate = getDate("rankingToDate");
-				if (toDate == null)
-					return;
-				dataUrl += "&fromDate=" + fromDate + "&toDate=" + toDate;
-			}
-		}
-		if (timeSpan == "CR")
-			dataUrl += "&byAge=" + $("#rankingByAge").prop("checked");
-		if (rankType == "POINTS")
-			dataUrl += "&compensatePoints=" + $("#compensatePoints").prop("checked");
+		bySeason = $("#rankingBySeason").prop("checked") && $("#rankingTimeSpan").val() != "1";
+		isRank = $("#rankType").val().endsWith("RANK");
+		var rankingUrlParams = rankingsChartUrlParams();
+		if (rankingUrlParams == null) return;
+		var url = "[(@{/playerRankingsTable(playerId=${playerId})})]" + rankingUrlParams;
 		var $loading = $("#rankChartLoading");
 		$loading.show();
-		$.ajax(dataUrl).done(function(json) {
+		$.ajax(url).done(function(json) {
 			rankChartData = new google.visualization.DataTable(JSON.stringify(json));
 			logScale = isRank ? useLogScale(json) : false;
 			rankPointCount = json.rows.length;
@@ -54,19 +33,47 @@
 			$loading.hide().css("position", "absolute").css("z-index", "100");
 		});
 	}
+	function rankingsChartUrlParams() {
+		var rankType = $("#rankType").val();
+		var timeSpan = $("#rankingTimeSpan").val();
+		var params = "&rankType=" + rankType + "&timeSpan=" + timeSpan;
+		var bySeason = $("#rankingBySeason").prop("checked") && timeSpan != "1";
+		if (bySeason) params += "&bySeason=" + bySeason;
+		if (timeSpan == "CS") {
+			if (bySeason) {
+				var fromSeason = $("#rankingFromSeason").val();
+				if (fromSeason) params += "&fromSeason=" + fromSeason;
+				var toSeason = $("#rankingToSeason").val();
+				if (toSeason) params += "&toSeason=" + toSeason;
+			}
+			else {
+				var fromDate = getDate("rankingFromDate");
+				if (fromDate == null) return;
+				else if (fromDate) params += "&fromDate=" + fromDate;
+				var toDate = getDate("rankingToDate");
+				if (toDate == null) return;
+				else if (toDate) params += "&toDate=" + toDate;
+			}
+		}
+		var byAge = $("#rankingByAge").prop("checked");
+		if (byAge && timeSpan == "CR") params += "&byAge=" + byAge;
+		var compensatePoints = $("#compensatePoints").prop("checked");
+		if (compensatePoints && rankType == "POINTS") params += "&compensatePoints=" + compensatePoints;
+		return params;
+	}
 	function onRankingTimeSpanChange() {
 		var timeSpan = $("#rankingTimeSpan").val();
 		var bySeason = $("#rankingBySeason").prop("checked");
 		$("#rankingBySeasonDiv").css("display", timeSpan != "1" ? "block" : "none");
-		$("#rankingDateRange").css("display", timeSpan == "CS" && !bySeason ? "block" : "none");
-		$("#rankingSeasonRange").css("display", timeSpan == "CS" && bySeason ? "block" : "none");
+		$("#rankingDateRange").css("display", timeSpan == "CS" && !bySeason ? "table" : "none");
+		$("#rankingSeasonRange").css("display", timeSpan == "CS" && bySeason ? "table" : "none");
 		$("#rankingByAgeDiv").css("display", timeSpan == "CR" ? "block" : "none");
 	}
 	function onRankTypeChange() {
 		$("#compensatePointsDiv").css("visibility", $("#rankType").val() == "POINTS" ? "visible" : "hidden");
 	}
 	$(function() {
-		dateRangePicker("rankingFromDate", "rankingToDate");
+		dateRangePicker("rankingFromDate", "rankingToDate", "[(${seasons.get(seasons.size()-1)})]:[(${seasons.get(0)})]");
 		$("#rankChartSize").slider({
 			min: 500,
 			max: 1500,
@@ -91,59 +98,6 @@
 <div class="row">
 	<div class="col-md-3">
 		<div class="input-group">
-			<label for="rankingTimeSpan" class="input-group-addon">Time span:</label>
-			<select id="rankingTimeSpan" class="form-control" onchange="onRankingTimeSpanChange()">
-				<option value="CR">Career</option>
-				<option value="1">Last 52 weeks</option>
-				<option value="2">Last two years</option>
-				<option value="3">Last three years</option>
-				<option value="5">Last five years</option>
-				<option value="10">Last ten years</option>
-				<option value="CS" th:selected="${fromDate != null || toDate != null}">Custom</option>
-			</select>
-		</div>
-	</div>
-	<div id="rankingBySeasonDiv" class="col-md-2">
-		<div class="checkbox">
-			<label data-toggle="tooltip" data-placement="top" title="Show chart by season (year-end)">
-				<input id="rankingBySeason" type="checkbox" onchange="onRankingTimeSpanChange()"/> By season
-			</label>
-		</div>
-	</div>
-	<div id="rankingDateRange" class="col-md-4" style="display: none">
-		<div class="input-group">
-			<label for="rankingFromDate" class="input-group-addon">From:</label>
-			<input id="rankingFromDate" type="text" maxlength="10" class="form-control" th:value="${fromDate}"/>
-			<label for="rankingToDate" class="input-group-addon">To:</label>
-			<input id="rankingToDate" type="text" maxlength="10" class="form-control" th:value="${toDate}"/>
-		</div>
-	</div>
-	<div id="rankingSeasonRange" class="col-md-4" style="display: none">
-		<div class="input-group">
-			<label for="rankingFromSeason" class="input-group-addon">From:</label>
-			<select id="rankingFromSeason" class="form-control">
-				<option value="">All seasons</option>
-				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
-			</select>
-			<label for="rankingToSeason" class="input-group-addon">To:</label>
-			<select id="rankingToSeason" class="form-control">
-				<option value="">All seasons</option>
-				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
-			</select>
-		</div>
-	</div>
-	<div id="rankingByAgeDiv" class="col-md-2">
-		<div class="checkbox">
-			<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
-				<input id="rankingByAge" type="checkbox"/> By age
-			</label>
-		</div>
-	</div>
-</div>
-<div style="height: 5px"></div>
-<div class="row">
-	<div class="col-md-3">
-		<div class="input-group">
 			<label for="rankType" class="input-group-addon">Rank type:</label>
 			<select id="rankType" class="form-control" onchange="onRankTypeChange()">
 				<option th:each="aRankType : ${rankTypes}" th:value="${aRankType}" th:class="${aRankType.surface == null ? _ : 'bg-surface-' + aRankType.surface.code}" value="RANK" th:text="${aRankType.text}" th:selected="${aRankType.name() == rankType}">ATP Ranking</option>
@@ -159,7 +113,7 @@
 	</div>
 	<div class="col-md-2">
 		<div id="rankChartSize" style="margin-top: 6px"></div>
-		<div style="text-align: center; opacity: 0.5">Chart size</div>
+		<div style="text-align: center; opacity: 0.5; height: 15px">Chart size</div>
 	</div>
 	<div class="col-md-2">
 		<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawRankingChart()">
@@ -167,7 +121,55 @@
 		</a>
 	</div>
 </div>
-<div class="row">
+<div class="row" style="margin-top: 5px">
+	<div class="col-md-3">
+		<div class="input-group">
+			<label for="rankingTimeSpan" class="input-group-addon">Time span:</label>
+			<select id="rankingTimeSpan" class="form-control" onchange="onRankingTimeSpanChange()">
+				<option value="CR">Career</option>
+				<option value="1">Last 52 weeks</option>
+				<option value="2">Last two years</option>
+				<option value="3">Last three years</option>
+				<option value="5">Last five years</option>
+				<option value="10">Last ten years</option>
+				<option value="CS" th:selected="${fromDate != null || toDate != null}">Custom</option>
+			</select>
+		</div>
+	</div>
+	<div class="col-md-2">
+		<div id="rankingBySeasonDiv" class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Show chart by season (year-end)">
+				<input id="rankingBySeason" type="checkbox" onchange="onRankingTimeSpanChange()"/> By season
+			</label>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div id="rankingDateRange" class="input-group" style="display: none">
+			<label for="rankingFromDate" class="input-group-addon">From:</label>
+			<input id="rankingFromDate" type="text" maxlength="10" class="form-control" th:value="${fromDate}"/>
+			<label for="rankingToDate" class="input-group-addon">To:</label>
+			<input id="rankingToDate" type="text" maxlength="10" class="form-control" th:value="${toDate}"/>
+		</div>
+		<div id="rankingSeasonRange" class="input-group" style="display: none">
+			<label for="rankingFromSeason" class="input-group-addon">From:</label>
+			<select id="rankingFromSeason" class="form-control">
+				<option value="">All seasons</option>
+				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+			</select>
+			<label for="rankingToSeason" class="input-group-addon">To:</label>
+			<select id="rankingToSeason" class="form-control">
+				<option value="">All seasons</option>
+				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+			</select>
+		</div>
+		<div id="rankingByAgeDiv" class="checkbox">
+			<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
+				<input id="rankingByAge" type="checkbox"/> By age
+			</label>
+		</div>
+	</div>
+</div>
+<div class="row" style="margin-top: 5px">
 	<div class="row col-md-9 text-center">
 		<div id="rankChartLoading" style="width: 100%; display: none">
 			<br/>

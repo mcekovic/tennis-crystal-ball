@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
-import org.thymeleaf.util.*;
 
 import static java.lang.Boolean.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 import static org.thymeleaf.util.StringUtils.*;
 
 @Controller
@@ -26,7 +26,7 @@ public class RankingsController extends PageController {
 	public ModelAndView rankingsTable(
 		@RequestParam(name = "rankType", defaultValue = "POINTS") RankType rankType,
 		@RequestParam(name = "season", required = false) Integer season,
-		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date
+		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date
 	) {
 		if (date != null)
 			season = date.getYear();
@@ -53,15 +53,15 @@ public class RankingsController extends PageController {
 	public ModelAndView rankingsChart(
 		@RequestParam(name = "players", required = false) String players,
 		@RequestParam(name = "rankType", required = false) RankType rankType,
-		@RequestParam(name = "compensatePoints", required = false) Boolean compensatePoints,
+		@RequestParam(name = "compensatePoints", defaultValue = F) Boolean compensatePoints,
 		@RequestParam(name = "timeSpan", required = false) String timeSpan,
-		@RequestParam(name = "bySeason", required = false) Boolean bySeason,
-		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
-		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
+		@RequestParam(name = "bySeason", defaultValue = F) Boolean bySeason,
+		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
+		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate toDate,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
-		@RequestParam(name = "byAge", required = false) Boolean byAge
+		@RequestParam(name = "byAge", defaultValue = F) Boolean byAge
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("players", players);

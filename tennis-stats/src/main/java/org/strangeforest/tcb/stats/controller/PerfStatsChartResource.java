@@ -13,6 +13,7 @@ import org.strangeforest.tcb.util.*;
 import com.google.common.collect.*;
 
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
 @RestController
 public class PerfStatsChartResource {
@@ -27,7 +28,7 @@ public class PerfStatsChartResource {
 		@RequestParam(name = "category", defaultValue = "matches") String category,
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
-		@RequestParam(name = "byAge", defaultValue = "false") boolean byAge
+		@RequestParam(name = "byAge", defaultValue = F) boolean byAge
 	) {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
@@ -49,7 +50,7 @@ public class PerfStatsChartResource {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
-		@RequestParam(name = "byAge", defaultValue = "false") boolean byAge
+		@RequestParam(name = "byAge", defaultValue = F) boolean byAge
 	) {
 		StatsCategory statsCategory = StatsCategory.get(category);
 		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);

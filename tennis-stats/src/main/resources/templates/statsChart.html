@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="players" type="java.lang.String"*/-->
+<!--/*@thymesVar id="category" type="java.lang.String"*/-->
+<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="fromSeason" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="toSeason" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="byAge" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="categoryTypes" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
@@ -10,25 +16,23 @@
 	<script th:src="@{/js/tennis-chart.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" th:inline="javascript">
-		google.load("visualization", "1.0", {packages:["corechart"], "language": "en"});
-		var chartData, pointCount, isPct, legendPosition;
+		google.load("visualization", "1.0", {packages:["corechart"], "language": "en"[# th:if="${players}"], callback: function() {
+			drawChart();
+		}[/]});
+		var urlParams, chartData, pointCount, isPct, legendPosition;
 		var categoryTypes = [[${categoryTypes}]];
 		function drawChart() {
 			var players = $.trim($("#players").val());
 			if (getPlayerCount(players) >= 1)
 				doDrawChart();
 			else
-				$("#statsChart").html("<div class='row'><div class='col-md-10'><div class='alert alert-warning'>No player selected!</div></div></div>");
+				$("#statsChart").html("<br/><div class='row'><div class='col-md-11'><div class='alert alert-warning'>No player selected!</div></div></div>");
 		}
 		function doDrawChart() {
-			var players = $("#players").val();
-			var category = $("#category").val();
-			var dataUrl = "/playerStatisticsTable?players=" + players + "&category=" + category + "&surface=" + $("#surface").val();
-			dataUrl += "&fromSeason=" + $("#fromSeason").val() + "&toSeason=" + $("#toSeason").val();
-			dataUrl += "&byAge=" + $("#byAge").prop("checked");
+			urlParams = chartUrlParams();
 			var $loading = $("#loading");
 			$loading.show();
-			$.ajax(dataUrl).done(function(json) {
+			$.ajax("/playerStatisticsTable" + urlParams).done(function(json) {
 				chartData = new google.visualization.DataTable(JSON.stringify(json));
 				pointCount = json.rows.length;
 				isPct = categoryTypes[category] == "PERCENTAGE";
@@ -38,6 +42,28 @@
 			}).always(function() {
 				$loading.hide().css("position", "absolute").css("z-index", "100");
 			});
+		}
+		function chartUrlParams() {
+			var players = $("#players").val();
+			var category = $("#category").val();
+			var params = "?players=" + players + "&category=" + category;
+			var surface = $("#surface").val();
+			if (surface) params += "&surface=" + surface;
+			var fromSeason = $("#fromSeason").val();
+			if (fromSeason) params += "&fromSeason=" + fromSeason;
+			var toSeason = $("#toSeason").val();
+			if (toSeason) params += "&toSeason=" + toSeason;
+			var byAge = $("#byAge").prop("checked");
+			if (byAge) params += "&byAge=" + byAge;
+			return params;
+		}
+		function onSeasonRangeChange() {
+			$("#byAgeDiv").css("display", $("#fromSeason").val() == "" && $("#toSeason").val() == "" ? "block" : "none");
+		}
+		function chartPermalink() {
+			var url = "/statsChart";
+			if (urlParams) url += urlParams;
+			window.location.href = url;
 		}
 		$(function() {
 			autocompletePlayers("players", drawChart);
@@ -53,9 +79,6 @@
 			onSeasonRangeChange();
 			$("[data-toggle='tooltip']").tooltip();
 		});
-		function onSeasonRangeChange() {
-			$("#byAgeDiv").css("display", $("#fromSeason").val() == "" && $("#toSeason").val() == "" ? "block" : "none");
-		}
 	</script>
 	<style>
 		.checkbox {
@@ -66,12 +89,12 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>Statistics Chart</h3>
+	<h3>Statistics Chart <a href="javascript:chartPermalink()" title="Permalink to this chart"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a></h3>
 	<div class="row">
-		<div class="col-md-10">
+		<div class="col-md-11">
 			<div class="input-group">
 				<label for="players" class="input-group-addon">Players:</label>
-				<input id="players" type="text" class="ui-widget search-field form-control" placeholder="Search Players"/>
+				<input id="players" type="text" class="ui-widget search-field form-control" th:value="${players}" placeholder="Search Players"/>
 				<div class="input-group-btn" th:include="fragments/playerQuickPicks :: quickPicks"></div>
 			</div>
 		</div>
@@ -83,7 +106,7 @@
 				<label for="category" class="input-group-addon">Category:</label>
 				<select id="category" class="form-control">
 					<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
-						<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+						<option th:each="aCategory : ${categoryClass.value}" th:value="${aCategory.name}" value="aces" th:text="${aCategory.title}" th:selected="${aCategory.name == category}" th:title="#{__${aCategory.descriptionId}__}">Aces</option>
 					</optgroup>
 				</select>
 			</div>
@@ -93,47 +116,46 @@
 				<label for="surface" class="input-group-addon">Surface:</label>
 				<select id="surface" class="form-control">
 					<option value="">All surfaces</option>
-					<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
-					<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+					<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
+					<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes.length() > 1 && surfaceGroup.codes == surface}">Fast (H, G, Cp)</option>
 				</select>
 			</div>
 		</div>
 	</div>
-	<div style="height: 5px"></div>
-	<div class="row">
+	<div class="row" style="margin-top: 5px">
 		<div class="col-md-4">
 			<div class="input-group">
 				<label for="fromSeason" class="input-group-addon">From:</label>
 				<select id="fromSeason" class="form-control" onchange="onSeasonRangeChange()">
 					<option value="">All seasons</option>
-					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}" th:selected="${season == fromSeason}">2005</option>
 				</select>
 				<label for="toSeason" class="input-group-addon">To:</label>
 				<select id="toSeason" class="form-control" onchange="onSeasonRangeChange()">
 					<option value="">All seasons</option>
-					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}" th:selected="${season == toSeason}">2005</option>
 				</select>
 			</div>
 		</div>
 		<div class="col-md-2">
 			<div id="byAgeDiv" class="checkbox">
 				<label data-toggle="tooltip" data-placement="top" title="Show chart by age">
-					<input id="byAge" type="checkbox"/> By age
+					<input id="byAge" type="checkbox" th:checked="${byAge}"/> By age
 				</label>
 			</div>
 		</div>
 		<div class="col-md-2">
 			<div id="statsChartSize" style="margin-top: 6px"></div>
-			<div style="text-align: center; opacity: 0.5">Chart size</div>
+			<div style="text-align: center; opacity: 0.5; height: 15px">Chart size</div>
 		</div>
-		<div class="col-md-2">
+		<div class="col-md-3">
 			<a class="btn btn-primary pull-right" href="#" role="button" onclick="drawChart()">
 				<span class="glyphicon glyphicon-signal"></span>&nbsp;&nbsp;Draw Chart
 			</a>
 		</div>
 	</div>
-	<div class="row">
-		<div class="row col-md-10 text-center">
+	<div class="row" style="margin-top: 5px">
+		<div class="row col-md-11 text-center">
 			<div id="loading" style="width: 100%; display: none">
 				<br/>
 				<img src="/images/loading-chart.gif" width="128" height="128" alt="Loading chart..."/>

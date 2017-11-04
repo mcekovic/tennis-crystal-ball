@@ -13,6 +13,7 @@ import org.strangeforest.tcb.stats.service.*;
 
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
 @Controller
 public class PlayerStatsController extends BaseController {
@@ -35,7 +36,7 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
 		@RequestParam(name = "statsTo", required = false) Double statsTo,
 		@RequestParam(name = "searchPhrase", required = false) String searchPhrase,
-		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
@@ -68,7 +69,7 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "statsTo", required = false) Double statsTo,
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "searchPhrase", required = false) String searchPhrase,
-		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
@@ -91,7 +92,7 @@ public class PlayerStatsController extends BaseController {
 	public ModelAndView eventStats(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "tournamentEventId") int tournamentEventId,
-		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
@@ -118,7 +119,7 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "outcome", required = false) String outcome,
-		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
@@ -137,12 +138,12 @@ public class PlayerStatsController extends BaseController {
 	@GetMapping("/matchStats")
 	public ModelAndView matchStats(
 		@RequestParam(name = "matchId") long matchId,
-		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
-		@RequestParam(name = "compareSeason", defaultValue = "false") boolean compareSeason,
-		@RequestParam(name = "compareLevel", defaultValue = "false") boolean compareLevel,
-		@RequestParam(name = "compareSurface", defaultValue = "false") boolean compareSurface,
-		@RequestParam(name = "compareRound", defaultValue = "false") boolean compareRound,
-		@RequestParam(name = "compareOpponent", defaultValue = "false") boolean compareOpponent
+		@RequestParam(name = "compare", defaultValue = F) boolean compare,
+		@RequestParam(name = "compareSeason", defaultValue = F) boolean compareSeason,
+		@RequestParam(name = "compareLevel", defaultValue = F) boolean compareLevel,
+		@RequestParam(name = "compareSurface", defaultValue = F) boolean compareSurface,
+		@RequestParam(name = "compareRound", defaultValue = F) boolean compareRound,
+		@RequestParam(name = "compareOpponent", defaultValue = F) boolean compareOpponent
 	) {
 		MatchStats matchStats = statisticsService.getMatchStats(matchId);
 

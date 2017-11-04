@@ -19,6 +19,8 @@ import com.google.common.collect.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.RankCategory.*;
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
+import static org.strangeforest.tcb.util.DateUtil.*;
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
 @RestController
 public class RankingsResource {
@@ -44,7 +46,7 @@ public class RankingsResource {
 	public BootgridTable<? extends PlayerRankingsRow> rankingsTableTable(
 		@RequestParam(name = "rankType") RankType rankType,
 		@RequestParam(name = "season", required = false) Integer season,
-		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date,
+		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date,
 		@RequestParam(name = "peak", required = false) boolean peak,
 		@RequestParam(name = "active", required = false) Boolean active,
 		@RequestParam(name = "current") int current,
@@ -82,13 +84,13 @@ public class RankingsResource {
 		@RequestParam(name = "players", defaultValue = "") String playersCSV,
 		@RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType,
 		@RequestParam(name = "timeSpan", defaultValue = CAREER) String timeSpan,
-		@RequestParam(name = "bySeason", defaultValue = "false") boolean bySeason,
-		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate fromDate,
-		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate toDate,
+		@RequestParam(name = "bySeason", defaultValue = F) boolean bySeason,
+		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
+		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate toDate,
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
-		@RequestParam(name = "byAge", defaultValue = "false") boolean byAge,
-		@RequestParam(name = "compensatePoints", defaultValue = "false") boolean compensatePoints
+		@RequestParam(name = "byAge", defaultValue = F) boolean byAge,
+		@RequestParam(name = "compensatePoints", defaultValue = F) boolean compensatePoints
 	) {
 		Range<LocalDate> dateRange = !bySeason ? toDateRange(timeSpan, fromDate, toDate) : null;
 		Range<Integer> seasonRange = bySeason ? toSeasonRange(timeSpan, fromSeason, toSeason) : null;

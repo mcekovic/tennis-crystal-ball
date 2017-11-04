@@ -22,6 +22,7 @@ import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
 @Controller
 public class RivalriesController extends PageController {
@@ -191,11 +192,11 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
-		@RequestParam(name = "h2h", defaultValue = "false") boolean h2h,
+		@RequestParam(name = "h2h", defaultValue = F) boolean h2h,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "countryId", required = false) String countryId,
-		@RequestParam(name = "advFilter", defaultValue = "false") boolean advFilter,
-		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData
+		@RequestParam(name = "advFilter", defaultValue = F) boolean advFilter,
+		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
 		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
 		Set<TournamentItem> tournaments = getTournamentsUnion(playerId1, playerId2);
@@ -265,12 +266,12 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
-		@RequestParam(name = "h2h", defaultValue = "false") boolean h2h,
+		@RequestParam(name = "h2h", defaultValue = F) boolean h2h,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "countryId", required = false) String countryId,
-		@RequestParam(name = "advFilter", defaultValue = "false") boolean advFilter,
-		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData,
-		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "advFilter", defaultValue = F) boolean advFilter,
+		@RequestParam(name = "rawData", defaultValue = F) boolean rawData,
+		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
@@ -370,13 +371,13 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "surface", required = false) String surface,
       @RequestParam(name = "level", required = false) String level,
       @RequestParam(name = "round", required = false) String round,
-      @RequestParam(name = "date", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date,
-      @RequestParam(name = "date1", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date1,
-      @RequestParam(name = "date2", required = false) @DateTimeFormat(pattern="dd-MM-yyyy") LocalDate date2,
+      @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date,
+      @RequestParam(name = "date1", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date1,
+      @RequestParam(name = "date2", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date2,
       @RequestParam(name = "dateSelector1", required = false) String dateSelector1,
       @RequestParam(name = "dateSelector2", required = false) String dateSelector2,
       @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat,
-		@RequestParam(name = "showDetails", defaultValue = "false") boolean showDetails
+		@RequestParam(name = "showDetails", defaultValue = F) boolean showDetails
    ) {
 		Player player1 = playerService.getPlayer(playerId1).get();
 		Player player2 = playerService.getPlayer(playerId2).get();
@@ -471,7 +472,7 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "statsVsAll") boolean statsVsAll,
-		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData
+		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
 		List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
 		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, surface, round);

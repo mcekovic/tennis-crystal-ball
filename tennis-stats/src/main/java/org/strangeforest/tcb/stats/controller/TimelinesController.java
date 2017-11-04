@@ -14,6 +14,7 @@ import org.strangeforest.tcb.util.*;
 import com.google.common.collect.*;
 
 import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
 @Controller
 public class TimelinesController extends PageController {
@@ -27,7 +28,7 @@ public class TimelinesController extends PageController {
 	public ModelAndView dominanceTimeline(
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
-		@RequestParam(name = "averageElo", defaultValue = "false") boolean averageElo
+		@RequestParam(name = "averageElo", defaultValue = F) boolean averageElo
 	) {
 		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
 		DominanceTimeline timeline = timelineService.getDominanceTimeline().filterSeasons(seasonRange);

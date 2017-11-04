@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.controller.*;
 
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
+
 @Component @VisitorSupport
 public class VisitorsMvcEndpoint extends AbstractMvcEndpoint {
 
@@ -25,7 +27,7 @@ public class VisitorsMvcEndpoint extends AbstractMvcEndpoint {
 	public ModelAndView visitors(
 		@RequestParam(name = "stat", defaultValue = "HITS") VisitorStat stat,
 		@RequestParam(name = "interval", defaultValue = "DAY") VisitorInterval interval,
-		@RequestParam(name = "robots", defaultValue = "false") boolean robots
+		@RequestParam(name = "robots", defaultValue = F) boolean robots
 	) {
 		Map<String, BigDecimal> countriesMap = repository.getVisitorsByCountry(stat, interval, robots);
 		List<Object[]> countries = mapToDataArray(countriesMap, "Country", stat.getCaption());

@@ -46,8 +46,9 @@ function useLogScale(json) {
 
 function defaultChartSize(device) {
 	switch (device) {
-		case "sm": return 750;
 		case "xs": return 600;
+		case "sm": return 750;
+		case "md": return 950;
 		default: return 1000;
 	}
 }

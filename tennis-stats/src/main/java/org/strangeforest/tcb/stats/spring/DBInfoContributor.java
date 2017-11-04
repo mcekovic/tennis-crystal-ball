@@ -9,6 +9,8 @@ import org.strangeforest.tcb.stats.service.*;
 
 import com.google.common.collect.*;
 
+import static org.strangeforest.tcb.util.DateUtil.*;
+
 @Component
 public class DBInfoContributor implements InfoContributor {
 
@@ -21,7 +23,7 @@ public class DBInfoContributor implements InfoContributor {
 		builder.withDetail("db", ImmutableMap.of(
 			"version", dataService.getDBServerVersionString(),
 			"size", dataService.getDatabaseSize(databaseName),
-			"dataUpdate", new SimpleDateFormat("dd-MM-yyyy").format(dataService.getDataUpdate())
+			"dataUpdate", new SimpleDateFormat(DATE_FORMAT).format(dataService.getDataUpdate())
 		));
 	}
 }

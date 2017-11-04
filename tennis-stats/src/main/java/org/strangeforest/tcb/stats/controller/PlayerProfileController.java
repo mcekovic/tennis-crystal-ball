@@ -16,6 +16,7 @@ import com.neovisionaries.i18n.*;
 
 import static com.google.common.base.Strings.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
 @Controller
 public class PlayerProfileController extends PageController {
@@ -263,8 +264,8 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "countryId", required = false) String countryId,
-		@RequestParam(name = "advFilter", defaultValue = "false") boolean advFilter,
-		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData
+		@RequestParam(name = "advFilter", defaultValue = F) boolean advFilter,
+		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
 		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
@@ -319,9 +320,9 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "countryId", required = false) String countryId,
-		@RequestParam(name = "advFilter", defaultValue = "false") boolean advFilter,
-		@RequestParam(name = "rawData", defaultValue = "false") boolean rawData,
-		@RequestParam(name = "compare", defaultValue = "false") boolean compare,
+		@RequestParam(name = "advFilter", defaultValue = F) boolean advFilter,
+		@RequestParam(name = "rawData", defaultValue = F) boolean rawData,
+		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface

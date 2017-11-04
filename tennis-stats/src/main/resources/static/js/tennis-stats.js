@@ -150,17 +150,17 @@ function datePicker(id) {
 	$("div.ui-datepicker").css({fontSize: "12px"});
 }
 
-function dateRangePicker(fromId, toId) {
+function dateRangePicker(fromId, toId, yearRange) {
 	var $from = $("#" + fromId);
 	var $to = $("#" + toId);
 	$from.datepicker({
-		defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: date_format,
+		defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, yearRange: yearRange, showWeek: true, firstDay: 1, dateFormat: date_format,
 		onClose: function (selectedDate) {
 			$to.datepicker("option", "minDate", selectedDate);
 		}
 	});
 	$to.datepicker({
-		defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, showWeek: true, firstDay: 1, dateFormat: date_format,
+		defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, yearRange: yearRange, showWeek: true, firstDay: 1, dateFormat: date_format,
 		onClose: function (selectedDate) {
 			$from.datepicker("option", "maxDate", selectedDate);
 		}

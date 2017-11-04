@@ -6,6 +6,8 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
+
 @RestController
 public class RecordsResource {
 
@@ -17,7 +19,7 @@ public class RecordsResource {
 	@GetMapping("/recordsTable")
 	public BootgridTable<RecordRow> recordsTable(
 		@RequestParam(name = "category", required = false) String category,
-		@RequestParam(name = "infamous", required = false, defaultValue = "false") boolean infamous,
+		@RequestParam(name = "infamous", required = false, defaultValue = F) boolean infamous,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam(name = "searchPhrase") String searchPhrase
@@ -31,7 +33,7 @@ public class RecordsResource {
 	public BootgridTable<PlayerRecordRow> playerRecordsTable(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "category", required = false) String category,
-		@RequestParam(name = "infamous", required = false, defaultValue = "false") boolean infamous,
+		@RequestParam(name = "infamous", required = false, defaultValue = F) boolean infamous,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam(name = "searchPhrase") String searchPhrase

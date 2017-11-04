@@ -12,6 +12,7 @@ import org.strangeforest.tcb.stats.util.*;
 import com.google.common.collect.*;
 
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
 @RestController
 public class GOATListResource {
@@ -39,8 +40,8 @@ public class GOATListResource {
 	@GetMapping("/goatListTable")
 	public BootgridTable<GOATListRow> goatListTable(
 		@RequestParam(name = "active", required = false) Boolean active,
-		@RequestParam(name = "oldLegends", defaultValue = "false") boolean oldLegends,
-		@RequestParam(name = "extrapolate", defaultValue = "false") boolean extrapolate,
+		@RequestParam(name = "oldLegends", defaultValue = F) boolean oldLegends,
+		@RequestParam(name = "extrapolate", defaultValue = F) boolean extrapolate,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue = "") String searchPhrase,
