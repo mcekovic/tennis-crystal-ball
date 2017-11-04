@@ -62,11 +62,15 @@ public class RankingsService {
 		"  WHERE r.rank_date BETWEEN (SELECT pd.prev_rank_date FROM prev_date pd) AND :date\n" +
 		"  WINDOW pr AS (PARTITION BY player_id ORDER BY rank_date)\n" +
 		")\n" +
-		"SELECT r.rank, player_id, p.name, p.country_id, r.points, r.rank_diff, r.points_diff, p.%4$s AS best_rank, p.%5$s AS best_rank_date, p.%6$s AS best_points\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, r.points, r.rank_diff, r.points_diff, %4$s AS best_rank, %5$s AS best_rank_date, %6$s AS best_points\n" +
 		"FROM ranking_ex r\n" +
-		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE r.rank_date = :date%7$s\n" +
-		"ORDER BY %8$s OFFSET :offset";
+		"INNER JOIN player_v p USING (player_id)%7$s\n" +
+		"WHERE r.rank_date = :date%8$s\n" +
+		"ORDER BY %9$s OFFSET :offset";
+
+	private static final String BEST_ELO_JOIN = //language=SQL
+		"LEFT JOIN player_best_elo_rank k USING (player_id)\n" +
+		"LEFT JOIN player_best_elo_rating t USING (player_id)";
 
 	private static final String PEAK_ELO_RATING_TABLE_QUERY = //language=SQL
 		"WITH best_elo_rating_ranked AS (\n" +
@@ -185,8 +189,15 @@ public class RankingsService {
 		BootgridTable<PlayerDiffRankingsRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
+		boolean surfaceElo = rankType.category == ELO && rankType.surface != null;
 		jdbcTemplate.query(
-			format(RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType), bestRankColumn(rankType), bestRankDateColumn(rankType), bestPointsColumn(rankType), filter.getCriteria(), orderBy),
+			format(
+				RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType),
+				(surfaceElo ? "k." : "p.") + bestRankColumn(rankType),
+				(surfaceElo ? "k." : "p.") + bestRankDateColumn(rankType),
+				(surfaceElo ? "t." : "p.") + bestPointsColumn(rankType),
+				surfaceElo ? BEST_ELO_JOIN : "", filter.getCriteria(), orderBy
+			),
 			getTableParams(filter, date, offset),
 			rs -> {
 				int rank = rs.getInt("rank");
