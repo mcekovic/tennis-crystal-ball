@@ -22,28 +22,11 @@ public class RankingHighlights {
 	private String bestYearEndRankPointsSeasons;
 	private int goatRank;
 	private int goatPoints;
-	private int currentEloRank;
-	private int currentEloRating;
-	private int bestEloRank;
-	private Date bestEloRankDate;
-	private int bestEloRating;
-	private Date bestEloRatingDate;
-	private int bestHardEloRank;
-	private Date bestHardEloRankDate;
-	private int bestHardEloRating;
-	private Date bestHardEloRatingDate;
-	private int bestClayEloRank;
-	private Date bestClayEloRankDate;
-	private int bestClayEloRating;
-	private Date bestClayEloRatingDate;
-	private int bestGrassEloRank;
-	private Date bestGrassEloRankDate;
-	private int bestGrassEloRating;
-	private Date bestGrassEloRatingDate;
-	private int bestCarpetEloRank;
-	private Date bestCarpetEloRankDate;
-	private int bestCarpetEloRating;
-	private Date bestCarpetEloRatingDate;
+	private EloHighlights elo;
+	private EloHighlights hardElo;
+	private EloHighlights clayElo;
+	private EloHighlights grassElo;
+	private EloHighlights carpetElo;
 	private Map<Integer, Double> weeksAt = new HashMap<>();
 	private Map<Integer, Integer> yearEndsAt = new HashMap<>();
 
@@ -164,180 +147,48 @@ public class RankingHighlights {
 		this.goatPoints = goatPoints;
 	}
 
-	public int getCurrentEloRank() {
-		return currentEloRank;
+	public EloHighlights getElo() {
+		return elo;
 	}
 
-	public void setCurrentEloRank(int currentEloRank) {
-		this.currentEloRank = currentEloRank;
+	public void setElo(EloHighlights elo) {
+		this.elo = elo;
 	}
 
-	public int getCurrentEloRating() {
-		return currentEloRating;
+	public EloHighlights getHardElo() {
+		return hardElo;
 	}
 
-	public void setCurrentEloRating(int currentEloRating) {
-		this.currentEloRating = currentEloRating;
+	public void setHardElo(EloHighlights hardElo) {
+		this.hardElo = hardElo;
 	}
 
-	public int getBestEloRank() {
-		return bestEloRank;
+	public EloHighlights getClayElo() {
+		return clayElo;
 	}
 
-	public void setBestEloRank(int bestEloRank) {
-		this.bestEloRank = bestEloRank;
+	public void setClayElo(EloHighlights clayElo) {
+		this.clayElo = clayElo;
 	}
 
-	public Date getBestEloRankDate() {
-		return bestEloRankDate;
+	public EloHighlights getGrassElo() {
+		return grassElo;
 	}
 
-	public void setBestEloRankDate(Date bestEloRankDate) {
-		this.bestEloRankDate = bestEloRankDate;
+	public void setGrassElo(EloHighlights grassElo) {
+		this.grassElo = grassElo;
 	}
 
-	public int getBestEloRating() {
-		return bestEloRating;
+	public EloHighlights getCarpetElo() {
+		return carpetElo;
 	}
 
-	public void setBestEloRating(int bestEloRating) {
-		this.bestEloRating = bestEloRating;
+	public void setCarpetElo(EloHighlights carpetElo) {
+		this.carpetElo = carpetElo;
 	}
 
-	public Date getBestEloRatingDate() {
-		return bestEloRatingDate;
-	}
-
-	public void setBestEloRatingDate(Date bestEloRatingDate) {
-		this.bestEloRatingDate = bestEloRatingDate;
-	}
-
-	public int getBestHardEloRank() {
-		return bestHardEloRank;
-	}
-
-	public void setBestHardEloRank(int bestHardEloRank) {
-		this.bestHardEloRank = bestHardEloRank;
-	}
-
-	public Date getBestHardEloRankDate() {
-		return bestHardEloRankDate;
-	}
-
-	public void setBestHardEloRankDate(Date bestHardEloRankDate) {
-		this.bestHardEloRankDate = bestHardEloRankDate;
-	}
-
-	public int getBestHardEloRating() {
-		return bestHardEloRating;
-	}
-
-	public void setBestHardEloRating(int bestHardEloRating) {
-		this.bestHardEloRating = bestHardEloRating;
-	}
-
-	public Date getBestHardEloRatingDate() {
-		return bestHardEloRatingDate;
-	}
-
-	public void setBestHardEloRatingDate(Date bestHardEloRatingDate) {
-		this.bestHardEloRatingDate = bestHardEloRatingDate;
-	}
-
-	public int getBestClayEloRank() {
-		return bestClayEloRank;
-	}
-
-	public void setBestClayEloRank(int bestClayEloRank) {
-		this.bestClayEloRank = bestClayEloRank;
-	}
-
-	public Date getBestClayEloRankDate() {
-		return bestClayEloRankDate;
-	}
-
-	public void setBestClayEloRankDate(Date bestClayEloRankDate) {
-		this.bestClayEloRankDate = bestClayEloRankDate;
-	}
-
-	public int getBestClayEloRating() {
-		return bestClayEloRating;
-	}
-
-	public void setBestClayEloRating(int bestClayEloRating) {
-		this.bestClayEloRating = bestClayEloRating;
-	}
-
-	public Date getBestClayEloRatingDate() {
-		return bestClayEloRatingDate;
-	}
-
-	public void setBestClayEloRatingDate(Date bestClayEloRatingDate) {
-		this.bestClayEloRatingDate = bestClayEloRatingDate;
-	}
-
-	public int getBestGrassEloRank() {
-		return bestGrassEloRank;
-	}
-
-	public void setBestGrassEloRank(int bestGrassEloRank) {
-		this.bestGrassEloRank = bestGrassEloRank;
-	}
-
-	public Date getBestGrassEloRankDate() {
-		return bestGrassEloRankDate;
-	}
-
-	public void setBestGrassEloRankDate(Date bestGrassEloRankDate) {
-		this.bestGrassEloRankDate = bestGrassEloRankDate;
-	}
-
-	public int getBestGrassEloRating() {
-		return bestGrassEloRating;
-	}
-
-	public void setBestGrassEloRating(int bestGrassEloRating) {
-		this.bestGrassEloRating = bestGrassEloRating;
-	}
-
-	public Date getBestGrassEloRatingDate() {
-		return bestGrassEloRatingDate;
-	}
-
-	public void setBestGrassEloRatingDate(Date bestGrassEloRatingDate) {
-		this.bestGrassEloRatingDate = bestGrassEloRatingDate;
-	}
-
-	public int getBestCarpetEloRank() {
-		return bestCarpetEloRank;
-	}
-
-	public void setBestCarpetEloRank(int bestCarpetEloRank) {
-		this.bestCarpetEloRank = bestCarpetEloRank;
-	}
-
-	public Date getBestCarpetEloRankDate() {
-		return bestCarpetEloRankDate;
-	}
-
-	public void setBestCarpetEloRankDate(Date bestCarpetEloRankDate) {
-		this.bestCarpetEloRankDate = bestCarpetEloRankDate;
-	}
-
-	public int getBestCarpetEloRating() {
-		return bestCarpetEloRating;
-	}
-
-	public void setBestCarpetEloRating(int bestCarpetEloRating) {
-		this.bestCarpetEloRating = bestCarpetEloRating;
-	}
-
-	public Date getBestCarpetEloRatingDate() {
-		return bestCarpetEloRatingDate;
-	}
-
-	public void setBestCarpetEloRatingDate(Date bestCarpetEloRatingDate) {
-		this.bestCarpetEloRatingDate = bestCarpetEloRatingDate;
+	public boolean hasCurrentElo() {
+		return elo.currentRank > 0 || hardElo.currentRank > 0 || clayElo.currentRank > 0 || grassElo.currentRank > 0 || carpetElo.currentRank > 0;
 	}
 
 	private Supplier<FrequentRank<Double>> mostFrequentRank = Memoizer.of(() -> findMostFrequentRank(weeksAt));
@@ -464,6 +315,53 @@ public class RankingHighlights {
 		@Override public int compareTo(FrequentRank<T> frequentRank) {
 			int result = duration.compareTo(frequentRank.duration);
 			return result != 0 ? result : -Integer.compare(rank, frequentRank.rank);
+		}
+	}
+
+	public static class EloHighlights {
+		
+		private final int currentRank;
+		private final int currentRating;
+		private final int bestRank;
+		private final Date bestRankDate;
+		private final int bestRating;
+		private final Date bestRatingDate;
+
+		public EloHighlights(int currentRank, int currentRating, int bestRank, Date bestRankDate, int bestRating, Date bestRatingDate) {
+			this.currentRank = currentRank;
+			this.currentRating = currentRating;
+			this.bestRank = bestRank;
+			this.bestRankDate = bestRankDate;
+			this.bestRating = bestRating;
+			this.bestRatingDate = bestRatingDate;
+		}
+
+		public int getCurrentRank() {
+			return currentRank;
+		}
+
+		public int getCurrentRating() {
+			return currentRating;
+		}
+
+		public int getBestRank() {
+			return bestRank;
+		}
+
+		public Date getBestRankDate() {
+			return bestRankDate;
+		}
+
+		public int getBestRating() {
+			return bestRating;
+		}
+
+		public Date getBestRatingDate() {
+			return bestRatingDate;
+		}
+
+		public boolean isEmpty() {
+			return currentRank == 0 && bestRank == 0 && bestRating == 0;
 		}
 	}
 }

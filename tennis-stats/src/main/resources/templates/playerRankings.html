@@ -73,7 +73,7 @@
 		$("#compensatePointsDiv").css("visibility", $("#rankType").val() == "POINTS" ? "visible" : "hidden");
 	}
 	$(function() {
-		dateRangePicker("rankingFromDate", "rankingToDate", "[(${seasons.get(seasons.size()-1)})]:[(${seasons.get(0)})]");
+		dateRangePicker("rankingFromDate", "rankingToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		$("#rankChartSize").slider({
 			min: 500,
 			max: 1500,
@@ -86,6 +86,7 @@
 		onRankingTimeSpanChange();
 		onRankTypeChange();
 		$("[data-toggle='tooltip']").tooltip();
+		bindPopovers();
 	});
 </script>
 <script async defer type="text/javascript" src="https://www.google.com/jsapi?callback=loadGoogleChartsForRanking"></script>
@@ -280,54 +281,58 @@
 		</table>
 		</th:block>
 	</div>
-	<div class="col-md-4">
+	<div class="col-md-5">
 		<h4>Elo Ranking</h4>
-		<table class="table table-condensed text-nowrap">
-			<tr th:if="${highlights.currentEloRank > 0}">
-				<th>Current Elo Rank</th>
-				<td th:text="${highlights.currentEloRank} + ' (' + ${highlights.currentEloRating} + ')'">5 (2210)</td>
+		<table class="table table-condensed text-nowrap" th:with="hasCurrent=${highlights.hasCurrentElo()}">
+			<tr>
+				<th>Elo</th>
+				<th th:if="${hasCurrent}" class="text-right">Current</th>
+				<th class="text-right">Best Rank</th>
+				<th class="text-right">Peak Rating</th>
 			</tr>
-			<tr th:if="${highlights.bestEloRank > 0}">
-				<th>Best Elo Rank</th>
-				<td th:text="${highlights.bestEloRank} + ' (' + ${#dates.format(highlights.bestEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
+			<th:block th:with="elo=${highlights.elo}">
+			<tr th:unless="${elo.empty}">
+				<th>Overall</th>
+				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
-			<tr th:if="${highlights.bestEloRating > 0}">
-				<th>Highest Elo Rating</th>
-				<td th:text="${highlights.bestEloRating} + ' (' + ${#dates.format(highlights.bestEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
+			</th:block>
+			<th:block th:with="elo=${highlights.hardElo}">
+			<tr class="bg-surface-H" th:unless="${elo.empty}">
+				<th>Hard</th>
+				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
-			<tr th:if="${highlights.bestHardEloRank > 0}" class="bg-surface-H">
-				<th>Best Hard Elo Rank</th>
-				<td th:text="${highlights.bestHardEloRank} + ' (' + ${#dates.format(highlights.bestHardEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
+			</th:block>
+			<th:block th:with="elo=${highlights.clayElo}">
+			<tr class="bg-surface-C" th:unless="${elo.empty}">
+				<th>Clay</th>
+				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
-			<tr th:if="${highlights.bestHardEloRating > 0}" class="bg-surface-H">
-				<th>Highest Hard Elo Rating</th>
-				<td th:text="${highlights.bestHardEloRating} + ' (' + ${#dates.format(highlights.bestHardEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
+			</th:block>
+			<th:block th:with="elo=${highlights.grassElo}">
+			<tr class="bg-surface-G" th:unless="${elo.empty}">
+				<th>Grass</th>
+				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
-			<tr th:if="${highlights.bestClayEloRank > 0}" class="bg-surface-C">
-				<th>Best Clay Elo Rank</th>
-				<td th:text="${highlights.bestClayEloRank} + ' (' + ${#dates.format(highlights.bestClayEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
+			</th:block>
+			<th:block th:with="elo=${highlights.carpetElo}">
+			<tr class="bg-surface-P" th:unless="${elo.empty}">
+				<th>Carpet</th>
+				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
-			<tr th:if="${highlights.bestClayEloRating > 0}" class="bg-surface-C">
-				<th>Highest Clay Elo Rating</th>
-				<td th:text="${highlights.bestClayEloRating} + ' (' + ${#dates.format(highlights.bestClayEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
-			</tr>
-			<tr th:if="${highlights.bestGrassEloRank > 0}" class="bg-surface-G">
-				<th>Best Grass Elo Rank</th>
-				<td th:text="${highlights.bestGrassEloRank} + ' (' + ${#dates.format(highlights.bestGrassEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
-			</tr>
-			<tr th:if="${highlights.bestGrassEloRating > 0}" class="bg-surface-G">
-				<th>Highest Grass Elo Rating</th>
-				<td th:text="${highlights.bestGrassEloRating} + ' (' + ${#dates.format(highlights.bestGrassEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
-			</tr>
-			<tr th:if="${highlights.bestCarpetEloRank > 0}" class="bg-surface-P">
-				<th>Best Carpet Elo Rank</th>
-				<td th:text="${highlights.bestCarpetEloRank} + ' (' + ${#dates.format(highlights.bestCarpetEloRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
-			</tr>
-			<tr th:if="${highlights.bestCarpetEloRating > 0}" class="bg-surface-P">
-				<th>Highest Carpet Elo Rating</th>
-				<td th:text="${highlights.bestCarpetEloRating} + ' (' + ${#dates.format(highlights.bestCarpetEloRatingDate, 'dd-MM-yyyy')} + ')'">2450 (01-01-2011)</td>
-			</tr>
+			</th:block>
 		</table>
+		<th:block th:include="fragments/aboutElo :: aboutElo('left')"/>
+		<div th:include="fragments/aboutElo :: aboutEloFormula"></div>
 	</div>
 </div>
 </th:block>

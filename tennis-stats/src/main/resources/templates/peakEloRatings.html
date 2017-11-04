@@ -99,9 +99,9 @@
 		</tr>
 		</thead>
 	</table>
-	<em><strong>*</strong> <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> considers opponent rating as well, meaning wins over quality opponents are worth more then wins over lesser rated players.<br/>Ultimate Tennis Statistics use sophisticated tennis-customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="top" data-popover="#eloRatingPopover">Elo rating formula</a>.</em>
+	<th:block th:include="fragments/aboutElo :: aboutElo('top')"/>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
-	<div th:include="fragments/aboutElo :: aboutElo"></div>
+	<div th:include="fragments/aboutElo :: aboutEloFormula"></div>
 </body>
 </html>

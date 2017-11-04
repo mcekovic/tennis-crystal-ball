@@ -93,7 +93,7 @@
 		}
 		$(function() {
 			autocompletePlayers("players", drawChart);
-			dateRangePicker("fromDate", "toDate", "[(${seasons.get(seasons.size()-1)})]:[(${seasons.get(0)})]");
+			dateRangePicker("fromDate", "toDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 			$("#rankChartSize").slider({
 				min: 500,
 				max: 1500,

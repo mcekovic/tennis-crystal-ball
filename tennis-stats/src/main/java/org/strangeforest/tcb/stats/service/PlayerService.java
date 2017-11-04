@@ -28,7 +28,9 @@ public class PlayerService {
 		"SELECT player_id, name, dob, extract(YEAR FROM age) AS age, country_id, birthplace, residence, height, weight,\n" +
 		"  hand, backhand, active, turned_pro, coach, web_site, facebook, twitter,\n" +
 		"  titles, grand_slams, tour_finals, alt_finals, masters, olympics,\n" +
-		"  current_rank, current_rank_points, best_rank, best_rank_date, current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, goat_rank, goat_points, weeks_at_no1\n" +
+		"  current_rank, current_rank_points, best_rank, best_rank_date,\n" +
+		"  current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,\n" +
+		"  goat_rank, goat_points, weeks_at_no1\n" +
 		"FROM player_v";
 
 	private static final String PLAYER_BY_NAME_QUERY = PLAYER_SELECT + "\nWHERE name = :name ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
@@ -207,6 +209,8 @@ public class PlayerService {
 			p.setCurrentEloRating(rs.getInt("current_elo_rating"));
 			p.setBestEloRank(rs.getInt("best_elo_rank"));
 			p.setBestEloRankDate(rs.getDate("best_elo_rank_date"));
+			p.setBestEloRating(rs.getInt("best_elo_rating"));
+			p.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
 			p.setGoatRank(rs.getInt("goat_rank"));
 			p.setGoatPoints(rs.getInt("goat_points"));
 			p.setWeeksAtNo1(rs.getInt("weeks_at_no1"));

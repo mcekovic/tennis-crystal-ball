@@ -46,6 +46,8 @@ public class Player {
 	private int currentEloRating;
 	private int bestEloRank;
 	private Date bestEloRankDate;
+	private int bestEloRating;
+	private Date bestEloRatingDate;
 	private int goatRank;
 	private int goatPoints;
 	private int weeksAtNo1;
@@ -327,6 +329,22 @@ public class Player {
 
 	public void setBestEloRankDate(Date bestEloRankDate) {
 		this.bestEloRankDate = bestEloRankDate;
+	}
+
+	public int getBestEloRating() {
+		return bestEloRating;
+	}
+
+	public void setBestEloRating(int bestEloRating) {
+		this.bestEloRating = bestEloRating;
+	}
+
+	public Date getBestEloRatingDate() {
+		return bestEloRatingDate;
+	}
+
+	public void setBestEloRatingDate(Date bestEloRatingDate) {
+		this.bestEloRatingDate = bestEloRatingDate;
 	}
 
 	public int getGoatRank() {

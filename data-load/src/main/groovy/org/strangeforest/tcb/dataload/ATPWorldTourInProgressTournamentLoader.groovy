@@ -185,7 +185,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			if (verbose)
 				println '\n' + round
 			short matchNumOffset = matchNum + 1
-			Elements roundPlayers = drawTable.select("tbody > tr > td[rowspan=$drawRowSpan")
+			Elements roundPlayers = drawTable.select("tbody > tr > td[rowspan=$drawRowSpan]")
 			if (!roundPlayers.select('div.scores-draw-entry-box').find { e -> e.text() })
 				return
 			if (round == 'Winner') {

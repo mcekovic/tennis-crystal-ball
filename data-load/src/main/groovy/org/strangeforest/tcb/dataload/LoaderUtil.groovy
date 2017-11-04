@@ -20,6 +20,7 @@ abstract class LoaderUtil {
 				return closure.call(retry)
 			}
 			catch (Throwable th) {
+				th.printStackTrace()
 				def rootCause = extractRootCause(th)
 				if (retry < count && predicate.curry(rootCause)) {
 					println "Exception occurred: ${rootCause} [retry ${retry + 1} follows]"

@@ -1,4 +1,10 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutElo">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutElo(popoverPosition)">
+	<em>
+		<strong>*</strong> <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> considers opponent rating as well, meaning wins over quality opponents are worth more then wins over lesser rated players.<br/>
+		Ultimate Tennis Statistics uses sophisticated tennis-customized <a href="#" data-toggle="popover" data-trigger="focus" th:data-placement="${popoverPosition}" data-popover="#eloRatingPopover">Elo rating formula</a>.
+	</em>
+</th:block>
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutEloFormula">
 	<div class="hidden" id="eloRatingPopover">
 		<div class="popover-title"><strong>Elo Rating Formula</strong></div>
 		<div class="popover-content">

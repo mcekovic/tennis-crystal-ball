@@ -427,16 +427,16 @@ public class RivalriesController extends PageController {
 			case "CareerEnd": return playerService.getPlayerCareerEnd(playerId);
 			case "PeakRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestRankDate());
 			case "PeakRankPoints": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestRankPointsDate());
-			case "PeakEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestEloRankDate());
-			case "PeakEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestEloRatingDate());
-			case "PeakHardEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestHardEloRankDate());
-			case "PeakHardEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestHardEloRatingDate());
-			case "PeakClayEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestClayEloRankDate());
-			case "PeakClayEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestClayEloRatingDate());
-			case "PeakGrassEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestGrassEloRankDate());
-			case "PeakGrassEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestGrassEloRatingDate());
-			case "PeakCarpetEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestCarpetEloRankDate());
-			case "PeakCarpetEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestCarpetEloRatingDate());
+			case "PeakEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getElo().getBestRankDate());
+			case "PeakEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getElo().getBestRatingDate());
+			case "PeakHardEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getHardElo().getBestRankDate());
+			case "PeakHardEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getHardElo().getBestRatingDate());
+			case "PeakClayEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getClayElo().getBestRankDate());
+			case "PeakClayEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getClayElo().getBestRatingDate());
+			case "PeakGrassEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getGrassElo().getBestRankDate());
+			case "PeakGrassEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getGrassElo().getBestRatingDate());
+			case "PeakCarpetEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getCarpetElo().getBestRankDate());
+			case "PeakCarpetEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getCarpetElo().getBestRatingDate());
 			default: return null;
 		}
 	}

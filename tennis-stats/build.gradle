@@ -54,7 +54,12 @@ dependencies {
 	}
 	compile ('org.springframework.boot:spring-boot-starter-logging')
 	compile ('org.springframework.boot:spring-boot-starter-actuator')
-	compile ("com.google.guava:guava:$guavaVersion")
+	compile ("com.google.guava:guava:$guavaVersion") {
+		exclude group: 'org.codehaus.mojo'
+		exclude group: 'com.google.code.findbugs'
+		exclude group: 'com.google.errorprone'
+		exclude group: 'com.google.j2objc'
+	}
 	compile ("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 	compile ("org.postgresql:postgresql:$postgresqlJdbcVersion")
 	compile ("com.neovisionaries:nv-i18n:$nvi18nVersion")

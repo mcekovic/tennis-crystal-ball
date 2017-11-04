@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.RankingHighlights.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
@@ -73,21 +74,25 @@ public class RankingsService {
 		"  FROM player_best_elo_rating\n" +
 		"  WHERE %1$s IS NOT NULL\n" +
 		")\n" +
-		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, r.best_elo_rating_date AS points_date, p.%3$s AS best_rank, p.%4$s AS best_rank_date,\n" +
+		"SELECT r.rank, player_id, p.name, p.country_id, p.active, r.best_elo_rating AS points, r.best_elo_rating_date AS points_date, k.%3$s AS best_rank, k.%4$s AS best_rank_date,\n" +
 		"  e.tournament_event_id, e.name AS tournament, e.season, e.level\n" +
 		"FROM best_elo_rating_ranked r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
+		"LEFT JOIN player_best_elo_rank k USING (player_id)\n" +
 		"INNER JOIN tournament_event e ON e.tournament_event_id = r.best_elo_rating_event_id%5$s\n" +
 		"ORDER BY rank OFFSET :offset LIMIT :limit";
 
 	private static final String PLAYER_RANKING_QUERY =
-		"SELECT current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date, goat_rank, goat_points,\n" +
-		"  current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,\n" +
-		"  best_hard_elo_rank, best_hard_elo_rank_date, best_hard_elo_rating, best_hard_elo_rating_date,\n" +
-		"  best_clay_elo_rank, best_clay_elo_rank_date, best_clay_elo_rating, best_clay_elo_rating_date,\n" +
-		"  best_grass_elo_rank, best_grass_elo_rank_date, best_grass_elo_rating, best_grass_elo_rating_date,\n" +
-		"  best_carpet_elo_rank, best_carpet_elo_rank_date, best_carpet_elo_rating, best_carpet_elo_rating_date\n" +
-		"FROM player_v\n" +
+		"SELECT p.current_rank, p.current_rank_points, p.best_rank, p.best_rank_date, p.best_rank_points, p.best_rank_points_date, p.goat_rank, p.goat_points,\n" +
+		"  ce.current_elo_rank, ce.current_elo_rating, be.best_elo_rank, be.best_elo_rank_date, bet.best_elo_rating, bet.best_elo_rating_date,\n" +
+		"  ce.current_hard_elo_rank, ce.current_hard_elo_rating, be.best_hard_elo_rank, be.best_hard_elo_rank_date, bet.best_hard_elo_rating, bet.best_hard_elo_rating_date,\n" +
+		"  ce.current_clay_elo_rank, ce.current_clay_elo_rating, be.best_clay_elo_rank, be.best_clay_elo_rank_date, bet.best_clay_elo_rating, bet.best_clay_elo_rating_date,\n" +
+		"  ce.current_grass_elo_rank, ce.current_grass_elo_rating, be.best_grass_elo_rank, be.best_grass_elo_rank_date, bet.best_grass_elo_rating, bet.best_grass_elo_rating_date,\n" +
+		"  ce.current_carpet_elo_rank, ce.current_carpet_elo_rating, be.best_carpet_elo_rank, be.best_carpet_elo_rank_date, bet.best_carpet_elo_rating, bet.best_carpet_elo_rating_date\n" +
+		"FROM player_v p\n" +
+		"LEFT JOIN player_current_elo_rank ce USING (player_id)\n" +
+		"LEFT JOIN player_best_elo_rank be USING (player_id)\n" +
+		"LEFT JOIN player_best_elo_rating bet USING (player_id)\n" +
 		"WHERE player_id = :playerId";
 
 	private static final String PLAYER_YEAR_END_RANK_QUERY =
@@ -361,28 +366,11 @@ public class RankingsService {
 			highlights.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
 			highlights.setGoatRank(rs.getInt("goat_rank"));
 			highlights.setGoatPoints(rs.getInt("goat_points"));
-			highlights.setCurrentEloRank(rs.getInt("current_elo_rank"));
-			highlights.setCurrentEloRating(rs.getInt("current_elo_rating"));
-			highlights.setBestEloRank(rs.getInt("best_elo_rank"));
-			highlights.setBestEloRankDate(rs.getDate("best_elo_rank_date"));
-			highlights.setBestEloRating(rs.getInt("best_elo_rating"));
-			highlights.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
-			highlights.setBestHardEloRank(rs.getInt("best_hard_elo_rank"));
-			highlights.setBestHardEloRankDate(rs.getDate("best_hard_elo_rank_date"));
-			highlights.setBestHardEloRating(rs.getInt("best_hard_elo_rating"));
-			highlights.setBestHardEloRatingDate(rs.getDate("best_hard_elo_rating_date"));
-			highlights.setBestClayEloRank(rs.getInt("best_clay_elo_rank"));
-			highlights.setBestClayEloRankDate(rs.getDate("best_clay_elo_rank_date"));
-			highlights.setBestClayEloRating(rs.getInt("best_clay_elo_rating"));
-			highlights.setBestClayEloRatingDate(rs.getDate("best_clay_elo_rating_date"));
-			highlights.setBestGrassEloRank(rs.getInt("best_grass_elo_rank"));
-			highlights.setBestGrassEloRankDate(rs.getDate("best_grass_elo_rank_date"));
-			highlights.setBestGrassEloRating(rs.getInt("best_grass_elo_rating"));
-			highlights.setBestGrassEloRatingDate(rs.getDate("best_grass_elo_rating_date"));
-			highlights.setBestCarpetEloRank(rs.getInt("best_carpet_elo_rank"));
-			highlights.setBestCarpetEloRankDate(rs.getDate("best_carpet_elo_rank_date"));
-			highlights.setBestCarpetEloRating(rs.getInt("best_carpet_elo_rating"));
-			highlights.setBestCarpetEloRatingDate(rs.getDate("best_carpet_elo_rating_date"));
+			highlights.setElo(mapEloHighlights(rs, ""));
+			highlights.setHardElo(mapEloHighlights(rs, "hard_"));
+			highlights.setClayElo(mapEloHighlights(rs, "clay_"));
+			highlights.setGrassElo(mapEloHighlights(rs, "grass_"));
+			highlights.setCarpetElo(mapEloHighlights(rs, "carpet_"));
 		});
 
 		jdbcTemplate.query(PLAYER_YEAR_END_RANK_QUERY, params("playerId", playerId), rs -> {
@@ -407,6 +395,17 @@ public class RankingsService {
 		});
 
 		return highlights;
+	}
+
+	private static EloHighlights mapEloHighlights(ResultSet rs, String prefix) throws SQLException {
+		return new EloHighlights(
+			rs.getInt("current_" + prefix + "elo_rank"),
+			rs.getInt("current_" + prefix + "elo_rating"),
+			rs.getInt("best_" + prefix + "elo_rank"),
+			rs.getDate("best_" + prefix + "elo_rank_date"),
+			rs.getInt("best_" + prefix + "elo_rating"),
+			rs.getDate("best_" + prefix + "elo_rating_date")
+		);
 	}
 
 

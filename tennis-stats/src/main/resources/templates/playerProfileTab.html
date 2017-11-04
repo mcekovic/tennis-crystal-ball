@@ -136,6 +136,10 @@
 				<th>Best Elo Rank</th>
 				<td th:text="${player.bestEloRank + ' (' + #dates.format(player.bestEloRankDate, 'dd-MM-yyyy') + ')'}">5 (1.1.2010)</td>
 			</tr>
+			<tr th:if="${player.bestEloRating > 0}">
+				<th>Peak Elo Rating</th>
+				<td th:text="${player.bestEloRating + ' (' + #dates.format(player.bestEloRatingDate, 'dd-MM-yyyy') + ')'}">2455 (1.1.2010)</td>
+			</tr>
 			<tr th:if="${player.goatPoints > 0}">
 				<th>GOAT Rank</th>
 				<td>[(${player.goatRank})] (<a th:href="@{/playerProfile(playerId=${player.id}, tab=goatPoints)}" th:text="${player.goatPoints}" title="Show GOAT points distribution">25</a>)</td>

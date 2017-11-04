@@ -223,7 +223,11 @@ CREATE INDEX ON player_year_end_rank (player_id);
 
 CREATE OR REPLACE VIEW player_current_elo_rank_v AS
 WITH current_rank_date AS (SELECT max(rank_date) AS rank_date FROM player_elo_ranking)
-SELECT player_id, rank AS current_elo_rank, elo_rating AS current_elo_rating
+SELECT player_id, rank AS current_elo_rank, elo_rating AS current_elo_rating,
+	hard_rank AS current_hard_elo_rank, hard_elo_rating AS current_hard_elo_rating,
+	clay_rank AS current_clay_elo_rank, clay_elo_rating AS current_clay_elo_rating,
+	grass_rank AS current_grass_elo_rank, grass_elo_rating AS current_grass_elo_rating,
+	carpet_rank AS current_carpet_elo_rank, carpet_elo_rating AS current_carpet_elo_rating
 FROM player_elo_ranking
 WHERE rank_date = (SELECT rank_date FROM current_rank_date);
 
@@ -1848,10 +1852,6 @@ CREATE OR REPLACE VIEW player_v AS
 SELECT p.*, full_name(first_name, last_name) AS name, regexp_replace(initcap(first_name), '[^A-Z\s]+', '.', 'g') || ' ' || last_name AS short_name, age(dob) AS age,
 	current_rank, current_rank_points, best_rank, best_rank_date, best_rank_points, best_rank_points_date,
 	current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,
-	best_hard_elo_rank, best_hard_elo_rank_date, best_hard_elo_rating, best_hard_elo_rating_date,
-	best_clay_elo_rank, best_clay_elo_rank_date, best_clay_elo_rating, best_clay_elo_rating_date,
-	best_grass_elo_rank, best_grass_elo_rank_date, best_grass_elo_rating, best_grass_elo_rating_date,
-	best_carpet_elo_rank, best_carpet_elo_rank_date, best_carpet_elo_rating, best_carpet_elo_rating_date,
 	goat_rank, coalesce(goat_points, 0) AS goat_points, coalesce(weeks_at_no1, 0) weeks_at_no1,
 	coalesce(titles, 0) AS titles, coalesce(big_titles, 0) AS big_titles,
 	coalesce(grand_slams, 0) AS grand_slams, coalesce(tour_finals, 0) AS tour_finals, coalesce(alt_finals, 0) AS alt_finals, coalesce(masters, 0) AS masters, coalesce(olympics, 0) AS olympics
