@@ -18,6 +18,8 @@ public class DataLoadCommand {
 	@Value("${tennis-stats.jobs.data-load.command:../data-load/bin/data-load}")
 	private String dataLoadCommand;
 
+	public static final int NOT_CHANGED = 80;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(DataLoadCommand.class);
 
 	public int execute(String name, String... params) {
@@ -37,6 +39,8 @@ public class DataLoadCommand {
 				LOGGER.info(sb.toString());
 				if (exitCode == 0)
 					LOGGER.debug("{} finished.", name);
+				else if (exitCode == NOT_CHANGED)
+					LOGGER.debug("{} exited with code {}.", name, exitCode);
 				else
 					LOGGER.error("{} exited with code {}.", name, exitCode);
 				return exitCode;

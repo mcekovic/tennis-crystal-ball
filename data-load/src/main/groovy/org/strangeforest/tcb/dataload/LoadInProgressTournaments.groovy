@@ -1,9 +1,8 @@
 package org.strangeforest.tcb.dataload
 
-import static java.util.Arrays.asList
-import static org.strangeforest.tcb.dataload.LoaderUtil.retriedGetDoc
+import static org.strangeforest.tcb.dataload.LoaderUtil.*
 
-loadTournaments(new SqlPool())
+System.exit(loadTournaments(new SqlPool()) ? 0 : 80)
 
 static loadTournaments(SqlPool sqlPool) {
 	sqlPool.withSql {sql ->
@@ -13,14 +12,17 @@ static loadTournaments(SqlPool sqlPool) {
 		def eventInfos = findInProgressEvents()
 		def newExtIds = eventInfos.collect { info -> info.extId }
 		println "New in-progress tournaments: $newExtIds"
+		def changed = false
 		eventInfos.each { info ->
-			atpInProgressTournamentLoader.loadAndSimulateTournament(info.urlId, info.extId)
+			changed |= atpInProgressTournamentLoader.loadAndSimulateTournament(info.urlId, info.extId)
 		}
 		oldExtIds.removeAll(newExtIds)
 		if (oldExtIds) {
 			println "Removing finished in-progress tournaments: $oldExtIds"
 			atpInProgressTournamentLoader.deleteInProgressEventExtIds(oldExtIds)
+			changed = true
 		}
+		changed
 	}
 }
 
@@ -53,7 +55,7 @@ class CascadingCrawler {
 
 	CascadingCrawler(String... urls) {
 		visitedUrls = new HashSet<>()
-		this.urls = new HashSet<>(asList(urls))
+		this.urls = new HashSet<>(Arrays.asList(urls))
 	}
 
 	def visit(Closure c) {

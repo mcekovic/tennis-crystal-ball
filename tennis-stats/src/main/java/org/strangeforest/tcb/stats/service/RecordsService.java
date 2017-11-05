@@ -43,17 +43,17 @@ public class RecordsService {
 		"ORDER BY r.sort_order, p.name OFFSET :offset";
 
 	private static final String SAVE_RECORD = //language=SQL
-		"WITH player_record AS (\n" +
+		"WITH record_plain AS (\n" +
 		"  %1$s\n" +
-		"), player_record_ranked AS (\n" +
+		"), record_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY %2$s) AS rank, rank() OVER (ORDER BY %3$s) AS order, player_id, %4$s\n" +
-		"  FROM player_record r LEFT JOIN player p USING (player_id)\n" +
+		"  FROM record_plain r LEFT JOIN player p USING (player_id)\n" +
 		"  WHERE NOT lower(p.last_name) LIKE '%%unknown%%'%5$s\n" +
 		")\n" +
 		"INSERT INTO %6$s\n" +
 		"SELECT :recordId AS record_id, row_number() OVER (ORDER BY r.order, p.name) AS sort_order, r.rank, player_id,\n" +
 		"  (SELECT row_to_json(d) FROM (SELECT %4$s) AS d) AS detail\n" +
-		"FROM player_record_ranked r\n" +
+		"FROM record_ranked r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.rank <= :maxPlayers\n" +
 		"ORDER BY r.order, p.name";
