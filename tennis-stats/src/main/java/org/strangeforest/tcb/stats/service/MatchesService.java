@@ -45,9 +45,12 @@ public class MatchesService {
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
-		"INNER JOIN player_v pl ON pl.player_id = m.loser_id%1$s\n" +
-		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%2$s\n" +
-		"ORDER BY %3$s OFFSET :offset";
+		"INNER JOIN player_v pl ON pl.player_id = m.loser_id%1$s%2$s\n" +
+		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%3$s\n" +
+		"ORDER BY %4$s OFFSET :offset";
+
+	private static final String TOURNAMENT_EVENT_RESULT_JOIN = //language=SQL
+		"\nINNER JOIN player_tournament_event_result r ON r.player_id = :playerId AND r.tournament_event_id = m.tournament_event_id";
 
 	private static final String MATCH_STATS_JOIN = //language=SQL
 		"\nLEFT JOIN player_match_stats_v ms ON ms.match_id = m.match_id AND ms.player_id = :playerId";
@@ -136,7 +139,7 @@ public class MatchesService {
 		AtomicInteger matches = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(PLAYER_MATCHES_QUERY, filter.hasStatsFilter() ? MATCH_STATS_JOIN : "", filter.getCriteria(), orderBy),
+			format(PLAYER_MATCHES_QUERY, filter.hasResult() ? TOURNAMENT_EVENT_RESULT_JOIN : "", filter.hasStatsFilter() ? MATCH_STATS_JOIN : "", filter.getCriteria(), orderBy),
 			filter.getParams()
 				.addValue("playerId", playerId)
 				.addValue("offset", offset),

@@ -1,10 +1,12 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.time.*;
 import java.util.*;
 
 import org.springframework.jdbc.core.namedparam.*;
 
 import com.google.common.base.MoreObjects.*;
+import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
@@ -14,62 +16,68 @@ public class MatchFilter extends TournamentEventResultFilter {
 
 	// Factory
 
-	public static final MatchFilter ALL = new MatchFilter(null, null, null, null, null, null, null, null, null, null, null, null);
+	public static final MatchFilter ALL = new MatchFilter(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
 	public static MatchFilter forTournamentEvent(int tournamentEventId) {
-		return new MatchFilter(null, null, null, null, tournamentEventId, null, null, null, null, null, null, null);
+		return new MatchFilter(null, null, null, null, null, null, null, null, null, tournamentEventId, null, null, null, null, null);
 	}
 
 	public static MatchFilter forOpponent(int opponentId) {
-		return new MatchFilter(null, null, null, null, null, null, null, OpponentFilter.forStats(opponentId), null, null, null, null);
+		return new MatchFilter(null, null, null, null, null, null, null, null, null, null, OpponentFilter.forStats(opponentId), null, null, null, null);
 	}
 
 	public static MatchFilter forOpponent(int opponentId, String level, String surface, String round) {
-		return new MatchFilter(null, level, surface, null, null, null, round, OpponentFilter.forStats(opponentId), null, null, null, null);
+		return new MatchFilter(null, null, level, null, surface, null, round, null, null, null, OpponentFilter.forStats(opponentId), null, null, null, null);
 	}
 
-	public static MatchFilter forOpponent(int opponentId, Integer season, String level, String surface, Integer tournamentId, String round, String outcome, String score) {
-		return new MatchFilter(season, level, surface, tournamentId, null, null, round, OpponentFilter.forStats(opponentId), OutcomeFilter.forStats(outcome), ScoreFilter.forStats(score), null, null);
+	public static MatchFilter forOpponent(int opponentId, Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, String round, Integer tournamentId, String outcome, String score) {
+		return new MatchFilter(season, dateRange, level, bestOf, surface, indoor, round, null, tournamentId, null, OpponentFilter.forStats(opponentId), OutcomeFilter.forStats(outcome), ScoreFilter.forStats(score), null, null);
 	}
 
 	public static MatchFilter forSeason(int season) {
-		return new MatchFilter(season, null, null, null, null, null, null, null, null, null, null, null);
+		return new MatchFilter(season, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	public static MatchFilter forSurface(String surface) {
-		return new MatchFilter(null, null, surface, null, null, null, null, null, null, null, null, null);
+		return new MatchFilter(null, null, null, null, surface, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	public static MatchFilter forSeasonAndSurface(int season, String surface) {
-		return new MatchFilter(season, null, surface, null, null, null, null, null, null, null, null, null);
+		return new MatchFilter(season, null, null, null, surface, null, null, null, null, null, null, null, null, null, null);
 	}
 
-	public static MatchFilter forMatches(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, ScoreFilter scoreFilter, StatsFilter statsFilter, String searchPhrase) {
-		return new MatchFilter(season, level, surface, tournamentId, tournamentEventId, null, round, opponentFilter, outcomeFilter, scoreFilter, statsFilter, searchPhrase);
+	public static MatchFilter forMatches(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, ScoreFilter scoreFilter, StatsFilter statsFilter, String searchPhrase) {
+		return new MatchFilter(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, searchPhrase);
 	}
 
+	// For Compare Stats
 	public static MatchFilter forStats(Integer season, String level, String surface) {
-		return new MatchFilter(season, level, surface, null, null, null, null, null, null, null, null, null);
+		return forStats(season, null, level, null, surface, null, null, null, null, null, null, null, null, null, null);
 	}
 
+	// For Compare Match Stats
 	public static MatchFilter forStats(Integer season, String level, String surface, String round, Integer opponentId) {
-		return new MatchFilter(season, level, surface, null, null, null, round, OpponentFilter.forStats(opponentId), null, null, null, null);
+		return forStats(season, null, level, null, surface, null, round, null, null, null, OpponentFilter.forStats(opponentId), null, null, null, null);
 	}
 
-	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, String result, StatsFilter statsFilter, String searchPhrase) {
-		return forStats(season, level, surface, tournamentId, null, result, null, null, null, null, statsFilter, searchPhrase);
-	}
-
+	// For H2H Compare Stats
 	public static MatchFilter forStats(Integer season, String level, String surface, OpponentFilter opponentFilter) {
-		return forStats(season, level, surface, null, null, null, null, opponentFilter, null, null, null, null);
+		return forStats(season, null, level, null, surface, null, null, null, null, null, opponentFilter, null, null, null, null);
 	}
 
-	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, String round, OpponentFilter opponentFilter) {
-		return forStats(season, level, surface, tournamentId, null, null, round, opponentFilter, null, null, null, null);
+	// For Tournaments
+	public static MatchFilter forStats(Integer season, Range<LocalDate> dateRange, String level, String surface, Boolean indoor, String result, Integer tournamentId, StatsFilter statsFilter, String searchPhrase) {
+		return forStats(season, dateRange, level, null, surface, indoor, null, result, tournamentId, null, null, null, null, statsFilter, searchPhrase);
 	}
 
-	public static MatchFilter forStats(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String result, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, ScoreFilter scoreFilter, StatsFilter statsFilter, String searchPhrase) {
-		return new MatchFilter(season, level, surface, tournamentId, tournamentEventId, result, round, opponentFilter, outcomeFilter, scoreFilter, statsFilter, searchPhrase) {
+	// For Performance and Statistics
+	public static MatchFilter forStats(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, String round, String result, Integer tournamentId, OpponentFilter opponentFilter) {
+		return forStats(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, null, opponentFilter, null, null, null, null);
+	}
+
+	// For Matches
+	public static MatchFilter forStats(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, ScoreFilter scoreFilter, StatsFilter statsFilter, String searchPhrase) {
+		return new MatchFilter(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, searchPhrase) {
 			@Override protected String getSearchCriterion() {
 				return STATS_SEARCH_CRITERION;
 			}
@@ -79,20 +87,20 @@ public class MatchFilter extends TournamentEventResultFilter {
 
 	// Instance
 
+	private final Integer bestOf;
 	private final String round;
 	private final OpponentFilter opponentFilter;
 	private final OutcomeFilter outcomeFilter;
 	private final ScoreFilter scoreFilter;
 
-	private static final String LAST_52_WEEKS_CRITERION  = " AND m.date >= current_date - INTERVAL '1 year'";
-	private static final String SURFACE_CRITERION        = " AND m.surface = :surface::surface";
-	private static final String SURFACES_CRITERION       = " AND m.surface::TEXT IN (:surfaces)";
+	private static final String BEST_OF_CRITERION        = " AND m.best_of = :bestOf";
 	private static final String ROUND_CRITERION          = " AND m.round %1$s :round::match_round";
 	private static final String MATCHES_SEARCH_CRITERION = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR pw.name ILIKE '%' || :searchPhrase || '%' OR pl.name ILIKE '%' || :searchPhrase || '%')";
 	private static final String STATS_SEARCH_CRITERION   = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR o.name ILIKE '%' || :searchPhrase || '%')";
 
-	private MatchFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String result, String round, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, ScoreFilter scoreFilter, StatsFilter statsFilter, String searchPhrase) {
-		super(season, level, surface, tournamentId, tournamentEventId, result, statsFilter, searchPhrase);
+	private MatchFilter(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, ScoreFilter scoreFilter, StatsFilter statsFilter, String searchPhrase) {
+		super(season, dateRange, level, surface, indoor, result, tournamentId, tournamentEventId, statsFilter, searchPhrase);
+		this.bestOf = bestOf;
 		this.round = round;
 		this.opponentFilter = opponentFilter != null ? opponentFilter : OpponentFilter.ALL;
 		this.outcomeFilter = outcomeFilter != null ? outcomeFilter : OutcomeFilter.ALL;
@@ -101,6 +109,8 @@ public class MatchFilter extends TournamentEventResultFilter {
 
 	@Override protected void appendCriteria(StringBuilder criteria) {
 		super.appendCriteria(criteria);
+		if (bestOf != null)
+			criteria.append(BEST_OF_CRITERION);
 		if (!isNullOrEmpty(round))
 			criteria.append(format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
 		opponentFilter.appendCriteria(criteria);
@@ -110,6 +120,8 @@ public class MatchFilter extends TournamentEventResultFilter {
 
 	@Override public void addParams(MapSqlParameterSource params) {
 		super.addParams(params);
+		if (bestOf != null)
+			params.addValue("bestOf", bestOf);
 		if (!isNullOrEmpty(round))
 			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 		opponentFilter.addParams(params);
@@ -117,16 +129,8 @@ public class MatchFilter extends TournamentEventResultFilter {
 		scoreFilter.addParams(params);
 	}
 
-	@Override protected String getLast52WeeksCriterion() {
-		return LAST_52_WEEKS_CRITERION;
-	}
-
-	@Override protected String getSurfaceCriterion() {
-		return SURFACE_CRITERION;
-	}
-
-	@Override protected String getSurfacesCriterion() {
-		return SURFACES_CRITERION;
+	@Override protected String getPrefix() {
+		return "m.";
 	}
 
 	@Override protected String getSearchCriterion() {
@@ -134,7 +138,7 @@ public class MatchFilter extends TournamentEventResultFilter {
 	}
 
 	@Override public boolean isEmpty() {
-		return super.isEmpty() && isNullOrEmpty(round) && opponentFilter.isEmpty() && outcomeFilter.isEmpty() && scoreFilter.isEmpty();
+		return super.isEmpty() && bestOf == null && isNullOrEmpty(round) && opponentFilter.isEmpty() && outcomeFilter.isEmpty() && scoreFilter.isEmpty();
 	}
 
 	public boolean isTournamentEventFilterEmpty() {
@@ -169,15 +173,16 @@ public class MatchFilter extends TournamentEventResultFilter {
 		if (!(o instanceof MatchFilter)) return false;
 		if (!super.equals(o)) return false;
 		MatchFilter filter = (MatchFilter)o;
-		return stringsEqual(round, filter.round) && opponentFilter.equals(filter.opponentFilter) && outcomeFilter.equals(filter.outcomeFilter) && scoreFilter.equals(filter.scoreFilter);
+		return Objects.equals(bestOf, filter.bestOf) && stringsEqual(round, filter.round) && opponentFilter.equals(filter.opponentFilter) && outcomeFilter.equals(filter.outcomeFilter) && scoreFilter.equals(filter.scoreFilter);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(super.hashCode(), emptyToNull(round), opponentFilter, outcomeFilter, scoreFilter);
+		return Objects.hash(super.hashCode(), bestOf, emptyToNull(round), opponentFilter, outcomeFilter, scoreFilter);
 	}
 
 	@Override protected ToStringHelper toStringHelper() {
 		return super.toStringHelper()
+			.add("bestOf", bestOf)
 			.add("round", emptyToNull(round))
 			.add("opponentFilter", opponentFilter)
 			.add("outcomeFilter", outcomeFilter)

@@ -124,17 +124,21 @@ function formatDate(date) {
 	return date ? $.datepicker.formatDate(date_format, new Date(date)) : "";
 }
 
-function getDate(id) {
+function getDate(id, title) {
 	var $date = $("#" + id);
 	var date = $date.val();
-	if (date == "")
+	if (date == "") {
+		$date.tooltip("destroy");
 		return date;
+	}
 	try {
 		$.datepicker.parseDate(date_format, date);
+		$date.tooltip("destroy");
 		return date;
 	}
 	catch (err) {
-		alert("Invalid " + id.substr(0, id.length - 4) + " date: " + date);
+		$date.tooltip("destroy");
+		$date.tooltip({title: "Invalid " + title + ": " + date, placement: "top"}).tooltip("show");
 		$date.focus();
 		return null;
 	}
@@ -151,18 +155,25 @@ function datePicker(id) {
 }
 
 function dateRangePicker(fromId, toId, yearRange) {
+	var singleSeason = yearRange.indexOf(":") < 0;
+	if (singleSeason) {
+		var season = yearRange;
+		yearRange = season + ":" + season;
+	}
 	var $from = $("#" + fromId);
 	var $to = $("#" + toId);
 	$from.datepicker({
-		defaultDate: "-1y", maxDate: "0", changeMonth: true, changeYear: true, yearRange: yearRange, showWeek: true, firstDay: 1, dateFormat: date_format,
+		defaultDate: singleSeason ? "01-01-" + season : "-1y", maxDate: "0", changeMonth: true, changeYear: !singleSeason, yearRange: yearRange, showWeek: true, firstDay: 1, dateFormat: date_format,
 		onClose: function (selectedDate) {
 			$to.datepicker("option", "minDate", selectedDate);
+			$to.tooltip("destroy");
 		}
 	});
 	$to.datepicker({
-		defaultDate: "0", maxDate: "0", changeMonth: true, changeYear: true, yearRange: yearRange, showWeek: true, firstDay: 1, dateFormat: date_format,
+		defaultDate: singleSeason ? "31-12-" + season : "0", maxDate: "0", changeMonth: true, changeYear: !singleSeason, yearRange: yearRange, showWeek: true, firstDay: 1, dateFormat: date_format,
 		onClose: function (selectedDate) {
 			$from.datepicker("option", "maxDate", selectedDate);
+			$from.tooltip("destroy");
 		}
 	});
 	$("div.ui-datepicker").css({fontSize: "12px"});
@@ -190,7 +201,7 @@ function setBootgridTitles($gridTable, titles) {
 		}
 	});
 }
-var bootgridTemplateLoading = "Loading... <img src='/images/ui-anim_basic_16x16.gif' width='16' height='16'/>"
+var bootgridTemplateLoading = "Loading... <img src='/images/ui-anim_basic_16x16.gif' width='16' height='16'/>";
 /* Fixes Bootgrid Issue with no link cursors on pagination buttons */
 var bootgridTemplatePaginationItem = "<li class=\"{{ctx.css}}\"><a href=\"#\" data-page=\"{{ctx.page}}\" class=\"{{css.paginationButton}}\">{{ctx.text}}</a></li>";
 
@@ -502,6 +513,119 @@ function deviceGreaterOrEqual(device1, device2) {
 }
 function detectDevice() {
 	return $(".device-check:visible").data("device");
+}
+
+
+// Perf/Stats
+
+function performancePlayerMatchesUrl(playerId, outcome, prefix) {
+	var url = "/playerProfile?playerId=" + playerId + "&tab=matches";
+	var category = paramValue("category", prefix);
+	var season = paramValue("season", prefix);
+	if (season) url += "&season=" + season;
+	var fromDate = paramValue("fromDate", prefix);
+	if (fromDate) url += "&fromDate=" + fromDate;
+	var toDate = paramValue("toDate", prefix);
+	if (toDate) url += "&toDate=" + toDate;
+	var level = paramValue("level", prefix);
+	if (category == "grandSlamMatches") url += "&level=G";
+	else if (category == "tourFinalsMatches") url += "&level=F";
+	else if (category == "mastersMatches") url += "&level=M";
+	else if (category == "olympicsMatches") url += "&level=O";
+	else if (level) url += "&level=" + level;
+	var bestOf = paramValue("bestOf", prefix);
+	if (bestOf) url += "&bestOf=" + bestOf;
+	if (category == "hardMatches") url += "&surface=H";
+	else if (category == "clayMatches") url += "&surface=C";
+	else if (category == "grassMatches") url += "&surface=G";
+	else if (category == "carpetMatches") url += "&surface=P";
+	else {
+		var surface = paramValue("surface", prefix);
+		if (surface) url += "&surface=" + surface;
+	}
+	var indoor = paramValue("indoor", prefix);
+	if (indoor) url += "&indoor=" + indoor;
+	if (category == "finals") {
+		url += "&round=F";
+		if (!level) url += "&level=GFLMOAB";
+	}
+	else {
+		var round = paramValue("round", prefix);
+		if (round) {
+			url += "&round=" + encodeURIComponent(round);
+			if (!level) url += "&level=GFLMOAB";
+		}
+	}
+	var result = paramValue("result", prefix);
+	if (result) {
+		url += "&result=" + encodeURIComponent(result);
+		if (!level) url += "&level=GFLMOAB";
+	}
+	var tournament = paramValue("tournament", prefix);
+	if (tournament) url += "&tournamentId=" + tournament;
+	if (category == "vsNo1") url += "&opponent=NO_1";
+	else if (category == "vsTop5") url += "&opponent=TOP_5";
+	else if (category == "vsTop10") url += "&opponent=TOP_10";
+	else {
+		var opponent = paramValue("opponent", prefix);
+		if (opponent) url += "&opponent=" + opponent;
+	}
+	var country = paramValue("country", prefix);
+	if (country) url += "&countryId=" + country;
+	if (category == "decidingSets") url += "&score=*DS";
+	else if (category == "fifthSets") url += "&score=" + encodeURIComponent("2:2+");
+	else if (category == "afterWinningFirstSet") url += "&score=" + encodeURIComponent("1:0+");
+	else if (category == "afterLosingFirstSet") url += "&score=" + encodeURIComponent("0:1+");
+	else if (category == "tieBreaks") url += "&score=*TB" + outcome;
+	else if (category == "decidingSetTBs") url += "&score=*DSTB";
+	if (category != "tieBreaks") {
+		if (outcome == "W") url += "&outcome=wonplayed";
+		else if (outcome == "L") url += "&outcome=lostplayed";
+		else url += "&outcome=played";
+	}
+	return url;
+}
+
+function statisticsPlayerMatchesUrl(playerId, prefix) {
+	var url = "/playerProfile?playerId=" + playerId + "&tab=matches";
+	var season = paramValue("season", prefix);
+	if (season) url += "&season=" + season;
+	var fromDate = paramValue("fromDate", prefix);
+	if (fromDate) url += "&fromDate=" + fromDate;
+	var toDate = paramValue("toDate", prefix);
+	if (toDate) url += "&toDate=" + toDate;
+	var level = paramValue("level", prefix);
+	if (level) url += "&level=" + level;
+	var bestOf = paramValue("bestOf", prefix);
+	if (bestOf) url += "&bestOf=" + bestOf;
+	var surface = paramValue("surface", prefix);
+	if (surface) url += "&surface=" + surface;
+	var indoor = paramValue("indoor", prefix);
+	if (indoor) url += "&indoor=" + indoor;
+	var round = paramValue("round", prefix);
+	if (round) {
+		url += "&round=" + encodeURIComponent(round);
+		if (!level) url += "&level=GFLMOAB";
+	}
+	var result = paramValue("result", prefix);
+	if (result) {
+		url += "&result=" + encodeURIComponent(result);
+		if (!level) url += "&level=GFLMOAB";
+	}
+	var tournament = paramValue("tournament", prefix);
+	if (tournament) url += "&tournamentId=" + tournament;
+	var tournamentEvent = paramValue("tournamentEvent", prefix);
+	if (tournamentEvent) url += "&tournamentEventId=" + tournamentEvent;
+	var opponent = paramValue("opponent", prefix);
+	if (opponent) url += "&opponent=" + opponent;
+	var country = paramValue("country", prefix);
+	if (country) url += "&countryId=" + country;
+	url += "&outcome=played";
+	return url;
+}
+
+function paramValue(name, prefix) {
+	return $("#" + (prefix ? prefix + (name.charAt(0).toUpperCase() + name.substr(1)) : name)).val()
 }
 
 

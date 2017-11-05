@@ -1,18 +1,22 @@
 package org.strangeforest.tcb.stats.controller;
 
+import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.format.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
 
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
+import static org.strangeforest.tcb.util.DateUtil.*;
 
 @RestController
 public class PlayerRivalriesResource {
@@ -55,14 +59,19 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "playerId1") int playerId1,
 		@RequestParam(name = "playerId2") int playerId2,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
+		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate toDate,
 		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
-		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "outcome", required = false) String outcome
 	) {
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, level, surface, tournamentId, round, outcome, score));
+		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, round, tournamentId, outcome, score));
 		return asList(stats1.getMatchesWon(), stats1.getMatchesLost());
 	}
 }

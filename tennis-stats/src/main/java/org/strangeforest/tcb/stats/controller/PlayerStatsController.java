@@ -1,19 +1,25 @@
 package org.strangeforest.tcb.stats.controller;
 
+import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.format.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.service.*;
+import org.strangeforest.tcb.util.*;
+
+import com.google.common.collect.*;
 
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
+import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Controller
 public class PlayerStatsController extends BaseController {
@@ -28,8 +34,11 @@ public class PlayerStatsController extends BaseController {
 	public ModelAndView eventsStats(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
+		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate toDate,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
@@ -41,8 +50,9 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
+		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
-		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, result, statsFilter, searchPhrase);
+		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, surface, indoor, result, tournamentId, statsFilter, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();
@@ -56,10 +66,15 @@ public class PlayerStatsController extends BaseController {
 	public ModelAndView matchesStats(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
+		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate toDate,
 		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
+		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "outcome", required = false) String outcome,
@@ -74,11 +89,12 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
+		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
 		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
 		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
 		ScoreFilter scoreFilter = ScoreFilter.forStats(score);
-		MatchFilter filter = MatchFilter.forStats(season, level, surface, tournamentId, tournamentEventId, null, round, opponentFilter, outcomeFilter, scoreFilter, statsFilter, searchPhrase);
+		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();
@@ -113,10 +129,14 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "opponentId") int opponentId,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
+		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate toDate,
 		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
-		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "compare", defaultValue = F) boolean compare,
@@ -124,7 +144,8 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		MatchFilter filter = MatchFilter.forOpponent(opponentId, season, level, surface, tournamentId, round, outcome, score);
+		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
+		MatchFilter filter = MatchFilter.forOpponent(opponentId, season, dateRange, level, bestOf, surface, indoor, round, tournamentId, outcome, score);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();

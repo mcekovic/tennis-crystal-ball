@@ -1,19 +1,25 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId1" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="playerId2" type="java.lang.Integer"*/-->
-<!--/*@thymesVar id="seasons" type="java.util.Set<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.NavigableSet<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.EventResult[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.Set<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 <!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
+<!--/*@thymesVar id="toDate" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String>"*/-->
+<!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="h2h" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="opponent" type="java.lang.String>"*/-->
@@ -37,14 +43,22 @@
 			var surface = $label.data("surface");
 			$label.addClass("label-" + surfaceClassSuffix(surface));
 		});
+		dateRangePicker("perfFromDate", "perfToDate", "[(${!seasons.empty ? (seasons.last() + ':' + seasons.first()) : _})]");
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function reloadPerformance() {
+		if (!validatePerformanceFilter())
+			return;
 		var url = "/h2hPerformance?playerId1=[(${playerId1})]&playerId2=[(${playerId2})]";
 		url += "&season=" + $("#perfSeason").val();
+		url += "&fromDate=" + $("#perfFromDate").val();
+		url += "&toDate=" + $("#perfToDate").val();
 		url += "&level=" + $("#perfLevel").val();
+		url += "&bestOf=" + $("#perfBestOf").val();
 		url += "&surface=" + $("#perfSurface").val();
+		url += "&indoor=" + $("#perfIndoor").val();
 		url += "&round=" + encodeURIComponent($("#perfRound").val());
+		url += "&result=" + encodeURIComponent($("#perfResult").val());
 		url += "&tournamentId=" + $("#perfTournament").val();
 		url += "&h2h=" + $("#perfH2h").prop("checked");
 		url += "&opponent=" + $("#perfOpponent").val();
@@ -53,11 +67,19 @@
 		url += "&rawData=" + perfRawData;
 		$("#performance").load(url);
 	}
+	function validatePerformanceFilter() {
+		return getDate("perfFromDate", "from date") !== null && getDate("perfToDate", "to date") !== null;
+	}
 	function clearPerformanceFilter() {
 		$("#perfSeason").val("");
+		$("#perfFromDate").val("");
+		$("#perfToDate").val("");
 		$("#perfLevel").val("");
+		$("#perfBestOf").val("");
 		$("#perfSurface").val("");
+		$("#perfIndoor").val("");
 		$("#perfRound").val("");
+		$("#perfResult").val("");
 		$("#perfTournament").val("");
 		clearH2h();
 		clearOpponent();
@@ -145,26 +167,58 @@
 		</div>
 	</div>
 </div>
-<div id="perfAdvancedFilter" class="row margin-top collapse" th:attrappend="class=${advFilter ? ' in' : _}">
-	<div class="col-md-2">
-		<select id="perfOpponent" class="form-control" onchange="opponentChanged(); reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
-			<option value="">Vs all</option>
-			<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
-				<option th:each="anOpponent : ${opponentCategory.value}" th:value="${anOpponent}" value="NO_1" th:text="${anOpponent.text}" th:selected="${anOpponent.name() == opponent}">Vs No. 1</option>
-			</optgroup>
-		</select>
+<div id="perfAdvancedFilter" class="collapse" th:attrappend="class=${advFilter ? ' in' : _}">
+	<div class="row margin-top">
+		<div class="col-md-4">
+			<div id="perfDateRange" class="input-group">
+				<label for="perfFromDate" class="input-group-addon">From:</label>
+				<input id="perfFromDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(fromDate, 'dd-MM-yyyy')}" onchange="reloadPerformance()"/>
+				<label for="perfToDate" class="input-group-addon">To:</label>
+				<input id="perfToDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(toDate, 'dd-MM-yyyy')}" onchange="reloadPerformance()"/>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<select id="perfIndoor" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+				<option value="">Outdoor / Indoor</option>
+				<option value="false" th:selected="${indoor == false}">Outdoor</option>
+				<option value="true" th:selected="${indoor}">Indoor</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="perfResult" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by tournament result">
+				<option value="">All results</option>
+				<option th:each="aResult : ${results}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}" th:selected="${aResult.code == result}">Win</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="perfOpponent" class="form-control" onchange="opponentChanged(); reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+				<option value="">Vs all</option>
+				<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
+					<option th:each="anOpponent : ${opponentCategory.value}" th:value="${anOpponent}" value="NO_1" th:text="${anOpponent.text}" th:selected="${anOpponent.name() == opponent}">Vs No. 1</option>
+				</optgroup>
+			</select>
+		</div>
 	</div>
-	<div class="col-md-3">
-		<select id="perfTournament" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
-			<option value="">All tournaments</option>
-			<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
-		</select>
-	</div>
-	<div class="col-md-3">
-		<select id="perfCountry" class="form-control" onchange="countryChanged(); reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
-			<option value="">Vs all countries</option>
-			<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}" th:selected="${country.alpha3 == countryId}">Switzerland</option>
-		</select>
+	<div class="row margin-top">
+		<div class="col-md-2">
+			<select id="perfBestOf" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+				<option value="">Best of any</option>
+				<option value="3" th:selected="${bestOf == 3}">Best of 3</option>
+				<option value="5" th:selected="${bestOf == 5}">Best of 5</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="perfTournament" class="form-control" onchange="reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="perfCountry" class="form-control" onchange="countryChanged(); reloadPerformance()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+				<option value="">Vs all countries</option>
+				<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}" th:selected="${country.alpha3 == countryId}">Switzerland</option>
+			</select>
+		</div>
 	</div>
 </div>
 <br/>
@@ -174,7 +228,7 @@
 			<th class="text-right" width="40%">
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, outcome=played)}" title="Show matches">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, outcome=played)}" title="Show matches">
 							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
 						</a>
@@ -185,7 +239,7 @@
 			<th class="text-left" width="40%">
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, outcome=played)}" title="Show matches">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, outcome=played)}" title="Show matches">
 							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
 						</a>
@@ -204,7 +258,7 @@
 			<th class="text-right">
 				<div th:if="${wl1}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level}, surface=${surface.code}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${surface.text} matches|">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface.code}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${surface.text} matches|">
 							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
 						</a>
@@ -215,7 +269,7 @@
 			<th class="text-left">
 				<div th:if="${wl2}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" th:data-surface="${surface.code}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level}, surface=${surface.code}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${surface.text} matches|">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface.code}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${surface.text} matches|">
 							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
 						</a>
@@ -235,7 +289,7 @@
 			<th class="text-right">
 				<div th:if="${wl1}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level.code}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${level.text} matches|">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level.code}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${level.text} matches|">
 							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
 						</a>
@@ -246,7 +300,7 @@
 			<th class="text-left">
 				<div th:if="${wl2}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level.code}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${level.text} matches|">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level.code}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${level.text} matches|">
 							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
 						</a>
@@ -265,7 +319,7 @@
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='*DS', outcome=finished)}" title="Show deciding set matches">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='*DS', outcome=finished)}" title="Show deciding set matches">
 							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
 						</a>
@@ -276,7 +330,7 @@
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='*DS', outcome=finished)}" title="Show deciding set matches">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='*DS', outcome=finished)}" title="Show deciding set matches">
 							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
 						</a>
@@ -288,7 +342,7 @@
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='2:2+', outcome=finished)}" title="Show fifth set matches">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='2:2+', outcome=finished)}" title="Show fifth set matches">
 							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
 						</a>
@@ -299,7 +353,7 @@
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='2:2+', outcome=finished)}" title="Show fifth set matches">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='2:2+', outcome=finished)}" title="Show fifth set matches">
 							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
 						</a>
@@ -311,7 +365,7 @@
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='1:0+', outcome=played)}" title="Show after winning 1st set matches">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='1:0+', outcome=played)}" title="Show after winning 1st set matches">
 							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
 						</a>
@@ -322,7 +376,7 @@
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='1:0+', outcome=played)}" title="Show after winning 1st set matches">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='1:0+', outcome=played)}" title="Show after winning 1st set matches">
 							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
 						</a>
@@ -334,7 +388,7 @@
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='0:1+', outcome=played)}" title="Show after losing 1st set matches">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='0:1+', outcome=played)}" title="Show after losing 1st set matches">
 							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
 						</a>
@@ -345,7 +399,7 @@
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='0:1+', outcome=played)}" title="Show after losing 1st set matches">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='0:1+', outcome=played)}" title="Show after losing 1st set matches">
 							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
 						</a>
@@ -357,7 +411,7 @@
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='*TB')}" title="Show matches with tie break">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='*TB')}" title="Show matches with tie break">
 							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
 						</a>
@@ -368,7 +422,7 @@
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='*TB')}" title="Show matches with tie break">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='*TB')}" title="Show matches with tie break">
 							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
 						</a>
@@ -380,7 +434,7 @@
 			<th>
 				<div th:unless="${wl1.empty}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='*DSTB', outcome=finished)}" title="Show deciding set tie break matches">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, score='*DSTB', outcome=finished)}" title="Show deciding set tie break matches">
 							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
 						</a>
@@ -391,7 +445,7 @@
 			<th>
 				<div th:unless="${wl2.empty}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='*DSTB', outcome=finished)}" title="Show deciding set tie break matches">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, score='*DSTB', outcome=finished)}" title="Show deciding set tie break matches">
 							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
 						</a>
@@ -410,7 +464,7 @@
 			<th class="text-right">
 				<div th:if="${wl1}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opposition}, countryId=${countryId}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opposition}, countryId=${countryId}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
 							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
 						</a>
@@ -421,7 +475,7 @@
 			<th class="text-left">
 				<div th:if="${wl2}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level}, surface=${surface}, round=${round}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opposition}, countryId=${countryId}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opposition}, countryId=${countryId}, outcome=played)}" th:title="|Show ${opposition.text} matches|">
 							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
 						</a>
@@ -441,7 +495,7 @@
 			<th class="text-right">
 				<div th:if="${wl1}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-season progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, level=${level != null && level != '' ? level : 'GFLMOAB'}, surface=${surface}, round=${round.code}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${round.text} matches|">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level != null && level != '' ? level : 'GFLMOAB'}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round.code}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${round.text} matches|">
 							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
 						</a>
@@ -452,7 +506,7 @@
 			<th class="text-left">
 				<div th:if="${wl2}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, level=${level != null && level != '' ? level : 'GFLMOAB'}, surface=${surface}, round=${round.code}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${round.text} matches|">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level != null && level != '' ? level : 'GFLMOAB'}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round.code}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${round.text} matches|">
 							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
 							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
 						</a>
@@ -472,7 +526,7 @@
 			<th class="text-right">
 				<div th:if="${wl1}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-season progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=tournaments, season=${season}, level=${level}, surface=${surface}, tournamentId=${tournamentId}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=tournaments, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, tournamentId=${tournamentId}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
 							<span class="pct-data" th:text="${wl1.wonPctStr}">50%</span>
 							<span class="raw-data" th:text="${wl1.WT}">10 / 20</span>
 						</a>
@@ -483,7 +537,7 @@
 			<th class="text-left">
 				<div th:if="${wl2}" class="progress progress-perf pull-left">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
-						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=tournaments, season=${season}, level=${level}, surface=${surface}, tournamentId=${tournamentId}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=tournaments, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, tournamentId=${tournamentId}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
 							<span class="pct-data" th:text="${wl2.wonPctStr}">50%</span>
 							<span class="raw-data" th:text="${wl2.WT}">10 / 20</span>
 						</a>

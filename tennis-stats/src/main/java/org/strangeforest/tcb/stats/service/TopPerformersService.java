@@ -52,6 +52,9 @@ public class TopPerformersService {
 		"  GROUP BY m.player_id\n" +
 		") AS player_performance_summed";
 
+	private static final String EVENT_RESULT_JOIN = //language=SQL
+		"\n  INNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)";
+
 	private static final String OPPONENT_JOIN = //language=SQL
 	 	"\n  INNER JOIN player_v o ON o.player_id = m.opponent_id";
 
@@ -66,7 +69,7 @@ public class TopPerformersService {
 		PerformanceCategory perfCategory = PerformanceCategory.get(category);
 		boolean materializedSum = isMaterializedSum(filter);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
-			format(TOP_PERFORMERS_COUNT_QUERY, getPerformanceTableName(perfCategory, filter), materializedSum ? perfCategory.getColumn() : "items", materializedSum ? filter.getCriteria() : filter.getSearchCriteria()),
+			format(TOP_PERFORMERS_COUNT_QUERY, getTopPerformersTableName(perfCategory, filter), materializedSum ? perfCategory.getColumn() : "items", materializedSum ? filter.getCriteria() : filter.getSearchCriteria()),
 			filter.getParams().addValue("minEntries", getMinEntries(perfCategory, filter, minEntries)),
 			Integer.class
 		));
@@ -79,7 +82,7 @@ public class TopPerformersService {
 		BootgridTable<TopPerformerRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(TOP_PERFORMERS_QUERY, materializedSum ? perfCategory.getColumn() : "items", getPerformanceTableName(perfCategory, filter), materializedSum ? filter.getBaseCriteria() : "", where(filter.getSearchCriteria()), orderBy),
+			format(TOP_PERFORMERS_QUERY, materializedSum ? perfCategory.getColumn() : "items", getTopPerformersTableName(perfCategory, filter), materializedSum ? filter.getBaseCriteria() : "", where(filter.getSearchCriteria()), orderBy),
 			filter.getParams()
 				.addValue("minEntries", getMinEntries(perfCategory, filter, minEntries))
 				.addValue("offset", offset)
@@ -101,7 +104,7 @@ public class TopPerformersService {
 		return filter.isEmpty() || filter.isForSeason() || filter.isForTournament();
 	}
 
-	private static String getPerformanceTableName(PerformanceCategory perfCategory, PerfStatsFilter filter) {
+	private static String getTopPerformersTableName(PerformanceCategory perfCategory, PerfStatsFilter filter) {
 		if (filter.isEmpty())
 			return "player_performance";
 		else if (filter.isForSeason())
@@ -109,7 +112,16 @@ public class TopPerformersService {
 		else if (filter.isForTournament())
 			return "player_tournament_performance";
 		else
-			return format(TOP_PERFORMERS_SUMMED, perfCategory.getSumExpression("_won"), perfCategory.getSumExpression("_lost"), filter.getOpponentFilter().isOpponentRequired() ? OPPONENT_JOIN : "", where(filter.getBaseCriteria(), 2));
+			return format(TOP_PERFORMERS_SUMMED, perfCategory.getSumExpression("_won"), perfCategory.getSumExpression("_lost"), getTopPerformersJoin(filter), where(filter.getBaseCriteria(), 2));
+	}
+
+	private static String getTopPerformersJoin(PerfStatsFilter filter) {
+		StringBuilder sb = new StringBuilder();
+		if (filter.hasResult())
+			sb.append(EVENT_RESULT_JOIN);
+		if (filter.getOpponentFilter().isOpponentRequired())
+			sb.append(OPPONENT_JOIN);
+		return sb.toString();
 	}
 
 	public String getTopPerformersMinEntries(String category, PerfStatsFilter filter, Integer minEntries) {

@@ -8,6 +8,7 @@
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.EventResult[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 <!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
@@ -28,9 +29,14 @@
 				requestHandler: function(request) {
 					request.category = $("#category").val();
 					request.season = $("#season").val();
+					request.fromDate = $("#fromDate").val();
+					request.toDate = $("#toDate").val();
 					request.level = $("#level").val();
+					request.bestOf = $("#bestOf").val();
 					request.surface = $("#surface").val();
+					request.indoor = $("#indoor").val();
 					request.round = $("#round").val();
+					request.result = $("#result").val();
 					request.tournamentId = $("#tournament").val();
 					request.opponent = $("#opponent").val();
 					request.countryId = $("#country").val();
@@ -49,7 +55,7 @@
 					"country": countryFormatter,
 					"player": playerFormatter,
 					"value": function(column, row) {
-						return "<a href='" + playerMatchesUrl(row.playerId) + "' title='Show matches'>" + row.value + "</a>";
+						return "<a href='" + statisticsPlayerMatchesUrl(row.playerId) + "' title='Show matches'>" + row.value + "</a>";
 					}
 				},
 				labels: {
@@ -64,45 +70,26 @@
 			$search.before($("#activeDiv").remove());
 			$search.after($("#clearDiv").remove());
 			categoryChanged();
+			dateRangePicker("fromDate", "toDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 			$("[data-toggle='tooltip']").tooltip();
 		});
-		function playerMatchesUrl(playerId) {
-			var url = "/playerProfile?playerId=" + playerId + "&tab=matches";
-			var season = $("#season").val();
-			if (season)
-				url += "&season=" + season;
-			var level = $("#level").val();
-			if (level)
-				url += "&level=" + level;
-			var surface = $("#surface").val();
-			if (surface)
-				url += "&surface=" + surface;
-			var round = $("#round").val();
-			if (round) {
-				url += "&round=" + encodeURIComponent(round);
-				if (!level)
-					url += "&level=GFLMOAB";
-			}
-			var tournament = $("#tournament").val();
-			if (tournament)
-				url += "&tournamentId=" + tournament;
-			var opponent = $("#opponent").val();
-			if (opponent)
-				url += "&opponent=" + opponent;
-			var country = $("#country").val();
-			if (country)
-				url += "&countryId=" + country;
-			url += "&outcome=played";
-			return url;
-		}
 		function categoryChanged() {
 			var $category = $("#category");
 			$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
 			var url = "/statsLeadersMinEntries?category=" + $category.val();
 			url += "&season=" + $("#season").val();
+			var fromDate = getDate("fromDate", "from date");
+			if (fromDate) url += "&fromDate=" + fromDate;
+			else if (fromDate === null) return false;
+			var toDate = getDate("toDate", "to date");
+			if (toDate) url += "&toDate=" + toDate;
+			else if (toDate === null) return false;
 			url += "&level=" + $("#level").val();
+			url += "&bestOf=" + $("#bestOf").val();
 			url += "&surface=" + $("#surface").val();
+			url += "&indoor=" + $("#indoor").val();
 			url += "&round=" + encodeURIComponent($("#round").val());
+			url += "&result=" + encodeURIComponent($("#result").val());
 			url += "&tournamentId=" + $("#tournament").val();
 			url += "&opponent=" + $("#opponent").val();
 			url += "&countryId=" + $("#country").val();
@@ -125,18 +112,23 @@
 			if (categoryChanged())
 				$("#statsLeadersTable").bootgrid("reload");
 		}
-		function seasonChanged() {
+		function dateFilterChanged() {
 			var $active = $("#active");
-			var forSeason = $("#season").val() != "";
-			if (forSeason)
+			var hasDateFilter = $("#season").val() || $("#fromDate").val() || $("#toDate").val();
+			if (hasDateFilter)
 				$active.prop("checked", false);
-			$active.prop("disabled", forSeason);
+			$active.prop("disabled", hasDateFilter);
 		}
 		function clearStatsLeadersFilter() {
-			$("#season").val(""); seasonChanged();
+			$("#season").val("");
+			$("#fromDate").val("");
+			$("#toDate").val(""); dateFilterChanged();
 			$("#level").val("");
+			$("#bestOf").val("");
 			$("#surface").val("");
+			$("#indoor").val("");
 			$("#round").val("");
+			$("#result").val("");
 			$("#opponent").val("");
 			$("#tournament").val("");
 			$("#country").val("");
@@ -166,7 +158,7 @@
 	</div>
 	<div class="row margin-top">
 		<div class="col-md-2">
-			<select id="season" class="form-control" onchange="seasonChanged(); reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
+			<select id="season" class="form-control" onchange="dateFilterChanged(); reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
 				<option value="">Career</option>
 				<option value="-1">Last 52 weeks</option>
 				<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
@@ -208,23 +200,55 @@
 			</div>
 		</div>
 	</div>
-	<div id="advancedFilter" class="collapse row margin-top">
-		<div class="col-md-3">
-			<select id="tournament" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
-				<option value="">All tournaments</option>
-				<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
-			</select>
+	<div id="advancedFilter" class="collapse">
+		<div class="row margin-top">
+			<div class="col-md-4">
+				<div id="dateRange" class="input-group">
+					<label for="fromDate" class="input-group-addon">From:</label>
+					<input id="fromDate" type="text" maxlength="10" class="form-control" onchange="dateFilterChanged(); reloadStatsLeaders()"/>
+					<label for="toDate" class="input-group-addon">To:</label>
+					<input id="toDate" type="text" maxlength="10" class="form-control" onchange="dateFilterChanged(); reloadStatsLeaders()"/>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<select id="indoor" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+					<option value="">Outdoor / Indoor</option>
+					<option value="false">Outdoor</option>
+					<option value="true">Indoor</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="result" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by tournament result">
+					<option value="">All results</option>
+					<option th:each="aResult : ${results}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}">Win</option>
+				</select>
+			</div>
+			<div class="col-md-3">
+				<select id="country" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+					<option value="">Vs all countries</option>
+					<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
+				</select>
+			</div>
 		</div>
-		<div class="col-md-3">
-			<select id="country" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
-				<option value="">Vs all countries</option>
-				<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
-			</select>
-		</div>
-		<div class="col-md-3">
-			<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum entries">
-				<label for="minEntriesOverride" class="input-group-addon">Min. entries:</label>
-				<input id="minEntriesOverride" type="text" size="8" class="form-control" oninput="reloadStatsLeaders()" onchange="reloadStatsLeaders()"/>
+		<div class="row margin-top">
+			<div class="col-md-2">
+				<select id="bestOf" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+					<option value="">Best of any</option>
+					<option value="3">Best of 3</option>
+					<option value="5">Best of 5</option>
+				</select>
+			</div>
+			<div class="col-md-3">
+				<select id="tournament" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+					<option value="">All tournaments</option>
+					<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+				</select>
+			</div>
+			<div class="col-md-3">
+				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum entries">
+					<label for="minEntriesOverride" class="input-group-addon">Min. entries:</label>
+					<input id="minEntriesOverride" type="text" size="8" class="form-control" oninput="reloadStatsLeaders()" onchange="reloadStatsLeaders()"/>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -237,7 +261,7 @@
 	</div>
 	<div id="clearDiv" class="btn-group margin-right">
 		<button type="button" class="btn btn-default" onclick="clearStatsLeadersFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<span class="glyphicon glyphicon-erase"></span>
+			<span class="glyphicon glyphicon-erase"></span>&nbsp;&nbsp;Clear
 		</button>
 	</div>
 	<table id="statsLeadersTable" class="table table-condensed table-hover table-striped">

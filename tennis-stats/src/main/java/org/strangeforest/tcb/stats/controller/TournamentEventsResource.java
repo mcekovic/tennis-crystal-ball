@@ -43,7 +43,7 @@ public class TournamentEventsResource {
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		TournamentEventFilter filter = new TournamentEventFilter(season, level, surface, tournamentId, null, searchPhrase);
+		TournamentEventFilter filter = new TournamentEventFilter(season, null, level, surface, null, tournamentId, null, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENT_EVENTS;
 		return tournamentService.getTournamentEventsTable(filter, orderBy, pageSize, current);

@@ -15,14 +15,15 @@ import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.util.*;
 
+import com.google.common.collect.*;
 import com.neovisionaries.i18n.*;
 
 import static com.google.common.base.Strings.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
-import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
 @Controller
 public class RivalriesController extends PageController {
@@ -61,6 +62,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("round", round);
+		modelMap.addAttribute("params", ParamsUtil.INSTANCE);
 		return new ModelAndView("headToHead", modelMap);
 	}
 
@@ -129,8 +131,8 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("seasonPerf2", seasonPerf2);
 		modelMap.addAttribute("surfaces", surfaces);
 		modelMap.addAttribute("levels", levels);
-		modelMap.addAttribute("oppositions", oppositions);
 		modelMap.addAttribute("rounds", rounds);
+		modelMap.addAttribute("oppositions", oppositions);
 		modelMap.addAttribute("seasonGOATPoints1", seasonGOATPoints1);
 		modelMap.addAttribute("seasonGOATPoints2", seasonGOATPoints2);
 		return new ModelAndView("h2hSeason", modelMap);
@@ -188,9 +190,14 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "playerId1") int playerId1,
 		@RequestParam(name = "playerId2") int playerId2,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
+		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate toDate,
 		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "h2h", defaultValue = F) boolean h2h,
 		@RequestParam(name = "opponent", required = false) String opponent,
@@ -198,14 +205,15 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "advFilter", defaultValue = F) boolean advFilter,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
-		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
+		NavigableSet<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
 		Set<TournamentItem> tournaments = getTournamentsUnion(playerId1, playerId2);
 		Set<CountryCode> countries = getOpponentCountriesUnion(playerId1, playerId2);
 		List<String> countryIds = matchesService.getSameCountryIds(countryId);
+		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		OpponentFilter opponentFilter1 = h2h ? OpponentFilter.forStats(playerId2) : OpponentFilter.forStats(opponent, countryIds);
 		OpponentFilter opponentFilter2 = h2h ? OpponentFilter.forStats(playerId1) : OpponentFilter.forStats(opponent, countryIds);
-		PlayerPerformanceEx perf1 = performanceService.getPlayerPerformanceEx(playerId1, new PerfStatsFilter(season, level, surface, round, tournamentId, opponentFilter1));
-		PlayerPerformanceEx perf2 = performanceService.getPlayerPerformanceEx(playerId2, new PerfStatsFilter(season, level, surface, round, tournamentId, opponentFilter2));
+		PlayerPerformanceEx perf1 = performanceService.getPlayerPerformanceEx(playerId1, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, opponentFilter1));
+		PlayerPerformanceEx perf2 = performanceService.getPlayerPerformanceEx(playerId2, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, opponentFilter2));
 		Set<Surface> perfSurfaces = union(perf1.getSurfaceMatches().keySet(), perf2.getSurfaceMatches().keySet());
 		Set<TournamentLevel> perfLevels = union(perf1.getLevelMatches().keySet(), perf2.getLevelMatches().keySet());
 		Set<Opponent> perfOppositions = union(perf1.getOppositionMatches().keySet(), perf2.getOppositionMatches().keySet());
@@ -221,13 +229,19 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
 		modelMap.addAttribute("countries", countries);
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("fromDate", fromDate);
+		modelMap.addAttribute("toDate", toDate);
 		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("bestOf", bestOf);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("round", round);
+		modelMap.addAttribute("result", result);
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("h2h", h2h);
 		modelMap.addAttribute("opponent", opponent);
@@ -262,9 +276,14 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "playerId1") int playerId1,
 		@RequestParam(name = "playerId2") int playerId2,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
+		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate toDate,
 		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "h2h", defaultValue = F) boolean h2h,
 		@RequestParam(name = "opponent", required = false) String opponent,
@@ -276,14 +295,15 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		Set<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
+		NavigableSet<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
 		Set<TournamentItem> tournaments = getTournamentsUnion(playerId1, playerId2);
 		Set<CountryCode> countries = getOpponentCountriesUnion(playerId1, playerId2);
 		List<String> countryIds = matchesService.getSameCountryIds(countryId);
+		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		OpponentFilter opponentFilter1 = h2h ? OpponentFilter.forStats(playerId2) : OpponentFilter.forStats(opponent, countryIds);
 		OpponentFilter opponentFilter2 = h2h ? OpponentFilter.forStats(playerId1) : OpponentFilter.forStats(opponent, countryIds);
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forStats(season, level, surface, tournamentId, round, opponentFilter1));
-		PlayerStats stats2 = statisticsService.getPlayerStats(playerId2, MatchFilter.forStats(season, level, surface, tournamentId, round, opponentFilter2));
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, opponentFilter1));
+		PlayerStats stats2 = statisticsService.getPlayerStats(playerId2, MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, opponentFilter2));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
@@ -294,13 +314,19 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("tournaments", tournaments);
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
 		modelMap.addAttribute("countries", countries);
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("fromDate", fromDate);
+		modelMap.addAttribute("toDate", toDate);
 		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("bestOf", bestOf);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("round", round);
+		modelMap.addAttribute("result", result);
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("h2h", h2h);
 		modelMap.addAttribute("opponent", opponent);

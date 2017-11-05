@@ -6,6 +6,7 @@
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.EventResult[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 <!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
@@ -24,9 +25,14 @@
 			url: "/topPerformersTable?season=[(${season})]",
 			requestHandler: function(request) {
 				request.category = $("#perfCategory").val();
+				request.fromDate = $("#perfFromDate").val();
+				request.toDate = $("#perfToDate").val();
 				request.level = $("#perfLevel").val();
+				request.bestOf = $("#perfBestOf").val();
 				request.surface = $("#perfSurface").val();
+				request.indoor = $("#perfIndoor").val();
 				request.round = $("#perfRound").val();
+				request.result = $("#perfResult").val();
 				request.tournamentId = $("#perfTournament").val();
 				request.opponent = $("#perfOpponent").val();
 				request.countryId = $("#perfCountry").val();
@@ -40,7 +46,16 @@
 			},
 			formatters: {
 				"country": countryFormatter,
-				"player": playerFormatter
+				"player": playerFormatter,
+				"won": function(column, row) {
+					return "<a href='" + performancePlayerMatchesUrl(row.playerId, "W", "perf") + "' title='Show matches'>" + row.won + "</a>";
+				},
+				"lost": function(column, row) {
+					return "<a href='" + performancePlayerMatchesUrl(row.playerId, "L", "perf") + "' title='Show matches'>" + row.lost + "</a>";
+				},
+				"played": function(column, row) {
+					return "<a href='" + performancePlayerMatchesUrl(row.playerId, "", "perf") + "' title='Show matches'>" + row.played + "</a>";
+				}
 			},
 			labels: {
 				loading: bootgridTemplateLoading,
@@ -58,15 +73,25 @@
 		$search.after($("#perfClearDiv").remove());
 		$topPerformersTableHeader.find("div.actions").after($("#perfAdvancedFilterDiv").remove());
 		perfCategoryChanged();
+		dateRangePicker("perfFromDate", "perfToDate", "[(${season})]");
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function perfCategoryChanged() {
 		var $category = $("#perfCategory");
 		$("#topPerformersTable").find("th[data-column-id='wonLostPct'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
 		var url = "/topPerformersMinEntries?category=" + $category.val() + "&season=[(${season})]";
+		var fromDate = getDate("perfFromDate", "from date");
+		if (fromDate) url += "&fromDate=" + fromDate;
+		else if (fromDate === null) return false;
+		var toDate = getDate("perfToDate", "to date");
+		if (toDate) url += "&toDate=" + toDate;
+		else if (toDate === null) return false;
 		url += "&level=" + $("#perfLevel").val();
+		url += "&bestOf=" + $("#perfBestOf").val();
 		url += "&surface=" + $("#perfSurface").val();
+		url += "&indoor=" + $("#perfIndoor").val();
 		url += "&round=" + encodeURIComponent($("#perfRound").val());
+		url += "&result=" + encodeURIComponent($("#perfResult").val());
 		url += "&tournamentId=" + $("#perfTournament").val();
 		url += "&opponent=" + $("#perfOpponent").val();
 		url += "&countryId=" + $("#perfCountry").val();
@@ -89,41 +114,46 @@
 		if (perfCategoryChanged())
 			$("#topPerformersTable").bootgrid("reload");
 	}
-		function perfLevelChanged() {
-			setPerfCategoriesVisible("level-category", !$("#perfLevel").val());
-		}
-		function perfSurfaceChanged() {
-			var visible = !$("#perfSurface").val();
-			setPerfCategoriesVisible("surface-category", visible);
-			$("#perfCategory").find("optgroup[label='Surface Performance']").css("display", visible ? "block" : "none");
-		}
-		function perfRoundChanged() {
-			setPerfCategoriesVisible("round-category", !$("#perfRound").val());
-		}
-		function perfOpponentChanged() {
-			var opponent = $("#perfOpponent").val();
-			setPerfCategoriesVisible("topn-category", opponent != "NO_1" && !opponent.startsWith("TOP_"));
-		}
-		function setPerfCategoriesVisible(cssClass, visible) {
-			var $category = $("#perfCategory");
-			$category.find("option." + cssClass).each(function () {
-				var $this = $(this);
-				if ($this.is(':selected'))
-					$category.val("matches");
-				$this.css("display", visible ? "block" : "none");
-			});
-		}
-		function clearTopPerformersFilter() {
-			$("#perfLevel").val(""); perfLevelChanged();
-			$("#perfSurface").val(""); perfSurfaceChanged();
-			$("#perfRound").val(""); perfRoundChanged();
-			$("#perfOpponent").val(""); perfOpponentChanged();
-			$("#perfTournament").val("");
-			$("#perfCountry").val("");
-			$("#perfMinEntriesOverride").val("");
-			$("#topPerformersTable").bootgrid("search", "");
-			reloadTopPerformers();
-		}
+	function perfLevelChanged() {
+		setPerfCategoriesVisible("level-category", !$("#perfLevel").val());
+	}
+	function perfSurfaceChanged() {
+		var visible = !$("#perfSurface").val();
+		setPerfCategoriesVisible("surface-category", visible);
+		$("#perfCategory").find("optgroup[label='Surface Performance']").css("display", visible ? "block" : "none");
+	}
+	function perfRoundChanged() {
+		setPerfCategoriesVisible("round-category", !$("#perfRound").val());
+	}
+	function perfOpponentChanged() {
+		var opponent = $("#perfOpponent").val();
+		setPerfCategoriesVisible("topn-category", opponent != "NO_1" && !opponent.startsWith("TOP_"));
+	}
+	function setPerfCategoriesVisible(cssClass, visible) {
+		var $category = $("#perfCategory");
+		$category.find("option." + cssClass).each(function () {
+			var $this = $(this);
+			if ($this.is(':selected'))
+				$category.val("matches");
+			$this.css("display", visible ? "block" : "none");
+		});
+	}
+	function clearTopPerformersFilter() {
+		$("#perfFromDate").val("");
+		$("#perfToDate").val("");
+		$("#perfLevel").val(""); perfLevelChanged();
+		$("#perfBestOf").val("");
+		$("#perfSurface").val(""); perfSurfaceChanged();
+		$("#perfIndoor").val("");
+		$("#perfRound").val(""); perfRoundChanged();
+		$("#perfResult").val("");
+		$("#perfOpponent").val(""); perfOpponentChanged();
+		$("#perfTournament").val("");
+		$("#perfCountry").val("");
+		$("#perfMinEntriesOverride").val("");
+		$("#topPerformersTable").bootgrid("search", "");
+		reloadTopPerformers();
+	}
 </script>
 <div class="row margin-top">
 	<div class="col-md-8">
@@ -140,31 +170,63 @@
 		</div>
 	</div>
 </div>
-<div id="perfAdvancedFilter" class="collapse row margin-top">
-	<div class="col-md-2">
-		<select id="perfOpponent" class="form-control" onchange="perfOpponentChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
-			<option value="">Vs all</option>
-			<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
-				<option th:each="opponent : ${opponentCategory.value}" th:value="${opponent}" value="NO_1" th:text="${opponent.text}">Vs No. 1</option>
-			</optgroup>
-		</select>
+<div id="perfAdvancedFilter" class="collapse">
+	<div class="row margin-top">
+		<div class="col-md-2">
+			<select id="perfOpponent" class="form-control" onchange="perfOpponentChanged(); reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+				<option value="">Vs all</option>
+				<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
+					<option th:each="opponent : ${opponentCategory.value}" th:value="${opponent}" value="NO_1" th:text="${opponent.text}">Vs No. 1</option>
+				</optgroup>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="perfCountry" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+				<option value="">Vs all countries</option>
+				<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="perfTournament" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum entries">
+				<label for="perfMinEntriesOverride" class="input-group-addon">Min. entries:</label>
+				<input id="perfMinEntriesOverride" type="text" size="6" class="form-control" oninput="reloadTopPerformers()" onchange="reloadTopPerformers()"/>
+			</div>
+		</div>
 	</div>
-	<div class="col-md-3">
-		<select id="perfTournament" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
-			<option value="">All tournaments</option>
-			<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
-		</select>
-	</div>
-	<div class="col-md-3">
-		<select id="perfCountry" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
-			<option value="">Vs all countries</option>
-			<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}">Switzerland</option>
-		</select>
-	</div>
-	<div class="col-md-2">
-		<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum entries">
-			<label for="perfMinEntriesOverride" class="input-group-addon">Min. entries:</label>
-			<input id="perfMinEntriesOverride" type="text" size="6" class="form-control" oninput="reloadTopPerformers()" onchange="reloadTopPerformers()"/>
+	<div class="row margin-top">
+		<div class="col-md-2">
+			<select id="perfBestOf" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+				<option value="">Best of any</option>
+				<option value="3">Best of 3</option>
+				<option value="5">Best of 5</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="perfIndoor" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+				<option value="">Outdoor / Indoor</option>
+				<option value="false">Outdoor</option>
+				<option value="true">Indoor</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="perfResult" class="form-control" onchange="reloadTopPerformers()" data-toggle="tooltip" data-placement="top" title="Filter by tournament result">
+				<option value="">All results</option>
+				<option th:each="aResult : ${results}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}">Win</option>
+			</select>
+		</div>
+		<div class="col-md-4">
+			<div id="perfDateRange" class="input-group">
+				<label for="perfFromDate" class="input-group-addon">From:</label>
+				<input id="perfFromDate" type="text" maxlength="10" class="form-control" onchange="reloadTopPerformers()"/>
+				<label for="perfToDate" class="input-group-addon">To:</label>
+				<input id="perfToDate" type="text" maxlength="10" class="form-control" onchange="reloadTopPerformers()"/>
+			</div>
 		</div>
 	</div>
 </div>
@@ -200,16 +262,17 @@
 		</button>
 	</div>
 </div>
+<input id="perfSeason" type="hidden" th:value="${season}"/>
 <table id="topPerformersTable" class="table table-condensed table-hover table-striped">
 	<thead>
 	<tr>
 		<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
 		<th data-column-id="country" data-formatter="country" data-sortable="false" data-width="85">Country</th>
 		<th data-column-id="name" data-formatter="player" data-sortable="false" data-width="250">Name</th>
-		<th data-column-id="wonLostPct" data-order="desc" data-width="175" data-align="right" data-header-align="right">Pct.</th>
-		<th data-column-id="won" data-type="numeric" data-width="70" data-align="right" data-header-align="right">Won</th>
-		<th data-column-id="lost" data-type="numeric" data-width="70" data-align="right" data-header-align="right">Lost</th>
-		<th data-column-id="played" data-type="numeric" data-width="75" data-align="right" data-header-align="right">Played</th>
+		<th data-column-id="wonLostPct" data-order="desc" data-width="190" data-align="right" data-header-align="right">Pct.</th>
+		<th data-column-id="won" data-formatter="won" data-width="70" data-align="right" data-header-align="right">Won</th>
+		<th data-column-id="lost" data-formatter="lost" data-width="70" data-align="right" data-header-align="right">Lost</th>
+		<th data-column-id="played" data-formatter="played" data-width="75" data-align="right" data-header-align="right">Played</th>
 	</tr>
 	</thead>
 </table>

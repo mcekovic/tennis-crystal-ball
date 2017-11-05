@@ -61,10 +61,10 @@
 					if (toSeason) params += "&toSeason=" + toSeason;
 				}
 				else {
-					var fromDate = getDate("fromDate");
+					var fromDate = getDate("fromDate", "from date");
 					if (fromDate == null) return;
 					else if (fromDate) params += "&fromDate=" + fromDate;
-					var toDate = getDate("toDate");
+					var toDate = getDate("toDate", "to date");
 					if (toDate == null) return;
 					else if (toDate) params += "&toDate=" + toDate;
 				}

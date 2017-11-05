@@ -1,10 +1,12 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.time.*;
 import java.util.*;
 
 import org.springframework.jdbc.core.namedparam.*;
 
 import com.google.common.base.MoreObjects.*;
+import com.google.common.collect.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
@@ -18,15 +20,15 @@ public class TournamentEventResultFilter extends TournamentEventFilter {
 	private static final String RESULT_CRITERION = " AND r.result %1$s :result::tournament_event_result";
 
 	public TournamentEventResultFilter(Integer season) {
-		this(season, null, null, null, null, null, null, null);
+		this(season, null, null, null, null, null, null, null, null, null);
 	}
 
-	public TournamentEventResultFilter(Integer season, String level, String surface, Integer tournamentId, String result, StatsFilter statsFilter, String searchPhrase) {
-		this(season, level, surface, tournamentId, null, result, statsFilter, searchPhrase);
+	public TournamentEventResultFilter(Integer season, Range<LocalDate> dateRange, String level, String surface, Boolean indoor, String result, Integer tournamentId, StatsFilter statsFilter, String searchPhrase) {
+		this(season, dateRange, level, surface, indoor, result, tournamentId, null, statsFilter, searchPhrase);
 	}
 
-	protected TournamentEventResultFilter(Integer season, String level, String surface, Integer tournamentId, Integer tournamentEventId, String result, StatsFilter statsFilter, String searchPhrase) {
-		super(season, level, surface, tournamentId, tournamentEventId, searchPhrase);
+	protected TournamentEventResultFilter(Integer season, Range<LocalDate> dateRange, String level, String surface, Boolean indoor, String result, Integer tournamentId, Integer tournamentEventId, StatsFilter statsFilter, String searchPhrase) {
+		super(season, dateRange, level, surface, indoor, tournamentId, tournamentEventId, searchPhrase);
 		this.result = result;
 		this.statsFilter = statsFilter != null ? statsFilter : StatsFilter.ALL;
 	}

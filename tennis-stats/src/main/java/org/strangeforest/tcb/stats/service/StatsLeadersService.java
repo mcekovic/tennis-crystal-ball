@@ -69,6 +69,9 @@ public class StatsLeadersService {
 		"INNER JOIN player_v p USING (player_id)%6$s\n" +
 		"ORDER BY %7$s NULLS LAST OFFSET :offset LIMIT :limit";
 
+	private static final String EVENT_RESULT_JOIN = //language=SQL
+		"\n  INNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)";
+
 	private static final String OPPONENT_JOIN = //language=SQL
 		"\n  INNER JOIN player_v o ON o.player_id = m.opponent_id";
 
@@ -90,7 +93,7 @@ public class StatsLeadersService {
 		}
 		else {
 			return jdbcTemplate.queryForObject(
-				format(SUMMED_STATS_LEADERS_COUNT_QUERY, minEntriesColumn(statsCategory), statsTableName(filter), filter.getOpponentFilter().isOpponentRequired() ? OPPONENT_JOIN : "", where(filter.getCriteria(), 2)),
+				format(SUMMED_STATS_LEADERS_COUNT_QUERY, minEntriesColumn(statsCategory), statsTableName(filter), getStatsLeadersJoin(filter), where(filter.getCriteria(), 2)),
 				filter.getParams().addValue("minEntries", minEntries),
 				Integer.class
 			);
@@ -127,7 +130,16 @@ public class StatsLeadersService {
 	private String getTableSQL(StatsCategory statsCategory, PerfStatsFilter filter, String orderBy) {
 		return filter.isEmptyOrForSeasonOrSurface() && !filter.hasSurfaceGroup()
 	       ? format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy)
-	       : format(SUMMED_STATS_LEADERS_QUERY, statsCategory.getSummedExpression(), minEntriesColumn(statsCategory), statsTableName(filter), filter.getOpponentFilter().isOpponentRequired() ? OPPONENT_JOIN : "", where(filter.getBaseCriteria(), 2), where(filter.getSearchCriteria()), orderBy);
+	       : format(SUMMED_STATS_LEADERS_QUERY, statsCategory.getSummedExpression(), minEntriesColumn(statsCategory), statsTableName(filter), getStatsLeadersJoin(filter), where(filter.getBaseCriteria(), 2), where(filter.getSearchCriteria()), orderBy);
+	}
+
+	private static String getStatsLeadersJoin(PerfStatsFilter filter) {
+		StringBuilder sb = new StringBuilder();
+		if (filter.hasResult())
+			sb.append(EVENT_RESULT_JOIN);
+		if (filter.getOpponentFilter().isOpponentRequired())
+			sb.append(OPPONENT_JOIN);
+		return sb.toString();
 	}
 
 	private static String statsTableName(PerfStatsFilter filter) {

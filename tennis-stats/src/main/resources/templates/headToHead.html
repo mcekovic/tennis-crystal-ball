@@ -9,6 +9,7 @@
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
+<!--/*@thymesVar id="params" type="org.strangeforest.tcb.stats.controller.ParamsUtil"*/-->
 <head th:replace="fragments/head :: commonHead(${player1 != null || player2 != null} ? ${player1 != null ? player1.name : '?'} + ' vs ' +  ${player2 != null ? player2.name : '?'} : ~{::title/text()}, true, ~{::script}, _)">
 	<title>Head-to-Head</title>
 	<script type="text/javascript" th:inline="javascript">
@@ -37,9 +38,19 @@
 				currentTab = $(event.target).attr("href").substring(1);
 			});
 			[# th:if="${tab}" th:switch="${tab}"]
-				[# th:case="'matches'"] h2hMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]]); [/]
-				[# th:case="'hypotheticalMatchup'"] h2hHypotheticalMatchup([[${level}]], [[${surface}]], [[${round}]]); [/]
-				[# th:case="*"] $("#[(${tab})]Pill").click(); [/]
+				[# th:case="'matches'"]
+				var $pill = $("#matchesPill");
+				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('round', round)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="'hypotheticalMatchup'"]
+				var $pill = $("#hypotheticalMatchupPill");
+				var url = $pill.data("url") + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('round', round)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="*"]
+				$("#[(${tab})]Pill").click();
+				[/]
 			[/]
 			[# th:unless="${tab}"] $("#profilesPill").click(); [/]
 			var $player1 = $("#player1");
@@ -51,23 +62,6 @@
 					$player2.focus();
 			}
 		});
-		function h2hMatches(season, level, surface, round) {
-			var $pill = $("#matchesPill");
-			var url = $pill.data("url");
-			if (season) url += "&season=" + season;
-			if (level) url += "&level=" + level;
-			if (surface) url += "&surface=" + surface;
-			if (round) url += "&round=" + round;
-			loadTab($pill, url);
-		}
-		function h2hHypotheticalMatchup(level, surface, round) {
-			var $pill = $("#hypotheticalMatchupPill");
-			var url = $pill.data("url");
-			if (level) url += "&level=" + level;
-			if (surface) url += "&surface=" + surface;
-			if (round) url += "&round=" + round;
-			loadTab($pill, url);
-		}
 		[# th:if="${bothPlayersSelected}"] function swapPlayers() {
 			var tab = $("#h2hPills li.active a").attr("href");
 			if (tab == "#")

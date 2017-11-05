@@ -30,8 +30,12 @@
 			url: "/matchesTable?playerId=[(${player1.id})]&opponent=OPP_[(${player2.id})]",
 			requestHandler: function(request) {
 				request.season = $("#matchesSeason").val();
+				request.fromDate = $("#matchesFromDate").val();
+				request.toDate = $("#matchesToDate").val();
 				request.level = $("#matchesLevel").val();
+				request.bestOf = $("#matchesBestOf").val();
 				request.surface = $("#matchesSurface").val();
+				request.indoor = $("#matchesIndoor").val();
 				request.round = $("#matchesRound").val();
 				request.tournamentId = $("#matchesTournament").val();
 				request.score = $("#matchesScore").val();
@@ -66,44 +70,53 @@
 		$search.before($("#matchesOutcomeDiv").remove());
 		$search.after($("#rivalryStats-[(${player1.id})]").remove());
 		$search.after($("#clearDiv").remove());
+		dateRangePicker("matchesFromDate", "matchesToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function reloadMatches() {
-		reloadH2H();
-		$("#matchesTable").bootgrid("reload");
+		if (reloadH2H())
+			$("#matchesTable").bootgrid("reload");
 	}
 	function reloadH2H() {
 		var url = "/h2h?playerId1=[(${player1.id})]&playerId2=[(${player2.id})]" ;
 		var season = $("#matchesSeason").val();
-		if (season)
-			url += "&season=" + season;
+		if (season) url += "&season=" + season;
+		var fromDate = getDate("matchesFromDate", "from date");
+		if (fromDate) url += "&fromDate=" + fromDate;
+		else if (fromDate === null) return false;
+		var toDate = getDate("matchesToDate", "to date");
+		if (toDate) url += "&toDate=" + toDate;
+		else if (toDate === null) return false;
 		var level = $("#matchesLevel").val();
-		if (level)
-			url += "&level=" + level;
+		if (level) url += "&level=" + level;
+		var bestOf = $("#matchesBestOf").val();
+		if (bestOf) url += "&bestOf=" + bestOf;
 		var surface = $("#matchesSurface").val();
-		if (surface)
-			url += "&surface=" + surface;
+		if (surface) url += "&surface=" + surface;
+		var indoor = $("#matchesIndoor").val();
+		if (indoor) url += "&indoor=" + indoor;
 		var round = $("#matchesRound").val();
-		if (round)
-			url += "&round=" + encodeURIComponent(round);
+		if (round) url += "&round=" + encodeURIComponent(round);
 		var tournamentId = $("#matchesTournament").val();
-		if (tournamentId)
-			url += "&tournamentId=" + tournamentId;
+		if (tournamentId) url += "&tournamentId=" + tournamentId;
 		var score = $("#matchesScore").val();
-		if (score)
-			url += "&score=" + encodeURIComponent(score);
+		if (score) url += "&score=" + encodeURIComponent(score);
 		var outcome = $("#matchesOutcome").val();
-		if (outcome)
-			url += "&outcome=" + outcome;
+		if (outcome) url += "&outcome=" + outcome;
 		$.get(url, function (data) {
 			$("#playerWon1").html(data[0]);
 			$("#playerWon2").html(data[1]);
 		});
+		return true;
 	}
 	function clearMatchesFilter() {
 		$("#matchesSeason").val("");
+		$("#matchesFromDate").val("");
+		$("#matchesToDate").val("");
 		$("#matchesLevel").val("");
+		$("#matchesBestOf").val("");
 		$("#matchesSurface").val("");
+		$("#matchesIndoor").val("");
 		$("#matchesRound").val("");
 		$("#matchesTournament").val("");
 		$("#matchesScore").val("");
@@ -117,8 +130,12 @@
 			event.preventDefault();
 			var url = "/rivalryStats?playerId=" + playerId1 + "&opponentId=" + playerId2;
 			url += "&season=" + $("#matchesSeason").val();
+			url += "&fromDate=" + $("#matchesFromDate").val();
+			url += "&toDate=" + $("#matchesToDate").val();
 			url += "&level=" + $("#matchesLevel").val();
+			url += "&bestOf=" + $("#matchesBestOf").val();
 			url += "&surface=" + $("#matchesSurface").val();
+			url += "&indoor=" + $("#matchesIndoor").val();
 			url += "&round=" + encodeURIComponent($("#matchesRound").val());
 			url += "&tournamentId=" + $("#matchesTournament").val();
 			var score = $("#matchesScore").val();
@@ -135,7 +152,7 @@
 		}
 	}
 </script>
-<div class="row text-nowrap" style="margin-top: 5px">
+<div class="row text-nowrap" style="margin: 5px 0">
 	<div class="col-xs-5 text-right">
 		<h4>
 			<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -3px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
@@ -152,7 +169,6 @@
 		</h4>
 	</div>
 </div>
-<br/>
 <div class="row">
 	<div class="col-md-2">
 		<select id="matchesSeason" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
@@ -188,17 +204,46 @@
 		</select>
 	</div>
 	<div class="col-md-2">
+		<div class="pull-right" data-toggle="tooltip" data-placement="auto" title="Advanced filters">
+			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#matchesAdvancedFilter">
+				<span class="glyphicon glyphicon-filter"></span>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+			</button>
+		</div>
+	</div>
+</div>
+<div id="matchesAdvancedFilter" class="collapse row margin-top">
+	<div class="col-md-4">
+		<div id="matchesDateRange" class="input-group">
+			<label for="matchesFromDate" class="input-group-addon">From:</label>
+			<input id="matchesFromDate" type="text" maxlength="10" class="form-control" onchange="reloadMatches()"/>
+			<label for="matchesToDate" class="input-group-addon">To:</label>
+			<input id="matchesToDate" type="text" maxlength="10" class="form-control" onchange="reloadMatches()"/>
+		</div>
+	</div>
+	<div class="col-md-2">
+		<select id="matchesIndoor" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+			<option value="">Outdoor / Indoor</option>
+			<option value="false">Outdoor</option>
+			<option value="true">Indoor</option>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<select id="matchesBestOf" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+			<option value="">Best of any</option>
+			<option value="3">Best of 3</option>
+			<option value="5">Best of 5</option>
+		</select>
+	</div>
+	<div class="col-md-2">
 		<select id="matchesScore" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by match score">
 			<option value="">All scores</option>
 			<optgroup label="Best of 3">
-				<option value="*Bo3">Best of 3</option>
 				<option value="2:0">2:0</option>
 				<option value="2:1">2:1</option>
 				<option value="1:2">1:2</option>
 				<option value="0:2">0:2</option>
 			</optgroup>
 			<optgroup label="Best of 5">
-				<option value="*Bo5">Best of 5</option>
 				<option value="3:0">3:0</option>
 				<option value="3:1">3:1</option>
 				<option value="3:2">3:2</option>
@@ -225,14 +270,14 @@
 <div id="matchesOutcomeDiv" class="btn-group pull-left">
 	<select id="matchesOutcome" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outcome">
 		<option value="">All matches</option>
-		<option value="played" th:selected="${outcome == 'played'}">Played</option>
-		<option value="finished" th:selected="${outcome == 'finished'}">Finished</option>
-		<option value="notFinished" th:selected="${outcome == 'notFinished'}">Not finished</option>
-		<option value="RET" th:selected="${outcome == 'RET'}">Retirement</option>
-		<option value="W/O" th:selected="${outcome == 'W/O'}">Walkover</option>
-		<option value="DEF" th:selected="${outcome == 'DEF'}">Defaulting</option>
-		<option value="ABD" th:selected="${outcome == 'ABD'}">Abandoned</option>
-		<option value="notPlayed" th:selected="${outcome == 'notPlayed'}">Not played</option>
+		<option value="played">Played</option>
+		<option value="finished">Finished</option>
+		<option value="notFinished">Not finished</option>
+		<option value="RET">Retirement</option>
+		<option value="W/O">Walkover</option>
+		<option value="DEF">Defaulting</option>
+		<option value="ABD">Abandoned</option>
+		<option value="notPlayed">Not played</option>
 	</select>
 </div>
 <button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control margin-right" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'left', event, true)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">

@@ -4,8 +4,12 @@
 <!--/*@thymesVar id="playerRef" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tab" type="java.lang.String"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
+<!--/*@thymesVar id="toDate" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="opponent" type="java.lang.String"*/-->
@@ -16,90 +20,62 @@
 <!--/*@thymesVar id="countryId" type="java.lang.String"*/-->
 <!--/*@thymesVar id="rankType" type="java.lang.String"*/-->
 <!--/*@thymesVar id="infamous" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="params" type="org.strangeforest.tcb.stats.controller.ParamsUtil"*/-->
 <head th:replace="fragments/head :: commonHead(${player} ? ${player.name} : ~{::title/text()}, true, ~{::script}, _)">
 	<title>Player Profile</title>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("#playerPills").find("a").click(tabClick);
 			[# th:if="${tab}" th:switch="${tab}"]
-				[# th:case="'season'"] playerSeason([[${season}]]); [/]
-				[# th:case="'tournaments'"] playerTournaments([[${season}]], [[${level}]], [[${surface}]], [[${result}]], [[${tournamentId}]]); [/]
-				[# th:case="'matches'"] playerMatches([[${season}]], [[${level}]], [[${surface}]], [[${round}]], [[${opponent}]], [[${tournamentId}]], [[${tournamentEventId}]], [[${outcome}]], [[${score}]], [[${countryId}]]); [/]
-				[# th:case="'ranking'"] playerRanking([[${rankType}]], [[${season}]]); [/]
-				[# th:case="'performance'"] playerPerformance([[${season}]], [[${level}]], [[${surface}]]); [/]
-				[# th:case="'statistics'"] playerStatistics([[${season}]], [[${level}]], [[${surface}]]); [/]
-				[# th:case="'goatPoints'"] playerGoatPoints([[${season}]]); [/]
-				[# th:case="'records'"] playerRecords([[${infamous}]]); [/]
-				[# th:case="*"] $("#[(${tab})]Pill").click(); [/]
+				[# th:case="'season'"]
+				var $pill = $("#seasonPill");
+				var url = $pill.data("url") + [(${params.param('season', season)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="'tournaments'"]
+				var $pill = $("#tournamentsPill");
+				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('fromDate', fromDate)})] + [(${params.param('toDate', toDate)})];
+				url += [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('result', result)})] + [(${params.param('tournamentId', tournamentId)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="'matches'"]
+				var $pill = $("#matchesPill");
+				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('fromDate', fromDate)})] + [(${params.param('toDate', toDate)})];
+				url += [(${params.param('level', level)})] + [(${params.param('bestOf', bestOf)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('result', result)})] + [(${params.param('round', round)})] + [(${params.param('opponent', opponent)})];
+				url += [(${params.param('tournamentId', tournamentId)})] + [(${params.param('tournamentEventId', tournamentEventId)})] + [(${params.param('outcome', outcome)})] + [(${params.param('score', score)})] + [(${params.param('countryId', countryId)})];
+				loadTab($pill, url)
+				[/]
+				[# th:case="'ranking'"]
+				var $pill = $("#rankingPill");
+				var url = $pill.data("url") + [(${params.param('rankType', rankType)})] + [(${params.param('season', season)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="'performance'"]
+				var $pill = $("#performancePill");
+				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('level', level)})] + [(${params.param('surface', surface)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="'statistics'"]
+				var $pill = $("#statisticsPill");
+				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('level', level)})] + [(${params.param('surface', surface)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="'goatPoints'"]
+				var $pill = $("#goatPointsPill");
+				var url = $pill.data("url") + [(${params.param('season', season)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="'records'"]
+				var $pill = $("#recordsPill");
+				var url = $pill.data("url") + [(${params.param('infamous', infamous)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="*"]
+				$("#[(${tab})]Pill").click();
+				[/]
 			[/]
 			[# th:unless="${tab}"] $("#profilePill").click(); [/]
 		});
-		function playerSeason(season) {
-			var $pill = $("#seasonPill");
-			var url = $pill.data("url");
-			if (season)	url += "&season=" + season;
-			loadTab($pill, url);
-		}
-		function playerTournaments(season, level, surface, result, tournamentId) {
-			var $pill = $("#tournamentsPill");
-			var url = $pill.data("url");
-			if (season) url += "&season=" + season;
-			if (level) url += "&level=" + level;
-			if (surface) url += "&surface=" + surface;
-			if (result) url += "&result=" + encodeURIComponent(result);
-			if (tournamentId) url += "&tournamentId=" + tournamentId;
-			loadTab($pill, url);
-		}
-		function playerMatches(season, level, surface, round, opponent, tournamentId, tournamentEventId, outcome, score, countryId) {
-			var $pill = $("#matchesPill");
-			var url = $pill.data("url");
-			if (season) url += "&season=" + season;
-			if (level) url += "&level=" + level;
-			if (surface) url += "&surface=" + surface;
-			if (round) url += "&round=" + encodeURIComponent(round);
-			if (opponent) url += "&opponent=" + opponent;
-			if (tournamentId) url += "&tournamentId=" + tournamentId;
-			if (tournamentEventId) url += "&tournamentEventId=" + tournamentEventId;
-			if (outcome) url += "&outcome=" + encodeURIComponent(outcome);
-			if (score) url += "&score=" + encodeURIComponent(score);
-			if (countryId) url += "&countryId=" + countryId;
-			loadTab($pill, url)
-		}
-		function playerRanking(rankType, season) {
-			var $pill = $("#rankingPill");
-			var url = $pill.data("url");
-			if (rankType) url += "&rankType=" + rankType;
-			if (season) url += "&season=" + season;
-			loadTab($pill, url);
-		}
-		function playerPerformance(season, level, surface) {
-			var $pill = $("#performancePill");
-			var url = $pill.data("url");
-			if (season) url += "&season=" + season;
-			if (level) url += "&level=" + level;
-			if (surface) url += "&surface=" + surface;
-			loadTab($pill, url);
-		}
-		function playerStatistics(season, level, surface) {
-			var $pill = $("#statisticsPill");
-			var url = $pill.data("url");
-			if (season) url += "&season=" + season;
-			if (level) url += "&level=" + level;
-			if (surface) url += "&surface=" + surface;
-			loadTab($pill, url);
-		}
-		function playerGoatPoints(season) {
-			var $pill = $("#goatPointsPill");
-			var url = $pill.data("url");
-			if (season) url += "&season=" + season;
-			loadTab($pill, url);
-		}
-		function playerRecords(infamous) {
-			var $pill = $("#recordsPill");
-			var url = $pill.data("url");
-			if (infamous) url += "&infamous=" + infamous;
-			loadTab($pill, url);
-		}
 	</script>
 </head>
 <body class="container">

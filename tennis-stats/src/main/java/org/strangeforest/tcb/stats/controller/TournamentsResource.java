@@ -46,7 +46,7 @@ public class TournamentsResource {
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		TournamentEventFilter filter = new TournamentEventFilter(null, level, surface, null, null, searchPhrase);
+		TournamentEventFilter filter = new TournamentEventFilter(null, null, level, surface, null, null, null, searchPhrase);
 		Comparator<Tournament> comparator = BootgridUtil.getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
 		return tournamentService.getTournamentsTable(filter, comparator, pageSize, current);

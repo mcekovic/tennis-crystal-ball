@@ -1,19 +1,25 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId1" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="playerId2" type="java.lang.Integer"*/-->
-<!--/*@thymesVar id="seasons" type="java.util.Set<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.NavigableSet<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.EventResult[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.Set<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 <!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
+<!--/*@thymesVar id="toDate" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String>"*/-->
+<!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="h2h" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="opponent" type="java.lang.String>"*/-->
@@ -37,14 +43,20 @@
 		setStatsURL();
 		$("#h2hStats").find(statsRawData ? ".pct-data" : ".raw-data").hide();
 		$("#statsAdvancedFilter").on('shown.bs.collapse', setStatsURL).on('hidden.bs.collapse', setStatsURL);
+		dateRangePicker("statsFromDate", "statsToDate", "[(${!seasons.empty ? (seasons.last() + ':' + seasons.first()) : _})]");
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function getStatsURL() {
 		var url = "/h2hStats?playerId1=[(${playerId1})]&playerId2=[(${playerId2})]";
 		url += "&season=" + $("#statsSeason").val();
+		url += "&fromDate=" + $("#statsFromDate").val();
+		url += "&toDate=" + $("#statsToDate").val();
 		url += "&level=" + $("#statsLevel").val();
+		url += "&bestOf=" + $("#statsBestOf").val();
 		url += "&surface=" + $("#statsSurface").val();
+		url += "&indoor=" + $("#statsIndoor").val();
 		url += "&round=" + encodeURIComponent($("#statsRound").val());
+		url += "&result=" + encodeURIComponent($("#statsResult").val());
 		url += "&tournamentId=" + $("#statsTournament").val();
 		url += "&h2h=" + $("#statsH2h").prop("checked");
 		url += "&opponent=" + $("#statsOpponent").val();
@@ -53,9 +65,12 @@
 		return url;
 	}
 	function setStatsURL() {
-		$("#statistics").data("statsURL", getStatsURL());
+		if (validateStatisticsFilter())
+			$("#statistics").data("statsURL", getStatsURL());
 	}
 	function reloadStats() {
+		if (!validateStatisticsFilter())
+			return;
 		var url = getStatsURL() + "&rawData=" + statsRawData;
 		[# th:unless=${compare}]
 		$("#statistics").load(url);
@@ -65,11 +80,19 @@
 		compareStats("statistics", "statistics", false);
 		[/]
 	}
+	function validateStatisticsFilter() {
+		return getDate("statsFromDate", "from date") !== null && getDate("statsToDate", "to date") !== null;
+	}
 	function clearStatsFilter() {
 		$("#statsSeason").val("");
+		$("#statsFromDate").val("");
+		$("#statsToDate").val("");
 		$("#statsLevel").val("");
+		$("#statsBestOf").val("");
 		$("#statsSurface").val("");
+		$("#statsIndoor").val("");
 		$("#statsRound").val("");
+		$("#statsResult").val("");
 		$("#statsTournament").val("");
 		clearH2h();
 		clearOpponent();
@@ -99,11 +122,32 @@
 	.stat {
 		color: inherit;
 	}
+	.link-stat {
+		color: inherit;
+	}
+	.link-stat[href]:hover,
+	.link-stat[href]:focus {
+		color: inherit;
+	}
 	.stat-w {
 		color: seagreen;
 	}
+	.link-stat-w {
+		color: green;
+	}
+	.link-stat-w[href]:hover,
+	.link-stat-w[href]:focus {
+		color: limegreen;
+	}
 	.stat-l {
 		color: crimson;
+	}
+	.link-stat-l {
+		color: red;
+	}
+	.link-stat-l[href]:hover,
+	.link-stat-l[href]:focus {
+		color: indianred;
 	}
 </style>
 <br/>
@@ -155,26 +199,58 @@
 		</div>
 	</div>
 </div>
-<div id="statsAdvancedFilter" class="row margin-top collapse" th:attrappend="class=${advFilter ? ' in' : _}">
-	<div class="col-md-2">
-		<select id="statsOpponent" class="form-control" onchange="opponentChanged(); reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
-			<option value="">Vs all</option>
-			<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
-				<option th:each="anOpponent : ${opponentCategory.value}" th:value="${anOpponent}" value="NO_1" th:text="${anOpponent.text}" th:selected="${anOpponent.name() == opponent}">Vs No. 1</option>
-			</optgroup>
-		</select>
+<div id="statsAdvancedFilter" class="collapse" th:attrappend="class=${advFilter ? ' in' : _}">
+	<div class="row margin-top">
+		<div class="col-md-4">
+			<div id="statsDateRange" class="input-group">
+				<label for="statsFromDate" class="input-group-addon">From:</label>
+				<input id="statsFromDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(fromDate, 'dd-MM-yyyy')}" onchange="reloadStats()"/>
+				<label for="statsToDate" class="input-group-addon">To:</label>
+				<input id="statsToDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(toDate, 'dd-MM-yyyy')}" onchange="reloadStats()"/>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<select id="statsIndoor" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+				<option value="">Outdoor / Indoor</option>
+				<option value="false" th:selected="${indoor == false}">Outdoor</option>
+				<option value="true" th:selected="${indoor}">Indoor</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="statsResult" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by tournament result">
+				<option value="">All results</option>
+				<option th:each="aResult : ${results}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}" th:selected="${aResult.code == result}">Win</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="statsOpponent" class="form-control" onchange="opponentChanged(); reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
+				<option value="">Vs all</option>
+				<optgroup th:each="opponentCategory : ${opponentCategories}" th:label="${opponentCategory.key.text}" label="Rank">
+					<option th:each="anOpponent : ${opponentCategory.value}" th:value="${anOpponent}" value="NO_1" th:text="${anOpponent.text}" th:selected="${anOpponent.name() == opponent}">Vs No. 1</option>
+				</optgroup>
+			</select>
+		</div>
 	</div>
-	<div class="col-md-3">
-		<select id="statsTournament" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
-			<option value="">All tournaments</option>
-			<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
-		</select>
-	</div>
-	<div class="col-md-3">
-		<select id="statsCountry" class="form-control" onchange="countryChanged(); reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
-			<option value="">Vs all countries</option>
-			<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}" th:selected="${country.alpha3 == countryId}">Switzerland</option>
-		</select>
+	<div class="row margin-top">
+		<div class="col-md-2">
+			<select id="statsBestOf" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+				<option value="">Best of any</option>
+				<option value="3" th:selected="${bestOf == 3}">Best of 3</option>
+				<option value="5" th:selected="${bestOf == 5}">Best of 5</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="statsTournament" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="statsCountry" class="form-control" onchange="countryChanged(); reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+				<option value="">Vs all countries</option>
+				<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}" th:selected="${country.alpha3 == countryId}">Switzerland</option>
+			</select>
+		</div>
 	</div>
 </div>
 <br/>
@@ -523,9 +599,13 @@
 		<tr class="pct-data" th:with="sc=${statsFormatUtil.compare(stats1.matchesWonPct, stats2.matchesWonPct)}">
 			<th th:if="${compareStats1}" th:text="${!compareStats1.empty ? statsFormatUtil.formatPct(compareStats1.matchesWonPct) : _}" class="text-right">69%</th>
 			<th th:if="${compareStats1}" th:text="${!compareStats1.empty ? statsFormatUtil.formatPctDiff(compareStats1.matchesWonPct, stats1.matchesWonPct) : _}" class="text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.matchesWonPct, stats1.matchesWonPct)}">0%</th>
-			<th th:text="${!stats1.empty ? statsFormatUtil.formatPct(stats1.matchesWonPct) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">69%</th>
+			<th class="text-right">
+				<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:text="${!stats1.empty ? statsFormatUtil.formatPct(stats1.matchesWonPct) : _}" class="link-stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}" title="Show matches">69%</a>
+			</th>
 			<td class="text-center">Matches Won</td>
-			<th th:text="${!stats2.empty ? statsFormatUtil.formatPct(stats2.matchesWonPct) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">69%</th>
+			<th class="text-left">
+				<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:text="${!stats2.empty ? statsFormatUtil.formatPct(stats2.matchesWonPct) : _}" class="link-stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}" title="Show matches">69%</a>
+			</th>
 			<th th:if="${compareStats2}" th:text="${!compareStats2.empty ? statsFormatUtil.formatPctDiff(compareStats2.matchesWonPct, stats2.matchesWonPct) : _}" class="text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.matchesWonPct, stats2.matchesWonPct)}">0%</th>
 			<th th:if="${compareStats2}" th:text="${!compareStats2.empty ? statsFormatUtil.formatPct(compareStats2.matchesWonPct) : _}" class="text-left">69%</th>
 		</tr>
@@ -549,9 +629,13 @@
 			<th th:text="${!stats2.empty ? stats2.setsWon + ' / ' + stats2.sets : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">16 / 27</th>
 		</tr>
 		<tr class="raw-data" th:with="sc=${statsFormatUtil.compare(stats1.matchesWonPct, stats2.matchesWonPct)}">
-			<th th:text="${!stats1.empty ? stats1.matchesWon + ' / ' + stats1.matches : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">6 / 10</th>
+			<th class="text-right">
+				<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:text="${!stats1.empty ? stats1.matchesWon + ' / ' + stats1.matches : _}" class="link-stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}" title="Show matches">6 / 10</a>
+			</th>
 			<td class="text-center">Matches Won</td>
-			<th th:text="${!stats2.empty ? stats2.matchesWon + ' / ' + stats2.matches : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">6 / 10</th>
+			<th class="text-left">
+				<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:text="${!stats2.empty ? stats2.matchesWon + ' / ' + stats2.matches : _}" class="link-stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}" title="Show matches">6 / 10</a>
+			</th>
 		</tr>
 	</table>
 	<div class="row">

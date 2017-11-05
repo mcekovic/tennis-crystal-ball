@@ -6,13 +6,19 @@
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.EventResult[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 <!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
+<!--/*@thymesVar id="toDate" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String>"*/-->
+<!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
 <!--/*@thymesVar id="opponent" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="countryId" type="java.lang.String>"*/-->
@@ -22,15 +28,21 @@
 <script type="text/javascript" th:inline="javascript">
 	$(function() {
 		setStatsURL();
+		dateRangePicker("statsFromDate", "statsToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		$("[data-toggle='tooltip']").tooltip();
 		$("#statsAdvancedFilter").on('shown.bs.collapse', setStatsURL).on('hidden.bs.collapse', setStatsURL);
 	});
 	function getStatsURL() {
 		var url = "/playerStatsTab?playerId=[(${playerId})]";
 		url += "&season=" + $("#statsSeason").val();
+		url += "&fromDate=" + $("#statsFromDate").val();
+		url += "&toDate=" + $("#statsToDate").val();
 		url += "&level=" + $("#statsLevel").val();
+		url += "&bestOf=" + $("#statsBestOf").val();
 		url += "&surface=" + $("#statsSurface").val();
+		url += "&indoor=" + $("#statsIndoor").val();
 		url += "&round=" + encodeURIComponent($("#statsRound").val());
+		url += "&result=" + encodeURIComponent($("#statsResult").val());
 		url += "&tournamentId=" + $("#statsTournament").val();
 		url += "&opponent=" + $("#statsOpponent").val();
 		url += "&countryId=" + $("#statsCountry").val();
@@ -41,6 +53,8 @@
 		$("#statistics").data("statsURL", getStatsURL());
 	}
 	function reloadStats() {
+		if (!validateStatisticsFilter())
+			return;
 		var url = getStatsURL() + "&rawData=" + statsRawData;
 		[# th:unless=${compare}]
 		$("#statistics").load(url);
@@ -50,11 +64,19 @@
 		compareStats("statistics", "statistics", false);
 		[/]
 	}
+	function validateStatisticsFilter() {
+		return getDate("statsFromDate", "from date") !== null && getDate("statsToDate", "to date") !== null;
+	}
 	function clearStatsFilter() {
 		$("#statsSeason").val("");
+		$("#statsFromDate").val("");
+		$("#statsToDate").val("");
 		$("#statsLevel").val("");
+		$("#statsBestOf").val("");
 		$("#statsSurface").val("");
+		$("#statsIndoor").val("");
 		$("#statsRound").val("");
+		$("#statsResult").val("");
 		$("#statsTournament").val("");
 		$("#statsOpponent").val("");
 		$("#statsCountry").val("");
@@ -111,18 +133,50 @@
 		</div>
 	</div>
 </div>
-<div id="statsAdvancedFilter" class="row margin-top collapse" th:attrappend="class=${advFilter ? ' in' : _}">
-	<div class="col-md-3">
-		<select id="statsTournament" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
-			<option value="">All tournaments</option>
-			<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
-		</select>
+<div id="statsAdvancedFilter" class="collapse" th:attrappend="class=${advFilter ? ' in' : _}">
+	<div class="row margin-top">
+		<div class="col-md-4">
+			<div id="statsDateRange" class="input-group">
+				<label for="statsFromDate" class="input-group-addon">From:</label>
+				<input id="statsFromDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(fromDate, 'dd-MM-yyyy')}" onchange="reloadStats()"/>
+				<label for="statsToDate" class="input-group-addon">To:</label>
+				<input id="statsToDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(toDate, 'dd-MM-yyyy')}" onchange="reloadStats()"/>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<select id="statsIndoor" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+				<option value="">Outdoor / Indoor</option>
+				<option value="false" th:selected="${indoor == false}">Outdoor</option>
+				<option value="true" th:selected="${indoor}">Indoor</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="statsResult" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by tournament result">
+				<option value="">All results</option>
+				<option th:each="aResult : ${results}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}" th:selected="${aResult.code == result}">Win</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="statsCountry" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+				<option value="">Vs all countries</option>
+				<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}" th:selected="${country.alpha3 == countryId}">Switzerland</option>
+			</select>
+		</div>
 	</div>
-	<div class="col-md-3">
-		<select id="statsCountry" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
-			<option value="">Vs all countries</option>
-			<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:text="${country.name}" th:selected="${country.alpha3 == countryId}">Switzerland</option>
-		</select>
+	<div class="row margin-top">
+		<div class="col-md-2">
+			<select id="statsBestOf" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+				<option value="">Best of any</option>
+				<option value="3" th:selected="${bestOf == 3}">Best of 3</option>
+				<option value="5" th:selected="${bestOf == 5}">Best of 5</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="statsTournament" class="form-control" onchange="reloadStats()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+			</select>
+		</div>
 	</div>
 </div>
 <br/>

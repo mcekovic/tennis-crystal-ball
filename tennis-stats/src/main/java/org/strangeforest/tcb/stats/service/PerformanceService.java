@@ -88,6 +88,9 @@ public class PerformanceService {
 		"GROUP BY round\n" +
 		"ORDER BY round DESC";
 
+	private static final String EVENT_RESULT_JOIN = //language=SQL
+		"\nINNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)";
+
 	private static final String OPPONENT_JOIN = //language=SQL
 		"\nINNER JOIN player_v o ON o.player_id = m.opponent_id";
 
@@ -129,7 +132,12 @@ public class PerformanceService {
 	}
 
 	private static String playerPerformanceJoin(PerfStatsFilter filter) {
-		return filter.getOpponentFilter().isOpponentRequired() ? OPPONENT_JOIN : "";
+		StringBuilder sb = new StringBuilder();
+		if (filter.hasResult())
+			sb.append(EVENT_RESULT_JOIN);
+		if (filter.getOpponentFilter().isOpponentRequired())
+			sb.append(OPPONENT_JOIN);
+		return sb.toString();
 	}
 
 	public Map<Integer, PlayerPerformance> getPlayerSeasonsPerformance(int playerId) {

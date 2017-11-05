@@ -40,9 +40,9 @@
 		var round = $("#predictionRound").val();
 		if (round)
 			url += "&round=" + round;
-		var date = getDate("predictionDate");
-		var date1 = getDate("predictionDate1");
-		var date2 = getDate("predictionDate2");
+		var date = getDate("predictionDate", "date");
+		var date1 = getDate("predictionDate1", "date 1");
+		var date2 = getDate("predictionDate2", "date 2");
 		if (date && date1 == date2)
 			url += "&date=" + date;
 		else {

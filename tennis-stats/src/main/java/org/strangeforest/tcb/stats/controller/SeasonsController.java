@@ -37,6 +37,7 @@ public class SeasonsController extends PageController {
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("params", ParamsUtil.INSTANCE);
 		return new ModelAndView("season", modelMap);
 	}
 
@@ -96,6 +97,7 @@ public class SeasonsController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("tournaments", tournamentService.getSeasonTournaments(season));
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
 		modelMap.addAttribute("countries", matchesService.getSeasonCountries(season));
@@ -114,6 +116,7 @@ public class SeasonsController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("results", EventResult.values());
 		modelMap.addAttribute("tournaments", tournamentService.getSeasonTournaments(season));
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
 		modelMap.addAttribute("countries", matchesService.getSeasonCountries(season));

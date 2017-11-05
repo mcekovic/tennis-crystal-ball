@@ -8,13 +8,19 @@
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
+<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.EventResult[]"*/-->
 <!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 <!--/*@thymesVar id="tournamentEvents" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentEventItem>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
+<!--/*@thymesVar id="toDate" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
+<!--/*@thymesVar id="result" type="java.lang.String"*/-->
 <!--/*@thymesVar id="opponent" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="opponentName" type="java.lang.String>"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
@@ -44,9 +50,14 @@
 			url: "/matchesTable?playerId=[(${playerId})]",
 			requestHandler: function(request) {
 				request.season = $("#matchesSeason").val();
+				request.fromDate = $("#matchesFromDate").val();
+				request.toDate = $("#matchesToDate").val();
 				request.level = $("#matchesLevel").val();
+				request.bestOf = $("#matchesBestOf").val();
 				request.surface = $("#matchesSurface").val();
+				request.indoor = $("#matchesIndoor").val();
 				request.round = $("#matchesRound").val();
+				request.result = $("#matchesResult").val();
 				request.opponent = $("#matchesOpponent").val();
 				request.tournamentId = $("#matchesTournament").val();
 				request.tournamentEventId = $("#matchesTournamentEvent").val();
@@ -92,23 +103,25 @@
 		});
 		var $matchesTableHeader = $("#matchesTable-header");
 		var $search = $matchesTableHeader.find("div.search");
-		$search.before($("#matchesStats").remove());
 		$search.before($("#matchesTournamentDiv").remove());
 		$search.before($("#matchesTournamentEventDiv").remove());
 		$search.before($("#matchesOutcomeDiv").remove());
+		$search.before($("#matchesStats").remove());
+		dateRangePicker("matchesFromDate", "matchesToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function reloadMatches() {
-		$("#matchesTable").bootgrid("reload");
+		if (validateMatchesFilter())
+			$("#matchesTable").bootgrid("reload");
 	}
 	function matchesStatsFilter() {
 		return new StatsFilter($("#matchesStatsCategory"), $("#matchesStatsFrom"), $("#matchesStatsTo"))
 	}
-	function validateMatchesStatsFilter() {
-		return validateStatsFilter($("#matchesStatsFrom"), $("#matchesStatsTo"), $("#matchesStatsRange"))
+	function validateMatchesFilter() {
+		return getDate("matchesFromDate", "from date") !== null && getDate("matchesToDate", "to date") !== null && validateStatsFilter($("#matchesStatsFrom"), $("#matchesStatsTo"), $("#matchesStatsRange"));
 	}
 	function matchesStatsFilterChanged() {
-		if (validateMatchesStatsFilter() && !lastMatchesStatsFilter.equals(matchesStatsFilter()))
+		if (!lastMatchesStatsFilter.equals(matchesStatsFilter()))
 			reloadMatches();
 	}
 	function updateMatchesStatsCategoryStat() {
@@ -137,9 +150,14 @@
 	}
 	function clearMatchesFilter() {
 		$("#matchesSeason").val("");
+		$("#matchesFromDate").val("");
+		$("#matchesToDate").val("");
 		$("#matchesLevel").val("");
+		$("#matchesBestOf").val("");
 		$("#matchesSurface").val("");
+		$("#matchesIndoor").val("");
 		$("#matchesRound").val("");
+		$("#matchesResult").val("");
 		$("#matchesOpponent").val("");
 		$("#matchesTournament").val("");
 		$("#matchesTournamentEvent").val("");
@@ -155,9 +173,14 @@
 	function matchStatsParams() {
 		var params = "?playerId=[(${playerId})]";
 		params += "&season=" + $("#matchesSeason").val();
+		params += "&fromDate=" + $("#matchesFromDate").val();
+		params += "&toDate=" + $("#matchesToDate").val();
 		params += "&level=" + $("#matchesLevel").val();
+		params += "&bestOf=" + $("#matchesBestOf").val();
 		params += "&surface=" + $("#matchesSurface").val();
+		params += "&indoor=" + $("#matchesIndoor").val();
 		params += "&round=" + encodeURIComponent($("#matchesRound").val());
+		params += "&result=" + encodeURIComponent($("#matchesResult").val());
 		params += "&opponent=" + $("#matchesOpponent").val();
 		params += "&tournamentId=" + $("#matchesTournament").val();
 		params += "&tournamentEventId=" + $("#matchesTournamentEvent").val();
@@ -168,11 +191,11 @@
 		return params;
 	}
 	function showMatchesStats(event) {
+		if (!validateMatchesFilter())
+			return;
 		var $matchesStats = $("#matchesStats");
 		if (!$matchesStats.hasClass("loaded")) {
 			event.preventDefault();
-			if (!validateMatchesStatsFilter())
-				return;
 			var url = "/matchesStats" + matchStatsParams();
 			var statsFilter = matchesStatsFilter();
 			if (statsFilter.hasFilter()) {
@@ -188,6 +211,17 @@
 		}
 	}
 </script>
+<style scoped="scoped">
+	.option-won {
+		background-color: #e0ffe0;
+	}
+	.option-lost {
+		background-color: #ffe8e8;
+	}
+	.option-abd {
+		background-color: #ffffd0;
+	}
+</style>
 <div class="row">
 	<div class="col-md-2">
 		<select id="matchesSeason" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
@@ -228,7 +262,7 @@
 		</select>
 	</div>
 	<div class="col-md-2">
-		<button type="button" class="btn btn-default pull-left margin-right" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+		<button type="button" class="btn btn-default margin-right" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
 			<span class="glyphicon glyphicon-erase"></span>
 		</button>
 		<span data-toggle="tooltip" data-placement="auto" title="Advanced filters">
@@ -238,65 +272,95 @@
 		</span>
 	</div>
 </div>
-<div id="matchesAdvancedFilter" class="row margin-top collapse" th:attrappend="class=${(score != null && score != '') || (countryId != null && countryId != '') ? ' in' : _}">
-	<div class="col-md-2">
-		<select id="matchesScore" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by match score">
-			<option value="">All scores</option>
-			<optgroup label="Best of 3">
-				<option value="*Bo3" th:selected="${score == '*Bo3'}">Best of 3</option>
-				<option value="2:0" th:selected="${score == '2:0'}">2:0</option>
-				<option value="2:1" th:selected="${score == '2:0'}">2:1</option>
-				<option value="1:2" th:selected="${score == '2:0'}">1:2</option>
-				<option value="0:2" th:selected="${score == '2:0'}">0:2</option>
-			</optgroup>
-			<optgroup label="Best of 5">
-				<option value="*Bo5" th:selected="${score == '*Bo5'}">Best of 5</option>
-				<option value="3:0" th:selected="${score == '3:0'}">3:0</option>
-				<option value="3:1" th:selected="${score == '3:1'}">3:1</option>
-				<option value="3:2" th:selected="${score == '3:2'}">3:2</option>
-				<option value="2:3" th:selected="${score == '2:3'}">2:3</option>
-				<option value="1:3" th:selected="${score == '1:3'}">1:3</option>
-				<option value="0:3" th:selected="${score == '0:3'}">0:3</option>
-			</optgroup>
-			<optgroup label="After">
-				<option value="1:0+" th:selected="${score == '1:0+'}">After 1:0</option>
-				<option value="0:1+" th:selected="${score == '0:1+'}">After 0:1</option>
-				<option value="1:1+" th:selected="${score == '1:1+'}">After 1:1</option>
-				<option value="2:0+" th:selected="${score == '2:0+'}">After 2:0</option>
-				<option value="0:2+" th:selected="${score == '0:2+'}">After 0:2</option>
-				<option value="2:1+" th:selected="${score == '2:1+'}">After 2:1</option>
-				<option value="1:2+" th:selected="${score == '1:2+'}">After 1:2</option>
-				<option value="2:2+" th:selected="${score == '2:2+'}">After 2:2</option>
-			</optgroup>
-			<optgroup label="Misc">
-				<option value="*DS" th:selected="${score == '*DS'}">Deciding Set</option>
-				<option value="*TB" th:selected="${score == '*TB'}">Tie Break</option>
-				<option value="*TBW" th:selected="${score == '*TBW'}">Tie Break Won</option>
-				<option value="*TBL" th:selected="${score == '*TBL'}">Tie Break Lost</option>
-				<option value="*DSTB" th:selected="${score == '*DSTB'}">Dec. Set TB</option>
-			</optgroup>
-		</select>
-	</div>
-	<div class="col-md-6">
-		<div class="input-group">
-			<select id="matchesStatsCategory" style="width: 220px" class="form-control" onchange="matchesStatsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
-				<option value="">Select statistics category</option>
-				<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
-					<option th:each="category : ${categoryClass.value}" th:unless="${category.name.startsWith('matches')}" th:value="${category.name}" value="aces" th:data-type="${category.type}" data-type="COUNT" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
-				</optgroup>
+<div id="matchesAdvancedFilter" class="collapse" th:attrappend="class=${fromDate != null || toDate != null || bestOf != null || indoor != null || (countryId != null && countryId != '') || (score != null && score != '') || (result != null && result != '') ? ' in' : _}">
+	<div class="row margin-top">
+		<div class="col-md-4">
+			<div id="matchesDateRange" class="input-group">
+				<label for="matchesFromDate" class="input-group-addon">From:</label>
+				<input id="matchesFromDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(fromDate, 'dd-MM-yyyy')}" onchange="reloadMatches()"/>
+				<label for="matchesToDate" class="input-group-addon">To:</label>
+				<input id="matchesToDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(toDate, 'dd-MM-yyyy')}" onchange="reloadMatches()"/>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<select id="matchesIndoor" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+				<option value="">Outdoor / Indoor</option>
+				<option value="false" th:selected="${indoor == false}">Outdoor</option>
+				<option value="true" th:selected="${indoor}">Indoor</option>
 			</select>
-			<label id="matchesStatsCategoryLabel" for="matchesStatsCategory" class="input-group-addon" style="width: 75px" data-toggle="tooltip" data-placement="top" title="Statistics category value for the selected filter"></label>
-			<label for="matchesStatsFrom" class="input-group-addon">From:</label>
-			<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
-			<label id="matchesStatsRange" for="matchesStatsTo" class="input-group-addon">To:</label>
-			<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
+		</div>
+		<div class="col-md-2">
+			<select id="matchesResult" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament result">
+				<option value="">All results</option>
+				<option th:each="aResult : ${results}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}" th:selected="${aResult.code == result}">Win</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="matchesCountry" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+				<option value="">Vs all countries</option>
+				<option th:each="aCountry : ${countries}" th:value="${aCountry.alpha3}" value="SUI" th:text="${aCountry.name}" th:selected="${aCountry.alpha3 == countryId}">Switzerland</option>
+			</select>
 		</div>
 	</div>
-	<div class="col-md-3">
-		<select id="matchesCountry" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
-			<option value="">Vs all countries</option>
-			<option th:each="aCountry : ${countries}" th:value="${aCountry.alpha3}" value="SUI" th:text="${aCountry.name}" th:selected="${aCountry.alpha3 == countryId}">Switzerland</option>
-		</select>
+	<div class="row margin-top">
+		<div class="col-md-2">
+			<select id="matchesBestOf" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+				<option value="">Best of any</option>
+				<option value="3" th:selected="${bestOf == 3}">Best of 3</option>
+				<option value="5" th:selected="${bestOf == 5}">Best of 5</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="matchesScore" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by match score">
+				<option value="">All scores</option>
+				<optgroup label="Best of 3">
+					<option value="2:0" th:selected="${score == '2:0'}">2:0</option>
+					<option value="2:1" th:selected="${score == '2:0'}">2:1</option>
+					<option value="1:2" th:selected="${score == '2:0'}">1:2</option>
+					<option value="0:2" th:selected="${score == '2:0'}">0:2</option>
+				</optgroup>
+				<optgroup label="Best of 5">
+					<option value="3:0" th:selected="${score == '3:0'}">3:0</option>
+					<option value="3:1" th:selected="${score == '3:1'}">3:1</option>
+					<option value="3:2" th:selected="${score == '3:2'}">3:2</option>
+					<option value="2:3" th:selected="${score == '2:3'}">2:3</option>
+					<option value="1:3" th:selected="${score == '1:3'}">1:3</option>
+					<option value="0:3" th:selected="${score == '0:3'}">0:3</option>
+				</optgroup>
+				<optgroup label="After">
+					<option value="1:0+" th:selected="${score == '1:0+'}">After 1:0</option>
+					<option value="0:1+" th:selected="${score == '0:1+'}">After 0:1</option>
+					<option value="1:1+" th:selected="${score == '1:1+'}">After 1:1</option>
+					<option value="2:0+" th:selected="${score == '2:0+'}">After 2:0</option>
+					<option value="0:2+" th:selected="${score == '0:2+'}">After 0:2</option>
+					<option value="2:1+" th:selected="${score == '2:1+'}">After 2:1</option>
+					<option value="1:2+" th:selected="${score == '1:2+'}">After 1:2</option>
+					<option value="2:2+" th:selected="${score == '2:2+'}">After 2:2</option>
+				</optgroup>
+				<optgroup label="Misc">
+					<option value="*DS" th:selected="${score == '*DS'}">Deciding Set</option>
+					<option value="*TB" th:selected="${score == '*TB'}">Tie Break</option>
+					<option value="*TBW" th:selected="${score == '*TBW'}">Tie Break Won</option>
+					<option value="*TBL" th:selected="${score == '*TBL'}">Tie Break Lost</option>
+					<option value="*DSTB" th:selected="${score == '*DSTB'}">Dec. Set TB</option>
+				</optgroup>
+			</select>
+		</div>
+		<div class="col-md-7">
+			<div class="input-group">
+				<select id="matchesStatsCategory" style="width: 220px" class="form-control" onchange="matchesStatsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+					<option value="">Select statistics category</option>
+					<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
+						<option th:each="category : ${categoryClass.value}" th:unless="${category.name.startsWith('matches')}" th:value="${category.name}" value="aces" th:data-type="${category.type}" data-type="COUNT" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
+					</optgroup>
+				</select>
+				<label id="matchesStatsCategoryLabel" for="matchesStatsCategory" class="input-group-addon" style="width: 75px" data-toggle="tooltip" data-placement="top" title="Statistics category value for the selected filter"></label>
+				<label for="matchesStatsFrom" class="input-group-addon">From:</label>
+				<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
+				<label id="matchesStatsRange" for="matchesStatsTo" class="input-group-addon">To:</label>
+				<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
+			</div>
+		</div>
 	</div>
 </div>
 <div id="matchesTournamentDiv" class="btn-group pull-left margin-right no-margin-left" style="width: 210px">
@@ -314,27 +378,27 @@
 <div id="matchesOutcomeDiv" class="btn-group pull-left margin-right">
 	<select id="matchesOutcome" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outcome">
 		<option value="">All matches</option>
-		<option value="won" th:selected="${outcome == 'won'}">Won</option>
-		<option value="lost" th:selected="${outcome == 'lost'}">Lost</option>
+		<option value="won" th:selected="${outcome == 'won'}" class="option-won">Won</option>
+		<option value="lost" th:selected="${outcome == 'lost'}" class="option-lost">Lost</option>
 		<option value="played" th:selected="${outcome == 'played'}">Played</option>
-		<option value="wonplayed" th:selected="${outcome == 'wonplayed'}">Played & won</option>
-		<option value="lostplayed" th:selected="${outcome == 'lostplayed'}">Played & lost</option>
+		<option value="wonplayed" th:selected="${outcome == 'wonplayed'}" class="option-won">Played & won</option>
+		<option value="lostplayed" th:selected="${outcome == 'lostplayed'}" class="option-lost">Played & lost</option>
 		<option value="finished" th:selected="${outcome == 'finished'}">Finished</option>
-		<option value="wonfinished" th:selected="${outcome == 'wonfinished'}">Finished & won</option>
-		<option value="lostfinished" th:selected="${outcome == 'lostfinished'}">Finished & lost</option>
+		<option value="wonfinished" th:selected="${outcome == 'wonfinished'}" class="option-won">Finished & won</option>
+		<option value="lostfinished" th:selected="${outcome == 'lostfinished'}" class="option-lost">Finished & lost</option>
 		<option value="notFinished" th:selected="${outcome == 'notFinished'}">Not finished</option>
-		<option value="wonnotFinished" th:selected="${outcome == 'wonnotFinished'}">Not finished & won</option>
-		<option value="lostnotFinished" th:selected="${outcome == 'lostnotFinished'}">Not finished & lost</option>
+		<option value="wonnotFinished" th:selected="${outcome == 'wonnotFinished'}" class="option-won">Not finished & won</option>
+		<option value="lostnotFinished" th:selected="${outcome == 'lostnotFinished'}" class="option-lost">Not finished & lost</option>
 		<option value="RET" th:selected="${outcome == 'RET'}">Retirement</option>
-		<option value="wonRET" th:selected="${outcome == 'wonRET'}">Won by retirement</option>
-		<option value="lostRET" th:selected="${outcome == 'lostRET'}">Lost by retirement</option>
+		<option value="wonRET" th:selected="${outcome == 'wonRET'}" class="option-won">Won by retirement</option>
+		<option value="lostRET" th:selected="${outcome == 'lostRET'}" class="option-lost">Lost by retirement</option>
 		<option value="W/O" th:selected="${outcome == 'W/O'}">Walkover</option>
-		<option value="wonW/O" th:selected="${outcome == 'wonW/O'}">Won by walkover</option>
-		<option value="lostW/O" th:selected="${outcome == 'lostW/O'}">Lost by walkover</option>
+		<option value="wonW/O" th:selected="${outcome == 'wonW/O'}" class="option-won">Won by walkover</option>
+		<option value="lostW/O" th:selected="${outcome == 'lostW/O'}" class="option-lost">Lost by walkover</option>
 		<option value="DEF" th:selected="${outcome == 'DEF'}">Defaulting</option>
-		<option value="wonDEF" th:selected="${outcome == 'wonDEF'}">Won by defaulting</option>
-		<option value="lostDEF" th:selected="${outcome == 'lostDEF'}">Lost by defaulting</option>
-		<option value="ABD" th:selected="${outcome == 'ABD'}">Abandoned</option>
+		<option value="wonDEF" th:selected="${outcome == 'wonDEF'}" class="option-won">Won by defaulting</option>
+		<option value="lostDEF" th:selected="${outcome == 'lostDEF'}" class="option-lost">Lost by defaulting</option>
+		<option value="ABD" th:selected="${outcome == 'ABD'}" class="option-abd">Abandoned</option>
 		<option value="notPlayed" th:selected="${outcome == 'notPlayed'}">Not played</option>
 	</select>
 </div>

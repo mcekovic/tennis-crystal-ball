@@ -47,10 +47,10 @@
 				if (toSeason) params += "&toSeason=" + toSeason;
 			}
 			else {
-				var fromDate = getDate("rankingFromDate");
+				var fromDate = getDate("rankingFromDate", "from date");
 				if (fromDate == null) return;
 				else if (fromDate) params += "&fromDate=" + fromDate;
-				var toDate = getDate("rankingToDate");
+				var toDate = getDate("rankingToDate", "to date");
 				if (toDate == null) return;
 				else if (toDate) params += "&toDate=" + toDate;
 			}

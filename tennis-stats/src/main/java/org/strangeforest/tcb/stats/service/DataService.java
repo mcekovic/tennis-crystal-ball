@@ -75,6 +75,11 @@ public class DataService {
 		return jdbcTemplate.queryForList(SEASONS_QUERY, Integer.class);
 	}
 
+	public Integer getFirstSeason() {
+		List<Integer> seasons = getSeasons();
+		return !seasons.isEmpty() ? seasons.get(seasons.size() - 1) : null;
+	}
+
 	public Integer getLastSeason() {
 		List<Integer> seasons = getSeasons();
 		return !seasons.isEmpty() ? seasons.get(0) : null;

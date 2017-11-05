@@ -1,6 +1,8 @@
 package org.strangeforest.tcb.util;
 
+import java.text.*;
 import java.time.*;
+import java.time.format.*;
 import java.util.*;
 
 public abstract class DateUtil {
@@ -16,5 +18,13 @@ public abstract class DateUtil {
 			return ((java.sql.Date)date).toLocalDate();
 		else
 			return date != null ? date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
+	}
+
+	public static String formatDate(LocalDate date) {
+		return DateTimeFormatter.ofPattern(DATE_FORMAT).format(date);
+	}
+
+	public static String formatDate(Date date) {
+		return new SimpleDateFormat(DATE_FORMAT).format(date);
 	}
 }

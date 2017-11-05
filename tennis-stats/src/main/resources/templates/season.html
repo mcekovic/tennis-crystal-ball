@@ -4,23 +4,23 @@
 <!--/*@thymesVar id="tab" type="java.lang.String"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="params" type="org.strangeforest.tcb.stats.controller.ParamsUtil"*/-->
 <head th:replace="fragments/head :: commonHead('Season ' + ${season}, true, ~{::script}, _)">
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("#seasonPills").find("a").click(tabClick);
 			[# th:if="${tab}" th:switch="${tab}"]
-				[# th:case="'events'"] seasonEvents([[${level}]], [[${surface}]]); [/]
-				[# th:case="*"] $("#[(${tab})]Pill").click(); [/]
+				[# th:case="'events'"]
+				var $pill = $("#eventsPill");
+				var url = $pill.data("url") + [(${params.param('level', level)})] + [(${params.param('surface', surface)})];
+				loadTab($pill, url);
+				[/]
+				[# th:case="*"]
+				$("#[(${tab})]Pill").click();
+				[/]
 			[/]
 			[# th:unless="${tab}"] $("#recordsPill").click(); [/]
 		});
-		function seasonEvents(level, surface) {
-			var $pill = $("#eventsPill");
-			var url = $pill.data("url");
-			if (level) url += "&level=" + level;
-			if (surface) url += "&surface=" + surface;
-			loadTab($pill, url);
-		}
 	</script>
 </head>
 <body class="container">

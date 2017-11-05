@@ -13,8 +13,8 @@ import static java.lang.Math.*;
 @Service
 public class MinEntries {
 
-	@Autowired
-	private TournamentService tournamentService;
+	@Autowired private DataService dataService;
+	@Autowired private TournamentService tournamentService;
 
 	private static final int MIN_ENTRIES_SEASON_FACTOR =  10;
 	private static final int MIN_ENTRIES_EVENT_FACTOR  = 100;
@@ -35,11 +35,19 @@ public class MinEntries {
 		.put("GLD",    0.25)
 		.put("FMOABT", 0.75)
 	.build();
+	private static final Map<Integer, Double> MIN_ENTRIES_BEST_OF_WEIGHT_MAP = ImmutableMap.<Integer, Double>builder()
+		.put(3, 0.75)
+		.put(5, 0.25)
+	.build();
 	private static final Map<String, Double> MIN_ENTRIES_SURFACE_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
 		.put("H", 0.5)
 		.put("C", 0.5)
 		.put("G", 0.25)
 		.put("P", 0.25)
+	.build();
+	private static final Map<Boolean, Double> MIN_ENTRIES_INDOOR_WEIGHT_MAP = ImmutableMap.<Boolean, Double>builder()
+		.put(Boolean.FALSE, 0.75)
+		.put(Boolean.TRUE,  0.25)
 	.build();
 	private static final Map<String, Double> MIN_ENTRIES_ROUND_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
 		.put("F",    0.1)
@@ -56,6 +64,10 @@ public class MinEntries {
 		.put("R64",  0.25)
 		.put("R128", 0.1)
 		.put("RR",   0.05)
+	.build();
+	private static final Map<String, Double> MIN_ENTRIES_RESULT_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
+		.put("W",    0.05)
+		.putAll(MIN_ENTRIES_ROUND_WEIGHT_MAP)
 	.build();
 	private static final Map<String, Double> MIN_ENTRIES_OPPONENT_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
 		.put(Opponent.NO_1.name(), 0.05)
@@ -95,24 +107,38 @@ public class MinEntries {
 	private static final int MIN_ENTRIES_COUNTRY_FACTOR = 10;
 
 	public int getFilteredMinEntries(int minEntries, PerfStatsFilter filter) {
+		LocalDate today = LocalDate.now();
+		Range<LocalDate> dateRange = Range.closed(LocalDate.of(dataService.getFirstSeason(), 1, 1), today);
 		if (filter.hasSeason()) {
-			minEntries /= MIN_ENTRIES_SEASON_FACTOR;
-			LocalDate today = LocalDate.now();
-			if (filter.getSeason() == today.getYear() && today.getMonth().compareTo(Month.SEPTEMBER) <= 0)
-				minEntries /= 12.0 / today.getMonth().getValue();
+			Integer season = filter.getSeason();
+			dateRange = dateRange.intersection(Range.closed(LocalDate.of(season, 1, 1), LocalDate.of(season, 12, 31)));
 		}
 		if (filter.isLast52Weeks())
-			minEntries /= MIN_ENTRIES_SEASON_FACTOR;
+			dateRange = dateRange.intersection(Range.closed(today.minusYears(1), today));
+		if (filter.hasDateRange())
+			dateRange = dateRange.intersection(filter.getDateRange());
+		minEntries *= getMinEntriesWeight(Period.between(dateRange.lowerEndpoint(), dateRange.upperEndpoint()));
+
 		if (filter.hasLevel())
 			minEntries *= getMinEntriesWeight(filter.getLevel(), MIN_ENTRIES_LEVEL_WEIGHT_MAP);
+		else if (filter.hasBestOf())
+			minEntries *= getMinEntriesWeight(filter.getBestOf(), MIN_ENTRIES_BEST_OF_WEIGHT_MAP);
+
 		if (filter.hasSurface())
 			minEntries *= getMinEntriesSummedWeight(filter.getSurface(), MIN_ENTRIES_SURFACE_WEIGHT_MAP);
+		else if (filter.hasIndoor())
+			minEntries *= getMinEntriesWeight(filter.getIndoor(), MIN_ENTRIES_INDOOR_WEIGHT_MAP);
+		
 		if (filter.hasRound())
 			minEntries *= getMinEntriesWeight(filter.getRound(), MIN_ENTRIES_ROUND_WEIGHT_MAP);
+		else if (filter.hasResult())
+			minEntries *= getMinEntriesWeight(filter.getResult(), MIN_ENTRIES_RESULT_WEIGHT_MAP);
+
 		if (filter.hasTournamentEvent())
 			minEntries /= MIN_ENTRIES_EVENT_FACTOR;
 		else if (filter.hasTournament())
 			minEntries /= getMinEntriesTournamentFactor(filter.getTournamentId());
+		
 		if (filter.hasOpponent()) {
 			OpponentFilter opponentFilter = filter.getOpponentFilter();
 			if (opponentFilter.hasOpponent())
@@ -123,12 +149,29 @@ public class MinEntries {
 		return max(minEntries, 2);
 	}
 
-	private double getMinEntriesWeight(String item, Map<String, Double> weightMap) {
+	private <I> double getMinEntriesWeight(I item, Map<I, Double> weightMap) {
 		return weightMap.getOrDefault(item, 1.0);
 	}
 
 	private double getMinEntriesSummedWeight(String items, Map<String, Double> weightMap) {
 		return min(items.chars().mapToObj(i -> (char)i).mapToDouble(c -> weightMap.getOrDefault(c.toString(), 0.0)).sum(), 1.0);
+	}
+
+	private static double getMinEntriesWeight(Period period) {
+		int years = period.getYears();
+		if (years == 0) {
+			int months = period.getMonths();
+			if (months == 0)
+				return 0.1 / MIN_ENTRIES_SEASON_FACTOR;
+			else if (months < 10)
+				return months / (10.0 * MIN_ENTRIES_SEASON_FACTOR);
+			else
+				return 1.0 / MIN_ENTRIES_SEASON_FACTOR;
+		}
+		else if (years < MIN_ENTRIES_SEASON_FACTOR)
+			return Math.round((20.0 * years) / MIN_ENTRIES_SEASON_FACTOR) / 20.0;
+		else
+			return 1.0;
 	}
 
 	private double getMinEntriesTournamentFactor(int tournamentId) {
