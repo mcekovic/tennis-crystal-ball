@@ -231,11 +231,11 @@
 		<button type="button" class="btn btn-default pull-left margin-right" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
 			<span class="glyphicon glyphicon-erase"></span>
 		</button>
-		<div data-toggle="tooltip" data-placement="top" title="Advanced filters">
+		<span data-toggle="tooltip" data-placement="auto" title="Advanced filters">
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#matchesAdvancedFilter">
 				Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
 			</button>
-		</div>
+		</span>
 	</div>
 </div>
 <div id="matchesAdvancedFilter" class="row margin-top collapse" th:attrappend="class=${(score != null && score != '') || (countryId != null && countryId != '') ? ' in' : _}">
