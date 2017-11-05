@@ -8,6 +8,8 @@ import com.google.common.base.*;
 
 public class RivalryPlayerListFilter extends PlayerListFilter {
 
+	public static final RivalryPlayerListFilter ALL = new RivalryPlayerListFilter(null, RivalryFilter.ALL);
+
 	private final RivalryFilter rivalryFilter;
 
 	public RivalryPlayerListFilter(String searchPhrase, RivalryFilter rivalryFilter) {

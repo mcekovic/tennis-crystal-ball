@@ -12,6 +12,8 @@ import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class PlayerListFilter {
 
+	public static final PlayerListFilter ALL = new PlayerListFilter(null);
+
 	private final Boolean active;
 	private final String searchPhrase;
 	private String prefix = "";

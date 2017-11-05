@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.util.*;
+
 import org.junit.*;
 import org.junit.runner.*;
 import org.springframework.beans.factory.annotation.*;
@@ -15,6 +17,13 @@ import static org.assertj.core.api.Assertions.*;
 public class GOATListServiceIT {
 
 	@Autowired private GOATListService goatListService;
+
+	@Test
+	public void goatTopN() {
+		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+
+		assertThat(goatTopN).hasSize(10);
+	}
 
 	@Test
 	public void goatList() {

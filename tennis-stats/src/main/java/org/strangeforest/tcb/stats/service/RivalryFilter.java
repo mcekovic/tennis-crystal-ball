@@ -15,6 +15,8 @@ import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 public class RivalryFilter {
 
+	public static final RivalryFilter ALL = new RivalryFilter((Integer)null, null, null, null);
+
 	private final Range<Integer> seasonRange;
 	private final boolean last52Weeks;
 	private final String level;

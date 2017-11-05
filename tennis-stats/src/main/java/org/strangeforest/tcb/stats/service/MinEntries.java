@@ -10,7 +10,7 @@ import com.google.common.collect.*;
 
 import static java.lang.Math.*;
 
-@Component
+@Service
 public class MinEntries {
 
 	@Autowired
