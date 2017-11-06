@@ -44,7 +44,9 @@ abstract class BaseATPWorldTourTournamentLoader {
 			case 'atp':
 			case 'atpwt':
 			case 'challenger': return 'B'
-			default: throw new IllegalArgumentException('Unknown tournament level: ' + level)
+			default:
+				System.err.println "Unknown tournament level: $level"
+				return 'H'
 		}
 	}
 

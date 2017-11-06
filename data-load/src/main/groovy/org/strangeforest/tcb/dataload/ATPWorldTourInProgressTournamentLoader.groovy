@@ -95,8 +95,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def doc = retriedGetDoc(url)
 		def dates = doc.select('.tourney-dates').text()
 		def atpLevel = extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1)
-		if (atpLevel == 'itf') {
-			println "Skipping ITF tournament at '$url'"
+		if (!atpLevel || atpLevel == 'itf') {
+			println "Skipping tournament at '$url', unsupported level: $atpLevel"
 			return
 		}
 		level = level ?: mapLevel(atpLevel)
