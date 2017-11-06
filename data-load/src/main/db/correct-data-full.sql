@@ -6,6 +6,27 @@ WHERE player_id = (SELECT player_id FROM player_v WHERE name = 'Pat Cash') AND r
 
 COMMIT;
 
+-- Correct player names cases
+
+UPDATE player SET last_name = 'McEnroe'
+WHERE last_name = 'Mcenroe';
+
+COMMIT;
+
+
+-- Correct Lendl nationality in matches
+
+WITH lendl_id AS (
+	SELECT player_id FROM player_v WHERE name = 'Ivan Lendl'
+)
+UPDATE match
+SET winner_country_id = CASE WHEN winner_id = (SELECT player_id FROM lendl_id) THEN 'CZE' ELSE winner_country_id END,
+	loser_country_id = CASE WHEN loser_id = (SELECT player_id FROM lendl_id) THEN 'CZE' ELSE loser_country_id END
+WHERE (winner_id = (SELECT player_id FROM lendl_id) OR loser_id = (SELECT player_id FROM lendl_id))
+AND date < DATE '1992-07-07';
+
+COMMIT;
+
 
 -- Zverev Jr/Sr separation
 
