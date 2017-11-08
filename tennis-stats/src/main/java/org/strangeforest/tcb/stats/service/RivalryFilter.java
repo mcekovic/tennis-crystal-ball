@@ -15,36 +15,44 @@ import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 public class RivalryFilter {
 
-	public static final RivalryFilter ALL = new RivalryFilter((Integer)null, null, null, null);
+	public static final RivalryFilter ALL = new RivalryFilter((Integer)null, null, null, null, null, null);
 
 	private final Range<Integer> seasonRange;
 	private final boolean last52Weeks;
 	private final String level;
+	private final Integer bestOf;
 	private final String surface;
+	private final Boolean indoor;
 	private final String round;
 
 	private static final String LAST_52_WEEKS_CRITERION = " AND m.date >= current_date - INTERVAL '1 year'";
 	private static final String LEVEL_CRITERION         = " AND level = :level::tournament_level";
 	private static final String LEVELS_CRITERION        = " AND level::TEXT IN (:levels)";
+	private static final String BEST_OF_CRITERION       = " AND best_of = :bestOf";
 	private static final String SURFACE_CRITERION       = " AND m.surface = :surface::surface";
 	private static final String SURFACES_CRITERION      = " AND m.surface::TEXT IN (:surfaces)";
+	private static final String INDOOR_CRITERION        = " AND m.indoor = :indoor";
 	private static final String ROUND_CRITERION         = " AND round %1$s :round::match_round";
 
 	private static final int LAST_52_WEEKS_SEASON = -1;
 
-	public RivalryFilter(Range<Integer> seasonRange, String level, String surface, String round) {
+	public RivalryFilter(Range<Integer> seasonRange, String level, Integer bestOf, String surface, Boolean indoor, String round) {
 		this.seasonRange = seasonRange != null ? seasonRange : Range.all();
+		this.bestOf = bestOf;
+		this.indoor = indoor;
 		last52Weeks = false;
 		this.level = level;
 		this.surface = surface;
 		this.round = round;
 	}
 
-	public RivalryFilter(Integer season, String level, String surface, String round) {
+	public RivalryFilter(Integer season, String level, Integer bestOf, String surface, Boolean indoor, String round) {
 		this.seasonRange = season != null && season != LAST_52_WEEKS_SEASON ? Range.singleton(season) : Range.all();
 		last52Weeks = season != null && season == LAST_52_WEEKS_SEASON;
 		this.level = level;
+		this.bestOf = bestOf;
 		this.surface = surface;
+		this.indoor = indoor;
 		this.round = round;
 	}
 
@@ -60,8 +68,16 @@ public class RivalryFilter {
 		return level;
 	}
 
+	public Integer getBestOf() {
+		return bestOf;
+	}
+
 	public String getSurface() {
 		return surface;
+	}
+
+	public Boolean getIndoor() {
+		return indoor;
 	}
 
 	public String getRound() {
@@ -76,8 +92,16 @@ public class RivalryFilter {
 		return !isNullOrEmpty(level);
 	}
 
+	public boolean hasBestOf() {
+		return bestOf != null;
+	}
+
 	public boolean hasSurface() {
 		return !isNullOrEmpty(surface);
+	}
+
+	public boolean hasIndoor() {
+		return indoor != null;
 	}
 
 	public boolean hasRound() {
@@ -96,8 +120,12 @@ public class RivalryFilter {
 			criteria.append(LAST_52_WEEKS_CRITERION);
 		if (!isNullOrEmpty(level))
 			criteria.append(level.length() == 1 ? LEVEL_CRITERION : LEVELS_CRITERION);
+		if (bestOf != null)
+			criteria.append(BEST_OF_CRITERION);
 		if (!isNullOrEmpty(surface))
 			criteria.append(surface.length() == 1 ? SURFACE_CRITERION : SURFACES_CRITERION);
+		if (indoor != null)
+			criteria.append(INDOOR_CRITERION);
 		if (!isNullOrEmpty(round))
 			criteria.append(format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
 	}
@@ -116,12 +144,16 @@ public class RivalryFilter {
 			else
 				params.addValue("levels", asList(level.split("")));
 		}
+		if (bestOf != null)
+			params.addValue("bestOf", bestOf);
 		if (!isNullOrEmpty(surface)) {
 			if (surface.length() == 1)
 				params.addValue("surface", surface);
 			else
 				params.addValue("surfaces", asList(surface.split("")));
 		}
+		if (indoor != null)
+			params.addValue("indoor", indoor);
 		if (!isNullOrEmpty(round))
 			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 	}
@@ -133,11 +165,12 @@ public class RivalryFilter {
 		if (this == o) return true;
 		if (!(o instanceof RivalryFilter)) return false;
 		RivalryFilter filter = (RivalryFilter)o;
-		return seasonRange.equals(filter.seasonRange) && last52Weeks == filter.last52Weeks && stringsEqual(level, filter.level) && stringsEqual(surface, filter.surface) && stringsEqual(round, filter.round);
+		return seasonRange.equals(filter.seasonRange) && last52Weeks == filter.last52Weeks &&
+			stringsEqual(level, filter.level) && Objects.equals(bestOf, filter.bestOf) && stringsEqual(surface, filter.surface) && Objects.equals(indoor, filter.indoor) && stringsEqual(round, filter.round);
 	}
 
 	@Override public int hashCode() {
-		return Objects.hash(seasonRange, last52Weeks, emptyToNull(level), emptyToNull(surface), emptyToNull(round));
+		return Objects.hash(seasonRange, last52Weeks, emptyToNull(level), bestOf, emptyToNull(surface), indoor, emptyToNull(round));
 	}
 
 	@Override public String toString() {
@@ -145,7 +178,9 @@ public class RivalryFilter {
 			.add("seasonRange", seasonRange.equals(Range.all()) ? null : seasonRange)
 			.add("last52Weeks", last52Weeks ? true : null)
 			.add("level", emptyToNull(level))
+			.add("bestOf", bestOf)
 			.add("surface", emptyToNull(surface))
+			.add("indoor", indoor)
 			.add("round", emptyToNull(round))
 			.toString();
 	}

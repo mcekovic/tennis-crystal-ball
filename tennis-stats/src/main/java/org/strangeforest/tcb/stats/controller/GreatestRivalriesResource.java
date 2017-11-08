@@ -8,6 +8,7 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
+import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
 
@@ -26,16 +27,19 @@ public class GreatestRivalriesResource {
 
 	@GetMapping("/greatestRivalriesTable")
 	public BootgridTable<GreatestRivalry> greatestRivalriesTable(
-		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "bestRank", required = false) Integer bestRank,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam Map<String, String> requestParams
 	) {
-		RivalryFilter filter = new RivalryFilter(season, level, surface, round);
+		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, bestOf, surface, indoor, round);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
 		return rivalriesService.getGreatestRivalriesTable(filter, bestRank, orderBy, pageSize, current);
@@ -43,12 +47,15 @@ public class GreatestRivalriesResource {
 
 	@GetMapping("/greatestRivalriesMinMatches")
 	public int greatestRivalriesMinMatches(
-		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "round", required = false) String round
 	) {
-		RivalryFilter filter = new RivalryFilter(season, level, surface, round);
+		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, bestOf, surface, indoor, round);
 		return rivalriesService.getGreatestRivalriesMinMatches(filter);
 	}
 }

@@ -17,6 +17,7 @@ public class MinEntries {
 	@Autowired private TournamentService tournamentService;
 
 	private static final int MIN_ENTRIES_SEASON_FACTOR =  10;
+	private static final int MIN_ENTRIES_MONTH_FACTOR  =  10;
 	private static final int MIN_ENTRIES_EVENT_FACTOR  = 100;
 	private static final Map<String, Double> MIN_ENTRIES_LEVEL_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
 		.put("G",      0.25)
@@ -162,14 +163,14 @@ public class MinEntries {
 		if (years == 0) {
 			int months = period.getMonths();
 			if (months == 0)
-				return 0.1 / MIN_ENTRIES_SEASON_FACTOR;
-			else if (months < 10)
-				return months / (10.0 * MIN_ENTRIES_SEASON_FACTOR);
+				months = 1;
+			if (months < 10)
+				return ((double)months) / (MIN_ENTRIES_SEASON_FACTOR * MIN_ENTRIES_MONTH_FACTOR);
 			else
 				return 1.0 / MIN_ENTRIES_SEASON_FACTOR;
 		}
 		else if (years < MIN_ENTRIES_SEASON_FACTOR)
-			return Math.round((20.0 * years) / MIN_ENTRIES_SEASON_FACTOR) / 20.0;
+			return Math.round(20.0 * years / MIN_ENTRIES_SEASON_FACTOR) / 20.0;
 		else
 			return 1.0;
 	}

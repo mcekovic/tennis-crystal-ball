@@ -25,9 +25,12 @@
 				},
 				url: "/greatestRivalriesTable",
 				requestHandler: function(request) {
-					request.season = $("#season").val();
+					request.fromSeason = $("#fromSeason").val();
+					request.toSeason = $("#toSeason").val();
 					request.level = $("#level").val();
+					request.bestOf = $("#bestOf").val();
 					request.surface = $("#surface").val();
+					request.indoor = $("#indoor").val();
 					request.round = $("#round").val();
 					request.bestRank = $("#bestRank").val();
 					return request;
@@ -77,12 +80,11 @@
 				});
 			});
 			var $search = $("#greatestRivalriesTable-header").find("div.search");
-			$search.before($("#seasonDiv").remove());
 			$search.before($("#levelDiv").remove());
 			$search.before($("#surfaceDiv").remove());
 			$search.before($("#roundDiv").remove());
-			$search.before($("#bestRankDiv").remove());
 			$search.before($("#clearDiv").remove());
+			$search.after($("#advFilterDiv").remove());
 			$search.remove();
 			$rivalriesTable.find("th[data-column-id='rivalry'] > a > span.text").html("<span title='Player with more GOAT points is on the left side'>Rivalry</span>");
 			filterChanged();
@@ -102,7 +104,7 @@
 			return name;
 		}
 		function filterChanged() {
-			var url = "/greatestRivalriesMinMatches?season=" + $("#season").val() + "&level=" + $("#level").val() + "&surface=" + $("#surface").val() + "&round=" + encodeURIComponent($("#round").val());
+			var url = "/greatestRivalriesMinMatches?fromSeason=" + $("#fromSeason").val() + "&toSeason=" + $("#toSeason").val() + "&level=" + $("#level").val() + "&bestOf=" + $("#bestOf").val() + "&surface=" + $("#surface").val() + "&indoor=" + $("#indoor").val() + "&round=" + encodeURIComponent($("#round").val());
 			$.get(url, function (data) {
 				$("#minMatches").html(data);
 			});
@@ -113,24 +115,36 @@
 		}
 		function rivalryFilterParams() {
 			var params = "";
-			var season = $("#season").val();
-			if (season)
-				params += "&season=" + season;
+			var fromSeason = $("#fromSeason").val();
+			if (fromSeason)
+				params += "&fromDate=01-01-" + fromSeason;
+			var toSeason = $("#toSeason").val();
+			if (toSeason)
+				params += "&toDate=31-12-" + toSeason;
 			var level = $("#level").val();
 			if (level)
 				params += "&level=" + level;
+			var bestOf = $("#bestOf").val();
+			if (bestOf)
+				params += "&bestOf=" + bestOf;
 			var surface = $("#surface").val();
 			if (surface)
 				params += "&surface=" + surface;
+			var indoor = $("#indoor").val();
+			if (indoor)
+				params += "&indoor=" + indoor;
 			var round = $("#round").val();
 			if (round)
 				params += "&round=" + encodeURIComponent(encodeURIComponent(round));
 			return params;
 		}
 		function clearGreatestRivalriesFilter() {
-			$("#season").val("");
+			$("#fromSeason").val("");
+			$("#toSeason").val("");
 			$("#level").val("");
+			$("#bestOf").val("");
 			$("#surface").val("");
+			$("#indoor").val("");
 			$("#round").val("");
 			$("#bestRank").val("");
 			reloadGreatestRivalries();
@@ -144,13 +158,51 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>Greatest Rivalries</h3>
-	<div id="seasonDiv" class="btn-group pull-left margin-right no-margin-left">
-		<select id="season" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
-			<option value="">Career</option>
-			<option value="-1">Last 52 weeks</option>
-			<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
-		</select>
+	<div class="row">
+		<div class="col-md-8">
+			<h3 class="text-nowrap" style="display: inline">Greatest Rivalries</h3>
+		</div>
+		<div class="col-md-4">
+			<div class="input-group">
+				<label for="fromSeason" class="input-group-addon">From:</label>
+				<select id="fromSeason" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Select from season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
+				<label for="toSeason" class="input-group-addon">To:</label>
+				<select id="toSeason" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Select to season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<div id="advancedFilter" class="collapse row margin-top">
+		<div class="col-md-2">
+			<select id="bestRank" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by player best rank">
+				<option value="">All players</option>
+				<option value="1">Between once No. 1</option>
+				<option value="2">Between once Top 2</option>
+				<option value="3">Between once Top 3</option>
+				<option value="5">Between once Top 5</option>
+				<option value="10">Between once Top 10</option>
+				<option value="20">Between once Top 20</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="bestOf" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+				<option value="">Best of any</option>
+				<option value="3">Best of 3</option>
+				<option value="5">Best of 5</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="indoor" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+				<option value="">Outdoor / Indoor</option>
+				<option value="false">Outdoor</option>
+				<option value="true">Indoor</option>
+			</select>
+		</div>
 	</div>
 	<div id="levelDiv" class="btn-group pull-left margin-right">
 		<select id="level" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
@@ -172,21 +224,17 @@
 			<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
 		</select>
 	</div>
-	<div id="bestRankDiv" class="btn-group pull-left margin-right">
-		<select id="bestRank" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by player best rank">
-			<option value="">All players</option>
-			<option value="1">Between once No. 1</option>
-			<option value="2">Between once Top 2</option>
-			<option value="3">Between once Top 3</option>
-			<option value="5">Between once Top 5</option>
-			<option value="10">Between once Top 10</option>
-			<option value="20">Between once Top 20</option>
-		</select>
-	</div>
-	<div id="clearDiv" class="btn-group pull-left margin-right">
+	<div id="clearDiv" class="btn-group margin-right">
 		<button type="button" class="btn btn-default" onclick="clearGreatestRivalriesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<span class="glyphicon glyphicon-erase"></span>
+			<span class="glyphicon glyphicon-erase"></span>&nbsp;&nbsp;Clear
 		</button>
+	</div>
+	<div id="advFilterDiv" class="btn-group pull-right margin-left">
+		<div data-toggle="tooltip" data-placement="auto" title="Advanced filters">
+			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advancedFilter">
+				<span class="glyphicon glyphicon-filter"></span>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-up"></span>
+			</button>
+		</div>
 	</div>
 	<table id="greatestRivalriesTable" class="table table-condensed table-hover table-striped">
 		<thead>

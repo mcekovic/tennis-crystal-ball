@@ -47,7 +47,7 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "searchPhrase") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		RivalryFilter rivalryFilter = new RivalryFilter(season, level, surface, round);
+		RivalryFilter rivalryFilter = new RivalryFilter(season, level, null, surface, null, round);
 		RivalryPlayerListFilter filter = new RivalryPlayerListFilter(searchPhrase, rivalryFilter);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;

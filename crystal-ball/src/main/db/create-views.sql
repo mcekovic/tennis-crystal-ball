@@ -342,7 +342,7 @@ WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T') AND (m.outcome IS
 -- match_for_rivalry_v
 
 CREATE OR REPLACE VIEW match_for_rivalry_v AS
-SELECT m.match_id, m.winner_id, m.loser_id, e.season, m.date, e.level, m.surface, m.round
+SELECT m.match_id, m.winner_id, m.loser_id, e.season, m.date, e.level, m.best_of, m.surface, m.indoor, m.round
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T');

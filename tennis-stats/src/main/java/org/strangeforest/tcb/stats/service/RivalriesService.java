@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
-import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
@@ -25,10 +24,12 @@ import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 public class RivalriesService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
+	@Autowired private DataService dataService;
 
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES = 20;
 	private static final int MIN_GREATEST_RIVALRIES_MATCHES_MIN = 2;
-	private static final int MIN_MATCHES_SEASON_FACTOR = 8;
+	private static final int MIN_MATCHES_SEASON_FACTOR = 10;
+	private static final int MIN_MATCHES_MONTH_FACTOR = 10;
 	private static final Map<String, Double> MIN_MATCHES_LEVEL_FACTOR = ImmutableMap.<String, Double>builder()
 		.put("G",       4.0)
 		.put("F",       8.0)
@@ -46,6 +47,10 @@ public class RivalriesService {
 		.put("GLD",     3.5)
 		.put("FMOABT",  1.3)
 	.build();
+	private static final Map<Integer, Double> MIN_MATCHES_BEST_OF_FACTOR = ImmutableMap.<Integer, Double>builder()
+		.put(3, 1.4)
+		.put(5, 3.0)
+	.build();
 	private static final Map<String, Double> MIN_MATCHES_SURFACE_FACTOR = ImmutableMap.<String, Double>builder()
 		.put("H",   2.0)
 		.put("C",   2.2)
@@ -60,6 +65,10 @@ public class RivalriesService {
 		.put("HGP", 1.4)
 		.put("HCP", 1.2)
 		.put("HCG", 1.3)
+	.build();
+	private static final Map<Boolean, Double> MIN_MATCHES_INDOOR_FACTOR = ImmutableMap.<Boolean, Double>builder()
+		.put(Boolean.FALSE, 1.3)
+		.put(Boolean.TRUE,  3.0)
 	.build();
 	private static final Map<String, Double> MIN_MATCHES_ROUND_FACTOR = ImmutableMap.<String, Double>builder()
 		.put("F",     5.0)
@@ -319,45 +328,56 @@ public class RivalriesService {
 
 	public int getGreatestRivalriesMinMatches(RivalryFilter filter) {
 		double minMatches = MIN_GREATEST_RIVALRIES_MATCHES;
+
+		LocalDate today = LocalDate.now();
+		Range<LocalDate> dateRange = Range.closed(LocalDate.of(dataService.getFirstSeason(), 1, 1), today);
 		if (filter.hasSeason()) {
-			minMatches /= MIN_MATCHES_SEASON_FACTOR;
-			LocalDate today = LocalDate.now();
 			Range<Integer> seasonRange = filter.getSeasonRange();
-			if (RangeUtil.isSingleton(seasonRange) && seasonRange.lowerEndpoint() == today.getYear() && today.getMonth().compareTo(Month.SEPTEMBER) <= 0)
-				minMatches /= 12.0 / today.getMonth().getValue();
+			dateRange = dateRange.intersection(RangeUtil.toRange(
+				seasonRange.hasLowerBound() ? LocalDate.of(seasonRange.lowerEndpoint(), 1, 1) : null,
+				seasonRange.hasUpperBound() ? LocalDate.of(seasonRange.upperEndpoint(), 12, 31) : null)
+			);
 		}
 		if (filter.isLast52Weeks())
-			minMatches /= MIN_MATCHES_SEASON_FACTOR;
+			dateRange = dateRange.intersection(Range.closed(today.minusYears(1), today));
+		minMatches /= getMinEntriesFactor(Period.between(dateRange.lowerEndpoint(), dateRange.upperEndpoint()));
+
 		if (filter.hasLevel())
-			minMatches /= getMinMatchesLevelFactor(filter.getLevel());
+			minMatches /= getMinEntriesFactor(filter.getLevel(), MIN_MATCHES_LEVEL_FACTOR);
+		else if (filter.hasBestOf())
+			minMatches /= getMinEntriesFactor(filter.getBestOf(), MIN_MATCHES_BEST_OF_FACTOR);
+
 		if (filter.hasSurface())
-			minMatches /= getMinMatchesSurfaceFactor(filter.getSurface());
+			minMatches /= getMinEntriesFactor(filter.getSurface(), MIN_MATCHES_SURFACE_FACTOR);
+		else if (filter.hasIndoor())
+			minMatches /= getMinEntriesFactor(filter.getIndoor(), MIN_MATCHES_INDOOR_FACTOR);
+
 		if (filter.hasRound())
-			minMatches /= getMinMatchesRoundFactor(filter.getRound());
+			minMatches /= getMinEntriesFactor(filter.getRound(), MIN_MATCHES_ROUND_FACTOR);
+
 		return Math.max((int)Math.round(minMatches), MIN_GREATEST_RIVALRIES_MATCHES_MIN);
 	}
 
-	private double getMinMatchesLevelFactor(String level) {
-		Double factor = MIN_MATCHES_LEVEL_FACTOR.get(level);
-		if (factor == null)
-			throw new NotFoundException("Level factor", level);
-		return factor;
+	private <I> double getMinEntriesFactor(I item, Map<I, Double> factorMap) {
+		return factorMap.getOrDefault(item, 1.0);
 	}
 
-	private double getMinMatchesSurfaceFactor(String surface) {
-		Double factor = MIN_MATCHES_SURFACE_FACTOR.get(surface);
-		if (factor == null)
-			throw new NotFoundException("Surface factor", surface);
-		return factor;
+	private static double getMinEntriesFactor(Period period) {
+		int years = period.getYears();
+		if (years == 0) {
+			int months = period.getMonths();
+			if (months == 0)
+				months = 1;
+			if (months < 10)
+				return ((double)MIN_MATCHES_SEASON_FACTOR * MIN_MATCHES_MONTH_FACTOR) / months;
+			else
+				return MIN_MATCHES_SEASON_FACTOR;
+		}
+		else if (years < MIN_MATCHES_SEASON_FACTOR)
+			return Math.round(20.0 * MIN_MATCHES_SEASON_FACTOR / years) / 20.0;
+		else
+			return 1.0;
 	}
-
-	private double getMinMatchesRoundFactor(String round) {
-		Double factor = MIN_MATCHES_ROUND_FACTOR.get(round);
-		if (factor == null)
-			throw new NotFoundException("Round factor", round);
-		return factor;
-	}
-
 
 	private static WonLost mapWonLost(ResultSet rs) throws SQLException {
 		return new WonLost(rs.getInt("won"), rs.getInt("lost"), rs.getInt("matches"));

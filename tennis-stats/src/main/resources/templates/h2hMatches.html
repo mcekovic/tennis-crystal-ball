@@ -10,8 +10,12 @@
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentItem>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
+<!--/*@thymesVar id="toDate" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <script type="text/javascript">
 	$(function() {
@@ -214,27 +218,27 @@
 		</div>
 	</div>
 </div>
-<div id="matchesAdvancedFilter" class="collapse row margin-top">
+<div id="matchesAdvancedFilter" class="collapse row margin-top" th:attrappend="class=${fromDate != null || toDate != null || bestOf != null || indoor != null ? ' in' : _}">
 	<div class="col-md-4">
 		<div id="matchesDateRange" class="input-group">
 			<label for="matchesFromDate" class="input-group-addon">From:</label>
-			<input id="matchesFromDate" type="text" maxlength="10" class="form-control" onchange="reloadMatches()"/>
+			<input id="matchesFromDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(fromDate, 'dd-MM-yyyy')}" onchange="reloadMatches()"/>
 			<label for="matchesToDate" class="input-group-addon">To:</label>
-			<input id="matchesToDate" type="text" maxlength="10" class="form-control" onchange="reloadMatches()"/>
+			<input id="matchesToDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(toDate, 'dd-MM-yyyy')}" onchange="reloadMatches()"/>
 		</div>
 	</div>
 	<div class="col-md-2">
 		<select id="matchesIndoor" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
 			<option value="">Outdoor / Indoor</option>
-			<option value="false">Outdoor</option>
-			<option value="true">Indoor</option>
+			<option value="false" th:selected="${indoor == false}">Outdoor</option>
+			<option value="true" th:selected="${indoor}">Indoor</option>
 		</select>
 	</div>
 	<div class="col-md-2">
 		<select id="matchesBestOf" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
 			<option value="">Best of any</option>
-			<option value="3">Best of 3</option>
-			<option value="5">Best of 5</option>
+			<option value="3" th:selected="${bestOf == 3}">Best of 3</option>
+			<option value="5" th:selected="${bestOf == 5}">Best of 5</option>
 		</select>
 	</div>
 	<div class="col-md-2">
