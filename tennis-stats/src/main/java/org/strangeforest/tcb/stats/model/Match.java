@@ -9,6 +9,7 @@ public class Match {
 	private final int tournamentEventId;
 	private final String tournament;
 	private final String level;
+	private final int bestOf;
 	private final String surface;
 	private final boolean indoor;
 	private final String round;
@@ -18,13 +19,14 @@ public class Match {
 	private final String outcome;
 	private final boolean hasStats;
 
-	public Match(long id, Date date, int tournamentEventId, String tournament, String level, String surface, boolean indoor, String round,
+	public Match(long id, Date date, int tournamentEventId, String tournament, String level, int bestOf, String surface, boolean indoor, String round,
 	             MatchPlayer winner, MatchPlayer loser, String score, String outcome, boolean hasStats) {
 		this.id = id;
 		this.date = date;
 		this.tournamentEventId = tournamentEventId;
 		this.tournament = tournament;
 		this.level = level;
+		this.bestOf = bestOf;
 		this.surface = surface;
 		this.indoor = indoor;
 		this.round = round;
@@ -53,6 +55,10 @@ public class Match {
 
 	public String getLevel() {
 		return level;
+	}
+
+	public int getBestOf() {
+		return bestOf;
 	}
 
 	public String getSurface() {

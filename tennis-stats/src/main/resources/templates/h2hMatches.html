@@ -71,6 +71,9 @@
 		$search.after($("#rivalryStats-[(${player1.id})]").remove());
 		$search.after($("#clearDiv").remove());
 		dateRangePicker("matchesFromDate", "matchesToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
+		setBootgridTitles($matchesTable, [
+			{id: "bestOf", title: "Best of"}
+		]);
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function reloadMatches() {
@@ -295,6 +298,7 @@
 		<th data-column-id="round" data-width="75">Round</th>
 		<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
 		<th data-column-id="matchEx" data-formatter="matchEx" data-sortable="false" data-visible="false" data-width="450">Match Ex</th>
+		<th data-column-id="bestOf" data-width="50" data-visible="false">BO</th>
 		<th data-column-id="score" data-sortable="false" data-width="175">Score</th>
 		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>
 	</tr>
