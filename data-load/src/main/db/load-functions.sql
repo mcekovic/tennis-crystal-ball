@@ -911,11 +911,11 @@ BEGIN
 	END IF;
 
 	UPDATE tournament_event
-	SET surface = p_surface::surface, indoor = p_indoor
+	SET surface = coalesce(p_surface::surface, surface), indoor = coalesce(p_indoor, indoor)
 	WHERE tournament_event_id = l_tournament_event_id;
 
 	UPDATE match
-	SET surface = p_surface::surface, indoor = p_indoor
+	SET surface = coalesce(p_surface::surface, surface), indoor = coalesce(p_indoor, indoor)
 	WHERE tournament_event_id = l_tournament_event_id;
 END;
 $$ LANGUAGE plpgsql;

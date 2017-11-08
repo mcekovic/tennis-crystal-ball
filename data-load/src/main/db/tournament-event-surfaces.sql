@@ -67,6 +67,92 @@ PERFORM set_tournament_event_surface(1976, 'Montreal / Toronto', 'C', FALSE);
 PERFORM set_tournament_event_surface(1977, 'Tournament of Champions WCT', 'H', FALSE);
 PERFORM set_tournament_event_surface(1977, 'Montreal / Toronto', 'C', FALSE);
 
+-- 2013
+PERFORM set_tournament_event_surface(2013, 'Montpellier', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Zagreb', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Rotterdam', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'San Jose', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Sao Paulo', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Marseille', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Memphis', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Metz', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'St. Petersburg', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Bangkok', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Kuala Lumpur', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Moscow', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Stockholm', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Vienna', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Basel', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Valencia', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Paris Masters', NULL, TRUE);
+PERFORM set_tournament_event_surface(2013, 'Tour Finals', NULL, TRUE);
+
+-- 2014
+PERFORM set_tournament_event_surface(2014, 'Montpellier', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Zagreb', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Memphis', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Rotterdam', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Marseille', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Sao Paulo', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Metz', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Kuala Lumpur', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Moscow', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Stockholm', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Vienna', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Basel', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Valencia', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Paris Masters', NULL, TRUE);
+PERFORM set_tournament_event_surface(2014, 'Tour Finals', NULL, TRUE);
+
+-- 2015
+PERFORM set_tournament_event_surface(2015, 'Montpellier', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Zagreb', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Memphis', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Rotterdam', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Sao Paulo', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Marseille', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Metz', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'St. Petersburg', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Kuala Lumpur', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Moscow', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Stockholm', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Basel', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Vienna', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Valencia', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Paris Masters', NULL, TRUE);
+PERFORM set_tournament_event_surface(2015, 'Tour Finals', NULL, TRUE);
+
+-- 2016
+PERFORM set_tournament_event_surface(2016, 'Montpellier', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Sofia', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Memphis', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Rotterdam', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Marseille', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Metz', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'St.Petersburg', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Antwerp', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Moscow', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Stockholm', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Basel', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Vienna', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Paris Masters', NULL, TRUE);
+PERFORM set_tournament_event_surface(2016, 'Tour Finals', NULL, TRUE);
+
+-- 2017
+PERFORM set_tournament_event_surface(2017, 'Montpellier', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Sofia', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Memphis', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Rotterdam', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Marseille', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Metz', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'St. Petersburg', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Antwerp', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Moscow', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Stockholm', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Basel', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Vienna', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Paris Masters', NULL, TRUE);
+
 END $$;
 
 COMMIT;
