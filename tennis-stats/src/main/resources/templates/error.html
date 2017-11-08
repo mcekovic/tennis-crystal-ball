@@ -12,7 +12,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>Unexpected error occurred</h3>
+	<h3 th:text="${status == 404 ? 'Object Not Found' : 'Unexpected Error Occurred'}">Unexpected error occurred</h3>
 	<div>Error: [[${error}]] ([[${status}]])</div>
 	<div>Path: [[${path}]]</div>
 	<div id="created">Timestamp: [[${timestamp}]]</div>

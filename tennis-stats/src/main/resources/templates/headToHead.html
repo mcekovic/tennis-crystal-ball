@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:with="bothPlayersSelected=${player1 != null && player2 != null}, anyPlayerSelected=${player1 != null || player2 != null}, neitherPlayerSelected=${player1 == null && player2 == null}, samePlayersSelected=${bothPlayersSelected && player1.id == player2.id}">
 <!--/*@thymesVar id="player1" type="org.strangeforest.tcb.stats.model.Player"*/-->
-<!--/*@thymesVar id="playerRef1" type="java.lang.String"*/-->
 <!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.Player"*/-->
-<!--/*@thymesVar id="playerRef2" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tab" type="java.lang.String"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
@@ -92,7 +90,6 @@
 				<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -3px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
 				<a th:href="@{/playerProfile(playerId=${player1.id})}" th:text="${player1.name}">Roger Federer</a>
 			</h3>
-			<h3 th:if="${player1 == null && playerRef1 != null}" th:text="'Player ' + ${playerRef1}  + ' not found.'">Player not found.</h3>
 		</div>
 		<div class="col-xs-2 text-center text-nowrap">
 			<h3>
@@ -106,7 +103,6 @@
 				<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="margin-top: -3px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
 				<a th:href="@{/playerProfile(playerId=${player2.id})}" th:text="${player2.name}">Rafael Nadal</a>
 			</h3>
-			<h3 th:if="${player2 == null && playerRef2 != null}" th:text="'Player ' + ${playerRef2}  + ' not found.'">Player not found.</h3>
 		</div>
 	</div>
 	<br th:if="${neitherPlayerSelected}"/>

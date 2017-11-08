@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
+import org.strangeforest.tcb.stats.util.*;
 
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
@@ -24,17 +25,20 @@ public class PlayerService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
-	private static final String PLAYER_SELECT =
+	private static final String PLAYER_BY_ID_QUERY =
 		"SELECT player_id, name, dob, extract(YEAR FROM age) AS age, country_id, birthplace, residence, height, weight,\n" +
 		"  hand, backhand, active, turned_pro, coach, web_site, facebook, twitter,\n" +
 		"  titles, grand_slams, tour_finals, alt_finals, masters, olympics,\n" +
 		"  current_rank, current_rank_points, best_rank, best_rank_date,\n" +
 		"  current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,\n" +
 		"  goat_rank, goat_points, weeks_at_no1\n" +
-		"FROM player_v";
-
-	private static final String PLAYER_BY_NAME_QUERY = PLAYER_SELECT + "\nWHERE name = :name ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
-	private static final String PLAYER_BY_ID_QUERY = PLAYER_SELECT + "\nWHERE player_id = :playerId";
+		"FROM player_v\n" +
+		"WHERE player_id = :playerId";
+	
+	private static final String PLAYER_ID_BY_NAME_QUERY =
+		"SELECT player_id FROM player_v\n" +
+		"WHERE name = :name\n" +
+		"ORDER BY goat_points DESC NULLS LAST, best_rank DESC NULLS LAST LIMIT 1";
 
 	private static final String PLAYER_NAME_QUERY =
 		"SELECT name FROM player_v\n" +
@@ -74,13 +78,27 @@ public class PlayerService {
 	private static final int AUTOCOMPLETE_EX_THRESHOLD = 5;
 
 	@Cacheable("Player")
-	public Optional<Player> getPlayer(int playerId) {
-		return jdbcTemplate.query(PLAYER_BY_ID_QUERY, params("playerId", playerId), this::playerExtractor);
+	public Player getPlayer(int playerId) {
+		return jdbcTemplate.query(PLAYER_BY_ID_QUERY, params("playerId", playerId), rs -> {
+			if (rs.next())
+				return mapPlayer(rs);
+			else
+				throw new NotFoundException("Player", playerId);
+		});
 	}
 
-	@Cacheable("PlayerByName")
-	public Optional<Player> getPlayer(String name) {
-		return jdbcTemplate.query(PLAYER_BY_NAME_QUERY, params("name", name), this::playerExtractor);
+	public Player getPlayer(String name) {
+		return getPlayer(getPlayerId(name));
+	}
+
+	@Cacheable("PlayerIdByName")
+	public Integer getPlayerId(String name) {
+		return jdbcTemplate.query(PLAYER_ID_BY_NAME_QUERY, params("name", name), rs -> {
+			if (rs.next())
+				return rs.getInt("player_id");
+			else
+				throw new NotFoundException("Player", name);
+		});
 	}
 
 	@Cacheable("PlayerName")
@@ -174,51 +192,47 @@ public class PlayerService {
 
 	// Util
 
-	private Optional<Player> playerExtractor(ResultSet rs) throws SQLException {
-		if (rs.next()) {
-			Player p = new Player(rs.getInt("player_id"));
-			p.setName(rs.getString("name"));
-			p.setDob(rs.getDate("dob"));
-			p.setAge(rs.getInt("age"));
-			p.setCountryId(rs.getString("country_id"));
-			p.setBirthplace(rs.getString("birthplace"));
-			p.setResidence(rs.getString("residence"));
-			p.setHeight(rs.getInt("height"));
-			p.setWeight(rs.getInt("weight"));
-			p.setHand(rs.getString("hand"));
-			p.setBackhand(rs.getString("backhand"));
-			p.setActive(rs.getBoolean("active"));
-			p.setTurnedPro(rs.getInt("turned_pro"));
-			p.setCoach(rs.getString("coach"));
-			p.setWebSite(rs.getString("web_site"));
-			p.setFacebook(rs.getString("facebook"));
-			p.setTwitter(rs.getString("twitter"));
+	private Player mapPlayer(ResultSet rs) throws SQLException {
+		Player p = new Player(rs.getInt("player_id"));
+		p.setName(rs.getString("name"));
+		p.setDob(rs.getDate("dob"));
+		p.setAge(rs.getInt("age"));
+		p.setCountryId(rs.getString("country_id"));
+		p.setBirthplace(rs.getString("birthplace"));
+		p.setResidence(rs.getString("residence"));
+		p.setHeight(rs.getInt("height"));
+		p.setWeight(rs.getInt("weight"));
+		p.setHand(rs.getString("hand"));
+		p.setBackhand(rs.getString("backhand"));
+		p.setActive(rs.getBoolean("active"));
+		p.setTurnedPro(rs.getInt("turned_pro"));
+		p.setCoach(rs.getString("coach"));
+		p.setWebSite(rs.getString("web_site"));
+		p.setFacebook(rs.getString("facebook"));
+		p.setTwitter(rs.getString("twitter"));
 
-			p.setTitles(rs.getInt("titles"));
-			p.setGrandSlams(rs.getInt("grand_slams"));
-			p.setTourFinals(rs.getInt("tour_finals"));
-			p.setAltFinals(rs.getInt("alt_finals"));
-			p.setMasters(rs.getInt("masters"));
-			p.setOlympics(rs.getInt("olympics"));
+		p.setTitles(rs.getInt("titles"));
+		p.setGrandSlams(rs.getInt("grand_slams"));
+		p.setTourFinals(rs.getInt("tour_finals"));
+		p.setAltFinals(rs.getInt("alt_finals"));
+		p.setMasters(rs.getInt("masters"));
+		p.setOlympics(rs.getInt("olympics"));
 
-			p.setCurrentRank(rs.getInt("current_rank"));
-			p.setCurrentRankPoints(rs.getInt("current_rank_points"));
-			p.setBestRank(rs.getInt("best_rank"));
-			p.setBestRankDate(rs.getDate("best_rank_date"));
-			p.setCurrentEloRank(rs.getInt("current_elo_rank"));
-			p.setCurrentEloRating(rs.getInt("current_elo_rating"));
-			p.setBestEloRank(rs.getInt("best_elo_rank"));
-			p.setBestEloRankDate(rs.getDate("best_elo_rank_date"));
-			p.setBestEloRating(rs.getInt("best_elo_rating"));
-			p.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
-			p.setGoatRank(rs.getInt("goat_rank"));
-			p.setGoatPoints(rs.getInt("goat_points"));
-			p.setWeeksAtNo1(rs.getInt("weeks_at_no1"));
+		p.setCurrentRank(rs.getInt("current_rank"));
+		p.setCurrentRankPoints(rs.getInt("current_rank_points"));
+		p.setBestRank(rs.getInt("best_rank"));
+		p.setBestRankDate(rs.getDate("best_rank_date"));
+		p.setCurrentEloRank(rs.getInt("current_elo_rank"));
+		p.setCurrentEloRating(rs.getInt("current_elo_rating"));
+		p.setBestEloRank(rs.getInt("best_elo_rank"));
+		p.setBestEloRankDate(rs.getDate("best_elo_rank_date"));
+		p.setBestEloRating(rs.getInt("best_elo_rating"));
+		p.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
+		p.setGoatRank(rs.getInt("goat_rank"));
+		p.setGoatPoints(rs.getInt("goat_points"));
+		p.setWeeksAtNo1(rs.getInt("weeks_at_no1"));
 
-			return Optional.of(p);
-		}
-		else
-			return Optional.empty();
+		return p;
 	}
 
 	private AutocompleteOption playerAutocompleteOptionMapper(ResultSet rs, int rowNum) throws SQLException {

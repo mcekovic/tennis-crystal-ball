@@ -9,6 +9,7 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
 import static java.lang.String.*;
+import static java.util.Collections.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
@@ -102,6 +103,8 @@ public class PerformanceService {
 		"GROUP BY r.result\n" +
 		"ORDER BY r.result DESC";
 
+	private static final String PLAYER_SURFACE_TITLES_QUERY =
+		"SELECT hard, clay, grass, carpet FROM player_titles WHERE player_id = :playerId";
 
 	public PlayerPerformance getPlayerPerformance(int playerId) {
 		return getPlayerPerformance(playerId, PerfStatsFilter.ALL);
@@ -241,5 +244,26 @@ public class PerformanceService {
 
 	private static WonLost mapWonLost(ResultSet rs) throws SQLException {
 		return new WonLost(rs.getInt("p_matches"), rs.getInt("o_matches"));
+	}
+
+
+	// Player surface titles
+
+	public Map<String, Integer> getPlayerSurfaceTitles(int playerId) {
+		return jdbcTemplate.query(
+			PLAYER_SURFACE_TITLES_QUERY, params("playerId", playerId),
+			rs -> {
+				if (rs.next()) {
+					Map<String, Integer> titles = new HashMap<>();
+					titles.put("H", rs.getInt("hard"));
+					titles.put("C", rs.getInt("clay"));
+					titles.put("G", rs.getInt("grass"));
+					titles.put("P", rs.getInt("carpet"));
+					return titles;
+				}
+				else
+					return emptyMap();
+			}
+		);
 	}
 }

@@ -1,7 +1,5 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.util.*;
-
 import org.junit.*;
 import org.junit.runner.*;
 import org.springframework.beans.factory.annotation.*;
@@ -25,8 +23,8 @@ public class PlayerServiceIT {
 	}
 
 	private void playerExists(String playerName) {
-		Optional<Player> player = playerService.getPlayer(playerName);
+		Player player = playerService.getPlayer(playerName);
 
-		assertThat(player).withFailMessage("Player %1$s does not exist", playerName).isNotEmpty();
+		assertThat(player).withFailMessage("Player %1$s does not exist", playerName).isNotNull();
 	}
 }

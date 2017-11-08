@@ -17,6 +17,9 @@ public class FavoriteSurface {
 	private static final double MIN_SURFACE_MATCHES = 5;
 	private static final double MIN_SURFACE_PCT = 4.0;
 	private static final double ALL_ROUNDER_SPREAD_PCT = 4.0;
+	private static final double BEST_SURFACE_GAP_PCT = 8.0;
+	private static final double SECOND_BEST_SURFACE_GAP_PCT = 4.0;
+	private static final double SECOND_BEST_SURFACE_GAP_FACTOR = 2.0;
 	private static final String ALL_ROUNDER = "All-Rounder";
 
 	public FavoriteSurface(PlayerPerformance performance) {
@@ -35,7 +38,7 @@ public class FavoriteSurface {
 			setNotAvailable();
 			return;
 		}
-		else if (surfaceCount == 1) {
+		if (surfaceCount == 1) {
 			setSurface(surfaces.get(0).surface);
 			return;
 		}
@@ -47,27 +50,38 @@ public class FavoriteSurface {
 			return;
 		}
 		if (surfaceCount > 2) {
+			SurfaceWonPct secondBestSurface = surfaces.get(surfaceCount - 2);
+			double bestSurfaceGap = bestSurface.wonPct - secondBestSurface.wonPct;
+			if (bestSurfaceGap >= BEST_SURFACE_GAP_PCT) {
+				setSurface(bestSurface.surface);
+				return;
+			}
+			SurfaceWonPct thirdBestSurface = surfaces.get(surfaceCount - 3);
+			double secondBestSurfaceGap = secondBestSurface.wonPct - thirdBestSurface.wonPct;
+			if (bestSurfaceGap >= SECOND_BEST_SURFACE_GAP_PCT && bestSurfaceGap * SECOND_BEST_SURFACE_GAP_FACTOR >= secondBestSurfaceGap) {
+				setSurface(bestSurface.surface);
+				return;
+			}
 			int maxWonPctGapIndex = getMaxWonPctGapIndex(surfaces);
 			List<SurfaceWonPct> favoriteSurfaces = surfaces.stream().skip(maxWonPctGapIndex).collect(toList());
 			int favoriteSurfaceCount = favoriteSurfaces.size();
 			if (favoriteSurfaceCount >= 2) {
-				Set<Surface> playedSurfaces = surfaces.stream().map(s -> s.surface).collect(toSet());
 				for (SurfaceGroup group : SurfaceGroup.values()) {
 					EnumSet<Surface> groupSurfaces = EnumSet.copyOf(group.getSurfaces());
-					groupSurfaces.retainAll(playedSurfaces);
-					int groupSurfaceCount = groupSurfaces.size();
-					if (groupSurfaceCount >= 2) {
-						if (groupSurfaceCount == favoriteSurfaceCount) {
-							if (groupSurfaces.equals(favoriteSurfaces.stream().map(s -> s.surface).collect(toSet()))) {
-								setSurfaceGroup(group);
-								return;
-							}
+					if (groupSurfaces.size() == favoriteSurfaceCount) {
+						if (groupSurfaces.equals(favoriteSurfaces.stream().map(s -> s.surface).collect(toSet()))) {
+							setSurfaceGroup(group);
+							return;
 						}
-						else if (groupSurfaceCount < favoriteSurfaceCount) {
-							if (groupSurfaces.equals(favoriteSurfaces.stream().skip(getMaxWonPctGapIndex(favoriteSurfaces)).map(s -> s.surface).collect(toSet()))) {
-								setSurfaceGroup(group);
-								return;
-							}
+					}
+				}
+				for (SurfaceGroup group : SurfaceGroup.values()) {
+					EnumSet<Surface> groupSurfaces = EnumSet.copyOf(group.getSurfaces());
+					int groupSurfaceCount = groupSurfaces.size();
+					if (groupSurfaceCount >= 2 && groupSurfaceCount < favoriteSurfaceCount) {
+						if (groupSurfaces.equals(favoriteSurfaces.stream().skip(getMaxWonPctGapIndex(favoriteSurfaces)).map(s -> s.surface).collect(toSet()))) {
+							setSurfaceGroup(group);
+							return;
 						}
 					}
 				}

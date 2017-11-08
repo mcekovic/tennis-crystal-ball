@@ -51,12 +51,12 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round
 	) {
-		Optional<Player> optionalPlayer1 = playerId1 != null ? playerService.getPlayer(playerId1) : (name1 != null ? playerService.getPlayer(name1) : Optional.empty());
-		Optional<Player> optionalPlayer2 = playerId2 != null ? playerService.getPlayer(playerId2) : (name2 != null ? playerService.getPlayer(name2) : Optional.empty());
+		Player player1 = playerId1 != null ? playerService.getPlayer(playerId1) : (name1 != null ? playerService.getPlayer(name1) : null);
+		Player player2 = playerId2 != null ? playerService.getPlayer(playerId2) : (name2 != null ? playerService.getPlayer(name2) : null);
 
 		ModelMap modelMap = new ModelMap();
-		addPlayer(modelMap, playerId1, name1, optionalPlayer1, 1);
-		addPlayer(modelMap, playerId2, name2, optionalPlayer2, 2);
+		modelMap.addAttribute("player1", player1);
+		modelMap.addAttribute("player2", player2);
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
@@ -66,20 +66,13 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("headToHead", modelMap);
 	}
 
-	private static void addPlayer(ModelMap modelMap, Integer playerId, String name, Optional<Player> optionalPlayer, int index) {
-		if (optionalPlayer.isPresent())
-			modelMap.addAttribute("player" + index, optionalPlayer.get());
-		else
-			modelMap.addAttribute("playerRef" + index, playerId != null ? playerId : name);
-	}
-
 	@GetMapping("/h2hProfiles")
 	public ModelAndView h2hProfiles(
 		@RequestParam(name = "playerId1") int playerId1,
 		@RequestParam(name = "playerId2") int playerId2
 	) {
-		Player player1 = playerService.getPlayer(playerId1).get();
-		Player player2 = playerService.getPlayer(playerId2).get();
+		Player player1 = playerService.getPlayer(playerId1);
+		Player player2 = playerService.getPlayer(playerId2);
 		PlayerPerformance performance1 = performanceService.getPlayerPerformance(playerId1);
 		PlayerPerformance performance2 = performanceService.getPlayerPerformance(playerId2);
 		FavoriteSurface favoriteSurface1 = new FavoriteSurface(performance1);
@@ -147,8 +140,8 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "surface", required = false) String surface,
       @RequestParam(name = "round", required = false) String round
    ) {
-		Player player1 = playerService.getPlayer(playerId1).get();
-		Player player2 = playerService.getPlayer(playerId2).get();
+		Player player1 = playerService.getPlayer(playerId1);
+		Player player2 = playerService.getPlayer(playerId2);
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, round));
 		List<Integer> seasons = getSeasonsIntersection(playerId1, playerId2);
 		List<TournamentItem> tournaments = new ArrayList<>(tournamentService.getPlayerTournaments(playerId1));
@@ -405,8 +398,8 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat,
 		@RequestParam(name = "showDetails", defaultValue = F) boolean showDetails
    ) {
-		Player player1 = playerService.getPlayer(playerId1).get();
-		Player player2 = playerService.getPlayer(playerId2).get();
+		Player player1 = playerService.getPlayer(playerId1);
+		Player player2 = playerService.getPlayer(playerId2);
 		LocalDate aDate1 = dateForMatchup(dateSelector1, date1, date, player1);
 		LocalDate aDate2 = dateForMatchup(dateSelector2, date2, date, player2);
 		MatchPrediction prediction = matchPredictionService.predictMatch(

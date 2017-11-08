@@ -121,30 +121,27 @@ CREATE INDEX ON player_tournament_event_result (result);
 -- player_titles
 
 CREATE OR REPLACE VIEW player_titles_v AS
-WITH level_titles AS (
-	SELECT player_id, level, count(result) AS titles FROM player_tournament_event_result
+WITH titles AS (
+	SELECT player_id, level, surface, count(result) AS titles
+	FROM player_tournament_event_result
 	INNER JOIN tournament_event USING (tournament_event_id)
-	WHERE result = 'W'
-	GROUP BY player_id, level
-), titles AS (
-	SELECT player_id, sum(titles) AS titles FROM level_titles
-	WHERE level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')
-	GROUP BY player_id
-), big_titles AS (
-	SELECT player_id, sum(titles) AS titles FROM level_titles
-	WHERE level IN ('G', 'F', 'L', 'M', 'O')
-	GROUP BY player_id
+	WHERE result = 'W' AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')
+	GROUP BY GROUPING SETS (player_id, (player_id, level), (player_id, surface))
 )
-SELECT p.player_id, t.titles AS titles, bt.titles AS big_titles, gt.titles AS grand_slams, ft.titles AS tour_finals, lt.titles AS alt_finals, mt.titles AS masters, ot.titles AS olympics
+SELECT p.player_id, t.titles AS titles, coalesce(gt.titles, 0) + coalesce(ft.titles, 0) + coalesce(lt.titles, 0) + coalesce(mt.titles, 0) + coalesce(ot.titles, 0) AS big_titles,
+	gt.titles AS grand_slams, ft.titles AS tour_finals, lt.titles AS alt_finals, mt.titles AS masters, ot.titles AS olympics,
+	sht.titles AS hard, sct.titles AS clay, sgt.titles AS grass, spt.titles AS carpet
 FROM player p
-LEFT JOIN titles t USING (player_id)
-LEFT JOIN big_titles bt USING (player_id)
-LEFT JOIN level_titles gt ON gt.player_id = p.player_id AND gt.level = 'G'
-LEFT JOIN level_titles ft ON ft.player_id = p.player_id AND ft.level = 'F'
-LEFT JOIN level_titles lt ON lt.player_id = p.player_id AND lt.level = 'L'
-LEFT JOIN level_titles mt ON mt.player_id = p.player_id AND mt.level = 'M'
-LEFT JOIN level_titles ot ON ot.player_id = p.player_id AND ot.level = 'O'
-WHERE t.titles > 0;
+LEFT JOIN titles t ON t.player_id = p.player_id AND t.level IS NULL AND surface IS NULL
+LEFT JOIN titles gt ON gt.player_id = p.player_id AND gt.level = 'G' AND gt.surface IS NULL
+LEFT JOIN titles ft ON ft.player_id = p.player_id AND ft.level = 'F' AND ft.surface IS NULL
+LEFT JOIN titles lt ON lt.player_id = p.player_id AND lt.level = 'L' AND lt.surface IS NULL
+LEFT JOIN titles mt ON mt.player_id = p.player_id AND mt.level = 'M' AND mt.surface IS NULL
+LEFT JOIN titles ot ON ot.player_id = p.player_id AND ot.level = 'O' AND ot.surface IS NULL
+LEFT JOIN titles sht ON sht.player_id = p.player_id AND sht.surface = 'H' AND sht.level IS NULL
+LEFT JOIN titles sct ON sct.player_id = p.player_id AND sct.surface = 'C' AND sct.level IS NULL
+LEFT JOIN titles sgt ON sgt.player_id = p.player_id AND sgt.surface = 'G' AND sgt.level IS NULL
+LEFT JOIN titles spt ON spt.player_id = p.player_id AND spt.surface = 'P' AND spt.level IS NULL;
 
 CREATE MATERIALIZED VIEW player_titles AS SELECT * FROM player_titles_v;
 

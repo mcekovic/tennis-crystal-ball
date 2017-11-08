@@ -12,6 +12,7 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
+import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
@@ -59,15 +60,11 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "infamous", required = false) Boolean infamous
 	) {
 		if (playerId == null && name == null)
-			return new ModelAndView("playerProfile");
-
-		Optional<Player> optionalPlayer = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
+			throw new NotFoundException("Player", null);
+		Player player = playerId != null ? playerService.getPlayer(playerId) : playerService.getPlayer(name);
 
 		ModelMap modelMap = new ModelMap();
-		if (optionalPlayer.isPresent())
-			modelMap.addAttribute("player", optionalPlayer.get());
-		else
-			modelMap.addAttribute("playerRef", playerId != null ? playerId : name);
+		modelMap.addAttribute("player", player);
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("fromDate", fromDate);
@@ -94,15 +91,17 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerProfileTab(
 		@RequestParam(name = "playerId") int playerId
 	) {
-		Player player = playerService.getPlayer(playerId).get();
+		Player player = playerService.getPlayer(playerId);
 		PlayerPerformance performance = performanceService.getPlayerPerformance(playerId);
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance);
+		Map<String, Integer> surfaceTitles = performanceService.getPlayerSurfaceTitles(playerId);
 		WonDrawLost playerH2H = rivalriesService.getPlayerH2H(playerId).orElse(null);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player", player);
 		modelMap.addAttribute("favoriteSurface", favoriteSurface);
 		modelMap.addAttribute("performance", performance);
+		modelMap.addAttribute("surfaceTitles", surfaceTitles);
 		modelMap.addAttribute("playerH2H", playerH2H);
 		return new ModelAndView("playerProfileTab", modelMap);
 	}

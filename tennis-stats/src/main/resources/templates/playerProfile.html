@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"*/-->
-<!--/*@thymesVar id="playerRef" type="java.lang.String"*/-->
 <!--/*@thymesVar id="tab" type="java.lang.String"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
@@ -80,53 +79,50 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<th:block th:if="${player}">
-		<h3>
-			<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" style="float: left; margin-top: 2px; margin-right: 8px" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-			<th:block th:text="${player.name}">Roger Federer</th:block> <a th:href="@{/playerProfile(name=${player.name})}" th:title="|Permalink to ${player.name} profile|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
-		</h3>
-		<ul id="playerPills" class="nav nav-pills">
-			<li><a id="profilePill" data-toggle="pill" href="#profile" th:data-url="'/playerProfileTab?playerId=' + ${player.id}">Profile</a></li>
-			<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/playerSeason?playerId=' + ${player.id}">Season</a></li>
-			<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" th:data-url="'/playerTournaments?playerId=' + ${player.id}">Tournaments</a></li>
-			<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/playerMatches?playerId=' + ${player.id}">Matches</a></li>
-			<li><a id="timelinePill" data-toggle="pill" href="#timeline" th:data-url="'/playerTimeline?playerId=' + ${player.id}">Timeline</a></li>
-			<li><a id="rivalriesPill" data-toggle="pill" href="#rivalries" th:data-url="'/playerRivalries?playerId=' + ${player.id}">Rivalries</a></li>
-			<li><a id="rankingPill" data-toggle="pill" href="#ranking" th:data-url="'/playerRankings?playerId=' + ${player.id}">Ranking</a></li>
-			<li class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Performance<span class="caret"></span></a>
-				<ul class="dropdown-menu">
-					<li><a id="performancePill" data-toggle="pill" href="#performance" th:data-url="'/playerPerformance?playerId=' + ${player.id}">Performance</a></li>
-					<li><a id="performanceChartPill" data-toggle="pill" href="#performanceChart" th:data-url="'/playerPerformanceChart?playerId=' + ${player.id}">Performance Chart</a></li>
-				</ul>
-			</li>
-			<li class="dropdown">
-				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Statistics<span class="caret"></span></a>
-				<ul class="dropdown-menu">
-					<li><a id="statisticsPill" data-toggle="pill" href="#statistics" th:data-url="'/playerStatsTab?playerId=' + ${player.id}">Statistics</a></li>
-					<li><a id="statisticsChartPill" data-toggle="pill" href="#statisticsChart" th:data-url="'/playerStatsChart?playerId=' + ${player.id}">Statistics Chart</a></li>
-				</ul>
-			</li>
-			<li><a id="goatPointsPill" data-toggle="pill" href="#goatPoints" th:data-url="'/playerGOATPoints?playerId=' + ${player.id}" title="GOAT Points Breakdown">GOAT Points</a></li>
-			<li><a id="recordsPill" data-toggle="pill" href="#records" th:data-url="'/playerRecords?playerId=' + ${player.id}">Records</a></li>
-		</ul>
-		<div class="tab-content">
-			<div id="profile" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="season" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="tournaments" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="matches" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="timeline" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="rivalries" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="ranking" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="performance" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="performanceChart" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="statisticsChart" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="goatPoints" class="tab-pane fade"><div class="loading"></div></div>
-			<div id="records" class="tab-pane fade"><div class="loading"></div></div>
-		</div>
-	</th:block>
-	<h4 th:unless="${player}" th:text="'Player ' + ${playerRef}  + ' not found.'">Player not found.</h4>
+	<h3>
+		<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" style="float: left; margin-top: 2px; margin-right: 8px" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+		<th:block th:text="${player.name}">Roger Federer</th:block> <a th:href="@{/playerProfile(name=${player.name})}" th:title="|Permalink to ${player.name} profile|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
+	</h3>
+	<ul id="playerPills" class="nav nav-pills">
+		<li><a id="profilePill" data-toggle="pill" href="#profile" th:data-url="'/playerProfileTab?playerId=' + ${player.id}">Profile</a></li>
+		<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/playerSeason?playerId=' + ${player.id}">Season</a></li>
+		<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" th:data-url="'/playerTournaments?playerId=' + ${player.id}">Tournaments</a></li>
+		<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/playerMatches?playerId=' + ${player.id}">Matches</a></li>
+		<li><a id="timelinePill" data-toggle="pill" href="#timeline" th:data-url="'/playerTimeline?playerId=' + ${player.id}">Timeline</a></li>
+		<li><a id="rivalriesPill" data-toggle="pill" href="#rivalries" th:data-url="'/playerRivalries?playerId=' + ${player.id}">Rivalries</a></li>
+		<li><a id="rankingPill" data-toggle="pill" href="#ranking" th:data-url="'/playerRankings?playerId=' + ${player.id}">Ranking</a></li>
+		<li class="dropdown">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#">Performance<span class="caret"></span></a>
+			<ul class="dropdown-menu">
+				<li><a id="performancePill" data-toggle="pill" href="#performance" th:data-url="'/playerPerformance?playerId=' + ${player.id}">Performance</a></li>
+				<li><a id="performanceChartPill" data-toggle="pill" href="#performanceChart" th:data-url="'/playerPerformanceChart?playerId=' + ${player.id}">Performance Chart</a></li>
+			</ul>
+		</li>
+		<li class="dropdown">
+			<a class="dropdown-toggle" data-toggle="dropdown" href="#">Statistics<span class="caret"></span></a>
+			<ul class="dropdown-menu">
+				<li><a id="statisticsPill" data-toggle="pill" href="#statistics" th:data-url="'/playerStatsTab?playerId=' + ${player.id}">Statistics</a></li>
+				<li><a id="statisticsChartPill" data-toggle="pill" href="#statisticsChart" th:data-url="'/playerStatsChart?playerId=' + ${player.id}">Statistics Chart</a></li>
+			</ul>
+		</li>
+		<li><a id="goatPointsPill" data-toggle="pill" href="#goatPoints" th:data-url="'/playerGOATPoints?playerId=' + ${player.id}" title="GOAT Points Breakdown">GOAT Points</a></li>
+		<li><a id="recordsPill" data-toggle="pill" href="#records" th:data-url="'/playerRecords?playerId=' + ${player.id}">Records</a></li>
+	</ul>
+	<div class="tab-content">
+		<div id="profile" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="season" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="tournaments" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="matches" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="timeline" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="rivalries" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="ranking" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="performance" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="performanceChart" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="statisticsChart" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="goatPoints" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="records" class="tab-pane fade"><div class="loading"></div></div>
+	</div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>

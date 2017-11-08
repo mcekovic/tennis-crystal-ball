@@ -2,6 +2,7 @@
 <!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"*/-->
 <!--/*@thymesVar id="favoriteSurface" type="org.strangeforest.tcb.stats.model.FavoriteSurface"*/-->
 <!--/*@thymesVar id="performance" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
+<!--/*@thymesVar id="surfaceTitles" type="java.util.Map<java.lang.String, java.lang.Integer>"*/-->
 <!--/*@thymesVar id="playerH2H" type="org.strangeforest.tcb.stats.model.WonDrawLost"*/-->
 <script type="text/javascript">
 	$(function() {
@@ -168,13 +169,14 @@
 		<table th:unless="${wl.empty}" class="table table-condensed text-nowrap">
 			<tr>
 				<th>Overall</th>
-				<th>
-					<div class="progress progress-profile ">
+				<th width="100%">
+					<div class="progress progress-profile">
 						<div class="progress-bar progress-bar-overall" th:attrappend="class=${player.active ? ' progress-bar-striped' : ''}" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, outcome=played)}" th:text="${wl.pctWL}" title="Show matches">50% (10-10)</a>
 						</div>
 					</div>
 				</th>
+				<th th:unless="${surfaceTitles.empty}"></th>
 			</tr>
 			</th:block>
 			<th:block th:with="wl=${performance.hardMatches}">
@@ -186,6 +188,9 @@
 							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=H, outcome=played)}" th:text="${wl.pctWL}" title="Show hard matches">50% (10-10)</a>
 						</div>
 					</div>
+				</th>
+				<th th:if="${surfaceTitles['H']}">
+					<a class="label label-primary player-title" th:text="${surfaceTitles['H']}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, surface=H, result=W)}" title="Show hard titles">1</a> <span class="glyphicon glyphicon-glass text-primary"></span>
 				</th>
 			</tr>
 			</th:block>
@@ -199,6 +204,9 @@
 						</div>
 					</div>
 				</th>
+				<th th:if="${surfaceTitles['C']}">
+					<a class="label label-danger player-title" th:text="${surfaceTitles['C']}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, surface=C, result=W)}" title="Show clay titles">1</a> <span class="glyphicon glyphicon-glass text-danger"></span>
+				</th>
 			</tr>
 			</th:block>
 			<th:block th:with="wl=${performance.grassMatches}">
@@ -211,6 +219,9 @@
 						</div>
 					</div>
 				</th>
+				<th th:if="${surfaceTitles['G']}">
+					<a class="label label-success player-title" th:text="${surfaceTitles['G']}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, surface=G, result=W)}" title="Show grass titles">1</a> <span class="glyphicon glyphicon-glass text-success"></span>
+				</th>
 			</tr>
 			</th:block>
 			<th:block th:with="wl=${performance.carpetMatches}">
@@ -222,6 +233,9 @@
 							<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, surface=P, outcome=played)}" th:text="${wl.pctWL}" title="Show carpet matches">50% (10-10)</a>
 						</div>
 					</div>
+				</th>
+				<th th:if="${surfaceTitles['P']}">
+					<a class="label label-warning player-title" th:text="${surfaceTitles['P']}" th:href="@{/playerProfile(playerId=${player.id}, tab=tournaments, surface=P, result=W)}" title="Show carpet titles">1</a> <span class="glyphicon glyphicon-glass text-warning"></span>
 				</th>
 			</tr>
 		</table>
