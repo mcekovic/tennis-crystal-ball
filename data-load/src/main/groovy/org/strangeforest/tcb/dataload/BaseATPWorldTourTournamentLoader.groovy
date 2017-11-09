@@ -34,16 +34,16 @@ abstract class BaseATPWorldTourTournamentLoader {
 		}
 	}
 
-	static mapLevel(String level) {
+	static mapLevel(String level, String urlId) {
 		switch (level) {
 			case 'grandslam': return 'G'
 			case 'finals-pos': return 'F'
 			case '1000s': return 'M'
 			case '500': return 'A'
 			case '250':
-			case 'atp':
-			case 'atpwt':
 			case 'challenger': return 'B'
+			case 'atp':
+			case 'atpwt': return urlId.contains('finals') ? 'F' : 'B'
 			default:
 				System.err.println "Unknown tournament level: $level"
 				return 'H'
@@ -57,6 +57,13 @@ abstract class BaseATPWorldTourTournamentLoader {
 			case 'Grass': return 'G'
 			case 'Carpet': return 'P'
 			default: return null
+		}
+	}
+
+	static mapDrawType(String level) {
+		switch (level) {
+			case 'F': return 'RR'
+			default: return 'KO'
 		}
 	}
 

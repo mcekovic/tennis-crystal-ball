@@ -97,14 +97,18 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def atpLevel = extract(doc.select('.tourney-badge-wrapper > img:nth-child(1)').attr("src"), '_', 1)
 		if (!atpLevel || atpLevel == 'itf') {
 			println "Skipping tournament at '$url', unsupported level: $atpLevel"
-			return
+			return 0
 		}
-		level = level ?: mapLevel(atpLevel)
+		level = level ?: mapLevel(atpLevel, urlId)
 		def name = getName(doc, level, LocalDate.now().getYear())
 		def atpSurface = doc.select('td.tourney-details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)').text()
 		surface = surface ?: mapSurface(atpSurface)
 		def indoor = surface == 'P' || name.toLowerCase().contains('indoor')
-		def drawType = 'KO'
+		def drawType = mapDrawType(level)
+		if (drawType != 'KO') {
+			println "Skipping tournament at '$url', unsupported drawType: $drawType"
+			return 0
+		}
 		def drawSize = doc.select('a.not-in-system:nth-child(1) > span:nth-child(1)').text()
 		def bestOf = smallint(mapBestOf(level))
 
