@@ -202,6 +202,7 @@ public class PlayerStatsController extends BaseController {
 		Map<Integer, Integer> yearEndRanks = timelineService.getPlayerYearEndRanks(playerId);
 		Map<Integer, Integer> bestEloRatings = timelineService.getPlayerBestEloRatings(playerId);
 		Map<Integer, Integer> goatPoints = timelineService.getPlayerSeasonGOATPoints(playerId);
+		Map<Integer, Integer> entries = timelineService.getPlayerSeasonEntries(playerId);
 		PlayerPerformance careerPerf = performanceService.getPlayerPerformance(playerId);
 		List<Integer> seasonList = toSeasons(seasons);
 		Map<Integer, PlayerPerformance> seasonsPerf = performanceService.getPlayerSeasonsPerformance(playerId);
@@ -212,6 +213,7 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("yearEndRanks", yearEndRanks);
 		modelMap.addAttribute("bestEloRatings", bestEloRatings);
 		modelMap.addAttribute("goatPoints", goatPoints);
+		modelMap.addAttribute("entries", entries);
 		modelMap.addAttribute("careerPerf", careerPerf);
 		modelMap.addAttribute("seasons", seasonList);
 		modelMap.addAttribute("seasonsPerf", seasonsPerf);

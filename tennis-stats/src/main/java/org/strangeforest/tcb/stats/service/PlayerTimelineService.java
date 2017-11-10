@@ -56,6 +56,14 @@ public class PlayerTimelineService {
 		"SELECT NULL, goat_points FROM player_goat_points\n" +
 		"WHERE player_id = :playerId";
 
+	private static final String SEASON_ENTRIES_QUERY = //language=SQL
+		"SELECT season, count(result) AS entries FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
+		"WHERE player_id = :playerId AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')\n" +
+		"GROUP BY season\n" +
+		"UNION ALL\n" +
+		"SELECT NULL, count(result) AS entries FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
+		"WHERE player_id = :playerId AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')";
+
 
 	public PlayerTimeline getPlayerTimeline(int playerId) {
 		PlayerTimeline timeline = new PlayerTimeline(tournamentService.getAllTournamentSeasons());
@@ -93,6 +101,10 @@ public class PlayerTimelineService {
 
 	public Map<Integer, Integer> getPlayerSeasonGOATPoints(int playerId) {
 		return getPlayerSeasonValues(SEASON_GOAT_POINTS_QUERY, "goat_points", playerId);
+	}
+
+	public Map<Integer, Integer> getPlayerSeasonEntries(int playerId) {
+		return getPlayerSeasonValues(SEASON_ENTRIES_QUERY, "entries", playerId);
 	}
 
 	private Map<Integer, Integer> getPlayerSeasonValues(String query, String column, int playerId) {
