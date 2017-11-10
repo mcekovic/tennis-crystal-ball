@@ -265,7 +265,7 @@ function levelName(level) {
 // Surface Formatter
 function surfaceFormatter(column, row) {
 	if (row.surface)
-		return "<span class='label label-" + surfaceClassSuffix(row.surface) + (row.indoor != null ? "' title='" + (row.indoor ? "Indoor" : "Outdoor") : "") + "'>" + surfaceName(row.surface) + "</span>";
+		return "<span class='label label-" + surfaceClassSuffix(row.surface) + "'>" + surfaceName(row.surface) + (row.surface === 'H' && row.indoor ? " <span title='Indoor'>(i)</span>" : "") + "</span>";
 }
 
 function surfaceClassSuffix(surface) {

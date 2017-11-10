@@ -116,26 +116,19 @@
 		function rivalryFilterParams() {
 			var params = "";
 			var fromSeason = $("#fromSeason").val();
-			if (fromSeason)
-				params += "&fromDate=01-01-" + fromSeason;
+			if (fromSeason) params += "&fromDate=01-01-" + fromSeason;
 			var toSeason = $("#toSeason").val();
-			if (toSeason)
-				params += "&toDate=31-12-" + toSeason;
+			if (toSeason) params += "&toDate=31-12-" + toSeason;
 			var level = $("#level").val();
-			if (level)
-				params += "&level=" + level;
+			if (level) params += "&level=" + level;
 			var bestOf = $("#bestOf").val();
-			if (bestOf)
-				params += "&bestOf=" + bestOf;
+			if (bestOf) params += "&bestOf=" + bestOf;
 			var surface = $("#surface").val();
-			if (surface)
-				params += "&surface=" + surface;
+			if (surface) params += "&surface=" + surface;
 			var indoor = $("#indoor").val();
-			if (indoor)
-				params += "&indoor=" + indoor;
+			if (indoor) params += "&indoor=" + indoor;
 			var round = $("#round").val();
-			if (round)
-				params += "&round=" + encodeURIComponent(encodeURIComponent(round));
+			if (round) params += "&round=" + encodeURIComponent(encodeURIComponent(round));
 			return params;
 		}
 		function clearGreatestRivalriesFilter() {
@@ -204,7 +197,7 @@
 			</select>
 		</div>
 	</div>
-	<div id="levelDiv" class="btn-group pull-left margin-right">
+	<div id="levelDiv" class="btn-group pull-left margin-right no-margin-left">
 		<select id="level" class="form-control" onchange="reloadGreatestRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
 			<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
@@ -229,7 +222,7 @@
 			<span class="glyphicon glyphicon-erase"></span>&nbsp;&nbsp;Clear
 		</button>
 	</div>
-	<div id="advFilterDiv" class="btn-group pull-right margin-left">
+	<div id="advFilterDiv" class="btn-group pull-right margin-left no-margin-right">
 		<div data-toggle="tooltip" data-placement="auto" title="Advanced filters">
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advancedFilter">
 				<span class="glyphicon glyphicon-filter"></span>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-up"></span>

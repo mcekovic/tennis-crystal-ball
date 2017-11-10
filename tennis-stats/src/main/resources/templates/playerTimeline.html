@@ -9,7 +9,8 @@
 		$tournamentsBody.find("div.surface").each(function() {
 			var $surface = $(this);
 			var surface = $surface.text();
-			$surface.text(surfaceName(surface));
+			var indoor = $surface.data("indoor");
+			$surface.html(surfaceName(surface) + (surface === 'H' && indoor ? " <span title='Indoor'>(i)</span>" : ""));
 			$surface.addClass("label-" + surfaceClassSuffix(surface));
 		});
 		$tournamentsBody.find("a.tournament").each(function() {
@@ -22,13 +23,14 @@
 			var $result = $(this);
 			var level = $result.data("level");
 			var surface = $result.data("surface");
+			var indoor = $result.data("indoor");
 			var title = "";
 			if (level)
 				title += "<span class='label label-" + level + "'>" + levelName(level) + "</span>";
 			if (surface) {
 				if (level)
 					title += " ";
-				title += "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + "</span>";
+				title += "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + (surface === 'H' && indoor ? " (i)" : "") +"</span>";
 			}
 			$result.tooltip({title: title, html: true});
 		});
@@ -108,7 +110,7 @@
 	<thead id="performanceHead">
 	<tr class="bg-primary">
 		<th>
-			<button id="timelinePerf" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#performanceBody" title="Toggle seasons performance"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;Performance</button>
+			<button id="timelinePerf" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#performanceBody" title="Toggle seasons performance"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;Performance&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span></button>
 			<div class="btn-stats" style="display: none">
 				<button class="pct-data btn btn-info btn-xs" onclick="toggleStatsData('#performanceHead, #performanceBody')" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
 				<button class="raw-data btn btn-info btn-xs" onclick="toggleStatsData('#performanceHead, #performanceBody')" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
@@ -124,7 +126,7 @@
 	<thead id="statisticsHead">
 	<tr class="bg-primary">
 		<th>
-			<button id="timelineStats" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"><span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats</button>
+			<button id="timelineStats" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"><span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span></button>
 			<div class="btn-stats" style="display: none">
 				<button class="pct-data btn btn-info btn-xs" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
 				<button class="raw-data btn btn-info btn-xs" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>

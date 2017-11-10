@@ -92,6 +92,7 @@ PERFORM set_tournament_event_surface(1975, 'New York', 'H', TRUE);
 PERFORM set_tournament_event_surface(1975, 'Istanbul', 'C', FALSE);
 PERFORM set_tournament_event_surface(1975, 'Washington', 'C', FALSE);
 PERFORM set_tournament_event_surface(1975, 'Montreal / Toronto', 'C', FALSE);
+PERFORM set_tournament_event_surface(1975, 'Melbourne Indoor', 'P', TRUE);
 PERFORM set_tournament_event_surface(1975, 'Sydney Indoor', NULL, TRUE);
 PERFORM set_tournament_event_surface(1975, 'Paris Indoor', NULL, TRUE);
 PERFORM set_tournament_event_surface(1975, 'Stockholm', NULL, TRUE);

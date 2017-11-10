@@ -8,11 +8,11 @@
 	</td>
 	<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
 		<th:block th:each="surface : ${tournament.surfaces}">
-			<div th:text="${surface.surface}" class="label surface" th:title="${surface.indoor ? 'Indoor' : 'Outdoor'}">G</div>
+			<div th:text="${surface.surface}" class="label surface" th:data-indoor="${surface.indoor ? 'true' : _}">G</div>
 		</th:block>
 	</td>
 	<td th:each="item : ${tournament.items}" th:class="${item.result != null ? 'bg-result-' + item.result : ''}" class="bg-result-W" align="center">
-		<a th:if="${item.hasResult()}" th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${item.tournamentEventId})}" th:data-level="${tournament.levelCount > 1 ? item.level : ''}" th:data-surface="${tournament.surfaceCount > 1 ? item.surface : ''}">
+		<a th:if="${item.hasResult()}" th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${item.tournamentEventId})}" th:data-level="${tournament.levelCount > 1 ? item.level : _}" th:data-surface="${tournament.surfaceCount > 1 ? item.surface : _}" th:data-indoor="${tournament.surfaceCount > 1 ? item.indoor : _}">
 			<span th:text="${item.result}" title="Show tournament matches">W</span>
 		</a>
 		<span th:if="${item.absent}" class="absent">A</span>

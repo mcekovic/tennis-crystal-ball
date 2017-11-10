@@ -127,7 +127,7 @@ public class MinEntries {
 
 		if (filter.hasSurface())
 			minEntries *= getMinEntriesSummedWeight(filter.getSurface(), MIN_ENTRIES_SURFACE_WEIGHT_MAP);
-		else if (filter.hasIndoor())
+		if (filter.hasIndoor())
 			minEntries *= getMinEntriesWeight(filter.getIndoor(), MIN_ENTRIES_INDOOR_WEIGHT_MAP);
 		
 		if (filter.hasRound())

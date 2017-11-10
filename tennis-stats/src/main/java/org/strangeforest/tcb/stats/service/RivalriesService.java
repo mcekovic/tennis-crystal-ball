@@ -67,8 +67,8 @@ public class RivalriesService {
 		.put("HCG", 1.3)
 	.build();
 	private static final Map<Boolean, Double> MIN_MATCHES_INDOOR_FACTOR = ImmutableMap.<Boolean, Double>builder()
-		.put(Boolean.FALSE, 1.3)
-		.put(Boolean.TRUE,  3.0)
+		.put(Boolean.FALSE, 1.4)
+		.put(Boolean.TRUE,  2.5)
 	.build();
 	private static final Map<String, Double> MIN_MATCHES_ROUND_FACTOR = ImmutableMap.<String, Double>builder()
 		.put("F",     5.0)
@@ -349,7 +349,7 @@ public class RivalriesService {
 
 		if (filter.hasSurface())
 			minMatches /= getMinEntriesFactor(filter.getSurface(), MIN_MATCHES_SURFACE_FACTOR);
-		else if (filter.hasIndoor())
+		if (filter.hasIndoor())
 			minMatches /= getMinEntriesFactor(filter.getIndoor(), MIN_MATCHES_INDOOR_FACTOR);
 
 		if (filter.hasRound())
