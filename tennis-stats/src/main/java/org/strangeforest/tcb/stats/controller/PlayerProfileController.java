@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.records.*;
+import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 import org.strangeforest.tcb.util.*;
@@ -94,12 +95,20 @@ public class PlayerProfileController extends PageController {
 		Player player = playerService.getPlayer(playerId);
 		PlayerPerformance performance = performanceService.getPlayerPerformance(playerId);
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance);
+		int seasonCount = playerService.getPlayerSeasons(playerId).size();
+		BootgridTable<PlayerTournamentEvent> lastEvent = tournamentService.getPlayerTournamentEventResultsTable(playerId, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
 		Map<String, Integer> surfaceTitles = performanceService.getPlayerSurfaceTitles(playerId);
 		WonDrawLost playerH2H = rivalriesService.getPlayerH2H(playerId).orElse(null);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player", player);
 		modelMap.addAttribute("favoriteSurface", favoriteSurface);
+		modelMap.addAttribute("seasonCount", seasonCount);
+		if (lastEvent.getTotal() > 0) {
+			modelMap.addAttribute("lastEvent", lastEvent.getRows().get(0));
+			modelMap.addAttribute("levels", TournamentLevel.asMap());
+			modelMap.addAttribute("surfaces", Surface.asMap());
+		}
 		modelMap.addAttribute("performance", performance);
 		modelMap.addAttribute("surfaceTitles", surfaceTitles);
 		modelMap.addAttribute("playerH2H", playerH2H);

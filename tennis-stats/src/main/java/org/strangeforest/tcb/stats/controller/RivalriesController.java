@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
+import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.util.*;
 
@@ -85,6 +86,15 @@ public class RivalriesController extends PageController {
 		PlayerPerformance performance2 = performanceService.getPlayerPerformance(playerId2);
 		FavoriteSurface favoriteSurface1 = new FavoriteSurface(performance1);
 		FavoriteSurface favoriteSurface2 = new FavoriteSurface(performance2);
+		int seasonCount1 = playerService.getPlayerSeasons(playerId1).size();
+		int seasonCount2 = playerService.getPlayerSeasons(playerId2).size();
+		BootgridTable<PlayerTournamentEvent> lastEvent1 = tournamentService.getPlayerTournamentEventResultsTable(playerId1, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
+		BootgridTable<PlayerTournamentEvent> lastEvent2 = tournamentService.getPlayerTournamentEventResultsTable(playerId2, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
+		Map<String, Integer> surfaceTitles1 = performanceService.getPlayerSurfaceTitles(playerId1);
+		Map<String, Integer> surfaceTitles2 = performanceService.getPlayerSurfaceTitles(playerId2);
+		WonDrawLost playerH2H1 = rivalriesService.getPlayerH2H(playerId1).orElse(null);
+		WonDrawLost playerH2H2 = rivalriesService.getPlayerH2H(playerId2).orElse(null);
+
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2));
 
 		ModelMap modelMap = new ModelMap();
@@ -92,8 +102,20 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("player2", player2);
 		modelMap.addAttribute("favoriteSurface1", favoriteSurface1);
 		modelMap.addAttribute("favoriteSurface2", favoriteSurface2);
+		modelMap.addAttribute("seasonCount1", seasonCount1);
+		modelMap.addAttribute("seasonCount2", seasonCount2);
+		if (lastEvent1.getTotal() > 0)
+			modelMap.addAttribute("lastEvent1", lastEvent1.getRows().get(0));
+		if (lastEvent2.getTotal() > 0)
+			modelMap.addAttribute("lastEvent2", lastEvent2.getRows().get(0));
+		modelMap.addAttribute("levels", TournamentLevel.asMap());
+		modelMap.addAttribute("surfaces", Surface.asMap());
 		modelMap.addAttribute("performance1", performance1);
 		modelMap.addAttribute("performance2", performance2);
+		modelMap.addAttribute("surfaceTitles1", surfaceTitles1);
+		modelMap.addAttribute("surfaceTitles2", surfaceTitles2);
+		modelMap.addAttribute("playerH2H1", playerH2H1);
+		modelMap.addAttribute("playerH2H2", playerH2H2);
 		modelMap.addAttribute("stats1", stats1);
 		return new ModelAndView("h2hProfiles", modelMap);
 	}

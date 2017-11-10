@@ -1,6 +1,10 @@
 <th:block  xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.Player"*/-->
 <!--/*@thymesVar id="favoriteSurface" type="org.strangeforest.tcb.stats.model.FavoriteSurface"*/-->
+<!--/*@thymesVar id="seasonCount" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="lastEvent" type="org.strangeforest.tcb.stats.model.PlayerTournamentEvent"*/-->
+<!--/*@thymesVar id="levels" type="java.util.Map"*/-->
+<!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
 <!--/*@thymesVar id="performance" type="org.strangeforest.tcb.stats.model.PlayerPerformance"*/-->
 <!--/*@thymesVar id="surfaceTitles" type="java.util.Map<java.lang.String, java.lang.Integer>"*/-->
 <!--/*@thymesVar id="playerH2H" type="org.strangeforest.tcb.stats.model.WonDrawLost"*/-->
@@ -14,7 +18,7 @@
 					window.location = "/headToHead?playerId1=[(${player.id})]&playerId2=" + ui.item.id;
 			}
 		});
-		decorateSurface("#favoriteSurface");
+		decorateSurface("#favoriteSurface, #lastEventSurface");
 	});
 </script>
 <style>
@@ -24,7 +28,7 @@
 </style>
 <br/>
 <div class="row">
-	<div class="col-md-3">
+	<div class="col-md-4 col-lg-3">
 		<table class="table table-condensed text-nowrap">
 			<!--/* General */-->
 			<tr th:if="${player.dob}">
@@ -64,13 +68,21 @@
 				<th>Favorite Surface</th>
 				<td><span id="favoriteSurface" class="label" th:data-surface="${favoriteSurface.surface != null ? favoriteSurface.surface.code : _}" th:text="${favoriteSurface}" th:title="${favoriteSurface.surfaceGroup != null ? favoriteSurface.surfaceGroup.surfacesText : _}">Hard</span></td>
 			</tr>
+			<tr th:if="${player.coach}">
+				<th>Coach</th>
+				<td th:text="${player.coach}">Brad Gilbert</td>
+			</tr>
 			<tr th:if="${player.turnedPro > 0}">
 				<th>Turned Pro</th>
 				<td th:text="${player.turnedPro}">2005</td>
 			</tr>
-			<tr th:if="${player.coach}">
-				<th>Coach</th>
-				<td th:text="${player.coach}">Brad Gilbert</td>
+			<tr th:if="${seasonCount > 0}">
+				<th>Seasons</th>
+				<td><a th:href="@{/playerProfile(playerId=${player.id}, tab=timeline)}" th:text="${seasonCount}" title="Show timeline">10</a></td>
+			</tr>
+			<tr>
+				<th>Active</th>
+				<td>[(${player.active ? 'Yes' : 'No'})] <img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/></td>
 			</tr>
 			<!--/* Social */-->
 			<tr th:if="${player.webSite}">
@@ -85,14 +97,10 @@
 				<th>Twitter</th>
 				<td><img src="/images/glyphicons-social-twitter-small.png" width="16" height="16"/> <a th:href="'https://twitter.com/' + ${player.twitter}" href="https://twitter.com/JohnSmith" target="_blank" th:text="'@'+ ${player.twitter}">@JohnSmith</a></td>
 			</tr>
-			<tr>
-				<th>Active</th>
-				<td>[(${player.active ? 'Yes' : 'No'})] <img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/></td>
-			</tr>
 		</table>
 	</div>
-	<div class="col-md-1">&nbsp;</div>
-	<div class="col-md-3">
+	<div class="col-lg-1">&nbsp;</div>
+	<div class="col-md-4 col-lg-3">
 		<table class="table table-condensed text-nowrap">
 			<!--/* Titles */-->
 			<tr th:if="${player.titles > 0}">
@@ -149,9 +157,23 @@
 				<th>Weeks at No. 1</th>
 				<td th:text="${player.weeksAtNo1}">50</td>
 			</tr>
+			<th:block th:if="${lastEvent}">
+			<tr><td colspan="2">&nbsp;</td></tr>
+			<tr>
+				<th>Last Appearance</th>
+				<td th:text="${#dates.format(lastEvent.date, 'dd-MM-yyyy')}">15-07-2015</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<a th:href="@{/tournamentEvent(tournamentEventId=${lastEvent.tournamentEventId})}" class="label label-" th:attrappend="class=${lastEvent.level}" th:text="${lastEvent.name}" th:title="${levels[lastEvent.level]}">Wimbledon</a>
+					<span th:if="${lastEvent.surface}" id="lastEventSurface" class="label" th:data-surface="${lastEvent.surface}">[(${surfaces[lastEvent.surface]})]<span th:if="${lastEvent.indoor && lastEvent.surface == 'H'}" title="Indoor"> (i)</span></span>
+					<a th:href="@{/playerProfile(playerId=${player.id}, tab=matches, tournamentEventId=${lastEvent.tournamentEventId})}" class="label black bg-result-" th:attrappend="class=${lastEvent.result}" th:text="${lastEvent.result}" title="Show tournament matches">W</a>
+				</td>
+			</tr>
+			</th:block>
 		</table>
 	</div>
-	<div class="col-md-1">&nbsp;</div>
+	<div class="col-lg-1">&nbsp;</div>
 	<div class="col-md-4">
 		<style scoped="scoped">
 			.progress-profile {
@@ -240,9 +262,9 @@
 			</tr>
 		</table>
 		</th:block>
+		<!--/* H2H */-->
 		<th:block th:if="${playerH2H}">
 		<br/>
-		<!--/* H2H */-->
 		<table class="table table-condensed text-nowrap">
 			<tr>
 				<th th:title="#{h2hSeries.notes}">H2H</th>

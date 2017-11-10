@@ -14,6 +14,8 @@ import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 
 public class TournamentEventResultFilter extends TournamentEventFilter {
 
+	public static final TournamentEventResultFilter EMPTY = new TournamentEventResultFilter(null, null, null, null, null, null, null, null, null, null);
+
 	private final String result;
 	private final StatsFilter statsFilter;
 
