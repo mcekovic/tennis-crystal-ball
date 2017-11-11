@@ -28,6 +28,8 @@ public class TournamentFinalsLostButNeverWonCategory extends RecordCategory {
 		register(mostMaxFinals(CLAY));
 		register(mostMaxFinals(GRASS));
 		register(mostMaxFinals(CARPET));
+		register(mostMaxFinals(OUTDOOR));
+		register(mostMaxFinals(INDOOR));
 	}
 
 	private static Record mostMaxFinals(RecordDomain domain) {
