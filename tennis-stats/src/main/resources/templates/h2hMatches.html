@@ -25,6 +25,11 @@
 		setBootgridColumnsVisible($matchesTable, ["surface"], deviceGreaterOrEqual(device, "sm"));
 		if (!deviceGreaterOrEqual(device, "md"))
 			setBootgridColumnsWidths($matchesTable, ["tournament", "match", "score"], [150, 250, 125]);
+		if ($(window).width() >= 1300) {
+			$(".container").css("width", 1300);
+			$matchesTable.find("th[data-column-id='match']").data("visible", false);
+			$matchesTable.find("th[data-column-id='matchEx']").data("visible", true);
+		}
 		$matchesTable.bootgrid({
 			ajax: true,
 			ajaxSettings: {

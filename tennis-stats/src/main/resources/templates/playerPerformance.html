@@ -331,6 +331,48 @@
 			<div class="col-lg-4 col-sm-6">
 				<table class="table table-condensed table-striped">
 					<tr>
+						<th colspan="2">Outdoor / Indoor Breakdown</th>
+					</tr>
+					<tr th:each="indoorWL : ${perf.indoorMatches}" th:with="indoor=${indoorWL.key}, wl=${indoorWL.value}">
+						<td width="40%" th:text="${indoor ? 'Indoor' : 'Outdoor'}">Outdoor</td>
+						<th>
+							<div class="progress progress-perf">
+								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${indoor ? 'Indoor' : 'Outdoor'} matches|">
+										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
+										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									</a>
+								</div>
+							</div>
+						</th>
+					</tr>
+				</table>
+			</div>
+			<div class="col-lg-4 col-sm-6">
+				<table class="table table-condensed table-striped">
+					<tr>
+						<th colspan="2">Best Of Breakdown</th>
+					</tr>
+					<tr th:each="bestOfWL : ${perf.bestOfMatches}" th:with="bestOf=${bestOfWL.key}, wl=${bestOfWL.value}">
+						<td width="40%" th:text="|Best Of ${bestOf}|">Best Of 3</td>
+						<th>
+							<div class="progress progress-perf">
+								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show Best of ${bestOf} matches|">
+										<span class="pct-data" th:text="${wl.pctWL}">50% (10-10)</span>
+										<span class="raw-data" th:text="${wl.WLT}">10 - 10 / 20</span>
+									</a>
+								</div>
+							</div>
+						</th>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-4 col-sm-6">
+				<table class="table table-condensed table-striped">
+					<tr>
 						<th colspan="2">Opposition Breakdown</th>
 					</tr>
 					<tr th:each="oppositionWL : ${perf.oppositionMatches}" th:with="opposition=${oppositionWL.key}, wl=${oppositionWL.value}">

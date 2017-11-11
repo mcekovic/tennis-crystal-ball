@@ -29,7 +29,9 @@
 <!--/*@thymesVar id="perf1" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <!--/*@thymesVar id="perf2" type="org.strangeforest.tcb.stats.model.PlayerPerformanceEx"*/-->
 <!--/*@thymesVar id="perfSurfaces" type="java.util.Set<org.strangeforest.tcb.stats.model.Surface>"*/-->
+<!--/*@thymesVar id="perfIndoors" type="java.util.Set<java.lang.Boolean>"*/-->
 <!--/*@thymesVar id="perfLevels" type="java.util.Set<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
+<!--/*@thymesVar id="perfBestOfs" type="java.util.Set<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="perfOppositions" type="java.util.Set<org.strangeforest.tcb.stats.service.Opponent>"*/-->
 <!--/*@thymesVar id="perfRounds" type="java.util.Set<org.strangeforest.tcb.stats.model.Round>"*/-->
 <!--/*@thymesVar id="perfResults" type="java.util.Set<org.strangeforest.tcb.stats.model.EventResult>"*/-->
@@ -278,6 +280,37 @@
 			</th>
 		</tr>
 		</th:block>
+		<th:block th:if="${indoor == null}">
+		<tr>
+			<td colspan="3">&nbsp;</td>
+		</tr>
+		<tr>
+			<td></td><th class="text-center">Outdoor / Indoor Breakdown</th><td></td>
+		</tr>
+		<tr th:each="indoor : ${perfIndoors}" class="text-nowrap" th:with="wl1=${perf1.indoorMatches.get(indoor)}, wl2=${perf2.indoorMatches.get(indoor)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+			<th class="text-right">
+				<div th:if="${wl1}" class="progress progress-perf pull-right">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${indoor ? 'Indoor' : 'Outdoor'} matches|">
+							<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+			<th class="text-center" th:text="${indoor ? 'Indoor' : 'Outdoor'}">Outdoor</th>
+			<th class="text-left">
+				<div th:if="${wl2}" class="progress progress-perf pull-left">
+					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+						<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show ${indoor ? 'Indoor' : 'Outdoor'} matches|">
+							<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+							<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+						</a>
+					</div>
+				</div>
+			</th>
+		</tr>
+		</th:block>
 		<th:block th:if="${level == null || level.empty || level.length() > 1}">
 		<tr>
 			<td colspan="3">&nbsp;</td>
@@ -308,6 +341,37 @@
 				</div>
 			</th>
 		</tr>
+		</th:block>
+		<th:block th:if="${bestOf == null}">
+			<tr>
+				<td colspan="3">&nbsp;</td>
+			</tr>
+			<tr>
+				<td></td><th class="text-center">Best Of Breakdown</th><td></td>
+			</tr>
+			<tr th:each="bestOf : ${perfBestOfs}" class="text-nowrap" th:with="wl1=${perf1.bestOfMatches.get(bestOf)}, wl2=${perf2.bestOfMatches.get(bestOf)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+				<th class="text-right">
+					<div th:if="${wl1}" class="progress progress-perf pull-right">
+						<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">
+							<a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId2 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show Best of ${bestOf} matches|">
+								<span class="pct-data" th:text="${wl1.pctWL}">50% (10-10)</span>
+								<span class="raw-data" th:text="${wl1.WLT}">10 - 10 / 20</span>
+							</a>
+						</div>
+					</div>
+				</th>
+				<th class="text-center" th:text="|Best Of ${bestOf}|">Best Of 3</th>
+				<th class="text-left">
+					<div th:if="${wl2}" class="progress progress-perf pull-left">
+						<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
+							<a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${h2h ? 'OPP_' + playerId1 : opponent}, countryId=${countryId}, outcome=played)}" th:title="|Show Best of ${bestOf} matches|">
+								<span class="pct-data" th:text="${wl2.pctWL}">50% (10-10)</span>
+								<span class="raw-data" th:text="${wl2.WLT}">10 - 10 / 20</span>
+							</a>
+						</div>
+					</div>
+				</th>
+			</tr>
 		</th:block>
 		<tr>
 			<td colspan="3">&nbsp;</td>

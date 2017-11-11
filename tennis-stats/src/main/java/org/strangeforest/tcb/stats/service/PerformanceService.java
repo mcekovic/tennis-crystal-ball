@@ -56,12 +56,12 @@ public class PerformanceService {
 		"WHERE player_id = :playerId\n" +
 		"ORDER BY season";
 
-	private static final String PLAYER_LEVEL_BREAKDOWN_QUERY = //language=SQL
-		"SELECT level, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
-		"FROM player_match_for_stats_v m%1$s\n" +
-		"WHERE m.player_id = :playerId%2$s\n" +
-		"GROUP BY level\n" +
-		"ORDER BY level";
+	private static final String PLAYER_ITEM_BREAKDOWN_QUERY = //language=SQL
+		"SELECT %1$s, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
+		"FROM player_match_for_stats_v m%2$s\n" +
+		"WHERE m.player_id = :playerId%3$s\n" +
+		"GROUP BY %1$s\n" +
+		"ORDER BY %1$s";
 
 	private static final String PLAYER_OPPOSITION_BREAKDOWN_QUERY = //language=SQL
 		"WITH season_opposition AS (\n" +
@@ -198,11 +198,29 @@ public class PerformanceService {
 		MapSqlParameterSource params = filter.getParams().addValue("playerId", playerId);
 
 		jdbcTemplate.query(
-			format(PLAYER_LEVEL_BREAKDOWN_QUERY, join, criteria), params,
+			format(PLAYER_ITEM_BREAKDOWN_QUERY, "indoor", join, criteria), params,
+			rs -> {
+				boolean indoor = rs.getBoolean("indoor");
+				WonLost wonLost = mapWonLost(rs);
+				performanceEx.addIndoorMatches(indoor, wonLost);
+			}
+		);
+
+		jdbcTemplate.query(
+			format(PLAYER_ITEM_BREAKDOWN_QUERY, "level", join, criteria), params,
 			rs -> {
 				TournamentLevel level = TournamentLevel.decode(rs.getString("level"));
 				WonLost wonLost = mapWonLost(rs);
 				performanceEx.addLevelMatches(level, wonLost);
+			}
+		);
+
+		jdbcTemplate.query(
+			format(PLAYER_ITEM_BREAKDOWN_QUERY, "best_of", join, criteria), params,
+			rs -> {
+				int bestOf = rs.getInt("best_of");
+				WonLost wonLost = mapWonLost(rs);
+				performanceEx.addBestOfMatches(bestOf, wonLost);
 			}
 		);
 

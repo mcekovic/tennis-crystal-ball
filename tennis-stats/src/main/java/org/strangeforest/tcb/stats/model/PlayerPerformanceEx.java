@@ -7,7 +7,9 @@ import org.strangeforest.tcb.stats.service.*;
 public class PlayerPerformanceEx extends PlayerPerformance {
 
 	private final Map<Surface, WonLost> surfaceMatches;
+	private final Map<Boolean, WonLost> indoorMatches;
 	private final Map<TournamentLevel, WonLost> levelMatches;
+	private final Map<Integer, WonLost> bestOfMatches;
 	private final Map<Opponent, WonLost> oppositionMatches;
 	private final Map<Round, WonLost> roundMatches;
 	private final Map<EventResult, WonLost> resultCounts;
@@ -15,7 +17,9 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 	public PlayerPerformanceEx(PlayerPerformance perf) {
 		super(perf);
 		surfaceMatches = new LinkedHashMap<>();
+		indoorMatches = new LinkedHashMap<>();
 		levelMatches = new LinkedHashMap<>();
+		bestOfMatches = new LinkedHashMap<>();
 		oppositionMatches = new LinkedHashMap<>();
 		roundMatches = new LinkedHashMap<>();
 		resultCounts = new LinkedHashMap<>();
@@ -34,6 +38,15 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 			surfaceMatches.put(surface, wonLost);
 	}
 
+	public Map<Boolean, WonLost> getIndoorMatches() {
+		return indoorMatches;
+	}
+
+	public void addIndoorMatches(Boolean indoor, WonLost wonLost) {
+		if (!wonLost.isEmpty())
+			indoorMatches.put(indoor, wonLost);
+	}
+
 	public Map<TournamentLevel, WonLost> getLevelMatches() {
 		return levelMatches;
 	}
@@ -41,6 +54,15 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 	public void addLevelMatches(TournamentLevel level, WonLost wonLost) {
 		if (!wonLost.isEmpty())
 			levelMatches.put(level, wonLost);
+	}
+
+	public Map<Integer, WonLost> getBestOfMatches() {
+		return bestOfMatches;
+	}
+
+	public void addBestOfMatches(Integer bestOf, WonLost wonLost) {
+		if (!wonLost.isEmpty())
+			bestOfMatches.put(bestOf, wonLost);
 	}
 
 	public Map<Opponent, WonLost> getOppositionMatches() {

@@ -247,7 +247,9 @@ public class RivalriesController extends PageController {
 		PlayerPerformanceEx perf1 = performanceService.getPlayerPerformanceEx(playerId1, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, opponentFilter1));
 		PlayerPerformanceEx perf2 = performanceService.getPlayerPerformanceEx(playerId2, new PerfStatsFilter(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, opponentFilter2));
 		Set<Surface> perfSurfaces = union(perf1.getSurfaceMatches().keySet(), perf2.getSurfaceMatches().keySet());
+		Set<Boolean> perfIndoors = union(perf1.getIndoorMatches().keySet(), perf2.getIndoorMatches().keySet());
 		Set<TournamentLevel> perfLevels = union(perf1.getLevelMatches().keySet(), perf2.getLevelMatches().keySet());
+		Set<Integer> perfBestOfs = union(perf1.getBestOfMatches().keySet(), perf2.getBestOfMatches().keySet());
 		Set<Opponent> perfOppositions = union(perf1.getOppositionMatches().keySet(), perf2.getOppositionMatches().keySet());
 		Set<Round> perfRounds = union(perf1.getRoundMatches().keySet(), perf2.getRoundMatches().keySet());
 		Set<EventResult> perfResults = union(perf1.getResultCounts().keySet(), perf2.getResultCounts().keySet());
@@ -283,7 +285,9 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("perf1", perf1);
 		modelMap.addAttribute("perf2", perf2);
 		modelMap.addAttribute("perfSurfaces", perfSurfaces);
+		modelMap.addAttribute("perfIndoors", perfIndoors);
 		modelMap.addAttribute("perfLevels", perfLevels);
+		modelMap.addAttribute("perfBestOfs", perfBestOfs);
 		modelMap.addAttribute("perfOppositions", perfOppositions);
 		modelMap.addAttribute("perfRounds", perfRounds);
 		modelMap.addAttribute("perfResults", perfResults);
