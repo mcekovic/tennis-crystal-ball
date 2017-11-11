@@ -20,11 +20,13 @@
 				var fromSeason = $("#fromSeason").val();
 				var toSeason = $("#toSeason").val();
 				var level = $("#level").val();
+				var bestOf = $("#bestOf").val();
 				var surface = $("#surface").val();
+				var indoor = $("#indoor").val();
 				var round = encodeURIComponent($("#round").val());
 				var statsVsAll = $("#statsVsAll").prop("checked");
 				var rawData = window.h2hRawData === undefined || h2hRawData;
-				var url = "/headsToHeadsTable?players=" + players + "&fromSeason=" + fromSeason + "&toSeason=" + toSeason + "&level=" + level + "&surface=" + surface + "&round=" + round + "&statsVsAll=" + statsVsAll + "&rawData=" + rawData;
+				var url = "/headsToHeadsTable?players=" + players + "&fromSeason=" + fromSeason + "&toSeason=" + toSeason + "&level=" + level + "&bestOf=" + bestOf + "&surface=" + surface + "&indoor=" + indoor + "&round=" + round + "&statsVsAll=" + statsVsAll + "&rawData=" + rawData;
 				$.ajax(url).done(function(data) {
 					$("#headsToHeadsDiv").html(data);
 				});
@@ -33,6 +35,16 @@
 				var message = count == 1 ? "At least two players must be selected!" : "No player selected!";
 				$("#headsToHeadsDiv").html("<div class='row'><div class='col-md-12'><div class='alert alert-warning'>" + message + "</div></div></div>");
 			}
+		}
+		function clearHeadsToHeadsFilter() {
+			$("#fromSeason").val("");
+			$("#toSeason").val("");
+			$("#level").val("");
+			$("#bestOf").val("");
+			$("#surface").val("");
+			$("#indoor").val("");
+			$("#round").val("");
+			$("#statsVsAll").prop("checked", false);
 		}
 	</script>
 </head>
@@ -53,8 +65,7 @@
 			</a>
 		</div>
 	</div>
-	<div style="height: 5px"></div>
-	<div class="row">
+	<div class="row" style="margin-top: 5px">
 		<div class="col-md-4">
 			<div class="input-group">
 				<label for="fromSeason" class="input-group-addon">From:</label>
@@ -83,6 +94,8 @@
 				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
 			</select>
 		</div>
+	</div>
+	<div class="row" style="margin-top: 5px">
 		<div class="col-md-2">
 			<select id="round" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by round">
 				<option value="">All rounds</option>
@@ -95,6 +108,25 @@
 					<input id="statsVsAll" type="checkbox"/> Stats vs All
 				</label>
 			</div>
+		</div>
+		<div class="col-md-2">
+			<select id="bestOf" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+				<option value="">Best of any</option>
+				<option value="3">Best of 3</option>
+				<option value="5">Best of 5</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="indoor" class="form-control" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+				<option value="">Outdoor / Indoor</option>
+				<option value="false">Outdoor</option>
+				<option value="true">Indoor</option>
+			</select>
+		</div>
+		<div class="col-md-1">
+			<button type="button" class="btn btn-default" onclick="clearHeadsToHeadsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+				<span class="glyphicon glyphicon-erase"></span>&nbsp;&nbsp;Clear
+			</button>
 		</div>
 	</div>
 	<br/>

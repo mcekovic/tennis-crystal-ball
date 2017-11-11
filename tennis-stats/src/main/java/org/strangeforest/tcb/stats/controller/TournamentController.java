@@ -51,6 +51,7 @@ public class TournamentController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
 	) {
 		List<Integer> seasons = dataService.getSeasons();
@@ -60,6 +61,7 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);

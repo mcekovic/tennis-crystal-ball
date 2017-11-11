@@ -3,6 +3,7 @@
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
@@ -33,6 +34,7 @@
 					request.season = $("#season").val();
 					request.level = $("#level").val();
 					request.surface = $("#surface").val();
+					request.indoor = $("#indoor").val();
 					request.tournamentId = $("#tournament").val();
 					return request;
 				},
@@ -58,6 +60,7 @@
 				}
 			});
 			var $search = $("#tournamentEventsTable-header").find("div.search");
+			$search.before($("#tournamentDiv").remove());
 			$search.after($("#clearDiv").remove());
 			setBootgridTitles($tournamentEventsTable, [
 				{id: "playerCount", title: "Players"},
@@ -74,6 +77,7 @@
 			$("#season").val("");
 			$("#level").val("");
 			$("#surface").val("");
+			$("#indoor").val("");
 			$("#tournament").val("");
 			$("#tournamentEventsTable").bootgrid("search", "");
 			reloadTournamentEvents();
@@ -83,7 +87,7 @@
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-4">
 			<h3 class="text-nowrap" style="display: inline">Tournament Events</h3>
 		</div>
 		<div class="col-md-2">
@@ -107,16 +111,23 @@
 				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes.length() > 1 && surfaceGroup.codes == surface}">Fast (H, G, Cp)</option>
 			</select>
 		</div>
-		<div class="col-md-3">
-			<select id="tournament" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
-				<option value="">All tournaments</option>
-				<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+		<div class="col-md-2">
+			<select id="indoor" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+				<option value="">Outdoor / Indoor</option>
+				<option value="false" th:selected="${indoor == false}">Outdoor</option>
+				<option value="true" th:selected="${indoor}">Indoor</option>
 			</select>
 		</div>
 	</div>
+	<div id="tournamentDiv" class="btn-group margin-right no-margin-left">
+		<select id="tournament" class="form-control" onchange="reloadTournamentEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+			<option value="">All tournaments</option>
+			<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+		</select>
+	</div>
 	<div id="clearDiv" class="btn-group margin-right">
 		<button type="button" class="btn btn-default" onclick="clearTournamentEventsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<span class="glyphicon glyphicon-erase"></span>
+			<span class="glyphicon glyphicon-erase"></span>&nbsp;&nbsp;Clear
 		</button>
 	</div>
 	<table id="tournamentEventsTable" class="table table-condensed table-hover table-striped">

@@ -30,13 +30,15 @@ public class SeasonsController extends PageController {
 		@RequestParam(name = "season") int season,
 		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "level", required = false) String level,
-		@RequestParam(name = "surface", required = false) String surface
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("params", ParamsUtil.INSTANCE);
 		return new ModelAndView("season", modelMap);
 	}

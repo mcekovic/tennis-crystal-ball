@@ -527,13 +527,15 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "statsVsAll") boolean statsVsAll,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
 		List<String> players = Stream.of(playersCSV.split(",")).map(String::trim).collect(toList());
-		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, null, surface, null, round);
+		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, bestOf, surface, indoor, round);
 
 		List<Integer> playerIds = playerService.findPlayerIds(players);
 		HeadsToHeads headsToHeads = rivalriesService.getHeadsToHeads(playerIds, filter);

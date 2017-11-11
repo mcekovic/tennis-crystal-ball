@@ -29,11 +29,8 @@ public class PlayerTimelineService {
 	private static final String SEASON_TITLES_QUERY = //language=SQL
 		"SELECT e.season, count(tournament_event_id) AS titles FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"WHERE r.player_id = :playerId AND r.result = 'W'\n" +
-		"GROUP BY e.season\n" +
-		"UNION ALL\n" +
-		"SELECT NULL, count(tournament_event_id) FROM player_tournament_event_result\n" +
-		"WHERE player_id = :playerId AND result = 'W'";
+		"WHERE r.player_id = :playerId AND r.result = 'W' AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')\n" +
+		"GROUP BY ROLLUP(e.season)";
 
 	private static final String YEAR_END_RANKS_QUERY = //language=SQL
 		"SELECT season, year_end_rank FROM player_year_end_rank\n" +
@@ -59,10 +56,7 @@ public class PlayerTimelineService {
 	private static final String SEASON_ENTRIES_QUERY = //language=SQL
 		"SELECT season, count(result) AS entries FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
 		"WHERE player_id = :playerId AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')\n" +
-		"GROUP BY season\n" +
-		"UNION ALL\n" +
-		"SELECT NULL, count(result) AS entries FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
-		"WHERE player_id = :playerId AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')";
+		"GROUP BY ROLLUP(season)";
 
 
 	public PlayerTimeline getPlayerTimeline(int playerId) {
