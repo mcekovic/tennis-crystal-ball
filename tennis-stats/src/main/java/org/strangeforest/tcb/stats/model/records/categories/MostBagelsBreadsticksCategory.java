@@ -20,6 +20,9 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			@Override String itemCondition(ItemType itemType) {
 				return "s.w_games >= 6 AND s.l_games = " + itemType.games;
 			}
+			@Override String urlParam(ItemType itemType) {
+				return "6:" + itemType.games;
+			}
 		},
 		AGAINST("Against", "Against") {
 			@Override RecordType inverted() {
@@ -27,6 +30,9 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			}
 			@Override String itemCondition(ItemType itemType) {
 				return "s.w_games = " + itemType.games + " AND s.l_games >= 6";
+			}
+			@Override String urlParam(ItemType itemType) {
+				return itemType.games + ":6";
 			}
 		};
 
@@ -40,6 +46,7 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 
 		abstract RecordType inverted();
 		abstract String itemCondition(ItemType itemType);
+		abstract String urlParam(ItemType itemType);
 	}
 
 	enum ItemType {
@@ -119,8 +126,8 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"FROM player_items\n" +
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
-			IntegerRecordDetail.class, null,
-			asList(new RecordColumn("value", "numeric", null, ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")))
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&score=*%3$s", playerId, domain.urlParam, type.urlParam(itemType)),
+			asList(new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")))
 		);
 	}
 
@@ -143,8 +150,8 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"FROM player_items\n" +
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
-			IntegerRecordDetail.class, null,
-			asList(new RecordColumn("value", "numeric", null, ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")))
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&score=*%3$s", playerId, domain.urlParam, type.urlParam(itemType)),
+			asList(new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")))
 		);
 	}
 
@@ -167,9 +174,9 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"FROM player_items\n" +
 			"GROUP BY player_id, season",
 			"r.value, r.season", "r.value DESC", "r.value DESC, r.season, r.last_date",
-			SeasonIntegerRecordDetail.class, null,
+			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d&score=*%3$s", playerId, recordDetail.getSeason(), type.urlParam(itemType)),
 			asList(
-				new RecordColumn("value", "numeric", null, ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")),
+				new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", itemType.name + prefix(type.name, " ")),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			)
 		);
@@ -197,9 +204,9 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"GROUP BY player_id\n" +
 			"HAVING sum(items) > 0 AND sum(total) >= " + minEntries,
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.last_date",
-			WinningPctRecordDetail.class, null,
+			WinningPctRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s", playerId, domain.urlParam),
 			asList(
-				new RecordColumn("value", null, null, PCT_WIDTH, "right", itemType.name + prefix(type.name, " ") + " Pct."),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", itemType.name + prefix(type.name, " ") + " Pct."),
 				new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", type.name),
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
 			),
@@ -231,9 +238,9 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"GROUP BY player_id\n" +
 			"HAVING sum(items) > 0 AND sum(total) >= " + minEntries,
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.last_date",
-			WinningPctRecordDetail.class, null,
+			WinningPctRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s", playerId, domain.urlParam),
 			asList(
-				new RecordColumn("value", null, null, PCT_WIDTH, "right", itemType.name + prefix(type.name, " ") + " Pct."),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", itemType.name + prefix(type.name, " ") + " Pct."),
 				new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", type.name),
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
 			),
@@ -263,9 +270,9 @@ public class MostBagelsBreadsticksCategory extends RecordCategory {
 			"GROUP BY player_id, season\n" +
 			"HAVING sum(items) > 0 AND sum(total) >= " + minEntries,
 			"r.won, r.lost, r.season", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.season, r.last_date",
-			SeasonWinningPctRecordDetail.class, null,
+			SeasonWinningPctRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d", playerId, recordDetail.getSeason()),
 			asList(
-				new RecordColumn("value", null, null, PCT_WIDTH, "right", itemType.name + prefix(type.name, " ") + " Pct."),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", itemType.name + prefix(type.name, " ") + " Pct."),
 				new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", type.name),
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")

@@ -931,7 +931,7 @@ FROM weeks_at_elo_topn;
 -- player_weeks_at_elo_topn_v
 
 CREATE OR REPLACE VIEW player_weeks_at_elo_topn_v AS
-SELECT player_id, rank, ceil(sum(CASE WHEN weeks <= 52 THEN weeks ELSE 0 END)) weeks
+SELECT player_id, rank, ceil(sum(weeks) FILTER (WHERE weeks <= 52)) weeks
 FROM topn_player_elo_ranking_v
 GROUP BY player_id, rank;
 
@@ -939,10 +939,10 @@ GROUP BY player_id, rank;
 -- player_season_weeks_at_elo_topn_goat_points_v
 
 CREATE OR REPLACE VIEW player_season_weeks_at_elo_topn_goat_points_v AS
-SELECT player_id, season, round(sum(CASE WHEN weeks <= 52 THEN weeks ELSE 0 END::REAL / weeks_for_point))::INTEGER AS goat_points, sum(CASE WHEN weeks <= 52 THEN weeks ELSE 0 END::REAL / weeks_for_point) AS unrounded_goat_points
+SELECT player_id, season, round((sum(weeks) FILTER (WHERE weeks <= 52))::REAL / weeks_for_point)::INTEGER AS goat_points, (sum(weeks) FILTER (WHERE weeks <= 52))::REAL / weeks_for_point AS unrounded_goat_points
 FROM player_season_weeks_at_elo_topn_v
 INNER JOIN weeks_at_elo_topn_goat_points USING (rank)
-GROUP BY player_id, season;
+GROUP BY player_id, season, weeks_for_point;
 
 
 -- player_weeks_at_elo_topn_goat_points_v

@@ -5,6 +5,7 @@ import java.util.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 
+import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 import static org.strangeforest.tcb.stats.model.records.categories.LongestCareerResultSpanCategory.ResultType.*;
@@ -12,15 +13,17 @@ import static org.strangeforest.tcb.stats.model.records.categories.LongestCareer
 public class LongestCareerResultSpanCategory extends RecordCategory {
 
 	enum ResultType {
-		TITLE("Title", TITLES),
-		FINAL("Final", FINALS);
+		TITLE("Title", TITLES, "W"),
+		FINAL("Final", FINALS, "F%2B");
 
 		private final String name;
 		private final String condition;
+		public final String urlParam;
 
-		ResultType(String name, String condition) {
+		ResultType(String name, String condition, String urlParam) {
 			this.name = name;
 			this.condition = condition;
+			this.urlParam = urlParam;
 		}
 	}
 
@@ -84,7 +87,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"INNER JOIN tournament_event le ON le.tournament_event_id = r.last_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'",
 			SPAN_COLUMNS, "r.value DESC", "r.value DESC, r.end_date",
-			TournamentCareerSpanRecordDetail.class, null,
+			TournamentCareerSpanRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s&result=%3$s&fromDate=%4$td-%4$tm-%4$tY&toDate=%5$td-%5$tm-%5$tY", playerId, domain.urlParam, type.urlParam, recordDetail.getStartDate(), recordDetail.getEndDate()),
 			SPAN_RECORD_COLUMNS
 		);
 	}
@@ -111,7 +114,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'\n" +
 			"AND p.name NOT IN ('Fred Hemmes', 'Miloslav Mecir')", // TODO Remove after data is fixed
 			SPAN_COLUMNS, "r.value DESC", "r.value DESC, r.end_date",
-			TournamentCareerSpanRecordDetail.class, null,
+			TournamentCareerSpanRecordDetail.class,  (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&outcome=wonplayed&fromDate=%3$td-%3$tm-%3$tY&toDate=%4$td-%4$tm-%4$tY", playerId, domain.urlParam, recordDetail.getStartDate(), recordDetail.getEndDate()),
 			SPAN_RECORD_COLUMNS
 		);
 	}
@@ -119,7 +122,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 	private static final String SPAN_COLUMNS = "r.value, r.start_date, r.start_tournament_event_id, r.start_tournament, r.start_level, r.end_date, r.end_tournament_event_id, r.end_tournament, r.end_level";
 
 	private static final List<RecordColumn> SPAN_RECORD_COLUMNS = asList(
-		new RecordColumn("value", null, null, SPAN_WIDTH, "left", "Career Span"),
+		new RecordColumn("value", null, "valueUrl", SPAN_WIDTH, "left", "Career Span"),
 		new RecordColumn("startDate", null, "startDate", DATE_WIDTH, "center", "First Date"),
 		new RecordColumn("startEvent", null, "startTournamentEvent", TOURNAMENT_WIDTH, "left", "First Tournament"),
 		new RecordColumn("endDate", null, "endDate", DATE_WIDTH, "center", "Last Date"),
@@ -146,9 +149,9 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"GROUP BY player_id, grouping_season\n" +
 			"HAVING max(consecutive_seasons) > 1",
 			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
-			SeasonRangeIntegerRecordDetail.class, null,
+			SeasonRangeIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s&result=%3$s&fromDate=01-01-%4$d&toDate=31-12-%5$d", playerId, domain.urlParam, type.urlParam, recordDetail.getStartSeason(), recordDetail.getEndSeason()),
 			asList(
-				new RecordColumn("value", "numeric", null, SEASONS_WIDTH, "right", "Seasons"),
+				new RecordColumn("value", null, "valueUrl", SEASONS_WIDTH, "right", "Seasons"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),
 				new RecordColumn("endSeason", "numeric", null, SEASON_WIDTH, "center", "End Season")
 			)

@@ -239,7 +239,7 @@
 	<div class="col-md-4">
 		<div id="eventsDateRange" class="input-group">
 			<label for="eventsFromDate" class="input-group-addon">From:</label>
-			<input id="eventsFromDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(fromDate, 'dd-MM-yytcb@localhost - DigitalOceanyy')}" onchange="reloadEvents()"/>
+			<input id="eventsFromDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(fromDate, 'dd-MM-yyyy')}" onchange="reloadEvents()"/>
 			<label for="eventsToDate" class="input-group-addon">To:</label>
 			<input id="eventsToDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(toDate, 'dd-MM-yyyy')}" onchange="reloadEvents()"/>
 		</div>

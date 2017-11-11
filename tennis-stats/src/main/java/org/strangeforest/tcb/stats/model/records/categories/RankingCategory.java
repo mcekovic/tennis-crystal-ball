@@ -103,7 +103,6 @@ public abstract class RankingCategory extends RecordCategory {
 		register(careerSpanRanking(type, domain, TOP_20, TOP_20_NAME, rankDBName, TOP_20_RANK));
 	}
 
-	// PostgreSQL FILTER should be used instead of CASE in PostgreSQL 9.4+
 	protected static Record mostWeeksAt(String rankingType, RecordDomain domain, String id, String name, String rankDBName, String condition, String bestCondition) {
 		return new Record<>(
 			"WeeksAt" + domain.id + rankingType + id, "Most Weeks at " + suffix(domain.name, " ") + rankingType + " " + name,
@@ -114,7 +113,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"  INNER JOIN player_best_" + rankDBName + "rank USING (player_id)\n" +
 			"  WHERE best_" + domain.columnPrefix + rankDBName + "rank " + bestCondition + "\n" +
 			")\n" +
-			"SELECT player_id, ceil(sum(CASE WHEN weeks <= 52 THEN weeks ELSE 0 END)) AS value, max(rank_date) AS last_date\n" +
+			"SELECT player_id, ceil(sum(weeks) FILTER (WHERE weeks <= 52)) AS value, max(rank_date) AS last_date\n" +
 			"FROM player_ranking_weeks\n" +
 			"INNER JOIN player_v p USING (player_id)\n" +
 			"WHERE rank " + condition + "\n" +

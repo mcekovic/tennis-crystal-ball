@@ -31,10 +31,10 @@ public class TitleStreaksCategory extends ResultsStreaksCategory {
 	}
 
 	private static Record titleStreak(RecordDomain domain) {
-		return resultStreak(domain.id + "Title", suffix(domain.name, " ") + "Title", domain.nameSuffix, TITLES, domain.condition);
+		return resultStreak(domain, "Title", "Title", domain.nameSuffix, TITLES, "W");
 	}
 
 	private static Record tournamentTitleStreak(RecordDomain domain) {
-		return tournamentResultStreak(domain.id + "Title", domain.name, "Title", TITLES, domain.condition);
+		return tournamentResultStreak(domain, "Title", "Title", TITLES, "W");
 	}
 }

@@ -324,13 +324,13 @@
 		<div class="col-md-2">
 			<select id="matchesScore" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by match score">
 				<option value="">All scores</option>
-				<optgroup label="Best of 3">
+				<optgroup label="Best Of 3">
 					<option value="2:0" th:selected="${score == '2:0'}">2:0</option>
 					<option value="2:1" th:selected="${score == '2:0'}">2:1</option>
 					<option value="1:2" th:selected="${score == '2:0'}">1:2</option>
 					<option value="0:2" th:selected="${score == '2:0'}">0:2</option>
 				</optgroup>
-				<optgroup label="Best of 5">
+				<optgroup label="Best Of 5">
 					<option value="3:0" th:selected="${score == '3:0'}">3:0</option>
 					<option value="3:1" th:selected="${score == '3:1'}">3:1</option>
 					<option value="3:2" th:selected="${score == '3:2'}">3:2</option>
@@ -348,12 +348,20 @@
 					<option value="1:2+" th:selected="${score == '1:2+'}">After 1:2</option>
 					<option value="2:2+" th:selected="${score == '2:2+'}">After 2:2</option>
 				</optgroup>
-				<optgroup label="Misc">
+				<optgroup label="Under Pressure">
 					<option value="*DS" th:selected="${score == '*DS'}">Deciding Set</option>
 					<option value="*TB" th:selected="${score == '*TB'}">Tie Break</option>
 					<option value="*TBW" th:selected="${score == '*TBW'}">Tie Break Won</option>
 					<option value="*TBL" th:selected="${score == '*TBL'}">Tie Break Lost</option>
 					<option value="*DSTB" th:selected="${score == '*DSTB'}">Dec. Set TB</option>
+				</optgroup>
+				<optgroup label="Set Score">
+					<option value="*6:0" th:selected="${score == '*6:0'}">6:0 Set</option>
+					<option value="*0:6" th:selected="${score == '*0:6'}">0:6 Set</option>
+					<option value="*6:1" th:selected="${score == '*6:1'}">6:1 Set</option>
+					<option value="*1:6" th:selected="${score == '*1:6'}">1:6 Set</option>
+					<option value="*7:5" th:selected="${score == '*7:5'}">7:5 Set</option>
+					<option value="*5:7" th:selected="${score == '*5:7'}">5:7 Set</option>
 				</optgroup>
 			</select>
 		</div>

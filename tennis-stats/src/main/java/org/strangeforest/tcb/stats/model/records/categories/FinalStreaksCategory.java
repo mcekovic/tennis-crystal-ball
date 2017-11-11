@@ -31,10 +31,10 @@ public class FinalStreaksCategory extends ResultsStreaksCategory {
 	}
 
 	private static Record finalStreak(RecordDomain domain) {
-		return resultStreak(domain.id + "Final", suffix(domain.name, " ") + "Final", domain.nameSuffix, FINALS, domain.condition);
+		return resultStreak(domain, "Final", "Final", domain.nameSuffix, FINALS, "F%2B");
 	}
 
 	private static Record tournamentFinalStreak(RecordDomain domain) {
-		return tournamentResultStreak(domain.id + "Final", domain.name, "Final", FINALS, domain.condition);
+		return tournamentResultStreak(domain, "Final", "Final", FINALS, "F%2B");
 	}
 }

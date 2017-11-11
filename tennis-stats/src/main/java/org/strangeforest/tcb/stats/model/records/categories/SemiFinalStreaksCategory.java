@@ -31,10 +31,10 @@ public class SemiFinalStreaksCategory extends ResultsStreaksCategory {
 	}
 
 	private static Record semiFinalStreak(RecordDomain domain) {
-		return resultStreak(domain.id + "SemiFinal", suffix(domain.name, " ") + "Semi-Final", domain.nameSuffix, SEMI_FINALS, domain.condition);
+		return resultStreak(domain, "SemiFinal", "Semi-Final", domain.nameSuffix, SEMI_FINALS, "SF%2B");
 	}
 
 	private static Record tournamentSemiFinalStreak(RecordDomain domain) {
-		return tournamentResultStreak(domain.id + "SemiFinal", domain.name, "Semi-Final", SEMI_FINALS, domain.condition);
+		return tournamentResultStreak(domain, "SemiFinal", "Semi-Final", SEMI_FINALS, "SF%2B");
 	}
 }

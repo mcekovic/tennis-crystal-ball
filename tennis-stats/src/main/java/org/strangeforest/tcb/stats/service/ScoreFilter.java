@@ -53,6 +53,7 @@ public class ScoreFilter {
 	private static final String TIE_BREAK_WON_CRITERION = " AND (s.w_tb_pt > s.l_tb_pt OR (s.w_games = 7 AND s.l_games = 6))";
 	private static final String TIE_BREAK_LOST_CRITERION = " AND (s.w_tb_pt < s.l_tb_pt OR (s.w_games = 6 AND s.l_games = 7))";
 	private static final String SET_TIE_BREAK_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id AND s.set = %1$d" + TIE_BREAK_PLAYED_CRITERION + ")";
+	private static final String SET_GAMES_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id AND (s.w_games = %1$d  AND s.l_games = %2$d))";
 
 	private ScoreFilter(String score, boolean forStats) {
 		this.forStats = forStats;
@@ -122,6 +123,11 @@ public class ScoreFilter {
 				BEST_OF_3 + format(SET_TIE_BREAK_CRITERION, 3),
 				BEST_OF_5 + format(SET_TIE_BREAK_CRITERION, 5)
 			));
+		}
+		else if (misc.length() == 3 && misc.charAt(1) == ':') {
+			int wGames = Integer.parseInt(misc.substring(0, 1));
+			int lGames = Integer.parseInt(misc.substring(2));
+			criteria.append(format(forStats ? STATS_CRITERION_TEMPLATE : MATCHES_CRITERION_TEMPLATE, format(SET_GAMES_CRITERION, wGames, lGames), format(SET_GAMES_CRITERION, lGames, wGames)));
 		}
 	}
 

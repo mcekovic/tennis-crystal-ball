@@ -31,10 +31,10 @@ public class QuarterFinalStreaksCategory extends ResultsStreaksCategory {
 	}
 
 	private static Record quarterFinalStreak(RecordDomain domain) {
-		return resultStreak(domain.id + "QuarterFinal", suffix(domain.name, " ") + "Quarter-Final", domain.nameSuffix, QUARTER_FINALS, domain.condition);
+		return resultStreak(domain, "QuarterFinal", "Quarter-Final", domain.nameSuffix, QUARTER_FINALS, "QF%2B");
 	}
 
 	private static Record tournamentQuarterFinalStreak(RecordDomain domain) {
-		return tournamentResultStreak(domain.id + "QuarterFinal", domain.name, "Quarter-Final", QUARTER_FINALS, domain.condition);
+		return tournamentResultStreak(domain, "QuarterFinal", "Quarter-Final", QUARTER_FINALS, "QF%2B");
 	}
 }
