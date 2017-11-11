@@ -23,6 +23,8 @@ public class MostSemiFinalsCategory extends TournamentResultsCategory {
 		register(mostSemiFinals(CLAY));
 		register(mostSemiFinals(GRASS));
 		register(mostSemiFinals(CARPET));
+		register(mostSemiFinals(OUTDOOR));
+		register(mostSemiFinals(INDOOR));
 		register(mostSeasonSemiFinals(ALL_WO_TEAM));
 		register(mostSeasonSemiFinals(GRAND_SLAM));
 		register(mostSeasonSemiFinals(MASTERS));

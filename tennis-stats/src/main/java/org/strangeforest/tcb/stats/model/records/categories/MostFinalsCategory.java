@@ -23,6 +23,8 @@ public class MostFinalsCategory extends TournamentResultsCategory {
 		register(mostFinals(CLAY));
 		register(mostFinals(GRASS));
 		register(mostFinals(CARPET));
+		register(mostFinals(OUTDOOR));
+		register(mostFinals(INDOOR));
 		register(mostSeasonFinals(ALL_WO_TEAM));
 		register(mostSeasonFinals(GRAND_SLAM));
 		register(mostSeasonFinals(ALL_FINALS));
@@ -32,6 +34,8 @@ public class MostFinalsCategory extends TournamentResultsCategory {
 		register(mostSeasonFinals(CLAY));
 		register(mostSeasonFinals(GRASS));
 		register(mostSeasonFinals(CARPET));
+		register(mostSeasonFinals(OUTDOOR));
+		register(mostSeasonFinals(INDOOR));
 		register(mostTournamentFinals(ALL_WO_TEAM));
 		register(mostTournamentFinals(GRAND_SLAM));
 		register(mostTournamentFinals(MASTERS));

@@ -23,6 +23,8 @@ public class SemiFinalStreaksCategory extends ResultsStreaksCategory {
 		register(semiFinalStreak(CLAY));
 		register(semiFinalStreak(GRASS));
 		register(semiFinalStreak(CARPET));
+		register(semiFinalStreak(OUTDOOR));
+		register(semiFinalStreak(INDOOR));
 		register(tournamentSemiFinalStreak(ALL_WO_TEAM));
 		register(tournamentSemiFinalStreak(GRAND_SLAM));
 		register(tournamentSemiFinalStreak(MASTERS));

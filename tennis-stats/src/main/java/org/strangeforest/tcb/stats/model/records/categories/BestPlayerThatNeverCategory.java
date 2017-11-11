@@ -13,6 +13,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 
 	private static final String POINTS_WIDTH = "120";
 
+	private static final String CARPET_DOB_THRESHOLD = "01-01-1985";
 	private static final RecordColumn GOAT_POINTS_COLUMN = new RecordColumn("value", null, "valueUrl", POINTS_WIDTH, "right", "GOAT Points");
 	private static final BiFunction<Integer, IntegerRecordDetail, String> PLAYER_GOAT_POINTS_URL_FORMATTER =
 		(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints", playerId);
@@ -21,10 +22,14 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 		super("Best Player That Never...");
 		register(bestPlayerThatNeverWon(GRAND_SLAM, "grand_slams"));
 		register(bestPlayerThatNeverWon(TOUR_FINALS, "tour_finals"));
-		register(bestPlayerThatNeverWon(ALL_FINALS, "tour_finals + alt_finals", "Any Tour Finals Title (Official or Alternative)"));
+		register(bestPlayerThatNeverWon(ALL_FINALS, "tour_finals + alt_finals", N_A, "Any Tour Finals Title (Official or Alternative)", null));
 		register(bestPlayerThatNeverWon(MASTERS, "masters"));
 		register(bestPlayerThatNeverWon(OLYMPICS, "olympics"));
 		register(bestPlayerThatNeverWon(BIG_TOURNAMENTS, "big_titles"));
+		register(bestPlayerThatNeverWon(HARD, "hard"));
+		register(bestPlayerThatNeverWon(CLAY, "clay"));
+		register(bestPlayerThatNeverWon(GRASS, "grass"));
+		register(bestPlayerThatNeverWon(CARPET, "carpet", " AND dob < DATE '" + CARPET_DOB_THRESHOLD + "'", null, "Born before " + CARPET_DOB_THRESHOLD));
 		register(bestPlayerThatNeverWon(ALL_WO_TEAM, "titles"));
 		register(bestPlayerThatNeverReachedTopN(NO_1, NO_1_NAME, ATP, "best_rank", 1));
 		register(bestPlayerThatNeverReachedTopN(TOP_2, TOP_2_NAME, ATP, "best_rank", 2));
@@ -39,19 +44,20 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 	}
 
 	private static Record bestPlayerThatNeverWon(RecordDomain domain, String titleColumn) {
-		return bestPlayerThatNeverWon(domain, titleColumn, null);
+		return bestPlayerThatNeverWon(domain, titleColumn, N_A, null, null);
 	}
 
-	private static Record bestPlayerThatNeverWon(RecordDomain domain, String titleColumn, String domainTitleOverride) {
+	private static Record bestPlayerThatNeverWon(RecordDomain domain, String titleColumn, String condition, String domainTitleOverride, String notes) {
 		String domainTitle = domainTitleOverride != null ? prefix(domainTitleOverride, " ") : prefix(domain.name, " ") + " Title" + prefix(domain.nameSuffix, " ");
 		return new Record<>(
 			"BestPlayerThatNeverWon" + domain.id + "Title", "Best Player That Never Won" + domainTitle,
 			/* language=SQL */
-			"SELECT player_id, goat_points AS value FROM player_v\n" +
-			"WHERE goat_points > 0 AND " + titleColumn + " = 0",
+			"SELECT player_id, goat_points AS value FROM player\n" +
+			"INNER JOIN player_titles USING (player_id) INNER JOIN player_goat_points USING (player_id)\n" +
+			"WHERE goat_points > 0 AND coalesce(" + titleColumn + ", 0) = 0" + condition,
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, PLAYER_GOAT_POINTS_URL_FORMATTER,
-			asList(GOAT_POINTS_COLUMN)
+			asList(GOAT_POINTS_COLUMN), notes
 		);
 	}
 

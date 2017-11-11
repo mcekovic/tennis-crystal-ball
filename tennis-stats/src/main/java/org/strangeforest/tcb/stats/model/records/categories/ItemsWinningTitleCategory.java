@@ -56,6 +56,8 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		register(itemsLostWinningTitle(type, GAMES, CLAY, surfaceTournaments("C", "e.")));
 		register(itemsLostWinningTitle(type, GAMES, GRASS, surfaceTournaments("G", "e.")));
 		register(itemsLostWinningTitle(type, GAMES, CARPET, surfaceTournaments("P", "e.")));
+		register(itemsLostWinningTitle(type, GAMES, OUTDOOR, indoorTournaments(false, "e.")));
+		register(itemsLostWinningTitle(type, GAMES, INDOOR, indoorTournaments(true, "e.")));
 		register(itemsLostWinningTitle(type, SETS, ALL_WO_TEAM));
 		register(itemsLostWinningTitle(type, SETS, GRAND_SLAM));
 		register(itemsLostWinningTitle(type, SETS, TOUR_FINALS));
@@ -68,6 +70,8 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		register(itemsLostWinningTitle(type, SETS, CLAY, surfaceTournaments("C", "e.")));
 		register(itemsLostWinningTitle(type, SETS, GRASS, surfaceTournaments("G", "e.")));
 		register(itemsLostWinningTitle(type, SETS, CARPET, surfaceTournaments("P", "e.")));
+		register(itemsLostWinningTitle(type, SETS, OUTDOOR, indoorTournaments(false, "e.")));
+		register(itemsLostWinningTitle(type, SETS, INDOOR, indoorTournaments(true, "e.")));
 		if (type == LEAST) {
 			register(titlesWonWOLosingSet(ALL_WO_TEAM));
 			register(titlesWonWOLosingSet(GRAND_SLAM));
@@ -81,6 +85,8 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 			register(titlesWonWOLosingSet(CLAY, surfaceTournaments("C", "e.")));
 			register(titlesWonWOLosingSet(GRASS, surfaceTournaments("G", "e.")));
 			register(titlesWonWOLosingSet(CARPET, surfaceTournaments("P", "e.")));
+			register(titlesWonWOLosingSet(OUTDOOR, indoorTournaments(false, "e.")));
+			register(titlesWonWOLosingSet(INDOOR, indoorTournaments(true, "e.")));
 		}
 	}
 
@@ -101,7 +107,7 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 			"r.value, r.tournament_event_id, r.tournament, r.level, r.season, r.matches", type.order, type.order + ", r.date",
 			TournamentEventIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentEventId=%2$d", playerId, recordDetail.getTournamentEventId()),
 			asList(
-				new RecordColumn("value", "numeric", null, ITEMS_WIDTH, "right", item.name),
+				new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", item.name),
 				new RecordColumn("matches", "numeric", null, MATCHES_WIDTH, "right", "Matches"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")
@@ -133,7 +139,7 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
 			IntegerRecordDetail.class, null,
 			asList(
-				new RecordColumn("value", "numeric", null, ITEMS_WIDTH, "right", "Titles")
+				new RecordColumn("value", null, "valueUrl", ITEMS_WIDTH, "right", "Titles")
 			),
 			"Minimum 3 matches played to win the title"
 		);

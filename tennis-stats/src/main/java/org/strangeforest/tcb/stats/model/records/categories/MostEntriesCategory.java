@@ -23,6 +23,8 @@ public class MostEntriesCategory extends TournamentResultsCategory {
 		register(mostEntries(CLAY));
 		register(mostEntries(GRASS));
 		register(mostEntries(CARPET));
+		register(mostEntries(OUTDOOR));
+		register(mostEntries(INDOOR));
 		register(mostSeasonEntries(ALL_WO_TEAM));
 		register(mostSeasonEntries(HARD));
 		register(mostSeasonEntries(CLAY));

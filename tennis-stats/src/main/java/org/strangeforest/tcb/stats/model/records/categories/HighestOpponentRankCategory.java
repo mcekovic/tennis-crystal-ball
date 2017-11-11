@@ -66,11 +66,15 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			register(highestOpponentRank(type, rankingType, CLAY));
 			register(highestOpponentRank(type, rankingType, GRASS));
 			register(highestOpponentRank(type, rankingType, CARPET));
+			register(highestOpponentRank(type, rankingType, OUTDOOR));
+			register(highestOpponentRank(type, rankingType, INDOOR));
 			register(highestSeasonOpponentRank(type, rankingType, ALL));
 			register(highestSeasonOpponentRank(type, rankingType, HARD));
 			register(highestSeasonOpponentRank(type, rankingType, CLAY));
 			register(highestSeasonOpponentRank(type, rankingType, GRASS));
 			register(highestSeasonOpponentRank(type, rankingType, CARPET));
+			register(highestSeasonOpponentRank(type, rankingType, OUTDOOR));
+			register(highestSeasonOpponentRank(type, rankingType, INDOOR));
 		}
 		register(highestTitleOpponentRank(type, rankingType, ALL_WO_TEAM));
 		register(highestTitleOpponentRank(type, rankingType, GRAND_SLAM));

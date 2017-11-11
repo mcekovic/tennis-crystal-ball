@@ -23,6 +23,8 @@ public class MostQuarterFinalsCategory extends TournamentResultsCategory {
 		register(mostQuarterFinals(CLAY));
 		register(mostQuarterFinals(GRASS));
 		register(mostQuarterFinals(CARPET));
+		register(mostQuarterFinals(OUTDOOR));
+		register(mostQuarterFinals(INDOOR));
 		register(mostSeasonQuarterFinals(ALL_WO_TEAM));
 		register(mostSeasonQuarterFinals(GRAND_SLAM));
 		register(mostSeasonQuarterFinals(MASTERS));

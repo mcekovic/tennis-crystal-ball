@@ -78,6 +78,10 @@ public abstract class RecordCategory {
 		return "surface = '" + surface + "' AND " + prefix + ALL_TOURNAMENTS;
 	}
 
+	protected static String indoorTournaments(boolean indoor, String prefix) {
+		return "indoor = " + indoor + " AND " + prefix + ALL_TOURNAMENTS;
+	}
+
 	protected static String where(String condition) {
 		return where(condition, 0);
 	}

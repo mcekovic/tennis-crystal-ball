@@ -21,6 +21,8 @@ public enum RecordDomain {
 	CLAY("Clay", "Clay", N_A, "surface = 'C' AND " + ALL_TOURNAMENTS, "clay_", "clayMatches", "&surface=C"),
 	GRASS("Grass", "Grass", N_A, "surface = 'G' AND " + ALL_TOURNAMENTS, "grass_", "grassMatches", "&surface=G"),
 	CARPET("Carpet", "Carpet", N_A, "surface = 'P' AND " + ALL_TOURNAMENTS, "carpet_", "carpetMatches", "&surface=P"),
+	OUTDOOR("Outdoor", "Outdoor", N_A, "indoor = FALSE AND " + ALL_TOURNAMENTS, null, "hardMatches", "&indoor=false"),
+	INDOOR("Indoor", "Indoor", N_A, "indoor AND " + ALL_TOURNAMENTS, null, "clayMatches", "&indoor=true"),
 	NO_1_FILTER(NO_1, NO_1_NAME, N_A, NO_1_RANK, "vs_no1", "vsNo1", "&opponent=NO_1"),
 	TOP_5_FILTER(TOP_5, TOP_5_NAME, N_A, TOP_5_RANK, "vs_top5", "vsTop5", "&opponent=TOP_5"),
 	TOP_10_FILTER(TOP_10, TOP_10_NAME, N_A, TOP_10_RANK, "vs_top10", "vsTop10", "&opponent=TOP_10");

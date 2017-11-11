@@ -23,6 +23,8 @@ public class FinalStreaksCategory extends ResultsStreaksCategory {
 		register(finalStreak(CLAY));
 		register(finalStreak(GRASS));
 		register(finalStreak(CARPET));
+		register(finalStreak(OUTDOOR));
+		register(finalStreak(INDOOR));
 		register(tournamentFinalStreak(ALL_WO_TEAM));
 		register(tournamentFinalStreak(GRAND_SLAM));
 		register(tournamentFinalStreak(MASTERS));

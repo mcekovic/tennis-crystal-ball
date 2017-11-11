@@ -23,6 +23,8 @@ public class TitleStreaksCategory extends ResultsStreaksCategory {
 		register(titleStreak(CLAY));
 		register(titleStreak(GRASS));
 		register(titleStreak(CARPET));
+		register(titleStreak(OUTDOOR));
+		register(titleStreak(INDOOR));
 		register(tournamentTitleStreak(ALL_WO_TEAM));
 		register(tournamentTitleStreak(GRAND_SLAM));
 		register(tournamentTitleStreak(MASTERS));

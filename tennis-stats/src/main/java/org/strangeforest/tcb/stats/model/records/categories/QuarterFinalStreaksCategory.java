@@ -23,6 +23,8 @@ public class QuarterFinalStreaksCategory extends ResultsStreaksCategory {
 		register(quarterFinalStreak(CLAY));
 		register(quarterFinalStreak(GRASS));
 		register(quarterFinalStreak(CARPET));
+		register(quarterFinalStreak(OUTDOOR));
+		register(quarterFinalStreak(INDOOR));
 		register(tournamentQuarterFinalStreak(ALL_WO_TEAM));
 		register(tournamentQuarterFinalStreak(GRAND_SLAM));
 		register(tournamentQuarterFinalStreak(MASTERS));
