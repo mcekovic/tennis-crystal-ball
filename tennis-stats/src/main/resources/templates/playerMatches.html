@@ -41,8 +41,11 @@
 		setBootgridColumnsVisible($matchesTable, ["surface"], deviceGreaterOrEqual(device, "sm"));
 		if (!deviceGreaterOrEqual(device, "md"))
 			setBootgridColumnsWidths($matchesTable, ["tournament", "match", "score"], [150, 250, 125]);
-		if ($(window).width() >= 1350) {
-			$(".container").css("width", 1350);
+		var windowWidth = $(window).width();
+		if (windowWidth >= 1350) {
+			$(".container").css("width", windowWidth >= 1400 ? 1400 : 1350);
+			if (windowWidth >= 1400)
+				$matchesTable.find("th[data-column-id='h2h']").data("visible", true);
 			$matchesTable.find("th[data-column-id='match']").data("visible", false);
 			$matchesTable.find("th[data-column-id='matchEx']").data("visible", true);
 		}
@@ -423,10 +426,10 @@
 		<th data-column-id="wonLost" data-formatter="wonLost" data-width="55">W/L</th>
 		<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
 		<th data-column-id="matchEx" data-formatter="matchEx" data-sortable="false" data-visible="false" data-width="450">Match Ex</th>
-		<th data-column-id="h2h" data-formatter="h2h" data-sortable="false" data-visible="false" data-width="55" data-css-class="h2h-column">H2H</th>
 		<th data-column-id="bestOf" data-width="50" data-visible="false">BO</th>
 		<th data-column-id="score" data-sortable="false" data-width="175">Score</th>
 		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>
+		<th data-column-id="h2h" data-formatter="h2h" data-sortable="false" data-visible="false" data-width="55" data-css-class="h2h-column">H2H</th>
 	</tr>
 	</thead>
 </table>
