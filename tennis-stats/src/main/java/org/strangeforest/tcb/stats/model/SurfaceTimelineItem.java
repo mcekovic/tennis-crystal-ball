@@ -31,7 +31,7 @@ public class SurfaceTimelineItem {
 	public SurfaceTimelineItem(int season, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, int hardIndoorMatchCount) {
 		this(season, matchCount, hardMatchCount, clayMatchCount, grassMatchCount, carpetMatchCount);
 		hardOutdoorPct = scaledPct(hardMatchCount - hardIndoorMatchCount, matchCount);
-		hardIndoorPct = scaledPct(hardIndoorMatchCount, matchCount);
+		hardIndoorPct = hardPct.subtract(hardOutdoorPct);
 	}
 
 	public int getSeason() {
