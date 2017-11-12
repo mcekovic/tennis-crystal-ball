@@ -31,6 +31,8 @@ public class SeasonsResource {
 		.put("clayCount", "clay_count")
 		.put("grassCount", "grass_count")
 		.put("carpetCount", "carpet_count")
+		.put("outdoorCount", "outdoor_count")
+		.put("indoorCount", "indoor_count")
 		.put("matchCount", "match_count")
 	.build();
 	private static final OrderBy SEASONS_DEFAULT_ORDER = OrderBy.desc("season");

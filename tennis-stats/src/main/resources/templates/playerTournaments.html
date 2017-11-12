@@ -116,7 +116,9 @@
 				var stat = parseFloat(data);
 				switch (type) {
 					case "PERCENTAGE": stat = stat.toFixed(1) + "%"; break;
-					case "RATIO": stat = stat.toFixed(2); break;
+					case "RATIO2": stat = stat.toFixed(1); break;
+					case "RATIO3": stat = stat.toFixed(2); break;
+					case "TIME": stat = Math.floor(stat / 60) + ":" + Math.round(stat % 60); break;
 				}
 				$label.html(stat);
 			});

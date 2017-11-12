@@ -40,7 +40,9 @@ public class SeasonsService {
 		"    count(*) FILTER (WHERE surface = 'H') AS hard_count,\n" +
 		"    count(*) FILTER (WHERE surface = 'C') AS clay_count,\n" +
 		"    count(*) FILTER (WHERE surface = 'G') AS grass_count,\n" +
-		"    count(*) FILTER (WHERE surface = 'P') AS carpet_count\n" +
+		"    count(*) FILTER (WHERE surface = 'P') AS carpet_count,\n" +
+		"    count(*) FILTER (WHERE NOT indoor) AS outdoor_count,\n" +
+		"    count(*) FILTER (WHERE indoor) AS indoor_count\n" +
 		"  FROM tournament_event\n" +
 		"  WHERE level NOT IN ('D', 'T')\n" +
 		"  GROUP BY season\n" +
@@ -163,6 +165,8 @@ public class SeasonsService {
 						rs.getInt("clay_count"),
 						rs.getInt("grass_count"),
 						rs.getInt("carpet_count"),
+						rs.getInt("outdoor_count"),
+						rs.getInt("indoor_count"),
 						rs.getInt("match_count"),
 						rs.getInt("hard_match_count"),
 						rs.getInt("clay_match_count"),

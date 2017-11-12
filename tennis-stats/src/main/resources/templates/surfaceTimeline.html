@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="timeline" type="java.util.List<org.strangeforest.tcb.stats.model.SurfaceTimelineItem>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
 	<title>Surface Timeline</title>
@@ -7,6 +8,9 @@
 		$(function() {
 			$("[data-toggle='tooltip']").tooltip();
 		});
+		function indoorChanged() {
+			window.location.href = "/surfaceTimeline?indoor=" + $("#indoor").prop("checked");
+		}
 	</script>
 	<style>
 		div.progress-bar > a {
@@ -30,7 +34,14 @@
 		<thead>
 			<tr>
 				<th width="80px">Season</th>
-				<th>Surfaces</th>
+				<th>
+					Surfaces
+					<div class="checkbox pull-right" style="margin: 0 5px">
+						<label data-toggle="tooltip" data-placement="top" onchange="indoorChanged()" title="Distinguish hard outdoor / indoor">
+							<input id="indoor" type="checkbox" th:checked="${indoor}"/> Indoor
+						</label>
+					</div>
+				</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -43,8 +54,14 @@
 				</th>
 				<td>
 					<div class="progress">
-						<div class="progress-bar progress-bar-default" role="progressbar" th:style="|width: ${item.hardPct}|" data-toggle="tooltip" data-placement="top" th:title="|Hard ${item.hardPct}|">
+						<div th:unless="${indoor}" class="progress-bar progress-bar-default" role="progressbar" th:style="|width: ${item.hardPct}|" data-toggle="tooltip" data-placement="top" th:title="|Hard ${item.hardPct}|">
 							<a th:href="@{/tournamentEvents(season=${item.season > 0 ? item.season : _}, surface=H)}" title="Show hard tournaments"><strong th:text="${item.hardPct}">25.0%</strong></a>
+						</div>
+						<div th:if="${indoor}" class="progress-bar progress-bar-default" role="progressbar" th:style="|width: ${item.hardOutdoorPct}|" data-toggle="tooltip" data-placement="top" th:title="|Outdoor Hard ${item.hardOutdoorPct}|">
+							<a th:href="@{/tournamentEvents(season=${item.season > 0 ? item.season : _}, surface=H, indoor=false)}" title="Show outdoor hard tournaments"><strong th:text="${item.hardOutdoorPct}">15.0%</strong></a>
+						</div>
+						<div th:if="${indoor}" class="progress-bar progress-bar-info" role="progressbar" th:style="|width: ${item.hardIndoorPct}|" data-toggle="tooltip" data-placement="top" th:title="|Indoor Hard ${item.hardIndoorPct}|">
+							<a th:href="@{/tournamentEvents(season=${item.season > 0 ? item.season : _}, surface=H, indoor=true)}" title="Show indoor hard tournaments"><strong th:text="${item.hardIndoorPct}">25.0%</strong></a>
 						</div>
 						<div class="progress-bar progress-bar-warning" role="progressbar" th:style="|width: ${item.carpetPct}|" data-toggle="tooltip" data-placement="top" th:title="|Carpet ${item.carpetPct}|">
 							<a th:href="@{/tournamentEvents(season=${item.season > 0 ? item.season : _}, surface=P)}" title="Show carpet tournaments"><strong th:text="${item.carpetPct}">25.0%</strong></a>

@@ -13,6 +13,8 @@ public class SurfaceTimelineItem {
 	private final BigDecimal clayPct;
 	private final BigDecimal grassPct;
 	private final BigDecimal carpetPct;
+	private BigDecimal hardOutdoorPct;
+	private BigDecimal hardIndoorPct;
 
 	private static final BigDecimal HUNDRED = new BigDecimal(100);
 
@@ -24,6 +26,12 @@ public class SurfaceTimelineItem {
 		BigDecimal aCarpetPct = scaledPct(carpetMatchCount, matchCount);
 		BigDecimal hardClayGrassPct = hardPct.add(clayPct).add(grassPct);
 		carpetPct = hardClayGrassPct.add(aCarpetPct).compareTo(HUNDRED) <= 0 ? aCarpetPct : HUNDRED.subtract(hardClayGrassPct);
+	}
+
+	public SurfaceTimelineItem(int season, int matchCount, int hardMatchCount, int clayMatchCount, int grassMatchCount, int carpetMatchCount, int hardIndoorMatchCount) {
+		this(season, matchCount, hardMatchCount, clayMatchCount, grassMatchCount, carpetMatchCount);
+		hardOutdoorPct = scaledPct(hardMatchCount - hardIndoorMatchCount, matchCount);
+		hardIndoorPct = scaledPct(hardIndoorMatchCount, matchCount);
 	}
 
 	public int getSeason() {
@@ -44,6 +52,14 @@ public class SurfaceTimelineItem {
 
 	public String getCarpetPct() {
 		return formatPct(carpetPct);
+	}
+
+	public String getHardOutdoorPct() {
+		return formatPct(hardOutdoorPct);
+	}
+
+	public String getHardIndoorPct() {
+		return formatPct(hardIndoorPct);
 	}
 
 	private static BigDecimal scaledPct(int value, int from) {

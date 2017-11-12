@@ -64,12 +64,14 @@ public class SeasonsController extends PageController {
 	public ModelAndView seasonEvents(
 		@RequestParam(name = "season") int season,
 		@RequestParam(name = "level", required = false) String level,
-		@RequestParam(name = "surface", required = false) String surface
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());

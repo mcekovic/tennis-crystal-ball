@@ -40,7 +40,7 @@
 				</tr>
 				<tr th:unless="${isTeam}">
 					<th>Surface</th>
-					<td><span id="eventSurface" th:if="${tournamentEvent.surface}" class="label" th:data-surface="${tournamentEvent.surface}" th:text="${(tournamentEvent.indoor ? 'Indoor ' : '') + surfaces[tournamentEvent.surface]}">Hard</span></td>
+					<td><span id="eventSurface" th:if="${tournamentEvent.surface}" class="label" th:data-surface="${tournamentEvent.surface}">[(${surfaces[tournamentEvent.surface]})]<span th:if="${tournamentEvent.indoor && tournamentEvent.surface == 'H'}" title="Indoor"> (i)</span></span></td>
 				</tr>
 				<tr th:unless="${isTeam}">
 					<th>Date</th>

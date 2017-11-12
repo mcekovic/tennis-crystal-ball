@@ -1,8 +1,8 @@
 package org.strangeforest.tcb.stats.model;
 
 import static java.lang.String.*;
-import static org.strangeforest.tcb.util.EnumUtil.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
+import static org.strangeforest.tcb.util.EnumUtil.*;
 
 public class StatsLeaderRow extends PlayerRow {
 
@@ -19,7 +19,12 @@ public class StatsLeaderRow extends PlayerRow {
 		switch (categoryType) {
 			case COUNT: return valueOf((int)value);
 			case PERCENTAGE: return format("%6.2f%%", PCT * value);
-			case RATIO: return format("%8.3f", value);
+			case RATIO2: return format("%8.2f", value);
+			case RATIO3: return format("%8.3f", value);
+			case TIME: {
+				int minutes = (int)value;
+				return format("%d:%02d", minutes / 60, minutes % 60);
+			}
 			default: throw unknownEnum(categoryType);
 		}
 	}

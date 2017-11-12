@@ -122,26 +122,28 @@ CREATE INDEX ON player_tournament_event_result (result);
 
 CREATE OR REPLACE VIEW player_titles_v AS
 WITH titles AS (
-	SELECT player_id, level, surface, count(result) AS titles
+	SELECT player_id, level, surface, indoor, count(result) AS titles
 	FROM player_tournament_event_result
 	INNER JOIN tournament_event USING (tournament_event_id)
 	WHERE result = 'W' AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')
-	GROUP BY GROUPING SETS (player_id, (player_id, level), (player_id, surface))
+	GROUP BY GROUPING SETS (player_id, (player_id, level), (player_id, surface), (player_id, indoor))
 )
 SELECT p.player_id, t.titles AS titles, coalesce(gt.titles, 0) + coalesce(ft.titles, 0) + coalesce(lt.titles, 0) + coalesce(mt.titles, 0) + coalesce(ot.titles, 0) AS big_titles,
 	gt.titles AS grand_slams, ft.titles AS tour_finals, lt.titles AS alt_finals, mt.titles AS masters, ot.titles AS olympics,
-	sht.titles AS hard, sct.titles AS clay, sgt.titles AS grass, spt.titles AS carpet
+	sht.titles AS hard, sct.titles AS clay, sgt.titles AS grass, spt.titles AS carpet, iot.titles AS outdoor, iit.titles AS indoor
 FROM player p
-LEFT JOIN titles t ON t.player_id = p.player_id AND t.level IS NULL AND surface IS NULL
-LEFT JOIN titles gt ON gt.player_id = p.player_id AND gt.level = 'G' AND gt.surface IS NULL
-LEFT JOIN titles ft ON ft.player_id = p.player_id AND ft.level = 'F' AND ft.surface IS NULL
-LEFT JOIN titles lt ON lt.player_id = p.player_id AND lt.level = 'L' AND lt.surface IS NULL
-LEFT JOIN titles mt ON mt.player_id = p.player_id AND mt.level = 'M' AND mt.surface IS NULL
-LEFT JOIN titles ot ON ot.player_id = p.player_id AND ot.level = 'O' AND ot.surface IS NULL
-LEFT JOIN titles sht ON sht.player_id = p.player_id AND sht.surface = 'H' AND sht.level IS NULL
-LEFT JOIN titles sct ON sct.player_id = p.player_id AND sct.surface = 'C' AND sct.level IS NULL
-LEFT JOIN titles sgt ON sgt.player_id = p.player_id AND sgt.surface = 'G' AND sgt.level IS NULL
-LEFT JOIN titles spt ON spt.player_id = p.player_id AND spt.surface = 'P' AND spt.level IS NULL;
+LEFT JOIN titles t ON t.player_id = p.player_id AND t.level IS NULL AND surface IS NULL AND indoor IS NULL
+LEFT JOIN titles gt ON gt.player_id = p.player_id AND gt.level = 'G'
+LEFT JOIN titles ft ON ft.player_id = p.player_id AND ft.level = 'F'
+LEFT JOIN titles lt ON lt.player_id = p.player_id AND lt.level = 'L'
+LEFT JOIN titles mt ON mt.player_id = p.player_id AND mt.level = 'M'
+LEFT JOIN titles ot ON ot.player_id = p.player_id AND ot.level = 'O'
+LEFT JOIN titles sht ON sht.player_id = p.player_id AND sht.surface = 'H'
+LEFT JOIN titles sct ON sct.player_id = p.player_id AND sct.surface = 'C'
+LEFT JOIN titles sgt ON sgt.player_id = p.player_id AND sgt.surface = 'G'
+LEFT JOIN titles spt ON spt.player_id = p.player_id AND spt.surface = 'P'
+LEFT JOIN titles iot ON iot.player_id = p.player_id AND NOT iot.indoor
+LEFT JOIN titles iit ON iit.player_id = p.player_id AND iit.indoor;
 
 CREATE MATERIALIZED VIEW player_titles AS SELECT * FROM player_titles_v;
 
@@ -530,7 +532,8 @@ SELECT match_id, tournament_event_id, tournament_id, season, date, level, surfac
 	loser_id opponent_id, loser_rank opponent_rank, loser_elo_rating opponent_elo_rating, loser_seed opponent_seed, loser_entry opponent_entry, loser_country_id opponent_country_id, loser_age opponent_age, loser_height opponent_height,
 	outcome, 1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games,
 	w_ace p_ace, w_df p_df, w_sv_pt p_sv_pt, w_1st_in p_1st_in, w_1st_won p_1st_won, w_2nd_won p_2nd_won, w_sv_gms p_sv_gms, w_bp_sv p_bp_sv, w_bp_fc p_bp_fc,
-	l_ace o_ace, l_df o_df, l_sv_pt o_sv_pt, l_1st_in o_1st_in, l_1st_won o_1st_won, l_2nd_won o_2nd_won, l_sv_gms o_sv_gms, l_bp_sv o_bp_sv, l_bp_fc o_bp_fc
+	l_ace o_ace, l_df o_df, l_sv_pt o_sv_pt, l_1st_in o_1st_in, l_1st_won o_1st_won, l_2nd_won o_2nd_won, l_sv_gms o_sv_gms, l_bp_sv o_bp_sv, l_bp_fc o_bp_fc,
+	minutes, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + 1 matches_w_stats, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_sets + l_sets sets_w_stats, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_games + l_games games_w_stats
 FROM match_for_stats_v
 LEFT JOIN match_stats USING (match_id)
 WHERE set = 0 OR set IS NULL
@@ -539,7 +542,8 @@ SELECT match_id, tournament_event_id, tournament_id, season, date, level, surfac
 	winner_id, winner_rank, winner_elo_rating, winner_seed, winner_entry, winner_country_id, winner_age, winner_height,
 	outcome, 0, 1, l_sets, w_sets, l_games, w_games,
 	l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,
-	w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc
+	w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,
+	minutes, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + 1, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_sets + l_sets, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_games + l_games
 FROM match_for_stats_v
 LEFT JOIN match_stats USING (match_id)
 WHERE set = 0 OR set IS NULL;
@@ -550,7 +554,8 @@ WHERE set = 0 OR set IS NULL;
 CREATE OR REPLACE VIEW player_season_surface_stats_v AS
 SELECT player_id, season, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
-   sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
+   sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
+	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats
 FROM player_match_stats_v
 GROUP BY player_id, season, surface;
 
@@ -565,7 +570,8 @@ CREATE INDEX ON player_season_surface_stats (season, surface);
 CREATE OR REPLACE VIEW player_season_stats_v AS
 SELECT player_id, season, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
-   sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
+   sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
+	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats
 FROM player_season_surface_stats
 GROUP BY player_id, season;
 
@@ -580,7 +586,8 @@ CREATE INDEX ON player_season_stats (season);
 CREATE OR REPLACE VIEW player_surface_stats_v AS
 SELECT player_id, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
-   sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
+   sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
+	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats
 FROM player_season_surface_stats
 GROUP BY player_id, surface;
 
@@ -595,7 +602,8 @@ CREATE INDEX ON player_surface_stats (surface);
 CREATE OR REPLACE VIEW player_stats_v AS
 SELECT player_id, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
-   sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc
+   sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
+	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats
 FROM player_season_stats
 GROUP BY player_id;
 

@@ -30,6 +30,8 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 		register(bestPlayerThatNeverWon(CLAY, "clay"));
 		register(bestPlayerThatNeverWon(GRASS, "grass"));
 		register(bestPlayerThatNeverWon(CARPET, "carpet", " AND dob < DATE '" + CARPET_DOB_THRESHOLD + "'", null, "Born before " + CARPET_DOB_THRESHOLD));
+		register(bestPlayerThatNeverWon(OUTDOOR, "outdoor"));
+		register(bestPlayerThatNeverWon(INDOOR, "indoor"));
 		register(bestPlayerThatNeverWon(ALL_WO_TEAM, "titles"));
 		register(bestPlayerThatNeverReachedTopN(NO_1, NO_1_NAME, ATP, "best_rank", 1));
 		register(bestPlayerThatNeverReachedTopN(TOP_2, TOP_2_NAME, ATP, "best_rank", 2));

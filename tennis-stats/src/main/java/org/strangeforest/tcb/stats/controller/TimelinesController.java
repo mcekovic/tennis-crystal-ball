@@ -100,10 +100,13 @@ public class TimelinesController extends PageController {
 	}
 
 	@GetMapping("/surfaceTimeline")
-	public ModelAndView surfaceTimeline() {
+	public ModelAndView surfaceTimeline(
+		@RequestParam(name = "indoor", defaultValue = "false") boolean indoor
+	) {
 		List<SurfaceTimelineItem> timeline = surfaceService.getSurfaceTimeline();
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("timeline", timeline);
 		return new ModelAndView("surfaceTimeline", modelMap);
 	}

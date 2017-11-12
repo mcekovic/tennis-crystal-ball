@@ -76,9 +76,11 @@ public class StatisticsChartService {
 	private static Object getStatsValue(ResultSet rs, StatsCategory category) throws SQLException {
 		Type type = category.getType();
 		switch (type) {
-			case COUNT: return rs.getInt("value");
+			case COUNT:
+			case TIME: return rs.getInt("value");
 			case PERCENTAGE: return round(rs.getDouble("value"), 10000.0);
-			case RATIO: return round(rs.getDouble("value"), 1000.0);
+			case RATIO2: return round(rs.getDouble("value"), 100.0);
+			case RATIO3: return round(rs.getDouble("value"), 1000.0);
 			default: throw unknownEnum(type);
 		}
 	}
