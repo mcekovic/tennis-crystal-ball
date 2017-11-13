@@ -4,8 +4,8 @@
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
-<!--/*@thymesVar id="date" type="java.util.Date"*/-->
-<!--/*@thymesVar id="dates" type="java.util.List<java.util.Date>"*/-->
+<!--/*@thymesVar id="date" type="java.time.LocalDate"*/-->
+<!--/*@thymesVar id="dates" type="java.util.List<java.time.LocalDate>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
 	<title>Rankings Table</title>
 	<script type="text/javascript" th:inline="javascript">
@@ -97,7 +97,7 @@
 			$date.append("<option value=''>" + (season == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
 			for (var i = 0; i < dates.length; i++) {
 				var date = formatDate(dates[i]);
-				$date.append("<option value='" + date + "'" + (date == "[(${#dates.format(date, 'dd-MM-yyyy')})]" ? " selected='selected'" : "") + ">" + date + "</option>");
+				$date.append("<option value='" + date + "'" + (date == "[(${#temporals.format(date, 'dd-MM-yyyy')})]" ? " selected='selected'" : "") + ">" + date + "</option>");
 			}
 		}
 		function prevRankingDate() {

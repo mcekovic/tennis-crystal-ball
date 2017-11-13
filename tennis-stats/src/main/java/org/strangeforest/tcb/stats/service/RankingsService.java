@@ -150,19 +150,19 @@ public class RankingsService {
 	@Cacheable("RankingsTable.CurrentDate")
 	public LocalDate getCurrentRankingDate(RankType rankType) {
 		String sql = format(CURRENT_RANKING_DATE_QUERY, rankingTable(rankType));
-		return toLocalDate(jdbcTemplate.getJdbcOperations().queryForObject(sql, Date.class));
+		return jdbcTemplate.getJdbcOperations().queryForObject(sql, LocalDate.class);
 	}
 
 	@Cacheable("RankingsTable.SeasonEndDate")
 	public LocalDate getSeasonEndRankingDate(RankType rankType, int season) {
 		String sql = format(SEASON_END_RANKING_DATE_QUERY, rankingTable(rankType));
-		return toLocalDate(jdbcTemplate.queryForObject(sql, params("season", season), Date.class));
+		return jdbcTemplate.queryForObject(sql, params("season", season), LocalDate.class);
 	}
 
 	@Cacheable("RankingsTable.SeasonDates")
-	public List<Date> getSeasonRankingDates(RankType rankType, int season) {
+	public List<LocalDate> getSeasonRankingDates(RankType rankType, int season) {
 		String sql = format(RANKING_SEASON_DATES_QUERY, rankingTable(rankType));
-		return jdbcTemplate.queryForList(sql, params("season", season), Date.class);
+		return jdbcTemplate.queryForList(sql, params("season", season), LocalDate.class);
 	}
 
 	@Cacheable("RankingsTable.TopN")

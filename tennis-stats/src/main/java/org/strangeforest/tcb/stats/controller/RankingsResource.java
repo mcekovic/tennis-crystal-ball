@@ -71,7 +71,7 @@ public class RankingsResource {
 	}
 
 	@GetMapping("/seasonRankingDates")
-	public List<Date> seasonRankingDates(
+	public List<LocalDate> seasonRankingDates(
 		@RequestParam(name = "rankType") RankType rankType,
 		@RequestParam(name = "season") int season
 	) {
