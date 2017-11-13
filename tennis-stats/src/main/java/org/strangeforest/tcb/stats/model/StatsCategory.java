@@ -69,6 +69,7 @@ public final class StatsCategory {
 		addCategory(SERVE, "servicePointsWonPct", "(p_1st_won + p_2nd_won)::REAL / nullif(p_sv_pt, 0)", PlayerStats::getServicePointsWonPct, PERCENTAGE, true, "Service Pts. Won %");
 		addCategory(SERVE, "serviceIPPointsWonPct", "(p_1st_won + p_2nd_won - p_ace)::REAL / nullif(p_sv_pt - p_ace - p_df, 0)", PlayerStats::getServiceInPlayPointsWonPct, PERCENTAGE, true, "Service In-play Pts. Won %", "stats.serviceIPPointsWonPct.title");
 		addCategory(SERVE, "pointsPerSvcGame", "p_sv_pt::REAL / nullif(p_sv_gms, 0)", PlayerStats::getPointsPerServiceGame, RATIO3, true, "Points per Service Game");
+		addCategory(SERVE, "pointsLostPerSvcGame", "(p_sv_pt - p_1st_won - p_2nd_won)::REAL / nullif(p_sv_gms, 0)", PlayerStats::getPointsLostPerServiceGame, RATIO3, true, "Points Lost per Svc. Game");
 		addCategory(SERVE, "serviceGamesWonPct", "(p_sv_gms - (p_bp_fc - p_bp_sv))::REAL / nullif(p_sv_gms, 0)", PlayerStats::getServiceGamesWonPct, PERCENTAGE, true, "Service Games Won %");
 		addCategory(SERVE, "svcGamesLostPerSet", "(p_bp_fc - p_bp_sv)::REAL / nullif(sets_w_stats, 0)", PlayerStats::getServiceGamesLostPerSet, RATIO3, true, "Svc. Games Lost per Set");
 		addCategory(SERVE, "svcGamesLostPerMarch", "(p_bp_fc - p_bp_sv)::REAL / nullif(matches_w_stats, 0)", PlayerStats::getServiceGamesLostPerMatch, RATIO2, true, "Svc. Games Lost per Match");
@@ -82,6 +83,7 @@ public final class StatsCategory {
 		addCategory(RETURN, "returnPointsWonPct", RETURN_POINTS_WON_PCT, PlayerStats::getReturnPointsWonPct, PERCENTAGE, true, "Return Pts. Won %");
 		addCategory(RETURN, "returnIPPointsWonPct", "(o_sv_pt - o_1st_won - o_2nd_won - o_df)::REAL / nullif(o_sv_pt - o_ace - o_df, 0)", PlayerStats::getReturnInPlayPointsWonPct, PERCENTAGE, true, "Return In-play Pts. Won %", "stats.returnIPPointsWonPct.title");
 		addCategory(RETURN, "pointsPerRtnGame", "o_sv_pt::REAL / nullif(o_sv_gms, 0)", PlayerStats::getPointsPerReturnGame, RATIO3, true, "Points per Return Game");
+		addCategory(RETURN, "pointsWonPerRtnGame", "(o_sv_pt - o_1st_won - o_2nd_won)::REAL / nullif(o_sv_gms, 0)", PlayerStats::getPointsWonPerReturnGame, RATIO3, true, "Points Won per Rtn. Game");
 		addCategory(RETURN, "returnGamesWonPct", RETURN_GAMES_WON_PCT, PlayerStats::getReturnGamesWonPct, PERCENTAGE, true, "Return Games Won %");
 		addCategory(RETURN, "rtnGamesWonPerSet", "(o_bp_fc - o_bp_sv)::REAL / nullif(sets_w_stats, 0)", PlayerStats::getReturnGamesWonPerSet, RATIO3, true, "Rtn. Games Won per Set");
 		addCategory(RETURN, "rtnGamesWonPerMarch", "(o_bp_fc - o_bp_sv)::REAL / nullif(matches_w_stats, 0)", PlayerStats::getReturnGamesWonPerMatch, RATIO2, true, "Rtn. Games Won per Match");

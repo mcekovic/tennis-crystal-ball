@@ -9,12 +9,15 @@ import org.springframework.stereotype.*;
 import com.google.common.collect.*;
 
 import static java.lang.Math.*;
+import static org.strangeforest.tcb.util.RangeUtil.*;
 
 @Service
 public class MinEntries {
 
 	@Autowired private DataService dataService;
 	@Autowired private TournamentService tournamentService;
+
+	public static final Range<LocalDate> EMPTY_DATE_RANGE = Range.closed(LocalDate.of(1900, 1, 1), LocalDate.of(1900, 1, 1));
 
 	private static final int MIN_ENTRIES_SEASON_FACTOR =  10;
 	private static final int MIN_ENTRIES_MONTH_FACTOR  =  10;
@@ -112,12 +115,12 @@ public class MinEntries {
 		Range<LocalDate> dateRange = Range.closed(LocalDate.of(dataService.getFirstSeason(), 1, 1), today);
 		if (filter.hasSeason()) {
 			Integer season = filter.getSeason();
-			dateRange = dateRange.intersection(Range.closed(LocalDate.of(season, 1, 1), LocalDate.of(season, 12, 31)));
+			dateRange = intersection(dateRange, Range.closed(LocalDate.of(season, 1, 1), LocalDate.of(season, 12, 31)), EMPTY_DATE_RANGE);
 		}
 		if (filter.isLast52Weeks())
-			dateRange = dateRange.intersection(Range.closed(today.minusYears(1), today));
+			dateRange = intersection(dateRange, Range.closed(today.minusYears(1), today), EMPTY_DATE_RANGE);
 		if (filter.hasDateRange())
-			dateRange = dateRange.intersection(filter.getDateRange());
+			dateRange = intersection(dateRange, filter.getDateRange(), EMPTY_DATE_RANGE);
 		minEntries *= getMinEntriesWeight(Period.between(dateRange.lowerEndpoint(), dateRange.upperEndpoint()));
 
 		if (filter.hasLevel())

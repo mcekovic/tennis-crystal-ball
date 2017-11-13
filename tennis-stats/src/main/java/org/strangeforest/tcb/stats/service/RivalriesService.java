@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.table.*;
-import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
 
@@ -19,6 +18,7 @@ import static java.lang.String.*;
 import static java.util.Collections.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.util.RangeUtil.*;
 
 @Service
 public class RivalriesService {
@@ -333,13 +333,13 @@ public class RivalriesService {
 		Range<LocalDate> dateRange = Range.closed(LocalDate.of(dataService.getFirstSeason(), 1, 1), today);
 		if (filter.hasSeason()) {
 			Range<Integer> seasonRange = filter.getSeasonRange();
-			dateRange = dateRange.intersection(RangeUtil.toRange(
+			dateRange = intersection(dateRange, toRange(
 				seasonRange.hasLowerBound() ? LocalDate.of(seasonRange.lowerEndpoint(), 1, 1) : null,
-				seasonRange.hasUpperBound() ? LocalDate.of(seasonRange.upperEndpoint(), 12, 31) : null)
-			);
+				seasonRange.hasUpperBound() ? LocalDate.of(seasonRange.upperEndpoint(), 12, 31) : null
+			), MinEntries.EMPTY_DATE_RANGE);
 		}
 		if (filter.isLast52Weeks())
-			dateRange = dateRange.intersection(Range.closed(today.minusYears(1), today));
+			dateRange = intersection(dateRange, Range.closed(today.minusYears(1), today), MinEntries.EMPTY_DATE_RANGE);
 		minMatches /= getMinEntriesFactor(Period.between(dateRange.lowerEndpoint(), dateRange.upperEndpoint()));
 
 		if (filter.hasLevel())

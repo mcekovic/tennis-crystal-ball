@@ -15,7 +15,7 @@ public abstract class RangeUtil {
 			return to != null ? Range.atMost(to) : Range.all();
 	}
 
-	public static <T extends Comparable<? super T>> boolean isSingleton(Range<T> range) {
-		return range.hasLowerBound() && range.equals(Range.singleton(range.lowerEndpoint()));
+	public static <T extends Comparable<? super T>> Range<T> intersection(Range<T> range1, Range<T> range2, Range<T> empty) {
+		return range1.isConnected(range2) ? range1.intersection(range2) : empty;
 	}
 }

@@ -216,6 +216,10 @@ public class PlayerStats {
 		return ratio(servicePoints, serviceGames);
 	}
 
+	public double getPointsLostPerServiceGame() {
+		return ratio(servicePoints - servicePointsWon, serviceGames);
+	}
+
 	public int getServiceGames() {
 		return serviceGames;
 	}
@@ -321,6 +325,10 @@ public class PlayerStats {
 
 	public double getPointsPerReturnGame() {
 		return opponentStats.getPointsPerServiceGame();
+	}
+
+	public double getPointsWonPerReturnGame() {
+		return opponentStats.getPointsLostPerServiceGame();
 	}
 
 	public int getReturnGames() {

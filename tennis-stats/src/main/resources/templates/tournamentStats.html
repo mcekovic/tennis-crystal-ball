@@ -25,8 +25,10 @@
 			requestHandler: function(request) {
 				request.category = $("#statsCategory").val();
 				request.season = $("#statsSeason").val();
-				request.fromDate = $("#statsFromDate").val();
-				request.toDate = $("#statsToDate").val();
+				var fromSeason = $("#statsFromSeason").val();
+				if (fromSeason) request.fromDate = "01-01-" + fromSeason;
+				var toSeason = $("#statsToSeason").val();
+				if (toSeason) request.toDate = "31-12-" + toSeason;
 				request.level = $("#statsLevel").val();
 				request.bestOf = $("#statsBestOf").val();
 				request.surface = $("#statsSurface").val();
@@ -70,7 +72,6 @@
 		$search.after($("#statsClearDiv").remove());
 		$statsLeadersTableHeader.find("div.actions").after($("#statsAdvancedFilterDiv").remove());
 		statsCategoryChanged();
-		dateRangePicker("statsFromDate", "statsToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		$("[data-toggle='tooltip']").tooltip();
 	});
 	function statsCategoryChanged() {
@@ -78,12 +79,10 @@
 		$("#statsLeadersTable").find("th[data-column-id='value'] > a > span.text").html($category.find("option[value='" + $category.val() + "']").html());
 		var url = "/statsLeadersMinEntries?category=" + $category.val() + "&tournamentId=[(${tournamentId})]";
 		url += "&season=" + $("#statsSeason").val();
-		var fromDate = getDate("statsFromDate", "from date");
-		if (fromDate) url += "&fromDate=" + fromDate;
-		else if (fromDate === null) return false;
-		var toDate = getDate("statsToDate", "to date");
-		if (toDate) url += "&toDate=" + toDate;
-		else if (toDate === null) return false;
+		var fromSeason = $("#statsFromSeason").val();
+		if (fromSeason) url += "&fromDate=01-01-" + fromSeason;
+		var toSeason = $("#statsToSeason").val();
+		if (toSeason) url += "&toDate=31-12-" + toSeason;
 		url += "&level=" + $("#statsLevel").val();
 		url += "&bestOf=" + $("#statsBestOf").val();
 		url += "&surface=" + $("#statsSurface").val();
@@ -111,17 +110,17 @@
 		if (statsCategoryChanged())
 			$("#statsLeadersTable").bootgrid("reload");
 	}
-	function statsDateFilterChanged() {
+	function statsSeasonFilterChanged() {
 		var $active = $("#statsActive");
-		var hasDateFilter = $("#statsSeason").val() || $("#statsFromDate").val() || $("#statsToDate").val();
-		if (hasDateFilter)
+		var hasSeasonFilter = $("#statsSeason").val() || $("#statsFromSeason").val() || $("#statsToSeason").val();
+		if (hasSeasonFilter)
 			$active.prop("checked", false);
-		$active.prop("disabled", hasDateFilter);
+		$active.prop("disabled", hasSeasonFilter);
 	}
 	function clearStatsLeadersFilter() {
 		$("#statsSeason").val("");
-		$("#statsFromDate").val("");
-		$("#statsToDate").val(""); statsDateFilterChanged();
+		$("#statsFromSeason").val("");
+		$("#statsToSeason").val(""); statsSeasonFilterChanged();
 		$("#statsLevel").val("");
 		$("#statsBestOf").val("");
 		$("#statsSurface").val("");
@@ -202,17 +201,23 @@
 			</select>
 		</div>
 		<div class="col-md-4">
-			<div id="statsDateRange" class="input-group">
-				<label for="statsFromDate" class="input-group-addon">From:</label>
-				<input id="statsFromDate" type="text" maxlength="10" class="form-control" onchange="statsDateFilterChanged(); reloadStatsLeaders()"/>
-				<label for="statsToDate" class="input-group-addon">To:</label>
-				<input id="statsToDate" type="text" maxlength="10" class="form-control" onchange="statsDateFilterChanged(); reloadStatsLeaders()"/>
+			<div class="input-group">
+				<label for="statsFromSeason" class="input-group-addon">From:</label>
+				<select id="statsFromSeason" class="form-control" onchange="statsSeasonFilterChanged(); reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select from season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
+				<label for="statsToSeason" class="input-group-addon">To:</label>
+				<select id="statsToSeason" class="form-control" onchange="statsSeasonFilterChanged(); reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select to season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
 			</div>
 		</div>
 	</div>
 </div>
 <div id="statsSeasonDiv" class="btn-group pull-left margin-right no-margin-left">
-	<select id="statsSeason" class="form-control" onchange="statsDateFilterChanged(); reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
+	<select id="statsSeason" class="form-control" onchange="statsSeasonFilterChanged(); reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
 		<option value="">Career</option>
 		<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
 	</select>
