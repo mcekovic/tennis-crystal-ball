@@ -121,7 +121,10 @@ function loadCollapse($button, url) {
 var date_format = "dd-mm-yy";
 
 function formatDate(date) {
-	return date ? $.datepicker.formatDate(date_format, new Date(date)) : "";
+	if (typeof date === "string" && date.length === 10 && date.charAt(4) === "-" && date.charAt(7) === "-")
+		return date.substr(8, 2) + "-" + date.substr(5, 2) + "-" + date.substr(0, 4);
+	else
+		return date ? $.datepicker.formatDate(date_format, new Date(date)) : "";
 }
 
 function getDate(id, title) {
