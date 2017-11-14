@@ -274,7 +274,8 @@ function surfaceClassSuffix(surface) {
 		case "C": return "danger";
 		case "G": return "success";
 		case "P": return "warning";
-		default: return "default";
+		case undefined: return "default";
+		default: return surface;
 	}
 }
 

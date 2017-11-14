@@ -30,6 +30,7 @@ public class GOATLegendController extends BaseController {
 		// Achievements
 		modelMap.addAttribute("careerGrandSlamGOATPoints", goatLegendService.getCareerGrandSlamGOATPoints());
 		modelMap.addAttribute("seasonGrandSlamGOATPoints", goatLegendService.getSeasonGrandSlamGOATPoints());
+		modelMap.addAttribute("season3GrandSlamGOATPoints", goatLegendService.getSeason3GrandSlamGOATPoints());
 		modelMap.addAttribute("grandSlamHolderGOATPoints", goatLegendService.getGrandSlamHolderGOATPoints());
 		modelMap.addAttribute("consecutiveGrandSlamOnSameEventGOATPoints", goatLegendService.getConsecutiveGrandSlamOnSameEventGOATPoints());
 		modelMap.addAttribute("grandSlamOnSameEventGOATPointsDivider", (int)(1.0 / goatLegendService.getGrandSlamOnSameEventGOATPoints()));

@@ -110,6 +110,11 @@ public class GOATLegendService {
 		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "season_grand_slam"), Integer.class);
 	}
 
+	@Cacheable(value = "Global", key = "'Season3GrandSlamGOATPoints'")
+	public int getSeason3GrandSlamGOATPoints() {
+		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "season_3_grand_slam"), Integer.class);
+	}
+
 	@Cacheable(value = "Global", key = "'GrandSlamHolderGOATPoints'")
 	public int getGrandSlamHolderGOATPoints() {
 		return jdbcTemplate.queryForObject(format(GRAND_SLAM_GOAT_POINTS, "grand_slam_holder"), Integer.class);

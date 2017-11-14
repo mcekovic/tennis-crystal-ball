@@ -66,7 +66,7 @@
 			</tr>
 			<tr th:if="${!favoriteSurface.empty}">
 				<th>Favorite Surface</th>
-				<td><span id="favoriteSurface" class="label" th:data-surface="${favoriteSurface.surface != null ? favoriteSurface.surface.code : _}" th:text="${favoriteSurface}" th:title="${favoriteSurface.surfaceGroup != null ? favoriteSurface.surfaceGroup.surfacesText : _}">Hard</span></td>
+				<td><span id="favoriteSurface" class="label" th:data-surface="${favoriteSurface.code != null ? favoriteSurface.code : _}" th:text="${favoriteSurface}" th:title="${favoriteSurface.surfaceGroup != null ? favoriteSurface.surfaceGroup.surfacesText : _}">Hard</span></td>
 			</tr>
 			<tr th:if="${player.coach}">
 				<th>Coach</th>

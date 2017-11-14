@@ -12,6 +12,7 @@
 	<!--/*@thymesVar id="h2hRankFactors" type="java.util.List<org.strangeforest.tcb.stats.model.RankRangeGOATPoints>"*/-->
 	<!--/*@thymesVar id="careerGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="seasonGrandSlamGOATPoints" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="season3GrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="grandSlamHolderGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="consecutiveGrandSlamOnSameEventGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="grandSlamOnSameEventGOATPointsDivider" type="java.lang.Integer"*/-->
@@ -178,6 +179,7 @@
 				</strong>
 				<div th:unless="${forSeason}">+[(${careerGrandSlamGOATPoints})] points for each Career Grand Slam</div>
 				<div th:inline="text">+[(${seasonGrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Calendar Year Grand Slam</div>
+				<div th:inline="text">+[(${season3GrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Season with 3 Grand Slams<sup class="new-feature">&nbsp;New!</sup></div>
 				<div th:unless="${forSeason}">+[(${grandSlamHolderGOATPoints})] points each time when holding all 4 Grand Slams</div>
 				<div th:unless="${forSeason}" th:title="${'I.e. 5 consecutive wins at Wimbledon = (5 - 1) * ' + consecutiveGrandSlamOnSameEventGOATPoints + ' = ' + (4 * consecutiveGrandSlamOnSameEventGOATPoints) + ' points'}">+ (N - 1) * [(${consecutiveGrandSlamOnSameEventGOATPoints})] points where N (N > 1) is number of consecutive Grand Slams on the same tournament<sup class="new-feature">&nbsp;New!</sup></div>
 				<div th:unless="${forSeason}" th:title="${'I.e. 10 wins at Roland Garros = (10 - 1) / ' + grandSlamOnSameEventGOATPointsDivider + ' = ' + (9.0 / grandSlamOnSameEventGOATPointsDivider) + ' points'}">+ (N - 1) / [(${grandSlamOnSameEventGOATPointsDivider})] points where N (N > 1) is number of Grand Slams on the same tournament<sup class="new-feature">&nbsp;New!</sup></div>

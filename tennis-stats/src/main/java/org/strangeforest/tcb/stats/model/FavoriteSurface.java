@@ -144,6 +144,15 @@ public class FavoriteSurface {
 		return allRounder;
 	}
 
+	public String getCode() {
+		if (surface != null)
+			return surface.getCode();
+		if (surfaceGroup != null)
+			return surfaceGroup.getCodes();
+		else
+			return null;
+	}
+
 	public boolean isEmpty() {
 		return surface == null && surfaceGroup == null && !allRounder;
 	}

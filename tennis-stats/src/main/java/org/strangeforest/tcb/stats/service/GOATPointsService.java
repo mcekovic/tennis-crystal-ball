@@ -142,10 +142,10 @@ public class GOATPointsService {
 		points.setRankingPoints(rs.getInt("ranking_goat_points"));
 		points.setAchievementsPoints(rs.getInt("achievements_goat_points"));
 		points.setYearEndRankPoints(rs.getInt("year_end_rank_goat_points"));
-		points.setWeeksAtNo1Points(rs.getInt("weeks_at_no1_goat_points"));
-		points.setWeeksAtEloTopNPoints(rs.getInt("weeks_at_elo_topn_goat_points"));
+		points.setWeeksAtNo1Points(rs.getDouble("weeks_at_no1_goat_points"));
+		points.setWeeksAtEloTopNPoints(rs.getDouble("weeks_at_elo_topn_goat_points"));
 		points.setGrandSlamPoints(rs.getInt("grand_slam_goat_points"));
-		points.setBigWinsPoints(rs.getInt("big_wins_goat_points"));
+		points.setBigWinsPoints(rs.getDouble("big_wins_goat_points"));
 		return points;
 	}
 }

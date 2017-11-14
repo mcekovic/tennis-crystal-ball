@@ -421,6 +421,7 @@ CREATE TABLE best_surface_elo_rating_goat_points (
 CREATE TABLE grand_slam_goat_points (
 	career_grand_slam INTEGER NOT NULL,
 	season_grand_slam INTEGER NOT NULL,
+	season_3_grand_slam INTEGER NOT NULL,
 	grand_slam_holder INTEGER NOT NULL,
 	consecutive_grand_slam_on_same_event INTEGER NOT NULL,
 	grand_slam_on_same_event REAL NOT NULL

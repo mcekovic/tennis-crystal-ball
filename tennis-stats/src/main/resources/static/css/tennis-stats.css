@@ -118,6 +118,33 @@ a.label-btn {
 .label-warning2[href]:focus {
 	background-color: #da8005;
 }
+.label-HC {
+	background: repeating-linear-gradient(to right, #337ab7, #337ab7 20px, #d9534f 20px, #d9534f 40px);
+}
+.label-HG {
+	background: repeating-linear-gradient(to right, #337ab7, #337ab7 20px, #5cb85c 20px, #5cb85c 40px);
+}
+.label-HP {
+	background: repeating-linear-gradient(to right, #337ab7, #337ab7 20px, #f0ad4e 20px, #f0ad4e 40px);
+}
+.label-CG {
+	background: repeating-linear-gradient(to right, #d9534f, #d9534f 20px, #5cb85c 20px, #5cb85c 40px);
+}
+.label-GP {
+	background: repeating-linear-gradient(to right, #5cb85c, #5cb85c 20px, #f0ad4e 20px, #f0ad4e 40px);
+}
+.label-CGP {
+	background: repeating-linear-gradient(to right, #d9534f, #d9534f 20px, #5cb85c 20px, #5cb85c 40px, #f0ad4e 40px, #f0ad4e 60px);
+}
+.label-HGP {
+	background: repeating-linear-gradient(to right, #337ab7, #337ab7 20px, #5cb85c 20px, #5cb85c 40px, #f0ad4e 40px, #f0ad4e 60px);
+}
+.label-HCP {
+	background: repeating-linear-gradient(to right, #337ab7, #337ab7 20px, #d9534f 20px, #d9534f 40px, #f0ad4e 40px, #f0ad4e 60px);
+}
+.label-HCG {
+	background: repeating-linear-gradient(to right, #337ab7, #337ab7 20px, #d9534f 20px, #d9534f 40px, #5cb85c 40px, #5cb85c 60px);
+}
 .black {
 	color: black;
 }
