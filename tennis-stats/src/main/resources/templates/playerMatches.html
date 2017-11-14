@@ -28,6 +28,7 @@
 <!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
 <!--/*@thymesVar id="score" type="java.lang.String"*/-->
 <!--/*@thymesVar id="countryId" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bigWin" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <script type="text/javascript">
@@ -78,6 +79,7 @@
 					request.statsTo = lastMatchesStatsFilter.to;
 				}
 				request.countryId = $("#matchesCountry").val();
+				request.bigWin = $("#matchesBigWin").prop("checked");
 				return request;
 			},
 			rowCount: [15, 25, 50, -1],
@@ -180,6 +182,7 @@
 		$("#matchesStatsFrom").val("");
 		$("#matchesStatsTo").val("");
 		$("#matchesCountry").val("");
+		$("#matchesBigWin").prop("checked", false);
 		$("#matchesTable").bootgrid("search", "");
 		reloadMatches();
 	}
@@ -200,6 +203,7 @@
 		params += "&outcome=" + $("#matchesOutcome").val();
 		params += "&score=" + encodeURIComponent($("#matchesScore").val());
 		params += "&countryId=" + $("#matchesCountry").val();
+		params += "&bigWin=" + $("#matchesBigWin").prop("checked");
 		params += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 		return params;
 	}
@@ -285,7 +289,7 @@
 		</span>
 	</div>
 </div>
-<div id="matchesAdvancedFilter" class="collapse" th:attrappend="class=${fromDate != null || toDate != null || bestOf != null || indoor != null || (countryId != null && countryId != '') || (score != null && score != '') || (result != null && result != '') ? ' in' : _}">
+<div id="matchesAdvancedFilter" class="collapse" th:attrappend="class=${fromDate != null || toDate != null || bestOf != null || indoor != null || (countryId != null && countryId != '') || (score != null && score != '') || (result != null && result != '') || bigWin ? ' in' : _}">
 	<div class="row margin-top">
 		<div class="col-md-4">
 			<div id="matchesDateRange" class="input-group">
@@ -380,6 +384,13 @@
 				<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
 				<label id="matchesStatsRange" for="matchesStatsTo" class="input-group-addon">To:</label>
 				<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
+			</div>
+		</div>
+		<div class="col-md-1">
+			<div class="checkbox">
+				<label data-toggle="tooltip" data-placement="top" title="Filter Big Wins for Big Win GOAT Points">
+					<input id="matchesBigWin" type="checkbox" th:checked="${bigWin}" onchange="reloadMatches()"/> Big win
+				</label>
 			</div>
 		</div>
 	</div>

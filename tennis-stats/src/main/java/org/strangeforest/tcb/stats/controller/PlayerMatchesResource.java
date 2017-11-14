@@ -56,6 +56,7 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
 		@RequestParam(name = "statsTo", required = false) Double statsTo,
 		@RequestParam(name = "countryId", required = false) String countryId,
+		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
 		@RequestParam(name = "current") int current,
 		@RequestParam(name = "rowCount") int rowCount,
 		@RequestParam(name = "searchPhrase") String searchPhrase,
@@ -66,7 +67,7 @@ public class PlayerMatchesResource {
 		OutcomeFilter outcomeFilter = OutcomeFilter.forMatches(outcome);
 		ScoreFilter scoreFilter = ScoreFilter.forMatches(score);
 		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
-		MatchFilter filter = MatchFilter.forMatches(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, searchPhrase);
+		MatchFilter filter = MatchFilter.forMatches(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
 		return matchesService.getPlayerMatchesTable(playerId, filter, orderBy, pageSize, current);
@@ -91,13 +92,14 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
 		@RequestParam(name = "countryId", required = false) String countryId,
+		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
 		@RequestParam(name = "searchPhrase") String searchPhrase
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
 		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
 		ScoreFilter scoreFilter = ScoreFilter.forStats(score);
-		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, StatsFilter.ALL, searchPhrase);
+		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, StatsFilter.ALL, bigWin, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 		return StatsCategory.get(statsCategory).getStat(stats);
 	}

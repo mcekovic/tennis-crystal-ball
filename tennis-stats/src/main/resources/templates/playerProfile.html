@@ -17,6 +17,7 @@
 <!--/*@thymesVar id="outcome" type="java.lang.String"*/-->
 <!--/*@thymesVar id="score" type="java.lang.String"*/-->
 <!--/*@thymesVar id="countryId" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bigWin" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="rankType" type="java.lang.String"*/-->
 <!--/*@thymesVar id="infamous" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="params" type="org.strangeforest.tcb.stats.controller.ParamsUtil"*/-->
@@ -41,7 +42,7 @@
 				var $pill = $("#matchesPill");
 				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('fromDate', fromDate)})] + [(${params.param('toDate', toDate)})];
 				url += [(${params.param('level', level)})] + [(${params.param('bestOf', bestOf)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('result', result)})] + [(${params.param('round', round)})] + [(${params.param('opponent', opponent)})];
-				url += [(${params.param('tournamentId', tournamentId)})] + [(${params.param('tournamentEventId', tournamentEventId)})] + [(${params.param('outcome', outcome)})] + [(${params.param('score', score)})] + [(${params.param('countryId', countryId)})];
+				url += [(${params.param('tournamentId', tournamentId)})] + [(${params.param('tournamentEventId', tournamentEventId)})] + [(${params.param('outcome', outcome)})] + [(${params.param('score', score)})] + [(${params.param('countryId', countryId)})] + [(${params.param('bigWin', bigWin)})];
 				loadTab($pill, url)
 				[/]
 				[# th:case="'ranking'"]

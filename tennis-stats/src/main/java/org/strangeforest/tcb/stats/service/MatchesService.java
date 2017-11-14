@@ -45,15 +45,18 @@ public class MatchesService {
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
-		"INNER JOIN player_v pl ON pl.player_id = m.loser_id%1$s%2$s\n" +
-		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%3$s\n" +
-		"ORDER BY %4$s OFFSET :offset";
+		"INNER JOIN player_v pl ON pl.player_id = m.loser_id%1$s\n" +
+		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%2$s\n" +
+		"ORDER BY %3$s OFFSET :offset";
 
 	private static final String TOURNAMENT_EVENT_RESULT_JOIN = //language=SQL
 		"\nINNER JOIN player_tournament_event_result r ON r.player_id = :playerId AND r.tournament_event_id = m.tournament_event_id";
 
 	private static final String MATCH_STATS_JOIN = //language=SQL
 		"\nLEFT JOIN player_match_stats_v ms ON ms.match_id = m.match_id AND ms.player_id = :playerId";
+
+	private static final String BIG_WIN_JOIN = //language=SQL
+		"\nINNER JOIN big_win_match_factor mf ON mf.level = e.level AND mf.round = m.round";
 
 	private static final String MATCH_QUERY = //language=SQL
 		"SELECT m.match_id, e.season, e.level, m.surface, m.indoor, tournament_event_id, e.name AS tournament,\n" +
@@ -139,7 +142,7 @@ public class MatchesService {
 		AtomicInteger matches = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(PLAYER_MATCHES_QUERY, filter.hasResult() ? TOURNAMENT_EVENT_RESULT_JOIN : "", filter.hasStatsFilter() ? MATCH_STATS_JOIN : "", filter.getCriteria(), orderBy),
+			format(PLAYER_MATCHES_QUERY, playerMatchesJoin(filter), filter.getCriteria(), orderBy),
 			filter.getParams()
 				.addValue("playerId", playerId)
 				.addValue("offset", offset),
@@ -166,6 +169,17 @@ public class MatchesService {
 		);
 		table.setTotal(offset + matches.get());
 		return table;
+	}
+
+	private String playerMatchesJoin(MatchFilter filter) {
+		StringBuilder sb = new StringBuilder(100);
+		if (filter.hasResult())
+			sb.append(TOURNAMENT_EVENT_RESULT_JOIN);
+		if (filter.hasStatsFilter())
+			sb.append(MATCH_STATS_JOIN);
+		if (filter.isBigWin())
+			sb.append(BIG_WIN_JOIN);
+		return sb.toString();
 	}
 
 	static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix, boolean withCountry) throws SQLException {

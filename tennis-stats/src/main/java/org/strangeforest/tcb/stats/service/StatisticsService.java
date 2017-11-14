@@ -85,6 +85,9 @@ public class StatisticsService {
 	private static final String OPPONENT_JOIN = //language=SQL
 	 	"\nINNER JOIN player_v o ON o.player_id = opponent_id";
 
+	private static final String BIG_WIN_JOIN = //language=SQL
+		"\nINNER JOIN big_win_match_factor mf ON mf.level = m.level AND mf.round = m.round";
+
 	private static final String OPPONENTS_CRITERIA = //language=SQL
 	 	" AND opponent_id IN (:playerIds)";
 
@@ -198,6 +201,8 @@ public class StatisticsService {
 		OpponentFilter opponentFilter = filter.getOpponentFilter();
 		if (opponentFilter.isOpponentRequired() || filter.hasSearchPhrase())
 			sb.append(OPPONENT_JOIN);
+		if (filter.isBigWin())
+			sb.append(BIG_WIN_JOIN);
 		return sb.toString();
 	}
 

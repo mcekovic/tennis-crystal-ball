@@ -57,6 +57,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "countryId", required = false) String countryId,
+		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
 		@RequestParam(name = "rankType", required = false) String rankType,
 		@RequestParam(name = "infamous", required = false) Boolean infamous
 	) {
@@ -82,6 +83,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("outcome", outcome);
 		modelMap.addAttribute("score", score);
 		modelMap.addAttribute("countryId", countryId);
+		modelMap.addAttribute("bigWin", bigWin);
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("infamous", infamous);
 		modelMap.addAttribute("params", ParamsUtil.INSTANCE);
@@ -192,7 +194,8 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "tournamentEventId", required = false) Integer tournamentEventId,
 		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "score", required = false) String score,
-		@RequestParam(name = "countryId", required = false) String countryId
+		@RequestParam(name = "countryId", required = false) String countryId,
+		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
@@ -235,6 +238,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("outcome", outcome);
 		modelMap.addAttribute("score", score);
 		modelMap.addAttribute("countryId", countryId);
+		modelMap.addAttribute("bigWin", bigWin);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerMatches", modelMap);
 	}
