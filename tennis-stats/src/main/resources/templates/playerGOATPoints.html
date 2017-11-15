@@ -119,7 +119,7 @@
 			<td class="points" th:text="${#numbers.formatDecimal(season.weeksAtNo1Points, 1, 1)}">5.2</td>
 			<td class="points" th:text="${#numbers.formatDecimal(season.weeksAtEloTopNPoints, 1, 1)}">5.2</td>
 			<td class="points first-column" th:text="${season.rankingPoints}">13</td>
-			<td class="points first-column" th:text="${#numbers.formatDecimal(season.bigWinsPoints, 1, 1)}">4.5</td>
+			<td class="points first-column"><a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season.season}, bigWin=true)}" th:text="${#numbers.formatDecimal(season.bigWinsPoints, 1, 1)}" title="Show Big Win matches">4.5</a></td>
 			<td class="points" th:text="${season.grandSlamPoints}">0</td>
 			<td class="points first-column last-column" th:text="${season.achievementsPoints}">4</td>
 		</tr>
@@ -139,7 +139,7 @@
 			<th class="points first-header ranking" th:text="${goatPoints.weeksAtNo1Points}">5</th>
 			<th class="points first-header ranking" th:text="${goatPoints.weeksAtEloTopNPoints}">5</th>
 			<th class="points first-header first-column ranking" th:text="${goatPoints.seasonsRankingPoints}">13</th>
-			<th class="points first-header first-column achievements" th:text="${goatPoints.bigWinsPoints}">4</th>
+			<th class="points first-header first-column achievements"><a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, bigWin=true)}" th:text="${goatPoints.bigWinsPoints}" title="Show Big Win matches">4</a></th>
 			<th class="points first-header achievements" th:text="${goatPoints.seasonsGrandSlamPoints}">0</th>
 			<th class="points first-header first-column last-column achievements" th:text="${goatPoints.seasonsAchievementsPoints}">4</th>
 		</tr>

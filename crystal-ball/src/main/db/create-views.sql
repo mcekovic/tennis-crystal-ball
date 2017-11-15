@@ -1660,7 +1660,6 @@ GROUP BY player_id;
 
 -- player_season_goat_points
 
-DROP VIEW player_season_goat_points_v CASCADE;
 CREATE OR REPLACE VIEW player_season_goat_points_v AS
 WITH goat_points AS (
 	SELECT r.player_id, e.season, sum(r.goat_points) goat_points, sum(r.goat_points) tournament_goat_points, 0 ranking_goat_points, 0 achievements_goat_points,

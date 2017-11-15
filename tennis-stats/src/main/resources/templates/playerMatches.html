@@ -116,6 +116,7 @@
 		$search.before($("#matchesTournamentDiv").remove());
 		$search.before($("#matchesTournamentEventDiv").remove());
 		$search.before($("#matchesOutcomeDiv").remove());
+		$search.before($("#matchesScoreDiv").remove());
 		$search.before($("#matchesStats").remove());
 		dateRangePicker("matchesFromDate", "matchesToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		setBootgridTitles($matchesTable, [
@@ -289,7 +290,7 @@
 		</span>
 	</div>
 </div>
-<div id="matchesAdvancedFilter" class="collapse" th:attrappend="class=${fromDate != null || toDate != null || bestOf != null || indoor != null || (countryId != null && countryId != '') || (score != null && score != '') || (result != null && result != '') || bigWin ? ' in' : _}">
+<div id="matchesAdvancedFilter" class="collapse" th:attrappend="class=${fromDate != null || toDate != null || bestOf != null || indoor != null || (countryId != null && countryId != '') || (result != null && result != '') || bigWin ? ' in' : _}">
 	<div class="row margin-top">
 		<div class="col-md-4">
 			<div id="matchesDateRange" class="input-group">
@@ -328,48 +329,11 @@
 			</select>
 		</div>
 		<div class="col-md-2">
-			<select id="matchesScore" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by match score">
-				<option value="">All scores</option>
-				<optgroup label="Best Of 3">
-					<option value="2:0" th:selected="${score == '2:0'}">2:0</option>
-					<option value="2:1" th:selected="${score == '2:0'}">2:1</option>
-					<option value="1:2" th:selected="${score == '2:0'}">1:2</option>
-					<option value="0:2" th:selected="${score == '2:0'}">0:2</option>
-				</optgroup>
-				<optgroup label="Best Of 5">
-					<option value="3:0" th:selected="${score == '3:0'}">3:0</option>
-					<option value="3:1" th:selected="${score == '3:1'}">3:1</option>
-					<option value="3:2" th:selected="${score == '3:2'}">3:2</option>
-					<option value="2:3" th:selected="${score == '2:3'}">2:3</option>
-					<option value="1:3" th:selected="${score == '1:3'}">1:3</option>
-					<option value="0:3" th:selected="${score == '0:3'}">0:3</option>
-				</optgroup>
-				<optgroup label="After">
-					<option value="1:0+" th:selected="${score == '1:0+'}">After 1:0</option>
-					<option value="0:1+" th:selected="${score == '0:1+'}">After 0:1</option>
-					<option value="1:1+" th:selected="${score == '1:1+'}">After 1:1</option>
-					<option value="2:0+" th:selected="${score == '2:0+'}">After 2:0</option>
-					<option value="0:2+" th:selected="${score == '0:2+'}">After 0:2</option>
-					<option value="2:1+" th:selected="${score == '2:1+'}">After 2:1</option>
-					<option value="1:2+" th:selected="${score == '1:2+'}">After 1:2</option>
-					<option value="2:2+" th:selected="${score == '2:2+'}">After 2:2</option>
-				</optgroup>
-				<optgroup label="Under Pressure">
-					<option value="*DS" th:selected="${score == '*DS'}">Deciding Set</option>
-					<option value="*TB" th:selected="${score == '*TB'}">Tie Break</option>
-					<option value="*TBW" th:selected="${score == '*TBW'}">Tie Break Won</option>
-					<option value="*TBL" th:selected="${score == '*TBL'}">Tie Break Lost</option>
-					<option value="*DSTB" th:selected="${score == '*DSTB'}">Dec. Set TB</option>
-				</optgroup>
-				<optgroup label="Set Score">
-					<option value="*6:0" th:selected="${score == '*6:0'}">6:0 Set</option>
-					<option value="*0:6" th:selected="${score == '*0:6'}">0:6 Set</option>
-					<option value="*6:1" th:selected="${score == '*6:1'}">6:1 Set</option>
-					<option value="*1:6" th:selected="${score == '*1:6'}">1:6 Set</option>
-					<option value="*7:5" th:selected="${score == '*7:5'}">7:5 Set</option>
-					<option value="*5:7" th:selected="${score == '*5:7'}">5:7 Set</option>
-				</optgroup>
-			</select>
+			<div class="checkbox text-nowrap">
+				<label data-toggle="tooltip" data-placement="top" title="Filter Big Wins for Big Win GOAT Points">
+					<input id="matchesBigWin" type="checkbox" th:checked="${bigWin}" onchange="reloadMatches()"/> Big win
+				</label>
+			</div>
 		</div>
 		<div class="col-md-7">
 			<div class="input-group">
@@ -384,13 +348,6 @@
 				<input id="matchesStatsFrom" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
 				<label id="matchesStatsRange" for="matchesStatsTo" class="input-group-addon">To:</label>
 				<input id="matchesStatsTo" type="text" maxlength="6" class="form-control" oninput="matchesStatsFilterChanged()" onchange="matchesStatsFilterChanged()"/>
-			</div>
-		</div>
-		<div class="col-md-1">
-			<div class="checkbox">
-				<label data-toggle="tooltip" data-placement="top" title="Filter Big Wins for Big Win GOAT Points">
-					<input id="matchesBigWin" type="checkbox" th:checked="${bigWin}" onchange="reloadMatches()"/> Big win
-				</label>
 			</div>
 		</div>
 	</div>
@@ -432,6 +389,50 @@
 		<option value="lostDEF" th:selected="${outcome == 'lostDEF'}" class="option-lost">Lost by defaulting</option>
 		<option value="ABD" th:selected="${outcome == 'ABD'}" class="option-abd">Abandoned</option>
 		<option value="notPlayed" th:selected="${outcome == 'notPlayed'}">Not played</option>
+	</select>
+</div>
+<div id="matchesScoreDiv" class="btn-group pull-left margin-right">
+	<select id="matchesScore" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by match score">
+		<option value="">All scores</option>
+		<optgroup label="Best Of 3">
+			<option value="2:0" th:selected="${score == '2:0'}">2:0</option>
+			<option value="2:1" th:selected="${score == '2:0'}">2:1</option>
+			<option value="1:2" th:selected="${score == '2:0'}">1:2</option>
+			<option value="0:2" th:selected="${score == '2:0'}">0:2</option>
+		</optgroup>
+		<optgroup label="Best Of 5">
+			<option value="3:0" th:selected="${score == '3:0'}">3:0</option>
+			<option value="3:1" th:selected="${score == '3:1'}">3:1</option>
+			<option value="3:2" th:selected="${score == '3:2'}">3:2</option>
+			<option value="2:3" th:selected="${score == '2:3'}">2:3</option>
+			<option value="1:3" th:selected="${score == '1:3'}">1:3</option>
+			<option value="0:3" th:selected="${score == '0:3'}">0:3</option>
+		</optgroup>
+		<optgroup label="After">
+			<option value="1:0+" th:selected="${score == '1:0+'}">After 1:0</option>
+			<option value="0:1+" th:selected="${score == '0:1+'}">After 0:1</option>
+			<option value="1:1+" th:selected="${score == '1:1+'}">After 1:1</option>
+			<option value="2:0+" th:selected="${score == '2:0+'}">After 2:0</option>
+			<option value="0:2+" th:selected="${score == '0:2+'}">After 0:2</option>
+			<option value="2:1+" th:selected="${score == '2:1+'}">After 2:1</option>
+			<option value="1:2+" th:selected="${score == '1:2+'}">After 1:2</option>
+			<option value="2:2+" th:selected="${score == '2:2+'}">After 2:2</option>
+		</optgroup>
+		<optgroup label="Under Pressure">
+			<option value="*DS" th:selected="${score == '*DS'}">Deciding Set</option>
+			<option value="*TB" th:selected="${score == '*TB'}">Tie Break</option>
+			<option value="*TBW" th:selected="${score == '*TBW'}">Tie Break Won</option>
+			<option value="*TBL" th:selected="${score == '*TBL'}">Tie Break Lost</option>
+			<option value="*DSTB" th:selected="${score == '*DSTB'}">Dec. Set TB</option>
+		</optgroup>
+		<optgroup label="Set Score">
+			<option value="*6:0" th:selected="${score == '*6:0'}">6:0 Set</option>
+			<option value="*0:6" th:selected="${score == '*0:6'}">0:6 Set</option>
+			<option value="*6:1" th:selected="${score == '*6:1'}">6:1 Set</option>
+			<option value="*1:6" th:selected="${score == '*1:6'}">1:6 Set</option>
+			<option value="*7:5" th:selected="${score == '*7:5'}">7:5 Set</option>
+			<option value="*5:7" th:selected="${score == '*5:7'}">5:7 Set</option>
+		</optgroup>
 	</select>
 </div>
 <button id="matchesStats" type="button" class="btn btn-info grid-control margin-right" onclick="showMatchesStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected matches)|">
