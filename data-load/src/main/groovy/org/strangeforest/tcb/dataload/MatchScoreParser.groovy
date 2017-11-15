@@ -8,8 +8,12 @@ class MatchScoreParser {
 		if (!score)
 			return null
 		List sets = score.tokenize(' ')
-		short w_sets = 0, l_sets = 0
-		short w_games = 0, l_games = 0
+		short w_sets = 0
+		short l_sets = 0
+		short w_games = 0
+		short l_games = 0
+		short w_tbs = 0
+		short l_tbs = 0
 		List setScores = new ArrayList(sets.size())
 		String outcome = null
 		for (String set in sets) {
@@ -40,6 +44,10 @@ class MatchScoreParser {
 						w_tb_pt: tb_pt >= 0 ? (w_win ? max(tb_pt + 2, 7) : tb_pt) : null,
 						l_tb_pt: tb_pt >= 0 ? (l_win ? max(tb_pt + 2, 7) : tb_pt) : null
 					)
+					if (w_gms == (l_gms + 1) && l_gms >= 6)
+						++w_tbs
+					if (l_gms == (w_gms + 1) && w_gms >= 6)
+						++l_tbs
 				}
 				catch (Exception ex) {
 					println("Invalid set: $set")
@@ -80,7 +88,7 @@ class MatchScoreParser {
 		}
 		if (!outcome && setScores.size() > w_sets + l_sets)
 			outcome = 'RET'
-		new MatchScore(outcome: outcome, w_sets: w_sets, l_sets: l_sets, w_games: w_games, l_games: l_games, setScores: setScores)
+		new MatchScore(outcome: outcome, w_sets: w_sets, l_sets: l_sets, w_games: w_games, l_games: l_games, w_tbs: w_tbs, l_tbs: l_tbs, setScores: setScores)
 	}
 
 	private static short parseGames(String s) {

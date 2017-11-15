@@ -188,6 +188,8 @@ CREATE TABLE match (
 	l_sets SMALLINT,
 	w_games SMALLINT,
 	l_games SMALLINT,
+	w_tbs SMALLINT,
+	l_tbs SMALLINT,
 	has_stats BOOLEAN,
 	UNIQUE (tournament_event_id, match_num)
 );
@@ -225,15 +227,6 @@ CREATE TABLE match_stats (
 	w_sv_gms SMALLINT,
 	w_bp_sv SMALLINT,
 	w_bp_fc SMALLINT,
-	w_win SMALLINT,
-	w_fh_win SMALLINT,
-	w_bh_win SMALLINT,
-	w_uf_err SMALLINT,
-	w_fh_uf_err SMALLINT,
-	w_bh_uf_err SMALLINT,
-	w_fc_err SMALLINT,
-	w_n_pt SMALLINT,
-	w_n_pt_won SMALLINT,
 	l_ace SMALLINT,
 	l_df SMALLINT,
 	l_sv_pt SMALLINT,
@@ -243,15 +236,6 @@ CREATE TABLE match_stats (
 	l_sv_gms SMALLINT,
 	l_bp_sv SMALLINT,
 	l_bp_fc SMALLINT,
-	l_win SMALLINT,
-	l_fh_win SMALLINT,
-	l_bh_win SMALLINT,
-	l_uf_err SMALLINT,
-	l_fh_uf_err SMALLINT,
-	l_bh_uf_err SMALLINT,
-	l_fc_err SMALLINT,
-	l_n_pt SMALLINT,
-	l_n_pt_won SMALLINT,
 	PRIMARY KEY (match_id, set)
 );
 

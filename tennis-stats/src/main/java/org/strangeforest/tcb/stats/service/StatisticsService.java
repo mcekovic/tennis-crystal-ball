@@ -23,7 +23,7 @@ public class StatisticsService {
 		"ORDER BY season DESC";
 
 	private static final String MATCH_STATS_QUERY =
-		"SELECT pw.name AS winner, pl.name AS loser, 1 w_matches, 0 l_matches, w_sets, l_sets, w_games, l_games,\n" +
+		"SELECT pw.name AS winner, pl.name AS loser, 1 w_matches, 0 l_matches, w_sets, l_sets, w_games, l_games, w_tbs, l_tbs,\n" +
 		"  w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,\n" +
 		"  l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,\n" +
 		"  minutes, 1 matches_w_stats, w_sets + l_sets sets_w_stats, w_games + l_games games_w_stats\n" +
@@ -34,7 +34,7 @@ public class StatisticsService {
 		"WHERE match_id = :matchId AND set = 0";
 
 	private static final String PLAYER_STATS_COLUMNS =
-		"p_matches, o_matches, p_sets, o_sets, p_games, o_games,\n" +
+		"p_matches, o_matches, p_sets, o_sets, p_games, o_games, p_tbs, o_tbs,\n" +
 		"p_ace, p_df, p_sv_pt, p_1st_in, p_1st_won, p_2nd_won, p_sv_gms, p_bp_sv, p_bp_fc,\n" +
 		"o_ace, o_df, o_sv_pt, o_1st_in, o_1st_won, o_2nd_won, o_sv_gms, o_bp_sv, o_bp_fc,\n" +
 		"minutes, matches_w_stats, sets_w_stats, games_w_stats\n";
@@ -60,7 +60,7 @@ public class StatisticsService {
 		"WHERE player_id = :playerId AND season = :season AND surface = :surface::surface";
 
 	static final String PLAYER_STATS_SUMMED_COLUMNS =
-		"sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,\n" +
+		"sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games, sum(p_tbs) p_tbs, sum(o_tbs) o_tbs,\n" +
 		"sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,\n" +
 		"sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,\n" +
 		"sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats\n";
@@ -231,6 +231,7 @@ public class StatisticsService {
 			rs.getInt(prefix + "matches"),
 			rs.getInt(prefix + "sets"),
 			rs.getInt(prefix + "games"),
+			rs.getInt(prefix + "tbs"),
 			rs.getInt(prefix + "ace"),
 			rs.getInt(prefix + "df"),
 			rs.getInt(prefix + "sv_pt"),

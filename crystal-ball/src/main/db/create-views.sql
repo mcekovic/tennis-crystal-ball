@@ -335,7 +335,7 @@ CREATE INDEX ON player_year_end_elo_rank (player_id);
 CREATE OR REPLACE VIEW match_for_stats_v AS
 SELECT m.match_id, m.winner_id, m.loser_id, m.tournament_event_id, e.tournament_id, e.season, m.date, m.match_num, e.level, m.surface, m.indoor, m.round, m.best_of,
 	m.winner_rank, m.loser_rank, m.winner_elo_rating, m.loser_elo_rating, m.winner_seed, m.loser_seed, m.winner_entry, m.loser_entry, m.winner_country_id, m.loser_country_id, m.winner_age, m.loser_age, m.winner_height, m.loser_height,
-	m.w_sets, m.l_sets, m.w_games, m.l_games, m.outcome
+	m.w_sets, m.l_sets, m.w_games, m.l_games, m.w_tbs, m.l_tbs, m.outcome
 FROM match m
 INNER JOIN tournament_event e USING (tournament_event_id)
 WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T') AND (m.outcome IS NULL OR m.outcome IN ('RET', 'DEF'));
@@ -355,12 +355,12 @@ WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T');
 CREATE OR REPLACE VIEW player_match_for_stats_v AS
 SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, indoor, round, best_of, winner_id player_id, winner_rank player_rank, winner_elo_rating player_elo_rating, winner_age player_age, winner_height player_height,
 	loser_id opponent_id, loser_rank opponent_rank, loser_elo_rating opponent_elo_rating, loser_seed opponent_seed, loser_entry opponent_entry, loser_country_id opponent_country_id, loser_age opponent_age, loser_height opponent_height,
-	1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games
+	1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games, w_tbs p_tbs, l_tbs o_tbs
 FROM match_for_stats_v
 UNION ALL
 SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, indoor, round, best_of, loser_id, loser_rank, loser_elo_rating, loser_age, loser_height,
 	winner_id, winner_rank, winner_elo_rating, winner_seed, winner_entry, winner_country_id, winner_age, winner_height,
-	0, 1, l_sets, w_sets, l_games, w_games
+	0, 1, l_sets, w_sets, l_games, w_games, l_tbs, w_tbs
 FROM match_for_stats_v;
 
 
@@ -369,90 +369,90 @@ FROM match_for_stats_v;
 CREATE OR REPLACE VIEW player_match_performance_v AS
 SELECT m.season, m.date, m.level, m.surface, m.indoor, m.round, m.best_of, m.tournament_id, m.tournament_event_id, m.winner_id player_id, m.winner_rank player_rank, m.winner_age player_age, m.winner_height player_height,
 	m.loser_id opponent_id, m.loser_rank opponent_rank, m.loser_seed opponent_seed, m.loser_entry opponent_entry, m.loser_country_id opponent_country_id, m.loser_age opponent_age, m.loser_height opponent_height,
-	match_id match_id_won, NULL match_id_lost,
-	CASE WHEN m.level = 'G' THEN match_id ELSE NULL END grand_slam_match_id_won, NULL grand_slam_match_id_lost,
-	CASE WHEN m.level = 'F' THEN match_id ELSE NULL END tour_finals_match_id_won, NULL tour_finals_match_id_lost,
-	CASE WHEN m.level = 'L' THEN match_id ELSE NULL END alt_finals_match_id_won, NULL alt_finals_match_id_lost,
-	CASE WHEN m.level = 'M' THEN match_id ELSE NULL END masters_match_id_won, NULL masters_match_id_lost,
-	CASE WHEN m.level = 'O' THEN match_id ELSE NULL END olympics_match_id_won, NULL olympics_match_id_lost,
-	CASE WHEN m.level = 'A' THEN match_id ELSE NULL END atp500_match_id_won, NULL atp500_match_id_lost,
-	CASE WHEN m.level = 'B' THEN match_id ELSE NULL END atp250_match_id_won, NULL atp250_match_id_lost,
-	CASE WHEN m.level = 'D' THEN match_id ELSE NULL END davis_cup_match_id_won, NULL davis_cup_match_id_lost,
-	CASE WHEN m.surface = 'H' THEN match_id ELSE NULL END hard_match_id_won, NULL hard_match_id_lost,
-	CASE WHEN m.surface = 'C' THEN match_id ELSE NULL END clay_match_id_won, NULL clay_match_id_lost,
-	CASE WHEN m.surface = 'G' THEN match_id ELSE NULL END grass_match_id_won, NULL grass_match_id_lost,
-	CASE WHEN m.surface = 'P' THEN match_id ELSE NULL END carpet_match_id_won, NULL carpet_match_id_lost,
-	CASE WHEN m.w_sets + m.l_sets = m.best_of AND m.outcome IS NULL THEN match_id ELSE NULL END deciding_set_match_id_won, NULL deciding_set_match_id_lost,
-	CASE WHEN m.w_sets + m.l_sets = 5 AND m.outcome IS NULL THEN match_id ELSE NULL END fifth_set_match_id_won, NULL fifth_set_match_id_lost,
-	CASE WHEN m.round = 'F' AND m.level NOT IN ('D', 'T') THEN match_id ELSE NULL END final_match_id_won, NULL final_match_id_lost,
-	CASE WHEN m.loser_rank = 1 THEN match_id ELSE NULL END vs_no1_match_id_won, NULL vs_no1_match_id_lost,
-	CASE WHEN m.loser_rank <= 5 THEN match_id ELSE NULL END vs_top5_match_id_won, NULL vs_top5_match_id_lost,
-	CASE WHEN m.loser_rank <= 10 THEN match_id ELSE NULL END vs_top10_match_id_won, NULL vs_top10_match_id_lost,
-	CASE WHEN s.set = 1 AND s.w_games > s.l_games THEN match_id ELSE NULL END after_winning_first_set_match_id_won, NULL after_winning_first_set_match_id_lost,
-	CASE WHEN s.set = 1 AND s.w_games < s.l_games THEN match_id ELSE NULL END after_losing_first_set_match_id_won, NULL after_losing_first_set_match_id_lost,
-	CASE WHEN s.w_games = s.l_games + 1 AND s.l_games >= 6 THEN s.set ELSE NULL END w_tie_break_set_won, NULL l_tie_break_set_won,
-	CASE WHEN s.l_games = s.w_games + 1 AND s.w_games >= 6 THEN s.set ELSE NULL END w_tie_break_set_lost, NULL l_tie_break_set_lost,
-	CASE WHEN m.w_sets + m.l_sets = m.best_of AND m.outcome IS NULL AND s.set = m.w_sets + m.l_sets AND s.w_games = s.l_games + 1 AND s.l_games >= 6 THEN match_id ELSE NULL END deciding_set_tb_match_id_won, NULL deciding_set_tb_match_id_lost
+	1 matches_won, 0 matches_lost,
+	CASE WHEN m.level = 'G' THEN 1 ELSE 0 END grand_slam_matches_won, 0 grand_slam_matches_lost,
+	CASE WHEN m.level = 'F' THEN 1 ELSE 0 END tour_finals_matches_won, 0 tour_finals_matches_lost,
+	CASE WHEN m.level = 'L' THEN 1 ELSE 0 END alt_finals_matches_won, 0 alt_finals_matches_lost,
+	CASE WHEN m.level = 'M' THEN 1 ELSE 0 END masters_matches_won, 0 masters_matches_lost,
+	CASE WHEN m.level = 'O' THEN 1 ELSE 0 END olympics_matches_won, 0 olympics_matches_lost,
+	CASE WHEN m.level = 'A' THEN 1 ELSE 0 END atp500_matches_won, 0 atp500_matches_lost,
+	CASE WHEN m.level = 'B' THEN 1 ELSE 0 END atp250_matches_won, 0 atp250_matches_lost,
+	CASE WHEN m.level = 'D' THEN 1 ELSE 0 END davis_cup_matches_won, 0 davis_cup_matches_lost,
+	CASE WHEN m.surface = 'H' THEN 1 ELSE 0 END hard_matches_won, 0 hard_matches_lost,
+	CASE WHEN m.surface = 'C' THEN 1 ELSE 0 END clay_matches_won, 0 clay_matches_lost,
+	CASE WHEN m.surface = 'G' THEN 1 ELSE 0 END grass_matches_won, 0 grass_matches_lost,
+	CASE WHEN m.surface = 'P' THEN 1 ELSE 0 END carpet_matches_won, 0 carpet_matches_lost,
+	CASE WHEN m.w_sets + m.l_sets = m.best_of AND m.outcome IS NULL THEN 1 ELSE 0 END deciding_sets_won, 0 deciding_sets_lost,
+	CASE WHEN m.w_sets + m.l_sets = 5 AND m.outcome IS NULL THEN 1 ELSE 0 END fifth_sets_won, 0 fifth_sets_lost,
+	CASE WHEN m.round = 'F' AND m.level NOT IN ('D', 'T') THEN 1 ELSE 0 END finals_won, 0 finals_lost,
+	CASE WHEN m.loser_rank = 1 THEN 1 ELSE 0 END vs_no1_won, 0 vs_no1_lost,
+	CASE WHEN m.loser_rank <= 5 THEN 1 ELSE 0 END vs_top5_won, 0 vs_top5_lost,
+	CASE WHEN m.loser_rank <= 10 THEN 1 ELSE 0 END vs_top10_won, 0 vs_top10_lost,
+	CASE WHEN s1.w_games > s1.l_games THEN 1 ELSE 0 END after_winning_first_set_won, 0 after_winning_first_set_lost,
+	CASE WHEN s1.w_games < s1.l_games THEN 1 ELSE 0 END after_losing_first_set_won, 0 after_losing_first_set_lost,
+	m.w_tbs tie_breaks_won, m.l_tbs tie_breaks_lost,
+	CASE WHEN m.w_sets + m.l_sets = m.best_of AND m.outcome IS NULL AND ds.w_games = ds.l_games + 1 AND ds.l_games >= 6 THEN 1 ELSE 0 END deciding_set_tbs_won, 0 deciding_set_tbs_lost
 FROM match_for_stats_v m
-LEFT JOIN set_score s USING (match_id)
+LEFT JOIN set_score s1 ON s1.match_id = m.match_id AND s1.set = 1
+LEFT JOIN set_score ds ON ds.match_id = m.match_id AND ds.set = m.best_of
 UNION ALL
 SELECT m.season, m.date, m.level, m.surface, m.indoor, m.round, m.best_of, m.tournament_id, m.tournament_event_id, m.loser_id, m.loser_rank, m.loser_age, m.loser_height,
 	m.winner_id, m.winner_rank, m.winner_seed, m.winner_entry, m.winner_country_id, m.winner_age, m.winner_height,
-	NULL, match_id,
-	NULL, CASE WHEN m.level = 'G' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.level = 'F' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.level = 'L' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.level = 'M' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.level = 'O' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.level = 'A' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.level = 'B' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.level = 'D' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.surface = 'H' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.surface = 'C' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.surface = 'G' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.surface = 'P' THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.w_sets + m.l_sets = m.best_of AND m.outcome IS NULL THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.w_sets + m.l_sets = 5 AND m.outcome IS NULL THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.round = 'F' AND m.level NOT IN ('D', 'T') THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.winner_rank = 1 THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.winner_rank <= 5 THEN match_id ELSE NULL END,
-	NULL, CASE WHEN m.winner_rank <= 10 THEN match_id ELSE NULL END,
-	NULL, CASE WHEN s.set = 1 AND s.w_games < s.l_games THEN match_id ELSE NULL END,
-	NULL, CASE WHEN s.set = 1 AND s.w_games > s.l_games THEN match_id ELSE NULL END,
-	NULL, CASE WHEN s.l_games = s.w_games + 1 AND s.w_games >= 6 THEN s.set ELSE NULL END,
-	NULL, CASE WHEN s.w_games = s.l_games + 1 AND s.l_games >= 6 THEN s.set ELSE NULL END,
-	NULL, CASE WHEN m.w_sets + m.l_sets = m.best_of AND m.outcome IS NULL AND s.set = m.w_sets + m.l_sets AND s.w_games = s.l_games + 1 AND s.l_games >= 6 THEN match_id ELSE NULL END
+	0, 1,
+	0, CASE WHEN m.level = 'G' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.level = 'F' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.level = 'L' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.level = 'M' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.level = 'O' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.level = 'A' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.level = 'B' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.level = 'D' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.surface = 'H' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.surface = 'C' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.surface = 'G' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.surface = 'P' THEN 1 ELSE 0 END,
+	0, CASE WHEN m.w_sets + m.l_sets = m.best_of AND m.outcome IS NULL THEN 1 ELSE 0 END,
+	0, CASE WHEN m.w_sets + m.l_sets = 5 AND m.outcome IS NULL THEN 1 ELSE 0 END,
+	0, CASE WHEN m.round = 'F' AND m.level NOT IN ('D', 'T') THEN 1 ELSE 0 END,
+	0, CASE WHEN m.winner_rank = 1 THEN 1 ELSE 0 END,
+	0, CASE WHEN m.winner_rank <= 5 THEN 1 ELSE 0 END,
+	0, CASE WHEN m.winner_rank <= 10 THEN 1 ELSE 0 END,
+	0, CASE WHEN s1.w_games < s1.l_games THEN 1 ELSE 0 END,
+	0, CASE WHEN s1.w_games > s1.l_games THEN 1 ELSE 0 END,
+	m.l_tbs tie_breaks_won, m.w_tbs tie_breaks_lost,
+	0, CASE WHEN m.w_sets + m.l_sets = m.best_of AND m.outcome IS NULL AND ds.w_games = ds.l_games + 1 AND ds.l_games >= 6 THEN 1 ELSE 0 END
 FROM match_for_stats_v m
-LEFT JOIN set_score s USING (match_id);
+LEFT JOIN set_score s1 ON s1.match_id = m.match_id AND s1.set = 1
+LEFT JOIN set_score ds ON ds.match_id = m.match_id AND ds.set = m.best_of;
 
 
 -- player_season_performance
 
 CREATE OR REPLACE VIEW player_season_performance_v AS
 SELECT player_id, season,
-	count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,
-	count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,
-	count(DISTINCT tour_finals_match_id_won) tour_finals_matches_won, count(DISTINCT tour_finals_match_id_lost) tour_finals_matches_lost,
-	count(DISTINCT alt_finals_match_id_won) alt_finals_matches_won, count(DISTINCT alt_finals_match_id_lost) alt_finals_matches_lost,
-	count(DISTINCT masters_match_id_won) masters_matches_won, count(DISTINCT masters_match_id_lost) masters_matches_lost,
-	count(DISTINCT olympics_match_id_won) olympics_matches_won, count(DISTINCT olympics_match_id_lost) olympics_matches_lost,
-	count(DISTINCT atp500_match_id_won) atp500_matches_won, count(DISTINCT atp500_match_id_lost) atp500_matches_lost,
-	count(DISTINCT atp250_match_id_won) atp250_matches_won, count(DISTINCT atp250_match_id_lost) atp250_matches_lost,
-	count(DISTINCT davis_cup_match_id_won) davis_cup_matches_won, count(DISTINCT davis_cup_match_id_lost) davis_cup_matches_lost,
-	count(DISTINCT hard_match_id_won) hard_matches_won, count(DISTINCT hard_match_id_lost) hard_matches_lost,
-	count(DISTINCT clay_match_id_won) clay_matches_won, count(DISTINCT clay_match_id_lost) clay_matches_lost,
-	count(DISTINCT grass_match_id_won) grass_matches_won, count(DISTINCT grass_match_id_lost) grass_matches_lost,
-	count(DISTINCT carpet_match_id_won) carpet_matches_won, count(DISTINCT carpet_match_id_lost) carpet_matches_lost,
-	count(DISTINCT deciding_set_match_id_won) deciding_sets_won, count(DISTINCT deciding_set_match_id_lost) deciding_sets_lost,
-	count(DISTINCT fifth_set_match_id_won) fifth_sets_won, count(DISTINCT fifth_set_match_id_lost) fifth_sets_lost,
-	count(DISTINCT final_match_id_won) finals_won, count(DISTINCT final_match_id_lost) finals_lost,
-	count(DISTINCT vs_no1_match_id_won) vs_no1_won, count(DISTINCT vs_no1_match_id_lost) vs_no1_lost,
-	count(DISTINCT vs_top5_match_id_won) vs_top5_won, count(DISTINCT vs_top5_match_id_lost) vs_top5_lost,
-	count(DISTINCT vs_top10_match_id_won) vs_top10_won, count(DISTINCT vs_top10_match_id_lost) vs_top10_lost,
-	count(DISTINCT after_winning_first_set_match_id_won) after_winning_first_set_won, count(DISTINCT after_winning_first_set_match_id_lost) after_winning_first_set_lost,
-	count(DISTINCT after_losing_first_set_match_id_won) after_losing_first_set_won, count(DISTINCT after_losing_first_set_match_id_lost) after_losing_first_set_lost,
-	count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost,
-	count(DISTINCT deciding_set_tb_match_id_won) deciding_set_tbs_won, count(DISTINCT deciding_set_tb_match_id_lost) deciding_set_tbs_lost
+	sum(matches_won) matches_won, sum(matches_lost) matches_lost,
+	sum(grand_slam_matches_won) grand_slam_matches_won, sum(grand_slam_matches_lost) grand_slam_matches_lost,
+	sum(tour_finals_matches_won) tour_finals_matches_won, sum(tour_finals_matches_lost) tour_finals_matches_lost,
+	sum(alt_finals_matches_won) alt_finals_matches_won, sum(alt_finals_matches_lost) alt_finals_matches_lost,
+	sum(masters_matches_won) masters_matches_won, sum(masters_matches_lost) masters_matches_lost,
+	sum(olympics_matches_won) olympics_matches_won, sum(olympics_matches_lost) olympics_matches_lost,
+	sum(atp500_matches_won) atp500_matches_won, sum(atp500_matches_lost) atp500_matches_lost,
+	sum(atp250_matches_won) atp250_matches_won, sum(atp250_matches_lost) atp250_matches_lost,
+	sum(davis_cup_matches_won) davis_cup_matches_won, sum(davis_cup_matches_lost) davis_cup_matches_lost,
+	sum(hard_matches_won) hard_matches_won, sum(hard_matches_lost) hard_matches_lost,
+	sum(clay_matches_won) clay_matches_won, sum(clay_matches_lost) clay_matches_lost,
+	sum(grass_matches_won) grass_matches_won, sum(grass_matches_lost) grass_matches_lost,
+	sum(carpet_matches_won) carpet_matches_won, sum(carpet_matches_lost) carpet_matches_lost,
+	sum(deciding_sets_won) deciding_sets_won, sum(deciding_sets_lost) deciding_sets_lost,
+	sum(fifth_sets_won) fifth_sets_won, sum(fifth_sets_lost) fifth_sets_lost,
+	sum(finals_won) finals_won, sum(finals_lost) finals_lost,
+	sum(vs_no1_won) vs_no1_won, sum(vs_no1_lost) vs_no1_lost,
+	sum(vs_top5_won) vs_top5_won, sum(vs_top5_lost) vs_top5_lost,
+	sum(vs_top10_won) vs_top10_won, sum(vs_top10_lost) vs_top10_lost,
+	sum(after_winning_first_set_won) after_winning_first_set_won, sum(after_winning_first_set_lost) after_winning_first_set_lost,
+	sum(after_losing_first_set_won) after_losing_first_set_won, sum(after_losing_first_set_lost) after_losing_first_set_lost,
+	sum(tie_breaks_won) tie_breaks_won, sum(tie_breaks_lost) tie_breaks_lost,
+	sum(deciding_set_tbs_won) deciding_set_tbs_won, sum(deciding_set_tbs_lost) deciding_set_tbs_lost
 FROM player_match_performance_v
 GROUP BY player_id, season;
 
@@ -466,21 +466,21 @@ CREATE INDEX ON player_season_performance (season);
 
 CREATE OR REPLACE VIEW player_tournament_performance_v AS
 SELECT player_id, tournament_id,
-	count(DISTINCT match_id_won) matches_won, count(DISTINCT match_id_lost) matches_lost,
-	count(DISTINCT grand_slam_match_id_won) grand_slam_matches_won, count(DISTINCT grand_slam_match_id_lost) grand_slam_matches_lost,
-	count(DISTINCT masters_match_id_won) masters_matches_won, count(DISTINCT masters_match_id_lost) masters_matches_lost,
-	count(DISTINCT atp500_match_id_won) atp500_matches_won, count(DISTINCT atp500_match_id_lost) atp500_matches_lost,
-	count(DISTINCT atp250_match_id_won) atp250_matches_won, count(DISTINCT atp250_match_id_lost) atp250_matches_lost,
-	count(DISTINCT deciding_set_match_id_won) deciding_sets_won, count(DISTINCT deciding_set_match_id_lost) deciding_sets_lost,
-	count(DISTINCT fifth_set_match_id_won) fifth_sets_won, count(DISTINCT fifth_set_match_id_lost) fifth_sets_lost,
-	count(DISTINCT final_match_id_won) finals_won, count(DISTINCT final_match_id_lost) finals_lost,
-	count(DISTINCT vs_no1_match_id_won) vs_no1_won, count(DISTINCT vs_no1_match_id_lost) vs_no1_lost,
-	count(DISTINCT vs_top5_match_id_won) vs_top5_won, count(DISTINCT vs_top5_match_id_lost) vs_top5_lost,
-	count(DISTINCT vs_top10_match_id_won) vs_top10_won, count(DISTINCT vs_top10_match_id_lost) vs_top10_lost,
-	count(DISTINCT after_winning_first_set_match_id_won) after_winning_first_set_won, count(DISTINCT after_winning_first_set_match_id_lost) after_winning_first_set_lost,
-	count(DISTINCT after_losing_first_set_match_id_won) after_losing_first_set_won, count(DISTINCT after_losing_first_set_match_id_lost) after_losing_first_set_lost,
-	count(w_tie_break_set_won) + count(l_tie_break_set_won) tie_breaks_won, count(w_tie_break_set_lost) + count(l_tie_break_set_lost) tie_breaks_lost,
-	count(DISTINCT deciding_set_tb_match_id_won) deciding_set_tbs_won, count(DISTINCT deciding_set_tb_match_id_lost) deciding_set_tbs_lost
+	sum(matches_won) matches_won, sum(matches_lost) matches_lost,
+	sum(grand_slam_matches_won) grand_slam_matches_won, sum(grand_slam_matches_lost) grand_slam_matches_lost,
+	sum(masters_matches_won) masters_matches_won, sum(masters_matches_lost) masters_matches_lost,
+	sum(atp500_matches_won) atp500_matches_won, sum(atp500_matches_lost) atp500_matches_lost,
+	sum(atp250_matches_won) atp250_matches_won, sum(atp250_matches_lost) atp250_matches_lost,
+	sum(deciding_sets_won) deciding_sets_won, sum(deciding_sets_lost) deciding_sets_lost,
+	sum(fifth_sets_won) fifth_sets_won, sum(fifth_sets_lost) fifth_sets_lost,
+	sum(finals_won) finals_won, sum(finals_lost) finals_lost,
+	sum(vs_no1_won) vs_no1_won, sum(vs_no1_lost) vs_no1_lost,
+	sum(vs_top5_won) vs_top5_won, sum(vs_top5_lost) vs_top5_lost,
+	sum(vs_top10_won) vs_top10_won, sum(vs_top10_lost) vs_top10_lost,
+	sum(after_winning_first_set_won) after_winning_first_set_won, sum(after_winning_first_set_lost) after_winning_first_set_lost,
+	sum(after_losing_first_set_won) after_losing_first_set_won, sum(after_losing_first_set_lost) after_losing_first_set_lost,
+	sum(tie_breaks_won) tie_breaks_won, sum(tie_breaks_lost) tie_breaks_lost,
+	sum(deciding_set_tbs_won) deciding_set_tbs_won, sum(deciding_set_tbs_lost) deciding_set_tbs_lost
 FROM player_match_performance_v
 GROUP BY player_id, tournament_id;
 
@@ -530,7 +530,7 @@ CREATE UNIQUE INDEX ON player_performance (player_id);
 CREATE OR REPLACE VIEW player_match_stats_v AS
 SELECT match_id, tournament_event_id, tournament_id, season, date, level, surface, indoor, round, best_of, winner_id player_id, winner_rank player_rank, winner_elo_rating player_elo_rating, winner_age player_age, winner_height player_height,
 	loser_id opponent_id, loser_rank opponent_rank, loser_elo_rating opponent_elo_rating, loser_seed opponent_seed, loser_entry opponent_entry, loser_country_id opponent_country_id, loser_age opponent_age, loser_height opponent_height,
-	outcome, 1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games,
+	outcome, 1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games, w_tbs p_tbs, l_tbs o_tbs,
 	w_ace p_ace, w_df p_df, w_sv_pt p_sv_pt, w_1st_in p_1st_in, w_1st_won p_1st_won, w_2nd_won p_2nd_won, w_sv_gms p_sv_gms, w_bp_sv p_bp_sv, w_bp_fc p_bp_fc,
 	l_ace o_ace, l_df o_df, l_sv_pt o_sv_pt, l_1st_in o_1st_in, l_1st_won o_1st_won, l_2nd_won o_2nd_won, l_sv_gms o_sv_gms, l_bp_sv o_bp_sv, l_bp_fc o_bp_fc,
 	minutes, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + 1 matches_w_stats, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_sets + l_sets sets_w_stats, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_games + l_games games_w_stats
@@ -540,7 +540,7 @@ WHERE set = 0 OR set IS NULL
 UNION ALL
 SELECT match_id, tournament_event_id, tournament_id, season, date, level, surface, indoor, round, best_of, loser_id, loser_rank, loser_elo_rating, loser_age, loser_height,
 	winner_id, winner_rank, winner_elo_rating, winner_seed, winner_entry, winner_country_id, winner_age, winner_height,
-	outcome, 0, 1, l_sets, w_sets, l_games, w_games,
+	outcome, 0, 1, l_sets, w_sets, l_games, w_games, l_tbs, w_tbs,
 	l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,
 	w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,
 	minutes, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + 1, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_sets + l_sets, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_games + l_games
@@ -552,7 +552,7 @@ WHERE set = 0 OR set IS NULL;
 -- player_season_surface_stats
 
 CREATE OR REPLACE VIEW player_season_surface_stats_v AS
-SELECT player_id, season, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
+SELECT player_id, season, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games, sum(p_tbs) p_tbs, sum(o_tbs) o_tbs,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
 	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats
@@ -568,7 +568,7 @@ CREATE INDEX ON player_season_surface_stats (season, surface);
 -- player_season_stats
 
 CREATE OR REPLACE VIEW player_season_stats_v AS
-SELECT player_id, season, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
+SELECT player_id, season, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games, sum(p_tbs) p_tbs, sum(o_tbs) o_tbs,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
 	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats
@@ -584,7 +584,7 @@ CREATE INDEX ON player_season_stats (season);
 -- player_surface_stats
 
 CREATE OR REPLACE VIEW player_surface_stats_v AS
-SELECT player_id, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
+SELECT player_id, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games, sum(p_tbs) p_tbs, sum(o_tbs) o_tbs,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
 	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats
@@ -600,7 +600,7 @@ CREATE INDEX ON player_surface_stats (surface);
 -- player_stats
 
 CREATE OR REPLACE VIEW player_stats_v AS
-SELECT player_id, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games,
+SELECT player_id, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games, sum(p_tbs) p_tbs, sum(o_tbs) o_tbs,
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
 	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats

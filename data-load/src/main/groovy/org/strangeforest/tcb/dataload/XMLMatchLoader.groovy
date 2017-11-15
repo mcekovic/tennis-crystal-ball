@@ -12,7 +12,7 @@ class XMLMatchLoader extends BaseXMLLoader {
 			':match_num, :date, :round, :best_of, ' +
 			':ext_winner_id, :winner_seed, :winner_entry, :winner_rank, :winner_rank_points, :winner_age, :winner_country_id, :winner_name, :winner_height, :winner_hand, ' +
 			':ext_loser_id, :loser_seed, :loser_entry, :loser_rank, :loser_rank_points, :loser_age, :loser_country_id, :loser_name, :loser_height, :loser_hand, ' +
-			':score, :outcome, :w_sets, :l_sets, :w_games, :l_games, :w_set_games, :l_set_games, :w_set_tb_pt, :l_set_tb_pt, :minutes, ' +
+			':score, :outcome, :w_sets, :l_sets, :w_games, :l_games, :w_tbs, :l_tbs, :w_set_games, :l_set_games, :w_set_tb_pt, :l_set_tb_pt, :minutes, ' +
 			':w_ace, :w_df, :w_sv_pt, :w_1st_in, :w_1st_won, :w_2nd_won, :w_sv_gms, :w_bp_sv, :w_bp_fc, ' +
 			':l_ace, :l_df, :l_sv_pt, :l_1st_in, :l_1st_won, :l_2nd_won, :l_sv_gms, :l_bp_sv, :l_bp_fc' +
 		')}'
@@ -110,6 +110,8 @@ class XMLMatchLoader extends BaseXMLLoader {
 		params.l_sets = matchScore?.l_sets
 		params.w_games = matchScore?.w_games
 		params.l_games = matchScore?.l_games
+		params.w_tbs = matchScore?.w_tbs
+		params.l_tbs = matchScore?.l_tbs
 		params.w_set_games = matchScore ? shortArray(conn, matchScore.w_set_games) : null
 		params.l_set_games = matchScore ? shortArray(conn, matchScore.l_set_games) : null
 		params.w_set_tb_pt = matchScore ? shortArray(conn, matchScore.w_set_tb_pt) : null

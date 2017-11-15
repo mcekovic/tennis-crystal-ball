@@ -7,6 +7,7 @@ class MatchScore {
 
 	short w_sets, l_sets
 	short w_games, l_games
+	short w_tbs, l_tbs
 	String outcome
 	List setScores
 

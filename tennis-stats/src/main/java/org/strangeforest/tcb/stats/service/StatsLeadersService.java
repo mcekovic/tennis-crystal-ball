@@ -17,19 +17,17 @@ public class StatsLeadersService {
 	@Autowired private MinEntries minEntries;
 
 	private static final int MAX_PLAYER_COUNT =  1000;
-	private static final int MIN_MATCHES      =   200;
-	private static final int MIN_POINTS       = 10000;
 
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE p_%2$s + o_%2$s >= :minEntries%3$s";
+		"WHERE %2$s >= :minEntries%3$s";
 
 	private static final String STATS_LEADERS_QUERY = //language=SQL
 		"WITH stats_leaders AS (\n" +
 		"  SELECT player_id, %1$s AS value\n" +
 		"  FROM %2$s\n" +
-		"  WHERE p_%3$s + o_%3$s >= :minEntries%4$s\n" +
+		"  WHERE %3$s >= :minEntries%4$s\n" +
 		"), stats_leaders_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, value\n" +
 		"  FROM stats_leaders\n" +
@@ -42,23 +40,20 @@ public class StatsLeadersService {
 
 	private static final String SUMMED_STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"WITH player_stats AS (\n" +
-		"  SELECT m.player_id, sum(p_%1$s) AS p_%1$s, sum(o_%1$s) AS o_%1$s\n" +
+		"  SELECT m.player_id\n" +
 		"  FROM %2$s m%3$s\n" +
 		"  INNER JOIN player_v p ON p.player_id = m.player_id%4$s\n" +
 		"  GROUP BY m.player_id\n" +
+		"  HAVING sum(%1$s) >= :minEntries\n" +
 		")\n" +
-		"SELECT count(player_id) AS player_count FROM player_stats\n" +
-		"WHERE p_%1$s + o_%1$s >= :minEntries";
+		"SELECT count(player_id) AS player_count FROM player_stats";
 
 	private static final String SUMMED_STATS_LEADERS_QUERY = //language=SQL
-		"WITH player_stats AS (\n" +
-		"  SELECT m.player_id, %1$s AS value, sum(p_%2$s) AS p_%2$s, sum(o_%2$s) AS o_%2$s\n" +
-		"  FROM %3$s m%4$s%5$s\n" +
+		"WITH stats_leaders AS (\n" +
+		"  SELECT m.player_id, %1$s AS value\n" +
+		"  FROM %2$s m%3$s%4$s\n" +
 		"  GROUP BY m.player_id\n" +
-		"), stats_leaders AS (\n" +
-		"  SELECT player_id, value\n" +
-		"  FROM player_stats\n" +
-		"  WHERE p_%2$s + o_%2$s >= :minEntries\n" +
+		"  HAVING sum(%5$s) >= :minEntries\n" +
 		"), stats_leaders_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, value\n" +
 		"  FROM stats_leaders\n" +
@@ -124,13 +119,13 @@ public class StatsLeadersService {
 
 	public String getStatsLeadersMinEntries(String category, PerfStatsFilter filter, Integer minEntries) {
 		StatsCategory statsCategory = StatsCategory.get(category);
-		return getMinEntries(statsCategory, filter, minEntries) + (statsCategory.isNeedsStats() ? " points" : " matches");
+		return getMinEntries(statsCategory, filter, minEntries) + " " + (statsCategory.getItem().getText());
 	}
 
 	private String getTableSQL(StatsCategory statsCategory, PerfStatsFilter filter, String orderBy) {
 		return filter.isEmptyOrForSeasonOrSurface() && !filter.hasSurfaceGroup()
 	       ? format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy)
-	       : format(SUMMED_STATS_LEADERS_QUERY, statsCategory.getSummedExpression(), minEntriesColumn(statsCategory), statsTableName(filter), getStatsLeadersJoin(filter), where(filter.getBaseCriteria(), 2), where(filter.getSearchCriteria()), orderBy);
+	       : format(SUMMED_STATS_LEADERS_QUERY, statsCategory.getSummedExpression(), statsTableName(filter), getStatsLeadersJoin(filter), where(filter.getBaseCriteria(), 2), minEntriesColumn(statsCategory), where(filter.getSearchCriteria()), orderBy);
 	}
 
 	private static String getStatsLeadersJoin(PerfStatsFilter filter) {
@@ -150,10 +145,10 @@ public class StatsLeadersService {
 	}
 
 	private String minEntriesColumn(StatsCategory category) {
-		return category.isNeedsStats() ? "sv_pt" : "matches";
+		return category.getItem().getExpression();
 	}
 
 	private int getMinEntries(StatsCategory category, PerfStatsFilter filter, Integer minEntriesOverride) {
-		return minEntriesOverride == null ? minEntries.getFilteredMinEntries(category.isNeedsStats() ? MIN_POINTS : MIN_MATCHES, filter) : minEntriesOverride;
+		return minEntriesOverride == null ? minEntries.getFilteredMinEntries(category.getItem().getMinEntries(), filter) : minEntriesOverride;
 	}
 }

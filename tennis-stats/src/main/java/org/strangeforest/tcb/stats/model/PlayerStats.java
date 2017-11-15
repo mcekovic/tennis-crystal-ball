@@ -6,6 +6,7 @@ public class PlayerStats {
 
 	private final int matchesWon;
 	private final int setsWon;
+	private final int tieBreaksWon;
 	private final int gamesWon;
 	private final int aces;
 	private final int doubleFaults;
@@ -48,13 +49,14 @@ public class PlayerStats {
 	private PlayerStats opponentStats;
 
 	public PlayerStats(
-		int matchesWon, int setsWon, int gamesWon,
+		int matchesWon, int setsWon, int gamesWon, int tieBreaksWon,
 		int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced,
 		int minutes, int matchesWithStats, int setsWithStats, int gamesWithStats
 	) {
 		this.matchesWon = matchesWon;
 		this.setsWon = setsWon;
 		this.gamesWon = gamesWon;
+		this.tieBreaksWon = tieBreaksWon;
 		this.aces = aces;
 		this.doubleFaults = doubleFaults;
 		this.servicePoints = servicePoints;
@@ -117,7 +119,15 @@ public class PlayerStats {
 		return opponentStats.getTotalGamesWon();
 	}
 
+	public int getTieBreaksWon() {
+		return tieBreaksWon;
+	}
 
+	public int getTieBreaksLost() {
+		return opponentStats.getTieBreaksWon();
+	}
+
+	
 	// Service
 
 	public int getAces() {
@@ -402,6 +412,22 @@ public class PlayerStats {
 		return pct(getTotalGamesWon(), getTotalGames());
 	}
 
+	public int getTieBreaks() {
+		return tieBreaksWon + getTieBreaksLost();
+	}
+
+	public double getTieBreaksWonPct() {
+		return pct(tieBreaksWon, getTieBreaks());
+	}
+
+	public double getTieBreaksPerSetPct() {
+		return pct(getTieBreaks(), getSets());
+	}
+
+	public double getTieBreaksPerMatch() {
+		return ratio(getTieBreaks(), getMatches());
+	}
+
 	public int getTotalPoints() {
 		return servicePoints + getReturnPoints();
 	}
@@ -469,7 +495,7 @@ public class PlayerStats {
 	public static final PlayerStats EMPTY = empty();
 
 	private static PlayerStats empty() {
-		PlayerStats empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		PlayerStats empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		empty.crossLinkOpponentStats(empty);
 		return empty;
 	}

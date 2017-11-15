@@ -143,6 +143,8 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 			params.l_sets = matchScore.l_sets
 			params.w_games = matchScore.w_games
 			params.l_games = matchScore.l_games
+			params.w_tbs = matchScore.w_tbs
+			params.l_tbs = matchScore.l_tbs
 			def conn = sql.connection
 			params.w_set_games = shortArray(conn, matchScore.w_set_games)
 			params.l_set_games = shortArray(conn, matchScore.l_set_games)
