@@ -34,8 +34,8 @@ public class TopPerformersView {
 		.put("P", "carpetMatches")
 	.build();
 	private static final Map<Boolean, String> INDOOR_CATEGORY_MAP = ImmutableMap.<Boolean, String>builder()
-		.put(Boolean.TRUE, "outdoorMatches")
-		.put(Boolean.FALSE, "indoorMatches")
+		.put(Boolean.FALSE, "outdoorMatches")
+		.put(Boolean.TRUE, "indoorMatches")
 	.build();
 	private static final Map<String, String> ROUND_CATEGORY_MAP = ImmutableMap.<String, String>builder()
 		.put("F", "finals")
@@ -79,8 +79,12 @@ public class TopPerformersView {
 					return optimizedAll(OPPOSITION_CATEGORY_MAP.get(filter.getOpponentFilter().getOpponent()));
 				else if (filter.isForSeasonAndLevel())
 					return optimizedSeason(LEVEL_CATEGORY_MAP.get(filter.getLevel()), filter.getSeason());
+				else if (filter.isForSeasonAndBestOf())
+					return optimizedSeason(BEST_OF_CATEGORY_MAP.get(filter.getBestOf()), filter.getSeason());
 				else if (filter.isForSeasonAndSurface())
 					return optimizedSeason(SURFACE_CATEGORY_MAP.get(filter.getSurface()), filter.getSeason());
+				else if (filter.isForSeasonAndIndoor())
+					return optimizedSeason(INDOOR_CATEGORY_MAP.get(filter.getIndoor()), filter.getSeason());
 				else if (filter.isForSeasonAndRound())
 					return optimizedSeason(ROUND_CATEGORY_MAP.get(filter.getRound()), filter.getSeason());
 				else if (filter.isForSeasonAndOpposition())

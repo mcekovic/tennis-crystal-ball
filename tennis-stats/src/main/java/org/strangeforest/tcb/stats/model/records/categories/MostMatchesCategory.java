@@ -54,10 +54,14 @@ public class MostMatchesCategory extends RecordCategory {
 		register(mostMatches(type, ATP_500));
 		register(mostMatches(type, ATP_250));
 		register(mostMatches(type, DAVIS_CUP));
+		register(mostMatches(type, BEST_OF_3));
+		register(mostMatches(type, BEST_OF_5));
 		register(mostMatches(type, HARD));
 		register(mostMatches(type, CLAY));
 		register(mostMatches(type, GRASS));
 		register(mostMatches(type, CARPET));
+		register(mostMatches(type, OUTDOOR));
+		register(mostMatches(type, INDOOR));
 		register(mostMatchesVs(type, NO_1_FILTER));
 		register(mostMatchesVs(type, TOP_5_FILTER));
 		register(mostMatchesVs(type, TOP_10_FILTER));
@@ -66,6 +70,8 @@ public class MostMatchesCategory extends RecordCategory {
 		register(mostSeasonMatches(type, CLAY));
 		register(mostSeasonMatches(type, GRASS));
 		register(mostSeasonMatches(type, CARPET));
+		register(mostSeasonMatches(type, OUTDOOR));
+		register(mostSeasonMatches(type, INDOOR));
 		register(mostTournamentMatches(type, ALL));
 		register(mostTournamentMatches(type, GRAND_SLAM));
 		register(mostTournamentMatches(type, MASTERS));

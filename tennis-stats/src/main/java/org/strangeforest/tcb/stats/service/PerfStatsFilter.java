@@ -28,8 +28,16 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return new PerfStatsFilter(season, null, level, null, null, null, null, null, null, null);
 	}
 
+	public static PerfStatsFilter forSeasonAndBestOf(Integer season, Integer bestOf) {
+		return new PerfStatsFilter(season, null, null, bestOf, null, null, null, null, null, null);
+	}
+
 	public static PerfStatsFilter forSeasonAndSurface(Integer season, String surface) {
 		return new PerfStatsFilter(season, null, null, null, surface, null, null, null, null, null);
+	}
+
+	public static PerfStatsFilter forSeasonAndIndoor(Integer season, Boolean indoor) {
+		return new PerfStatsFilter(season, null, null, null, null, indoor, null, null, null, null);
 	}
 
 	public static PerfStatsFilter forSeasonAndRound(Integer season, String round) {
@@ -317,8 +325,16 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return season != null && !isNullOrEmpty(level) && equals(forSeasonAndLevel(season, level));
 	}
 
+	public boolean isForSeasonAndBestOf() {
+		return season != null && bestOf != null && equals(forSeasonAndBestOf(season, bestOf));
+	}
+
 	public boolean isForSeasonAndSurface() {
 		return season != null && !isNullOrEmpty(surface) && equals(forSeasonAndSurface(season, surface));
+	}
+
+	public boolean isForSeasonAndIndoor() {
+		return season != null && indoor != null && equals(forSeasonAndIndoor(season, indoor));
 	}
 
 	public boolean isForSeasonAndRound() {

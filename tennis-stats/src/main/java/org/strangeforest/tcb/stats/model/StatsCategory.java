@@ -114,10 +114,10 @@ public final class StatsCategory {
 		addCategory(SERVE, "svcGamesLostPerSet", "(p_bp_fc - p_bp_sv)::REAL / nullif(sets_w_stats, 0)", PlayerStats::getServiceGamesLostPerSet, SET_W_STATS, RATIO3, "Svc. Gms. Lost per Set");
 		addCategory(SERVE, "svcGamesLostPerMarch", "(p_bp_fc - p_bp_sv)::REAL / nullif(matches_w_stats, 0)", PlayerStats::getServiceGamesLostPerMatch, MATCH_W_STATS, RATIO2, "Svc. Gms. Lost per Match");
 		// Return
-		addCategory(RETURN, "firstServeReturnWonPct", "(o_1st_in - o_1st_won)::REAL / nullif(o_1st_in, 0)", PlayerStats::getFirstServeReturnPointsWonPct, RETURN_POINT, PERCENTAGE, "1st Srv. Rtn. Won %");
-		addCategory(RETURN, "secondServeReturnWonPct", "(o_sv_pt - o_1st_in - o_2nd_won)::REAL / nullif(o_sv_pt - o_1st_in, 0)", PlayerStats::getSecondServeReturnPointsWonPct, RETURN_POINT, PERCENTAGE, "2nd Srv. Rtn. Won %");
+		addCategory(RETURN, "firstServeReturnWonPct", "(o_1st_in - o_1st_won)::REAL / nullif(o_1st_in, 0)", PlayerStats::getFirstServeReturnPointsWonPct, RETURN_POINT, PERCENTAGE, "1st Srv. Return Won %");
+		addCategory(RETURN, "secondServeReturnWonPct", "(o_sv_pt - o_1st_in - o_2nd_won)::REAL / nullif(o_sv_pt - o_1st_in, 0)", PlayerStats::getSecondServeReturnPointsWonPct, RETURN_POINT, PERCENTAGE, "2nd Srv. Return Won %");
 		addCategory(RETURN, "breakPointsPct", BREAK_POINTS_CONVERTED_PCT, PlayerStats::getBreakPointsWonPct, RETURN_POINT, PERCENTAGE, "Break Points Won %");
-		addCategory(RETURN, "bpsPerRtnGame", "o_bp_fc::REAL / nullif(o_sv_gms, 0)", PlayerStats::getBreakPointsPerReturnGame, RETURN_GAME, RATIO3, "BPs per Rtn. Game");
+		addCategory(RETURN, "bpsPerRtnGame", "o_bp_fc::REAL / nullif(o_sv_gms, 0)", PlayerStats::getBreakPointsPerReturnGame, RETURN_GAME, RATIO3, "BPs per Return Game");
 		addCategory(RETURN, "bpsPerSet", "o_bp_fc::REAL / nullif(sets_w_stats, 0)", PlayerStats::getBreakPointsPerSet, SET_W_STATS, RATIO3, "BPs per Set");
 		addCategory(RETURN, "bpsPerMatch", "o_bp_fc::REAL / nullif(matches_w_stats, 0)", PlayerStats::getBreakPointsPerMatch, MATCH_W_STATS, RATIO2, "BPs per Match");
 		addCategory(RETURN, "returnPointsWonPct", RETURN_POINTS_WON_PCT, PlayerStats::getReturnPointsWonPct, RETURN_POINT, PERCENTAGE, "Return Points Won %");

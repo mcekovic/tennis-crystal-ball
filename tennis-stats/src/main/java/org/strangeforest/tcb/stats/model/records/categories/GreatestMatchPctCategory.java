@@ -62,10 +62,14 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		register(greatestMatchPct(type, ATP_500));
 		register(greatestMatchPct(type, ATP_250));
 		register(greatestMatchPct(type, DAVIS_CUP));
+		register(greatestMatchPct(type, BEST_OF_3));
+		register(greatestMatchPct(type, BEST_OF_5));
 		register(greatestMatchPct(type, HARD));
 		register(greatestMatchPct(type, CLAY));
 		register(greatestMatchPct(type, GRASS));
 		register(greatestMatchPct(type, CARPET));
+		register(greatestMatchPct(type, OUTDOOR));
+		register(greatestMatchPct(type, INDOOR));
 		register(greatestMatchPctVs(type, NO_1_FILTER));
 		register(greatestMatchPctVs(type, TOP_5_FILTER));
 		register(greatestMatchPctVs(type, TOP_10_FILTER));
@@ -74,6 +78,8 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		register(greatestSeasonMatchPct(type, CLAY));
 		register(greatestSeasonMatchPct(type, GRASS));
 		register(greatestSeasonMatchPct(type, CARPET));
+		register(greatestSeasonMatchPct(type, OUTDOOR));
+		register(greatestSeasonMatchPct(type, INDOOR));
 		register(greatestTournamentMatchPct(type, ALL));
 		register(greatestTournamentMatchPct(type, GRAND_SLAM));
 		register(greatestTournamentMatchPct(type, MASTERS));
@@ -88,10 +94,14 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		register(greatestPeakMatchPct(type, ATP_500));
 		register(greatestPeakMatchPct(type, ATP_250));
 		register(greatestPeakMatchPct(type, DAVIS_CUP));
+		register(greatestPeakMatchPct(type, BEST_OF_3));
+		register(greatestPeakMatchPct(type, BEST_OF_5));
 		register(greatestPeakMatchPct(type, HARD));
 		register(greatestPeakMatchPct(type, CLAY));
 		register(greatestPeakMatchPct(type, GRASS));
 		register(greatestPeakMatchPct(type, CARPET));
+		register(greatestPeakMatchPct(type, OUTDOOR));
+		register(greatestPeakMatchPct(type, INDOOR));
 		register(greatestPeakMatchPctVs(type, NO_1_FILTER));
 		register(greatestPeakMatchPctVs(type, TOP_5_FILTER));
 		register(greatestPeakMatchPctVs(type, TOP_10_FILTER));

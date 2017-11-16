@@ -73,10 +73,14 @@ DROP VIEW player_season_surface_stats_v;
 
 DROP MATERIALIZED VIEW player_win_streak;
 DROP VIEW player_win_streak_v;
-DROP MATERIALIZED VIEW player_surface_win_streak;
-DROP VIEW player_surface_win_streak_v;
 DROP MATERIALIZED VIEW player_level_win_streak;
 DROP VIEW player_level_win_streak_v;
+DROP MATERIALIZED VIEW player_best_of_win_streak;
+DROP VIEW player_best_of_win_streak_v;
+DROP MATERIALIZED VIEW player_surface_win_streak;
+DROP VIEW player_surface_win_streak_v;
+DROP MATERIALIZED VIEW player_indoor_win_streak;
+DROP VIEW player_indoor_win_streak_v;
 DROP MATERIALIZED VIEW player_vs_no1_win_streak;
 DROP VIEW player_vs_no1_win_streak_v;
 DROP MATERIALIZED VIEW player_vs_top5_win_streak;

@@ -351,10 +351,10 @@
 			<div class="col-lg-4 col-sm-6">
 				<table class="table table-condensed table-striped">
 					<tr>
-						<th colspan="2">Best Of Breakdown</th>
+						<th colspan="2">Best of Breakdown</th>
 					</tr>
 					<tr th:each="bestOfWL : ${perf.bestOfMatches}" th:with="bestOf=${bestOfWL.key}, wl=${bestOfWL.value}">
-						<td width="40%" th:text="|Best Of ${bestOf}|">Best Of 3</td>
+						<td width="40%" th:text="|Best of ${bestOf}|">Best of 3</td>
 						<th>
 							<div class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">

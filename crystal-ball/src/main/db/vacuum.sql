@@ -66,8 +66,10 @@ VACUUM FULL ANALYSE VERBOSE player_stats;
 VACUUM FULL ANALYSE VERBOSE player_h2h;
 
 VACUUM FULL ANALYSE VERBOSE player_win_streak;
-VACUUM FULL ANALYSE VERBOSE player_surface_win_streak;
 VACUUM FULL ANALYSE VERBOSE player_level_win_streak;
+VACUUM FULL ANALYSE VERBOSE player_best_of_win_streak;
+VACUUM FULL ANALYSE VERBOSE player_surface_win_streak;
+VACUUM FULL ANALYSE VERBOSE player_indoor_win_streak;
 VACUUM FULL ANALYSE VERBOSE player_vs_no1_win_streak;
 VACUUM FULL ANALYSE VERBOSE player_vs_top5_win_streak;
 VACUUM FULL ANALYSE VERBOSE player_vs_top10_win_streak;

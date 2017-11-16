@@ -394,13 +394,13 @@
 <div id="matchesScoreDiv" class="btn-group pull-left margin-right">
 	<select id="matchesScore" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by match score">
 		<option value="">All scores</option>
-		<optgroup label="Best Of 3">
+		<optgroup label="Best of 3">
 			<option value="2:0" th:selected="${score == '2:0'}">2:0</option>
 			<option value="2:1" th:selected="${score == '2:0'}">2:1</option>
 			<option value="1:2" th:selected="${score == '2:0'}">1:2</option>
 			<option value="0:2" th:selected="${score == '2:0'}">0:2</option>
 		</optgroup>
-		<optgroup label="Best Of 5">
+		<optgroup label="Best of 5">
 			<option value="3:0" th:selected="${score == '3:0'}">3:0</option>
 			<option value="3:1" th:selected="${score == '3:1'}">3:1</option>
 			<option value="3:2" th:selected="${score == '3:2'}">3:2</option>

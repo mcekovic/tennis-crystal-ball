@@ -689,6 +689,56 @@ CREATE MATERIALIZED VIEW player_win_streak AS SELECT * FROM player_win_streak_v;
 CREATE INDEX ON player_win_streak (player_id);
 
 
+-- player_level_win_streak
+
+CREATE OR REPLACE VIEW player_level_win_streak_v AS
+WITH match_lost_count AS (
+	SELECT match_id, player_id, level, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id, level ORDER BY date, round, match_num) AS o_matches_count
+	FROM player_match_for_stats_v
+), match_win_streak AS (
+	SELECT player_id, level, rank() OVER ws AS win_streak,
+		first_value(match_id) OVER ws AS first_match_id,
+		last_value(match_id) OVER (PARTITION BY player_id, level, o_matches_count ORDER BY date, round, match_num ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_match_id
+	FROM match_lost_count
+	WHERE p_matches > 0
+	WINDOW ws AS (PARTITION BY player_id, level, o_matches_count ORDER BY date, round, match_num)
+)
+SELECT player_id, level, max(win_streak) AS win_streak, first_match_id, last_match_id
+FROM match_win_streak
+GROUP BY player_id, level, first_match_id, last_match_id
+HAVING max(win_streak) >= 5;
+
+CREATE MATERIALIZED VIEW player_level_win_streak AS SELECT * FROM player_level_win_streak_v;
+
+CREATE INDEX ON player_level_win_streak (player_id);
+CREATE INDEX ON player_level_win_streak (level);
+
+
+-- player_best_of_win_streak
+
+CREATE OR REPLACE VIEW player_best_of_win_streak_v AS
+WITH match_lost_count AS (
+	SELECT match_id, player_id, best_of, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id, best_of ORDER BY date, round, match_num) AS o_matches_count
+	FROM player_match_for_stats_v
+), match_win_streak AS (
+	SELECT player_id, best_of, rank() OVER ws AS win_streak,
+		first_value(match_id) OVER ws AS first_match_id,
+		last_value(match_id) OVER (PARTITION BY player_id, best_of, o_matches_count ORDER BY date, round, match_num ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_match_id
+	FROM match_lost_count
+	WHERE p_matches > 0
+	WINDOW ws AS (PARTITION BY player_id, best_of, o_matches_count ORDER BY date, round, match_num)
+)
+SELECT player_id, best_of, max(win_streak) AS win_streak, first_match_id, last_match_id
+FROM match_win_streak
+GROUP BY player_id, best_of, first_match_id, last_match_id
+HAVING max(win_streak) >= 5;
+
+CREATE MATERIALIZED VIEW player_best_of_win_streak AS SELECT * FROM player_best_of_win_streak_v;
+
+CREATE INDEX ON player_best_of_win_streak (player_id);
+CREATE INDEX ON player_best_of_win_streak (best_of);
+
+
 -- player_surface_win_streak
 
 CREATE OR REPLACE VIEW player_surface_win_streak_v AS
@@ -714,29 +764,29 @@ CREATE INDEX ON player_surface_win_streak (player_id);
 CREATE INDEX ON player_surface_win_streak (surface);
 
 
--- player_level_win_streak
+-- player_indoor_win_streak
 
-CREATE OR REPLACE VIEW player_level_win_streak_v AS
+CREATE OR REPLACE VIEW player_indoor_win_streak_v AS
 WITH match_lost_count AS (
-	SELECT match_id, player_id, level, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id, level ORDER BY date, round, match_num) AS o_matches_count
+	SELECT match_id, player_id, indoor, date, round, match_num, p_matches, sum(o_matches) OVER (PARTITION BY player_id, indoor ORDER BY date, round, match_num) AS o_matches_count
 	FROM player_match_for_stats_v
 ), match_win_streak AS (
-	SELECT player_id, level, rank() OVER ws AS win_streak,
+	SELECT player_id, indoor, rank() OVER ws AS win_streak,
 		first_value(match_id) OVER ws AS first_match_id,
-		last_value(match_id) OVER (PARTITION BY player_id, level, o_matches_count ORDER BY date, round, match_num ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_match_id
+		last_value(match_id) OVER (PARTITION BY player_id, indoor, o_matches_count ORDER BY date, round, match_num ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_match_id
 	FROM match_lost_count
 	WHERE p_matches > 0
-	WINDOW ws AS (PARTITION BY player_id, level, o_matches_count ORDER BY date, round, match_num)
+	WINDOW ws AS (PARTITION BY player_id, indoor, o_matches_count ORDER BY date, round, match_num)
 )
-SELECT player_id, level, max(win_streak) AS win_streak, first_match_id, last_match_id
+SELECT player_id, indoor, max(win_streak) AS win_streak, first_match_id, last_match_id
 FROM match_win_streak
-GROUP BY player_id, level, first_match_id, last_match_id
+GROUP BY player_id, indoor, first_match_id, last_match_id
 HAVING max(win_streak) >= 5;
 
-CREATE MATERIALIZED VIEW player_level_win_streak AS SELECT * FROM player_level_win_streak_v;
+CREATE MATERIALIZED VIEW player_indoor_win_streak AS SELECT * FROM player_indoor_win_streak_v;
 
-CREATE INDEX ON player_level_win_streak (player_id);
-CREATE INDEX ON player_level_win_streak (level);
+CREATE INDEX ON player_indoor_win_streak (player_id);
+CREATE INDEX ON player_indoor_win_streak (indoor);
 
 
 -- player_vs_no1_win_streak

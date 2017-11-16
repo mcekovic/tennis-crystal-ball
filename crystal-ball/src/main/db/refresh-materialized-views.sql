@@ -24,8 +24,10 @@ REFRESH MATERIALIZED VIEW player_stats;
 REFRESH MATERIALIZED VIEW player_h2h;
 
 REFRESH MATERIALIZED VIEW player_win_streak;
-REFRESH MATERIALIZED VIEW player_surface_win_streak;
 REFRESH MATERIALIZED VIEW player_level_win_streak;
+REFRESH MATERIALIZED VIEW player_best_of_win_streak;
+REFRESH MATERIALIZED VIEW player_surface_win_streak;
+REFRESH MATERIALIZED VIEW player_indoor_win_streak;
 REFRESH MATERIALIZED VIEW player_vs_no1_win_streak;
 REFRESH MATERIALIZED VIEW player_vs_top5_win_streak;
 REFRESH MATERIALIZED VIEW player_vs_top10_win_streak;

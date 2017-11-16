@@ -29,10 +29,14 @@ public class WinningStreaksCategory extends RecordCategory {
 		register(winningStreak(ATP_250, N_A, "_level"));
 		register(winningStreak(SMALL_TOURNAMENTS, TOURNAMENT, "_level"));
 		register(winningStreak(DAVIS_CUP, N_A, "_level"));
+		register(winningStreak(BEST_OF_3, N_A, "_best_of"));
+		register(winningStreak(BEST_OF_5, N_A, "_best_of"));
 		register(winningStreak(HARD, N_A, "_surface", "surface = 'H'"));
 		register(winningStreak(CLAY, N_A, "_surface", "surface = 'C'"));
 		register(winningStreak(GRASS, N_A, "_surface", "surface = 'G'"));
 		register(winningStreak(CARPET, N_A, "_surface", "surface = 'P'"));
+		register(winningStreak(OUTDOOR, N_A, "_indoor", "indoor = FALSE"));
+		register(winningStreak(INDOOR, N_A, "_indoor", "indoor"));
 		register(winningStreakVs(NO_1_FILTER, "no1"));
 		register(winningStreakVs(TOP_5_FILTER, "top5"));
 		register(winningStreakVs(TOP_10_FILTER, "top10"));

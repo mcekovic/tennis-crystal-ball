@@ -347,7 +347,7 @@
 				<td colspan="3">&nbsp;</td>
 			</tr>
 			<tr>
-				<td></td><th class="text-center">Best Of Breakdown</th><td></td>
+				<td></td><th class="text-center">Best of Breakdown</th><td></td>
 			</tr>
 			<tr th:each="bestOf : ${perfBestOfs}" class="text-nowrap" th:with="wl1=${perf1.bestOfMatches.get(bestOf)}, wl2=${perf2.bestOfMatches.get(bestOf)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 				<th class="text-right">
@@ -360,7 +360,7 @@
 						</div>
 					</div>
 				</th>
-				<th class="text-center" th:text="|Best Of ${bestOf}|">Best Of 3</th>
+				<th class="text-center" th:text="|Best of ${bestOf}|">Best of 3</th>
 				<th class="text-left">
 					<div th:if="${wl2}" class="progress progress-perf pull-left">
 						<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc < 0 ? '-w' : (wlc > 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl2.wonPctStr}" th:attr="aria-valuenow=${wl2.wonPct}" aria-valuemin="0" aria-valuemax="100">
