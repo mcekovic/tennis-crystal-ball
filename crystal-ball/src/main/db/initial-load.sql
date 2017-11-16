@@ -152,6 +152,14 @@ VALUES
 ( 4, 2),
 ( 5, 1);
 
+DELETE FROM best_indoor_elo_rating_goat_points;
+INSERT INTO best_indoor_elo_rating_goat_points
+(best_elo_rating_rank, goat_points)
+VALUES
+( 1, 4),
+( 2, 2),
+( 3, 1);
+
 DELETE FROM grand_slam_goat_points;
 INSERT INTO grand_slam_goat_points
 (career_grand_slam, season_grand_slam, season_3_grand_slam, grand_slam_holder, consecutive_grand_slam_on_same_event, grand_slam_on_same_event)
@@ -252,6 +260,8 @@ VALUES
 ('GrassTitles', 2, 1),
 ('CarpetTitles', 1, 2),
 ('CarpetTitles', 2, 1),
+('OutdoorTitles', 1, 1),
+('IndoorTitles', 1, 1),
 ('SeasonTitles', 1, 2),
 ('SeasonTitles', 2, 1),
 ('SeasonGrandSlamTitles', 1, 4),
@@ -400,7 +410,7 @@ VALUES
 ('matches',              'Overall Matches',         200,  1),
 ('grandSlamMatches',     'Grand Slam Matches',       50,  2),
 ('tourFinalsMatches',    'Tour Finals Matches',      10,  3),
-('altFinalsMatches',     'Alt. Tour Finals Matches', 10,  4),
+('altFinalsMatches',     'Alt. Tour Finals Matches',  5,  4),
 ('mastersMatches',       'Masters Matches',          50,  5),
 ('olympicsMatches',      'Olympics Matches',          5,  6),
 ('hardMatches',          'Hard Matches',            100,  7),

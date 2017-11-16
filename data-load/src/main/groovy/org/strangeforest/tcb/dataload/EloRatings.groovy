@@ -35,7 +35,7 @@ class EloRatings {
 	Date saveFromDate
 
 	static final String QUERY_MATCHES = //language=SQL
-		"SELECT m.match_id, m.winner_id, m.loser_id, tournament_end(e.date, e.level, e.draw_size) AS end_date, e.level, e.surface, m.round, m.best_of, m.outcome\n" +
+		"SELECT m.match_id, m.winner_id, m.loser_id, tournament_end(e.date, e.level, e.draw_size) AS end_date, e.level, m.surface, m.indoor, m.round, m.best_of, m.outcome\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
@@ -54,7 +54,7 @@ class EloRatings {
 		"ORDER BY rank_date, player_id"
 
 	static final String MERGE_ELO_RANKING = //language=SQL
-		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating, :hard_rank, :hard_elo_rating, :clay_rank, :clay_elo_rating, :grass_rank, :grass_elo_rating, :carpet_rank, :carpet_elo_rating)}"
+		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating, :hard_rank, :hard_elo_rating, :clay_rank, :clay_elo_rating, :grass_rank, :grass_elo_rating, :carpet_rank, :carpet_elo_rating, :outdoor_rank, :outdoor_elo_rating, :indoor_rank, :indoor_elo_rating)}"
 
 	static final String DELETE_ALL = //language=SQL
 		"DELETE FROM player_elo_ranking"
@@ -62,9 +62,9 @@ class EloRatings {
 	static final String UPDATE_MATCH_ELO_RATINGS = //language=SQL
 		"UPDATE match SET winner_elo_rating = :winner_elo_rating, loser_elo_rating = :loser_elo_rating WHERE match_id = :match_id"
 
-	static final List<String> SURFACES = ['H', 'C', 'G', 'P']
+	static final List<String> SURFACES = ['H', 'C', 'G', 'P', 'O', 'I']
 	static final Date CARPET_EOL = toDate(LocalDate.of(2008, 1, 1))
-	static final Map<String, Integer> MIN_MATCHES = [(null): 10, H: 5, C: 5, G: 5, P: 5]
+	static final Map<String, Integer> MIN_MATCHES = [(null): 10, H: 5, C: 5, G: 5, P: 5, O: 5, I: 5]
 	static final int MIN_MATCHES_PERIOD = 365
 	static final int MIN_MATCHES_IN_PERIOD = 3
 	static final int PLAYERS_TO_SAVE = 200
@@ -134,8 +134,9 @@ class EloRatings {
 						waitForAllMatchesToComplete()
 						saveCurrentRatings()
 					}
-					processMatch(match, false)
-					processMatch(match, true)
+					processMatch(match, false, false)
+					processMatch(match, true, false)
+					processMatch(match, false, true)
 					lastDate = date
 					if (++matches % MATCHES_PER_DOT == 0)
 						progressTick '.'
@@ -176,7 +177,7 @@ class EloRatings {
 			.findAll { ++i <= count }
 	}
 
-	def processMatch(match, boolean forSurface) {
+	def processMatch(match, boolean forSurface, boolean forIndoor) {
 		if (forSurface && !match.surface)
 			return
 		long matchId = match.match_id
@@ -185,7 +186,11 @@ class EloRatings {
 		def playerId1 = min(winnerId, loserId)
 		def playerId2 = max(winnerId, loserId)
 		String level = match.level
-		String surface = forSurface ? match.surface : null
+		String surface
+		if (forSurface)
+			surface = match.surface
+		else if (forIndoor)
+			surface = match.indoor ? 'I' : 'O'
 		String round = match.round
 		short bestOf = match.best_of
 		String outcome = match.outcome
@@ -208,7 +213,7 @@ class EloRatings {
 						winnerRating = getRating(surface, winnerId, date) ?: newEloRating(winnerId)
 						loserRating = getRating(surface, loserId, date) ?: newEloRating(loserId)
 						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
-						if (forSurface)
+						if (forSurface || forIndoor)
 							deltaRating *= eloSurfaceFactors.surfaceKFactor(surface, date)
 						putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date, outcome)
 					}
@@ -218,7 +223,7 @@ class EloRatings {
 			}
 			else {
 				def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
-				if (forSurface)
+				if (forSurface || forIndoor)
 					deltaRating *= eloSurfaceFactors.surfaceKFactor(surface, date)
 				putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date, outcome)
 			}
@@ -491,6 +496,10 @@ class EloRatings {
 					boolean isCarpetUsed = date < CARPET_EOL
 					params.carpet_rank = isCarpetUsed ? ranks['P'] : null
 					params.carpet_elo_rating = isCarpetUsed ? intRound(ratings['P']) : null
+					params.outdoor_rank = ranks['O']
+					params.outdoor_elo_rating = intRound ratings['O']
+					params.indoor_rank = ranks['I']
+					params.indoor_elo_rating = intRound ratings['I']
 					ps.addBatch(params)
 				}
 			}

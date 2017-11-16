@@ -11,6 +11,7 @@ VACUUM FULL ANALYSE VERBOSE tournament_event_rank_factor;
 VACUUM FULL ANALYSE VERBOSE match;
 VACUUM FULL ANALYSE VERBOSE set_score;
 VACUUM FULL ANALYSE VERBOSE match_stats;
+VACUUM FULL ANALYSE VERBOSE match_price;
 VACUUM FULL ANALYSE VERBOSE team_tournament_event_winner;
 VACUUM FULL ANALYSE VERBOSE in_progress_event;
 VACUUM FULL ANALYSE VERBOSE in_progress_match;
@@ -23,6 +24,7 @@ VACUUM FULL ANALYSE VERBOSE weeks_at_no1_goat_points;
 VACUUM FULL ANALYSE VERBOSE weeks_at_elo_topn_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_elo_rating_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_surface_elo_rating_goat_points;
+VACUUM FULL ANALYSE VERBOSE best_indoor_elo_rating_goat_points;
 
 VACUUM FULL ANALYSE VERBOSE grand_slam_goat_points;
 VACUUM FULL ANALYSE VERBOSE big_win_match_factor;

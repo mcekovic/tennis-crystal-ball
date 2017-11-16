@@ -207,6 +207,10 @@ public class RankingChartService {
 			case GRASS_ELO_RATING: return "r.grass_elo_rating";
 			case CARPET_ELO_RANK: return "r.carpet_rank";
 			case CARPET_ELO_RATING: return "r.carpet_elo_rating";
+			case OUTDOOR_ELO_RANK: return "r.outdoor_rank";
+			case OUTDOOR_ELO_RATING: return "r.outdoor_elo_rating";
+			case INDOOR_ELO_RANK: return "r.indoor_rank";
+			case INDOOR_ELO_RATING: return "r.indoor_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -225,6 +229,10 @@ public class RankingChartService {
 			case GRASS_ELO_RATING: return "r.grass_best_elo_rating";
 			case CARPET_ELO_RANK: return "r.carpet_year_end_rank";
 			case CARPET_ELO_RATING: return "r.carpet_best_elo_rating";
+			case OUTDOOR_ELO_RANK: return "r.outdoor_year_end_rank";
+			case OUTDOOR_ELO_RATING: return "r.outdoor_best_elo_rating";
+			case INDOOR_ELO_RANK: return "r.indoor_year_end_rank";
+			case INDOOR_ELO_RATING: return "r.indoor_best_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}

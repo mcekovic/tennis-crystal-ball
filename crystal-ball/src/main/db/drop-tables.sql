@@ -12,6 +12,7 @@ DROP TABLE weeks_at_no1_goat_points CASCADE;
 DROP TABLE weeks_at_elo_topn_goat_points CASCADE;
 DROP TABLE best_elo_rating_goat_points CASCADE;
 DROP TABLE best_surface_elo_rating_goat_points CASCADE;
+DROP TABLE best_indoor_elo_rating_goat_points CASCADE;
 
 DROP TABLE grand_slam_goat_points CASCADE;
 DROP TABLE big_win_match_factor CASCADE;

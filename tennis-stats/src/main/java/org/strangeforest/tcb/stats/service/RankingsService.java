@@ -20,7 +20,6 @@ import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 import static org.strangeforest.tcb.stats.util.NameUtil.*;
-import static org.strangeforest.tcb.util.DateUtil.*;
 import static org.strangeforest.tcb.util.EnumUtil.*;
 
 @Service
@@ -92,7 +91,9 @@ public class RankingsService {
 		"  ce.current_hard_elo_rank, ce.current_hard_elo_rating, be.best_hard_elo_rank, be.best_hard_elo_rank_date, bet.best_hard_elo_rating, bet.best_hard_elo_rating_date,\n" +
 		"  ce.current_clay_elo_rank, ce.current_clay_elo_rating, be.best_clay_elo_rank, be.best_clay_elo_rank_date, bet.best_clay_elo_rating, bet.best_clay_elo_rating_date,\n" +
 		"  ce.current_grass_elo_rank, ce.current_grass_elo_rating, be.best_grass_elo_rank, be.best_grass_elo_rank_date, bet.best_grass_elo_rating, bet.best_grass_elo_rating_date,\n" +
-		"  ce.current_carpet_elo_rank, ce.current_carpet_elo_rating, be.best_carpet_elo_rank, be.best_carpet_elo_rank_date, bet.best_carpet_elo_rating, bet.best_carpet_elo_rating_date\n" +
+		"  ce.current_carpet_elo_rank, ce.current_carpet_elo_rating, be.best_carpet_elo_rank, be.best_carpet_elo_rank_date, bet.best_carpet_elo_rating, bet.best_carpet_elo_rating_date,\n" +
+		"  ce.current_outdoor_elo_rank, ce.current_outdoor_elo_rating, be.best_outdoor_elo_rank, be.best_outdoor_elo_rank_date, bet.best_outdoor_elo_rating, bet.best_outdoor_elo_rating_date,\n" +
+		"  ce.current_indoor_elo_rank, ce.current_indoor_elo_rating, be.best_indoor_elo_rank, be.best_indoor_elo_rank_date, bet.best_indoor_elo_rating, bet.best_indoor_elo_rating_date\n" +
 		"FROM player_v p\n" +
 		"LEFT JOIN player_current_elo_rank ce USING (player_id)\n" +
 		"LEFT JOIN player_best_elo_rank be USING (player_id)\n" +
@@ -189,14 +190,14 @@ public class RankingsService {
 		BootgridTable<PlayerDiffRankingsRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
-		boolean surfaceElo = rankType.category == ELO && rankType.surface != null;
+		boolean surfaceOrIndoorElo = rankType.isSurfaceOrIndoorElo();
 		jdbcTemplate.query(
 			format(
 				RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType),
-				(surfaceElo ? "k." : "p.") + bestRankColumn(rankType),
-				(surfaceElo ? "k." : "p.") + bestRankDateColumn(rankType),
-				(surfaceElo ? "t." : "p.") + bestPointsColumn(rankType),
-				surfaceElo ? BEST_ELO_JOIN : "", filter.getCriteria(), orderBy
+				(surfaceOrIndoorElo ? "k." : "p.") + bestRankColumn(rankType),
+				(surfaceOrIndoorElo ? "k." : "p.") + bestRankDateColumn(rankType),
+				(surfaceOrIndoorElo ? "t." : "p.") + bestPointsColumn(rankType),
+				surfaceOrIndoorElo ? BEST_ELO_JOIN : "", filter.getCriteria(), orderBy
 			),
 			getTableParams(filter, date, offset),
 			rs -> {
@@ -278,6 +279,8 @@ public class RankingsService {
 			case CLAY_ELO_RATING: return "clay_rank";
 			case GRASS_ELO_RATING: return "grass_rank";
 			case CARPET_ELO_RATING: return "carpet_rank";
+			case OUTDOOR_ELO_RATING: return "outdoor_rank";
+			case INDOOR_ELO_RATING: return "indoor_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -289,7 +292,8 @@ public class RankingsService {
 			case HARD_ELO_RATING: return "hard_elo_rating";
 			case CLAY_ELO_RATING: return "clay_elo_rating";
 			case GRASS_ELO_RATING: return "grass_elo_rating";
-			case CARPET_ELO_RATING: return "carpet_elo_rating";
+			case OUTDOOR_ELO_RATING: return "outdoor_elo_rating";
+			case INDOOR_ELO_RATING: return "indoor_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -302,6 +306,8 @@ public class RankingsService {
 			case CLAY_ELO_RATING: return "best_clay_elo_rank";
 			case GRASS_ELO_RATING: return "best_grass_elo_rank";
 			case CARPET_ELO_RATING: return "best_carpet_elo_rank";
+			case OUTDOOR_ELO_RATING: return "best_outdoor_elo_rank";
+			case INDOOR_ELO_RATING: return "best_indoor_elo_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -314,6 +320,8 @@ public class RankingsService {
 			case CLAY_ELO_RATING: return "best_clay_elo_rank_date";
 			case GRASS_ELO_RATING: return "best_grass_elo_rank_date";
 			case CARPET_ELO_RATING: return "best_carpet_elo_rank_date";
+			case OUTDOOR_ELO_RATING: return "best_outdoor_elo_rank_date";
+			case INDOOR_ELO_RATING: return "best_indoor_elo_rank_date";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -326,6 +334,8 @@ public class RankingsService {
 			case CLAY_ELO_RATING: return "best_clay_elo_rating";
 			case GRASS_ELO_RATING: return "best_grass_elo_rating";
 			case CARPET_ELO_RATING: return "best_carpet_elo_rating";
+			case OUTDOOR_ELO_RATING: return "best_outdoor_elo_rating";
+			case INDOOR_ELO_RATING: return "best_indoor_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -337,6 +347,8 @@ public class RankingsService {
 			case CLAY_ELO_RATING: return "best_clay_elo_rating_date";
 			case GRASS_ELO_RATING: return "best_grass_elo_rating_date";
 			case CARPET_ELO_RATING: return "best_carpet_elo_rating_date";
+			case OUTDOOR_ELO_RATING: return "best_outdoor_elo_rating_date";
+			case INDOOR_ELO_RATING: return "best_indoor_elo_rating_date";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -348,7 +360,9 @@ public class RankingsService {
 			case HARD_ELO_RATING:
 			case CLAY_ELO_RATING:
 			case GRASS_ELO_RATING:
-			case CARPET_ELO_RATING: return "player_elo_ranking";
+			case CARPET_ELO_RATING:
+			case OUTDOOR_ELO_RATING:
+			case INDOOR_ELO_RATING: return "player_elo_ranking";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -382,6 +396,8 @@ public class RankingsService {
 			highlights.setClayElo(mapEloHighlights(rs, "clay_"));
 			highlights.setGrassElo(mapEloHighlights(rs, "grass_"));
 			highlights.setCarpetElo(mapEloHighlights(rs, "carpet_"));
+			highlights.setOutdoorElo(mapEloHighlights(rs, "outdoor_"));
+			highlights.setIndoorElo(mapEloHighlights(rs, "indoor_"));
 		});
 
 		jdbcTemplate.query(PLAYER_YEAR_END_RANK_QUERY, params("playerId", playerId), rs -> {
@@ -449,6 +465,8 @@ public class RankingsService {
 			case CLAY_ELO_RATING: return "clay_year_end_rank";
 			case GRASS_ELO_RATING: return "grass_year_end_rank";
 			case CARPET_ELO_RATING: return "carpet_year_end_rank";
+			case OUTDOOR_ELO_RATING: return "outdoor_year_end_rank";
+			case INDOOR_ELO_RATING: return "indoor_year_end_rank";
 			case GOAT_POINTS: return "year_end_rank";
 			default: throw unknownEnum(rankType);
 		}
@@ -461,7 +479,9 @@ public class RankingsService {
 			case HARD_ELO_RATING:
 			case CLAY_ELO_RATING:
 			case GRASS_ELO_RATING:
-			case CARPET_ELO_RATING: return "player_year_end_elo_rank";
+			case CARPET_ELO_RATING:
+			case OUTDOOR_ELO_RATING:
+			case INDOOR_ELO_RATING: return "player_year_end_elo_rank";
 			case GOAT_POINTS: return "player_year_end_goat_rank";
 			default: throw unknownEnum(rankType);
 		}

@@ -1,67 +1,68 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="rankingTopN">
-	<!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
-	<!--/*@thymesVar id="count" type="java.lang.Integer"*/-->
-	<!--/*@thymesVar id="date" type="java.util.Date"*/-->
-	<!--/*@thymesVar id="rankingTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
-	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
-	<!--/*@thymesVar id="surface" type="org.strangeforest.tcb.stats.model.Surface"*/-->
-	<style>
-		button.rank-type {
-			padding: 0 4px;
-			background-color: inherit;
-			font-size: inherit;
-		}
-		td.top-rank {
-			width: 25px;
-			text-align: right;
-		}
-		td.top-player {
-			padding: 3px 3px !important;
-			max-width: 100px;
-		}
-		td.top-points {
-			text-align: right;
-		}
-	</style>
-	<div class="panel panel-default component text-nowrap">
-		<div class="panel-heading" style="padding: 6px 8px">
-			<h4 class="text-center text-nowrap component-header">
-				<div class="pull-left">
-					<div>Top [(${rankingTopN.size()})]</div>
-					<div class="text-muted" style="font-size: 60%" th:text="${#dates.format(date, 'dd-MM-yyyy')}">01-11-2015</div>
-				</div>
-				<div class="btn-group" th:attrappend="class=${surface != null ? ' bg-surface-' + surface.code : _}" style="margin-left: 4px">
-					<button type="button" class="btn btn-default rank-type">[(${rankType.name() == 'POINTS' ? 'ATP' : 'Elo'})]</button>
-					<button type="button" class="btn btn-default dropdown-toggle rank-type" data-toggle="dropdown">
-						<span class="caret"></span>
-					</button>
-					<ul id="rankingTopNSelect" class="dropdown-menu" role="menu">
-						<li><a href="#" th:onclick="'event.preventDefault(); loadRankingTopN(\'POINTS\', ' + ${count} + ')'">ATP</a></li>
-						<li><a href="#" th:onclick="'event.preventDefault(); loadRankingTopN(\'ELO_RATING\', ' + ${count} + ')'">Elo</a></li>
-						<li th:each="aSurface : ${surfaces}" th:unless="${aSurface.code == 'P'}"><a href="#" target="" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:text="|${aSurface.text} Elo|" th:onclick="'event.preventDefault(); loadRankingTopN(\'' + ${aSurface} + '_ELO_RATING\', ' + ${count} + ')'">Hard Elo</a></li>
-					</ul>
-				</div>
-				<a th:href="@{/rankingsTable(rankType=${rankType})}" style="vertical-align: text-top" title="Full Rankings Table"><span class="glyphicon glyphicon-zoom-in" style="font-size: 16px"></span></a>
-			</h4>
-		</div>
-		<table class="table table-condensed table-hover table-striped small">
-			<thead>
-			<tr th:class="${surface != null ? ' bg-surface-' + surface.code : _}">
-				<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'ATP Rank' : ((surface != null ? surface.text + ' ' : '') + 'Elo Rank')}">R.</th>
-				<th>Name</th>
-				<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'Ranking Points' : ((surface != null ? surface.text + ' ' : '') + 'Elo Rating')}" th:text="${rankType.name() == 'POINTS' ? 'Pts.' : 'Elo'}">Pts.</th>
-			</tr>
-			</thead>
-			<tbody>
-			<tr th:each="player : ${rankingTopN}">
-				<td th:text="${player.rank}" class="top-rank">1</td>
-				<td class="top-player">
-					<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-					<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Federer</a>
-				</td>
-				<td th:text="${player.points}" class="top-points">1000</td>
-			</tr>
-			</tbody>
-		</table>
+<!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
+<!--/*@thymesVar id="count" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="date" type="java.util.Date"*/-->
+<!--/*@thymesVar id="rankingTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
+<style>
+	button.rank-type {
+		padding: 0 4px;
+		background-color: inherit;
+		font-size: inherit;
+	}
+	td.top-rank {
+		width: 25px;
+		text-align: right;
+	}
+	td.top-player {
+		padding: 3px 3px !important;
+		max-width: 100px;
+	}
+	td.top-points {
+		text-align: right;
+	}
+</style>
+<div class="panel panel-default component text-nowrap">
+	<div class="panel-heading" style="padding: 6px 8px">
+		<h4 class="text-center text-nowrap component-header">
+			<div class="pull-left">
+				<div>Top [(${rankingTopN.size()})]</div>
+				<div class="text-muted" style="font-size: 60%" th:text="${#dates.format(date, 'dd-MM-yyyy')}">01-11-2015</div>
+			</div>
+			<div class="btn-group" th:attrappend="class=${rankType.surface != null ? ' bg-surface-' + rankType.surface.code : _}" style="margin-left: 4px">
+				<button type="button" class="btn btn-default rank-type">[(${rankType.name() == 'POINTS' ? 'ATP' : 'Elo'})]</button>
+				<button type="button" class="btn btn-default dropdown-toggle rank-type" data-toggle="dropdown">
+					<span class="caret"></span>
+				</button>
+				<ul id="rankingTopNSelect" class="dropdown-menu" role="menu">
+					<li><a href="#" th:onclick="'event.preventDefault(); loadRankingTopN(\'POINTS\', ' + ${count} + ')'">ATP</a></li>
+					<li><a href="#" th:onclick="'event.preventDefault(); loadRankingTopN(\'ELO_RATING\', ' + ${count} + ')'">Elo</a></li>
+					<li th:each="aSurface : ${surfaces}" th:unless="${aSurface.code == 'P'}"><a href="#" target="" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:text="|${aSurface.text} Elo|" th:onclick="'event.preventDefault(); loadRankingTopN(\'' + ${aSurface} + '_ELO_RATING\', ' + ${count} + ')'">Hard Elo</a></li>
+					<li><a href="#" th:onclick="'event.preventDefault(); loadRankingTopN(\'OUTDOOR_ELO_RATING\', ' + ${count} + ')'" title="Outdoor Elo">Out. Elo</a></li>
+					<li><a href="#" th:onclick="'event.preventDefault(); loadRankingTopN(\'INDOOR_ELO_RATING\', ' + ${count} + ')'" title="Indoor Elo">In. Elo</a></li>
+				</ul>
+			</div>
+			<a th:href="@{/rankingsTable(rankType=${rankType})}" style="vertical-align: text-top" title="Full Rankings Table"><span class="glyphicon glyphicon-zoom-in" style="font-size: 16px"></span></a>
+		</h4>
 	</div>
+	<table class="table table-condensed table-hover table-striped small">
+		<thead>
+		<tr th:class="${rankType.surface != null ? 'bg-surface-' + rankType.surface.code : _}">
+			<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'ATP Rank' : ((rankType.surface != null ? rankType.surface.text + ' ' : (rankType.indoor != null ? (rankType.indoor ? 'Indoor ' : 'Outdoor ') : '')) + 'Elo Rank')}">R.</th>
+			<th>Name</th>
+			<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'Ranking Points' : ((rankType.surface != null ? rankType.surface.text + ' ' : (rankType.indoor != null ? (rankType.indoor ? 'Indoor ' : 'Outdoor ') : '')) + 'Elo Rating')}" th:text="${rankType.name() == 'POINTS' ? 'Pts.' : (rankType.surface != null ? rankType.surface.text.charAt(0) + '. ' : (rankType.indoor != null ? (rankType.indoor ? 'I. ' : 'O. ') : '')) + 'Elo'}">Pts.</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="player : ${rankingTopN}">
+			<td th:text="${player.rank}" class="top-rank">1</td>
+			<td class="top-player">
+				<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
+				<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Federer</a>
+			</td>
+			<td th:text="${player.points}" class="top-points">1000</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
 </th:block>

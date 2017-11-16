@@ -77,6 +77,8 @@
 		<select id="rankType" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select overall or Elo rating by surface">
 			<option value="ELO_RATING">Overall</option>
 			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+			<option value="OUTDOOR_ELO_RATING">Outdoor</option>
+			<option value="INDOOR_ELO_RATING">Indoor</option>
 		</select>
 	</div>
 	<div id="activeDiv" class="btn-group margin-right">

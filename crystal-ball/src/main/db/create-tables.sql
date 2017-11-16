@@ -147,6 +147,10 @@ CREATE TABLE player_elo_ranking (
 	grass_elo_rating INTEGER,
 	carpet_rank INTEGER,
 	carpet_elo_rating INTEGER,
+	outdoor_rank INTEGER,
+	outdoor_elo_rating INTEGER,
+	indoor_rank INTEGER,
+	indoor_elo_rating INTEGER,
 	PRIMARY KEY (rank_date, player_id)
 );
 
@@ -208,6 +212,8 @@ CREATE TABLE set_score (
 	l_games SMALLINT NOT NULL,
 	w_tb_pt SMALLINT,
 	l_tb_pt SMALLINT,
+	w_tbs SMALLINT,
+	l_tbs SMALLINT,
 	PRIMARY KEY (match_id, set)
 );
 
@@ -394,6 +400,15 @@ CREATE TABLE best_elo_rating_goat_points (
 -- best_surface_elo_rating_goat_points
 
 CREATE TABLE best_surface_elo_rating_goat_points (
+	best_elo_rating_rank INTEGER NOT NULL,
+	goat_points INTEGER NOT NULL,
+	PRIMARY KEY (best_elo_rating_rank, goat_points)
+);
+
+
+-- best_indoor_elo_rating_goat_points
+
+CREATE TABLE best_indoor_elo_rating_goat_points (
 	best_elo_rating_rank INTEGER NOT NULL,
 	goat_points INTEGER NOT NULL,
 	PRIMARY KEY (best_elo_rating_rank, goat_points)

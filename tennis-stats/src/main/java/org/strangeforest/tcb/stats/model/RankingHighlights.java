@@ -27,6 +27,8 @@ public class RankingHighlights {
 	private EloHighlights clayElo;
 	private EloHighlights grassElo;
 	private EloHighlights carpetElo;
+	private EloHighlights outdoorElo;
+	private EloHighlights indoorElo;
 	private Map<Integer, Double> weeksAt = new HashMap<>();
 	private Map<Integer, Integer> yearEndsAt = new HashMap<>();
 
@@ -45,8 +47,6 @@ public class RankingHighlights {
 	private int yearEndsInTop20;
 	private int yearEndsInTop50;
 	private int yearEndsInTop100;
-
-	private static final int MAX_WEEKS = 52;
 
 
 	// Ranking
@@ -187,8 +187,24 @@ public class RankingHighlights {
 		this.carpetElo = carpetElo;
 	}
 
+	public EloHighlights getOutdoorElo() {
+		return outdoorElo;
+	}
+
+	public void setOutdoorElo(EloHighlights outdoorElo) {
+		this.outdoorElo = outdoorElo;
+	}
+
+	public EloHighlights getIndoorElo() {
+		return indoorElo;
+	}
+
+	public void setIndoorElo(EloHighlights indoorElo) {
+		this.indoorElo = indoorElo;
+	}
+
 	public boolean hasCurrentElo() {
-		return elo.currentRank > 0 || hardElo.currentRank > 0 || clayElo.currentRank > 0 || grassElo.currentRank > 0 || carpetElo.currentRank > 0;
+		return elo.currentRank > 0 || hardElo.currentRank > 0 || clayElo.currentRank > 0 || grassElo.currentRank > 0 || carpetElo.currentRank > 0 || outdoorElo.currentRank > 0 || indoorElo.currentRank > 0;
 	}
 
 	private Supplier<FrequentRank<Double>> mostFrequentRank = Memoizer.of(() -> findMostFrequentRank(weeksAt));

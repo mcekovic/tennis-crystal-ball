@@ -91,6 +91,16 @@ public class RankingsServiceIT {
 		peakEloRatingsTest(CARPET_ELO_RATING);
 	}
 
+	@Test
+	public void peakOutdoorEloRatings() {
+		peakEloRatingsTest(OUTDOOR_ELO_RATING);
+	}
+
+	@Test
+	public void peakIndoorEloRatings() {
+		peakEloRatingsTest(INDOOR_ELO_RATING);
+	}
+
 	private void peakEloRatingsTest(RankType rankType) {
 		BootgridTable<PlayerPeakEloRankingsRow> playerRankings = rankingsService.getPeakEloRatingsTable(rankType, PlayerListFilter.ALL, 20, 1, 100);
 
@@ -127,6 +137,16 @@ public class RankingsServiceIT {
 	@Test
 	public void carpetEloRankingsTimeline() {
 		rankingsTimelineTest(CARPET_ELO_RATING);
+	}
+
+	@Test
+	public void outdoorEloRankingsTimeline() {
+		rankingsTimelineTest(OUTDOOR_ELO_RATING);
+	}
+
+	@Test
+	public void indoorEloRankingsTimeline() {
+		rankingsTimelineTest(INDOOR_ELO_RATING);
 	}
 
 	@Test

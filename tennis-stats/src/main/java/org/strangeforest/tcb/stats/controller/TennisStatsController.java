@@ -48,7 +48,6 @@ public class TennisStatsController extends PageController {
 		return new ModelAndView("about", "goatTopN", goatTopN);
 	}
 
-	private static final String ELO_RATING_SUFFIX = "_ELO_RATING";
 	private static final String MAX_AGE_1_HOUR = CacheControl.maxAge(1L, TimeUnit.HOURS).cachePublic().getHeaderValue();
 
 	@GetMapping("/rankingTopN")
@@ -61,8 +60,6 @@ public class TennisStatsController extends PageController {
 
 		LocalDate date = rankingsService.getCurrentRankingDate(rankType);
 		List<PlayerRanking> rankingTopN = rankingsService.getRankingsTopN(rankType, date, count);
-		String rankTypeName = rankType.name();
-		Surface surface = rankTypeName.endsWith(ELO_RATING_SUFFIX) ? Surface.valueOf(rankTypeName.substring(0, rankTypeName.length() - ELO_RATING_SUFFIX.length())) : null;
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("rankType", rankType);
@@ -70,7 +67,6 @@ public class TennisStatsController extends PageController {
 		modelMap.addAttribute("date", toDate(date));
 		modelMap.addAttribute("rankingTopN", rankingTopN);
 		modelMap.addAttribute("surfaces", Surface.values());
-		modelMap.addAttribute("surface", surface);
 		return new ModelAndView("rankingTopN", modelMap);
 	}
 

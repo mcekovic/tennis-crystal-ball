@@ -89,6 +89,8 @@ public abstract class Records {
 		register(RANKING, new EloRankingCategory(RecordDomain.CLAY), false);
 		register(RANKING, new EloRankingCategory(RecordDomain.GRASS), false);
 		register(RANKING, new EloRankingCategory(RecordDomain.CARPET), false);
+		register(RANKING, new EloRankingCategory(RecordDomain.OUTDOOR), false);
+		register(RANKING, new EloRankingCategory(RecordDomain.INDOOR), false);
 		register(MISC, new HeadToHeadCategory(false), false);
 		register(MISC, new HighestOpponentRankCategory(HighestOpponentRankCategory.RecordType.HIGHEST, HighestOpponentRankCategory.RankingType.RANK), false);
 		register(MISC, new HighestOpponentRankCategory(HighestOpponentRankCategory.RecordType.HIGHEST, HighestOpponentRankCategory.RankingType.ELO_RATING), false);
