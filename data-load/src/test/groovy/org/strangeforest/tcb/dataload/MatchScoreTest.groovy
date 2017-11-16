@@ -54,9 +54,9 @@ class MatchScoreTest {
 		assert score.w_tbs == 2
 		assert score.l_tbs == 1
 		assert score.setScores.size() == 3
-		assert score.setScores[0] == new SetScore(w_games: 7, l_games: 6, w_tb_pt: 7, l_tb_pt: 4)
-		assert score.setScores[1] == new SetScore(w_games: 6, l_games: 7, w_tb_pt: 0, l_tb_pt: 7)
-		assert score.setScores[2] == new SetScore(w_games: 7, l_games: 6, w_tb_pt: 14, l_tb_pt: 12)
+		assert score.setScores[0] == new SetScore(w_games: 7, l_games: 6, w_tb_pt: 7, l_tb_pt: 4, w_tbs: 1)
+		assert score.setScores[1] == new SetScore(w_games: 6, l_games: 7, w_tb_pt: 0, l_tb_pt: 7, l_tbs: 1)
+		assert score.setScores[2] == new SetScore(w_games: 7, l_games: 6, w_tb_pt: 14, l_tb_pt: 12, w_tbs: 1)
 		assert score.toString() == '7-6(4) 6-7(0) 7-6(12)'
 	}
 
@@ -73,8 +73,8 @@ class MatchScoreTest {
 		assert score.l_tbs == 1
 		assert score.setScores.size() == 3
 		assert score.setScores[0] == new SetScore(w_games: 6, l_games: 3)
-		assert score.setScores[1] == new SetScore(w_games: 8, l_games: 9)
-		assert score.setScores[2] == new SetScore(w_games: 9, l_games: 8)
+		assert score.setScores[1] == new SetScore(w_games: 8, l_games: 9, l_tbs: 1)
+		assert score.setScores[2] == new SetScore(w_games: 9, l_games: 8, w_tbs: 1)
 		assert score.toString() == '6-3 8-9 9-8'
 	}
 

@@ -533,6 +533,7 @@ function performancePlayerMatchesUrl(playerId, outcome, prefix) {
 	if (toDate) url += "&toDate=" + toDate;
 	var level = paramValue("level", prefix);
 	if (category == "grandSlamMatches") url += "&level=G";
+	else if (category == "altFinalsMatches") url += "&level=L";
 	else if (category == "tourFinalsMatches") url += "&level=F";
 	else if (category == "mastersMatches") url += "&level=M";
 	else if (category == "olympicsMatches") url += "&level=O";

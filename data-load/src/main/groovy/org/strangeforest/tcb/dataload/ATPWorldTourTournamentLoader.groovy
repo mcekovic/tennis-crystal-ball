@@ -150,6 +150,8 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 			params.l_set_games = shortArray(conn, matchScore.l_set_games)
 			params.w_set_tb_pt = shortArray(conn, matchScore.w_set_tb_pt)
 			params.l_set_tb_pt = shortArray(conn, matchScore.l_set_tb_pt)
+			params.w_set_tbs = shortArray(conn, matchScore.w_set_tbs)
+			params.l_set_tbs = shortArray(conn, matchScore.l_set_tbs)
 		}
 	}
 

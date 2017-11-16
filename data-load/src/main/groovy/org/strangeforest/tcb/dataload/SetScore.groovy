@@ -7,6 +7,7 @@ class SetScore {
 
 	short w_games, l_games
 	Short w_tb_pt, l_tb_pt
+	Short w_tbs, l_tbs
 
 	String toString() {
 		StringBuilder sb = new StringBuilder(8)

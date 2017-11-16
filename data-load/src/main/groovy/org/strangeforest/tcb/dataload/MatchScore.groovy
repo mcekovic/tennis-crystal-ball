@@ -27,6 +27,14 @@ class MatchScore {
 		setScores.collect({setScore -> setScore.l_tb_pt})
 	}
 
+	Short[] getW_set_tbs() {
+		setScores.collect({setScore -> setScore.w_tbs})
+	}
+
+	Short[] getL_set_tbs() {
+		setScores.collect({setScore -> setScore.l_tbs})
+	}
+
 	Short getBestOf() {
 		if (!outcome) {
 			if (w_sets == (short)2)

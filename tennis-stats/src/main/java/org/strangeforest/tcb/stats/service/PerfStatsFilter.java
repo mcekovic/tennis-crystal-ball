@@ -48,12 +48,20 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return new PerfStatsFilter(null, null, level, null, null, null, null, null, tournamentId, null);
 	}
 
+	public static PerfStatsFilter forBestOf(Integer bestOf) {
+		return new PerfStatsFilter(null, null, null, bestOf, null, null, null, null, null, null);
+	}
+
  	public static PerfStatsFilter forSurface(String surface) {
 		return new PerfStatsFilter(null, null, null, null, surface, null, null, null, null, null);
 	}
 
  	public static PerfStatsFilter forSurfaceAndTournament(String surface, Integer tournamentId) {
 		return new PerfStatsFilter(null, null, null, null, surface, null, null, null, tournamentId, null);
+	}
+
+	public static PerfStatsFilter forIndoor(Boolean indoor) {
+		return new PerfStatsFilter(null, null, null, null, null, indoor, null, null, null, null);
 	}
 
  	public static PerfStatsFilter forRound(String round) {
@@ -329,8 +337,16 @@ public class PerfStatsFilter extends PlayerListFilter {
 		return !isNullOrEmpty(level) && tournamentId != null && equals(forLevelAndTournament(level, tournamentId));
 	}
 
+	public boolean isForBestOf() {
+		return bestOf != null && equals(forBestOf(bestOf));
+	}
+
 	public boolean isForSurface() {
 		return !isNullOrEmpty(surface) && equals(forSurface(surface));
+	}
+
+	public boolean isForIndoor() {
+		return indoor != null && equals(forIndoor(indoor));
 	}
 
 	public boolean isForRound() {

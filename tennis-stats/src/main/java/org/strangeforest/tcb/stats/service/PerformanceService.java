@@ -19,7 +19,10 @@ public class PerformanceService {
 
 	private static final String PLAYER_PERFORMANCE_COLUMNS =
 		"matches_won, matches_lost, grand_slam_matches_won, grand_slam_matches_lost, tour_finals_matches_won, tour_finals_matches_lost, alt_finals_matches_won, alt_finals_matches_lost, masters_matches_won, masters_matches_lost, olympics_matches_won, olympics_matches_lost,\n" +
+		"atp500_matches_won, atp500_matches_lost, atp250_matches_won, atp250_matches_lost, davis_cup_matches_won, davis_cup_matches_lost, world_team_cup_matches_won, world_team_cup_matches_lost,\n" +
+		"best_of_3_matches_won, best_of_3_matches_lost, best_of_5_matches_won, best_of_5_matches_lost,\n" +
 		"hard_matches_won, hard_matches_lost, clay_matches_won, clay_matches_lost, grass_matches_won, grass_matches_lost, carpet_matches_won, carpet_matches_lost,\n" +
+		"outdoor_matches_won, outdoor_matches_lost, indoor_matches_won, indoor_matches_lost,\n" +
 		"deciding_sets_won, deciding_sets_lost, fifth_sets_won, fifth_sets_lost, finals_won, finals_lost, vs_no1_won, vs_no1_lost, vs_top5_won, vs_top5_lost, vs_top10_won, vs_top10_lost,\n" +
 		"after_winning_first_set_won, after_winning_first_set_lost, after_losing_first_set_won, after_losing_first_set_lost, tie_breaks_won, tie_breaks_lost, deciding_set_tbs_won, deciding_set_tbs_lost\n";
 
@@ -33,10 +36,15 @@ public class PerformanceService {
 		"sum(atp500_matches_won) atp500_matches_won, sum(atp500_matches_lost) atp500_matches_lost,\n" +
 		"sum(atp250_matches_won) atp250_matches_won, sum(atp250_matches_lost) atp250_matches_lost,\n" +
 		"sum(davis_cup_matches_won) davis_cup_matches_won, sum(davis_cup_matches_lost) davis_cup_matches_lost,\n" +
+		"sum(world_team_cup_matches_won) world_team_cup_matches_won, sum(world_team_cup_matches_lost) world_team_cup_matches_lost,\n" +
+		"sum(best_of_3_matches_won) best_of_3_matches_won, sum(best_of_3_matches_lost) best_of_3_matches_lost,\n" +
+		"sum(best_of_5_matches_won) best_of_5_matches_won, sum(best_of_5_matches_lost) best_of_5_matches_lost,\n" +
 		"sum(hard_matches_won) hard_matches_won, sum(hard_matches_lost) hard_matches_lost,\n" +
 		"sum(clay_matches_won) clay_matches_won, sum(clay_matches_lost) clay_matches_lost,\n" +
 		"sum(grass_matches_won) grass_matches_won, sum(grass_matches_lost) grass_matches_lost,\n" +
 		"sum(carpet_matches_won) carpet_matches_won, sum(carpet_matches_lost) carpet_matches_lost,\n" +
+		"sum(outdoor_matches_won) outdoor_matches_won, sum(outdoor_matches_lost) outdoor_matches_lost,\n" +
+		"sum(indoor_matches_won) indoor_matches_won, sum(indoor_matches_lost) indoor_matches_lost,\n" +
 		"sum(deciding_sets_won) deciding_sets_won, sum(deciding_sets_lost) deciding_sets_lost,\n" +
 		"sum(fifth_sets_won) fifth_sets_won, sum(fifth_sets_lost) fifth_sets_lost,\n" +
 		"sum(finals_won) finals_won, sum(finals_lost) finals_lost,\n" +
@@ -58,13 +66,6 @@ public class PerformanceService {
 		"FROM player_season_performance\n" +
 		"WHERE player_id = :playerId\n" +
 		"ORDER BY season";
-
-	private static final String PLAYER_ITEM_BREAKDOWN_QUERY = //language=SQL
-		"SELECT %1$s, sum(p_matches) p_matches, sum(o_matches) o_matches\n" +
-		"FROM player_match_for_stats_v m%2$s\n" +
-		"WHERE m.player_id = :playerId%3$s\n" +
-		"GROUP BY %1$s\n" +
-		"ORDER BY %1$s";
 
 	private static final String PLAYER_OPPOSITION_BREAKDOWN_QUERY = //language=SQL
 		"WITH season_opposition AS (\n" +
@@ -167,10 +168,18 @@ public class PerformanceService {
 		perf.setAltFinalsMatches(mapWonLost(rs, "alt_finals_matches"));
 		perf.setMastersMatches(mapWonLost(rs, "masters_matches"));
 		perf.setOlympicsMatches(mapWonLost(rs, "olympics_matches"));
+		perf.setAtp500Matches(mapWonLost(rs, "atp500_matches"));
+		perf.setAtp250Matches(mapWonLost(rs, "atp250_matches"));
+		perf.setDavisCupMatches(mapWonLost(rs, "davis_cup_matches"));
+		perf.setWorldTeamCupMatches(mapWonLost(rs, "world_team_cup_matches"));
+		perf.setBestOf3Matches(mapWonLost(rs, "best_of_3_matches"));
+		perf.setBestOf5Matches(mapWonLost(rs, "best_of_5_matches"));
 		perf.setHardMatches(mapWonLost(rs, "hard_matches"));
 		perf.setClayMatches(mapWonLost(rs, "clay_matches"));
 		perf.setGrassMatches(mapWonLost(rs, "grass_matches"));
 		perf.setCarpetMatches(mapWonLost(rs, "carpet_matches"));
+		perf.setOutdoorMatches(mapWonLost(rs, "outdoor_matches"));
+		perf.setIndoorMatches(mapWonLost(rs, "indoor_matches"));
 		// Pressure situations
 		perf.setDecidingSets(mapWonLost(rs, "deciding_sets"));
 		perf.setFifthSets(mapWonLost(rs, "fifth_sets"));
@@ -199,33 +208,6 @@ public class PerformanceService {
 		String join = playerPerformanceJoin(filter);
 		String criteria = filter.getCriteria();
 		MapSqlParameterSource params = filter.getParams().addValue("playerId", playerId);
-
-		jdbcTemplate.query(
-			format(PLAYER_ITEM_BREAKDOWN_QUERY, "indoor", join, criteria), params,
-			rs -> {
-				boolean indoor = rs.getBoolean("indoor");
-				WonLost wonLost = mapWonLost(rs);
-				performanceEx.addIndoorMatches(indoor, wonLost);
-			}
-		);
-
-		jdbcTemplate.query(
-			format(PLAYER_ITEM_BREAKDOWN_QUERY, "level", join, criteria), params,
-			rs -> {
-				TournamentLevel level = TournamentLevel.decode(rs.getString("level"));
-				WonLost wonLost = mapWonLost(rs);
-				performanceEx.addLevelMatches(level, wonLost);
-			}
-		);
-
-		jdbcTemplate.query(
-			format(PLAYER_ITEM_BREAKDOWN_QUERY, "best_of", join, criteria), params,
-			rs -> {
-				int bestOf = rs.getInt("best_of");
-				WonLost wonLost = mapWonLost(rs);
-				performanceEx.addBestOfMatches(bestOf, wonLost);
-			}
-		);
 
 		Map<Opponent, WonLost> oppositionMatches = new TreeMap<>();
 		jdbcTemplate.query(

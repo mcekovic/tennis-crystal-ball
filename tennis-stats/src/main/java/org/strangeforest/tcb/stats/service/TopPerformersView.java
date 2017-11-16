@@ -9,11 +9,13 @@ public class TopPerformersView {
 	private static final Map<String, String> LEVEL_CATEGORY_MAP = ImmutableMap.<String, String>builder()
 		.put("G", "grandSlamMatches")
 		.put("F", "tourFinalsMatches")
+		.put("L", "altFinalsMatches")
 		.put("M", "mastersMatches")
 		.put("O", "olympicsMatches")
 		.put("A", "atp500Matches")
 		.put("B", "atp250Matches")
 		.put("D", "davisCupMatches")
+		.put("T", "worldTeamCupMatches")
 	.build();
 	private static final Map<String, String> TOURNAMENT_LEVEL_CATEGORY_MAP = ImmutableMap.<String, String>builder()
 		.put("G", "grandSlamMatches")
@@ -21,11 +23,19 @@ public class TopPerformersView {
 		.put("A", "atp500Matches")
 		.put("B", "atp250Matches")
 	.build();
+	private static final Map<Integer, String> BEST_OF_CATEGORY_MAP = ImmutableMap.<Integer, String>builder()
+		.put(3, "bestOf3Matches")
+		.put(5, "bestOf5Matches")
+	.build();
 	private static final Map<String, String> SURFACE_CATEGORY_MAP = ImmutableMap.<String, String>builder()
 		.put("H", "hardMatches")
 		.put("C", "clayMatches")
 		.put("G", "grassMatches")
 		.put("P", "carpetMatches")
+	.build();
+	private static final Map<Boolean, String> INDOOR_CATEGORY_MAP = ImmutableMap.<Boolean, String>builder()
+		.put(Boolean.TRUE, "outdoorMatches")
+		.put(Boolean.FALSE, "indoorMatches")
 	.build();
 	private static final Map<String, String> ROUND_CATEGORY_MAP = ImmutableMap.<String, String>builder()
 		.put("F", "finals")
@@ -57,8 +67,12 @@ public class TopPerformersView {
 			case "matches": {
 				if (filter.isForLevel())
 					return optimizedAll(LEVEL_CATEGORY_MAP.get(filter.getLevel()));
+				if (filter.isForBestOf())
+					return optimizedAll(BEST_OF_CATEGORY_MAP.get(filter.getBestOf()));
 				else if (filter.isForSurface())
 					return optimizedAll(SURFACE_CATEGORY_MAP.get(filter.getSurface()));
+				else if (filter.isForIndoor())
+					return optimizedAll(INDOOR_CATEGORY_MAP.get(filter.getIndoor()));
 				else if (filter.isForRound())
 					return optimizedAll(ROUND_CATEGORY_MAP.get(filter.getRound()));
 				else if (filter.isForOpposition())
@@ -79,6 +93,7 @@ public class TopPerformersView {
 					return optimizedTournament(OPPOSITION_CATEGORY_MAP.get(filter.getOpponentFilter().getOpponent()), filter.getTournamentId());
 				break;
 			}
+			case "altFinalsMatches": return deoptimizeTournamentLevel("L");
 			case "tourFinalsMatches": return deoptimizeTournamentLevel("F");
 			case "olympicsMatches": return deoptimizeTournamentLevel("O");
 			case "davisCupMatches": return deoptimizeTournamentLevel("D");

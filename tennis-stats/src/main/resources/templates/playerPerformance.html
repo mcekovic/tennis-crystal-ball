@@ -333,7 +333,7 @@
 					<tr>
 						<th colspan="2">Outdoor / Indoor Breakdown</th>
 					</tr>
-					<tr th:each="indoorWL : ${perf.indoorMatches}" th:with="indoor=${indoorWL.key}, wl=${indoorWL.value}">
+					<tr th:each="indoorWL : ${perf.outdoorIndoorMatches}" th:with="indoor=${indoorWL.key}, wl=${indoorWL.value}">
 						<td width="40%" th:text="${indoor ? 'Indoor' : 'Outdoor'}">Outdoor</td>
 						<th>
 							<div class="progress progress-perf">

@@ -11,10 +11,18 @@ public class PlayerPerformance {
 	private WonLost altFinalsMatches;
 	private WonLost mastersMatches;
 	private WonLost olympicsMatches;
+	private WonLost atp500Matches;
+	private WonLost atp250Matches;
+	private WonLost davisCupMatches;
+	private WonLost worldTeamCupMatches;
+	private WonLost bestOf3Matches;
+	private WonLost bestOf5Matches;
 	private WonLost hardMatches;
 	private WonLost clayMatches;
 	private WonLost grassMatches;
 	private WonLost carpetMatches;
+	private WonLost outdoorMatches;
+	private WonLost indoorMatches;
 
 	// Pressure situations
 	private WonLost decidingSets;
@@ -37,10 +45,18 @@ public class PlayerPerformance {
 		altFinalsMatches = perf.altFinalsMatches;
 		mastersMatches = perf.mastersMatches;
 		olympicsMatches = perf.olympicsMatches;
+		atp500Matches = perf.atp500Matches;
+		atp250Matches = perf.atp250Matches;
+		davisCupMatches = perf.davisCupMatches;
+		worldTeamCupMatches = perf.worldTeamCupMatches;
+		bestOf3Matches = perf.bestOf3Matches;
+		bestOf5Matches = perf.bestOf5Matches;
 		hardMatches = perf.hardMatches;
 		clayMatches = perf.clayMatches;
 		grassMatches = perf.grassMatches;
 		carpetMatches = perf.carpetMatches;
+		outdoorMatches = perf.outdoorMatches;
+		indoorMatches = perf.indoorMatches;
 
 		decidingSets = perf.decidingSets;
 		fifthSets = perf.fifthSets;
@@ -105,6 +121,54 @@ public class PlayerPerformance {
 		this.olympicsMatches = olympicsMatches;
 	}
 
+	public WonLost getAtp500Matches() {
+		return atp500Matches;
+	}
+
+	public void setAtp500Matches(WonLost atp500Matches) {
+		this.atp500Matches = atp500Matches;
+	}
+
+	public WonLost getAtp250Matches() {
+		return atp250Matches;
+	}
+
+	public void setAtp250Matches(WonLost atp250Matches) {
+		this.atp250Matches = atp250Matches;
+	}
+
+	public WonLost getDavisCupMatches() {
+		return davisCupMatches;
+	}
+
+	public void setDavisCupMatches(WonLost davisCupMatches) {
+		this.davisCupMatches = davisCupMatches;
+	}
+
+	public WonLost getWorldTeamCupMatches() {
+		return worldTeamCupMatches;
+	}
+
+	public void setWorldTeamCupMatches(WonLost worldTeamCupMatches) {
+		this.worldTeamCupMatches = worldTeamCupMatches;
+	}
+
+	public WonLost getBestOf3Matches() {
+		return bestOf3Matches;
+	}
+
+	public void setBestOf3Matches(WonLost bestOf3Matches) {
+		this.bestOf3Matches = bestOf3Matches;
+	}
+
+	public WonLost getBestOf5Matches() {
+		return bestOf5Matches;
+	}
+
+	public void setBestOf5Matches(WonLost bestOf5Matches) {
+		this.bestOf5Matches = bestOf5Matches;
+	}
+
 	public WonLost getHardMatches() {
 		return hardMatches;
 	}
@@ -147,7 +211,23 @@ public class PlayerPerformance {
 		}
 	}
 
-	
+	public WonLost getOutdoorMatches() {
+		return outdoorMatches;
+	}
+
+	public void setOutdoorMatches(WonLost outdoorMatches) {
+		this.outdoorMatches = outdoorMatches;
+	}
+
+	public WonLost getIndoorMatches() {
+		return indoorMatches;
+	}
+
+	public void setIndoorMatches(WonLost indoorMatches) {
+		this.indoorMatches = indoorMatches;
+	}
+
+
 	// Pressure situations
 
 	public WonLost getDecidingSets() {
@@ -247,10 +327,18 @@ public class PlayerPerformance {
 		empty.altFinalsMatches = WonLost.EMPTY;
 		empty.mastersMatches = WonLost.EMPTY;
 		empty.olympicsMatches = WonLost.EMPTY;
+		empty.atp500Matches = WonLost.EMPTY;
+		empty.atp250Matches = WonLost.EMPTY;
+		empty.davisCupMatches = WonLost.EMPTY;
+		empty.worldTeamCupMatches = WonLost.EMPTY;
+		empty.bestOf3Matches = WonLost.EMPTY;
+		empty.bestOf5Matches = WonLost.EMPTY;
 		empty.hardMatches = WonLost.EMPTY;
 		empty.clayMatches = WonLost.EMPTY;
 		empty.grassMatches = WonLost.EMPTY;
 		empty.carpetMatches = WonLost.EMPTY;
+		empty.outdoorMatches = WonLost.EMPTY;
+		empty.indoorMatches = WonLost.EMPTY;
 		empty.decidingSets = WonLost.EMPTY;
 		empty.fifthSets = WonLost.EMPTY;
 		empty.finals = WonLost.EMPTY;

@@ -287,7 +287,7 @@
 		<tr>
 			<td></td><th class="text-center">Outdoor / Indoor Breakdown</th><td></td>
 		</tr>
-		<tr th:each="indoor : ${perfIndoors}" class="text-nowrap" th:with="wl1=${perf1.indoorMatches.get(indoor)}, wl2=${perf2.indoorMatches.get(indoor)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
+		<tr th:each="indoor : ${perfIndoors}" class="text-nowrap" th:with="wl1=${perf1.outdoorIndoorMatches.get(indoor)}, wl2=${perf2.outdoorIndoorMatches.get(indoor)}, wlc=${wl1 != null ? (wl2 != null ? wl2.compareTo(wl1) : 1) : -1}">
 			<th class="text-right">
 				<div th:if="${wl1}" class="progress progress-perf pull-right">
 					<div class="progress-bar progress-bar-perf" th:attrappend="class=${wlc > 0 ? '-w' : (wlc < 0 ? '-l' : _)}" role="progressbar" th:style="'width: ' + ${wl1.wonPctStr}" th:attr="aria-valuenow=${wl1.wonPct}" aria-valuemin="0" aria-valuemax="100">

@@ -39,15 +39,19 @@ class MatchScoreParser {
 						if (w_win) w_games--
 						if (l_win) l_games--
 					}
+					Short w_tb = w_gms == (l_gms + 1) && l_gms >= 6 ? 1 : null
+					Short l_tb = l_gms == (w_gms + 1) && w_gms >= 6 ? 1 : null
+					if (w_tb)
+						++w_tbs
+					if (l_tb)
+						++l_tbs
 					setScores << new SetScore(
 						w_games: w_gms, l_games: l_gms,
 						w_tb_pt: tb_pt >= 0 ? (w_win ? max(tb_pt + 2, 7) : tb_pt) : null,
-						l_tb_pt: tb_pt >= 0 ? (l_win ? max(tb_pt + 2, 7) : tb_pt) : null
+						l_tb_pt: tb_pt >= 0 ? (l_win ? max(tb_pt + 2, 7) : tb_pt) : null,
+						w_tbs: w_tb,
+						l_tbs: l_tb
 					)
-					if (w_gms == (l_gms + 1) && l_gms >= 6)
-						++w_tbs
-					if (l_gms == (w_gms + 1) && w_gms >= 6)
-						++l_tbs
 				}
 				catch (Exception ex) {
 					println("Invalid set: $set")
