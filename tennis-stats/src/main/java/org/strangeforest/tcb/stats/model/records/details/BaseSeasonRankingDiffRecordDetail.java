@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-public abstract class BaseSeasonRankingDiffRecordDetail<T> extends BaseRankingDiffRecordDetail<T> {
+public abstract class BaseSeasonRankingDiffRecordDetail<T> extends BaseRankingDiffRecordDetail<T> implements SeasonRecordDetail<T> {
 
 	private final int season;
 
@@ -9,7 +9,7 @@ public abstract class BaseSeasonRankingDiffRecordDetail<T> extends BaseRankingDi
 		this.season = season;
 	}
 
-	public int getSeason() {
+	@Override public int getSeason() {
 		return season;
 	}
 

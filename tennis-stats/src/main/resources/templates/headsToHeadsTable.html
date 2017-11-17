@@ -56,12 +56,12 @@
 			</th>
 			<th style="text-align: center">
 				<span class="raw-data" th:text="${hRivalry.wonLost.WLT}">11 - 9 / 20</span>
-				<span class="pct-data" th:text="${hRivalry.wonLost.wonPctStr}">55.5%</span>
+				<span class="pct-data" th:text="${hRivalry.wonLost.pctWL}">55.5% (11-9)</span>
 			</th>
 			<td th:each="vRivalry : ${headsToHeads.rivalries}" th:with="playerId1=${hRivalry.player1.playerId}, playerId2=${vRivalry.player1.playerId}, rivalry=${headsToHeads.getRivalry(playerId1, playerId2)}">
 				<span th:if="${rivalry}" th:with="match=${rivalry.lastMatch}, url=@{/headToHead(playerId1=${playerId1}, playerId2=${playerId2}, tab=matches, level=${level}, surface=${surface}, round=${round})}, title=${'Show ' + hRivalry.player1.name + ' - ' + vRivalry.player1.name + ' H2H matches'}" class="rivalry" th:attr="data-won=${match.winnerId == hRivalry.player1.playerId}, data-score=${match.score}, data-season=${match.season}, data-tournamenteventid=${match.tournamentEventId}, data-tournament=${match.tournament}, data-level=${match.level}, data-surface=${match.surface}, data-indoor=${match.indoor}, data-round=${match.round}">
 					<a class="raw-data" th:href="${url}" th:text="${playerCount &lt;= 10 ? rivalry.wonLost.WLT : rivalry.wonLost.WL}" th:title="${title}">4 - 2 / 6</a>
-					<a class="pct-data" th:href="${url}" th:text="${rivalry.wonLost.wonPctStr}" th:title="${title}">66.7%</a>
+					<a class="pct-data" th:href="${url}" th:text="${playerCount &lt;= 10 ? rivalry.wonLost.pctWL : rivalry.wonLost.wonPctStr}" th:title="${title}">66.7% (4-2)</a>
 				</span>
 			</td>
 		</tr>

@@ -176,7 +176,7 @@ public class PlayerService {
 		quickPicks.put("Week Era", "Lleyton Hewitt, Andy Roddick, Gustavo Kuerten, Marat Safin, Juan Carlos Ferrero");
 		quickPicks.put("Americans rule '90", "Pete Sampras, Andre Agassi, Jim Courier, Michael Chang");
 		quickPicks.put("Late '80 / Early '90", "Boris Becker, Stefan Edberg, Mats Wilander, Thomas Muster");
-		quickPicks.put("'70 / Early '80 dominance", "Ivan Lendl, Jimmy Connors, John Mcenroe, Bjorn Borg, Guillermo Vilas");
+		quickPicks.put("'70 / Early '80 dominance", "Ivan Lendl, Jimmy Connors, John McEnroe, Bjorn Borg, Guillermo Vilas");
 		quickPicks.put("Dawn of Open Era", "Rod Laver, Ken Rosewall, Ilie Nastase, Arthur Ashe, John Newcombe");
 		quickPicks.put("Top 10", join(", ", topN("current_rank", 10)));
 		quickPicks.put("Top 20", join(", ", topN("current_rank", 20)));

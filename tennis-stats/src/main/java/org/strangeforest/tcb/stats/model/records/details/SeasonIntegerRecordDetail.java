@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 
 import static java.lang.String.*;
 
-public class SeasonIntegerRecordDetail extends SimpleRecordDetail<Integer> {
+public class SeasonIntegerRecordDetail extends SimpleRecordDetail<Integer> implements SeasonRecordDetail<Integer> {
 
 	private final int season;
 
@@ -16,7 +16,7 @@ public class SeasonIntegerRecordDetail extends SimpleRecordDetail<Integer> {
 		this.season = season;
 	}
 
-	public int getSeason() {
+	@Override public int getSeason() {
 		return season;
 	}
 

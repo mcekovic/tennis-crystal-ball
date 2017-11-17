@@ -1212,8 +1212,8 @@ GROUP BY player_id, season;
 -- player_big_wins_goat_points_v
 
 CREATE OR REPLACE VIEW player_big_wins_goat_points_v AS
-SELECT player_id, round(sum(goat_points))::INTEGER AS goat_points, sum(goat_points) AS unrounded_goat_points
-FROM player_big_wins_v
+SELECT player_id, round(sum(big_wins_goat_points))::INTEGER AS goat_points, sum(big_wins_goat_points) AS unrounded_goat_points
+FROM player_season_goat_points
 GROUP BY player_id;
 
 

@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-public abstract class SeasonWonLostRecordDetail extends WonLostRecordDetail {
+public abstract class SeasonWonLostRecordDetail extends WonLostRecordDetail implements SeasonRecordDetail<String> {
 
 	private final int season;
 
@@ -9,7 +9,7 @@ public abstract class SeasonWonLostRecordDetail extends WonLostRecordDetail {
 		this.season = season;
 	}
 
-	public int getSeason() {
+	@Override public int getSeason() {
 		return season;
 	}
 }

@@ -34,10 +34,10 @@ public class GOATPointsCategory extends RecordCategory {
 		register(mostSeasonGOATPoints(N_A, N_A, "goat_points"));
 		register(mostSeasonGOATPoints("Tournament", "Tournament", "tournament_goat_points"));
 		register(mostSeasonGOATPoints("Ranking", "Ranking", "ranking_goat_points"));
-		register(mostSeasonGOATPoints("WeeksAtNo1", "Weeks at No. 1", "weeks_at_no1_goat_points"));
-		register(mostSeasonGOATPoints("WeeksAtEloTopN", "Weeks at Elo Top 5", "weeks_at_elo_topn_goat_points"));
+		register(mostSeasonFractionalGOATPoints("WeeksAtNo1", "Weeks at No. 1", "weeks_at_no1_goat_points"));
+		register(mostSeasonFractionalGOATPoints("WeeksAtEloTopN", "Weeks at Elo Top 5", "weeks_at_elo_topn_goat_points"));
 		register(mostSeasonGOATPoints("Achievements", "Achievements", "achievements_goat_points"));
-		register(mostSeasonGOATPoints("BigWins", "Big Wins", "big_wins_goat_points"));
+		register(mostSeasonFractionalGOATPoints("BigWins", "Big Wins", "round(big_wins_goat_points, 1)"));
 		register(mostSeasonGOATPoints("GrandSlam", "Grand Slam", "grand_slam_goat_points"));
 		register(goatPointsCareerSpan());
 		register(mostConsecutiveSeasonsWithGOATPoints());
@@ -57,6 +57,14 @@ public class GOATPointsCategory extends RecordCategory {
 	}
 
 	private static Record mostSeasonGOATPoints(String id, String name, String columnName) {
+		return mostSeasonGOATPoints(id, name, columnName, SeasonIntegerRecordDetail.class, "valueUrl");
+	}
+
+	private static Record mostSeasonFractionalGOATPoints(String id, String name, String columnName) {
+		return mostSeasonGOATPoints(id, name, columnName, SeasonDoubleRecordDetail.class, "factor");
+	}
+
+	private static <T extends SeasonRecordDetail> Record mostSeasonGOATPoints(String id, String name, String columnName, Class<T> detailClass, String formatter) {
 		return new Record<>(
 			"Season" + id + "GOATPoints", "Most " + suffix(name, " ") + "GOAT Points in Single Season",
 			/* language=SQL */
@@ -64,9 +72,9 @@ public class GOATPointsCategory extends RecordCategory {
 			"FROM player_season_goat_points\n" +
 			"WHERE " + columnName + " > 0",
 			"r.value, r.season", "r.value DESC", "r.value DESC, r.season",
-			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints&season=%2$d", playerId, recordDetail.getSeason()),
+			detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints&season=%2$d", playerId, recordDetail.getSeason()),
 			asList(
-				new RecordColumn("value", null, "valueUrl", POINTS_WIDTH, "right", suffix(name, " ") + "GOAT Points"),
+				new RecordColumn("value", null, formatter, POINTS_WIDTH, "right", suffix(name, " ") + "GOAT Points"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			)
 		);

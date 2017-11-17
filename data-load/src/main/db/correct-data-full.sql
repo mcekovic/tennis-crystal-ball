@@ -17,7 +17,7 @@ WHERE first_name = 'Stanislas' AND last_name = 'Wawrinka';
 COMMIT;
 
 
--- Correct Lendl nationality in matches
+-- Correct player nationalities
 
 WITH lendl_id AS (
 	SELECT player_id FROM player_v WHERE name = 'Ivan Lendl'
@@ -27,6 +27,10 @@ SET winner_country_id = CASE WHEN winner_id = (SELECT player_id FROM lendl_id) T
 	loser_country_id = CASE WHEN loser_id = (SELECT player_id FROM lendl_id) THEN 'CZE' ELSE loser_country_id END
 WHERE (winner_id = (SELECT player_id FROM lendl_id) OR loser_id = (SELECT player_id FROM lendl_id))
 AND date < DATE '1992-07-07';
+
+UPDATE player
+SET country_id = 'SRB'
+WHERE first_name = 'Slobodan' AND last_name = 'Zivojinovic';
 
 COMMIT;
 
