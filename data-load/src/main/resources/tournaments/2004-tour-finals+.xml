@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
-	<tournament season="2004" name="Masters Cup" date="2004-11-15" ext-id="605">
+	<tournament season="2004" tournament-name="Tour Finals" name="Masters Cup" date="2004-11-15" ext-id="605">
 		<level>F</level>
 		<surface>H</surface>
 		<draw-type>RR</draw-type>

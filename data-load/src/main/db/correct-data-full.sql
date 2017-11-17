@@ -6,10 +6,13 @@ WHERE player_id = (SELECT player_id FROM player_v WHERE name = 'Pat Cash') AND r
 
 COMMIT;
 
--- Correct player names cases
+-- Correct player names
 
 UPDATE player SET last_name = 'McEnroe'
 WHERE last_name = 'Mcenroe';
+
+UPDATE player SET first_name = 'Stan'
+WHERE first_name = 'Stanislas' AND last_name = 'Wawrinka';
 
 COMMIT;
 
