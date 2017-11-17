@@ -42,7 +42,7 @@
 		var $resultsTable = $("#resultsTable[(${id})]");
 		var resultsTable = $resultsTable.get(0);
 		resultsTable.rounds = [[${results.rounds}]];
-		resultsTable.roundsToShow = Math.min(resultsTable.rounds.length, {"xs": 2, "sm": 2, "md": [(${3 + columnCountOffset})], "lg": [(${4 + columnCountOffset})]}[device]);
+		resultsTable.roundsToShow = Math.min(resultsTable.rounds.length, {"xs": 2, "sm": 2, "md": [(${3 + columnCountOffset})], "lg": [(${4 + columnCountOffset})], "xl": [(${4 + columnCountOffset})]}[device]);
 		resultsTable.maxRoundPos = resultsTable.rounds.length - resultsTable.roundsToShow;
 		resultsTable.roundPos = [(${forecast ? 0 : 'resultsTable.maxRoundPos'})];
 		showRounds($resultsTable);

@@ -11,11 +11,12 @@
 	$(function() {
 		var $seasonEventsTable = $("#seasonEventsTable");
 		var device = detectDevice();
+		setBootgridColumnsVisible($seasonEventsTable, ["finalEx"], deviceGreaterOrEqual(device, "xl"));
 		setBootgridColumnsVisible($seasonEventsTable, ["playerCount", "strength", "averageEloRating"], deviceGreaterOrEqual(device, "lg"));
-		setBootgridColumnsVisible($seasonEventsTable, ["final"], deviceGreaterOrEqual(device, "md"));
-		if (device != "lg")
+		setBootgridColumnsVisible($seasonEventsTable, ["final"], deviceGreaterOrEqual(device, "md") && deviceLessOrEqual(device, "lg"));
+		if (deviceGreaterOrEqual(device, "lg"))
 			setBootgridColumnsWidths($seasonEventsTable, ["name"], [175]);
-		if (device == "md")
+		if (device === "md")
 			setBootgridColumnsWidths($seasonEventsTable, ["final"], [400]);
 		$seasonEventsTable.bootgrid({
 			ajax: true,
@@ -41,7 +42,8 @@
 				"level": levelFormatter,
 				"surface": surfaceFormatter,
 				"participation": participationFormatter,
-				"match": finalFormatter
+				"final": finalFormatter,
+				"finalEx": finalExFormatter
 			},
 			labels: {
 				loading: bootgridTemplateLoading,
@@ -113,7 +115,8 @@
 		<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>
 		<th data-column-id="strength" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Str.</th>
 		<th data-column-id="averageEloRating" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Elo</th>
-		<th data-column-id="final" data-formatter="match" data-sortable="false" data-width="500">Final</th>
+		<th data-column-id="final" data-formatter="final" data-sortable="false" data-width="500">Final</th>
+		<th data-column-id="finalEx" data-formatter="finalEx" data-sortable="false" data-visible="false" data-width="550">Final Ex</th>
 	</tr>
 	</thead>
 </table>

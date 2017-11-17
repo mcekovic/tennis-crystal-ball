@@ -99,8 +99,8 @@ public class MatchesService {
 				TournamentEventMatch match = new TournamentEventMatch(
 					rs.getLong("match_id"),
 					rs.getString("round"),
-					mapMatchPlayer(rs, "winner_", true),
-					mapMatchPlayer(rs, "loser_", true),
+					mapMatchPlayer(rs, "winner_"),
+					mapMatchPlayer(rs, "loser_"),
 					mapSetScores(rs),
 					rs.getString("outcome"),
 					rs.getBoolean("has_stats")
@@ -182,7 +182,7 @@ public class MatchesService {
 		return sb.toString();
 	}
 
-	static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix, boolean withCountry) throws SQLException {
+	static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix) throws SQLException {
 		int playerId = rs.getInt(prefix + "id");
 		if (!rs.wasNull()) {
 			return new MatchPlayer(
@@ -190,7 +190,7 @@ public class MatchesService {
 				rs.getString(prefix + "name"),
 				getInteger(rs, prefix + "seed"),
 				rs.getString(prefix + "entry"),
-				withCountry ? rs.getString(prefix + "country_id") : null
+				rs.getString(prefix + "country_id")
 			);
 		}
 		else

@@ -15,12 +15,18 @@
 		});
 	</script>
 	<style th:inline="css">
-		[# th:if="${level.code == 'M'}"] .container {
-			width: 1500px;
-		} [/]
-		[# th:if="${level.code == 'F' || level.code == 'O'}"] .table {
+		[# th:if="${level.code == 'M'}"]
+		@media (min-width: 1530px) {
+			.container {
+				width: 1500px;
+			}
+		}
+		[/]
+		[# th:if="${level.code == 'F' || level.code == 'O'}"]
+		.table {
 			width: 50%;
-		} [/]
+		}
+		[/]
 		span.small-dimmed {
 			font-size: smaller;
 			color: #444;

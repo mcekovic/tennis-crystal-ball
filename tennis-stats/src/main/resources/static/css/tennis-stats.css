@@ -1,3 +1,14 @@
+@media (min-width: 1430px) {
+	.container {
+		width: 1400px;
+	}
+	.visible-xl {
+		display: block !important;
+	}
+	.visible-lg {
+		display: none !important;
+	}
+}
 .component {
 	border: 1px solid #c0c0c0;
 	border-radius: 5px;

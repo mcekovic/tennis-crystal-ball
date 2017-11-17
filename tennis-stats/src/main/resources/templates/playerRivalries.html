@@ -14,7 +14,7 @@
 		var device = detectDevice();
 		setBootgridColumnsVisible($rivalriesTable, ["lastMatch"], deviceGreaterOrEqual(device, "lg"));
 		setBootgridColumnsVisible($rivalriesTable, ["bestRank"], deviceGreaterOrEqual(device, "sm"));
-		if (!deviceGreaterOrEqual(device, "sm"))
+		if (deviceLessOrEqual(device, "xs"))
 			setBootgridColumnsWidths($rivalriesTable, ["name"], [150]);
 		$rivalriesTable.bootgrid({
 			ajax: true,

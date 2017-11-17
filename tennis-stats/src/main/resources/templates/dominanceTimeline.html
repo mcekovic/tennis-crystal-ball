@@ -78,9 +78,11 @@
 		}
 	</script>
 	<style th:inline="css">
-		[# th:if="${seasonCount > 30}"]
-		.container {
-			width: [(${1170 + 27 * (seasonCount - 30)})]px;
+		[# th:if="${seasonCount > 39}" th:with="newWidth=${1400 + 27 * (seasonCount - 39)}"]
+		@media (min-width: [(${newWidth + 30})]px) {
+			.container {
+				width: [(${newWidth})]px;
+			}
 		}
 		[/]
 		#dominanceTable > thead > tr.season > th {

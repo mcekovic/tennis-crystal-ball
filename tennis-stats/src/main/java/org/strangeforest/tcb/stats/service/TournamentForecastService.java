@@ -4,8 +4,6 @@ import java.sql.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
@@ -229,8 +227,8 @@ public class TournamentForecastService {
 			COMPLETED_MATCHES_QUERY, params("inProgressEventId", inProgressEventId),
 			rs -> {
 				short winnerIndex = rs.getShort("winner");
-				MatchPlayer winner = mapMatchPlayer(rs, format("player%1$d_", winnerIndex), true);
-				MatchPlayer loser = mapMatchPlayer(rs, format("player%1$d_", 3 - winnerIndex), true);
+				MatchPlayer winner = mapMatchPlayer(rs, format("player%1$d_", winnerIndex));
+				MatchPlayer loser = mapMatchPlayer(rs, format("player%1$d_", 3 - winnerIndex));
 				String outcome = loser != null ? rs.getString("outcome") : "BYE";
 				TournamentEventMatch match = new TournamentEventMatch(
 					rs.getLong("in_progress_match_id"),

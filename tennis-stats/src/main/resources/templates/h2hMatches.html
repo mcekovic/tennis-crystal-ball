@@ -21,15 +21,12 @@
 	$(function() {
 		var $matchesTable = $("#matchesTable");
 		var device = detectDevice();
+		setBootgridColumnsVisible($matchesTable, ["matchEx"], deviceGreaterOrEqual(device, "xl"));
+		setBootgridColumnsVisible($matchesTable, ["match"], deviceLessOrEqual(device, "lg"));
 		setBootgridColumnsVisible($matchesTable, ["stats"], deviceGreaterOrEqual(device, "md"));
 		setBootgridColumnsVisible($matchesTable, ["surface"], deviceGreaterOrEqual(device, "sm"));
-		if (!deviceGreaterOrEqual(device, "md"))
+		if (deviceLessOrEqual(device, "sm"))
 			setBootgridColumnsWidths($matchesTable, ["tournament", "match", "score"], [150, 250, 125]);
-		if ($(window).width() >= 1300) {
-			$(".container").css("width", 1300);
-			$matchesTable.find("th[data-column-id='match']").data("visible", false);
-			$matchesTable.find("th[data-column-id='matchEx']").data("visible", true);
-		}
 		$matchesTable.bootgrid({
 			ajax: true,
 			ajaxSettings: {

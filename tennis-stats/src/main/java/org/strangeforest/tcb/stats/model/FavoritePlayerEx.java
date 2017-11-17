@@ -42,10 +42,7 @@ public class FavoritePlayerEx extends FavoritePlayer {
 	}
 	
 	public String seedAndEntry() {
-		if (seed != null)
-			return !isNullOrEmpty(entry) ? seed + " " + entry : String.valueOf(seed);
-		else
-			return !isNullOrEmpty(entry) ? entry : "";
+		return MatchPlayer.formatSeedAndEntry(seed, entry);
 	}
 
 	public Integer getCurrentRank() {

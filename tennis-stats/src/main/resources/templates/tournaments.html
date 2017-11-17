@@ -14,7 +14,7 @@
 			setBootgridColumnsVisible($tournamentsTable, ["seasons", "topPlayers"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($tournamentsTable, ["strength", "averageEloRating"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($tournamentsTable, ["participation"], deviceGreaterOrEqual(device, "sm"));
-			if (device != "lg")
+			if (deviceGreaterOrEqual(device, "lg"))
 				setBootgridColumnsWidths($tournamentsTable, ["name"], [175]);
 			$tournamentsTable.bootgrid({
 				ajax: true,

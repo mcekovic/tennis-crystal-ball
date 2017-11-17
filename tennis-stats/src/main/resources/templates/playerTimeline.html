@@ -56,9 +56,11 @@
 	}
 </script>
 <style th:inline="css">
-	[# th:if="${timeline.seasonCount > 18}"]
-	.container {
-		width: [(${1170 + 45 * (timeline.seasonCount - 18)})]px;
+	[# th:if="${timeline.seasonCount > 21}" th:with="newWidth=${1400 + 42 * (timeline.seasonCount - 21)}"]
+	@media (min-width: [(${newWidth + 30})]px) {
+		.container {
+			width: [(${newWidth})]px;
+		}
 	}
 	[/]
 </style>

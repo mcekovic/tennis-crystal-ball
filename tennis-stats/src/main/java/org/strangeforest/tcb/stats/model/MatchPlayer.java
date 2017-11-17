@@ -12,10 +12,6 @@ public class MatchPlayer {
 	private final String entry;
 	private final Country country;
 
-	public MatchPlayer(int id, String name, Integer seed, String entry) {
-		this(id, name, seed, entry, null);
-	}
-
 	public MatchPlayer(int id, String name, Integer seed, String entry, String countryId) {
 		this.id = id;
 		this.name = name;
@@ -40,6 +36,10 @@ public class MatchPlayer {
 		return name;
 	}
 
+	public String nameSeedAndEntry() {
+		return seed != null || !isNullOrEmpty(entry) ? name + " (" + formatSeedAndEntry(seed, entry) + ")" : name;
+	}
+
 	public Integer getSeed() {
 		return seed;
 	}
@@ -49,13 +49,20 @@ public class MatchPlayer {
 	}
 
 	public String seedAndEntry() {
-		if (seed != null)
-			return !isNullOrEmpty(entry) ? seed + " " + entry : String.valueOf(seed);
-		else
-			return !isNullOrEmpty(entry) ? entry : "";
+		return formatSeedAndEntry(seed, entry);
 	}
 
 	public Country getCountry() {
 		return country;
+	}
+
+
+	// Util
+
+	public static String formatSeedAndEntry(Integer seed, String entry) {
+		if (seed != null)
+			return !isNullOrEmpty(entry) ? seed + " " + entry : String.valueOf(seed);
+		else
+			return !isNullOrEmpty(entry) ? entry : "";
 	}
 }

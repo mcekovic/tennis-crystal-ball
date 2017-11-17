@@ -338,36 +338,44 @@ function participationFormatter(column, row) {
 // Match Formatter
 function matchFormatter(playerId) {
 	return function(column, row) {
-		return formatMatchPlayer(row.winner, false, playerId) + " " + (row.outcome != "ABD" ? "d." : "vs") + " " + formatMatchPlayer(row.loser, false, playerId);
+		return formatMatchPlayer(row.winner, false, playerId) + " " + (row.outcome !== "ABD" ? "d." : "vs") + " " + formatMatchPlayer(row.loser, false, playerId);
 	};
 }
 
 function matchExFormatter(playerId) {
 	return function(column, row) {
-		return formatCountry(row.winner) + " "  + formatMatchPlayer(row.winner, false, playerId) + formatRanking(row.winner) +
-			" " + (row.outcome != "ABD" ? "d." : "vs") + " " +
-			formatCountry(row.loser) + " "  + formatMatchPlayer(row.loser, false, playerId) + formatRanking(row.loser);
+		return formatMatchExPlayer(row.winner, false, playerId) + " " + (row.outcome !== "ABD" ? "d." : "vs") + " " + formatMatchExPlayer(row.loser, false, playerId);
 	};
 }
 
-function formatRanking(row) {
-	return row.rank || row.eloRating ? " <div class='rankings-badge'>" + (row.rank ? "Rank " + row.rank : "") + (row.eloRating ? "<br/>Elo " + row.eloRating : "") + "</div>" : "";
-}
-
 function h2hMatchFormatter(column, row) {
-	var victory = row.outcome != "ABD";
+	var victory = row.outcome !== "ABD";
 	return formatMatchPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchPlayer(row.loser);
 }
 
 function finalFormatter(column, row) {
 	if (!row.winner && !row.runnerUp) return "";
-	var victory = row.outcome != "ABD";
+	var victory = row.outcome !== "ABD";
 	return formatMatchPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchPlayer(row.runnerUp) + " " + row.score;
+}
+
+function finalExFormatter(column, row) {
+	if (!row.winner && !row.runnerUp) return "";
+	var victory = row.outcome !== "ABD";
+	return formatMatchExPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchExPlayer(row.runnerUp) + " " + row.score;
 }
 
 function formatMatchPlayer(player, winner, playerId) {
 	var name = (winner ? "<strong>" : "") + player.name + (winner ? "</strong>" : "") + formatSeedEntry(player.seed, player.entry);
-	return player.id == playerId ? name : "<a href='/playerProfile?playerId=" + player.id + "' title='Show profile'>" + name + "</a>";
+	return player.id === playerId ? name : "<a href='/playerProfile?playerId=" + player.id + "' title='Show profile'>" + name + "</a>";
+}
+
+function formatMatchExPlayer(player, winner, playerId) {
+	return formatCountry(player) + " "  + formatMatchPlayer(player, winner, playerId) + formatRanking(player);
+}
+
+function formatRanking(row) {
+	return row.rank || row.eloRating ? " <div class='rankings-badge'>" + (row.rank ? "Rank " + row.rank : "") + (row.eloRating ? "<br/>Elo " + row.eloRating : "") + "</div>" : "";
 }
 
 function formatSeedEntry(seed, entry) {
@@ -511,9 +519,12 @@ function validateStatsFilter($matchesStatsFrom, $matchesStatsTo, $range) {
 
 // Devices
 
-var deviceMatrix = {"xs": ["xs", "sm", "md", "lg"], "sm": ["sm", "md", "lg"], "md": ["md", "lg"], "lg": ["lg"]};
+var deviceMatrix = {"xs": ["xs", "sm", "md", "lg", "xl"], "sm": ["sm", "md", "lg", "xl"], "md": ["md", "lg", "xl"], "lg": ["lg", "xl"], "xl": ["xl"]};
 function deviceGreaterOrEqual(device1, device2) {
 	return deviceMatrix[device2].indexOf(device1) >= 0;
+}
+function deviceLessOrEqual(device1, device2) {
+	return deviceMatrix[device2].indexOf(device1) <= 0;
 }
 function detectDevice() {
 	return $(".device-check:visible").data("device");
