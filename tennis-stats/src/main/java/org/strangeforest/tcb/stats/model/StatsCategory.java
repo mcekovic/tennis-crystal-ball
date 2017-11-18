@@ -48,7 +48,7 @@ public final class StatsCategory {
 		}
 	}
 
-	public enum Type {COUNT, PERCENTAGE, RATIO2, RATIO3, TIME}
+	public enum Type {COUNT, PERCENTAGE, RATIO1, RATIO2, RATIO3, TIME}
 
 
 	// Factory
@@ -80,6 +80,7 @@ public final class StatsCategory {
 	private static final String RETURN = "Return";
 	private static final String TOTAL = "Total";
 	private static final String PERFORMANCE = "Performance";
+	private static final String OPPONENT_CATEGORY = "Opponent";
 	private static final String TIME_CATEGORY = "Time";
 
 	static {
@@ -163,6 +164,9 @@ public final class StatsCategory {
 		addCategory(PERFORMANCE, "bpsOverPerfRatio", "((p_bp_sv + o_bp_fc - o_bp_sv)::REAL / nullif(p_bp_fc + o_bp_fc, 0)) / nullif(" + TOTAL_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsOverPerformingRatio, POINT, RATIO3, "BPs Over-Performing", "stats.breakPointsOverPerformingRatio.title");
 		addCategory(PERFORMANCE, "bpsSavedOverPerfRatio", "(" + BREAK_POINTS_SAVED_PCT + ") / nullif(" + SERVICE_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsSavedOverPerformingRatio, POINT, RATIO3, "BPs Saved Over-Perf.", "stats.breakPointsSavedOverPerformingRatio.title");
 		addCategory(PERFORMANCE, "bpsConvOverPerfRatio", "(" + BREAK_POINTS_PCT + ") / nullif(" + RETURN_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsConvertedOverPerformingRatio, POINT, RATIO3, "BPs Conv. Over-Perf.", "stats.breakPointsConvertedOverPerformingRatio.title");
+		// Opponent
+		addCategory(OPPONENT_CATEGORY, "opponentRank", "exp(opponent_rank / nullif(" + TOTAL_MATCHES + ", 0))", PlayerStats::getOpponentRank, MATCH, RATIO1, "Opponent Rank");
+		addCategory(OPPONENT_CATEGORY, "opponentEloRating", "opponent_elo_rating::REAL / nullif(" + TOTAL_MATCHES + ", 0)", PlayerStats::getOpponentEloRating, MATCH, RATIO1, "Opponent Elo Rating");
 		// Time
 		addCategory(TIME_CATEGORY, "pointTime", "60 * minutes::REAL / nullif(" + TOTAL_POINTS + ", 0)", PlayerStats::getPointTime, POINT, RATIO2, "Point Time (seconds)");
 		addCategory(TIME_CATEGORY, "gameTime", "minutes::REAL / nullif(games_w_stats, 0)", PlayerStats::getGameTime, GAME_W_STATS, RATIO3, "Game Time (minutes)");

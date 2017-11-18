@@ -18,9 +18,11 @@ public class PlayerStats {
 	private final int breakPointsSaved;
 	private final int breakPointsFaced;
 	private final int minutes;
-	private final int matchesWithStats;
-	private final int setsWithStats;
-	private final int gamesWithStats;
+	private int matchesWithStats;
+	private int setsWithStats;
+	private int gamesWithStats;
+	private double opponentRank;
+	private double opponentEloRating;
 
 	private final double acePct;
 	private final double acesPerServiceGame;
@@ -51,7 +53,15 @@ public class PlayerStats {
 	public PlayerStats(
 		int matchesWon, int setsWon, int gamesWon, int tieBreaksWon,
 		int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced,
-		int minutes, int matchesWithStats, int setsWithStats, int gamesWithStats
+		int minutes
+	) {
+		this(matchesWon, setsWon, gamesWon, tieBreaksWon, aces, doubleFaults, servicePoints, firstServesIn, firstServesWon, secondServesWon, serviceGames, breakPointsSaved, breakPointsFaced, minutes, 0, 0, 0, 0.0, 0.0);
+	}
+
+	public PlayerStats(
+		int matchesWon, int setsWon, int gamesWon, int tieBreaksWon,
+		int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced,
+		int minutes, int matchesWithStats, int setsWithStats, int gamesWithStats, double opponentRank, double opponentEloRating
 	) {
 		this.matchesWon = matchesWon;
 		this.setsWon = setsWon;
@@ -70,6 +80,8 @@ public class PlayerStats {
 		this.matchesWithStats = matchesWithStats;
 		this.setsWithStats = setsWithStats;
 		this.gamesWithStats = gamesWithStats;
+		this.opponentRank = opponentRank;
+		this.opponentEloRating = opponentEloRating;
 		acePct = pct(aces, servicePoints);
 		acesPerServiceGame = ratio(aces, serviceGames);
 		doubleFaultPct = pct(doubleFaults, servicePoints);
@@ -504,6 +516,26 @@ public class PlayerStats {
 		return minutes;
 	}
 
+	public int getMatchesWithStats() {
+		return matchesWithStats;
+	}
+
+	public int getSetsWithStats() {
+		return setsWithStats;
+	}
+
+	public int getGamesWithStats() {
+		return gamesWithStats;
+	}
+
+	public double getOpponentRank() {
+		return Math.pow(Math.E, ratio(opponentRank, getMatches()));
+	}
+
+	public double getOpponentEloRating() {
+		return ratio(opponentEloRating, getMatches());
+	}
+
 	public double getMatchTime() {
 		return ratio(minutes, matchesWithStats);
 	}
@@ -539,7 +571,7 @@ public class PlayerStats {
 	public static final PlayerStats EMPTY = empty();
 
 	private static PlayerStats empty() {
-		PlayerStats empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		PlayerStats empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		empty.crossLinkOpponentStats(empty);
 		return empty;
 	}

@@ -26,7 +26,7 @@ public class StatisticsService {
 		"SELECT pw.name AS winner, pl.name AS loser, 1 w_matches, 0 l_matches, w_sets, l_sets, w_games, l_games, w_tbs, l_tbs,\n" +
 		"  w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,\n" +
 		"  l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,\n" +
-		"  minutes, 1 matches_w_stats, w_sets + l_sets sets_w_stats, w_games + l_games games_w_stats\n" +
+		"  minutes\n" +
 		"FROM match_stats\n" +
 		"INNER JOIN match m USING (match_id)\n" +
 		"INNER JOIN player_v pw ON m.winner_id = pw.player_id\n" +
@@ -37,7 +37,7 @@ public class StatisticsService {
 		"p_matches, o_matches, p_sets, o_sets, p_games, o_games, p_tbs, o_tbs,\n" +
 		"p_ace, p_df, p_sv_pt, p_1st_in, p_1st_won, p_2nd_won, p_sv_gms, p_bp_sv, p_bp_fc,\n" +
 		"o_ace, o_df, o_sv_pt, o_1st_in, o_1st_won, o_2nd_won, o_sv_gms, o_bp_sv, o_bp_fc,\n" +
-		"minutes, matches_w_stats, sets_w_stats, games_w_stats\n";
+		"minutes, matches_w_stats, sets_w_stats, games_w_stats, opponent_rank, opponent_elo_rating\n";
 
 	private static final String PLAYER_STATS_QUERY =
 		"SELECT " + PLAYER_STATS_COLUMNS +
@@ -63,7 +63,8 @@ public class StatisticsService {
 		"sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games, sum(p_tbs) p_tbs, sum(o_tbs) o_tbs,\n" +
 		"sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,\n" +
 		"sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,\n" +
-		"sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats\n";
+		"sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats,\n" +
+		"exp(avg(ln(coalesce(opponent_rank, 1500)))) opponent_rank, avg(coalesce(opponent_elo_rating, 1500)::REAL) opponent_elo_rating\n";
 
 	private static final String PLAYER_FILTERED_STATS_QUERY = //language=SQL
 		"SELECT " + PLAYER_STATS_SUMMED_COLUMNS +
@@ -220,8 +221,8 @@ public class StatisticsService {
 	}
 
 	private PlayerStats mapPlayerStats(ResultSet rs) throws SQLException {
-		PlayerStats playerStats = mapPlayerStats(rs, "p_");
-		PlayerStats opponentStats = mapPlayerStats(rs, "o_");
+		PlayerStats playerStats = mapSummedPlayerStats(rs, "p_");
+		PlayerStats opponentStats = mapSummedPlayerStats(rs, "o_");
 		playerStats.crossLinkOpponentStats(opponentStats);
 		return playerStats;
 	}
@@ -241,10 +242,31 @@ public class StatisticsService {
 			rs.getInt(prefix + "sv_gms"),
 			rs.getInt(prefix + "bp_sv"),
 			rs.getInt(prefix + "bp_fc"),
+			rs.getInt("minutes")
+		);
+	}
+
+	private PlayerStats mapSummedPlayerStats(ResultSet rs, String prefix) throws SQLException {
+		return new PlayerStats(
+			rs.getInt(prefix + "matches"),
+			rs.getInt(prefix + "sets"),
+			rs.getInt(prefix + "games"),
+			rs.getInt(prefix + "tbs"),
+			rs.getInt(prefix + "ace"),
+			rs.getInt(prefix + "df"),
+			rs.getInt(prefix + "sv_pt"),
+			rs.getInt(prefix + "1st_in"),
+			rs.getInt(prefix + "1st_won"),
+			rs.getInt(prefix + "2nd_won"),
+			rs.getInt(prefix + "sv_gms"),
+			rs.getInt(prefix + "bp_sv"),
+			rs.getInt(prefix + "bp_fc"),
 			rs.getInt("minutes"),
 			rs.getInt("matches_w_stats"),
 			rs.getInt("sets_w_stats"),
-			rs.getInt("games_w_stats")
+			rs.getInt("games_w_stats"),
+			rs.getDouble("opponent_rank"),
+			rs.getDouble("opponent_elo_rating")
 		);
 	}
 }

@@ -79,6 +79,7 @@ public class StatisticsChartService {
 			case COUNT:
 			case TIME: return rs.getInt("value");
 			case PERCENTAGE: return round(rs.getDouble("value"), 10000.0);
+			case RATIO1: return round(rs.getDouble("value"), 10.0);
 			case RATIO2: return round(rs.getDouble("value"), 100.0);
 			case RATIO3: return round(rs.getDouble("value"), 1000.0);
 			default: throw unknownEnum(type);
