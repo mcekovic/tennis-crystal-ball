@@ -1194,7 +1194,7 @@ GROUP BY gs.player_id, grand_slam_on_same_event;
 
 CREATE OR REPLACE VIEW player_big_wins_v AS
 SELECT m.match_id, m.winner_id AS player_id, m.season, m.date,
-	mf.match_factor * ((coalesce(wrf.rank_factor, 0) + coalesce(lrf.rank_factor, 0))::NUMERIC / 2 + pow(10, (m.loser_elo_rating - 2000)::NUMERIC / 400)) / 200 AS goat_points
+	mf.match_factor * ((coalesce(wrf.rank_factor, 0) + coalesce(lrf.rank_factor, 0))::NUMERIC / 2 + CASE WHEN m.loser_elo_rating > 2000 THEN (m.loser_elo_rating - 2000)::NUMERIC / 40 ELSE 0 END) / 200 AS goat_points
 FROM match_for_stats_v m
 INNER JOIN big_win_match_factor mf ON mf.level = m.level AND mf.round = m.round
 LEFT JOIN big_win_rank_factor wrf ON m.winner_rank BETWEEN wrf.rank_from AND wrf.rank_to
