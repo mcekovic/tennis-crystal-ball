@@ -456,6 +456,50 @@ public class PlayerStats {
 		return ratio(getMatchesWonPct(), getTotalPointsWonPct());
 	}
 
+	public Double getPointsToSetsOverPerformingRatio() {
+		return ratio(getSetsWonPct(), getTotalPointsWonPct());
+	}
+
+	public Double getServicePointsToServiceGamesOverPerformingRatio() {
+		return ratio(getServiceGamesWon(), getServicePointsWonPct());
+	}
+
+	public Double getReturnPointsToReturnGamesOverPerformingRatio() {
+		return ratio(getReturnGamesWon(), getReturnPointsWonPct());
+	}
+
+	public Double getPointsToGamesOverPerformingRatio() {
+		return ratio(getTotalGamesWon(), getTotalPointsWonPct());
+	}
+
+	public Double getPointsToTieBreaksOverPerformingRatio() {
+		return ratio(getTieBreaksWonPct(), getTotalPointsWonPct());
+	}
+
+	public Double getGamesToMatchesOverPerformingRatio() {
+		return ratio(getMatchesWonPct(), getTotalGamesWonPct());
+	}
+
+	public Double getGamesToSetsOverPerformingRatio() {
+		return ratio(getSetsWonPct(), getTotalGamesWonPct());
+	}
+
+	public Double getSetsToMatchesOverPerformingRatio() {
+		return ratio(getMatchesWonPct(), getSetsWonPct());
+	}
+
+	public Double getBreakPointsSavedOverPerformingRatio() {
+		return ratio(getBreakPointsSavedPct(), new Double(getServicePointsWonPct()));
+	}
+
+	public Double getBreakPointsConvertedOverPerformingRatio() {
+		return ratio(getBreakPointsWonPct(), new Double(getReturnPointsWonPct()));
+	}
+
+	public Double getBreakPointsOverPerformingRatio() {
+		return ratio(optPct(breakPointsSaved + getBreakPointsWon(), breakPointsFaced + opponentStats.getBreakPointsFaced()), new Double(getTotalPointsWonPct()));
+	}
+
 	public int getMinutes() {
 		return minutes;
 	}

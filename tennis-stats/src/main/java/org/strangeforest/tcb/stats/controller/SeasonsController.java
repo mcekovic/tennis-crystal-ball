@@ -95,7 +95,7 @@ public class SeasonsController extends PageController {
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("season", season);
-		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
+		modelMap.addAttribute("categoryClasses", PerformanceCategory.getBasicCategoryClasses());
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
 		modelMap.addAttribute("surfaces", Surface.values());

@@ -21,7 +21,7 @@ public class TopPerformersController extends PageController {
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("category", category);
-		modelMap.addAttribute("categoryClasses", PerformanceCategory.getCategoryClasses());
+		modelMap.addAttribute("categoryClasses", PerformanceCategory.getBasicCategoryClasses());
 		modelMap.addAttribute("seasons", topPerformersService.getSeasons());
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
