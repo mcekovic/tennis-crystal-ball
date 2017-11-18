@@ -101,7 +101,7 @@ public class MatchFilter extends TournamentEventResultFilter {
 	private static final String ROUND_CRITERION           = " AND m.round %1$s :round::match_round";
 	private static final String MATCHES_SEARCH_CRITERION  = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR pw.name ILIKE '%' || :searchPhrase || '%' OR pl.name ILIKE '%' || :searchPhrase || '%')";
 	private static final String STATS_SEARCH_CRITERION    = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR o.name ILIKE '%' || :searchPhrase || '%')";
-	private static final String MATCHES_BIG_WIN_CRITERION = " AND m.winner_id = :playerId AND e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T') AND (m.outcome IS NULL OR m.outcome IN ('RET', 'DEF'))";
+	private static final String MATCHES_BIG_WIN_CRITERION = " AND m.winner_id = :playerId";
 	private static final String STATS_BIG_WIN_CRITERION   = " AND m.player_id = :playerId AND m.p_matches = 1";
 
 	private MatchFilter(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, ScoreFilter scoreFilter, StatsFilter statsFilter, boolean bigWin, String searchPhrase) {

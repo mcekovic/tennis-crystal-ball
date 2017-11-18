@@ -268,7 +268,9 @@
 		<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
 	</select>
 </div>
-<button id="eventsMatches" type="button" class="btn btn-info grid-control margin-right" onclick="showEventsMatches()" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Matches (for the selected tournaments)|">Matches</button>
+<button id="eventsMatches" type="button" class="btn btn-info grid-control margin-right" onclick="showEventsMatches()" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Matches (for the selected tournaments)|">
+	<span class="glyphicon glyphicon-list"></span>&nbsp;&nbsp;Matches
+</button>
 <button id="eventsStats" type="button" class="btn btn-info grid-control margin-right" onclick="showEventsStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected tournaments)|">
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats
 </button>

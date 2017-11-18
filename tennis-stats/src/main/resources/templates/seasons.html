@@ -6,9 +6,10 @@
 		$(function() {
 			var $seasonsTable = $("#seasonsTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($seasonsTable, ["hardCount", "clayCount", "grassCount", "carpetCount"], deviceGreaterOrEqual(device, "sm"));
-			setBootgridColumnsVisible($seasonsTable, ["bestPlayer"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($seasonsTable, ["outdoorCount", "indoorCount"], deviceGreaterOrEqual(device, "xl"));
 			setBootgridColumnsVisible($seasonsTable, ["surfaces", "dominantAge"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($seasonsTable, ["bestPlayer"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($seasonsTable, ["hardCount", "clayCount", "grassCount", "carpetCount"], deviceGreaterOrEqual(device, "sm"));
 			$seasonsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {

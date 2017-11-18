@@ -1193,7 +1193,7 @@ GROUP BY gs.player_id, grand_slam_on_same_event;
 -- player_big_wins_v
 
 CREATE OR REPLACE VIEW player_big_wins_v AS
-SELECT m.winner_id AS player_id, m.season, m.date,
+SELECT m.match_id, m.winner_id AS player_id, m.season, m.date,
 	mf.match_factor * ((coalesce(wrf.rank_factor, 0) + coalesce(lrf.rank_factor, 0))::NUMERIC / 2 + pow(10, (m.loser_elo_rating - 2000)::NUMERIC / 400)) / 200 AS goat_points
 FROM match_for_stats_v m
 INNER JOIN big_win_match_factor mf ON mf.level = m.level AND mf.round = m.round
@@ -1207,14 +1207,6 @@ CREATE OR REPLACE VIEW player_season_big_wins_goat_points_v AS
 SELECT player_id, season, round(sum(goat_points))::INTEGER AS goat_points, sum(goat_points) AS unrounded_goat_points
 FROM player_big_wins_v
 GROUP BY player_id, season;
-
-
--- player_big_wins_goat_points_v
-
-CREATE OR REPLACE VIEW player_big_wins_goat_points_v AS
-SELECT player_id, round(sum(big_wins_goat_points))::INTEGER AS goat_points, sum(big_wins_goat_points) AS unrounded_goat_points
-FROM player_season_goat_points
-GROUP BY player_id;
 
 
 -- player_records_goat_points_v
@@ -1799,6 +1791,14 @@ HAVING sum(goat_points) > 0;
 CREATE MATERIALIZED VIEW player_season_goat_points AS SELECT * FROM player_season_goat_points_v;
 
 CREATE UNIQUE INDEX ON player_season_goat_points (player_id, season);
+
+
+-- player_big_wins_goat_points_v
+
+CREATE OR REPLACE VIEW player_big_wins_goat_points_v AS
+SELECT player_id, round(sum(big_wins_goat_points))::INTEGER AS goat_points, sum(big_wins_goat_points) AS unrounded_goat_points
+FROM player_season_goat_points
+GROUP BY player_id;
 
 
 -- player_best_season_goat_points_v

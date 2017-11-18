@@ -43,6 +43,7 @@
 		setBootgridColumnsVisible($matchesTable, ["wonLost"], deviceGreaterOrEqual(device, "lg"));
 		setBootgridColumnsVisible($matchesTable, ["stats"], deviceGreaterOrEqual(device, "md"));
 		setBootgridColumnsVisible($matchesTable, ["surface"], deviceGreaterOrEqual(device, "sm"));
+		setBootgridColumnsVisible($matchesTable, ["bigWinPoints"], [(${bigWin})]);
 		if (deviceLessOrEqual(device, "sm"))
 			setBootgridColumnsWidths($matchesTable, ["tournament", "match", "score"], [150, 250, 125]);
 		$matchesTable.bootgrid({
@@ -87,6 +88,10 @@
 				},
 				"match": matchFormatter([(${playerId})]),
 				"matchEx": matchExFormatter([(${playerId})]),
+				"bigWinPoints": function(column, row) {
+					var bigWinPoints = row.bigWinPoints;
+					return bigWinPoints ? bigWinPoints.toFixed(2) : "";
+				},
 				"stats": function(column, row) {
 					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>" : "";
 				},
@@ -115,7 +120,8 @@
 		$search.before($("#matchesStats").remove());
 		dateRangePicker("matchesFromDate", "matchesToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		setBootgridTitles($matchesTable, [
-			{id: "bestOf", title: "Best of"}
+			{id: "bestOf", title: "Best of"},
+			{id: "bigWinPoints", title: "Big Win GOAT Points"}
 		]);
 		$("[data-toggle='tooltip']").tooltip();
 	});
@@ -442,9 +448,10 @@
 		<th data-column-id="round" data-width="75">Round</th>
 		<th data-column-id="wonLost" data-formatter="wonLost" data-width="55">W/L</th>
 		<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
-		<th data-column-id="matchEx" data-formatter="matchEx" data-sortable="false" data-visible="false" data-width="450">Match Ex</th>
+		<th data-column-id="matchEx" data-formatter="matchEx" data-sortable="false" data-visible="false" data-width="450">Match Details</th>
 		<th data-column-id="bestOf" data-width="50" data-visible="false">BO</th>
 		<th data-column-id="score" data-sortable="false" data-width="175">Score</th>
+		<th data-column-id="bigWinPoints" data-formatter="bigWinPoints" data-sortable="true" data-visible="false" data-width="50">BW</th>
 		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>
 		<th data-column-id="h2h" data-formatter="h2h" data-sortable="false" data-visible="false" data-width="55" data-css-class="h2h-column">H2H</th>
 	</tr>

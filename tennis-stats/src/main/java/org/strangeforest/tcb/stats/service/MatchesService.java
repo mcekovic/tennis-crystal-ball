@@ -41,13 +41,13 @@ public class MatchesService {
 		"SELECT m.match_id, m.date, m.tournament_event_id, e.name AS tournament, e.level, m.best_of, m.surface, m.indoor, m.round,\n" +
 		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.winner_country_id, m.winner_rank, m.winner_elo_rating,\n" +
 		"  m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.loser_country_id, m.loser_rank, m.loser_elo_rating,\n" +
-		"  m.score, m.outcome, m.has_stats\n" +
+		"  m.score, m.outcome, m.has_stats%1$s\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
-		"INNER JOIN player_v pl ON pl.player_id = m.loser_id%1$s\n" +
-		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%2$s\n" +
-		"ORDER BY %3$s OFFSET :offset";
+		"INNER JOIN player_v pl ON pl.player_id = m.loser_id%2$s\n" +
+		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%3$s\n" +
+		"ORDER BY %4$s OFFSET :offset";
 
 	private static final String TOURNAMENT_EVENT_RESULT_JOIN = //language=SQL
 		"\nINNER JOIN player_tournament_event_result r ON r.player_id = :playerId AND r.tournament_event_id = m.tournament_event_id";
@@ -56,7 +56,7 @@ public class MatchesService {
 		"\nLEFT JOIN player_match_stats_v ms ON ms.match_id = m.match_id AND ms.player_id = :playerId";
 
 	private static final String BIG_WIN_JOIN = //language=SQL
-		"\nINNER JOIN big_win_match_factor mf ON mf.level = e.level AND mf.round = m.round";
+		"\nINNER JOIN player_big_wins_v bw ON bw.match_id = m.match_id";
 
 	private static final String MATCH_QUERY = //language=SQL
 		"SELECT m.match_id, e.season, e.level, m.surface, m.indoor, tournament_event_id, e.name AS tournament,\n" +
@@ -142,13 +142,13 @@ public class MatchesService {
 		AtomicInteger matches = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(PLAYER_MATCHES_QUERY, playerMatchesJoin(filter), filter.getCriteria(), orderBy),
+			format(PLAYER_MATCHES_QUERY, filter.isBigWin() ? ", bw.goat_points big_win_points" : "", playerMatchesJoin(filter), filter.getCriteria(), orderBy),
 			filter.getParams()
 				.addValue("playerId", playerId)
 				.addValue("offset", offset),
 			rs -> {
 				if (matches.incrementAndGet() <= pageSize) {
-					table.addRow(new Match(
+					Match match = new Match(
 						rs.getLong("match_id"),
 						rs.getDate("date"),
 						rs.getInt("tournament_event_id"),
@@ -163,7 +163,10 @@ public class MatchesService {
 						rs.getString("score"),
 						rs.getString("outcome"),
 						rs.getBoolean("has_stats")
-					));
+					);
+					if (filter.isBigWin())
+						match.setBigWinPoints(getDouble(rs, "big_win_points"));
+					table.addRow(match);
 				}
 			}
 		);

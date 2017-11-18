@@ -112,7 +112,7 @@
 				For more information please click <a href="/about">here <span class="glyphicon glyphicon-question-sign"></span></a>.
 			</p>
 			<th:block th:if="${hasInProgressEvents}">
-			<h4 class="text-nowrap" style="margin-top: 25px">Latest Forecasts <span class="glyphicon glyphicon-eye-open"></span></h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-eye-open" style="vertical-align: text-top"></span> Latest Forecasts</h4>
 			<table id="inProgressEventsTable" class="table table-condensed table-hover table-striped" style="margin-bottom: 0">
 				<thead>
 				<tr>
@@ -129,7 +129,7 @@
 				<a href="/inProgressEventsForecasts" class="label label-default" title="Full forecasts details">All Forecasts</a>
 			</div>
 			</th:block>
-			<h4 class="text-nowrap" style="margin-top: 25px">Latest Results <span class="glyphicon glyphicon-calendar"></span></h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-calendar"></span> Latest Results</h4>
 			<table id="latestEvents" class="table table-condensed table-hover table-striped" style="margin-bottom: 0">
 				<thead>
 				<tr>
@@ -138,7 +138,7 @@
 					<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
 					<th data-column-id="draw" data-width="65">Draw</th>
 					<th data-column-id="final" data-formatter="final" data-width="500">Final</th>
-					<th data-column-id="finalEx" data-formatter="finalEx" data-visible="false" data-width="550">FinalEx</th>
+					<th data-column-id="finalEx" data-formatter="finalEx" data-visible="false" data-width="550">Final</th>
 					<th data-column-id="winner" data-formatter="winner" data-width="200">Winner</th>
 				</tr>
 				</thead>
@@ -147,7 +147,7 @@
 				<a href="/tournamentEvents" class="label label-B" title="Show more tournament results">More Results</a>
 				<a th:href="@{/season(season=${currentSeason})}" class="label label-default" th:title="|Show season ${currentSeason} figures|">Season [(${currentSeason})]</a>
 			</div>
-			<h4 class="text-nowrap" style="margin-top: 25px">Latest New Features <span class="glyphicon glyphicon-star-empty"></span><sup class="new-feature">&nbsp;New!</sup></h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-star-empty" style="vertical-align: text-top"></span> Latest New Features<sup class="new-feature">&nbsp;New!</sup></h4>
 			<ul>
 				<li>Outdoor/Indoor and Best of 3/5 records, Outdoor/Indoor Elo Ratings</li>
 				<li>Following community feedback, many improvements are added across the site: Outdoor / Indoor differentiation of tournament events, filters by date range, outdoor/indoor, best-of 3/5 (for events, matches, stats...) and many other smaller improvements (thanks to @Starigniter from <a href="http://www.menstennisforums.com/" target="_blank">Man Tennis Forums</a> for excellent suggestions)</li>
@@ -159,7 +159,7 @@
 				<li><a href="/record?recordId=RecordsGOATPoints">Records 'GOAT' Points</a> - 'GOAT' Points for selected records, see 'GOAT' Legend for the details</li>
 				<li>GOAT Points for the consecutive and repeating wins at the same Grand Slam tournament (i.e. 5 consecutive wins at Wimbledon = (5 - 1) * 1 = 4 points, 10 total wins at Roland Garros = (10 - 1) / 2 = 4.5 points).</li>
 			</ul>
-			<h4 class="text-nowrap" style="margin-top: 25px">Tips <span class="glyphicon glyphicon-bullhorn"></span><sup class="cool-feature"><em>&nbsp;Cool!</em></sup></h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-bullhorn" style="vertical-align: text-top"></span> Tips<sup class="cool-feature">&nbsp;Cool!</sup></h4>
 			<ul>
 				<li><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span> is mobile-friendly web site, but to see it in its 'full glory', open it on screen greater then 1440 pixels, in which case more data fill show up and more columns with various details will be available in the data tables.</li>
 				<li>On most pages with filter, there is a search box

@@ -18,6 +18,7 @@ public class Match {
 	private final String score;
 	private final String outcome;
 	private final boolean hasStats;
+	private Double bigWinPoints;
 
 	public Match(long id, Date date, int tournamentEventId, String tournament, String level, int bestOf, String surface, boolean indoor, String round,
 	             MatchPlayer winner, MatchPlayer loser, String score, String outcome, boolean hasStats) {
@@ -91,5 +92,13 @@ public class Match {
 
 	public boolean isHasStats() {
 		return hasStats;
+	}
+
+	public Double getBigWinPoints() {
+		return bigWinPoints;
+	}
+
+	public void setBigWinPoints(Double bigWinsPoints) {
+		this.bigWinPoints = bigWinsPoints;
 	}
 }

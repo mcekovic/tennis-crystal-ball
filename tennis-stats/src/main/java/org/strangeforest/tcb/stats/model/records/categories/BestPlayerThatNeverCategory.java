@@ -22,7 +22,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 		super("Best Player That Never...");
 		register(bestPlayerThatNeverWon(GRAND_SLAM, "grand_slams"));
 		register(bestPlayerThatNeverWon(TOUR_FINALS, "tour_finals"));
-		register(bestPlayerThatNeverWon(ALL_FINALS, "tour_finals + alt_finals", N_A, "Any Tour Finals Title (Official or Alternative)", null));
+		register(bestPlayerThatNeverWon(ALL_FINALS, "tour_finals + coalesce(alt_finals, 0)", N_A, "Any Tour Finals Title (Official or Alternative)", null));
 		register(bestPlayerThatNeverWon(MASTERS, "masters"));
 		register(bestPlayerThatNeverWon(OLYMPICS, "olympics"));
 		register(bestPlayerThatNeverWon(BIG_TOURNAMENTS, "big_titles"));
