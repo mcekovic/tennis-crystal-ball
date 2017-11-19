@@ -26,6 +26,6 @@ public abstract class H2HWonLostRecordDetail extends WonLostRecordDetail {
 	}
 
 	@Override public String toDetailString() {
-		return format("%1$d-%2$d", wonLost.getWon(), wonLost.getLost());
+		return format("%1$d-%2$d vs %3$s", wonLost.getWon(), wonLost.getLost(), getPlayer2().shortName());
 	}
 }

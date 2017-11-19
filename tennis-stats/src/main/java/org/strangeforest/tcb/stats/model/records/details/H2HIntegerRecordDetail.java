@@ -22,4 +22,8 @@ public class H2HIntegerRecordDetail extends SimpleRecordDetail<Integer> {
 	public PlayerRow getPlayer2() {
 		return player2;
 	}
+
+	@Override public String toDetailString() {
+		return "vs " + getPlayer2().shortName();
+	}
 }

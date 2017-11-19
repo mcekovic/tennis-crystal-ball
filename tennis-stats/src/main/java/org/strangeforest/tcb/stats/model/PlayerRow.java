@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.util.regex.*;
+
 import org.strangeforest.tcb.util.*;
 
 public class PlayerRow {
@@ -44,5 +46,11 @@ public class PlayerRow {
 
 	public Boolean getActive() {
 		return active;
+	}
+
+	private static final Pattern SHORT_NAME_PATTERN = Pattern.compile("[^A-Z\\s]+(?=\\s+[A-Z]+[^A-Z\\s]+)");
+
+	public String shortName() {
+		return SHORT_NAME_PATTERN.matcher(name).replaceAll(".");
 	}
 }
