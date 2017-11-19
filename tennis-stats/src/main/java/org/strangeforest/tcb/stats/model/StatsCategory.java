@@ -165,7 +165,7 @@ public final class StatsCategory {
 		addCategory(PERFORMANCE, "bpsSavedOverPerfRatio", "(" + BREAK_POINTS_SAVED_PCT + ") / nullif(" + SERVICE_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsSavedOverPerformingRatio, POINT, RATIO3, "BPs Saved Over-Perf.", "stats.breakPointsSavedOverPerformingRatio.title");
 		addCategory(PERFORMANCE, "bpsConvOverPerfRatio", "(" + BREAK_POINTS_PCT + ") / nullif(" + RETURN_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsConvertedOverPerformingRatio, POINT, RATIO3, "BPs Conv. Over-Perf.", "stats.breakPointsConvertedOverPerformingRatio.title");
 		// Opponent
-		addCategory(OPPONENT_CATEGORY, "opponentRank", "exp(opponent_rank / nullif(" + TOTAL_MATCHES + ", 0))", PlayerStats::getOpponentRank, MATCH, RATIO1, "Opponent Rank");
+		addCategory(OPPONENT_CATEGORY, "opponentRank", "exp(opponent_rank / nullif(" + TOTAL_MATCHES + ", 0))", "exp(sum(ln(coalesce(opponent_rank, 1500))) / nullif(sum(p_matches) + sum(o_matches), 0))", PlayerStats::getOpponentRank, MATCH, RATIO1, "Opponent Rank");
 		addCategory(OPPONENT_CATEGORY, "opponentEloRating", "opponent_elo_rating::REAL / nullif(" + TOTAL_MATCHES + ", 0)", PlayerStats::getOpponentEloRating, MATCH, RATIO1, "Opponent Elo Rating");
 		// Time
 		addCategory(TIME_CATEGORY, "pointTime", "60 * minutes::REAL / nullif(" + TOTAL_POINTS + ", 0)", PlayerStats::getPointTime, POINT, RATIO2, "Point Time (seconds)");
@@ -175,11 +175,19 @@ public final class StatsCategory {
 	}
 
 	private static void addCategory(String categoryClass, String name, String expression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, String title) {
-		addCategory(categoryClass, name, expression, statFunction, item, type, title, null);
+		addCategory(categoryClass, name, expression, null, statFunction, item, type, title, null);
 	}
-	
+
 	private static void addCategory(String categoryClass, String name, String expression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, String title, String descriptionId) {
-		StatsCategory category = new StatsCategory(name, expression, statFunction, item, type, title, descriptionId);
+		addCategory(categoryClass, name, expression, null, statFunction, item, type, title, descriptionId);
+	}
+
+	private static void addCategory(String categoryClass, String name, String expression, String summedExpression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, String title) {
+		addCategory(categoryClass, name, expression, summedExpression, statFunction, item, type, title, null);
+	}
+
+	private static void addCategory(String categoryClass, String name, String expression, String summedExpression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, String title, String descriptionId) {
+		StatsCategory category = new StatsCategory(name, expression, summedExpression, statFunction, item, type, title, descriptionId);
 		CATEGORIES.put(name, category);
 		CATEGORY_CLASSES.computeIfAbsent(categoryClass, catCls -> new ArrayList<>()).add(category);
 		CATEGORY_TYPES.put(name, category.getType().name());
@@ -209,15 +217,17 @@ public final class StatsCategory {
 
 	private final String name;
 	private final String expression;
+	private final String summedExpression;
 	private final Function<PlayerStats, ? extends Number> statFunction;
 	private final Item item;
 	private final Type type;
 	private final String title;
 	private final String descriptionId;
 
-	private StatsCategory(String name, String expression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, String title, String descriptionId) {
+	private StatsCategory(String name, String expression, String summedExpression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, String title, String descriptionId) {
 		this.name = name;
 		this.expression = expression;
+		this.summedExpression = summedExpression;
 		this.statFunction = statFunction;
 		this.item = item;
 		this.type = type;
@@ -234,10 +244,10 @@ public final class StatsCategory {
 	}
 
 	public String getSummedExpression() {
-		return SUMMED_EXPRESSION_PATTERN.matcher(expression).replaceAll("sum($1)");
+		return summedExpression != null ? summedExpression : SUMMED_EXPRESSION_PATTERN.matcher(expression).replaceAll("sum($1)");
 	}
 
-	private static final Pattern SUMMED_EXPRESSION_PATTERN = Pattern.compile("(p_[a-z0-9_]+|o_[a-z0-9_]+|minutes|[a-z0-9_]+_w_stats)");
+	private static final Pattern SUMMED_EXPRESSION_PATTERN = Pattern.compile("(p_[a-z0-9_]+|o_[a-z0-9_]+|minutes|[a-z0-9_]+_w_stats|opponent_[a-z0-9_]+)");
 
 	public Number getStat(PlayerStats stats) {
 		return statFunction.apply(stats);
