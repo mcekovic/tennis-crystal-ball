@@ -11,6 +11,7 @@ public abstract class Records {
 	private static final String TITLES = "Titles and Tournament Results";
 	private static final String WINS = "Matches and Wins";
 	private static final String RANKING = "Ranking";
+	private static final String H2H = "Head to Head";
 	private static final String MISC = "Miscellaneous";
 	private static final String NEVER = "Best Player That Never...";
 	private static final String LOSES = "Loses";
@@ -91,7 +92,9 @@ public abstract class Records {
 		register(RANKING, new EloRankingCategory(RecordDomain.CARPET), false);
 		register(RANKING, new EloRankingCategory(RecordDomain.OUTDOOR), false);
 		register(RANKING, new EloRankingCategory(RecordDomain.INDOOR), false);
-		register(MISC, new HeadToHeadCategory(false), false);
+		register(H2H, new HeadToHeadCategory(HeadToHeadCategory.ItemType.MATCHES, false), false);
+		register(H2H, new HeadToHeadCategory(HeadToHeadCategory.ItemType.FINALS, false), false);
+		register(H2H, new HeadToHeadSeriesCategory(false), false);
 		register(MISC, new HighestOpponentRankCategory(HighestOpponentRankCategory.RecordType.HIGHEST, HighestOpponentRankCategory.RankingType.RANK), false);
 		register(MISC, new HighestOpponentRankCategory(HighestOpponentRankCategory.RecordType.HIGHEST, HighestOpponentRankCategory.RankingType.ELO_RATING), false);
 		register(MISC, new MostBagelsBreadsticksCategory(MostBagelsBreadsticksCategory.RecordType.SCORED), false);
@@ -106,9 +109,11 @@ public abstract class Records {
 		register(LOSES, new GreatestMatchPctCategory(GreatestMatchPctCategory.RecordType.LOSING), true);
 		register(RANKING, new InfamousATPRankingCategory(), true);
 		register(RANKING, new InfamousEloRankingCategory(), true);
-		register(MISC, new MostBagelsBreadsticksCategory(MostBagelsBreadsticksCategory.RecordType.AGAINST), true);
-		register(MISC, new HeadToHeadCategory(true), true);
+		register(H2H, new HeadToHeadCategory(HeadToHeadCategory.ItemType.MATCHES, true), true);
+		register(H2H, new HeadToHeadCategory(HeadToHeadCategory.ItemType.FINALS, true), true);
+		register(H2H, new HeadToHeadSeriesCategory(true), true);
 		register(MISC, new HighestOpponentRankCategory(HighestOpponentRankCategory.RecordType.LOWEST, HighestOpponentRankCategory.RankingType.ELO_RATING), true);
+		register(MISC, new MostBagelsBreadsticksCategory(MostBagelsBreadsticksCategory.RecordType.AGAINST), true);
 		register(MISC, new MostRecordsCategory(true), true);
 	}
 }

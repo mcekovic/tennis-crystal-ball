@@ -55,12 +55,12 @@ public class YoungestOldestTournamentResultCategory extends RecordCategory {
 		register(ageTournamentResult(recordType, resultType, OLYMPICS));
 		register(ageTournamentResult(recordType, resultType, ATP_500));
 		register(ageTournamentResult(recordType, resultType, ATP_250));
-		register(ageTournamentResult(recordType, resultType, HARD));
-		register(ageTournamentResult(recordType, resultType, CLAY));
-		register(ageTournamentResult(recordType, resultType, GRASS));
-		register(ageTournamentResult(recordType, resultType, CARPET));
-		register(ageTournamentResult(recordType, resultType, OUTDOOR));
-		register(ageTournamentResult(recordType, resultType, INDOOR));
+		register(ageTournamentResult(recordType, resultType, HARD_TOURNAMENTS));
+		register(ageTournamentResult(recordType, resultType, CLAY_TOURNAMENTS));
+		register(ageTournamentResult(recordType, resultType, GRASS_TOURNAMENTS));
+		register(ageTournamentResult(recordType, resultType, CARPET_TOURNAMENTS));
+		register(ageTournamentResult(recordType, resultType, OUTDOOR_TOURNAMENTS));
+		register(ageTournamentResult(recordType, resultType, INDOOR_TOURNAMENTS));
 	}
 
 	private static Record ageTournamentResult(RecordType type, ResultType resultType, RecordDomain domain) {

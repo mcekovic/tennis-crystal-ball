@@ -294,7 +294,7 @@
 	<tr th:if="${!performance1.hardMatches.empty || !performance2.hardMatches.empty}" th:with="wl1=${performance1.hardMatches}, wl2=${performance2.hardMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${surfaceTitles1['H']}">
-				<a class="label label-default player-title" th:text="${surfaceTitles1['H']}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, surface=H, result=W)}" title="Show hard titles">1</a> <span class="glyphicon glyphicon-glass text-default"></span>
+				<a class="label label-primary player-title" th:text="${surfaceTitles1['H']}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, surface=H, result=W)}" title="Show hard titles">1</a> <span class="glyphicon glyphicon-glass text-primary"></span>
 			</div>
 		</th>
 		<th class="text-right">
@@ -314,7 +314,7 @@
 		</th>
 		<th class="text-left">
 			<div th:if="${surfaceTitles2['H']}">
-				<a class="label label-default player-title" th:text="${surfaceTitles2['H']}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, surface=H, result=W)}" title="Show hard titles">1</a> <span class="glyphicon glyphicon-glass text-default"></span>
+				<a class="label label-primary player-title" th:text="${surfaceTitles2['H']}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, surface=H, result=W)}" title="Show hard titles">1</a> <span class="glyphicon glyphicon-glass text-primary"></span>
 			</div>
 		</th>
 	</tr>

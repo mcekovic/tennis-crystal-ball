@@ -52,12 +52,12 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		register(itemsLostWinningTitle(type, GAMES, OLYMPICS));
 		register(itemsLostWinningTitle(type, GAMES, ATP_500));
 		register(itemsLostWinningTitle(type, GAMES, ATP_250));
-		register(itemsLostWinningTitle(type, GAMES, HARD, surfaceTournaments("H", "e.")));
-		register(itemsLostWinningTitle(type, GAMES, CLAY, surfaceTournaments("C", "e.")));
-		register(itemsLostWinningTitle(type, GAMES, GRASS, surfaceTournaments("G", "e.")));
-		register(itemsLostWinningTitle(type, GAMES, CARPET, surfaceTournaments("P", "e.")));
-		register(itemsLostWinningTitle(type, GAMES, OUTDOOR, indoorTournaments(false, "e.")));
-		register(itemsLostWinningTitle(type, GAMES, INDOOR, indoorTournaments(true, "e.")));
+		register(itemsLostWinningTitle(type, GAMES, HARD_TOURNAMENTS, surfaceTournaments("H", "e.")));
+		register(itemsLostWinningTitle(type, GAMES, CLAY_TOURNAMENTS, surfaceTournaments("C", "e.")));
+		register(itemsLostWinningTitle(type, GAMES, GRASS_TOURNAMENTS, surfaceTournaments("G", "e.")));
+		register(itemsLostWinningTitle(type, GAMES, CARPET_TOURNAMENTS, surfaceTournaments("P", "e.")));
+		register(itemsLostWinningTitle(type, GAMES, OUTDOOR_TOURNAMENTS, indoorTournaments(false, "e.")));
+		register(itemsLostWinningTitle(type, GAMES, INDOOR_TOURNAMENTS, indoorTournaments(true, "e.")));
 		register(itemsLostWinningTitle(type, SETS, ALL_WO_TEAM));
 		register(itemsLostWinningTitle(type, SETS, GRAND_SLAM));
 		register(itemsLostWinningTitle(type, SETS, TOUR_FINALS));
@@ -66,12 +66,12 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 		register(itemsLostWinningTitle(type, SETS, OLYMPICS));
 		register(itemsLostWinningTitle(type, SETS, ATP_500));
 		register(itemsLostWinningTitle(type, SETS, ATP_250));
-		register(itemsLostWinningTitle(type, SETS, HARD, surfaceTournaments("H", "e.")));
-		register(itemsLostWinningTitle(type, SETS, CLAY, surfaceTournaments("C", "e.")));
-		register(itemsLostWinningTitle(type, SETS, GRASS, surfaceTournaments("G", "e.")));
-		register(itemsLostWinningTitle(type, SETS, CARPET, surfaceTournaments("P", "e.")));
-		register(itemsLostWinningTitle(type, SETS, OUTDOOR, indoorTournaments(false, "e.")));
-		register(itemsLostWinningTitle(type, SETS, INDOOR, indoorTournaments(true, "e.")));
+		register(itemsLostWinningTitle(type, SETS, HARD_TOURNAMENTS, surfaceTournaments("H", "e.")));
+		register(itemsLostWinningTitle(type, SETS, CLAY_TOURNAMENTS, surfaceTournaments("C", "e.")));
+		register(itemsLostWinningTitle(type, SETS, GRASS_TOURNAMENTS, surfaceTournaments("G", "e.")));
+		register(itemsLostWinningTitle(type, SETS, CARPET_TOURNAMENTS, surfaceTournaments("P", "e.")));
+		register(itemsLostWinningTitle(type, SETS, OUTDOOR_TOURNAMENTS, indoorTournaments(false, "e.")));
+		register(itemsLostWinningTitle(type, SETS, INDOOR_TOURNAMENTS, indoorTournaments(true, "e.")));
 		if (type == LEAST) {
 			register(titlesWonWOLosingSet(ALL_WO_TEAM));
 			register(titlesWonWOLosingSet(GRAND_SLAM));
@@ -81,12 +81,12 @@ public class ItemsWinningTitleCategory extends RecordCategory {
 			register(titlesWonWOLosingSet(OLYMPICS));
 			register(titlesWonWOLosingSet(ATP_500));
 			register(titlesWonWOLosingSet(ATP_250));
-			register(titlesWonWOLosingSet(HARD, surfaceTournaments("H", "e.")));
-			register(titlesWonWOLosingSet(CLAY, surfaceTournaments("C", "e.")));
-			register(titlesWonWOLosingSet(GRASS, surfaceTournaments("G", "e.")));
-			register(titlesWonWOLosingSet(CARPET, surfaceTournaments("P", "e.")));
-			register(titlesWonWOLosingSet(OUTDOOR, indoorTournaments(false, "e.")));
-			register(titlesWonWOLosingSet(INDOOR, indoorTournaments(true, "e.")));
+			register(titlesWonWOLosingSet(HARD_TOURNAMENTS, surfaceTournaments("H", "e.")));
+			register(titlesWonWOLosingSet(CLAY_TOURNAMENTS, surfaceTournaments("C", "e.")));
+			register(titlesWonWOLosingSet(GRASS_TOURNAMENTS, surfaceTournaments("G", "e.")));
+			register(titlesWonWOLosingSet(CARPET_TOURNAMENTS, surfaceTournaments("P", "e.")));
+			register(titlesWonWOLosingSet(OUTDOOR_TOURNAMENTS, indoorTournaments(false, "e.")));
+			register(titlesWonWOLosingSet(INDOOR_TOURNAMENTS, indoorTournaments(true, "e.")));
 		}
 	}
 

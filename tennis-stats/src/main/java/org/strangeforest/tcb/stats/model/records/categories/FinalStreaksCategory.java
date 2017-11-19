@@ -19,12 +19,12 @@ public class FinalStreaksCategory extends ResultsStreaksCategory {
 		register(finalStreak(ATP_500));
 		register(finalStreak(ATP_250));
 		register(finalStreak(SMALL_TOURNAMENTS));
-		register(finalStreak(HARD));
-		register(finalStreak(CLAY));
-		register(finalStreak(GRASS));
-		register(finalStreak(CARPET));
-		register(finalStreak(OUTDOOR));
-		register(finalStreak(INDOOR));
+		register(finalStreak(HARD_TOURNAMENTS));
+		register(finalStreak(CLAY_TOURNAMENTS));
+		register(finalStreak(GRASS_TOURNAMENTS));
+		register(finalStreak(CARPET_TOURNAMENTS));
+		register(finalStreak(OUTDOOR_TOURNAMENTS));
+		register(finalStreak(INDOOR_TOURNAMENTS));
 		register(tournamentFinalStreak(ALL_WO_TEAM));
 		register(tournamentFinalStreak(GRAND_SLAM));
 		register(tournamentFinalStreak(MASTERS));

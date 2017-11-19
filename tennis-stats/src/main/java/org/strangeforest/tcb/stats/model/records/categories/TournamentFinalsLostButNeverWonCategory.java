@@ -24,16 +24,16 @@ public class TournamentFinalsLostButNeverWonCategory extends RecordCategory {
 		register(mostMaxFinals(ATP_500));
 		register(mostMaxFinals(ATP_250));
 		register(mostMaxFinals(SMALL_TOURNAMENTS));
-		register(mostMaxFinals(HARD));
-		register(mostMaxFinals(CLAY));
-		register(mostMaxFinals(GRASS));
-		register(mostMaxFinals(CARPET));
-		register(mostMaxFinals(OUTDOOR));
-		register(mostMaxFinals(INDOOR));
+		register(mostMaxFinals(HARD_TOURNAMENTS));
+		register(mostMaxFinals(CLAY_TOURNAMENTS));
+		register(mostMaxFinals(GRASS_TOURNAMENTS));
+		register(mostMaxFinals(CARPET_TOURNAMENTS));
+		register(mostMaxFinals(OUTDOOR_TOURNAMENTS));
+		register(mostMaxFinals(INDOOR_TOURNAMENTS));
 	}
 
 	private static Record mostMaxFinals(RecordDomain domain) {
-		return mostMaxResults(domain.id + "FinalsLostButNeverWon", suffix(domain.name, " ") + "Finals Lost But Never Won", domain, MAX_FINALS, "&round=F");
+		return mostMaxResults(domain.id + "FinalsLostButNeverWon", suffix(domain.name, " ") + "Finals Lost But Never Won", domain, "result = 'F'", "&round=F");
 	}
 
 	private static Record mostMaxResults(String id, String name, RecordDomain domain, String resultCondition, String urlParam) {

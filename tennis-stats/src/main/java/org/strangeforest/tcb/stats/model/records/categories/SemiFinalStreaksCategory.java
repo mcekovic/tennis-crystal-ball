@@ -19,12 +19,12 @@ public class SemiFinalStreaksCategory extends ResultsStreaksCategory {
 		register(semiFinalStreak(ATP_500));
 		register(semiFinalStreak(ATP_250));
 		register(semiFinalStreak(SMALL_TOURNAMENTS));
-		register(semiFinalStreak(HARD));
-		register(semiFinalStreak(CLAY));
-		register(semiFinalStreak(GRASS));
-		register(semiFinalStreak(CARPET));
-		register(semiFinalStreak(OUTDOOR));
-		register(semiFinalStreak(INDOOR));
+		register(semiFinalStreak(HARD_TOURNAMENTS));
+		register(semiFinalStreak(CLAY_TOURNAMENTS));
+		register(semiFinalStreak(GRASS_TOURNAMENTS));
+		register(semiFinalStreak(CARPET_TOURNAMENTS));
+		register(semiFinalStreak(OUTDOOR_TOURNAMENTS));
+		register(semiFinalStreak(INDOOR_TOURNAMENTS));
 		register(tournamentSemiFinalStreak(ALL_WO_TEAM));
 		register(tournamentSemiFinalStreak(GRAND_SLAM));
 		register(tournamentSemiFinalStreak(MASTERS));

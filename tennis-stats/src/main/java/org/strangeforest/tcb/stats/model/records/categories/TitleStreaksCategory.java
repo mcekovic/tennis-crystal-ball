@@ -19,12 +19,12 @@ public class TitleStreaksCategory extends ResultsStreaksCategory {
 		register(titleStreak(ATP_500));
 		register(titleStreak(ATP_250));
 		register(titleStreak(SMALL_TOURNAMENTS));
-		register(titleStreak(HARD));
-		register(titleStreak(CLAY));
-		register(titleStreak(GRASS));
-		register(titleStreak(CARPET));
-		register(titleStreak(OUTDOOR));
-		register(titleStreak(INDOOR));
+		register(titleStreak(HARD_TOURNAMENTS));
+		register(titleStreak(CLAY_TOURNAMENTS));
+		register(titleStreak(GRASS_TOURNAMENTS));
+		register(titleStreak(CARPET_TOURNAMENTS));
+		register(titleStreak(OUTDOOR_TOURNAMENTS));
+		register(titleStreak(INDOOR_TOURNAMENTS));
 		register(tournamentTitleStreak(ALL_WO_TEAM));
 		register(tournamentTitleStreak(GRAND_SLAM));
 		register(tournamentTitleStreak(MASTERS));

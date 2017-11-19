@@ -50,12 +50,12 @@ public class GreatestTitlePctCategory extends RecordCategory {
 		register(greatestFinalPct(type, ATP_500));
 		register(greatestFinalPct(type, ATP_250));
 		register(greatestFinalPct(type, SMALL_TOURNAMENTS));
-		register(greatestFinalPct(type, HARD));
-		register(greatestFinalPct(type, CLAY));
-		register(greatestFinalPct(type, GRASS));
-		register(greatestFinalPct(type, CARPET));
-		register(greatestFinalPct(type, OUTDOOR));
-		register(greatestFinalPct(type, INDOOR));
+		register(greatestFinalPct(type, HARD_TOURNAMENTS));
+		register(greatestFinalPct(type, CLAY_TOURNAMENTS));
+		register(greatestFinalPct(type, GRASS_TOURNAMENTS));
+		register(greatestFinalPct(type, CARPET_TOURNAMENTS));
+		register(greatestFinalPct(type, OUTDOOR_TOURNAMENTS));
+		register(greatestFinalPct(type, INDOOR_TOURNAMENTS));
 		if (type == RecordType.WINNING) {
 			register(greatestTitlePct(ALL_WO_TEAM));
 			register(greatestTitlePct(GRAND_SLAM));
@@ -68,12 +68,12 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			register(greatestTitlePct(ATP_500));
 			register(greatestTitlePct(ATP_250));
 			register(greatestTitlePct(SMALL_TOURNAMENTS));
-			register(greatestTitlePct(HARD));
-			register(greatestTitlePct(CLAY));
-			register(greatestTitlePct(GRASS));
-			register(greatestTitlePct(CARPET));
-			register(greatestTitlePct(OUTDOOR));
-			register(greatestTitlePct(INDOOR));
+			register(greatestTitlePct(HARD_TOURNAMENTS));
+			register(greatestTitlePct(CLAY_TOURNAMENTS));
+			register(greatestTitlePct(GRASS_TOURNAMENTS));
+			register(greatestTitlePct(CARPET_TOURNAMENTS));
+			register(greatestTitlePct(OUTDOOR_TOURNAMENTS));
+			register(greatestTitlePct(INDOOR_TOURNAMENTS));
 		}
 	}
 
