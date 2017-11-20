@@ -60,6 +60,31 @@ abstract class BaseATPWorldTourTournamentLoader {
 		}
 	}
 
+	static mapIndoor(String surface, String name, int season) {
+		if (name.toLowerCase().contains('indoor'))
+			return true
+		switch (surface) {
+			case 'P': return true
+			case 'H': return season >= 2017 && (
+				name.startsWith('Montpellier') ||
+				name.startsWith('Sofia') ||
+				name.startsWith('Memphis') ||
+				name.startsWith('Rotterdam') ||
+				name.startsWith('Marseille') ||
+				name.startsWith('Metz') ||
+				name.startsWith('St. Petersburg') ||
+				name.startsWith('Antwerp') ||
+				name.startsWith('Moscow') ||
+				name.startsWith('Stockholm') ||
+				name.startsWith('Basel') ||
+				name.startsWith('Vienna') ||
+				name.startsWith('Paris Masters') ||
+				name.startsWith('Tour Finals')
+			)
+			default: return false
+		}
+	}
+
 	static mapDrawType(String level) {
 		switch (level) {
 			case 'F': return 'RR'

@@ -47,7 +47,7 @@ class MatchLoader extends BaseCSVLoader {
 		params.tournament_level = mappedLevel
 		def surface = string record.surface
 		params.surface = mapSurface surface
-		params.indoor = mapIndoor(surface) || eventName.toLowerCase().contains('indoor')
+		params.indoor = mapIndoor(surface, eventName, season)
 		params.draw_type = mapDrawType(mappedLevel, season)
 		params.draw_size = mapDrawSize(drawSize, mappedLevel, season)
 		params.rank_points = mapRankPoints mappedLevel
@@ -288,9 +288,27 @@ class MatchLoader extends BaseCSVLoader {
 		}
 	}
 
-	static mapIndoor(String surface) {
+	static mapIndoor(String surface, String name, int season) {
+		if (name.toLowerCase().contains('indoor'))
+			return true
 		switch (surface) {
 			case 'Carpet': return true
+			case 'Hard': return season >= 2017 && (
+				name.startsWith('Montpellier') ||
+				name.startsWith('Sofia') ||
+				name.startsWith('Memphis') ||
+				name.startsWith('Rotterdam') ||
+				name.startsWith('Marseille') ||
+				name.startsWith('Metz') ||
+				name.startsWith('St. Petersburg') ||
+				name.startsWith('Antwerp') ||
+				name.startsWith('Moscow') ||
+				name.startsWith('Stockholm') ||
+				name.startsWith('Basel') ||
+				name.startsWith('Vienna') ||
+				name.startsWith('Paris Masters') ||
+				name.startsWith('Tour Finals')
+			)
 			default: return false
 		}
 	}

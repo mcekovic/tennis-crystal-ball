@@ -100,10 +100,11 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			return 0
 		}
 		level = level ?: mapLevel(atpLevel, urlId)
-		def name = getName(doc, level, LocalDate.now().getYear())
+		season = season ?: LocalDate.now().year
+		def name = getName(doc, level, season)
 		def atpSurface = doc.select('td.tourney-details:nth-child(2) > div:nth-child(2) > div:nth-child(1) > span:nth-child(1)').text()
 		surface = surface ?: mapSurface(atpSurface)
-		def indoor = surface == 'P' || name.toLowerCase().contains('indoor')
+		def indoor = mapIndoor(surface, name, season)
 		def drawType = mapDrawType(level)
 		if (drawType != 'KO') {
 			println "Skipping tournament at '$url', unsupported drawType: $drawType"

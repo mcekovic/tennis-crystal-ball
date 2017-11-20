@@ -800,6 +800,7 @@ PERFORM set_tournament_event_surface(2017, 'Stockholm', NULL, TRUE);
 PERFORM set_tournament_event_surface(2017, 'Basel', NULL, TRUE);
 PERFORM set_tournament_event_surface(2017, 'Vienna', NULL, TRUE);
 PERFORM set_tournament_event_surface(2017, 'Paris Masters', NULL, TRUE);
+PERFORM set_tournament_event_surface(2017, 'Tour Finals', NULL, TRUE);
 
 END $$;
 
