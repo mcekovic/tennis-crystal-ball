@@ -1,0 +1,1 @@
+ALTER TYPE tournament_entry ADD VALUE 'ALT' AFTER 'SE';

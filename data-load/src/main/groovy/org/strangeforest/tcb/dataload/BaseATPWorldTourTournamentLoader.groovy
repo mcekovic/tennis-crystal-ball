@@ -88,8 +88,10 @@ abstract class BaseATPWorldTourTournamentLoader {
 
 	static mapEntry(String entry) {
 		if (entry) {
-			if (entry == 'S')
-				return 'SE'
+			switch (entry) {
+				case 'S': return 'SE'
+				case 'Alt': return 'ALT'
+			}
 		}
 		entry
 	}

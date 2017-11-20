@@ -292,6 +292,7 @@ public class RankingsService {
 			case HARD_ELO_RATING: return "hard_elo_rating";
 			case CLAY_ELO_RATING: return "clay_elo_rating";
 			case GRASS_ELO_RATING: return "grass_elo_rating";
+			case CARPET_ELO_RATING: return "carpet_elo_rating";
 			case OUTDOOR_ELO_RATING: return "outdoor_elo_rating";
 			case INDOOR_ELO_RATING: return "indoor_elo_rating";
 			default: throw unknownEnum(rankType);

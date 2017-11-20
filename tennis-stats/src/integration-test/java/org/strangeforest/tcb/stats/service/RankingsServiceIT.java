@@ -56,6 +56,16 @@ public class RankingsServiceIT {
 		rankingsTableTest(GRASS_ELO_RATING);
 	}
 
+	@Test
+	public void outdoorRankingsTable() {
+		rankingsTableTest(OUTDOOR_ELO_RATING);
+	}
+
+	@Test
+	public void indoorRankingsTable() {
+		rankingsTableTest(INDOOR_ELO_RATING);
+	}
+
 	private void rankingsTableTest(RankType rankType) {
 		LocalDate currentRankingDate = rankingsService.getCurrentRankingDate(rankType);
 
