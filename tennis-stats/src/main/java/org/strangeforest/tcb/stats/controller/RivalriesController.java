@@ -431,6 +431,7 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "playerId1") int playerId1,
       @RequestParam(name = "playerId2") int playerId2,
       @RequestParam(name = "surface", required = false) String surface,
+      @RequestParam(name = "indoor", required = false) Boolean indoor,
       @RequestParam(name = "level", required = false) String level,
       @RequestParam(name = "round", required = false) String round,
       @RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date,
@@ -447,7 +448,7 @@ public class RivalriesController extends PageController {
 		LocalDate aDate2 = dateForMatchup(dateSelector2, date2, date, player2);
 		MatchPrediction prediction = matchPredictionService.predictMatch(
 			playerId1, playerId2, aDate1, aDate2,
-			Surface.safeDecode(surface), TournamentLevel.safeDecode(level), Round.safeDecode(round)
+			Surface.safeDecode(surface), indoor, TournamentLevel.safeDecode(level), Round.safeDecode(round)
       );
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, round));
 

@@ -331,7 +331,7 @@ public class TournamentForecastService {
 	private void addMatchProbability(InProgressEvent event, PlayerForecast player1, PlayerForecast player2, String round, LocalDate date) {
 		MatchPrediction prediction = matchPredictionService.predictMatch(
 			player1.getId(), player2.getId(), date,
-			event.getTournamentId(), event.getId(), true, Surface.safeDecode(event.getSurface()), TournamentLevel.safeDecode(event.getLevel()), Round.safeDecode(round), null
+			event.getTournamentId(), event.getId(), true, Surface.safeDecode(event.getSurface()), event.isIndoor(), TournamentLevel.safeDecode(event.getLevel()), null, Round.safeDecode(round)
 		);
 		player1.addForecast("M_" + round, prediction.getWinProbability1());
 		player2.addForecast("M_" + round, prediction.getWinProbability2());

@@ -58,6 +58,15 @@ END$$;;
 COMMIT;
 
 
+-- Update Tournament Event names
+
+UPDATE tournament_event
+SET name = 'Vina del Mar'
+WHERE name = 'Santiago' AND season IN (2012, 2013);
+
+COMMIT;
+
+
 -- Update match missing rankings
 
 UPDATE match m

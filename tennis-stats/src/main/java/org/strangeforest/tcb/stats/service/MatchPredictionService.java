@@ -42,7 +42,7 @@ public class MatchPredictionService {
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_ELO_RATINGS_QUERY = //language=SQL
-		"SELECT elo_rating, %1$selo_rating FROM player_elo_ranking\n" +
+		"SELECT elo_rating, %1$selo_rating, %2$selo_rating FROM player_elo_ranking\n" +
 		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1 year') AND :date\n" +
 		"ORDER BY rank_date DESC LIMIT 1";
 
@@ -87,38 +87,38 @@ public class MatchPredictionService {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Surface surface, TournamentLevel level, Round round) {
-		return predictMatch(playerId1, playerId2, date, date, null, null, true, surface, level, round, null);
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
+		return predictMatch(playerId1, playerId2, date, date, null, null, true, surface, indoor, level, null, round);
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Round round) {
-		return predictMatch(playerId1, playerId2, date1, date2, null, null, true, surface, level, round, null);
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
+		return predictMatch(playerId1, playerId2, date1, date2, null, null, true, surface, indoor, level, null, round);
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, TournamentLevel level, Round round, Short bestOf) {
-		return predictMatch(playerId1, playerId2, date, date, tournamentId, tournamentEventId, inProgress, surface, level, round, bestOf);
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round) {
+		return predictMatch(playerId1, playerId2, date, date, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round);
 	}
 
-	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, TournamentLevel level, Round round, Short bestOf) {
+	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round) {
 		if (playerId1 > 0) {
 			if (playerId2 > 0)
-				return predictMatchBetweenEntries(playerId1, playerId2, date1, date2, tournamentId, tournamentEventId, inProgress, surface, level, round, bestOf);
+				return predictMatchBetweenEntries(playerId1, playerId2, date1, date2, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round);
 			else
-				return predictMatchVsQualifier(playerId1, date1, tournamentId, tournamentEventId, inProgress, surface, level, round, bestOf);
+				return predictMatchVsQualifier(playerId1, date1, tournamentId, tournamentEventId, inProgress, surface, level, bestOf, round);
 		}
 		else {
 			if (playerId2 > 0)
-				return predictMatchVsQualifier(playerId2, date2, tournamentId, tournamentEventId, inProgress, surface, level, round, bestOf).swap();
+				return predictMatchVsQualifier(playerId2, date2, tournamentId, tournamentEventId, inProgress, surface, level, bestOf, round).swap();
 			else
 				return MatchPrediction.TIE;
 		}
 	}
 
-	private MatchPrediction predictMatchBetweenEntries(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, TournamentLevel level, Round round, Short bestOf) {
+	private MatchPrediction predictMatchBetweenEntries(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round) {
 		PlayerData playerData1 = getPlayerData(playerId1);
 		PlayerData playerData2 = getPlayerData(playerId2);
-		RankingData rankingData1 = getRankingData(playerId1, date1, surface);
-		RankingData rankingData2 = getRankingData(playerId2, date2, surface);
+		RankingData rankingData1 = getRankingData(playerId1, date1, surface, indoor);
+		RankingData rankingData2 = getRankingData(playerId2, date2, surface, indoor);
 		List<MatchData> matchData1 = getMatchData(playerId1, date1, tournamentEventId, inProgress, round);
 		List<MatchData> matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
 		short bstOf = defaultBestOf(level, bestOf);
@@ -133,7 +133,7 @@ public class MatchPredictionService {
 		return prediction;
 	}
 
-	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, TournamentLevel level, Round round, Short bestOf) {
+	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, TournamentLevel level, Short bestOf, Round round) {
 		List<MatchData> matchData = getMatchData(playerId, date, tournamentEventId, inProgress, round);
 		short bstOf = defaultBestOf(level, bestOf);
 		return new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bstOf).predictMatch();
@@ -186,8 +186,8 @@ public class MatchPredictionService {
 
 	// Ranking Data
 
-	private RankingData getRankingData(int playerId, LocalDate date, Surface surface) {
-		return playersRankings.get(new RankingKey(playerId, date, surface));
+	private RankingData getRankingData(int playerId, LocalDate date, Surface surface, Boolean indoor) {
+		return playersRankings.get(new RankingKey(playerId, date, surface, indoor));
 	}
 
 	private RankingData fetchRankingData(RankingKey key) {
@@ -201,13 +201,16 @@ public class MatchPredictionService {
 			}
 		);
 		String surfacePrefix = key.surface != null ? key.surface.getText().toLowerCase() + '_' : "";
+		String outInPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
 		jdbcTemplate.query(
-			format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix),
+			format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, outInPrefix),
 			params("playerId", key.playerId).addValue("date", key.date),
 			rs -> {
 				rankingData.setEloRating(getInteger(rs, "elo_rating"));
 				if (!surfacePrefix.isEmpty())
 					rankingData.setSurfaceEloRating(getInteger(rs, surfacePrefix + "elo_rating"));
+				if (!outInPrefix.isEmpty())
+					rankingData.setOutInEloRating(getInteger(rs, outInPrefix + "elo_rating"));
 			}
 		);
 		return rankingData;
@@ -276,22 +279,24 @@ public class MatchPredictionService {
 		public final int playerId;
 		public final LocalDate date;
 		public final Surface surface;
+		public final Boolean indoor;
 
-		public RankingKey(int playerId, LocalDate date, Surface surface) {
+		public RankingKey(int playerId, LocalDate date, Surface surface, Boolean indoor) {
 			this.playerId = playerId;
 			this.date = date;
 			this.surface = surface;
+			this.indoor = indoor;
 		}
 
 		@Override public boolean equals(Object o) {
 			if (this == o) return true;
 			if (!(o instanceof RankingKey)) return false;
 			RankingKey key = (RankingKey)o;
-			return playerId == key.playerId && Objects.equals(date, key.date) && Objects.equals(surface, key.surface);
+			return playerId == key.playerId && Objects.equals(date, key.date) && Objects.equals(surface, key.surface)  && Objects.equals(indoor, key.indoor);
 		}
 
 		@Override public int hashCode() {
-			return Objects.hash(playerId, date, surface);
+			return Objects.hash(playerId, date, surface, indoor);
 		}
 	}
 }

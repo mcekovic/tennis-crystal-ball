@@ -6,6 +6,7 @@ public final class RankingData {
 	private Integer rankPoints;
 	private Integer eloRating;
 	private Integer surfaceEloRating;
+	private Integer outInEloRating;
 
 	public Integer getRank() {
 		return rank;
@@ -37,5 +38,13 @@ public final class RankingData {
 
 	public void setSurfaceEloRating(Integer surfaceEloRating) {
 		this.surfaceEloRating = surfaceEloRating;
+	}
+
+	public Integer getOutInEloRating() {
+		return outInEloRating;
+	}
+
+	public void setOutInEloRating(Integer outInEloRating) {
+		this.outInEloRating = outInEloRating;
 	}
 }

@@ -36,7 +36,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	private static final int PROGRESS_LINE_WRAP = 100;
 
 	private static final String MATCHES_QUERY = //language=SQL
-		"SELECT m.winner_id, m.loser_id, m.date, m.tournament_id, m.tournament_event_id, m.level, m.surface, m.round, m.best_of, p.winner_price, p.loser_price\n" +
+		"SELECT m.winner_id, m.loser_id, m.date, m.tournament_id, m.tournament_event_id, m.level, m.best_of, m.surface, m.indoor, m.round, p.winner_price, p.loser_price\n" +
 		"FROM match_for_stats_v m\n" +
 		"LEFT JOIN match_price p ON p.match_id = m.match_id AND source = :source\n" +
 		"WHERE m.date BETWEEN :date1 AND :date2\n" +
@@ -57,7 +57,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		AtomicInteger ticks = new AtomicInteger();
 		for (MatchForVerification match : matches(fromDate, toDate)) {
 			executor.execute(() -> {
-				MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.tournamentId, match.tournamentEventId, false, match.surface, match.level, match.round, match.best_of);
+				MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.tournamentId, match.tournamentEventId, false, match.surface, match.indoor, match.level, match.bestOf, match.round);
 				if (prediction.getPredictability1() > MIN_PREDICTABILITY) {
 					predicted.incrementAndGet();
 					double winnerProbability = prediction.getWinProbability1();
@@ -131,9 +131,10 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 			rs.getInt("tournament_id"),
 			rs.getInt("tournament_event_id"),
 			rs.getString("level"),
-			rs.getString("surface"),
-			rs.getString("round"),
 			rs.getShort("best_of"),
+			rs.getString("surface"),
+			rs.getBoolean("indoor"),
+			rs.getString("round"),
 			getDouble(rs,"winner_price"),
 			getDouble(rs,"loser_price")
 		);
