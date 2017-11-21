@@ -58,20 +58,18 @@ END$$;;
 COMMIT;
 
 
--- Update tournament event names
-
-UPDATE tournament_event
-SET name = 'Vina del Mar'
-WHERE name = 'Santiago' AND season IN (2012, 2013);
-
-COMMIT;
-
-
 -- Link same tournaments
 
 DO $$ BEGIN
 
-PERFORM link_tournament('581', '580');
+PERFORM link_tournament('581', '580'); -- Australian Open
+PERFORM link_tournament('3935', '3934'); -- WCT Challenge Cup
+PERFORM link_tournament('1506', '650'); -- Birmingham
+PERFORM link_tournament('712', '650'); -- Birmingham
+PERFORM link_tournament('3944', '316'); -- Baastad
+PERFORM link_tournament('3939', '344'); -- Caracas
+PERFORM link_tournament('2049', '741'); -- Eastbourne
+PERFORM link_tournament('468', '7290'); -- Estoril
 
 END $$;
 

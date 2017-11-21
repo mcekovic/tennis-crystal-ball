@@ -101,6 +101,7 @@ PERFORM set_tournament_event_surface(1975, 'Masters', NULL, TRUE);
 -- 1976
 PERFORM set_tournament_event_surface(1976, 'Montreal / Toronto', 'C', FALSE);
 PERFORM set_tournament_event_surface(1976, 'Paris Indoor', NULL, TRUE);
+PERFORM set_tournament_event_surface(1976, '3934', NULL, TRUE);
 PERFORM set_tournament_event_surface(1976, 'Vienna', NULL, TRUE);
 PERFORM set_tournament_event_surface(1976, 'Stockholm', NULL, TRUE);
 

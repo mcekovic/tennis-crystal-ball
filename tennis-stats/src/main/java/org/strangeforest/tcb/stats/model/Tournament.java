@@ -5,6 +5,7 @@ import java.util.*;
 public class Tournament {
 
 	private final int id;
+	private final String extId;
 	private final String name;
 	private final List<String> levels;
 	private final List<String> surfaces;
@@ -16,8 +17,9 @@ public class Tournament {
 	private int averageEloRating;
 	private final List<PlayerRow> topPlayers;
 
-	public Tournament(int id, String name, List<String> levels, List<String> surfaces, int eventCount, String seasons, int playerCount, double participation, int strength, int averageEloRating, List<PlayerRow> topPlayers) {
+	public Tournament(int id, String extId, String name, List<String> levels, List<String> surfaces, int eventCount, String seasons, int playerCount, double participation, int strength, int averageEloRating, List<PlayerRow> topPlayers) {
 		this.id = id;
+		this.extId = extId;
 		this.name = name;
 		this.levels = levels;
 		this.surfaces = surfaces;
@@ -32,6 +34,10 @@ public class Tournament {
 
 	public int getId() {
 		return id;
+	}
+
+	public String getExtId() {
+		return extId;
 	}
 
 	public String getName() {

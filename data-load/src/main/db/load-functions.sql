@@ -911,7 +911,12 @@ BEGIN
 	SELECT tournament_event_id INTO l_tournament_event_id FROM tournament_event
 	WHERE season = p_season AND name = p_name;
 	IF l_tournament_event_id IS NULL THEN
-		RAISE EXCEPTION 'Tournament event % for season % not found', p_name, p_season;
+		SELECT e.tournament_event_id INTO l_tournament_event_id FROM tournament_event e
+		INNER JOIN tournament_mapping m ON m.tournament_id = e.original_tournament_id
+		WHERE e.season = p_season AND m.ext_tournament_id = p_name;
+		IF l_tournament_event_id IS NULL THEN
+			RAISE EXCEPTION 'Tournament event % for season % not found', p_name, p_season;
+		END IF;
 	END IF;
 
 	UPDATE tournament_event

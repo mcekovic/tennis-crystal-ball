@@ -35,7 +35,7 @@
 				},
 				formatters: {
 					"tournament": function(column, row) {
-						return "<a href='/tournament?tournamentId=" + row.id + "' title='Show tournament'>" + row.name + "</a>";
+						return "<a href='/tournament?tournamentId=" + row.id + "' title='Show tournament" + (row.extId ? " - " +  row.extId : "") + "'>" + row.name + "</a>";
 					},
 					"levels": function(column, row) {
 						var levels = row.levels;

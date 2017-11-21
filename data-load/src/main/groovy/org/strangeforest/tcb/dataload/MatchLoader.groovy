@@ -170,7 +170,11 @@ class MatchLoader extends BaseCSVLoader {
 			case 'M': return season >= 1990 && !name.endsWith(' Masters') ? name + ' Masters' : name
 			case 'O': return season == 2016 ? 'Rio Olympics' : name
 			case 'D': return dcInfo.name
-			default: return name
+			default:
+				if (name.equals('Santiago') && season in 2012..2013)
+					return 'Vina del Mar'
+				else
+					return name
 		}
 	}
 

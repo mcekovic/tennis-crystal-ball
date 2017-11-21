@@ -49,7 +49,7 @@ public class TournamentService {
 		"  SELECT tournament_id, player_id, titles, rank() OVER (PARTITION BY tournament_id ORDER BY titles DESC, last_date) AS rank\n" +
 		"  FROM player_tournament_titles\n" +
 		")\n" +
-		"SELECT tournament_id, name, level,\n" +
+		"SELECT tournament_id, mp.ext_tournament_id, name, level,\n" +
 		"  array_to_json(array(SELECT row_to_json(event) FROM (\n" +
 		"    SELECT e.level, e.surface, e.season, p.player_count, p.participation, p.strength, p.average_elo_rating\n" +
 		"    FROM tournament_event e\n" +
@@ -64,6 +64,7 @@ public class TournamentService {
 		"    WHERE pt.tournament_id = t.tournament_id AND pt.rank <= 1\n" +
 		"  ) AS top_player)) AS top_players\n" +
 		"FROM tournament t\n" +
+		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
 		"WHERE t.level NOT IN ('D', 'T') AND NOT t.linked";
 
 	private static final String TOURNAMENT_QUERY =
@@ -77,7 +78,7 @@ public class TournamentService {
 		"  SELECT player_id, titles, rank() OVER (ORDER BY titles DESC, last_date) AS rank\n" +
 		"  FROM player_tournament_titles\n" +
 		")\n" +
-		"SELECT tournament_id, name, level,\n" +
+		"SELECT tournament_id, mp.ext_tournament_id, name, level,\n" +
 		"  array_to_json(array(SELECT row_to_json(event) FROM (\n" +
 		"    SELECT e.level, e.surface, e.season, p.player_count, p.participation, p.strength, p.average_elo_rating\n" +
 		"    FROM tournament_event e\n" +
@@ -92,6 +93,7 @@ public class TournamentService {
 		"    WHERE pt.rank <= 4\n" +
 		"  ) AS top_player)) AS top_players\n" +
 		"FROM tournament t\n" +
+		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
 		"WHERE tournament_id = :tournamentId";
 
 	private static final String TOURNAMENT_SEASONS_QUERY = //language=SQL
@@ -234,6 +236,7 @@ public class TournamentService {
 
 	private Tournament mapTournament(ResultSet rs) throws SQLException {
 		int tournamentId = rs.getInt("tournament_id");
+		String extTournamentId = rs.getString("ext_tournament_id");
 		String name = rs.getString("name");
 		Map<String, Integer> levels = new HashMap<>();
 		Map<String, Integer> surfaces = new HashMap<>();
@@ -283,7 +286,7 @@ public class TournamentService {
 			throw new SQLException(ex);
 		}
 
-		return new Tournament(tournamentId, name, levelList, surfaceList, eventCount, formattedSeasons, avgPlayerCount, avgParticipation, avgStrength, avgAverageEloRating, topPlayers);
+		return new Tournament(tournamentId, extTournamentId, name, levelList, surfaceList, eventCount, formattedSeasons, avgPlayerCount, avgParticipation, avgStrength, avgAverageEloRating, topPlayers);
 	}
 
 	private static Integer increment(String s, Integer i) {
