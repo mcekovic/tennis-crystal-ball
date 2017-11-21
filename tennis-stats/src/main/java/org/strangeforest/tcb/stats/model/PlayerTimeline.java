@@ -50,13 +50,13 @@ public class PlayerTimeline {
 	}
 
 	public void addItem(PlayerTimelineItem item) {
-		PlayerTournamentTimeline tournament = getTournamentTimeline(item.getTournamentId());
+		PlayerTournamentTimeline tournament = getTournamentTimeline(item);
 		tournament.addItem(item);
 		seasons.add(item.getSeason());
 	}
 
-	private PlayerTournamentTimeline getTournamentTimeline(int tournamentId) {
-		return tournaments.computeIfAbsent(tournamentId, id -> new PlayerTournamentTimeline(this, id));
+	private PlayerTournamentTimeline getTournamentTimeline(PlayerTimelineItem item) {
+		return tournaments.computeIfAbsent(item.getOriginalTournamentId(), id -> new PlayerTournamentTimeline(this, item.getTournamentId()));
 	}
 
 	boolean hasSeason(int tournamentId, int season) {

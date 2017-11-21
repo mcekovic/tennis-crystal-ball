@@ -58,11 +58,22 @@ END$$;;
 COMMIT;
 
 
--- Update Tournament Event names
+-- Update tournament event names
 
 UPDATE tournament_event
 SET name = 'Vina del Mar'
 WHERE name = 'Santiago' AND season IN (2012, 2013);
+
+COMMIT;
+
+
+-- Link same tournaments
+
+DO $$ BEGIN
+
+PERFORM link_tournament('581', '580');
+
+END $$;
 
 COMMIT;
 

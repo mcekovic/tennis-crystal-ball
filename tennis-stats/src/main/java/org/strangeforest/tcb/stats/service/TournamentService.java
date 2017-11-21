@@ -33,7 +33,7 @@ public class TournamentService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String TOURNAMENT_ITEMS_QUERY = //language=SQL
-		"SELECT tournament_id, name, level FROM tournament ORDER BY name";
+		"SELECT tournament_id, name, level FROM tournament WHERE NOT linked ORDER BY name";
 
 	private static final String SEASON_TOURNAMENT_ITEMS_QUERY = //language=SQL
 		"SELECT tournament_id, name, level FROM tournament_event WHERE season = :season ORDER BY name";
@@ -64,7 +64,7 @@ public class TournamentService {
 		"    WHERE pt.tournament_id = t.tournament_id AND pt.rank <= 1\n" +
 		"  ) AS top_player)) AS top_players\n" +
 		"FROM tournament t\n" +
-		"WHERE t.level NOT IN ('D', 'T')";
+		"WHERE t.level NOT IN ('D', 'T') AND NOT t.linked";
 
 	private static final String TOURNAMENT_QUERY =
 		"WITH player_tournament_titles AS (\n" +

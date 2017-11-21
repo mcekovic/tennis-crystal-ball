@@ -17,11 +17,11 @@ public class PlayerTimelineService {
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
 	private static final String TIMELINE_QUERY =
-		"SELECT tournament_id, t.name AS tournament_name, e.season, tournament_event_id,\n" +
+		"SELECT e.original_tournament_id, e.tournament_id, t.name AS tournament_name, e.season, tournament_event_id,\n" +
 		"  tournament_end(e.date, e.level, e.draw_size) AS date, e.level, e.surface, e.indoor, e.name, r.result\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
-		"INNER JOIN tournament t USING (tournament_id)\n" +
+		"INNER JOIN tournament t ON t.tournament_id = e.original_tournament_id\n" +
 		"WHERE r.player_id = :playerId\n" +
 		"AND e.level NOT IN ('D', 'T')\n" +
 		"ORDER BY tournament_event_id";
@@ -65,6 +65,7 @@ public class PlayerTimelineService {
 			TIMELINE_QUERY, params("playerId", playerId),
 			rs -> {
 				timeline.addItem(new PlayerTimelineItem(
+					rs.getInt("original_tournament_id"),
 					rs.getInt("tournament_id"),
 					rs.getString("tournament_name"),
 					rs.getInt("season"),

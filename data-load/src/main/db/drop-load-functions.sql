@@ -30,3 +30,4 @@ DROP FUNCTION load_player_in_progress_result(INTEGER, INTEGER, TEXT, TEXT, REAL)
 DROP FUNCTION create_player(TEXT, TEXT, DATE, TEXT);
 DROP FUNCTION set_tournament_map_properties(TEXT, INTEGER, INTEGER, INTEGER[], JSON) CASCADE;
 DROP FUNCTION set_tournament_event_surface(INTEGER, TEXT, TEXT, BOOLEAN) CASCADE;
+DROP FUNCTION link_tournament(TEXT, TEXT) CASCADE;

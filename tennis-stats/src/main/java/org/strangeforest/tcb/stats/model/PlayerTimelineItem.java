@@ -6,6 +6,7 @@ import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
 
 public class PlayerTimelineItem {
 
+	private final int originalTournamentId;
 	private final int tournamentId;
 	private final String tournamentName;
 	private final int season;
@@ -20,10 +21,11 @@ public class PlayerTimelineItem {
 	static final String ABSENT = "A";
 
 	public PlayerTimelineItem(int tournamentId, int season, String result) {
-		this(tournamentId, null, season, 0, null, null, null, false, null, result);
+		this(tournamentId, tournamentId, null, season, 0, null, null, null, false, null, result);
 	}
 
-	public PlayerTimelineItem(int tournamentId, String tournamentName, int season, int tournamentEventId, Date date, String level, String surface, boolean indoor, String name, String result) {
+	public PlayerTimelineItem(int originalTournamentId, int tournamentId, String tournamentName, int season, int tournamentEventId, Date date, String level, String surface, boolean indoor, String name, String result) {
+		this.originalTournamentId = originalTournamentId;
 		this.tournamentId = tournamentId;
 		this.tournamentName = tournamentName;
 		this.season = season;
@@ -34,6 +36,10 @@ public class PlayerTimelineItem {
 		this.indoor = indoor;
 		this.name = name;
 		this.result = result;
+	}
+
+	public int getOriginalTournamentId() {
+		return originalTournamentId;
 	}
 
 	public int getTournamentId() {

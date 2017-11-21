@@ -7,7 +7,8 @@ CREATE TABLE tournament (
 	city TEXT,
 	level tournament_level NOT NULL,
 	surface surface,
-	indoor BOOLEAN NOT NULL
+	indoor BOOLEAN NOT NULL,
+	linked BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE INDEX ON tournament (level);
@@ -29,6 +30,7 @@ CREATE INDEX ON tournament_mapping (tournament_id);
 CREATE TABLE tournament_event (
 	tournament_event_id SERIAL PRIMARY KEY,
 	tournament_id INTEGER NOT NULL REFERENCES tournament (tournament_id),
+	original_tournament_id INTEGER NOT NULL REFERENCES tournament (tournament_id),
 	season SMALLINT NOT NULL,
 	date DATE NOT NULL,
 	name TEXT NOT NULL,
@@ -40,7 +42,7 @@ CREATE TABLE tournament_event (
 	draw_size SMALLINT,
 	rank_points INTEGER,
 	map_properties JSON,
-	UNIQUE (tournament_id, season)
+	UNIQUE (original_tournament_id, season)
 );
 
 CREATE INDEX ON tournament_event (tournament_id);
