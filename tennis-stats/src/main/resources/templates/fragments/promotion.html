@@ -1,0 +1,32 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="facebook">
+	<script type="text/javascript">
+		(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10";
+		fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+	</script>
+	<div id="fb-root"></div>
+	<div class="fb-like text-center" style="width: 100%" data-href="http://www.ultimatetennisstatistics.com" data-layout="button_count" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+</th:block>
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="twitter">
+	<div style="text-align: center; margin-top: 20px">
+		<a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-url="http://www.ultimatetennisstatistics.com" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+	</div>
+</th:block>
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="paypal">
+	<div style="text-align: center; margin-top: 20px">
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+			<input type="hidden" name="cmd" value="_s-xclick">
+			<input type="hidden" name="hosted_button_id" value="YSPA9L86SVHFN">
+			<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+			<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+		</form>
+		<p style="font-size: x-small">
+			If you like this website and want to support it, please consider a small donation to support the project.<br/>
+			All donations will be used only for paying the web hosting bill.
+		</p>
+	</div>
+</th:block>

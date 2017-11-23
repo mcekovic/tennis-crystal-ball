@@ -83,13 +83,6 @@
 			bindPopovers();
 			loadRankingTopN("POINTS");
 		});
-		(function(d, s, id) {
-			var js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s); js.id = id;
-			js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10";
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
 	</script>
 	<style>
 		body {
@@ -184,22 +177,9 @@
 				<a href="http://www.livescore.in/" title="Livescore.in" target="_blank">Livescore.in</a>
 			</div>
 			<th:block th:include="fragments/goatTopN :: goatTopN"/>
-			<div id="fb-root"></div>
-			<div class="fb-like text-center" style="width: 100%" data-href="http://www.ultimatetennisstatistics.com" data-layout="button_count" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
-			<br/>
-			<br/>
-			<div style="text-align: center">
-				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-					<input type="hidden" name="cmd" value="_s-xclick">
-					<input type="hidden" name="hosted_button_id" value="YSPA9L86SVHFN">
-					<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-					<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-				</form>
-				<p style="font-size: x-small">
-					If you like this website and want to support it, please consider a small donation to support the project.<br/>
-					All donations will be used only for paying the web hosting bill.
-				</p>
-			</div>
+			<th:block th:include="fragments/promotion :: facebook"/>
+			<th:block th:include="fragments/promotion :: twitter"/>
+			<th:block th:include="fragments/promotion :: paypal"/>
 		</div>
 	</div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
