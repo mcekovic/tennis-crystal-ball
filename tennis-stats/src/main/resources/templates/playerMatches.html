@@ -29,6 +29,7 @@
 <!--/*@thymesVar id="score" type="java.lang.String"*/-->
 <!--/*@thymesVar id="countryId" type="java.lang.String"*/-->
 <!--/*@thymesVar id="bigWin" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="searchPhrase" type="java.lang.String"*/-->
 <!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.StatsCategory>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <script type="text/javascript">
@@ -106,7 +107,7 @@
 			templates: {
 				paginationItem: bootgridTemplatePaginationItem
 			}
-		}).on("load.rs.jquery.bootgrid", function() {
+		}).bootgrid("search", "[(${searchPhrase})]").on("load.rs.jquery.bootgrid", function() {
 			updateMatchesStatsCategoryStat();
 		}).on("loaded.rs.jquery.bootgrid", function() {
 			$("#matchesStats").popover("destroy").removeClass("loaded");

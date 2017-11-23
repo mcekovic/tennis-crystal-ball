@@ -59,7 +59,8 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
 		@RequestParam(name = "rankType", required = false) String rankType,
-		@RequestParam(name = "infamous", required = false) Boolean infamous
+		@RequestParam(name = "infamous", required = false) Boolean infamous,
+		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
 	) {
 		if (playerId == null && name == null)
 			throw new NotFoundException("Player", null);
@@ -86,6 +87,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("bigWin", bigWin);
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("infamous", infamous);
+		modelMap.addAttribute("searchPhrase", searchPhrase);
 		modelMap.addAttribute("params", ParamsUtil.INSTANCE);
 		return new ModelAndView("playerProfile", modelMap);
 	}
@@ -195,7 +197,8 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "outcome", required = false) String outcome,
 		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "countryId", required = false) String countryId,
-		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin
+		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
+		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
@@ -239,6 +242,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("score", score);
 		modelMap.addAttribute("countryId", countryId);
 		modelMap.addAttribute("bigWin", bigWin);
+		modelMap.addAttribute("searchPhrase", searchPhrase);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerMatches", modelMap);
 	}
