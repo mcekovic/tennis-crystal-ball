@@ -80,6 +80,12 @@ public class TennisStatsController extends PageController {
 		return "liveScores";
 	}
 
+	@GetMapping("/donationThankYou")
+	public ModelAndView donationThankYou() {
+		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+		return new ModelAndView("donationThankYou", "goatTopN", goatTopN);
+	}
+
 	@Value("${tennis-stats.down-for-maintenance:false}")
 	private boolean downForMaintenance;
 
