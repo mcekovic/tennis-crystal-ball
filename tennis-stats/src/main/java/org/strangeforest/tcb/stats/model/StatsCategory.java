@@ -1,13 +1,19 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.util.ArrayList;
 import java.util.*;
 import java.util.function.*;
 import java.util.regex.*;
+import java.util.stream.*;
 
+import org.strangeforest.tcb.stats.controller.*;
 import org.strangeforest.tcb.stats.util.*;
 
+import static java.util.Arrays.*;
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.StatsCategory.Item.*;
 import static org.strangeforest.tcb.stats.model.StatsCategory.Type.*;
+import static org.strangeforest.tcb.util.EnumUtil.*;
 
 public final class StatsCategory {
 
@@ -56,6 +62,7 @@ public final class StatsCategory {
 	private static final Map<String, StatsCategory> CATEGORIES = new HashMap<>();
 	private static final Map<String, List<StatsCategory>> CATEGORY_CLASSES = new LinkedHashMap<>();
 	private static final Map<String, String> CATEGORY_TYPES = new LinkedHashMap<>();
+	private static final List<CategoryGroup> CATEGORY_GROUPS = new ArrayList<>();
 
 	private static final String TOTAL_POINTS = "p_sv_pt + o_sv_pt";
 	private static final String TOTAL_TIE_BREAKS = "p_tbs + o_tbs";
@@ -84,7 +91,7 @@ public final class StatsCategory {
 	private static final String TIME_CATEGORY = "Time";
 
 	static {
-		// Aces
+		// Aces & DFs
 		addCategory(ACES_AND_DFS, "aces", "p_ace", PlayerStats::getAces, SERVICE_POINT, COUNT, "Aces");
 		addCategory(ACES_AND_DFS, "acePct", "p_ace::REAL / nullif(p_sv_pt, 0)", PlayerStats::getAcePct, SERVICE_POINT, PERCENTAGE, "Ace %");
 		addCategory(ACES_AND_DFS, "acesPerSvcGame", "p_ace::REAL / nullif(p_sv_gms, 0)", PlayerStats::getAcesPerServiceGame, SERVICE_GAME, RATIO3, "Aces per Svc. Game");
@@ -172,6 +179,48 @@ public final class StatsCategory {
 		addCategory(TIME_CATEGORY, "gameTime", "minutes::REAL / nullif(games_w_stats, 0)", PlayerStats::getGameTime, GAME_W_STATS, RATIO3, "Game Time (minutes)");
 		addCategory(TIME_CATEGORY, "setTime", "minutes::REAL / nullif(sets_w_stats, 0)", PlayerStats::getSetTime, SET_W_STATS, RATIO2, "Set Time (minutes)");
 		addCategory(TIME_CATEGORY, "matchTime", "minutes::REAL / nullif(matches_w_stats, 0)", PlayerStats::getMatchTime, MATCH_W_STATS, TIME, "Match Time");
+
+		// Overview
+		addGroup("overview", "Overview",
+			new CategorySubGroup("Serve", "acePct", "doubleFaultPct", "firstServePct", "firstServeWonPct", "secondServeWonPct", "breakPointsSavedPct", "servicePointsWonPct", "serviceGamesWonPct"),
+			new CategorySubGroup("Return", "aceAgainstPct", "doubleFaultAgainstPct", "firstServeReturnWonPct", "secondServeReturnWonPct", "breakPointsPct", "returnPointsWonPct", "returnGamesWonPct"),
+			new CategorySubGroup("Total", "pointsDominanceRatio", "breakPointsRatio", "totalPointsWonPct", "totalGamesWonPct", "setsWonPct", "matchesWonPct", "opponentRank", "matchTime")
+		);
+		// Aces & DFs
+		addGroup("acesAndDFs", ACES_AND_DFS,
+			new CategorySubGroup("Aces", "aces", "acePct", "acesPerSvcGame", "acesPerSet", "acesPerMatch"),
+			new CategorySubGroup("Double Faults", "doubleFault", "doubleFaultPct", "doubleFaultPerSecondServePct", "dfsPerSvcGame", "dfsPerSet", "dfsPerMatch"),
+			new CategorySubGroup("Other", "acesDfsRatio", "aceAgainst", "aceAgainstPct", "doubleFaultAgainst", "doubleFaultAgainstPct")
+		);
+		// Serve
+		addGroup("serve", SERVE,
+			new CategorySubGroup("Serve", "firstServePct", "firstServeWonPct", "secondServeWonPct", "breakPointsSavedPct", "bpsPerSvcGame", "bpsFacedPerSet", "bpsFacedPerMatch"),
+			new CategorySubGroup("Points", "servicePointsWonPct", "serviceIPPointsWonPct", "pointsPerSvcGame", "pointsLostPerSvcGame"),
+			new CategorySubGroup("Games", "serviceGamesWonPct", "svcGamesLostPerSet", "svcGamesLostPerMarch")
+		);
+		// Return
+		addGroup("return", RETURN,
+			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct", "breakPointsPct", "bpsPerRtnGame", "bpsPerSet", "bpsPerMatch"),
+			new CategorySubGroup("Points", "returnPointsWonPct", "returnIPPointsWonPct", "pointsPerRtnGame", "pointsWonPerRtnGame"),
+			new CategorySubGroup("Games", "returnGamesWonPct", "rtnGamesWonPerSet", "rtnGamesWonPerMarch")
+		);
+		// Total
+		addGroup("total", TOTAL,
+			new CategorySubGroup("Points", "totalPoints", "totalPointsWon", "totalPointsWonPct", "totalGames", "totalGamesWon", "totalGamesWonPct"),
+			new CategorySubGroup("Tie Breaks", "tieBreaks", "tieBreakWon", "tieBreakWonPct", "tieBreaksPerSet", "tieBreaksPerMatch"),
+			new CategorySubGroup("Sets & Matches", "sets", "setsWon", "setsWonPct", "matches", "matchesWon", "matchesWonPct")
+		);
+		// Performance
+		addGroup("performance", PERFORMANCE,
+			new CategorySubGroup("Dominance", "pointsDominanceRatio", "gamesDominanceRatio", "breakPointsRatio"),
+			new CategorySubGroup("Over-Performing", "overPerformingRatio", "ptsToSetsOverPerfRatio", "ptsToGamesOverPerfRatio", "svcPtsToSvcGamesOverPerfRatio", "rtnPtsToRtnGamesOverPerfRatio", "ptsToTBsOverPerfRatio"),
+			new CategorySubGroup("Over-Performing Ex", "gmsToMatchesOverPerfRatio", "gmsToSetsOverPerfRatio", "setsToMatchesOverPerfRatio", "bpsOverPerfRatio", "bpsSavedOverPerfRatio", "bpsConvOverPerfRatio")
+		);
+		// Opponent & Time
+		addGroup("opponentAndTime", "Opponent & Time",
+			new CategorySubGroup("Opponent", "opponentRank", "opponentEloRating"),
+			new CategorySubGroup("Time", "pointTime", "gameTime", "setTime", "matchTime")
+		);
 	}
 
 	private static void addCategory(String categoryClass, String name, String expression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, String title) {
@@ -253,6 +302,33 @@ public final class StatsCategory {
 		return statFunction.apply(stats);
 	}
 
+	public String getStatFormatted(PlayerStats stats, StatsFormatUtil util) {
+		Number value = statFunction.apply(stats);
+		switch (type) {
+			case COUNT: return String.valueOf(value.intValue());
+			case PERCENTAGE: return util.formatPct(value.doubleValue());
+			case RATIO1: return util.formatRatio1(value.doubleValue());
+			case RATIO2: return util.formatRatio2(value.doubleValue());
+			case RATIO3: return util.formatRatio3(value.doubleValue());
+			case TIME: return util.formatTime(value.doubleValue());
+			default: throw unknownEnum(type);
+		}
+	}
+
+	public String getStatDiffFormatted(PlayerStats compareStats, PlayerStats stats, StatsFormatUtil util) {
+		Number compareValue = statFunction.apply(compareStats);
+		Number value = statFunction.apply(stats);
+		switch (type) {
+			case COUNT: return String.valueOf(value.intValue() - compareValue.intValue());
+			case PERCENTAGE: return util.formatPctDiff(compareValue.doubleValue(), value.doubleValue());
+			case RATIO1: return util.formatRatio1Diff(compareValue.doubleValue(),value.doubleValue());
+			case RATIO2: return util.formatRatio2Diff(compareValue.doubleValue(),value.doubleValue());
+			case RATIO3: return util.formatRatio3Diff(compareValue.doubleValue(),value.doubleValue());
+			case TIME: return util.formatTimeDiff(compareValue, value);
+			default: throw unknownEnum(type);
+		}
+	}
+
 	public Item getItem() {
 		return item;
 	}
@@ -274,5 +350,65 @@ public final class StatsCategory {
 
 	@Override public String toString() {
 		return name;
+	}
+
+
+	// Groups
+
+	public static List<CategoryGroup> getCategoryGroups() {
+		return CATEGORY_GROUPS;
+	}
+
+	private static void addGroup(String id, String name, CategorySubGroup... subGroups) {
+		CATEGORY_GROUPS.add(new CategoryGroup(id, name, subGroups));
+	}
+
+	private static class CategoryGroup {
+
+		private final String id;
+		private final String name;
+		private final List<CategorySubGroup> subGroups;
+
+		private CategoryGroup(String id, String name, CategorySubGroup... subGroups) {
+			this.id = id;
+			this.name = name;
+			this.subGroups = asList(subGroups);
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public List<CategorySubGroup> getSubGroups() {
+			return subGroups;
+		}
+	}
+
+	private static class CategorySubGroup {
+
+		private final String name;
+		private final List<StatsCategory> categories;
+
+		private CategorySubGroup(String name, String... categories) {
+			this.name = name;
+			this.categories = Stream.of(categories).map(category -> {
+				StatsCategory statsCategory = CATEGORIES.get(category);
+				if (statsCategory == null)
+					throw new IllegalArgumentException("Unknown statistics category: " + category);
+				return statsCategory;
+			}).collect(toList());
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public List<StatsCategory> getCategories() {
+			return categories;
+		}
 	}
 }

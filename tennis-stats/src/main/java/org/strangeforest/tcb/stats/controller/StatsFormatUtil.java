@@ -7,13 +7,19 @@ import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.base.*;
 
+import static java.lang.String.format;
+
 public class StatsFormatUtil {
 
 	private static final NumberFormat PCT_FORMAT = new DecimalFormat("0.0'%'");
 	private static final NumberFormat PCT_DIFF_FORMAT = new DecimalFormat("+0.0'%';-0.0'%'");
 	private static final double DIFF_SCALE = 10.0;
-	private static final NumberFormat RATIO_FORMAT = new DecimalFormat("0.00");
-	private static final NumberFormat RATIO_DIFF_FORMAT = new DecimalFormat("+0.00;-0.00");
+	private static final NumberFormat RATIO1_FORMAT = new DecimalFormat("0");
+	private static final NumberFormat RATIO1_DIFF_FORMAT = new DecimalFormat("+0;-0");
+	private static final NumberFormat RATIO2_FORMAT = new DecimalFormat("0.0");
+	private static final NumberFormat RATIO2_DIFF_FORMAT = new DecimalFormat("+0.0;-0.0");
+	private static final NumberFormat RATIO3_FORMAT = new DecimalFormat("0.00");
+	private static final NumberFormat RATIO3_DIFF_FORMAT = new DecimalFormat("+0.00;-0.00");
 	private static final double RATIO_SCALE = 100.0;
 
 	public String formatPct(Double pct) {
@@ -24,12 +30,46 @@ public class StatsFormatUtil {
 		return fromPct != null && toPct != null ? PCT_DIFF_FORMAT.format(diff(fromPct, toPct, DIFF_SCALE)) : "";
 	}
 
-	public String formatRatio(Double ratio) {
-		return ratio != null ? RATIO_FORMAT.format(ratio) : "";
+	public String formatRatio1(Double ratio) {
+		return ratio != null ? RATIO1_FORMAT.format(ratio) : "";
 	}
 
-	public String formatRatioDiff(Double fromRatio, Double toRatio) {
-		return fromRatio != null && toRatio != null ? RATIO_DIFF_FORMAT.format(diff(fromRatio, toRatio, RATIO_SCALE)) : "";
+	public String formatRatio1Diff(Double fromRatio, Double toRatio) {
+		return fromRatio != null && toRatio != null ? RATIO1_DIFF_FORMAT.format(diff(fromRatio, toRatio, RATIO_SCALE)) : "";
+	}
+
+	public String formatRatio2(Double ratio) {
+		return ratio != null ? RATIO2_FORMAT.format(ratio) : "";
+	}
+
+	public String formatRatio2Diff(Double fromRatio, Double toRatio) {
+		return fromRatio != null && toRatio != null ? RATIO2_DIFF_FORMAT.format(diff(fromRatio, toRatio, RATIO_SCALE)) : "";
+	}
+
+	public String formatRatio3(Double ratio) {
+		return ratio != null ? RATIO3_FORMAT.format(ratio) : "";
+	}
+
+	public String formatRatio3Diff(Double fromRatio, Double toRatio) {
+		return fromRatio != null && toRatio != null ? RATIO3_DIFF_FORMAT.format(diff(fromRatio, toRatio, RATIO_SCALE)) : "";
+	}
+
+	public static String formatTime(int minutes) {
+		return format("%d:%02d", minutes / 60, minutes % 60);
+	}
+
+	public static String formatTime(Number time) {
+		if (time == null)
+			return "";
+		int minutes = time.intValue();
+		return formatTime(minutes);
+	}
+
+	public static String formatTimeDiff(Number fromTime, Number toTime) {
+		if (fromTime == null || toTime == null)
+			return "";
+		int minutes = toTime.intValue() - fromTime.intValue();
+		return formatTime(minutes);
 	}
 
 	private static double diff(double from, double to, double scale) {

@@ -533,40 +533,40 @@
 		<!-- Total Pct. Data -->
 		<th:block th:if="${hasPointsStats}">
 			<tr th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.pointsDominanceRatio, stats2.pointsDominanceRatio) : 0}">
-				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio(compareStats1.pointsDominanceRatio) : _}" class="pct-data text-right">1.07</th>
-				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatioDiff(compareStats1.pointsDominanceRatio, stats1.pointsDominanceRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.pointsDominanceRatio, stats1.pointsDominanceRatio)}">0</th>
-				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio(stats1.pointsDominanceRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.07</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio3(compareStats1.pointsDominanceRatio) : _}" class="pct-data text-right">1.07</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio3Diff(compareStats1.pointsDominanceRatio, stats1.pointsDominanceRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.pointsDominanceRatio, stats1.pointsDominanceRatio)}">0</th>
+				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio3(stats1.pointsDominanceRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.07</th>
 				<td class="text-center" th:title="#{stats.pointsDominanceRatio.title}">Points Dominance</td>
-				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio(stats2.pointsDominanceRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.07</th>
-				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatioDiff(compareStats2.pointsDominanceRatio, stats2.pointsDominanceRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.pointsDominanceRatio, stats2.pointsDominanceRatio)}">0</th>
-				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio(compareStats2.pointsDominanceRatio) : _}" class="pct-data text-left">1.07</th>
+				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio3(stats2.pointsDominanceRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.07</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio3Diff(compareStats2.pointsDominanceRatio, stats2.pointsDominanceRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.pointsDominanceRatio, stats2.pointsDominanceRatio)}">0</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio3(compareStats2.pointsDominanceRatio) : _}" class="pct-data text-left">1.07</th>
 			</tr>
 			<tr th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.gamesDominanceRatio, stats2.gamesDominanceRatio) : 0}">
-				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio(compareStats1.gamesDominanceRatio) : _}" class="pct-data text-right">1.07</th>
-				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatioDiff(compareStats1.gamesDominanceRatio, stats1.gamesDominanceRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.gamesDominanceRatio, stats1.gamesDominanceRatio)}">0</th>
-				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio(stats1.gamesDominanceRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.07</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio3(compareStats1.gamesDominanceRatio) : _}" class="pct-data text-right">1.07</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio3Diff(compareStats1.gamesDominanceRatio, stats1.gamesDominanceRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.gamesDominanceRatio, stats1.gamesDominanceRatio)}">0</th>
+				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio3(stats1.gamesDominanceRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.07</th>
 				<td class="text-center" th:title="#{stats.gamesDominanceRatio.title}">Games Dominance</td>
-				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio(stats2.gamesDominanceRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.07</th>
-				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatioDiff(compareStats2.gamesDominanceRatio, stats2.gamesDominanceRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.gamesDominanceRatio, stats2.gamesDominanceRatio)}">0</th>
-				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio(compareStats2.gamesDominanceRatio) : _}" class="pct-data text-left">1.07</th>
+				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio3(stats2.gamesDominanceRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.07</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio3Diff(compareStats2.gamesDominanceRatio, stats2.gamesDominanceRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.gamesDominanceRatio, stats2.gamesDominanceRatio)}">0</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio3(compareStats2.gamesDominanceRatio) : _}" class="pct-data text-left">1.07</th>
 			</tr>
 			<tr th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.breakPointsRatio, stats2.breakPointsRatio) : 0}">
-				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio(compareStats1.breakPointsRatio) : _}" class="pct-data text-right">1.03</th>
-				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatioDiff(compareStats1.breakPointsRatio, stats1.breakPointsRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.breakPointsRatio, stats1.breakPointsRatio)}">0</th>
-				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio(stats1.breakPointsRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.03</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio3(compareStats1.breakPointsRatio) : _}" class="pct-data text-right">1.03</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio3Diff(compareStats1.breakPointsRatio, stats1.breakPointsRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.breakPointsRatio, stats1.breakPointsRatio)}">0</th>
+				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio3(stats1.breakPointsRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.03</th>
 				<td class="text-center" th:title="#{stats.breakPointsRatio.title}">Brk. Pts. Ratio</td>
-				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio(stats2.breakPointsRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.03</th>
-				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatioDiff(compareStats2.breakPointsRatio, stats2.breakPointsRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.breakPointsRatio, stats2.breakPointsRatio)}">0</th>
-				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio(compareStats2.breakPointsRatio) : _}" class="pct-data text-left">1.03</th>
+				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio3(stats2.breakPointsRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.03</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio3Diff(compareStats2.breakPointsRatio, stats2.breakPointsRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.breakPointsRatio, stats2.breakPointsRatio)}">0</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio3(compareStats2.breakPointsRatio) : _}" class="pct-data text-left">1.03</th>
 			</tr>
 			<tr th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.overPerformingRatio, stats2.overPerformingRatio) : 0}">
-				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio(compareStats1.overPerformingRatio) : _}" class="pct-data text-right">1.01</th>
-				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatioDiff(compareStats1.overPerformingRatio, stats1.overPerformingRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.overPerformingRatio, stats1.overPerformingRatio)}">0</th>
-				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio(stats1.overPerformingRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.01</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio3(compareStats1.overPerformingRatio) : _}" class="pct-data text-right">1.01</th>
+				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatRatio3Diff(compareStats1.overPerformingRatio, stats1.overPerformingRatio) : _}" class="pct-data text-right " th:attrappend="class=${statsFormatUtil.pnClass(compareStats1.overPerformingRatio, stats1.overPerformingRatio)}">0</th>
+				<th th:text="${hasPointsStats1 ? statsFormatUtil.formatRatio3(stats1.overPerformingRatio) : _}" class="text-right stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}">1.01</th>
 				<td class="text-center" th:title="#{stats.overPerformingRatio.title}">Over-Performing</td>
-				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio(stats2.overPerformingRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.01</th>
-				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatioDiff(compareStats2.overPerformingRatio, stats2.overPerformingRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.overPerformingRatio, stats2.overPerformingRatio)}">0</th>
-				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio(compareStats2.overPerformingRatio) : _}" class="pct-data text-left">1.01</th>
+				<th th:text="${hasPointsStats2 ? statsFormatUtil.formatRatio3(stats2.overPerformingRatio) : _}" class="text-left stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}">1.01</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio3Diff(compareStats2.overPerformingRatio, stats2.overPerformingRatio) : _}" class="pct-data text-left " th:attrappend="class=${statsFormatUtil.pnClass(compareStats2.overPerformingRatio, stats2.overPerformingRatio)}">0</th>
+				<th th:if="${compareStats2}" th:text="${hasPointCompareStats2 ? statsFormatUtil.formatRatio3(compareStats2.overPerformingRatio) : _}" class="pct-data text-left">1.01</th>
 			</tr>
 			<tr class="pct-data" th:with="sc=${hasBothPointsStats ? statsFormatUtil.compare(stats1.totalPointsWonPct, stats2.totalPointsWonPct) : 0}">
 				<th th:if="${compareStats1}" th:text="${hasPointCompareStats1 ? statsFormatUtil.formatPct(compareStats1.totalPointsWonPct) : _}" class="text-right">56%</th>

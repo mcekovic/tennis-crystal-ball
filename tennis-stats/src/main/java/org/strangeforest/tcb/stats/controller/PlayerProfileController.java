@@ -423,6 +423,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("countryId", countryId);
 		modelMap.addAttribute("advFilter", advFilter);
 		modelMap.addAttribute("rawData", rawData);
+		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("stats", stats);
 		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
 		modelMap.addAttribute("compare", compare);
