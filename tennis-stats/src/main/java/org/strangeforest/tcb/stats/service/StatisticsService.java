@@ -119,8 +119,8 @@ public class StatisticsService {
 	private MatchStats mapMatchStats(ResultSet rs) throws SQLException {
 		String winner = rs.getString("winner");
 		String loser = rs.getString("loser");
-		PlayerStats winnerStats = mapPlayerStats(rs, "w_");
-		PlayerStats loserStats = mapPlayerStats(rs, "l_");
+		PlayerStats winnerStats = mapPlayerMatchStats(rs, "w_");
+		PlayerStats loserStats = mapPlayerMatchStats(rs, "l_");
 		int minutes = rs.getInt("minutes");
 		return new MatchStats(winner, loser, winnerStats, loserStats, minutes);
 	}
@@ -132,7 +132,7 @@ public class StatisticsService {
 		return jdbcTemplate.query(
 			PLAYER_STATS_QUERY,
 			params("playerId", playerId),
-			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY
+			rs -> rs.next() ? mapPlayerStats(rs, false) : PlayerStats.EMPTY
 		);
 	}
 
@@ -140,7 +140,7 @@ public class StatisticsService {
 		return jdbcTemplate.query(
 			PLAYER_SEASON_STATS_QUERY,
 			params("playerId", playerId).addValue("season", season),
-			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY
+			rs -> rs.next() ? mapPlayerStats(rs, false) : PlayerStats.EMPTY
 		);
 	}
 
@@ -148,7 +148,7 @@ public class StatisticsService {
 		return jdbcTemplate.query(
 			PLAYER_SURFACE_STATS_QUERY,
 			params("playerId", playerId).addValue("surface", surface),
-			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY
+			rs -> rs.next() ? mapPlayerStats(rs, false) : PlayerStats.EMPTY
 		);
 	}
 
@@ -156,7 +156,7 @@ public class StatisticsService {
 		return jdbcTemplate.query(
 			PLAYER_SEASON_SURFACE_STATS_QUERY,
 			params("playerId", playerId).addValue("season", season).addValue("surface", surface),
-			rs -> rs.next() ? mapPlayerStats(rs) : PlayerStats.EMPTY
+			rs -> rs.next() ? mapPlayerStats(rs, false) : PlayerStats.EMPTY
 		);
 	}
 
@@ -173,7 +173,7 @@ public class StatisticsService {
 			return jdbcTemplate.queryForObject(
 				format(PLAYER_FILTERED_STATS_QUERY, join(filter), filter.getCriteria()),
 				filter.getParams().addValue("playerId", playerId),
-				(rs, rowNum) -> mapPlayerStats(rs)
+				(rs, rowNum) -> mapPlayerStats(rs, true)
 			);
 		}
 	}
@@ -186,7 +186,7 @@ public class StatisticsService {
 				filter.getParams().addValue("playerIds", playerIds),
 				rs -> {
 					int playerId = rs.getInt("player_id");
-					playersStats.put(playerId, mapPlayerStats(rs));
+					playersStats.put(playerId, mapPlayerStats(rs, true));
 				}
 			);
 		}
@@ -213,21 +213,21 @@ public class StatisticsService {
 			PLAYER_SEASONS_STATS_QUERY, params("playerId", playerId),
 			rs -> {
 				int season = rs.getInt("season");
-				PlayerStats stats = mapPlayerStats(rs);
+				PlayerStats stats = mapPlayerStats(rs, false);
 				seasonsStats.put(season, stats);
 			}
 		);
 		return seasonsStats;
 	}
 
-	private PlayerStats mapPlayerStats(ResultSet rs) throws SQLException {
-		PlayerStats playerStats = mapSummedPlayerStats(rs, "p_");
-		PlayerStats opponentStats = mapSummedPlayerStats(rs, "o_");
+	private PlayerStats mapPlayerStats(ResultSet rs, boolean summed) throws SQLException {
+		PlayerStats playerStats = mapPlayerStats(rs, "p_", summed);
+		PlayerStats opponentStats = mapPlayerStats(rs, "o_", summed);
 		playerStats.crossLinkOpponentStats(opponentStats);
 		return playerStats;
 	}
 
-	private PlayerStats mapPlayerStats(ResultSet rs, String prefix) throws SQLException {
+	private PlayerStats mapPlayerMatchStats(ResultSet rs, String prefix) throws SQLException {
 		return new PlayerStats(
 			rs.getInt(prefix + "matches"),
 			rs.getInt(prefix + "sets"),
@@ -246,7 +246,7 @@ public class StatisticsService {
 		);
 	}
 
-	private PlayerStats mapSummedPlayerStats(ResultSet rs, String prefix) throws SQLException {
+	private PlayerStats mapPlayerStats(ResultSet rs, String prefix, boolean summed) throws SQLException {
 		return new PlayerStats(
 			rs.getInt(prefix + "matches"),
 			rs.getInt(prefix + "sets"),
@@ -266,7 +266,8 @@ public class StatisticsService {
 			rs.getInt("sets_w_stats"),
 			rs.getInt("games_w_stats"),
 			rs.getDouble("opponent_rank"),
-			rs.getDouble("opponent_elo_rating")
+			rs.getDouble("opponent_elo_rating"),
+			summed
 		);
 	}
 }

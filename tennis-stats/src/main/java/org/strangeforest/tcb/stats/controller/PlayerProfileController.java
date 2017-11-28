@@ -384,6 +384,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "advFilter", defaultValue = F) boolean advFilter,
+		@RequestParam(name = "tab", defaultValue = "statisticsOverview") String tab,
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData,
 		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
@@ -422,10 +423,11 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("opponent", opponent);
 		modelMap.addAttribute("countryId", countryId);
 		modelMap.addAttribute("advFilter", advFilter);
+		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("stats", stats);
-		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
+		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		modelMap.addAttribute("compare", compare);
 		if (compare) {
 			MatchFilter compareFilter = MatchFilter.forStats(compareSeason, compareLevel, compareSurface);

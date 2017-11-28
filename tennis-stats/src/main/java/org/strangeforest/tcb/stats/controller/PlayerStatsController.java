@@ -56,8 +56,9 @@ public class PlayerStatsController extends BaseController {
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("stats", stats);
-		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
+		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("eventsStats", modelMap);
 	}
@@ -99,8 +100,9 @@ public class PlayerStatsController extends BaseController {
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("stats", stats);
-		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
+		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("matchesStats", modelMap);
 	}
@@ -119,8 +121,9 @@ public class PlayerStatsController extends BaseController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
+		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("stats", stats);
-		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
+		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("eventStats", modelMap);
 	}
@@ -151,8 +154,9 @@ public class PlayerStatsController extends BaseController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("opponentId", opponentId);
+		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("stats", stats);
-		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
+		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("rivalryStats", modelMap);
 	}
@@ -172,7 +176,7 @@ public class PlayerStatsController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("matchId", matchId);
 		modelMap.addAttribute("matchStats", matchStats);
-		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
+		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareMatchStats(modelMap, matchId, compare, compareSeason, compareLevel, compareSurface, compareRound, compareOpponent);
 		return new ModelAndView("matchStats", modelMap);
 	}

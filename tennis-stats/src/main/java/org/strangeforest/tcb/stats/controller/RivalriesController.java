@@ -369,9 +369,10 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("countryId", countryId);
 		modelMap.addAttribute("advFilter", advFilter);
 		modelMap.addAttribute("rawData", rawData);
+		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("stats1", stats1);
 		modelMap.addAttribute("stats2", stats2);
-		modelMap.addAttribute("statsFormatUtil", new StatsFormatUtil());
+		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		modelMap.addAttribute("compare", compare);
 		if (compare) {
 			MatchFilter compareFilter1 = MatchFilter.forStats(compareSeason, compareLevel, compareSurface, h2h ? OpponentFilter.forStats(playerId2) : null);

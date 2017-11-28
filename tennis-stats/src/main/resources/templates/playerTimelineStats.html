@@ -132,8 +132,8 @@
 </tr>
 <tr class="raw-data">
 	<td class="stats-header stats-return" title="First service return points won">1st Srv. Rtn. Won</td>
-	<td th:text="${careerStats.firstServeReturnPointsWon + '/' + careerStats.firstServeReturnPoints}" class="stats">333/444</td>
-	<td th:each="season : ${seasons}" th:with="stats=${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.firstServeReturnPointsWon + '/' + stats.firstServeReturnPoints : ''}" class="stats">333/444</td>
+	<td th:text="${careerStats.firstServeReturnPointsWon + '/' + careerStats.firstServeReturnPointsIn}" class="stats">333/444</td>
+	<td th:each="season : ${seasons}" th:with="stats=${seasonsStats.get(season)}" th:text="${stats.hasPointStats() ? stats.firstServeReturnPointsWon + '/' + stats.firstServeReturnPointsIn : ''}" class="stats">333/444</td>
 </tr>
 <tr class="pct-data">
 	<td class="stats-header stats-return" title="Second service return points won %">2nd Srv. Rtn. Won %</td>

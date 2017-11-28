@@ -421,6 +421,7 @@ function toggleStatsData(selector) {
 
 function compareStats(containerId, statsId, close) {
 	var url = $("#" + statsId).data("statsURL");
+	url += "&tab=" + $("#" + statsId + "Tabs").find("li.active a").attr("href").substr(1);
 	if (!close) {
 		url += "&compare=true";
 		var compareSelector = "#" + statsId + "Compare";

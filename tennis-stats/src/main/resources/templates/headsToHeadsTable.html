@@ -136,7 +136,7 @@
 			<td class="pct-data stats stats-return" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.doubleFaultAgainstPct, 1, 1) + '%' : ''}">4.5%</td>
 			<td class="raw-data stats stats-return" th:text="${stats.hasPointStats() ? stats.doubleFaultsAgainst : ''}">333</td>
 			<td class="pct-data stats stats-return" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.firstServeReturnPointsWonPct, 1, 1) + '%' : ''}">84.5%</td>
-			<td class="raw-data stats stats-return" th:text="${stats.hasPointStats() ? stats.firstServeReturnPointsWon + '/' + stats.firstServeReturnPoints : ''}">333/444</td>
+			<td class="raw-data stats stats-return" th:text="${stats.hasPointStats() ? stats.firstServeReturnPointsWon + '/' + stats.firstServeReturnPointsIn : ''}">333/444</td>
 			<td class="pct-data stats stats-return" th:text="${stats.hasPointStats() ? #numbers.formatDecimal(stats.secondServeReturnPointsWonPct, 1, 1) + '%' : ''}">84.5%</td>
 			<td class="raw-data stats stats-return" th:text="${stats.hasPointStats() ? stats.secondServeReturnPointsWon + '/' + stats.secondServeReturnPoints : ''}">333/444</td>
 			<td class="pct-data stats stats-return" th:text="${stats.hasPointStats() and stats.breakPointsWonPct != null ? #numbers.formatDecimal(stats.breakPointsWonPct, 1, 1) + '%' : ''}">84.5%</td>
