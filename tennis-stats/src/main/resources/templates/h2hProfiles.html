@@ -254,7 +254,7 @@
 				<th:block th:if="${lastEvent1}">
 				<span style="vertical-align: middle" th:text="${#dates.format(lastEvent.date, 'dd-MM-yyyy')}">15-07-2015</span>
 				<a th:href="@{/tournamentEvent(tournamentEventId=${lastEvent.tournamentEventId})}" class="label label-" th:attrappend="class=${lastEvent.level}" th:text="${lastEvent.name}" th:title="${levels[lastEvent.level]}">Wimbledon</a>
-				<span th:if="${lastEvent.surface}" id="lastEventSurface1" class="label" th:data-surface="${lastEvent.surface}">[(${surfaces[lastEvent.surface]})]<span th:if="${lastEvent.indoor && lastEvent.surface == 'H'}" title="Indoor"> (i)</span></span>
+				<span th:if="${lastEvent.surface}" id="lastEventSurface1" class="label" th:data-surface="${lastEvent.surface}">[(${surfaces[lastEvent.surface]})]<span th:if="${lastEvent.indoor && lastEvent.surface != 'P'}" title="Indoor"> (i)</span></span>
 				<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${lastEvent.tournamentEventId})}" class="label black bg-result-" th:attrappend="class=${lastEvent.result}" th:text="${lastEvent.result}" title="Show tournament matches">W</a>
 				</th:block>
 			</td>
@@ -263,7 +263,7 @@
 				<th:block th:if="${lastEvent2}">
 				<span style="vertical-align: middle" th:text="${#dates.format(lastEvent.date, 'dd-MM-yyyy')}">15-07-2015</span>
 				<a th:href="@{/tournamentEvent(tournamentEventId=${lastEvent.tournamentEventId})}" class="label label-" th:attrappend="class=${lastEvent.level}" th:text="${lastEvent.name}" th:title="${levels[lastEvent.level]}">Wimbledon</a>
-				<span th:if="${lastEvent.surface}" id="lastEventSurface1" class="label" th:data-surface="${lastEvent.surface}">[(${surfaces[lastEvent.surface]})]<span th:if="${lastEvent.indoor && lastEvent.surface == 'H'}" title="Indoor"> (i)</span></span>
+				<span th:if="${lastEvent.surface}" id="lastEventSurface1" class="label" th:data-surface="${lastEvent.surface}">[(${surfaces[lastEvent.surface]})]<span th:if="${lastEvent.indoor && lastEvent.surface != 'P'}" title="Indoor"> (i)</span></span>
 				<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${lastEvent.tournamentEventId})}" class="label black bg-result-" th:attrappend="class=${lastEvent.result}" th:text="${lastEvent.result}" title="Show tournament matches">W</a>
 				</th:block>
 			</td>

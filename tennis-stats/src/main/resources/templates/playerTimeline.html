@@ -10,7 +10,7 @@
 			var $surface = $(this);
 			var surface = $surface.text();
 			var indoor = $surface.data("indoor");
-			$surface.html(surfaceName(surface) + (surface === 'H' && indoor ? " <span title='Indoor'>(i)</span>" : ""));
+			$surface.html(surfaceName(surface) + (surface !== 'P' && indoor ? " <span title='Indoor'>(i)</span>" : ""));
 			$surface.addClass("label-" + surfaceClassSuffix(surface));
 		});
 		$tournamentsBody.find("a.tournament").each(function() {
@@ -30,7 +30,7 @@
 			if (surface) {
 				if (level)
 					title += " ";
-				title += "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + (surface === 'H' && indoor ? " (i)" : "") +"</span>";
+				title += "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + (surface !== 'P' && indoor ? " (i)" : "") +"</span>";
 			}
 			$result.tooltip({title: title, html: true});
 		});

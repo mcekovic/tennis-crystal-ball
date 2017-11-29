@@ -60,7 +60,6 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
-		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("eventsStats", modelMap);
 	}
@@ -106,7 +105,6 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
-		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("matchesStats", modelMap);
 	}
@@ -129,7 +127,6 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
-		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("eventStats", modelMap);
 	}
@@ -164,7 +161,6 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
-		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("rivalryStats", modelMap);
 	}

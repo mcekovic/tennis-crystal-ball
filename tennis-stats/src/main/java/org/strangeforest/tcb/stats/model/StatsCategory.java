@@ -179,7 +179,7 @@ public final class StatsCategory {
 		addCategory(PERFORMANCE, "bpsSavedOverPerfRatio", "(" + BREAK_POINTS_SAVED_PCT + ") / nullif(" + SERVICE_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsSavedOverPerformingRatio, POINT, RATIO3, false, "BPs Saved Over-Perf.", "stats.breakPointsSavedOverPerformingRatio.title");
 		addCategory(PERFORMANCE, "bpsConvOverPerfRatio", "(" + BREAK_POINTS_PCT + ") / nullif(" + RETURN_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsConvertedOverPerformingRatio, POINT, RATIO3, false, "BPs Conv. Over-Perf.", "stats.breakPointsConvertedOverPerformingRatio.title");
 		// Opponent
-		addCategory(OPPONENT_CATEGORY, "opponentRank", "exp(opponent_rank / nullif(" + TOTAL_MATCHES + ", 0))", "exp(sum(ln(coalesce(opponent_rank, 1500))) / nullif(sum(p_matches) + sum(o_matches), 0))", PlayerStats::getOpponentRank, MATCH, RATIO1, true, "Opponent Rank");
+		addCategory(OPPONENT_CATEGORY, "opponentRank", "exp(opponent_rank / nullif(" + TOTAL_MATCHES + ", 0))", "exp(sum(ln(coalesce(opponent_rank, 1500))) / nullif(sum(p_matches) + sum(o_matches), 0))", PlayerStats::getOpponentRank, MATCH, RATIO1, true, "Opponent Rank", "stats.opponentRank.title");
 		addCategory(OPPONENT_CATEGORY, "opponentEloRating", "opponent_elo_rating::REAL / nullif(" + TOTAL_MATCHES + ", 0)", PlayerStats::getOpponentEloRating, MATCH, RATIO1, false, "Opponent Elo Rating");
 		// Time
 		addCategory(TIME_CATEGORY, "pointTime", "60 * minutes::REAL / nullif(" + TOTAL_POINTS + ", 0)", PlayerStats::getPointTime, POINT, RATIO2, true, "Point Time (seconds)");
@@ -246,8 +246,8 @@ public final class StatsCategory {
 		addCategory(categoryClass, name, expression, null, statFunction, upFunction, downFunction, item, type, inverted, title, descriptionId);
 	}
 
-	private static void addCategory(String categoryClass, String name, String expression, String summedExpression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, boolean inverted, String title) {
-		addCategory(categoryClass, name, expression, summedExpression, statFunction, null, null, item, type, inverted, title, null);
+	private static void addCategory(String categoryClass, String name, String expression, String summedExpression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
+		addCategory(categoryClass, name, expression, summedExpression, statFunction, null, null, item, type, inverted, title, descriptionId);
 	}
 
 	private static void addCategory(String categoryClass, String name, String expression, String summedExpression, Function<PlayerStats, ? extends Number> statFunction, Function<PlayerStats, ? extends Number> upFunction, Function<PlayerStats, ? extends Number> downFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
@@ -352,6 +352,17 @@ public final class StatsCategory {
 
 	public String getStatDiffClass(PlayerStats compareStats, PlayerStats stats) {
 		return diffClass(statFunction.apply(compareStats), statFunction.apply(stats), inverted);
+	}
+
+	public int statCompare(PlayerStats stats1, PlayerStats stats2) {
+		Number n1 = getStat(stats1);
+		Number n2 = getStat(stats2);
+		if (n1 != null && n2 != null) {
+			int result = Double.compare(n1.doubleValue(), n2.doubleValue());
+			return inverted ? -result : result;
+		}
+		else
+			return 0;
 	}
 
 	public boolean hasRawData() {

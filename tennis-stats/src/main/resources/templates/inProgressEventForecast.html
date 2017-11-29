@@ -77,7 +77,7 @@
 				</tr>
 				<tr>
 					<th>Surface</th>
-					<td><span id="eventSurface" th:if="${inProgressEvent.surface}" class="label" th:data-surface="${inProgressEvent.surface}">[(${surfaces[inProgressEvent.surface]})]<span th:if="${inProgressEvent.indoor && inProgressEvent.surface == 'H'}" title="Indoor"> (i)</span></span></td>
+					<td><span id="eventSurface" th:if="${inProgressEvent.surface}" class="label" th:data-surface="${inProgressEvent.surface}">[(${surfaces[inProgressEvent.surface]})]<span th:if="${inProgressEvent.indoor && inProgressEvent.surface != 'P'}" title="Indoor"> (i)</span></span></td>
 				</tr>
 				<tr>
 					<th>Date</th>

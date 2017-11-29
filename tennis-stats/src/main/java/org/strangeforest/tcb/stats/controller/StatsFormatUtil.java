@@ -80,18 +80,6 @@ public class StatsFormatUtil {
 		return Math.round(d * scale) / scale;
 	}
 
-	public static int compare(int i1, int i2) {
-		return Integer.compare(i1, i2);
-	}
-
-	public static int compare(double d1, double d2) {
-		return Double.compare(d1, d2);
-	}
-
-	public static int compare(Double d1, Double d2) {
-		return d1 != null && d2 != null ? Double.compare(d1, d2) : 0;
-	}
-
 	public static String diffClass(Number from, Number to, boolean inverted) {
 		if (from != null && to != null) {
 			double diff = to.doubleValue() - from.doubleValue();

@@ -423,11 +423,10 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("opponent", opponent);
 		modelMap.addAttribute("countryId", countryId);
 		modelMap.addAttribute("advFilter", advFilter);
-		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
-		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
+		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("compare", compare);
 		if (compare) {
 			MatchFilter compareFilter = MatchFilter.forStats(compareSeason, compareLevel, compareSurface);
