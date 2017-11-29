@@ -45,6 +45,7 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
 		@RequestParam(name = "statsTo", required = false) Double statsTo,
 		@RequestParam(name = "searchPhrase", required = false) String searchPhrase,
+		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
@@ -57,6 +58,7 @@ public class PlayerStatsController extends BaseController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
+		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
 		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
@@ -86,6 +88,7 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
 		@RequestParam(name = "searchPhrase", required = false) String searchPhrase,
+		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
@@ -101,6 +104,7 @@ public class PlayerStatsController extends BaseController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
+		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
 		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
@@ -111,6 +115,7 @@ public class PlayerStatsController extends BaseController {
 	public ModelAndView eventStats(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "tournamentEventId") int tournamentEventId,
+		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
@@ -122,6 +127,7 @@ public class PlayerStatsController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("tournamentEventId", tournamentEventId);
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
+		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
 		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
@@ -143,6 +149,7 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "outcome", required = false) String outcome,
+		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
@@ -155,6 +162,7 @@ public class PlayerStatsController extends BaseController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("opponentId", opponentId);
 		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
+		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
 		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);

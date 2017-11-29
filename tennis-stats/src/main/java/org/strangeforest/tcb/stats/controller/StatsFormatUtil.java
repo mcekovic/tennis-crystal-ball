@@ -23,11 +23,11 @@ public class StatsFormatUtil {
 	}
 
 	public static String formatPct(Number pct) {
-		return pct != null ? format("%.1f", pct.doubleValue()) : "";
+		return pct != null ? format("%.1f%%", pct.doubleValue()) : "";
 	}
 
 	public static String formatPctDiff(Number fromPct, Number toPct) {
-		return fromPct != null && toPct != null ? format("%+.1f", diff(fromPct.doubleValue(), toPct.doubleValue(), 10.0)) : "";
+		return fromPct != null && toPct != null ? format("%+.1f%%", diff(fromPct.doubleValue(), toPct.doubleValue(), 10.0)) : "";
 	}
 
 	public static String formatRatio1(Number ratio) {
