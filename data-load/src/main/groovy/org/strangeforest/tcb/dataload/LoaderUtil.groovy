@@ -20,6 +20,10 @@ abstract class LoaderUtil {
 				return closure.call(retry)
 			}
 			catch (Throwable th) {
+				if (isNonRecoverableKnownError(th)) {
+					println th.getMessage()
+					throw th
+				}
 				th.printStackTrace()
 				def rootCause = extractRootCause(th)
 				if (retry < count && predicate.curry(rootCause)) {
@@ -55,5 +59,9 @@ abstract class LoaderUtil {
 			col.each { (++i <= part1Size ? part1 : part2) << it }
 			[part1, part2]
 		}
+	}
+
+	static boolean isNonRecoverableKnownError(Throwable th) {
+		th instanceof IOException && th.message?.startsWith('Too many redirects')
 	}
 }
