@@ -35,7 +35,7 @@ class EloRatings {
 	Date saveFromDate
 
 	static final String QUERY_MATCHES = //language=SQL
-		"SELECT m.match_id, m.winner_id, m.loser_id, tournament_end(e.date, e.level, e.draw_size) AS end_date, e.level, m.surface, m.indoor, m.round, m.best_of, m.outcome\n" +
+		"SELECT m.match_id, m.winner_id, m.loser_id, tournament_end(CASE WHEN e.level = 'D' THEN m.date ELSE e.date END, e.level, e.draw_size) AS end_date, e.level, m.surface, m.indoor, m.round, m.best_of, m.outcome\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
