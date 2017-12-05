@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -119,7 +120,7 @@ public class GOATListService {
 				row.setWonLost(new WonLost(rs.getInt("matches_won"), rs.getInt("matches_lost")));
 				// Elo rating
 				row.setBestEloRating(rs.getInt("best_elo_rating"));
-				row.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
+				row.setBestEloRatingDate(rs.getObject("best_elo_rating_date", LocalDate.class));
 				table.addRow(row);
 			}
 		);

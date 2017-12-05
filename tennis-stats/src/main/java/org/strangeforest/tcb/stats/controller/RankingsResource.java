@@ -49,9 +49,9 @@ public class RankingsResource {
 		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date,
 		@RequestParam(name = "peak", required = false) boolean peak,
 		@RequestParam(name = "active", required = false) Boolean active,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
-		@RequestParam(name = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);

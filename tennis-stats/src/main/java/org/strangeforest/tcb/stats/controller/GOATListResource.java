@@ -42,8 +42,8 @@ public class GOATListResource {
 		@RequestParam(name = "active", required = false) Boolean active,
 		@RequestParam(name = "oldLegends", defaultValue = F) boolean oldLegends,
 		@RequestParam(name = "extrapolate", defaultValue = F) boolean extrapolate,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue = "") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {

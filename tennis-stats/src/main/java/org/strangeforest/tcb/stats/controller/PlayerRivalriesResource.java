@@ -42,9 +42,9 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
-		@RequestParam(name = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		RivalryFilter rivalryFilter = new RivalryFilter(season, level, null, surface, null, round);

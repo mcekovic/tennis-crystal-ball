@@ -58,8 +58,8 @@ public class SeasonsResource {
 
 	@GetMapping("/seasonsTable")
 	public BootgridTable<Season> seasonsTable(
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam Map<String, String> requestParams
 	) {
 		String orderBy = BootgridUtil.getOrderBy(requestParams, SEASONS_ORDER_MAP, SEASONS_DEFAULT_ORDER);
@@ -69,9 +69,9 @@ public class SeasonsResource {
 
 	@GetMapping("/bestSeasonsTable")
 	public BootgridTable<BestSeasonRow> bestSeasonsTable(
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
-		@RequestParam(name = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		PlayerListFilter filter = new PlayerListFilter(searchPhrase);

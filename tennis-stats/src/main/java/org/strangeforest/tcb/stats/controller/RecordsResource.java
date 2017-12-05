@@ -20,9 +20,9 @@ public class RecordsResource {
 	public BootgridTable<RecordRow> recordsTable(
 		@RequestParam(name = "category", required = false) String category,
 		@RequestParam(name = "infamous", required = false, defaultValue = F) boolean infamous,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
-		@RequestParam(name = "searchPhrase") String searchPhrase
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase
 	) {
 		int pageSize = rowCount > 0 ? rowCount : MAX_RECORDS;
 		RecordFilter filter = new RecordFilter(category, searchPhrase, infamous);
@@ -34,9 +34,9 @@ public class RecordsResource {
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "category", required = false) String category,
 		@RequestParam(name = "infamous", required = false, defaultValue = F) boolean infamous,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
-		@RequestParam(name = "searchPhrase") String searchPhrase
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase
 	) {
 		int pageSize = rowCount > 0 ? rowCount : MAX_RECORDS;
 		RecordFilter filter = new RecordFilter(category, searchPhrase, infamous);
@@ -47,8 +47,8 @@ public class RecordsResource {
 	public BootgridTable<RecordDetailRow> recordTable(
 		@RequestParam(name = "recordId") String recordId,
 		@RequestParam(name = "active") boolean active,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount
 	) {
 		int pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
 		return recordsService.getRecordTable(recordId, active, pageSize, current);

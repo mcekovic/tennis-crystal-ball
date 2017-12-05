@@ -41,9 +41,9 @@ public class TournamentsResource {
 	public BootgridTable<Tournament> tournamentsTable(
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
-		@RequestParam(name = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		TournamentEventFilter filter = new TournamentEventFilter(null, null, level, surface, null, null, null, searchPhrase);

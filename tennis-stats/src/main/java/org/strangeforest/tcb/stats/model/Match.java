@@ -1,11 +1,11 @@
 package org.strangeforest.tcb.stats.model;
 
-import java.util.*;
+import java.time.*;
 
 public class Match {
 
 	private final long id;
-	private final Date date;
+	private final LocalDate date;
 	private final int tournamentEventId;
 	private final String tournament;
 	private final String level;
@@ -20,7 +20,7 @@ public class Match {
 	private final boolean hasStats;
 	private Double bigWinPoints;
 
-	public Match(long id, Date date, int tournamentEventId, String tournament, String level, int bestOf, String surface, boolean indoor, String round,
+	public Match(long id, LocalDate date, int tournamentEventId, String tournament, String level, int bestOf, String surface, boolean indoor, String round,
 	             MatchPlayer winner, MatchPlayer loser, String score, String outcome, boolean hasStats) {
 		this.id = id;
 		this.date = date;
@@ -42,7 +42,7 @@ public class Match {
 		return id;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 

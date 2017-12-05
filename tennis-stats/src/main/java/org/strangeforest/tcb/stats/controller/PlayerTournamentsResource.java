@@ -51,9 +51,9 @@ public class PlayerTournamentsResource {
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
 		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
 		@RequestParam(name = "statsTo", required = false) Double statsTo,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
-		@RequestParam(name = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
@@ -76,7 +76,7 @@ public class PlayerTournamentsResource {
 		@RequestParam(name = "result", required = false) String result,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
-		@RequestParam(name = "searchPhrase") String searchPhrase
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, surface, indoor, result, tournamentId, StatsFilter.ALL, searchPhrase);

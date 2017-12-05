@@ -43,9 +43,9 @@ public class StatsLeadersResource {
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "minEntries", required = false) Integer minEntries,
 		@RequestParam(name = "active", required = false) Boolean active,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
-		@RequestParam(name = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);

@@ -58,9 +58,9 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "statsTo", required = false) Double statsTo,
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
-		@RequestParam(name = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
@@ -94,7 +94,7 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "statsCategory", required = false) String statsCategory,
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
-		@RequestParam(name = "searchPhrase") String searchPhrase
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));

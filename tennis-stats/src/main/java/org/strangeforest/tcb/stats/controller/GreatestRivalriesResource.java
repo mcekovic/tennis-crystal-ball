@@ -35,8 +35,8 @@ public class GreatestRivalriesResource {
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "bestRank", required = false) Integer bestRank,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam Map<String, String> requestParams
 	) {
 		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, bestOf, surface, indoor, round);

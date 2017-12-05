@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
-import java.util.*;
+import java.time.*;
 
 public class GOATListRow extends PlayerRow {
 
@@ -18,7 +18,7 @@ public class GOATListRow extends PlayerRow {
 	private int weeksAtNo1;
 	private WonLost wonLost;
 	private int bestEloRating;
-	private Date bestEloRatingDate;
+	private LocalDate bestEloRatingDate;
 
 	public GOATListRow(int goatRank, int playerId, String name, String countryId, Boolean active, int goatPoints, int tournamentGoatPoints, int rankingGoatPoints, int achievementsGoatPoints) {
 		super(goatRank, playerId, name, countryId, active);
@@ -254,11 +254,11 @@ public class GOATListRow extends PlayerRow {
 		this.bestEloRating = bestEloRating;
 	}
 
-	public Date getBestEloRatingDate() {
+	public LocalDate getBestEloRatingDate() {
 		return bestEloRatingDate;
 	}
 
-	public void setBestEloRatingDate(Date bestEloRatingDate) {
+	public void setBestEloRatingDate(LocalDate bestEloRatingDate) {
 		this.bestEloRatingDate = bestEloRatingDate;
 	}
 }

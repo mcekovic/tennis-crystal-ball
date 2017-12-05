@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -150,7 +151,7 @@ public class MatchesService {
 				if (matches.incrementAndGet() <= pageSize) {
 					Match match = new Match(
 						rs.getLong("match_id"),
-						rs.getDate("date"),
+						rs.getObject("date", LocalDate.class),
 						rs.getInt("tournament_event_id"),
 						rs.getString("tournament"),
 						rs.getString("level"),

@@ -39,9 +39,9 @@ public class TournamentEventsResource {
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
-		@RequestParam(name = "current") int current,
-		@RequestParam(name = "rowCount") int rowCount,
-		@RequestParam(name = "searchPhrase") String searchPhrase,
+		@RequestParam(name = "current", defaultValue = "1") int current,
+		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
+		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		TournamentEventFilter filter = new TournamentEventFilter(season, null, level, surface, indoor, tournamentId, null, searchPhrase);
