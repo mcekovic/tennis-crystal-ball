@@ -67,7 +67,7 @@ public class PlayerMatchesResource {
 		OpponentFilter opponentFilter = OpponentFilter.forMatches(opponent, matchesService.getSameCountryIds(countryId));
 		OutcomeFilter outcomeFilter = OutcomeFilter.forMatches(outcome);
 		ScoreFilter scoreFilter = ScoreFilter.forMatches(score);
-		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
+		StatsFilter statsFilter = StatsFilter.forMatches(statsCategory, statsFrom, statsTo);
 		MatchFilter filter = MatchFilter.forMatches(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;

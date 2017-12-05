@@ -179,8 +179,8 @@ public final class StatsCategory {
 		addCategory(PERFORMANCE, "bpsSavedOverPerfRatio", "(" + BREAK_POINTS_SAVED_PCT + ") / nullif(" + SERVICE_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsSavedOverPerformingRatio, POINT, RATIO3, false, "BPs Saved Over-Perf.", "stats.breakPointsSavedOverPerformingRatio.title");
 		addCategory(PERFORMANCE, "bpsConvOverPerfRatio", "(" + BREAK_POINTS_PCT + ") / nullif(" + RETURN_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsConvertedOverPerformingRatio, POINT, RATIO3, false, "BPs Conv. Over-Perf.", "stats.breakPointsConvertedOverPerformingRatio.title");
 		// Opponent
-		addCategory(OPPONENT_CATEGORY, "opponentRank", "exp(opponent_rank / nullif(" + TOTAL_MATCHES + ", 0))", "exp(sum(ln(coalesce(opponent_rank, 1500))) / nullif(sum(p_matches) + sum(o_matches), 0))", PlayerStats::getOpponentRank, MATCH, RATIO1, true, "Opponent Rank", "stats.opponentRank.title");
-		addCategory(OPPONENT_CATEGORY, "opponentEloRating", "opponent_elo_rating::REAL / nullif(" + TOTAL_MATCHES + ", 0)", PlayerStats::getOpponentEloRating, MATCH, RATIO1, false, "Opponent Elo Rating");
+		addCategory(OPPONENT_CATEGORY, "opponentRank", "exp(coalesce(opponent_rank, 1500) / nullif(" + TOTAL_MATCHES + ", 0))", "exp(sum(ln(coalesce(opponent_rank, 1500))) / nullif(sum(p_matches) + sum(o_matches), 0))", "coalesce(opponent_rank, 1500)", PlayerStats::getOpponentRank, MATCH, RATIO1, true, "Opponent Rank", "stats.opponentRank.title");
+		addCategory(OPPONENT_CATEGORY, "opponentEloRating", "coalesce(opponent_elo_rating, 1500)::REAL / nullif(" + TOTAL_MATCHES + ", 0)", "avg(coalesce(opponent_elo_rating, 1500))", "coalesce(opponent_elo_rating, 1500)", PlayerStats::getOpponentEloRating, MATCH, RATIO1, false, "Opponent Elo Rating", null);
 		// Time
 		addCategory(TIME_CATEGORY, "pointTime", "60 * minutes::REAL / nullif(" + TOTAL_POINTS + ", 0)", PlayerStats::getPointTime, POINT, RATIO2, true, "Point Time (seconds)");
 		addCategory(TIME_CATEGORY, "gameTime", "minutes::REAL / nullif(games_w_stats, 0)", PlayerStats::getGameTime, GAME_W_STATS, RATIO3, true, "Game Time (minutes)");
@@ -231,27 +231,27 @@ public final class StatsCategory {
 	}
 
 	private static void addCategory(String categoryClass, String name, String expression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, boolean inverted, String title) {
-		addCategory(categoryClass, name, expression, null, statFunction, null, null, item, type, inverted, title, null);
+		addCategory(categoryClass, name, expression, null, null, statFunction, null, null, item, type, inverted, title, null);
 	}
 
 	private static void addCategory(String categoryClass, String name, String expression, Function<PlayerStats, ? extends Number> statFunction, Function<PlayerStats, ? extends Number> upFunction, Function<PlayerStats, ? extends Number> downFunction, Item item, Type type, boolean inverted, String title) {
-		addCategory(categoryClass, name, expression, null, statFunction, upFunction, downFunction, item, type, inverted, title, null);
+		addCategory(categoryClass, name, expression, null, null, statFunction, upFunction, downFunction, item, type, inverted, title, null);
 	}
 
 	private static void addCategory(String categoryClass, String name, String expression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
-		addCategory(categoryClass, name, expression, null, statFunction, null, null, item, type, inverted, title, descriptionId);
+		addCategory(categoryClass, name, expression, null, null, statFunction, null, null, item, type, inverted, title, descriptionId);
 	}
 
 	private static void addCategory(String categoryClass, String name, String expression, Function<PlayerStats, ? extends Number> statFunction, Function<PlayerStats, ? extends Number> upFunction, Function<PlayerStats, ? extends Number> downFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
-		addCategory(categoryClass, name, expression, null, statFunction, upFunction, downFunction, item, type, inverted, title, descriptionId);
+		addCategory(categoryClass, name, expression, null, null, statFunction, upFunction, downFunction, item, type, inverted, title, descriptionId);
 	}
 
-	private static void addCategory(String categoryClass, String name, String expression, String summedExpression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
-		addCategory(categoryClass, name, expression, summedExpression, statFunction, null, null, item, type, inverted, title, descriptionId);
+	private static void addCategory(String categoryClass, String name, String expression, String summedExpression, String singleExpression, Function<PlayerStats, ? extends Number> statFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
+		addCategory(categoryClass, name, expression, summedExpression, singleExpression, statFunction, null, null, item, type, inverted, title, descriptionId);
 	}
 
-	private static void addCategory(String categoryClass, String name, String expression, String summedExpression, Function<PlayerStats, ? extends Number> statFunction, Function<PlayerStats, ? extends Number> upFunction, Function<PlayerStats, ? extends Number> downFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
-		StatsCategory category = new StatsCategory(name, expression, summedExpression, statFunction, upFunction, downFunction, item, type, inverted, title, descriptionId);
+	private static void addCategory(String categoryClass, String name, String expression, String summedExpression, String singleExpression, Function<PlayerStats, ? extends Number> statFunction, Function<PlayerStats, ? extends Number> upFunction, Function<PlayerStats, ? extends Number> downFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
+		StatsCategory category = new StatsCategory(name, expression, summedExpression, singleExpression, statFunction, upFunction, downFunction, item, type, inverted, title, descriptionId);
 		CATEGORIES.put(name, category);
 		CATEGORY_CLASSES.computeIfAbsent(categoryClass, catCls -> new ArrayList<>()).add(category);
 		CATEGORY_TYPES.put(name, category.getType().name());
@@ -282,6 +282,7 @@ public final class StatsCategory {
 	private final String name;
 	private final String expression;
 	private final String summedExpression;
+	private final String singleExpression;
 	private final Function<PlayerStats, ? extends Number> statFunction;
 	private final Function<PlayerStats, ? extends Number> upFunction;
 	private final Function<PlayerStats, ? extends Number> downFunction;
@@ -291,10 +292,11 @@ public final class StatsCategory {
 	private final String title;
 	private final String descriptionId;
 
-	private StatsCategory(String name, String expression, String summedExpression, Function<PlayerStats, ? extends Number> statFunction, Function<PlayerStats, ? extends Number> upFunction, Function<PlayerStats, ? extends Number> downFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
+	private StatsCategory(String name, String expression, String summedExpression, String singleExpression, Function<PlayerStats, ? extends Number> statFunction, Function<PlayerStats, ? extends Number> upFunction, Function<PlayerStats, ? extends Number> downFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
 		this.name = name;
 		this.expression = expression;
 		this.summedExpression = summedExpression;
+		this.singleExpression = singleExpression;
 		this.statFunction = statFunction;
 		this.upFunction = upFunction;
 		this.downFunction = downFunction;
@@ -314,7 +316,15 @@ public final class StatsCategory {
 	}
 
 	public String getSummedExpression() {
-		return summedExpression != null ? summedExpression : SUMMED_EXPRESSION_PATTERN.matcher(expression).replaceAll("sum($1)");
+		return summedExpression != null ? summedExpression : getPartiallySummedExpression();
+	}
+
+	public String getPartiallySummedExpression() {
+		return SUMMED_EXPRESSION_PATTERN.matcher(expression).replaceAll("sum($1)");
+	}
+
+	public String getSingleExpression() {
+		return singleExpression != null ? singleExpression : expression;
 	}
 
 	private static final Pattern SUMMED_EXPRESSION_PATTERN = Pattern.compile("(p_[a-z0-9_]+|o_[a-z0-9_]+|minutes|[a-z0-9_]+_w_stats|opponent_[a-z0-9_]+)");

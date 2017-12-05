@@ -184,7 +184,7 @@ public class TournamentService {
 
 	private static final String TOURNAMENT_STATS_JOIN = //language=SQL
 		"\nLEFT JOIN (\n" +
-		"  SELECT ms.tournament_event_id, " + StatisticsService.PLAYER_STATS_SUMMED_COLUMNS +
+		"  SELECT ms.tournament_event_id, " + StatisticsService.PLAYER_BASIC_STATS_SUMMED_COLUMNS + "sum(ln(coalesce(opponent_rank, 1500))) opponent_rank, sum(coalesce(opponent_elo_rating, 1500)::REAL) opponent_elo_rating\n" +
 		"  FROM player_match_stats_v ms\n" +
 		"  WHERE ms.player_id = :playerId\n" +
 		"  GROUP BY ms.tournament_event_id\n" +

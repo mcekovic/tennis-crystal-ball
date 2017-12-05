@@ -57,7 +57,7 @@ public class PlayerTournamentsResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
+		StatsFilter statsFilter = StatsFilter.forTournaments(statsCategory, statsFrom, statsTo);
 		TournamentEventResultFilter filter = new TournamentEventResultFilter(season, dateRange, level, surface, indoor, result, tournamentId, statsFilter, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;

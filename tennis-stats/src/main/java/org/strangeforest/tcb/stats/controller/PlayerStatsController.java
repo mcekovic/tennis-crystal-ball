@@ -52,7 +52,7 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
-		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
+		StatsFilter statsFilter = StatsFilter.forStats(statsCategory, statsFrom, statsTo);
 		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, surface, indoor, result, tournamentId, statsFilter, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
@@ -96,7 +96,7 @@ public class PlayerStatsController extends BaseController {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
 		OutcomeFilter outcomeFilter = OutcomeFilter.forStats(outcome);
-		StatsFilter statsFilter = new StatsFilter(statsCategory, statsFrom, statsTo);
+		StatsFilter statsFilter = StatsFilter.forStats(statsCategory, statsFrom, statsTo);
 		ScoreFilter scoreFilter = ScoreFilter.forStats(score);
 		MatchFilter filter = MatchFilter.forStats(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);

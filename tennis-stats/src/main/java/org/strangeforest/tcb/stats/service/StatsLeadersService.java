@@ -123,9 +123,10 @@ public class StatsLeadersService {
 	}
 
 	private String getTableSQL(StatsCategory statsCategory, PerfStatsFilter filter, String orderBy) {
-		return filter.isEmptyOrForSeasonOrSurface() && !filter.hasSurfaceGroup()
+		boolean summed = filter.isEmptyOrForSeasonOrSurface();
+		return summed && !filter.hasSurfaceGroup()
 	       ? format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy)
-	       : format(SUMMED_STATS_LEADERS_QUERY, statsCategory.getSummedExpression(), statsTableName(filter), getStatsLeadersJoin(filter), where(filter.getBaseCriteria(), 2), minEntriesColumn(statsCategory), where(filter.getSearchCriteria()), orderBy);
+	       : format(SUMMED_STATS_LEADERS_QUERY, summed ? statsCategory.getPartiallySummedExpression() : statsCategory.getSummedExpression(), statsTableName(filter), getStatsLeadersJoin(filter), where(filter.getBaseCriteria(), 2), minEntriesColumn(statsCategory), where(filter.getSearchCriteria()), orderBy);
 	}
 
 	private static String getStatsLeadersJoin(PerfStatsFilter filter) {

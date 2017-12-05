@@ -19,26 +19,44 @@ public class StatsFilter {
 
 	public static final StatsFilter ALL = new StatsFilter(null, null);
 
+	public static StatsFilter forMatches(String category, Double from, Double to) {
+		return new StatsFilter(category, from, to) {
+			@Override protected String getExpression() {
+				return StatsCategory.get(category).getSingleExpression();
+			}
+		};
+	}
+
+	public static StatsFilter forTournaments(String category, Double from, Double to) {
+		return new StatsFilter(category, from, to);
+	}
+
+	public static StatsFilter forStats(String category, Double from, Double to) {
+		return forMatches(category, from, to);
+	}
+
 
 	// Instance
 
 	private final String category;
 	private final Range<Double> range;
 
-	public StatsFilter(String category, Double from, Double to) {
+	private StatsFilter(String category, Double from, Double to) {
 		this(category, RangeUtil.toRange(from, to));
 	}
 
 	private StatsFilter(String category, Range<Double> range) {
 		this.category = category;
-		this.range = range;
+		this.range = range != null ? range : Range.all();
 	}
 
 	void appendCriteria(StringBuilder criteria) {
-		if (!isNullOrEmpty(category)) {
-			String expression = StatsCategory.get(category).getExpression();
-			appendRangeFilter(criteria, range, '(' + expression + ')', "stats");
-		}
+		if (!isNullOrEmpty(category))
+			appendRangeFilter(criteria, range, '(' + getExpression() + ')', "stats");
+	}
+
+	protected String getExpression() {
+		return StatsCategory.get(category).getExpression();
 	}
 
 	void addParams(MapSqlParameterSource params) {
