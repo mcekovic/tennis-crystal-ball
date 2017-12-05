@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.service;
 
 import java.io.*;
 import java.sql.*;
-import java.time.*;
+import java.util.ArrayList;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
@@ -402,7 +402,7 @@ public class TournamentService {
 			rs.getInt("tournament_id"),
 			rs.getString("ext_tournament_id"),
 			rs.getInt("season"),
-			rs.getDate("date"),
+			getLocalDate(rs, "date"),
 			rs.getString("name"),
 			rs.getString("level"),
 			rs.getString("surface"),
@@ -489,7 +489,7 @@ public class TournamentService {
 					table.addRow(new PlayerTournamentEvent(
 						rs.getInt("tournament_event_id"),
 						rs.getInt("season"),
-						rs.getObject("date", LocalDate.class),
+						getLocalDate(rs, "date"),
 						rs.getString("name"),
 						rs.getString("level"),
 						rs.getString("surface"),

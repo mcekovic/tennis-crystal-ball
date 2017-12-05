@@ -18,7 +18,6 @@ import org.strangeforest.tcb.stats.util.*;
 
 import static java.util.stream.Collectors.*;
 import static org.springframework.http.HttpHeaders.*;
-import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Controller
 public class TennisStatsController extends PageController {
@@ -64,7 +63,7 @@ public class TennisStatsController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("count", count);
-		modelMap.addAttribute("date", toDate(date));
+		modelMap.addAttribute("date", date);
 		modelMap.addAttribute("rankingTopN", rankingTopN);
 		modelMap.addAttribute("surfaces", Surface.values());
 		return new ModelAndView("rankingTopN", modelMap);

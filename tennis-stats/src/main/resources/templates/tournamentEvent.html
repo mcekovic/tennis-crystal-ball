@@ -44,7 +44,7 @@
 				</tr>
 				<tr th:unless="${isTeam}">
 					<th>Date</th>
-					<td th:text="${#dates.format(tournamentEvent.date, 'dd-MM-yyyy')}">1-1-1990</td>
+					<td th:text="${#temporals.format(tournamentEvent.date, 'dd-MM-yyyy')}">1-1-1990</td>
 				</tr>
 				<tr>
 					<th>Draw</th>

@@ -119,7 +119,7 @@ public class TournamentForecastService {
 		InProgressEvent inProgressEvent = new InProgressEvent(
 			rs.getInt("in_progress_event_id"),
 			rs.getInt("tournament_id"),
-			rs.getDate("date"),
+			getLocalDate(rs, "date"),
 			rs.getString("name"),
 			rs.getString("level"),
 			rs.getString("surface"),

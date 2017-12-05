@@ -1,12 +1,13 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.time.*;
 import java.util.*;
 
 public class InProgressEvent {
 
 	private final int id;
 	private final int tournamentId;
-	private final Date date;
+	private final LocalDate date;
 	private final String name;
 	private final String level;
 	private final String surface;
@@ -19,7 +20,7 @@ public class InProgressEvent {
 	private int averageEloRating;
 	private List<FavoritePlayer> favorites;
 
-	public InProgressEvent(int id, int tournamentId, Date date, String name, String level, String surface, boolean indoor) {
+	public InProgressEvent(int id, int tournamentId, LocalDate date, String name, String level, String surface, boolean indoor) {
 		this.id = id;
 		this.tournamentId = tournamentId;
 		this.date = date;
@@ -46,7 +47,7 @@ public class InProgressEvent {
 		return tournamentId;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 

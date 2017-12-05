@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.time.*;
 import java.util.*;
 
 import com.google.common.collect.*;
@@ -9,12 +10,12 @@ import static java.util.stream.Collectors.*;
 public class PlayerDominanceTimeline extends PlayerRow {
 
 	private final String lastName;
-	private final Date dob;
+	private final LocalDate dob;
 	private final int goatPoints;
 	private final Map<Integer, SeasonPoints> seasons = new HashMap<>(); // <Season, SeasonPoints>
 	private DominanceTimeline timeline;
 
-	public PlayerDominanceTimeline(int rank, int playerId, String name, String lastName, String countryId, boolean active, Date dob, int goatPoints) {
+	public PlayerDominanceTimeline(int rank, int playerId, String name, String lastName, String countryId, boolean active, LocalDate dob, int goatPoints) {
 		super(rank, playerId, name, countryId, active);
 		this.lastName = lastName;
 		this.dob = dob;
@@ -33,7 +34,7 @@ public class PlayerDominanceTimeline extends PlayerRow {
 		return lastName;
 	}
 
-	public Date getDob() {
+	public LocalDate getDob() {
 		return dob;
 	}
 

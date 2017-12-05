@@ -16,6 +16,7 @@ import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.RankType.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 import static org.strangeforest.tcb.util.EnumUtil.*;
 
 @Service
@@ -138,7 +139,7 @@ public class RankingChartService {
 					x = byAge ? rs.getInt("age") : season;
 				}
 				else {
-					LocalDate date = rs.getDate("date").toLocalDate();
+					LocalDate date = getLocalDate(rs, "date");
 					if (compensate)
 						y = compensateRankingPoints(date, y);
 					x = byAge ? toDouble((PGInterval)rs.getObject("age")) : date;

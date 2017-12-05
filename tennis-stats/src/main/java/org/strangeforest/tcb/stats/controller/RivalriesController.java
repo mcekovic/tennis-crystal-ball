@@ -463,9 +463,9 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("round", round);
-		modelMap.addAttribute("date", toDate(date != null ? date : aDate1));
-		modelMap.addAttribute("date1", toDate(aDate1));
-		modelMap.addAttribute("date2", toDate(aDate2));
+		modelMap.addAttribute("date", date != null ? date : aDate1);
+		modelMap.addAttribute("date1", aDate1);
+		modelMap.addAttribute("date2", aDate2);
 		modelMap.addAttribute("dateSelector1", dateSelector1);
 		modelMap.addAttribute("dateSelector2", dateSelector2);
 		modelMap.addAttribute("prediction", prediction);
@@ -490,18 +490,18 @@ public class RivalriesController extends PageController {
 		switch (dateSelector) {
 			case "Today": return LocalDate.now();
 			case "CareerEnd": return playerService.getPlayerCareerEnd(playerId);
-			case "PeakRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestRankDate());
-			case "PeakRankPoints": return toLocalDate(rankingsService.getRankingHighlights(playerId).getBestRankPointsDate());
-			case "PeakEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getElo().getBestRankDate());
-			case "PeakEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getElo().getBestRatingDate());
-			case "PeakHardEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getHardElo().getBestRankDate());
-			case "PeakHardEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getHardElo().getBestRatingDate());
-			case "PeakClayEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getClayElo().getBestRankDate());
-			case "PeakClayEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getClayElo().getBestRatingDate());
-			case "PeakGrassEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getGrassElo().getBestRankDate());
-			case "PeakGrassEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getGrassElo().getBestRatingDate());
-			case "PeakCarpetEloRank": return toLocalDate(rankingsService.getRankingHighlights(playerId).getCarpetElo().getBestRankDate());
-			case "PeakCarpetEloRating": return toLocalDate(rankingsService.getRankingHighlights(playerId).getCarpetElo().getBestRatingDate());
+			case "PeakRank": return rankingsService.getRankingHighlights(playerId).getBestRankDate();
+			case "PeakRankPoints": return rankingsService.getRankingHighlights(playerId).getBestRankPointsDate();
+			case "PeakEloRank": return rankingsService.getRankingHighlights(playerId).getElo().getBestRankDate();
+			case "PeakEloRating": return rankingsService.getRankingHighlights(playerId).getElo().getBestRatingDate();
+			case "PeakHardEloRank": return rankingsService.getRankingHighlights(playerId).getHardElo().getBestRankDate();
+			case "PeakHardEloRating": return rankingsService.getRankingHighlights(playerId).getHardElo().getBestRatingDate();
+			case "PeakClayEloRank": return rankingsService.getRankingHighlights(playerId).getClayElo().getBestRankDate();
+			case "PeakClayEloRating": return rankingsService.getRankingHighlights(playerId).getClayElo().getBestRatingDate();
+			case "PeakGrassEloRank": return rankingsService.getRankingHighlights(playerId).getGrassElo().getBestRankDate();
+			case "PeakGrassEloRating": return rankingsService.getRankingHighlights(playerId).getGrassElo().getBestRatingDate();
+			case "PeakCarpetEloRank": return rankingsService.getRankingHighlights(playerId).getCarpetElo().getBestRankDate();
+			case "PeakCarpetEloRating": return rankingsService.getRankingHighlights(playerId).getCarpetElo().getBestRatingDate();
 			default: return null;
 		}
 	}

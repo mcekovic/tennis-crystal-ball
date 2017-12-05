@@ -1,7 +1,7 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="rankingTopN">
 <!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.RankType"*/-->
 <!--/*@thymesVar id="count" type="java.lang.Integer"*/-->
-<!--/*@thymesVar id="date" type="java.util.Date"*/-->
+<!--/*@thymesVar id="date" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="rankingTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.Surface[]"*/-->
 <style>
@@ -27,7 +27,7 @@
 		<h4 class="text-center text-nowrap component-header">
 			<div class="pull-left">
 				<div>Top [(${rankingTopN.size()})]</div>
-				<div class="text-muted" style="font-size: 60%" th:text="${#dates.format(date, 'dd-MM-yyyy')}">01-11-2015</div>
+				<div class="text-muted" style="font-size: 60%" th:text="${#temporals.format(date, 'dd-MM-yyyy')}">01-11-2015</div>
 			</div>
 			<div class="btn-group" th:attrappend="class=${rankType.surface != null ? ' bg-surface-' + rankType.surface.code : _}" style="margin-left: 4px">
 				<button type="button" class="btn btn-default rank-type">[(${rankType.name() == 'POINTS' ? 'ATP' : 'Elo'})]</button>

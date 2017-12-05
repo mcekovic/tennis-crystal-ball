@@ -1,6 +1,5 @@
 package org.strangeforest.tcb.stats.controller;
 
-import java.sql.Date;
 import java.time.*;
 import java.util.*;
 import java.util.stream.*;
@@ -17,10 +16,10 @@ import org.strangeforest.tcb.util.*;
 import com.google.common.collect.*;
 
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.model.RankCategory.*;
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
-import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
 @RestController
 public class RankingsResource {

@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
-import java.util.*;
+import java.time.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,7 @@ public abstract class PageController extends BaseController {
 	@Autowired protected DataService dataService;
 
 	@ModelAttribute("dataUpdate")
-	public Date getDataUpdate() {
+	public LocalDate getDataUpdate() {
 		return dataService.getDataUpdate();
 	}
 }

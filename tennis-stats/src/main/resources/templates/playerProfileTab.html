@@ -33,7 +33,7 @@
 			<!--/* General */-->
 			<tr th:if="${player.dob}">
 				<th>Age</th>
-				<td th:text="|${player.age} (${#dates.format(player.dob, 'dd-MM-yyyy')})|">25 (1-1-1990)</td>
+				<td th:text="|${player.age} (${#temporals.format(player.dob, 'dd-MM-yyyy')})|">25 (1-1-1990)</td>
 			</tr>
 			<tr>
 				<th>Country</th>
@@ -135,7 +135,7 @@
 			</tr>
 			<tr th:if="${player.bestRank > 0}">
 				<th>Best Rank</th>
-				<td th:text="${player.bestRank + ' (' + #dates.format(player.bestRankDate, 'dd-MM-yyyy') + ')'}">5 (1.1.2010)</td>
+				<td th:text="${player.bestRank + ' (' + #temporals.format(player.bestRankDate, 'dd-MM-yyyy') + ')'}">5 (1.1.2010)</td>
 			</tr>
 			<tr th:if="${player.currentEloRank > 0}">
 				<th>Current Elo Rank</th>
@@ -143,11 +143,11 @@
 			</tr>
 			<tr th:if="${player.bestEloRank > 0}">
 				<th>Best Elo Rank</th>
-				<td th:text="${player.bestEloRank + ' (' + #dates.format(player.bestEloRankDate, 'dd-MM-yyyy') + ')'}">5 (1.1.2010)</td>
+				<td th:text="${player.bestEloRank + ' (' + #temporals.format(player.bestEloRankDate, 'dd-MM-yyyy') + ')'}">5 (1.1.2010)</td>
 			</tr>
 			<tr th:if="${player.bestEloRating > 0}">
 				<th>Peak Elo Rating</th>
-				<td th:text="${player.bestEloRating + ' (' + #dates.format(player.bestEloRatingDate, 'dd-MM-yyyy') + ')'}">2455 (1.1.2010)</td>
+				<td th:text="${player.bestEloRating + ' (' + #temporals.format(player.bestEloRatingDate, 'dd-MM-yyyy') + ')'}">2455 (1.1.2010)</td>
 			</tr>
 			<tr th:if="${player.goatPoints > 0}">
 				<th>GOAT Rank</th>

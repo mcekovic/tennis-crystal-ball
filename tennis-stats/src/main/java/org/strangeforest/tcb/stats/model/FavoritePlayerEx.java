@@ -1,7 +1,5 @@
 package org.strangeforest.tcb.stats.model;
 
-import static com.google.common.base.Strings.*;
-
 public class FavoritePlayerEx extends FavoritePlayer {
 
 	private Integer seed;

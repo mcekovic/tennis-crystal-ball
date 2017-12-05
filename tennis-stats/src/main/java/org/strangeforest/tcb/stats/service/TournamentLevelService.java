@@ -64,7 +64,7 @@ public class TournamentLevelService {
 					rs.getString("name"),
 					rs.getInt("season"),
 					rs.getInt("tournament_event_id"),
-					rs.getDate("date"),
+					getLocalDate(rs, "date"),
 					level,
 					rs.getString("surface")
 				);

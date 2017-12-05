@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
+import java.time.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -13,9 +14,9 @@ public class RankingHighlights {
 	private int currentRank;
 	private int currentRankPoints;
 	private int bestRank;
-	private Date bestRankDate;
+	private LocalDate bestRankDate;
 	private int bestRankPoints;
-	private Date bestRankPointsDate;
+	private LocalDate bestRankPointsDate;
 	private int bestYearEndRank;
 	private String bestYearEndRankSeasons;
 	private int bestYearEndRankPoints;
@@ -75,11 +76,11 @@ public class RankingHighlights {
 		this.bestRank = bestRank;
 	}
 
-	public Date getBestRankDate() {
+	public LocalDate getBestRankDate() {
 		return bestRankDate;
 	}
 
-	public void setBestRankDate(Date bestRankDate) {
+	public void setBestRankDate(LocalDate bestRankDate) {
 		this.bestRankDate = bestRankDate;
 	}
 
@@ -91,11 +92,11 @@ public class RankingHighlights {
 		this.bestRankPoints = bestRankPoints;
 	}
 
-	public Date getBestRankPointsDate() {
+	public LocalDate getBestRankPointsDate() {
 		return bestRankPointsDate;
 	}
 
-	public void setBestRankPointsDate(Date bestRankPointsDate) {
+	public void setBestRankPointsDate(LocalDate bestRankPointsDate) {
 		this.bestRankPointsDate = bestRankPointsDate;
 	}
 
@@ -339,11 +340,11 @@ public class RankingHighlights {
 		private final int currentRank;
 		private final int currentRating;
 		private final int bestRank;
-		private final Date bestRankDate;
+		private final LocalDate bestRankDate;
 		private final int bestRating;
-		private final Date bestRatingDate;
+		private final LocalDate bestRatingDate;
 
-		public EloHighlights(int currentRank, int currentRating, int bestRank, Date bestRankDate, int bestRating, Date bestRatingDate) {
+		public EloHighlights(int currentRank, int currentRating, int bestRank, LocalDate bestRankDate, int bestRating, LocalDate bestRatingDate) {
 			this.currentRank = currentRank;
 			this.currentRating = currentRating;
 			this.bestRank = bestRank;
@@ -364,7 +365,7 @@ public class RankingHighlights {
 			return bestRank;
 		}
 
-		public Date getBestRankDate() {
+		public LocalDate getBestRankDate() {
 			return bestRankDate;
 		}
 
@@ -372,7 +373,7 @@ public class RankingHighlights {
 			return bestRating;
 		}
 
-		public Date getBestRatingDate() {
+		public LocalDate getBestRatingDate() {
 			return bestRatingDate;
 		}
 

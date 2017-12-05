@@ -9,7 +9,6 @@ import org.strangeforest.tcb.util.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.PlayerTimelineItem.*;
-import static org.strangeforest.tcb.util.DateUtil.*;
 
 public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTimeline> {
 
@@ -18,7 +17,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	private String name;
 	private final Map<String, String> levels = new LinkedHashMap<>(); // <Level, Name>
 	private final Set<TimelineSurface> surfaces = new LinkedHashSet<>();
-	private final List<Date> dates = new ArrayList<>();
+	private final List<LocalDate> dates = new ArrayList<>();
 	private final Map<Integer, PlayerTimelineItem> items = new HashMap<>();
 	private boolean firstByLevel;
 
@@ -95,7 +94,7 @@ public class PlayerTournamentTimeline implements Comparable<PlayerTournamentTime
 	);
 
 	private final Supplier<MonthDay> endDay = Memoizer.of(
-		() -> MonthDay.from(LocalDate.ofYearDay(REFERENCE_YEAR, (int)dates.stream().mapToInt(date -> toLocalDate(date).getDayOfYear()).average().getAsDouble()))
+		() -> MonthDay.from(LocalDate.ofYearDay(REFERENCE_YEAR, (int)dates.stream().mapToInt(LocalDate::getDayOfYear).average().getAsDouble()))
 	);
 
 	private static final int REFERENCE_YEAR = 2000;

@@ -190,11 +190,11 @@
 			</tr>
 			<tr th:if="${highlights.bestRank > 0}">
 				<th>Best Rank</th>
-				<td th:text="${highlights.bestRank} + ' (' + ${#dates.format(highlights.bestRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
+				<td th:text="${highlights.bestRank} + ' (' + ${#temporals.format(highlights.bestRankDate, 'dd-MM-yyyy')} + ')'">5 (01-01-2010)</td>
 			</tr>
 			<tr th:if="${highlights.bestRankPoints > 0}">
 				<th>Most Rank Points</th>
-				<td th:text="${highlights.bestRankPoints} + ' (' + ${#dates.format(highlights.bestRankPointsDate, 'dd-MM-yyyy')} + ')'">5000 (01-01-2011)</td>
+				<td th:text="${highlights.bestRankPoints} + ' (' + ${#temporals.format(highlights.bestRankPointsDate, 'dd-MM-yyyy')} + ')'">5000 (01-01-2011)</td>
 			</tr>
 			<tr th:if="${highlights.bestYearEndRank > 0}">
 				<th>Best Year-End Rank</th>
@@ -294,56 +294,56 @@
 			<tr th:unless="${elo.empty}">
 				<th>Overall</th>
 				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
-				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
-				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
 			</th:block>
 			<th:block th:with="elo=${highlights.hardElo}">
 			<tr class="bg-surface-H" th:unless="${elo.empty}">
 				<th>Hard</th>
 				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
-				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
-				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
 			</th:block>
 			<th:block th:with="elo=${highlights.clayElo}">
 			<tr class="bg-surface-C" th:unless="${elo.empty}">
 				<th>Clay</th>
 				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
-				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
-				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
 			</th:block>
 			<th:block th:with="elo=${highlights.grassElo}">
 			<tr class="bg-surface-G" th:unless="${elo.empty}">
 				<th>Grass</th>
 				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
-				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
-				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
 			</th:block>
 			<th:block th:with="elo=${highlights.carpetElo}">
 			<tr class="bg-surface-P" th:unless="${elo.empty}">
 				<th>Carpet</th>
 				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
-				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
-				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
 			</th:block>
 			<th:block th:with="elo=${highlights.outdoorElo}">
 			<tr th:unless="${elo.empty}">
 				<th>Outdoor</th>
 				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
-				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
-				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
 			</th:block>
 			<th:block th:with="elo=${highlights.indoorElo}">
 			<tr th:unless="${elo.empty}">
 				<th>Indoor</th>
 				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
-				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #dates.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
-				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #dates.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
 			</th:block>
 		</table>

@@ -70,7 +70,7 @@ public class PlayerTimelineService {
 					rs.getString("tournament_name"),
 					rs.getInt("season"),
 					rs.getInt("tournament_event_id"),
-					rs.getDate("date"),
+					getLocalDate(rs, "date"),
 					rs.getString("level"),
 					rs.getString("surface"),
 					rs.getBoolean("indoor"),

@@ -8,9 +8,9 @@
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
-<!--/*@thymesVar id="date" type="java.util.Date"*/-->
-<!--/*@thymesVar id="date1" type="java.util.Date"*/-->
-<!--/*@thymesVar id="date2" type="java.util.Date"*/-->
+<!--/*@thymesVar id="date" type="java.time.LocalDate"*/-->
+<!--/*@thymesVar id="date1" type="java.time.LocalDate"*/-->
+<!--/*@thymesVar id="date2" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="dateSelector1" type="java.lang.String"*/-->
 <!--/*@thymesVar id="dateSelector2" type="java.lang.String"*/-->
 <!--/*@thymesVar id="prediction" type="org.strangeforest.tcb.stats.model.prediction.MatchPrediction"*/-->
@@ -134,7 +134,7 @@
 	<div id="predictionDateDiv" class="col-md-3" th:style="'display: ' + ${sameDates ? 'block' : 'none'}">
 		<div class="input-group">
 			<label for="predictionDate" class="input-group-addon">On Date:</label>
-			<input id="predictionDate" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
+			<input id="predictionDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(date, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
 		</div>
 	</div>
 </div>
@@ -157,13 +157,13 @@
 	<div class="col-md-3">
 		<div class="input-group">
 			<label for="predictionDate1" class="input-group-addon">On Date 1:</label>
-			<input id="predictionDate1" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date1, 'dd-MM-yyyy')}" onchange="predictMatch()" th:readonly="${dateSelector1}"/>
+			<input id="predictionDate1" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(date1, 'dd-MM-yyyy')}" onchange="predictMatch()" th:readonly="${dateSelector1}"/>
 		</div>
 	</div>
 	<div class="col-md-3">
 		<div class="input-group">
 			<label for="predictionDate2" class="input-group-addon">On Date 2:</label>
-			<input id="predictionDate2" type="text" maxlength="10" class="form-control" th:value="${#dates.format(date2, 'dd-MM-yyyy')}" onchange="predictMatch()" th:readonly="${dateSelector2}"/>
+			<input id="predictionDate2" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(date2, 'dd-MM-yyyy')}" onchange="predictMatch()" th:readonly="${dateSelector2}"/>
 		</div>
 	</div>
 	<div class="col-md-3">

@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
-import java.util.*;
+import java.time.*;
 
 import org.strangeforest.tcb.util.*;
 
@@ -9,7 +9,7 @@ public class Player {
 	// General
 	private final int id;
 	private String name;
-	private Date dob;
+	private LocalDate dob;
 	private int age;
 	private Country country;
 	private String birthplace;
@@ -41,13 +41,13 @@ public class Player {
 	private int currentRank;
 	private int currentRankPoints;
 	private int bestRank;
-	private Date bestRankDate;
+	private LocalDate bestRankDate;
 	private int currentEloRank;
 	private int currentEloRating;
 	private int bestEloRank;
-	private Date bestEloRankDate;
+	private LocalDate bestEloRankDate;
 	private int bestEloRating;
-	private Date bestEloRatingDate;
+	private LocalDate bestEloRatingDate;
 	private int goatRank;
 	private int goatPoints;
 	private int weeksAtNo1;
@@ -71,11 +71,11 @@ public class Player {
 		this.name = name;
 	}
 
-	public Date getDob() {
+	public LocalDate getDob() {
 		return dob;
 	}
 
-	public void setDob(Date dob) {
+	public void setDob(LocalDate dob) {
 		this.dob = dob;
 	}
 
@@ -291,11 +291,11 @@ public class Player {
 		this.bestRank = bestRank;
 	}
 
-	public Date getBestRankDate() {
+	public LocalDate getBestRankDate() {
 		return bestRankDate;
 	}
 
-	public void setBestRankDate(Date bestRankDate) {
+	public void setBestRankDate(LocalDate bestRankDate) {
 		this.bestRankDate = bestRankDate;
 	}
 
@@ -323,11 +323,11 @@ public class Player {
 		this.bestEloRank = bestEloRank;
 	}
 
-	public Date getBestEloRankDate() {
+	public LocalDate getBestEloRankDate() {
 		return bestEloRankDate;
 	}
 
-	public void setBestEloRankDate(Date bestEloRankDate) {
+	public void setBestEloRankDate(LocalDate bestEloRankDate) {
 		this.bestEloRankDate = bestEloRankDate;
 	}
 
@@ -339,11 +339,11 @@ public class Player {
 		this.bestEloRating = bestEloRating;
 	}
 
-	public Date getBestEloRatingDate() {
+	public LocalDate getBestEloRatingDate() {
 		return bestEloRatingDate;
 	}
 
-	public void setBestEloRatingDate(Date bestEloRatingDate) {
+	public void setBestEloRatingDate(LocalDate bestEloRatingDate) {
 		this.bestEloRatingDate = bestEloRatingDate;
 	}
 

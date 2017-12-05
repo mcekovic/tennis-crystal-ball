@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
-import java.util.*;
+import java.time.*;
 
 public class TournamentEvent {
 
@@ -8,7 +8,7 @@ public class TournamentEvent {
 	private final int tournamentId;
 	private final String tournamentExtId;
 	private final int season;
-	private final Date date;
+	private final LocalDate date;
 	private final String name;
 	private final String level;
 	private final String surface;
@@ -25,7 +25,7 @@ public class TournamentEvent {
 	private String outcome;
 	private String mapProperties;
 
-	public TournamentEvent(int id, int tournamentId, String tournamentExtId, int season, Date date, String name, String level, String surface, boolean indoor) {
+	public TournamentEvent(int id, int tournamentId, String tournamentExtId, int season, LocalDate date, String name, String level, String surface, boolean indoor) {
 		this.id = id;
 		this.tournamentId = tournamentId;
 		this.tournamentExtId = tournamentExtId;
@@ -80,7 +80,7 @@ public class TournamentEvent {
 		return season;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 

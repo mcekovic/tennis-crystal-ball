@@ -2,7 +2,6 @@ package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
 import java.time.*;
-import java.util.Date;
 import java.util.*;
 import java.util.stream.*;
 
@@ -18,7 +17,7 @@ import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
-import static org.strangeforest.tcb.util.DateUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
 @Service
 public class PlayerService {
@@ -108,8 +107,8 @@ public class PlayerService {
 
 	@Cacheable("PlayerCareerEnd")
 	public LocalDate getPlayerCareerEnd(int playerId) {
-		Date lastMatchDate = jdbcTemplate.queryForObject(PLAYER_CAREER_END_QUERY, params("playerId", playerId), Date.class);
-		return lastMatchDate != null ? toLocalDate(lastMatchDate).plusDays(1L) : null;
+		LocalDate lastMatchDate = jdbcTemplate.queryForObject(PLAYER_CAREER_END_QUERY, params("playerId", playerId), LocalDate.class);
+		return lastMatchDate != null ? lastMatchDate.plusDays(1L) : null;
 	}
 
 	public List<AutocompleteOption> autocompletePlayer(String name) {
@@ -195,7 +194,7 @@ public class PlayerService {
 	private Player mapPlayer(ResultSet rs) throws SQLException {
 		Player p = new Player(rs.getInt("player_id"));
 		p.setName(rs.getString("name"));
-		p.setDob(rs.getDate("dob"));
+		p.setDob(getLocalDate(rs, "dob"));
 		p.setAge(rs.getInt("age"));
 		p.setCountryId(rs.getString("country_id"));
 		p.setBirthplace(rs.getString("birthplace"));
@@ -221,13 +220,13 @@ public class PlayerService {
 		p.setCurrentRank(rs.getInt("current_rank"));
 		p.setCurrentRankPoints(rs.getInt("current_rank_points"));
 		p.setBestRank(rs.getInt("best_rank"));
-		p.setBestRankDate(rs.getDate("best_rank_date"));
+		p.setBestRankDate(getLocalDate(rs, "best_rank_date"));
 		p.setCurrentEloRank(rs.getInt("current_elo_rank"));
 		p.setCurrentEloRating(rs.getInt("current_elo_rating"));
 		p.setBestEloRank(rs.getInt("best_elo_rank"));
-		p.setBestEloRankDate(rs.getDate("best_elo_rank_date"));
+		p.setBestEloRankDate(getLocalDate(rs, "best_elo_rank_date"));
 		p.setBestEloRating(rs.getInt("best_elo_rating"));
-		p.setBestEloRatingDate(rs.getDate("best_elo_rating_date"));
+		p.setBestEloRatingDate(getLocalDate(rs, "best_elo_rating_date"));
 		p.setGoatRank(rs.getInt("goat_rank"));
 		p.setGoatPoints(rs.getInt("goat_points"));
 		p.setWeeksAtNo1(rs.getInt("weeks_at_no1"));

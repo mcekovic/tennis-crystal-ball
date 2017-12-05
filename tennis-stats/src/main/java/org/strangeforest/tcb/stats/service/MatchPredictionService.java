@@ -20,7 +20,6 @@ import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
-import static org.strangeforest.tcb.util.DateUtil.*;
 
 @Service
 public class MatchPredictionService {
@@ -245,7 +244,7 @@ public class MatchPredictionService {
 
 	private MatchData matchData(ResultSet rs, int rowNum) throws SQLException {
 		return new MatchData(
-			toLocalDate(rs.getDate("date")),
+			getLocalDate(rs, "date"),
 			rs.getInt("tournament_id"),
 			rs.getInt("tournament_event_id"),
 			rs.getBoolean("in_progress"),

@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
+import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -33,6 +34,11 @@ public abstract class ResultSetUtil {
 	public static Double getDouble(ResultSet rs, String column) throws SQLException {
 		double d = rs.getDouble(column);
 		return rs.wasNull() ? null : d;
+	}
+
+	public static LocalDate getLocalDate(ResultSet rs, String column) throws SQLException {
+		LocalDate date = rs.getObject(column, LocalDate.class);
+		return rs.wasNull() ? null : date;
 	}
 
 

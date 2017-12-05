@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.sql.Date;
+import java.time.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.regex.*;
@@ -66,8 +66,8 @@ public class DataService {
 	}
 
 	@Cacheable(value = "Global", key = "'DataUpdate'")
-	public Date getDataUpdate() {
-		return jdbcTemplate.queryForObject(DATA_UPDATE_QUERY, Date.class);
+	public LocalDate getDataUpdate() {
+		return jdbcTemplate.queryForObject(DATA_UPDATE_QUERY, LocalDate.class);
 	}
 
 	@Cacheable(value = "Global", key = "'Seasons'")

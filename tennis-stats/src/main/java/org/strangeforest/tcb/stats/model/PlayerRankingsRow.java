@@ -1,14 +1,14 @@
 package org.strangeforest.tcb.stats.model;
 
-import java.util.*;
+import java.time.*;
 
 public class PlayerRankingsRow extends PlayerRow {
 
 	private final int points;
 	private final int bestRank;
-	private final Date bestRankDate;
+	private final LocalDate bestRankDate;
 
-	public PlayerRankingsRow(int rank, int playerId, String name, String countryId, Boolean active, int points, int bestRank, Date bestRankDate) {
+	public PlayerRankingsRow(int rank, int playerId, String name, String countryId, Boolean active, int points, int bestRank, LocalDate bestRankDate) {
 		super(rank, playerId, name, countryId, active);
 		this.points = points;
 		this.bestRank = bestRank;
@@ -23,7 +23,7 @@ public class PlayerRankingsRow extends PlayerRow {
 		return bestRank;
 	}
 
-	public Date getBestRankDate() {
+	public LocalDate getBestRankDate() {
 		return bestRankDate;
 	}
 }

@@ -19,7 +19,6 @@ import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
-import static org.strangeforest.tcb.util.DateUtil.*;
 
 public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringContextTests {
 
@@ -127,7 +126,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		return new MatchForVerification(
 			rs.getInt("winner_id"),
 			rs.getInt("loser_id"),
-			toLocalDate(rs.getDate("date")),
+			getLocalDate(rs, "date"),
 			rs.getInt("tournament_id"),
 			rs.getInt("tournament_event_id"),
 			rs.getString("level"),

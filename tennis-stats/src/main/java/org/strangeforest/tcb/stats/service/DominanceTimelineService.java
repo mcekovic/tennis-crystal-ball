@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
+import java.time.*;
 import java.util.concurrent.atomic.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
 @Service
 public class DominanceTimelineService {
@@ -89,7 +91,7 @@ public class DominanceTimelineService {
 		String lastName = rs.getString("last_name");
 		String countryId = rs.getString("country_id");
 		boolean active = rs.getBoolean("active");
-		Date dob = rs.getDate("dob");
+		LocalDate dob = getLocalDate(rs, "dob");
 		int goatPoints = rs.getInt("goat_points");
 		return new PlayerDominanceTimeline(rank.incrementAndGet(), playerId, name, lastName, countryId, active, dob, goatPoints);
 	}

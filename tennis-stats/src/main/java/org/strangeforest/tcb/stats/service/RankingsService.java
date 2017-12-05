@@ -1,6 +1,5 @@
 package org.strangeforest.tcb.stats.service;
 
-import java.sql.Date;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
@@ -209,7 +208,7 @@ public class RankingsService {
 				String countryId = rs.getString("country_id");
 				int points = rs.getInt("points");
 				int bestRank = rs.getInt("best_rank");
-				Date bestRankDate = rs.getDate("best_rank_date");
+				LocalDate bestRankDate = getLocalDate(rs, "best_rank_date");
 				Integer rankDiff = getInteger(rs, "rank_diff");
 				Integer pointsDiff = getInteger(rs, "points_diff");
 				if (pointsDiff != null && pointsDiff == points)
@@ -244,8 +243,8 @@ public class RankingsService {
 				Boolean active = !filter.hasActive() ? rs.getBoolean("active") : null;
 				int points = rs.getInt("points");
 				int bestRank = rs.getInt("best_rank");
-				Date bestRankDate = rs.getDate("best_rank_date");
-				Date pointsDate = rs.getDate("points_date");
+				LocalDate bestRankDate = getLocalDate(rs, "best_rank_date");
+				LocalDate pointsDate = getLocalDate(rs, "points_date");
 				TournamentEventItem tournamentEvent = mapTournamentEvent(rs);
 				table.addRow(new PlayerPeakEloRankingsRow(rank, playerId, name, countryId, active, points, pointsDate, bestRank, bestRankDate, tournamentEvent));
 			}
@@ -387,9 +386,9 @@ public class RankingsService {
 			highlights.setCurrentRank(rs.getInt("current_rank"));
 			highlights.setCurrentRankPoints(rs.getInt("current_rank_points"));
 			highlights.setBestRank(rs.getInt("best_rank"));
-			highlights.setBestRankDate(rs.getDate("best_rank_date"));
+			highlights.setBestRankDate(getLocalDate(rs, "best_rank_date"));
 			highlights.setBestRankPoints(rs.getInt("best_rank_points"));
-			highlights.setBestRankPointsDate(rs.getDate("best_rank_points_date"));
+			highlights.setBestRankPointsDate(getLocalDate(rs, "best_rank_points_date"));
 			highlights.setGoatRank(rs.getInt("goat_rank"));
 			highlights.setGoatPoints(rs.getInt("goat_points"));
 			highlights.setElo(mapEloHighlights(rs, ""));
@@ -430,9 +429,9 @@ public class RankingsService {
 			rs.getInt("current_" + prefix + "elo_rank"),
 			rs.getInt("current_" + prefix + "elo_rating"),
 			rs.getInt("best_" + prefix + "elo_rank"),
-			rs.getDate("best_" + prefix + "elo_rank_date"),
+			getLocalDate(rs, "best_" + prefix + "elo_rank_date"),
 			rs.getInt("best_" + prefix + "elo_rating"),
-			rs.getDate("best_" + prefix + "elo_rating_date")
+			getLocalDate(rs, "best_" + prefix + "elo_rating_date")
 		);
 	}
 
