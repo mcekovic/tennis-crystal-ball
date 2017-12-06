@@ -345,8 +345,10 @@ class MatchLoader extends BaseCSVLoader {
 
 	static mapEntry(String entry) {
 		if (entry) {
-			if (entry == 'S')
-				return 'SE'
+			switch (entry) {
+				case 'S': return 'SE'
+				case 'Alt': return 'AL'
+			}
 		}
 		entry
 	}

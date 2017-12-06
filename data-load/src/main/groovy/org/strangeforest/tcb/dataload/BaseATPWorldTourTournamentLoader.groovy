@@ -115,7 +115,7 @@ abstract class BaseATPWorldTourTournamentLoader {
 		if (entry) {
 			switch (entry) {
 				case 'S': return 'SE'
-				case 'Alt': return 'ALT'
+				case 'Alt': return 'AL'
 			}
 		}
 		entry
