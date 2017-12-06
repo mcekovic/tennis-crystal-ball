@@ -21,6 +21,13 @@ public enum Opponent {
 	TOP_100(RANK, "Vs Top 100", matchesRankCriterion(100), statsRankCriterion(100), false),
 	HIGHER_RANKED(RANK, "Vs Higher Ranked", matchesRankCriterion(true), statsRankCriterion(true), false),
 	LOWER_RANKED(RANK, "Vs Lower Ranked", matchesRankCriterion(false), statsRankCriterion(false), false),
+	// Elo Rating
+	ELO_2400(ELO, "Vs Elo >= 2400", matchesEloCriterion(2400), statsEloCriterion(2400), false),
+	ELO_2200(ELO, "Vs Elo >= 2200", matchesEloCriterion(2200), statsEloCriterion(2200), false),
+	ELO_2000(ELO, "Vs Elo >= 2000", matchesEloCriterion(2000), statsEloCriterion(2000), false),
+	ELO_1800(ELO, "Vs Elo >= 1800", matchesEloCriterion(1800), statsEloCriterion(1800), false),
+	HIGHER_ELO(ELO, "Vs Higher Elo", matchesEloCriterion(true), statsEloCriterion(true), false),
+	LOWER_ELO(ELO, "Vs Lower Elo", matchesEloCriterion(false), statsEloCriterion(false), false),
 	// Age
 	UNDER_18(AGE, "Vs Under 18", matchesAgeCriterion(Range.atMost(18)), statsAgeCriterion(Range.atMost(18)), false),
 	UNDER_21(AGE, "Vs Under 21", matchesAgeCriterion(Range.atMost(21)), statsAgeCriterion(Range.atMost(21)), false),
@@ -53,6 +60,7 @@ public enum Opponent {
 
 	public enum OpponentCategory {
 		RANK("Vs Rank"),
+		ELO("Vs Elo Rating"),
 		AGE("Vs Age"),
 		STYLE("Vs Playing Style"),
 		SEEDING("Vs Seeding"),
@@ -94,6 +102,9 @@ public enum Opponent {
 	private static final String MATCHES_RANK_CRITERION = " AND ((m.winner_rank <= %1$d AND m.winner_id <> :playerId) OR (m.loser_rank <= %1$d AND m.loser_id <> :playerId))";
 	private static final String MATCHES_WINNER_HIGHER_RANKED_CRITERION = " AND m.winner_rank < m.loser_rank";
 	private static final String MATCHES_WINNER_LOWER_RANKED_CRITERION = " AND m.winner_rank > m.loser_rank";
+	private static final String MATCHES_ELO_CRITERION = " AND ((m.winner_elo_rating >= %1$d AND m.winner_id <> :playerId) OR (m.loser_elo_rating >= %1$d AND m.loser_id <> :playerId))";
+	private static final String MATCHES_WINNER_HIGHER_ELO_CRITERION = " AND m.winner_elo_rating > m.loser_elo_rating";
+	private static final String MATCHES_WINNER_LOWER_ELO_CRITERION = " AND m.winner_elo_rating < m.loser_elo_rating";
 	private static final String MATCHES_WINNER_YOUNGER_CRITERION = " AND m.winner_age < m.loser_age";
 	private static final String MATCHES_WINNER_OLDER_CRITERION = " AND m.winner_age > m.loser_age";
 	private static final String MATCHES_SEED_CRITERION = " AND ((m.winner_seed %1$s AND m.winner_id <> :playerId) OR (m.loser_seed %1$s AND m.loser_id <> :playerId))";
@@ -106,6 +117,9 @@ public enum Opponent {
 	private static final String STATS_RANK_CRITERION = " AND opponent_rank <= %1$d";
 	private static final String STATS_OPPONENT_HIGHER_RANKED_CRITERION = " AND opponent_rank < player_rank";
 	private static final String STATS_OPPONENT_LOWER_RANKED_CRITERION = " AND opponent_rank > player_rank";
+	private static final String STATS_ELO_CRITERION = " AND opponent_elo_rating >= %1$d";
+	private static final String STATS_OPPONENT_HIGHER_ELO_CRITERION = " AND opponent_elo_rating > player_elo_rating";
+	private static final String STATS_OPPONENT_LOWER_ELO_CRITERION = " AND opponent_elo_rating < player_elo_rating";
 	private static final String STATS_OPPONENT_YOUNGER_CRITERION = " AND opponent_age < player_age";
 	private static final String STATS_OPPONENT_OLDER_CRITERION = " AND opponent_age > player_age";
 	private static final String STATS_SEED_CRITERION = " AND opponent_seed %1$s";
@@ -151,6 +165,14 @@ public enum Opponent {
 		return format(MATCHES_PLAYER_CRITERION, higherRanked ? MATCHES_WINNER_HIGHER_RANKED_CRITERION : MATCHES_WINNER_LOWER_RANKED_CRITERION, higherRanked ? MATCHES_WINNER_LOWER_RANKED_CRITERION : MATCHES_WINNER_HIGHER_RANKED_CRITERION);
 	}
 
+	private static String matchesEloCriterion(int eloRating) {
+		return format(MATCHES_ELO_CRITERION, eloRating);
+	}
+
+	private static String matchesEloCriterion(boolean higherElo) {
+		return format(MATCHES_PLAYER_CRITERION, higherElo ? MATCHES_WINNER_HIGHER_ELO_CRITERION : MATCHES_WINNER_LOWER_ELO_CRITERION, higherElo ? MATCHES_WINNER_LOWER_ELO_CRITERION : MATCHES_WINNER_HIGHER_ELO_CRITERION);
+	}
+
 	private static String matchesAgeCriterion(Range<Integer> ageRange) {
 		return format(MATCHES_PLAYER_CRITERION, rangeFilter(ageRange, "m.winner_age"), rangeFilter(ageRange, "m.loser_age"));
 	}
@@ -189,6 +211,14 @@ public enum Opponent {
 
 	private static String statsRankCriterion(boolean higherRanked) {
 		return higherRanked ? STATS_OPPONENT_HIGHER_RANKED_CRITERION : STATS_OPPONENT_LOWER_RANKED_CRITERION;
+	}
+
+	private static String statsEloCriterion(int eloRating) {
+		return format(STATS_ELO_CRITERION, eloRating);
+	}
+
+	private static String statsEloCriterion(boolean higherElo) {
+		return higherElo ? STATS_OPPONENT_HIGHER_ELO_CRITERION : STATS_OPPONENT_LOWER_ELO_CRITERION;
 	}
 
 	private static String statsAgeCriterion(Range<Integer> ageRange) {
