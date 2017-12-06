@@ -379,8 +379,8 @@ FROM match_for_stats_v;
 -- player_match_performance_v
 
 CREATE OR REPLACE VIEW player_match_performance_v AS
-SELECT m.season, m.date, m.level, m.surface, m.indoor, m.round, m.best_of, m.tournament_id, m.tournament_event_id, m.winner_id player_id, m.winner_rank player_rank, m.winner_age player_age, m.winner_height player_height,
-	m.loser_id opponent_id, m.loser_rank opponent_rank, m.loser_seed opponent_seed, m.loser_entry opponent_entry, m.loser_country_id opponent_country_id, m.loser_age opponent_age, m.loser_height opponent_height,
+SELECT m.season, m.date, m.level, m.surface, m.indoor, m.round, m.best_of, m.tournament_id, m.tournament_event_id, m.winner_id player_id, m.winner_rank player_rank, m.winner_elo_rating player_elo_rating, m.winner_age player_age, m.winner_height player_height,
+	m.loser_id opponent_id, m.loser_rank opponent_rank, m.loser_elo_rating opponent_elo_rating, m.loser_seed opponent_seed, m.loser_entry opponent_entry, m.loser_country_id opponent_country_id, m.loser_age opponent_age, m.loser_height opponent_height,
 	1 matches_won, 0 matches_lost,
 	CASE WHEN m.level = 'G' THEN 1 ELSE 0 END grand_slam_matches_won, 0 grand_slam_matches_lost,
 	CASE WHEN m.level = 'F' THEN 1 ELSE 0 END tour_finals_matches_won, 0 tour_finals_matches_lost,
@@ -413,8 +413,8 @@ FROM match_for_stats_v m
 LEFT JOIN set_score s1 ON s1.match_id = m.match_id AND s1.set = 1
 LEFT JOIN set_score ds ON ds.match_id = m.match_id AND ds.set = m.best_of AND m.w_sets + m.l_sets = m.best_of AND m.outcome IS NULL
 UNION ALL
-SELECT m.season, m.date, m.level, m.surface, m.indoor, m.round, m.best_of, m.tournament_id, m.tournament_event_id, m.loser_id, m.loser_rank, m.loser_age, m.loser_height,
-	m.winner_id, m.winner_rank, m.winner_seed, m.winner_entry, m.winner_country_id, m.winner_age, m.winner_height,
+SELECT m.season, m.date, m.level, m.surface, m.indoor, m.round, m.best_of, m.tournament_id, m.tournament_event_id, m.loser_id, m.loser_rank, m.loser_elo_rating, m.loser_age, m.loser_height,
+	m.winner_id, m.winner_rank, m.winner_elo_rating, m.winner_seed, m.winner_entry, m.winner_country_id, m.winner_age, m.winner_height,
 	0, 1,
 	0, CASE WHEN m.level = 'G' THEN 1 ELSE 0 END,
 	0, CASE WHEN m.level = 'F' THEN 1 ELSE 0 END,
