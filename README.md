@@ -35,13 +35,13 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - [GOAT List by Surface](https://github.com/mcekovic/tennis-crystal-ball/issues/99) - In addition to overall Open Era 'GOAT' list, create separate 'GOAT' lists by surface, taking into account achievements on specific surface only
 - [Glicko Ratings](https://github.com/mcekovic/tennis-crystal-ball/issues/77) - Improve Elo Rating computation with [Glicko 2](https://en.wikipedia.org/wiki/Glicko_rating_system) variant, to better reflect periods when player is out of competition
 - [In-progress Game, Set and Match Forecasts](https://github.com/mcekovic/tennis-crystal-ball/issues/154) - In-progress game, set and match forecast with probabilities for in-progress matches
-- [Round Robin Tournament Simulator](https://github.com/mcekovic/tennis-crystal-ball/issues/97) - Round Robin Tournament Simulator for Tour Finals, in addition to ordinary knock-out simulator
+- [Round Robin Tournament Simulator](https://github.com/mcekovic/tennis-crystal-ball/issues/97) - Round Robin Tournament Simulator for Tour Finals, in addition to ordinary knock-out tournament simulator
 
 ### Technology
 
 PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Google Charts, Groovy...
 
-### Preview
+### Production
 http://www.ultimatetennisstatistics.com
 
 ### Data Loaders

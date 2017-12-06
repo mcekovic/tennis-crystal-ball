@@ -179,7 +179,7 @@ public final class StatsCategory {
 		addCategory(PERFORMANCE, "bpsSavedOverPerfRatio", "(" + BREAK_POINTS_SAVED_PCT + ") / nullif(" + SERVICE_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsSavedOverPerformingRatio, POINT, RATIO3, false, "BPs Saved Over-Perf.", "stats.breakPointsSavedOverPerformingRatio.title");
 		addCategory(PERFORMANCE, "bpsConvOverPerfRatio", "(" + BREAK_POINTS_PCT + ") / nullif(" + RETURN_POINTS_WON_PCT + ", 0)", PlayerStats::getBreakPointsConvertedOverPerformingRatio, POINT, RATIO3, false, "BPs Conv. Over-Perf.", "stats.breakPointsConvertedOverPerformingRatio.title");
 		// Opponent
-		addCategory(OPPONENT_CATEGORY, "opponentRank", "exp(coalesce(opponent_rank, 1500) / nullif(" + TOTAL_MATCHES + ", 0))", "exp(sum(ln(coalesce(opponent_rank, 1500))) / nullif(sum(p_matches) + sum(o_matches), 0))", "coalesce(opponent_rank, 1500)", PlayerStats::getOpponentRank, MATCH, RATIO1, true, "Opponent Rank", "stats.opponentRank.title");
+		addCategory(OPPONENT_CATEGORY, "opponentRank", "exp(coalesce(opponent_rank, 1500) / nullif(" + TOTAL_MATCHES + ", 0))", "exp(avg(ln(coalesce(opponent_rank, 1500))))", "coalesce(opponent_rank, 1500)", PlayerStats::getOpponentRank, MATCH, RATIO1, true, "Opponent Rank", "stats.opponentRank.title");
 		addCategory(OPPONENT_CATEGORY, "opponentEloRating", "coalesce(opponent_elo_rating, 1500)::REAL / nullif(" + TOTAL_MATCHES + ", 0)", "avg(coalesce(opponent_elo_rating, 1500))", "coalesce(opponent_elo_rating, 1500)", PlayerStats::getOpponentEloRating, MATCH, RATIO1, false, "Opponent Elo Rating", null);
 		// Time
 		addCategory(TIME_CATEGORY, "pointTime", "60 * minutes::REAL / nullif(" + TOTAL_POINTS + ", 0)", PlayerStats::getPointTime, POINT, RATIO2, true, "Point Time (seconds)");
