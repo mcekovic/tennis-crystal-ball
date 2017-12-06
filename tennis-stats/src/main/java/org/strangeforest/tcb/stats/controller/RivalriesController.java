@@ -452,7 +452,7 @@ public class RivalriesController extends PageController {
 			playerId1, playerId2, aDate1, aDate2,
 			Surface.safeDecode(surface), indoor, TournamentLevel.safeDecode(level), Round.safeDecode(round)
       );
-		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, round));
+		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, level, surface, indoor, round));
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
@@ -461,6 +461,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
 		modelMap.addAttribute("rounds", Round.ROUNDS);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("level", level);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("date", date != null ? date : aDate1);

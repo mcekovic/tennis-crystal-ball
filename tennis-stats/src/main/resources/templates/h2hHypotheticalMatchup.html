@@ -6,6 +6,7 @@
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.TournamentLevel>"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.Round[]"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="date" type="java.time.LocalDate"*/-->
@@ -34,6 +35,9 @@
 		var surface = $("#predictionSurface").val();
 		if (surface)
 			url += "&surface=" + surface;
+		var indoor = $("#predictionIndoor").val();
+		if (indoor)
+			url += "&indoor=" + indoor;
 		var level = $("#predictionLevel").val();
 		if (level)
 			url += "&level=" + level;
@@ -60,6 +64,13 @@
 		url += "&priceFormat=" + $("#h2hPriceFormat").val();
 		url += "&showDetails=" + showDetails;
 		$("#hypotheticalMatchup").load(url);
+	}
+	function predictionSurfaceChanged() {
+		var surface = $("#predictionSurface").val();
+		if (surface === "P")
+			$("#predictionIndoor").val("true")
+		else if (surface === "C" || surface === "G")
+			$("#predictionIndoor").val("false")
 	}
 	function onSameDateChanged() {
 		var sameDate = $("#predictionSameDate").prop("checked");
@@ -106,32 +117,41 @@
 	}
 </script>
 <div class="row">
-	<div class="col-md-2">
-		<select id="predictionSurface" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select surface">
+	<div class="col-md-3">
+		<select id="predictionSurface" class="form-control" onchange="predictionSurfaceChanged(); predictMatch()" data-toggle="tooltip" data-placement="top" title="Select surface">
 			<option value="">Unknown surface</option>
 			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
 		</select>
 	</div>
-	<div class="col-md-2">
+	<div class="col-md-3">
+		<select id="predictionIndoor" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select outdoor/indoor">
+			<option value="">Unknown out/indoor</option>
+			<option value="false" th:selected="${indoor == false}">Outdoor</option>
+			<option value="true" th:selected="${indoor == true}">Indoor</option>
+		</select>
+	</div>
+	<div class="col-md-3">
 		<select id="predictionLevel" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select tournament level">
 			<option value="">Unknown level</option>
 			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
 		</select>
 	</div>
-	<div class="col-md-2">
+	<div class="col-md-3">
 		<select id="predictionRound" class="form-control" onchange="predictMatch()" data-toggle="tooltip" data-placement="top" title="Select round">
 			<option value="">Unknown round</option>
 			<option th:each="aRound : ${rounds}" th:value="${aRound.code}" th:class="|bg-result-${aRound.baseCode}|" value="F" class="bg-result-F" th:text="${aRound.text}" th:selected="${aRound.code == round}">Final</option>
 		</select>
 	</div>
-	<div class="col-md-2">
+</div>
+<div class="row" style="margin-top: 10px">
+	<div class="col-md-2 col-md-offset-3">
 		<div class="checkbox">
-			<label data-toggle="tooltip" data-placement="top" class="text-nowrap" title="Predict match with current form on the same date for both players">
+			<label data-toggle="tooltip" data-placement="top" title="Predict match with current form on the same date for both players">
 				<input id="predictionSameDate" type="checkbox" th:checked="${sameDates}" onchange="onSameDateChanged()"/> On Same Date
 			</label>
 		</div>
 	</div>
-	<div id="predictionDateDiv" class="col-md-3" th:style="'display: ' + ${sameDates ? 'block' : 'none'}">
+	<div id="predictionDateDiv" class="col-md-3" th:style="'display: ' + ${sameDates ? 'inline-block' : 'none'}">
 		<div class="input-group">
 			<label for="predictionDate" class="input-group-addon">On Date:</label>
 			<input id="predictionDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(date, 'dd-MM-yyyy')}" onchange="predictMatch()"/>
