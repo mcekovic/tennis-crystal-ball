@@ -1,9 +1,9 @@
 package org.strangeforest.tcb.model
 
 abstract class DiffOutcome	protected constructor(
-	val maxItems: Int,
-	val itemsDiff: Int,
-	val pItemWin: (Int) -> Double
+	private val maxItems: Int,
+	private val itemsDiff: Int,
+	private val pItemWin: (Int) -> Double
 ) {
 
 	fun pWin(): Double {
@@ -13,32 +13,34 @@ abstract class DiffOutcome	protected constructor(
 	fun pWin(items1: Int, items2: Int): Double {
 		if (items1 == maxItems) {
 			val diff = items1 - items2
-			if (diff >= itemsDiff)
-				return 1.0
+			return if (diff >= itemsDiff)
+				1.0
 			else {
 				val nextItem = items1 + items2 + 1
-				if (diff == 0)
-					return pDeuce(pItemWin(nextItem), pItemWin(nextItem + 1))
-				else if (diff == 1) {
-					val p = pItemWin(nextItem)
-					return p + (1 - p) * pDeuce(pItemWin(nextItem + 1), pItemWin(nextItem + 2))
-				} else
-					throw IllegalStateException()
+				when (diff) {
+					0 -> pDeuce(pItemWin(nextItem), pItemWin(nextItem + 1))
+					1 -> {
+						val p = pItemWin(nextItem)
+						p + (1 - p) * pDeuce(pItemWin(nextItem + 1), pItemWin(nextItem + 2))
+					}
+					else -> throw IllegalStateException()
+				}
 			}
 		}
 		if (items2 >= maxItems) {
 			val diff = items2 - items1
-			if (diff >= itemsDiff)
-				return 0.0
+			return if (diff >= itemsDiff)
+				0.0
 			else {
 				val nextItem = items1 + items2 + 1
-				if (diff == 0)
-					return pDeuce(pItemWin(nextItem), pItemWin(nextItem + 1))
-				else if (diff == 1) {
-					val p = pItemWin(nextItem)
-					return p * pDeuce(pItemWin(nextItem + 1), pItemWin(nextItem + 2))
-				} else
-					throw IllegalStateException()
+				when (diff) {
+					0 -> pDeuce(pItemWin(nextItem), pItemWin(nextItem + 1))
+					1 -> {
+						val p = pItemWin(nextItem)
+						p * pDeuce(pItemWin(nextItem + 1), pItemWin(nextItem + 2))
+					}
+					else -> throw IllegalStateException()
+				}
 			}
 		}
 		val p = pItemWin(items1 + items2 + 1)
