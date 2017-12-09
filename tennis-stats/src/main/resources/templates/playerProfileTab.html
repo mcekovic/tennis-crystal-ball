@@ -85,6 +85,10 @@
 				<td>[(${player.active ? 'Yes' : 'No'})] <img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/></td>
 			</tr>
 			<!--/* Social */-->
+			<tr>
+				<th>Wikipedia</th>
+				<td><img src="/images/glyphicons-social-wikipedia-small.png" width="16" height="16"/> <a th:href="@{/playerWikipediaUrl(playerId=${player.id})}" href="https://en.wikipedia.org/wiki/Roger_Federer_career_statistics" target="_blank">Wikipedia</a></td>
+			</tr>
 			<tr th:if="${player.webSite}">
 				<th>Web Site</th>
 				<td><a th:href="'http://' + ${player.webSite}" href="http://www.johnsmith.com" target="_blank" th:text="${player.webSite}">www.johnsmith.com</a></td>

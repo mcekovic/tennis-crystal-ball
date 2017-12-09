@@ -1,10 +1,13 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.io.*;
+import java.net.*;
 import java.sql.*;
 import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
@@ -23,6 +26,9 @@ import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 public class PlayerService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
+	@Autowired private DataService dataService;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(PlayerService.class);
 
 	private static final String PLAYER_BY_ID_QUERY =
 		"SELECT player_id, name, dob, extract(YEAR FROM age) AS age, country_id, birthplace, residence, height, weight,\n" +
@@ -186,6 +192,28 @@ public class PlayerService {
 
 	private List<String> topN(String orderBy, int count) {
 		return jdbcTemplate.queryForList(format(TOP_N_QUERY, orderBy), params("count", count), String.class);
+	}
+
+
+	// Wikipedia URL
+
+	private static String[] WIKIPEDIA_URLS = new String[] {"https://en.wikipedia.org/wiki/%1$s_(tennis)", "https://en.wikipedia.org/wiki/%1$s"};
+	private static String WIKIPEDIA_SEARCH_URL = "https://en.wikipedia.org/w?search=%1$s";
+
+	@Cacheable("PlayerWikipediaUrl")
+	public String getPlayerWikipediaUrl(int playerId) {
+		String name = getPlayerName(playerId).replace(' ', '_');
+		for (String wikipediaUrlTemplate : WIKIPEDIA_URLS) {
+			String wikipediaUrl = format(wikipediaUrlTemplate, name);
+			try {
+				if (dataService.checkURL(wikipediaUrl) == HttpURLConnection.HTTP_OK)
+					return wikipediaUrl;
+			}
+			catch (IOException ex) {
+				LOGGER.debug("Error checking URL.", ex);
+			}
+		}
+		return format(WIKIPEDIA_SEARCH_URL, name);
 	}
 
 

@@ -119,6 +119,13 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerProfileTab", modelMap);
 	}
 
+	@GetMapping("/playerWikipediaUrl")
+	public String playerWikipediaUrl(
+		@RequestParam(name = "playerId") int playerId
+	) {
+		return "redirect:" + playerService.getPlayerWikipediaUrl(playerId);
+	}
+
 	@GetMapping("/playerSeason")
 	public ModelAndView playerSeason(
 		@RequestParam(name = "playerId") int playerId,

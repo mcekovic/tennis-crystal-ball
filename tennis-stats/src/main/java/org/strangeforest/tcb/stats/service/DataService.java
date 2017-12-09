@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.io.*;
+import java.net.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
@@ -9,6 +11,7 @@ import org.postgresql.core.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.*;
 import org.springframework.cache.annotation.*;
+import org.springframework.http.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.util.*;
@@ -102,5 +105,16 @@ public class DataService {
 		Cache cache = cacheManager.getCache("Global");
 		if (cache != null)
 			cache.evict(key);
+	}
+
+	private static final int CONNECT_TIMEOUT = 10000;
+	private static final int READ_TIMEOUT = 10000;
+
+	public int checkURL(String url) throws IOException {
+		HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
+		con.setRequestMethod(HttpMethod.HEAD.name());
+		con.setConnectTimeout(CONNECT_TIMEOUT);
+		con.setReadTimeout(READ_TIMEOUT);
+		return con.getResponseCode();
 	}
 }
