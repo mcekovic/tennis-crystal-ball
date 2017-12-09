@@ -35,15 +35,17 @@
 			$result.tooltip({title: title, html: true});
 		});
 		bindTimelineExtraData("performance", "/playerTimelinePerformance");
-		bindTimelineExtraData("statistics", "/playerTimelineStats");
+		bindTimelineExtraData("statistics", "/playerTimelineStats", function() { console.log('onLoad'); timelineShowStatsGroup("Overview"); });
 	});
-	function bindTimelineExtraData(elementPrefix, url) {
+	function bindTimelineExtraData(elementPrefix, url, onLoad) {
 		var $head = $("#" + elementPrefix + "Head");
 		$head.find(".raw-data").hide();
 		var $body = $("#" + elementPrefix + "Body");
 		$body.on("shown.bs.collapse", function () {
 			if (!$body.hasClass("loaded")) {
 				$($body).load(url + "?playerId=[(${playerId})]&seasons=[[${#strings.listJoin(timeline.seasons, ",")}]]", function () {
+					if (onLoad)
+						onLoad();
 					$body.find(".raw-data").hide();
 					$body.addClass("loaded");
 				});
@@ -53,6 +55,11 @@
 		}).on("hidden.bs.collapse", function () {
 			$head.find(".btn-stats").hide();
 		});
+	}
+	function timelineShowStatsGroup(groupId) {
+		var $statisticsBody = $("#statisticsBody");
+		$statisticsBody.find(".stats-group:not(.stats-group-" + groupId + ")").hide("fast");
+		$statisticsBody.find(".stats-group-" + groupId).show("fast");
 	}
 </script>
 <style th:inline="css">

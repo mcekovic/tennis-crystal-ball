@@ -198,6 +198,7 @@ public class PlayerStatsController extends BaseController {
 		ensureSeasons(seasonsStats, seasonList, PlayerStats.EMPTY);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("careerStats", careerStats);
 		modelMap.addAttribute("seasons", seasonList);
 		modelMap.addAttribute("seasonsStats", seasonsStats);

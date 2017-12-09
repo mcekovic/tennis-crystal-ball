@@ -13,6 +13,12 @@
 	<td th:text="${titles.get(null)}" class="stats">25</td>
 	<td th:each="season : ${seasons}" th:text="${titles.get(season)}" class="stats" align="center">5</td>
 </tr>
+<!-- Entries -->
+<tr th:unless="${entries.empty}">
+	<td class="stats-header stats-general">Entries</td>
+	<td th:text="${entries.get(null)}" class="stats">155</td>
+	<td th:each="season : ${seasons}" th:text="${entries.get(season)}" class="stats" align="center">25</td>
+</tr>
 <!-- Year-end Rank -->
 <tr>
 	<td class="stats-header stats-general">Year-End Ranking</td>
@@ -30,12 +36,6 @@
 	<td class="stats-header stats-general">GOAT Points</td>
 	<td th:text="${goatPoints.get(null)}" class="stats">155</td>
 	<td th:each="season : ${seasons}" th:text="${goatPoints.get(season)}" class="stats" align="center">25</td>
-</tr>
-<!-- Entries -->
-<tr th:unless="${entries.empty}">
-	<td class="stats-header stats-general">Entries</td>
-	<td th:text="${entries.get(null)}" class="stats">155</td>
-	<td th:each="season : ${seasons}" th:text="${entries.get(season)}" class="stats" align="center">25</td>
 </tr>
 <!-- Performance -->
 <th:block th:unless="${careerPerf.matches.empty}">
