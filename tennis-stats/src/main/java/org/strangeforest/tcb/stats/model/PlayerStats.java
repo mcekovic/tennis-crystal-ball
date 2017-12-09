@@ -54,9 +54,9 @@ public class PlayerStats {
 	public PlayerStats(
 		int matchesWon, int setsWon, int gamesWon, int tieBreaksWon,
 		int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced,
-		int minutes
+		int minutes, int setsWithStats, int gamesWithStats
 	) {
-		this(matchesWon, setsWon, gamesWon, tieBreaksWon, aces, doubleFaults, servicePoints, firstServesIn, firstServesWon, secondServesWon, serviceGames, breakPointsSaved, breakPointsFaced, minutes, 0, 0, 0, 0.0, 0.0, false);
+		this(matchesWon, setsWon, gamesWon, tieBreaksWon, aces, doubleFaults, servicePoints, firstServesIn, firstServesWon, secondServesWon, serviceGames, breakPointsSaved, breakPointsFaced, minutes, 1, setsWithStats, gamesWithStats, 0.0, 0.0, false);
 	}
 
 	public PlayerStats(
@@ -601,7 +601,7 @@ public class PlayerStats {
 	public static final PlayerStats EMPTY = empty();
 
 	private static PlayerStats empty() {
-		PlayerStats empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		PlayerStats empty = new PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 		empty.crossLinkOpponentStats(empty);
 		return empty;
 	}

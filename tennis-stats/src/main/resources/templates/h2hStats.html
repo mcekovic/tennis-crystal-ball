@@ -278,8 +278,8 @@
 					</th:block>
 				</tr>
 				<tr th:each="category : ${subGroup.categories}" th:if="${hasPointStats || !category.needsStats}" th:with="showStats1=${!stats1.empty && (hasPointStats1 || !category.needsStats)}, showStats2=${!stats2.empty && (hasPointStats2 || !category.needsStats)}, sc=${hasBothPointsStats ? category.statCompare(stats1, stats2) : 0}">
-					<th th:if="${doCompareStats}" th:text="${doCompareStats1 && (hasPointCompareStats1 || !category.needsStats) ? category.getStatFormatted(compareStats1) : _}" class="pct-data text-right" th:attrappend="class=${category.hasRawData() ? ' pct-data' : _}">10%</th>
-					<th th:if="${doCompareStats}" th:text="${doCompareStats1 && (hasPointCompareStats1 || !category.needsStats) ? category.getStatDiffFormatted(compareStats1, stats1) : _}" class="pct-data text-right" th:attrappend="class=${(doCompareStats1 ? ' ' + category.getStatDiffClass(compareStats1, stats1) : '') + (category.hasRawData() ? ' pct-data' : '')}">0%</th>
+					<th th:if="${doCompareStats}" th:text="${doCompareStats1 && (hasPointCompareStats1 || !category.needsStats) ? category.getStatFormatted(compareStats1) : _}" class="pct-data text-right">10%</th>
+					<th th:if="${doCompareStats}" th:text="${doCompareStats1 && (hasPointCompareStats1 || !category.needsStats) ? category.getStatDiffFormatted(compareStats1, stats1) : _}" class="pct-data text-right" th:attrappend="class=${doCompareStats1 ? ' ' + category.getStatDiffClass(compareStats1, stats1) : _}">0%</th>
 					<th:block th:unless="${category.matchesLink}">
 						<th th:text="${showStats1 ? category.getStatFormatted(stats1) : _}" class="text-right stat" th:attrappend="class=${(sc > 0 ? '-w' : (sc < 0 ? '-l' : '')) + (category.hasRawData() ? ' pct-data' : '')}">10%</th>
 						<th th:if="${category.hasRawData()}" th:text="${showStats1 ? category.getStatUp(stats1) + ' / ' + category.getStatDown(stats1) : _}" class="text-right stat" th:attrappend="class=${(sc > 0 ? '-w' : (sc < 0 ? '-l' : '')) + (category.hasRawData() ? ' raw-data' : '')}">10 / 100</th>
@@ -288,7 +288,7 @@
 						<th class="text-right" th:attrappend="class=${category.hasRawData() ? ' pct-data' : _}">
 							<a th:if="${showStats1}" th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=${(category.wonMatches ? 'won' : '') + 'played'})}" class="link-stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}" th:text="${category.getStatFormatted(stats1)}" title="Show matches">69%</a>
 						</th>
-						<th th:if="${category.hasRawData()}" class="text-right raw-data">
+						<th th:if="${category.hasRawData()}" class="raw-data text-right">
 							<a th:if="${showStats1}" th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=${(category.wonMatches ? 'won' : '') + 'played'})}" class="link-stat" th:attrappend="class=${sc > 0 ? '-w' : (sc < 0 ? '-l' : _)}" th:text="${category.getStatUp(stats1) + ' / ' + category.getStatDown(stats1)}" title="Show matches">6 / 10</a>
 						</th>
 					</th:block>
@@ -301,12 +301,12 @@
 						<th class="text-left" th:attrappend="class=${category.hasRawData() ? ' pct-data' : _}">
 							<a th:if="${showStats2}" th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=${(category.wonMatches ? 'won' : '') + 'played'})}" class="link-stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}" th:text="${category.getStatFormatted(stats2)}" title="Show matches">69%</a>
 						</th>
-						<th th:if="${category.hasRawData()}" class="text-left raw-data">
+						<th th:if="${category.hasRawData()}" class="raw-data text-left">
 							<a th:if="${showStats2}" th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, outcome=${(category.wonMatches ? 'won' : '') + 'played'})}" class="link-stat" th:attrappend="class=${sc < 0 ? '-w' : (sc > 0 ? '-l' : _)}" th:text="${category.getStatUp(stats2) + ' / ' + category.getStatDown(stats2)}" title="Show matches">6 / 10</a>
 						</th>
 					</th:block>
-					<th th:if="${doCompareStats}" th:text="${doCompareStats2 && (hasPointCompareStats2 || !category.needsStats) ? category.getStatDiffFormatted(compareStats2, stats2) : _}" class="pct-data text-left" th:attrappend="class=${(doCompareStats2 ? ' ' + category.getStatDiffClass(compareStats2, stats2) : '') + (category.hasRawData() ? ' pct-data' : '')}">0%</th>
-					<th th:if="${doCompareStats}" th:text="${doCompareStats2 && (hasPointCompareStats2 || !category.needsStats) ? category.getStatFormatted(compareStats2) : _}" class="pct-data text-left" th:attrappend="class=${category.hasRawData() ? ' pct-data' : _}">10%</th>
+					<th th:if="${doCompareStats}" th:text="${doCompareStats2 && (hasPointCompareStats2 || !category.needsStats) ? category.getStatDiffFormatted(compareStats2, stats2) : _}" class="pct-data text-left" th:attrappend="class=${doCompareStats2 ? ' ' + category.getStatDiffClass(compareStats2, stats2) : _}">0%</th>
+					<th th:if="${doCompareStats}" th:text="${doCompareStats2 && (hasPointCompareStats2 || !category.needsStats) ? category.getStatFormatted(compareStats2) : _}" class="pct-data text-left">10%</th>
 				</tr>
 				</th:block>
 			</table>

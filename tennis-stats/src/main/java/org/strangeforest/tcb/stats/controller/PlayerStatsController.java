@@ -168,6 +168,7 @@ public class PlayerStatsController extends BaseController {
 	@GetMapping("/matchStats")
 	public ModelAndView matchStats(
 		@RequestParam(name = "matchId") long matchId,
+		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", defaultValue = F) boolean compareSeason,
 		@RequestParam(name = "compareLevel", defaultValue = F) boolean compareLevel,
@@ -179,8 +180,9 @@ public class PlayerStatsController extends BaseController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("matchId", matchId);
+		modelMap.addAttribute("categoryGroups", StatsCategory.getMatchCategoryGroups());
+		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("matchStats", matchStats);
-		modelMap.addAttribute("statsFormatUtil", StatsFormatUtil.INSTANCE);
 		addCompareMatchStats(modelMap, matchId, compare, compareSeason, compareLevel, compareSurface, compareRound, compareOpponent);
 		return new ModelAndView("matchStats", modelMap);
 	}

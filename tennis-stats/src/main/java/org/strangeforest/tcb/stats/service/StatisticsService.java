@@ -26,7 +26,7 @@ public class StatisticsService {
 		"SELECT pw.name AS winner, pl.name AS loser, 1 w_matches, 0 l_matches, w_sets, l_sets, w_games, l_games, w_tbs, l_tbs,\n" +
 		"  w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,\n" +
 		"  l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,\n" +
-		"  minutes\n" +
+		"  minutes, w_sets + l_sets sets_w_stats, w_games + l_games games_w_stats\n" +
 		"FROM match_stats\n" +
 		"INNER JOIN match m USING (match_id)\n" +
 		"INNER JOIN player_v pw ON m.winner_id = pw.player_id\n" +
@@ -123,8 +123,7 @@ public class StatisticsService {
 		String loser = rs.getString("loser");
 		PlayerStats winnerStats = mapPlayerMatchStats(rs, "w_");
 		PlayerStats loserStats = mapPlayerMatchStats(rs, "l_");
-		int minutes = rs.getInt("minutes");
-		return new MatchStats(winner, loser, winnerStats, loserStats, minutes);
+		return new MatchStats(winner, loser, winnerStats, loserStats);
 	}
 
 
@@ -244,7 +243,9 @@ public class StatisticsService {
 			rs.getInt(prefix + "sv_gms"),
 			rs.getInt(prefix + "bp_sv"),
 			rs.getInt(prefix + "bp_fc"),
-			rs.getInt("minutes")
+			rs.getInt("minutes"),
+			rs.getInt("sets_w_stats"),
+			rs.getInt("games_w_stats")
 		);
 	}
 

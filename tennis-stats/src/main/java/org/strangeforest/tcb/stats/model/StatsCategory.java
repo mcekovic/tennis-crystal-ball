@@ -70,6 +70,7 @@ public final class StatsCategory {
 	private static final Map<String, List<StatsCategory>> CATEGORY_CLASSES = new LinkedHashMap<>();
 	private static final Map<String, String> CATEGORY_TYPES = new LinkedHashMap<>();
 	private static final List<CategoryGroup> CATEGORY_GROUPS = new ArrayList<>();
+	private static final List<CategoryGroup> MATCH_CATEGORY_GROUPS = new ArrayList<>();
 
 	private static final String TOTAL_POINTS = "p_sv_pt + o_sv_pt";
 	private static final String TOTAL_TIE_BREAKS = "p_tbs + o_tbs";
@@ -187,45 +188,66 @@ public final class StatsCategory {
 		addCategory(TIME_CATEGORY, "setTime", "minutes::REAL / nullif(sets_w_stats, 0)", PlayerStats::getSetTime, SET_W_STATS, RATIO2, true, "Set Time (minutes)");
 		addCategory(TIME_CATEGORY, "matchTime", "minutes::REAL / nullif(matches_w_stats, 0)", PlayerStats::getMatchTime, MATCH_W_STATS, TIME, true, "Match Time");
 
-		// Overview
+		// Groups
 		addGroup("Overview", "Overview", true,
 			new CategorySubGroup("Serve", "acePct", "doubleFaultPct", "firstServePct", "firstServeWonPct", "secondServeWonPct", "breakPointsSavedPct", "servicePointsWonPct", "serviceGamesWonPct"),
 			new CategorySubGroup("Return", "aceAgainstPct", "doubleFaultAgainstPct", "firstServeReturnWonPct", "secondServeReturnWonPct", "breakPointsPct", "returnPointsWonPct", "returnGamesWonPct"),
 			new CategorySubGroup("Total", "pointsDominanceRatio", "gamesDominanceRatio", "breakPointsRatio", "totalPointsWonPct", "totalGamesWonPct", "setsWonPct", "matchesWonPct", "matchTime")
 		);
-		// Aces & DFs
 		addGroup("AcesDFs", ACES_AND_DFS, false,
 			new CategorySubGroup("Aces", "aces", "acePct", "acesPerSvcGame", "acesPerSet", "acesPerMatch"),
 			new CategorySubGroup("Double Faults", "doubleFault", "doubleFaultPct", "doubleFaultPerSecondServePct", "dfsPerSvcGame", "dfsPerSet", "dfsPerMatch"),
 			new CategorySubGroup("Other", "acesDfsRatio", "aceAgainst", "aceAgainstPct", "doubleFaultAgainst", "doubleFaultAgainstPct")
 		);
-		// Serve
 		addGroup("Serve", SERVE, false,
 			new CategorySubGroup("Serve", "firstServePct", "firstServeWonPct", "secondServeWonPct", "breakPointsSavedPct", "bpsPerSvcGame", "bpsFacedPerSet", "bpsFacedPerMatch"),
 			new CategorySubGroup("Points", "servicePointsWonPct", "serviceIPPointsWonPct", "pointsPerSvcGame", "pointsLostPerSvcGame"),
 			new CategorySubGroup("Games", "serviceGamesWonPct", "svcGamesLostPerSet", "svcGamesLostPerMarch")
 		);
-		// Return
 		addGroup("Return", RETURN, false,
 			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct", "breakPointsPct", "bpsPerRtnGame", "bpsPerSet", "bpsPerMatch"),
 			new CategorySubGroup("Points", "returnPointsWonPct", "returnIPPointsWonPct", "pointsPerRtnGame", "pointsWonPerRtnGame"),
 			new CategorySubGroup("Games", "returnGamesWonPct", "rtnGamesWonPerSet", "rtnGamesWonPerMarch")
 		);
-		// Total
 		addGroup("Total", TOTAL, false,
 			new CategorySubGroup("Points", "totalPoints", "totalPointsWon", "totalPointsWonPct", "totalGames", "totalGamesWon", "totalGamesWonPct"),
 			new CategorySubGroup("Tie Breaks", "tieBreaks", "tieBreakWon", "tieBreakWonPct", "tieBreaksPerSet", "tieBreaksPerMatch"),
 			new CategorySubGroup("Sets & Matches", "sets", "setsWon", "setsWonPct", "matches", "matchesWon", "matchesWonPct")
 		);
-		// Performance
 		addGroup("Performance", PERFORMANCE, false,
 			new CategorySubGroup("Dominance", "pointsDominanceRatio", "gamesDominanceRatio", "breakPointsRatio"),
 			new CategorySubGroup("Over-Performing", "overPerformingRatio", "ptsToSetsOverPerfRatio", "ptsToGamesOverPerfRatio", "svcPtsToSvcGamesOverPerfRatio", "rtnPtsToRtnGamesOverPerfRatio", "ptsToTBsOverPerfRatio"),
 			new CategorySubGroup("Over-Performing Ex", "gmsToMatchesOverPerfRatio", "gmsToSetsOverPerfRatio", "setsToMatchesOverPerfRatio", "bpsOverPerfRatio", "bpsSavedOverPerfRatio", "bpsConvOverPerfRatio")
 		);
-		// Opponent & Time
 		addGroup("OpponentTime", "Opponent & Time", false,
 			new CategorySubGroup("Opponent", "opponentRank", "opponentEloRating"),
+			new CategorySubGroup("Time", "pointTime", "gameTime", "setTime", "matchTime")
+		);
+
+		// Match Groups
+		addMatchGroup("Overview", "Overview", true,
+			new CategorySubGroup("Serve", "acePct", "doubleFaultPct", "firstServePct", "firstServeWonPct", "secondServeWonPct", "breakPointsSavedPct", "servicePointsWonPct"),
+			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct", "breakPointsPct", "returnPointsWonPct"),
+			new CategorySubGroup("Total", "pointsDominanceRatio", "totalPointsWonPct", "matchTime")
+		);
+		addMatchGroup("AcesDFs", ACES_AND_DFS, false,
+			new CategorySubGroup("Aces", "aces", "acePct", "acesPerSvcGame", "acesPerSet"),
+			new CategorySubGroup("Double Faults", "doubleFault", "doubleFaultPct", "doubleFaultPerSecondServePct", "dfsPerSvcGame", "dfsPerSet"),
+			new CategorySubGroup("Other", "acesDfsRatio")
+		);
+		addMatchGroup("Serve", SERVE, false,
+			new CategorySubGroup("Serve", "firstServePct", "firstServeWonPct", "secondServeWonPct", "breakPointsSavedPct", "bpsPerSvcGame", "bpsFacedPerSet"),
+			new CategorySubGroup("Points", "servicePointsWonPct", "serviceIPPointsWonPct", "pointsPerSvcGame", "pointsLostPerSvcGame"),
+			new CategorySubGroup("Games", "serviceGamesWonPct", "svcGamesLostPerSet")
+		);
+		addMatchGroup("Return", RETURN, false,
+			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct", "breakPointsPct", "bpsPerRtnGame", "bpsPerSet"),
+			new CategorySubGroup("Points", "returnPointsWonPct", "returnIPPointsWonPct", "pointsPerRtnGame", "pointsWonPerRtnGame"),
+			new CategorySubGroup("Games", "returnGamesWonPct", "rtnGamesWonPerSet")
+		);
+		addMatchGroup("Total", TOTAL, false,
+			new CategorySubGroup("Points", "totalPoints", "totalPointsWon", "totalPointsWonPct", "totalGames", "totalGamesWon", "totalGamesWonPct"),
+			new CategorySubGroup("Dominance", "pointsDominanceRatio", "gamesDominanceRatio", "breakPointsRatio"),
 			new CategorySubGroup("Time", "pointTime", "gameTime", "setTime", "matchTime")
 		);
 	}
@@ -251,7 +273,7 @@ public final class StatsCategory {
 	}
 
 	private static void addCategory(String categoryClass, String name, String expression, String summedExpression, String singleExpression, Function<PlayerStats, ? extends Number> statFunction, Function<PlayerStats, ? extends Number> upFunction, Function<PlayerStats, ? extends Number> downFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
-		StatsCategory category = new StatsCategory(name, expression, summedExpression, singleExpression, statFunction, upFunction, downFunction, item, type, inverted, title, descriptionId);
+		StatsCategory category = new StatsCategory(name, expression, summedExpression, singleExpression, statFunction, upFunction, downFunction, item, type, inverted, categoryClass.equals(TIME_CATEGORY), title, descriptionId);
 		CATEGORIES.put(name, category);
 		CATEGORY_CLASSES.computeIfAbsent(categoryClass, catCls -> new ArrayList<>()).add(category);
 		CATEGORY_TYPES.put(name, category.getType().name());
@@ -289,10 +311,11 @@ public final class StatsCategory {
 	private final Item item;
 	private final Type type;
 	private final boolean inverted;
+	private final boolean time;
 	private final String title;
 	private final String descriptionId;
 
-	private StatsCategory(String name, String expression, String summedExpression, String singleExpression, Function<PlayerStats, ? extends Number> statFunction, Function<PlayerStats, ? extends Number> upFunction, Function<PlayerStats, ? extends Number> downFunction, Item item, Type type, boolean inverted, String title, String descriptionId) {
+	private StatsCategory(String name, String expression, String summedExpression, String singleExpression, Function<PlayerStats, ? extends Number> statFunction, Function<PlayerStats, ? extends Number> upFunction, Function<PlayerStats, ? extends Number> downFunction, Item item, Type type, boolean inverted, boolean time, String title, String descriptionId) {
 		this.name = name;
 		this.expression = expression;
 		this.summedExpression = summedExpression;
@@ -303,6 +326,7 @@ public final class StatsCategory {
 		this.item = item;
 		this.type = type;
 		this.inverted = inverted;
+		this.time = time;
 		this.title = title;
 		this.descriptionId = descriptionId;
 	}
@@ -403,6 +427,10 @@ public final class StatsCategory {
 		return inverted;
 	}
 
+	public boolean isTime() {
+		return time;
+	}
+
 	public String getTitle() {
 		return title;
 	}
@@ -433,8 +461,16 @@ public final class StatsCategory {
 		return CATEGORY_GROUPS;
 	}
 
+	public static List<CategoryGroup> getMatchCategoryGroups() {
+		return MATCH_CATEGORY_GROUPS;
+	}
+
 	private static void addGroup(String id, String name, boolean def, CategorySubGroup... subGroups) {
 		CATEGORY_GROUPS.add(new CategoryGroup(id, name, def, subGroups));
+	}
+
+	private static void addMatchGroup(String id, String name, boolean def, CategorySubGroup... subGroups) {
+		MATCH_CATEGORY_GROUPS.add(new CategoryGroup(id, name, def, subGroups));
 	}
 
 	private static class CategoryGroup {

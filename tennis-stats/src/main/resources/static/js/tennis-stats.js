@@ -449,7 +449,7 @@ function showMatchStats(matchId, event) {
 		var url = "matchStats?matchId=" + matchId;
 		$.get(url, function(data) {
 			$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
-			$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "500px"); }).click();
+			$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "600px"); }).click();
 			$matchStats.data("statsURL", url);
 		});
 	}
@@ -457,6 +457,9 @@ function showMatchStats(matchId, event) {
 
 function compareMatchStats(matchId, close) {
 	var url = $("#matchStats-" + matchId).data("statsURL");
+	var tab = $("#matchStats-" + matchId + "Tabs").find("li.active a").attr("href");
+	if (tab)
+		url += "&tab=" + tab.substr(1);
 	if (!close) {
 		url += "&compare=true";
 		var compareSelector = "#matchStats-" + matchId + "Compare";

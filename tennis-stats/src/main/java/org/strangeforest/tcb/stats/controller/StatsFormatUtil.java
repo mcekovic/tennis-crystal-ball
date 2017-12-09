@@ -8,11 +8,7 @@ import com.google.common.base.*;
 import static java.lang.Math.*;
 import static java.lang.String.*;
 
-public class StatsFormatUtil {
-
-	public static final StatsFormatUtil INSTANCE = new StatsFormatUtil();
-
-	private StatsFormatUtil() {}
+public abstract class StatsFormatUtil {
 
 	public static String formatCount(Number count) {
 		return count != null ? format("%.0f", count.doubleValue()) : "";
@@ -89,10 +85,6 @@ public class StatsFormatUtil {
 		}
 		else
 			return "";
-	}
-
-	public static String diffClass(Number from, Number to) {
-		return diffClass(from, to, false);
 	}
 
 	public static String relativeTo(Integer compareSeason, String compareLevel, String compareSurface) {
