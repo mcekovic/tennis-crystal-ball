@@ -8,12 +8,13 @@ import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
 
-import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
+import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
 @Controller

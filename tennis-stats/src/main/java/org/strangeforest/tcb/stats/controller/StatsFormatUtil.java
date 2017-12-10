@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
-import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.base.*;

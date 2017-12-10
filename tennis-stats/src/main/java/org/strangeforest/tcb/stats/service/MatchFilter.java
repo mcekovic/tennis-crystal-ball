@@ -11,6 +11,7 @@ import com.google.common.collect.*;
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.util.ObjectUtil.*;
 
 public class MatchFilter extends TournamentEventResultFilter {
 
@@ -204,6 +205,6 @@ public class MatchFilter extends TournamentEventResultFilter {
 			.add("opponentFilter", opponentFilter)
 			.add("outcomeFilter", outcomeFilter)
 			.add("scoreFilter", scoreFilter)
-			.add("bigWin", bigWin ? true : null);
+			.add("bigWin", nullIf(bigWin, true));
 	}
 }

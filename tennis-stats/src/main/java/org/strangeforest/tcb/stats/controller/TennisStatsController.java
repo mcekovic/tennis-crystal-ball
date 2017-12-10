@@ -13,6 +13,7 @@ import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
 
@@ -67,11 +68,6 @@ public class TennisStatsController extends PageController {
 		modelMap.addAttribute("rankingTopN", rankingTopN);
 		modelMap.addAttribute("surfaces", Surface.values());
 		return new ModelAndView("rankingTopN", modelMap);
-	}
-
-	@GetMapping("/goatList")
-	public String goatList() {
-		return "goatList";
 	}
 
 	@GetMapping("/liveScores")

@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.util.*;
 
 public class PlayerPerformance {

@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 import static java.util.Comparator.*;
 
 public class HeadsToHeads {

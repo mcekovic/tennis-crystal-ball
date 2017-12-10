@@ -8,6 +8,7 @@ import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.util.ObjectUtil.*;
 
 public class RecordFilter {
 
@@ -63,7 +64,7 @@ public class RecordFilter {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("category", emptyToNull(category))
 			.add("searchPhrase", emptyToNull(searchPhrase))
-			.add("infamous", infamous ? true : null)
+			.add("infamous", nullIf(infamous, true))
 		.toString();
 	}
 }

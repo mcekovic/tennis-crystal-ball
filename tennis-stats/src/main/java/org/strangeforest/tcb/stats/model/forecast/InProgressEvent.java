@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.model;
+package org.strangeforest.tcb.stats.model.forecast;
 
 import java.time.*;
 import java.util.*;

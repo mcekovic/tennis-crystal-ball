@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.prediction;
 
 import java.time.*;
 
-import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 
 public class MatchForVerification {
 

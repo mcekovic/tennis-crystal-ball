@@ -1,4 +1,4 @@
-<a xmlns:th="http://www.thymeleaf.org" th:fragment="playerTournamentTimeline(tournament)">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="playerTournamentTimeline(tournament)">
 	<!--/*@thymesVar id="tournament" type="org.strangeforest.tcb.stats.model.PlayerTournamentTimeline"*/-->
 	<td th:class="|bg-level-${tournament.maxLevel}|" class="bg-level-G">
 		<th:block th:unless="${tournament.maxLevel} == 'O'" th:each="levelAndName : ${tournament.levelsAndNames}">

@@ -1,7 +1,9 @@
 package org.strangeforest.tcb.dataload
 
+import org.strangeforest.tcb.stats.model.core.*
+import org.strangeforest.tcb.stats.model.forecast.*
+
 import groovy.transform.*
-import org.strangeforest.tcb.stats.model.*
 
 import static java.lang.Math.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*

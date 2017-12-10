@@ -10,6 +10,7 @@ import com.google.common.base.MoreObjects.*;
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
+import static org.strangeforest.tcb.util.ObjectUtil.*;
 
 public class ScoreFilter {
 
@@ -240,7 +241,7 @@ public class ScoreFilter {
 		ToStringHelper helper = MoreObjects.toStringHelper(this).omitNullValues();
 		if (!all) {
 			if (isNullOrEmpty(misc)) {
-				helper.add("after", after ? true : null);
+				helper.add("after", nullIf(after, true));
 				helper.add("wSets", wSets);
 				helper.add("lSets", lSets);
 			}

@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 public class TournamentEventResults {
 
 	private enum ResultRound {

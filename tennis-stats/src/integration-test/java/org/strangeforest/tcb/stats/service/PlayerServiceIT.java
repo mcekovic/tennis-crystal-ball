@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.test.context.junit4.*;
 import org.strangeforest.tcb.stats.*;
 import org.strangeforest.tcb.stats.boot.*;
-import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 
 import static org.assertj.core.api.Assertions.*;
 

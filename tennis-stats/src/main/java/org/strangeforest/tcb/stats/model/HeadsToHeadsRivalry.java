@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 public class HeadsToHeadsRivalry extends Rivalry {
 
 	public HeadsToHeadsRivalry(RivalryPlayer player1, RivalryPlayer player2, WonLost wonLost, MatchInfo lastMatch) {

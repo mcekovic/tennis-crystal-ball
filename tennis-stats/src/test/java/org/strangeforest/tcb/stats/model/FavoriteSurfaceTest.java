@@ -1,10 +1,11 @@
 package org.strangeforest.tcb.stats.model;
 
 import org.junit.*;
+import org.strangeforest.tcb.stats.model.core.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.strangeforest.tcb.stats.model.Surface.*;
-import static org.strangeforest.tcb.stats.model.SurfaceGroup.*;
+import static org.strangeforest.tcb.stats.model.core.Surface.*;
+import static org.strangeforest.tcb.stats.model.core.SurfaceGroup.*;
 
 public class FavoriteSurfaceTest {
 

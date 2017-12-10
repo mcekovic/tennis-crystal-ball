@@ -5,7 +5,8 @@ import java.time.*
 import org.jsoup.nodes.*
 import org.jsoup.select.*
 import org.springframework.jdbc.core.namedparam.*
-import org.strangeforest.tcb.stats.model.*
+import org.strangeforest.tcb.stats.model.core.*
+import org.strangeforest.tcb.stats.model.forecast.*
 import org.strangeforest.tcb.stats.service.*
 
 import com.google.common.base.*

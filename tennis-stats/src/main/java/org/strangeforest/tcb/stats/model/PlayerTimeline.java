@@ -2,8 +2,10 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
+import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
 
 public class PlayerTimeline {
 

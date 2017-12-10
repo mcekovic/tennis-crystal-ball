@@ -12,7 +12,8 @@ import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
-import static org.strangeforest.tcb.stats.service.ParamsUtil.addRangeParams;
+import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.util.ObjectUtil.*;
 
 public class PerfStatsFilter extends PlayerListFilter {
 
@@ -421,8 +422,8 @@ public class PerfStatsFilter extends PlayerListFilter {
 	@Override protected MoreObjects.ToStringHelper toStringHelper() {
 		return super.toStringHelper()
 			.add("season", season)
-			.add("last52Weeks", last52Weeks ? true : null)
-			.add("dateRange", dateRange.equals(Range.all()) ? null : dateRange)
+			.add("last52Weeks", nullIf(last52Weeks, true))
+			.add("dateRange", nullIf(dateRange, Range.all()))
 			.add("level", emptyToNull(level))
 			.add("bestOf", bestOf)
 			.add("surface", emptyToNull(surface))

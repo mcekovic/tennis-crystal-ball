@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.model;
+package org.strangeforest.tcb.stats.model.core;
 
 import java.util.ArrayList;
 import java.util.*;
@@ -7,13 +7,14 @@ import java.util.function.*;
 import java.util.regex.*;
 import java.util.stream.*;
 
+import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.util.*;
 
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
-import static org.strangeforest.tcb.stats.model.StatsCategory.Item.*;
-import static org.strangeforest.tcb.stats.model.StatsCategory.Type.*;
+import static org.strangeforest.tcb.stats.model.core.StatsCategory.Item.*;
+import static org.strangeforest.tcb.stats.model.core.StatsCategory.Type.*;
 import static org.strangeforest.tcb.util.EnumUtil.*;
 
 public final class StatsCategory {

@@ -1,11 +1,11 @@
-package org.strangeforest.tcb.stats.model;
+package org.strangeforest.tcb.stats.model.core;
 
 import java.util.*;
 
 import org.strangeforest.tcb.stats.util.*;
 
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
+import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
 
 public enum TournamentLevelGroup implements CodedEnum {
 

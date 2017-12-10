@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 public class TopPerformerRow extends PlayerRow {
 
 	private final WonLost wonLost;

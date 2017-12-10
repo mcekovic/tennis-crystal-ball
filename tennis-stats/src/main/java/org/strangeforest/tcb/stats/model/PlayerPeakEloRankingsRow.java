@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.time.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 public class PlayerPeakEloRankingsRow extends PlayerRankingsRow {
 
 	private final LocalDate pointsDate;

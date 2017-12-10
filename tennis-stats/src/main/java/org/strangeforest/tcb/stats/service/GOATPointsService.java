@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
-import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
+import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service

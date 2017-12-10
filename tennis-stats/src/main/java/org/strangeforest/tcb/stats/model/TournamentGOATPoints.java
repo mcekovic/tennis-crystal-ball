@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model;
 
-import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
+import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
 
 public class TournamentGOATPoints {
 

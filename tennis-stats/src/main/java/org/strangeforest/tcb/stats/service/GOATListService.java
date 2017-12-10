@@ -7,9 +7,11 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 
@@ -27,22 +29,30 @@ public class GOATListService {
 
 	private static final String GOAT_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM player_goat_points g\n" +
-		"INNER JOIN player_v USING (player_id)\n" +
-		"WHERE g.goat_points > 0 AND NOT lower(name) LIKE '%%unknown%%' AND g.goat_rank <= :maxPlayers%1$s%2$s";
+		"INNER JOIN player_v p USING (player_id)\n" +
+		"WHERE %1$s > 0 AND NOT lower(p.name) LIKE '%%unknown%%'%2$s%3$s";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
-		"SELECT player_id, g.%1$sgoat_rank AS goat_rank, p.name, p.country_id, p.active, g.%2$sgoat_points AS goat_points, g.tournament_goat_points, g.ranking_goat_points, g.achievements_goat_points,\n" +
-		"  g.year_end_rank_goat_points, g.best_rank_goat_points, g.weeks_at_no1_goat_points, g.weeks_at_elo_topn_goat_points, g.best_elo_rating_goat_points,\n" +
-		"  g.grand_slam_goat_points, g.big_wins_goat_points, g.h2h_goat_points, g.records_goat_points, g.best_season_goat_points, g.greatest_rivalries_goat_points, g.performance_goat_points, g.statistics_goat_points,\n" +
-		"  p.grand_slams, p.tour_finals, p.alt_finals, p.masters, p.olympics, p.big_titles, p.titles, p.weeks_at_no1, pf.matches_won, pf.matches_lost, p.best_elo_rating, p.best_elo_rating_date\n" +
-		"FROM player_goat_points g\n" +
+		"WITH goat_list AS (\n" +
+		"  SELECT player_id, %1$s AS goat_points, %2$s AS tournament_goat_points, %3$s AS ranking_goat_points, %4$s AS achievements_goat_points,\n" +
+		"    g.year_end_rank_goat_points, g.best_rank_goat_points, g.weeks_at_no1_goat_points, g.weeks_at_elo_topn_goat_points, g.best_elo_rating_goat_points,\n" +
+		"    g.grand_slam_goat_points, g.big_wins_goat_points, g.h2h_goat_points, g.records_goat_points, g.best_season_goat_points, g.greatest_rivalries_goat_points, g.performance_goat_points, g.statistics_goat_points\n" +
+		"  FROM player_goat_points g\n" +
+		"  INNER JOIN player_v p USING (player_id)\n" +
+		"  WHERE g.goat_points > 0 AND NOT lower(p.name) LIKE '%%unknown%%'%5$s\n" +
+		"), goat_list_ranked AS (\n" +
+		"  SELECT *, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank\n" +
+		"  FROM goat_list\n" +
+		"  WHERE goat_points > 0\n" +
+		")\n" +
+		"SELECT g.*, p.name, p.country_id, p.active, p.grand_slams, p.tour_finals, p.alt_finals, p.masters, p.olympics, p.big_titles, p.titles, p.weeks_at_no1, pf.matches_won, pf.matches_lost, p.best_elo_rating, p.best_elo_rating_date\n" +
+		"FROM goat_list_ranked g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"INNER JOIN player_performance pf USING (player_id)\n" +
-		"WHERE g.goat_points > 0 AND NOT lower(name) LIKE '%%unknown%%' AND g.goat_rank <= :maxPlayers%3$s%4$s\n" +
-		"ORDER BY %5$s OFFSET :offset LIMIT :limit";
+		"INNER JOIN player_performance pf USING (player_id)%6$s\n" +
+		"ORDER BY %7$s OFFSET :offset LIMIT :limit";
 
 	private static final String FILTER_OLD_LEGENDS_CRITERIA = //language=SQL
-		" AND dob >= DATE '1940-01-01'";
+		" AND p.dob >= DATE '1940-01-01'";
 
 	
 	@Cacheable("GOATList.TopN")
@@ -63,22 +73,24 @@ public class GOATListService {
 	}
 
 	@Cacheable("GOATList.Count")
-	public int getPlayerCount(PlayerListFilter filter, boolean oldLegends) {
-		return jdbcTemplate.queryForObject(
-			format(GOAT_COUNT_QUERY, filter.getCriteria(), getOldLegendsCriteria(oldLegends)),
-			filter.getParams().addValue("maxPlayers", MAX_PLAYER_COUNT),
+	public int getPlayerCount(PlayerListFilter filter, GOATListConfig config) {
+		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
+			format(GOAT_COUNT_QUERY, getGOATPointsExpression(config), filter.getCriteria(), getOldLegendsCriteria(config.isOldLegends())),
+			getParams(filter, config),
 			Integer.class
-		);
+		));
 	}
 
 	@Cacheable("GOATList.Table")
-	public BootgridTable<GOATListRow> getGOATListTable(int playerCount, PlayerListFilter filter, boolean oldLegends, boolean extrapolateCareer, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<GOATListRow> getGOATListTable(int playerCount, PlayerListFilter filter, GOATListConfig config, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<GOATListRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(GOAT_LIST_QUERY, getGOATRankPrefix(oldLegends, extrapolateCareer), getGOATPointsPrefix(extrapolateCareer), filter.getCriteria(), getOldLegendsCriteria(oldLegends), orderBy),
-			filter.getParams()
-				.addValue("maxPlayers", MAX_PLAYER_COUNT)
+			format(GOAT_LIST_QUERY,
+				getGOATPointsExpression(config), getTournamentGOATPointsExpression(config), getRankingGOATPointsExpression(config), getAchievementsGOATPointsExpression(config),
+				getOldLegendsCriteria(config.isOldLegends()), where(filter.getCriteria()), orderBy
+			),
+			getParams(filter, config)
 				.addValue("offset", offset)
 				.addValue("limit", pageSize),
 			rs -> {
@@ -93,19 +105,19 @@ public class GOATListService {
 				int achievementsGoatPoints = rs.getInt("achievements_goat_points");
 				GOATListRow row = new GOATListRow(goatRank, playerId, name, countryId, active, goatPoints, tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints);
 				// GOAT points items
-				row.setYearEndRankGoatPoints(rs.getInt("year_end_rank_goat_points"));
-				row.setBestRankGoatPoints(rs.getInt("best_rank_goat_points"));
-				row.setWeeksAtNo1GoatPoints(rs.getInt("weeks_at_no1_goat_points"));
-				row.setWeeksAtEloTopNGoatPoints(rs.getInt("weeks_at_elo_topn_goat_points"));
-				row.setBestEloRatingGoatPoints(rs.getInt("best_elo_rating_goat_points"));
-				row.setGrandSlamGoatPoints(rs.getInt("grand_slam_goat_points"));
-				row.setBigWinsGoatPoints(rs.getInt("big_wins_goat_points"));
-				row.setH2hGoatPoints(rs.getInt("h2h_goat_points"));
-				row.setRecordsGoatPoints(rs.getInt("records_goat_points"));
-				row.setBestSeasonGoatPoints(rs.getInt("best_season_goat_points"));
-				row.setGreatestRivalriesGoatPoints(rs.getInt("greatest_rivalries_goat_points"));
-				row.setPerformanceGoatPoints(rs.getInt("performance_goat_points"));
-				row.setStatisticsGoatPoints(rs.getInt("statistics_goat_points"));
+				row.setYearEndRankGoatPoints(rs.getInt("year_end_rank_goat_points") * config.getYearEndRankPointsTotalFactor());
+				row.setBestRankGoatPoints(rs.getInt("best_rank_goat_points") * config.getBestRankPointsTotalFactor());
+				row.setWeeksAtNo1GoatPoints(rs.getInt("weeks_at_no1_goat_points") * config.getWeeksAtNo1PointsTotalFactor());
+				row.setWeeksAtEloTopNGoatPoints(rs.getInt("weeks_at_elo_topn_goat_points") * config.getWeeksAtEloTopNPointsTotalFactor());
+				row.setBestEloRatingGoatPoints(rs.getInt("best_elo_rating_goat_points") * config.getBestEloRatingPointsTotalFactor());
+				row.setGrandSlamGoatPoints(rs.getInt("grand_slam_goat_points") * config.getGrandSlamPointsTotalFactor());
+				row.setBigWinsGoatPoints(rs.getInt("big_wins_goat_points") * config.getBigWinsPointsTotalFactor());
+				row.setH2hGoatPoints(rs.getInt("h2h_goat_points") * config.getH2hPointsTotalFactor());
+				row.setRecordsGoatPoints(rs.getInt("records_goat_points") * config.getRecordsPointsTotalFactor());
+				row.setBestSeasonGoatPoints(rs.getInt("best_season_goat_points") * config.getBestSeasonPointsTotalFactor());
+				row.setGreatestRivalriesGoatPoints(rs.getInt("greatest_rivalries_goat_points") * config.getGreatestRivalriesPointsTotalFactor());
+				row.setPerformanceGoatPoints(rs.getInt("performance_goat_points") * config.getPerformancePointsTotalFactor());
+				row.setStatisticsGoatPoints(rs.getInt("statistics_goat_points") * config.getStatisticsPointsTotalFactor());
 				// Titles
 				row.setGrandSlams(rs.getInt("grand_slams"));
 				row.setTourFinals(rs.getInt("tour_finals"));
@@ -127,17 +139,76 @@ public class GOATListService {
 		return table;
 	}
 
-	private static String getGOATRankPrefix(boolean oldLegends, boolean extrapolateCareer) {
-		StringBuilder prefix = new StringBuilder();
-		if (!oldLegends)
-			prefix.append("alt_");
-		if (extrapolateCareer)
-			prefix.append("extrapolated_");
-		return prefix.toString();
+	private static MapSqlParameterSource getParams(PlayerListFilter filter, GOATListConfig config) {
+		MapSqlParameterSource params = filter.getParams();
+		if (!config.hasDefaultFactors()) {
+			params.addValue("tournamentPointsFactor", config.getTournamentPointsFactor());
+			params.addValue("rankingPointsFactor", config.getRankingPointsFactor());
+			params.addValue("achievementsPointsFactor", config.getAchievementsPointsFactor());
+			if (!config.hasDefaultRankingFactors()) {
+				params.addValue("yearEndRankPointsFactor", config.getYearEndRankPointsTotalFactor());
+				params.addValue("bestRankPointsFactor", config.getBestRankPointsTotalFactor());
+				params.addValue("weeksAtNo1PointsFactor", config.getWeeksAtNo1PointsTotalFactor());
+				params.addValue("weeksAtEloTopNPointsFactor", config.getWeeksAtEloTopNPointsTotalFactor());
+				params.addValue("bestEloRatingPointsFactor", config.getBestEloRatingPointsTotalFactor());
+			}
+			if (!config.hasDefaultAchievementsFactors()) {
+				params.addValue("grandSlamPointsFactor", config.getGrandSlamPointsTotalFactor());
+				params.addValue("bigWinsPointsFactor", config.getBigWinsPointsTotalFactor());
+				params.addValue("h2hPointsFactor", config.getH2hPointsTotalFactor());
+				params.addValue("recordsPointsFactor", config.getRecordsPointsTotalFactor());
+				params.addValue("bestSeasonPointsFactor", config.getBestSeasonPointsTotalFactor());
+				params.addValue("greatestRivalriesPointsFactor", config.getGreatestRivalriesPointsTotalFactor());
+				params.addValue("performancePointsFactor", config.getPerformancePointsTotalFactor());
+				params.addValue("statisticsPointsFactor", config.getStatisticsPointsTotalFactor());
+			}
+		}
+		return params;
+	}
+ 
+	private static String getGOATPointsExpression(GOATListConfig config) {
+		if (config.hasDefaultFactors())
+			return config.isExtrapolateCareer() ? "g.extrapolated_goat_points" : "g.goat_points";
+		else
+			return format("%1$s + %2$s + %3$s", getTournamentGOATPointsExpression(config), getRankingGOATPointsExpression(config), getAchievementsGOATPointsExpression(config));
 	}
 
-	private static String getGOATPointsPrefix(boolean extrapolateCareer) {
-		return extrapolateCareer ? "extrapolated_" : "";
+	private static String getTournamentGOATPointsExpression(GOATListConfig config) {
+		if (config.hasDefaultFactors())
+			return "g.tournament_goat_points";
+		else
+			return "g.tournament_goat_points * :tournamentPointsFactor";
+	}
+
+	private static String getRankingGOATPointsExpression(GOATListConfig config) {
+		if (config.hasDefaultFactors())
+			return "g.ranking_goat_points";
+		else if (config.hasDefaultRankingFactors())
+			return "g.ranking_goat_points * :rankingPointsFactor";
+		else {
+			return "g.year_end_rank_goat_points * :yearEndRankPointsFactor + " +
+				"g.best_rank_goat_points * :bestRankPointsFactor + " +
+				"g.weeks_at_no1_goat_points * :weeksAtNo1PointsFactor + " +
+				"g.weeks_at_elo_topn_goat_points * :weeksAtEloTopNPointsFactor + " +
+				"g.best_elo_rating_goat_points * :bestEloRatingPointsFactor";
+		}
+	}
+
+	private static String getAchievementsGOATPointsExpression(GOATListConfig config) {
+		if (config.hasDefaultFactors())
+			return "g.achievements_goat_points";
+		else if (config.hasDefaultAchievementsFactors())
+			return "g.achievements_goat_points * :achievementsPointsFactor";
+		else {
+			return "g.grand_slam_goat_points * :grandSlamPointsFactor + " +
+				"g.big_wins_goat_points * :bigWinsPointsFactor + " +
+				"g.h2h_goat_points * :h2hPointsFactor + " +
+				"g.records_goat_points * :recordsPointsFactor + " +
+				"g.best_season_goat_points * :bestSeasonPointsFactor + " +
+				"g.greatest_rivalries_goat_points * :greatestRivalriesPointsFactor + " +
+				"g.performance_goat_points * :performancePointsFactor + " +
+				"g.statistics_goat_points * :statisticsPointsFactor";
+		}
 	}
 
 	private static String getOldLegendsCriteria(boolean oldLegends) {

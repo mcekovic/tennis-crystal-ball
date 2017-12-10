@@ -185,6 +185,18 @@ function dateRangePicker(fromId, toId, yearRange) {
 
 // Bootgrid
 
+function addRequestParam(request, param, def) {
+	var value = $("#" + param).val();
+	if (value && !(def && value === def))
+		request[param] = value;
+}
+
+function addRequestBooleanParam(request, param) {
+	var value = $("#" + param).prop("checked");
+	if (value)
+		request[param] = value;
+}
+
 function setBootgridColumnsVisible($gridTable, columns, visible) {
 	for (var i = 0, count = columns.length; i < count; i++)
 		$gridTable.find("th[data-column-id='" + columns[i] + "']").data("visible", visible);

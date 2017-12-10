@@ -12,9 +12,9 @@ import org.testng.annotations.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.data.Percentage.*;
-import static org.strangeforest.tcb.stats.model.Round.*;
-import static org.strangeforest.tcb.stats.model.Surface.*;
-import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
+import static org.strangeforest.tcb.stats.model.core.Round.*;
+import static org.strangeforest.tcb.stats.model.core.Surface.*;
+import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
 
 @ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 public class PredictionIT extends AbstractTestNGSpringContextTests {

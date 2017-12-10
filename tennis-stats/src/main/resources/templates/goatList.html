@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
+<!--/*@thymesVar id="config" type="org.strangeforest.tcb.stats.model.GOATListConfig"*/-->
+<!--/*@thymesVar id="factors" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
 	<title>GOAT List</title>
 	<script type="text/javascript">
 		$(function() {
@@ -19,15 +21,25 @@
 				},
 				url: "/goatListTable",
 				requestHandler: function(request) {
-					var active = $("#active").prop("checked");
-					if (active)
-						request.active = active;
-					var oldLegends = $("#oldLegends").prop("checked");
-					if (oldLegends)
-						request.oldLegends = oldLegends;
-					var extrapolate = $("#extrapolate").prop("checked");
-					if (extrapolate)
-						request.extrapolate = extrapolate;
+					addRequestBooleanParam(request, "active");
+					request.oldLegends = $("#oldLegends").prop("checked");
+					addRequestBooleanParam(request, "extrapolate");
+					addRequestParam(request, "tournamentPointsFactor", "1");
+					addRequestParam(request, "rankingPointsFactor", "1");
+					addRequestParam(request, "achievementsPointsFactor", "1");
+					addRequestParam(request, "yearEndRankPointsFactor", "1");
+					addRequestParam(request, "bestRankPointsFactor", "1");
+					addRequestParam(request, "weeksAtNo1PointsFactor", "1");
+					addRequestParam(request, "weeksAtEloTopNPointsFactor", "1");
+					addRequestParam(request, "bestEloRatingPointsFactor", "1");
+					addRequestParam(request, "grandSlamPointsFactor", "1");
+					addRequestParam(request, "bigWinsPointsFactor", "1");
+					addRequestParam(request, "h2hPointsFactor", "1");
+					addRequestParam(request, "recordsPointsFactor", "1");
+					addRequestParam(request, "bestSeasonPointsFactor", "1");
+					addRequestParam(request, "greatestRivalriesPointsFactor", "1");
+					addRequestParam(request, "performancePointsFactor", "1");
+					addRequestParam(request, "statisticsPointsFactor", "1");
 					return request;
 				},
 				rowCount: [20, 50, 100, -1],
@@ -44,7 +56,7 @@
 						if (row.rankingGoatPoints > 0) {
 							var title = "";
 							title = appendGoatPointsTitle(title, row, "yearEndRankGoatPoints", "Year-end ranking");
-							title = appendGoatPointsTitle(title, row, "bestRankGoatPoints", "Best ranking");
+							title = appendGoatPointsTitle(title, row, "bestRankGoatPoints", "Career high ranking");
 							title = appendGoatPointsTitle(title, row, "weeksAtNo1GoatPoints", "Weeks at No. 1");
 							title = appendGoatPointsTitle(title, row, "weeksAtEloTopNGoatPoints", "Weeks at Elo Top 5");
 							title = appendGoatPointsTitle(title, row, "bestEloRatingGoatPoints", "Peak Elo rating");
@@ -93,10 +105,9 @@
 				}
 			});
 			var $goatListTableHeader = $("#goatListTable-header");
-			var $search = $goatListTableHeader.find("div.search");
-			$search.before($("#activeDiv").remove());
-			$search.before($("#oldLegendsDiv").remove());
-			$search.before($("#extrapolateDiv").remove());
+			$goatListTableHeader.find("div.search").before($("#activeDiv").remove());
+			$goatListTableHeader.find("div.actions").after($("#goatListConfigDiv").remove());
+			$goatListTableHeader.after($("#goatListConfig").remove());
 			setBootgridTitle($goatListTableHeader, $("#goatListTable-title"));
 			setBootgridTitles($goatListTable, [
 				{id: "goatRank", title: "GOAT rank"},
@@ -115,6 +126,7 @@
 				{id: "wonPct", title: "Winning percentage"},
 				{id: "bestEloRating", title: "Career Peak Elo rating"}
 			]);
+			adjustExtrapolate();
 			bindPopovers("body");
 			$("[data-toggle='collapse']").click(collapseClick);
 			$("[data-toggle='tooltip']").tooltip();
@@ -129,7 +141,82 @@
 		function reloadGOATListTable() {
 			$("#goatListTable").bootgrid("reload");
 		}
+		function adjustExtrapolate() {
+			var defaultFactors = $("#tournamentPointsFactor").val() === "1" && $("#rankingPointsFactor").val() === "1" && $("#achievementsPointsFactor").val() === "1"
+				&& $("#yearEndRankPointsFactor").val() === "1" && $("#bestRankPointsFactor").val() === "1" && $("#weeksAtNo1PointsFactor").val() === "1" && $("#weeksAtEloTopNPointsFactor").val() === "1" && $("#bestEloRatingPointsFactor").val() === "1"
+				&& $("#grandSlamPointsFactor").val() === "1" && $("#bigWinsPointsFactor").val() === "1" && $("#h2hPointsFactor").val() === "1" && $("#recordsPointsFactor").val() === "1" && $("#bestSeasonPointsFactor").val() === "1" && $("#greatestRivalriesPointsFactor").val() === "1" && $("#performancePointsFactor").val() === "1" && $("#statisticsPointsFactor").val() === "1";
+			var $extrapolate = $("#extrapolate");
+			$extrapolate.prop("disabled", !defaultFactors);
+			if (!defaultFactors)
+				$extrapolate.prop("checked", false);
+		}
+		function pointFactorsChanged() {
+			adjustExtrapolate();
+			reloadGOATListTable();
+		}
+		function resetTournamentPointsConfig() {
+			$("#tournamentPointsFactor").val("1");
+			pointFactorsChanged();
+		}
+		function resetRankingPointsConfig() {
+			$("#rankingPointsFactor").val("1");
+			$("#yearEndRankPointsFactor").val("1");
+			$("#bestRankPointsFactor").val("1");
+			$("#weeksAtNo1PointsFactor").val("1");
+			$("#weeksAtEloTopNPointsFactor").val("1");
+			$("#bestEloRatingPointsFactor").val("1");
+			pointFactorsChanged();
+		}
+		function resetAchievementsPointsConfig() {
+			$("#achievementsPointsFactor").val("1");
+			$("#grandSlamPointsFactor").val("1");
+			$("#bigWinsPointsFactor").val("1");
+			$("#h2hPointsFactor").val("1");
+			$("#recordsPointsFactor").val("1");
+			$("#bestSeasonPointsFactor").val("1");
+			$("#greatestRivalriesPointsFactor").val("1");
+			$("#performancePointsFactor").val("1");
+			$("#statisticsPointsFactor").val("1");
+			pointFactorsChanged();
+		}
+		function goatListPermalink() {
+			var url = "/goatList?oldLegends=" + $("#oldLegends").prop("checked");
+			var extrapolate = $("#extrapolate").prop("checked");
+			if (extrapolate)
+				url += "&extrapolate=" + extrapolate;
+			url += addParam("tournamentPointsFactor", "1");
+			url += addParam("rankingPointsFactor", "1");
+			url += addParam("achievementsPointsFactor", "1");
+			url += addParam("yearEndRankPointsFactor", "1");
+			url += addParam("bestRankPointsFactor", "1");
+			url += addParam("weeksAtNo1PointsFactor", "1");
+			url += addParam("weeksAtEloTopNPointsFactor", "1");
+			url += addParam("bestEloRatingPointsFactor", "1");
+			url += addParam("grandSlamPointsFactor", "1");
+			url += addParam("bigWinsPointsFactor", "1");
+			url += addParam("h2hPointsFactor", "1");
+			url += addParam("recordsPointsFactor", "1");
+			url += addParam("bestSeasonPointsFactor", "1");
+			url += addParam("greatestRivalriesPointsFactor", "1");
+			url += addParam("performancePointsFactor", "1");
+			url += addParam("statisticsPointsFactor", "1");
+			window.location.href = url;
+		}
+		function addParam(param, def) {
+			var value = $("#" + param).val();
+			return value && !(def && value === def) ? "&" + param + "=" + value : "";
+		}
 	</script>
+	<style>
+		.small-control {
+			padding: 1px 12px !important;
+			height: 24px !important;
+		}
+		.factor-label {
+			width: 190px;
+			text-align: left;
+		}
+	</style>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
@@ -141,20 +228,231 @@
 			</label>
 		</div>
 	</div>
-	<div id="oldLegendsDiv" class="btn-group margin-right">
-		<div class="checkbox">
-			<label data-toggle="tooltip" data-placement="bottom" title="Include 'old legends' born before 1940 (but counting only their Open Era achievements)">
-				<input id="oldLegends" type="checkbox" checked="checked" onchange="reloadGOATListTable()"/> Old legends
-			</label>
+	<div id="goatListConfigDiv" class="btn-group margin-left no-margin-right">
+		<div data-toggle="tooltip" data-placement="auto" title="Make Your Own GOAT!">
+			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#goatListConfig">
+				<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Config&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+			</button>
 		</div>
 	</div>
-	<div id="extrapolateDiv" class="btn-group margin-right">
-		<div class="checkbox pull-left">
-			<label data-toggle="tooltip" data-placement="bottom" title="Extrapolate career for active players and players born before 1952, click questionmark for explanation how this works">
-				<input id="extrapolate" type="checkbox" onchange="reloadGOATListTable()"/> Extrapolate career
-			</label>
+	<div id="goatListConfig" class="collapse" th:attrappend="class=${config.default ? _ : ' in'}" style="margin-bottom: 10px; margin-top: -10px">
+		<div class="row">
+			<div class="col-md-2 col-sm-3 col-xs-4 text-nowrap">
+				<div class="checkbox">
+					<label data-toggle="tooltip" data-placement="auto" title="Include 'old legends' born before 1940 (but counting only their Open Era achievements)">
+						<input id="oldLegends" type="checkbox" th:checked="${config.oldLegends}" onchange="reloadGOATListTable()"/> Old legends
+					</label>
+				</div>
+			</div>
+			<div class="col-lg-2 col-md-3 col-sm-4 col-xs-5 text-nowrap">
+				<div class="checkbox pull-left">
+					<label data-toggle="tooltip" data-placement="auto" title="Extrapolate career for active players and players born before 1952, click questionmark for explanation how this works">
+						<input id="extrapolate" type="checkbox" th:checked="${config.extrapolateCareer}" onchange="reloadGOATListTable()"/> Extrapolate career
+					</label>
+				</div>
+				&nbsp;<a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#extrapolateCareerPopover"><span style="margin-top: 10px" class="glyphicon glyphicon-question-sign"></span></a>
+			</div>
+			<div class="col-xs-1">
+				<button type="button" class="btn btn-sm btn-info" onclick="goatListPermalink()" data-toggle="tooltip" data-placement="auto" title="Permalink to this GOAT List">
+					<span class="glyphicon glyphicon-link"></span>&nbsp;&nbsp;Permalink
+				</button>
+			</div>
 		</div>
-		&nbsp;<a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#extrapolateCareerPopover"><span style="margin-top: 10px" class="glyphicon glyphicon-question-sign"></span></a>
+		<div class="row">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Change Tournament GOAT Points factor">
+					<label for="tournamentPointsFactor" class="input-group-addon factor-label">Tournament Pts.:</label>
+					<select id="tournamentPointsFactor" class="form-control" onchange="pointFactorsChanged()">
+						<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.tournamentPointsFactor}">x 0</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-1 col-xs-2">
+				<button type="button" class="btn btn-sm btn-default" onclick="resetTournamentPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Tournament GOAT Points configuration">
+					<span class="glyphicon glyphicon-repeat"></span>&nbsp;&nbsp;Reset
+				</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Change Ranking GOAT Points factor">
+					<label for="rankingPointsFactor" class="input-group-addon factor-label">Ranking Pts.:</label>
+					<select id="rankingPointsFactor" class="form-control" onchange="pointFactorsChanged()">
+						<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.rankingPointsFactor}">x 0</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-1 col-xs-2">
+				<button type="button" class="btn btn-sm btn-default" onclick="resetRankingPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Ranking GOAT Points configuration">
+					<span class="glyphicon glyphicon-repeat"></span>&nbsp;&nbsp;Reset
+				</button>
+			</div>
+			<div class="col-md-1 col-xs-2">
+				<div data-toggle="tooltip" data-placement="auto" title="Advanced Ranking GOAT Points configuration">
+					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#rankingConfig">
+						<span class="glyphicon glyphicon-wrench"></span>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+		<div id="rankingConfig" class="collapse" th:attrappend="class=${config.hasDefaultRankingFactors() ? _ : ' in'}">
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="yearEndRankPointsFactor" class="input-group-addon small-control factor-label">Year-End Ranking Pts.:</label>
+						<select id="yearEndRankPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.yearEndRankPointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="bestRankPointsFactor" class="input-group-addon small-control factor-label">Career High Ranking Pts.:</label>
+						<select id="bestRankPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.bestRankPointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="weeksAtNo1PointsFactor" class="input-group-addon small-control factor-label">Weeks at No. 1 Pts.:</label>
+						<select id="weeksAtNo1PointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.weeksAtNo1PointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="weeksAtEloTopNPointsFactor" class="input-group-addon small-control factor-label">Weeks at Elo Top 5 Pts.:</label>
+						<select id="weeksAtEloTopNPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.weeksAtEloTopNPointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="bestEloRatingPointsFactor" class="input-group-addon small-control factor-label">Peak Elo Rating Pts.:</label>
+						<select id="bestEloRatingPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.bestEloRatingPointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Change Achievements GOAT Points factor">
+					<label for="achievementsPointsFactor" class="input-group-addon factor-label">Achievements Pts.:</label>
+					<select id="achievementsPointsFactor" class="form-control" onchange="pointFactorsChanged()">
+						<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.achievementsPointsFactor}">x 0</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-md-1 col-xs-2">
+				<div>
+					<button type="button" class="btn btn-sm btn-default" onclick="resetAchievementsPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Achievements GOAT Points configuration">
+						<span class="glyphicon glyphicon-repeat"></span>&nbsp;&nbsp;Reset
+					</button>
+				</div>
+			</div>
+			<div class="col-md-1 col-xs-2">
+				<div data-toggle="tooltip" data-placement="auto" title="Advanced Achievements GOAT Points configuration">
+					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#achievementsConfig">
+						<span class="glyphicon glyphicon-wrench"></span>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+		<div id="achievementsConfig" class="collapse" th:attrappend="class=${config.hasDefaultAchievementsFactors() ? _ : ' in'}">
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="grandSlamPointsFactor" class="input-group-addon small-control factor-label">Grand Slam Pts.:</label>
+						<select id="grandSlamPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.grandSlamPointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="bigWinsPointsFactor" class="input-group-addon small-control factor-label">Big Wins Pts.:</label>
+						<select id="bigWinsPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.bigWinsPointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="h2hPointsFactor" class="input-group-addon small-control factor-label">H2H Pts.:</label>
+						<select id="h2hPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.h2hPointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="recordsPointsFactor" class="input-group-addon small-control factor-label">Records Pts.:</label>
+						<select id="recordsPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.recordsPointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="bestSeasonPointsFactor" class="input-group-addon small-control factor-label">Best Seasons Pts.:</label>
+						<select id="bestSeasonPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.bestSeasonPointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="greatestRivalriesPointsFactor" class="input-group-addon small-control factor-label">Greatest Rivalries Pts.:</label>
+						<select id="greatestRivalriesPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.greatestRivalriesPointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="performancePointsFactor" class="input-group-addon small-control factor-label">Performance Pts.:</label>
+						<select id="performancePointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.performancePointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label for="statisticsPointsFactor" class="input-group-addon small-control factor-label">Statistics Pts.:</label>
+						<select id="statisticsPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.statisticsPointsFactor}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 	<table id="goatListTable" class="table table-condensed table-hover table-striped">
 		<thead>

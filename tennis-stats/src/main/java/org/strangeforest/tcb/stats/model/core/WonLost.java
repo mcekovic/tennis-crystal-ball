@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.model;
+package org.strangeforest.tcb.stats.model.core;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;

@@ -1,4 +1,7 @@
-package org.strangeforest.tcb.stats.model;
+package org.strangeforest.tcb.stats.model.forecast;
+
+import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 
 public class FavoritePlayerEx extends FavoritePlayer {
 

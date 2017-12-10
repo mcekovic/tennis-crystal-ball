@@ -4,7 +4,7 @@ import java.sql.*
 import java.time.*
 
 import org.springframework.jdbc.core.namedparam.*
-import org.strangeforest.tcb.stats.model.*
+import org.strangeforest.tcb.stats.model.core.*
 import org.strangeforest.tcb.stats.service.*
 
 import static java.time.DayOfWeek.*

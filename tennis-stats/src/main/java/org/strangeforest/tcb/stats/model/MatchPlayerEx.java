@@ -25,7 +25,7 @@ public class MatchPlayerEx extends MatchPlayer {
 		return eloRating;
 	}
 
-	void setEloRating(Integer eloRating) {
+	public void setEloRating(Integer eloRating) {
 		this.eloRating = eloRating;
 	}
 }

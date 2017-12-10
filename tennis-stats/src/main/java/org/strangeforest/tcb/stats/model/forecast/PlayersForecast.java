@@ -1,6 +1,8 @@
-package org.strangeforest.tcb.stats.model;
+package org.strangeforest.tcb.stats.model.forecast;
 
 import java.util.*;
+
+import org.strangeforest.tcb.stats.model.*;
 
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;

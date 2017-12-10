@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.model;
+package org.strangeforest.tcb.stats.model.core;
 
 import org.strangeforest.tcb.stats.util.*;
 

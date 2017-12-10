@@ -1,6 +1,6 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
-import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.records.*;
 
 public abstract class WonLostRecordDetail implements RecordDetail<String> {

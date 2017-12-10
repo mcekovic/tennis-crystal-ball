@@ -14,6 +14,7 @@ import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.util.ObjectUtil.*;
 
 public class TournamentEventFilter {
 
@@ -160,8 +161,8 @@ public class TournamentEventFilter {
 	protected ToStringHelper toStringHelper() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("season", season)
-			.add("last52Weeks", last52Weeks ? true : null)
-			.add("dateRange", dateRange.equals(Range.all()) ? null : dateRange)
+			.add("last52Weeks", nullIf(last52Weeks, true))
+			.add("dateRange", nullIf(dateRange, Range.all()))
 			.add("level", emptyToNull(level))
 			.add("surface", emptyToNull(surface))
 			.add("indoor", indoor)

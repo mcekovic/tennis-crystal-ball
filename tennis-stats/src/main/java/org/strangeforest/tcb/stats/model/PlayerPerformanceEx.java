@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.service.*;
 
 public class PlayerPerformanceEx extends PlayerPerformance {

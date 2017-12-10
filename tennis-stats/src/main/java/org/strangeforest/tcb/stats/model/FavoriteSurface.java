@@ -2,9 +2,11 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.model.Surface.*;
+import static org.strangeforest.tcb.stats.model.core.Surface.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class FavoriteSurface {

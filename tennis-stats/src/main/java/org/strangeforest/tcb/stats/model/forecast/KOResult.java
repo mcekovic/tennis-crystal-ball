@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.model;
+package org.strangeforest.tcb.stats.model.forecast;
 
 public enum KOResult {
 	R128, R64, R32, R16, QF, SF, F, W;

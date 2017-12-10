@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="level" type="org.strangeforest.tcb.stats.model.TournamentLevel"*/-->
-<!--/*@thymesVar id="levelGroup" type="org.strangeforest.tcb.stats.model.TournamentLevelGroup"*/-->
+<!--/*@thymesVar id="level" type="org.strangeforest.tcb.stats.model.core.TournamentLevel"*/-->
+<!--/*@thymesVar id="levelGroup" type="org.strangeforest.tcb.stats.model.core.TournamentLevelGroup"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.TournamentLevelTimeline"*/-->
 <head th:replace="fragments/head :: commonHead(${level.text} + ' Timeline', false, ~{::script}, ~{::style})">
 	<script type="text/javascript">

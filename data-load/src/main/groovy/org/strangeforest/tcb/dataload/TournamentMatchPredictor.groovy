@@ -2,7 +2,7 @@ package org.strangeforest.tcb.dataload
 
 import java.time.*
 
-import org.strangeforest.tcb.stats.model.*
+import org.strangeforest.tcb.stats.model.core.*
 import org.strangeforest.tcb.stats.service.*
 
 import groovy.transform.*

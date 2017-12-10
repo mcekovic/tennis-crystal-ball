@@ -4,7 +4,7 @@ import java.time.*;
 import java.util.*;
 import java.util.function.*;
 
-import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 
 import com.google.common.collect.*;
 

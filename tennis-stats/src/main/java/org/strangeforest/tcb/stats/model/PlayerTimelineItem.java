@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model;
 
 import java.time.*;
 
-import static org.strangeforest.tcb.stats.model.TournamentLevel.*;
+import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
 
 public class PlayerTimelineItem {
 

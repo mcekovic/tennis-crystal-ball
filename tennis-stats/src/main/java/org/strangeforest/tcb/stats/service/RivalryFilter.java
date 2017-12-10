@@ -12,6 +12,7 @@ import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
+import static org.strangeforest.tcb.util.ObjectUtil.*;
 
 public class RivalryFilter {
 
@@ -175,8 +176,8 @@ public class RivalryFilter {
 
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
-			.add("seasonRange", seasonRange.equals(Range.all()) ? null : seasonRange)
-			.add("last52Weeks", last52Weeks ? true : null)
+			.add("seasonRange", nullIf(seasonRange, Range.all()))
+			.add("last52Weeks", nullIf(last52Weeks, true))
 			.add("level", emptyToNull(level))
 			.add("bestOf", bestOf)
 			.add("surface", emptyToNull(surface))

@@ -1,8 +1,10 @@
-package org.strangeforest.tcb.stats.model;
+package org.strangeforest.tcb.stats.model.core;
+
+import org.strangeforest.tcb.stats.model.*;
 
 import static java.lang.Boolean.*;
 import static org.strangeforest.tcb.stats.model.RankCategory.*;
-import static org.strangeforest.tcb.stats.model.Surface.*;
+import static org.strangeforest.tcb.stats.model.core.Surface.*;
 
 public enum RankType {
 	

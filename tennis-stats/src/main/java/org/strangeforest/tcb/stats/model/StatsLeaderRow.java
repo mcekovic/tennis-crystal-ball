@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;

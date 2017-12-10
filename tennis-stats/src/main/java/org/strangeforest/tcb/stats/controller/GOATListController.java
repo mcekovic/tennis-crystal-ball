@@ -2,44 +2,33 @@ package org.strangeforest.tcb.stats.controller;
 
 import java.util.*;
 
-import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
+import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
-import org.strangeforest.tcb.stats.model.table.*;
-import org.strangeforest.tcb.stats.service.*;
-import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.collect.*;
 
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.util.OrderBy.*;
 
-@RestController
-public class GOATListResource {
+@Controller
+public class GOATListController extends PageController {
 
-	@Autowired private GOATListService goatListService;
-
-	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
-		.put("goatPoints", "goat_points")
-		.put("tournamentGoatPoints", "tournament_goat_points")
-		.put("rankingGoatPoints", "ranking_goat_points")
-		.put("achievementsGoatPoints", "achievements_goat_points")
-		.put("grandSlams", "grand_slams")
-		.put("tourFinals", "tour_finals")
-		.put("altFinals", "alt_finals")
-		.put("masters", "masters")
-		.put("olympics", "olympics")
-		.put("bigTitles", "big_titles")
-		.put("titles", "titles")
-		.put("weeksAtNo1", "weeks_at_no1")
-		.put("wonPct", "matches_won::REAL / (matches_won + matches_lost)")
-		.put("bestEloRating", "best_elo_rating NULLS LAST")
+	private static Map<Integer, String> FACTOR_MAP = ImmutableMap.<Integer, String>builder()
+		.put(0, "x 0")
+		.put(1, "x 1")
+		.put(2, "x 2")
+		.put(3, "x 3")
+		.put(4, "x 4")
+		.put(5, "x 5")
+		.put(6, "x 6")
+		.put(8, "x 8")
+		.put(10, "x 10")
 	.build();
-	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("goat_points"), desc("grand_slams"), desc("tour_finals"), desc("masters"), desc("titles"), asc("name")};
 
-	@GetMapping("/goatListTable")
-	public BootgridTable<GOATListRow> goatListTable(
-		@RequestParam(name = "active", required = false) Boolean active,
+	@GetMapping("/goatList")
+	public ModelAndView goatList(
 		@RequestParam(name = "oldLegends", defaultValue = T) boolean oldLegends,
 		@RequestParam(name = "extrapolate", defaultValue = F) boolean extrapolate,
 		@RequestParam(name = "tournamentPointsFactor", defaultValue = "1") int tournamentPointsFactor,
@@ -57,22 +46,18 @@ public class GOATListResource {
 		@RequestParam(name = "bestSeasonPointsFactor", defaultValue = "1") int bestSeasonPointsFactor,
 		@RequestParam(name = "greatestRivalriesPointsFactor", defaultValue = "1") int greatestRivalriesPointsFactor,
 		@RequestParam(name = "performancePointsFactor", defaultValue = "1") int performancePointsFactor,
-		@RequestParam(name = "statisticsPointsFactor", defaultValue = "1") int statisticsPointsFactor,
-		@RequestParam(name = "current", defaultValue = "1") int current,
-		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
-		@RequestParam(name = "searchPhrase", defaultValue = "") String searchPhrase,
-		@RequestParam Map<String, String> requestParams
+		@RequestParam(name = "statisticsPointsFactor", defaultValue = "1") int statisticsPointsFactor
 	) {
-		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);
 		GOATListConfig config = new GOATListConfig(
 			oldLegends, extrapolate, tournamentPointsFactor, rankingPointsFactor, achievementsPointsFactor,
 			yearEndRankPointsFactor, bestRankPointsFactor, weeksAtNo1PointsFactor, weeksAtEloTopNPointsFactor, bestEloRatingPointsFactor,
 			grandSlamPointsFactor, bigWinsPointsFactor, h2hPointsFactor, recordsPointsFactor, bestSeasonPointsFactor, greatestRivalriesPointsFactor, performancePointsFactor, statisticsPointsFactor
 		);
-		int playerCount = goatListService.getPlayerCount(filter, config);
 
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
-		int pageSize = rowCount > 0 ? rowCount : playerCount;
-		return goatListService.getGOATListTable(playerCount, filter, config, orderBy, pageSize, current);
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("config", config);
+		modelMap.addAttribute("factors", FACTOR_MAP);
+
+		return new ModelAndView("goatList", modelMap);
 	}
 }

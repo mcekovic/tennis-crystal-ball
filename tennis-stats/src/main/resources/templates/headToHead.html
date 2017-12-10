@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:with="bothPlayersSelected=${player1 != null && player2 != null}, anyPlayerSelected=${player1 != null || player2 != null}, neitherPlayerSelected=${player1 == null && player2 == null}, samePlayersSelected=${bothPlayersSelected && player1.id == player2.id}">
-<!--/*@thymesVar id="player1" type="org.strangeforest.tcb.stats.model.Player"*/-->
-<!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.Player"*/-->
+<!--/*@thymesVar id="player1" type="org.strangeforest.tcb.stats.model.core.Player"*/-->
+<!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.core.Player"*/-->
 <!--/*@thymesVar id="tab" type="java.lang.String"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
