@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="config" type="org.strangeforest.tcb.stats.model.GOATListConfig"*/-->
 <!--/*@thymesVar id="factors" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
+<!--/*@thymesVar id="levels" type="java.util.List<java.lang.String>"*/-->
+<!--/*@thymesVar id="levelEnum" type="org.strangeforest.tcb.stats.model.core.TournamentLevel"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
 	<title>GOAT List</title>
 	<script type="text/javascript">
@@ -27,6 +29,15 @@
 					addRequestParam(request, "tournamentPointsFactor", "1");
 					addRequestParam(request, "rankingPointsFactor", "1");
 					addRequestParam(request, "achievementsPointsFactor", "1");
+					addRequestParam(request, "levelGPointsFactor", "1");
+					addRequestParam(request, "levelFPointsFactor", "1");
+					addRequestParam(request, "levelLPointsFactor", "1");
+					addRequestParam(request, "levelMPointsFactor", "1");
+					addRequestParam(request, "levelOPointsFactor", "1");
+					addRequestParam(request, "levelAPointsFactor", "1");
+					addRequestParam(request, "levelBPointsFactor", "1");
+					addRequestParam(request, "levelDPointsFactor", "1");
+					addRequestParam(request, "levelTPointsFactor", "1");
 					addRequestParam(request, "yearEndRankPointsFactor", "1");
 					addRequestParam(request, "bestRankPointsFactor", "1");
 					addRequestParam(request, "weeksAtNo1PointsFactor", "1");
@@ -142,6 +153,15 @@
 		}
 		function resetTournamentPointsConfig() {
 			$("#tournamentPointsFactor").val("1");
+			$("#levelGPointsFactor").val("1");
+			$("#levelFPointsFactor").val("1");
+			$("#levelLPointsFactor").val("1");
+			$("#levelMPointsFactor").val("1");
+			$("#levelOPointsFactor").val("1");
+			$("#levelAPointsFactor").val("1");
+			$("#levelBPointsFactor").val("1");
+			$("#levelDPointsFactor").val("1");
+			$("#levelTPointsFactor").val("1");
 			reloadGOATListTable();
 		}
 		function resetRankingPointsConfig() {
@@ -173,6 +193,15 @@
 			url += addParam("tournamentPointsFactor", "1");
 			url += addParam("rankingPointsFactor", "1");
 			url += addParam("achievementsPointsFactor", "1");
+			url += addParam("levelGPointsFactor", "1");
+			url += addParam("levelFPointsFactor", "1");
+			url += addParam("levelLPointsFactor", "1");
+			url += addParam("levelMPointsFactor", "1");
+			url += addParam("levelOPointsFactor", "1");
+			url += addParam("levelAPointsFactor", "1");
+			url += addParam("levelBPointsFactor", "1");
+			url += addParam("levelDPointsFactor", "1");
+			url += addParam("levelTPointsFactor", "1");
 			url += addParam("yearEndRankPointsFactor", "1");
 			url += addParam("bestRankPointsFactor", "1");
 			url += addParam("weeksAtNo1PointsFactor", "1");
@@ -275,6 +304,25 @@
 				<button type="button" class="btn btn-sm btn-default" onclick="resetTournamentPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Tournament GOAT Points configuration">
 					<i class="fa fa-undo"></i>&nbsp;&nbsp;Reset
 				</button>
+			</div>
+			<div class="col-md-1 col-xs-2">
+				<div data-toggle="tooltip" data-placement="auto" title="Advanced Tournament GOAT Points configuration">
+					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#tournamentConfig">
+						<i class="fa fa-cogs"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+		<div id="tournamentConfig" class="collapse well-nopad" th:attrappend="class=${config.hasDefaultTournamentFactors() ? _ : ' in'}">
+			<div class="row">
+				<div th:each="level : ${levels}" class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label th:for="|level${level}PointsFactor|" class="input-group-addon small-control factor-label" th:text="${levelEnum.decode(level).text + ' Pts.:'}">Grand Slam Pts.:</label>
+						<select th:id="|level${level}PointsFactor|" class="form-control small-control" onchange="reloadGOATListTable()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.getLevelPointsFactor(level)}">x 0</option>
+						</select>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="row">

@@ -51,9 +51,16 @@ public class GOATListService {
 		"INNER JOIN player_performance pf USING (player_id)%8$s\n" +
 		"ORDER BY %9$s OFFSET :offset LIMIT :limit";
 
+	private static final String TOURNAMENT_GOAT_POINTS = //language=SQL
+		"(SELECT coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'G'), 0) * :levelGPointsFactor\n" +
+		" + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'F'), 0) * :levelFPointsFactor + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'L'), 0) * :levelLPointsFactor\n" +
+		" + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'M'), 0) * :levelMPointsFactor + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'O'), 0) * :levelOPointsFactor\n" +
+		" + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'A'), 0) * :levelAPointsFactor + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'B'), 0) * :levelBPointsFactor\n" +
+		" + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'D'), 0) * :levelDPointsFactor + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'D'), 0) * :levelDPointsFactor\n" +
+		" FROM player_tournament_event_result r INNER JOIN tournament_event re USING (tournament_event_id) WHERE r.player_id = g.player_id)";
+
 	private static final String FILTER_OLD_LEGENDS_CRITERIA = //language=SQL
 		" AND p.dob >= DATE '1940-01-01'";
-
 
 	private static final String EXTRAPOLATED_GOAT_POINTS = //language=SQL
 		", goat_points_age_distribution AS (\n" +
@@ -71,6 +78,7 @@ public class GOATListService {
 		"    grand_slam_goat_points, big_wins_goat_points, h2h_goat_points, records_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points\n" +
 		"  FROM goat_list\n" +
 		")";
+
 
 	@Cacheable("GOATList.TopN")
 	public List<PlayerRanking> getGOATTopN(int playerCount) {
@@ -162,6 +170,10 @@ public class GOATListService {
 			params.addValue("tournamentPointsFactor", config.getTournamentPointsFactor());
 			params.addValue("rankingPointsFactor", config.getRankingPointsFactor());
 			params.addValue("achievementsPointsFactor", config.getAchievementsPointsFactor());
+			if (!config.hasDefaultTournamentFactors()) {
+				for (String level : GOATListConfig.TOURNAMENT_LEVELS)
+					params.addValue("level" + level + "PointsFactor", config.getLevelPointsTotalFactor(level));
+			}
 			if (!config.hasDefaultRankingFactors()) {
 				params.addValue("yearEndRankPointsFactor", config.getYearEndRankPointsTotalFactor());
 				params.addValue("bestRankPointsFactor", config.getBestRankPointsTotalFactor());
@@ -193,8 +205,10 @@ public class GOATListService {
 	private static String getTournamentGOATPointsExpression(GOATListConfig config) {
 		if (config.hasDefaultFactors())
 			return "g.tournament_goat_points";
-		else
+		else if (config.hasDefaultTournamentFactors())
 			return "g.tournament_goat_points * :tournamentPointsFactor";
+		else
+			return TOURNAMENT_GOAT_POINTS;
 	}
 
 	private static String getRankingGOATPointsExpression(GOATListConfig config) {

@@ -7,6 +7,7 @@ import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 
 import com.google.common.collect.*;
 
@@ -34,6 +35,15 @@ public class GOATListController extends PageController {
 		@RequestParam(name = "tournamentPointsFactor", defaultValue = "1") int tournamentPointsFactor,
 		@RequestParam(name = "rankingPointsFactor", defaultValue = "1") int rankingPointsFactor,
 		@RequestParam(name = "achievementsPointsFactor", defaultValue = "1") int achievementsPointsFactor,
+		@RequestParam(name = "levelGPointsFactor", defaultValue = "1") int levelGPointsFactor,
+		@RequestParam(name = "levelFPointsFactor", defaultValue = "1") int levelFPointsFactor,
+		@RequestParam(name = "levelLPointsFactor", defaultValue = "1") int levelLPointsFactor,
+		@RequestParam(name = "levelMPointsFactor", defaultValue = "1") int levelMPointsFactor,
+		@RequestParam(name = "levelOPointsFactor", defaultValue = "1") int levelOPointsFactor,
+		@RequestParam(name = "levelAPointsFactor", defaultValue = "1") int levelAPointsFactor,
+		@RequestParam(name = "levelBPointsFactor", defaultValue = "1") int levelBPointsFactor,
+		@RequestParam(name = "levelDPointsFactor", defaultValue = "1") int levelDPointsFactor,
+		@RequestParam(name = "levelTPointsFactor", defaultValue = "1") int levelTPointsFactor,
 		@RequestParam(name = "yearEndRankPointsFactor", defaultValue = "1") int yearEndRankPointsFactor,
 		@RequestParam(name = "bestRankPointsFactor", defaultValue = "1") int bestRankPointsFactor,
 		@RequestParam(name = "weeksAtNo1PointsFactor", defaultValue = "1") int weeksAtNo1PointsFactor,
@@ -48,8 +58,19 @@ public class GOATListController extends PageController {
 		@RequestParam(name = "performancePointsFactor", defaultValue = "1") int performancePointsFactor,
 		@RequestParam(name = "statisticsPointsFactor", defaultValue = "1") int statisticsPointsFactor
 	) {
+		Map<String, Integer> levelPointsFactors = ImmutableMap.<String, Integer>builder()
+			.put("levelGPointsFactor", levelGPointsFactor)
+			.put("levelFPointsFactor", levelFPointsFactor)
+			.put("levelLPointsFactor", levelLPointsFactor)
+			.put("levelMPointsFactor", levelMPointsFactor)
+			.put("levelOPointsFactor", levelOPointsFactor)
+			.put("levelAPointsFactor", levelAPointsFactor)
+			.put("levelBPointsFactor", levelBPointsFactor)
+			.put("levelDPointsFactor", levelDPointsFactor)
+			.put("levelTPointsFactor", levelTPointsFactor)
+		.build();
 		GOATListConfig config = new GOATListConfig(
-			oldLegends, extrapolate, tournamentPointsFactor, rankingPointsFactor, achievementsPointsFactor,
+			oldLegends, extrapolate, tournamentPointsFactor, rankingPointsFactor, achievementsPointsFactor, levelPointsFactors,
 			yearEndRankPointsFactor, bestRankPointsFactor, weeksAtNo1PointsFactor, weeksAtEloTopNPointsFactor, bestEloRatingPointsFactor,
 			grandSlamPointsFactor, bigWinsPointsFactor, h2hPointsFactor, recordsPointsFactor, bestSeasonPointsFactor, greatestRivalriesPointsFactor, performancePointsFactor, statisticsPointsFactor
 		);
@@ -57,6 +78,8 @@ public class GOATListController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("config", config);
 		modelMap.addAttribute("factors", FACTOR_MAP);
+		modelMap.addAttribute("levels", GOATListConfig.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelEnum", TournamentLevel.GRAND_SLAM);
 
 		return new ModelAndView("goatList", modelMap);
 	}
