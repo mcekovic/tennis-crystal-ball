@@ -34,27 +34,44 @@ public class GOATListService {
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
 		"WITH goat_list AS (\n" +
-		"  SELECT player_id, %1$s AS goat_points, %2$s AS tournament_goat_points, %3$s AS ranking_goat_points, %4$s AS achievements_goat_points,\n" +
+		"  SELECT player_id, p.active, p.dob, %1$s AS goat_points, %2$s AS tournament_goat_points, %3$s AS ranking_goat_points, %4$s AS achievements_goat_points,\n" +
 		"    g.year_end_rank_goat_points, g.best_rank_goat_points, g.weeks_at_no1_goat_points, g.weeks_at_elo_topn_goat_points, g.best_elo_rating_goat_points,\n" +
 		"    g.grand_slam_goat_points, g.big_wins_goat_points, g.h2h_goat_points, g.records_goat_points, g.best_season_goat_points, g.greatest_rivalries_goat_points, g.performance_goat_points, g.statistics_goat_points\n" +
 		"  FROM player_goat_points g\n" +
 		"  INNER JOIN player_v p USING (player_id)\n" +
 		"  WHERE g.goat_points > 0 AND NOT lower(p.name) LIKE '%%unknown%%'%5$s\n" +
-		"), goat_list_ranked AS (\n" +
+		")%6$s, goat_list_ranked AS (\n" +
 		"  SELECT *, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank\n" +
-		"  FROM goat_list\n" +
+		"  FROM %7$sgoat_list\n" +
 		"  WHERE goat_points > 0\n" +
 		")\n" +
 		"SELECT g.*, p.name, p.country_id, p.active, p.grand_slams, p.tour_finals, p.alt_finals, p.masters, p.olympics, p.big_titles, p.titles, p.weeks_at_no1, pf.matches_won, pf.matches_lost, p.best_elo_rating, p.best_elo_rating_date\n" +
 		"FROM goat_list_ranked g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"INNER JOIN player_performance pf USING (player_id)%6$s\n" +
-		"ORDER BY %7$s OFFSET :offset LIMIT :limit";
+		"INNER JOIN player_performance pf USING (player_id)%8$s\n" +
+		"ORDER BY %9$s OFFSET :offset LIMIT :limit";
 
 	private static final String FILTER_OLD_LEGENDS_CRITERIA = //language=SQL
 		" AND p.dob >= DATE '1940-01-01'";
 
-	
+
+	private static final String EXTRAPOLATED_GOAT_POINTS = //language=SQL
+		", goat_points_age_distribution AS (\n" +
+		"  SELECT g.season - extract(YEAR FROM p.dob) AS age, sum(g.goat_points)::NUMERIC / (SELECT sum(goat_points) FROM player_season_goat_points) AS goat_points_pct, max(g.goat_points) AS max_goat_points\n" +
+		"  FROM player_season_goat_points g\n" +
+		"  INNER JOIN player p USING (player_id)\n" +
+		"  GROUP BY age\n" +
+		"), extrapolated_goat_list AS (\n" +
+		"  SELECT player_id, least(10 * goat_points, goat_points + coalesce(CASE\n" +
+		"      WHEN active THEN round((SELECT sum(least(d.max_goat_points, goat_points * d.goat_points_pct / (SELECT sum(d2.goat_points_pct) FROM goat_points_age_distribution d2 WHERE d2.age <= extract(YEAR FROM age(dob))))) FROM goat_points_age_distribution d WHERE d.age > extract(YEAR FROM age(dob))))\n" +
+		"      WHEN dob < DATE '1952-01-01' THEN round((SELECT sum(least(d.max_goat_points, goat_points * d.goat_points_pct / (SELECT sum(d2.goat_points_pct) FROM goat_points_age_distribution d2 WHERE d2.age >= extract(YEAR FROM age(DATE '1968-01-01', dob))))) FROM goat_points_age_distribution d WHERE d.age < extract(YEAR FROM age(DATE '1968-01-01', dob))))\n" +
+		"      ELSE NULL\n" +
+		"    END, 0.0)) AS goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,\n" +
+		"    year_end_rank_goat_points, best_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, best_elo_rating_goat_points,\n" +
+		"    grand_slam_goat_points, big_wins_goat_points, h2h_goat_points, records_goat_points, best_season_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points\n" +
+		"  FROM goat_list\n" +
+		")";
+
 	@Cacheable("GOATList.TopN")
 	public List<PlayerRanking> getGOATTopN(int playerCount) {
 		return jdbcTemplate.query(
@@ -88,7 +105,7 @@ public class GOATListService {
 		jdbcTemplate.query(
 			format(GOAT_LIST_QUERY,
 				getGOATPointsExpression(config), getTournamentGOATPointsExpression(config), getRankingGOATPointsExpression(config), getAchievementsGOATPointsExpression(config),
-				getOldLegendsCriteria(config.isOldLegends()), where(filter.getCriteria()), orderBy
+				getOldLegendsCriteria(config.isOldLegends()), config.isExtrapolateCareer() ? EXTRAPOLATED_GOAT_POINTS : "", config.isExtrapolateCareer() ? "extrapolated_" : "", where(filter.withPrefix("p.").getCriteria()), orderBy
 			),
 			getParams(filter, config)
 				.addValue("offset", offset)
@@ -168,7 +185,7 @@ public class GOATListService {
  
 	private static String getGOATPointsExpression(GOATListConfig config) {
 		if (config.hasDefaultFactors())
-			return config.isExtrapolateCareer() ? "g.extrapolated_goat_points" : "g.goat_points";
+			return "g.goat_points";
 		else
 			return format("%1$s + %2$s + %3$s", getTournamentGOATPointsExpression(config), getRankingGOATPointsExpression(config), getAchievementsGOATPointsExpression(config));
 	}

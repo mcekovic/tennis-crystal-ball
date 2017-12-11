@@ -126,7 +126,6 @@
 				{id: "wonPct", title: "Winning percentage"},
 				{id: "bestEloRating", title: "Career Peak Elo rating"}
 			]);
-			adjustExtrapolate();
 			bindPopovers("body");
 			$("[data-toggle='collapse']").click(collapseClick);
 			$("[data-toggle='tooltip']").tooltip();
@@ -141,22 +140,9 @@
 		function reloadGOATListTable() {
 			$("#goatListTable").bootgrid("reload");
 		}
-		function adjustExtrapolate() {
-			var defaultFactors = $("#tournamentPointsFactor").val() === "1" && $("#rankingPointsFactor").val() === "1" && $("#achievementsPointsFactor").val() === "1"
-				&& $("#yearEndRankPointsFactor").val() === "1" && $("#bestRankPointsFactor").val() === "1" && $("#weeksAtNo1PointsFactor").val() === "1" && $("#weeksAtEloTopNPointsFactor").val() === "1" && $("#bestEloRatingPointsFactor").val() === "1"
-				&& $("#grandSlamPointsFactor").val() === "1" && $("#bigWinsPointsFactor").val() === "1" && $("#h2hPointsFactor").val() === "1" && $("#recordsPointsFactor").val() === "1" && $("#bestSeasonPointsFactor").val() === "1" && $("#greatestRivalriesPointsFactor").val() === "1" && $("#performancePointsFactor").val() === "1" && $("#statisticsPointsFactor").val() === "1";
-			var $extrapolate = $("#extrapolate");
-			$extrapolate.prop("disabled", !defaultFactors);
-			if (!defaultFactors)
-				$extrapolate.prop("checked", false);
-		}
-		function pointFactorsChanged() {
-			adjustExtrapolate();
-			reloadGOATListTable();
-		}
 		function resetTournamentPointsConfig() {
 			$("#tournamentPointsFactor").val("1");
-			pointFactorsChanged();
+			reloadGOATListTable();
 		}
 		function resetRankingPointsConfig() {
 			$("#rankingPointsFactor").val("1");
@@ -165,7 +151,7 @@
 			$("#weeksAtNo1PointsFactor").val("1");
 			$("#weeksAtEloTopNPointsFactor").val("1");
 			$("#bestEloRatingPointsFactor").val("1");
-			pointFactorsChanged();
+			reloadGOATListTable();
 		}
 		function resetAchievementsPointsConfig() {
 			$("#achievementsPointsFactor").val("1");
@@ -177,7 +163,7 @@
 			$("#greatestRivalriesPointsFactor").val("1");
 			$("#performancePointsFactor").val("1");
 			$("#statisticsPointsFactor").val("1");
-			pointFactorsChanged();
+			reloadGOATListTable();
 		}
 		function goatListUrl() {
 			var url = "/goatList?oldLegends=" + $("#oldLegends").prop("checked");
@@ -280,7 +266,7 @@
 			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Change Tournament GOAT Points factor">
 					<label for="tournamentPointsFactor" class="input-group-addon factor-label">Tournament Pts.:</label>
-					<select id="tournamentPointsFactor" class="form-control" onchange="pointFactorsChanged()">
+					<select id="tournamentPointsFactor" class="form-control" onchange="reloadGOATListTable()">
 						<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.tournamentPointsFactor}">x 0</option>
 					</select>
 				</div>
@@ -295,7 +281,7 @@
 			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Change Ranking GOAT Points factor">
 					<label for="rankingPointsFactor" class="input-group-addon factor-label">Ranking Pts.:</label>
-					<select id="rankingPointsFactor" class="form-control" onchange="pointFactorsChanged()">
+					<select id="rankingPointsFactor" class="form-control" onchange="reloadGOATListTable()">
 						<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.rankingPointsFactor}">x 0</option>
 					</select>
 				</div>
@@ -318,7 +304,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="yearEndRankPointsFactor" class="input-group-addon small-control factor-label">Year-End Ranking Pts.:</label>
-						<select id="yearEndRankPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="yearEndRankPointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.yearEndRankPointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -326,7 +312,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="bestRankPointsFactor" class="input-group-addon small-control factor-label">Career High Ranking Pts.:</label>
-						<select id="bestRankPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="bestRankPointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.bestRankPointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -334,7 +320,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="weeksAtNo1PointsFactor" class="input-group-addon small-control factor-label">Weeks at No. 1 Pts.:</label>
-						<select id="weeksAtNo1PointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="weeksAtNo1PointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.weeksAtNo1PointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -342,7 +328,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="weeksAtEloTopNPointsFactor" class="input-group-addon small-control factor-label">Weeks at Elo Top 5 Pts.:</label>
-						<select id="weeksAtEloTopNPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="weeksAtEloTopNPointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.weeksAtEloTopNPointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -350,7 +336,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="bestEloRatingPointsFactor" class="input-group-addon small-control factor-label">Peak Elo Rating Pts.:</label>
-						<select id="bestEloRatingPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="bestEloRatingPointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.bestEloRatingPointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -361,7 +347,7 @@
 			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Change Achievements GOAT Points factor">
 					<label for="achievementsPointsFactor" class="input-group-addon factor-label">Achievements Pts.:</label>
-					<select id="achievementsPointsFactor" class="form-control" onchange="pointFactorsChanged()">
+					<select id="achievementsPointsFactor" class="form-control" onchange="reloadGOATListTable()">
 						<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.achievementsPointsFactor}">x 0</option>
 					</select>
 				</div>
@@ -386,7 +372,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="grandSlamPointsFactor" class="input-group-addon small-control factor-label">Grand Slam Pts.:</label>
-						<select id="grandSlamPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="grandSlamPointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.grandSlamPointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -394,7 +380,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="bigWinsPointsFactor" class="input-group-addon small-control factor-label">Big Wins Pts.:</label>
-						<select id="bigWinsPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="bigWinsPointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.bigWinsPointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -402,7 +388,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="h2hPointsFactor" class="input-group-addon small-control factor-label">H2H Pts.:</label>
-						<select id="h2hPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="h2hPointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.h2hPointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -410,7 +396,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="recordsPointsFactor" class="input-group-addon small-control factor-label">Records Pts.:</label>
-						<select id="recordsPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="recordsPointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.recordsPointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -418,7 +404,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="bestSeasonPointsFactor" class="input-group-addon small-control factor-label">Best Seasons Pts.:</label>
-						<select id="bestSeasonPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="bestSeasonPointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.bestSeasonPointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -426,7 +412,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="greatestRivalriesPointsFactor" class="input-group-addon small-control factor-label">Greatest Rivalries Pts.:</label>
-						<select id="greatestRivalriesPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="greatestRivalriesPointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.greatestRivalriesPointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -434,7 +420,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="performancePointsFactor" class="input-group-addon small-control factor-label">Performance Pts.:</label>
-						<select id="performancePointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="performancePointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.performancePointsFactor}">x 0</option>
 						</select>
 					</div>
@@ -442,7 +428,7 @@
 				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
 						<label for="statisticsPointsFactor" class="input-group-addon small-control factor-label">Statistics Pts.:</label>
-						<select id="statisticsPointsFactor" class="form-control small-control" onchange="pointFactorsChanged()">
+						<select id="statisticsPointsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.statisticsPointsFactor}">x 0</option>
 						</select>
 					</div>
