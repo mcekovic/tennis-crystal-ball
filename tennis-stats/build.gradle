@@ -59,6 +59,7 @@ dependencies {
 		exclude group: 'com.google.code.findbugs'
 		exclude group: 'com.google.errorprone'
 		exclude group: 'com.google.j2objc'
+		exclude group: 'org.checkerframework'
 	}
 	compile ("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 	compile ("org.postgresql:postgresql:$postgresqlJdbcVersion")
@@ -78,6 +79,7 @@ dependencies {
 	runtime ("org.webjars.bower:jquery-bootgrid:$jQueryBootgridVersion") {
 		exclude group: 'org.webjars.bower'
 	}
+	runtime ("org.webjars:font-awesome:$fontAwesomeVersion")
 	compile ("com.maxmind.geoip2:geoip2:$geoip2Version") {
 		exclude group: 'com.google.http-client'
 	}

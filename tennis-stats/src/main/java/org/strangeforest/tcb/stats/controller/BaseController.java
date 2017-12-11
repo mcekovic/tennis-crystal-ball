@@ -12,7 +12,8 @@ public abstract class BaseController {
 		"jquery", "2.2.4",
 		"jquery-ui", "1.12.1",
 		"bootstrap", "3.3.7",
-		"bootgrid", "1.3.1"
+		"bootgrid", "1.3.1",
+		"font-awesome", "4.7.0"
 	);
 
 	@ModelAttribute("versions")

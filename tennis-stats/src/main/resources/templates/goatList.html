@@ -179,7 +179,7 @@
 			$("#statisticsPointsFactor").val("1");
 			pointFactorsChanged();
 		}
-		function goatListPermalink() {
+		function goatListUrl() {
 			var url = "/goatList?oldLegends=" + $("#oldLegends").prop("checked");
 			var extrapolate = $("#extrapolate").prop("checked");
 			if (extrapolate)
@@ -200,7 +200,14 @@
 			url += addParam("greatestRivalriesPointsFactor", "1");
 			url += addParam("performancePointsFactor", "1");
 			url += addParam("statisticsPointsFactor", "1");
-			window.location.href = url;
+			return url;
+		}
+		function goatListPermalink() {
+			window.location.href = goatListUrl();
+		}
+		function goatListTweat() {
+			window.open("https://twitter.com/intent/tweet?text=My+GOAT+List&via=UltmTennisStats&url=" + encodeURIComponent("http://www.ultimatetennisstatistics.com" + goatListUrl()), "Tweat this GOAT List", "width=600, height=600, left=" + (screen.width-600)/2 + ", top=" + (screen.height-600)/2);
+			return false;
 		}
 		function addParam(param, def) {
 			var value = $("#" + param).val();
@@ -237,7 +244,7 @@
 	</div>
 	<div id="goatListConfig" class="collapse" th:attrappend="class=${config.default ? _ : ' in'}" style="margin-bottom: 10px; margin-top: -10px">
 		<div class="row">
-			<div class="col-md-2 col-sm-3 col-xs-4 text-nowrap">
+			<div class="col-md-2 col-xs-3 text-nowrap">
 				<div class="checkbox">
 					<label data-toggle="tooltip" data-placement="auto" title="Include 'old legends' born before 1940 (but counting only their Open Era achievements)">
 						<input id="oldLegends" type="checkbox" th:checked="${config.oldLegends}" onchange="reloadGOATListTable()"/> Old legends
@@ -252,9 +259,14 @@
 				</div>
 				&nbsp;<a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#extrapolateCareerPopover"><span style="margin-top: 10px" class="glyphicon glyphicon-question-sign"></span></a>
 			</div>
-			<div class="col-xs-1">
+			<div class="col-lg-1 col-xs-2">
 				<button type="button" class="btn btn-sm btn-info" onclick="goatListPermalink()" data-toggle="tooltip" data-placement="auto" title="Permalink to this GOAT List">
 					<span class="glyphicon glyphicon-link"></span>&nbsp;&nbsp;Permalink
+				</button>
+			</div>
+			<div class="col-md-1 col-xs-2">
+				<button type="button" class="btn btn-sm btn-info" onclick="goatListTweat()" data-toggle="tooltip" data-placement="auto" title="Tweat this GOAT List">
+					<i class="fa fa-twitter"></i>&nbsp;&nbsp;Tweat
 				</button>
 			</div>
 		</div>
