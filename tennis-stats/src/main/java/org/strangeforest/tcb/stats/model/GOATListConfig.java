@@ -20,49 +20,49 @@ public class GOATListConfig {
 
 	private final boolean oldLegends;
 	private final boolean extrapolateCareer;
-	private final int tournamentPointsFactor;
-	private final int rankingPointsFactor;
-	private final int achievementsPointsFactor;
+	private final int tournamentFactor;
+	private final int rankingFactor;
+	private final int achievementsFactor;
 
-	private final Map<String, Integer> levelPointsFactors;
+	private final Map<String, Integer> levelFactors;
 
-	private final int yearEndRankPointsFactor;
-	private final int bestRankPointsFactor;
-	private final int weeksAtNo1PointsFactor;
-	private final int weeksAtEloTopNPointsFactor;
-	private final int bestEloRatingPointsFactor;
+	private final int yearEndRankFactor;
+	private final int bestRankFactor;
+	private final int weeksAtNo1Factor;
+	private final int weeksAtEloTopNFactor;
+	private final int bestEloRatingFactor;
 
-	private final int grandSlamPointsFactor;
-	private final int bigWinsPointsFactor;
-	private final int h2hPointsFactor;
-	private final int recordsPointsFactor;
-	private final int bestSeasonPointsFactor;
-	private final int greatestRivalriesPointsFactor;
-	private final int performancePointsFactor;
-	private final int statisticsPointsFactor;
+	private final int grandSlamFactor;
+	private final int bigWinsFactor;
+	private final int h2hFactor;
+	private final int recordsFactor;
+	private final int bestSeasonFactor;
+	private final int greatestRivalriesFactor;
+	private final int performanceFactor;
+	private final int statisticsFactor;
 
-	public GOATListConfig(boolean oldLegends, boolean extrapolateCareer, int tournamentPointsFactor, int rankingPointsFactor, int achievementsPointsFactor, Map<String, Integer> levelPointsFactors, 
-	                      int yearEndRankPointsFactor, int bestRankPointsFactor, int weeksAtNo1PointsFactor, int weeksAtEloTopNPointsFactor, int bestEloRatingPointsFactor,
-	                      int grandSlamPointsFactor, int bigWinsPointsFactor, int h2hPointsFactor, int recordsPointsFactor, int bestSeasonPointsFactor, int greatestRivalriesPointsFactor, int performancePointsFactor, int statisticsPointsFactor) {
+	public GOATListConfig(boolean oldLegends, boolean extrapolateCareer, int tournamentFactor, int rankingFactor, int achievementsFactor, Map<String, Integer> levelFactors, 
+	                      int yearEndRankFactor, int bestRankFactor, int weeksAtNo1Factor, int weeksAtEloTopNFactor, int bestEloRatingFactor,
+	                      int grandSlamFactor, int bigWinsFactor, int h2hFactor, int recordsFactor, int bestSeasonFactor, int greatestRivalriesFactor, int performanceFactor, int statisticsFactor) {
 		this.oldLegends = oldLegends;
 		this.extrapolateCareer = extrapolateCareer;
-		this.tournamentPointsFactor = tournamentPointsFactor;
-		this.rankingPointsFactor = rankingPointsFactor;
-		this.achievementsPointsFactor = achievementsPointsFactor;
-		this.levelPointsFactors = levelPointsFactors.entrySet().stream().filter(e -> e.getValue() != 1).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-		this.yearEndRankPointsFactor = yearEndRankPointsFactor;
-		this.bestRankPointsFactor = bestRankPointsFactor;
-		this.weeksAtNo1PointsFactor = weeksAtNo1PointsFactor;
-		this.weeksAtEloTopNPointsFactor = weeksAtEloTopNPointsFactor;
-		this.bestEloRatingPointsFactor = bestEloRatingPointsFactor;
-		this.grandSlamPointsFactor = grandSlamPointsFactor;
-		this.bigWinsPointsFactor = bigWinsPointsFactor;
-		this.h2hPointsFactor = h2hPointsFactor;
-		this.recordsPointsFactor = recordsPointsFactor;
-		this.bestSeasonPointsFactor = bestSeasonPointsFactor;
-		this.greatestRivalriesPointsFactor = greatestRivalriesPointsFactor;
-		this.performancePointsFactor = performancePointsFactor;
-		this.statisticsPointsFactor = statisticsPointsFactor;
+		this.tournamentFactor = tournamentFactor;
+		this.rankingFactor = rankingFactor;
+		this.achievementsFactor = achievementsFactor;
+		this.levelFactors = levelFactors.entrySet().stream().filter(e -> e.getValue() != 1).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+		this.yearEndRankFactor = yearEndRankFactor;
+		this.bestRankFactor = bestRankFactor;
+		this.weeksAtNo1Factor = weeksAtNo1Factor;
+		this.weeksAtEloTopNFactor = weeksAtEloTopNFactor;
+		this.bestEloRatingFactor = bestEloRatingFactor;
+		this.grandSlamFactor = grandSlamFactor;
+		this.bigWinsFactor = bigWinsFactor;
+		this.h2hFactor = h2hFactor;
+		this.recordsFactor = recordsFactor;
+		this.bestSeasonFactor = bestSeasonFactor;
+		this.greatestRivalriesFactor = greatestRivalriesFactor;
+		this.performanceFactor = performanceFactor;
+		this.statisticsFactor = statisticsFactor;
 	}
 
 	public boolean isOldLegends() {
@@ -73,128 +73,128 @@ public class GOATListConfig {
 		return extrapolateCareer;
 	}
 
-	public int getTournamentPointsFactor() {
-		return tournamentPointsFactor;
+	public int getTournamentFactor() {
+		return tournamentFactor;
 	}
 
-	public int getRankingPointsFactor() {
-		return rankingPointsFactor;
+	public int getRankingFactor() {
+		return rankingFactor;
 	}
 
-	public int getAchievementsPointsFactor() {
-		return achievementsPointsFactor;
+	public int getAchievementsFactor() {
+		return achievementsFactor;
 	}
 
-	public int getLevelPointsFactor(String level) {
-		return levelPointsFactors.getOrDefault(level, 1);
+	public int getLevelFactor(String level) {
+		return levelFactors.getOrDefault(level, 1);
 	}
 
-	public int getYearEndRankPointsFactor() {
-		return yearEndRankPointsFactor;
+	public int getYearEndRankFactor() {
+		return yearEndRankFactor;
 	}
 
-	public int getBestRankPointsFactor() {
-		return bestRankPointsFactor;
+	public int getBestRankFactor() {
+		return bestRankFactor;
 	}
 
-	public int getWeeksAtNo1PointsFactor() {
-		return weeksAtNo1PointsFactor;
+	public int getWeeksAtNo1Factor() {
+		return weeksAtNo1Factor;
 	}
 
-	public int getWeeksAtEloTopNPointsFactor() {
-		return weeksAtEloTopNPointsFactor;
+	public int getWeeksAtEloTopNFactor() {
+		return weeksAtEloTopNFactor;
 	}
 
-	public int getBestEloRatingPointsFactor() {
-		return bestEloRatingPointsFactor;
+	public int getBestEloRatingFactor() {
+		return bestEloRatingFactor;
 	}
 
-	public int getGrandSlamPointsFactor() {
-		return grandSlamPointsFactor;
+	public int getGrandSlamFactor() {
+		return grandSlamFactor;
 	}
 
-	public int getBigWinsPointsFactor() {
-		return bigWinsPointsFactor;
+	public int getBigWinsFactor() {
+		return bigWinsFactor;
 	}
 
-	public int getH2hPointsFactor() {
-		return h2hPointsFactor;
+	public int getH2hFactor() {
+		return h2hFactor;
 	}
 
-	public int getRecordsPointsFactor() {
-		return recordsPointsFactor;
+	public int getRecordsFactor() {
+		return recordsFactor;
 	}
 
-	public int getBestSeasonPointsFactor() {
-		return bestSeasonPointsFactor;
+	public int getBestSeasonFactor() {
+		return bestSeasonFactor;
 	}
 
-	public int getGreatestRivalriesPointsFactor() {
-		return greatestRivalriesPointsFactor;
+	public int getGreatestRivalriesFactor() {
+		return greatestRivalriesFactor;
 	}
 
-	public int getPerformancePointsFactor() {
-		return performancePointsFactor;
+	public int getPerformanceFactor() {
+		return performanceFactor;
 	}
 
-	public int getStatisticsPointsFactor() {
-		return statisticsPointsFactor;
+	public int getStatisticsFactor() {
+		return statisticsFactor;
 	}
 
-	public int getLevelPointsTotalFactor(String level) {
-		return tournamentPointsFactor * getLevelPointsFactor(level);
+	public int getLevelTotalFactor(String level) {
+		return tournamentFactor * getLevelFactor(level);
 	}
 
-	public int getYearEndRankPointsTotalFactor() {
-		return rankingPointsFactor * yearEndRankPointsFactor;
+	public int getYearEndRankTotalFactor() {
+		return rankingFactor * yearEndRankFactor;
 	}
 
-	public int getBestRankPointsTotalFactor() {
-		return rankingPointsFactor * bestRankPointsFactor;
+	public int getBestRankTotalFactor() {
+		return rankingFactor * bestRankFactor;
 	}
 
-	public int getWeeksAtNo1PointsTotalFactor() {
-		return rankingPointsFactor * weeksAtNo1PointsFactor;
+	public int getWeeksAtNo1TotalFactor() {
+		return rankingFactor * weeksAtNo1Factor;
 	}
 
-	public int getWeeksAtEloTopNPointsTotalFactor() {
-		return rankingPointsFactor * weeksAtEloTopNPointsFactor;
+	public int getWeeksAtEloTopNTotalFactor() {
+		return rankingFactor * weeksAtEloTopNFactor;
 	}
 
-	public int getBestEloRatingPointsTotalFactor() {
-		return rankingPointsFactor * bestEloRatingPointsFactor;
+	public int getBestEloRatingTotalFactor() {
+		return rankingFactor * bestEloRatingFactor;
 	}
 
-	public int getGrandSlamPointsTotalFactor() {
-		return achievementsPointsFactor * grandSlamPointsFactor;
+	public int getGrandSlamTotalFactor() {
+		return achievementsFactor * grandSlamFactor;
 	}
 
-	public int getBigWinsPointsTotalFactor() {
-		return achievementsPointsFactor * bigWinsPointsFactor;
+	public int getBigWinsTotalFactor() {
+		return achievementsFactor * bigWinsFactor;
 	}
 
-	public int getH2hPointsTotalFactor() {
-		return achievementsPointsFactor * h2hPointsFactor;
+	public int getH2hTotalFactor() {
+		return achievementsFactor * h2hFactor;
 	}
 
-	public int getRecordsPointsTotalFactor() {
-		return achievementsPointsFactor * recordsPointsFactor;
+	public int getRecordsTotalFactor() {
+		return achievementsFactor * recordsFactor;
 	}
 
-	public int getBestSeasonPointsTotalFactor() {
-		return achievementsPointsFactor * bestSeasonPointsFactor;
+	public int getBestSeasonTotalFactor() {
+		return achievementsFactor * bestSeasonFactor;
 	}
 
-	public int getGreatestRivalriesPointsTotalFactor() {
-		return achievementsPointsFactor * greatestRivalriesPointsFactor;
+	public int getGreatestRivalriesTotalFactor() {
+		return achievementsFactor * greatestRivalriesFactor;
 	}
 
-	public int getPerformancePointsTotalFactor() {
-		return achievementsPointsFactor * performancePointsFactor;
+	public int getPerformanceTotalFactor() {
+		return achievementsFactor * performanceFactor;
 	}
 
-	public int getStatisticsPointsTotalFactor() {
-		return achievementsPointsFactor * statisticsPointsFactor;
+	public int getStatisticsTotalFactor() {
+		return achievementsFactor * statisticsFactor;
 	}
 
 	public boolean hasDefaultFactors() {
@@ -202,7 +202,7 @@ public class GOATListConfig {
 	}
 
 	public boolean hasDefaultTournamentFactors() {
-		return levelPointsFactors.isEmpty();
+		return levelFactors.isEmpty();
 	}
 
 	public boolean hasDefaultRankingFactors() {
@@ -218,15 +218,15 @@ public class GOATListConfig {
 	private Supplier<Boolean> hasDefaultAchievementsFactors = Memoizer.of(this::checkHasDefaultAchievementsFactors);
 
 	private boolean checkHasDefaultFactors() {
-		return tournamentPointsFactor == 1 && rankingPointsFactor == 1 && achievementsPointsFactor == 1 && hasDefaultTournamentFactors() && hasDefaultRankingFactors() && hasDefaultAchievementsFactors();
+		return tournamentFactor == 1 && rankingFactor == 1 && achievementsFactor == 1 && hasDefaultTournamentFactors() && hasDefaultRankingFactors() && hasDefaultAchievementsFactors();
 	}
 
 	private boolean checkHasDefaultRankingFactors() {
-		return yearEndRankPointsFactor == 1 && bestRankPointsFactor == 1 && weeksAtNo1PointsFactor == 1 && weeksAtEloTopNPointsFactor == 1 && bestEloRatingPointsFactor == 1;
+		return yearEndRankFactor == 1 && bestRankFactor == 1 && weeksAtNo1Factor == 1 && weeksAtEloTopNFactor == 1 && bestEloRatingFactor == 1;
 	}
 
 	private boolean checkHasDefaultAchievementsFactors() {
-		return grandSlamPointsFactor == 1 && bigWinsPointsFactor == 1 && h2hPointsFactor == 1 && recordsPointsFactor == 1 && bestSeasonPointsFactor == 1 && greatestRivalriesPointsFactor == 1 && performancePointsFactor == 1 && statisticsPointsFactor == 1;
+		return grandSlamFactor == 1 && bigWinsFactor == 1 && h2hFactor == 1 && recordsFactor == 1 && bestSeasonFactor == 1 && greatestRivalriesFactor == 1 && performanceFactor == 1 && statisticsFactor == 1;
 	}
 
 	public boolean isDefault() {
@@ -241,30 +241,30 @@ public class GOATListConfig {
 		if (o == null || getClass() != o.getClass()) return false;
 		GOATListConfig config = (GOATListConfig)o;
 		return config.oldLegends == oldLegends && config.extrapolateCareer == extrapolateCareer &&
-			config.tournamentPointsFactor == tournamentPointsFactor &&
-			config.rankingPointsFactor == rankingPointsFactor &&
-			config.achievementsPointsFactor == achievementsPointsFactor &&
-			config.levelPointsFactors.equals(levelPointsFactors) &&
-			config.yearEndRankPointsFactor == yearEndRankPointsFactor &&
-			config.bestRankPointsFactor == bestRankPointsFactor &&
-			config.weeksAtNo1PointsFactor == weeksAtNo1PointsFactor &&
-			config.weeksAtEloTopNPointsFactor == weeksAtEloTopNPointsFactor &&
-			config.bestEloRatingPointsFactor == bestEloRatingPointsFactor &&
-			config.grandSlamPointsFactor == grandSlamPointsFactor &&
-			config.bigWinsPointsFactor == bigWinsPointsFactor &&
-			config.h2hPointsFactor == h2hPointsFactor &&
-			config.recordsPointsFactor == recordsPointsFactor &&
-			config.bestSeasonPointsFactor == bestSeasonPointsFactor &&
-			config.greatestRivalriesPointsFactor == greatestRivalriesPointsFactor &&
-			config.performancePointsFactor == performancePointsFactor &&
-			config.statisticsPointsFactor == statisticsPointsFactor;
+			config.tournamentFactor == tournamentFactor &&
+			config.rankingFactor == rankingFactor &&
+			config.achievementsFactor == achievementsFactor &&
+			config.levelFactors.equals(levelFactors) &&
+			config.yearEndRankFactor == yearEndRankFactor &&
+			config.bestRankFactor == bestRankFactor &&
+			config.weeksAtNo1Factor == weeksAtNo1Factor &&
+			config.weeksAtEloTopNFactor == weeksAtEloTopNFactor &&
+			config.bestEloRatingFactor == bestEloRatingFactor &&
+			config.grandSlamFactor == grandSlamFactor &&
+			config.bigWinsFactor == bigWinsFactor &&
+			config.h2hFactor == h2hFactor &&
+			config.recordsFactor == recordsFactor &&
+			config.bestSeasonFactor == bestSeasonFactor &&
+			config.greatestRivalriesFactor == greatestRivalriesFactor &&
+			config.performanceFactor == performanceFactor &&
+			config.statisticsFactor == statisticsFactor;
 	}
 
 	@Override public int hashCode() {
 		return Objects.hash(
-			oldLegends, extrapolateCareer, tournamentPointsFactor, rankingPointsFactor, achievementsPointsFactor, levelPointsFactors,
-			yearEndRankPointsFactor, bestRankPointsFactor, weeksAtNo1PointsFactor, weeksAtEloTopNPointsFactor, bestEloRatingPointsFactor,
-			grandSlamPointsFactor, bigWinsPointsFactor, h2hPointsFactor, recordsPointsFactor, bestSeasonPointsFactor, greatestRivalriesPointsFactor, performancePointsFactor, statisticsPointsFactor
+			oldLegends, extrapolateCareer, tournamentFactor, rankingFactor, achievementsFactor, levelFactors,
+			yearEndRankFactor, bestRankFactor, weeksAtNo1Factor, weeksAtEloTopNFactor, bestEloRatingFactor,
+			grandSlamFactor, bigWinsFactor, h2hFactor, recordsFactor, bestSeasonFactor, greatestRivalriesFactor, performanceFactor, statisticsFactor
 		);
 	}
 
@@ -272,23 +272,23 @@ public class GOATListConfig {
 		return MoreObjects.toStringHelper(this).omitNullValues()
 			.add("oldLegends", nullIf(oldLegends, false))
 			.add("extrapolateCareer", nullIf(extrapolateCareer, true))
-			.add("tournamentPointsFactor", nullIf(tournamentPointsFactor, 1))
-			.add("rankingPointsFactor", nullIf(rankingPointsFactor, 1))
-			.add("achievementsPointsFactor", nullIf(achievementsPointsFactor, 1))
-			.add("levelPointsFactors", nullIf(levelPointsFactors, emptyMap()))
-			.add("yearEndRankPointsFactor", nullIf(yearEndRankPointsFactor, 1))
-			.add("bestRankPointsFactor", nullIf(bestRankPointsFactor, 1))
-			.add("weeksAtNo1PointsFactor", nullIf(weeksAtNo1PointsFactor, 1))
-			.add("weeksAtEloTopNPointsFactor", nullIf(weeksAtEloTopNPointsFactor, 1))
-			.add("bestEloRatingPointsFactor", nullIf(bestEloRatingPointsFactor, 1))
-			.add("grandSlamPointsFactor", nullIf(grandSlamPointsFactor, 1))
-			.add("bigWinsPointsFactor", nullIf(bigWinsPointsFactor, 1))
-			.add("h2hPointsFactor", nullIf(h2hPointsFactor, 1))
-			.add("recordsPointsFactor", nullIf(recordsPointsFactor, 1))
-			.add("bestSeasonPointsFactor", nullIf(bestSeasonPointsFactor, 1))
-			.add("greatestRivalriesPointsFactor", nullIf(greatestRivalriesPointsFactor, 1))
-			.add("performancePointsFactor", nullIf(performancePointsFactor, 1))
-			.add("statisticsPointsFactor", nullIf(statisticsPointsFactor, 1))
+			.add("tournamentFactor", nullIf(tournamentFactor, 1))
+			.add("rankingFactor", nullIf(rankingFactor, 1))
+			.add("achievementsFactor", nullIf(achievementsFactor, 1))
+			.add("levelFactors", nullIf(levelFactors, emptyMap()))
+			.add("yearEndRankFactor", nullIf(yearEndRankFactor, 1))
+			.add("bestRankFactor", nullIf(bestRankFactor, 1))
+			.add("weeksAtNo1Factor", nullIf(weeksAtNo1Factor, 1))
+			.add("weeksAtEloTopNFactor", nullIf(weeksAtEloTopNFactor, 1))
+			.add("bestEloRatingFactor", nullIf(bestEloRatingFactor, 1))
+			.add("grandSlamFactor", nullIf(grandSlamFactor, 1))
+			.add("bigWinsFactor", nullIf(bigWinsFactor, 1))
+			.add("h2hFactor", nullIf(h2hFactor, 1))
+			.add("recordsFactor", nullIf(recordsFactor, 1))
+			.add("bestSeasonFactor", nullIf(bestSeasonFactor, 1))
+			.add("greatestRivalriesFactor", nullIf(greatestRivalriesFactor, 1))
+			.add("performanceFactor", nullIf(performanceFactor, 1))
+			.add("statisticsFactor", nullIf(statisticsFactor, 1))
 			.toString();
 	}
 }

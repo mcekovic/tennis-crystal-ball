@@ -42,52 +42,52 @@ public class GOATListResource {
 		@RequestParam(name = "active", required = false) Boolean active,
 		@RequestParam(name = "oldLegends", defaultValue = T) boolean oldLegends,
 		@RequestParam(name = "extrapolate", defaultValue = F) boolean extrapolate,
-		@RequestParam(name = "tournamentPointsFactor", defaultValue = "1") int tournamentPointsFactor,
-		@RequestParam(name = "rankingPointsFactor", defaultValue = "1") int rankingPointsFactor,
-		@RequestParam(name = "achievementsPointsFactor", defaultValue = "1") int achievementsPointsFactor,
-		@RequestParam(name = "levelGPointsFactor", defaultValue = "1") int levelGPointsFactor,
-		@RequestParam(name = "levelFPointsFactor", defaultValue = "1") int levelFPointsFactor,
-		@RequestParam(name = "levelLPointsFactor", defaultValue = "1") int levelLPointsFactor,
-		@RequestParam(name = "levelMPointsFactor", defaultValue = "1") int levelMPointsFactor,
-		@RequestParam(name = "levelOPointsFactor", defaultValue = "1") int levelOPointsFactor,
-		@RequestParam(name = "levelAPointsFactor", defaultValue = "1") int levelAPointsFactor,
-		@RequestParam(name = "levelBPointsFactor", defaultValue = "1") int levelBPointsFactor,
-		@RequestParam(name = "levelDPointsFactor", defaultValue = "1") int levelDPointsFactor,
-		@RequestParam(name = "levelTPointsFactor", defaultValue = "1") int levelTPointsFactor,
-		@RequestParam(name = "yearEndRankPointsFactor", defaultValue = "1") int yearEndRankPointsFactor,
-		@RequestParam(name = "bestRankPointsFactor", defaultValue = "1") int bestRankPointsFactor,
-		@RequestParam(name = "weeksAtNo1PointsFactor", defaultValue = "1") int weeksAtNo1PointsFactor,
-		@RequestParam(name = "weeksAtEloTopNPointsFactor", defaultValue = "1") int weeksAtEloTopNPointsFactor,
-		@RequestParam(name = "bestEloRatingPointsFactor", defaultValue = "1") int bestEloRatingPointsFactor,
-		@RequestParam(name = "grandSlamPointsFactor", defaultValue = "1") int grandSlamPointsFactor,
-		@RequestParam(name = "bigWinsPointsFactor", defaultValue = "1") int bigWinsPointsFactor,
-		@RequestParam(name = "h2hPointsFactor", defaultValue = "1") int h2hPointsFactor,
-		@RequestParam(name = "recordsPointsFactor", defaultValue = "1") int recordsPointsFactor,
-		@RequestParam(name = "bestSeasonPointsFactor", defaultValue = "1") int bestSeasonPointsFactor,
-		@RequestParam(name = "greatestRivalriesPointsFactor", defaultValue = "1") int greatestRivalriesPointsFactor,
-		@RequestParam(name = "performancePointsFactor", defaultValue = "1") int performancePointsFactor,
-		@RequestParam(name = "statisticsPointsFactor", defaultValue = "1") int statisticsPointsFactor,
+		@RequestParam(name = "tournamentFactor", defaultValue = "1") int tournamentFactor,
+		@RequestParam(name = "rankingFactor", defaultValue = "1") int rankingFactor,
+		@RequestParam(name = "achievementsFactor", defaultValue = "1") int achievementsFactor,
+		@RequestParam(name = "levelGFactor", defaultValue = "1") int levelGFactor,
+		@RequestParam(name = "levelFFactor", defaultValue = "1") int levelFFactor,
+		@RequestParam(name = "levelLFactor", defaultValue = "1") int levelLFactor,
+		@RequestParam(name = "levelMFactor", defaultValue = "1") int levelMFactor,
+		@RequestParam(name = "levelOFactor", defaultValue = "1") int levelOFactor,
+		@RequestParam(name = "levelAFactor", defaultValue = "1") int levelAFactor,
+		@RequestParam(name = "levelBFactor", defaultValue = "1") int levelBFactor,
+		@RequestParam(name = "levelDFactor", defaultValue = "1") int levelDFactor,
+		@RequestParam(name = "levelTFactor", defaultValue = "1") int levelTFactor,
+		@RequestParam(name = "yearEndRankFactor", defaultValue = "1") int yearEndRankFactor,
+		@RequestParam(name = "bestRankFactor", defaultValue = "1") int bestRankFactor,
+		@RequestParam(name = "weeksAtNo1Factor", defaultValue = "1") int weeksAtNo1Factor,
+		@RequestParam(name = "weeksAtEloTopNFactor", defaultValue = "1") int weeksAtEloTopNFactor,
+		@RequestParam(name = "bestEloRatingFactor", defaultValue = "1") int bestEloRatingFactor,
+		@RequestParam(name = "grandSlamFactor", defaultValue = "1") int grandSlamFactor,
+		@RequestParam(name = "bigWinsFactor", defaultValue = "1") int bigWinsFactor,
+		@RequestParam(name = "h2hFactor", defaultValue = "1") int h2hFactor,
+		@RequestParam(name = "recordsFactor", defaultValue = "1") int recordsFactor,
+		@RequestParam(name = "bestSeasonFactor", defaultValue = "1") int bestSeasonFactor,
+		@RequestParam(name = "greatestRivalriesFactor", defaultValue = "1") int greatestRivalriesFactor,
+		@RequestParam(name = "performanceFactor", defaultValue = "1") int performanceFactor,
+		@RequestParam(name = "statisticsFactor", defaultValue = "1") int statisticsFactor,
 		@RequestParam(name = "current", defaultValue = "1") int current,
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue = "") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);
-		Map<String, Integer> levelPointsFactors = ImmutableMap.<String, Integer>builder()
-			.put("levelGPointsFactor", levelGPointsFactor)
-			.put("levelFPointsFactor", levelFPointsFactor)
-			.put("levelLPointsFactor", levelLPointsFactor)
-			.put("levelMPointsFactor", levelMPointsFactor)
-			.put("levelOPointsFactor", levelOPointsFactor)
-			.put("levelAPointsFactor", levelAPointsFactor)
-			.put("levelBPointsFactor", levelBPointsFactor)
-			.put("levelDPointsFactor", levelDPointsFactor)
-			.put("levelTPointsFactor", levelTPointsFactor)
+		Map<String, Integer> levelFactors = ImmutableMap.<String, Integer>builder()
+			.put("G", levelGFactor)
+			.put("F", levelFFactor)
+			.put("L", levelLFactor)
+			.put("M", levelMFactor)
+			.put("O", levelOFactor)
+			.put("A", levelAFactor)
+			.put("B", levelBFactor)
+			.put("D", levelDFactor)
+			.put("T", levelTFactor)
 		.build();
 		GOATListConfig config = new GOATListConfig(
-			oldLegends, extrapolate, tournamentPointsFactor, rankingPointsFactor, achievementsPointsFactor, levelPointsFactors,
-			yearEndRankPointsFactor, bestRankPointsFactor, weeksAtNo1PointsFactor, weeksAtEloTopNPointsFactor, bestEloRatingPointsFactor,
-			grandSlamPointsFactor, bigWinsPointsFactor, h2hPointsFactor, recordsPointsFactor, bestSeasonPointsFactor, greatestRivalriesPointsFactor, performancePointsFactor, statisticsPointsFactor
+			oldLegends, extrapolate, tournamentFactor, rankingFactor, achievementsFactor, levelFactors,
+			yearEndRankFactor, bestRankFactor, weeksAtNo1Factor, weeksAtEloTopNFactor, bestEloRatingFactor,
+			grandSlamFactor, bigWinsFactor, h2hFactor, recordsFactor, bestSeasonFactor, greatestRivalriesFactor, performanceFactor, statisticsFactor
 		);
 		int playerCount = goatListService.getPlayerCount(filter, config);
 
