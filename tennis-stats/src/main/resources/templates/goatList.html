@@ -3,6 +3,7 @@
 <!--/*@thymesVar id="config" type="org.strangeforest.tcb.stats.model.GOATListConfig"*/-->
 <!--/*@thymesVar id="factors" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.List<java.lang.String>"*/-->
+<!--/*@thymesVar id="results" type="java.util.List<java.lang.String>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
 	<title>GOAT List</title>
 	<script type="text/javascript" th:inline="javascript">
@@ -29,6 +30,7 @@
 					addRequestParam(request, "rankingFactor", "1");
 					addRequestParam(request, "achievementsFactor", "1");
 					[# th:each="level : ${levels}"]addRequestParam(request, "level[(${level})]Factor", "1"); [/]
+					[# th:each="result : ${results}"]addRequestParam(request, "result[(${result})]Factor", "1"); [/]
 					addRequestParam(request, "yearEndRankFactor", "1");
 					addRequestParam(request, "bestRankFactor", "1");
 					addRequestParam(request, "weeksAtNo1Factor", "1");
@@ -146,6 +148,7 @@
 		function resetTournamentPointsConfig() {
 			$("#tournamentFactor").val("1");
 			[# th:each="level : ${levels}"]$("#level[(${level})]Factor").val("1"); [/]
+			[# th:each="result : ${results}"]$("#result[(${result})]Factor").val("1"); [/]
 			reloadGOATListTable();
 		}
 		function resetRankingPointsConfig() {
@@ -178,6 +181,7 @@
 			url += addParam("rankingFactor", "1");
 			url += addParam("achievementsFactor", "1");
 			[# th:each="level : ${levels}"]url += addParam("level[(${level})]Factor", "1"); [/]
+			[# th:each="result : ${results}"]url += addParam("result[(${result})]Factor", "1"); [/]
 			url += addParam("yearEndRankFactor", "1");
 			url += addParam("bestRankFactor", "1");
 			url += addParam("weeksAtNo1Factor", "1");
@@ -243,9 +247,10 @@
 		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Quick Picks <span class="caret"></span></button>
 		<ul class="dropdown-menu">
 			<li><a href="/goatList" title="All GOAT Points constituents are included with weight x 1">Default</a></li>
-			<li><a href="/goatList?levelGFactor=2&weeksAtNo1Factor=2&grandSlamFactor=2" title="Grand Slam tournament and achievement points and weeks at No. 1 points are emphasized x 2 the default weight (1 GS = 4 Master titles)">Grand Slam and No. 1 focus</a></li>
-			<li><a href="/goatList?levelFFactor=0&levelLFactor=0&levelMFactor=0&levelOFactor=0&levelAFactor=0&levelBFactor=0&levelDFactor=0&levelTFactor=0&yearEndRankFactor=0&bestRankFactor=0&weeksAtEloTopNFactor=0&bestEloRatingFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&bestSeasonFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Grand Slam tournament and achievement points and weeks at No. 1 points are the only ones selected">Minimalist</a></li>
-			<li><a href="/goatList?bestEloRatingFactor=2&bigWinsFactor=2&bestSeasonFactor=2" title="Peak achievements (Peak Elo Ratings, Big Wins and Best Seasons) are emphasized x 2 the default weight">Peak emphasis</a></li>
+			<li><a href="/goatList?levelGFactor=2&resultWFactor=2&weeksAtNo1Factor=2&grandSlamFactor=2" title="Grand Slam tournament and achievement points, title points and weeks at No. 1 points are emphasized x 2 the default weight (1 GS = 4 Masters, 1 title = 4 finals)">Grand Slam titles and No. 1 focus</a></li>
+			<li><a href="/goatList?levelFFactor=0&levelLFactor=0&levelMFactor=0&levelOFactor=0&levelAFactor=0&levelBFactor=0&levelDFactor=0&levelTFactor=0&resultFFactor=0&resultSFFactor=0&resultQFFactor=0&resultRRFactor=0&resultBRFactor=0&yearEndRankFactor=0&bestRankFactor=0&weeksAtEloTopNFactor=0&bestEloRatingFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&bestSeasonFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Grand Slam titles and achievement points and weeks at No. 1 points are the only ones selected">Minimalist</a></li>
+			<li><a href="/goatList?bestRankFactor=2&bestEloRatingFactor=2&bestSeasonFactor=2" title="Peak achievements (Career High Ranking, Peak Elo Ratings, and Best Seasons) are emphasized x 2 the default weight">Peak emphasis</a></li>
+			<li><a href="/goatList?tournamentFactor=0&yearEndRankFactor=0&weeksAtNo1Factor=0&weeksAtEloTopNFactor=0&grandSlamFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Peak achievements (Career High Ranking, Peak Elo Ratings and Best Seasons) are the only ones selected">Minimalist Peak</a></li>
 		</ul>
 	</div>
 	<div id="goatListConfig" class="collapse" th:attrappend="class=${config.default ? _ : ' in'}" style="margin-bottom: 10px; margin-top: -10px">
@@ -305,6 +310,16 @@
 						<label th:for="|level${level}Factor|" class="input-group-addon small-control factor-label" th:text="${T(org.strangeforest.tcb.stats.model.core.TournamentLevel).decode(level).text + ' Pts.:'}">Grand Slam Pts.:</label>
 						<select th:id="|level${level}Factor|" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.getLevelFactor(level)}">x 0</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div th:each="result : ${results}" class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+					<div class="input-group">
+						<label th:for="|result${result}Factor|" class="input-group-addon small-control factor-label" th:text="${(result == 'W' ? 'Title' : T(org.strangeforest.tcb.stats.model.core.EventResult).decode(result).text) + ' Pts.:'}">Title Pts.:</label>
+						<select th:id="|result${result}Factor|" class="form-control small-control" onchange="reloadGOATListTable()">
+							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.getResultFactor(result)}">x 0</option>
 						</select>
 					</div>
 				</div>

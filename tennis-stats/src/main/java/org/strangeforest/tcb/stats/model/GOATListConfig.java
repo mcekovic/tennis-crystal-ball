@@ -15,8 +15,9 @@ import static org.strangeforest.tcb.util.ObjectUtil.*;
 
 public class GOATListConfig {
 
-	public static final GOATListConfig DEFAULT = new GOATListConfig(true, false, 1, 1, 1, emptyMap(), 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+	public static final GOATListConfig DEFAULT = new GOATListConfig(true, false, 1, 1, 1, emptyMap(), emptyMap(), 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 	public static final List<String> TOURNAMENT_LEVELS = asList("G", "F", "L", "M", "O", "A", "B", "D", "T");
+	public static final List<String> TOURNAMENT_RESULTS = asList("W", "F", "SF", "QF", "RR", "BR");
 
 	private final boolean oldLegends;
 	private final boolean extrapolateCareer;
@@ -25,6 +26,7 @@ public class GOATListConfig {
 	private final int achievementsFactor;
 
 	private final Map<String, Integer> levelFactors;
+	private final Map<String, Integer> resultFactors;
 
 	private final int yearEndRankFactor;
 	private final int bestRankFactor;
@@ -41,7 +43,7 @@ public class GOATListConfig {
 	private final int performanceFactor;
 	private final int statisticsFactor;
 
-	public GOATListConfig(boolean oldLegends, boolean extrapolateCareer, int tournamentFactor, int rankingFactor, int achievementsFactor, Map<String, Integer> levelFactors, 
+	public GOATListConfig(boolean oldLegends, boolean extrapolateCareer, int tournamentFactor, int rankingFactor, int achievementsFactor, Map<String, Integer> levelFactors, Map<String, Integer> resultFactors,
 	                      int yearEndRankFactor, int bestRankFactor, int weeksAtNo1Factor, int weeksAtEloTopNFactor, int bestEloRatingFactor,
 	                      int grandSlamFactor, int bigWinsFactor, int h2hFactor, int recordsFactor, int bestSeasonFactor, int greatestRivalriesFactor, int performanceFactor, int statisticsFactor) {
 		this.oldLegends = oldLegends;
@@ -49,7 +51,8 @@ public class GOATListConfig {
 		this.tournamentFactor = tournamentFactor;
 		this.rankingFactor = rankingFactor;
 		this.achievementsFactor = achievementsFactor;
-		this.levelFactors = levelFactors.entrySet().stream().filter(e -> e.getValue() != 1).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+		this.levelFactors = filterOutDefaults(levelFactors);
+		this.resultFactors = filterOutDefaults(resultFactors);
 		this.yearEndRankFactor = yearEndRankFactor;
 		this.bestRankFactor = bestRankFactor;
 		this.weeksAtNo1Factor = weeksAtNo1Factor;
@@ -63,6 +66,10 @@ public class GOATListConfig {
 		this.greatestRivalriesFactor = greatestRivalriesFactor;
 		this.performanceFactor = performanceFactor;
 		this.statisticsFactor = statisticsFactor;
+	}
+
+	private static Map<String, Integer> filterOutDefaults(Map<String, Integer> factorMap) {
+		return factorMap.entrySet().stream().filter(e -> e.getValue() != 1).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
 	public boolean isOldLegends() {
@@ -87,6 +94,10 @@ public class GOATListConfig {
 
 	public int getLevelFactor(String level) {
 		return levelFactors.getOrDefault(level, 1);
+	}
+
+	public int getResultFactor(String result) {
+		return resultFactors.getOrDefault(result, 1);
 	}
 
 	public int getYearEndRankFactor() {
@@ -143,6 +154,10 @@ public class GOATListConfig {
 
 	public int getLevelTotalFactor(String level) {
 		return tournamentFactor * getLevelFactor(level);
+	}
+
+	public int getResultTotalFactor(String result) {
+		return tournamentFactor * getResultFactor(result);
 	}
 
 	public int getYearEndRankTotalFactor() {
@@ -202,7 +217,7 @@ public class GOATListConfig {
 	}
 
 	public boolean hasDefaultTournamentFactors() {
-		return levelFactors.isEmpty();
+		return levelFactors.isEmpty() && resultFactors.isEmpty();
 	}
 
 	public boolean hasDefaultRankingFactors() {
@@ -245,6 +260,7 @@ public class GOATListConfig {
 			config.rankingFactor == rankingFactor &&
 			config.achievementsFactor == achievementsFactor &&
 			config.levelFactors.equals(levelFactors) &&
+			config.resultFactors.equals(resultFactors) &&
 			config.yearEndRankFactor == yearEndRankFactor &&
 			config.bestRankFactor == bestRankFactor &&
 			config.weeksAtNo1Factor == weeksAtNo1Factor &&
@@ -262,7 +278,7 @@ public class GOATListConfig {
 
 	@Override public int hashCode() {
 		return Objects.hash(
-			oldLegends, extrapolateCareer, tournamentFactor, rankingFactor, achievementsFactor, levelFactors,
+			oldLegends, extrapolateCareer, tournamentFactor, rankingFactor, achievementsFactor, levelFactors, resultFactors,
 			yearEndRankFactor, bestRankFactor, weeksAtNo1Factor, weeksAtEloTopNFactor, bestEloRatingFactor,
 			grandSlamFactor, bigWinsFactor, h2hFactor, recordsFactor, bestSeasonFactor, greatestRivalriesFactor, performanceFactor, statisticsFactor
 		);
@@ -276,6 +292,7 @@ public class GOATListConfig {
 			.add("rankingFactor", nullIf(rankingFactor, 1))
 			.add("achievementsFactor", nullIf(achievementsFactor, 1))
 			.add("levelFactors", nullIf(levelFactors, emptyMap()))
+			.add("resultFactors", nullIf(resultFactors, emptyMap()))
 			.add("yearEndRankFactor", nullIf(yearEndRankFactor, 1))
 			.add("bestRankFactor", nullIf(bestRankFactor, 1))
 			.add("weeksAtNo1Factor", nullIf(weeksAtNo1Factor, 1))

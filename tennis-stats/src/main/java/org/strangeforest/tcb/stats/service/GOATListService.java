@@ -52,11 +52,9 @@ public class GOATListService {
 		"ORDER BY %9$s OFFSET :offset LIMIT :limit";
 
 	private static final String TOURNAMENT_GOAT_POINTS = //language=SQL
-		"(SELECT coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'G'), 0) * :levelGFactor\n" +
-		" + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'F'), 0) * :levelFFactor + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'L'), 0) * :levelLFactor\n" +
-		" + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'M'), 0) * :levelMFactor + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'O'), 0) * :levelOFactor\n" +
-		" + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'A'), 0) * :levelAFactor + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'B'), 0) * :levelBFactor\n" +
-		" + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'D'), 0) * :levelDFactor + coalesce(sum(r.goat_points) FILTER (WHERE re.level = 'T'), 0) * :levelTFactor\n" +
+		"(SELECT sum(r.goat_points" +
+		" * CASE re.level WHEN 'G' THEN :levelGFactor WHEN 'F' THEN :levelFFactor WHEN 'L' THEN :levelLFactor WHEN 'M' THEN :levelMFactor WHEN 'O' THEN :levelOFactor WHEN 'A' THEN :levelAFactor WHEN 'B' THEN :levelBFactor WHEN 'D' THEN :levelDFactor WHEN 'T' THEN :levelTFactor ELSE NULL END\n" +
+		" * CASE r.result WHEN 'W' THEN :resultWFactor WHEN 'F' THEN :resultFFactor WHEN 'SF' THEN :resultSFFactor WHEN 'QF' THEN :resultQFFactor WHEN 'RR' THEN :resultRRFactor WHEN 'BR' THEN :resultBRFactor ELSE NULL END)\n" +
 		" FROM player_tournament_event_result r INNER JOIN tournament_event re USING (tournament_event_id) WHERE r.player_id = g.player_id)";
 
 	private static final String FILTER_OLD_LEGENDS_CRITERIA = //language=SQL
@@ -173,6 +171,8 @@ public class GOATListService {
 			if (!config.hasDefaultTournamentFactors()) {
 				for (String level : GOATListConfig.TOURNAMENT_LEVELS)
 					params.addValue("level" + level + "Factor", config.getLevelTotalFactor(level));
+				for (String result : GOATListConfig.TOURNAMENT_RESULTS)
+					params.addValue("result" + result + "Factor", config.getResultTotalFactor(result));
 			}
 			if (!config.hasDefaultRankingFactors()) {
 				params.addValue("yearEndRankFactor", config.getYearEndRankTotalFactor());

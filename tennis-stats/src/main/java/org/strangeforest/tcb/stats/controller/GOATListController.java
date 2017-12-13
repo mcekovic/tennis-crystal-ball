@@ -47,6 +47,12 @@ public class GOATListController extends PageController {
 		@RequestParam(name = "levelBFactor", defaultValue = "1") int levelBFactor,
 		@RequestParam(name = "levelDFactor", defaultValue = "1") int levelDFactor,
 		@RequestParam(name = "levelTFactor", defaultValue = "1") int levelTFactor,
+		@RequestParam(name = "resultWFactor", defaultValue = "1") int resultWFactor,
+		@RequestParam(name = "resultFFactor", defaultValue = "1") int resultFFactor,
+		@RequestParam(name = "resultSFFactor", defaultValue = "1") int resultSFFactor,
+		@RequestParam(name = "resultQFFactor", defaultValue = "1") int resultQFFactor,
+		@RequestParam(name = "resultRRFactor", defaultValue = "1") int resultRRFactor,
+		@RequestParam(name = "resultBRFactor", defaultValue = "1") int resultBRFactor,
 		@RequestParam(name = "yearEndRankFactor", defaultValue = "1") int yearEndRankFactor,
 		@RequestParam(name = "bestRankFactor", defaultValue = "1") int bestRankFactor,
 		@RequestParam(name = "weeksAtNo1Factor", defaultValue = "1") int weeksAtNo1Factor,
@@ -72,8 +78,16 @@ public class GOATListController extends PageController {
 			.put("D", levelDFactor)
 			.put("T", levelTFactor)
 		.build();
+		Map<String, Integer> resultFactors = ImmutableMap.<String, Integer>builder()
+			.put("W", resultWFactor)
+			.put("F", resultFFactor)
+			.put("SF", resultSFFactor)
+			.put("QF", resultQFFactor)
+			.put("RR", resultRRFactor)
+			.put("BR", resultBRFactor)
+		.build();
 		GOATListConfig config = new GOATListConfig(
-			oldLegends, extrapolate, tournamentFactor, rankingFactor, achievementsFactor, levelFactors,
+			oldLegends, extrapolate, tournamentFactor, rankingFactor, achievementsFactor, levelFactors, resultFactors,
 			yearEndRankFactor, bestRankFactor, weeksAtNo1Factor, weeksAtEloTopNFactor, bestEloRatingFactor,
 			grandSlamFactor, bigWinsFactor, h2hFactor, recordsFactor, bestSeasonFactor, greatestRivalriesFactor, performanceFactor, statisticsFactor
 		);
@@ -82,6 +96,7 @@ public class GOATListController extends PageController {
 		modelMap.addAttribute("config", config);
 		modelMap.addAttribute("factors", FACTOR_MAP);
 		modelMap.addAttribute("levels", GOATListConfig.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("results", GOATListConfig.TOURNAMENT_RESULTS);
 
 		return new ModelAndView("goatList", modelMap);
 	}
