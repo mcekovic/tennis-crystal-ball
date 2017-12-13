@@ -3,7 +3,6 @@
 <!--/*@thymesVar id="config" type="org.strangeforest.tcb.stats.model.GOATListConfig"*/-->
 <!--/*@thymesVar id="factors" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.List<java.lang.String>"*/-->
-<!--/*@thymesVar id="levelEnum" type="org.strangeforest.tcb.stats.model.core.TournamentLevel"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
 	<title>GOAT List</title>
 	<script type="text/javascript" th:inline="javascript">
@@ -109,6 +108,7 @@
 			});
 			var $goatListTableHeader = $("#goatListTable-header");
 			$goatListTableHeader.find("div.search").before($("#activeDiv").remove());
+			$goatListTableHeader.find("div.actions").after($("#goatListQuickPicks").remove());
 			$goatListTableHeader.find("div.actions").after($("#goatListConfigDiv").remove());
 			$goatListTableHeader.after($("#goatListConfig").remove());
 			setBootgridTitle($goatListTableHeader, $("#goatListTable-title"));
@@ -232,12 +232,21 @@
 			</label>
 		</div>
 	</div>
-	<div id="goatListConfigDiv" class="btn-group margin-left no-margin-right">
+	<div id="goatListConfigDiv" class="btn-group margin-left">
 		<div data-toggle="tooltip" data-placement="auto" title="Make Your Own GOAT!">
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#goatListConfig">
 				<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Config&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
 			</button>
 		</div>
+	</div>
+	<div id="goatListQuickPicks" class="btn-group margin-left no-margin-right">
+		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Quick Picks <span class="caret"></span></button>
+		<ul class="dropdown-menu">
+			<li><a href="/goatList" title="All GOAT Points constituents are included with weight x 1">Default</a></li>
+			<li><a href="/goatList?levelGFactor=2&weeksAtNo1Factor=2&grandSlamFactor=2" title="Grand Slam tournament and achievement points and weeks at No. 1 points are emphasized x 2 the default weight (1 GS = 4 Master titles)">Grand Slam and No. 1 focus</a></li>
+			<li><a href="/goatList?levelFFactor=0&levelLFactor=0&levelMFactor=0&levelOFactor=0&levelAFactor=0&levelBFactor=0&levelDFactor=0&levelTFactor=0&yearEndRankFactor=0&bestRankFactor=0&weeksAtEloTopNFactor=0&bestEloRatingFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&bestSeasonFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Only Grand Slam tournament and achievement points and weeks at No. 1 points are the only ones selected">Minimalist</a></li>
+			<li><a href="/goatList?bestEloRatingFactor=2&bigWinsFactor=2&bestSeasonFactor=2" title="Peak achievements (Peak Elo Ratings, Big Wins and Best Seasons) are emphasized x 2 the default weight">Peak emphasis</a></li>
+		</ul>
 	</div>
 	<div id="goatListConfig" class="collapse" th:attrappend="class=${config.default ? _ : ' in'}" style="margin-bottom: 10px; margin-top: -10px">
 		<div class="row">
@@ -293,7 +302,7 @@
 			<div class="row">
 				<div th:each="level : ${levels}" class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
 					<div class="input-group">
-						<label th:for="|level${level}Factor|" class="input-group-addon small-control factor-label" th:text="${levelEnum.decode(level).text + ' Pts.:'}">Grand Slam Pts.:</label>
+						<label th:for="|level${level}Factor|" class="input-group-addon small-control factor-label" th:text="${T(org.strangeforest.tcb.stats.model.core.TournamentLevel).decode(level).text + ' Pts.:'}">Grand Slam Pts.:</label>
 						<select th:id="|level${level}Factor|" class="form-control small-control" onchange="reloadGOATListTable()">
 							<option th:each="factor : ${factors}" th:value="${factor.key}" th:text="${factor.value}" th:selected="${factor.key == config.getLevelFactor(level)}">x 0</option>
 						</select>
