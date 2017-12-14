@@ -333,6 +333,8 @@ VALUES
 ('ClayWinningStreak', 1, 1),
 ('GrassWinningStreak', 1, 1),
 ('CarpetWinningStreak', 1, 1),
+('OutdoorWinningStreak', 1, 1),
+('IndoorWinningStreak', 1, 1),
 ('WinningStreakVsNo1', 1, 1),
 ('WinningStreakVsTop5', 1, 1),
 ('WinningStreakVsTop10', 1, 1),
