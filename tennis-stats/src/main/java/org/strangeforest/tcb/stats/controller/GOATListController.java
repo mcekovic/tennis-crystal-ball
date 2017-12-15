@@ -101,14 +101,13 @@ public class GOATListController extends PageController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("forSeason", forSeason);
+		modelMap.addAttribute("config", config);
 		// Tournament
 		modelMap.addAttribute("tournamentGOATPoints", applyConfig(goatLegendService.getTournamentGOATPoints(), config));
 		// Ranking
 		modelMap.addAttribute("yearEndRankGOATPoints", applyRankFactor(goatLegendService.getYearEndRankGOATPoints(), config.getYearEndRankTotalFactor()));
 		modelMap.addAttribute("bestRankGOATPoints", applyRankFactor(goatLegendService.getBestRankGOATPoints(), config.getBestRankTotalFactor()));
-		modelMap.addAttribute("weeksAtNo1PointFactor", config.getWeeksAtNo1TotalFactor());
 		modelMap.addAttribute("weeksAtNo1ForGOATPoint", goatLegendService.getWeeksAtNo1ForGOATPoint());
-		modelMap.addAttribute("weeksAtEloTopNPointFactor", config.getWeeksAtEloTopNTotalFactor());
 		modelMap.addAttribute("weeksAtEloTopNForGOATPoint", goatLegendService.getWeeksAtEloTopNGOATPoint());
 		int bestEloRatingTotalFactor = config.getBestEloRatingTotalFactor();
 		modelMap.addAttribute("bestEloRatingGOATPoints", applyRankFactor(goatLegendService.getBestEloRatingGOATPoints(), bestEloRatingTotalFactor));
@@ -125,7 +124,6 @@ public class GOATListController extends PageController {
 		modelMap.addAttribute("bigWinMatchFactors", applyBigWinsFactor(goatLegendService.getBigWinMatchFactors(), config.getBigWinsTotalFactor()));
 		modelMap.addAttribute("bigWinRankFactors", goatLegendService.getBigWinRankFactors());
 		modelMap.addAttribute("h2hRankFactors", goatLegendService.getH2hRankFactors());
-		modelMap.addAttribute("h2hPointFactor", config.getH2hTotalFactor());
 		modelMap.addAttribute("bestSeasonGOATPoints", applyRankFactor(goatLegendService.getBestSeasonGOATPoints(), config.getBestSeasonTotalFactor()));
 		modelMap.addAttribute("greatestRivalriesGOATPoints", applyRankFactor(goatLegendService.getGreatestRivalriesGOATPoints(), config.getGreatestRivalriesTotalFactor()));
 		return new ModelAndView("goatLegend", modelMap);

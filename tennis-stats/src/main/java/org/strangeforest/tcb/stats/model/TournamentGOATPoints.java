@@ -33,6 +33,6 @@ public class TournamentGOATPoints {
 	}
 
 	public void applyConfig(GOATListConfig config) {
-		goatPoints *= config.getLevelTotalFactor(level) * config.getResultTotalFactor(result);
+		goatPoints *= config.getLevelFactor(level) * config.getResultFactor(result) * config.getTournamentFactor();
 	}
 }

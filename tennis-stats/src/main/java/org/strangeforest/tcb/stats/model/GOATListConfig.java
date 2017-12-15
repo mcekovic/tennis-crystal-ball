@@ -319,6 +319,6 @@ public class GOATListConfig {
 			return "0";
 		else if (factor == 1)
 			return goatPoints;
-		return Stream.of(goatPoints.split(",")).map(p -> String.valueOf(parseInt(p) * factor)).collect(joining(","));
+		return Stream.of(goatPoints.split(",")).map(p -> String.valueOf(parseInt(p.trim()) * factor)).collect(joining(", "));
 	}
 }

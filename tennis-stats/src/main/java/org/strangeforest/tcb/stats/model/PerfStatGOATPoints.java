@@ -27,6 +27,6 @@ public class PerfStatGOATPoints {
 	}
 
 	public void applyFactor(int factor) {
-		applyFactorToCSV(goatPoints, factor);
+		goatPoints = applyFactorToCSV(goatPoints, factor);
 	}
 }

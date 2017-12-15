@@ -1,11 +1,11 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="legend(forSeason)">
 	<!--/*@thymesVar id="forSeason" type="java.lang.Boolean"*/-->
+	<!--/*@thymesVar id="config" type="org.strangeforest.tcb.stats.model.GOATListConfig"*/-->
 	<!--/*@thymesVar id="tournamentGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentGOATPoints>"*/-->
 	<!--/*@thymesVar id="yearEndRankGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="bestRankGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="weeksAtNo1PointFactor" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="weeksAtNo1ForGOATPoint" type="java.lang.Integer"*/-->
-	<!--/*@thymesVar id="weeksAtEloTopNPointFactor" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="weeksAtEloTopNForGOATPoint" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="bestEloRatingGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="bestSurfaceEloRatingGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
@@ -13,7 +13,6 @@
 	<!--/*@thymesVar id="bigWinMatchFactors" type="java.util.List<org.strangeforest.tcb.stats.model.BigWinMatchFactor>"*/-->
 	<!--/*@thymesVar id="bigWinRankFactors" type="java.util.List<org.strangeforest.tcb.stats.model.RankRangeGOATPoints>"*/-->
 	<!--/*@thymesVar id="h2hRankFactors" type="java.util.List<org.strangeforest.tcb.stats.model.RankRangeGOATPoints>"*/-->
-	<!--/*@thymesVar id="h2hPointFactor" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="careerGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="seasonGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="season3GrandSlamGOATPoints" type="java.lang.Integer"*/-->
@@ -47,7 +46,7 @@
 	</script>
 <h4>GOAT Points Legend</h4>
 <div id="goatLegendRow" class="row">
-	<div class="col-md-3">
+	<div th:if="${config.tournamentFactor > 0}" class="col-md-3">
 		<h4>
 			<a th:unless="${forSeason}" href="/record?recordId=TournamentGOATPoints" title="Players with most Tournament GOAT Points">Tournament Points</a>
 			<a th:if="${forSeason}" href="/record?recordId=SeasonTournamentGOATPoints" title="Players with most Tournament GOAT Points in the single season">Tournament Points</a>
@@ -62,7 +61,7 @@
 			</tr>
 			</thead>
 			<tbody>
-			<tr th:each="point : ${tournamentGOATPoints}">
+			<tr th:each="point : ${tournamentGOATPoints}" th:if="${point.goatPoints > 0}">
 				<td><span th:data-level="${point.level}" data-level="G" class="label level"></span></td>
 				<td class="text-center"><span th:class="'label black bg-result-' + ${point.result}" class="label black" th:text="${point.result}">W</span></td>
 				<td class="text-center" th:text="${(point.additive ? '+' : '') + point.goatPoints + (point.level == 'F' && !point.additive ? '*' : '') + (point.level == 'L' ? '**' : '')}">8</td>
@@ -73,11 +72,12 @@
 		<p><em>* Tour Finals draw is normally round-robin, but was knock-out from 1982 to 1985</em></p>
 		<p><em>** Alternative Tour Finals (Dallas WCT and Grand Slam Cup)</em></p>
 	</div>
-	<div class="col-md-3">
+	<div th:if="${config.rankingFactor > 0}" class="col-md-3">
 		<h4>
 			<a th:unless="${forSeason}" href="/record?recordId=RankingGOATPoints" title="Players with most Ranking GOAT Points">Ranking Points</a>
 			<a th:if="${forSeason}" href="/record?recordId=SeasonRankingGOATPoints" title="Players with most Ranking GOAT Points in the single season">Ranking Points</a>
 		</h4>
+		<th:block th:if="${config.yearEndRankFactor > 0}">
 		<strong th:unless="${forSeason}"><a href="/record?recordId=YearEndRankingGOATPoints" title="Players with most Year-End Ranking GOAT Points">Each Season's Year-End Rank</a></strong>
 		<strong th:if="${forSeason}">Season's Year-End Rank</strong>
 		<table class="table table-condensed table-hover table-striped">
@@ -94,7 +94,8 @@
 			</tr>
 			</tbody>
 		</table>
-		<th:block th:unless="${forSeason}">
+		</th:block>
+		<th:block th:if="${!forSeason && config.bestRankFactor > 0}">
 		<strong>Career High Ranking</strong>
 		<table class="table table-condensed table-hover table-striped">
 			<thead>
@@ -111,18 +112,21 @@
 			</tbody>
 		</table>
 		</th:block>
+		<th:block th:if="${config.weeksAtNo1Factor > 0}">
 		<div>
 			<strong>
 				<a th:unless="${forSeason}" href="/record?recordId=WeeksAtNo1GOATPoints" title="Players with most Weeks at No. 1 GOAT Points">Weeks at No. 1</a>
 				<a th:if="${forSeason}" href="/record?recordId=SeasonWeeksAtNo1GOATPoints" title="Players with most Weeks at No. 1 GOAT Points in the single season">Weeks at No. 1</a>
 			</strong>
-			<p>+[(${weeksAtNo1PointFactor})] point[(${weeksAtNo1PointFactor != 1 ? 's' : _})] for each [(${weeksAtNo1ForGOATPoint})] weeks as ATP No. 1</p>
+			<p th:with="factor=${config.weeksAtNo1TotalFactor}">+[(${factor})] point[(${factor != 1 ? 's' : _})] for each [(${weeksAtNo1ForGOATPoint})] weeks as ATP No. 1</p>
 		</div>
+		</th:block>
+		<th:block th:if="${config.weeksAtEloTopNFactor > 0}">
 		<strong>
 			<a th:unless="${forSeason}" href="/record?recordId=WeeksAtEloTopNGOATPoints" title="Players with most Weeks at Elo Top 5 GOAT Points">Weeks at Elo Top 5</a>
 			<a th:if="${forSeason}" href="/record?recordId=SeasonWeeksAtEloTopNGOATPoints" title="Players with most Weeks at Elo Top 5 GOAT Points in the single season">Weeks at Elo Top 5</a>
 		</strong>
-		<p>+[(${weeksAtEloTopNPointFactor})] point[(${weeksAtEloTopNPointFactor != 1 ? 's' : _})] for each M weeks at Elo No. 1-5</p>
+		<p th:with="factor=${config.weeksAtEloTopNTotalFactor}">+[(${factor})] point[(${factor != 1 ? 's' : _})] for each N weeks at Elo No. 1-5</p>
 		<table class="table table-condensed table-hover table-striped">
 			<thead>
 			<tr>
@@ -137,7 +141,8 @@
 			</tr>
 			</tbody>
 		</table>
-		<th:block th:unless="${forSeason}">
+		</th:block>
+		<th:block th:if="${!forSeason && config.bestEloRatingFactor > 0}">
 		<h5><strong>
 			<a href="/record?recordId=BestEloRatingGOATPoints" title="Players with most Peak Elo Rating GOAT Points">Peak Elo Rating Points</a>
 		</strong></h5>
@@ -190,13 +195,14 @@
 		</table>
 		</th:block>
 	</div>
-	<div class="col-md-6">
+	<div th:if="${config.achievementsFactor > 0}" class="col-md-6">
 		<h4>
 			<a th:unless="${forSeason}" href="/record?recordId=AchievementsGOATPoints" title="Players with most Achievements GOAT Points">Achievements, Performance and Statistics Points</a>
 			<a th:if="${forSeason}" href="/record?recordId=SeasonAchievementsGOATPoints" title="Players with most Achievements GOAT Points in the single season">Achievements Points</a>
 		</h4>
 		<div class="row">
-			<div class="col-md-6">
+			<div th:if="${config.grandSlamFactor > 0 || config.bigWinsFactor > 0}" class="col-md-6">
+				<th:block th:if="${config.grandSlamFactor > 0}">
 				<strong>
 					<a th:unless="${forSeason}" href="/record?recordId=GrandSlamGOATPoints" title="Players with most Grand Slam GOAT Points">Grand Slam Points</a>
 					<a th:if="${forSeason}" href="/record?recordId=SeasonGrandSlamGOATPoints" title="Players with most Grand Slam GOAT Points in the single season">Grand Slam Points</a>
@@ -206,8 +212,10 @@
 				<div th:inline="text">+[(${season3GrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Season with 3 Grand Slams<sup class="new-feature">&nbsp;New!</sup></div>
 				<div th:unless="${forSeason}">+[(${grandSlamHolderGOATPoints})] points each time when holding all 4 Grand Slams</div>
 				<div th:unless="${forSeason}" th:title="${'I.e. 5 consecutive wins at Wimbledon = (5 - 1) * ' + consecutiveGrandSlamOnSameEventGOATPoints + ' = ' + (4 * consecutiveGrandSlamOnSameEventGOATPoints) + ' points'}">+ (N - 1) * [(${consecutiveGrandSlamOnSameEventGOATPoints})] points where N (N > 1) is number of consecutive Grand Slams on the same tournament</div>
-				<div th:unless="${forSeason}" th:title="${'I.e. 10 wins at Roland Garros = (10 - 1) ' + (grandSlamOnSameEventGOATPoints > 0 && grandSlamOnSameEventGOATPoints < 1 ? '/' : '*') + ' ' + new java.text.DecimalFormat('#.#').format(grandSlamOnSameEventGOATPoints > 0 && grandSlamOnSameEventGOATPoints < 1 ? 1 / grandSlamOnSameEventGOATPoints : grandSlamOnSameEventGOATPoints) + ' = ' + new java.text.DecimalFormat('#.#').format(9.0 * grandSlamOnSameEventGOATPoints) + ' points'}">+ (N - 1) [(${grandSlamOnSameEventGOATPoints > 0 && grandSlamOnSameEventGOATPoints < 1 ? '/' : '*'})] [(${new java.text.DecimalFormat('#.#').format(grandSlamOnSameEventGOATPoints > 0 && grandSlamOnSameEventGOATPoints < 1 ? 1 / grandSlamOnSameEventGOATPoints : grandSlamOnSameEventGOATPoints)})] points where N (N > 1) is number of Grand Slams on the same tournament</div>
+				<div th:unless="${forSeason}" th:title="${'I.e. 10 wins at Roland Garros = (10 - 1) ' + (grandSlamOnSameEventGOATPoints < 1 ? '/' : '*') + ' ' + new java.text.DecimalFormat('#.#').format(grandSlamOnSameEventGOATPoints < 1 ? 1 / grandSlamOnSameEventGOATPoints : grandSlamOnSameEventGOATPoints) + ' = ' + new java.text.DecimalFormat('#.#').format(9.0 * grandSlamOnSameEventGOATPoints) + ' points'}">+ (N - 1) [(${grandSlamOnSameEventGOATPoints < 1 ? '/' : '*'})] [(${new java.text.DecimalFormat('#.#').format(grandSlamOnSameEventGOATPoints < 1 ? 1 / grandSlamOnSameEventGOATPoints : grandSlamOnSameEventGOATPoints)})] points where N (N > 1) is number of Grand Slams on the same tournament</div>
 				<br/>
+				</th:block>
+				<th:block th:if="${config.bigWinsFactor > 0}">
 				<div>
 					<strong>
 						<a th:unless="${forSeason}" href="/record?recordId=BigWinsGOATPoints" title="Players with most Big Wins GOAT Points">Big Wins Points</a>
@@ -255,9 +263,10 @@
 					</tr>
 					</tbody>
 				</table>
+				</th:block>
 			</div>
-			<div class="col-md-6">
-				<th:block th:unless="${forSeason}">
+			<div th:unless="${forSeason}" class="col-md-6">
+				<th:block th:if="${config.recordsFactor > 0}">
 				<strong>
 					<a href="/record?recordId=RecordsGOATPoints" title="Players with most Records GOAT Points">Records Points</a><sup class="new-feature">&nbsp;New!</sup>
 				</strong>
@@ -266,13 +275,15 @@
 					Records Points&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
 				</button>
 				<br/><br/>
+				</th:block>
+				<th:block th:if="${config.h2hFactor > 0}">
 				<div>
 					<strong>
 						<a href="/record?recordId=H2HGOATPoints" title="Players with most Head-to-Head GOAT Points">Head-to-Head Points</a>
 					</strong>
 					<p>Points assigned for exceptional Head-to-Head ratios against fellow players in the same Era</p>
 					<p class="text-nowrap">
-						[(${20 * h2hPointFactor})] * <i>ln</i>(<br/>
+						[(${20 * config.h2hTotalFactor})] * <i>ln</i>(<br/>
 						&nbsp;<i>sum</i>(Wh2h * Wh2hWeight * RankFactor)<br/>
 						&nbsp;/<br/>
 						&nbsp;<i>sum</i>(Lh2h * Lh2hWeight * RankFactor)<br/>
@@ -285,7 +296,7 @@
 					RankFactor = <i>factor</i>(OpponentBestRank)<br/>
 					* minimum 3 H2H series matches<br/>
 					** minimum 10 H2H series
-				</span>
+						</span>
 					</p>
 				</div>
 				<table class="table table-condensed table-hover table-striped">
@@ -302,6 +313,8 @@
 					</tr>
 					</tbody>
 				</table>
+				</th:block>
+				<th:block th:if="${config.bestSeasonFactor > 0}">
 				<div>
 					<strong><a href="/record?recordId=BestSeasonsGOATPoints" title="Players with most Best Seasons GOAT Points">Best Seasons Points</a></strong>
 					<p>Points assigned for best rated seasons</p>
@@ -320,6 +333,8 @@
 					</tr>
 					</tbody>
 				</table>
+				</th:block>
+				<th:block th:if="${config.greatestRivalriesFactor > 0}">
 				<div>
 					<strong><a href="/record?recordId=GreatestRivalriesGOATPoints" title="Players with most Greatest Rivalries GOAT Points">Greatest Rivalries Points</a></strong>
 					<p>Points assigned for participation in the Greatest Rivalries (points are distributed to both rivalry players by rivalry won/lost ratio)</p>
@@ -338,6 +353,8 @@
 					</tr>
 					</tbody>
 				</table>
+				</th:block>
+				<th:block th:if="${config.performanceFactor > 0}">
 				<div>
 					<strong><a href="/record?recordId=PerformanceGOATPoints" title="Players with most Performance GOAT Points">Performance Points</a></strong>
 				</div>
@@ -346,6 +363,8 @@
 					Performance Points&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
 				</button>
 				<br/><br/>
+				</th:block>
+				<th:block th:if="${config.statisticsFactor > 0}">
 				<div>
 					<strong><a href="/record?recordId=StatisticsGOATPoints" title="Players with most Statistics GOAT Points">Statistics Points</a></strong>
 				</div>
