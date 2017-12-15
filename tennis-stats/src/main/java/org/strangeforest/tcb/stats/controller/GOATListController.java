@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.util.*;
+import java.util.Map.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -13,6 +14,7 @@ import org.strangeforest.tcb.stats.service.*;
 
 import com.google.common.collect.*;
 
+import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.model.GOATListConfig.*;
 
@@ -151,34 +153,48 @@ public class GOATListController extends PageController {
 	}
 
 	private static List<TournamentGOATPoints> applyConfig(List<TournamentGOATPoints> tournamentPoints, GOATListConfig config) {
-		for (TournamentGOATPoints point : tournamentPoints)
-			point.applyConfig(config);
-		return tournamentPoints;
+		int factor = config.getTournamentFactor();
+		if (factor == 0 || (factor == 1 && config.hasDefaultTournamentFactors()))
+			return tournamentPoints;
+		else
+			return tournamentPoints.stream().map(p -> p.applyConfig(config)).collect(toList());
 	}
 
 	private static List<RankGOATPoints> applyRankFactor(List<RankGOATPoints> rankPoints, int factor) {
-		for (RankGOATPoints point : rankPoints)
-			point.applyFactor(factor);
-		return rankPoints;
+		if (factor <= 1)
+			return rankPoints;
+		else
+			return rankPoints.stream().map(p -> p.applyFactor(factor)).collect(toList());
 	}
 
 	private static List<BigWinMatchFactor> applyBigWinsFactor(List<BigWinMatchFactor> bigWinMatchFactors, int factor) {
-		for (BigWinMatchFactor point : bigWinMatchFactors)
-			point.applyFactor(factor);
-		return bigWinMatchFactors;
+		if (factor <= 1)
+			return bigWinMatchFactors;
+		else
+			return bigWinMatchFactors.stream().map(p -> p.applyFactor(factor)).collect(toList());
 	}
 
 	private static Map<String, Map<Record, String>> applyRecordsFactor(Map<String, Map<Record, String>> goatPoints, int factor) {
-		for (Map<Record, String> map : goatPoints.values()) {
-			for (Map.Entry<Record, String> entry : map.entrySet())
-				entry.setValue(applyFactorToCSV(entry.getValue(), factor));
+		if (factor == 1)
+			return goatPoints;
+		else {
+			return goatPoints.entrySet().stream().collect(toMap(
+				Entry::getKey,
+				e -> e.getValue().entrySet().stream().collect(toMap(Entry::getKey, e2 -> applyFactorToCSV(e2.getValue(), factor), GOATListController::throwingMerger, LinkedHashMap::new)),
+				GOATListController::throwingMerger,
+				LinkedHashMap::new
+			));
 		}
-		return goatPoints;
+	}
+	
+	private static <K> K throwingMerger(K k1, K k2) {
+		throw new IllegalStateException(String.format("Duplicate key %s", k1));
 	}
 
 	private static List<PerfStatGOATPoints> applyPerfStatFactor(List<PerfStatGOATPoints> perfStatPoints, int factor) {
-		for (PerfStatGOATPoints point : perfStatPoints)
-			point.applyFactor(factor);
-		return perfStatPoints;
+		if (factor == 1)
+			return perfStatPoints;
+		else
+			return perfStatPoints.stream().map(p -> p.applyFactor(factor)).collect(toList());
 	}
 }

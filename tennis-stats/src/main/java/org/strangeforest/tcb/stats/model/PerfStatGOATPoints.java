@@ -6,7 +6,7 @@ public class PerfStatGOATPoints {
 
 	private final String categoryId;
 	private final String category;
-	private String goatPoints;
+	private final String goatPoints;
 
 	public PerfStatGOATPoints(String categoryId, String category, String goatPoints) {
 		this.categoryId = categoryId;
@@ -26,7 +26,7 @@ public class PerfStatGOATPoints {
 		return goatPoints;
 	}
 
-	public void applyFactor(int factor) {
-		goatPoints = applyFactorToCSV(goatPoints, factor);
+	public PerfStatGOATPoints applyFactor(int factor) {
+		return factor == 1 ? this : new PerfStatGOATPoints(categoryId, category, applyFactorToCSV(goatPoints, factor));
 	}
 }

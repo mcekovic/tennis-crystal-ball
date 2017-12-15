@@ -6,7 +6,7 @@ public class TournamentGOATPoints {
 
 	private final String level;
 	private final String result;
-	private int goatPoints;
+	private final int goatPoints;
 	private final boolean additive;
 
 	public TournamentGOATPoints(String level, String result, int goatPoints, boolean additive) {
@@ -32,7 +32,8 @@ public class TournamentGOATPoints {
 		return additive;
 	}
 
-	public void applyConfig(GOATListConfig config) {
-		goatPoints *= config.getLevelFactor(level) * config.getResultFactor(result) * config.getTournamentFactor();
+	public TournamentGOATPoints applyConfig(GOATListConfig config) {
+		int factor = config.getLevelFactor(level) * config.getResultFactor(result) * config.getTournamentFactor();
+		return factor == 1 ? this : new TournamentGOATPoints(level, result, goatPoints * factor, additive);
 	}
 }
