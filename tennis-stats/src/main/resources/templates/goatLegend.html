@@ -3,7 +3,9 @@
 	<!--/*@thymesVar id="tournamentGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.TournamentGOATPoints>"*/-->
 	<!--/*@thymesVar id="yearEndRankGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="bestRankGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
+	<!--/*@thymesVar id="weeksAtNo1PointFactor" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="weeksAtNo1ForGOATPoint" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="weeksAtEloTopNPointFactor" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="weeksAtEloTopNForGOATPoint" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="bestEloRatingGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="bestSurfaceEloRatingGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
@@ -11,12 +13,13 @@
 	<!--/*@thymesVar id="bigWinMatchFactors" type="java.util.List<org.strangeforest.tcb.stats.model.BigWinMatchFactor>"*/-->
 	<!--/*@thymesVar id="bigWinRankFactors" type="java.util.List<org.strangeforest.tcb.stats.model.RankRangeGOATPoints>"*/-->
 	<!--/*@thymesVar id="h2hRankFactors" type="java.util.List<org.strangeforest.tcb.stats.model.RankRangeGOATPoints>"*/-->
+	<!--/*@thymesVar id="h2hPointFactor" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="careerGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="seasonGrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="season3GrandSlamGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="grandSlamHolderGOATPoints" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="consecutiveGrandSlamOnSameEventGOATPoints" type="java.lang.Integer"*/-->
-	<!--/*@thymesVar id="grandSlamOnSameEventGOATPointsDivider" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="grandSlamOnSameEventGOATPoints" type="java.lang.Double"*/-->
 	<!--/*@thymesVar id="bestSeasonGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<!--/*@thymesVar id="greatestRivalriesGOATPoints" type="java.util.List<org.strangeforest.tcb.stats.model.RankGOATPoints>"*/-->
 	<script type="text/javascript">
@@ -28,11 +31,14 @@
 				$level.html(levelName(level));
 			});
 		});
-		function showGOATPointsPopover(section, event) {
+		function showGOATPointsPopover(section, factor, event) {
 			var $button = $("#" + section + "GOATPoints");
 			if (!$button.hasClass("loaded")) {
 				event.preventDefault();
-				$.get("/" + section + "GOATPointsLegend", function(data) {
+				var url = "/" + section + "GOATPointsLegend";
+				if (factor || factor == 0)
+					url += "?factor=" + factor;
+				$.get(url, function(data) {
 					$button.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
 					$button.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
 				});
@@ -110,12 +116,13 @@
 				<a th:unless="${forSeason}" href="/record?recordId=WeeksAtNo1GOATPoints" title="Players with most Weeks at No. 1 GOAT Points">Weeks at No. 1</a>
 				<a th:if="${forSeason}" href="/record?recordId=SeasonWeeksAtNo1GOATPoints" title="Players with most Weeks at No. 1 GOAT Points in the single season">Weeks at No. 1</a>
 			</strong>
-			<p>+1 point for each [(${weeksAtNo1ForGOATPoint})] weeks as ATP No. 1</p>
+			<p>+[(${weeksAtNo1PointFactor})] point[(${weeksAtNo1PointFactor != 1 ? 's' : _})] for each [(${weeksAtNo1ForGOATPoint})] weeks as ATP No. 1</p>
 		</div>
 		<strong>
 			<a th:unless="${forSeason}" href="/record?recordId=WeeksAtEloTopNGOATPoints" title="Players with most Weeks at Elo Top 5 GOAT Points">Weeks at Elo Top 5</a>
 			<a th:if="${forSeason}" href="/record?recordId=SeasonWeeksAtEloTopNGOATPoints" title="Players with most Weeks at Elo Top 5 GOAT Points in the single season">Weeks at Elo Top 5</a>
 		</strong>
+		<p>+[(${weeksAtEloTopNPointFactor})] point[(${weeksAtEloTopNPointFactor != 1 ? 's' : _})] for each M weeks at Elo No. 1-5</p>
 		<table class="table table-condensed table-hover table-striped">
 			<thead>
 			<tr>
@@ -199,7 +206,7 @@
 				<div th:inline="text">+[(${season3GrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Season with 3 Grand Slams<sup class="new-feature">&nbsp;New!</sup></div>
 				<div th:unless="${forSeason}">+[(${grandSlamHolderGOATPoints})] points each time when holding all 4 Grand Slams</div>
 				<div th:unless="${forSeason}" th:title="${'I.e. 5 consecutive wins at Wimbledon = (5 - 1) * ' + consecutiveGrandSlamOnSameEventGOATPoints + ' = ' + (4 * consecutiveGrandSlamOnSameEventGOATPoints) + ' points'}">+ (N - 1) * [(${consecutiveGrandSlamOnSameEventGOATPoints})] points where N (N > 1) is number of consecutive Grand Slams on the same tournament</div>
-				<div th:unless="${forSeason}" th:title="${'I.e. 10 wins at Roland Garros = (10 - 1) / ' + grandSlamOnSameEventGOATPointsDivider + ' = ' + (9.0 / grandSlamOnSameEventGOATPointsDivider) + ' points'}">+ (N - 1) / [(${grandSlamOnSameEventGOATPointsDivider})] points where N (N > 1) is number of Grand Slams on the same tournament</div>
+				<div th:unless="${forSeason}" th:title="${'I.e. 10 wins at Roland Garros = (10 - 1) ' + (grandSlamOnSameEventGOATPoints > 0 && grandSlamOnSameEventGOATPoints < 1 ? '/' : '*') + ' ' + new java.text.DecimalFormat('#.#').format(grandSlamOnSameEventGOATPoints > 0 && grandSlamOnSameEventGOATPoints < 1 ? 1 / grandSlamOnSameEventGOATPoints : grandSlamOnSameEventGOATPoints) + ' = ' + new java.text.DecimalFormat('#.#').format(9.0 * grandSlamOnSameEventGOATPoints) + ' points'}">+ (N - 1) [(${grandSlamOnSameEventGOATPoints > 0 && grandSlamOnSameEventGOATPoints < 1 ? '/' : '*'})] [(${new java.text.DecimalFormat('#.#').format(grandSlamOnSameEventGOATPoints > 0 && grandSlamOnSameEventGOATPoints < 1 ? 1 / grandSlamOnSameEventGOATPoints : grandSlamOnSameEventGOATPoints)})] points where N (N > 1) is number of Grand Slams on the same tournament</div>
 				<br/>
 				<div>
 					<strong>
@@ -255,7 +262,7 @@
 					<a href="/record?recordId=RecordsGOATPoints" title="Players with most Records GOAT Points">Records Points</a><sup class="new-feature">&nbsp;New!</sup>
 				</strong>
 				<p>Points assigned for holding most prestigious tennis records</p>
-				<button id="recordsGOATPoints" type="button" class="btn btn-default btn-sm" style="margin-top: 5px" onclick="showGOATPointsPopover('records', event)" data-toggle="tooltip" data-placement="top" title="Records GOAT Points">
+				<button id="recordsGOATPoints" type="button" class="btn btn-default btn-sm" style="margin-top: 5px" onclick="showGOATPointsPopover('records', $('#achievementsFactor').val() * $('#recordsFactor').val(), event)" data-toggle="tooltip" data-placement="top" title="Records GOAT Points">
 					Records Points&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
 				</button>
 				<br/><br/>
@@ -265,7 +272,7 @@
 					</strong>
 					<p>Points assigned for exceptional Head-to-Head ratios against fellow players in the same Era</p>
 					<p class="text-nowrap">
-						20 * <i>ln</i>(<br/>
+						[(${20 * h2hPointFactor})] * <i>ln</i>(<br/>
 						&nbsp;<i>sum</i>(Wh2h * Wh2hWeight * RankFactor)<br/>
 						&nbsp;/<br/>
 						&nbsp;<i>sum</i>(Lh2h * Lh2hWeight * RankFactor)<br/>
@@ -335,7 +342,7 @@
 					<strong><a href="/record?recordId=PerformanceGOATPoints" title="Players with most Performance GOAT Points">Performance Points</a></strong>
 				</div>
 				<p>Points assigned to best players in each performance category</p>
-				<button id="performanceGOATPoints" type="button" class="btn btn-default btn-sm" style="margin-top: 5px" onclick="showGOATPointsPopover('performance', event)" data-toggle="tooltip" data-placement="top" title="Performance GOAT Points">
+				<button id="performanceGOATPoints" type="button" class="btn btn-default btn-sm" style="margin-top: 5px" onclick="showGOATPointsPopover('performance', $('#achievementsFactor').val() * $('#performanceFactor').val(), event)" data-toggle="tooltip" data-placement="top" title="Performance GOAT Points">
 					Performance Points&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
 				</button>
 				<br/><br/>
@@ -343,7 +350,7 @@
 					<strong><a href="/record?recordId=StatisticsGOATPoints" title="Players with most Statistics GOAT Points">Statistics Points</a></strong>
 				</div>
 				<p>Points assigned to best players in each statistics category</p>
-				<button id="statisticsGOATPoints" type="button" class="btn btn-default btn-sm" style="margin-top: 5px" onclick="showGOATPointsPopover('statistics', event)" data-toggle="tooltip" data-placement="top" title="Statistics GOAT Points">
+				<button id="statisticsGOATPoints" type="button" class="btn btn-default btn-sm" style="margin-top: 5px" onclick="showGOATPointsPopover('statistics', $('#achievementsFactor').val() * $('#statisticsFactor').val(), event)" data-toggle="tooltip" data-placement="top" title="Statistics GOAT Points">
 					Statistics Points&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
 				</button>
 				</th:block>

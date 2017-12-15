@@ -38,7 +38,6 @@
 	$(function() {
 		var $matchesTable = $("#matchesTable");
 		var device = detectDevice();
-		console.log(device);
 		setBootgridColumnsVisible($matchesTable, ["matchEx", "h2h"], deviceGreaterOrEqual(device, "xl"));
 		setBootgridColumnsVisible($matchesTable, ["match"], deviceLessOrEqual(device, "lg"));
 		setBootgridColumnsVisible($matchesTable, ["wonLost"], deviceGreaterOrEqual(device, "lg"));

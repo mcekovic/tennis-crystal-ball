@@ -2,9 +2,12 @@ package org.strangeforest.tcb.stats.controller;
 
 import java.io.*;
 import java.time.*;
+import java.util.*;
 
 import org.springframework.web.util.*;
 
+import static com.google.common.base.Strings.*;
+import static java.util.Collections.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 
 public class ParamsUtil {
@@ -33,5 +36,19 @@ public class ParamsUtil {
 
 	private String format(String name, Object value) throws UnsupportedEncodingException {
 		return "\"&" + name + '=' + UriUtils.encode(value.toString(), ENCODING) + "\"";
+	}
+
+	public static Map<String, Integer> parseIntProperties(String props) {
+		if (isNullOrEmpty(props))
+			return emptyMap();
+		Map<String, Integer> propMap = new HashMap<>();
+		for (String prop : props.split(",")) {
+			int pos = prop.indexOf('=');
+			if (pos > 0)
+				propMap.put(prop.substring(0, pos), Integer.parseInt(prop.substring(pos + 1)));
+			else
+				throw new IllegalArgumentException("Invalid property definition: " + prop);
+		}
+		return propMap;
 	}
 }

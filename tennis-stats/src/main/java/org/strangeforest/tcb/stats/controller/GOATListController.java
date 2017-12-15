@@ -8,11 +8,13 @@ import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
 
 import com.google.common.collect.*;
 
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
+import static org.strangeforest.tcb.stats.model.GOATListConfig.*;
 
 @Controller
 public class GOATListController extends PageController {
@@ -38,21 +40,8 @@ public class GOATListController extends PageController {
 		@RequestParam(name = "tournamentFactor", defaultValue = "1") int tournamentFactor,
 		@RequestParam(name = "rankingFactor", defaultValue = "1") int rankingFactor,
 		@RequestParam(name = "achievementsFactor", defaultValue = "1") int achievementsFactor,
-		@RequestParam(name = "levelGFactor", defaultValue = "1") int levelGFactor,
-		@RequestParam(name = "levelFFactor", defaultValue = "1") int levelFFactor,
-		@RequestParam(name = "levelLFactor", defaultValue = "1") int levelLFactor,
-		@RequestParam(name = "levelMFactor", defaultValue = "1") int levelMFactor,
-		@RequestParam(name = "levelOFactor", defaultValue = "1") int levelOFactor,
-		@RequestParam(name = "levelAFactor", defaultValue = "1") int levelAFactor,
-		@RequestParam(name = "levelBFactor", defaultValue = "1") int levelBFactor,
-		@RequestParam(name = "levelDFactor", defaultValue = "1") int levelDFactor,
-		@RequestParam(name = "levelTFactor", defaultValue = "1") int levelTFactor,
-		@RequestParam(name = "resultWFactor", defaultValue = "1") int resultWFactor,
-		@RequestParam(name = "resultFFactor", defaultValue = "1") int resultFFactor,
-		@RequestParam(name = "resultSFFactor", defaultValue = "1") int resultSFFactor,
-		@RequestParam(name = "resultQFFactor", defaultValue = "1") int resultQFFactor,
-		@RequestParam(name = "resultRRFactor", defaultValue = "1") int resultRRFactor,
-		@RequestParam(name = "resultBRFactor", defaultValue = "1") int resultBRFactor,
+		@RequestParam(name = "levelFactors", defaultValue = "") String levelFactors,
+		@RequestParam(name = "resultFactors", defaultValue = "") String resultFactors,
 		@RequestParam(name = "yearEndRankFactor", defaultValue = "1") int yearEndRankFactor,
 		@RequestParam(name = "bestRankFactor", defaultValue = "1") int bestRankFactor,
 		@RequestParam(name = "weeksAtNo1Factor", defaultValue = "1") int weeksAtNo1Factor,
@@ -67,27 +56,8 @@ public class GOATListController extends PageController {
 		@RequestParam(name = "performanceFactor", defaultValue = "1") int performanceFactor,
 		@RequestParam(name = "statisticsFactor", defaultValue = "1") int statisticsFactor
 	) {
-		Map<String, Integer> levelFactors = ImmutableMap.<String, Integer>builder()
-			.put("G", levelGFactor)
-			.put("F", levelFFactor)
-			.put("L", levelLFactor)
-			.put("M", levelMFactor)
-			.put("O", levelOFactor)
-			.put("A", levelAFactor)
-			.put("B", levelBFactor)
-			.put("D", levelDFactor)
-			.put("T", levelTFactor)
-		.build();
-		Map<String, Integer> resultFactors = ImmutableMap.<String, Integer>builder()
-			.put("W", resultWFactor)
-			.put("F", resultFFactor)
-			.put("SF", resultSFFactor)
-			.put("QF", resultQFFactor)
-			.put("RR", resultRRFactor)
-			.put("BR", resultBRFactor)
-		.build();
 		GOATListConfig config = new GOATListConfig(
-			oldLegends, extrapolate, tournamentFactor, rankingFactor, achievementsFactor, levelFactors, resultFactors,
+			oldLegends, extrapolate, tournamentFactor, rankingFactor, achievementsFactor, parseIntProperties(levelFactors), parseIntProperties(resultFactors),
 			yearEndRankFactor, bestRankFactor, weeksAtNo1Factor, weeksAtEloTopNFactor, bestEloRatingFactor,
 			grandSlamFactor, bigWinsFactor, h2hFactor, recordsFactor, bestSeasonFactor, greatestRivalriesFactor, performanceFactor, statisticsFactor
 		);
@@ -95,55 +65,122 @@ public class GOATListController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("config", config);
 		modelMap.addAttribute("factors", FACTOR_MAP);
-		modelMap.addAttribute("levels", GOATListConfig.TOURNAMENT_LEVELS);
-		modelMap.addAttribute("results", GOATListConfig.TOURNAMENT_RESULTS);
+		modelMap.addAttribute("levels", TOURNAMENT_LEVELS);
+		modelMap.addAttribute("results", TOURNAMENT_RESULTS);
 
 		return new ModelAndView("goatList", modelMap);
 	}
 
 	@GetMapping("/goatLegend")
 	public ModelAndView goatLegend(
-		@RequestParam(name = "forSeason", required = false) boolean forSeason
+		@RequestParam(name = "forSeason", required = false) boolean forSeason,
+		@RequestParam(name = "tournamentFactor", defaultValue = "1") int tournamentFactor,
+		@RequestParam(name = "rankingFactor", defaultValue = "1") int rankingFactor,
+		@RequestParam(name = "achievementsFactor", defaultValue = "1") int achievementsFactor,
+		@RequestParam(name = "levelFactors", defaultValue = "") String levelFactors,
+		@RequestParam(name = "resultFactors", defaultValue = "") String resultFactors,
+		@RequestParam(name = "yearEndRankFactor", defaultValue = "1") int yearEndRankFactor,
+		@RequestParam(name = "bestRankFactor", defaultValue = "1") int bestRankFactor,
+		@RequestParam(name = "weeksAtNo1Factor", defaultValue = "1") int weeksAtNo1Factor,
+		@RequestParam(name = "weeksAtEloTopNFactor", defaultValue = "1") int weeksAtEloTopNFactor,
+		@RequestParam(name = "bestEloRatingFactor", defaultValue = "1") int bestEloRatingFactor,
+		@RequestParam(name = "grandSlamFactor", defaultValue = "1") int grandSlamFactor,
+		@RequestParam(name = "bigWinsFactor", defaultValue = "1") int bigWinsFactor,
+		@RequestParam(name = "h2hFactor", defaultValue = "1") int h2hFactor,
+		@RequestParam(name = "recordsFactor", defaultValue = "1") int recordsFactor,
+		@RequestParam(name = "bestSeasonFactor", defaultValue = "1") int bestSeasonFactor,
+		@RequestParam(name = "greatestRivalriesFactor", defaultValue = "1") int greatestRivalriesFactor,
+		@RequestParam(name = "performanceFactor", defaultValue = "1") int performanceFactor,
+		@RequestParam(name = "statisticsFactor", defaultValue = "1") int statisticsFactor
 	) {
+		GOATListConfig config = new GOATListConfig(
+			true, false, tournamentFactor, rankingFactor, achievementsFactor, parseIntProperties(levelFactors), parseIntProperties(resultFactors),
+			yearEndRankFactor, bestRankFactor, weeksAtNo1Factor, weeksAtEloTopNFactor, bestEloRatingFactor,
+			grandSlamFactor, bigWinsFactor, h2hFactor, recordsFactor, bestSeasonFactor, greatestRivalriesFactor, performanceFactor, statisticsFactor
+		);
+
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("forSeason", forSeason);
 		// Tournament
-		modelMap.addAttribute("tournamentGOATPoints", goatLegendService.getTournamentGOATPoints());
+		modelMap.addAttribute("tournamentGOATPoints", applyConfig(goatLegendService.getTournamentGOATPoints(), config));
 		// Ranking
-		modelMap.addAttribute("yearEndRankGOATPoints", goatLegendService.getYearEndRankGOATPoints());
-		modelMap.addAttribute("bestRankGOATPoints", goatLegendService.getBestRankGOATPoints());
+		modelMap.addAttribute("yearEndRankGOATPoints", applyRankFactor(goatLegendService.getYearEndRankGOATPoints(), config.getYearEndRankTotalFactor()));
+		modelMap.addAttribute("bestRankGOATPoints", applyRankFactor(goatLegendService.getBestRankGOATPoints(), config.getBestRankTotalFactor()));
+		modelMap.addAttribute("weeksAtNo1PointFactor", config.getWeeksAtNo1TotalFactor());
 		modelMap.addAttribute("weeksAtNo1ForGOATPoint", goatLegendService.getWeeksAtNo1ForGOATPoint());
+		modelMap.addAttribute("weeksAtEloTopNPointFactor", config.getWeeksAtEloTopNTotalFactor());
 		modelMap.addAttribute("weeksAtEloTopNForGOATPoint", goatLegendService.getWeeksAtEloTopNGOATPoint());
-		modelMap.addAttribute("bestEloRatingGOATPoints", goatLegendService.getBestEloRatingGOATPoints());
-		modelMap.addAttribute("bestSurfaceEloRatingGOATPoints", goatLegendService.getBestSurfaceEloRatingGOATPoints());
-		modelMap.addAttribute("bestIndoorEloRatingGOATPoints", goatLegendService.getBestIndoorEloRatingGOATPoints());
+		int bestEloRatingTotalFactor = config.getBestEloRatingTotalFactor();
+		modelMap.addAttribute("bestEloRatingGOATPoints", applyRankFactor(goatLegendService.getBestEloRatingGOATPoints(), bestEloRatingTotalFactor));
+		modelMap.addAttribute("bestSurfaceEloRatingGOATPoints", applyRankFactor(goatLegendService.getBestSurfaceEloRatingGOATPoints(), bestEloRatingTotalFactor));
+		modelMap.addAttribute("bestIndoorEloRatingGOATPoints", applyRankFactor(goatLegendService.getBestIndoorEloRatingGOATPoints(), bestEloRatingTotalFactor));
 		// Achievements
-		modelMap.addAttribute("careerGrandSlamGOATPoints", goatLegendService.getCareerGrandSlamGOATPoints());
-		modelMap.addAttribute("seasonGrandSlamGOATPoints", goatLegendService.getSeasonGrandSlamGOATPoints());
-		modelMap.addAttribute("season3GrandSlamGOATPoints", goatLegendService.getSeason3GrandSlamGOATPoints());
-		modelMap.addAttribute("grandSlamHolderGOATPoints", goatLegendService.getGrandSlamHolderGOATPoints());
-		modelMap.addAttribute("consecutiveGrandSlamOnSameEventGOATPoints", goatLegendService.getConsecutiveGrandSlamOnSameEventGOATPoints());
-		modelMap.addAttribute("grandSlamOnSameEventGOATPointsDivider", (int)(1.0 / goatLegendService.getGrandSlamOnSameEventGOATPoints()));
-		modelMap.addAttribute("bigWinMatchFactors", goatLegendService.getBigWinMatchFactors());
+		int grandSlamTotalFactor = config.getGrandSlamTotalFactor();
+		modelMap.addAttribute("careerGrandSlamGOATPoints", goatLegendService.getCareerGrandSlamGOATPoints() * grandSlamTotalFactor);
+		modelMap.addAttribute("seasonGrandSlamGOATPoints", goatLegendService.getSeasonGrandSlamGOATPoints() * grandSlamTotalFactor);
+		modelMap.addAttribute("season3GrandSlamGOATPoints", goatLegendService.getSeason3GrandSlamGOATPoints() * grandSlamTotalFactor);
+		modelMap.addAttribute("grandSlamHolderGOATPoints", goatLegendService.getGrandSlamHolderGOATPoints() * grandSlamTotalFactor);
+		modelMap.addAttribute("consecutiveGrandSlamOnSameEventGOATPoints", goatLegendService.getConsecutiveGrandSlamOnSameEventGOATPoints() * grandSlamTotalFactor);
+		modelMap.addAttribute("grandSlamOnSameEventGOATPoints", goatLegendService.getGrandSlamOnSameEventGOATPoints() * grandSlamTotalFactor);
+		modelMap.addAttribute("bigWinMatchFactors", applyBigWinsFactor(goatLegendService.getBigWinMatchFactors(), config.getBigWinsTotalFactor()));
 		modelMap.addAttribute("bigWinRankFactors", goatLegendService.getBigWinRankFactors());
 		modelMap.addAttribute("h2hRankFactors", goatLegendService.getH2hRankFactors());
-		modelMap.addAttribute("bestSeasonGOATPoints", goatLegendService.getBestSeasonGOATPoints());
-		modelMap.addAttribute("greatestRivalriesGOATPoints", goatLegendService.getGreatestRivalriesGOATPoints());
+		modelMap.addAttribute("h2hPointFactor", config.getH2hTotalFactor());
+		modelMap.addAttribute("bestSeasonGOATPoints", applyRankFactor(goatLegendService.getBestSeasonGOATPoints(), config.getBestSeasonTotalFactor()));
+		modelMap.addAttribute("greatestRivalriesGOATPoints", applyRankFactor(goatLegendService.getGreatestRivalriesGOATPoints(), config.getGreatestRivalriesTotalFactor()));
 		return new ModelAndView("goatLegend", modelMap);
 	}
 
 	@GetMapping("/recordsGOATPointsLegend")
-	public ModelAndView recordsGOATPointsLegend() {
-		return new ModelAndView("recordsGOATPointsLegend", "recordsGOATPoints", goatLegendService.getRecordsGOATPoints());
+	public ModelAndView recordsGOATPointsLegend(
+		@RequestParam(name = "factor", defaultValue = "1") int factor
+	) {
+		return new ModelAndView("recordsGOATPointsLegend", "recordsGOATPoints", applyRecordsFactor(goatLegendService.getRecordsGOATPoints(), factor));
 	}
 
 	@GetMapping("/performanceGOATPointsLegend")
-	public ModelAndView performanceGOATPointsLegend() {
-		return new ModelAndView("performanceGOATPointsLegend", "performanceGOATPoints", goatLegendService.getPerformanceGOATPoints());
+	public ModelAndView performanceGOATPointsLegend(
+		@RequestParam(name = "factor", defaultValue = "1") int factor
+	) {
+		return new ModelAndView("performanceGOATPointsLegend", "performanceGOATPoints", applyPerfStatFactor(goatLegendService.getPerformanceGOATPoints(), factor));
 	}
 
 	@GetMapping("/statisticsGOATPointsLegend")
-	public ModelAndView statisticsGOATPointsLegend() {
-		return new ModelAndView("statisticsGOATPointsLegend", "statisticsGOATPoints", goatLegendService.getStatisticsGOATPoints());
+	public ModelAndView statisticsGOATPointsLegend(
+		@RequestParam(name = "factor", defaultValue = "1") int factor
+	) {
+		return new ModelAndView("statisticsGOATPointsLegend", "statisticsGOATPoints", applyPerfStatFactor(goatLegendService.getStatisticsGOATPoints(), factor));
+	}
+
+	private static List<TournamentGOATPoints> applyConfig(List<TournamentGOATPoints> tournamentPoints, GOATListConfig config) {
+		for (TournamentGOATPoints point : tournamentPoints)
+			point.applyConfig(config);
+		return tournamentPoints;
+	}
+
+	private static List<RankGOATPoints> applyRankFactor(List<RankGOATPoints> rankPoints, int factor) {
+		for (RankGOATPoints point : rankPoints)
+			point.applyFactor(factor);
+		return rankPoints;
+	}
+
+	private static List<BigWinMatchFactor> applyBigWinsFactor(List<BigWinMatchFactor> bigWinMatchFactors, int factor) {
+		for (BigWinMatchFactor point : bigWinMatchFactors)
+			point.applyFactor(factor);
+		return bigWinMatchFactors;
+	}
+
+	private static Map<String, Map<Record, String>> applyRecordsFactor(Map<String, Map<Record, String>> goatPoints, int factor) {
+		for (Map<Record, String> map : goatPoints.values()) {
+			for (Map.Entry<Record, String> entry : map.entrySet())
+				entry.setValue(applyFactorToCSV(entry.getValue(), factor));
+		}
+		return goatPoints;
+	}
+
+	private static List<PerfStatGOATPoints> applyPerfStatFactor(List<PerfStatGOATPoints> perfStatPoints, int factor) {
+		for (PerfStatGOATPoints point : perfStatPoints)
+			point.applyFactor(factor);
+		return perfStatPoints;
 	}
 }

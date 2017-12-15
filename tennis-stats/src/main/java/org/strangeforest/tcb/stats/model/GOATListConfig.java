@@ -3,11 +3,13 @@ package org.strangeforest.tcb.stats.model;
 import java.util.*;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.*;
 
 import org.strangeforest.tcb.util.*;
 
 import com.google.common.base.*;
 
+import static java.lang.Integer.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
@@ -307,5 +309,16 @@ public class GOATListConfig {
 			.add("performanceFactor", nullIf(performanceFactor, 1))
 			.add("statisticsFactor", nullIf(statisticsFactor, 1))
 			.toString();
+	}
+
+
+	// Util
+
+	public static String applyFactorToCSV(String goatPoints, int factor) {
+		if (factor == 0)
+			return "0";
+		else if (factor == 1)
+			return goatPoints;
+		return Stream.of(goatPoints.split(",")).map(p -> String.valueOf(parseInt(p) * factor)).collect(joining(","));
 	}
 }

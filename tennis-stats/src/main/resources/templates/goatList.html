@@ -29,8 +29,10 @@
 					addRequestParam(request, "tournamentFactor", "1");
 					addRequestParam(request, "rankingFactor", "1");
 					addRequestParam(request, "achievementsFactor", "1");
-					[# th:each="level : ${levels}"]addRequestParam(request, "level[(${level})]Factor", "1"); [/]
-					[# th:each="result : ${results}"]addRequestParam(request, "result[(${result})]Factor", "1"); [/]
+					var levelFactors = getLevelFactors();
+               if (levelFactors) request.levelFactors = levelFactors;
+					var resultFactors = getResultFactors();
+					if (resultFactors) request.resultFactors = resultFactors;
 					addRequestParam(request, "yearEndRankFactor", "1");
 					addRequestParam(request, "bestRankFactor", "1");
 					addRequestParam(request, "weeksAtNo1Factor", "1");
@@ -137,7 +139,7 @@
 			bindPopovers("body");
 			$("[data-toggle='collapse']").click(collapseClick);
 			$("[data-toggle='tooltip']").tooltip();
-			$("#goatLegendButton").click();
+			loadCollapse($("#goatLegendButton"), goatLegendUrl());
 		});
 		function playerTitlesFormatter(attr, params, title) {
 			return function(column, row) {
@@ -147,6 +149,7 @@
 		}
 		function reloadGOATListTable() {
 			$("#goatListTable").bootgrid("reload");
+			loadCollapse($("#goatLegendButton"), goatLegendUrl());
 		}
 		function resetTournamentPointsConfig() {
 			$("#tournamentFactor").val("1");
@@ -180,11 +183,21 @@
 			var extrapolate = $("#extrapolate").prop("checked");
 			if (extrapolate)
 				url += "&extrapolate=" + extrapolate;
+			url += goatListFactors();
+			return url;
+		}
+		function goatLegendUrl() {
+			return "/goatLegend?forSeason=false" + goatListFactors();
+		}
+		function goatListFactors() {
+			var url = "";
 			url += addParam("tournamentFactor", "1");
 			url += addParam("rankingFactor", "1");
 			url += addParam("achievementsFactor", "1");
-			[# th:each="level : ${levels}"]url += addParam("level[(${level})]Factor", "1"); [/]
-			[# th:each="result : ${results}"]url += addParam("result[(${result})]Factor", "1"); [/]
+			var levelFactors = getLevelFactors();
+			if (levelFactors) url += "&levelFactors=" + levelFactors;
+			var resultFactors = getResultFactors();
+			if (resultFactors) url += "&resultFactors=" + resultFactors;
 			url += addParam("yearEndRankFactor", "1");
 			url += addParam("bestRankFactor", "1");
 			url += addParam("weeksAtNo1Factor", "1");
@@ -210,6 +223,20 @@
 		function addParam(param, def) {
 			var value = $("#" + param).val();
 			return value && !(def && value === def) ? "&" + param + "=" + value : "";
+		}
+		function getLevelFactors() {
+			var levelFactors = "";
+			[# th:each="level : ${levels}"]levelFactors = addProperty(levelFactors, "level[(${level})]Factor", "[(${level})]", "1"); [/]
+			return levelFactors;
+		}
+		function getResultFactors() {
+			var resultFactors = "";
+			[# th:each="result : ${results}"]resultFactors = addProperty(resultFactors, "result[(${result})]Factor", "[(${result})]", "1"); [/]
+			return resultFactors;
+		}
+		function addProperty(props, id, prop, def) {
+			var value = $("#" + id).val();
+			return props + (value && !(def && value === def) ? (props ? "," : "") + prop + "=" + value : "");
 		}
 	</script>
 	<style>
@@ -243,8 +270,8 @@
 		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Quick Picks <span class="caret"></span></button>
 		<ul class="dropdown-menu">
 			<li><a href="/goatList" title="All GOAT Points constituents are included with weight x 1">Default</a></li>
-			<li><a href="/goatList?levelGFactor=2&resultWFactor=2&weeksAtNo1Factor=4&grandSlamFactor=4" title="Grand Slam tournament titles are emphasized with x 4 the default weight, other GS tournament points (F, SF, QF) x 2, other titles x 2 (resulting in 1 GS = 4 Masters, 1 title = 4 finals), Grand Slam achievement points x 4 and weeks at No. 1 points x 4">Grand Slam titles and No. 1 focus</a></li>
-			<li><a href="/goatList?levelFFactor=0&levelLFactor=0&levelMFactor=0&levelOFactor=0&levelAFactor=0&levelBFactor=0&levelDFactor=0&levelTFactor=0&resultFFactor=0&resultSFFactor=0&resultQFFactor=0&resultRRFactor=0&resultBRFactor=0&yearEndRankFactor=0&bestRankFactor=0&weeksAtEloTopNFactor=0&bestEloRatingFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&bestSeasonFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Grand Slam titles and achievement points and weeks at No. 1 points are the only ones selected">Minimalist</a></li>
+			<li><a href="/goatList?levelFactors=G=2&resultFactors=W=2&weeksAtNo1Factor=4&grandSlamFactor=4" title="Grand Slam tournament titles are emphasized with x 4 the default weight, other GS tournament points (F, SF, QF) x 2, other titles x 2 (resulting in 1 GS = 4 Masters, 1 title = 4 finals), Grand Slam achievement points x 4 and weeks at No. 1 points x 4">Grand Slam titles and No. 1 focus</a></li>
+			<li><a href="/goatList?levelFactors=F=0,L=0,M=0,O=0,A=0,B=0,D=0,T=0&resultFactors=F=0,SF=0,QF=0,RR=0,BR=0&yearEndRankFactor=0&bestRankFactor=0&weeksAtEloTopNFactor=0&bestEloRatingFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&bestSeasonFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Grand Slam titles and achievement points and weeks at No. 1 points are the only ones selected">Minimalist</a></li>
 			<li><a href="/goatList?bestRankFactor=4&bestEloRatingFactor=4&bestSeasonFactor=4" title="Peak achievements (Career High Ranking, Peak Elo Ratings, and Best Seasons) are emphasized x 4 the default weight">Peak emphasis</a></li>
 			<li><a href="/goatList?tournamentFactor=0&yearEndRankFactor=0&weeksAtNo1Factor=0&weeksAtEloTopNFactor=0&grandSlamFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Peak achievements (Career High Ranking, Peak Elo Ratings and Best Seasons) are the only ones selected">Minimalist Peak</a></li>
 		</ul>

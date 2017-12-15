@@ -35,7 +35,7 @@
 			$result.tooltip({title: title, html: true});
 		});
 		bindTimelineExtraData("performance", "/playerTimelinePerformance");
-		bindTimelineExtraData("statistics", "/playerTimelineStats", function() { console.log('onLoad'); timelineShowStatsGroup("Overview"); });
+		bindTimelineExtraData("statistics", "/playerTimelineStats", function() { timelineShowStatsGroup("Overview"); });
 	});
 	function bindTimelineExtraData(elementPrefix, url, onLoad) {
 		var $head = $("#" + elementPrefix + "Head");

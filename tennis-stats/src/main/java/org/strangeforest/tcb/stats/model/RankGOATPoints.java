@@ -3,7 +3,7 @@ package org.strangeforest.tcb.stats.model;
 public class RankGOATPoints {
 
 	private final int rank;
-	private final int goatPoints;
+	private int goatPoints;
 
 	public RankGOATPoints(int rank, int goatPoints) {
 		this.rank = rank;
@@ -16,5 +16,9 @@ public class RankGOATPoints {
 
 	public int getGoatPoints() {
 		return goatPoints;
+	}
+
+	public void applyFactor(int factor) {
+		goatPoints *= factor;
 	}
 }

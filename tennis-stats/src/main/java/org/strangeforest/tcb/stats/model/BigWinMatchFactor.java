@@ -4,7 +4,7 @@ public class BigWinMatchFactor {
 
 	private final String level;
 	private final String round;
-	private final int matchFactor;
+	private int matchFactor;
 
 	public BigWinMatchFactor(String level, String round, int matchFactor) {
 		this.level = level;
@@ -22,5 +22,9 @@ public class BigWinMatchFactor {
 
 	public int getMatchFactor() {
 		return matchFactor;
+	}
+
+	public void applyFactor(int factor) {
+		matchFactor *= factor;
 	}
 }
