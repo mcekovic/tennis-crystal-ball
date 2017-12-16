@@ -3,6 +3,8 @@ DROP VIEW visitor_summary_v;
 
 DROP VIEW player_v;
 
+DROP MATERIALIZED VIEW player_surface_goat_points;
+DROP VIEW player_surface_goat_points_v;
 DROP MATERIALIZED VIEW player_goat_points;
 DROP VIEW player_goat_points_v;
 DROP VIEW player_best_season_goat_points_v;
@@ -11,11 +13,14 @@ DROP MATERIALIZED VIEW player_season_goat_points;
 DROP VIEW player_season_goat_points_v;
 
 DROP VIEW player_best_elo_rating_goat_points_v;
+DROP VIEW player_best_surface_elo_rating_goat_points_v;
 DROP VIEW player_weeks_at_elo_topn_goat_points_v;
 DROP VIEW player_season_weeks_at_elo_topn_goat_points_v;
+DROP VIEW player_weeks_at_surface_elo_topn_goat_points_v;
 DROP VIEW player_weeks_at_no1_goat_points_v;
 DROP VIEW player_season_weeks_at_no1_goat_points_v;
 DROP VIEW player_season_big_wins_goat_points_v;
+DROP VIEW player_surface_big_wins_goat_points_v;
 DROP VIEW player_career_grand_slam_goat_points_v;
 DROP VIEW player_season_grand_slam_goat_points_v;
 DROP VIEW player_grand_slam_holder_goat_points_v;
@@ -32,6 +37,8 @@ DROP VIEW player_h2h_v;
 DROP VIEW player_weeks_at_elo_topn_v;
 DROP VIEW player_season_weeks_at_elo_topn_v;
 DROP VIEW topn_player_elo_ranking_v;
+DROP VIEW player_weeks_at_surface_elo_topn_v;
+DROP VIEW topn_player_surface_elo_ranking_v;
 DROP MATERIALIZED VIEW player_weeks_at_no1;
 DROP VIEW player_weeks_at_no1_v;
 DROP MATERIALIZED VIEW player_season_weeks_at_no1;

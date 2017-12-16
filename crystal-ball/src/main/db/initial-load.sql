@@ -547,4 +547,13 @@ VALUES
 ('setsWonPct', 1, 2),
 ('setsWonPct', 2, 1);
 
+DELETE FROM surface_goat_points;
+INSERT INTO surface_goat_points
+(surface, goat_points_weight)
+VALUES
+('H', 0.40),
+('C', 0.35),
+('G', 0.10),
+('P', 0.15);
+
 COMMIT;

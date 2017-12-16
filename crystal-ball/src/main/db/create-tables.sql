@@ -523,6 +523,14 @@ CREATE TABLE statistics_goat_points (
 );
 
 
+-- surface_goat_points
+
+CREATE TABLE surface_goat_points (
+	surface surface NOT NULL PRIMARY KEY,
+	goat_points_weight REAL NOT NULL
+);
+
+
 -- player_record
 
 CREATE TABLE player_record (

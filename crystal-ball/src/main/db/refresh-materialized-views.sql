@@ -36,3 +36,4 @@ REFRESH MATERIALIZED VIEW player_tournament_level_win_streak;
 
 REFRESH MATERIALIZED VIEW player_season_goat_points;
 REFRESH MATERIALIZED VIEW player_goat_points;
+REFRESH MATERIALIZED VIEW player_surface_goat_points;

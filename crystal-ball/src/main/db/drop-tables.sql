@@ -21,6 +21,7 @@ DROP TABLE h2h_rank_factor CASCADE;
 DROP TABLE records_goat_points CASCADE;
 DROP TABLE best_season_goat_points CASCADE;
 DROP TABLE greatest_rivalries_goat_points CASCADE;
+DROP TABLE surface_goat_points CASCADE;
 
 DROP TABLE performance_goat_points CASCADE;
 DROP TABLE performance_category CASCADE;
