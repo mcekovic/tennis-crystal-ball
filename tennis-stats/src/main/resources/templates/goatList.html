@@ -314,7 +314,7 @@
 					</label>
 				</div>
 			</div>
-			<div class="col-lg-2 col-md-3 col-sm-4 col-xs-5 text-nowrap">
+			<div class="col-lg-2 col-md-3 col-sm-4 col-xs-6 text-nowrap">
 				<div class="checkbox pull-left">
 					<label data-toggle="tooltip" data-placement="auto" title="Extrapolate career for active players and players born before 1952, click questionmark for explanation how this works">
 						<input id="extrapolate" type="checkbox" th:checked="${config.extrapolateCareer}" onchange="reloadGOATListTable()"/> Extrapolate career
@@ -322,19 +322,19 @@
 				</div>
 				&nbsp;<a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#extrapolateCareerPopover"><span style="margin-top: 10px" class="glyphicon glyphicon-question-sign"></span></a>
 			</div>
-			<div class="col-lg-1 col-xs-2">
+			<div class="col-lg-1 col-sm-2 col-xs-3">
 				<button type="button" class="btn btn-sm btn-info" onclick="goatListPermalink()" data-toggle="tooltip" data-placement="auto" title="Permalink to this GOAT List">
 					<span class="glyphicon glyphicon-link"></span>&nbsp;&nbsp;Permalink
 				</button>
 			</div>
-			<div class="col-md-1 col-xs-2">
+			<div class="col-md-1 col-sm-2 col-xs-3">
 				<button type="button" class="btn btn-sm btn-info" onclick="goatListTweat()" data-toggle="tooltip" data-placement="auto" title="Tweat this GOAT List">
 					<i class="fa fa-twitter"></i>&nbsp;&nbsp;Tweat
 				</button>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Change Tournament GOAT Points factor">
 					<label for="tournamentFactor" class="input-group-addon factor-label">Tournament Pts.:</label>
 					<select id="tournamentFactor" class="form-control" onchange="reloadGOATListTable()">
@@ -342,12 +342,12 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-md-1 col-xs-2">
+			<div class="col-md-1 col-xs-3">
 				<button type="button" class="btn btn-sm btn-default" onclick="resetTournamentPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Tournament GOAT Points configuration">
 					<i class="fa fa-undo"></i>&nbsp;&nbsp;Reset
 				</button>
 			</div>
-			<div class="col-md-1 col-xs-2">
+			<div class="col-md-1 col-xs-3">
 				<div data-toggle="tooltip" data-placement="auto" title="Advanced Tournament GOAT Points configuration">
 					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#tournamentConfig">
 						<i class="fa fa-cogs"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
@@ -357,7 +357,7 @@
 		</div>
 		<div id="tournamentConfig" class="collapse well-nopad" th:attrappend="class=${config.hasDefaultTournamentFactors() ? _ : ' in'}">
 			<div class="row">
-				<div th:each="level : ${levels}" class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div th:each="level : ${levels}" class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label th:for="|level${level}Factor|" class="input-group-addon small-control factor-label" th:text="${T(org.strangeforest.tcb.stats.model.core.TournamentLevel).decode(level).text + ' Pts.:'}">Grand Slam Pts.:</label>
 						<select th:id="|level${level}Factor|" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -367,7 +367,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<div th:each="result : ${results}" class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div th:each="result : ${results}" class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label th:for="|result${result}Factor|" class="input-group-addon small-control factor-label" th:text="${(result == 'W' ? 'Title' : T(org.strangeforest.tcb.stats.model.core.EventResult).decode(result).text) + ' Pts.:'}">Title Pts.:</label>
 						<select th:id="|result${result}Factor|" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -378,7 +378,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Change Ranking GOAT Points factor">
 					<label for="rankingFactor" class="input-group-addon factor-label">Ranking Pts.:</label>
 					<select id="rankingFactor" class="form-control" onchange="reloadGOATListTable()">
@@ -386,12 +386,12 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-md-1 col-xs-2">
+			<div class="col-md-1 col-xs-3">
 				<button type="button" class="btn btn-sm btn-default" onclick="resetRankingPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Ranking GOAT Points configuration">
 					<i class="fa fa-undo"></i>&nbsp;&nbsp;Reset
 				</button>
 			</div>
-			<div class="col-md-1 col-xs-2">
+			<div class="col-md-1 col-xs-3">
 				<div data-toggle="tooltip" data-placement="auto" title="Advanced Ranking GOAT Points configuration">
 					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#rankingConfig">
 						<i class="fa fa-cogs"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
@@ -401,7 +401,7 @@
 		</div>
 		<div id="rankingConfig" class="collapse well-nopad" th:attrappend="class=${config.hasDefaultRankingFactors() ? _ : ' in'}">
 			<div class="row">
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="yearEndRankFactor" class="input-group-addon small-control factor-label">Year-End Ranking Pts.:</label>
 						<select id="yearEndRankFactor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -409,7 +409,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="bestRankFactor" class="input-group-addon small-control factor-label">Career High Ranking Pts.:</label>
 						<select id="bestRankFactor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -417,7 +417,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="weeksAtNo1Factor" class="input-group-addon small-control factor-label">Weeks at No. 1 Pts.:</label>
 						<select id="weeksAtNo1Factor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -425,7 +425,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="weeksAtEloTopNFactor" class="input-group-addon small-control factor-label">Weeks at Elo Top 5 Pts.:</label>
 						<select id="weeksAtEloTopNFactor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -433,7 +433,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="bestEloRatingFactor" class="input-group-addon small-control factor-label">Peak Elo Rating Pts.:</label>
 						<select id="bestEloRatingFactor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -444,7 +444,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Change Achievements GOAT Points factor">
 					<label for="achievementsFactor" class="input-group-addon factor-label">Achievements Pts.:</label>
 					<select id="achievementsFactor" class="form-control" onchange="reloadGOATListTable()">
@@ -452,14 +452,14 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-md-1 col-xs-2">
+			<div class="col-md-1 col-xs-3">
 				<div>
 					<button type="button" class="btn btn-sm btn-default" onclick="resetAchievementsPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Achievements GOAT Points configuration">
 						<i class="fa fa-undo"></i>&nbsp;&nbsp;Reset
 					</button>
 				</div>
 			</div>
-			<div class="col-md-1 col-xs-2">
+			<div class="col-md-1 col-xs-3">
 				<div data-toggle="tooltip" data-placement="auto" title="Advanced Achievements GOAT Points configuration">
 					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#achievementsConfig">
 						<i class="fa fa-cogs"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
@@ -469,7 +469,7 @@
 		</div>
 		<div id="achievementsConfig" class="collapse well-nopad" th:attrappend="class=${config.hasDefaultAchievementsFactors() ? _ : ' in'}">
 			<div class="row">
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="grandSlamFactor" class="input-group-addon small-control factor-label">Grand Slam Pts.:</label>
 						<select id="grandSlamFactor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -477,7 +477,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="bigWinsFactor" class="input-group-addon small-control factor-label">Big Wins Pts.:</label>
 						<select id="bigWinsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -485,7 +485,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="h2hFactor" class="input-group-addon small-control factor-label">H2H Pts.:</label>
 						<select id="h2hFactor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -493,7 +493,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="recordsFactor" class="input-group-addon small-control factor-label">Records Pts.:</label>
 						<select id="recordsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -501,7 +501,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="bestSeasonFactor" class="input-group-addon small-control factor-label">Best Seasons Pts.:</label>
 						<select id="bestSeasonFactor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -509,7 +509,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="greatestRivalriesFactor" class="input-group-addon small-control factor-label">Greatest Rivalries Pts.:</label>
 						<select id="greatestRivalriesFactor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -517,7 +517,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="performanceFactor" class="input-group-addon small-control factor-label">Performance Pts.:</label>
 						<select id="performanceFactor" class="form-control small-control" onchange="reloadGOATListTable()">
@@ -525,7 +525,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-8">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 					<div class="input-group">
 						<label for="statisticsFactor" class="input-group-addon small-control factor-label">Statistics Pts.:</label>
 						<select id="statisticsFactor" class="form-control small-control" onchange="reloadGOATListTable()">
