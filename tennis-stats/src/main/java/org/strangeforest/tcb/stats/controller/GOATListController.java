@@ -15,6 +15,7 @@ import org.strangeforest.tcb.stats.service.*;
 
 import com.google.common.collect.*;
 
+import static com.google.common.base.Strings.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.model.GOATListConfig.*;
@@ -79,7 +80,7 @@ public class GOATListController extends PageController {
 
 	@GetMapping("/goatLegend")
 	public ModelAndView goatLegend(
-		@RequestParam(name = "forSurface", defaultValue = F) boolean forSurface,
+		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "forSeason", defaultValue = F) boolean forSeason,
 		@RequestParam(name = "tournamentFactor", defaultValue = "1") int tournamentFactor,
 		@RequestParam(name = "rankingFactor", defaultValue = "1") int rankingFactor,
@@ -107,7 +108,7 @@ public class GOATListController extends PageController {
 		);
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("forSurface", forSurface);
+		modelMap.addAttribute("surface", Surface.safeDecode(surface));
 		modelMap.addAttribute("forSeason", forSeason);
 		modelMap.addAttribute("config", config);
 		// Tournament
@@ -134,7 +135,7 @@ public class GOATListController extends PageController {
 		modelMap.addAttribute("h2hRankFactors", goatLegendService.getH2hRankFactors());
 		modelMap.addAttribute("bestSeasonGOATPoints", applyRankFactor(goatLegendService.getBestSeasonGOATPoints(), config.getBestSeasonTotalFactor()));
 		double greatestRivalriesTotalFactor = config.getGreatestRivalriesTotalFactor();
-		if (forSurface)
+		if (!isNullOrEmpty(surface))
 			greatestRivalriesTotalFactor /= 2.0;
 		modelMap.addAttribute("greatestRivalriesGOATPoints", applyRankFactor(goatLegendService.getGreatestRivalriesGOATPoints(), greatestRivalriesTotalFactor));
 		return new ModelAndView("goatLegend", modelMap);

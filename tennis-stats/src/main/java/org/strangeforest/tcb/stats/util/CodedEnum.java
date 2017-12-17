@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.util;
 import java.util.*;
 import java.util.stream.*;
 
+import static com.google.common.base.Strings.*;
 import static java.util.stream.Collectors.*;
 
 public interface CodedEnum {
@@ -19,7 +20,7 @@ public interface CodedEnum {
 	}
 
 	static <E extends Enum<E> & CodedEnum> E safeDecode(Class<E> enumClass, String code) {
-		return code != null ? decode(enumClass, code) : null;
+		return isNullOrEmpty(code) ? null : decode(enumClass, code);
 	}
 
 	static <E extends Enum<E> & CodedEnum> String safeEncode(E e) {
