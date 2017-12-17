@@ -312,11 +312,6 @@ function decorateSurface(selector) {
 	});
 }
 
-// Won/Lost Formatter
-function wonLostFormatter(column, row) {
-	return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=performance" + (row.season ? "&season=" + row.season : "") + "' title='" + row.wonLost + "'>" + row.wonPct + "</a>";
-}
-
 // Tournament Formatter
 function tournamentFormatter(column, row) {
 	return "<a href='/tournament?tournamentId=" + row.tournamentId + "' class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + row.tournament + "</a>";

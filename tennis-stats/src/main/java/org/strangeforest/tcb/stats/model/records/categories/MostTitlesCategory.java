@@ -25,6 +25,16 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 		register(mostTitles(CARPET_TOURNAMENTS));
 		register(mostTitles(OUTDOOR_TOURNAMENTS));
 		register(mostTitles(INDOOR_TOURNAMENTS));
+		register(mostTitles(HARD_TOURNAMENTS, GRAND_SLAM));
+		register(mostTitles(CLAY_TOURNAMENTS, GRAND_SLAM));
+		register(mostTitles(GRASS_TOURNAMENTS, GRAND_SLAM));
+		register(mostTitles(HARD_TOURNAMENTS, MASTERS));
+		register(mostTitles(CLAY_TOURNAMENTS, MASTERS));
+		register(mostTitles(CARPET_TOURNAMENTS, MASTERS));
+		register(mostTitles(HARD_TOURNAMENTS, BIG_TOURNAMENTS));
+		register(mostTitles(CLAY_TOURNAMENTS, BIG_TOURNAMENTS));
+		register(mostTitles(GRASS_TOURNAMENTS, BIG_TOURNAMENTS));
+		register(mostTitles(CARPET_TOURNAMENTS, BIG_TOURNAMENTS));
 		register(mostSeasonTitles(ALL_WO_TEAM));
 		register(mostSeasonTitles(GRAND_SLAM));
 		register(mostSeasonTitles(ALL_FINALS));
@@ -50,6 +60,10 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 
 	private static Record mostTitles(RecordDomain domain) {
 		return mostResults(domain.id + "Titles", suffix(domain.name, " ") + "Titles", domain, TITLES, RESULT_TITLE);
+	}
+
+	private static Record mostTitles(RecordDomain domain1, RecordDomain domain2) {
+		return mostResults(domain1.id + domain2.id + "Titles", suffix(domain1.name, " ") + suffix(domain2.name, " ") + "Titles", domain1, domain2, TITLES, RESULT_TITLE);
 	}
 
 	private static Record mostSeasonTitles(RecordDomain domain) {

@@ -346,7 +346,7 @@ public class TournamentForecastService {
 	public InProgressEventFavorites getInProgressEventFavorites(int inProgressEventId, int count) {
 		Surface surface = Surface.safeDecode(getInProgressEvent(inProgressEventId).getSurface());
 		Map<Integer, PlayerForecast> players = fetchPlayers(inProgressEventId).stream().collect(toMap(MatchPlayer::getId, identity()));
-		String extraColumns = format(FAVORITE_EXTRA_COLUMNS, surface != null ? format(PLAYER_SURFACE_ELO_RATING, surface.getText().toLowerCase()) : "NULL");
+		String extraColumns = format(FAVORITE_EXTRA_COLUMNS, surface != null ? format(PLAYER_SURFACE_ELO_RATING, surface.getLowerCaseText()) : "NULL");
 		List<FavoritePlayerEx> favorites = jdbcTemplate.query(format(FIND_FAVORITES_QUERY, extraColumns), params("inProgressEventId", inProgressEventId).addValue("favoriteCount", count), this::mapFavoritePlayerEx);
 		for (FavoritePlayerEx favorite : favorites) {
 			PlayerForecast player = players.get(favorite.getPlayerId());

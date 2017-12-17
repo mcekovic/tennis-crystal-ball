@@ -26,12 +26,12 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 		register(bestPlayerThatNeverWon(MASTERS, "masters"));
 		register(bestPlayerThatNeverWon(OLYMPICS, "olympics"));
 		register(bestPlayerThatNeverWon(BIG_TOURNAMENTS, "big_titles"));
-		register(bestPlayerThatNeverWon(HARD_TOURNAMENTS, "hard"));
-		register(bestPlayerThatNeverWon(CLAY_TOURNAMENTS, "clay"));
-		register(bestPlayerThatNeverWon(GRASS_TOURNAMENTS, "grass"));
-		register(bestPlayerThatNeverWon(CARPET_TOURNAMENTS, "carpet", " AND dob < DATE '" + CARPET_DOB_THRESHOLD + "'", null, "Born before " + CARPET_DOB_THRESHOLD));
-		register(bestPlayerThatNeverWon(OUTDOOR_TOURNAMENTS, "outdoor"));
-		register(bestPlayerThatNeverWon(INDOOR_TOURNAMENTS, "indoor"));
+		register(bestPlayerThatNeverWon(HARD_TOURNAMENTS, "hard_titles"));
+		register(bestPlayerThatNeverWon(CLAY_TOURNAMENTS, "clay_titles"));
+		register(bestPlayerThatNeverWon(GRASS_TOURNAMENTS, "grass_titles"));
+		register(bestPlayerThatNeverWon(CARPET_TOURNAMENTS, "carpet_titles", " AND dob < DATE '" + CARPET_DOB_THRESHOLD + "'", null, "Born before " + CARPET_DOB_THRESHOLD));
+		register(bestPlayerThatNeverWon(OUTDOOR_TOURNAMENTS, "outdoor_titles"));
+		register(bestPlayerThatNeverWon(INDOOR_TOURNAMENTS, "indoor_titles"));
 		register(bestPlayerThatNeverWon(ALL_WO_TEAM, "titles"));
 		register(bestPlayerThatNeverReachedTopN(NO_1, NO_1_NAME, ATP, "best_rank", 1));
 		register(bestPlayerThatNeverReachedTopN(TOP_2, TOP_2_NAME, ATP, "best_rank", 2));

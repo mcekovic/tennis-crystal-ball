@@ -199,7 +199,7 @@ public class MatchPredictionService {
 				rankingData.setRankPoints(getInteger(rs, "rank_points"));
 			}
 		);
-		String surfacePrefix = key.surface != null ? key.surface.getText().toLowerCase() + '_' : "";
+		String surfacePrefix = key.surface != null ? key.surface.getLowerCaseText() + '_' : "";
 		String outInPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
 		jdbcTemplate.query(
 			format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, outInPrefix),

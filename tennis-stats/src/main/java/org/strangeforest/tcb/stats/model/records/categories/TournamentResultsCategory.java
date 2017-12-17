@@ -36,6 +36,20 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 		);
 	}
 
+	protected static Record mostResults(String id, String name, RecordDomain domain1, RecordDomain domain2, String resultCondition, String result) {
+		return new Record<>(
+			id, "Most " + name + prefix(domain1.nameSuffix, " ") + prefix(domain2.nameSuffix, " "),
+			/* language=SQL */
+			"SELECT player_id, count(tournament_event_id) AS value, max(date) AS last_date\n" +
+			"FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
+			"WHERE " + resultCondition + " AND " + domain1.condition + " AND " + domain2.condition + "\n" +
+			"GROUP BY player_id",
+			"r.value", "r.value DESC", "r.value DESC, r.last_date",
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s%3$s%4$s", playerId, domain1.urlParam, domain2.urlParam, resultURLParam(result)),
+			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
+		);
+	}
+
 	protected static Record mostSeasonResults(String id, String name, RecordDomain domain, String resultCondition, String result) {
 		return new Record<>(
 			"Season" + id, "Most " + name + " in Single Season" + prefix(domain.nameSuffix, " "),

@@ -121,29 +121,47 @@ CREATE INDEX ON player_tournament_event_result (result);
 -- player_titles
 
 CREATE OR REPLACE VIEW player_titles_v AS
-WITH titles AS (
-	SELECT player_id, level, surface, indoor, count(result) AS titles
-	FROM player_tournament_event_result
-	INNER JOIN tournament_event USING (tournament_event_id)
-	WHERE result = 'W' AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')
-	GROUP BY GROUPING SETS (player_id, (player_id, level), (player_id, surface), (player_id, indoor))
-)
-SELECT p.player_id, t.titles AS titles, coalesce(gt.titles, 0) + coalesce(ft.titles, 0) + coalesce(lt.titles, 0) + coalesce(mt.titles, 0) + coalesce(ot.titles, 0) AS big_titles,
-	gt.titles AS grand_slams, ft.titles AS tour_finals, lt.titles AS alt_finals, mt.titles AS masters, ot.titles AS olympics,
-	sht.titles AS hard, sct.titles AS clay, sgt.titles AS grass, spt.titles AS carpet, iot.titles AS outdoor, iit.titles AS indoor
-FROM player p
-LEFT JOIN titles t ON t.player_id = p.player_id AND t.level IS NULL AND surface IS NULL AND indoor IS NULL
-LEFT JOIN titles gt ON gt.player_id = p.player_id AND gt.level = 'G'
-LEFT JOIN titles ft ON ft.player_id = p.player_id AND ft.level = 'F'
-LEFT JOIN titles lt ON lt.player_id = p.player_id AND lt.level = 'L'
-LEFT JOIN titles mt ON mt.player_id = p.player_id AND mt.level = 'M'
-LEFT JOIN titles ot ON ot.player_id = p.player_id AND ot.level = 'O'
-LEFT JOIN titles sht ON sht.player_id = p.player_id AND sht.surface = 'H'
-LEFT JOIN titles sct ON sct.player_id = p.player_id AND sct.surface = 'C'
-LEFT JOIN titles sgt ON sgt.player_id = p.player_id AND sgt.surface = 'G'
-LEFT JOIN titles spt ON spt.player_id = p.player_id AND spt.surface = 'P'
-LEFT JOIN titles iot ON iot.player_id = p.player_id AND NOT iot.indoor
-LEFT JOIN titles iit ON iit.player_id = p.player_id AND iit.indoor;
+SELECT player_id, count(*) titles,
+	count(*) FILTER (WHERE level IN ('G', 'F', 'L', 'M', 'O')) big_titles,
+	count(*) FILTER (WHERE level = 'G') grand_slams,
+	count(*) FILTER (WHERE level = 'F') tour_finals,
+	count(*) FILTER (WHERE level = 'L') alt_finals,
+	count(*) FILTER (WHERE level = 'M') masters,
+	count(*) FILTER (WHERE level = 'O') olympics,
+	count(*) FILTER (WHERE surface = 'H') hard_titles,
+	count(*) FILTER (WHERE surface = 'H' AND level IN ('G', 'F', 'L', 'M', 'O')) hard_big_titles,
+	count(*) FILTER (WHERE surface = 'H' AND level = 'G') hard_grand_slams,
+	count(*) FILTER (WHERE surface = 'H' AND level = 'F') hard_tour_finals,
+	count(*) FILTER (WHERE surface = 'H' AND level = 'L') hard_alt_finals,
+	count(*) FILTER (WHERE surface = 'H' AND level = 'M') hard_masters,
+	count(*) FILTER (WHERE surface = 'H' AND level = 'O') hard_olympics,
+	count(*) FILTER (WHERE surface = 'C') clay_titles,
+	count(*) FILTER (WHERE surface = 'C' AND level IN ('G', 'F', 'L', 'M', 'O')) clay_big_titles,
+	count(*) FILTER (WHERE surface = 'C' AND level = 'G') clay_grand_slams,
+	count(*) FILTER (WHERE surface = 'C' AND level = 'F') clay_tour_finals,
+	count(*) FILTER (WHERE surface = 'C' AND level = 'L') clay_alt_finals,
+	count(*) FILTER (WHERE surface = 'C' AND level = 'M') clay_masters,
+	count(*) FILTER (WHERE surface = 'C' AND level = 'O') clay_olympics,
+	count(*) FILTER (WHERE surface = 'G') grass_titles,
+	count(*) FILTER (WHERE surface = 'G' AND level IN ('G', 'F', 'L', 'M', 'O')) grass_big_titles,
+	count(*) FILTER (WHERE surface = 'G' AND level = 'G') grass_grand_slams,
+	count(*) FILTER (WHERE surface = 'G' AND level = 'F') grass_tour_finals,
+	count(*) FILTER (WHERE surface = 'G' AND level = 'L') grass_alt_finals,
+	count(*) FILTER (WHERE surface = 'G' AND level = 'M') grass_masters,
+	count(*) FILTER (WHERE surface = 'G' AND level = 'O') grass_olympics,
+	count(*) FILTER (WHERE surface = 'P') carpet_titles,
+	count(*) FILTER (WHERE surface = 'P' AND level IN ('G', 'F', 'L', 'M', 'O')) carpet_big_titles,
+	count(*) FILTER (WHERE surface = 'P' AND level = 'G') carpet_grand_slams,
+	count(*) FILTER (WHERE surface = 'P' AND level = 'F') carpet_tour_finals,
+	count(*) FILTER (WHERE surface = 'P' AND level = 'L') carpet_alt_finals,
+	count(*) FILTER (WHERE surface = 'P' AND level = 'M') carpet_masters,
+	count(*) FILTER (WHERE surface = 'P' AND level = 'O') carpet_olympics,
+	count(*) FILTER (WHERE NOT indoor) outdoor_titles,
+	count(*) FILTER (WHERE indoor) indoor_titles
+FROM player_tournament_event_result
+INNER JOIN tournament_event USING (tournament_event_id)
+WHERE result = 'W' AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')
+GROUP BY player_id;
 
 CREATE MATERIALIZED VIEW player_titles AS SELECT * FROM player_titles_v;
 
@@ -681,6 +699,33 @@ CREATE MATERIALIZED VIEW player_h2h AS SELECT * FROM player_h2h_v;
 CREATE UNIQUE INDEX ON player_h2h (player_id);
 
 
+-- player_surface_h2h_goat_points_v
+
+CREATE OR REPLACE VIEW player_surface_h2h_goat_points_v AS
+WITH rivalry AS (
+	SELECT player_id, opponent_id, surface, sum(p_matches) AS p_matches, sum(o_matches) AS o_matches
+	FROM player_match_for_stats_v
+	WHERE surface IS NOT NULL
+	GROUP BY player_id, opponent_id, surface
+	HAVING count(match_id) >= 3
+), h2h AS (
+	SELECT r.player_id, r.surface,
+		count(r.opponent_id) AS h2h_count,
+		sum((2 + sign(r.p_matches - r.o_matches)) * (1 + r.p_matches / 10.0) * f.rank_factor) AS h2h_won_factor,
+		sum((2 + sign(r.o_matches - r.p_matches)) * (1 + r.o_matches / 10.0) * f.rank_factor) AS h2h_lost_factor
+	FROM rivalry r
+	LEFT JOIN player_best_rank br ON br.player_id = r.opponent_id
+	LEFT JOIN h2h_rank_factor f ON br.best_rank BETWEEN f.rank_from AND f.rank_to
+	GROUP BY r.player_id, r.surface
+)
+SELECT player_id, surface, CASE WHEN h2h_count >= 5 THEN CASE
+	WHEN h2h_lost_factor = 0 THEN 100
+	WHEN h2h_won_factor = 0 THEN 0
+	ELSE greatest(round(10 * ln(h2h_won_factor / h2h_lost_factor))::INTEGER, 0)
+END ELSE 0 END AS goat_points
+FROM h2h;
+
+
 -- player_win_streak
 
 CREATE OR REPLACE VIEW player_win_streak_v AS
@@ -1098,10 +1143,9 @@ GROUP BY player_id, surface, rank;
 -- player_weeks_at_surface_elo_topn_goat_points_v
 
 CREATE OR REPLACE VIEW player_weeks_at_surface_elo_topn_goat_points_v AS
-SELECT player_id, surface, round(sum(weeks::REAL / weeks_for_point * goat_points_weight))::INTEGER AS goat_points
+SELECT player_id, surface, round(sum(weeks::REAL / (2 * weeks_for_point)))::INTEGER AS goat_points
 FROM player_weeks_at_surface_elo_topn_v
 INNER JOIN weeks_at_elo_topn_goat_points USING (rank)
-INNER JOIN surface_goat_points USING (surface)
 GROUP BY player_id, surface;
 
 
@@ -1297,6 +1341,7 @@ GROUP BY player_id, season;
 CREATE OR REPLACE VIEW player_surface_big_wins_goat_points_v AS
 SELECT player_id, surface, round(sum(goat_points))::INTEGER AS goat_points, sum(goat_points) AS unrounded_goat_points
 FROM player_big_wins_v
+WHERE surface IS NOT NULL
 GROUP BY player_id, surface;
 
 
@@ -1311,6 +1356,28 @@ WITH goat_points AS (
 SELECT player_id, sum(goat_points) AS goat_points
 FROM goat_points
 GROUP BY player_id;
+
+
+-- player_surface_records_goat_points_v
+
+CREATE OR REPLACE VIEW player_surface_records_goat_points_v AS
+WITH surfaces AS (
+	SELECT 'H'::surface AS surface, 'Hard' AS name
+	UNION ALL
+	SELECT 'C'::surface, 'Clay'
+	UNION ALL
+	SELECT 'G'::surface, 'Grass'
+	UNION ALL
+	SELECT 'P'::surface, 'Carpet'
+), goat_points AS (
+  SELECT DISTINCT r.player_id, s.surface, r.record_id, g.goat_points
+  FROM player_record r
+  CROSS JOIN surfaces s
+  INNER JOIN surface_records_goat_points g ON replace(g.record_id, '$', s.name) = r.record_id AND g.rank = r.rank
+)
+SELECT player_id, surface, sum(goat_points) AS goat_points
+FROM goat_points
+GROUP BY player_id, surface;
 
 
 -- player_greatest_rivalries_goat_points_v
@@ -1337,9 +1404,7 @@ WITH rivalries AS (
   FROM rivalries_2
   GROUP BY player_id_1, player_id_2
   HAVING sum(matches) >= 20
-  WINDOW riv AS (
-    PARTITION BY CASE WHEN player_id_1 < player_id_2 THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY player_id_1
-  )
+  WINDOW riv AS (PARTITION BY CASE WHEN player_id_1 < player_id_2 THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END ORDER BY player_id_1)
 ), rivalries_4 AS (
   SELECT rank() OVER (ORDER BY matches DESC, (won + lost) DESC) AS rivalry_rank, r.player_id_1, r.player_id_2, r.matches, r.won, r.lost
   FROM rivalries_3 r
@@ -1356,6 +1421,51 @@ WITH rivalries AS (
 SELECT player_id, sum(round(goat_points))::INTEGER AS goat_points, sum(goat_points) AS unrounded_goat_points
 FROM goat_points
 GROUP BY player_id;
+
+
+-- player_surface_greatest_rivalries_goat_points_v
+
+CREATE OR REPLACE VIEW player_surface_greatest_rivalries_goat_points_v AS
+WITH rivalries AS (
+  SELECT winner_id, loser_id, surface, count(match_id) matches, 0 won
+  FROM match_for_rivalry_v
+  WHERE surface iS NOT NULL
+  GROUP BY winner_id, loser_id, surface
+  UNION ALL
+  SELECT winner_id, loser_id, surface, 0, count(match_id)
+  FROM match_for_stats_v
+  WHERE surface iS NOT NULL
+  GROUP BY winner_id, loser_id, surface
+), rivalries_2 AS (
+  SELECT winner_id player_id_1, loser_id player_id_2, surface, sum(matches) matches, sum(won) won, 0 lost
+  FROM rivalries
+  GROUP BY player_id_1, player_id_2, surface
+  UNION ALL
+  SELECT loser_id player_id_1, winner_id player_id_2, surface, sum(matches), 0, sum(won)
+  FROM rivalries
+  GROUP BY player_id_1, player_id_2, surface
+), rivalries_3 AS (
+  SELECT rank() OVER riv AS rank, player_id_1, player_id_2, surface, sum(matches) matches, sum(won) won, sum(lost) lost
+  FROM rivalries_2
+  GROUP BY player_id_1, player_id_2, surface
+  HAVING sum(matches) >= 5
+  WINDOW riv AS (PARTITION BY CASE WHEN player_id_1 < player_id_2 THEN player_id_1 || '-' || player_id_2 ELSE player_id_2 || '-' || player_id_1 END, surface ORDER BY player_id_1)
+), rivalries_4 AS (
+  SELECT rank() OVER (PARTITION BY surface ORDER BY matches DESC, (won + lost) DESC) AS rivalry_rank, r.player_id_1, r.player_id_2, surface, r.matches, r.won, r.lost
+  FROM rivalries_3 r
+  WHERE rank = 1
+), goat_points AS (
+  SELECT r.player_id_1 player_id, surface, r.won::REAL / (r.won + r.lost) * g.goat_points AS goat_points
+  FROM rivalries_4 r
+  INNER JOIN greatest_rivalries_goat_points g USING (rivalry_rank)
+  UNION ALL
+  SELECT r.player_id_2, surface, r.lost::REAL / (r.won + r.lost) * g.goat_points
+  FROM rivalries_4 r
+  INNER JOIN greatest_rivalries_goat_points g USING (rivalry_rank)
+)
+SELECT player_id, surface, sum(round(goat_points) / 2)::INTEGER AS goat_points, sum(goat_points) / 2 AS unrounded_goat_points
+FROM goat_points
+GROUP BY player_id, surface;
 
 
 -- player_performance_goat_points_v
@@ -2025,34 +2135,44 @@ CREATE UNIQUE INDEX ON player_goat_points (player_id);
 CREATE OR REPLACE VIEW player_surface_goat_points_v AS
 WITH goat_points AS (
 	SELECT e.surface, r.player_id, sum(r.goat_points) goat_points, sum(r.goat_points) tournament_goat_points, 0 ranking_goat_points, 0 achievements_goat_points,
-		0 weeks_at_elo_topn_goat_points, 0 best_elo_rating_goat_points,
-		0 big_wins_goat_points, 0 h2h_goat_points, 0 records_goat_points, 0 greatest_rivalries_goat_points, 0 performance_goat_points, 0 statistics_goat_points
+		0 weeks_at_elo_topn_goat_points, 0 best_elo_rating_goat_points, 0 big_wins_goat_points, 0 h2h_goat_points, 0 records_goat_points, 0 greatest_rivalries_goat_points
 	FROM player_tournament_event_result r
 	INNER JOIN tournament_event e USING (tournament_event_id)
-	WHERE r.goat_points > 0 AND e.level <> 'D'
+	WHERE r.goat_points > 0 AND e.level <> 'D' AND e.surface IS NOT NULL
 	GROUP BY e.surface, r.player_id
 	UNION ALL
 	SELECT surface, player_id, goat_points, 0, goat_points, 0,
-		goat_points, 0, 0, 0, 0, 0, 0, 0
+		goat_points, 0, 0, 0, 0, 0
 	FROM player_weeks_at_surface_elo_topn_goat_points_v
 	UNION ALL
 	SELECT surface, player_id, goat_points, 0, goat_points, 0,
-		0, goat_points, 0, 0, 0, 0, 0, 0
+		0, goat_points, 0, 0, 0, 0
 	FROM player_best_surface_elo_rating_goat_points_v
 	UNION ALL
 	SELECT surface, player_id, goat_points, 0, 0, goat_points,
-		0, 0, goat_points, 0, 0, 0, 0, 0
+		0, 0, goat_points, 0, 0, 0
 	FROM player_surface_big_wins_goat_points_v
+	UNION ALL
+	SELECT surface, player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0, goat_points, 0, 0
+	FROM player_surface_h2h_goat_points_v
+	UNION ALL
+	SELECT surface, player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0, 0, goat_points, 0
+	FROM player_surface_records_goat_points_v
+	UNION ALL
+	SELECT surface, player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0, 0, 0, goat_points
+	FROM player_surface_greatest_rivalries_goat_points_v
 ), goat_points_total AS (
 	SELECT player_id, surface, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points,
 		sum(weeks_at_elo_topn_goat_points) weeks_at_elo_topn_goat_points, sum(best_elo_rating_goat_points) best_elo_rating_goat_points,
-		sum(big_wins_goat_points) big_wins_goat_points, sum(h2h_goat_points) h2h_goat_points, sum(records_goat_points) records_goat_points, sum(greatest_rivalries_goat_points) greatest_rivalries_goat_points, sum(performance_goat_points) performance_goat_points, sum(statistics_goat_points) statistics_goat_points
+		sum(big_wins_goat_points) big_wins_goat_points, sum(h2h_goat_points) h2h_goat_points, sum(records_goat_points) records_goat_points, sum(greatest_rivalries_goat_points) greatest_rivalries_goat_points
 	FROM goat_points
 	GROUP BY surface, player_id
 )
 SELECT surface, player_id, rank() OVER (PARTITION BY surface ORDER BY goat_points DESC NULLS LAST) AS goat_rank, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
-	weeks_at_elo_topn_goat_points, best_elo_rating_goat_points,
-	big_wins_goat_points, h2h_goat_points, records_goat_points, greatest_rivalries_goat_points, performance_goat_points, statistics_goat_points
+	weeks_at_elo_topn_goat_points, best_elo_rating_goat_points, big_wins_goat_points, h2h_goat_points, records_goat_points, greatest_rivalries_goat_points
 FROM goat_points_total
 WHERE goat_points > 0;
 

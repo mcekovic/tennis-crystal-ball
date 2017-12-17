@@ -109,7 +109,7 @@ public class PerformanceService {
 		"ORDER BY r.result DESC";
 
 	private static final String PLAYER_SURFACE_TITLES_QUERY =
-		"SELECT hard, clay, grass, carpet FROM player_titles WHERE player_id = :playerId";
+		"SELECT hard_titles, clay_titles, grass_titles, carpet_titles FROM player_titles WHERE player_id = :playerId";
 
 	public PlayerPerformance getPlayerPerformance(int playerId) {
 		return getPlayerPerformance(playerId, PerfStatsFilter.ALL);
@@ -259,10 +259,10 @@ public class PerformanceService {
 			rs -> {
 				if (rs.next()) {
 					Map<String, Integer> titles = new HashMap<>();
-					titles.put("H", rs.getInt("hard"));
-					titles.put("C", rs.getInt("clay"));
-					titles.put("G", rs.getInt("grass"));
-					titles.put("P", rs.getInt("carpet"));
+					titles.put("H", rs.getInt("hard_titles"));
+					titles.put("C", rs.getInt("clay_titles"));
+					titles.put("G", rs.getInt("grass_titles"));
+					titles.put("P", rs.getInt("carpet_titles"));
 					return titles;
 				}
 				else

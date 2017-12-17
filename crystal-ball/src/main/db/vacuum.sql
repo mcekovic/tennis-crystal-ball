@@ -31,6 +31,7 @@ VACUUM FULL ANALYSE VERBOSE big_win_match_factor;
 VACUUM FULL ANALYSE VERBOSE big_win_rank_factor;
 VACUUM FULL ANALYSE VERBOSE h2h_rank_factor;
 VACUUM FULL ANALYSE VERBOSE records_goat_points;
+VACUUM FULL ANALYSE VERBOSE surface_records_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_season_goat_points;
 VACUUM FULL ANALYSE VERBOSE greatest_rivalries_goat_points;
 
@@ -57,6 +58,7 @@ VACUUM FULL ANALYSE VERBOSE player_tournament_event_result;
 VACUUM FULL ANALYSE VERBOSE player_titles;
 VACUUM FULL ANALYSE VERBOSE player_season_goat_points;
 VACUUM FULL ANALYSE VERBOSE player_goat_points;
+VACUUM FULL ANALYSE VERBOSE player_surface_goat_points;
 
 VACUUM FULL ANALYSE VERBOSE player_season_performance;
 VACUUM FULL ANALYSE VERBOSE player_tournament_performance;

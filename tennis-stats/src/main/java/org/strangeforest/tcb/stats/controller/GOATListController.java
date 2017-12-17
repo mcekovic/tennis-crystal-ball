@@ -9,6 +9,7 @@ import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
 
@@ -37,6 +38,7 @@ public class GOATListController extends PageController {
 
 	@GetMapping("/goatList")
 	public ModelAndView goatList(
+		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "oldLegends", defaultValue = T) boolean oldLegends,
 		@RequestParam(name = "extrapolate", defaultValue = F) boolean extrapolate,
 		@RequestParam(name = "tournamentFactor", defaultValue = "1") int tournamentFactor,
@@ -65,6 +67,8 @@ public class GOATListController extends PageController {
 		);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("config", config);
 		modelMap.addAttribute("factors", FACTOR_MAP);
 		modelMap.addAttribute("levels", TOURNAMENT_LEVELS);
@@ -75,7 +79,8 @@ public class GOATListController extends PageController {
 
 	@GetMapping("/goatLegend")
 	public ModelAndView goatLegend(
-		@RequestParam(name = "forSeason", required = false) boolean forSeason,
+		@RequestParam(name = "forSurface", defaultValue = F) boolean forSurface,
+		@RequestParam(name = "forSeason", defaultValue = F) boolean forSeason,
 		@RequestParam(name = "tournamentFactor", defaultValue = "1") int tournamentFactor,
 		@RequestParam(name = "rankingFactor", defaultValue = "1") int rankingFactor,
 		@RequestParam(name = "achievementsFactor", defaultValue = "1") int achievementsFactor,
@@ -102,6 +107,7 @@ public class GOATListController extends PageController {
 		);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("forSurface", forSurface);
 		modelMap.addAttribute("forSeason", forSeason);
 		modelMap.addAttribute("config", config);
 		// Tournament
@@ -127,15 +133,19 @@ public class GOATListController extends PageController {
 		modelMap.addAttribute("bigWinRankFactors", goatLegendService.getBigWinRankFactors());
 		modelMap.addAttribute("h2hRankFactors", goatLegendService.getH2hRankFactors());
 		modelMap.addAttribute("bestSeasonGOATPoints", applyRankFactor(goatLegendService.getBestSeasonGOATPoints(), config.getBestSeasonTotalFactor()));
-		modelMap.addAttribute("greatestRivalriesGOATPoints", applyRankFactor(goatLegendService.getGreatestRivalriesGOATPoints(), config.getGreatestRivalriesTotalFactor()));
+		double greatestRivalriesTotalFactor = config.getGreatestRivalriesTotalFactor();
+		if (forSurface)
+			greatestRivalriesTotalFactor /= 2.0;
+		modelMap.addAttribute("greatestRivalriesGOATPoints", applyRankFactor(goatLegendService.getGreatestRivalriesGOATPoints(), greatestRivalriesTotalFactor));
 		return new ModelAndView("goatLegend", modelMap);
 	}
 
 	@GetMapping("/recordsGOATPointsLegend")
 	public ModelAndView recordsGOATPointsLegend(
+		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "factor", defaultValue = "1") int factor
 	) {
-		return new ModelAndView("recordsGOATPointsLegend", "recordsGOATPoints", applyRecordsFactor(goatLegendService.getRecordsGOATPoints(), factor));
+		return new ModelAndView("recordsGOATPointsLegend", "recordsGOATPoints", applyRecordsFactor(goatLegendService.getRecordsGOATPoints(surface), factor));
 	}
 
 	@GetMapping("/performanceGOATPointsLegend")
@@ -162,6 +172,13 @@ public class GOATListController extends PageController {
 
 	private static List<RankGOATPoints> applyRankFactor(List<RankGOATPoints> rankPoints, int factor) {
 		if (factor <= 1)
+			return rankPoints;
+		else
+			return rankPoints.stream().map(p -> p.applyFactor(factor)).collect(toList());
+	}
+
+	private static List<RankGOATPoints> applyRankFactor(List<RankGOATPoints> rankPoints, double factor) {
+		if (factor == 0.0 || factor == 1.0)
 			return rankPoints;
 		else
 			return rankPoints.stream().map(p -> p.applyFactor(factor)).collect(toList());

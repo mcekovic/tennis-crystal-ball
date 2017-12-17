@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.records.*;
 
 import static java.lang.String.*;
@@ -41,7 +42,7 @@ public class GOATLegendService {
 
 	private static final String RECORDS_GOAT_POINTS = //language=SQL
 		"SELECT record_id, string_agg(goat_points::TEXT, ', ' ORDER BY rank) AS goat_points\n" +
-		"FROM records_goat_points GROUP BY record_id";
+		"FROM %1$srecords_goat_points GROUP BY record_id";
 
 	private static final String PERF_STAT_GOAT_POINTS_QUERY = //language=SQL
 		"SELECT category_id, name AS category, string_agg(goat_points::TEXT, ', ' ORDER BY rank) AS goat_points\n" +
@@ -156,10 +157,15 @@ public class GOATLegendService {
 	}
 
 	@Cacheable(value = "Global", key = "'RecordsGOATPoints'")
-	public Map<String, Map<Record, String>> getRecordsGOATPoints() {
+	public Map<String, Map<Record, String>> getRecordsGOATPoints(String surface) {
+		Surface aSurface = Surface.safeDecode(surface);
 		Map<String, String> goatPoints = new HashMap<>();
-		jdbcTemplate.query(RECORDS_GOAT_POINTS, rs -> {
-			goatPoints.put(rs.getString("record_id"), rs.getString("goat_points"));
+		jdbcTemplate.query(format(RECORDS_GOAT_POINTS, aSurface == null ? "" : "surface_"), rs -> {
+			String recordId = rs.getString("record_id");
+			if (aSurface != null)
+				recordId = recordId.replace("$", aSurface.getText());
+			String goatPointsCSV = rs.getString("goat_points");
+			goatPoints.put(recordId, goatPointsCSV);
 		});
 		Map<String, Map<Record, String>> recordGOATPoints = new LinkedHashMap<>();
 		for (RecordCategory category : Records.getRecordCategories()) {

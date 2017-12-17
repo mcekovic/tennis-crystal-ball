@@ -467,6 +467,16 @@ CREATE TABLE records_goat_points (
 );
 
 
+-- surface_records_goat_points
+
+CREATE TABLE surface_records_goat_points (
+	record_id TEXT NOT NULL,
+	rank INTEGER NOT NULL,
+	goat_points INTEGER NOT NULL,
+	PRIMARY KEY (record_id, rank)
+);
+
+
 -- best_season_goat_points
 
 CREATE TABLE best_season_goat_points (
@@ -520,14 +530,6 @@ CREATE TABLE statistics_goat_points (
 	rank INTEGER NOT NULL,
 	goat_points INTEGER NOT NULL,
 	PRIMARY KEY (category_id, rank)
-);
-
-
--- surface_goat_points
-
-CREATE TABLE surface_goat_points (
-	surface surface NOT NULL PRIMARY KEY,
-	goat_points_weight REAL NOT NULL
 );
 
 

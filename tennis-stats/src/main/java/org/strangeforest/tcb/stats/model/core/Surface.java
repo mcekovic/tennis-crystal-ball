@@ -27,6 +27,10 @@ public enum Surface implements CodedEnum {
 		return text;
 	}
 
+	public String getLowerCaseText() {
+		return text.toLowerCase();
+	}
+
 	public static Surface decode(String code) {
 		return CodedEnum.decode(Surface.class, code);
 	}

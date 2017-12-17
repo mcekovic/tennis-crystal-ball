@@ -385,6 +385,39 @@ VALUES
 ('HighestTourFinalsOpponentEloRating', 1, 1),
 ('HighestMastersOpponentEloRating', 1, 1);
 
+DELETE FROM surface_records_goat_points;
+INSERT INTO surface_records_goat_points
+(record_id, rank, goat_points)
+VALUES
+-- Titles
+('$Titles', 1, 2),
+('$Titles', 2, 1),
+('$GrandSlamTitles', 1, 4),
+('$GrandSlamTitles', 2, 2),
+('$GrandSlamTitles', 3, 1),
+('$MastersTitles', 1, 2),
+('$MastersTitles', 2, 1),
+('$BigTitles', 1, 2),
+('$BigTitles', 2, 1),
+('Season$Titles', 1, 1),
+-- Finals
+('$GrandSlamFinals', 1, 1),
+-- Title Streaks
+('$TitleStreak', 1, 1),
+-- Youngest/Oldest Champion
+('Youngest$Champion', 1, 1),
+('Oldest$Champion', 1, 1),
+-- Winning Streak
+('$WinningStreak', 1, 1),
+-- Winning Pct
+('$WinningPct', 1, 2),
+('$WinningPct', 2, 1),
+('Season$WinningPct', 1, 1),
+-- Titles Won W/O Losing Set
+('$TitlesWonWOLosingSet', 1, 1),
+-- Mean Opponent Elo Rating
+('Highest$OpponentEloRating', 1, 1);
+
 DELETE FROM best_season_goat_points;
 INSERT INTO best_season_goat_points
 (season_rank, goat_points)
@@ -546,14 +579,5 @@ VALUES
 ('totalGamesWonPct', 2, 1),
 ('setsWonPct', 1, 2),
 ('setsWonPct', 2, 1);
-
-DELETE FROM surface_goat_points;
-INSERT INTO surface_goat_points
-(surface, goat_points_weight)
-VALUES
-('H', 0.40),
-('C', 0.35),
-('G', 0.10),
-('P', 0.15);
 
 COMMIT;

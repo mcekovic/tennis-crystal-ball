@@ -4,7 +4,23 @@
 	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for the die-hard tennis fans</subtitle>
 	<link href="http://www.ultimatetennisstatistics.com/feed.atom" rel="self"/>
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
-	<updated>2017-10-26T12:00:00Z</updated>
+	<updated>2017-12-18T12:00:00Z</updated>
+	<entry>
+		<title>Personalized and by Surface GOAT Lists!</title>
+		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/goatList"/>
+		<id>urn:uuid:4a4233ac-e37b-11e7-80c1-9a214cf093ae</id>
+		<updated>2017-12-18T12:00:00Z</updated>
+		<summary>Personalized GOAT list with configurable weights for GOAT Points formula and permalink to save your 'GOAT' List and share it (overall and by surface)</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Personalized GOAT list with configurable weights for GOAT Points formula and permalink to save your 'GOAT' List and share it (overall and by surface)</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 	<entry>
 		<title>Alternative Tour Finals</title>
 		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/tournaments?level=L"/>

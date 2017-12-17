@@ -27,7 +27,39 @@ public class GOATListServiceIT {
 
 	@Test
 	public void goatList() {
-		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, new PlayerListFilter(""), GOATListConfig.DEFAULT, "goat_points", 20, 1);
+		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, null, new PlayerListFilter(""), GOATListConfig.DEFAULT, "goat_points", 20, 1);
+
+		assertThat(goatList.getRowCount()).isEqualTo(20);
+		assertThat(goatList.getTotal()).isGreaterThanOrEqualTo(500);
+	}
+
+	@Test
+	public void hardGoatList() {
+		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, "H", new PlayerListFilter(""), GOATListConfig.DEFAULT, "goat_points", 20, 1);
+
+		assertThat(goatList.getRowCount()).isEqualTo(20);
+		assertThat(goatList.getTotal()).isGreaterThanOrEqualTo(500);
+	}
+
+	@Test
+	public void clayGoatList() {
+		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, "C", new PlayerListFilter(""), GOATListConfig.DEFAULT, "goat_points", 20, 1);
+
+		assertThat(goatList.getRowCount()).isEqualTo(20);
+		assertThat(goatList.getTotal()).isGreaterThanOrEqualTo(500);
+	}
+
+	@Test
+	public void grassGoatList() {
+		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, "G", new PlayerListFilter(""), GOATListConfig.DEFAULT, "goat_points", 20, 1);
+
+		assertThat(goatList.getRowCount()).isEqualTo(20);
+		assertThat(goatList.getTotal()).isGreaterThanOrEqualTo(500);
+	}
+
+	@Test
+	public void carpetGoatList() {
+		BootgridTable<GOATListRow> goatList = goatListService.getGOATListTable(1000, "P", new PlayerListFilter(""), GOATListConfig.DEFAULT, "goat_points", 20, 1);
 
 		assertThat(goatList.getRowCount()).isEqualTo(20);
 		assertThat(goatList.getTotal()).isGreaterThanOrEqualTo(500);

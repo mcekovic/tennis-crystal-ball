@@ -50,7 +50,9 @@
 					"mastersFinals": playerTournamentsFormatter("mastersFinals", "&level=M&result=F", "Masters finals"),
 					"olympicsTitles": playerTournamentsFormatter("olympicsTitles", "&level=O&result=W", "Olympics titles"),
 					"titles": playerTournamentsFormatter("titles", "&result=W", "titles"),
-					"wonPct": wonLostFormatter,
+					"wonPct": function(column, row) {
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=performance&season=" + row.season + "' title='" + row.wonLost + "'>" + row.wonPct + "</a>";
+					},
 					"yearEndRank": function(column, row) {
 						return row.yearEndRank != null ? ("<a href='/rankingsTable?season=" + row.season + "' title='Show " + row.season + " year-end rankings'>" + row.yearEndRank + "</a>") : "";
 					},

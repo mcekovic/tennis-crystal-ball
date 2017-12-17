@@ -21,13 +21,16 @@ DROP VIEW player_weeks_at_no1_goat_points_v;
 DROP VIEW player_season_weeks_at_no1_goat_points_v;
 DROP VIEW player_season_big_wins_goat_points_v;
 DROP VIEW player_surface_big_wins_goat_points_v;
+DROP VIEW player_surface_h2h_goat_points_v;
 DROP VIEW player_career_grand_slam_goat_points_v;
 DROP VIEW player_season_grand_slam_goat_points_v;
 DROP VIEW player_grand_slam_holder_goat_points_v;
 DROP VIEW player_consecutive_grand_slam_on_same_event_goat_points_v;
 DROP VIEW player_grand_slam_on_same_event_goat_points_v;
 DROP VIEW player_greatest_rivalries_goat_points_v;
+DROP VIEW player_surface_greatest_rivalries_goat_points_v;
 DROP VIEW player_records_goat_points_v;
+DROP VIEW player_surface_records_goat_points_v;
 DROP VIEW player_performance_goat_points_v;
 DROP VIEW player_statistics_goat_points_v;
 
