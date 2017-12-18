@@ -55,7 +55,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 			"BestPlayerThatNeverWon" + domain.id + "Title", "Best Player That Never Won" + domainTitle,
 			/* language=SQL */
 			"SELECT player_id, goat_points AS value FROM player\n" +
-			"INNER JOIN player_titles USING (player_id) INNER JOIN player_goat_points USING (player_id)\n" +
+			"LEFT JOIN player_titles USING (player_id) INNER JOIN player_goat_points USING (player_id)\n" +
 			"WHERE goat_points > 0 AND coalesce(" + titleColumn + ", 0) = 0" + condition,
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, PLAYER_GOAT_POINTS_URL_FORMATTER,
