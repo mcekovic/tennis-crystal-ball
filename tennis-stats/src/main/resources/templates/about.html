@@ -55,7 +55,7 @@
 				It tries to provide all kind of tennis statistics in the <a href="https://en.wikipedia.org/wiki/History_of_tennis#Open_Era" target="_blank">Open Era</a> male tennis with simple yet effective web GUI.
 				If you have any suggestions for additional features or tweaks to the current features, please e-mail me at <a href="mailto:mcekovic@gmail.com" target="_blank">mcekovic@gmail.com</a> or log a <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank">GitHub issue</a>.
 			</p>
-			<h4 class="text-nowrap"><span class="glyphicon glyphicon-star" style="vertical-align: text-top"></span> Features</h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-star" style="vertical-align: text-top"></span> Features</h4>
 			<ul>
 				<li><a href="/goatList">'GOAT' List <span class="glyphicon glyphicon-flag"></span></a> - Best players of Open Era ranked by 'GOAT' points with customizable weights (overall and by surface)</li>
 				<li>Player Profile - Player information, season summary, tournament results, matches, timeline, rivalries, ranking, performance indicators and statistics with charts, 'GOAT' points breakdown and records</li>
@@ -78,7 +78,7 @@
 				<li><a href="/records">Records</a><sup class="cool-feature">&nbsp;Cool!</sup> - Various match, tournament result and ranking records, famous and infamous (best player that never...)</li>
 				<li><a href="/liveScores">Live Scores</a> <img src="/images/active.png" style="vertical-align: top" title="Live" width="12" height="12"/> - Live Scores integration</li>
 			</ul>
-			<h4 class="text-nowrap"><span class="glyphicon glyphicon-list-alt" style="vertical-align: text-top"></span> Tennis Data</h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-list-alt" style="vertical-align: text-top"></span> Tennis Data</h4>
 			<p>
 				Data on which the statistics is based is from open source tennis data <a href="https://github.com/JeffSackmann/tennis_atp" target="_blank">repository</a> by <a href="https://github.com/JeffSackmann" target="_blank">Jeff Sackmann</a>, with some corrections and additions where data is wrong or lacking.
 				Even with these corrections and additions, there are still small errors and data missing.
@@ -104,7 +104,7 @@
 				</ul>
 				Please provide feedback on data as well at <a href="mailto:mcekovic@gmail.com" target="_blank">mcekovic@gmail.com</a> or <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank">GitHub</a>.
 			</p>
-			<h4 class="text-nowrap"><span class="glyphicon glyphicon-flag" style="vertical-align: text-top"></span> 'GOAT' Formula</h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-flag" style="vertical-align: text-top"></span> 'GOAT' Formula</h4>
 			<p>
 				A lot of content on this site is based on 'GOAT' formula, which is a formula to quantify tennis player achievements throughout their careers and to compare players from different eras.
 				'GOAT' formula is based on assigning 'GOAT' points to players for tournament results, ATP and Elo rankings and various important achievements.
@@ -112,9 +112,7 @@
 			</p>
 			<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span></button>
 			<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
-			<br/>
-			<br/>
-			<h4 class="text-nowrap"><span class="glyphicon glyphicon-book" style="vertical-align: text-top"></span> Glossary</h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-book" style="vertical-align: text-top"></span> Glossary</h4>
 			<ul>
 				<li><strong>'GOAT' Points <span class="glyphicon glyphicon-flag"></span></strong> - The points assigned to players for various tennis achievements, like winning or going deep into tournaments, ATP and Elo rankings, Grand Slam (career and calendar year), big wins, head-to-head ratios, title, streak, performance and statistics records.</li>
 				<li><strong>Elo Rating System</strong> - The <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> is a method for calculating the relative skill levels of players in competitor-versus-competitor games such as chess or tennis. It is named after its creator Arpad Elo, a Hungarian-born American physics professor.</li>
@@ -128,6 +126,12 @@
 				<li><strong>Participation Weights</strong> - [[#{event.participation.weights}]]</li>
 				<li><strong>Rivalry Score</strong> - [[#{rivalry.score.title}]]</li>
 			</ul>
+			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-file-text-o" style="vertical-align: text-top"></i> License</h4>
+			<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width: 0; margin-bottom: 5px" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png"/></a>
+			<br/>
+			This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+			<br/>
+			In short: Attribution is required. Non-commercial use only.
 		</div>
 		<div class="col-lg-2 col-md-3">
 			<th:block th:include="fragments/goatTopN :: goatTopN"/>
@@ -135,6 +139,7 @@
 			<th:block th:include="fragments/promotion :: facebook"/>
 			<th:block th:include="fragments/promotion :: twitter"/>
 			<th:block th:include="fragments/promotion :: paypal"/>
+			<th:block th:include="fragments/promotion :: license"/>
 		</div>
 	</div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
