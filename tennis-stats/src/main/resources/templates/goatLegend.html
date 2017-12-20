@@ -35,7 +35,8 @@
 			var $button = $("#" + section + "GOATPoints");
 			if (!$button.hasClass("loaded")) {
 				event.preventDefault();
-				var url = "/" + section + "GOATPointsLegend?surface=" + $("#surface").val();
+				var surface = $("#surface").val();
+				var url = "/" + section + "GOATPointsLegend?surface=" + (surface ? surface : "");
 				if (factor || factor == 0) url += "&factor=" + factor;
 				$.get(url, function(data) {
 					$button.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
