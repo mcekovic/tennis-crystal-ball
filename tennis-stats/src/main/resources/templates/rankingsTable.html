@@ -139,7 +139,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 id="rankingsTable-title" class="grid-title">Rankings Table</h3>
+	<h3 id="rankingsTable-title" class="grid-title"><i class="fa fa-list-ol"></i> Rankings Table</h3>
 	<div id="rankTypeDiv" class="btn-group margin-right">
 		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
 			<option value="POINTS" th:selected="${rankType != null && rankType.name() == 'POINTS'}">ATP Ranking</option>
@@ -157,11 +157,11 @@
 	</div>
 	<div id="dateDiv" class="btn-group margin-right">
 		<button id="prevDate" type="button" class="pull-left btn btn-default" onclick="prevRankingDate()" data-toggle="tooltip" data-placement="top" title="Previous date">
-			<span class="glyphicon glyphicon-backward"></span>
+			<i class="fa fa-backward"></i>
 		</button>
 		<select id="date" class="form-control pull-left" style="width: 125px" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select date"></select>
 		<button id="nextDate" type="button" class="pull-right btn btn-default" onclick="nextRankingDate()" data-toggle="tooltip" data-placement="top" title="Next date">
-			<span class="glyphicon glyphicon-forward"></span>
+			<i class="fa fa-forward"></i>
 		</button>
 	</div>
 	<table id="rankingsTable" class="table table-condensed table-hover table-striped">

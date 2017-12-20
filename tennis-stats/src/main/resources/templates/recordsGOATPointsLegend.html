@@ -2,7 +2,7 @@
 <!--/*@thymesVar id="recordsGOATPoints" type="java.util.Map<String, java.util.Map<Record, String>>"*/-->
 <div th:each="categoryPoints : ${recordsGOATPoints}">
 	<strong th:text="${categoryPoints.key}">Titles</strong>
-	<button class="btn btn-default btn-xs pull-right" onclick="$('#recordsGOATPoints').click()" title="Close"><i class="fa fa-close"></i></button>
+	<button class="btn btn-default btn-xs pull-right" onclick="$('#recordsGOATPoints').click()" title="Close"><i class="fa fa-close fa-b"></i></button>
 	<table class="table table-condensed table-hover table-striped text-nowrap">
 		<thead>
 		<tr>

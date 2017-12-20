@@ -42,11 +42,11 @@
 				<th:block th:each="subGroup : ${group.subGroups}" th:if="${hasPointStats || !subGroup.needsStats}" th:with="time=${subGroup.name == 'Time'}">
 				<tr>
 					<th:block th:if="${compare}">
-						<th class="pct-data text-right" th:title="|${winnerRelativeTo} statistics|"><span th:unless="${time}" class="glyphicon glyphicon-pushpin"></span></th>
-						<th class="pct-data text-right" title="Statistics difference"><span th:unless="${time}" class="glyphicon glyphicon-sort"></span></th>
-						<th class="pct-data text-right" title="Match statistics"><span th:unless="${time}" class="glyphicon glyphicon-scale"></span></th>
+						<th class="pct-data text-right" th:title="|${winnerRelativeTo} statistics|"><i th:unless="${time}" class="fa fa-thumb-tack"></i></th>
+						<th class="pct-data text-right" title="Statistics difference"><i th:unless="${time}" class="fa fa-exchange"></i></th>
+						<th class="pct-data text-right" title="Match statistics"><i th:unless="${time}" class="fa fa-percent"></i></th>
 					</th:block>
-					<th th:unless="${compare}" class="pct-data text-right"><span th:unless="${time}" class="glyphicon glyphicon-scale"></span></th>
+					<th th:unless="${compare}" class="pct-data text-right"><i th:unless="${time}" class="fa fa-percent"></i></th>
 					<th class="raw-data text-right"><i class="fa fa-hashtag"></i></th>
 					<th th:text="${subGroup.name}" class="text-center">Serve</th>
 					<th:block th:if="${compare}">
@@ -81,7 +81,7 @@
 			&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareMatchStats(${matchId}, ${compare})|" title="Compare statistics"><span class="glyphicon glyphicon-object-align-left"></span>&nbsp;&nbsp;Compare</button>
 		</div>
 		<div class="col-md-4">
-			<button class="btn btn-default btn-xs pull-right" th:onclick="|$('#matchStats-${matchId}').click()|"><i class="fa fa-close"></i>&nbsp;&nbsp;Close</button>
+			<button class="btn btn-default btn-xs pull-right" th:onclick="|$('#matchStats-${matchId}').click()|"><i class="fa fa-close fa-b"></i>&nbsp;&nbsp;Close</button>
 		</div>
 	</div>
 	<style scoped="scoped">

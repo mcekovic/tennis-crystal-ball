@@ -39,7 +39,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>[[${level.text}]] Timeline</h3>
+	<h3><i class="fa fa-history" th:attrappend="class=${level.code == 'G' ? ' text-danger' : (level.code == 'F' ? ' text-warning' : (level.code == 'M' ? ' text-info' : (level.code == 'O' ? ' text-success' : _)))}"></i> [[${level.text}]] Timeline</h3>
 	<th:block th:with="minDevice=${level.code == 'G' ? 'md' : (level.code == 'M' ? 'lg' : _)}" th:include="fragments/deviceDetector :: largeDeviceRequired(${minDevice})"/>
 	<table id="timelineTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<th:block th:each="season : ${timeline.seasons}">

@@ -19,7 +19,7 @@
 </head>
 <body th:with="rankTypeName=${rankType.name()}" class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>Top Rankings Timeline</h3>
+	<h3><i class="fa fa-history"></i> Top Rankings Timeline</h3>
 	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('sm')"/>
 	<row>
 		<div class="col-md-4 input-group">

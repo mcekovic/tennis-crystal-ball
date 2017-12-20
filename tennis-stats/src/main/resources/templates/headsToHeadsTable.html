@@ -52,7 +52,7 @@
 			<th th:with="player=${hRivalry.player1}">
 				<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 				<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" title="Show profile">Roger Federer</a>
-				<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12"/>
+				<img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12" style="vertical-align: 0"/>
 			</th>
 			<th style="text-align: center">
 				<span class="raw-data" th:text="${hRivalry.wonLost.WLT}">11 - 9 / 20</span>

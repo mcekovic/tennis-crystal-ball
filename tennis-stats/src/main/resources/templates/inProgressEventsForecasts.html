@@ -33,7 +33,7 @@
 						return formatFavorite(column, row.favorite2);
 					},
 					"forecast": function(column, row) {
-						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-primary label-btn' title='Show full forecast'><span class='glyphicon glyphicon-eye-open'></span>&nbsp;&nbsp;Forecast</a>";
+						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-primary label-btn' title='Show full forecast'><i class='fa fa-eye'></i>&nbsp;&nbsp;Forecast</a>";
 					}
 				},
 				labels: {
@@ -59,7 +59,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 id="inProgressEventsTable-title" class="grid-title">Tournament Event Forecasts</h3>
+	<h3 id="inProgressEventsTable-title" class="grid-title"><i class="fa fa-eye"></i> Tournament Event Forecasts</h3>
 	<table id="inProgressEventsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>

@@ -13,7 +13,7 @@
 		<td>
 			<img th:src="@{/images/flags/{code}.png(code=${playerRecord.country.code})}" src="/images/flags/ch.png'" th:title="${playerRecord.country.id}" title="SUI" width="24" height="20"/>
 			<a th:href="@{/playerProfile(playerId=${playerRecord.playerId})}" th:text="${playerRecord.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
-			<img th:if="${playerRecord.active}" src="/images/active.png" title="Active" width="12" height="12"/>
+			<img th:if="${playerRecord.active}" src="/images/active.png" title="Active" width="12" height="12" style="vertical-align: 0"/>
 		</td>
 		<td class="text-right" th:with="detailUrl=${playerRecord.detailUrl}">
 			<th:block th:unless="${detailUrl}" th:text="${playerRecord.detail.value}"/>

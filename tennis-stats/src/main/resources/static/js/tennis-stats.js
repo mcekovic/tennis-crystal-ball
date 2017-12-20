@@ -242,7 +242,7 @@ function formatCountry(row) {
 // Player Formatter
 function playerFormatter(column, row) {
 	return "<a href='/playerProfile?playerId=" + row.playerId + "' title='Show " + row.name + "&apos;s profile'>" + row.name + "</a>" +
-		(row.active ? " <img src='/images/active.png' title='Active' width='12' height='12'/>" : "");
+		(row.active ? " <img src='/images/active.png' title='Active' width='12' height='12' style='vertical-align: 0'/>" : "");
 }
 
 function playerCountryFormatter(column, row) {

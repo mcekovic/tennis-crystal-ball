@@ -41,7 +41,7 @@
 						var active = row.player1.active && row.player2.active;
 						row.player1.active = false;
 						row.player2.active = false;
-						return playerCountryFormatter(column, row.player1) + " - " + playerCountryFormatter(column, row.player2) + (active ? " <img src='/images/active.png' title='Active' width='12' height='12'/>" : "");
+						return playerCountryFormatter(column, row.player1) + " - " + playerCountryFormatter(column, row.player2) + (active ? " <img src='/images/active.png' title='Active' width='12' height='12' style='vertical-align: 0'/>" : "");
 					},
 					"matches": function(column, row) {
 						var params = "&tab=matches" + rivalryFilterParams();
@@ -153,7 +153,7 @@
 	<header th:include="fragments/header :: title"></header>
 	<div class="row">
 		<div class="col-md-8">
-			<h3 class="text-nowrap" style="display: inline">Greatest Rivalries</h3>
+			<h3 class="text-nowrap" style="display: inline"><i class="fa fa-handshake-o"></i> Greatest Rivalries</h3>
 		</div>
 		<div class="col-md-4">
 			<div class="input-group">

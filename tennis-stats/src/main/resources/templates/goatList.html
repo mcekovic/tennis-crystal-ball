@@ -252,7 +252,7 @@
 			window.location.href = goatListUrl();
 		}
 		function goatListTweet() {
-			window.open("https://twitter.com/intent/tweet?text=My+GOAT+List&via=UltmTennisStats&url=" + encodeURIComponent("http://www.ultimatetennisstatistics.com" + goatListUrl()), "Tweat this GOAT List", "width=600, height=600, left=" + (screen.width-600)/2 + ", top=" + (screen.height-600)/2);
+			window.open("https://twitter.com/intent/tweet?text=My+GOAT+List&via=UltmTennisStats&url=" + encodeURIComponent("http://www.ultimatetennisstatistics.com" + goatListUrl()), "Tweet this GOAT List", "width=600, height=600, left=" + (screen.width-600)/2 + ", top=" + (screen.height-600)/2);
 			return false;
 		}
 		function addParam(param, def) {
@@ -293,7 +293,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 id="goatListTable-title" class="grid-title text-nowrap">Open Era GOAT List <i class="fa fa-flag"></i></h3>
+	<h3 id="goatListTable-title" class="grid-title text-nowrap"><i class="fa fa-flag"></i> Open Era GOAT List</h3>
 	<div id="surfaceDiv" class="btn-group margin-right">
 		<select id="surface" class="form-control" onchange="surfaceChanged(); reloadGOATListTableAndLegend()" data-toggle="tooltip" data-placement="top" title="Select overall or GOAT List by surface">
 			<option value="">Overall</option>
@@ -370,7 +370,7 @@
 			</div>
 			<div class="col-md-1 col-sm-2 col-xs-3">
 				<button type="button" class="btn btn-sm btn-info" onclick="goatListTweet()" data-toggle="tooltip" data-placement="auto" title="Tweet this GOAT List">
-					<i class="fa fa-twitter fa-b"></i>&nbsp;&nbsp;Tweat
+					<i class="fa fa-twitter fa-b"></i>&nbsp;&nbsp;Tweet
 				</button>
 			</div>
 		</div>

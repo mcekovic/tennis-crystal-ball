@@ -65,7 +65,7 @@
 						var topPlayers = row.topPlayers;
 						if (topPlayers.length == 0) return "";
 						var topPlayer = topPlayers[0];
-						return "<a href='/playerProfile?playerId=" + topPlayer.playerId + "&tab=tournaments&tournamentId=" + row.id + "&result=W' title='Show titles'>" + topPlayer.rank + " <span class='glyphicon glyphicon-glass'></span></a> " + playerCountryFormatter(column, topPlayer);
+						return "<a href='/playerProfile?playerId=" + topPlayer.playerId + "&tab=tournaments&tournamentId=" + row.id + "&result=W' title='Show titles'>" + topPlayer.rank + " <i class='fa fa-trophy fa-b'></i></a> " + playerCountryFormatter(column, topPlayer);
 					}
 				},
 				labels: {
@@ -103,7 +103,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 id="tournamentsTable-title" class="grid-title text-nowrap">Tournaments</h3>
+	<h3 id="tournamentsTable-title" class="grid-title text-nowrap"><i class="fa fa-calendar-o"></i> Tournaments</h3>
 	<div id="levelDiv" class="btn-group margin-right">
 		<select id="level" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>

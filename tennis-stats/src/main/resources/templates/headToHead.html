@@ -78,13 +78,13 @@
 	<div class="row">
 		<div class="col-md-6">
 			<div class="input-group">
-				<label for="player1" class="input-group-addon">Player 1:</label>
+				<label for="player1" class="input-group-addon"><i class="fa fa-user"></i> Player 1:</label>
 				<input id="player1" type="text" class="ui-widget search-field form-control" size="30" th:value="${player1 != null ? player1.name : _}" th:data-playerId="${player1 != null ? player1.id : _}" placeholder="Search Player 1"/>
 			</div>
 		</div>
 		<div class="col-md-6">
 			<div class="input-group">
-				<label for="player2" class="input-group-addon">Player 2:</label>
+				<label for="player2" class="input-group-addon"><i class="fa fa-user"></i> Player 2:</label>
 				<input id="player2" type="text" class="ui-widget search-field form-control" size="30" th:value="${player2 != null ? player2.name : _}" th:data-playerId="${player2 != null ? player2.id : _}" placeholder="Search Player 2"/>
 			</div>
 		</div>
