@@ -39,7 +39,7 @@
 						return formatFavorite(column, row.favorite2);
 					},
 					"forecast": function(column, row) {
-						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-primary label-btn' title='Show full forecast'><span class='glyphicon glyphicon-eye-open'></span>&nbsp;&nbsp;Forecast</a>";
+						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-primary label-btn' title='Show full forecast'><i class='fa fa-eye'></i>&nbsp;&nbsp;Forecast</a>";
 					}
 				},
 				labels: {
@@ -102,10 +102,10 @@
 			</div>
 			<p>
 				Welcome to <span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span>, the ultimate tennis statistics destination for the die-hard tennis fans!<br/>
-				For more information please click <a href="/about">here <span class="glyphicon glyphicon-question-sign"></span></a>.
+				For more information please click <a href="/about">here <i class="fa fa-question-circle"></i></a>.
 			</p>
 			<th:block th:if="${hasInProgressEvents}">
-			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-eye-open" style="vertical-align: text-top"></span> Latest Forecasts</h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-eye"></i> Latest Forecasts</h4>
 			<table id="inProgressEventsTable" class="table table-condensed table-hover table-striped" style="margin-bottom: 0">
 				<thead>
 				<tr>
@@ -122,7 +122,7 @@
 				<a href="/inProgressEventsForecasts" class="label label-default" title="Full forecasts details">All Forecasts</a>
 			</div>
 			</th:block>
-			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-calendar"></span> Latest Results</h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-calendar"></i> Latest Results</h4>
 			<table id="latestEvents" class="table table-condensed table-hover table-striped" style="margin-bottom: 0">
 				<thead>
 				<tr>
@@ -140,7 +140,7 @@
 				<a href="/tournamentEvents" class="label label-B" title="Show more tournament results">More Results</a>
 				<a th:href="@{/season(season=${currentSeason})}" class="label label-default" th:title="|Show season ${currentSeason} figures|">Season [(${currentSeason})]</a>
 			</div>
-			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-star-empty" style="vertical-align: text-top"></span> Latest New Features<sup class="new-feature">&nbsp;New!</sup></h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-star-o"></i> Latest New Features<sup class="new-feature">&nbsp;New!</sup></h4>
 			<ul>
 				<li><a href="/goatList">'GOAT' List by Surface</a> - 'GOAT' lists for each of the surfaces!</li>
 				<li><a href="/goatList">Make Your Own 'GOAT'</a> - Personalized 'GOAT' list with configurable weights for 'GOAT' Points formula and permalink to save your 'GOAT' List and share it!</li>
@@ -151,7 +151,7 @@
 				<li><a href="/inProgressEventsForecasts">Tournament Forecasts</a> enhancements - Improved match prediction accuracy, progressive <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank">Elo rating</a> calculations as tournament goes and Tournament Favorites on the glance!</li>
 				<li><a href="/tournaments">Tournaments</a> browser - Browse tournaments, see players with most titles, historical tournament levels and surfaces and average participation.</li>
 			</ul>
-			<h4 class="text-nowrap" style="margin-top: 25px"><span class="glyphicon glyphicon-bullhorn" style="vertical-align: text-top"></span> Tips<sup class="cool-feature">&nbsp;Cool!</sup></h4>
+			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-bullhorn"></i> Tips<sup class="cool-feature">&nbsp;Cool!</sup></h4>
 			<ul>
 				<li><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span> is a mobile-friendly web site, but to see it in its 'full glory', open it on the screen greater then 1440 pixels, in which case more data will show up and more columns with various details will be available in the data tables.</li>
 				<li>On most pages with filter, there is a search box

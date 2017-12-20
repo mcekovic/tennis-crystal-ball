@@ -42,7 +42,7 @@
 					<li><a href="#" th:onclick="'event.preventDefault(); loadRankingTopN(\'INDOOR_ELO_RATING\', ' + ${count} + ')'" title="Indoor Elo">In. Elo</a></li>
 				</ul>
 			</div>
-			<a th:href="@{/rankingsTable(rankType=${rankType})}" style="vertical-align: text-top" title="Full Rankings Table"><span class="glyphicon glyphicon-zoom-in" style="font-size: 16px"></span></a>
+			<a th:href="@{/rankingsTable(rankType=${rankType})}" style="vertical-align: text-top" title="Full Rankings Table"><i class="fa fa-search-plus"></i></a>
 		</h4>
 	</div>
 	<table class="table table-condensed table-hover table-striped small">

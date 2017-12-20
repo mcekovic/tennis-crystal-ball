@@ -9,6 +9,9 @@
 		display: none !important;
 	}
 }
+.fa-b {
+	font-size: 120%;
+}
 .component {
 	border: 1px solid #c0c0c0;
 	border-radius: 5px;
