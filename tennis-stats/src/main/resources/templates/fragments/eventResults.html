@@ -32,10 +32,10 @@
 		});
 		var $roundLeft = $("#roundLeft[(${id})]");
 		$roundLeft.prop("disabled", resultsTable.roundPos == 0);
-		$roundLeft.html("<span class='glyphicon glyphicon-chevron-left'></span>&nbsp;&nbsp;" + resultsTable.rounds[Math.max(0, resultsTable.roundPos - 1)]);
+		$roundLeft.html("<i class='fa fa-chevron-left'></i>&nbsp;&nbsp;" + resultsTable.rounds[Math.max(0, resultsTable.roundPos - 1)]);
 		var $roundRight = $("#roundRight[(${id})]");
 		$roundRight.prop("disabled", resultsTable.roundPos == resultsTable.maxRoundPos);
-		$roundRight.html("<span class='glyphicon glyphicon-chevron-right'></span>&nbsp;&nbsp;" + resultsTable.rounds[Math.min(resultsTable.maxRoundPos, resultsTable.roundPos + 1) + resultsTable.roundsToShow - 1]);
+		$roundRight.html("<i class='fa fa-chevron-right'></i>&nbsp;&nbsp;" + resultsTable.rounds[Math.min(resultsTable.maxRoundPos, resultsTable.roundPos + 1) + resultsTable.roundsToShow - 1]);
 	}
 	$(function() {
 		var device = detectDevice();

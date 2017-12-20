@@ -47,15 +47,15 @@
 						<th class="pct-data text-right" title="Match statistics"><span th:unless="${time}" class="glyphicon glyphicon-scale"></span></th>
 					</th:block>
 					<th th:unless="${compare}" class="pct-data text-right"><span th:unless="${time}" class="glyphicon glyphicon-scale"></span></th>
-					<th class="raw-data text-right"><span class="glyphicon glyphicon-equalizer"></span></th>
+					<th class="raw-data text-right"><i class="fa fa-hashtag"></i></th>
 					<th th:text="${subGroup.name}" class="text-center">Serve</th>
 					<th:block th:if="${compare}">
-						<th class="pct-data text-left" title="Match statistics"><span class="glyphicon glyphicon-scale"></span></th>
-						<th class="pct-data text-left" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
-						<th class="pct-data text-left" th:title="|${loserRelativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+						<th class="pct-data text-left" title="Match statistics"><i class="fa fa-percent"></i></th>
+						<th class="pct-data text-left" title="Statistics difference"><i class="fa fa-exchange"></i></th>
+						<th class="pct-data text-left" th:title="|${loserRelativeTo} statistics|"><i class="fa fa-thumb-tack"></i></th>
 					</th:block>
-					<th th:unless="${compare}" class="pct-data text-left"><span class="glyphicon glyphicon-scale"></span></th>
-					<th class="raw-data text-left"><span class="glyphicon glyphicon-equalizer"></span></th>
+					<th th:unless="${compare}" class="pct-data text-left"><i class="fa fa-percent"></i></th>
+					<th class="raw-data text-left"><i class="fa fa-hashtag"></i></th>
 				</tr>
 				<tr th:each="category : ${subGroup.categories}" th:if="${hasPointStats || !category.needsStats}">
 					<th th:if="${winnerCompareStats}" th:text="${!category.time && (winnerHasPointCompareStats || !category.needsStats) ? category.getStatFormatted(winnerCompareStats) : _}" class="pct-data text-right">10%</th>
@@ -76,12 +76,12 @@
 	<th:block th:unless="${matchStats}"><p>No statistics available</p></th:block>
 	<div class="row">
 		<div th:if="${matchStats}" class="col-md-8">
-			<button class="pct-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
-			<button class="raw-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
+			<button class="pct-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|" title="Show raw data"><i class="fa fa-hashtag"></i>&nbsp;&nbsp;Raw Data</button>
+			<button class="raw-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|" title="Show percentage data"><i class="fa fa-percent"></i>&nbsp;&nbsp;Pct. Data</button>
 			&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareMatchStats(${matchId}, ${compare})|" title="Compare statistics"><span class="glyphicon glyphicon-object-align-left"></span>&nbsp;&nbsp;Compare</button>
 		</div>
 		<div class="col-md-4">
-			<button class="btn btn-default btn-xs pull-right" th:onclick="|$('#matchStats-${matchId}').click()|"><span class="glyphicon glyphicon-remove"></span>&nbsp;&nbsp;Close</button>
+			<button class="btn btn-default btn-xs pull-right" th:onclick="|$('#matchStats-${matchId}').click()|"><i class="fa fa-close"></i>&nbsp;&nbsp;Close</button>
 		</div>
 	</div>
 	<style scoped="scoped">

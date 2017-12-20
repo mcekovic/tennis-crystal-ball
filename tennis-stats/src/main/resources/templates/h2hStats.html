@@ -182,13 +182,13 @@
 	</div>
 	<div class="col-md-2">
 		<button type="button" class="btn btn-default" onclick="clearStatsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<span class="glyphicon glyphicon-erase"></span>&nbsp;&nbsp;Clear
+			<i class="fa fa-eraser"></i>&nbsp;&nbsp;Clear
 		</button>
 	</div>
 	<div class="col-md-1">
 		<div class="pull-right" data-toggle="tooltip" data-placement="auto" title="Advanced filters">
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#statsAdvancedFilter">
-				<span class="glyphicon glyphicon-filter"></span>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+				<i class="fa fa-plus-square"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
 			</button>
 		</div>
 	</div>
@@ -262,19 +262,19 @@
 				<tr th:unless="${subGroupStat.first}"><td th:colspan="${compare ? 7 : 3}">&nbsp;</td></tr>
 				<tr>
 					<th:block th:if="${compare}">
-						<th th:if="${doCompareStats}" class="pct-data text-right" width="40%" th:title="|${relativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
-						<th th:if="${doCompareStats}" class="pct-data text-right" width="40px" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
-						<th class="pct-data text-right" width="40px" title="Selected matches statistics"><span class="glyphicon glyphicon-scale"></span></th>
+						<th th:if="${doCompareStats}" class="pct-data text-right" width="40%" th:title="|${relativeTo} statistics|"><i class="fa fa-thumb-tack"></i></th>
+						<th th:if="${doCompareStats}" class="pct-data text-right" width="40px" title="Statistics difference"><i class="fa fa-exchange"></i></th>
+						<th class="pct-data text-right" width="40px" title="Selected matches statistics"><i class="fa fa-percent"></i></th>
 					</th:block>
-					<th th:unless="${compare}" class="pct-data text-right" width="40%"><span class="glyphicon glyphicon-scale"></span></th>
-					<th class="raw-data text-right" width="40%"><span class="glyphicon glyphicon-equalizer"></span></th>
+					<th th:unless="${compare}" class="pct-data text-right" width="40%"><i class="fa fa-percent"></i></th>
+					<th class="raw-data text-right" width="40%"><i class="fa fa-hashtag"></i></th>
 					<th class="text-center" width="20%" th:text="${subGroup.name}">Serve</th>
-					<th class="raw-data text-left" width="40%"><span class="glyphicon glyphicon-equalizer"></span></th>
-					<th th:unless="${compare}" class="pct-data text-left" width="40%"><span class="glyphicon glyphicon-scale"></span></th>
+					<th class="raw-data text-left" width="40%"><i class="fa fa-hashtag"></i></th>
+					<th th:unless="${compare}" class="pct-data text-left" width="40%"><i class="fa fa-percent"></i></th>
 					<th:block th:if="${compare}">
-						<th class="pct-data text-left" width="40px" title="Selected matches statistics"><span class="glyphicon glyphicon-scale"></span></th>
-						<th th:if="${doCompareStats}" class="pct-data text-left" width="40px" title="Statistics difference"><span class="glyphicon glyphicon-sort"></span></th>
-						<th th:if="${doCompareStats}" class="pct-data text-left" width="40%" th:title="|${relativeTo} statistics|"><span class="glyphicon glyphicon-pushpin"></span></th>
+						<th class="pct-data text-left" width="40px" title="Selected matches statistics"><i class="fa fa-percent"></i></th>
+						<th th:if="${doCompareStats}" class="pct-data text-left" width="40px" title="Statistics difference"><i class="fa fa-exchange"></i></th>
+						<th th:if="${doCompareStats}" class="pct-data text-left" width="40%" th:title="|${relativeTo} statistics|"><i class="fa fa-thumb-tack"></i></th>
 					</th:block>
 				</tr>
 				<tr th:each="category : ${subGroup.categories}" th:if="${hasPointStats || !category.needsStats}" th:with="showStats1=${!stats1.empty && (hasPointStats1 || !category.needsStats)}, showStats2=${!stats2.empty && (hasPointStats2 || !category.needsStats)}, sc=${hasBothPointsStats ? category.statCompare(stats1, stats2) : 0}">
@@ -314,8 +314,8 @@
 	</div>
 	<div class="row">
 		<div class="col-md-12 text-center">
-			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats'); statsRawData = true" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
-			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats'); statsRawData = false" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
+			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats'); statsRawData = true" title="Show raw data"><i class="fa fa-hashtag"></i>&nbsp;&nbsp;Raw Data</button>
+			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats'); statsRawData = false" title="Show percentage data"><i class="fa fa-percent"></i>&nbsp;&nbsp;Pct. Data</button>
 			&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareStats('statistics', 'statistics', ${compare})|" title="Compare statistics"><span class="glyphicon glyphicon-object-align-left"></span>&nbsp;&nbsp;Compare</button>
 		</div>
 	</div>

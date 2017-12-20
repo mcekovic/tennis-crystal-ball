@@ -166,10 +166,10 @@
 	</table>
 	<div th:unless="${headsToHeads.empty}" class="row">
 		<div class="pct-data col-md-2">
-			<button class="btn btn-default btn-xs" onclick="toggleStatsData(); window.h2hRawData = true" title="Show raw data"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
+			<button class="btn btn-default btn-xs" onclick="toggleStatsData(); window.h2hRawData = true" title="Show raw data"><i class="fa fa-hashtag"></i>&nbsp;&nbsp;Raw Data</button>
 		</div>
 		<div class="raw-data col-md-2">
-			<button class="btn btn-default btn-xs" onclick="toggleStatsData(); window.h2hRawData = false" title="Show percentage data"><span class="glyphicon glyphicon-scale"></span>&nbsp;&nbsp;Pct. Data</button>
+			<button class="btn btn-default btn-xs" onclick="toggleStatsData(); window.h2hRawData = false" title="Show percentage data"><i class="fa fa-percent"></i>&nbsp;&nbsp;Pct. Data</button>
 		</div>
 	</div>
 </th:block>

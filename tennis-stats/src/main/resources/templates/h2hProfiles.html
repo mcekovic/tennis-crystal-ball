@@ -145,78 +145,78 @@
 	<tr th:if="${player1.titles > 0 || player2.titles > 0}">
 		<td class="text-right" colspan="2">
 			<div th:if="${player1.titles > 0}">
-				<a class="label label-default player-title" th:text="${player1.titles}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, result=W)}" title="Show titles">10</a> <span class="glyphicon glyphicon-glass"></span>
+				<i class="fa fa-glass"></i> <a class="label label-default player-title" th:text="${player1.titles}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, result=W)}" title="Show titles">10</a>
 			</div>
 		</td>
 		<th class="text-center">Titles</th>
 		<td class="text-left" colspan="2">
 			<div th:if="${player2.titles > 0}">
-				<a class="label label-default player-title" th:text="${player2.titles}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, result=W)}" title="Show titles">10</a> <span class="glyphicon glyphicon-glass"></span>
+				<a class="label label-default player-title" th:text="${player2.titles}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, result=W)}" title="Show titles">10</a> <i class="fa fa-glass"></i>
 			</div>
 		</td>
 	</tr>
 	<tr th:if="${player1.grandSlams > 0 || player2.grandSlams > 0}">
 		<td class="text-right" colspan="2">
 			<div th:if="${player1.grandSlams > 0}">
-				<a class="label label-danger player-title" th:text="${player1.grandSlams}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, level=G, result=W)}" title="Show Grand Slam titles">1</a> <span class="glyphicon glyphicon-glass text-danger"></span>
+				<i class="fa fa-glass text-danger"></i> <a class="label label-danger player-title" th:text="${player1.grandSlams}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, level=G, result=W)}" title="Show Grand Slam titles">1</a>
 			</div>
 		</td>
 		<th class="text-center">Grand Slams</th>
 		<td class="text-left" colspan="2">
 			<div th:if="${player2.grandSlams > 0}">
-				<a class="label label-danger player-title" th:text="${player2.grandSlams}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, level=G, result=W)}" title="Show Grand Slam titles">1</a> <span class="glyphicon glyphicon-glass text-danger"></span>
+				<a class="label label-danger player-title" th:text="${player2.grandSlams}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, level=G, result=W)}" title="Show Grand Slam titles">1</a> <i class="fa fa-glass text-danger"></i>
 			</div>
 		</td>
 	</tr>
 	<tr th:if="${player1.tourFinals > 0 || player2.tourFinals > 0}">
 		<td class="text-right" colspan="2">
 			<div th:if="${player1.tourFinals > 0}">
-				<a class="label label-warning2 player-title" th:text="${player1.tourFinals}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, level=F, result=W)}" title="Show Tour Finals titles">1</a> <span class="glyphicon glyphicon-glass text-warning"></span>
+				<i class="fa fa-glass text-warning"></i> <a class="label label-warning2 player-title" th:text="${player1.tourFinals}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, level=F, result=W)}" title="Show Tour Finals titles">1</a>
 			</div>
 		</td>
 		<th class="text-center">Tour Finals</th>
 		<td class="text-left" colspan="2">
 			<div th:if="${player2.tourFinals > 0}">
-				<a class="label label-warning2 player-title" th:text="${player2.tourFinals}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, level=F, result=W)}" title="Show Tour Finals titles">1</a> <span class="glyphicon glyphicon-glass text-warning"></span>
+				<a class="label label-warning2 player-title" th:text="${player2.tourFinals}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, level=F, result=W)}" title="Show Tour Finals titles">1</a> <i class="fa fa-glass text-warning"></i>
 			</div>
 		</td>
 	</tr>
 	<tr th:if="${player1.altFinals > 0 || player2.altFinals > 0}">
 		<td class="text-right" colspan="2">
 			<div th:if="${player1.altFinals > 0}">
-				<a class="label label-warning player-title" th:text="${player1.altFinals}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, level=L, result=W)}" title="Show Alternative Tour Finals titles">1</a> <span class="glyphicon glyphicon-glass text-warning"></span>
+				<i class="fa fa-glass text-warning"></i> <a class="label label-warning player-title" th:text="${player1.altFinals}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, level=L, result=W)}" title="Show Alternative Tour Finals titles">1</a>
 			</div>
 		</td>
 		<th class="text-center" title="Alternative Tour Finals">Alt. Finals</th>
 		<td class="text-left" colspan="2">
 			<div th:if="${player2.altFinals > 0}">
-				<a class="label label-warning player-title" th:text="${player2.altFinals}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, level=L, result=W)}" title="Show Alternative Tour Finals titles">1</a> <span class="glyphicon glyphicon-glass text-warning"></span>
+				<a class="label label-warning player-title" th:text="${player2.altFinals}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, level=L, result=W)}" title="Show Alternative Tour Finals titles">1</a> <i class="fa fa-glass text-warning"></i>
 			</div>
 		</td>
 	</tr>
 	<tr th:if="${player1.masters > 0 || player2.masters > 0}">
 		<td class="text-right" colspan="2">
 			<div th:if="${player1.masters > 0}">
-				<a class="label label-info player-title" th:text="${player1.masters}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, level=M, result=W)}" title="Show Masters titles">5</a> <span class="glyphicon glyphicon-glass text-info"></span>
+				<i class="fa fa-glass text-info"></i> <a class="label label-info player-title" th:text="${player1.masters}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, level=M, result=W)}" title="Show Masters titles">5</a>
 			</div>
 		</td>
 		<th class="text-center">Masters</th>
 		<td class="text-left" colspan="2">
 			<div th:if="${player2.masters > 0}">
-				<a class="label label-info player-title" th:text="${player2.masters}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, level=M, result=W)}" title="Show Masters titles">5</a> <span class="glyphicon glyphicon-glass text-info"></span>
+				<a class="label label-info player-title" th:text="${player2.masters}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, level=M, result=W)}" title="Show Masters titles">5</a> <i class="fa fa-glass text-info"></i>
 			</div>
 		</td>
 	</tr>
 	<tr th:if="${player1.olympics > 0 || player2.olympics > 0}">
 		<td class="text-right" colspan="2">
 			<div th:if="${player1.olympics > 0}">
-				<a class="label label-success player-title" th:text="${player1.olympics}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, level=O, result=W)}" title="Show Olympics titles">1</a> <span class="glyphicon glyphicon-glass text-success"></span>
+				<i class="fa fa-glass text-success"></i> <a class="label label-success player-title" th:text="${player1.olympics}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, level=O, result=W)}" title="Show Olympics titles">1</a>
 			</div>
 		</td>
 		<th class="text-center">Olympics</th>
 		<td class="text-left" colspan="2">
 			<div th:if="${player2.olympics > 0}">
-				<a class="label label-success player-title" th:text="${player2.olympics}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, level=O, result=W)}" title="Show Olympics titles">1</a> <span class="glyphicon glyphicon-glass text-success"></span>
+				<a class="label label-success player-title" th:text="${player2.olympics}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, level=O, result=W)}" title="Show Olympics titles">1</a> <i class="fa fa-glass text-success"></i>
 			</div>
 		</td>
 	</tr>
@@ -304,7 +304,7 @@
 	<tr th:if="${!performance1.hardMatches.empty || !performance2.hardMatches.empty}" th:with="wl1=${performance1.hardMatches}, wl2=${performance2.hardMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${surfaceTitles1['H']}">
-				<a class="label label-primary player-title" th:text="${surfaceTitles1['H']}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, surface=H, result=W)}" title="Show hard titles">1</a> <span class="glyphicon glyphicon-glass text-primary"></span>
+				<i class="fa fa-glass text-primary"></i> <a class="label label-primary player-title" th:text="${surfaceTitles1['H']}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, surface=H, result=W)}" title="Show hard titles">1</a>
 			</div>
 		</th>
 		<th class="text-right">
@@ -324,14 +324,14 @@
 		</th>
 		<th class="text-left">
 			<div th:if="${surfaceTitles2['H']}">
-				<a class="label label-primary player-title" th:text="${surfaceTitles2['H']}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, surface=H, result=W)}" title="Show hard titles">1</a> <span class="glyphicon glyphicon-glass text-primary"></span>
+				<a class="label label-primary player-title" th:text="${surfaceTitles2['H']}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, surface=H, result=W)}" title="Show hard titles">1</a> <i class="fa fa-glass text-primary"></i>
 			</div>
 		</th>
 	</tr>
 	<tr th:if="${!performance1.clayMatches.empty || !performance2.clayMatches.empty}" th:with="wl1=${performance1.clayMatches}, wl2=${performance2.clayMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${surfaceTitles1['C']}">
-				<a class="label label-danger player-title" th:text="${surfaceTitles1['C']}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, surface=C, result=W)}" title="Show clay titles">1</a> <span class="glyphicon glyphicon-glass text-danger"></span>
+				<i class="fa fa-glass text-danger"></i> <a class="label label-danger player-title" th:text="${surfaceTitles1['C']}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, surface=C, result=W)}" title="Show clay titles">1</a>
 			</div>
 		</th>
 		<th class="text-right">
@@ -351,14 +351,14 @@
 		</th>
 		<th class="text-left">
 			<div th:if="${surfaceTitles2['C']}">
-				<a class="label label-danger player-title" th:text="${surfaceTitles2['C']}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, surface=C, result=W)}" title="Show clay titles">1</a> <span class="glyphicon glyphicon-glass text-danger"></span>
+				<a class="label label-danger player-title" th:text="${surfaceTitles2['C']}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, surface=C, result=W)}" title="Show clay titles">1</a> <i class="fa fa-glass text-danger"></i>
 			</div>
 		</th>
 	</tr>
 	<tr th:if="${!performance1.grassMatches.empty || !performance2.grassMatches.empty}" th:with="wl1=${performance1.grassMatches}, wl2=${performance2.grassMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${surfaceTitles1['G']}">
-				<a class="label label-success player-title" th:text="${surfaceTitles1['G']}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, surface=G, result=W)}" title="Show grass titles">1</a> <span class="glyphicon glyphicon-glass text-success"></span>
+				<i class="fa fa-glass text-success"></i> <a class="label label-success player-title" th:text="${surfaceTitles1['G']}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, surface=G, result=W)}" title="Show grass titles">1</a>
 			</div>
 		</th>
 		<th class="text-right">
@@ -378,14 +378,14 @@
 		</th>
 		<th class="text-left">
 			<div th:if="${surfaceTitles2['G']}">
-				<a class="label label-success player-title" th:text="${surfaceTitles2['G']}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, surface=G, result=W)}" title="Show grass titles">1</a> <span class="glyphicon glyphicon-glass text-success"></span>
+				<a class="label label-success player-title" th:text="${surfaceTitles2['G']}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, surface=G, result=W)}" title="Show grass titles">1</a> <i class="fa fa-glass text-success"></i>
 			</div>
 		</th>
 	</tr>
 	<tr th:if="${!performance1.carpetMatches.empty || !performance2.carpetMatches.empty}" th:with="wl1=${performance1.carpetMatches}, wl2=${performance2.carpetMatches}, wlc=${!wl1.empty ? (!wl2.empty ? wl2.compareTo(wl1) : 1) : -1}">
 		<th class="text-right">
 			<div th:if="${surfaceTitles1['P']}">
-				<a class="label label-warning player-title" th:text="${surfaceTitles1['P']}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, surface=P, result=W)}" title="Show carpet titles">1</a> <span class="glyphicon glyphicon-glass text-warning"></span>
+				<i class="fa fa-glass text-warning"></i> <a class="label label-warning player-title" th:text="${surfaceTitles1['P']}" th:href="@{/playerProfile(playerId=${player1.id}, tab=tournaments, surface=P, result=W)}" title="Show carpet titles">1</a>
 			</div>
 		</th>
 		<th class="text-right">
@@ -405,7 +405,7 @@
 		</th>
 		<th class="text-left">
 			<div th:if="${surfaceTitles2['P']}">
-				<a class="label label-warning player-title" th:text="${surfaceTitles2['P']}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, surface=P, result=W)}" title="Show carpet titles">1</a> <span class="glyphicon glyphicon-glass text-warning"></span>
+				<a class="label label-warning player-title" th:text="${surfaceTitles2['P']}" th:href="@{/playerProfile(playerId=${player2.id}, tab=tournaments, surface=P, result=W)}" title="Show carpet titles">1</a> <i class="fa fa-glass text-warning"></i>
 			</div>
 		</th>
 	</tr>

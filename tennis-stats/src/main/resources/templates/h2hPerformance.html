@@ -158,13 +158,13 @@
 	</div>
 	<div class="col-md-2">
 		<button type="button" class="btn btn-default" onclick="clearPerformanceFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
-			<span class="glyphicon glyphicon-erase"></span>&nbsp;&nbsp;Clear
+			<i class="fa fa-eraser"></i>&nbsp;&nbsp;Clear
 		</button>
 	</div>
 	<div class="col-md-1">
 		<div class="pull-right" data-toggle="tooltip" data-placement="auto" title="Advanced filters">
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#perfAdvancedFilter">
-				<span class="glyphicon glyphicon-filter"></span>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<span class="glyphicon glyphicon-chevron-down"></span>
+				<i class="fa fa-plus-square"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
 			</button>
 		</div>
 	</div>
@@ -613,8 +613,8 @@
 	</table>
 	<div th:unless="${perf1.empty && perf2.empty}" class="row">
 		<div class="col-md-12 text-center">
-			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance'); perfRawData = true" title="Show raw data: Won - Lost / Played"><span class="glyphicon glyphicon-equalizer"></span>&nbsp;&nbsp;Raw Data</button>
-			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance'); perfRawData = false" title="Show percentage data: Pct. (Won-Lost)"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;Pct. Data</button>
+			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance'); perfRawData = true" title="Show raw data: Won - Lost / Played"><i class="fa fa-hashtag"></i>&nbsp;&nbsp;Raw Data</button>
+			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hPerformance'); perfRawData = false" title="Show percentage data: Pct. (Won-Lost)"><i class="fa fa-tasks"></i>&nbsp;&nbsp;Pct. Data</button>
 		</div>
 	</div>
 	<th:block th:if="${perf1.empty && perf2.empty}"><p>No performance data available</p></th:block>
