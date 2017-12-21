@@ -1,22 +1,11 @@
 <footer xmlns:th="http://www.thymeleaf.org" th:fragment="copy">
 	<br/>
-	<style scoped="scoped">
-		.copyright {
-			font-size: small
-		}
-		.powered {
-			font-size: x-small;
-			font-style: italic;
-		}
-	</style>
-	<div class="row">
-		<div class="col-md-10" style="white-space: nowrap">
-			<div style="float: left; margin-right: 15px">
-				<div class="copyright" style="white-space: normal">&copy; 2015-[[${#temporals.createToday().year}]] Strange Forest Software, feedback at <a href="mailto:mcekovic@gmail.com" target="_blank">mcekovic@gmail.com</a>, issues at <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank">GitHub Issues</a></div>
-				<div class="powered" style="white-space: normal">Powered by open-source software: PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Groovy, available at <a href="https://github.com/mcekovic/tennis-crystal-ball" target="_blank">GitHub</a></div>
-			</div>
-			<a href="/manage/visitors" class="label label-info label-btn" title="People visiting this site"><i class="fa fa-globe fa-lg"></i></a>
+	<div style="white-space: nowrap">
+		<div style="float: left; margin-right: 15px">
+			<div style="font-size: small; white-space: normal">&copy; 2015-[[${#temporals.createToday().year}]] Strange Forest Software, feedback at <a href="mailto:mcekovic@gmail.com" target="_blank">mcekovic@gmail.com</a>, issues at <a href="https://github.com/mcekovic/tennis-crystal-ball/issues" target="_blank">GitHub Issues</a></div>
+			<div style="font-size: x-small; font-style: italic; white-space: normal">Powered by open-source software: PostgreSQL, Java, Spring Boot, Thymeleaf, JQuery, Bootstrap, Groovy, available at <a href="https://github.com/mcekovic/tennis-crystal-ball" target="_blank">GitHub</a></div>
 		</div>
+		<a href="/manage/visitors" class="label label-info label-btn" title="People visiting this site"><i class="fa fa-globe fa-lg"></i></a>
 	</div>
 	<br/>
 </footer>
