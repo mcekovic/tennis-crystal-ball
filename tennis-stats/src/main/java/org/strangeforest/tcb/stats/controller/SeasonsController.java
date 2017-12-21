@@ -17,6 +17,7 @@ public class SeasonsController extends PageController {
 	@Autowired private SeasonsService seasonsService;
 	@Autowired private TournamentService tournamentService;
 	@Autowired private MatchesService matchesService;
+	@Autowired private RankingsService rankingsService;
 
 	private static final int MAX_RECORD_PLAYERS = 10;
 
@@ -86,6 +87,7 @@ public class SeasonsController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("tableDate", rankingsService.getRankingsDate(RankType.POINTS, season, null));
 		return new ModelAndView("seasonRankings", modelMap);
 	}
 

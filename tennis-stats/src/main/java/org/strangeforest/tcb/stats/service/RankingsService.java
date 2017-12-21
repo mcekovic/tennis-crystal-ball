@@ -148,14 +148,24 @@ public class RankingsService {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
+	@Cacheable("RankingsTable.Date")
+	public LocalDate getRankingsDate(RankType rankType, Integer season, LocalDate date) {
+		if (date == null) {
+			if (season != null)
+				date = getSeasonEndRankingDate(rankType, season);
+			if (date == null)
+				date = getCurrentRankingDate(rankType);
+		}
+		return date;
+	}
+
 	@Cacheable("RankingsTable.CurrentDate")
 	public LocalDate getCurrentRankingDate(RankType rankType) {
 		String sql = format(CURRENT_RANKING_DATE_QUERY, rankingTable(rankType));
 		return jdbcTemplate.getJdbcOperations().queryForObject(sql, LocalDate.class);
 	}
 
-	@Cacheable("RankingsTable.SeasonEndDate")
-	public LocalDate getSeasonEndRankingDate(RankType rankType, int season) {
+	private LocalDate getSeasonEndRankingDate(RankType rankType, int season) {
 		String sql = format(SEASON_END_RANKING_DATE_QUERY, rankingTable(rankType));
 		return jdbcTemplate.queryForObject(sql, params("season", season), LocalDate.class);
 	}

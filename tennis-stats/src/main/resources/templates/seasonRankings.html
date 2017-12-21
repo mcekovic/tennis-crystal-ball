@@ -1,6 +1,7 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="tableDate" type="java.time.LocalDate"*/-->
 <script type="text/javascript">
 	$(function() {
 		var $rankingsTable = $("#rankingsTable");
@@ -92,6 +93,12 @@
 		}
 	}
 	function reloadRankings() {
+		var url = "/rankingsDate?rankType=" + $("#rankType").val() + "&season=[(${season})]";
+		var date = $("#rankDate").val();
+		if (date) url += "&date=" + date;
+		$.get(url, function (date) {
+			$("#tableDate").html(formatDate(date));
+		});
 		$("#rankingsTable").bootgrid("reload");
 	}
 	function formatDiff(diff) {
@@ -111,7 +118,7 @@
 		vertical-align: text-top;
 	}
 </style>
-<h3 id="rankingsTable-title" class="grid-title">Rankings Table</h3>
+<h3 id="rankingsTable-title" class="grid-title">Rankings Table <span id="tableDate" th:text="${#temporals.format(tableDate, 'dd-MM-yyyy')}">01-11-2015</span></h3>
 <div id="rankTypeDiv" class="btn-group margin-right">
 	<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
 		<option value="POINTS">ATP Ranking</option>

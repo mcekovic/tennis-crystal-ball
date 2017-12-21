@@ -33,6 +33,7 @@ public class RankingsController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
+		modelMap.addAttribute("tableDate", rankingsService.getRankingsDate(rankType, season, date));
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("date", date);
