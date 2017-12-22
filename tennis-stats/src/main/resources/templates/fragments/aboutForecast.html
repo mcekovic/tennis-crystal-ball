@@ -21,7 +21,7 @@
 			as well as probabilities of all players in the other half of the draw to reach the final multiplied by probabilities for player A to win the final match over the each of them.<br/>
 			As tournament progresses, outcome of some matches gets known, thus the match probabilities are set to 100% and 0% for the winner and for the loser respectively.<br/>
 			Sometimes, as initial tournament draws are out, they include unknown qualifiers. Probability for the player to win over the unknown qualifier is determined by variation of the Match Prediction algorithm that includes player's winning percentage vs qualifiers, overall and by surface, level, etc...<br/>
-			Elo Ratings are recalculated after each round and Elo rating points earned by wins in previous rounds are presented in brackets.
+			Elo Ratings are recalculated after the each round and Elo rating points earned by wins in previous rounds are presented in brackets.
 		</div>
 	</div>
 </th:block>
@@ -33,7 +33,7 @@
 			Head-to-Head ratios and Winning Percentages varied by surface, tournament level, tournament, round, recency, match or set ratios, vs rank, vs hand, vs backhand...<br/>
 			Neural Network is trained on historical data for highest prediction rates to determine optimal feature weights.<br/>
 			During training, some neurons are determined to be useless and they are removed from the network, thus about ~30 neurons remain.<br/>
-			Elo Ratings, overall and by surface, are main contributors to the match prediction, following by recent form, H2H percentages and winning percentages vs hand (vs left-hander or vs right-hander).<br/>
+			Elo Ratings, overall and by surface, are the main contributors to the match prediction, following by recent form, H2H percentages and winning percentages vs hand (vs left-hander or vs right-hander).<br/>
 			Elo Rating neurons individually give high prediction rates, but when they are combined with recent form, H2H and various winning percentages, the prediction accuracy is even further increased.
 		</div>
 	</div>
