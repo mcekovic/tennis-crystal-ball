@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mcekovic/tennis-crystal-ball.svg?branch=master)](https://travis-ci.org/mcekovic/tennis-crystal-ball)
 [![Web Site](https://img.shields.io/website-up-down-green-red/http/www.ultimatetennisstatistics.com.svg)](http://www.ultimatetennisstatistics.com)
-[![Creative Commons License](https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?maxAge=2592000)](http://www.apache.org/licenses/LICENSE-2.0)
 
 Ultimate Tennis statistics and data analysis with nice web GUI.
 
@@ -105,6 +105,8 @@ http://www.ultimatetennisstatistics.com
 ![Records Book](https://github.com/mcekovic/open-box/blob/master/RecordsBook.png?raw=true)
 
 ### License
+
+Tennis Crystal Ball and Ultimate Tennis Statistics source code is licensed under [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).
 
 [![Creative Commons License](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 
