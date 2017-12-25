@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.*;
 import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.util.*;
 
@@ -41,13 +42,21 @@ public class MatchesService {
 		"SELECT m.match_id, m.date, m.tournament_event_id, e.name AS tournament, e.level, m.best_of, m.surface, m.indoor, m.round,\n" +
 		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.winner_country_id, m.winner_rank, m.winner_elo_rating,\n" +
 		"  m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.loser_country_id, m.loser_rank, m.loser_elo_rating,\n" +
-		"  m.score, m.outcome, m.has_stats%1$s\n" +
+		"  m.score, m.outcome, m.has_stats%1$s%2$s\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
-		"INNER JOIN player_v pl ON pl.player_id = m.loser_id%2$s\n" +
-		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%3$s\n" +
-		"ORDER BY %4$s OFFSET :offset";
+		"INNER JOIN player_v pl ON pl.player_id = m.loser_id%3$s\n" +
+		"WHERE (m.winner_id = :playerId OR m.loser_id = :playerId)%4$s\n" +
+		"ORDER BY %5$s OFFSET :offset";
+
+	private static final String MATCH_FOR_STATS_CONDITION = //language=SQL
+		"e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T') AND (m.outcome IS NULL OR m.outcome IN ('RET', 'DEF'))";
+
+	private static final String PLAYER_H2H_COLUMNS = //language=SQL
+		",\n" +
+		"  count(*) FILTER (WHERE " + MATCH_FOR_STATS_CONDITION + " AND m.winner_id = :playerId) OVER (PARTITION BY (CASE WHEN m.winner_id > m.loser_id THEN m.winner_id || '-' || m.loser_id ELSE m.loser_id || '-' || m.winner_id END) ORDER BY m.date, m.round, m.match_num) AS h2h_won,\n"+
+		"  count(*) FILTER (WHERE " + MATCH_FOR_STATS_CONDITION + " AND m.loser_id = :playerId) OVER (PARTITION BY (CASE WHEN m.winner_id > m.loser_id THEN m.loser_id || '-' || m.winner_id ELSE m.winner_id || '-' || m.loser_id END) ORDER BY m.date, m.round, m.match_num) AS h2h_lost";
 
 	private static final String TOURNAMENT_EVENT_RESULT_JOIN = //language=SQL
 		"\nINNER JOIN player_tournament_event_result r ON r.player_id = :playerId AND r.tournament_event_id = m.tournament_event_id";
@@ -137,12 +146,12 @@ public class MatchesService {
 	}
 
 
-	public BootgridTable<Match> getPlayerMatchesTable(int playerId, MatchFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<Match> getPlayerMatchesTable(int playerId, MatchFilter filter, boolean h2h, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<Match> table = new BootgridTable<>(currentPage);
 		AtomicInteger matches = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(PLAYER_MATCHES_QUERY, filter.isBigWin() ? ", bw.goat_points big_win_points" : "", playerMatchesJoin(filter), filter.getCriteria(), orderBy),
+			format(PLAYER_MATCHES_QUERY, filter.isBigWin() ? ", bw.goat_points big_win_points" : "", h2h ? PLAYER_H2H_COLUMNS : "", playerMatchesJoin(filter), filter.getCriteria(), orderBy),
 			filter.getParams()
 				.addValue("playerId", playerId)
 				.addValue("offset", offset),
@@ -166,6 +175,8 @@ public class MatchesService {
 					);
 					if (filter.isBigWin())
 						match.setBigWinPoints(getDouble(rs, "big_win_points"));
+					if (h2h)
+						match.setH2h(new WonLost(rs.getInt("h2h_won"), rs.getInt("h2h_lost")).getWL());
 					table.addRow(match);
 				}
 			}

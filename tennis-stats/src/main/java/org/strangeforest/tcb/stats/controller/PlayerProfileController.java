@@ -269,7 +269,8 @@ public class PlayerProfileController extends PageController {
 
 	@GetMapping("/playerRivalries")
 	public ModelAndView playerRivalries(
-		@RequestParam(name = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "season", required = false) Integer season
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
@@ -283,6 +284,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("season", season);
 		return new ModelAndView("playerRivalries", modelMap);
 	}
 

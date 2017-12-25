@@ -19,6 +19,7 @@ public class Match {
 	private final String outcome;
 	private final boolean hasStats;
 	private Double bigWinPoints;
+	private String h2h;
 
 	public Match(long id, LocalDate date, int tournamentEventId, String tournament, String level, int bestOf, String surface, boolean indoor, String round,
 	             MatchPlayer winner, MatchPlayer loser, String score, String outcome, boolean hasStats) {
@@ -100,5 +101,13 @@ public class Match {
 
 	public void setBigWinPoints(Double bigWinsPoints) {
 		this.bigWinPoints = bigWinsPoints;
+	}
+
+	public String getH2h() {
+		return h2h;
+	}
+
+	public void setH2h(String h2h) {
+		this.h2h = h2h;
 	}
 }

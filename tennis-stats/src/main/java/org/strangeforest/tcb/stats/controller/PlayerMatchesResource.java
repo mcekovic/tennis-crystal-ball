@@ -59,6 +59,7 @@ public class PlayerMatchesResource {
 		@RequestParam(name = "statsTo", required = false) Double statsTo,
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
+		@RequestParam(name = "h2h", defaultValue = "false") boolean h2h,
 		@RequestParam(name = "current", defaultValue = "1") int current,
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
@@ -72,7 +73,7 @@ public class PlayerMatchesResource {
 		MatchFilter filter = MatchFilter.forMatches(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
-		return matchesService.getPlayerMatchesTable(playerId, filter, orderBy, pageSize, current);
+		return matchesService.getPlayerMatchesTable(playerId, filter, h2h, orderBy, pageSize, current);
 	}
 	
 	@GetMapping("/matchesStat")

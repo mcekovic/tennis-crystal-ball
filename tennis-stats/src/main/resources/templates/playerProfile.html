@@ -46,6 +46,11 @@
 				url += [(${params.param('tournamentId', tournamentId)})] + [(${params.param('tournamentEventId', tournamentEventId)})] + [(${params.param('outcome', outcome)})] + [(${params.param('score', score)})] + [(${params.param('countryId', countryId)})] + [(${params.param('bigWin', bigWin)})] + [(${params.param('searchPhrase', searchPhrase)})];
 				loadTab($pill, url)
 				[/]
+				[# th:case="'rivalries'"]
+				var $pill = $("#rivalriesPill");
+				var url = $pill.data("url") + [(${params.param('season', season)})];
+				loadTab($pill, url)
+				[/]
 				[# th:case="'ranking'"]
 				var $pill = $("#rankingPill");
 				var url = $pill.data("url") + [(${params.param('rankType', rankType)})] + [(${params.param('season', season)})];

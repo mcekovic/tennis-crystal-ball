@@ -53,7 +53,7 @@ public class RivalriesServiceIT {
 
 	@Test
 	public void playerRivalries() {
-		BootgridTable<PlayerRivalryRow> playerRivalries = rivalriesService.getPlayerRivalriesTable(1, RivalryPlayerListFilter.ALL, "matches", 10, 1);
+		BootgridTable<PlayerRivalryRow> playerRivalries = rivalriesService.getPlayerRivalriesTable(1, RivalryPlayerListFilter.ALL, null, "matches", 10, 1);
 
 		assertThat(playerRivalries.getRowCount()).isPositive();
 		assertThat(playerRivalries.getTotal()).isPositive();

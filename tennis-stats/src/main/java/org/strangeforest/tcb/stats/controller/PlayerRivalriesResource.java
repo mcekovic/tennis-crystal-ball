@@ -42,6 +42,7 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "h2h", required = false) Integer h2h,
 		@RequestParam(name = "current", defaultValue = "1") int current,
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
@@ -51,7 +52,7 @@ public class PlayerRivalriesResource {
 		RivalryPlayerListFilter filter = new RivalryPlayerListFilter(searchPhrase, rivalryFilter);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
-		return rivalriesService.getPlayerRivalriesTable(playerId, filter, orderBy, pageSize, current);
+		return rivalriesService.getPlayerRivalriesTable(playerId, filter, h2h, orderBy, pageSize, current);
 	}
 
 	@GetMapping("/h2h")

@@ -41,9 +41,12 @@
 			</select>
 		</div>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-9">
 		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season})}" title="Show season tournaments">Tournaments</a>
 		<a class="btn btn-default margin-left" th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season})}" title="Show season matches">Matches</a>
+		<a class="btn btn-default margin-left" th:href="@{/playerProfile(playerId=${playerId}, tab=rivalries, season=${season})}" title="Show season rivalries">Rivalries</a>
+		<a class="btn btn-default margin-left" th:href="@{/playerProfile(playerId=${playerId}, tab=performance, season=${season})}" title="Show season performance">Performance</a>
+		<a class="btn btn-default margin-left" th:href="@{/playerProfile(playerId=${playerId}, tab=statistics, season=${season})}" title="Show season statistics">Statistics</a>
 	</div>
 </div>
 <br/>
