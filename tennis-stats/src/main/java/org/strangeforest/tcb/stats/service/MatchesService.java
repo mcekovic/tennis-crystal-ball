@@ -40,8 +40,8 @@ public class MatchesService {
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
 		"SELECT m.match_id, m.date, m.tournament_event_id, e.name AS tournament, e.level, m.best_of, m.surface, m.indoor, m.round,\n" +
-		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.winner_country_id, m.winner_rank, m.winner_elo_rating,\n" +
-		"  m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.loser_country_id, m.loser_rank, m.loser_elo_rating,\n" +
+		"  m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.winner_country_id, m.winner_rank, m.winner_elo_rating, m.winner_next_elo_rating,\n" +
+		"  m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.loser_country_id, m.loser_rank, m.loser_elo_rating, m.loser_next_elo_rating,\n" +
 		"  m.score, m.outcome, m.has_stats%1$s%2$s\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
@@ -221,7 +221,8 @@ public class MatchesService {
 				rs.getString(prefix + "entry"),
 				rs.getString(prefix + "country_id"),
 				getInteger(rs, prefix + "rank"),
-				getInteger(rs, prefix + "elo_rating")
+				getInteger(rs, prefix + "elo_rating"),
+				getInteger(rs, prefix + "next_elo_rating")
 			);
 		}
 		else

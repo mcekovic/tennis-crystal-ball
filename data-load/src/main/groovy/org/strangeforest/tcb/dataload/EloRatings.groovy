@@ -60,7 +60,8 @@ class EloRatings {
 		"DELETE FROM player_elo_ranking"
 
 	static final String UPDATE_MATCH_ELO_RATINGS = //language=SQL
-		"UPDATE match SET winner_elo_rating = :winner_elo_rating, loser_elo_rating = :loser_elo_rating WHERE match_id = :match_id"
+		"UPDATE match SET winner_elo_rating = :winner_elo_rating, winner_next_elo_rating = :winner_next_elo_rating, loser_elo_rating = :loser_elo_rating, loser_next_elo_rating = :loser_next_elo_rating\n" +
+		"WHERE match_id = :match_id"
 
 	static final List<String> SURFACES = ['H', 'C', 'G', 'P', 'O', 'I']
 	static final Date CARPET_EOL = toDate(LocalDate.of(2008, 1, 1))
@@ -246,13 +247,17 @@ class EloRatings {
 	}
 
 	private putNewRatings(long matchId, String surface, int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date, String outcome) {
+		def winnerNextRating = winnerRating
+		def loserNextRating = loserRating
 		if (outcome != 'ABD') {
 			def ratings = getRatings(surface)
-			ratings.put(winnerId, winnerRating.newRating(deltaRating, date, surface))
-			ratings.put(loserId, loserRating.newRating(-deltaRating, date, surface))
+			winnerNextRating = winnerRating.newRating(deltaRating, date, surface)
+			ratings.put(winnerId, winnerNextRating)
+			loserNextRating = loserRating.newRating(-deltaRating, date, surface)
+			ratings.put(loserId, loserNextRating)
 		}
 		if (saveExecutor && !surface && (!saveFromDate || lastDate >= saveFromDate))
-			matchRatings.put new MatchEloRating(matchId: matchId, winnerRating: winnerRating.rating, loserRating: loserRating.rating)
+			matchRatings.put new MatchEloRating(matchId: matchId, winnerRating: winnerRating.rating, winnerNextRating: winnerNextRating.rating, loserRating: loserRating.rating, loserNextRating: loserNextRating.rating)
 	}
 
 	static double deltaRating(double winnerRating, double loserRating, String level, String round, short bestOf, String outcome) {
@@ -512,7 +517,9 @@ class EloRatings {
 					Map params = [:]
 					params.match_id = matchEloRatings.matchId
 					params.winner_elo_rating = intRound matchEloRatings.winnerRating
+					params.winner_next_elo_rating = intRound matchEloRatings.winnerNextRating
 					params.loser_elo_rating = intRound matchEloRatings.loserRating
+					params.loser_next_elo_rating = intRound matchEloRatings.loserNextRating
 					ps.addBatch(params)
 				}
 			}
@@ -577,6 +584,8 @@ class EloRatings {
 	private static class MatchEloRating {
 		long matchId
 		int winnerRating
+		int winnerNextRating
 		int loserRating
+		int loserNextRating
 	}
 }

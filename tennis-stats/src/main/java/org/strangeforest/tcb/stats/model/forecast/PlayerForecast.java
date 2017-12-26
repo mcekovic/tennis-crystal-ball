@@ -10,11 +10,10 @@ import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class PlayerForecast extends MatchPlayerEx {
 
-	private Integer nextEloRating;
 	private Map<String, Double> forecast;
 
 	public PlayerForecast(int playerId, String name, Integer seed, String entry, String countryId, Integer rank, Integer eloRating) {
-		super(playerId, name, seed, entry, countryId, rank, eloRating);
+		super(playerId, name, seed, entry, countryId, rank, eloRating, null);
 	}
 
 	public PlayerForecast(PlayerForecast player) {
@@ -38,13 +37,6 @@ public class PlayerForecast extends MatchPlayerEx {
 
 	public Integer getNextEloRating() {
 		return nextEloRating;
-	}
-
-	public Integer getEloRatingDelta() {
-		if (eloRating == null || nextEloRating == null)
-			return null;
-		int delta = nextEloRating - eloRating;
-		return delta != 0 ? delta : null;
 	}
 
 	void setNextEloRating(Integer nextEloRating) {

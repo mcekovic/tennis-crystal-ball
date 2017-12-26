@@ -382,7 +382,11 @@ function formatMatchExPlayer(player, winner, playerId) {
 }
 
 function formatRanking(row) {
-	return row.rank || row.eloRating ? " <div class='rankings-badge'>" + (row.rank ? "Rank " + row.rank : "") + (row.eloRating ? "<br/>Elo " + row.eloRating : "") + "</div>" : "";
+	if (row.rank || row.eloRating || row.eloRatingDelta)
+		return " <div class='rankings-badge'>" + (row.rank ? "Rank " + row.rank : "")
+			+ (row.eloRating || row.eloRatingDelta ? "<br/>Elo" + (row.eloRating ? " " + row.eloRating : "") + (row.eloRatingDelta ? (row.eloRatingDelta > 0 ? " (<span class='positive'>+" + row.eloRatingDelta + "</span>)" : " (<span class='negative'>" + row.eloRatingDelta + "</span>)") : "") : "") + "</div>";
+	else
+		return "";
 }
 
 function formatSeedEntry(seed, entry) {
