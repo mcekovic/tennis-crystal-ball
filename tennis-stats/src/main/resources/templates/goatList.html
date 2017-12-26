@@ -377,7 +377,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-3 col-sm-4 col-xs-6">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 				<select id="countryId" class="form-control" onchange="reloadGOATListTable()" data-toggle="tooltip" data-placement="top" title="Filter by country">
 					<option value="">All countries</option>
 					<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:selected="${country.alpha3 == countryId}" th:text="${country.name}">Switzerland</option>
@@ -403,12 +403,12 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-md-1 col-xs-3">
+			<div class="col-md-1 col-sm-2 col-xs-3">
 				<button type="button" class="btn btn-sm btn-default" onclick="resetTournamentPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Tournament GOAT Points configuration">
 					<i class="fa fa-undo fa-b"></i>&nbsp;&nbsp;Reset
 				</button>
 			</div>
-			<div class="col-md-1 col-xs-3">
+			<div class="col-md-1 col-sm-2 col-xs-3">
 				<div data-toggle="tooltip" data-placement="auto" title="Advanced Tournament GOAT Points configuration">
 					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#tournamentConfig">
 						<i class="fa fa-cogs fa-b"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
@@ -447,12 +447,12 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-md-1 col-xs-3">
+			<div class="col-md-1 col-sm-2 col-xs-3">
 				<button type="button" class="btn btn-sm btn-default" onclick="resetRankingPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Ranking GOAT Points configuration">
 					<i class="fa fa-undo fa-b"></i>&nbsp;&nbsp;Reset
 				</button>
 			</div>
-			<div class="col-md-1 col-xs-3">
+			<div class="col-md-1 col-sm-2 col-xs-3">
 				<div data-toggle="tooltip" data-placement="auto" title="Advanced Ranking GOAT Points configuration">
 					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#rankingConfig">
 						<i class="fa fa-cogs fa-b"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
@@ -513,14 +513,14 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-md-1 col-xs-3">
+			<div class="col-md-1 col-sm-2 col-xs-3">
 				<div>
 					<button type="button" class="btn btn-sm btn-default" onclick="resetAchievementsPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Achievements GOAT Points configuration">
 						<i class="fa fa-undo fa-b"></i>&nbsp;&nbsp;Reset
 					</button>
 				</div>
 			</div>
-			<div class="col-md-1 col-xs-3">
+			<div class="col-md-1 col-sm-2 col-xs-3">
 				<div data-toggle="tooltip" data-placement="auto" title="Advanced Achievements GOAT Points configuration">
 					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#achievementsConfig">
 						<i class="fa fa-cogs fa-b"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
