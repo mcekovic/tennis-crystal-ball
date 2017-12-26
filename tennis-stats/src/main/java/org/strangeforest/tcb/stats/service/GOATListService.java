@@ -65,7 +65,7 @@ public class GOATListService {
 		"(SELECT sum(r.goat_points" +
 		" * CASE re.level WHEN 'G' THEN :levelGFactor WHEN 'F' THEN :levelFFactor WHEN 'L' THEN :levelLFactor WHEN 'M' THEN :levelMFactor WHEN 'O' THEN :levelOFactor WHEN 'A' THEN :levelAFactor WHEN 'B' THEN :levelBFactor WHEN 'D' THEN :levelDFactor WHEN 'T' THEN :levelTFactor ELSE NULL END\n" +
 		" * CASE r.result WHEN 'W' THEN :resultWFactor WHEN 'F' THEN :resultFFactor WHEN 'SF' THEN :resultSFFactor WHEN 'QF' THEN :resultQFFactor WHEN 'RR' THEN :resultRRFactor WHEN 'BR' THEN :resultBRFactor ELSE NULL END)\n" +
-		" FROM player_tournament_event_result r INNER JOIN tournament_event re USING (tournament_event_id) WHERE r.player_id = g.player_id)";
+		" FROM player_tournament_event_result r INNER JOIN tournament_event re USING (tournament_event_id) WHERE r.player_id = g.player_id%1$s)";
 
 	private static final String TOURNAMENT_SURFACE_CRITERIA = //language=SQL
 		" AND re.level <> 'D' AND re.surface = :surface::surface";
@@ -250,7 +250,7 @@ public class GOATListService {
 		else if (config.hasDefaultTournamentFactors())
 			return "g.tournament_goat_points * :tournamentFactor";
 		else
-			return surface == null ? TOURNAMENT_GOAT_POINTS : TOURNAMENT_GOAT_POINTS + TOURNAMENT_SURFACE_CRITERIA;
+			return format(TOURNAMENT_GOAT_POINTS, surface == null ? "" : TOURNAMENT_SURFACE_CRITERIA);
 	}
 
 	private static String getRankingGOATPointsExpression(Surface surface, GOATListConfig config) {
