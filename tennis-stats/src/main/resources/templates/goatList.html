@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="active" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="countryId" type="java.lang.String"*/-->
 <!--/*@thymesVar id="config" type="org.strangeforest.tcb.stats.model.GOATListConfig"*/-->
 <!--/*@thymesVar id="factors" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.List<java.lang.String>"*/-->
@@ -27,6 +30,7 @@
 				requestHandler: function(request) {
 					addRequestParam(request, "surface");
 					addRequestBooleanParam(request, "active");
+					addRequestParam(request, "countryId");
 					request.oldLegends = $("#oldLegends").prop("checked");
 					addRequestBooleanParam(request, "extrapolate");
 					addRequestParam(request, "tournamentFactor", "1");
@@ -213,8 +217,16 @@
 			reloadGOATListTableAndLegend();
 		}
 		function goatListUrl() {
+			var url = "/goatList?oldLegends=" + $("#oldLegends").prop("checked");
 			var surface = $("#surface").val();
-			var url = "/goatList?" + (surface ? "surface=" + surface + "&" : "") + "oldLegends=" + $("#oldLegends").prop("checked");
+			if (surface)
+				url += "&surface=" + surface;
+			var active = $("#active").prop("checked");
+			if (active)
+				url += "&active=" + active;
+			var countryId = $("#countryId").val();
+			if (countryId)
+				url += "&countryId=" + countryId;
 			var extrapolate = $("#extrapolate").prop("checked");
 			if (extrapolate)
 				url += "&extrapolate=" + extrapolate;
@@ -303,7 +315,7 @@
 	<div id="activeDiv" class="btn-group margin-right">
 		<div class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Show only active players">
-				<input id="active" type="checkbox" onchange="reloadGOATListTable()"/> Active players
+				<input id="active" type="checkbox" th:checked="${active}" onchange="reloadGOATListTable()"/> Active players
 			</label>
 		</div>
 	</div>
@@ -346,7 +358,7 @@
 			</button>
 		</div>
 	</div>
-	<div id="goatListConfig" class="collapse" th:attrappend="class=${config.default ? _ : ' in'}" style="margin-bottom: 10px; margin-top: 10px">
+	<div id="goatListConfig" class="collapse" th:attrappend="class=${countryId == null && config.default ? _ : ' in'}" style="margin-bottom: 10px; margin-top: 10px">
 		<div class="row">
 			<div class="col-md-2 col-xs-3 text-nowrap">
 				<div class="checkbox">
@@ -363,14 +375,22 @@
 				</div>
 				&nbsp;<a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#extrapolateCareerPopover"><i class="fa fa-question-circle fa-lg" style="margin-top: 12px"></i></a>
 			</div>
-			<div class="col-lg-1 col-sm-2 col-xs-3">
-				<button type="button" class="btn btn-sm btn-info" onclick="goatListPermalink()" data-toggle="tooltip" data-placement="auto" title="Permalink to this GOAT List">
-					<span class="glyphicon glyphicon-link"></span>&nbsp;&nbsp;Permalink
-				</button>
+		</div>
+		<div class="row">
+			<div class="col-md-3 col-sm-4 col-xs-6">
+				<select id="countryId" class="form-control" onchange="reloadGOATListTable()" data-toggle="tooltip" data-placement="top" title="Filter by country">
+					<option value="">All countries</option>
+					<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:selected="${country.alpha3 == countryId}" th:text="${country.name}">Switzerland</option>
+				</select>
 			</div>
 			<div class="col-md-1 col-sm-2 col-xs-3">
 				<button type="button" class="btn btn-sm btn-info" onclick="goatListTweet()" data-toggle="tooltip" data-placement="auto" title="Tweet this GOAT List">
 					<i class="fa fa-twitter fa-b"></i>&nbsp;&nbsp;Tweet
+				</button>
+			</div>
+			<div class="col-lg-1 col-sm-2 col-xs-3">
+				<button type="button" class="btn btn-sm btn-info" onclick="goatListPermalink()" data-toggle="tooltip" data-placement="auto" title="Permalink to this GOAT List">
+					<span class="glyphicon glyphicon-link"></span>&nbsp;&nbsp;Permalink
 				</button>
 			</div>
 		</div>

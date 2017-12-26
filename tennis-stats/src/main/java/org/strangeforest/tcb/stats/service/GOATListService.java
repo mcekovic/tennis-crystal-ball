@@ -9,6 +9,9 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.table.*;
+import org.strangeforest.tcb.util.*;
+
+import com.neovisionaries.i18n.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
@@ -26,6 +29,9 @@ public class GOATListService {
 		"SELECT player_id, goat_rank, last_name, country_id, active, goat_points\n" +
 		"FROM player_v\n" +
 		"ORDER BY goat_rank, goat_points DESC, grand_slams DESC, tour_finals DESC, masters DESC, titles DESC, last_name LIMIT :playerCount";
+
+	private static final String GOAT_COUNTRIES_QUERY = //language=SQL
+		"SELECT DISTINCT country_id FROM player_v WHERE goat_points > 0";
 
 	private static final String GOAT_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s g\n" +
@@ -107,6 +113,11 @@ public class GOATListService {
 				return new PlayerRanking(goatRank, playerId, name, countryId, active, goatPoints);
 			}
 		);
+	}
+
+	@Cacheable("GOATList.Countries")
+	public List<CountryCode> getCountries() {
+		return Country.codes(jdbcTemplate.getJdbcOperations().queryForList(GOAT_COUNTRIES_QUERY, String.class));
 	}
 
 	@Cacheable("GOATList.Count")

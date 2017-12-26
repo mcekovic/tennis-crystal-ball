@@ -23,6 +23,7 @@ import static org.strangeforest.tcb.stats.model.GOATListConfig.*;
 @Controller
 public class GOATListController extends PageController {
 
+	@Autowired private GOATListService goatListService;
 	@Autowired private GOATLegendService goatLegendService;
 
 	private static Map<Integer, String> FACTOR_MAP = ImmutableMap.<Integer, String>builder()
@@ -40,6 +41,8 @@ public class GOATListController extends PageController {
 	@GetMapping("/goatList")
 	public ModelAndView goatList(
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "active", required = false) Boolean active,
+		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "oldLegends", defaultValue = T) boolean oldLegends,
 		@RequestParam(name = "extrapolate", defaultValue = F) boolean extrapolate,
 		@RequestParam(name = "tournamentFactor", defaultValue = "1") int tournamentFactor,
@@ -69,7 +72,10 @@ public class GOATListController extends PageController {
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("countries", goatListService.getCountries());
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("active", active);
+		modelMap.addAttribute("countryId", countryId);
 		modelMap.addAttribute("config", config);
 		modelMap.addAttribute("factors", FACTOR_MAP);
 		modelMap.addAttribute("levels", TOURNAMENT_LEVELS);

@@ -18,6 +18,7 @@ import static org.strangeforest.tcb.stats.util.OrderBy.*;
 public class GOATListResource {
 
 	@Autowired private GOATListService goatListService;
+	@Autowired private MatchesService matchesService;
 
 	private static Map<String, String> ORDER_MAP = ImmutableMap.<String, String>builder()
 		.put("goatPoints", "goat_points")
@@ -41,6 +42,7 @@ public class GOATListResource {
 	public BootgridTable<GOATListRow> goatListTable(
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "active", required = false) Boolean active,
+		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "oldLegends", defaultValue = T) boolean oldLegends,
 		@RequestParam(name = "extrapolate", defaultValue = F) boolean extrapolate,
 		@RequestParam(name = "tournamentFactor", defaultValue = "1") int tournamentFactor,
@@ -66,7 +68,7 @@ public class GOATListResource {
 		@RequestParam(name = "searchPhrase", defaultValue = "") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);
+		PlayerListFilter filter = new PlayerListFilter(active, matchesService.getSameCountryIds(countryId), searchPhrase);
 		GOATListConfig config = new GOATListConfig(
 			oldLegends, extrapolate, tournamentFactor, rankingFactor, achievementsFactor, parseIntProperties(levelFactors), parseIntProperties(resultFactors),
 			yearEndRankFactor, bestRankFactor, weeksAtNo1Factor, weeksAtEloTopNFactor, bestEloRatingFactor,
