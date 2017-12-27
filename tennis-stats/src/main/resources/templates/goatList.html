@@ -378,24 +378,6 @@
 		</div>
 		<div class="row">
 			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
-				<select id="countryId" class="form-control" onchange="reloadGOATListTable()" data-toggle="tooltip" data-placement="top" title="Filter by country">
-					<option value="">All countries</option>
-					<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:selected="${country.alpha3 == countryId}" th:text="${country.name}">Switzerland</option>
-				</select>
-			</div>
-			<div class="col-md-1 col-sm-2 col-xs-3">
-				<button type="button" class="btn btn-sm btn-info" onclick="goatListTweet()" data-toggle="tooltip" data-placement="auto" title="Tweet this GOAT List">
-					<i class="fa fa-twitter fa-b"></i>&nbsp;&nbsp;Tweet
-				</button>
-			</div>
-			<div class="col-lg-1 col-sm-2 col-xs-3">
-				<button type="button" class="btn btn-sm btn-info" onclick="goatListPermalink()" data-toggle="tooltip" data-placement="auto" title="Permalink to this GOAT List">
-					<span class="glyphicon glyphicon-link"></span>&nbsp;&nbsp;Permalink
-				</button>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
 				<div class="input-group" data-toggle="tooltip" data-placement="top" title="Change Tournament GOAT Points factor">
 					<label for="tournamentFactor" class="input-group-addon factor-label">Tournament Pts.:</label>
 					<select id="tournamentFactor" class="form-control" onchange="reloadGOATListTableAndLegend()">
@@ -594,6 +576,24 @@
 						</select>
 					</div>
 				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-3 col-md-4 col-sm-6 col-xs-9">
+				<select id="countryId" class="form-control" onchange="reloadGOATListTable()" data-toggle="tooltip" data-placement="top" title="Filter by country">
+					<option value="">All countries</option>
+					<option th:each="country : ${countries}" th:value="${country.alpha3}" value="SUI" th:selected="${country.alpha3 == countryId}" th:text="${country.name}">Switzerland</option>
+				</select>
+			</div>
+			<div class="col-md-1 col-sm-2 col-xs-3">
+				<button type="button" class="btn btn-sm btn-info" onclick="goatListTweet()" data-toggle="tooltip" data-placement="auto" title="Tweet this GOAT List">
+					<i class="fa fa-twitter fa-b"></i>&nbsp;&nbsp;Tweet
+				</button>
+			</div>
+			<div class="col-lg-1 col-sm-2 col-xs-3">
+				<button type="button" class="btn btn-sm btn-info" onclick="goatListPermalink()" data-toggle="tooltip" data-placement="auto" title="Permalink to this GOAT List">
+					<span class="glyphicon glyphicon-link"></span>&nbsp;&nbsp;Permalink
+				</button>
 			</div>
 		</div>
 	</div>
