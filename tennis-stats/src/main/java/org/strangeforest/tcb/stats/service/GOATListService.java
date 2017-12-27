@@ -56,7 +56,7 @@ public class GOATListService {
 		"  pf.%11$smatches_won matches_won, pf.%11$smatches_lost matches_lost, pf.%11$smatches_won::REAL / (pf.%11$smatches_won + pf.%11$smatches_lost) matches_won_pct, %12$s best_elo_rating, %12$s_date best_elo_rating_date\n" +
 		"FROM goat_list_ranked g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"INNER JOIN player_titles pt USING (player_id)\n" +
+		"LEFT JOIN player_titles pt USING (player_id)\n" +
 		"INNER JOIN player_performance pf USING (player_id)%13$s%14$s\n" +
 		"ORDER BY %15$s OFFSET :offset LIMIT :limit";
 
