@@ -11,6 +11,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 
 	protected static final String RESULT_TITLE         = "W";
 	protected static final String RESULT_FINAL         = "F";
+	protected static final String RESULT_MEDAL         = "BR";
 	protected static final String RESULT_SEMI_FINAL    = "SF";
 	protected static final String RESULT_QUARTER_FINAL = "QF";
 

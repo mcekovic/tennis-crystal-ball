@@ -15,6 +15,7 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 		register(mostTitles(ALL_FINALS));
 		register(mostTitles(MASTERS));
 		register(mostTitles(OLYMPICS));
+		register(mostMedals(OLYMPICS));
 		register(mostTitles(BIG_TOURNAMENTS));
 		register(mostTitles(ATP_500));
 		register(mostTitles(ATP_250));
@@ -60,6 +61,10 @@ public class MostTitlesCategory extends TournamentResultsCategory {
 
 	private static Record mostTitles(RecordDomain domain) {
 		return mostResults(domain.id + "Titles", suffix(domain.name, " ") + "Titles", domain, TITLES, RESULT_TITLE);
+	}
+
+	private static Record mostMedals(RecordDomain domain) {
+		return mostResults(domain.id + "Medals", suffix(domain.name, " ") + "Medals", domain, MEDALS, RESULT_MEDAL);
 	}
 
 	private static Record mostTitles(RecordDomain domain1, RecordDomain domain2) {

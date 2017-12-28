@@ -36,6 +36,7 @@ public abstract class RecordCategory {
 	protected static final String ALL_TOURNAMENTS = "level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')";
 	protected static final String TITLES = "result = 'W'";
 	protected static final String FINALS = "result >= 'F'";
+	protected static final String MEDALS = "result >= 'BR'";
 	protected static final String SEMI_FINALS = "result >= 'SF'";
 	protected static final String QUARTER_FINALS = "result >= 'QF'";
 	protected static final String ENTRIES = "result IS NOT NULL";
