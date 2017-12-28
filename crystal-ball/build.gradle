@@ -21,7 +21,13 @@ sourceSets.main.resources.srcDirs = ['src/main/resources', 'src/main/db']
 
 dependencies {
 	compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
-	compile ("com.google.guava:guava:$guavaVersion")
+	compile ("com.google.guava:guava:$guavaVersion") {
+		exclude group: 'org.codehaus.mojo'
+		exclude group: 'com.google.code.findbugs'
+		exclude group: 'com.google.errorprone'
+		exclude group: 'com.google.j2objc'
+		exclude group: 'org.checkerframework'
+	}
 	runtime ("org.postgresql:postgresql:$postgresqlJdbcVersion")
 	testCompile ("junit:junit:$junitVersion")
 	testCompile ("org.assertj:assertj-core:$assertjCoreVersion")

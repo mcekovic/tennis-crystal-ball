@@ -15,7 +15,6 @@ import static java.lang.Math.*
 import static org.strangeforest.tcb.dataload.StartEloRatings.*
 import static org.strangeforest.tcb.util.DateUtil.*
 
-//TODO Cache player start rankings, optionally batch rankings fetch for the whole day
 class EloRatings {
 
 	final SqlPool sqlPool
@@ -511,16 +510,18 @@ class EloRatings {
 		}
 		List<MatchEloRating> matchRatingsBatch = new ArrayList<>(matchRatings.size())
 		matchRatings.drainTo(matchRatingsBatch)
-		sqlPool.withSql { sql ->
-			sql.withBatch(UPDATE_MATCH_ELO_RATINGS) { ps ->
-				matchRatingsBatch.each { matchEloRatings ->
-					Map params = [:]
-					params.match_id = matchEloRatings.matchId
-					params.winner_elo_rating = intRound matchEloRatings.winnerRating
-					params.winner_next_elo_rating = intRound matchEloRatings.winnerNextRating
-					params.loser_elo_rating = intRound matchEloRatings.loserRating
-					params.loser_next_elo_rating = intRound matchEloRatings.loserNextRating
-					ps.addBatch(params)
+		if (matchRatingsBatch) {
+			sqlPool.withSql { sql ->
+				sql.withBatch(UPDATE_MATCH_ELO_RATINGS) { ps ->
+					matchRatingsBatch.each { matchEloRatings ->
+						Map params = [:]
+						params.match_id = matchEloRatings.matchId
+						params.winner_elo_rating = intRound matchEloRatings.winnerRating
+						params.winner_next_elo_rating = intRound matchEloRatings.winnerNextRating
+						params.loser_elo_rating = intRound matchEloRatings.loserRating
+						params.loser_next_elo_rating = intRound matchEloRatings.loserNextRating
+						ps.addBatch(params)
+					}
 				}
 			}
 		}

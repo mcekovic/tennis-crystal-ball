@@ -19,6 +19,7 @@ dependencies {
 	}
 	compile (project(':tennis-stats')) {
 		exclude group: 'org.springframework.boot'
+		exclude group: 'org.thymeleaf.extras'
 		exclude group: 'org.webjars'
 		exclude group: 'org.webjars.bower'
 		exclude group: 'com.maxmind.geoip2'
@@ -31,6 +32,7 @@ dependencies {
 		exclude group: 'com.google.code.findbugs'
 		exclude group: 'com.google.errorprone'
 		exclude group: 'com.google.j2objc'
+		exclude group: 'org.checkerframework'
 	}
 	compile ("org.jsoup:jsoup:$jsoupVersion")
 	runtime ("org.postgresql:postgresql:$postgresqlJdbcVersion")
