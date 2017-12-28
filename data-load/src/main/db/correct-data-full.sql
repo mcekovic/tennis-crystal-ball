@@ -64,12 +64,18 @@ DO $$ BEGIN
 
 PERFORM link_tournament('581', '580'); -- Australian Open
 PERFORM link_tournament('3935', '3934'); -- WCT Challenge Cup
+PERFORM link_tournament('3944', '316'); -- Baastad
 PERFORM link_tournament('1506', '650'); -- Birmingham
 PERFORM link_tournament('712', '650'); -- Birmingham
-PERFORM link_tournament('3944', '316'); -- Baastad
+PERFORM link_tournament('3943', '417'); -- Boston
+PERFORM link_tournament('3938', '347'); -- Bournemouth
+PERFORM link_tournament('3942', '313'); -- Bristol
 PERFORM link_tournament('3939', '344'); -- Caracas
 PERFORM link_tournament('2049', '741'); -- Eastbourne
 PERFORM link_tournament('468', '7290'); -- Estoril
+PERFORM link_tournament('820', '405'); -- Houston
+PERFORM link_tournament('1727', '663'); -- Louisville
+PERFORM link_tournament('2050', '315'); -- Newport
 
 END $$;
 
