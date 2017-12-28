@@ -81,7 +81,7 @@ dependencies {
 	}
 	runtime ("org.webjars:font-awesome:$fontAwesomeVersion")
 	compile ("com.maxmind.geoip2:geoip2:$geoip2Version") {
-		exclude group: 'com.google.http-client'
+		exclude group: 'org.apache.httpcomponents'
 	}
 	runtime files ('lib/GeoLite2-Country.zip')
 	compile ("eu.bitwalker:UserAgentUtils:$userAgentUtilsVersion")
