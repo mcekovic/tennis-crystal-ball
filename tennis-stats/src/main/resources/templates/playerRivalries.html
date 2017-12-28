@@ -9,6 +9,9 @@
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="opponent" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="h2h" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="matches" type="java.lang.Integer"*/-->
 <script type="text/javascript">
 	var isChrome = navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
 	$(function() {
@@ -30,7 +33,9 @@
 				request.level = $("#rivalryLevel").val();
 				request.surface = $("#rivalrySurface").val();
 				request.round = $("#rivalryRound").val();
+				request.opponent = $("#rivalryOpponent").val();
 				request.h2h = $("#rivalryH2H").val();
+				request.matches = $("#rivalryMatches").val();
 				return request;
 			},
 			rowCount: [15, 25, 50, -1],
@@ -75,6 +80,8 @@
 			});
 		});
 		var $search = $("#rivalriesTable-header").find("div.search");
+		$search.before($("#rivalryH2HDiv").remove());
+		$search.before($("#rivalryMatchesDiv").remove());
 		$search.after($("#clearRivalryFilterButton").remove());
 		$("[data-toggle='tooltip']").tooltip();
 	});
@@ -86,7 +93,9 @@
 		$("#rivalryLevel").val("");
 		$("#rivalrySurface").val("");
 		$("#rivalryRound").val("");
+		$("#rivalryOpponent").val("");
 		$("#rivalryH2H").val("");
+		$("#rivalryMatches").val("");
 		$("#rivalriesTable").bootgrid("search", "");
 		reloadRivalries();
 	}
@@ -166,13 +175,33 @@
 		</select>
 	</div>
 	<div class="col-md-2">
-		<select id="rivalryH2H" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by H2H score">
-			<option value="">All H2Hs</option>
-			<option value="1" class="bg-positive">Positive H2H</option>
-			<option value="0" class="bg-draw">Draw H2H</option>
-			<option value="-1" class="bg-negative">Negative H2H</option>
+		<select id="rivalryOpponent" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by opponent best ranking">
+			<option value="">Vs all</option>
+			<option value="1" th:selected="${opponent == 1}">Vs once No. 1</option>
+			<option value="2" th:selected="${opponent == 2}">Vs once Top 2</option>
+			<option value="3" th:selected="${opponent == 3}">Vs once Top 3</option>
+			<option value="5" th:selected="${opponent == 5}">Vs once Top 5</option>
+			<option value="10" th:selected="${opponent == 10}">Vs once Top 10</option>
+			<option value="20" th:selected="${opponent == 20}">Vs once Top 20</option>
 		</select>
 	</div>
+</div>
+<div id="rivalryH2HDiv" class="btn-group pull-left margin-right no-margin-left">
+	<select id="rivalryH2H" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by H2H score">
+		<option value="">All H2Hs</option>
+		<option value="1" th:selected="${h2h == 1}" class="bg-positive">Positive H2H</option>
+		<option value="0" th:selected="${h2h == 0}" class="bg-draw">Draw H2H</option>
+		<option value="-1" th:selected="${h2h == -1}" class="bg-negative">Negative H2H</option>
+	</select>
+</div>
+<div id="rivalryMatchesDiv" class="btn-group pull-left margin-right">
+	<select id="rivalryMatches" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by minimum rivalry matches">
+		<option value="">All rivalries</option>
+		<option value="3" th:selected="${matches == 3}">3+ matches</option>
+		<option value="5" th:selected="${matches == 5}">5+ matches</option>
+		<option value="10" th:selected="${matches == 10}">10+ matches</option>
+		<option value="20" th:selected="${matches == 20}">20+ matches</option>
+	</select>
 </div>
 <div id="clearRivalryFilterButton" class="btn-group margin-right">
 	<button type="button" class="btn btn-default" onclick="clearRivalryFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">

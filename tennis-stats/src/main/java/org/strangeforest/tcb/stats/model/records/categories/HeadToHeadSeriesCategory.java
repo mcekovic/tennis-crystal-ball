@@ -26,17 +26,19 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 	}
 
 	enum RecordType {
-		PLAYED("Played", HTH_TOTAL),
-		WON("Won", "h2h_won"),
-		DRAW("Draw", "h2h_draw"),
-		LOST("Lost", "h2h_lost");
+		PLAYED("Played", HTH_TOTAL, ""),
+		WON("Won", "h2h_won", "&h2h=1"),
+		DRAW("Draw", "h2h_draw", "&h2h=0"),
+		LOST("Lost", "h2h_lost", "&h2h=-1");
 
 		private final String name;
 		private final String column;
+		private final String urlParam;
 
-		RecordType(String name, String column) {
+		RecordType(String name, String column, String urlParam) {
 			this.name = name;
 			this.column = column;
+			this.urlParam = urlParam;
 		}
 	}
 
@@ -78,15 +80,15 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 			register(mostH2HSeries(LEAST, LOST));
 			register(mostH2HSeries(MOST, DRAW));
 			register(greatestH2HSeriesPct(WINNING));
-			register(mostH2HSeriesVs(MOST, PLAYED, NO_1_FILTER));
-			register(mostH2HSeriesVs(MOST, PLAYED, TOP_5_FILTER));
-			register(mostH2HSeriesVs(MOST, PLAYED, TOP_10_FILTER));
-			register(mostH2HSeriesVs(MOST, WON, NO_1_FILTER));
-			register(mostH2HSeriesVs(MOST, WON, TOP_5_FILTER));
-			register(mostH2HSeriesVs(MOST, WON, TOP_10_FILTER));
-			register(greatestH2HSeriesPctVs(WINNING, NO_1_FILTER));
-			register(greatestH2HSeriesPctVs(WINNING, TOP_5_FILTER));
-			register(greatestH2HSeriesPctVs(WINNING, TOP_10_FILTER));
+			register(mostH2HSeriesVs(MOST, PLAYED, NO_1_FILTER, "&opponent=1"));
+			register(mostH2HSeriesVs(MOST, PLAYED, TOP_5_FILTER, "&opponent=5"));
+			register(mostH2HSeriesVs(MOST, PLAYED, TOP_10_FILTER, "&opponent=10"));
+			register(mostH2HSeriesVs(MOST, WON, NO_1_FILTER, "&opponent=1"));
+			register(mostH2HSeriesVs(MOST, WON, TOP_5_FILTER, "&opponent=5"));
+			register(mostH2HSeriesVs(MOST, WON, TOP_10_FILTER, "&opponent=10"));
+			register(greatestH2HSeriesPctVs(WINNING, NO_1_FILTER, "&opponent=1"));
+			register(greatestH2HSeriesPctVs(WINNING, TOP_5_FILTER, "&opponent=5"));
+			register(greatestH2HSeriesPctVs(WINNING, TOP_10_FILTER, "&opponent=10"));
 		}
 		else {
 			register(mostH2HSeries(MOST, LOST));
@@ -104,8 +106,8 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 			"FROM player_h2h\n" +
 			"WHERE " + HTH_TOTAL + " >= " + minSeries,
 			"r.value", mostLeast.order, mostLeast.order,
-			IntegerRecordDetail.class, null,
-			asList(new RecordColumn("value", "numeric", null, H2H_WIDTH, "right", "H2H Series " + type.name)),
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries&matches=3%2$s", playerId, type.urlParam),
+			asList(new RecordColumn("value", null, "valueUrl", H2H_WIDTH, "right", "H2H Series " + type.name)),
 			notes(minSeries)
 		);
 	}
@@ -119,9 +121,9 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 			"FROM player_h2h\n" +
 			"WHERE " + HTH_TOTAL + " >= " + minSeries,
 			"r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC",
-			type.detailClass, null,
+			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries&matches=3", playerId),
 			asList(
-				new RecordColumn("value", null, null, PCT_WIDTH, "right", "H2H " + type.name + " Pct."),
+				new RecordColumn("value",  null, "valueUrl", PCT_WIDTH, "right", "H2H " + type.name + " Pct."),
 				type.value1RecordColumn,
 				new RecordColumn("draw", "numeric", null, H2H_SMALL_WIDTH, "right", "Draw"),
 				type.value2RecordColumn,
@@ -131,7 +133,7 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 		);
 	}
 
-	private static Record mostH2HSeriesVs(MostLeast mostLeast, RecordType type, RecordDomain domain) {
+	private static Record mostH2HSeriesVs(MostLeast mostLeast, RecordType type, RecordDomain domain, String urlParam) {
 		int minSeries = minSeries(domain);
 		return new Record<>(
 			mostLeast.name + "H2HSeries" + type.name + "Vs" + domain.id, mostLeast.name + " Head-to-Head Series " + type.name + " Vs Once " + domain.name,
@@ -141,13 +143,13 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 			"FROM player_h2h\n" +
 			"WHERE " + HTH_TOTAL + " >= " + minSeries,
 			"r.value", mostLeast.order, mostLeast.order,
-			IntegerRecordDetail.class, null,
-			asList(new RecordColumn("value", "numeric", null, H2H_WIDTH, "right", "H2H Series " + type.name)),
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries&matches=3%2$s%3$s", playerId, type.urlParam, urlParam),
+			asList(new RecordColumn("value", null, "valueUrl", H2H_WIDTH, "right", "H2H Series " + type.name)),
          notes(minSeries)
 		);
 	}
 
-	private static Record greatestH2HSeriesPctVs(PctRecordType type, RecordDomain domain) {
+	private static Record greatestH2HSeriesPctVs(PctRecordType type, RecordDomain domain, String urlParam) {
 		int minSeries = minSeries(domain);
 		return new Record<>(
 			"H2HSeries" + type.name + "PctVs" + domain.id, "Greatest Head-to-Head Series " + type.name + " Pct. Vs Once " + domain.name,
@@ -158,9 +160,9 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 			"INNER JOIN player_best_rank USING (player_id)\n" +
 			"WHERE best_rank " + domain.condition + " AND " + HTH_TOTAL + " >= " + minSeries,
 			"r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC",
-			type.detailClass, null,
+			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries&matches=3%2$s", playerId, urlParam),
 			asList(
-				new RecordColumn("value", null, null, PCT_WIDTH, "right", "H2H " + type.name + " Pct."),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", "H2H " + type.name + " Pct."),
 				type.value1RecordColumn,
 				new RecordColumn("draw", "numeric", null, H2H_SMALL_WIDTH, "right", "Draw"),
 				type.value2RecordColumn,

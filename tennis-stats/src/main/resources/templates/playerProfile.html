@@ -18,6 +18,8 @@
 <!--/*@thymesVar id="score" type="java.lang.String"*/-->
 <!--/*@thymesVar id="countryId" type="java.lang.String"*/-->
 <!--/*@thymesVar id="bigWin" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="h2h" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="matches" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="rankType" type="java.lang.String"*/-->
 <!--/*@thymesVar id="infamous" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="searchPhrase" type="java.lang.String"*/-->
@@ -48,7 +50,7 @@
 				[/]
 				[# th:case="'rivalries'"]
 				var $pill = $("#rivalriesPill");
-				var url = $pill.data("url") + [(${params.param('season', season)})];
+				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('opponent', opponent)})] + [(${params.param('h2h', h2h)})] + [(${params.param('matches', matches)})];
 				loadTab($pill, url)
 				[/]
 				[# th:case="'ranking'"]

@@ -59,6 +59,8 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "score", required = false) String score,
 		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "bigWin", defaultValue = "false") boolean bigWin,
+		@RequestParam(name = "h2h", required = false) Integer h2h,
+		@RequestParam(name = "matches", required = false) Integer matches,
 		@RequestParam(name = "rankType", required = false) String rankType,
 		@RequestParam(name = "infamous", required = false) Boolean infamous,
 		@RequestParam(name = "searchPhrase", required = false) String searchPhrase
@@ -86,6 +88,8 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("score", score);
 		modelMap.addAttribute("countryId", countryId);
 		modelMap.addAttribute("bigWin", bigWin);
+		modelMap.addAttribute("h2h", h2h);
+		modelMap.addAttribute("matches", matches);
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("infamous", infamous);
 		modelMap.addAttribute("searchPhrase", searchPhrase);
@@ -270,7 +274,10 @@ public class PlayerProfileController extends PageController {
 	@GetMapping("/playerRivalries")
 	public ModelAndView playerRivalries(
 		@RequestParam(name = "playerId") int playerId,
-		@RequestParam(name = "season", required = false) Integer season
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "opponent", required = false) Integer opponent,
+		@RequestParam(name = "h2h", required = false) Integer h2h,
+		@RequestParam(name = "matches", required = false) Integer matches
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
@@ -285,6 +292,9 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("opponent", opponent);
+		modelMap.addAttribute("h2h", h2h);
+		modelMap.addAttribute("matches", matches);
 		return new ModelAndView("playerRivalries", modelMap);
 	}
 

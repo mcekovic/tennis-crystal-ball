@@ -220,9 +220,6 @@ public class RivalriesService {
 		"  ORDER BY e.date DESC, m.date DESC, m.round DESC, m.match_num DESC LIMIT 1\n" +
 		") lm";
 
-	private static final String H2H_CRITERIA = //language=SQL
-		" AND r.won %1$s r.lost";
-
 
 	@Cacheable("PlayerH2H")
 	public Optional<WonDrawLost> getPlayerH2H(int playerId) {
@@ -239,7 +236,7 @@ public class RivalriesService {
 		});
 	}
 
-	public BootgridTable<PlayerRivalryRow> getPlayerRivalriesTable(int playerId, RivalryPlayerListFilter filter, Integer h2h, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<PlayerRivalryRow> getPlayerRivalriesTable(int playerId, RivalryPlayerListFilter filter, RivalrySeriesFilter seriesFilter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<PlayerRivalryRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
@@ -248,11 +245,12 @@ public class RivalriesService {
 			   filter.getCriteria(),
 				LAST_MATCH_LATERAL,
 				format(LAST_MATCH_JOIN_LATERAL, "player_id", "opponent_id", filter.getRivalryCriteria()),
-				h2h != null ? where(format(H2H_CRITERIA, h2h > 0 ? ">" : (h2h < 0 ? "<" : "="))) : "",
+				where(seriesFilter.getCriteria()),
 				orderBy
 			),
-			filter.getParams()
-				.addValue("playerId", playerId)
+			params("playerId", playerId)
+				.addValues(seriesFilter.getParams().getValues())
+				.addValues(filter.getParams().getValues())
 				.addValue("offset", offset),
 			rs -> {
 				if (rivalries.incrementAndGet() <= pageSize) {
