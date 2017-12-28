@@ -54,15 +54,7 @@ dependencies {
 	}
 	compile ('org.springframework.boot:spring-boot-starter-logging')
 	compile ('org.springframework.boot:spring-boot-starter-actuator')
-	compile ("com.google.guava:guava:$guavaVersion") {
-		exclude group: 'org.codehaus.mojo'
-		exclude group: 'com.google.code.findbugs'
-		exclude group: 'com.google.errorprone'
-		exclude group: 'com.google.j2objc'
-		exclude group: 'org.checkerframework'
-	}
 	compile ("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
-	compile ("org.postgresql:postgresql:$postgresqlJdbcVersion")
 	compile ("com.neovisionaries:nv-i18n:$nvi18nVersion")
 	compile ("org.thymeleaf.extras:thymeleaf-extras-java8time:$thymeleafJava8TimeVersion") {
 		exclude group: 'org.slf4j'
@@ -87,8 +79,6 @@ dependencies {
 	compile ("eu.bitwalker:UserAgentUtils:$userAgentUtilsVersion")
 
 	testCompile ('org.springframework.boot:spring-boot-starter-test')
-	testCompile ("junit:junit:$junitVersion")
-	testCompile ("org.assertj:assertj-core:$assertjCoreVersion")
 	testCompile ("org.mockito:mockito-core:$mockitoVersion")
 	testCompile ("org.testng:testng:$testngVersion")
 
@@ -99,7 +89,7 @@ dependencies {
 }
 
 task integrationTest(type: Test) {
-	testClassesDir = sourceSets."integration-test".output.classesDir
+	testClassesDirs = sourceSets."integration-test".output.classesDirs
 	classpath = sourceSets."integration-test".runtimeClasspath
 }
 

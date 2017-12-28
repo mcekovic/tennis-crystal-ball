@@ -27,19 +27,9 @@ dependencies {
 	}
 	compile ("org.codehaus.groovy:groovy-all:$groovyVersion")
 	compile ("com.xlson.groovycsv:groovycsv:$groovyCsvVersion")
-	compile ("com.google.guava:guava:$guavaVersion") {
-		exclude group: 'org.codehaus.mojo'
-		exclude group: 'com.google.code.findbugs'
-		exclude group: 'com.google.errorprone'
-		exclude group: 'com.google.j2objc'
-		exclude group: 'org.checkerframework'
-	}
 	compile ("org.jsoup:jsoup:$jsoupVersion")
-	runtime ("org.postgresql:postgresql:$postgresqlJdbcVersion")
 	compile ("org.springframework:spring-jdbc:$springJdbcVersion")
 	compile ("commons-cli:commons-cli:$commonsCliVersion")
-	testCompile ("junit:junit:$junitVersion")
-	testCompile ("org.assertj:assertj-core:$assertjCoreVersion")
 }
 
 task quickDeployToDigitalOcean {
