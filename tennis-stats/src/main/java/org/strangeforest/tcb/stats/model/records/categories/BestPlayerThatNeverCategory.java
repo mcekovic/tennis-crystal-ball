@@ -13,6 +13,7 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 
 	private static final String POINTS_WIDTH = "120";
 
+	private static final String OLYMPICS_DOB_THRESHOLD = "01-01-1950";
 	private static final String CARPET_DOB_THRESHOLD = "01-01-1985";
 	private static final RecordColumn GOAT_POINTS_COLUMN = new RecordColumn("value", null, "valueUrl", POINTS_WIDTH, "right", "GOAT Points");
 	private static final BiFunction<Integer, IntegerRecordDetail, String> PLAYER_GOAT_POINTS_URL_FORMATTER =
@@ -24,7 +25,8 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 		register(bestPlayerThatNeverWon(TOUR_FINALS, "tour_finals"));
 		register(bestPlayerThatNeverWon(ALL_FINALS, "tour_finals + coalesce(alt_finals, 0)", N_A, "Any Tour Finals Title (Official or Alternative)", null));
 		register(bestPlayerThatNeverWon(MASTERS, "masters"));
-		register(bestPlayerThatNeverWon(OLYMPICS, "olympics"));
+		register(bestPlayerThatNeverWon(OLYMPICS, "olympics", " AND dob >= DATE '" + OLYMPICS_DOB_THRESHOLD + "'", null, "Born after " + OLYMPICS_DOB_THRESHOLD));
+		register(bestPlayerThatNeverWonMedal(OLYMPICS, " AND dob >= DATE '" + OLYMPICS_DOB_THRESHOLD + "'", "Born after " + OLYMPICS_DOB_THRESHOLD));
 		register(bestPlayerThatNeverWon(BIG_TOURNAMENTS, "big_titles"));
 		register(bestPlayerThatNeverWon(HARD_TOURNAMENTS, "hard_titles"));
 		register(bestPlayerThatNeverWon(CLAY_TOURNAMENTS, "clay_titles"));
@@ -57,6 +59,21 @@ public class BestPlayerThatNeverCategory extends RecordCategory {
 			"SELECT player_id, goat_points AS value FROM player\n" +
 			"LEFT JOIN player_titles USING (player_id) INNER JOIN player_goat_points USING (player_id)\n" +
 			"WHERE goat_points > 0 AND coalesce(" + titleColumn + ", 0) = 0" + condition,
+			"r.value", "r.value DESC", "r.value DESC",
+			IntegerRecordDetail.class, PLAYER_GOAT_POINTS_URL_FORMATTER,
+			asList(GOAT_POINTS_COLUMN), notes
+		);
+	}
+
+	private static Record bestPlayerThatNeverWonMedal(RecordDomain domain, String condition, String notes) {
+		String domainTitle = prefix(domain.name, " ") + " Medal" + prefix(domain.nameSuffix, " ");
+		return new Record<>(
+			"BestPlayerThatNeverWon" + domain.id + "Medal", "Best Player That Never Won" + domainTitle,
+			/* language=SQL */
+			"SELECT player_id, g.goat_points AS value FROM player p\n" +
+			"INNER JOIN player_goat_points g USING (player_id)\n" +
+			"WHERE g.goat_points > 0" + condition + "\n" +
+			"AND NOT EXISTS (SELECT * FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = p.player_id AND r.result >= 'BR'" + prefix(domain.condition, " AND e.") + ")",
 			"r.value", "r.value DESC", "r.value DESC",
 			IntegerRecordDetail.class, PLAYER_GOAT_POINTS_URL_FORMATTER,
 			asList(GOAT_POINTS_COLUMN), notes
