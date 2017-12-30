@@ -48,7 +48,7 @@
 				[/]
 				[# th:case="'hypotheticalMatchup'"]
 				var $pill = $("#hypotheticalMatchupPill");
-				var url = $pill.data("url") + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('round', round)})];
+				var url = $pill.data("url") + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('round', round)})];
 				loadTab($pill, url);
 				[/]
 				[# th:case="*"]

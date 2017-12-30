@@ -21,6 +21,7 @@
 				rowCount: [-1],
 				navigation: 1,
 				formatters: {
+					"date": dateFormatter,
 					"event": function(column, row) {
 						return "<a href='/inProgressEventForecast?inProgressEventId=" + row.id + "' class='label label-" + row.level + "' title='Show full forecast'>" + row.name + "</a>";
 					},

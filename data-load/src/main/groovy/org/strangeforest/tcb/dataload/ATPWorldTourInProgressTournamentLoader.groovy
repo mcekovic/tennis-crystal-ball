@@ -360,7 +360,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def entryResult = KOResult.valueOf(matches[0].round)
 
 		MatchPredictionService predictionService = new MatchPredictionService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
-		TournamentMatchPredictor predictor = new TournamentMatchPredictor(predictionService, today, tournamentId, inProgressEventId, surface, level, bestOf)
+		TournamentMatchPredictor predictor = new TournamentMatchPredictor(predictionService, today, tournamentId, inProgressEventId, surface, false, level, bestOf)
 
 		def resultCount = 0
 		def tournamentSimulator
