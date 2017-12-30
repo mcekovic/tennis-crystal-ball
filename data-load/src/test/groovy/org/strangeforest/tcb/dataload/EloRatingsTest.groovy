@@ -97,4 +97,12 @@ class EloRatingsTest {
 		assertThat(kFunction((double)2000)).isCloseTo((double)0.5, offset)
 		assertThat(kFunction((double)2300)).isCloseTo((double)0.5, offset)
 	}
+
+	@Test
+	void "delta rating is calculated as expected"() {
+		def offset = Offset.offset((double)0.1)
+
+ 		assertThat(deltaRating(2375, 2483, 'G', 'F', (short)5, null)).isCloseTo(65.1d, offset)
+ 		assertThat(deltaRating(2050, 2506, 'M', 'F', (short)3, null)).isCloseTo(67.1d, offset)
+	}
 }
