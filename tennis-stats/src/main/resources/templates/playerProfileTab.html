@@ -80,9 +80,13 @@
 				<th>Seasons</th>
 				<td><a th:href="@{/playerProfile(playerId=${player.id}, tab=timeline)}" th:text="${seasonCount}" title="Show timeline">10</a></td>
 			</tr>
-			<tr>
+			<tr th:if="${player.active}">
 				<th>Active</th>
-				<td>[(${player.active ? 'Yes' : 'No'})] <img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12" style="vertical-align: 0"/></td>
+				<td>Yes <img th:if="${player.active}" src="/images/active.png" title="Active" width="12" height="12" style="vertical-align: 0"/></td>
+			</tr>
+			<tr th:if="${!player.active && lastEvent != null}">
+				<th>Retired</th>
+				<td th:text="${lastEvent.season}">2010</td>
 			</tr>
 			<!--/* Social */-->
 			<tr>
