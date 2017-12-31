@@ -13,6 +13,7 @@ import org.strangeforest.tcb.stats.model.forecast.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.service.*;
+import org.strangeforest.tcb.stats.util.*;
 
 @Controller
 public class TournamentController extends PageController {
@@ -176,10 +177,17 @@ public class TournamentController extends PageController {
 
 	@GetMapping("/inProgressEventForecast")
 	public ModelAndView inProgressEventForecast(
-		@RequestParam(name = "inProgressEventId") int inProgressEventId,
+		@RequestParam(name = "inProgressEventId", required = false) Integer inProgressEventId,
+		@RequestParam(name = "name", required = false) String name,
 		@RequestParam(name = "tab", required = false) String tab,
       @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat
 	) {
+		if (inProgressEventId == null) {
+			if (name != null)
+				inProgressEventId = forecastService.findInProgressEventId(name);
+			else
+				throw new NotFoundException("In-Progress Event", null);
+		}
 		InProgressEventForecast forecast = forecastService.getInProgressEventForecast(inProgressEventId);
 
 		ModelMap modelMap = new ModelMap();

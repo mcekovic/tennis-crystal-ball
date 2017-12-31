@@ -98,7 +98,7 @@ public class PlayerService {
 	}
 
 	@Cacheable("PlayerIdByName")
-	public Integer getPlayerId(String name) {
+	public int getPlayerId(String name) {
 		return jdbcTemplate.query(PLAYER_ID_BY_NAME_QUERY, params("name", name), rs -> {
 			if (rs.next())
 				return rs.getInt("player_id");
