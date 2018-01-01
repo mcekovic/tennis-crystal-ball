@@ -1,6 +1,8 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
 	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+	<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 	<!--/*@thymesVar id="levelResults" type="java.util.Map<java.lang.String, java.util.List<java.lang.String>>"*/-->
 	<!--/*@thymesVar id="levelResultCount" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="goatPoints" type="org.strangeforest.tcb.stats.model.PlayerGOATPoints"*/-->
@@ -24,6 +26,12 @@
 			});
 			$("[data-toggle='collapse']").click(collapseClick);
 		});
+		function reloadPlayerGOATPoints() {
+			var url = "/playerProfile?playerId=[(${playerId})]&tab=goatPoints";
+			var surface = $("#surface").val();
+			if (surface) url += "&surface=" + surface;
+			$("#goatPoints").load(url);
+		}
 	</script>
 	<style scoped="scoped">
 		th.grand-total {
@@ -75,12 +83,18 @@
 	<table id="goatPointsTable" class="table table-condensed table-hover table-bordered text-nowrap">
 		<thead>
 		<tr>
-			<th colspan="2" rowspan="2" class="first-header first-column text-center valign-middle grand-total">GOAT Points</th>
+			<th colspan="2" class="first-header first-column text-center valign-middle grand-total" style="padding: 3px">
+				<select id="surface" class="form-control" style="height: 24px; padding: 2px 5px" onchange="reloadPlayerGOATPoints()" data-toggle="tooltip" data-placement="top" title="Select overall or GOAT Points by surface">
+					<option value="">Overall</option>
+					<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:selected="${aSurface.code == surface}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}">Hard</option>
+				</select>
+			</th>
 			<th th:colspan="${levelResultCount + 2}" class="first-header first-column text-center tournament">Tournament</th>
 			<th colspan="4" rowspan="2" class="first-header first-column text-center valign-middle ranking">Ranking</th>
 			<th colspan="3" rowspan="2" class="first-header first-column last-column text-center valign-middle achievements">Achievements</th>
 		</tr>
 		<tr>
+			<th colspan="2" class="first-column text-center valign-middle grand-total">GOAT Points</th>
 			<th th:each="level : ${levelResults}" th:colspan="${level.value.size()}" class="level first-column text-center" th:data-level="${level.key}" th:text="${level.key}">G</th>
 			<th title="Davis Cup and World Team Cup" class="first-column text-center bg-level-D">D&amp;T</th>
 			<th title="Tournament Level" class="first-column tournament">Level</th>
@@ -107,10 +121,10 @@
 			<th class="first-column points-" th:attrappend="class=${season.totalPointsRounded}">
 				<a th:href="@{/playerProfile(playerId=${playerId}, tab=season, season=${season.season})}" th:text="${season.season}" class="points-link" title="Show season">2000</a>
 			</th>
-			<th class="points first-column points-" th:attrappend="class=${season.totalPointsRounded}" th:text="${season.totalPoints}">50</th>
+			<th class="points first-column points-" th:attrappend="class=${surface == null ? season.totalPointsRounded : season.totalPointsRounded2}" th:text="${season.totalPoints}">50</th>
 			<th:block th:each="level : ${levelResults}">
 				<td th:each="result : ${level.value}" class="points" th:attrappend="class=${resultStat.first ? ' first-column' : ''}">
-					<a th:if="${breakdown.hasItem(level.key, result)}" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season.season}, level=${breakdown.getLevel(level.key, result)}, result=${result})}" th:text="${breakdown.getItem(level.key, result)}" title="Show results">1</a>
+					<a th:if="${breakdown.hasItem(level.key, result)}" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season.season}, level=${breakdown.getLevel(level.key, result)}, surface=${surface}, result=${result})}" th:text="${breakdown.getItem(level.key, result)}" title="Show results">1</a>
 				</td>
 			</th:block>
 			<td class="points first-column" th:text="${breakdown.getItem('T', 'W')}">2</td>
@@ -119,7 +133,7 @@
 			<td class="points" th:text="${#numbers.formatDecimal(season.weeksAtNo1Points, 1, 1)}">5.2</td>
 			<td class="points" th:text="${#numbers.formatDecimal(season.weeksAtEloTopNPoints, 1, 1)}">5.2</td>
 			<td class="points first-column" th:text="${season.rankingPoints}">13</td>
-			<td class="points first-column"><a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season.season}, bigWin=true)}" th:text="${#numbers.formatDecimal(season.bigWinsPoints, 1, 1)}" title="Show Big Win matches">4.5</a></td>
+			<td class="points first-column"><a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season.season}, surface=${surface}, bigWin=true)}" th:text="${#numbers.formatDecimal(season.bigWinsPoints, 1, 1)}" title="Show Big Win matches">4.5</a></td>
 			<td class="points" th:text="${season.grandSlamPoints}">0</td>
 			<td class="points first-column last-column" th:text="${season.achievementsPoints}">4</td>
 		</tr>
@@ -130,7 +144,7 @@
 			<th class="points first-header first-column total" th:text="${goatPoints.seasonsPoints}">250</th>
 			<th:block th:each="level : ${levelResults}">
 				<th th:each="result : ${level.value}" class="level points first-header" th:attrappend="class=${resultStat.first ? ' first-column' : ''}" th:data-level="${level.key}">
-					<a th:if="${breakdown.hasItem(level.key, result)}" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, level=${breakdown.getLevel(level.key, result)}, result=${result})}" th:text="${breakdown.getItem(level.key, result)}" class="points-link" title="Show results">1</a>
+					<a th:if="${breakdown.hasItem(level.key, result)}" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, level=${breakdown.getLevel(level.key, result)}, surface=${surface}, result=${result})}" th:text="${breakdown.getItem(level.key, result)}" class="points-link" title="Show results">1</a>
 				</th>
 			</th:block>
 			<th class="points first-header first-column bg-level-D" th:text="${breakdown.getItem('T', 'W')}">4</th>
@@ -139,7 +153,7 @@
 			<th class="points first-header ranking" th:text="${goatPoints.weeksAtNo1Points}">5</th>
 			<th class="points first-header ranking" th:text="${goatPoints.weeksAtEloTopNPoints}">5</th>
 			<th class="points first-header first-column ranking" th:text="${goatPoints.seasonsRankingPoints}">13</th>
-			<th class="points first-header first-column achievements"><a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, bigWin=true)}" th:text="${goatPoints.bigWinsPoints}" title="Show Big Win matches">4</a></th>
+			<th class="points first-header first-column achievements"><a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, surface=${surface}, bigWin=true)}" th:text="${goatPoints.bigWinsPoints}" title="Show Big Win matches">4</a></th>
 			<th class="points first-header achievements" th:text="${goatPoints.seasonsGrandSlamPoints}">0</th>
 			<th class="points first-header first-column last-column achievements" th:text="${goatPoints.seasonsAchievementsPoints}">4</th>
 		</tr>
@@ -245,6 +259,6 @@
 		</thead>
 	</table>
 	<br/>
-	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
+	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" th:data-url="@{/goatLegend(surface=${surface})}">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
 	<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
 </th:block>

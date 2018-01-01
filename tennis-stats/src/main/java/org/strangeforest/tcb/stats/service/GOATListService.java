@@ -52,13 +52,13 @@ public class GOATListService {
 		"  FROM %10$sgoat_list\n" +
 		"  WHERE goat_points > 0\n" +
 		")\n" +
-		"SELECT g.*, p.name, p.country_id, p.active, pt.%11$sgrand_slams grand_slams, pt.%11$stour_finals tour_finals, pt.%11$salt_finals alt_finals, pt.%11$smasters masters, pt.%11$solympics olympics, pt.%11$sbig_titles big_titles, pt.%11$stitles titles, p.weeks_at_no1,\n" +
-		"  pf.%11$smatches_won matches_won, pf.%11$smatches_lost matches_lost, pf.%11$smatches_won::REAL / (pf.%11$smatches_won + pf.%11$smatches_lost) matches_won_pct, %12$s best_elo_rating, %12$s_date best_elo_rating_date\n" +
+		"SELECT g.*, p.name, p.country_id, p.active, pt.%11$sgrand_slams grand_slams, pt.%11$stour_finals tour_finals, pt.%11$salt_finals alt_finals, pt.%11$smasters masters, pt.%11$solympics olympics, pt.%11$sbig_titles big_titles, pt.%11$stitles titles, %12$s,\n" +
+		"  pf.%11$smatches_won matches_won, pf.%11$smatches_lost matches_lost, pf.%11$smatches_won::REAL / (pf.%11$smatches_won + pf.%11$smatches_lost) matches_won_pct, %13$s best_elo_rating, %13$s_date best_elo_rating_date\n" +
 		"FROM goat_list_ranked g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"LEFT JOIN player_titles pt USING (player_id)\n" +
-		"INNER JOIN player_performance pf USING (player_id)%13$s%14$s\n" +
-		"ORDER BY %15$s OFFSET :offset LIMIT :limit";
+		"INNER JOIN player_performance pf USING (player_id)%14$s%15$s\n" +
+		"ORDER BY %16$s OFFSET :offset LIMIT :limit";
 
 	private static final String GOAT_POINTS_AREAS = //language=SQL
 		"    g.year_end_rank_goat_points, g.best_rank_goat_points, g.weeks_at_no1_goat_points, g.weeks_at_elo_topn_goat_points, g.best_elo_rating_goat_points,\n" +
@@ -94,8 +94,9 @@ public class GOATListService {
 		"  FROM goat_list g\n" +
 		")";
 
-	private static final String PLAYER_BEST_ELO_RATING_JOIN = //language=SQL
-		"\nINNER JOIN player_best_elo_rating be USING (player_id)";
+	private static final String SURFACE_JOINS = //language=SQL
+		"\nLEFT JOIN player_weeks_at_surface_elo_topn we ON we.player_id = g.player_id AND we.surface = :surface::surface AND we.rank = 1" +
+		"\nLEFT JOIN player_best_elo_rating be ON be.player_id = g.player_id";
 
 
 	@Cacheable("GOATList.TopN")
@@ -139,7 +140,7 @@ public class GOATListService {
 			format(GOAT_LIST_QUERY,
 				getGOATPointsExpression(aSurface, config), getTournamentGOATPointsExpression(aSurface, config), getRankingGOATPointsExpression(aSurface, config), getAchievementsGOATPointsExpression(aSurface, config), getGOATPointsAreas(aSurface),
 				getTableName(aSurface), getSurfaceCriteria(aSurface), getOldLegendsCriteria(config.isOldLegends()), getExtrapolateIntermediateTable(aSurface, config), config.isExtrapolateCareer() ? "extrapolated_" : "",
-				surface == null ? "" : aSurface.getLowerCaseText() + '_', surface == null ? "p.best_elo_rating" : "be.best_" + aSurface.getLowerCaseText() + "_elo_rating", surface == null ? "" : PLAYER_BEST_ELO_RATING_JOIN,
+				surface == null ? "" : aSurface.getLowerCaseText() + '_', surface == null ? "p.weeks_at_no1" : "we.weeks AS weeks_at_no1", surface == null ? "p.best_elo_rating" : "be.best_" + aSurface.getLowerCaseText() + "_elo_rating", surface == null ? "" : SURFACE_JOINS,
 				where(filter.withPrefix("p.").getCriteria()), orderBy
 			),
 			getParams(aSurface, filter, config)

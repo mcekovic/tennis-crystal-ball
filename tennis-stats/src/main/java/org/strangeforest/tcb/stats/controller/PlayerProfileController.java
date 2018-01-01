@@ -480,13 +480,16 @@ public class PlayerProfileController extends PageController {
 	@GetMapping("/playerGOATPoints")
 	public ModelAndView playerGOATPoints(
 		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "season", required = false) Integer season
 	) {
 		Map<String, Collection<String>> levelResults = goatPointsService.getLevelResults();
-		PlayerGOATPoints goatPoints = goatPointsService.getPlayerGOATPoints(playerId);
+		PlayerGOATPoints goatPoints = goatPointsService.getPlayerGOATPoints(playerId, surface, true);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("levelResults", levelResults);
 		modelMap.addAttribute("levelResultCount", levelResults.values().stream().mapToInt(Collection::size).sum());
 		modelMap.addAttribute("goatPoints", goatPoints);

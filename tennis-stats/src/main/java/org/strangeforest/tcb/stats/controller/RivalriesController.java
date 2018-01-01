@@ -412,10 +412,11 @@ public class RivalriesController extends PageController {
 	@GetMapping("/h2hGOATPoints")
 	public ModelAndView h2hGOATPoints(
 		@RequestParam(name = "playerId1") int playerId1,
-		@RequestParam(name = "playerId2") int playerId2
+		@RequestParam(name = "playerId2") int playerId2,
+		@RequestParam(name = "surface", required = false) String surface
 	) {
-		PlayerGOATPoints goatPoints1 = goatPointsService.getPlayerGOATPoints(playerId1);
-		PlayerGOATPoints goatPoints2 = goatPointsService.getPlayerGOATPoints(playerId2);
+		PlayerGOATPoints goatPoints1 = goatPointsService.getPlayerGOATPoints(playerId1, surface, false);
+		PlayerGOATPoints goatPoints2 = goatPointsService.getPlayerGOATPoints(playerId2, surface, false);
 		Set<Integer> seasons = new TreeSet<>(reverseOrder());
 		seasons.addAll(goatPoints1.getPlayerSeasons());
 		seasons.addAll(goatPoints2.getPlayerSeasons());
@@ -423,6 +424,8 @@ public class RivalriesController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
 		modelMap.addAttribute("playerId2", playerId2);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("goatPoints1", goatPoints1);
 		modelMap.addAttribute("goatPoints2", goatPoints2);
 		modelMap.addAttribute("seasons", seasons);

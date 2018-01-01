@@ -13,6 +13,10 @@ REFRESH MATERIALIZED VIEW player_season_best_elo_rating;
 REFRESH MATERIALIZED VIEW player_year_end_elo_rank;
 REFRESH MATERIALIZED VIEW player_season_weeks_at_no1;
 REFRESH MATERIALIZED VIEW player_weeks_at_no1;
+REFRESH MATERIALIZED VIEW player_season_weeks_at_elo_topn;
+REFRESH MATERIALIZED VIEW player_weeks_at_elo_topn;
+REFRESH MATERIALIZED VIEW player_season_weeks_at_surface_elo_topn;
+REFRESH MATERIALIZED VIEW player_weeks_at_surface_elo_topn;
 
 REFRESH MATERIALIZED VIEW player_season_performance;
 REFRESH MATERIALIZED VIEW player_tournament_performance;
@@ -36,4 +40,5 @@ REFRESH MATERIALIZED VIEW player_tournament_level_win_streak;
 
 REFRESH MATERIALIZED VIEW player_season_goat_points;
 REFRESH MATERIALIZED VIEW player_goat_points;
+REFRESH MATERIALIZED VIEW player_surface_season_goat_points;
 REFRESH MATERIALIZED VIEW player_surface_goat_points;

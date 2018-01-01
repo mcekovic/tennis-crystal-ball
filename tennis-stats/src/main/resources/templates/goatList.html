@@ -12,6 +12,7 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
 	<title>GOAT List</title>
 	<script type="text/javascript" th:inline="javascript">
+		var surface = [[${surface}]];
 		$(function() {
 			var $goatListTable = $("#goatListTable");
 			var device = detectDevice();
@@ -63,7 +64,7 @@
 				formatters: {
 					"player": playerCountryFormatter,
 					"goatPoints": function(column, row) {
-						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=goatPoints' title='Show GOAT points distribution'><b>" + row.goatPoints + "</b></a>";
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=goatPoints" + (surface ? "&surface=" + surface : "") + "' title='Show GOAT points distribution'><b>" + row.goatPoints + "</b></a>";
 					},
 					"rankingGoatPoints": function(column, row) {
 						if (row.rankingGoatPoints > 0) {
@@ -102,15 +103,18 @@
 					"bigTitles": playerTitlesFormatter("bigTitles", "&level=GFLMO", " Big"),
 					"titles": playerTitlesFormatter("titles", "", ""),
 					"weeksAtNo1":  function(column, row) {
-						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=ranking' title='Show ATP ranking'>" + row.weeksAtNo1 + "</a>";
+						var weeksAtNo1 = row.weeksAtNo1;
+						if (weeksAtNo1 > 0)
+							return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=ranking" + (surface ? "&rankType=" + surfaceName(surface).toUpperCase() + "_ELO_RANK" : "") + "' title='Show " + (surface ? surfaceName(surface) + " Elo" : "ATP") + " ranking'>" + weeksAtNo1 + "</a>";
+						else
+							return "<span class='text-muted'>0</span>";
+
 					},
 					"wonPct": function(column, row) {
-						var surface = $("#surface").val();
 						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=performance" + (surface ? "&surface=" + surface : "") + "' title='" + row.wonLost + "'>" + row.wonPct + "</a>";
 					},
 					"bestEloRating": function(column, row) {
-						var surface = $("#surface").val();
-						var surfacePrefix = surface ? (surface === "H" ? "HARD_" : (surface === "C" ? "CLAY_" : (surface === "G" ? "GRASS_" : (surface === "P" ? "CARPET_" : "")))) : "";
+						var surfacePrefix = surface ? surfaceName(surface).toUpperCase() + "_" : "";
 						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=ranking&rankType=" + surfacePrefix + "ELO_RATING' title='" + formatDate(row.bestEloRatingDate) + "'>" + row.bestEloRating + "</a>";
 					}
 				},
@@ -158,10 +162,8 @@
 		function playerTitlesFormatter(attr, params, title) {
 			return function(column, row) {
 				var count = row[attr];
-				if (count > 0) {
-					var surface = $("#surface").val();
+				if (count > 0)
 					return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&result=W" + (surface ? "&surface=" + surface : "") + params + "' title='Show" + title + " titles'>" + count + "</a>";
-				}
 				else
 					return "<span class='text-muted'>0</span>";
 			};
@@ -174,7 +176,7 @@
 			loadCollapse($("#goatLegendButton"), goatLegendUrl());
 		}
 		function surfaceChanged() {
-			var surface = $("#surface").val();
+			surface = $("#surface").val();
 			processNonSurfaceArea("yearEndRankFactor", surface);
 			processNonSurfaceArea("bestRankFactor", surface);
 			processNonSurfaceArea("weeksAtNo1Factor", surface);
@@ -234,30 +236,31 @@
 			return url;
 		}
 		function goatLegendUrl() {
-			return "/goatLegend?surface=" + $("#surface").val() + goatListFactors();
+			var surface = $("#surface").val();
+			return "/goatLegend?surface=" + (surface ? surface : "") + goatListFactors();
 		}
 		function goatListFactors() {
 			var url = "";
-			url += addParam("tournamentFactor", "1");
-			url += addParam("rankingFactor", "1");
-			url += addParam("achievementsFactor", "1");
+			url += param("tournamentFactor", "1");
+			url += param("rankingFactor", "1");
+			url += param("achievementsFactor", "1");
 			var levelFactors = getLevelFactors();
 			if (levelFactors) url += "&levelFactors=" + levelFactors;
 			var resultFactors = getResultFactors();
 			if (resultFactors) url += "&resultFactors=" + resultFactors;
-			url += addParam("yearEndRankFactor", "1");
-			url += addParam("bestRankFactor", "1");
-			url += addParam("weeksAtNo1Factor", "1");
-			url += addParam("weeksAtEloTopNFactor", "1");
-			url += addParam("bestEloRatingFactor", "1");
-			url += addParam("grandSlamFactor", "1");
-			url += addParam("bigWinsFactor", "1");
-			url += addParam("h2hFactor", "1");
-			url += addParam("recordsFactor", "1");
-			url += addParam("bestSeasonFactor", "1");
-			url += addParam("greatestRivalriesFactor", "1");
-			url += addParam("performanceFactor", "1");
-			url += addParam("statisticsFactor", "1");
+			url += param("yearEndRankFactor", "1");
+			url += param("bestRankFactor", "1");
+			url += param("weeksAtNo1Factor", "1");
+			url += param("weeksAtEloTopNFactor", "1");
+			url += param("bestEloRatingFactor", "1");
+			url += param("grandSlamFactor", "1");
+			url += param("bigWinsFactor", "1");
+			url += param("h2hFactor", "1");
+			url += param("recordsFactor", "1");
+			url += param("bestSeasonFactor", "1");
+			url += param("greatestRivalriesFactor", "1");
+			url += param("performanceFactor", "1");
+			url += param("statisticsFactor", "1");
 			return url;
 		}
 		function goatListPermalink() {
@@ -267,7 +270,7 @@
 			window.open("https://twitter.com/intent/tweet?text=My+GOAT+List&via=UltmTennisStats&url=" + encodeURIComponent("http://www.ultimatetennisstatistics.com" + goatListUrl()), "Tweet this GOAT List", "width=600, height=600, left=" + (screen.width-600)/2 + ", top=" + (screen.height-600)/2);
 			return false;
 		}
-		function addParam(param, def) {
+		function param(param, def) {
 			var value = $("#" + param).val();
 			return value && !(def && value === def) ? "&" + param + "=" + value : "";
 		}

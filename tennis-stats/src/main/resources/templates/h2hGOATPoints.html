@@ -2,6 +2,8 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId1" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="playerId2" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="goatPoints1" type="org.strangeforest.tcb.stats.model.PlayerGOATPoints"*/-->
 <!--/*@thymesVar id="goatPoints2" type="org.strangeforest.tcb.stats.model.PlayerGOATPoints"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.Set<java.lang.Integer>"*/-->
@@ -10,6 +12,12 @@
 	$(function() {
 		$("[data-toggle='collapse']").click(collapseClick);
 	});
+	function reloadH2HGOATPoints() {
+		var url = "/headToHead?playerId1=[(${playerId1})]&playerId2=[(${playerId2})]&tab=goatPoints";
+		var surface = $("#surface").val();
+		if (surface) url += "&surface=" + surface;
+		$("#goatPoints").load(url);
+	}
 </script>
 <style scoped="scoped">
 	th.grand-total {
@@ -54,13 +62,21 @@
 <table id="goatPointsTable" class="table table-condensed table-hover table-bordered text-nowrap">
 	<thead>
 	<tr>
-		<th colspan="3" class="first-header first-column last-column text-center valign-middle achievements">Achievements</th>
-		<th colspan="4" class="first-header first-column text-center valign-middle ranking">Ranking</th>
-		<th class="first-header first-column text-center tournament">Tournament</th>
+		<th colspan="3" rowspan="2" class="first-header first-column last-column text-center valign-middle achievements">Achievements</th>
+		<th colspan="4" rowspan="2" class="first-header first-column text-center valign-middle ranking">Ranking</th>
+		<th rowspan="2" class="first-header first-column text-center tournament">Tournament</th>
+		<th colspan="3" class="first-header first-column text-center valign-middle grand-total" style="padding: 3px">
+			<select id="surface" class="form-control" style="height: 24px; padding: 2px 5px" onchange="reloadH2HGOATPoints()" data-toggle="tooltip" data-placement="top" title="Select overall or GOAT Points by surface">
+				<option value="">Overall</option>
+				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:selected="${aSurface.code == surface}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}">Hard</option>
+			</select>
+		</th>
+		<th rowspan="2" class="first-header first-column text-center tournament">Tournament</th>
+		<th colspan="4" rowspan="2" class="first-header first-column text-center valign-middle ranking">Ranking</th>
+		<th colspan="3" rowspan="2" class="first-header first-column last-column text-center valign-middle achievements">Achievements</th>
+	</tr>
+	<tr>
 		<th colspan="3" class="first-header first-column text-center valign-middle grand-total">GOAT Points</th>
-		<th class="first-header first-column text-center tournament">Tournament</th>
-		<th colspan="4" class="first-header first-column text-center valign-middle ranking">Ranking</th>
-		<th colspan="3" class="first-header first-column last-column text-center valign-middle achievements">Achievements</th>
 	</tr>
 	<tr>
 		<th class="first-column last-column text-center achievements" th:title="#{goatPoints.achievements.title}">Ach P</th>
@@ -88,25 +104,25 @@
 	<tr th:each="season : ${seasons}" th:with="season1=${goatPoints1.getPlayerSeasonPoints(season)}, season2=${goatPoints2.getPlayerSeasonPoints(season)}">
 		<td class="points first-column last-column" th:text="${season1.achievementsPoints}">4</td>
 		<td class="points" th:text="${season1.grandSlamPoints}">0</td>
-		<td class="points last-column"><a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, bigWin=true)}" th:text="${#numbers.formatDecimal(season1.bigWinsPoints, 1, 1)}" title="Show Big Win matches">4.5</a></td>
+		<td class="points last-column"><a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, season=${season}, surface=${surface}, bigWin=true)}" th:text="${#numbers.formatDecimal(season1.bigWinsPoints, 1, 1)}" title="Show Big Win matches">4.5</a></td>
 		<td class="points first-column" th:text="${season1.rankingPoints}">13</td>
 		<td class="points first-column" th:text="${#numbers.formatDecimal(season1.weeksAtEloTopNPoints, 1, 1)}">5.2</td>
 		<td class="points" th:text="${#numbers.formatDecimal(season1.weeksAtNo1Points, 1, 1)}">5.2</td>
 		<td class="points" th:text="${season1.yearEndRankPoints}">8</td>
 		<td class="points first-column" th:text="${season1.tournamentPoints}">35</td>
-		<th class="points first-column points-" th:attrappend="class=${season1.totalPointsRounded}">
-			<a th:if="${season1.totalPoints > 0}" th:href="@{/playerProfile(playerId=${playerId1}, tab=goatPoints, season=${season})}" th:text="${season1.totalPoints}" class="points-link" title="Show season GOAT Points distribution">50</a>
+		<th class="points first-column points-" th:attrappend="class=${surface == null ? season1.totalPointsRounded : season1.totalPointsRounded2}">
+			<a th:if="${season1.totalPoints > 0}" th:href="@{/playerProfile(playerId=${playerId1}, tab=goatPoints, season=${season}, surface=${surface})}" th:text="${season1.totalPoints}" class="points-link" title="Show season GOAT Points distribution">50</a>
 		</th>
 		<th class="first-column text-center" th:text="${season}">2000</th>
-		<th class="points first-column points-" th:attrappend="class=${season2.totalPointsRounded}">
-			<a th:if="${season2.totalPoints > 0}" th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints, season=${season})}" th:text="${season2.totalPoints}" class="points-link" title="Show season GOAT Points distribution">50</a>
+		<th class="points first-column points-" th:attrappend="class=${surface == null ? season2.totalPointsRounded : season2.totalPointsRounded2}">
+			<a th:if="${season2.totalPoints > 0}" th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints, season=${season}, surface=${surface})}" th:text="${season2.totalPoints}" class="points-link" title="Show season GOAT Points distribution">50</a>
 		</th>
 		<td class="points first-column" th:text="${season2.tournamentPoints}">35</td>
 		<td class="points first-column" th:text="${season2.yearEndRankPoints}">8</td>
 		<td class="points" th:text="${#numbers.formatDecimal(season2.weeksAtNo1Points, 1, 1)}">5.2</td>
 		<td class="points" th:text="${#numbers.formatDecimal(season2.weeksAtEloTopNPoints, 1, 1)}">5.2</td>
 		<td class="points first-column" th:text="${season2.rankingPoints}">13</td>
-		<td class="points first-column"><a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, bigWin=true)}" th:text="${#numbers.formatDecimal(season2.bigWinsPoints, 1, 1)}" title="Show Big Win matches">4.5</a></td>
+		<td class="points first-column"><a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, season=${season}, surface=${surface}, bigWin=true)}" th:text="${#numbers.formatDecimal(season2.bigWinsPoints, 1, 1)}" title="Show Big Win matches">4.5</a></td>
 		<td class="points" th:text="${season2.grandSlamPoints}">0</td>
 		<td class="points first-column last-column" th:text="${season2.achievementsPoints}">4</td>
 	</tr>
@@ -115,7 +131,7 @@
 	<tr>
 		<th class="points first-header first-column last-column achievements" th:text="${goatPoints1.seasonsAchievementsPoints}">4</th>
 		<th class="points first-header achievements" th:text="${goatPoints1.seasonsGrandSlamPoints}">0</th>
-		<th class="points first-header last-column achievements"><a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, bigWin=true)}" th:text="${goatPoints1.bigWinsPoints}" title="Show Big Win matches">4</a></th>
+		<th class="points first-header last-column achievements"><a th:href="@{/playerProfile(playerId=${playerId1}, tab=matches, surface=${surface}, bigWin=true)}" th:text="${goatPoints1.bigWinsPoints}" title="Show Big Win matches">4</a></th>
 		<th class="points first-header first-column ranking" th:text="${goatPoints1.seasonsRankingPoints}">13</th>
 		<th class="points first-header first-column ranking" th:text="${goatPoints1.weeksAtEloTopNPoints}">5</th>
 		<th class="points first-header ranking" th:text="${goatPoints1.weeksAtNo1Points}">5</th>
@@ -129,7 +145,7 @@
 		<th class="points first-header ranking" th:text="${goatPoints2.weeksAtNo1Points}">5</th>
 		<th class="points first-header ranking" th:text="${goatPoints2.weeksAtEloTopNPoints}">5</th>
 		<th class="points first-header first-column ranking" th:text="${goatPoints2.seasonsRankingPoints}">13</th>
-		<th class="points first-header first-column achievements"><a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, bigWin=true)}" th:text="${goatPoints2.bigWinsPoints}" title="Show Big Win matches">4</a></th>
+		<th class="points first-header first-column achievements"><a th:href="@{/playerProfile(playerId=${playerId2}, tab=matches, surface=${surface}, bigWin=true)}" th:text="${goatPoints2.bigWinsPoints}" title="Show Big Win matches">4</a></th>
 		<th class="points first-header achievements" th:text="${goatPoints2.seasonsGrandSlamPoints}">0</th>
 		<th class="points first-header first-column last-column achievements" th:text="${goatPoints2.seasonsAchievementsPoints}">4</th>
 	</tr>
@@ -227,13 +243,13 @@
 	</tr>
 	<tr th:if="${goatPoints1.greatestRivalriesPoints > 0 || goatPoints2.greatestRivalriesPoints > 0}">
 		<td class="points first-column last-column" th:text="${goatPoints1.greatestRivalriesPoints > 0 ? goatPoints1.greatestRivalriesPoints : _}"></td>
-		<td colspan="2" class="first-column text-left" th:title="#{goatPoints.greatestRivalries.title}">Greatest Rivalr</td>
+		<td colspan="2" class="first-column text-left" th:title="#{goatPoints.greatestRivalries.title}">Greatest Rival.</td>
 		<td colspan="5" class="first-column"></td>
 		<td class="points first-column" th:text="${goatPoints1.greatestRivalriesPoints > 0 ? goatPoints1.greatestRivalriesPoints : _}"></td>
 		<td class="first-column"></td>
 		<td class="points first-column" th:text="${goatPoints2.greatestRivalriesPoints > 0 ? goatPoints2.greatestRivalriesPoints : _}"></td>
 		<td colspan="5" class="first-column"></td>
-		<td colspan="2" class="first-column text-right" th:title="#{goatPoints.greatestRivalries.title}">Greatest Rivalr</td>
+		<td colspan="2" class="first-column text-right" th:title="#{goatPoints.greatestRivalries.title}">Greatest Rival.</td>
 		<td class="points first-column last-column" th:text="${goatPoints2.greatestRivalriesPoints > 0 ? goatPoints2.greatestRivalriesPoints : _}"></td>
 	</tr>
 	<tr th:if="${goatPoints1.performancePoints > 0 || goatPoints2.performancePoints > 0}">
@@ -277,17 +293,17 @@
 	<tr>
 		<th colspan="8" class="first-header first-column last-column"></th>
 		<th class="points first-header first-column grand-total">
-			<a th:href="@{/playerProfile(playerId=${playerId1}, tab=goatPoints)}" th:text="${goatPoints1.totalPoints}" class="points-link" title="Show GOAT Points distribution">155</a>
+			<a th:href="@{/playerProfile(playerId=${playerId1}, tab=goatPoints, surface=${surface})}" th:text="${goatPoints1.totalPoints}" class="points-link" title="Show GOAT Points distribution">155</a>
 		</th>
 		<th class="first-header first-column text-center grand-total">Total</th>
 		<th class="points first-header first-column grand-total">
-			<a th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints)}" th:text="${goatPoints2.totalPoints}" class="points-link" title="Show GOAT Points distribution">155</a>
+			<a th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints, surface=${surface})}" th:text="${goatPoints2.totalPoints}" class="points-link" title="Show GOAT Points distribution">155</a>
 		</th>
 		<th colspan="8" class="first-header first-column last-column"></th>
 	</tr>
 	</thead>
 </table>
 <br/>
-<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
+<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" th:data-url="@{/goatLegend(surface=${surface})}">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
 <div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
 </th:block>

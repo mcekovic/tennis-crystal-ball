@@ -979,10 +979,8 @@ CREATE INDEX ON player_tournament_level_win_streak (tournament_id);
 
 CREATE OR REPLACE VIEW no1_player_ranking_v AS
 WITH no1_player_ranking AS (
-	SELECT player_id, rank_date, extract(YEAR FROM rank_date)::INTEGER AS season, rank,
-		weeks(rank_date, lead(rank_date) OVER p) AS weeks,
-		season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks,
-		next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks
+	SELECT player_id, rank_date, extract(YEAR FROM rank_date)::INTEGER AS season, rank, weeks(rank_date, lead(rank_date) OVER p) AS weeks,
+		season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks, next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks
 	FROM player_ranking
 	INNER JOIN player_best_rank USING (player_id)
 	WHERE best_rank = 1
@@ -1041,10 +1039,8 @@ INNER JOIN weeks_at_no1_goat_points ON TRUE;
 
 CREATE OR REPLACE VIEW topn_player_elo_ranking_v AS
 WITH topn_player_elo_ranking AS (
-	SELECT player_id, rank, rank_date, extract(YEAR FROM rank_date)::INTEGER AS season,
-		weeks(rank_date, lead(rank_date) OVER p) AS weeks,
-		season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks,
-		next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks
+	SELECT player_id, rank, rank_date, extract(YEAR FROM rank_date)::INTEGER AS season, weeks(rank_date, lead(rank_date) OVER p) AS weeks,
+		season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks, next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks
 	FROM player_elo_ranking
 	INNER JOIN player_best_elo_rank USING (player_id)
 	WHERE best_elo_rank <= 5
@@ -1055,7 +1051,7 @@ FROM topn_player_elo_ranking
 WHERE rank <= 5;
 
 
--- player_season_weeks_at_elo_topn_v
+-- player_season_weeks_at_elo_topn
 
 CREATE OR REPLACE VIEW player_season_weeks_at_elo_topn_v AS
 WITH weeks_at_elo_topn AS (
@@ -1066,13 +1062,21 @@ WITH weeks_at_elo_topn AS (
 SELECT player_id, rank, season, round(season_weeks + coalesce(lag(next_season_weeks) OVER (PARTITION BY player_id ORDER BY season), 0))::INTEGER AS weeks
 FROM weeks_at_elo_topn;
 
+CREATE MATERIALIZED VIEW player_season_weeks_at_elo_topn AS SELECT * FROM player_season_weeks_at_elo_topn_v;
 
--- player_weeks_at_elo_topn_v
+CREATE UNIQUE INDEX ON player_season_weeks_at_elo_topn (player_id, rank, season);
+
+
+-- player_weeks_at_elo_topn
 
 CREATE OR REPLACE VIEW player_weeks_at_elo_topn_v AS
 SELECT player_id, rank, ceil(sum(weeks) FILTER (WHERE weeks <= 52)) weeks
 FROM topn_player_elo_ranking_v
 GROUP BY player_id, rank;
+
+CREATE MATERIALIZED VIEW player_weeks_at_elo_topn AS SELECT * FROM player_weeks_at_elo_topn_v;
+
+CREATE UNIQUE INDEX ON player_weeks_at_elo_topn (player_id, rank);
 
 
 -- player_season_weeks_at_elo_topn_goat_points_v
@@ -1080,7 +1084,7 @@ GROUP BY player_id, rank;
 CREATE OR REPLACE VIEW player_season_weeks_at_elo_topn_goat_points_v AS
 WITH weeks_at_elo_topn_goat_points AS (
 	SELECT player_id, season, rank, (sum(weeks) FILTER (WHERE weeks <= 52))::REAL / weeks_for_point AS unrounded_goat_points
-	FROM player_season_weeks_at_elo_topn_v
+	FROM player_season_weeks_at_elo_topn
 	INNER JOIN weeks_at_elo_topn_goat_points USING (rank)
 	GROUP BY player_id, season, rank, weeks_for_point
 )
@@ -1093,7 +1097,7 @@ GROUP BY player_id, season;
 
 CREATE OR REPLACE VIEW player_weeks_at_elo_topn_goat_points_v AS
 SELECT player_id, round(sum(weeks::REAL / weeks_for_point))::INTEGER AS goat_points, sum(weeks::REAL / weeks_for_point) AS unrounded_goat_points
-FROM player_weeks_at_elo_topn_v
+FROM player_weeks_at_elo_topn
 INNER JOIN weeks_at_elo_topn_goat_points USING (rank)
 GROUP BY player_id;
 
@@ -1103,48 +1107,86 @@ GROUP BY player_id;
 
 CREATE OR REPLACE VIEW topn_player_surface_elo_ranking_v AS
 WITH topn_player_surface_elo_ranking AS (
-	SELECT player_id, 'H'::surface AS surface, hard_rank AS rank, rank_date, weeks(rank_date, lead(rank_date) OVER p) AS weeks
+	SELECT player_id, 'H'::surface AS surface, hard_rank AS rank, rank_date, extract(YEAR FROM rank_date)::INTEGER AS season, weeks(rank_date, lead(rank_date) OVER p) AS weeks,
+		season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks, next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks
 	FROM player_elo_ranking
 	INNER JOIN player_best_elo_rank USING (player_id)
 	WHERE best_hard_elo_rank <= 5
 	WINDOW p AS (PARTITION BY player_id ORDER BY rank_date)
 	UNION ALL
-	SELECT player_id, 'C'::surface AS surface, clay_rank AS rank, rank_date, weeks(rank_date, lead(rank_date) OVER p) AS weeks
+	SELECT player_id, 'C'::surface AS surface, clay_rank AS rank, rank_date, extract(YEAR FROM rank_date)::INTEGER, weeks(rank_date, lead(rank_date) OVER p),
+		season_weeks(rank_date, lead(rank_date) OVER p), next_season_weeks(rank_date, lead(rank_date) OVER p)
 	FROM player_elo_ranking
 	INNER JOIN player_best_elo_rank USING (player_id)
 	WHERE best_clay_elo_rank <= 5
 	WINDOW p AS (PARTITION BY player_id ORDER BY rank_date)
 	UNION ALL
-	SELECT player_id, 'G'::surface AS surface, grass_rank AS rank, rank_date, weeks(rank_date, lead(rank_date) OVER p) AS weeks
+	SELECT player_id, 'G'::surface AS surface, grass_rank AS rank, rank_date, extract(YEAR FROM rank_date)::INTEGER, weeks(rank_date, lead(rank_date) OVER p),
+		season_weeks(rank_date, lead(rank_date) OVER p), next_season_weeks(rank_date, lead(rank_date) OVER p)
 	FROM player_elo_ranking
 	INNER JOIN player_best_elo_rank USING (player_id)
 	WHERE best_grass_elo_rank <= 5
 	WINDOW p AS (PARTITION BY player_id ORDER BY rank_date)
 	UNION ALL
-	SELECT player_id, 'P'::surface AS surface, carpet_rank AS rank, rank_date, weeks(rank_date, lead(rank_date) OVER p) AS weeks
+	SELECT player_id, 'P'::surface AS surface, carpet_rank AS rank, rank_date, extract(YEAR FROM rank_date)::INTEGER, weeks(rank_date, lead(rank_date) OVER p),
+		season_weeks(rank_date, lead(rank_date) OVER p), next_season_weeks(rank_date, lead(rank_date) OVER p)
 	FROM player_elo_ranking
 	INNER JOIN player_best_elo_rank USING (player_id)
 	WHERE best_carpet_elo_rank <= 5
 	WINDOW p AS (PARTITION BY player_id ORDER BY rank_date)
 )
-SELECT player_id, surface, rank, rank_date, weeks
+SELECT player_id, surface, rank, rank_date, season, weeks, season_weeks, next_season_weeks
 FROM topn_player_surface_elo_ranking
 WHERE rank <= 5;
 
 
--- player_weeks_at_surface_elo_topn_v
+-- player_season_weeks_at_surface_elo_topn
+
+CREATE OR REPLACE VIEW player_season_weeks_at_surface_elo_topn_v AS
+WITH weeks_at_surface_elo_topn AS (
+	SELECT player_id, surface, rank, season, sum(season_weeks) AS season_weeks, sum(next_season_weeks) AS next_season_weeks
+	FROM topn_player_surface_elo_ranking_v
+	GROUP BY player_id, surface, rank, season
+)
+SELECT player_id, surface, rank, season, round(season_weeks + coalesce(lag(next_season_weeks) OVER (PARTITION BY player_id ORDER BY season), 0))::INTEGER AS weeks
+FROM weeks_at_surface_elo_topn;
+
+CREATE MATERIALIZED VIEW player_season_weeks_at_surface_elo_topn AS SELECT * FROM player_season_weeks_at_surface_elo_topn_v;
+
+CREATE UNIQUE INDEX ON player_season_weeks_at_surface_elo_topn (player_id, surface, rank, season);
+
+
+-- player_weeks_at_surface_elo_topn
 
 CREATE OR REPLACE VIEW player_weeks_at_surface_elo_topn_v AS
 SELECT player_id, surface, rank, ceil(sum(weeks) FILTER (WHERE weeks <= 52)) weeks
 FROM topn_player_surface_elo_ranking_v
 GROUP BY player_id, surface, rank;
 
+CREATE MATERIALIZED VIEW player_weeks_at_surface_elo_topn AS SELECT * FROM player_weeks_at_surface_elo_topn_v;
+
+CREATE UNIQUE INDEX ON player_weeks_at_surface_elo_topn (player_id, surface, rank);
+
+
+-- player_season_weeks_at_surface_elo_topn_goat_points_v
+
+CREATE OR REPLACE VIEW player_season_weeks_at_surface_elo_topn_goat_points_v AS
+WITH weeks_at_surface_elo_topn_goat_points AS (
+	SELECT player_id, surface, season, rank, (sum(weeks) FILTER (WHERE weeks <= 52))::REAL / (2 * weeks_for_point) AS unrounded_goat_points
+	FROM player_season_weeks_at_surface_elo_topn
+	INNER JOIN weeks_at_elo_topn_goat_points USING (rank)
+	GROUP BY player_id, surface, season, rank, weeks_for_point
+)
+SELECT player_id, surface, season, round(sum(unrounded_goat_points))::INTEGER goat_points, sum(unrounded_goat_points) unrounded_goat_points
+FROM weeks_at_surface_elo_topn_goat_points
+GROUP BY player_id, surface, season;
+
 
 -- player_weeks_at_surface_elo_topn_goat_points_v
 
 CREATE OR REPLACE VIEW player_weeks_at_surface_elo_topn_goat_points_v AS
 SELECT player_id, surface, round(sum(weeks::REAL / (2 * weeks_for_point)))::INTEGER AS goat_points
-FROM player_weeks_at_surface_elo_topn_v
+FROM player_weeks_at_surface_elo_topn
 INNER JOIN weeks_at_elo_topn_goat_points USING (rank)
 GROUP BY player_id, surface;
 
@@ -1336,13 +1378,13 @@ FROM player_big_wins_v
 GROUP BY player_id, season;
 
 
--- player_surface_big_wins_goat_points_v
+-- player_surface_season_big_wins_goat_points_v
 
-CREATE OR REPLACE VIEW player_surface_big_wins_goat_points_v AS
-SELECT player_id, surface, round(sum(goat_points))::INTEGER AS goat_points, sum(goat_points) AS unrounded_goat_points
+CREATE OR REPLACE VIEW player_surface_season_big_wins_goat_points_v AS
+SELECT player_id, surface, season, round(sum(goat_points))::INTEGER AS goat_points, sum(goat_points) AS unrounded_goat_points
 FROM player_big_wins_v
 WHERE surface IS NOT NULL
-GROUP BY player_id, surface;
+GROUP BY player_id, season, surface;
 
 
 -- player_records_goat_points_v
@@ -2130,16 +2172,55 @@ CREATE MATERIALIZED VIEW player_goat_points AS SELECT * FROM player_goat_points_
 CREATE UNIQUE INDEX ON player_goat_points (player_id);
 
 
+-- player_surface_season_goat_points
+
+CREATE OR REPLACE VIEW player_surface_season_goat_points_v AS
+WITH goat_points AS (
+	SELECT e.surface, r.player_id, e.season, sum(r.goat_points) goat_points, sum(r.goat_points) tournament_goat_points, 0 ranking_goat_points, 0 achievements_goat_points,
+		sum(r.goat_points) raw_goat_points, 0 raw_ranking_goat_points, 0 raw_achievements_goat_points,
+		0 weeks_at_elo_topn_goat_points, 0 big_wins_goat_points
+	FROM player_tournament_event_result r
+	INNER JOIN tournament_event e USING (tournament_event_id)
+	WHERE r.goat_points > 0 AND e.level <> 'D' AND e.surface IS NOT NULL
+	GROUP BY e.surface, r.player_id, e.season
+	UNION ALL
+	SELECT surface, player_id, season, goat_points, 0, goat_points, 0,
+		0, 0, 0,
+		unrounded_goat_points, 0
+	FROM player_season_weeks_at_surface_elo_topn_goat_points_v
+	UNION ALL
+	SELECT surface, player_id, season, goat_points, 0, 0, goat_points,
+		0, 0, 0,
+		0, unrounded_goat_points
+	FROM player_surface_season_big_wins_goat_points_v
+)
+SELECT surface, player_id, season, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points,
+	sum(raw_goat_points) raw_goat_points, sum(raw_ranking_goat_points) raw_ranking_goat_points, sum(raw_achievements_goat_points) raw_achievements_goat_points,
+	sum(weeks_at_elo_topn_goat_points) weeks_at_elo_topn_goat_points, sum(big_wins_goat_points) big_wins_goat_points
+FROM goat_points
+GROUP BY surface, player_id, season
+HAVING sum(goat_points) > 0;
+
+CREATE MATERIALIZED VIEW player_surface_season_goat_points AS SELECT * FROM player_surface_season_goat_points_v;
+
+CREATE UNIQUE INDEX ON player_surface_season_goat_points (surface, player_id, season);
+
+
+-- player_surface_big_wins_goat_points_v
+
+CREATE OR REPLACE VIEW player_surface_big_wins_goat_points_v AS
+SELECT player_id, surface, round(sum(big_wins_goat_points))::INTEGER AS goat_points, sum(big_wins_goat_points) AS unrounded_goat_points
+FROM player_surface_season_goat_points
+GROUP BY player_id, surface;
+
+
 -- player_surface_goat_points
 
 CREATE OR REPLACE VIEW player_surface_goat_points_v AS
 WITH goat_points AS (
-	SELECT e.surface, r.player_id, sum(r.goat_points) goat_points, sum(r.goat_points) tournament_goat_points, 0 ranking_goat_points, 0 achievements_goat_points,
+	SELECT surface, player_id, raw_goat_points goat_points, tournament_goat_points, raw_ranking_goat_points ranking_goat_points, raw_achievements_goat_points achievements_goat_points,
 		0 weeks_at_elo_topn_goat_points, 0 best_elo_rating_goat_points, 0 big_wins_goat_points, 0 h2h_goat_points, 0 records_goat_points, 0 greatest_rivalries_goat_points
-	FROM player_tournament_event_result r
-	INNER JOIN tournament_event e USING (tournament_event_id)
-	WHERE r.goat_points > 0 AND e.level <> 'D' AND e.surface IS NOT NULL
-	GROUP BY e.surface, r.player_id
+	FROM player_surface_season_goat_points
 	UNION ALL
 	SELECT surface, player_id, goat_points, 0, goat_points, 0,
 		goat_points, 0, 0, 0, 0, 0
