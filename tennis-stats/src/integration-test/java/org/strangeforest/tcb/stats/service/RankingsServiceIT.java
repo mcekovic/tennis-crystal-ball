@@ -165,6 +165,26 @@ public class RankingsServiceIT {
 		rankingsTimelineTest(GOAT_POINTS);
 	}
 
+	@Test
+	public void hardGOATPointsRankingsTimeline() {
+		rankingsTimelineTest(HARD_GOAT_POINTS);
+	}
+
+	@Test
+	public void clayGOATPointsRankingsTimeline() {
+		rankingsTimelineTest(CLAY_GOAT_POINTS);
+	}
+
+	@Test
+	public void grassGOATPointsRankingsTimeline() {
+		rankingsTimelineTest(GRASS_GOAT_POINTS);
+	}
+
+	@Test
+	public void carpetGOATPointsRankingsTimeline() {
+		rankingsTimelineTest(CARPET_GOAT_POINTS);
+	}
+
 	private void rankingsTimelineTest(RankType points) {
 		TopRankingsTimeline rankingsTimeline = rankingsService.getTopRankingsTimeline(points);
 

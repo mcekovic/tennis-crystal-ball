@@ -10,6 +10,8 @@ import static java.lang.String.*;
 
 public class RivalrySeriesFilter {
 
+	public static final RivalrySeriesFilter ALL = new RivalrySeriesFilter(null, null, null);
+
 	private static final String OPPONENT_CRITERIA = " AND o.best_rank <= :opponent";
 	private static final String H2H_CRITERIA = " AND r.won %1$s r.lost";
 	private static final String MATCHES_CRITERIA = " AND r.won + r.lost >= :matches";

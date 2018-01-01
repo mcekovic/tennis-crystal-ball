@@ -18,7 +18,7 @@ import com.google.common.collect.*;
 
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
-import static org.strangeforest.tcb.stats.model.RankCategory.*;
+import static org.strangeforest.tcb.stats.model.core.RankCategory.*;
 import static org.strangeforest.tcb.stats.util.OrderBy.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 

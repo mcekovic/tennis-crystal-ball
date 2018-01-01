@@ -1,9 +1,7 @@
 package org.strangeforest.tcb.stats.model.core;
 
-import org.strangeforest.tcb.stats.model.*;
-
 import static java.lang.Boolean.*;
-import static org.strangeforest.tcb.stats.model.RankCategory.*;
+import static org.strangeforest.tcb.stats.model.core.RankCategory.*;
 import static org.strangeforest.tcb.stats.model.core.Surface.*;
 
 public enum RankType {
@@ -27,7 +25,11 @@ public enum RankType {
 	INDOOR_ELO_RANK(ELO, false, "Indoor Elo Ranking", null, TRUE),
 	INDOOR_ELO_RATING(ELO, true, "Indoor Elo Rating", null, TRUE),
 	// GOAT
-	GOAT_POINTS(GOAT, true, "GOAT Points", null, null);
+	GOAT_POINTS(GOAT, true, "GOAT Points", null, null),
+	HARD_GOAT_POINTS(GOAT, true, "Hard GOAT Points", HARD, null),
+	CLAY_GOAT_POINTS(GOAT, true, "Clay GOAT Points", CLAY, null),
+	GRASS_GOAT_POINTS(GOAT, true, "Grass GOAT Points", GRASS, null),
+	CARPET_GOAT_POINTS(GOAT, true, "Carpet GOAT Points", CARPET, null);
 
 	public final RankCategory category;
 	public final boolean points;

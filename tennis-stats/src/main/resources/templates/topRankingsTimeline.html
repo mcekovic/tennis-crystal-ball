@@ -31,6 +31,7 @@
 				<option value="OUTDOOR_ELO_RATING" th:selected="${rankTypeName == 'OUTDOOR_ELO_RATING'}">Outdoor Elo Ranking</option>
 				<option value="INDOOR_ELO_RATING" th:selected="${rankTypeName == 'INDOOR_ELO_RATING'}">Indoor Elo Ranking</option>
 				<option value="GOAT_POINTS" th:selected="${rankTypeName == 'GOAT_POINTS'}">GOAT Points Ranking</option>
+				<option th:each="surface : ${surfaces}" th:value="|${surface}_GOAT_POINTS|" th:class="|bg-surface-${surface.code}|" value="HARD_GOAT_POINTS" class="bg-surface-H" th:text="|${surface.text} GOAT Points Ranking|" th:selected="${rankType != null && rankTypeName == (surface + '_GOAT_POINTS')}">Hard GOAT Points Ranking</option>
 			</select>
 		</div>
 	</row>
@@ -39,14 +40,14 @@
 		<thead>
 			<tr>
 				<th>Season</th>
-				<th th:each="rank : ${#numbers.sequence(1, timeline.topRanks)}" th:colspan="${rank == timeline.topRanks ? 2 : 1}" th:text="'No. ' + ${rank}">No. 1</th>
+				<th th:each="rank : ${#numbers.sequence(1, timeline.topRanks)}" th:colspan="${rank == timeline.topRanks ? 20 : 1}" th:text="'No. ' + ${rank}">No. 1</th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="season : ${timeline.seasons}" th:unless="${season > 2007 && rankTypeName == 'CARPET_ELO_RATING'}">
+			<tr th:each="season : ${timeline.seasons}" th:unless="${season > 2007 && rankTypeName.startsWith('CARPET')}">
 				<th>
-					<a th:unless="${rankTypeName == 'GOAT_POINTS'}" th:href="@{/rankingsTable(rankType=${rankType}, season=${season})}" th:text="${season}" title="Show season year-end rankings">2000</a>
-					<a th:if="${rankTypeName == 'GOAT_POINTS'}" th:href="@{/season(season=${season}, tab=goatPoints)}" th:text="${season}" title="Show season GOAT Points">2000</a>
+					<a th:unless="${rankType.category.name() == 'GOAT'}" th:href="@{/rankingsTable(rankType=${rankType}, season=${season})}" th:text="${season}" title="Show season year-end rankings">2000</a>
+					<a th:if="${rankType.category.name() == 'GOAT'}" th:href="@{/season(season=${season}, tab=goatPoints)}" th:text="${season}" title="Show season GOAT Points">2000</a>
 					<th:block th:if="${season < 1973 && rankTypeName == 'POINTS'}"> *</th:block>
 				</th>
 				<td th:each="player : ${timeline.getTopPlayers(season)}">

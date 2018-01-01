@@ -15,7 +15,7 @@ import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
 import static java.lang.String.*;
-import static org.strangeforest.tcb.stats.model.RankCategory.*;
+import static org.strangeforest.tcb.stats.model.core.RankCategory.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
@@ -135,11 +135,11 @@ public class RankingsService {
 		"WHERE r.%1$s <= :topRanks\n" +
 		"ORDER BY r.season, r.%1$s, p.goat_points DESC";
 
-	private static final String PLAYER_YEAR_END_GOAT_RANK = //language=SQL
-		"WITH player_year_end_goat_rank AS (\n" +
+	private static final String PLAYER_SEASON_GOAT_RANK = //language=SQL
+		"WITH player_season_goat_rank AS (\n" +
 		"  SELECT player_id, season, rank() OVER (PARTITION BY season ORDER BY goat_points DESC) AS year_end_rank\n" +
-		"  FROM player_season_goat_points\n" +
-		"  WHERE season < extract(YEAR FROM current_date) OR extract(MONTH FROM current_date) >= 11\n" +
+		"  FROM %1$s\n" +
+		"  WHERE goat_points >= 2 AND (season < extract(YEAR FROM current_date) OR extract(MONTH FROM current_date) >= 11)%2$s\n" +
 		")\n";
 
 
@@ -451,10 +451,13 @@ public class RankingsService {
 
 	public TopRankingsTimeline getTopRankingsTimeline(RankType rankType) {
 		TopRankingsTimeline timeline = new TopRankingsTimeline(TOP_RANKS_FOR_TIMELINE);
+		MapSqlParameterSource params = params("topRanks", TOP_RANKS_FOR_TIMELINE);
+		if (rankType.category == RankCategory.GOAT && rankType.surface != null)
+			params.addValue("surface", rankType.surface.getCode());
 		jdbcTemplate.query(
-			(rankType == RankType.GOAT_POINTS ? PLAYER_YEAR_END_GOAT_RANK : "") +
+			(rankType.category == RankCategory.GOAT ? format(PLAYER_SEASON_GOAT_RANK, rankType.surface == null ? "player_season_goat_points" : "player_surface_season_goat_points", rankType.surface == null ? "" : " AND surface = :surface::surface") : "") +
 			format(TOP_RANKINGS_TIMELINE_QUERY, yearEndRankColumn(rankType), yearEndRankingTable(rankType)),
-			params("topRanks", TOP_RANKS_FOR_TIMELINE),
+			params,
 			rs -> {
 				timeline.addSeasonTopPlayer(rs.getInt("season"), new TopRankingsPlayer(
 					rs.getInt("year_end_rank"),
@@ -478,7 +481,11 @@ public class RankingsService {
 			case CARPET_ELO_RATING: return "carpet_year_end_rank";
 			case OUTDOOR_ELO_RATING: return "outdoor_year_end_rank";
 			case INDOOR_ELO_RATING: return "indoor_year_end_rank";
-			case GOAT_POINTS: return "year_end_rank";
+			case GOAT_POINTS:
+			case HARD_GOAT_POINTS:
+			case CLAY_GOAT_POINTS:
+			case GRASS_GOAT_POINTS:
+			case CARPET_GOAT_POINTS: return "year_end_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -493,7 +500,11 @@ public class RankingsService {
 			case CARPET_ELO_RATING:
 			case OUTDOOR_ELO_RATING:
 			case INDOOR_ELO_RATING: return "player_year_end_elo_rank";
-			case GOAT_POINTS: return "player_year_end_goat_rank";
+			case GOAT_POINTS:
+			case HARD_GOAT_POINTS:
+			case CLAY_GOAT_POINTS:
+			case GRASS_GOAT_POINTS:
+			case CARPET_GOAT_POINTS: return "player_season_goat_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}

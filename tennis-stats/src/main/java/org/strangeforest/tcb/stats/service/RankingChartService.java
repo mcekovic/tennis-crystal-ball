@@ -44,7 +44,7 @@ public class RankingChartService {
 		"AND %2$s > 0%5$s\n" +
 		"ORDER BY %6$s, r.player_id";
 
-	private static final String PLAYER_GOAT_POINTS_QUERY = //language=SQL
+	private static final String PLAYER_GOAT_POINTS = //language=SQL
 		"WITH goat_points AS (\n" +
 		"  SELECT e.date, r.player_id, r.goat_points\n" +
 		"  FROM player_tournament_event_result r\n" +
@@ -69,32 +69,61 @@ public class RankingChartService {
 		"  UNION ALL\n" +
 		"  SELECT season_end(season), player_id, goat_points\n" +
 		"  FROM player_best_season_goat_points_v\n" +
-		"), goat_points_summed AS (\n" +
-		"  SELECT g.date%1$s, g.player_id, sum(g.goat_points) OVER (PARTITION BY g.player_id ORDER BY g.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
-		"  FROM goat_points g%2$s\n" +
-		"  WHERE g.player_id IN (:playerIds)%3$s\n" +
-		"  ORDER BY %4$s, g.player_id\n" +
+		")";
+
+	private static final String PLAYER_SURFACE_GOAT_POINTS = //language=SQL
+		"WITH goat_points AS (\n" +
+		"  SELECT e.date, r.player_id, r.goat_points\n" +
+		"  FROM player_tournament_event_result r\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  WHERE r.goat_points > 0 AND e.level <> 'D' AND e.surface = :surface::surface\n" +
+		"  UNION ALL\n" +
+		"  SELECT season_end(season), player_id, goat_points\n" +
+		"  FROM player_season_weeks_at_surface_elo_topn_goat_points_v\n" +
+		"  WHERE surface = :surface::surface\n" +
+		"  UNION ALL\n" +
+		"  SELECT date, player_id, goat_points\n" +
+		"  FROM player_big_wins_v\n" +
+		"  WHERE surface = :surface::surface\n" +
+		")";
+
+	private static final String PLAYER_GOAT_POINTS_QUERY = //language=SQL
+		"%1$s, goat_points_summed AS (\n" +
+		"  SELECT g.date%2$s, g.player_id, sum(g.goat_points) OVER (PARTITION BY g.player_id ORDER BY g.DATE ROWS UNBOUNDED PRECEDING) AS rank_value\n" +
+		"  FROM goat_points g%3$s\n" +
+		"  WHERE g.player_id IN (:playerIds)%4$s\n" +
+		"  ORDER BY %5$s, g.player_id\n" +
 		"), goat_points_numbered AS (\n" +
-		"	SELECT date%5$s, player_id, rank_value, row_number() OVER (PARTITION BY %4$s, player_id ORDER BY rank_value DESC) row_number\n" +
+		"	SELECT date%6$s, player_id, rank_value, row_number() OVER (PARTITION BY %5$s, player_id ORDER BY rank_value DESC) row_number\n" +
 		"	FROM goat_points_summed\n" +
 		")\n" +
-		"SELECT date%5$s, player_id, rank_value\n" +
+		"SELECT date%6$s, player_id, rank_value\n" +
 		"FROM goat_points_numbered\n" +
 		"WHERE row_number = 1";
 
-	private static final String PLAYER_SEASON_GOAT_POINTS_QUERY = //language=SQL
+	private static final String PLAYER_SEASON_GOAT_POINTS = //language=SQL
 		"WITH goat_points AS (\n" +
 		"  SELECT season, player_id, goat_points\n" +
 		"  FROM player_season_goat_points\n" +
 		"  UNION ALL\n" +
 		"  SELECT season, player_id, goat_points\n" +
 		"  FROM player_best_season_goat_points_v\n" +
-		")\n" +
-		"SELECT g.season%1$s, g.player_id, sum(g.goat_points) rank_value\n" +
-		"FROM goat_points g%2$s\n" +
-		"WHERE g.player_id IN (:playerIds)%3$s\n" +
-		"GROUP BY g.season%4$s, g.player_id\n" +
-		"ORDER BY %5$s, g.player_id";
+		")";
+
+	private static final String PLAYER_SURFACE_SEASON_GOAT_POINTS = //language=SQL
+		"WITH goat_points AS (\n" +
+		"  SELECT season, player_id, goat_points\n" +
+		"  FROM player_surface_season_goat_points\n" +
+		"  WHERE surface = :surface::surface\n" +
+		")";
+
+	private static final String PLAYER_SEASON_GOAT_POINTS_QUERY = //language=SQL
+		"%1$s\n" +
+		"SELECT g.season%2$s, g.player_id, sum(g.goat_points) rank_value\n" +
+		"FROM goat_points g%3$s\n" +
+		"WHERE g.player_id IN (:playerIds)%4$s\n" +
+		"GROUP BY g.season%5$s, g.player_id\n" +
+		"ORDER BY %6$s, g.player_id";
 
 	private static final String PLAYER_JOIN = /*language=SQL*/ " INNER JOIN player p USING (player_id)";
 
@@ -125,7 +154,7 @@ public class RankingChartService {
 		boolean compensate = compensatePoints && rankType == POINTS;
 		jdbcTemplate.query(
 			getSQL(rankType, bySeason, dateRange, seasonRange, byAge),
-			getParams(players, bySeason, dateRange, seasonRange),
+			getParams(players, bySeason, dateRange, seasonRange, rankType.category == RankCategory.GOAT ? rankType.surface : null),
 			rs -> {
 				Object x;
 				int playerId = rs.getInt("player_id");
@@ -165,15 +194,18 @@ public class RankingChartService {
 	private String getSQL(RankType rankType, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, boolean byAge) {
 		String playerJoin = byAge ? PLAYER_JOIN : "";
 		String orderBy = byAge ? "age" : (bySeason ? "season" : "date");
-		if (rankType == GOAT_POINTS) {
+		if (rankType.category == RankCategory.GOAT) {
+			boolean bySurface = rankType.surface != null;
 			if (bySeason) {
 				return format(PLAYER_SEASON_GOAT_POINTS_QUERY,
+					bySurface ? PLAYER_SURFACE_SEASON_GOAT_POINTS : PLAYER_SEASON_GOAT_POINTS,
 					byAge ? ", extract(YEAR FROM age((g.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "",
 					playerJoin, rangeFilter(seasonRange, "g.season", "season"), byAge ? ", age" : "", orderBy
 				);
 			}
 			else {
 				return format(PLAYER_GOAT_POINTS_QUERY,
+					bySurface ? PLAYER_SURFACE_GOAT_POINTS : PLAYER_GOAT_POINTS,
 					byAge ? ", age(g.date, p.dob) AS age" : "",
 					playerJoin, rangeFilter(dateRange, "g.date", "date"), orderBy, byAge ? ", age" : ""
 				);
@@ -254,12 +286,14 @@ public class RankingChartService {
 		}
 	}
 
-	private MapSqlParameterSource getParams(IndexedPlayers players, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange) {
+	private MapSqlParameterSource getParams(IndexedPlayers players, boolean bySeason, Range<LocalDate> dateRange, Range<Integer> seasonRange, Surface surface) {
 		MapSqlParameterSource params = params("playerIds", players.getPlayerIds());
 		if (bySeason)
 			addRangeParams(params, seasonRange, "season");
 		else
 			addRangeParams(params, dateRange, "date");
+		if (surface != null)
+			params.addValue("surface", surface.getCode());
 		return params;
 	}
 
