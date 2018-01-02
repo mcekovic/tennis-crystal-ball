@@ -30,7 +30,7 @@
 			var robots = $("#robots").prop("checked");
 			if (robots)
 				url += "&robots=true";
-			window.location = url;
+			window.location.href = url;
 		}
 	</script>
 	<style>
@@ -68,7 +68,7 @@
 			</div>
 		</div>
 		<div class="col-md-1">
-			<button class="btn btn-default" title="Ultimate Tennis Statistics Home" onclick="window.location = '/'"><i class="fa fa-home fa-b"></i>&nbsp;&nbsp;Home</button>
+			<button class="btn btn-default" href="/" title="Ultimate Tennis Statistics Home"><i class="fa fa-home fa-b"></i>&nbsp;&nbsp;Home</button>
 		</div>
 	</div>
 	<br/>

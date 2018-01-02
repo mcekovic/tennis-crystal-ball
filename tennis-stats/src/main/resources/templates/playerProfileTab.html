@@ -15,7 +15,7 @@
 			minLength: 2,
 			select: function (event, ui) {
 				if (ui.item)
-					window.location = "/headToHead?playerId1=[(${player.id})]&playerId2=" + ui.item.id;
+					window.location.href = "/headToHead?playerId1=[(${player.id})]&playerId2=" + ui.item.id;
 			}
 		});
 		decorateSurface("#favoriteSurface, #lastEventSurface");

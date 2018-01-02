@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:with="seasonCount=${timeline.seasons.size()}">
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="fromSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="toSeason" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="averageElo" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.DominanceTimeline"*/-->
 <!--/*@thymesVar id="dominanceRatioCoefficient" type="java.lang.Integer"*/-->
@@ -60,17 +62,14 @@
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadDominanceTimeline() {
-			var url = "/dominanceTimeline"
+			var url = "/dominanceTimeline?averageElo=" + $("#averageElo").prop("checked");
 			var fromSeason = $("#fromSeason").val();
-			if (fromSeason)
-				url += "?fromSeason=" + fromSeason;
+			if (fromSeason) url += "&fromSeason=" + fromSeason;
 			var toSeason = $("#toSeason").val();
-			if (toSeason)
-				url += (fromSeason ? "&" : "?") + "toSeason=" + toSeason;
-			var averageElo = $("#averageElo").prop("checked");
-			if (averageElo)
-				url += (fromSeason || toSeason ? "&" : "?") + "averageElo=" + averageElo;
-			window.location = url;
+			if (toSeason) url += "&toSeason=" + toSeason;
+			var surface = $("#surface").val();
+			if (surface) url += "&surface=" + surface;
+			window.location.href = url;
 		}
 		function onAverageEloChange() {
 			var averageElo = $("#averageElo").prop("checked");
@@ -116,6 +115,7 @@
 			height: 25px;
 		}
 		.points-0, .points-10, .points-20, .points-30, .points-40, .points-50, .points-60, .points-70, .points-80, .points-90, .points-100 {
+			width: 26px;
 			text-align: right;
 		}
 		.points {
@@ -125,10 +125,8 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<h3 class="text-nowrap"><i class="fa fa-history"></i> Dominance Timeline</h3>
 	<div class="row">
-		<div class="col-sm-4 col-md-5 col-lg-6">
-			<h3 class="text-nowrap" style="display: inline"><i class="fa fa-history"></i> Dominance Timeline</h3>
-		</div>
 		<div class="col-sm-6 col-md-5 col-lg-4">
 			<div class="input-group">
 				<label for="fromSeason" class="input-group-addon">From:</label>
@@ -143,6 +141,15 @@
 				</select>
 			</div>
 		</div>
+		<div class="col-sm-4 col-md-3 col-lg-3">
+			<div class="input-group">
+				<label for="surface" class="input-group-addon">Season:</label>
+				<select id="surface" class="form-control" onchange="reloadDominanceTimeline()" data-toggle="tooltip" data-placement="top" title="Select overall or Dominance Timeline by surface">
+					<option value="">Overall</option>
+					<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:selected="${aSurface.code == surface}" th:text="${aSurface.text}">Hard</option>
+				</select>
+			</div>
+		</div>
 		<div class="col-sm-2 col-md-2 col-lg-2">
 			<div class="checkbox text-nowrap">
 				<label data-toggle="tooltip" data-placement="top" title="Show average Elo ratings">
@@ -151,12 +158,11 @@
 			</div>
 		</div>
 	</div>
-	<br/>
 	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired(${seasonCount >= 30 ? 'lg' : (seasonCount >= 22 ? 'md' : (seasonCount >= 14 ? 'sm' : _))})"/>
 	<table id="dominanceTable" class="table table-condensed table-hover table-bordered text-nowrap" style="width: auto; border: 3px solid lightgray">
 		<thead id="timelineHeader">
 		<tr class="best-player">
-			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Era</th>
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray; height: 85px">Era</th>
 			<th th:each="era : ${timeline.dominanceEras}" th:class="'points-' + ${era.dominanceRatioRounded}" style="padding: 1px" th:colspan="${era.seasonCount}">
 				<span th:if="${era.player}" th:text="${era.player.lastName}" class="best-player era-player">Sampras</span>
 			</th>
@@ -168,7 +174,7 @@
 			</th>
 		</tr>
 		<tr class="best-player">
-			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Season Best Player</th>
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray; height: 85px">Season Best Player</th>
 			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
 				<span th:text="${season.bestPlayer.lastName}" class="best-player">Federer</span>
 			</th>
@@ -183,7 +189,7 @@
 		<thead id="averageEloTimeline" style="display: none">
 		<tr class="season" style="border-bottom: 3px solid lightgray">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray">Average Elo Ratings</th>
-			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="@{/season(season=${season})}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
+			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="@{/season(season=${season}, tab=goatPoints, surface=${surface})}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
 		</tr>
 		<tr class="season" style="border-top: 3px solid lightgray">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average No 1 Elo Rating">No 1</th>
@@ -227,7 +233,7 @@
 			<th style="padding: 1px 4px">Player</th>
 			<th style="padding: 1px 4px">Born</th>
 			<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
-			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="@{/season(season=${season})}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
+			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="@{/season(season=${season}, tab=goatPoints, surface=${surface})}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -239,9 +245,9 @@
 			</td>
 			<td style="padding: 1px 4px" th:text="${player.dob.year}">1985</td>
 			<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray">
-				<a th:href="@{/playerProfile(playerId=${player.playerId}, tab=goatPoints)}" th:text="${player.goatPoints}" title="Show GOAT points distribution">585</a>
+				<a th:href="@{/playerProfile(playerId=${player.playerId}, tab=goatPoints, surface=${surface})}" th:text="${player.goatPoints}" title="Show GOAT points distribution">585</a>
 			</td>
-			<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${seasonPoint.pointsRounded}" class="points-10"><a th:href="@{/playerProfile(playerId=${player.playerId}, tab=goatPoints, season=${seasonPoint.season})}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points" title="Show season GOAT points distribution">15</a></td>
+			<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${seasonPoint.pointsRounded}" class="points-10"><a th:href="@{/playerProfile(playerId=${player.playerId}, tab=goatPoints, season=${seasonPoint.season}, surface=${surface})}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points" title="Show season GOAT points distribution">15</a></td>
 		</tr>
 		</tbody>
 		<thead>
@@ -249,13 +255,13 @@
 			<th style="padding: 1px 4px">Player</th>
 			<th style="padding: 1px 4px">Born</th>
 			<th style="padding: 1px 4px; border-right: 3px solid lightgray">GOAT Pts.</th>
-			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="@{/season(season=${season})}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
+			<th style="padding: 1px" th:each="season : ${timeline.seasons}"><a th:href="@{/season(season=${season}, tab=goatPoints, surface=${surface})}" th:text="${season}" class="vseason" title="Show season">2015</a></th>
 		</tr>
 		</thead>
 	</table>
 	<p><i>* Minimum <span th:text="${minGOATPoints}">40</span> GOAT points</i></p>
 	<br/>
-	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
+	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" th:data-url="@{/goatLegend(surface=${surface})}">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
 	<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>

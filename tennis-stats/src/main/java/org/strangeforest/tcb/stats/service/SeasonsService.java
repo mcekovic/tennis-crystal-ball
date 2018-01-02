@@ -229,15 +229,16 @@ public class SeasonsService {
 	}
 
 	public List<RecordDetailRow> getSeasonGOATPoints(int season, String surface, String pointsColumnPrefix, int maxPlayers) {
+		boolean overall = isNullOrEmpty(surface);
 		MapSqlParameterSource params = params("season", season)
 			.addValue("maxPlayers", maxPlayers);
-		if (!isNullOrEmpty(surface))
+		if (!overall)
 			params.addValue("surface", surface);
 		return jdbcTemplate.query(
 			format(SEASON_GOAT_POINTS_QUERY,
 				pointsColumnPrefix,
-				isNullOrEmpty(surface) ? "player_season_goat_points" : "player_surface_season_goat_points",
-				isNullOrEmpty(surface) ? "" : format(SURFACE_CRITERIA, "")
+				overall ? "player_season_goat_points" : "player_surface_season_goat_points",
+				overall ? "" : format(SURFACE_CRITERIA, "")
 			),
 			params,
 			(rs, rowNum) -> mapSeasonGOATPointsRecordDetailRow(rs, season, surface)
@@ -263,13 +264,14 @@ public class SeasonsService {
 
 	@Cacheable("BestSeasons.Count")
 	public int getBestSeasonCount(String surface, PlayerListFilter filter) {
+		boolean overall = isNullOrEmpty(surface);
 		MapSqlParameterSource params = filter.getParams().addValue("minPoints", getMinSeasonGOATPoints(surface));
-		if (!isNullOrEmpty(surface))
+		if (!overall)
 			params.addValue("surface", surface);
 		return Math.min(MAX_BEST_SEASON_COUNT, jdbcTemplate.queryForObject(
 			format(BEST_SEASON_COUNT_QUERY,
-				isNullOrEmpty(surface) ? "player_season_goat_points" : "player_surface_season_goat_points",
-				isNullOrEmpty(surface) ? "" : format(SURFACE_CRITERIA, "s."),
+				overall ? "player_season_goat_points" : "player_surface_season_goat_points",
+				overall ? "" : format(SURFACE_CRITERIA, "s."),
 				filter.getCriteria()
 			),
 			params,

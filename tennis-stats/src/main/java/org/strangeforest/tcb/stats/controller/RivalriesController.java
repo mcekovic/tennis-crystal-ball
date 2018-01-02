@@ -415,8 +415,9 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "playerId2") int playerId2,
 		@RequestParam(name = "surface", required = false) String surface
 	) {
-		PlayerGOATPoints goatPoints1 = goatPointsService.getPlayerGOATPoints(playerId1, surface, false);
-		PlayerGOATPoints goatPoints2 = goatPointsService.getPlayerGOATPoints(playerId2, surface, false);
+		Surface aSurface = Surface.safeDecode(surface);
+		PlayerGOATPoints goatPoints1 = goatPointsService.getPlayerGOATPoints(playerId1, aSurface, false);
+		PlayerGOATPoints goatPoints2 = goatPointsService.getPlayerGOATPoints(playerId2, aSurface, false);
 		Set<Integer> seasons = new TreeSet<>(reverseOrder());
 		seasons.addAll(goatPoints1.getPlayerSeasons());
 		seasons.addAll(goatPoints2.getPlayerSeasons());

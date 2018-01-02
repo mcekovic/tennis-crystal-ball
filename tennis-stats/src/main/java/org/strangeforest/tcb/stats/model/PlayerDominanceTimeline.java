@@ -3,6 +3,8 @@ package org.strangeforest.tcb.stats.model;
 import java.time.*;
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 import com.google.common.collect.*;
 
 import static java.util.stream.Collectors.*;
@@ -11,14 +13,16 @@ public class PlayerDominanceTimeline extends PlayerRow {
 
 	private final String lastName;
 	private final LocalDate dob;
+	private final Surface surface;
 	private final int goatPoints;
 	private final Map<Integer, SeasonPoints> seasons = new HashMap<>(); // <Season, SeasonPoints>
 	private DominanceTimeline timeline;
 
-	public PlayerDominanceTimeline(int rank, int playerId, String name, String lastName, String countryId, boolean active, LocalDate dob, int goatPoints) {
+	public PlayerDominanceTimeline(int rank, int playerId, String name, String lastName, String countryId, boolean active, LocalDate dob, Surface surface, int goatPoints) {
 		super(rank, playerId, name, countryId, active);
 		this.lastName = lastName;
 		this.dob = dob;
+		this.surface = surface;
 		this.goatPoints = goatPoints;
 	}
 
@@ -27,6 +31,7 @@ public class PlayerDominanceTimeline extends PlayerRow {
 		super(timeline);
 		lastName = timeline.lastName;
 		dob = timeline.dob;
+		surface = timeline.surface;
 		goatPoints = timeline.goatPoints;
 	}
 
@@ -53,7 +58,7 @@ public class PlayerDominanceTimeline extends PlayerRow {
 	public List<SeasonPoints> getSeasonsPoints() {
 		return timeline.getSeasons().stream().map(season -> {
 			SeasonPoints seasonPoints = seasons.get(season);
-			return seasonPoints != null ? seasonPoints : new SeasonPoints(season, 0);
+			return seasonPoints != null ? seasonPoints : new SeasonPoints(season, surface, 0);
 		}).collect(toList());
 	}
 

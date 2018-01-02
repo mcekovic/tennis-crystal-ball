@@ -2,10 +2,13 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 import static java.util.stream.Collectors.*;
 
 public class PlayerGOATPoints {
 
+	private final Surface surface;
 	// Totals
 	private int totalPoints;
 	private int tournamentPoints;
@@ -33,6 +36,11 @@ public class PlayerGOATPoints {
 	private List<PlayerSeasonGOATPoints> playerSeasonsPoints = new ArrayList<>();
 
 
+	public PlayerGOATPoints(Surface surface) {
+		this.surface = surface;
+	}
+
+	
 	// Totals
 
 	public int getTotalPoints() {
@@ -242,6 +250,6 @@ public class PlayerGOATPoints {
 	}
 
 	public PlayerSeasonGOATPoints getPlayerSeasonPoints(int season) {
-		return playerSeasonsPoints.stream().filter(points -> points.getSeason() == season).findFirst().orElse(new PlayerSeasonGOATPoints(season, 0));
+		return playerSeasonsPoints.stream().filter(points -> points.getSeason() == season).findFirst().orElse(new PlayerSeasonGOATPoints(season, surface, 0));
 	}
 }

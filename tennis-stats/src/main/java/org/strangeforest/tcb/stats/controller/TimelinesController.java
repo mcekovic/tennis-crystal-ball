@@ -29,20 +29,24 @@ public class TimelinesController extends PageController {
 	public ModelAndView dominanceTimeline(
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
+		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "averageElo", defaultValue = F) boolean averageElo
 	) {
 		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
-		DominanceTimeline timeline = timelineService.getDominanceTimeline().filterSeasons(seasonRange);
-		int minGOATPoints = timelineService.getMinGOATPoints();
+		Surface aSurface = Surface.safeDecode(surface);
+		DominanceTimeline timeline = timelineService.getDominanceTimeline(aSurface).filterSeasons(seasonRange);
+		int minGOATPoints = timelineService.getMinGOATPoints(aSurface);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("seasons", dataService.getSeasons());
+		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("fromSeason", seasonRange.hasLowerBound() ? seasonRange.lowerEndpoint() : null);
 		modelMap.addAttribute("toSeason", seasonRange.hasUpperBound() ? seasonRange.upperEndpoint() : null);
+		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("averageElo", averageElo);
 		modelMap.addAttribute("timeline", timeline);
 		modelMap.addAttribute("minGOATPoints", minGOATPoints);
-		modelMap.addAttribute("dominanceRatioCoefficient", (int)DominanceSeason.DOMINANCE_RATIO_COEFFICIENT);
+		modelMap.addAttribute("dominanceRatioCoefficient", (int)DominanceSeason.getDominanceRatioCoefficient(aSurface));
 		return new ModelAndView("dominanceTimeline", modelMap);
 	}
 

@@ -110,11 +110,11 @@
 		<td class="points" th:text="${#numbers.formatDecimal(season1.weeksAtNo1Points, 1, 1)}">5.2</td>
 		<td class="points" th:text="${season1.yearEndRankPoints}">8</td>
 		<td class="points first-column" th:text="${season1.tournamentPoints}">35</td>
-		<th class="points first-column points-" th:attrappend="class=${surface == null ? season1.totalPointsRounded : season1.totalPointsRounded2}">
+		<th class="points first-column points-" th:attrappend="class=${surface == null ? season1.totalPointsRounded : season1.totalPointsRounded}">
 			<a th:if="${season1.totalPoints > 0}" th:href="@{/playerProfile(playerId=${playerId1}, tab=goatPoints, season=${season}, surface=${surface})}" th:text="${season1.totalPoints}" class="points-link" title="Show season GOAT Points distribution">50</a>
 		</th>
 		<th class="first-column text-center" th:text="${season}">2000</th>
-		<th class="points first-column points-" th:attrappend="class=${surface == null ? season2.totalPointsRounded : season2.totalPointsRounded2}">
+		<th class="points first-column points-" th:attrappend="class=${surface == null ? season2.totalPointsRounded : season2.totalPointsRounded}">
 			<a th:if="${season2.totalPoints > 0}" th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints, season=${season}, surface=${surface})}" th:text="${season2.totalPoints}" class="points-link" title="Show season GOAT Points distribution">50</a>
 		</th>
 		<td class="points first-column" th:text="${season2.tournamentPoints}">35</td>

@@ -121,7 +121,7 @@
 			<th class="first-column points-" th:attrappend="class=${season.totalPointsRounded}">
 				<a th:href="@{/playerProfile(playerId=${playerId}, tab=season, season=${season.season})}" th:text="${season.season}" class="points-link" title="Show season">2000</a>
 			</th>
-			<th class="points first-column points-" th:attrappend="class=${surface == null ? season.totalPointsRounded : season.totalPointsRounded2}" th:text="${season.totalPoints}">50</th>
+			<th class="points first-column points-" th:attrappend="class=${surface == null ? season.totalPointsRounded : season.totalPointsRounded}" th:text="${season.totalPoints}">50</th>
 			<th:block th:each="level : ${levelResults}">
 				<td th:each="result : ${level.value}" class="points" th:attrappend="class=${resultStat.first ? ' first-column' : ''}">
 					<a th:if="${breakdown.hasItem(level.key, result)}" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season.season}, level=${breakdown.getLevel(level.key, result)}, surface=${surface}, result=${result})}" th:text="${breakdown.getItem(level.key, result)}" title="Show results">1</a>

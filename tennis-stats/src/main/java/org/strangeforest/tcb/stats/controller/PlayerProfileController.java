@@ -484,7 +484,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "season", required = false) Integer season
 	) {
 		Map<String, Collection<String>> levelResults = goatPointsService.getLevelResults();
-		PlayerGOATPoints goatPoints = goatPointsService.getPlayerGOATPoints(playerId, surface, true);
+		PlayerGOATPoints goatPoints = goatPointsService.getPlayerGOATPoints(playerId, Surface.safeDecode(surface), true);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);

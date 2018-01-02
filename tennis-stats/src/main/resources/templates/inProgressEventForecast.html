@@ -21,7 +21,7 @@
 			var priceFormat = $("#priceFormat").val();
 			if (priceFormat)
 				url += "&priceFormat=" + priceFormat;
-			window.location = url + "&tab=" + $("#inProgressEventPills li.active a").attr("href").substr(1);
+			window.location.href = url + "&tab=" + $("#inProgressEventPills li.active a").attr("href").substr(1);
 		}
 	</script>
 	<style>

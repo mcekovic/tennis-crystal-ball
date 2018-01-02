@@ -17,7 +17,7 @@ public class DominanceTimelineServiceIT {
 
 	@Test
 	public void dominanceTimeline() {
-		DominanceTimeline dominanceTimeline = dominanceTimelineService.getDominanceTimeline();
+		DominanceTimeline dominanceTimeline = dominanceTimelineService.getDominanceTimeline(null);
 
 		assertThat(dominanceTimeline.getSeasons().size()).isPositive();
 		assertThat(dominanceTimeline.getPlayers().size()).isPositive();

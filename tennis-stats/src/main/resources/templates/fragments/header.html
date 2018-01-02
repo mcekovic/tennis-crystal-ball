@@ -95,7 +95,7 @@
 					<li th:class="${path == '/tournaments' || path == '/tournament' || path == '/tournamentEvents' || path == '/tournamentEvent' || path == '/inProgressEventsForecasts' || path == '/inProgressEventForecast' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Tournaments<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/tournaments' || path == '/tournament' ? 'active' : _}"><a href="/tournaments"><i class="fa fa-calendar-o fa-fw"></i> Tournaments<sup class="new-feature">&nbsp;New!</sup></a></li>
+							<li th:class="${path == '/tournaments' || path == '/tournament' ? 'active' : _}"><a href="/tournaments"><i class="fa fa-calendar-o fa-fw"></i> Tournaments</a></li>
 							<li th:class="${path == '/tournamentEvents' || path == '/tournamentEvent' ? 'active' : _}"><a href="/tournamentEvents"><i class="fa fa-calendar fa-fw"></i> Tournament Events</a></li>
 							<li th:class="${path == '/inProgressEventsForecasts' || path == '/inProgressEventForecast' ? 'active' : _}"><a href="/inProgressEventsForecasts"><i class="fa fa-eye fa-fw"></i> Tournament Forecasts<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
 						</ul>

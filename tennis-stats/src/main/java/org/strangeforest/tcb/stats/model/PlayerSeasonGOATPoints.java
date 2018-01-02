@@ -1,8 +1,11 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 public class PlayerSeasonGOATPoints {
 
 	private final int season;
+	private final Surface surface;
 	// Totals
 	private final int totalPoints;
 	private int tournamentPoints;
@@ -18,8 +21,9 @@ public class PlayerSeasonGOATPoints {
 	private int grandSlamPoints;
 	private double bigWinsPoints;
 
-	public PlayerSeasonGOATPoints(int season, int totalPoints) {
+	public PlayerSeasonGOATPoints(int season, Surface surface, int totalPoints) {
 		this.season = season;
+		this.surface = surface;
 		this.totalPoints = totalPoints;
 		tournamentBreakdown = new PlayerTournamentGOATPoints();
 	}
@@ -36,11 +40,7 @@ public class PlayerSeasonGOATPoints {
 	}
 
 	public int getTotalPointsRounded() {
-		return 10 * (totalPoints / 10);
-	}
-
-	public int getTotalPointsRounded2() {
-		return 10 * (totalPoints / 5);
+		return 10 * (totalPoints / SeasonPoints.getPointsRounder(surface));
 	}
 
 	public Integer getTournamentPoints() {

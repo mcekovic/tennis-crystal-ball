@@ -95,6 +95,7 @@
 				{id: "bestEloRating", title: "Season Peak Elo Rating"}
 			]);
 			$("[data-toggle='collapse']").click(collapseClick);
+			$("[data-toggle='tooltip']").tooltip();
 		});
 		function playerTournamentsFormatter(attr, params, title) {
 			return function(column, row) {

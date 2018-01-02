@@ -7,7 +7,7 @@ function autocompletePlayer(id) {
 			minLength: 2,
 			select: function (event, ui) {
 				if (ui.item)
-					window.location = "/playerProfile?playerId=" + ui.item.id;
+					window.location.href = "/playerProfile?playerId=" + ui.item.id;
 			}
 		});
 	});

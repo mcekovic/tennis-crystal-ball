@@ -2,18 +2,21 @@ package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.collect.*;
 
 public class DominanceTimeline {
 
+	private final Surface surface;
 	private final List<PlayerDominanceTimeline> players;
 	private final SortedSet<Integer> seasons;
 	private List<DominanceSeason> dominanceSeasons;
 	private List<DominanceEra> dominanceEras;
 
-	public DominanceTimeline() {
+	public DominanceTimeline(Surface surface) {
+		this.surface = surface;
 		players = new ArrayList<>();
 		seasons = new TreeSet<>(Comparator.reverseOrder());
 	}
@@ -51,7 +54,7 @@ public class DominanceTimeline {
 	public void calculateDominanceSeasons() {
 		dominanceSeasons = new ArrayList<>(seasons.size());
 		for (Integer season : seasons) {
-			DominanceSeason dominanceSeason = new DominanceSeason(season);
+			DominanceSeason dominanceSeason = new DominanceSeason(season, surface);
 			for (PlayerDominanceTimeline player : players)
 				dominanceSeason.processPlayer(player);
 			dominanceSeasons.add(dominanceSeason);
@@ -91,7 +94,7 @@ public class DominanceTimeline {
 	public DominanceTimeline filterSeasons(Range<Integer> seasonRange) {
 		if (seasonRange.equals(Range.all()))
 			return this;
-		DominanceTimeline timeline = new DominanceTimeline();
+		DominanceTimeline timeline = new DominanceTimeline(surface);
 		for (PlayerDominanceTimeline player : players) {
 			player = player.filterSeasons(seasonRange);
 			if (player.hasSeasons())

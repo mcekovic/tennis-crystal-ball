@@ -3,9 +3,28 @@ package org.strangeforest.tcb.stats.model;
 import java.time.*;
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
+import com.google.common.collect.*;
+
+import static org.strangeforest.tcb.stats.model.core.Surface.*;
+
 public class DominanceSeason {
 
+	private static final double DOMINANCE_RATIO_COEFFICIENT = 1500.0;
+	private static final Map<Surface, Double> SURFACE_DOMINANCE_RATIO_COEFFICIENT = ImmutableMap.<Surface, Double>builder()
+		.put(HARD,   400.0)
+		.put(CLAY,   130.0)
+		.put(GRASS,   60.0)
+		.put(CARPET, 110.0)
+	.build();
+
+	public static double getDominanceRatioCoefficient(Surface surface) {
+		return surface == null ? DOMINANCE_RATIO_COEFFICIENT : SURFACE_DOMINANCE_RATIO_COEFFICIENT.get(surface);
+	}
+
 	private final int season;
+	private final Surface surface;
 	private final boolean eligibleForEra;
 	private final boolean ongoing;
 	private int dominanceRatioPoints;
@@ -14,10 +33,9 @@ public class DominanceSeason {
 	private int bestPlayerPoints;
 	private Map<Integer, Integer> averageEloRatings;
 
-	public static final double DOMINANCE_RATIO_COEFFICIENT = 1500.0;
-
-	public DominanceSeason(int season) {
+	public DominanceSeason(int season, Surface surface) {
 		this.season = season;
+		this.surface = surface;
 		LocalDate today = LocalDate.now();
 		int year = today.getYear();
 		ongoing = season == year && today.getMonth().compareTo(Month.NOVEMBER) < 0;
@@ -38,7 +56,7 @@ public class DominanceSeason {
 	}
 
 	public double getDominanceRatio() {
-		return dominanceRatioPoints / DOMINANCE_RATIO_COEFFICIENT;
+		return dominanceRatioPoints / getDominanceRatioCoefficient(surface);
 	}
 
 	public int getDominanceRatioRounded() {
