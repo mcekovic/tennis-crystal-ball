@@ -152,7 +152,11 @@ public class SeasonsController extends PageController {
 
 	@GetMapping("/bestSeasons")
 	public ModelAndView bestSeasons() {
-		int minSeasonGOATPoints = seasonsService.getMinSeasonGOATPoints();
-		return new ModelAndView("bestSeasons", "minSeasonGOATPoints", minSeasonGOATPoints);
+		int minSeasonGOATPoints = seasonsService.getMinSeasonGOATPoints(null);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("minSeasonGOATPoints", minSeasonGOATPoints);
+		return new ModelAndView("bestSeasons", modelMap);
 	}
 }

@@ -50,7 +50,7 @@ public class SeasonsResource {
 		.put("olympicsTitles", "olympics_titles")
 		.put("olympicsFinals", "olympics_finals")
 		.put("titles", "titles")
-		.put("wonPct", "matches_won::REAL / (matches_won + matches_lost)")
+		.put("wonPct", "matches_won_pct")
 		.put("yearEndRank", "year_end_rank")
 		.put("bestEloRating", "best_elo_rating")
 	.build();
@@ -69,16 +69,24 @@ public class SeasonsResource {
 
 	@GetMapping("/bestSeasonsTable")
 	public BootgridTable<BestSeasonRow> bestSeasonsTable(
+		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "current", defaultValue = "1") int current,
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
 		PlayerListFilter filter = new PlayerListFilter(searchPhrase);
-		int seasonCount = seasonsService.getBestSeasonCount(filter);
+		int seasonCount = seasonsService.getBestSeasonCount(surface, filter);
 
 		String orderBy = BootgridUtil.getOrderBy(requestParams, BEST_SEASONS_ORDER_MAP, BEST_SEASONS_DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : seasonCount;
-		return seasonsService.getBestSeasonsTable(seasonCount, filter, orderBy, pageSize, current);
+		return seasonsService.getBestSeasonsTable(seasonCount, surface, filter, orderBy, pageSize, current);
+	}
+
+	@GetMapping("/bestSeasonsMinGOATPoints")
+	public int bestSeasonsMinGOATPoints(
+		@RequestParam(name = "surface", required = false) String surface
+	) {
+		return seasonsService.getMinSeasonGOATPoints(surface);
 	}
 }

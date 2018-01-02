@@ -101,17 +101,18 @@ function collapseClick(event) {
 		return;
 	var url = $button.data("url");
 	if (typeof url !== "undefined")
-		loadCollapse($button, url);
+		loadCollapse($button, url, true);
 	else
 		$($button.data("target")).collapse("toggle");
 }
 
-function loadCollapse($button, url) {
+function loadCollapse($button, url, show) {
 	var $pane = $($button.data("target"));
 	$pane.load(url, function () {
 		if (!$button.hasClass("loaded"))
 			$button.addClass("loaded");
-		$pane.collapse("show");
+		if (show)
+			$pane.collapse("show");
 	});
 }
 

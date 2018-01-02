@@ -13,6 +13,7 @@ import org.strangeforest.tcb.util.*;
 
 import com.neovisionaries.i18n.*;
 
+import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
@@ -52,8 +53,8 @@ public class GOATListService {
 		"  FROM %10$sgoat_list\n" +
 		"  WHERE goat_points > 0\n" +
 		")\n" +
-		"SELECT g.*, p.name, p.country_id, p.active, pt.%11$sgrand_slams grand_slams, pt.%11$stour_finals tour_finals, pt.%11$salt_finals alt_finals, pt.%11$smasters masters, pt.%11$solympics olympics, pt.%11$sbig_titles big_titles, pt.%11$stitles titles, %12$s,\n" +
-		"  pf.%11$smatches_won matches_won, pf.%11$smatches_lost matches_lost, pf.%11$smatches_won::REAL / (pf.%11$smatches_won + pf.%11$smatches_lost) matches_won_pct, %13$s best_elo_rating, %13$s_date best_elo_rating_date\n" +
+		"SELECT g.*, p.name, p.country_id, p.active, coalesce(pt.%11$sgrand_slams, 0) grand_slams, coalesce(pt.%11$stour_finals, 0) tour_finals, coalesce(pt.%11$salt_finals, 0) alt_finals, coalesce(pt.%11$smasters, 0) masters, coalesce(pt.%11$solympics, 0) olympics, coalesce(pt.%11$sbig_titles, 0) big_titles, coalesce(pt.%11$stitles, 0) titles,\n" +
+		"  coalesce(%12$s, 0) weeks_at_no1, pf.%11$smatches_won matches_won, pf.%11$smatches_lost matches_lost, pf.%11$smatches_won::REAL / (pf.%11$smatches_won + pf.%11$smatches_lost) matches_won_pct, coalesce(%13$s, 1500) best_elo_rating, %13$s_date best_elo_rating_date\n" +
 		"FROM goat_list_ranked g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"LEFT JOIN player_titles pt USING (player_id)\n" +
@@ -133,6 +134,7 @@ public class GOATListService {
 
 	@Cacheable("GOATList.Table")
 	public BootgridTable<GOATListRow> getGOATListTable(int playerCount, String surface, PlayerListFilter filter, GOATListConfig config, String orderBy, int pageSize, int currentPage) {
+		boolean overall = isNullOrEmpty(surface);
 		Surface aSurface = Surface.safeDecode(surface);
 		BootgridTable<GOATListRow> table = new BootgridTable<>(currentPage, playerCount);
 		int offset = (currentPage - 1) * pageSize;
@@ -140,7 +142,7 @@ public class GOATListService {
 			format(GOAT_LIST_QUERY,
 				getGOATPointsExpression(aSurface, config), getTournamentGOATPointsExpression(aSurface, config), getRankingGOATPointsExpression(aSurface, config), getAchievementsGOATPointsExpression(aSurface, config), getGOATPointsAreas(aSurface),
 				getTableName(aSurface), getSurfaceCriteria(aSurface), getOldLegendsCriteria(config.isOldLegends()), getExtrapolateIntermediateTable(aSurface, config), config.isExtrapolateCareer() ? "extrapolated_" : "",
-				surface == null ? "" : aSurface.getLowerCaseText() + '_', surface == null ? "p.weeks_at_no1" : "we.weeks AS weeks_at_no1", surface == null ? "p.best_elo_rating" : "be.best_" + aSurface.getLowerCaseText() + "_elo_rating", surface == null ? "" : SURFACE_JOINS,
+				overall ? "" : aSurface.getLowerCaseText() + '_', overall ? "p.weeks_at_no1" : "we.weeks", overall ? "p.best_elo_rating" : "be.best_" + aSurface.getLowerCaseText() + "_elo_rating", overall ? "" : SURFACE_JOINS,
 				where(filter.withPrefix("p.").getCriteria()), orderBy
 			),
 			getParams(aSurface, filter, config)
@@ -158,22 +160,22 @@ public class GOATListService {
 				int achievementsGoatPoints = rs.getInt("achievements_goat_points");
 				GOATListRow row = new GOATListRow(goatRank, playerId, name, countryId, active, goatPoints, tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints);
 				// GOAT points items
-				if (surface == null) {
+				if (overall) {
 					row.setYearEndRankGoatPoints(rs.getInt("year_end_rank_goat_points") * config.getYearEndRankTotalFactor());
 					row.setBestRankGoatPoints(rs.getInt("best_rank_goat_points") * config.getBestRankTotalFactor());
 					row.setWeeksAtNo1GoatPoints(rs.getInt("weeks_at_no1_goat_points") * config.getWeeksAtNo1TotalFactor());
 				}
 				row.setWeeksAtEloTopNGoatPoints(rs.getInt("weeks_at_elo_topn_goat_points") * config.getWeeksAtEloTopNTotalFactor());
 				row.setBestEloRatingGoatPoints(rs.getInt("best_elo_rating_goat_points") * config.getBestEloRatingTotalFactor());
-				if (surface == null)
+				if (overall)
 					row.setGrandSlamGoatPoints(rs.getInt("grand_slam_goat_points") * config.getGrandSlamTotalFactor());
 				row.setBigWinsGoatPoints(rs.getInt("big_wins_goat_points") * config.getBigWinsTotalFactor());
 				row.setH2hGoatPoints(rs.getInt("h2h_goat_points") * config.getH2hTotalFactor());
 				row.setRecordsGoatPoints(rs.getInt("records_goat_points") * config.getRecordsTotalFactor());
-				if (surface == null)
+				if (overall)
 					row.setBestSeasonGoatPoints(rs.getInt("best_season_goat_points") * config.getBestSeasonTotalFactor());
 				row.setGreatestRivalriesGoatPoints(rs.getInt("greatest_rivalries_goat_points") * config.getGreatestRivalriesTotalFactor());
-				if (surface == null) {
+				if (overall) {
 					row.setPerformanceGoatPoints(rs.getInt("performance_goat_points") * config.getPerformanceTotalFactor());
 					row.setStatisticsGoatPoints(rs.getInt("statistics_goat_points") * config.getStatisticsTotalFactor());
 				}

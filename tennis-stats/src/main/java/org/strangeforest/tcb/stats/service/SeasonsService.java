@@ -14,6 +14,8 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
+import com.google.common.collect.*;
+
 import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.records.details.RecordDetailUtil.*;
@@ -29,6 +31,12 @@ public class SeasonsService {
 
 	private static final int MAX_BEST_SEASON_COUNT = 200;
 	private static final int MIN_SEASON_GOAT_POINTS = 25;
+	private static final Map<String, Integer> MIN_SURFACE_SEASON_GOAT_POINTS = ImmutableMap.<String, Integer>builder()
+		.put("H", 10)
+		.put("C", 8)
+		.put("G", 5)
+		.put("P", 5)
+	.build();
 
 	private static final String SEASONS_QUERY = //language=SQL
 		"WITH season_tournament_count AS (\n" +
@@ -104,14 +112,22 @@ public class SeasonsService {
 		"ORDER BY g.value DESC, p.goat_points DESC, p.name";
 
 	private static final String BEST_SEASON_COUNT_QUERY = //language=SQL
-		"SELECT count(s.season) AS season_count FROM player_season_goat_points s\n" +
+		"SELECT count(s.season) AS season_count FROM %1$s s\n" +
 		"INNER JOIN player_v USING (player_id)\n" +
-		"WHERE s.goat_points >= :minPoints%1$s";
+		"WHERE s.goat_points >= :minPoints%2$s%3$s";
+
+	private static final String SURFACE_CRITERIA = //language=SQL
+		" AND %1$ssurface = :surface::surface";
+
+	private static final String BEST_SEASONS_AREAS = //language=SQL
+		", year_end_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, big_wins_goat_points, grand_slam_goat_points";
+
+	private static final String BEST_SURFACE_SEASONS_AREAS = //language=SQL
+		", weeks_at_elo_topn_goat_points, big_wins_goat_points";
 
 	private static final String BEST_SEASONS_QUERY = //language=SQL
 		"WITH player_season AS (\n" +
-		"  SELECT player_id, s.season, s.goat_points,\n" +
-		"    s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.weeks_at_elo_topn_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points,\n" +
+		"  SELECT player_id, s.season, s.goat_points, s.tournament_goat_points%1$s,\n" +
 		"    count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'W') grand_slam_titles,\n" +
 		"    count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'F') grand_slam_finals,\n" +
 		"    count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'SF') grand_slam_semi_finals,\n" +
@@ -121,27 +137,27 @@ public class SeasonsService {
 		"    count(player_id) FILTER (WHERE e.level = 'M' AND r.result = 'F') masters_finals,\n" +
 		"    count(player_id) FILTER (WHERE e.level = 'O' AND r.result = 'W') olympics_titles,\n" +
 		"    count(player_id) FILTER (WHERE e.level NOT IN ('D', 'T') AND r.result = 'W') titles\n" +
-		"  FROM player_season_goat_points s\n" +
+		"  FROM %2$s s\n" +
 		"  LEFT JOIN player_tournament_event_result r USING (player_id)\n" +
-		"  INNER JOIN tournament_event e USING (tournament_event_id, season)\n" +
-		"  WHERE s.goat_points >= :minPoints\n" +
-		"  GROUP BY player_id, s.season, s.goat_points, s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.weeks_at_elo_topn_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id, season%3$s)\n" +
+		"  WHERE s.goat_points >= :minPoints%4$s\n" +
+		"  GROUP BY player_id, s.season, s.goat_points, s.tournament_goat_points%1$s\n" +
 		"), player_season_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank,\n" +
-		"     player_id, season, goat_points, tournament_goat_points, year_end_rank_goat_points, weeks_at_no1_goat_points, weeks_at_elo_topn_goat_points, big_wins_goat_points, grand_slam_goat_points,\n" +
+		"     player_id, season, goat_points, tournament_goat_points%1$s,\n" +
 		"     grand_slam_titles, grand_slam_finals, grand_slam_semi_finals, tour_finals_titles, tour_finals_finals, masters_titles, masters_finals, olympics_titles, titles\n" +
 		"  FROM player_season\n" +
 		")\n" +
 		"SELECT season_rank, player_id, p.name, rank() OVER (PARTITION BY player_id ORDER BY season_rank) player_season_rank,\n" +
-		"  p.country_id, s.season, s.goat_points, s.tournament_goat_points, s.year_end_rank_goat_points, s.weeks_at_no1_goat_points, s.weeks_at_elo_topn_goat_points, s.big_wins_goat_points, s.grand_slam_goat_points,\n" +
-		"  s.grand_slam_titles, s.grand_slam_finals, s.grand_slam_semi_finals, s.tour_finals_titles, s.tour_finals_finals,\n" +
-		"  s.masters_titles, s.masters_finals, s.olympics_titles, s.titles, sp.matches_won, sp.matches_lost, y.year_end_rank, e.best_elo_rating\n" +
+		"  p.country_id, s.season, s.goat_points, s.tournament_goat_points%1$s,\n" +
+		"  s.grand_slam_titles, s.grand_slam_finals, s.grand_slam_semi_finals, s.tour_finals_titles, s.tour_finals_finals, s.masters_titles, s.masters_finals, s.olympics_titles, s.titles,\n" +
+		"  sp.%5$smatches_won matches_won, sp.%5$smatches_lost matches_lost, sp.%5$smatches_won::REAL / (sp.%5$smatches_won + sp.%5$smatches_lost) matches_won_pct, y.%5$syear_end_rank year_end_rank, e.%5$sbest_elo_rating best_elo_rating\n" +
 		"FROM player_season_ranked s\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"LEFT JOIN player_season_performance sp USING (player_id, season)\n" +
-		"LEFT JOIN player_year_end_rank y USING (player_id, season)\n" +
-		"LEFT JOIN player_season_best_elo_rating e USING (player_id, season)%1$s\n" +
-		"ORDER BY %2$s OFFSET :offset LIMIT :limit";
+		"LEFT JOIN %6$s y USING (player_id, season)\n" +
+		"LEFT JOIN player_season_best_elo_rating e USING (player_id, season)%7$s\n" +
+		"ORDER BY %8$s OFFSET :offset LIMIT :limit";
 
 
 	@Cacheable("Seasons")
@@ -221,7 +237,7 @@ public class SeasonsService {
 			format(SEASON_GOAT_POINTS_QUERY,
 				pointsColumnPrefix,
 				isNullOrEmpty(surface) ? "player_season_goat_points" : "player_surface_season_goat_points",
-				isNullOrEmpty(surface) ? "" : " AND surface = :surface::surface"
+				isNullOrEmpty(surface) ? "" : format(SURFACE_CRITERIA, "")
 			),
 			params,
 			(rs, rowNum) -> mapSeasonGOATPointsRecordDetailRow(rs, season, surface)
@@ -246,25 +262,46 @@ public class SeasonsService {
 
 
 	@Cacheable("BestSeasons.Count")
-	public int getBestSeasonCount(PlayerListFilter filter) {
+	public int getBestSeasonCount(String surface, PlayerListFilter filter) {
+		MapSqlParameterSource params = filter.getParams().addValue("minPoints", getMinSeasonGOATPoints(surface));
+		if (!isNullOrEmpty(surface))
+			params.addValue("surface", surface);
 		return Math.min(MAX_BEST_SEASON_COUNT, jdbcTemplate.queryForObject(
-			format(BEST_SEASON_COUNT_QUERY, filter.getCriteria()),
-			filter.getParams().addValue("minPoints", MIN_SEASON_GOAT_POINTS),
+			format(BEST_SEASON_COUNT_QUERY,
+				isNullOrEmpty(surface) ? "player_season_goat_points" : "player_surface_season_goat_points",
+				isNullOrEmpty(surface) ? "" : format(SURFACE_CRITERIA, "s."),
+				filter.getCriteria()
+			),
+			params,
 			Integer.class
 		));
 	}
 
 	@Cacheable("BestSeasons.Table")
-	public BootgridTable<BestSeasonRow> getBestSeasonsTable(int seasonCount, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<BestSeasonRow> getBestSeasonsTable(int seasonCount, String surface, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
+		boolean overall = isNullOrEmpty(surface);
+		Surface aSurface = Surface.safeDecode(surface);
 		BootgridTable<BestSeasonRow> table = new BootgridTable<>(currentPage, seasonCount);
 		int offset = (currentPage - 1) * pageSize;
 		int currentSeason = dataService.getLastSeason();
+		MapSqlParameterSource params = filter.getParams()
+			.addValue("minPoints", getMinSeasonGOATPoints(surface))
+			.addValue("offset", offset)
+			.addValue("limit", pageSize);
+		if (!overall)
+			params.addValue("surface", surface);
 		jdbcTemplate.query(
-			format(BEST_SEASONS_QUERY, where(filter.getCriteria()), orderBy),
-			filter.getParams()
-				.addValue("minPoints", MIN_SEASON_GOAT_POINTS)
-				.addValue("offset", offset)
-				.addValue("limit", pageSize),
+			format(BEST_SEASONS_QUERY,
+				overall ? BEST_SEASONS_AREAS : BEST_SURFACE_SEASONS_AREAS,
+				overall ? "player_season_goat_points" : "player_surface_season_goat_points",
+				overall ? "" : ", surface",
+				overall ? "" : format(SURFACE_CRITERIA, "s."),
+				overall ? "" : aSurface.getLowerCaseText() + '_',
+				overall ? "player_year_end_rank" : "player_year_end_elo_rank",
+				where(filter.getCriteria()),
+				orderBy
+			),
+			params,
 			rs -> {
 				int seasonRank = rs.getInt("season_rank");
 				int playerId = rs.getInt("player_id");
@@ -278,11 +315,14 @@ public class SeasonsService {
 				BestSeasonRow row = new BestSeasonRow(seasonRank, playerId, name, countryId, season, season == currentSeason, goatPoints);
 				// GOAT points items
 				row.setTournamentGoatPoints(rs.getInt("tournament_goat_points"));
-				row.setYearEndRankGoatPoints(rs.getInt("year_end_rank_goat_points"));
-				row.setWeeksAtNo1GoatPoints(rs.getInt("weeks_at_no1_goat_points"));
+				if (overall) {
+					row.setYearEndRankGoatPoints(rs.getInt("year_end_rank_goat_points"));
+					row.setWeeksAtNo1GoatPoints(rs.getInt("weeks_at_no1_goat_points"));
+				}
 				row.setWeeksAtEloTopNGoatPoints(rs.getInt("weeks_at_elo_topn_goat_points"));
 				row.setBigWinsGoatPoints(rs.getInt("big_wins_goat_points"));
-				row.setGrandSlamGoatPoints(rs.getInt("grand_slam_goat_points"));
+				if (overall)
+					row.setGrandSlamGoatPoints(rs.getInt("grand_slam_goat_points"));
 				// Titles
 				row.setGrandSlamTitles(rs.getInt("grand_slam_titles"));
 				row.setGrandSlamFinals(rs.getInt("grand_slam_finals"));
@@ -303,7 +343,7 @@ public class SeasonsService {
 		return table;
 	}
 
-	public int getMinSeasonGOATPoints() {
-		return MIN_SEASON_GOAT_POINTS;
+	public int getMinSeasonGOATPoints(String surface) {
+		return isNullOrEmpty(surface) ? MIN_SEASON_GOAT_POINTS : MIN_SURFACE_SEASON_GOAT_POINTS.get(surface);
 	}
 }

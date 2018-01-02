@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="minSeasonGOATPoints" type="java.lang.Integer"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
 	<title>Best Seasons</title>
-	<script type="text/javascript">
+	<script type="text/javascript" th:inline="javascript">
+		var surface = [[${surface}]];
 		$(function() {
 			var $bestSeasonsTable = $("#bestSeasonsTable");
 			var device = detectDevice();
@@ -17,6 +19,10 @@
 					cache: false
 				},
 				url: "/bestSeasonsTable",
+				requestHandler: function(request) {
+					addRequestParam(request, "surface");
+					return request;
+				},
 				rowCount: [20, 50, 100, -1],
 				searchSettings: {
 					delay: 300,
@@ -36,7 +42,7 @@
 							title = appendGoatPointsTitle(title, row, "weeksAtEloTopNGoatPoints", "Weeks at Elo Top 5");
 							title = appendGoatPointsTitle(title, row, "bigWinsGoatPoints", "Big wins");
 							title = appendGoatPointsTitle(title, row, "grandSlamGoatPoints", "Grand Slam");
-							return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=goatPoints&season=" + row.season + "' title='" + title + "'>" + row.goatPoints + "</a>";
+							return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=goatPoints&season=" + row.season + (surface ? "&surface=" + surface : "") + "' title='" + title + "'>" + row.goatPoints + "</a>";
 						}
 						else
 							return row.achievementsGoatPoints;
@@ -51,13 +57,13 @@
 					"olympicsTitles": playerTournamentsFormatter("olympicsTitles", "&level=O&result=W", "Olympics titles"),
 					"titles": playerTournamentsFormatter("titles", "&result=W", "titles"),
 					"wonPct": function(column, row) {
-						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=performance&season=" + row.season + "' title='" + row.wonLost + "'>" + row.wonPct + "</a>";
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=performance&season=" + row.season + (surface ? "&surface=" + surface : "") + "' title='" + row.wonLost + "'>" + row.wonPct + "</a>";
 					},
 					"yearEndRank": function(column, row) {
-						return row.yearEndRank != null ? ("<a href='/rankingsTable?season=" + row.season + "' title='Show " + row.season + " year-end rankings'>" + row.yearEndRank + "</a>") : "";
+						return row.yearEndRank != null ? ("<a href='/rankingsTable?season=" + row.season + (surface ? "&rankType=" + surfaceName(surface).toUpperCase() + "_ELO_RATING" : "") + "' title='Show " + row.season + " year-end" + (surface ? " " + surfaceName(surface) + " Elo" : " ATP") + " rankings'>" + row.yearEndRank + "</a>") : "";
 					},
 					"bestEloRating": function(column, row) {
-						return row.bestEloRating != null ? ("<a href='/playerProfile?playerId=" + row.playerId + "&tab=ranking&rankType=ELO_RATING&season=" + row.season + "' title='Show " + row.season + " Elo rating chart'>" + row.bestEloRating + "</a>") : "";
+						return row.bestEloRating != null ? ("<a href='/playerProfile?playerId=" + row.playerId + "&tab=ranking&rankType=" + (surface ? surfaceName(surface).toUpperCase() + "_" : "") + "ELO_RATING&season=" + row.season + "' title='Show " + row.season + " " + surfaceName(surface) + " Elo rating chart'>" + row.bestEloRating + "</a>") : "";
 					}
 				},
 				labels: {
@@ -68,7 +74,10 @@
 					paginationItem: bootgridTemplatePaginationItem
 				}
 			});
-			setBootgridTitle($("#bestSeasonsTable-header"), $("#bestSeasonsTable-title"));
+			var $bestSeasonsTableHeader = $("#bestSeasonsTable-header");
+			var $search = $bestSeasonsTableHeader.find("div.search");
+			$search.before($("#surfaceDiv").remove());
+			setBootgridTitle($bestSeasonsTableHeader, $("#bestSeasonsTable-title"));
 			setBootgridTitles($bestSeasonsTable, [
 				{id: "rank", title: "Season rank"},
 				{id: "goatPoints", title: "GOAT points"},
@@ -90,14 +99,38 @@
 		function playerTournamentsFormatter(attr, params, title) {
 			return function(column, row) {
 				var count = row[attr];
-				return count > 0 ? "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&season=" + row.season + params + "' title='Show " + title + "'>" + count + "</a>" : "<span class='text-muted'>0</span>";
+				return count > 0 ? "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&season=" + row.season + (surface ? "&surface=" + surface : "") + params + "' title='Show " + title + "'>" + count + "</a>" : "<span class='text-muted'>0</span>";
 			};
+		}
+		function surfaceChanged() {
+			surface = $("#surface").val();
+			$("#bestSeasonsTable").bootgrid("reload");
+			var minPointsUrl = "/bestSeasonsMinGOATPoints";
+			var legendUrl = "/goatLegend?forSeason=true";
+			if (surface) {
+				minPointsUrl += "?surface=" + surface;
+				legendUrl += "&surface=" + surface;
+			}
+			$.get(minPointsUrl, function (data) {
+				$("#minGOATPoints").html(data);
+			});
+			var $button = $("#goatLegendButton");
+			if ($button.hasClass("loaded"))
+				loadCollapse($button, legendUrl);
+			else
+				$button.data("url", legendUrl);
 		}
 	</script>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
 	<h3 id="bestSeasonsTable-title" class="grid-title"><i class="fa fa-check-square-o"></i> Best Seasons</h3>
+	<div id="surfaceDiv" class="btn-group margin-right">
+		<select id="surface" class="form-control" onchange="surfaceChanged()" data-toggle="tooltip" data-placement="top" title="Select overall or Best Seasons by surface">
+			<option value="">Overall</option>
+			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}">Hard</option>
+		</select>
+	</div>
 	<table id="bestSeasonsTable" class="table table-condensed table-hover table-striped">
 		<thead>
 		<tr>
@@ -120,9 +153,9 @@
 		</tr>
 		</thead>
 	</table>
-	<p><i>* Minimum <span th:text="${minSeasonGOATPoints}">25</span> season GOAT points</i></p>
+	<p><i>* Minimum <span id="minGOATPoints" th:text="${minSeasonGOATPoints}">25</span> season GOAT points</i></p>
 	<br/>
-	<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend?forSeason=true">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
+	<button id="goatLegendButton" type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend?forSeason=true">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
 	<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
 	<footer th:include="fragments/footer :: copy"></footer>

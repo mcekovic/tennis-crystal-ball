@@ -34,7 +34,7 @@ public class GOATListResource {
 		.put("titles", "titles")
 		.put("weeksAtNo1", "weeks_at_no1")
 		.put("wonPct", "matches_won_pct")
-		.put("bestEloRating", "best_elo_rating NULLS LAST")
+		.put("bestEloRating", "best_elo_rating")
 	.build();
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("goat_points"), desc("grand_slams"), desc("tour_finals"), desc("masters"), desc("titles"), asc("name")};
 

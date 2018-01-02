@@ -114,8 +114,7 @@
 						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=performance" + (surface ? "&surface=" + surface : "") + "' title='" + row.wonLost + "'>" + row.wonPct + "</a>";
 					},
 					"bestEloRating": function(column, row) {
-						var surfacePrefix = surface ? surfaceName(surface).toUpperCase() + "_" : "";
-						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=ranking&rankType=" + surfacePrefix + "ELO_RATING' title='" + formatDate(row.bestEloRatingDate) + "'>" + row.bestEloRating + "</a>";
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=ranking&rankType=" + (surface ? surfaceName(surface).toUpperCase() + "_" : "") + "ELO_RATING' title='" + formatDate(row.bestEloRatingDate) + "'>" + row.bestEloRating + "</a>";
 					}
 				},
 				labels: {
@@ -157,7 +156,7 @@
 			bindPopovers("body");
 			$("[data-toggle='collapse']").click(collapseClick);
 			$("[data-toggle='tooltip']").tooltip();
-			loadCollapse($("#goatLegendButton"), goatLegendUrl());
+			loadCollapse($("#goatLegendButton"), goatLegendUrl(), true);
 		});
 		function playerTitlesFormatter(attr, params, title) {
 			return function(column, row) {
