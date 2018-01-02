@@ -22,7 +22,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Statistics Leaders - Find statistics leaders in different statistics categories, including dominance and break points ratios
 - Statistics Charts - Statistics charts for various statistics categories, including dominance and break points ratios
 - Seasons - Browse seasons and check season records, tournaments, rankings, performance, statistics and 'GOAT' points distribution among top players
-- Best Seasons - Find which are the best seasons of Open Era based on 'GOAT' points
+- Best Seasons - Find which are the best seasons of Open Era based on 'GOAT' points (overall and by surface)
 - Tournaments - Browse tournaments, see players with most titles, historical tournament levels and surfaces and average participation
 - Tournaments Events - Browse all Open Era tournament events, see tournament event draw, performance, statistics, historical winners and records
 - Tournament Forecasts - Tournament Event Forecasts based on the Neural Network Match Prediction Algorithm
