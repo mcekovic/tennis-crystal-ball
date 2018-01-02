@@ -133,7 +133,7 @@ public class RankingsService {
 		"FROM %2$s r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"WHERE r.%1$s <= :topRanks AND lower(p.name) NOT LIKE '%%unknown%%'\n" +
-		"ORDER BY r.season, r.%1$s, p.goat_points, p.name DESC";
+		"ORDER BY r.season, r.%1$s, p.goat_points DESC, p.name DESC";
 
 	private static final String PLAYER_SEASON_GOAT_RANK = //language=SQL
 		"WITH player_season_goat_rank AS (\n" +
