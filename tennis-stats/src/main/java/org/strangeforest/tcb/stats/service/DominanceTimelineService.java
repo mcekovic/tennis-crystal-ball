@@ -62,7 +62,7 @@ public class DominanceTimelineService {
 		"ORDER BY season DESC";
 	
 
-	@Cacheable(value = "Global", key = "'DominanceTimeline'")
+	@Cacheable("DominanceTimeline")
 	public DominanceTimeline getDominanceTimeline(Surface surface) {
 		boolean overall = surface == null;
 		DominanceTimeline timeline = new DominanceTimeline(surface);

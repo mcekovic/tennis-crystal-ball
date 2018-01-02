@@ -156,7 +156,7 @@ public class GOATLegendService {
 		return getRankRangeGOATPoints("h2h_rank_factor", "rank_factor");
 	}
 
-	@Cacheable(value = "Global", key = "'RecordsGOATPoints'")
+	@Cacheable("RecordsGOATPoints")
 	public Map<String, Map<Record, String>> getRecordsGOATPoints(String surface) {
 		Surface aSurface = Surface.safeDecode(surface);
 		Map<String, String> goatPoints = new HashMap<>();

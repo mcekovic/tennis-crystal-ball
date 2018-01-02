@@ -106,7 +106,7 @@ public class TournamentForecastService {
 		"ORDER BY match_num";
 
 
-	@Cacheable(value = "Global", key = "'InProgressEvents'")
+	@Cacheable("InProgressEvents")
 	public BootgridTable<InProgressEvent> getInProgressEventsTable(String orderBy) {
 		BootgridTable<InProgressEvent> table = new BootgridTable<>();
 		jdbcTemplate.query(
