@@ -16,6 +16,11 @@
 				var url = $pill.data("url") + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})];
 				loadTab($pill, url);
 				[/]
+				[# th:case="'goatPoints'"]
+				var $pill = $("#goatPointsPill");
+				var url = $pill.data("url") + [(${params.param('surface', surface)})];
+				loadTab($pill, url);
+				[/]
 				[# th:case="*"]
 				$("#[(${tab})]Pill").click();
 				[/]

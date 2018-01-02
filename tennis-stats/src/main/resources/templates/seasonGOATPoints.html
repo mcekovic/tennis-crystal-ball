@@ -1,5 +1,8 @@
 <br/>
 <th:block xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="totalPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
 <!--/*@thymesVar id="tournamentPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
 <!--/*@thymesVar id="rankingPoints" type="java.util.List<org.strangeforest.tcb.stats.model.records.RecordDetailRow>"*/-->
@@ -8,8 +11,25 @@
 	$(function() {
 		$("[data-toggle='collapse']").click(collapseClick);
 	});
+	function reloadSeasonGOATPoints() {
+		var url = "/seasonGOATPoints?season=[(${season})]&tab=goatPoints";
+		var surface = $("#goatPointsSurface").val();
+		if (surface) url += "&surface=" + surface;
+		$("#goatPoints").load(url);
+	}
 </script>
 <div class="row">
+	<div class="col-md-3">
+		<div class="input-group">
+			<label for="goatPointsSurface" class="input-group-addon">Surface:</label>
+			<select id="goatPointsSurface" class="form-control" onchange="reloadSeasonGOATPoints()" data-toggle="tooltip" data-placement="top" title="Select overall or GOAT Points by surface">
+				<option value="">Overall</option>
+				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:selected="${aSurface.code == surface}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}">Hard</option>
+			</select>
+		</div>
+	</div>
+</div>
+<div class="row margin-top">
 	<div class="col-md-3">
 		<th:block th:include="fragments/record :: record('Total Points', ${totalPoints})"/>
 	</div>
@@ -24,6 +44,6 @@
 	</div>
 </div>
 <br/>
-<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend?forSeason=true">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
+<button type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" th:data-url="@{/goatLegend(forSeason=true, surface=${surface})}">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
 <div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
 </th:block>

@@ -26,6 +26,10 @@ public class TopRankingsTimeline {
 		return seasonsTopPlayers.get(season);
 	}
 
+	public int getTopPlayerCount(int season) {
+		return Optional.ofNullable(getTopPlayers(season)).map(List::size).orElse(0);
+	}
+
 	public int getYENo1(int playerId) {
 		return playersYENo1.get(playerId);
 	}

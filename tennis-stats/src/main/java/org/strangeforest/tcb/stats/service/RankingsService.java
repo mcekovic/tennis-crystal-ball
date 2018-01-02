@@ -132,14 +132,14 @@ public class RankingsService {
 		"SELECT r.season, r.%1$s AS year_end_rank, player_id, p.short_name, p.country_id, p.active\n" +
 		"FROM %2$s r\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE r.%1$s <= :topRanks\n" +
-		"ORDER BY r.season, r.%1$s, p.goat_points DESC";
+		"WHERE r.%1$s <= :topRanks AND lower(p.name) NOT LIKE '%%unknown%%'\n" +
+		"ORDER BY r.season, r.%1$s, p.goat_points, p.name DESC";
 
 	private static final String PLAYER_SEASON_GOAT_RANK = //language=SQL
 		"WITH player_season_goat_rank AS (\n" +
 		"  SELECT player_id, season, rank() OVER (PARTITION BY season ORDER BY goat_points DESC) AS year_end_rank\n" +
 		"  FROM %1$s\n" +
-		"  WHERE goat_points >= 2 AND (season < extract(YEAR FROM current_date) OR extract(MONTH FROM current_date) >= 11)%2$s\n" +
+		"  WHERE goat_points > 0 AND (season < extract(YEAR FROM current_date) OR extract(MONTH FROM current_date) >= 11)%2$s\n" +
 		")\n";
 
 
@@ -459,13 +459,16 @@ public class RankingsService {
 			format(TOP_RANKINGS_TIMELINE_QUERY, yearEndRankColumn(rankType), yearEndRankingTable(rankType)),
 			params,
 			rs -> {
-				timeline.addSeasonTopPlayer(rs.getInt("season"), new TopRankingsPlayer(
-					rs.getInt("year_end_rank"),
-					rs.getInt("player_id"),
-					rs.getString("short_name"),
-					rs.getString("country_id"),
-					rs.getBoolean("active")
-				));
+				int season = rs.getInt("season");
+				if (timeline.getTopPlayerCount(season) < TOP_RANKS_FOR_TIMELINE) {
+					timeline.addSeasonTopPlayer(season, new TopRankingsPlayer(
+						rs.getInt("year_end_rank"),
+						rs.getInt("player_id"),
+						rs.getString("short_name"),
+						rs.getString("country_id"),
+						rs.getBoolean("active")
+					));
+				}
 			}
 		);
 		return timeline;

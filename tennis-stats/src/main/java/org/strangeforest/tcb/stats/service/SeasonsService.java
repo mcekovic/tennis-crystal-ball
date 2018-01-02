@@ -14,6 +14,7 @@ import org.strangeforest.tcb.stats.model.records.*;
 import org.strangeforest.tcb.stats.model.records.details.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
+import static com.google.common.base.Strings.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.records.details.RecordDetailUtil.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
@@ -93,8 +94,8 @@ public class SeasonsService {
 	private static final String SEASON_GOAT_POINTS_QUERY = //language=SQL
 		"WITH goat_points AS (\n" +
 		"  SELECT player_id, %1$sgoat_points AS value, rank() OVER (ORDER BY %1$sgoat_points DESC) AS rank\n" +
-		"  FROM player_season_goat_points\n" +
-		"  WHERE season = :season AND %1$sgoat_points > 0\n" +
+		"  FROM %2$s\n" +
+		"  WHERE season = :season AND %1$sgoat_points > 0%3$s\n" +
 		")\n" +
 		"SELECT g.rank, player_id, p.name, p.country_id, g.value\n" +
 		"FROM goat_points g\n" +
@@ -211,24 +212,35 @@ public class SeasonsService {
 		);
 	}
 
-	public List<RecordDetailRow> getSeasonGOATPoints(int season, String pointsColumnPrefix, int maxPlayers) {
+	public List<RecordDetailRow> getSeasonGOATPoints(int season, String surface, String pointsColumnPrefix, int maxPlayers) {
+		MapSqlParameterSource params = params("season", season)
+			.addValue("maxPlayers", maxPlayers);
+		if (!isNullOrEmpty(surface))
+			params.addValue("surface", surface);
 		return jdbcTemplate.query(
-			format(SEASON_GOAT_POINTS_QUERY, pointsColumnPrefix),
-			params("season", season)
-				.addValue("maxPlayers", maxPlayers),
-			(rs, rowNum) -> mapSeasonGOATPointsRecordDetailRow(rs, season)
+			format(SEASON_GOAT_POINTS_QUERY,
+				pointsColumnPrefix,
+				isNullOrEmpty(surface) ? "player_season_goat_points" : "player_surface_season_goat_points",
+				isNullOrEmpty(surface) ? "" : " AND surface = :surface::surface"
+			),
+			params,
+			(rs, rowNum) -> mapSeasonGOATPointsRecordDetailRow(rs, season, surface)
 		);
 	}
 
-	private static RecordDetailRow mapSeasonGOATPointsRecordDetailRow(ResultSet rs, int season) throws SQLException {
+	private static RecordDetailRow mapSeasonGOATPointsRecordDetailRow(ResultSet rs, int season, String surface) throws SQLException {
 		return new RecordDetailRow<>(
 			rs.getInt("rank"),
 			rs.getInt("player_id"),
 			rs.getString("name"),
 			rs.getString("country_id"),
 			null,
-			new IntegerRecordDetail(rs.getInt("value")),
-			(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=goatPoints&season=%2$d", playerId, season)
+			new IntegerRecordDetail(rs.getInt("value")), (playerId, recordDetail) -> {
+				String url = format("/playerProfile?playerId=%1$d&tab=goatPoints&season=%2$d", playerId, season);
+				if (!isNullOrEmpty(surface))
+					url += "&surface=" + surface;
+				return url;
+			}
 		);
 	}
 

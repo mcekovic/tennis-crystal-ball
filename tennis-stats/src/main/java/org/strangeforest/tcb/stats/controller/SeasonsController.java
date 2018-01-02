@@ -131,14 +131,18 @@ public class SeasonsController extends PageController {
 	
 	@GetMapping("/seasonGOATPoints")
 	public ModelAndView seasonGOATPoints(
-		@RequestParam(name = "season") int season
+		@RequestParam(name = "season") int season,
+		@RequestParam(name = "surface", required = false) String surface
 	) {
-		List<RecordDetailRow> totalPoints = seasonsService.getSeasonGOATPoints(season, "", MAX_RECORD_PLAYERS);
-		List<RecordDetailRow> tournamentPoints = seasonsService.getSeasonGOATPoints(season, "tournament_", MAX_RECORD_PLAYERS);
-		List<RecordDetailRow> rankingPoints = seasonsService.getSeasonGOATPoints(season, "ranking_", MAX_RECORD_PLAYERS);
-		List<RecordDetailRow> achievementsPoints = seasonsService.getSeasonGOATPoints(season, "achievements_", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> totalPoints = seasonsService.getSeasonGOATPoints(season, surface, "", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> tournamentPoints = seasonsService.getSeasonGOATPoints(season, surface, "tournament_", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> rankingPoints = seasonsService.getSeasonGOATPoints(season, surface, "ranking_", MAX_RECORD_PLAYERS);
+		List<RecordDetailRow> achievementsPoints = seasonsService.getSeasonGOATPoints(season, surface, "achievements_", MAX_RECORD_PLAYERS);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("totalPoints", totalPoints);
 		modelMap.addAttribute("tournamentPoints", tournamentPoints);
 		modelMap.addAttribute("rankingPoints", rankingPoints);
