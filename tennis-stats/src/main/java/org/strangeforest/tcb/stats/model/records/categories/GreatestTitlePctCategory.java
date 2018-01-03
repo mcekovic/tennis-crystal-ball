@@ -28,8 +28,8 @@ public class GreatestTitlePctCategory extends RecordCategory {
 		}
 	}
 
-	private static final String PCT_WIDTH =   "140";
-	private static final String ITEM_WIDTH =   "80";
+	private static final String PCT_WIDTH =  "120";
+	private static final String ITEM_WIDTH =  "80";
 
 	private static final RecordColumn WON_COLUMN = new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", "Won");
 	private static final RecordColumn LOST_COLUMN = new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost");
@@ -106,7 +106,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC",
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&round=F", playerId, domain.urlParam),
 			asList(
-				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				WON_COLUMN,
 				LOST_COLUMN,
 				PLAYED_COLUMN
@@ -127,7 +127,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC",
 			WinningPctRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s", playerId, domain.urlParam),
 			asList(
-				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + "Winning Pct."),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", "Winning Pct."),
 				WON_COLUMN,
 				LOST_COLUMN,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Entries")

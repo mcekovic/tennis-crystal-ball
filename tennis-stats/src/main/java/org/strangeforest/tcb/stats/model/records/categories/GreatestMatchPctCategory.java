@@ -39,7 +39,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		}
 	}
 
-	private static final String PCT_WIDTH =        "140";
+	private static final String PCT_WIDTH =        "120";
 	private static final String ITEM_WIDTH =        "80";
 	private static final String SEASON_WIDTH =      "80";
 	private static final String TOURNAMENT_WIDTH = "120";
@@ -115,7 +115,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC",
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&outcome=played", playerId, domain.urlParam),
 			asList(
-				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				WON_COLUMN,
 				LOST_COLUMN,
 				PLAYED_COLUMN
@@ -134,7 +134,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC",
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&outcome=played", playerId, domain.urlParam),
 			asList(
-				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct. Vs " + domain.name),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				WON_COLUMN,
 				LOST_COLUMN,
 				PLAYED_COLUMN
@@ -154,7 +154,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"r.won, r.lost, r.season", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.season",
 			type.seasonDetailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d%3$s&outcome=played", playerId, recordDetail.getSeason(), domain.urlParam),
 			asList(
-				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				WON_COLUMN,
 				LOST_COLUMN,
 				PLAYED_COLUMN,
@@ -176,7 +176,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"r.won, r.lost, r.tournament_id, r.tournament, r.level", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.tournament",
 			type.tournamentDetailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentId=%2$d%3$s&outcome=played", playerId, recordDetail.getTournamentId(), domain.urlParam),
 			asList(
-				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				WON_COLUMN,
 				LOST_COLUMN,
 				PLAYED_COLUMN,
@@ -207,7 +207,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"r.won, r.lost, r.date", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.date",
 			type.peakDetailClass, null,
 			asList(
-				new RecordColumn("value", null, "value", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
+				new RecordColumn("value", null, "value", PCT_WIDTH, "right", type.name + " Pct."),
 				WON_COLUMN,
 				LOST_COLUMN,
 				PLAYED_COLUMN,
@@ -239,7 +239,7 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			"r.won, r.lost, r.date", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC, r.date",
 			type.peakDetailClass, null,
 			asList(
-				new RecordColumn("value", null, "value", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
+				new RecordColumn("value", null, "value", PCT_WIDTH, "right", type.name + " Pct."),
 				WON_COLUMN,
 				LOST_COLUMN,
 				PLAYED_COLUMN,

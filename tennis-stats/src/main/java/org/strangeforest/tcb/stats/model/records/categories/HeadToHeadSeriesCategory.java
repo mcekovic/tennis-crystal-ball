@@ -63,9 +63,10 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 
 	private static final String HTH_TOTAL = "h2h_won + h2h_draw + h2h_lost";
 
-	private static final String H2H_WIDTH =      "100";
-	private static final String H2H_SMALL_WIDTH = "70";
-	private static final String PCT_WIDTH =      "100";
+	private static final String H2H_WIDTH =       "100";
+	private static final String H2H_SMALL_WIDTH =  "70";
+	private static final String H2H_PLAYED_WIDTH = "80";
+	private static final String PCT_WIDTH =       "120";
 
 	private static final RecordColumn WON_COLUMN = new RecordColumn("won", "numeric", null, H2H_SMALL_WIDTH, "right", "Won");
 	private static final RecordColumn LOST_COLUMN = new RecordColumn("lost", "numeric", null, H2H_SMALL_WIDTH, "right", "Lost");
@@ -123,11 +124,11 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 			"r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC",
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries&matches=3", playerId),
 			asList(
-				new RecordColumn("value",  null, "valueUrl", PCT_WIDTH, "right", "H2H " + type.name + " Pct."),
+				new RecordColumn("value",  null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				type.value1RecordColumn,
 				new RecordColumn("draw", "numeric", null, H2H_SMALL_WIDTH, "right", "Draw"),
 				type.value2RecordColumn,
-				new RecordColumn("played", "numeric", null, H2H_SMALL_WIDTH, "right", "Played")
+				new RecordColumn("played", "numeric", null, H2H_PLAYED_WIDTH, "right", "Played")
 			),
 			notes(minSeries)
 		);
@@ -162,11 +163,11 @@ public class HeadToHeadSeriesCategory extends RecordCategory {
 			"r.won, r.draw, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.draw + r.lost DESC",
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=rivalries&matches=3%2$s", playerId, urlParam),
 			asList(
-				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", "H2H " + type.name + " Pct."),
+				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
 				type.value1RecordColumn,
 				new RecordColumn("draw", "numeric", null, H2H_SMALL_WIDTH, "right", "Draw"),
 				type.value2RecordColumn,
-				new RecordColumn("played", "numeric", null, H2H_SMALL_WIDTH, "right", "Played")
+				new RecordColumn("played", "numeric", null, H2H_PLAYED_WIDTH, "right", "Played")
 			),
 			notes(minSeries)
 		);
