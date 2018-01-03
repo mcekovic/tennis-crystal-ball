@@ -141,7 +141,7 @@ public class TournamentForecastService {
 		return inProgressEvent;
 	}
 
-	@Cacheable("PlayerIdByName")
+	@Cacheable("InProgressEventIdByName")
 	public int findInProgressEventId(String name) {
 		return jdbcTemplate.query(IN_PROGRESS_EVENT_ID_QUERY, params("name", name), rs -> {
 			if (rs.next())

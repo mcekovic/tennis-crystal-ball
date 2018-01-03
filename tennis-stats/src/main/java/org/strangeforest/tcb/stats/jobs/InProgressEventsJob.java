@@ -24,7 +24,7 @@ public class InProgressEventsJob {
 
 	private void clearCaches() {
 		dataService.evictGlobal("InProgressEvents");
-		int cacheCount = dataService.clearCaches("InProgressEventForecast");
+		int cacheCount = dataService.clearCaches("InProgressEvent.*");
 		LOGGER.info("{} cache(s) cleared.", cacheCount);
 	}
 }
