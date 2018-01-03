@@ -307,7 +307,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 id="goatListTable-title" class="grid-title text-nowrap"><i class="fa fa-flag"></i> Open Era GOAT List</h3>
+	<h3 id="goatListTable-title" class="grid-title text-nowrap"><i class="fa fa-flag"></i> Open Era GOAT List&nbsp;<a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#goatListPopover"><i class="fa fa-question-circle" style="font-size: 80%; vertical-align: text-top"></i></a></h3>
 	<div id="surfaceDiv" class="btn-group margin-right">
 		<select id="surface" class="form-control" onchange="surfaceChanged(); reloadGOATListTableAndLegend()" data-toggle="tooltip" data-placement="top" title="Select overall or GOAT List by surface">
 			<option value="">Overall</option>
@@ -605,6 +605,21 @@
 	<br/>
 	<button id="goatLegendButton" type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
 	<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
+	<div class="hidden" id="goatListPopover">
+		<div class="popover-title"><strong>Open Era GOAT List</strong></div>
+		<div class="popover-content">
+			<p><strong>GOAT Points formula</strong></p>
+			<p>Open Era GOAT List quantifies tennis achievements using the GOAT Points formula. For detailed visual description of the formula used, please see GOAT Points Legend below.</p>
+			<p><strong>Open Era exclusive</strong></p>
+			<p><a href="https://en.wikipedia.org/wiki/History_of_tennis#Open_Era" target="_blank">Open Era</a> GOAT List quantifies tennis achievements during Open Era only. Tennis achievements that predate the Open Era are not included.</p>
+			<p><strong>Why Open Era only?</strong></p>
+			<p>The reason is simple: GOAT Points formula on which Open Era GOAT List is based needs detailed information about all matches players played. Unfortunately, this information is available for wide audience only for the Open Era.</p>
+			<p><strong>GOAT Lists by surface</strong></p>
+			<p>GOAT Lists by different surfaces are available by choosing a surface in the surface combo box at the top.</p>
+			<p><strong>Configurability and weight factors</strong></p>
+			<p>GOAT List is not a simple list, but a full 'GOAT Calculator' with configurable weight factors for different GOAT Points areas and sub-areas. Please click 'Config' button below to open the configuration form.</p>
+		</div>
+	</div>
 	<div class="hidden" id="extrapolateCareerPopover">
 		<div class="popover-title"><strong>GOAT Points Extrapolation</strong></div>
 		<div class="popover-content">
