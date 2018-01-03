@@ -13,14 +13,6 @@ public abstract class H2HWonLostRecordDetail extends WonLostRecordDetail {
 		player2 = new PlayerRow(2, playerId2, name2, countryId2, active2);
 	}
 
-	public int getWon() {
-		return wonLost.getWon();
-	}
-
-	public int getLost() {
-		return wonLost.getLost();
-	}
-
 	public PlayerRow getPlayer2() {
 		return player2;
 	}

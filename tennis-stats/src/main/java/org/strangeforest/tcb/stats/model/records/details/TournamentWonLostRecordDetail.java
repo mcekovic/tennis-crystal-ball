@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model.records.details;
 
+import static java.lang.String.*;
+
 public abstract class TournamentWonLostRecordDetail extends WonLostRecordDetail {
 
 	private final int tournamentId;
@@ -23,5 +25,9 @@ public abstract class TournamentWonLostRecordDetail extends WonLostRecordDetail 
 
 	public String getLevel() {
 		return level;
+	}
+
+	@Override public String toDetailString() {
+		return format("%4$s %1$d-%2$d/%3$d", wonLost.getWon(), wonLost.getLost(), wonLost.getTotal(), getTournament());
 	}
 }

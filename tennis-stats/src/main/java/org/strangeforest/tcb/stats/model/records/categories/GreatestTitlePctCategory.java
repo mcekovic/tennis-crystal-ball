@@ -11,31 +11,29 @@ import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 public class GreatestTitlePctCategory extends RecordCategory {
 
 	public enum RecordType {
-		WINNING("Final / Title", "Winning", "finals_won", "count(*) FILTER (WHERE r.result = 'W')", WinningPctRecordDetail.class,
-			new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", "Won")
-		),
-		LOSING("Final", "Losing", "finals_lost", "count(*) FILTER (WHERE r.result <> 'W')", LosingPctRecordDetail.class,
-			new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost")
-		);
+		WINNING("Final / Title", "Winning", "finals_won", "count(*) FILTER (WHERE r.result = 'W')", WinningPctRecordDetail.class),
+		LOSING("Final", "Losing", "finals_lost", "count(*) FILTER (WHERE r.result <> 'W')", LosingPctRecordDetail.class);
 
 		private final String categoryName;
 		private final String name;
 		private final String expression1, expression2;
 		private final Class<? extends RecordDetail> detailClass;
-		private final RecordColumn valueRecordColumn;
 
-		RecordType(String categoryName, String name, String expression1, String expression2, Class<? extends RecordDetail> detailClass, RecordColumn valueRecordColumn) {
+		RecordType(String categoryName, String name, String expression1, String expression2, Class<? extends RecordDetail> detailClass) {
 			this.categoryName = categoryName;
 			this.name = name;
 			this.expression1 = expression1;
 			this.expression2 = expression2;
 			this.detailClass = detailClass;
-			this.valueRecordColumn = valueRecordColumn;
 		}
 	}
 
 	private static final String PCT_WIDTH =   "140";
 	private static final String ITEM_WIDTH =   "80";
+
+	private static final RecordColumn WON_COLUMN = new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", "Won");
+	private static final RecordColumn LOST_COLUMN = new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost");
+	private static final RecordColumn PLAYED_COLUMN = new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played");
 
 	public GreatestTitlePctCategory(RecordType type) {
 		super("Greatest " + suffix(type.categoryName, " ") + type.name + " Pct.");
@@ -88,8 +86,9 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&round=F", playerId),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
+				WON_COLUMN,
+				LOST_COLUMN,
+				PLAYED_COLUMN
 			),
 			format("Minimum %1$d %2$s", minEntries, "finals")
 		);
@@ -108,8 +107,9 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&round=F", playerId, domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
+				WON_COLUMN,
+				LOST_COLUMN,
+				PLAYED_COLUMN
 			),
 			format("Minimum %1$d %2$s", minEntries, "finals")
 		);
@@ -128,7 +128,8 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			WinningPctRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s", playerId, domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + "Winning Pct."),
-				RecordType.WINNING.valueRecordColumn,
+				WON_COLUMN,
+				LOST_COLUMN,
 				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Entries")
 			),
 			format("Minimum %1$d %2$s", minEntries, "entries")

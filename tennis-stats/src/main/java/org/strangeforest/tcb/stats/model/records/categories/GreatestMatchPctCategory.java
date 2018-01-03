@@ -11,12 +11,8 @@ import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
 public class GreatestMatchPctCategory extends RecordCategory {
 
 	public enum RecordType {
-		WINNING("Winning", "_won", "p_matches", "pct DESC", WinningPctRecordDetail.class, SeasonWinningPctRecordDetail.class, TournamentWinningPctRecordDetail.class, PeakWinningPctRecordDetail.class,
-			new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", "Won")
-		),
-		LOSING("Losing", "_lost", "o_matches", "pct", LosingPctRecordDetail.class, SeasonLosingPctRecordDetail.class, TournamentLosingPctRecordDetail.class, PeakLosingPctRecordDetail.class,
-			new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost")
-		);
+		WINNING("Winning", "_won", "p_matches", "pct DESC", WinningPctRecordDetail.class, SeasonWinningPctRecordDetail.class, TournamentWinningPctRecordDetail.class, PeakWinningPctRecordDetail.class),
+		LOSING("Losing", "_lost", "o_matches", "pct", LosingPctRecordDetail.class, SeasonLosingPctRecordDetail.class, TournamentLosingPctRecordDetail.class, PeakLosingPctRecordDetail.class);
 
 		private final String name;
 		private final String columnSuffix;
@@ -26,9 +22,8 @@ public class GreatestMatchPctCategory extends RecordCategory {
 		private final Class<? extends SeasonWonLostRecordDetail> seasonDetailClass;
 		private final Class<? extends TournamentWonLostRecordDetail> tournamentDetailClass;
 		private final Class<? extends PeakWonLostRecordDetail> peakDetailClass;
-		private final RecordColumn valueRecordColumn;
 
-		RecordType(String name, String column, String peakColumn, String peakOrder, Class<? extends RecordDetail> detailClass, Class<? extends SeasonWonLostRecordDetail> seasonDetailClass, Class<? extends TournamentWonLostRecordDetail> tournamentDetailClass, Class<? extends PeakWonLostRecordDetail> peakDetailClass, RecordColumn valueRecordColumn) {
+		RecordType(String name, String column, String peakColumn, String peakOrder, Class<? extends RecordDetail> detailClass, Class<? extends SeasonWonLostRecordDetail> seasonDetailClass, Class<? extends TournamentWonLostRecordDetail> tournamentDetailClass, Class<? extends PeakWonLostRecordDetail> peakDetailClass) {
 			this.name = name;
 			this.columnSuffix = column;
 			this.peakColumn = peakColumn;
@@ -37,7 +32,6 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			this.seasonDetailClass = seasonDetailClass;
 			this.tournamentDetailClass = tournamentDetailClass;
 			this.peakDetailClass = peakDetailClass;
-			this.valueRecordColumn = valueRecordColumn;
 		}
 
 		String expression(String prefix) {
@@ -50,6 +44,10 @@ public class GreatestMatchPctCategory extends RecordCategory {
 	private static final String SEASON_WIDTH =      "80";
 	private static final String TOURNAMENT_WIDTH = "120";
 	private static final String DATE_WIDTH =        "85";
+
+	private static final RecordColumn WON_COLUMN = new RecordColumn("won", "numeric", null, ITEM_WIDTH, "right", "Won");
+	private static final RecordColumn LOST_COLUMN = new RecordColumn("lost", "numeric", null, ITEM_WIDTH, "right", "Lost");
+	private static final RecordColumn PLAYED_COLUMN = new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played");
 
 	public GreatestMatchPctCategory(RecordType type) {
 		super("Greatest " + type.name + " Pct.");
@@ -118,8 +116,9 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&outcome=played", playerId, domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
+				WON_COLUMN,
+				LOST_COLUMN,
+				PLAYED_COLUMN
 			),
 			format("Minimum %1$d %2$s", perfCategory.getMinEntries(), perfCategory.getEntriesName())
 		);
@@ -136,8 +135,9 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			type.detailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches%2$s&outcome=played", playerId, domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", type.name + " Pct. Vs " + domain.name),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played")
+				WON_COLUMN,
+				LOST_COLUMN,
+				PLAYED_COLUMN
 			),
 			format("Minimum %1$d %2$s", perfCategory.getMinEntries(), perfCategory.getEntriesName())
 		);
@@ -155,8 +155,9 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			type.seasonDetailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&season=%2$d%3$s&outcome=played", playerId, recordDetail.getSeason(), domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played"),
+				WON_COLUMN,
+				LOST_COLUMN,
+				PLAYED_COLUMN,
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
 			),
 			format("Minimum %1$d %2$s", minEntries, perfCategory.getEntriesName())
@@ -176,8 +177,9 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			type.tournamentDetailClass, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentId=%2$d%3$s&outcome=played", playerId, recordDetail.getTournamentId(), domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played"),
+				WON_COLUMN,
+				LOST_COLUMN,
+				PLAYED_COLUMN,
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
 			),
 			format("Minimum %1$d %2$s", minEntries, perfCategory.getEntriesName())
@@ -206,8 +208,9 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			type.peakDetailClass, null,
 			asList(
 				new RecordColumn("value", null, "value", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played"),
+				WON_COLUMN,
+				LOST_COLUMN,
+				PLAYED_COLUMN,
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
 			),
 			format("Minimum %1$d %2$s", perfCategory.getMinEntries(), perfCategory.getEntriesName())
@@ -237,8 +240,9 @@ public class GreatestMatchPctCategory extends RecordCategory {
 			type.peakDetailClass, null,
 			asList(
 				new RecordColumn("value", null, "value", PCT_WIDTH, "right", suffix(domain.name, " ") + type.name + " Pct."),
-				type.valueRecordColumn,
-				new RecordColumn("played", "numeric", null, ITEM_WIDTH, "right", "Played"),
+				WON_COLUMN,
+				LOST_COLUMN,
+				PLAYED_COLUMN,
 				new RecordColumn("date", null, "date", DATE_WIDTH, "center", "Date")
 			),
 			format("Minimum %1$d %2$s", perfCategory.getMinEntries(), perfCategory.getEntriesName())
