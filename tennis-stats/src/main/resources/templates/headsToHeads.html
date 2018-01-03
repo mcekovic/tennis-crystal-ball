@@ -46,6 +46,11 @@
 			$("#round").val("");
 			$("#statsVsAll").prop("checked", false);
 		}
+		function showStatsGroup(groupId) {
+			var $playersStatsTable = $("#playersStatsTable");
+			$playersStatsTable.find(".stats-group:not(.stats-group-" + groupId + ")").hide("fast");
+			$playersStatsTable.find(".stats-group-" + groupId).show("fast");
+		}
 	</script>
 </head>
 <body class="container">

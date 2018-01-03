@@ -560,7 +560,9 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("headsToHeads", headsToHeads);
+		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
 		modelMap.addAttribute("playersStats", playersStats);
+		modelMap.addAttribute("hasPointStats", playersStats.values().stream().anyMatch(PlayerStats::hasPointStats));
 		return new ModelAndView("headsToHeadsTable", modelMap);
 	}
 
