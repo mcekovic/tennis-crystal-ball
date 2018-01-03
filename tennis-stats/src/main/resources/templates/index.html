@@ -98,10 +98,10 @@
 	<div class="row">
 		<div class="col-lg-10 col-md-9">
 			<div>
-				<h1 style="margin-top: 10px; margin-bottom: 20px"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></h1>
+				<h1 style="margin-top: 10px; margin-bottom: 20px"><th:block th:include="fragments/promotion :: logo"/></h1>
 			</div>
 			<p>
-				Welcome to <span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span>, the ultimate tennis statistics destination for the die-hard tennis fans!<br/>
+				Welcome to <th:block th:include="fragments/promotion :: logo"/>, the ultimate tennis statistics destination for the die-hard tennis fans!<br/>
 				For more information please click <a href="/about">here <i class="fa fa-question-circle"></i></a>.
 			</p>
 			<th:block th:if="${hasInProgressEvents}">
@@ -153,7 +153,7 @@
 			</ul>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-bullhorn"></i> Tips<sup class="cool-feature">&nbsp;Cool!</sup></h4>
 			<ul>
-				<li><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span> is a mobile-friendly web site, but to see it in its 'full glory', open it on the screen greater then 1440 pixels, in which case more data will show up and more columns with various details will be available in the data tables.</li>
+				<li><th:block th:include="fragments/promotion :: logo"/> is a mobile-friendly web site, but to see it in its 'full glory', open it on the screen greater then 1440 pixels, in which case more data will show up and more columns with various details will be available in the data tables.</li>
 				<li>On most pages with filter, there is a search box
 					<div class="input-group" style="display: inline-table; vertical-align: -40%; width: 120px"><span class="icon glyphicon glyphicon-search input-group-addon"></span><input class="search-field form-control" placeholder="Search" type="text" disabled="disabled" style="margin-top: 1px; margin-bottom: -1px"></div>
 					where players or tournaments can be quickly filtered by name. But if you type country code like USA, GBR, ESP, FRA, you can filter players by country too.

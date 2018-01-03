@@ -4,7 +4,7 @@
 <head th:replace="fragments/head :: commonHead(null, false, _, _)">
 <body class="container">
 	<br/>
-	<h4 class="text-nowrap"><a href="/"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></a> - Down for Maintenance</h4>
+	<h4 class="text-nowrap"><a href="/"><th:block th:include="fragments/promotion :: logo"/></a> - Down for Maintenance</h4>
 	<p>Ultimate Tennis Statistics is down for maintenance and will be back soon.</p>
 	<p th:text="${maintenanceMessage}">Maintenance message</p>
 	<p>Please <a href="/">try again</a> later.</p>

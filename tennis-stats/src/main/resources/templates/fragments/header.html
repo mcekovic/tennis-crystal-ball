@@ -14,7 +14,7 @@
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<div class="navbar-brand text-nowrap pull-left">
-					<a href="/" style="font-size: larger" title="Home"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></a>
+					<a href="/" style="font-size: larger" title="Home"><th:block th:include="fragments/promotion :: logo"/></a>
 				</div>
 				<div th:if="${dataUpdate}" class="navbar-text pull-left text-nowrap text-muted">
 					<small class="hidden-xs">Updated: </small><small th:text="${#temporals.format(dataUpdate, 'dd-MM-yyyy')}" title="Last data update">21-09-2015</small>
