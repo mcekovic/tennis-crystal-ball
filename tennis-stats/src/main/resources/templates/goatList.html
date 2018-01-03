@@ -134,7 +134,7 @@
 			var $search = $goatListTableHeader.find("div.search");
 			$search.before($("#surfaceDiv").remove());
 			$search.before($("#activeDiv").remove());
-			$goatListTableHeader.find("div.actions").after($("#goatListQuickPicks").remove());
+			$search.before($("#goatListQuickPicks").remove());
 			setBootgridTitle($goatListTableHeader, $("#goatListTable-title"));
 			setBootgridTitles($goatListTable, [
 				{id: "goatRank", title: "GOAT rank"},
@@ -321,7 +321,7 @@
 			</label>
 		</div>
 	</div>
-	<div id="goatListQuickPicks" class="btn-group margin-left no-margin-right">
+	<div id="goatListQuickPicks" class="btn-group margin-right">
 		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Quick Picks <span class="caret"></span></button>
 		<ul class="dropdown-menu">
 			<li><a href="/goatList" title="All GOAT Points constituents are included with weight x 1">Default</a></li>
