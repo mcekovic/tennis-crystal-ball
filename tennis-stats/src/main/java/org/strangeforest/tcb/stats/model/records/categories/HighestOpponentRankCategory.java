@@ -104,7 +104,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			"SELECT player_id, round(unrounded_value::NUMERIC, 1) AS value, unrounded_value\n" +
 			"FROM opponent_rank" + rankingType.where,
 			"r.value", "r.unrounded_value" + desc, "r.unrounded_value" + desc,
-			DoubleRecordDetail.class, null,
+			DoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&outcome=played&%2$s", playerId, domain.urlParam),
 			asList(new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name)),
 			format("Minimum %1$d %2$s; %3$s", minEntries, perfCategory.getEntriesName(), rankingType.notes)
 		);
@@ -126,7 +126,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			"SELECT player_id, season, round(unrounded_value::NUMERIC, 1) AS value, unrounded_value\n" +
 			"FROM season_opponent_rank" + rankingType.where,
 			"r.value, r.season", "r.unrounded_value" + desc, "r.unrounded_value" + desc + ", r.season",
-			SeasonDoubleRecordDetail.class, null,
+			SeasonDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&outcome=played&season=%2$d&%3$s", playerId, recordDetail.getSeason(), domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
@@ -152,7 +152,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			"SELECT player_id, tournament_event_id, tournament, level, season, date, round(unrounded_value::NUMERIC, 1) AS value, unrounded_value\n" +
 			"FROM tournament_opponent_rank" + rankingType.where,
 			"r.value, r.tournament_event_id, r.tournament, r.level, r.season", "r.unrounded_value" + desc, "r.unrounded_value" + desc + ", r.date",
-			TournamentEventDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&tournamentEventId=%2$d", playerId, recordDetail.getTournamentEventId()),
+			TournamentEventDoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&outcome=played&tournamentEventId=%2$d", playerId, recordDetail.getTournamentEventId()),
 			asList(
 				new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
@@ -179,7 +179,7 @@ public class HighestOpponentRankCategory extends RecordCategory {
 			"SELECT player_id, round(unrounded_value::NUMERIC, 1) AS value, unrounded_value\n" +
 			"FROM titles_opponent_rank" + rankingType.where,
 			"r.value", "r.unrounded_value" + desc, "r.unrounded_value" + desc,
-			DoubleRecordDetail.class, null,
+			DoubleRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=matches&outcome=played&result=W&%2$s", playerId, domain.urlParam),
 			asList(new RecordColumn("value", null, "factor", RANK_WIDTH, "right", "Mean Opponent " + rankingType.name)),
 			format("Minimum %1$d matches; %2$s", minEntries, rankingType.notes)
 		);
