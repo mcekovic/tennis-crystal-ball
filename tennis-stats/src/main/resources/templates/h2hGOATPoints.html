@@ -13,7 +13,7 @@
 		$("[data-toggle='collapse']").click(collapseClick);
 	});
 	function reloadH2HGOATPoints() {
-		var url = "/headToHead?playerId1=[(${playerId1})]&playerId2=[(${playerId2})]&tab=goatPoints";
+		var url = "/h2hGOATPoints?playerId1=[(${playerId1})]&playerId2=[(${playerId2})]";
 		var surface = $("#surface").val();
 		if (surface) url += "&surface=" + surface;
 		$("#goatPoints").load(url);

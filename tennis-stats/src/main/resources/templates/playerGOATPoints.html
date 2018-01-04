@@ -27,7 +27,7 @@
 			$("[data-toggle='collapse']").click(collapseClick);
 		});
 		function reloadPlayerGOATPoints() {
-			var url = "/playerProfile?playerId=[(${playerId})]&tab=goatPoints";
+			var url = "/playerGOATPoints?playerId=[(${playerId})]";
 			var surface = $("#surface").val();
 			if (surface) url += "&surface=" + surface;
 			$("#goatPoints").load(url);
