@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model;
 
 import java.time.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 public class Match {
 
 	private final long id;
@@ -19,7 +21,7 @@ public class Match {
 	private final String outcome;
 	private final boolean hasStats;
 	private Double bigWinPoints;
-	private String h2h;
+	private WonLost h2h;
 
 	public Match(long id, LocalDate date, int tournamentEventId, String tournament, String level, int bestOf, String surface, boolean indoor, String round,
 	             MatchPlayer winner, MatchPlayer loser, String score, String outcome, boolean hasStats) {
@@ -103,11 +105,11 @@ public class Match {
 		this.bigWinPoints = bigWinsPoints;
 	}
 
-	public String getH2h() {
+	public WonLost getH2h() {
 		return h2h;
 	}
 
-	public void setH2h(String h2h) {
+	public void setH2h(WonLost h2h) {
 		this.h2h = h2h;
 	}
 }

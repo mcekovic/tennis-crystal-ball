@@ -55,6 +55,9 @@
 				"surface": surfaceFormatter,
 				"match": h2hMatchFormatter,
 				"matchEx": matchExFormatter([(${playerId})]),
+				"h2h": function(column, row) {
+					return "<span title='" + row.h2h.wonPct.toFixed(1) + "% - " + (100 - row.h2h.wonPct).toFixed(1) + "%'>" + row.h2h.wl + "</span>";
+				},
 				"stats": function(column, row) {
 					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>" : "";
 				}
@@ -306,7 +309,7 @@
 		<th data-column-id="matchEx" data-formatter="matchEx" data-sortable="false" data-visible="false" data-width="500">Match Details</th>
 		<th data-column-id="bestOf" data-width="50" data-visible="false">BO</th>
 		<th data-column-id="score" data-sortable="false" data-width="175">Score</th>
-		<th data-column-id="h2h" data-sortable="false" data-width="55">H2H</th>
+		<th data-column-id="h2h" data-formatter="h2h" data-sortable="false" data-width="55">H2H</th>
 		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>
 	</tr>
 	</thead>

@@ -176,7 +176,7 @@ public class MatchesService {
 					if (filter.isBigWin())
 						match.setBigWinPoints(getDouble(rs, "big_win_points"));
 					if (h2h)
-						match.setH2h(new WonLost(rs.getInt("h2h_won"), rs.getInt("h2h_lost")).getWL());
+						match.setH2h(new WonLost(rs.getInt("h2h_won"), rs.getInt("h2h_lost")));
 					table.addRow(match);
 				}
 			}
