@@ -143,7 +143,7 @@
 		</div>
 		<div class="col-sm-4 col-md-3 col-lg-3">
 			<div class="input-group">
-				<label for="surface" class="input-group-addon">Season:</label>
+				<label for="surface" class="input-group-addon">Surface:</label>
 				<select id="surface" class="form-control" onchange="reloadDominanceTimeline()" data-toggle="tooltip" data-placement="top" title="Select overall or Dominance Timeline by surface">
 					<option value="">Overall</option>
 					<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:selected="${aSurface.code == surface}" th:text="${aSurface.text}">Hard</option>
