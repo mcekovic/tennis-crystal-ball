@@ -15,8 +15,9 @@ import org.strangeforest.tcb.stats.util.*;
 import com.github.benmanes.caffeine.cache.*;
 
 import static com.google.common.base.Strings.*;
+import static com.google.common.collect.Lists.*;
 import static java.lang.String.*;
-import static java.util.Arrays.*;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
@@ -46,7 +47,8 @@ public class MatchPredictionService {
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
-		"SELECT m.match_num, m.date, m.tournament_id, m.tournament_event_id, FALSE in_progress, m.level, m.surface, m.round, m.opponent_id, m.opponent_rank, m.opponent_elo_rating, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
+		"SELECT m.match_num, m.date, m.tournament_id, m.tournament_event_id, FALSE in_progress, m.level, m.surface, m.round,\n" +
+		"  m.opponent_id, m.opponent_rank, m.opponent_elo_rating, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets, NULL next_elo_rating\n" +
 		"FROM player_match_for_stats_v m\n" +
 		"LEFT JOIN player p ON p.player_id = m.opponent_id\n" +
 		"WHERE m.player_id = :playerId\n" +
@@ -54,13 +56,15 @@ public class MatchPredictionService {
 
 	private static final String PLAYER_IN_PROGRESS_MATCHES_UNION = //language=SQL
 		"UNION\n" +
-		"SELECT m.match_num, m.date, e.tournament_id, m.in_progress_event_id, TRUE, e.level, m.surface, m.round, m.player2_id, m.player2_rank, m.player2_elo_rating, m.player2_entry, o.hand, o.backhand, 2 - winner, winner - 1, m.player1_sets, m.player2_sets\n" +
+		"SELECT m.match_num, m.date, e.tournament_id, m.in_progress_event_id, TRUE, e.level, m.surface, m.round,\n" +
+		"  m.player2_id, m.player2_rank, m.player2_elo_rating, m.player2_entry, o.hand, o.backhand, 2 - winner, winner - 1, m.player1_sets, m.player2_sets, player1_next_elo_rating\n" +
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player2_id\n" +
 		"WHERE winner IS NOT NULL AND m.player1_id = :playerId AND m.player2_id > 0\n" +
 		"UNION\n" +
-		"SELECT m.match_num, m.date, e.tournament_id, m.in_progress_event_id, TRUE, e.level, m.surface, m.round, m.player1_id, m.player1_rank, m.player1_elo_rating, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.player2_sets, m.player1_sets\n" +
+		"SELECT m.match_num, m.date, e.tournament_id, m.in_progress_event_id, TRUE, e.level, m.surface, m.round,\n" +
+		"  m.player1_id, m.player1_rank, m.player1_elo_rating, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.player2_sets, m.player1_sets, player2_next_elo_rating\n" +
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player1_id\n" +
@@ -120,6 +124,12 @@ public class MatchPredictionService {
 		RankingData rankingData2 = getRankingData(playerId2, date2, surface, indoor);
 		List<MatchData> matchData1 = getMatchData(playerId1, date1, tournamentEventId, inProgress, round);
 		List<MatchData> matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
+		if (inProgress) {
+			reverse(matchData1).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null).findFirst()
+				.ifPresent(match -> rankingData1.setEloRating(match.getNextEloRating()));
+			reverse(matchData2).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null).findFirst()
+				.ifPresent(match -> rankingData2.setEloRating(match.getNextEloRating()));
+		}
 		short bstOf = defaultBestOf(level, bestOf);
 		MatchPrediction prediction = predictMatch(asList(
 			new RankingMatchPredictor(rankingData1, rankingData2),
@@ -191,27 +201,20 @@ public class MatchPredictionService {
 
 	private RankingData fetchRankingData(RankingKey key) {
 		RankingData rankingData = new RankingData();
-		jdbcTemplate.query(
-			PLAYER_RANKING_QUERY,
-			params("playerId", key.playerId).addValue("date", key.date),
-			rs -> {
-				rankingData.setRank(getInteger(rs, "rank"));
-				rankingData.setRankPoints(getInteger(rs, "rank_points"));
-			}
-		);
+		MapSqlParameterSource params = params("playerId", key.playerId).addValue("date", key.date);
+		jdbcTemplate.query(PLAYER_RANKING_QUERY, params, rs -> {
+			rankingData.setRank(getInteger(rs, "rank"));
+			rankingData.setRankPoints(getInteger(rs, "rank_points"));
+		});
 		String surfacePrefix = key.surface != null ? key.surface.getLowerCaseText() + '_' : "";
 		String outInPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
-		jdbcTemplate.query(
-			format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, outInPrefix),
-			params("playerId", key.playerId).addValue("date", key.date),
-			rs -> {
-				rankingData.setEloRating(getInteger(rs, "elo_rating"));
-				if (!surfacePrefix.isEmpty())
-					rankingData.setSurfaceEloRating(getInteger(rs, surfacePrefix + "elo_rating"));
-				if (!outInPrefix.isEmpty())
-					rankingData.setOutInEloRating(getInteger(rs, outInPrefix + "elo_rating"));
-			}
-		);
+		jdbcTemplate.query(format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, outInPrefix), params, rs -> {
+			rankingData.setEloRating(getInteger(rs, "elo_rating"));
+			if (!surfacePrefix.isEmpty())
+				rankingData.setSurfaceEloRating(getInteger(rs, surfacePrefix + "elo_rating"));
+			if (!outInPrefix.isEmpty())
+				rankingData.setOutInEloRating(getInteger(rs, outInPrefix + "elo_rating"));
+		});
 		return rankingData;
 	}
 
@@ -260,7 +263,8 @@ public class MatchPredictionService {
 			rs.getInt("p_matches"),
 			rs.getInt("o_matches"),
 			rs.getInt("p_sets"),
-			rs.getInt("o_sets")
+			rs.getInt("o_sets"),
+			rs.getInt("next_elo_rating")
 		);
 	}
 

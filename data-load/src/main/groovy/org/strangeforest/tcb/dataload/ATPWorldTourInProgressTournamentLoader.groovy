@@ -268,6 +268,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				}
 			}
 			sql.executeUpdate([extId: string(extId), matchesHash: matchesHash], UPDATE_EVENT_HASH_SQL)
+			sql.commit()
 			println "${matches.size()} matches loaded in $stopwatch"
 			matches.size()
 		}
