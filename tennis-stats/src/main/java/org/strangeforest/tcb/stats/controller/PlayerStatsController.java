@@ -1,8 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.time.*;
-import java.util.*;
-import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.format.annotation.*;
@@ -17,7 +15,6 @@ import org.strangeforest.tcb.util.*;
 
 import com.google.common.collect.*;
 
-import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.controller.StatsFormatUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
@@ -26,9 +23,7 @@ import static org.strangeforest.tcb.util.DateUtil.*;
 public class PlayerStatsController extends BaseController {
 
 	@Autowired private PlayerService playerService;
-	@Autowired private PerformanceService performanceService;
 	@Autowired private StatisticsService statisticsService;
-	@Autowired private PlayerTimelineService timelineService;
 	@Autowired private MatchesService matchesService;
 
 	@GetMapping("/eventsStats")
@@ -186,62 +181,6 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("matchStats", matchStats);
 		addCompareMatchStats(modelMap, matchId, compare, compareSeason, compareLevel, compareSurface, compareRound, compareOpponent);
 		return new ModelAndView("matchStats", modelMap);
-	}
-
-	@GetMapping("/playerTimelineStats")
-	public ModelAndView playerTimelineStats(
-		@RequestParam(name = "playerId") int playerId,
-		@RequestParam(name = "seasons") String seasons
-	) {
-		PlayerStats careerStats = statisticsService.getPlayerStats(playerId);
-		List<Integer> seasonList = toSeasons(seasons);
-		Map<Integer, PlayerStats> seasonsStats = statisticsService.getPlayerSeasonsStats(playerId);
-		ensureSeasons(seasonsStats, seasonList, PlayerStats.EMPTY);
-
-		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
-		modelMap.addAttribute("careerStats", careerStats);
-		modelMap.addAttribute("seasons", seasonList);
-		modelMap.addAttribute("seasonsStats", seasonsStats);
-		return new ModelAndView("playerTimelineStats", modelMap);
-	}
-
-	@GetMapping("/playerTimelinePerformance")
-	public ModelAndView playerTimelinePerformance(
-		@RequestParam(name = "playerId") int playerId,
-		@RequestParam(name = "seasons") String seasons
-	) {
-		Map<Integer, Integer> titles = timelineService.getPlayerSeasonTitles(playerId);
-		Map<Integer, Integer> yearEndRanks = timelineService.getPlayerYearEndRanks(playerId);
-		Map<Integer, Integer> bestEloRatings = timelineService.getPlayerBestEloRatings(playerId);
-		Map<Integer, Integer> goatPoints = timelineService.getPlayerSeasonGOATPoints(playerId);
-		Map<Integer, Integer> entries = timelineService.getPlayerSeasonEntries(playerId);
-		PlayerPerformance careerPerf = performanceService.getPlayerPerformance(playerId);
-		List<Integer> seasonList = toSeasons(seasons);
-		Map<Integer, PlayerPerformance> seasonsPerf = performanceService.getPlayerSeasonsPerformance(playerId);
-		ensureSeasons(seasonsPerf, seasonList, PlayerPerformance.EMPTY);
-
-		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("titles", titles);
-		modelMap.addAttribute("yearEndRanks", yearEndRanks);
-		modelMap.addAttribute("bestEloRatings", bestEloRatings);
-		modelMap.addAttribute("goatPoints", goatPoints);
-		modelMap.addAttribute("entries", entries);
-		modelMap.addAttribute("careerPerf", careerPerf);
-		modelMap.addAttribute("seasons", seasonList);
-		modelMap.addAttribute("seasonsPerf", seasonsPerf);
-		return new ModelAndView("playerTimelinePerformance", modelMap);
-	}
-
-	private List<Integer> toSeasons(String seasons) {
-		return Stream.of(seasons.split(",")).map(Integer::valueOf).collect(toList());
-	}
-
-	private <T> void ensureSeasons(Map<Integer, T> seasonsData, List<Integer> seasons, T empty) {
-		for (Integer season : seasons) {
-			if (!seasonsData.containsKey(season))
-				seasonsData.put(season, empty);
-		}
 	}
 
 

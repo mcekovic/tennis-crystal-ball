@@ -23,7 +23,7 @@
 	});
 </script>
 <style>
-	#headsToHeadsTable > thead > tr > th, #playersStatsTable > thead > tr > th {
+	#headsToHeadsTable > thead > tr > th {
 		border-bottom: 3px solid lightgray;
 	}
 	#headsToHeadsTable > tbody > tr > th, #playersStatsTable > tbody > tr > th {
@@ -34,6 +34,9 @@
 		text-align: center;
 		vertical-align: middle;
 		padding: 5px 2px;
+	}
+	tr.first-row {
+		border-top: 3px solid lightgray;
 	}
 	.tooltip-inner {
 		background-color: #444444;
@@ -76,7 +79,7 @@
 <th:block th:include="fragments/deviceDetector :: largeDeviceRequired('md')"/>
 <table th:unless="${headsToHeads.empty}" id="playersStatsTable" class="table table-condensed table-hover table-bordered text-nowrap">
 	<thead>
-	<tr>
+	<tr style="border-bottom: 3px solid lightgray">
 		<th style="border-right: 3px solid lightgray">Player</th>
 		<th th:each="rivalry : ${headsToHeads.rivalries}" style="text-align: center">
 			<a th:with="player=${rivalry.player1}" th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${playerCount &lt;= 10 ? player.name : player.initials}" title="Show profile">Roger Federer</a>

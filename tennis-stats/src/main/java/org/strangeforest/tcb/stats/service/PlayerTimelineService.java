@@ -32,6 +32,11 @@ public class PlayerTimelineService {
 		"WHERE r.player_id = :playerId AND r.result = 'W' AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')\n" +
 		"GROUP BY ROLLUP(e.season)";
 
+	private static final String SEASON_ENTRIES_QUERY = //language=SQL
+		"SELECT season, count(result) AS entries FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
+		"WHERE player_id = :playerId AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')\n" +
+		"GROUP BY ROLLUP(season)";
+
 	private static final String YEAR_END_RANKS_QUERY = //language=SQL
 		"SELECT season, year_end_rank FROM player_year_end_rank\n" +
 		"WHERE player_id = :playerId\n" +
@@ -52,11 +57,6 @@ public class PlayerTimelineService {
 		"UNION ALL\n" +
 		"SELECT NULL, goat_points FROM player_goat_points\n" +
 		"WHERE player_id = :playerId";
-
-	private static final String SEASON_ENTRIES_QUERY = //language=SQL
-		"SELECT season, count(result) AS entries FROM player_tournament_event_result INNER JOIN tournament_event USING (tournament_event_id)\n" +
-		"WHERE player_id = :playerId AND level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')\n" +
-		"GROUP BY ROLLUP(season)";
 
 
 	public PlayerTimeline getPlayerTimeline(int playerId) {
@@ -79,27 +79,32 @@ public class PlayerTimelineService {
 				));
 			}
 		);
+		timeline.setTitles(getPlayerSeasonTitles(playerId));
+		timeline.setEntries(getPlayerSeasonEntries(playerId));
+		timeline.setYearEndRanks(getPlayerYearEndRanks(playerId));
+		timeline.setBestEloRatings(getPlayerBestEloRatings(playerId));
+		timeline.setGoatPoints(getPlayerSeasonGOATPoints(playerId));
 		return timeline;
 	}
 
-	public Map<Integer, Integer> getPlayerSeasonTitles(int playerId) {
+	private Map<Integer, Integer> getPlayerSeasonTitles(int playerId) {
 		return getPlayerSeasonValues(SEASON_TITLES_QUERY, "titles", playerId);
 	}
 
-	public Map<Integer, Integer> getPlayerYearEndRanks(int playerId) {
+	private Map<Integer, Integer> getPlayerSeasonEntries(int playerId) {
+		return getPlayerSeasonValues(SEASON_ENTRIES_QUERY, "entries", playerId);
+	}
+
+	private Map<Integer, Integer> getPlayerYearEndRanks(int playerId) {
 		return getPlayerSeasonValues(YEAR_END_RANKS_QUERY, "year_end_rank", playerId);
 	}
 
-	public Map<Integer, Integer> getPlayerBestEloRatings(int playerId) {
+	private Map<Integer, Integer> getPlayerBestEloRatings(int playerId) {
 		return getPlayerSeasonValues(BEST_ELO_RATINGS_QUERY, "best_elo_rating", playerId);
 	}
 
-	public Map<Integer, Integer> getPlayerSeasonGOATPoints(int playerId) {
+	private Map<Integer, Integer> getPlayerSeasonGOATPoints(int playerId) {
 		return getPlayerSeasonValues(SEASON_GOAT_POINTS_QUERY, "goat_points", playerId);
-	}
-
-	public Map<Integer, Integer> getPlayerSeasonEntries(int playerId) {
-		return getPlayerSeasonValues(SEASON_ENTRIES_QUERY, "entries", playerId);
 	}
 
 	private Map<Integer, Integer> getPlayerSeasonValues(String query, String column, int playerId) {

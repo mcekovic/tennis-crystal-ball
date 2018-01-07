@@ -1,0 +1,117 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:with="careerWeeks=${timeline.careerWeeksAtRank}, seasonsWeeks=${timeline.seasonsWeeksAtRank}">
+<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.RankingTimeline"*/-->
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<tr th:if="${careerWeeks.atNo1 > 0}" th:class="${careerWeeks.no1First ? 'first-row' : _}">
+	<td class="stats-header stats-perf">Weeks at No. 1</td>
+	<td th:text="${careerWeeks.atNo1}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).atNo1}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+<th:block th:if="${careerWeeks.atNo2 > 0}">
+<tr class="pct-data" th:attrappend="class=${careerWeeks.top2First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks in Top 2</td>
+	<td th:text="${careerWeeks.inTop2}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).inTop2}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+<tr class="raw-data" th:attrappend="class=${careerWeeks.top2First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks at No. 2</td>
+	<td th:text="${careerWeeks.atNo2}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).atNo2}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+</th:block>
+<th:block th:if="${careerWeeks.atNo3 > 0}">
+<tr class="pct-data" th:attrappend="class=${careerWeeks.top3First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks in Top 3</td>
+	<td th:text="${careerWeeks.inTop3}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).inTop3}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+<tr class="raw-data" th:attrappend="class=${careerWeeks.top3First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks at No. 3</td>
+	<td th:text="${careerWeeks.atNo3}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).atNo3}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+</th:block>
+<th:block th:if="${careerWeeks.atNo4 > 0}">
+<tr class="pct-data" th:attrappend="class=${careerWeeks.top4First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks in Top 4</td>
+	<td th:text="${careerWeeks.inTop4}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).inTop4}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+<tr class="raw-data" th:attrappend="class=${careerWeeks.top4First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks at No. 4</td>
+	<td th:text="${careerWeeks.atNo4}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).atNo4}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+</th:block>
+<th:block th:if="${careerWeeks.atNo5 > 0}">
+<tr class="pct-data" th:attrappend="class=${careerWeeks.top5First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks in Top 5</td>
+	<td th:text="${careerWeeks.inTop5}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).inTop5}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+<tr class="raw-data" th:attrappend="class=${careerWeeks.top5First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks at No. 5</td>
+	<td th:text="${careerWeeks.atNo5}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).atNo5}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+</th:block>
+<th:block th:if="${careerWeeks.atNo6_10 > 0}">
+<tr class="pct-data" th:attrappend="class=${careerWeeks.top10First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks in Top 10</td>
+	<td th:text="${careerWeeks.inTop10}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).inTop10}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+<tr class="raw-data" th:attrappend="class=${careerWeeks.top10First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks at No. 6-10</td>
+	<td th:text="${careerWeeks.atNo6_10}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).atNo6_10}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+</th:block>
+<th:block th:if="${careerWeeks.atNo11_20 > 0}">
+<tr class="pct-data" th:attrappend="class=${careerWeeks.top20First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks in Top 20</td>
+	<td th:text="${careerWeeks.inTop20}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).inTop20}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+<tr class="raw-data" th:attrappend="class=${careerWeeks.top20First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks at No. 11-20</td>
+	<td th:text="${careerWeeks.atNo11_20}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).atNo11_20}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+</th:block>
+<th:block th:if="${careerWeeks.atNo21_50 > 0}">
+<tr class="pct-data" th:attrappend="class=${careerWeeks.top50First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks in Top 50</td>
+	<td th:text="${careerWeeks.inTop50}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).inTop50}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+<tr class="raw-data" th:attrappend="class=${careerWeeks.top50First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks at No. 21-50</td>
+	<td th:text="${careerWeeks.atNo21_50}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).atNo21_50}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+</th:block>
+<th:block th:if="${careerWeeks.atNo51_100 > 0}">
+<tr class="pct-data" th:attrappend="class=${careerWeeks.top100First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks in Top 100</td>
+	<td th:text="${careerWeeks.inTop100}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).inTop100}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+<tr class="raw-data" th:attrappend="class=${careerWeeks.top100First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks at No. 51-100</td>
+	<td th:text="${careerWeeks.atNo51_100}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).atNo51_100}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+</th:block>
+<th:block th:if="${careerWeeks.atNo101_200 > 0}">
+<tr class="pct-data" th:attrappend="class=${careerWeeks.top200First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks in Top 200</td>
+	<td th:text="${careerWeeks.inTop200}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).inTop200}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+<tr class="raw-data" th:attrappend="class=${careerWeeks.top200First ? ' first-row' : _}">
+	<td class="stats-header stats-perf">Weeks at No. 101-200</td>
+	<td th:text="${careerWeeks.atNo101_200}" class="stats">33</td>
+	<td th:each="season : ${seasons}" th:with="weeks=${seasonsWeeks.get(season).atNo101_200}" th:text="${weeks > 0 ? weeks : _}" class="stats">11</td>
+</tr>
+</th:block>
+</th:block>

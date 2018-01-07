@@ -1083,7 +1083,7 @@ CREATE UNIQUE INDEX ON player_weeks_at_elo_topn (player_id, rank);
 
 CREATE OR REPLACE VIEW player_season_weeks_at_elo_topn_goat_points_v AS
 WITH weeks_at_elo_topn_goat_points AS (
-	SELECT player_id, season, rank, (sum(weeks) FILTER (WHERE weeks <= 53))::REAL / weeks_for_point AS unrounded_goat_points
+	SELECT player_id, season, rank, (sum(weeks) FILTER (WHERE weeks < 53))::REAL / weeks_for_point AS unrounded_goat_points
 	FROM player_season_weeks_at_elo_topn
 	INNER JOIN weeks_at_elo_topn_goat_points USING (rank)
 	GROUP BY player_id, season, rank, weeks_for_point
@@ -1172,7 +1172,7 @@ CREATE UNIQUE INDEX ON player_weeks_at_surface_elo_topn (player_id, surface, ran
 
 CREATE OR REPLACE VIEW player_season_weeks_at_surface_elo_topn_goat_points_v AS
 WITH weeks_at_surface_elo_topn_goat_points AS (
-	SELECT player_id, surface, season, rank, (sum(weeks) FILTER (WHERE weeks <= 53))::REAL / (2 * weeks_for_point) AS unrounded_goat_points
+	SELECT player_id, surface, season, rank, (sum(weeks) FILTER (WHERE weeks < 53))::REAL / (2 * weeks_for_point) AS unrounded_goat_points
 	FROM player_season_weeks_at_surface_elo_topn
 	INNER JOIN weeks_at_elo_topn_goat_points USING (rank)
 	GROUP BY player_id, surface, season, rank, weeks_for_point

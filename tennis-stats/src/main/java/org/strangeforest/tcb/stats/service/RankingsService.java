@@ -14,6 +14,8 @@ import org.strangeforest.tcb.stats.model.RankingHighlights.*;
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
+import com.google.common.base.*;
+
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.core.RankCategory.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
@@ -118,6 +120,20 @@ public class RankingsService {
 		")\n" +
 		"SELECT best_year_end_rank_points, (SELECT string_agg(season::TEXT, ', ' ORDER BY season) AS seasons FROM player_year_end_rank r WHERE r.player_id = :playerId AND r.year_end_rank_points = b.best_year_end_rank_points) AS best_year_end_rank_points_seasons\n" +
 		"FROM best_rank_points b";
+
+	private static final String PLAYER_RANKING_TIMELINE_QUERY =
+		"SELECT extract(YEAR FROM rank_date)::INTEGER AS season, rank, weeks(rank_date, lead(rank_date) OVER (ORDER BY rank_date)) AS weeks,\n" +
+		"  season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks, next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks\n" +
+		"FROM player_ranking\n" +
+		"WHERE player_id = :playerId\n" +
+		"WINDOW p AS (PARTITION BY player_id ORDER BY rank_date)";
+
+	private static final String PLAYER_ELO_RANKING_TIMELINE_QUERY =
+		"SELECT extract(YEAR FROM rank_date)::INTEGER AS season, %1$srank AS rank, weeks(rank_date, lead(rank_date) OVER (ORDER BY rank_date)) AS weeks,\n" +
+		"  season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks, next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks\n" +
+		"FROM player_elo_ranking\n" +
+		"WHERE player_id = :playerId\n" +
+		"WINDOW p AS (PARTITION BY player_id ORDER BY rank_date)";
 
 	private static final String PLAYER_RANKINGS_FOR_HIGHLIGHTS_QUERY =
 		"SELECT rank, weeks(rank_date, lead(rank_date) OVER (ORDER BY rank_date)) AS weeks\n" +
@@ -388,12 +404,46 @@ public class RankingsService {
 	}
 
 
+	// Ranking Timeline
+
+	public RankingTimeline getPlayerRankingTimeline(int playerId) {
+		RankingTimeline timeline = new RankingTimeline();
+		jdbcTemplate.query(PLAYER_RANKING_TIMELINE_QUERY, params("playerId", playerId), rs -> {
+			timeline.processWeeksAt(rs.getInt("season"), rs.getInt("rank"), rs.getDouble("weeks"), rs.getDouble("season_weeks"), rs.getDouble("next_season_weeks"));
+		});
+		return timeline;
+	}
+
+	public RankingTimeline getPlayerEloRankingTimeline(int playerId, String surface) {
+		RankingTimeline timeline = new RankingTimeline();
+		jdbcTemplate.query(
+			format(PLAYER_ELO_RANKING_TIMELINE_QUERY, eloRankPrefix(surface)),
+			params("playerId", playerId),
+			rs -> {
+				timeline.processWeeksAt(rs.getInt("season"), rs.getInt("rank"), rs.getDouble("weeks"), rs.getDouble("season_weeks"), rs.getDouble("next_season_weeks"));
+			}
+		);
+		return timeline;
+	}
+
+	private String eloRankPrefix(String surface) {
+		if (Strings.isNullOrEmpty(surface))
+			return "";
+		switch (surface) {
+			case "O": return "outdoor_";
+			case "I": return "indoor_";
+			default: return Surface.decode(surface).getText().toLowerCase() + "_";
+		}
+	}
+
+
 	// Ranking Highlights
 
 	public RankingHighlights getRankingHighlights(int playerId) {
 		RankingHighlights highlights = new RankingHighlights();
+		MapSqlParameterSource params = params("playerId", playerId);
 
-		jdbcTemplate.query(PLAYER_RANKING_QUERY, params("playerId", playerId), rs -> {
+		jdbcTemplate.query(PLAYER_RANKING_QUERY, params, rs -> {
 			highlights.setCurrentRank(rs.getInt("current_rank"));
 			highlights.setCurrentRankPoints(rs.getInt("current_rank_points"));
 			highlights.setBestRank(rs.getInt("best_rank"));
@@ -411,23 +461,23 @@ public class RankingsService {
 			highlights.setIndoorElo(mapEloHighlights(rs, "indoor_"));
 		});
 
-		jdbcTemplate.query(PLAYER_YEAR_END_RANK_QUERY, params("playerId", playerId), rs -> {
+		jdbcTemplate.query(PLAYER_YEAR_END_RANK_QUERY, params, rs -> {
 			highlights.setBestYearEndRank(rs.getInt("best_year_end_rank"));
 			highlights.setBestYearEndRankSeasons(rs.getString("best_year_end_rank_seasons"));
 		});
 
-		jdbcTemplate.query(PLAYER_YEAR_END_RANK_POINTS_QUERY, params("playerId", playerId), rs -> {
+		jdbcTemplate.query(PLAYER_YEAR_END_RANK_POINTS_QUERY, params, rs -> {
 			highlights.setBestYearEndRankPoints(rs.getInt("best_year_end_rank_points"));
 			highlights.setBestYearEndRankPointsSeasons(rs.getString("best_year_end_rank_points_seasons"));
 		});
 
-		jdbcTemplate.query(PLAYER_RANKINGS_FOR_HIGHLIGHTS_QUERY, params("playerId", playerId), rs -> {
+		jdbcTemplate.query(PLAYER_RANKINGS_FOR_HIGHLIGHTS_QUERY, params, rs -> {
 			int rank = rs.getInt("rank");
 			double weeks = rs.getDouble("weeks");
 			highlights.processWeeksAt(rank, weeks);
 		});
 
-		jdbcTemplate.query(PLAYER_YEAR_END_RANKINGS_FOR_HIGHLIGHTS_QUERY, params("playerId", playerId), rs -> {
+		jdbcTemplate.query(PLAYER_YEAR_END_RANKINGS_FOR_HIGHLIGHTS_QUERY, params, rs -> {
 			int rank = rs.getInt("year_end_rank");
 			highlights.processYearEndRank(rank);
 		});

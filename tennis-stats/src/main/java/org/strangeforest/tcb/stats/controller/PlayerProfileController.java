@@ -268,6 +268,7 @@ public class PlayerProfileController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("timeline", timeline);
+		modelMap.addAttribute("surfaces", Surface.values());
 		return new ModelAndView("playerTimeline", modelMap);
 	}
 

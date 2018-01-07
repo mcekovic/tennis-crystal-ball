@@ -2,6 +2,7 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <script type="text/javascript">
 	$(function() {
 		// Tournaments
@@ -34,6 +35,8 @@
 			}
 			$result.tooltip({title: title, html: true});
 		});
+		bindTimelineExtraData("ranking", "/playerTimelineRanking");
+		bindTimelineExtraData("eloRanking", "/playerTimelineEloRanking");
 		bindTimelineExtraData("performance", "/playerTimelinePerformance");
 		bindTimelineExtraData("statistics", "/playerTimelineStats", function() { timelineShowStatsGroup("Overview"); });
 	});
@@ -56,10 +59,22 @@
 			$head.find(".btn-stats").hide();
 		});
 	}
+	function reloadEloRankingTimeline() {
+		var $body = $("#eloRankingBody");
+		var url = "/playerTimelineEloRanking?playerId=[(${playerId})]&seasons=[[${#strings.listJoin(timeline.seasons, ',')}]]";
+		var surface = $("#surface").val();
+		if (surface) url += "&surface=" + surface;
+		$($body).load(url, function () {
+			var rawData = $("#timelineEloRankingAt:hidden").length > 0;
+			$body.find(rawData ? ".pct-data" : ".raw-data").hide();
+			$body.addClass("loaded");
+		});
+		$("#eloRankingHead").find(".btn-stats").css("display", "inline");
+	}
 	function timelineShowStatsGroup(groupId) {
-		var $statisticsBody = $("#statisticsBody");
-		$statisticsBody.find(".stats-group:not(.stats-group-" + groupId + ")").hide("fast");
-		$statisticsBody.find(".stats-group-" + groupId).show("fast");
+		var $body = $("#statisticsBody");
+		$body.find(".stats-group:not(.stats-group-" + groupId + ")").hide("fast");
+		$body.find(".stats-group-" + groupId).show("fast");
 	}
 </script>
 <style th:inline="css">
@@ -116,6 +131,85 @@
 		<th:block th:include="fragments/playerTournamentTimeline :: playerTournamentTimeline(tournament=${tournament})"/>
 	</tr>
 	</tbody>
+	<thead>
+	<tr class="bg-primary" style="border-bottom: 3px solid lightgray">
+		<th>Timeline</th>
+		<th class="text-center">Career</th>
+		<th th:each="season : ${timeline.seasons}" class="season">
+			<a th:href="@{/playerProfile(playerId=${playerId}, tab=season, season=${season})}" th:text="${season}" class="season" title="Show season">2015</a>
+		</th>
+	</tr>
+	</thead>
+	<tbody th:with="titles=${timeline.titles}, entries=${timeline.entries}, yearEndRanks=${timeline.yearEndRanks}, bestEloRatings=${timeline.bestEloRatings}, goatPoints=${timeline.goatPoints}">
+		<!-- Titles -->
+		<tr th:unless="${titles.empty}">
+			<td class="stats-header stats-general">Titles</td>
+			<td th:text="${titles.get(null)}" class="stats">25</td>
+			<td th:each="season : ${timeline.seasons}" th:text="${titles.get(season)}" class="stats" align="center">5</td>
+		</tr>
+		<!-- Entries -->
+		<tr th:unless="${entries.empty}">
+			<td class="stats-header stats-general">Entries</td>
+			<td th:text="${entries.get(null)}" class="stats">155</td>
+			<td th:each="season : ${timeline.seasons}" th:text="${entries.get(season)}" class="stats" align="center">25</td>
+		</tr>
+		<!-- Year-end Rank -->
+		<tr th:unless="${yearEndRanks.empty}">
+			<td class="stats-header stats-general">Year-End Rank</td>
+			<td th:text="${yearEndRanks.get(null)}" class="stats">5</td>
+			<td th:each="season : ${timeline.seasons}" th:text="${yearEndRanks.get(season)}" class="stats" align="center">5</td>
+		</tr>
+		<!-- Best Elo Rating -->
+		<tr th:unless="${bestEloRatings.empty}">
+			<td class="stats-header stats-general">Peak Elo Rating</td>
+			<td th:text="${bestEloRatings.get(null)}" class="stats">2350</td>
+			<td th:each="season : ${timeline.seasons}" th:text="${bestEloRatings.get(season)}" class="stats" align="center">5</td>
+		</tr>
+		<!-- GOAT Points -->
+		<tr th:unless="${goatPoints.empty}">
+			<td class="stats-header stats-general">GOAT Points</td>
+			<td th:text="${goatPoints.get(null)}" class="stats">155</td>
+			<td th:each="season : ${timeline.seasons}" th:text="${goatPoints.get(season)}" class="stats" align="center">25</td>
+		</tr>
+	</tbody>
+	<thead id="rankingHead">
+	<tr class="bg-primary">
+		<th>
+			<button id="timelineRanking" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#rankingBody" title="Toggle seasons ATP ranking"><i class="fa fa-tasks fa-b"></i>&nbsp;&nbsp;Ranking&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
+			<div class="btn-stats" style="display: none">
+				<button class="pct-data btn btn-info btn-xs" onclick="toggleStatsData('#rankingHead, #rankingBody')" title="Show ranking at position"><i class="fa fa-at"></i>&nbsp;&nbsp;At Position</button>
+				<button class="raw-data btn btn-info btn-xs" onclick="toggleStatsData('#rankingHead, #rankingBody')" title="Show ranking in top N"><i class="fa fa-level-up"></i>&nbsp;&nbsp;In Top N</button>
+			</div>
+		</th>
+		<th class="text-center">Career</th>
+		<th th:each="season : ${timeline.seasons}" class="season">
+			<a th:href="@{playerProfile(playerId=${playerId}, tab=season, season=${season})}" th:text="${season}" class="season" title="Show season">2015</a>
+		</th>
+	</tr>
+	</thead>
+	<tbody id="rankingBody"></tbody>
+	<thead id="eloRankingHead">
+	<tr class="bg-primary">
+		<th>
+			<button id="timelineEloRanking" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#eloRankingBody" title="Toggle seasons Elo ranking"><i class="fa fa-tasks fa-b"></i>&nbsp;&nbsp;Elo Ranking&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
+			<select id="surface" class="form-control btn-stats" style="display: none; width: 90px; height: 24px; padding: 2px 5px" onchange="reloadEloRankingTimeline()" data-toggle="tooltip" data-placement="top" title="Select overall or Elo ranking by surface">
+				<option value="">Overall</option>
+				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}">Hard</option>
+				<option value="O">Outdoor</option>
+				<option value="I">Indoor</option>
+			</select>
+			<div class="btn-stats" style="display: none">
+				<button id="timelineEloRankingAt" class="pct-data btn btn-info btn-xs" onclick="toggleStatsData('#eloRankingHead, #eloRankingBody')" title="Show Elo ranking at position"><i class="fa fa-at"></i>&nbsp;&nbsp;At Position</button>
+				<button class="raw-data btn btn-info btn-xs" onclick="toggleStatsData('#eloRankingHead, #eloRankingBody')" title="Show Elo ranking in top N"><i class="fa fa-level-up"></i>&nbsp;&nbsp;In Top N</button>
+			</div>
+		</th>
+		<th class="text-center">Career</th>
+		<th th:each="season : ${timeline.seasons}" class="season">
+			<a th:href="@{playerProfile(playerId=${playerId}, tab=season, season=${season})}" th:text="${season}" class="season" title="Show season">2015</a>
+		</th>
+	</tr>
+	</thead>
+	<tbody id="eloRankingBody"></tbody>
 	<thead id="performanceHead">
 	<tr class="bg-primary">
 		<th>
@@ -135,7 +229,7 @@
 	<thead id="statisticsHead">
 	<tr class="bg-primary">
 		<th>
-			<button id="timelineStats" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"><span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
+			<button id="timelineStats" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#statisticsBody" title="Toggle seasons statistics"><span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Statistics&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
 			<div class="btn-stats" style="display: none">
 				<button class="pct-data btn btn-info btn-xs" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show raw data"><i class="fa fa-hashtag"></i>&nbsp;&nbsp;Raw Data</button>
 				<button class="raw-data btn btn-info btn-xs" onclick="toggleStatsData('#statisticsHead, #statisticsBody')" title="Show percentage data"><i class="fa fa-percent"></i>&nbsp;&nbsp;Pct. Data</button>

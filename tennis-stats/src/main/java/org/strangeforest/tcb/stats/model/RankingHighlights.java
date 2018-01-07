@@ -30,8 +30,8 @@ public class RankingHighlights {
 	private EloHighlights carpetElo;
 	private EloHighlights outdoorElo;
 	private EloHighlights indoorElo;
-	private Map<Integer, Double> weeksAt = new HashMap<>();
-	private Map<Integer, Integer> yearEndsAt = new HashMap<>();
+	private final Map<Integer, Double> weeksAt = new HashMap<>();
+	private final Map<Integer, Integer> yearEndsAt = new HashMap<>();
 
 	// Weeks
 	private double weeksAtNo1;
@@ -252,6 +252,8 @@ public class RankingHighlights {
 	}
 
 	public void processWeeksAt(int rank, double weeks) {
+		if (weeks > 53.0)
+			return;
 		if (rank == 1)
 			weeksAtNo1 += weeks;
 		if (rank <= 5)
