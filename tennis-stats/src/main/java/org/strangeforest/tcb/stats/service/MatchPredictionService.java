@@ -21,6 +21,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.util.CompareUtil.*;
 
 @Service
 public class MatchPredictionService {
@@ -42,7 +43,7 @@ public class MatchPredictionService {
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_ELO_RATINGS_QUERY = //language=SQL
-		"SELECT elo_rating, %1$selo_rating, %2$selo_rating FROM player_elo_ranking\n" +
+		"SELECT rank_date, elo_rating, %1$selo_rating, %2$selo_rating FROM player_elo_ranking\n" +
 		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1 year') AND :date\n" +
 		"ORDER BY rank_date DESC LIMIT 1";
 
@@ -125,10 +126,14 @@ public class MatchPredictionService {
 		List<MatchData> matchData1 = getMatchData(playerId1, date1, tournamentEventId, inProgress, round);
 		List<MatchData> matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
 		if (inProgress) {
-			reverse(matchData1).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null).findFirst()
-				.ifPresent(match -> rankingData1.setEloRating(match.getNextEloRating()));
-			reverse(matchData2).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null).findFirst()
-				.ifPresent(match -> rankingData2.setEloRating(match.getNextEloRating()));
+			reverse(matchData1).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date1, m.getDate()) >= 0).findFirst().ifPresent(match -> {
+				if (nullsLastCompare(match.getDate(), rankingData1.getEloDate()) >= 0)
+					rankingData1.setEloRating(match.getNextEloRating());
+			});
+			reverse(matchData2).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date2, m.getDate()) >= 0).findFirst().ifPresent(match -> {
+				if (nullsLastCompare(match.getDate(), rankingData2.getEloDate()) >= 0)
+					rankingData2.setEloRating(match.getNextEloRating());
+			});
 		}
 		short bstOf = defaultBestOf(level, bestOf);
 		MatchPrediction prediction = predictMatch(asList(
@@ -214,6 +219,7 @@ public class MatchPredictionService {
 				rankingData.setSurfaceEloRating(getInteger(rs, surfacePrefix + "elo_rating"));
 			if (!outInPrefix.isEmpty())
 				rankingData.setOutInEloRating(getInteger(rs, outInPrefix + "elo_rating"));
+			rankingData.setEloDate(getLocalDate(rs, "rank_date"));
 		});
 		return rankingData;
 	}

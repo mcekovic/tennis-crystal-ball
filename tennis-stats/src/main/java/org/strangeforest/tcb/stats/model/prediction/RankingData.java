@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
+import java.time.*;
+
 public final class RankingData {
 
 	private Integer rank;
@@ -7,6 +9,7 @@ public final class RankingData {
 	private Integer eloRating;
 	private Integer surfaceEloRating;
 	private Integer outInEloRating;
+	private LocalDate eloDate;
 
 	public Integer getRank() {
 		return rank;
@@ -46,5 +49,13 @@ public final class RankingData {
 
 	public void setOutInEloRating(Integer outInEloRating) {
 		this.outInEloRating = outInEloRating;
+	}
+
+	public LocalDate getEloDate() {
+		return eloDate;
+	}
+
+	public void setEloDate(LocalDate eloDate) {
+		this.eloDate = eloDate;
 	}
 }
