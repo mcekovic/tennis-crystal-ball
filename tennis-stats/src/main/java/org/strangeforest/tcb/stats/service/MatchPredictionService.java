@@ -126,11 +126,12 @@ public class MatchPredictionService {
 		List<MatchData> matchData1 = getMatchData(playerId1, date1, tournamentEventId, inProgress, round);
 		List<MatchData> matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
 		if (inProgress) {
-			reverse(matchData1).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date1, m.getDate()) >= 0).findFirst().ifPresent(match -> {
+			//TODO Replace with ListIterator, stop when not in-progress match
+			reverse(matchData1).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date1, m.getDate()) >= 0 && nullsLastCompare(Round.safeDecode(m.getRound()), round) > 0).findFirst().ifPresent(match -> {
 				if (nullsLastCompare(match.getDate(), rankingData1.getEloDate()) >= 0)
 					rankingData1.setEloRating(match.getNextEloRating());
 			});
-			reverse(matchData2).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date2, m.getDate()) >= 0).findFirst().ifPresent(match -> {
+			reverse(matchData2).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date2, m.getDate()) >= 0 && nullsLastCompare(Round.safeDecode(m.getRound()), round) > 0).findFirst().ifPresent(match -> {
 				if (nullsLastCompare(match.getDate(), rankingData2.getEloDate()) >= 0)
 					rankingData2.setEloRating(match.getNextEloRating());
 			});
