@@ -38,7 +38,7 @@ public class DominanceTimeline {
 			if (dominanceSeason.getSeason() == season)
 				return dominanceSeason;
 		}
-		throw new NotFoundException("Dominance season", season);
+		return null;
 	}
 
 	public List<DominanceEra> getDominanceEras() {
@@ -102,8 +102,11 @@ public class DominanceTimeline {
 		}
 		timeline.calculateDominanceSeasons();
 		timeline.calculateDominanceEras();
-		for (DominanceSeason dominanceSeason : timeline.getDominanceSeasons())
-			dominanceSeason.setAverageEloRatings(getDominanceSeason(dominanceSeason.getSeason()).getAverageEloRatings());
+		for (DominanceSeason dominanceSeason : timeline.getDominanceSeasons()) {
+			DominanceSeason season = getDominanceSeason(dominanceSeason.getSeason());
+			if (season != null)
+				dominanceSeason.setAverageEloRatings(season.getAverageEloRatings());
+		}
 		return timeline;
 	}
 

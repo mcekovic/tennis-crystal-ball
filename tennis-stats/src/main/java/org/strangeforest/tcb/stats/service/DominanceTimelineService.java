@@ -94,15 +94,17 @@ public class DominanceTimelineService {
 				if (surface == CARPET && season > 2007)
 					return;
 				DominanceSeason dominanceSeason = timeline.getDominanceSeason(season);
-				dominanceSeason.addAverageEloRating(1, rs.getInt("average_no1_elo_rating"));
-				dominanceSeason.addAverageEloRating(2, rs.getInt("average_top2_elo_rating"));
-				dominanceSeason.addAverageEloRating(3, rs.getInt("average_top3_elo_rating"));
-				dominanceSeason.addAverageEloRating(5, rs.getInt("average_top5_elo_rating"));
-				dominanceSeason.addAverageEloRating(10, rs.getInt("average_top10_elo_rating"));
-				dominanceSeason.addAverageEloRating(20, rs.getInt("average_top20_elo_rating"));
-				dominanceSeason.addAverageEloRating(50, rs.getInt("average_top50_elo_rating"));
-				dominanceSeason.addAverageEloRating(100, rs.getInt("average_top100_elo_rating"));
-				dominanceSeason.addAverageEloRating(200, rs.getInt("average_top200_elo_rating"));
+				if (dominanceSeason != null) {
+					dominanceSeason.addAverageEloRating(1, rs.getInt("average_no1_elo_rating"));
+					dominanceSeason.addAverageEloRating(2, rs.getInt("average_top2_elo_rating"));
+					dominanceSeason.addAverageEloRating(3, rs.getInt("average_top3_elo_rating"));
+					dominanceSeason.addAverageEloRating(5, rs.getInt("average_top5_elo_rating"));
+					dominanceSeason.addAverageEloRating(10, rs.getInt("average_top10_elo_rating"));
+					dominanceSeason.addAverageEloRating(20, rs.getInt("average_top20_elo_rating"));
+					dominanceSeason.addAverageEloRating(50, rs.getInt("average_top50_elo_rating"));
+					dominanceSeason.addAverageEloRating(100, rs.getInt("average_top100_elo_rating"));
+					dominanceSeason.addAverageEloRating(200, rs.getInt("average_top200_elo_rating"));
+				}
 			}
 		);
 		return timeline;
