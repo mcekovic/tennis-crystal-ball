@@ -38,7 +38,7 @@ static findInProgressEvents(String url, CascadingCrawler crawler) {
 	def doc = retriedGetDoc('http://www.atpworldtour.com' + url)
 	def eventInfos = new TreeSet<>()
 	eventInfos.addAll doc.select('div.arrow-next-tourney > div > a.tourney-title').collect { a ->
-		def eventUrl = a.attr('href')
+		def eventUrl = a.attr('href').replace('overview', 'draws').replace('tournaments', 'scores/current')
 		crawler.addUrl eventUrl
 		new EventInfo(eventUrl)
 	}
