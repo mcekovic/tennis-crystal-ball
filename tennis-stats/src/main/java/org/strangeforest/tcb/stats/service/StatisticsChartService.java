@@ -107,7 +107,7 @@ public class StatisticsChartService {
 		boolean bySurface = !isNullOrEmpty(surface);
 		boolean bySurfaceGroup = bySurface && surface.length() > 1;
 		return format(PLAYER_SEASON_STATISTICS_QUERY,
-			byAge ? "extract(YEAR FROM age((s.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "s.season",
+			byAge ? "extract(YEAR FROM age(make_date(s.season, 12, 31), p.dob)) AS age" : "s.season",
 			bySurfaceGroup ? category.getPartiallySummedExpression() : category.getExpression(),
 			bySurface ? "player_season_surface_stats" : "player_season_stats",
 			byAge ? PLAYER_JOIN : "",

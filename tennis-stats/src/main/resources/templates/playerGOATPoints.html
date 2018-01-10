@@ -28,7 +28,7 @@
 		});
 		function reloadPlayerGOATPoints() {
 			var url = "/playerGOATPoints?playerId=[(${playerId})]";
-			var surface = $("#surface").val();
+			var surface = $("#goatPointsSurface").val();
 			if (surface) url += "&surface=" + surface;
 			$("#goatPoints").load(url);
 		}
@@ -84,7 +84,7 @@
 		<thead>
 		<tr>
 			<th colspan="2" class="first-header first-column text-center valign-middle grand-total" style="padding: 3px">
-				<select id="surface" class="form-control" style="height: 24px; padding: 2px 5px" onchange="reloadPlayerGOATPoints()" data-toggle="tooltip" data-placement="top" title="Select overall or GOAT Points by surface">
+				<select id="goatPointsSurface" class="form-control" style="height: 24px; padding: 2px 5px" onchange="reloadPlayerGOATPoints()" data-toggle="tooltip" data-placement="top" title="Select overall or GOAT Points by surface">
 					<option value="">Overall</option>
 					<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:selected="${aSurface.code == surface}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}">Hard</option>
 				</select>

@@ -44,7 +44,7 @@ CREATE OR REPLACE FUNCTION season_start(
 	p_season INTEGER
 ) RETURNS DATE AS $$
 BEGIN
-	RETURN (p_season::TEXT || '-01-01')::DATE;
+	RETURN make_date(p_season, 1, 1);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -60,7 +60,7 @@ BEGIN
 	IF p_season = extract(YEAR FROM curr_date)::INTEGER THEN
 		RETURN curr_date;
 	ELSE
-		RETURN (p_season::TEXT || '-12-31')::DATE;
+		RETURN make_date(p_season, 12, 31);
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
@@ -72,11 +72,14 @@ CREATE OR REPLACE FUNCTION season_weeks(
 	p_from DATE,
 	p_to DATE
 ) RETURNS REAL AS $$
+DECLARE
+	from_season INTEGER;
 BEGIN
-	IF extract(YEAR FROM p_from) = extract(YEAR FROM p_to) THEN
+	from_season := extract(YEAR FROM p_from);
+	IF from_season = extract(YEAR FROM p_to) THEN
 		RETURN weeks(p_from, p_to);
 	ELSE
-		RETURN weeks(p_from, date_trunc('year', p_to)::DATE);
+		RETURN weeks(p_from, make_date(from_season + 1, 1, 1));
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
@@ -88,11 +91,18 @@ CREATE OR REPLACE FUNCTION next_season_weeks(
 	p_from DATE,
 	p_to DATE
 ) RETURNS REAL AS $$
+DECLARE
+	from_season INTEGER;
+	to_season INTEGER;
 BEGIN
-	IF extract(YEAR FROM p_from) = extract(YEAR FROM p_to) THEN
+	from_season := extract(YEAR FROM p_from);
+	to_season := extract(YEAR FROM p_to);
+	IF from_season >= to_season THEN
 		RETURN 0;
+	ELSIF from_season + 1 = to_season THEN
+		RETURN weeks(make_date(to_season, 1, 1), p_to);
 	ELSE
-		RETURN weeks(date_trunc('year', p_to)::DATE, p_to);
+		RETURN 52;
 	END IF;
 END;
 $$ LANGUAGE plpgsql;

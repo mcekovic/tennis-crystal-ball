@@ -16,8 +16,10 @@ public class RankingTimeline {
 	}
 
 	public void processWeeksAt(int season, int rank, double weeks, double seasonWeeks, double nextSeasonWeeks) {
-		careerWeeksAtRank.processWeeksAt(rank, weeks);
-		seasonsWeeksAtRank.computeIfAbsent(season, s -> new WeeksAtRank(true)).processWeeksAt(rank, seasonWeeks);
-		seasonsWeeksAtRank.computeIfAbsent(season + 1, s -> new WeeksAtRank(true)).processWeeksAt(rank, nextSeasonWeeks);
+		if (rank > 0) {
+			careerWeeksAtRank.processWeeksAt(rank, weeks);
+			seasonsWeeksAtRank.computeIfAbsent(season, s -> new WeeksAtRank(true)).processWeeksAt(rank, seasonWeeks);
+			seasonsWeeksAtRank.computeIfAbsent(season + 1, s -> new WeeksAtRank(true)).processWeeksAt(rank, nextSeasonWeeks);
+		}
 	}
 }

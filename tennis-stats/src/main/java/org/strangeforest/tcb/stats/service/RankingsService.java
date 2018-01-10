@@ -128,7 +128,7 @@ public class RankingsService {
 		"WHERE player_id = :playerId\n" +
 		"WINDOW p AS (PARTITION BY player_id ORDER BY rank_date)";
 
-	private static final String PLAYER_ELO_RANKING_TIMELINE_QUERY =
+	private static final String PLAYER_ELO_RANKING_TIMELINE_QUERY = //language=SQL
 		"SELECT extract(YEAR FROM rank_date)::INTEGER AS season, %1$srank AS rank, weeks(rank_date, lead(rank_date) OVER (ORDER BY rank_date)) AS weeks,\n" +
 		"  season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks, next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks\n" +
 		"FROM player_elo_ranking\n" +

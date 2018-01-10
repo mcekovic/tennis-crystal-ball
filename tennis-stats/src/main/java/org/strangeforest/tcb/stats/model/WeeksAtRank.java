@@ -25,8 +25,6 @@ public class WeeksAtRank {
 	private double atNo51_100;
 	private double atNo101_200;
 
-	private static final double SEASON_WEEK_CAP = 53.0;
-
 	public WeeksAtRank(boolean forSeason) {
 		this.forSeason = forSeason;
 	}
@@ -147,57 +145,50 @@ public class WeeksAtRank {
 		return inTop100 == 0.0 && inTop200 > 0.0;
 	}
 
-	public void processWeeksAt(int rank, double weeks) {
-		if (weeks >= SEASON_WEEK_CAP)
-			return;
-		if (rank == 1)
-			atNo1 = sum(atNo1, weeks);
-		if (rank <= 2)
-			inTop2 = sum(inTop2, weeks);
-		if (rank <= 3)
-			inTop3 = sum(inTop3, weeks);
-		if (rank <= 4)
-			inTop4 = sum(inTop4, weeks);
-		if (rank <= 5)
-			inTop5 = sum(inTop5, weeks);
-		if (rank <= 10)
-			inTop10 = sum(inTop10, weeks);
-		if (rank <= 20)
-			inTop20 = sum(inTop20, weeks);
-		if (rank <= 50)
-			inTop50 = sum(inTop50, weeks);
-		if (rank <= 100)
-			inTop100 = sum(inTop100, weeks);
-		if (rank <= 200)
-			inTop200 = sum(inTop200, weeks);
-		if (rank == 2 && (!forSeason || inTop2 < SEASON_WEEK_CAP))
-			atNo2 = sum(atNo2, weeks);
-		if (rank == 3 && (!forSeason || inTop3 < SEASON_WEEK_CAP))
-			atNo3 = sum(atNo3, weeks);
-		if (rank == 4 && (!forSeason || inTop4 < SEASON_WEEK_CAP))
-			atNo4 = sum(atNo4, weeks);
-		if (rank == 5 && (!forSeason || inTop5 < SEASON_WEEK_CAP))
-			atNo5 = sum(atNo5, weeks);
-		if (rank >= 6 && rank <= 10 && (!forSeason || inTop10 < SEASON_WEEK_CAP))
-			atNo6_10 = sum(atNo6_10, weeks);
-		if (rank >= 11 && rank <= 20 && (!forSeason || inTop20 < SEASON_WEEK_CAP))
-			atNo11_20 = sum(atNo11_20, weeks);
-		if (rank >= 21 && rank <= 50 && (!forSeason || inTop50 < SEASON_WEEK_CAP))
-			atNo21_50 = sum(atNo21_50, weeks);
-		if (rank >= 51 && rank <= 100 && (!forSeason || inTop100 < SEASON_WEEK_CAP))
-			atNo51_100 = sum(atNo51_100, weeks);
-		if (rank >= 101 && rank <= 200 && (!forSeason || inTop200 < SEASON_WEEK_CAP))
-			atNo101_200 = sum(atNo101_200, weeks);
-	}
-
 	private int round(double weeks) {
 		return (int)(forSeason ? Math.round(weeks) : Math.ceil(weeks));
 	}
 
-	private double sum(double weeks1, double weeks2) {
-		double weeks = weeks1 + weeks2;
-		if (forSeason && weeks > SEASON_WEEK_CAP)
-			weeks = SEASON_WEEK_CAP;
-		return weeks;
+	public void processWeeksAt(int rank, double weeks) {
+		if (weeks >= 53.0)
+			return;
+		if (rank == 1)
+			atNo1 += weeks;
+		if (rank <= 2)
+			inTop2 += weeks;
+		if (rank <= 3)
+			inTop3 += weeks;
+		if (rank <= 4)
+			inTop4 += weeks;
+		if (rank <= 5)
+			inTop5 += weeks;
+		if (rank <= 10)
+			inTop10 += weeks;
+		if (rank <= 20)
+			inTop20 += weeks;
+		if (rank <= 50)
+			inTop50 += weeks;
+		if (rank <= 100)
+			inTop100 += weeks;
+		if (rank <= 200)
+			inTop200 += weeks;
+		if (rank == 2)
+			atNo2 += weeks;
+		if (rank == 3)
+			atNo3 += weeks;
+		if (rank == 4)
+			atNo4 += weeks;
+		if (rank == 5)
+			atNo5 += weeks;
+		if (rank >= 6 && rank <= 10)
+			atNo6_10 += weeks;
+		if (rank >= 11 && rank <= 20)
+			atNo11_20 += weeks;
+		if (rank >= 21 && rank <= 50)
+			atNo21_50 += weeks;
+		if (rank >= 51 && rank <= 100)
+			atNo51_100 += weeks;
+		if (rank >= 101 && rank <= 200)
+			atNo101_200 += weeks;
 	}
 }

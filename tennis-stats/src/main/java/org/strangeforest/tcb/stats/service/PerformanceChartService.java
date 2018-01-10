@@ -82,7 +82,7 @@ public class PerformanceChartService {
 
 	private String getSQL(PerformanceCategory category, Range<Integer> seasonRange, boolean byAge) {
 		return format(PLAYER_SEASON_PERFORMANCE_QUERY,
-			byAge ? "extract(YEAR FROM age((pf.season::TEXT || '-12-31')::DATE, p.dob)) AS age" : "pf.season",
+			byAge ? "extract(YEAR FROM age(make_date(pf.season, 12, 31), p.dob)) AS age" : "pf.season",
 			category.getColumn(),
 			byAge ? PLAYER_JOIN : "",
 			rangeFilter(seasonRange, "pf.season", "season"),

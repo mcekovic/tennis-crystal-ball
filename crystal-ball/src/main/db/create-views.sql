@@ -1059,7 +1059,7 @@ WITH weeks_at_elo_topn AS (
 	FROM topn_player_elo_ranking_v
 	GROUP BY player_id, rank, season
 )
-SELECT player_id, rank, season, round(season_weeks + coalesce(lag(next_season_weeks) OVER (PARTITION BY player_id ORDER BY season), 0))::INTEGER AS weeks
+SELECT player_id, rank, season, round(season_weeks + coalesce(lag(next_season_weeks) OVER (PARTITION BY player_id, rank ORDER BY season), 0))::INTEGER AS weeks
 FROM weeks_at_elo_topn;
 
 CREATE MATERIALIZED VIEW player_season_weeks_at_elo_topn AS SELECT * FROM player_season_weeks_at_elo_topn_v;
@@ -1148,7 +1148,7 @@ WITH weeks_at_surface_elo_topn AS (
 	FROM topn_player_surface_elo_ranking_v
 	GROUP BY player_id, surface, rank, season
 )
-SELECT player_id, surface, rank, season, round(season_weeks + coalesce(lag(next_season_weeks) OVER (PARTITION BY player_id ORDER BY season), 0))::INTEGER AS weeks
+SELECT player_id, surface, rank, season, round(season_weeks + coalesce(lag(next_season_weeks) OVER (PARTITION BY player_id, surface, rank ORDER BY season), 0))::INTEGER AS weeks
 FROM weeks_at_surface_elo_topn;
 
 CREATE MATERIALIZED VIEW player_season_weeks_at_surface_elo_topn AS SELECT * FROM player_season_weeks_at_surface_elo_topn_v;
