@@ -280,7 +280,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 	static extractEntryPlayer(Element entryMatch, int index) {
 		def playerBox = entryMatch.select("tbody > tr:nth-child($index) > td:nth-child(3)")
-		def name = playerBox.select("a.scores-draw-entry-box-players-item").text()
+		def name = playerBox.select("*.scores-draw-entry-box-players-item").text()
 		if (!name) {
 			name = playerBox.text()
 			if (isBye(name))
@@ -290,7 +290,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 	}
 
 	static extractPlayer(Element roundPlayer) {
-		emptyToNull(player(roundPlayer.select('a.scores-draw-entry-box-players-item').text()))
+		emptyToNull(player(roundPlayer.select('*.scores-draw-entry-box-players-item').text()))
 	}
 
 	def setScoreParams(Map params, Elements scoreElem = null, String winnerName = null) {
