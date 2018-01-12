@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.stats.model;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 public class MatchPlayerEx extends MatchPlayer {
 
 	private final Integer rank;
@@ -27,6 +29,10 @@ public class MatchPlayerEx extends MatchPlayer {
 		return eloRating;
 	}
 
+	public int eloRating() {
+		return eloRating != null ? eloRating : Player.START_ELO_RATING;
+	}
+
 	public void setEloRating(Integer eloRating) {
 		this.eloRating = eloRating;
 	}
@@ -34,7 +40,7 @@ public class MatchPlayerEx extends MatchPlayer {
 	public Integer getEloRatingDelta() {
 		if (nextEloRating == null)
 			return null;
-		int delta = nextEloRating - (eloRating != null ? eloRating : 1500);
+		int delta = nextEloRating - eloRating();
 		return delta != 0 ? delta : null;
 	}
 }

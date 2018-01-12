@@ -217,7 +217,7 @@
 								<a th:href="@{/playerProfile(playerId=${playerForecast.id})}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
 							</td>
 							<td th:text="${playerForecast.rank}" class="player-rank hidden-xs">1</td>
-							<td th:with="playerForecastForElo=${(current || prevPlayersForecast == null ? playersForecast : prevPlayersForecast).getPlayerForecast(playerForecast.id)}, eloRatingDelta=${prevPlayersForecast != null ? playerForecastForElo.eloRatingDelta : null}" class="player-rank hidden-xs"><span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${baseResultStat.first ? playerForecastForElo.eloRating : playerForecastForElo.nextEloRating})]</td>
+							<td th:with="playerForecastForElo=${(current || prevPlayersForecast == null ? playersForecast : prevPlayersForecast).getPlayerForecast(playerForecast.id)}, eloRatingDelta=${prevPlayersForecast != null ? playerForecastForElo.eloRatingDelta : null}" class="player-rank hidden-xs"><span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${baseResultStat.first ? playerForecastForElo.eloRating() : playerForecastForElo.nextEloRating})]</td>
 							</th:block>
 							<th:block th:if="${playerForecast.bye}">
 							<td colspan="2">Bye</td>

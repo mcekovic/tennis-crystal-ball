@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
 import static java.lang.Math.*;
+import static org.strangeforest.tcb.stats.model.core.Player.*;
 import static org.strangeforest.tcb.stats.model.prediction.RankingPredictionItem.*;
 
 public class RankingMatchPredictor implements MatchPredictor {
@@ -10,7 +11,6 @@ public class RankingMatchPredictor implements MatchPredictor {
 
 	private static final int DEFAULT_RANK = 500;
 	private static final int DEFAULT_RANK_POINTS = 0;
-	private static final int DEFAULT_ELO_RATING = 1500;
 
 	public RankingMatchPredictor(RankingData rankingData1, RankingData rankingData2) {
 		this.rankingData1 = rankingData1;
@@ -77,8 +77,8 @@ public class RankingMatchPredictor implements MatchPredictor {
 	}
 
 	private static double eloWinProbability(Integer eloRating1, Integer eloRating2) {
-		eloRating1 = defaultIfNull(eloRating1, DEFAULT_ELO_RATING);
-		eloRating2 = defaultIfNull(eloRating2, DEFAULT_ELO_RATING);
+		eloRating1 = defaultIfNull(eloRating1, START_ELO_RATING);
+		eloRating2 = defaultIfNull(eloRating2, START_ELO_RATING);
 		return 1 / (1 + pow(10.0, (eloRating2 - eloRating1) / 400.0));
 	}
 

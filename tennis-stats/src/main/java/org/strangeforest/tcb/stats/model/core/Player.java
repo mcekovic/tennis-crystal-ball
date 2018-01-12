@@ -6,6 +6,8 @@ import org.strangeforest.tcb.util.*;
 
 public class Player {
 
+	public static final int START_ELO_RATING = 1500;
+	
 	// General
 	private final int id;
 	private String name;

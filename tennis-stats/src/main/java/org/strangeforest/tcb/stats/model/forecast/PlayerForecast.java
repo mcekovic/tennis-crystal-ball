@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.model.forecast;
 import java.util.*;
 
 import org.strangeforest.tcb.stats.model.*;
+import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
 
 import static org.strangeforest.tcb.stats.model.prediction.PriceUtil.*;
@@ -35,8 +36,8 @@ public class PlayerForecast extends MatchPlayerEx {
 	
 	// Elo ratings
 
-	public Integer getNextEloRating() {
-		return nextEloRating;
+	public int getNextEloRating() {
+		return nextEloRating != null ? nextEloRating : Player.START_ELO_RATING;
 	}
 
 	void setNextEloRating(Integer nextEloRating) {

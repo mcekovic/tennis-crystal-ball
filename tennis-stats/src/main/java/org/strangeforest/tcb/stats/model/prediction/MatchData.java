@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 import java.time.*;
 
+import org.strangeforest.tcb.stats.model.core.*;
+
 public final class MatchData {
 
 	private final LocalDate date;
@@ -88,7 +90,7 @@ public final class MatchData {
 
 	public double getOpponentEloScore() {
 		if (opponentEloRating != null) {
-			int ratingDelta = opponentEloRating - 1500;
+			int ratingDelta = opponentEloRating - Player.START_ELO_RATING;
 			if (ratingDelta > 0) {
 				if (oMatches > pMatches)
 					ratingDelta = -ratingDelta;
