@@ -6,6 +6,7 @@ import org.strangeforest.tcb.stats.model.core.*;
 
 public class GOATListRow extends PlayerRow {
 
+	private final LocalDate dob;
 	private final int goatPoints;
 	private final int tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints;
 	private int yearEndRankGoatPoints, bestRankGoatPoints, weeksAtNo1GoatPoints, weeksAtEloTopNGoatPoints, bestEloRatingGoatPoints;
@@ -22,12 +23,17 @@ public class GOATListRow extends PlayerRow {
 	private int bestEloRating;
 	private LocalDate bestEloRatingDate;
 
-	public GOATListRow(int goatRank, int playerId, String name, String countryId, Boolean active, int goatPoints, int tournamentGoatPoints, int rankingGoatPoints, int achievementsGoatPoints) {
+	public GOATListRow(int goatRank, int playerId, String name, String countryId, Boolean active, LocalDate dob, int goatPoints, int tournamentGoatPoints, int rankingGoatPoints, int achievementsGoatPoints) {
 		super(goatRank, playerId, name, countryId, active);
+		this.dob = dob;
 		this.goatPoints = goatPoints;
 		this.tournamentGoatPoints = tournamentGoatPoints;
 		this.rankingGoatPoints = rankingGoatPoints;
 		this.achievementsGoatPoints = achievementsGoatPoints;
+	}
+
+	public LocalDate getDob() {
+		return dob;
 	}
 
 	public int getGoatRank() {

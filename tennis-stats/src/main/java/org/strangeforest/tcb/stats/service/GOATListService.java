@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.stats.service;
 
+import java.time.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -53,7 +54,7 @@ public class GOATListService {
 		"  FROM %10$sgoat_list\n" +
 		"  WHERE goat_points > 0\n" +
 		")\n" +
-		"SELECT g.*, p.name, p.country_id, p.active, coalesce(pt.%11$sgrand_slams, 0) grand_slams, coalesce(pt.%11$stour_finals, 0) tour_finals, coalesce(pt.%11$salt_finals, 0) alt_finals, coalesce(pt.%11$smasters, 0) masters, coalesce(pt.%11$solympics, 0) olympics, coalesce(pt.%11$sbig_titles, 0) big_titles, coalesce(pt.%11$stitles, 0) titles,\n" +
+		"SELECT g.*, p.name, p.country_id, p.active, p.dob, coalesce(pt.%11$sgrand_slams, 0) grand_slams, coalesce(pt.%11$stour_finals, 0) tour_finals, coalesce(pt.%11$salt_finals, 0) alt_finals, coalesce(pt.%11$smasters, 0) masters, coalesce(pt.%11$solympics, 0) olympics, coalesce(pt.%11$sbig_titles, 0) big_titles, coalesce(pt.%11$stitles, 0) titles,\n" +
 		"  coalesce(%12$s, 0) weeks_at_no1, pf.%11$smatches_won matches_won, pf.%11$smatches_lost matches_lost, pf.%11$smatches_won::REAL / (pf.%11$smatches_won + pf.%11$smatches_lost) matches_won_pct, coalesce(%13$s, 1500) best_elo_rating, %13$s_date best_elo_rating_date\n" +
 		"FROM goat_list_ranked g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
@@ -154,11 +155,12 @@ public class GOATListService {
 				String name = rs.getString("name");
 				String countryId = rs.getString("country_id");
 				Boolean active = !filter.hasActive() ? rs.getBoolean("active") : null;
+				LocalDate dob = getLocalDate(rs, "dob");
 				int goatPoints = rs.getInt("goat_points");
 				int tournamentGoatPoints = rs.getInt("tournament_goat_points");
 				int rankingGoatPoints = rs.getInt("ranking_goat_points");
 				int achievementsGoatPoints = rs.getInt("achievements_goat_points");
-				GOATListRow row = new GOATListRow(goatRank, playerId, name, countryId, active, goatPoints, tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints);
+				GOATListRow row = new GOATListRow(goatRank, playerId, name, countryId, active, dob, goatPoints, tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints);
 				// GOAT points items
 				if (overall) {
 					row.setYearEndRankGoatPoints(rs.getInt("year_end_rank_goat_points") * config.getYearEndRankTotalFactor());
