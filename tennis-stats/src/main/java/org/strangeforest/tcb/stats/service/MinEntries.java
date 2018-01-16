@@ -109,7 +109,7 @@ public class MinEntries {
 		.put(Opponent.SPECIAL_EXEMPT.name(), 0.005)
 	.build();
 	private static final Map<Range<Integer>, Double> MIN_ENTRIES_TOURNAMENT_FACTOR_MAP = ImmutableMap.<Range<Integer>, Double>builder()
-		.put(Range.closed(1, 2), 100.0)
+		.put(Range.atMost(2), 100.0)
 		.put(Range.closed(3, 5), 50.0)
 		.put(Range.closed(6, 9), 25.0)
 		.put(Range.atLeast(10), 20.0)
