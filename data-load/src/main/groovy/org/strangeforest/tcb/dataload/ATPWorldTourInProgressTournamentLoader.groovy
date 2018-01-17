@@ -128,7 +128,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		params.indoor = indoor
 		params.draw_type = drawType
 		params.draw_size = smallint drawSize
-		sql.executeUpdate(params, LOAD_EVENT_SQL)
+		saveEvent(params)
 
 		def drawTable = doc.select('#scoresDrawTable')
 		def rounds = drawTable.select('thead > tr > th').findAll().collect { round -> round.text() }
@@ -259,23 +259,13 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			prevMatchNumOffset = matchNumOffset
 		}
 
-		def matchesHash = Hashing.murmur3_128().newHasher().putString(matches.toString(), Charsets.UTF_8).hash().toString()
-		def oldMatchesHash = forceForecast ? null : sql.firstRow([extId: string(extId)], FETCH_EVENT_HASH_SQL).matches_hash
-		if (matchesHash != oldMatchesHash) {
-			sql.withBatch(LOAD_MATCH_SQL) { ps ->
-				matches.values().each { match ->
-					ps.addBatch(match)
-				}
-			}
-			sql.executeUpdate([extId: string(extId), matchesHash: matchesHash], UPDATE_EVENT_HASH_SQL)
-			sql.commit()
+		def matchCount = saveMatches(extId, matches)
+		if (matchCount > 0)
 			println "${matches.size()} matches loaded in $stopwatch"
-			matches.size()
-		}
-		else {
+		else
 			println 'Matches not changed'
-			0
-		}
+		sql.commit()
+		matchCount
 	}
 
 	static extractEntryPlayer(Element entryMatch, int index) {
@@ -339,7 +329,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		if (verbose)
 			println '\nStarting tournament simulation'
 		def stopwatch = Stopwatch.createStarted()
-		def matches = sql.rows([extId: string(extId)], FETCH_MATCHES_SQL)
+		def matches = fetchMatches(extId)
 
 		// Set qualifier ids as different negative numbers
 		int qualifierIndex
@@ -366,7 +356,6 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		def resultCount = 0
 		def tournamentSimulator
 		if (drawType == 'KO') {
-			sql.execute([inProgressEventId: inProgressEventId], DELETE_PLAYER_PROGRESS_RESULTS_SQL)
 
 			// Current state simulation
 			if (verbose)
@@ -374,6 +363,9 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, matches, entryResult, true, verbose)
 			tournamentSimulator.calculateEloRatings()
 			saveEloRatings(matches)
+			sql.commit()
+
+			deleteResults(inProgressEventId)
 			def results = tournamentSimulator.simulate()
 			saveResults(results)
 			resultCount += results.size()
@@ -397,12 +389,41 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		println "Tournament simulation: ${resultCount} results loaded in $stopwatch"
 	}
 
+	def saveEvent(Map params) {
+		sql.executeUpdate(params, LOAD_EVENT_SQL)
+	}
+
+	def saveMatches(extId, matches) {
+		def matchesHash = Hashing.murmur3_128().newHasher().putString(matches.toString(), Charsets.UTF_8).hash().toString()
+		def oldMatchesHash = forceForecast ? null : sql.firstRow([extId: string(extId)], FETCH_EVENT_HASH_SQL).matches_hash
+		if (matchesHash != oldMatchesHash) {
+			sql.withBatch(LOAD_MATCH_SQL) { ps ->
+				matches.values().each { match ->
+					ps.addBatch(match)
+				}
+			}
+			sql.executeUpdate([extId: string(extId), matchesHash: matchesHash], UPDATE_EVENT_HASH_SQL)
+			sql.commit()
+			matches.size()
+		}
+		else
+			0
+	}
+
+	def fetchMatches(extId) {
+		sql.rows([extId: string(extId)], FETCH_MATCHES_SQL)
+	}
+
 	def saveEloRatings(matches) {
 		sql.withBatch(UPDATE_MATCH_ELO_RATINGS_SQL) { ps ->
 			matches.each { match ->
 				ps.addBatch(match)
 			}
 		}
+	}
+
+	def deleteResults(int inProgressEventId) {
+		sql.execute([inProgressEventId: inProgressEventId], DELETE_PLAYER_PROGRESS_RESULTS_SQL)
 	}
 
 	def saveResults(results) {
