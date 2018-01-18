@@ -150,6 +150,7 @@ public final class StatsCategory {
 		addCategory(TOTAL, "totalPoints", TOTAL_POINTS, PlayerStats::getTotalPoints, POINT, COUNT, false, "Total Points Played");
 		addCategory(TOTAL, "totalPointsWon", TOTAL_POINTS_WON, PlayerStats::getTotalPointsWon, POINT, COUNT, false, "Total Points Won");
 		addCategory(TOTAL, "totalPointsWonPct", TOTAL_POINTS_WON_PCT, PlayerStats::getTotalPointsWonPct, PlayerStats::getTotalPointsWon, PlayerStats::getTotalPoints, POINT, PERCENTAGE, false, "Total Points Won %");
+		addCategory(TOTAL, "rtnToSvcPointsRatio", "o_sv_pt::REAL / nullif(p_sv_pt, 0)", PlayerStats::getReturnToServicePointsRatio, PlayerStats::getReturnPoints, PlayerStats::getServicePoints, POINT, RATIO3, false, "Rtn. to Svc. Points Ratio");
 		addCategory(TOTAL, "totalGames", TOTAL_GAMES, PlayerStats::getTotalGames, GAME, COUNT, false, "Total Games Played");
 		addCategory(TOTAL, "totalGamesWon", "p_games", PlayerStats::getTotalGamesWon, GAME, COUNT, false, "Total Games Won");
 		addCategory(TOTAL, "totalGamesWonPct", GAMES_WON_PCT, PlayerStats::getTotalGamesWonPct, PlayerStats::getTotalGamesWon, PlayerStats::getTotalGames, GAME, PERCENTAGE, false, "Games Won %");
@@ -211,7 +212,7 @@ public final class StatsCategory {
 			new CategorySubGroup("Games", "returnGamesWonPct", "rtnGamesWonPerSet", "rtnGamesWonPerMarch")
 		);
 		addGroup("Total", TOTAL, false,
-			new CategorySubGroup("Points", "totalPoints", "totalPointsWon", "totalPointsWonPct", "totalGames", "totalGamesWon", "totalGamesWonPct"),
+			new CategorySubGroup("Points & Games", "totalPoints", "totalPointsWon", "totalPointsWonPct", "rtnToSvcPointsRatio", "totalGames", "totalGamesWon", "totalGamesWonPct"),
 			new CategorySubGroup("Tie Breaks", "tieBreaks", "tieBreakWon", "tieBreakWonPct", "tieBreaksPerSet", "tieBreaksPerMatch"),
 			new CategorySubGroup("Sets & Matches", "sets", "setsWon", "setsWonPct", "matches", "matchesWon", "matchesWonPct")
 		);
@@ -247,7 +248,7 @@ public final class StatsCategory {
 			new CategorySubGroup("Games", "returnGamesWonPct", "rtnGamesWonPerSet")
 		);
 		addMatchGroup("Total", TOTAL, false,
-			new CategorySubGroup("Points", "totalPoints", "totalPointsWon", "totalPointsWonPct", "totalGames", "totalGamesWon", "totalGamesWonPct"),
+			new CategorySubGroup("Points & Games", "totalPoints", "totalPointsWon", "totalPointsWonPct", "rtnToSvcPointsRatio", "totalGames", "totalGamesWon", "totalGamesWonPct"),
 			new CategorySubGroup("Dominance", "pointsDominanceRatio", "gamesDominanceRatio", "breakPointsRatio"),
 			new CategorySubGroup("Time", "pointTime", "gameTime", "setTime", "matchTime")
 		);

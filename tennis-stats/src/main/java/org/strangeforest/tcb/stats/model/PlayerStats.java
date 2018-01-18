@@ -482,6 +482,10 @@ public class PlayerStats {
 		return pct(getTotalPointsWon(), getTotalPoints());
 	}
 
+	public double getReturnToServicePointsRatio() {
+		return ratio(getReturnPoints(), servicePoints);
+	}
+
 	public double getPointsDominanceRatio() {
 		return ratio(getReturnPointsWonPct(), servicePointsLostPct);
 	}
