@@ -12,8 +12,8 @@ apply plugin: 'application'
 
 mainClassName = 'org.strangeforest.tcb.stats.TennisStatsApplication'
 applicationDefaultJvmArgs = [
-	'-Xms224m',
-	'-Xmx224m',
+	'-Xms256m',
+	'-Xmx256m',
 	'-Dspring.profiles.active=digitalocean,jobs',
 	'-Dcom.sun.management.jmxremote',
 	'-Dcom.sun.management.jmxremote.port=9999',

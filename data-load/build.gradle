@@ -3,7 +3,7 @@ apply plugin: 'application'
 
 mainClassName = 'org.strangeforest.tcb.dataload.Main'
 applicationDefaultJvmArgs = [
-	'-Xmx160m',
+	'-Xmx256m',
 	'-Dtcb.db.url=jdbc:postgresql://localhost:5432/tcb?prepareThreshold=0',
 	'-Dtcb.db.username=tcb',
 	'-Dtcb.db.password=tcb',
