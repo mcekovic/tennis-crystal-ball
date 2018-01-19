@@ -54,10 +54,19 @@
 		var dominanceTableOffset;
 		$(function() {
 			correctInitPositions();
-			dominanceTableOffset = $("#dominanceTable").offset();
+			var $dominanceTable = $("#dominanceTable");
+			dominanceTableOffset = $dominanceTable.offset();
 			$(window).resize(correctPositionsOnResize);
 			$("#navbar").resize(correctPositionsOnResize);
 			onAverageEloChange();
+			$dominanceTable.find("tr.player").each(function() {
+				var $player = $(this);
+				var url = "/playerProfile?playerId=" + $player.data("player-id") + "&tab=goatPoints[(${surface != null ? '&surface=' + surface : _})]";
+				$player.find(".points-0, .points-10, .points-20, .points-30, .points-40, .points-50, .points-60, .points-70, .points-80, .points-90, .points-100").each(function() {
+					var $points = $(this);
+					$points.html("<a href='" + url + "&season=" + $points.data("sn") + "' title='Show season GOAT points distribution' class='points'>" + $points.html() + "</a>");
+				});
+			});
 			$("[data-toggle='collapse']").click(collapseClick);
 			$("[data-toggle='tooltip']").tooltip();
 		});
@@ -113,6 +122,9 @@
 			display: block;
 			width: 20px;
 			height: 25px;
+		}
+		.elo {
+			padding: 1px !important;
 		}
 		.points-0, .points-10, .points-20, .points-30, .points-40, .points-50, .points-60, .points-70, .points-80, .points-90, .points-100 {
 			width: 26px;
@@ -193,39 +205,39 @@
 		</tr>
 		<tr class="season" style="border-top: 3px solid lightgray">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average No 1 Elo Rating">No 1</th>
-			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(1)}"><span class="vseason" th:text="${season.getAverageEloRating(1)}">2100</span></th>
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'elo points-' + ${season.getAverageEloRatingPoints(1)}"><span class="vseason" th:text="${season.getAverageEloRating(1)}">2100</span></th>
 		</tr>
 		<tr class="season" style="border-top: 3px solid lightgray">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 2 Elo Rating">Top 2</th>
-			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(2)}"><span class="vseason" th:text="${season.getAverageEloRating(2)}">2100</span></th>
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'elo points-' + ${season.getAverageEloRatingPoints(2)}"><span class="vseason" th:text="${season.getAverageEloRating(2)}">2100</span></th>
 		</tr>
 		<tr class="season" style="border-top: 3px solid lightgray">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 3 Elo Rating">Top 3</th>
-			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(3)}"><span class="vseason" th:text="${season.getAverageEloRating(3)}">2100</span></th>
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'elo points-' + ${season.getAverageEloRatingPoints(3)}"><span class="vseason" th:text="${season.getAverageEloRating(3)}">2100</span></th>
 		</tr>
 		<tr class="season" style="border-top: 3px solid lightgray">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 5 Elo Rating">Top 5</th>
-			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(5)}"><span class="vseason" th:text="${season.getAverageEloRating(5)}">2100</span></th>
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'elo points-' + ${season.getAverageEloRatingPoints(5)}"><span class="vseason" th:text="${season.getAverageEloRating(5)}">2100</span></th>
 		</tr>
 		<tr class="season" style="border-top: 3px solid lightgray">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 10 Elo Rating">Top 10</th>
-			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(10)}"><span class="vseason" th:text="${season.getAverageEloRating(10)}">2100</span></th>
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'elo points-' + ${season.getAverageEloRatingPoints(10)}"><span class="vseason" th:text="${season.getAverageEloRating(10)}">2100</span></th>
 		</tr>
 		<tr class="season" style="border-top: 3px solid lightgray">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 20 Elo Rating">Top 20</th>
-			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(20)}"><span class="vseason" th:text="${season.getAverageEloRating(20)}">2100</span></th>
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'elo points-' + ${season.getAverageEloRatingPoints(20)}"><span class="vseason" th:text="${season.getAverageEloRating(20)}">2100</span></th>
 		</tr>
 		<tr class="season" style="border-top: 3px solid lightgray">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 50 Elo Rating">Top 50</th>
-			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(50)}"><span class="vseason" th:text="${season.getAverageEloRating(50)}">2100</span></th>
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'elo points-' + ${season.getAverageEloRatingPoints(50)}"><span class="vseason" th:text="${season.getAverageEloRating(50)}">2100</span></th>
 		</tr>
 		<tr class="season" style="border-top: 3px solid lightgray">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 100 Elo Rating">Top 100</th>
-			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(100)}"><span class="vseason" th:text="${season.getAverageEloRating(100)}">2100</span></th>
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'elo points-' + ${season.getAverageEloRatingPoints(100)}"><span class="vseason" th:text="${season.getAverageEloRating(100)}">2100</span></th>
 		</tr>
 		<tr class="season" style="border-top: 3px solid lightgray">
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Average Top 200 Elo Rating">Top 200</th>
-			<th style="padding: 1px" th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.getAverageEloRatingPoints(200)}"><span class="vseason" th:text="${season.getAverageEloRating(200)}">2100</span></th>
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'elo points-' + ${season.getAverageEloRatingPoints(200)}"><span class="vseason" th:text="${season.getAverageEloRating(200)}">2100</span></th>
 		</tr>
 		</thead>
 		<thead>
@@ -237,7 +249,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		<tr th:each="player : ${timeline.players}">
+		<tr th:each="player : ${timeline.players}" class="player" th:data-player-id="${player.playerId}">
 			<td style="padding: 1px 4px">
 				<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 				<a th:href="@{/playerProfile(playerId=${player.playerId})}" th:text="${player.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
@@ -247,7 +259,7 @@
 			<td style="padding: 1px 20px; text-align: right; border-right: 3px solid lightgray">
 				<a th:href="@{/playerProfile(playerId=${player.playerId}, tab=goatPoints, surface=${surface})}" th:text="${player.goatPoints}" title="Show GOAT points distribution">585</a>
 			</td>
-			<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${seasonPoint.pointsRounded}" class="points-10"><a th:href="@{/playerProfile(playerId=${player.playerId}, tab=goatPoints, season=${seasonPoint.season}, surface=${surface})}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}" class="points" title="Show season GOAT points distribution">15</a></td>
+			<td th:each="seasonPoint : ${player.getSeasonsPoints()}" th:class="'points-' + ${seasonPoint.pointsRounded}" class="points-10" th:data-sn="${seasonPoint.season}" th:text="${seasonPoint.points > 0 ? seasonPoint.points : ''}">15</td>
 		</tr>
 		</tbody>
 		<thead>
