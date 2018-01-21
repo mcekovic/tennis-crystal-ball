@@ -6,10 +6,10 @@ import static org.strangeforest.tcb.dataload.LoaderUtil.*
 
 loadTournaments(new SqlPool())
 
-static loadTournaments(SqlPool sqlPool) {
+static loadTournaments(SqlPool sqlPool, Integer season = null) {
 	sqlPool.withSql {sql ->
 		def atpTournamentLoader = new ATPWorldTourTournamentLoader(sql)
-		def season = LocalDate.now().year
+		season = season ?: LocalDate.now().year
 		def eventInfos = findCompletedEvents(season)
 		def seasonExtIds = atpTournamentLoader.findSeasonEventExtIds(season)
 		eventInfos.removeAll { info -> info.extId in seasonExtIds }
