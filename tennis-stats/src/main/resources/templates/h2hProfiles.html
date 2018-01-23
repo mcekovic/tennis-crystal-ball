@@ -415,18 +415,30 @@
 	<tr><td colspan="5">&nbsp;</td></tr>
 	<tr>
 		<th class="text-right" colspan="2">
-			<div th:if="${playerH2H1}" class="progress progress-profile pull-right">
-				<div class="progress-bar progress-bar-profile progress-bar-success" role="progressbar" th:style="'width: ' + ${playerH2H1.rawWonPctStr}" th:attr="aria-valuenow=${playerH2H1.rawWonPct}" aria-valuemin="0" aria-valuemax="100" th:text="${playerH2H1.won}" th:title="'Won: ' + ${playerH2H1.won}">42</div>
-				<div class="progress-bar progress-bar-profile progress-bar-warning" role="progressbar" th:style="'width: ' + ${playerH2H1.rawDrawPctStr}" th:attr="aria-valuenow=${playerH2H1.rawDrawPct}" aria-valuemin="0" aria-valuemax="100" th:text="${playerH2H1.draw}" th:title="'Draw: ' + ${playerH2H1.draw}">4</div>
-				<div class="progress-bar progress-bar-profile progress-bar-danger" role="progressbar" th:style="'width: ' + ${playerH2H1.rawLostPctStr}" th:attr="aria-valuenow=${playerH2H1.rawLostPct}" aria-valuemin="0" aria-valuemax="100" th:text="${playerH2H1.lost}" th:title="'Lost: ' + ${playerH2H1.lost}">11</div>
+			<div th:if="${playerH2H1}" class="progress progress-profile pull-right" style="width: 250px">
+				<div class="progress-bar progress-bar-profile progress-bar-success" role="progressbar" th:style="'width: ' + ${playerH2H1.rawWonPctStr}" th:attr="aria-valuenow=${playerH2H1.rawWonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=rivalries, h2h=1, matches=3)}" th:text="${playerH2H1.won}" title="Show positive H2H rivalries">42</a>
+				</div>
+				<div class="progress-bar progress-bar-profile progress-bar-warning" role="progressbar" th:style="'width: ' + ${playerH2H1.rawDrawPctStr}" th:attr="aria-valuenow=${playerH2H1.rawDrawPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=rivalries, h2h=0, matches=3)}" th:text="${playerH2H1.draw}" title="Show draw H2H rivalries">4</a>
+				</div>
+				<div class="progress-bar progress-bar-profile progress-bar-danger" role="progressbar" th:style="'width: ' + ${playerH2H1.rawLostPctStr}" th:attr="aria-valuenow=${playerH2H1.rawLostPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player1.id}, tab=rivalries, h2h=-1, matches=3)}" th:text="${playerH2H1.lost}" title="Show negative H2H rivalries">1</a>
+				</div>
 			</div>
 		</th>
 		<th class="text-center" th:title="#{h2hSeries.notes}">H2H</th>
 		<th class="text-left" colspan="2">
-			<div th:if="${playerH2H2}" class="progress progress-profile pull-left">
-				<div class="progress-bar progress-bar-profile progress-bar-success" role="progressbar" th:style="'width: ' + ${playerH2H2.rawWonPctStr}" th:attr="aria-valuenow=${playerH2H2.rawWonPct}" aria-valuemin="0" aria-valuemax="100" th:text="${playerH2H2.won}" th:title="'Won: ' + ${playerH2H2.won}">42</div>
-				<div class="progress-bar progress-bar-profile progress-bar-warning" role="progressbar" th:style="'width: ' + ${playerH2H2.rawDrawPctStr}" th:attr="aria-valuenow=${playerH2H2.rawDrawPct}" aria-valuemin="0" aria-valuemax="100" th:text="${playerH2H2.draw}" th:title="'Draw: ' + ${playerH2H2.draw}">4</div>
-				<div class="progress-bar progress-bar-profile progress-bar-danger" role="progressbar" th:style="'width: ' + ${playerH2H2.rawLostPctStr}" th:attr="aria-valuenow=${playerH2H2.rawLostPct}" aria-valuemin="0" aria-valuemax="100" th:text="${playerH2H2.lost}" th:title="'Lost: ' + ${playerH2H2.lost}">11</div>
+			<div th:if="${playerH2H2}" class="progress progress-profile pull-left" style="width: 250px">
+				<div class="progress-bar progress-bar-profile progress-bar-success" role="progressbar" th:style="'width: ' + ${playerH2H2.rawWonPctStr}" th:attr="aria-valuenow=${playerH2H2.rawWonPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=rivalries, h2h=1, matches=3)}" th:text="${playerH2H2.won}" title="Show positive H2H rivalries">42</a>
+				</div>
+				<div class="progress-bar progress-bar-profile progress-bar-warning" role="progressbar" th:style="'width: ' + ${playerH2H2.rawDrawPctStr}" th:attr="aria-valuenow=${playerH2H2.rawDrawPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=rivalries, h2h=0, matches=3)}" th:text="${playerH2H2.draw}" title="Show draw H2H rivalries">4</a>
+				</div>
+				<div class="progress-bar progress-bar-profile progress-bar-danger" role="progressbar" th:style="'width: ' + ${playerH2H2.rawLostPctStr}" th:attr="aria-valuenow=${playerH2H2.rawLostPct}" aria-valuemin="0" aria-valuemax="100">
+					<a th:href="@{/playerProfile(playerId=${player2.id}, tab=rivalries, h2h=-1, matches=3)}" th:text="${playerH2H2.lost}" title="Show negative H2H rivalries">1</a>
+				</div>
 			</div>
 		</th>
 	</tr>
