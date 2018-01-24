@@ -18,6 +18,7 @@ import com.google.common.base.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.core.RankCategory.*;
+import static org.strangeforest.tcb.stats.model.core.RankType.*;
 import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
@@ -216,14 +217,14 @@ public class RankingsService {
 		BootgridTable<PlayerDiffRankingsRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
-		boolean surfaceOrIndoorElo = rankType.isSurfaceOrIndoorElo();
+		boolean specificElo = rankType.category == ELO && rankType != ELO_RANK;
 		jdbcTemplate.query(
 			format(
 				RANKING_TABLE_QUERY, rankingTable(rankType), rankColumn(rankType), pointsColumn(rankType),
-				(surfaceOrIndoorElo ? "k." : "p.") + bestRankColumn(rankType),
-				(surfaceOrIndoorElo ? "k." : "p.") + bestRankDateColumn(rankType),
-				(surfaceOrIndoorElo ? "t." : "p.") + bestPointsColumn(rankType),
-				surfaceOrIndoorElo ? BEST_ELO_JOIN : "", filter.getCriteria(), orderBy
+				(specificElo ? "k." : "p.") + bestRankColumn(rankType),
+				(specificElo ? "k." : "p.") + bestRankDateColumn(rankType),
+				(specificElo ? "t." : "p.") + bestPointsColumn(rankType),
+				specificElo ? BEST_ELO_JOIN : "", filter.getCriteria(), orderBy
 			),
 			getTableParams(filter, date, offset),
 			rs -> {
@@ -281,7 +282,7 @@ public class RankingsService {
 	}
 
 	private static void checkRankType(RankType rankType) {
-		if (!rankType.points)
+		if (rankType.points)
 			throw new IllegalArgumentException("Unsupported rankings table RankType: " + rankType);
 	}
 
@@ -299,99 +300,118 @@ public class RankingsService {
 
 	private String rankColumn(RankType rankType) {
 		switch (rankType) {
-			case POINTS:
-			case ELO_RATING: return "rank";
-			case HARD_ELO_RATING: return "hard_rank";
-			case CLAY_ELO_RATING: return "clay_rank";
-			case GRASS_ELO_RATING: return "grass_rank";
-			case CARPET_ELO_RATING: return "carpet_rank";
-			case OUTDOOR_ELO_RATING: return "outdoor_rank";
-			case INDOOR_ELO_RATING: return "indoor_rank";
+			case RANK:
+			case ELO_RANK: return "rank";
+			case HARD_ELO_RANK: return "hard_rank";
+			case CLAY_ELO_RANK: return "clay_rank";
+			case GRASS_ELO_RANK: return "grass_rank";
+			case CARPET_ELO_RANK: return "carpet_rank";
+			case OUTDOOR_ELO_RANK: return "outdoor_rank";
+			case INDOOR_ELO_RANK: return "indoor_rank";
+			case SET_ELO_RANK: return "set_rank";
+			case SERVICE_GAME_ELO_RANK: return "service_game_rank";
+			case RETURN_GAME_ELO_RANK: return "return_game_rank";
+			case TIE_BREAK_ELO_RANK: return "tie_break_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}
 
 	private String pointsColumn(RankType rankType) {
 		switch (rankType) {
-			case POINTS: return "rank_points";
-			case ELO_RATING: return "elo_rating";
-			case HARD_ELO_RATING: return "hard_elo_rating";
-			case CLAY_ELO_RATING: return "clay_elo_rating";
-			case GRASS_ELO_RATING: return "grass_elo_rating";
-			case CARPET_ELO_RATING: return "carpet_elo_rating";
-			case OUTDOOR_ELO_RATING: return "outdoor_elo_rating";
-			case INDOOR_ELO_RATING: return "indoor_elo_rating";
+			case RANK: return "rank_points";
+			case ELO_RANK: return "elo_rating";
+			case HARD_ELO_RANK: return "hard_elo_rating";
+			case CLAY_ELO_RANK: return "clay_elo_rating";
+			case GRASS_ELO_RANK: return "grass_elo_rating";
+			case CARPET_ELO_RANK: return "carpet_elo_rating";
+			case OUTDOOR_ELO_RANK: return "outdoor_elo_rating";
+			case INDOOR_ELO_RANK: return "indoor_elo_rating";
+			case SET_ELO_RANK: return "set_elo_rating";
+			case SERVICE_GAME_ELO_RANK: return "service_game_elo_rating";
+			case RETURN_GAME_ELO_RANK: return "return_game_elo_rating";
+			case TIE_BREAK_ELO_RANK: return "tie_break_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
 
 	private String bestRankColumn(RankType rankType) {
 		switch (rankType) {
-			case POINTS: return "best_rank";
-			case ELO_RATING: return "best_elo_rank";
-			case HARD_ELO_RATING: return "best_hard_elo_rank";
-			case CLAY_ELO_RATING: return "best_clay_elo_rank";
-			case GRASS_ELO_RATING: return "best_grass_elo_rank";
-			case CARPET_ELO_RATING: return "best_carpet_elo_rank";
-			case OUTDOOR_ELO_RATING: return "best_outdoor_elo_rank";
-			case INDOOR_ELO_RATING: return "best_indoor_elo_rank";
+			case RANK: return "best_rank";
+			case ELO_RANK: return "best_elo_rank";
+			case HARD_ELO_RANK: return "best_hard_elo_rank";
+			case CLAY_ELO_RANK: return "best_clay_elo_rank";
+			case GRASS_ELO_RANK: return "best_grass_elo_rank";
+			case CARPET_ELO_RANK: return "best_carpet_elo_rank";
+			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rank";
+			case INDOOR_ELO_RANK: return "best_indoor_elo_rank";
+			case SET_ELO_RANK: return "best_elo_rank";
+			case SERVICE_GAME_ELO_RANK: return "best_elo_rank";
+			case RETURN_GAME_ELO_RANK: return "best_elo_rank";
+			case TIE_BREAK_ELO_RANK: return "best_elo_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}
 
 	private String bestRankDateColumn(RankType rankType) {
 		switch (rankType) {
-			case POINTS: return "best_rank_date";
-			case ELO_RATING: return "best_elo_rank_date";
-			case HARD_ELO_RATING: return "best_hard_elo_rank_date";
-			case CLAY_ELO_RATING: return "best_clay_elo_rank_date";
-			case GRASS_ELO_RATING: return "best_grass_elo_rank_date";
-			case CARPET_ELO_RATING: return "best_carpet_elo_rank_date";
-			case OUTDOOR_ELO_RATING: return "best_outdoor_elo_rank_date";
-			case INDOOR_ELO_RATING: return "best_indoor_elo_rank_date";
+			case RANK: return "best_rank_date";
+			case ELO_RANK: return "best_elo_rank_date";
+			case HARD_ELO_RANK: return "best_hard_elo_rank_date";
+			case CLAY_ELO_RANK: return "best_clay_elo_rank_date";
+			case GRASS_ELO_RANK: return "best_grass_elo_rank_date";
+			case CARPET_ELO_RANK: return "best_carpet_elo_rank_date";
+			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rank_date";
+			case INDOOR_ELO_RANK: return "best_indoor_elo_rank_date";
+			case SET_ELO_RANK: return "best_elo_rank_date";
+			case SERVICE_GAME_ELO_RANK: return "best_elo_rank_date";
+			case RETURN_GAME_ELO_RANK: return "best_elo_rank_date";
+			case TIE_BREAK_ELO_RANK: return "best_elo_rank_date";
 			default: throw unknownEnum(rankType);
 		}
 	}
 
 	private String bestPointsColumn(RankType rankType) {
 		switch (rankType) {
-			case POINTS: return "best_rank_points";
-			case ELO_RATING: return "best_elo_rating";
-			case HARD_ELO_RATING: return "best_hard_elo_rating";
-			case CLAY_ELO_RATING: return "best_clay_elo_rating";
-			case GRASS_ELO_RATING: return "best_grass_elo_rating";
-			case CARPET_ELO_RATING: return "best_carpet_elo_rating";
-			case OUTDOOR_ELO_RATING: return "best_outdoor_elo_rating";
-			case INDOOR_ELO_RATING: return "best_indoor_elo_rating";
+			case RANK: return "best_rank_points";
+			case ELO_RANK: return "best_elo_rating";
+			case HARD_ELO_RANK: return "best_hard_elo_rating";
+			case CLAY_ELO_RANK: return "best_clay_elo_rating";
+			case GRASS_ELO_RANK: return "best_grass_elo_rating";
+			case CARPET_ELO_RANK: return "best_carpet_elo_rating";
+			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rating";
+			case INDOOR_ELO_RANK: return "best_indoor_elo_rating";
+			case SET_ELO_RANK: return "best_elo_rating";
+			case SERVICE_GAME_ELO_RANK: return "best_elo_rating";
+			case RETURN_GAME_ELO_RANK: return "best_elo_rating";
+			case TIE_BREAK_ELO_RANK: return "best_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
 
 	private String bestEloRatingDateColumn(RankType rankType) {
 		switch (rankType) {
-			case ELO_RATING: return "best_elo_rating_date";
-			case HARD_ELO_RATING: return "best_hard_elo_rating_date";
-			case CLAY_ELO_RATING: return "best_clay_elo_rating_date";
-			case GRASS_ELO_RATING: return "best_grass_elo_rating_date";
-			case CARPET_ELO_RATING: return "best_carpet_elo_rating_date";
-			case OUTDOOR_ELO_RATING: return "best_outdoor_elo_rating_date";
-			case INDOOR_ELO_RATING: return "best_indoor_elo_rating_date";
+			case ELO_RANK: return "best_elo_rating_date";
+			case HARD_ELO_RANK: return "best_hard_elo_rating_date";
+			case CLAY_ELO_RANK: return "best_clay_elo_rating_date";
+			case GRASS_ELO_RANK: return "best_grass_elo_rating_date";
+			case CARPET_ELO_RANK: return "best_carpet_elo_rating_date";
+			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rating_date";
+			case INDOOR_ELO_RANK: return "best_indoor_elo_rating_date";
+			case SET_ELO_RANK: return "best_elo_rating_date";
+			case SERVICE_GAME_ELO_RANK: return "best_elo_rating_date";
+			case RETURN_GAME_ELO_RANK: return "best_elo_rating_date";
+			case TIE_BREAK_ELO_RANK: return "best_elo_rating_date";
 			default: throw unknownEnum(rankType);
 		}
 	}
 
 	private String rankingTable(RankType rankType) {
-		switch (rankType) {
-			case POINTS: return "player_ranking";
-			case ELO_RATING:
-			case HARD_ELO_RATING:
-			case CLAY_ELO_RATING:
-			case GRASS_ELO_RATING:
-			case CARPET_ELO_RATING:
-			case OUTDOOR_ELO_RATING:
-			case INDOOR_ELO_RATING: return "player_elo_ranking";
-			default: throw unknownEnum(rankType);
-		}
+		if (rankType == RANK)
+			return "player_ranking";
+		else if (rankType.category == ELO && !rankType.points)
+			return "player_elo_ranking";
+		else
+			throw unknownEnum(rankType);
 	}
 
 	private TournamentEventItem mapTournamentEvent(ResultSet rs) throws SQLException {
@@ -526,14 +546,14 @@ public class RankingsService {
 
 	private String yearEndRankColumn(RankType rankType) {
 		switch (rankType) {
-			case POINTS:
-			case ELO_RATING: return "year_end_rank";
-			case HARD_ELO_RATING: return "hard_year_end_rank";
-			case CLAY_ELO_RATING: return "clay_year_end_rank";
-			case GRASS_ELO_RATING: return "grass_year_end_rank";
-			case CARPET_ELO_RATING: return "carpet_year_end_rank";
-			case OUTDOOR_ELO_RATING: return "outdoor_year_end_rank";
-			case INDOOR_ELO_RATING: return "indoor_year_end_rank";
+			case RANK:
+			case ELO_RANK: return "year_end_rank";
+			case HARD_ELO_RANK: return "hard_year_end_rank";
+			case CLAY_ELO_RANK: return "clay_year_end_rank";
+			case GRASS_ELO_RANK: return "grass_year_end_rank";
+			case CARPET_ELO_RANK: return "carpet_year_end_rank";
+			case OUTDOOR_ELO_RANK: return "outdoor_year_end_rank";
+			case INDOOR_ELO_RANK: return "indoor_year_end_rank";
 			case GOAT_POINTS:
 			case HARD_GOAT_POINTS:
 			case CLAY_GOAT_POINTS:
@@ -545,14 +565,14 @@ public class RankingsService {
 
 	private String yearEndRankingTable(RankType rankType) {
 		switch (rankType) {
-			case POINTS: return "player_year_end_rank";
-			case ELO_RATING:
-			case HARD_ELO_RATING:
-			case CLAY_ELO_RATING:
-			case GRASS_ELO_RATING:
-			case CARPET_ELO_RATING:
-			case OUTDOOR_ELO_RATING:
-			case INDOOR_ELO_RATING: return "player_year_end_elo_rank";
+			case RANK: return "player_year_end_rank";
+			case ELO_RANK:
+			case HARD_ELO_RANK:
+			case CLAY_ELO_RANK:
+			case GRASS_ELO_RANK:
+			case CARPET_ELO_RANK:
+			case OUTDOOR_ELO_RANK:
+			case INDOOR_ELO_RANK: return "player_year_end_elo_rank";
 			case GOAT_POINTS:
 			case HARD_GOAT_POINTS:
 			case CLAY_GOAT_POINTS:

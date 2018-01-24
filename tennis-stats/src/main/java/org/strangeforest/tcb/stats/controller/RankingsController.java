@@ -24,14 +24,14 @@ public class RankingsController extends PageController {
 
 	@GetMapping("/rankingsTable")
 	public ModelAndView rankingsTable(
-		@RequestParam(name = "rankType", defaultValue = "POINTS") RankType rankType,
+		@RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date
 	) {
 		if (date != null)
 			season = date.getYear();
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("rankTypes", RankType.values());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("tableDate", rankingsService.getRankingsDate(rankType, season, date));
 		modelMap.addAttribute("rankType", rankType);

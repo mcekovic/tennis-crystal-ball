@@ -1,4 +1,5 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="rankingTopN">
+<!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.core.RankType[]"*/-->
 <!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.core.RankType"*/-->
 <!--/*@thymesVar id="count" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="date" type="java.time.LocalDate"*/-->
@@ -30,16 +31,12 @@
 				<div class="text-muted" style="font-size: 60%" th:text="${#temporals.format(date, 'dd-MM-yyyy')}">01-11-2015</div>
 			</div>
 			<div class="btn-group" th:attrappend="class=${rankType.surface != null ? ' bg-surface-' + rankType.surface.code : _}" style="margin-left: 4px">
-				<button type="button" class="btn btn-default rank-type">[(${rankType.name() == 'POINTS' ? 'ATP' : 'Elo'})]</button>
+				<button type="button" class="btn btn-default rank-type">[(${rankType.name() == 'RANK' ? 'ATP' : 'Elo'})]</button>
 				<button type="button" class="btn btn-default dropdown-toggle rank-type" data-toggle="dropdown">
 					<span class="caret"></span>
 				</button>
 				<ul id="rankingTopNSelect" class="dropdown-menu" role="menu">
-					<li><a href="#" th:onclick="'event.preventDefault(); loadRankingTopN(\'POINTS\', ' + ${count} + ')'">ATP</a></li>
-					<li><a href="#" th:onclick="'event.preventDefault(); loadRankingTopN(\'ELO_RATING\', ' + ${count} + ')'">Elo</a></li>
-					<li th:each="aSurface : ${surfaces}" th:unless="${aSurface.code == 'P'}"><a href="#" target="" th:class="|bg-surface-${aSurface.code}|" class="bg-surface-H" th:text="|${aSurface.text} Elo|" th:onclick="'event.preventDefault(); loadRankingTopN(\'' + ${aSurface} + '_ELO_RATING\', ' + ${count} + ')'">Hard Elo</a></li>
-					<li><a href="#" th:onclick="'event.preventDefault(); loadRankingTopN(\'OUTDOOR_ELO_RATING\', ' + ${count} + ')'" title="Outdoor Elo">Out. Elo</a></li>
-					<li><a href="#" th:onclick="'event.preventDefault(); loadRankingTopN(\'INDOOR_ELO_RATING\', ' + ${count} + ')'" title="Indoor Elo">In. Elo</a></li>
+					<li th:each="aRankType : ${rankTypes}" th:unless="${aRankType.points || (aRankType.surface != null && aRankType.surface.name() == 'CARPET')}"><a href="#" th:class="${aRankType.surface != null ? 'bg-surface-' + aRankType.surface.code : _}" th:onclick="'event.preventDefault(); loadRankingTopN(\'' + ${aRankType} + '\', ' + ${count} + ')'" th:text="${aRankType.shortText}" th:title="${aRankType.text}">ATP</a></li>
 				</ul>
 			</div>
 			<a th:href="@{/rankingsTable(rankType=${rankType})}" style="vertical-align: text-top" title="Full Rankings Table"><i class="fa fa-search-plus"></i></a>
@@ -48,9 +45,9 @@
 	<table class="table table-condensed table-hover table-striped small">
 		<thead>
 		<tr th:class="${rankType.surface != null ? 'bg-surface-' + rankType.surface.code : _}">
-			<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'ATP Rank' : ((rankType.surface != null ? rankType.surface.text + ' ' : (rankType.indoor != null ? (rankType.indoor ? 'Indoor ' : 'Outdoor ') : '')) + 'Elo Rank')}">R.</th>
+			<th class="text-right" th:title="${rankType.text}">R.</th>
 			<th>Name</th>
-			<th class="text-right" th:title="${rankType.name() == 'POINTS' ? 'Ranking Points' : ((rankType.surface != null ? rankType.surface.text + ' ' : (rankType.indoor != null ? (rankType.indoor ? 'Indoor ' : 'Outdoor ') : '')) + 'Elo Rating')}" th:text="${rankType.name() == 'POINTS' ? 'Pts.' : (rankType.surface != null ? rankType.surface.text.charAt(0) + '. ' : (rankType.indoor != null ? (rankType.indoor ? 'I. ' : 'O. ') : '')) + 'Elo'}">Pts.</th>
+			<th class="text-right" th:title="${rankType.pointsType.text}">Pts.</th>
 		</tr>
 		</thead>
 		<tbody>

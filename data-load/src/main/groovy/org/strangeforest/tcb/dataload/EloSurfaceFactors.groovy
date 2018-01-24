@@ -40,12 +40,12 @@ class EloSurfaceFactors {
 
 	double surfaceKFactor(String surface, Date date) {
 		switch (surface) {
-			case 'H': return kFactor(hardFactors, date); break
-			case 'C': return kFactor(clayFactors, date); break
-			case 'G': return kFactor(grassFactors, date); break
-			case 'P': return kFactor(carpetFactors, date); break
-			case 'O': return kFactor(outdoorFactors, date); break
-			case 'I': return kFactor(indoorFactors, date); break
+			case 'H': return kFactor(hardFactors, date)
+			case 'C': return kFactor(clayFactors, date)
+			case 'G': return kFactor(grassFactors, date)
+			case 'P': return kFactor(carpetFactors, date)
+			case 'O': return kFactor(outdoorFactors, date)
+			case 'I': return kFactor(indoorFactors, date)
 		}
 	}
 

@@ -153,6 +153,14 @@ CREATE TABLE player_elo_ranking (
 	outdoor_elo_rating INTEGER,
 	indoor_rank INTEGER,
 	indoor_elo_rating INTEGER,
+	set_rank INTEGER,
+	set_elo_rating INTEGER,
+	service_game_rank INTEGER,
+	service_game_elo_rating INTEGER,
+	return_game_rank INTEGER,
+	return_game_elo_rating INTEGER,
+	tie_break_rank INTEGER,
+	tie_break_elo_rating INTEGER,
 	PRIMARY KEY (rank_date, player_id)
 );
 

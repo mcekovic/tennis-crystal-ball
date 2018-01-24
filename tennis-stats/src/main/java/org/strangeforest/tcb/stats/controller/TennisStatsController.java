@@ -52,7 +52,7 @@ public class TennisStatsController extends PageController {
 
 	@GetMapping("/rankingTopN")
 	public ModelAndView rankingTopN(
-      @RequestParam(name = "rankType", defaultValue = "POINTS") RankType rankType,
+      @RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType,
       @RequestParam(name = "count", defaultValue = "10") int count,
       HttpServletResponse response
 	) {
@@ -62,6 +62,7 @@ public class TennisStatsController extends PageController {
 		List<PlayerRanking> rankingTopN = rankingsService.getRankingsTopN(rankType, date, count);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("rankTypes", RankType.values());
 		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("count", count);
 		modelMap.addAttribute("date", date);

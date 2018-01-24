@@ -23,7 +23,7 @@ class EloRatings {
 	final Map<Integer, CompletableFuture> playerMatchFutures
 	final EloSurfaceFactors eloSurfaceFactors
 	Map<Integer, EloRating> playerRatings
-	Map<String, Map<Integer, EloRating>> surfacePlayerRatings
+	Map<String, Map<Integer, EloRating>> playerRatingsByType
 	BlockingQueue<MatchEloRating> matchRatings
 	Map<RankKey, Integer> rankCache
 	Map<Date, Map<Integer, Integer>> rankDateCache
@@ -34,9 +34,11 @@ class EloRatings {
 	Date saveFromDate
 
 	static final String QUERY_MATCHES = //language=SQL
-		"SELECT m.match_id, m.winner_id, m.loser_id, tournament_end(CASE WHEN e.level = 'D' THEN m.date ELSE e.date END, e.level, e.draw_size) AS end_date, e.level, m.surface, m.indoor, m.round, m.best_of, m.outcome\n" +
+		"SELECT m.match_id, m.winner_id, m.loser_id, tournament_end(CASE WHEN e.level = 'D' THEN m.date ELSE e.date END, e.level, e.draw_size) AS end_date, e.level, m.surface, m.indoor, m.round, m.best_of, m.outcome," +
+		"  m.w_sets, m.l_sets, s.w_sv_gms - (s.w_bp_fc - s.w_bp_sv) AS w_sv_gms, s.l_sv_gms - (s.l_bp_fc - s.l_bp_sv) AS l_sv_gms, s.l_bp_fc - s.l_bp_sv AS w_rt_gms, s.w_bp_fc - s.w_bp_sv AS l_rt_gms, m.w_tbs, m.l_tbs\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"LEFT JOIN match_stats s ON s.match_id = m.match_id AND s.set = 0\n" +
 		"WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T')\n" +
 		"ORDER BY end_date, m.round, m.winner_id, m.loser_id, m.match_num"
 
@@ -53,7 +55,11 @@ class EloRatings {
 		"ORDER BY rank_date, player_id"
 
 	static final String MERGE_ELO_RANKING = //language=SQL
-		"{call merge_elo_ranking(:rank_date, :player_id, :rank, :elo_rating, :hard_rank, :hard_elo_rating, :clay_rank, :clay_elo_rating, :grass_rank, :grass_elo_rating, :carpet_rank, :carpet_elo_rating, :outdoor_rank, :outdoor_elo_rating, :indoor_rank, :indoor_elo_rating)}"
+		"{call merge_elo_ranking(" +
+		"  :rank_date, :player_id, :rank, :elo_rating," +
+		"  :hard_rank, :hard_elo_rating, :clay_rank, :clay_elo_rating, :grass_rank, :grass_elo_rating, :carpet_rank, :carpet_elo_rating, :outdoor_rank, :outdoor_elo_rating, :indoor_rank, :indoor_elo_rating," +
+		"  :set_rank, :set_elo_rating, :service_game_rank, :service_game_elo_rating, :return_game_rank, :return_game_elo_rating, :tie_break_rank, :tie_break_elo_rating" +
+		")}"
 
 	static final String DELETE_ALL = //language=SQL
 		"DELETE FROM player_elo_ranking"
@@ -62,9 +68,10 @@ class EloRatings {
 		"UPDATE match SET winner_elo_rating = :winner_elo_rating, winner_next_elo_rating = :winner_next_elo_rating, loser_elo_rating = :loser_elo_rating, loser_next_elo_rating = :loser_next_elo_rating\n" +
 		"WHERE match_id = :match_id"
 
-	static final List<String> SURFACES = ['H', 'C', 'G', 'P', 'O', 'I']
+	static final List<String> RATING_TYPES = ['H', 'C', 'G', 'P', 'O', 'I', 's', 'sg', 'rg', 'tb']
 	static final Date CARPET_EOL = toDate(LocalDate.of(2008, 1, 1))
-	static final Map<String, Integer> MIN_MATCHES = [(null): 10, H: 5, C: 5, G: 5, P: 5, O: 5, I: 5]
+	static final int DEFAULT_MIN_MATCHES = 10
+	static final Map<String, Integer> MIN_MATCHES = [H: 5, C: 5, G: 5, P: 5, O: 5, I: 5]
 	static final int MIN_MATCHES_PERIOD = 365
 	static final int MIN_MATCHES_IN_PERIOD = 3
 	static final int PLAYERS_TO_SAVE = 200
@@ -95,8 +102,8 @@ class EloRatings {
 		def stopwatch = Stopwatch.createStarted()
 		int matches = 0
 		playerRatings = new ConcurrentHashMap<>()
-		surfacePlayerRatings = [:]
-		SURFACES.each { surfacePlayerRatings[it] = new ConcurrentHashMap<>()}
+		playerRatingsByType = [:]
+		RATING_TYPES.each { playerRatingsByType[it] = new ConcurrentHashMap<>()}
 		matchRatings = new LinkedBlockingDeque<>()
 		lastDate = null
 		saves = new AtomicInteger()
@@ -137,6 +144,10 @@ class EloRatings {
 					processMatch(match, false, false)
 					processMatch(match, true, false)
 					processMatch(match, false, true)
+					processMatch(match, false, false, 's')
+					processMatch(match, false, false, 'sg')
+					processMatch(match, false, false, 'rg')
+					processMatch(match, false, false, 'tb')
 					lastDate = date
 					if (++matches % MATCHES_PER_DOT == 0)
 						progressTick '.'
@@ -162,12 +173,16 @@ class EloRatings {
 		playerMatchFutures.clear()
 	}
 
-	def current(int count, Date date = new Date(), String surface = null) {
+	def current(int count, Date date = new Date(), String type = null) {
 		Date minDate = toDate(toLocalDate(date).minusYears(1))
 		def i = 0
-		getRatings(surface).values().findAll { it.matches >= MIN_MATCHES[surface] && it.lastDate >= minDate && it.getDaysSpan(date) <= MIN_MATCHES_PERIOD }
+		getRatings(type).values().findAll { it.matches >= minMatches() && it.lastDate >= minDate && it.getDaysSpan(date) <= MIN_MATCHES_PERIOD }
 			.sort(comparator)
 			.findAll { ++i <= count }
+	}
+
+	static def minMatches(String type) {
+		type ? (MIN_MATCHES[type] ?: DEFAULT_MIN_MATCHES) : DEFAULT_MIN_MATCHES
 	}
 
 	def peak(int count) {
@@ -177,27 +192,25 @@ class EloRatings {
 			.findAll { ++i <= count }
 	}
 
-	def processMatch(match, boolean forSurface, boolean forIndoor) {
+	def processMatch(match, boolean forSurface, boolean forIndoor, String forType = null) {
 		if (forSurface && !match.surface)
 			return
-		long matchId = match.match_id
 		int winnerId = match.winner_id
 		int loserId = match.loser_id
 		def playerId1 = min(winnerId, loserId)
 		def playerId2 = max(winnerId, loserId)
-		String level = match.level
-		String surface
+		String type = null
 		if (forSurface)
-			surface = match.surface
+			type = match.surface
 		else if (forIndoor)
-			surface = match.indoor ? 'I' : 'O'
-		String round = match.round
-		short bestOf = match.best_of
-		String outcome = match.outcome
+			type = match.indoor ? 'I' : 'O'
+		else if (forType)
+			type = forType
+		String loserType = loserType(type)
 		Date date = match.end_date
 		lockManager.withLock(playerId1, playerId2) {
-			def winnerRating = getRating(surface, winnerId, date)
-			def loserRating = getRating(surface, loserId, date)
+			def winnerRating = getRating(type, winnerId, date)
+			def loserRating = getRating(loserType, loserId, date)
 			boolean schedule = false
 			if (!(winnerRating && loserRating)) {
 				if (rankExecutor)
@@ -210,23 +223,16 @@ class EloRatings {
 			if (schedule) {
 				def future = CompletableFuture.allOf(playerMatchFutures.get(playerId1) ?: nullFuture, playerMatchFutures.get(playerId2) ?: nullFuture).thenRunAsync({
 					lockManager.withLock(playerId1, playerId2) {
-						winnerRating = getRating(surface, winnerId, date) ?: newEloRating(winnerId)
-						loserRating = getRating(surface, loserId, date) ?: newEloRating(loserId)
-						def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
-						if (forSurface || forIndoor)
-							deltaRating *= eloSurfaceFactors.surfaceKFactor(surface, date)
-						putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date, outcome)
+						winnerRating = getRating(type, winnerId, date) ?: newEloRating(winnerId)
+						loserRating = getRating(loserType, loserId, date) ?: newEloRating(loserId)
+						calculateAndPutNewRatings(winnerRating, loserRating, match, type, date, forSurface, forIndoor, forType)
 					}
 				}, rankExecutor)
 				playerMatchFutures.put(playerId1, future)
 				playerMatchFutures.put(playerId2, future)
 			}
-			else {
-				def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
-				if (forSurface || forIndoor)
-					deltaRating *= eloSurfaceFactors.surfaceKFactor(surface, date)
-				putNewRatings(matchId, surface, winnerId, loserId, winnerRating, loserRating, deltaRating, date, outcome)
-			}
+			else
+				calculateAndPutNewRatings(winnerRating, loserRating, match, type, date, forSurface, forIndoor, forType)
 		}
 	}
 
@@ -234,28 +240,53 @@ class EloRatings {
 		new EloRating(playerId, playerRank(playerId, lastDate))
 	}
 
-	private getRatings(String surface) {
-		surface == null ? playerRatings : surfacePlayerRatings[surface]
+	private getRatings(String type) {
+		type ? playerRatingsByType[type] : playerRatings
 	}
 
-	private getRating(String surface, int playerId, Date date) {
-		def rating = getRatings(surface).get(playerId)
+	private getRating(String type, int playerId, Date date) {
+		def rating = getRatings(type).get(playerId)
 		if (rating)
 			rating.adjustRating(date)
 		rating
 	}
 
-	private putNewRatings(long matchId, String surface, int winnerId, int loserId, EloRating winnerRating, EloRating loserRating, double deltaRating, Date date, String outcome) {
+	private String loserType(String type) {
+		switch (type) {
+			case 'sg': return 'rg'
+			case 'rg': return 'sg'
+			default: return type
+		}
+	}
+
+	private calculateAndPutNewRatings(EloRating winnerRating, EloRating loserRating, match, String type, Date date, boolean forSurface, boolean forIndoor, String forType) {
+		long matchId = match.match_id
+		String level = match.level
+		String round = match.round
+		short bestOf = forType ? (short)5 : match.best_of
+		String outcome = match.outcome
+		def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
+		if (forSurface || forIndoor)
+			deltaRating *= eloSurfaceFactors.surfaceKFactor(type, date)
+		else if (forType) {
+			switch (type) {
+				case 's': deltaRating *= 0.5 * ((match.w_sets ?: 0) - (match.l_sets ?: 0)); break
+				case 'sg': deltaRating *= 0.5 * ((match.w_sv_gms ?: 0) - (match.l_rt_gms ?: 0)); break
+				case 'rg': deltaRating *= 0.5 * ((match.w_rt_gms ?: 0) - (match.w_sv_gms ?: 0)); break
+				case 'tb': deltaRating *= 2 * ((match.w_tbs ?: 0) - (match.l_tbs ?: 0)); break
+			}
+		}
+
 		def winnerNextRating = winnerRating
 		def loserNextRating = loserRating
 		if (outcome != 'ABD') {
-			def ratings = getRatings(surface)
-			winnerNextRating = winnerRating.newRating(deltaRating, date, surface)
-			ratings.put(winnerId, winnerNextRating)
-			loserNextRating = loserRating.newRating(-deltaRating, date, surface)
-			ratings.put(loserId, loserNextRating)
+			def ratings = getRatings(type)
+			winnerNextRating = winnerRating.newRating(deltaRating, date, type)
+			ratings.put(winnerRating.playerId, winnerNextRating)
+			loserNextRating = loserRating.newRating(-deltaRating, date, type)
+			ratings.put(loserRating.playerId, loserNextRating)
 		}
-		if (saveExecutor && !surface && (!saveFromDate || lastDate >= saveFromDate))
+		if (saveExecutor && !type && (!saveFromDate || lastDate >= saveFromDate))
 			matchRatings.put new MatchEloRating(matchId: matchId, winnerRating: winnerRating.rating, winnerNextRating: winnerNextRating.rating, loserRating: loserRating.rating, loserNextRating: loserNextRating.rating)
 	}
 
@@ -327,9 +358,9 @@ class EloRatings {
 			rating = startRating(rank)
 		}
 
-		EloRating newRating(double delta, Date date, String surface) {
+		EloRating newRating(double delta, Date date, String type) {
 			def newRating = new EloRating(playerId: playerId, rating: rating + delta * kFunction(rating), matches: matches + 1, dates: new ArrayDeque<>(dates ?: []))
-			newRating.bestRating = bestRating(newRating, surface)
+			newRating.bestRating = bestRating(newRating, type)
 			newRating.addDate(date)
 			newRating
 		}
@@ -365,8 +396,8 @@ class EloRatings {
 			max(START_RATING, rating - (daysSinceLastMatch - 365) * 200 / 365)
 		}
 
-		def bestRating(EloRating newRating, String surface) {
-			if (matches >= MIN_MATCHES[surface])
+		def bestRating(EloRating newRating, String type) {
+			if (matches >= minMatches(type))
 				bestRating && bestRating >= newRating ? bestRating : newRating
 			else
 				null
@@ -450,9 +481,9 @@ class EloRatings {
 		if (saveExecutor && playerRatings && (!saveFromDate || lastDate >= saveFromDate)) {
 			def eloRatings = setRanks(current(Integer.MAX_VALUE, lastDate).collect { new EloRatingValue(it) })
 			def playerRatings = new LinkedHashMap<Integer, EloRatingValue>(eloRatings.collectEntries({[(it.playerId): it]}))
-			SURFACES.each { surface ->
-				def surfaceEloRatings = current(PLAYERS_TO_SAVE, lastDate, surface).collect { new EloRatingValue(it, surface) }
-				mergeRatings(playerRatings, setRanks(surfaceEloRatings, surface))
+			RATING_TYPES.each { type ->
+				def typeEloRatings = current(PLAYERS_TO_SAVE, lastDate, type).collect { new EloRatingValue(it, type) }
+				mergeRatings(playerRatings, setRanks(typeEloRatings, type))
 			}
 			def ratingsForSave = playerRatings.values().findAll { it.forSave }
 			def date = lastDate
@@ -471,10 +502,10 @@ class EloRatings {
 		}
 	}
 
-	private static setRanks(Collection<EloRatingValue> eloRatings, String surface = null) {
+	private static setRanks(Collection<EloRatingValue> eloRatings, String type = null) {
 		int rank = 0
 		for (def eloRating : eloRatings)
-			eloRating.ranks[surface] = ++rank
+			eloRating.ranks[type] = ++rank
 		eloRatings
 	}
 
@@ -504,6 +535,14 @@ class EloRatings {
 					params.outdoor_elo_rating = intRound ratings['O']
 					params.indoor_rank = ranks['I']
 					params.indoor_elo_rating = intRound ratings['I']
+					params.set_rank = ranks['s']
+					params.set_elo_rating = intRound ratings['s']
+					params.service_game_rank = ranks['sg']
+					params.service_game_elo_rating = intRound ratings['sg']
+					params.return_game_rank = ranks['rg']
+					params.return_game_elo_rating = intRound ratings['rg']
+					params.tie_break_rank = ranks['tb']
+					params.tie_break_elo_rating = intRound ratings['tb']
 					ps.addBatch(params)
 				}
 			}
@@ -545,9 +584,9 @@ class EloRatings {
 		Map<String, Integer> ranks = [:]
 		Map<String, Double> ratings = [:]
 
-		EloRatingValue(EloRating eloRating, String surface = null) {
+		EloRatingValue(EloRating eloRating, String type = null) {
 			playerId = eloRating.playerId
-			ratings[surface] = eloRating.rating
+			ratings[type] = eloRating.rating
 		}
 
 		def merge(EloRatingValue eloRating) {
