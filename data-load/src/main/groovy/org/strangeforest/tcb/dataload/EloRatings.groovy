@@ -251,7 +251,7 @@ class EloRatings {
 		rating
 	}
 
-	private String loserType(String type) {
+	private static String loserType(String type) {
 		switch (type) {
 			case 'sg': return 'rg'
 			case 'rg': return 'sg'
@@ -265,26 +265,46 @@ class EloRatings {
 		String round = match.round
 		short bestOf = forType ? (short)5 : match.best_of
 		String outcome = match.outcome
-		def deltaRating = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
-		if (forSurface || forIndoor)
-			deltaRating *= eloSurfaceFactors.surfaceKFactor(type, date)
+		def wDelta = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
+		def winnerDelta = wDelta
+		def loserDelta = -wDelta
+		if (forSurface || forIndoor) {
+			wDelta *= eloSurfaceFactors.surfaceKFactor(type, date)
+			winnerDelta = wDelta
+			loserDelta = -wDelta
+		}
 		else if (forType) {
+			def lDelta = deltaRating(loserRating.rating, winnerRating.rating, level, round, bestOf, outcome)
 			switch (type) {
-				case 's': deltaRating *= 0.5 * ((match.w_sets ?: 0) - (match.l_sets ?: 0)); break
-				case 'sg': deltaRating *= 0.5 * ((match.w_sv_gms ?: 0) - (match.l_rt_gms ?: 0)); break
-				case 'rg': deltaRating *= 0.5 * ((match.w_rt_gms ?: 0) - (match.w_sv_gms ?: 0)); break
-				case 'tb': deltaRating *= 2 * ((match.w_tbs ?: 0) - (match.l_tbs ?: 0)); break
+				case 's':
+					wDelta = 0.75 * (wDelta * (match.w_sets ?: 0) - lDelta * (match.l_sets ?: 0))
+					winnerDelta = wDelta
+					loserDelta = -wDelta
+					break
+				case 'sg':
+					winnerDelta = 1.0 * (wDelta * (match.w_sv_gms ?: 0) - lDelta * (match.l_rt_gms ?: 0))
+					loserDelta = 1.0 * (lDelta * (match.l_sv_gms ?: 0) - wDelta * (match.w_rt_gms ?: 0))
+					break
+				case 'rg':
+					winnerDelta = 1.0 * (wDelta * (match.w_rt_gms ?: 0) - lDelta * (match.l_sv_gms ?: 0))
+					loserDelta = 1.0 * (lDelta * (match.l_rt_gms ?: 0) - wDelta * (match.w_sv_gms ?: 0))
+					break
+				case 'tb':
+					wDelta = 2.5 * (wDelta * (match.w_tbs ?: 0) - lDelta * (match.l_tbs ?: 0))
+					winnerDelta = wDelta
+					loserDelta = -wDelta
+					break
 			}
 		}
 
 		def winnerNextRating = winnerRating
 		def loserNextRating = loserRating
 		if (outcome != 'ABD') {
-			def ratings = getRatings(type)
-			winnerNextRating = winnerRating.newRating(deltaRating, date, type)
-			ratings.put(winnerRating.playerId, winnerNextRating)
-			loserNextRating = loserRating.newRating(-deltaRating, date, type)
-			ratings.put(loserRating.playerId, loserNextRating)
+			winnerNextRating = winnerRating.newRating(winnerDelta, date, type)
+			getRatings(type).put(winnerRating.playerId, winnerNextRating)
+			String loserType = loserType(type)
+			loserNextRating = loserRating.newRating(loserDelta, date, loserType)
+			getRatings(loserType).put(loserRating.playerId, loserNextRating)
 		}
 		if (saveExecutor && !type && (!saveFromDate || lastDate >= saveFromDate))
 			matchRatings.put new MatchEloRating(matchId: matchId, winnerRating: winnerRating.rating, winnerNextRating: winnerNextRating.rating, loserRating: loserRating.rating, loserNextRating: loserNextRating.rating)
