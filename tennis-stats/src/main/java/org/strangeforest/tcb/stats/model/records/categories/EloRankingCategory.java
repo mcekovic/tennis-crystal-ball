@@ -11,7 +11,7 @@ public class EloRankingCategory extends RankingCategory {
 	static final String ELO_DIFF_CONDITION = "r1.rank_date >= DATE '1968-07-01'";
 
 	public EloRankingCategory(RecordDomain domain) {
-		super(RankType.ELO_RATING, suffix(domain.name, " ") + "Elo Ranking");
+		super(RankType.ELO_RANK, suffix(domain.name, " ") + "Elo Ranking");
 		registerRanking("Elo", domain, "elo_");
 		String ratingColumn = domain.columnPrefix + "elo_rating";
 		register(mostPoints(domain.id + "EloRating", "Highest " + suffix(domain.name, " ") + "Elo Rating", "player_best_elo_rating", "best_" + ratingColumn, "best_" + ratingColumn + "_date", "Elo Rating", getRankType(domain), N_A));
@@ -31,23 +31,23 @@ public class EloRankingCategory extends RankingCategory {
 			register(endOfSeasonPointsDifferenceBetweenNo1andNo2(
 				"EndOfSeasonEloRatingNo1No2Difference", "End of Season Elo Rating Difference Between No. 1 and No. 2", "player_year_end_elo_rank", "year_end_elo_rating", "year_end_rank", N_A,
 				"r1.year_end_elo_rating - r2.year_end_elo_rating", "r1.year_end_elo_rating", "r2.year_end_elo_rating", "value DESC",
-				SeasonRankingDiffRecordDetail.class, "Rating", "Rating Diff.", RankType.ELO_RATING, N_A
+				SeasonRankingDiffRecordDetail.class, "Rating", "Rating Diff.", RankType.ELO_RANK, N_A
 			));
 			register(endOfSeasonPointsDifferenceBetweenNo1andNo2(
 				"EndOfSeasonEloRatingNo1No2DifferencePct", "End of Season Elo Rating Pct. Difference Between No. 1 and No. 2", "player_year_end_elo_rank", "year_end_elo_rating", "year_end_rank", N_A,
 				"100.0 * (r1.year_end_elo_rating - r2.year_end_elo_rating) / r2.year_end_elo_rating", "r1.year_end_elo_rating", "r2.year_end_elo_rating", "value DESC",
-				SeasonRankingPctDiffRecordDetail.class, "Rating", "Rating Pct. Diff.", RankType.ELO_RATING, N_A
+				SeasonRankingPctDiffRecordDetail.class, "Rating", "Rating Pct. Diff.", RankType.ELO_RANK, N_A
 			));
 		}
 	}
 
 	static RankType getRankType(RecordDomain domain) {
 		switch (domain) {
-			case HARD: return RankType.HARD_ELO_RATING;
-			case CLAY: return RankType.CLAY_ELO_RATING;
-			case GRASS: return RankType.GRASS_ELO_RATING;
-			case CARPET: return RankType.CARPET_ELO_RATING;
-			default: return RankType.ELO_RATING;
+			case HARD: return RankType.HARD_ELO_RANK;
+			case CLAY: return RankType.CLAY_ELO_RANK;
+			case GRASS: return RankType.GRASS_ELO_RANK;
+			case CARPET: return RankType.CARPET_ELO_RANK;
+			default: return RankType.ELO_RANK;
 		}
 	}
 }

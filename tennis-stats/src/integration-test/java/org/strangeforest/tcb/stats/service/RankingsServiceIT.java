@@ -24,47 +24,46 @@ public class RankingsServiceIT {
 
 	@Test
 	public void rankingsTopN() {
-		LocalDate currentRankingDate = rankingsService.getCurrentRankingDate(POINTS);
+		LocalDate currentRankingDate = rankingsService.getCurrentRankingDate(RANK);
 
-		List<PlayerRanking> playerRankings = rankingsService.getRankingsTopN(POINTS, currentRankingDate, 10);
+		List<PlayerRanking> playerRankings = rankingsService.getRankingsTopN(RANK, currentRankingDate, 10);
 
 		assertThat(playerRankings).hasSize(10);
 	}
 
-
 	@Test
 	public void rankingsTable() {
-		rankingsTableTest(POINTS);
+		rankingsTableTest(RANK);
 	}
 
 	@Test
 	public void eloRankingsTable() {
-		rankingsTableTest(ELO_RATING);
+		rankingsTableTest(ELO_RANK);
 	}
 
 	@Test
 	public void hardEloRankingsTable() {
-		rankingsTableTest(HARD_ELO_RATING);
+		rankingsTableTest(HARD_ELO_RANK);
 	}
 
 	@Test
 	public void clayEloRankingsTable() {
-		rankingsTableTest(CLAY_ELO_RATING);
+		rankingsTableTest(CLAY_ELO_RANK);
 	}
 
 	@Test
 	public void grassEloRankingsTable() {
-		rankingsTableTest(GRASS_ELO_RATING);
+		rankingsTableTest(GRASS_ELO_RANK);
 	}
 
 	@Test
 	public void outdoorRankingsTable() {
-		rankingsTableTest(OUTDOOR_ELO_RATING);
+		rankingsTableTest(OUTDOOR_ELO_RANK);
 	}
 
 	@Test
 	public void indoorRankingsTable() {
-		rankingsTableTest(INDOOR_ELO_RATING);
+		rankingsTableTest(INDOOR_ELO_RANK);
 	}
 
 	private void rankingsTableTest(RankType rankType) {
@@ -122,42 +121,42 @@ public class RankingsServiceIT {
 
 	@Test
 	public void rankingsTimeline() {
-		rankingsTimelineTest(POINTS);
+		rankingsTimelineTest(RANK);
 	}
 
 	@Test
 	public void eloRankingsTimeline() {
-		rankingsTimelineTest(ELO_RATING);
+		rankingsTimelineTest(ELO_RANK);
 	}
 
 	@Test
 	public void hardEloRankingsTimeline() {
-		rankingsTimelineTest(HARD_ELO_RATING);
+		rankingsTimelineTest(HARD_ELO_RANK);
 	}
 
 	@Test
 	public void clayEloRankingsTimeline() {
-		rankingsTimelineTest(CLAY_ELO_RATING);
+		rankingsTimelineTest(CLAY_ELO_RANK);
 	}
 
 	@Test
 	public void grassEloRankingsTimeline() {
-		rankingsTimelineTest(GRASS_ELO_RATING);
+		rankingsTimelineTest(GRASS_ELO_RANK);
 	}
 
 	@Test
 	public void carpetEloRankingsTimeline() {
-		rankingsTimelineTest(CARPET_ELO_RATING);
+		rankingsTimelineTest(CARPET_ELO_RANK);
 	}
 
 	@Test
 	public void outdoorEloRankingsTimeline() {
-		rankingsTimelineTest(OUTDOOR_ELO_RATING);
+		rankingsTimelineTest(OUTDOOR_ELO_RANK);
 	}
 
 	@Test
 	public void indoorEloRankingsTimeline() {
-		rankingsTimelineTest(INDOOR_ELO_RATING);
+		rankingsTimelineTest(INDOOR_ELO_RANK);
 	}
 
 	@Test
@@ -189,7 +188,7 @@ public class RankingsServiceIT {
 		TopRankingsTimeline rankingsTimeline = rankingsService.getTopRankingsTimeline(points);
 
 		assertThat(rankingsTimeline.getTopRanks()).isEqualTo(5);
-		assertThat(rankingsTimeline.getSeasons().size()).isGreaterThanOrEqualTo(40);
+		assertThat(rankingsTimeline.getSeasons().size()).isGreaterThanOrEqualTo(35);
 	}
 
 

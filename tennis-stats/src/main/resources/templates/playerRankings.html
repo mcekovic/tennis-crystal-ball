@@ -6,7 +6,7 @@
 <!--/*@thymesVar id="toDate" type="java.lang.String"*/-->
 <!--/*@thymesVar id="highlights" type="org.strangeforest.tcb.stats.model.RankingHighlights"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
-<!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.core.RankType[]"*/-->
+<!--/*@thymesVar id="rankCategories" type="org.strangeforest.tcb.stats.model.core.RankCategory[]"*/-->
 <script th:src="@{/js/tennis-chart.js}"></script>
 <script type="text/javascript">
 	var rankChartData, bySeason, rankPointCount, isRank, logScale;
@@ -101,7 +101,9 @@
 		<div class="input-group">
 			<label for="rankType" class="input-group-addon">Rank type:</label>
 			<select id="rankType" class="form-control" onchange="onRankTypeChange()">
-				<option th:each="aRankType : ${rankTypes}" th:value="${aRankType}" th:class="${aRankType.surface == null ? _ : 'bg-surface-' + aRankType.surface.code}" value="RANK" th:text="${aRankType.text}" th:selected="${aRankType.name() == rankType}">ATP Ranking</option>
+				<optgroup th:each="rankCategory : ${rankCategories}" th:label="${rankCategory.text}" label="ATP">
+					<option th:each="aRankType : ${rankCategory.rankTypes}" th:value="${aRankType}" th:class="${aRankType.surface == null ? _ : 'bg-surface-' + aRankType.surface.code}" value="RANK" th:text="${aRankType.text}" th:selected="${aRankType.name() == rankType}">ATP Ranking</option>
+				</optgroup>
 			</select>
 		</div>
 	</div>
@@ -341,6 +343,38 @@
 			<th:block th:with="elo=${highlights.indoorElo}">
 			<tr th:unless="${elo.empty}">
 				<th>Indoor</th>
+				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+			</tr>
+			</th:block>
+			<th:block th:with="elo=${highlights.setElo}">
+			<tr th:unless="${elo.empty}">
+				<th>Set</th>
+				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+			</tr>
+			</th:block>
+			<th:block th:with="elo=${highlights.serviceGameElo}">
+			<tr th:unless="${elo.empty}">
+				<th>Service Game</th>
+				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+			</tr>
+			</th:block>
+			<th:block th:with="elo=${highlights.returnGameElo}">
+			<tr th:unless="${elo.empty}">
+				<th>Return Game</th>
+				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+			</tr>
+			</th:block>
+			<th:block th:with="elo=${highlights.tieBreakElo}">
+			<tr th:unless="${elo.empty}">
+				<th>Tie Break</th>
 				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
 				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
 				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>

@@ -96,7 +96,11 @@ public class RankingsService {
 		"  ce.current_grass_elo_rank, ce.current_grass_elo_rating, be.best_grass_elo_rank, be.best_grass_elo_rank_date, bet.best_grass_elo_rating, bet.best_grass_elo_rating_date,\n" +
 		"  ce.current_carpet_elo_rank, ce.current_carpet_elo_rating, be.best_carpet_elo_rank, be.best_carpet_elo_rank_date, bet.best_carpet_elo_rating, bet.best_carpet_elo_rating_date,\n" +
 		"  ce.current_outdoor_elo_rank, ce.current_outdoor_elo_rating, be.best_outdoor_elo_rank, be.best_outdoor_elo_rank_date, bet.best_outdoor_elo_rating, bet.best_outdoor_elo_rating_date,\n" +
-		"  ce.current_indoor_elo_rank, ce.current_indoor_elo_rating, be.best_indoor_elo_rank, be.best_indoor_elo_rank_date, bet.best_indoor_elo_rating, bet.best_indoor_elo_rating_date\n" +
+		"  ce.current_indoor_elo_rank, ce.current_indoor_elo_rating, be.best_indoor_elo_rank, be.best_indoor_elo_rank_date, bet.best_indoor_elo_rating, bet.best_indoor_elo_rating_date,\n" +
+		"  ce.current_set_elo_rank, ce.current_set_elo_rating, be.best_set_elo_rank, be.best_set_elo_rank_date, bet.best_set_elo_rating, bet.best_set_elo_rating_date,\n" +
+		"  ce.current_service_game_elo_rank, ce.current_service_game_elo_rating, be.best_service_game_elo_rank, be.best_service_game_elo_rank_date, bet.best_service_game_elo_rating, bet.best_service_game_elo_rating_date,\n" +
+		"  ce.current_return_game_elo_rank, ce.current_return_game_elo_rating, be.best_return_game_elo_rank, be.best_return_game_elo_rank_date, bet.best_return_game_elo_rating, bet.best_return_game_elo_rating_date,\n" +
+		"  ce.current_tie_break_elo_rank, ce.current_tie_break_elo_rating, be.best_tie_break_elo_rank, be.best_tie_break_elo_rank_date, bet.best_tie_break_elo_rating, bet.best_tie_break_elo_rating_date\n" +
 		"FROM player_v p\n" +
 		"LEFT JOIN player_current_elo_rank ce USING (player_id)\n" +
 		"LEFT JOIN player_best_elo_rank be USING (player_id)\n" +
@@ -195,7 +199,7 @@ public class RankingsService {
 
 	@Cacheable("RankingsTable.TopN")
 	public List<PlayerRanking> getRankingsTopN(RankType rankType, LocalDate date, int playerCount) {
-		checkRankType(rankType);
+		checkRankingTableRankType(rankType);
 		return jdbcTemplate.query(
 			format(RANKING_TOP_N_QUERY, rankColumn(rankType), pointsColumn(rankType), rankingTable(rankType)),
 			params("date", date).addValue("playerCount", playerCount),
@@ -212,7 +216,7 @@ public class RankingsService {
 
 	@Cacheable("RankingsTable.Table")
 	public BootgridTable<PlayerDiffRankingsRow> getRankingsTable(RankType rankType, LocalDate date, PlayerListFilter filter, String orderBy, int pageSize, int currentPage) {
-		checkRankType(rankType);
+		checkRankingTableRankType(rankType);
 
 		BootgridTable<PlayerDiffRankingsRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
@@ -249,12 +253,17 @@ public class RankingsService {
 		return table;
 	}
 
+	private static void checkRankingTableRankType(RankType rankType) {
+		if (rankType.points)
+			throw new IllegalArgumentException("Unsupported rankings table RankType: " + rankType);
+	}
+
 	@Cacheable("PeakEloRatingsTable.Table")
 	public BootgridTable<PlayerPeakEloRankingsRow> getPeakEloRatingsTable(RankType rankType, PlayerListFilter filter, int pageSize, int currentPage, int maxPlayers) {
-		checkRankType(rankType);
-		if (rankType.category != ELO)
-			throw new IllegalArgumentException("Peak ranking is available only for Elo ranking.");
+		if (rankType.category != ELO && !rankType.points)
+			throw new IllegalArgumentException("Peak Elo Ratings is not supported for rankType: " + rankType);
 
+		rankType = rankType.rankType;
 		BootgridTable<PlayerPeakEloRankingsRow> table = new BootgridTable<>(currentPage);
 		AtomicInteger players = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
@@ -279,11 +288,6 @@ public class RankingsService {
 		);
 		table.setTotal(offset + players.get());
 		return table;
-	}
-
-	private static void checkRankType(RankType rankType) {
-		if (rankType.points)
-			throw new IllegalArgumentException("Unsupported rankings table RankType: " + rankType);
 	}
 
 	private MapSqlParameterSource getTableParams(PlayerListFilter filter, LocalDate date, int offset) {
@@ -344,10 +348,10 @@ public class RankingsService {
 			case CARPET_ELO_RANK: return "best_carpet_elo_rank";
 			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rank";
 			case INDOOR_ELO_RANK: return "best_indoor_elo_rank";
-			case SET_ELO_RANK: return "best_elo_rank";
-			case SERVICE_GAME_ELO_RANK: return "best_elo_rank";
-			case RETURN_GAME_ELO_RANK: return "best_elo_rank";
-			case TIE_BREAK_ELO_RANK: return "best_elo_rank";
+			case SET_ELO_RANK: return "best_set_elo_rank";
+			case SERVICE_GAME_ELO_RANK: return "best_service_game_elo_rank";
+			case RETURN_GAME_ELO_RANK: return "best_return_game_elo_rank";
+			case TIE_BREAK_ELO_RANK: return "best_tie_break_elo_rank";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -362,10 +366,10 @@ public class RankingsService {
 			case CARPET_ELO_RANK: return "best_carpet_elo_rank_date";
 			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rank_date";
 			case INDOOR_ELO_RANK: return "best_indoor_elo_rank_date";
-			case SET_ELO_RANK: return "best_elo_rank_date";
-			case SERVICE_GAME_ELO_RANK: return "best_elo_rank_date";
-			case RETURN_GAME_ELO_RANK: return "best_elo_rank_date";
-			case TIE_BREAK_ELO_RANK: return "best_elo_rank_date";
+			case SET_ELO_RANK: return "best_set_elo_rank_date";
+			case SERVICE_GAME_ELO_RANK: return "best_service_game_elo_rank_date";
+			case RETURN_GAME_ELO_RANK: return "best_return_game_elo_rank_date";
+			case TIE_BREAK_ELO_RANK: return "best_tie_break_elo_rank_date";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -380,10 +384,10 @@ public class RankingsService {
 			case CARPET_ELO_RANK: return "best_carpet_elo_rating";
 			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rating";
 			case INDOOR_ELO_RANK: return "best_indoor_elo_rating";
-			case SET_ELO_RANK: return "best_elo_rating";
-			case SERVICE_GAME_ELO_RANK: return "best_elo_rating";
-			case RETURN_GAME_ELO_RANK: return "best_elo_rating";
-			case TIE_BREAK_ELO_RANK: return "best_elo_rating";
+			case SET_ELO_RANK: return "best_set_elo_rating";
+			case SERVICE_GAME_ELO_RANK: return "best_service_game_elo_rating";
+			case RETURN_GAME_ELO_RANK: return "best_return_game_elo_rating";
+			case TIE_BREAK_ELO_RANK: return "best_tie_break_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -397,10 +401,10 @@ public class RankingsService {
 			case CARPET_ELO_RANK: return "best_carpet_elo_rating_date";
 			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rating_date";
 			case INDOOR_ELO_RANK: return "best_indoor_elo_rating_date";
-			case SET_ELO_RANK: return "best_elo_rating_date";
-			case SERVICE_GAME_ELO_RANK: return "best_elo_rating_date";
-			case RETURN_GAME_ELO_RANK: return "best_elo_rating_date";
-			case TIE_BREAK_ELO_RANK: return "best_elo_rating_date";
+			case SET_ELO_RANK: return "best_set_elo_rating_date";
+			case SERVICE_GAME_ELO_RANK: return "best_service_game_elo_rating_date";
+			case RETURN_GAME_ELO_RANK: return "best_return_game_elo_rating_date";
+			case TIE_BREAK_ELO_RANK: return "best_tie_break_elo_rating_date";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -479,6 +483,10 @@ public class RankingsService {
 			highlights.setCarpetElo(mapEloHighlights(rs, "carpet_"));
 			highlights.setOutdoorElo(mapEloHighlights(rs, "outdoor_"));
 			highlights.setIndoorElo(mapEloHighlights(rs, "indoor_"));
+			highlights.setSetElo(mapEloHighlights(rs, "set_"));
+			highlights.setServiceGameElo(mapEloHighlights(rs, "service_game_"));
+			highlights.setReturnGameElo(mapEloHighlights(rs, "return_game_"));
+			highlights.setTieBreakElo(mapEloHighlights(rs, "tie_break_"));
 		});
 
 		jdbcTemplate.query(PLAYER_YEAR_END_RANK_QUERY, params, rs -> {
@@ -554,6 +562,10 @@ public class RankingsService {
 			case CARPET_ELO_RANK: return "carpet_year_end_rank";
 			case OUTDOOR_ELO_RANK: return "outdoor_year_end_rank";
 			case INDOOR_ELO_RANK: return "indoor_year_end_rank";
+			case SET_ELO_RANK: return "set_year_end_rank";
+			case SERVICE_GAME_ELO_RANK: return "service_game_year_end_rank";
+			case RETURN_GAME_ELO_RANK: return "return_game_year_end_rank";
+			case TIE_BREAK_ELO_RANK: return "tie_break_year_end_rank";
 			case GOAT_POINTS:
 			case HARD_GOAT_POINTS:
 			case CLAY_GOAT_POINTS:
@@ -572,7 +584,11 @@ public class RankingsService {
 			case GRASS_ELO_RANK:
 			case CARPET_ELO_RANK:
 			case OUTDOOR_ELO_RANK:
-			case INDOOR_ELO_RANK: return "player_year_end_elo_rank";
+			case INDOOR_ELO_RANK:
+			case SET_ELO_RANK:
+			case SERVICE_GAME_ELO_RANK:
+			case RETURN_GAME_ELO_RANK:
+			case TIE_BREAK_ELO_RANK: return "player_year_end_elo_rank";
 			case GOAT_POINTS:
 			case HARD_GOAT_POINTS:
 			case CLAY_GOAT_POINTS:

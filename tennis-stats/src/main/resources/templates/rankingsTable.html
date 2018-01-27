@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.core.RankType[]"*/-->
+<!--/*@thymesVar id="rankCategories" type="org.strangeforest.tcb.stats.model.core.RankCategory[]"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="tableDate" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.core.RankType"*/-->
@@ -150,7 +150,9 @@
 	<h3><i class="fa fa-list-ol"></i> Rankings Table <span id="tableDate" th:text="${#temporals.format(tableDate, 'dd-MM-yyyy')}">01-11-2015</span></h3>
 	<div id="rankTypeDiv" class="btn-group pull-left no-margin-left margin-right">
 		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
-			<option th:each="aRankType : ${rankTypes}" th:unless="${aRankType.points}" th:value="${aRankType}" value="RANK" th:selected="${aRankType == rankType}" th:class="${aRankType.surface != null ? 'bg-surface-' + aRankType.surface.code : _}" th:text="${aRankType.text}">ATP Ranking</option>
+			<optgroup th:each="rankCategory : ${rankCategories}" th:if="${rankCategory.name() != 'GOAT'}" th:label="${rankCategory.text}" label="ATP">
+				<option th:each="aRankType : ${rankCategory.rankTypes}" th:unless="${aRankType.points}" th:value="${aRankType}" value="RANK" th:selected="${aRankType == rankType}" th:class="${aRankType.surface != null ? 'bg-surface-' + aRankType.surface.code : _}" th:text="${aRankType.text}">ATP Ranking</option>
+			</optgroup>
 		</select>
 	</div>
 	<div id="seasonDiv" class="btn-group pull-left margin-right">

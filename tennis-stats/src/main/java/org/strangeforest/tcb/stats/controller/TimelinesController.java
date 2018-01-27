@@ -93,14 +93,14 @@ public class TimelinesController extends PageController {
 
 	@GetMapping("/topRankingsTimeline")
 	public ModelAndView topRankingsTimeline(
-		@RequestParam(name = "rankType", defaultValue = "POINTS") RankType rankType
+		@RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType
 	) {
 		TopRankingsTimeline timeline = rankingsService.getTopRankingsTimeline(rankType);
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("timeline", timeline);
+		modelMap.addAttribute("rankCategories", RankCategory.values());
 		modelMap.addAttribute("rankType", rankType);
-		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("timeline", timeline);
 		return new ModelAndView("topRankingsTimeline", modelMap);
 	}
 

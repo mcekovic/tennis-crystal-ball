@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.TopRankingsTimeline"*/-->
+<!--/*@thymesVar id="rankCategories" type="org.strangeforest.tcb.stats.model.core.RankCategory[]"*/-->
 <!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.core.RankType"*/-->
-<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.TopRankingsTimeline"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
 	<title>Top Rankings Timeline</title>
 	<script type="text/javascript">
@@ -25,13 +25,9 @@
 		<div class="col-md-4 input-group">
 			<label for="rankType" class="input-group-addon">Ranking type:</label>
 			<select id="rankType" class="form-control" onchange="onRankTypeChange()">
-				<option value="POINTS" th:selected="${rankTypeName == 'POINTS'}">ATP Ranking</option>
-				<option value="ELO_RATING" th:selected="${rankTypeName == 'ELO_RATING'}">Elo Ranking</option>
-				<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="|${surface.text} Elo Ranking|" th:selected="${rankType != null && rankTypeName == (surface + '_ELO_RATING')}">Hard Elo Ranking</option>
-				<option value="OUTDOOR_ELO_RATING" th:selected="${rankTypeName == 'OUTDOOR_ELO_RATING'}">Outdoor Elo Ranking</option>
-				<option value="INDOOR_ELO_RATING" th:selected="${rankTypeName == 'INDOOR_ELO_RATING'}">Indoor Elo Ranking</option>
-				<option value="GOAT_POINTS" th:selected="${rankTypeName == 'GOAT_POINTS'}">GOAT Points Ranking</option>
-				<option th:each="surface : ${surfaces}" th:value="|${surface}_GOAT_POINTS|" th:class="|bg-surface-${surface.code}|" value="HARD_GOAT_POINTS" class="bg-surface-H" th:text="|${surface.text} GOAT Points Ranking|" th:selected="${rankType != null && rankTypeName == (surface + '_GOAT_POINTS')}">Hard GOAT Points Ranking</option>
+				<optgroup th:each="rankCategory : ${rankCategories}" th:label="${rankCategory.text}" label="ATP" th:with="isGOAT=${rankCategory.name() == 'GOAT'}">
+					<option th:each="aRankType : ${rankCategory.rankTypes}" th:if="${!aRankType.points || isGOAT}" th:value="${aRankType}" value="RANK" th:selected="${aRankType == rankType}" th:class="${aRankType.surface != null ? 'bg-surface-' + aRankType.surface.code : _}" th:text="${aRankType.text + (isGOAT ? ' Ranking' : '')}">ATP Ranking</option>
+				</optgroup>
 			</select>
 		</div>
 	</row>

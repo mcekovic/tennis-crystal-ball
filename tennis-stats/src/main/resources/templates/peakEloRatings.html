@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.core.RankType[]"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
 	<title>Peak Elo Ratings</title>
 	<script type="text/javascript">
@@ -75,10 +75,7 @@
 	<h3 id="rankingsTable-title" class="grid-title"><i class="fa fa-tachometer"></i> Peak Elo Ratings</h3>
 	<div id="rankTypeDiv" class="btn-group margin-right">
 		<select id="rankType" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select overall or Elo rating by surface">
-			<option value="ELO_RATING">Overall</option>
-			<option th:each="surface : ${surfaces}" th:value="|${surface}_ELO_RATING|" th:class="|bg-surface-${surface.code}|" value="HARD_ELO_RATING" class="bg-surface-H" th:text="${surface.text}">Hard</option>
-			<option value="OUTDOOR_ELO_RATING">Outdoor</option>
-			<option value="INDOOR_ELO_RATING">Indoor</option>
+			<option th:each="rankType : ${rankTypes}" th:if="${rankType.points}" th:value="${rankType}" value="ELO_RATING" th:class="${rankType.surface != null ? 'bg-surface-' + rankType.surface.code : _}" th:text="${rankType.shortText}">Overall</option>
 		</select>
 	</div>
 	<div id="activeDiv" class="btn-group margin-right">

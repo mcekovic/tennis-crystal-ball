@@ -277,20 +277,20 @@ class EloRatings {
 			def lDelta = deltaRating(loserRating.rating, winnerRating.rating, level, round, bestOf, outcome)
 			switch (type) {
 				case 's':
-					wDelta = 0.75 * (wDelta * (match.w_sets ?: 0) - lDelta * (match.l_sets ?: 0))
+					wDelta = 0.5 * (wDelta * (match.w_sets ?: 0) - lDelta * (match.l_sets ?: 0))
 					winnerDelta = wDelta
 					loserDelta = -wDelta
 					break
 				case 'sg':
-					winnerDelta = 1.0 * (wDelta * (match.w_sv_gms ?: 0) - lDelta * (match.l_rt_gms ?: 0))
-					loserDelta = 1.0 * (lDelta * (match.l_sv_gms ?: 0) - wDelta * (match.w_rt_gms ?: 0))
+					winnerDelta = 0.1 * (wDelta * (match.w_sv_gms ?: 0) - lDelta * (match.l_rt_gms ?: 0))
+					loserDelta = 0.1 * (lDelta * (match.l_sv_gms ?: 0) - wDelta * (match.w_rt_gms ?: 0))
 					break
 				case 'rg':
-					winnerDelta = 1.0 * (wDelta * (match.w_rt_gms ?: 0) - lDelta * (match.l_sv_gms ?: 0))
-					loserDelta = 1.0 * (lDelta * (match.l_rt_gms ?: 0) - wDelta * (match.w_sv_gms ?: 0))
+					winnerDelta = 0.1 * (wDelta * (match.w_rt_gms ?: 0) - lDelta * (match.l_sv_gms ?: 0))
+					loserDelta = 0.1 * (lDelta * (match.l_rt_gms ?: 0) - wDelta * (match.w_sv_gms ?: 0))
 					break
 				case 'tb':
-					wDelta = 2.5 * (wDelta * (match.w_tbs ?: 0) - lDelta * (match.l_tbs ?: 0))
+					wDelta = 2.0 * (wDelta * (match.w_tbs ?: 0) - lDelta * (match.l_tbs ?: 0))
 					winnerDelta = wDelta
 					loserDelta = -wDelta
 					break

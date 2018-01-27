@@ -86,8 +86,8 @@ public class SeasonsController extends PageController {
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("season", season);
-		modelMap.addAttribute("surfaces", Surface.values());
-		modelMap.addAttribute("tableDate", rankingsService.getRankingsDate(RankType.POINTS, season, null));
+		modelMap.addAttribute("rankCategories", RankCategory.values());
+		modelMap.addAttribute("tableDate", rankingsService.getRankingsDate(RankType.RANK, season, null));
 		return new ModelAndView("seasonRankings", modelMap);
 	}
 

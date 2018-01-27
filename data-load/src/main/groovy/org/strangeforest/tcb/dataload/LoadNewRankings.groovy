@@ -18,7 +18,7 @@ static loadRankings(SqlPool sqlPool) {
 	sqlPool.withSql {sql ->
 		def atpRankingsLoader = new ATPWorldTourRankingsLoader(sql)
 		def rankingService = new RankingsService(new NamedParameterJdbcTemplate(SqlPool.dataSource()))
-		def lastDate = rankingService.getCurrentRankingDate(RankType.POINTS)
+		def lastDate = rankingService.getCurrentRankingDate(RankType.RANK)
 		def currentDate = LocalDate.now().with(previousOrSame(MONDAY))
 		for (def date = lastDate.with(next(MONDAY)); date <= currentDate; date = date.with(next(MONDAY))) {
 			def formattedDate = date.format(ofPattern("yyyy-MM-dd"))

@@ -31,7 +31,7 @@ public class RankingsController extends PageController {
 		if (date != null)
 			season = date.getYear();
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("rankTypes", RankType.values());
+		modelMap.addAttribute("rankCategories", RankCategory.values());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
 		modelMap.addAttribute("tableDate", rankingsService.getRankingsDate(rankType, season, date));
 		modelMap.addAttribute("rankType", rankType);
@@ -45,7 +45,7 @@ public class RankingsController extends PageController {
 	@GetMapping("/peakEloRatings")
 	public ModelAndView peakEloRatings() {
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("rankTypes", RankCategory.ELO.getRankTypes());
 		modelMap.addAttribute("peakElo", TRUE);
 		return new ModelAndView("peakEloRatings", modelMap);
 	}
@@ -85,7 +85,7 @@ public class RankingsController extends PageController {
 		modelMap.addAttribute("byAge", byAge);
 		modelMap.addAttribute("playerQuickPicks", playerService.getPlayerQuickPicks());
 		modelMap.addAttribute("seasons", dataService.getSeasons());
-		modelMap.addAttribute("rankTypes", RankType.values());
+		modelMap.addAttribute("rankCategories", RankCategory.values());
 		return new ModelAndView("rankingsChart", modelMap);
 	}
 }

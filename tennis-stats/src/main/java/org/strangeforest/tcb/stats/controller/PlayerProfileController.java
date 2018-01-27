@@ -317,7 +317,7 @@ public class PlayerProfileController extends PageController {
 		}
 		modelMap.addAttribute("highlights", rankingHighlights);
 		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("rankTypes", RankType.values());
+		modelMap.addAttribute("rankCategories", RankCategory.values());
 		return new ModelAndView("playerRankings", modelMap);
 	}
 

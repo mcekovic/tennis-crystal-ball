@@ -244,6 +244,14 @@ public class RankingChartService {
 			case OUTDOOR_ELO_RATING: return "r.outdoor_elo_rating";
 			case INDOOR_ELO_RANK: return "r.indoor_rank";
 			case INDOOR_ELO_RATING: return "r.indoor_elo_rating";
+			case SET_ELO_RANK: return "r.set_rank";
+			case SET_ELO_RATING: return "r.set_elo_rating";
+			case SERVICE_GAME_ELO_RANK: return "r.service_game_rank";
+			case SERVICE_GAME_ELO_RATING: return "r.service_game_elo_rating";
+			case RETURN_GAME_ELO_RANK: return "r.return_game_rank";
+			case RETURN_GAME_ELO_RATING: return "r.return_game_elo_rating";
+			case TIE_BREAK_ELO_RANK: return "r.tie_break_rank";
+			case TIE_BREAK_ELO_RATING: return "r.tie_break_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
@@ -266,6 +274,14 @@ public class RankingChartService {
 			case OUTDOOR_ELO_RATING: return "r.outdoor_best_elo_rating";
 			case INDOOR_ELO_RANK: return "r.indoor_year_end_rank";
 			case INDOOR_ELO_RATING: return "r.indoor_best_elo_rating";
+			case SET_ELO_RANK: return "r.set_year_end_rank";
+			case SET_ELO_RATING: return "r.set_best_elo_rating";
+			case SERVICE_GAME_ELO_RANK: return "r.service_game_year_end_rank";
+			case SERVICE_GAME_ELO_RATING: return "r.service_game_best_elo_rating";
+			case RETURN_GAME_ELO_RANK: return "r.return_game_year_end_rank";
+			case RETURN_GAME_ELO_RATING: return "r.return_game_best_elo_rating";
+			case TIE_BREAK_ELO_RANK: return "r.tie_break_year_end_rank";
+			case TIE_BREAK_ELO_RATING: return "r.tie_break_best_elo_rating";
 			default: throw unknownEnum(rankType);
 		}
 	}
