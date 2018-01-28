@@ -74,7 +74,7 @@
 	<header th:include="fragments/header :: title"></header>
 	<h3 id="rankingsTable-title" class="grid-title"><i class="fa fa-tachometer"></i> Peak Elo Ratings</h3>
 	<div id="rankTypeDiv" class="btn-group margin-right">
-		<select id="rankType" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select overall or Elo rating by surface">
+		<select id="rankType" class="form-control" onchange="reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select Elo rating type">
 			<option th:each="rankType : ${rankTypes}" th:if="${rankType.points}" th:value="${rankType}" value="ELO_RATING" th:class="${rankType.surface != null ? 'bg-surface-' + rankType.surface.code : _}" th:text="${rankType.shortText}">Overall</option>
 		</select>
 	</div>
