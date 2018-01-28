@@ -2,7 +2,7 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.PlayerTimeline"*/-->
-<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="rankTypes" type="org.strangeforest.tcb.stats.model.core.RankType[]"*/-->
 <script type="text/javascript">
 	$(function() {
 		// Tournaments
@@ -62,8 +62,8 @@
 	function reloadEloRankingTimeline() {
 		var $body = $("#eloRankingBody");
 		var url = "/playerTimelineEloRanking?playerId=[(${playerId})]&seasons=[[${#strings.listJoin(timeline.seasons, ',')}]]";
-		var surface = $("#timelineEloRankingSurface").val();
-		if (surface) url += "&surface=" + surface;
+		var rankType = $("#timelineEloRankingType").val();
+		if (rankType) url += "&rankType=" + rankType;
 		$($body).load(url, function () {
 			var rawData = $("#timelineEloRankingAt:hidden").length > 0;
 			$body.find(rawData ? ".pct-data" : ".raw-data").hide();
@@ -192,11 +192,8 @@
 	<tr class="bg-primary">
 		<th>
 			<button id="timelineEloRanking" class="btn btn-info btn-xs" data-toggle="collapse" data-target="#eloRankingBody" title="Toggle seasons Elo ranking"><i class="fa fa-tasks fa-b"></i>&nbsp;&nbsp;Elo Ranking&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
-			<select id="timelineEloRankingSurface" class="form-control btn-stats" style="display: none; width: 90px; height: 24px; padding: 2px 5px" onchange="reloadEloRankingTimeline()" data-toggle="tooltip" data-placement="top" title="Select overall or Elo ranking by surface">
-				<option value="">Overall</option>
-				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}">Hard</option>
-				<option value="O">Outdoor</option>
-				<option value="I">Indoor</option>
+			<select id="timelineEloRankingType" class="form-control btn-stats" style="display: none; width: 100px; height: 24px; padding: 2px 5px" onchange="reloadEloRankingTimeline()" data-toggle="tooltip" data-placement="top" title="Select Elo ranking type">
+				<option th:each="rankType : ${rankTypes}" th:unless="${rankType.points}" th:value="${rankType}" value="ELO_RATING" th:class="${rankType.surface != null ? 'bg-surface-' + rankType.surface.code : _}" th:text="${rankType.pointsType.shortText}">Overall</option>
 			</select>
 			<div class="btn-stats" style="display: none">
 				<button id="timelineEloRankingAt" class="pct-data btn btn-info btn-xs" onclick="toggleStatsData('#eloRankingHead, #eloRankingBody')" title="Show Elo ranking at position"><i class="fa fa-at"></i>&nbsp;&nbsp;At Position</button>

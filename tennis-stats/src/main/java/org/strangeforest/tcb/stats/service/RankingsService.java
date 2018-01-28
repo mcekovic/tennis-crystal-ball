@@ -134,7 +134,7 @@ public class RankingsService {
 		"WINDOW p AS (PARTITION BY player_id ORDER BY rank_date)";
 
 	private static final String PLAYER_ELO_RANKING_TIMELINE_QUERY = //language=SQL
-		"SELECT extract(YEAR FROM rank_date)::INTEGER AS season, %1$srank AS rank, weeks(rank_date, lead(rank_date) OVER (ORDER BY rank_date)) AS weeks,\n" +
+		"SELECT extract(YEAR FROM rank_date)::INTEGER AS season, %1$s AS rank, weeks(rank_date, lead(rank_date) OVER (ORDER BY rank_date)) AS weeks,\n" +
 		"  season_weeks(rank_date, lead(rank_date) OVER p) AS season_weeks, next_season_weeks(rank_date, lead(rank_date) OVER p) AS next_season_weeks\n" +
 		"FROM player_elo_ranking\n" +
 		"WHERE player_id = :playerId\n" +
@@ -438,26 +438,16 @@ public class RankingsService {
 		return timeline;
 	}
 
-	public RankingTimeline getPlayerEloRankingTimeline(int playerId, String surface) {
+	public RankingTimeline getPlayerEloRankingTimeline(int playerId, RankType rankType) {
 		RankingTimeline timeline = new RankingTimeline();
 		jdbcTemplate.query(
-			format(PLAYER_ELO_RANKING_TIMELINE_QUERY, eloRankPrefix(surface)),
+			format(PLAYER_ELO_RANKING_TIMELINE_QUERY, rankColumn(rankType)),
 			params("playerId", playerId),
 			rs -> {
 				timeline.processWeeksAt(rs.getInt("season"), rs.getInt("rank"), rs.getDouble("weeks"), rs.getDouble("season_weeks"), rs.getDouble("next_season_weeks"));
 			}
 		);
 		return timeline;
-	}
-
-	private String eloRankPrefix(String surface) {
-		if (Strings.isNullOrEmpty(surface))
-			return "";
-		switch (surface) {
-			case "O": return "outdoor_";
-			case "I": return "indoor_";
-			default: return Surface.decode(surface).getText().toLowerCase() + "_";
-		}
 	}
 
 

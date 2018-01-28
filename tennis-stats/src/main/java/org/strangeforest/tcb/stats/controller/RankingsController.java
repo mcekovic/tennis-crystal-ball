@@ -11,7 +11,6 @@ import org.springframework.web.servlet.*;
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.service.*;
 
-import static java.lang.Boolean.*;
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 import static org.strangeforest.tcb.util.DateUtil.*;
 import static org.thymeleaf.util.StringUtils.*;
@@ -46,7 +45,6 @@ public class RankingsController extends PageController {
 	public ModelAndView peakEloRatings() {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("rankTypes", RankCategory.ELO.getRankTypes());
-		modelMap.addAttribute("peakElo", TRUE);
 		return new ModelAndView("peakEloRatings", modelMap);
 	}
 

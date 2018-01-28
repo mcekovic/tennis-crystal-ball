@@ -39,10 +39,10 @@ public class PlayerTimelineController extends BaseController {
 	@GetMapping("/playerTimelineEloRanking")
 	public ModelAndView playerTimelineEloRanking(
 		@RequestParam(name = "playerId") int playerId,
-		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "rankType", defaultValue = "ELO_RANK") RankType rankType,
 		@RequestParam(name = "seasons") String seasons
 	) {
-		RankingTimeline timeline = rankingsService.getPlayerEloRankingTimeline(playerId, surface);
+		RankingTimeline timeline = rankingsService.getPlayerEloRankingTimeline(playerId, rankType);
 		List<Integer> seasonList = toSeasons(seasons);
 		ensureSeasons(timeline.getSeasonsWeeksAtRank(), seasonList, WeeksAtRank.EMPTY);
 

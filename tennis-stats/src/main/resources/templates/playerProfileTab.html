@@ -143,7 +143,7 @@
 			</tr>
 			<tr th:if="${player.bestRank > 0}">
 				<th>Best Rank</th>
-				<td th:text="${player.bestRank + ' (' + #temporals.format(player.bestRankDate, 'dd-MM-yyyy') + ')'}">5 (1.1.2010)</td>
+				<td>[(${player.bestRank})] (<a th:href="@{/rankingsTable(rankType=RANK, date=${#temporals.format(player.bestRankDate, 'dd-MM-yyyy')})}" th:text="${#temporals.format(player.bestRankDate, 'dd-MM-yyyy')}">01-01-2010</a>)</td>
 			</tr>
 			<tr th:if="${player.currentEloRank > 0}">
 				<th>Current Elo Rank</th>
@@ -151,11 +151,11 @@
 			</tr>
 			<tr th:if="${player.bestEloRank > 0}">
 				<th>Best Elo Rank</th>
-				<td th:text="${player.bestEloRank + ' (' + #temporals.format(player.bestEloRankDate, 'dd-MM-yyyy') + ')'}">5 (1.1.2010)</td>
+				<td>[(${player.bestEloRank})] (<a th:href="@{/rankingsTable(rankType=ELO_RANK, date=${#temporals.format(player.bestEloRankDate, 'dd-MM-yyyy')})}" th:text="${#temporals.format(player.bestEloRankDate, 'dd-MM-yyyy')}">01-01-2010</a>)</td>
 			</tr>
 			<tr th:if="${player.bestEloRating > 0}">
 				<th>Peak Elo Rating</th>
-				<td th:text="${player.bestEloRating + ' (' + #temporals.format(player.bestEloRatingDate, 'dd-MM-yyyy') + ')'}">2455 (1.1.2010)</td>
+				<td>[(${player.bestEloRating})] (<a th:href="@{/rankingsTable(rankType=ELO_RANK, date=${#temporals.format(player.bestEloRatingDate, 'dd-MM-yyyy')})}" th:text="${#temporals.format(player.bestEloRatingDate, 'dd-MM-yyyy')}">01-01-2010</a>)</td>
 			</tr>
 			<tr th:if="${player.goatPoints > 0}">
 				<th>GOAT Rank</th>

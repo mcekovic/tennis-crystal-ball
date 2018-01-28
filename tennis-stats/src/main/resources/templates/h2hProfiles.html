@@ -110,9 +110,9 @@
 		<td class="text-left" colspan="2" th:text="${player2.turnedPro > 0 ? player2.turnedPro : _}">2005</td>
 	</tr>
 	<tr th:if="${seasonCount1 > 0 || seasonCount2 > 0}">
-		<td class="text-right" colspan="2"><a th:href="@{/playerProfile(playerId=${player1.id}, tab=timeline)}" th:text="${seasonCount1}" title="Show timeline">10</a></td>
+		<td class="text-right" colspan="2"><a th:if="${seasonCount1 > 0}" th:href="@{/playerProfile(playerId=${player1.id}, tab=timeline)}" th:text="${seasonCount1}" title="Show timeline">10</a></td>
 		<th class="text-center">Seasons</th>
-		<td class="text-left" colspan="2"><a th:href="@{/playerProfile(playerId=${player2.id}, tab=timeline)}" th:text="${seasonCount2}" title="Show timeline">10</a></td>
+		<td class="text-left" colspan="2"><a th:if="${seasonCount2 > 0}" th:href="@{/playerProfile(playerId=${player2.id}, tab=timeline)}" th:text="${seasonCount2}" title="Show timeline">10</a></td>
 	</tr>
 	<tr>
 		<td class="text-right" colspan="2">[(${player1.active ? 'Yes' : 'No'})] <img th:if="${player1.active}" src="/images/active.png" title="Active" width="12" height="12" style="vertical-align: 0"/></td>
@@ -228,9 +228,9 @@
 		<td class="text-left" colspan="2" th:text="${player2.currentRank > 0 ? player2.currentRank + ' (' + player2.currentRankPoints + ')' : _}">10 (3000)</td>
 	</tr>
 	<tr th:if="${player1.bestRank > 0 || player2.bestRank > 0}">
-		<td class="text-right" colspan="2" th:text="${player1.bestRank > 0 ? player1.bestRank + ' (' + #temporals.format(player1.bestRankDate, 'dd-MM-yyyy') + ')' : _}">5 (1.1.2010)</td>
+		<td class="text-right" colspan="2"><th:block th:if="${player1.bestRank > 0}">[(${player1.bestRank})] (<a th:href="@{/rankingsTable(rankType=RANK, date=${#temporals.format(player1.bestRankDate, 'dd-MM-yyyy')})}" th:text="${#temporals.format(player1.bestRankDate, 'dd-MM-yyyy')}">01-01-2010</a>)</th:block></td>
 		<th class="text-center">Best Rank</th>
-		<td class="text-left" colspan="2" th:text="${player2.bestRank > 0 ? player2.bestRank + ' (' + #temporals.format(player2.bestRankDate, 'dd-MM-yyyy') + ')' : _}">5 (1.1.2010)</td>
+		<td class="text-left" colspan="2"><th:block th:if="${player2.bestRank > 0}">[(${player2.bestRank})] (<a th:href="@{/rankingsTable(rankType=RANK, date=${#temporals.format(player2.bestRankDate, 'dd-MM-yyyy')})}" th:text="${#temporals.format(player2.bestRankDate, 'dd-MM-yyyy')}">01-01-2010</a>)</th:block></td>
 	</tr>
 	<tr th:if="${player1.currentEloRank > 0 || player2.currentEloRank > 0}">
 		<td class="text-right" colspan="2" th:text="${player1.currentEloRank > 0 ? player1.currentEloRank + ' (' + player1.currentEloRating + ')' : _}">10 (2200)</td>
@@ -238,14 +238,14 @@
 		<td class="text-left" colspan="2" th:text="${player2.currentEloRank > 0 ? player2.currentEloRank + ' (' + player2.currentEloRating + ')' : _}">10 (2200)</td>
 	</tr>
 	<tr th:if="${player1.bestEloRank > 0 || player2.bestEloRank > 0}">
-		<td class="text-right" colspan="2" th:text="${player1.bestEloRank > 0 ? player1.bestEloRank + ' (' + #temporals.format(player1.bestEloRankDate, 'dd-MM-yyyy') + ')' : _}">5 (1.1.2010)</td>
+		<td class="text-right" colspan="2"><th:block th:if="${player1.bestEloRank > 0}">[(${player1.bestEloRank})] (<a th:href="@{/rankingsTable(rankType=ELO_RANK, date=${#temporals.format(player1.bestEloRankDate, 'dd-MM-yyyy')})}" th:text="${#temporals.format(player1.bestEloRankDate, 'dd-MM-yyyy')}">01-01-2010</a>)</th:block></td>
 		<th class="text-center">Best Elo Rank</th>
-		<td class="text-left" colspan="2" th:text="${player2.bestEloRank > 0 ? player2.bestEloRank + ' (' + #temporals.format(player2.bestEloRankDate, 'dd-MM-yyyy') + ')' : _}">5 (1.1.2010)</td>
+		<td class="text-left" colspan="2"><th:block th:if="${player2.bestEloRank > 0}">[(${player2.bestEloRank})] (<a th:href="@{/rankingsTable(rankType=ELO_RANK, date=${#temporals.format(player2.bestEloRankDate, 'dd-MM-yyyy')})}" th:text="${#temporals.format(player2.bestEloRankDate, 'dd-MM-yyyy')}">01-01-2010</a>)</th:block></td>
 	</tr>
 	<tr th:if="${player1.bestEloRating > 0 || player2.bestEloRating > 0}">
-		<td class="text-right" colspan="2" th:text="${player1.bestEloRating > 0 ? player1.bestEloRating + ' (' + #temporals.format(player1.bestEloRatingDate, 'dd-MM-yyyy') + ')' : _}">2455 (1.1.2010)</td>
+		<td class="text-right" colspan="2"><th:block th:if="${player1.bestEloRating > 0}">[(${player1.bestEloRating})] (<a th:href="@{/rankingsTable(rankType=ELO_RANK, date=${#temporals.format(player1.bestEloRatingDate, 'dd-MM-yyyy')})}" th:text="${#temporals.format(player1.bestEloRatingDate, 'dd-MM-yyyy')}">01-01-2010</a>)</th:block></td>
 		<th class="text-center">Peak Elo Rating</th>
-		<td class="text-left" colspan="2" th:text="${player2.bestEloRating > 0 ? player2.bestEloRating + ' (' + #temporals.format(player2.bestEloRatingDate, 'dd-MM-yyyy') + ')' : _}">2455 (1.1.2010)</td>
+		<td class="text-left" colspan="2"><th:block th:if="${player2.bestEloRating > 0}">[(${player2.bestEloRating})] (<a th:href="@{/rankingsTable(rankType=ELO_RANK, date=${#temporals.format(player2.bestEloRatingDate, 'dd-MM-yyyy')})}" th:text="${#temporals.format(player2.bestEloRatingDate, 'dd-MM-yyyy')}">01-01-2010</a>)</th:block></td>
 	</tr>
 	<tr th:if="${player1.goatPoints > 0 || player2.goatPoints > 0}">
 		<td class="text-right" colspan="2"><th:block th:if="${player1.goatPoints > 0}">[(${player1.goatRank})] (<a th:href="@{/playerProfile(playerId=${player1.id}, tab=goatPoints)}" th:text="${player1.goatPoints}" title="Show GOAT points distribution">25</a>)</th:block></td>

@@ -214,7 +214,7 @@ public class RivalriesController extends PageController {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("seasons", seasons);
-		modelMap.addAttribute("rankTypes", RankType.values());
+		modelMap.addAttribute("rankCategories", RankCategory.values());
 		return new ModelAndView("playerRankings", modelMap);
 	}
 

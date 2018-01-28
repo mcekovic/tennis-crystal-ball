@@ -94,10 +94,10 @@
 		}
 		function populateDates(season, dates) {
 			var $date = $("#date");
-			$date.append("<option value=''>" + (season === new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
+			$date.append("<option value=''>" + (season == new Date().getFullYear() ? "Current" : "Year-end") + "</option>");
 			for (var i = 0; i < dates.length; i++) {
 				var date = formatDate(dates[i]);
-				$date.append("<option value='" + date + "'" + (date === "[(${#temporals.format(date, 'dd-MM-yyyy')})]" ? " selected='selected'" : "") + ">" + date + "</option>");
+				$date.append("<option value='" + date + "'" + (date == "[(${#temporals.format(date, 'dd-MM-yyyy')})]" ? " selected='selected'" : "") + ">" + date + "</option>");
 			}
 		}
 		function prevRankingDate() {

@@ -204,15 +204,8 @@ public class TournamentService {
 		return jdbcTemplate.query(SEASON_TOURNAMENT_ITEMS_QUERY, params("season", season), this::tournamentItemMapper);
 	}
 
-	@Cacheable("Tournaments.Table")
 	public BootgridTable<Tournament> getTournamentsTable(TournamentEventFilter filter, Comparator<Tournament> comparator, int pageSize, int currentPage) {
-		List<Tournament> tournaments = jdbcTemplate.query(
-			format(TOURNAMENTS_QUERY, filter.getCriteria()),
-			filter.getParams(),
-			(rs, rowNum) -> mapTournament(rs)
-		);
-		if (!filter.isEmpty())
-			tournaments = tournaments.stream().filter(t -> t.getEventCount() > 0).collect(toList());
+		List<Tournament> tournaments = getTournaments(filter);
 		tournaments.sort(comparator);
 
 		BootgridTable<Tournament> table = new BootgridTable<>(currentPage);
@@ -221,6 +214,17 @@ public class TournamentService {
 		table.addRows(tournaments.subList(offset, endOffset));
 		table.setTotal(tournaments.size());
 		return table;
+	}
+
+	@Cacheable("Tournaments.Table")
+	public List<Tournament> getTournaments(TournamentEventFilter filter) {
+		List<Tournament> tournaments = jdbcTemplate.query(
+			format(TOURNAMENTS_QUERY, filter.getCriteria()),
+			filter.getParams(),
+			(rs, rowNum) -> mapTournament(rs)
+		);
+		tournaments = tournaments.stream().filter(t -> t.getEventCount() > 0).collect(toList());
+		return tournaments;
 	}
 
 	public Tournament getTournament(int tournamentId) {
