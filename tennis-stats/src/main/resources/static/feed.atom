@@ -119,7 +119,7 @@
 	</entry>
 	<entry>
 		<title>New Feature - Rankings table improvements</title>
-		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/rankingsTable?rankType=ELO_RATING"/>
+		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/rankingsTable?rankType=ELO_RANK"/>
 		<id>urn:uuid:56556a53-273c-4341-8d87-a61a7ff580c9</id>
 		<updated>2017-07-26T12:00:00Z</updated>
 		<summary>New Feature - Rankings table improvements</summary>

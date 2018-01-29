@@ -60,7 +60,7 @@
 						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=performance&season=" + row.season + (surface ? "&surface=" + surface : "") + "' title='" + row.wonLost + "'>" + row.wonPct + "</a>";
 					},
 					"yearEndRank": function(column, row) {
-						return row.yearEndRank != null ? ("<a href='/rankingsTable?season=" + row.season + (surface ? "&rankType=" + surfaceName(surface).toUpperCase() + "_ELO_RATING" : "") + "' title='Show " + row.season + " year-end" + (surface ? " " + surfaceName(surface) + " Elo" : " ATP") + " rankings'>" + row.yearEndRank + "</a>") : "";
+						return row.yearEndRank != null ? ("<a href='/rankingsTable?season=" + row.season + "&rankType=" + (surface ? surfaceName(surface).toUpperCase() + "_ELO_" : "") + "RANK" + "' title='Show " + row.season + " year-end" + (surface ? " " + surfaceName(surface) + " Elo" : " ATP") + " rankings'>" + row.yearEndRank + "</a>") : "";
 					},
 					"bestEloRating": function(column, row) {
 						return row.bestEloRating != null ? ("<a href='/playerProfile?playerId=" + row.playerId + "&tab=ranking&rankType=" + (surface ? surfaceName(surface).toUpperCase() + "_" : "") + "ELO_RATING&season=" + row.season + "' title='Show " + row.season + " " + surfaceName(surface) + " Elo rating chart'>" + row.bestEloRating + "</a>") : "";
