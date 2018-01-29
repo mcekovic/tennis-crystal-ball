@@ -356,7 +356,8 @@
 					<option value="1:2+" th:selected="${score == '1:2+'}">After 1:2</option>
 					<option value="2:2+" th:selected="${score == '2:2+'}">After 2:2</option>
 				</optgroup>
-				<optgroup label="Under Pressure">
+				<optgroup label="Misc">
+					<option value="*SS" th:selected="${score == '*SS'}">Straight Sets</option>
 					<option value="*DS" th:selected="${score == '*DS'}">Deciding Set</option>
 					<option value="*TB" th:selected="${score == '*TB'}">Tie Break</option>
 					<option value="*TBW" th:selected="${score == '*TBW'}">Tie Break Won</option>
