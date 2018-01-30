@@ -19,7 +19,7 @@ static loadTournaments(SqlPool sqlPool) {
 		oldExtIds.removeAll(newExtIds)
 		if (oldExtIds) {
 			println "Removing finished in-progress tournaments: $oldExtIds"
-			atpInProgressTournamentLoader.deleteInProgressEventExtIds(oldExtIds)
+			atpInProgressTournamentLoader.completeInProgressEventExtIds(oldExtIds)
 			changed = true
 		}
 		changed
