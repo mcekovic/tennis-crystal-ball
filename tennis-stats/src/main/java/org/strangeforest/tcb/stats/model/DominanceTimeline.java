@@ -83,7 +83,8 @@ public class DominanceTimeline {
 				eraSeasons = new ArrayList<>();
 			eraSeasons.add(dominanceSeason);
 		}
-		dominanceEras.add(new DominanceEra(eraSeasons));
+		if (eraSeasons != null)
+			dominanceEras.add(new DominanceEra(eraSeasons));
 	}
 
 	private PlayerDominanceTimeline getAdjacentSeasonBestPlayer(int seasonIndex) {
