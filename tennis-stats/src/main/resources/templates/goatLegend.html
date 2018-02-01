@@ -73,7 +73,7 @@
 		<p><em>* Tour Finals draw is normally round-robin, but was knock-out from 1982 to 1985</em></p>
 		<p><em>** Alternative Tour Finals (Dallas WCT and Grand Slam Cup)</em></p>
 	</div>
-	<div th:if="${config.rankingFactor > 0}" class="col-md-3">
+	<div th:if="${config.hasRankingPoints(surface != null)}" class="col-md-3">
 		<h4>
 			<a th:unless="${forSeason}" th:href="@{/record(recordId=${surface != null ? surface.text : ''} + 'RankingGOATPoints')}" title="Players with most Ranking GOAT Points">Ranking Points</a>
 			<a th:if="${forSeason}" href="/record?recordId=SeasonRankingGOATPoints" title="Players with most Ranking GOAT Points in the single season">Ranking Points</a>
@@ -198,7 +198,7 @@
 		</th:block>
 		</th:block>
 	</div>
-	<div th:if="${config.achievementsFactor > 0}" class="col-md-6">
+	<div th:if="${config.hasAchievementsFactor(surface != null)}" class="col-md-6">
 		<h4>
 			<a th:unless="${forSeason}" th:href="@{/record(recordId=${surface != null ? surface.text : ''} + 'AchievementsGOATPoints')}" title="Players with most Achievements GOAT Points">Achievements, Performance and Statistics Points</a>
 			<a th:if="${forSeason}" href="/record?recordId=SeasonAchievementsGOATPoints" title="Players with most Achievements GOAT Points in the single season">Achievements Points</a>

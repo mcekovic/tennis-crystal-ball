@@ -47,6 +47,8 @@ public class ScoreFilter {
 	private static final String STATS_WON_CRITERION = " AND m.p_matches = 1";
 	private static final String STATS_LOST_CRITERION = " AND m.p_matches = 0";
 	private static final String SET_SCORE_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id AND s.set = %1$d AND s.w_games %2$s s.l_games)";
+	private static final String MATCHES_STRAIGHT_SETS_CRITERION = " AND ((m.w_sets > m.best_of / 2 AND m.l_sets = 0) OR (m.w_sets = 0 AND m.l_sets > m.best_of / 2))";
+	private static final String STATS_STRAIGHT_SETS_CRITERION = " AND ((m.p_sets > m.best_of / 2 AND m.o_sets = 0) OR (m.p_sets = 0 AND m.o_sets > m.best_of / 2))";
 	private static final String MATCHES_DECIDING_SET_CRITERION = " AND m.w_sets + m.l_sets = m.best_of";
 	private static final String STATS_DECIDING_SET_CRITERION = " AND m.p_sets + m.o_sets = m.best_of";
 	private static final String TIE_BREAK_CRITERION = " AND EXISTS (SELECT s.set FROM set_score s WHERE s.match_id = m.match_id%1$s)";
@@ -111,6 +113,8 @@ public class ScoreFilter {
 			criteria.append(forStats ? STATS_SCORE_CRITERION : MATCHES_SCORE_CRITERION);
 			criteria.append(FINISHED_CRITERION);
 		}
+		else if (misc.equals("SS"))
+			criteria.append(forStats ? STATS_STRAIGHT_SETS_CRITERION : MATCHES_STRAIGHT_SETS_CRITERION);
 		else if (misc.equals("DS"))
 			criteria.append(forStats ? STATS_DECIDING_SET_CRITERION : MATCHES_DECIDING_SET_CRITERION);
 		else if (misc.equals("TB"))

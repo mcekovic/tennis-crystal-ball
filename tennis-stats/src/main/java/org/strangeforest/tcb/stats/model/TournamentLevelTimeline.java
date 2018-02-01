@@ -69,7 +69,7 @@ public class TournamentLevelTimeline {
 				List<TournamentLevelTimelineItem> prevSeasonEvents = seasonsEvents.get(prevSeason);
 				for (int index = seasonTournaments.size(); index < prevSeasonEvents.size(); index++) {
 					TournamentLevelTimelineItem item = prevSeasonEvents.get(index);
-					addItem(new TournamentLevelTimelineItem(item.getTournamentId(), item.getName(), season, 0, null, null, null));
+					addItem(new TournamentLevelTimelineItem(item.getTournamentId(), item.getName(), season, 0, null, item.getLevel(), null));
 				}
 			}
 		}

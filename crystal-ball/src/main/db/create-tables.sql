@@ -293,6 +293,7 @@ CREATE TABLE in_progress_event (
 	indoor BOOLEAN NOT NULL,
 	draw_type draw_type,
 	draw_size SMALLINT,
+	completed BOOLEAN NOT NULL DEFAULT FALSE,
 	matches_hash TEXT,
 	UNIQUE (tournament_id)
 );

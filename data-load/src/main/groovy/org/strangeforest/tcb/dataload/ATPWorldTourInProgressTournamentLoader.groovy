@@ -68,10 +68,11 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 	static final String SELECT_EVENT_EXT_IDS_SQL = //language=SQL
 		'SELECT ext_tournament_id FROM in_progress_event\n' +
 		'INNER JOIN tournament_mapping USING (tournament_id)\n' +
+		'WHERE NOT completed\n' +
 		'ORDER BY ext_tournament_id'
 
-	static final String DELETE_EVENT_SQL = //language=SQL
-		'DELETE FROM in_progress_event\n' +
+	static final String COMPLETE_EVENT_SQL = //language=SQL
+		'UPDATE in_progress_event SET completed = TRUE\n' +
 		'WHERE tournament_id = (SELECT tournament_id FROM tournament_mapping WHERE ext_tournament_id = :extId)'
 
 
@@ -441,8 +442,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		sql.rows(SELECT_EVENT_EXT_IDS_SQL).collect { row -> row.ext_tournament_id }
 	}
 
-	def deleteInProgressEventExtIds(Collection extIds) {
-		sql.withBatch(DELETE_EVENT_SQL) { ps ->
+	def completeInProgressEventExtIds(Collection extIds) {
+		sql.withBatch(COMPLETE_EVENT_SQL) { ps ->
 			extIds.each { extId ->
 				ps.addBatch([extId: extId])
 			}
