@@ -44,7 +44,7 @@ public class RankingsResource {
 
 	@GetMapping("/rankingsDate")
 	public LocalDate rankingsDate(
-		@RequestParam(name = "rankType") RankType rankType,
+		@RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date
 	) {
@@ -53,7 +53,7 @@ public class RankingsResource {
 
 	@GetMapping("/rankingsTableTable")
 	public BootgridTable<? extends PlayerRankingsRow> rankingsTableTable(
-		@RequestParam(name = "rankType") RankType rankType,
+		@RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "date", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date,
 		@RequestParam(name = "peak", required = false) boolean peak,
@@ -76,7 +76,7 @@ public class RankingsResource {
 
 	@GetMapping("/seasonRankingDates")
 	public List<LocalDate> seasonRankingDates(
-		@RequestParam(name = "rankType") RankType rankType,
+		@RequestParam(name = "rankType", defaultValue = "RANK") RankType rankType,
 		@RequestParam(name = "season") int season
 	) {
 		return rankingsService.getSeasonRankingDates(rankType, season);
