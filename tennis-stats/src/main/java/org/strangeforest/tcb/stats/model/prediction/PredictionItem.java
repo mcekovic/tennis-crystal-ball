@@ -4,4 +4,5 @@ public interface PredictionItem extends Weighted {
 
 	PredictionArea getArea();
 	void setArea(PredictionArea area);
+	boolean isForSet();
 }

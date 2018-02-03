@@ -1,20 +1,25 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
+import java.util.function.*;
+
 import static java.lang.Math.*;
 import static org.strangeforest.tcb.stats.model.core.Player.*;
+import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.probabilityTransformer;
 import static org.strangeforest.tcb.stats.model.prediction.RankingPredictionItem.*;
 
 public class RankingMatchPredictor implements MatchPredictor {
 
 	private final RankingData rankingData1;
 	private final RankingData rankingData2;
+	private final short bestOf;
 
 	private static final int DEFAULT_RANK = 500;
 	private static final int DEFAULT_RANK_POINTS = 0;
 
-	public RankingMatchPredictor(RankingData rankingData1, RankingData rankingData2) {
+	public RankingMatchPredictor(RankingData rankingData1, RankingData rankingData2, short bestOf) {
 		this.rankingData1 = rankingData1;
 		this.rankingData2 = rankingData2;
+		this.bestOf = bestOf;
 	}
 
 	@Override public PredictionArea getArea() {
@@ -28,6 +33,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 		addEloItemProbabilities(prediction, ELO, rankingData1.getEloRating(), rankingData2.getEloRating());
 		addEloItemProbabilities(prediction, SURFACE_ELO, rankingData1.getSurfaceEloRating(), rankingData2.getSurfaceEloRating());
 		addEloItemProbabilities(prediction, OUT_IN_ELO, rankingData1.getOutInEloRating(), rankingData2.getOutInEloRating());
+		addEloItemProbabilities(prediction, SET_ELO, rankingData1.getSetEloRating(), rankingData2.getSetEloRating());
 		return prediction;
 	}
 
@@ -71,8 +77,9 @@ public class RankingMatchPredictor implements MatchPredictor {
 	private void addEloItemProbabilities(MatchPrediction prediction, RankingPredictionItem item, Integer eloRating1, Integer eloRating2) {
 		double weight = item.getWeight() * presenceWeight(eloRating1, eloRating2);
 		if (weight > 0.0) {
-			prediction.addItemProbability1(item, weight, eloWinProbability(eloRating1, eloRating2));
-			prediction.addItemProbability2(item, weight, eloWinProbability(eloRating2, eloRating1));
+			DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
+			prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(eloWinProbability(eloRating1, eloRating2)));
+			prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(eloWinProbability(eloRating2, eloRating1)));
 		}
 	}
 

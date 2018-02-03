@@ -43,7 +43,7 @@ public class MatchPredictionService {
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_ELO_RATINGS_QUERY = //language=SQL
-		"SELECT rank_date, elo_rating, %1$selo_rating, %2$selo_rating FROM player_elo_ranking\n" +
+		"SELECT rank_date, elo_rating, %1$selo_rating, %2$selo_rating, set_elo_rating FROM player_elo_ranking\n" +
 		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1 year') AND :date\n" +
 		"ORDER BY rank_date DESC LIMIT 1";
 
@@ -138,7 +138,7 @@ public class MatchPredictionService {
 		}
 		short bstOf = defaultBestOf(level, bestOf);
 		MatchPrediction prediction = predictMatch(asList(
-			new RankingMatchPredictor(rankingData1, rankingData2),
+			new RankingMatchPredictor(rankingData1, rankingData2, bstOf),
 			new RecentFormMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round),
 			new H2HMatchPredictor(matchData1, matchData2, playerId1, playerId2, date1, date2, surface, level, tournamentId, round, bstOf),
 			new WinningPctMatchPredictor(matchData1, matchData2, rankingData1, rankingData2, playerData1, playerData2, date1, date2, surface, level, round, tournamentId, bstOf)
@@ -220,6 +220,7 @@ public class MatchPredictionService {
 				rankingData.setSurfaceEloRating(getInteger(rs, surfacePrefix + "elo_rating"));
 			if (!outInPrefix.isEmpty())
 				rankingData.setOutInEloRating(getInteger(rs, outInPrefix + "elo_rating"));
+			rankingData.setSetEloRating(getInteger(rs, "set_elo_rating"));
 			rankingData.setEloDate(getLocalDate(rs, "rank_date"));
 		});
 		return rankingData;

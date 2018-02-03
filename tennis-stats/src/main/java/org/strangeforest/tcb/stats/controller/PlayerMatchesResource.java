@@ -33,6 +33,9 @@ public class PlayerMatchesResource {
 		.put("round", "round")
 		.put("wonLost", "CASE WHEN pw.player_id = :playerId THEN 1 ELSE 0 END")
 		.put("bestOf", "best_of")
+	.build();
+	private static Map<String, String> ORDER_MAP_BIG_WINS = ImmutableMap.<String, String>builder()
+		.putAll(ORDER_MAP)
 		.put("bigWinPoints", "big_win_points")
 	.build();
 	private static final OrderBy[] DEFAULT_ORDERS = new OrderBy[] {desc("date"), desc("round"), desc("match_num")};
@@ -71,7 +74,7 @@ public class PlayerMatchesResource {
 		ScoreFilter scoreFilter = ScoreFilter.forMatches(score);
 		StatsFilter statsFilter = StatsFilter.forMatches(statsCategory, statsFrom, statsTo);
 		MatchFilter filter = MatchFilter.forMatches(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
-		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
+		String orderBy = BootgridUtil.getOrderBy(requestParams, bigWin ? ORDER_MAP_BIG_WINS : ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_MATCHES;
 		return matchesService.getPlayerMatchesTable(playerId, filter, h2h, orderBy, pageSize, current);
 	}

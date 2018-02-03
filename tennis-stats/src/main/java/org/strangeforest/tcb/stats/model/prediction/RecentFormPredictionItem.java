@@ -2,7 +2,7 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 public enum RecentFormPredictionItem implements PredictionItem {
 
-	OVERALL(6.0),
+	OVERALL(5.0),
 	SURFACE(6.0),
 	LEVEL(9.0),
 	ROUND(0.0),
@@ -23,6 +23,10 @@ public enum RecentFormPredictionItem implements PredictionItem {
 
 	@Override public void setArea(PredictionArea area) {
 		this.area = area;
+	}
+
+	@Override public boolean isForSet() {
+		return false;
 	}
 
 	@Override public double getWeight() {

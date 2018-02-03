@@ -1,19 +1,19 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
-public enum H2HPredictionItem implements MatchPredictionItem {
+public enum H2HPredictionItem implements PredictionItem {
 
 	OVERALL(false, 0.0),
-	SURFACE(false, 7.0),
+	SURFACE(false, 5.0),
 	LEVEL(false, 1.0),
 	TOURNAMENT(false, 3.0),
-	ROUND(false, 4.0),
+	ROUND(false, 3.0),
 	RECENT(false, 4.0),
-	SURFACE_RECENT(false, 0.0),
-	LEVEL_RECENT(false, 1.0),
+	SURFACE_RECENT(false, 3.0),
+	LEVEL_RECENT(false, 0.0),
 	ROUND_RECENT(false, 0.0),
-	OVERALL_SET(true, 2.0),
-	SURFACE_SET(true, 1.0),
-	LEVEL_SET(true, 2.0),
+	OVERALL_SET(true, 0.0),
+	SURFACE_SET(true, 0.0),
+	LEVEL_SET(true, 1.0),
 	TOURNAMENT_SET(true, 1.0),
 	ROUND_SET(true, 0.0),
 	RECENT_SET(true, 0.0),

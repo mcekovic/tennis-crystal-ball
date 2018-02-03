@@ -280,10 +280,10 @@ class EloRatings {
 					delta = 0.5 * (wDelta * (match.w_sets ?: 0) - lDelta * (match.l_sets ?: 0))
 					break
 				case 'sg':
-					delta = 0.15 * (wDelta * (match.w_sv_gms ?: 0) - lDelta * (match.l_rt_gms ?: 0))
+					delta = 0.1 * (wDelta * (match.w_sv_gms ?: 0) - lDelta * (match.l_rt_gms ?: 0))
 					break
 				case 'rg':
-					delta = 0.15 * (wDelta * (match.w_rt_gms ?: 0) - lDelta * (match.l_sv_gms ?: 0))
+					delta = 0.1 * (wDelta * (match.w_rt_gms ?: 0) - lDelta * (match.l_sv_gms ?: 0))
 					break
 				case 'tb':
 					delta = 2.0 * (wDelta * (match.w_tbs ?: 0) - lDelta * (match.l_tbs ?: 0))

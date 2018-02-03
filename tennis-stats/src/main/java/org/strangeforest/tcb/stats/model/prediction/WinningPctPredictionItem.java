@@ -1,17 +1,17 @@
 package org.strangeforest.tcb.stats.model.prediction;
 
-public enum WinningPctPredictionItem implements MatchPredictionItem {
+public enum WinningPctPredictionItem implements PredictionItem {
 
 	OVERALL(false, 2.0),
-	SURFACE(false, 9.0),
-	LEVEL(false, 1.0),
+	SURFACE(false, 10.0),
+	LEVEL(false, 0.0),
 	TOURNAMENT(false, 0.0),
 	ROUND(false, 0.0),
 	RECENT(false, 2.0),
-	SURFACE_RECENT(false, 2.0),
+	SURFACE_RECENT(false, 1.0),
 	LEVEL_RECENT(false, 3.0),
-	ROUND_RECENT(false, 0.0),
-	VS_RANK(false, 0.0),
+	ROUND_RECENT(false, 1.0),
+	VS_RANK(false, 2.0),
 	VS_HAND(false, 0.0),
 	VS_BACKHAND(false, 6.0),
 	OVERALL_SET(true, 3.0),
@@ -21,7 +21,7 @@ public enum WinningPctPredictionItem implements MatchPredictionItem {
 	ROUND_SET(true, 0.0),
 	RECENT_SET(true, 0.0),
 	SURFACE_RECENT_SET(true, 2.0),
-	LEVEL_RECENT_SET(true, 1.0),
+	LEVEL_RECENT_SET(true, 2.0),
 	ROUND_RECENT_SET(true, 0.0),
 	VS_RANK_SET(true, 3.0),
 	VS_HAND_SET(true, 2.0),
