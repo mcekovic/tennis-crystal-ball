@@ -27,12 +27,13 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	private final Round round;
 	private final Integer tournamentId;
 	private final short bestOf;
+	private final PredictionConfig config;
 
 	private static final int MATCH_RECENT_PERIOD_YEARS = 2;
 	private static final int SET_RECENT_PERIOD_YEARS = 1;
 
 	public WinningPctMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, RankingData rankingData1, RankingData rankingData2, PlayerData playerData1, PlayerData playerData2,
-	                                LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Round round, Integer tournamentId, short bestOf) {
+	                                LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Round round, Integer tournamentId, short bestOf, PredictionConfig config) {
 		this.matchData1 = matchData1;
 		this.matchData2 = matchData2;
 		this.rankRange1 = rankRange(rankingData1.getRank());
@@ -46,6 +47,7 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 		this.round = round;
 		this.tournamentId = tournamentId;
 		this.bestOf = bestOf;
+		this.config = config;
 	}
 
 	@Override public PredictionArea getArea() {
@@ -55,7 +57,7 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	@Override public MatchPrediction predictMatch() {
 		Period matchRecentPeriod = getMatchRecentPeriod();
 		Period setRecentPeriod = getSetRecentPeriod();
-		MatchPrediction prediction = new MatchPrediction();
+		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight());
 		addItemProbabilities(prediction, OVERALL, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
@@ -84,11 +86,11 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	}
 
 	private Period getMatchRecentPeriod() {
-		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period.match." + getArea()).orElse(MATCH_RECENT_PERIOD_YEARS));
+		return Period.ofYears(config.getMatchRecentPeriod(getArea(), MATCH_RECENT_PERIOD_YEARS));
 	}
 
 	private Period getSetRecentPeriod() {
-		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period.set." + getArea()).orElse(SET_RECENT_PERIOD_YEARS));
+		return Period.ofYears(config.getSetRecentPeriod(getArea(), SET_RECENT_PERIOD_YEARS));
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, WinningPctPredictionItem item, Predicate<MatchData> filter) {
@@ -96,7 +98,8 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, WinningPctPredictionItem item, Predicate<MatchData> filter1, Predicate<MatchData> filter2) {
-		if (item.getWeight() > 0.0) {
+		double itemWeight = config.getItemWeight(item);
+		if (itemWeight > 0.0) {
 			ToIntFunction<MatchData> wonDimension = item.isForSet() ? MatchData::getPSets : MatchData::getPMatches;
 			ToIntFunction<MatchData> lostDimension = item.isForSet() ? MatchData::getOSets : MatchData::getOMatches;
 			List<MatchData> filteredMatchData1 = matchData1.stream().filter(filter1).collect(toList());
@@ -108,7 +111,7 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 			int total1 = won1 + lost1;
 			int total2 = won2 + lost2;
 			if (total1 > 0 && total2 > 0) {
-				double weight = item.getWeight() * weight(total1, total2);
+				double weight = itemWeight * weight(total1, total2);
 				double p1 = 1.0 * won1 / total1;
 				double p2 = 1.0 * won2 / total2;
 				if (p1 + p2 > 0.0) {

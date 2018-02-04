@@ -6,13 +6,14 @@ import org.strangeforest.tcb.stats.model.prediction.*;
 
 import static org.strangeforest.tcb.stats.prediction.BasePredictionVerificationIT.*;
 
+//TODO Automatically add equivalent config results
 public class TuningContext {
 
 	private final Comparator<PredictionResult> resultComparator;
 	private final double minWeight;
 	private final double maxWeight;
 	private final double weightStep;
-	private final Map<Properties, PredictionResult> results;
+	private final Map<PredictionConfig, PredictionResult> results;
 	private final PriorityQueue<PredictionResult> candidateNextResults;
 	private PredictionResult bestResult;
 	private PredictionResult baseStepResult;
@@ -36,8 +37,7 @@ public class TuningContext {
 
 	public void finish() {
 		System.out.println("***** Best result: " + bestResult);
-		PredictionConfig.set(bestResult.getConfig());
-		printWeights();
+		printWeights(bestResult.getConfig());
 	}
 
 	public PredictionResult startStep() {
@@ -55,54 +55,22 @@ public class TuningContext {
 		return bestStepResult;
 	}
 
-	public boolean stepUp(Weighted weighted) {
-		PredictionConfig.set(baseStepResult.getConfig());
-		if (tryStepUp(weighted)) {
-			if (isNewConfig())
-				return true;
-			else {
-				tryStepDown(weighted);
-				return false;
-			}
-		}
-		else
-			return false;
+	public PredictionConfig stepUp(Weighted weighted) {
+		return stepWeight(baseStepResult.getConfig(), weighted, weightStep);
 	}
 
-	public boolean stepDown(Weighted weighted) {
-		PredictionConfig.set(baseStepResult.getConfig());
-		if (tryStepDown(weighted)) {
-			if (isNewConfig())
-				return true;
-			else {
-				tryStepUp(weighted);
-				return false;
-			}
-		}
-		else
-			return false;
+	public PredictionConfig stepDown(Weighted weighted) {
+		return stepWeight(baseStepResult.getConfig(), weighted, -weightStep);
 	}
 
-	private boolean tryStepUp(Weighted weighted) {
-		return stepWeight(weighted, weightStep);
-	}
-
-	private boolean tryStepDown(Weighted weighted) {
-		return stepWeight(weighted, -weightStep);
-	}
-
-	private boolean stepWeight(Weighted weighted, double step) {
-		double weight = weighted.getWeight() + step;
+	private PredictionConfig stepWeight(PredictionConfig config, Weighted weighted, double step) {
+		double weight = weighted.getWeight(config) + step;
 		if (weight >= minWeight && weight <= maxWeight) {
-			weighted.setWeight(weight);
-			return true;
+			PredictionConfig newConfig = weighted.setWeight(config, weight);
+			if (newConfig.isAnyAreaEnabled() && !results.containsKey(newConfig))
+				return newConfig;
 		}
-		else
-			return false;
-	}
-
-	private boolean isNewConfig() {
-		return PredictionArea.isAnyEnabled() && !results.containsKey(PredictionConfig.get());
+		return null;
 	}
 
 	public void nextResult(PredictionResult result) {

@@ -2,38 +2,36 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 public enum WinningPctPredictionItem implements PredictionItem {
 
-	OVERALL(false, 2.0),
-	SURFACE(false, 10.0),
-	LEVEL(false, 0.0),
-	TOURNAMENT(false, 0.0),
-	ROUND(false, 0.0),
-	RECENT(false, 2.0),
-	SURFACE_RECENT(false, 1.0),
-	LEVEL_RECENT(false, 3.0),
-	ROUND_RECENT(false, 1.0),
-	VS_RANK(false, 2.0),
-	VS_HAND(false, 0.0),
-	VS_BACKHAND(false, 6.0),
-	OVERALL_SET(true, 3.0),
-	SURFACE_SET(true, 1.0),
-	LEVEL_SET(true, 0.0),
-	TOURNAMENT_SET(true, 0.0),
-	ROUND_SET(true, 0.0),
-	RECENT_SET(true, 0.0),
-	SURFACE_RECENT_SET(true, 2.0),
-	LEVEL_RECENT_SET(true, 2.0),
-	ROUND_RECENT_SET(true, 0.0),
-	VS_RANK_SET(true, 3.0),
-	VS_HAND_SET(true, 2.0),
-	VS_BACKHAND_SET(true, 4.0);
+	OVERALL(false),
+	SURFACE(false),
+	LEVEL(false),
+	TOURNAMENT(false),
+	ROUND(false),
+	RECENT(false),
+	SURFACE_RECENT(false),
+	LEVEL_RECENT(false),
+	ROUND_RECENT(false),
+	VS_RANK(false),
+	VS_HAND(false),
+	VS_BACKHAND(false),
+	OVERALL_SET(true),
+	SURFACE_SET(true),
+	LEVEL_SET(true),
+	TOURNAMENT_SET(true),
+	ROUND_SET(true),
+	RECENT_SET(true),
+	SURFACE_RECENT_SET(true),
+	LEVEL_RECENT_SET(true),
+	ROUND_RECENT_SET(true),
+	VS_RANK_SET(true),
+	VS_HAND_SET(true),
+	VS_BACKHAND_SET(true);
 
 	private volatile PredictionArea area;
 	private final boolean forSet;
-	private volatile double weight;
 
-	WinningPctPredictionItem(boolean forSet, double weight) {
+	WinningPctPredictionItem(boolean forSet) {
 		this.forSet = forSet;
-		this.weight = weight;
 	}
 
 	@Override public PredictionArea getArea() {
@@ -48,13 +46,12 @@ public enum WinningPctPredictionItem implements PredictionItem {
 		return forSet;
 	}
 
-	@Override public double getWeight() {
-		return weight;
+	@Override public double getWeight(PredictionConfig config) {
+		return config.getItemWeight(this);
 	}
 
-	@Override public void setWeight(double weight) {
-		this.weight = weight;
-		area.calculateItemAdjustmentWeight();
+	@Override public PredictionConfig setWeight(PredictionConfig config, double weight) {
+		return new PredictionConfig(config, this, weight);
 	}
 
 	@Override public String toString() {

@@ -29,14 +29,12 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	@Test
 	public void tunePredictionByArea() throws InterruptedException {
-		setWeights(1.0);
-		doTunePredictionByArea();
+		doTunePredictionByArea(PredictionConfig.EQUAL_WEIGHTS);
 	}
 
 	@Test
 	public void tunePredictionByItem() throws InterruptedException {
-		setWeights(1.0);
-		doTunePredictionByItem();
+		doTunePredictionByItem(PredictionConfig.EQUAL_WEIGHTS);
 	}
 
 	@Test
@@ -64,65 +62,65 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	@Test
 	public void tuneDefaultPredictionByArea() throws InterruptedException {
-		doTunePredictionByArea();
+		doTunePredictionByArea(PredictionConfig.defaultConfig());
 	}
 
 	@Test
 	public void tuneDefaultPredictionByItem() throws InterruptedException {
-		doTunePredictionByItem();
+		doTunePredictionByItem(PredictionConfig.defaultConfig());
 	}
 
 	@Test
 	public void tuneDefaultPredictionInRankingArea() throws InterruptedException {
-		doTunePredictionInArea(RANKING);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(), RANKING);
 	}
 
 	@Test
 	public void tuneDefaultPredictionInRecentFormArea() throws InterruptedException {
-		doTunePredictionInArea(RECENT_FORM);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(), RECENT_FORM);
 	}
 
 	@Test
 	public void tuneDefaultPredictionInH2HArea() throws InterruptedException {
-		doTunePredictionInArea(H2H);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(), H2H);
 	}
 
 	@Test
 	public void tuneDefaultPredictionInWinningPctArea() throws InterruptedException {
-		doTunePredictionInArea(WINNING_PCT);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(), WINNING_PCT);
 	}
 
 
 	// Tuning
 
-	private void doTunePredictionByArea() throws InterruptedException {
-		tunePrediction(asList(PredictionArea.values()), METRICS);
+	private void doTunePredictionByArea(PredictionConfig config) throws InterruptedException {
+		tunePrediction(config, asList(PredictionArea.values()), METRICS);
 	}
 
-	private void doTunePredictionByItem() throws InterruptedException {
-		tunePrediction(Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getItems())).collect(toList()), METRICS);
+	private void doTunePredictionByItem(PredictionConfig config) throws InterruptedException {
+		tunePrediction(config, Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getItems())).collect(toList()), METRICS);
 	}
 
 	private void doTunePredictionInAreaFromPointZero(PredictionArea area) throws InterruptedException {
-		setWeights(0.0);
-		area.setWeights(1.0);
-		tunePrediction(asList(area.getItems()), METRICS);
+		tunePrediction(PredictionConfig.areaEqualWeights(area), asList(area.getItems()), METRICS);
 	}
 
-	private void doTunePredictionInArea(PredictionArea area) throws InterruptedException {
-		tunePrediction(asList(area.getItems()), METRICS);
+	private void doTunePredictionInArea(PredictionConfig config, PredictionArea area) throws InterruptedException {
+		tunePrediction(config, asList(area.getItems()), METRICS);
 	}
 
-	private void tunePrediction(Iterable<Weighted> features, Function<PredictionResult, Double> metrics) throws InterruptedException {
+	private void tunePrediction(PredictionConfig config, Iterable<Weighted> features, Function<PredictionResult, Double> metrics) throws InterruptedException {
 		TuningContext context = new TuningContext(comparing(metrics), MIN_WEIGHT, MAX_WEIGHT, WEIGHT_STEP);
-		PredictionResult result = verifyPrediction(FROM_DATE, TO_DATE);
+		PredictionResult result = verifyPrediction(config, FROM_DATE, TO_DATE);
 
 		for (context.initialResult(result); context.startStep() != null; context.endStep()) {
 			for (Weighted weighted : features) {
-				if (context.stepDown(weighted))
-					context.nextResult(verifyPrediction(FROM_DATE, TO_DATE));
-				if (context.stepUp(weighted))
-					context.nextResult(verifyPrediction(FROM_DATE, TO_DATE));
+				PredictionConfig stepDownConfig = context.stepDown(weighted);
+				if (stepDownConfig != null)
+					context.nextResult(verifyPrediction(stepDownConfig, FROM_DATE, TO_DATE));
+				PredictionConfig stepUpConfig = context.stepUp(weighted);
+				if (stepUpConfig != null)
+					context.nextResult(verifyPrediction(stepUpConfig, FROM_DATE, TO_DATE));
 			}
 		}
 		context.finish();

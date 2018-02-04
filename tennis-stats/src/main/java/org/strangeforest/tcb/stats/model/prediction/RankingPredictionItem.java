@@ -2,19 +2,17 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 public enum RankingPredictionItem implements PredictionItem {
 
-	RANK(false, 0.0),
-	RANK_POINTS(false, 4.0),
-	ELO(false, 8.0),
-	SURFACE_ELO(false, 10.0),
-	OUT_IN_ELO(false, 1.0),
-	SET_ELO(true, 0.0);
+	RANK(false),
+	RANK_POINTS(false),
+	ELO(false),
+	SURFACE_ELO(false),
+	OUT_IN_ELO(false),
+	SET_ELO(true);
 
 	private volatile PredictionArea area;
 	private final boolean forSet;
-	private volatile double weight;
 
-	RankingPredictionItem(boolean forSet, double weight) {
-		this.weight = weight;
+	RankingPredictionItem(boolean forSet) {
 		this.forSet = forSet;
 	}
 
@@ -30,13 +28,12 @@ public enum RankingPredictionItem implements PredictionItem {
 		return forSet;
 	}
 
-	@Override public double getWeight() {
-		return weight;
+	@Override public double getWeight(PredictionConfig config) {
+		return config.getItemWeight(this);
 	}
 
-	@Override public void setWeight(double weight) {
-		this.weight = weight;
-		area.calculateItemAdjustmentWeight();
+	@Override public PredictionConfig setWeight(PredictionConfig config, double weight) {
+		return new PredictionConfig(config, this, weight);
 	}
 
 	@Override public String toString() {

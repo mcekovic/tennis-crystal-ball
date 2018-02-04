@@ -42,9 +42,9 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		"ORDER BY m.date";
 
 
-	protected PredictionResult verifyPrediction(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
+	protected PredictionResult verifyPrediction(PredictionConfig config, LocalDate fromDate, LocalDate toDate) throws InterruptedException {
 		System.out.printf("\nVerifying prediction from %1$s to %2$s and weights:\n", fromDate, toDate);
-		printWeights();
+		printWeights(config);
 		ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 		AtomicInteger total = new AtomicInteger();
 		AtomicInteger predicted = new AtomicInteger();
@@ -56,7 +56,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		AtomicInteger ticks = new AtomicInteger();
 		for (MatchForVerification match : matches(fromDate, toDate)) {
 			executor.execute(() -> {
-				MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.tournamentId, match.tournamentEventId, false, match.surface, match.indoor, match.level, match.bestOf, match.round);
+				MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.tournamentId, match.tournamentEventId, false, match.surface, match.indoor, match.level, match.bestOf, match.round, config);
 				if (prediction.getPredictability1() > MIN_PREDICTABILITY) {
 					predicted.incrementAndGet();
 					double winnerProbability = prediction.getWinProbability1();
@@ -107,7 +107,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 			System.out.printf("Profitable: %1$.3f%%\n", profitablePct);
 			System.out.printf("Profit: %1$.3f%%\n", profitPct);
 		}
-		return new PredictionResult(predictablePct, predictionRate, profitPct);
+		return new PredictionResult(predictablePct, predictionRate, profitPct, config);
 	}
 
 	private static double kellyStake(double probability, double price) {
@@ -139,21 +139,12 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		);
 	}
 
-	protected static void setWeights(double weight) {
-		setWeights(weight, weight);
-	}
-
-	protected static void setWeights(double areaWeight, double itemWeight) {
-		for (PredictionArea area : PredictionArea.values())
-			area.setWeights(areaWeight, itemWeight);
-	}
-
-	protected static void printWeights() {
+	protected static void printWeights(PredictionConfig config) {
 		for (PredictionArea area : PredictionArea.values()) {
-			double areaWeight = area.getWeight();
+			double areaWeight = config.getAreaWeight(area);
 			if (areaWeight > 0.0) {
 				System.out.printf("%1$s: %2$s %3$s\n", area, areaWeight,
-					Stream.of(area.getItems()).filter(item -> item.getWeight() > 0.0).map(item -> format("%1$s: %2$s", item, item.getWeight())).collect(toList())
+					Stream.of(area.getItems()).filter(item -> config.getItemWeight(item) > 0.0).map(item -> format("%1$s: %2$s", item, config.getItemWeight(item))).collect(toList())
 				);
 			}
 		}

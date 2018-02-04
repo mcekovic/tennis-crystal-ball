@@ -12,14 +12,16 @@ public class RankingMatchPredictor implements MatchPredictor {
 	private final RankingData rankingData1;
 	private final RankingData rankingData2;
 	private final short bestOf;
+	private final PredictionConfig config;
 
 	private static final int DEFAULT_RANK = 500;
 	private static final int DEFAULT_RANK_POINTS = 0;
 
-	public RankingMatchPredictor(RankingData rankingData1, RankingData rankingData2, short bestOf) {
+	public RankingMatchPredictor(RankingData rankingData1, RankingData rankingData2, short bestOf, PredictionConfig config) {
 		this.rankingData1 = rankingData1;
 		this.rankingData2 = rankingData2;
 		this.bestOf = bestOf;
+		this.config = config;
 	}
 
 	@Override public PredictionArea getArea() {
@@ -27,7 +29,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	}
 
 	@Override public MatchPrediction predictMatch() {
-		MatchPrediction prediction = new MatchPrediction();
+		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight());
 		addRankItemProbabilities(prediction, RANK, rankingData1.getRank(), rankingData2.getRank());
 		addRankPointsItemProbabilities(prediction, RANK_POINTS, rankingData1.getRankPoints(), rankingData2.getRankPoints());
 		addEloItemProbabilities(prediction, ELO, rankingData1.getEloRating(), rankingData2.getEloRating());
@@ -41,7 +43,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	// Rank
 
 	private void addRankItemProbabilities(MatchPrediction prediction, RankingPredictionItem item, Integer rank1, Integer rank2) {
-		double weight = item.getWeight() * presenceWeight(rank1, rank2);
+		double weight = config.getItemWeight(item) * presenceWeight(rank1, rank2);
 		if (weight > 0.0) {
 			prediction.addItemProbability1(item, weight, rankWinProbability(rank1, rank2));
 			prediction.addItemProbability2(item, weight, rankWinProbability(rank2, rank1));
@@ -58,7 +60,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	// Rank Points
 
 	private void addRankPointsItemProbabilities(MatchPrediction prediction, RankingPredictionItem item, Integer rankPoints1, Integer rankPoints2) {
-		double weight = item.getWeight() * presenceWeight(rankPoints1, rankPoints2);
+		double weight = config.getItemWeight(item) * presenceWeight(rankPoints1, rankPoints2);
 		if (weight > 0.0) {
 			prediction.addItemProbability1(item, weight, rankPointsWinProbability(rankPoints1, rankPoints2));
 			prediction.addItemProbability2(item, weight, rankPointsWinProbability(rankPoints2, rankPoints1));
@@ -75,7 +77,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	// Elo
 
 	private void addEloItemProbabilities(MatchPrediction prediction, RankingPredictionItem item, Integer eloRating1, Integer eloRating2) {
-		double weight = item.getWeight() * presenceWeight(eloRating1, eloRating2);
+		double weight = config.getItemWeight(item) * presenceWeight(eloRating1, eloRating2);
 		if (weight > 0.0) {
 			DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
 			prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(eloWinProbability(eloRating1, eloRating2)));

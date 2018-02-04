@@ -2,6 +2,6 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 public interface Weighted {
 
-	double getWeight();
-	void setWeight(double weight);
+	double getWeight(PredictionConfig config);
+	PredictionConfig setWeight(PredictionConfig config, double weight);
 }

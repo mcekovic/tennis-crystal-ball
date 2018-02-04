@@ -14,7 +14,7 @@ public final class MatchPrediction {
 	public static final MatchPrediction TIE = prediction(0.5);
 
 	private static MatchPrediction prediction(double winProbability1) {
-		MatchPrediction prediction = new MatchPrediction();
+		MatchPrediction prediction = new MatchPrediction(1.0);
 		prediction.addItemProbability1(RankingPredictionItem.RANK, 1.0, winProbability1);
 		prediction.addItemProbability2(RankingPredictionItem.RANK, 1.0, 1.0 - winProbability1);
 		return prediction;
@@ -23,12 +23,17 @@ public final class MatchPrediction {
 
 	// Instance
 
+	private final double totalAreaWeight;
 	private List<WeightedProbability> itemProbabilities1 = new ArrayList<>();
 	private List<WeightedProbability> itemProbabilities2 = new ArrayList<>();
 	private Double winProbability1 = 0.5;
 	private Double winProbability2 = 0.5;
 	private RankingData rankingData1;
 	private RankingData rankingData2;
+
+	public MatchPrediction(double totalAreaWeight) {
+		this.totalAreaWeight = totalAreaWeight;
+	}
 
 	public double getWinProbability1() {
 		if (winProbability1 == null)
@@ -102,11 +107,11 @@ public final class MatchPrediction {
 	}
 
 	public double getPredictability1() {
-		return getItemProbabilitiesWeight1() / PredictionArea.getTotalAreaWeight();
+		return getItemProbabilitiesWeight1() / totalAreaWeight;
 	}
 
 	public double getPredictability2() {
-		return getItemProbabilitiesWeight2() / PredictionArea.getTotalAreaWeight();
+		return getItemProbabilitiesWeight2() / totalAreaWeight;
 	}
 
 	public boolean isEmpty() {
@@ -127,15 +132,12 @@ public final class MatchPrediction {
 		}
 	}
 
-	public void addAreaProbabilities(PredictionArea area, MatchPrediction prediction) {
-		if (!prediction.isEmpty() && area.getWeight() > 0.0) {
-			double weight = area.getItemAdjustmentWeight();
-			if (weight > 0.0) {
-				itemProbabilities1.addAll(prediction.getItemProbabilities1(weight));
-				itemProbabilities2.addAll(prediction.getItemProbabilities2(weight));
-				winProbability1 = null;
-				winProbability2 = null;
-			}
+	public void addAreaProbabilities(MatchPrediction prediction, double areaAdjustedWeight) {
+		if (areaAdjustedWeight > 0.0) {
+			itemProbabilities1.addAll(prediction.getItemProbabilities1(areaAdjustedWeight));
+			itemProbabilities2.addAll(prediction.getItemProbabilities2(areaAdjustedWeight));
+			winProbability1 = null;
+			winProbability2 = null;
 		}
 	}
 
@@ -168,7 +170,7 @@ public final class MatchPrediction {
 	}
 
 	public MatchPrediction swap() {
-		MatchPrediction swapped = new MatchPrediction();
+		MatchPrediction swapped = new MatchPrediction(totalAreaWeight);
 		swapped.itemProbabilities1 = new ArrayList<>(itemProbabilities2);
 		swapped.itemProbabilities2 = new ArrayList<>(itemProbabilities1);
 		swapped.winProbability1 = winProbability2;

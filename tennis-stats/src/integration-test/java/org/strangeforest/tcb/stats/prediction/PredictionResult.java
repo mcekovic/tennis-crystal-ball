@@ -1,7 +1,5 @@
 package org.strangeforest.tcb.stats.prediction;
 
-import java.util.*;
-
 import org.strangeforest.tcb.stats.model.prediction.*;
 
 import static com.google.common.base.MoreObjects.*;
@@ -11,13 +9,13 @@ public class PredictionResult {
 	private final double predictablePct;
 	private final double predictionRate;
 	private final double profit;
-	private final Properties config;
+	private final PredictionConfig config;
 
-	public PredictionResult(double predictablePct, double predictionRate, double profit) {
+	public PredictionResult(double predictablePct, double predictionRate, double profit, PredictionConfig config) {
 		this.predictablePct = predictablePct;
 		this.predictionRate = predictionRate;
 		this.profit = profit;
-		config = PredictionConfig.get();
+		this.config = config;
 	}
 
 	public double getPredictablePct() {
@@ -40,7 +38,7 @@ public class PredictionResult {
 		return predictablePct * profit;
 	}
 
-	public Properties getConfig() {
+	public PredictionConfig getConfig() {
 		return config;
 	}
 
@@ -52,7 +50,7 @@ public class PredictionResult {
 			.add("predictablePct", predictablePct)
 			.add("predictionRate", predictionRate)
 			.add("profit", profit)
-			.add("config", new TreeMap<>(config))
-			.toString();
+			.add("config", config)
+		.toString();
 	}
 }

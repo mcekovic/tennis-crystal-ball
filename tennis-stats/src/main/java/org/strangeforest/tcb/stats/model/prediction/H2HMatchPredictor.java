@@ -22,12 +22,13 @@ public class H2HMatchPredictor implements MatchPredictor {
 	private final Integer tournamentId;
 	private final Round round;
 	private final short bestOf;
+	private final PredictionConfig config;
 
 	static final int MATCH_RECENT_PERIOD_YEARS = 3;
 	static final int SET_RECENT_PERIOD_YEARS = 2;
 
 	public H2HMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, int playerId1, int playerId2, LocalDate date1, LocalDate date2,
-	                         Surface surface, TournamentLevel level, Integer tournamentId, Round round, short bestOf) {
+	                         Surface surface, TournamentLevel level, Integer tournamentId, Round round, short bestOf, PredictionConfig config) {
 		this.matchData1 = matchData1;
 		this.matchData2 = matchData2;
 		this.playerId1 = playerId1;
@@ -39,6 +40,7 @@ public class H2HMatchPredictor implements MatchPredictor {
 		this.tournamentId = tournamentId;
 		this.round = round;
 		this.bestOf = bestOf;
+		this.config = config;
 	}
 
 	@Override public PredictionArea getArea() {
@@ -48,7 +50,7 @@ public class H2HMatchPredictor implements MatchPredictor {
 	@Override public MatchPrediction predictMatch() {
 		Period matchRecentPeriod = getMatchRecentPeriod();
 		Period setRecentPeriod = getSetRecentPeriod();
-		MatchPrediction prediction = new MatchPrediction();
+		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight());
 		addItemProbabilities(prediction, OVERALL, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
@@ -71,11 +73,11 @@ public class H2HMatchPredictor implements MatchPredictor {
 	}
 
 	private Period getMatchRecentPeriod() {
-		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period.match." + getArea()).orElse(MATCH_RECENT_PERIOD_YEARS));
+		return Period.ofYears(config.getMatchRecentPeriod(getArea(), MATCH_RECENT_PERIOD_YEARS));
 	}
 
 	private Period getSetRecentPeriod() {
-		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period.set." + getArea()).orElse(SET_RECENT_PERIOD_YEARS));
+		return Period.ofYears(config.getSetRecentPeriod(getArea(), SET_RECENT_PERIOD_YEARS));
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, H2HPredictionItem item, Predicate<MatchData> filter) {
@@ -83,13 +85,14 @@ public class H2HMatchPredictor implements MatchPredictor {
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, H2HPredictionItem item, Predicate<MatchData> filter1, Predicate<MatchData> filter2) {
-		if (item.getWeight() > 0.0) {
+		double itemWeight = config.getItemWeight(item);
+		if (itemWeight > 0.0) {
 			ToIntFunction<MatchData> dimension = item.isForSet() ? MatchData::getPSets : MatchData::getPMatches;
 			int won1 = matchData1.stream().filter(filter1.and(isOpponent(playerId2))).mapToInt(dimension).sum();
 			int won2 = matchData2.stream().filter(filter2.and(isOpponent(playerId1))).mapToInt(dimension).sum();
 			int total = won1 + won2;
 			if (total > 0) {
-				double weight = item.getWeight() * weight(total);
+				double weight = itemWeight * weight(total);
 				DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
 				prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(1.0 * won1 / total));
 				prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(1.0 * won2 / total));

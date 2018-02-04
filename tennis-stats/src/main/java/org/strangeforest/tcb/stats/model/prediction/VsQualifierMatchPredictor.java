@@ -19,8 +19,9 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 	private final Integer tournamentId;
 	private final Round round;
 	private final short bestOf;
+	private final PredictionConfig config;
 
-	public VsQualifierMatchPredictor(List<MatchData> matchData, LocalDate date, Surface surface, TournamentLevel level, Integer tournamentId, Round round, short bestOf) {
+	public VsQualifierMatchPredictor(List<MatchData> matchData, LocalDate date, Surface surface, TournamentLevel level, Integer tournamentId, Round round, short bestOf, PredictionConfig config) {
 		this.matchData = matchData;
 		this.date = date;
 		this.surface = surface;
@@ -28,6 +29,7 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 		this.tournamentId = tournamentId;
 		this.round = round;
 		this.bestOf = bestOf;
+		this.config = config;
 	}
 
 	@Override public PredictionArea getArea() {
@@ -35,7 +37,7 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 	}
 
 	@Override public MatchPrediction predictMatch() {
-		MatchPrediction prediction = new MatchPrediction();
+		MatchPrediction prediction = new MatchPrediction(config.getTotalAreasWeight());
 		addItemProbabilities(prediction, OVERALL, ALWAYS_TRUE);
 		addItemProbabilities(prediction, SURFACE, isSurface(surface));
 		addItemProbabilities(prediction, LEVEL, isLevel(level));
@@ -58,15 +60,16 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 	}
 
 	private Period getMatchRecentPeriod() {
-		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period.match." + getArea()).orElse(MATCH_RECENT_PERIOD_YEARS));
+		return Period.ofYears(config.getMatchRecentPeriod(getArea(), MATCH_RECENT_PERIOD_YEARS));
 	}
 
 	private Period getSetRecentPeriod() {
-		return Period.ofYears(PredictionConfig.getIntegerProperty("recent_period.set." + getArea()).orElse(SET_RECENT_PERIOD_YEARS));
+		return Period.ofYears(config.getSetRecentPeriod(getArea(), SET_RECENT_PERIOD_YEARS));
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, H2HPredictionItem item, Predicate<MatchData> filter) {
-		if (item.getWeight() > 0.0) {
+		double itemWeight = config.getItemWeight(item);
+		if (itemWeight > 0.0) {
 			ToIntFunction<MatchData> dimension = item.isForSet() ? MatchData::getSets : MatchData::getMatches;
 
 			Predicate<MatchData> qualifierFilter = filter.and(isOpponentQualifier());
@@ -75,7 +78,7 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 				ToIntFunction<MatchData> pDimension = item.isForSet() ? MatchData::getPSets : MatchData::getPMatches;
 				int won = matchData.stream().filter(qualifierFilter).mapToInt(pDimension).sum();
 				int lost = total - won;
-				double weight = item.getWeight() * weight(total);
+				double weight = itemWeight * weight(total);
 				DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
 				prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(1.0 * won / total));
 				prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(1.0 * lost / total));

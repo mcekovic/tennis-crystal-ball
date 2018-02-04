@@ -2,32 +2,30 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 public enum H2HPredictionItem implements PredictionItem {
 
-	OVERALL(false, 0.0),
-	SURFACE(false, 5.0),
-	LEVEL(false, 1.0),
-	TOURNAMENT(false, 3.0),
-	ROUND(false, 3.0),
-	RECENT(false, 4.0),
-	SURFACE_RECENT(false, 3.0),
-	LEVEL_RECENT(false, 0.0),
-	ROUND_RECENT(false, 0.0),
-	OVERALL_SET(true, 0.0),
-	SURFACE_SET(true, 0.0),
-	LEVEL_SET(true, 1.0),
-	TOURNAMENT_SET(true, 1.0),
-	ROUND_SET(true, 0.0),
-	RECENT_SET(true, 0.0),
-	SURFACE_RECENT_SET(true, 3.0),
-	LEVEL_RECENT_SET(true, 1.0),
-	ROUND_RECENT_SET(true, 0.0);
+	OVERALL(false),
+	SURFACE(false),
+	LEVEL(false),
+	TOURNAMENT(false),
+	ROUND(false),
+	RECENT(false),
+	SURFACE_RECENT(false),
+	LEVEL_RECENT(false),
+	ROUND_RECENT(false),
+	OVERALL_SET(true),
+	SURFACE_SET(true),
+	LEVEL_SET(true),
+	TOURNAMENT_SET(true),
+	ROUND_SET(true),
+	RECENT_SET(true),
+	SURFACE_RECENT_SET(true),
+	LEVEL_RECENT_SET(true),
+	ROUND_RECENT_SET(true);
 
 	private volatile PredictionArea area;
 	private final boolean forSet;
-	private volatile double weight;
 
-	H2HPredictionItem(boolean forSet, double weight) {
+	H2HPredictionItem(boolean forSet) {
 		this.forSet = forSet;
-		this.weight = weight;
 	}
 
 	@Override public PredictionArea getArea() {
@@ -42,13 +40,12 @@ public enum H2HPredictionItem implements PredictionItem {
 		return forSet;
 	}
 
-	@Override public double getWeight() {
-		return weight;
+	@Override public double getWeight(PredictionConfig config) {
+		return config.getItemWeight(this);
 	}
 
-	@Override public void setWeight(double weight) {
-		this.weight = weight;
-		area.calculateItemAdjustmentWeight();
+	@Override public PredictionConfig setWeight(PredictionConfig config, double weight) {
+		return new PredictionConfig(config, this, weight);
 	}
 
 	@Override public String toString() {
