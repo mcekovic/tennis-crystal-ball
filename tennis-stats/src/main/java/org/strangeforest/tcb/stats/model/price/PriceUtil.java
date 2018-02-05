@@ -1,4 +1,4 @@
-package org.strangeforest.tcb.stats.model.prediction;
+package org.strangeforest.tcb.stats.model.price;
 
 import java.math.*;
 

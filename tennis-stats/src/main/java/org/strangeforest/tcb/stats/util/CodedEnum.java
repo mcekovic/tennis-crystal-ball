@@ -23,10 +23,6 @@ public interface CodedEnum {
 		return isNullOrEmpty(code) ? null : decode(enumClass, code);
 	}
 
-	static <E extends Enum<E> & CodedEnum> String safeEncode(E e) {
-		return e != null ? e.getCode() : null;
-	}
-
 	static <E extends Enum<E> & CodedEnum> Map<String, String> asMap(Class<E> enumClass) {
 		return Stream.<CodedEnum>of(enumClass.getEnumConstants()).collect(toMap(CodedEnum::getCode, CodedEnum::getText));
 	}

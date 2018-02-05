@@ -10,9 +10,9 @@ public final class MatchData {
 	private final int tournamentId;
 	private final int tournamentEventId;
 	private final boolean inProgress;
-	private final String level;
-	private final String surface;
-	private final String round;
+	private final TournamentLevel level;
+	private final Surface surface;
+	private final Round round;
 	private final int opponentId;
 	private final Integer opponentRank;
 	private final Integer opponentEloRating;
@@ -25,7 +25,7 @@ public final class MatchData {
 	private final int oSets;
 	private final Integer nextEloRating;
 
-	public MatchData(LocalDate date, int tournamentId, int tournamentEventId, boolean inProgress, String level, String surface, String round,
+	public MatchData(LocalDate date, int tournamentId, int tournamentEventId, boolean inProgress, TournamentLevel level, Surface surface, Round round,
 	                 int opponentId, Integer opponentRank, Integer opponentEloRating, String opponentHand, String opponentBackhand, String opponentEntry,
 	                 int pMatches, int oMatches, int pSets, int oSets, Integer nextEloRating) {
 		this.date = date;
@@ -64,15 +64,15 @@ public final class MatchData {
 		return inProgress;
 	}
 
-	public String getLevel() {
+	public TournamentLevel getLevel() {
 		return level;
 	}
 
-	public String getSurface() {
+	public Surface getSurface() {
 		return surface;
 	}
 
-	public String getRound() {
+	public Round getRound() {
 		return round;
 	}
 

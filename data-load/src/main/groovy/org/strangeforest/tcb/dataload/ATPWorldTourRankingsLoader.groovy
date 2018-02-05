@@ -27,14 +27,18 @@ class ATPWorldTourRankingsLoader {
 			def points = integer it.select('td.points-cell').text().replace(',', '')
 			paramsBatch << [rank_date: parsedDate, player_name: player, rank: rank, rank_points: points]
 		}
-		withTx sql, { Sql s ->
-			s.withBatch('{call load_ranking(:rank_date, :player_name, :rank, :rank_points)}') { ps ->
-				paramsBatch.each { params ->
-					ps.addBatch(params)
+		if (paramsBatch) {
+			withTx sql, { Sql s ->
+				s.withBatch('{call load_ranking(:rank_date, :player_name, :rank, :rank_points)}') { ps ->
+					paramsBatch.each { params ->
+						ps.addBatch(params)
+					}
 				}
 			}
+			println "$rankDate: $paramsBatch.size rankings loaded in $stopwatch"
 		}
-		println "$rankDate: $paramsBatch.size rankings loaded in $stopwatch"
+		else
+			println "No rankings found for date $rankDate"
 	}
 
 	static player(String name) {

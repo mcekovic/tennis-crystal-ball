@@ -4,9 +4,9 @@ import java.util.*;
 
 import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.core.*;
-import org.strangeforest.tcb.stats.model.prediction.*;
+import org.strangeforest.tcb.stats.model.price.*;
 
-import static org.strangeforest.tcb.stats.model.prediction.PriceUtil.*;
+import static org.strangeforest.tcb.stats.model.price.PriceUtil.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 public class PlayerForecast extends MatchPlayerEx {

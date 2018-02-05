@@ -19,6 +19,7 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	private static final LocalDate FROM_DATE = LocalDate.of(2005, 1, 1);
 	private static final LocalDate TO_DATE = LocalDate.now();
+	private static final TuningSet TUNING_SET = TuningSet.HARD_OUTDOOR_BEST_OF_3;
 	private static final Function<PredictionResult, Double> METRICS = PredictionResult::getPredictablePredictionRate;
 	private static final double MIN_WEIGHT = 0.0;
 	private static final double MAX_WEIGHT = 10.0;
@@ -29,12 +30,12 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	@Test
 	public void tunePredictionByArea() throws InterruptedException {
-		doTunePredictionByArea(PredictionConfig.EQUAL_WEIGHTS);
+		doTunePredictionByArea(PredictionConfig.equalWeights());
 	}
 
 	@Test
 	public void tunePredictionByItem() throws InterruptedException {
-		doTunePredictionByItem(PredictionConfig.EQUAL_WEIGHTS);
+		doTunePredictionByItem(PredictionConfig.equalWeights());
 	}
 
 	@Test
@@ -111,16 +112,16 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	private void tunePrediction(PredictionConfig config, Iterable<Weighted> features, Function<PredictionResult, Double> metrics) throws InterruptedException {
 		TuningContext context = new TuningContext(comparing(metrics), MIN_WEIGHT, MAX_WEIGHT, WEIGHT_STEP);
-		PredictionResult result = verifyPrediction(config, FROM_DATE, TO_DATE);
+		PredictionResult result = verifyPrediction(FROM_DATE, TO_DATE, config, TUNING_SET);
 
 		for (context.initialResult(result); context.startStep() != null; context.endStep()) {
 			for (Weighted weighted : features) {
 				PredictionConfig stepDownConfig = context.stepDown(weighted);
 				if (stepDownConfig != null)
-					context.nextResult(verifyPrediction(stepDownConfig, FROM_DATE, TO_DATE));
+					context.nextResult(verifyPrediction(FROM_DATE, TO_DATE, stepDownConfig, TUNING_SET));
 				PredictionConfig stepUpConfig = context.stepUp(weighted);
 				if (stepUpConfig != null)
-					context.nextResult(verifyPrediction(stepUpConfig, FROM_DATE, TO_DATE));
+					context.nextResult(verifyPrediction(FROM_DATE, TO_DATE, stepUpConfig, TUNING_SET));
 			}
 		}
 		context.finish();

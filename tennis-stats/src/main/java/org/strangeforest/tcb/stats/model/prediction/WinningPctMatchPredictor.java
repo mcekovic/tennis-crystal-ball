@@ -8,7 +8,6 @@ import org.strangeforest.tcb.stats.model.core.*;
 
 import com.google.common.collect.*;
 
-import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
 import static org.strangeforest.tcb.stats.model.prediction.WinningPctPredictionItem.*;
 
@@ -102,18 +101,14 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 		if (itemWeight > 0.0) {
 			ToIntFunction<MatchData> wonDimension = item.isForSet() ? MatchData::getPSets : MatchData::getPMatches;
 			ToIntFunction<MatchData> lostDimension = item.isForSet() ? MatchData::getOSets : MatchData::getOMatches;
-			List<MatchData> filteredMatchData1 = matchData1.stream().filter(filter1).collect(toList());
-			List<MatchData> filteredMatchData2 = matchData2.stream().filter(filter2).collect(toList());
-			int won1 = filteredMatchData1.stream().mapToInt(wonDimension).sum();
-			int lost1 = filteredMatchData1.stream().mapToInt(lostDimension).sum();
-			int won2 = filteredMatchData2.stream().mapToInt(wonDimension).sum();
-			int lost2 = filteredMatchData2.stream().mapToInt(lostDimension).sum();
-			int total1 = won1 + lost1;
-			int total2 = won2 + lost2;
+			WL wonLost1 = matchData1.stream().filter(filter1).map(m -> new WL(wonDimension.applyAsInt(m), lostDimension.applyAsInt(m))).reduce(new WL(), WL::add);
+			WL wonLost2 = matchData2.stream().filter(filter2).map(m -> new WL(wonDimension.applyAsInt(m), lostDimension.applyAsInt(m))).reduce(new WL(), WL::add);
+			int total1 = wonLost1.total();
+			int total2 = wonLost2.total();
 			if (total1 > 0 && total2 > 0) {
 				double weight = itemWeight * weight(total1, total2);
-				double p1 = 1.0 * won1 / total1;
-				double p2 = 1.0 * won2 / total2;
+				double p1 = 1.0 * wonLost1.won / total1;
+				double p2 = 1.0 * wonLost2.won / total2;
 				if (p1 + p2 > 0.0) {
 					p1 = p1 * p1;
 					p2 = p2 * p2;
@@ -123,6 +118,29 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 					prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(p2 / p12));
 				}
 			}
+		}
+	}
+
+	private static final class WL {
+		
+		public int won;
+		public int lost;
+
+		public WL() {}
+
+		public WL(int won, int lost) {
+			this.won = won;
+			this.lost = lost;
+		}
+
+		public WL add(WL wl) {
+			won += wl.won;
+			lost += wl.lost;
+			return this;
+		}
+
+		public int total() {
+			return won + lost;
 		}
 	}
 }

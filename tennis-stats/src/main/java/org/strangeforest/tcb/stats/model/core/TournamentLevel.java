@@ -6,26 +6,28 @@ import org.strangeforest.tcb.stats.util.*;
 
 public enum TournamentLevel implements CodedEnum {
 
-	GRAND_SLAM("G", "Grand Slam"),
-	TOUR_FINALS("F", "Tour Finals"),
-	ALT_FINALS("L", "Alt. Finals"),
-	MASTERS("M", "Masters"),
-	OLYMPICS("O", "Olympics"),
-	ATP_500("A", "ATP 500"),
-	ATP_250("B", "ATP 250"),
-	CHALLENGERS("C", "Challengers"),
-	FUTURES("U", "Futures"),
-	EXHIBITIONS("E", "Exhibitions"),
-	OTHERS("H", "Others"),
-	DAVIS_CUP("D", "Davis Cup"),
-	OTHERS_TEAM("T", "World Team Cup");
+	GRAND_SLAM("G", "Grand Slam", 5),
+	TOUR_FINALS("F", "Tour Finals", 3),
+	ALT_FINALS("L", "Alt. Finals", 3),
+	MASTERS("M", "Masters", 3),
+	OLYMPICS("O", "Olympics", 3),
+	ATP_500("A", "ATP 500", 3),
+	ATP_250("B", "ATP 250", 3),
+	CHALLENGERS("C", "Challengers", 3),
+	FUTURES("U", "Futures", 3),
+	EXHIBITIONS("E", "Exhibitions", 3),
+	OTHERS("H", "Others", 3),
+	DAVIS_CUP("D", "Davis Cup", 5),
+	OTHERS_TEAM("T", "World Team Cup", 3);
 
 	private final String code;
 	private final String text;
+	private final short bestOf;
 
-	TournamentLevel(String code, String text) {
+	TournamentLevel(String code, String text, int bestOf) {
 		this.code = code;
 		this.text = text;
+		this.bestOf = (short)bestOf;
 	}
 
 	@Override public String getCode() {
@@ -34,6 +36,10 @@ public enum TournamentLevel implements CodedEnum {
 
 	@Override public String getText() {
 		return text;
+	}
+
+	public short getBestOf() {
+		return bestOf;
 	}
 
 	public static TournamentLevel decode(String code) {

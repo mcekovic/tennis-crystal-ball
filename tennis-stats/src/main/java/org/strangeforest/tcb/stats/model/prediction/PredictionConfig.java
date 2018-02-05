@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.model.prediction;
 import java.io.*;
 import java.util.*;
 import java.util.Objects;
+import java.util.concurrent.*;
 import java.util.regex.*;
 import java.util.stream.*;
 
@@ -11,6 +12,7 @@ import org.strangeforest.tcb.stats.util.*;
 import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
+import static java.lang.String.format;
 
 public class PredictionConfig {
 
@@ -23,15 +25,17 @@ public class PredictionConfig {
 
 	// Factory
 
-	private static PredictionConfig defaultConfig;
+	private static Map<TuningSet, PredictionConfig> defaultConfigs = new ConcurrentHashMap<>();
 
-	public static synchronized PredictionConfig defaultConfig() {
-		if (defaultConfig == null)
-			loadConfig("/prediction/default-prediction.properties");
-		return defaultConfig;
+	public static PredictionConfig defaultConfig() {
+		return defaultConfig(TuningSet.ALL);
+	}
+	
+	public static synchronized PredictionConfig defaultConfig(TuningSet tuningSet) {
+		return defaultConfigs.computeIfAbsent(tuningSet, ts -> loadConfig(format("/prediction/prediction%1$s.properties", tuningSet.getConfigSuffix())));
 	}
 
-	public static void loadConfig(String configName) {
+	public static PredictionConfig loadConfig(String configName) {
 		Properties props = new Properties();
 		try {
 			InputStream in = PredictionConfig.class.getResourceAsStream(configName);
@@ -42,11 +46,14 @@ public class PredictionConfig {
 		catch (IOException ex) {
 			throw new TennisStatsException("Cannot load prediction config.", ex);
 		}
-		defaultConfig = new PredictionConfig(props);
+		return new PredictionConfig(props);
 	}
 
 	public static final PredictionConfig EMPTY = new PredictionConfig();
-	public static final PredictionConfig EQUAL_WEIGHTS = new PredictionConfig(1.0);
+
+	public static PredictionConfig equalWeights() {
+		return new PredictionConfig(1.0);
+	}
 
 	public static PredictionConfig areaEqualWeights(PredictionArea area) {
 		return new PredictionConfig(area, 1.0);

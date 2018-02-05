@@ -10,7 +10,6 @@ import com.google.common.collect.*;
 
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.util.CodedEnum.*;
 
 public abstract class MatchDataUtil {
 
@@ -42,6 +41,24 @@ public abstract class MatchDataUtil {
 		return setProbability * setProbability * setProbability * (10 - 15 * setProbability + 6 * setProbability * setProbability);
 	}
 
+	public static short defaultBestOf(TournamentLevel level, Short bestOf) {
+		if (bestOf != null)
+			return bestOf;
+		else if (level != null)
+			return level.getBestOf();
+		else
+			return 3;
+	}
+
+	public static Short bestOf(TournamentLevel level, Short bestOf) {
+		if (bestOf != null)
+			return bestOf;
+		else if (level != null)
+			return level.getBestOf();
+		else
+			return null;
+	}
+
 	public static final Predicate<MatchData> ALWAYS_TRUE = m -> Boolean.TRUE;
 
 	public static Predicate<MatchData> isRecent(LocalDate date, Period period) {
@@ -50,11 +67,11 @@ public abstract class MatchDataUtil {
 	}
 
 	public static Predicate<MatchData> isSurface(Surface surface) {
-		return match -> nonNullEquals(match.getSurface(), safeEncode(surface));
+		return match -> nonNullEquals(match.getSurface(), surface);
 	}
 
 	public static Predicate<MatchData> isLevel(TournamentLevel level) {
-		return match -> nonNullEquals(match.getLevel(), safeEncode(level));
+		return match -> nonNullEquals(match.getLevel(), level);
 	}
 
 	public static Predicate<MatchData> isTournament(Integer tournamentId) {
@@ -62,7 +79,7 @@ public abstract class MatchDataUtil {
 	}
 
 	public static Predicate<MatchData> isRound(Round round) {
-		return match -> nonNullEquals(roundGroup(Round.safeDecode(match.getRound())), roundGroup(round));
+		return match -> nonNullEquals(roundGroup(match.getRound()), roundGroup(round));
 	}
 
 	private static Round roundGroup(Round round) {

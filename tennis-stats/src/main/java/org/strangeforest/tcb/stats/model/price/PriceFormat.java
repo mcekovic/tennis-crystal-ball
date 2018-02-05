@@ -1,9 +1,9 @@
-package org.strangeforest.tcb.stats.model.prediction;
+package org.strangeforest.tcb.stats.model.price;
 
 import java.math.*;
 import java.util.*;
 
-import org.strangeforest.tcb.stats.model.prediction.FractionalPriceTable.*;
+import org.strangeforest.tcb.stats.model.price.FractionalPriceTable.*;
 
 import static java.math.BigDecimal.*;
 import static java.math.RoundingMode.*;

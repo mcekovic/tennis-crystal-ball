@@ -3,9 +3,11 @@ package org.strangeforest.tcb.stats.model.prediction;
 import java.util.*;
 import java.util.stream.*;
 
+import org.strangeforest.tcb.stats.model.price.*;
+
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
-import static org.strangeforest.tcb.stats.model.prediction.PriceUtil.*;
+import static org.strangeforest.tcb.stats.model.price.PriceUtil.*;
 
 public final class MatchPrediction {
 

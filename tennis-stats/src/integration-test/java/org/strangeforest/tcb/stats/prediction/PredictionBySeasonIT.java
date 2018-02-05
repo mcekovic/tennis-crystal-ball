@@ -4,7 +4,6 @@ import java.time.*;
 
 import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
-import org.strangeforest.tcb.stats.model.prediction.*;
 import org.testng.annotations.*;
 
 @ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
@@ -16,6 +15,6 @@ public class PredictionBySeasonIT extends BasePredictionVerificationIT {
 	@Test
 	public void bySeasonPredictions() throws InterruptedException {
 		for (int year = FROM_YEAR; year <= TO_YEAR ; year++)
-			verifyPrediction(PredictionConfig.defaultConfig(), LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31));
+			verifyPrediction(LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31));
 	}
 }

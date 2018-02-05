@@ -14,11 +14,11 @@ import org.strangeforest.tcb.stats.util.*;
 
 import com.github.benmanes.caffeine.cache.*;
 
-import static com.google.common.base.Strings.*;
 import static com.google.common.collect.Lists.*;
 import static java.lang.String.*;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.*;
+import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 import static org.strangeforest.tcb.util.CompareUtil.*;
@@ -92,15 +92,18 @@ public class MatchPredictionService {
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
-		return predictMatch(playerId1, playerId2, date, date, null, null, true, surface, indoor, level, null, round, PredictionConfig.defaultConfig());
+		PredictionConfig config = PredictionConfig.defaultConfig(TuningSet.select(surface, indoor, level, null));
+		return predictMatch(playerId1, playerId2, date, date, null, null, true, surface, indoor, level, null, round, config);
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
-		return predictMatch(playerId1, playerId2, date1, date2, null, null, true, surface, indoor, level, null, round, PredictionConfig.defaultConfig());
+		PredictionConfig config = PredictionConfig.defaultConfig(TuningSet.select(surface, indoor, level, null));
+		return predictMatch(playerId1, playerId2, date1, date2, null, null, true, surface, indoor, level, null, round, config);
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round) {
-		return predictMatch(playerId1, playerId2, date, date, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round, PredictionConfig.defaultConfig());
+		PredictionConfig config = PredictionConfig.defaultConfig(TuningSet.select(surface, indoor, level, bestOf));
+		return predictMatch(playerId1, playerId2, date, date, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round, config);
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round, PredictionConfig config) {
@@ -131,11 +134,11 @@ public class MatchPredictionService {
 		List<MatchData> matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
 		if (inProgress) {
 			//TODO Replace with ListIterator, stop when not in-progress match
-			reverse(matchData1).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date1, m.getDate()) >= 0 && nullsLastCompare(Round.safeDecode(m.getRound()), round) > 0).findFirst().ifPresent(match -> {
+			reverse(matchData1).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date1, m.getDate()) >= 0 && nullsLastCompare(m.getRound(), round) > 0).findFirst().ifPresent(match -> {
 				if (nullsLastCompare(match.getDate(), rankingData1.getEloDate()) >= 0)
 					rankingData1.setEloRating(match.getNextEloRating());
 			});
-			reverse(matchData2).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date2, m.getDate()) >= 0 && nullsLastCompare(Round.safeDecode(m.getRound()), round) > 0).findFirst().ifPresent(match -> {
+			reverse(matchData2).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date2, m.getDate()) >= 0 && nullsLastCompare(m.getRound(), round) > 0).findFirst().ifPresent(match -> {
 				if (nullsLastCompare(match.getDate(), rankingData2.getEloDate()) >= 0)
 					rankingData2.setEloRating(match.getNextEloRating());
 			});
@@ -156,20 +159,6 @@ public class MatchPredictionService {
 		List<MatchData> matchData = getMatchData(playerId, date, tournamentEventId, inProgress, round);
 		short bstOf = defaultBestOf(level, bestOf);
 		return new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bstOf, config).predictMatch();
-	}
-
-	private short defaultBestOf(TournamentLevel level, Short bestOf) {
-		if (bestOf != null)
-			return bestOf;
-		else if (level != null) {
-			switch (level) {
-				case GRAND_SLAM:
-				case DAVIS_CUP: return 5;
-				default: return 3;
-			}
-		}
-		else
-			return 3;
 	}
 
 	private MatchPrediction predictMatch(Iterable<MatchPredictor> predictors, PredictionConfig config) {
@@ -245,12 +234,8 @@ public class MatchPredictionService {
 			LocalDate matchDate = match.getDate();
 			if (matchDate.isBefore(date))
 				return true;
-			else if (matchDate.equals(date) && Objects.equals(match.getTournamentEventId(), tournamentEventId) && match.isInProgress() == inProgress) {
-				if (round == null)
-					return false;
-				String matchRound = match.getRound();
-				return !isNullOrEmpty(matchRound) && Round.decode(matchRound).compareTo(round) > 0;
-			}
+			else if (matchDate.equals(date) && Objects.equals(match.getTournamentEventId(), tournamentEventId) && match.isInProgress() == inProgress)
+				return round != null && match.getRound().compareTo(round) > 0;
 			else
 				return false;
 		}).collect(toList());
@@ -267,9 +252,9 @@ public class MatchPredictionService {
 			rs.getInt("tournament_id"),
 			rs.getInt("tournament_event_id"),
 			rs.getBoolean("in_progress"),
-			rs.getString("level"),
-			rs.getString("surface"),
-			rs.getString("round"),
+			TournamentLevel.decode(rs.getString("level")),
+			Surface.safeDecode(rs.getString("surface")),
+			Round.decode(rs.getString("round")),
 			rs.getInt("opponent_id"),
 			getInteger(rs, "opponent_rank"),
 			getInteger(rs, "opponent_elo_rating"),

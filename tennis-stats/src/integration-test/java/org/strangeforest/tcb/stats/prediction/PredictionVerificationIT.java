@@ -16,25 +16,25 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 
 	@Test
 	public void verifyDefaultPrediction() throws InterruptedException {
-		verifyPrediction(PredictionConfig.defaultConfig(), FROM_DATE, TO_DATE);
+		verifyPrediction(FROM_DATE, TO_DATE);
 	}
 
 	@Test
 	public void allAreasAllItemsPredictions() throws InterruptedException {
-		verifyPrediction(PredictionConfig.EQUAL_WEIGHTS, FROM_DATE, TO_DATE);
+		verifyPrediction(FROM_DATE, TO_DATE, PredictionConfig.equalWeights());
 	}
 
 	@Test
 	public void singleAreaAllItemsPredictions() throws InterruptedException {
 		for (PredictionArea area : PredictionArea.values())
-			verifyPrediction(PredictionConfig.areaEqualWeights(area), FROM_DATE, TO_DATE);
+			verifyPrediction(FROM_DATE, TO_DATE, PredictionConfig.areaEqualWeights(area));
 	}
 
 	@Test
 	public void singleItemPredictions() throws InterruptedException {
 		for (PredictionArea area : PredictionArea.values()) {
 			for (PredictionItem item : area.getItems())
-				verifyPrediction(new PredictionConfig(area, 1.0, item, 1.0), FROM_DATE, TO_DATE);
+				verifyPrediction(FROM_DATE, TO_DATE, new PredictionConfig(area, 1.0, item, 1.0));
 		}
 	}
 }
