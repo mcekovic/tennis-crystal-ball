@@ -20,6 +20,41 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 	}
 
 	@Test
+	public void verifyDefaultPredictionForHardOutdoorBestOf3() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.HARD_OUTDOOR_BEST_OF_3);
+	}
+
+	@Test
+	public void verifyDefaultPredictionForHardOutdoorBestOf5() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.HARD_OUTDOOR_BEST_OF_5);
+	}
+
+	@Test
+	public void verifyDefaultPredictionForHardIndoorCarpet() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.HARD_INDOOR_CARPET);
+	}
+
+	@Test
+	public void verifyDefaultPredictionForClayBestOf3() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.CLAY_BEST_OF_3);
+	}
+
+	@Test
+	public void verifyDefaultPredictionForClayBestOf5() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.CLAY_BEST_OF_5);
+	}
+
+	@Test
+	public void verifyDefaultPredictionForGrassBestOf3() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.GRASS_BEST_OF_3);
+	}
+
+	@Test
+	public void verifyDefaultPredictionForGrassBestOf5() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.GRASS_BEST_OF_5);
+	}
+
+	@Test
 	public void allAreasAllItemsPredictions() throws InterruptedException {
 		verifyPrediction(FROM_DATE, TO_DATE, PredictionConfig.equalWeights());
 	}

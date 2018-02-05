@@ -60,13 +60,17 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		return verifyPrediction(fromDate, toDate, null, TuningSet.ALL);
 	}
 
+	protected PredictionResult verifyPrediction(LocalDate fromDate, LocalDate toDate, TuningSet tuningSet) throws InterruptedException {
+		return verifyPrediction(fromDate, toDate, null, tuningSet);
+	}
+
 	protected PredictionResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config) throws InterruptedException {
 		return verifyPrediction(fromDate, toDate, config, TuningSet.ALL);
 	}
 
 	protected PredictionResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config, TuningSet tuningSet) throws InterruptedException {
 		System.out.printf("\nVerifying prediction from %1$s to %2$s and weights:\n", fromDate, toDate);
-		printWeights(config);
+		printWeights(config, tuningSet);
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		AtomicInteger total = new AtomicInteger();
 		AtomicInteger predicted = new AtomicInteger();
@@ -173,18 +177,23 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		);
 	}
 
-	protected static void printWeights(PredictionConfig config) {
-		if (config != null) {
-			for (PredictionArea area : PredictionArea.values()) {
-				double areaWeight = config.getAreaWeight(area);
-				if (areaWeight > 0.0) {
-					System.out.printf("%1$s: %2$s %3$s\n", area, areaWeight,
-						Stream.of(area.getItems()).filter(item -> config.getItemWeight(item) > 0.0).map(item -> format("%1$s: %2$s", item, config.getItemWeight(item))).collect(toList())
-					);
-				}
-			}
-		}
+	protected static void printWeights(PredictionConfig config, TuningSet tuningSet) {
+		if (config == null && !tuningSet.isCompound() )
+			config = PredictionConfig.defaultConfig(tuningSet);
+		if (config != null)
+			printWeights(config);
 		else
 			System.out.println("Using variable tuning set weights");
+	}
+
+	protected static void printWeights(PredictionConfig config) {
+		for (PredictionArea area : PredictionArea.values()) {
+			double areaWeight = config.getAreaWeight(area);
+			if (areaWeight > 0.0) {
+				System.out.printf("%1$s: %2$s %3$s\n", area, areaWeight,
+					Stream.of(area.getItems()).filter(item -> config.getItemWeight(item) > 0.0).map(item -> format("%1$s: %2$s", item, config.getItemWeight(item))).collect(toList())
+				);
+			}
+		}
 	}
 }

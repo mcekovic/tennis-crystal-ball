@@ -35,8 +35,4 @@ public enum RankingPredictionItem implements PredictionItem {
 	@Override public PredictionConfig setWeight(PredictionConfig config, double weight) {
 		return new PredictionConfig(config, this, weight);
 	}
-
-	@Override public String toString() {
-		return area + "[" + super.toString() + "]";
-	}
 }

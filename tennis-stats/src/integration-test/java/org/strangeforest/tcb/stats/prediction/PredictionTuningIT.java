@@ -19,11 +19,44 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	private static final LocalDate FROM_DATE = LocalDate.of(2005, 1, 1);
 	private static final LocalDate TO_DATE = LocalDate.now();
-	private static final TuningSet TUNING_SET = TuningSet.HARD_OUTDOOR_BEST_OF_3;
+	private static final TuningSet TUNING_SET = TuningSet.CLAY_BEST_OF_5;
 	private static final Function<PredictionResult, Double> METRICS = PredictionResult::getPredictablePredictionRate;
 	private static final double MIN_WEIGHT = 0.0;
 	private static final double MAX_WEIGHT = 10.0;
 	private static final double WEIGHT_STEP = 1.0;
+
+
+	// Starting from default weights
+
+	@Test
+	public void tuneDefaultPredictionByArea() throws InterruptedException {
+		doTunePredictionByArea(PredictionConfig.defaultConfig(TUNING_SET));
+	}
+
+	@Test
+	public void tuneDefaultPredictionByItem() throws InterruptedException {
+		doTunePredictionByItem(PredictionConfig.defaultConfig(TUNING_SET));
+	}
+
+	@Test
+	public void tuneDefaultPredictionInRankingArea() throws InterruptedException {
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RANKING);
+	}
+
+	@Test
+	public void tuneDefaultPredictionInRecentFormArea() throws InterruptedException {
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RECENT_FORM);
+	}
+
+	@Test
+	public void tuneDefaultPredictionInH2HArea() throws InterruptedException {
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), H2H);
+	}
+
+	@Test
+	public void tuneDefaultPredictionInWinningPctArea() throws InterruptedException {
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), WINNING_PCT);
+	}
 
 
 	// Starting from equal weights
@@ -56,39 +89,6 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 	@Test
 	public void tunePredictionInWinningPctArea() throws InterruptedException {
 		doTunePredictionInAreaFromPointZero(WINNING_PCT);
-	}
-
-
-	// Starting from default weights
-
-	@Test
-	public void tuneDefaultPredictionByArea() throws InterruptedException {
-		doTunePredictionByArea(PredictionConfig.defaultConfig());
-	}
-
-	@Test
-	public void tuneDefaultPredictionByItem() throws InterruptedException {
-		doTunePredictionByItem(PredictionConfig.defaultConfig());
-	}
-
-	@Test
-	public void tuneDefaultPredictionInRankingArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(), RANKING);
-	}
-
-	@Test
-	public void tuneDefaultPredictionInRecentFormArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(), RECENT_FORM);
-	}
-
-	@Test
-	public void tuneDefaultPredictionInH2HArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(), H2H);
-	}
-
-	@Test
-	public void tuneDefaultPredictionInWinningPctArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(), WINNING_PCT);
 	}
 
 
