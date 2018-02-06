@@ -19,7 +19,7 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	private static final LocalDate FROM_DATE = LocalDate.of(2005, 1, 1);
 	private static final LocalDate TO_DATE = LocalDate.now();
-	private static final TuningSet TUNING_SET = TuningSet.CLAY_BEST_OF_5;
+	private static final TuningSet TUNING_SET = TuningSet.ALL;
 	private static final Function<PredictionResult, Double> METRICS = PredictionResult::getPredictablePredictionRate;
 	private static final double MIN_WEIGHT = 0.0;
 	private static final double MAX_WEIGHT = 10.0;
