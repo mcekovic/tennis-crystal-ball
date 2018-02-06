@@ -20,6 +20,36 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 	}
 
 	@Test
+	public void verifyDefaultPredictionForHardOutdoor() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.HARD_OUTDOOR);
+	}
+
+	@Test
+	public void verifyDefaultPredictionForClay() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.CLAY);
+	}
+
+	@Test
+	public void verifyDefaultPredictionForGrass() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.GRASS);
+	}
+
+	@Test
+	public void verifyDefaultPredictionForHardIndoorCarpet() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.HARD_INDOOR_CARPET);
+	}
+
+	@Test
+	public void verifyDefaultPredictionForBestOf3() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.BEST_OF_3);
+	}
+
+	@Test
+	public void verifyDefaultPredictionForBestOf5() throws InterruptedException {
+		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.BEST_OF_5);
+	}
+
+	@Test
 	public void verifyDefaultPredictionForHardOutdoorBestOf3() throws InterruptedException {
 		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.HARD_OUTDOOR_BEST_OF_3);
 	}
@@ -27,11 +57,6 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 	@Test
 	public void verifyDefaultPredictionForHardOutdoorBestOf5() throws InterruptedException {
 		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.HARD_OUTDOOR_BEST_OF_5);
-	}
-
-	@Test
-	public void verifyDefaultPredictionForHardIndoorCarpet() throws InterruptedException {
-		verifyPrediction(FROM_DATE, TO_DATE, TuningSet.HARD_INDOOR_CARPET);
 	}
 
 	@Test

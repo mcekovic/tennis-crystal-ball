@@ -27,6 +27,7 @@ import static org.strangeforest.tcb.util.CompareUtil.*;
 public class MatchPredictionService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
+	@Value("${tennis-stats.prediction.tuning-set-level:SURFACE}") TuningSetLevel tuningSetLevel;
 
 	private final boolean includeInProgressEventData;
 	private final LoadingCache<Integer, PlayerData> players;
@@ -89,20 +90,21 @@ public class MatchPredictionService {
 	public MatchPredictionService(NamedParameterJdbcTemplate jdbcTemplate) {
 		this();
 		this.jdbcTemplate = jdbcTemplate;
+		tuningSetLevel = TuningSetLevel.SURFACE;
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
-		PredictionConfig config = PredictionConfig.defaultConfig(TuningSet.select(surface, indoor, level, null));
+		PredictionConfig config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, null));
 		return predictMatch(playerId1, playerId2, date, date, null, null, true, surface, indoor, level, null, round, config);
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date1, LocalDate date2, Surface surface, Boolean indoor, TournamentLevel level, Round round) {
-		PredictionConfig config = PredictionConfig.defaultConfig(TuningSet.select(surface, indoor, level, null));
+		PredictionConfig config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, null));
 		return predictMatch(playerId1, playerId2, date1, date2, null, null, true, surface, indoor, level, null, round, config);
 	}
 
 	public MatchPrediction predictMatch(int playerId1, int playerId2, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round) {
-		PredictionConfig config = PredictionConfig.defaultConfig(TuningSet.select(surface, indoor, level, bestOf));
+		PredictionConfig config = PredictionConfig.defaultConfig(tuningSetLevel.select(surface, indoor, level, bestOf));
 		return predictMatch(playerId1, playerId2, date, date, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round, config);
 	}
 

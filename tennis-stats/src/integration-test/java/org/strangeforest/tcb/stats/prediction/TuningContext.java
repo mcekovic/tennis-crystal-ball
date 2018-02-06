@@ -37,7 +37,7 @@ public class TuningContext {
 
 	public void finish() {
 		System.out.println("***** Best result: " + bestResult);
-		printWeights(bestResult.getConfig());
+		printWeights(bestResult.getConfig(), false);
 	}
 
 	public PredictionResult startStep() {
@@ -78,6 +78,7 @@ public class TuningContext {
 		if (resultComparator.compare(result, bestResult) > 0) {
 			bestResult = result;
 			System.out.println("***** New best result: " + bestResult);
+			printWeights(result.getConfig(), false);
 		}
 		if (bestStepResult == null || resultComparator.compare(result, bestStepResult) > 0) {
 			bestStepResult = result;

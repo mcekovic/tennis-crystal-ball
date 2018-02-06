@@ -29,6 +29,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	@Autowired private MatchPredictionService predictionService;
 	private ExecutorService executor;
 
+	private static final TuningSetLevel TUNING_SET_LEVEL = TuningSetLevel.SURFACE;
 	private static final double MIN_PREDICTABILITY = 0.0;
 	private static final String PRICE_SOURCE = "B365";
 	private static final boolean BET_ON_OUTSIDER = false;
@@ -70,7 +71,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 
 	protected PredictionResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config, TuningSet tuningSet) throws InterruptedException {
 		System.out.printf("\nVerifying prediction from %1$s to %2$s and weights:\n", fromDate, toDate);
-		printWeights(config, tuningSet);
+		printWeights(config, tuningSet, true);
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		AtomicInteger total = new AtomicInteger();
 		AtomicInteger predicted = new AtomicInteger();
@@ -89,7 +90,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 					boolean indoor = match.indoor;
 					TournamentLevel level = match.level;
 					short bestOf = match.bestOf;
-					PredictionConfig matchConfig = config != null ? config : PredictionConfig.defaultConfig(TuningSet.select(surface, indoor, level, bestOf));
+					PredictionConfig matchConfig = config != null ? config : PredictionConfig.defaultConfig(TUNING_SET_LEVEL.select(surface, indoor, level, bestOf));
 					MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.tournamentId, match.tournamentEventId, false, surface, indoor, level, bestOf, match.round, matchConfig);
 					if (prediction.getPredictability1() > MIN_PREDICTABILITY) {
 						predicted.incrementAndGet();
@@ -131,9 +132,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		matchCount.await();
 		double predictablePct = 100.0 * predicted.get() / total.get();
 		double predictionRate = 100.0 * hits.get() / predicted.get();
-		System.out.printf("\nPredictable: %1$.3f%%\n", predictablePct);
-		System.out.printf("Prediction rate: %1$.3f%%\n", predictionRate);
-		System.out.printf("Time: %1$s\n", stopwatch);
+		System.out.printf("\nPrediction rate: %1$.3f%%, Predictable: %2$.3f%%, Time: %3$s\n", predictionRate, predictablePct, stopwatch);
 		double profitPct = 0.0;
 		if (hasPrice.get() > 0.0) {
 			double hasPricePct = 100.0 * hasPrice.get() / predicted.get();
@@ -177,21 +176,22 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		);
 	}
 
-	protected static void printWeights(PredictionConfig config, TuningSet tuningSet) {
-		if (config == null && !tuningSet.isCompound() )
+	protected static void printWeights(PredictionConfig config, TuningSet tuningSet, boolean compact) {
+		if (config == null && tuningSet.getLevel() != TuningSetLevel.TOP)
 			config = PredictionConfig.defaultConfig(tuningSet);
 		if (config != null)
-			printWeights(config);
+			printWeights(config, compact);
 		else
 			System.out.println("Using variable tuning set weights");
 	}
 
-	protected static void printWeights(PredictionConfig config) {
+	protected static void printWeights(PredictionConfig config, boolean compact) {
 		for (PredictionArea area : PredictionArea.values()) {
 			double areaWeight = config.getAreaWeight(area);
 			if (areaWeight > 0.0) {
-				System.out.printf("%1$s: %2$s %3$s\n", area, areaWeight,
-					Stream.of(area.getItems()).filter(item -> config.getItemWeight(item) > 0.0).map(item -> format("%1$s: %2$s", item, config.getItemWeight(item))).collect(toList())
+				System.out.printf("%1$s: %2$s %3$s%4$s", area, areaWeight,
+					Stream.of(area.getItems()).filter(item -> config.getItemWeight(item) > 0.0).map(item -> format("%1$s: %2$s", item, config.getItemWeight(item))).collect(toList()),
+					compact ? "; " : "\n"
 				);
 			}
 		}
