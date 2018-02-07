@@ -132,7 +132,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		matchCount.await();
 		double predictablePct = 100.0 * predicted.get() / total.get();
 		double predictionRate = 100.0 * hits.get() / predicted.get();
-		System.out.printf("\nPrediction rate: %1$.3f%%, Predictable: %2$.3f%%, Time: %3$s\n", predictionRate, predictablePct, stopwatch);
+		System.out.printf("\nPrediction rate: %1$.3f%%, Predictable: %2$.3f%%, Matches: %3$d, Time: %4$s\n", predictionRate, predictablePct, matches.size(), stopwatch);
 		double profitPct = 0.0;
 		if (hasPrice.get() > 0.0) {
 			double hasPricePct = 100.0 * hasPrice.get() / predicted.get();
