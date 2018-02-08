@@ -58,14 +58,14 @@
 						return s;
 					},
 					"eventCount": function(column, row) {
-					  	return "<a href='/tournamentEvents?tournamentId=" + row.id + "' title='Show tournament events'>" + row.eventCount + "</a>";
+					  	return "<a href='/tournamentEvents?tournamentId=" + row.id + filterParams() + "' title='Show tournament events'>" + row.eventCount + "</a>";
 					},
 					"participation": participationFormatter,
 					"topPlayer": function(column, row) {
 						var topPlayers = row.topPlayers;
 						if (topPlayers.length == 0) return "";
 						var topPlayer = topPlayers[0];
-						return "<a href='/playerProfile?playerId=" + topPlayer.playerId + "&tab=tournaments&tournamentId=" + row.id + "&result=W' title='Show titles'>" + topPlayer.rank + " <i class='fa fa-trophy fa-b'></i></a> " + playerCountryFormatter(column, topPlayer);
+						return "<a href='/playerProfile?playerId=" + topPlayer.playerId + "&tab=tournaments&tournamentId=" + row.id + filterParams() + "&result=W' title='Show titles'>" + topPlayer.rank + " <i class='fa fa-trophy fa-b'></i></a> " + playerCountryFormatter(column, topPlayer);
 					}
 				},
 				labels: {
@@ -92,6 +92,14 @@
 		});
 		function reloadTournaments() {
 			$("#tournamentsTable").bootgrid("reload");
+		}
+		function filterParams() {
+			var url = "";
+			var level = $("#level").val();
+			if (level) url += "&level=" + level;
+			var surface = $("#surface").val();
+			if (surface) url += "&surface=" + surface;
+			return url;
 		}
 		function clearTournamentsFilter() {
 			$("#level").val("");

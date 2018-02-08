@@ -18,7 +18,7 @@ public enum TuningSetLevel {
 			if (surface == null)
 				return TuningSet.ALL;
 			switch (surface) {
-				case HARD: return indoor ? HARD_INDOOR_CARPET : HARD_OUTDOOR;
+				case HARD: return indoor != null && indoor ? HARD_INDOOR_CARPET : HARD_OUTDOOR;
 				case CLAY: return CLAY;
 				case GRASS: return GRASS;
 				case CARPET: return HARD_INDOOR_CARPET;
@@ -37,7 +37,7 @@ public enum TuningSetLevel {
 			if (surface == null)
 				return BEST_OF.select(null, indoor, level, bestOf);
 			switch (surface) {
-				case HARD: return indoor ? HARD_INDOOR_CARPET : (defaultBestOf(level, bestOf) == 3 ? HARD_OUTDOOR_BEST_OF_3 : HARD_OUTDOOR_BEST_OF_5);
+				case HARD: return indoor != null && indoor ? HARD_INDOOR_CARPET : (defaultBestOf(level, bestOf) == 3 ? HARD_OUTDOOR_BEST_OF_3 : HARD_OUTDOOR_BEST_OF_5);
 				case CLAY: return defaultBestOf(level, bestOf) == 3 ? CLAY_BEST_OF_3 : CLAY_BEST_OF_5;
 				case GRASS: return defaultBestOf(level, bestOf) == 3 ? GRASS_BEST_OF_3 : GRASS_BEST_OF_5;
 				case CARPET: return HARD_INDOOR_CARPET;
