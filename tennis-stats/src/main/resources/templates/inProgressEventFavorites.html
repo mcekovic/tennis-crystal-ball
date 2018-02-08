@@ -13,8 +13,8 @@
 				<th class="text-right">Rank</th>
 				<th class="text-right hidden-xs">Best Rank</th>
 				<th class="text-right" title="Elo rating">Elo</th>
-				<th th:if="${surface}" class="text-right hidden-md hidden-sm hidden-xs" th:text="${surface.text + ' Elo'}" th:title="${surface.text + ' Elo rating'}">Hard Elo</th>
-				<th class="text-right hidden-xs" title="Last 52 weeks overall performance">52W %</th>
+				<th th:if="${surface}" class="text-right hidden-xs" th:text="${surface.text + ' Elo'}" th:title="${surface.text + ' Elo rating'}">Hard Elo</th>
+				<th class="text-right hidden-md hidden-sm hidden-xs" title="Last 52 weeks overall performance">52W %</th>
 				<th th:if="${surface}" class="text-right hidden-md hidden-sm hidden-xs" th:text="${'52W ' + surface.text + ' %'}" th:title="|Last 52 weeks ${surface.text} performance|">52W Hard %</th>
 				<th class="text-right hidden-md hidden-sm hidden-xs" title="Last 52 weeks titles">52W <i class="fa fa-trophy fa-b"></i></th>
 				<th class="text-right hidden-md hidden-sm hidden-xs">Age</th>
