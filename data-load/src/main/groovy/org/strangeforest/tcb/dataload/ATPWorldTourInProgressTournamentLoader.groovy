@@ -23,8 +23,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 	boolean forceForecast
 
 	static final String LOAD_EVENT_SQL = //language=SQL
-		'{call load_in_progress_event(' +
-			':ext_tournament_id, :date, :name, :tournament_level, :surface, :indoor, :draw_type, :draw_size' +
+		'{call load_in_progress_event(\n' +
+			':ext_tournament_id, :date, :name, :tournament_level, :surface, :indoor, :draw_type, :draw_size\n' +
 		')}'
 
 	static final String FETCH_EVENT_HASH_SQL = //language=SQL
@@ -33,11 +33,11 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		'WHERE ext_tournament_id = :extId'
 
 	static final String LOAD_MATCH_SQL = //language=SQL
-		'{call load_in_progress_match(' +
-			':ext_tournament_id, :match_num, :prev_match_num1, :prev_match_num2, :date, :surface, :indoor, :round, :best_of, ' +
-			':player1_name, :player1_country_id, :player1_seed, :player1_entry, ' +
-			':player2_name, :player2_country_id, :player2_seed, :player2_entry, ' +
-			':winner, :score, :outcome, :player1_sets, :player1_games, :player1_tb_pt, :player2_sets, :player2_games, :player2_tb_pt' +
+		'{call load_in_progress_match(\n' +
+			':ext_tournament_id, :match_num, :prev_match_num1, :prev_match_num2, :date, :surface, :indoor, :round, :best_of,\n' +
+			':player1_name, :player1_country_id, :player1_seed, :player1_entry,\n' +
+			':player2_name, :player2_country_id, :player2_seed, :player2_entry,\n' +
+			':winner, :score, :outcome, :player1_sets, :player1_games, :player1_tb_pt, :player2_sets, :player2_games, :player2_tb_pt\n' +
 		')}'
 
 	static final String UPDATE_EVENT_HASH_SQL = //language=SQL
@@ -57,8 +57,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		'WHERE in_progress_match_id = :in_progress_match_id'
 
 	static final String LOAD_PLAYER_RESULT_SQL = //language=SQL
-		'{call load_player_in_progress_result(' +
-			':in_progress_event_id, :player_id, :base_result, :result, :probability' +
+		'{call load_player_in_progress_result(\n' +
+			':in_progress_event_id, :player_id, :base_result, :result, :probability\n' +
 		')}'
 
 	static final String DELETE_PLAYER_PROGRESS_RESULTS_SQL = //language=SQL

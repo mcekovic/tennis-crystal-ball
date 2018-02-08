@@ -27,7 +27,6 @@ import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
 public class PlayerService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
-	@Autowired private DataService dataService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PlayerService.class);
 
@@ -82,6 +81,12 @@ public class PlayerService {
 
 	private static final int AUTOCOMPLETE_COUNT = 20;
 	private static final int AUTOCOMPLETE_EX_THRESHOLD = 5;
+
+	public PlayerService() {}
+
+	public PlayerService(NamedParameterJdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
 
 	@Cacheable("Player")
 	public Player getPlayer(int playerId) {
@@ -207,7 +212,7 @@ public class PlayerService {
 		for (String wikipediaUrlTemplate : WIKIPEDIA_URLS) {
 			String wikipediaUrl = format(wikipediaUrlTemplate, name);
 			try {
-				if (dataService.checkURL(wikipediaUrl) == HttpURLConnection.HTTP_OK)
+				if (URLUtil.checkURL(wikipediaUrl) == HttpURLConnection.HTTP_OK)
 					return wikipediaUrl;
 			}
 			catch (IOException ex) {
