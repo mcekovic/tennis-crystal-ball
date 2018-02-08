@@ -55,6 +55,10 @@ public class RankingChartService {
 		"  FROM player_year_end_rank r\n" +
 		"  INNER JOIN year_end_rank_goat_points p USING (year_end_rank)\n" +
 		"  UNION ALL\n" +
+		"  SELECT r.best_rank_date, r.player_id, p.goat_points\n" +
+		"  FROM player_best_rank r\n" +
+		"  INNER JOIN best_rank_goat_points p USING (best_rank)\n" +
+		"  UNION ALL\n" +
 		"  SELECT season_end(season), player_id, goat_points\n" +
 		"  FROM player_season_weeks_at_no1_goat_points_v\n" +
 		"  UNION ALL\n" +
@@ -78,6 +82,10 @@ public class RankingChartService {
 		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"  WHERE r.goat_points > 0 AND e.level <> 'D' AND e.surface = :surface::surface\n" +
 		"  UNION ALL\n" +
+		"  SELECT best_rank_date, player_id, goat_points\n" +
+		"  FROM player_surface_best_rank_goat_points_v\n" +
+		"  WHERE surface = :surface::surface\n" +
+		"  UNION ALL\n" +
 		"  SELECT season_end(season), player_id, goat_points\n" +
 		"  FROM player_season_weeks_at_surface_elo_topn_goat_points_v\n" +
 		"  WHERE surface = :surface::surface\n" +
@@ -85,6 +93,9 @@ public class RankingChartService {
 		"  SELECT date, player_id, goat_points\n" +
 		"  FROM player_big_wins_v\n" +
 		"  WHERE surface = :surface::surface\n" +
+		"  UNION ALL\n" +
+		"  SELECT season_end(season), player_id, goat_points\n" +
+		"  FROM player_surface_best_season_goat_points_v WHERE surface = :surface::surface\n" +
 		")";
 
 	private static final String PLAYER_GOAT_POINTS_QUERY = //language=SQL

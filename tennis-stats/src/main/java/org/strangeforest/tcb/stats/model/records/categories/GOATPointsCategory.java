@@ -48,8 +48,7 @@ public class GOATPointsCategory extends RecordCategory {
 		register(mostGOATPoints(domain, "BigWins", "Big Wins", "big_wins_goat_points"));
 		register(mostGOATPoints(domain, "H2H", "Head-to-Head", "h2h_goat_points"));
 		register(mostGOATPoints(domain, "Records", "Records", "records_goat_points"));
-		if (domain == RecordDomain.ALL)
-			register(mostGOATPoints(domain, "BestSeasons", "Best Seasons", "best_season_goat_points"));
+		register(mostGOATPoints(domain, "BestSeasons", "Best Seasons", "best_season_goat_points"));
 		register(mostGOATPoints(domain, "GreatestRivalries", "Greatest Rivalries", "greatest_rivalries_goat_points"));
 		if (domain == RecordDomain.ALL) {
 			register(mostGOATPoints(domain, "Performance", "Performance", "performance_goat_points"));

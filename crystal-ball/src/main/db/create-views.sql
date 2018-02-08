@@ -2233,6 +2233,26 @@ CREATE MATERIALIZED VIEW player_surface_season_goat_points AS SELECT * FROM play
 CREATE UNIQUE INDEX ON player_surface_season_goat_points (surface, player_id, season);
 
 
+-- player_surface_best_rank_goat_points_v
+
+CREATE OR REPLACE VIEW player_surface_best_rank_goat_points_v AS
+SELECT player_id, 'H'::surface AS surface, goat_points / 2 AS goat_points, best_hard_elo_rank_date AS best_rank_date
+FROM player_best_elo_rank
+INNER JOIN best_rank_goat_points ON best_rank = best_hard_elo_rank
+UNION ALL
+SELECT player_id, 'C'::surface AS surface, goat_points / 2 AS goat_points, best_clay_elo_rank_date AS best_rank_date
+FROM player_best_elo_rank
+INNER JOIN best_rank_goat_points ON best_rank = best_clay_elo_rank
+UNION ALL
+SELECT player_id, 'G'::surface AS surface, goat_points / 2 AS goat_points, best_grass_elo_rank_date AS best_rank_date
+FROM player_best_elo_rank
+INNER JOIN best_rank_goat_points ON best_rank = best_grass_elo_rank
+UNION ALL
+SELECT player_id, 'P'::surface AS surface, goat_points / 2 AS goat_points, best_carpet_elo_rank_date AS best_rank_date
+FROM player_best_elo_rank
+INNER JOIN best_rank_goat_points ON best_rank = best_carpet_elo_rank;
+
+
 -- player_surface_big_wins_goat_points_v
 
 CREATE OR REPLACE VIEW player_surface_big_wins_goat_points_v AS
@@ -2241,46 +2261,80 @@ FROM player_surface_season_goat_points
 GROUP BY player_id, surface;
 
 
+-- player_surface_best_season_goat_points_v
+
+CREATE OR REPLACE VIEW player_surface_best_season_goat_points_v AS
+WITH pleayer_season AS (
+	SELECT player_id, s.surface, s.season, s.goat_points,
+		count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'W') grand_slam_titles,
+		count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'F') grand_slam_finals,
+		count(player_id) FILTER (WHERE e.level = 'F' AND r.result = 'W') tour_finals_titles,
+		count(player_id) FILTER (WHERE e.level = 'L' AND r.result = 'W') alt_finals_titles,
+		count(player_id) FILTER (WHERE e.level = 'M' AND r.result = 'W') masters_titles,
+		count(player_id) FILTER (WHERE e.level = 'O' AND r.result = 'W') olympics_titles,
+		count(player_id) FILTER (WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B') AND r.result = 'W') titles
+	FROM player_surface_season_goat_points s
+	LEFT JOIN player_tournament_event_result r USING (player_id)
+	LEFT JOIN tournament_event e USING (tournament_event_id, season)
+	WHERE s.goat_points > 0
+	GROUP BY player_id, s.surface, s.season, s.goat_points
+), pleayer_season_ranked AS (
+	SELECT player_id, surface, season, rank() OVER (PARTITION BY surface ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, alt_finals_titles DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank
+	FROM pleayer_season
+)
+SELECT player_id, surface, season, goat_points / 2 AS goat_points
+FROM pleayer_season_ranked
+INNER JOIN best_season_goat_points USING (season_rank);
+
+
 -- player_surface_goat_points
 
 CREATE OR REPLACE VIEW player_surface_goat_points_v AS
 WITH goat_points AS (
 	SELECT surface, player_id, raw_goat_points goat_points, tournament_goat_points, raw_ranking_goat_points ranking_goat_points, raw_achievements_goat_points achievements_goat_points,
-		0 weeks_at_elo_topn_goat_points, 0 best_elo_rating_goat_points, 0 big_wins_goat_points, 0 h2h_goat_points, 0 records_goat_points, 0 greatest_rivalries_goat_points
+		0 best_rank_goat_points, 0 weeks_at_elo_topn_goat_points, 0 best_elo_rating_goat_points, 0 big_wins_goat_points, 0 h2h_goat_points, 0 records_goat_points, 0 best_season_goat_points, 0 greatest_rivalries_goat_points
 	FROM player_surface_season_goat_points
 	UNION ALL
 	SELECT surface, player_id, goat_points, 0, goat_points, 0,
-		goat_points, 0, 0, 0, 0, 0
+		goat_points, 0, 0, 0, 0, 0, 0, 0
+	FROM player_surface_best_rank_goat_points_v
+	UNION ALL
+	SELECT surface, player_id, goat_points, 0, goat_points, 0,
+		0, goat_points, 0, 0, 0, 0, 0, 0
 	FROM player_weeks_at_surface_elo_topn_goat_points_v
 	UNION ALL
 	SELECT surface, player_id, goat_points, 0, goat_points, 0,
-		0, goat_points, 0, 0, 0, 0
+		0, 0, goat_points, 0, 0, 0, 0, 0
 	FROM player_best_surface_elo_rating_goat_points_v
 	UNION ALL
 	SELECT surface, player_id, goat_points, 0, 0, goat_points,
-		0, 0, goat_points, 0, 0, 0
+		0, 0, 0, goat_points, 0, 0, 0, 0
 	FROM player_surface_big_wins_goat_points_v
 	UNION ALL
 	SELECT surface, player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0, goat_points, 0, 0
+		0, 0, 0, 0, goat_points, 0, 0, 0
 	FROM player_surface_h2h_goat_points_v
 	UNION ALL
 	SELECT surface, player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0, 0, goat_points, 0
+		0, 0, 0, 0, 0, goat_points, 0, 0
 	FROM player_surface_records_goat_points_v
 	UNION ALL
 	SELECT surface, player_id, goat_points, 0, 0, goat_points,
-		0, 0, 0, 0, 0, goat_points
+		0, 0, 0, 0, 0, 0, goat_points, 0
+	FROM player_surface_best_season_goat_points_v
+	UNION ALL
+	SELECT surface, player_id, goat_points, 0, 0, goat_points,
+		0, 0, 0, 0, 0, 0, 0, goat_points
 	FROM player_surface_greatest_rivalries_goat_points_v
 ), goat_points_total AS (
 	SELECT player_id, surface, sum(goat_points) goat_points, sum(tournament_goat_points) tournament_goat_points, sum(ranking_goat_points) ranking_goat_points, sum(achievements_goat_points) achievements_goat_points,
-		sum(weeks_at_elo_topn_goat_points) weeks_at_elo_topn_goat_points, sum(best_elo_rating_goat_points) best_elo_rating_goat_points,
-		sum(big_wins_goat_points) big_wins_goat_points, sum(h2h_goat_points) h2h_goat_points, sum(records_goat_points) records_goat_points, sum(greatest_rivalries_goat_points) greatest_rivalries_goat_points
+		sum(best_rank_goat_points) best_rank_goat_points, sum(weeks_at_elo_topn_goat_points) weeks_at_elo_topn_goat_points, sum(best_elo_rating_goat_points) best_elo_rating_goat_points,
+		sum(big_wins_goat_points) big_wins_goat_points, sum(h2h_goat_points) h2h_goat_points, sum(records_goat_points) records_goat_points, sum(best_season_goat_points) best_season_goat_points, sum(greatest_rivalries_goat_points) greatest_rivalries_goat_points
 	FROM goat_points
 	GROUP BY surface, player_id
 )
 SELECT surface, player_id, rank() OVER (PARTITION BY surface ORDER BY goat_points DESC NULLS LAST) AS goat_rank, goat_points, tournament_goat_points, ranking_goat_points, achievements_goat_points,
-	weeks_at_elo_topn_goat_points, best_elo_rating_goat_points, big_wins_goat_points, h2h_goat_points, records_goat_points, greatest_rivalries_goat_points
+	best_rank_goat_points, weeks_at_elo_topn_goat_points, best_elo_rating_goat_points, big_wins_goat_points, h2h_goat_points, records_goat_points, best_season_goat_points, greatest_rivalries_goat_points
 FROM goat_points_total
 WHERE goat_points > 0;
 

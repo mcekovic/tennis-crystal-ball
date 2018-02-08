@@ -5,7 +5,9 @@ DROP VIEW player_v;
 
 DROP MATERIALIZED VIEW player_surface_goat_points;
 DROP VIEW player_surface_goat_points_v;
+DROP VIEW player_surface_best_season_goat_points_v;
 DROP VIEW player_surface_big_wins_goat_points_v;
+DROP VIEW player_surface_best_rank_goat_points_v;
 DROP MATERIALIZED VIEW player_surface_season_goat_points;
 DROP VIEW player_surface_season_goat_points_v;
 DROP MATERIALIZED VIEW player_goat_points;

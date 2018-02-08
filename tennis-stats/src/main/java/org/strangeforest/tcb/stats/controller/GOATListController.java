@@ -120,14 +120,14 @@ public class GOATListController extends PageController {
 		// Tournament
 		modelMap.addAttribute("tournamentGOATPoints", applyConfig(goatLegendService.getTournamentGOATPoints(), config));
 		// Ranking
-		modelMap.addAttribute("yearEndRankGOATPoints", applyRankFactor(goatLegendService.getYearEndRankGOATPoints(), config.getYearEndRankTotalFactor()));
-		modelMap.addAttribute("bestRankGOATPoints", applyRankFactor(goatLegendService.getBestRankGOATPoints(), config.getBestRankTotalFactor()));
+		modelMap.addAttribute("yearEndRankGOATPoints", applyRankFactor(surface, goatLegendService.getYearEndRankGOATPoints(), config.getYearEndRankTotalFactor()));
+		modelMap.addAttribute("bestRankGOATPoints", applyRankFactor(surface, goatLegendService.getBestRankGOATPoints(), config.getBestRankTotalFactor()));
 		modelMap.addAttribute("weeksAtNo1ForGOATPoint", goatLegendService.getWeeksAtNo1ForGOATPoint());
 		modelMap.addAttribute("weeksAtEloTopNForGOATPoint", goatLegendService.getWeeksAtEloTopNGOATPoint());
 		int bestEloRatingTotalFactor = config.getBestEloRatingTotalFactor();
-		modelMap.addAttribute("bestEloRatingGOATPoints", applyRankFactor(goatLegendService.getBestEloRatingGOATPoints(), bestEloRatingTotalFactor));
-		modelMap.addAttribute("bestSurfaceEloRatingGOATPoints", applyRankFactor(goatLegendService.getBestSurfaceEloRatingGOATPoints(), bestEloRatingTotalFactor));
-		modelMap.addAttribute("bestIndoorEloRatingGOATPoints", applyRankFactor(goatLegendService.getBestIndoorEloRatingGOATPoints(), bestEloRatingTotalFactor));
+		modelMap.addAttribute("bestEloRatingGOATPoints", applyRankFactor(null, goatLegendService.getBestEloRatingGOATPoints(), bestEloRatingTotalFactor));
+		modelMap.addAttribute("bestSurfaceEloRatingGOATPoints", applyRankFactor(null, goatLegendService.getBestSurfaceEloRatingGOATPoints(), bestEloRatingTotalFactor));
+		modelMap.addAttribute("bestIndoorEloRatingGOATPoints", applyRankFactor(null, goatLegendService.getBestIndoorEloRatingGOATPoints(), bestEloRatingTotalFactor));
 		// Achievements
 		int grandSlamTotalFactor = config.getGrandSlamTotalFactor();
 		modelMap.addAttribute("careerGrandSlamGOATPoints", goatLegendService.getCareerGrandSlamGOATPoints() * grandSlamTotalFactor);
@@ -139,11 +139,8 @@ public class GOATListController extends PageController {
 		modelMap.addAttribute("bigWinMatchFactors", applyBigWinsFactor(goatLegendService.getBigWinMatchFactors(), config.getBigWinsTotalFactor()));
 		modelMap.addAttribute("bigWinRankFactors", goatLegendService.getBigWinRankFactors());
 		modelMap.addAttribute("h2hRankFactors", goatLegendService.getH2hRankFactors());
-		modelMap.addAttribute("bestSeasonGOATPoints", applyRankFactor(goatLegendService.getBestSeasonGOATPoints(), config.getBestSeasonTotalFactor()));
-		double greatestRivalriesTotalFactor = config.getGreatestRivalriesTotalFactor();
-		if (!isNullOrEmpty(surface))
-			greatestRivalriesTotalFactor /= 2.0;
-		modelMap.addAttribute("greatestRivalriesGOATPoints", applyRankFactor(goatLegendService.getGreatestRivalriesGOATPoints(), greatestRivalriesTotalFactor));
+		modelMap.addAttribute("bestSeasonGOATPoints", applyRankFactor(surface, goatLegendService.getBestSeasonGOATPoints(), config.getBestSeasonTotalFactor()));
+		modelMap.addAttribute("greatestRivalriesGOATPoints", applyRankFactor(surface, goatLegendService.getGreatestRivalriesGOATPoints(), config.getGreatestRivalriesTotalFactor()));
 		return new ModelAndView("goatLegend", modelMap);
 	}
 
@@ -177,18 +174,12 @@ public class GOATListController extends PageController {
 			return tournamentPoints.stream().map(p -> p.applyConfig(config)).collect(toList());
 	}
 
-	private static List<RankGOATPoints> applyRankFactor(List<RankGOATPoints> rankPoints, int factor) {
-		if (factor <= 1)
+	private static List<RankGOATPoints> applyRankFactor(String surface, List<RankGOATPoints> rankPoints, int factor) {
+		double fact = isNullOrEmpty(surface) ? factor : factor / 2.0;
+		if (fact == 0.0 || fact == 1.0)
 			return rankPoints;
 		else
-			return rankPoints.stream().map(p -> p.applyFactor(factor)).collect(toList());
-	}
-
-	private static List<RankGOATPoints> applyRankFactor(List<RankGOATPoints> rankPoints, double factor) {
-		if (factor == 0.0 || factor == 1.0)
-			return rankPoints;
-		else
-			return rankPoints.stream().map(p -> p.applyFactor(factor)).collect(toList());
+			return rankPoints.stream().map(p -> p.applyFactor(fact)).collect(toList());
 	}
 
 	private static List<BigWinMatchFactor> applyBigWinsFactor(List<BigWinMatchFactor> bigWinMatchFactors, int factor) {

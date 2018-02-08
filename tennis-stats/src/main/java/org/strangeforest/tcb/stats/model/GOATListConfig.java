@@ -256,7 +256,7 @@ public class GOATListConfig {
 		if (!forSurface)
 			return yearEndRankFactor > 0 || bestRankFactor > 0 || weeksAtNo1Factor > 0 || weeksAtEloTopNFactor > 0 || bestEloRatingFactor > 0;
 		else
-			return weeksAtEloTopNFactor > 0 || bestEloRatingFactor > 0;
+			return bestRankFactor > 0 || weeksAtEloTopNFactor > 0 || bestEloRatingFactor > 0;
 	}
 
 	public boolean hasAchievementsFactor(boolean forSurface) {
@@ -265,7 +265,7 @@ public class GOATListConfig {
 		if (!forSurface)
 			return grandSlamFactor > 0 || bigWinsFactor > 0 || h2hFactor > 0 || recordsFactor > 0 || bestSeasonFactor > 0 || greatestRivalriesFactor > 0 || performanceFactor > 0 || statisticsFactor > 0;
 		else
-			return bigWinsFactor > 0 || h2hFactor > 0 || recordsFactor > 0 || greatestRivalriesFactor > 0;
+			return bigWinsFactor > 0 || h2hFactor > 0 || recordsFactor > 0 || bestSeasonFactor > 0 || greatestRivalriesFactor > 0;
 	}
 
 

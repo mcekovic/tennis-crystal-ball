@@ -67,7 +67,8 @@ public class GOATListService {
 		"    g.grand_slam_goat_points, g.big_wins_goat_points, g.h2h_goat_points, g.records_goat_points, g.best_season_goat_points, g.greatest_rivalries_goat_points, g.performance_goat_points, g.statistics_goat_points\n";
 
 	private static final String SURFACE_GOAT_POINTS_AREAS = //language=SQL
-		"    g.weeks_at_elo_topn_goat_points, g.best_elo_rating_goat_points, g.big_wins_goat_points, g.h2h_goat_points, g.records_goat_points, g.greatest_rivalries_goat_points\n";
+		"    g.best_rank_goat_points, g.weeks_at_elo_topn_goat_points, g.best_elo_rating_goat_points,\n" +
+		"    g.big_wins_goat_points, g.h2h_goat_points, g.records_goat_points, g.best_season_goat_points, g.greatest_rivalries_goat_points\n";
 
 	private static final String TOURNAMENT_GOAT_POINTS = //language=SQL
 		"(SELECT sum(r.goat_points" +
@@ -162,11 +163,11 @@ public class GOATListService {
 				int achievementsGoatPoints = rs.getInt("achievements_goat_points");
 				GOATListRow row = new GOATListRow(goatRank, playerId, name, countryId, active, dob, goatPoints, tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints);
 				// GOAT points items
-				if (overall) {
+				if (overall)
 					row.setYearEndRankGoatPoints(rs.getInt("year_end_rank_goat_points") * config.getYearEndRankTotalFactor());
-					row.setBestRankGoatPoints(rs.getInt("best_rank_goat_points") * config.getBestRankTotalFactor());
+				row.setBestRankGoatPoints(rs.getInt("best_rank_goat_points") * config.getBestRankTotalFactor());
+				if (overall)
 					row.setWeeksAtNo1GoatPoints(rs.getInt("weeks_at_no1_goat_points") * config.getWeeksAtNo1TotalFactor());
-				}
 				row.setWeeksAtEloTopNGoatPoints(rs.getInt("weeks_at_elo_topn_goat_points") * config.getWeeksAtEloTopNTotalFactor());
 				row.setBestEloRatingGoatPoints(rs.getInt("best_elo_rating_goat_points") * config.getBestEloRatingTotalFactor());
 				if (overall)
@@ -174,8 +175,7 @@ public class GOATListService {
 				row.setBigWinsGoatPoints(rs.getInt("big_wins_goat_points") * config.getBigWinsTotalFactor());
 				row.setH2hGoatPoints(rs.getInt("h2h_goat_points") * config.getH2hTotalFactor());
 				row.setRecordsGoatPoints(rs.getInt("records_goat_points") * config.getRecordsTotalFactor());
-				if (overall)
-					row.setBestSeasonGoatPoints(rs.getInt("best_season_goat_points") * config.getBestSeasonTotalFactor());
+				row.setBestSeasonGoatPoints(rs.getInt("best_season_goat_points") * config.getBestSeasonTotalFactor());
 				row.setGreatestRivalriesGoatPoints(rs.getInt("greatest_rivalries_goat_points") * config.getGreatestRivalriesTotalFactor());
 				if (overall) {
 					row.setPerformanceGoatPoints(rs.getInt("performance_goat_points") * config.getPerformanceTotalFactor());
@@ -276,11 +276,11 @@ public class GOATListService {
 			return "g.ranking_goat_points * :rankingFactor";
 		else {
 			StringBuilder sb = new StringBuilder(200);
-			if (surface == null) {
+			if (surface == null)
 				sb.append("g.year_end_rank_goat_points * :yearEndRankFactor + ");
-				sb.append("g.best_rank_goat_points * :bestRankFactor + ");
+			sb.append("g.best_rank_goat_points * :bestRankFactor + ");
+			if (surface == null)
 				sb.append("g.weeks_at_no1_goat_points * :weeksAtNo1Factor + ");
-			}
 			sb.append("g.weeks_at_elo_topn_goat_points * :weeksAtEloTopNFactor + ");
 			sb.append("g.best_elo_rating_goat_points * :bestEloRatingFactor");
 			return sb.toString();
@@ -299,8 +299,7 @@ public class GOATListService {
 			sb.append("g.big_wins_goat_points * :bigWinsFactor + ");
 			sb.append("g.h2h_goat_points * :h2hFactor + ");
 			sb.append("g.records_goat_points * :recordsFactor + ");
-			if (surface == null)
-				sb.append("g.best_season_goat_points * :bestSeasonFactor + ");
+			sb.append("g.best_season_goat_points * :bestSeasonFactor + ");
 			sb.append("g.greatest_rivalries_goat_points * :greatestRivalriesFactor");
 			if (surface == null) {
 				sb.append(" + g.performance_goat_points * :performanceFactor + ");
