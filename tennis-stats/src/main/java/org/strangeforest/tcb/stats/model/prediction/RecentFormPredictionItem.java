@@ -12,6 +12,10 @@ public enum RecentFormPredictionItem implements PredictionItem {
 
 	private volatile PredictionArea area;
 
+	@Override public String longName() {
+		return area + "[" + super.toString() + "]";
+	}
+
 	@Override public PredictionArea getArea() {
 		return area;
 	}

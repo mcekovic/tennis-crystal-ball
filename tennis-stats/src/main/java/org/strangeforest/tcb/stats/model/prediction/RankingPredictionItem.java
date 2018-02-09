@@ -16,6 +16,10 @@ public enum RankingPredictionItem implements PredictionItem {
 		this.forSet = forSet;
 	}
 
+	@Override public String longName() {
+		return area + "[" + super.toString() + "]";
+	}
+
 	@Override public PredictionArea getArea() {
 		return area;
 	}
