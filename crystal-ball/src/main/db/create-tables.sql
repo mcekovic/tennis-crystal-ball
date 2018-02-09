@@ -77,6 +77,8 @@ CREATE TABLE player (
 	active BOOLEAN,
 	turned_pro SMALLINT,
 	coach TEXT,
+	prize_money TEXT,
+	wikipedia TEXT,
 	web_site TEXT,
 	facebook TEXT,
 	twitter TEXT,

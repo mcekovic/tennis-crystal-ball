@@ -32,7 +32,7 @@ public class PlayerService {
 
 	private static final String PLAYER_BY_ID_QUERY =
 		"SELECT player_id, name, dob, extract(YEAR FROM age) AS age, country_id, birthplace, residence, height, weight,\n" +
-		"  hand, backhand, active, turned_pro, coach, web_site, facebook, twitter,\n" +
+		"  hand, backhand, active, turned_pro, coach, prize_money, wikipedia, web_site, facebook, twitter,\n" +
 		"  titles, grand_slams, tour_finals, alt_finals, masters, olympics,\n" +
 		"  current_rank, current_rank_points, best_rank, best_rank_date,\n" +
 		"  current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,\n" +
@@ -206,7 +206,6 @@ public class PlayerService {
 	private static String[] WIKIPEDIA_URLS = new String[] {"https://en.wikipedia.org/wiki/%1$s_(tennis)", "https://en.wikipedia.org/wiki/%1$s"};
 	private static String WIKIPEDIA_SEARCH_URL = "https://en.wikipedia.org/w?search=%1$s";
 
-	@Cacheable("PlayerWikipediaUrl")
 	public String getPlayerWikipediaUrl(int playerId) {
 		String name = getPlayerName(playerId).replace(' ', '_');
 		for (String wikipediaUrlTemplate : WIKIPEDIA_URLS) {
@@ -240,6 +239,8 @@ public class PlayerService {
 		p.setActive(rs.getBoolean("active"));
 		p.setTurnedPro(rs.getInt("turned_pro"));
 		p.setCoach(rs.getString("coach"));
+		p.setPrizeMoney(rs.getString("prize_money"));
+		p.setWikipedia(rs.getString("wikipedia"));
 		p.setWebSite(rs.getString("web_site"));
 		p.setFacebook(rs.getString("facebook"));
 		p.setTwitter(rs.getString("twitter"));

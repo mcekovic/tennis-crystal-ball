@@ -25,8 +25,10 @@ public class Player {
 	private boolean active;
 	private int turnedPro;
 	private String coach;
+	private String prizeMoney;
 
 	// Social
+	private String wikipedia;
 	private String webSite;
 	private String facebook;
 	private String twitter;
@@ -188,8 +190,24 @@ public class Player {
 		this.coach = coach;
 	}
 
+	public String getPrizeMoney() {
+		return prizeMoney;
+	}
+
+	public void setPrizeMoney(String prizeMoney) {
+		this.prizeMoney = prizeMoney;
+	}
+
 
 	// Social
+
+	public String getWikipedia() {
+		return wikipedia;
+	}
+
+	public void setWikipedia(String wikipedia) {
+		this.wikipedia = wikipedia;
+	}
 
 	public String getWebSite() {
 		return webSite;

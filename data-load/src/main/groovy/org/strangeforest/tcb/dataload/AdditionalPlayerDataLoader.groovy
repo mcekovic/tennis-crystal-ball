@@ -11,7 +11,7 @@ class AdditionalPlayerDataLoader extends SimpleXMLLoader {
 	String loadSql(item) {
 		def children = item.children()
 		if (!children.isEmpty()) {
-			def sql = "UPDATE player SET"
+			def sql = 'UPDATE player SET'
 			def index = 0
 			for (attr in children) {
 				def attrName = attr.name()
@@ -21,7 +21,7 @@ class AdditionalPlayerDataLoader extends SimpleXMLLoader {
 					sql += ','
 				sql += " $column = :$attrCast"
 			}
-			sql + " WHERE full_name(first_name, last_name) = :name"
+			sql + ' WHERE lower(full_name(first_name, last_name)) = lower(:name) OR lower(full_name(first_name, last_name)) = (SELECT lower(alias) FROM player_alias WHERE lower(name) = lower(:name))'
 		}
 		else
 			null
