@@ -12,6 +12,10 @@
 .fa-b {
 	font-size: 120%;
 }
+a.external:after {
+	font: normal normal normal 12px/1 FontAwesome;
+	content: " \f08e";
+}
 .component {
 	border: 1px solid #c0c0c0;
 	border-radius: 5px;

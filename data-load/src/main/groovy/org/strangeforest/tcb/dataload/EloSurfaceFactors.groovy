@@ -6,15 +6,15 @@ class EloSurfaceFactors {
 
 	static final String QUERY_SURFACE_RATIOS = //language=SQL
 		"SELECT extract(YEAR FROM date) AS season,\n" +
-			"  count(*) FILTER (WHERE surface = 'H')::REAL / count(*) AS hard_pct,\n" +
-			"  count(*) FILTER (WHERE surface = 'C')::REAL / count(*) AS clay_pct,\n" +
-			"  count(*) FILTER (WHERE surface = 'G')::REAL / count(*) AS grass_pct,\n" +
-			"  count(*) FILTER (WHERE surface = 'P')::REAL / count(*) AS carpet_pct,\n" +
-			"  count(*) FILTER (WHERE NOT indoor)::REAL / count(*) AS outdoor_pct,\n" +
-			"  count(*) FILTER (WHERE indoor)::REAL / count(*) AS indoor_pct\n" +
-			"FROM match\n" +
-			"GROUP BY season\n" +
-			"ORDER BY season"
+		"  count(*) FILTER (WHERE surface = 'H')::REAL / count(*) AS hard_pct,\n" +
+		"  count(*) FILTER (WHERE surface = 'C')::REAL / count(*) AS clay_pct,\n" +
+		"  count(*) FILTER (WHERE surface = 'G')::REAL / count(*) AS grass_pct,\n" +
+		"  count(*) FILTER (WHERE surface = 'P')::REAL / count(*) AS carpet_pct,\n" +
+		"  count(*) FILTER (WHERE NOT indoor)::REAL / count(*) AS outdoor_pct,\n" +
+		"  count(*) FILTER (WHERE indoor)::REAL / count(*) AS indoor_pct\n" +
+		"FROM match\n" +
+		"GROUP BY season\n" +
+		"ORDER BY season"
 
 	private Map<Integer, Double> hardFactors = new TreeMap<>()
 	private Map<Integer, Double> clayFactors = new TreeMap<>()

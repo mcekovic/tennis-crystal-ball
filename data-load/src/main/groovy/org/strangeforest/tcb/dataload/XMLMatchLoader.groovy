@@ -7,14 +7,14 @@ import java.sql.*
 class XMLMatchLoader extends BaseXMLLoader {
 
 	static final String LOAD_SQL =
-		'{call load_match(\n' +
-			':ext_tournament_id, :season, :tournament_date, :tournament_name, :event_name, :tournament_level, :surface, :indoor, :draw_type, :draw_size, :rank_points,\n' +
-			':match_num, :date, :round, :best_of,\n' +
-			':ext_winner_id, :winner_seed, :winner_entry, :winner_rank, :winner_rank_points, :winner_age, :winner_country_id, :winner_name, :winner_height, :winner_hand,\n' +
-			':ext_loser_id, :loser_seed, :loser_entry, :loser_rank, :loser_rank_points, :loser_age, :loser_country_id, :loser_name, :loser_height, :loser_hand,\n' +
-			':score, :outcome, :w_sets, :l_sets, :w_games, :l_games, :w_tbs, :l_tbs, :w_set_games, :l_set_games, :w_set_tb_pt, :l_set_tb_pt, :w_set_tbs, :l_set_tbs, :minutes,\n' +
-			':w_ace, :w_df, :w_sv_pt, :w_1st_in, :w_1st_won, :w_2nd_won, :w_sv_gms, :w_bp_sv, :w_bp_fc,\n' +
-			':l_ace, :l_df, :l_sv_pt, :l_1st_in, :l_1st_won, :l_2nd_won, :l_sv_gms, :l_bp_sv, :l_bp_fc\n' +
+		'{call load_match(' +
+			':ext_tournament_id, :season, :tournament_date, :tournament_name, :event_name, :tournament_level, :surface, :indoor, :draw_type, :draw_size, :rank_points, ' +
+			':match_num, :date, :round, :best_of, ' +
+			':ext_winner_id, :winner_seed, :winner_entry, :winner_rank, :winner_rank_points, :winner_age, :winner_country_id, :winner_name, :winner_height, :winner_hand, ' +
+			':ext_loser_id, :loser_seed, :loser_entry, :loser_rank, :loser_rank_points, :loser_age, :loser_country_id, :loser_name, :loser_height, :loser_hand, ' +
+			':score, :outcome, :w_sets, :l_sets, :w_games, :l_games, :w_tbs, :l_tbs, :w_set_games, :l_set_games, :w_set_tb_pt, :l_set_tb_pt, :w_set_tbs, :l_set_tbs, :minutes, ' +
+			':w_ace, :w_df, :w_sv_pt, :w_1st_in, :w_1st_won, :w_2nd_won, :w_sv_gms, :w_bp_sv, :w_bp_fc, ' +
+			':l_ace, :l_df, :l_sv_pt, :l_1st_in, :l_1st_won, :l_2nd_won, :l_sv_gms, :l_bp_sv, :l_bp_fc' +
 		')}'
 
 	XMLMatchLoader(Sql sql) {

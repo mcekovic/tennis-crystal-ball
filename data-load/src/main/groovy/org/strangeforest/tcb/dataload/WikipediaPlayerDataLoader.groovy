@@ -7,7 +7,6 @@ import org.strangeforest.tcb.stats.service.*
 
 import com.google.common.base.*
 
-import static org.strangeforest.tcb.dataload.BaseCSVLoader.*
 import static org.strangeforest.tcb.dataload.LoaderUtil.*
 
 class WikipediaPlayerDataLoader {
@@ -19,8 +18,8 @@ class WikipediaPlayerDataLoader {
 
 	static final String FETCH_PLAYERS_FOR_DATA_UPDATE_SQL = //language=SQL
 		'SELECT player_id FROM player_v\n' +
-		'WHERE (TRUE OR wikipedia IS NULL OR birthplace IS NULL OR residence IS NULL OR backhand IS NULL OR turned_pro IS NULL OR coach IS NULL OR prize_money IS NULL OR web_site IS NULL)\n' +
-		'AND (goat_points > 100 AND best_rank <= 500)\n' +
+		'WHERE (wikipedia IS NULL OR backhand IS NULL OR turned_pro IS NULL OR prize_money IS NULL OR web_site IS NULL)\n' +
+		'AND (goat_points > 0 OR best_rank <= 500)\n' +
 		'ORDER BY goat_points DESC, best_rank'
 
 	WikipediaPlayerDataLoader(SqlPool sqlPool) {
@@ -65,18 +64,18 @@ class WikipediaPlayerDataLoader {
 		def doc = retriedGetDoc(url)
 		def vcard = doc.select('table.infobox.vcard > tbody')
 
-		// Birthplace
-		def born = findVCardField(vcard, 'born')
-		if (born) {
-			def pos = born.lastIndexOf(')')
-			if (pos > 0)
-				playerData['birthplace'] = born.substring(pos + 1).trim()
-		}
-
-		// Residence
-		def residence = findVCardField(vcard, 'residence')
-		if (residence)
-			playerData['residence'] = residence
+//		// Birthplace
+//		def born = findVCardField(vcard, 'born')
+//		if (born) {
+//			def pos = born.lastIndexOf(')')
+//			if (pos > 0)
+//				playerData['birthplace'] = born.substring(pos + 1).trim()
+//		}
+//
+//		// Residence
+//		def residence = findVCardField(vcard, 'residence')
+//		if (residence)
+//			playerData['residence'] = residence
 
 		// Plays
 		def plays = findVCardField(vcard, 'plays')
@@ -91,7 +90,7 @@ class WikipediaPlayerDataLoader {
 		// Turned Pro
 		def turnedPro = findVCardField(vcard, 'turned')
 		if (turnedPro)
-			playerData['turned_pro'] = integer turnedPro.replaceAll('\\(.*\\)', '').replaceAll('\\[.*]', '').trim()
+			playerData['turned_pro'] = safeInteger turnedPro.replaceAll('\\(.*\\)', '').replaceAll('\\[.*]', '').trim()
 
 		// Prize Money
 		def prizeMoney = findVCardField(vcard, 'prize')
@@ -99,7 +98,8 @@ class WikipediaPlayerDataLoader {
 			def pos = prizeMoney.indexOf(' ' + (char)160)
 			if (pos > 0)
 				prizeMoney = prizeMoney.substring(0, pos)
-			playerData['prize_money'] = prizeMoney
+			if (prizeMoney.matches('.*\\d+.*'))
+				playerData['prize_money'] = prizeMoney.replaceAll('\\(.*\\)', '').replaceAll('\\[.*]', '').trim()
 		}
 
 		// Website
@@ -121,6 +121,15 @@ class WikipediaPlayerDataLoader {
 		def paramMap = [playerId: playerId] << params
 		sqlPool.withSql { sql ->
 			sql.execute(paramMap, "UPDATE player SET $paramsSql WHERE player_id = :playerId")
+		}
+	}
+
+	static Integer safeInteger(i) {
+		try {
+			i ? i.toInteger() : null
+		}
+		catch (Exception ex) {
+			null
 		}
 	}
 }

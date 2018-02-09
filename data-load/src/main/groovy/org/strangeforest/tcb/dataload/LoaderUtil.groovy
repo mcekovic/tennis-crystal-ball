@@ -62,6 +62,7 @@ abstract class LoaderUtil {
 	}
 
 	static boolean isNonRecoverableKnownError(Throwable th) {
-		th instanceof IOException && th.message?.startsWith('Too many redirects')
+		(th instanceof IOException && th.message?.startsWith('Too many redirects')) ||
+		(th instanceof HttpStatusException && ((HttpStatusException)th).statusCode == 400)
 	}
 }

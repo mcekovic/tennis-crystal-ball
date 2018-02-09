@@ -36,8 +36,10 @@ if (options && (options.cd || options.dd || options.lt || options.ln || options.
 		new LoadATPTennis().run()
 	if (options.ln)
 		new LoadATPTennisNew().run()
-	if (options.lp)
+	if (options.lp) {
 		callLoader('loadAdditionalPlayerData')
+		new UpdatePlayerData().run()
+	}
 	if (options.la) {
 		new LoadAdHocRankings().run()
 		new LoadAdHocTournaments().run()

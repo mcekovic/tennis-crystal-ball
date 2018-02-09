@@ -55,10 +55,10 @@ class EloRatings {
 		"ORDER BY rank_date, player_id"
 
 	static final String MERGE_ELO_RANKING = //language=SQL
-		"{call merge_elo_ranking(\n" +
-		"  :rank_date, :player_id, :rank, :elo_rating,\n" +
-		"  :hard_rank, :hard_elo_rating, :clay_rank, :clay_elo_rating, :grass_rank, :grass_elo_rating, :carpet_rank, :carpet_elo_rating, :outdoor_rank, :outdoor_elo_rating, :indoor_rank, :indoor_elo_rating,\n" +
-		"  :set_rank, :set_elo_rating, :service_game_rank, :service_game_elo_rating, :return_game_rank, :return_game_elo_rating, :tie_break_rank, :tie_break_elo_rating\n" +
+		"{call merge_elo_ranking(" +
+		"  :rank_date, :player_id, :rank, :elo_rating, " +
+		"  :hard_rank, :hard_elo_rating, :clay_rank, :clay_elo_rating, :grass_rank, :grass_elo_rating, :carpet_rank, :carpet_elo_rating, :outdoor_rank, :outdoor_elo_rating, :indoor_rank, :indoor_elo_rating, " +
+		"  :set_rank, :set_elo_rating, :service_game_rank, :service_game_elo_rating, :return_game_rank, :return_game_elo_rating, :tie_break_rank, :tie_break_elo_rating" +
 		")}"
 
 	static final String DELETE_ALL = //language=SQL

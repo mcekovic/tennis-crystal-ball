@@ -95,19 +95,19 @@
 			<!--/* Social */-->
 			<tr>
 				<th>Wikipedia</th>
-				<td><img src="/images/glyphicons-social-wikipedia-small.png" width="16" height="16"/> <a th:href="${player.wikipedia != null ? player.wikipedia : '/playerWikipediaUrl?playerId=' + player.id}" href="https://en.wikipedia.org/wiki/Roger_Federer" target="_blank">Wikipedia</a></td>
+				<td><img src="/images/glyphicons-social-wikipedia-small.png" width="16" height="16"/> <a th:href="${player.wikipedia != null ? player.wikipedia : '/playerWikipediaUrl?playerId=' + player.id}" href="https://en.wikipedia.org/wiki/Roger_Federer" target="_blank" class="external">Wikipedia</a></td>
 			</tr>
 			<tr th:if="${player.webSite}">
 				<th>Web Site</th>
-				<td><a th:href="'http://' + ${player.webSite}" href="http://www.johnsmith.com" target="_blank" th:text="${player.webSite}">www.johnsmith.com</a></td>
+				<td><a th:href="'http://' + ${player.webSite}" href="http://www.johnsmith.com" target="_blank" class="external">[(${player.webSite})]</a></td>
 			</tr>
 			<tr th:if="${player.facebook}">
 				<th>Facebook</th>
-				<td><img src="/images/glyphicons-social-facebook-small.png" width="16" height="16"/> <a th:href="'https://www.facebook.com/' + ${player.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" th:text="${player.facebook}">JohnSmith</a></td>
+				<td><img src="/images/glyphicons-social-facebook-small.png" width="16" height="16"/> <a th:href="'https://www.facebook.com/' + ${player.facebook}" href="https://www.facebook.com/JohnSmith" target="_blank" class="external">[(${player.facebook})]</a></td>
 			</tr>
 			<tr th:if="${player.twitter}">
 				<th>Twitter</th>
-				<td><img src="/images/glyphicons-social-twitter-small.png" width="16" height="16"/> <a th:href="'https://twitter.com/' + ${player.twitter}" href="https://twitter.com/JohnSmith" target="_blank" th:text="'@'+ ${player.twitter}">@JohnSmith</a></td>
+				<td><img src="/images/glyphicons-social-twitter-small.png" width="16" height="16"/> <a th:href="'https://twitter.com/' + ${player.twitter}" href="https://twitter.com/JohnSmith" target="_blank" class="external" th:text="'@'+ ${player.twitter}">@JohnSmith</a></td>
 			</tr>
 		</table>
 	</div>
