@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.dataload
 
+import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 
 import org.jsoup.select.*
@@ -12,6 +13,8 @@ import static org.strangeforest.tcb.dataload.SqlPool.*
 import static org.strangeforest.tcb.dataload.XMLMatchLoader.*
 
 class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
+
+	static final int FETCH_THREAD_COUNT = 5
 
 	static final String SELECT_SEASON_EVENT_EXT_IDS_SQL = //language=SQL
 		'SELECT ext_tournament_id FROM tournament_event\n' +
@@ -111,19 +114,27 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		}
 
 		AtomicInteger rows = new AtomicInteger()
-		matches.parallelStream().forEach { params ->
-			def statsUrl = params.statsUrl
-			if (statsUrl) {
-				def statsDoc = retriedGetDoc(statsUrl)
-				params.minutes = minutes statsDoc.select('#completedScoreBox table.scores-table tr.match-info-row td.time').text()
-				def matchStats = statsDoc.select('#completedMatchStats > table.match-stats-table')
-				if (matchStats) {
-					setATPStatsParams(params, matchStats)
-					print '.'
+		ForkJoinPool pool = new ForkJoinPool(FETCH_THREAD_COUNT)
+		try {
+			pool.submit{
+				matches.parallelStream().forEach { params ->
+					def statsUrl = params.statsUrl
+					if (statsUrl) {
+						def statsDoc = retriedGetDoc(statsUrl)
+						params.minutes = minutes statsDoc.select('#completedScoreBox table.scores-table tr.match-info-row td.time').text()
+						def matchStats = statsDoc.select('#completedMatchStats > table.match-stats-table')
+						if (matchStats) {
+							setATPStatsParams(params, matchStats)
+							print '.'
+						}
+					}
+					if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
+						println()
 				}
-			}
-			if (rows.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
-				println()
+			}.get()
+		}
+		finally {
+			pool.shutdown()
 		}
 
 		withTx sql, { Sql s ->

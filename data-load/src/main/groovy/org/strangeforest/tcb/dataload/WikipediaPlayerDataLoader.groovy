@@ -1,5 +1,6 @@
 package org.strangeforest.tcb.dataload
 
+import java.util.concurrent.*
 import java.util.concurrent.atomic.*
 
 import org.springframework.jdbc.core.namedparam.*
@@ -15,6 +16,7 @@ class WikipediaPlayerDataLoader {
 	final PlayerService playerService
 
 	static final int PROGRESS_LINE_WRAP = 100
+	static final int FETCH_THREAD_COUNT = 5
 
 	static final String FETCH_PLAYERS_FOR_DATA_UPDATE_SQL = //language=SQL
 		'SELECT player_id FROM player_v\n' +
@@ -34,26 +36,35 @@ class WikipediaPlayerDataLoader {
 			sql -> sql.rows(FETCH_PLAYERS_FOR_DATA_UPDATE_SQL).collect { row -> row.player_id }
 		}
 		def updates = new AtomicInteger(), errors = new AtomicInteger(), total = new AtomicInteger()
-		playerIds.parallelStream().forEach { playerId ->
-			try {
-				def url = playerService.getPlayerWikipediaUrl(playerId)
-				def playerData = findPlayerData(url)
-				if (playerData) {
-					updatePlayer(playerId, playerData)
-					updates.incrementAndGet()
-					print '.'
+		ForkJoinPool pool = new ForkJoinPool(FETCH_THREAD_COUNT)
+		try {
+			pool.submit{
+				playerIds.parallelStream().forEach { playerId ->
+					try {
+						def url = playerService.getPlayerWikipediaUrl(playerId)
+						def playerData = findPlayerData(url)
+						if (playerData) {
+							updatePlayer(playerId, playerData)
+							updates.incrementAndGet()
+							print '.'
+						}
+						else {
+							errors.incrementAndGet()
+							print '!'
+						}
+						if (total.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
+							println()
+					}
+					catch (Exception ex) {
+						ex.printStackTrace()
+					}
 				}
-				else {
-					errors.incrementAndGet()
-					print '!'
-				}
-				if (total.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
-					println()
-			}
-			catch (Exception ex) {
-				ex.printStackTrace()
-			}
+			}.get()
 		}
+		finally {
+			pool.shutdown()
+		}
+
 		println "\n$updates players updated in $stopwatch, cannot update $errors players"
 	}
 

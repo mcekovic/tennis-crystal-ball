@@ -21,7 +21,7 @@ abstract class LoaderUtil {
 			}
 			catch (Throwable th) {
 				if (isNonRecoverableKnownError(th)) {
-					println th.getMessage()
+					println th.message
 					throw th
 				}
 				th.printStackTrace()
