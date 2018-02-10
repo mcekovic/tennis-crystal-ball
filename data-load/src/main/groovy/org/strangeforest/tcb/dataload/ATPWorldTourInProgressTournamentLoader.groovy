@@ -260,11 +260,17 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			prevMatchNumOffset = matchNumOffset
 		}
 
-		def matchCount = saveMatches(extId, matches)
-		if (matchCount > 0)
-			println "${matches.size()} matches loaded in $stopwatch"
+		def matchCount = 0
+		if (matches) {
+			matchCount = saveMatches(extId, matches)
+			if (matchCount > 0)
+				println "${matches.size()} matches loaded in $stopwatch"
+			else
+				println 'Matches not changed'
+		}
 		else
-			println 'Matches not changed'
+			println 'No matches found'
+
 		sql.commit()
 		matchCount
 	}
