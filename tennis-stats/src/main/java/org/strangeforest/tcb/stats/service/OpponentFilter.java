@@ -124,6 +124,6 @@ public class OpponentFilter {
 			.add("opponent", opponent)
 			.add("opponentId", opponentId)
 			.add("countryIds", countryIds.isEmpty() ? null : countryIds)
-			.toString();
+		.toString();
 	}
 }

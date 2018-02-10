@@ -276,12 +276,13 @@ public class PlayerProfileController extends PageController {
 	public ModelAndView playerRivalries(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
-		@RequestParam(name = "opponent", required = false) Integer opponent,
+		@RequestParam(name = "opponent", required = false) String opponent,
 		@RequestParam(name = "h2h", required = false) Integer h2h,
 		@RequestParam(name = "matches", required = false) Integer matches
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
+		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
@@ -292,6 +293,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("countries", countries);
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("opponent", opponent);
 		modelMap.addAttribute("h2h", h2h);

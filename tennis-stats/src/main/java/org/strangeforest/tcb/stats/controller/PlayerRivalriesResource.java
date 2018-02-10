@@ -23,6 +23,7 @@ public class PlayerRivalriesResource {
 
 	@Autowired private RivalriesService rivalriesService;
 	@Autowired private StatisticsService statisticsService;
+	@Autowired private MatchesService matchesService;
 
 	private static final int MAX_RIVALRIES = 1000;
 
@@ -39,10 +40,15 @@ public class PlayerRivalriesResource {
 	public BootgridTable<PlayerRivalryRow> playerRivalriesTable(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
+		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "round", required = false) String round,
-		@RequestParam(name = "opponent", required = false) Integer opponent,
+		@RequestParam(name = "opponent", required = false) String opponent,
+		@RequestParam(name = "countryId", required = false) String countryId,
 		@RequestParam(name = "h2h", required = false) Integer h2h,
 		@RequestParam(name = "matches", required = false) Integer matches,
 		@RequestParam(name = "current", defaultValue = "1") int current,
@@ -50,8 +56,8 @@ public class PlayerRivalriesResource {
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		RivalryFilter rivalryFilter = new RivalryFilter(season, level, null, surface, null, round);
-		RivalrySeriesFilter rivalrySeriesFilter = new RivalrySeriesFilter(opponent, h2h, matches);
+		RivalryFilter rivalryFilter = new RivalryFilter(season, RangeUtil.toRange(fromSeason, toSeason), level, bestOf, surface, indoor, round);
+		RivalrySeriesFilter rivalrySeriesFilter = new RivalrySeriesFilter(opponent, matchesService.getSameCountryIds(countryId), h2h, matches);
 		RivalryPlayerListFilter filter = new RivalryPlayerListFilter(searchPhrase, rivalryFilter);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDERS);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;

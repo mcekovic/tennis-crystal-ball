@@ -8,8 +8,9 @@
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
+<!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
-<!--/*@thymesVar id="opponent" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="opponent" type="java.lang.String"*/-->
 <!--/*@thymesVar id="h2h" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="matches" type="java.lang.Integer"*/-->
 <script type="text/javascript">
@@ -30,10 +31,15 @@
 			url: "/playerRivalriesTable?playerId=[(${playerId})]",
 			requestHandler: function(request) {
 				request.season = $("#rivalrySeason").val();
+				request.fromSeason = $("#rivalryFromSeason").val();
+				request.toSeason = $("#rivalryToSeason").val();
 				request.level = $("#rivalryLevel").val();
+				request.bestOf = $("#rivalryBestOf").val();
 				request.surface = $("#rivalrySurface").val();
+				request.indoor = $("#rivalryIndoor").val();
 				request.round = $("#rivalryRound").val();
 				request.opponent = $("#rivalryOpponent").val();
+				request.countryId = $("#rivalryCountry").val();
 				request.h2h = $("#rivalryH2H").val();
 				request.matches = $("#rivalryMatches").val();
 				return request;
@@ -85,15 +91,30 @@
 		$search.after($("#clearRivalryFilterButton").remove());
 		$("[data-toggle='tooltip']").tooltip();
 	});
+	function rivalrySeasonChanged() {
+		if ($("#rivalrySeason").val()) {
+			$("#rivalryFromSeason").val("");
+			$("#rivalryToSeason").val("");
+		}
+	}
+	function rivalrySeasonsChanged() {
+		if ($("#rivalryFromSeason").val() || $("#rivalryToSeason").val())
+			$("#rivalrySeason").val("");
+	}
 	function reloadRivalries() {
 		$("#rivalriesTable").bootgrid("reload");
 	}
 	function clearRivalryFilter() {
 		$("#rivalrySeason").val("");
+		$("#rivalryFromSeason").val("");
+		$("#rivalryToSeason").val("");
 		$("#rivalryLevel").val("");
+		$("#rivalryBestOf").val("");
 		$("#rivalrySurface").val("");
+		$("#rivalryIndoor").val("");
 		$("#rivalryRound").val("");
 		$("#rivalryOpponent").val("");
+		$("#rivalryCountry").val("");
 		$("#rivalryH2H").val("");
 		$("#rivalryMatches").val("");
 		$("#rivalriesTable").bootgrid("search", "");
@@ -114,17 +135,21 @@
 	function rivalryFilterParams() {
 		var params = "";
 		var season = $("#rivalrySeason").val();
-		if (season)
-			params += "&season=" + season;
+		if (season) params += "&season=" + season;
+		var fromSeason = $("#rivalryFromSeason").val();
+		if (fromSeason) params += "&fromDate=01-01-" + fromSeason;
+		var toSeason = $("#rivalryToSeason").val();
+		if (toSeason) params += "&toDate=31-12-" + toSeason;
 		var level = $("#rivalryLevel").val();
-		if (level)
-			params += "&level=" + level;
+		if (level) params += "&level=" + level;
+		var bestOf = $("#rivalryBestOf").val();
+		if (bestOf) params += "&bestOf=" + bestOf;
 		var surface = $("#rivalrySurface").val();
-		if (surface)
-			params += "&surface=" + surface;
+		if (surface) params += "&surface=" + surface;
+		var indoor = $("#rivalryIndoor").val();
+		if (indoor) params += "&indoor=" + indoor;
 		var round = $("#rivalryRound").val();
-		if (round)
-			params += "&round=" + encodeURIComponent(round);
+		if (round) params += "&round=" + encodeURIComponent(round);
 		return params;
 	}
 	function playerMatchesUrl(opponentId, outcome) {
@@ -148,7 +173,7 @@
 </style>
 <div class="row">
 	<div class="col-md-2">
-		<select id="rivalrySeason" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
+		<select id="rivalrySeason" class="form-control" onchange="rivalrySeasonChanged(); reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
 			<option value="">Career</option>
 			<option value="-1" th:selected="${season == -1}">Last 52 weeks</option>
 			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
@@ -177,13 +202,66 @@
 	<div class="col-md-2">
 		<select id="rivalryOpponent" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by opponent best ranking">
 			<option value="">Vs all</option>
-			<option value="1" th:selected="${opponent == 1}">Vs once No. 1</option>
-			<option value="2" th:selected="${opponent == 2}">Vs once Top 2</option>
-			<option value="3" th:selected="${opponent == 3}">Vs once Top 3</option>
-			<option value="5" th:selected="${opponent == 5}">Vs once Top 5</option>
-			<option value="10" th:selected="${opponent == 10}">Vs once Top 10</option>
-			<option value="20" th:selected="${opponent == 20}">Vs once Top 20</option>
+			<optgroup label="Vs Best Rank">
+				<option value="1" th:selected="${opponent == '1'}">Vs once No. 1</option>
+				<option value="2" th:selected="${opponent == '2'}">Vs once Top 2</option>
+				<option value="3" th:selected="${opponent == '3'}">Vs once Top 3</option>
+				<option value="5" th:selected="${opponent == '5'}">Vs once Top 5</option>
+				<option value="10" th:selected="${opponent == '10'}">Vs once Top 10</option>
+				<option value="20" th:selected="${opponent == '20'}">Vs once Top 20</option>
+			</optgroup>
+			<optgroup label="Vs Playing Style">
+				<option value="RIGHT_HANDED" th:selected="${opponent == 'RIGHT_HANDED'}">Vs Right-handed</option>
+				<option value="LEFT_HANDED" th:selected="${opponent == 'LEFT_HANDED'}">Vs Left-handed</option>
+				<option value="BACKHAND_2" th:selected="${opponent == 'BACKHAND_2'}">Vs Two-handed bh.</option>
+				<option value="BACKHAND_1" th:selected="${opponent == 'BACKHAND_1'}">Vs One-handed bh.</option>
+			</optgroup>
 		</select>
+	</div>
+	<div class="col-md-2">
+		<div data-toggle="tooltip" data-placement="auto" title="Advanced filters">
+			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#rivalryAdvancedFilter">
+				<i class="fa fa-folder-open"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
+			</button>
+		</div>
+	</div>
+</div>
+<div id="rivalryAdvancedFilter" class="collapse">
+	<div class="row margin-top">
+		<div class="col-md-4">
+			<div id="rivalrySeasonRange" class="input-group">
+				<label for="rivalryFromSeason" class="input-group-addon">From:</label>
+				<select id="rivalryFromSeason" class="form-control" onchange="rivalrySeasonsChanged(); reloadRivalries()">
+					<option value="">All seasons</option>
+					<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}">2005</option>
+				</select>
+				<label for="rivalryToSeason" class="input-group-addon">To:</label>
+				<select id="rivalryToSeason" class="form-control" onchange="rivalrySeasonsChanged(); reloadRivalries()">
+					<option value="">All seasons</option>
+					<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}">2005</option>
+				</select>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<select id="rivalryIndoor" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+				<option value="">Outdoor / Indoor</option>
+				<option value="false">Outdoor</option>
+				<option value="true">Indoor</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="rivalryBestOf" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+				<option value="">Best of any</option>
+				<option value="3">Best of 3</option>
+				<option value="5">Best of 5</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="rivalryCountry" class="form-control" onchange="reloadRivalries()" data-toggle="tooltip" data-placement="top" title="Filter by opponent country">
+				<option value="">Vs all countries</option>
+				<option th:each="aCountry : ${countries}" th:value="${aCountry.alpha3}" value="SUI" th:text="${aCountry.name}">Switzerland</option>
+			</select>
+		</div>
 	</div>
 </div>
 <div id="rivalryH2HDiv" class="btn-group pull-left margin-right no-margin-left">

@@ -38,17 +38,15 @@ public class RivalryFilter {
 	private static final int LAST_52_WEEKS_SEASON = -1;
 
 	public RivalryFilter(Range<Integer> seasonRange, String level, Integer bestOf, String surface, Boolean indoor, String round) {
-		this.seasonRange = seasonRange != null ? seasonRange : Range.all();
-		this.bestOf = bestOf;
-		this.indoor = indoor;
-		last52Weeks = false;
-		this.level = level;
-		this.surface = surface;
-		this.round = round;
+		this(null, seasonRange, level, bestOf, surface, indoor, round);
 	}
 
 	public RivalryFilter(Integer season, String level, Integer bestOf, String surface, Boolean indoor, String round) {
-		this.seasonRange = season != null && season != LAST_52_WEEKS_SEASON ? Range.singleton(season) : Range.all();
+		this(season, null, level, bestOf, surface, indoor, round);
+	}
+
+	public RivalryFilter(Integer season, Range<Integer> seasonRange, String level, Integer bestOf, String surface, Boolean indoor, String round) {
+		this.seasonRange = season != null && season != LAST_52_WEEKS_SEASON ? Range.singleton(season) : (seasonRange != null ? seasonRange : Range.all());
 		last52Weeks = season != null && season == LAST_52_WEEKS_SEASON;
 		this.level = level;
 		this.bestOf = bestOf;
