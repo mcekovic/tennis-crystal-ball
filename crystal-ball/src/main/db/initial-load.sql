@@ -160,6 +160,14 @@ VALUES
 ( 2, 2),
 ( 3, 1);
 
+DELETE FROM best_in_match_elo_rating_goat_points;
+INSERT INTO best_in_match_elo_rating_goat_points
+(best_elo_rating_rank, goat_points)
+VALUES
+( 1, 4),
+( 2, 2),
+( 3, 1);
+
 DELETE FROM grand_slam_goat_points;
 INSERT INTO grand_slam_goat_points
 (career_grand_slam, season_grand_slam, season_3_grand_slam, grand_slam_holder, consecutive_grand_slam_on_same_event, grand_slam_on_same_event)

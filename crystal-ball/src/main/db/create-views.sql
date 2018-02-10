@@ -1228,7 +1228,11 @@ WITH best_elo_rating_ranked AS (
 		rank() OVER (ORDER BY best_grass_elo_rating DESC NULLS LAST) AS best_grass_elo_rating_rank,
 		rank() OVER (ORDER BY best_carpet_elo_rating DESC NULLS LAST) AS best_carpet_elo_rating_rank,
 		rank() OVER (ORDER BY best_outdoor_elo_rating DESC NULLS LAST) AS best_outdoor_elo_rating_rank,
-		rank() OVER (ORDER BY best_indoor_elo_rating DESC NULLS LAST) AS best_indoor_elo_rating_rank
+		rank() OVER (ORDER BY best_indoor_elo_rating DESC NULLS LAST) AS best_indoor_elo_rating_rank,
+		rank() OVER (ORDER BY best_set_elo_rating DESC NULLS LAST) AS best_set_elo_rating_rank,
+		rank() OVER (ORDER BY best_service_game_elo_rating DESC NULLS LAST) AS best_service_game_elo_rating_rank,
+		rank() OVER (ORDER BY best_return_game_elo_rating DESC NULLS LAST) AS best_return_game_elo_rating_rank,
+		rank() OVER (ORDER BY best_tie_break_elo_rating DESC NULLS LAST) AS best_tie_break_elo_rating_rank
 	FROM player_best_elo_rating
 ), goat_points AS (
 	SELECT player_id, goat_points
@@ -1258,6 +1262,22 @@ WITH best_elo_rating_ranked AS (
 	SELECT player_id, goat_points
 	FROM best_elo_rating_ranked
 	INNER JOIN best_indoor_elo_rating_goat_points gi ON gi.best_elo_rating_rank = best_indoor_elo_rating_rank
+	UNION ALL
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_in_match_elo_rating_goat_points gs ON gs.best_elo_rating_rank = best_set_elo_rating_rank
+	UNION ALL
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_in_match_elo_rating_goat_points gsg ON gsg.best_elo_rating_rank = best_service_game_elo_rating_rank
+	UNION ALL
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_in_match_elo_rating_goat_points grg ON grg.best_elo_rating_rank = best_return_game_elo_rating_rank
+	UNION ALL
+	SELECT player_id, goat_points
+	FROM best_elo_rating_ranked
+	INNER JOIN best_in_match_elo_rating_goat_points gtb ON gtb.best_elo_rating_rank = best_tie_break_elo_rating_rank
 )
 SELECT player_id, sum(goat_points) AS goat_points
 FROM goat_points

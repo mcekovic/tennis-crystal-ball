@@ -103,6 +103,11 @@ public class GOATLegendService {
 		return getRankGOATPoints("best_indoor_elo_rating_goat_points", "best_elo_rating_rank", "goat_points");
 	}
 
+	@Cacheable(value = "Global", key = "'BestInMatchEloRatingGOATPoints'")
+	public List<RankGOATPoints> getBestInMatchEloRatingGOATPoints() {
+		return getRankGOATPoints("best_in_match_elo_rating_goat_points", "best_elo_rating_rank", "goat_points");
+	}
+
 
 	// Achievements
 

@@ -430,6 +430,15 @@ CREATE TABLE best_indoor_elo_rating_goat_points (
 );
 
 
+-- best_in_match_elo_rating_goat_points
+
+CREATE TABLE best_in_match_elo_rating_goat_points (
+	best_elo_rating_rank INTEGER NOT NULL,
+	goat_points INTEGER NOT NULL,
+	PRIMARY KEY (best_elo_rating_rank, goat_points)
+);
+
+
 -- grand_slam_goat_points
 
 CREATE TABLE grand_slam_goat_points (

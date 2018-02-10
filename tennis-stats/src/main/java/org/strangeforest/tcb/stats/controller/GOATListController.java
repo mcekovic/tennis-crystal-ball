@@ -128,6 +128,7 @@ public class GOATListController extends PageController {
 		modelMap.addAttribute("bestEloRatingGOATPoints", applyRankFactor(null, goatLegendService.getBestEloRatingGOATPoints(), bestEloRatingTotalFactor));
 		modelMap.addAttribute("bestSurfaceEloRatingGOATPoints", applyRankFactor(null, goatLegendService.getBestSurfaceEloRatingGOATPoints(), bestEloRatingTotalFactor));
 		modelMap.addAttribute("bestIndoorEloRatingGOATPoints", applyRankFactor(null, goatLegendService.getBestIndoorEloRatingGOATPoints(), bestEloRatingTotalFactor));
+		modelMap.addAttribute("bestInMatchEloRatingGOATPoints", applyRankFactor(null, goatLegendService.getBestInMatchEloRatingGOATPoints(), bestEloRatingTotalFactor));
 		// Achievements
 		int grandSlamTotalFactor = config.getGrandSlamTotalFactor();
 		modelMap.addAttribute("careerGrandSlamGOATPoints", goatLegendService.getCareerGrandSlamGOATPoints() * grandSlamTotalFactor);

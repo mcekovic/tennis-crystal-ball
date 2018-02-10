@@ -25,6 +25,7 @@ VACUUM FULL ANALYSE VERBOSE weeks_at_elo_topn_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_elo_rating_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_surface_elo_rating_goat_points;
 VACUUM FULL ANALYSE VERBOSE best_indoor_elo_rating_goat_points;
+VACUUM FULL ANALYSE VERBOSE best_in_match_elo_rating_goat_points;
 
 VACUUM FULL ANALYSE VERBOSE grand_slam_goat_points;
 VACUUM FULL ANALYSE VERBOSE big_win_match_factor;
