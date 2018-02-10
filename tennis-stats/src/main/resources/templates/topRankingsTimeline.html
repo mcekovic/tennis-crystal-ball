@@ -3,8 +3,9 @@
 <!--/*@thymesVar id="rankCategories" type="org.strangeforest.tcb.stats.model.core.RankCategory[]"*/-->
 <!--/*@thymesVar id="rankType" type="org.strangeforest.tcb.stats.model.core.RankType"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.TopRankingsTimeline"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Top Rankings Timeline</title>
+	<template>
 	<script type="text/javascript">
 		function onRankTypeChange() {
 			window.location.href = "/topRankingsTimeline?rankType=" + $("#rankType").val();
@@ -16,6 +17,7 @@
 			color: #444;
 		}
 	</style>
+	</template>
 </head>
 <body th:with="rankTypeName=${rankType.name()}" class="container">
 	<header th:include="fragments/header :: title"></header>

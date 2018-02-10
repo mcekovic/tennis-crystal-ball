@@ -11,8 +11,9 @@
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Tournament Events</title>
+	<template>
 	<script type="text/javascript">
 		$(function() {
 			var $tournamentEventsTable = $("#tournamentEventsTable");
@@ -85,6 +86,7 @@
 			reloadTournamentEvents();
 		}
 	</script>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

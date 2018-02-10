@@ -3,8 +3,9 @@
 <!--/*@thymesVar id="recordCount" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="recordCategoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>>"*/-->
 <!--/*@thymesVar id="infamousRecordCategoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.records.RecordCategory>>"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Records Book</title>
+	<template>
 	<script type="text/javascript">
 		$(function() {
 			$("#recordsTable").bootgrid({
@@ -56,6 +57,7 @@
 			$("#recordsTable").bootgrid("reload");
 		}
 	</script>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

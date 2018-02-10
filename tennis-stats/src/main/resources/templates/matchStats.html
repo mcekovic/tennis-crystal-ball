@@ -78,7 +78,7 @@
 		<div th:if="${matchStats}" class="col-md-8">
 			<button class="pct-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|" title="Show raw data"><i class="fa fa-hashtag"></i>&nbsp;&nbsp;Raw Data</button>
 			<button class="raw-data btn btn-default btn-xs" th:onclick="|toggleStatsData('#matchStatsPopover-${matchId}')|" title="Show percentage data"><i class="fa fa-percent"></i>&nbsp;&nbsp;Pct. Data</button>
-			&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareMatchStats(${matchId}, ${compare})|" title="Compare statistics"><span class="glyphicon glyphicon-object-align-left"></span>&nbsp;&nbsp;Compare</button>
+			&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareMatchStats(${matchId}, ${compare})|" title="Compare statistics"><i class="fa fa-balance-scale" style="font-size: 110%"></i>&nbsp;&nbsp;Compare</button>
 		</div>
 		<div class="col-md-4">
 			<button class="btn btn-default btn-xs pull-right" th:onclick="|$('#matchStats-${matchId}').click()|"><i class="fa fa-close fa-b"></i>&nbsp;&nbsp;Close</button>

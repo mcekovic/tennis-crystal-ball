@@ -7,7 +7,8 @@
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
 <!--/*@thymesVar id="priceFormats" type="org.strangeforest.tcb.stats.model.price.PriceFormat[]"*/-->
 <!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
-<head th:replace="fragments/head :: commonHead(${inProgressEvent.name} + ' Forecast', false, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(${inProgressEvent.name} + ' Forecast', false, ~{::template})">
+	<template>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			decorateSurface("#eventSurface");
@@ -64,6 +65,7 @@
 			width: 20px;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

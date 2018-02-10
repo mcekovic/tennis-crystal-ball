@@ -4,7 +4,8 @@
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Map"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
-<head th:replace="fragments/head :: commonHead(${tournamentEvent.name + ' ' + tournamentEvent.season}, true, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(${tournamentEvent.name + ' ' + tournamentEvent.season}, true, ~{::template})">
+	<template>
 	<script type="text/javascript">
 		$(function() {
 			decorateSurface("#eventSurface");
@@ -27,6 +28,7 @@
 			text-decoration: none;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

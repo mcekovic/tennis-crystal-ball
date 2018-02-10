@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="record" type="org.strangeforest.tcb.stats.model.records.Record"*/-->
 <!--/*@thymesVar id="active" type="java.lang.Boolean"*/-->
-<head th:replace="fragments/head :: commonHead(${record.name}, true, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead(${record.name}, true, ~{::template})">
+	<template>
 	<script type="text/javascript">
 		$(function() {
 			$("#recordTable").bootgrid({
@@ -49,6 +50,7 @@
 			$("#recordTable").bootgrid("reload");
 		}
 	</script>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

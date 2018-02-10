@@ -9,8 +9,9 @@
 <!--/*@thymesVar id="factors" type="java.util.Map<java.lang.String, java.lang.String>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.List<java.lang.String>"*/-->
 <!--/*@thymesVar id="results" type="java.util.List<java.lang.String>"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>GOAT List</title>
+	<template>
 	<script type="text/javascript" th:inline="javascript">
 		var surface = [[${surface}]];
 		$(function() {
@@ -302,6 +303,7 @@
 			text-align: left;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

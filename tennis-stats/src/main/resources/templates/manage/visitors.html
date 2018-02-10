@@ -7,8 +7,9 @@
 <!--/*@thymesVar id="intervals" type="org.strangeforest.tcb.stats.web.VisitorInterval[]"*/-->
 <!--/*@thymesVar id="countries" type="java.lang.Object[]"*/-->
 <!--/*@thymesVar id="agentTypes" type="java.lang.Object[]"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Visitors</title>
+	<template>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	<script type="text/javascript" th:inline="javascript">
 		google.charts.load("current", {"packages": ["corechart", "geochart"], "language": "en"});
@@ -41,6 +42,7 @@
 			padding: 3px 5px;
 		}
 	</style>
+	</template>
 </head>
 <body>
 	<div class="row">

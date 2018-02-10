@@ -108,7 +108,13 @@
 							<li><a href="http://live-tennis.eu" target="_blank"><i class="fa fa-sort-numeric-asc"></i> Live Rankings</a></li>
 						</ul>
 					</li>
-					<li th:class="${path == '/about' ? 'active' : _}"><a href="/about"><i class="fa fa-question-circle"></i> About</a></li>
+					<li th:class="${path == '/about' || path == '/contact' ? 'active dropdown' : 'dropdown'}">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">More<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li th:class="${path == '/about' ? 'active' : _}"><a href="/about"><i class="fa fa-question-circle fa-fw"></i> About</a></li>
+							<li th:class="${path == '/contact' ? 'active' : _}"><a href="/contact"><i class="fa fa-vcard fa-fw"></i> Contact</a></li>
+						</ul>
+					</li>
 				</ul>
 			</div>
 		</div>

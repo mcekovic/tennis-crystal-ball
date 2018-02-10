@@ -12,8 +12,9 @@
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <!--/*@thymesVar id="params" type="org.strangeforest.tcb.stats.controller.ParamsUtil"*/-->
-<head th:replace="fragments/head :: commonHead(${player1 != null || player2 != null} ? ${player1 != null ? player1.name : '?'} + ' vs ' +  ${player2 != null ? player2.name : '?'} : ~{::title/text()}, true, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead(${player1 != null || player2 != null} ? ${player1 != null ? player1.name : '?'} + ' vs ' +  ${player2 != null ? player2.name : '?'} : ~{::title/text()}, true, ~{::template})">
 	<title>Head-to-Head</title>
+	<template>
 	<script type="text/javascript" th:inline="javascript">
 		var currentTab = "profiles";
 		$(function() {
@@ -77,6 +78,7 @@
 			window.location.href = "/headToHead?playerId1=[(${player2.id})]&playerId2=[(${player1.id})]&tab=" + tab.substr(1);
 		} [/]
 	</script>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

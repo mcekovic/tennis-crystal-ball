@@ -2,8 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="minSeasonGOATPoints" type="java.lang.Integer"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Best Seasons</title>
+	<template>
 	<script type="text/javascript" th:inline="javascript">
 		var surface = [[${surface}]];
 		$(function() {
@@ -125,6 +126,7 @@
 				$button.data("url", legendUrl);
 		}
 	</script>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

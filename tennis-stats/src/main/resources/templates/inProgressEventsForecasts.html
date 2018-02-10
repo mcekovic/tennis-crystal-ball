@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Tournament Event Forecasts</title>
+	<template>
 	<script type="text/javascript">
 		$(function() {
 			var $inProgressEventsTable = $("#inProgressEventsTable");
@@ -57,6 +58,7 @@
 			bindPopovers();
 		});
 	</script>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

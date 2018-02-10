@@ -12,8 +12,9 @@
 <!--/*@thymesVar id="byAge" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="rankCategories" type="org.strangeforest.tcb.stats.model.core.RankCategory[]"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Rankings Chart</title>
+	<template>
 	<script th:src="@{/js/tennis-chart.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" th:inline="javascript">
@@ -114,6 +115,7 @@
 			margin-bottom: 7px;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

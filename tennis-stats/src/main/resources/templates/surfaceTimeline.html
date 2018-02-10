@@ -2,8 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="timeline" type="java.util.List<org.strangeforest.tcb.stats.model.SurfaceTimelineItem>"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Surface Timeline</title>
+	<template>
 	<script type="text/javascript">
 		$(function() {
 			$("[data-toggle='tooltip']").tooltip();
@@ -26,6 +27,7 @@
 			padding: 3px;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

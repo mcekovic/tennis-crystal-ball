@@ -6,7 +6,8 @@
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="params" type="org.strangeforest.tcb.stats.controller.ParamsUtil"*/-->
-<head th:replace="fragments/head :: commonHead('Season ' + ${season}, true, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead('Season ' + ${season}, true, ~{::template})">
+	<template>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$("#seasonPills").find("a").click(tabClick);
@@ -28,6 +29,7 @@
 			[# th:unless="${tab}"] $("#recordsPill").click(); [/]
 		});
 	</script>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

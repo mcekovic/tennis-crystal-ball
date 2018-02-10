@@ -3,7 +3,8 @@
 <!--/*@thymesVar id="hasInProgressEvents" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="currentSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="goatTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
-<head th:replace="fragments/head :: commonHead(null, true, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(null, true, ~{::template})">
+	<template>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			var device = detectDevice();
@@ -92,6 +93,7 @@
 			margin: 0;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

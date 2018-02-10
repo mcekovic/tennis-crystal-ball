@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script},  ~{::style})">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Seasons</title>
+	<template>
 	<script type="text/javascript">
 		$(function() {
 			var $seasonsTable = $("#seasonsTable");
@@ -96,6 +97,7 @@
 			margin-bottom: 0;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

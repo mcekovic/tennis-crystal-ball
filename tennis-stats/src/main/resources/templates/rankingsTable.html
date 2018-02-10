@@ -7,8 +7,9 @@
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="date" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="dates" type="java.util.List<java.time.LocalDate>"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Rankings Table</title>
+	<template>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			[# th:if=${dates}]populateDates([(${season})], [[${dates}]]);[/]
@@ -144,6 +145,7 @@
 			vertical-align: text-top;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

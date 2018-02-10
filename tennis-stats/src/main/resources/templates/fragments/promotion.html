@@ -1,15 +1,15 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="logo"><span style="color: #dd7777">Ultimate</span> <span style="color: #22ddcc">Tennis</span> <span style="color: #4477cc">Statistics</span></th:block>
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="facebook">
+	<div id="fb-root"></div>
 	<script type="text/javascript">
 		(function(d, s, id) {
 		var js, fjs = d.getElementsByTagName(s)[0];
 		if (d.getElementById(id)) return;
 		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10";
+		js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.12";
 		fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
 	</script>
-	<div id="fb-root"></div>
 	<div class="fb-like text-center" style="width: 100%; min-height: 20px" data-href="http://www.ultimatetennisstatistics.com" data-layout="button_count" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
 </th:block>
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="twitter">

@@ -48,6 +48,12 @@ public class TennisStatsController extends PageController {
 		return new ModelAndView("about", "goatTopN", goatTopN);
 	}
 
+	@GetMapping("/contact")
+	public ModelAndView contact() {
+		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
+		return new ModelAndView("contact", "goatTopN", goatTopN);
+	}
+
 	private static final String MAX_AGE_1_HOUR = CacheControl.maxAge(1L, TimeUnit.HOURS).cachePublic().getHeaderValue();
 
 	@GetMapping("/rankingTopN")

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="goatTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, _, ~{::style})">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Thank You!</title>
+	<template>
 	<style>
 		body {
 			background: url("/images/home-bg.jpg") repeat;
@@ -11,6 +12,7 @@
 			margin: 0;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 <header th:include="fragments/header :: title"></header>

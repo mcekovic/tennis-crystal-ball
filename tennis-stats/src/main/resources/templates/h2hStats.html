@@ -316,7 +316,7 @@
 		<div class="col-md-12 text-center">
 			<button class="pct-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats'); statsRawData = true" title="Show raw data"><i class="fa fa-hashtag"></i>&nbsp;&nbsp;Raw Data</button>
 			<button class="raw-data btn btn-default btn-xs" onclick="toggleStatsData('#h2hStats'); statsRawData = false" title="Show percentage data"><i class="fa fa-percent"></i>&nbsp;&nbsp;Pct. Data</button>
-			&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareStats('statistics', 'statistics', ${compare})|" title="Compare statistics"><span class="glyphicon glyphicon-object-align-left"></span>&nbsp;&nbsp;Compare</button>
+			&nbsp;&nbsp;<button class="btn btn-default btn-xs" th:onclick="|compareStats('statistics', 'statistics', ${compare})|" title="Compare statistics"><i class="fa fa-balance-scale" style="font-size: 110%"></i>&nbsp;&nbsp;Compare</button>
 		</div>
 	</div>
 	<div th:if="${compare}">

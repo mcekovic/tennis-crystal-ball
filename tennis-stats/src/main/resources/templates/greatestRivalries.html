@@ -6,8 +6,9 @@
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Greatest Rivalries</title>
+	<template>
 	<script type="text/javascript">
 		var isChrome = navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
 		$(function() {
@@ -148,6 +149,7 @@
 			padding: 8px 4px;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

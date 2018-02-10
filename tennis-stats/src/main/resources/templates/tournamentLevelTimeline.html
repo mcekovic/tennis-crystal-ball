@@ -3,7 +3,8 @@
 <!--/*@thymesVar id="level" type="org.strangeforest.tcb.stats.model.core.TournamentLevel"*/-->
 <!--/*@thymesVar id="levelGroup" type="org.strangeforest.tcb.stats.model.core.TournamentLevelGroup"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.TournamentLevelTimeline"*/-->
-<head th:replace="fragments/head :: commonHead(${level.text} + ' Timeline', false, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(${level.text} + ' Timeline', false, ~{::template})">
+	<template>
 	<script type="text/javascript">
 		$(function() {
 			$("#timelineTable").find("td>span").each(function() {
@@ -36,6 +37,7 @@
 			max-width: 400px;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

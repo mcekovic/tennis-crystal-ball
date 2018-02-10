@@ -9,8 +9,9 @@
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.DominanceTimeline"*/-->
 <!--/*@thymesVar id="dominanceRatioCoefficient" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="minGOATPoints" type="java.lang.Integer"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, ~{::style})">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Dominance Timeline</title>
+	<template>
 	<script th:src="@{/js/jquery.resize.js}"></script>
 	<script type="text/javascript">
 		function correctInitPositions() {
@@ -134,6 +135,7 @@
 			color: darkblue;
 		}
 	</style>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>

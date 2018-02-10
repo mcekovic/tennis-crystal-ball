@@ -6,8 +6,9 @@
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
-<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::script}, _)">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Heads-to-Heads</title>
+	<template>
 	<script type="text/javascript">
 		$(function() {
 			autocompletePlayers("players", showHeadsToHeads);
@@ -52,6 +53,7 @@
 			$playersStatsTable.find(".stats-group-" + groupId).show("fast");
 		}
 	</script>
+	</template>
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
