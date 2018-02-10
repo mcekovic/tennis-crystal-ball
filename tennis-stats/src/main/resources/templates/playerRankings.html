@@ -283,7 +283,7 @@
 		</table>
 		</th:block>
 	</div>
-	<div class="col-md-5">
+	<div th:if="${highlights.hasElo()}" class="col-md-5">
 		<h4>Elo Ranking</h4>
 		<table class="table table-condensed text-nowrap" th:with="hasCurrent=${highlights.hasCurrentElo()}">
 			<tr>
