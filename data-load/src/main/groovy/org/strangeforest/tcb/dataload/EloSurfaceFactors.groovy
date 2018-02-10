@@ -28,12 +28,12 @@ class EloSurfaceFactors {
 		sqlPool.withSql  { sql ->
 			sql.eachRow(QUERY_SURFACE_RATIOS) { row ->
 				int season = row.season
-				hardFactors[season] = (1.5f + pctToFactor(toDouble(row.hard_pct))) / 2
-				clayFactors[season] = (1.6f + pctToFactor(toDouble(row.clay_pct))) / 2
-				grassFactors[season] = (2.2f + pctToFactor(toDouble(row.grass_pct))) / 2
-				carpetFactors[season] = (2.5f + pctToFactor(toDouble(row.carpet_pct))) / 2
-				outdoorFactors[season] = (1.1f + pctToFactor(toDouble(row.outdoor_pct))) / 2
-				indoorFactors[season] = (2.4f + pctToFactor(toDouble(row.indoor_pct))) / 2
+				hardFactors[season] = (1.5d + pctToFactor(toDouble(row.hard_pct))) / 2
+				clayFactors[season] = (1.6d + pctToFactor(toDouble(row.clay_pct))) / 2
+				grassFactors[season] = (2.2d + pctToFactor(toDouble(row.grass_pct))) / 2
+				carpetFactors[season] = (2.5d + pctToFactor(toDouble(row.carpet_pct))) / 2
+				outdoorFactors[season] = (1.1d + pctToFactor(toDouble(row.outdoor_pct))) / 2
+				indoorFactors[season] = (2.4d + pctToFactor(toDouble(row.indoor_pct))) / 2
 			}
 		}
 	}
@@ -50,7 +50,7 @@ class EloSurfaceFactors {
 	}
 
 	private static double pctToFactor(double pct) {
-		pct > 0.0f ? Double.max(1.0f, 2.4f - 1.5f * pct) : 2.4f
+		pct > 0.0d ? Double.max(1.0d, 2.4d - 1.5d * pct) : 2.4d
 	}
 
 	private static double kFactor(Map<Integer, Double> surfaceFactors, Date date) {
@@ -60,10 +60,10 @@ class EloSurfaceFactors {
 			pct = surfaceFactors[season - 1]
 		if (!pct)
 			pct = surfaceFactors[season + 1]
-		pct ?: 0.0f
+		pct ?: 0.0d
 	}
 
 	private static double toDouble(Number n) {
-		n ? n.doubleValue() : 0.0f
+		n ? n.doubleValue() : 0.0d
 	}
 }

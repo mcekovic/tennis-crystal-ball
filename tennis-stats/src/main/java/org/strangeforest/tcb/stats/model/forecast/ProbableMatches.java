@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.model.forecast;
 import java.util.*;
 
 import org.strangeforest.tcb.stats.model.*;
-import org.strangeforest.tcb.stats.model.forecast.*;
 
 public class ProbableMatches {
 

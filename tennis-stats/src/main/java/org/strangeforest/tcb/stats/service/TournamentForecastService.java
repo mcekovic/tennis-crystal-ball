@@ -157,14 +157,7 @@ public class TournamentForecastService {
 		InProgressEvent inProgressEvent = getInProgressEvent(inProgressEventId);
 		List<FavoritePlayer> favorites = findFavoritePlayers(inProgressEventId, 4);
 		inProgressEvent.setFavorites(favorites);
-		InProgressEventForecast forecast = new InProgressEventForecast(inProgressEvent);
-		List<PlayerForecast> players = fetchPlayers(inProgressEventId);
-		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, ""), params("inProgressEventId", inProgressEventId), rs -> {
-			addForecast(forecast, players, rs);
-		});
-		forecast.process();
-		addEloRatings(forecast);
-		return forecast;
+		return fetchInProgressEventForecast(inProgressEvent, "");
 	}
 
 	private InProgressEvent getInProgressEvent(int inProgressEventId) {
@@ -174,6 +167,18 @@ public class TournamentForecastService {
 			else
 				throw new NotFoundException("In-progress event", inProgressEventId);
 		});
+	}
+
+	private InProgressEventForecast fetchInProgressEventForecast(InProgressEvent event, String condition) {
+		InProgressEventForecast forecast = new InProgressEventForecast(event);
+		int inProgressEventId = event.getId();
+		List<PlayerForecast> players = fetchPlayers(inProgressEventId);
+		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, condition), params("inProgressEventId", inProgressEventId), rs -> {
+			addForecast(forecast, players, rs);
+		});
+		forecast.process();
+		addEloRatings(forecast);
+		return forecast;
 	}
 
 	private List<PlayerForecast> fetchPlayers(int inProgressEventId) {
@@ -283,13 +288,7 @@ public class TournamentForecastService {
 	@Cacheable("InProgressEventProbableMatches")
 	public ProbableMatches getInProgressEventProbableMatches(int inProgressEventId, Integer pinnedPlayerId) {
 		InProgressEvent event = getInProgressEvent(inProgressEventId);
-		InProgressEventForecast forecast = new InProgressEventForecast(event);
-		List<PlayerForecast> players = fetchPlayers(inProgressEventId);
-		jdbcTemplate.query(format(PLAYER_IN_PROGRESS_RESULTS_QUERY, CURRENT_CONDITION), params("inProgressEventId", inProgressEventId), rs -> {
-			addForecast(forecast, players, rs);
-		});
-		forecast.process();
-		addEloRatings(forecast);
+		InProgressEventForecast forecast = fetchInProgressEventForecast(event, CURRENT_CONDITION);
 
 		PlayersForecast current = forecast.getCurrentForecast();
 		TournamentEventResults probableMatches = new TournamentEventResults();

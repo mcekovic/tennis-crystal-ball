@@ -80,7 +80,7 @@ class EloRatings {
 
 	static final int MATCHES_FETCH_SIZE = 200
 	static final int RANK_PRELOAD_FETCH_SIZE = 1000
-	static final double SAVE_RANK_THREAD_RATIO = 1.0
+	static final double SAVE_RANK_THREAD_RATIO = 1.0d
 
 	static final comparator = { a, b -> b <=> a }
 	static final bestComparator = { a, b -> b.bestRating <=> a.bestRating }
@@ -277,16 +277,16 @@ class EloRatings {
 			def lDelta = deltaRating(loserRating.rating, winnerRating.rating, level, round, bestOf, outcome)
 			switch (type) {
 				case 's':
-					delta = 0.5f * (wDelta * (match.w_sets ?: 0) - lDelta * (match.l_sets ?: 0))
+					delta = 0.5d * (wDelta * (match.w_sets ?: 0) - lDelta * (match.l_sets ?: 0))
 					break
 				case 'sg':
-					delta = 0.1f * (wDelta * (match.w_sv_gms ?: 0) - lDelta * (match.l_rt_gms ?: 0))
+					delta = 0.1d * (wDelta * (match.w_sv_gms ?: 0) - lDelta * (match.l_rt_gms ?: 0))
 					break
 				case 'rg':
-					delta = 0.1f * (wDelta * (match.w_rt_gms ?: 0) - lDelta * (match.l_sv_gms ?: 0))
+					delta = 0.1d * (wDelta * (match.w_rt_gms ?: 0) - lDelta * (match.l_sv_gms ?: 0))
 					break
 				case 'tb':
-					delta = 2.0f * (wDelta * (match.w_tbs ?: 0) - lDelta * (match.l_tbs ?: 0))
+					delta = 2.0d * (wDelta * (match.w_tbs ?: 0) - lDelta * (match.l_tbs ?: 0))
 					break
 			}
 		}
@@ -305,37 +305,37 @@ class EloRatings {
 
 	static double deltaRating(double winnerRating, double loserRating, String level, String round, short bestOf, String outcome) {
 		if (outcome == 'ABD')
-			return 0f
-		double winnerQ = pow(10f, winnerRating / 400f)
-		double loserQ = pow(10f, loserRating / 400f)
+			return 0d
+		double winnerQ = pow(10d, winnerRating / 400d)
+		double loserQ = pow(10d, loserRating / 400d)
 		double loserExpectedScore = loserQ / (winnerQ + loserQ)
 		kFactor(level, round, bestOf, outcome) * loserExpectedScore
 	}
 
 	static double kFactor(String level, String round, short bestOf, String outcome) {
-		double kFactor = 100f
+		double kFactor = 100d
 		switch (level) {
 			case 'G': break
-			case 'F': kFactor *= 0.9f; break
-			case 'L': kFactor *= 0.8f; break
-			case 'M': kFactor *= 0.8f; break
-			case 'O': kFactor *= 0.75f; break
-			case 'A': kFactor *= 0.7f; break
-			default: kFactor *= 0.6f; break
+			case 'F': kFactor *= 0.9d; break
+			case 'L': kFactor *= 0.8d; break
+			case 'M': kFactor *= 0.8d; break
+			case 'O': kFactor *= 0.75d; break
+			case 'A': kFactor *= 0.7d; break
+			default: kFactor *= 0.6d; break
 		}
 		switch (round) {
 			case 'F': break
-			case 'BR': kFactor *= 0.975f; break
-			case 'SF': kFactor *= 0.95f; break
-			case 'QF': kFactor *= 0.90f; break
-			case 'R16': kFactor *= 0.85f; break
-			case 'R32': kFactor *= 0.80f; break
-			case 'R64': kFactor *= 0.75f; break
-			case 'R128': kFactor *= 0.70f; break
-			case 'RR': kFactor *= 0.90f; break
+			case 'BR': kFactor *= 0.975d; break
+			case 'SF': kFactor *= 0.95d; break
+			case 'QF': kFactor *= 0.90d; break
+			case 'R16': kFactor *= 0.85d; break
+			case 'R32': kFactor *= 0.80d; break
+			case 'R64': kFactor *= 0.75d; break
+			case 'R128': kFactor *= 0.70d; break
+			case 'RR': kFactor *= 0.90d; break
 		}
-		if (bestOf < 5) kFactor *= 0.9f
-		if (outcome == 'W/O') kFactor *= 0.5f
+		if (bestOf < 5) kFactor *= 0.9d
+		if (outcome == 'W/O') kFactor *= 0.5d
 		kFactor
 	}
 
@@ -348,19 +348,19 @@ class EloRatings {
 	 * @return values from 1/2 to 1, depending on current rating
 	 */
 	static double kFunction(double rating, String type = null) {
-		if (rating <= ratingForType(1800f, type))
-			1.0f
-		else if (rating <= ratingForType(2000f, type))
-			1.0f - (rating - ratingForType(1800f, type)) / ratingDiffForType(400f, type)
+		if (rating <= ratingForType(1800d, type))
+			1.0d
+		else if (rating <= ratingForType(2000d, type))
+			1.0d - (rating - ratingForType(1800d, type)) / ratingDiffForType(400d, type)
 		else
-			0.5f
+			0.5d
 	}
 
 	static final Map<String, Double> RATING_TYPE_FACTOR = [
-		's': 0.75f,
-		'sg': 0.45f,
-		'rg': 0.10f,
-		'tb': 0.5f
+		's': 0.75d,
+		'sg': 0.45d,
+		'rg': 0.10d,
+		'tb': 0.5d
 	]
 
 	static int ratingForType(double rating, String type) {
@@ -423,7 +423,7 @@ class EloRatings {
 		}
 
 		private ratingAdjusted(long daysSinceLastMatch, String type) {
-			max(START_RATING, rating - (daysSinceLastMatch - 365) * ratingDiffForType(200f, type) / 365)
+			max(START_RATING, rating - (daysSinceLastMatch - 365) * ratingDiffForType(200d, type) / 365)
 		}
 
 		def bestRating(EloRating newRating, String type) {
