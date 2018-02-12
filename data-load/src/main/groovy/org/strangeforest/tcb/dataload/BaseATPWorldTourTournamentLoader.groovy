@@ -161,10 +161,23 @@ abstract class BaseATPWorldTourTournamentLoader {
 	}
 
 	static minutes(String time) {
-		int pos = time.indexOf('Time:')
-		if (pos >= 0)
-			time = time.substring(pos + 5).trim()
-		time ? smallint(60 * Integer.parseInt(time.substring(0, 2)) + Integer.parseInt(time.substring(3, 5))) : null
+		int hPos = time.indexOf('Time:')
+		if (hPos >= 0)
+			time = time.substring(hPos + 5).trim()
+		int mPos = time.indexOf(':')
+		if (mPos < 0)
+			return null
+		int hours = (int)Float.parseFloat(time.substring(0, mPos))
+		mPos++
+		int sPos = time.indexOf(':', mPos)
+		int mins
+		if (sPos >= 0)
+			mins = (int)Float.parseFloat(time.substring(mPos, sPos))
+		else {
+			mins = hours
+			hours = 0
+		}
+		time ? smallint(60 * hours + mins) : null
 	}
 
 	static allDigits(String s) {
