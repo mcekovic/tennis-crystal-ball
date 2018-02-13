@@ -48,6 +48,17 @@ public class MatchPredictionService {
 		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1 year') AND :date\n" +
 		"ORDER BY rank_date DESC LIMIT 1";
 
+	private static final String QUALIFIER_RANKING_DATA_QUERY = //language=SQL
+		"WITH qualifier_match AS (\n" +
+		"  SELECT winner_rank rank, adjust_atp_rank_points(winner_rank_points, date) rank_points, winner_elo_rating elo_rating FROM match\n" +
+		"  WHERE winner_entry = 'Q'\n" +
+		"  UNION ALL\n" +
+		"  SELECT loser_rank, adjust_atp_rank_points(loser_rank_points, date), loser_elo_rating FROM match\n" +
+		"  WHERE loser_entry = 'Q'\n" +
+		")\n" +
+		"SELECT avg(rank) rank, avg(rank_points) rank_points, avg(elo_rating) elo_rating\n" +
+		"FROM qualifier_match";
+
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
 		"SELECT m.match_num, m.date, m.tournament_id, m.tournament_event_id, FALSE in_progress, m.level, m.surface, m.round,\n" +
 		"  m.opponent_id, m.opponent_rank, m.opponent_elo_rating, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets, NULL next_elo_rating\n" +
@@ -117,11 +128,11 @@ public class MatchPredictionService {
 			if (playerId2 > 0)
 				return predictMatchBetweenEntries(playerId1, playerId2, date1, date2, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round, config);
 			else
-				return predictMatchVsQualifier(playerId1, date1, tournamentId, tournamentEventId, inProgress, surface, level, bestOf, round, config);
+				return predictMatchVsQualifier(playerId1, date1, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round, config);
 		}
 		else {
 			if (playerId2 > 0)
-				return predictMatchVsQualifier(playerId2, date2, tournamentId, tournamentEventId, inProgress, surface, level, bestOf, round, config).swap();
+				return predictMatchVsQualifier(playerId2, date2, tournamentId, tournamentEventId, inProgress, surface, indoor, level, bestOf, round, config).swap();
 			else
 				return MatchPrediction.TIE;
 		}
@@ -157,10 +168,14 @@ public class MatchPredictionService {
 		return prediction;
 	}
 
-	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, TournamentLevel level, Short bestOf, Round round, PredictionConfig config) {
+	private MatchPrediction predictMatchVsQualifier(int playerId, LocalDate date, Integer tournamentId, Integer tournamentEventId, boolean inProgress, Surface surface, Boolean indoor, TournamentLevel level, Short bestOf, Round round, PredictionConfig config) {
+		RankingData rankingData = getRankingData(playerId, date, surface, indoor);
 		List<MatchData> matchData = getMatchData(playerId, date, tournamentEventId, inProgress, round);
 		short bstOf = defaultBestOf(level, bestOf);
-		return new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bstOf, config).predictMatch();
+		return predictMatch(asList(
+			new RankingMatchPredictor(rankingData, getQualifierRankingData(), bstOf, config),
+			new VsQualifierMatchPredictor(matchData, date, surface, level, tournamentId, round, bstOf, config)
+		), config);
 	}
 
 	private MatchPrediction predictMatch(Iterable<MatchPredictor> predictors, PredictionConfig config) {
@@ -206,24 +221,38 @@ public class MatchPredictionService {
 		return playersRankings.get(new RankingKey(playerId, date, surface, indoor));
 	}
 
+	private RankingData getQualifierRankingData() {
+		return playersRankings.get(QUALIFIER_RANKING_KEY);
+	}
+
 	private RankingData fetchRankingData(RankingKey key) {
 		RankingData rankingData = new RankingData();
-		MapSqlParameterSource params = params("playerId", key.playerId).addValue("date", key.date);
-		jdbcTemplate.query(PLAYER_RANKING_QUERY, params, rs -> {
-			rankingData.setRank(getInteger(rs, "rank"));
-			rankingData.setRankPoints(getInteger(rs, "rank_points"));
-		});
-		String surfacePrefix = key.surface != null ? key.surface.getLowerCaseText() + '_' : "";
-		String outInPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
-		jdbcTemplate.query(format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, outInPrefix), params, rs -> {
-			rankingData.setEloRating(getInteger(rs, "elo_rating"));
-			if (!surfacePrefix.isEmpty())
-				rankingData.setSurfaceEloRating(getInteger(rs, surfacePrefix + "elo_rating"));
-			if (!outInPrefix.isEmpty())
-				rankingData.setOutInEloRating(getInteger(rs, outInPrefix + "elo_rating"));
-			rankingData.setSetEloRating(getInteger(rs, "set_elo_rating"));
-			rankingData.setEloDate(getLocalDate(rs, "rank_date"));
-		});
+		if (!key.isQualifier()) {
+			MapSqlParameterSource params = params("playerId", key.playerId).addValue("date", key.date);
+			jdbcTemplate.query(PLAYER_RANKING_QUERY, params, rs -> {
+				rankingData.setRank(getInteger(rs, "rank"));
+				rankingData.setRankPoints(getInteger(rs, "rank_points"));
+			});
+			String surfacePrefix = key.surface != null ? key.surface.getLowerCaseText() + '_' : "";
+			String outInPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
+			jdbcTemplate.query(format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, outInPrefix), params, rs -> {
+				rankingData.setEloRating(getInteger(rs, "elo_rating"));
+				if (!surfacePrefix.isEmpty())
+					rankingData.setSurfaceEloRating(getInteger(rs, surfacePrefix + "elo_rating"));
+				if (!outInPrefix.isEmpty())
+					rankingData.setOutInEloRating(getInteger(rs, outInPrefix + "elo_rating"));
+				rankingData.setSetEloRating(getInteger(rs, "set_elo_rating"));
+				rankingData.setEloDate(getLocalDate(rs, "rank_date"));
+			});
+		}
+		else {
+			jdbcTemplate.query(QUALIFIER_RANKING_DATA_QUERY, rs -> {
+				rankingData.setRank(getInteger(rs, "rank"));
+				rankingData.setRankPoints(getInteger(rs, "rank_points"));
+				rankingData.setEloRating(getInteger(rs, "elo_rating"));
+				rankingData.setEloDate(LocalDate.now());
+			});
+		}
 		return rankingData;
 	}
 
@@ -280,6 +309,8 @@ public class MatchPredictionService {
 		playersMatches.invalidateAll();
 	}
 
+	private static final RankingKey QUALIFIER_RANKING_KEY = new RankingKey(-1, null, null, null);
+	
 	private static final class RankingKey {
 
 		public final int playerId;
@@ -292,6 +323,10 @@ public class MatchPredictionService {
 			this.date = date;
 			this.surface = surface;
 			this.indoor = indoor;
+		}
+
+		public boolean isQualifier() {
+			return playerId == QUALIFIER_RANKING_KEY.playerId;
 		}
 
 		@Override public boolean equals(Object o) {
