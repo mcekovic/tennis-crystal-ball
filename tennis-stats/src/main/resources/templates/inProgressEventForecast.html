@@ -15,7 +15,7 @@
 			$("#inProgressEventPills").find("a").click(tabClick);
 			[# th:if="${tab}"] $("#[(${tab})]Pill").click(); [/]
 			bindPopovers();
-			loadRankingTopN("RANK", 20);
+			loadRankingTopN("ELO_RANK", 20);
 		});
 		function priceFormatChanged() {
 			var url = "/inProgressEventForecast?inProgressEventId=[(${inProgressEventId})]";
