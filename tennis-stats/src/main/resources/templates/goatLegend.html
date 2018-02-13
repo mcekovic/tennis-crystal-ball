@@ -63,16 +63,17 @@
 			</tr>
 			</thead>
 			<tbody>
-			<tr th:each="point : ${tournamentGOATPoints}" th:if="${point.goatPoints > 0}">
-				<td><span th:data-level="${point.level}" data-level="G" class="label level"></span></td>
-				<td class="text-center"><span th:class="'label black bg-result-' + ${point.result}" class="label black" th:text="${point.result}">W</span></td>
-				<td class="text-center" th:text="${(point.additive ? '+' : '') + point.goatPoints + (point.level == 'F' && !point.additive ? '*' : '') + (point.level == 'L' ? '**' : '')}">8</td>
+			<tr th:each="point : ${tournamentGOATPoints}" th:if="${point.goatPoints > 0}" th:with="points=${point.goatPoints}, level=${point.level}, result=${point.result}, additive=${point.additive}">
+				<td><span th:data-level="${level}" data-level="G" class="label level"></span></td>
+				<td class="text-center"><span th:class="'label black bg-result-' + ${result}" class="label black" th:text="${result}">W</span></td>
+				<td class="text-center" th:text="${(additive ? '+' : '') + points + (level == 'F' && !additive ? '*' : '') + (level == 'L' ? '**' : '') + (level == 'D' || level == 'T' ? '***' : '')}">8</td>
 			</tr>
 			</tbody>
 		</table>
-		<p><em>+ is for tournaments where points are assigned for wins in each round rather then for tournament result</em></p>
-		<p><em>* Tour Finals draw is normally round-robin, but was knock-out from 1982 to 1985</em></p>
-		<p><em>** Alternative Tour Finals (Dallas WCT and Grand Slam Cup)</em></p>
+		<p th:if="${config.getLevelTotalFactor('F') > 0 || config.getLevelTotalFactor('D') > 0 || config.getLevelTotalFactor('T') > 0}"><em>+ is for tournaments where points are assigned for wins in each round rather then for tournament result</em></p>
+		<p th:if="${config.getLevelTotalFactor('F') > 0}"><em>* Tour Finals draw is normally round-robin, but was knock-out from 1982 to 1985</em></p>
+		<p th:if="${config.getLevelTotalFactor('L') > 0}"><em>** Alternative Tour Finals (Dallas WCT and Grand Slam Cup)</em></p>
+		<p th:if="${config.getLevelTotalFactor('D') > 0 || config.getLevelTotalFactor('T') > 0}"><em>*** Davis Cup and World Team Cup points for each single match win in the final tie</em></p>
 	</div>
 	<div th:if="${config.hasRankingPoints(surface != null)}" class="col-md-3">
 		<h4>
