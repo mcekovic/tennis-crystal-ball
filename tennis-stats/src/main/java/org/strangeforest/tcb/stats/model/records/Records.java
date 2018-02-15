@@ -32,6 +32,10 @@ public abstract class Records {
 		return INFAMOUS_RECORD_CATEGORY_CLASSES;
 	}
 
+	public static boolean isInfampus(String category) {
+		return INFAMOUS_RECORD_CATEGORIES.stream().anyMatch(c -> c.getId().equals(category));
+	}
+
 	public static Record getRecord(String recordId) {
 		Record record = RECORDS.get(recordId);
 		if (record == null)
@@ -51,7 +55,7 @@ public abstract class Records {
 		(infamous ? INFAMOUS_RECORD_CATEGORIES : RECORD_CATEGORIES).add(recordCategory);
 		(infamous ? INFAMOUS_RECORD_CATEGORY_CLASSES : RECORD_CATEGORY_CLASSES).computeIfAbsent(categoryClass, catCls -> new ArrayList<>()).add(recordCategory);
 		for (Record record : recordCategory.getRecords()) {
-			record.setCategory(recordCategory.getName());
+			record.setCategory(recordCategory);
 			record.setInfamous(infamous);
 			RECORDS.put(record.getId(), record);
 			recordCount++;

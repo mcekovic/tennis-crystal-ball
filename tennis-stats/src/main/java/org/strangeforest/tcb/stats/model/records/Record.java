@@ -18,7 +18,7 @@ public class Record<D extends RecordDetail> {
 	private final BiFunction<Integer, D, String> detailURLFormatter;
 	private final List<RecordColumn> columnInfos;
 	private final String notes;
-	private String category;
+	private RecordCategory category;
 	private boolean infamous;
 
 	public Record(String id, String name, String sql, String columns, String rankOrder, String displayOrder, Class<D> detailClass, BiFunction<Integer, D, String> detailURLFormatter, List<RecordColumn> columnInfos) {
@@ -78,11 +78,11 @@ public class Record<D extends RecordDetail> {
 		return notes;
 	}
 
-	public String getCategory() {
+	public RecordCategory getCategory() {
 		return category;
 	}
 
-	void setCategory(String category) {
+	void setCategory(RecordCategory category) {
 		this.category = category;
 	}
 

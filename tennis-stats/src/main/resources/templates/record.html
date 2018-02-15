@@ -38,10 +38,11 @@
 					noResults: "No record results found"
 				},
 				templates: {
-					paginationItem: bootgridTemplatePaginationItem
+					paginationItem: bootgridTemplatePaginationItem,
 				}
 			});
 			var $recordTableHeader = $("#recordTable-header");
+			$recordTableHeader.find("div.row").after($("ol.tsbreadcrumb").remove());
 			$recordTableHeader.find("div.search").before($("#activeDiv").remove()).remove();
 			setBootgridTitle($recordTableHeader, $("#recordTable-title"));
 			$("[data-toggle='tooltip']").tooltip();
@@ -54,7 +55,12 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 id="recordTable-title" class="grid-title" th:text="${record.name}">Record</h3>
+	<h3 th:text="${record.name}">Record</h3>
+	<ol id="recordTable-title" class="grid-title breadcrumb-title">
+		<li><a href="/records">Records</a></li>
+		<li><a th:href="@{/records(category=${record.category.id})}" th:text="${record.category.name}">Titles</a></li>
+		<li class="active" th:text="${record.name}">Most Titles</li>
+	</ol>
 	<div id="activeDiv" class="btn-group margin-right">
 		<div class="checkbox">
 			<label data-toggle="tooltip" data-placement="top" title="Show only active players">

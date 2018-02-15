@@ -33,7 +33,12 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3 th:text="|Season ${season}|">Season 2000</h3>
+	<h3>
+		<ol class="breadcrumb-title">
+			<li><a href="/seasons"><i class="fa fa-clone"></i> Seasons</a></li>
+			<li th:text="${season}">2000</li>
+		</ol>
+	</h3>
 	<ul id="seasonPills" class="nav nav-pills">
 		<li><a id="recordsPill" data-toggle="pill" href="#records" th:data-url="'/seasonRecords?season=' + ${season}">Records</a></li>
 		<li><a id="eventsPill" data-toggle="pill" href="#events" th:data-url="'/seasonEvents?season=' + ${season}">Events</a></li>

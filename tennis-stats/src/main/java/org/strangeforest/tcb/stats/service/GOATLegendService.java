@@ -177,7 +177,7 @@ public class GOATLegendService {
 			for (Record record : category.getRecords()) {
 				String points = goatPoints.get(record.getId());
 				if (points != null)
-					recordGOATPoints.computeIfAbsent(record.getCategory(), cat -> new LinkedHashMap<>()).put(record, points);
+					recordGOATPoints.computeIfAbsent(record.getCategory().getName(), cat -> new LinkedHashMap<>()).put(record, points);
 			}
 		}
 		return recordGOATPoints;

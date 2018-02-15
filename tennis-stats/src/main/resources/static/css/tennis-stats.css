@@ -44,6 +44,20 @@ a.external:after {
 	float: left;
 	margin: 5px 5px 0 -15px
 }
+.breadcrumb-title {
+	padding: 0;
+}
+.breadcrumb-title > li {
+	display: inline-block;
+}
+.breadcrumb-title > li + li:before {
+	padding: 0 5px;
+	color: #ccc;
+	content: "/\00a0";
+}
+.breadcrumb-title > .active {
+	color: #777;
+}
 .margin-top {
 	margin-top: 15px;
 }

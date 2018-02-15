@@ -1,6 +1,7 @@
 package org.strangeforest.tcb.stats.model.records;
 
 import java.util.*;
+import java.util.regex.*;
 
 import com.google.common.base.*;
 
@@ -8,6 +9,7 @@ import static com.google.common.base.Strings.*;
 
 public abstract class RecordCategory {
 
+	private final String id;
 	private final String name;
 	private final List<Record> records;
 
@@ -49,9 +51,16 @@ public abstract class RecordCategory {
 	protected static final String TOP_10_RANK = "<= 10";
 	protected static final String TOP_20_RANK = "<= 20";
 
+	private static final Pattern NON_WORD_PATTERN = Pattern.compile("[^\\w]");
+
 	protected RecordCategory(String name) {
+		this.id = NON_WORD_PATTERN.matcher(name).replaceAll("");
 		this.name = name;
 		records = new ArrayList<>();
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	public String getName() {

@@ -35,7 +35,7 @@ public class RecordFilter {
 	}
 
 	public boolean predicate(Record record) {
-		if (!(isNullOrEmpty(category) || Objects.equals(record.getCategory(), category)))
+		if (!(isNullOrEmpty(category) || Objects.equals(record.getCategory().getId(), category)))
 			return false;
 		if (!(isNullOrEmpty(searchPhrase) || matches(record.getId()) || matches(record.getName())))
 			return false;
