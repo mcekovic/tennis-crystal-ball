@@ -16,7 +16,7 @@
 			var $match = $(this);
 			var match = {won: $match.data("won"), score: $match.data("score"), season: $match.data("season"), tournamentEventId: $match.data("tournamenteventid"), tournament: $match.data("tournament"),
 				          level: $match.data("level"), surface: $match.data("surface"), indoor: $match.data("indoor"), round: $match.data("round")};
-			var matchTitle = "Last Match <span class='label label-" + (match.won ? "won" : "lost") + "'>" + (match.won ? "Won" : "Lost") + "</span> [ " + match.score + " ]"
+			var matchTitle = "Last Match <span class='label label-" + (match.won ? "won" : "lost") + "'>" + (match.won ? "Won" : "Lost") + "</span> [ " + formatScore(match.score) + " ]"
 				+ "<br/><span class='text-nowrap'>at " + match.season + " " + tournamentEventFormatter(null, match) + " " + surfaceFormatter(null, match) + " " + match.round + "</span>";
 			$match.tooltip({title: matchTitle, html: true, placement: "top"});
 		});

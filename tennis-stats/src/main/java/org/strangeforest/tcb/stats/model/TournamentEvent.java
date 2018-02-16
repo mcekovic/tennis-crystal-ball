@@ -140,6 +140,10 @@ public class TournamentEvent {
 		return score;
 	}
 
+	public String scoreFormatted() {
+		return score.replace("(", "<sup>(").replace(")", ")</sup>");
+	}
+
 	public String getOutcome() {
 		return outcome;
 	}

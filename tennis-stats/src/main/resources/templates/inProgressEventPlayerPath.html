@@ -1,0 +1,126 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="inProgressEventId" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="players" type="java.util.List<org.strangeforest.tcb.stats.model.MatchPlayer>"*/-->
+	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="playerPath" type="org.strangeforest.tcb.stats.model.PlayerPath"*/-->
+	<!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
+	<script type="text/javascript">
+		$(function() {
+			playerPathProbableMoreClick();
+			$("[data-toggle='tooltip']").tooltip();
+		});
+		function reloadPlayerPath() {
+			showPlayerPath($("#pathPlayer").val());
+		}
+		function playerPathProbableMoreClick(round) {
+			$("#playerPathProbableBody").find("tr" + (round ? "[data-round='" + round + "']" : "")).find("th, td").find("div:gt(4), div > button.more").toggle();
+		}
+	</script>
+	<style type="text/css">
+		.opponent {
+			height: 22px;
+		}
+	</style>
+	<br/>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="input-group">
+				<label for="pathPlayer" class="input-group-addon" data-toggle="tooltip" data-placement="top" title="Choose player to see his tournament path">Player:</label>
+				<select id="pathPlayer" class="form-control" onchange="reloadPlayerPath()">
+					<option value=""></option>
+					<option th:each="player : ${players}" th:with="seedAndEntry=${player.seedAndEntry()}" th:value="${player.id}" th:text="${(seedAndEntry != '' ? ('(' + seedAndEntry + ') ') : '') + player.name + ' (' + player.country.id + ')'}" th:selected="${player.id == playerId}">(1) Roger Federer (SUI)</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<br/>
+	<table th:with="completed=${playerPath.completedMatches}, probable=${playerPath.probableMatches}" th:unless="${playerPath.empty}" class="table table-condensed table-hover table-striped text-nowrap">
+		<th:block th:unless="${completed.empty}">
+		<thead>
+		<tr>
+			<th>Round</th>
+			<th>Outcome</th>
+			<th>Opponent</th>
+			<th class="text-right hidden-xs" title="Opponent rank">Opp. Rank</th>
+			<th class="text-right hidden-md hidden-sm hidden-xs">Player Elo</th>
+			<th class="text-right">Score</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="round : ${completed.rounds}" th:with="matches=${completed.getRoundMatches(round)}">
+			<th th:text="${round}">R128</th>
+			<td>
+				<div th:each="match : ${matches}" class="opponent" th:attrappend="class=${match.winner.id == playerId ? (match.loser != null ? ' positive' : _) : ' negative'}" th:text="${match.winner.id == playerId ? (match.loser != null ? 'Defeated' : 'Bye') : 'Lost'}">Defeated</div>
+			</td>
+			<td>
+				<th:block th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}">
+				<div th:if="${opponent}" class="opponent">
+					<img th:src="@{/images/flags/{code}.png(code=${opponent.country.code})}" src="/images/flags/ch.png'" th:title="${opponent.country.id}" title="SUI" width="24" height="20"/>
+					<a th:href="@{/playerProfile(playerId=${opponent.id})}" th:text="${opponent.name}" title="Show profile">Roger Federer</a>[(${opponent.formattedSeedAndEntry()})]
+				</div>
+				</th:block>
+			</td>
+			<td class="text-right hidden-xs">
+				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent" th:text="${opponent != null ? opponent.rank : _}">6</div>
+			</td>
+			<td class="text-right hidden-md hidden-sm hidden-xs">
+				<div th:each="match : ${matches}" th:with="player=${match.winner.id == playerId ? match.winner : match.loser}, eloRatingDelta=${player.eloRatingDelta}" class="opponent">
+					<span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${player.nextEloRating})]
+				</div>
+			</td>
+			<td class="text-right">
+				<div th:each="match : ${matches}" class="opponent" th:utext="${match.formattedScore}">6-3 6-4</div>
+			</td>
+		</tr>
+		</tbody>
+		</th:block>
+		<th:block th:unless="${probable.empty}">
+		<thead>
+		<tr>
+			<th>Round</th>
+			<th class="text-right" title="Probability to meet the player in this round">Matchup Prob.</th>
+			<th>Opponent</th>
+			<th class="text-right hidden-xs" title="Opponent rank">Opp. Rank</th>
+			<th class="text-right hidden-md hidden-sm hidden-xs">Opponent Elo</th>
+			<th class="text-right" title="Probability to win over the potential opponent if they eventually meet in this round">Win Prob.</th>
+		</tr>
+		</thead>
+		<tbody id="playerPathProbableBody">
+		<tr th:each="round : ${probable.rounds}" th:with="matches=${probable.getProbableRoundMatches(round)}" th:data-round="${round}">
+			<th>
+				<div th:each="match : ${matches}" class="opponent">
+					<th:block th:if="${matchStat.first}" th:text="${round}">R128</th:block>
+					<button th:if="${matchStat.index == 4 && matches.size() > 5}" class="btn btn-xs more" style="display: none" th:onclick="|playerPathProbableMoreClick('${round}')|">More <i class="fa fa-angle-double-down"></i></button>
+					<button th:if="${matchStat.last && matches.size() > 5}" class="btn btn-xs" th:onclick="|playerPathProbableMoreClick('${round}')|">Less <i class="fa fa-angle-double-up"></i></button>
+				</div>
+			</th>
+			<td class="text-right">
+				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent"
+				     th:text="${!opponent.qualifier ? #numbers.formatDecimal(opponent.getProbability(round), 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + opponent.getPrice(round, priceFormat) : _}">85.2%</div>
+			</td>
+			<td>
+				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent">
+					<th:block th:unless="${opponent.qualifier}">
+						<img th:src="@{/images/flags/{code}.png(code=${opponent.country.code})}" src="/images/flags/ch.png'" th:title="${opponent.country.id}" title="SUI" width="24" height="20"/>
+						<a th:href="@{/playerProfile(playerId=${opponent.id})}" th:text="${opponent.name}" title="Show profile">Roger Federer</a>[(${opponent.formattedSeedAndEntry()})]
+					</th:block>
+					<th:block th:if="${opponent.qualifier}">Qualifier</th:block>
+				</div>
+			</td>
+			<td class="text-right hidden-xs">
+				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent" th:text="${opponent.rank}">6</div>
+			</td>
+			<td class="text-right hidden-md hidden-sm hidden-xs">
+				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}, eloRatingDelta=${opponent.eloRatingDelta}" class="opponent">
+					<span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${opponent.nextEloRating})]
+				</div>
+			</td>
+			<td class="text-right">
+				<div th:each="match : ${matches}" th:with="player=${match.winner.id == playerId ? match.winner : match.loser}, opponent=${match.winner.id == playerId ? match.loser : match.winner}, matchRef=${'M_' + round + '_' + opponent.id}" class="opponent"
+				     th:text="${#numbers.formatDecimal(player.getProbability(matchRef), 1, 1) + '%'}" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(matchRef, priceFormat) : _}">85.2%</div>
+			</td>
+		</tr>
+		</tbody>
+		</th:block>
+	</table>
+</th:block>

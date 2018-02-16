@@ -27,4 +27,12 @@ public class SetScore {
 	public Integer getlTBPoints() {
 		return lTBPoints;
 	}
+
+	public String formatted() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(wGames).append('-').append(lGames);
+		if (wTBPoints != null && lTBPoints != null)
+			sb.append("<sup>(").append(wTBPoints > lTBPoints ? lTBPoints : wTBPoints).append(")</sup>");
+		return sb.toString();
+	}
 }

@@ -81,7 +81,7 @@
 					<td th:with="player=${tournamentEvent.winner}">
 						<th:block th:unless="${tournamentEvent.outcome == 'ABD'}">
 							<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-							<strong><a th:href="@{/playerProfile(playerId=${player.id})}" th:text="${player.nameSeedAndEntry()}" title="Show profile">Roger Federer</a></strong>
+							<strong><a th:href="@{/playerProfile(playerId=${player.id})}" th:text="${player.name}" title="Show profile">Roger Federer</a>[(${player.formattedSeedAndEntry()})]</strong>
 						</th:block>
 						<th:block th:if="${tournamentEvent.outcome == 'ABD'}">ABD</th:block>
 					</td>
@@ -89,13 +89,13 @@
 				<tr th:if="${tournamentEvent.runnerUp != null && tournamentEvent.outcome != 'ABD'}">
 					<th>Runner-up</th>
 					<td th:with="player=${tournamentEvent.runnerUp}">
-						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
-						<a th:href="@{/playerProfile(playerId=${player.id})}" th:text="${player.nameSeedAndEntry()}" title="Show profile">Rafael Nadal</a>
+						<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/es.png'" th:title="${player.country.id}" title="ESP" width="24" height="20"/>
+						<a th:href="@{/playerProfile(playerId=${player.id})}" th:text="${player.name}" title="Show profile">Rafael Nadal</a>[(${player.formattedSeedAndEntry()})]
 					</td>
 				</tr>
 				<tr th:if="${tournamentEvent.score}">
 					<th>Final Score</th>
-					<td th:text="${tournamentEvent.score}">6-4 6-3</td>
+					<td th:utext="${tournamentEvent.scoreFormatted()}">6-4 6-3</td>
 				</tr>
 			</table>
 		</div>

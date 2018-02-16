@@ -62,7 +62,7 @@
 				"lastMatch": function(column, row) {
 					var match = row.lastMatch;
 					var won = match.winnerId == [(${playerId})];
-					return "<span class='label label-" + (won ? "won" : "lost") + "'>" + (won ? "Won" : "Lost") + "</span> [ " + match.score + " ] at " +
+					return "<span class='label label-" + (won ? "won" : "lost") + "'>" + (won ? "Won" : "Lost") + "</span> [ " + formatScore(match.score) + " ] at " +
 						match.season + " " + tournamentEventFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
 				},
 				"stats": function(column, row) {

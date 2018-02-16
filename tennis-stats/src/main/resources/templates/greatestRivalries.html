@@ -60,7 +60,7 @@
 					},
 					"lastMatch": function(column, row) {
 						var match = row.lastMatch;
-						return shortName(match.winnerId == row.player1.playerId ? row.player1.name : row.player2.name) + " [ " + match.score + " ] at " +
+						return shortName(match.winnerId == row.player1.playerId ? row.player1.name : row.player2.name) + " [ " + formatScore(match.score) + " ] at " +
 							match.season + " " + tournamentEventFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
 					},
 					"h2h2": function(column, row) {

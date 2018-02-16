@@ -364,13 +364,13 @@ function h2hMatchFormatter(column, row) {
 function finalFormatter(column, row) {
 	if (!row.winner && !row.runnerUp) return "";
 	var victory = row.outcome !== "ABD";
-	return formatMatchPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchPlayer(row.runnerUp) + " " + row.score;
+	return formatMatchPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchPlayer(row.runnerUp) + " " + formatScore(row.score);
 }
 
 function finalExFormatter(column, row) {
 	if (!row.winner && !row.runnerUp) return "";
 	var victory = row.outcome !== "ABD";
-	return formatMatchExPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchExPlayer(row.runnerUp) + " " + row.score;
+	return formatMatchExPlayer(row.winner, victory) + " " + (victory ? "d." : "vs") + " " + formatMatchExPlayer(row.runnerUp) + " " + formatScore(row.score);
 }
 
 function formatMatchPlayer(player, winner, playerId) {
@@ -392,6 +392,10 @@ function formatRanking(row) {
 
 function formatSeedEntry(seed, entry) {
 	return (seed ? (" (" + seed + (entry ? " " + entry : "") + ")") : (entry ? " (" + entry + ")" : ""));
+}
+
+function formatScore(score) {
+	return score.replace("(", "<sup>(").replace(")", ")</sup>");
 }
 
 // Record Formatter

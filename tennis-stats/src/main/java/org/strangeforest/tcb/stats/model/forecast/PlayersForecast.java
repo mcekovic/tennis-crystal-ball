@@ -45,16 +45,41 @@ public class PlayersForecast {
 		return playerForecastMap.get(playerId);
 	}
 
-	public PlayerForecast getOtherPlayer(int index) {
-		int otherIndex = index + (index % 2 == 0 ? 1 : -1);
-		return otherIndex < playerForecasts.size() ? playerForecasts.get(otherIndex) : null;
+	public PlayerForecast getOpponent(int index) {
+		int opponentIndex = index + (index % 2 == 0 ? 1 : -1);
+		return opponentIndex < playerForecasts.size() ? playerForecasts.get(opponentIndex) : null;
+	}
+
+	public List<PlayerForecast> getOpponents(int index, int rounds) {
+		int drawFactor = 2 << rounds;
+		int startIndex = index - index % drawFactor;
+		int endIndex = startIndex + drawFactor - 1;
+		if (2 * index < startIndex + endIndex)
+			startIndex += drawFactor >> 1;
+		else
+			endIndex -= drawFactor >> 1;
+		List<PlayerForecast> opponents = new ArrayList<>(endIndex - startIndex + 1);
+		for (int opponentIndex = startIndex; opponentIndex <= endIndex; opponentIndex++) {
+			if (opponentIndex < playerForecasts.size())
+				opponents.add(playerForecasts.get(opponentIndex));
+		}
+		return opponents;
+	}
+
+	public Optional<Integer> findIndex(int playerId) {
+		for (int i = 0, size = playerForecasts.size(); i < size; i++) {
+			if (playerForecasts.get(i).getId() == playerId)
+				return Optional.of(i);
+		}
+		return Optional.empty();
 	}
 
 	public double getStrength(int fromIndex, int count) {
 		return playerForecasts.stream().skip(fromIndex).limit(count).mapToDouble(PlayerForecast::getWinProbability).sum();
 	}
 
-	public List<MatchPlayer> getKnownPlayers(String result) {
+	public List<MatchPlayer> getKnownPlayers() {
+		String result = results.iterator().next();
 		return playerForecasts.stream().filter(player -> player.getId() > 0 && player.getRawProbability(result) > 0.0)
 			.sorted(comparing(MatchPlayer::getSeed, nullsLast(naturalOrder())).thenComparing(MatchPlayer::getName, nullsLast(naturalOrder())))
 			.collect(toList());

@@ -17,7 +17,7 @@ public class PlayerForecast extends MatchPlayerEx {
 		super(playerId, name, seed, entry, countryId, rank, eloRating, null);
 	}
 
-	public PlayerForecast(PlayerForecast player) {
+	public PlayerForecast(MatchPlayerEx player) {
 		super(player);
 	}
 

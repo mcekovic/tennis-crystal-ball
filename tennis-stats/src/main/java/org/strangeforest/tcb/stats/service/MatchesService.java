@@ -105,17 +105,16 @@ public class MatchesService {
 		jdbcTemplate.query(
 			TOURNAMENT_EVENT_MATCHES_QUERY, params("tournamentEventId", tournamentEventId),
 			rs -> {
-				TournamentEventMatch match = new TournamentEventMatch(
+				results.addMatch(new TournamentEventMatch(
 					rs.getLong("match_id"),
+					rs.getShort("match_num"),
 					rs.getString("round"),
 					mapMatchPlayer(rs, "winner_"),
 					mapMatchPlayer(rs, "loser_"),
 					mapSetScores(rs),
 					rs.getString("outcome"),
 					rs.getBoolean("has_stats")
-				);
-				short matchNum = rs.getShort("match_num");
-				results.addMatch(matchNum, match);
+				));
 			}
 		);
 		return results;

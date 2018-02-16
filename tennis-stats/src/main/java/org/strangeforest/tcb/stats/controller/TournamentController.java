@@ -212,18 +212,35 @@ public class TournamentController extends PageController {
 	@GetMapping("/inProgressEventProbableMatches")
 	public ModelAndView inProgressEventProbableMatches(
 		@RequestParam(name = "inProgressEventId") int inProgressEventId,
-		@RequestParam(name = "pinnedPlayerId", required = false) Integer pinnedPlayerId,
+		@RequestParam(name = "playerId", required = false) Integer playerId,
       @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat
 	) {
-		ProbableMatches probableMatches = forecastService.getInProgressEventProbableMatches(inProgressEventId, pinnedPlayerId);
+		ProbableMatches probableMatches = forecastService.getInProgressEventProbableMatches(inProgressEventId, playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("inProgressEvent", probableMatches.getEvent());
 		modelMap.addAttribute("results", probableMatches.getResults());
 		modelMap.addAttribute("players", probableMatches.getPlayers());
-		modelMap.addAttribute("pinnedPlayerId", pinnedPlayerId);
+		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("priceFormat", priceFormat);
 		return new ModelAndView("inProgressEventProbableMatches", modelMap);
+	}
+
+	@GetMapping("/inProgressEventPlayerPath")
+	public ModelAndView inProgressEventPlayerPath(
+		@RequestParam(name = "inProgressEventId") int inProgressEventId,
+		@RequestParam(name = "playerId", required = false) Integer playerId,
+      @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat
+	) {
+		PlayerPath playerPath = forecastService.getInProgressEventPlayerPath(inProgressEventId, playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("inProgressEventId", inProgressEventId);
+		modelMap.addAttribute("players", playerPath.getPlayers());
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("playerPath", playerPath);
+		modelMap.addAttribute("priceFormat", priceFormat);
+		return new ModelAndView("inProgressEventPlayerPath", modelMap);
 	}
 
 	@GetMapping("/inProgressEventFavorites")

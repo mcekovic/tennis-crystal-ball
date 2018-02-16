@@ -31,6 +31,10 @@ public class InProgressEventForecast {
 		return getPlayersForecast(CURRENT);
 	}
 
+	public PlayersForecast getEntryForecast() {
+		return getPlayersForecast(playersForecasts.keySet().iterator().next());
+	}
+
 	public PlayersForecast getPlayersForecast(String baseResult) {
 		return playersForecasts.get(baseResult);
 	}

@@ -6,7 +6,7 @@ import org.strangeforest.tcb.stats.model.core.*;
 
 public class TournamentEventResults {
 
-	private enum ResultRound {
+	public enum ResultRound {
 
 		RR(Round.RR),
 		R128(Round.R128),
@@ -41,8 +41,8 @@ public class TournamentEventResults {
 		return matches.values();
 	}
 
-	public void addMatch(short matchNum, TournamentEventMatch match) {
-		matches.put(matchNum, match);
+	public void addMatch(TournamentEventMatch match) {
+		matches.put(match.getMatchNum(), match);
 		ResultRound round = ResultRound.valueOf(match.getRound());
 		matchesByRound.computeIfAbsent(round, r -> new ArrayList<>()).add(match);
 	}

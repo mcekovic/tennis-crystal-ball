@@ -36,10 +36,6 @@ public class MatchPlayer {
 		return name;
 	}
 
-	public String nameSeedAndEntry() {
-		return seed != null || !isNullOrEmpty(entry) ? name + " (" + formatSeedAndEntry(seed, entry) + ")" : name;
-	}
-
 	public Integer getSeed() {
 		return seed;
 	}
@@ -50,6 +46,10 @@ public class MatchPlayer {
 
 	public String seedAndEntry() {
 		return formatSeedAndEntry(seed, entry);
+	}
+
+	public String formattedSeedAndEntry() {
+		return seed != null || !isNullOrEmpty(entry) ? " (" + formatSeedAndEntry(seed, entry) + ")" : "";
 	}
 
 	public Country getCountry() {
