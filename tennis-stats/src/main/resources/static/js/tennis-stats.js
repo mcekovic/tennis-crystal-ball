@@ -395,7 +395,7 @@ function formatSeedEntry(seed, entry) {
 }
 
 function formatScore(score) {
-	return score.replace("(", "<sup>(").replace(")", ")</sup>");
+	return score.replace(/\(/g, "<sup>(").replace(/\)/g, ")</sup>");
 }
 
 // Record Formatter

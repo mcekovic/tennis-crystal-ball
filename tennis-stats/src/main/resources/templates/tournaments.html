@@ -42,7 +42,7 @@
 						var levels = row.levels;
 						var s = "";
 						for (var i = 0, count = Math.min(2, levels.length); i < count; i++) {
-							if (s != "") s += " ";
+							if (s !== "") s += " ";
 							var name = levelName(levels[i]);
 							s += "<a href='/tournamentEvents?level=" + levels[i] + "' class='label label-" + levels[i] + "' title='Show " + name + " tournament events'>" + name + "</a>";
 						}
@@ -52,7 +52,7 @@
 						var surfaces = row.surfaces;
 						var s = "";
 						for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
-							if (s != "") s += " ";
+							if (s !== "") s += " ";
 							var name = surfaceName(surfaces[i]);
 							s += "<a href='/tournamentEvents?tournamentId=" + row.id + "&surface=" + surfaces[i] + "' class='label label-" + surfaceClassSuffix(surfaces[i]) + "' title='Show " + name + " tournament events'>" + name + "</a>";
 						}
@@ -64,9 +64,18 @@
 					"participation": participationFormatter,
 					"topPlayer": function(column, row) {
 						var topPlayers = row.topPlayers;
-						if (topPlayers.length == 0) return "";
+						if (topPlayers.length === 0) return "";
 						var topPlayer = topPlayers[0];
-						return "<a href='/playerProfile?playerId=" + topPlayer.playerId + "&tab=tournaments&tournamentId=" + row.id + filterParams() + "&result=W' title='Show titles'>" + topPlayer.rank + " <i class='fa fa-trophy fa-b'></i></a> " + playerCountryFormatter(column, topPlayer);
+						var html = "<a href='/playerProfile?playerId=" + topPlayer.playerId + "&tab=tournaments&tournamentId=" + row.id + filterParams() + "&result=W' title='Show titles'>" + topPlayer.rank + " <i class='fa fa-trophy fa-b'></i></a> " + playerCountryFormatter(column, topPlayer);
+						if (topPlayers.length > 1) {
+							var tiedPlayers = "<div class=\"text-left\">";
+							for (var i = 1; i < topPlayers.length; i++)
+								tiedPlayers += playerCountryFormatter(column, topPlayers[i]).replace(/'/g, '"') + "<br/>";
+							tiedPlayers += "</div>";
+							html += " <i class='fa fa-users top-players-tooltip' style='color: #337ab7' title='" + tiedPlayers + "' data-toggle='tooltip' data-placement='top' data-html='true'></i>"
+						}
+						console.log(html);
+						return html;
 					}
 				},
 				labels: {
@@ -76,6 +85,8 @@
 				templates: {
 					paginationItem: bootgridTemplatePaginationItem
 				}
+			}).on("loaded.rs.jquery.bootgrid", function () {
+				$("#tournamentsTable").find("[data-toggle='tooltip']").tooltip();
 			});
 			var $tournamentsTableHeader = $("#tournamentsTable-header");
 			var $search = $tournamentsTableHeader.find("div.search");
@@ -109,6 +120,15 @@
 			reloadTournaments();
 		}
 	</script>
+	<style type="text/css">
+		.top-players-tooltip + .tooltip > .tooltip-inner {
+			border: 1px solid lightgray;
+			background-color: #f9f9f9;
+		}
+		.top-players-tooltip + .tooltip.top > .tooltip-arrow {
+			border-top-color: gray;
+		}
+	</style>
 	</template>
 </head>
 <body class="container">

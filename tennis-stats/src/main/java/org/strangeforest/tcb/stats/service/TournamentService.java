@@ -48,7 +48,8 @@ public class TournamentService {
 		"  WHERE r.result = 'W'%1$s\n" +
 		"  GROUP BY e.tournament_id, r.player_id\n" +
 		"), player_tournament_titles_ranked AS (\n" +
-		"  SELECT tournament_id, player_id, titles, rank() OVER (PARTITION BY tournament_id ORDER BY titles DESC, last_date) AS rank\n" +
+		"  SELECT tournament_id, player_id, titles, rank() OVER (PARTITION BY tournament_id ORDER BY titles DESC, last_date) AS rank,\n" +
+		"    rank() OVER (PARTITION BY tournament_id ORDER BY titles DESC) AS titles_rank\n" +
 		"  FROM player_tournament_titles\n" +
 		")\n" +
 		"SELECT tournament_id, mp.ext_tournament_id, name, level,\n" +
@@ -63,7 +64,8 @@ public class TournamentService {
 		"    SELECT p.player_id, p.name, p.country_id, p.active, pt.titles\n" +
 		"    FROM player_tournament_titles_ranked pt\n" +
 		"    INNER JOIN player_v p USING (player_id)\n" +
-		"    WHERE pt.tournament_id = t.tournament_id AND pt.rank <= 1\n" +
+		"    WHERE pt.tournament_id = t.tournament_id AND pt.titles_rank <= 1\n" +
+		"    ORDER BY pt.rank\n" +
 		"  ) AS top_player)) AS top_players\n" +
 		"FROM tournament t\n" +
 		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
