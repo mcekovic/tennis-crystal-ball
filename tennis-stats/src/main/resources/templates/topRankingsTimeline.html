@@ -57,7 +57,7 @@
 			</tr>
 		</tbody>
 	</table>
-	<p th:if="${rankTypeName == 'RANK'}"><i>* Estimated rankings</i></p>
+	<p th:if="${rankTypeName == 'RANK'}"><th:block th:include="fragments/aboutRanking :: aboutEstimatedRanking"/></p>
 	<footer th:include="fragments/footer :: copy"></footer>
 </body>
 </html>

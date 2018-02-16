@@ -8,7 +8,7 @@ import static org.strangeforest.tcb.stats.model.records.categories.ATPRankingCat
 public class InfamousATPRankingCategory extends RankingCategory {
 
 	public InfamousATPRankingCategory() {
-		super(RankType.RANK, "Infamous ATP Ranking");
+		super(RankClass.ATP, RankType.RANK, "Infamous ATP Ranking", DATE_CONDITION, SEASON_CONDITION);
 		register(leastPointsAsNo1("LeastATPPointsAsNo1", "Least ATP Points as No. 1", "player_ranking", "adjust_atp_rank_points(rank_points, rank_date)", "rank_points", "ATP Points", RankType.RANK, ADJUSTMENT_NOTES));
 		register(leastEndOfSeasonPointsAsNo1("LeastEndOfSeasonATPPointsAsNo1", "Least End of Season ATP Points as No. 1", "player_year_end_rank", "adjust_atp_rank_points(year_end_rank_points, season_start(season))", "ATP Points", RankType.RANK, ADJUSTMENT_NOTES));
 		register(pointsDifferenceBetweenNo1andNo2(

@@ -74,10 +74,11 @@
 			var $rankingsTable = $("#rankingsTable");
 			$rankingsTable.find("th[data-column-id='points'] > a > span.text").html(rankType === "RANK" ? "Points" : "Elo Rating");
 			$rankingsTable.find("th[data-column-id='pointsDiff'] > a > span.text").html(rankType === "RANK" ? "Pts. +/-" : "Elo +/-");
-			$("#eloInfo").css("display", rankType === "RANK" ? "none" : "inline");
+			$("#eloInfo").css("display", rankType !== "RANK" ? "inline" : "none");
 			seasonChanged(skipDatesLoad);
 		}
 		function seasonChanged(skipDatesLoad) {
+			var rankType = $("#rankType").val();
 			var season = $("#season").val();
 			var $date = $("#date");
 			var current = season === "";
@@ -87,11 +88,12 @@
 				$date.find("option").remove();
 			else if (!skipDatesLoad) {
 				$date.find("option").remove();
-				var url = "/seasonRankingDates?rankType=" + $("#rankType").val() + "&season=" + season;
+				var url = "/seasonRankingDates?rankType=" + rankType + "&season=" + season;
 				$.get(url, function (data) {
 					populateDates(season, data);
 				});
 			}
+			$("#estimatedRankingInfo").css("display", rankType === "RANK" && season && season <= 1973 ? "inline" : "none");
 		}
 		function populateDates(season, dates) {
 			var $date = $("#date");
@@ -185,6 +187,9 @@
 		</tr>
 		</thead>
 	</table>
+	<div id="estimatedRankingInfo" style="display: none">
+		<th:block th:include="fragments/aboutRanking :: aboutEstimatedRanking"/>
+	</div>
 	<div id="eloInfo" style="display: none">
 		<th:block th:include="fragments/aboutElo :: aboutElo('top')"/>
 	</div>

@@ -89,6 +89,7 @@ public abstract class Records {
 		register(WINS, new GreatestMatchPctCategory(GreatestMatchPctCategory.RecordType.WINNING), false);
 		register(WINS, new WinningStreaksCategory(), false);
 		register(RANKING, new ATPRankingCategory(), false);
+		register(RANKING, new OpenEraRankingCategory(), false);
 		register(RANKING, new EloRankingCategory(RecordDomain.ALL), false);
 		register(RANKING, new EloRankingCategory(RecordDomain.HARD), false);
 		register(RANKING, new EloRankingCategory(RecordDomain.CLAY), false);
