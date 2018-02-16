@@ -387,7 +387,7 @@ public class TournamentForecastService {
 				LocalDate today = LocalDate.now();
 				while (true) {
 					String round = result.prev().name();
-					if (!matches.getRounds().contains(ResultRound.valueOf(round))) {
+					if (!completed.getRounds().contains(ResultRound.valueOf(round))) {
 						for (PlayerForecast opponent : current.getOpponents(index, result.ordinal() - firstResult.ordinal())) {
 							if (opponent.isBye())
 								continue;
