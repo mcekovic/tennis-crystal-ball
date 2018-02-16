@@ -140,7 +140,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"WHERE rank " + condition + "\n" +
 			"AND p.name NOT IN (" + INVALID_RANKING_PLAYERS + ")\n" + // TODO Remove after data is fixed
 			"GROUP BY player_id",
-			"r.value", "r.value DESC", "r.value DESC, r.last_date",
+			"r.value", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.last_date",
 			IntegerRecordDetail.class, null,
 			asList(new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Weeks At " + name))
 		);
@@ -170,7 +170,7 @@ public abstract class RankingCategory extends RecordCategory {
 			"FROM player_consecutive_weeks INNER JOIN player_v USING (player_id)\n" +
 			"WHERE rank " + condition + " AND prev_rank " + condition + "\n" +
 			"GROUP BY player_id, name, start_date, end_date",
-			"r.value, r.start_date, r.end_date", "r.value DESC", "r.value DESC, r.end_date",
+			"r.value, r.start_date, r.end_date", "r.value DESC NULLS LAST", "r.value DESC NULLS LAST, r.end_date",
 			DateRangeIntegerRecordDetail.class, null,
 			asList(
 				new RecordColumn("value", "numeric", null, WEEKS_WIDTH, "right", "Weeks at " + name),
