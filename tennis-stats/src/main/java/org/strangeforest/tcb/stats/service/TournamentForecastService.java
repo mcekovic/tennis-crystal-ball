@@ -353,6 +353,7 @@ public class TournamentForecastService {
 
 	@Cacheable("InProgressEventPlayerPath")
 	public PlayerPath getInProgressEventPlayerPath(int inProgressEventId, Integer playerId) {
+		PlayerForecast player = null;
 		InProgressEventForecast forecast = getInProgressEventForecast(inProgressEventId);
 		TournamentEventResults completed = new TournamentEventResults();
 		PlayerPathMatches probable = new PlayerPathMatches();
@@ -362,24 +363,31 @@ public class TournamentForecastService {
 			for (TournamentEventMatch match : matches.getMatches()) {
 				MatchPlayer winner = match.getWinner();
 				MatchPlayer loser = match.getLoser();
-				if (winner.getId() == playerId || loser != null && loser.getId() == playerId) {
+				boolean isWinner = winner.getId() == playerId;
+				boolean isLoser = loser != null && loser.getId() == playerId;
+				if (isWinner || isLoser) {
 					PlayersForecast roundForecast = forecast.getPlayersForecast(match.getRound());
+					PlayerForecast winnerForecast = roundForecast.getPlayerForecast(winner.getId());
+					PlayerForecast	loserForecast = loser != null ? roundForecast.getPlayerForecast(loser.getId()) : null;
 					completed.addMatch(new TournamentEventMatch(
-						match.getId(), match.getMatchNum(), match.getRound(),
-						roundForecast.getPlayerForecast(winner.getId()), loser != null ? roundForecast.getPlayerForecast(loser.getId()) : null,
-						match.getScore(), match.getOutcome(), match.isHasStats()
+						match.getId(), match.getMatchNum(), match.getRound(), winnerForecast, loserForecast, match.getScore(), match.getOutcome(), match.isHasStats()
 					));
+					if (isWinner)
+						player = winnerForecast;
+					else if (loserForecast != null)
+						player = loserForecast;
 				}
 			}
 			// Probable opponents
 			PlayersForecast current = forecast.getCurrentForecast();
 			PlayerForecast playerForecast = current.getPlayerForecast(playerId);
+			if (playerForecast != null)
+				player = playerForecast;
 			Optional<Integer> optionalIndex = current.findIndex(playerId);
 			if (playerForecast != null && playerForecast.getRawProbability(current.getFirstResult()) > 0.0 && optionalIndex.isPresent()) {
 				int index = optionalIndex.get();
 				AtomicInteger matchId = new AtomicInteger(1000);
 				AtomicInteger matchNum = new AtomicInteger(1000);
-				PlayerForecast player = current.getPlayerForecast(playerId);
 				KOResult firstResult = KOResult.valueOf(current.getFirstResult());
 				KOResult result = firstResult;
 				String firstRound = firstResult.prev().name();
@@ -396,10 +404,10 @@ public class TournamentForecastService {
 							if (opponent.isKnown() && opponent.getRawProbability(round) <= 0.0)
 								continue;
 							probable.addMatch(new TournamentEventMatch(
-								matchId.incrementAndGet(), (short)matchNum.incrementAndGet(), round, player, opponent, emptyList(), null, false
+								matchId.incrementAndGet(), (short)matchNum.incrementAndGet(), round, playerForecast, opponent, emptyList(), null, false
 							));
 							MatchPrediction prediction = predictMatch(playerId, opponent.getId(), event, today, round);
-							player.addForecast("M_" + round + '_' + opponent.getId(), prediction.getWinProbability1());
+							playerForecast.addForecast("M_" + round + '_' + opponent.getId(), prediction.getWinProbability1());
 						}
 					}
 					if (result.hasNext())
@@ -409,7 +417,7 @@ public class TournamentForecastService {
 				}
 			}
 		}
-		return new PlayerPath(completed, probable, forecast.getEntryForecast().getKnownPlayers());
+		return new PlayerPath(player, completed, probable, forecast.getEntryForecast().getKnownPlayers());
 	}
 
 	private MatchPrediction predictMatch(int playerId1, int playerId2, InProgressEvent event, LocalDate date, String round) {
