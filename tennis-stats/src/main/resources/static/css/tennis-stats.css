@@ -102,7 +102,11 @@ a.label-btn {
 }
 .label-lost {
 	color: black;
-	background-color: #ffa07a;
+	background-color: lightsalmon;
+}
+.label-abd {
+	color: black;
+	background-color: moccasin;
 }
 .label-G {
 	background-color: #d9534f;

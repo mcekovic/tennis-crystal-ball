@@ -16,7 +16,7 @@
 			var device = detectDevice();
 			setBootgridColumnsVisible($rivalriesTable, ["lastMatch"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($rivalriesTable, ["h2hPct", "h2h2"], deviceGreaterOrEqual(device, "sm"));
-			if (device == "xs")
+			if (device === "xs")
 				setBootgridColumnsWidths($rivalriesTable, ["rivalry"], [250]);
 			$rivalriesTable.bootgrid({
 				ajax: true,
@@ -60,7 +60,7 @@
 					},
 					"lastMatch": function(column, row) {
 						var match = row.lastMatch;
-						return shortName(match.winnerId == row.player1.playerId ? row.player1.name : row.player2.name) + " [ " + formatScore(match.score) + " ] at " +
+						return shortName(match.winnerId === row.player1.playerId ? row.player1.name : row.player2.name) + " [ " + formatScore(match.score) + " ] at " +
 							match.season + " " + tournamentEventFormatter(column, match) + " " + surfaceFormatter(column, match) + " " + match.round;
 					},
 					"h2h2": function(column, row) {

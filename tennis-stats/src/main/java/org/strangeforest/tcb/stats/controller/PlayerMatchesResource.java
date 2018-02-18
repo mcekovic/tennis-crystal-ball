@@ -31,7 +31,7 @@ public class PlayerMatchesResource {
 		.put("tournament", "tournament")
 		.put("surface", "surface")
 		.put("round", "round")
-		.put("wonLost", "CASE WHEN pw.player_id = :playerId THEN 1 ELSE 0 END")
+		.put("wonLost", "CASE WHEN outcome = 'ABD' THEN 0 WHEN pw.player_id = :playerId THEN 1 ELSE -1 END")
 		.put("bestOf", "best_of")
 	.build();
 	private static Map<String, String> ORDER_MAP_BIG_WINS = ImmutableMap.<String, String>builder()

@@ -394,6 +394,10 @@ function formatSeedEntry(seed, entry) {
 	return (seed ? (" (" + seed + (entry ? " " + entry : "") + ")") : (entry ? " (" + entry + ")" : ""));
 }
 
+function scoreFormatter(column, row) {
+	return formatScore(row.score);
+}
+
 function formatScore(score) {
 	return score.replace(/\(/g, "<sup>(").replace(/\)/g, ")</sup>");
 }

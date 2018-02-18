@@ -55,6 +55,7 @@
 				"surface": surfaceFormatter,
 				"match": h2hMatchFormatter,
 				"matchEx": matchExFormatter([(${playerId})]),
+				"score": scoreFormatter,
 				"h2h": function(column, row) {
 					return "<span title='" + row.h2h.wonPct.toFixed(1) + "% - " + (100 - row.h2h.wonPct).toFixed(1) + "%'>" + row.h2h.wl + "</span>";
 				},
@@ -308,7 +309,7 @@
 		<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
 		<th data-column-id="matchEx" data-formatter="matchEx" data-sortable="false" data-visible="false" data-width="500">Match Details</th>
 		<th data-column-id="bestOf" data-width="50" data-visible="false">BO</th>
-		<th data-column-id="score" data-sortable="false" data-width="175">Score</th>
+		<th data-column-id="score" data-formatter="score" data-sortable="false" data-width="175">Score</th>
 		<th data-column-id="h2h" data-formatter="h2h" data-sortable="false" data-width="55">H2H</th>
 		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>
 	</tr>

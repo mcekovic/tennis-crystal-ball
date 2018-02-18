@@ -84,13 +84,11 @@
 				"tournament": tournamentEventFormatter,
 				"surface": surfaceFormatter,
 				"wonLost": function(column, row) {
-					return row.outcome != "ABD" ? (row.winner.id == [(${playerId})] ? "W" : "L") : "A";
+					return row.outcome !== "ABD" ? (row.winner.id === [(${playerId})] ? "<label class='label label-won'>W</label>" : "<label class='label label-lost'>L</label>") : "<label class='label label-abd'>A</label>";
 				},
 				"match": matchFormatter([(${playerId})]),
 				"matchEx": matchExFormatter([(${playerId})]),
-				"score": function(column, row) {
-					return formatScore(row.score);
-				},
+				"score": scoreFormatter,
 				"bigWinPoints": function(column, row) {
 					var bigWinPoints = row.bigWinPoints;
 					return bigWinPoints ? bigWinPoints.toFixed(2) : "";
@@ -99,7 +97,7 @@
 					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>" : "";
 				},
 				"h2h": function(column, row) {
-					return "<a href='/headToHead?playerId1=[(${playerId})]&playerId2=" + (row.winner.id == [(${playerId})] ? row.loser.id : row.winner.id) + "' class='label label-primary label-btn'" + (isChrome ? " style='padding: 3px 7px'" : "") + " title='Show Head-to-Head'>H2H</a>"
+					return "<a href='/headToHead?playerId1=[(${playerId})]&playerId2=" + (row.winner.id === [(${playerId})] ? row.loser.id : row.winner.id) + "' class='label label-primary label-btn'" + (isChrome ? " style='padding: 3px 7px'" : "") + " title='Show Head-to-Head'>H2H</a>"
 				}
 			},
 			labels: {
