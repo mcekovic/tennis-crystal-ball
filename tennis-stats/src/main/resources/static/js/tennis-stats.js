@@ -281,7 +281,11 @@ function levelName(level) {
 // Surface Formatter
 function surfaceFormatter(column, row) {
 	if (row.surface)
-		return "<span class='label label-" + surfaceClassSuffix(row.surface) + "'>" + surfaceName(row.surface) + (row.surface !== 'P' && row.indoor ? " <span title='Indoor'>(i)</span>" : "") + "</span>";
+		return formatSurface(row.surface, row.indoor);
+}
+
+function formatSurface(surface, indoor) {
+	return "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + (surface !== 'P' && indoor ? " <span title='Indoor'>(i)</span>" : "") + "</span>";
 }
 
 function surfaceClassSuffix(surface) {

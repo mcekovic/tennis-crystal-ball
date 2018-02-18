@@ -50,11 +50,13 @@
 					},
 					"surfaces": function(column, row) {
 						var surfaces = row.surfaces;
+						var multi = surfaces.length > 1;
 						var s = "";
 						for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
 							if (s !== "") s += " ";
-							var name = surfaceName(surfaces[i]);
-							s += "<a href='/tournamentEvents?tournamentId=" + row.id + "&surface=" + surfaces[i] + "' class='label label-" + surfaceClassSuffix(surfaces[i]) + "' title='Show " + name + " tournament events'>" + name + "</a>";
+							var surface = surfaces[i];
+							var name = surfaceName(surface);
+							s += "<a href='/tournamentEvents?tournamentId=" + row.id + "&surface=" + surface + "' class='label label-" + surfaceClassSuffix(surface) + "' title='Show " + name + " tournament events'>" + (multi ? surface : name) + "</a>";
 						}
 						return s;
 					},
@@ -158,7 +160,7 @@
 		<tr>
 			<th data-column-id="name" data-formatter="tournament" data-width="200">Name</th>
 			<th data-column-id="levels" data-formatter="levels" data-width="140">Level</th>
-			<th data-column-id="surfaces" data-formatter="surfaces" data-width="170">Surface</th>
+			<th data-column-id="surfaces" data-formatter="surfaces" data-width="90">Surface</th>
 			<th data-column-id="eventCount" data-formatter="eventCount" data-width="75">Events</th>
 			<th data-column-id="seasons" data-width="180" data-sortable="false">Seasons</th>
 			<th data-column-id="playerCount" data-type="numeric" data-visible="false" data-width="55" data-align="right" data-header-align="right">Pls.</th>
