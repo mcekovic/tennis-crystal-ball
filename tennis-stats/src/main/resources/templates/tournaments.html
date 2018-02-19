@@ -56,7 +56,7 @@
 							if (s !== "") s += " ";
 							var surface = surfaces[i];
 							var name = surfaceName(surface);
-							s += "<a href='/tournamentEvents?tournamentId=" + row.id + "&surface=" + surface + "' class='label label-" + surfaceClassSuffix(surface) + "' title='Show " + name + " tournament events'>" + (multi ? surface : name) + "</a>";
+							s += "<a href='/tournamentEvents?tournamentId=" + row.id + "&surface=" + surface + "' class='label label-" + surfaceClassSuffix(surface) + "' title='Show " + name + " tournament events'>" + (multi ? surfaceShortName(surface) : name) + "</a>";
 						}
 						return s;
 					},
@@ -160,7 +160,7 @@
 		<tr>
 			<th data-column-id="name" data-formatter="tournament" data-width="200">Name</th>
 			<th data-column-id="levels" data-formatter="levels" data-width="140">Level</th>
-			<th data-column-id="surfaces" data-formatter="surfaces" data-width="90">Surface</th>
+			<th data-column-id="surfaces" data-formatter="surfaces" data-width="110">Surface</th>
 			<th data-column-id="eventCount" data-formatter="eventCount" data-width="75">Events</th>
 			<th data-column-id="seasons" data-width="180" data-sortable="false">Seasons</th>
 			<th data-column-id="playerCount" data-type="numeric" data-visible="false" data-width="55" data-align="right" data-header-align="right">Pls.</th>

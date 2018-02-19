@@ -12,7 +12,7 @@
 			var surface = $surface.text();
 			var indoor = $surface.data("indoor");
 			var multi = $surface.siblings().length > 0;
-			$surface.html((multi ? surface : surfaceName(surface)) + (surface !== 'P' && indoor ? " <span title='Indoor'>(i)</span>" : ""));
+			$surface.html((multi ? surfaceShortName(surface) : surfaceName(surface)) + (surface !== 'P' && indoor ? " <span title='Indoor'>(i)</span>" : ""));
 			$surface.addClass("label-" + surfaceClassSuffix(surface));
 			if (multi)
 				$surface.tooltip({title: formatSurface(surface, indoor), html: true});

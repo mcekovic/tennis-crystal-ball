@@ -309,6 +309,16 @@ function surfaceName(surface) {
 	}
 }
 
+function surfaceShortName(surface) {
+	switch (surface) {
+		case "H": return "Hd";
+		case "C": return "Cl";
+		case "G": return "Gr";
+		case "P": return "Cp";
+		default: return surface;
+	}
+}
+
 function decorateSurface(selector) {
 	$(selector).each(function() {
 		var $this = $(this);
