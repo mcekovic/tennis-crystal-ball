@@ -158,10 +158,6 @@ public class GOATListConfig {
 		return tournamentFactor * getLevelFactor(level);
 	}
 
-	public int getResultTotalFactor(String result) {
-		return tournamentFactor * getResultFactor(result);
-	}
-
 	public int getYearEndRankTotalFactor() {
 		return rankingFactor * yearEndRankFactor;
 	}

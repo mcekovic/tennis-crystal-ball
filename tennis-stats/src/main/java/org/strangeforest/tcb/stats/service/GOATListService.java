@@ -214,7 +214,7 @@ public class GOATListService {
 				for (String level : GOATListConfig.TOURNAMENT_LEVELS)
 					params.addValue("level" + level + "Factor", config.getLevelTotalFactor(level));
 				for (String result : GOATListConfig.TOURNAMENT_RESULTS)
-					params.addValue("result" + result + "Factor", config.getResultTotalFactor(result));
+					params.addValue("result" + result + "Factor", config.getResultFactor(result));
 			}
 			if (!config.hasDefaultRankingFactors()) {
 				params.addValue("yearEndRankFactor", config.getYearEndRankTotalFactor());
