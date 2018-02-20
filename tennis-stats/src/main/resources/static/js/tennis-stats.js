@@ -329,7 +329,7 @@ function decorateSurface(selector) {
 
 // Tournament Formatter
 function tournamentFormatter(column, row) {
-	return "<a href='/tournament?tournamentId=" + row.tournamentId + "' class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + row.tournament + "</a>";
+	return "<a href='/tournament?tournamentId=" + row.id + "' title='Show tournament" + (row.extId ? " - " +  row.extId : "") + "'>" + row.name + "</a>";
 }
 
 // Tournament Event Formatter

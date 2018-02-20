@@ -32,7 +32,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"WHERE " + resultCondition + " AND " + domain.condition + "\n" +
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
-			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s%3$s", playerId, domain.urlParam, resultURLParam(result)),
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s%3$s", playerId, domain.urlParam, resultURLParam(result)),
 			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
 		);
 	}
@@ -46,7 +46,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"WHERE " + resultCondition + " AND " + domain1.condition + " AND " + domain2.condition + "\n" +
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.last_date",
-			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s%3$s%4$s", playerId, domain1.urlParam, domain2.urlParam, resultURLParam(result)),
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s%3$s%4$s", playerId, domain1.urlParam, domain2.urlParam, resultURLParam(result)),
 			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
 		);
 	}
@@ -60,7 +60,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"WHERE " + resultCondition + " AND " + domain.condition + "\n" +
 			"GROUP BY player_id, season",
 			"r.value, r.season", "r.value DESC", "r.value DESC, r.season",
-			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments&season=%2$d%3$s%4$s", playerId, recordDetail.getSeason(), domain.urlParam, resultURLParam(result)),
+			SeasonIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events&season=%2$d%3$s%4$s", playerId, recordDetail.getSeason(), domain.urlParam, resultURLParam(result)),
 			asList(
 				new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
@@ -77,7 +77,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"WHERE r." + resultCondition + " AND e." + domain.condition + "\n" +
 			"GROUP BY player_id, tournament_id, t.name, t.level",
 			"r.value, r.tournament_id, r.tournament, r.level", "r.value DESC", "r.value DESC, r.last_date",
-			TournamentIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments&tournamentId=%2$d%3$s%4$s", playerId, recordDetail.getTournamentId(), domain.urlParam, resultURLParam(result)),
+			TournamentIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events&tournamentId=%2$d%3$s%4$s", playerId, recordDetail.getTournamentId(), domain.urlParam, resultURLParam(result)),
 			asList(
 				new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
@@ -99,7 +99,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"FROM results\n" +
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.first_date",
-			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s%3$s", playerId, domain.urlParam, resultURLParam(result)),
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s%3$s", playerId, domain.urlParam, resultURLParam(result)),
 			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
 		);
 	}

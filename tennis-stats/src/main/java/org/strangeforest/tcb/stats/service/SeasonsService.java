@@ -224,7 +224,7 @@ public class SeasonsService {
 			rs.getString("country_id"),
 			null,
 			new IntegerRecordDetail(rs.getInt("value")),
-			(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments&season=%2$d%3$s", playerId, season, resultURLParam(result))
+			(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events&season=%2$d%3$s", playerId, season, resultURLParam(result))
 		);
 	}
 

@@ -160,7 +160,7 @@ public class TournamentService {
 		"SELECT map_properties FROM tournament_event\n" +
 		"WHERE tournament_event_id = :tournamentEventId";
 
-	private static final String PLAYER_TOURNAMENTS_QUERY =
+	private static final String PLAYER_TOURNAMENT_ITEMS_QUERY =
 		"SELECT DISTINCT tournament_id, t.name, t.level\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
@@ -168,7 +168,7 @@ public class TournamentService {
 		"WHERE r.player_id = :playerId\n" +
 		"ORDER BY name";
 
-	private static final String PLAYER_TOURNAMENT_EVENTS_QUERY =
+	private static final String PLAYER_TOURNAMENT_EVENT_ITEMS_QUERY =
 		"SELECT tournament_event_id, t.name, e.season, e.level\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
@@ -176,7 +176,7 @@ public class TournamentService {
 		"WHERE r.player_id = :playerId\n" +
 		"ORDER BY name, season";
 
-	private static final String PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY = //language=SQL
+	private static final String PLAYER_TOURNAMENT_EVENTS_QUERY = //language=SQL
 		"SELECT r.tournament_event_id, e.season, e.date, e.name, e.level, e.surface, e.indoor, e.draw_type, e.draw_size, p.participation, p.strength, p.average_elo_rating, r.result\n" +
 		"FROM player_tournament_event_result r\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
@@ -184,6 +184,24 @@ public class TournamentService {
 		"WHERE r.player_id = :playerId\n" +
 		"AND e.level NOT IN ('D', 'T')%2$s\n" +
 		"ORDER BY %3$s OFFSET :offset";
+
+	private static final String PLAYER_TOURNAMENTS_QUERY = //language=SQL
+		"WITH player_tournaments AS (\n" +
+		"  SELECT DISTINCT tournament_id, t.name\n" +
+		"  FROM player_tournament_event_result r\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  INNER JOIN tournament t USING (tournament_id)%1$s\n" +
+		"  WHERE r.player_id = :playerId%2$s\n" +
+		")\n" +
+		"SELECT t.tournament_id, t.name,\n" +
+		"  array_to_json(array(SELECT row_to_json(event) FROM (\n" +
+		"    SELECT e.level, e.surface, e.season\n" +
+		"    FROM player_tournament_event_result r\n" +
+		"    INNER JOIN tournament_event e USING (tournament_event_id)%1$s\n" +
+		"    WHERE r.player_id = :playerId AND e.tournament_id = t.tournament_id%2$s\n" +
+		"    ORDER BY season\n" +
+		"  ) AS event)) AS events\n" +
+		"FROM player_tournaments t";
 
 	private static final String TOURNAMENT_STATS_JOIN = //language=SQL
 		"\nLEFT JOIN (\n" +
@@ -451,7 +469,7 @@ public class TournamentService {
 				rs.getString("country_id"),
 				rs.getBoolean("active"),
 				new IntegerRecordDetail(rs.getInt("count")),
-				(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments&tournamentId=%2$d%3$s", playerId, tournamentId, resultURLParam(result))
+				(playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events&tournamentId=%2$d%3$s", playerId, tournamentId, resultURLParam(result))
 			)
 		);
 	}
@@ -474,20 +492,61 @@ public class TournamentService {
 
 	@Cacheable("PlayerTournaments")
 	public List<TournamentItem> getPlayerTournaments(int playerId) {
-		return jdbcTemplate.query(PLAYER_TOURNAMENTS_QUERY, params("playerId", playerId), this::tournamentItemMapper);
+		return jdbcTemplate.query(PLAYER_TOURNAMENT_ITEMS_QUERY, params("playerId", playerId), this::tournamentItemMapper);
 	}
 
 	@Cacheable("PlayerTournamentEvents")
 	public List<TournamentEventItem> getPlayerTournamentEvents(int playerId) {
-		return jdbcTemplate.query(PLAYER_TOURNAMENT_EVENTS_QUERY, params("playerId", playerId), this::tournamentEventItemMapper);
+		return jdbcTemplate.query(PLAYER_TOURNAMENT_EVENT_ITEMS_QUERY, params("playerId", playerId), this::tournamentEventItemMapper);
 	}
 
-	public BootgridTable<PlayerTournamentEvent> getPlayerTournamentEventResultsTable(int playerId, TournamentEventResultFilter filter, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<PlayerTournament> getPlayerTournamentsTable(int playerId, TournamentEventResultFilter filter, Comparator<PlayerTournament> comparator, int pageSize, int currentPage) {
+		List<PlayerTournament> tournaments = new ArrayList<>();
+		jdbcTemplate.query(
+			format(PLAYER_TOURNAMENTS_QUERY, filter.hasStatsFilter() ? TOURNAMENT_STATS_JOIN : "", filter.getCriteria()),
+			filter.getParams()
+				.addValue("playerId", playerId),
+			rs -> {
+				Map<String, Integer> levels = new HashMap<>();
+				Map<String, Integer> surfaces = new HashMap<>();
+				List<Integer> seasons = new ArrayList<>();
+				try {
+					JsonNode events = READER.readTree(rs.getString("events"));
+					for (JsonNode event : events) {
+						levels.compute(event.get("level").asText(), TournamentService::increment);
+						surfaces.compute(event.get("surface").asText(), TournamentService::increment);
+						seasons.add(event.get("season").asInt());
+					}
+				}
+				catch (IOException ex) {
+					throw new SQLException(ex);
+				}
+				tournaments.add(new PlayerTournament(
+					rs.getInt("tournament_id"),
+					rs.getString("name"),
+					sortKeysByValuesDesc(levels, comparing(TournamentLevel::decode)),
+					sortKeysByValuesDesc(surfaces, comparing(Surface::decode)),
+					seasons.size(),
+					formatSeasons(seasons)
+				));
+			}
+		);
+		tournaments.sort(comparator);
+
+		BootgridTable<PlayerTournament> table = new BootgridTable<>(currentPage);
+		int offset = (currentPage - 1) * pageSize;
+		int endOffset = Math.min(offset + pageSize, tournaments.size());
+		table.addRows(tournaments.subList(offset, endOffset));
+		table.setTotal(tournaments.size());
+		return table;
+	}
+
+	public BootgridTable<PlayerTournamentEvent> getPlayerTournamentEventsTable(int playerId, TournamentEventResultFilter filter, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<PlayerTournamentEvent> table = new BootgridTable<>(currentPage);
 		AtomicInteger tournamentEvents = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(PLAYER_TOURNAMENT_EVENT_RESULTS_QUERY, filter.hasStatsFilter() ? TOURNAMENT_STATS_JOIN : "", filter.getCriteria(), orderBy),
+			format(PLAYER_TOURNAMENT_EVENTS_QUERY, filter.hasStatsFilter() ? TOURNAMENT_STATS_JOIN : "", filter.getCriteria(), orderBy),
 			filter.getParams()
 				.addValue("playerId", playerId)
 				.addValue("offset", offset),
@@ -531,7 +590,7 @@ public class TournamentService {
 	}
 
 	public Map<EventResult, List<PlayerTournamentEvent>> getPlayerSeasonHighlights(int playerId, int season, int maxResults) {
-		BootgridTable<PlayerTournamentEvent> results = getPlayerTournamentEventResultsTable(playerId, new TournamentEventResultFilter(season), "result DESC, level, date", Integer.MAX_VALUE, 1);
+		BootgridTable<PlayerTournamentEvent> results = getPlayerTournamentEventsTable(playerId, new TournamentEventResultFilter(season), "result DESC, level, date", Integer.MAX_VALUE, 1);
 		return results.getRows().stream()
 			.collect(groupingBy(r -> EventResult.valueOf(r.result()), LinkedHashMap::new, toList()))
 			.entrySet().stream().limit(maxResults).collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));

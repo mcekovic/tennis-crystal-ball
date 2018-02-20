@@ -420,7 +420,7 @@
 						<th>
 							<div class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
-									<a th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, tournamentId=${tournamentId}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=events, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, tournamentId=${tournamentId}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
 										<span class="pct-data" th:text="${wl.wonPctStr}">50%</span>
 										<span class="raw-data" th:text="${wl.WT}">10 / 20</span>
 									</a>

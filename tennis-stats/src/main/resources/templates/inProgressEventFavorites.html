@@ -35,7 +35,7 @@
 				<td th:if="${surface}" class="text-right hidden-xs"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=ranking, rankType=${surface + '_ELO_RATING'})}" th:text="${favorite.surfaceEloRating}" th:title="|Show ${surface.text} Elo rating chart|">2432</a></td>
 				<td class="text-right hidden-md hidden-sm hidden-xs" th:with="wl=${favorite.last52WeeksWonLost}"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=performance, season=-1)}" th:text="${wl != null ? wl.wonPctStr : _}" th:title="${wl != null ? wl.getWLT() : _}">85.4%</a></td>
 				<td class="text-right hidden-md hidden-sm hidden-xs" th:with="wl=${favorite.last52WeeksSurfaceWonLost}"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=performance, season=-1, surface=${surface.code})}" th:text="${wl != null ? wl.wonPctStr : _}" th:title="${wl != null ? wl.getWLT() : _}">82.9%</a></td>
-				<td class="text-right hidden-md hidden-sm hidden-xs"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=tournaments, result=W, season=-1)}" th:text="${favorite.last52WeeksTitles}" title="Show titles">5</a></td>
+				<td class="text-right hidden-md hidden-sm hidden-xs"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=events, result=W, season=-1)}" th:text="${favorite.last52WeeksTitles}" title="Show titles">5</a></td>
 				<td class="text-right hidden-md hidden-sm hidden-xs" th:text="${favorite.age}">35</td>
 			</tr>
 		</tbody>

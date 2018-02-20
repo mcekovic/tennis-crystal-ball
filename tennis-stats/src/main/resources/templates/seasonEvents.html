@@ -14,8 +14,6 @@
 		setBootgridColumnsVisible($seasonEventsTable, ["finalEx"], deviceGreaterOrEqual(device, "xl"));
 		setBootgridColumnsVisible($seasonEventsTable, ["playerCount", "strength", "averageEloRating"], deviceGreaterOrEqual(device, "lg"));
 		setBootgridColumnsVisible($seasonEventsTable, ["final"], deviceGreaterOrEqual(device, "md") && deviceLessOrEqual(device, "lg"));
-		if (deviceGreaterOrEqual(device, "lg"))
-			setBootgridColumnsWidths($seasonEventsTable, ["name"], [175]);
 		if (device === "md")
 			setBootgridColumnsWidths($seasonEventsTable, ["final"], [400]);
 		$seasonEventsTable.bootgrid({

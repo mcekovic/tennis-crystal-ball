@@ -19,6 +19,10 @@ public class MatchFilter extends TournamentEventResultFilter {
 
 	public static final MatchFilter ALL = new MatchFilter(null, null, null, null, null, null, null, null, null, null, null, null, null, null, false, null);
 
+	public static MatchFilter forTournament(int tournamentId) {
+		return new MatchFilter(null, null, null, null, null, null, null, null, tournamentId, null, null, null, null, null, false, null);
+	}
+
 	public static MatchFilter forTournamentEvent(int tournamentEventId) {
 		return new MatchFilter(null, null, null, null, null, null, null, null, null, tournamentEventId, null, null, null, null, false, null);
 	}

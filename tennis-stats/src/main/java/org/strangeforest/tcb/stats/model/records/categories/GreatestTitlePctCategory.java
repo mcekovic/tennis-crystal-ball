@@ -125,7 +125,7 @@ public class GreatestTitlePctCategory extends RecordCategory {
 			"WHERE e." + domain.condition + "\n" +
 			"GROUP BY r.player_id HAVING count(r.player_id) >= " + minEntries,
 			"r.won, r.lost", "r.pct DESC", "r.pct DESC, r.won + r.lost DESC",
-			WinningPctRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s", playerId, domain.urlParam),
+			WinningPctRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s", playerId, domain.urlParam),
 			asList(
 				new RecordColumn("value", null, "valueUrl", PCT_WIDTH, "right", "Winning Pct."),
 				WON_COLUMN,

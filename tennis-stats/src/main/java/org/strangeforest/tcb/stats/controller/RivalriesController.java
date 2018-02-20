@@ -90,8 +90,8 @@ public class RivalriesController extends PageController {
 		FavoriteSurface favoriteSurface2 = new FavoriteSurface(performance2);
 		int seasonCount1 = playerService.getPlayerSeasons(playerId1).size();
 		int seasonCount2 = playerService.getPlayerSeasons(playerId2).size();
-		BootgridTable<PlayerTournamentEvent> lastEvent1 = tournamentService.getPlayerTournamentEventResultsTable(playerId1, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
-		BootgridTable<PlayerTournamentEvent> lastEvent2 = tournamentService.getPlayerTournamentEventResultsTable(playerId2, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
+		BootgridTable<PlayerTournamentEvent> lastEvent1 = tournamentService.getPlayerTournamentEventsTable(playerId1, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
+		BootgridTable<PlayerTournamentEvent> lastEvent2 = tournamentService.getPlayerTournamentEventsTable(playerId2, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
 		Map<String, Integer> surfaceTitles1 = performanceService.getPlayerSurfaceTitles(playerId1);
 		Map<String, Integer> surfaceTitles2 = performanceService.getPlayerSurfaceTitles(playerId2);
 		WonDrawLost playerH2H1 = rivalriesService.getPlayerH2H(playerId1).orElse(null);

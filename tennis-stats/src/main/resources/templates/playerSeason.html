@@ -42,7 +42,7 @@
 		</div>
 	</div>
 	<div class="col-md-9">
-		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season})}" title="Show season tournaments">Tournaments</a>
+		<a class="btn btn-default" th:href="@{/playerProfile(playerId=${playerId}, tab=events, season=${season})}" title="Show season tournament events">Events</a>
 		<a class="btn btn-default margin-left" th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season})}" title="Show season matches">Matches</a>
 		<a class="btn btn-default margin-left" th:href="@{/playerProfile(playerId=${playerId}, tab=rivalries, season=${season})}" title="Show season rivalries">Rivalries</a>
 		<a class="btn btn-default margin-left" th:href="@{/playerProfile(playerId=${playerId}, tab=performance, season=${season})}" title="Show season performance">Performance</a>
@@ -56,7 +56,7 @@
 	</tr>
 	<tr th:each="resultHighlights : ${seasonHighlights}">
 		<th>
-			<a class="label highlight black bg-result-" th:attrappend="class=${resultHighlights.key.code}" th:href="@{/playerProfile(playerId=${playerId}, tab=tournaments, season=${season}, result=${resultHighlights.key.code})}" th:text="${resultHighlights.key.code}" th:title="|Show season ${resultHighlights.key.text} results|">W</a>
+			<a class="label highlight black bg-result-" th:attrappend="class=${resultHighlights.key.code}" th:href="@{/playerProfile(playerId=${playerId}, tab=events, season=${season}, result=${resultHighlights.key.code})}" th:text="${resultHighlights.key.code}" th:title="|Show season ${resultHighlights.key.text} results|">W</a>
 		</th>
 		<th width="100%">
 			<a th:each="result : ${resultHighlights.value}" th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${result.tournamentEventId})}" class="label highlight label-" th:attrappend="class=${result.level}" th:text="${result.name}" title="Show tournament matches">Wimbledon</a>

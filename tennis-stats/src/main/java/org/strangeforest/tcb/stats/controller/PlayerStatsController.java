@@ -26,6 +26,34 @@ public class PlayerStatsController extends BaseController {
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private MatchesService matchesService;
 
+	@GetMapping("/tournamentsStats")
+	public ModelAndView tournamentsStats(
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "result", required = false) String result,
+		@RequestParam(name = "statsCategory", required = false) String statsCategory,
+		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
+		@RequestParam(name = "statsTo", required = false) Double statsTo,
+		@RequestParam(name = "searchPhrase", required = false) String searchPhrase,
+		@RequestParam(name = "tab", required = false) String tab,
+		@RequestParam(name = "compare", defaultValue = F) boolean compare,
+		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
+		@RequestParam(name = "compareLevel", required = false) String compareLevel,
+		@RequestParam(name = "compareSurface", required = false) String compareSurface
+	) {
+		StatsFilter statsFilter = StatsFilter.forStats(statsCategory, statsFrom, statsTo);
+		MatchFilter filter = MatchFilter.forStats(null, null, level, surface, null, result, null, statsFilter, searchPhrase);
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
+		modelMap.addAttribute("tab", tab);
+		modelMap.addAttribute("stats", stats);
+		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
+		return new ModelAndView("tournamentsStats", modelMap);
+	}
+
 	@GetMapping("/eventsStats")
 	public ModelAndView eventsStats(
 		@RequestParam(name = "playerId") int playerId,
@@ -103,6 +131,28 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("stats", stats);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
 		return new ModelAndView("matchesStats", modelMap);
+	}
+
+	@GetMapping("/tournamentPlayerStats")
+	public ModelAndView tournamentPlayerStats(
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "tournamentId") int tournamentId,
+		@RequestParam(name = "tab", required = false) String tab,
+		@RequestParam(name = "compare", defaultValue = F) boolean compare,
+		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
+		@RequestParam(name = "compareLevel", required = false) String compareLevel,
+		@RequestParam(name = "compareSurface", required = false) String compareSurface
+	) {
+		MatchFilter filter = MatchFilter.forTournament(tournamentId);
+		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("tournamentId", tournamentId);
+		modelMap.addAttribute("categoryGroups", StatsCategory.getCategoryGroups());
+		modelMap.addAttribute("tab", tab);
+		modelMap.addAttribute("stats", stats);
+		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
+		return new ModelAndView("tournamentPlayerStats", modelMap);
 	}
 
 	@GetMapping("/eventStats")

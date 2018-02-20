@@ -36,8 +36,8 @@
 				var url = $pill.data("url") + [(${params.param('season', season)})];
 				loadTab($pill, url);
 				[/]
-				[# th:case="'tournaments'"]
-				var $pill = $("#tournamentsPill");
+				[# th:case="'events'"]
+				var $pill = $("#eventsPill");
 				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('fromDate', fromDate)})] + [(${params.param('toDate', toDate)})];
 				url += [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('result', result)})] + [(${params.param('tournamentId', tournamentId)})];
 				loadTab($pill, url);
@@ -97,7 +97,8 @@
 	<ul id="playerPills" class="nav nav-pills">
 		<li><a id="profilePill" data-toggle="pill" href="#profile" th:data-url="'/playerProfileTab?playerId=' + ${player.id}">Profile</a></li>
 		<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/playerSeason?playerId=' + ${player.id}">Season</a></li>
-		<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" th:data-url="'/playerTournaments?playerId=' + ${player.id}">Tournaments</a></li>
+		<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" th:data-url="'/playerTournaments?playerId=' + ${player.id}">Tournaments<sup class="new-feature">&nbsp;New!</sup></a></li>
+		<li><a id="eventsPill" data-toggle="pill" href="#events" th:data-url="'/playerEvents?playerId=' + ${player.id}">Events</a></li>
 		<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/playerMatches?playerId=' + ${player.id}">Matches</a></li>
 		<li><a id="timelinePill" data-toggle="pill" href="#timeline" th:data-url="'/playerTimeline?playerId=' + ${player.id}">Timeline</a></li>
 		<li><a id="rivalriesPill" data-toggle="pill" href="#rivalries" th:data-url="'/playerRivalries?playerId=' + ${player.id}">Rivalries</a></li>
@@ -123,6 +124,7 @@
 		<div id="profile" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="season" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="tournaments" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="events" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="matches" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="timeline" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="rivalries" class="tab-pane fade"><div class="loading"></div></div>

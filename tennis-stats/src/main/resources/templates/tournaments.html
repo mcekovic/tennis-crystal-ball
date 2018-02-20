@@ -15,8 +15,6 @@
 			setBootgridColumnsVisible($tournamentsTable, ["seasons", "topPlayers"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($tournamentsTable, ["strength", "averageEloRating"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($tournamentsTable, ["participation"], deviceGreaterOrEqual(device, "sm"));
-			if (deviceGreaterOrEqual(device, "lg"))
-				setBootgridColumnsWidths($tournamentsTable, ["name"], [175]);
 			$tournamentsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {
@@ -35,9 +33,7 @@
 					characters: 2
 				},
 				formatters: {
-					"tournament": function(column, row) {
-						return "<a href='/tournament?tournamentId=" + row.id + "' title='Show tournament" + (row.extId ? " - " +  row.extId : "") + "'>" + row.name + "</a>";
-					},
+					"tournament": tournamentFormatter,
 					"levels": function(column, row) {
 						var levels = row.levels;
 						var s = "";
@@ -68,7 +64,7 @@
 						var topPlayers = row.topPlayers;
 						if (topPlayers.length === 0) return "";
 						var topPlayer = topPlayers[0];
-						var html = "<a href='/playerProfile?playerId=" + topPlayer.playerId + "&tab=tournaments&tournamentId=" + row.id + filterParams() + "&result=W' title='Show titles'>" + topPlayer.rank + " <i class='fa fa-trophy fa-b'></i></a> " + playerCountryFormatter(column, topPlayer);
+						var html = "<a href='/playerProfile?playerId=" + topPlayer.playerId + "&tab=events&tournamentId=" + row.id + filterParams() + "&result=W' title='Show titles'>" + topPlayer.rank + " <i class='fa fa-trophy fa-b'></i></a> " + playerCountryFormatter(column, topPlayer);
 						if (topPlayers.length > 1) {
 							var tiedPlayers = "<div class=\"text-left\">";
 							for (var i = 1; i < topPlayers.length; i++)

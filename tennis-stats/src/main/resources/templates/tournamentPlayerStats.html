@@ -1,0 +1,4 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+	<!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
+	<div th:include="fragments/playerStats :: playerStats(containerId='tournamentStatsPopover-' + ${tournamentId}, statsContainerId='tournamentStatsPopover-' + ${tournamentId}, statsId='tournamentStats-' + ${tournamentId}, popover=true)"></div>
+</th:block>

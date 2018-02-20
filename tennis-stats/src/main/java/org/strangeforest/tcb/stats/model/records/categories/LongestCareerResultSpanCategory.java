@@ -87,7 +87,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"INNER JOIN tournament_event le ON le.tournament_event_id = r.last_event_id\n" +
 			"WHERE age(le.date, fe.date) > INTERVAL '0 day'",
 			SPAN_COLUMNS, "r.value DESC", "r.value DESC, r.end_date",
-			TournamentCareerSpanRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s&result=%3$s&fromDate=%4$td-%4$tm-%4$tY&toDate=%5$td-%5$tm-%5$tY", playerId, domain.urlParam, type.urlParam, recordDetail.getStartDate(), recordDetail.getEndDate()),
+			TournamentCareerSpanRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s&result=%3$s&fromDate=%4$td-%4$tm-%4$tY&toDate=%5$td-%5$tm-%5$tY", playerId, domain.urlParam, type.urlParam, recordDetail.getStartDate(), recordDetail.getEndDate()),
 			SPAN_RECORD_COLUMNS
 		);
 	}
@@ -149,7 +149,7 @@ public class LongestCareerResultSpanCategory extends RecordCategory {
 			"GROUP BY player_id, grouping_season\n" +
 			"HAVING max(consecutive_seasons) > 1",
 			"r.value, r.start_season, r.end_season", "r.value DESC", "r.value DESC, r.end_season",
-			SeasonRangeIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s&result=%3$s&fromDate=01-01-%4$d&toDate=31-12-%5$d", playerId, domain.urlParam, type.urlParam, recordDetail.getStartSeason(), recordDetail.getEndSeason()),
+			SeasonRangeIntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s&result=%3$s&fromDate=01-01-%4$d&toDate=31-12-%5$d", playerId, domain.urlParam, type.urlParam, recordDetail.getStartSeason(), recordDetail.getEndSeason()),
 			asList(
 				new RecordColumn("value", null, "valueUrl", SEASONS_WIDTH, "right", "Seasons"),
 				new RecordColumn("startSeason", "numeric", null, SEASON_WIDTH, "center", "Start Season"),

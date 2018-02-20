@@ -1,7 +1,6 @@
 package org.strangeforest.tcb.stats.controller;
 
 import java.util.*;
-import java.util.function.*;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +12,7 @@ import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.collect.*;
 
-import static java.util.Collections.*;
 import static java.util.Comparator.*;
-import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.util.CompareUtil.*;
 
 @RestController
@@ -51,15 +48,5 @@ public class TournamentsResource {
 		Comparator<Tournament> comparator = BootgridUtil.getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
 		return tournamentService.getTournamentsTable(filter, comparator, pageSize, current);
-	}
-
-	private static <T, R> List<R> mapList(List<T> items, Function<? super T, ? extends R> mapper) {
-		return items.stream().map(mapper).collect(toList());
-	}
-
-	private static <T, R extends Comparable> List<R> mapSortList(List<T> items, Function<? super T, ? extends R> mapper) {
-		List<R> list = mapList(items, mapper);
-		sort(list);
-		return list;
 	}
 }

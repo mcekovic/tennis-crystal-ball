@@ -102,7 +102,7 @@
 			return function(column, row) {
 				var count = row[attr];
 				if (count > 0)
-					return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=tournaments&season=" + row.season + (surface ? "&surface=" + surface : "") + params + "' title='Show " + title + "'>" + count + "</a>";
+					return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=events&season=" + row.season + (surface ? "&surface=" + surface : "") + params + "' title='Show " + title + "'>" + count + "</a>";
 				else
 					return "<span class='text-muted'>" + ((attr.startsWith("olympics") && (row.season < 1984 || row.season % 4 !== 0) || ((attr.startsWith("tourFinals") || attr.startsWith("masters")) && row.season < 1970)) ? "-" : "0") + "</span>";
 			};

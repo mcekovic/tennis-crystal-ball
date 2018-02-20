@@ -21,8 +21,6 @@
 			setBootgridColumnsVisible($tournamentEventsTable, ["finalEx"], deviceGreaterOrEqual(device, "xl"));
 			setBootgridColumnsVisible($tournamentEventsTable, ["playerCount", "strength", "averageEloRating"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($tournamentEventsTable, ["final"], deviceGreaterOrEqual(device, "md") && deviceLessOrEqual(device, "lg"));
-			if (deviceGreaterOrEqual(device, "lg"))
-				setBootgridColumnsWidths($tournamentEventsTable, ["name"], [175]);
 			if (device === "md")
 				setBootgridColumnsWidths($tournamentEventsTable, ["final"], [400]);
 			$tournamentEventsTable.bootgrid({

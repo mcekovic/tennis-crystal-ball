@@ -105,7 +105,7 @@ public class PlayerProfileController extends PageController {
 		PlayerPerformance performance = performanceService.getPlayerPerformance(playerId);
 		FavoriteSurface favoriteSurface = new FavoriteSurface(performance);
 		int seasonCount = playerService.getPlayerSeasons(playerId).size();
-		BootgridTable<PlayerTournamentEvent> lastEvent = tournamentService.getPlayerTournamentEventResultsTable(playerId, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
+		BootgridTable<PlayerTournamentEvent> lastEvent = tournamentService.getPlayerTournamentEventsTable(playerId, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
 		Map<String, Integer> surfaceTitles = performanceService.getPlayerSurfaceTitles(playerId);
 		WonDrawLost playerH2H = rivalriesService.getPlayerH2H(playerId).orElse(null);
 
@@ -155,6 +155,24 @@ public class PlayerProfileController extends PageController {
 
 	@GetMapping("/playerTournaments")
 	public ModelAndView playerTournaments(
+		@RequestParam(name = "playerId") int playerId
+	) {
+		String name = playerService.getPlayerName(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("playerName", name);
+		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("results", EventResult.values());
+		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
+		return new ModelAndView("playerTournaments", modelMap);
+	}
+
+	@GetMapping("/playerEvents")
+	public ModelAndView playerEvents(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "season", required = false) Integer season,
 		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
@@ -188,7 +206,7 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("result", result);
 		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
-		return new ModelAndView("playerTournaments", modelMap);
+		return new ModelAndView("playerEvents", modelMap);
 	}
 
 	@GetMapping("/playerMatches")

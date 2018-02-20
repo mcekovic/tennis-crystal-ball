@@ -1,9 +1,12 @@
 package org.strangeforest.tcb.util;
 
 import java.util.*;
+import java.util.function.*;
 
-import static java.lang.Integer.*;
+import static java.lang.Integer.max;
+import static java.util.Collections.*;
 import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
 
 public abstract class CompareUtil {
 
@@ -24,5 +27,15 @@ public abstract class CompareUtil {
 				return result;
 		}
 		return 0;
+	}
+
+	public static <T, R> List<R> mapList(List<T> items, Function<? super T, ? extends R> mapper) {
+		return items.stream().map(mapper).collect(toList());
+	}
+
+	public static <T, R extends Comparable> List<R> mapSortList(List<T> items, Function<? super T, ? extends R> mapper) {
+		List<R> list = mapList(items, mapper);
+		sort(list);
+		return list;
 	}
 }

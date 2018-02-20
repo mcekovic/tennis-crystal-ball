@@ -23,7 +23,9 @@
 					"country": countryFormatter,
 					"player": playerFormatter,
 					"valueUrl": recordValueFormatter,
-					"tournament": tournamentFormatter,
+					"tournament": function (column, row) {
+						return "<a href='/tournament?tournamentId=" + row.tournamentId + "' class='label label-" + row.level + "' title='" + levelName(row.level) + "'>" + row.tournament + "</a>";
+					},
 					"tournamentEvent": tournamentEventFormatter,
 					"startTournamentEvent": startTournamentEventFormatter,
 					"endTournamentEvent": endTournamentEventFormatter,

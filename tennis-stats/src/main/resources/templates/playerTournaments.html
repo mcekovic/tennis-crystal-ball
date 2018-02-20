@@ -2,32 +2,19 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
 <!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="playerName" type="java.lang.String"*/-->
-<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
 <!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.core.TournamentLevel>"*/-->
 <!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
 <!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
 <!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
 <!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.core.EventResult[]"*/-->
-<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
-<!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
-<!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
-<!--/*@thymesVar id="toDate" type="java.time.LocalDate"*/-->
-<!--/*@thymesVar id="level" type="java.lang.String"*/-->
-<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
-<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
-<!--/*@thymesVar id="result" type="java.lang.String"*/-->
-<!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
-	<!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.core.StatsCategory>>"*/-->
+<!--/*@thymesVar id="categoryClasses" type="java.util.Map<java.lang.String, java.util.List<org.strangeforest.tcb.stats.model.core.StatsCategory>>"*/-->
 <script type="text/javascript">
-	var lastEventsStatsFilter;
+	var lastTournamentsStatsFilter;
 	$(function() {
-		var $eventsTable = $("#eventsTable");
+		var $tournamentsTable = $("#tournamentsTable");
 		var device = detectDevice();
-		setBootgridColumnsVisible($eventsTable, ["averageEloRating"], deviceGreaterOrEqual(device, "lg"));
-		setBootgridColumnsVisible($eventsTable, ["participation", "strength"], deviceGreaterOrEqual(device, "md"));
-		setBootgridColumnsVisible($eventsTable, ["season", "draw"], deviceGreaterOrEqual(device, "sm"));
-		setBootgridColumnsWidths($eventsTable, ["name"], [device == "xs" ? 150 : (device == "sm" ? 200 : (device == "md" ? 250 : 300))]);
-		$eventsTable.bootgrid({
+		setBootgridColumnsWidths($tournamentsTable, ["name"], [device === "xs" ? 150 : 200]);
+		$tournamentsTable.bootgrid({
 			ajax: true,
 			ajaxSettings: {
 				method: "GET",
@@ -35,33 +22,45 @@
 			},
 			url: "/playerTournamentsTable?playerId=[(${playerId})]",
 			requestHandler: function(request) {
-				request.season = $("#eventsSeason").val();
-				request.fromDate = $("#eventsFromDate").val();
-				request.toDate = $("#eventsToDate").val();
-				request.level = $("#eventsLevel").val();
-				request.surface = $("#eventsSurface").val();
-				request.indoor = $("#eventsIndoor").val();
-				request.result = $("#eventsResult").val();
-				request.tournamentId = $("#eventsTournament").val();
-				lastEventsStatsFilter = eventsStatsFilter();
-				if (lastEventsStatsFilter.hasFilter()) {
-					request.statsCategory = lastEventsStatsFilter.category;
-					request.statsFrom = lastEventsStatsFilter.from;
-					request.statsTo = lastEventsStatsFilter.to;
+				request.level = $("#tournamentsLevel").val();
+				request.surface = $("#tournamentsSurface").val();
+				request.result = $("#tournamentsResult").val();
+				lastTournamentsStatsFilter = tournamentsStatsFilter();
+				if (lastTournamentsStatsFilter.hasFilter()) {
+					request.statsCategory = lastTournamentsStatsFilter.category;
+					request.statsFrom = lastTournamentsStatsFilter.from;
+					request.statsTo = lastTournamentsStatsFilter.to;
 				}
 				return request;
 			},
 			rowCount: [15, 25, 50, -1],
 			formatters: {
-				"date": dateFormatter,
-				"tournament": tournamentEventFormatter,
-				"surface": surfaceFormatter,
-				"participation": participationFormatter,
-				"result": function(column, row) {
-					return "<a class='label black bg-result-" + row.result + "' href='/playerProfile?playerId=[(${playerId})]&tab=matches&tournamentEventId=" + row.tournamentEventId + "' title='Show tournament matches'>" + row.result + "</a>"
+				"tournament": tournamentFormatter,
+				"levels": function(column, row) {
+					var levels = row.levels;
+					var s = "";
+					for (var i = 0, count = Math.min(2, levels.length); i < count; i++) {
+						if (s !== "") s += " ";
+						s += "<a href='/playerProfile?playerId=[(${playerId})]&tab=events&tournamentId=" + row.id + "&level=" + levels[i] + "' class='label label-" + levels[i] + "' title='Show tournament events'>" + levelName(levels[i]) + "</a>";
+					}
+					return s;
+				},
+				"surfaces": function(column, row) {
+					var surfaces = row.surfaces;
+					var multi = surfaces.length > 1;
+					var s = "";
+					for (var i = 0, count = Math.min(3, surfaces.length); i < count; i++) {
+						if (s !== "") s += " ";
+						var surface = surfaces[i];
+						s += "<a href='/playerProfile?playerId=[(${playerId})]&tab=events&tournamentId=" + row.id + "&surface=" + surface + "' class='label label-" + surfaceClassSuffix(surface) + "' title='Show tournament events'>" + (multi ? surfaceShortName(surface) : surfaceName(surface)) + "</a>";
+					}
+					return s;
+				},
+				"eventCount": function(column, row) {
+					return "<a href='/playerProfile?playerId=[(${playerId})]&tab=events&tournamentId=" + row.id + "' title='Show tournament events'>" + row.eventCount + "</a>";
 				},
 				"stats": function(column, row) {
-					return "<a id='eventStats-" + row.tournamentEventId + "' href='#' class='label label-info label-btn' onclick='showEventStats(" + row.tournamentEventId + ", event)' title='[[${playerName}]] " + row.name + " " + row.season + " Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>";
+					return "<a id='tournamentStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showTournamentStats(" + row.id + ", event)' title='[[${playerName}]] " + row.name + " Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>";
 				}
 			},
 			labels: {
@@ -72,44 +71,32 @@
 				paginationItem: bootgridTemplatePaginationItem
 			}
 		}).on("load.rs.jquery.bootgrid", function() {
-			updateEventsStatsCategoryStat();
+			updateTournamentsStatsCategoryStat();
 		}).on("loaded.rs.jquery.bootgrid", function() {
-			$("#eventsStats").popover("destroy").removeClass("loaded");
+			$("#tournamentsStats").popover("destroy").removeClass("loaded");
 		});
-		var $eventsTableHeader = $("#eventsTable-header");
-		var $search = $eventsTableHeader.find("div.search");
-		$search.before($("#eventsTournamentDiv").remove());
-		$search.before($("#eventsMatches").remove());
-		$search.before($("#eventsStats").remove());
-		$search.after($("#eventsClear").remove());
-		dateRangePicker("eventsFromDate", "eventsToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
-		setBootgridTitles($eventsTable, [
-			{id: "participation", title: "[[#{event.participation.title}]]"},
-			{id: "strength", title: "[[#{event.strength.title}]]"},
-			{id: "averageEloRating", title: "[[#{event.averageEloRating.title}]]"}
-		]);
+		var $tournamentsTableHeader = $("#tournamentsTable-header");
+		var $search = $tournamentsTableHeader.find("div.search");
+		$search.before($("#tournamentsStats").remove());
+		$search.after($("#tournamentsClear").remove());
 		$("[data-toggle='tooltip']").tooltip();
 	});
-	function reloadEvents() {
-		if (validateEventsFilter())
-			$("#eventsTable").bootgrid("reload");
+	function reloadTournaments() {
+		$("#tournamentsTable").bootgrid("reload");
 	}
-	function eventsStatsFilter() {
-		return new StatsFilter($("#eventsStatsCategory"), $("#eventsStatsFrom"), $("#eventsStatsTo"))
+	function tournamentsStatsFilter() {
+		return new StatsFilter($("#tournamentsStatsCategory"), $("#tournamentsStatsFrom"), $("#tournamentsStatsTo"))
 	}
-	function validateEventsFilter() {
-		return getDate("eventsFromDate", "from date") !== null && getDate("eventsToDate", "to date") !== null && validateStatsFilter($("#eventsStatsFrom"), $("#eventsStatsTo"), $("#eventsStatsRange"));
+	function tournamentsStatsFilterChanged() {
+		if (!lastTournamentsStatsFilter.equals(tournamentsStatsFilter()))
+			reloadTournaments();
 	}
-	function eventsStatsFilterChanged() {
-		if (!lastEventsStatsFilter.equals(eventsStatsFilter()))
-			reloadEvents();
-	}
-	function updateEventsStatsCategoryStat() {
-		var $category = $("#eventsStatsCategory");
-		var $label = $("#eventsStatsCategoryLabel");
+	function updateTournamentsStatsCategoryStat() {
+		var $category = $("#tournamentsStatsCategory");
+		var $label = $("#tournamentsStatsCategoryLabel");
 		var category = $category.val();
 		if (category) {
-			var url = "/playerTournamentsStat" + eventsParams();
+			var url = "/playerTournamentsStat" + tournamentsParams();
 			url += "&statsCategory=" + category;
 			$.get(url, function (data) {
 				var type = $category.find(":selected").data("type");
@@ -127,169 +114,119 @@
 		else
 			$label.html("");
 	}
-	function eventsStatsCategoryChanged() {
-		updateEventsStatsCategoryStat();
-		eventsStatsFilterChanged();
+	function tournamentsStatsCategoryChanged() {
+		updateTournamentsStatsCategoryStat();
+		tournamentsStatsFilterChanged();
 	}
-	function clearEventsFilter() {
-		$("#eventsSeason").val("");
-		$("#eventsFromDate").val("");
-		$("#eventsToDate").val("");
-		$("#eventsLevel").val("");
-		$("#eventsSurface").val("");
-		$("#eventsIndoor").val("");
-		$("#eventsResult").val("");
-		$("#eventsTournament").val("");
-		$("#eventsStatsCategory").val("");
-		$("#eventsStatsFrom").val("");
-		$("#eventsStatsTo").val("");
-		$("#eventsTable").bootgrid("search", "");
-		reloadEvents();
+	function clearTournamentsFilter() {
+		$("#tournamentsLevel").val("");
+		$("#tournamentsSurface").val("");
+		$("#tournamentsResult").val("");
+		$("#tournamentsStatsCategory").val("");
+		$("#tournamentsStatsFrom").val("");
+		$("#tournamentsStatsTo").val("");
+		$("#tournamentsTable").bootgrid("search", "");
+		reloadTournaments();
 	}
-	function eventsParams() {
+	function tournamentsParams() {
 		var params = "?playerId=[(${playerId})]";
-		params += "&season=" + $("#eventsSeason").val();
-		params += "&fromDate=" + $("#eventsFromDate").val();
-		params += "&toDate=" + $("#eventsToDate").val();
-		params += "&level=" + $("#eventsLevel").val();
-		params += "&surface=" + $("#eventsSurface").val();
-		params += "&indoor=" + $("#eventsIndoor").val();
-		params += "&result=" + encodeURIComponent($("#eventsResult").val());
-		params += "&tournamentId=" + $("#eventsTournament").val();
-		params += "&searchPhrase=" + $("#eventsTable-header").find("input.search-field").val();
+		params += "&level=" + $("#tournamentsLevel").val();
+		params += "&surface=" + $("#tournamentsSurface").val();
+		params += "&result=" + encodeURIComponent($("#tournamentsResult").val());
+		params += "&searchPhrase=" + $("#tournamentsTable-header").find("input.search-field").val();
 		return params;
 	}
-	function showEventsMatches() {
-		window.location.href = "/playerProfile" + eventsParams() + "&tab=matches";
-	}
-	function showEventsStats(event) {
-		if (!validateEventsFilter())
-			return;
-		var $eventsStats = $("#eventsStats");
-		if (!$eventsStats.hasClass("loaded")) {
+	function showTournamentsStats(event) {
+		var $tournamentsStats = $("#tournamentsStats");
+		if (!$tournamentsStats.hasClass("loaded")) {
 			event.preventDefault();
-			var url = "/eventsStats" + eventsParams();
-			var statsFilter = eventsStatsFilter();
+			var url = "/tournamentsStats" + tournamentsParams();
+			var statsFilter = tournamentsStatsFilter();
 			if (statsFilter.hasFilter()) {
 				url += "&statsCategory=" + statsFilter.category;
 				url += "&statsFrom=" + statsFilter.from;
 				url += "&statsTo=" + statsFilter.to;
 			}
 			$.get(url, function(data) {
-				$eventsStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
-				$eventsStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
-				$eventsStats.data("statsURL", url);
+				$tournamentsStats.addClass("loaded").popover({content: data, html: true, placement: "auto left"});
+				$tournamentsStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
+				$tournamentsStats.data("statsURL", url);
 			});
 		}
 	}
-	function showEventStats(tournamentEventId, event) {
-		var $eventStats = $("#eventStats-" + tournamentEventId);
-		if (!$eventStats.hasClass("loaded")) {
+	function showTournamentStats(tournamentId, event) {
+		var $tournamentStats = $("#tournamentStats-" + tournamentId);
+		if (!$tournamentStats.hasClass("loaded")) {
 			event.preventDefault();
-			var url = "/eventStats?playerId=[(${playerId})]&tournamentEventId=" + tournamentEventId;
+			var url = "/tournamentPlayerStats?playerId=[(${playerId})]&tournamentId=" + tournamentId;
 			$.get(url, function(data) {
-				$eventStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
-				$eventStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
-				$eventStats.data("statsURL", url);
+				$tournamentStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
+				$tournamentStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
+				$tournamentStats.data("statsURL", url);
 			});
 		}
 	}
 </script>
 <div class="row">
 	<div class="col-md-2">
-		<select id="eventsSeason" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
-			<option value="">Career</option>
-			<option value="-1" th:selected="${season == -1}">Last 52 weeks</option>
-			<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2005" th:text="${aSeason}" th:selected="${aSeason == season}">2005</option>
-		</select>
-	</div>
-	<div class="col-md-2">
-		<select id="eventsLevel" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+		<select id="tournamentsLevel" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 			<option value="">All levels</option>
-			<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
-			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFLMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
+			<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
+			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFLMO" th:text="${levelGroup.text}">Big Tournaments</option>
 		</select>
 	</div>
 	<div class="col-md-2">
-		<select id="eventsSurface" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+		<select id="tournamentsSurface" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 			<option value="">All surfaces</option>
-			<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
-			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes.length() > 1 && surfaceGroup.codes == surface}">Fast (H, G, Cp)</option>
+			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
 		</select>
 	</div>
 	<div class="col-md-2">
-		<select id="eventsIndoor" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
-			<option value="">Outdoor / Indoor</option>
-			<option value="false" th:selected="${indoor == false}">Outdoor</option>
-			<option value="true" th:selected="${indoor}">Indoor</option>
-		</select>
-	</div>
-	<div class="col-md-2">
-		<select id="eventsResult" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by result">
+		<select id="tournamentsResult" class="form-control" onchange="reloadTournaments()" data-toggle="tooltip" data-placement="top" title="Filter by result">
 			<option value="">All results</option>
-			<option th:each="aResult : ${results}" th:value="${aResult.code}" th:class="|bg-result-${aResult.baseCode}|" value="W" class="bg-result-W" th:text="${aResult.text}" th:selected="${aResult.code == result}">Win</option>
+			<option th:each="result : ${results}" th:value="${result.code}" th:class="|bg-result-${result.baseCode}|" value="W" class="bg-result-W" th:text="${result.text}">Win</option>
 		</select>
 	</div>
 	<div class="col-md-2">
 		<div data-toggle="tooltip" data-placement="auto" title="Advanced filters">
-			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#eventsAdvancedFilter">
+			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#tournamentsAdvancedFilter">
 				<i class="fa fa-folder-open"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
 			</button>
 		</div>
 	</div>
 </div>
-<div id="eventsAdvancedFilter" class="row margin-top collapse" th:attrappend="class=${fromDate != null || toDate != null ? ' in' : _}">
-	<div class="col-md-4">
-		<div id="eventsDateRange" class="input-group">
-			<label for="eventsFromDate" class="input-group-addon">From:</label>
-			<input id="eventsFromDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(fromDate, 'dd-MM-yyyy')}" onchange="reloadEvents()"/>
-			<label for="eventsToDate" class="input-group-addon">To:</label>
-			<input id="eventsToDate" type="text" maxlength="10" class="form-control" th:value="${#temporals.format(toDate, 'dd-MM-yyyy')}" onchange="reloadEvents()"/>
-		</div>
-	</div>
+<div id="tournamentsAdvancedFilter" class="row margin-top collapse">
 	<div class="col-md-7">
 		<div class="input-group">
-			<select id="eventsStatsCategory" style="width: 220px" class="form-control" onchange="eventsStatsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
+			<select id="tournamentsStatsCategory" style="width: 220px" class="form-control" onchange="tournamentsStatsCategoryChanged()" data-toggle="tooltip" data-placement="top" title="Select statistics category">
 				<option value="">Select statistics category</option>
 				<optgroup th:each="categoryClass : ${categoryClasses}" th:label="${categoryClass.key}" label="Serve">
 					<option th:each="category : ${categoryClass.value}" th:value="${category.name}" value="aces" th:data-type="${category.type}" data-type="COUNT" th:text="${category.title}" th:title="#{__${category.descriptionId}__}">Aces</option>
 				</optgroup>
 			</select>
-			<label id="eventsStatsCategoryLabel" for="eventsStatsCategory" class="input-group-addon" style="width: 75px" data-toggle="tooltip" data-placement="top" title="Statistics category value for the selected filter"></label>
-			<label for="eventsStatsFrom" class="input-group-addon">From:</label>
-			<input id="eventsStatsFrom" type="text" maxlength="6" class="form-control" oninput="eventsStatsFilterChanged()" onchange="eventsStatsFilterChanged()"/>
-			<label id="eventsStatsRange" for="eventsStatsTo" class="input-group-addon">To:</label>
-			<input id="eventsStatsTo" type="text" maxlength="6" class="form-control" oninput="eventsStatsFilterChanged()" onchange="eventsStatsFilterChanged()"/>
+			<label id="tournamentsStatsCategoryLabel" for="tournamentsStatsCategory" class="input-group-addon" style="width: 75px" data-toggle="tooltip" data-placement="top" title="Statistics category value for the selected filter"></label>
+			<label for="tournamentsStatsFrom" class="input-group-addon">From:</label>
+			<input id="tournamentsStatsFrom" type="text" maxlength="6" class="form-control" oninput="tournamentsStatsFilterChanged()" onchange="tournamentsStatsFilterChanged()"/>
+			<label id="tournamentsStatsRange" for="tournamentsStatsTo" class="input-group-addon">To:</label>
+			<input id="tournamentsStatsTo" type="text" maxlength="6" class="form-control" oninput="tournamentsStatsFilterChanged()" onchange="tournamentsStatsFilterChanged()"/>
 		</div>
 	</div>
 </div>
-<div id="eventsTournamentDiv" class="btn-group pull-left margin-right no-margin-left" style="width: 210px">
-	<select id="eventsTournament" class="form-control" onchange="reloadEvents()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
-		<option value="">All tournaments</option>
-		<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
-	</select>
-</div>
-<button id="eventsMatches" type="button" class="btn btn-info grid-control margin-right" onclick="showEventsMatches()" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Matches (for the selected tournaments)|">
-	<span class="glyphicon glyphicon-list"></span>&nbsp;&nbsp;Matches
-</button>
-<button id="eventsStats" type="button" class="btn btn-info grid-control margin-right" onclick="showEventsStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected tournaments)|">
+<button id="tournamentsStats" type="button" class="btn btn-info grid-control margin-right" onclick="showTournamentsStats(event)" data-toggle="tooltip" data-placement="top" th:title="|${playerName} Statistics (for the selected tournaments)|">
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats
 </button>
-<button id="eventsClear" type="button" class="btn btn-default grid-control margin-right" onclick="clearEventsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+<button id="tournamentsClear" type="button" class="btn btn-default grid-control margin-right" onclick="clearTournamentsFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
 	<i class="fa fa-eraser"></i>&nbsp;&nbsp;Clear
 </button>
-<table id="eventsTable" class="table table-condensed table-hover table-striped">
+<table id="tournamentsTable" class="table table-condensed table-hover table-striped">
 	<thead>
 	<tr>
-		<th data-column-id="season" data-type="numeric" data-width="80">Season</th>
-		<th data-column-id="date" data-formatter="date" data-order="desc" data-width="85">Date</th>
 		<th data-column-id="name" data-formatter="tournament" data-width="200">Tournament</th>
-		<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
-		<th data-column-id="draw" data-width="65">Draw</th>
-		<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>
-		<th data-column-id="strength" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Str.</th>
-		<th data-column-id="averageEloRating" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Elo</th>
-		<th data-column-id="result" data-formatter="result" data-width="75" data-align="center" data-header-align="center">Result</th>
+		<th data-column-id="levels" data-formatter="levels" data-width="140">Level</th>
+		<th data-column-id="surfaces" data-formatter="surfaces" data-width="110">Surface</th>
+		<th data-column-id="eventCount" data-formatter="eventCount" data-width="75">Events</th>
+		<th data-column-id="seasons" data-width="200" data-sortable="false">Seasons</th>
 		<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>
 	</tr>
 	</thead>
