@@ -10,18 +10,32 @@
 	<div class="hidden" id="tournamentSimulationPopover">
 		<div class="popover-title"><strong>Tournament Simulation</strong></div>
 		<div class="popover-content">
-			Tournament Simulation is driven by individual Match Prediction. In each round, probabilities for each match in the draw are calculated using Neural Network Match Prediction Algorithm.<br/>
-			Lets name match probability that player A wins over player B as <span class="text-nowrap"><strong>Pm<sub>A vs B</sub></strong></span>.<br/>
-			These probabilities determine the probability for each player to pass to the second round <span class="text-nowrap"><strong>Pr<sub>A</sub>(R2) = Pm<sub>A vs B</sub></strong></span>.<br/>
-			Probability of the player A to reach the next round R+1 is calculated this way:<br/>
-			<span class="text-nowrap"><strong>Pr<sub>A</sub>(R+1) = Pr<sub>A</sub>(R) * &Sigma;<sub>N=1-n</sub> ( Pr<sub>N</sub>(R) * Pm<sub>A vs N</sub> )</strong></span><br/>
-			This means that probability for player A to reach the next round R+1 depend on probability for player A to reach the previous round R multiplied by the weighted sum of probabilities for player A to win over his potential opponents in the next round.
-			Weights of the potential opponents are the probabilities of each opponent to reach the round R.<br/>
-			That means for example, that probability for player A to win the title depends on the probability of the player A to reach the final
-			as well as probabilities of all players in the other half of the draw to reach the final multiplied by probabilities for player A to win the final match over the each of them.<br/>
-			As tournament progresses, outcome of some matches gets known, thus the match probabilities are set to 100% and 0% for the winner and for the loser respectively.<br/>
-			Sometimes, as initial tournament draws are out, they include unknown qualifiers. Probability for the player to win over the unknown qualifier is determined by variation of the Match Prediction algorithm that includes player's winning percentage vs qualifiers, overall and by surface, level, etc...<br/>
-			Elo Ratings are recalculated after the each round and Elo rating points earned by wins in previous rounds are presented in brackets.
+			<p><strong>About Tournament Simulation</strong></p>
+			<p>
+				Tournament Simulation is driven by individual Match Prediction. In each round, probabilities for each match in the draw are calculated using Neural Network Match Prediction Algorithm.<br/>
+				Based on this probabilities, chances for probable matchups in the further tournament rounds are calculated. Finally, probability of the player to win the title is calculated as a multiplier of probabilities to win in the each or the rounds.<br/>
+				If the round is far, like semi-final or final, there are many potential opponents. For example, probability to win in the final depends on probabilities of players in the other half of the draw to reach the final, as well as on the probability of the player to win against each of them.
+			</p>
+			<p><strong>Tracking Tournament Progress</strong></p>
+			<p>
+				As tournament progresses, outcome of some matches gets known, thus the match probabilities are set to 100% and 0% for the winner and for the loser respectively.<br/>
+				Elo Ratings are recalculated after the each round and Elo rating points earned/lost by wins/loss in all the previous rounds (including current round if match is finished) are presented in brackets.
+			</p>
+			<p><strong>Unknown Qualifiers</strong></p>
+			<p>
+				Sometimes, as initial tournament draws are out, they include unknown qualifiers. Probability for the player to win over the unknown qualifier is determined by variation of the Match Prediction algorithm that includes average Elo Rating and ATP ranking points of the qualifiers as well as winning percentage vs qualifiers, overall and by surface, level, etc...
+			</p>
+			<p><strong>Mathematical details</strong></p>
+			<p>
+				Lets name match probability that player A wins over player B as <span class="text-nowrap"><strong>Pm<sub>A vs B</sub></strong></span>.<br/>
+				These probabilities determine the probability for each player to pass to the second round <span class="text-nowrap"><strong>Pr<sub>A</sub>(R2) = Pm<sub>A vs B</sub></strong></span>.<br/>
+				Probability of the player A to reach the next round R+1 is calculated this way:<br/>
+				<span class="text-nowrap"><strong>Pr<sub>A</sub>(R+1) = Pr<sub>A</sub>(R) * &Sigma;<sub>N=1-n</sub> ( Pr<sub>N</sub>(R) * Pm<sub>A vs N</sub> )</strong></span><br/>
+				This means that probability for player A to reach the next round R+1 depend on probability for player A to reach the previous round R multiplied by the weighted sum of probabilities for player A to win over his potential opponents in the next round.
+				Weights of the potential opponents are the probabilities of each opponent to reach the round R.<br/>
+				That means for example, that probability for player A to win the title depends on the probability of the player A to reach the final
+				as well as probabilities of all players in the other half of the draw to reach the final multiplied by probabilities for player A to win the final match over the each of them.
+			</p>
 		</div>
 	</div>
 </th:block>
@@ -29,13 +43,26 @@
 	<div class="hidden" id="matchPredictionPopover">
 		<div class="popover-title"><strong>Neural Network Match Prediction Algorithm</strong></div>
 		<div class="popover-content">
-			Match Prediction is based on the Neural Network Algorithm with ~60 neurons for different features about players like Elo Rating, Surface Elo Rating, ATP Points, Recent Form,
-			Head-to-Head ratios and Winning Percentages varied by surface, tournament level, tournament, round, recency, match or set ratios, vs rank, vs hand, vs backhand...<br/>
-			Neural Network is trained on historical data for highest prediction rates to determine optimal feature weights.<br/>
-			In order to further increase prediction accuracy, Neural Network is trained specifically for different surfaces, resulting in different feature weights per surface.<br/>
-			During training, some neurons are determined to be useless and they are removed from the network, thus about ~40 neurons remain.<br/>
-			Elo Ratings, overall and by surface, are the main contributors to the match prediction, following by recent form, winning percentages and H2H percentages.<br/>
-			Elo Rating neurons individually give high prediction rates, but when they are combined with recent form, H2H and various winning percentages, the prediction accuracy is even further increased.
+			<p><strong>About Match Prediction Algorithm</strong></p>
+			<p>
+				Match Prediction is based on players' previous results and track records.<br/>
+				Previous results are analyzed by the Neural Network Algorithm with ~60 neurons for different features about players like Elo Rating, Surface Elo Rating, ATP Points, Recent Form,
+				Head-to-Head ratios and Winning Percentages varied by surface, tournament level, tournament, round, recency, match or set ratios, vs rank, vs hand, vs backhand...
+			</p>
+			<p><strong>Training and Tuning</strong></p>
+			<p>
+				Neural Network is trained on the historical data for the highest prediction rates and to determine optimal feature weights.<br/>
+				In order to further increase prediction accuracy, Neural Network is trained specifically for different surfaces, resulting in different feature weights per surface.<br/>
+				During training, some neurons are determined to be useless and they are removed from the network, thus about ~40 neurons remain.
+			</p>
+			<p><strong>Primary and Secondary Probability Contributors</strong></p>
+			<p>
+				Elo Ratings, overall and by surface, are the primary contributors to the match prediction, following by recent form, winning percentages and H2H percentages.<br/>
+				Elo Rating neurons individually give high prediction rates, but when they are combined with recent form, H2H and various winning percentages, the prediction accuracy is even further increased.<br/>
+				However, importance of the secondary contributors is very surface dependent, so for example on clay and grass, recent form is pretty much irrelevant, because of the surface change and relatively short lengths of the clay and grass seasons.<br/>
+				While winning percentages and H2H are more or less equally important on clay, H2H is mostly irrelevant on grass (H2H patterns that are observable on hard and clay do not stand out on grass).<br/>
+				On hard court, recent form is pretty much relevant (due to the length of hard-court season), alongside winning percentages and H2H.
+			</p>
 		</div>
 	</div>
 </th:block>
