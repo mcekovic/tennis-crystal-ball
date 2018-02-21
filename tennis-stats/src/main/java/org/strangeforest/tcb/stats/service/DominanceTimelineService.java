@@ -48,15 +48,15 @@ public class DominanceTimelineService {
 
 	private static final String AVERAGE_ELO_RATINGS_QUERY = //language=SQL
 		"SELECT extract(YEAR FROM rank_date) AS season,\n" +
-		"  round(avg(%1$selo_rating) FILTER (WHERE rank = 1)) AS average_no1_elo_rating,\n" +
-		"  round(avg(%1$selo_rating) FILTER (WHERE rank <= 2)) average_top2_elo_rating,\n" +
-		"  round(avg(%1$selo_rating) FILTER (WHERE rank <= 3)) average_top3_elo_rating,\n" +
-		"  round(avg(%1$selo_rating) FILTER (WHERE rank <= 5)) average_top5_elo_rating,\n" +
-		"  round(avg(%1$selo_rating) FILTER (WHERE rank <= 10)) average_top10_elo_rating,\n" +
-		"  round(avg(%1$selo_rating) FILTER (WHERE rank <= 20)) average_top20_elo_rating,\n" +
-		"  round(avg(%1$selo_rating) FILTER (WHERE rank <= 50)) average_top50_elo_rating,\n" +
-		"  round(avg(%1$selo_rating) FILTER (WHERE rank <= 100)) average_top100_elo_rating,\n" +
-		"  round(avg(%1$selo_rating) FILTER (WHERE rank <= 200)) average_top200_elo_rating\n" +
+		"  round(avg(%1$selo_rating) FILTER (WHERE %1$srank = 1)) AS average_no1_elo_rating,\n" +
+		"  round(avg(%1$selo_rating) FILTER (WHERE %1$srank <= 2)) average_top2_elo_rating,\n" +
+		"  round(avg(%1$selo_rating) FILTER (WHERE %1$srank <= 3)) average_top3_elo_rating,\n" +
+		"  round(avg(%1$selo_rating) FILTER (WHERE %1$srank <= 5)) average_top5_elo_rating,\n" +
+		"  round(avg(%1$selo_rating) FILTER (WHERE %1$srank <= 10)) average_top10_elo_rating,\n" +
+		"  round(avg(%1$selo_rating) FILTER (WHERE %1$srank <= 20)) average_top20_elo_rating,\n" +
+		"  round(avg(%1$selo_rating) FILTER (WHERE %1$srank <= 50)) average_top50_elo_rating,\n" +
+		"  round(avg(%1$selo_rating) FILTER (WHERE %1$srank <= 100)) average_top100_elo_rating,\n" +
+		"  round(avg(%1$selo_rating) FILTER (WHERE %1$srank <= 200)) average_top200_elo_rating\n" +
 		"FROM player_elo_ranking\n" +
 		"GROUP BY season\n" +
 		"ORDER BY season DESC";

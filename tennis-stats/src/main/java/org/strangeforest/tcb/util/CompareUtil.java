@@ -11,9 +11,14 @@ import static java.util.stream.Collectors.*;
 public abstract class CompareUtil {
 
 	private static final Comparator NULLS_LAST_COMPARATOR = nullsLast(naturalOrder());
+	private static final Comparator NULLS_FIRST_COMPARATOR = nullsFirst(naturalOrder());
 
 	public static <T extends Comparable<T>> int nullsLastCompare(T t1, T t2) {
 		return Objects.compare(t1, t2, NULLS_LAST_COMPARATOR);
+	}
+
+	public static <T extends Comparable<T>> int nullsFirstCompare(T t1, T t2) {
+		return Objects.compare(t1, t2, NULLS_FIRST_COMPARATOR);
 	}
 
 	public static <T extends Comparable<T>> int compareLists(List<T> list1, List<T> list2) {

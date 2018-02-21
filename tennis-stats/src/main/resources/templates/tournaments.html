@@ -59,6 +59,7 @@
 					"eventCount": function(column, row) {
 					  	return "<a href='/tournamentEvents?tournamentId=" + row.id + filterParams() + "' title='Show tournament events'>" + row.eventCount + "</a>";
 					},
+					"seasons": seasonsFormatter,
 					"participation": participationFormatter,
 					"topPlayer": function(column, row) {
 						var topPlayers = row.topPlayers;
@@ -158,7 +159,7 @@
 			<th data-column-id="levels" data-formatter="levels" data-width="140">Level</th>
 			<th data-column-id="surfaces" data-formatter="surfaces" data-width="110">Surface</th>
 			<th data-column-id="eventCount" data-formatter="eventCount" data-width="75">Events</th>
-			<th data-column-id="seasons" data-width="180" data-sortable="false">Seasons</th>
+			<th data-column-id="seasons" data-formatter="seasons" data-width="180" data-sortable="false">Seasons</th>
 			<th data-column-id="playerCount" data-type="numeric" data-visible="false" data-width="55" data-align="right" data-header-align="right">Pls.</th>
 			<th data-column-id="participation" data-formatter="participation" data-width="60" data-align="right" data-header-align="right">Part.</th>
 			<th data-column-id="strength" data-type="numeric" data-width="50" data-align="right" data-header-align="right">Str.</th>

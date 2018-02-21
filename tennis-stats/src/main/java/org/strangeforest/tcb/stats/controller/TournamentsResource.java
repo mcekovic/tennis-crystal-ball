@@ -13,6 +13,7 @@ import org.strangeforest.tcb.stats.util.*;
 import com.google.common.collect.*;
 
 import static java.util.Comparator.*;
+import static org.strangeforest.tcb.stats.util.BootgridUtil.*;
 import static org.strangeforest.tcb.util.CompareUtil.*;
 
 @RestController
@@ -47,6 +48,6 @@ public class TournamentsResource {
 		TournamentEventFilter filter = new TournamentEventFilter(null, null, level, surface, null, null, null, searchPhrase);
 		Comparator<Tournament> comparator = BootgridUtil.getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
-		return tournamentService.getTournamentsTable(filter, comparator, pageSize, current);
+		return sortAndPage(tournamentService.getTournaments(filter), comparator, pageSize, current);
 	}
 }

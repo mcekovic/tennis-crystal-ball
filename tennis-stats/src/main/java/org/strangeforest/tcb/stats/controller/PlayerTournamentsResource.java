@@ -8,18 +8,17 @@ import org.strangeforest.tcb.stats.model.*;
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
-import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.collect.*;
 
 import static java.util.Comparator.*;
+import static org.strangeforest.tcb.stats.util.BootgridUtil.*;
 import static org.strangeforest.tcb.util.CompareUtil.*;
 
 @RestController
 public class PlayerTournamentsResource {
 
 	@Autowired private TournamentService tournamentService;
-	@Autowired private StatisticsService statisticsService;
 
 	private static final int MAX_TOURNAMENTS = 1000;
 
@@ -30,6 +29,10 @@ public class PlayerTournamentsResource {
 		.put("levels", BY_LEVEL)
 		.put("surfaces", (t1, t2) -> compareLists(mapList(t1.getSurfaces(), Surface::decode), mapList(t2.getSurfaces(), Surface::decode)))
 		.put("eventCount", comparing(PlayerTournament::getEventCount))
+		.put("bestResult", comparing(PlayerTournament::bestResult))
+		.put("lastResult", comparing(PlayerTournament::lastResult))
+		.put("wonPct", comparing(PlayerTournament::wonLost))
+		.put("titles", comparing(PlayerTournament::getTitles))
 	.build();
 
 	@GetMapping("/playerTournamentsTable")
@@ -37,34 +40,16 @@ public class PlayerTournamentsResource {
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "result", required = false) String result,
-		@RequestParam(name = "statsCategory", required = false) String statsCategory,
-		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
-		@RequestParam(name = "statsTo", required = false) Double statsTo,
 		@RequestParam(name = "current", defaultValue = "1") int current,
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase,
 		@RequestParam Map<String, String> requestParams
 	) {
-		StatsFilter statsFilter = StatsFilter.forTournaments(statsCategory, statsFrom, statsTo);
-		TournamentEventResultFilter filter = new TournamentEventResultFilter(null, null, level, surface, null, result, null, statsFilter, searchPhrase);
-		Comparator<PlayerTournament> comparator = BootgridUtil.getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
+		TournamentEventResultFilter filter = new TournamentEventResultFilter(null, null, level, surface, indoor, result, null, null, searchPhrase);
+		Comparator<PlayerTournament> comparator = getComparator(requestParams, ORDER_MAP, BY_LEVEL.thenComparing(BY_NAME));
 		int pageSize = rowCount > 0 ? rowCount : MAX_TOURNAMENTS;
-		return tournamentService.getPlayerTournamentsTable(playerId, filter, comparator, pageSize, current);
-	}
-
-	@GetMapping("/playerTournamentsStat")
-	public Number playerTournamentsStat(
-		@RequestParam(name = "playerId") int playerId,
-		@RequestParam(name = "level", required = false) String level,
-		@RequestParam(name = "surface", required = false) String surface,
-		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "result", required = false) String result,
-		@RequestParam(name = "statsCategory", required = false) String statsCategory,
-		@RequestParam(name = "searchPhrase", defaultValue="") String searchPhrase
-	) {
-		MatchFilter filter = MatchFilter.forStats(null, null, level, surface, indoor, result, null, StatsFilter.ALL, searchPhrase);
-		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
-		return StatsCategory.get(statsCategory).getStat(stats);
+		return sortAndPage(tournamentService.getPlayerTournaments(playerId, filter), comparator, pageSize, current);
 	}
 }

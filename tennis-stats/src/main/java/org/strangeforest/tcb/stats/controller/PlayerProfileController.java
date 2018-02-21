@@ -153,24 +153,6 @@ public class PlayerProfileController extends PageController {
 		return new ModelAndView("playerSeason", modelMap);
 	}
 
-	@GetMapping("/playerTournaments")
-	public ModelAndView playerTournaments(
-		@RequestParam(name = "playerId") int playerId
-	) {
-		String name = playerService.getPlayerName(playerId);
-
-		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("playerId", playerId);
-		modelMap.addAttribute("playerName", name);
-		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
-		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
-		modelMap.addAttribute("surfaces", Surface.values());
-		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
-		modelMap.addAttribute("results", EventResult.values());
-		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
-		return new ModelAndView("playerTournaments", modelMap);
-	}
-
 	@GetMapping("/playerEvents")
 	public ModelAndView playerEvents(
 		@RequestParam(name = "playerId") int playerId,
@@ -185,7 +167,7 @@ public class PlayerProfileController extends PageController {
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
+		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
@@ -232,8 +214,8 @@ public class PlayerProfileController extends PageController {
 	) {
 		String name = playerService.getPlayerName(playerId);
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
-		List<TournamentEventItem> tournamentEvents = tournamentService.getPlayerTournamentEvents(playerId);
+		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
+		List<TournamentEventItem> tournamentEvents = tournamentService.getPlayerTournamentEventItems(playerId);
 		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 
 		ModelMap modelMap = new ModelMap();
@@ -360,7 +342,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
+		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
 		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
@@ -433,7 +415,7 @@ public class PlayerProfileController extends PageController {
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
 		List<Integer> seasons = playerService.getPlayerSeasons(playerId);
-		List<TournamentItem> tournaments = tournamentService.getPlayerTournaments(playerId);
+		List<TournamentItem> tournaments = tournamentService.getPlayerTournamentItems(playerId);
 		List<CountryCode> countries = matchesService.getOpponentCountries(playerId);
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
@@ -496,6 +478,23 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("categoryTypes", StatsCategory.getCategoryTypes());
 		modelMap.addAttribute("categoryClasses", StatsCategory.getCategoryClasses());
 		return new ModelAndView("playerStatsChart", modelMap);
+	}
+
+	@GetMapping("/playerTournaments")
+	public ModelAndView playerTournaments(
+		@RequestParam(name = "playerId") int playerId
+	) {
+		String name = playerService.getPlayerName(playerId);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("playerName", name);
+		modelMap.addAttribute("levels", TournamentLevel.MAIN_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.INDIVIDUAL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("results", EventResult.values());
+		return new ModelAndView("playerTournaments", modelMap);
 	}
 
 	@GetMapping("/playerGOATPoints")

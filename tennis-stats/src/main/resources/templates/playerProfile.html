@@ -61,7 +61,7 @@
 				[/]
 				[# th:case="'performance'"]
 				var $pill = $("#performancePill");
-				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('level', level)})] + [(${params.param('surface', surface)})];
+				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('level', level)})] + [(${params.param('surface', surface)})] + [(${params.param('indoor', indoor)})] + [(${params.param('result', result)})] + [(${params.param('tournamentId', tournamentId)})];
 				loadTab($pill, url);
 				[/]
 				[# th:case="'statistics'"]

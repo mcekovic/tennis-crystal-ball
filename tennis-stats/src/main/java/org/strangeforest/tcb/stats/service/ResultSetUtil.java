@@ -2,6 +2,7 @@ package org.strangeforest.tcb.stats.service;
 
 import java.sql.*;
 import java.time.*;
+import java.time.format.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -46,5 +47,14 @@ public abstract class ResultSetUtil {
 
 	public static void bindStringArray(PreparedStatement ps, int index, String[] strings) throws SQLException {
 		ps.setArray(index, ps.getConnection().createArrayOf("text", strings));
+	}
+
+
+	// JSON Parsing
+
+	private static final String DATE_FORMAT = "yyyy-MM-dd";
+
+	public static LocalDate parseJSONDate(String date) {
+		return LocalDate.parse(date, DateTimeFormatter.ofPattern(DATE_FORMAT));
 	}
 }

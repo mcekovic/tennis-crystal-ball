@@ -2,6 +2,8 @@ package org.strangeforest.tcb.stats.util;
 
 import java.util.*;
 
+import org.strangeforest.tcb.stats.model.table.*;
+
 public abstract class BootgridUtil {
 
 	public static String getOrderBy(Map<String, String> params, Map<String, String> orderMap, OrderBy... defaultOrders) {
@@ -54,5 +56,15 @@ public abstract class BootgridUtil {
 
 	private static <T> Comparator<T> chain(Comparator<T> c1, Comparator<T> c2) {
 		return c2 != null ? (c1 != null ? c1.thenComparing(c2) : c2) : c1;
+	}
+
+	public static <T> BootgridTable<T> sortAndPage(List<T> rows, Comparator<T> comparator, int pageSize, int currentPage) {
+		BootgridTable<T> table = new BootgridTable<>(currentPage);
+		int offset = (currentPage - 1) * pageSize;
+		int endOffset = Math.min(offset + pageSize, rows.size());
+		rows.sort(comparator);
+		table.addRows(rows.subList(offset, endOffset));
+		table.setTotal(rows.size());
+		return table;
 	}
 }

@@ -31,10 +31,8 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "level", required = false) String level,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "result", required = false) String result,
-		@RequestParam(name = "statsCategory", required = false) String statsCategory,
-		@RequestParam(name = "statsFrom", required = false) Double statsFrom,
-		@RequestParam(name = "statsTo", required = false) Double statsTo,
 		@RequestParam(name = "searchPhrase", required = false) String searchPhrase,
 		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "compare", defaultValue = F) boolean compare,
@@ -42,8 +40,7 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		StatsFilter statsFilter = StatsFilter.forStats(statsCategory, statsFrom, statsTo);
-		MatchFilter filter = MatchFilter.forStats(null, null, level, surface, null, result, null, statsFilter, searchPhrase);
+		MatchFilter filter = MatchFilter.forStats(null, null, level, surface, indoor, result, null, null, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();
@@ -137,13 +134,18 @@ public class PlayerStatsController extends BaseController {
 	public ModelAndView tournamentPlayerStats(
 		@RequestParam(name = "playerId") int playerId,
 		@RequestParam(name = "tournamentId") int tournamentId,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "result", required = false) String result,
+		@RequestParam(name = "searchPhrase", required = false) String searchPhrase,
 		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
 		@RequestParam(name = "compareSurface", required = false) String compareSurface
 	) {
-		MatchFilter filter = MatchFilter.forTournament(tournamentId);
+		MatchFilter filter = MatchFilter.forStats(null, null, level, surface, indoor, result, tournamentId, null, searchPhrase);
 		PlayerStats stats = statisticsService.getPlayerStats(playerId, filter);
 
 		ModelMap modelMap = new ModelMap();

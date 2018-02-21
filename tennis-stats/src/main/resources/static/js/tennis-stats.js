@@ -416,6 +416,11 @@ function formatScore(score) {
 	return score.replace(/\(/g, "<sup>(").replace(/\)/g, ")</sup>");
 }
 
+// Seasons Formatter
+function seasonsFormatter(column, row) {
+	return row.seasons.length > 30 ? "<span style='font-size: 75%'>" + row.seasons + "</span>" : row.seasons;
+}
+
 // Record Formatter
 function recordFormatter(column, row) {
 	return "<a href='/record?recordId=" + row.id + "' title='Show Record'>" + row.name + "</a>";
