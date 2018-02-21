@@ -38,7 +38,7 @@
 		<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 		<a th:href="@{/playerProfile(playerId=${player.id})}" th:text="${player.name}" title="Show profile">Roger Federer</a>[(${player.formattedSeedAndEntry()})] <i class="fa fa-road"></i>
 	</h4>
-	<table th:with="completed=${playerPath.completedMatches}, probable=${playerPath.probableMatches}" th:unless="${playerPath.empty}" class="table table-condensed table-hover table-striped text-nowrap">
+	<table th:with="completed=${playerPath.completedMatches}, probable=${playerPath.probableMatches}" th:unless="${playerPath.empty}" class="table table-condensed table-striped text-nowrap">
 		<th:block th:unless="${completed.empty}">
 		<thead>
 		<tr>

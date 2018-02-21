@@ -97,7 +97,6 @@
 	<ul id="playerPills" class="nav nav-pills">
 		<li><a id="profilePill" data-toggle="pill" href="#profile" th:data-url="'/playerProfileTab?playerId=' + ${player.id}">Profile</a></li>
 		<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/playerSeason?playerId=' + ${player.id}">Season</a></li>
-		<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" th:data-url="'/playerTournaments?playerId=' + ${player.id}">Tournaments<sup class="new-feature">&nbsp;New!</sup></a></li>
 		<li><a id="eventsPill" data-toggle="pill" href="#events" th:data-url="'/playerEvents?playerId=' + ${player.id}">Events</a></li>
 		<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/playerMatches?playerId=' + ${player.id}">Matches</a></li>
 		<li><a id="timelinePill" data-toggle="pill" href="#timeline" th:data-url="'/playerTimeline?playerId=' + ${player.id}">Timeline</a></li>
@@ -117,13 +116,13 @@
 				<li><a id="statisticsChartPill" data-toggle="pill" href="#statisticsChart" th:data-url="'/playerStatsChart?playerId=' + ${player.id}">Statistics Chart</a></li>
 			</ul>
 		</li>
+		<li><a id="tournamentsPill" data-toggle="pill" href="#tournaments" th:data-url="'/playerTournaments?playerId=' + ${player.id}">Tournaments<sup class="new-feature">&nbsp;New!</sup></a></li>
 		<li><a id="goatPointsPill" data-toggle="pill" href="#goatPoints" th:data-url="'/playerGOATPoints?playerId=' + ${player.id}" title="GOAT Points Breakdown">GOAT Points</a></li>
 		<li><a id="recordsPill" data-toggle="pill" href="#records" th:data-url="'/playerRecords?playerId=' + ${player.id}">Records</a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="profile" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="season" class="tab-pane fade"><div class="loading"></div></div>
-		<div id="tournaments" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="events" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="matches" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="timeline" class="tab-pane fade"><div class="loading"></div></div>
@@ -133,6 +132,7 @@
 		<div id="performanceChart" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="statistics" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="statisticsChart" class="tab-pane fade"><div class="loading"></div></div>
+		<div id="tournaments" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="goatPoints" class="tab-pane fade"><div class="loading"></div></div>
 		<div id="records" class="tab-pane fade"><div class="loading"></div></div>
 	</div>
