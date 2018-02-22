@@ -482,7 +482,11 @@ public class PlayerProfileController extends PageController {
 
 	@GetMapping("/playerTournaments")
 	public ModelAndView playerTournaments(
-		@RequestParam(name = "playerId") int playerId
+		@RequestParam(name = "playerId") int playerId,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "result", required = false) String result
 	) {
 		String name = playerService.getPlayerName(playerId);
 
@@ -494,6 +498,10 @@ public class PlayerProfileController extends PageController {
 		modelMap.addAttribute("surfaces", Surface.values());
 		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
 		modelMap.addAttribute("results", EventResult.values());
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("indoor", indoor);
+		modelMap.addAttribute("result", result);
 		return new ModelAndView("playerTournaments", modelMap);
 	}
 

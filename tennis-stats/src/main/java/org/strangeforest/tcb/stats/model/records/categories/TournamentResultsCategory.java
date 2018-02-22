@@ -99,7 +99,7 @@ public abstract class TournamentResultsCategory extends RecordCategory {
 			"FROM results\n" +
 			"GROUP BY player_id",
 			"r.value", "r.value DESC", "r.value DESC, r.first_date",
-			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=events%2$s%3$s", playerId, domain.urlParam, resultURLParam(result)),
+			IntegerRecordDetail.class, (playerId, recordDetail) -> format("/playerProfile?playerId=%1$d&tab=tournaments%2$s%3$s", playerId, domain.urlParam, resultURLParam(result)),
 			asList(new RecordColumn("value", null, "valueUrl", RESULTS_WIDTH, "right", name))
 		);
 	}
