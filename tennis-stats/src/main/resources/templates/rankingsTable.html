@@ -120,13 +120,14 @@
 			}
 		}
 		function reloadRankings() {
-			var url = "/rankingsDate?rankType=" + $("#rankType").val();
+			var $rankType = $("#rankType");
+			var url = "/rankingsDate?rankType=" + $rankType.val();
 			var season = $("#season").val();
 			if (season) url += "&season=" + season;
 			var date = $("#date").val();
 			if (date) url += "&date=" + date;
 			$.get(url, function (date) {
-				$("#tableDate").html(formatDate(date));
+				$("#tableTitle").html($rankType.find("option[value='" + $rankType.val() + "']").text() + "s Table " + formatDate(date));
 			});
 			$("#rankingsTable").bootgrid("reload");
 		}
@@ -151,7 +152,7 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3><i class="fa fa-list-ol"></i> Rankings Table <span id="tableDate" th:text="${#temporals.format(tableDate, 'dd-MM-yyyy')}">01-11-2015</span></h3>
+	<h3><i class="fa fa-list-ol"></i> <span id="tableTitle" th:text="${rankType.text + 's Table ' + #temporals.format(tableDate, 'dd-MM-yyyy')}">Rankings Table 01-11-2015</span></h3>
 	<div id="rankTypeDiv" class="btn-group pull-left no-margin-left margin-right">
 		<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
 			<optgroup th:each="rankCategory : ${rankCategories}" th:if="${rankCategory.name() != 'GOAT'}" th:label="${rankCategory.text}" label="ATP">

@@ -55,7 +55,6 @@
 		var $search = $rankingsTableHeader.find("div.search");
 		$search.before($("#rankTypeDiv").remove());
 		$search.before($("#rankDateDiv").remove());
-		setBootgridTitle($rankingsTableHeader, $("#rankingsTable-title"));
 		rankTypeChanged();
 		$("[data-toggle='tooltip']").tooltip();
 		bindPopovers();
@@ -94,11 +93,12 @@
 		}
 	}
 	function reloadRankings() {
-		var url = "/rankingsDate?rankType=" + $("#rankType").val() + "&season=[(${season})]";
+		var $rankType = $("#rankType");
+		var url = "/rankingsDate?rankType=" + $rankType.val() + "&season=[(${season})]";
 		var date = $("#rankDate").val();
 		if (date) url += "&date=" + date;
 		$.get(url, function (date) {
-			$("#tableDate").html(formatDate(date));
+			$("#tableTitle").html($rankType.find("option[value='" + $rankType.val() + "']").text() + "s Table " + formatDate(date));
 		});
 		$("#rankingsTable").bootgrid("reload");
 	}
@@ -119,15 +119,15 @@
 		vertical-align: text-top;
 	}
 </style>
-<h3 id="rankingsTable-title" class="grid-title">Rankings Table <span id="tableDate" th:text="${#temporals.format(tableDate, 'dd-MM-yyyy')}">01-11-2015</span></h3>
-<div id="rankTypeDiv" class="btn-group margin-right">
+<h3><span id="tableTitle" th:text="'ATP Rankings Table ' + ${#temporals.format(tableDate, 'dd-MM-yyyy')}">01-11-2015</span></h3>
+<div id="rankTypeDiv" class="btn-group pull-left margin-right no-margin-left">
 	<select id="rankType" class="form-control" onchange="rankTypeChanged(); reloadRankings()" data-toggle="tooltip" data-placement="top" title="Select ranking type">
 		<optgroup th:each="rankCategory : ${rankCategories}" th:if="${rankCategory.name() != 'GOAT'}" th:label="${rankCategory.text}" label="ATP">
 			<option th:each="rankType : ${rankCategory.rankTypes}" th:unless="${rankType.points}" th:value="${rankType}" value="RANK" th:class="${rankType.surface != null ? 'bg-surface-' + rankType.surface.code : _}" th:text="${rankType.text}">ATP Ranking</option>
 		</optgroup>
 	</select>
 </div>
-<div id="rankDateDiv" class="btn-group margin-right">
+<div id="rankDateDiv" class="btn-group pull-left margin-right">
 	<button id="prevDate" type="button" class="pull-left btn btn-default" onclick="prevRankingDate()" data-toggle="tooltip" data-placement="top" title="Previous date">
 		<i class="fa fa-backward"></i>
 	</button>

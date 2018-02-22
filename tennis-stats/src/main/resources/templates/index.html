@@ -130,6 +130,7 @@
 			</table>
 			<div class="pull-right" style="margin: 5px 10px">
 				<a href="/inProgressEventsForecasts" class="label label-default" title="Full forecasts details">All Forecasts</a>
+				<a href="/rankingsTable?rankType=ELO_RANK" class="label label-B" title="Current Elo rankings">Elo Rankings</a>
 			</div>
 			</th:block>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-calendar"></i> Latest Results</h4>
@@ -147,14 +148,14 @@
 				</thead>
 			</table>
 			<div class="pull-right">
-				<a href="/tournamentEvents" class="label label-B" title="Show more tournament results">More Results</a>
-				<a th:href="@{/season(season=${currentSeason})}" class="label label-default" th:title="|Show season ${currentSeason} figures|">Season [(${currentSeason})]</a>
+				<a href="/tournamentEvents" class="label label-default" title="Show more tournament results">More Results</a>
+				<a th:href="@{/season(season=${currentSeason})}" class="label label-B" th:title="|Show season ${currentSeason} figures|">Season [(${currentSeason})]</a>
 			</div>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-star-o"></i> Latest New Features<sup class="new-feature">&nbsp;New!</sup></h4>
 			<ul>
 				<li>Player Tournaments Summaries - In player profile with seasons participated, best results, winning percentages and more</li>
 				<li>Player Path - Player path in the in-progress tournament, with completed rounds as well as projected opponents (with probabilities) in the rounds to come</li>
-				<li>Set, Service Game, Return Game and Tie Break Elo Ratings<sup class="cool-feature">&nbsp;Beta</sup> - In Ranking Tables, Ranking Charts, Peak Elo Ratings and Top Rankings Timeline</li>
+				<li>Set, Service Game, Return Game and Tie Break Elo Ratings<sup class="cool-feature" title="Subject to change, most notably Elo K-factor function for these Elo ratings may be tweaked in the future">&nbsp;Beta</sup> - In Ranking Tables, Ranking Charts, Peak Elo Ratings and Top Rankings Timeline</li>
 				<li><a href="/dominanceTimeline">Dominance Timeline</a>, Player 'GOAT' Points breakdown, <a href="/bestSeasons">Best Seasons</a>, <a href="/topRankingsTimeline?rankType=GOAT_POINTS">'GOAT' Points Top Rankings Timeline</a> and Season 'GOAT' Points  now all support surface distribution</li>
 				<li><a href="/goatList">'GOAT' List by Surface</a> - 'GOAT' lists for each of the surfaces!</li>
 				<li><a href="/goatList">Make Your Own 'GOAT'</a> - Personalized 'GOAT' list with configurable weights for 'GOAT' Points formula and permalink to save your 'GOAT' List and share it!</li>
