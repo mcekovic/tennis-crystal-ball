@@ -221,7 +221,7 @@
 				<a th:if="${totalPoints2 != null}" th:href="@{/playerProfile(playerId=${playerId2}, tab=goatPoints, season=${season})}" class="label label-primary" th:text="${totalPoints2}" title="Show season GOAT points">35</a>
 			</th>
 		</tr>
-		<tr class="text-nowrap">
+		<tr th:if="${tournamentPoints1 != null || tournamentPoints2 != null}" class="text-nowrap">
 			<th class="text-right">
 				<span th:if="${tournamentPoints1 != null}" class="label label-info" th:text="${tournamentPoints1}">25</span>
 			</th>
@@ -230,7 +230,7 @@
 				<span th:if="${tournamentPoints2 != null}" class="label label-info" th:text="${tournamentPoints2}">25</span>
 			</th>
 		</tr>
-		<tr class="text-nowrap">
+		<tr th:if="${rankingPoints1 != null || rankingPoints2 != null}" class="text-nowrap">
 			<th class="text-right">
 				<span th:if="${rankingPoints1 != null}" class="label label-info" th:text="${rankingPoints1}">25</span>
 			</th>
@@ -239,7 +239,7 @@
 				<span th:if="${rankingPoints2 != null}" class="label label-info" th:text="${rankingPoints2}">25</span>
 			</th>
 		</tr>
-		<tr class="text-nowrap">
+		<tr th:if="${achievementsPoints1 != null || achievementsPoints2 != null}" class="text-nowrap">
 			<th class="text-right">
 				<span th:if="${achievementsPoints1 != null}" class="label label-info" th:text="${achievementsPoints1}">25</span>
 			</th>
