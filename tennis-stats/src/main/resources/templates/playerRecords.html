@@ -71,7 +71,7 @@
 		<select id="category" class="form-control" onchange="reloadPlayerRecordsTable()" data-toggle="tooltip" data-placement="top" title="Select Record Category">
 			<option value="">All Records</option>
 			<optgroup th:each="recordCategoryClass : ${recordCategoryClasses}" th:label="${recordCategoryClass.key}" label="Titles and Tournament Results">
-				<option th:each="recordCategory : ${recordCategoryClass.value}" th:value="${recordCategory.name}" value="Most Titles" th:text="${recordCategory.name}">Most Titles</option>
+				<option th:each="recordCategory : ${recordCategoryClass.value}" th:value="${recordCategory.id}" value="Most Titles" th:text="${recordCategory.name}">Most Titles</option>
 			</optgroup>
 		</select>
 	</div>
@@ -80,7 +80,7 @@
 		<select id="infamousCategory" class="form-control" onchange="reloadPlayerRecordsTable()" data-toggle="tooltip" data-placement="top" title="Select Infamous Record">
 			<option value="">All Infamous Records</option>
 			<optgroup th:each="recordCategoryClass : ${infamousRecordCategoryClasses}" th:label="${recordCategoryClass.key}" label="Titles and Tournament Results">
-				<option th:each="recordCategory : ${recordCategoryClass.value}" th:value="${recordCategory.name}" value="Most Titles" th:text="${recordCategory.name}">Most Titles</option>
+				<option th:each="recordCategory : ${recordCategoryClass.value}" th:value="${recordCategory.id}" value="Most Titles" th:text="${recordCategory.name}">Most Titles</option>
 			</optgroup>
 		</select>
 	</div>
