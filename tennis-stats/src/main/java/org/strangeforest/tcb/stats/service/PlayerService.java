@@ -199,7 +199,7 @@ public class PlayerService {
 		quickPicks.put("Top 10 GOATs", join(", ", topN("goat_points DESC", 10)));
 		quickPicks.put("Top 20 GOATs", join(", ", topN("goat_points DESC", 20)));
 		quickPicks.put("ATP No. 1s", join(", ", topCondition("best_rank = 1", "best_rank_date")));
-		quickPicks.put("Elo No. 1s", join(", ", topCondition("best_elo_rank = 1 AND lower(name) NOT LIKE '%unknown%' AND best_elo_rank_date >= DATE '01-07-1968'", "best_elo_rank_date")));
+		quickPicks.put("Elo No. 1s", join(", ", topCondition("best_elo_rank = 1 AND lower(name) NOT LIKE '%unknown%' AND best_elo_rank_date >= DATE '1968-07-01'", "best_elo_rank_date")));
 		return quickPicks;
 	}
 
