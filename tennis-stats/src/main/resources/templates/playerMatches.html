@@ -83,9 +83,7 @@
 				"date": dateFormatter,
 				"tournament": tournamentEventFormatter,
 				"surface": surfaceFormatter,
-				"wonLost": function(column, row) {
-					return row.outcome !== "ABD" ? (row.winner.id === [(${playerId})] ? "<label class='label label-won'>W</label>" : "<label class='label label-lost'>L</label>") : "<label class='label label-abd'>A</label>";
-				},
+				"wonLost": wonLostFormatter([(${playerId})]),
 				"match": matchFormatter([(${playerId})]),
 				"matchEx": matchExFormatter([(${playerId})]),
 				"score": scoreFormatter,

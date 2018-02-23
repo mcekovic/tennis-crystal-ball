@@ -18,9 +18,9 @@
 <!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="round" type="java.lang.String"*/-->
 <script type="text/javascript">
+	var device = detectDevice();
 	$(function() {
 		var $matchesTable = $("#matchesTable");
-		var device = detectDevice();
 		setBootgridColumnsVisible($matchesTable, ["matchEx", "h2h"], deviceGreaterOrEqual(device, "xl"));
 		setBootgridColumnsVisible($matchesTable, ["match"], deviceLessOrEqual(device, "lg"));
 		setBootgridColumnsVisible($matchesTable, ["stats"], deviceGreaterOrEqual(device, "md"));
@@ -35,17 +35,7 @@
 			},
 			url: "/matchesTable?playerId=[(${player1.id})]&opponent=OPP_[(${player2.id})]&h2h=true",
 			requestHandler: function(request) {
-				request.season = $("#matchesSeason").val();
-				request.fromDate = $("#matchesFromDate").val();
-				request.toDate = $("#matchesToDate").val();
-				request.level = $("#matchesLevel").val();
-				request.bestOf = $("#matchesBestOf").val();
-				request.surface = $("#matchesSurface").val();
-				request.indoor = $("#matchesIndoor").val();
-				request.round = $("#matchesRound").val();
-				request.tournamentId = $("#matchesTournament").val();
-				request.score = $("#matchesScore").val();
-				request.outcome = $("#matchesOutcome").val();
+				bootgridParams(request);
 				return request;
 			},
 			rowCount: [15, 25, 50, -1],
@@ -77,18 +67,109 @@
 		var $matchesTableHeader = $("#matchesTable-header");
 		var $search = $matchesTableHeader.find("div.search");
 		$search.before($("#rivalryStats-[(${player2.id})]").remove());
-		$search.before($("#matchesOutcomeDiv").remove());
 		$search.after($("#rivalryStats-[(${player1.id})]").remove());
-		$search.after($("#clearDiv").remove());
+		$search.after($("#matchesClear").remove());
 		dateRangePicker("matchesFromDate", "matchesToDate", "[(${!seasons.empty ? (seasons.get(seasons.size()-1) + ':' + seasons.get(0)) : _})]");
 		setBootgridTitles($matchesTable, [
 			{id: "bestOf", title: "Best of"}
 		]);
 		$("[data-toggle='tooltip']").tooltip();
 	});
+	function matchesBootgrid(index, playerId) {
+		var selector = "#matches" + index + "Table";
+		var $matchesTable = $(selector);
+		if ($matchesTable.hasClass("loaded")) return;
+		setBootgridColumnsVisible($matchesTable, ["surface", "stats"], device !== "lg" && device !== "xs");
+		$matchesTable.bootgrid({
+			ajax: true,
+			ajaxSettings: {
+				method: "GET",
+				cache: false
+			},
+			url: "/matchesTable?playerId=" + playerId,
+			requestHandler: function(request) {
+				bootgridParams(request);
+				return request;
+			},
+			rowCount: [15, 25, 50, -1],
+			formatters: {
+				"date": dateFormatter,
+				"tournament": tournamentEventFormatter,
+				"surface": shortSurfaceFormatter,
+				"wonLost": wonLostFormatter(playerId),
+				"opponent": function(column, row) {
+					return formatMatchPlayer(row.winner.id === playerId ? row.loser : row.winner);
+				},
+				"score": scoreFormatter,
+				"stats": function(column, row) {
+					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event, \"#matchesFilter\")' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span></a>" : "";
+				}
+			},
+			labels: {
+				loading: bootgridTemplateLoading,
+				noResults: "No matches found"
+			},
+			templates: {
+				paginationItem: bootgridTemplatePaginationItem
+			}
+		}).on("loaded.rs.jquery.bootgrid", function() {
+			$("#matchesStats" + index).popover("destroy").removeClass("loaded");
+		});
+		var $tableHeader = $(selector + "-header");
+		setBootgridTitle($tableHeader, $(selector + "-title"));
+		var $search = $tableHeader.find("div.search");
+		$search.before($("#matchesStats" + index).remove().show().tooltip());
+		$search.after($("#matchesClear" + index).remove().show().tooltip());
+		$search.remove();
+		setBootgridTitles($matchesTable, [
+			{id: "surface", title: "Surface"},
+			{id: "round", title: "Round"},
+			{id: "wonLost", title: "Won / Lost"},
+			{id: "stats", title: "Match statistics"}
+		]);
+		$matchesTable.addClass("loaded");
+	}
+	function bootgridParams(request) {
+		request.season = $("#matchesSeason").val();
+		request.fromDate = $("#matchesFromDate").val();
+		request.toDate = $("#matchesToDate").val();
+		request.level = $("#matchesLevel").val();
+		request.bestOf = $("#matchesBestOf").val();
+		request.surface = $("#matchesSurface").val();
+		request.indoor = $("#matchesIndoor").val();
+		request.round = $("#matchesRound").val();
+		request.tournamentId = $("#matchesTournament").val();
+		request.score = $("#matchesScore").val();
+		request.outcome = $("#matchesOutcome").val();
+	}
 	function reloadMatches() {
-		if (reloadH2H())
-			$("#matchesTable").bootgrid("reload");
+		if (reloadH2H()) {
+			var h2h = $("#matchesH2H").prop("checked");
+			if (h2h)
+				$("#matchesTable").bootgrid("reload");
+			else {
+				$("#matches1Table").bootgrid("reload");
+				$("#matches2Table").bootgrid("reload");
+			}
+		}
+	}
+	function showBootrgid(id, show) {
+		var $table = $("#" + id + ", #" + id + "-header, #" + id + "-footer, #" + id + "-title");
+		if (show)
+			$table.show();
+		else
+			$table.hide();
+	}
+	function matchesH2HChanged() {
+		var h2h = $("#matchesH2H").prop("checked");
+		showBootrgid("matchesTable", h2h);
+		if (!h2h) {
+			matchesBootgrid(1, [(${player1.id})]);
+			matchesBootgrid(2, [(${player2.id})]);
+		}
+		showBootrgid("matches1Table", !h2h);
+		showBootrgid("matches2Table", !h2h);
+		reloadMatches();
 	}
 	function reloadH2H() {
 		var url = "/h2h?playerId1=[(${player1.id})]&playerId2=[(${player2.id})]" ;
@@ -137,34 +218,59 @@
 		$("#matchesTable").bootgrid("search", "");
 		reloadMatches();
 	}
+	function matchesParams(invertScore) {
+		var url = "&season=" + $("#matchesSeason").val();
+		url += "&fromDate=" + $("#matchesFromDate").val();
+		url += "&toDate=" + $("#matchesToDate").val();
+		url += "&level=" + $("#matchesLevel").val();
+		url += "&bestOf=" + $("#matchesBestOf").val();
+		url += "&surface=" + $("#matchesSurface").val();
+		url += "&indoor=" + $("#matchesIndoor").val();
+		url += "&round=" + encodeURIComponent($("#matchesRound").val());
+		url += "&tournamentId=" + $("#matchesTournament").val();
+		var score = $("#matchesScore").val();
+		if (invertScore)
+			score = score.charAt(2) + score.charAt(1) + score.charAt(0) + score.substr(3);
+		url += "&score=" + encodeURIComponent(score);
+		url += "&outcome=" + $("#matchesOutcome").val();
+		return url;
+	}
 	function showRivalryStats(playerId1, playerId2, placement, event, invertScore) {
 		var $rivalryStats = $("#rivalryStats-" + playerId2);
 		if (!$rivalryStats.hasClass("loaded")) {
 			event.preventDefault();
-			var url = "/rivalryStats?playerId=" + playerId1 + "&opponentId=" + playerId2;
-			url += "&season=" + $("#matchesSeason").val();
-			url += "&fromDate=" + $("#matchesFromDate").val();
-			url += "&toDate=" + $("#matchesToDate").val();
-			url += "&level=" + $("#matchesLevel").val();
-			url += "&bestOf=" + $("#matchesBestOf").val();
-			url += "&surface=" + $("#matchesSurface").val();
-			url += "&indoor=" + $("#matchesIndoor").val();
-			url += "&round=" + encodeURIComponent($("#matchesRound").val());
-			url += "&tournamentId=" + $("#matchesTournament").val();
-			var score = $("#matchesScore").val();
-			if (invertScore)
-				score = score.charAt(2) + score.charAt(1) + score.charAt(0) + score.substr(3);
-			url += "&score=" + encodeURIComponent(score);
-			url += "&outcome=" + $("#matchesOutcome").val();
+			var url = "/rivalryStats?playerId=" + playerId1 + "&opponentId=" + playerId2 + matchesParams(invertScore);
 			url += "&searchPhrase=" + $("#matchesTable-header").find("input.search-field").val();
 			$.get(url, function(data) {
-				$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto " + placement});
+				$rivalryStats.addClass("loaded").popover({content: data, html: true, placement: "auto " + placement, container: "#matchesFilter"});
 				$rivalryStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
 				$rivalryStats.data("statsURL", url);
 			});
 		}
 	}
+	function showPlayerStats(index, playerId, event) {
+		var $playerStats = $("#matchesStats" + index);
+		if (!$playerStats.hasClass("loaded")) {
+			event.preventDefault();
+			var url = "/matchesStats?playerId=" + playerId + "&playerIndex=" + index + matchesParams(false);
+			$.get(url, function(data) {
+				$playerStats.addClass("loaded").popover({content: data, html: true, placement: "auto" + (index === 2 ? " left" : ""), container: "#matchesFilter"});
+				$playerStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "1000px"); }).click();
+				$playerStats.data("statsURL", url);
+			});
+		}
+	}
 </script>
+<style type="text/css">
+	.table-ultra-condensed> thead > tr > th,
+	.table-ultra-condensed > tbody > tr > th,
+	.table-ultra-condensed > tfoot > tr > th,
+	.table-ultra-condensed > thead > tr > td,
+	.table-ultra-condensed > tbody > tr > td,
+	.table-ultra-condensed > tfoot > tr > td {
+		padding: 5px 2px;
+	}
+</style>
 <div class="row text-nowrap" style="margin: 5px 0">
 	<div class="col-xs-5 text-right">
 		<h4>
@@ -182,7 +288,7 @@
 		</h4>
 	</div>
 </div>
-<div class="row">
+<div id="matchesFilter" class="row">
 	<div class="col-md-2">
 		<select id="matchesSeason" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Select career or filter by season">
 			<option value="">Career</option>
@@ -216,12 +322,19 @@
 			<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
 		</select>
 	</div>
-	<div class="col-md-2">
-		<div class="pull-right" data-toggle="tooltip" data-placement="auto" title="Advanced filters">
-			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#matchesAdvancedFilter">
-				<i class="fa fa-folder-open"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
-			</button>
+	<div class="col-md-1">
+		<div class="checkbox" onchange="matchesH2HChanged()">
+			<label data-toggle="tooltip" data-placement="top" title="Toggle H2H or all matches">
+				<input id="matchesH2H" type="checkbox" checked="checked"/> H2H
+			</label>
 		</div>
+	</div>
+	<div class="col-md-1">
+		<span data-toggle="tooltip" data-placement="auto" title="Advanced filters">
+			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#matchesAdvancedFilter">
+				Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
+			</button>
+		</span>
 	</div>
 </div>
 <div id="matchesAdvancedFilter" class="collapse row margin-top" th:attrappend="class=${fromDate != null || toDate != null || bestOf != null || indoor != null ? ' in' : _}">
@@ -245,6 +358,19 @@
 			<option value="">Best of any</option>
 			<option value="3" th:selected="${bestOf == 3}">Best of 3</option>
 			<option value="5" th:selected="${bestOf == 5}">Best of 5</option>
+		</select>
+	</div>
+	<div class="col-md-2">
+		<select id="matchesOutcome" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outcome">
+			<option value="">All matches</option>
+			<option value="played">Played</option>
+			<option value="finished">Finished</option>
+			<option value="notFinished">Not finished</option>
+			<option value="RET">Retirement</option>
+			<option value="W/O">Walkover</option>
+			<option value="DEF">Defaulting</option>
+			<option value="ABD">Abandoned</option>
+			<option value="notPlayed">Not played</option>
 		</select>
 	</div>
 	<div class="col-md-2">
@@ -280,23 +406,10 @@
 <button th:id="|rivalryStats-${player2.id}|" type="button" class="btn btn-info grid-control pull-left no-margin-left margin-right" th:onclick="|showRivalryStats(${player1.id}, ${player2.id}, 'right', event, false)|" data-toggle="tooltip" data-placement="top" th:title="|${player1.name} vs ${player2.name} Statistics (for the selected matches)|">
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats 1
 </button>
-<div id="matchesOutcomeDiv" class="btn-group pull-left">
-	<select id="matchesOutcome" class="form-control" onchange="reloadMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outcome">
-		<option value="">All matches</option>
-		<option value="played">Played</option>
-		<option value="finished">Finished</option>
-		<option value="notFinished">Not finished</option>
-		<option value="RET">Retirement</option>
-		<option value="W/O">Walkover</option>
-		<option value="DEF">Defaulting</option>
-		<option value="ABD">Abandoned</option>
-		<option value="notPlayed">Not played</option>
-	</select>
-</div>
 <button th:id="|rivalryStats-${player1.id}|" type="button" class="btn btn-info grid-control margin-right" th:onclick="|showRivalryStats(${player2.id}, ${player1.id}, 'left', event, true)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} vs ${player1.name} Statistics (for the selected matches)|">
 	<span class="glyphicon glyphicon-stats"></span>&nbsp;&nbsp;Stats 2
 </button>
-<button id="clearDiv" type="button" class="btn btn-default grid-control margin-right" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+<button id="matchesClear" type="button" class="btn btn-default grid-control margin-right" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
 	<i class="fa fa-eraser"></i>&nbsp;&nbsp;Clear
 </button>
 <table id="matchesTable" class="table table-condensed table-hover table-striped">
@@ -315,4 +428,58 @@
 	</tr>
 	</thead>
 </table>
+<h4 id="matches1Table-title" class="grid-title text-nowrap" style="display: none">
+	<img th:src="@{/images/flags/{code}.png(code=${player1.country.code})}" src="/images/flags/ch.png'" style="margin-top: -3px" th:title="${player1.country.id}" title="SUI" width="24" height="20"/>
+	<a th:href="@{/playerProfile(playerId=${player1.id})}" th:text="${player1.name}">Roger Federer</a>
+</h4>
+<h4 id="matches2Table-title" class="grid-title text-nowrap" style="display: none">
+	<img th:src="@{/images/flags/{code}.png(code=${player2.country.code})}" src="/images/flags/es.png'" style="margin-top: -3px" th:title="${player2.country.id}" title="ESP" width="24" height="20"/>
+	<a th:href="@{/playerProfile(playerId=${player2.id})}" th:text="${player2.name}">Rafael Nadal</a>
+</h4>
+<button id="matchesStats1" type="button" class="btn btn-info grid-control margin-right" style="display: none" th:onclick="|showPlayerStats(1, ${player1.id}, event)|" data-toggle="tooltip" data-placement="top" th:title="|${player1.name} Statistics (for the selected matches)|">
+	<span class="glyphicon glyphicon-stats"></span>
+</button>
+<button id="matchesStats2" type="button" class="btn btn-info grid-control margin-right" style="display: none" th:onclick="|showPlayerStats(2, ${player2.id}, event)|" data-toggle="tooltip" data-placement="top" th:title="|${player2.name} Statistics (for the selected matches)|">
+	<span class="glyphicon glyphicon-stats"></span>
+</button>
+<button id="matchesClear1" type="button" class="btn btn-default grid-control margin-right" style="display: none" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+	<i class="fa fa-eraser"></i>
+</button>
+<button id="matchesClear2" type="button" class="btn btn-default grid-control margin-right" style="display: none" onclick="clearMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+	<i class="fa fa-eraser"></i>
+</button>
+<div class="row">
+	<div class="col-lg-6">
+		<table id="matches1Table" class="table table-ultra-condensed table-hover table-striped" style="display: none">
+			<thead>
+			<tr>
+				<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
+				<th data-column-id="tournament" data-formatter="tournament" data-width="120">Tournament</th>
+				<th data-column-id="surface" data-formatter="surface" data-width="50">Sfc</th>
+				<th data-column-id="round" data-width="40">Rd</th>
+				<th data-column-id="wonLost" data-formatter="wonLost" data-sortable="false" data-width="30">O</th>
+				<th data-column-id="opponent" data-formatter="opponent" data-sortable="false" data-width="150">Match</th>
+				<th data-column-id="score" data-formatter="score" data-sortable="false" data-width="150">Score</th>
+				<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="30">S</th>
+			</tr>
+			</thead>
+		</table>
+	</div>
+	<div class="col-lg-6">
+		<table id="matches2Table" class="table table-ultra-condensed table-hover table-striped" style="display: none">
+			<thead>
+			<tr>
+				<th data-column-id="date" data-formatter="date" data-order="desc" data-width="80">Date</th>
+				<th data-column-id="tournament" data-formatter="tournament" data-width="120">Tournament</th>
+				<th data-column-id="surface" data-formatter="surface" data-width="50">Sfc</th>
+				<th data-column-id="round" data-width="40">Rd</th>
+				<th data-column-id="wonLost" data-formatter="wonLost" data-sortable="false" data-width="30">O</th>
+				<th data-column-id="opponent" data-formatter="opponent" data-sortable="false" data-width="150">Match</th>
+				<th data-column-id="score" data-formatter="score" data-sortable="false" data-width="150">Score</th>
+				<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="30">S</th>
+			</tr>
+			</thead>
+		</table>
+	</div>
+</div>
 </th:block>

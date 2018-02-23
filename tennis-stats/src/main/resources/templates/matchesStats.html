@@ -1,3 +1,3 @@
 <div xmlns:th="http://www.thymeleaf.org"
-     th:include="fragments/playerStats :: playerStats(containerId='matchesStatsPopover', statsContainerId='matchesStatsPopover', statsId='matchesStats', popover=true)">
+     th:include="fragments/playerStats :: playerStats(containerId='matchesStatsPopover' + ${playerIndex != null ? playerIndex : _}, statsContainerId='matchesStatsPopover' + ${playerIndex != null ? playerIndex : _}, statsId='matchesStats' + ${playerIndex != null ? playerIndex : _}, popover=true)">
 </div>

@@ -284,8 +284,17 @@ function surfaceFormatter(column, row) {
 		return formatSurface(row.surface, row.indoor);
 }
 
+function shortSurfaceFormatter(column, row) {
+	if (row.surface)
+		return "<span class='label label-" + surfaceClassSuffix(row.surface) + "'><span title='" + surfaceName(row.surface) + "'>" + surfaceShortName(row.surface) + "</span>" + indoorMark(row.surface, row.indoor) + "</span>";;
+}
+
 function formatSurface(surface, indoor) {
-	return "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + (surface !== 'P' && indoor ? " <span title='Indoor'>(i)</span>" : "") + "</span>";
+	return "<span class='label label-" + surfaceClassSuffix(surface) + "'>" + surfaceName(surface) + indoorMark(surface, indoor) + "</span>";
+}
+
+function indoorMark(surface, indoor) {
+	return indoor && surface !== 'P' ? " <span title='Indoor'>(i)</span>" : "";
 }
 
 function surfaceClassSuffix(surface) {
@@ -416,6 +425,12 @@ function formatScore(score) {
 	return score.replace(/\(/g, "<sup>(").replace(/\)/g, ")</sup>");
 }
 
+function wonLostFormatter(playerId) {
+	return function(column, row) {
+		return row.outcome !== "ABD" ? (row.winner.id === playerId ? "<label class='label label-won'>W</label>" : "<label class='label label-lost'>L</label>") : "<label class='label label-abd'>A</label>";
+	}
+}
+
 // Seasons Formatter
 function seasonsFormatter(column, row) {
 	return row.seasons.length > 30 ? "<span style='font-size: 75%'>" + row.seasons + "</span>" : row.seasons;
@@ -481,13 +496,13 @@ function compareStats(containerId, statsId, close) {
 	});
 }
 
-function showMatchStats(matchId, event) {
+function showMatchStats(matchId, event, container) {
 	var $matchStats = $("#matchStats-" + matchId);
 	if (!$matchStats.hasClass("loaded")) {
 		event.preventDefault();
 		var url = "matchStats?matchId=" + matchId;
 		$.get(url, function(data) {
-			$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto right"});
+			$matchStats.addClass("loaded").popover({content: data, html: true, placement: "auto right", container: container});
 			$matchStats.on("show.bs.popover", function() { $(this).data("bs.popover").tip().css("max-width", "600px"); }).click();
 			$matchStats.data("statsURL", url);
 		});

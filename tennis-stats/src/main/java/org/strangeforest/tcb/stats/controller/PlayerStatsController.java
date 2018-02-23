@@ -112,7 +112,8 @@ public class PlayerStatsController extends BaseController {
 		@RequestParam(name = "compare", defaultValue = F) boolean compare,
 		@RequestParam(name = "compareSeason", required = false) Integer compareSeason,
 		@RequestParam(name = "compareLevel", required = false) String compareLevel,
-		@RequestParam(name = "compareSurface", required = false) String compareSurface
+		@RequestParam(name = "compareSurface", required = false) String compareSurface,
+		@RequestParam(name = "playerIndex", required = false) Integer playerIndex
 	) {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		OpponentFilter opponentFilter = OpponentFilter.forStats(opponent, matchesService.getSameCountryIds(countryId));
@@ -127,6 +128,7 @@ public class PlayerStatsController extends BaseController {
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("stats", stats);
 		addCompareStats(modelMap, playerId, compare, compareSeason, compareLevel, compareSurface);
+		modelMap.addAttribute("playerIndex", playerIndex);
 		return new ModelAndView("matchesStats", modelMap);
 	}
 

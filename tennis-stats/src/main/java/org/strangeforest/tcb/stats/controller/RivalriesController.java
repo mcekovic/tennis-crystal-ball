@@ -181,8 +181,7 @@ public class RivalriesController extends PageController {
 		Range<LocalDate> dateRange = RangeUtil.toRange(fromDate, toDate);
 		PlayerStats stats1 = statisticsService.getPlayerStats(playerId1, MatchFilter.forOpponent(playerId2, season, dateRange, level, bestOf, surface, indoor, round, null, null, null));
 		List<Integer> seasons = getSeasonsIntersection(playerId1, playerId2);
-		List<TournamentItem> tournaments = new ArrayList<>(tournamentService.getPlayerTournamentItems(playerId1));
-		tournaments.retainAll(tournamentService.getPlayerTournamentItems(playerId2));
+		List<TournamentItem> tournaments = getTournamentsIntersection(playerId1, playerId2);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("player1", player1);
@@ -593,6 +592,12 @@ public class RivalriesController extends PageController {
 		seasons.addAll(playerService.getPlayerSeasons(playerId1));
 		seasons.addAll(playerService.getPlayerSeasons(playerId2));
 		return seasons;
+	}
+
+	private List<TournamentItem> getTournamentsIntersection(int playerId1, int playerId2) {
+		List<TournamentItem> tournaments = new ArrayList<>(tournamentService.getPlayerTournamentItems(playerId1));
+		tournaments.retainAll(tournamentService.getPlayerTournamentItems(playerId2));
+		return tournaments;
 	}
 
 	private Set<TournamentItem> getTournamentsUnion(int playerId1, int playerId2) {
