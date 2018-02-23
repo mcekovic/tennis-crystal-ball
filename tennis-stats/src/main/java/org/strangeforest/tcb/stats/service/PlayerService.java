@@ -78,6 +78,11 @@ public class PlayerService {
 		"SELECT name FROM player_v\n" +
 		"ORDER BY %1$s LIMIT :count";
 
+	private static final String TOP_CONDITION_QUERY = //language=SQL
+		"SELECT name FROM player_v\n" +
+		"WHERE %1$s\n" +
+		"ORDER BY %2$s";
+
 
 	private static final int AUTOCOMPLETE_COUNT = 20;
 	private static final int AUTOCOMPLETE_EX_THRESHOLD = 5;
@@ -189,10 +194,12 @@ public class PlayerService {
 		quickPicks.put("Late '80 / Early '90", "Boris Becker, Stefan Edberg, Mats Wilander, Thomas Muster");
 		quickPicks.put("'70 / Early '80 dominance", "Ivan Lendl, Jimmy Connors, John McEnroe, Bjorn Borg, Guillermo Vilas");
 		quickPicks.put("Dawn of Open Era", "Rod Laver, Ken Rosewall, Ilie Nastase, Arthur Ashe, John Newcombe");
-		quickPicks.put("Top 10", join(", ", topN("current_rank", 10)));
-		quickPicks.put("Top 20", join(", ", topN("current_rank", 20)));
-		quickPicks.put("GOAT 10", join(", ", topN("goat_points DESC", 10)));
-		quickPicks.put("GOAT 20", join(", ", topN("goat_points DESC", 20)));
+		quickPicks.put("Top 10 ATP", join(", ", topN("current_rank", 10)));
+		quickPicks.put("Top 20 ATP", join(", ", topN("current_rank", 20)));
+		quickPicks.put("Top 10 GOATs", join(", ", topN("goat_points DESC", 10)));
+		quickPicks.put("Top 20 GOATs", join(", ", topN("goat_points DESC", 20)));
+		quickPicks.put("ATP No. 1s", join(", ", topCondition("best_rank = 1", "best_rank_date")));
+		quickPicks.put("Elo No. 1s", join(", ", topCondition("best_elo_rank = 1 AND lower(name) NOT LIKE '%unknown%' AND best_elo_rank_date >= DATE '01-07-1968'", "best_elo_rank_date")));
 		return quickPicks;
 	}
 
@@ -200,11 +207,15 @@ public class PlayerService {
 		return jdbcTemplate.queryForList(format(TOP_N_QUERY, orderBy), params("count", count), String.class);
 	}
 
+	private List<String> topCondition(String condition, String orderBy) {
+		return jdbcTemplate.getJdbcOperations().queryForList(format(TOP_CONDITION_QUERY, condition, orderBy), String.class);
+	}
+
 
 	// Wikipedia URL
 
-	private static String[] WIKIPEDIA_URLS = new String[] {"https://en.wikipedia.org/wiki/%1$s_(tennis)", "https://en.wikipedia.org/wiki/%1$s"};
-	private static String WIKIPEDIA_SEARCH_URL = "https://en.wikipedia.org/w?search=%1$s";
+	private static final String[] WIKIPEDIA_URLS = new String[] {"https://en.wikipedia.org/wiki/%1$s_(tennis)", "https://en.wikipedia.org/wiki/%1$s"};
+	private static final String WIKIPEDIA_SEARCH_URL = "https://en.wikipedia.org/w?search=%1$s";
 
 	public String getPlayerWikipediaUrl(int playerId) {
 		String name = getPlayerName(playerId).replace(' ', '_');
