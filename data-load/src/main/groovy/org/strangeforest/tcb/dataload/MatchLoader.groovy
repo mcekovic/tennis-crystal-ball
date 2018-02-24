@@ -26,7 +26,7 @@ class MatchLoader extends BaseCSVLoader {
 		if (extTourneyId.startsWith('0'))
 			extTourneyId = extTourneyId.substring(1)
 		def level = string record.tourney_level
-		def name = string record.tourney_name
+		def name = string(record.tourney_name).trim()
 		def season = smallint tourneyId.substring(0, 4)
 		if (season == ((short)1971) && name == 'Toronto WCT')
 			return null
@@ -197,7 +197,7 @@ class MatchLoader extends BaseCSVLoader {
 			case 'A':
 				if (name.startsWith('Australian Open') && season == 1977)
 					return 'G'
-				else if (extTournamentId == '605' && season == 2016)
+				else if (extTournamentId == '605' && season >= 2016)
 					return 'F'
 				else if ( // Alternative Tour Finals
 					(name.startsWith('Dallas') && extTournamentId == '610' && season in 1971..1989) || // WCT Finals

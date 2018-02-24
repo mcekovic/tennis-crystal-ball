@@ -82,12 +82,17 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 	}
 
 	def loadAndSimulateTournament(String urlId, extId, Integer season = null, String level = null, String surface = null, boolean verbose = false) {
-		if (loadTournament(urlId, extId, season, level, surface, verbose)) {
-			simulateTournament(extId, verbose)
-			true
+		try {
+			if (loadTournament(urlId, extId, season, level, surface, verbose)) {
+				simulateTournament(extId, verbose)
+				true
+			}
 		}
-		else
-			false
+		catch (Exception ex) {
+			System.err.println "Error loading and simulating in-progress tournament: $urlId/$extId"
+			ex.printStackTrace()
+		}
+		false
 	}
 
 	def loadTournament(String urlId, extId, Integer season, String level, String surface, boolean verbose) {

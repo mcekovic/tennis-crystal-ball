@@ -18,7 +18,6 @@ LoadNewRankings.loadRankings(sqlPool)
 
 loader.loadMatches(new MatchLoader(sqlPool))
 sqlPool.withSql { sql -> loader.loadAdditionalTournamentData(sql) }
-LoadNewTournaments.loadTournaments(sqlPool, 2017)
 LoadNewTournaments.loadTournaments(sqlPool)
 
 sqlPool.withSql { sql -> loader.vacuum(sql) }

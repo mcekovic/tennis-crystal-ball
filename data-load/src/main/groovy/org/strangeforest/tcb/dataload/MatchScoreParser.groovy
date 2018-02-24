@@ -17,6 +17,8 @@ class MatchScoreParser {
 		List setScores = new ArrayList(sets.size())
 		String outcome = null
 		for (String set in sets) {
+			if (set.startsWith('[') && set.endsWith(']'))
+				set = set.substring(1, set.length() - 1)
 			int pos = set.indexOf('-')
 			if (pos > 0) {
 				try {

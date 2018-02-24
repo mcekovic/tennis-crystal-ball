@@ -13,6 +13,7 @@ sqlPool.withSql { Sql sql ->
 	Surface.values().each { surface ->
 		export(sql, "player-${surface.name().toLowerCase()}-statistics.json", /*language=SQL */ "SELECT row_to_json(p) AS json FROM player_surface_stats p WHERE surface = '${surface.code}' ORDER BY player_id")
 	}
+//	new XMLTournamentExporter(sql).exportTournament('505', 2007)
 }
 
 def export(Sql sql, String fileName, String query) {

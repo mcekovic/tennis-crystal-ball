@@ -20,14 +20,11 @@ abstract class LoaderUtil {
 				return closure.call(retry)
 			}
 			catch (Throwable th) {
-				if (isNonRecoverableKnownError(th)) {
-					println th.message
+				if (isNonRecoverableKnownError(th))
 					throw th
-				}
-				th.printStackTrace()
 				def rootCause = extractRootCause(th)
 				if (retry < count && predicate.curry(rootCause)) {
-					println "Exception occurred: ${rootCause} [retry ${retry + 1} follows]"
+					System.err.println "Exception occurred: ${rootCause} [retry ${retry + 1} follows]"
 					Thread.sleep(delay)
 				}
 				else
@@ -62,7 +59,7 @@ abstract class LoaderUtil {
 	}
 
 	static boolean isNonRecoverableKnownError(Throwable th) {
-		(th instanceof IOException && th.message?.startsWith('Too many redirects')) ||
-		(th instanceof HttpStatusException && ((HttpStatusException)th).statusCode == 400)
+		(th instanceof HttpStatusException && ((HttpStatusException)th).statusCode in [400, 404]) ||
+		(th instanceof IOException && th.message?.startsWith('Too many redirects'))
 	}
 }

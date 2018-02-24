@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tournament-data xmlns="http://www.strangeforest.org/schema/tcb">
+  <tournament season="2007" tournament-name="Vina Del Mar" name="Vina Del Mar" date="2007-01-29" ext-id="505">
+    <level>B</level>
+    <surface>C</surface>
+    <indoor>false</indoor>
+    <draw-type>RR</draw-type>
+    <draw-size>24</draw-size>
+    <player seed="1" name="Fernando Gonzalez" country="CHI" />
+    <player seed="2" name="Gaston Gaudio" country="ARG" />
+    <player seed="3" name="Nicolas Massu" country="CHI" />
+    <player seed="4" name="Ruben Ramirez Hidalgo" country="ESP" />
+    <player seed="5" name="Luis Horna" country="PER" />
+    <player seed="6" name="Sergio Roitman" country="ARG" />
+    <player seed="7" name="Albert Montanes" country="ESP" />
+    <player seed="8" name="Martin Vassallo Arguello" country="ARG" />
+    <player entry="Q" name="Albert Portas" country="ESP" />
+    <player entry="Q" name="Juan Pablo Guzman" country="ARG" />
+    <player entry="Q" name="Oscar Hernandez" country="ESP" />
+    <player entry="WC" name="Gustavo Kuerten" country="BRA" />
+    <player entry="WC" name="Paul Capdeville" country="CHI" />
+    <player entry="LL" name="Diego Junqueira" country="ARG" />
+    <player name="Alessio Di Mauro" country="ITA" />
+    <player name="Boris Pashanski" country="SRB" />
+    <player name="Carlos Berlocq" country="ARG" />
+    <player name="Diego Hartfield" country="ARG" />
+    <player name="Gorka Fraile" country="ESP" />
+    <player name="Igor Andreev" country="RUS" />
+    <player name="Ivan Navarro" country="ESP" />
+    <player name="Mariano Zabaleta" country="ARG" />
+    <player name="Olivier Patience" country="FRA" />
+    <player name="Ricardo Mello" country="BRA" />
+    <player name="Thiago Alves" country="BRA" />
+    <!-- RR -->
+    <match match-num="8" round="RR" best-of="3" winner="Igor Andreev" loser="Diego Hartfield" score="6-3 3-6 6-4" />
+    <match match-num="9" round="RR" best-of="3" winner="Carlos Berlocq" loser="Ivan Navarro" score="7-6(4) 6-2" />
+    <match match-num="10" round="RR" best-of="3" winner="Paul Capdeville" loser="Gorka Fraile" score="7-6(3) 6-1" />
+    <match match-num="11" round="RR" best-of="3" winner="Oscar Hernandez" loser="Gustavo Kuerten" score="7-6(2) 7-6(3)" />
+    <match match-num="12" round="RR" best-of="3" winner="Ricardo Mello" loser="Alessio Di Mauro" score="6-0 6-4" />
+    <match match-num="13" round="RR" best-of="3" winner="Olivier Patience" loser="Thiago Alves" score="6-2 6-4" />
+    <match match-num="14" round="RR" best-of="3" winner="Albert Portas" loser="Boris Pashanski" score="6-3 6-3" />
+    <match match-num="15" round="RR" best-of="3" winner="Mariano Zabaleta" loser="Juan Pablo Guzman" score="6-3 6-4" />
+    <match match-num="16" round="RR" best-of="3" winner="Fernando Gonzalez" loser="Olivier Patience" score="5-7 6-0 6-4" />
+    <match match-num="17" round="RR" best-of="3" winner="Nicolas Massu" loser="Gorka Fraile" score="6-3 6-2" />
+    <match match-num="18" round="RR" best-of="3" winner="Igor Andreev" loser="Ruben Ramirez Hidalgo" score="7-6(3) 6-1" />
+    <match match-num="19" round="RR" best-of="3" winner="Luis Horna" loser="Alessio Di Mauro" score="6-1 6-2" />
+    <match match-num="20" round="RR" best-of="3" winner="Sergio Roitman" loser="Mariano Zabaleta" score="6-4 6-4" />
+    <match match-num="21" round="RR" best-of="3" winner="Albert Montanes" loser="Gustavo Kuerten" score="6-1 6-4" />
+    <match match-num="22" round="RR" best-of="3" winner="Martin Vassallo Arguello" loser="Boris Pashanski" score="7-6(2) 6-4" />
+    <match match-num="23" round="RR" best-of="3" winner="Ivan Navarro" loser="Diego Junqueira" score="6-3 7-6(5)" />
+    <match match-num="24" round="RR" best-of="3" winner="Fernando Gonzalez" loser="Thiago Alves" score="6-2 6-2" />
+    <match match-num="25" round="RR" best-of="3" winner="Carlos Berlocq" loser="Gaston Gaudio" score="6-2 6-2" />
+    <match match-num="26" round="RR" best-of="3" winner="Nicolas Massu" loser="Paul Capdeville" score="6-4 6-3" />
+    <match match-num="27" round="RR" best-of="3" winner="Ruben Ramirez Hidalgo" loser="Diego Hartfield" score="6-4 6-1" />
+    <match match-num="28" round="RR" best-of="3" winner="Luis Horna" loser="Ricardo Mello" score="6-3 6-1" />
+    <match match-num="29" round="RR" best-of="3" winner="Sergio Roitman" loser="Juan Pablo Guzman" score="4-6 6-4 6-3" />
+    <match match-num="30" round="RR" best-of="3" winner="Albert Montanes" loser="Oscar Hernandez" score="6-3 7-5" />
+    <match match-num="31" round="RR" best-of="3" winner="Martin Vassallo Arguello" loser="Albert Portas" score="6-1 6-1" />
+    <!-- QF -->
+    <match match-num="4" round="QF" best-of="3" winner="Albert Montanes" loser="Fernando Gonzalez" score="6-3 3-6 6-4" minutes="0">
+      <winner-stats ace="8" df="6" sv-pt="82" fst-in="52" fst-won="33" snd-won="15" sv-gms="14" bp-sv="2" bp-fc="7" />
+      <loser-stats ace="8" df="0" sv-pt="95" fst-in="61" fst-won="38" snd-won="13" sv-gms="14" bp-sv="9" bp-fc="15" />
+    </match>
+    <match match-num="5" round="QF" best-of="3" winner="Nicolas Massu" loser="Sergio Roitman" score="0-6 7-6(3)" minutes="0">
+      <winner-stats ace="5" df="2" sv-pt="64" fst-in="37" fst-won="28" snd-won="14" sv-gms="9" bp-sv="1" bp-fc="2" />
+      <loser-stats ace="6" df="1" sv-pt="76" fst-in="53" fst-won="35" snd-won="7" sv-gms="9" bp-sv="9" bp-fc="13" />
+    </match>
+    <match match-num="6" round="QF" best-of="3" winner="Luis Horna" loser="Igor Andreev" score="6-3 6-3" minutes="0">
+      <winner-stats ace="6" df="0" sv-pt="53" fst-in="33" fst-won="26" snd-won="14" sv-gms="9" bp-sv="0" bp-fc="0" />
+      <loser-stats ace="6" df="0" sv-pt="54" fst-in="36" fst-won="22" snd-won="9" sv-gms="9" bp-sv="2" bp-fc="5" />
+    </match>
+    <match match-num="7" round="QF" best-of="3" winner="Martin Vassallo Arguello" loser="Carlos Berlocq" score="3-6 6-3 7-5" minutes="0">
+      <winner-stats ace="3" df="2" sv-pt="88" fst-in="58" fst-won="40" snd-won="18" sv-gms="15" bp-sv="9" bp-fc="12" />
+      <loser-stats ace="5" df="2" sv-pt="120" fst-in="68" fst-won="44" snd-won="25" sv-gms="15" bp-sv="16" bp-fc="20" />
+    </match>
+    <!-- SF -->
+    <match match-num="2" round="SF" best-of="3" winner="Nicolas Massu" loser="Albert Montanes" score="6-1 6-3" minutes="0">
+      <winner-stats ace="1" df="1" sv-pt="52" fst-in="38" fst-won="24" snd-won="9" sv-gms="8" bp-sv="2" bp-fc="3" />
+      <loser-stats ace="2" df="2" sv-pt="43" fst-in="24" fst-won="13" snd-won="8" sv-gms="8" bp-sv="4" bp-fc="9" />
+    </match>
+    <match match-num="3" round="SF" best-of="3" winner="Luis Horna" loser="Martin Vassallo Arguello" score="7-5 6-4" minutes="0">
+      <winner-stats ace="3" df="1" sv-pt="65" fst-in="46" fst-won="30" snd-won="9" sv-gms="11" bp-sv="1" bp-fc="4" />
+      <loser-stats ace="2" df="1" sv-pt="77" fst-in="48" fst-won="26" snd-won="13" sv-gms="11" bp-sv="9" bp-fc="14" />
+    </match>
+    <!-- F -->
+    <match match-num="1" round="F" best-of="3" winner="Luis Horna" loser="Nicolas Massu" score="7-5 6-3" minutes="0">
+      <winner-stats ace="1" df="1" sv-pt="76" fst-in="64" fst-won="41" snd-won="8" sv-gms="11" bp-sv="0" bp-fc="1" />
+      <loser-stats ace="4" df="0" sv-pt="59" fst-in="46" fst-won="31" snd-won="6" sv-gms="10" bp-sv="1" bp-fc="4" />
+    </match>
+  </tournament>
+</tournament-data>

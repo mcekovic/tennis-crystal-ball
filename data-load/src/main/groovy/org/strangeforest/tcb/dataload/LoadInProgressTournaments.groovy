@@ -35,16 +35,23 @@ static findInProgressEvents() {
 }
 
 static findInProgressEvents(String url, CascadingCrawler crawler) {
-	def doc = retriedGetDoc('http://www.atpworldtour.com' + url)
+	def fullUrl = 'http://www.atpworldtour.com' + url
 	def eventInfos = new TreeSet<>()
-	eventInfos.addAll doc.select('div.arrow-next-tourney > div > a.tourney-title').collect { a ->
-		def eventUrl = a.attr('href').replace('overview', 'draws').replace('tournaments', 'scores/current')
+	try {
+		def doc = retriedGetDoc(fullUrl)
+		eventInfos.addAll doc.select('div.arrow-next-tourney > div > a.tourney-title').collect { a ->
+			def eventUrl = a.attr('href').replace('overview', 'draws').replace('tournaments', 'scores/current')
+			crawler.addUrl eventUrl
+			new EventInfo(eventUrl)
+		}
+		def eventUrl = doc.select('div.module-header > div.module-tabs > div.module-tab.current > span > a').attr('href')
 		crawler.addUrl eventUrl
-		new EventInfo(eventUrl)
+		eventInfos << new EventInfo(eventUrl)
 	}
-	def eventUrl = doc.select('div.module-header > div.module-tabs > div.module-tab.current > span > a').attr('href')
-	crawler.addUrl eventUrl
-	eventInfos << new EventInfo(eventUrl)
+	catch (Exception ex) {
+		System.err.println 'Error fetching URL: ' + fullUrl
+		ex.printStackTrace()
+	}
 	eventInfos
 }
 

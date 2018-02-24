@@ -53,9 +53,10 @@ class WikipediaPlayerDataLoader {
 							print '!'
 						}
 						if (total.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
-							println()
+							printf(' %1$.2f%%\n', 100.0 * total.get() / playerIds.size())
 					}
 					catch (Exception ex) {
+						System.err.println 'Error finding player data for player: ' + playerId
 						ex.printStackTrace()
 					}
 				}

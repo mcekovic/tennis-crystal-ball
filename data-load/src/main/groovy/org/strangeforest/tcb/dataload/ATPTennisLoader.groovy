@@ -41,10 +41,10 @@ class ATPTennisLoader {
 		load {
 			def rows = 0
 			if (full) {
-				for (year in 1968..2016)
+				for (year in 1968..2017)
 					rows += loader.loadFile(baseDir() + "atp_matches_${year}.csv")
 			}
-			def year = 2017
+			def year = 2018
 			rows += loader.loadFile(baseDir() + "atp_matches_${year}.csv")
 		}
 		println()
@@ -55,10 +55,10 @@ class ATPTennisLoader {
 		load {
 			def rows = 0
 			if (full) {
-				for (year in 2001..2016)
+				for (year in 2001..2017)
 					rows += loader.loadFile(baseDir() + "match_prices_${year}.csv")
 			}
-			def year = 2017
+			def year = 2018
 			rows += loader.loadFile(baseDir() + "match_prices_${year}.csv")
 		}
 		println()
@@ -163,7 +163,7 @@ class ATPTennisLoader {
 			atpWorldTourMatchLoader.loadTournament(1976, 'pepsi-grand-slam', 1725, false, null, null, [], 'Pepsi Grand Slam')
 			atpWorldTourMatchLoader.loadTournament(1977, 'birmingham', 350, false, null, 'G')
 			atpWorldTourMatchLoader.loadTournament(1980, 'indian-wells', 404, false, 'B', null, [], null, 728)
-			atpWorldTourMatchLoader.loadTournament(2007, 'vina-del-mar', 505)
+//			atpWorldTourMatchLoader.loadTournament(2007, 'vina-del-mar', 505)
 			atpWorldTourMatchLoader.loadTournament(2008, 'moscow', 438)
 
 			loadAdditionalMatchData(sql, 'classpath:/tournaments/1969-fort-worth.xml')
@@ -197,6 +197,7 @@ class ATPTennisLoader {
 			loadAdditionalMatchData(sql, 'classpath:/tournaments/2002-tour-finals+.xml')
 			loadAdditionalMatchData(sql, 'classpath:/tournaments/2003-tour-finals+.xml')
 			loadAdditionalMatchData(sql, 'classpath:/tournaments/2004-tour-finals+.xml')
+			loadAdditionalMatchData(sql, 'classpath:/tournaments/2007-vina-del-mar.xml')
 		}
 	}
 
