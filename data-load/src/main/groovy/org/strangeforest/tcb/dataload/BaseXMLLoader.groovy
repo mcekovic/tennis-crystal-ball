@@ -96,7 +96,7 @@ abstract class BaseXMLLoader {
 	}
 
 	static Array shortArray(Connection conn, a) {
-		conn.createArrayOf('smallint', a)
+		conn.createArrayOf('smallint', (Short[])a)
 	}
 
 	static String country(c) {

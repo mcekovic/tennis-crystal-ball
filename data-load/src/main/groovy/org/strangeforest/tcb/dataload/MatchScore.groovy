@@ -11,11 +11,11 @@ class MatchScore {
 	String outcome
 	List setScores
 
-	short[] getW_set_games() {
+	Short[] getW_set_games() {
 		setScores.collect({setScore -> setScore.w_games})
 	}
 
-	short[] getL_set_games() {
+	Short[] getL_set_games() {
 		setScores.collect({setScore -> setScore.l_games})
 	}
 
