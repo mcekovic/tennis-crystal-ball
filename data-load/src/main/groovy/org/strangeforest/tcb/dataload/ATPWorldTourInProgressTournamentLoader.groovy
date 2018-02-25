@@ -204,6 +204,8 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			Elements roundPlayers = drawTable.select("tbody > tr > td[rowspan=$drawRowSpan]")
 			if (!roundPlayers.select('div.scores-draw-entry-box').find { e -> e.text() })
 				return
+			if (round == 'Winner' && roundPlayers.size() == 2) // Workaround ATP website bug
+				round = 'F'
 			if (round == 'Winner') {
 				def winner = roundPlayers.get(0)
 				def winnerName = player winner.select('a.scores-draw-entry-box-players-item').text()
