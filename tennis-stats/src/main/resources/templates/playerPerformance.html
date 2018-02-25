@@ -135,7 +135,7 @@
 		</div>
 	</div>
 </div>
-<div id="perfAdvancedFilter" class="collapse" th:attrappend="class=${advFilter || indoor != null || result != null || tournamentId != null ? ' in' : _}">
+<div id="perfAdvancedFilter" class="collapse" th:attrappend="class=${advFilter || fromDate != null || toDate != null || bestOf != null || indoor != null || (countryId != null && countryId != '') || (result != null && result != '') || tournamentId != null ? ' in' : _}">
 	<div class="row margin-top">
 		<div class="col-md-4">
 			<div id="perfDateRange" class="input-group">

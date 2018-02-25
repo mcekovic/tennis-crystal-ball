@@ -85,7 +85,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		try {
 			if (loadTournament(urlId, extId, season, level, surface, verbose)) {
 				simulateTournament(extId, verbose)
-				true
+				return true
 			}
 		}
 		catch (Exception ex) {

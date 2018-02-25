@@ -133,7 +133,7 @@
 		</div>
 	</div>
 </div>
-<div id="statsAdvancedFilter" class="collapse" th:attrappend="class=${advFilter ? ' in' : _}">
+<div id="statsAdvancedFilter" class="collapse" th:attrappend="class=${advFilter || fromDate != null || toDate != null || bestOf != null || indoor != null || (countryId != null && countryId != '') || (result != null && result != '') || tournamentId != null ? ' in' : _}">
 	<div class="row margin-top">
 		<div class="col-md-4">
 			<div id="statsDateRange" class="input-group">
