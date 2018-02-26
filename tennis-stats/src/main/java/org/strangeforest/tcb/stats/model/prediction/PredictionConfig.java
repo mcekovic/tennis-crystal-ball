@@ -241,11 +241,11 @@ public class PredictionConfig {
 
 	@Override public String toString() {
 		return MoreObjects.toStringHelper(this).omitNullValues()
-			.add("weights", areaWeights)
+			.add("weights", new TreeMap<>(areaWeights))
 			.add("itemWeights", itemWeights)
-			.add("matchRecentPeriods", matchRecentPeriods)
-			.add("setRecentPeriods", setRecentPeriods)
-			.add("lastMatchesCounts", lastMatchesCounts)
+			.add("matchRecentPeriods", new TreeMap<>(matchRecentPeriods))
+			.add("setRecentPeriods", new TreeMap<>(setRecentPeriods))
+			.add("lastMatchesCounts", new TreeMap<>(lastMatchesCounts))
 		.toString();
 	}
 }
