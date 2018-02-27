@@ -29,10 +29,13 @@ public class TuningContext {
 		candidateNextResults = new PriorityQueue<>(resultComparator.reversed());
 	}
 
-	public void initialResult(PredictionResult initialResult) {
-		addResult(initialResult);
-		bestResult = initialResult;
+	public void initialResult(PredictionVerificationResult verificationResult) {
+		PredictionResult result = verificationResult.getResult();
+		addResult(result);
+		bestResult = result;
 		System.out.println("***** Initial result: " + bestResult);
+		printWeights(result.getConfig(), false);
+		printResultDistribution(verificationResult);
 	}
 
 	public void finish() {
@@ -73,12 +76,14 @@ public class TuningContext {
 		return null;
 	}
 
-	public void nextResult(PredictionResult result) {
+	public void nextResult(PredictionVerificationResult verificationResult) {
+		PredictionResult result = verificationResult.getResult();
 		addResult(result);
 		if (resultComparator.compare(result, bestResult) > 0) {
 			bestResult = result;
 			System.out.println("***** New best result: " + bestResult);
 			printWeights(result.getConfig(), false);
+			printResultDistribution(verificationResult);
 		}
 		if (bestStepResult == null || resultComparator.compare(result, bestStepResult) > 0) {
 			bestStepResult = result;

@@ -32,7 +32,6 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	private static final String PRICE_SOURCE = "B365";
 	private static final boolean BET_ON_OUTSIDER = false;
 	private static final boolean KELLY_STAKE = true;
-	private static final boolean VERBOSE = true;
 
 	private static final int THREADS = 8;
 
@@ -54,20 +53,20 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		executor.shutdown();
 	}
 
-	protected PredictionResult verifyPrediction(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
+	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
 		return verifyPrediction(fromDate, toDate, null, TuningSet.ALL);
 	}
 
-	protected PredictionResult verifyPrediction(LocalDate fromDate, LocalDate toDate, TuningSet tuningSet) throws InterruptedException {
+	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, TuningSet tuningSet) throws InterruptedException {
 		return verifyPrediction(fromDate, toDate, null, tuningSet);
 	}
 
-	protected PredictionResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config) throws InterruptedException {
+	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config) throws InterruptedException {
 		return verifyPrediction(fromDate, toDate, config, TuningSet.ALL);
 	}
 
-	protected PredictionResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config, TuningSet tuningSet) throws InterruptedException {
-		System.out.printf("\nVerifying prediction from %1$s to %2$s and weights:\n", fromDate, toDate);
+	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config, TuningSet tuningSet) throws InterruptedException {
+		System.out.printf("\nVerifying prediction from %1$s to %2$s and weights: ", fromDate, toDate);
 		printWeights(config, tuningSet, true);
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		PredictionVerificationResult verificationResult = new PredictionVerificationResult(config);
@@ -120,16 +119,10 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		matchCount.await();
 		verificationResult.complete();
 		PredictionResult result = verificationResult.getResult();
-		System.out.printf("\nPrediction rate: %1$.3f%%, Predictable: %2$.3f%%, Matches: %3$d, Time: %4$s\n", result.getPredictionRate(), result.getPredictablePct(), result.getTotal(), stopwatch);
+		System.out.printf("Prediction rate: %1$.3f%%, Predictable: %2$.3f%%, Score: %3$.3f, Matches: %4$d, Time: %5$s\n", result.getPredictionRate(), result.getPredictablePct(), result.getScore(), result.getTotal(), stopwatch);
 		if (result.getWithPrice() > 0)
 			System.out.printf("Profit: %1$.3f%%, Profitable: %2$.3f%%, Beating price: %3$.3f%%, With price: %4$.3f%%\n", result.getProfitPct(), result.getProfitablePct(), result.getBeatingPricePct(), result.getWithPricePct());
-		if (VERBOSE) {
-			System.out.println(verificationResult.getSurfaceResults());
-			System.out.println(verificationResult.getLevelResults());
-			System.out.println(verificationResult.getProbabilityRangeResults());
-			System.out.println(verificationResult.getRankRangeResults());
-		}
-		return verificationResult.getResult();
+		return verificationResult;
 	}
 
 	private static double kellyStake(double probability, double price) {
@@ -182,5 +175,14 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 				);
 			}
 		}
+		if (compact)
+			System.out.println();
+	}
+
+	protected static void printResultDistribution(PredictionVerificationResult result) {
+		System.out.println(result.getSurfaceResults());
+		System.out.println(result.getLevelResults());
+		System.out.println(result.getProbabilityRangeResults());
+		System.out.println(result.getRankRangeResults());
 	}
 }

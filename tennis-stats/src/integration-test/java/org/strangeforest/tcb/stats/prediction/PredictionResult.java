@@ -13,6 +13,7 @@ public class PredictionResult {
 	private int total;
 	private int predictable;
 	private int predicted;
+	private double delta2;
 	private int withPrice;
 	private int beatingPrice;
 	private int profitable;
@@ -21,6 +22,8 @@ public class PredictionResult {
 
 	private double predictablePct;
 	private double predictionRate;
+	private double brierScore;
+	private double score;
 	private double withPricePct;
 	private double beatingPricePct;
 	private double profitablePct;
@@ -35,12 +38,14 @@ public class PredictionResult {
 		return config;
 	}
 
-	public void newMatch(boolean predictable, boolean predicted, boolean withPrice, boolean beatingPrice, boolean profitable, double stake, double return_) {
+	public void newMatch(boolean predictable, double probability, boolean predicted, boolean withPrice, boolean beatingPrice, boolean profitable, double stake, double return_) {
 		++total;
 		if (predictable) { // Predictor is kicked on
 			++this.predictable;
 			if (predicted) // Prediction was correct
 				++this.predicted;
+			double delta = probability - (predicted ? 1.0 : 0.0);
+			delta2 += delta * delta;
 			if (withPrice) { // Match has valid bookmaker price to compare prediction to
 				++this.withPrice;
 				if (beatingPrice) { // Prediction is outside of price margin spread, thus a candidate for betting
@@ -56,8 +61,10 @@ public class PredictionResult {
 	}
 
 	public void complete() {
-		predictablePct = pct(predictable,  total);
+		predictablePct = pct(predictable, total);
 		predictionRate = pct(predicted, predictable);
+		brierScore = delta2 / predictable;
+		score = predicted / (total * brierScore); // = Prediction Rate * Predictable Rate / Brier Score
 		withPricePct = pct(withPrice, predictable);
 		beatingPricePct = pct(beatingPrice, withPrice);
 		profitablePct = pct(profitable, beatingPrice);
@@ -75,6 +82,14 @@ public class PredictionResult {
 
 	public int getPredicted() {
 		return predicted;
+	}
+
+	public double getBrierScore() {
+		return brierScore;
+	}
+
+	public double getScore() {
+		return score;
 	}
 
 	public int getWithPrice() {
@@ -131,7 +146,8 @@ public class PredictionResult {
 	@Override public String toString() {
 		ToStringHelper builder = toStringHelper(this)
 			.add("predictionRate", format("%1$.3f%%", predictionRate))
-			.add("predictable", format("%1$.3f%%", predictablePct));
+			.add("predictable", format("%1$.3f%%", predictablePct))
+			.add("score", format("%1$.3f", score));
 		if (withPrice > 0) {
 			builder.add("profit", format("%1$.3f%%", profitPct))
 				.add("profitable", format("%1$.3f%%", profitablePct))

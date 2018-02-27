@@ -112,7 +112,7 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	private void tunePrediction(PredictionConfig config, Iterable<Weighted> features, Function<PredictionResult, Double> metrics) throws InterruptedException {
 		TuningContext context = new TuningContext(comparing(metrics), MIN_WEIGHT, MAX_WEIGHT, WEIGHT_STEP);
-		PredictionResult result = verifyPrediction(FROM_DATE, TO_DATE, config, TUNING_SET);
+		PredictionVerificationResult result = verifyPrediction(FROM_DATE, TO_DATE, config, TUNING_SET);
 
 		for (context.initialResult(result); context.startStep() != null; context.endStep()) {
 			for (Weighted weighted : features) {
