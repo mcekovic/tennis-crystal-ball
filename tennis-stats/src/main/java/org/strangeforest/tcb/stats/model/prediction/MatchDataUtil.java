@@ -10,6 +10,7 @@ import com.google.common.collect.*;
 
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
+import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
 
 public abstract class MatchDataUtil {
 
@@ -71,7 +72,24 @@ public abstract class MatchDataUtil {
 	}
 
 	public static Predicate<MatchData> isLevel(TournamentLevel level) {
-		return match -> nonNullEquals(match.getLevel(), level);
+		return match -> nonNullEquals(levelGroup(match.getLevel()), levelGroup(level));
+	}
+
+	private static TournamentLevel levelGroup(TournamentLevel level) {
+		if (level == null)
+			return OTHERS;
+		switch (level) {
+			case GRAND_SLAM: return GRAND_SLAM;
+			case TOUR_FINALS:
+			case ALT_FINALS: return TOUR_FINALS;
+			case MASTERS:
+			case OLYMPICS: return MASTERS;
+			case ATP_500:
+			case ATP_250: return ATP_500;
+			case DAVIS_CUP:
+			case OTHERS_TEAM: return DAVIS_CUP;
+			default: return OTHERS;
+		}
 	}
 
 	public static Predicate<MatchData> isTournament(Integer tournamentId) {

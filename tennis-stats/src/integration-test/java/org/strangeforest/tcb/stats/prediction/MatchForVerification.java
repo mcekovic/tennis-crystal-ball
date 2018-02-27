@@ -16,10 +16,12 @@ public class MatchForVerification {
 	public final Surface surface;
 	public final boolean indoor;
 	public final Round round;
+	public final Integer winnerRank;
+	public final Integer loserRank;
 	public final Double winnerPrice;
 	public final Double loserPrice;
 
-	public MatchForVerification(int winnerId, int loserId, LocalDate date, int tournamentId, int tournamentEventId, String level, short bestOf, String surface, boolean indoor, String round, Double winnerPrice, Double loserPrice) {
+	public MatchForVerification(int winnerId, int loserId, LocalDate date, int tournamentId, int tournamentEventId, String level, short bestOf, String surface, boolean indoor, String round, Integer winnerRank, Integer loserRank, Double winnerPrice, Double loserPrice) {
 		this.winnerId = winnerId;
 		this.loserId = loserId;
 		this.date = date;
@@ -30,6 +32,8 @@ public class MatchForVerification {
 		this.surface = Surface.safeDecode(surface);
 		this.indoor = indoor;
 		this.round = Round.decode(round);
+		this.winnerRank = winnerRank;
+		this.loserRank = loserRank;
 		this.winnerPrice = winnerPrice;
 		this.loserPrice = loserPrice;
 	}

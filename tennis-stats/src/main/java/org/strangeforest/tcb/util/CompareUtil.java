@@ -21,6 +21,10 @@ public abstract class CompareUtil {
 		return Objects.compare(t1, t2, NULLS_FIRST_COMPARATOR);
 	}
 
+	public static <T extends Comparable<T>> T nullsLastMin(T t1, T t2) {
+		return nullsLastCompare(t1, t2) < 0 ? t1 : t2;
+	}
+
 	public static <T extends Comparable<T>> int compareLists(List<T> list1, List<T> list2) {
 		int size1 = list1.size();
 		int size2 = list2.size();

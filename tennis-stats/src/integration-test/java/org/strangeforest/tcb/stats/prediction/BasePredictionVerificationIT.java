@@ -4,7 +4,6 @@ import java.sql.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
 import java.util.stream.*;
 
 import org.springframework.beans.factory.annotation.*;
@@ -16,7 +15,6 @@ import org.strangeforest.tcb.stats.service.*;
 import org.testng.annotations.*;
 
 import com.google.common.base.*;
-import com.google.common.util.concurrent.*;
 
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
@@ -34,13 +32,12 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	private static final String PRICE_SOURCE = "B365";
 	private static final boolean BET_ON_OUTSIDER = false;
 	private static final boolean KELLY_STAKE = true;
+	private static final boolean VERBOSE = true;
 
 	private static final int THREADS = 8;
-	private static final int MATCHES_PER_TICK = 1000;
-	private static final int PROGRESS_LINE_WRAP = 100;
 
 	private static final String MATCHES_QUERY = //language=SQL
-		"SELECT m.winner_id, m.loser_id, m.date, m.tournament_id, m.tournament_event_id, m.level, m.best_of, m.surface, m.indoor, m.round, p.winner_price, p.loser_price\n" +
+		"SELECT m.winner_id, m.loser_id, m.date, m.tournament_id, m.tournament_event_id, m.level, m.best_of, m.surface, m.indoor, m.round, m.winner_rank, m.loser_rank, p.winner_price, p.loser_price\n" +
 		"FROM match_for_stats_v m\n" +
 		"LEFT JOIN match_price p ON p.match_id = m.match_id AND source = :source\n" +
 		"WHERE (m.date BETWEEN :date1 AND :date2)%1$s\n" +
@@ -73,14 +70,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		System.out.printf("\nVerifying prediction from %1$s to %2$s and weights:\n", fromDate, toDate);
 		printWeights(config, tuningSet, true);
 		Stopwatch stopwatch = Stopwatch.createStarted();
-		AtomicInteger total = new AtomicInteger();
-		AtomicInteger predicted = new AtomicInteger();
-		AtomicInteger hits = new AtomicInteger();
-		AtomicInteger hasPrice = new AtomicInteger();
-		AtomicInteger profitable = new AtomicInteger();
-		AtomicInteger beatingPrice = new AtomicInteger();
-		AtomicDouble profit = new AtomicDouble();
-		AtomicInteger ticks = new AtomicInteger();
+		PredictionVerificationResult verificationResult = new PredictionVerificationResult(config);
 		List<MatchForVerification> matches = matches(fromDate, toDate, tuningSet.getCondition());
 		CountDownLatch matchCount = new CountDownLatch(matches.size());
 		for (MatchForVerification match : matches) {
@@ -92,37 +82,35 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 					short bestOf = match.bestOf;
 					PredictionConfig matchConfig = config != null ? config : PredictionConfig.defaultConfig(TUNING_SET_LEVEL.select(surface, indoor, level, bestOf));
 					MatchPrediction prediction = predictionService.predictMatch(match.winnerId, match.loserId, match.date, match.tournamentId, match.tournamentEventId, false, surface, indoor, level, bestOf, match.round, matchConfig);
+					boolean predictable = false, predicted = false, withPrice = false, beatingPrice = false, profitable = false;
+					double winnerProbability = 0.0, stake = 0.0, return_ = 0.0;
 					if (prediction.getPredictability1() > MIN_PREDICTABILITY) {
-						predicted.incrementAndGet();
-						double winnerProbability = prediction.getWinProbability1();
+						predictable = true;
+						winnerProbability = prediction.getWinProbability1();
 						double loserProbability = prediction.getWinProbability2();
 						Double winnerPrice = match.winnerPrice;
 						Double loserPrice = match.loserPrice;
 						if (winnerProbability > 0.5)
-							hits.incrementAndGet();
-						if (winnerPrice != null || loserPrice != null)
-							hasPrice.incrementAndGet();
-						if (winnerProbability > 0.5 || BET_ON_OUTSIDER) {
-							if (winnerPrice != null && winnerProbability > 1.0 / winnerPrice) {
-								beatingPrice.incrementAndGet();
-								profitable.incrementAndGet();
-								double stake = KELLY_STAKE ? kellyStake(winnerProbability, winnerPrice) : 1.0;
-								profit.addAndGet(stake * (winnerPrice - 1.0));
+							predicted = true;
+						if (winnerPrice != null || loserPrice != null) {
+							withPrice = true;
+							if (winnerProbability > 0.5 || BET_ON_OUTSIDER) {
+								if (winnerPrice != null && winnerProbability > 1.0 / winnerPrice) {
+									beatingPrice = true;
+									profitable = true;
+									stake = KELLY_STAKE ? kellyStake(winnerProbability, winnerPrice) : 1.0;
+									return_ = stake * winnerPrice;
+								}
 							}
-						}
-						if (loserProbability > 0.5 || BET_ON_OUTSIDER) {
-							if (loserPrice != null && loserProbability > 1.0 / loserPrice) {
-								beatingPrice.incrementAndGet();
-								double stake = KELLY_STAKE ? kellyStake(loserProbability, loserPrice) : 1.0;
-								profit.addAndGet(-stake);
+							if (loserProbability > 0.5 || BET_ON_OUTSIDER) {
+								if (loserPrice != null && loserProbability > 1.0 / loserPrice) {
+									beatingPrice = true;
+									stake = KELLY_STAKE ? kellyStake(loserProbability, loserPrice) : 1.0;
+								}
 							}
 						}
 					}
-					if (total.incrementAndGet() % MATCHES_PER_TICK == 0) {
-						System.out.print('.');
-						if (ticks.incrementAndGet() % PROGRESS_LINE_WRAP == 0)
-							System.out.println();
-					}
+					verificationResult.newMatch(match, predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 				}
 				finally {
 					matchCount.countDown();
@@ -130,21 +118,18 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 			});
 		}
 		matchCount.await();
-		double predictablePct = 100.0 * predicted.get() / total.get();
-		double predictionRate = 100.0 * hits.get() / predicted.get();
-		System.out.printf("\nPrediction rate: %1$.3f%%, Predictable: %2$.3f%%, Matches: %3$d, Time: %4$s\n", predictionRate, predictablePct, matches.size(), stopwatch);
-		double profitPct = 0.0;
-		if (hasPrice.get() > 0.0) {
-			double hasPricePct = 100.0 * hasPrice.get() / predicted.get();
-			double beatingPriceRate = 100.0 * beatingPrice.get() / predicted.get();
-			double profitablePct = 100.0 * profitable.get() / beatingPrice.get();
-			profitPct = 100.0 * profit.get() / beatingPrice.get();
-			System.out.printf("Has price: %1$.3f%%\n", hasPricePct);
-			System.out.printf("Beating price rate: %1$.3f%%\n", beatingPriceRate);
-			System.out.printf("Profitable: %1$.3f%%\n", profitablePct);
-			System.out.printf("Profit: %1$.3f%%\n", profitPct);
+		verificationResult.complete();
+		PredictionResult result = verificationResult.getResult();
+		System.out.printf("\nPrediction rate: %1$.3f%%, Predictable: %2$.3f%%, Matches: %3$d, Time: %4$s\n", result.getPredictionRate(), result.getPredictablePct(), result.getTotal(), stopwatch);
+		if (result.getWithPrice() > 0)
+			System.out.printf("Profit: %1$.3f%%, Profitable: %2$.3f%%, Beating price: %3$.3f%%, With price: %4$.3f%%\n", result.getProfitPct(), result.getProfitablePct(), result.getBeatingPricePct(), result.getWithPricePct());
+		if (VERBOSE) {
+			System.out.println(verificationResult.getSurfaceResults());
+			System.out.println(verificationResult.getLevelResults());
+			System.out.println(verificationResult.getProbabilityRangeResults());
+			System.out.println(verificationResult.getRankRangeResults());
 		}
-		return new PredictionResult(predictablePct, predictionRate, profitPct, config);
+		return verificationResult.getResult();
 	}
 
 	private static double kellyStake(double probability, double price) {
@@ -171,6 +156,8 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 			rs.getString("surface"),
 			rs.getBoolean("indoor"),
 			rs.getString("round"),
+			getInteger(rs,"winner_rank"),
+			getInteger(rs,"loser_rank"),
 			getDouble(rs,"winner_price"),
 			getDouble(rs,"loser_price")
 		);
