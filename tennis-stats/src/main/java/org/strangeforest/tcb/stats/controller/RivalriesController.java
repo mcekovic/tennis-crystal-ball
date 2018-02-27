@@ -56,7 +56,8 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "round", required = false) String round
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "rankType", required = false) String rankType
 	) {
 		Player player1 = playerId1 != null ? playerService.getPlayer(playerId1) : (name1 != null ? playerService.getPlayer(name1) : null);
 		Player player2 = playerId2 != null ? playerService.getPlayer(playerId2) : (name2 != null ? playerService.getPlayer(name2) : null);
@@ -73,6 +74,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("round", round);
+		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("params", ParamsUtil.INSTANCE);
 		return new ModelAndView("headToHead", modelMap);
 	}
@@ -207,12 +209,14 @@ public class RivalriesController extends PageController {
 
 	@GetMapping("/h2hRankings")
 	public ModelAndView h2hRankings(
-		@RequestParam(name = "playerId") int[] playerId
+		@RequestParam(name = "playerId") int[] playerId,
+		@RequestParam(name = "rankType", required = false) String rankType
 	) {
 		List<Integer> seasons = playerService.getPlayersSeasons(playerId);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("rankType", rankType);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("rankCategories", RankCategory.values());
 		return new ModelAndView("playerRankings", modelMap);

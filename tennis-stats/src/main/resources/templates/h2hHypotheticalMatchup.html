@@ -314,7 +314,33 @@
 		<td class="text-right">
 			<div th:text="${#numbers.formatDecimal(100 * prediction.getItemProbability1(item).probability, 1, 1) + '%'}">50.0%</div>
 		</td>
-		<th class="text-center" th:text="${item.longName()}">ELO</th>
+		<th class="text-center">
+			<th:block th:switch="${item.longName()}" th:with="url=${'/headToHead?playerId1=' + player1.id + '&playerId2=' + player2.id}">
+				<a th:case="'RANKING[RANK]'" th:href="${url + '&tab=ranking&rankType=RANK'}" th:text="${item.longName()}" title="Show ranking comparision">ELO</a>
+				<a th:case="'RANKING[RANK_POINTS]'" th:href="${url + '&tab=ranking&rankType=POINTS'}" th:text="${item.longName()}" title="Show ranking points comparision">ELO</a>
+				<a th:case="'RANKING[ELO]'" th:href="${url + '&tab=ranking&rankType=ELO_RATING'}" th:text="${item.longName()}" title="Show Elo rating comparision">ELO</a>
+				<a th:case="'RANKING[SURFACE_ELO]'" th:href="${url + '&tab=ranking&rankType=' + T(org.strangeforest.tcb.stats.model.core.Surface).decode(surface).name() + '_ELO_RATING'}" th:text="${item.longName()}" th:title="|Show ${T(org.strangeforest.tcb.stats.model.core.Surface).decode(surface).text} Elo rating comparision|">ELO</a>
+				<a th:case="'RANKING[OUT_IN_ELO]'" th:href="${url + '&tab=ranking&rankType=' + (indoor ? 'INDOOR' : 'OUTDOOR') + '_ELO_RATING'}" th:text="${item.longName()}" th:title="|Show ${indoor ? 'Indoor' : 'Outdoor'} Elo rating comparision|">ELO</a>
+				<a th:case="'RANKING[SET_ELO]'" th:href="${url + '&tab=ranking&rankType=SET_ELO_RATING'}" th:text="${item.longName()}" title="Show Set Elo rating comparision">ELO</a>
+				<a th:case="'H2H[OVERALL]'" th:href="${url + '&tab=matches'}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'H2H[SURFACE]'" th:href="${url + '&tab=matches&surface=' + surface}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'H2H[LEVEL]'" th:href="${url + '&tab=matches&level=' + level}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'H2H[ROUND]'" th:href="${url + '&tab=matches&round=' + round}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'H2H[OVERALL_SET]'" th:href="${url + '&tab=matches'}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'H2H[SURFACE_SET]'" th:href="${url + '&tab=matches&surface=' + surface}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'H2H[LEVEL_SET]'" th:href="${url + '&tab=matches&level=' + level}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'H2H[ROUND_SET]'" th:href="${url + '&tab=matches&round=' + round}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'WINNING_PCT[OVERALL]'" th:href="${url + '&tab=performance'}" th:text="${item.longName()}" title="Show performance comparision">ELO</a>
+				<a th:case="'WINNING_PCT[SURFACE]'" th:href="${url + '&tab=performance&surface=' + surface}" th:text="${item.longName()}" title="Show performance comparision">ELO</a>
+				<a th:case="'WINNING_PCT[LEVEL]'" th:href="${url + '&tab=performance&level=' + level}" th:text="${item.longName()}" title="Show performance comparision">ELO</a>
+				<a th:case="'WINNING_PCT[ROUND]'" th:href="${url + '&tab=performance&round=' + round}" th:text="${item.longName()}" title="Show performance comparision">ELO</a>
+				<a th:case="'WINNING_PCT[OVERALL_SET]'" th:href="${url + '&tab=statistics'}" th:text="${item.longName()}" title="Show statistics comparision">ELO</a>
+				<a th:case="'WINNING_PCT[SURFACE_SET]'" th:href="${url + '&tab=statistics&surface=' + surface}" th:text="${item.longName()}" title="Show statistics comparision">ELO</a>
+				<a th:case="'WINNING_PCT[LEVEL_SET]'" th:href="${url + '&tab=statistics&level=' + level}" th:text="${item.longName()}" title="Show statistics comparision">ELO</a>
+				<a th:case="'WINNING_PCT[ROUND_SET]'" th:href="${url + '&tab=statistics&round=' + round}" th:text="${item.longName()}" title="Show statistics comparision">ELO</a>
+				<th:block th:case="*" th:text="${item.longName()}">ELO</th:block>
+			</th:block>
+		</th>
 		<td class="text-left">
 			<div th:text="${#numbers.formatDecimal(100 * prediction.getItemProbability2(item).probability, 1, 1) + '%'}">50.0%</div>
 		</td>
