@@ -12,7 +12,7 @@ import org.strangeforest.tcb.stats.util.*;
 import com.google.common.base.*;
 
 import static com.google.common.base.Strings.*;
-import static java.lang.String.format;
+import static java.lang.String.*;
 
 public class PredictionConfig {
 
@@ -32,7 +32,11 @@ public class PredictionConfig {
 	}
 	
 	public static synchronized PredictionConfig defaultConfig(TuningSet tuningSet) {
-		return defaultConfigs.computeIfAbsent(tuningSet, ts -> loadConfig(format("/prediction/prediction%1$s.properties", tuningSet.getConfigSuffix())));
+		return defaultConfigs.computeIfAbsent(tuningSet, ts -> loadConfig(getConfigFileName(tuningSet)));
+	}
+
+	private static String getConfigFileName(TuningSet tuningSet) {
+		return format("/prediction/prediction%1$s.properties", tuningSet.getConfigSuffix());
 	}
 
 	public static PredictionConfig loadConfig(String configName) {
@@ -187,6 +191,28 @@ public class PredictionConfig {
 				config.setProperty("item." + area + '.' + item, String.valueOf(getItemWeight(item)));
 		}
 		return config;
+	}
+
+	public void save(TuningSet tuningSet) {
+		try (PrintStream out = new PrintStream(new FileOutputStream("tennis-stats/src/main/resources" + getConfigFileName(tuningSet)))) {
+			out.println("# Areas");
+			int maxAreaLength = maxLength(PredictionArea.values()) + 1;
+			for (PredictionArea area : PredictionArea.values())
+				out.printf("area.%1$-" + maxAreaLength + "s%2$2.0f\n", area + "=", getAreaWeight(area));
+			for (PredictionArea area : PredictionArea.values()) {
+				out.printf("\n# %1$s Items\n", area);
+				int maxItemLength = maxLength(area.getItems()) + 1;
+				for (PredictionItem item : area.getItems())
+					out.printf("item.%1$s.%2$-" + maxItemLength + "s%3$2.0f\n", area, item + "=", getItemWeight(item));
+			}
+		}
+		catch (FileNotFoundException ex) {
+			throw new IllegalArgumentException("Cannot save config", ex);
+		}
+	}
+
+	private static int maxLength(Object[] items) {
+		return Stream.of(items).mapToInt(o -> o.toString().length()).max().orElse(0);
 	}
 
 	private void fromProperties(Properties props) {

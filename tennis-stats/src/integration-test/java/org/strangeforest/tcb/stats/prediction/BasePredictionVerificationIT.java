@@ -180,9 +180,9 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	}
 
 	protected static void printResultDistribution(PredictionVerificationResult result) {
+		System.out.println(result.getProbabilityRangeResults());
 		System.out.println(result.getSurfaceResults());
 		System.out.println(result.getLevelResults());
-		System.out.println(result.getProbabilityRangeResults());
 		System.out.println(result.getRankRangeResults());
 	}
 }

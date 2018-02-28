@@ -15,34 +15,36 @@ public class PredictionVerificationResult {
 
 	private final PredictionConfig config;
 	private final PredictionResult result;
+	private final Map<Double, PredictionResult> probabilityRangeResults;
 	private final Map<Surface, PredictionResult> surfaceResults;
 	private final Map<TournamentLevel, PredictionResult> levelResults;
-	private final Map<Double, PredictionResult> probabilityRangeResults;
 	private final Map<Range<Integer>, PredictionResult> rankRangeResults;
 
+	private static final int PROBABILITY_RANGES = 10;
+	private static final int PROBABILITY_RANGES_2 = 2 * PROBABILITY_RANGES;
 
 	public PredictionVerificationResult(PredictionConfig config) {
 		this.config = config;
 		result = new PredictionResult(config);
+		probabilityRangeResults = new HashMap<>();
 		surfaceResults = new HashMap<>();
 		levelResults = new HashMap<>();
-		probabilityRangeResults = new HashMap<>();
 		rankRangeResults = new HashMap<>();
 	}
 
 	public synchronized void newMatch(MatchForVerification match, boolean predictable, double probability, boolean predicted, boolean withPrice, boolean beatingPrice, boolean profitable, double stake, double return_) {
 		result.newMatch(predictable, probability, predicted, withPrice, beatingPrice, profitable, stake, return_);
+		if (predictable) {
+			probability = probability >= 0.5 ? probability : 1.0 - probability;
+			probability = Math.round(probability * PROBABILITY_RANGES_2) / (double)PROBABILITY_RANGES_2;
+			probabilityRangeResults.computeIfAbsent(probability, s -> new PredictionResult(config)).newMatch(predictable, probability, predicted, withPrice, beatingPrice, profitable, stake, return_);
+		}
 		Surface surface = match.surface;
 		if (surface != null)
 			surfaceResults.computeIfAbsent(surface, s -> new PredictionResult(config)).newMatch(predictable, probability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 		TournamentLevel level = match.level;
 		if (level != null)
 			levelResults.computeIfAbsent(level, s -> new PredictionResult(config)).newMatch(predictable, probability, predicted, withPrice, beatingPrice, profitable, stake, return_);
-		if (predictable) {
-			probability = probability >= 0.5 ? probability : 1.0 - probability;
-			probability = Math.round(probability * 20) / 20.0;
-			probabilityRangeResults.computeIfAbsent(probability, s -> new PredictionResult(config)).newMatch(predictable, probability, predicted, withPrice, beatingPrice, profitable, stake, return_);
-		}
 		Range<Integer> rankRange = rankRange(nullsLastMin(match.winnerRank, match.loserRank));
 		if (rankRange != null)
 			rankRangeResults.computeIfAbsent(rankRange, s -> new PredictionResult(config)).newMatch(predictable, probability, predicted, withPrice, beatingPrice, profitable, stake, return_);
@@ -50,11 +52,11 @@ public class PredictionVerificationResult {
 
 	public synchronized void complete() {
 		result.complete();
+		for (PredictionResult result : probabilityRangeResults.values())
+			result.complete();
 		for (PredictionResult result : surfaceResults.values())
 			result.complete();
 		for (PredictionResult result : levelResults.values())
-			result.complete();
-		for (PredictionResult result : probabilityRangeResults.values())
 			result.complete();
 		for (PredictionResult result : rankRangeResults.values())
 			result.complete();
@@ -64,16 +66,16 @@ public class PredictionVerificationResult {
 		return result;
 	}
 
+	public Map<Double, PredictionResult> getProbabilityRangeResults() {
+		return new TreeMap<>(probabilityRangeResults);
+	}
+
 	public Map<Surface, PredictionResult> getSurfaceResults() {
 		return new TreeMap<>(surfaceResults);
 	}
 
 	public Map<TournamentLevel, PredictionResult> getLevelResults() {
 		return new TreeMap<>(levelResults);
-	}
-
-	public Map<Double, PredictionResult> getProbabilityRangeResults() {
-		return new TreeMap<>(probabilityRangeResults);
 	}
 
 	public Map<Range<Integer>, PredictionResult> getRankRangeResults() {

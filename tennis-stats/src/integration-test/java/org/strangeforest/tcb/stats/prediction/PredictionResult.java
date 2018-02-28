@@ -44,7 +44,7 @@ public class PredictionResult {
 			++this.predictable;
 			if (predicted) // Prediction was correct
 				++this.predicted;
-			double delta = probability - (predicted ? 1.0 : 0.0);
+			double delta = 1 - probability;
 			delta2 += delta * delta;
 			if (withPrice) { // Match has valid bookmaker price to compare prediction to
 				++this.withPrice;
@@ -147,6 +147,7 @@ public class PredictionResult {
 		ToStringHelper builder = toStringHelper(this)
 			.add("predictionRate", format("%1$.3f%%", predictionRate))
 			.add("predictable", format("%1$.3f%%", predictablePct))
+			.add("brierScore", format("%1$.4f", brierScore))
 			.add("score", format("%1$.3f", score));
 		if (withPrice > 0) {
 			builder.add("profit", format("%1$.3f%%", profitPct))
