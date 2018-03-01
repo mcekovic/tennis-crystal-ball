@@ -110,8 +110,8 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 				double p1 = 1.0 * wonLost1.won / total1;
 				double p2 = 1.0 * wonLost2.won / total2;
 				if (p1 + p2 > 0.0) {
-					p1 = p1 * p1;
-					p2 = p2 * p2;
+					p1 *= p1;
+					p2 *= p2;
 					double p12 = p1 + p2;
 					DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
 					prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(p1 / p12));

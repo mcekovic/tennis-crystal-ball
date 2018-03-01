@@ -24,6 +24,7 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 	private static final double MIN_WEIGHT = 0.0;
 	private static final double MAX_WEIGHT = 10.0;
 	private static final double WEIGHT_STEP = 1.0;
+	private static final boolean SAVE_BEST_CONFIG = false;
 
 
 	// Starting from default weights
@@ -118,12 +119,22 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 			for (Weighted weighted : features) {
 				PredictionConfig stepDownConfig = context.stepDown(weighted);
 				if (stepDownConfig != null)
-					context.nextResult(verifyPrediction(FROM_DATE, TO_DATE, stepDownConfig, TUNING_SET), TUNING_SET);
+					tuningStep(context, stepDownConfig);
 				PredictionConfig stepUpConfig = context.stepUp(weighted);
 				if (stepUpConfig != null)
-					context.nextResult(verifyPrediction(FROM_DATE, TO_DATE, stepUpConfig, TUNING_SET), TUNING_SET);
+					tuningStep(context, stepUpConfig);
 			}
 		}
 		context.finish();
+	}
+
+	private void tuningStep(TuningContext context, PredictionConfig config) throws InterruptedException {
+		PredictionVerificationResult result = verifyPrediction(FROM_DATE, TO_DATE, config, TUNING_SET);
+		if (context.nextResult(result)) {
+			printWeights(config, false);
+			printResultDistribution(result);
+			if (SAVE_BEST_CONFIG)
+				config.save(TUNING_SET);
+		}
 	}
 }

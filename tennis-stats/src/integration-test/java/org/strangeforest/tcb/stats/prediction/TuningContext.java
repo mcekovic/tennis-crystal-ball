@@ -76,21 +76,25 @@ public class TuningContext {
 		return null;
 	}
 
-	public void nextResult(PredictionVerificationResult verificationResult, TuningSet tuningSet) {
+	/**
+	 * Processes next prediction verification result
+	 * @param verificationResult prediction verification result
+	 * @return true if new result is the best one
+	 */
+	public boolean nextResult(PredictionVerificationResult verificationResult) {
 		PredictionResult result = verificationResult.getResult();
 		addResult(result);
+		boolean best = false;
 		if (resultComparator.compare(result, bestResult) > 0) {
 			bestResult = result;
+			best = true;
 			System.out.println("***** New best result: " + bestResult);
-			PredictionConfig config = result.getConfig();
-			printWeights(config, false);
-			printResultDistribution(verificationResult);
-			config.save(tuningSet);
 		}
 		if (bestStepResult == null || resultComparator.compare(result, bestStepResult) > 0) {
 			bestStepResult = result;
 			System.out.println("*** New best step result: " + bestStepResult);
 		}
+		return best;
 	}
 
 	private void addResult(PredictionResult result) {

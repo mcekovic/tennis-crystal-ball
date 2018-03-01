@@ -28,12 +28,10 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	private ExecutorService executor;
 
 	private static final TuningSetLevel TUNING_SET_LEVEL = TuningSetLevel.SURFACE;
-	private static final double MIN_PREDICTABILITY = 0.0;
+	private static final double MIN_PREDICTABILITY = 0.5;
 	private static final String PRICE_SOURCE = "B365";
 	private static final boolean BET_ON_OUTSIDER = false;
 	private static final boolean KELLY_STAKE = true;
-
-	private static final int THREADS = 8;
 
 	private static final String MATCHES_QUERY = //language=SQL
 		"SELECT m.winner_id, m.loser_id, m.date, m.tournament_id, m.tournament_event_id, m.level, m.best_of, m.surface, m.indoor, m.round, m.winner_rank, m.loser_rank, p.winner_price, p.loser_price\n" +
@@ -45,7 +43,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 
 	@BeforeClass
 	public void setUp() {
-		executor = Executors.newFixedThreadPool(THREADS);
+		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 	}
 
 	@AfterClass
@@ -119,7 +117,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		matchCount.await();
 		verificationResult.complete();
 		PredictionResult result = verificationResult.getResult();
-		System.out.printf("Prediction rate: %1$.3f%%, Predictable: %2$.3f%%, Score: %3$.3f, Matches: %4$d, Time: %5$s\n", result.getPredictionRate(), result.getPredictablePct(), result.getScore(), result.getTotal(), stopwatch);
+		System.out.printf("Prediction rate: %1$.3f%%, Predictable: %2$.3f%%, Score: %3$.4f, Matches: %4$d, Time: %5$s\n", result.getPredictionRate(), result.getPredictablePct(), result.getScore(), result.getTotal(), stopwatch);
 		if (result.getWithPrice() > 0)
 			System.out.printf("Profit: %1$.3f%%, Profitable: %2$.3f%%, Beating price: %3$.3f%%, With price: %4$.3f%%\n", result.getProfitPct(), result.getProfitablePct(), result.getBeatingPricePct(), result.getWithPricePct());
 		return verificationResult;

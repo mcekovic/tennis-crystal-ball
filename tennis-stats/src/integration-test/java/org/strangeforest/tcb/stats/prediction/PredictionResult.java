@@ -145,10 +145,10 @@ public class PredictionResult {
 
 	@Override public String toString() {
 		ToStringHelper builder = toStringHelper(this)
-			.add("predictionRate", format("%1$.3f%%", predictionRate))
+			.add("rate", format("%1$.3f%%", predictionRate))
 			.add("predictable", format("%1$.3f%%", predictablePct))
-			.add("brierScore", format("%1$.4f", brierScore))
-			.add("score", format("%1$.3f", score));
+			.add("brier", format("%1$.5f", brierScore))
+			.add("score", format("%1$.4f", score));
 		if (withPrice > 0) {
 			builder.add("profit", format("%1$.3f%%", profitPct))
 				.add("profitable", format("%1$.3f%%", profitablePct))
