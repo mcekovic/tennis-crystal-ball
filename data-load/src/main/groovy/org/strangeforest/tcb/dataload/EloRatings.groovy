@@ -12,7 +12,9 @@ import groovy.sql.*
 import groovy.transform.*
 
 import static java.lang.Math.*
+import static java.lang.String.*
 import static org.strangeforest.tcb.dataload.StartEloRatings.*
+import static org.strangeforest.tcb.stats.util.PercentageUtil.*
 import static org.strangeforest.tcb.util.DateUtil.*
 
 class EloRatings {
@@ -24,6 +26,8 @@ class EloRatings {
 	final EloSurfaceFactors eloSurfaceFactors
 	Map<Integer, EloRating> playerRatings
 	Map<String, Map<Integer, EloRating>> playerRatingsByType
+	PredictionResult predictionResult
+	Map<String, PredictionResult> predictionResultByType
 	BlockingQueue<MatchEloRating> matchRatings
 	Map<RankKey, Integer> rankCache
 	Map<Date, Map<Integer, Integer>> rankDateCache
@@ -105,7 +109,12 @@ class EloRatings {
 		int matches = 0
 		playerRatings = new ConcurrentHashMap<>()
 		playerRatingsByType = [:]
-		RATING_TYPES.each { playerRatingsByType[it] = new ConcurrentHashMap<>()}
+		predictionResult = new PredictionResult()
+		predictionResultByType = [:]
+		RATING_TYPES.each {
+			playerRatingsByType[it] = new ConcurrentHashMap<>()
+			predictionResultByType[it] = new PredictionResult()
+		}
 		matchRatings = new LinkedBlockingDeque<>()
 		lastDate = null
 		saves = new AtomicInteger()
@@ -169,6 +178,10 @@ class EloRatings {
 		println "Rank fetches: $rankFetches"
 		if (save)
 			println "Saves: $saves"
+		predictionResult.complete()
+		RATING_TYPES.each { predictionResultByType[it].complete() }
+		println predictionResult
+		println predictionResultByType
 		playerRatings
 	}
 
@@ -263,6 +276,10 @@ class EloRatings {
 		}
 	}
 
+	private predictionResult(String type) {
+		type ? predictionResultByType[type] : predictionResult
+	}
+
 	private calculateAndPutNewRatings(EloRating winnerRating, EloRating loserRating, match, String type, String loserType, Date date, boolean forSurface, boolean forIndoor, String forType) {
 		long matchId = match.match_id
 		String level = match.level
@@ -277,16 +294,16 @@ class EloRatings {
 			def lDelta = deltaRating(loserRating.rating, winnerRating.rating, level, round, bestOf, outcome)
 			switch (type) {
 				case 's':
-					delta = 0.5d * (wDelta * (match.w_sets ?: 0) - lDelta * (match.l_sets ?: 0))
+					delta = 0.5d * (wDelta * (match.w_sets ?: 0d) - lDelta * (match.l_sets ?: 0d))
 					break
 				case 'sg':
-					delta = 0.1d * (wDelta * (match.w_sv_gms ?: 0) - lDelta * (match.l_rt_gms ?: 0))
+					delta = 0.1d * (wDelta * (match.w_sv_gms ?: 0d) - lDelta * (match.l_rt_gms ?: 0d))
 					break
 				case 'rg':
-					delta = 0.1d * (wDelta * (match.w_rt_gms ?: 0) - lDelta * (match.l_sv_gms ?: 0))
+					delta = 0.1d * (wDelta * (match.w_rt_gms ?: 0d) - lDelta * (match.l_sv_gms ?: 0d))
 					break
 				case 'tb':
-					delta = 2.0d * (wDelta * (match.w_tbs ?: 0) - lDelta * (match.l_tbs ?: 0))
+					delta = 2.0d * (wDelta * (match.w_tbs ?: 0d) - lDelta * (match.l_tbs ?: 0d))
 					break
 			}
 		}
@@ -294,6 +311,7 @@ class EloRatings {
 		def winnerNextRating = winnerRating
 		def loserNextRating = loserRating
 		if (outcome != 'ABD') {
+			predictionResult(type).newMatch(type, match, winnerRating.rating, loserRating.rating)
 			winnerNextRating = winnerRating.newRating(delta, date, type)
 			getRatings(type).put(winnerRating.playerId, winnerNextRating)
 			loserNextRating = loserRating.newRating(-delta, date, loserType)
@@ -306,10 +324,8 @@ class EloRatings {
 	static double deltaRating(double winnerRating, double loserRating, String level, String round, short bestOf, String outcome) {
 		if (outcome == 'ABD')
 			return 0d
-		double winnerQ = pow(10d, winnerRating / 400d)
-		double loserQ = pow(10d, loserRating / 400d)
-		double loserExpectedScore = loserQ / (winnerQ + loserQ)
-		kFactor(level, round, bestOf, outcome) * loserExpectedScore
+		double delta = 1.0d / (1.0d + pow(10d, (winnerRating - loserRating) / 400.0))
+		kFactor(level, round, bestOf, outcome) * delta
 	}
 
 	static double kFactor(String level, String round, short bestOf, String outcome) {
@@ -659,5 +675,70 @@ class EloRatings {
 		int winnerNextRating
 		int loserRating
 		int loserNextRating
+	}
+
+	@ToString
+	private static class PredictionResult {
+
+		int total
+		int predicted
+		double delta2
+
+		double predictionRate
+		double brierScore
+		double score
+
+		void newMatch(String type, def match, double winnerRating, double loserRating) {
+
+			def winnerScore, loserScore
+			switch (type) {
+				case 's':
+					winnerScore = match.w_sets ?: 0d
+					loserScore = match.l_sets ?: 0d
+					break
+				case 'sg':
+					winnerScore = match.w_sv_gms ?: 0d
+					loserScore = match.l_rt_gms ?: 0d
+					break
+				case 'rg':
+					winnerScore = match.w_rt_gms ?: 0d
+					loserScore = match.l_sv_gms ?: 0d
+					break
+				case 'tb':
+					winnerScore = match.w_tbs ?: 0d
+					loserScore = match.l_tbs ?: 0d
+					break
+				default:
+					winnerScore = 1d
+					loserScore = 0d
+					break
+			}
+
+			double totalScore = winnerScore + loserScore
+			if (totalScore > 0.0d) {
+				++total
+				def winnerProbability = 1.0d / (1.0d + pow(10.0d, (loserRating - winnerRating) / 400.0d))
+				if (winnerScore >= loserScore) {
+					if (winnerProbability > 0.5d)
+						++predicted
+				}
+				else {
+					if (winnerProbability < 0.5d)
+						++predicted
+				}
+				double delta = winnerScore / totalScore - winnerProbability
+				delta2 += delta * delta
+			}
+		}
+
+		def complete() {
+			predictionRate = pct(predicted, total)
+			brierScore = delta2 / total
+			score = predicted / (total * brierScore) // = Prediction Rate / Brier Score
+		}
+
+		@Override String toString() {
+			return format('Rate=%1$.3f%%, Brier=%2$.5f, Score=%3$.4f, Matches=%4$d', predictionRate, brierScore, score, total)
+		}
 	}
 }

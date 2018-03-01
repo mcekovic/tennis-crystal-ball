@@ -13,7 +13,6 @@ import static java.util.Arrays.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.prediction.PredictionArea.*;
-import static org.strangeforest.tcb.stats.model.prediction.TuningSet.*;
 
 @ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 public class PredictionTuningIT extends BasePredictionVerificationIT {
@@ -42,22 +41,22 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	@Test
 	public void tuneDefaultPredictionInRankingArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(ALL_RANKING), RANKING);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RANKING);
 	}
 
 	@Test
 	public void tuneDefaultPredictionInRecentFormArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(ALL_RECENT_FORM), RECENT_FORM);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RECENT_FORM);
 	}
 
 	@Test
 	public void tuneDefaultPredictionInH2HArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(ALL_H2H), H2H);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), H2H);
 	}
 
 	@Test
 	public void tuneDefaultPredictionInWinningPctArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(ALL_WINNING_PCT), WINNING_PCT);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), WINNING_PCT);
 	}
 
 
