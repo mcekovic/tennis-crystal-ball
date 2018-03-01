@@ -16,6 +16,8 @@ public class RankingMatchPredictor implements MatchPredictor {
 
 	private static final int DEFAULT_RANK = 500;
 	private static final int DEFAULT_RANK_POINTS = 10;
+	private static final double RANK_PROBABILITY_EXPONENT = 0.65; // Experimentally determined for smallest Brier score
+	private static final double RANK_POINTS_PROBABILITY_EXPONENT = 0.85; // Experimentally determined for smallest Brier score
 
 	public RankingMatchPredictor(RankingData rankingData1, RankingData rankingData2, short bestOf, PredictionConfig config) {
 		this.rankingData1 = rankingData1;
@@ -53,7 +55,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	private static double rankWinProbability(Integer rank1, Integer rank2) {
 		rank1 = defaultIfNull(rank1, DEFAULT_RANK);
 		rank2 = defaultIfNull(rank2, DEFAULT_RANK);
-		return 1 / (1 + pow((double)rank1 / rank2, 0.65));
+		return 1 / (1 + pow((double)rank1 / rank2, RANK_PROBABILITY_EXPONENT));
 	}
 
 
@@ -70,7 +72,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 	private static double rankPointsWinProbability(Integer rankPoints1, Integer rankPoints2) {
 		rankPoints1 = defaultIfNull(rankPoints1, DEFAULT_RANK_POINTS);
 		rankPoints2 = defaultIfNull(rankPoints2, DEFAULT_RANK_POINTS);
-		return 1 / (1 + pow((double)rankPoints2 / rankPoints1, 0.85));
+		return 1 / (1 + pow((double)rankPoints2 / rankPoints1, RANK_POINTS_PROBABILITY_EXPONENT));
 	}
 
 

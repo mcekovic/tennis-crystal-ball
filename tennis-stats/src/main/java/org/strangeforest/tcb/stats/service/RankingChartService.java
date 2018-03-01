@@ -257,6 +257,8 @@ public class RankingChartService {
 			case INDOOR_ELO_RATING: return "r.indoor_elo_rating";
 			case SET_ELO_RANK: return "r.set_rank";
 			case SET_ELO_RATING: return "r.set_elo_rating";
+			case GAME_ELO_RANK: return "r.game_rank";
+			case GAME_ELO_RATING: return "r.game_elo_rating";
 			case SERVICE_GAME_ELO_RANK: return "r.service_game_rank";
 			case SERVICE_GAME_ELO_RATING: return "r.service_game_elo_rating";
 			case RETURN_GAME_ELO_RANK: return "r.return_game_rank";
@@ -287,6 +289,8 @@ public class RankingChartService {
 			case INDOOR_ELO_RATING: return "r.indoor_best_elo_rating";
 			case SET_ELO_RANK: return "r.set_year_end_rank";
 			case SET_ELO_RATING: return "r.set_best_elo_rating";
+			case GAME_ELO_RANK: return "r.game_year_end_rank";
+			case GAME_ELO_RATING: return "r.game_best_elo_rating";
 			case SERVICE_GAME_ELO_RANK: return "r.service_game_year_end_rank";
 			case SERVICE_GAME_ELO_RATING: return "r.service_game_best_elo_rating";
 			case RETURN_GAME_ELO_RANK: return "r.return_game_year_end_rank";

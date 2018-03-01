@@ -94,7 +94,7 @@ public final class MatchData {
 			if (ratingDelta > 0) {
 				if (oMatches > pMatches)
 					ratingDelta = -ratingDelta;
-				return ratingDelta / 400.0;
+				return ratingDelta;
 			}
 		}
 		return 0.0;

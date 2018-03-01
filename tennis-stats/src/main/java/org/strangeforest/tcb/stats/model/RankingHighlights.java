@@ -31,6 +31,7 @@ public class RankingHighlights {
 	private EloHighlights outdoorElo;
 	private EloHighlights indoorElo;
 	private EloHighlights setElo;
+	private EloHighlights gameElo;
 	private EloHighlights serviceGameElo;
 	private EloHighlights returnGameElo;
 	private EloHighlights tieBreakElo;
@@ -216,6 +217,14 @@ public class RankingHighlights {
 		this.setElo = setElo;
 	}
 
+	public EloHighlights getGameElo() {
+		return gameElo;
+	}
+
+	public void setGameElo(EloHighlights gameElo) {
+		this.gameElo = gameElo;
+	}
+
 	public EloHighlights getServiceGameElo() {
 		return serviceGameElo;
 	}
@@ -242,12 +251,12 @@ public class RankingHighlights {
 
 	public boolean hasElo() {
 		return !(elo.isEmpty() && hardElo.isEmpty() && clayElo.isEmpty() && grassElo.isEmpty() && carpetElo.isEmpty() && outdoorElo.isEmpty() && indoorElo.isEmpty()
-			&& setElo.isEmpty() && serviceGameElo.isEmpty() && returnGameElo.isEmpty() && tieBreakElo.isEmpty());
+			&& setElo.isEmpty() && gameElo.isEmpty() && serviceGameElo.isEmpty() && returnGameElo.isEmpty() && tieBreakElo.isEmpty());
 	}
 
 	public boolean hasCurrentElo() {
 		return elo.currentRank > 0 || hardElo.currentRank > 0 || clayElo.currentRank > 0 || grassElo.currentRank > 0 || carpetElo.currentRank > 0 || outdoorElo.currentRank > 0 || indoorElo.currentRank > 0
-			|| setElo.currentRank > 0 || serviceGameElo.currentRank > 0 || returnGameElo.currentRank > 0 || tieBreakElo.currentRank > 0;
+			|| setElo.currentRank > 0 || gameElo.currentRank > 0 || serviceGameElo.currentRank > 0 || returnGameElo.currentRank > 0 || tieBreakElo.currentRank > 0;
 	}
 
 	private Supplier<FrequentRank<Double>> mostFrequentRank = Memoizer.of(() -> findMostFrequentRank(weeksAt));

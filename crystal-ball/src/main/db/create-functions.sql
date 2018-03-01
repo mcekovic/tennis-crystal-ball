@@ -210,6 +210,8 @@ CREATE OR REPLACE FUNCTION merge_elo_ranking(
 	p_indoor_elo_rating INTEGER,
 	p_set_rank INTEGER,
 	p_set_elo_rating INTEGER,
+	p_game_rank INTEGER,
+	p_game_elo_rating INTEGER,
 	p_service_game_rank INTEGER,
 	p_service_game_elo_rating INTEGER,
 	p_return_game_rank INTEGER,
@@ -222,11 +224,11 @@ BEGIN
 		INSERT INTO player_elo_ranking
 		(rank_date, player_id, rank, elo_rating,
 		 hard_rank, hard_elo_rating, clay_rank, clay_elo_rating, grass_rank, grass_elo_rating, carpet_rank, carpet_elo_rating, outdoor_rank, outdoor_elo_rating, indoor_rank, indoor_elo_rating,
-		 set_rank, set_elo_rating, service_game_rank, service_game_elo_rating, return_game_rank, return_game_elo_rating, tie_break_rank, tie_break_elo_rating)
+		 set_rank, set_elo_rating, game_rank, game_elo_rating, service_game_rank, service_game_elo_rating, return_game_rank, return_game_elo_rating, tie_break_rank, tie_break_elo_rating)
 		VALUES
 		(p_rank_date, p_player_id, p_rank, p_elo_rating,
 		 p_hard_rank, p_hard_elo_rating, p_clay_rank, p_clay_elo_rating, p_grass_rank, p_grass_elo_rating, p_carpet_rank, p_carpet_elo_rating, p_outdoor_rank, p_outdoor_elo_rating, p_indoor_rank, p_indoor_elo_rating,
-		 p_set_rank, p_set_elo_rating, p_service_game_rank, p_service_game_elo_rating, p_return_game_rank, p_return_game_elo_rating, p_tie_break_rank, p_tie_break_elo_rating);
+		 p_set_rank, p_set_elo_rating, p_game_rank, p_game_elo_rating, p_service_game_rank, p_service_game_elo_rating, p_return_game_rank, p_return_game_elo_rating, p_tie_break_rank, p_tie_break_elo_rating);
 	EXCEPTION WHEN unique_violation THEN
 		UPDATE player_elo_ranking
 		SET rank = p_rank, elo_rating = p_elo_rating,
@@ -237,6 +239,7 @@ BEGIN
 			outdoor_rank = p_outdoor_rank, outdoor_elo_rating = p_outdoor_elo_rating,
 			indoor_rank = p_indoor_rank, indoor_elo_rating = p_indoor_elo_rating,
 			set_rank = p_set_rank, set_elo_rating = p_set_elo_rating,
+			game_rank = p_game_rank, game_elo_rating = p_game_elo_rating,
 			service_game_rank = p_service_game_rank, service_game_elo_rating = p_service_game_elo_rating,
 			return_game_rank = p_return_game_rank, return_game_elo_rating = p_return_game_elo_rating,
 			tie_break_rank = p_tie_break_rank, tie_break_elo_rating = p_tie_break_elo_rating

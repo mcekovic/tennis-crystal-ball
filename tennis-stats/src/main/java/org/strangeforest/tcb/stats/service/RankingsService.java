@@ -14,8 +14,6 @@ import org.strangeforest.tcb.stats.model.RankingHighlights.*;
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.table.*;
 
-import com.google.common.base.*;
-
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.core.RankCategory.*;
 import static org.strangeforest.tcb.stats.model.core.RankType.*;
@@ -98,6 +96,7 @@ public class RankingsService {
 		"  ce.current_outdoor_elo_rank, ce.current_outdoor_elo_rating, be.best_outdoor_elo_rank, be.best_outdoor_elo_rank_date, bet.best_outdoor_elo_rating, bet.best_outdoor_elo_rating_date,\n" +
 		"  ce.current_indoor_elo_rank, ce.current_indoor_elo_rating, be.best_indoor_elo_rank, be.best_indoor_elo_rank_date, bet.best_indoor_elo_rating, bet.best_indoor_elo_rating_date,\n" +
 		"  ce.current_set_elo_rank, ce.current_set_elo_rating, be.best_set_elo_rank, be.best_set_elo_rank_date, bet.best_set_elo_rating, bet.best_set_elo_rating_date,\n" +
+		"  ce.current_game_elo_rank, ce.current_game_elo_rating, be.best_game_elo_rank, be.best_game_elo_rank_date, bet.best_game_elo_rating, bet.best_game_elo_rating_date,\n" +
 		"  ce.current_service_game_elo_rank, ce.current_service_game_elo_rating, be.best_service_game_elo_rank, be.best_service_game_elo_rank_date, bet.best_service_game_elo_rating, bet.best_service_game_elo_rating_date,\n" +
 		"  ce.current_return_game_elo_rank, ce.current_return_game_elo_rating, be.best_return_game_elo_rank, be.best_return_game_elo_rank_date, bet.best_return_game_elo_rating, bet.best_return_game_elo_rating_date,\n" +
 		"  ce.current_tie_break_elo_rank, ce.current_tie_break_elo_rating, be.best_tie_break_elo_rank, be.best_tie_break_elo_rank_date, bet.best_tie_break_elo_rating, bet.best_tie_break_elo_rating_date\n" +
@@ -313,6 +312,7 @@ public class RankingsService {
 			case OUTDOOR_ELO_RANK: return "outdoor_rank";
 			case INDOOR_ELO_RANK: return "indoor_rank";
 			case SET_ELO_RANK: return "set_rank";
+			case GAME_ELO_RANK: return "game_rank";
 			case SERVICE_GAME_ELO_RANK: return "service_game_rank";
 			case RETURN_GAME_ELO_RANK: return "return_game_rank";
 			case TIE_BREAK_ELO_RANK: return "tie_break_rank";
@@ -331,6 +331,7 @@ public class RankingsService {
 			case OUTDOOR_ELO_RANK: return "outdoor_elo_rating";
 			case INDOOR_ELO_RANK: return "indoor_elo_rating";
 			case SET_ELO_RANK: return "set_elo_rating";
+			case GAME_ELO_RANK: return "game_elo_rating";
 			case SERVICE_GAME_ELO_RANK: return "service_game_elo_rating";
 			case RETURN_GAME_ELO_RANK: return "return_game_elo_rating";
 			case TIE_BREAK_ELO_RANK: return "tie_break_elo_rating";
@@ -349,6 +350,7 @@ public class RankingsService {
 			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rank";
 			case INDOOR_ELO_RANK: return "best_indoor_elo_rank";
 			case SET_ELO_RANK: return "best_set_elo_rank";
+			case GAME_ELO_RANK: return "best_game_elo_rank";
 			case SERVICE_GAME_ELO_RANK: return "best_service_game_elo_rank";
 			case RETURN_GAME_ELO_RANK: return "best_return_game_elo_rank";
 			case TIE_BREAK_ELO_RANK: return "best_tie_break_elo_rank";
@@ -367,6 +369,7 @@ public class RankingsService {
 			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rank_date";
 			case INDOOR_ELO_RANK: return "best_indoor_elo_rank_date";
 			case SET_ELO_RANK: return "best_set_elo_rank_date";
+			case GAME_ELO_RANK: return "best_game_elo_rank_date";
 			case SERVICE_GAME_ELO_RANK: return "best_service_game_elo_rank_date";
 			case RETURN_GAME_ELO_RANK: return "best_return_game_elo_rank_date";
 			case TIE_BREAK_ELO_RANK: return "best_tie_break_elo_rank_date";
@@ -385,6 +388,7 @@ public class RankingsService {
 			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rating";
 			case INDOOR_ELO_RANK: return "best_indoor_elo_rating";
 			case SET_ELO_RANK: return "best_set_elo_rating";
+			case GAME_ELO_RANK: return "best_game_elo_rating";
 			case SERVICE_GAME_ELO_RANK: return "best_service_game_elo_rating";
 			case RETURN_GAME_ELO_RANK: return "best_return_game_elo_rating";
 			case TIE_BREAK_ELO_RANK: return "best_tie_break_elo_rating";
@@ -402,6 +406,7 @@ public class RankingsService {
 			case OUTDOOR_ELO_RANK: return "best_outdoor_elo_rating_date";
 			case INDOOR_ELO_RANK: return "best_indoor_elo_rating_date";
 			case SET_ELO_RANK: return "best_set_elo_rating_date";
+			case GAME_ELO_RANK: return "best_game_elo_rating_date";
 			case SERVICE_GAME_ELO_RANK: return "best_service_game_elo_rating_date";
 			case RETURN_GAME_ELO_RANK: return "best_return_game_elo_rating_date";
 			case TIE_BREAK_ELO_RANK: return "best_tie_break_elo_rating_date";
@@ -474,6 +479,7 @@ public class RankingsService {
 			highlights.setOutdoorElo(mapEloHighlights(rs, "outdoor_"));
 			highlights.setIndoorElo(mapEloHighlights(rs, "indoor_"));
 			highlights.setSetElo(mapEloHighlights(rs, "set_"));
+			highlights.setGameElo(mapEloHighlights(rs, "game_"));
 			highlights.setServiceGameElo(mapEloHighlights(rs, "service_game_"));
 			highlights.setReturnGameElo(mapEloHighlights(rs, "return_game_"));
 			highlights.setTieBreakElo(mapEloHighlights(rs, "tie_break_"));
@@ -553,6 +559,7 @@ public class RankingsService {
 			case OUTDOOR_ELO_RANK: return "outdoor_year_end_rank";
 			case INDOOR_ELO_RANK: return "indoor_year_end_rank";
 			case SET_ELO_RANK: return "set_year_end_rank";
+			case GAME_ELO_RANK: return "game_year_end_rank";
 			case SERVICE_GAME_ELO_RANK: return "service_game_year_end_rank";
 			case RETURN_GAME_ELO_RANK: return "return_game_year_end_rank";
 			case TIE_BREAK_ELO_RANK: return "tie_break_year_end_rank";
@@ -576,6 +583,7 @@ public class RankingsService {
 			case OUTDOOR_ELO_RANK:
 			case INDOOR_ELO_RANK:
 			case SET_ELO_RANK:
+			case GAME_ELO_RANK:
 			case SERVICE_GAME_ELO_RANK:
 			case RETURN_GAME_ELO_RANK:
 			case TIE_BREAK_ELO_RANK: return "player_year_end_elo_rank";

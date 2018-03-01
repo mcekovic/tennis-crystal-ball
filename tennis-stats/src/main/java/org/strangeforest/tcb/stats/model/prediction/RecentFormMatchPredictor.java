@@ -104,6 +104,6 @@ public class RecentFormMatchPredictor implements MatchPredictor {
 	}
 
 	private static double winProbability(double form1, double form2) {
-		return 1 / (1 + pow(10.0, form2 - form1));
+		return 1 / (1 + pow(10.0, (form2 - form1) / 400.0));
 	}
 }

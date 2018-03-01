@@ -39,7 +39,7 @@ class EloRatings {
 
 	static final String QUERY_MATCHES = //language=SQL
 		"SELECT m.match_id, m.winner_id, m.loser_id, tournament_end(CASE WHEN e.level = 'D' THEN m.date ELSE e.date END, e.level, e.draw_size) AS end_date, e.level, m.surface, m.indoor, m.round, m.best_of, m.outcome,\n" +
-		"  m.w_sets, m.l_sets, s.w_sv_gms - (s.w_bp_fc - s.w_bp_sv) AS w_sv_gms, s.l_sv_gms - (s.l_bp_fc - s.l_bp_sv) AS l_sv_gms, s.l_bp_fc - s.l_bp_sv AS w_rt_gms, s.w_bp_fc - s.w_bp_sv AS l_rt_gms, m.w_tbs, m.l_tbs, m.has_stats\n" +
+		"  m.w_sets, m.l_sets, m.w_games, m.l_games, s.w_sv_gms - (s.w_bp_fc - s.w_bp_sv) AS w_sv_gms, s.l_sv_gms - (s.l_bp_fc - s.l_bp_sv) AS l_sv_gms, s.l_bp_fc - s.l_bp_sv AS w_rt_gms, s.w_bp_fc - s.w_bp_sv AS l_rt_gms, m.w_tbs, m.l_tbs, m.has_stats\n" +
 		"FROM match m\n" +
 		"INNER JOIN tournament_event e USING (tournament_event_id)\n" +
 		"LEFT JOIN match_stats s ON s.match_id = m.match_id AND s.set = 0\n" +
@@ -62,7 +62,7 @@ class EloRatings {
 		"{call merge_elo_ranking(" +
 		"  :rank_date, :player_id, :rank, :elo_rating, " +
 		"  :hard_rank, :hard_elo_rating, :clay_rank, :clay_elo_rating, :grass_rank, :grass_elo_rating, :carpet_rank, :carpet_elo_rating, :outdoor_rank, :outdoor_elo_rating, :indoor_rank, :indoor_elo_rating, " +
-		"  :set_rank, :set_elo_rating, :service_game_rank, :service_game_elo_rating, :return_game_rank, :return_game_elo_rating, :tie_break_rank, :tie_break_elo_rating" +
+		"  :set_rank, :set_elo_rating, :game_rank, :game_elo_rating, :service_game_rank, :service_game_elo_rating, :return_game_rank, :return_game_elo_rating, :tie_break_rank, :tie_break_elo_rating" +
 		")}"
 
 	static final String DELETE_ALL = //language=SQL
@@ -72,7 +72,8 @@ class EloRatings {
 		"UPDATE match SET winner_elo_rating = :winner_elo_rating, winner_next_elo_rating = :winner_next_elo_rating, loser_elo_rating = :loser_elo_rating, loser_next_elo_rating = :loser_next_elo_rating\n" +
 		"WHERE match_id = :match_id"
 
-	static final List<String> RATING_TYPES = ['H', 'C', 'G', 'P', 'O', 'I', 's', 'sg', 'rg', 'tb']
+	
+	static final List<String> RATING_TYPES = ['H', 'C', 'G', 'P', 'O', 'I', 's', 'g', 'sg', 'rg', 'tb']
 	static final Date CARPET_END = toDate(LocalDate.of(2008, 1, 1))
 	static final Date STATS_START = toDate(LocalDate.of(1991, 1, 1))
 	static final Date TIE_BREAK_START = toDate(LocalDate.of(1970, 1, 1))
@@ -156,6 +157,7 @@ class EloRatings {
 					processMatch(match, true, false)
 					processMatch(match, false, true)
 					processMatch(match, false, false, 's')
+					processMatch(match, false, false, 'g')
 					if (match.has_stats) {
 						processMatch(match, false, false, 'sg')
 						processMatch(match, false, false, 'rg')
@@ -296,11 +298,14 @@ class EloRatings {
 				case 's':
 					delta = 0.5d * (wDelta * (match.w_sets ?: 0d) - lDelta * (match.l_sets ?: 0d))
 					break
+				case 'g':
+					delta = 0.0556d * (wDelta * (match.w_games ?: 0d) - lDelta * (match.l_games ?: 0d))
+					break
 				case 'sg':
-					delta = 0.1d * (wDelta * (match.w_sv_gms ?: 0d) - lDelta * (match.l_rt_gms ?: 0d))
+					delta = 0.1667d * (wDelta * (match.w_sv_gms ?: 0d) * returnToServeRatio(match.surface) - lDelta * (match.l_rt_gms ?: 0d))
 					break
 				case 'rg':
-					delta = 0.1d * (wDelta * (match.w_rt_gms ?: 0d) - lDelta * (match.l_sv_gms ?: 0d))
+					delta = 0.1667d * (wDelta * (match.w_rt_gms ?: 0d) - lDelta * (match.l_sv_gms ?: 0d) * returnToServeRatio(match.surface))
 					break
 				case 'tb':
 					delta = 2.0d * (wDelta * (match.w_tbs ?: 0d) - lDelta * (match.l_tbs ?: 0d))
@@ -324,7 +329,7 @@ class EloRatings {
 	static double deltaRating(double winnerRating, double loserRating, String level, String round, short bestOf, String outcome) {
 		if (outcome == 'ABD')
 			return 0d
-		double delta = 1.0d / (1.0d + pow(10d, (winnerRating - loserRating) / 400.0))
+		double delta = 1d / (1d + pow(10d, (winnerRating - loserRating) / 400d))
 		kFactor(level, round, bestOf, outcome) * delta
 	}
 
@@ -365,17 +370,18 @@ class EloRatings {
 	 */
 	static double kFunction(double rating, String type = null) {
 		if (rating <= ratingForType(1800d, type))
-			1.0d
+			1d
 		else if (rating <= ratingForType(2000d, type))
-			1.0d - (rating - ratingForType(1800d, type)) / ratingDiffForType(400d, type)
+			1d - (rating - ratingForType(1800d, type)) / ratingDiffForType(400d, type)
 		else
 			0.5d
 	}
 
 	static final Map<String, Double> RATING_TYPE_FACTOR = [
 		's': 0.75d,
-		'sg': 0.45d,
-		'rg': 0.10d,
+		'g': 0.25d,
+		'sg': 0.3d,
+		'rg': 0.3d,
 		'tb': 0.5d
 	]
 
@@ -387,6 +393,16 @@ class EloRatings {
 	static int ratingDiffForType(double ratingDiff, String type) {
 		Double factor = RATING_TYPE_FACTOR[type]
 		factor ? factor * ratingDiff : ratingDiff
+	}
+
+	static double returnToServeRatio(String surface) {
+		switch (surface) {
+			case 'H': return 0.281d
+			case 'C': return 0.365d
+			case 'G': return 0.227d
+			case 'P': return 0.243d
+			default: return 0.297d
+		}
 	}
 
 	static class EloRating implements Comparable<EloRating> {
@@ -583,6 +599,8 @@ class EloRatings {
 					params.indoor_elo_rating = intRound ratings['I']
 					params.set_rank = ranks['s']
 					params.set_elo_rating = intRound ratings['s']
+					params.game_rank = ranks['g']
+					params.game_elo_rating = intRound ratings['g']
 					boolean areStatsUsed = date >= STATS_START
 					params.service_game_rank = areStatsUsed ? ranks['sg'] : null
 					params.service_game_elo_rating = areStatsUsed ? intRound(ratings['sg']) : null
@@ -677,7 +695,6 @@ class EloRatings {
 		int loserNextRating
 	}
 
-	@ToString
 	private static class PredictionResult {
 
 		int total
@@ -696,13 +713,17 @@ class EloRatings {
 					winnerScore = match.w_sets ?: 0d
 					loserScore = match.l_sets ?: 0d
 					break
+				case 'g':
+					winnerScore = match.w_games ?: 0d
+					loserScore = match.l_games ?: 0d
+					break
 				case 'sg':
-					winnerScore = match.w_sv_gms ?: 0d
+					winnerScore = (match.w_sv_gms ?: 0d) * returnToServeRatio(match.surface)
 					loserScore = match.l_rt_gms ?: 0d
 					break
 				case 'rg':
 					winnerScore = match.w_rt_gms ?: 0d
-					loserScore = match.l_sv_gms ?: 0d
+					loserScore = (match.l_sv_gms ?: 0d) * returnToServeRatio(match.surface)
 					break
 				case 'tb':
 					winnerScore = match.w_tbs ?: 0d
@@ -715,9 +736,9 @@ class EloRatings {
 			}
 
 			double totalScore = winnerScore + loserScore
-			if (totalScore > 0.0d) {
+			if (totalScore > 0d) {
 				++total
-				def winnerProbability = 1.0d / (1.0d + pow(10.0d, (loserRating - winnerRating) / 400.0d))
+				def winnerProbability = 1d / (1d + pow(10d, (loserRating - winnerRating) / 400d))
 				if (winnerScore >= loserScore) {
 					if (winnerProbability > 0.5d)
 						++predicted

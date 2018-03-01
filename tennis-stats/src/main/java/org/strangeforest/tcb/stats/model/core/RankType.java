@@ -25,6 +25,8 @@ public enum RankType {
 	INDOOR_ELO_RATING(ELO, INDOOR_ELO_RANK, true, "Indoor Elo Rating", "Indoor", null),
 	SET_ELO_RANK(ELO, null, false, "Set Elo Ranking", "Set Elo", null),
 	SET_ELO_RATING(ELO, SET_ELO_RANK, true, "Set Elo Rating", "Set", null),
+	GAME_ELO_RANK(ELO, null, false, "Game Elo Ranking", "Game Elo", null),
+	GAME_ELO_RATING(ELO, GAME_ELO_RANK, true, "Game Elo Rating", "Game", null),
 	SERVICE_GAME_ELO_RANK(ELO, null, false, "Service Game Elo Ranking", "Service Elo", null),
 	SERVICE_GAME_ELO_RATING(ELO, SERVICE_GAME_ELO_RANK, true, "Service Game Elo Rating", "Service Game", null),
 	RETURN_GAME_ELO_RANK(ELO, null, false, "Return Game Elo Ranking", "Return Elo", null),

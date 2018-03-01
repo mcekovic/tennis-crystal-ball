@@ -356,6 +356,14 @@
 				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
 			</tr>
 			</th:block>
+			<th:block th:with="elo=${highlights.gameElo}">
+			<tr th:unless="${elo.empty}">
+				<th>Game</th>
+				<td th:if="${hasCurrent}" th:text="${elo.currentRank > 0 ? elo.currentRank + ' (' + elo.currentRating + ')' : _}" align="right">5 (2210)</td>
+				<td th:text="${elo.bestRank > 0 ? elo.bestRank + ' (' + #temporals.format(elo.bestRankDate, 'dd-MM-yyyy') + ')' : _}" align="right">5 (01-01-2010)</td>
+				<td th:text="${elo.bestRating > 0 ? elo.bestRating + ' (' + #temporals.format(elo.bestRatingDate, 'dd-MM-yyyy') + ')' : _}" align="right">2450 (01-01-2011)</td>
+			</tr>
+			</th:block>
 			<th:block th:with="elo=${highlights.serviceGameElo}">
 			<tr th:unless="${elo.empty}">
 				<th>Service Game</th>

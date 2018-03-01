@@ -157,6 +157,8 @@ CREATE TABLE player_elo_ranking (
 	indoor_elo_rating INTEGER,
 	set_rank INTEGER,
 	set_elo_rating INTEGER,
+	game_rank INTEGER,
+	game_elo_rating INTEGER,
 	service_game_rank INTEGER,
 	service_game_elo_rating INTEGER,
 	return_game_rank INTEGER,
