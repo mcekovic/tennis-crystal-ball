@@ -107,7 +107,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 							}
 						}
 					}
-					verificationResult.newMatch(match, predictable, winnerProbability, withPrice, beatingPrice, profitable, stake, return_);
+					verificationResult.newMatch(match, predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 				}
 				finally {
 					matchCount.countDown();

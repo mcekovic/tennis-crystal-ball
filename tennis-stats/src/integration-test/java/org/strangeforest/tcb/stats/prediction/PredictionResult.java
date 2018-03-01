@@ -38,13 +38,13 @@ public class PredictionResult {
 		return config;
 	}
 
-	public void newMatch(boolean predictable, double winnerProbability, boolean withPrice, boolean beatingPrice, boolean profitable, double stake, double return_) {
+	public void newMatch(boolean predictable, double probability, boolean predicted, boolean withPrice, boolean beatingPrice, boolean profitable, double stake, double return_) {
 		++total;
 		if (predictable) { // Predictor is kicked on
 			++this.predictable;
-			if (winnerProbability > 0.5) // Prediction was correct
-				++predicted;
-			double delta = 1 - winnerProbability;
+			if (predicted) // Prediction was correct
+				++this.predicted;
+			double delta = 1 - probability;
 			delta2 += delta * delta;
 			if (withPrice) { // Match has valid bookmaker price to compare prediction to
 				++this.withPrice;

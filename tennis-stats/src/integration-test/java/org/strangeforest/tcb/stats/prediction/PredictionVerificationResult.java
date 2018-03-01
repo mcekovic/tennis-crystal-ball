@@ -32,22 +32,22 @@ public class PredictionVerificationResult {
 		rankRangeResults = new HashMap<>();
 	}
 
-	public synchronized void newMatch(MatchForVerification match, boolean predictable, double winnerProbability, boolean withPrice, boolean beatingPrice, boolean profitable, double stake, double return_) {
-		result.newMatch(predictable, winnerProbability, withPrice, beatingPrice, profitable, stake, return_);
+	public synchronized void newMatch(MatchForVerification match, boolean predictable, double probability, boolean predicted, boolean withPrice, boolean beatingPrice, boolean profitable, double stake, double return_) {
+		result.newMatch(predictable, probability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 		if (predictable) {
-			winnerProbability = winnerProbability >= 0.5 ? winnerProbability : 1.0 - winnerProbability;
-			winnerProbability = Math.round(winnerProbability * PROBABILITY_RANGES_2) / (double)PROBABILITY_RANGES_2;
-			probabilityRangeResults.computeIfAbsent(winnerProbability, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, withPrice, beatingPrice, profitable, stake, return_);
+			probability = probability >= 0.5 ? probability : 1.0 - probability;
+			probability = Math.round(probability * PROBABILITY_RANGES_2) / (double)PROBABILITY_RANGES_2;
+			probabilityRangeResults.computeIfAbsent(probability, s -> new PredictionResult(config)).newMatch(predictable, probability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 		}
 		Surface surface = match.surface;
 		if (surface != null)
-			surfaceResults.computeIfAbsent(surface, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, withPrice, beatingPrice, profitable, stake, return_);
+			surfaceResults.computeIfAbsent(surface, s -> new PredictionResult(config)).newMatch(predictable, probability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 		TournamentLevel level = match.level;
 		if (level != null)
-			levelResults.computeIfAbsent(level, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, withPrice, beatingPrice, profitable, stake, return_);
+			levelResults.computeIfAbsent(level, s -> new PredictionResult(config)).newMatch(predictable, probability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 		Range<Integer> rankRange = rankRange(nullsLastMin(match.winnerRank, match.loserRank));
 		if (rankRange != null)
-			rankRangeResults.computeIfAbsent(rankRange, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, withPrice, beatingPrice, profitable, stake, return_);
+			rankRangeResults.computeIfAbsent(rankRange, s -> new PredictionResult(config)).newMatch(predictable, probability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 	}
 
 	public synchronized void complete() {
