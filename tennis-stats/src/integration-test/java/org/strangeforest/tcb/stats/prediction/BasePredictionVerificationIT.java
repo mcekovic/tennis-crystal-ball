@@ -28,7 +28,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	private ExecutorService executor;
 
 	private static final TuningSetLevel TUNING_SET_LEVEL = TuningSetLevel.SURFACE;
-	private static final double MIN_PREDICTABILITY = 0.5;
+	private static final double MIN_PREDICTABILITY = 0.25;
 	private static final String PRICE_SOURCE = "B365";
 	private static final boolean BET_ON_OUTSIDER = false;
 	private static final boolean KELLY_STAKE = true;
