@@ -25,7 +25,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Best Seasons - Find which are the players' best seasons of the Open Era based on 'GOAT' points (overall and by surface)
 - Tournaments - Browse tournaments, see players with most titles, historical tournament levels and surfaces and average participation
 - Tournaments Events - Browse all Open Era tournament events, see tournament event draw, performance, statistics, historical winners and records
-- Tournament Forecasts - Tournament Event Forecasts based on the Neural Network Match Prediction Algorithm
+- Tournament Forecasts - Tournament Event Forecasts for in-progress tournaments driven by Neural Network Match Prediction Algorithm
 - Records Book - Various match, tournament result and ranking records, famous and infamous (best player that never...)
 - Live Scores - Live Scores via [Livescore.in](https://www.livescore.in)
 
