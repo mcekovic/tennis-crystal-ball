@@ -10,6 +10,6 @@ static loadTournaments(SqlPool sqlPool) {
 		def atpWorldTourMatchLoader = new ATPWorldTourTournamentLoader(sql)
 		atpWorldTourMatchLoader.loadTournament(2017, 'dubai', 495)
 //		def atpInProgressTournamentLoader = new ATPWorldTourInProgressTournamentLoader(sql)
-//		atpInProgressTournamentLoader.loadAndSimulateTournament('indian-wells', 404, 2017, null, null, true)
+//		atpInProgressTournamentLoader.loadAndForecastTournament('indian-wells', 404, 2017, null, null, true)
 	}
 }

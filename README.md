@@ -14,7 +14,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 - Head-to-Head - Head-to-head between two players with H2H matches, season summary, performance and statistics comparision, ranking, performance and statistics charts, 'GOAT' points breakdown and Hypothetical Matchup prediction based on the Neural Network Match Prediction Algorithm
 - Heads-to-Heads - Heads-to-heads clusters among several players (i.e. among 'Big 4')
 - Greatest Rivalries - Explore greatest rivalries, overall or by season, tournament level, surface or round
-- Ranking Tables - Player ranking tables, including [Elo rating](https://en.wikipedia.org/wiki/Elo_rating_system) (overall and by surface) using customized Elo rating formula
+- Ranking Tables - Player ranking tables, including [Elo rating](https://en.wikipedia.org/wiki/Elo_rating_system) (overall, by surface, set or game) using customized Elo rating formula
 - Ranking Charts - Player ranking and ranking point charts, compare players by constructing custom charts
 - Peak Elo Ratings - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie break)
 - Top Performers - Find top performers in both performance and pressure situations categories
@@ -33,7 +33,7 @@ Ultimate Tennis statistics and data analysis with nice web GUI.
 
 - [In-progress Game, Set and Match Forecasts](https://github.com/mcekovic/tennis-crystal-ball/issues/154) - In-progress game, set and match forecast with probabilities for in-progress matches
 - [Glicko Ratings](https://github.com/mcekovic/tennis-crystal-ball/issues/77) - Improve Elo Rating computation with [Glicko 2](https://en.wikipedia.org/wiki/Glicko_rating_system) variant, to better reflect periods when player is out of competition
-- [Round Robin Tournament Simulator](https://github.com/mcekovic/tennis-crystal-ball/issues/97) - Round Robin Tournament Simulator for Tour Finals, in addition to ordinary knock-out tournament simulator
+- [Round Robin Tournament Forecast](https://github.com/mcekovic/tennis-crystal-ball/issues/97) - Round Robin Tournament forecasting for Tour Finals, in addition to ordinary knock-out tournament forecasting
 
 ### Technology
 
@@ -110,6 +110,6 @@ Tennis Crystal Ball and Ultimate Tennis Statistics source code is licensed under
 
 [![Creative Commons License](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-'GOAT' Formula, customizations of Elo Ratings for tennis, Match Prediction, Tournament Simulation and other algorithms by Ultimate Tennis Statistics are licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/).
+'GOAT' Formula, customizations of Elo Ratings for tennis, Match Prediction, Tournament Forecast and other algorithms by Ultimate Tennis Statistics are licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 In short: Attribution is required. Non-commercial use only.

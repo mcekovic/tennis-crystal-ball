@@ -7,9 +7,9 @@ import groovy.transform.*
 
 import static java.lang.Math.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
-import static org.strangeforest.tcb.dataload.KOTournamentSimulator.MatchResult.*
+import static KOTournamentForecaster.MatchResult.*
 
-class KOTournamentSimulator {
+class KOTournamentForecaster {
 
 	enum MatchResult { WON, LOST, N_A }
 
@@ -24,7 +24,7 @@ class KOTournamentSimulator {
 	boolean verbose
 	Map probabilities = [:]
 
-	KOTournamentSimulator(TournamentMatchPredictor predictor, int inProgressEventId, List matches, KOResult baseResult, boolean current = true, boolean verbose = false) {
+	KOTournamentForecaster(TournamentMatchPredictor predictor, int inProgressEventId, List matches, KOResult baseResult, boolean current = true, boolean verbose = false) {
 		this.predictor = predictor
 		this.inProgressEventId = inProgressEventId
 		this.matches = matches
@@ -106,7 +106,7 @@ class KOTournamentSimulator {
 		d ? (int)round(d) : null
 	}
 
-	def simulate() {
+	def forecast() {
 		def results = []
 		for (def result = baseResult; result.hasNext(); result = result.next()) {
 			def nextResult = result.next()

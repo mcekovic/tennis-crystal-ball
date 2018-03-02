@@ -81,15 +81,15 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		forceForecast = getBooleanProperty(FORCE_FORECAST_PROPERTY, FORCE_FORECAST_DEFAULT)
 	}
 
-	def loadAndSimulateTournament(String urlId, extId, Integer season = null, String level = null, String surface = null, boolean verbose = false) {
+	def loadAndForecastTournament(String urlId, extId, Integer season = null, String level = null, String surface = null, boolean verbose = false) {
 		try {
 			if (loadTournament(urlId, extId, season, level, surface, verbose)) {
-				simulateTournament(extId, verbose)
+				forecastTournament(extId, verbose)
 				return true
 			}
 		}
 		catch (Exception ex) {
-			System.err.println "Error loading and simulating in-progress tournament: $urlId/$extId"
+			System.err.println "Error loading and forecasting in-progress tournament: $urlId/$extId"
 			ex.printStackTrace()
 		}
 		false
@@ -337,11 +337,11 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 	}
 
 	
-	// Tournament Simulation
+	// Tournament Forecast
 
-	def simulateTournament(extId, boolean verbose) {
+	def forecastTournament(extId, boolean verbose) {
 		if (verbose)
-			println '\nStarting tournament simulation'
+			println '\nStarting tournament forecast'
 		def stopwatch = Stopwatch.createStarted()
 		def matches = fetchMatches(extId)
 
@@ -368,29 +368,29 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		TournamentMatchPredictor predictor = new TournamentMatchPredictor(predictionService, today, tournamentId, inProgressEventId, surface, false, level, bestOf)
 
 		def resultCount = 0
-		def tournamentSimulator
+		def tournamentForecaster
 		if (drawType == 'KO') {
 
-			// Current state simulation
+			// Current state forecast
 			if (verbose)
 				println 'Current'
-			tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, matches, entryResult, true, verbose)
-			tournamentSimulator.calculateEloRatings()
+			tournamentForecaster = new KOTournamentForecaster(predictor, inProgressEventId, matches, entryResult, true, verbose)
+			tournamentForecaster.calculateEloRatings()
 			saveEloRatings(matches)
 			sql.commit()
 
 			deleteResults(inProgressEventId)
-			def results = tournamentSimulator.simulate()
+			def results = tournamentForecaster.forecast()
 			saveResults(results)
 			resultCount += results.size()
 
-			// Each round state simulation
+			// Each round state forecast
 			for (baseResult in KOResult.values().findAll { r -> r >= entryResult && r < KOResult.W }) {
 				if (verbose)
 					println baseResult
 				def selectedMatches = matches.findAll { match -> KOResult.valueOf(match.round) >= baseResult }
-				tournamentSimulator = new KOTournamentSimulator(predictor, inProgressEventId, selectedMatches, baseResult, false, verbose)
-				results = tournamentSimulator.simulate()
+				tournamentForecaster = new KOTournamentForecaster(predictor, inProgressEventId, selectedMatches, baseResult, false, verbose)
+				results = tournamentForecaster.forecast()
 				saveResults(results)
 				resultCount += results.size()
 				if (selectedMatches.find { match -> KOResult.valueOf(match.round) == baseResult && !match.winner })
@@ -400,7 +400,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 		else
 			throw new UnsupportedOperationException("Draw type $drawType is not supported.")
 
-		println "Tournament simulation: ${resultCount} results loaded in $stopwatch"
+		println "Tournament forecast: ${resultCount} results loaded in $stopwatch"
 	}
 
 	def saveEvent(Map params) {
