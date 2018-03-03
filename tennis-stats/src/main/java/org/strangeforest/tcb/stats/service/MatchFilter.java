@@ -4,6 +4,7 @@ import java.time.*;
 import java.util.*;
 
 import org.springframework.jdbc.core.namedparam.*;
+import org.strangeforest.tcb.stats.model.core.*;
 
 import com.google.common.base.MoreObjects.*;
 import com.google.common.collect.*;
@@ -100,6 +101,7 @@ public class MatchFilter extends TournamentEventResultFilter {
 
 	private static final String BEST_OF_CRITERION         = " AND m.best_of = :bestOf";
 	private static final String ROUND_CRITERION           = " AND m.round %1$s :round::match_round";
+	private static final String ENTRY_ROUND_CRITERION     = " AND m.round BETWEEN 'R128' AND 'R16'";
 	private static final String MATCHES_SEARCH_CRITERION  = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR pw.name ILIKE '%' || :searchPhrase || '%' OR pl.name ILIKE '%' || :searchPhrase || '%')";
 	private static final String STATS_SEARCH_CRITERION    = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR o.name ILIKE '%' || :searchPhrase || '%')";
 	private static final String MATCHES_BIG_WIN_CRITERION = " AND m.winner_id = :playerId";
@@ -120,7 +122,7 @@ public class MatchFilter extends TournamentEventResultFilter {
 		if (bestOf != null)
 			criteria.append(BEST_OF_CRITERION);
 		if (!isNullOrEmpty(round))
-			criteria.append(format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
+			criteria.append(round.equals(Round.ENTRY.getCode()) ? ENTRY_ROUND_CRITERION : format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
 		opponentFilter.appendCriteria(criteria);
 		outcomeFilter.appendCriteria(criteria);
 		scoreFilter.appendCriteria(criteria);
@@ -132,7 +134,7 @@ public class MatchFilter extends TournamentEventResultFilter {
 		super.addParams(params);
 		if (bestOf != null)
 			params.addValue("bestOf", bestOf);
-		if (!isNullOrEmpty(round))
+		if (!isNullOrEmpty(round) && !round.equals(Round.ENTRY.getCode()))
 			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 		opponentFilter.addParams(params);
 		outcomeFilter.addParams(params);

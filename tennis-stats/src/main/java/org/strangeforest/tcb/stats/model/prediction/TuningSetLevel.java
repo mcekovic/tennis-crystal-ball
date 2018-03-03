@@ -10,13 +10,13 @@ public enum TuningSetLevel {
 	
 	TOP {
 		@Override public TuningSet select(Surface surface, Boolean indoor, TournamentLevel level, Short bestOf) {
-			return TuningSet.ALL;
+			return TuningSet.OVERALL;
 		}
 	},
 	SURFACE {
 		@Override public TuningSet select(Surface surface, Boolean indoor, TournamentLevel level, Short bestOf) {
 			if (surface == null)
-				return TuningSet.ALL;
+				return TuningSet.OVERALL;
 			switch (surface) {
 				case HARD: return indoor != null && indoor ? HARD_INDOOR_CARPET : HARD_OUTDOOR;
 				case CLAY: return CLAY;
@@ -29,7 +29,7 @@ public enum TuningSetLevel {
 	BEST_OF {
 		@Override public TuningSet select(Surface surface, Boolean indoor, TournamentLevel level, Short bestOf) {
 			bestOf = bestOf(level, bestOf);
-			return bestOf == null ? ALL : (bestOf == 3 ? BEST_OF_3 : BEST_OF_5);
+			return bestOf == null ? OVERALL : (bestOf == 3 ? BEST_OF_3 : BEST_OF_5);
 		}
 	},
 	SURFACE_AND_BEST_OF {

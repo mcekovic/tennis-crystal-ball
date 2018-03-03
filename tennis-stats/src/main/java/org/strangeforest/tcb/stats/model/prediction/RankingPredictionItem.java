@@ -39,4 +39,16 @@ public enum RankingPredictionItem implements PredictionItem {
 	@Override public PredictionConfig setWeight(PredictionConfig config, double weight) {
 		return new PredictionConfig(config, this, weight);
 	}
+
+	@Override public double minWeight() {
+		return 0.0;
+	}
+
+	@Override public double maxWeight() {
+		return 20.0;
+	}
+
+	@Override public double weightStep() {
+		return 1.0;
+	}
 }

@@ -10,9 +10,6 @@ import static org.strangeforest.tcb.stats.prediction.BasePredictionVerificationI
 public class TuningContext {
 
 	private final Comparator<PredictionResult> resultComparator;
-	private final double minWeight;
-	private final double maxWeight;
-	private final double weightStep;
 	private final Map<PredictionConfig, PredictionResult> results;
 	private final PriorityQueue<PredictionResult> candidateNextResults;
 	private PredictionResult bestResult;
@@ -20,11 +17,8 @@ public class TuningContext {
 	private PredictionResult bestStepResult;
 	private int step;
 
-	public TuningContext(Comparator<PredictionResult> resultComparator, double minWeight, double maxWeight, double weightStep) {
+	public TuningContext(Comparator<PredictionResult> resultComparator) {
 		this.resultComparator = resultComparator;
-		this.minWeight = minWeight;
-		this.maxWeight = maxWeight;
-		this.weightStep = weightStep;
 		results = new HashMap<>();
 		candidateNextResults = new PriorityQueue<>(resultComparator.reversed());
 	}
@@ -59,16 +53,16 @@ public class TuningContext {
 	}
 
 	public PredictionConfig stepUp(Weighted weighted) {
-		return stepWeight(baseStepResult.getConfig(), weighted, weightStep);
+		return stepWeight(baseStepResult.getConfig(), weighted, weighted.weightStep());
 	}
 
 	public PredictionConfig stepDown(Weighted weighted) {
-		return stepWeight(baseStepResult.getConfig(), weighted, -weightStep);
+		return stepWeight(baseStepResult.getConfig(), weighted, -weighted.weightStep());
 	}
 
 	private PredictionConfig stepWeight(PredictionConfig config, Weighted weighted, double step) {
 		double weight = weighted.getWeight(config) + step;
-		if (weight >= minWeight && weight <= maxWeight) {
+		if (weight >= weighted.minWeight() && weight <= weighted.maxWeight()) {
 			PredictionConfig newConfig = weighted.setWeight(config, weight);
 			if (newConfig.isAnyAreaEnabled() && !results.containsKey(newConfig))
 				return newConfig;
@@ -90,10 +84,8 @@ public class TuningContext {
 			best = true;
 			System.out.println("***** New best result: " + bestResult);
 		}
-		if (bestStepResult == null || resultComparator.compare(result, bestStepResult) > 0) {
+		if (bestStepResult == null || resultComparator.compare(result, bestStepResult) > 0)
 			bestStepResult = result;
-			System.out.println("*** New best step result: " + bestStepResult);
-		}
 		return best;
 	}
 

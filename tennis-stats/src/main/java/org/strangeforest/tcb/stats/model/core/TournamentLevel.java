@@ -6,26 +6,28 @@ import org.strangeforest.tcb.stats.util.*;
 
 public enum TournamentLevel implements CodedEnum {
 
-	GRAND_SLAM("G", "Grand Slam", 5),
-	TOUR_FINALS("F", "Tour Finals", 3),
-	ALT_FINALS("L", "Alt. Finals", 3),
-	MASTERS("M", "Masters", 3),
-	OLYMPICS("O", "Olympics", 3),
-	ATP_500("A", "ATP 500", 3),
-	ATP_250("B", "ATP 250", 3),
-	CHALLENGERS("C", "Challengers", 3),
-	FUTURES("U", "Futures", 3),
-	EXHIBITIONS("E", "Exhibitions", 3),
-	OTHERS("H", "Others", 3),
-	DAVIS_CUP("D", "Davis Cup", 5),
-	OTHERS_TEAM("T", "World Team Cup", 3);
+	GRAND_SLAM("G", "G", "Grand Slam", 5),
+	TOUR_FINALS("F", "FL", "Tour Finals", 3),
+	ALT_FINALS("L", "FL", "Alt. Finals", 3),
+	MASTERS("M", "MO", "Masters", 3),
+	OLYMPICS("O", "MO", "Olympics", 3),
+	ATP_500("A", "AB", "ATP 500", 3),
+	ATP_250("B", "AB", "ATP 250", 3),
+	CHALLENGERS("C", "CUEH", "Challengers", 3),
+	FUTURES("U", "CUEH", "Futures", 3),
+	EXHIBITIONS("E", "CUEH", "Exhibitions", 3),
+	OTHERS("H", "CUEH", "Others", 3),
+	DAVIS_CUP("D", "DT", "Davis Cup", 5),
+	OTHERS_TEAM("T", "DT", "World Team Cup", 3);
 
 	private final String code;
+	private final String predictionCodes;
 	private final String text;
 	private final short bestOf;
 
-	TournamentLevel(String code, String text, int bestOf) {
+	TournamentLevel(String code, String predictionCodes, String text, int bestOf) {
 		this.code = code;
+		this.predictionCodes = predictionCodes;
 		this.text = text;
 		this.bestOf = (short)bestOf;
 	}
@@ -40,6 +42,10 @@ public enum TournamentLevel implements CodedEnum {
 
 	public short getBestOf() {
 		return bestOf;
+	}
+
+	public String getPredictionCodes() {
+		return predictionCodes;
 	}
 
 	public static TournamentLevel decode(String code) {

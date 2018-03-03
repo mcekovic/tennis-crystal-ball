@@ -15,8 +15,8 @@
 <!--/*@thymesVar id="dateSelector1" type="java.lang.String"*/-->
 <!--/*@thymesVar id="dateSelector2" type="java.lang.String"*/-->
 <!--/*@thymesVar id="prediction" type="org.strangeforest.tcb.stats.model.prediction.MatchPrediction"*/-->
-	<!--/*@thymesVar id="priceFormats" type="org.strangeforest.tcb.stats.model.price.PriceFormat[]"*/-->
-	<!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
+<!--/*@thymesVar id="priceFormats" type="org.strangeforest.tcb.stats.model.price.PriceFormat[]"*/-->
+<!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
 <!--/*@thymesVar id="showDetails" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
 <script type="text/javascript">
@@ -324,20 +324,20 @@
 				<a th:case="'RANKING[SET_ELO]'" th:href="${url + '&tab=ranking&rankType=SET_ELO_RATING'}" th:text="${item.longName()}" title="Show Set Elo rating comparision">ELO</a>
 				<a th:case="'H2H[OVERALL]'" th:href="${url + '&tab=matches'}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
 				<a th:case="'H2H[SURFACE]'" th:href="${url + '&tab=matches&surface=' + surface}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
-				<a th:case="'H2H[LEVEL]'" th:href="${url + '&tab=matches&level=' + level}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
-				<a th:case="'H2H[ROUND]'" th:href="${url + '&tab=matches&round=' + round}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'H2H[LEVEL]'" th:href="${url + '&tab=matches&level=' + T(org.strangeforest.tcb.stats.model.core.TournamentLevel).decode(level).predictionCodes}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'H2H[ROUND]'" th:href="${url + '&tab=matches&round=' + T(org.strangeforest.tcb.stats.model.core.Round).decode(round).predictionCode}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
 				<a th:case="'H2H[OVERALL_SET]'" th:href="${url + '&tab=matches'}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
 				<a th:case="'H2H[SURFACE_SET]'" th:href="${url + '&tab=matches&surface=' + surface}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
-				<a th:case="'H2H[LEVEL_SET]'" th:href="${url + '&tab=matches&level=' + level}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
-				<a th:case="'H2H[ROUND_SET]'" th:href="${url + '&tab=matches&round=' + round}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'H2H[LEVEL_SET]'" th:href="${url + '&tab=matches&level=' + T(org.strangeforest.tcb.stats.model.core.TournamentLevel).decode(level).predictionCodes}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
+				<a th:case="'H2H[ROUND_SET]'" th:href="${url + '&tab=matches&round=' + T(org.strangeforest.tcb.stats.model.core.Round).decode(round).predictionCode}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
 				<a th:case="'WINNING_PCT[OVERALL]'" th:href="${url + '&tab=performance'}" th:text="${item.longName()}" title="Show performance comparision">ELO</a>
 				<a th:case="'WINNING_PCT[SURFACE]'" th:href="${url + '&tab=performance&surface=' + surface}" th:text="${item.longName()}" title="Show performance comparision">ELO</a>
-				<a th:case="'WINNING_PCT[LEVEL]'" th:href="${url + '&tab=performance&level=' + level}" th:text="${item.longName()}" title="Show performance comparision">ELO</a>
-				<a th:case="'WINNING_PCT[ROUND]'" th:href="${url + '&tab=performance&round=' + round}" th:text="${item.longName()}" title="Show performance comparision">ELO</a>
+				<a th:case="'WINNING_PCT[LEVEL]'" th:href="${url + '&tab=performance&level=' + T(org.strangeforest.tcb.stats.model.core.TournamentLevel).decode(level).predictionCodes}" th:text="${item.longName()}" title="Show performance comparision">ELO</a>
+				<a th:case="'WINNING_PCT[ROUND]'" th:href="${url + '&tab=performance&round=' + T(org.strangeforest.tcb.stats.model.core.Round).decode(round).predictionCode}" th:text="${item.longName()}" title="Show performance comparision">ELO</a>
 				<a th:case="'WINNING_PCT[OVERALL_SET]'" th:href="${url + '&tab=statistics'}" th:text="${item.longName()}" title="Show statistics comparision">ELO</a>
 				<a th:case="'WINNING_PCT[SURFACE_SET]'" th:href="${url + '&tab=statistics&surface=' + surface}" th:text="${item.longName()}" title="Show statistics comparision">ELO</a>
-				<a th:case="'WINNING_PCT[LEVEL_SET]'" th:href="${url + '&tab=statistics&level=' + level}" th:text="${item.longName()}" title="Show statistics comparision">ELO</a>
-				<a th:case="'WINNING_PCT[ROUND_SET]'" th:href="${url + '&tab=statistics&round=' + round}" th:text="${item.longName()}" title="Show statistics comparision">ELO</a>
+				<a th:case="'WINNING_PCT[LEVEL_SET]'" th:href="${url + '&tab=statistics&level=' + T(org.strangeforest.tcb.stats.model.core.TournamentLevel).decode(level).predictionCodes}" th:text="${item.longName()}" title="Show statistics comparision">ELO</a>
+				<a th:case="'WINNING_PCT[ROUND_SET]'" th:href="${url + '&tab=statistics&round=' + T(org.strangeforest.tcb.stats.model.core.Round).decode(round).predictionCode}" th:text="${item.longName()}" title="Show statistics comparision">ELO</a>
 				<th:block th:case="*" th:text="${item.longName()}">ELO</th:block>
 			</th:block>
 		</th>

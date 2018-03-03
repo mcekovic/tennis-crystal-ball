@@ -23,6 +23,14 @@ public enum PredictionArea implements Weighted {
 		return itemClass.getEnumConstants();
 	}
 
+	public Weighted[] getAreaAndItems() {
+		PredictionItem[] items = itemClass.getEnumConstants();
+		Weighted[] w = new Weighted[items.length + 1];
+		w[0] = this;
+		System.arraycopy(items, 0, w, 1, items.length);
+		return w;
+	}
+
 	public PredictionItem getItem(String itemName) {
 		return Stream.of(getItems()).filter(item -> item.name().equals(itemName)).findFirst().orElseThrow(
 			() -> new IllegalArgumentException(format("Unknown prediction item %1$s for prediction area %2$s.", itemName, name()))
@@ -35,5 +43,17 @@ public enum PredictionArea implements Weighted {
 
 	@Override public PredictionConfig setWeight(PredictionConfig config, double weight) {
 		return new PredictionConfig(config, this, weight);
+	}
+
+	@Override public double minWeight() {
+		return 0.0;
+	}
+
+	@Override public double maxWeight() {
+		return 20.0;
+	}
+
+	@Override public double weightStep() {
+		return 1.0;
 	}
 }

@@ -4,11 +4,11 @@ import static org.strangeforest.tcb.stats.model.prediction.TuningSetLevel.*;
 
 public enum TuningSet {
 
-	ALL("", "", TOP),
-	ALL_RANKING("", "-ranking", TOP),
-	ALL_RECENT_FORM("", "-recent-form", TOP),
-	ALL_H2H("", "-h2h", TOP),
-	ALL_WINNING_PCT("", "-winning-pct", TOP),
+	OVERALL("", "", TOP),
+	OVERALL_RANKING("", "-ranking", TOP),
+	OVERALL_RECENT_FORM("", "-recent-form", TOP),
+	OVERALL_H2H("", "-h2h", TOP),
+	OVERALL_WINNING_PCT("", "-winning-pct", TOP),
 
 	HARD_OUTDOOR(" AND surface = 'H' AND NOT indoor", "-hard-outdoor", SURFACE),
 	CLAY(" AND surface = 'C'", "-clay", SURFACE),

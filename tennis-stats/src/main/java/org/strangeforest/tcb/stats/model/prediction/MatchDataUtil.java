@@ -10,7 +10,6 @@ import com.google.common.collect.*;
 
 import static java.lang.Math.*;
 import static java.util.Arrays.*;
-import static org.strangeforest.tcb.stats.model.core.TournamentLevel.*;
 
 public abstract class MatchDataUtil {
 
@@ -75,21 +74,8 @@ public abstract class MatchDataUtil {
 		return match -> nonNullEquals(levelGroup(match.getLevel()), levelGroup(level));
 	}
 
-	private static TournamentLevel levelGroup(TournamentLevel level) {
-		if (level == null)
-			return OTHERS;
-		switch (level) {
-			case GRAND_SLAM: return GRAND_SLAM;
-			case TOUR_FINALS:
-			case ALT_FINALS: return TOUR_FINALS;
-			case MASTERS:
-			case OLYMPICS: return MASTERS;
-			case ATP_500:
-			case ATP_250: return ATP_500;
-			case DAVIS_CUP:
-			case OTHERS_TEAM: return DAVIS_CUP;
-			default: return OTHERS;
-		}
+	private static String levelGroup(TournamentLevel level) {
+		return level != null ? level.getPredictionCodes() : null;
 	}
 
 	public static Predicate<MatchData> isTournament(Integer tournamentId) {
@@ -100,10 +86,8 @@ public abstract class MatchDataUtil {
 		return match -> nonNullEquals(roundGroup(match.getRound()), roundGroup(round));
 	}
 
-	private static Round roundGroup(Round round) {
-		if (round == null)
-			return null;
-		return round.compareTo(Round.QF) <= 0 ? round : null;
+	private static String roundGroup(Round round) {
+		return round != null ? round.getPredictionCode() : null;
 	}
 
 	public static Predicate<MatchData> isOpponent(int playerId) {

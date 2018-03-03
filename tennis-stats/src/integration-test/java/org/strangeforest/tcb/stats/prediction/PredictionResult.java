@@ -64,7 +64,7 @@ public class PredictionResult {
 		predictablePct = pct(predictable, total);
 		predictionRate = pct(predicted, predictable);
 		brierScore = delta2 / predictable;
-		score = predicted / (total * brierScore); // = Prediction Rate * Predictable Rate / Brier Score
+		score = predicted / (predictable * brierScore); // = Prediction Rate / Brier Score
 		withPricePct = pct(withPrice, predictable);
 		beatingPricePct = pct(beatingPrice, withPrice);
 		profitablePct = pct(profitable, beatingPrice);

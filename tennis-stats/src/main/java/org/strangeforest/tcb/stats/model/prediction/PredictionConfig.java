@@ -28,14 +28,14 @@ public class PredictionConfig {
 	private static Map<TuningSet, PredictionConfig> defaultConfigs = new ConcurrentHashMap<>();
 
 	public static PredictionConfig defaultConfig() {
-		return defaultConfig(TuningSet.ALL);
+		return defaultConfig(TuningSet.OVERALL);
 	}
 	
 	public static synchronized PredictionConfig defaultConfig(TuningSet tuningSet) {
 		return defaultConfigs.computeIfAbsent(tuningSet, ts -> loadConfig(getConfigFileName(tuningSet)));
 	}
 
-	private static String getConfigFileName(TuningSet tuningSet) {
+	public static String getConfigFileName(TuningSet tuningSet) {
 		return format("/prediction/prediction%1$s.properties", tuningSet.getConfigSuffix());
 	}
 
@@ -193,21 +193,16 @@ public class PredictionConfig {
 		return config;
 	}
 
-	public void save(TuningSet tuningSet) {
-		try (PrintStream out = new PrintStream(new FileOutputStream("tennis-stats/src/main/resources" + getConfigFileName(tuningSet)))) {
-			out.println("# Areas");
-			int maxAreaLength = maxLength(PredictionArea.values()) + 1;
-			for (PredictionArea area : PredictionArea.values())
-				out.printf("area.%1$-" + maxAreaLength + "s%2$2.0f\n", area + "=", getAreaWeight(area));
-			for (PredictionArea area : PredictionArea.values()) {
-				out.printf("\n# %1$s Items\n", area);
-				int maxItemLength = maxLength(area.getItems()) + 1;
-				for (PredictionItem item : area.getItems())
-					out.printf("item.%1$s.%2$-" + maxItemLength + "s%3$2.0f\n", area, item + "=", getItemWeight(item));
-			}
-		}
-		catch (FileNotFoundException ex) {
-			throw new IllegalArgumentException("Cannot save config", ex);
+	public void save(PrintStream out) {
+		out.println("# Areas");
+		int maxAreaLength = maxLength(PredictionArea.values()) + 1;
+		for (PredictionArea area : PredictionArea.values())
+			out.printf("area.%1$-" + maxAreaLength + "s%2$2.0f\n", area + "=", getAreaWeight(area));
+		for (PredictionArea area : PredictionArea.values()) {
+			out.printf("\n# %1$s Items\n", area);
+			int maxItemLength = maxLength(area.getItems()) + 1;
+			for (PredictionItem item : area.getItems())
+				out.printf("item.%1$s.%2$-" + maxItemLength + "s%3$2.0f\n", area, item + "=", getItemWeight(item));
 		}
 	}
 

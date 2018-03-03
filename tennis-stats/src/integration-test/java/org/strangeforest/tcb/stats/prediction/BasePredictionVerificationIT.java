@@ -52,7 +52,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	}
 
 	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
-		return verifyPrediction(fromDate, toDate, null, TuningSet.ALL);
+		return verifyPrediction(fromDate, toDate, null, TuningSet.OVERALL);
 	}
 
 	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, TuningSet tuningSet) throws InterruptedException {
@@ -60,7 +60,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 	}
 
 	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config) throws InterruptedException {
-		return verifyPrediction(fromDate, toDate, config, TuningSet.ALL);
+		return verifyPrediction(fromDate, toDate, config, TuningSet.OVERALL);
 	}
 
 	protected PredictionVerificationResult verifyPrediction(LocalDate fromDate, LocalDate toDate, PredictionConfig config, TuningSet tuningSet) throws InterruptedException {

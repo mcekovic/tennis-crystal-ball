@@ -21,22 +21,22 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 
 	@Test
 	public void verifyDefaultRankingPrediction() throws InterruptedException {
-		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.ALL_RANKING), TuningSet.ALL_RANKING);
+		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.OVERALL_RANKING), TuningSet.OVERALL_RANKING);
 	}
 
 	@Test
 	public void verifyDefaultRecentFormPrediction() throws InterruptedException {
-		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.ALL_RECENT_FORM), TuningSet.ALL_RECENT_FORM);
+		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.OVERALL_RECENT_FORM), TuningSet.OVERALL_RECENT_FORM);
 	}
 
 	@Test
 	public void verifyDefaultH2HPrediction() throws InterruptedException {
-		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.ALL_H2H), TuningSet.ALL_H2H);
+		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.OVERALL_H2H), TuningSet.OVERALL_H2H);
 	}
 
 	@Test
 	public void verifyDefaultWinningPctPrediction() throws InterruptedException {
-		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.ALL_WINNING_PCT), TuningSet.ALL_WINNING_PCT);
+		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(TuningSet.OVERALL_WINNING_PCT), TuningSet.OVERALL_WINNING_PCT);
 	}
 
 	@Test
