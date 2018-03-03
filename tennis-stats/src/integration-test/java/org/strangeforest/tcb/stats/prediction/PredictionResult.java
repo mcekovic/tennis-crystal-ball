@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.prediction;
 import org.strangeforest.tcb.stats.model.prediction.*;
 
 import static com.google.common.base.MoreObjects.*;
+import static java.lang.Math.*;
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
@@ -13,6 +14,8 @@ public class PredictionResult {
 	private int total;
 	private int predictable;
 	private int predicted;
+	private double probSum;
+	private double logProbSum;
 	private double delta2;
 	private int withPrice;
 	private int beatingPrice;
@@ -24,6 +27,8 @@ public class PredictionResult {
 	private double predictionRate;
 	private double brierScore;
 	private double score;
+	private double calibration;
+	private double logLoss;
 	private double withPricePct;
 	private double beatingPricePct;
 	private double profitablePct;
@@ -45,6 +50,9 @@ public class PredictionResult {
 			if (predicted) // Prediction was correct
 				++this.predicted;
 			double delta = 1 - probability;
+			double prob = predicted ? probability : delta;
+			probSum += prob;
+			logProbSum += log(prob);
 			delta2 += delta * delta;
 			if (withPrice) { // Match has valid bookmaker price to compare prediction to
 				++this.withPrice;
@@ -65,6 +73,8 @@ public class PredictionResult {
 		predictionRate = pct(predicted, predictable);
 		brierScore = delta2 / predictable;
 		score = predicted / (predictable * brierScore); // = Prediction Rate / Brier Score
+		calibration = probSum / predicted;
+		logLoss = -logProbSum / predictable;
 		withPricePct = pct(withPrice, predictable);
 		beatingPricePct = pct(beatingPrice, withPrice);
 		profitablePct = pct(profitable, beatingPrice);
@@ -148,7 +158,9 @@ public class PredictionResult {
 			.add("rate", format("%1$.3f%%", predictionRate))
 			.add("predictable", format("%1$.3f%%", predictablePct))
 			.add("brier", format("%1$.5f", brierScore))
-			.add("score", format("%1$.4f", score));
+			.add("score", format("%1$.4f", score))
+			.add("calibration", format("%1$.4f", calibration))
+			.add("logLoss", format("%1$.4f", logLoss));
 		if (withPrice > 0) {
 			builder.add("profit", format("%1$.3f%%", profitPct))
 				.add("profitable", format("%1$.3f%%", profitablePct))
