@@ -128,31 +128,23 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 
 	private void verifyPredictionPrintInfo(LocalDate fromDate, LocalDate toDate) throws InterruptedException {
 		PredictionVerificationResult result = verifyPrediction(fromDate, toDate);
-		printResult(result);
 		printResultDistribution(result);
 	}
 
 	private void verifyPredictionPrintInfo(LocalDate fromDate, LocalDate toDate, TuningSet tuningSet) throws InterruptedException {
 		PredictionVerificationResult result = verifyPrediction(fromDate, toDate, tuningSet);
-		printResult(result);
 		printResultDistribution(result);
 	}
 
 	private void verifyPredictionPrintInfo(LocalDate fromDate, LocalDate toDate, PredictionConfig config) throws InterruptedException {
 		PredictionVerificationResult result = verifyPrediction(fromDate, toDate, config);
-		printResult(result);
 		printWeights(config, false);
 		printResultDistribution(result);
 	}
 
 	private void verifyPredictionPrintInfo(LocalDate fromDate, LocalDate toDate, PredictionConfig config, TuningSet tuningSet) throws InterruptedException {
 		PredictionVerificationResult result = verifyPrediction(fromDate, toDate, config, tuningSet);
-		printResult(result);
 		printWeights(config, false);
 		printResultDistribution(result);
-	}
-
-	private static void printResult(PredictionVerificationResult result) {
-		System.out.println(result.getResult());
 	}
 }

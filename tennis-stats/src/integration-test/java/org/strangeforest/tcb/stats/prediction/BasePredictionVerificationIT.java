@@ -117,9 +117,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		matchCount.await();
 		verificationResult.complete();
 		PredictionResult result = verificationResult.getResult();
-		System.out.printf("Prediction rate: %1$.3f%%, Predictable: %2$.3f%%, Score: %3$.4f, Matches: %4$d, Time: %5$s\n", result.getPredictionRate(), result.getPredictablePct(), result.getScore(), result.getTotal(), stopwatch);
-		if (result.getWithPrice() > 0)
-			System.out.printf("Profit: %1$.3f%%, Profitable: %2$.3f%%, Beating price: %3$.3f%%, With price: %4$.3f%%\n", result.getProfitPct(), result.getProfitablePct(), result.getBeatingPricePct(), result.getWithPricePct());
+		System.out.printf("%1$s in %2$s\n", result, stopwatch);
 		return verificationResult;
 	}
 
