@@ -14,7 +14,7 @@ public class PredictionResult {
 	private int total;
 	private int predictable;
 	private int predicted;
-	private double probSum;
+	private double probabilitySum;
 	private double logProbSum;
 	private double delta2;
 	private int withPrice;
@@ -43,17 +43,17 @@ public class PredictionResult {
 		return config;
 	}
 
-	public void newMatch(boolean predictable, double probability, boolean predicted, boolean withPrice, boolean beatingPrice, boolean profitable, double stake, double return_) {
+	public void newMatch(boolean predictable, double winnerProbability, boolean predicted, boolean withPrice, boolean beatingPrice, boolean profitable, double stake, double return_) {
 		++total;
 		if (predictable) { // Predictor is kicked on
 			++this.predictable;
 			if (predicted) // Prediction was correct
 				++this.predicted;
-			double delta = 1 - probability;
-			double prob = predicted ? probability : delta;
-			probSum += prob;
-			logProbSum += log(prob);
-			delta2 += delta * delta;
+			double loserProbability = 1 - winnerProbability;
+			double probability = predicted ? winnerProbability : loserProbability;
+			probabilitySum += probability;
+			logProbSum += log(probability);
+			delta2 += loserProbability * loserProbability;
 			if (withPrice) { // Match has valid bookmaker price to compare prediction to
 				++this.withPrice;
 				if (beatingPrice) { // Prediction is outside of price margin spread, thus a candidate for betting
@@ -73,7 +73,7 @@ public class PredictionResult {
 		predictionRate = pct(predicted, predictable);
 		brierScore = delta2 / predictable;
 		score = predicted / (predictable * brierScore); // = Prediction Rate / Brier Score
-		calibration = probSum / predicted;
+		calibration = probabilitySum / predicted;
 		logLoss = -logProbSum / predictable;
 		withPricePct = pct(withPrice, predictable);
 		beatingPricePct = pct(beatingPrice, withPrice);

@@ -82,11 +82,11 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 					boolean predictable = false, predicted = false, withPrice = false, beatingPrice = false, profitable = false;
 					double winnerProbability = 0.0, stake = 0.0, return_ = 0.0;
 					if (prediction.getPredictability1() > MIN_PREDICTABILITY) {
-						predictable = true;
 						winnerProbability = prediction.getWinProbability1();
 						double loserProbability = prediction.getWinProbability2();
 						Double winnerPrice = match.winnerPrice;
 						Double loserPrice = match.loserPrice;
+						predictable = winnerProbability != 0.5;
 						if (winnerProbability > 0.5)
 							predicted = true;
 						if (winnerPrice != null || loserPrice != null) {
