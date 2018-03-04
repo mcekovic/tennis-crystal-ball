@@ -3,23 +3,23 @@ package org.strangeforest.tcb.dataload
 class StartEloRatings {
 
 	static final int START_RATING = 1500
-	static final int START_RATING_RANK = 300
+	static final int START_RATING_RANK = 1000
 	static final List<RatingPoint> START_RATING_TABLE = [
-		ratingPoint(  1, 2367),
-		ratingPoint(  2, 2290),
-		ratingPoint(  3, 2235),
-		ratingPoint(  4, 2192),
-		ratingPoint(  5, 2158),
-		ratingPoint(  7, 2110),
-		ratingPoint( 10, 2064),
-		ratingPoint( 15, 2016),
-		ratingPoint( 20, 1982),
-		ratingPoint( 30, 1924),
-		ratingPoint( 50, 1837),
-		ratingPoint( 70, 1768),
-		ratingPoint(100, 1692),
-		ratingPoint(150, 1605),
-		ratingPoint(200, 1533),
+		ratingPoint(  1, 2394),
+		ratingPoint(  2, 2323),
+		ratingPoint(  3, 2275),
+		ratingPoint(  4, 2237),
+		ratingPoint(  5, 2204),
+		ratingPoint(  7, 2160),
+		ratingPoint( 10, 2117),
+		ratingPoint( 15, 2070),
+		ratingPoint( 20, 2035),
+		ratingPoint( 30, 1978),
+		ratingPoint( 50, 1907),
+		ratingPoint( 70, 1856),
+		ratingPoint(100, 1801),
+		ratingPoint(150, 1730),
+		ratingPoint(200, 1658),
 		ratingPoint(START_RATING_RANK, START_RATING)
 	]
 
@@ -31,7 +31,7 @@ class StartEloRatings {
 					return point.eloRating
 				else if (rank < point.rank) {
 					if (prevPoint != null)
-						return prevPoint.eloRating - (prevPoint.eloRating - point.eloRating) * (rank - prevPoint.rank) / (point.rank - prevPoint.rank)
+						return prevPoint.eloRating - ((prevPoint.eloRating - point.eloRating) * (rank - prevPoint.rank)) / (point.rank - prevPoint.rank)
 					else
 						return point.eloRating
 				}

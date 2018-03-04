@@ -28,12 +28,12 @@ class EloSurfaceFactors {
 		sqlPool.withSql  { sql ->
 			sql.eachRow(QUERY_SURFACE_RATIOS) { row ->
 				int season = row.season
-				hardFactors[season] = (1.5d + pctToFactor(toDouble(row.hard_pct))) / 2
-				clayFactors[season] = (1.6d + pctToFactor(toDouble(row.clay_pct))) / 2
-				grassFactors[season] = (2.2d + pctToFactor(toDouble(row.grass_pct))) / 2
-				carpetFactors[season] = (2.5d + pctToFactor(toDouble(row.carpet_pct))) / 2
-				outdoorFactors[season] = (1.1d + pctToFactor(toDouble(row.outdoor_pct))) / 2
-				indoorFactors[season] = (2.4d + pctToFactor(toDouble(row.indoor_pct))) / 2
+				hardFactors[season] = (1.4d + pctToFactor(toDouble(row.hard_pct))) / 2
+				clayFactors[season] = (1.45d + pctToFactor(toDouble(row.clay_pct))) / 2
+				grassFactors[season] = (2.05d + pctToFactor(toDouble(row.grass_pct))) / 2
+				carpetFactors[season] = (2.3d + pctToFactor(toDouble(row.carpet_pct))) / 2
+				outdoorFactors[season] = (1.05d + pctToFactor(toDouble(row.outdoor_pct))) / 2
+				indoorFactors[season] = (1.95d + pctToFactor(toDouble(row.indoor_pct))) / 2
 			}
 		}
 	}

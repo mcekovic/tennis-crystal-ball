@@ -308,7 +308,7 @@ class EloRatings {
 					delta = 0.1667d * (wDelta * (match.w_rt_gms ?: 0d) - lDelta * (match.l_sv_gms ?: 0d) * returnToServeRatio(match.surface))
 					break
 				case 'tb':
-					delta = 2.0d * (wDelta * (match.w_tbs ?: 0d) - lDelta * (match.l_tbs ?: 0d))
+					delta = 1.5d * (wDelta * (match.w_tbs ?: 0d) - lDelta * (match.l_tbs ?: 0d))
 					break
 			}
 		}
@@ -334,47 +334,41 @@ class EloRatings {
 	}
 
 	static double kFactor(String level, String round, short bestOf, String outcome) {
-		double kFactor = 100d
+		double kFactor = 32d
 		switch (level) {
 			case 'G': break
-			case 'F': kFactor *= 0.9d; break
-			case 'L': kFactor *= 0.8d; break
-			case 'M': kFactor *= 0.8d; break
-			case 'O': kFactor *= 0.75d; break
-			case 'A': kFactor *= 0.7d; break
-			default: kFactor *= 0.6d; break
+			case 'F': kFactor *= 0.90d; break
+			case 'L': kFactor *= 0.85d; break
+			case 'M': kFactor *= 0.85d; break
+			case 'O': kFactor *= 0.80d; break
+			case 'A': kFactor *= 0.75d; break
+			default: kFactor *= 0.70d; break
 		}
 		switch (round) {
 			case 'F': break
-			case 'BR': kFactor *= 0.975d; break
-			case 'SF': kFactor *= 0.95d; break
-			case 'QF': kFactor *= 0.90d; break
-			case 'R16': kFactor *= 0.85d; break
+			case 'BR': kFactor *= 0.95d; break
+			case 'SF': kFactor *= 0.90d; break
+			case 'QF': kFactor *= 0.85d; break
+			case 'R16': kFactor *= 0.80d; break
 			case 'R32': kFactor *= 0.80d; break
 			case 'R64': kFactor *= 0.75d; break
-			case 'R128': kFactor *= 0.70d; break
-			case 'RR': kFactor *= 0.90d; break
+			case 'R128': kFactor *= 0.75d; break
+			case 'RR': kFactor *= 0.85d; break
 		}
-		if (bestOf < 5) kFactor *= 0.9d
-		if (outcome == 'W/O') kFactor *= 0.5d
+		if (bestOf < 5) kFactor *= 0.90d
+		if (outcome == 'W/O') kFactor *= 0.50d
 		kFactor
 	}
 
 	/**
-	 * K-Function returns values from 1/2 to 1 depending on current rating.
+	 * K-Function returns values from 1 to 10 depending on current rating.
 	 * It stabilizes ratings at the top, while allows fast progress of lower rated players.
-	 * For rating 0-1800 returns 1
-	 * For rating 1800-2000 returns linearly decreased values from 1 to 1/2. For example, for 1900 return 3/4
-	 * For rating 2000+ returns 1/2
-	 * @return values from 1/2 to 1, depending on current rating
+	 * For high ratings returns 1
+	 * For low ratings return 10
+	 * @return values from 1 to 10, depending on current rating
 	 */
 	static double kFunction(double rating, String type = null) {
-		if (rating <= ratingForType(1800d, type))
-			1d
-		else if (rating <= ratingForType(2000d, type))
-			1d - (rating - ratingForType(1800d, type)) / ratingDiffForType(400d, type)
-		else
-			0.5d
+		1d + 18d / (1d + pow(2d, (ratingFromType(rating, type) - START_RATING) / 63d))
 	}
 
 	static final Map<String, Double> RATING_TYPE_FACTOR = [
@@ -382,17 +376,26 @@ class EloRatings {
 		'g': 0.25d,
 		'sg': 0.3d,
 		'rg': 0.3d,
-		'tb': 0.5d
+		'tb': 0.4d
 	]
 
-	static int ratingForType(double rating, String type) {
+	static double ratingForType(double rating, String type) {
 		Double factor = RATING_TYPE_FACTOR[type]
-		factor ? START_RATING + factor * (rating - START_RATING) : rating
+		factor ? START_RATING + (rating - START_RATING) * factor : rating
 	}
 
-	static int ratingDiffForType(double ratingDiff, String type) {
+	static double ratingFromType(double typeRating, String type) {
 		Double factor = RATING_TYPE_FACTOR[type]
-		factor ? factor * ratingDiff : ratingDiff
+		factor ? START_RATING + (typeRating - START_RATING) / factor : typeRating
+	}
+
+	static double ratingDiffForType(double ratingDiff, String type) {
+		Double factor = RATING_TYPE_FACTOR[type]
+		factor ? ratingDiff * factor : ratingDiff
+	}
+
+	static double capDeltaRating(double delta, String type) {
+		signum(delta) * min(abs(delta), ratingDiffForType(200d, type))
 	}
 
 	static double returnToServeRatio(String surface) {
@@ -421,7 +424,7 @@ class EloRatings {
 		}
 
 		EloRating newRating(double delta, Date date, String type) {
-			def newRating = new EloRating(playerId: playerId, rating: rating + delta * kFunction(rating, type), matches: matches + 1, dates: new ArrayDeque<>(dates ?: []))
+			def newRating = new EloRating(playerId: playerId, rating: rating + capDeltaRating(delta * kFunction(rating, type), type), matches: matches + 1, dates: new ArrayDeque<>(dates ?: []))
 			newRating.bestRating = bestRating(newRating, type)
 			newRating.addDate(date)
 			newRating
@@ -708,7 +711,7 @@ class EloRatings {
 		double calibration
 
 		void newMatch(String type, def match, double winnerRating, double loserRating) {
-			if (toLocalDate(match.end_date) < LocalDate.of(1970, 1, 1))
+			if (toLocalDate(match.end_date) < LocalDate.of(2005, 1, 1))
 				return
 
 			def winnerScore, loserScore
