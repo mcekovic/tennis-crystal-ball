@@ -735,15 +735,18 @@ class EloRatings {
 					break
 			}
 
+			if (winnerScore == loserScore)
+				return
 			double totalScore = winnerScore + loserScore
 			if (totalScore > 0d) {
-				++total
 				def winnerProbability = 1d / (1d + pow(10d, (loserRating - winnerRating) / 400d))
-				if (winnerScore >= loserScore) {
+				if (winnerScore > loserScore) {
+					++total
 					if (winnerProbability > 0.5d)
 						++predicted
 				}
 				else {
+					++total
 					if (winnerProbability < 0.5d)
 						++predicted
 				}
