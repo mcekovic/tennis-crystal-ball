@@ -14,9 +14,9 @@ public class PredictionResult {
 	private int total;
 	private int predictable;
 	private int predicted;
-	private double probabilitySum;
-	private double logProbSum;
-	private double delta2;
+	private double p;
+	private double pDelta2;
+	private double pLog;
 	private int withPrice;
 	private int beatingPrice;
 	private int profitable;
@@ -25,10 +25,10 @@ public class PredictionResult {
 
 	private double predictablePct;
 	private double predictionRate;
-	private double brierScore;
+	private double brier;
+	private double logLoss;
 	private double score;
 	private double calibration;
-	private double logLoss;
 	private double withPricePct;
 	private double beatingPricePct;
 	private double profitablePct;
@@ -51,9 +51,9 @@ public class PredictionResult {
 				++this.predicted;
 			double loserProbability = 1 - winnerProbability;
 			double probability = predicted ? winnerProbability : loserProbability;
-			probabilitySum += probability;
-			logProbSum += log(probability);
-			delta2 += loserProbability * loserProbability;
+			p += probability;
+			pLog += log(probability);
+			pDelta2 += loserProbability * loserProbability;
 			if (withPrice) { // Match has valid bookmaker price to compare prediction to
 				++this.withPrice;
 				if (beatingPrice) { // Prediction is outside of price margin spread, thus a candidate for betting
@@ -71,10 +71,10 @@ public class PredictionResult {
 	public void complete() {
 		predictablePct = pct(predictable, total);
 		predictionRate = pct(predicted, predictable);
-		brierScore = delta2 / predictable;
-		score = predicted / (predictable * brierScore); // = Prediction Rate / Brier Score
-		calibration = probabilitySum / predicted;
-		logLoss = -logProbSum / predictable;
+		brier = pDelta2 / predictable;
+		logLoss = -pLog / predictable;
+		score = predicted / (predictable * brier); // = Prediction Rate / Brier
+		calibration = p / predicted;
 		withPricePct = pct(withPrice, predictable);
 		beatingPricePct = pct(beatingPrice, withPrice);
 		profitablePct = pct(profitable, beatingPrice);
@@ -94,8 +94,8 @@ public class PredictionResult {
 		return predicted;
 	}
 
-	public double getBrierScore() {
-		return brierScore;
+	public double getBrier() {
+		return brier;
 	}
 
 	public double getScore() {
@@ -157,10 +157,10 @@ public class PredictionResult {
 		ToStringHelper builder = toStringHelper(this)
 			.add("rate", format("%1$.3f%%", predictionRate))
 			.add("predictable", format("%1$.3f%%", predictablePct))
-			.add("brier", format("%1$.5f", brierScore))
+			.add("brier", format("%1$.5f", brier))
+			.add("logLoss", format("%1$.4f", logLoss))
 			.add("score", format("%1$.4f", score))
-			.add("calibration", format("%1$.4f", calibration))
-			.add("logLoss", format("%1$.4f", logLoss));
+			.add("calibration", format("%1$.4f", calibration));
 		if (withPrice > 0) {
 			builder.add("profit", format("%1$.3f%%", profitPct))
 				.add("profitable", format("%1$.3f%%", profitablePct))
