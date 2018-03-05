@@ -158,7 +158,7 @@ public class PredictionResult {
 			.add("rate", format("%1$.3f%%", predictionRate))
 			.add("predictable", format("%1$.3f%%", predictablePct))
 			.add("brier", format("%1$.5f", brier))
-			.add("logLoss", format("%1$.4f", logLoss))
+			.add("logLoss", format("%1$.5f", logLoss))
 			.add("score", format("%1$.4f", score))
 			.add("calibration", format("%1$.4f", calibration));
 		if (withPrice > 0) {

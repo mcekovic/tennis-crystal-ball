@@ -93,7 +93,7 @@ public class H2HMatchPredictor implements MatchPredictor {
 			int total = won1 + won2;
 			if (total > 0) {
 				double weight = itemWeight * weight(total);
-				DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
+				DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), item.isMixedBestOf(), bestOf);
 				prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(1.0 * won1 / total));
 				prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(1.0 * won2 / total));
 			}

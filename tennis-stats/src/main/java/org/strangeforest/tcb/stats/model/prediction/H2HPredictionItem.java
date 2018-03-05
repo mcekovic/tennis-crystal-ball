@@ -2,30 +2,32 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 public enum H2HPredictionItem implements PredictionItem {
 
-	OVERALL(false),
-	SURFACE(false),
-	LEVEL(false),
-	TOURNAMENT(false),
-	ROUND(false),
-	RECENT(false),
-	SURFACE_RECENT(false),
-	LEVEL_RECENT(false),
-	ROUND_RECENT(false),
-	OVERALL_SET(true),
-	SURFACE_SET(true),
-	LEVEL_SET(true),
-	TOURNAMENT_SET(true),
-	ROUND_SET(true),
-	RECENT_SET(true),
-	SURFACE_RECENT_SET(true),
-	LEVEL_RECENT_SET(true),
-	ROUND_RECENT_SET(true);
+	OVERALL(false, true),
+	SURFACE(false, true),
+	LEVEL(false, false),
+	TOURNAMENT(false, false),
+	ROUND(false, true),
+	RECENT(false, true),
+	SURFACE_RECENT(false, true),
+	LEVEL_RECENT(false, false),
+	ROUND_RECENT(false, true),
+	OVERALL_SET(true, false),
+	SURFACE_SET(true, false),
+	LEVEL_SET(true, false),
+	TOURNAMENT_SET(true, false),
+	ROUND_SET(true, false),
+	RECENT_SET(true, false),
+	SURFACE_RECENT_SET(true, false),
+	LEVEL_RECENT_SET(true, false),
+	ROUND_RECENT_SET(true, false);
 
 	private volatile PredictionArea area;
 	private final boolean forSet;
+	private final boolean mixedBestOf;
 
-	H2HPredictionItem(boolean forSet) {
+	H2HPredictionItem(boolean forSet, boolean mixedBestOf) {
 		this.forSet = forSet;
+		this.mixedBestOf = mixedBestOf;
 	}
 
 	@Override public String longName() {
@@ -42,6 +44,10 @@ public enum H2HPredictionItem implements PredictionItem {
 
 	@Override public boolean isForSet() {
 		return forSet;
+	}
+
+	public boolean isMixedBestOf() {
+		return mixedBestOf;
 	}
 
 	@Override public double getWeight(PredictionConfig config) {

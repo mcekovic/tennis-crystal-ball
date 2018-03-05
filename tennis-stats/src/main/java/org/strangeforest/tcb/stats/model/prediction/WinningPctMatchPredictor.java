@@ -113,7 +113,7 @@ public class WinningPctMatchPredictor implements MatchPredictor {
 					p1 *= p1;
 					p2 *= p2;
 					double p12 = p1 + p2;
-					DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
+					DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), item.isMixedBestOf(), bestOf);
 					prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(p1 / p12));
 					prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(p2 / p12));
 				}
