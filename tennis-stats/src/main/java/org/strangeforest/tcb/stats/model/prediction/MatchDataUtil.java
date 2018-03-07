@@ -142,6 +142,10 @@ public abstract class MatchDataUtil {
 		return match -> "Q".equals(match.getOpponentEntry());
 	}
 
+	public static double recencyAdjustment(int offset, int halfAtOffset) {
+		return 1 + pow(2, (offset - halfAtOffset) / 2.0);
+	}
+
 	private static boolean nonNullEquals(Object o1, Object o2) {
 		return o1 != null && o2 != null && o1.equals(o2);
 	}
