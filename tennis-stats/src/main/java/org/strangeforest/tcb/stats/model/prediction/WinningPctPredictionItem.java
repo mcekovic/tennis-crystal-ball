@@ -2,36 +2,38 @@ package org.strangeforest.tcb.stats.model.prediction;
 
 public enum WinningPctPredictionItem implements PredictionItem {
 
-	OVERALL(false),
-	SURFACE(false),
-	LEVEL(false),
-	TOURNAMENT(false),
-	ROUND(false),
-	RECENT(false),
-	SURFACE_RECENT(false),
-	LEVEL_RECENT(false),
-	ROUND_RECENT(false),
-	VS_RANK(false),
-	VS_HAND(false),
-	VS_BACKHAND(false),
-	OVERALL_SET(true),
-	SURFACE_SET(true),
-	LEVEL_SET(true),
-	TOURNAMENT_SET(true),
-	ROUND_SET(true),
-	RECENT_SET(true),
-	SURFACE_RECENT_SET(true),
-	LEVEL_RECENT_SET(true),
-	ROUND_RECENT_SET(true),
-	VS_RANK_SET(true),
-	VS_HAND_SET(true),
-	VS_BACKHAND_SET(true);
+	OVERALL(false, true),
+	SURFACE(false, true),
+	LEVEL(false, false),
+	TOURNAMENT(false, false),
+	ROUND(false, true),
+	RECENT(false, true),
+	SURFACE_RECENT(false, true),
+	LEVEL_RECENT(false, false),
+	ROUND_RECENT(false, true),
+	VS_RANK(false, true),
+	VS_HAND(false, true),
+	VS_BACKHAND(false, true),
+	OVERALL_SET(true, false),
+	SURFACE_SET(true, false),
+	LEVEL_SET(true, false),
+	TOURNAMENT_SET(true, false),
+	ROUND_SET(true, false),
+	RECENT_SET(true, false),
+	SURFACE_RECENT_SET(true, false),
+	LEVEL_RECENT_SET(true, false),
+	ROUND_RECENT_SET(true, false),
+	VS_RANK_SET(true, false),
+	VS_HAND_SET(true, false),
+	VS_BACKHAND_SET(true, false);
 
 	private volatile PredictionArea area;
 	private final boolean forSet;
+	private final boolean mixedBestOf;
 
-	WinningPctPredictionItem(boolean forSet) {
+	WinningPctPredictionItem(boolean forSet, boolean mixedBestOf) {
 		this.forSet = forSet;
+		this.mixedBestOf = mixedBestOf;
 	}
 
 	@Override public String longName() {
@@ -48,6 +50,10 @@ public enum WinningPctPredictionItem implements PredictionItem {
 
 	@Override public boolean isForSet() {
 		return forSet;
+	}
+
+	public boolean isMixedBestOf() {
+		return mixedBestOf;
 	}
 
 	@Override public double getWeight(PredictionConfig config) {

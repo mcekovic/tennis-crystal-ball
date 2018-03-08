@@ -79,7 +79,7 @@ public class VsQualifierMatchPredictor implements MatchPredictor {
 				int won = matchData.stream().filter(qualifierFilter).mapToInt(pDimension).sum();
 				int lost = total - won;
 				double weight = itemWeight * weight(total);
-				DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
+				DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), item.isMixedBestOf(), bestOf);
 				prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(1.0 * won / total));
 				prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(1.0 * lost / total));
 			}

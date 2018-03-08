@@ -29,7 +29,7 @@ public class RecentFormMatchPredictor implements MatchPredictor {
 	private final PredictionConfig config;
 
 	private static final int MATCH_RECENT_PERIOD_YEARS = 2;
-	private static final int LAST_MATCHES_COUNT = 20;
+	private static final int LAST_MATCHES_COUNT = 30;
 
 	public RecentFormMatchPredictor(List<MatchData> matchData1, List<MatchData> matchData2, RankingData rankingData1, RankingData rankingData2, PlayerData playerData1, PlayerData playerData2,
 	                                LocalDate date1, LocalDate date2, Surface surface, TournamentLevel level, Round round, PredictionConfig config) {
@@ -70,7 +70,7 @@ public class RecentFormMatchPredictor implements MatchPredictor {
 	}
 
 	private int getRecentFormMatches() {
-		return config.getLastMatchesCount(getArea(), LAST_MATCHES_COUNT);
+		return config.getLastMatchesCount(getArea(), 3 * LAST_MATCHES_COUNT / 2);
 	}
 
 	private void addItemProbabilities(MatchPrediction prediction, RecentFormPredictionItem item, Predicate<MatchData> filter1, Predicate<MatchData> filter2, Integer matches) {
@@ -89,8 +89,14 @@ public class RecentFormMatchPredictor implements MatchPredictor {
 			int matches1 = filteredMatchData1.size();
 			int matches2 = filteredMatchData2.size();
 			if (matches1 > 0 && matches2 > 0) {
-				double form1 = filteredMatchData1.stream().mapToDouble(MatchData::getOpponentEloScore).sum() / matches1;
-				double form2 = filteredMatchData2.stream().mapToDouble(MatchData::getOpponentEloScore).sum() / matches2;
+				double form1 = 0.0;
+				for (int i = 0; i < matches1; i++)
+					form1 += filteredMatchData1.get(i).getOpponentEloScore() / recencyAdjustment(matches1 - i, LAST_MATCHES_COUNT);
+				form1 /= matches1;
+				double form2 = 0.0;
+				for (int i = 0; i < matches2; i++)
+					form2 += filteredMatchData2.get(i).getOpponentEloScore() / recencyAdjustment(matches2 - i, LAST_MATCHES_COUNT);
+				form2 /= matches2;
 				double weight = itemWeight * weight(matches1, matches2);
 				double p1 = winProbability(form1, form2);
 				double p2 = winProbability(form2, form1);
@@ -104,6 +110,6 @@ public class RecentFormMatchPredictor implements MatchPredictor {
 	}
 
 	private static double winProbability(double form1, double form2) {
-		return 1 / (1 + pow(10.0, (form2 - form1) / 400.0));
+		return 1 / (1 + pow(10.0, (form2 - form1) / 350.0));
 	}
 }

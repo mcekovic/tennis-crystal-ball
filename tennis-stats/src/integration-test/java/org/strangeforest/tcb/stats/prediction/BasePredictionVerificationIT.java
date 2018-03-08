@@ -179,6 +179,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		System.out.println(result.getProbabilityRangeResults());
 		System.out.println(result.getSurfaceResults());
 		System.out.println(result.getLevelResults());
+		System.out.println(result.getBestOfResults());
 		System.out.println(result.getRankRangeResults());
 	}
 }

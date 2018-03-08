@@ -152,6 +152,7 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 					out.println("# " + result.getProbabilityRangeResults());
 					out.println("# " + result.getSurfaceResults());
 					out.println("# " + result.getLevelResults());
+					out.println("# " + result.getBestOfResults());
 					out.println("# " + result.getRankRangeResults());
 					out.println("# Tuned at: " + LocalDateTime.now());
 					out.println();

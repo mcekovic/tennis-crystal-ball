@@ -4,7 +4,7 @@ import java.util.function.*;
 
 import static java.lang.Math.*;
 import static org.strangeforest.tcb.stats.model.core.Player.*;
-import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.probabilityTransformer;
+import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
 import static org.strangeforest.tcb.stats.model.prediction.RankingPredictionItem.*;
 
 public class RankingMatchPredictor implements MatchPredictor {
@@ -16,8 +16,11 @@ public class RankingMatchPredictor implements MatchPredictor {
 
 	private static final int DEFAULT_RANK = 500;
 	private static final int DEFAULT_RANK_POINTS = 10;
-	private static final double RANK_PROBABILITY_EXPONENT = 0.65; // Experimentally determined for smallest Brier score
-	private static final double RANK_POINTS_PROBABILITY_EXPONENT = 0.85; // Experimentally determined for smallest Brier score
+	// Experimentally determined for smallest Brier score and calibration near to 1 for seasons 2005+
+	private static final double RANK_BEST_OF_3_PROBABILITY_EXPONENT = 0.6;
+	private static final double RANK_BEST_OF_5_PROBABILITY_EXPONENT = 0.87;
+	private static final double RANK_POINTS_BEST_OF_3_PROBABILITY_EXPONENT = 0.77;
+	private static final double RANK_POINTS_BEST_OF_5_PROBABILITY_EXPONENT = 1.02;
 
 	public RankingMatchPredictor(RankingData rankingData1, RankingData rankingData2, short bestOf, PredictionConfig config) {
 		this.rankingData1 = rankingData1;
@@ -52,10 +55,10 @@ public class RankingMatchPredictor implements MatchPredictor {
 		}
 	}
 
-	private static double rankWinProbability(Integer rank1, Integer rank2) {
+	private double rankWinProbability(Integer rank1, Integer rank2) {
 		rank1 = defaultIfNull(rank1, DEFAULT_RANK);
 		rank2 = defaultIfNull(rank2, DEFAULT_RANK);
-		return 1 / (1 + pow((double)rank1 / rank2, RANK_PROBABILITY_EXPONENT));
+		return 1 / (1 + pow((double)rank1 / rank2, bestOf < 5 ? RANK_BEST_OF_3_PROBABILITY_EXPONENT : RANK_BEST_OF_5_PROBABILITY_EXPONENT));
 	}
 
 
@@ -69,10 +72,10 @@ public class RankingMatchPredictor implements MatchPredictor {
 		}
 	}
 
-	private static double rankPointsWinProbability(Integer rankPoints1, Integer rankPoints2) {
+	private double rankPointsWinProbability(Integer rankPoints1, Integer rankPoints2) {
 		rankPoints1 = defaultIfNull(rankPoints1, DEFAULT_RANK_POINTS);
 		rankPoints2 = defaultIfNull(rankPoints2, DEFAULT_RANK_POINTS);
-		return 1 / (1 + pow((double)rankPoints2 / rankPoints1, RANK_POINTS_PROBABILITY_EXPONENT));
+		return 1 / (1 + pow((double)rankPoints2 / rankPoints1, bestOf < 5 ? RANK_POINTS_BEST_OF_3_PROBABILITY_EXPONENT : RANK_POINTS_BEST_OF_5_PROBABILITY_EXPONENT));
 	}
 
 
@@ -81,13 +84,13 @@ public class RankingMatchPredictor implements MatchPredictor {
 	private void addEloItemProbabilities(MatchPrediction prediction, RankingPredictionItem item, Integer eloRating1, Integer eloRating2) {
 		double weight = config.getItemWeight(item) * presenceWeight(eloRating1, eloRating2);
 		if (weight > 0.0) {
-			DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), bestOf);
+			DoubleUnaryOperator probabilityTransformer = probabilityTransformer(item.isForSet(), true, bestOf);
 			prediction.addItemProbability1(item, weight, probabilityTransformer.applyAsDouble(eloWinProbability(eloRating1, eloRating2)));
 			prediction.addItemProbability2(item, weight, probabilityTransformer.applyAsDouble(eloWinProbability(eloRating2, eloRating1)));
 		}
 	}
 
-	private static double eloWinProbability(Integer eloRating1, Integer eloRating2) {
+	private double eloWinProbability(Integer eloRating1, Integer eloRating2) {
 		eloRating1 = defaultIfNull(eloRating1, START_ELO_RATING);
 		eloRating2 = defaultIfNull(eloRating2, START_ELO_RATING);
 		return 1 / (1 + pow(10.0, (eloRating2 - eloRating1) / 400.0));

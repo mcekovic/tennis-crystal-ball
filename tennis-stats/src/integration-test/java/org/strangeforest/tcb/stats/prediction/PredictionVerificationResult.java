@@ -18,6 +18,7 @@ public class PredictionVerificationResult {
 	private final Map<Double, PredictionResult> probabilityRangeResults;
 	private final Map<Surface, PredictionResult> surfaceResults;
 	private final Map<TournamentLevel, PredictionResult> levelResults;
+	private final Map<Short, PredictionResult> bestOfResults;
 	private final Map<Range<Integer>, PredictionResult> rankRangeResults;
 
 	private static final int PROBABILITY_RANGES = 10;
@@ -29,6 +30,7 @@ public class PredictionVerificationResult {
 		probabilityRangeResults = new HashMap<>();
 		surfaceResults = new HashMap<>();
 		levelResults = new HashMap<>();
+		bestOfResults = new HashMap<>();
 		rankRangeResults = new HashMap<>();
 	}
 
@@ -45,6 +47,8 @@ public class PredictionVerificationResult {
 		TournamentLevel level = match.level;
 		if (level != null)
 			levelResults.computeIfAbsent(level, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
+		short bestOf = match.bestOf;
+		bestOfResults.computeIfAbsent(bestOf, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
 		Range<Integer> rankRange = rankRange(nullsLastMin(match.winnerRank, match.loserRank));
 		if (rankRange != null)
 			rankRangeResults.computeIfAbsent(rankRange, s -> new PredictionResult(config)).newMatch(predictable, winnerProbability, predicted, withPrice, beatingPrice, profitable, stake, return_);
@@ -57,6 +61,8 @@ public class PredictionVerificationResult {
 		for (PredictionResult result : surfaceResults.values())
 			result.complete();
 		for (PredictionResult result : levelResults.values())
+			result.complete();
+		for (PredictionResult result : bestOfResults.values())
 			result.complete();
 		for (PredictionResult result : rankRangeResults.values())
 			result.complete();
@@ -76,6 +82,10 @@ public class PredictionVerificationResult {
 
 	public Map<TournamentLevel, PredictionResult> getLevelResults() {
 		return new TreeMap<>(levelResults);
+	}
+
+	public Map<Short, PredictionResult> getBestOfResults() {
+		return bestOfResults;
 	}
 
 	public Map<Range<Integer>, PredictionResult> getRankRangeResults() {

@@ -699,13 +699,17 @@ class EloRatings {
 
 		int total
 		int predicted
-		double delta2
+		double p
+		double pDelta2
 
 		double predictionRate
-		double brierScore
+		double brier
 		double score
+		double calibration
 
 		void newMatch(String type, def match, double winnerRating, double loserRating) {
+			if (toLocalDate(match.end_date) < LocalDate.of(1970, 1, 1))
+				return
 
 			def winnerScore, loserScore
 			switch (type) {
@@ -742,27 +746,36 @@ class EloRatings {
 				def winnerProbability = 1d / (1d + pow(10d, (loserRating - winnerRating) / 400d))
 				if (winnerScore > loserScore) {
 					++total
-					if (winnerProbability > 0.5d)
+					if (winnerProbability > 0.5d) {
 						++predicted
+						p += winnerProbability
+					}
+					else
+						p += 1 - winnerProbability
 				}
 				else {
 					++total
-					if (winnerProbability < 0.5d)
+					if (winnerProbability < 0.5d) {
 						++predicted
+						p += 1 - winnerProbability
+					}
+					else
+						p += winnerProbability
 				}
-				double delta = winnerScore / totalScore - winnerProbability
-				delta2 += delta * delta
+				def pDelta = winnerScore / totalScore - winnerProbability
+				pDelta2 += pDelta * pDelta
 			}
 		}
 
 		def complete() {
 			predictionRate = pct(predicted, total)
-			brierScore = delta2 / total
-			score = predicted / (total * brierScore) // = Prediction Rate / Brier Score
+			brier = pDelta2 / total
+			score = predicted / (total * brier) // = Prediction Rate / Brier Score
+			calibration = p / predicted
 		}
 
 		@Override String toString() {
-			return format('Rate=%1$.3f%%, Brier=%2$.5f, Score=%3$.4f, Matches=%4$d', predictionRate, brierScore, score, total)
+			return format('Rate=%1$.3f%%, Brier=%2$.5f, Score=%3$.4f, Calibration=%4$.4f, Matches=%5$d', predictionRate, brier, score, calibration, total)
 		}
 	}
 }

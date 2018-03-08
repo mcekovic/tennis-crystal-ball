@@ -21,14 +21,22 @@ public abstract class MatchDataUtil {
 		return sqrt(weight(total1) * weight(total2));
 	}
 
-	public static DoubleUnaryOperator probabilityTransformer(boolean forSet, short bestOf) {
-		return forSet ? matchProbability(bestOf) : DoubleUnaryOperator.identity();
+	public static DoubleUnaryOperator probabilityTransformer(boolean forSet, boolean mixedBestOf, short bestOf) {
+		return forSet ? matchFromSetProbability(bestOf) : (mixedBestOf ? matchProbability(bestOf) : DoubleUnaryOperator.identity());
 	}
 
-	public static DoubleUnaryOperator matchProbability(short bestOf) {
+	private static DoubleUnaryOperator matchFromSetProbability(short bestOf) {
 		switch (bestOf) {
 			case 3: return MatchDataUtil::bestOf3MatchProbability;
 			case 5: return MatchDataUtil::bestOf5MatchProbability;
+			default: throw new IllegalArgumentException("Invalid bestOf: " + bestOf);
+		}
+	}
+
+	private static DoubleUnaryOperator matchProbability(short bestOf) {
+		switch (bestOf) {
+			case 3: return DoubleUnaryOperator.identity();
+			case 5: return MatchDataUtil::bestOf5FromBestOf3MatchProbability;
 			default: throw new IllegalArgumentException("Invalid bestOf: " + bestOf);
 		}
 	}
@@ -39,6 +47,10 @@ public abstract class MatchDataUtil {
 
 	public static double bestOf5MatchProbability(double setProbability) {
 		return setProbability * setProbability * setProbability * (10 - 15 * setProbability + 6 * setProbability * setProbability);
+	}
+
+	public static double bestOf5FromBestOf3MatchProbability(double bestOf3Probability) {
+		return bestOf3Probability * (0.5 + 1.5 * bestOf3Probability - bestOf3Probability * bestOf3Probability); // Approximation
 	}
 
 	public static short defaultBestOf(TournamentLevel level, Short bestOf) {
@@ -128,6 +140,10 @@ public abstract class MatchDataUtil {
 
 	public static Predicate<MatchData> isOpponentQualifier() {
 		return match -> "Q".equals(match.getOpponentEntry());
+	}
+
+	public static double recencyAdjustment(int offset, int halfAtOffset) {
+		return 1 + pow(2, (offset - halfAtOffset) / 2.0);
 	}
 
 	private static boolean nonNullEquals(Object o1, Object o2) {
