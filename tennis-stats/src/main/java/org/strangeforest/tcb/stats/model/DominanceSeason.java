@@ -7,6 +7,7 @@ import org.strangeforest.tcb.stats.model.core.*;
 
 import com.google.common.collect.*;
 
+import static java.lang.Math.*;
 import static org.strangeforest.tcb.stats.model.core.Surface.*;
 
 public class DominanceSeason {
@@ -31,6 +32,8 @@ public class DominanceSeason {
 	private PlayerDominanceTimeline bestPlayer;
 	private PlayerDominanceTimeline eraPlayer;
 	private int bestPlayerPoints;
+	private double predictability;
+	private double eloPredictability;
 	private Map<Integer, Integer> averageEloRatings;
 
 	public DominanceSeason(int season, Surface surface) {
@@ -73,6 +76,34 @@ public class DominanceSeason {
 
 	void setEraPlayer(PlayerDominanceTimeline eraPlayer) {
 		this.eraPlayer = eraPlayer;
+	}
+
+	public double getPredictability() {
+		return predictability;
+	}
+
+	public int getPredictabilityClass() {
+		return predictabilityClass(predictability);
+	}
+
+	public void setPredictability(double predictability) {
+		this.predictability = predictability;
+	}
+
+	public double getEloPredictability() {
+		return eloPredictability;
+	}
+
+	public int getEloPredictabilityClass() {
+		return predictabilityClass(eloPredictability);
+	}
+
+	public void setEloPredictability(double eloPredictability) {
+		this.eloPredictability = eloPredictability;
+	}
+
+	private static int predictabilityClass(double predictability) {
+		return 10 * min(10, (int)round((predictability - 60.0) * 5.0 / 8.0));
 	}
 
 	Map<Integer, Integer> getAverageEloRatings() {

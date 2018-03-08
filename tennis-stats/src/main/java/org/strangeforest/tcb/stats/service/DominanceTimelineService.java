@@ -16,8 +16,10 @@ import com.google.common.collect.*;
 
 import static java.lang.String.*;
 import static org.strangeforest.tcb.stats.model.core.Surface.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
+import static org.strangeforest.tcb.stats.util.PercentageUtil.*;
 
 @Service
 public class DominanceTimelineService {
@@ -45,6 +47,15 @@ public class DominanceTimelineService {
 
 	private static final String SURFACE_CRITERIA = //language=SQL
 		" AND surface = :surface::surface";
+
+	private static final String PREDICTABILITY_QUERY = //language=SQL
+		"SELECT season, count(*) FILTER (WHERE winner_rank < loser_rank OR (winner_rank IS NOT NULL AND loser_rank IS NULL)) AS predicted,\n" +
+		"  count(*) FILTER (WHERE winner_rank IS NOT NULL OR loser_rank IS NOT NULL) AS predictable,\n" +
+		"  count(*) FILTER (WHERE winner_elo_rating > loser_elo_rating OR (winner_elo_rating IS NOT NULL AND loser_elo_rating IS NULL)) AS elo_predicted,\n" +
+		"  count(*) FILTER (WHERE winner_elo_rating IS NOT NULL OR loser_elo_rating IS NOT NULL) AS elo_predictable\n" +
+		"FROM match_for_stats_v%1$s\n" +
+		"GROUP BY season\n" +
+		"ORDER BY season DESC";
 
 	private static final String AVERAGE_ELO_RATINGS_QUERY = //language=SQL
 		"SELECT extract(YEAR FROM rank_date) AS season,\n" +
@@ -87,6 +98,18 @@ public class DominanceTimelineService {
 		);
 		timeline.calculateDominanceSeasons();
 		timeline.calculateDominanceEras();
+		jdbcTemplate.query(
+			format(PREDICTABILITY_QUERY, overall ? "" : where(SURFACE_CRITERIA)),
+			params,
+			rs -> {
+				int season = rs.getInt("season");
+				DominanceSeason dominanceSeason = timeline.getDominanceSeason(season);
+				if (dominanceSeason != null) {
+					dominanceSeason.setPredictability(pct(rs.getDouble("predicted"), rs.getDouble("predictable")));
+					dominanceSeason.setEloPredictability(pct(rs.getDouble("elo_predicted"), rs.getDouble("elo_predictable")));
+				}
+			}
+		);
 		jdbcTemplate.query(
 			format(AVERAGE_ELO_RATINGS_QUERY, overall ? "" : surface.getLowerCaseText() + '_'),
 			rs -> {

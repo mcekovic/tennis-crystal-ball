@@ -3,7 +3,6 @@ package org.strangeforest.tcb.stats.model;
 import java.util.*;
 
 import org.strangeforest.tcb.stats.model.core.*;
-import org.strangeforest.tcb.stats.util.*;
 
 import com.google.common.collect.*;
 

@@ -5,6 +5,7 @@
 <!--/*@thymesVar id="fromSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="toSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="predictability" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="averageElo" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.DominanceTimeline"*/-->
 <!--/*@thymesVar id="dominanceRatioCoefficient" type="java.lang.Integer"*/-->
@@ -59,6 +60,7 @@
 			dominanceTableOffset = $dominanceTable.offset();
 			$(window).resize(correctPositionsOnResize);
 			$("#navbar").resize(correctPositionsOnResize);
+			onPredictabilityChange();
 			onAverageEloChange();
 			$dominanceTable.find("tr.player").each(function() {
 				var $player = $(this);
@@ -72,7 +74,9 @@
 			$("[data-toggle='tooltip']").tooltip();
 		});
 		function reloadDominanceTimeline() {
-			var url = "/dominanceTimeline?averageElo=" + $("#averageElo").prop("checked");
+			var url = "/dominanceTimeline?predictability=" + $("#predictability").prop("checked");
+			var averageElo = $("#averageElo").prop("checked");
+			if (averageElo) url += "&averageElo=" + averageElo;
 			var fromSeason = $("#fromSeason").val();
 			if (fromSeason) url += "&fromSeason=" + fromSeason;
 			var toSeason = $("#toSeason").val();
@@ -80,6 +84,10 @@
 			var surface = $("#surface").val();
 			if (surface) url += "&surface=" + surface;
 			window.location.href = url;
+		}
+		function onPredictabilityChange() {
+			var predictability = $("#predictability").prop("checked");
+			$("#predictabilityTimeline").css("display", predictability ? "table-header-group" : "none");
 		}
 		function onAverageEloChange() {
 			var averageElo = $("#averageElo").prop("checked");
@@ -141,7 +149,7 @@
 	<header th:include="fragments/header :: title"></header>
 	<h3 class="text-nowrap"><i class="fa fa-history"></i> Dominance Timeline</h3>
 	<div class="row">
-		<div class="col-sm-6 col-md-5 col-lg-4">
+		<div class="col-md-5 col-lg-4">
 			<div class="input-group">
 				<label for="fromSeason" class="input-group-addon">From:</label>
 				<select id="fromSeason" class="form-control" onchange="reloadDominanceTimeline()" data-toggle="tooltip" data-placement="top" title="Select from season">
@@ -155,7 +163,7 @@
 				</select>
 			</div>
 		</div>
-		<div class="col-sm-4 col-md-3 col-lg-3">
+		<div class="col-md-3 col-lg-3">
 			<div class="input-group">
 				<label for="surface" class="input-group-addon">Surface:</label>
 				<select id="surface" class="form-control" onchange="reloadDominanceTimeline()" data-toggle="tooltip" data-placement="top" title="Select overall or Dominance Timeline by surface">
@@ -164,7 +172,14 @@
 				</select>
 			</div>
 		</div>
-		<div class="col-sm-2 col-md-2 col-lg-2">
+		<div class="col-md-2 col-lg-2">
+			<div class="checkbox text-nowrap">
+				<label data-toggle="tooltip" data-placement="top" title="Show predictability">
+					<input id="predictability" type="checkbox" th:checked="${predictability}" onchange="onPredictabilityChange()"/> Predictability
+				</label>
+			</div>
+		</div>
+		<div class="col-md-2 col-lg-2">
 			<div class="checkbox text-nowrap">
 				<label data-toggle="tooltip" data-placement="top" title="Show average Elo ratings">
 					<input id="averageElo" type="checkbox" th:checked="${averageElo}" onchange="onAverageEloChange()"/> Average Elo
@@ -197,6 +212,20 @@
 			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" th:title="'For all players with minimum ' + ${minGOATPoints} + ' GOAT points: SUM(player season GOAT points * player GOAT points) / ' + ${dominanceRatioCoefficient}">Season Dominance Ratio</th>
 			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.dominanceRatioRounded}" style="padding: 1px">
 				<span th:text="${#numbers.formatDecimal(season.dominanceRatio, 1, 1)}" class="vseason">66.7</span>
+			</th>
+		</tr>
+		</thead>
+		<thead id="predictabilityTimeline" style="display: none">
+		<tr class="season">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Predictability is the percentage of matches won by higher ranked player (data for seasons 1981-1983 and before 1973 is skewed because of the lack of official ranking data)">Predictability</th>
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.predictabilityClass}" style="padding: 1px">
+				<span th:text="${#numbers.formatDecimal(season.predictability, 1, 1)}" class="vseason">66.7</span>
+			</th>
+		</tr>
+		<tr class="season">
+			<th colspan="3" style="padding: 1px 4px; text-align: right; border-right: 3px solid lightgray" title="Elo predictability is the percentage of matches won by player with greater Elo rating (data for seasons 1968 and 1969 is skewed because of the lack of data for all matches)">Elo Predictability</th>
+			<th th:each="season : ${timeline.dominanceSeasons}" th:class="'points-' + ${season.eloPredictabilityClass}" style="padding: 1px">
+				<span th:text="${#numbers.formatDecimal(season.eloPredictability, 1, 1)}" class="vseason">66.7</span>
 			</th>
 		</tr>
 		</thead>

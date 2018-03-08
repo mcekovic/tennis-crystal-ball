@@ -30,6 +30,7 @@ public class TimelinesController extends PageController {
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,
 		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "predictability", defaultValue = F) boolean predictability,
 		@RequestParam(name = "averageElo", defaultValue = F) boolean averageElo
 	) {
 		Range<Integer> seasonRange = RangeUtil.toRange(fromSeason, toSeason);
@@ -43,6 +44,7 @@ public class TimelinesController extends PageController {
 		modelMap.addAttribute("fromSeason", seasonRange.hasLowerBound() ? seasonRange.lowerEndpoint() : null);
 		modelMap.addAttribute("toSeason", seasonRange.hasUpperBound() ? seasonRange.upperEndpoint() : null);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("predictability", predictability);
 		modelMap.addAttribute("averageElo", averageElo);
 		modelMap.addAttribute("timeline", timeline);
 		modelMap.addAttribute("minGOATPoints", minGOATPoints);
