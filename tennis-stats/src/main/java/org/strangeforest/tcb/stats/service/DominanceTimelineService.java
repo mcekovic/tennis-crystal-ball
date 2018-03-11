@@ -91,8 +91,12 @@ public class DominanceTimelineService {
 			rs -> {
 				PlayerDominanceTimeline player = mapPlayer(surface, rank, rs);
 				Object[] seasonsPoints = (Object[])rs.getArray("seasons_points").getArray();
-				for (Object seasonsPoint : seasonsPoints)
-					player.addSeasonPoints(mapSeasonPoints(surface, seasonsPoint.toString()));
+				for (Object seasonsPoint : seasonsPoints) {
+					SeasonPoints seasonPoints = mapSeasonPoints(surface, seasonsPoint.toString());
+					if (surface == CARPET && seasonPoints.getSeason() > 2007)
+						return;
+					player.addSeasonPoints(seasonPoints);
+				}
 				timeline.addPlayer(player);
 			}
 		);

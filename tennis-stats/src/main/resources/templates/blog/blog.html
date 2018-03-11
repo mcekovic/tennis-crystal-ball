@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="goatTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
+	<title>About</title>
+	<template>
+		<style>
+			body {
+				background: url("/images/home-bg.jpg") repeat;
+			}
+			.component-header {
+				margin: 0;
+			}
+		</style>
+	</template>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<div class="row">
+		<div class="col-lg-10 col-md-9">
+			<h3><i class="fa fa-edit"></i> <th:block th:include="fragments/promotion :: logo"/> Blog</h3>
+			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-flask"></i> <a href="/blog/eloKfactorTweaks">Elo K-Factor Tweaks</a></h4>
+		</div>
+		<div class="col-lg-2 col-md-3">
+			<th:block th:include="fragments/goatTopN :: goatTopN"/>
+		</div>
+	</div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

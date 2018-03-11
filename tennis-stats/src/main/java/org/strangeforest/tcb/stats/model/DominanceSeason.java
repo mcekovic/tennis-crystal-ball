@@ -115,7 +115,7 @@ public class DominanceSeason {
 	}
 
 	public int getAverageEloRating(int topN) {
-		return averageEloRatings.get(topN);
+		return averageEloRatings.getOrDefault(topN, Player.START_ELO_RATING);
 	}
 
 	public int getAverageEloRatingPoints(int topN) {

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
+	<title>About</title>
+	<template>
+		<script type="text/javascript">
+			$(function() {
+				bindPopovers();
+				loadRankingTopN("ELO_RANK", 20);
+			});
+		</script>
+		<style>
+			body {
+				background: url("/images/home-bg.jpg") repeat;
+			}
+			.component-header {
+				margin: 0;
+			}
+		</style>
+	</template>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<div class="row">
+		<div class="col-lg-10 col-md-9">
+			<h3 class="text-nowrap"><i class="fa fa-flask"></i> Elo K-Factor Tweaks</h3>
+			<p>
+				<th:block th:include="fragments/promotion :: logo"/> has been using <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" class="external">Elo rating</a> system and tennis-customized K-factor function for a long time.
+			</p>
+			<h4>Old Formula</h4>
+			<p>
+				Leveraging original Elo system, Ultimate Tennis Statistics (UTS) K-factor function incorporates in the ratings opponent strength, meaning wins over quality opponents increase ratings more, while loses from lower ranked players decrease ratings fast.
+				But it is also going further, in order to accommodate to tennis and to reflect different significance of tennis matches at different tournament levels, different rounds and the difference between best-of-3 and best-of-5, UTS used highly customized Elo K-factor function.
+				UTS users appreciate both Elo ratings accuracy and weekly refresh, but most importantly, ratings stability, as the same formula was used for more then 2 years.
+			</p>
+			<p>
+				This formula was good, but was not perfect. It was good to reflect current players' form but also to compare players' strength across Eras. However, it had one shortcoming: it was not optimized for maximum predictability of tennis matches.
+			</p>
+			<h4>New Formula</h4>
+			<p>
+				As UTS features <a href="/inProgressEventsForecasts">Tournament Forecasts</a>, that are very much dependent on Elo ratings, it was necessary to optimize K-factor function for maximum predictability.<br/>
+				Details on new K-factor function can be found <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#eloRatingPopover">here</a>. Most notable change is different function for K-factor dependence on current player rating. Instead of linear function, new logistic function allows much smoother and much faster progress of newcomers, as well as smother stabilization of the top ratings and players.
+			</p>
+			<p>
+				In general, you will notice little changes, as previous function was very good, but new function is excellent as it features maximum predictability in addition. This means it can both better predict match winners when players are of similar strength, but also gives better probabilities when favorite play the outsider.
+			</p>
+			<p>
+				For the other usages of Elo Ratings on Ultimate Tennis Statistics, new Elo K-factor formula reflects better player strengths across Eras, as at the end of the day, what matters is only predictability. If a function gives more predictability, it better reflects player strengths in Era, but as average Elo ratings are still constant over time, also across Eras.
+			</p>
+		</div>
+		<div class="col-lg-2 col-md-3">
+			<div id="rankingTopN"></div>
+		</div>
+	</div>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
+	<footer th:include="fragments/footer :: copy"></footer>
+	<div th:include="fragments/aboutElo :: aboutEloFormula"></div>
+</body>
+</html>
