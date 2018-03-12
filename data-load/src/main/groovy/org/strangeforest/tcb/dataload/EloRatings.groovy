@@ -704,14 +704,16 @@ class EloRatings {
 		int predicted
 		double p
 		double pDelta2
+		double pLog
 
 		double predictionRate
 		double brier
+		double logLoss
 		double score
 		double calibration
 
 		void newMatch(String type, def match, double winnerRating, double loserRating) {
-			if (toLocalDate(match.end_date) < LocalDate.of(2005, 1, 1))
+			if (winnerRating == loserRating || match.outcome != null || toLocalDate(match.end_date) < LocalDate.of(2005, 1, 1))
 				return
 
 			def winnerScore, loserScore
@@ -747,24 +749,28 @@ class EloRatings {
 			double totalScore = winnerScore + loserScore
 			if (totalScore > 0d) {
 				def winnerProbability = 1d / (1d + pow(10d, (loserRating - winnerRating) / 400d))
+				def loserProbability = 1d - winnerProbability
+				def probability
 				if (winnerScore > loserScore) {
 					++total
 					if (winnerProbability > 0.5d) {
 						++predicted
-						p += winnerProbability
+						probability = winnerProbability
 					}
 					else
-						p += 1 - winnerProbability
+						probability = loserProbability
 				}
 				else {
 					++total
 					if (winnerProbability < 0.5d) {
 						++predicted
-						p += 1 - winnerProbability
+						probability = loserProbability
 					}
 					else
-						p += winnerProbability
+						probability = winnerProbability
 				}
+				p += probability
+				pLog += log(winnerProbability)
 				def pDelta = winnerScore / totalScore - winnerProbability
 				pDelta2 += pDelta * pDelta
 			}
@@ -773,12 +779,13 @@ class EloRatings {
 		def complete() {
 			predictionRate = pct(predicted, total)
 			brier = pDelta2 / total
-			score = predicted / (total * brier) // = Prediction Rate / Brier Score
+			logLoss = -pLog / total
+			score = predicted / (total * logLoss) // = Prediction Rate / Log-Loss
 			calibration = p / predicted
 		}
 
 		@Override String toString() {
-			return format('Rate=%1$.3f%%, Brier=%2$.5f, Score=%3$.4f, Calibration=%4$.4f, Matches=%5$d', predictionRate, brier, score, calibration, total)
+			return format('Rate=%1$.3f%%, Brier=%2$.5f, LogLoss=%3$.5f, Score=%4$.5f, Calibration=%5$.5f, Matches=%6$d', predictionRate, brier, logLoss, score, calibration, total)
 		}
 	}
 }

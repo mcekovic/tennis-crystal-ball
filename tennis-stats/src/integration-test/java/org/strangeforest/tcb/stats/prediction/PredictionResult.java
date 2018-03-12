@@ -50,9 +50,8 @@ public class PredictionResult {
 			if (predicted) // Prediction was correct
 				++this.predicted;
 			double loserProbability = 1 - winnerProbability;
-			double probability = predicted ? winnerProbability : loserProbability;
-			p += probability;
-			pLog += log(probability);
+			p += predicted ? winnerProbability : loserProbability;
+			pLog += log(winnerProbability);
 			pDelta2 += loserProbability * loserProbability;
 			if (withPrice) { // Match has valid bookmaker price to compare prediction to
 				++this.withPrice;
@@ -73,7 +72,7 @@ public class PredictionResult {
 		predictionRate = pct(predicted, predictable);
 		brier = pDelta2 / predictable;
 		logLoss = -pLog / predictable;
-		score = predicted / (predictable * brier); // = Prediction Rate / Brier
+		score = predicted / (predictable * logLoss); // = Prediction Rate / Log-Loss
 		calibration = p / predicted;
 		withPricePct = pct(withPrice, predictable);
 		beatingPricePct = pct(beatingPrice, withPrice);
@@ -159,8 +158,8 @@ public class PredictionResult {
 			.add("predictable", format("%1$.3f%%", predictablePct))
 			.add("brier", format("%1$.5f", brier))
 			.add("logLoss", format("%1$.5f", logLoss))
-			.add("score", format("%1$.4f", score))
-			.add("calibration", format("%1$.4f", calibration));
+			.add("score", format("%1$.5f", score))
+			.add("calibration", format("%1$.5f", calibration));
 		if (withPrice > 0) {
 			builder.add("profit", format("%1$.3f%%", profitPct))
 				.add("profitable", format("%1$.3f%%", profitablePct))

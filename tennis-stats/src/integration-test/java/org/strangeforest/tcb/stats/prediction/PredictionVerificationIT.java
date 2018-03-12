@@ -120,7 +120,7 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 
 	@Test
 	public void adHocSingleItemPrediction() throws InterruptedException {
-		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, new PredictionConfig(PredictionArea.RANKING, 1.0, RankingPredictionItem.RANK_POINTS, 1.0));
+		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, new PredictionConfig(PredictionArea.RANKING, 1.0, RankingPredictionItem.ELO, 1.0));
 	}
 
 

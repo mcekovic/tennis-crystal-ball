@@ -37,7 +37,7 @@ public abstract class BasePredictionVerificationIT extends AbstractTestNGSpringC
 		"SELECT m.winner_id, m.loser_id, m.date, m.tournament_id, m.tournament_event_id, m.level, m.best_of, m.surface, m.indoor, m.round, m.winner_rank, m.loser_rank, p.winner_price, p.loser_price\n" +
 		"FROM match_for_stats_v m\n" +
 		"LEFT JOIN match_price p ON p.match_id = m.match_id AND source = :source\n" +
-		"WHERE (m.date BETWEEN :date1 AND :date2)%1$s\n" +
+		"WHERE outcome IS NULL AND (m.date BETWEEN :date1 AND :date2)%1$s\n" +
 		"ORDER BY m.date";
 
 

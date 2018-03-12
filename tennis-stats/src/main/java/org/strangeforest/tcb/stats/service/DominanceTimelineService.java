@@ -53,7 +53,8 @@ public class DominanceTimelineService {
 		"  count(*) FILTER (WHERE winner_rank IS NOT NULL OR loser_rank IS NOT NULL) AS predictable,\n" +
 		"  count(*) FILTER (WHERE winner_elo_rating > loser_elo_rating OR (winner_elo_rating IS NOT NULL AND loser_elo_rating IS NULL)) AS elo_predicted,\n" +
 		"  count(*) FILTER (WHERE winner_elo_rating IS NOT NULL OR loser_elo_rating IS NOT NULL) AS elo_predictable\n" +
-		"FROM match_for_stats_v%1$s\n" +
+		"FROM match_for_stats_v\n" +
+		"WHERE outcome IS NULL%1$s\n" +
 		"GROUP BY season\n" +
 		"ORDER BY season DESC";
 
@@ -103,7 +104,7 @@ public class DominanceTimelineService {
 		timeline.calculateDominanceSeasons();
 		timeline.calculateDominanceEras();
 		jdbcTemplate.query(
-			format(PREDICTABILITY_QUERY, overall ? "" : where(SURFACE_CRITERIA)),
+			format(PREDICTABILITY_QUERY, overall ? "" : SURFACE_CRITERIA),
 			params,
 			rs -> {
 				int season = rs.getInt("season");
