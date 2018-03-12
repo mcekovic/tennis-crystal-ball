@@ -14,11 +14,11 @@
 				<li>Start rating is 1500 points</li>
 				<li>Minimum is 10 matches</li>
 			</ul>
-			However, highly customized <strong>K-factor</strong> function reflecting tournament level, match round, best-of and player current rating is used:
+			However, highly customized <strong>K-factor</strong> function reflecting tournament level, match round, best-of, walkover and player current rating is used:
 			<ul>
 				<li>K-factor base value is <strong>32</strong></li>
 				<li>Tournament level adjustment is: Grand Slam 100%, Tour Finals 90%, Masters 85%, Olympics 80%, ATP 500 75% and all others 70%</li>
-				<li>Match round adjustment is: Final 100%, Semi-Final 90%, Quarter-Final 85%, Round of 16 80%, Round of 32 80%, Round of 64 75%, Round of 128 75%, Round-Robin 85% and For Bronze Medal 95%</li>
+				<li>Match round adjustment is: Final 100%, Semi-Final 90%, Quarter-Final and Round-Robin 85%, Rounds of 16 and 32 80%, Rounds of 64 and 128 75% and For Bronze Medal 95%</li>
 				<li>Best-of sets adjustment: Best-of-5 100% and Best-of-3 90%</li>
 				<li>Walk-over adjustment: 50%</li>
 				<li>Current rating adjustment (this allows lower ranked players to advance more rapidly, while stabilizes ratings at the top):<br/>
@@ -38,7 +38,7 @@
 						</div>
 					</div>
 				</li>
-				<li>All above coefficients are experimentally optimized for maximum predictability</li>
+				<li>Each of the above coefficients (tournament level, round, best-of, walkover and current rating) are experimentally and carefully optimized for maximum predictability</li>
 				<li>Surface factor (for Elo ratings by surface and by outdoor/indoor): Depends on the percentage of surface or outdoor/indoor matches in the season</li>
 				<li>Set, Game, Service/Return Game and Tie Break Elo Ratings<sup class="cool-feature">&nbsp;Beta</sup> K-factor adjustments are work in progress, thus subject to change</li>
 			</ul>

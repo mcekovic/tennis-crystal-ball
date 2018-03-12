@@ -9,30 +9,6 @@
 		$(function() {
 			loadRankingTopN("RANK");
 			bindPopovers();
-			$("[data-toggle='collapse']").click(collapseClick);
-			$("#goatLegend").on("show.bs.collapse", setGOATLegendWidth);
-		});
-		function goatLegendWidth() {
-			switch (detectDevice()) {
-				case "lg": return "120%";
-				case "md": return "133%";
-				default: return "100%";
-			}
-		}
-		function setGOATLegendWidth() {
-			$("#goatLegend").css("width", goatLegendWidth());
-		}
-		var waitForFinalEvent = function() {
-			var b = {};
-			return function(c, d, a) {
-				a || (a = "dummy");
-				b[a] && clearTimeout(b[a]);
-				b[a] = setTimeout(c, d);
-			}
-		}();
-		var fullDateString = new Date();
-		$(window).resize(function() {
-			waitForFinalEvent(setGOATLegendWidth, 100, fullDateString.getTime());
 		});
 	</script>
 	<style>

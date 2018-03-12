@@ -1,9 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="tab" type="java.lang.String"*/-->
 <!--/*@thymesVar id="goatTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
-	<title>About</title>
+	<title>Blog</title>
 	<template>
+		<meta property="fb:admins" content="UltmTennisStats"/>
+		<script type="text/javascript" th:inline="javascript">
+			$(function() {
+				var $pill = $("#[(${tab})]Pill");
+				loadTab($pill, $pill.data("url"));
+				$("#blogPills").find("a").click(function() {
+					window.location.href = "/blog?tab=" + $(this).attr("href").substr(1);
+				});
+			});
+		</script>
 		<style>
 			body {
 				background: url("/images/home-bg.jpg") repeat;
@@ -16,13 +27,25 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
+	<h3><i class="fa fa-edit"></i> <th:block th:include="fragments/promotion :: logo"/> Blog</h3>
 	<div class="row">
-		<div class="col-lg-10 col-md-9">
-			<h3><i class="fa fa-edit"></i> <th:block th:include="fragments/promotion :: logo"/> Blog</h3>
-			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-flask"></i> <a href="/blog/eloKfactorTweaks">Elo K-Factor Tweaks</a></h4>
+		<div class="col-lg-2 col-md-2">
+			<br/>
+			<ul id="blogPills" class="nav nav-pills nav-stacked">
+				<li><a id="newBlogSectionPill" data-toggle="pill" href="#newBlogSection" data-url="/blog/newBlogSection"><i class="fa fa-edit"></i> New Blog Section</a></li>
+				<li><a id="eloKfactorTweaksPill" data-toggle="pill" href="#eloKfactorTweaks" data-url="/blog/eloKfactorTweaks"><i class="fa fa-flask"></i> Elo K-Factor Tweaks</a></li>
+			</ul>
+		</div>
+		<div class="col-lg-8 col-md-7">
+			<div class="tab-content">
+				<div id="newBlogSection" class="tab-pane fade"><div class="loading"></div></div>
+				<div id="eloKfactorTweaks" class="tab-pane fade"><div class="loading"></div></div>
+			</div>
 		</div>
 		<div class="col-lg-2 col-md-3">
 			<th:block th:include="fragments/goatTopN :: goatTopN"/>
+			<th:block th:include="fragments/promotion :: facebook"/>
+			<th:block th:include="fragments/promotion :: twitter"/>
 		</div>
 	</div>
 	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>

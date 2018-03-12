@@ -1,0 +1,8 @@
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="comments(blogItem)">
+<script type="text/javascript">
+	try {
+		FB.init({appId: '331937223993103', status: true, xfbml: true, version: 'v2.12'});
+	} catch (err) {}
+</script>
+<div class="fb-comments" th:data-href="${'http://www.ultimatetennisstatistics.com/blog/' + blogItem}" data-width="600" data-numposts="10"></div>
+</th:block>
