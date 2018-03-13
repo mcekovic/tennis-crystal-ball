@@ -35,8 +35,8 @@ public abstract class MatchDataUtil {
 
 	private static DoubleUnaryOperator matchProbability(short bestOf) {
 		switch (bestOf) {
-			case 3: return DoubleUnaryOperator.identity();
-			case 5: return MatchDataUtil::bestOf5FromBestOf3MatchProbability;
+			case 3: return MatchDataUtil::bestOf3FromMixedProbability;
+			case 5: return MatchDataUtil::bestOf5FromMixedProbability;
 			default: throw new IllegalArgumentException("Invalid bestOf: " + bestOf);
 		}
 	}
@@ -49,7 +49,17 @@ public abstract class MatchDataUtil {
 		return setProbability * setProbability * setProbability * (10 - 15 * setProbability + 6 * setProbability * setProbability);
 	}
 
-	public static double bestOf5FromBestOf3MatchProbability(double bestOf3Probability) {
+	private static final double BO5_PCT = 0.24;
+
+	public static double bestOf3FromMixedProbability(double mixedProbability) {
+		return (1 + BO5_PCT) * mixedProbability - BO5_PCT * bestOf5FromBestOf3MatchProbability(mixedProbability); // Approximation
+	}
+
+	public static double bestOf5FromMixedProbability(double mixedProbability) {
+		return BO5_PCT * mixedProbability + (1 - BO5_PCT) * bestOf5FromBestOf3MatchProbability(mixedProbability); // Approximation
+	}
+
+	private static double bestOf5FromBestOf3MatchProbability(double bestOf3Probability) {
 		return bestOf3Probability * (0.5 + 1.5 * bestOf3Probability - bestOf3Probability * bestOf3Probability); // Approximation
 	}
 

@@ -195,7 +195,7 @@ class EloRatings {
 	def current(int count, Date date = new Date(), String type = null) {
 		Date minDate = toDate(toLocalDate(date).minusYears(1))
 		def i = 0
-		getRatings(type).values().findAll { it.matches >= minMatches() && it.lastDate >= minDate && it.getDaysSpan(date) <= MIN_MATCHES_PERIOD }
+		getRatings(type).values().findAll { it.rating >= START_RATING && it.matches >= minMatches() && it.lastDate >= minDate && it.getDaysSpan(date) <= MIN_MATCHES_PERIOD }
 			.sort(comparator)
 			.findAll { ++i <= count }
 	}
@@ -265,7 +265,7 @@ class EloRatings {
 
 	private getRating(String type, int playerId, Date date) {
 		def rating = getRatings(type).get(playerId)
-		if (rating)
+		if (rating) // TODO Potential side effect
 			rating.adjustRating(date, type)
 		rating
 	}
@@ -452,8 +452,11 @@ class EloRatings {
 			def lastDate = this.lastDate
 			if (lastDate) {
 				def daysSinceLastMatch = ChronoUnit.DAYS.between(toLocalDate(lastDate), toLocalDate(date))
-				if (daysSinceLastMatch > 365)
+				if (daysSinceLastMatch > 365) {
 					rating = ratingAdjusted(daysSinceLastMatch, type)
+					if (daysSinceLastMatch > 365 * 5)
+						matches = 0
+				}
 			}
 		}
 
