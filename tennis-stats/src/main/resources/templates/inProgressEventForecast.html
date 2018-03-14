@@ -80,7 +80,10 @@
 </head>
 <body class="container">
 	<header th:include="fragments/header :: title"></header>
-	<h3>[[${inProgressEvent.name}]] Forecast <a th:href="@{/inProgressEventForecast(name=${forecast.event.name})}" th:title="|Permalink to ${forecast.event.name} forecast|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a></h3>
+	<h3>
+		[[${inProgressEvent.name}]] Forecast <a th:href="@{/inProgressEventForecast(name=${forecast.event.name})}" th:title="|Permalink to ${forecast.event.name} forecast|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
+		<footer style="margin-top: -10px; margin-left: 50px"><i style="font-size: x-small">Powered by 'Tennis Crystal Ball'</i></footer>
+	</h3>
 	<div class="row">
 		<div class="col-md-3">
 			<table class="table table-condensed text-nowrap">

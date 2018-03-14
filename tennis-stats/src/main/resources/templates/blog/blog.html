@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!--/*@thymesVar id="tab" type="java.lang.String"*/-->
+<!--/*@thymesVar id="post" type="java.lang.String"*/-->
 <!--/*@thymesVar id="goatTopN" type="java.util.List<org.strangeforest.tcb.stats.model.PlayerRanking>"*/-->
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Blog</title>
@@ -8,10 +8,10 @@
 		<meta property="fb:admins" content="UltmTennisStats"/>
 		<script type="text/javascript" th:inline="javascript">
 			$(function() {
-				var $pill = $("#[(${tab})]Pill");
+				var $pill = $("#[(${post})]Pill");
 				loadTab($pill, $pill.data("url"));
 				$("#blogPills").find("a").click(function() {
-					window.location.href = "/blog?tab=" + $(this).attr("href").substr(1);
+					window.location.href = "/blog?post=" + $(this).attr("href").substr(1);
 				});
 			});
 		</script>

@@ -65,7 +65,7 @@
 	<header th:include="fragments/header :: title"></header>
 	<div class="text-nowrap" style="margin-bottom: 20px">
 		<h3 style="float: left; margin-top: 5px"><i class="fa fa-book"></i> Records Book</h3>
-		<h5 style="font-style: italic" th:text="'&nbsp;' + ${recordCount} + ' Different Records!'">&nbsp;100 Different Records</h5>
+		<h5 th:text="'&nbsp;' + ${recordCount} + ' Different Records!'"> <i>100 Different Records</i></h5>
 	</div>
 	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('sm')"/>
 	<div id="categoryDiv" class="btn-group pull-left margin-right" style="width: 420px">

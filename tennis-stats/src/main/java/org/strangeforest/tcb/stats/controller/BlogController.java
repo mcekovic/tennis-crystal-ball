@@ -17,23 +17,20 @@ public class BlogController extends PageController {
 
 	@GetMapping("/blog")
 	public ModelAndView blog(
-		@RequestParam(name = "tab", defaultValue = "newBlogSection") String tab
+		@RequestParam(name = "post", defaultValue = "newBlogSection") String post
 	) {
 		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(20);
 		
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("tab", tab);
+		modelMap.addAttribute("post", post);
 		modelMap.addAttribute("goatTopN", goatTopN);
 		return new ModelAndView("blog/blog", modelMap);
 	}
 
-	@GetMapping("/blog/newBlogSection")
-	public ModelAndView newBlogSection() {
-		return new ModelAndView("blog/newBlogSection");
-	}
-
-	@GetMapping("/blog/eloKfactorTweaks")
-	public ModelAndView eloKfactorTweaks() {
-		return new ModelAndView("blog/eloKfactorTweaks");
+	@GetMapping("/blog/{post}")
+	public ModelAndView post(
+		@PathVariable String post
+	) {
+		return new ModelAndView("blog/" + post);
 	}
 }

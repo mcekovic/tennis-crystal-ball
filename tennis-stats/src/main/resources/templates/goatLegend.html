@@ -181,7 +181,7 @@
 			</tr>
 			</tbody>
 		</table>
-		<strong>Peak Outdoor/Indoor Elo Rating<sup class="new-feature">&nbsp;New!</sup></strong>
+		<strong>Peak Outdoor/Indoor Elo Rating</strong>
 		<p>Points assigned for outdoor and indoor</p>
 		<table class="table table-condensed table-hover table-striped">
 			<thead>
@@ -230,7 +230,7 @@
 				</strong>
 				<div th:unless="${forSeason}">+[(${careerGrandSlamGOATPoints})] points for each Career Grand Slam</div>
 				<div th:inline="text">+[(${seasonGrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Calendar Year Grand Slam</div>
-				<div th:inline="text">+[(${season3GrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Season with 3 Grand Slams<sup class="new-feature">&nbsp;New!</sup></div>
+				<div th:inline="text">+[(${season3GrandSlamGOATPoints})] points for [# th:unless="${forSeason}"]each [/]Season with 3 Grand Slams</div>
 				<div th:unless="${forSeason}">+[(${grandSlamHolderGOATPoints})] points each time when holding all 4 Grand Slams</div>
 				<div th:unless="${forSeason}" th:title="${'I.e. 5 consecutive wins at Wimbledon = (5 - 1) * ' + consecutiveGrandSlamOnSameEventGOATPoints + ' = ' + (4 * consecutiveGrandSlamOnSameEventGOATPoints) + ' points'}">+ (N - 1) * [(${consecutiveGrandSlamOnSameEventGOATPoints})] points where N (N > 1) is number of consecutive Grand Slams on the same tournament</div>
 				<div th:unless="${forSeason}" th:title="${'I.e. 10 wins at Roland Garros = (10 - 1) ' + (grandSlamOnSameEventGOATPoints < 1 ? '/' : '*') + ' ' + new java.text.DecimalFormat('#.#').format(grandSlamOnSameEventGOATPoints < 1 ? 1 / grandSlamOnSameEventGOATPoints : grandSlamOnSameEventGOATPoints) + ' = ' + new java.text.DecimalFormat('#.#').format(9.0 * grandSlamOnSameEventGOATPoints) + ' points'}">+ (N - 1) [(${grandSlamOnSameEventGOATPoints < 1 ? '/' : '*'})] [(${new java.text.DecimalFormat('#.#').format(grandSlamOnSameEventGOATPoints < 1 ? 1 / grandSlamOnSameEventGOATPoints : grandSlamOnSameEventGOATPoints)})] points where N (N > 1) is number of Grand Slams on the same tournament</div>
