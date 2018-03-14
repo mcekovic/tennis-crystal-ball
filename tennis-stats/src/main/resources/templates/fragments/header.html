@@ -111,8 +111,8 @@
 					<li th:class="${path == '/about' || path == '/contact' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">More<span class="caret"></span></a>
 						<ul class="dropdown-menu">
+							<li th:class="${path == '/blog' ? 'active' : _}"><a href="/blog"><i class="fa fa-edit fa-fw"></i> Blog</a></li>
 							<li th:class="${path == '/about' ? 'active' : _}"><a href="/about"><i class="fa fa-question-circle fa-fw"></i> About</a></li>
-							<li th:class="${path != null && path.startsWith('/blog') ? 'active' : _}"><a href="/blog"><i class="fa fa-edit fa-fw"></i> Blog</a></li>
 							<li th:class="${path == '/contact' ? 'active' : _}"><a href="/contact"><i class="fa fa-vcard fa-fw"></i> Contact</a></li>
 						</ul>
 					</li>
