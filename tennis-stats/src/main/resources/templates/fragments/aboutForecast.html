@@ -1,6 +1,6 @@
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutForecast">
 	<p>
-		<em>* <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#tournamentForecastPopover"><strong>Tournament Event Forecasts</strong></a> are driven by <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><strong>Neural Network Match Prediction Algorithm</strong></a></em><br/>
+		<em>* <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#tournamentForecastPopover"><strong>Tournament Event Forecasts</strong></a> are driven by <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><strong><th:block th:include="fragments/promotion :: tcb"/> Match Prediction Algorithm</strong></a></em><br/>
 		<em>** Updated twice an hour</em>
 	</p>
 	<div th:include="fragments/aboutForecast :: aboutTournamentForecast"></div>
@@ -40,12 +40,12 @@
 </th:block>
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutPrediction">
 	<div class="hidden" id="matchPredictionPopover">
-		<div class="popover-title"><strong>Neural Network Match Prediction Algorithm</strong></div>
+		<div class="popover-title"><strong><th:block th:include="fragments/promotion :: tcb"/> Match Prediction Algorithm</strong></div>
 		<div class="popover-content">
-			<p><strong>About Match Prediction Algorithm</strong></p>
+			<p><strong>About <th:block th:include="fragments/promotion :: tcb"/> Match Prediction Algorithm</strong></p>
 			<p>
 				Match Prediction is based on players' previous results and track records.<br/>
-				Previous results are analyzed by the Neural Network Algorithm with ~60 neurons for different features about players like Elo Rating, Surface Elo Rating, ATP Points, Recent Form,
+				Previous results are analyzed by the <a href="https://en.wikipedia.org/wiki/Artificial_neural_network" class="external" target="_blank">Neural Network</a> algorithm with ~60 neurons for different features about players like Elo Rating, Surface Elo Rating, ATP Points, Recent Form,
 				Head-to-Head ratios and Winning Percentages varied by surface, tournament level, tournament, round, recency, match or set ratios, vs rank, vs hand, vs backhand...<br/>
 				Match win probabilities given by each of the features (neurons) are then combined by the neural network using different weights.
 			</p>
