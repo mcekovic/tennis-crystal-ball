@@ -22,13 +22,14 @@ public class StatsLeadersService {
 	private static final String STATS_LEADERS_COUNT_QUERY = //language=SQL
 		"SELECT count(player_id) AS player_count FROM %1$s\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE %2$s >= :minEntries%3$s";
+		"WHERE %2$s >= :minEntries AND NOT lower(p.name) LIKE '%%unknown%%'%3$s";
 
 	private static final String STATS_LEADERS_QUERY = //language=SQL
 		"WITH stats_leaders AS (\n" +
 		"  SELECT player_id, %1$s AS value\n" +
 		"  FROM %2$s\n" +
-		"  WHERE %3$s >= :minEntries%4$s\n" +
+		"  INNER JOIN player_v p USING (player_id)\n" +
+		"  WHERE %3$s >= :minEntries AND NOT lower(p.name) LIKE '%%unknown%%'%4$s\n" +
 		"), stats_leaders_ranked AS (\n" +
 		"  SELECT rank() OVER (ORDER BY value DESC NULLS LAST) AS rank, player_id, value\n" +
 		"  FROM stats_leaders\n" +
@@ -43,7 +44,8 @@ public class StatsLeadersService {
 		"WITH player_stats AS (\n" +
 		"  SELECT m.player_id\n" +
 		"  FROM %2$s m%3$s\n" +
-		"  INNER JOIN player_v p ON p.player_id = m.player_id%4$s\n" +
+		"  INNER JOIN player_v p ON p.player_id = m.player_id\n" +
+		"  WHERE NOT lower(p.name) LIKE '%%unknown%%'%4$s\n" +
 		"  GROUP BY m.player_id\n" +
 		"  HAVING sum(%1$s) >= :minEntries\n" +
 		")\n" +
@@ -52,7 +54,9 @@ public class StatsLeadersService {
 	private static final String SUMMED_STATS_LEADERS_QUERY = //language=SQL
 		"WITH stats_leaders AS (\n" +
 		"  SELECT m.player_id, %1$s AS value\n" +
-		"  FROM %2$s m%3$s%4$s\n" +
+		"  FROM %2$s m%3$s\n" +
+		"  INNER JOIN player_v p ON p.player_id = m.player_id\n" +
+		"  WHERE NOT lower(p.name) LIKE '%%unknown%%'%4$s\n" +
 		"  GROUP BY m.player_id\n" +
 		"  HAVING sum(%5$s) >= :minEntries\n" +
 		"), stats_leaders_ranked AS (\n" +
@@ -89,7 +93,7 @@ public class StatsLeadersService {
 		}
 		else {
 			return jdbcTemplate.queryForObject(
-				format(SUMMED_STATS_LEADERS_COUNT_QUERY, minEntriesColumn(statsCategory), statsTableName(filter), getStatsLeadersJoin(filter), where(filter.getCriteria(), 2)),
+				format(SUMMED_STATS_LEADERS_COUNT_QUERY, minEntriesColumn(statsCategory), statsTableName(filter), getStatsLeadersJoin(filter), filter.getCriteria()),
 				filter.getParams().addValue("minEntries", minEntries),
 				Integer.class
 			);
@@ -127,7 +131,7 @@ public class StatsLeadersService {
 		boolean summed = filter.isEmptyOrForSeasonOrSurface();
 		return summed && !filter.hasSurfaceGroup()
 	       ? format(STATS_LEADERS_QUERY, statsCategory.getExpression(), statsTableName(filter), minEntriesColumn(statsCategory), filter.getBaseCriteria(), where(filter.getSearchCriteria()), orderBy)
-	       : format(SUMMED_STATS_LEADERS_QUERY, summed ? statsCategory.getPartiallySummedExpression() : statsCategory.getSummedExpression(), statsTableName(filter), getStatsLeadersJoin(filter), where(filter.getBaseCriteria(), 2), minEntriesColumn(statsCategory), where(filter.getSearchCriteria()), orderBy);
+	       : format(SUMMED_STATS_LEADERS_QUERY, summed ? statsCategory.getPartiallySummedExpression() : statsCategory.getSummedExpression(), statsTableName(filter), getStatsLeadersJoin(filter), filter.getBaseCriteria(), minEntriesColumn(statsCategory), where(filter.getSearchCriteria()), orderBy);
 	}
 
 	private static String getStatsLeadersJoin(PerfStatsFilter filter) {

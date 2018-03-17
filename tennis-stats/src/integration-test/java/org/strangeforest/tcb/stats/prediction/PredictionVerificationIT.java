@@ -40,6 +40,11 @@ public class PredictionVerificationIT extends BasePredictionVerificationIT {
 	}
 
 	@Test
+	public void verifyOverallDefaultPrediction() throws InterruptedException {
+		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, PredictionConfig.defaultConfig(), TuningSet.OVERALL);
+	}
+
+	@Test
 	public void verifyDefaultPredictionForHardOutdoor() throws InterruptedException {
 		verifyPredictionPrintInfo(FROM_DATE, TO_DATE, TuningSet.HARD_OUTDOOR);
 	}

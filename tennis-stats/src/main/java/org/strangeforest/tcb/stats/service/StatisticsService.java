@@ -37,7 +37,7 @@ public class StatisticsService {
 		"p_matches, o_matches, p_sets, o_sets, p_games, o_games, p_tbs, o_tbs,\n" +
 		"p_ace, p_df, p_sv_pt, p_1st_in, p_1st_won, p_2nd_won, p_sv_gms, p_bp_sv, p_bp_fc,\n" +
 		"o_ace, o_df, o_sv_pt, o_1st_in, o_1st_won, o_2nd_won, o_sv_gms, o_bp_sv, o_bp_fc,\n" +
-		"minutes, matches_w_stats, sets_w_stats, games_w_stats, opponent_rank, opponent_elo_rating\n";
+		"minutes, matches_w_stats, sets_w_stats, games_w_stats, opponent_rank, opponent_elo_rating, p_upsets, o_upsets, matches_w_rank\n";
 
 	private static final String PLAYER_STATS_QUERY =
 		"SELECT " + PLAYER_STATS_COLUMNS +
@@ -63,7 +63,7 @@ public class StatisticsService {
 		"sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets) p_sets, sum(o_sets) o_sets, sum(p_games) p_games, sum(o_games) o_games, sum(p_tbs) p_tbs, sum(o_tbs) o_tbs,\n" +
 		"sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,\n" +
 		"sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,\n" +
-		"sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats,\n";
+		"sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats, sum(p_upsets) p_upsets, sum(o_upsets) o_upsets, sum(matches_w_rank) matches_w_rank,\n";
 
 	static final String PLAYER_STATS_SUMMED_COLUMNS = PLAYER_BASIC_STATS_SUMMED_COLUMNS +
 		"exp(avg(ln(coalesce(opponent_rank, 1500)))) opponent_rank, avg(coalesce(opponent_elo_rating, 1500)::REAL) opponent_elo_rating\n";
@@ -270,6 +270,8 @@ public class StatisticsService {
 			rs.getInt("games_w_stats"),
 			rs.getDouble("opponent_rank"),
 			rs.getDouble("opponent_elo_rating"),
+			rs.getInt(prefix + "upsets"),
+			rs.getInt("matches_w_rank"),
 			summed
 		);
 	}

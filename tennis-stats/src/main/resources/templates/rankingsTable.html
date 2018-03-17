@@ -10,6 +10,7 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Rankings Table</title>
 	<template>
+	<meta name="description" content="Weekly ATP and Elo rankings"/>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			[# th:if=${dates}]populateDates([(${season})], [[${dates}]]);[/]

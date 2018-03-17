@@ -4,13 +4,14 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Peak Elo Ratings</title>
 	<template>
+	<meta name="description" content="Peak Elo Ratings compare peak player strengths across Eras, overall, by surface, by in/out or by set/game/tie-break"/>
 	<script type="text/javascript">
 		$(function() {
 			var $rankingsTable = $("#rankingsTable");
 			var device = detectDevice();
 			setBootgridColumnsVisible($rankingsTable, ["tournamentEvent"], deviceGreaterOrEqual(device, "lg"));
 			setBootgridColumnsVisible($rankingsTable, ["bestRank"], deviceGreaterOrEqual(device, "sm"));
-			setBootgridColumnsWidths($rankingsTable, ["name"], [device == "xs" ? 150 : (device == "sm" ? 200 : (device == "md" ? 300 : 400))]);
+			setBootgridColumnsWidths($rankingsTable, ["name"], [device === "xs" ? 150 : (device === "sm" ? 200 : (device === "md" ? 300 : 400))]);
 			$rankingsTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {

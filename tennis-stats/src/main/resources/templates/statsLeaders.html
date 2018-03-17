@@ -15,11 +15,12 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>Statistics Leaders</title>
 	<template>
+	<meta name="description" content="Tennis statistics leaders by more then 80 figures filtered by various filters"/>
 	<script type="text/javascript">
 		$(function() {
 			var $statsLeadersTable = $("#statsLeadersTable");
 			var device = detectDevice();
-			setBootgridColumnsWidths($statsLeadersTable, ["name"], [device == "xs" ? 200 : (device == "sm" ? 250 : (device == "md" ? 300 : 400))]);
+			setBootgridColumnsWidths($statsLeadersTable, ["name"], [device === "xs" ? 200 : (device === "sm" ? 250 : (device === "md" ? 300 : 400))]);
 			$statsLeadersTable.bootgrid({
 				ajax: true,
 				ajaxSettings: {

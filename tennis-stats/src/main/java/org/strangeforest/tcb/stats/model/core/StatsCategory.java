@@ -97,6 +97,7 @@ public final class StatsCategory {
 	private static final String TOTAL = "Total";
 	private static final String PERFORMANCE = "Performance";
 	private static final String OPPONENT_CATEGORY = "Opponent";
+	private static final String UPSETS_CATEGORY = "Upsets";
 	private static final String TIME_CATEGORY = "Time";
 
 	static {
@@ -184,6 +185,13 @@ public final class StatsCategory {
 		// Opponent
 		addCategory(OPPONENT_CATEGORY, "opponentRank", "exp(coalesce(opponent_rank, 1500) / nullif(" + TOTAL_MATCHES + ", 0))", "exp(avg(ln(coalesce(opponent_rank, 1500))))", "coalesce(opponent_rank, 1500)", PlayerStats::getOpponentRank, MATCH, RATIO1, true, "Opponent Rank", "stats.opponentRank.title");
 		addCategory(OPPONENT_CATEGORY, "opponentEloRating", "coalesce(opponent_elo_rating, 1500)::REAL / nullif(" + TOTAL_MATCHES + ", 0)", "avg(coalesce(opponent_elo_rating, 1500))", "coalesce(opponent_elo_rating, 1500)", PlayerStats::getOpponentEloRating, MATCH, RATIO1, false, "Opponent Elo Rating", null);
+		// Upsets
+		addCategory(UPSETS_CATEGORY, "upsetsScored", "p_upsets", PlayerStats::getUpsetsScored, MATCH, COUNT, false, "Upsets scored");
+		addCategory(UPSETS_CATEGORY, "upsetsScoredPct", "p_upsets::REAL / nullif(matches_w_rank, 0)", PlayerStats::getUpsetsScoredPct, PlayerStats::getUpsetsScored, PlayerStats::getMatches, MATCH, PERCENTAGE, false, "Upsets scored %");
+		addCategory(UPSETS_CATEGORY, "upsetsAgainst", "o_upsets", PlayerStats::getUpsetsAgainst, MATCH, COUNT, true, "Upsets against");
+		addCategory(UPSETS_CATEGORY, "upsetsAgainstPct", "o_upsets::REAL / nullif(matches_w_rank, 0)", PlayerStats::getUpsetsAgainstPct, PlayerStats::getUpsetsAgainst, PlayerStats::getMatches, MATCH, PERCENTAGE, true, "Upsets against %");
+		addCategory(UPSETS_CATEGORY, "upsets", "p_upsets + o_upsets", PlayerStats::getUpsets, MATCH, COUNT, true, "Upsets");
+		addCategory(UPSETS_CATEGORY, "upsetsPct", "(p_upsets + o_upsets)::REAL / nullif(matches_w_rank, 0)", PlayerStats::getUpsetsPct, PlayerStats::getUpsets, PlayerStats::getMatches, MATCH, PERCENTAGE, true, "Upsets %");
 		// Time
 		addCategory(TIME_CATEGORY, "pointTime", "60 * minutes::REAL / nullif(" + TOTAL_POINTS + ", 0)", PlayerStats::getPointTime, POINT, RATIO2, true, "Point Time (seconds)");
 		addCategory(TIME_CATEGORY, "gameTime", "minutes::REAL / nullif(games_w_stats, 0)", PlayerStats::getGameTime, GAME_W_STATS, RATIO3, true, "Game Time (minutes)");
@@ -223,6 +231,7 @@ public final class StatsCategory {
 		);
 		addGroup("OpponentTime", "Opponent & Time", false,
 			new CategorySubGroup("Opponent", "opponentRank", "opponentEloRating"),
+			new CategorySubGroup("Upsets", "upsetsScored", "upsetsScoredPct", "upsetsAgainst", "upsetsAgainstPct", "upsets", "upsetsPct"),
 			new CategorySubGroup("Time", "pointTime", "gameTime", "setTime", "matchTime")
 		);
 
@@ -353,7 +362,7 @@ public final class StatsCategory {
 		return singleExpression != null ? singleExpression : expression;
 	}
 
-	private static final Pattern SUMMED_EXPRESSION_PATTERN = Pattern.compile("(p_[a-z0-9_]+|o_[a-z0-9_]+|minutes|[a-z0-9_]+_w_stats|opponent_[a-z0-9_]+)");
+	private static final Pattern SUMMED_EXPRESSION_PATTERN = Pattern.compile("(p_[a-z0-9_]+|o_[a-z0-9_]+|minutes|[a-z0-9_]+_w_stats|opponent_[a-z0-9_]+|[a-z0-9_]+_w_rank)");
 
 	public Number getStat(PlayerStats stats) {
 		return statFunction.apply(stats);
@@ -442,11 +451,15 @@ public final class StatsCategory {
 	}
 
 	public boolean isMatchesLink() {
-		return item == MATCH && (type == COUNT || type == PERCENTAGE);
+		return item == MATCH && (type == COUNT || type == PERCENTAGE) && !name.equals("upsets");
 	}
 
-	public boolean isWonMatches() {
-		return name.equals("matchesWon");
+	public String getOutcomeFilter() {
+		return (name.equals("matchesWon") || name.equals("upsetsScored") ? "won" : (name.equals("upsetsAgainst") ? "lost" : "")) + "played";
+	}
+
+	public String getOpponentFilter() {
+		return name.equals("upsetsScored") ? "HIGHER_ELO" : (name.equals("upsetsAgainst") ? "LOWER_ELO" : null);
 	}
 
 

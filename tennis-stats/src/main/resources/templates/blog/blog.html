@@ -5,24 +5,25 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Blog</title>
 	<template>
-		<meta property="fb:admins" content="UltmTennisStats"/>
-		<script type="text/javascript" th:inline="javascript">
-			$(function() {
-				var $pill = $("#[(${post})]Pill");
-				loadTab($pill, $pill.data("url"));
-				$("#blogPills").find("a").click(function() {
-					window.location.href = "/blog?post=" + $(this).attr("href").substr(1);
-				});
+	<meta name="description" content="Ultimate Tennis Statistics and Tennis Crystal Ball match prediction and tournament forecasts"/>
+	<meta property="fb:admins" content="UltmTennisStats"/>
+	<script type="text/javascript" th:inline="javascript">
+		$(function() {
+			var $pill = $("#[(${post})]Pill");
+			loadTab($pill, $pill.data("url"));
+			$("#blogPills").find("a").click(function() {
+				window.location.href = "/blog?post=" + $(this).attr("href").substr(1);
 			});
-		</script>
-		<style>
-			body {
-				background: url("/images/home-bg.jpg") repeat;
-			}
-			.component-header {
-				margin: 0;
-			}
-		</style>
+		});
+	</script>
+	<style>
+		body {
+			background: url("/images/home-bg.jpg") repeat;
+		}
+		.component-header {
+			margin: 0;
+		}
+	</style>
 	</template>
 </head>
 <body class="container">

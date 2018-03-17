@@ -616,7 +616,8 @@ SELECT match_id, tournament_event_id, tournament_id, season, date, level, surfac
 	outcome, 1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games, w_tbs p_tbs, l_tbs o_tbs,
 	w_ace p_ace, w_df p_df, w_sv_pt p_sv_pt, w_1st_in p_1st_in, w_1st_won p_1st_won, w_2nd_won p_2nd_won, w_sv_gms p_sv_gms, w_bp_sv p_bp_sv, w_bp_fc p_bp_fc,
 	l_ace o_ace, l_df o_df, l_sv_pt o_sv_pt, l_1st_in o_1st_in, l_1st_won o_1st_won, l_2nd_won o_2nd_won, l_sv_gms o_sv_gms, l_bp_sv o_bp_sv, l_bp_fc o_bp_fc,
-	minutes, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + 1 matches_w_stats, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_sets + l_sets sets_w_stats, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_games + l_games games_w_stats
+	minutes, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + 1 matches_w_stats, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_sets + l_sets sets_w_stats, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_games + l_games games_w_stats,
+	CASE WHEN winner_rank > loser_rank THEN 1 ELSE 0 END p_upsets, 0 o_upsets, CASE WHEN winner_rank IS NOT NULL AND loser_rank IS NOT NULL THEN 1 ELSE 0 END matches_w_rank
 FROM match_for_stats_v
 LEFT JOIN match_stats USING (match_id)
 WHERE set = 0 OR set IS NULL
@@ -626,7 +627,8 @@ SELECT match_id, tournament_event_id, tournament_id, season, date, level, surfac
 	outcome, 0, 1, l_sets, w_sets, l_games, w_games, l_tbs, w_tbs,
 	l_ace, l_df, l_sv_pt, l_1st_in, l_1st_won, l_2nd_won, l_sv_gms, l_bp_sv, l_bp_fc,
 	w_ace, w_df, w_sv_pt, w_1st_in, w_1st_won, w_2nd_won, w_sv_gms, w_bp_sv, w_bp_fc,
-	minutes, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + 1, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_sets + l_sets, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_games + l_games
+	minutes, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + 1, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_sets + l_sets, (w_sv_pt + l_sv_pt - w_sv_pt - l_sv_pt) + w_games + l_games,
+	0, CASE WHEN winner_rank > loser_rank THEN 1 ELSE 0 END, CASE WHEN winner_rank IS NOT NULL AND loser_rank IS NOT NULL THEN 1 ELSE 0 END matches_w_rank
 FROM match_for_stats_v
 LEFT JOIN match_stats USING (match_id)
 WHERE set = 0 OR set IS NULL;
@@ -639,7 +641,7 @@ SELECT player_id, season, surface, sum(p_matches) p_matches, sum(o_matches) o_ma
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
 	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats,
-	sum(ln(coalesce(opponent_rank, 1500))) opponent_rank, sum(coalesce(opponent_elo_rating, 1500)) opponent_elo_rating
+	sum(ln(coalesce(opponent_rank, 1500))) opponent_rank, sum(coalesce(opponent_elo_rating, 1500)) opponent_elo_rating, sum(p_upsets) p_upsets, sum(o_upsets) o_upsets, sum(matches_w_rank) matches_w_rank
 FROM player_match_stats_v
 GROUP BY player_id, season, surface;
 
@@ -656,7 +658,7 @@ SELECT player_id, season, sum(p_matches) p_matches, sum(o_matches) o_matches, su
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
 	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats,
-	sum(opponent_rank) opponent_rank, sum(opponent_elo_rating) opponent_elo_rating
+	sum(opponent_rank) opponent_rank, sum(opponent_elo_rating) opponent_elo_rating, sum(p_upsets) p_upsets, sum(o_upsets) o_upsets, sum(matches_w_rank) matches_w_rank
 FROM player_season_surface_stats
 GROUP BY player_id, season;
 
@@ -673,7 +675,7 @@ SELECT player_id, surface, sum(p_matches) p_matches, sum(o_matches) o_matches, s
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
 	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats,
-	sum(opponent_rank) opponent_rank, sum(opponent_elo_rating) opponent_elo_rating
+	sum(opponent_rank) opponent_rank, sum(opponent_elo_rating) opponent_elo_rating, sum(p_upsets) p_upsets, sum(o_upsets) o_upsets, sum(matches_w_rank) matches_w_rank
 FROM player_season_surface_stats
 GROUP BY player_id, surface;
 
@@ -690,7 +692,7 @@ SELECT player_id, sum(p_matches) p_matches, sum(o_matches) o_matches, sum(p_sets
 	sum(p_ace) p_ace, sum(p_df) p_df, sum(p_sv_pt) p_sv_pt, sum(p_1st_in) p_1st_in, sum(p_1st_won) p_1st_won, sum(p_2nd_won) p_2nd_won, sum(p_sv_gms) p_sv_gms, sum(p_bp_sv) p_bp_sv, sum(p_bp_fc) p_bp_fc,
    sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,
 	sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats,
-	sum(opponent_rank) opponent_rank, sum(opponent_elo_rating) opponent_elo_rating
+	sum(opponent_rank) opponent_rank, sum(opponent_elo_rating) opponent_elo_rating, sum(p_upsets) p_upsets, sum(o_upsets) o_upsets, sum(matches_w_rank) matches_w_rank
 FROM player_surface_stats
 GROUP BY player_id;
 
