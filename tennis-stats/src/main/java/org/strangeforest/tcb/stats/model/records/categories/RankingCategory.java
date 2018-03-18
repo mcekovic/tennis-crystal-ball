@@ -404,15 +404,9 @@ public abstract class RankingCategory extends RecordCategory {
 			"  FROM " + tableName + " r1\n" +
 			"  INNER JOIN " + tableName + " r2 ON r2.season = r1.season AND r2." + rankColumnName + " = 2 AND r2." + columnName + " > 0\n" +
 			"  WHERE r1." + rankColumnName + " = 1 AND r1." + columnName + " > 0" + prefix(condition, " AND ") + "\n" +
-			"), ranking_diff2 AS (\n" +
-			"  SELECT player_id, player_id2, first_value(value1) OVER diff AS value1, first_value(value2) OVER diff AS value2,\n" +
-			"    first_value(value) OVER diff AS value, first_value(season) OVER diff AS season\n" +
-			"  FROM ranking_diff\n" +
-			"  GROUP BY player_id, player_id2, value1, value2, value, season\n" +
-			"  WINDOW diff AS (PARTITION BY player_id, player_id2 ORDER BY " + order + ")\n" +
 			")\n" +
 			"SELECT DISTINCT d.player_id, d.player_id2, p2.name AS name2, p2.country_id AS country_id2, p2.active AS active2, d.value1, d.value2, d.value, d.season\n" +
-			"FROM ranking_diff2 d\n" +
+			"FROM ranking_diff d\n" +
 			"INNER JOIN player_v p2 ON p2.player_id = d.player_id2",
 			"r.player_id2, r.name2, r.country_id2, r.active2, r.value1, r.value2, r.value, r.season", "r." + order, "r." + order + ", r.season",
 			detailClass, (playerId, recordDetail) -> format("/rankingsTable?rankType=%1$s&season=%2$d", rankType, recordDetail.getSeason()),

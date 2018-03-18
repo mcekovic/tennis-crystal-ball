@@ -868,6 +868,25 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- fix_rank_points
+
+CREATE OR REPLACE FUNCTION fix_rank_points(
+  p_date DATE,
+	p_from_date DATE
+) RETURNS VOID AS $$
+BEGIN
+  WITH prev_rank_points AS (
+      SELECT player_id, rank_points
+      FROM player_ranking
+      WHERE rank_date = p_from_date
+  )
+  UPDATE player_ranking r
+  SET rank_points = (SELECT pr.rank_points FROM prev_rank_points pr WHERE pr.player_id = r.player_id)
+  WHERE rank_date = p_date AND coalesce(rank_points, 0) = 0;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- set_tournament_map_properties
 
 CREATE OR REPLACE FUNCTION set_tournament_map_properties(

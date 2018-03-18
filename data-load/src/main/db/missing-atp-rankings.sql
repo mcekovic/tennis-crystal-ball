@@ -703,6 +703,13 @@ PERFORM load_ranking(DATE '1984-06-18', 'Vitas Gerulaitis', 18, NULL);
 PERFORM load_ranking(DATE '1984-06-18', 'Tim Mayotte', 19, NULL);
 PERFORM load_ranking(DATE '1984-06-18', 'Gene Mayer', 20, NULL);
 
+PERFORM fix_rank_points(DATE '1990-12-31', DATE '1990-12-24');
+PERFORM fix_rank_points(DATE '1991-12-30', DATE '1991-12-23');
+PERFORM fix_rank_points(DATE '1992-12-28', DATE '1992-12-21');
+PERFORM fix_rank_points(DATE '1993-12-27', DATE '1993-12-20');
+PERFORM fix_rank_points(DATE '1994-12-26', DATE '1994-12-19');
+PERFORM fix_rank_points(DATE '1995-12-25', DATE '1995-12-18');
+
 END $$;
 
 COMMIT;
