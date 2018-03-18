@@ -114,7 +114,7 @@
 	<ul id="tournamentEventPills" class="nav nav-pills">
 		<li class="active"><a data-toggle="pill" href="#results">Results</a></li>
 		<li><a data-toggle="pill" href="#statistics" th:data-url="'/tournamentEventStats?tournamentEventId=' + ${tournamentEvent.id}">Statistics</a></li>
-		<li th:if="${tournamentEvent.mapProperties}"><a data-toggle="pill" href="#map" th:data-url="'/tournamentEventMap?tournamentEventId=' + ${tournamentEvent.id}">Map<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
+		<li th:if="${tournamentEvent.mapProperties}"><a data-toggle="pill" href="#map" th:data-url="'/tournamentEventMap?tournamentEventId=' + ${tournamentEvent.id}">Map<sup class="cool-feature"></sup></a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="results" class="tab-pane fade in active">

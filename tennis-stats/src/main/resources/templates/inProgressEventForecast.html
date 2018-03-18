@@ -191,7 +191,7 @@
 					<a th:id="'baseResult' + ${baseResult} + 'Pill'" data-toggle="pill" th:href="'#baseResult' + ${baseResult}" th:text="${baseResult}">W</a>
 				</li>
 				<li><a id="probablePill" data-toggle="pill" href="#probable" th:data-url="'/inProgressEventProbableMatches?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Probable Matchups</a></li>
-				<li><a id="playerPathPill" data-toggle="pill" href="#playerPath" th:data-url="'/inProgressEventPlayerPath?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Player Path<sup class="new-feature">&nbsp;New!</sup></a></li>
+				<li><a id="playerPathPill" data-toggle="pill" href="#playerPath" th:data-url="'/inProgressEventPlayerPath?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Player Path<sup class="new-feature"></sup></a></li>
 				<li><a id="favoritesPill" data-toggle="pill" href="#favorites" th:data-url="'/inProgressEventFavorites?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Favorites</a></li>
 			</ul>
 			<div class="tab-content">

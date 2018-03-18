@@ -44,7 +44,7 @@
 					<li th:class="${path != null && path.endsWith('Timeline') ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Timelines<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li th:class="${path == '/dominanceTimeline' ? 'active' : _}"><a href="javascript:dominanceTimeline()"><i class="fa fa-history"></i> Dominance Timeline<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
+							<li th:class="${path == '/dominanceTimeline' ? 'active' : _}"><a href="javascript:dominanceTimeline()"><i class="fa fa-history"></i> Dominance Timeline<sup class="cool-feature"></sup></a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'G' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=G"><i class="fa fa-history text-danger"></i> Grand Slam Timeline</a></li>
 							<li th:class="${path == '/tournamentLevelGroupTimeline' && param.level[0] == 'FL' ? 'active' : _}"><a href="/tournamentLevelGroupTimeline?level=FL"><i class="fa fa-history text-warning"></i> Tour Finals Timeline</a></li>
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'M' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=M"><i class="fa fa-history text-info"></i> Masters Timeline</a></li>
@@ -68,7 +68,7 @@
 						<ul class="dropdown-menu">
 							<li th:class="${path == '/rankingsTable' ? 'active' : _}"><a href="/rankingsTable"><i class="fa fa-list-ol fa-fw"></i> Rankings Table</a></li>
 							<li th:class="${path == '/rankingsChart' ? 'active' : _}"><a href="/rankingsChart"><i class="fa fa-bar-chart fa-fw"></i> Rankings Chart</a></li>
-							<li th:class="${path == '/peakEloRatings' ? 'active' : _}"><a href="/peakEloRatings"><i class="fa fa-tachometer fa-fw"></i> Peak Elo Ratings<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
+							<li th:class="${path == '/peakEloRatings' ? 'active' : _}"><a href="/peakEloRatings"><i class="fa fa-tachometer fa-fw"></i> Peak Elo Ratings<sup class="cool-feature"></sup></a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/topPerformers' || path == '/performanceChart' ? 'active dropdown' : 'dropdown'}">
@@ -97,10 +97,10 @@
 						<ul class="dropdown-menu">
 							<li th:class="${path == '/tournaments' || path == '/tournament' ? 'active' : _}"><a href="/tournaments"><i class="fa fa-calendar-o fa-fw"></i> Tournaments</a></li>
 							<li th:class="${path == '/tournamentEvents' || path == '/tournamentEvent' ? 'active' : _}"><a href="/tournamentEvents"><i class="fa fa-calendar fa-fw"></i> Tournament Events</a></li>
-							<li th:class="${path == '/inProgressEventsForecasts' || path == '/inProgressEventForecast' ? 'active' : _}"><a href="/inProgressEventsForecasts"><i class="fa fa-eye fa-fw"></i> Tournament Forecasts<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
+							<li th:class="${path == '/inProgressEventsForecasts' || path == '/inProgressEventForecast' ? 'active' : _}"><a href="/inProgressEventsForecasts"><i class="fa fa-eye fa-fw"></i> Tournament Forecasts<sup class="cool-feature"></sup></a></li>
 						</ul>
 					</li>
-					<li th:class="${path == '/records' || path == '/record' ? 'active' : _}"><a href="/records"><i class="fa fa-book"></i> Records<sup class="cool-feature">&nbsp;Cool!</sup></a></li>
+					<li th:class="${path == '/records' || path == '/record' ? 'active' : _}"><a href="/records"><i class="fa fa-book"></i> Records<sup class="cool-feature"></sup></a></li>
 					<li th:class="${path == '/liveScores' ? 'active dropdown' : 'dropdown'}">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Live<span class="caret"></span></a>
 						<ul class="dropdown-menu">

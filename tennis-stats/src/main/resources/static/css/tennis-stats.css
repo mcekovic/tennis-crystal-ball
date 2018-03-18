@@ -73,13 +73,20 @@ a.external:after {
 .no-margin-right {
 	margin-right: -15px;
 }
-.new-feature {
+.new-feature:after {
 	font-size: x-small;
 	color: crimson;
+	content: " New!";
 }
-.cool-feature {
+.cool-feature:after {
 	font-size: x-small;
 	color: deeppink;
+	content: " Cool!";
+}
+.beta-feature:after {
+	font-size: x-small;
+	color: mediumorchid;
+	content: " Beta";
 }
 div.loading {
 	background: white url("/images/loading.gif") center center no-repeat;
