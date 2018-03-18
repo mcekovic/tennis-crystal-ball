@@ -136,6 +136,8 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 		finally {
 			pool.shutdown()
 		}
+		if (rows.get() > 0)
+			println()
 
 		withTx sql, { Sql s ->
 			s.withBatch(LOAD_SQL) { ps ->
@@ -144,7 +146,7 @@ class ATPWorldTourTournamentLoader extends BaseATPWorldTourTournamentLoader {
 				}
 			}
 		}
-		println "\n$matches.size matches loaded in $stopwatch"
+		println "$matches.size matches loaded in $stopwatch"
 	}
 
 	def setScoreParams(Map params, MatchScore matchScore) {
