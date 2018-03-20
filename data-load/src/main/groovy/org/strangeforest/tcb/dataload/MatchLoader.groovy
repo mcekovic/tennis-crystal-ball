@@ -200,6 +200,7 @@ class MatchLoader extends BaseCSVLoader {
 				else if (extTournamentId == '605' && season >= 2016)
 					return 'F'
 				else if ( // Alternative Tour Finals
+					(name.equals('Tennis Champions Classic') && season in 1970..1971) || // Tennis Champions Classic
 					(name.startsWith('Dallas') && extTournamentId == '610' && season in 1971..1989) || // WCT Finals
 					(name.equals('Grand Slam Cup') && season in 1990..1999)
 				)

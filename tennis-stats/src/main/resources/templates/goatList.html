@@ -166,7 +166,7 @@
 				if (count > 0)
 					return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=events&result=W" + (surface ? "&surface=" + surface : "") + params + "' title='Show" + title + " titles'>" + count + "</a>";
 				else
-					return "<span class='text-muted'>" + (attr === "olympics" && row.dob[0] < 1950 ? "-" : "0") + "</span>";
+					return "<span class='text-muted'>" + ((attr === "olympics" && row.dob[0] < 1950) || (attr === "altFinals" && row.dob[0] >= 1982) ? "-" : "0") + "</span>";
 			};
 		}
 		function reloadGOATListTable() {

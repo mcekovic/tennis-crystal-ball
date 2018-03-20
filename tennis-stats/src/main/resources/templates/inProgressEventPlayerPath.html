@@ -20,6 +20,9 @@
 		.opponent {
 			height: 22px;
 		}
+		a.h2h {
+			padding: 2px 5px 3px
+		}
 	</style>
 	<br/>
 	<div class="row">
@@ -48,6 +51,7 @@
 			<th class="text-right hidden-xs" title="Opponent rank">Opp. Rank</th>
 			<th class="text-right hidden-md hidden-sm hidden-xs">Player Elo</th>
 			<th class="text-right">Score</th>
+			<th class="text-right hidden-md hidden-sm hidden-xs">H2H</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -61,6 +65,7 @@
 				<div th:if="${opponent}" class="opponent">
 					<img th:src="@{/images/flags/{code}.png(code=${opponent.country.code})}" src="/images/flags/ch.png'" th:title="${opponent.country.id}" title="SUI" width="24" height="20"/>
 					<a th:href="@{/playerProfile(playerId=${opponent.id})}" th:text="${opponent.name}" title="Show profile">Roger Federer</a>[(${opponent.formattedSeedAndEntry()})]
+					<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|playerPathClick(${opponent.id})|"><i class="fa fa-road"></i></a>
 				</div>
 				</th:block>
 			</td>
@@ -75,6 +80,11 @@
 			<td class="text-right">
 				<div th:each="match : ${matches}" class="opponent" th:utext="${match.formattedScore}">6-3 6-4</div>
 			</td>
+			<td class="text-right hidden-md hidden-sm hidden-xs">
+				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent">
+					<a th:if="${opponent != null && opponent.known}" th:href="@{/headToHead(playerId1=${playerId}, playerId2=${opponent.id})}" class="label label-primary label-btn h2h" title="Show Head-to-Head">H2H</a>
+				</div>
+			</td>
 		</tr>
 		</tbody>
 		</th:block>
@@ -87,6 +97,7 @@
 			<th class="text-right hidden-xs" title="Opponent rank">Opp. Rank</th>
 			<th class="text-right hidden-md hidden-sm hidden-xs">Opponent Elo</th>
 			<th class="text-right" title="Probability to win over the potential opponent if they eventually meet in this round">Win Prob.</th>
+			<th class="text-right hidden-md hidden-sm hidden-xs">H2H</th>
 		</tr>
 		</thead>
 		<tbody id="playerPathProbableBody">
@@ -107,6 +118,7 @@
 					<th:block th:unless="${opponent.qualifier}">
 						<img th:src="@{/images/flags/{code}.png(code=${opponent.country.code})}" src="/images/flags/ch.png'" th:title="${opponent.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${opponent.id})}" th:text="${opponent.name}" title="Show profile">Roger Federer</a>[(${opponent.formattedSeedAndEntry()})]
+						<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|playerPathClick(${opponent.id})|"><i class="fa fa-road"></i></a>
 					</th:block>
 					<th:block th:if="${opponent.qualifier}">Qualifier</th:block>
 				</div>
@@ -122,6 +134,11 @@
 			<td class="text-right">
 				<div th:each="match : ${matches}" th:with="player=${match.winner.id == playerId ? match.winner : match.loser}, opponent=${match.winner.id == playerId ? match.loser : match.winner}, matchRef=${'M_' + round + '_' + opponent.id}" class="opponent"
 				     th:text="${#numbers.formatDecimal(player.getProbability(matchRef), 1, 1) + '%'}" th:title="${priceFormat != null ? 'Odds ' + player.getPrice(matchRef, priceFormat) : _}">85.2%</div>
+			</td>
+			<td class="text-right hidden-md hidden-sm hidden-xs">
+				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent">
+					<a th:if="${opponent.known}" th:href="@{/headToHead(playerId1=${playerId}, playerId2=${opponent.id})}" class="label label-primary label-btn h2h" title="Show Head-to-Head">H2H</a>
+				</div>
 			</td>
 		</tr>
 		</tbody>

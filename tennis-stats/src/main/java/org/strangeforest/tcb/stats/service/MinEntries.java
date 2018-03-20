@@ -75,20 +75,24 @@ public class MinEntries {
 		.putAll(MIN_ENTRIES_ROUND_WEIGHT_MAP)
 	.build();
 	private static final Map<String, Double> MIN_ENTRIES_OPPONENT_WEIGHT_MAP = ImmutableMap.<String, Double>builder()
+		// Rank
 		.put(Opponent.NO_1.name(), 0.05)
 		.put(Opponent.TOP_5.name(), 0.1)
 		.put(Opponent.TOP_10.name(), 0.1)
 		.put(Opponent.TOP_20.name(), 0.25)
 		.put(Opponent.TOP_50.name(), 0.5)
 		.put(Opponent.TOP_100.name(), 1.0)
+		.put(Opponent.OVER_100.name(), 0.1)
 		.put(Opponent.HIGHER_RANKED.name(), 0.25)
 		.put(Opponent.LOWER_RANKED.name(), 0.25)
+		// Elo Rating
 		.put(Opponent.ELO_2400.name(), 0.025)
 		.put(Opponent.ELO_2200.name(), 0.1)
 		.put(Opponent.ELO_2000.name(), 0.5)
 		.put(Opponent.ELO_1800.name(), 1.0)
 		.put(Opponent.HIGHER_ELO.name(), 0.25)
 		.put(Opponent.LOWER_ELO.name(), 0.25)
+		// Age
 		.put(Opponent.UNDER_18.name(), 0.05)
 		.put(Opponent.UNDER_21.name(), 0.2)
 		.put(Opponent.UNDER_25.name(), 0.5)
@@ -97,10 +101,12 @@ public class MinEntries {
 		.put(Opponent.OVER_35.name(), 0.05)
 		.put(Opponent.YOUNGER.name(), 0.25)
 		.put(Opponent.OLDER.name(), 0.25)
+		// Playing style
 		.put(Opponent.RIGHT_HANDED.name(), 1.0)
 		.put(Opponent.LEFT_HANDED.name(), 0.2)
 		.put(Opponent.BACKHAND_2.name(), 0.1)
 		.put(Opponent.BACKHAND_1.name(), 0.1)
+		// Seeding
 		.put(Opponent.SEEDED.name(), 0.5)
 		.put(Opponent.UNSEEDED.name(), 0.5)
 		.put(Opponent.QUALIFIER.name(), 0.1)
@@ -108,6 +114,13 @@ public class MinEntries {
 		.put(Opponent.LUCKY_LOSER.name(), 0.05)
 		.put(Opponent.PROTECTED_RANKING.name(), 0.005)
 		.put(Opponent.SPECIAL_EXEMPT.name(), 0.005)
+		// Height
+		.put(Opponent.UNDER_5_10.name(), 0.25)
+		.put(Opponent.UNDER_6_0.name(), 0.5)
+		.put(Opponent.OVER_6_2.name(), 0.5)
+		.put(Opponent.OVER_6_4.name(), 0.25)
+		.put(Opponent.SHORTER.name(), 0.25)
+		.put(Opponent.TALLER.name(), 0.25)
 	.build();
 	private static final Map<Range<Integer>, Double> MIN_ENTRIES_TOURNAMENT_FACTOR_MAP = ImmutableMap.<Range<Integer>, Double>builder()
 		.put(Range.atMost(2), 100.0)

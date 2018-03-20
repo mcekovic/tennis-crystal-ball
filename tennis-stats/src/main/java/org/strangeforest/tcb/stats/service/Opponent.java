@@ -19,6 +19,7 @@ public enum Opponent {
 	TOP_20(RANK, "Vs Top 20", matchesRankCriterion(20), statsRankCriterion(20), false),
 	TOP_50(RANK, "Vs Top 50", matchesRankCriterion(50), statsRankCriterion(50), false),
 	TOP_100(RANK, "Vs Top 100", matchesRankCriterion(100), statsRankCriterion(100), false),
+	OVER_100(RANK, "Vs 100+ Ranked", matchesOverRankCriterion(100), statsOverRankCriterion(100), false),
 	HIGHER_RANKED(RANK, "Vs Higher Ranked", matchesRankCriterion(true), statsRankCriterion(true), false),
 	LOWER_RANKED(RANK, "Vs Lower Ranked", matchesRankCriterion(false), statsRankCriterion(false), false),
 	// Elo Rating
@@ -100,6 +101,7 @@ public enum Opponent {
 
 	private static final String MATCHES_PLAYER_CRITERION = " AND ((m.winner_id <> :playerId%1$s) OR (m.loser_id <> :playerId%2$s))";
 	private static final String MATCHES_RANK_CRITERION = " AND ((m.winner_rank <= %1$d AND m.winner_id <> :playerId) OR (m.loser_rank <= %1$d AND m.loser_id <> :playerId))";
+	private static final String MATCHES_OVER_RANK_CRITERION = " AND ((m.winner_rank > %1$d AND m.winner_id <> :playerId) OR (m.loser_rank > %1$d AND m.loser_id <> :playerId))";
 	private static final String MATCHES_WINNER_HIGHER_RANKED_CRITERION = " AND m.winner_rank < m.loser_rank";
 	private static final String MATCHES_WINNER_LOWER_RANKED_CRITERION = " AND m.winner_rank > m.loser_rank";
 	private static final String MATCHES_ELO_CRITERION = " AND ((m.winner_elo_rating >= %1$d AND m.winner_id <> :playerId) OR (m.loser_elo_rating >= %1$d AND m.loser_id <> :playerId))";
@@ -115,6 +117,7 @@ public enum Opponent {
 	private static final String MATCHES_WINNER_TALLER_CRITERION = " AND m.winner_height > m.loser_height";
 
 	private static final String STATS_RANK_CRITERION = " AND opponent_rank <= %1$d";
+	private static final String STATS_OVER_RANK_CRITERION = " AND opponent_rank > %1$d";
 	private static final String STATS_OPPONENT_HIGHER_RANKED_CRITERION = " AND opponent_rank < player_rank";
 	private static final String STATS_OPPONENT_LOWER_RANKED_CRITERION = " AND opponent_rank > player_rank";
 	private static final String STATS_ELO_CRITERION = " AND opponent_elo_rating >= %1$d";
@@ -159,6 +162,10 @@ public enum Opponent {
 
 	private static String matchesRankCriterion(int rank) {
 		return format(MATCHES_RANK_CRITERION, rank);
+	}
+
+	private static String matchesOverRankCriterion(int rank) {
+		return format(MATCHES_OVER_RANK_CRITERION, rank);
 	}
 
 	private static String matchesRankCriterion(boolean higherRanked) {
@@ -207,6 +214,10 @@ public enum Opponent {
 
 	private static String statsRankCriterion(int rank) {
 		return format(STATS_RANK_CRITERION, rank);
+	}
+
+	private static String statsOverRankCriterion(int rank) {
+		return format(STATS_OVER_RANK_CRITERION, rank);
 	}
 
 	private static String statsRankCriterion(boolean higherRanked) {
