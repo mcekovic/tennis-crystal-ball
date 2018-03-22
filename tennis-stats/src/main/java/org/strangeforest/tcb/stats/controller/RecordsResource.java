@@ -13,7 +13,7 @@ public class RecordsResource {
 
 	@Autowired private RecordsService recordsService;
 
-	private static final int MAX_RECORDS = 1000;
+	private static final int MAX_RECORDS = 2000;
 	private static final int MAX_PLAYERS =  500;
 
 	@GetMapping("/recordsTable")
