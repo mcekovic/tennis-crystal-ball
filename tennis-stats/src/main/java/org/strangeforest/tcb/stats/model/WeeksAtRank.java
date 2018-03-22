@@ -150,7 +150,7 @@ public class WeeksAtRank {
 	}
 
 	public void processWeeksAt(int rank, double weeks) {
-		if (weeks >= 53.0)
+		if (weeks > 54.0)
 			return;
 		if (rank == 1)
 			atNo1 += weeks;

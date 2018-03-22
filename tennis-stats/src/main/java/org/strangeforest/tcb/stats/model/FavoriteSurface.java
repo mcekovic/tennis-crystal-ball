@@ -22,6 +22,7 @@ public class FavoriteSurface {
 	private static final double BEST_SURFACE_GAP_PCT = 8.0;
 	private static final double SECOND_BEST_SURFACE_GAP_PCT = 4.0;
 	private static final double SECOND_BEST_SURFACE_GAP_FACTOR = 2.0;
+	private static final int ALL_ROUNDER_MIN_SURFACES = 3;
 	private static final String ALL_ROUNDER = "All-Rounder";
 
 	public FavoriteSurface(PlayerPerformance performance) {
@@ -47,7 +48,7 @@ public class FavoriteSurface {
 		surfaces.sort(naturalOrder());
 		SurfaceWonPct worstSurface = surfaces.get(0);
 		SurfaceWonPct bestSurface = surfaces.get(surfaceCount - 1);
-		if (bestSurface.wonPct - worstSurface.wonPct <= ALL_ROUNDER_SPREAD_PCT) {
+		if (bestSurface.wonPct - worstSurface.wonPct <= ALL_ROUNDER_SPREAD_PCT && surfaceCount >= ALL_ROUNDER_MIN_SURFACES) {
 			setAllRounder();
 			return;
 		}

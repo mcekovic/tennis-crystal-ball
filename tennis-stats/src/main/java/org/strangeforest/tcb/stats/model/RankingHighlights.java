@@ -303,7 +303,7 @@ public class RankingHighlights {
 	}
 
 	public void processWeeksAt(int rank, double weeks) {
-		if (weeks > 53.0)
+		if (weeks > 54.0)
 			return;
 		if (rank == 1)
 			weeksAtNo1 += weeks;

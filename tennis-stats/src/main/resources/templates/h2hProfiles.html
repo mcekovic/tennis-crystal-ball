@@ -114,10 +114,15 @@
 		<th class="text-center">Seasons</th>
 		<td class="text-left" colspan="2"><a th:if="${seasonCount2 > 0}" th:href="@{/playerProfile(playerId=${player2.id}, tab=timeline)}" th:text="${seasonCount2}" title="Show timeline">10</a></td>
 	</tr>
-	<tr>
+	<tr th:if="${player1.active || player2.active}">
 		<td class="text-right" colspan="2">[(${player1.active ? 'Yes' : 'No'})] <img th:if="${player1.active}" src="/images/active.png" title="Active" width="12" height="12" style="vertical-align: 0"/></td>
 		<th class="text-center">Active</th>
 		<td class="text-left" colspan="2">[(${player2.active ? 'Yes' : 'No'})] <img th:if="${player2.active}" src="/images/active.png" title="Active" width="12" height="12" style="vertical-align: 0"/></td>
+	</tr>
+	<tr th:if="${(!player1.active && lastEvent1 != null) || (!player2.active && lastEvent2 != null)}">
+		<td class="text-right" colspan="2" th:text="${!player1.active ? lastEvent1.season : _}">2010</td>
+		<th class="text-center">Retired</th>
+		<td class="text-left" colspan="2" th:text="${!player2.active ? lastEvent2.season : _}">2010</td>
 	</tr>
 	<tr th:if="${player1.prizeMoney != null || player2.prizeMoney != null}">
 		<td class="text-right" colspan="2" th:text="${player1.prizeMoney}">US$ 1,000,000</td>
