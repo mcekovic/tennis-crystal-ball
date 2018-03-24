@@ -5,6 +5,8 @@
 <!--/*@thymesVar id="favoriteSurface2" type="org.strangeforest.tcb.stats.model.FavoriteSurface"*/-->
 <!--/*@thymesVar id="seasonCount1" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="seasonCount2" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="bestSeason1" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="bestSeason2" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="lastEvent1" type="org.strangeforest.tcb.stats.model.PlayerTournamentEvent"*/-->
 <!--/*@thymesVar id="lastEvent2" type="org.strangeforest.tcb.stats.model.PlayerTournamentEvent"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Map"*/-->
@@ -120,9 +122,9 @@
 		<td class="text-left" colspan="2">[(${player2.active ? 'Yes' : 'No'})] <img th:if="${player2.active}" src="/images/active.png" title="Active" width="12" height="12" style="vertical-align: 0"/></td>
 	</tr>
 	<tr th:if="${(!player1.active && lastEvent1 != null) || (!player2.active && lastEvent2 != null)}">
-		<td class="text-right" colspan="2" th:text="${!player1.active ? lastEvent1.season : _}">2010</td>
+		<td class="text-right" colspan="2" th:text="${!player1.active && lastEvent1 != null ? lastEvent1.season : _}">2010</td>
 		<th class="text-center">Retired</th>
-		<td class="text-left" colspan="2" th:text="${!player2.active ? lastEvent2.season : _}">2010</td>
+		<td class="text-left" colspan="2" th:text="${!player2.active && lastEvent2 != null ? lastEvent2.season : _}">2010</td>
 	</tr>
 	<tr th:if="${player1.prizeMoney != null || player2.prizeMoney != null}">
 		<td class="text-right" colspan="2" th:text="${player1.prizeMoney}">US$ 1,000,000</td>
@@ -267,28 +269,31 @@
 		<th class="text-center">Weeks at No. 1</th>
 		<td class="text-left" colspan="2" th:text="${player2.weeksAtNo1 > 0 ? player2.weeksAtNo1 : _}">50</td>
 	</tr>
-	<th:block th:if="${lastEvent1 != null || lastEvent2 != null}">
-		<tr><td colspan="5">&nbsp;</td></tr>
-		<tr>
-			<td class="text-right" colspan="2" th:with="lastEvent=${lastEvent1}, playerId=${player1.id}">
-				<th:block th:if="${lastEvent1}">
-				<span style="vertical-align: middle" th:text="${#temporals.format(lastEvent.date, 'dd-MM-yyyy')}">15-07-2015</span>
-				<a th:href="@{/tournamentEvent(tournamentEventId=${lastEvent.tournamentEventId})}" class="label label-" th:attrappend="class=${lastEvent.level}" th:text="${lastEvent.name}" th:title="${levels[lastEvent.level]}">Wimbledon</a>
-				<span th:if="${lastEvent.surface}" id="lastEventSurface1" class="label" th:data-surface="${lastEvent.surface}">[(${surfaces[lastEvent.surface]})]<span th:if="${lastEvent.indoor && lastEvent.surface != 'P'}" title="Indoor"> (i)</span></span>
-				<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${lastEvent.tournamentEventId})}" class="label black bg-result-" th:attrappend="class=${lastEvent.result}" th:text="${lastEvent.result}" title="Show tournament matches">W</a>
-				</th:block>
-			</td>
-			<th class="text-center">Last Appearance</th>
-			<td class="text-left" colspan="2" th:with="lastEvent=${lastEvent2}, playerId=${player2.id}">
-				<th:block th:if="${lastEvent2}">
-				<span style="vertical-align: middle" th:text="${#temporals.format(lastEvent.date, 'dd-MM-yyyy')}">15-07-2015</span>
-				<a th:href="@{/tournamentEvent(tournamentEventId=${lastEvent.tournamentEventId})}" class="label label-" th:attrappend="class=${lastEvent.level}" th:text="${lastEvent.name}" th:title="${levels[lastEvent.level]}">Wimbledon</a>
-				<span th:if="${lastEvent.surface}" id="lastEventSurface1" class="label" th:data-surface="${lastEvent.surface}">[(${surfaces[lastEvent.surface]})]<span th:if="${lastEvent.indoor && lastEvent.surface != 'P'}" title="Indoor"> (i)</span></span>
-				<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${lastEvent.tournamentEventId})}" class="label black bg-result-" th:attrappend="class=${lastEvent.result}" th:text="${lastEvent.result}" title="Show tournament matches">W</a>
-				</th:block>
-			</td>
-		</tr>
-	</th:block>
+	<tr th:if="${bestSeason1 != null || bestSeason2 != null || lastEvent1 != null || lastEvent2 != null}"><td colspan="5">&nbsp;</td></tr>
+	<tr th:if="${bestSeason1 != null || bestSeason2 != null}">
+		<td class="text-right" colspan="2"><a th:if="${bestSeason1}" th:href="@{/playerProfile(playerId=${player1.id}, tab=season, season=${bestSeason1})}" title="Show season highlights" th:text="${bestSeason1}">2015</a></td>
+		<th class="text-center">Best Season</th>
+		<td class="text-left" colspan="2"><a th:if="${bestSeason2}" th:href="@{/playerProfile(playerId=${player2.id}, tab=season, season=${bestSeason2})}" title="Show season highlights" th:text="${bestSeason2}">2015</a></td>
+	</tr>
+	<tr th:if="${lastEvent1 != null || lastEvent2 != null}">
+		<td class="text-right" colspan="2" th:with="lastEvent=${lastEvent1}, playerId=${player1.id}">
+			<th:block th:if="${lastEvent1}">
+			<span style="vertical-align: middle" th:text="${#temporals.format(lastEvent.date, 'dd-MM-yyyy')}">15-07-2015</span>
+			<a th:href="@{/tournamentEvent(tournamentEventId=${lastEvent.tournamentEventId})}" class="label label-" th:attrappend="class=${lastEvent.level}" th:text="${lastEvent.name}" th:title="${levels[lastEvent.level]}">Wimbledon</a>
+			<span th:if="${lastEvent.surface}" id="lastEventSurface1" class="label" th:data-surface="${lastEvent.surface}">[(${surfaces[lastEvent.surface]})]<span th:if="${lastEvent.indoor && lastEvent.surface != 'P'}" title="Indoor"> (i)</span></span>
+			<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${lastEvent.tournamentEventId})}" class="label black bg-result-" th:attrappend="class=${lastEvent.result}" th:text="${lastEvent.result}" title="Show tournament matches">W</a>
+			</th:block>
+		</td>
+		<th class="text-center">Last Appearance</th>
+		<td class="text-left" colspan="2" th:with="lastEvent=${lastEvent2}, playerId=${player2.id}">
+			<th:block th:if="${lastEvent2}">
+			<span style="vertical-align: middle" th:text="${#temporals.format(lastEvent.date, 'dd-MM-yyyy')}">15-07-2015</span>
+			<a th:href="@{/tournamentEvent(tournamentEventId=${lastEvent.tournamentEventId})}" class="label label-" th:attrappend="class=${lastEvent.level}" th:text="${lastEvent.name}" th:title="${levels[lastEvent.level]}">Wimbledon</a>
+			<span th:if="${lastEvent.surface}" id="lastEventSurface1" class="label" th:data-surface="${lastEvent.surface}">[(${surfaces[lastEvent.surface]})]<span th:if="${lastEvent.indoor && lastEvent.surface != 'P'}" title="Indoor"> (i)</span></span>
+			<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, tournamentEventId=${lastEvent.tournamentEventId})}" class="label black bg-result-" th:attrappend="class=${lastEvent.result}" th:text="${lastEvent.result}" title="Show tournament matches">W</a>
+			</th:block>
+		</td>
+	</tr>
 	<!-- Performance -->
 	<th:block th:if="${!performance1.matches.empty || !performance2.matches.empty}">
 	<tr><td colspan="5">&nbsp;</td></tr>

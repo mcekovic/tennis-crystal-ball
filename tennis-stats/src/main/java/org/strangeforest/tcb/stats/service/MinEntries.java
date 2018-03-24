@@ -68,6 +68,7 @@ public class MinEntries {
 		.put("R32+", 0.75)
 		.put("R64",  0.25)
 		.put("R128", 0.1)
+		.put("ENT",  0.75)
 		.put("RR",   0.05)
 	.build();
 	private static final Map<String, Double> MIN_ENTRIES_RESULT_WEIGHT_MAP = ImmutableMap.<String, Double>builder()

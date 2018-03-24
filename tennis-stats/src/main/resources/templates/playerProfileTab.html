@@ -2,6 +2,7 @@
 <!--/*@thymesVar id="player" type="org.strangeforest.tcb.stats.model.core.Player"*/-->
 <!--/*@thymesVar id="favoriteSurface" type="org.strangeforest.tcb.stats.model.FavoriteSurface"*/-->
 <!--/*@thymesVar id="seasonCount" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="bestSeason" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="lastEvent" type="org.strangeforest.tcb.stats.model.PlayerTournamentEvent"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Map"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
@@ -169,8 +170,12 @@
 				<th>Weeks at No. 1</th>
 				<td th:text="${player.weeksAtNo1}">50</td>
 			</tr>
+			<tr th:if="${bestSeason != null || lastEvent != null}"><td colspan="2">&nbsp;</td></tr>
+			<tr th:if="${bestSeason}">
+				<th>Best Season</th>
+				<td><a th:href="@{/playerProfile(playerId=${player.id}, tab=season, season=${bestSeason})}" title="Show season highlights" th:text="${bestSeason}">2015</a></td>
+			</tr>
 			<th:block th:if="${lastEvent}">
-			<tr><td colspan="2">&nbsp;</td></tr>
 			<tr>
 				<th>Last Appearance</th>
 				<td th:text="${#temporals.format(lastEvent.date, 'dd-MM-yyyy')}">15-07-2015</td>

@@ -35,6 +35,7 @@
 					request.indoor = $("#indoor").val();
 					request.round = $("#round").val();
 					request.bestRank = $("#bestRank").val();
+					request.minMatches = $("#minMatchesOverride").val();
 					return request;
 				},
 				rowCount: [20, 50, 100, -1],
@@ -106,14 +107,25 @@
 			return name;
 		}
 		function filterChanged() {
-			var url = "/greatestRivalriesMinMatches?fromSeason=" + $("#fromSeason").val() + "&toSeason=" + $("#toSeason").val() + "&level=" + $("#level").val() + "&bestOf=" + $("#bestOf").val() + "&surface=" + $("#surface").val() + "&indoor=" + $("#indoor").val() + "&round=" + encodeURIComponent($("#round").val());
+			var url = "/greatestRivalriesMinMatches?fromSeason=" + $("#fromSeason").val() + "&toSeason=" + $("#toSeason").val() + "&level=" + $("#level").val() + "&bestOf=" + $("#bestOf").val() + "&surface=" + $("#surface").val() + "&indoor=" + $("#indoor").val() + "&round=" + encodeURIComponent($("#round").val()) + "&bestRank=" + $("#bestRank").val();
+			var $minMatches = $("#minMatchesOverride");
+			if (!validateNumber($minMatches))
+				return false;
+			var minMatches = $minMatches.val();
+			if (minMatches && minMatches < 5) {
+				$minMatches.tooltip({title: "Minimum matches must be greater or equal to 5", placement: "bottom"}).tooltip("show");
+				$minMatches.focus();
+				return false;
+			}
+			url += "&minMatches=" + minMatches;
 			$.get(url, function (data) {
 				$("#minMatches").html(data);
 			});
+			return true;
 		}
 		function reloadGreatestRivalries() {
-			filterChanged();
-			$("#greatestRivalriesTable").bootgrid("reload");
+			if (filterChanged())
+				$("#greatestRivalriesTable").bootgrid("reload");
 		}
 		function rivalryFilterParams() {
 			var params = "";
@@ -142,6 +154,7 @@
 			$("#indoor").val("");
 			$("#round").val("");
 			$("#bestRank").val("");
+			$("#minMatchesOverride").val("");
 			reloadGreatestRivalries();
 		}
 	</script>
@@ -198,6 +211,12 @@
 				<option value="false">Outdoor</option>
 				<option value="true">Indoor</option>
 			</select>
+		</div>
+		<div class="col-md-2">
+			<div class="input-group" data-toggle="tooltip" data-placement="top" title="Override minimum matches">
+				<label for="minMatchesOverride" class="input-group-addon">Min. matches:</label>
+				<input id="minMatchesOverride" type="text" size="6" class="form-control" oninput="reloadGreatestRivalries()" onchange="reloadGreatestRivalries()"/>
+			</div>
 		</div>
 	</div>
 	<div id="levelDiv" class="btn-group pull-left margin-right no-margin-left">

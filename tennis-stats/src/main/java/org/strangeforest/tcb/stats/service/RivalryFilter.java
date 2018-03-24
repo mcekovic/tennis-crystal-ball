@@ -3,6 +3,7 @@ package org.strangeforest.tcb.stats.service;
 import java.util.Objects;
 
 import org.springframework.jdbc.core.namedparam.*;
+import org.strangeforest.tcb.stats.model.core.*;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;
@@ -34,6 +35,7 @@ public class RivalryFilter {
 	private static final String SURFACES_CRITERION      = " AND m.surface::TEXT IN (:surfaces)";
 	private static final String INDOOR_CRITERION        = " AND m.indoor = :indoor";
 	private static final String ROUND_CRITERION         = " AND round %1$s :round::match_round";
+	private static final String ENTRY_ROUND_CRITERION   = " AND round BETWEEN 'R128' AND 'R16'";
 
 	private static final int LAST_52_WEEKS_SEASON = -1;
 
@@ -126,7 +128,7 @@ public class RivalryFilter {
 		if (indoor != null)
 			criteria.append(INDOOR_CRITERION);
 		if (!isNullOrEmpty(round))
-			criteria.append(format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
+			criteria.append(round.equals(Round.ENTRY.getCode()) ? ENTRY_ROUND_CRITERION : format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
 	}
 
 	public MapSqlParameterSource getParams() {
@@ -153,7 +155,7 @@ public class RivalryFilter {
 		}
 		if (indoor != null)
 			params.addValue("indoor", indoor);
-		if (!isNullOrEmpty(round))
+		if (!isNullOrEmpty(round) && !round.equals(Round.ENTRY.getCode()))
 			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 	}
 

@@ -2104,26 +2104,29 @@ FROM player_season_goat_points
 GROUP BY player_id;
 
 
+-- player_best_season_v
+
+CREATE OR REPLACE VIEW player_best_season_v AS
+SELECT player_id, s.season, s.goat_points,
+	count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'W') grand_slam_titles,
+	count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'F') grand_slam_finals,
+	count(player_id) FILTER (WHERE e.level IN ('F', 'L') AND r.result = 'W') tour_finals_titles,
+	count(player_id) FILTER (WHERE e.level = 'M' AND r.result = 'W') masters_titles,
+	count(player_id) FILTER (WHERE e.level = 'O' AND r.result = 'W') olympics_titles,
+	count(player_id) FILTER (WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B') AND r.result = 'W') titles
+FROM player_season_goat_points s
+LEFT JOIN player_tournament_event_result r USING (player_id)
+LEFT JOIN tournament_event e USING (tournament_event_id, season)
+WHERE s.goat_points > 0
+GROUP BY player_id, s.season, s.goat_points;
+
+
 -- player_best_season_goat_points_v
 
 CREATE OR REPLACE VIEW player_best_season_goat_points_v AS
-WITH pleayer_season AS (
-	SELECT player_id, s.season, s.goat_points,
-		count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'W') grand_slam_titles,
-		count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'F') grand_slam_finals,
-		count(player_id) FILTER (WHERE e.level = 'F' AND r.result = 'W') tour_finals_titles,
-		count(player_id) FILTER (WHERE e.level = 'L' AND r.result = 'W') alt_finals_titles,
-		count(player_id) FILTER (WHERE e.level = 'M' AND r.result = 'W') masters_titles,
-		count(player_id) FILTER (WHERE e.level = 'O' AND r.result = 'W') olympics_titles,
-		count(player_id) FILTER (WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B') AND r.result = 'W') titles
-	FROM player_season_goat_points s
-	LEFT JOIN player_tournament_event_result r USING (player_id)
-	LEFT JOIN tournament_event e USING (tournament_event_id, season)
-	WHERE s.goat_points > 0
-	GROUP BY player_id, s.season, s.goat_points
-), pleayer_season_ranked AS (
-	SELECT player_id, season, rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, alt_finals_titles DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank
-	FROM pleayer_season
+WITH pleayer_season_ranked AS (
+	SELECT player_id, season, rank() OVER (ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank
+	FROM player_best_season_v
 )
 SELECT player_id, season, goat_points
 FROM pleayer_season_ranked
@@ -2301,8 +2304,7 @@ WITH pleayer_season AS (
 	SELECT player_id, s.surface, s.season, s.goat_points,
 		count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'W') grand_slam_titles,
 		count(player_id) FILTER (WHERE e.level = 'G' AND r.result = 'F') grand_slam_finals,
-		count(player_id) FILTER (WHERE e.level = 'F' AND r.result = 'W') tour_finals_titles,
-		count(player_id) FILTER (WHERE e.level = 'L' AND r.result = 'W') alt_finals_titles,
+		count(player_id) FILTER (WHERE e.level IN ('F', 'L') AND r.result = 'W') tour_finals_titles,
 		count(player_id) FILTER (WHERE e.level = 'M' AND r.result = 'W') masters_titles,
 		count(player_id) FILTER (WHERE e.level = 'O' AND r.result = 'W') olympics_titles,
 		count(player_id) FILTER (WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B') AND r.result = 'W') titles
@@ -2312,7 +2314,7 @@ WITH pleayer_season AS (
 	WHERE s.goat_points > 0
 	GROUP BY player_id, s.surface, s.season, s.goat_points
 ), pleayer_season_ranked AS (
-	SELECT player_id, surface, season, rank() OVER (PARTITION BY surface ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, alt_finals_titles DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank
+	SELECT player_id, surface, season, rank() OVER (PARTITION BY surface ORDER BY goat_points DESC, grand_slam_titles DESC, tour_finals_titles DESC, grand_slam_finals DESC, masters_titles DESC, olympics_titles DESC, titles DESC) AS season_rank
 	FROM pleayer_season
 )
 SELECT player_id, surface, season, goat_points / 2 AS goat_points

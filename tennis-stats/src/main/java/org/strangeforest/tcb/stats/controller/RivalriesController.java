@@ -92,6 +92,8 @@ public class RivalriesController extends PageController {
 		FavoriteSurface favoriteSurface2 = new FavoriteSurface(performance2);
 		int seasonCount1 = playerService.getPlayerSeasons(playerId1).size();
 		int seasonCount2 = playerService.getPlayerSeasons(playerId2).size();
+		Integer bestSeason1 = playerService.getPlayerBestSeason(playerId1);
+		Integer bestSeason2 = playerService.getPlayerBestSeason(playerId2);
 		BootgridTable<PlayerTournamentEvent> lastEvent1 = tournamentService.getPlayerTournamentEventsTable(playerId1, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
 		BootgridTable<PlayerTournamentEvent> lastEvent2 = tournamentService.getPlayerTournamentEventsTable(playerId2, TournamentEventResultFilter.EMPTY, "date DESC", 1, 1);
 		Map<String, Integer> surfaceTitles1 = performanceService.getPlayerSurfaceTitles(playerId1);
@@ -108,6 +110,8 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("favoriteSurface2", favoriteSurface2);
 		modelMap.addAttribute("seasonCount1", seasonCount1);
 		modelMap.addAttribute("seasonCount2", seasonCount2);
+		modelMap.addAttribute("bestSeason1", bestSeason1);
+		modelMap.addAttribute("bestSeason2", bestSeason2);
 		if (lastEvent1.getTotal() > 0)
 			modelMap.addAttribute("lastEvent1", lastEvent1.getRows().get(0));
 		if (lastEvent2.getTotal() > 0)

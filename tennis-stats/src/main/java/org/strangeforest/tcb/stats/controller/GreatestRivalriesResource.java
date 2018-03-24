@@ -35,6 +35,7 @@ public class GreatestRivalriesResource {
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
 		@RequestParam(name = "round", required = false) String round,
 		@RequestParam(name = "bestRank", required = false) Integer bestRank,
+		@RequestParam(name = "minMatches", required = false) Integer minMatches,
 		@RequestParam(name = "current", defaultValue = "1") int current,
 		@RequestParam(name = "rowCount", defaultValue = "20") int rowCount,
 		@RequestParam Map<String, String> requestParams
@@ -42,7 +43,7 @@ public class GreatestRivalriesResource {
 		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, bestOf, surface, indoor, round);
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 		int pageSize = rowCount > 0 ? rowCount : MAX_RIVALRIES;
-		return rivalriesService.getGreatestRivalriesTable(filter, bestRank, orderBy, pageSize, current);
+		return rivalriesService.getGreatestRivalriesTable(filter, bestRank, minMatches, orderBy, pageSize, current);
 	}
 
 	@GetMapping("/greatestRivalriesMinMatches")
@@ -53,9 +54,11 @@ public class GreatestRivalriesResource {
 		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
 		@RequestParam(name = "indoor", required = false) Boolean indoor,
-		@RequestParam(name = "round", required = false) String round
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "bestRank", required = false) Integer bestRank,
+		@RequestParam(name = "minMatches", required = false) Integer minMatches
 	) {
 		RivalryFilter filter = new RivalryFilter(RangeUtil.toRange(fromSeason, toSeason), level, bestOf, surface, indoor, round);
-		return rivalriesService.getGreatestRivalriesMinMatches(filter);
+		return rivalriesService.getGreatestRivalriesMinMatches(filter, bestRank, minMatches);
 	}
 }

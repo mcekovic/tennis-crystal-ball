@@ -85,9 +85,18 @@ public class RivalriesService {
 		.put("R64",   5.0)
 		.put("R64+",  1.1)
 		.put("R128",  8.0)
+		.put("ENT",   2.0)
 		.put("RR",    8.0)
 		.put("BR",   20.0)
 		.put("BR+",   5.0)
+	.build();
+	private static final Map<Integer, Double> MIN_MATCHES_BEST_RANK_FACTOR = ImmutableMap.<Integer, Double>builder()
+		.put(1,  3.5)
+		.put(2,  2.0)
+		.put(3,  1.7)
+		.put(5,  1.3)
+		.put(10, 1.25)
+		.put(20, 1.25)
 	.build();
 
 	private static final String PLAYER_H2H_QUERY = //language=SQL
@@ -292,14 +301,14 @@ public class RivalriesService {
 	}
 
 	@Cacheable("GreatestRivalries.Table")
-	public BootgridTable<GreatestRivalry> getGreatestRivalriesTable(RivalryFilter filter, Integer bestRank, String orderBy, int pageSize, int currentPage) {
+	public BootgridTable<GreatestRivalry> getGreatestRivalriesTable(RivalryFilter filter, Integer bestRank, Integer minMatches, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<GreatestRivalry> table = new BootgridTable<>(currentPage);
 		AtomicInteger rivalries = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		String criteria = filter.getCriteria();
 		String lastMatchCriteria = criteria;
 		MapSqlParameterSource params = filter.getParams()
-			.addValue("minMatches", getGreatestRivalriesMinMatches(filter))
+			.addValue("minMatches", getGreatestRivalriesMinMatches(filter, bestRank, minMatches))
 			.addValue("offset", offset);
 		if (bestRank != null) {
 			criteria += BEST_RANK_CRITERIA;
@@ -330,7 +339,9 @@ public class RivalriesService {
 		return table;
 	}
 
-	public int getGreatestRivalriesMinMatches(RivalryFilter filter) {
+	public int getGreatestRivalriesMinMatches(RivalryFilter filter, Integer bestRank, Integer minMatchesOverride) {
+		if (minMatchesOverride != null)
+			return minMatchesOverride;
 		double minMatches = MIN_GREATEST_RIVALRIES_MATCHES;
 
 		LocalDate today = LocalDate.now();
@@ -358,6 +369,9 @@ public class RivalriesService {
 
 		if (filter.hasRound())
 			minMatches /= getMinEntriesFactor(filter.getRound(), MIN_MATCHES_ROUND_FACTOR);
+
+		if (bestRank != null)
+			minMatches /= getMinEntriesFactor(bestRank, MIN_MATCHES_BEST_RANK_FACTOR);
 
 		return Math.max((int)Math.round(minMatches), MIN_GREATEST_RIVALRIES_MATCHES_MIN);
 	}

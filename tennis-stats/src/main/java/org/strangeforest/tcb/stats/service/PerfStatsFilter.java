@@ -4,6 +4,7 @@ import java.time.*;
 import java.util.Objects;
 
 import org.springframework.jdbc.core.namedparam.*;
+import org.strangeforest.tcb.stats.model.core.*;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;
@@ -118,6 +119,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 	private static final String SURFACES_CRITERION         = " AND surface::TEXT IN (:surfaces)";
 	private static final String INDOOR_CRITERION           = " AND indoor = :indoor";
 	private static final String ROUND_CRITERION            = " AND round %1$s :round::match_round AND level NOT IN ('D', 'T')";
+	private static final String ENTRY_ROUND_CRITERION      = " AND round BETWEEN 'R128' AND 'R16' AND level NOT IN ('D', 'T')";
 	private static final String RESULT_CRITERION           = " AND r.result %1$s :result::tournament_event_result AND level NOT IN ('D', 'T')";
 	private static final String TOURNAMENT_CRITERION       = " AND tournament_id = :tournamentId";
 	private static final String TOURNAMENT_EVENT_CRITERION = " AND tournament_event_id = :tournamentEventId";
@@ -180,7 +182,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 		if (indoor != null)
 			criteria.append(INDOOR_CRITERION);
 		if (!isNullOrEmpty(round))
-			criteria.append(format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
+			criteria.append(round.equals(Round.ENTRY.getCode()) ? ENTRY_ROUND_CRITERION : format(ROUND_CRITERION, round.endsWith("+") ? ">=" : "="));
 		if (!isNullOrEmpty(result))
 			criteria.append(format(RESULT_CRITERION, result.endsWith("+") ? ">=" : "="));
 		if (tournamentId != null)
@@ -211,7 +213,7 @@ public class PerfStatsFilter extends PlayerListFilter {
 		}
 		if (indoor != null)
 			params.addValue("indoor", indoor);
-		if (!isNullOrEmpty(round))
+		if (!isNullOrEmpty(round) && !round.equals(Round.ENTRY.getCode()))
 			params.addValue("round", round.endsWith("+") ? round.substring(0, round.length() - 1) : round);
 		if (!isNullOrEmpty(result))
 			params.addValue("result", result.endsWith("+") ? result.substring(0, result.length() - 1) : result);
