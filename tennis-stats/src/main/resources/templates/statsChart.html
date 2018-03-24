@@ -14,6 +14,7 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Statistics Chart</title>
 	<template>
+	<meta name="description" content="Compare tennis players via statistics figures charts with various filters"/>
 	<script th:src="@{/js/tennis-chart.js}"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" th:inline="javascript">

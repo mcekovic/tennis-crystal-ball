@@ -5,6 +5,7 @@
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
 <head th:replace="fragments/head :: commonHead(${tournament.name}, true, ~{::template})">
 	<template>
+	<meta name="description" th:content="${tournament.name} + ' at Ultimate Tennis Statistics'"/>
 	<script type="text/javascript">
 		$(function() {
 			decorateSurface("#tournamentSurfaces .tournament-surface");

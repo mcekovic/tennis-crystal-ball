@@ -9,6 +9,7 @@
 <!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
 <head th:replace="fragments/head :: commonHead(${inProgressEvent.name} + ' Forecast', false, ~{::template})">
 	<template>
+	<meta name="description" th:content="${forecast.event.name} + ' forecast by Tennis Crystal Ball'"/>
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			decorateSurface("#eventSurface");

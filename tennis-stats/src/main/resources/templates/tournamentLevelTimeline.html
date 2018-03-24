@@ -5,6 +5,7 @@
 <!--/*@thymesVar id="timeline" type="org.strangeforest.tcb.stats.model.TournamentLevelTimeline"*/-->
 <head th:replace="fragments/head :: commonHead(${level.text} + ' Timeline', false, ~{::template})">
 	<template>
+	<meta name="description" th:content="${level.text} + ' Timeline at Ultimate Tennis Statistics'"/>
 	<script type="text/javascript">
 		$(function() {
 			$("#timelineTable").find("td>span").each(function() {

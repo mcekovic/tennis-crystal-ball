@@ -6,6 +6,7 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Top Rankings Timeline</title>
 	<template>
+	<meta name="description" content="ATP or Elo top rankings timeline"/>
 	<script type="text/javascript">
 		function onRankTypeChange() {
 			window.location.href = "/topRankingsTimeline?rankType=" + $("#rankType").val();

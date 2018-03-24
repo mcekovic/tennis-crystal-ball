@@ -4,6 +4,7 @@
 <!--/*@thymesVar id="active" type="java.lang.Boolean"*/-->
 <head th:replace="fragments/head :: commonHead(${record.name}, true, ~{::template})">
 	<template>
+	<meta name="description" th:content="${record.name} + ' at Ultimate Tennis Statistics'"/>
 	<script type="text/javascript">
 		$(function() {
 			$("#recordTable").bootgrid({

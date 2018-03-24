@@ -16,6 +16,7 @@
 <head th:replace="fragments/head :: commonHead(${player1 != null || player2 != null} ? ${player1 != null ? player1.name : '?'} + ' vs ' +  ${player2 != null ? player2.name : '?'} : ~{::title/text()}, true, ~{::template})">
 	<title>Head-to-Head</title>
 	<template>
+	<meta name="description" th:content="|${player1.name} vs ${player2.name} at Ultimate Tennis Statistics|"/>
 	<script type="text/javascript" th:inline="javascript">
 		var currentTab = "profiles";
 		$(function() {

@@ -3,6 +3,7 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
 	<title>Live Scores</title>
 	<template>
+	<meta name="description" content="Live tennis scores via Livescore.in"/>
 	<script th:src="@{/js/livescore.js}"></script>
 	<script type="text/javascript">
 		$(function() {
