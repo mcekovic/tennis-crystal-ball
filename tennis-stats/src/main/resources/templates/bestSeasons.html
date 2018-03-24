@@ -38,12 +38,12 @@
 					"goatPoints": function(column, row) {
 						if (row.goatPoints > 0) {
 							var title = "";
-							title = appendGoatPointsTitle(title, row, "tournamentGoatPoints", "Tournament");
-							title = appendGoatPointsTitle(title, row, "yearEndRankGoatPoints", "Year-end ranking");
-							title = appendGoatPointsTitle(title, row, "weeksAtNo1GoatPoints", "Weeks at No. 1");
-							title = appendGoatPointsTitle(title, row, "weeksAtEloTopNGoatPoints", "Weeks at Elo Top 5");
-							title = appendGoatPointsTitle(title, row, "bigWinsGoatPoints", "Big wins");
-							title = appendGoatPointsTitle(title, row, "grandSlamGoatPoints", "Grand Slam");
+							title = appendPointsTitle(title, row, "tournamentGoatPoints", "Tournament");
+							title = appendPointsTitle(title, row, "yearEndRankGoatPoints", "Year-end ranking");
+							title = appendPointsTitle(title, row, "weeksAtNo1GoatPoints", "Weeks at No. 1");
+							title = appendPointsTitle(title, row, "weeksAtEloTopNGoatPoints", "Weeks at Elo Top 5");
+							title = appendPointsTitle(title, row, "bigWinsGoatPoints", "Big wins");
+							title = appendPointsTitle(title, row, "grandSlamGoatPoints", "Grand Slam");
 							return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=goatPoints&season=" + row.season + (surface ? "&surface=" + surface : "") + "' title='" + title + "'>" + row.goatPoints + "</a>";
 						}
 						else

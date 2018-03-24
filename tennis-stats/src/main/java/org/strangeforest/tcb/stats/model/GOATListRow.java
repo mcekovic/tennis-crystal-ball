@@ -7,10 +7,11 @@ import org.strangeforest.tcb.stats.model.core.*;
 public class GOATListRow extends PlayerRow {
 
 	private final LocalDate dob;
-	private final int goatPoints;
-	private final int tournamentGoatPoints, rankingGoatPoints, achievementsGoatPoints;
-	private int yearEndRankGoatPoints, bestRankGoatPoints, weeksAtNo1GoatPoints, weeksAtEloTopNGoatPoints, bestEloRatingGoatPoints;
-	private int grandSlamGoatPoints, bigWinsGoatPoints, h2hGoatPoints, recordsGoatPoints, bestSeasonGoatPoints, greatestRivalriesGoatPoints, performanceGoatPoints, statisticsGoatPoints;
+	private final int totalPoints;
+	private final int tournamentPoints, rankingPoints, achievementsPoints;
+	private int tGPoints, tFLPoints, tMPoints, tOPoints, tABPoints, tDTPoints;
+	private int yearEndRankPoints, bestRankPoints, weeksAtNo1Points, weeksAtEloTopNPoints, bestEloRatingPoints;
+	private int grandSlamPoints, bigWinsPoints, h2hPoints, recordsPoints, bestSeasonPoints, greatestRivalriesPoints, performancePoints, statisticsPoints;
 	private int grandSlams;
 	private int tourFinals;
 	private int altFinals;
@@ -23,13 +24,13 @@ public class GOATListRow extends PlayerRow {
 	private int bestEloRating;
 	private LocalDate bestEloRatingDate;
 
-	public GOATListRow(int goatRank, int playerId, String name, String countryId, Boolean active, LocalDate dob, int goatPoints, int tournamentGoatPoints, int rankingGoatPoints, int achievementsGoatPoints) {
+	public GOATListRow(int goatRank, int playerId, String name, String countryId, Boolean active, LocalDate dob, int totalPoints, int tournamentPoints, int rankingPoints, int achievementsPoints) {
 		super(goatRank, playerId, name, countryId, active);
 		this.dob = dob;
-		this.goatPoints = goatPoints;
-		this.tournamentGoatPoints = tournamentGoatPoints;
-		this.rankingGoatPoints = rankingGoatPoints;
-		this.achievementsGoatPoints = achievementsGoatPoints;
+		this.totalPoints = totalPoints;
+		this.tournamentPoints = tournamentPoints;
+		this.rankingPoints = rankingPoints;
+		this.achievementsPoints = achievementsPoints;
 	}
 
 	public LocalDate getDob() {
@@ -40,130 +41,181 @@ public class GOATListRow extends PlayerRow {
 		return getRank();
 	}
 
-	public int getGoatPoints() {
-		return goatPoints;
+	public int getTotalPoints() {
+		return totalPoints;
 	}
 
-	public int getTournamentGoatPoints() {
-		return tournamentGoatPoints;
+	public int getTournamentPoints() {
+		return tournamentPoints;
 	}
 
-	public int getRankingGoatPoints() {
-		return rankingGoatPoints;
+	public int getRankingPoints() {
+		return rankingPoints;
 	}
 
-	public int getAchievementsGoatPoints() {
-		return achievementsGoatPoints;
+	public int getAchievementsPoints() {
+		return achievementsPoints;
+	}
+
+
+	// Tournament GOAT points
+
+	public int gettGPoints() {
+		return tGPoints;
+	}
+
+	public void settGPoints(int tGPoints) {
+		this.tGPoints = tGPoints;
+	}
+
+	public int gettFLPoints() {
+		return tFLPoints;
+	}
+
+	public void settFLPoints(int tFLPoints) {
+		this.tFLPoints = tFLPoints;
+	}
+
+	public int gettMPoints() {
+		return tMPoints;
+	}
+
+	public void settMPoints(int tMPoints) {
+		this.tMPoints = tMPoints;
+	}
+
+	public int gettOPoints() {
+		return tOPoints;
+	}
+
+	public void settOPoints(int tOPoints) {
+		this.tOPoints = tOPoints;
+	}
+
+	public int gettABPoints() {
+		return tABPoints;
+	}
+
+	public void settABPoints(int tABPoints) {
+		this.tABPoints = tABPoints;
+	}
+
+	public int gettDTPoints() {
+		return tDTPoints;
+	}
+
+	public void settDTPoints(int tDTPoints) {
+		this.tDTPoints = tDTPoints;
 	}
 
 
 	// Ranking GOAT points
 
-	public int getYearEndRankGoatPoints() {
-		return yearEndRankGoatPoints;
+	public int getYearEndRankPoints() {
+		return yearEndRankPoints;
 	}
 
-	public void setYearEndRankGoatPoints(int yearEndRankGoatPoints) {
-		this.yearEndRankGoatPoints = yearEndRankGoatPoints;
+	public void setYearEndRankPoints(int yearEndRankPoints) {
+		this.yearEndRankPoints = yearEndRankPoints;
 	}
 
-	public int getBestRankGoatPoints() {
-		return bestRankGoatPoints;
+	public int getBestRankPoints() {
+		return bestRankPoints;
 	}
 
-	public void setBestRankGoatPoints(int bestRankGoatPoints) {
-		this.bestRankGoatPoints = bestRankGoatPoints;
+	public void setBestRankPoints(int bestRankPoints) {
+		this.bestRankPoints = bestRankPoints;
 	}
 
-	public int getWeeksAtNo1GoatPoints() {
-		return weeksAtNo1GoatPoints;
+	public int getWeeksAtNo1Points() {
+		return weeksAtNo1Points;
 	}
 
-	public void setWeeksAtNo1GoatPoints(int weeksAtNo1GoatPoints) {
-		this.weeksAtNo1GoatPoints = weeksAtNo1GoatPoints;
+	public void setWeeksAtNo1Points(int weeksAtNo1Points) {
+		this.weeksAtNo1Points = weeksAtNo1Points;
 	}
 
-	public int getWeeksAtEloTopNGoatPoints() {
-		return weeksAtEloTopNGoatPoints;
+	public int getWeeksAtEloTopNPoints() {
+		return weeksAtEloTopNPoints;
 	}
 
-	public void setWeeksAtEloTopNGoatPoints(int weeksAtEloTopNGoatPoints) {
-		this.weeksAtEloTopNGoatPoints = weeksAtEloTopNGoatPoints;
+	public void setWeeksAtEloTopNPoints(int weeksAtEloTopNPoints) {
+		this.weeksAtEloTopNPoints = weeksAtEloTopNPoints;
 	}
 
-	public int getBestEloRatingGoatPoints() {
-		return bestEloRatingGoatPoints;
+	public int getBestEloRatingPoints() {
+		return bestEloRatingPoints;
 	}
 
-	public void setBestEloRatingGoatPoints(int bestEloRatingGoatPoints) {
-		this.bestEloRatingGoatPoints = bestEloRatingGoatPoints;
+	public void setBestEloRatingPoints(int bestEloRatingPoints) {
+		this.bestEloRatingPoints = bestEloRatingPoints;
 	}
 
 	
 	// Achievements GOAT points
 
-	public int getGrandSlamGoatPoints() {
-		return grandSlamGoatPoints;
+	public int getGrandSlamPoints() {
+		return grandSlamPoints;
 	}
 
-	public void setGrandSlamGoatPoints(int grandSlamGoatPoints) {
-		this.grandSlamGoatPoints = grandSlamGoatPoints;
+	public void setGrandSlamPoints(int grandSlamPoints) {
+		this.grandSlamPoints = grandSlamPoints;
 	}
 
-	public int getBigWinsGoatPoints() {
-		return bigWinsGoatPoints;
+	public int getBigWinsPoints() {
+		return bigWinsPoints;
 	}
 
-	public void setBigWinsGoatPoints(int bigWinsGoatPoints) {
-		this.bigWinsGoatPoints = bigWinsGoatPoints;
+	public void setBigWinsPoints(int bigWinsPoints) {
+		this.bigWinsPoints = bigWinsPoints;
 	}
 
-	public int getH2hGoatPoints() {
-		return h2hGoatPoints;
+	public int getH2hPoints() {
+		return h2hPoints;
 	}
 
-	public void setH2hGoatPoints(int h2hGoatPoints) {
-		this.h2hGoatPoints = h2hGoatPoints;
+	public void setH2hPoints(int h2hPoints) {
+		this.h2hPoints = h2hPoints;
 	}
 
-	public int getRecordsGoatPoints() {
-		return recordsGoatPoints;
+	public int getRecordsPoints() {
+		return recordsPoints;
 	}
 
-	public void setRecordsGoatPoints(int recordsGoatPoints) {
-		this.recordsGoatPoints = recordsGoatPoints;
+	public void setRecordsPoints(int recordsPoints) {
+		this.recordsPoints = recordsPoints;
 	}
 
-	public int getBestSeasonGoatPoints() {
-		return bestSeasonGoatPoints;
+	public int getBestSeasonPoints() {
+		return bestSeasonPoints;
 	}
 
-	public void setBestSeasonGoatPoints(int bestSeasonGoatPoints) {
-		this.bestSeasonGoatPoints = bestSeasonGoatPoints;
+	public void setBestSeasonPoints(int bestSeasonPoints) {
+		this.bestSeasonPoints = bestSeasonPoints;
 	}
 
-	public int getGreatestRivalriesGoatPoints() {
-		return greatestRivalriesGoatPoints;
+	public int getGreatestRivalriesPoints() {
+		return greatestRivalriesPoints;
 	}
 
-	public void setGreatestRivalriesGoatPoints(int greatestRivalriesGoatPoints) {
-		this.greatestRivalriesGoatPoints = greatestRivalriesGoatPoints;
+	public void setGreatestRivalriesPoints(int greatestRivalriesPoints) {
+		this.greatestRivalriesPoints = greatestRivalriesPoints;
 	}
 
-	public int getPerformanceGoatPoints() {
-		return performanceGoatPoints;
+	public int getPerformancePoints() {
+		return performancePoints;
 	}
 
-	public void setPerformanceGoatPoints(int performanceGoatPoints) {
-		this.performanceGoatPoints = performanceGoatPoints;
+	public void setPerformancePoints(int performancePoints) {
+		this.performancePoints = performancePoints;
 	}
 
-	public int getStatisticsGoatPoints() {
-		return statisticsGoatPoints;
+	public int getStatisticsPoints() {
+		return statisticsPoints;
 	}
 
-	public void setStatisticsGoatPoints(int statisticsGoatPoints) {
-		this.statisticsGoatPoints = statisticsGoatPoints;
+	public void setStatisticsPoints(int statisticsPoints) {
+		this.statisticsPoints = statisticsPoints;
 	}
 
 

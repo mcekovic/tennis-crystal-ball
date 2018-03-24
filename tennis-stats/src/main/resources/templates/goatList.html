@@ -18,7 +18,7 @@
 		$(function() {
 			var $goatListTable = $("#goatListTable");
 			var device = detectDevice();
-			setBootgridColumnsVisible($goatListTable, ["tournamentGoatPoints", "rankingGoatPoints", "achievementsGoatPoints"], deviceGreaterOrEqual(device, "sm"));
+			setBootgridColumnsVisible($goatListTable, ["tournamentPoints", "rankingPoints", "achievementsPoints"], deviceGreaterOrEqual(device, "sm"));
 			setBootgridColumnsVisible($goatListTable, ["tourFinals", "altFinals", "masters", "olympics", "bigTitles", "weeksAtNo1"], deviceGreaterOrEqual(device, "md"));
 			setBootgridColumnsVisible($goatListTable, ["wonPct", "bestEloRating"], deviceGreaterOrEqual(device, "lg"));
 			if (deviceGreaterOrEqual("md", device))
@@ -65,38 +65,71 @@
 				},
 				formatters: {
 					"player": playerCountryFormatter,
-					"goatPoints": function(column, row) {
-						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=goatPoints" + (surface ? "&surface=" + surface : "") + "' title='Show GOAT points distribution'><b>" + row.goatPoints + "</b></a>";
+					"totalPoints": function(column, row) {
+						return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=goatPoints" + (surface ? "&surface=" + surface : "") + "' title='Show GOAT points distribution'><b>" + row.totalPoints + "</b></a>";
 					},
-					"rankingGoatPoints": function(column, row) {
-						if (row.rankingGoatPoints > 0) {
+					"tournamentPoints": function(column, row) {
+						if (row.tournamentPoints > 0) {
 							var title = "";
-							title = appendGoatPointsTitle(title, row, "yearEndRankGoatPoints", "Year-end ranking");
-							title = appendGoatPointsTitle(title, row, "bestRankGoatPoints", "Career high ranking");
-							title = appendGoatPointsTitle(title, row, "weeksAtNo1GoatPoints", "Weeks at No. 1");
-							title = appendGoatPointsTitle(title, row, "weeksAtEloTopNGoatPoints", "Weeks at Elo Top 5");
-							title = appendGoatPointsTitle(title, row, "bestEloRatingGoatPoints", "Peak Elo rating");
-							return "<span title='" + title + "'>" + row.rankingGoatPoints + "</span>";
+							title = appendPointsTitle(title, row, "tGPoints", "Grand Slam");
+							title = appendPointsTitle(title, row, "tFLPoints", "Tour Finals");
+							title = appendPointsTitle(title, row, "tMPoints", "Masters");
+							title = appendPointsTitle(title, row, "tOPoints", "Olympics");
+							title = appendPointsTitle(title, row, "tABPoints", "Small tournaments");
+							title = appendPointsTitle(title, row, "tDTPoints", "Team tournaments");
+							return "<span title='" + title + "'>" + row.tournamentPoints + "</span>";
 						}
 						else
-							return row.rankingGoatPoints;
+							return row.tournamentPoints;
 					},
-					"achievementsGoatPoints": function(column, row) {
-						if (row.achievementsGoatPoints > 0) {
+					"rankingPoints": function(column, row) {
+						if (row.rankingPoints > 0) {
 							var title = "";
-							title = appendGoatPointsTitle(title, row, "grandSlamGoatPoints", "Grand Slam");
-							title = appendGoatPointsTitle(title, row, "bigWinsGoatPoints", "Big wins");
-							title = appendGoatPointsTitle(title, row, "h2hGoatPoints", "Head-to-head");
-							title = appendGoatPointsTitle(title, row, "recordsGoatPoints", "Records");
-							title = appendGoatPointsTitle(title, row, "bestSeasonGoatPoints", "Best seasons");
-							title = appendGoatPointsTitle(title, row, "greatestRivalriesGoatPoints", "Greatest rivalries");
-							title = appendGoatPointsTitle(title, row, "performanceGoatPoints", "Performance");
-							title = appendGoatPointsTitle(title, row, "statisticsGoatPoints", "Statistics");
-							return "<span title='" + title + "'>" + row.achievementsGoatPoints + "</span>";
+							title = appendPointsTitle(title, row, "yearEndRankPoints", "Year-end ranking");
+							title = appendPointsTitle(title, row, "bestRankPoints", "Career high ranking");
+							title = appendPointsTitle(title, row, "weeksAtNo1Points", "Weeks at No. 1");
+							title = appendPointsTitle(title, row, "weeksAtEloTopNPoints", "Weeks at Elo Top 5");
+							title = appendPointsTitle(title, row, "bestEloRatingPoints", "Peak Elo rating");
+							return "<span title='" + title + "'>" + row.rankingPoints + "</span>";
 						}
 						else
-							return row.achievementsGoatPoints;
+							return row.rankingPoints;
 					},
+					"achievementsPoints": function(column, row) {
+						if (row.achievementsPoints > 0) {
+							var title = "";
+							title = appendPointsTitle(title, row, "grandSlamPoints", "Grand Slam");
+							title = appendPointsTitle(title, row, "bigWinsPoints", "Big wins");
+							title = appendPointsTitle(title, row, "h2hPoints", "Head-to-head");
+							title = appendPointsTitle(title, row, "recordsPoints", "Records");
+							title = appendPointsTitle(title, row, "bestSeasonPoints", "Best seasons");
+							title = appendPointsTitle(title, row, "greatestRivalriesPoints", "Greatest rivalries");
+							title = appendPointsTitle(title, row, "performancePoints", "Performance");
+							title = appendPointsTitle(title, row, "statisticsPoints", "Statistics");
+							return "<span title='" + title + "'>" + row.achievementsPoints + "</span>";
+						}
+						else
+							return row.achievementsPoints;
+					},
+					"tGPoints": areaPointsFormatter("tGPoints"),
+					"tFLPoints": areaPointsFormatter("tFLPoints"),
+					"tMPoints": areaPointsFormatter("tMPoints"),
+					"tOPoints": areaPointsFormatter("tOPoints"),
+					"tABPoints": areaPointsFormatter("tABPoints"),
+					"tDTPoints": areaPointsFormatter("tDTPoints"),
+					"yearEndRankPoints": areaPointsFormatter("yearEndRankPoints"),
+					"bestRankPoints": areaPointsFormatter("bestRankPoints"),
+					"weeksAtNo1Points": areaPointsFormatter("weeksAtNo1Points"),
+					"weeksAtEloTopNPoints": areaPointsFormatter("weeksAtEloTopNPoints"),
+					"bestEloRatingPoints": areaPointsFormatter("bestEloRatingPoints"),
+					"grandSlamPoints": areaPointsFormatter("grandSlamPoints"),
+					"bigWinsPoints": areaPointsFormatter("bigWinsPoints"),
+					"h2hPoints": areaPointsFormatter("h2hPoints"),
+					"recordsPoints": areaPointsFormatter("recordsPoints"),
+					"bestSeasonPoints": areaPointsFormatter("bestSeasonPoints"),
+					"greatestRivalriesPoints": areaPointsFormatter("greatestRivalriesPoints"),
+					"performancePoints": areaPointsFormatter("performancePoints"),
+					"statisticsPoints": areaPointsFormatter("statisticsPoints"),
 					"grandSlams": playerTitlesFormatter("grandSlams", "&level=G", " Grand Slam"),
 					"tourFinals": playerTitlesFormatter("tourFinals", "&level=F", " Tour Finals"),
 					"altFinals": playerTitlesFormatter("altFinals", "&level=L", " Alternative Tour Finals"),
@@ -140,10 +173,29 @@
 			setBootgridTitle($goatListTableHeader, $("#goatListTable-title"));
 			setBootgridTitles($goatListTable, [
 				{id: "goatRank", title: "GOAT rank"},
-				{id: "goatPoints", title: "GOAT points"},
-				{id: "tournamentGoatPoints", title: "Tournament GOAT points"},
-				{id: "rankingGoatPoints", title: "Ranking GOAT points"},
-				{id: "achievementsGoatPoints", title: "Achievements, performance and statistics GOAT points"},
+				{id: "totalPoints", title: "GOAT points"},
+				{id: "tournamentPoints", title: "Tournament GOAT points"},
+				{id: "rankingPoints", title: "Ranking GOAT points"},
+				{id: "tGPoints", title: "Grand Slam tournament GOAT points"},
+				{id: "tFLPoints", title: "Tour Finals (official and alternative) tournament GOAT points"},
+				{id: "tMPoints", title: "Masters tournament GOAT points"},
+				{id: "tOPoints", title: "Olympics tournament GOAT points"},
+				{id: "tABPoints", title: "Small (ATP 500 and ATP 250) tournament GOAT points"},
+				{id: "tDTPoints", title: "Team (Davis Cup and World Team Cup) tournament GOAT points"},
+				{id: "yearEndRankPoints", title: "Year-end rank GOAT points"},
+				{id: "bestRankPoints", title: "Best rank GOAT points"},
+				{id: "weeksAtNo1Points", title: "Weeks at No. 1 GOAT points"},
+				{id: "weeksAtEloTopNPoints", title: "Weeks at Elo Top 5 GOAT points"},
+				{id: "bestEloRatingPoints", title: "Best Elo Rating GOAT points"},
+				{id: "achievementsPoints", title: "Achievements, performance and statistics GOAT points"},
+				{id: "grandSlamPoints", title: "Grand Slam achievements GOAT points"},
+				{id: "bigWinsPoints", title: "Big Wins GOAT points"},
+				{id: "h2hPoints", title: "Head-to-Head GOAT points"},
+				{id: "recordsPoints", title: "Records GOAT points"},
+				{id: "bestSeasonPoints", title: "Best Seasons GOAT points"},
+				{id: "greatestRivalriesPoints", title: "Greatest Rivalries GOAT points"},
+				{id: "performancePoints", title: "Performance GOAT points"},
+				{id: "statisticsPoints", title: "Statistics GOAT points"},
 				{id: "grandSlams", title: "Grand Slam titles"},
 				{id: "tourFinals", title: "Tour Finals titles"},
 				{id: "altFinals", title: "Alternative Tour Finals titles"},
@@ -160,13 +212,18 @@
 			$("[data-toggle='tooltip']").tooltip();
 			loadCollapse($("#goatLegendButton"), goatLegendUrl(), true);
 		});
+		function areaPointsFormatter(attr) {
+			return function(column, row) {
+				return "<span class='small text-muted'>" + row[attr] + "</span>";
+			};
+		}
 		function playerTitlesFormatter(attr, params, title) {
 			return function(column, row) {
 				var count = row[attr];
 				if (count > 0)
 					return "<a href='/playerProfile?playerId=" + row.playerId + "&tab=events&result=W" + (surface ? "&surface=" + surface : "") + params + "' title='Show" + title + " titles'>" + count + "</a>";
 				else
-					return "<span class='text-muted'>" + ((attr === "olympics" && row.dob[0] < 1950) || (attr === "altFinals" && row.dob[0] >= 1982) ? "-" : "0") + "</span>";
+					return "<span class='text-muted'>" + (row.dob && ((attr === "olympics" && row.dob[0] < 1950) || (attr === "altFinals" && row.dob[0] >= 1982)) ? "-" : "0") + "</span>";
 			};
 		}
 		function reloadGOATListTable() {
@@ -326,7 +383,7 @@
 		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Quick Picks <span class="caret"></span></button>
 		<ul class="dropdown-menu">
 			<li><a href="/goatList" title="All GOAT Points constituents are included with weight x 1">Default</a></li>
-			<li><a href="/goatList?levelFactors=G=2&resultFactors=W=2&weeksAtNo1Factor=4&grandSlamFactor=4" title="Grand Slam tournament titles are emphasized with x 4 the default weight, other GS tournament points (F, SF, QF) x 2, other titles x 2 (resulting in 1 GS = 4 Masters, 1 title = 4 finals), Grand Slam achievement points x 4 and weeks at No. 1 points x 4">Grand Slam titles and No. 1 focus</a></li>
+			<li><a href="/goatList?levelFactors=G=2&resultFactors=W=2&weeksAtNo1Factor=4&grandSlamFactor=4" title="Grand Slam tournament titles are emphasized with x 4 the default weight, other GS tournament points (F, SF, QF) x 2, other titles x 2 (resulting in 1 GS = 4 Masters, 1 title = 4 finals), Grand Slam achievement points x 4 and weeks at No. 1 points x 4">GS, titles and No. 1 focus</a></li>
 			<li><a href="/goatList?levelFactors=F=0,L=0,M=0,O=0,A=0,B=0,D=0,T=0&resultFactors=F=0,SF=0,QF=0,RR=0,BR=0&yearEndRankFactor=0&bestRankFactor=0&weeksAtEloTopNFactor=0&bestEloRatingFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&bestSeasonFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Grand Slam titles and achievement points and weeks at No. 1 points are the only ones selected">Minimalist</a></li>
 			<li><a href="/goatList?bestRankFactor=4&bestEloRatingFactor=4&bestSeasonFactor=4" title="Peak achievements (Career High Ranking, Peak Elo Ratings, and Best Seasons) are emphasized x 4 the default weight">Peak emphasis</a></li>
 			<li><a href="/goatList?tournamentFactor=0&yearEndRankFactor=0&weeksAtNo1Factor=0&weeksAtEloTopNFactor=0&grandSlamFactor=0&bigWinsFactor=0&h2hFactor=0&recordsFactor=0&greatestRivalriesFactor=0&performanceFactor=0&statisticsFactor=0" title="Peak achievements (Career High Ranking, Peak Elo Ratings and Best Seasons) are the only ones selected">Minimalist Peak</a></li>
@@ -337,10 +394,29 @@
 		<tr>
 			<th data-column-id="goatRank" data-type="numeric" data-sortable="false" data-width="65">Rank</th>
 			<th data-column-id="name" data-formatter="player" data-width="200" data-sortable="false">Name</th>
-			<th data-column-id="goatPoints" data-formatter="goatPoints" data-order="desc" data-width="60" data-align="right" data-header-align="right">Pts</th>
-			<th data-column-id="tournamentGoatPoints" data-type="numeric" data-order="desc" data-width="80" data-align="right" data-header-align="right">Tourn P</th>
-			<th data-column-id="rankingGoatPoints" data-formatter="rankingGoatPoints" data-order="desc" data-width="80" data-align="right" data-header-align="right">Rank P</th>
-			<th data-column-id="achievementsGoatPoints" data-formatter="achievementsGoatPoints" data-order="desc" data-width="80" data-align="right" data-header-align="right">Ach P</th>
+			<th data-column-id="totalPoints" data-formatter="totalPoints" data-order="desc" data-width="60" data-align="right" data-header-align="right">Pts</th>
+			<th data-column-id="tournamentPoints" data-formatter="tournamentPoints" data-order="desc" data-width="80" data-align="right" data-header-align="right">Tourn P</th>
+			<th data-column-id="tGPoints" data-formatter="tGPoints" data-order="desc" data-width="60" data-align="right" data-header-align="right" data-visible="false">GS P</th>
+			<th data-column-id="tFLPoints" data-formatter="tFLPoints" data-order="desc" data-width="60" data-align="right" data-header-align="right" data-visible="false">TF P</th>
+			<th data-column-id="tMPoints" data-formatter="tMPoints" data-order="desc" data-width="55" data-align="right" data-header-align="right" data-visible="false">M P</th>
+			<th data-column-id="tOPoints" data-formatter="tOPoints" data-order="desc" data-width="55" data-align="right" data-header-align="right" data-visible="false">O P</th>
+			<th data-column-id="tABPoints" data-formatter="tABPoints" data-order="desc" data-width="65" data-align="right" data-header-align="right" data-visible="false">Sm P</th>
+			<th data-column-id="tDTPoints" data-formatter="tDTPoints" data-order="desc" data-width="65" data-align="right" data-header-align="right" data-visible="false">Tm P</th>
+			<th data-column-id="rankingPoints" data-formatter="rankingPoints" data-order="desc" data-width="80" data-align="right" data-header-align="right">Rank P</th>
+			<th data-column-id="yearEndRankPoints" data-formatter="yearEndRankPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right" data-visible="false">YER P</th>
+			<th data-column-id="bestRankPoints" data-formatter="bestRankPoints" data-order="desc" data-width="60" data-align="right" data-header-align="right" data-visible="false">BR P</th>
+			<th data-column-id="weeksAtNo1Points" data-formatter="weeksAtNo1Points" data-order="desc" data-width="75" data-align="right" data-header-align="right" data-visible="false">W@1 P</th>
+			<th data-column-id="weeksAtEloTopNPoints" data-formatter="weeksAtEloTopNPoints" data-order="desc" data-width="85" data-align="right" data-header-align="right" data-visible="false">W@E5 P</th>
+			<th data-column-id="bestEloRatingPoints" data-formatter="bestEloRatingPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right" data-visible="false">BER P</th>
+			<th data-column-id="achievementsPoints" data-formatter="achievementsPoints" data-order="desc" data-width="80" data-align="right" data-header-align="right">Ach P</th>
+			<th data-column-id="grandSlamPoints" data-formatter="grandSlamPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right" data-visible="false">GSA P</th>
+			<th data-column-id="bigWinsPoints" data-formatter="bigWinsPoints" data-order="desc" data-width="65" data-align="right" data-header-align="right" data-visible="false">BW P</th>
+			<th data-column-id="h2hPoints" data-formatter="h2hPoints" data-order="desc" data-width="70" data-align="right" data-header-align="right" data-visible="false">H2H P</th>
+			<th data-column-id="recordsPoints" data-formatter="recordsPoints" data-order="desc" data-width="60" data-align="right" data-header-align="right" data-visible="false">Rc P</th>
+			<th data-column-id="bestSeasonPoints" data-formatter="bestSeasonPoints" data-order="desc" data-width="60" data-align="right" data-header-align="right" data-visible="false">BS P</th>
+			<th data-column-id="greatestRivalriesPoints" data-formatter="greatestRivalriesPoints" data-order="desc" data-width="65" data-align="right" data-header-align="right" data-visible="false">GR P</th>
+			<th data-column-id="performancePoints" data-formatter="performancePoints" data-order="desc" data-width="60" data-align="right" data-header-align="right" data-visible="false">Pf P</th>
+			<th data-column-id="statisticsPoints" data-formatter="statisticsPoints" data-order="desc" data-width="60" data-align="right" data-header-align="right" data-visible="false">St P</th>
 			<th data-column-id="grandSlams" data-formatter="grandSlams" data-width="50" data-align="right" data-header-align="right">GS</th>
 			<th data-column-id="tourFinals" data-formatter="tourFinals" data-width="50" data-align="right" data-header-align="right">TF</th>
 			<th data-column-id="altFinals" data-formatter="altFinals" data-width="50" data-align="right" data-header-align="right">AF</th>

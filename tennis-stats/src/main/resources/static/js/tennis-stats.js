@@ -741,7 +741,7 @@ function validateNumber($selector) {
 	}
 }
 
-function appendGoatPointsTitle(title, row, propertyName, propertyTitle) {
+function appendPointsTitle(title, row, propertyName, propertyTitle) {
 	var points = row[propertyName];
 	if (points > 0) {
 		if (title)
