@@ -94,6 +94,8 @@ class MatchScoreParser {
 		}
 		if (!outcome && setScores.size() > w_sets + l_sets)
 			outcome = 'RET'
+		if (outcome == 'DEF' && w_games + l_games == 0)
+			outcome = 'W/O'
 		new MatchScore(outcome: outcome, w_sets: w_sets, l_sets: l_sets, w_games: w_games, l_games: l_games, w_tbs: w_tbs, l_tbs: l_tbs, setScores: setScores)
 	}
 
