@@ -39,31 +39,56 @@ public class GOATListService {
 		"SELECT DISTINCT country_id FROM player_v WHERE goat_points > 0";
 
 	private static final String GOAT_COUNT_QUERY = //language=SQL
-		"SELECT count(player_id) AS player_count FROM %1$s g\n" +
-		"INNER JOIN player_v p USING (player_id)\n" +
-		"WHERE %2$s > 0 AND NOT lower(p.name) LIKE '%%unknown%%'%3$s%4$s%5$s";
+		"%1$sSELECT count(player_id) AS player_count FROM %2$s g\n" +
+		"INNER JOIN player_v p USING (player_id)%3$s\n" +
+		"WHERE %4$s > 0 AND NOT lower(p.name) LIKE '%%unknown%%'%5$s%6$s%7$s";
 
 	private static final String SURFACE_CRITERIA = //language=SQL
 		" AND g.surface = :surface::surface";
 
 	private static final String GOAT_LIST_QUERY = //language=SQL
-		"WITH goat_list AS (\n" +
-		"  SELECT player_id, p.active, p.dob, %1$s AS goat_points, %2$s AS tournament_goat_points, %3$s AS ranking_goat_points, %4$s AS achievements_goat_points,\n%5$s" +
-		"  FROM %6$s g\n" +
-		"  INNER JOIN player_v p USING (player_id)\n" +
-		"  WHERE g.goat_points > 0 AND NOT lower(p.name) LIKE '%%unknown%%'%7$s%8$s\n" +
-		")%9$s, goat_list_ranked AS (\n" +
+		"WITH%1$s goat_list AS (\n" +
+		"  SELECT player_id, p.active, p.dob, %2$s AS goat_points, %3$s AS tournament_goat_points, %4$s AS ranking_goat_points, %5$s AS achievements_goat_points,\n%6$s" +
+		"  FROM %7$s g\n" +
+		"  INNER JOIN player_v p USING (player_id)%8$s\n" +
+		"  WHERE g.goat_points > 0 AND NOT lower(p.name) LIKE '%%unknown%%'%9$s%10$s\n" +
+		")%11$s, goat_list_ranked AS (\n" +
 		"  SELECT *, rank() OVER (ORDER BY goat_points DESC NULLS LAST) AS goat_rank\n" +
-		"  FROM %10$sgoat_list\n" +
+		"  FROM %12$sgoat_list\n" +
 		"  WHERE goat_points > 0\n" +
 		")\n" +
-		"SELECT g.*, p.name, p.country_id, p.active, p.dob, coalesce(pt.%11$sgrand_slams, 0) grand_slams, coalesce(pt.%11$stour_finals, 0) tour_finals, coalesce(pt.%11$salt_finals, 0) alt_finals, coalesce(pt.%11$smasters, 0) masters, coalesce(pt.%11$solympics, 0) olympics, coalesce(pt.%11$sbig_titles, 0) big_titles, coalesce(pt.%11$stitles, 0) titles,\n" +
-		"  coalesce(%12$s, 0) weeks_at_no1, pf.%11$smatches_won matches_won, pf.%11$smatches_lost matches_lost, pf.%11$smatches_won::REAL / (pf.%11$smatches_won + pf.%11$smatches_lost) matches_won_pct, coalesce(%13$s, 1500) best_elo_rating, %13$s_date best_elo_rating_date\n" +
+		"SELECT g.*, p.name, p.country_id, p.active, p.dob, coalesce(pt.%13$sgrand_slams, 0) grand_slams, coalesce(pt.%13$stour_finals, 0) tour_finals, coalesce(pt.%13$salt_finals, 0) alt_finals, coalesce(pt.%13$smasters, 0) masters, coalesce(pt.%13$solympics, 0) olympics, coalesce(pt.%13$sbig_titles, 0) big_titles, coalesce(pt.%13$stitles, 0) titles,\n" +
+		"  coalesce(%14$s, 0) weeks_at_no1, pf.%13$smatches_won matches_won, pf.%13$smatches_lost matches_lost, pf.%13$smatches_won::REAL / (pf.%13$smatches_won + pf.%13$smatches_lost) matches_won_pct, coalesce(%15$s, 1500) best_elo_rating, %15$s_date best_elo_rating_date\n" +
 		"FROM goat_list_ranked g\n" +
 		"INNER JOIN player_v p USING (player_id)\n" +
 		"LEFT JOIN player_titles pt USING (player_id)\n" +
-		"INNER JOIN player_performance pf USING (player_id)%14$s%15$s\n" +
-		"ORDER BY %16$s OFFSET :offset LIMIT :limit";
+		"INNER JOIN player_performance pf USING (player_id)%16$s%17$s\n" +
+		"ORDER BY %18$s OFFSET :offset LIMIT :limit";
+
+	private static final String RESULT_FACTOR = //language=SQL
+		"CASE r.result WHEN 'W' THEN :resultWFactor WHEN 'F' THEN :resultFFactor WHEN 'SF' THEN :resultSFFactor WHEN 'QF' THEN :resultQFFactor WHEN 'RR' THEN :resultRRFactor WHEN 'BR' THEN :resultBRFactor ELSE NULL END";
+
+	private static final String TOURNAMENT_GOAT_POINTS = //language=SQL
+		" tournament_goat_points AS (\n" +
+		"  SELECT player_id, coalesce(sum(r.goat_points * CASE re.level WHEN 'G' THEN :levelGFactor WHEN 'F' THEN :levelFFactor WHEN 'L' THEN :levelLFactor WHEN 'M' THEN :levelMFactor WHEN 'O' THEN :levelOFactor WHEN 'A' THEN :levelAFactor WHEN 'B' THEN :levelBFactor WHEN 'D' THEN :levelDFactor WHEN 'T' THEN :levelTFactor ELSE NULL END * " + RESULT_FACTOR + "), 0) AS tournament_goat_points,\n" +
+		"    coalesce(sum(r.goat_points * :levelGFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'G'), 0) AS tournament_g_goat_points,\n" +
+		"    coalesce(sum(r.goat_points * :levelFFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'F'), 0) +\n" +
+		"    coalesce(sum(r.goat_points * :levelLFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'L'), 0) AS tournament_fl_goat_points,\n" +
+		"    coalesce(sum(r.goat_points * :levelMFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'M'), 0) AS tournament_m_goat_points,\n" +
+		"    coalesce(sum(r.goat_points * :levelOFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'O'), 0) AS tournament_o_goat_points,\n" +
+		"    coalesce(sum(r.goat_points * :levelAFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'A'), 0) +\n" +
+		"    coalesce(sum(r.goat_points * :levelBFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'B'), 0) AS tournament_ab_goat_points,\n" +
+		"    coalesce(sum(r.goat_points * :levelDFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'D'), 0) +\n" +
+		"    coalesce(sum(r.goat_points * :levelTFactor * " + RESULT_FACTOR + ") FILTER (WHERE re.level = 'T'), 0) AS tournament_dt_goat_points\n" +
+		"  FROM player_tournament_event_result r INNER JOIN tournament_event re USING (tournament_event_id)%1$s\n" +
+		"  GROUP BY r.player_id\n" +
+		")";
+
+	private static final String TOURNAMENT_SURFACE_CRITERIA = //language=SQL
+		" AND re.level <> 'D' AND re.surface = :surface::surface";
+
+	private static final String TOURNAMENT_GOAT_POINTS_JOIN = //language=SQL
+		" LEFT JOIN tournament_goat_points tg USING (player_id)";
 
 	private static final String GOAT_POINTS_AREAS = //language=SQL
 		"    g.year_end_rank_goat_points, g.best_rank_goat_points, g.weeks_at_no1_goat_points, g.weeks_at_elo_topn_goat_points, g.best_elo_rating_goat_points,\n" +
@@ -72,15 +97,6 @@ public class GOATListService {
 	private static final String SURFACE_GOAT_POINTS_AREAS = //language=SQL
 		"    g.best_rank_goat_points, g.weeks_at_elo_topn_goat_points, g.best_elo_rating_goat_points,\n" +
 		"    g.big_wins_goat_points, g.h2h_goat_points, g.records_goat_points, g.best_season_goat_points, g.greatest_rivalries_goat_points\n";
-
-	private static final String TOURNAMENT_GOAT_POINTS = //language=SQL
-		"(SELECT coalesce(sum(r.goat_points" +
-		" * CASE re.level WHEN 'G' THEN :levelGFactor WHEN 'F' THEN :levelFFactor WHEN 'L' THEN :levelLFactor WHEN 'M' THEN :levelMFactor WHEN 'O' THEN :levelOFactor WHEN 'A' THEN :levelAFactor WHEN 'B' THEN :levelBFactor WHEN 'D' THEN :levelDFactor WHEN 'T' THEN :levelTFactor ELSE NULL END\n" +
-		" * CASE r.result WHEN 'W' THEN :resultWFactor WHEN 'F' THEN :resultFFactor WHEN 'SF' THEN :resultSFFactor WHEN 'QF' THEN :resultQFFactor WHEN 'RR' THEN :resultRRFactor WHEN 'BR' THEN :resultBRFactor ELSE NULL END), 0)\n" +
-		" FROM player_tournament_event_result r INNER JOIN tournament_event re USING (tournament_event_id) WHERE r.player_id = g.player_id%1$s)";
-
-	private static final String TOURNAMENT_SURFACE_CRITERIA = //language=SQL
-		" AND re.level <> 'D' AND re.surface = :surface::surface";
 
 	private static final String FILTER_OLD_LEGENDS_CRITERIA = //language=SQL
 		" AND p.dob >= DATE '1940-01-01'";
@@ -96,7 +112,9 @@ public class GOATListService {
 		"      WHEN g.active THEN round((SELECT sum(least(d.max_goat_points, g.goat_points * d.goat_points_pct / (SELECT sum(d2.goat_points_pct) FROM goat_points_age_distribution d2 WHERE d2.age <= extract(YEAR FROM age(g.dob))))) FROM goat_points_age_distribution d WHERE d.age > extract(YEAR FROM age(g.dob))))\n" +
 		"      WHEN g.dob < DATE '1952-01-01' THEN round((SELECT sum(least(d.max_goat_points, g.goat_points * d.goat_points_pct / (SELECT sum(d2.goat_points_pct) FROM goat_points_age_distribution d2 WHERE d2.age >= extract(YEAR FROM age(DATE '1968-01-01', g.dob))))) FROM goat_points_age_distribution d WHERE d.age < extract(YEAR FROM age(DATE '1968-01-01', g.dob))))\n" +
 		"      ELSE NULL\n" +
-		"    END, 0.0)) AS goat_points, g.tournament_goat_points, g.ranking_goat_points, g.achievements_goat_points,\n%1$s" +
+		"    END, 0.0)) AS goat_points, g.tournament_goat_points, g.ranking_goat_points, g.achievements_goat_points,\n" +
+		"    g.tournament_g_goat_points, g.tournament_fl_goat_points, g.tournament_m_goat_points, g.tournament_o_goat_points, g.tournament_ab_goat_points, g.tournament_dt_goat_points,\n" +
+		"    %1$s" +
 		"  FROM goat_list g\n" +
 		")";
 
@@ -131,7 +149,10 @@ public class GOATListService {
 	public int getPlayerCount(String surface, PlayerListFilter filter, GOATListConfig config) {
 		Surface aSurface = Surface.safeDecode(surface);
 		return Math.min(MAX_PLAYER_COUNT, jdbcTemplate.queryForObject(
-			format(GOAT_COUNT_QUERY, getTableName(aSurface), getGOATPointsExpression(aSurface, config), getSurfaceCriteria(aSurface), filter.getCriteria(), getOldLegendsCriteria(config.isOldLegends())),
+			format(GOAT_COUNT_QUERY,
+				config.hasDefaultTournamentFactors() ? "" : "WITH " + getTournamentGOATPointsTable(aSurface), getTableName(aSurface), config.hasDefaultTournamentFactors() ? "" : TOURNAMENT_GOAT_POINTS_JOIN,
+				getGOATPointsExpression(aSurface, config), getSurfaceCriteria(aSurface), filter.getCriteria(), getOldLegendsCriteria(config.isOldLegends())
+			),
 			getParams(aSurface, filter, config),
 			Integer.class
 		));
@@ -145,8 +166,8 @@ public class GOATListService {
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
 			format(GOAT_LIST_QUERY,
-				getGOATPointsExpression(aSurface, config), getTournamentGOATPointsExpression(aSurface, config), getRankingGOATPointsExpression(aSurface, config), getAchievementsGOATPointsExpression(aSurface, config), getGOATPointsAreas(aSurface, config),
-				getTableName(aSurface), getSurfaceCriteria(aSurface), getOldLegendsCriteria(config.isOldLegends()), getExtrapolateIntermediateTable(aSurface, config), config.isExtrapolateCareer() ? "extrapolated_" : "",
+				config.hasDefaultTournamentFactors() ? "" : getTournamentGOATPointsTable(aSurface) + ",", getGOATPointsExpression(aSurface, config), getTournamentGOATPointsExpression(config), getRankingGOATPointsExpression(aSurface, config), getAchievementsGOATPointsExpression(aSurface, config), getGOATPointsAreas(aSurface, config),
+				getTableName(aSurface), config.hasDefaultTournamentFactors() ? "" : TOURNAMENT_GOAT_POINTS_JOIN, getSurfaceCriteria(aSurface), getOldLegendsCriteria(config.isOldLegends()), getExtrapolateIntermediateTable(aSurface, config), config.isExtrapolateCareer() ? "extrapolated_" : "",
 				overall ? "" : aSurface.getLowerCaseText() + '_', overall ? "p.weeks_at_no1" : "we.weeks", overall ? "p.best_elo_rating" : "be.best_" + aSurface.getLowerCaseText() + "_elo_rating", overall ? "" : SURFACE_JOINS,
 				where(filter.withPrefix("p.").getCriteria()), orderBy
 			),
@@ -211,6 +232,10 @@ public class GOATListService {
 		return table;
 	}
 
+	private String getTournamentGOATPointsTable(Surface aSurface) {
+		return format(TOURNAMENT_GOAT_POINTS, aSurface == null ? "" : where(TOURNAMENT_SURFACE_CRITERIA));
+	}
+
 	private static MapSqlParameterSource getParams(Surface surface, PlayerListFilter filter, GOATListConfig config) {
 		MapSqlParameterSource params = filter.getParams();
 		if (surface != null)
@@ -251,7 +276,7 @@ public class GOATListService {
 	}
 
 	private static String getGOATPointsAreas(Surface surface, GOATListConfig config) {
-		return "    " + LEVEL_AREAS.stream().map(l -> getTournamentGOATPointsAreaExpression(surface, config, l)).collect(joining(", ")) + ",\n"
+		return "    " + LEVEL_AREAS.stream().map(l -> getTournamentGOATPointsAreaExpression(config, l)).collect(joining(", ")) + ",\n"
 			+ (surface == null ? GOAT_POINTS_AREAS : SURFACE_GOAT_POINTS_AREAS);
 	}
 
@@ -260,33 +285,33 @@ public class GOATListService {
 	}
 
 	private static String getExtrapolateIntermediateTable(Surface surface, GOATListConfig config) {
-		return config.isExtrapolateCareer() ? format(EXTRAPOLATED_GOAT_POINTS, getGOATPointsAreas(surface, config)) : "";
+		return config.isExtrapolateCareer() ? format(EXTRAPOLATED_GOAT_POINTS, (surface == null ? GOAT_POINTS_AREAS : SURFACE_GOAT_POINTS_AREAS)) : "";
 	}
 
 	private static String getGOATPointsExpression(Surface surface, GOATListConfig config) {
 		if (config.hasDefaultFactors())
 			return "g.goat_points";
 		else
-			return format("%1$s + %2$s + %3$s", getTournamentGOATPointsExpression(surface, config), getRankingGOATPointsExpression(surface, config), getAchievementsGOATPointsExpression(surface, config));
+			return format("%1$s + %2$s + %3$s", getTournamentGOATPointsExpression(config), getRankingGOATPointsExpression(surface, config), getAchievementsGOATPointsExpression(surface, config));
 	}
 
-	private static String getTournamentGOATPointsExpression(Surface surface, GOATListConfig config) {
+	private static String getTournamentGOATPointsExpression(GOATListConfig config) {
 		if (config.hasDefaultFactors())
 			return "g.tournament_goat_points";
 		else if (config.hasDefaultTournamentFactors())
 			return "g.tournament_goat_points * :tournamentFactor";
 		else
-			return format(TOURNAMENT_GOAT_POINTS, surface == null ? "" : TOURNAMENT_SURFACE_CRITERIA);
+			return "coalesce(tg.tournament_goat_points, 0)";
 	}
 
-	private static String getTournamentGOATPointsAreaExpression(Surface surface, GOATListConfig config, List<String> levels) {
+	private static String getTournamentGOATPointsAreaExpression(GOATListConfig config, List<String> levels) {
 		String columnName = "tournament_" + levelsString(levels) + "_goat_points";
 		if (config.hasDefaultFactors())
 			return "g." + columnName;
 		else if (config.hasDefaultTournamentFactors())
 			return "g." + columnName + " * :tournamentFactor AS " + columnName;
 		else
-			return format(TOURNAMENT_GOAT_POINTS, (surface == null ? "" : TOURNAMENT_SURFACE_CRITERIA) + (" AND level IN (" + levels.stream().map(l -> "'" + l + "'").collect(joining(", ")) + ")")) + " AS " + columnName;
+			return "coalesce(tg." + columnName + ", 0) AS " + columnName;
 	}
 
 	private static String levelsString(List<String> levels) {
