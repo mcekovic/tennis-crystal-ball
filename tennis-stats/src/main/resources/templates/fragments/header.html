@@ -51,8 +51,9 @@
 							<li th:class="${path == '/tournamentLevelTimeline' && param.level[0] == 'O' ? 'active' : _}"><a href="/tournamentLevelTimeline?level=O"><i class="fa fa-history text-success"></i> Olympics Timeline</a></li>
 							<li th:class="${path == '/teamTournamentLevelTimeline' && param.level[0] == 'D' ? 'active' : _}"><a href="/teamTournamentLevelTimeline?level=D"><i class="fa fa-history"></i> Davis Cup Timeline</a></li>
 							<li th:class="${path == '/teamTournamentLevelTimeline' && param.level[0] == 'T' ? 'active' : _}"><a href="/teamTournamentLevelTimeline?level=T"><i class="fa fa-history"></i> World Team Cup Timeline</a></li>
-							<li th:class="${path == '/topRankingsTimeline' ? 'active' : _}"><a href="/topRankingsTimeline"><i class="fa fa-history"></i> Top Rankings Timeline</a></li>
-							<li th:class="${path == '/surfaceTimeline' ? 'active' : _}"><a href="/surfaceTimeline"><i class="fa fa-history"></i> Surface Timeline</a></li>
+							<li th:class="${path == '/topRankingsTimeline' ? 'active' : _}"><a href="/topRankingsTimeline"><i class="fa fa-list-ol"></i> Top Rankings Timeline</a></li>
+							<li th:class="${path == '/surfaceTimeline' ? 'active' : _}"><a href="/surfaceTimeline"><i class="fa fa-paw"></i> Surface Timeline</a></li>
+							<li th:class="${path == '/statsTimeline' ? 'active' : _}"><a href="/statsTimeline"><i class="fa fa-align-left"></i> Statistics Timeline</a></li>
 						</ul>
 					</li>
 					<li th:class="${path == '/headToHead' || path == '/headsToHeads' || path == '/greatestRivalries' ? 'active dropdown' : 'dropdown'}">

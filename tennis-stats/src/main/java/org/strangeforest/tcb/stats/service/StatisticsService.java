@@ -10,6 +10,7 @@ import org.springframework.stereotype.*;
 import org.strangeforest.tcb.stats.model.*;
 
 import static java.lang.String.*;
+import static org.strangeforest.tcb.stats.service.FilterUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 
 @Service
@@ -65,7 +66,7 @@ public class StatisticsService {
 		"sum(o_ace) o_ace, sum(o_df) o_df, sum(o_sv_pt) o_sv_pt, sum(o_1st_in) o_1st_in, sum(o_1st_won) o_1st_won, sum(o_2nd_won) o_2nd_won, sum(o_sv_gms) o_sv_gms, sum(o_bp_sv) o_bp_sv, sum(o_bp_fc) o_bp_fc,\n" +
 		"sum(minutes) minutes, sum(matches_w_stats) matches_w_stats, sum(sets_w_stats) sets_w_stats, sum(games_w_stats) games_w_stats, sum(p_upsets) p_upsets, sum(o_upsets) o_upsets, sum(matches_w_rank) matches_w_rank,\n";
 
-	static final String PLAYER_STATS_SUMMED_COLUMNS = PLAYER_BASIC_STATS_SUMMED_COLUMNS +
+	private static final String PLAYER_STATS_SUMMED_COLUMNS = PLAYER_BASIC_STATS_SUMMED_COLUMNS +
 		"exp(avg(ln(coalesce(opponent_rank, 1500)))) opponent_rank, avg(coalesce(opponent_elo_rating, 1500)::REAL) opponent_elo_rating\n";
 
 	private static final String PLAYER_FILTERED_STATS_QUERY = //language=SQL
@@ -100,6 +101,13 @@ public class StatisticsService {
 		"WHERE player_id = :playerId\n" +
 		"ORDER BY season";
 
+	private static final String SEASONS_STATS_QUERY = //language=SQL
+		"SELECT season, " + PLAYER_BASIC_STATS_SUMMED_COLUMNS + "0 opponent_rank, 0 opponent_elo_rating\n" +
+		"FROM player_match_stats_v%1$s\n" +
+		"GROUP BY ROLLUP(season)\n" +
+		"HAVING sum(p_sv_pt) IS NOT NULL\n" +
+		"ORDER BY season DESC NULLS LAST";
+
 
 	// Seasons
 
@@ -133,7 +141,7 @@ public class StatisticsService {
 		return jdbcTemplate.query(
 			PLAYER_STATS_QUERY,
 			params("playerId", playerId),
-			rs -> rs.next() ? mapPlayerStats(rs, false) : PlayerStats.EMPTY
+			rs -> rs.next() ? mapPlayerStats(rs, false, false) : PlayerStats.EMPTY
 		);
 	}
 
@@ -141,7 +149,7 @@ public class StatisticsService {
 		return jdbcTemplate.query(
 			PLAYER_SEASON_STATS_QUERY,
 			params("playerId", playerId).addValue("season", season),
-			rs -> rs.next() ? mapPlayerStats(rs, false) : PlayerStats.EMPTY
+			rs -> rs.next() ? mapPlayerStats(rs, false, false) : PlayerStats.EMPTY
 		);
 	}
 
@@ -149,7 +157,7 @@ public class StatisticsService {
 		return jdbcTemplate.query(
 			PLAYER_SURFACE_STATS_QUERY,
 			params("playerId", playerId).addValue("surface", surface),
-			rs -> rs.next() ? mapPlayerStats(rs, false) : PlayerStats.EMPTY
+			rs -> rs.next() ? mapPlayerStats(rs, false, false) : PlayerStats.EMPTY
 		);
 	}
 
@@ -157,7 +165,7 @@ public class StatisticsService {
 		return jdbcTemplate.query(
 			PLAYER_SEASON_SURFACE_STATS_QUERY,
 			params("playerId", playerId).addValue("season", season).addValue("surface", surface),
-			rs -> rs.next() ? mapPlayerStats(rs, false) : PlayerStats.EMPTY
+			rs -> rs.next() ? mapPlayerStats(rs, false, false) : PlayerStats.EMPTY
 		);
 	}
 
@@ -174,7 +182,7 @@ public class StatisticsService {
 			return jdbcTemplate.queryForObject(
 				format(PLAYER_FILTERED_STATS_QUERY, join(filter), filter.getCriteria()),
 				filter.getParams().addValue("playerId", playerId),
-				(rs, rowNum) -> mapPlayerStats(rs, true)
+				(rs, rowNum) -> mapPlayerStats(rs, true, false)
 			);
 		}
 	}
@@ -187,7 +195,7 @@ public class StatisticsService {
 				filter.getParams().addValue("playerIds", playerIds),
 				rs -> {
 					int playerId = rs.getInt("player_id");
-					playersStats.put(playerId, mapPlayerStats(rs, true));
+					playersStats.put(playerId, mapPlayerStats(rs, true, false));
 				}
 			);
 		}
@@ -214,21 +222,21 @@ public class StatisticsService {
 			PLAYER_SEASONS_STATS_QUERY, params("playerId", playerId),
 			rs -> {
 				int season = rs.getInt("season");
-				PlayerStats stats = mapPlayerStats(rs, false);
+				PlayerStats stats = mapPlayerStats(rs, false, false);
 				seasonsStats.put(season, stats);
 			}
 		);
 		return seasonsStats;
 	}
 
-	private PlayerStats mapPlayerStats(ResultSet rs, boolean summed) throws SQLException {
-		PlayerStats playerStats = mapPlayerStats(rs, "p_", summed);
-		PlayerStats opponentStats = mapPlayerStats(rs, "o_", summed);
+	static PlayerStats mapPlayerStats(ResultSet rs, boolean summed, boolean total) throws SQLException {
+		PlayerStats playerStats = mapPlayerStats(rs, "p_", summed, total);
+		PlayerStats opponentStats = mapPlayerStats(rs, "o_", summed, total);
 		playerStats.crossLinkOpponentStats(opponentStats);
 		return playerStats;
 	}
 
-	private PlayerStats mapPlayerMatchStats(ResultSet rs, String prefix) throws SQLException {
+	private static PlayerStats mapPlayerMatchStats(ResultSet rs, String prefix) throws SQLException {
 		return new PlayerStats(
 			rs.getInt(prefix + "matches"),
 			rs.getInt(prefix + "sets"),
@@ -249,7 +257,7 @@ public class StatisticsService {
 		);
 	}
 
-	private PlayerStats mapPlayerStats(ResultSet rs, String prefix, boolean summed) throws SQLException {
+	private static PlayerStats mapPlayerStats(ResultSet rs, String prefix, boolean summed, boolean total) throws SQLException {
 		return new PlayerStats(
 			rs.getInt(prefix + "matches"),
 			rs.getInt(prefix + "sets"),
@@ -272,7 +280,23 @@ public class StatisticsService {
 			rs.getDouble("opponent_elo_rating"),
 			rs.getInt(prefix + "upsets"),
 			rs.getInt("matches_w_rank"),
-			summed
+			summed, total
 		);
+	}
+
+
+	@Cacheable("StatisticsTimeline")
+	public Map<Integer, PlayerStats> getStatisticsTimeline(PerfStatsFilter filter) {
+		Map<Integer, PlayerStats> seasonsStats = new LinkedHashMap<>();
+		jdbcTemplate.query(
+			format(SEASONS_STATS_QUERY, where(filter.getCriteria())),
+			filter.getParams(),
+			rs -> {
+				int season = rs.getInt("season");
+				PlayerStats stats = StatisticsService.mapPlayerStats(rs, true, true);
+				seasonsStats.put(season, stats);
+			}
+		);
+		return seasonsStats;
 	}
 }

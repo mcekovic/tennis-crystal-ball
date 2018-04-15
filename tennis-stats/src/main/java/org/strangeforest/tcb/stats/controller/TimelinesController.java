@@ -24,6 +24,8 @@ public class TimelinesController extends PageController {
 	@Autowired private TournamentLevelService tournamentLevelService;
 	@Autowired private RankingsService rankingsService;
 	@Autowired private SurfaceService surfaceService;
+	@Autowired private StatisticsService statisticsService;
+	@Autowired private TournamentService tournamentService;
 
 	@GetMapping("dominanceTimeline")
 	public ModelAndView dominanceTimeline(
@@ -116,5 +118,37 @@ public class TimelinesController extends PageController {
 		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("timeline", timeline);
 		return new ModelAndView("surfaceTimeline", modelMap);
+	}
+
+	@GetMapping("/statsTimeline")
+	public ModelAndView statsTimeline(
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId,
+		@RequestParam(name = "rawData", defaultValue = F) boolean rawData
+	) {
+		PerfStatsFilter filter = new PerfStatsFilter(null, null, level, bestOf, surface, indoor, round, null, tournamentId, null);
+		Map<Integer, PlayerStats> seasonsStats = statisticsService.getStatisticsTimeline(filter);
+
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("levels", TournamentLevel.ALL_TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("tournaments", tournamentService.getTournaments());
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("bestOf", bestOf);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("indoor", indoor);
+		modelMap.addAttribute("round", round);
+		modelMap.addAttribute("tournamentId", tournamentId);
+		modelMap.addAttribute("rawData", rawData);
+		modelMap.addAttribute("categoryGroups", StatsCategory.getSeasonCategoryGroups());
+		modelMap.addAttribute("stats", seasonsStats);
+		return new ModelAndView("statsTimeline", modelMap);
 	}
 }

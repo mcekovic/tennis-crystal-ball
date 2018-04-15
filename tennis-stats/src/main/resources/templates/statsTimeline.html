@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.core.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
+<!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="round" type="java.lang.String>"*/-->
+<!--/*@thymesVar id="tournamentId" type="java.lang.Integer>"*/-->
+<!--/*@thymesVar id="rawData" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="categoryGroups" type="java.util.List<org.strangeforest.tcb.stats.model.core.StatsCategory.CategoryGroup>"*/-->
+<!--/*@thymesVar id="stats" type="java.util.Map<java.lang.Integer, org.strangeforest.tcb.stats.model.PlayerStats>"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, false, ~{::template})">
+	<title>Statistics Timeline</title>
+	<template>
+	<meta name="description" content="How tennis game evolved through time"/>
+	<script type="text/javascript">
+		var rawData = [(${rawData})];
+		$(function() {
+			$(rawData ? ".pct-data" : ".raw-data").hide();
+			showStatsGroup("Overview");
+			$("[data-toggle='tooltip']").tooltip();
+		});
+		function reloadStatsTimeline() {
+			var url = "/statsTimeline?rawData=" + rawData;
+			var level = $("#level").val();
+			if (level) url += "&level=" + level;
+			var bestOf = $("#bestOf").val();
+			if (bestOf) url += "&bestOf=" + bestOf;
+			var surface = $("#surface").val();
+			if (surface) url += "&surface=" + surface;
+			var indoor = $("#indoor").val();
+			if (indoor) url += "&indoor=" + indoor;
+			var round = $("#round").val();
+			if (round) url += "&round=" + encodeURIComponent(round);
+			var tournamentId = $("#tournament").val();
+			if (tournamentId) url += "&tournamentId=" + tournamentId;
+			window.location.href = url;
+		}
+		function clearStatsTimelineFilter() {
+			$("#level").val("");
+			$("#bestOf").val("");
+			$("#surface").val("");
+			$("#indoor").val("");
+			$("#round").val("");
+			$("#tournament").val("");
+			reloadStatsTimeline();
+		}
+		function showStatsGroup(groupId) {
+			var $statsTimelineTable = $("#statsTimelineTable");
+			$statsTimelineTable.find(".stats-group:not(.stats-group-" + groupId + ")").hide("fast");
+			$statsTimelineTable.find(".stats-group-" + groupId).show("fast");
+		}
+	</script>
+	<style type="text/css">
+		#statsTimelineTable > thead > tr > th {
+			border-bottom: 3px solid lightgray;
+		}
+		#statsTimelineTable > tbody > tr > th {
+			border-right: 3px solid lightgray;
+			vertical-align: middle;
+		}
+		#statsTimelineTable > tbody > tr > td {
+			text-align: center;
+			vertical-align: middle;
+			padding: 5px 2px;
+		}
+		tr.first-row {
+			border-top: 3px solid lightgray;
+		}
+		th.season {
+			text-align: center;
+			padding: 5px 2px !important;
+		}
+	</style>
+	</template>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<h3><i class="fa fa-align-left"></i> Statistics Timeline</h3>
+	<th:block th:include="fragments/deviceDetector :: largeDeviceRequired('lg')"/>
+	<div class="row">
+		<div class="col-md-2">
+			<select id="level" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+				<option value="">All levels</option>
+				<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
+				<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFLMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="surface" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+				<option value="">All surfaces</option>
+				<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
+				<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes.length() > 1 && surfaceGroup.codes == surface}">Fast (H, G, Cp)</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="round" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+				<option value="">All rounds</option>
+				<option th:each="aRound : ${rounds}" th:value="${aRound.code}" th:class="|bg-result-${aRound.baseCode}|" value="F" class="bg-result-F" th:text="${aRound.text}" th:selected="${aRound.code == round}">Final</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select id="tournament" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<button type="button" class="btn btn-default" onclick="clearStatsTimelineFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+				Clear&nbsp;&nbsp;<i class="fa fa-eraser"></i>
+			</button>
+		</div>
+		<div class="col-md-1">
+			<div class="pull-right" data-toggle="tooltip" data-placement="auto" title="Advanced filters">
+				<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#statsTimelineAdvancedFilter">
+					<i class="fa fa-folder-open"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div id="statsTimelineAdvancedFilter" class="collapse" th:attrappend="class=${bestOf != null || indoor != null ? ' in' : _}">
+		<div class="row margin-top">
+			<div class="col-md-2">
+				<select id="bestOf" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+					<option value="">Best of any</option>
+					<option value="3" th:selected="${bestOf == 3}">Best of 3</option>
+					<option value="5" th:selected="${bestOf == 5}">Best of 5</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select id="indoor" class="form-control" onchange="reloadStatsTimeline()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+					<option value="">Outdoor / Indoor</option>
+					<option value="false" th:selected="${indoor == false}">Outdoor</option>
+					<option value="true" th:selected="${indoor}">Indoor</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<table id="statsTimelineTable" class="table table-condensed table-hover table-bordered margin-top text-nowrap">
+		<thead>
+		<tr>
+			<th style="border-right: 3px solid lightgray">Season</th>
+			<th th:each="season : ${stats.keySet()}" th:if="${season}" class="season">
+				<a th:href="@{/seasons(season=${season})}" th:text="${season}" title="Show season">2018</a>
+			</th>
+			<th class="season">Total</th>
+		</tr>
+		</thead>
+		<th:block th:each="group : ${categoryGroups}">
+			<thead>
+			<tr class="bg-info">
+				<th th:colspan="${stats.size() + 1}" style="padding: 2px 2px">
+					<button class="btn btn-default btn-xs" th:onclick="'showStatsGroup(\'' + ${group.id} + '\')'" th:title="|Show ${group.name} statistics group|">[[${group.name}]]&nbsp;<i class="fa fa-angle-double-right"></i></button>
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			<th:block th:each="subGroup : ${group.subGroups}">
+				<tr th:each="category : ${subGroup.categories}" th:class="${'stats-group stats-group-' + group.id + (categoryStat.first ? ' first-row' : '')}" th:with="indexMod3=${subGroupStat.index % 3}">
+					<th class="stats-header stats-" th:attrappend="class=${indexMod3 == 0 ? 'serve' : (indexMod3 == 1 ? 'return' : 'total')}" th:title="#{${category.descriptionId}}" th:text="${category.title}">Ace %</th>
+					<td th:each="seasonStats : ${stats.values()}" th:text="${!category.needsStats || seasonStats.hasPointStats() ? category.getStatFormatted(seasonStats) : _}" class="stats" th:attrappend="class=${category.hasRawData() ? ' pct-data' : _}">10%</td>
+					<td th:if="${category.hasRawData()}" th:each="seasonStats : ${stats.values()}" th:text="${!category.needsStats || seasonStats.hasPointStats() ? category.getStatUp(seasonStats) + ' / ' + category.getStatDown(seasonStats) : _}" class="raw-data stats">10 / 100</td>
+				</tr>
+			</th:block>
+			</tbody>
+		</th:block>
+		<thead>
+		<tr style="border-top: 3px solid lightgray">
+			<th style="border-right: 3px solid lightgray">Season</th>
+			<th th:each="season : ${stats.keySet()}" th:if="${season}" class="season">
+				<a th:href="@{/seasons(season=${season})}" th:text="${season}" title="Show season">2018</a>
+			</th>
+			<th class="season">Total</th>
+		</tr>
+		</thead>
+	</table>
+	<div class="row">
+		<div class="pct-data col-md-2">
+			<button class="btn btn-default btn-xs" onclick="toggleStatsData(); rawData = true" title="Show raw data"><i class="fa fa-hashtag"></i>&nbsp;&nbsp;Raw Data</button>
+		</div>
+		<div class="raw-data col-md-2">
+			<button class="btn btn-default btn-xs" onclick="toggleStatsData(); rawData = false" title="Show percentage data"><i class="fa fa-percent"></i>&nbsp;&nbsp;Pct. Data</button>
+		</div>
+	</div>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

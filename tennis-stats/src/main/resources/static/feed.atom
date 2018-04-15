@@ -4,7 +4,23 @@
 	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for the die-hard tennis fans</subtitle>
 	<link href="http://www.ultimatetennisstatistics.com/feed.atom" rel="self"/>
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
-	<updated>2017-12-18T12:00:00Z</updated>
+	<updated>2018-04-15T12:00:00Z</updated>
+	<entry>
+		<title>Statistics Timeline</title>
+		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/statsTimeline"/>
+		<id>urn:uuid:55168d66-40d5-11e8-842f-0ed5f89f718b</id>
+		<updated>2018-04-15T12:00:00Z</updated>
+		<summary>Statistics Timeline - How tennis game evolved through time</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Statistics Timeline shows how tennis game evolved through time</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 	<entry>
 		<title>Personalized and by Surface GOAT Lists!</title>
 		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/goatList"/>

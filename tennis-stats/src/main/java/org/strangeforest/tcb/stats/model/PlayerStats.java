@@ -17,7 +17,7 @@ public class PlayerStats {
 	private final int serviceGames;
 	private final int breakPointsSaved;
 	private final int breakPointsFaced;
-	private final int minutes;
+	private int minutes;
 	private int matchesWithStats;
 	private int setsWithStats;
 	private int gamesWithStats;
@@ -26,6 +26,7 @@ public class PlayerStats {
 	private int upsetsScored;
 	private int matchesWithRank;
 	private boolean summed;
+	private boolean total;
 
 	private final double acePct;
 	private final double acesPerServiceGame;
@@ -58,13 +59,13 @@ public class PlayerStats {
 		int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced,
 		int minutes, int setsWithStats, int gamesWithStats
 	) {
-		this(matchesWon, setsWon, gamesWon, tieBreaksWon, aces, doubleFaults, servicePoints, firstServesIn, firstServesWon, secondServesWon, serviceGames, breakPointsSaved, breakPointsFaced, minutes, 1, setsWithStats, gamesWithStats, 0.0, 0.0, 0, 0, false);
+		this(matchesWon, setsWon, gamesWon, tieBreaksWon, aces, doubleFaults, servicePoints, firstServesIn, firstServesWon, secondServesWon, serviceGames, breakPointsSaved, breakPointsFaced, minutes, 1, setsWithStats, gamesWithStats, 0.0, 0.0, 0, 0, false, false);
 	}
 
 	public PlayerStats(
 		int matchesWon, int setsWon, int gamesWon, int tieBreaksWon,
 		int aces, int doubleFaults, int servicePoints, int firstServesIn, int firstServesWon, int secondServesWon, int serviceGames, int breakPointsSaved, int breakPointsFaced,
-		int minutes, int matchesWithStats, int setsWithStats, int gamesWithStats, double opponentRank, double opponentEloRating, int upsetsScored, int matchesWithRank, boolean summed
+		int minutes, int matchesWithStats, int setsWithStats, int gamesWithStats, double opponentRank, double opponentEloRating, int upsetsScored, int matchesWithRank, boolean summed, boolean total
 	) {
 		this.matchesWon = matchesWon;
 		this.setsWon = setsWon;
@@ -88,6 +89,14 @@ public class PlayerStats {
 		this.upsetsScored = upsetsScored;
 		this.matchesWithRank = matchesWithRank;
 		this.summed = summed;
+		this.total = total;
+		if (total) {
+			this.minutes /= 2;
+			this.matchesWithStats /= 2;
+			this.setsWithStats /= 2;
+			this.gamesWithStats /= 2;
+			this.matchesWithRank /= 2;
+		}
 		acePct = pct(aces, servicePoints);
 		acesPerServiceGame = ratio(aces, serviceGames);
 		doubleFaultPct = pct(doubleFaults, servicePoints);
@@ -435,7 +444,10 @@ public class PlayerStats {
 	// Totals
 
 	public int getMatches() {
-		return matchesWon + getMatchesLost();
+		int matches = matchesWon + getMatchesLost();
+		if (total)
+			matches /= 2;
+		return matches;
 	}
 
 	public double getMatchesWonPct() {
@@ -443,7 +455,10 @@ public class PlayerStats {
 	}
 
 	public int getSets() {
-		return setsWon + getSetsLost();
+		int sets = setsWon + getSetsLost();
+		if (total)
+			sets /= 2;
+		return sets;
 	}
 
 	public double getSetsWonPct() {
@@ -451,7 +466,10 @@ public class PlayerStats {
 	}
 
 	public int getTotalGames() {
-		return gamesWon + getTotalGamesLost();
+		int games = gamesWon + getTotalGamesLost();
+		if (total)
+			games /= 2;
+		return games;
 	}
 
 	public double getTotalGamesWonPct() {
@@ -459,7 +477,10 @@ public class PlayerStats {
 	}
 
 	public int getTieBreaks() {
-		return tieBreaksWon + getTieBreaksLost();
+		int tieBreaks = tieBreaksWon + getTieBreaksLost();
+		if (total)
+			tieBreaks /= 2;
+		return tieBreaks;
 	}
 
 	public double getTieBreaksWonPct() {
@@ -475,7 +496,10 @@ public class PlayerStats {
 	}
 
 	public int getTotalPoints() {
-		return servicePoints + getReturnPoints();
+		int points = servicePoints + getReturnPoints();
+		if (total)
+			points /= 2;
+		return points;
 	}
 
 	public int getTotalPointsWon() {
@@ -573,7 +597,10 @@ public class PlayerStats {
 	}
 
 	public int getUpsets() {
-		return upsetsScored + getUpsetsAgainst();
+		int upsets = upsetsScored + getUpsetsAgainst();
+		if (total)
+			upsets /= 2;
+		return upsets;
 	}
 
 	public double getUpsetsPct() {

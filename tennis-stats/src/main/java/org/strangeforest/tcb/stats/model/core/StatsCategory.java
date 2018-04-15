@@ -72,6 +72,7 @@ public final class StatsCategory {
 	private static final Map<String, String> CATEGORY_TYPES = new LinkedHashMap<>();
 	private static final List<CategoryGroup> CATEGORY_GROUPS = new ArrayList<>();
 	private static final List<CategoryGroup> MATCH_CATEGORY_GROUPS = new ArrayList<>();
+	private static final List<CategoryGroup> SEASON_CATEGORY_GROUPS = new ArrayList<>();
 
 	private static final String TOTAL_POINTS = "p_sv_pt + o_sv_pt";
 	private static final String TOTAL_TIE_BREAKS = "p_tbs + o_tbs";
@@ -156,8 +157,8 @@ public final class StatsCategory {
 		addCategory(TOTAL, "totalGamesWon", "p_games", PlayerStats::getTotalGamesWon, GAME, COUNT, false, "Total Games Won");
 		addCategory(TOTAL, "totalGamesWonPct", GAMES_WON_PCT, PlayerStats::getTotalGamesWonPct, PlayerStats::getTotalGamesWon, PlayerStats::getTotalGames, GAME, PERCENTAGE, false, "Games Won %");
 		addCategory(TOTAL, "tieBreaks", TOTAL_TIE_BREAKS, PlayerStats::getTieBreaks, TIE_BREAK, COUNT, false, "Tie Breaks Played");
-		addCategory(TOTAL, "tieBreakWon", "p_tbs", PlayerStats::getTieBreaksWon, TIE_BREAK, COUNT, false, "Tie Breaks Won");
-		addCategory(TOTAL, "tieBreakWonPct", TIE_BREAKS_WON_PCT, PlayerStats::getTieBreaksWonPct, PlayerStats::getTieBreaksWon, PlayerStats::getTieBreaks, TIE_BREAK, PERCENTAGE, false, "Tie Breaks Won %");
+		addCategory(TOTAL, "tieBreaksWon", "p_tbs", PlayerStats::getTieBreaksWon, TIE_BREAK, COUNT, false, "Tie Breaks Won");
+		addCategory(TOTAL, "tieBreaksWonPct", TIE_BREAKS_WON_PCT, PlayerStats::getTieBreaksWonPct, PlayerStats::getTieBreaksWon, PlayerStats::getTieBreaks, TIE_BREAK, PERCENTAGE, false, "Tie Breaks Won %");
 		addCategory(TOTAL, "tieBreaksPerSet", "(" + TOTAL_TIE_BREAKS + ")::REAL / nullif(" + TOTAL_SETS + ", 0)", PlayerStats::getTieBreaksPerSetPct, PlayerStats::getTieBreaks, PlayerStats::getSets, SET, PERCENTAGE, false, "Tie Breaks per Set %");
 		addCategory(TOTAL, "tieBreaksPerMatch", "(" + TOTAL_TIE_BREAKS + ")::REAL / nullif(" + TOTAL_MATCHES + ", 0)", PlayerStats::getTieBreaksPerMatch, PlayerStats::getTieBreaks, PlayerStats::getMatches, MATCH, RATIO3, false, "Tie Breaks per Match");
 		addCategory(TOTAL, "sets", TOTAL_SETS, PlayerStats::getSets, SET, COUNT, false, "Sets Played");
@@ -221,7 +222,7 @@ public final class StatsCategory {
 		);
 		addGroup("Total", TOTAL, false,
 			new CategorySubGroup("Points & Games", "totalPoints", "totalPointsWon", "totalPointsWonPct", "rtnToSvcPointsRatio", "totalGames", "totalGamesWon", "totalGamesWonPct"),
-			new CategorySubGroup("Tie Breaks", "tieBreaks", "tieBreakWon", "tieBreakWonPct", "tieBreaksPerSet", "tieBreaksPerMatch"),
+			new CategorySubGroup("Tie Breaks", "tieBreaks", "tieBreaksWon", "tieBreaksWonPct", "tieBreaksPerSet", "tieBreaksPerMatch"),
 			new CategorySubGroup("Sets & Matches", "sets", "setsWon", "setsWonPct", "matches", "matchesWon", "matchesWonPct")
 		);
 		addGroup("Performance", PERFORMANCE, false,
@@ -259,6 +260,41 @@ public final class StatsCategory {
 		addMatchGroup("Total", TOTAL, false,
 			new CategorySubGroup("Points & Games", "totalPoints", "totalPointsWon", "totalPointsWonPct", "rtnToSvcPointsRatio", "totalGames", "totalGamesWon", "totalGamesWonPct"),
 			new CategorySubGroup("Dominance", "pointsDominanceRatio", "gamesDominanceRatio", "breakPointsRatio"),
+			new CategorySubGroup("Time", "pointTime", "gameTime", "setTime", "matchTime")
+		);
+
+		// Season Groups
+		addSeasonGroup("Overview", "Overview", true,
+			new CategorySubGroup("Serve", "acePct", "doubleFaultPct", "firstServePct", "firstServeWonPct", "secondServeWonPct", "breakPointsSavedPct", "servicePointsWonPct", "serviceGamesWonPct"),
+			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct", "breakPointsPct", "returnPointsWonPct", "returnGamesWonPct"),
+			new CategorySubGroup("Time", "matchTime")
+		);
+		addSeasonGroup("AcesDFs", ACES_AND_DFS, false,
+			new CategorySubGroup("Aces", "aces", "acePct", "acesPerSvcGame", "acesPerSet", "acesPerMatch"),
+			new CategorySubGroup("Double Faults", "doubleFault", "doubleFaultPct", "doubleFaultPerSecondServePct", "dfsPerSvcGame", "dfsPerSet", "dfsPerMatch"),
+			new CategorySubGroup("Other", "acesDfsRatio")
+		);
+		addSeasonGroup("Serve", SERVE, false,
+			new CategorySubGroup("Serve", "firstServePct", "firstServeWonPct", "secondServeWonPct", "breakPointsSavedPct", "bpsPerSvcGame", "bpsFacedPerSet", "bpsFacedPerMatch"),
+			new CategorySubGroup("Points", "servicePointsWonPct", "serviceIPPointsWonPct", "pointsPerSvcGame", "pointsLostPerSvcGame"),
+			new CategorySubGroup("Games", "serviceGamesWonPct", "svcGamesLostPerSet", "svcGamesLostPerMarch")
+		);
+		addSeasonGroup("Return", RETURN, false,
+			new CategorySubGroup("Return", "firstServeReturnWonPct", "secondServeReturnWonPct", "breakPointsPct", "bpsPerRtnGame", "bpsPerSet", "bpsPerMatch"),
+			new CategorySubGroup("Points", "returnPointsWonPct", "returnIPPointsWonPct", "pointsPerRtnGame", "pointsWonPerRtnGame"),
+			new CategorySubGroup("Games", "returnGamesWonPct", "rtnGamesWonPerSet", "rtnGamesWonPerMarch")
+		);
+		addSeasonGroup("Total", TOTAL, false,
+			new CategorySubGroup("Points & Games", "totalPoints", "totalGames"),
+			new CategorySubGroup("Tie Breaks", "tieBreaks", "tieBreaksPerSet", "tieBreaksPerMatch"),
+			new CategorySubGroup("Sets & Matches", "sets", "matches")
+		);
+		addSeasonGroup("Performance", PERFORMANCE, false,
+			new CategorySubGroup("Over-Performing", "svcPtsToSvcGamesOverPerfRatio", "rtnPtsToRtnGamesOverPerfRatio"),
+			new CategorySubGroup("Over-Performing Ex", "bpsSavedOverPerfRatio", "bpsConvOverPerfRatio")
+		);
+		addSeasonGroup("OpponentTime", "Upsets & Time", false,
+			new CategorySubGroup("Upsets", "upsets", "upsetsPct"),
 			new CategorySubGroup("Time", "pointTime", "gameTime", "setTime", "matchTime")
 		);
 	}
@@ -480,12 +516,20 @@ public final class StatsCategory {
 		return MATCH_CATEGORY_GROUPS;
 	}
 
+	public static List<CategoryGroup> getSeasonCategoryGroups() {
+		return SEASON_CATEGORY_GROUPS;
+	}
+
 	private static void addGroup(String id, String name, boolean def, CategorySubGroup... subGroups) {
 		CATEGORY_GROUPS.add(new CategoryGroup(id, name, def, subGroups));
 	}
 
 	private static void addMatchGroup(String id, String name, boolean def, CategorySubGroup... subGroups) {
 		MATCH_CATEGORY_GROUPS.add(new CategoryGroup(id, name, def, subGroups));
+	}
+
+	private static void addSeasonGroup(String id, String name, boolean def, CategorySubGroup... subGroups) {
+		SEASON_CATEGORY_GROUPS.add(new CategoryGroup(id, name, def, subGroups));
 	}
 
 	private static class CategoryGroup {
