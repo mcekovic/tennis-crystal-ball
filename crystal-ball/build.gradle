@@ -20,7 +20,7 @@ targetCompatibility = 1.8
 sourceSets.main.resources.srcDirs = ['src/main/resources', 'src/main/db']
 
 dependencies {
-	compile ("org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion")
+	compile ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
 }
 
 flyway {

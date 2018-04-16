@@ -27,7 +27,7 @@ public class TimelinesController extends PageController {
 	@Autowired private StatisticsService statisticsService;
 	@Autowired private TournamentService tournamentService;
 
-	@GetMapping("dominanceTimeline")
+	@GetMapping("/dominanceTimeline")
 	public ModelAndView dominanceTimeline(
 		@RequestParam(name = "fromSeason", required = false) Integer fromSeason,
 		@RequestParam(name = "toSeason", required = false) Integer toSeason,

@@ -2,13 +2,13 @@ package org.strangeforest.tcb.stats.spring;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.autoconfigure.condition.*;
-import org.springframework.boot.autoconfigure.web.*;
+import org.springframework.boot.web.servlet.error.*;
 import org.springframework.context.annotation.*;
 import org.springframework.web.servlet.config.annotation.*;
 import org.strangeforest.tcb.stats.controller.*;
 
 @Configuration @ConditionalOnWebApplication
-public class TennisStatsWebConfig extends WebMvcConfigurerAdapter {
+public class TennisStatsWebConfig implements WebMvcConfigurer {
 
 	@Autowired(required = false) DownForMaintenanceInterceptor downForMaintenanceInterceptor;
 

@@ -4,8 +4,7 @@ import java.math.*;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.actuate.endpoint.mvc.*;
-import org.springframework.http.*;
+import org.springframework.boot.actuate.endpoint.web.annotation.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
@@ -14,16 +13,13 @@ import org.strangeforest.tcb.stats.controller.*;
 
 import static org.strangeforest.tcb.stats.controller.ParamsUtil.*;
 
-@Component @VisitorSupport
-public class VisitorsMvcEndpoint extends AbstractMvcEndpoint {
+@Component @ControllerEndpoint(id = "visitors")
+@VisitorSupport
+public class VisitorsEndpoint {
 
 	@Autowired private VisitorRepository repository;
 
-	public VisitorsMvcEndpoint() {
-		super("/visitors", false);
-	}
-
-	@GetMapping(produces = MediaType.TEXT_HTML_VALUE)
+	@GetMapping("/")
 	public ModelAndView visitors(
 		@RequestParam(name = "stat", defaultValue = "HITS") VisitorStat stat,
 		@RequestParam(name = "interval", defaultValue = "DAY") VisitorInterval interval,
@@ -43,7 +39,7 @@ public class VisitorsMvcEndpoint extends AbstractMvcEndpoint {
 		modelMap.put("intervals", VisitorInterval.values());
 		modelMap.put("countries", countries.toArray());
 		modelMap.put("agentTypes", agentTypes.toArray());
-		return new ModelAndView("manage/visitors", modelMap);
+		return new ModelAndView("actuator/visitors", modelMap);
 	}
 
 	private static <K, V> List<Object[]> mapToDataArray(Map<K, V> map, String keyHeader, String valueHeader) {

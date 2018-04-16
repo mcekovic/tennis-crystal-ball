@@ -42,18 +42,30 @@ processResources {
 }
 
 dependencies {
-	compile ('org.springframework.boot:spring-boot-starter-aop')
-	compile ('org.springframework.boot:spring-boot-starter-jdbc')
-	compile ('org.springframework.boot:spring-boot-starter-cache')
+	compile ('org.springframework.boot:spring-boot-starter-aop') {
+		exclude group: 'org.apache.logging.log4j'
+	}
+	compile ('org.springframework.boot:spring-boot-starter-jdbc') {
+		exclude group: 'org.apache.logging.log4j'
+	}
+	compile ('org.springframework.boot:spring-boot-starter-cache') {
+		exclude group: 'org.apache.logging.log4j'
+	}
 	compile ('org.springframework.boot:spring-boot-starter-web') {
-		exclude group: 'org.hibernate'
+		exclude group: 'org.apache.logging.log4j'
+		exclude group: 'org.hibernate.validator'
+		exclude group: 'com.fasterxml.jackson.datatype', module: 'jackson-datatype-jdk8'
+		exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-parameter-names'
 	}
 	compile ('org.springframework.boot:spring-boot-starter-thymeleaf') {
+		exclude group: 'org.apache.logging.log4j'
 		exclude group: 'org.codehaus.groovy'
-		exclude group: 'org.hibernate'
+		exclude group: 'org.hibernate.validator'
+		exclude group: 'ognl'
 	}
-	compile ('org.springframework.boot:spring-boot-starter-logging')
-	compile ('org.springframework.boot:spring-boot-starter-actuator')
+	compile ('org.springframework.boot:spring-boot-starter-actuator') {
+		exclude group: 'org.apache.logging.log4j'
+	}
 	compile ("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 	compile ("com.neovisionaries:nv-i18n:$nvi18nVersion")
 	compile ("org.thymeleaf.extras:thymeleaf-extras-java8time:$thymeleafJava8TimeVersion") {
@@ -63,7 +75,6 @@ dependencies {
 	compile ("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion")
 	compile ("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-	compile ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 	runtime ("org.webjars:bootstrap:$bootstrapVersion")
 	runtime ("org.webjars:jquery:$jQueryVersion")
 	runtime ("org.webjars:jquery-ui:$jQueryUIVersion")
@@ -77,8 +88,11 @@ dependencies {
 	}
 	runtime files ('lib/GeoLite2-Country.zip')
 	compile ("eu.bitwalker:UserAgentUtils:$userAgentUtilsVersion")
-
-	testCompile ('org.springframework.boot:spring-boot-starter-test')
+	runtime ("io.micrometer:micrometer-registry-prometheus:$micrometerPrometeusVersion")
+	
+	testCompile ('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.apache.logging.log4j'
+	}
 	testCompile ("org.mockito:mockito-core:$mockitoVersion")
 	testCompile ("org.testng:testng:$testngVersion")
 
@@ -93,7 +107,19 @@ task integrationTest(type: Test) {
 	classpath = sourceSets."integration-test".runtimeClasspath
 }
 
-bootRepackage {
+jar {
+	enabled = true
+}
+
+bootJar {
+	enabled = false
+}
+
+bootDistZip {
+	enabled = false
+}
+
+bootDistTar {
 	enabled = false
 }
 
@@ -139,7 +165,7 @@ task fullDeployToDigitalOcean {
 
 task productionHealthCheck {
 	doLast {
-		def health = new groovy.json.JsonSlurper().parse(new URL('http://www.ultimatetennisstatistics.com/manage/health'))
+		def health = new groovy.json.JsonSlurper().parse(new URL('http://www.ultimatetennisstatistics.com/actuator/health'))
 		println "Ultimate Tennis Statistics is ${health.status}"
 		println "Disk usage: ${health.quota.blocks.pctUsed}"
 	}
@@ -147,7 +173,7 @@ task productionHealthCheck {
 
 task productionInfo {
 	doLast {
-		def info = new groovy.json.JsonSlurper().parse(new URL('http://www.ultimatetennisstatistics.com/manage/info'))
+		def info = new groovy.json.JsonSlurper().parse(new URL('http://www.ultimatetennisstatistics.com/actuator/info'))
 		println "Ultimate Tennis Statistics: ${info.app.version}"
 		println "DB size: ${info.db.size}"
 		println "Visitors: ${info.visitors}"

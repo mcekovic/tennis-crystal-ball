@@ -4,11 +4,10 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.actuate.metrics.*;
-import org.springframework.stereotype.*;
-
 import eu.bitwalker.useragentutils.*;
+import io.micrometer.core.instrument.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
 
 import static com.google.common.base.Strings.*;
 
@@ -16,9 +15,9 @@ import static com.google.common.base.Strings.*;
 public class GeoIPFilter implements Filter {
 
 	@Autowired private VisitorManager visitorManager;
-	@Autowired private CounterService counterService;
+	@Autowired private MeterRegistry meterRegistry;
 
-	private static final String COUNTER_COUNTRY = "counter.country.";
+	private static final String COUNTER_COUNTRY = "visitors.country.";
 
 	@Override public void init(FilterConfig filterConfig) {}
 	@Override public void destroy() {}
@@ -35,7 +34,7 @@ public class GeoIPFilter implements Filter {
 		Visitor visitor = visitorManager.visit(remoteAddr, agentType);
 		String country = visitor.getCountry();
 		if (!isNullOrEmpty(country))
-			counterService.increment(COUNTER_COUNTRY + country);
+			meterRegistry.counter(COUNTER_COUNTRY + country).increment();
 		chain.doFilter(request, response);
 	}
 

@@ -5,51 +5,67 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import org.slf4j.*;
-import org.springframework.boot.actuate.endpoint.*;
-import org.springframework.boot.actuate.metrics.*;
 import org.springframework.stereotype.*;
+
+import io.micrometer.core.instrument.*;
 
 import static java.util.Arrays.*;
 
 @Component
-public class OSMemoryMetrics implements PublicMetrics {
+public class OSMemoryMetrics {
+
+	private static final List<OSMemoryGauge> OS_MEMORY_GAUGES = asList(
+		new OSMemoryGauge("os.memory.physical.total", "getTotalPhysicalMemorySize"),
+		new OSMemoryGauge("os.memory.physical.free", "getFreePhysicalMemorySize"),
+		new OSMemoryGauge("os.memory.virtual.committed", "getCommittedVirtualMemorySize"),
+		new OSMemoryGauge("os.memory.swap.total", "getTotalSwapSpaceSize"),
+		new OSMemoryGauge("os.memory.swap.free", "getFreeSwapSpaceSize")
+	);
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OSMemoryMetrics.class);
 
-	@Override public Collection<Metric<?>> metrics() {
-		OperatingSystemMXBean os = ManagementFactory.getOperatingSystemMXBean();
-		return asList(
-			new Metric("os.memory.physical.total", toKB(invoke(os, "getTotalPhysicalMemorySize"))),
-			new Metric("os.memory.physical.free", toKB(invoke(os, "getFreePhysicalMemorySize"))),
-			new Metric("os.memory.virtual.committed", toKB(invoke(os, "getCommittedVirtualMemorySize"))),
-			new Metric("os.memory.swap.total", toKB(invoke(os, "getTotalSwapSpaceSize"))),
-			new Metric("os.memory.swap.free", toKB(invoke(os, "getFreeSwapSpaceSize")))
-		);
+	public OSMemoryMetrics(MeterRegistry meterRegistry) {
+		for (OSMemoryGauge gauge : OS_MEMORY_GAUGES)
+			meterRegistry.gauge(gauge.name, gauge, OSMemoryGauge::getMemoryValue);
 	}
 
-	private static Object invoke(Object obj, String methodName) {
-		try {
-			Method method = obj.getClass().getDeclaredMethod(methodName);
-			method.setAccessible(true);
-			return method.invoke(obj);
-		}
-		catch (IllegalAccessException | NoSuchMethodException ignored) {
-			LOGGER.error(ignored.getMessage(), ignored);
+	private static class OSMemoryGauge {
 
-		}
-		catch (InvocationTargetException ex) {
-			Throwable target = ex.getTargetException();
-			if (target == null)
-				target = ex;
-			LOGGER.error(target.getMessage(), target);
-		}
-		catch (Exception ex) {
-			LOGGER.error(ex.getMessage(), ex);
-		}
-		return 0;
-	}
+		private final String name;
+		private final String methodName;
 
-	private static long toKB(Object value) {
-		return value instanceof Number ? ((Number)value).longValue() / 1024 : 0L;
+		OSMemoryGauge(String name, String methodName) {
+			this.name = name;
+			this.methodName = methodName;
+		}
+
+		double getMemoryValue() {
+			return toKB(invoke(ManagementFactory.getOperatingSystemMXBean(), methodName));
+		}
+
+		private static Object invoke(Object obj, String methodName) {
+			try {
+				Method method = obj.getClass().getDeclaredMethod(methodName);
+				method.setAccessible(true);
+				return method.invoke(obj);
+			}
+			catch (IllegalAccessException | NoSuchMethodException ignored) {
+				LOGGER.error(ignored.getMessage(), ignored);
+			}
+			catch (InvocationTargetException ex) {
+				Throwable target = ex.getTargetException();
+				if (target == null)
+					target = ex;
+				LOGGER.error(target.getMessage(), target);
+			}
+			catch (Exception ex) {
+				LOGGER.error(ex.getMessage(), ex);
+			}
+			return 0;
+		}
+
+		private static double toKB(Object value) {
+			return value instanceof Number ? ((Number)value).doubleValue() / 1024.0 : 0.0;
+		}
 	}
 }

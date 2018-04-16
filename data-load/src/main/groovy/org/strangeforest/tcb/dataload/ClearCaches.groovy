@@ -5,7 +5,7 @@ import org.jsoup.*
 clearCaches()
 
 static clearCaches() {
-	def doc = Jsoup.connect('http://localhost/manage/clearCache').timeout(10 * 1000).get()
+	def doc = Jsoup.connect('http://localhost/actuator/clearcache').timeout(10 * 1000).get()
 	println doc.select('body').text()
 }
 

@@ -27,7 +27,7 @@
 			agentsTypesPieChart.draw(agentTypesData, {sliceVisibilityThreshold: 0.01});
 		}
 		function chartChanged() {
-			var url = "/manage/visitors?stat=" + $("#chartStat").val() + "&interval=" + $("#chartInterval").val();
+			var url = "/actuator/visitors?stat=" + $("#chartStat").val() + "&interval=" + $("#chartInterval").val();
 			var robots = $("#robots").prop("checked");
 			if (robots)
 				url += "&robots=true";
