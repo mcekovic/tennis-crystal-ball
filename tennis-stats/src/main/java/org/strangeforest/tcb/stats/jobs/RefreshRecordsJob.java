@@ -29,7 +29,7 @@ public class RefreshRecordsJob {
 	}
 
 	private void clearCaches() {
-		int cacheCount = dataService.clearCaches("Records.*") + dataService.clearCaches("PlayerRecords.*");
+		int cacheCount = dataService.clearCaches(".*");
 		LOGGER.info("{} cache(s) cleared.", cacheCount);
 	}
 }
