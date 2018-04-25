@@ -19,7 +19,7 @@ public class TennisStatsWebConfig implements WebMvcConfigurer {
 	}
 
 	@Bean
-	public static ErrorAttributes errorAttributes() {
+	public ErrorAttributes errorAttributes() {
 		return new TennisStatsErrorAttributes();
 	}
 }
