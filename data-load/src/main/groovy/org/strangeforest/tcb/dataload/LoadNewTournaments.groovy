@@ -13,11 +13,15 @@ static loadTournaments(SqlPool sqlPool, Integer season = null) {
 		def eventInfos = findCompletedEvents(season)
 		def seasonExtIds = atpTournamentLoader.findSeasonEventExtIds(season)
 		eventInfos.removeAll { info -> info.extId in seasonExtIds }
-		def newExtIds = eventInfos.collect { info -> info.extId }
-		println "New completed tournaments for season $season: $newExtIds"
-		eventInfos.each { info ->
-			atpTournamentLoader.loadTournament(season, info.urlId, info.extId, info.current)
+		if (eventInfos) {
+			def newExtIds = eventInfos.collect { info -> info.extId }
+			println "New completed tournaments for season $season: $newExtIds"
+			eventInfos.each { info ->
+				atpTournamentLoader.loadTournament(season, info.urlId, info.extId, info.current)
+			}
 		}
+		else
+			println "No new completed tournaments found for season $season"
 	}
 }
 
