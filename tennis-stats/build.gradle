@@ -67,6 +67,7 @@ dependencies {
 		exclude group: 'org.apache.logging.log4j'
 	}
 	compile ("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
+	compile ("com.zaxxer:HikariCP:$hikariCPVersion")
 	compile ("com.neovisionaries:nv-i18n:$nvi18nVersion")
 	compile ("org.thymeleaf.extras:thymeleaf-extras-java8time:$thymeleafJava8TimeVersion") {
 		exclude group: 'org.slf4j'
