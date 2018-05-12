@@ -94,6 +94,13 @@ public class PerformanceService {
 		"GROUP BY round\n" +
 		"ORDER BY round DESC";
 
+	private static final String PLAYER_SCORE_BREAKDOWN_QUERY = //language=SQL
+		"SELECT best_of, p_sets, o_sets, count(match_id) count\n" +
+		"FROM player_match_for_stats_v m%1$s\n" +
+		"WHERE m.player_id = :playerId AND m.outcome IS NULL %2$s\n" +
+		"GROUP BY best_of, p_sets, o_sets\n" +
+		"ORDER BY best_of, p_sets DESC, o_sets";
+
 	private static final String EVENT_RESULT_JOIN = //language=SQL
 		"\nINNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)";
 
@@ -230,6 +237,19 @@ public class PerformanceService {
 			}
 		);
 
+		Map<PerfMatchScore, Integer> scoreCounts = new TreeMap<>();
+		jdbcTemplate.query(
+			format(PLAYER_SCORE_BREAKDOWN_QUERY, join, criteria), params,
+			rs -> {
+				int bestOf = rs.getInt("best_of");
+				int pSets = rs.getInt("p_sets");
+				int oSets = rs.getInt("o_sets");
+				int count = rs.getInt("count");
+				scoreCounts.put(new PerfMatchScore(bestOf, pSets, oSets), count);
+			}
+		);
+		performanceEx.addScoreCounts(scoreCounts);
+
 		if (filter.isTournamentGranularity()) {
 			Map<EventResult, Integer> resultCounts = new TreeMap<>();
 			jdbcTemplate.query(
@@ -240,7 +260,7 @@ public class PerformanceService {
 					resultCounts.put(result, count);
 				}
 			);
-			performanceEx.addResultMatches(resultCounts);
+			performanceEx.addResultCounts(resultCounts);
 		}
 		
 		return performanceEx;

@@ -418,12 +418,12 @@ WHERE e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B', 'D', 'T');
 CREATE OR REPLACE VIEW player_match_for_stats_v AS
 SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, indoor, round, best_of, winner_id player_id, winner_rank player_rank, winner_elo_rating player_elo_rating, winner_age player_age, winner_height player_height,
 	loser_id opponent_id, loser_rank opponent_rank, loser_elo_rating opponent_elo_rating, loser_seed opponent_seed, loser_entry opponent_entry, loser_country_id opponent_country_id, loser_age opponent_age, loser_height opponent_height,
-	1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games, w_tbs p_tbs, l_tbs o_tbs
+	1 p_matches, 0 o_matches, w_sets p_sets, l_sets o_sets, w_games p_games, l_games o_games, w_tbs p_tbs, l_tbs o_tbs, outcome
 FROM match_for_stats_v
 UNION ALL
 SELECT match_id, tournament_event_id, tournament_id, season, date, match_num, level, surface, indoor, round, best_of, loser_id, loser_rank, loser_elo_rating, loser_age, loser_height,
 	winner_id, winner_rank, winner_elo_rating, winner_seed, winner_entry, winner_country_id, winner_age, winner_height,
-	0, 1, l_sets, w_sets, l_games, w_games, l_tbs, w_tbs
+	0, 1, l_sets, w_sets, l_games, w_games, l_tbs, w_tbs, outcome
 FROM match_for_stats_v;
 
 

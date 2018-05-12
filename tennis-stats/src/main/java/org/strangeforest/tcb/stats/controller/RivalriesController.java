@@ -261,6 +261,7 @@ public class RivalriesController extends PageController {
 		Set<Integer> perfBestOfs = union(perf1.getBestOfMatches().keySet(), perf2.getBestOfMatches().keySet());
 		Set<Opponent> perfOppositions = union(perf1.getOppositionMatches().keySet(), perf2.getOppositionMatches().keySet());
 		Set<Round> perfRounds = union(perf1.getRoundMatches().keySet(), perf2.getRoundMatches().keySet());
+		Set<PerfMatchScore> perfScores = union(perf1.getScoreCounts().keySet(), perf2.getScoreCounts().keySet());
 		Set<EventResult> perfResults = union(perf1.getResultCounts().keySet(), perf2.getResultCounts().keySet());
 
 		ModelMap modelMap = new ModelMap();
@@ -299,6 +300,7 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("perfBestOfs", perfBestOfs);
 		modelMap.addAttribute("perfOppositions", perfOppositions);
 		modelMap.addAttribute("perfRounds", perfRounds);
+		modelMap.addAttribute("perfScores", perfScores);
 		modelMap.addAttribute("perfResults", perfResults);
 		return new ModelAndView("h2hPerformance", modelMap);
 	}

@@ -82,6 +82,14 @@ END $$;
 COMMIT;
 
 
+-- Correct best-of
+
+UPDATE match SET best_of = 5
+WHERE best_of = 3 AND (w_sets > 2 OR l_sets > 2 OR w_sets + l_sets > 3);
+
+COMMIT;
+
+
 -- Update match missing rankings
 
 UPDATE match m

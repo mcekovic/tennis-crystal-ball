@@ -347,8 +347,6 @@
 						</th>
 					</tr>
 				</table>
-			</div>
-			<div class="col-lg-4 col-sm-6">
 				<table class="table table-condensed table-striped">
 					<tr>
 						<th colspan="2">Best of Breakdown</th>
@@ -368,8 +366,6 @@
 					</tr>
 				</table>
 			</div>
-		</div>
-		<div class="row">
 			<div class="col-lg-4 col-sm-6">
 				<table class="table table-condensed table-striped">
 					<tr>
@@ -410,6 +406,28 @@
 					</tr>
 				</table>
 			</div>
+		</div>
+		<div class="row">
+			<div th:unless="${perf.scoreCounts.empty}" class="col-lg-4 col-sm-6">
+				<table class="table table-condensed table-striped">
+					<tr>
+						<th colspan="2">Score Breakdown</th>
+					</tr>
+					<tr th:each="scoreWL : ${perf.scoreCounts}" th:with="score=${scoreWL.key}, wl=${scoreWL.value}">
+						<td width="40%" th:text="${score}">2-0</td>
+						<th>
+							<div class="progress progress-perf">
+								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
+									<a th:href="@{/playerProfile(playerId=${playerId}, tab=matches, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, result=${result}, tournamentId=${tournamentId}, opponent=${opponent}, countryId=${countryId}, score=${score.score}, outcome=finished)}" th:title="|Show ${score} matches|">
+										<span class="pct-data" th:text="${wl.pctWT()}">50%</span>
+										<span class="raw-data" th:text="${wl.WT}">10 / 20</span>
+									</a>
+								</div>
+							</div>
+						</th>
+					</tr>
+				</table>
+			</div>
 			<div th:unless="${perf.resultCounts.empty}" class="col-lg-4 col-sm-6">
 				<table class="table table-condensed table-striped">
 					<tr>
@@ -421,7 +439,7 @@
 							<div class="progress progress-perf">
 								<div class="progress-bar progress-bar-perf-def" role="progressbar" th:style="'width: ' + ${wl.wonPctStr}" th:attr="aria-valuenow=${wl.wonPct}" aria-valuemin="0" aria-valuemax="100">
 									<a th:href="@{/playerProfile(playerId=${playerId}, tab=events, season=${season}, fromDate=${#temporals.format(fromDate, 'dd-MM-yyyy')}, toDate=${#temporals.format(toDate, 'dd-MM-yyyy')}, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, tournamentId=${tournamentId}, result=${result.code})}" th:title="|Show ${result.text} tournaments|">
-										<span class="pct-data" th:text="${wl.wonPctStr}">50%</span>
+										<span class="pct-data" th:text="${wl.pctWT()}">50%</span>
 										<span class="raw-data" th:text="${wl.WT}">10 / 20</span>
 									</a>
 								</div>

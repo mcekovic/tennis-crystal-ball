@@ -1,9 +1,12 @@
 package org.strangeforest.tcb.stats.model;
 
 import java.util.*;
+import java.util.Map.*;
 
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.service.*;
+
+import static java.util.stream.Collectors.*;
 
 public class PlayerPerformanceEx extends PlayerPerformance {
 
@@ -13,6 +16,7 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 	private final Map<Integer, WonLost> bestOfMatches;
 	private final Map<Opponent, WonLost> oppositionMatches;
 	private final Map<Round, WonLost> roundMatches;
+	private final Map<PerfMatchScore, WonLost> scoreCounts;
 	private final Map<EventResult, WonLost> resultCounts;
 
 	public PlayerPerformanceEx(PlayerPerformance perf) {
@@ -23,6 +27,7 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 		bestOfMatches = new LinkedHashMap<>();
 		oppositionMatches = new LinkedHashMap<>();
 		roundMatches = new LinkedHashMap<>();
+		scoreCounts = new LinkedHashMap<>();
 		resultCounts = new LinkedHashMap<>();
 		addLevelMatches(TournamentLevel.GRAND_SLAM, perf.getGrandSlamMatches());
 		addLevelMatches(TournamentLevel.TOUR_FINALS, perf.getTourFinalsMatches());
@@ -101,11 +106,24 @@ public class PlayerPerformanceEx extends PlayerPerformance {
 			roundMatches.put(round, wonLost);
 	}
 
+	public Map<PerfMatchScore, WonLost> getScoreCounts() {
+		return scoreCounts;
+	}
+
+	public void addScoreCounts(Map<PerfMatchScore, Integer> scores) {
+		Map<Integer, Integer> bestOfCounts = scores.entrySet().stream().collect(groupingBy(e -> e.getKey().getBestOf(), summingInt(Entry::getValue)));
+		for (Map.Entry<PerfMatchScore, Integer> entry : scores.entrySet()) {
+			int count = entry.getValue();
+			if (count > 0)
+				scoreCounts.put(entry.getKey(), new WonLost(count, bestOfCounts.get(entry.getKey().getBestOf()) - count));
+		}
+	}
+
 	public Map<EventResult, WonLost> getResultCounts() {
 		return resultCounts;
 	}
 
-	public void addResultMatches(Map<EventResult, Integer> results) {
+	public void addResultCounts(Map<EventResult, Integer> results) {
 		int total = results.values().stream().mapToInt(Integer::intValue).sum();
 		for (Map.Entry<EventResult, Integer> entry : results.entrySet()) {
 			int count = entry.getValue();
