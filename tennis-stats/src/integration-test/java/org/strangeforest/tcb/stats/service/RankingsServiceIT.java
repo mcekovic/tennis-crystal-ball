@@ -112,7 +112,8 @@ public class RankingsServiceIT {
 	}
 
 	private void peakEloRatingsTest(RankType rankType) {
-		BootgridTable<PlayerPeakEloRankingsRow> playerRankings = rankingsService.getPeakEloRatingsTable(rankType, PlayerListFilter.ALL, 20, 1, 100);
+		int playerCount = rankingsService.getPeakEloRatingsCount(rankType, PlayerListFilter.ALL);
+		BootgridTable<PlayerPeakEloRankingsRow> playerRankings = rankingsService.getPeakEloRatingsTable(playerCount, rankType, PlayerListFilter.ALL, 20, 1);
 
 		assertThat(playerRankings.getRowCount()).isEqualTo(20);
 		assertThat(playerRankings.getRows()).hasSize(20);

@@ -64,11 +64,14 @@ public class RankingsResource {
 		@RequestParam Map<String, String> requestParams
 	) {
 		PlayerListFilter filter = new PlayerListFilter(active, searchPhrase);
-		int pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
-		if (rankType.category == ELO && peak)
-			return rankingsService.getPeakEloRatingsTable(rankType, filter, pageSize, current, MAX_PLAYERS);
+		if (rankType.category == ELO && peak) {
+			int playerCount = Math.min(MAX_PLAYERS, rankingsService.getPeakEloRatingsCount(rankType, filter));
+			int pageSize = rowCount > 0 ? rowCount : playerCount;
+			return rankingsService.getPeakEloRatingsTable(playerCount, rankType, filter, pageSize, current);
+		}
 		else {
 			date = rankingsService.getRankingsDate(rankType, season, date);
+			int pageSize = rowCount > 0 ? rowCount : MAX_PLAYERS;
 			String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
 			return rankingsService.getRankingsTable(rankType, date, filter, orderBy, pageSize, current);
 		}

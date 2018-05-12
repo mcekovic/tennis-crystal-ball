@@ -301,41 +301,24 @@ WITH best_elo_rating AS (
 		max(set_elo_rating) AS best_set_elo_rating, max(game_elo_rating) AS best_game_elo_rating, max(service_game_elo_rating) AS best_service_game_elo_rating, max(return_game_elo_rating) AS best_return_game_elo_rating, max(tie_break_elo_rating) AS best_tie_break_elo_rating
 	FROM player_elo_ranking
 	GROUP BY player_id
-), best_elo_rating2 AS (
-	SELECT player_id, b.best_elo_rating, b.best_recent_elo_rating, b.best_hard_elo_rating, b.best_clay_elo_rating, b.best_grass_elo_rating, b.best_carpet_elo_rating, b.best_outdoor_elo_rating, b.best_indoor_elo_rating, b.best_set_elo_rating, b.best_game_elo_rating, b.best_service_game_elo_rating, b.best_return_game_elo_rating, b.best_tie_break_elo_rating,
-		min(r.rank_date) FILTER (WHERE r.elo_rating = b.best_elo_rating) AS best_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.recent_elo_rating = b.best_recent_elo_rating) AS best_recent_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.hard_elo_rating = b.best_hard_elo_rating) AS best_hard_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.clay_elo_rating = b.best_clay_elo_rating) AS best_clay_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.grass_elo_rating = b.best_grass_elo_rating) AS best_grass_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.carpet_elo_rating = b.best_carpet_elo_rating) AS best_carpet_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.outdoor_elo_rating = b.best_outdoor_elo_rating) AS best_outdoor_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.indoor_elo_rating = b.best_indoor_elo_rating) AS best_indoor_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.set_elo_rating = b.best_set_elo_rating) AS best_set_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.game_elo_rating = b.best_game_elo_rating) AS best_game_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.service_game_elo_rating = b.best_service_game_elo_rating) AS best_service_game_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.return_game_elo_rating = b.best_return_game_elo_rating) AS best_return_game_elo_rating_date,
-		min(r.rank_date) FILTER (WHERE r.tie_break_elo_rating = b.best_tie_break_elo_rating) AS best_tie_break_elo_rating_date
-	FROM best_elo_rating b
-	INNER JOIN player_elo_ranking r USING (player_id)
-	GROUP BY player_id, b.best_elo_rating, b.best_recent_elo_rating, b.best_hard_elo_rating, b.best_clay_elo_rating, b.best_grass_elo_rating, b.best_carpet_elo_rating, b.best_outdoor_elo_rating, b.best_indoor_elo_rating, b.best_set_elo_rating, b.best_game_elo_rating, b.best_service_game_elo_rating, b.best_return_game_elo_rating, b.best_tie_break_elo_rating
 )
-SELECT player_id, best_elo_rating, best_elo_rating_date, best_recent_elo_rating, best_recent_elo_rating_date, best_hard_elo_rating, best_hard_elo_rating_date, best_clay_elo_rating, best_clay_elo_rating_date, best_grass_elo_rating, best_grass_elo_rating_date, best_carpet_elo_rating, best_carpet_elo_rating_date, best_outdoor_elo_rating, best_outdoor_elo_rating_date, best_indoor_elo_rating, best_indoor_elo_rating_date,
-	best_set_elo_rating, best_set_elo_rating_date, best_game_elo_rating, best_game_elo_rating_date, best_service_game_elo_rating, best_service_game_elo_rating_date, best_return_game_elo_rating, best_return_game_elo_rating_date, best_tie_break_elo_rating, best_tie_break_elo_rating_date,
-	CASE WHEN best_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_elo_rating_event_id,
-	CASE WHEN best_recent_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_recent_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_recent_elo_rating_event_id,
-	CASE WHEN best_hard_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.surface = 'H' AND e.date < best_hard_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_hard_elo_rating_event_id,
-	CASE WHEN best_clay_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.surface = 'C' AND e.date < best_clay_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_clay_elo_rating_event_id,
-	CASE WHEN best_grass_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.surface = 'G' AND e.date < best_grass_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_grass_elo_rating_event_id,
-	CASE WHEN best_carpet_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.surface = 'P' AND e.date < best_carpet_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_carpet_elo_rating_event_id,
-	CASE WHEN best_outdoor_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND NOT e.indoor AND e.date < best_outdoor_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_outdoor_elo_rating_event_id,
-	CASE WHEN best_indoor_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.indoor AND e.date < best_indoor_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_indoor_elo_rating_event_id,
-	CASE WHEN best_set_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_set_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_set_elo_rating_event_id,
-	CASE WHEN best_game_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_game_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_game_elo_rating_event_id,
-	CASE WHEN best_service_game_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_service_game_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_service_game_elo_rating_event_id,
-	CASE WHEN best_return_game_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_return_game_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_return_game_elo_rating_event_id,
-	CASE WHEN best_tie_break_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_tie_break_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_tie_break_elo_rating_event_id
-FROM best_elo_rating2 b;
+SELECT player_id, b.best_elo_rating, b.best_recent_elo_rating, b.best_hard_elo_rating, b.best_clay_elo_rating, b.best_grass_elo_rating, b.best_carpet_elo_rating, b.best_outdoor_elo_rating, b.best_indoor_elo_rating, b.best_set_elo_rating, b.best_game_elo_rating, b.best_service_game_elo_rating, b.best_return_game_elo_rating, b.best_tie_break_elo_rating,
+	min(r.rank_date) FILTER (WHERE r.elo_rating = b.best_elo_rating) AS best_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.recent_elo_rating = b.best_recent_elo_rating) AS best_recent_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.hard_elo_rating = b.best_hard_elo_rating) AS best_hard_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.clay_elo_rating = b.best_clay_elo_rating) AS best_clay_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.grass_elo_rating = b.best_grass_elo_rating) AS best_grass_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.carpet_elo_rating = b.best_carpet_elo_rating) AS best_carpet_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.outdoor_elo_rating = b.best_outdoor_elo_rating) AS best_outdoor_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.indoor_elo_rating = b.best_indoor_elo_rating) AS best_indoor_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.set_elo_rating = b.best_set_elo_rating) AS best_set_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.game_elo_rating = b.best_game_elo_rating) AS best_game_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.service_game_elo_rating = b.best_service_game_elo_rating) AS best_service_game_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.return_game_elo_rating = b.best_return_game_elo_rating) AS best_return_game_elo_rating_date,
+	min(r.rank_date) FILTER (WHERE r.tie_break_elo_rating = b.best_tie_break_elo_rating) AS best_tie_break_elo_rating_date
+FROM best_elo_rating b
+INNER JOIN player_elo_ranking r USING (player_id)
+GROUP BY player_id, b.best_elo_rating, b.best_recent_elo_rating, b.best_hard_elo_rating, b.best_clay_elo_rating, b.best_grass_elo_rating, b.best_carpet_elo_rating, b.best_outdoor_elo_rating, b.best_indoor_elo_rating, b.best_set_elo_rating, b.best_game_elo_rating, b.best_service_game_elo_rating, b.best_return_game_elo_rating, b.best_tie_break_elo_rating;
 
 CREATE MATERIALIZED VIEW player_best_elo_rating AS SELECT * FROM player_best_elo_rating_v;
 
