@@ -7,6 +7,7 @@ public final class RankingData {
 	private Integer rank;
 	private Integer rankPoints;
 	private Integer eloRating;
+	private Integer recentEloRating;
 	private Integer surfaceEloRating;
 	private Integer outInEloRating;
 	private Integer setEloRating;
@@ -34,6 +35,14 @@ public final class RankingData {
 
 	public void setEloRating(Integer eloRating) {
 		this.eloRating = eloRating;
+	}
+
+	public Integer getRecentEloRating() {
+		return recentEloRating;
+	}
+
+	public void setRecentEloRating(Integer recentEloRating) {
+		this.recentEloRating = recentEloRating;
 	}
 
 	public Integer getSurfaceEloRating() {

@@ -241,6 +241,7 @@ CREATE INDEX ON player_year_end_rank (player_id);
 CREATE OR REPLACE VIEW player_current_elo_rank_v AS
 WITH current_rank_date AS (SELECT max(rank_date) AS rank_date FROM player_elo_ranking)
 SELECT player_id, rank AS current_elo_rank, elo_rating AS current_elo_rating,
+	recent_rank AS current_recent_elo_rank, recent_elo_rating AS current_recent_elo_rating,
 	hard_rank AS current_hard_elo_rank, hard_elo_rating AS current_hard_elo_rating,
 	clay_rank AS current_clay_elo_rank, clay_elo_rating AS current_clay_elo_rating,
 	grass_rank AS current_grass_elo_rank, grass_elo_rating AS current_grass_elo_rating,
@@ -264,13 +265,14 @@ CREATE UNIQUE INDEX ON player_current_elo_rank (player_id);
 
 CREATE OR REPLACE VIEW player_best_elo_rank_v AS
 WITH best_elo_rank AS (
-	SELECT player_id, min(rank) AS best_elo_rank, min(hard_rank) AS best_hard_elo_rank, min(clay_rank) AS best_clay_elo_rank, min(grass_rank) AS best_grass_elo_rank, min(carpet_rank) AS best_carpet_elo_rank, min(outdoor_rank) AS best_outdoor_elo_rank, min(indoor_rank) AS best_indoor_elo_rank,
+	SELECT player_id, min(rank) AS best_elo_rank, min(recent_rank) AS best_recent_elo_rank, min(hard_rank) AS best_hard_elo_rank, min(clay_rank) AS best_clay_elo_rank, min(grass_rank) AS best_grass_elo_rank, min(carpet_rank) AS best_carpet_elo_rank, min(outdoor_rank) AS best_outdoor_elo_rank, min(indoor_rank) AS best_indoor_elo_rank,
 		min(set_rank) AS best_set_elo_rank, min(game_rank) AS best_game_elo_rank, min(service_game_rank) AS best_service_game_elo_rank, min(return_game_rank) AS best_return_game_elo_rank, min(tie_break_rank) AS best_tie_break_elo_rank
 	FROM player_elo_ranking
 	GROUP BY player_id
 )
-SELECT player_id, best_elo_rank, best_hard_elo_rank, best_clay_elo_rank, best_grass_elo_rank, best_carpet_elo_rank, best_outdoor_elo_rank, best_indoor_elo_rank, best_set_elo_rank, best_game_elo_rank, best_service_game_elo_rank, best_return_game_elo_rank, best_tie_break_elo_rank,
+SELECT player_id, best_elo_rank, best_recent_elo_rank, best_hard_elo_rank, best_clay_elo_rank, best_grass_elo_rank, best_carpet_elo_rank, best_outdoor_elo_rank, best_indoor_elo_rank, best_set_elo_rank, best_game_elo_rank, best_service_game_elo_rank, best_return_game_elo_rank, best_tie_break_elo_rank,
 	min(rank_date) FILTER (WHERE r.rank = b.best_elo_rank) AS best_elo_rank_date,
+	min(rank_date) FILTER (WHERE r.recent_rank = b.best_recent_elo_rank) AS best_recent_elo_rank_date,
 	min(rank_date) FILTER (WHERE r.hard_rank = b.best_hard_elo_rank) AS best_hard_elo_rank_date,
 	min(rank_date) FILTER (WHERE r.clay_rank = b.best_clay_elo_rank) AS best_clay_elo_rank_date,
 	min(rank_date) FILTER (WHERE r.grass_rank = b.best_grass_elo_rank) AS best_grass_elo_rank_date,
@@ -284,7 +286,7 @@ SELECT player_id, best_elo_rank, best_hard_elo_rank, best_clay_elo_rank, best_gr
 	min(rank_date) FILTER (WHERE r.tie_break_rank = b.best_tie_break_elo_rank) AS best_tie_break_elo_rank_date
 FROM best_elo_rank b
 INNER JOIN player_elo_ranking r USING (player_id)
-GROUP BY player_id, best_elo_rank, best_hard_elo_rank, best_clay_elo_rank, best_grass_elo_rank, best_carpet_elo_rank, best_outdoor_elo_rank, best_indoor_elo_rank, best_set_elo_rank, best_game_elo_rank, best_service_game_elo_rank, best_return_game_elo_rank, best_tie_break_elo_rank;
+GROUP BY player_id, best_elo_rank, best_recent_elo_rank, best_hard_elo_rank, best_clay_elo_rank, best_grass_elo_rank, best_carpet_elo_rank, best_outdoor_elo_rank, best_indoor_elo_rank, best_set_elo_rank, best_game_elo_rank, best_service_game_elo_rank, best_return_game_elo_rank, best_tie_break_elo_rank;
 
 CREATE MATERIALIZED VIEW player_best_elo_rank AS SELECT * FROM player_best_elo_rank_v;
 
@@ -295,13 +297,14 @@ CREATE UNIQUE INDEX ON player_best_elo_rank (player_id);
 
 CREATE OR REPLACE VIEW player_best_elo_rating_v AS
 WITH best_elo_rating AS (
-	SELECT player_id, max(elo_rating) AS best_elo_rating, max(hard_elo_rating) AS best_hard_elo_rating, max(clay_elo_rating) AS best_clay_elo_rating, max(grass_elo_rating) AS best_grass_elo_rating, max(carpet_elo_rating) AS best_carpet_elo_rating, max(outdoor_elo_rating) AS best_outdoor_elo_rating, max(indoor_elo_rating) AS best_indoor_elo_rating,
+	SELECT player_id, max(elo_rating) AS best_elo_rating, max(recent_elo_rating) AS best_recent_elo_rating, max(hard_elo_rating) AS best_hard_elo_rating, max(clay_elo_rating) AS best_clay_elo_rating, max(grass_elo_rating) AS best_grass_elo_rating, max(carpet_elo_rating) AS best_carpet_elo_rating, max(outdoor_elo_rating) AS best_outdoor_elo_rating, max(indoor_elo_rating) AS best_indoor_elo_rating,
 		max(set_elo_rating) AS best_set_elo_rating, max(game_elo_rating) AS best_game_elo_rating, max(service_game_elo_rating) AS best_service_game_elo_rating, max(return_game_elo_rating) AS best_return_game_elo_rating, max(tie_break_elo_rating) AS best_tie_break_elo_rating
 	FROM player_elo_ranking
 	GROUP BY player_id
 ), best_elo_rating2 AS (
-	SELECT player_id, b.best_elo_rating, b.best_hard_elo_rating, b.best_clay_elo_rating, b.best_grass_elo_rating, b.best_carpet_elo_rating, b.best_outdoor_elo_rating, b.best_indoor_elo_rating, b.best_set_elo_rating, b.best_game_elo_rating, b.best_service_game_elo_rating, b.best_return_game_elo_rating, b.best_tie_break_elo_rating,
+	SELECT player_id, b.best_elo_rating, b.best_recent_elo_rating, b.best_hard_elo_rating, b.best_clay_elo_rating, b.best_grass_elo_rating, b.best_carpet_elo_rating, b.best_outdoor_elo_rating, b.best_indoor_elo_rating, b.best_set_elo_rating, b.best_game_elo_rating, b.best_service_game_elo_rating, b.best_return_game_elo_rating, b.best_tie_break_elo_rating,
 		min(r.rank_date) FILTER (WHERE r.elo_rating = b.best_elo_rating) AS best_elo_rating_date,
+		min(r.rank_date) FILTER (WHERE r.recent_elo_rating = b.best_recent_elo_rating) AS best_recent_elo_rating_date,
 		min(r.rank_date) FILTER (WHERE r.hard_elo_rating = b.best_hard_elo_rating) AS best_hard_elo_rating_date,
 		min(r.rank_date) FILTER (WHERE r.clay_elo_rating = b.best_clay_elo_rating) AS best_clay_elo_rating_date,
 		min(r.rank_date) FILTER (WHERE r.grass_elo_rating = b.best_grass_elo_rating) AS best_grass_elo_rating_date,
@@ -315,11 +318,12 @@ WITH best_elo_rating AS (
 		min(r.rank_date) FILTER (WHERE r.tie_break_elo_rating = b.best_tie_break_elo_rating) AS best_tie_break_elo_rating_date
 	FROM best_elo_rating b
 	INNER JOIN player_elo_ranking r USING (player_id)
-	GROUP BY player_id, b.best_elo_rating, b.best_hard_elo_rating, b.best_clay_elo_rating, b.best_grass_elo_rating, b.best_carpet_elo_rating, b.best_outdoor_elo_rating, b.best_indoor_elo_rating, b.best_set_elo_rating, b.best_game_elo_rating, b.best_service_game_elo_rating, b.best_return_game_elo_rating, b.best_tie_break_elo_rating
+	GROUP BY player_id, b.best_elo_rating, b.best_recent_elo_rating, b.best_hard_elo_rating, b.best_clay_elo_rating, b.best_grass_elo_rating, b.best_carpet_elo_rating, b.best_outdoor_elo_rating, b.best_indoor_elo_rating, b.best_set_elo_rating, b.best_game_elo_rating, b.best_service_game_elo_rating, b.best_return_game_elo_rating, b.best_tie_break_elo_rating
 )
-SELECT player_id, best_elo_rating, best_elo_rating_date, best_hard_elo_rating, best_hard_elo_rating_date, best_clay_elo_rating, best_clay_elo_rating_date, best_grass_elo_rating, best_grass_elo_rating_date, best_carpet_elo_rating, best_carpet_elo_rating_date, best_outdoor_elo_rating, best_outdoor_elo_rating_date, best_indoor_elo_rating, best_indoor_elo_rating_date,
+SELECT player_id, best_elo_rating, best_elo_rating_date, best_recent_elo_rating, best_recent_elo_rating_date, best_hard_elo_rating, best_hard_elo_rating_date, best_clay_elo_rating, best_clay_elo_rating_date, best_grass_elo_rating, best_grass_elo_rating_date, best_carpet_elo_rating, best_carpet_elo_rating_date, best_outdoor_elo_rating, best_outdoor_elo_rating_date, best_indoor_elo_rating, best_indoor_elo_rating_date,
 	best_set_elo_rating, best_set_elo_rating_date, best_game_elo_rating, best_game_elo_rating_date, best_service_game_elo_rating, best_service_game_elo_rating_date, best_return_game_elo_rating, best_return_game_elo_rating_date, best_tie_break_elo_rating, best_tie_break_elo_rating_date,
 	CASE WHEN best_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_elo_rating_event_id,
+	CASE WHEN best_recent_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.date < best_recent_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_recent_elo_rating_event_id,
 	CASE WHEN best_hard_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.surface = 'H' AND e.date < best_hard_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_hard_elo_rating_event_id,
 	CASE WHEN best_clay_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.surface = 'C' AND e.date < best_clay_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_clay_elo_rating_event_id,
 	CASE WHEN best_grass_elo_rating_date IS NOT NULL THEN (SELECT tournament_event_id FROM player_tournament_event_result r INNER JOIN tournament_event e USING (tournament_event_id) WHERE r.player_id = b.player_id AND e.surface = 'G' AND e.date < best_grass_elo_rating_date - INTERVAL '2 day' ORDER BY e.date DESC LIMIT 1) ELSE NULL END AS best_grass_elo_rating_event_id,
@@ -343,6 +347,7 @@ CREATE UNIQUE INDEX ON player_best_elo_rating (player_id);
 CREATE OR REPLACE VIEW player_season_best_elo_rating_v AS
 SELECT DISTINCT player_id, extract(YEAR FROM rank_date)::INTEGER AS season,
    max(elo_rating) AS best_elo_rating,
+	max(recent_elo_rating) AS recent_best_elo_rating,
 	max(hard_elo_rating) AS hard_best_elo_rating,
 	max(clay_elo_rating) AS clay_best_elo_rating,
 	max(grass_elo_rating) AS grass_best_elo_rating,
@@ -374,6 +379,7 @@ WITH year_end_elo_rank_date AS (
 	GROUP BY player_id, season
 )
 SELECT player_id, season, rank AS year_end_rank, elo_rating AS year_end_elo_rating,
+	recent_rank AS recent_year_end_rank, recent_elo_rating AS recent_year_end_elo_rating,
 	hard_rank AS hard_year_end_rank, hard_elo_rating AS hard_year_end_elo_rating,
 	clay_rank AS clay_year_end_rank, clay_elo_rating AS clay_year_end_elo_rating,
 	grass_rank AS grass_year_end_rank, grass_elo_rating AS grass_year_end_elo_rating,

@@ -24,7 +24,7 @@ class EloSurfaceFactors {
 	private Map<Integer, Double> indoorFactors = new TreeMap<>()
 
 	EloSurfaceFactors(SqlPool sqlPool) {
-		println 'Loading surface ratios'
+		println 'Loading Elo Ratings surface ratios'
 		sqlPool.withSql  { sql ->
 			sql.eachRow(QUERY_SURFACE_RATIOS) { row ->
 				int season = row.season

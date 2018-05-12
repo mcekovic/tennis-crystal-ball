@@ -243,6 +243,8 @@ public class RankingChartService {
 			case POINTS: return "r.rank_points";
 			case ELO_RANK: return "r.rank";
 			case ELO_RATING: return "r.elo_rating";
+			case RECENT_ELO_RANK: return "r.recent_rank";
+			case RECENT_ELO_RATING: return "r.recent_elo_rating";
 			case HARD_ELO_RANK: return "r.hard_rank";
 			case HARD_ELO_RATING: return "r.hard_elo_rating";
 			case CLAY_ELO_RANK: return "r.clay_rank";
@@ -275,6 +277,8 @@ public class RankingChartService {
 			case ELO_RANK: return "r.year_end_rank";
 			case POINTS: return "r.year_end_rank_points";
 			case ELO_RATING: return "r.best_elo_rating";
+			case RECENT_ELO_RANK: return "r.recent_year_end_rank";
+			case RECENT_ELO_RATING: return "r.recent_best_elo_rating";
 			case HARD_ELO_RANK: return "r.hard_year_end_rank";
 			case HARD_ELO_RATING: return "r.hard_best_elo_rating";
 			case CLAY_ELO_RANK: return "r.clay_year_end_rank";

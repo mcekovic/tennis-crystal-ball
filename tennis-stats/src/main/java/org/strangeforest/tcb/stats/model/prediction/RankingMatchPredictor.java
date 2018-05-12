@@ -38,6 +38,7 @@ public class RankingMatchPredictor implements MatchPredictor {
 		addRankItemProbabilities(prediction, RANK, rankingData1.getRank(), rankingData2.getRank());
 		addRankPointsItemProbabilities(prediction, RANK_POINTS, rankingData1.getRankPoints(), rankingData2.getRankPoints());
 		addEloItemProbabilities(prediction, ELO, rankingData1.getEloRating(), rankingData2.getEloRating());
+		addEloItemProbabilities(prediction, RECENT_ELO, rankingData1.getRecentEloRating(), rankingData2.getRecentEloRating());
 		addEloItemProbabilities(prediction, SURFACE_ELO, rankingData1.getSurfaceEloRating(), rankingData2.getSurfaceEloRating());
 		addEloItemProbabilities(prediction, OUT_IN_ELO, rankingData1.getOutInEloRating(), rankingData2.getOutInEloRating());
 		addEloItemProbabilities(prediction, SET_ELO, rankingData1.getSetEloRating(), rankingData2.getSetEloRating());

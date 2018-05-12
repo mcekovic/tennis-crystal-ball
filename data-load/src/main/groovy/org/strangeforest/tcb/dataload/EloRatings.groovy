@@ -60,7 +60,7 @@ class EloRatings {
 
 	static final String MERGE_ELO_RANKING = //language=SQL
 		"{call merge_elo_ranking(" +
-		"  :rank_date, :player_id, :rank, :elo_rating, " +
+		"  :rank_date, :player_id, :rank, :elo_rating, :recent_rank, :recent_elo_rating, " +
 		"  :hard_rank, :hard_elo_rating, :clay_rank, :clay_elo_rating, :grass_rank, :grass_elo_rating, :carpet_rank, :carpet_elo_rating, :outdoor_rank, :outdoor_elo_rating, :indoor_rank, :indoor_elo_rating, " +
 		"  :set_rank, :set_elo_rating, :game_rank, :game_elo_rating, :service_game_rank, :service_game_elo_rating, :return_game_rank, :return_game_elo_rating, :tie_break_rank, :tie_break_elo_rating" +
 		")}"
@@ -73,7 +73,7 @@ class EloRatings {
 		"WHERE match_id = :match_id"
 
 	
-	static final List<String> RATING_TYPES = ['H', 'C', 'G', 'P', 'O', 'I', 's', 'g', 'sg', 'rg', 'tb']
+	static final List<String> RATING_TYPES = ['r', 'H', 'C', 'G', 'P', 'O', 'I', 's', 'g', 'sg', 'rg', 'tb']
 	static final Date CARPET_END = toDate(LocalDate.of(2008, 1, 1))
 	static final Date STATS_START = toDate(LocalDate.of(1991, 1, 1))
 	static final Date TIE_BREAK_START = toDate(LocalDate.of(1970, 1, 1))
@@ -154,6 +154,7 @@ class EloRatings {
 						saveCurrentRatings()
 					}
 					processMatch(match, false, false)
+					processMatch(match, false, false, 'r')
 					processMatch(match, true, false)
 					processMatch(match, false, true)
 					processMatch(match, false, false, 's')
@@ -295,6 +296,9 @@ class EloRatings {
 			def wDelta = delta
 			def lDelta = deltaRating(loserRating.rating, winnerRating.rating, level, round, bestOf, outcome)
 			switch (type) {
+				case 'r':
+					delta = 2.0d * wDelta
+					break
 				case 's':
 					delta = 0.5d * (wDelta * (match.w_sets ?: 0d) - lDelta * (match.l_sets ?: 0d))
 					break
@@ -372,6 +376,7 @@ class EloRatings {
 	}
 
 	static final Map<String, Double> RATING_TYPE_FACTOR = [
+		'r': 1.2d,
 		's': 0.75d,
 		'g': 0.25d,
 		'sg': 0.3d,
@@ -590,6 +595,8 @@ class EloRatings {
 					def ratings = eloRating.ratings
 					params.rank = ranks[null]
 					params.elo_rating = intRound ratings[null]
+					params.recent_rank = ranks['r']
+					params.recent_elo_rating = intRound ratings['r']
 					params.hard_rank = ranks['H']
 					params.hard_elo_rating = intRound ratings['H']
 					params.clay_rank = ranks['C']

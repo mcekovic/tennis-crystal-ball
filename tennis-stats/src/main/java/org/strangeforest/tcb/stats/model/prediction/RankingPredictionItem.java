@@ -5,6 +5,7 @@ public enum RankingPredictionItem implements PredictionItem {
 	RANK(false),
 	RANK_POINTS(false),
 	ELO(false),
+	RECENT_ELO(false),
 	SURFACE_ELO(false),
 	OUT_IN_ELO(false),
 	SET_ELO(true);

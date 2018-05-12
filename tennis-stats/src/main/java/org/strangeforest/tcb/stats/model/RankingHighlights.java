@@ -24,6 +24,7 @@ public class RankingHighlights {
 	private int goatRank;
 	private int goatPoints;
 	private EloHighlights elo;
+	private EloHighlights recentElo;
 	private EloHighlights hardElo;
 	private EloHighlights clayElo;
 	private EloHighlights grassElo;
@@ -161,6 +162,14 @@ public class RankingHighlights {
 		this.elo = elo;
 	}
 
+	public EloHighlights getRecentElo() {
+		return recentElo;
+	}
+
+	public void setRecentElo(EloHighlights recentElo) {
+		this.recentElo = recentElo;
+	}
+
 	public EloHighlights getHardElo() {
 		return hardElo;
 	}
@@ -250,12 +259,12 @@ public class RankingHighlights {
 	}
 
 	public boolean hasElo() {
-		return !(elo.isEmpty() && hardElo.isEmpty() && clayElo.isEmpty() && grassElo.isEmpty() && carpetElo.isEmpty() && outdoorElo.isEmpty() && indoorElo.isEmpty()
+		return !(elo.isEmpty() && recentElo.isEmpty() && hardElo.isEmpty() && clayElo.isEmpty() && grassElo.isEmpty() && carpetElo.isEmpty() && outdoorElo.isEmpty() && indoorElo.isEmpty()
 			&& setElo.isEmpty() && gameElo.isEmpty() && serviceGameElo.isEmpty() && returnGameElo.isEmpty() && tieBreakElo.isEmpty());
 	}
 
 	public boolean hasCurrentElo() {
-		return elo.currentRank > 0 || hardElo.currentRank > 0 || clayElo.currentRank > 0 || grassElo.currentRank > 0 || carpetElo.currentRank > 0 || outdoorElo.currentRank > 0 || indoorElo.currentRank > 0
+		return elo.currentRank > 0 || recentElo.currentRank > 0 || hardElo.currentRank > 0 || clayElo.currentRank > 0 || grassElo.currentRank > 0 || carpetElo.currentRank > 0 || outdoorElo.currentRank > 0 || indoorElo.currentRank > 0
 			|| setElo.currentRank > 0 || gameElo.currentRank > 0 || serviceGameElo.currentRank > 0 || returnGameElo.currentRank > 0 || tieBreakElo.currentRank > 0;
 	}
 

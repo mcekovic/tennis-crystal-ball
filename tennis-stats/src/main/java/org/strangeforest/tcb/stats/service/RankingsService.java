@@ -89,6 +89,7 @@ public class RankingsService {
 	private static final String PLAYER_RANKING_QUERY =
 		"SELECT p.current_rank, p.current_rank_points, p.best_rank, p.best_rank_date, p.best_rank_points, p.best_rank_points_date, p.goat_rank, p.goat_points,\n" +
 		"  ce.current_elo_rank, ce.current_elo_rating, be.best_elo_rank, be.best_elo_rank_date, bet.best_elo_rating, bet.best_elo_rating_date,\n" +
+		"  ce.current_recent_elo_rank, ce.current_recent_elo_rating, be.best_recent_elo_rank, be.best_recent_elo_rank_date, bet.best_recent_elo_rating, bet.best_recent_elo_rating_date,\n" +
 		"  ce.current_hard_elo_rank, ce.current_hard_elo_rating, be.best_hard_elo_rank, be.best_hard_elo_rank_date, bet.best_hard_elo_rating, bet.best_hard_elo_rating_date,\n" +
 		"  ce.current_clay_elo_rank, ce.current_clay_elo_rating, be.best_clay_elo_rank, be.best_clay_elo_rank_date, bet.best_clay_elo_rating, bet.best_clay_elo_rating_date,\n" +
 		"  ce.current_grass_elo_rank, ce.current_grass_elo_rating, be.best_grass_elo_rank, be.best_grass_elo_rank_date, bet.best_grass_elo_rating, bet.best_grass_elo_rating_date,\n" +
@@ -305,6 +306,7 @@ public class RankingsService {
 		switch (rankType) {
 			case RANK:
 			case ELO_RANK: return "rank";
+			case RECENT_ELO_RANK: return "recent_rank";
 			case HARD_ELO_RANK: return "hard_rank";
 			case CLAY_ELO_RANK: return "clay_rank";
 			case GRASS_ELO_RANK: return "grass_rank";
@@ -324,6 +326,7 @@ public class RankingsService {
 		switch (rankType) {
 			case RANK: return "rank_points";
 			case ELO_RANK: return "elo_rating";
+			case RECENT_ELO_RANK: return "recent_elo_rating";
 			case HARD_ELO_RANK: return "hard_elo_rating";
 			case CLAY_ELO_RANK: return "clay_elo_rating";
 			case GRASS_ELO_RANK: return "grass_elo_rating";
@@ -343,6 +346,7 @@ public class RankingsService {
 		switch (rankType) {
 			case RANK: return "best_rank";
 			case ELO_RANK: return "best_elo_rank";
+			case RECENT_ELO_RANK: return "best_recent_elo_rank";
 			case HARD_ELO_RANK: return "best_hard_elo_rank";
 			case CLAY_ELO_RANK: return "best_clay_elo_rank";
 			case GRASS_ELO_RANK: return "best_grass_elo_rank";
@@ -362,6 +366,7 @@ public class RankingsService {
 		switch (rankType) {
 			case RANK: return "best_rank_date";
 			case ELO_RANK: return "best_elo_rank_date";
+			case RECENT_ELO_RANK: return "best_recent_elo_rank_date";
 			case HARD_ELO_RANK: return "best_hard_elo_rank_date";
 			case CLAY_ELO_RANK: return "best_clay_elo_rank_date";
 			case GRASS_ELO_RANK: return "best_grass_elo_rank_date";
@@ -381,6 +386,7 @@ public class RankingsService {
 		switch (rankType) {
 			case RANK: return "best_rank_points";
 			case ELO_RANK: return "best_elo_rating";
+			case RECENT_ELO_RANK: return "best_recent_elo_rating";
 			case HARD_ELO_RANK: return "best_hard_elo_rating";
 			case CLAY_ELO_RANK: return "best_clay_elo_rating";
 			case GRASS_ELO_RANK: return "best_grass_elo_rating";
@@ -399,6 +405,7 @@ public class RankingsService {
 	private String bestEloRatingDateColumn(RankType rankType) {
 		switch (rankType) {
 			case ELO_RANK: return "best_elo_rating_date";
+			case RECENT_ELO_RANK: return "best_recent_elo_rating_date";
 			case HARD_ELO_RANK: return "best_hard_elo_rating_date";
 			case CLAY_ELO_RANK: return "best_clay_elo_rating_date";
 			case GRASS_ELO_RANK: return "best_grass_elo_rating_date";
@@ -472,6 +479,7 @@ public class RankingsService {
 			highlights.setGoatRank(rs.getInt("goat_rank"));
 			highlights.setGoatPoints(rs.getInt("goat_points"));
 			highlights.setElo(mapEloHighlights(rs, ""));
+			highlights.setRecentElo(mapEloHighlights(rs, "recent_"));
 			highlights.setHardElo(mapEloHighlights(rs, "hard_"));
 			highlights.setClayElo(mapEloHighlights(rs, "clay_"));
 			highlights.setGrassElo(mapEloHighlights(rs, "grass_"));
@@ -552,6 +560,7 @@ public class RankingsService {
 		switch (rankType) {
 			case RANK:
 			case ELO_RANK: return "year_end_rank";
+			case RECENT_ELO_RANK: return "recent_year_end_rank";
 			case HARD_ELO_RANK: return "hard_year_end_rank";
 			case CLAY_ELO_RANK: return "clay_year_end_rank";
 			case GRASS_ELO_RANK: return "grass_year_end_rank";
@@ -576,6 +585,7 @@ public class RankingsService {
 		switch (rankType) {
 			case RANK: return "player_year_end_rank";
 			case ELO_RANK:
+			case RECENT_ELO_RANK:
 			case HARD_ELO_RANK:
 			case CLAY_ELO_RANK:
 			case GRASS_ELO_RANK:

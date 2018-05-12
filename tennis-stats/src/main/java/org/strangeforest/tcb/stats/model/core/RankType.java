@@ -11,6 +11,8 @@ public enum RankType {
 	// Elo
 	ELO_RANK(ELO, null, false, "Elo Ranking", "Elo", null),
 	ELO_RATING(ELO, ELO_RANK, true, "Elo Rating", "Overall", null),
+	RECENT_ELO_RANK(ELO, null, false, "Recent Elo Ranking", "Recent Elo", null),
+	RECENT_ELO_RATING(ELO, RECENT_ELO_RANK, true, "Recent Elo Rating", "Recent", null),
 	HARD_ELO_RANK(ELO, null, false, "Hard Elo Ranking", "Hard Elo", HARD),
 	HARD_ELO_RATING(ELO, HARD_ELO_RANK, true, "Hard Elo Rating", "Hard", HARD),
 	CLAY_ELO_RANK(ELO, null, false, "Clay Elo Ranking", "Clay Elo", CLAY),

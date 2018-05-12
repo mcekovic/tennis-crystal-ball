@@ -143,6 +143,8 @@ CREATE TABLE player_elo_ranking (
 	player_id INTEGER NOT NULL REFERENCES player (player_id) ON DELETE CASCADE,
 	rank INTEGER NOT NULL,
 	elo_rating INTEGER NOT NULL,
+	recent_rank INTEGER NOT NULL,
+	recent_elo_rating INTEGER NOT NULL,
 	hard_rank INTEGER,
 	hard_elo_rating INTEGER,
 	clay_rank INTEGER,

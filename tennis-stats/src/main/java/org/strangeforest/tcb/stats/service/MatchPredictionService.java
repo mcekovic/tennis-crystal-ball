@@ -44,7 +44,7 @@ public class MatchPredictionService {
 		"ORDER BY rank_date DESC LIMIT 1";
 
 	private static final String PLAYER_ELO_RATINGS_QUERY = //language=SQL
-		"SELECT rank_date, elo_rating, %1$selo_rating, %2$selo_rating, set_elo_rating FROM player_elo_ranking\n" +
+		"SELECT rank_date, elo_rating, recent_elo_rating, %1$selo_rating, %2$selo_rating, set_elo_rating FROM player_elo_ranking\n" +
 		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1 year') AND :date\n" +
 		"ORDER BY rank_date DESC LIMIT 1";
 
@@ -237,6 +237,7 @@ public class MatchPredictionService {
 			String outInPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
 			jdbcTemplate.query(format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, outInPrefix), params, rs -> {
 				rankingData.setEloRating(getInteger(rs, "elo_rating"));
+				rankingData.setRecentEloRating(getInteger(rs, "recent_elo_rating"));
 				if (!surfacePrefix.isEmpty())
 					rankingData.setSurfaceEloRating(getInteger(rs, surfacePrefix + "elo_rating"));
 				if (!outInPrefix.isEmpty())
