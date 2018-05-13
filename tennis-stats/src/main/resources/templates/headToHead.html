@@ -4,6 +4,8 @@
 <!--/*@thymesVar id="player2" type="org.strangeforest.tcb.stats.model.core.Player"*/-->
 <!--/*@thymesVar id="tab" type="java.lang.String"*/-->
 <!--/*@thymesVar id="season" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="season1" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="season2" type="java.lang.Integer"*/-->
 <!--/*@thymesVar id="fromDate" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="toDate" type="java.time.LocalDate"*/-->
 <!--/*@thymesVar id="level" type="java.lang.String"*/-->
@@ -43,6 +45,11 @@
 				currentTab = $(event.target).attr("href").substring(1);
 			});
 			[# th:if="${tab}" th:switch="${tab}"]
+				[# th:case="'season'"]
+				var $pill = $("#seasonPill");
+				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('season1', season1)})] + [(${params.param('season2', season2)})];
+				loadTab($pill, url);
+				[/]
 				[# th:case="'matches'"]
 				var $pill = $("#matchesPill");
 				var url = $pill.data("url") + [(${params.param('season', season)})] + [(${params.param('fromDate', fromDate)})] + [(${params.param('toDate', toDate)})];

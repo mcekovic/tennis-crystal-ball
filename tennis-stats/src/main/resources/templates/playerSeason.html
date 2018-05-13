@@ -13,8 +13,9 @@
 			var surface = $progressBar.data("surface");
 			$progressBar.addClass("progress-bar-" + surfaceClassSuffix(surface));
 		});
+		$("[data-toggle='tooltip']").tooltip();
 	});
-	function changeSeason() {
+	function seasonChanged() {
 		$("#season").load("/playerSeason?playerId=[(${playerId})]&season=" + $("#seasonSeason").val());
 	}
 </script>
@@ -36,7 +37,7 @@
 	<div class="col-md-3">
 		<div class="input-group">
 			<label for="seasonSeason" class="input-group-addon">Season:</label>
-			<select id="seasonSeason" class="form-control" onchange="changeSeason()" data-toggle="tooltip" data-placement="top" title="Select season">
+			<select id="seasonSeason" class="form-control" onchange="seasonChanged()" data-toggle="tooltip" data-placement="top" title="Select season">
 				<option th:each="aSeason : ${seasons}" th:value="${aSeason}" value="2015" th:text="${aSeason}" th:selected="${aSeason == season}">2015</option>
 			</select>
 		</div>

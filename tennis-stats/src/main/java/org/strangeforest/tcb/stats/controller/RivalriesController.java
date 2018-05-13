@@ -50,6 +50,8 @@ public class RivalriesController extends PageController {
 		@RequestParam(name = "name2", required = false) String name2,
 		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "season1", required = false) Integer season1,
+		@RequestParam(name = "season2", required = false) Integer season2,
 		@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate fromDate,
 		@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate toDate,
 		@RequestParam(name = "level", required = false) String level,
@@ -67,6 +69,8 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("player2", player2);
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("season1", season1);
+		modelMap.addAttribute("season2", season2);
 		modelMap.addAttribute("fromDate", fromDate);
 		modelMap.addAttribute("toDate", toDate);
 		modelMap.addAttribute("level", level);
@@ -132,28 +136,37 @@ public class RivalriesController extends PageController {
 	public ModelAndView h2hSeason(
 		@RequestParam(name = "playerId1") int playerId1,
 		@RequestParam(name = "playerId2") int playerId2,
-		@RequestParam(name = "season", required = false) Integer season
+		@RequestParam(name = "season", required = false) Integer season,
+		@RequestParam(name = "season1", required = false) Integer season1,
+		@RequestParam(name = "season2", required = false) Integer season2
 	) {
-		NavigableSet<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
+		SortedSet<Integer> seasons = getSeasonsUnion(playerId1, playerId2);
+		int defaultSeason = !seasons.isEmpty() ? seasons.first() : Integer.valueOf(LocalDate.now().getYear());
+		int defaultSeasons = season != null && season >= 0 ? season : defaultSeason;
 		if (season == null)
-			season = !seasons.isEmpty() ? seasons.first() : Integer.valueOf(LocalDate.now().getYear());
-		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season, 4);
-		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season, 4);
+			season = season1 == null && season2 == null ? defaultSeason : -1;
+		if (season1 == null)
+			season1 = defaultSeasons;
+		if (season2 == null)
+			season2 = defaultSeasons;
+		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights1 = tournamentService.getPlayerSeasonHighlights(playerId1, season1, 4);
+		Map<EventResult, List<PlayerTournamentEvent>> seasonHighlights2 = tournamentService.getPlayerSeasonHighlights(playerId2, season2, 4);
 		List<EventResult> eventResults = union(seasonHighlights1.keySet(), seasonHighlights2.keySet()).stream().limit(4).collect(toList());
-		PerfStatsFilter seasonFilter = PerfStatsFilter.forSeason(season);
-		PlayerPerformanceEx seasonPerf1 = performanceService.getPlayerPerformanceEx(playerId1, seasonFilter);
-		PlayerPerformanceEx seasonPerf2 = performanceService.getPlayerPerformanceEx(playerId2, seasonFilter);
+		PlayerPerformanceEx seasonPerf1 = performanceService.getPlayerPerformanceEx(playerId1, PerfStatsFilter.forSeason(season1));
+		PlayerPerformanceEx seasonPerf2 = performanceService.getPlayerPerformanceEx(playerId2, PerfStatsFilter.forSeason(season2));
 		Set<Surface> surfaces = union(seasonPerf1.getSurfaceMatches().keySet(), seasonPerf2.getSurfaceMatches().keySet());
 		Set<TournamentLevel> levels = union(seasonPerf1.getLevelMatches().keySet(), seasonPerf2.getLevelMatches().keySet());
 		Set<Opponent> oppositions = union(seasonPerf1.getOppositionMatches().keySet(), seasonPerf2.getOppositionMatches().keySet());
 		Set<Round> rounds = union(seasonPerf1.getRoundMatches().keySet(), seasonPerf2.getRoundMatches().keySet());
-		PlayerSeasonGOATPoints seasonGOATPoints1 = goatPointsService.getPlayerSeasonGOATPoints(playerId1, season);
-		PlayerSeasonGOATPoints seasonGOATPoints2 = goatPointsService.getPlayerSeasonGOATPoints(playerId2, season);
+		PlayerSeasonGOATPoints seasonGOATPoints1 = goatPointsService.getPlayerSeasonGOATPoints(playerId1, season1);
+		PlayerSeasonGOATPoints seasonGOATPoints2 = goatPointsService.getPlayerSeasonGOATPoints(playerId2, season2);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("playerId1", playerId1);
 		modelMap.addAttribute("playerId2", playerId2);
 		modelMap.addAttribute("season", season);
+		modelMap.addAttribute("season1", season1);
+		modelMap.addAttribute("season2", season2);
 		modelMap.addAttribute("seasons", seasons);
 		modelMap.addAttribute("eventResults", eventResults);
 		modelMap.addAttribute("seasonHighlights1", seasonHighlights1);
