@@ -23,6 +23,7 @@ public class TournamentEvent {
 	private MatchPlayer runnerUp;
 	private String score;
 	private String outcome;
+	private Double titleDifficulty;
 	private String mapProperties;
 
 	public TournamentEvent(int id, int tournamentId, String tournamentExtId, int season, LocalDate date, String name, String level, String surface, boolean indoor) {
@@ -58,6 +59,10 @@ public class TournamentEvent {
 		runnerUp = null;
 		score = null;
 		outcome = null;
+	}
+
+	public void setTitleDifficulty(Double titleDifficulty) {
+		this.titleDifficulty = titleDifficulty;
 	}
 
 	public void setMapProperties(String mapProperties) {
@@ -146,6 +151,10 @@ public class TournamentEvent {
 
 	public String getOutcome() {
 		return outcome;
+	}
+
+	public Double getTitleDifficulty() {
+		return titleDifficulty;
 	}
 
 	public String getMapProperties() {

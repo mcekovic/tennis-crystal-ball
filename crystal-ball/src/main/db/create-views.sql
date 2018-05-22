@@ -750,6 +750,31 @@ END ELSE 0 END AS goat_points
 FROM h2h;
 
 
+-- title_difficulty
+
+CREATE OR REPLACE VIEW title_difficulty_v AS
+WITH winner_avg_elo_rating AS (
+	SELECT m.level, avg(m.player_elo_rating) AS avg_elo_rating
+	FROM player_match_for_stats_v m
+	INNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)
+	WHERE r.result = 'W'
+	GROUP BY m.level
+), raw_title_difficulty AS (
+	SELECT tournament_event_id, level, sum(1 + power(10, (m.opponent_elo_rating - e.avg_elo_rating)::REAL / 400)) AS difficulty
+	FROM player_tournament_event_result r
+	INNER JOIN player_match_for_stats_v m USING (player_id, tournament_event_id)
+	INNER JOIN winner_avg_elo_rating e USING (level)
+	WHERE r.result = 'W'
+	GROUP BY tournament_event_id, level
+)
+SELECT tournament_event_id, difficulty / avg(difficulty) OVER (PARTITION BY level) AS difficulty
+FROM raw_title_difficulty;
+
+CREATE MATERIALIZED VIEW title_difficulty AS SELECT * FROM title_difficulty_v;
+
+CREATE INDEX ON title_difficulty (tournament_event_id);
+
+
 -- player_win_streak
 
 CREATE OR REPLACE VIEW player_win_streak_v AS

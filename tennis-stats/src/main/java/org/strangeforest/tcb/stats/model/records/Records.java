@@ -71,6 +71,7 @@ public abstract class Records {
 	static {
 		// Famous Records
 		register(TITLES, new MostTitlesCategory(), false);
+		register(TITLES, new MostTitlesAdjustedCategory(), false);
 		register(TITLES, new MostFinalsCategory(), false);
 		register(TITLES, new MostSemiFinalsCategory(), false);
 		register(TITLES, new MostQuarterFinalsCategory(), false);
@@ -80,6 +81,7 @@ public abstract class Records {
 		register(TITLES, new FinalStreaksCategory(), false);
 		register(TITLES, new SemiFinalStreaksCategory(), false);
 		register(TITLES, new QuarterFinalStreaksCategory(), false);
+		register(TITLES, new HardestTitleCategory(HardestTitleCategory.RecordType.HARDEST), false);
 		register(TITLES, new YoungestOldestTournamentResultCategory(YoungestOldestTournamentResultCategory.RecordType.YOUNGEST), false);
 		register(TITLES, new YoungestOldestTournamentResultCategory(YoungestOldestTournamentResultCategory.RecordType.OLDEST), false);
 		register(TITLES, new LongestCareerResultSpanCategory(), false);
@@ -109,6 +111,7 @@ public abstract class Records {
 		register(NEVER, new BestPlayerThatNeverCategory(), true);
 		register(TITLES, new TournamentFinalsLostButNeverWonCategory(), true);
 		register(TITLES, new GreatestTitlePctCategory(GreatestTitlePctCategory.RecordType.LOSING), true);
+		register(TITLES, new HardestTitleCategory(HardestTitleCategory.RecordType.EASIEST), true);
 		register(TITLES, new ItemsWinningTitleCategory(ItemsWinningTitleCategory.RecordType.MOST), true);
 		register(LOSES, new MostMatchesCategory(MostMatchesCategory.RecordType.LOST), true);
 		register(LOSES, new GreatestMatchPctCategory(GreatestMatchPctCategory.RecordType.LOSING), true);

@@ -226,11 +226,6 @@ function dateFormatter(column, row) {
 	return formatDate(row.date);
 }
 
-// Factor Formatter
-function factorFormatter(column, row) {
-	return formatRecordDetail(row.value.toFixed(1), row.detailUrl);
-}
-
 // Country Formatter
 function countryFormatter(column, row) {
 	return formatCountry(row) + " " + row.country.id;

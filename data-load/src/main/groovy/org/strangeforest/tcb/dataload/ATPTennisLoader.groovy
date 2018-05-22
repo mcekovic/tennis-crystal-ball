@@ -245,7 +245,7 @@ class ATPTennisLoader {
 			'player_season_weeks_at_no1', 'player_weeks_at_no1', 'player_season_weeks_at_elo_topn', 'player_weeks_at_elo_topn', 'player_season_weeks_at_surface_elo_topn', 'player_weeks_at_surface_elo_topn',
 			'player_season_performance', 'player_tournament_performance', 'player_performance',
 			'player_season_surface_stats', 'player_season_stats', 'player_surface_stats', 'player_stats',
-			'player_h2h',
+			'player_h2h', 'title_difficulty',
 			'player_win_streak', 'player_level_win_streak', 'player_best_of_win_streak', 'player_surface_win_streak', 'player_indoor_win_streak',
 			'player_vs_no1_win_streak', 'player_vs_top5_win_streak', 'player_vs_top10_win_streak',
 			'player_tournament_win_streak', 'player_tournament_level_win_streak',

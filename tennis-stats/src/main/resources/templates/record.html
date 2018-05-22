@@ -34,7 +34,9 @@
 					"startDate": function(column, row) { return formatDate(row.startDate); },
 					"endDate": function(column, row) { return formatDate(row.endDate); },
 					"player2": function(column, row) { return playerCountryFormatter(column, row.player2); },
-					"factor": factorFormatter
+					"factor": function(column, row) { return formatRecordDetail(row.value.toFixed(1), row.detailUrl); },
+					"factor2": function(column, row) { return formatRecordDetail(row.value.toFixed(2), row.detailUrl); },
+					"factor3": function(column, row) { return formatRecordDetail(row.value.toFixed(3), row.detailUrl); }
 				},
 				labels: {
 					loading: bootgridTemplateLoading,

@@ -43,6 +43,8 @@ DROP VIEW player_statistics_goat_points_v;
 
 DROP MATERIALIZED VIEW player_h2h;
 DROP VIEW player_h2h_v;
+DROP MATERIALIZED VIEW title_difficulty;
+DROP VIEW title_difficulty_v;
 
 DROP MATERIALIZED VIEW player_weeks_at_elo_topn;
 DROP VIEW player_weeks_at_elo_topn_v;

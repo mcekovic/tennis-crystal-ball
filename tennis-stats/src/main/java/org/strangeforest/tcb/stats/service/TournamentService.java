@@ -116,18 +116,21 @@ public class TournamentService {
 		"  p.player_count, p.participation, p.strength, p.average_elo_rating,\n" +
 		"  m.winner_id, pw.name winner_name, m.winner_seed, m.winner_entry, m.winner_country_id,\n" +
 		"  m.loser_id runner_up_id, pl.name runner_up_name, m.loser_seed runner_up_seed, m.loser_entry runner_up_entry, m.loser_country_id runner_up_country_id,\n" +
-		"  m.score, m.outcome, e.map_properties\n" +
+		"  m.score, m.outcome, e.map_properties%1$s\n" +
 		"FROM tournament_event e\n" +
 		"LEFT JOIN tournament_mapping mp USING (tournament_id)\n" +
 		"LEFT JOIN event_participation p USING (tournament_event_id)\n" +
 		"LEFT JOIN match m ON m.tournament_event_id = e.tournament_event_id AND m.round = 'F'\n" +
 		"LEFT JOIN player_v pw ON pw.player_id = m.winner_id\n" +
-		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id\n";
+		"LEFT JOIN player_v pl ON pl.player_id = m.loser_id%2$s\n";
+
+	private static final String TITLE_DIFFICULTY_JOIN = //language=SQL
+		"\nLEFT JOIN title_difficulty d ON d.tournament_event_id = e.tournament_event_id";
 
 	private static final String TOURNAMENT_EVENTS_QUERY = //language=SQL
 		TOURNAMENT_EVENT_SELECT +
-		"WHERE e.level NOT IN ('D', 'T')%1$s\n" +
-		"ORDER BY %2$s OFFSET :offset";
+		"WHERE e.level NOT IN ('D', 'T')%3$s\n" +
+		"ORDER BY %4$s OFFSET :offset";
 
 	private static final String TOURNAMENT_EVENT_QUERY = //language=SQL
 		TOURNAMENT_EVENT_SELECT +
@@ -369,7 +372,7 @@ public class TournamentService {
 		AtomicInteger tournamentEvents = new AtomicInteger();
 		int offset = (currentPage - 1) * pageSize;
 		jdbcTemplate.query(
-			format(TOURNAMENT_EVENTS_QUERY, filter.getCriteria(), orderBy),
+			format(TOURNAMENT_EVENTS_QUERY, "", "", filter.getCriteria(), orderBy),
 			filter.getParams().addValue("offset", offset),
 			rs -> {
 				if (tournamentEvents.incrementAndGet() <= pageSize)
@@ -382,11 +385,15 @@ public class TournamentService {
 
 	public TournamentEvent getTournamentEvent(int tournamentEventId) {
 		TournamentEvent event = jdbcTemplate.query(
-			TOURNAMENT_EVENT_QUERY,
+			format(TOURNAMENT_EVENT_QUERY, ", d.difficulty", TITLE_DIFFICULTY_JOIN),
 			params("tournamentEventId", tournamentEventId),
 			rs -> {
-				if (rs.next())
-					return mapTournamentEvent(rs);
+				if (rs.next()) {
+					TournamentEvent tournamentEvent = mapTournamentEvent(rs);
+					tournamentEvent.setMapProperties(rs.getString("map_properties"));
+					tournamentEvent.setTitleDifficulty(getDouble(rs, "difficulty"));
+					return tournamentEvent;
+				}
 				else
 					throw new NotFoundException("Tournament event", tournamentEventId);
 			}
@@ -439,7 +446,6 @@ public class TournamentService {
 			rs.getString("score"),
 			rs.getString("outcome")
 		);
-		tournamentEvent.setMapProperties(rs.getString("map_properties"));
 		return tournamentEvent;
 	}
 

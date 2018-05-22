@@ -98,6 +98,10 @@
 					<th>Final Score</th>
 					<td th:utext="${tournamentEvent.scoreFormatted()}">6-4 6-3</td>
 				</tr>
+				<tr th:if="${tournamentEvent.titleDifficulty}">
+					<th th:title="#{event.titleDifficulty}">Title Difficulty<sup class="new-feature"></sup></th>
+					<td th:utext="${#numbers.formatDecimal(tournamentEvent.titleDifficulty, 1, 3)}">1.23</td>
+				</tr>
 			</table>
 		</div>
 		<div class="col-md-2">
