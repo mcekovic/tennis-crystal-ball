@@ -754,13 +754,13 @@ FROM h2h;
 
 CREATE OR REPLACE VIEW title_difficulty_v AS
 WITH winner_avg_elo_rating AS (
-	SELECT m.level, avg(m.player_elo_rating) AS avg_elo_rating
-	FROM player_match_for_stats_v m
-	INNER JOIN player_tournament_event_result r USING (player_id, tournament_event_id)
+	SELECT e.level, avg((SELECT coalesce(m.player_elo_rating, 1500) FROM player_match_for_stats_v m WHERE m.player_id = r.player_id AND m.tournament_event_id = r.tournament_event_id ORDER BY m.round LIMIT 1)) AS avg_elo_rating
+	FROM player_tournament_event_result r
+	INNER JOIN tournament_event e USING (tournament_event_id)
 	WHERE r.result = 'W'
-	GROUP BY m.level
+	GROUP BY e.level
 ), raw_title_difficulty AS (
-	SELECT tournament_event_id, level, sum(1 + power(10, (m.opponent_elo_rating - e.avg_elo_rating)::REAL / 400)) AS difficulty
+	SELECT tournament_event_id, level, sum(1 + power(10, (coalesce(m.opponent_elo_rating, 1500) - e.avg_elo_rating)::REAL / 400)) AS difficulty
 	FROM player_tournament_event_result r
 	INNER JOIN player_match_for_stats_v m USING (player_id, tournament_event_id)
 	INNER JOIN winner_avg_elo_rating e USING (level)
