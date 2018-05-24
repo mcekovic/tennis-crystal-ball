@@ -417,7 +417,7 @@ function scoreFormatter(column, row) {
 }
 
 function formatScore(score) {
-	return score.replace(/\(/g, "<sup>(").replace(/\)/g, ")</sup>");
+	return score ? score.replace(/\(/g, "<sup>(").replace(/\)/g, ")</sup>") : score;
 }
 
 function wonLostFormatter(playerId) {
