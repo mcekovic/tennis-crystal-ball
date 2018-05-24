@@ -44,7 +44,6 @@ http://www.ultimatetennisstatistics.com
 
 ### Data Loaders
 - For Jeff Sackmann ATP CSV repository: https://github.com/JeffSackmann/tennis_atp
-- For ATP World Tour website: http://www.atpworldtour.com/en/scores/results-archive
 
 ### Screenshots
 
