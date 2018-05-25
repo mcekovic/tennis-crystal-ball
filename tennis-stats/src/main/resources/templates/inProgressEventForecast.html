@@ -29,9 +29,20 @@
 			showPlayerPath(playerId);
 		}
 		function showPlayerPath(playerId) {
-			var url = "/inProgressEventPlayerPath?inProgressEventId=[(${inProgressEventId + (priceFormat != null ? '&priceFormat=' + priceFormat : '')})]";
-			if (playerId) url += "&playerId=" + playerId;
-			$("#playerPath").load(url);
+			var $loading = $("#loading");
+			$loading.show();
+			$("#pathPlayerDiv").hide();
+			setTimeout(function() {
+				try {
+					var url = "/inProgressEventPlayerPath?inProgressEventId=[(${inProgressEventId + (priceFormat != null ? '&priceFormat=' + priceFormat : '')})]";
+					if (playerId) url += "&playerId=" + playerId;
+					$("#playerPath").load(url);
+				}
+				finally {
+					clearTimeout(timer);
+					$loading.hide();
+				}
+			}, 0);
 		}
 	</script>
 	<style type="text/css">

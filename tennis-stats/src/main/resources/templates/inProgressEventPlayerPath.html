@@ -37,6 +37,7 @@
 		</div>
 	</div>
 	<br/>
+	<div id="pathPlayerDiv">
 	<h4 th:if="${playerPath.player}" th:with="player=${playerPath.player}">
 		<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 		<a th:href="@{/playerProfile(playerId=${player.id})}" th:text="${player.name}" title="Show profile">Roger Federer</a>[(${player.formattedSeedAndEntry()})] <i class="fa fa-road"></i>
@@ -144,4 +145,10 @@
 		</tbody>
 		</th:block>
 	</table>
+	</div>
+	<div id="loading" style="width: 100%; text-align: center; display: none">
+		<br/>
+		<img src="/images/loading-chart.gif" width="128" height="128" alt="Loading player path..."/>
+		<br/>
+	</div>
 </th:block>
