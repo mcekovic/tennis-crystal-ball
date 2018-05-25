@@ -6,6 +6,7 @@ import org.strangeforest.tcb.stats.model.records.details.*;
 import static java.lang.String.*;
 import static java.util.Arrays.*;
 import static org.strangeforest.tcb.stats.model.records.RecordDomain.*;
+import static org.strangeforest.tcb.stats.model.records.categories.HardestTitleCategory.*;
 
 public class MostTitlesAdjustedCategory extends RecordCategory {
 
@@ -49,7 +50,8 @@ public class MostTitlesAdjustedCategory extends RecordCategory {
 			asList(
 				new RecordColumn("value", null, "factor2", ADJ_TITLES_WIDTH, "right", "Adjusted " + suffix(domain.name, " ") + "Titles"),
 				new RecordColumn("intValue", "numeric", null, TITLES_WIDTH, "right", suffix(domain.name, " ") + "Titles")
-			)
+			),
+			TITLE_DIFFICULTY_NOTES
 		);
 	}
 
@@ -67,7 +69,8 @@ public class MostTitlesAdjustedCategory extends RecordCategory {
 			asList(
 				new RecordColumn("value", null, "factor2", ADJ_TITLES_WIDTH, "right", "Adjusted " + suffix(domain1.name, " ") + suffix(domain2.name, " ") + "Titles"),
 				new RecordColumn("intValue", "numeric", null, TITLES_WIDTH, "right", suffix(domain1.name, " ") + suffix(domain2.name, " ") + "Titles")
-			)
+			),
+			TITLE_DIFFICULTY_NOTES
 		);
 	}
 
@@ -86,7 +89,8 @@ public class MostTitlesAdjustedCategory extends RecordCategory {
 				new RecordColumn("value", null, "factor2", ADJ_TITLES_WIDTH, "right", "Adjusted " + suffix(domain.name, " ") + "Titles"),
 				new RecordColumn("intValue", "numeric", null, TITLES_WIDTH, "right", suffix(domain.name, " ") + "Titles"),
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season")
-			)
+			),
+			TITLE_DIFFICULTY_NOTES
 		);
 	}
 
@@ -105,7 +109,8 @@ public class MostTitlesAdjustedCategory extends RecordCategory {
 				new RecordColumn("value", null, "factor2", ADJ_TITLES_WIDTH, "right", "Adjusted " + suffix(domain.name, " ") + "Titles"),
 				new RecordColumn("intValue", "numeric", null, TITLES_WIDTH, "right", suffix(domain.name, " ") + "Titles"),
 				new RecordColumn("tournament", null, "tournament", TOURNAMENT_WIDTH, "left", "Tournament")
-			)
+			),
+			TITLE_DIFFICULTY_NOTES
 		);
 	}
 }

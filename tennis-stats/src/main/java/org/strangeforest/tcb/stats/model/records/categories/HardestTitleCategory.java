@@ -26,7 +26,7 @@ public class HardestTitleCategory extends RecordCategory {
 	private static final String SEASON_WIDTH =      "80";
 	private static final String TOURNAMENT_WIDTH = "120";
 
-	private static final String NOTES = "Relative Title Difficulty factor represents how hard was to win the title compared to winning an average title of the same tournament level";
+	public static final String TITLE_DIFFICULTY_NOTES = "Relative Title Difficulty factor represents how hard was to win the title compared to winning an average title of the same tournament level";
 
 	public HardestTitleCategory(RecordType type) {
 		super(type.name + " Titles");
@@ -60,7 +60,7 @@ public class HardestTitleCategory extends RecordCategory {
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")
 			),
-			NOTES
+			TITLE_DIFFICULTY_NOTES
 		);
 	}
 
@@ -79,7 +79,7 @@ public class HardestTitleCategory extends RecordCategory {
 				new RecordColumn("season", "numeric", null, SEASON_WIDTH, "center", "Season"),
 				new RecordColumn("tournament", null, "tournamentEvent", TOURNAMENT_WIDTH, "left", "Tournament")
 			),
-			NOTES
+			TITLE_DIFFICULTY_NOTES
 		);
 	}
 }
