@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="seasons" type="java.util.List<java.lang.Integer>"*/-->
+<!--/*@thymesVar id="levels" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.core.TournamentLevel>"*/-->
+<!--/*@thymesVar id="levelGroups" type="java.util.EnumSet<org.strangeforest.tcb.stats.model.core.TournamentLevelGroup>"*/-->
+<!--/*@thymesVar id="surfaces" type="org.strangeforest.tcb.stats.model.core.Surface[]"*/-->
+<!--/*@thymesVar id="surfaceGroups" type="org.strangeforest.tcb.stats.model.core.SurfaceGroup[]"*/-->
+<!--/*@thymesVar id="rounds" type="org.strangeforest.tcb.stats.model.core.Round[]"*/-->
+<!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
+<!--/*@thymesVar id="minMatchScore" type="java.lang.Integer"*/-->
+<head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
+	<title>Greatest Matches</title>
+	<template>
+	<meta name="description" content="Greatest Open Era tennis matches"/>
+	<script type="text/javascript">
+		var isChrome = navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
+		$(function() {
+			var $matchesTable = $("#greatestMatchesTable");
+			var device = detectDevice();
+			setBootgridColumnsVisible($matchesTable, ["matchEx", "h2h"], deviceGreaterOrEqual(device, "xl"));
+			setBootgridColumnsVisible($matchesTable, ["match"], deviceLessOrEqual(device, "lg"));
+			setBootgridColumnsVisible($matchesTable, ["surface", "stats"], deviceGreaterOrEqual(device, "lg"));
+			setBootgridColumnsVisible($matchesTable, ["round"], deviceGreaterOrEqual(device, "md"));
+			setBootgridColumnsVisible($matchesTable, ["matchScore"], deviceGreaterOrEqual(device, "sm"));
+			if (deviceLessOrEqual(device, "sm"))
+				setBootgridColumnsWidths($matchesTable, ["tournament", "match", "score"], [125, 250, 125]);
+			$matchesTable.bootgrid({
+				ajax: true,
+				ajaxSettings: {
+					method: "GET",
+					cache: false
+				},
+				url: "/greatestMatchesTable",
+				requestHandler: function(request) {
+					request.fromSeason = $("#fromSeason").val();
+					request.toSeason = $("#toSeason").val();
+					request.level = $("#level").val();
+					request.bestOf = $("#bestOf").val();
+					request.surface = $("#surface").val();
+					request.indoor = $("#indoor").val();
+					request.round = $("#round").val();
+					request.tournamentId = $("#tournament").val();
+					request.bestRank = $("#bestRank").val();
+					return request;
+				},
+				rowCount: [20, 50, 100, -1],
+				formatters: {
+					"date": dateFormatter,
+					"tournament": tournamentEventFormatter,
+					"surface": surfaceFormatter,
+					"match": matchFormatter([(${playerId})]),
+					"matchEx": matchExFormatter([(${playerId})]),
+					"score": scoreFormatter,
+					"stats": function(column, row) {
+						return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>" : "";
+					},
+					"h2h": function(column, row) {
+						return "<a href='/headToHead?playerId1=" + row.winner.id + "&playerId2=" + row.loser.id + "' class='label label-primary label-btn'" + (isChrome ? " style='padding: 3px 7px'" : "") + " title='Show Head-to-Head'>H2H</a>"
+					}
+				},
+				labels: {
+					loading: bootgridTemplateLoading,
+					noResults: "No matches found"
+				},
+				templates: {
+					paginationItem: bootgridTemplatePaginationItem
+				}
+			});
+			var $search = $("#greatestMatchesTable-header").find("div.search");
+			$search.before($("#levelDiv").remove());
+			$search.before($("#surfaceDiv").remove());
+			$search.before($("#roundDiv").remove());
+			$search.before($("#clearDiv").remove());
+			$search.after($("#advFilterDiv").remove());
+			$("[data-toggle='tooltip']").tooltip();
+			setBootgridTitles($matchesTable, [
+				{id: "rank", title: "Match greatness rank"},
+				{id: "bestOf", title: "Best of"},
+				{id: "matchScore", title: "Match greatness score"}
+			]);
+		});
+		function reloadGreatestMatches() {
+			$("#greatestMatchesTable").bootgrid("reload");
+		}
+		function clearGreatestMatchesFilter() {
+			$("#fromSeason").val("");
+			$("#toSeason").val("");
+			$("#level").val("");
+			$("#bestOf").val("");
+			$("#surface").val("");
+			$("#indoor").val("");
+			$("#round").val("");
+			$("#tournament").val("");
+			$("#bestRank").val("");
+			$("#matchesTable").bootgrid("search", "");
+			reloadGreatestMatches();
+		}
+	</script>
+	</template>
+</head>
+<body class="container">
+	<header th:include="fragments/header :: title"></header>
+	<div class="row">
+		<div class="col-md-8">
+			<h3 class="text-nowrap" style="display: inline"><i class="fa fa-signing"></i> Greatest Matches</h3>
+		</div>
+		<div class="col-md-4">
+			<div class="input-group">
+				<label for="fromSeason" class="input-group-addon">From:</label>
+				<select id="fromSeason" class="form-control" onchange="reloadGreatestMatches()" data-toggle="tooltip" data-placement="top" title="Select from season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
+				<label for="toSeason" class="input-group-addon">To:</label>
+				<select id="toSeason" class="form-control" onchange="reloadGreatestMatches()" data-toggle="tooltip" data-placement="top" title="Select to season">
+					<option value="">All seasons</option>
+					<option th:each="season : ${seasons}" th:value="${season}" value="2005" th:text="${season}">2005</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<div id="advancedFilter" class="collapse row margin-top">
+		<div class="col-md-2">
+			<select id="bestOf" class="form-control" onchange="reloadGreatestMatches()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
+				<option value="">Best of any</option>
+				<option value="3">Best of 3</option>
+				<option value="5">Best of 5</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="indoor" class="form-control" onchange="reloadGreatestMatches()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
+				<option value="">Outdoor / Indoor</option>
+				<option value="false">Outdoor</option>
+				<option value="true">Indoor</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="bestRank" class="form-control" onchange="reloadGreatestMatches()" data-toggle="tooltip" data-placement="top" title="Filter by player best rank">
+				<option value="">All players</option>
+				<option value="1">Between once No. 1</option>
+				<option value="2">Between once Top 2</option>
+				<option value="3">Between once Top 3</option>
+				<option value="5">Between once Top 5</option>
+				<option value="10">Between once Top 10</option>
+				<option value="20">Between once Top 20</option>
+			</select>
+		</div>
+		<div class="col-md-2">
+			<select id="tournament" class="form-control" onchange="reloadGreatestMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
+				<option value="">All tournaments</option>
+				<option th:each="tournament : ${tournaments}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+			</select>
+		</div>
+	</div>
+	<div id="levelDiv" class="btn-group pull-left margin-right no-margin-left">
+		<select id="level" class="form-control" onchange="reloadGreatestMatches()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
+			<option value="">All levels</option>
+			<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
+			<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFLMO" th:text="${levelGroup.text}">Big Tournaments</option>
+		</select>
+	</div>
+	<div id="surfaceDiv" class="btn-group pull-left margin-right">
+		<select id="surface" class="form-control" onchange="reloadGreatestMatches()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
+			<option value="">All surfaces</option>
+			<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
+			<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+		</select>
+	</div>
+	<div id="roundDiv" class="btn-group pull-left margin-right">
+		<select id="round" class="form-control" onchange="reloadGreatestMatches()" data-toggle="tooltip" data-placement="top" title="Filter by round">
+			<option value="">All rounds</option>
+			<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+		</select>
+	</div>
+	<div id="clearDiv" class="btn-group margin-right">
+		<button type="button" class="btn btn-default" onclick="clearGreatestMatchesFilter()" data-toggle="tooltip" data-placement="top" title="Clear all filters">
+			<i class="fa fa-eraser"></i>&nbsp;&nbsp;Clear
+		</button>
+	</div>
+	<div id="advFilterDiv" class="btn-group pull-right margin-left no-margin-right">
+		<div data-toggle="tooltip" data-placement="auto" title="Advanced filters">
+			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advancedFilter">
+				<i class="fa fa-folder-open"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-up"></i>
+			</button>
+		</div>
+	</div>
+	<table id="greatestMatchesTable" class="table table-condensed table-hover table-striped">
+		<thead>
+		<tr>
+			<th data-column-id="rank" data-type="numeric" data-sortable="false" data-width="55">Rnk</th>
+			<th data-column-id="date" data-formatter="date" data-width="85">Date</th>
+			<th data-column-id="tournament" data-formatter="tournament" data-width="175">Tournament</th>
+			<th data-column-id="surface" data-formatter="surface" data-width="80">Surface</th>
+			<th data-column-id="round" data-width="75">Round</th>
+			<th data-column-id="match" data-formatter="match" data-sortable="false" data-width="300">Match</th>
+			<th data-column-id="matchEx" data-formatter="matchEx" data-sortable="false" data-visible="false" data-width="500">Match Details</th>
+			<th data-column-id="bestOf" data-width="50" data-visible="false">BO</th>
+			<th data-column-id="score" data-formatter="score" data-sortable="false" data-width="180">Match Score</th>
+			<th data-column-id="matchScore" data-type="numeric" data-order="desc" data-width="75" data-align="right" data-header-align="right">Score</th>
+			<th data-column-id="stats" data-formatter="stats" data-sortable="false" data-width="75">Stats</th>
+			<th data-column-id="h2h" data-formatter="h2h" data-sortable="false" data-visible="false" data-width="55" data-css-class="h2h-column">H2H</th>
+		</tr>
+		</thead>
+	</table>
+	<p><em><strong>*</strong> Minimum Match Greatness Score: [(${minMatchScore})]</em></p>
+	<p><em><strong>**</strong> [[#{match.greatnessScore.title}]]</em></p>
+	<th:block th:include="fragments/deviceDetector :: deviceDetectors"/>
+	<footer th:include="fragments/footer :: copy"></footer>
+</body>
+</html>

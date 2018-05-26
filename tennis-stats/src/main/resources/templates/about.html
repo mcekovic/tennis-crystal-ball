@@ -66,6 +66,7 @@
 				<li><a href="/headToHead"><i class="fa fa-user"></i><i class="fa fa-user" style="margin-left: -3px"></i> Head-to-Head</a> - Head-to-head between two players with H2H matches, season summary, performance and statistics comparision, ranking, performance and statistics charts, 'GOAT' points breakdown and Hypothetical Matchup prediction based on <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><th:block th:include="fragments/promotion :: tcb"/> Match Prediction Algorithm</a></li>
 				<li><a href="/headsToHeads"><i class="fa fa-users"></i> Heads-to-Heads</a> - Heads-to-heads clusters among several players (i.e. among 'Big 4')</li>
 				<li><a href="/greatestRivalries"><i class="fa fa-handshake-o"></i> Greatest Rivalries</a> - Explore greatest rivalries, overall or by season, tournament level, surface or round</li>
+				<li><a href="/greatestMatches"><i class="fa fa-signing"></i> Greatest Matches</a> - Explore greatest matches ranked by special Match Greatness Score formula</li>
 				<li><a href="/rankingsTable"><i class="fa fa-list-ol"></i> Ranking Tables</a> - Player ranking tables, including <a href="https://en.wikipedia.org/wiki/Elo_rating_system" target="_blank" class="external">Elo rating</a> (overall, by surface, set or game) using customized <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#eloRatingPopover">Elo rating formula</a></li>
 				<li><a href="/rankingsChart"><i class="fa fa-bar-chart"></i> Ranking Charts</a> - Player ranking and ranking point charts (including Elo rating), compare players by constructing custom charts</li>
 				<li><a href="/peakEloRatings"><i class="fa fa-tachometer"></i> Peak Elo Ratings</a><sup class="cool-feature"></sup> - Peak Elo ratings list for comparing players in their peaks (overall, by surface, set, service/return game and tie break)</li>
@@ -146,9 +147,10 @@
 				<li><strong>Tournament Participation</strong> - [[#{event.participation.title}]]</li>
 				<li><strong>Tournament Strength</strong> - [[#{event.strength.title}]]</li>
 				<li><strong>Tournament Elo Rating</strong> - [[#{event.averageEloRating.title}]]</li>
-				<li><strong>Participation Weights</strong> - [[#{event.participation.weights}]]</li>
-				<li><strong>Title Difficulty</strong> - [[#{event.titleDifficulty}]]</li>
+				<li><strong>Participation Weights</strong> - [[#{event.participationWeights.title}]]</li>
+				<li><strong>Title Difficulty</strong> - [[#{event.titleDifficulty.title}]]</li>
 				<li><strong>Rivalry Score</strong> - [[#{rivalry.score.title}]]</li>
+				<li><strong>Match Greatness Score</strong> - [[#{match.greatnessScore.title}]]</li>
 			</ul>
 			<h4 class="text-nowrap" style="margin-top: 25px"><i class="fa fa-legal"></i> License</h4>
 			<p>

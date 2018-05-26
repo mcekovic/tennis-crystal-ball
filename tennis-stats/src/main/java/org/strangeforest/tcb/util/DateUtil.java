@@ -5,6 +5,8 @@ import java.time.*;
 import java.time.format.*;
 import java.util.*;
 
+import com.google.common.collect.*;
+
 public abstract class DateUtil {
 
 	public static final String DATE_FORMAT = "dd-MM-yyyy";
@@ -26,5 +28,9 @@ public abstract class DateUtil {
 
 	public static String formatDate(Date date) {
 		return new SimpleDateFormat(DATE_FORMAT).format(date);
+	}
+
+	public static Range<LocalDate> toDateRange(Integer fromYear, Integer toYear) {
+		return RangeUtil.toRange(fromYear != null ? LocalDate.of(fromYear, 1, 1) : null, toYear != null ? LocalDate.of(toYear, 12, 31) : null);
 	}
 }

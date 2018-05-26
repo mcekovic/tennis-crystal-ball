@@ -27,6 +27,8 @@ public class MatchesService {
 
 	@Autowired private NamedParameterJdbcTemplate jdbcTemplate;
 
+	public static final int MIN_MATCH_SCORE = 100;
+
 	private static final String TOURNAMENT_EVENT_MATCHES_QUERY =
 		"SELECT m.match_id, m.match_num, m.round,\n" +
 		"  m.winner_id, pw.short_name AS winner_name, m.winner_seed, m.winner_entry, m.winner_country_id,\n" +
@@ -66,6 +68,37 @@ public class MatchesService {
 
 	private static final String BIG_WIN_JOIN = //language=SQL
 		"\nINNER JOIN player_big_wins_v bw ON bw.match_id = m.match_id";
+
+	private static final String GREATEST_MATCHES_QUERY = //language=SQL
+		"WITH greatest_matches AS (\n" +
+		"  SELECT m.match_id, m.date, m.tournament_event_id, e.name AS tournament, e.level, m.best_of, m.surface, m.indoor, m.round,\n" +
+		"    m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.winner_country_id, m.winner_rank, m.winner_elo_rating, m.winner_next_elo_rating,\n" +
+		"    m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.loser_country_id, m.loser_rank, m.loser_elo_rating, m.loser_next_elo_rating,\n" +
+		"    m.score, m.outcome, m.has_stats, round(\n" +
+		"      coalesce(mf.match_factor, 0.5) * (coalesce(wrf.rank_factor, 0.5) + coalesce(lrf.rank_factor, 0.5)):: REAL / 2\n" +
+		"      * (coalesce(m.winner_elo_rating, 1500) + coalesce(m.loser_elo_rating, 1500) - 3000)::REAL / 400\n" +
+		"      * sqrt((m.w_sets + m.l_sets) * (m.w_games + m.l_games + (m.w_tbs + m.l_tbs) * 2))\n" +
+		"    ) AS match_score\n" +
+		"  FROM match m\n" +
+		"  INNER JOIN tournament_event e USING (tournament_event_id)\n" +
+		"  INNER JOIN player_v pw ON pw.player_id = m.winner_id\n" +
+		"  INNER JOIN player_v pl ON pl.player_id = m.loser_id\n" +
+		"  LEFT JOIN big_win_match_factor mf USING (level, round)\n" +
+		"  LEFT JOIN big_win_rank_factor wrf ON m.winner_rank BETWEEN wrf.rank_from AND wrf.rank_to\n" +
+		"  LEFT JOIN big_win_rank_factor lrf ON m.loser_rank BETWEEN lrf.rank_from AND lrf.rank_to\n" +
+		"  %1$sWHERE outcome IS NULL%2$s\n" +
+		")\n" +
+		"SELECT rank() OVER (ORDER BY match_score DESC) AS rank, *\n" +
+		"FROM greatest_matches\n" +
+		"WHERE match_score >= :minMatchScore\n" +
+		"ORDER BY %3$s OFFSET :offset";
+
+	private static final String BEST_RANK_JOIN = //language=SQL
+		"  INNER JOIN player_best_rank rw ON rw.player_id = winner_id\n" +
+		"  INNER JOIN player_best_rank rl ON rl.player_id = loser_id\n";
+
+	private static final String BEST_RANK_CRITERIA = //language=SQL
+		" AND rw.best_rank <= :bestRank AND rl.best_rank <= :bestRank";
 
 	private static final String MATCH_QUERY = //language=SQL
 		"SELECT m.match_id, e.season, e.level, m.surface, m.indoor, tournament_event_id, e.name AS tournament,\n" +
@@ -156,26 +189,39 @@ public class MatchesService {
 				.addValue("offset", offset),
 			rs -> {
 				if (matches.incrementAndGet() <= pageSize) {
-					Match match = new Match(
-						rs.getLong("match_id"),
-						getLocalDate(rs, "date"),
-						rs.getInt("tournament_event_id"),
-						rs.getString("tournament"),
-						rs.getString("level"),
-						rs.getInt("best_of"),
-						rs.getString("surface"),
-						rs.getBoolean("indoor"),
-						rs.getString("round"),
-						mapMatchPlayerEx(rs, "winner_"),
-						mapMatchPlayerEx(rs, "loser_"),
-						rs.getString("score"),
-						rs.getString("outcome"),
-						rs.getBoolean("has_stats")
-					);
+					Match match = mapMatch(rs);
 					if (filter.isBigWin())
 						match.setBigWinPoints(getDouble(rs, "big_win_points"));
 					if (h2h)
 						match.setH2h(new WonLost(rs.getInt("h2h_won"), rs.getInt("h2h_lost")));
+					table.addRow(match);
+				}
+			}
+		);
+		table.setTotal(offset + matches.get());
+		return table;
+	}
+
+	public BootgridTable<Match> getGreatestMatchesTable(MatchFilter filter, Integer bestRank, String orderBy, int pageSize, int currentPage) {
+		BootgridTable<Match> table = new BootgridTable<>(currentPage);
+		AtomicInteger matches = new AtomicInteger();
+		int offset = (currentPage - 1) * pageSize;
+		String criteria = filter.getCriteria();
+		MapSqlParameterSource params = filter.getParams()
+			.addValue("minMatchScore", MIN_MATCH_SCORE)
+			.addValue("offset", offset);
+		if (bestRank != null) {
+			criteria += BEST_RANK_CRITERIA;
+			params.addValue("bestRank", bestRank);
+		}
+		jdbcTemplate.query(
+			format(GREATEST_MATCHES_QUERY, bestRank != null ? BEST_RANK_JOIN : "", criteria, orderBy),
+			params,
+			rs -> {
+				if (matches.incrementAndGet() <= pageSize) {
+					Match match = mapMatch(rs);
+					match.setRank(rs.getInt("rank"));
+					match.setMatchScore(rs.getInt("match_score"));
 					table.addRow(match);
 				}
 			}
@@ -193,6 +239,25 @@ public class MatchesService {
 		if (filter.isBigWin())
 			sb.append(BIG_WIN_JOIN);
 		return sb.toString();
+	}
+
+	private static Match mapMatch(ResultSet rs) throws SQLException {
+		return new Match(
+			rs.getLong("match_id"),
+			getLocalDate(rs, "date"),
+			rs.getInt("tournament_event_id"),
+			rs.getString("tournament"),
+			rs.getString("level"),
+			rs.getInt("best_of"),
+			rs.getString("surface"),
+			rs.getBoolean("indoor"),
+			rs.getString("round"),
+			mapMatchPlayerEx(rs, "winner_"),
+			mapMatchPlayerEx(rs, "loser_"),
+			rs.getString("score"),
+			rs.getString("outcome"),
+			rs.getBoolean("has_stats")
+		);
 	}
 
 	static MatchPlayer mapMatchPlayer(ResultSet rs, String prefix) throws SQLException {

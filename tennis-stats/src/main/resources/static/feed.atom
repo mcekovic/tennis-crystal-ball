@@ -4,7 +4,39 @@
 	<subtitle>Ultimate Tennis Statistics - the Ultimate Tennis Statistics destination for the die-hard tennis fans</subtitle>
 	<link href="http://www.ultimatetennisstatistics.com/feed.atom" rel="self"/>
 	<id>urn:uuid:98cca2f0-d0da-11e6-bf26-cec0c932ce01</id>
-	<updated>2018-04-15T12:00:00Z</updated>
+	<updated>2018-05-26T12:00:00Z</updated>
+	<entry>
+		<title>Greatest Matches</title>
+		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/greatestMatches"/>
+		<id>urn:uuid:4eba5106-d4b9-437e-8cc9-8d14c2047640</id>
+		<updated>2018-05-26T12:00:00Z</updated>
+		<summary>Greatest Matches - Explore greatest matches ranked by special Match Greatness Score formula</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>Explore greatest matches of Open Era ranked by special Match Greatness Score formula</p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
+	<entry>
+		<title>Title Difficulty</title>
+		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/records?category=HardestTitles"/>
+		<id>urn:uuid:8e64796d-a248-471a-8958-148ef755f832</id>
+		<updated>2018-05-26T12:00:00Z</updated>
+		<summary>Title Difficulty factor represents how difficult was to win the title</summary>
+		<content type="xhtml">
+			<div xmlns="http://www.w3.org/1999/xhtml">
+				<p>New Tournament Event Title Difficulty factor, representing how difficult was to win the title based on the strength of the opponents a winner has faced on the path to the title (more details about Title Difficulty algorithm at <a href="/about#glossary">About</a> page, Glossary section), as well as new records: <a href="/records?category=MostTitlesAdjustedbyDifficulty">Most Titles Adjusted by Difficulty</a>, <a href="/records?category=HardestTitles">Hardest Titles</a> and <a href="/records?category=EasiestTitles">Easiest Titles</a></p>
+			</div>
+		</content>
+		<author>
+			<name>Mileta Cekovic</name>
+			<email>mcekovic@gmail.com</email>
+		</author>
+	</entry>
 	<entry>
 		<title>Statistics Timeline</title>
 		<link rel="alternate" type="text/html" href="http://www.ultimatetennisstatistics.com/statsTimeline"/>

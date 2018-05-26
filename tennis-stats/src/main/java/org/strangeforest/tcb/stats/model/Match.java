@@ -22,6 +22,8 @@ public class Match {
 	private final boolean hasStats;
 	private Double bigWinPoints;
 	private WonLost h2h;
+	private Integer rank;
+	private Integer matchScore;
 
 	public Match(long id, LocalDate date, int tournamentEventId, String tournament, String level, int bestOf, String surface, boolean indoor, String round,
 	             MatchPlayer winner, MatchPlayer loser, String score, String outcome, boolean hasStats) {
@@ -111,5 +113,21 @@ public class Match {
 
 	public void setH2h(WonLost h2h) {
 		this.h2h = h2h;
+	}
+
+	public Integer getRank() {
+		return rank;
+	}
+
+	public void setRank(Integer rank) {
+		this.rank = rank;
+	}
+
+	public Integer getMatchScore() {
+		return matchScore;
+	}
+
+	public void setMatchScore(Integer matchScore) {
+		this.matchScore = matchScore;
 	}
 }

@@ -601,6 +601,20 @@ public class RivalriesController extends PageController {
 		return new ModelAndView("greatestRivalries", modelMap);
 	}
 
+	@GetMapping("/greatestMatches")
+	public ModelAndView greatestMatches() {
+		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("seasons", dataService.getSeasons());
+		modelMap.addAttribute("levels", TournamentLevel.TOURNAMENT_LEVELS);
+		modelMap.addAttribute("levelGroups", TournamentLevelGroup.ALL_LEVEL_GROUPS);
+		modelMap.addAttribute("surfaces", Surface.values());
+		modelMap.addAttribute("surfaceGroups", SurfaceGroup.values());
+		modelMap.addAttribute("rounds", Round.values());
+		modelMap.addAttribute("tournaments", tournamentService.getTournaments());
+		modelMap.addAttribute("minMatchScore", MatchesService.MIN_MATCH_SCORE);
+		return new ModelAndView("greatestMatches", modelMap);
+	}
+
 
 	// Util
 

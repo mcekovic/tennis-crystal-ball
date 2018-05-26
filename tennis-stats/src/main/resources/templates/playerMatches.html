@@ -110,8 +110,7 @@
 		}).on("loaded.rs.jquery.bootgrid", function() {
 			$("#matchesStats").popover("destroy").removeClass("loaded");
 		});
-		var $matchesTableHeader = $("#matchesTable-header");
-		var $search = $matchesTableHeader.find("div.search");
+		var $search = $("#matchesTable-header").find("div.search");
 		$search.before($("#matchesTournamentDiv").remove());
 		$search.before($("#matchesTournamentEventDiv").remove());
 		$search.before($("#matchesOutcomeDiv").remove());

@@ -48,6 +48,10 @@ public class MatchFilter extends TournamentEventResultFilter {
 		return new MatchFilter(season, null, null, null, surface, null, null, null, null, null, null, null, null, null, false, null);
 	}
 
+	public static MatchFilter forMatches(Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, Integer tournamentId, String round, String searchPhrase) {
+		return forMatches(null, dateRange, level, bestOf, surface, indoor, round, null, tournamentId, null, null, null, null, null, false, searchPhrase);
+	}
+
 	public static MatchFilter forMatches(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, ScoreFilter scoreFilter, StatsFilter statsFilter, boolean bigWin, String searchPhrase) {
 		return new MatchFilter(season, dateRange, level, bestOf, surface, indoor, round, result, tournamentId, tournamentEventId, opponentFilter, outcomeFilter, scoreFilter, statsFilter, bigWin, searchPhrase);
 	}
