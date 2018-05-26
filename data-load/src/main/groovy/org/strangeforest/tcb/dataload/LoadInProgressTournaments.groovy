@@ -9,7 +9,10 @@ static loadTournaments(SqlPool sqlPool) {
 		def atpInProgressTournamentLoader = new ATPWorldTourInProgressTournamentLoader(sql)
 		def oldExtIds = atpInProgressTournamentLoader.findInProgressEventExtIds()
 		println "Old in-progress tournaments: $oldExtIds"
-		def eventInfos = findInProgressEvents()
+		def result = findInProgressEvents()
+		if (result.errorAndEmpty)
+			return false
+		def eventInfos = result.items
 		def newExtIds = eventInfos.collect { info -> info.extId }
 		println "New in-progress tournaments: $newExtIds"
 		def changed = false
@@ -27,14 +30,16 @@ static loadTournaments(SqlPool sqlPool) {
 }
 
 static findInProgressEvents() {
-	def eventInfos = new TreeSet<>()
+	CrawlingResult<EventInfo> result = CrawlingResult.empty()
 	def crawler = new CascadingCrawler('/en/scores/current')
-	crawler.visit { url -> eventInfos.addAll findInProgressEvents(url, crawler) }
-	eventInfos.removeIf { info -> !info.extId }
-	eventInfos
+	crawler.visit {
+		url -> result.add findInProgressEvents(url, crawler)
+	}
+	result.items.removeIf { info -> !info.extId }
+	result
 }
 
-static findInProgressEvents(String url, CascadingCrawler crawler) {
+static CrawlingResult<EventInfo> findInProgressEvents(String url, CascadingCrawler crawler) {
 	def fullUrl = 'http://www.atpworldtour.com' + url
 	def eventInfos = new TreeSet<>()
 	try {
@@ -51,8 +56,9 @@ static findInProgressEvents(String url, CascadingCrawler crawler) {
 	catch (Exception ex) {
 		System.err.println 'Error fetching URL: ' + fullUrl
 		ex.printStackTrace()
+		CrawlingResult.error(eventInfos)
 	}
-	eventInfos
+	CrawlingResult.ok(eventInfos)
 }
 
 class CascadingCrawler {
@@ -86,5 +92,37 @@ class CascadingCrawler {
 	def addUrl(String url) {
 		if (!isVisited(url))
 			urls.add url
+	}
+}
+
+class CrawlingResult<T> {
+
+	Set<T> items
+	boolean error
+
+	static CrawlingResult empty() {
+		new CrawlingResult(new TreeSet<>(), false)
+	}
+
+	static CrawlingResult ok(Set<T> items) {
+		new CrawlingResult(items, false)
+	}
+
+	static CrawlingResult error(Set<T> items) {
+		new CrawlingResult(items, true)
+	}
+
+	private CrawlingResult(Set<T> items, boolean error) {
+		this.items = items
+		this.error = error
+	}
+
+	def add(CrawlingResult<T> result) {
+		items.addAll(result.items)
+		error = error || result.error
+	}
+
+	def getErrorAndEmpty() {
+		error && !items
 	}
 }

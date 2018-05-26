@@ -83,10 +83,9 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 	def loadAndForecastTournament(String urlId, extId, Integer season = null, String level = null, String surface = null, boolean verbose = false) {
 		try {
-			if (loadTournament(urlId, extId, season, level, surface, verbose)) {
+			if (loadTournament(urlId, extId, season, level, surface, verbose))
 				forecastTournament(extId, verbose)
-				return true
-			}
+			return true
 		}
 		catch (Exception ex) {
 			System.err.println "Error loading and forecasting in-progress tournament: $urlId/$extId"

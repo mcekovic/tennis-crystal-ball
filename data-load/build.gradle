@@ -28,7 +28,7 @@ dependencies {
 	compile ("org.codehaus.groovy:groovy-all:$groovyVersion")
 	compile ("com.xlson.groovycsv:groovycsv:$groovyCsvVersion")
 	compile ("org.jsoup:jsoup:$jsoupVersion")
-	compile ("org.springframework:spring-jdbc:$springJdbcVersion")
+	compile ("org.springframework:spring-jdbc:$springVersion")
 	compile ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 	compile ("commons-cli:commons-cli:$commonsCliVersion")
 	compile ("org.slf4j:slf4j-simple:$slf4jVersion")
