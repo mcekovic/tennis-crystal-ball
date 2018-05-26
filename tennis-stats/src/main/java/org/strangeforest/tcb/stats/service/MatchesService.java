@@ -202,6 +202,7 @@ public class MatchesService {
 		return table;
 	}
 
+	@Cacheable("GreatestMatches.Table")
 	public BootgridTable<Match> getGreatestMatchesTable(MatchFilter filter, Integer bestRank, String orderBy, int pageSize, int currentPage) {
 		BootgridTable<Match> table = new BootgridTable<>(currentPage);
 		AtomicInteger matches = new AtomicInteger();
