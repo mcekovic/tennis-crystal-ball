@@ -91,6 +91,12 @@ function loadTab($pill, url) {
 	});
 }
 
+function tabLoading($pill) {
+	var $pane = $($pill.attr("href"));
+	$pane.html("<div class='loading'></div>") ;
+	$pill.tab("show");
+}
+
 
 // Collapse
 

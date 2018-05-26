@@ -66,7 +66,7 @@
 				<div th:if="${opponent}" class="opponent">
 					<img th:src="@{/images/flags/{code}.png(code=${opponent.country.code})}" src="/images/flags/ch.png'" th:title="${opponent.country.id}" title="SUI" width="24" height="20"/>
 					<a th:href="@{/playerProfile(playerId=${opponent.id})}" th:text="${opponent.name}" title="Show profile">Roger Federer</a>[(${opponent.formattedSeedAndEntry()})]
-					<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|playerPathClick(${opponent.id})|"><i class="fa fa-road"></i></a>
+					<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|showPlayerPath(${opponent.id})|"><i class="fa fa-road"></i></a>
 				</div>
 				</th:block>
 			</td>
@@ -119,7 +119,7 @@
 					<th:block th:unless="${opponent.qualifier}">
 						<img th:src="@{/images/flags/{code}.png(code=${opponent.country.code})}" src="/images/flags/ch.png'" th:title="${opponent.country.id}" title="SUI" width="24" height="20"/>
 						<a th:href="@{/playerProfile(playerId=${opponent.id})}" th:text="${opponent.name}" title="Show profile">Roger Federer</a>[(${opponent.formattedSeedAndEntry()})]
-						<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|playerPathClick(${opponent.id})|"><i class="fa fa-road"></i></a>
+						<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|showPlayerPath(${opponent.id})|"><i class="fa fa-road"></i></a>
 					</th:block>
 					<th:block th:if="${opponent.qualifier}">Qualifier</th:block>
 				</div>
@@ -145,10 +145,5 @@
 		</tbody>
 		</th:block>
 	</table>
-	</div>
-	<div id="loading" style="width: 100%; text-align: center; display: none">
-		<br/>
-		<img src="/images/loading-chart.gif" width="128" height="128" alt="Loading player path..."/>
-		<br/>
 	</div>
 </th:block>

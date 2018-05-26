@@ -27,7 +27,7 @@
 				<td>
 					<img th:src="@{/images/flags/{code}.png(code=${favorite.country.code})}" src="/images/flags/ch.png'" th:title="${favorite.country.id}" title="SUI" width="24" height="20"/>
 					<a th:href="@{/playerProfile(playerId=${favorite.playerId})}" th:text="${favorite.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
-					<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|playerPathClick(${favorite.playerId})|"><i class="fa fa-road"></i></a>
+					<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|showPlayerPath(${favorite.playerId})|"><i class="fa fa-road"></i></a>
 				</td>
 				<td class="text-right" th:text="${favorite.probability != null ? #numbers.formatDecimal(100 * favorite.probability, 1, 1) + '%' : _}" th:title="${priceFormat != null ? 'Odds ' + favorite.getPrice(priceFormat) : _}">45.2%</td>
 				<td class="text-right"><a th:href="@{/playerProfile(playerId=${favorite.playerId}, tab=ranking, rankType=RANK)}" th:text="${favorite.currentRank}" title="Show ranking chart">1</a></td>

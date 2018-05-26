@@ -24,25 +24,10 @@
 			if (priceFormat) url += "&priceFormat=" + priceFormat;
 			window.location.href = url + "&tab=" + $("#inProgressEventPills li.active a").attr("href").substr(1);
 		}
-		function playerPathClick(playerId) {
-			$("#playerPathPill").click();
-			showPlayerPath(playerId);
-		}
 		function showPlayerPath(playerId) {
-			var $loading = $("#loading");
-			$loading.show();
-			$("#pathPlayerDiv").hide();
-			setTimeout(function() {
-				try {
-					var url = "/inProgressEventPlayerPath?inProgressEventId=[(${inProgressEventId + (priceFormat != null ? '&priceFormat=' + priceFormat : '')})]";
-					if (playerId) url += "&playerId=" + playerId;
-					$("#playerPath").load(url);
-				}
-				finally {
-					clearTimeout(timer);
-					$loading.hide();
-				}
-			}, 0);
+			var $pill = $("#playerPathPill");
+			tabLoading($pill);
+			loadTab($pill, $pill.data("url") + "&playerId=" + playerId);
 		}
 	</script>
 	<style type="text/css">
@@ -244,7 +229,7 @@
 							<td colspan="2">
 								<img th:src="@{/images/flags/{code}.png(code=${playerForecast.country.code})}" src="/images/flags/ch.png'" th:title="${playerForecast.country.id}" title="SUI" width="24" height="20"/>
 								<a th:href="@{/playerProfile(playerId=${playerForecast.id})}" th:text="${playerForecast.name}" style="vertical-align: middle" title="Show profile">Roger Federer</a>
-								<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|playerPathClick(${playerForecast.id})|"><i class="fa fa-road"></i></a>
+								<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|showPlayerPath(${playerForecast.id})|"><i class="fa fa-road"></i></a>
 							</td>
 							<td th:text="${playerForecast.rank}" class="player-rank hidden-xs">1</td>
 							<td th:with="playerForecastForElo=${(current || prevPlayersForecast == null ? playersForecast : prevPlayersForecast).getPlayerForecast(playerForecast.id)}, eloRatingDelta=${prevPlayersForecast != null ? playerForecastForElo.eloRatingDelta : null}" class="player-rank hidden-xs"><span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${baseResultStat.first ? playerForecastForElo.eloRating() : playerForecastForElo.nextEloRating})]</td>
