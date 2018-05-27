@@ -650,10 +650,18 @@ BEGIN
 
 	-- find players
 	IF p_player1_name IS NOT NULL THEN
-		l_player1_id := find_player(p_player1_name, p_date);
+		BEGIN
+			l_player1_id := find_player(p_player1_name, p_date);
+		EXCEPTION
+			WHEN others THEN
+		END;
 	END IF;
 	IF p_player2_name IS NOT NULL THEN
-		l_player2_id := find_player(p_player2_name, p_date);
+		BEGIN
+			l_player2_id := find_player(p_player2_name, p_date);
+		EXCEPTION
+			WHEN others THEN
+		END;
 	END IF;
 
 	-- add data if missing
