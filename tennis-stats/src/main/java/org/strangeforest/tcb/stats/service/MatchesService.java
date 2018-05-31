@@ -76,7 +76,7 @@ public class MatchesService {
 		"    m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.loser_country_id, m.loser_rank, m.loser_elo_rating, m.loser_next_elo_rating,\n" +
 		"    m.score, m.outcome, m.has_stats, round(\n" +
 		"      coalesce(mf.match_factor, 0.5) * (coalesce(wrf.rank_factor, 0.5) + coalesce(lrf.rank_factor, 0.5)):: REAL / 2\n" +
-		"      * (coalesce(m.winner_elo_rating, 1500) + coalesce(m.loser_elo_rating, 1500) - 3000)::REAL / 400\n" +
+		"      * (coalesce(m.winner_elo_rating, 1500) + coalesce(m.loser_elo_rating, 1500) - 3000)::REAL / 800\n" +
 		"      * sqrt((m.w_sets + m.l_sets) * (m.w_games + m.l_games + (m.w_tbs + m.l_tbs) * 2))\n" +
 		"    ) AS match_score\n" +
 		"  FROM match m\n" +
