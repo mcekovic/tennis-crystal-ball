@@ -7,7 +7,7 @@ import groovy.transform.*
 
 import static java.lang.Math.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
-import static KOTournamentForecaster.MatchResult.*
+import static org.strangeforest.tcb.dataload.KOTournamentForecaster.MatchResult.*
 
 class KOTournamentForecaster {
 
