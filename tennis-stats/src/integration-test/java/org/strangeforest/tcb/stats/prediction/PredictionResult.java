@@ -51,7 +51,7 @@ public class PredictionResult {
 				++this.predicted;
 			double loserProbability = 1 - winnerProbability;
 			p += predicted ? winnerProbability : loserProbability;
-			pLog += log(winnerProbability);
+			pLog += winnerProbability > 0.0 ? log(winnerProbability) : -2.0 * E;
 			pDelta2 += loserProbability * loserProbability;
 			if (withPrice) { // Match has valid bookmaker price to compare prediction to
 				++this.withPrice;
