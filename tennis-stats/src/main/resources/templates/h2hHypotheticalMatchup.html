@@ -319,6 +319,7 @@
 				<a th:case="'RANKING[RANK]'" th:href="${url + '&tab=ranking&rankType=RANK'}" th:text="${item.longName()}" title="Show ranking comparision">ELO</a>
 				<a th:case="'RANKING[RANK_POINTS]'" th:href="${url + '&tab=ranking&rankType=POINTS'}" th:text="${item.longName()}" title="Show ranking points comparision">ELO</a>
 				<a th:case="'RANKING[ELO]'" th:href="${url + '&tab=ranking&rankType=ELO_RATING'}" th:text="${item.longName()}" title="Show Elo rating comparision">ELO</a>
+				<a th:case="'RANKING[RECENT_ELO]'" th:href="${url + '&tab=ranking&rankType=RECENT_ELO_RATING'}" th:text="${item.longName()}" title="Show Recent Elo rating comparision">ELO</a>
 				<a th:case="'RANKING[SURFACE_ELO]'" th:href="${url + '&tab=ranking&rankType=' + T(org.strangeforest.tcb.stats.model.core.Surface).decode(surface).name() + '_ELO_RATING'}" th:text="${item.longName()}" th:title="|Show ${T(org.strangeforest.tcb.stats.model.core.Surface).decode(surface).text} Elo rating comparision|">ELO</a>
 				<a th:case="'RANKING[OUT_IN_ELO]'" th:href="${url + '&tab=ranking&rankType=' + (indoor ? 'INDOOR' : 'OUTDOOR') + '_ELO_RATING'}" th:text="${item.longName()}" th:title="|Show ${indoor ? 'Indoor' : 'Outdoor'} Elo rating comparision|">ELO</a>
 				<a th:case="'RANKING[SET_ELO]'" th:href="${url + '&tab=ranking&rankType=SET_ELO_RATING'}" th:text="${item.longName()}" title="Show Set Elo rating comparision">ELO</a>
