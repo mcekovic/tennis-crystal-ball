@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import com.google.common.base.*
+
 import static org.strangeforest.tcb.util.DateUtil.*
 
 class EloSurfaceFactors {
@@ -24,7 +26,8 @@ class EloSurfaceFactors {
 	private Map<Integer, Double> indoorFactors = new TreeMap<>()
 
 	EloSurfaceFactors(SqlPool sqlPool) {
-		println 'Loading Elo Ratings surface ratios'
+		print 'Loading Elo Ratings surface ratios'
+		def stopwatch = Stopwatch.createStarted()
 		sqlPool.withSql  { sql ->
 			sql.eachRow(QUERY_SURFACE_RATIOS) { row ->
 				int season = row.season
@@ -36,6 +39,7 @@ class EloSurfaceFactors {
 				indoorFactors[season] = (1.95d + pctToFactor(toDouble(row.indoor_pct))) / 2
 			}
 		}
+		println " $stopwatch"
 	}
 
 	double surfaceKFactor(String surface, Date date) {

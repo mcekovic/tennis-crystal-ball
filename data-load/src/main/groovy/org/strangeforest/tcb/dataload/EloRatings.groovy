@@ -73,29 +73,38 @@ class EloRatings {
 		"WHERE match_id = :match_id"
 
 	
+	// Factors and tennis constants
 	static final List<String> RATING_TYPES = ['r', 'H', 'C', 'G', 'P', 'O', 'I', 's', 'g', 'sg', 'rg', 'tb']
 	static final Date CARPET_END = toDate(LocalDate.of(2008, 1, 1))
 	static final Date STATS_START = toDate(LocalDate.of(1991, 1, 1))
 	static final Date TIE_BREAK_START = toDate(LocalDate.of(1970, 1, 1))
 	static final int DEFAULT_MIN_MATCHES = 10
-	static final Map<String, Integer> MIN_MATCHES = [H: 5, C: 5, G: 5, P: 5, O: 5, I: 5]
-	static final int MIN_MATCHES_PERIOD = 365
+	static final Map<String, Integer> MIN_MATCHES = [r: 5, H: 5, C: 5, G: 5, P: 5, O: 5, I: 5, s: 5, g: 2, sg: 3, rg: 3]
+	static final int DEFAULT_MIN_MATCHES_PERIOD = 365
+	static final Map<String, Integer> MIN_MATCHES_PERIOD = [r: 90]
 	static final int MIN_MATCHES_IN_PERIOD = 3
+	static final int DEFAULT_NON_PLAYING_ADJ_PERIOD = 365
+	static final Map<String, Integer> NON_PLAYING_ADJ_PERIOD = [r: 90]
+
+	// Player counts
 	static final int PLAYERS_TO_SAVE = 200
 
+	// Technical
 	static final int MATCHES_FETCH_SIZE = 200
 	static final int RANK_PRELOAD_FETCH_SIZE = 1000
 	static final double SAVE_RANK_THREAD_RATIO = 1.0d
 
-	static final comparator = { a, b -> b <=> a }
-	static final bestComparator = { a, b -> b.bestRating <=> a.bestRating }
-	static final nullFuture = CompletableFuture.completedFuture(null)
-
+	// Progress tracking
 	static final int MATCHES_PER_DOT = 1000
 	static final int SAVES_PER_PLUS = 20
 	static final int RANK_FETCHES_PER_QUESTION_MARK = 200
 	static final int RANK_PRELOADS_PER_QUESTION_MARK = 20000
 	static final int PROGRESS_LINE_WRAP = 100
+
+	// Functions
+	static final comparator = { a, b -> b <=> a }
+	static final bestComparator = { a, b -> b.bestRating <=> a.bestRating }
+	static final nullFuture = CompletableFuture.completedFuture(null)
 
 	EloRatings(SqlPool sqlPool) {
 		this.sqlPool = sqlPool
@@ -196,13 +205,21 @@ class EloRatings {
 	def current(int count, Date date = new Date(), String type = null) {
 		Date minDate = toDate(toLocalDate(date).minusYears(1))
 		def i = 0
-		getRatings(type).values().findAll { it.rating >= START_RATING && it.matches >= minMatches() && it.lastDate >= minDate && it.getDaysSpan(date) <= MIN_MATCHES_PERIOD }
+		getRatings(type).values().findAll { it.rating >= START_RATING && it.matches >= minMatches() && it.lastDate >= minDate && it.getDaysSpan(date) <= minMatchesPeriod(type) }
 			.sort(comparator)
 			.findAll { ++i <= count }
 	}
 
 	static def minMatches(String type) {
 		type ? (MIN_MATCHES[type] ?: DEFAULT_MIN_MATCHES) : DEFAULT_MIN_MATCHES
+	}
+
+	static def minMatchesPeriod(String type) {
+		type ? (MIN_MATCHES_PERIOD[type] ?: DEFAULT_MIN_MATCHES_PERIOD) : DEFAULT_MIN_MATCHES_PERIOD
+	}
+
+	static def nonPlayingAdjustmentPeriod(String type) {
+		type ? (NON_PLAYING_ADJ_PERIOD[type] ?: DEFAULT_NON_PLAYING_ADJ_PERIOD) : DEFAULT_NON_PLAYING_ADJ_PERIOD
 	}
 
 	def peak(int count) {
@@ -457,16 +474,17 @@ class EloRatings {
 			def lastDate = this.lastDate
 			if (lastDate) {
 				def daysSinceLastMatch = ChronoUnit.DAYS.between(toLocalDate(lastDate), toLocalDate(date))
-				if (daysSinceLastMatch > 365) {
-					rating = ratingAdjusted(daysSinceLastMatch, type)
-					if (daysSinceLastMatch > 365 * 5)
+				def adjustmentPeriod = nonPlayingAdjustmentPeriod(type)
+				if (daysSinceLastMatch > adjustmentPeriod) {
+					rating = ratingAdjusted(daysSinceLastMatch, adjustmentPeriod, type)
+					if (daysSinceLastMatch > adjustmentPeriod * 5)
 						matches = 0
 				}
 			}
 		}
 
-		private ratingAdjusted(long daysSinceLastMatch, String type) {
-			max(START_RATING, rating - (daysSinceLastMatch - 365) * ratingDiffForType(200d, type) / 365)
+		private ratingAdjusted(long daysSinceLastMatch, int adjustmentPeriod, String type) {
+			max(START_RATING, rating - (daysSinceLastMatch - adjustmentPeriod) * ratingDiffForType(200d, type) / adjustmentPeriod)
 		}
 
 		def bestRating(EloRating newRating, String type) {
@@ -493,10 +511,12 @@ class EloRatings {
 	}
 
 	private deleteAll() {
-		println 'Deleting all Elo ratings'
+		print 'Deleting all Elo ratings'
+		def stopwatch = Stopwatch.createStarted()
 		sqlPool.withSql { sql ->
 			sql.execute(DELETE_ALL)
 		}
+		println " $stopwatch"
 	}
 
 	private Integer playerRank(int playerId, Date date) {
