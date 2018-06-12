@@ -83,8 +83,8 @@ class EloRatings {
 	static final int DEFAULT_MIN_MATCHES_PERIOD = 365
 	static final Map<String, Integer> MIN_MATCHES_PERIOD = [r: 90]
 	static final int MIN_MATCHES_IN_PERIOD = 3
-	static final int DEFAULT_NON_PLAYING_ADJ_PERIOD = 365
-	static final Map<String, Integer> NON_PLAYING_ADJ_PERIOD = [r: 90]
+	static final int DEFAULT_INACTIVITY_ADJ_PERIOD = 365
+	static final Map<String, Integer> INACTIVITY_ADJ_PERIOD = [r: 90]
 
 	// Player counts
 	static final int PLAYERS_TO_SAVE = 200
@@ -218,8 +218,8 @@ class EloRatings {
 		type ? (MIN_MATCHES_PERIOD[type] ?: DEFAULT_MIN_MATCHES_PERIOD) : DEFAULT_MIN_MATCHES_PERIOD
 	}
 
-	static def nonPlayingAdjustmentPeriod(String type) {
-		type ? (NON_PLAYING_ADJ_PERIOD[type] ?: DEFAULT_NON_PLAYING_ADJ_PERIOD) : DEFAULT_NON_PLAYING_ADJ_PERIOD
+	static def inactivityAdjustmentPeriod(String type) {
+		type ? (INACTIVITY_ADJ_PERIOD[type] ?: DEFAULT_INACTIVITY_ADJ_PERIOD) : DEFAULT_INACTIVITY_ADJ_PERIOD
 	}
 
 	def peak(int count) {
@@ -474,7 +474,7 @@ class EloRatings {
 			def lastDate = this.lastDate
 			if (lastDate) {
 				def daysSinceLastMatch = ChronoUnit.DAYS.between(toLocalDate(lastDate), toLocalDate(date))
-				def adjustmentPeriod = nonPlayingAdjustmentPeriod(type)
+				def adjustmentPeriod = inactivityAdjustmentPeriod(type)
 				if (daysSinceLastMatch > adjustmentPeriod) {
 					rating = ratingAdjusted(daysSinceLastMatch, adjustmentPeriod, type)
 					if (daysSinceLastMatch > adjustmentPeriod * 5)
