@@ -49,6 +49,7 @@ VALUES
    ('Jose Statham', 'Jose Rubin Statham'),
    ('Juan Gisbert Sr', 'Juan Gisbert'),
    ('Junjo Kawamuri', 'Junzo Kawamori'),
+   ('Jurabek Karimov', 'Djurabek Karimov'),
    ('Lloyd Harris', 'Lloyd George Muirhead Harris'),
    ('Marcelo Lara', 'Marcello Lara'),
    ('Matthias A Muller', 'Matthias Muller'),
