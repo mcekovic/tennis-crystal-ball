@@ -108,8 +108,8 @@ public class MatchFilter extends TournamentEventResultFilter {
 	private static final String ENTRY_ROUND_CRITERION     = " AND m.round BETWEEN 'R128' AND 'R16'";
 	private static final String MATCHES_SEARCH_CRITERION  = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR pw.name ILIKE '%' || :searchPhrase || '%' OR pl.name ILIKE '%' || :searchPhrase || '%')";
 	private static final String STATS_SEARCH_CRITERION    = " AND (e.name ILIKE '%' || :searchPhrase || '%' OR o.name ILIKE '%' || :searchPhrase || '%')";
-	private static final String MATCHES_BIG_WIN_CRITERION = " AND m.winner_id = :playerId";
-	private static final String STATS_BIG_WIN_CRITERION   = " AND m.player_id = :playerId AND m.p_matches = 1";
+	private static final String MATCHES_BIG_WIN_CRITERION = " AND m.winner_id = :playerId AND ((m.winner_rank <= 20 OR m.loser_rank <= 20) OR m.loser_elo_rating > 2000)";
+	private static final String STATS_BIG_WIN_CRITERION   = " AND m.player_id = :playerId AND ((m.player_rank <= 20 OR m.opponent_rank <= 20) OR m.opponent_elo_rating > 2000) AND m.p_matches = 1";
 
 	private MatchFilter(Integer season, Range<LocalDate> dateRange, String level, Integer bestOf, String surface, Boolean indoor, String round, String result, Integer tournamentId, Integer tournamentEventId, OpponentFilter opponentFilter, OutcomeFilter outcomeFilter, ScoreFilter scoreFilter, StatsFilter statsFilter, boolean bigWin, String searchPhrase) {
 		super(season, dateRange, level, surface, indoor, result, tournamentId, tournamentEventId, statsFilter, searchPhrase);
