@@ -89,7 +89,7 @@
 				"score": scoreFormatter,
 				"bigWinPoints": function(column, row) {
 					var bigWinPoints = row.bigWinPoints;
-					return bigWinPoints ? bigWinPoints.toFixed(2) : "";
+					return bigWinPoints >= 0 ? bigWinPoints.toFixed(2) : "";
 				},
 				"stats": function(column, row) {
 					return row.hasStats ? "<a id='matchStats-" + row.id + "' href='#' class='label label-info label-btn' onclick='showMatchStats(" + row.id + ", event)' title='Match Statistics'><span class='glyphicon glyphicon-stats'></span>&nbsp;&nbsp;Stats</a>" : "";
