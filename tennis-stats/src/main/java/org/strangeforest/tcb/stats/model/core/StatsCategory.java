@@ -495,7 +495,7 @@ public final class StatsCategory {
 	}
 
 	public String getOpponentFilter() {
-		return name.equals("upsetsScored") ? "HIGHER_ELO" : (name.equals("upsetsAgainst") ? "LOWER_ELO" : null);
+		return name.equals("upsetsScored") ? "HIGHER_RANKED" : (name.equals("upsetsAgainst") ? "LOWER_RANKED" : null);
 	}
 
 
