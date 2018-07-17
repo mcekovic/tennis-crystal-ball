@@ -26,7 +26,7 @@ public class HardestTitleCategory extends RecordCategory {
 	private static final String SEASON_WIDTH =      "80";
 	private static final String TOURNAMENT_WIDTH = "120";
 
-	public static final String TITLE_DIFFICULTY_NOTES = "Relative Title Difficulty factor represents how hard was to win the title compared to winning an average title of the same tournament level";
+	public static final String TITLE_DIFFICULTY_NOTES = "Relative Title Difficulty Factor represents how hard was to win the title compared to winning an average title of the same tournament level (Difficulty Factor of 1.315 means that a title was 31.5% harder to win compared to an average title of the same tournament level)";
 
 	public HardestTitleCategory(RecordType type) {
 		super(type.name + " Titles");
