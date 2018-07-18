@@ -100,15 +100,15 @@ class CrawlingResult<T> {
 	Set<T> items
 	boolean error
 
-	static CrawlingResult empty() {
+	static <T> CrawlingResult<T> empty() {
 		new CrawlingResult(new TreeSet<>(), false)
 	}
 
-	static CrawlingResult ok(Set<T> items) {
+	static <T> CrawlingResult<T> ok(Set<T> items) {
 		new CrawlingResult(items, false)
 	}
 
-	static CrawlingResult error(Set<T> items) {
+	static <T> CrawlingResult<T> error(Set<T> items) {
 		new CrawlingResult(items, true)
 	}
 

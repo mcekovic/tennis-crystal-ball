@@ -75,7 +75,7 @@ public class MatchesService {
 		"    m.winner_id, pw.name AS winner_name, m.winner_seed, m.winner_entry, m.winner_country_id, m.winner_rank, m.winner_elo_rating, m.winner_next_elo_rating,\n" +
 		"    m.loser_id, pl.name AS loser_name, m.loser_seed, m.loser_entry, m.loser_country_id, m.loser_rank, m.loser_elo_rating, m.loser_next_elo_rating,\n" +
 		"    m.score, m.outcome, m.has_stats, round(\n" +
-		"      coalesce(mf.match_factor, 0.5) * (coalesce(wrf.rank_factor, 0.5) + coalesce(lrf.rank_factor, 0.5)):: REAL / 2\n" +
+		"      coalesce(mf.match_factor, 0.5) * (coalesce(wrf.rank_factor, 0.5) + coalesce(lrf.rank_factor, 0.5) + coalesce(wbrf.rank_factor, 0.5) + coalesce(lbrf.rank_factor, 0.5)):: REAL / 4\n" +
 		"      * (coalesce(m.winner_elo_rating, 1500) + coalesce(m.loser_elo_rating, 1500) - 3000)::REAL / 800\n" +
 		"      * sqrt((m.w_sets + m.l_sets) * (m.w_games + m.l_games + (m.w_tbs + m.l_tbs) * 2))\n" +
 		"    ) AS match_score\n" +
@@ -86,6 +86,8 @@ public class MatchesService {
 		"  LEFT JOIN big_win_match_factor mf USING (level, round)\n" +
 		"  LEFT JOIN big_win_rank_factor wrf ON m.winner_rank BETWEEN wrf.rank_from AND wrf.rank_to\n" +
 		"  LEFT JOIN big_win_rank_factor lrf ON m.loser_rank BETWEEN lrf.rank_from AND lrf.rank_to\n" +
+		"  LEFT JOIN big_win_rank_factor wbrf ON pw.best_rank BETWEEN wbrf.rank_from AND wbrf.rank_to\n" +
+		"  LEFT JOIN big_win_rank_factor lbrf ON pl.best_rank BETWEEN lbrf.rank_from AND lbrf.rank_to\n" +
 		"  %1$sWHERE outcome IS NULL%2$s\n" +
 		")\n" +
 		"SELECT rank() OVER (ORDER BY match_score DESC) AS rank, *\n" +
