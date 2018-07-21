@@ -152,6 +152,11 @@
 		<th class="text-center">Twitter</th>
 		<td class="text-left" colspan="2"><th:block th:if="${player2.twitter}"><img src="/images/glyphicons-social-twitter-small.png" width="16" height="16"/> <a th:href="'https://twitter.com/' + ${player2.twitter}" href="https://twitter.com/JohnSmith" target="_blank" class="external" th:text="'@'+ ${player2.twitter}">@JohnSmith</a></th:block></td>
 	</tr>
+	<tr th:if="${player1.nicknames != null || player2.nicknames != null}">
+		<td class="text-right" colspan="2" th:text="${player1.nicknames}">Maestro</td>
+		<th class="text-center">Nicknames</th>
+		<td class="text-left" colspan="2" th:text="${player2.nicknames}">Bull</td>
+	</tr>
 	<tr><td colspan="5">&nbsp;</td></tr>
 	<!--/* Titles */-->
 	<tr th:if="${player1.titles > 0 || player2.titles > 0}">

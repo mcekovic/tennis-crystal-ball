@@ -32,7 +32,7 @@ public class PlayerService {
 
 	private static final String PLAYER_BY_ID_QUERY =
 		"SELECT player_id, name, dob, extract(YEAR FROM age) AS age, country_id, birthplace, residence, height, weight,\n" +
-		"  hand, backhand, active, turned_pro, coach, prize_money, wikipedia, web_site, facebook, twitter,\n" +
+		"  hand, backhand, active, turned_pro, coach, prize_money, wikipedia, web_site, facebook, twitter, nicknames,\n" +
 		"  titles, grand_slams, tour_finals, alt_finals, masters, olympics,\n" +
 		"  current_rank, current_rank_points, best_rank, best_rank_date,\n" +
 		"  current_elo_rank, current_elo_rating, best_elo_rank, best_elo_rank_date, best_elo_rating, best_elo_rating_date,\n" +
@@ -55,12 +55,12 @@ public class PlayerService {
 
 	private static final String PLAYER_AUTOCOMPLETE_QUERY =
 		"SELECT player_id, name, country_id FROM player_v\n" +
-		"WHERE name ILIKE '%' || :name || '%'\n" +
+		"WHERE name ILIKE '%' || :name || '%' OR nicknames ILIKE '%' || :name || '%'\n" +
 		"ORDER BY goat_points DESC, best_rank, name LIMIT :count";
 
 	private static final String PLAYER_AUTOCOMPLETE_EX_QUERY =
-		"SELECT player_id, name, country_id, name <-> :name AS dist FROM player_v\n" +
-		"WHERE name <-> :name <= 0.7\n" +
+		"SELECT player_id, name, country_id, least(name <-> :name, nicknames <-> :name) AS dist FROM player_v\n" +
+		"WHERE name <-> :name <= :distance OR nicknames <-> :name <= :distance\n" +
 		"ORDER BY dist, goat_points DESC, best_rank, name LIMIT :count";
 
 	private static final String PLAYER_ID_QUERY =
@@ -138,6 +138,7 @@ public class PlayerService {
 		List<AutocompleteOption> options = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_QUERY, params, this::playerAutocompleteOptionMapper);
 		int count = options.size();
 		if (count <= AUTOCOMPLETE_EX_THRESHOLD) {
+			params.addValue("distance", 0.7);
 			List<AutocompleteOption> optionsEx = jdbcTemplate.query(PLAYER_AUTOCOMPLETE_EX_QUERY, params, this::playerAutocompleteOptionMapper);
 			for (AutocompleteOption option : optionsEx) {
 				if (options.size() < AUTOCOMPLETE_COUNT && !options.contains(option))
@@ -265,6 +266,7 @@ public class PlayerService {
 		p.setWebSite(rs.getString("web_site"));
 		p.setFacebook(rs.getString("facebook"));
 		p.setTwitter(rs.getString("twitter"));
+		p.setNicknames(rs.getString("nicknames"));
 
 		p.setTitles(rs.getInt("titles"));
 		p.setGrandSlams(rs.getInt("grand_slams"));

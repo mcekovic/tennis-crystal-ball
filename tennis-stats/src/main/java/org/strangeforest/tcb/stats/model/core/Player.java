@@ -32,6 +32,7 @@ public class Player {
 	private String webSite;
 	private String facebook;
 	private String twitter;
+	private String nicknames;
 
 	// Titles
 	private int titles;
@@ -233,6 +234,14 @@ public class Player {
 		this.twitter = twitter;
 	}
 
+	public String getNicknames() {
+		return nicknames;
+	}
+
+	public void setNicknames(String nicknames) {
+		this.nicknames = nicknames;
+	}
+	
 
 	// Titles
 

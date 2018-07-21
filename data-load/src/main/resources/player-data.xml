@@ -10,6 +10,7 @@
 		<web-site>www.rogerfederer.com</web-site>
 		<facebook>Federer</facebook>
 		<twitter>rogerfederer</twitter>
+		<nicknames>FedExpress, Maestro</nicknames>
 	</player>
 	<player name="Novak Djokovic">
 		<birthplace>Belgrade, Serbia</birthplace>
@@ -21,6 +22,7 @@
 		<web-site>novakdjokovic.com</web-site>
 		<facebook>djokovic.official</facebook>
 		<twitter>DjokerNole</twitter>
+		<nicknames>Nole, Djoker</nicknames>
 	</player>
 	<player name="Rafael Nadal">
 		<birthplace>Manacor, Mallorca, Spain</birthplace>
@@ -32,6 +34,7 @@
 		<web-site>www.rafaelnadal.com</web-site>
 		<facebook>Nadal</facebook>
 		<twitter>RafaelNadal</twitter>
+		<nicknames>Rafa, Bull</nicknames>
 	</player>
 	<player name="Ivan Lendl">
 		<birthplace>Ostrava, Czechoslovakia</birthplace>
@@ -40,6 +43,7 @@
 		<backhand>1</backhand>
 		<turned-pro>1978</turned-pro>
 		<coach>Jay Bosworth</coach>
+		<nicknames>Terminator, Stoneface</nicknames>
 	</player>
 	<player name="Jimmy Connors">
 		<birthplace>Belleville, IL, USA</birthplace>
@@ -48,6 +52,7 @@
 		<backhand>2</backhand>
 		<turned-pro>1972</turned-pro>
 		<twitter>JimmyConnors</twitter>
+		<nicknames>Jimbo</nicknames>
 	</player>
 	<player name="Pete Sampras">
 		<birthplace>Washington, D.C., USA</birthplace>
@@ -57,6 +62,7 @@
 		<turned-pro>1988</turned-pro>
 		<coach>Paul Annacone</coach>
 		<web-site>www.petesampras.com</web-site>
+		<nicknames>Pistol Pete</nicknames>
 	</player>
 	<player name="John Mcenroe">
 		<birthplace>Wiesbaden, Germany</birthplace>
@@ -64,6 +70,7 @@
 		<weight>75</weight>
 		<backhand>1</backhand>
 		<turned-pro>1978</turned-pro>
+		<nicknames>Johnny Mac, Superbrat</nicknames>
 	</player>
 	<player name="Andre Agassi">
 		<birthplace>Las Vegas, Nevada, USA</birthplace>
@@ -73,6 +80,7 @@
 		<turned-pro>1986</turned-pro>
 		<coach>Darren Cahill</coach>
 		<twitter>AndreAgassi</twitter>
+		<nicknames>Punisher</nicknames>
 	</player>
 	<player name="Bjorn Borg">
 		<birthplace>Sodertalje, Sweden</birthplace>
@@ -81,6 +89,7 @@
 		<backhand>2</backhand>
 		<turned-pro>1973</turned-pro>
 		<coach>Lennart Bergelin</coach>
+		<nicknames>Ice Man</nicknames>
 	</player>
 	<player name="Boris Becker">
 		<birthplace>Leimen, Germany</birthplace>
@@ -89,6 +98,7 @@
 		<backhand>1</backhand>
 		<turned-pro>1998</turned-pro>
 		<coach>Mike Depalmer, Jr.</coach>
+		<nicknames>Boom Boom Boris</nicknames>
 	</player>
 	<player name="Stefan Edberg">
 		<birthplace>Vastervik, Sweden</birthplace>
@@ -108,6 +118,7 @@
 		<web-site>www.andymurray.com</web-site>
 		<facebook>andymurrayofficial</facebook>
 		<twitter>andy_murray</twitter>
+		<nicknames>Muzza</nicknames>
 	</player>
 	<player name="Mats Wilander">
 		<birthplace>Vaxjo, Sweden</birthplace>
@@ -126,6 +137,7 @@
 		<coach>Francisco Fogues</coach>
 		<web-site>www.davidferrer.com</web-site>
 		<twitter>DavidFerrer87</twitter>
+		<nicknames>Ferru, Bulldozer</nicknames>
 	</player>
 	<player name="Tomas Berdych">
 		<birthplace>Valasske Mezirici, Czech Republic</birthplace>
@@ -144,8 +156,10 @@
 		<weight>97</weight>
 		<backhand>2</backhand>
 		<turned-pro>2005</turned-pro>
+		<coach>Sebastian Prieto</coach>
 		<facebook>JuanMartinDelPotro.Ok</facebook>
 		<twitter>delpotrojuan</twitter>
+		<nicknames>DelPo, Tower of Tandil</nicknames>
 	</player>
 	<player name="Tommy Haas">
 		<birthplace>Hamburg, Germany</birthplace>
@@ -157,6 +171,7 @@
 		<web-site>www.tommyhaas.com</web-site>
 		<facebook>pages/Tommy-Haas/133144376702967</facebook>
 		<twitter>TommyHaas13</twitter>
+		<nicknames>Hasi</nicknames>
 	</player>
 	<player name="Jo Wilfried Tsonga">
 		<birthplace>Le Mans, France</birthplace>
@@ -168,6 +183,7 @@
 		<web-site>www.jowiltsonga.fr</web-site>
 		<facebook>tsonga</facebook>
 		<twitter>tsonga7</twitter>
+		<nicknames>Muhammad Ali</nicknames>
 	</player>
 	<player name="Stanislas Wawrinka">
 		<birthplace>Lausanne, Switzerland</birthplace>
@@ -179,6 +195,7 @@
 		<web-site>www.stanwawrinka.com</web-site>
 		<facebook>stanwawrinka</facebook>
 		<twitter>stanwawrinka</twitter>
+		<nicknames>Stan the Man, Stanimal</nicknames>
 	</player>
 	<player name="Richard Gasquet">
 		<birthplace>Beziers, France</birthplace>
@@ -218,6 +235,7 @@
 		<turned-pro>2001</turned-pro>
 		<web-site>robinsoderling.se</web-site>
 		<twitter>RSoderling</twitter>
+		<nicknames>Sod</nicknames>
 	</player>
 	<player name="Mikhail Youzhny">
 		<birthplace>Moscow, Russia</birthplace>
@@ -226,6 +244,7 @@
 		<backhand>1</backhand>
 		<turned-pro>1999</turned-pro>
 		<coach>Boris Sobkin</coach>
+		<nicknames>Misha, Colonel</nicknames>
 	</player>
 	<player name="Gael Monfils">
 		<birthplace>Paris, France</birthplace>
@@ -237,6 +256,7 @@
 		<web-site>www.lamonf.com</web-site>
 		<facebook>pages/Gael-Monfils-Tennis/128049253953369</facebook>
 		<twitter>Gael_Monfils</twitter>
+		<nicknames>La Monf</nicknames>
 	</player>
 	<player name="Kei Nishikori">
 		<birthplace>Shimane, Japan</birthplace>
@@ -255,10 +275,11 @@
 		<weight>98</weight>
 		<backhand>2</backhand>
 		<turned-pro>2008</turned-pro>
-		<coach>Mark Knowles</coach>
+		<coach>Goran Ivanisevic</coach>
 		<web-site>milosraonicofficial.com</web-site>
 		<facebook>MilosRaonicOfficial</facebook>
 		<twitter>milosraonic</twitter>
+		<nicknames>Missile, Sleeve</nicknames>
 	</player>
 	<player name="Janko Tipsarevic">
 		<birthplace>Belgrade, Serbia</birthplace>
@@ -301,6 +322,7 @@
 		<coach>Gunter Bresnik</coach>
 		<facebook>1.Dominic.Thiem</facebook>
 		<twitter>ThiemDomi</twitter>
+		<nicknames>Dominator</nicknames>
 	</player>
 	<player name="Alexander Zverev">
 		<birthplace>Hamburg, Germany</birthplace>
@@ -309,6 +331,7 @@
 		<backhand>2</backhand>
 		<turned-pro>2013</turned-pro>
 		<coach>Alexander Zverev Sr.</coach>
+		<nicknames>Sascha</nicknames>
 	</player>
 	<player name="Nick Kyrgios">
 		<birthplace>Canberra, Australia</birthplace>
@@ -320,6 +343,7 @@
 		<web-site>nickkyrgios.org</web-site>
 		<facebook>nkyrgios</facebook>
 		<twitter>NickKyrgios</twitter>
+		<nicknames>Wild Thing</nicknames>
 	</player>
 	<player name="Lucas Pouille">
 		<birthplace>Grande-Synthe, France</birthplace>
@@ -330,5 +354,115 @@
 		<coach>Emmanuel Planque</coach>
 		<facebook>iamlucaspouille</facebook>
 		<twitter>la_pouille</twitter>
+	</player>
+	<!-- Old Legends -->
+	<player name="Rod Laver">
+		<birthplace>Rockhampton, Queensland, Australia</birthplace>
+		<residence>Carlsbad, California, USA</residence>
+		<backhand>1</backhand>
+		<turned-pro>1963</turned-pro>
+		<nicknames>Rocket</nicknames>
+	</player>
+	<player name="Ken Rosewall">
+		<birthplace>Sydney, Australia</birthplace>
+		<residence>Sydney, Australia</residence>
+		<backhand>1</backhand>
+		<turned-pro>1956</turned-pro>
+		<nicknames>Muscles</nicknames>
+	</player>
+	<player name="Guillermo Vilas">
+		<birthplace>Mar del Plata, Argentina</birthplace>
+		<residence>Buenos Aires, Argentina</residence>
+		<backhand>1</backhand>
+		<turned-pro>1969</turned-pro>
+		<facebook>guillermo-vilas-166896010030780</facebook>
+		<twitter>GuilleVilasOK</twitter>
+		<nicknames>Chino</nicknames>
+	</player>
+	<player name="Ilie Nastase">
+		<birthplace>Bucharest, Romania</birthplace>
+		<residence>Constanta, Romania</residence>
+		<backhand>1</backhand>
+		<turned-pro>1969</turned-pro>
+		<facebook>ilie.nastase.102</facebook>
+		<twitter>ilienastase1</twitter>
+		<nicknames>Nasty</nicknames>
+	</player>
+	<player name="Arthur Ashe">
+		<birthplace>Richmond, Virginia, USA</birthplace>
+		<backhand>1</backhand>
+		<turned-pro>1969</turned-pro>
+		<facebook>ArthurAsheOfficial</facebook>
+		<twitter>ilienastase1</twitter>
+	</player>
+	<player name="John Newcombe">
+		<birthplace>Sydney, Australia</birthplace>
+		<residence>Sydney, Australia</residence>
+		<backhand>1</backhand>
+		<turned-pro>1967</turned-pro>
+		<nicknames>Newk</nicknames>
+	</player>
+	<player name="Lleyton Hewitt">
+		<birthplace>Adelaide, Australia</birthplace>
+		<residence>Toorak, Australia</residence>
+		<backhand>2</backhand>
+		<turned-pro>1998</turned-pro>
+		<coach>Tony Roche</coach>
+		<facebook>Lleyton-Hewitt-26580125015</facebook>
+		<twitter>officialhewitt</twitter>
+		<nicknames>Rusty</nicknames>
+	</player>
+	<player name="Andy Roddick">
+		<birthplace>Omaha, Nebraska, USA</birthplace>
+		<residence>Austin, Texas, USA</residence>
+		<backhand>2</backhand>
+		<turned-pro>2000</turned-pro>
+		<coach>Larry Stefanki</coach>
+		<facebook>Andy-Roddick-111835872659</facebook>
+		<twitter>andyroddick</twitter>
+		<nicknames>ARod</nicknames>
+	</player>
+	<player name="Gustavo Kuerten">
+		<birthplace>Florianopolis, Brazil</birthplace>
+		<residence>Florianopolis, Brazil</residence>
+		<backhand>1</backhand>
+		<turned-pro>1995</turned-pro>
+		<facebook>gustavokuerten</facebook>
+		<twitter>gugakuerten</twitter>
+		<nicknames>Guga</nicknames>
+	</player>
+	<player name="Juan Carlos Ferrero">
+		<birthplace>Ontinyent, Spain</birthplace>
+		<backhand>2</backhand>
+		<turned-pro>1998</turned-pro>
+		<twitter>juankiferri</twitter>
+		<nicknames>Mosquito</nicknames>
+	</player>
+	<player name="Jim Courier">
+		<birthplace>Sanford, Florida, USA</birthplace>
+		<residence>Orlando, Florida, USA</residence>
+		<backhand>2</backhand>
+		<turned-pro>1988</turned-pro>
+		<coach>Brad Stine</coach>
+		<facebook>Jim-Courier-305447633783</facebook>
+		<twitter>realjimcourier</twitter>
+		<nicknames>Rock</nicknames>
+	</player>
+	<player name="Michael Chang">
+		<birthplace>Hoboken, New Jersey, USA</birthplace>
+		<residence>Orange County, California, USA</residence>
+		<backhand>2</backhand>
+		<turned-pro>1988</turned-pro>
+		<coach>Carl Chang</coach>
+		<twitter>michaelchang89</twitter>
+	</player>
+	<player name="Goran Ivanisevic">
+		<birthplace>Split, Croatia</birthplace>
+		<residence>Monte Carlo, Monaco</residence>
+		<backhand>2</backhand>
+		<turned-pro>1988</turned-pro>
+		<facebook>GoranIvanisevicOfficial</facebook>
+		<twitter>ivanisevic_g</twitter>
+		<nicknames>Rabbit</nicknames>
 	</player>
 </player-data>

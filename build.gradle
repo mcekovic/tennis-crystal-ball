@@ -60,7 +60,7 @@ ext {
 	releaseVersion = releaseVersion version
 }
 
-task wrapper(type: Wrapper) {
+wrapper {
 	gradleVersion = "$gradleVersion"
 }
 

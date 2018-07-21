@@ -131,8 +131,9 @@
 			<xs:element type="xs:short" name="turned-pro" minOccurs="0"/>
 			<xs:element type="xs:string" name="coach" minOccurs="0"/>
 			<xs:element type="xs:anyURI" name="web-site" minOccurs="0"/>
-			<xs:element type="xs:string" name="twitter" minOccurs="0"/>
 			<xs:element type="xs:string" name="facebook" minOccurs="0"/>
+			<xs:element type="xs:string" name="twitter" minOccurs="0"/>
+			<xs:element type="xs:string" name="nicknames" minOccurs="0"/>
 		</xs:sequence>
 		<xs:attribute type="xs:string" name="name"/>
 	</xs:complexType>

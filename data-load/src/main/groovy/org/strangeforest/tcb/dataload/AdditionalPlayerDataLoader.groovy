@@ -54,6 +54,7 @@ class AdditionalPlayerDataLoader extends SimpleXMLLoader {
 		params.web_site = string item.'web-site'
 		params.facebook = string item.facebook
 		params.twitter = string item.twitter
+		params.nicknames = string item.nicknames
 		return params
 	}
 

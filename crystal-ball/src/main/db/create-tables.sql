@@ -82,6 +82,7 @@ CREATE TABLE player (
 	web_site TEXT,
 	facebook TEXT,
 	twitter TEXT,
+	nicknames TEXT,
 	UNIQUE (first_name, last_name, dob)
 );
 
@@ -101,7 +102,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE INDEX player_name_idx ON player (full_name(first_name, last_name));
-CREATE INDEX player_name_gin_idx ON player USING gin (full_name(first_name, last_name) gin_trgm_ops);
+CREATE INDEX player_name_gin_idx ON player USING gin (full_name(first_name, last_name) gin_trgm_ops, nicknames gin_trgm_ops);
 CREATE INDEX ON player (country_id);
 
 

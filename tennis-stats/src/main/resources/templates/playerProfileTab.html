@@ -110,6 +110,10 @@
 				<th>Twitter</th>
 				<td><img src="/images/glyphicons-social-twitter-small.png" width="16" height="16"/> <a th:href="'https://twitter.com/' + ${player.twitter}" href="https://twitter.com/JohnSmith" target="_blank" class="external" th:text="'@'+ ${player.twitter}">@JohnSmith</a></td>
 			</tr>
+			<tr th:if="${player.nicknames}">
+				<th>Nicknames</th>
+				<td th:text="${player.nicknames}">Maestro</td>
+			</tr>
 		</table>
 	</div>
 	<div class="col-lg-1">&nbsp;</div>
