@@ -20,8 +20,8 @@ class WikipediaPlayerDataLoader {
 
 	static final String FETCH_PLAYERS_FOR_DATA_UPDATE_SQL = //language=SQL
 		'SELECT player_id FROM player_v\n' +
-		'WHERE (wikipedia IS NULL OR backhand IS NULL OR turned_pro IS NULL OR prize_money IS NULL OR web_site IS NULL)\n' +
-		'AND (goat_points > 0 OR best_rank <= 500)\n' +
+		'WHERE (goat_points > 0 OR best_rank <= 500)\n' +
+//		'AND (wikipedia IS NULL OR backhand IS NULL OR turned_pro IS NULL OR prize_money IS NULL OR web_site IS NULL)\n' +
 		'ORDER BY goat_points DESC, best_rank'
 
 	WikipediaPlayerDataLoader(SqlPool sqlPool) {
