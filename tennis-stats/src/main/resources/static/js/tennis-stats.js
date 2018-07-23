@@ -1,3 +1,19 @@
+// Cookies
+
+function getCookie(name) {
+	var s = name + "=";
+	var cookie = decodeURIComponent(document.cookie).split(';');
+	for (var i = 0; i <cookie.length; i++) {
+		var c = cookie[i];
+		while (c.charAt(0) === ' ')
+			c = c.substring(1);
+		if (c.indexOf(s) === 0)
+			return c.substring(s.length, c.length);
+	}
+	return "";
+}
+
+
 // Autocomplete player
 
 function autocompletePlayer(id) {
@@ -252,7 +268,9 @@ function playerCountryFormatter(column, row) {
 }
 
 function formatFavorite(column, favorite) {
-	return favorite ? playerCountryFormatter(column, favorite) + " " + ((100 * favorite.probability).toFixed(1)) + "%" : "";
+	if (!favorite) return "";
+	var price = favorite.price;
+	return playerCountryFormatter(column, favorite) + " " + (price ? "<span title='Odds " + price + "'>" : "") + ((100 * favorite.probability).toFixed(1)) + "%" + (price ? "</span>" : "");
 }
 
 // Level Formatter

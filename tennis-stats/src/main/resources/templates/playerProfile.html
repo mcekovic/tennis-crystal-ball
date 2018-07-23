@@ -100,7 +100,7 @@
 		<img th:src="@{/images/flags/{code}.png(code=${player.country.code})}" src="/images/flags/ch.png'" style="float: left; margin-top: 2px; margin-right: 8px" th:title="${player.country.id}" title="SUI" width="24" height="20"/>
 		<th:block th:text="${player.name}">Roger Federer</th:block> <a th:href="@{/playerProfile(name=${player.name})}" th:title="|Permalink to ${player.name} profile|"><h4 style="margin: 0" class="glyphicon glyphicon-link"></h4></a>
 	</h3>
-	<ul id="playerPills" class="nav nav-pills">
+	<ul id="playerPills" class="nav nav-pills tab-param">
 		<li><a id="profilePill" data-toggle="pill" href="#profile" th:data-url="'/playerProfileTab?playerId=' + ${player.id}">Profile</a></li>
 		<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/playerSeason?playerId=' + ${player.id}">Season</a></li>
 		<li><a id="eventsPill" data-toggle="pill" href="#events" th:data-url="'/playerEvents?playerId=' + ${player.id}">Events</a></li>

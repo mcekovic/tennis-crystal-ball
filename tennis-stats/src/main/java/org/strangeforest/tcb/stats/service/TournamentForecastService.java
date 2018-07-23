@@ -14,6 +14,7 @@ import org.strangeforest.tcb.stats.model.TournamentEventResults.*;
 import org.strangeforest.tcb.stats.model.core.*;
 import org.strangeforest.tcb.stats.model.forecast.*;
 import org.strangeforest.tcb.stats.model.prediction.*;
+import org.strangeforest.tcb.stats.model.price.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.util.*;
 
@@ -109,7 +110,7 @@ public class TournamentForecastService {
 
 
 	@Cacheable("InProgressEvents")
-	public BootgridTable<InProgressEvent> getInProgressEventsTable(String orderBy) {
+	public BootgridTable<InProgressEvent> getInProgressEventsTable(String orderBy, PriceFormat priceFormat) {
 		BootgridTable<InProgressEvent> table = new BootgridTable<>();
 		jdbcTemplate.query(
 			format(IN_PROGRESS_EVENTS_QUERY, orderBy),
@@ -118,7 +119,7 @@ public class TournamentForecastService {
 			}
 		);
 		for (InProgressEvent inProgressEvent : table.getRows())
-			inProgressEvent.setFavorites(findFavoritePlayers(inProgressEvent.getId(), 2));
+			inProgressEvent.setFavorites(findFavoritePlayers(inProgressEvent.getId(), 2, priceFormat));
 		return table;
 	}
 
@@ -156,7 +157,7 @@ public class TournamentForecastService {
 	@Cacheable("InProgressEventForecast")
 	public InProgressEventForecast getInProgressEventForecast(int inProgressEventId) {
 		InProgressEvent inProgressEvent = getInProgressEvent(inProgressEventId);
-		List<FavoritePlayer> favorites = findFavoritePlayers(inProgressEventId, 4);
+		List<FavoritePlayer> favorites = findFavoritePlayers(inProgressEventId, 4, null);
 		inProgressEvent.setFavorites(favorites);
 		return fetchInProgressEventForecast(inProgressEvent, "");
 	}
@@ -464,17 +465,20 @@ public class TournamentForecastService {
 		);
 	}
 
-	private List<FavoritePlayer> findFavoritePlayers(int inProgressEventId, int count) {
-		return jdbcTemplate.query(format(FIND_FAVORITES_QUERY, ""), params("inProgressEventId", inProgressEventId).addValue("favoriteCount", count), this::mapFavoritePlayer);
+	private List<FavoritePlayer> findFavoritePlayers(int inProgressEventId, int count, PriceFormat priceFormat) {
+		return jdbcTemplate.query(format(FIND_FAVORITES_QUERY, ""), params("inProgressEventId", inProgressEventId).addValue("favoriteCount", count),
+			(rs, rowNum) -> mapFavoritePlayer(rs, rowNum, priceFormat)
+		);
 	}
 
-	private FavoritePlayer mapFavoritePlayer(ResultSet rs, int rowNum) throws SQLException {
+	private FavoritePlayer mapFavoritePlayer(ResultSet rs, int rowNum, PriceFormat priceFormat) throws SQLException {
 		return new FavoritePlayer(
 			rowNum + 1,
 			rs.getInt("player_id"),
 			rs.getString("name"),
 			rs.getString("country_id"),
-			rs.getDouble("probability")
+			rs.getDouble("probability"),
+			priceFormat
 		);
 	}
 }

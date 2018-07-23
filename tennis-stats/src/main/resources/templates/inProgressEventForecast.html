@@ -5,7 +5,6 @@
 <!--/*@thymesVar id="forecast" type="org.strangeforest.tcb.stats.model.forecast.InProgressEventForecast"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Map"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
-<!--/*@thymesVar id="priceFormats" type="org.strangeforest.tcb.stats.model.price.PriceFormat[]"*/-->
 <!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
 <head th:replace="fragments/head :: commonHead(${inProgressEvent.name} + ' Forecast', false, ~{::template})">
 	<template>
@@ -18,12 +17,6 @@
 			bindPopovers();
 			loadRankingTopN("ELO_RANK", 20);
 		});
-		function priceFormatChanged() {
-			var url = "/inProgressEventForecast?inProgressEventId=[(${inProgressEventId})]";
-			var priceFormat = $("#priceFormat").val();
-			if (priceFormat) url += "&priceFormat=" + priceFormat;
-			window.location.href = url + "&tab=" + $("#inProgressEventPills li.active a").attr("href").substr(1);
-		}
 		function showPlayerPath(playerId) {
 			var $pill = $("#playerPathPill");
 			tabLoading($pill);
@@ -167,29 +160,19 @@
 						</a>
 					</th>
 				</tr>
-				<tr><td>&nbsp;</td></tr>
-				<tr>
-					<td>
-						<label for="priceFormat" title="Choose odds format">Odds:</label>
-						<select id="priceFormat" class="" onchange="priceFormatChanged()">
-							<option value="">None</option>
-							<option th:each="aPriceFormat : ${priceFormats}" th:value="${aPriceFormat}" value="DECIMAL" th:text="${aPriceFormat.text}" th:selected="${aPriceFormat == priceFormat}">Decimal</option>
-						</select>
-					</td>
-				</tr>
 			</table>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-lg-10 col-md-9">
-			<ul id="inProgressEventPills" class="nav nav-pills" th:with="params=${priceFormat != null ? '&priceFormat=' + priceFormat : ''}">
+			<ul id="inProgressEventPills" class="nav nav-pills tab-param">
 				<li><a id="resultsPill" data-toggle="pill" href="#results" th:data-url="'/inProgressEventResults?inProgressEventId=' + ${inProgressEvent.id}">Completed</a></li>
 				<li th:each="baseResult : ${forecast.baseResults}" th:class="${baseResultStat.last ? 'active' : _}">
 					<a th:id="'baseResult' + ${baseResult} + 'Pill'" data-toggle="pill" th:href="'#baseResult' + ${baseResult}" th:text="${baseResult}">W</a>
 				</li>
-				<li><a id="probablePill" data-toggle="pill" href="#probable" th:data-url="'/inProgressEventProbableMatches?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Probable Matchups</a></li>
-				<li><a id="playerPathPill" data-toggle="pill" href="#playerPath" th:data-url="'/inProgressEventPlayerPath?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Player Path<sup class="new-feature"></sup></a></li>
-				<li><a id="favoritesPill" data-toggle="pill" href="#favorites" th:data-url="'/inProgressEventFavorites?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Favorites</a></li>
+				<li><a id="probablePill" data-toggle="pill" href="#probable" th:data-url="'/inProgressEventProbableMatches?inProgressEventId=' + ${inProgressEvent.id}">Probable Matchups</a></li>
+				<li><a id="playerPathPill" data-toggle="pill" href="#playerPath" th:data-url="'/inProgressEventPlayerPath?inProgressEventId=' + ${inProgressEvent.id}">Player Path<sup class="new-feature"></sup></a></li>
+				<li><a id="favoritesPill" data-toggle="pill" href="#favorites" th:data-url="'/inProgressEventFavorites?inProgressEventId=' + ${inProgressEvent.id}">Favorites</a></li>
 			</ul>
 			<div class="tab-content">
 				<div id="results" class="tab-pane fade"><div class="loading"></div></div>

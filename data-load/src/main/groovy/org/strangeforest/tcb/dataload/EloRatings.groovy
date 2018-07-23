@@ -79,12 +79,13 @@ class EloRatings {
 	static final Date STATS_START = toDate(LocalDate.of(1991, 1, 1))
 	static final Date TIE_BREAK_START = toDate(LocalDate.of(1970, 1, 1))
 	static final int DEFAULT_MIN_MATCHES = 10
-	static final Map<String, Integer> MIN_MATCHES = [r: 5, H: 5, C: 5, G: 5, P: 5, O: 5, I: 5, s: 5, g: 2, sg: 3, rg: 3]
+	static final Map<String, Integer> MIN_MATCHES = [r: 5, H: 5, C: 5, G: 5, P: 5, O: 5, I: 5, s: 5, g: 2, sg: 3, rg: 3, tb: 10]
 	static final int DEFAULT_MIN_MATCHES_PERIOD = 365
 	static final Map<String, Integer> MIN_MATCHES_PERIOD = [r: 90]
 	static final int MIN_MATCHES_IN_PERIOD = 3
 	static final int DEFAULT_INACTIVITY_ADJ_PERIOD = 365
 	static final Map<String, Integer> INACTIVITY_ADJ_PERIOD = [r: 90]
+	static final List<String> BEST_OF_INDEPENDENT = ['s', 'g', 'sg', 'rg', 'tb']
 
 	// Player counts
 	static final int PLAYERS_TO_SAVE = 200
@@ -304,7 +305,7 @@ class EloRatings {
 		long matchId = match.match_id
 		String level = match.level
 		String round = match.round
-		short bestOf = forType ? (short)5 : match.best_of
+		short bestOf = BEST_OF_INDEPENDENT.contains(type) ? (short)5 : match.best_of
 		String outcome = match.outcome
 		def delta = deltaRating(winnerRating.rating, loserRating.rating, level, round, bestOf, outcome)
 		if (forSurface || forIndoor)

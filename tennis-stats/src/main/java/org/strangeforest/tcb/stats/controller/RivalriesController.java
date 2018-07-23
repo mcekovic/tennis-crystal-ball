@@ -469,7 +469,7 @@ public class RivalriesController extends PageController {
       @RequestParam(name = "date2", required = false) @DateTimeFormat(pattern = DATE_FORMAT) LocalDate date2,
       @RequestParam(name = "dateSelector1", required = false) String dateSelector1,
       @RequestParam(name = "dateSelector2", required = false) String dateSelector2,
-      @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat,
+      @CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat,
 		@RequestParam(name = "showDetails", defaultValue = F) boolean showDetails
    ) {
 		Player player1 = playerService.getPlayer(playerId1);
@@ -498,7 +498,6 @@ public class RivalriesController extends PageController {
 		modelMap.addAttribute("dateSelector1", dateSelector1);
 		modelMap.addAttribute("dateSelector2", dateSelector2);
 		modelMap.addAttribute("prediction", prediction);
-		modelMap.addAttribute("priceFormats", PriceFormat.values());
 		modelMap.addAttribute("priceFormat", priceFormat);
 		modelMap.addAttribute("showDetails", showDetails);
 		modelMap.addAttribute("stats1", stats1);

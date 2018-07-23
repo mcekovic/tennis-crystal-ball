@@ -146,7 +146,7 @@
 	<div th:if="${anyPlayerSelected && !bothPlayersSelected}" class="alert alert-info">Please select another player for H2H comparision.</div>
 	<div th:if="${bothPlayersSelected && samePlayersSelected}" class="alert alert-warning">Cannot compare the same player!</div>
 	<th:block th:if="${bothPlayersSelected && !samePlayersSelected}">
-	<ul id="h2hPills" class="nav nav-pills" th:with="playerIdsParams='?playerId1=' + ${player1.id} + '&playerId2=' + ${player2.id}, playerIdParams='?playerId=' + ${player1.id} + '&playerId=' + ${player2.id}">
+	<ul id="h2hPills" class="nav nav-pills tab-param" th:with="playerIdsParams='?playerId1=' + ${player1.id} + '&playerId2=' + ${player2.id}, playerIdParams='?playerId=' + ${player1.id} + '&playerId=' + ${player2.id}">
 		<li><a id="profilesPill" data-toggle="pill" href="#profiles" th:data-url="'/h2hProfiles' + ${playerIdsParams}">Profiles</a></li>
 		<li><a id="seasonPill" data-toggle="pill" href="#season" th:data-url="'/h2hSeason' + ${playerIdsParams}">Season</a></li>
 		<li><a id="matchesPill" data-toggle="pill" href="#matches" th:data-url="'/h2hMatches' + ${playerIdsParams}">Matches</a></li>

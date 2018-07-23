@@ -1,5 +1,7 @@
 package org.strangeforest.tcb.dataload
 
+import groovy.cli.commons.CliBuilder
+
 import static org.strangeforest.tcb.dataload.LoadParams.*
 
 def cli = new CliBuilder(usage: 'data-load [commands]', header: 'Commands:')

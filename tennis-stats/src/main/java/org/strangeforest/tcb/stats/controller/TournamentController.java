@@ -180,7 +180,7 @@ public class TournamentController extends PageController {
 		@RequestParam(name = "inProgressEventId", required = false) Integer inProgressEventId,
 		@RequestParam(name = "name", required = false) String name,
 		@RequestParam(name = "tab", required = false) String tab,
-      @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat
+		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
 	) {
 		if (inProgressEventId == null) {
 			if (name != null)
@@ -196,7 +196,6 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("forecast", forecast);
 		modelMap.addAttribute("levels", TournamentLevel.asMap());
 		modelMap.addAttribute("surfaces", Surface.asMap());
-		modelMap.addAttribute("priceFormats", PriceFormat.values());
 		modelMap.addAttribute("priceFormat", priceFormat);
 		return new ModelAndView("inProgressEventForecast", modelMap);
 	}
@@ -213,7 +212,7 @@ public class TournamentController extends PageController {
 	public ModelAndView inProgressEventProbableMatches(
 		@RequestParam(name = "inProgressEventId") int inProgressEventId,
 		@RequestParam(name = "playerId", required = false) Integer playerId,
-      @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat
+		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
 	) {
 		ProbableMatches probableMatches = forecastService.getInProgressEventProbableMatches(inProgressEventId, playerId);
 
@@ -230,7 +229,7 @@ public class TournamentController extends PageController {
 	public ModelAndView inProgressEventPlayerPath(
 		@RequestParam(name = "inProgressEventId") int inProgressEventId,
 		@RequestParam(name = "playerId", required = false) Integer playerId,
-      @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat
+		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
 	) {
 		PlayerPath playerPath = forecastService.getInProgressEventPlayerPath(inProgressEventId, playerId);
 
@@ -246,7 +245,7 @@ public class TournamentController extends PageController {
 	@GetMapping("/inProgressEventFavorites")
 	public ModelAndView inProgressEventFavorites(
 		@RequestParam(name = "inProgressEventId") int inProgressEventId,
-      @RequestParam(name = "priceFormat", required = false) PriceFormat priceFormat
+		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
 	) {
 		InProgressEventFavorites favorites = forecastService.getInProgressEventFavorites(inProgressEventId, 10);
 

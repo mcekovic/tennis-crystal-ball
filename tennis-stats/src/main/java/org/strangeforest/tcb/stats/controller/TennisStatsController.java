@@ -32,7 +32,7 @@ public class TennisStatsController extends PageController {
 
 	@GetMapping("/")
 	public ModelAndView index() {
-		boolean hasInProgressEvents = forecastService.getInProgressEventsTable(FORECAST_ORDER_BY).getTotal() > 0;
+		boolean hasInProgressEvents = forecastService.getInProgressEventsTable(FORECAST_ORDER_BY, null).getTotal() > 0;
 		List<PlayerRanking> goatTopN = goatListService.getGOATTopN(10);
 
 		ModelMap modelMap = new ModelMap();

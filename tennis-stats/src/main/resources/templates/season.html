@@ -40,7 +40,7 @@
 			<li th:text="${season}">2000</li>
 		</ol>
 	</h3>
-	<ul id="seasonPills" class="nav nav-pills">
+	<ul id="seasonPills" class="nav nav-pills tab-param">
 		<li><a id="recordsPill" data-toggle="pill" href="#records" th:data-url="'/seasonRecords?season=' + ${season}">Records</a></li>
 		<li><a id="eventsPill" data-toggle="pill" href="#events" th:data-url="'/seasonEvents?season=' + ${season}">Events</a></li>
 		<li><a id="rankingsPill" data-toggle="pill" href="#rankings" th:data-url="'/seasonRankings?season=' + ${season}">Rankings</a></li>

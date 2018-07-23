@@ -8,7 +8,12 @@ import static java.math.BigDecimal.*;
 public abstract class FractionalPriceTable {
 
 	private static final List<FractionalPrice> PRICES = new ArrayList<>(100);
+
+	public static final FractionalPrice CERTAINTY = new FractionalPrice(1, -1, BigDecimal.ONE);
+	public static final FractionalPrice IMPOSSIBILITY = new FractionalPrice(-1, 1, PriceUtil.MAX_PRICE);
+
 	static {
+		PRICES.add(CERTAINTY);
 		addPrice(1, 1000);
 		addPrice(1, 900);
 		addPrice(1, 800);
@@ -148,6 +153,7 @@ public abstract class FractionalPriceTable {
 		addPrice(800, 1);
 		addPrice(900, 1);
 		addPrice(1000, 1);
+		PRICES.add(IMPOSSIBILITY);
 	}
 
 	private static void addPrice(int up, int down) {
@@ -177,7 +183,7 @@ public abstract class FractionalPriceTable {
 		return d1.subtract(d2).abs().compareTo(FRACTIONAL_PRECISION) < 0;
 	}
 
-	private static final BigDecimal FRACTIONAL_PRECISION = new BigDecimal("0.001");
+	private static final BigDecimal FRACTIONAL_PRECISION = new BigDecimal("0.0005");
 
 
 	static final class FractionalPrice {

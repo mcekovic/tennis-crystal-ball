@@ -5,6 +5,7 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
 import org.strangeforest.tcb.stats.model.forecast.*;
+import org.strangeforest.tcb.stats.model.price.*;
 import org.strangeforest.tcb.stats.model.table.*;
 import org.strangeforest.tcb.stats.service.*;
 import org.strangeforest.tcb.stats.util.*;
@@ -32,9 +33,10 @@ public class InProgressEventsResource {
 
 	@GetMapping("/inProgressEventsTable")
 	public BootgridTable<InProgressEvent> inProgressEventsTable(
-		@RequestParam Map<String, String> requestParams
+		@RequestParam Map<String, String> requestParams,
+		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
 	) {
 		String orderBy = BootgridUtil.getOrderBy(requestParams, ORDER_MAP, DEFAULT_ORDER);
-		return forecastService.getInProgressEventsTable(orderBy);
+		return forecastService.getInProgressEventsTable(orderBy, priceFormat);
 	}
 }

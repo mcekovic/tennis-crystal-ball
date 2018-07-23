@@ -1,7 +1,21 @@
 <header xmlns:th="http://www.thymeleaf.org" th:fragment="title">
 	<!--/*@thymesVar id="dataUpdate" type="java.time.LocalDate"*/-->
+	<!--/*@thymesVar id="priceFormats" type="org.strangeforest.tcb.stats.model.price.PriceFormat[]"*/-->
 	<script type="text/javascript">
+		$(function() {
+			$("#settingsPriceFormat").val(getCookie("priceFormat"));
+		});
 		autocompletePlayer("player");
+		function saveUserSettings() {
+			document.cookie = "priceFormat=" + $("#settingsPriceFormat").val() + "; path=/";
+			var url = window.location.href;
+			if (url.indexOf("tab=") < 0) {
+				var tabContentRef = $(".tab-param li.active a").attr("href");
+				if (tabContentRef)
+					url += (url.indexOf("?") ? "&" : "?") + "tab=" + tabContentRef.substr(1);
+			}
+			window.location.href = url;
+		}
 		function dominanceTimeline() {
 			var url = "/dominanceTimeline";
 			var width = $(window).width();
@@ -117,6 +131,20 @@
 							<li th:class="${path == '/about' ? 'active' : _}"><a href="/about"><i class="fa fa-question-circle fa-fw"></i> About</a></li>
 							<li th:class="${path == '/contact' ? 'active' : _}"><a href="/contact"><i class="fa fa-vcard fa-fw"></i> Contact</a></li>
 						</ul>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#" title="User settings"><i class="fa fa-cog fa-b"></i></a>
+						<div class="dropdown-menu" style="width: 200px; padding: 8px" onclick="event.stopPropagation()">
+							<div class="input-group">
+								<label for="settingsPriceFormat" class="input-group-addon" title="Choose odds format">Odds:</label>
+								<select id="settingsPriceFormat" class="form-control" onchange="saveUserSettings()">
+									<option value="">None</option>
+									<option th:each="aPriceFormat : ${priceFormats}" th:value="${aPriceFormat}" value="DECIMAL" th:text="${aPriceFormat.text}">Decimal</option>
+								</select>
+							</div>
+						</div>
 					</li>
 				</ul>
 			</div>

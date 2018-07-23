@@ -15,7 +15,6 @@
 <!--/*@thymesVar id="dateSelector1" type="java.lang.String"*/-->
 <!--/*@thymesVar id="dateSelector2" type="java.lang.String"*/-->
 <!--/*@thymesVar id="prediction" type="org.strangeforest.tcb.stats.model.prediction.MatchPrediction"*/-->
-<!--/*@thymesVar id="priceFormats" type="org.strangeforest.tcb.stats.model.price.PriceFormat[]"*/-->
 <!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
 <!--/*@thymesVar id="showDetails" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="stats1" type="org.strangeforest.tcb.stats.model.PlayerStats"*/-->
@@ -26,7 +25,6 @@
 		datePicker("predictionDate");
 		datePicker("predictionDate1");
 		datePicker("predictionDate2");
-		priceFormatChanged();
 		bindPopovers();
 		$("[data-toggle='tooltip']").tooltip();
 	});
@@ -61,7 +59,6 @@
 			if (dateSelector2)
 				url += "&dateSelector2=" + dateSelector2;
 		}
-		url += "&priceFormat=" + $("#h2hPriceFormat").val();
 		url += "&showDetails=" + showDetails;
 		$("#hypotheticalMatchup").load(url);
 	}
@@ -91,13 +88,6 @@
 		$("#predictionDatesDiv").css("display", !sameDate ? "block" : "none");
 		if (sameDate)
 			predictMatch();
-	}
-	function priceFormatChanged() {
-		var priceFormat = $("#h2hPriceFormat").val();
-		$("#h2hPrices").find("h4[data-price-format]").each(function() {
-			var $price = $(this);
-			$price.css("display", $price.data("price-format") == priceFormat ? "block" : "none");
-		});
 	}
 	function showPredictionDetails(show) {
 		var $showDetails = $("#showDetails");
@@ -236,16 +226,13 @@
 	</tr>
 	<tr id="h2hPrices">
 		<td class="text-right">
-			<h4 th:each="aPriceFormat : ${priceFormats}" th:data-price-format="${aPriceFormat}" th:text="${prediction.winPrices1[aPriceFormat.name()]}">1.50</h4>
+			<h4 th:text="${prediction.winPrices1[priceFormat.name()]}">1.50</h4>
 		</td>
 		<th class="text-center">
-			<select id="h2hPriceFormat" class="" onchange="priceFormatChanged()">
-				<option th:each="aPriceFormat : ${priceFormats}" th:value="${aPriceFormat}" value="DECIMAL" th:text="${aPriceFormat.text}" th:selected="${aPriceFormat == priceFormat}">Decimal</option>
-			</select>
-			&nbsp;Odds
+			Odds
 		</th>
 		<td class="text-left">
-			<h4 th:each="aPriceFormat : ${priceFormats}" th:data-price-format="${aPriceFormat}" th:text="${prediction.winPrices2[aPriceFormat.name()]}">3.00</h4>
+			<h4 th:text="${prediction.winPrices2[priceFormat.name()]}">3.00</h4>
 		</td>
 	</tr>
 	<tr th:if="${prediction.rankingData1.rank != null || prediction.rankingData2.rank != null}">

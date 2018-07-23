@@ -7,15 +7,25 @@ import static org.strangeforest.tcb.stats.model.price.PriceUtil.*;
 
 public class FavoritePlayer extends PlayerRow {
 
-	private double probability;
+	private final double probability;
+	private String price;
 
 	public FavoritePlayer(int favorite, int playerId, String name, String countryId, double probability) {
 		super(favorite, playerId, name, countryId, null);
 		this.probability = probability;
 	}
 
+	public FavoritePlayer(int favorite, int playerId, String name, String countryId, double probability, PriceFormat priceFormat) {
+		this(favorite, playerId, name, countryId, probability);
+		price = priceFormat != null ? priceFormat.format(toPrice(probability)) : null;
+	}
+
 	public double getProbability() {
 		return probability;
+	}
+
+	public String getPrice() {
+		return price;
 	}
 
 	public String getPrice(String format) {
