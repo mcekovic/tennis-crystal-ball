@@ -577,8 +577,12 @@ public class RivalriesController extends PageController {
 		Map<Integer, PlayerStats> playersStats = statisticsService.getPlayersStats(playerIds, filter, statsVsAll);
 
 		ModelMap modelMap = new ModelMap();
+		modelMap.addAttribute("fromSeason", fromSeason);
+		modelMap.addAttribute("toSeason", toSeason);
 		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("bestOf", bestOf);
 		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("indoor", indoor);
 		modelMap.addAttribute("round", round);
 		modelMap.addAttribute("rawData", rawData);
 		modelMap.addAttribute("headsToHeads", headsToHeads);

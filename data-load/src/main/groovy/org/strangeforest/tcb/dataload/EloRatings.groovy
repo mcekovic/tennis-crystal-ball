@@ -394,12 +394,12 @@ class EloRatings {
 	}
 
 	static final Map<String, Double> RATING_TYPE_FACTOR = [
-		'r': 1.25d,
+		'r': 1.1d,
 		's': 0.75d,
 		'g': 0.25d,
-		'sg': 0.3d,
-		'rg': 0.3d,
-		'tb': 0.4d
+		'sg': 0.35d,
+		'rg': 0.35d,
+		'tb': 0.25d
 	]
 
 	static double ratingForType(double rating, String type) {

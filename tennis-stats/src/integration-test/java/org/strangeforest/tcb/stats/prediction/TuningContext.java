@@ -52,6 +52,10 @@ public class TuningContext {
 		return bestStepResult;
 	}
 
+	public int currentStep() {
+		return step;
+	}
+
 	public PredictionConfig stepUp(Weighted weighted) {
 		return stepWeight(baseStepResult.getConfig(), weighted, weighted.weightStep());
 	}

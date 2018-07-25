@@ -29,37 +29,47 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	@Test
 	public void tuneDefaultPrediction() throws InterruptedException {
-		doTunePrediction(PredictionConfig.defaultConfig(TUNING_SET));
+		doTunePrediction(PredictionConfig.defaultConfig(TUNING_SET), null);
 	}
 
 	@Test
 	public void tuneDefaultPredictionByArea() throws InterruptedException {
-		doTunePredictionByArea(PredictionConfig.defaultConfig(TUNING_SET));
+		doTunePredictionByArea(PredictionConfig.defaultConfig(TUNING_SET), null);
 	}
 
 	@Test
 	public void tuneDefaultPredictionByItem() throws InterruptedException {
-		doTunePredictionByItem(PredictionConfig.defaultConfig(TUNING_SET));
+		doTunePredictionByItem(PredictionConfig.defaultConfig(TUNING_SET), null);
 	}
 
 	@Test
 	public void tuneDefaultPredictionInRankingArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RANKING);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RANKING, null);
 	}
 
 	@Test
 	public void tuneDefaultPredictionInRecentFormArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RECENT_FORM);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RECENT_FORM, null);
 	}
 
 	@Test
 	public void tuneDefaultPredictionInH2HArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), H2H);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), H2H, null);
 	}
 
 	@Test
 	public void tuneDefaultPredictionInWinningPctArea() throws InterruptedException {
-		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), WINNING_PCT);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), WINNING_PCT, null);
+	}
+
+	@Test
+	public void scriptedTuneDefaultPrediction() throws InterruptedException {
+		int factor = 50;
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RANKING, 5 * factor);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RECENT_FORM, 5 * factor);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), H2H, 3 * factor);
+		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), WINNING_PCT, 2 * factor);
+		doTunePredictionByArea(PredictionConfig.defaultConfig(TUNING_SET), 10 * factor);
 	}
 
 
@@ -67,67 +77,69 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	@Test @Ignore
 	public void tunePrediction() throws InterruptedException {
-		doTunePrediction(PredictionConfig.equalWeights());
+		doTunePrediction(PredictionConfig.equalWeights(), null);
 	}
 
 	@Test @Ignore
 	public void tunePredictionByArea() throws InterruptedException {
-		doTunePredictionByArea(PredictionConfig.equalWeights());
+		doTunePredictionByArea(PredictionConfig.equalWeights(), null);
 	}
 
 	@Test @Ignore
 	public void tunePredictionByItem() throws InterruptedException {
-		doTunePredictionByItem(PredictionConfig.equalWeights());
+		doTunePredictionByItem(PredictionConfig.equalWeights(), null);
 	}
 
 	@Test @Ignore
 	public void tunePredictionInRankingArea() throws InterruptedException {
-		doTunePredictionInAreaFromPointZero(RANKING);
+		doTunePredictionInAreaFromPointZero(RANKING, null);
 	}
 
 	@Test @Ignore
 	public void tunePredictionInRecentFormArea() throws InterruptedException {
-		doTunePredictionInAreaFromPointZero(RECENT_FORM);
+		doTunePredictionInAreaFromPointZero(RECENT_FORM, null);
 	}
 
 	@Test @Ignore
 	public void tunePredictionInH2HArea() throws InterruptedException {
-		doTunePredictionInAreaFromPointZero(H2H);
+		doTunePredictionInAreaFromPointZero(H2H, null);
 	}
 
 	@Test @Ignore
 	public void tunePredictionInWinningPctArea() throws InterruptedException {
-		doTunePredictionInAreaFromPointZero(WINNING_PCT);
+		doTunePredictionInAreaFromPointZero(WINNING_PCT, null);
 	}
 
 
 	// Tuning
 
-	private void doTunePrediction(PredictionConfig config) throws InterruptedException {
-		tunePrediction(config,  Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getAreaAndItems())).collect(toList()), METRICS);
+	private void doTunePrediction(PredictionConfig config, Integer maxSteps) throws InterruptedException {
+		tunePrediction(config,  Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getAreaAndItems())).collect(toList()), METRICS, maxSteps);
 	}
 
-	private void doTunePredictionByArea(PredictionConfig config) throws InterruptedException {
-		tunePrediction(config, asList(PredictionArea.values()), METRICS);
+	private void doTunePredictionByArea(PredictionConfig config, Integer maxSteps) throws InterruptedException {
+		tunePrediction(config, asList(PredictionArea.values()), METRICS, maxSteps);
 	}
 
-	private void doTunePredictionByItem(PredictionConfig config) throws InterruptedException {
-		tunePrediction(config, Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getItems())).collect(toList()), METRICS);
+	private void doTunePredictionByItem(PredictionConfig config, Integer maxSteps) throws InterruptedException {
+		tunePrediction(config, Stream.of(PredictionArea.values()).flatMap(area -> Stream.of(area.getItems())).collect(toList()), METRICS, maxSteps);
 	}
 
-	private void doTunePredictionInAreaFromPointZero(PredictionArea area) throws InterruptedException {
-		tunePrediction(PredictionConfig.areaEqualWeights(area), asList(area.getItems()), METRICS);
+	private void doTunePredictionInAreaFromPointZero(PredictionArea area, Integer maxSteps) throws InterruptedException {
+		tunePrediction(PredictionConfig.areaEqualWeights(area), asList(area.getItems()), METRICS, maxSteps);
 	}
 
-	private void doTunePredictionInArea(PredictionConfig config, PredictionArea area) throws InterruptedException {
-		tunePrediction(config, asList(area.getItems()), METRICS);
+	private void doTunePredictionInArea(PredictionConfig config, PredictionArea area, Integer maxSteps) throws InterruptedException {
+		tunePrediction(config, asList(area.getItems()), METRICS, maxSteps);
 	}
 
-	private void tunePrediction(PredictionConfig config, Iterable<Weighted> features, Function<PredictionResult, Double> metrics) throws InterruptedException {
+	private void tunePrediction(PredictionConfig config, Iterable<Weighted> features, Function<PredictionResult, Double> metrics, Integer maxSteps) throws InterruptedException {
 		TuningContext context = new TuningContext(comparing(metrics));
 		PredictionVerificationResult result = verifyPrediction(FROM_DATE, TO_DATE, config, TUNING_SET);
 
 		for (context.initialResult(result); context.startStep() != null; context.endStep()) {
+			if (maxSteps != null && context.currentStep() > maxSteps)
+				break;
 			for (Weighted weighted : features) {
 				PredictionConfig stepDownConfig = context.stepDown(weighted);
 				if (stepDownConfig != null)
