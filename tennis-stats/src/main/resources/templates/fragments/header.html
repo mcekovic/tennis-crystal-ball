@@ -7,7 +7,7 @@
 		});
 		autocompletePlayer("player");
 		function saveUserSettings() {
-			document.cookie = "priceFormat=" + $("#settingsPriceFormat").val() + "; path=/";
+			setCookie("priceFormat", $("#settingsPriceFormat").val(), 365);
 			var url = window.location.href;
 			if (url.indexOf("tab=") < 0) {
 				var tabContentRef = $(".tab-param li.active a").attr("href");

@@ -224,7 +224,7 @@
 			<h4 th:text="${#numbers.formatDecimal(100 * prediction.winProbability2, 1, 1) + '%'}">40.0%</h4>
 		</td>
 	</tr>
-	<tr id="h2hPrices">
+	<tr th:if="${priceFormat}">
 		<td class="text-right">
 			<h4 th:text="${prediction.winPrices1[priceFormat.name()]}">1.50</h4>
 		</td>

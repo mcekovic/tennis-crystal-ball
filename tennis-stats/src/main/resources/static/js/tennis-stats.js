@@ -13,6 +13,16 @@ function getCookie(name) {
 	return "";
 }
 
+function setCookie(name, value, days) {
+	var cookie = name + "=" + value;
+	if (days) {
+		var d = new Date();
+		d.setTime(d.getTime() + days * 86400000);
+		cookie += "; expires=" + d.toUTCString();
+	}
+	document.cookie = cookie + "; path=/";
+}
+
 
 // Autocomplete player
 
