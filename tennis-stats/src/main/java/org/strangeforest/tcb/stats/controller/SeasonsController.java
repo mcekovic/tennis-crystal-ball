@@ -31,15 +31,21 @@ public class SeasonsController extends PageController {
 		@RequestParam(name = "season") int season,
 		@RequestParam(name = "tab", required = false) String tab,
 		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
 		@RequestParam(name = "surface", required = false) String surface,
-		@RequestParam(name = "indoor", required = false) Boolean indoor
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("season", season);
 		modelMap.addAttribute("tab", tab);
 		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("bestOf", bestOf);
 		modelMap.addAttribute("surface", surface);
 		modelMap.addAttribute("indoor", indoor);
+		modelMap.addAttribute("round", round);
+		modelMap.addAttribute("tournamentId", tournamentId);
 		modelMap.addAttribute("params", ParamsUtil.INSTANCE);
 		return new ModelAndView("season", modelMap);
 	}
@@ -112,7 +118,13 @@ public class SeasonsController extends PageController {
 
 	@GetMapping("/seasonStats")
 	public ModelAndView seasonStats(
-		@RequestParam(name = "season") int season
+		@RequestParam(name = "season") int season,
+		@RequestParam(name = "level", required = false) String level,
+		@RequestParam(name = "bestOf", required = false) Integer bestOf,
+		@RequestParam(name = "surface", required = false) String surface,
+		@RequestParam(name = "indoor", required = false) Boolean indoor,
+		@RequestParam(name = "round", required = false) String round,
+		@RequestParam(name = "tournamentId", required = false) Integer tournamentId
 	) {
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("season", season);
@@ -126,6 +138,12 @@ public class SeasonsController extends PageController {
 		modelMap.addAttribute("tournaments", tournamentService.getSeasonTournaments(season));
 		modelMap.addAttribute("opponentCategories", Opponent.categories());
 		modelMap.addAttribute("countries", matchesService.getSeasonCountries(season));
+		modelMap.addAttribute("level", level);
+		modelMap.addAttribute("bestOf", bestOf);
+		modelMap.addAttribute("surface", surface);
+		modelMap.addAttribute("indoor", indoor);
+		modelMap.addAttribute("round", round);
+		modelMap.addAttribute("tournamentId", tournamentId);
 		return new ModelAndView("seasonStats", modelMap);
 	}
 	

@@ -147,7 +147,7 @@
 		<tr>
 			<th style="border-right: 3px solid lightgray">Season</th>
 			<th th:each="season : ${stats.keySet()}" th:if="${season}" class="season">
-				<a th:href="@{/seasons(season=${season})}" th:text="${season}" title="Show season">2018</a>
+				<a th:href="@{/season(season=${season}, tab=statistics, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, tournamentId=${tournamentId})}" th:text="${season}" title="Show season">2018</a>
 			</th>
 			<th class="season">Total</th>
 		</tr>
@@ -174,7 +174,7 @@
 		<tr style="border-top: 3px solid lightgray">
 			<th style="border-right: 3px solid lightgray">Season</th>
 			<th th:each="season : ${stats.keySet()}" th:if="${season}" class="season">
-				<a th:href="@{/seasons(season=${season})}" th:text="${season}" title="Show season">2018</a>
+				<a th:href="@{/season(season=${season}, tab=statistics, level=${level}, bestOf=${bestOf}, surface=${surface}, indoor=${indoor}, round=${round}, tournamentId=${tournamentId})}" th:text="${season}" title="Show season">2018</a>
 			</th>
 			<th class="season">Total</th>
 		</tr>

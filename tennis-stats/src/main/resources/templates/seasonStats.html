@@ -10,6 +10,12 @@
 <!--/*@thymesVar id="tournaments" type="java.util.List<org.strangeforest.tcb.stats.model.core.TournamentItem>"*/-->
 <!--/*@thymesVar id="opponentCategories" type="java.util.Map<org.strangeforest.tcb.stats.service.Opponent.OpponentCategory, List<org.strangeforest.tcb.stats.service.Opponent>>"*/-->
 <!--/*@thymesVar id="countries" type="java.util.List<com.neovisionaries.i18n.CountryCode>"*/-->
+<!--/*@thymesVar id="level" type="java.lang.String"*/-->
+<!--/*@thymesVar id="bestOf" type="java.lang.Integer"*/-->
+<!--/*@thymesVar id="surface" type="java.lang.String"*/-->
+<!--/*@thymesVar id="indoor" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="round" type="java.lang.String"*/-->
+<!--/*@thymesVar id="tournamentId" type="java.lang.Integer"*/-->
 <script type="text/javascript">
 	$(function() {
 		var $statsLeadersTable = $("#statsLeadersTable");
@@ -139,7 +145,7 @@
 		</div>
 	</div>
 </div>
-<div id="statsAdvancedFilter" class="collapse">
+<div id="statsAdvancedFilter" class="collapse" th:attrappend="class=${bestOf != null || indoor != null || tournamentId != null ? ' in' : _}">
 	<div class="row margin-top">
 		<div class="col-md-2">
 			<select id="statsOpponent" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by opponent">
@@ -158,7 +164,7 @@
 		<div class="col-md-3">
 			<select id="statsTournament" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by tournament">
 				<option value="">All tournaments</option>
-				<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}">Wimbledon</option>
+				<option th:each="tournament : ${tournaments}" th:if="${tournament.level != 'D' and tournament.level != 'T'}" th:value="${tournament.id}" value="101" th:text="${tournament.name}" th:class="'bg-level-' + ${tournament.level}" th:selected="${tournament.id == tournamentId}">Wimbledon</option>
 			</select>
 		</div>
 		<div class="col-md-3">
@@ -172,15 +178,15 @@
 		<div class="col-md-2">
 			<select id="statsBestOf" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by best of">
 				<option value="">Best of any</option>
-				<option value="3">Best of 3</option>
-				<option value="5">Best of 5</option>
+				<option value="3" th:selected="${bestOf == 3}">Best of 3</option>
+				<option value="5" th:selected="${bestOf == 5}">Best of 5</option>
 			</select>
 		</div>
 		<div class="col-md-2">
 			<select id="statsIndoor" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by outdoor / indoor">
 				<option value="">Outdoor / Indoor</option>
-				<option value="false">Outdoor</option>
-				<option value="true">Indoor</option>
+				<option value="false" th:selected="${indoor == false}">Outdoor</option>
+				<option value="true" th:selected="${indoor}">Indoor</option>
 			</select>
 		</div>
 		<div class="col-md-2">
@@ -202,21 +208,21 @@
 <div id="statsLevelDiv" class="btn-group pull-left margin-right no-margin-left">
 	<select id="statsLevel" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by tournament level">
 		<option value="">All levels</option>
-		<option th:each="level : ${levels}" th:value="${level.code}" th:class="|bg-level-${level.code}|" value="G" class="bg-level-G" th:text="${level.text}">Grand Slam</option>
-		<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFLMO" th:text="${levelGroup.text}">Big Tournaments</option>
+		<option th:each="aLevel : ${levels}" th:value="${aLevel.code}" th:class="|bg-level-${aLevel.code}|" value="G" class="bg-level-G" th:text="${aLevel.text}" th:selected="${aLevel.code == level}">Grand Slam</option>
+		<option th:each="levelGroup : ${levelGroups}" th:value="${levelGroup.codes}" value="GFLMO" th:text="${levelGroup.text}" th:selected="${levelGroup.codes == level}">Big Tournaments</option>
 	</select>
 </div>
 <div id="statsSurfaceDiv" class="btn-group pull-left margin-right">
 	<select id="statsSurface" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by surface">
 		<option value="">All surfaces</option>
-		<option th:each="surface : ${surfaces}" th:value="${surface.code}" th:class="|bg-surface-${surface.code}|" value="H" class="bg-surface-H" th:text="${surface.text}">Hard</option>
-		<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}">Fast (H, G, Cp)</option>
+		<option th:each="aSurface : ${surfaces}" th:value="${aSurface.code}" th:class="|bg-surface-${aSurface.code}|" value="H" class="bg-surface-H" th:text="${aSurface.text}" th:selected="${aSurface.code == surface}">Hard</option>
+		<option th:each="surfaceGroup : ${surfaceGroups}" th:value="${surfaceGroup.codes}" value="HGP" th:text="${surfaceGroup.text}" th:selected="${surfaceGroup.codes.length() > 1 && surfaceGroup.codes == surface}">Fast (H, G, Cp)</option>
 	</select>
 </div>
 <div id="statsRoundDiv" class="btn-group pull-left margin-right">
 	<select id="statsRound" class="form-control" onchange="reloadStatsLeaders()" data-toggle="tooltip" data-placement="top" title="Filter by round">
 		<option value="">All rounds</option>
-		<option th:each="round : ${rounds}" th:value="${round.code}" th:class="|bg-result-${round.baseCode}|" value="F" class="bg-result-F" th:text="${round.text}">Final</option>
+		<option th:each="aRound : ${rounds}" th:value="${aRound.code}" th:class="|bg-result-${aRound.baseCode}|" value="F" class="bg-result-F" th:text="${aRound.text}" th:selected="${aRound.code == round}">Final</option>
 	</select>
 </div>
 <div id="statsClearDiv" class="btn-group margin-right">
