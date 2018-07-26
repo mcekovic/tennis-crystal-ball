@@ -64,7 +64,7 @@ public class PredictionTuningIT extends BasePredictionVerificationIT {
 
 	@Test
 	public void scriptedTuneDefaultPrediction() throws InterruptedException {
-		int factor = 50;
+		int factor = 100;
 		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RANKING, 5 * factor);
 		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), RECENT_FORM, 5 * factor);
 		doTunePredictionInArea(PredictionConfig.defaultConfig(TUNING_SET), H2H, 3 * factor);

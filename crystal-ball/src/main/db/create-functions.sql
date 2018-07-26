@@ -189,6 +189,27 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- player_elo_ratings
+
+CREATE OR REPLACE FUNCTION player_elo_ratings(
+	p_player_id INTEGER,
+	p_date DATE,
+	p_surface TEXT,
+	p_indoor BOOLEAN
+) RETURNS elo_ratings AS $$
+BEGIN
+	RETURN (
+		SELECT (elo_rating, recent_elo_rating,
+			CASE p_surface WHEN 'H' THEN hard_elo_rating WHEN 'C' THEN clay_elo_rating WHEN 'G' THEN grass_elo_rating WHEN 'P' THEN carpet_elo_rating ELSE NULL END,
+			CASE WHEN p_indoor THEN indoor_elo_rating ELSE outdoor_elo_rating END, set_elo_rating)
+		FROM player_elo_ranking
+	   WHERE player_id = p_player_id AND rank_date BETWEEN p_date - (INTERVAL '1 year') AND p_date
+		ORDER BY rank_date DESC LIMIT 1
+	);
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- merge_elo_ranking
 
 CREATE OR REPLACE FUNCTION merge_elo_ranking(

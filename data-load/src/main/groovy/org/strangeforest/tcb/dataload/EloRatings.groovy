@@ -23,7 +23,7 @@ class EloRatings {
 	final LockManager<Integer> lockManager
 	final LockManager<RankKey> rankLockManager
 	final Map<Integer, CompletableFuture> playerMatchFutures
-	final EloSurfaceFactors eloSurfaceFactors
+	EloSurfaceFactors eloSurfaceFactors
 	Map<Integer, EloRating> playerRatings
 	Map<String, Map<Integer, EloRating>> playerRatingsByType
 	PredictionResult predictionResult
@@ -86,6 +86,12 @@ class EloRatings {
 	static final int DEFAULT_INACTIVITY_ADJ_PERIOD = 365
 	static final Map<String, Integer> INACTIVITY_ADJ_PERIOD = [r: 90]
 	static final List<String> BEST_OF_INDEPENDENT = ['s', 'g', 'sg', 'rg', 'tb']
+	static final double RECENT_K_FACTOR = 2.0d
+	static final double SET_K_FACTOR = 0.5d
+	static final double GAME_K_FACTOR = 0.0556d
+	static final double SERVICE_GAME_K_FACTOR = 0.1667d
+	static final double RETURN_GAME_K_FACTOR = 0.1667d
+	static final double TIE_BREAK_K_FACTOR = 1.5d
 
 	// Player counts
 	static final int PLAYERS_TO_SAVE = 200
@@ -112,7 +118,7 @@ class EloRatings {
 		lockManager = new LockManager<>()
 		rankLockManager = new LockManager<>()
 		playerMatchFutures = new HashMap<>()
-		eloSurfaceFactors = new EloSurfaceFactors(sqlPool)
+		sqlPool.withSql { sql -> eloSurfaceFactors = new EloSurfaceFactors(sql) }
 	}
 
 	def compute(boolean save = false, boolean fullSave = true, Date saveFromDate = null, boolean preLoadRanks = true) {
@@ -315,22 +321,27 @@ class EloRatings {
 			def lDelta = deltaRating(loserRating.rating, winnerRating.rating, level, round, bestOf, outcome)
 			switch (type) {
 				case 'r':
-					delta = 2.0d * wDelta
+					delta = RECENT_K_FACTOR * wDelta
 					break
 				case 's':
-					delta = 0.5d * (wDelta * (match.w_sets ?: 0d) - lDelta * (match.l_sets ?: 0d))
+					delta = SET_K_FACTOR * (wDelta * (match.w_sets ?: 0d) - lDelta * (match.l_sets ?: 0d))
 					break
 				case 'g':
-					delta = 0.0556d * (wDelta * (match.w_games ?: 0d) - lDelta * (match.l_games ?: 0d))
+					delta = GAME_K_FACTOR * (wDelta * (match.w_games ?: 0d) - lDelta * (match.l_games ?: 0d))
 					break
 				case 'sg':
-					delta = 0.1667d * (wDelta * (match.w_sv_gms ?: 0d) * returnToServeRatio(match.surface) - lDelta * (match.l_rt_gms ?: 0d))
+					delta = SERVICE_GAME_K_FACTOR * (wDelta * (match.w_sv_gms ?: 0d) * returnToServeRatio(match.surface) - lDelta * (match.l_rt_gms ?: 0d))
 					break
 				case 'rg':
-					delta = 0.1667d * (wDelta * (match.w_rt_gms ?: 0d) - lDelta * (match.l_sv_gms ?: 0d) * returnToServeRatio(match.surface))
+					delta = RETURN_GAME_K_FACTOR * (wDelta * (match.w_rt_gms ?: 0d) - lDelta * (match.l_sv_gms ?: 0d) * returnToServeRatio(match.surface))
 					break
 				case 'tb':
-					delta = 1.5d * (wDelta * (match.w_tbs ?: 0d) - lDelta * (match.l_tbs ?: 0d))
+					def wTBs = match.w_tbs ?: 0d
+					def lTBs = match.l_tbs ?: 0d
+					if (lTBs > wTBs) {
+						def t = wDelta; wDelta = lDelta; lDelta = t
+					}
+					delta = TIE_BREAK_K_FACTOR * (wDelta * wTBs - lDelta * lTBs)
 					break
 			}
 		}
@@ -395,11 +406,11 @@ class EloRatings {
 
 	static final Map<String, Double> RATING_TYPE_FACTOR = [
 		'r': 1.1d,
-		's': 0.75d,
+		's': 0.8d,
 		'g': 0.25d,
-		'sg': 0.35d,
-		'rg': 0.35d,
-		'tb': 0.25d
+		'sg': 0.4d,
+		'rg': 0.4d,
+		'tb': 0.4d
 	]
 
 	static double ratingForType(double rating, String type) {
@@ -415,6 +426,10 @@ class EloRatings {
 	static double ratingDiffForType(double ratingDiff, String type) {
 		Double factor = RATING_TYPE_FACTOR[type]
 		factor ? ratingDiff * factor : ratingDiff
+	}
+
+	static double newRating(double rating, double delta, String type) {
+		rating + capDeltaRating(delta * kFunction(rating, type), type)
 	}
 
 	static double capDeltaRating(double delta, String type) {
@@ -447,7 +462,7 @@ class EloRatings {
 		}
 
 		EloRating newRating(double delta, Date date, String type) {
-			def newRating = new EloRating(playerId: playerId, rating: rating + capDeltaRating(delta * kFunction(rating, type), type), matches: matches + 1, dates: new ArrayDeque<>(dates ?: []))
+			def newRating = new EloRating(playerId: playerId, rating: newRating(rating, delta, type), matches: matches + 1, dates: new ArrayDeque<>(dates ?: []))
 			newRating.bestRating = bestRating(newRating, type)
 			newRating.addDate(date)
 			newRating

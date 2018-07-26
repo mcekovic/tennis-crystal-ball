@@ -8,3 +8,4 @@ DROP TYPE match_round CASCADE;
 DROP TYPE tournament_entry CASCADE;
 DROP TYPE match_outcome CASCADE;
 DROP TYPE rank_points CASCADE;
+DROP TYPE elo_ratings CASCADE;

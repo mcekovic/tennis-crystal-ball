@@ -39,7 +39,7 @@ public class PredictionConfig {
 		return format("/prediction/prediction%1$s.properties", tuningSet.getConfigSuffix());
 	}
 
-	public static PredictionConfig loadConfig(String configName) {
+	private static PredictionConfig loadConfig(String configName) {
 		Properties props = new Properties();
 		try {
 			InputStream in = PredictionConfig.class.getResourceAsStream(configName);

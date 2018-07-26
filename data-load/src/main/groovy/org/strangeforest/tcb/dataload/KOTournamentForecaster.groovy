@@ -57,48 +57,81 @@ class KOTournamentForecaster {
 		}
 	}
 
-	def calculateEloRatings() {
+	def calculateEloRatings(EloSurfaceFactors eloSurfaceFactors) {
 		int count = matches.size()
 		for (int i = 0; i < count; i++) {
 			def match = matches[i]
 			def winner = match.winner
 			if (winner) {
-				def player1Id = match.player1_id
-				def player2Id = match.player2_id
-				Double rating1 = match.player1_elo_rating
-				Double rating2 = match.player2_elo_rating
-				if (player1Id && player2Id) {
-					def winner1 = winner == 1
-					if (!rating1)
-						rating1 = StartEloRatings.START_RATING
-					if (!rating2)
-						rating2 = StartEloRatings.START_RATING
-					def winneRating = winner1 ? rating1 : rating2
-					def loserRating = winner1 ? rating2 : rating1
-					def deltaRating = EloRatings.deltaRating(winneRating, loserRating, match.level, match.round, (short)match.best_of, match.outcome)
-					deltaRating = winner1 ? deltaRating : -deltaRating
-					rating1 += deltaRating * EloRatings.kFunction(rating1)
-					rating2 -= deltaRating * EloRatings.kFunction(rating2)
-					match.player1_next_elo_rating = safeRound rating1
-					match.player2_next_elo_rating = safeRound rating2
-					setNextMatchesEloRating(player1Id, rating1, i)
-					setNextMatchesEloRating(player2Id, rating2, i)
-				} else {
-					match.player1_next_elo_rating = safeRound rating1
-					match.player2_next_elo_rating = safeRound rating2
-				}
+				setMatchEloRatings(i)
+				setMatchEloRatings(i, 'r')
+				setMatchEloRatings(i, match.surface, eloSurfaceFactors)
+				setMatchEloRatings(i, match.indoor ? 'I' : 'O', eloSurfaceFactors)
+				setMatchEloRatings(i, 's')
 			}
 		}
 	}
 
-	private setNextMatchesEloRating(playerId, rating, int fromMatchIndex) {
+	static Map<String, String> ELO_PREFIX = [
+		r: 'recent_',
+		H: 'surface_', C: 'surface_', G: 'surface_', P: 'surface_',
+		I: 'in_out_', O: 'in_out_',
+		s: 'set_'
+	]
+
+	def setMatchEloRatings(int i, String type = null, EloSurfaceFactors eloSurfaceFactors = null) {
+		def match = matches[i]
+		def winner = match.winner
+		if (winner) {
+			def player1Id = match.player1_id
+			def player2Id = match.player2_id
+			Double rating1 = match.player1_elo_rating
+			Double rating2 = match.player2_elo_rating
+			def prefix = type ? ELO_PREFIX[type] : ''
+			if (player1Id && player2Id) {
+				if (!rating1)
+					rating1 = StartEloRatings.START_RATING
+				if (!rating2)
+					rating2 = StartEloRatings.START_RATING
+				def winner1 = winner == 1
+				def winnerRating = winner1 ? rating1 : rating2
+				def loserRating = winner1 ? rating2 : rating1
+				def deltaRating = EloRatings.deltaRating(winnerRating, loserRating, match.level, match.round, (short) match.best_of, match.outcome)
+				switch (type) {
+					case 'H': case 'C': case 'G': case 'P': case 'O': case 'I':
+						deltaRating *= eloSurfaceFactors.surfaceKFactor(type, match.date)
+						break
+					case 'r':
+						deltaRating = EloRatings.RECENT_K_FACTOR * deltaRating
+						break
+					case 's':
+						def wDelta = deltaRating
+						def lDelta = EloRatings.deltaRating(loserRating, winnerRating, match.level, match.round, (short) match.best_of, match.outcome)
+						def wSets = (winner1 ? match.player1_sets : match.player2_sets) ?: 0d
+						def lSets = (winner1 ? match.player2_sets : match.player1_sets) ?: 0d
+						deltaRating = EloRatings.SET_K_FACTOR * (wDelta * wSets - lDelta * lSets)
+						break
+				}
+				def deltaRating1 = winner1 ? deltaRating : -deltaRating
+				def deltaRating2 = winner1 ? -deltaRating : deltaRating
+				rating1 = EloRatings.newRating(rating1, deltaRating1, type)
+				rating2 = EloRatings.newRating(rating2, -deltaRating2, type)
+				setNextMatchesEloRating(player1Id, rating1, prefix, i)
+				setNextMatchesEloRating(player2Id, rating2, prefix, i)
+			}
+			match['player1_next_' + prefix + 'elo_rating'] = safeRound rating1
+			match['player2_next_' + prefix + 'elo_rating'] = safeRound rating2
+		}
+	}
+
+	private setNextMatchesEloRating(playerId, rating, String prefix, int fromMatchIndex) {
 		int count = matches.size()
 		for (int i = fromMatchIndex + 1; i < count; i++) {
 			def match = matches[i]
 			if (match.player1_id == playerId)
-				match.player1_elo_rating = safeRound rating
+				match['player1_' + prefix + 'elo_rating'] = safeRound rating
 			else if (match.player2_id == playerId)
-				match.player2_elo_rating = safeRound rating
+				match['player2_' + prefix + 'elo_rating'] = safeRound rating
 		}
 	}
 

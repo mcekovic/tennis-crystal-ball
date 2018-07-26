@@ -11,3 +11,10 @@ CREATE TYPE rank_points AS (
 	rank INTEGER,
 	rank_points INTEGER
 );
+CREATE TYPE elo_ratings AS (
+	overall INTEGER,
+	recent INTEGER,
+	surface INTEGER,
+	in_out INTEGER,
+	set INTEGER
+);

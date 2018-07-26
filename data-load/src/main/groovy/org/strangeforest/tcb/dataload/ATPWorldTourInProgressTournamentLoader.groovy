@@ -21,6 +21,7 @@ import static org.strangeforest.tcb.dataload.LoaderUtil.*
 class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentLoader {
 
 	boolean forceForecast
+	EloSurfaceFactors eloSurfaceFactors
 
 	static final String LOAD_EVENT_SQL = //language=SQL
 		'{call load_in_progress_event(' +
@@ -53,7 +54,16 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 	static final String UPDATE_MATCH_ELO_RATINGS_SQL = //language=SQL
 		'UPDATE in_progress_match\n' +
-		'SET player1_elo_rating = :player1_elo_rating, player1_next_elo_rating = :player1_next_elo_rating, player2_elo_rating = :player2_elo_rating, player2_next_elo_rating = :player2_next_elo_rating\n' +
+		'SET player1_elo_rating = :player1_elo_rating, player1_next_elo_rating = :player1_next_elo_rating,\n' +
+		'    player1_recent_elo_rating = :player1_recent_elo_rating, player1_next_recent_elo_rating = :player1_next_recent_elo_rating,\n' +
+		'    player1_surface_elo_rating = :player1_surface_elo_rating, player1_next_surface_elo_rating = :player1_next_surface_elo_rating,\n' +
+		'    player1_in_out_elo_rating = :player1_in_out_elo_rating, player1_next_in_out_elo_rating = :player1_next_in_out_elo_rating,\n' +
+		'    player1_set_elo_rating = :player1_set_elo_rating, player1_next_set_elo_rating = :player1_next_set_elo_rating,\n' +
+		'    player2_elo_rating = :player2_elo_rating, player2_next_elo_rating = :player2_next_elo_rating,\n' +
+		'    player2_recent_elo_rating = :player2_recent_elo_rating, player2_next_recent_elo_rating = :player2_next_recent_elo_rating,\n' +
+		'    player2_surface_elo_rating = :player2_surface_elo_rating, player2_next_surface_elo_rating = :player2_next_surface_elo_rating,\n' +
+		'    player2_in_out_elo_rating = :player2_in_out_elo_rating, player2_next_in_out_elo_rating = :player2_next_in_out_elo_rating,\n' +
+		'    player2_set_elo_rating = :player2_set_elo_rating, player2_next_set_elo_rating = :player2_next_set_elo_rating\n' +
 		'WHERE in_progress_match_id = :in_progress_match_id'
 
 	static final String LOAD_PLAYER_RESULT_SQL = //language=SQL
@@ -79,6 +89,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 	ATPWorldTourInProgressTournamentLoader(Sql sql) {
 		super(sql)
 		forceForecast = getBooleanProperty(FORCE_FORECAST_PROPERTY, FORCE_FORECAST_DEFAULT)
+		eloSurfaceFactors = new EloSurfaceFactors(sql, LocalDate.now().year - 1)
 	}
 
 	def loadAndForecastTournament(String urlId, extId, Integer season = null, String level = null, String surface = null, boolean verbose = false) {
@@ -374,7 +385,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			if (verbose)
 				println 'Current'
 			tournamentForecaster = new KOTournamentForecaster(predictor, inProgressEventId, matches, entryResult, true, verbose)
-			tournamentForecaster.calculateEloRatings()
+			tournamentForecaster.calculateEloRatings(eloSurfaceFactors)
 			saveEloRatings(matches)
 			sql.commit()
 
