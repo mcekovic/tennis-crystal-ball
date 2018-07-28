@@ -6,7 +6,7 @@ import org.strangeforest.tcb.stats.model.forecast.*;
 public class MatchPlayerEx extends MatchPlayer {
 
 	private final Integer rank;
-	protected EloRatingDelta eloRatingDelta;
+	protected final EloRatingDelta eloRatingDelta;
 
 	public MatchPlayerEx(int id, String name, Integer seed, String entry, String countryId, Integer rank, Integer eloRating, Integer nextEloRating) {
 		super(id, name, seed, entry, countryId);

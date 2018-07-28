@@ -20,15 +20,12 @@
 			loadRankingTopN("ELO_RANK", 20);
 		});
 		function eloTypeChanged() {
-			var url = "/inProgressEventForecast?inProgressEventId=[(${inProgressEventId})]";
-			var eloType = $("#eloType").val();
-			if (eloType) url += "&eloType=" + eloType;
-			window.location.href = url + "&tab=" + $("#inProgressEventPills li.active a").attr("href").substr(1);
+			window.location.href = "/inProgressEventForecast?inProgressEventId=[(${inProgressEventId})]&eloType=" + $("#eloType").val() + "&tab=" + $("#inProgressEventPills li.active a").attr("href").substr(1);
 		}
 		function showPlayerPath(playerId) {
 			var $pill = $("#playerPathPill");
 			tabLoading($pill);
-			loadTab($pill, $pill.data("url") + "&playerId=" + playerId);
+			loadTab($pill, $pill.data("url") + "&playerId=" + playerId + "&eloType=" + $("#eloType").val());
 		}
 	</script>
 	<style type="text/css">
@@ -168,11 +165,10 @@
 						</a>
 					</th>
 				</tr>
-				<tr><td>&nbsp;</td></tr>
 				<tr>
 					<td>
-						<label for="eloType" title="Choose type of Elo rating to show in forecasts">Elo Type:</label>
-						<select id="eloType" class="" onchange="eloTypeChanged()">
+						<label for="eloType" title="Choose type of Elo rating to show in forecasts">Elo type</label>
+						<select id="eloType" class="form-control" onchange="eloTypeChanged()">
 							<option th:each="anEloType : ${eloTypes}" th:value="${anEloType}" value="OVERALL" th:text="${anEloType.text}" th:selected="${anEloType == eloType}">Overall</option>
 						</select>
 					</td>
@@ -217,7 +213,7 @@
 								<th th:colspan="${entryCount >= 16 ? 1 : 2}">Player</th>
 								<th th:if="${entryCount >= 16}" class="text-right" th:text="${#numbers.formatDecimal(playersForecast.getStrength(playerForecastStat.index, 8), 1, 1)} + '%'" title="Draw section strength">25.4%</th>
 								<th class="player-rank hidden-xs">Rank</th>
-								<th class="player-rank hidden-xs">Elo</th>
+								<th class="player-rank hidden-xs" th:title="${eloType.description}">Elo</th>
 								<th></th>
 								<th th:each="result : ${playersForecast.results}" class="text-center" th:text="${result}">W</th>
 								<th th:if="${priceFormat}" class="text-right" title="Tournament winning odds">Odds</th>

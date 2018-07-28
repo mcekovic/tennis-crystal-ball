@@ -4,10 +4,8 @@ import org.strangeforest.tcb.stats.model.core.*;
 
 public class EloRatingDelta {
 
-	private Integer eloRating;
+	private final Integer eloRating;
 	private Integer nextEloRating;
-
-	public EloRatingDelta() {}
 
 	public EloRatingDelta(Integer eloRating, Integer nextEloRating) {
 		this.eloRating = eloRating;
@@ -24,23 +22,21 @@ public class EloRatingDelta {
 	}
 
 	public int getNextEloRating() {
-		return nextEloRating != null ? nextEloRating : Player.START_ELO_RATING;
+		return ensureEloRating(nextEloRating);
 	}
 
 	public Integer getEloRatingDelta() {
 		if (nextEloRating == null)
 			return null;
-		int delta = nextEloRating - eloRating();
+		int delta = nextEloRating - ensureEloRating(eloRating);
 		return delta != 0 ? delta : null;
 	}
 
-	int eloRating() {
-		return eloRating != null ? eloRating : Player.START_ELO_RATING;
+	void setNextEloRating(Integer nextEloRating) {
+		this.nextEloRating = nextEloRating;
 	}
 
-	void setEloRatings(Integer eloRating, Integer nextEloRating) {
-		if (this.eloRating == null)
-			this.eloRating = eloRating;
-		this.nextEloRating = nextEloRating;
+	private static int ensureEloRating(Integer eloRating) {
+		return eloRating != null ? eloRating : Player.START_ELO_RATING;
 	}
 }

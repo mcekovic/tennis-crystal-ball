@@ -60,21 +60,17 @@ public class TournamentForecastService {
 
 	private static final String FAVORITE_EXTRA_COLUMNS = //language=SQL
 		", p.current_rank, p.best_rank,\n" +
-		"  coalesce((SELECT CASE WHEN m.player1_id = player_id THEN coalesce(m.player1_next_elo_rating, m.player1_elo_rating) ELSE coalesce(m.player2_next_elo_rating, m.player2_elo_rating) END FROM in_progress_match m\n" +
-		"   WHERE m.in_progress_event_id = r.in_progress_event_id AND (m.player1_id = player_id OR m.player2_id = player_id) ORDER BY m.round DESC, m.match_num LIMIT 1), p.current_elo_rating) AS current_elo_rating,\n" +
-		"  (%1$s) AS current_surface_elo_rating,\n" +
+		"  (SELECT CASE WHEN m.player1_id = player_id THEN coalesce(m.player1_next_%1$selo_rating, m.player1_%1$selo_rating) ELSE coalesce(m.player2_next_%1$selo_rating, m.player2_%1$selo_rating) END FROM in_progress_match m\n" +
+		"   WHERE m.in_progress_event_id = r.in_progress_event_id AND (m.player1_id = player_id OR m.player2_id = player_id) ORDER BY m.round DESC, m.match_num LIMIT 1) AS current_elo_rating,\n" +
 		"  nullif((SELECT count(*) FROM player_tournament_event_result t INNER JOIN tournament_event e USING (tournament_event_id) WHERE t.player_id = r.player_id AND t.result = 'W' AND e.date >= current_date - (INTERVAL '1 year') AND e.level IN ('G', 'F', 'L', 'M', 'O', 'A', 'B')), 0) AS last52_titles,\n" +
 		"  extract(YEAR FROM age) AS age";
-
-	private static final String PLAYER_SURFACE_ELO_RATING = //language=SQL
-		"SELECT e.%1$s_elo_rating FROM player_elo_ranking e WHERE e.player_id = r.player_id AND e.rank_date BETWEEN current_date - (INTERVAL '1 year') AND current_date ORDER BY e.rank_date DESC LIMIT 1";
 
 	private static final String IN_PROGRESS_MATCHES_QUERY =
 		"WITH entry_round AS (\n" +
 		"  SELECT min(round) AS entry_round FROM in_progress_match WHERE in_progress_event_id = :inProgressEventId\n" +
 		")\n" +
-		"SELECT m.player1_id, m.player1_seed, m.player1_entry, p1.name player1_name, p1.country_id player1_country_id, m.player1_rank, m.player1_elo_rating,\n" +
-		"  m.player2_id, m.player2_seed, m.player2_entry, p2.name player2_name, p2.country_id player2_country_id, m.player2_rank, m.player2_elo_rating\n" +
+		"SELECT m.player1_id, m.player1_seed, m.player1_entry, p1.name player1_name, p1.country_id player1_country_id, m.player1_rank, m.player1_elo_rating, m.player1_recent_elo_rating, m.player1_surface_elo_rating, m.player1_in_out_elo_rating, m.player1_set_elo_rating,\n" +
+		"  m.player2_id, m.player2_seed, m.player2_entry, p2.name player2_name, p2.country_id player2_country_id, m.player2_rank, m.player2_elo_rating, m.player2_recent_elo_rating, m.player2_surface_elo_rating, m.player2_in_out_elo_rating, m.player2_set_elo_rating\n" +
 		"FROM in_progress_match m\n" +
 		"LEFT JOIN player_v p1 ON p1.player_id = player1_id\n" +
 		"LEFT JOIN player_v p2 ON p2.player_id = player2_id\n" +
@@ -82,10 +78,13 @@ public class TournamentForecastService {
 		"WHERE m.in_progress_event_id = :inProgressEventId AND m.round = er.entry_round\n" +
 		"ORDER BY m.match_num";
 
-	private static final String IN_PROGRESS_ELO_RATINGS_QUERY =
+	private static final String IN_PROGRESS_NEXT_ELO_RATINGS_QUERY =
 		"SELECT round, player1_id, player2_id,\n" +
-		"  player1_elo_rating, player1_next_elo_rating, player1_recent_elo_rating, player1_next_recent_elo_rating, player1_surface_elo_rating, player1_next_surface_elo_rating, player1_in_out_elo_rating, player1_next_in_out_elo_rating, player1_set_elo_rating, player1_next_set_elo_rating,\n" +
-		"  player2_elo_rating, player2_next_elo_rating, player2_recent_elo_rating, player2_next_recent_elo_rating, player2_surface_elo_rating, player2_next_surface_elo_rating, player2_in_out_elo_rating, player2_next_in_out_elo_rating, player2_set_elo_rating, player2_next_set_elo_rating\n" +
+		"  coalesce(player1_next_elo_rating, player1_elo_rating) AS player1_next_elo_rating, coalesce(player2_next_elo_rating, player2_elo_rating) AS player2_next_elo_rating,\n" +
+		"  coalesce(player1_next_recent_elo_rating, player1_recent_elo_rating) AS player1_next_recent_elo_rating, coalesce(player2_next_recent_elo_rating, player2_recent_elo_rating) AS player2_next_recent_elo_rating,\n" +
+		"  coalesce(player1_next_surface_elo_rating, player1_surface_elo_rating) AS player1_next_surface_elo_rating, coalesce(player2_next_surface_elo_rating, player2_surface_elo_rating) AS player2_next_surface_elo_rating,\n" +
+		"  coalesce(player1_next_in_out_elo_rating, player1_in_out_elo_rating) AS player1_next_in_out_elo_rating, coalesce(player2_next_in_out_elo_rating, player2_in_out_elo_rating) AS player2_next_in_out_elo_rating,\n" +
+		"  coalesce(player1_next_set_elo_rating, player1_set_elo_rating) AS player1_next_set_elo_rating, coalesce(player2_next_set_elo_rating, player2_set_elo_rating) AS player2_next_set_elo_rating\n" +
 		"FROM in_progress_match\n" +
 		"WHERE in_progress_event_id = :inProgressEventId\n" +
 		"ORDER BY round, match_num";
@@ -181,7 +180,7 @@ public class TournamentForecastService {
 			addForecast(forecast, players, rs);
 		});
 		forecast.process();
-		addEloRatings(forecast);
+		addNextEloRatings(forecast);
 		return forecast;
 	}
 
@@ -204,43 +203,28 @@ public class TournamentForecastService {
 		);
 	}
 
-	private void addEloRatings(InProgressEventForecast forecast) {
+	private void addNextEloRatings(InProgressEventForecast forecast) {
 		PlayersForecast currentForecast = forecast.getCurrentForecast();
-		jdbcTemplate.query(IN_PROGRESS_ELO_RATINGS_QUERY, params("inProgressEventId", forecast.getEvent().getId()), rs -> {
+		jdbcTemplate.query(IN_PROGRESS_NEXT_ELO_RATINGS_QUERY, params("inProgressEventId", forecast.getEvent().getId()), rs -> {
 			String round = rs.getString("round");
 			PlayersForecast playersForecast = forecast.getPlayersForecast(round);
-			setEloRatings(round, currentForecast, playersForecast, rs, "player1_");
-			setEloRatings(round, currentForecast, playersForecast, rs, "player2_");
+			setNextEloRatings(round, currentForecast, playersForecast, rs, "player1_");
+			setNextEloRatings(round, currentForecast, playersForecast, rs, "player2_");
 		});
 	}
 
-	private void setEloRatings(String round, PlayersForecast currentForecast, PlayersForecast playersForecast, ResultSet rs, String prefix) throws SQLException {
+	private void setNextEloRatings(String round, PlayersForecast currentForecast, PlayersForecast playersForecast, ResultSet rs, String prefix) throws SQLException {
 		Integer playerId = getInteger(rs, prefix + "id");
 		if (playerId != null) {
-			Integer eloRating = getInteger(rs, prefix + "elo_rating");
 			Integer nextEloRating = getInteger(rs, prefix + "next_elo_rating");
-			if (nextEloRating == null)
-				nextEloRating = eloRating;
-			Integer recentEloRating = getInteger(rs, prefix + "recent_elo_rating");
 			Integer nextRecentEloRating = getInteger(rs, prefix + "next_recent_elo_rating");
-			if (nextRecentEloRating == null)
-				nextRecentEloRating = recentEloRating;
-			Integer surfaceEloRating = getInteger(rs, prefix + "surface_elo_rating");
 			Integer nextSurfaceEloRating = getInteger(rs, prefix + "next_surface_elo_rating");
-			if (nextSurfaceEloRating == null)
-				nextSurfaceEloRating = surfaceEloRating;
-			Integer inOutEloRating = getInteger(rs, prefix + "in_out_elo_rating");
 			Integer nextInOutEloRating = getInteger(rs, prefix + "next_in_out_elo_rating");
-			if (nextInOutEloRating == null)
-				nextInOutEloRating = inOutEloRating;
-			Integer setEloRating = getInteger(rs, prefix + "set_elo_rating");
 			Integer nextSetEloRating = getInteger(rs, prefix + "next_set_elo_rating");
-			if (nextSetEloRating == null)
-				nextSetEloRating = setEloRating;
 			if (currentForecast != null && KOResult.valueOf(round).compareTo(currentForecast.getEntryRound()) >= 0)
-				currentForecast.setEloRatings(playerId, nextEloRating, nextEloRating, recentEloRating, nextRecentEloRating, surfaceEloRating, nextSurfaceEloRating, inOutEloRating, nextInOutEloRating, setEloRating, nextSetEloRating);
+				currentForecast.setNextEloRatings(playerId, nextEloRating, nextRecentEloRating, nextSurfaceEloRating, nextInOutEloRating, nextSetEloRating);
 			if (playersForecast != null)
-				playersForecast.setEloRatings(playerId, eloRating, nextEloRating, recentEloRating, nextRecentEloRating, surfaceEloRating, nextSurfaceEloRating, inOutEloRating, nextInOutEloRating, setEloRating, nextSetEloRating);
+				playersForecast.setNextEloRatings(playerId, nextEloRating, nextRecentEloRating, nextSurfaceEloRating, nextInOutEloRating, nextSetEloRating);
 		}
 	}
 
@@ -254,7 +238,11 @@ public class TournamentForecastService {
 			rs.getString(prefix + "entry"),
 			rs.getString(prefix + "country_id"),
 			getInteger(rs, prefix + "rank"),
-			getInteger(rs, prefix + "elo_rating")
+			getInteger(rs, prefix + "elo_rating"),
+			getInteger(rs, prefix + "recent_elo_rating"),
+			getInteger(rs, prefix + "surface_elo_rating"),
+			getInteger(rs, prefix + "in_out_elo_rating"),
+			getInteger(rs, prefix + "set_elo_rating")
 		);
 	}
 
@@ -449,10 +437,11 @@ public class TournamentForecastService {
 	// Favorites
 
 	@Cacheable("InProgressEventFavorites")
-	public InProgressEventFavorites getInProgressEventFavorites(int inProgressEventId, int count) {
-		Surface surface = Surface.safeDecode(getInProgressEvent(inProgressEventId).getSurface());
+	public InProgressEventFavorites getInProgressEventFavorites(int inProgressEventId, int count, ForecastEloType eloType) {
+		InProgressEvent event = getInProgressEvent(inProgressEventId);
+		Surface surface = Surface.safeDecode(event.getSurface());
 		Map<Integer, PlayerForecast> players = fetchPlayers(inProgressEventId).stream().collect(toMap(MatchPlayer::getId, identity()));
-		String extraColumns = format(FAVORITE_EXTRA_COLUMNS, surface != null ? format(PLAYER_SURFACE_ELO_RATING, surface.getLowerCaseText()) : "NULL");
+		String extraColumns = format(FAVORITE_EXTRA_COLUMNS, eloType.getColumnPrefix());
 		List<FavoritePlayerEx> favorites = jdbcTemplate.query(format(FIND_FAVORITES_QUERY, extraColumns), params("inProgressEventId", inProgressEventId).addValue("favoriteCount", count), this::mapFavoritePlayerEx);
 		for (FavoritePlayerEx favorite : favorites) {
 			PlayerForecast player = players.get(favorite.getPlayerId());
@@ -464,7 +453,7 @@ public class TournamentForecastService {
 			favorite.setLast52WeeksWonLost(performance.getMatches());
 			favorite.setLast52WeeksSurfaceWonLost(surface != null ? performance.getSurfaceMatches(surface) : WonLost.EMPTY);
 		}
-		return new InProgressEventFavorites(favorites, surface);
+		return new InProgressEventFavorites(favorites, surface, event.isIndoor());
 	}
 
 	private FavoritePlayerEx mapFavoritePlayerEx(ResultSet rs, int rowNum) throws SQLException {
@@ -477,7 +466,6 @@ public class TournamentForecastService {
 			getInteger(rs, "current_rank"),
 			getInteger(rs, "best_rank"),
 			getInteger(rs, "current_elo_rating"),
-			getInteger(rs, "current_surface_elo_rating"),
 			getInteger(rs, "last52_titles"),
 			getInteger(rs, "age")
 		);

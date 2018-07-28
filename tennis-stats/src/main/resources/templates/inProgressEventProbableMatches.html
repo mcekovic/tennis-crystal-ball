@@ -3,6 +3,7 @@
 	<!--/*@thymesVar id="results" type="org.strangeforest.tcb.stats.model.TournamentEventResults"*/-->
 	<!--/*@thymesVar id="players" type="java.util.List<org.strangeforest.tcb.stats.model.MatchPlayer>"*/-->
 	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
+	<!--/*@thymesVar id="eloType" type="org.strangeforest.tcb.stats.model.forecast.ForecastEloType"*/-->
 	<!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
 	<th:block th:unless="${results.isEmpty()}">
 		<script type="text/javascript">
@@ -10,7 +11,7 @@
 				$("[data-toggle='tooltip']").tooltip();
 			});
 			function reloadProbableMatches() {
-				var url = "/inProgressEventProbableMatches?inProgressEventId=[(${inProgressEvent.id + (priceFormat != null ? '&priceFormat=' + priceFormat : '')})]";
+				var url = "/inProgressEventProbableMatches?inProgressEventId=[(${inProgressEvent.id + '&eloType=' + eloType + (priceFormat != null ? '&priceFormat=' + priceFormat : '')})]";
 				var playerId = $("#pinnedPlayer").val();
 				if (playerId) url += "&playerId=" + playerId;
 				$("#probable").load(url);

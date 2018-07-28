@@ -8,10 +8,12 @@ public class InProgressEventFavorites {
 
 	private final List<FavoritePlayerEx> favorites;
 	private final Surface surface;
+	private final boolean indoor;
 
-	public InProgressEventFavorites(List<FavoritePlayerEx> favorites, Surface surface) {
+	public InProgressEventFavorites(List<FavoritePlayerEx> favorites, Surface surface, boolean indoor) {
 		this.favorites = favorites;
 		this.surface = surface;
+		this.indoor = indoor;
 	}
 
 	public List<FavoritePlayerEx> getFavorites() {
@@ -20,5 +22,9 @@ public class InProgressEventFavorites {
 
 	public Surface getSurface() {
 		return surface;
+	}
+
+	public boolean isIndoor() {
+		return indoor;
 	}
 }

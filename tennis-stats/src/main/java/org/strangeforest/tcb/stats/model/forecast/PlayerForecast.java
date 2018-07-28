@@ -12,17 +12,25 @@ import static org.strangeforest.tcb.util.EnumUtil.*;
 public class PlayerForecast extends MatchPlayerEx {
 
 	private Map<String, Double> forecast;
-	private EloRatingDelta recentEloRatingDelta = new EloRatingDelta();
-	private EloRatingDelta surfaceEloRatingDelta = new EloRatingDelta();
-	private EloRatingDelta inOutEloRatingDelta = new EloRatingDelta();
-	private EloRatingDelta setEloRatingDelta = new EloRatingDelta();
+	private final EloRatingDelta recentEloRatingDelta;
+	private final EloRatingDelta surfaceEloRatingDelta;
+	private final EloRatingDelta inOutEloRatingDelta;
+	private final EloRatingDelta setEloRatingDelta;
 
-	public PlayerForecast(int playerId, String name, Integer seed, String entry, String countryId, Integer rank, Integer eloRating) {
+	public PlayerForecast(int playerId, String name, Integer seed, String entry, String countryId, Integer rank, Integer eloRating, Integer recentEloRating, Integer surfaceEloRating, Integer inOutEloRating, Integer setEloRating) {
 		super(playerId, name, seed, entry, countryId, rank, eloRating, null);
+		recentEloRatingDelta = new EloRatingDelta(recentEloRating, null);
+		surfaceEloRatingDelta = new EloRatingDelta(surfaceEloRating, null);
+		inOutEloRatingDelta = new EloRatingDelta(inOutEloRating, null);
+		setEloRatingDelta = new EloRatingDelta(setEloRating, null);
 	}
 
-	public PlayerForecast(MatchPlayerEx player) {
+	public PlayerForecast(PlayerForecast player) {
 		super(player);
+		recentEloRatingDelta = new EloRatingDelta(player.recentEloRatingDelta);
+		surfaceEloRatingDelta = new EloRatingDelta(player.surfaceEloRatingDelta);
+		inOutEloRatingDelta = new EloRatingDelta(player.inOutEloRatingDelta);
+		setEloRatingDelta = new EloRatingDelta(player.setEloRatingDelta);
 	}
 
 	public boolean isKnown() {
@@ -120,23 +128,11 @@ public class PlayerForecast extends MatchPlayerEx {
 		}
 	}
 
-	void setEloRatings(Integer eloRating, Integer nextEloRating) {
-		eloRatingDelta.setEloRatings(eloRating, nextEloRating);
-	}
-
-	void setRecentEloRatings(Integer recentEloRating, Integer nextRecentEloRating) {
-		recentEloRatingDelta.setEloRatings(recentEloRating, nextRecentEloRating);
-	}
-
-	void setSurfaceEloRatings(Integer surfaceEloRating, Integer nextSurfaceEloRating) {
-		surfaceEloRatingDelta.setEloRatings(surfaceEloRating, nextSurfaceEloRating);
-	}
-
-	void setInOutEloRatings(Integer inOutEloRating, Integer nextInOutEloRating) {
-		inOutEloRatingDelta.setEloRatings(inOutEloRating, nextInOutEloRating);
-	}
-
-	void setSetEloRatings(Integer setEloRating, Integer nextSetEloRating) {
-		setEloRatingDelta.setEloRatings(setEloRating, nextSetEloRating);
+	void setNextEloRatings(Integer nextEloRating, Integer nextRecentEloRating, Integer nextSurfaceEloRating, Integer nextInOutEloRating, Integer nextSetEloRating) {
+		eloRatingDelta.setNextEloRating(nextEloRating);
+		recentEloRatingDelta.setNextEloRating(nextRecentEloRating);
+		surfaceEloRatingDelta.setNextEloRating(nextSurfaceEloRating);
+		inOutEloRatingDelta.setNextEloRating(nextInOutEloRating);
+		setEloRatingDelta.setNextEloRating(nextSetEloRating);
 	}
 }

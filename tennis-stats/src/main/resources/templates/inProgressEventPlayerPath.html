@@ -3,6 +3,7 @@
 	<!--/*@thymesVar id="players" type="java.util.List<org.strangeforest.tcb.stats.model.MatchPlayer>"*/-->
 	<!--/*@thymesVar id="playerId" type="java.lang.Integer"*/-->
 	<!--/*@thymesVar id="playerPath" type="org.strangeforest.tcb.stats.model.forecast.PlayerPath"*/-->
+	<!--/*@thymesVar id="eloType" type="org.strangeforest.tcb.stats.model.forecast.ForecastEloType"*/-->
 	<!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
 	<script type="text/javascript">
 		$(function() {
@@ -50,7 +51,7 @@
 			<th>Outcome</th>
 			<th>Opponent</th>
 			<th class="text-right hidden-xs" title="Opponent rank">Opp. Rank</th>
-			<th class="text-right hidden-md hidden-sm hidden-xs">Player Elo</th>
+			<th class="text-right hidden-md hidden-sm hidden-xs" th:title="'Player ' + ${eloType.description}">Player Elo</th>
 			<th class="text-right">Score</th>
 			<th class="text-right hidden-md hidden-sm hidden-xs">H2H</th>
 		</tr>
@@ -74,8 +75,8 @@
 				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent" th:text="${opponent != null ? opponent.rank : _}">6</div>
 			</td>
 			<td class="text-right hidden-md hidden-sm hidden-xs">
-				<div th:each="match : ${matches}" th:with="player=${match.winner.id == playerId ? match.winner : match.loser}, eloRatingDelta=${player.eloRatingDelta}" class="opponent">
-					<span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${player.nextEloRating})]
+				<div th:each="match : ${matches}" th:with="player=${match.winner.id == playerId ? match.winner : match.loser}, eloRatingDelta=${player.getEloRatingDelta(eloType)}" class="opponent">
+					<span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${player.getNextEloRating(eloType)})]
 				</div>
 			</td>
 			<td class="text-right">
@@ -96,7 +97,7 @@
 			<th class="text-right" title="Probability to meet the player in this round">Matchup Prob.</th>
 			<th>Opponent</th>
 			<th class="text-right hidden-xs" title="Opponent rank">Opp. Rank</th>
-			<th class="text-right hidden-md hidden-sm hidden-xs">Opponent Elo</th>
+			<th class="text-right hidden-md hidden-sm hidden-xs" th:title="'Opponent ' + ${eloType.description}">Opponent Elo</th>
 			<th class="text-right" title="Probability to win over the potential opponent if they eventually meet in this round">Win Prob.</th>
 			<th class="text-right hidden-md hidden-sm hidden-xs">H2H</th>
 		</tr>
@@ -128,8 +129,8 @@
 				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}" class="opponent" th:text="${opponent.rank}">6</div>
 			</td>
 			<td class="text-right hidden-md hidden-sm hidden-xs">
-				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}, eloRatingDelta=${opponent.eloRatingDelta}" class="opponent">
-					<span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${opponent.nextEloRating})]
+				<div th:each="match : ${matches}" th:with="opponent=${match.winner.id == playerId ? match.loser : match.winner}, eloRatingDelta=${opponent.getEloRatingDelta(eloType)}" class="opponent">
+					<span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${opponent.getNextEloRating(eloType)})]
 				</div>
 			</td>
 			<td class="text-right">

@@ -215,6 +215,7 @@ public class TournamentController extends PageController {
 	public ModelAndView inProgressEventProbableMatches(
 		@RequestParam(name = "inProgressEventId") int inProgressEventId,
 		@RequestParam(name = "playerId", required = false) Integer playerId,
+		@RequestParam(name = "eloType", defaultValue = "OVERALL") ForecastEloType eloType,
 		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
 	) {
 		ProbableMatches probableMatches = forecastService.getInProgressEventProbableMatches(inProgressEventId, playerId);
@@ -224,6 +225,7 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("results", probableMatches.getResults());
 		modelMap.addAttribute("players", probableMatches.getPlayers());
 		modelMap.addAttribute("playerId", playerId);
+		modelMap.addAttribute("eloType", eloType);
 		modelMap.addAttribute("priceFormat", priceFormat);
 		return new ModelAndView("inProgressEventProbableMatches", modelMap);
 	}
@@ -232,6 +234,7 @@ public class TournamentController extends PageController {
 	public ModelAndView inProgressEventPlayerPath(
 		@RequestParam(name = "inProgressEventId") int inProgressEventId,
 		@RequestParam(name = "playerId", required = false) Integer playerId,
+		@RequestParam(name = "eloType", defaultValue = "OVERALL") ForecastEloType eloType,
 		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
 	) {
 		PlayerPath playerPath = forecastService.getInProgressEventPlayerPath(inProgressEventId, playerId);
@@ -241,6 +244,7 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("players", playerPath.getPlayers());
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("playerPath", playerPath);
+		modelMap.addAttribute("eloType", eloType);
 		modelMap.addAttribute("priceFormat", priceFormat);
 		return new ModelAndView("inProgressEventPlayerPath", modelMap);
 	}
@@ -248,13 +252,16 @@ public class TournamentController extends PageController {
 	@GetMapping("/inProgressEventFavorites")
 	public ModelAndView inProgressEventFavorites(
 		@RequestParam(name = "inProgressEventId") int inProgressEventId,
+		@RequestParam(name = "eloType", defaultValue = "OVERALL") ForecastEloType eloType,
 		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
 	) {
-		InProgressEventFavorites favorites = forecastService.getInProgressEventFavorites(inProgressEventId, 10);
+		InProgressEventFavorites favorites = forecastService.getInProgressEventFavorites(inProgressEventId, 10, eloType);
 
 		ModelMap modelMap = new ModelMap();
 		modelMap.addAttribute("surface", favorites.getSurface());
+		modelMap.addAttribute("indoor", favorites.isIndoor());
 		modelMap.addAttribute("favorites", favorites.getFavorites());
+		modelMap.addAttribute("eloType", eloType);
 		modelMap.addAttribute("priceFormat", priceFormat);
 		return new ModelAndView("inProgressEventFavorites", modelMap);
 	}
