@@ -126,12 +126,15 @@ public class PlayersForecast {
 		return true;
 	}
 
-	public void setEloRatings(int playerId, Integer eloRating, Integer nextEloRating) {
+	public void setEloRatings(int playerId, Integer eloRating, Integer nextEloRating, Integer recentEloRating, Integer nextRecentEloRating,
+	                          Integer surfaceEloRating, Integer nextSurfaceEloRating, Integer inOutEloRating, Integer nextInOutEloRating, Integer setEloRating, Integer nextSetEloRating) {
 		PlayerForecast playerForecast = playerForecastMap.get(playerId);
 		if (playerForecast != null) {
-			if (playerForecast.getEloRating() == null)
-				playerForecast.setEloRating(eloRating);
-			playerForecast.setNextEloRating(nextEloRating);
+			playerForecast.setEloRatings(eloRating, nextEloRating);
+			playerForecast.setRecentEloRatings(recentEloRating, nextRecentEloRating);
+			playerForecast.setSurfaceEloRatings(surfaceEloRating, nextSurfaceEloRating);
+			playerForecast.setInOutEloRatings(inOutEloRating, nextInOutEloRating);
+			playerForecast.setSetEloRatings(setEloRating, nextSetEloRating);
 		}
 	}
 }

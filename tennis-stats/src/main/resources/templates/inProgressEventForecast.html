@@ -5,6 +5,8 @@
 <!--/*@thymesVar id="forecast" type="org.strangeforest.tcb.stats.model.forecast.InProgressEventForecast"*/-->
 <!--/*@thymesVar id="levels" type="java.util.Map"*/-->
 <!--/*@thymesVar id="surfaces" type="java.util.Map"*/-->
+<!--/*@thymesVar id="eloTypes" type="org.strangeforest.tcb.stats.model.forecast.ForecastEloType[]"*/-->
+<!--/*@thymesVar id="eloType" type="org.strangeforest.tcb.stats.model.forecast.ForecastEloType"*/-->
 <!--/*@thymesVar id="priceFormat" type="org.strangeforest.tcb.stats.model.price.PriceFormat"*/-->
 <head th:replace="fragments/head :: commonHead(${inProgressEvent.name} + ' Forecast', false, ~{::template})">
 	<template>
@@ -17,6 +19,12 @@
 			bindPopovers();
 			loadRankingTopN("ELO_RANK", 20);
 		});
+		function eloTypeChanged() {
+			var url = "/inProgressEventForecast?inProgressEventId=[(${inProgressEventId})]";
+			var eloType = $("#eloType").val();
+			if (eloType) url += "&eloType=" + eloType;
+			window.location.href = url + "&tab=" + $("#inProgressEventPills li.active a").attr("href").substr(1);
+		}
 		function showPlayerPath(playerId) {
 			var $pill = $("#playerPathPill");
 			tabLoading($pill);
@@ -160,19 +168,28 @@
 						</a>
 					</th>
 				</tr>
+				<tr><td>&nbsp;</td></tr>
+				<tr>
+					<td>
+						<label for="eloType" title="Choose type of Elo rating to show in forecasts">Elo Type:</label>
+						<select id="eloType" class="" onchange="eloTypeChanged()">
+							<option th:each="anEloType : ${eloTypes}" th:value="${anEloType}" value="OVERALL" th:text="${anEloType.text}" th:selected="${anEloType == eloType}">Overall</option>
+						</select>
+					</td>
+				</tr>
 			</table>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-lg-10 col-md-9">
-			<ul id="inProgressEventPills" class="nav nav-pills tab-param">
+			<ul id="inProgressEventPills" class="nav nav-pills tab-param" th:with="params=${eloType != null ? '&eloType=' + eloType : ''}">
 				<li><a id="resultsPill" data-toggle="pill" href="#results" th:data-url="'/inProgressEventResults?inProgressEventId=' + ${inProgressEvent.id}">Completed</a></li>
 				<li th:each="baseResult : ${forecast.baseResults}" th:class="${baseResultStat.last ? 'active' : _}">
 					<a th:id="'baseResult' + ${baseResult} + 'Pill'" data-toggle="pill" th:href="'#baseResult' + ${baseResult}" th:text="${baseResult}">W</a>
 				</li>
-				<li><a id="probablePill" data-toggle="pill" href="#probable" th:data-url="'/inProgressEventProbableMatches?inProgressEventId=' + ${inProgressEvent.id}">Probable Matchups</a></li>
-				<li><a id="playerPathPill" data-toggle="pill" href="#playerPath" th:data-url="'/inProgressEventPlayerPath?inProgressEventId=' + ${inProgressEvent.id}">Player Path<sup class="new-feature"></sup></a></li>
-				<li><a id="favoritesPill" data-toggle="pill" href="#favorites" th:data-url="'/inProgressEventFavorites?inProgressEventId=' + ${inProgressEvent.id}">Favorites</a></li>
+				<li><a id="probablePill" data-toggle="pill" href="#probable" th:data-url="'/inProgressEventProbableMatches?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Probable Matchups</a></li>
+				<li><a id="playerPathPill" data-toggle="pill" href="#playerPath" th:data-url="'/inProgressEventPlayerPath?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Player Path<sup class="new-feature"></sup></a></li>
+				<li><a id="favoritesPill" data-toggle="pill" href="#favorites" th:data-url="'/inProgressEventFavorites?inProgressEventId=' + ${inProgressEvent.id} + ${params}">Favorites</a></li>
 			</ul>
 			<div class="tab-content">
 				<div id="results" class="tab-pane fade"><div class="loading"></div></div>
@@ -215,7 +232,7 @@
 								<a href="#" style="vertical-align: middle" title="Show path" th:onclick="|showPlayerPath(${playerForecast.id})|"><i class="fa fa-road"></i></a>
 							</td>
 							<td th:text="${playerForecast.rank}" class="player-rank hidden-xs">1</td>
-							<td th:with="playerForecastForElo=${(current || prevPlayersForecast == null ? playersForecast : prevPlayersForecast).getPlayerForecast(playerForecast.id)}, eloRatingDelta=${prevPlayersForecast != null ? playerForecastForElo.eloRatingDelta : null}" class="player-rank hidden-xs"><span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${baseResultStat.first ? playerForecastForElo.eloRating() : playerForecastForElo.nextEloRating})]</td>
+							<td th:with="playerForecastForElo=${(current || prevPlayersForecast == null ? playersForecast : prevPlayersForecast).getPlayerForecast(playerForecast.id)}, eloRatingDelta=${prevPlayersForecast != null ? playerForecastForElo.getEloRatingDelta(eloType) : null}" class="player-rank hidden-xs"><span th:if="${eloRatingDelta}" class="small">(<span th:if="${eloRatingDelta > 0}" class="positive">+[(${eloRatingDelta})]</span><span th:if="${eloRatingDelta < 0}" class="negative">[(${eloRatingDelta})]</span>) </span>[(${baseResultStat.first ? playerForecastForElo.getEloRating(eloType) : playerForecastForElo.getNextEloRating(eloType)})]</td>
 							</th:block>
 							<th:block th:if="${playerForecast.bye}">
 							<td colspan="2">Bye</td>

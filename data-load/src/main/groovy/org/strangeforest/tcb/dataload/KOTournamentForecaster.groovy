@@ -83,11 +83,11 @@ class KOTournamentForecaster {
 		def match = matches[i]
 		def winner = match.winner
 		if (winner) {
+			def prefix = type ? ELO_PREFIX[type] : ''
+			Double rating1 = match['player1_' + prefix + 'elo_rating']
+			Double rating2 = match['player2_' + prefix + 'elo_rating']
 			def player1Id = match.player1_id
 			def player2Id = match.player2_id
-			Double rating1 = match.player1_elo_rating
-			Double rating2 = match.player2_elo_rating
-			def prefix = type ? ELO_PREFIX[type] : ''
 			if (player1Id && player2Id) {
 				if (!rating1)
 					rating1 = StartEloRatings.START_RATING
@@ -115,7 +115,7 @@ class KOTournamentForecaster {
 				def deltaRating1 = winner1 ? deltaRating : -deltaRating
 				def deltaRating2 = winner1 ? -deltaRating : deltaRating
 				rating1 = EloRatings.newRating(rating1, deltaRating1, type)
-				rating2 = EloRatings.newRating(rating2, -deltaRating2, type)
+				rating2 = EloRatings.newRating(rating2, deltaRating2, type)
 				setNextMatchesEloRating(player1Id, rating1, prefix, i)
 				setNextMatchesEloRating(player2Id, rating2, prefix, i)
 			}

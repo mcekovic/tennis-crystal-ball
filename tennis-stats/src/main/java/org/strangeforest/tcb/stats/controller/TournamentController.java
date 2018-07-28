@@ -180,6 +180,7 @@ public class TournamentController extends PageController {
 		@RequestParam(name = "inProgressEventId", required = false) Integer inProgressEventId,
 		@RequestParam(name = "name", required = false) String name,
 		@RequestParam(name = "tab", required = false) String tab,
+		@RequestParam(name = "eloType", defaultValue = "OVERALL") ForecastEloType eloType,
 		@CookieValue(value = "priceFormat", required = false) PriceFormat priceFormat
 	) {
 		if (inProgressEventId == null) {
@@ -196,6 +197,8 @@ public class TournamentController extends PageController {
 		modelMap.addAttribute("forecast", forecast);
 		modelMap.addAttribute("levels", TournamentLevel.asMap());
 		modelMap.addAttribute("surfaces", Surface.asMap());
+		modelMap.addAttribute("eloTypes", ForecastEloType.values());
+		modelMap.addAttribute("eloType", eloType);
 		modelMap.addAttribute("priceFormat", priceFormat);
 		return new ModelAndView("inProgressEventForecast", modelMap);
 	}

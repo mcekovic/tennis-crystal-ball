@@ -1,24 +1,23 @@
 package org.strangeforest.tcb.stats.model;
 
 import org.strangeforest.tcb.stats.model.core.*;
+import org.strangeforest.tcb.stats.model.forecast.*;
 
 public class MatchPlayerEx extends MatchPlayer {
 
 	private final Integer rank;
-	protected Integer eloRating;
-	protected Integer nextEloRating;
+	protected EloRatingDelta eloRatingDelta;
 
 	public MatchPlayerEx(int id, String name, Integer seed, String entry, String countryId, Integer rank, Integer eloRating, Integer nextEloRating) {
 		super(id, name, seed, entry, countryId);
 		this.rank = rank;
-		this.eloRating = eloRating;
-		this.nextEloRating = nextEloRating;
+		eloRatingDelta = new EloRatingDelta(eloRating, nextEloRating);
 	}
 
 	public MatchPlayerEx(MatchPlayerEx player) {
 		super(player);
 		rank = player.rank;
-		eloRating = player.eloRating;
+		eloRatingDelta = new EloRatingDelta(player.eloRatingDelta);
 	}
 
 	public Integer getRank() {
@@ -26,21 +25,10 @@ public class MatchPlayerEx extends MatchPlayer {
 	}
 
 	public Integer getEloRating() {
-		return eloRating;
-	}
-
-	public int eloRating() {
-		return eloRating != null ? eloRating : Player.START_ELO_RATING;
-	}
-
-	public void setEloRating(Integer eloRating) {
-		this.eloRating = eloRating;
+		return eloRatingDelta.getEloRating();
 	}
 
 	public Integer getEloRatingDelta() {
-		if (nextEloRating == null)
-			return null;
-		int delta = nextEloRating - eloRating();
-		return delta != 0 ? delta : null;
+		return eloRatingDelta.getEloRatingDelta();
 	}
 }

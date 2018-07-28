@@ -83,7 +83,9 @@ public class TournamentForecastService {
 		"ORDER BY m.match_num";
 
 	private static final String IN_PROGRESS_ELO_RATINGS_QUERY =
-		"SELECT round, player1_id, player1_elo_rating, player1_next_elo_rating, player2_id, player2_elo_rating, player2_next_elo_rating\n" +
+		"SELECT round, player1_id, player2_id,\n" +
+		"  player1_elo_rating, player1_next_elo_rating, player1_recent_elo_rating, player1_next_recent_elo_rating, player1_surface_elo_rating, player1_next_surface_elo_rating, player1_in_out_elo_rating, player1_next_in_out_elo_rating, player1_set_elo_rating, player1_next_set_elo_rating,\n" +
+		"  player2_elo_rating, player2_next_elo_rating, player2_recent_elo_rating, player2_next_recent_elo_rating, player2_surface_elo_rating, player2_next_surface_elo_rating, player2_in_out_elo_rating, player2_next_in_out_elo_rating, player2_set_elo_rating, player2_next_set_elo_rating\n" +
 		"FROM in_progress_match\n" +
 		"WHERE in_progress_event_id = :inProgressEventId\n" +
 		"ORDER BY round, match_num";
@@ -219,10 +221,26 @@ public class TournamentForecastService {
 			Integer nextEloRating = getInteger(rs, prefix + "next_elo_rating");
 			if (nextEloRating == null)
 				nextEloRating = eloRating;
+			Integer recentEloRating = getInteger(rs, prefix + "recent_elo_rating");
+			Integer nextRecentEloRating = getInteger(rs, prefix + "next_recent_elo_rating");
+			if (nextRecentEloRating == null)
+				nextRecentEloRating = recentEloRating;
+			Integer surfaceEloRating = getInteger(rs, prefix + "surface_elo_rating");
+			Integer nextSurfaceEloRating = getInteger(rs, prefix + "next_surface_elo_rating");
+			if (nextSurfaceEloRating == null)
+				nextSurfaceEloRating = surfaceEloRating;
+			Integer inOutEloRating = getInteger(rs, prefix + "in_out_elo_rating");
+			Integer nextInOutEloRating = getInteger(rs, prefix + "next_in_out_elo_rating");
+			if (nextInOutEloRating == null)
+				nextInOutEloRating = inOutEloRating;
+			Integer setEloRating = getInteger(rs, prefix + "set_elo_rating");
+			Integer nextSetEloRating = getInteger(rs, prefix + "next_set_elo_rating");
+			if (nextSetEloRating == null)
+				nextSetEloRating = setEloRating;
 			if (currentForecast != null && KOResult.valueOf(round).compareTo(currentForecast.getEntryRound()) >= 0)
-				currentForecast.setEloRatings(playerId, nextEloRating != null ? nextEloRating : eloRating, nextEloRating);
+				currentForecast.setEloRatings(playerId, nextEloRating, nextEloRating, recentEloRating, nextRecentEloRating, surfaceEloRating, nextSurfaceEloRating, inOutEloRating, nextInOutEloRating, setEloRating, nextSetEloRating);
 			if (playersForecast != null)
-				playersForecast.setEloRatings(playerId, eloRating, nextEloRating);
+				playersForecast.setEloRatings(playerId, eloRating, nextEloRating, recentEloRating, nextRecentEloRating, surfaceEloRating, nextSurfaceEloRating, inOutEloRating, nextInOutEloRating, setEloRating, nextSetEloRating);
 		}
 	}
 
