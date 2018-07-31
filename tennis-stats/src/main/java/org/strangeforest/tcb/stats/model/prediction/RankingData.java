@@ -9,7 +9,7 @@ public final class RankingData {
 	private Integer eloRating;
 	private Integer recentEloRating;
 	private Integer surfaceEloRating;
-	private Integer outInEloRating;
+	private Integer inOutEloRating;
 	private Integer setEloRating;
 	private LocalDate eloDate;
 
@@ -53,12 +53,12 @@ public final class RankingData {
 		this.surfaceEloRating = surfaceEloRating;
 	}
 
-	public Integer getOutInEloRating() {
-		return outInEloRating;
+	public Integer getInOutEloRating() {
+		return inOutEloRating;
 	}
 
-	public void setOutInEloRating(Integer outInEloRating) {
-		this.outInEloRating = outInEloRating;
+	public void setInOutEloRating(Integer inOutEloRating) {
+		this.inOutEloRating = inOutEloRating;
 	}
 
 	public Integer getSetEloRating() {

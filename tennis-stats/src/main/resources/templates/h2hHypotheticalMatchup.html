@@ -262,12 +262,39 @@
 			<div th:if="${eloRating2}" th:text="${eloRating2}">2250</div>
 		</td>
 	</tr>
-	<tr th:if="${surface != null && prediction.rankingData1.surfaceEloRating != null || prediction.rankingData2.surfaceEloRating != null}">
+	<tr th:if="${prediction.rankingData1.recentEloRating != null || prediction.rankingData2.recentEloRating != null}">
+		<td th:with="eloRating1=${prediction.rankingData1.recentEloRating}" class="text-right">
+			<div th:if="${eloRating1}" th:text="${eloRating1}">2350</div>
+		</td>
+		<th class="text-center">Recent Elo Rating</th>
+		<td th:with="eloRating2=${prediction.rankingData2.recentEloRating}" class="text-left">
+			<div th:if="${eloRating2}" th:text="${eloRating2}">2250</div>
+		</td>
+	</tr>
+	<tr th:if="${surface != null && (prediction.rankingData1.surfaceEloRating != null || prediction.rankingData2.surfaceEloRating != null)}">
 		<td th:with="eloRating1=${prediction.rankingData1.surfaceEloRating}" class="text-right">
 			<div th:if="${eloRating1}" th:text="${eloRating1}">2350</div>
 		</td>
 		<th class="text-center" th:text="${T(org.strangeforest.tcb.stats.model.core.Surface).decode(surface).text + ' Elo Rating'}">Hard Elo Rating</th>
 		<td th:with="eloRating2=${prediction.rankingData2.surfaceEloRating}" class="text-left">
+			<div th:if="${eloRating2}" th:text="${eloRating2}">2250</div>
+		</td>
+	</tr>
+	<tr th:if="${indoor != null && (prediction.rankingData1.inOutEloRating != null || prediction.rankingData2.inOutEloRating != null)}">
+		<td th:with="eloRating1=${prediction.rankingData1.inOutEloRating}" class="text-right">
+			<div th:if="${eloRating1}" th:text="${eloRating1}">2350</div>
+		</td>
+		<th class="text-center" th:text="${(indoor ? 'Indoor' : 'Outdoor') + ' Elo Rating'}">Outdoor Elo Rating</th>
+		<td th:with="eloRating2=${prediction.rankingData2.inOutEloRating}" class="text-left">
+			<div th:if="${eloRating2}" th:text="${eloRating2}">2250</div>
+		</td>
+	</tr>
+	<tr th:if="${prediction.rankingData1.setEloRating != null || prediction.rankingData2.setEloRating != null}">
+		<td th:with="eloRating1=${prediction.rankingData1.setEloRating}" class="text-right">
+			<div th:if="${eloRating1}" th:text="${eloRating1}">2350</div>
+		</td>
+		<th class="text-center">Set Elo Rating</th>
+		<td th:with="eloRating2=${prediction.rankingData2.setEloRating}" class="text-left">
 			<div th:if="${eloRating2}" th:text="${eloRating2}">2250</div>
 		</td>
 	</tr>
@@ -308,7 +335,7 @@
 				<a th:case="'RANKING[ELO]'" th:href="${url + '&tab=ranking&rankType=ELO_RATING'}" th:text="${item.longName()}" title="Show Elo rating comparision">ELO</a>
 				<a th:case="'RANKING[RECENT_ELO]'" th:href="${url + '&tab=ranking&rankType=RECENT_ELO_RATING'}" th:text="${item.longName()}" title="Show Recent Elo rating comparision">ELO</a>
 				<a th:case="'RANKING[SURFACE_ELO]'" th:href="${url + '&tab=ranking&rankType=' + T(org.strangeforest.tcb.stats.model.core.Surface).decode(surface).name() + '_ELO_RATING'}" th:text="${item.longName()}" th:title="|Show ${T(org.strangeforest.tcb.stats.model.core.Surface).decode(surface).text} Elo rating comparision|">ELO</a>
-				<a th:case="'RANKING[OUT_IN_ELO]'" th:href="${url + '&tab=ranking&rankType=' + (indoor ? 'INDOOR' : 'OUTDOOR') + '_ELO_RATING'}" th:text="${item.longName()}" th:title="|Show ${indoor ? 'Indoor' : 'Outdoor'} Elo rating comparision|">ELO</a>
+				<a th:case="'RANKING[IN_OUT_ELO]'" th:href="${url + '&tab=ranking&rankType=' + (indoor ? 'INDOOR' : 'OUTDOOR') + '_ELO_RATING'}" th:text="${item.longName()}" th:title="|Show ${indoor ? 'Indoor' : 'Outdoor'} Elo rating comparision|">ELO</a>
 				<a th:case="'RANKING[SET_ELO]'" th:href="${url + '&tab=ranking&rankType=SET_ELO_RATING'}" th:text="${item.longName()}" title="Show Set Elo rating comparision">ELO</a>
 				<a th:case="'H2H[OVERALL]'" th:href="${url + '&tab=matches'}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>
 				<a th:case="'H2H[SURFACE]'" th:href="${url + '&tab=matches&surface=' + surface}" th:text="${item.longName()}" title="Show H2H comparision">ELO</a>

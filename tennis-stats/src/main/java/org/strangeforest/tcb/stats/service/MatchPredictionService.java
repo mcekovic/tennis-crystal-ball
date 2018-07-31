@@ -14,14 +14,12 @@ import org.strangeforest.tcb.stats.util.*;
 
 import com.github.benmanes.caffeine.cache.*;
 
-import static com.google.common.collect.Lists.*;
 import static java.lang.String.*;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.*;
 import static org.strangeforest.tcb.stats.model.prediction.MatchDataUtil.*;
 import static org.strangeforest.tcb.stats.service.ParamsUtil.*;
 import static org.strangeforest.tcb.stats.service.ResultSetUtil.*;
-import static org.strangeforest.tcb.util.CompareUtil.*;
 
 @Service
 public class MatchPredictionService {
@@ -52,10 +50,10 @@ public class MatchPredictionService {
 		"UNION\n" +
 		"SELECT date + (INTERVAL '1 day') rank_date, elo_rating, recent_elo_rating, surface_elo_rating, in_out_elo_rating, set_elo_rating FROM (\n" +
 		"  SELECT date, round, match_num, player1_next_elo_rating elo_rating, player1_next_recent_elo_rating recent_elo_rating, player1_next_surface_elo_rating surface_elo_rating, player1_next_in_out_elo_rating in_out_elo_rating, player1_next_set_elo_rating set_elo_rating FROM in_progress_match\n" +
-		"  WHERE winner IS NOT NULL AND player1_id = :playerId AND player2_id > 0\n" +
+		"  WHERE winner IS NOT NULL AND date >= :date::DATE - (INTERVAL '1 weeks') AND player1_id = :playerId AND player2_id > 0\n" +
 		"  UNION\n" +
 		"  SELECT date, round, match_num, player2_next_elo_rating, player2_next_recent_elo_rating, player2_next_surface_elo_rating, player2_next_in_out_elo_rating, player2_next_set_elo_rating FROM in_progress_match\n" +
-		"  WHERE winner IS NOT NULL AND player2_id = :playerId AND player1_id > 0\n" +
+		"  WHERE winner IS NOT NULL AND date >= :date::DATE - (INTERVAL '1 weeks') AND player2_id = :playerId AND player1_id > 0\n" +
 		"  ORDER BY date DESC, round DESC, match_num LIMIT 1\n" +
 		") AS elo_ranking_data\n";
 
@@ -234,14 +232,14 @@ public class MatchPredictionService {
 				rankingData.setRankPoints(getInteger(rs, "rank_points"));
 			});
 			String surfacePrefix = key.surface != null ? key.surface.getLowerCaseText() + '_' : "";
-			String outInPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
-			jdbcTemplate.query(format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, outInPrefix, includeInProgressEventData ? PLAYER_IN_PROGRESS_ELO_RATINGS_UNION : ""), params, rs -> {
+			String inOutPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
+			jdbcTemplate.query(format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, inOutPrefix, includeInProgressEventData ? PLAYER_IN_PROGRESS_ELO_RATINGS_UNION : ""), params, rs -> {
 				rankingData.setEloRating(getInteger(rs, "elo_rating"));
 				rankingData.setRecentEloRating(getInteger(rs, "recent_elo_rating"));
 				if (!surfacePrefix.isEmpty())
 					rankingData.setSurfaceEloRating(getInteger(rs, surfacePrefix + "elo_rating"));
-				if (!outInPrefix.isEmpty())
-					rankingData.setOutInEloRating(getInteger(rs, outInPrefix + "elo_rating"));
+				if (!inOutPrefix.isEmpty())
+					rankingData.setInOutEloRating(getInteger(rs, inOutPrefix + "elo_rating"));
 				rankingData.setSetEloRating(getInteger(rs, "set_elo_rating"));
 				rankingData.setEloDate(getLocalDate(rs, "rank_date"));
 			});

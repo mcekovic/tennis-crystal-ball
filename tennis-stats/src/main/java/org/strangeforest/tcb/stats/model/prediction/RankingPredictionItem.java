@@ -7,7 +7,7 @@ public enum RankingPredictionItem implements PredictionItem {
 	ELO(false),
 	RECENT_ELO(false),
 	SURFACE_ELO(false),
-	OUT_IN_ELO(false),
+	IN_OUT_ELO(false),
 	SET_ELO(true);
 
 	private volatile PredictionArea area;
