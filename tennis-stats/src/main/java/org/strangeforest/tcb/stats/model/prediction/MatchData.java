@@ -23,11 +23,10 @@ public final class MatchData {
 	private final int oMatches;
 	private final int pSets;
 	private final int oSets;
-	private final Integer nextEloRating;
 
 	public MatchData(LocalDate date, int tournamentId, int tournamentEventId, boolean inProgress, TournamentLevel level, Surface surface, Round round,
 	                 int opponentId, Integer opponentRank, Integer opponentEloRating, String opponentHand, String opponentBackhand, String opponentEntry,
-	                 int pMatches, int oMatches, int pSets, int oSets, Integer nextEloRating) {
+	                 int pMatches, int oMatches, int pSets, int oSets) {
 		this.date = date;
 		this.tournamentId = tournamentId;
 		this.tournamentEventId = tournamentEventId;
@@ -45,7 +44,6 @@ public final class MatchData {
 		this.oMatches = oMatches;
 		this.pSets = pSets;
 		this.oSets = oSets;
-		this.nextEloRating = nextEloRating;
 	}
 
 	public LocalDate getDate() {
@@ -134,9 +132,5 @@ public final class MatchData {
 
 	public int getSets() {
 		return pSets + oSets;
-	}
-
-	public Integer getNextEloRating() {
-		return nextEloRating;
 	}
 }

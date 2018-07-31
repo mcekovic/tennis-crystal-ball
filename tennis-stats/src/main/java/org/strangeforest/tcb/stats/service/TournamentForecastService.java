@@ -449,9 +449,11 @@ public class TournamentForecastService {
 				favorite.setSeed(player.getSeed());
 				favorite.setEntry(player.getEntry());
 			}
-			PlayerPerformance performance = performanceService.getPlayerPerformance(favorite.getPlayerId(), PerfStatsFilter.forSeason(-1));
-			favorite.setLast52WeeksWonLost(performance.getMatches());
-			favorite.setLast52WeeksSurfaceWonLost(surface != null ? performance.getSurfaceMatches(surface) : WonLost.EMPTY);
+			PlayerPerformance careerPerf = performanceService.getPlayerPerformance(favorite.getPlayerId(), PerfStatsFilter.ALL);
+			favorite.setFavoriteSurface(new FavoriteSurface(careerPerf));
+			PlayerPerformance last52WeeksPerf = performanceService.getPlayerPerformance(favorite.getPlayerId(), PerfStatsFilter.forSeason(-1));
+			favorite.setLast52WeeksWonLost(last52WeeksPerf.getMatches());
+			favorite.setLast52WeeksSurfaceWonLost(surface != null ? last52WeeksPerf.getSurfaceMatches(surface) : WonLost.EMPTY);
 		}
 		return new InProgressEventFavorites(favorites, surface, event.isIndoor());
 	}

@@ -10,6 +10,7 @@ public class FavoritePlayerEx extends FavoritePlayer {
 	private final Integer currentRank;
 	private final Integer bestRank;
 	private Integer eloRating;
+	private FavoriteSurface favoriteSurface;
 	private WonLost last52WeeksWonLost;
 	private WonLost last52WeeksSurfaceWonLost;
 	private final Integer last52WeeksTitles;
@@ -58,6 +59,14 @@ public class FavoritePlayerEx extends FavoritePlayer {
 
 	public void setEloRating(Integer eloRating) {
 		this.eloRating = eloRating;
+	}
+
+	public FavoriteSurface getFavoriteSurface() {
+		return favoriteSurface;
+	}
+
+	public void setFavoriteSurface(FavoriteSurface favoriteSurface) {
+		this.favoriteSurface = favoriteSurface;
 	}
 
 	public WonLost getLast52WeeksWonLost() {

@@ -46,7 +46,18 @@ public class MatchPredictionService {
 	private static final String PLAYER_ELO_RATINGS_QUERY = //language=SQL
 		"SELECT rank_date, elo_rating, recent_elo_rating, %1$selo_rating, %2$selo_rating, set_elo_rating FROM player_elo_ranking\n" +
 		"WHERE player_id = :playerId AND rank_date BETWEEN :date::DATE - (INTERVAL '1 year') AND :date\n" +
-		"ORDER BY rank_date DESC LIMIT 1";
+		"%3$sORDER BY rank_date DESC LIMIT 1";
+
+	private static final String PLAYER_IN_PROGRESS_ELO_RATINGS_UNION = //language=SQL
+		"UNION\n" +
+		"SELECT date + (INTERVAL '1 day') rank_date, elo_rating, recent_elo_rating, surface_elo_rating, in_out_elo_rating, set_elo_rating FROM (\n" +
+		"  SELECT date, round, match_num, player1_next_elo_rating elo_rating, player1_next_recent_elo_rating recent_elo_rating, player1_next_surface_elo_rating surface_elo_rating, player1_next_in_out_elo_rating in_out_elo_rating, player1_next_set_elo_rating set_elo_rating FROM in_progress_match\n" +
+		"  WHERE winner IS NOT NULL AND player1_id = :playerId AND player2_id > 0\n" +
+		"  UNION\n" +
+		"  SELECT date, round, match_num, player2_next_elo_rating, player2_next_recent_elo_rating, player2_next_surface_elo_rating, player2_next_in_out_elo_rating, player2_next_set_elo_rating FROM in_progress_match\n" +
+		"  WHERE winner IS NOT NULL AND player2_id = :playerId AND player1_id > 0\n" +
+		"  ORDER BY date DESC, round DESC, match_num LIMIT 1\n" +
+		") AS elo_ranking_data\n";
 
 	private static final String QUALIFIER_RANKING_DATA_QUERY = //language=SQL
 		"WITH qualifier_match AS (\n" +
@@ -61,7 +72,7 @@ public class MatchPredictionService {
 
 	private static final String PLAYER_MATCHES_QUERY = //language=SQL
 		"SELECT m.match_num, m.date, m.tournament_id, m.tournament_event_id, FALSE in_progress, m.level, m.surface, m.round,\n" +
-		"  m.opponent_id, m.opponent_rank, m.opponent_elo_rating, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets, NULL next_elo_rating\n" +
+		"  m.opponent_id, m.opponent_rank, m.opponent_elo_rating, m.opponent_entry, p.hand opponent_hand, p.backhand opponent_backhand, m.p_matches, m.o_matches, m.p_sets, m.o_sets\n" +
 		"FROM player_match_for_stats_v m\n" +
 		"LEFT JOIN player p ON p.player_id = m.opponent_id\n" +
 		"WHERE m.player_id = :playerId\n" +
@@ -70,14 +81,14 @@ public class MatchPredictionService {
 	private static final String PLAYER_IN_PROGRESS_MATCHES_UNION = //language=SQL
 		"UNION\n" +
 		"SELECT m.match_num, m.date, e.tournament_id, m.in_progress_event_id, TRUE, e.level, m.surface, m.round,\n" +
-		"  m.player2_id, m.player2_rank, m.player2_elo_rating, m.player2_entry, o.hand, o.backhand, 2 - winner, winner - 1, m.player1_sets, m.player2_sets, player1_next_elo_rating\n" +
+		"  m.player2_id, m.player2_rank, m.player2_elo_rating, m.player2_entry, o.hand, o.backhand, 2 - winner, winner - 1, m.player1_sets, m.player2_sets\n" +
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player2_id\n" +
 		"WHERE winner IS NOT NULL AND m.player1_id = :playerId AND m.player2_id > 0\n" +
 		"UNION\n" +
 		"SELECT m.match_num, m.date, e.tournament_id, m.in_progress_event_id, TRUE, e.level, m.surface, m.round,\n" +
-		"  m.player1_id, m.player1_rank, m.player1_elo_rating, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.player2_sets, m.player1_sets, player2_next_elo_rating\n" +
+		"  m.player1_id, m.player1_rank, m.player1_elo_rating, m.player1_entry, o.hand, o.backhand, winner - 1, 2 - winner, m.player2_sets, m.player1_sets\n" +
 		"FROM in_progress_match m\n" +
 		"INNER JOIN in_progress_event e USING (in_progress_event_id)\n" +
 		"LEFT JOIN player o ON o.player_id = m.player1_id\n" +
@@ -145,17 +156,6 @@ public class MatchPredictionService {
 		RankingData rankingData2 = getRankingData(playerId2, date2, surface, indoor);
 		List<MatchData> matchData1 = getMatchData(playerId1, date1, tournamentEventId, inProgress, round);
 		List<MatchData> matchData2 = getMatchData(playerId2, date2, tournamentEventId, inProgress, round);
-		if (inProgress) {
-			//TODO Replace with ListIterator, stop when not in-progress match
-			reverse(matchData1).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date1, m.getDate()) >= 0 && nullsLastCompare(m.getRound(), round) > 0).findFirst().ifPresent(match -> {
-				if (nullsLastCompare(match.getDate(), rankingData1.getEloDate()) >= 0)
-					rankingData1.setEloRating(match.getNextEloRating());
-			});
-			reverse(matchData2).stream().filter(m -> m.isInProgress() && m.getNextEloRating() != null && nullsLastCompare(date2, m.getDate()) >= 0 && nullsLastCompare(m.getRound(), round) > 0).findFirst().ifPresent(match -> {
-				if (nullsLastCompare(match.getDate(), rankingData2.getEloDate()) >= 0)
-					rankingData2.setEloRating(match.getNextEloRating());
-			});
-		}
 		short bstOf = defaultBestOf(level, bestOf);
 		MatchPrediction prediction = predictMatch(asList(
 			new RankingMatchPredictor(rankingData1, rankingData2, bstOf, config),
@@ -235,7 +235,7 @@ public class MatchPredictionService {
 			});
 			String surfacePrefix = key.surface != null ? key.surface.getLowerCaseText() + '_' : "";
 			String outInPrefix = key.indoor != null ? (key.indoor ? "indoor_" : "outdoor_") : "";
-			jdbcTemplate.query(format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, outInPrefix), params, rs -> {
+			jdbcTemplate.query(format(PLAYER_ELO_RATINGS_QUERY, surfacePrefix, outInPrefix, includeInProgressEventData ? PLAYER_IN_PROGRESS_ELO_RATINGS_UNION : ""), params, rs -> {
 				rankingData.setEloRating(getInteger(rs, "elo_rating"));
 				rankingData.setRecentEloRating(getInteger(rs, "recent_elo_rating"));
 				if (!surfacePrefix.isEmpty())
@@ -296,8 +296,7 @@ public class MatchPredictionService {
 			rs.getInt("p_matches"),
 			rs.getInt("o_matches"),
 			rs.getInt("p_sets"),
-			rs.getInt("o_sets"),
-			rs.getInt("next_elo_rating")
+			rs.getInt("o_sets")
 		);
 	}
 
