@@ -12,7 +12,7 @@
 <head th:replace="fragments/head :: commonHead(~{::title/text()}, true, ~{::template})">
 	<title>GOAT List</title>
 	<template>
-	<meta name="description" content="Open Era GOAT List compares tennis player career achievements expressed by GOAT Points"/>
+	<meta name="description" content="Open Era GOAT List (a.k.a. GOATometer) compares tennis player career achievements expressed by GOAT Points"/>
 	<script type="text/javascript" th:inline="javascript">
 		var surface = [[${surface}]];
 		$(function() {
@@ -247,31 +247,31 @@
 				$area.val("1");
 			$area.prop("disabled", surface);
 		}
-		function resetTournamentPointsConfig() {
-			$("#tournamentFactor").val("1");
-			[# th:each="level : ${levels}"]$("#level[(${level})]Factor").val("1"); [/]
-			[# th:each="result : ${results}"]$("#result[(${result})]Factor").val("1"); [/]
+		function resetTournamentPointsConfig(pts) {
+			$("#tournamentFactor").val(pts);
+			[# th:each="level : ${levels}"]$("#level[(${level})]Factor").val(pts); [/]
+			[# th:each="result : ${results}"]$("#result[(${result})]Factor").val(pts); [/]
 			reloadGOATListTableAndLegend();
 		}
-		function resetRankingPointsConfig() {
-			$("#rankingFactor").val("1");
-			$("#yearEndRankFactor").val("1");
-			$("#bestRankFactor").val("1");
-			$("#weeksAtNo1Factor").val("1");
-			$("#weeksAtEloTopNFactor").val("1");
-			$("#bestEloRatingFactor").val("1");
+		function resetRankingPointsConfig(pts) {
+			$("#rankingFactor").val(pts);
+			$("#yearEndRankFactor").val(pts);
+			$("#bestRankFactor").val(pts);
+			$("#weeksAtNo1Factor").val(pts);
+			$("#weeksAtEloTopNFactor").val(pts);
+			$("#bestEloRatingFactor").val(pts);
 			reloadGOATListTableAndLegend();
 		}
-		function resetAchievementsPointsConfig() {
-			$("#achievementsFactor").val("1");
-			$("#grandSlamFactor").val("1");
-			$("#bigWinsFactor").val("1");
-			$("#h2hFactor").val("1");
-			$("#recordsFactor").val("1");
-			$("#bestSeasonFactor").val("1");
-			$("#greatestRivalriesFactor").val("1");
-			$("#performanceFactor").val("1");
-			$("#statisticsFactor").val("1");
+		function resetAchievementsPointsConfig(pts) {
+			$("#achievementsFactor").val(pts);
+			$("#grandSlamFactor").val(pts);
+			$("#bigWinsFactor").val(pts);
+			$("#h2hFactor").val(pts);
+			$("#recordsFactor").val(pts);
+			$("#bestSeasonFactor").val(pts);
+			$("#greatestRivalriesFactor").val(pts);
+			$("#performanceFactor").val(pts);
+			$("#statisticsFactor").val(pts);
 			reloadGOATListTableAndLegend();
 		}
 		function goatListUrl() {
@@ -433,7 +433,7 @@
 	<div id="goatListConfigDiv" class="btn-group margin-left" style="display: none; vertical-align: top">
 		<div data-toggle="tooltip" data-placement="auto" title="Customize GOAT List factors and options">
 			<button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#goatListConfig">
-				<i class="fa fa-cog fa-b"></i>&nbsp;&nbsp;Config&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
+				<i class="fa fa-calculator"></i>&nbsp;&nbsp;Config&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
 			</button>
 		</div>
 	</div>
@@ -465,11 +465,16 @@
 				</div>
 			</div>
 			<div class="col-md-1 col-sm-2 col-xs-3">
-				<button type="button" class="btn btn-sm btn-default" onclick="resetTournamentPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Tournament GOAT Points configuration">
+				<button type="button" class="btn btn-sm btn-default" onclick="resetTournamentPointsConfig(1)" data-toggle="tooltip" data-placement="auto" title="Reset Tournament GOAT Points configuration">
 					<i class="fa fa-undo fa-b"></i>&nbsp;&nbsp;Reset
 				</button>
 			</div>
 			<div class="col-md-1 col-sm-2 col-xs-3">
+				<button type="button" class="btn btn-sm btn-default" onclick="resetTournamentPointsConfig(0)" data-toggle="tooltip" data-placement="auto" title="Clear Tournament GOAT Points configuration">
+					<i class="fa fa-eraser fa-b"></i>&nbsp;&nbsp;Clear
+				</button>
+			</div>
+			<div class="col-md-1 col-sm-2 col-xs-3 col-sm-offset-0 col-xs-offset-9">
 				<div data-toggle="tooltip" data-placement="auto" title="Advanced Tournament GOAT Points configuration">
 					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#tournamentConfig">
 						<i class="fa fa-cogs fa-b"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
@@ -509,11 +514,16 @@
 				</div>
 			</div>
 			<div class="col-md-1 col-sm-2 col-xs-3">
-				<button type="button" class="btn btn-sm btn-default" onclick="resetRankingPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Ranking GOAT Points configuration">
+				<button type="button" class="btn btn-sm btn-default" onclick="resetRankingPointsConfig(1)" data-toggle="tooltip" data-placement="auto" title="Reset Ranking GOAT Points configuration">
 					<i class="fa fa-undo fa-b"></i>&nbsp;&nbsp;Reset
 				</button>
 			</div>
 			<div class="col-md-1 col-sm-2 col-xs-3">
+				<button type="button" class="btn btn-sm btn-default" onclick="resetRankingPointsConfig(0)" data-toggle="tooltip" data-placement="auto" title="Clear Ranking GOAT Points configuration">
+					<i class="fa fa-eraser fa-b"></i>&nbsp;&nbsp;Clear
+				</button>
+			</div>
+			<div class="col-md-1 col-sm-2 col-xs-3 col-sm-offset-0 col-xs-offset-9">
 				<div data-toggle="tooltip" data-placement="auto" title="Advanced Ranking GOAT Points configuration">
 					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#rankingConfig">
 						<i class="fa fa-cogs fa-b"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
@@ -575,13 +585,16 @@
 				</div>
 			</div>
 			<div class="col-md-1 col-sm-2 col-xs-3">
-				<div>
-					<button type="button" class="btn btn-sm btn-default" onclick="resetAchievementsPointsConfig()" data-toggle="tooltip" data-placement="auto" title="Reset Achievements GOAT Points configuration">
-						<i class="fa fa-undo fa-b"></i>&nbsp;&nbsp;Reset
-					</button>
-				</div>
+				<button type="button" class="btn btn-sm btn-default" onclick="resetAchievementsPointsConfig(1)" data-toggle="tooltip" data-placement="auto" title="Reset Achievements GOAT Points configuration">
+					<i class="fa fa-undo fa-b"></i>&nbsp;&nbsp;Reset
+				</button>
 			</div>
 			<div class="col-md-1 col-sm-2 col-xs-3">
+				<button type="button" class="btn btn-sm btn-default" onclick="resetAchievementsPointsConfig(0)" data-toggle="tooltip" data-placement="auto" title="Clear Achievements GOAT Points configuration">
+					<i class="fa fa-eraser fa-b"></i>&nbsp;&nbsp;Clear
+				</button>
+			</div>
+			<div class="col-md-1 col-sm-2 col-xs-3 col-sm-offset-0 col-xs-offset-9">
 				<div data-toggle="tooltip" data-placement="auto" title="Advanced Achievements GOAT Points configuration">
 					<button type="button" class="btn btn-sm btn-info" data-toggle="collapse" data-target="#achievementsConfig">
 						<i class="fa fa-cogs fa-b"></i>&nbsp;&nbsp;Adv.&nbsp;&nbsp;<i class="fa fa-chevron-down"></i>
@@ -683,7 +696,7 @@
 	<button id="goatLegendButton" type="button" class="btn btn-info btn-sm" data-toggle="collapse" data-target="#goatLegend" data-url="/goatLegend">GOAT Pts. Legend&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button>
 	<div id="goatLegend" class="collapse">Loading... <img src="/images/ui-anim_basic_16x16.gif" width="16" height="16"/></div>
 	<div class="hidden" id="goatListPopover">
-		<div class="popover-title"><strong>Open Era GOAT List</strong></div>
+		<div class="popover-title"><strong>Open Era GOAT List - a.k.a. GOATometer</strong></div>
 		<div class="popover-content">
 			<p><strong>GOAT Points formula</strong></p>
 			<p>Open Era GOAT List quantifies tennis achievements using the GOAT Points formula. For detailed visual description of the formula used, please see GOAT Points Legend below.</p>
@@ -694,7 +707,7 @@
 			<p><strong>GOAT Lists by surface</strong></p>
 			<p>GOAT Lists by different surfaces are available by choosing a surface in the surface combo box at the top.</p>
 			<p><strong>Configurability and weight factors</strong></p>
-			<p>GOAT List is not a simple list, but a full 'GOAT Calculator' with configurable weight factors for different GOAT Points areas and sub-areas. Please click 'Config' button below to open the configuration form.</p>
+			<p>GOAT List is not a simple list, but a full 'GOAT Calculator' with configurable weight factors for different GOAT Points areas and sub-areas. Please click 'Config' button below to open the calculator and configuration form.</p>
 		</div>
 	</div>
 	<div class="hidden" id="extrapolateCareerPopover">
