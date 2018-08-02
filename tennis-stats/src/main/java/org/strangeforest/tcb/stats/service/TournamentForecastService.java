@@ -424,7 +424,7 @@ public class TournamentForecastService {
 				}
 			}
 		}
-		return new PlayerPath(player, completed, probable, forecast.getEntryForecast().getKnownPlayers());
+		return new PlayerPath(player, completed, probable, forecast.getEntryForecast().getKnownPlayers(), forecast.getEvent());
 	}
 
 	private MatchPrediction predictMatch(int playerId1, int playerId2, InProgressEvent event, LocalDate date, String round) {

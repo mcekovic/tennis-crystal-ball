@@ -240,7 +240,7 @@ public class TournamentController extends PageController {
 		PlayerPath playerPath = forecastService.getInProgressEventPlayerPath(inProgressEventId, playerId);
 
 		ModelMap modelMap = new ModelMap();
-		modelMap.addAttribute("inProgressEventId", inProgressEventId);
+		modelMap.addAttribute("inProgressEvent", playerPath.getInProgressEvent());
 		modelMap.addAttribute("players", playerPath.getPlayers());
 		modelMap.addAttribute("playerId", playerId);
 		modelMap.addAttribute("playerPath", playerPath);

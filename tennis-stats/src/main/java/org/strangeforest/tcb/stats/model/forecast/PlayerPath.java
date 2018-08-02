@@ -10,12 +10,14 @@ public class PlayerPath {
 	private final TournamentEventResults completedMatches;
 	private final PlayerPathMatches probableMatches;
 	private final List<MatchPlayer> players;
+	private final InProgressEvent inProgressEvent;
 
-	public PlayerPath(PlayerForecast player, TournamentEventResults completedMatches, PlayerPathMatches probableMatches, List<MatchPlayer> players) {
+	public PlayerPath(PlayerForecast player, TournamentEventResults completedMatches, PlayerPathMatches probableMatches, List<MatchPlayer> players, InProgressEvent inProgressEvent) {
 		this.player = player;
 		this.completedMatches = completedMatches;
 		this.probableMatches = probableMatches;
 		this.players = players;
+		this.inProgressEvent = inProgressEvent;
 	}
 
 	public PlayerForecast getPlayer() {
@@ -32,6 +34,10 @@ public class PlayerPath {
 
 	public List<MatchPlayer> getPlayers() {
 		return players;
+	}
+
+	public InProgressEvent getInProgressEvent() {
+		return inProgressEvent;
 	}
 
 	public boolean isEmpty() {
