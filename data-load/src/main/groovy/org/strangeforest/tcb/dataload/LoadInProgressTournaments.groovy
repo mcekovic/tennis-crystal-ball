@@ -17,7 +17,7 @@ static loadTournaments(SqlPool sqlPool) {
 		println "New in-progress tournaments: $newExtIds"
 		def changed = false
 		eventInfos.each { info ->
-			changed |= atpInProgressTournamentLoader.loadAndForecastTournament(info.urlId, info.extId)
+			changed |= atpInProgressTournamentLoader.loadAndForecastTournament(info.urlId, info.extId, null, null, null, true)
 		}
 		oldExtIds.removeAll(newExtIds)
 		if (oldExtIds) {
