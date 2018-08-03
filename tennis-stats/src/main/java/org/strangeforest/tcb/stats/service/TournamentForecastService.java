@@ -90,7 +90,7 @@ public class TournamentForecastService {
 		"ORDER BY round, match_num";
 
 	private static final String PLAYER_IN_PROGRESS_RESULTS_QUERY = //language=SQL
-		"SELECT player_id, base_result, result, probability\n" +
+		"SELECT player_id, base_result, result, probability, avg_draw_probability, no_draw_probability\n" +
 		"FROM player_in_progress_result\n" +
 		"WHERE in_progress_event_id = :inProgressEventId%1$s\n" +
 		"ORDER BY base_result, result";
@@ -199,7 +199,9 @@ public class TournamentForecastService {
 			rs.getInt("player_id"),
 			rs.getString("base_result"),
 			rs.getString("result"),
-			rs.getDouble("probability")
+			rs.getDouble("probability"),
+			getDouble(rs, "avg_draw_probability"),
+			getDouble(rs, "no_draw_probability")
 		);
 	}
 

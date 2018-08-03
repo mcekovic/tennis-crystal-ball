@@ -714,17 +714,19 @@ CREATE OR REPLACE FUNCTION load_player_in_progress_result(
 	p_player_id INTEGER,
 	p_base_result TEXT,
 	p_result TEXT,
-	p_probability REAL
+	p_probability REAL,
+	p_avg_draw_probability REAL,
+	p_no_draw_probability REAL
 ) RETURNS VOID AS $$
 BEGIN
 	BEGIN
 		INSERT INTO player_in_progress_result
-		(in_progress_event_id, player_id, base_result, result, probability)
+		(in_progress_event_id, player_id, base_result, result, probability, avg_draw_probability, no_draw_probability)
 		VALUES
-		(p_in_progress_event_id, p_player_id, p_base_result::tournament_event_result, p_result::tournament_event_result, p_probability);
+		(p_in_progress_event_id, p_player_id, p_base_result::tournament_event_result, p_result::tournament_event_result, p_probability, p_avg_draw_probability, p_no_draw_probability);
 	EXCEPTION WHEN unique_violation THEN
 		UPDATE player_in_progress_result
-		SET probability = p_probability
+		SET probability = p_probability, avg_draw_probability = p_avg_draw_probability, no_draw_probability = p_no_draw_probability
 		WHERE in_progress_event_id = p_in_progress_event_id AND player_id = p_player_id
 		AND base_result = p_base_result::tournament_event_result AND result = p_result::tournament_event_result;
 	END;

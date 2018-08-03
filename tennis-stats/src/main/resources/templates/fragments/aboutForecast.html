@@ -1,10 +1,14 @@
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutForecast">
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutForecast(drawLuck)">
 	<p>
 		<em>* <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#tournamentForecastPopover"><strong>Tournament Event Forecasts</strong></a> are driven by <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><strong><th:block th:include="fragments/promotion :: tcb"/> Match Prediction Algorithm</strong></a></em><br/>
-		<em>** Updated twice an hour</em>
+		<em>** Updated twice an hour</em><br/>
+		<!--/*<em th:if="${drawLuck}">*** <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawLuckPopover"><strong><i class="fa fa-sitemap"></i> Draw Luck</strong></a> and <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawBonusPopover"><strong><i class="fa fa-sitemap"></i> Draw Bonus</strong></a> are visible only on entry round forecast tab</a></em>*/-->
+		<em th:if="${drawLuck}">*** <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawBonusPopover"><strong><i class="fa fa-sitemap"></i> Draw Bonus</strong></a> is visible only on entry round forecast tab</a></em>
 	</p>
 	<div th:include="fragments/aboutForecast :: aboutTournamentForecast"></div>
 	<div th:include="fragments/aboutForecast :: aboutPrediction"></div>
+	<!--/*<div th:if="${drawLuck}" th:include="fragments/aboutForecast :: aboutDrawLuck"></div>*/-->
+	<div th:if="${drawLuck}" th:include="fragments/aboutForecast :: aboutDrawBonus"></div>
 </th:block>
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutTournamentForecast">
 	<div class="hidden" id="tournamentForecastPopover">
@@ -62,6 +66,22 @@
 				However, importance of the secondary contributors is very surface dependent, so for example on grass, recent form is pretty much irrelevant, because momentum of form is often disturbed by the surface adaptation and because of relatively short length of the grass season.
 				Instead, winning percentages are more important on grass then on other surfaces.
 			</p>
+		</div>
+	</div>
+</th:block>
+<!--/*<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutDrawLuck">
+	<div class="hidden" id="drawLuckPopover">
+		<div class="popover-title"><strong>Draw Luck</strong></div>
+		<div class="popover-content">
+			<p th:text="#{forecast.drawLuck.title}"></p>
+		</div>
+	</div>
+</th:block>*/-->
+<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutDrawBonus">
+	<div class="hidden" id="drawBonusPopover">
+		<div class="popover-title"><strong><i class="fa fa-sitemap"></i> Draw Bonus</strong></div>
+		<div class="popover-content">
+			<p th:text="#{forecast.drawBonus.title}"></p>
 		</div>
 	</div>
 </th:block>

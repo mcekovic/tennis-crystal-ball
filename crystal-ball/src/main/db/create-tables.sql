@@ -373,6 +373,8 @@ CREATE TABLE player_in_progress_result (
 	base_result tournament_event_result,
 	result tournament_event_result,
 	probability REAL NOT NULL,
+	avg_draw_probability REAL,
+	no_draw_probability REAL,
 	PRIMARY KEY (in_progress_event_id, player_id, base_result, result)
 );
 

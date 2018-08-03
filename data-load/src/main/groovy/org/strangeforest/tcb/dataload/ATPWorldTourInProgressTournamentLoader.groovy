@@ -68,7 +68,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 	static final String LOAD_PLAYER_RESULT_SQL = //language=SQL
 		'{call load_player_in_progress_result(' +
-			':in_progress_event_id, :player_id, :base_result, :result, :probability' +
+			':in_progress_event_id, :player_id, :base_result, :result, :probability, :avg_draw_probability::REAL, :no_draw_probability::REAL' +
 		')}'
 
 	static final String DELETE_PLAYER_PROGRESS_RESULTS_SQL = //language=SQL
@@ -384,7 +384,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 			// Current state forecast
 			if (verbose)
 				println 'Current'
-			tournamentForecaster = new KOTournamentForecaster(predictor, inProgressEventId, matches, entryResult, true, verbose)
+			tournamentForecaster = new KOTournamentForecaster(predictor, inProgressEventId, matches, entryResult, true, false, verbose)
 			tournamentForecaster.calculateEloRatings(eloSurfaceFactors)
 			saveEloRatings(matches)
 			sql.commit()
@@ -399,7 +399,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				if (verbose)
 					println baseResult
 				def selectedMatches = matches.findAll { match -> KOResult.valueOf(match.round) >= baseResult }
-				tournamentForecaster = new KOTournamentForecaster(predictor, inProgressEventId, selectedMatches, baseResult, false, verbose)
+				tournamentForecaster = new KOTournamentForecaster(predictor, inProgressEventId, selectedMatches, baseResult, false, baseResult == entryResult, verbose)
 				results = tournamentForecaster.forecast()
 				saveResults(results)
 				resultCount += results.size()
