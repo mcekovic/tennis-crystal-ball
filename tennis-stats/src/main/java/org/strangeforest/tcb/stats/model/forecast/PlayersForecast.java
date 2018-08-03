@@ -85,8 +85,11 @@ public class PlayersForecast {
 			.collect(toList());
 	}
 
-	void addResult(int playerId, String result, double probability) {
-		playerForecastMap.get(playerId).addForecast(result, probability);
+	void addResult(int playerId, String result, double probability, Double avgDrawProbability, Double noDrawProbability) {
+		PlayerForecast playerForecast = playerForecastMap.get(playerId);
+		playerForecast.addForecast(result, probability);
+		playerForecast.addAvgDrawForecast(result, avgDrawProbability);
+		playerForecast.addNoDrawForecast(result, noDrawProbability);
 		results.add(result);
 	}
 

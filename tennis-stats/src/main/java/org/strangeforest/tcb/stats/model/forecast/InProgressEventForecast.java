@@ -49,12 +49,12 @@ public class InProgressEventForecast {
 		return null;
 	}
 
-	public void addForecast(List<PlayerForecast> players, int playerId, String baseResult, String result, double probability) {
+	public void addForecast(List<PlayerForecast> players, int playerId, String baseResult, String result, double probability, Double avgDrawProbability, Double noDrawProbability) {
 		if (baseResult.equals("W"))
 			baseResult = CURRENT;
 		else
 			maxResult = baseResult;
-		playersForecasts.computeIfAbsent(baseResult, round -> new PlayersForecast(players)).addResult(playerId, result, probability);
+		playersForecasts.computeIfAbsent(baseResult, round -> new PlayersForecast(players)).addResult(playerId, result, probability, avgDrawProbability, noDrawProbability);
 	}
 
 	public void process() {

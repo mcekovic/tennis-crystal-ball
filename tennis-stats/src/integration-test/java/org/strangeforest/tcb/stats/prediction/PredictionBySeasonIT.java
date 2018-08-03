@@ -9,7 +9,7 @@ import org.testng.annotations.*;
 @ContextConfiguration(classes = PredictionITsConfig.class, initializers = ConfigFileApplicationContextInitializer.class)
 public class PredictionBySeasonIT extends BasePredictionVerificationIT {
 
-	private static final int FROM_YEAR = 1970;
+	private static final int FROM_YEAR = 2005;
 	private static final int TO_YEAR = LocalDate.now().getYear();
 
 	@Test

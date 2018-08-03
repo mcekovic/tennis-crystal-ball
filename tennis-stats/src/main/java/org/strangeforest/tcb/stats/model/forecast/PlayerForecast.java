@@ -12,6 +12,8 @@ import static org.strangeforest.tcb.util.EnumUtil.*;
 public class PlayerForecast extends MatchPlayerEx {
 
 	private Map<String, Double> forecast;
+	private Map<String, Double> avgDrawForecast;
+	private Map<String, Double> noDrawForecast;
 	private final EloRatingDelta recentEloRatingDelta;
 	private final EloRatingDelta surfaceEloRatingDelta;
 	private final EloRatingDelta inOutEloRatingDelta;
@@ -68,14 +70,68 @@ public class PlayerForecast extends MatchPlayerEx {
 		return probability != null ? PriceFormat.valueOf(format).format(toPrice(probability)) : null;
 	}
 
+	public Double getDrawLuck() {
+		Double probability = rawProbability("W");
+		Double avgDrawProbability = rawAvgDrawProbability("W");
+		if (probability == null || avgDrawProbability == null)
+			return null;
+		if (avgDrawProbability == 0.0)
+			return Double.POSITIVE_INFINITY;
+		return PCT * (probability / avgDrawProbability - 1.0);
+	}
+
+	public Double getDrawSeeding() {
+		Double avgDrawProbability = rawAvgDrawProbability("W");
+		Double noDrawProbability = rawNoDrawProbability("W");
+		if (avgDrawProbability == null || noDrawProbability == null)
+			return null;
+		if (noDrawProbability == 0.0)
+			return Double.POSITIVE_INFINITY;
+		return PCT * (avgDrawProbability / noDrawProbability - 1.0);
+	}
+
+	public Double getDrawBonus() {
+		Double probability = rawProbability("W");
+		Double noDrawProbability = rawNoDrawProbability("W");
+		if (probability == null || noDrawProbability == null)
+			return null;
+		if (noDrawProbability == 0.0)
+			return Double.POSITIVE_INFINITY;
+		return PCT * (probability / noDrawProbability - 1.0);
+	}
+
 	private Double rawProbability(String result) {
 		return isEmpty() ? null : forecast.get(result);
+	}
+
+	private Double rawAvgDrawProbability(String result) {
+		return avgDrawForecast != null ? avgDrawForecast.get(result) : null;
+	}
+
+	private Double rawNoDrawProbability(String result) {
+		return noDrawForecast != null ? noDrawForecast.get(result) : null;
 	}
 
 	public void addForecast(String result, double probability) {
 		if (forecast == null)
 			forecast = new HashMap<>();
 		forecast.put(result, probability);
+	}
+
+	public void addAvgDrawForecast(String result, Double probability) {
+		if (probability != null) {
+			if (avgDrawForecast == null)
+				avgDrawForecast = new HashMap<>();
+			avgDrawForecast.put(result, probability);
+		}
+	}
+
+	public void addNoDrawForecast(String result, Double probability) {
+		if (probability != null) {
+			if (noDrawForecast == null)
+				noDrawForecast = new HashMap<>();
+			noDrawForecast.put(result, probability);
+		}
 	}
 
 	boolean isEmpty() {

@@ -6,6 +6,8 @@ import org.strangeforest.tcb.stats.model.forecast.*
 
 import groovy.transform.*
 
+import java.util.function.Function
+
 import static java.lang.Math.*
 import static org.strangeforest.tcb.dataload.BaseXMLLoader.*
 import static org.strangeforest.tcb.dataload.KOTournamentForecaster.MatchResult.*
@@ -15,15 +17,16 @@ class KOTournamentForecaster {
 	TournamentMatchPredictor predictor
 	int inProgressEventId
 	int playerCount, seedCount
-	int drawSize, seedDrawSize
+	int drawSize
 	List matches
 	List allPlayerIds = [] // <playerId>
 	Set playerIds = [] // <playerId>
-	Set seededPlayerIds = [] // <playerId>
 	Map matchMap = [:] // <PlayerResult w/o probabilityType, match>
 	Map playerEntries = [:] // <playerId, playerEntry>
 	Map entryPlayers = [:] // <playerEntry, playerId>
+	Map playerSeeds = [:] // <playerId, playerSeed>
 	KOResult baseResult
+	KOResult seedResult
 	boolean current
 	boolean drawLuck
 	boolean verbose
@@ -37,7 +40,6 @@ class KOTournamentForecaster {
 		this.current = current
 		this.drawLuck = drawLuck
 		this.verbose = verbose
-		playerCount = 0
 		int playerEntry = 0
 		matches.each { match ->
 			def playerId1 = match.player1_id
@@ -54,28 +56,30 @@ class KOTournamentForecaster {
 				allPlayerIds << playerId1
 				if (playerId1) {
 					playerIds << playerId1
-					if (match.player1_seed)
-						seededPlayerIds << playerId1
 					playerEntries[playerId1] = playerEntry
 					entryPlayers[playerEntry] = playerId1
+					if (match.player1_seed)
+						playerSeeds[playerId1] = match.player1_seed
 				}
 				playerEntry++
 				allPlayerIds << playerId2
 				if (playerId2) {
 					playerIds << playerId2
-					if (match.player2_seed)
-						seededPlayerIds << playerId2
 					playerEntries[playerId2] = playerEntry
 					entryPlayers[playerEntry] = playerId2
+					if (match.player2_seed)
+						playerSeeds[playerId2] = match.player2_seed
 				}
 			}
 		}
-		playerCount = playerIds.size()
-		drawSize = roundToPowerOf2(playerCount)
-		seedCount = seededPlayerIds.size()
-		seedDrawSize = roundToPowerOf2(seedCount)
-		if (verbose)
-			println "Players: $playerCount, Seeds: $seedCount"
+		if (drawLuck) {
+			playerCount = playerIds.size()
+			drawSize = roundToPowerOf2(playerCount)
+			seedCount = playerSeeds.size()
+			seedResult = seedResult(seedCount)
+			if (verbose)
+				println "Players: $playerCount, Draw size: $drawSize, Seeds: $seedCount, Seed round: $seedResult"
+		}
 	}
 
 
@@ -193,7 +197,7 @@ class KOTournamentForecaster {
 				}
 			}
 			if (drawLuck)
-				normalizeDrawLuckResults(results, baseResult, nextResult)
+				normalizeDrawLuckResults(results, nextResult)
 			if (verbose) {
 				for (def params : results) {
 					if (params.result == nextResult.name())
@@ -206,7 +210,7 @@ class KOTournamentForecaster {
 		results
 	}
 
-	def normalizeDrawLuckResults(List results, KOResult baseResult, KOResult result) {
+	def normalizeDrawLuckResults(List results, KOResult result) {
 		def avgDrawAdj = 0.0d
 		def noDrawAdj = 0.0d
 		for (def r : results) {
@@ -215,9 +219,13 @@ class KOTournamentForecaster {
 				noDrawAdj += r.no_draw_probability
 			}
 		}
-		def adj = (double)(1 << (result.ordinal() - baseResult.ordinal())) / drawSize
+		def adj = (double)potentialOpponentCount(result) / drawSize
 		avgDrawAdj *= adj
 		noDrawAdj *= adj
+		if (verbose) {
+			println "Average Draw normalization $baseResult -> $result: $avgDrawAdj"
+			println "No Draw normalization $baseResult -> $result: $noDrawAdj"
+		}
 		for (def r : results) {
 			if (r.base_result == baseResult.name() && r.result == result.name()) {
 				r.avg_draw_probability /= avgDrawAdj
@@ -251,9 +259,8 @@ class KOTournamentForecaster {
 					def opponentMatchProbability = predictor.getWinProbability(playerId, opponent.playerId, Round.valueOf(result.name()))
 					opponentProbability = opponentBaseProbability * opponentMatchProbability
 				}
-				else {
+				else // Bye
 					opponentProbability = 1.0d
-				}
 				probability += opponentProbability * opponent.weight
 			}
 		}
@@ -269,6 +276,16 @@ class KOTournamentForecaster {
 		probabilities[new PlayerResult(playerId: playerId, result: result, probabilityType: type)] = probability
 	}
 
+	private def hasWon(int playerId, KOResult round) {
+		def match = matchMap[new PlayerResult(playerId: playerId, result: round)]
+		if (!match)
+			return N_A
+		def winner = match.winner
+		if (!winner)
+			return N_A
+		(winner == 1 && match.player1_id == playerId) || (winner == 2 && match.player2_id == playerId) ? WON : LOST
+	}
+
 	private def findOpponents(int playerId, KOResult result, ProbabilityType type) {
 		switch (type) {
 			case ProbabilityType.DEFAULT: return findOpponents(playerId, result)
@@ -280,7 +297,7 @@ class KOTournamentForecaster {
 
 	private def findOpponents(int playerId, KOResult result) {
 		def entry = playerEntries[playerId]
-		def drawFactor = 2 << (result.ordinal() - baseResult.ordinal())
+		def drawFactor = 2 * potentialOpponentCount(result)
 		def startEntry = entry - (entry - 1) % drawFactor
 		def endEntry = startEntry + drawFactor - 1
 		if (2 * entry < startEntry + endEntry)
@@ -294,38 +311,108 @@ class KOTournamentForecaster {
 	}
 
 	private def findAvgDrawOpponents(int playerId, KOResult result) {
-		def seedWeight = findSeedWeight(result, playerId)
-		def nonSeedWeight = 1.0d - seedWeight
-		println "$seedWeight + $nonSeedWeight"
 		def opponentIds = (result == baseResult ? allPlayerIds : playerIds).findAll { o -> o != playerId }
-		opponentIds.collect {
-			o -> new Opponent(playerId: o, weight: seededPlayerIds.contains(o) ? seedWeight : nonSeedWeight)
+		def seedWeight = seedWeightFunction(result, playerId)
+		def os = opponentIds.collect {
+			o -> new Opponent(playerId: o, weight: seedWeight.apply(playerSeeds[o]))
 		}
+		println os.stream().mapToDouble({o -> o.weight}).sum() + ' ' + os.size() + ' ' + os
+		return os
 	}
 
 	private def findNoDrawOpponents(int playerId, KOResult result) {
 		def opponentIds = (result == baseResult ? allPlayerIds : playerIds).findAll { o -> o != playerId }
-		opponentIds.collect { o -> new Opponent(playerId: o, weight: 1.0) }
+		def weight = equalWeights(result)
+		def os = opponentIds.collect { o -> new Opponent(playerId: o, weight: weight) }
+		println os.stream().mapToDouble({o -> o.weight}).sum() + ' ' + os.size() + ' ' + os
+		return os
 	}
 
-	private def findSeedWeight(KOResult result, int playerId) {
-		def seeded = seededPlayerIds.contains(playerId)
-		def playerCount = 1 << (KOResult.W.ordinal() - result.ordinal())
-		println "$seeded, $playerCount, $seedDrawSize, $seedCount"
-		if (playerCount > seedDrawSize)
-			seeded ? 0.0d : (double)seedCount / (drawSize - seedCount)
-		else
-			(double)seedCount / drawSize
+	def equalWeights(KOResult result) {
+		(double)potentialOpponentCount(result) / (availablePlayerCount(result) - 1 )
 	}
 
-	private def hasWon(int playerId, KOResult round) {
-		def match = matchMap[new PlayerResult(playerId: playerId, result: round)]
-		if (!match)
-			return N_A
-		def winner = match.winner
-		if (!winner)
-			return N_A
-		(winner == 1 && match.player1_id == playerId) || (winner == 2 && match.player2_id == playerId) ? WON : LOST
+	def equalNonSeededWeights(KOResult result) {
+		(double)potentialOpponentCount(result) / (availablePlayerCount(result) - seedCount)
+	}
+
+	def potentialOpponentCount(KOResult result) {
+		1 << (result.ordinal() - baseResult.ordinal())
+	}
+
+	def availablePlayerCount(KOResult result) {
+		result == baseResult ? drawSize : playerCount
+	}
+
+	private Function<Integer, Double> seedWeightFunction(KOResult result, int playerId) {
+		def seed = playerSeeds[playerId]
+		println "Seed: $seed, Result: $result"
+		if (result < seedResult) {
+			if (seed)
+				new ConstantSeedWeight(0.0d , equalNonSeededWeights(result))
+			else {
+				def nonSeedsPerSeed = (1 << seedResult.ordinal() - baseResult.ordinal()) - 1
+				def opponentCount = (double)potentialOpponentCount(result)
+				def seedWeight = opponentCount / (nonSeedsPerSeed * seedCount)
+				def nonSeedWeight = opponentCount * (nonSeedsPerSeed - 1) / (nonSeedsPerSeed * (availablePlayerCount(result) - seedCount - 1))
+				new ConstantSeedWeight(seedWeight, nonSeedWeight)
+			}
+		}
+		else {
+			if (seed)
+				new DrawSeedWeight(seed, result)
+			else
+				new ConstantSeedWeight(equalWeights(result))
+		}
+	}
+
+	static class ConstantSeedWeight implements Function<Integer, Double> {
+
+		Double seedWeight
+		Double nonSeedWeight
+
+		ConstantSeedWeight(Double seedWeight, Double nonSeedWeight = seedWeight) {
+			this.seedWeight = seedWeight
+			this.nonSeedWeight = nonSeedWeight
+		}
+
+		@Override Double apply(Integer seed) {
+			return seed ? seedWeight : nonSeedWeight
+		}
+	}
+
+	class DrawSeedWeight implements Function<Integer, Double> {
+
+		int playerSeed
+		KOResult result
+
+		DrawSeedWeight(int playerSeed, KOResult result) {
+			this.playerSeed = playerSeed
+			this.result = result
+		}
+
+		@Override Double apply(Integer seed) {
+			if (seed) {
+				switch (result.ordinal() - seedResult.ordinal()) {
+					case 0:
+						def halfSeed = seedCount / 2.0d
+						if ((playerSeed <= halfSeed && seed > halfSeed) || (playerSeed > halfSeed && seed <= halfSeed))
+							return (2.0d * (seedCount - 1)) / seedCount * equalWeights(result)
+						else
+							return 0.0d
+					case 1:
+						def halfSeed = seedCount / 2.0d
+						if (playerSeed <= halfSeed) {
+							def quarterSeed = seedCount / 4.0d
+							if ((playerSeed <= quarterSeed && seed > quarterSeed) || (playerSeed > quarterSeed && (seed <= quarterSeed || seed > halfSeed)))
+								return (4.0d * (seedCount - 1)) / (3.0d * seedCount) * equalWeights(result)
+							else
+								return 0.0d
+						}
+				}
+			}
+			equalWeights(result)
+		}
 	}
 
 
@@ -334,13 +421,7 @@ class KOTournamentForecaster {
 	enum MatchResult { WON, LOST, N_A }
 	enum ProbabilityType { DEFAULT, AVG_DRAW, NO_DRAW }
 
-	@EqualsAndHashCode @ToString
-	static class PlayerResult {
-		int playerId
-		KOResult result
-		ProbabilityType probabilityType
-	}
-
+	@ToString(includePackage = false)
 	static class Opponent {
 		Integer playerId
 		double weight
@@ -355,5 +436,22 @@ class KOTournamentForecaster {
 			if (p2 >= i)
 				return p2
 		}
+	}
+
+	private static seedResult(int seedCount) {
+		def result = KOResult.W
+		def count = 1
+		while (result.hasPrev() && count < seedCount) {
+			result = result.prev()
+			count *= 2
+		}
+		result
+	}
+
+	@EqualsAndHashCode @ToString(includePackage = false)
+	static class PlayerResult {
+		int playerId
+		KOResult result
+		ProbabilityType probabilityType
 	}
 }

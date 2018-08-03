@@ -68,7 +68,7 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 
 	static final String LOAD_PLAYER_RESULT_SQL = //language=SQL
 		'{call load_player_in_progress_result(' +
-			':in_progress_event_id, :player_id, :base_result, :result, :probability' +
+			':in_progress_event_id, :player_id, :base_result, :result, :probability, :avg_draw_probability::REAL, :no_draw_probability::REAL' +
 		')}'
 
 	static final String DELETE_PLAYER_PROGRESS_RESULTS_SQL = //language=SQL
@@ -410,9 +410,9 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 						radp[r.result] += r.avg_draw_probability
 						rndp[r.result] += r.no_draw_probability
 					}
-					println rp
-					println radp
-					println rndp
+					println "Draw: $rp"
+					println "Avg. Draw: $radp"
+					println "No Draw: $rndp"
 				}
 				saveResults(results)
 				resultCount += results.size()
