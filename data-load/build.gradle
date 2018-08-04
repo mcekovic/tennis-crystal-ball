@@ -32,6 +32,7 @@ dependencies {
 	compile ("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 	compile ("commons-cli:commons-cli:$commonsCliVersion")
 	compile ("org.slf4j:slf4j-simple:$slf4jVersion")
+	testCompile ("org.mockito:mockito-core:$mockitoVersion")
 }
 
 task quickDeployToDigitalOcean {
