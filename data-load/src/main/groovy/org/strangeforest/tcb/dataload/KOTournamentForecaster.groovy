@@ -364,7 +364,7 @@ class KOTournamentForecaster {
 		println "Player: $playerId, Seed: $seed, Result: $result"
 		if (result < seedResult) {
 			if (seed) {
-				if (result == baseResult && byeCount > 0)
+				if (result == baseResult && byeCount > 0 && seed <= byeCount)
 					new ByeWeight()
 				else
 					new ConstantSeedWeight(0.0d, equalNonSeededWeights(result))
