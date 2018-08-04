@@ -15,7 +15,7 @@ class KOTournamentForecaster {
 
 	TournamentMatchPredictor predictor
 	int inProgressEventId
-	int playerCount, seedCount
+	int playerCount, seedCount, byeCount, nonSeedsPerSeed
 	int drawSize
 	List matches
 	List allPlayerIds = [] // <playerId>
@@ -74,10 +74,12 @@ class KOTournamentForecaster {
 		if (drawLuck) {
 			playerCount = playerIds.size()
 			drawSize = roundToPowerOf2(playerCount)
+			byeCount = drawSize - playerCount
 			seedCount = playerSeeds.size()
 			seedResult = seedResult(seedCount)
+			nonSeedsPerSeed = (1 << seedResult.ordinal() - baseResult.ordinal()) - 1
 			if (verbose)
-				println "Players: $playerCount, Draw size: $drawSize, Seeds: $seedCount, Seed round: $seedResult"
+				println "Players: $playerCount, Draw size: $drawSize, Seeds: $seedCount, Seed round: $seedResult, Byes: $byeCount"
 		}
 	}
 
@@ -204,8 +206,22 @@ class KOTournamentForecaster {
 				}
 			}
 		}
-		if (verbose)
+		if (verbose) {
 			println()
+			if (drawLuck) {
+				def rp = [:]
+				def radp = [:]
+				def rndp = [:]
+				results.each { r ->
+					rp[r.result] = (rp[r.result] ?: 0.0d) + r.probability
+					radp[r.result] = (radp[r.result] ?: 0.0d) + r.avg_draw_probability
+					rndp[r.result] = (rndp[r.result] ?: 0.0d) + r.no_draw_probability
+				}
+				println "Draw: $rp"
+				println "Avg. Draw: $radp"
+				println "No Draw: $rndp"
+			}
+		}
 		results
 	}
 
@@ -311,9 +327,9 @@ class KOTournamentForecaster {
 
 	private def findAvgDrawOpponents(int playerId, KOResult result) {
 		def opponentIds = (result == baseResult ? allPlayerIds : playerIds).findAll { o -> o != playerId }
-		def seedWeight = seedWeightFunction(result, playerId)
+		def playerWeight = playerWeightFunction(result, playerId)
 		def os = opponentIds.collect {
-			o -> new Opponent(playerId: o, weight: seedWeight.apply(playerSeeds[o]))
+			o -> new Opponent(playerId: o, weight: playerWeight.apply(o))
 		}
 		println os.stream().mapToDouble({o -> o.weight}).sum() + ' ' + os.size() + ' ' + os
 		return os
@@ -343,14 +359,17 @@ class KOTournamentForecaster {
 		result == baseResult ? drawSize : playerCount
 	}
 
-	private Function<Integer, Double> seedWeightFunction(KOResult result, int playerId) {
+	private Function<Integer, Double> playerWeightFunction(KOResult result, int playerId) {
 		def seed = playerSeeds[playerId]
-		println "Seed: $seed, Result: $result"
+		println "Player: $playerId, Seed: $seed, Result: $result"
 		if (result < seedResult) {
-			if (seed)
-				new ConstantSeedWeight(0.0d , equalNonSeededWeights(result))
+			if (seed) {
+				if (result == baseResult && byeCount > 0)
+					new ByeWeight()
+				else
+					new ConstantSeedWeight(0.0d, equalNonSeededWeights(result))
+			}
 			else {
-				def nonSeedsPerSeed = (1 << seedResult.ordinal() - baseResult.ordinal()) - 1
 				def opponentCount = (double)potentialOpponentCount(result)
 				def seedWeight = opponentCount / (nonSeedsPerSeed * seedCount)
 				def nonSeedWeight = opponentCount * (nonSeedsPerSeed - 1) / (nonSeedsPerSeed * (availablePlayerCount(result) - seedCount - 1))
@@ -361,36 +380,50 @@ class KOTournamentForecaster {
 			if (seed)
 				new DrawSeedWeight(seed, result)
 			else
-				new ConstantSeedWeight(equalWeights(result))
+				new ConstantWeight(equalWeights(result))
 		}
 	}
 
-	static class ConstantSeedWeight implements Function<Integer, Double> {
+	static class ConstantWeight implements Function<Integer, Double> {
 
+		Double weight
+
+		ConstantWeight(Double weight) {
+			this.weight = weight
+		}
+
+		@Override Double apply(Integer playerId) {
+			weight
+		}
+	}
+
+	class ConstantSeedWeight implements Function<Integer, Double> {
 		Double seedWeight
 		Double nonSeedWeight
-
-		ConstantSeedWeight(Double seedWeight, Double nonSeedWeight = seedWeight) {
+		ConstantSeedWeight(Double seedWeight, Double nonSeedWeight) {
 			this.seedWeight = seedWeight
 			this.nonSeedWeight = nonSeedWeight
 		}
+		@Override Double apply(Integer playerId) {
+			playerSeeds[playerId] ? seedWeight : nonSeedWeight
+		}
+	}
 
-		@Override Double apply(Integer seed) {
-			return seed ? seedWeight : nonSeedWeight
+	class ByeWeight implements Function<Integer, Double> {
+		@Override Double apply(Integer playerId) {
+			playerId ? 0.0d : 1.0d / byeCount
 		}
 	}
 
 	class DrawSeedWeight implements Function<Integer, Double> {
-
 		int playerSeed
 		KOResult result
-
 		DrawSeedWeight(int playerSeed, KOResult result) {
 			this.playerSeed = playerSeed
 			this.result = result
 		}
-
-		@Override Double apply(Integer seed) {
+		@Override Double apply(Integer playerId) {
+			def seed = playerSeeds[playerId]
 			if (seed) {
 				switch (result.ordinal() - seedResult.ordinal()) {
 					case 0:

@@ -401,19 +401,6 @@ class ATPWorldTourInProgressTournamentLoader extends BaseATPWorldTourTournamentL
 				def selectedMatches = matches.findAll { match -> KOResult.valueOf(match.round) >= baseResult }
 				tournamentForecaster = new KOTournamentForecaster(predictor, inProgressEventId, selectedMatches, baseResult, false, baseResult == entryResult, verbose)
 				results = tournamentForecaster.forecast()
-				if (baseResult == entryResult) {
-					def rp = [R32: 0.0d, R16: 0.0d, QF: 0.0d, SF: 0.0d, F: 0.0d, W: 0.0d]
-					def radp = [R32: 0.0d, R16: 0.0d, QF: 0.0d, SF: 0.0d, F: 0.0d, W: 0.0d]
-					def rndp = [R32: 0.0d, R16: 0.0d, QF: 0.0d, SF: 0.0d, F: 0.0d, W: 0.0d]
-					results.each { r ->
-						rp[r.result] += r.probability
-						radp[r.result] += r.avg_draw_probability
-						rndp[r.result] += r.no_draw_probability
-					}
-					println "Draw: $rp"
-					println "Avg. Draw: $radp"
-					println "No Draw: $rndp"
-				}
 				saveResults(results)
 				resultCount += results.size()
 				if (selectedMatches.find { match -> KOResult.valueOf(match.round) == baseResult && !match.winner })
