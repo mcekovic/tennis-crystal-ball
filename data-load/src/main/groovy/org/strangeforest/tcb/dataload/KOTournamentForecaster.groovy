@@ -345,15 +345,11 @@ class KOTournamentForecaster {
 	}
 
 	def equalWeightsWithBye(KOResult result) {
-		(double)potentialOpponentCount(result) / (availablePlayerCount(result) - 1 )
+		(double)potentialOpponentCount(result) / (availablePlayerCount(result) - 1)
 	}
 
 	def equalWeights(KOResult result) {
-		(double)potentialOpponentCount(result) / (playerCount - 1 )
-	}
-
-	def equalNonSeededWeights(KOResult result) {
-		(double)potentialOpponentCount(result) / (playerCount - seedCount)
+		(double)potentialOpponentCount(result) / (playerCount - 1)
 	}
 
 	def potentialOpponentCount(KOResult result) {
@@ -380,15 +376,27 @@ class KOTournamentForecaster {
 				if (hasBye(result, seed))
 					new ByeWeight()
 				else
-					new ConstantSeedWeight(0.0d, equalNonSeededWeights(result), false)
+					new ConstantSeedWeight(0.0d, 0.0d, (double)potentialOpponentCount(result) / (playerCount - seedCount))
 			}
 			else {
-				def opponentCount = (double)potentialOpponentCount(result)
-				def hasBye = hasBye(result)
-				def roundSeedCount = hasBye ? seedCount - byeCount : seedCount
-				def seedWeight = opponentCount / (nonSeedsPerSeed * roundSeedCount)
-				def nonSeedWeight = opponentCount * (drawSize - 2 * seedCount) / ((playerCount - seedCount) * (playerCount - seedCount - 1))
-				new ConstantSeedWeight(seedWeight, nonSeedWeight, hasBye)
+				if (byeCount > 0) {
+					if (result == baseResult) {
+						def weight = 1.0d / (playerCount - byeCount - 1)
+						return new ConstantSeedWeight(0.0d, weight, weight)
+					}
+					else if (baseResult.hasNext() && result == baseResult.next()) {
+						def nonSeedCount = playerCount - seedCount
+						def byedSeedWeight = (double)byeCount / nonSeedCount
+						def seedWeight = (seedCount - byeCount) / (2.0d * nonSeedCount)
+						def nonSeedWeight = 2.0d * (seedCount - byeCount) / (nonSeedCount * (nonSeedCount - 1))
+						return new ConstantSeedWeight(byedSeedWeight, seedWeight, nonSeedWeight)
+					}
+				}
+				else {
+					def seedWeight = 1.0d / (nonSeedsPerSeed * seedCount)
+					def nonSeedWeight = 1.0d * (nonSeedsPerSeed - 1) / (nonSeedsPerSeed * (playerCount - seedCount - 1))
+					new ConstantSeedWeight(seedWeight, seedWeight, nonSeedWeight)
+				}
 			}
 		}
 		else {
@@ -413,17 +421,17 @@ class KOTournamentForecaster {
 	}
 
 	class ConstantSeedWeight implements Function<Integer, Double> {
+		Double byedSeedWeight
 		Double seedWeight
 		Double nonSeedWeight
-		boolean hasByes
-		ConstantSeedWeight(Double seedWeight, Double nonSeedWeight, boolean hasByes) {
+		ConstantSeedWeight(Double byedSeedWeight, Double seedWeight, Double nonSeedWeight) {
+			this.byedSeedWeight = byedSeedWeight
 			this.seedWeight = seedWeight
 			this.nonSeedWeight = nonSeedWeight
-			this.hasByes = hasByes
 		}
 		@Override Double apply(Integer playerId) {
 			def seed = playerSeeds[playerId]
-			seed ? (hasByes && seed <= byeCount ? 0.0d : seedWeight) : nonSeedWeight
+			seed ? (seed <= byeCount ? byedSeedWeight : seedWeight) : nonSeedWeight
 		}
 	}
 
