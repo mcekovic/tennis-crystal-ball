@@ -100,6 +100,16 @@ public class PlayerForecast extends MatchPlayerEx {
 		return PCT * (probability / noDrawProbability - 1.0);
 	}
 
+	public double getAvgDrawWinProbability() {
+		Double probability = rawAvgDrawProbability("W");
+		return probability != null ? PCT * probability : 0.0;
+	}
+
+	public double getNoDrawWinProbability() {
+		Double probability = rawNoDrawProbability("W");
+		return probability != null ? PCT * probability : 0.0;
+	}
+
 	private Double rawProbability(String result) {
 		return isEmpty() ? null : forecast.get(result);
 	}

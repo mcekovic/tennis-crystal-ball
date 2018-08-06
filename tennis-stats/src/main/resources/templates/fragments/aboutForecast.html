@@ -2,11 +2,12 @@
 	<p>
 		<em>* <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#tournamentForecastPopover"><strong>Tournament Event Forecasts</strong></a> are driven by <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#matchPredictionPopover"><strong><th:block th:include="fragments/promotion :: tcb"/> Match Prediction Algorithm</strong></a></em><br/>
 		<em>** Updated twice an hour</em><br/>
-		<em th:if="${drawLuck}">*** <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawLuckPopover"><strong><i class="fa fa-sitemap"></i> Draw Luck</strong></a> and <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawBonusPopover"><strong><i class="fa fa-sitemap"></i> Draw Bonus</strong></a> are visible only on entry round forecast tab</a></em>
+		<!--/*<em th:if="${drawLuck}">*** <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawLuckPopover"><strong><i class="fa fa-sitemap"></i> Draw Luck</strong></a> and <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawBonusPopover"><strong><i class="fa fa-sitemap"></i> Draw Bonus</strong></a> are visible only on entry round forecast tab</a></em>*/-->
+		<em th:if="${drawLuck}">*** <a href="#" data-toggle="popover" data-trigger="focus" data-placement="auto" data-popover="#drawBonusPopover"><strong><i class="fa fa-sitemap"></i> Draw Bonus</strong></a> is visible only on entry round forecast tab</a></em>
 	</p>
 	<div th:include="fragments/aboutForecast :: aboutTournamentForecast"></div>
 	<div th:include="fragments/aboutForecast :: aboutPrediction"></div>
-	<div th:if="${drawLuck}" th:include="fragments/aboutForecast :: aboutDrawLuck"></div>
+	<!--/*<div th:if="${drawLuck}" th:include="fragments/aboutForecast :: aboutDrawLuck"></div>*/-->
 	<div th:if="${drawLuck}" th:include="fragments/aboutForecast :: aboutDrawBonus"></div>
 </th:block>
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutTournamentForecast">
@@ -68,17 +69,17 @@
 		</div>
 	</div>
 </th:block>
-<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutDrawLuck">
+<!--/*<th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutDrawLuck">
 	<div class="hidden" id="drawLuckPopover">
 		<div class="popover-title"><strong>Draw Luck</strong></div>
 		<div class="popover-content">
 			<p th:text="#{forecast.drawLuck.title}"></p>
 		</div>
 	</div>
-</th:block>
+</th:block>*/-->
 <th:block xmlns:th="http://www.thymeleaf.org" th:fragment="aboutDrawBonus">
 	<div class="hidden" id="drawBonusPopover">
-		<div class="popover-title"><strong>Draw Bonus</strong></div>
+		<div class="popover-title"><strong><i class="fa fa-sitemap"></i> Draw Bonus</strong></div>
 		<div class="popover-content">
 			<p th:text="#{forecast.drawBonus.title}"></p>
 		</div>

@@ -197,8 +197,8 @@ class KOTournamentForecaster {
 						results << params
 				}
 			}
-//			if (drawLuck)
-//				normalizeDrawLuckResults(results, nextResult)
+			if (drawLuck)
+				normalizeDrawLuckResults(results, nextResult)
 			if (verbose) {
 				for (def params : results) {
 					if (params.result == nextResult.name())
@@ -332,7 +332,7 @@ class KOTournamentForecaster {
 		def os = opponentIds.collect {
 			o -> new Opponent(playerId: o, weight: playerWeight.apply(o))
 		}
-		println os.stream().mapToDouble({o -> o.weight}).sum() + ' ' + os.size() + ' ' + os
+//		println os.stream().mapToDouble({o -> o.weight}).sum() + ' ' + os.size() + ' ' + os
 		return os
 	}
 
@@ -340,7 +340,7 @@ class KOTournamentForecaster {
 		def opponentIds = (result == baseResult ? allPlayerIds : playerIds).findAll { o -> o != playerId }
 		def weight = equalWeightsWithBye(result)
 		def os = opponentIds.collect { o -> new Opponent(playerId: o, weight: weight) }
-		println os.stream().mapToDouble({o -> o.weight}).sum() + ' ' + os.size() + ' ' + os
+//		println os.stream().mapToDouble({o -> o.weight}).sum() + ' ' + os.size() + ' ' + os
 		return os
 	}
 
@@ -370,7 +370,7 @@ class KOTournamentForecaster {
 
 	private Function<Integer, Double> playerWeightFunction(KOResult result, int playerId) {
 		def seed = playerSeeds[playerId]
-		println "Player: $playerId, Seed: $seed, Result: $result"
+//		println "Player: $playerId, Seed: $seed, Result: $result"
 		if (result < seedResult) {
 			if (seed) {
 				if (hasBye(result, seed))
